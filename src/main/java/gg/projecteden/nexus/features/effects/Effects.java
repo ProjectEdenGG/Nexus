@@ -122,16 +122,16 @@ public abstract class Effects extends Feature implements Listener {
 	}
 
 	public void rotatingStands() {
+		List<RotatingStand> rotatingStands = getRotatingStands();
+
 		List<String> resetPoses = new ArrayList<>() {{
-			for (RotatingStand rotatingStand : getRotatingStands()) {
-				if (rotatingStand.isReset())
-					add(rotatingStand.getUuid());
+			for (RotatingStand rotatingStand : rotatingStands) {
+				if (!rotatingStand.isResetPose())
+					continue;
+
+				add(rotatingStand.getUuid());
 			}
 		}};
-
-		List<RotatingStand> rotatingStands = getRotatingStands();
-		if (rotatingStands.isEmpty())
-			return;
 
 		onLoadRotatingStands();
 
@@ -141,13 +141,14 @@ public abstract class Effects extends Feature implements Listener {
 				if (armorStand == null)
 					continue;
 
-				if (resetPoses.contains(rotatingStand.getUuid())) {
+				String UUID = rotatingStand.getUuid();
+				if (resetPoses.contains(UUID)) {
 					switch (rotatingStand.getAxis()) {
 						case HORIZONTAL -> rotatingStand.resetRightArmPose();
 						case VERTICAL -> rotatingStand.resetHeadPose();
 					}
 
-					resetPoses.remove(rotatingStand.getUuid());
+					resetPoses.remove(UUID);
 				}
 
 				StandRotationType rotationType = rotatingStand.getRotationType();
@@ -166,26 +167,33 @@ public abstract class Effects extends Feature implements Listener {
 		String uuid;
 		StandRotationAxis axis;
 		StandRotationType rotationType;
-		boolean reset;
-		ArmorStand armorStand = null;
+		boolean resetPose;
 
-		public RotatingStand(String uuid, StandRotationAxis axis, StandRotationType rotationType, boolean reset) {
+		public RotatingStand(String uuid, StandRotationAxis axis, StandRotationType rotationType, boolean resetPose) {
 			this.uuid = uuid;
 			this.axis = axis;
 			this.rotationType = rotationType;
-			this.reset = reset;
+			this.resetPose = resetPose;
+		}
+
+		public ArmorStand getArmorStand() {
+			final Entity entity = Bukkit.getEntity(UUID.fromString(uuid));
+			if (entity != null && entity.isValid() && entity instanceof ArmorStand stand)
+				return stand;
+
+			return null;
 		}
 
 		public void resetRightArmPose() {
-			armorStand = getArmorStand();
+			ArmorStand armorStand = getArmorStand();
 			if (armorStand == null)
 				return;
 
-			armorStand.setRightArmPose(new EulerAngle(Math.toRadians(180), 0, Math.toRadians(270)));
+			getArmorStand().setRightArmPose(new EulerAngle(Math.toRadians(180), 0, Math.toRadians(270)));
 		}
 
 		public void resetHeadPose() {
-			armorStand = getArmorStand();
+			ArmorStand armorStand = getArmorStand();
 			if (armorStand == null)
 				return;
 
@@ -193,33 +201,19 @@ public abstract class Effects extends Feature implements Listener {
 		}
 
 		public void addRightArmPose(double x, double y, double z) {
-			armorStand = getArmorStand();
+			ArmorStand armorStand = getArmorStand();
 			if (armorStand == null)
 				return;
 
-			armorStand.setRightArmPose(armorStand.getRightArmPose().add(Math.toRadians(x), Math.toRadians(y), Math.toRadians(z)));
+			armorStand.setRightArmPose(armorStand.getRightArmPose().add(x, y, z));
 		}
 
 		public void addHeadPose(double x, double y, double z) {
-			armorStand = getArmorStand();
+			ArmorStand armorStand = getArmorStand();
 			if (armorStand == null)
 				return;
 
-			armorStand.setHeadPose(armorStand.getHeadPose().add(Math.toRadians(x), Math.toRadians(y), Math.toRadians(z)));
-		}
-
-		public ArmorStand getArmorStand() {
-			if (this.armorStand != null)
-				return this.armorStand;
-
-			final Entity entity = Bukkit.getEntity(UUID.fromString(uuid));
-			if (entity == null || !entity.isValid())
-				return null;
-
-			if (!(entity instanceof ArmorStand stand))
-				return null;
-
-			return stand;
+			armorStand.setHeadPose(armorStand.getHeadPose().add(x, y, z));
 		}
 
 		public enum StandRotationAxis {
