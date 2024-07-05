@@ -216,10 +216,10 @@ public abstract class Effects extends Feature implements Listener {
 			if (entity == null || !entity.isValid())
 				return null;
 
-			if (!(entity instanceof ArmorStand armorStand))
+			if (!(entity instanceof ArmorStand stand))
 				return null;
 
-			return armorStand;
+			return stand;
 		}
 
 		public enum StandRotationAxis {
