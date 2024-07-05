@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.menus;
 import gg.projecteden.api.common.exceptions.EdenException;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.anvilgui.AnvilGUI;
+import gg.projecteden.nexus.features.menus.anvilgui.AnvilGUI.Response;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
@@ -24,12 +25,14 @@ import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
@@ -132,7 +135,7 @@ public abstract class MenuUtils {
 				contents.set(row, noSpace[i], items[i]);
 	}
 
-	public static void openAnvilMenu(Player player, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete, Consumer<Player> onClose) {
+	public static void openAnvilMenu(Player player, String text, BiFunction<Player, String, Response> onComplete, Consumer<Player> onClose) {
 		new AnvilGUI.Builder()
 				.text(text)
 				.onComplete(onComplete)
@@ -163,11 +166,11 @@ public abstract class MenuUtils {
 						setter.accept(converter.apply(text));
 						if (writer != null)
 							writer.run();
-						return AnvilGUI.Response.close();
+						return Response.close();
 					}
 				} catch(Exception ignored){}
 				PlayerUtils.send(p, error);
-				return AnvilGUI.Response.close();
+				return Response.close();
 			}, p -> Tasks.wait(1, () -> menu.open(p)));
 		}
 
@@ -212,19 +215,19 @@ public abstract class MenuUtils {
 	@AllArgsConstructor
 	public static class ConfirmationMenu extends InventoryProvider {
 		@Getter
-		@Builder.Default
+		@Default
 		private final String title = CustomTexture.GUI_CONFIRMATION.getMenuTexture() + "&4Are you sure?";
-		@Builder.Default
+		@Default
 		private final String cancelText = "&cNo";
 		private final List<String> cancelLore;
-		@Builder.Default
+		@Default
 		private final ItemStack cancelItem = CustomMaterial.GUI_CLOSE.getNoNamedItem().dyeColor(ColorType.RED).build();
-		@Builder.Default
+		@Default
 		private final Consumer<ItemClickData> onCancel = (e) -> e.getPlayer().closeInventory();
-		@Builder.Default
+		@Default
 		private final String confirmText = "&aYes";
 		private final List<String> confirmLore;
-		@Builder.Default
+		@Default
 		private final ItemStack confirmItem = CustomMaterial.GUI_CHECK.getNoNamedItem().dyeColor(ColorType.LIGHT_GREEN).build();
 		@NonNull
 		private final Consumer<ItemClickData> onConfirm;
@@ -301,26 +304,29 @@ public abstract class MenuUtils {
 		}
 	}
 
+
 	// TODO: JOBS - Temporary menu until jobs are complete
 	@Rows(3)
 	@Builder(buildMethodName = "_build")
 	@AllArgsConstructor
-	public static class SurvivalNPCShopMenu extends InventoryProvider {
+	public static class NPCShopMenu extends InventoryProvider {
 		@Getter
-		@Builder.Default
+		@Default
 		private final String title = "Shop";
 		private final int npcId;
 		private final List<Product> products;
+		@Nullable
+		private final ShopGroup shopGroup;
 
 		private final BankerService bankerService = new BankerService();
 
-		public static class SurvivalNPCShopMenuBuilder {
+		public static class NPCShopMenuBuilder {
 			public void open(Player player) {
 				Tasks.sync(() -> _build().open(player));
 			}
 
 			@Deprecated
-			public SurvivalNPCShopMenu build() {
+			public NPCShopMenu build() {
 				throw new UnsupportedOperationException("Use open(player)");
 			}
 		}
@@ -332,12 +338,33 @@ public abstract class MenuUtils {
 			final List<ClickableItem> items = new ArrayList<>();
 
 			products.forEach(product -> {
-				double price = product.getPrice();
+				Double price = product.getPrice();
+				ItemStack priceItem = product.getPriceItem();
 				ItemStack item = product.getItemStack();
-				BiConsumer<Player, InventoryProvider> consumer = product.getConsumer();
+				BiConsumer<Player, InventoryProvider> consumer = product.getOnPurchase();
 
-				final boolean canAfford = bankerService.get(viewer).has(price, ShopGroup.SURVIVAL);
-				final ItemBuilder displayItem = new ItemBuilder(product.getDisplayItemStack()).lore("&3Price: " + (canAfford ? "&a" : "&c") + prettyMoney(price));
+				boolean canAfford;
+
+				String priceLore;
+				if (price != null) {
+					if (price > 0) {
+						if (shopGroup != null)
+							canAfford = bankerService.get(viewer).has(price, shopGroup);
+						else
+							canAfford = false;
+
+						priceLore = "&3Price: " + (canAfford ? "&a" : "&c") + prettyMoney(price);
+					} else {
+						canAfford = true;
+						priceLore = "&3Price: &afree";
+					}
+				} else if (!Nullables.isNullOrAir(priceItem)) {
+					canAfford = PlayerUtils.playerHas(viewer, priceItem);
+					priceLore = "&3Trade: " + (canAfford ? "&a" : "&c") + priceItem.getAmount() + " " + StringUtils.camelCase(priceItem.getType());
+				} else
+					throw new InvalidInputException(this.getTitle() + " - Product requires price type: " + StringUtils.camelCase(item != null ? item.getType() : null));
+
+				final ItemBuilder displayItem = new ItemBuilder(product.getDisplayItemStack()).lore(priceLore);
 
 				items.add(ClickableItem.of(displayItem, e -> {
 					if (canAfford)
@@ -346,20 +373,27 @@ public abstract class MenuUtils {
 								.displayItem(displayItem.build())
 							.onConfirm(e2 -> {
 								try {
-									bankerService.withdraw(TransactionCause.MARKET_PURCHASE.of(null, viewer, BigDecimal.valueOf(-price), ShopGroup.SURVIVAL, pretty(product.getDisplayItemStack())));
-									if (item == null) {
+									if (shopGroup != null)
+										bankerService.withdraw(TransactionCause.MARKET_PURCHASE.of(null, viewer, BigDecimal.valueOf(-price), shopGroup, pretty(product.getDisplayItemStack())));
+
+									if (!Nullables.isNullOrAir(priceItem))
+										viewer.getInventory().removeItem(priceItem);
+
+									if (item == null && consumer != null) {
 										consumer.accept(viewer, this);
 										return;
 									}
 
 									PlayerUtils.giveItem(viewer, item);
-									Shop.log(UUID0, viewer.getUniqueId(), ShopGroup.SURVIVAL, pretty(item).split(" ", 2)[1], 1, ExchangeType.SELL, String.valueOf(price), "");
+
+									if (shopGroup != null)
+										Shop.log(UUID0, viewer.getUniqueId(), shopGroup, pretty(item).split(" ", 2)[1], 1, ExchangeType.SELL, String.valueOf(price), "");
 
 									if (consumer != null)
 										consumer.accept(viewer, this);
 
 								} catch (Exception ex) {
-									MenuUtils.handleException(viewer, StringUtils.getPrefix("Jobs"), ex);
+									MenuUtils.handleException(viewer, StringUtils.getPrefix("NPCShopMenu"), ex);
 								}
 							})
 							.onFinally(e2 -> refresh())
@@ -373,15 +407,18 @@ public abstract class MenuUtils {
 		@Data
 		@Builder
 		public static class Product {
-			ItemStack itemStack;
-			ItemStack displayItemStack;
-			double price;
-			BiConsumer<Player, InventoryProvider> consumer;
+			@Nullable ItemStack itemStack;
+			@Nullable ItemStack displayItemStack;
+			@Nullable Double price;
+			@Nullable ItemStack priceItem;
+			@Nullable BiConsumer<Player, InventoryProvider> onPurchase;
 
 			public ItemStack getDisplayItemStack() {
 				return displayItemStack == null ? itemStack : displayItemStack;
 			}
 		}
+
+
 	}
 
 	public static void formatInventoryContents(InventoryContents contents, ItemStack[] inventory) {

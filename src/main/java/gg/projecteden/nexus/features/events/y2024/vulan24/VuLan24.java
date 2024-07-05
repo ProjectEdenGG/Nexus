@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.events.y2024.vulan24;
 
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.models.EventBreakable;
-import gg.projecteden.nexus.features.events.y2024.vulan24.menus.BoatPickerMenu;
+import gg.projecteden.nexus.features.events.y2024.vulan24.menus.VuLan24Menus;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Entity;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24NPC;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Quest;
@@ -66,7 +66,9 @@ public class VuLan24 extends EdenEvent {
 
 	@Override
 	public void registerInteractHandlers() {
-		handleInteract(VuLan24NPC.BOAT_SALESMAN, (player, npc) -> new BoatPickerMenu().open(player));
+		handleInteract(VuLan24NPC.BOAT_SALESMAN, (player, npc) -> VuLan24Menus.getBoatPicker().open(player));
+		handleInteract(VuLan24NPC.TOUR_GUIDE, (player, npc) -> VuLan24Menus.getGuideShop().open(player));
+		handleInteract(VuLan24NPC.MINER, (player, npc) -> VuLan24Menus.getMinerShop().open(player));
 	}
 
 	@Override

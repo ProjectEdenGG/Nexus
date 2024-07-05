@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.survival.avontyre;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.menus.MenuUtils.SurvivalNPCShopMenu;
+import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.event.EventHandler;
@@ -21,13 +21,13 @@ public class AvontyreNPCListener implements Listener {
 		if (!AvontyreNPCs.HUNTER__NULL.is(event.getNPC()))
 			return;
 
-		SurvivalNPCShopMenu.builder()
+		NPCShopMenu.builder()
 			.title("Hunter Shop")
 			.npcId(AvontyreNPCs.HUNTER__NULL.getNPCId())
 			.products(List.of(
-				SurvivalNPCShopMenu.Product.builder()
+					NPCShopMenu.Product.builder()
 					.itemStack(CustomMaterial.MOB_NET.getNamedItem())
-					.price(5000).build())
+							.price(5000.0).build())
 			)
 			.open(event.getClicker());
 	}

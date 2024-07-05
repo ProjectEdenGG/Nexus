@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.survival.decorationstore;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.menus.MenuUtils.SurvivalNPCShopMenu;
-import gg.projecteden.nexus.features.menus.MenuUtils.SurvivalNPCShopMenu.Product;
+import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu;
+import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu.Product;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreType;
@@ -82,7 +82,7 @@ public class DecorationStore implements Listener {
 	}
 
 	private void openDecorationShop(Player player) {
-		SurvivalNPCShopMenu.builder()
+		NPCShopMenu.builder()
 				.npcId(AvontyreNPCs.DECORATION__NULL.getNPCId())
 				.title("Decoration Shop")
 				.products(getProducts(player))
@@ -91,17 +91,17 @@ public class DecorationStore implements Listener {
 
 	private List<Product> getProducts(Player player) {
 		DecorationUserService service = new DecorationUserService();
-		List<SurvivalNPCShopMenu.Product> result = new ArrayList<>();
+		List<NPCShopMenu.Product> result = new ArrayList<>();
 
-		SurvivalNPCShopMenu.Product.ProductBuilder masterCatalog = SurvivalNPCShopMenu.Product.builder()
+		NPCShopMenu.Product.ProductBuilder masterCatalog = NPCShopMenu.Product.builder()
 				.itemStack(Catalog.getMASTER_CATALOG())
-				.price(500); // TODO DECORATION: PRICE
+				.price(500.0); // TODO DECORATION: PRICE
 
 
 		DecorationUser user = service.get(player);
 		if (user.isBoughtMasterCatalog()) {
 			if (!PlayerUtils.playerHas(player, Catalog.getMASTER_CATALOG()))
-				result.add(masterCatalog.price(0).build());
+				result.add(masterCatalog.price((double) 0).build());
 
 			for (Catalog.Theme theme : Catalog.Theme.values()) {
 				if (theme == Catalog.Theme.ALL)
@@ -111,10 +111,10 @@ public class DecorationStore implements Listener {
 					continue;
 
 				result.add(
-						SurvivalNPCShopMenu.Product.builder()
+						NPCShopMenu.Product.builder()
 								.displayItemStack(theme.getShopItem())
-								.price(theme.getPrice())
-								.consumer((_player, provider) -> {
+								.price((double) theme.getPrice())
+								.onPurchase((_player, provider) -> {
 									DecorationUserService _service = new DecorationUserService();
 									DecorationUser _user = _service.get(_player);
 									_user.addOwnedThemes(theme);
@@ -128,7 +128,7 @@ public class DecorationStore implements Listener {
 		} else {
 			result.add(
 					masterCatalog
-							.consumer((_player, provider) -> {
+							.onPurchase((_player, provider) -> {
 								DecorationUserService _service = new DecorationUserService();
 								DecorationUser _user = _service.get(_player);
 								_user.setBoughtMasterCatalog(true);
@@ -141,9 +141,9 @@ public class DecorationStore implements Listener {
 		}
 
 		result.add(
-				SurvivalNPCShopMenu.Product.builder()
+				NPCShopMenu.Product.builder()
 						.itemStack(DyeStation.getPaintbrush().build())
-						.price(500) // TODO DECORATION: PRICE
+						.price(500.0) // TODO DECORATION: PRICE
 						.build()
 		);
 
