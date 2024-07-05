@@ -497,7 +497,7 @@ public class AccountTransferCommand extends CustomCommand {
 		@Override
 		public void transfer(Player executor, PerkOwner previous, PerkOwner current) {
 			current.getPurchasedPerks().putAll(previous.getPurchasedPerks());
-			current.setTokens(current.getTokens() + previous.getTokens());
+			current.giveTokens(previous.getTokens());
 			current.setHideParticle(previous.getHideParticle());
 			current.setDailyTokens(previous.getDailyTokens());
 

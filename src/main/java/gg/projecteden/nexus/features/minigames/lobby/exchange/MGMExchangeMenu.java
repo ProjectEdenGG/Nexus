@@ -77,7 +77,7 @@ public class MGMExchangeMenu extends InventoryProvider {
 							return;
 
 						BANKER_SERVICE.withdraw(viewer, -amounts[finalI] * ECO_PRICE, Shop.ShopGroup.SURVIVAL, Transaction.TransactionCause.MGM_TOKEN_EXCHANGE);
-						MGM_SERVICE.edit(viewer, user -> user.setTokens(user.getTokens() + amounts[finalI]));
+						MGM_SERVICE.edit(viewer, user -> user.giveTokens(amounts[finalI]));
 
 						refresh();
 					}
@@ -110,7 +110,7 @@ public class MGMExchangeMenu extends InventoryProvider {
 							return;
 
 						VOTER_SERVICE.edit(viewer, user -> user.takePoints(amounts[finalI] * VP_PRICE));
-						MGM_SERVICE.edit(viewer, user -> user.setTokens(user.getTokens() + amounts[finalI]));
+						MGM_SERVICE.edit(viewer, user -> user.giveTokens(amounts[finalI]));
 
 						refresh();
 					}

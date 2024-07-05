@@ -13,6 +13,8 @@ import gg.projecteden.nexus.models.decoration.DecorationUser;
 import gg.projecteden.nexus.models.decoration.DecorationUserService;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfigService;
+import gg.projecteden.nexus.utils.Currency;
+import gg.projecteden.nexus.utils.Currency.Price;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
@@ -93,15 +95,13 @@ public class DecorationStore implements Listener {
 		DecorationUserService service = new DecorationUserService();
 		List<NPCShopMenu.Product> result = new ArrayList<>();
 
-		NPCShopMenu.Product.ProductBuilder masterCatalog = NPCShopMenu.Product.builder()
-				.itemStack(Catalog.getMASTER_CATALOG())
-				.price(500.0); // TODO DECORATION: PRICE
+		NPCShopMenu.Product masterCatalog = new Product(Catalog.getMASTER_CATALOG()).price(Currency.BALANCE, 500); // TODO DECORATION: PRICE
 
 
 		DecorationUser user = service.get(player);
 		if (user.isBoughtMasterCatalog()) {
 			if (!PlayerUtils.playerHas(player, Catalog.getMASTER_CATALOG()))
-				result.add(masterCatalog.price((double) 0).build());
+				result.add(masterCatalog.price(Currency.BALANCE, 0));
 
 			for (Catalog.Theme theme : Catalog.Theme.values()) {
 				if (theme == Catalog.Theme.ALL)
@@ -111,9 +111,9 @@ public class DecorationStore implements Listener {
 					continue;
 
 				result.add(
-						NPCShopMenu.Product.builder()
+						new Product()
 								.displayItemStack(theme.getShopItem())
-								.price((double) theme.getPrice())
+								.price(Currency.BALANCE, Price.of(theme.getPrice()))
 								.onPurchase((_player, provider) -> {
 									DecorationUserService _service = new DecorationUserService();
 									DecorationUser _user = _service.get(_player);
@@ -122,7 +122,6 @@ public class DecorationStore implements Listener {
 
 									openDecorationShop(player);
 								})
-								.build()
 				);
 			}
 		} else {
@@ -136,16 +135,10 @@ public class DecorationStore implements Listener {
 
 								openDecorationShop(player);
 							})
-							.build()
 			);
 		}
 
-		result.add(
-				NPCShopMenu.Product.builder()
-						.itemStack(DyeStation.getPaintbrush().build())
-						.price(500.0) // TODO DECORATION: PRICE
-						.build()
-		);
+		result.add(new Product(DyeStation.getPaintbrush().build()).price(Currency.BALANCE, 500)); // TODO DECORATION: PRICE
 
 		return result;
 	}

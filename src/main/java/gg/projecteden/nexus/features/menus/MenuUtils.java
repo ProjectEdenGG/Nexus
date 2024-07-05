@@ -18,14 +18,12 @@ import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.banker.BankerService;
-import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
-import gg.projecteden.nexus.models.shop.Shop;
-import gg.projecteden.nexus.models.shop.Shop.ExchangeType;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.Currency;
+import gg.projecteden.nexus.utils.Currency.Price;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -45,7 +43,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -56,10 +53,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
-import static gg.projecteden.nexus.features.shops.ShopUtils.prettyMoney;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.nexus.utils.StringUtils.pretty;
 
 public abstract class MenuUtils {
 
@@ -338,31 +332,13 @@ public abstract class MenuUtils {
 			final List<ClickableItem> items = new ArrayList<>();
 
 			products.forEach(product -> {
-				Double price = product.getPrice();
-				ItemStack priceItem = product.getPriceItem();
 				ItemStack item = product.getItemStack();
+				Currency currency = product.getCurrency();
+				Price price = product.getPrice();
 				BiConsumer<Player, InventoryProvider> consumer = product.getOnPurchase();
 
-				boolean canAfford;
-
-				String priceLore;
-				if (price != null) {
-					if (price > 0) {
-						if (shopGroup != null)
-							canAfford = bankerService.get(viewer).has(price, shopGroup);
-						else
-							canAfford = false;
-
-						priceLore = "&3Price: " + (canAfford ? "&a" : "&c") + prettyMoney(price);
-					} else {
-						canAfford = true;
-						priceLore = "&3Price: &afree";
-					}
-				} else if (!Nullables.isNullOrAir(priceItem)) {
-					canAfford = PlayerUtils.playerHas(viewer, priceItem);
-					priceLore = "&3Trade: " + (canAfford ? "&a" : "&c") + priceItem.getAmount() + " " + StringUtils.camelCase(priceItem.getType());
-				} else
-					throw new InvalidInputException(this.getTitle() + " - Product requires price type: " + StringUtils.camelCase(item != null ? item.getType() : null));
+				boolean canAfford = currency.canAfford(viewer, price, shopGroup);
+				String priceLore = currency.getPriceLore(price, canAfford);
 
 				final ItemBuilder displayItem = new ItemBuilder(product.getDisplayItemStack()).lore(priceLore);
 
@@ -373,11 +349,7 @@ public abstract class MenuUtils {
 								.displayItem(displayItem.build())
 							.onConfirm(e2 -> {
 								try {
-									if (shopGroup != null)
-										bankerService.withdraw(TransactionCause.MARKET_PURCHASE.of(null, viewer, BigDecimal.valueOf(-price), shopGroup, pretty(product.getDisplayItemStack())));
-
-									if (!Nullables.isNullOrAir(priceItem))
-										viewer.getInventory().removeItem(priceItem);
+									currency.withdraw(viewer, price, shopGroup, product);
 
 									if (item == null && consumer != null) {
 										consumer.accept(viewer, this);
@@ -386,8 +358,7 @@ public abstract class MenuUtils {
 
 									PlayerUtils.giveItem(viewer, item);
 
-									if (shopGroup != null)
-										Shop.log(UUID0, viewer.getUniqueId(), shopGroup, pretty(item).split(" ", 2)[1], 1, ExchangeType.SELL, String.valueOf(price), "");
+									currency.log(viewer, price, product, shopGroup);
 
 									if (consumer != null)
 										consumer.accept(viewer, this);
@@ -405,19 +376,91 @@ public abstract class MenuUtils {
 		}
 
 		@Data
-		@Builder
+		@AllArgsConstructor
 		public static class Product {
 			@Nullable ItemStack itemStack;
 			@Nullable ItemStack displayItemStack;
-			@Nullable Double price;
-			@Nullable ItemStack priceItem;
+
+			Currency currency;
+			@Nullable Currency.Price price;
+
 			@Nullable BiConsumer<Player, InventoryProvider> onPurchase;
+
+			public Product() {
+				this(null, null);
+			}
+
+			public Product(ItemBuilder itemBuilder) {
+				this(itemBuilder.build());
+			}
+
+			public Product(CustomMaterial material) {
+				this(material.getItem());
+			}
+
+			public Product(Material material) {
+				this(new ItemStack(material));
+			}
+
+			public Product(ItemStack itemStack) {
+				this(itemStack, null);
+			}
+
+			public Product(@Nullable ItemStack itemStack, @Nullable ItemStack displayItemStack) {
+				this.itemStack = itemStack;
+				this.displayItemStack = displayItemStack;
+			}
+
+			public static Product free(CustomMaterial material) {
+				return free(material.getItem());
+			}
+
+			public static Product free(Material material) {
+				return free(new ItemStack(material));
+			}
+
+			public static Product free(ItemBuilder itemBuilder) {
+				return free(itemBuilder.build());
+			}
+
+			public static Product free(ItemStack itemStack) {
+				return new Product(itemStack, null, Currency.FREE, Price.of(0), null);
+			}
+
+			//
+
+
+			public Product itemStack(ItemStack itemstack) {
+				this.itemStack = itemstack;
+				return this;
+			}
+
+			public Product displayItemStack(ItemStack displayItemStack) {
+				this.displayItemStack = displayItemStack;
+				return this;
+			}
+
+			public Product price(Currency currency, Price price) {
+				this.currency = currency;
+				this.price = price;
+				return this;
+			}
+
+			public Product price(Currency currency, double price) {
+				this.currency = currency;
+				this.price = Price.of(price);
+				return this;
+			}
+
+			public Product onPurchase(BiConsumer<Player, InventoryProvider> consumer) {
+				this.onPurchase = consumer;
+				return this;
+			}
 
 			public ItemStack getDisplayItemStack() {
 				return displayItemStack == null ? itemStack : displayItemStack;
 			}
 		}
-
 
 	}
 

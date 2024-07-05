@@ -817,7 +817,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Description("Modify a player's minigame tokens")
 	void addTokens(int amount, @Arg("self") Nerd nerd) {
 		new PerkOwnerService().edit(nerd, perkOwner -> {
-			perkOwner.setTokens(amount + perkOwner.getTokens());
+			perkOwner.giveTokens(amount);
 			String username = nerd.getUuid().equals(player().getUniqueId()) ? "You now have" : (perkOwner.getNickname() + " now has");
 			send(PREFIX + username + " " + perkOwner.getTokens() + plural(" token", perkOwner.getTokens()));
 		});

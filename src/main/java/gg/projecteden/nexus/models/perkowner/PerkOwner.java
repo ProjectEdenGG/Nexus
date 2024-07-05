@@ -11,7 +11,6 @@ import gg.projecteden.nexus.features.minigames.models.perks.Perk;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkCategory;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkType;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
-import gg.projecteden.nexus.models.boost.BoostConfig;
 import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.models.boost.Booster;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -81,6 +80,14 @@ public class PerkOwner implements PlayerOwnedObject {
 		return uuid.equals(other.getUuid());
 	}
 
+	public void takeTokens(int amount) {
+		this.tokens -= amount;
+	}
+
+	public void giveTokens(int amount) {
+		this.tokens += amount;
+	}
+
 	/**
 	 * Purchases a perk from the store. Specifically, this checks to see if the player doesn't already have the perk and
 	 * has enough tokens to purchase the perk. If it does, it takes the tokens from this player and adds the perk to
@@ -93,7 +100,7 @@ public class PerkOwner implements PlayerOwnedObject {
 			return false;
 		if (perk.getPerk().getPrice() > tokens)
 			return false;
-		tokens -= perk.getPrice();
+		takeTokens(perk.getPrice());
 		purchasedPerks.put(perk, false);
 		save();
 		return true;
@@ -112,7 +119,7 @@ public class PerkOwner implements PlayerOwnedObject {
 		}
 		int amount = Math.min(getMaxDailyTokens(uuid)-dailyTokens, RandomUtils.randomInt(5, 10));
 		if (amount > 0) {
-			tokens += amount;
+			giveTokens(amount);
 			dailyTokens += amount;
 			try {
 				if (getOnlinePlayer() != null)

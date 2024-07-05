@@ -14,6 +14,7 @@ public enum VuLan24NPC implements InteractableNPC {
 	MAYOR_HOA("Mayor Hoa", 5177),
 	TRUONG("Truong", 5178),
 	XUAM("Xuam", 5179),
+	HAT_SALESMAN("Hat Salesman", 5180),
 	ANH("Anh", 5181), // Community Quest
 	HANH("Hanh", 5182),
 	PHUONG("Phuong", 5183),

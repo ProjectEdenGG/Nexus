@@ -90,7 +90,7 @@ public class CratePreviewProvider extends InventoryProvider {
 					if (perkOwner.getTokens() < 50)
 						return;
 
-					perkOwner.setTokens(perkOwner.getTokens() - 50);
+					perkOwner.takeTokens(50);
 					perkService.save(perkOwner);
 					close();
 
@@ -100,7 +100,7 @@ public class CratePreviewProvider extends InventoryProvider {
 						if (ex.getMessage() != null)
 							PlayerUtils.send(viewer, Crates.PREFIX + ex.getMessage());
 						CrateHandler.reset(clickedCrate);
-						perkOwner.setTokens(perkOwner.getTokens() + 50);
+						perkOwner.giveTokens(50);
 						perkService.save(perkOwner);
 					}
 				}

@@ -5,12 +5,16 @@ import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu.NPCShopMenuBuilder;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu.Product;
 import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.utils.Currency;
+import gg.projecteden.nexus.utils.Currency.Price;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class VuLan24Menus {
 
@@ -21,15 +25,23 @@ public class VuLan24Menus {
 				.shopGroup(null)
 				.products(new ArrayList<>() {{
 					for (Material boatType : MaterialTag.BOATS.getValues()) {
-						add(Product.builder()
-								.itemStack(new ItemStack(boatType))
-								.price(0d)
+						add(Product.free(new ItemStack(boatType))
 								.onPurchase((player, provider) -> {
 									PlayerUtils.send(player, "TODO: DATABASE STUFF");
 									// TODO: Take old boat from player
 									// TODO: Save new boat to database
-								}).build());
+								}));
 					}
+				}});
+	}
+
+	public static NPCShopMenuBuilder getBambooHatShop() {
+		return NPCShopMenu.builder()
+				.title("Buy this Bamboo Hat costume?")
+				.npcId(VuLan24NPC.HAT_SALESMAN.getNpcId())
+				.shopGroup(null)
+				.products(new ArrayList<>() {{
+					add(new Product(CustomMaterial.COSTUMES_BAMBOO_HAT).price(Currency.EVENT_TOKENS, Price.of(100)));
 				}});
 	}
 
@@ -39,10 +51,9 @@ public class VuLan24Menus {
 				.npcId(VuLan24NPC.MINER.getNpcId())
 				.shopGroup(null)
 				.products(new ArrayList<>() {{
-					add(Product.builder()
-							.itemStack(new ItemStack(Material.IRON_PICKAXE))
-							.priceItem(new ItemStack(Material.APPLE))
-							.build());
+					add(new Product(new ItemStack(Material.IRON_PICKAXE))
+							.price(Currency.ITEM, Price.of(new ItemStack(Material.APPLE)))
+					);
 				}});
 	}
 
@@ -51,12 +62,7 @@ public class VuLan24Menus {
 				.title("Want a backpack?")
 				.npcId(VuLan24NPC.TOUR_GUIDE.getNpcId())
 				.shopGroup(null)
-				.products(new ArrayList<>() {{
-					add(Product.builder()
-							.itemStack(Backpacks.getBackpack())
-							.price(0d)
-							.build());
-				}});
+				.products(List.of(Product.free(Backpacks.getBackpack())));
 	}
 
 
