@@ -58,4 +58,12 @@ public class DyeStationCommand extends _WorkbenchCommand {
 	void dye(ColorChoice.StainChoice stainChoice) {
 		DecorationUtils.dye(getToolRequired(), stainChoice, player());
 	}
+
+	@HideFromWiki // Official command is /decoration dye
+	@Path("metal <stain>")
+	@Permission(Group.STAFF)
+	@Description("Plate an item")
+	void metal(ColorChoice.MetallicChoice metallicChoice) {
+		DecorationUtils.dye(getToolRequired(), metallicChoice, player());
+	}
 }

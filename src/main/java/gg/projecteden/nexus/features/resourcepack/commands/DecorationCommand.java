@@ -105,6 +105,14 @@ public class DecorationCommand extends CustomCommand {
 		DecorationUtils.dye(getToolRequired(), stainChoice, player());
 	}
 
+	@Path("dye metal <metal>")
+	@Description("Plate an item")
+	void dye(ColorChoice.MetallicChoice metallicChoice) {
+		checkPermissions();
+
+		DecorationUtils.dye(getToolRequired(), metallicChoice, player());
+	}
+
 	@Path("get <type>")
 	@Description("Get the decoration")
 	void get(DecorationConfig config) {
@@ -136,6 +144,14 @@ public class DecorationCommand extends CustomCommand {
 		checkPermissions();
 
 		giveItem(DyeStation.getMagicStain().build());
+	}
+
+	@Path("getItem magicMetal")
+	@Description("Spawn a magic metal item")
+	void get_magicMetal() {
+		checkPermissions();
+
+		giveItem(DyeStation.getMagicMetal().build());
 	}
 
 	@Path("getItem paintbrush")

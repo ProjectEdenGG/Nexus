@@ -18,7 +18,8 @@ public interface IDyeMenu {
 	SlotPos SLOT_COSTUME = new SlotPos(2, 1);
 
 	SlotPos SLOT_CHEAT_DYE = new SlotPos(0, 3);
-	SlotPos SLOT_CHEAT_STAIN = new SlotPos(0, 5);
+	SlotPos SLOT_CHEAT_STAIN = new SlotPos(0, 4);
+	SlotPos SLOT_CHEAT_METAL = new SlotPos(0, 5);
 
 	SlotPos SLOT_STAIN_PREVIOUS = new SlotPos(5, 1);
 	SlotPos SLOT_STAIN_NEXT = new SlotPos(5, 7);
@@ -60,9 +61,23 @@ public interface IDyeMenu {
 
 		switch (dyeType) {
 			case DYE -> {
-				for (ColorChoice.DyeChoice dyeChoice : ColorChoice.DyeChoice.values()) {
-					String itemName = StringUtils.camelCase(dyeChoice) + "s";
-					contents.set(row, col++, ClickableItem.of(dyeChoice.getItem(itemName), e -> fillChoices(contents, dyeChoice, ChoiceType.DYE)));
+				for (ColorChoice.DyeChoice choice : ColorChoice.DyeChoice.values()) {
+					String itemName = StringUtils.camelCase(choice) + "s";
+					contents.set(row, col++, ClickableItem.of(choice.getItem(itemName), e -> fillChoices(contents, choice, ChoiceType.DYE)));
+
+					if (++index == 3) {
+						++row;
+						col = 3;
+						index = 0;
+					}
+				}
+			}
+
+			case METAL -> {
+				for (ColorChoice.MetallicChoice choice : ColorChoice.MetallicChoice.values()) {
+					Color color = choice.getColor();
+					String itemName = StringUtils.camelCase(choice);
+					contents.set(row, col++, ClickableItem.of(choice.getItem(itemName), e -> setResultItem(color)));
 
 					if (++index == 3) {
 						++row;
@@ -75,7 +90,7 @@ public interface IDyeMenu {
 			case STAIN -> {
 				int skipCount = colorPage * 9;
 
-				for (ColorChoice.StainChoice stainChoice : ColorChoice.StainChoice.values()) {
+				for (ColorChoice.StainChoice choice : ColorChoice.StainChoice.values()) {
 					if (skipCount > index) {
 						index++;
 						continue;
@@ -85,9 +100,9 @@ public interface IDyeMenu {
 						continue;
 					}
 
-					String itemName = StringUtils.camelCase(stainChoice);
-					Color color = stainChoice.getButton().getColor();
-					contents.set(row, col++, ClickableItem.of(stainChoice.getItem(itemName), e -> setResultItem(color)));
+					Color color = choice.getColor();
+					String itemName = StringUtils.camelCase(choice);
+					contents.set(row, col++, ClickableItem.of(choice.getItem(itemName), e -> setResultItem(color)));
 					countAdded++;
 
 					if (++index == 3) {

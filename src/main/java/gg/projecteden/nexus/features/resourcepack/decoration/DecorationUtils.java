@@ -80,11 +80,22 @@ public class DecorationUtils {
 		String colorHex = StringUtils.toHex(color);
 		String colorName = colorHex;
 		boolean isStain = false;
+		boolean isMetal = false;
 		for (ColorChoice.StainChoice stainChoice : ColorChoice.StainChoice.values()) {
 			if (stainChoice.getColor().equals(color)) {
 				isStain = true;
 				colorName = StringUtils.camelCase(stainChoice.name());
 				break;
+			}
+		}
+
+		if (!isStain) {
+			for (ColorChoice.MetallicChoice metallicChoice : ColorChoice.MetallicChoice.values()) {
+				if (metallicChoice.getColor().equals(color)) {
+					isMetal = true;
+					colorName = StringUtils.camelCase(metallicChoice.name());
+					break;
+				}
 			}
 		}
 
@@ -104,6 +115,8 @@ public class DecorationUtils {
 				continue;
 			if (_line.contains("Stain: "))
 				continue;
+			if (_line.contains("Metal: "))
+				continue;
 
 			// reset uses
 			if (isPaintbrush && _line.contains(stripColor(DyeStation.USES_LORE))) {
@@ -121,7 +134,11 @@ public class DecorationUtils {
 		}
 
 		// Add color line
-		String colorLine = isStain ? "&3Stain: &" : "&3Color: &";
+		String colorLine = "&3Color: &";
+		if (isStain)
+			colorLine = "&3Stain: &";
+		else if (isMetal)
+			colorLine = "&3Metal: &";
 
 		finalLore.add(colorLine + colorHex + colorName);
 		DecorationLang.debug(debugger, "Adding color line: " + colorLine + colorHex + colorName);

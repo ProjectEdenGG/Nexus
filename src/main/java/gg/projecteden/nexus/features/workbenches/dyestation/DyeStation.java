@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.workbenches.CustomBench;
 import gg.projecteden.nexus.features.workbenches.ICraftableCustomBench;
+import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.ChoiceType;
 import gg.projecteden.nexus.framework.features.Unreleased;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -25,6 +26,7 @@ import java.util.List;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
 
+// TODO: ADD METALLIC DYE CRAFTING RECIPE
 @Unreleased
 @NoArgsConstructor
 public class DyeStation extends CustomBench implements ICraftableCustomBench {
@@ -39,7 +41,7 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 		return WORKBENCH.clone();
 	}
 
-	private static final ItemBuilder MAGIC_DYE = new ItemBuilder(ColorChoice.ChoiceType.DYE.getBottleMaterial())
+	private static final ItemBuilder MAGIC_DYE = new ItemBuilder(ChoiceType.DYE.getBottleMaterial())
 			.name(Gradient.of(List.of(ChatColor.RED, ChatColor.YELLOW, ChatColor.AQUA)).apply("Magic Dye"))
 			.lore(USAGE_LORE, USES_LORE + MAX_USES);
 
@@ -47,12 +49,20 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 		return MAGIC_DYE.clone();
 	}
 
-	private static final ItemBuilder MAGIC_STAIN = new ItemBuilder(ColorChoice.ChoiceType.STAIN.getBottleMaterial())
+	private static final ItemBuilder MAGIC_STAIN = new ItemBuilder(ChoiceType.STAIN.getBottleMaterial())
 			.name(Gradient.of(List.of(ChatColor.of("#e0a175"), ChatColor.of("#5c371d"))).apply("Magic Stain"))
 			.lore(USAGE_LORE, USES_LORE + MAX_USES);
 
 	public static ItemBuilder getMagicStain() {
 		return MAGIC_STAIN.clone();
+	}
+
+	private static final ItemBuilder MAGIC_METAL = new ItemBuilder(ChoiceType.METAL.getBottleMaterial())
+			.name(Gradient.of(List.of(ChatColor.of("#6A6A6A"), ChatColor.of("#D37A5A"), ChatColor.of("#E1C16E"))).apply("Magic Metal"))
+			.lore(USAGE_LORE, USES_LORE + MAX_USES);
+
+	public static ItemBuilder getMagicMetal() {
+		return MAGIC_METAL.clone();
 	}
 
 	private static final ItemBuilder PAINTBRUSH = new ItemBuilder(CustomMaterial.PAINTBRUSH)

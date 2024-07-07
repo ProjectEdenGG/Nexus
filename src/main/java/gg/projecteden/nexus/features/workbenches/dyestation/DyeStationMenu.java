@@ -191,6 +191,8 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 					e -> updateDyeChoice(contents, DyeStation.getMagicDye().build())));
 			contents.set(SLOT_CHEAT_STAIN, ClickableItem.of(DyeStation.getMagicStain().resetLore().build(),
 					e -> updateDyeChoice(contents, DyeStation.getMagicStain().build())));
+			contents.set(SLOT_CHEAT_METAL, ClickableItem.of(DyeStation.getMagicMetal().resetLore().build(),
+					e -> updateDyeChoice(contents, DyeStation.getMagicMetal().build())));
 		}
 	}
 
@@ -245,10 +247,14 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 
 		Optional<ClickableItem> dyeOptional = contents.get(SLOT_DYE);
 		ItemStack dye = dyeOptional.map(ClickableItem::getItem).orElse(null);
-		if (CustomMaterial.of(dye) == ColorChoice.ChoiceType.DYE.getBottleMaterial())
-			data.setDyeType(ColorChoice.ChoiceType.DYE);
-		else if (CustomMaterial.of(dye) == ColorChoice.ChoiceType.STAIN.getBottleMaterial())
-			data.setDyeType(ColorChoice.ChoiceType.STAIN);
+		CustomMaterial customMaterial = CustomMaterial.of(dye);
+
+		for (ChoiceType choiceType : ChoiceType.values()) {
+			if (customMaterial == choiceType.getBottleMaterial()) {
+				data.setDyeType(choiceType);
+				break;
+			}
+		}
 
 		Optional<ClickableItem> resultOptional = contents.get(SLOT_RESULT);
 		ItemStack result = resultOptional.map(ClickableItem::getItem).orElse(null);

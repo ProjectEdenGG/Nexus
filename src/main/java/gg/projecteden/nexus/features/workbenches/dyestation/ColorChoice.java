@@ -14,15 +14,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface ColorChoice {
+
 	void apply(ItemStack item);
 
 	@Getter
 	@AllArgsConstructor
 	enum ChoiceType {
-		DYE(CustomMaterial.DYE_STATION_DYE, CustomMaterial.DYE_STATION_BUTTON_DYE),
-		STAIN(CustomMaterial.DYE_STATION_STAIN, CustomMaterial.DYE_STATION_BUTTON_STAIN),
+		DYE(ColorType.hexToBukkit("#FF5555"), CustomMaterial.DYE_STATION_BOTTLE_DYE, CustomMaterial.DYE_STATION_BUTTON_DYE),
+		STAIN(ColorType.hexToBukkit("#F4C57A"), CustomMaterial.DYE_STATION_BOTTLE_STAIN, CustomMaterial.DYE_STATION_BUTTON_STAIN),
+		METAL(ColorType.hexToBukkit("#6a6a6a"), CustomMaterial.DYE_STATION_BOTTLE_METAL, CustomMaterial.DYE_STATION_BUTTON_METAL),
 		;
 
+		final Color color;
 		private final CustomMaterial bottleMaterial;
 		private final CustomMaterial buttonMaterial;
 
@@ -112,8 +115,47 @@ public interface ColorChoice {
 		public void apply(ItemStack item) {
 			Colored.of(this.getColor()).apply(item);
 		}
+	}
 
+	@Getter
+	enum MetallicChoice implements ColorChoice {
+		STEEL("#6A6A6A"),
+		IRON("#E0E0E0"),
+		GOLD("#FFD83E"),
+		COPPER("#D37A5A"),
+		NETHERITE("#484548"),
+		AMETHYST("#7A5BB5"),
+		EMERALD("#17C544"),
+		BRASS("#E1C16E"),
+		ELECTRUM("#E7C697"),
+		;
 
+		private final ColoredButton button;
+
+		MetallicChoice(String hex) {
+			this.button = new ColoredButton(hex);
+		}
+
+		public static MetallicChoice of(Color color) {
+			for (MetallicChoice metal : values()) {
+				if (metal.getColor().equals(color))
+					return metal;
+			}
+			return null;
+		}
+
+		public ItemStack getItem(String name) {
+			return getButton().getItem(ChoiceType.METAL, name);
+		}
+
+		public Color getColor() {
+			return getButton().getColor();
+		}
+
+		@Override
+		public void apply(ItemStack item) {
+			Colored.of(this.getColor()).apply(item);
+		}
 	}
 
 	@Getter

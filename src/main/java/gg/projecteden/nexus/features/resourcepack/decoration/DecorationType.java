@@ -569,7 +569,7 @@ public enum DecorationType {
 	FLORA_WALL_FLOWERS_1(new Flora(false, "Wall Flowers", CustomMaterial.FLORA_WALL_FLOWERS_1, PlacementType.WALL)),
 
 	@TypeConfig(money = 95, tokens = -1, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
-	FLORA_POTTED_TULIPS(new Flora(false, "Potted Tulips", CustomMaterial.FLORA_POTTED_TULIPS, HitboxSingle._1x1_HEAD, PlacementType.WALL)),
+	FLORA_POTTED_TULIPS(new Flora(false, "Potted Tulips", CustomMaterial.FLORA_POTTED_TULIPS, HitboxSingle._1x1_HEAD, PlacementType.FLOOR)),
 
 	// Misc
 	@TypeConfig(money = 115, tokens = -1, theme = Theme.OUTDOORS)
@@ -730,6 +730,9 @@ public enum DecorationType {
 // 	------------------------------------------------------------------------------------------------------
 	// 	Tables
 	@TypeConfig(money = 60, tokens = -1, tabs = {Tab.FURNITURE, Tab.TABLES})
+	TABLE_METALLIC_1x1(new Table(false, "Metallic Table - 1x1", CustomMaterial.TABLE_METALLIC_1X1, HitboxSingle._1x1_BARRIER, ColorableType.METAL)),
+
+	@TypeConfig(money = 60, tokens = -1, tabs = {Tab.FURNITURE, Tab.TABLES})
 	TABLE_WOODEN_1x1(new Table(false, "Wooden Table - 1x1", CustomMaterial.TABLE_WOODEN_1X1, HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(money = 105, tokens = -1, tabs = {Tab.FURNITURE, Tab.TABLES})
@@ -748,6 +751,9 @@ public enum DecorationType {
 	TABLE_WOODEN_3x3(new Table(true, "Wooden Table - 3x3", CustomMaterial.TABLE_WOODEN_3X3, HitboxFloor._3x3)),
 
 	// 	Chairs
+	@TypeConfig(money = 120, tokens = -1, tabs = {Tab.FURNITURE, Tab.CHAIRS})
+	CHAIR_METALLIC_BASIC(new DyeableChair(false, false, "Metallic Chair", CustomMaterial.CHAIR_METALLIC_BASIC, ColorableType.METAL)),
+
 	@TypeConfig(money = 120, tokens = -1, tabs = {Tab.FURNITURE, Tab.CHAIRS})
 	CHAIR_WOODEN_BASIC(new DyeableChair(false, false, "Wooden Chair", CustomMaterial.CHAIR_WOODEN_BASIC, ColorableType.STAIN)),
 
