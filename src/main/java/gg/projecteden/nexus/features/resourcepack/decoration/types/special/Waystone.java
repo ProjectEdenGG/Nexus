@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.special;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxFloor;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.TickableDecoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.FloorThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -8,9 +9,16 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 
 public class Waystone extends FloorThing implements TickableDecoration {
+	boolean activated;
 
-	public Waystone(String name, CustomMaterial material) {
-		super(false, name, material);
+	public Waystone(String name, CustomMaterial material, boolean activated) {
+		super(false, name, material, HitboxFloor._1x2V_WALL);
+		this.activated = activated;
+	}
+
+	@Override
+	public boolean shouldTick() {
+		return this.activated;
 	}
 
 	@Override

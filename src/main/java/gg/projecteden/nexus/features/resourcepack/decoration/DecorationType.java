@@ -1806,7 +1806,10 @@ public enum DecorationType {
 	SHELF_STORAGE(new Furniture(true, "Storage Shelf", CustomMaterial.SHELF_STORAGE, PlacementType.FLOOR, HitboxFloor._2x3V)),
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
-	WAYSTONE(new FloorThing(false, "Waystone", CustomMaterial.WAYSTONE)),
+	WAYSTONE(new Waystone("Waystone", CustomMaterial.WAYSTONE, false)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL) // Tickable
+	WAYSTONE_ACTIVATED(new Waystone("Activated Waystone", CustomMaterial.WAYSTONE_ACTIVATED, true)),
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	WINDOW_CURTAINS_1x2_CLOSED(new Curtain("Window Curtains 1x2", CurtainType._1x2_CLOSED)),
@@ -1828,9 +1831,6 @@ public enum DecorationType {
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	RECORD_PLAYER_MODERN_ON(new RecordPlayer("Modern Record Player", RecordPlayerType.ON)),
-
-	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL) // Tickable
-	WAYSTONE_ACTIVATED(new Waystone("Waystone Activated", CustomMaterial.WAYSTONE_ACTIVATED)),
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	BIRDHOUSE_FOREST_VERTICAL(new BirdHouse("Vertical Forest Birdhouse", CustomMaterial.BIRDHOUSE_FOREST_VERTICAL, false)),

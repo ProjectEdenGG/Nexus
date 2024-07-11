@@ -43,6 +43,11 @@ public class HitboxEnums {
 				Hitbox.offsetLight(BlockFace.UP, 1))
 		),
 
+		_1x2V_WALL(List.of(
+				Hitbox.origin(Material.STONE_BRICK_WALL),
+				Hitbox.offset(Material.STONE_BRICK_WALL, BlockFace.UP, 1))
+		),
+
 		_1x2V_LIGHT_DOWN(List.of(
 			Hitbox.originLight(),
 			Hitbox.offsetLight(BlockFace.DOWN, 1))
