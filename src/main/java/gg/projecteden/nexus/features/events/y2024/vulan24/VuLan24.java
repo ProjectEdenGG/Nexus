@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.events.y2024.vulan24;
 
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.models.EventBreakable;
-import gg.projecteden.nexus.features.events.y2024.vulan24.menus.VuLan24Menus;
+import gg.projecteden.nexus.features.events.y2024.vulan24.models.BoatTracker;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Entity;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24NPC;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Quest;
@@ -53,6 +53,11 @@ public class VuLan24 extends EdenEvent {
 
 	public static VuLan24 get() {
 		return instance;
+	}
+
+	@Override
+	public void onStart() {
+		new BoatTracker();
 	}
 
 	public static final List<LootTables> ARCHAEOLOGY_LOOT_TABLES = List.of(

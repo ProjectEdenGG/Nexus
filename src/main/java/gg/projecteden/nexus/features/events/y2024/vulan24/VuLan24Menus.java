@@ -1,6 +1,6 @@
-package gg.projecteden.nexus.features.events.y2024.vulan24.menus;
+package gg.projecteden.nexus.features.events.y2024.vulan24;
 
-import gg.projecteden.nexus.features.events.y2024.vulan24.VuLan24;
+import gg.projecteden.nexus.features.events.y2024.vulan24.models.BoatTracker;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24NPC;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu.NPCShopMenuBuilder;
@@ -9,11 +9,10 @@ import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.CostumeUserService;
+import gg.projecteden.nexus.utils.BoatType;
 import gg.projecteden.nexus.utils.Currency;
 import gg.projecteden.nexus.utils.Currency.Price;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -28,13 +27,9 @@ public class VuLan24Menus {
 				.npcId(VuLan24NPC.BOAT_SALESMAN.getNpcId())
 				.shopGroup(null)
 				.products(new ArrayList<>() {{
-					for (Material boatType : MaterialTag.BOATS.getValues()) {
-						add(Product.free(new ItemStack(boatType))
-								.onPurchase((player, provider) -> {
-									PlayerUtils.send(player, "TODO: DATABASE STUFF");
-									// TODO: Take old boat from player
-									// TODO: Save new boat to database
-								}));
+					for (BoatType boatType : BoatType.values()) {
+						add(Product.free(new ItemStack(boatType.getBoatMaterial()))
+								.onPurchase((player, provider) -> BoatTracker.selectBoat(player, boatType)));
 					}
 				}});
 	}
