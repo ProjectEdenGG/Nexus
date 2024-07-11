@@ -109,7 +109,7 @@ public class RadioCommand extends CustomCommand {
 	}
 
 	@Path("volume <number>")
-	@Description("Sets the volume for all radios")
+	@Description("Sets the volume for all radios for yourself")
 	void volume(@Arg(value = "0", min = 0, max = 100) byte volume) {
 		user.setVolume(volume);
 		userService.save(user);

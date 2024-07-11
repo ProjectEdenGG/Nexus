@@ -171,7 +171,7 @@ public class LocationUtils {
 	 */
 	public static void lookAt(HasPlayer hasPlayer, Location lookAt) {
 		Player player = hasPlayer.getPlayer();
-		Vector direction = player.getEyeLocation().toVector().subtract(lookAt.add(0.5, 0.5, 0.5).toVector()).normalize();
+		Vector direction = player.getEyeLocation().toVector().subtract(lookAt.toCenterLocation().toVector()).normalize();
 		double x = direction.getX();
 		double y = direction.getY();
 		double z = direction.getZ();

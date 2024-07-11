@@ -7,6 +7,7 @@ import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
+import gg.projecteden.nexus.utils.BoatType;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,6 +31,9 @@ public class VuLan24User implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private Set<Location> found = new HashSet<>();
+
+	private UUID boatUUID;
+	private BoatType boatType = BoatType.OAK;
 
 	private static final String PREFIX = StringUtils.getPrefix("VuLan24");
 
