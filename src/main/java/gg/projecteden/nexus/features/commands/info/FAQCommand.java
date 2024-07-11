@@ -26,7 +26,10 @@ public class FAQCommand extends CustomCommand {
 	String PLUS = "&3[+] &e";
 
 	public void back(String string) {
-		send(json("&f &3&m<  &e Back").command("/faq " + string));
+		if (!string.isEmpty())
+			string = " " + string;
+
+		send(json("&f &3&m<  &e Back").command("/faq" + string));
 		line();
 	}
 
