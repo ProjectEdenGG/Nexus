@@ -14,6 +14,7 @@ import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts.StoreLocation;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
+import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.MineralChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.CreativeBrushMenu;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -107,7 +108,7 @@ public class DecorationCommand extends CustomCommand {
 
 	@Path("dye metal <metal>")
 	@Description("Plate an item")
-	void dye(ColorChoice.MetallicChoice metallicChoice) {
+	void dye(MineralChoice metallicChoice) {
 		checkPermissions();
 
 		DecorationUtils.dye(getToolRequired(), metallicChoice, player());
@@ -131,7 +132,7 @@ public class DecorationCommand extends CustomCommand {
 	}
 
 	@Path("getItem magicDye")
-	@Description("Spawn a magic dye item")
+	@Description("Spawn a magic dye bottle")
 	void get_magicDye() {
 		checkPermissions();
 
@@ -139,19 +140,19 @@ public class DecorationCommand extends CustomCommand {
 	}
 
 	@Path("getItem magicStain")
-	@Description("Spawn a magic stain item")
+	@Description("Spawn a magic stain bottle")
 	void get_magicStain() {
 		checkPermissions();
 
 		giveItem(DyeStation.getMagicStain().build());
 	}
 
-	@Path("getItem magicMetal")
-	@Description("Spawn a magic metal item")
-	void get_magicMetal() {
+	@Path("getItem magicMineral")
+	@Description("Spawn a magic mineral bottle")
+	void get_magicMineral() {
 		checkPermissions();
 
-		giveItem(DyeStation.getMagicMetal().build());
+		giveItem(DyeStation.getMagicMineral().build());
 	}
 
 	@Path("getItem paintbrush")

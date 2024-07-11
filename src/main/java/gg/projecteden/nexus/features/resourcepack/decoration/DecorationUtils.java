@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Backp
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.PlayerPlushie;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
+import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.MineralChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStationMenu;
 import gg.projecteden.nexus.framework.interfaces.Colored;
@@ -80,7 +81,7 @@ public class DecorationUtils {
 		String colorHex = StringUtils.toHex(color);
 		String colorName = colorHex;
 		boolean isStain = false;
-		boolean isMetal = false;
+		boolean isMineral = false;
 		for (ColorChoice.StainChoice stainChoice : ColorChoice.StainChoice.values()) {
 			if (stainChoice.getColor().equals(color)) {
 				isStain = true;
@@ -90,9 +91,9 @@ public class DecorationUtils {
 		}
 
 		if (!isStain) {
-			for (ColorChoice.MetallicChoice metallicChoice : ColorChoice.MetallicChoice.values()) {
+			for (MineralChoice metallicChoice : MineralChoice.values()) {
 				if (metallicChoice.getColor().equals(color)) {
-					isMetal = true;
+					isMineral = true;
 					colorName = StringUtils.camelCase(metallicChoice.name());
 					break;
 				}
@@ -115,7 +116,7 @@ public class DecorationUtils {
 				continue;
 			if (_line.contains("Stain: "))
 				continue;
-			if (_line.contains("Metal: "))
+			if (_line.contains("Mineral: "))
 				continue;
 
 			// reset uses
@@ -137,8 +138,8 @@ public class DecorationUtils {
 		String colorLine = "&3Color: &";
 		if (isStain)
 			colorLine = "&3Stain: &";
-		else if (isMetal)
-			colorLine = "&3Metal: &";
+		else if (isMineral)
+			colorLine = "&3Mineral: &";
 
 		finalLore.add(colorLine + colorHex + colorName);
 		DecorationLang.debug(debugger, "Adding color line: " + colorLine + colorHex + colorName);

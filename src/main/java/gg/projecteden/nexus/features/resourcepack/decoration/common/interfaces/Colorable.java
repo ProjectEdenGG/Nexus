@@ -15,7 +15,7 @@ public interface Colorable {
 	enum ColorableType {
 		DYE(ColorType.hexToBukkit("#FF5555")),
 		STAIN(ColorType.hexToBukkit("#F4C57A")),
-		METAL(ColorType.hexToBukkit("#6a6a6a"))
+		MINERAL(ColorType.hexToBukkit("#6a6a6a"))
 		;
 
 		final Color color;

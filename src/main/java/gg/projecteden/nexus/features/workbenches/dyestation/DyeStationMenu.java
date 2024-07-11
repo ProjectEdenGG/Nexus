@@ -191,8 +191,8 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 					e -> updateDyeChoice(contents, DyeStation.getMagicDye().build())));
 			contents.set(SLOT_CHEAT_STAIN, ClickableItem.of(DyeStation.getMagicStain().resetLore().build(),
 					e -> updateDyeChoice(contents, DyeStation.getMagicStain().build())));
-			contents.set(SLOT_CHEAT_METAL, ClickableItem.of(DyeStation.getMagicMetal().resetLore().build(),
-					e -> updateDyeChoice(contents, DyeStation.getMagicMetal().build())));
+			contents.set(SLOT_CHEAT_METAL, ClickableItem.of(DyeStation.getMagicMineral().resetLore().build(),
+					e -> updateDyeChoice(contents, DyeStation.getMagicMineral().build())));
 		}
 	}
 

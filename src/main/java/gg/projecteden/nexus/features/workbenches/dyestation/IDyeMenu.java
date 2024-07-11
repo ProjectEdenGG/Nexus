@@ -6,6 +6,8 @@ import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.ChoiceType;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.ColoredButton;
+import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.MineralChoice;
+import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.StainChoice;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -56,7 +58,6 @@ public interface IDyeMenu {
 		int row = 1;
 		int col = 3;
 		int index = 0;
-		int countAdded = 0;
 
 
 		switch (dyeType) {
@@ -73,52 +74,45 @@ public interface IDyeMenu {
 				}
 			}
 
-			case METAL -> {
-				for (ColorChoice.MetallicChoice choice : ColorChoice.MetallicChoice.values()) {
-					Color color = choice.getColor();
-					String itemName = StringUtils.camelCase(choice);
-					contents.set(row, col++, ClickableItem.of(choice.getItem(itemName), e -> setResultItem(color)));
+			case MINERAL -> fillColorPages(List.of(MineralChoice.values()), contents, colorPage);
+			case STAIN -> fillColorPages(List.of(StainChoice.values()), contents, colorPage);
+		}
+	}
 
-					if (++index == 3) {
-						++row;
-						col = 3;
-						index = 0;
-					}
-				}
+	default void fillColorPages(List<? extends ColorChoice> values, InventoryContents contents, int colorPage) {
+		int row = 1;
+		int col = 3;
+		int index = 0;
+		int countAdded = 0;
+		int pageSkipCount = colorPage * 9;
+
+		for (ColorChoice choice : values) {
+			if (pageSkipCount > index) {
+				index++;
+				continue;
 			}
 
-			case STAIN -> {
-				int skipCount = colorPage * 9;
+			if (countAdded >= 9)
+				continue;
 
-				for (ColorChoice.StainChoice choice : ColorChoice.StainChoice.values()) {
-					if (skipCount > index) {
-						index++;
-						continue;
-					}
+			Color color = choice.getColor();
+			String itemName = StringUtils.camelCase((Enum<?>) choice);
+			contents.set(row, col++, ClickableItem.of(choice.getItem(itemName), e -> setResultItem(color)));
+			countAdded++;
 
-					if (countAdded >= 9) {
-						continue;
-					}
-
-					Color color = choice.getColor();
-					String itemName = StringUtils.camelCase(choice);
-					contents.set(row, col++, ClickableItem.of(choice.getItem(itemName), e -> setResultItem(color)));
-					countAdded++;
-
-					if (++index == 3) {
-						++row;
-						col = 3;
-						index = 0;
-					}
-				}
-
-				if (Math.ceil(ColorChoice.StainChoice.values().length / 9.0) > (colorPage + 1))
-					contents.set(SLOT_STAIN_NEXT, ClickableItem.of(STAIN_NEXT, e -> reopenMenu(contents, colorPage + 1)));
-
-				if (colorPage > 0)
-					contents.set(SLOT_STAIN_PREVIOUS, ClickableItem.of(STAIN_PREVIOUS, e -> reopenMenu(contents, colorPage - 1)));
+			if (++index == 3) {
+				++row;
+				col = 3;
+				index = 0;
 			}
 		}
+
+		if (Math.ceil(values.size() / 9.0) > (colorPage + 1))
+			contents.set(SLOT_STAIN_NEXT, ClickableItem.of(STAIN_NEXT, e -> reopenMenu(contents, colorPage + 1)));
+
+		if (colorPage > 0)
+			contents.set(SLOT_STAIN_PREVIOUS, ClickableItem.of(STAIN_PREVIOUS, e -> reopenMenu(contents, colorPage - 1)));
+
 	}
 
 	default void fillChoices(InventoryContents contents, ColorChoice.DyeChoice dyeChoice, ColorChoice.ChoiceType choiceType) {

@@ -26,7 +26,11 @@ import java.util.List;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
 
-// TODO: ADD METALLIC DYE CRAFTING RECIPE
+/*
+	TODO:
+	- ADD MINERAL DYE CRAFTING RECIPE
+	- ADD MORE MINERAL TYPES, REDSTONE, LAPIS, DIAMOND, COAL, QUARTZ?, SCRAP?
+ */
 @Unreleased
 @NoArgsConstructor
 public class DyeStation extends CustomBench implements ICraftableCustomBench {
@@ -57,12 +61,12 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 		return MAGIC_STAIN.clone();
 	}
 
-	private static final ItemBuilder MAGIC_METAL = new ItemBuilder(ChoiceType.METAL.getBottleMaterial())
+	private static final ItemBuilder MAGIC_MINERAL = new ItemBuilder(ChoiceType.MINERAL.getBottleMaterial())
 			.name(Gradient.of(List.of(ChatColor.of("#6A6A6A"), ChatColor.of("#D37A5A"), ChatColor.of("#E1C16E"))).apply("Magic Metal"))
 			.lore(USAGE_LORE, USES_LORE + MAX_USES);
 
-	public static ItemBuilder getMagicMetal() {
-		return MAGIC_METAL.clone();
+	public static ItemBuilder getMagicMineral() {
+		return MAGIC_MINERAL.clone();
 	}
 
 	private static final ItemBuilder PAINTBRUSH = new ItemBuilder(CustomMaterial.PAINTBRUSH)

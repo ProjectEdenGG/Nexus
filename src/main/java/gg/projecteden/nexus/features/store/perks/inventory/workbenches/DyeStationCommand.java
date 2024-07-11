@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.store.perks.inventory.workbenches;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
+import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.MineralChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStationMenu;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -60,10 +61,10 @@ public class DyeStationCommand extends _WorkbenchCommand {
 	}
 
 	@HideFromWiki // Official command is /decoration dye
-	@Path("metal <stain>")
+	@Path("mineral <mineral>")
 	@Permission(Group.STAFF)
-	@Description("Plate an item")
-	void metal(ColorChoice.MetallicChoice metallicChoice) {
+	@Description("Plate an item with a mineral")
+	void metal(MineralChoice metallicChoice) {
 		DecorationUtils.dye(getToolRequired(), metallicChoice, player());
 	}
 }

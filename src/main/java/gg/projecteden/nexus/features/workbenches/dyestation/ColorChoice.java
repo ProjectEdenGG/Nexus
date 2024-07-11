@@ -17,15 +17,19 @@ public interface ColorChoice {
 
 	void apply(ItemStack item);
 
+	Color getColor();
+
+	ItemStack getItem(String itemName);
+
 	@Getter
 	@AllArgsConstructor
 	enum ChoiceType {
 		DYE(ColorType.hexToBukkit("#FF5555"), CustomMaterial.DYE_STATION_BOTTLE_DYE, CustomMaterial.DYE_STATION_BUTTON_DYE),
 		STAIN(ColorType.hexToBukkit("#F4C57A"), CustomMaterial.DYE_STATION_BOTTLE_STAIN, CustomMaterial.DYE_STATION_BUTTON_STAIN),
-		METAL(ColorType.hexToBukkit("#6a6a6a"), CustomMaterial.DYE_STATION_BOTTLE_METAL, CustomMaterial.DYE_STATION_BUTTON_METAL),
+		MINERAL(ColorType.hexToBukkit("#6a6a6a"), CustomMaterial.DYE_STATION_BOTTLE_MINERAL, CustomMaterial.DYE_STATION_BUTTON_MINERAL),
 		;
 
-		final Color color;
+		final Color defaultColor;
 		private final CustomMaterial bottleMaterial;
 		private final CustomMaterial buttonMaterial;
 
@@ -36,6 +40,7 @@ public interface ColorChoice {
 		public ItemBuilder getButton() {
 			return new ItemBuilder(buttonMaterial);
 		}
+
 	}
 
 	@Getter
@@ -60,10 +65,12 @@ public interface ColorChoice {
 				choices.add(new ColoredButton(_hex));
 		}
 
+		@Override
 		public ItemStack getItem(String name) {
 			return getButton().getItem(ChoiceType.DYE, name);
 		}
 
+		@Override
 		public Color getColor() {
 			return getButton().getColor();
 		}
@@ -96,17 +103,19 @@ public interface ColorChoice {
 		}
 
 		public static StainChoice of(Color color) {
-			for (StainChoice stain : values()) {
-				if (stain.getColor().equals(color))
-					return stain;
+			for (StainChoice choice : values()) {
+				if (choice.getColor().equals(color))
+					return choice;
 			}
 			return null;
 		}
 
+		@Override
 		public ItemStack getItem(String name) {
 			return getButton().getItem(ChoiceType.STAIN, name);
 		}
 
+		@Override
 		public Color getColor() {
 			return getButton().getColor();
 		}
@@ -118,36 +127,45 @@ public interface ColorChoice {
 	}
 
 	@Getter
-	enum MetallicChoice implements ColorChoice {
-		STEEL("#6A6A6A"),
+	enum MineralChoice implements ColorChoice {
+		SILVER("#DEDACD"),
 		IRON("#E0E0E0"),
+		STEEL("#6A6A6A"),
+		NETHERITE("#484548"),
+		ELECTRUM("#E7C697"),
+		BRASS("#E1C16E"),
 		GOLD("#FFD83E"),
 		COPPER("#D37A5A"),
-		NETHERITE("#484548"),
+		BRONZE("#8E5A49"),
+		//
 		AMETHYST("#7A5BB5"),
 		EMERALD("#17C544"),
-		BRASS("#E1C16E"),
-		ELECTRUM("#E7C697"),
+		REDSTONE("#E21F08"),
+		COAL("#1F1E1E"),
+		LAPIS("#1F4F9A"),
+		DIAMOND("#4AE9E2"),
 		;
 
 		private final ColoredButton button;
 
-		MetallicChoice(String hex) {
+		MineralChoice(String hex) {
 			this.button = new ColoredButton(hex);
 		}
 
-		public static MetallicChoice of(Color color) {
-			for (MetallicChoice metal : values()) {
-				if (metal.getColor().equals(color))
-					return metal;
+		public static MineralChoice of(Color color) {
+			for (MineralChoice choice : values()) {
+				if (choice.getColor().equals(color))
+					return choice;
 			}
 			return null;
 		}
 
+		@Override
 		public ItemStack getItem(String name) {
-			return getButton().getItem(ChoiceType.METAL, name);
+			return getButton().getItem(ChoiceType.MINERAL, name);
 		}
 
+		@Override
 		public Color getColor() {
 			return getButton().getColor();
 		}

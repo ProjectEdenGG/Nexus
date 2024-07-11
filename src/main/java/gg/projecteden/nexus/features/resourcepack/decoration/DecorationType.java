@@ -730,7 +730,7 @@ public enum DecorationType {
 // 	------------------------------------------------------------------------------------------------------
 	// 	Tables
 	@TypeConfig(money = 60, tokens = -1, tabs = {Tab.FURNITURE, Tab.TABLES})
-	TABLE_METALLIC_1x1(new Table(false, "Metallic Table - 1x1", CustomMaterial.TABLE_METALLIC_1X1, HitboxSingle._1x1_BARRIER, ColorableType.METAL)),
+	TABLE_METALLIC_1x1(new Table(false, "Metallic Table - 1x1", CustomMaterial.TABLE_METALLIC_1X1, HitboxSingle._1x1_BARRIER, ColorableType.MINERAL)),
 
 	@TypeConfig(money = 60, tokens = -1, tabs = {Tab.FURNITURE, Tab.TABLES})
 	TABLE_WOODEN_1x1(new Table(false, "Wooden Table - 1x1", CustomMaterial.TABLE_WOODEN_1X1, HitboxSingle._1x1_BARRIER)),
@@ -752,7 +752,7 @@ public enum DecorationType {
 
 	// 	Chairs
 	@TypeConfig(money = 120, tokens = -1, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	CHAIR_METALLIC_BASIC(new DyeableChair(false, false, "Metallic Chair", CustomMaterial.CHAIR_METALLIC_BASIC, ColorableType.METAL)),
+	CHAIR_METALLIC_BASIC(new DyeableChair(false, false, "Metallic Chair", CustomMaterial.CHAIR_METALLIC_BASIC, ColorableType.MINERAL)),
 
 	@TypeConfig(money = 120, tokens = -1, tabs = {Tab.FURNITURE, Tab.CHAIRS})
 	CHAIR_WOODEN_BASIC(new DyeableChair(false, false, "Wooden Chair", CustomMaterial.CHAIR_WOODEN_BASIC, ColorableType.STAIN)),
