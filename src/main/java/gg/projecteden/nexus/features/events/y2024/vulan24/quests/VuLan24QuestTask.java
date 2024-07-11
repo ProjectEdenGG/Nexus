@@ -79,7 +79,7 @@ public enum VuLan24QuestTask implements IQuestTask {
 			new BlockRegenJob(block.getLocation(), block.getType()).schedule(randomInt(3 * 60, 5 * 60));
 		})
 		.reminder(dialog -> dialog
-			.npc("I need 12 pottery sherds for the festival, can you find them for me? You will have to brush suspicious sand to extract them") // TODO
+			.npc("I need 12 pottery sherds for the festival, can you find them for me? You will have to brush suspicious sand to extract them")
 		)
 		.complete(dialog -> dialog
 			.npc("Beautiful! We'll get to work right away, here are some Event Tokens for your help!")
@@ -110,12 +110,12 @@ public enum VuLan24QuestTask implements IQuestTask {
 		.dialog(dialog -> dialog
 			.npc("You want a lantern? Sorry my friend, we’re all out of supplies. I don’t think the Lantern Lighting Ceremony will happen this year if we can’t find any soon.")
 			.npc("But, if you really want one, maybe you can help us find the materials?")
-			.npc("We need 32 Paper, 32 String, and 16 Coal. If you can bring them back we’ll be sure to make some for you!")
+			.npc("We need 32 paper, 32 string, and 16 coal. If you can bring them back we’ll be sure to make some for you!")
 		)
 		.objective("Gather 32 paper, 32 string, and 16 coal")
 		.gather(Map.of(Material.PAPER, 32, Material.STRING, 32, Material.COAL, 16))
 		.reminder(dialog -> dialog
-			.npc("As soon as you come back with the 32 paper, 32 string, and 16 coal, we’ll get you your reward in no time!") // TODO
+			.npc("If you can find 32 paper, 32 string, and 16 coal, we can make your lanterns in no time!")
 		)
 		.complete(dialog -> dialog
 			.npc("Thank you so much. Here's two lanterns we made for you. Please consider placing it at the lighting ceremony at the end of the festival!") // TODO Doesnt mention tokens/mail reward
