@@ -6,7 +6,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
 import org.bukkit.Location;
 
-public enum District24 {
+public enum District {
 	UNKNOWN,
 	WEST,
 	EAST,
@@ -14,7 +14,7 @@ public enum District24 {
 	;
 
 	@Getter
-	private static final String PREFIX = Pugmas24.get().getRegionName() + "_" + District24.class.getSimpleName().toLowerCase();
+	private static final String PREFIX = Pugmas24.get().getRegionName() + "_" + District.class.getSimpleName().toLowerCase();
 
 	public String getName() {
 		return StringUtils.camelCase(this);
@@ -24,15 +24,15 @@ public enum District24 {
 		return getName() + " District";
 	}
 
-	public static District24 of(Location location) {
+	public static District of(Location location) {
 		if (!location.getWorld().equals(Pugmas24.get().getWorld()))
 			return null;
 
 		for (ProtectedRegion region : Pugmas24.get().worldguard().getRegionsAt(location))
-			for (District24 district : District24.values())
+			for (District district : District.values())
 				if (region.getId().matches(PREFIX + "_" + district.name().toLowerCase()))
 					return district;
 
-		return District24.UNKNOWN;
+		return District.UNKNOWN;
 	}
 }

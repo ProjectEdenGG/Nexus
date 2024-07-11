@@ -2,7 +2,7 @@ package gg.projecteden.nexus.models.pugmas24;
 
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.models.District24;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.District;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.parchment.HasLocation;
@@ -39,8 +39,8 @@ public class Advent24Present implements HasLocation {
 		return new ItemBuilder(CustomMaterial.PUGMAS_PRESENT_ADVENT).name("Advent Present").lore("&eDay #" + day, "&f", Pugmas24.LORE);
 	}
 
-	public District24 getDistrict() {
-		return District24.of(getLocation());
+	public District getDistrict() {
+		return District.of(getLocation());
 	}
 
 	@NotNull ItemFrame sendPacket(Advent24User user) {

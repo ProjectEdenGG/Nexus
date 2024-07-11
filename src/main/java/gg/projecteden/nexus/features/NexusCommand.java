@@ -8,7 +8,6 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.crates.CrateHandler;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Train;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.TrainBackground;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Geyser;
 import gg.projecteden.nexus.features.listeners.common.TemporaryListener;
@@ -247,15 +246,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 			if (WitherChallenge.currentFight != null)
 				throw new InvalidInputException("The wither is currently being fought");
 		}),
-		PUGMAS21_TRAIN(() -> {
-			if (Nexus.getEnv() == Env.PROD) {
-				if (Train.anyActiveInstances())
-					throw new InvalidInputException("There is an active Pugmas train");
-			} else {
-				for (Train train : new ArrayList<>(Train.getInstances()))
-					train.stop();
-			}
-		}),
 		PUGMAS21_TRAIN_BACKGROUND(() -> {
 			if (Nexus.getEnv() == Env.PROD) {
 				if (TrainBackground.isActive())
@@ -278,6 +268,14 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 			if (Geyser.isAnimating())
 				throw new InvalidInputException("Pugmas24 geyser is animating");
+
+			if (Nexus.getEnv() == Env.PROD) {
+				if (gg.projecteden.nexus.features.events.models.Train.anyActiveInstances())
+					throw new InvalidInputException("There is an active train");
+			} else {
+				for (gg.projecteden.nexus.features.events.models.Train train : new ArrayList<>(gg.projecteden.nexus.features.events.models.Train.getInstances()))
+					train.stop();
+			}
 		}),
 		CHAT_GAMES(() -> {
 			if (ChatGamesConfig.getCurrentGame() != null)

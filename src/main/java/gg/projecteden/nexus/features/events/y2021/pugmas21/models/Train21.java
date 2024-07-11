@@ -1,7 +1,7 @@
-package gg.projecteden.nexus.features.events.y2024.pugmas24.models;
+package gg.projecteden.nexus.features.events.y2021.pugmas21.models;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.block.BlockFace;
 
@@ -10,25 +10,18 @@ import java.util.function.Supplier;
 
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 
-public class Train24 {
-
-	public Train24() {
-	}
-
-	public static void start() {
-		getDefault().build().start();
-	}
+public class Train21 {
 
 	public static void schedule() {
 		final Supplier<Long> delay = () -> TickTime.MINUTE.x(randomInt(5, 10));
 
 		Tasks.wait(delay.get(), new AtomicReference<Runnable>() {{
 			set(() -> {
-				if (!Pugmas24.get().anyActivePlayers())
+				if (!Pugmas21.anyActivePlayers())
 					return;
 
 				getDefault().build().start();
-				Pugmas24.get().actionBar("&c&lA train is passing by...", TickTime.SECOND.x(10));
+				Pugmas21.actionBar("&c&lA train is passing by...", TickTime.SECOND.x(10));
 				Tasks.wait(delay.get(), get());
 			});
 		}}.get());
@@ -36,13 +29,11 @@ public class Train24 {
 
 	public static gg.projecteden.nexus.features.events.models.Train.TrainBuilder getDefault() {
 		return gg.projecteden.nexus.features.events.models.Train.builder()
-				.location(Pugmas24.get().location(-503.5, 84, -2971.5, 90, 0))
-				.direction(BlockFace.WEST)
-				.seconds(60)
-				.speed(.3)
-				.test(false)
-				.region(Pugmas24.get().getRegionName());
+			.location(Pugmas21.location(112.5, 54, 7.5, 90, 0))
+			.direction(BlockFace.WEST)
+			.seconds(60)
+			.speed(.3)
+			.test(false);
 	}
-
 
 }

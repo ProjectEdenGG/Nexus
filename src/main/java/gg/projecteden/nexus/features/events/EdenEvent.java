@@ -18,6 +18,7 @@ import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.quests.QuesterService;
+import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -164,6 +165,10 @@ public abstract class EdenEvent extends Feature implements Listener {
 		return isAtEvent(location) && !worldguard().getRegionsLikeAt(regex, location).isEmpty();
 	}
 
+	public boolean anyActivePlayers() {
+		return !getPlayers().isEmpty();
+	}
+
 	public Set<Player> getPlayers() {
 		return new HashSet<>(worldguard().getPlayersInRegion(getProtectedRegion()));
 	}
@@ -182,6 +187,10 @@ public abstract class EdenEvent extends Feature implements Listener {
 
 	public void send(Player player, String message) {
 		PlayerUtils.send(player, PREFIX + message);
+	}
+
+	public void actionBar(String message, long ticks) {
+		getPlayers().forEach(player -> ActionBarUtils.sendActionBar(player, message, ticks));
 	}
 
 	public class EventActiveCalculator implements ContextCalculator<Player> {

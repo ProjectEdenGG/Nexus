@@ -4,8 +4,9 @@ import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.IEventCommand;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24Menu;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.models.District24;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.District;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Geyser;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Train24;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -71,11 +72,11 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	@Path("district")
 	@Description("View which district you are currently in")
 	void district() {
-		District24 district = District24.of(location());
+		District district = District.of(location());
 		if (district == null)
 			error("You must be in Pugmas to run this command");
 
-		send(PREFIX + "You are " + (district == District24.UNKNOWN ? "not in a district" : "in the &e" + district.getFullName()));
+		send(PREFIX + "You are " + (district == District.UNKNOWN ? "not in a district" : "in the &e" + district.getFullName()));
 	}
 
 	@Path("advent")
@@ -149,15 +150,23 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	}
 
 	@Path("geyser start")
+	@Permission(Group.STAFF)
 	void startGeyser() {
 		send("Starting geyser animation");
 		Geyser.animate();
 	}
 
 	@Path("geyser stop")
+	@Permission(Group.STAFF)
 	void stopGeyser() {
 		send("Stopping geyser animation");
 		Geyser.reset();
+	}
+
+	@Path("train start")
+	@Permission(Group.ADMIN)
+	void train_start() {
+		Train24.start();
 	}
 
 }

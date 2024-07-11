@@ -11,7 +11,7 @@ import gg.projecteden.nexus.features.events.y2021.pugmas21.models.CandyCaneCanno
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.District;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.MultiModelStructure;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.MultiModelStructure.Model;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Train;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Train21;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.TrainBackground;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21NPC;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestItem;
@@ -124,14 +124,14 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	@Permission(Group.ADMIN)
 	@Description("Spawn a train armor stand")
 	void train_spawn(@Arg(min = 1) int model) {
-		Train.armorStand(model - 1, location());
+		gg.projecteden.nexus.features.events.models.Train.armorStand(model - 1, location());
 	}
 
 	@Path("train spawn all")
 	@Permission(Group.ADMIN)
 	@Description("Spawn all train armor stands")
 	void train_spawn_all() {
-		Train.builder()
+		gg.projecteden.nexus.features.events.models.Train.builder()
 			.location(location())
 			.direction(player().getFacing())
 			.build()
@@ -142,7 +142,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	@Permission(Group.ADMIN)
 	@Description("Start a moving train")
 	void train_start_default() {
-		Train.getDefault().build().start();
+		Train21.getDefault().build().start();
 	}
 
 	@Path("train start here")
@@ -152,7 +152,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 		@Arg(".3") @Switch double speed,
 		@Arg("60") @Switch int seconds
 	) {
-		Train.builder()
+		gg.projecteden.nexus.features.events.models.Train.builder()
 			.location(location())
 			.direction(player().getFacing())
 			.speed(speed)

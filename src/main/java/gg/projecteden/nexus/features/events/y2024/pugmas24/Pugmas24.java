@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.Rides;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Fairgrounds;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Train24;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24Entity;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24NPC;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24Quest;
@@ -62,6 +63,7 @@ public class Pugmas24 extends EdenEvent {
 		new Advent24();
 		new Fairgrounds();
 		Rides.startup();
+		new Train24();
 	}
 
 	@Override

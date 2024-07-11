@@ -1,9 +1,8 @@
-package gg.projecteden.nexus.features.events.y2021.pugmas21.models;
+package gg.projecteden.nexus.features.events.models;
 
 import gg.projecteden.api.common.utils.MathUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -29,13 +28,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.EntityUtils.forcePacket;
 import static gg.projecteden.nexus.utils.RandomUtils.randomDouble;
-import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 import static java.util.Comparator.comparing;
 
 public class Train {
@@ -50,13 +47,14 @@ public class Train {
 
 	@Getter
 	private boolean active;
+
 	private final List<ArmorStand> armorStands = new ArrayList<>();
 	private final List<Integer> taskIds = new ArrayList<>();
 	private Location lightLocation;
 
 	private final WorldGuardUtils worldguard;
+	private final String region;
 
-	private static final String REGION = Pugmas21.region("train");
 	private static final int TOTAL_MODELS = 18;
 	private static final double SEPARATOR = 7.5;
 
@@ -68,7 +66,7 @@ public class Train {
 	}
 
 	@Builder
-	public Train(Location location, BlockFace direction, double speed, int seconds, boolean test) {
+	public Train(Location location, BlockFace direction, double speed, int seconds, boolean test, String region) {
 		this.location = location.toCenterLocation();
 		this.forwards = direction;
 		this.backwards = direction.getOppositeFace();
@@ -78,30 +76,20 @@ public class Train {
 		this.smokeBack = backwards.getDirection().multiply(4);
 		this.smokeUp = BlockFace.UP.getDirection().multiply(5.3);
 		this.worldguard = new WorldGuardUtils(location);
+		this.region = region;
 	}
 
-	public static void schedule() {
-		final Supplier<Long> delay = () -> TickTime.MINUTE.x(randomInt(5, 10));
 
-		Tasks.wait(delay.get(), new AtomicReference<Runnable>() {{
-			set(() -> {
-				if (!Pugmas21.anyActivePlayers())
-					return;
-
-				getDefault().build().start();
-				Pugmas21.actionBar("&c&lA train is passing by...", TickTime.SECOND.x(10));
-				Tasks.wait(delay.get(), get());
-			});
-		}}.get());
+	private List<Player> getPlayers() {
+		return worldguard.getPlayersInRegion(region).stream().toList();
 	}
 
-	public static TrainBuilder getDefault() {
-		return Train.builder()
-			.location(Pugmas21.location(112.5, 54, 7.5, 90, 0))
-			.direction(BlockFace.WEST)
-			.seconds(60)
-			.speed(.3)
-			.test(false);
+	public void stop() {
+		taskIds.forEach(Tasks::cancel);
+		armorStands.forEach(Entity::remove);
+
+		active = false;
+		instances.remove(this);
 	}
 
 	public void start() {
@@ -110,25 +98,25 @@ public class Train {
 
 		taskIds.add(Tasks.wait(TickTime.SECOND.x(3), () ->
 				new SoundBuilder(CustomSound.TRAIN_WHISTLE)
-				.receivers(Pugmas21.getAllPlayers())
-				.category(SoundCategory.AMBIENT)
-				.volume(0.5)
-				.play()));
+						.receivers(getPlayers())
+						.category(SoundCategory.AMBIENT)
+						.volume(0.5)
+						.play()));
 
 		spawnArmorStands();
 
 		taskIds.add(Tasks.repeat(0, 1, this::move));
 		taskIds.add(Tasks.repeat(0, TickTime.SECOND, () ->
-			Pugmas21.getPlayers("district_plaza").forEach(player -> {
-				final ArmorStand nearest = getNearestArmorStand(player);
-				if (nearest != null)
-					new SoundBuilder(CustomSound.TRAIN_CHUG)
-						.receiver(player)
-						.location(nearest.getLocation())
-						.category(SoundCategory.AMBIENT)
-						.volume(MathUtils.clamp((63 - distance(player, nearest).getRealDistance()) * .03448275862, 0, 2))
-						.play();
-			})));
+				getPlayers().forEach(player -> {
+					final ArmorStand nearest = getNearestArmorStand(player);
+					if (nearest != null)
+						new SoundBuilder(CustomSound.TRAIN_CHUG)
+								.receiver(player)
+								.location(nearest.getLocation())
+								.category(SoundCategory.AMBIENT)
+								.volume(MathUtils.clamp((63 - distance(player, nearest).getRealDistance()) * .03448275862, 0, 2))
+								.play();
+				})));
 
 		taskIds.add(Tasks.wait(TickTime.SECOND.x(seconds), this::stop));
 	}
@@ -143,14 +131,6 @@ public class Train {
 
 	private List<ArmorStand> getValidArmorStands() {
 		return armorStands.stream().filter(ArmorStand::isValid).toList();
-	}
-
-	public void stop() {
-		taskIds.forEach(Tasks::cancel);
-		armorStands.forEach(Entity::remove);
-
-		active = false;
-		instances.remove(this);
 	}
 
 	private void move() {
@@ -200,7 +180,7 @@ public class Train {
 	}
 
 	private boolean isValidLocation(Location to) {
-		return test || !worldguard.getRegionsLikeAt(REGION, to).isEmpty();
+		return test || !worldguard.getRegionsLikeAt(region, to).isEmpty();
 	}
 
 	private Location getSmokeLocation() {
@@ -230,10 +210,12 @@ public class Train {
 		return ArmorStandEditorCommand.summon(location, armorStand -> {
 			armorStand.setVisible(false);
 			armorStand.setItem(EquipmentSlot.HEAD, new ItemBuilder(CustomMaterial.PUGMAS21_TRAIN_1)
-				.modelId(CustomMaterial.PUGMAS21_TRAIN_1.getModelId() + model)
-				.build());
+					.modelId(CustomMaterial.PUGMAS21_TRAIN_1.getModelId() + model)
+					.build());
 		});
 	}
+
+	//
 
 	public static class Smoke {
 		private static final Particle particle = Particle.CAMPFIRE_COSY_SMOKE;
