@@ -57,6 +57,7 @@ public class VuLan24 extends EdenEvent {
 
 	@Override
 	public void onStart() {
+		super.onStart();
 		new BoatTracker();
 	}
 
