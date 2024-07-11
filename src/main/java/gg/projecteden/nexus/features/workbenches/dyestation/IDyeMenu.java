@@ -21,7 +21,7 @@ public interface IDyeMenu {
 
 	SlotPos SLOT_CHEAT_DYE = new SlotPos(0, 3);
 	SlotPos SLOT_CHEAT_STAIN = new SlotPos(0, 4);
-	SlotPos SLOT_CHEAT_METAL = new SlotPos(0, 5);
+	SlotPos SLOT_CHEAT_MINERAL = new SlotPos(0, 5);
 
 	SlotPos SLOT_STAIN_PREVIOUS = new SlotPos(5, 1);
 	SlotPos SLOT_STAIN_NEXT = new SlotPos(5, 7);
@@ -85,10 +85,11 @@ public interface IDyeMenu {
 		int index = 0;
 		int countAdded = 0;
 		int pageSkipCount = colorPage * 9;
+		int countSkipped = 0;
 
 		for (ColorChoice choice : values) {
-			if (pageSkipCount > index) {
-				index++;
+			if (pageSkipCount > countSkipped) {
+				countSkipped++;
 				continue;
 			}
 

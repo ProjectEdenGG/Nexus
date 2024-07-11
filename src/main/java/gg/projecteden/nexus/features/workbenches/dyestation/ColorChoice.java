@@ -128,10 +128,10 @@ public interface ColorChoice {
 
 	@Getter
 	enum MineralChoice implements ColorChoice {
-		SILVER("#DEDACD"),
-		IRON("#E0E0E0"),
-		STEEL("#6A6A6A"),
 		NETHERITE("#484548"),
+		STEEL("#6A6A6A"),
+		IRON("#E0E0E0"),
+		SILVER("#DEDACD"),
 		ELECTRUM("#E7C697"),
 		BRASS("#E1C16E"),
 		GOLD("#FFD83E"),

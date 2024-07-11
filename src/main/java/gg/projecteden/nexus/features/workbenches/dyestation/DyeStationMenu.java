@@ -17,6 +17,7 @@ import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -116,6 +117,7 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 					.player(viewer)
 					.cheatMode(mode != DyeStationMode.NORMAL)
 					.showButtons(true)
+					.showDye(true)
 					.inputSlot(SLOT_INPUT)
 					.texture(CustomTexture.GUI_DYE_STATION)
 					.onConfirm(data1 -> PlayerUtils.giveItems(viewer, data1.getReturnItems()))
@@ -131,6 +133,8 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 			this.data = DyeStationData.builder()
 					.player(user.getOnlinePlayer())
 					.cheatMode(true)
+					.showButtons(true)
+					.showDye(false)
 					.input(user.getCostumeDisplayItem(costume))
 					.inputSlot(SLOT_COSTUME)
 					.texture(CustomTexture.GUI_DYE_STATION_COSTUME)
@@ -170,7 +174,7 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 		contents.set(data.getInputSlot(), ClickableItem.of(data.getInput(), e -> replaceItem(viewer, contents, e, data.getInputSlot())));
 		if (mode.equals(DyeStationMode.NORMAL))
 			contents.set(SLOT_DYE, ClickableItem.of(data.getDye(), e -> replaceItem(viewer, contents, e, SLOT_DYE)));
-		else
+		else if (data.isShowDye())
 			contents.set(SLOT_DYE, ClickableItem.empty(data.getDye()));
 
 		if (data.getColor() != null)
@@ -188,16 +192,21 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 
 		if (data.isCheatMode() && data.isShowButtons()) {
 			contents.set(SLOT_CHEAT_DYE, ClickableItem.of(DyeStation.getMagicDye().resetLore().build(),
-					e -> updateDyeChoice(contents, DyeStation.getMagicDye().build())));
+					e -> updateDyeChoice(contents, DyeStation.getMagicDye().build(), ChoiceType.DYE)));
+
 			contents.set(SLOT_CHEAT_STAIN, ClickableItem.of(DyeStation.getMagicStain().resetLore().build(),
-					e -> updateDyeChoice(contents, DyeStation.getMagicStain().build())));
-			contents.set(SLOT_CHEAT_METAL, ClickableItem.of(DyeStation.getMagicMineral().resetLore().build(),
-					e -> updateDyeChoice(contents, DyeStation.getMagicMineral().build())));
+					e -> updateDyeChoice(contents, DyeStation.getMagicStain().build(), ChoiceType.STAIN)));
+
+			contents.set(SLOT_CHEAT_MINERAL, ClickableItem.of(DyeStation.getMagicMineral().resetLore().build(),
+					e -> updateDyeChoice(contents, DyeStation.getMagicMineral().build(), ChoiceType.MINERAL)));
 		}
 	}
 
-	private void updateDyeChoice(InventoryContents contents, ItemStack item) {
-		contents.set(SLOT_DYE, ClickableItem.empty(item));
+	private void updateDyeChoice(InventoryContents contents, ItemStack item, ChoiceType choiceType) {
+		data.setDyeType(choiceType);
+		if (data.isShowDye())
+			contents.set(SLOT_DYE, ClickableItem.empty(item));
+
 		reopenMenu(contents);
 	}
 
@@ -247,12 +256,14 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 
 		Optional<ClickableItem> dyeOptional = contents.get(SLOT_DYE);
 		ItemStack dye = dyeOptional.map(ClickableItem::getItem).orElse(null);
-		CustomMaterial customMaterial = CustomMaterial.of(dye);
+		if (Nullables.isNotNullOrAir(dye)) {
+			CustomMaterial customMaterial = CustomMaterial.of(dye);
 
-		for (ChoiceType choiceType : ChoiceType.values()) {
-			if (customMaterial == choiceType.getBottleMaterial()) {
-				data.setDyeType(choiceType);
-				break;
+			for (ChoiceType choiceType : ChoiceType.values()) {
+				if (customMaterial == choiceType.getBottleMaterial()) {
+					data.setDyeType(choiceType);
+					break;
+				}
 			}
 		}
 
@@ -347,46 +358,48 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 
 	private void confirm() {
 		Optional<ClickableItem> inputOptional = contents.get(data.getInputSlot());
-		Optional<ClickableItem> dyeOptional = contents.get(SLOT_DYE);
 		Optional<ClickableItem> resultOptional = contents.get(SLOT_RESULT);
-
-		if (inputOptional.isEmpty() || dyeOptional.isEmpty() || resultOptional.isEmpty())
+		if (inputOptional.isEmpty() || resultOptional.isEmpty())
 			return;
 
 		if (!isValidInput(contents))
 			return;
 
-		if (!isValidDyeType(contents))
-			return;
-
+		ItemStack input = inputOptional.get().getItem();
 		List<ItemStack> returnItems = new ArrayList<>();
-		ItemStack input = inputOptional.get().getItem().subtract();
 
-		Player player = data.getPlayer();
-		ItemStack result = resultOptional.get().getItem();
-		if (mode != DyeStationMode.COSTUME)
+		if (mode != DyeStationMode.COSTUME) {
+			Optional<ClickableItem> dyeOptional = contents.get(SLOT_DYE);
+			if (dyeOptional.isEmpty() || !isValidDyeType(contents))
+				return;
+
+			Player player = data.getPlayer();
+			ItemStack result = resultOptional.get().getItem();
 			player.setItemOnCursor(result);
 
-		ItemStack dye = dyeOptional.get().getItem();
-		if (!data.isCheatMode()) {
-			if (dye.getAmount() > 1) {
-				ItemStack dyeExtra = dye.clone();
-				dyeExtra.subtract();
-				dye.setAmount(1);
+			ItemStack dye = dyeOptional.get().getItem();
+			if (!data.isCheatMode()) {
+				if (dye.getAmount() > 1) {
+					ItemStack dyeExtra = dye.clone();
+					dyeExtra.subtract();
+					dye.setAmount(1);
 
-				DecorationLang.debug(viewer, "Adding extra dye items");
-				returnItems.add(dyeExtra);
+					DecorationLang.debug(viewer, "Adding extra dye items");
+					returnItems.add(dyeExtra);
+				}
+
+				DecorationLang.debug(viewer, "Adding original dye");
+				dye = handleDye(dye).build();
+				data.setDye(dye);
+
+				new SoundBuilder(Sound.ITEM_BOTTLE_EMPTY).location(player).pitch(RandomUtils.randomDouble(0.8, 1.2)).play();
+				Tasks.wait(8, () -> new SoundBuilder(Sound.ITEM_BOTTLE_FILL).location(player).pitch(RandomUtils.randomDouble(0.8, 1.2)).play());
 			}
-
-			DecorationLang.debug(viewer, "Adding original dye");
-			dye = handleDye(dye).build();
-
-			new SoundBuilder(Sound.ITEM_BOTTLE_EMPTY).location(player).pitch(RandomUtils.randomDouble(0.8, 1.2)).play();
-			Tasks.wait(8, () -> new SoundBuilder(Sound.ITEM_BOTTLE_FILL).location(player).pitch(RandomUtils.randomDouble(0.8, 1.2)).play());
 		}
 
+		input.subtract();
+
 		data.setInput(input);
-		data.setDye(dye);
 		data.setResult(new ItemStack(Material.AIR));
 		data.onConfirm(returnItems);
 		data.setColor(null);
@@ -401,6 +414,7 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 		private final Player player;
 		private final boolean cheatMode;
 		private final boolean showButtons;
+		private final boolean showDye;
 		private final SlotPos inputSlot;
 		private final CustomTexture texture;
 		private final Consumer<DyeStationData> onConfirm;
@@ -414,13 +428,14 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 		private List<ItemStack> returnItems;
 
 		@Builder
-		public DyeStationData(Player player, boolean cheatMode, boolean showButtons,
+		public DyeStationData(Player player, boolean cheatMode, boolean showButtons, boolean showDye,
 							  SlotPos inputSlot, Consumer<DyeStationData> onConfirm, CustomTexture texture,
 							  ColorChoice.ChoiceType dyeType, ItemStack input, ItemStack dye,
 							  ItemStack result, ColorChoice.DyeChoice dyeChoice, Color color) {
 			this.player = player;
 			this.cheatMode = cheatMode;
 			this.showButtons = showButtons;
+			this.showDye = showDye;
 			this.inputSlot = inputSlot;
 			this.texture = texture;
 			this.onConfirm = onConfirm;
