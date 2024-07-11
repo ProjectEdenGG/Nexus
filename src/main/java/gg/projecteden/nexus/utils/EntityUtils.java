@@ -188,7 +188,7 @@ public class EntityUtils {
 		Location entityLoc = toPush.getLocation();
 		Vector entityDir = entityLoc.getDirection();
 
-		fromLoc.setDirection(entityDir);
+		fromLoc.clone().setDirection(entityDir);
 
 		Vector launchDirection = entityLoc.toVector().add(fromLoc.toVector().multiply(-1)).normalize();
 		launchDirection.setY(yVel);

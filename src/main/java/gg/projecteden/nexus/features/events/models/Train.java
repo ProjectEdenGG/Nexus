@@ -5,6 +5,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
+import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
@@ -32,6 +33,7 @@ import java.util.function.Supplier;
 
 import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.EntityUtils.forcePacket;
+import static gg.projecteden.nexus.utils.EntityUtils.getNearbyEntities;
 import static gg.projecteden.nexus.utils.RandomUtils.randomDouble;
 import static java.util.Comparator.comparing;
 
@@ -50,6 +52,7 @@ public class Train {
 	private final String regionTrack;
 	private final String regionAnnounce;
 	private final String regionReveal;
+	private final boolean bonkPlayers;
 
 	private final List<ArmorStand> armorStands = new ArrayList<>();
 	private final List<Integer> taskIds = new ArrayList<>();
@@ -69,7 +72,8 @@ public class Train {
 	}
 
 	@Builder
-	public Train(Location location, BlockFace direction, double speed, int seconds, boolean test, String regionAnnounce, String regionTrack, String regionReveal) {
+	public Train(Location location, BlockFace direction, double speed, int seconds, boolean test, String regionAnnounce,
+				 String regionTrack, String regionReveal, boolean bonkPlayers) {
 		this.location = location.toCenterLocation();
 		this.forwards = direction;
 		this.backwards = direction.getOppositeFace();
@@ -82,6 +86,7 @@ public class Train {
 		this.regionAnnounce = regionAnnounce;
 		this.regionTrack = regionTrack;
 		this.regionReveal = regionReveal;
+		this.bonkPlayers = bonkPlayers;
 	}
 
 	private List<Player> getPlayers() {
@@ -110,6 +115,23 @@ public class Train {
 		spawnArmorStands();
 
 		taskIds.add(Tasks.repeat(0, 1, this::move));
+
+		if (bonkPlayers) {
+			taskIds.add(Tasks.repeat(0, TickTime.TICK.x(5), () -> {
+				for (ArmorStand armorStand : getValidArmorStands()) {
+					for (Entity entity : getNearbyEntities(armorStand.getLocation(), 4).keySet()) {
+						if (!(entity instanceof Player player))
+							continue;
+
+						if (!worldguard.isInRegion(player, regionTrack))
+							continue;
+
+						player.setVelocity(EntityUtils.getForcefieldVelocity(player, armorStand.getLocation()));
+					}
+				}
+			}));
+		}
+
 		taskIds.add(Tasks.repeat(0, TickTime.SECOND, () ->
 				getPlayers().forEach(player -> {
 					final ArmorStand nearest = getNearestArmorStand(player);
@@ -127,6 +149,9 @@ public class Train {
 
 	@Nullable
 	private ArmorStand getNearestArmorStand(Player player) {
+		if (getValidArmorStands().isEmpty())
+			return null;
+
 		return Collections.min(getValidArmorStands(), comparing(armorStand -> distance(player, armorStand).get()));
 	}
 
@@ -173,7 +198,7 @@ public class Train {
 			return;
 
 		forcePacket(armorStand);
-		final Location to = armorStand.getLocation().add(forwards.getDirection().multiply(speed));
+		final Location to = armorStand.getLocation().clone().add(forwards.getDirection().multiply(speed));
 
 		reveal(armorStand, to);
 

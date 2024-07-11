@@ -66,6 +66,7 @@ public class Train24 {
 				.test(false)
 				.regionTrack(trainTrackRegion)
 				.regionAnnounce(Pugmas24.get().getRegionName())
-				.regionReveal(trainRevealRegion);
+				.regionReveal(trainRevealRegion)
+				.bonkPlayers(true);
 	}
 }
