@@ -44,9 +44,9 @@ public class Reflection {
 	@Getter
 	private static final String gameRg = Pugmas24.get().getRegionName() + "_reflection";
 	@Getter
-	private static final String bannerRg = gameRg + "_banner";
+	private static final String bannerRg = gameRg + "_banner"; // in gray glass
 	@Getter
-	private static final Location center = new Location(Pugmas24.get().getWorld(), -507, 245, -2777);
+	private static final Location center = new Location(Pugmas24.get().getWorld(), -744, 75, -2936); // in gray glass
 	@Getter
 	private static final List<BlockFace> angles = Arrays.asList(NORTH, NORTH_EAST, EAST, SOUTH_EAST, SOUTH, SOUTH_WEST, WEST, NORTH_WEST);
 
