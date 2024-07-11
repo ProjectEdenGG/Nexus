@@ -36,6 +36,9 @@ import static gg.projecteden.nexus.utils.RandomUtils.randomDouble;
 import static java.util.Comparator.comparing;
 
 public class Train {
+	@Getter
+	private boolean active;
+
 	private final Location location;
 	private final BlockFace forwards;
 	private final BlockFace backwards;
@@ -44,16 +47,16 @@ public class Train {
 	private final boolean test;
 	private final Vector smokeBack;
 	private final Vector smokeUp;
-
-	@Getter
-	private boolean active;
+	private final String regionTrack;
+	private final String regionAnnounce;
+	private final String regionReveal;
 
 	private final List<ArmorStand> armorStands = new ArrayList<>();
 	private final List<Integer> taskIds = new ArrayList<>();
 	private Location lightLocation;
 
 	private final WorldGuardUtils worldguard;
-	private final String region;
+
 
 	private static final int TOTAL_MODELS = 18;
 	private static final double SEPARATOR = 7.5;
@@ -66,7 +69,7 @@ public class Train {
 	}
 
 	@Builder
-	public Train(Location location, BlockFace direction, double speed, int seconds, boolean test, String region) {
+	public Train(Location location, BlockFace direction, double speed, int seconds, boolean test, String regionAnnounce, String regionTrack, String regionReveal) {
 		this.location = location.toCenterLocation();
 		this.forwards = direction;
 		this.backwards = direction.getOppositeFace();
@@ -76,12 +79,13 @@ public class Train {
 		this.smokeBack = backwards.getDirection().multiply(4);
 		this.smokeUp = BlockFace.UP.getDirection().multiply(5.3);
 		this.worldguard = new WorldGuardUtils(location);
-		this.region = region;
+		this.regionAnnounce = regionAnnounce;
+		this.regionTrack = regionTrack;
+		this.regionReveal = regionReveal;
 	}
 
-
 	private List<Player> getPlayers() {
-		return worldguard.getPlayersInRegion(region).stream().toList();
+		return worldguard.getPlayersInRegion(regionAnnounce).stream().toList();
 	}
 
 	public void stop() {
@@ -123,10 +127,7 @@ public class Train {
 
 	@Nullable
 	private ArmorStand getNearestArmorStand(Player player) {
-		final ArmorStand nearest = Collections.min(getValidArmorStands(), comparing(armorStand -> distance(player, armorStand).get()));
-		if (nearest == null)
-			return null;
-		return nearest;
+		return Collections.min(getValidArmorStands(), comparing(armorStand -> distance(player, armorStand).get()));
 	}
 
 	private List<ArmorStand> getValidArmorStands() {
@@ -173,14 +174,34 @@ public class Train {
 
 		forcePacket(armorStand);
 		final Location to = armorStand.getLocation().add(forwards.getDirection().multiply(speed));
+
+		reveal(armorStand, to);
+
 		if (!isValidLocation(to))
 			armorStand.remove();
 		else
 			armorStand.teleport(to);
 	}
 
+	private void reveal(ArmorStand armorStand, Location location) {
+		if (regionReveal == null)
+			return;
+
+		if (!worldguard.isInRegion(location, regionReveal))
+			return;
+
+		int ndx = 0;
+		for (ArmorStand _armorStand : armorStands) {
+			if (_armorStand.getUniqueId().toString().equalsIgnoreCase(armorStand.getUniqueId().toString())) {
+				setTrainItem(armorStand, ndx);
+				return;
+			}
+			ndx++;
+		}
+	}
+
 	private boolean isValidLocation(Location to) {
-		return test || !worldguard.getRegionsLikeAt(region, to).isEmpty();
+		return test || !worldguard.getRegionsLikeAt(regionTrack, to).isEmpty();
 	}
 
 	private Location getSmokeLocation() {
@@ -199,23 +220,27 @@ public class Train {
 		return first.getLocation();
 	}
 
-	public void spawnArmorStands() {
+	private void spawnArmorStands() {
 		for (int i = 0; i < TOTAL_MODELS; i++) {
 			armorStands.add(armorStand(i, location));
 			location.add(backwards.getDirection().multiply(SEPARATOR));
 		}
 	}
 
-	public static ArmorStand armorStand(int model, Location location) {
+	private ArmorStand armorStand(int model, Location location) {
 		return ArmorStandEditorCommand.summon(location, armorStand -> {
 			armorStand.setVisible(false);
-			armorStand.setItem(EquipmentSlot.HEAD, new ItemBuilder(CustomMaterial.PUGMAS21_TRAIN_1)
-					.modelId(CustomMaterial.PUGMAS21_TRAIN_1.getModelId() + model)
-					.build());
+
+			if (regionReveal == null)
+				setTrainItem(armorStand, model);
 		});
 	}
 
-	//
+	private void setTrainItem(ArmorStand armorStand, int model) {
+		armorStand.setItem(EquipmentSlot.HEAD, new ItemBuilder(CustomMaterial.PUGMAS21_TRAIN_1)
+				.modelId(CustomMaterial.PUGMAS21_TRAIN_1.getModelId() + model)
+				.build());
+	}
 
 	public static class Smoke {
 		private static final Particle particle = Particle.CAMPFIRE_COSY_SMOKE;

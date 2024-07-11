@@ -120,23 +120,23 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 		}
 	}
 
-	@Path("train spawn <model>")
-	@Permission(Group.ADMIN)
-	@Description("Spawn a train armor stand")
-	void train_spawn(@Arg(min = 1) int model) {
-		gg.projecteden.nexus.features.events.models.Train.armorStand(model - 1, location());
-	}
+//	@Path("train spawn <model>")
+//	@Permission(Group.ADMIN)
+//	@Description("Spawn a train armor stand")
+//	void train_spawn(@Arg(min = 1) int model) {
+//		gg.projecteden.nexus.features.events.models.Train.armorStand(model - 1, location());
+//	}
 
-	@Path("train spawn all")
-	@Permission(Group.ADMIN)
-	@Description("Spawn all train armor stands")
-	void train_spawn_all() {
-		gg.projecteden.nexus.features.events.models.Train.builder()
-			.location(location())
-			.direction(player().getFacing())
-			.build()
-			.spawnArmorStands();
-	}
+//	@Path("train spawn all")
+//	@Permission(Group.ADMIN)
+//	@Description("Spawn all train armor stands")
+//	void train_spawn_all() {
+//		gg.projecteden.nexus.features.events.models.Train.builder()
+//			.location(location())
+//			.direction(player().getFacing())
+//			.build()
+//			.spawnArmorStands();
+//	}
 
 	@Path("train start default")
 	@Permission(Group.ADMIN)

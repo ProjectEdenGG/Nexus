@@ -36,7 +36,7 @@ import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
 	start = @Date(m = 12, d = 1, y = 2024),
 	end = @Date(m = 1, d = 10, y = 2025),
 		world = "buildadmin", // TODO FINAL: WORLD
-		region = "pugmas24", // TODO FINAL: REGION NAME
+		region = "pugmas24",
 	warpType = WarpType.PUGMAS24
 )
 public class Pugmas24 extends EdenEvent {
@@ -63,11 +63,12 @@ public class Pugmas24 extends EdenEvent {
 		new Advent24();
 		new Fairgrounds();
 		Rides.startup();
-		new Train24();
+		Train24.startup();
 	}
 
 	@Override
 	public void onStop() {
+		Train24.shutdown();
 		Advent24.shutdown();
 	}
 

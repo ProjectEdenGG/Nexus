@@ -3,16 +3,39 @@ package gg.projecteden.nexus.features.events.y2024.pugmas24.models;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
 import gg.projecteden.nexus.utils.Tasks;
+import lombok.NoArgsConstructor;
+import org.bukkit.Chunk;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 
+@NoArgsConstructor
 public class Train24 {
 
-	public Train24() {
+	private static final Set<Chunk> trainChunks = new HashSet<>();
+	private static final String trainRevealRegion = Pugmas24.get().getRegionName() + "_train_reveal";
+	private static final String trainTrackRegion = Pugmas24.get().getRegionName() + "_train_track";
+
+	public static void startup() {
+		for (Block block : Pugmas24.get().worldedit().getBlocks(Pugmas24.get().worldguard().getProtectedRegion(trainTrackRegion))) {
+			trainChunks.add(block.getChunk());
+		}
+
+		for (Chunk chunk : trainChunks) {
+			chunk.setForceLoaded(true);
+		}
+	}
+
+	public static void shutdown() {
+		for (Chunk chunk : trainChunks) {
+			chunk.setForceLoaded(false);
+		}
 	}
 
 	public static void start() {
@@ -38,11 +61,11 @@ public class Train24 {
 		return gg.projecteden.nexus.features.events.models.Train.builder()
 				.location(Pugmas24.get().location(-503.5, 84, -2971.5, 90, 0))
 				.direction(BlockFace.WEST)
-				.seconds(60)
+				.seconds(80)
 				.speed(.3)
 				.test(false)
-				.region(Pugmas24.get().getRegionName());
+				.regionTrack(trainTrackRegion)
+				.regionAnnounce(Pugmas24.get().getRegionName())
+				.regionReveal(trainRevealRegion);
 	}
-
-
 }
