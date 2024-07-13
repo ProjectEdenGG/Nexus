@@ -9,6 +9,7 @@ import gg.projecteden.nexus.models.pugmas24.Pugmas24User;
 import gg.projecteden.nexus.models.pugmas24.Pugmas24UserService;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -24,6 +25,7 @@ import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 // TODO
+@NoArgsConstructor
 public class Advent24 {
 
 	private static final Pugmas24UserService userService = new Pugmas24UserService();
