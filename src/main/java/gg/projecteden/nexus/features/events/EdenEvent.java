@@ -19,6 +19,7 @@ import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.ChunkLoader;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -191,6 +192,10 @@ public abstract class EdenEvent extends Feature implements Listener {
 
 	public void actionBar(String message, long ticks) {
 		getPlayers().forEach(player -> ActionBarUtils.sendActionBar(player, message, ticks));
+	}
+
+	public void forceLoadChunks(String regionId) {
+		ChunkLoader.loadChunks(getWorld(), regionId);
 	}
 
 	public class EventActiveCalculator implements ContextCalculator<Player> {

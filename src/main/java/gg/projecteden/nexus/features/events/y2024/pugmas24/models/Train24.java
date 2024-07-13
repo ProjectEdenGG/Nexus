@@ -4,12 +4,8 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
-import org.bukkit.Chunk;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
@@ -18,24 +14,17 @@ import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 @NoArgsConstructor
 public class Train24 {
 
-	private static final Set<Chunk> trainChunks = new HashSet<>();
-	private static final String trainRevealRegion = Pugmas24.get().getRegionName() + "_train_reveal";
-	private static final String trainTrackRegion = Pugmas24.get().getRegionName() + "_train_track";
+	private static final String trainRevealRegion = Pugmas24.get().getRegionName() + "_train_reveal";  // TODO FINAL: DEFINE REGION
+	private static final String trainTrackRegion = Pugmas24.get().getRegionName() + "_train_track";  // TODO FINAL: DEFINE REGION
 
 	public static void startup() {
-		for (Block block : Pugmas24.get().worldedit().getBlocks(Pugmas24.get().worldguard().getProtectedRegion(trainTrackRegion))) {
-			trainChunks.add(block.getChunk());
-		}
+		Pugmas24.get().forceLoadChunks(trainTrackRegion);
 
-		for (Chunk chunk : trainChunks) {
-			chunk.setForceLoaded(true);
-		}
+		schedule();
 	}
 
 	public static void shutdown() {
-		for (Chunk chunk : trainChunks) {
-			chunk.setForceLoaded(false);
-		}
+
 	}
 
 	public static void start() {

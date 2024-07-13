@@ -62,7 +62,7 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 	}
 
 	private static final ItemBuilder MAGIC_MINERAL = new ItemBuilder(ChoiceType.MINERAL.getBottleMaterial())
-			.name(Gradient.of(List.of(ChatColor.of("#6A6A6A"), ChatColor.of("#D37A5A"), ChatColor.of("#E1C16E"))).apply("Magic Metal"))
+			.name(Gradient.of(List.of(ChatColor.of("#6A6A6A"), ChatColor.of("#D37A5A"), ChatColor.of("#E1C16E"))).apply("Magic Mineral"))
 			.lore(USAGE_LORE, USES_LORE + MAX_USES);
 
 	public static ItemBuilder getMagicMineral() {
