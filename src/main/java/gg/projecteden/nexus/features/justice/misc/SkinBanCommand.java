@@ -69,6 +69,7 @@ public class SkinBanCommand extends _JusticeCommand implements Listener {
 			if (changed) {
 				Punishments.broadcast("&e" + skin.getNickname() + " &chas changed their skin to &e" + skin.getTextureUrl());
 				config.unban(skin.getUuid());
+				service.save(config);
 			} else {
 				Punishments.broadcast("&e" + skin.getNickname() + " &ctried to join, but is skin banned");
 				event.disallow(Result.KICK_BANNED, SkinBanConfig.BAN_MESSAGE);
