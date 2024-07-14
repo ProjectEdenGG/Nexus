@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.events.y2024.pugmas24;
 
 import gg.projecteden.nexus.features.events.EdenEvent;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.Rides;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Fairgrounds;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Rides;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Train24;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24Entity;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24NPC;
@@ -17,6 +17,7 @@ import gg.projecteden.nexus.models.godmode.GodmodeService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import lombok.Getter;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -46,7 +47,10 @@ public class Pugmas24 extends EdenEvent {
 	public static final LocalDate _25TH = LocalDate.of(2024, 12, 25);
 
 	public static final String LORE = "&ePugmas 2024 Item";
-	public Location warp = location(0.5, 52, 0.5);
+	public final Location warp = location(-688.5, 82, -2964.5); // TODO FINAL: WARP LOCATION
+
+	@Getter
+	private static boolean ridesEnabled = true;
 
 	//
 

@@ -5,7 +5,6 @@ import gg.projecteden.nexus.features.effects.Effects;
 import gg.projecteden.nexus.features.effects.Effects.RotatingStand.StandRotationAxis;
 import gg.projecteden.nexus.features.effects.Effects.RotatingStand.StandRotationType;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Geyser;
-import gg.projecteden.nexus.framework.features.Depends;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -18,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Depends(Pugmas24.class)
 @NoArgsConstructor
 public class Pugmas24Effects extends Effects {
 
