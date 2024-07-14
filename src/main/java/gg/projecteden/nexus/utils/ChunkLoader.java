@@ -52,7 +52,7 @@ public class ChunkLoader extends Feature {
 	public static void loadChunk(Chunk chunk) {
 		chunk.setForceLoaded(true);
 
-		Set<Long> chunks = loadedChunks.get(chunk.getWorld());
+		Set<Long> chunks = loadedChunks.getOrDefault(chunk.getWorld(), new HashSet<>());
 		chunks.add(chunk.getChunkKey());
 
 		loadedChunks.put(chunk.getWorld(), chunks);
