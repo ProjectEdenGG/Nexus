@@ -2,9 +2,9 @@ package gg.projecteden.nexus.features.events.y2024.pugmas24;
 
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.ballooneditor.BalloonEditor;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Fairgrounds;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Rides;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.models.BalloonEditor;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Train24;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24Entity;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24NPC;

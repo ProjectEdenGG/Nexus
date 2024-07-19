@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.events.y2024.pugmas24.models;
+package gg.projecteden.nexus.features.events.y2024.pugmas24.ballooneditor;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
@@ -9,43 +9,43 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Rows(4)
 @Title("Select a color")
 public class BlockReplaceBrushMenu extends InventoryProvider {
 
-	private static final ItemBuilder BRUSH = new ItemBuilder(CustomMaterial.EVENT_PAINTBRUSH)
-			.name("Block Replacer Brush")
-			.lore("&3Color: " + StringUtils.colorLabel(BalloonEditor.getBrushColor()) + " Wool")
+	public static final CustomMaterial BRUSH_MATERIAL = CustomMaterial.EVENT_PAINTBRUSH;
+	private static final ItemBuilder BRUSH = new ItemBuilder(BRUSH_MATERIAL)
+			.name("&eBlock Replacer Brush")
+			.lore("&3Block: " + getColorLabel(BalloonEditor.defaultBrushColor))
 			.lore("")
 			.lore("&3How to use:")
-			.lore("&eLClick &3to change the color")
+			.lore("&eLClick &3a block to change the brush color")
 			.lore("&eRClick &3a block to replace it")
-			.dyeColor(ColorType.RED)
+			.dyeColor(BalloonEditor.defaultBrushColor)
 			.glow()
-			.itemFlags(ItemBuilder.ItemFlags.HIDE_ALL);
-
-	public BlockReplaceBrushMenu(ItemStack brushItem) {
-		this.brushItem = brushItem;
-	}
+			.itemFlags(ItemBuilder.ItemFlags.HIDE_ALL)
+			.updateDecorationLore(false);
 
 	public static ItemBuilder getBrushItem() {
 		return BRUSH.clone();
 	}
 
 	private SlotPos slotPos = SlotPos.of(1, 0);
-	private final ItemStack brushItem;
+	private final ItemStack tool;
+
+	public BlockReplaceBrushMenu(ItemStack tool) {
+		this.tool = tool;
+	}
 
 	@Override
 	public void init() {
@@ -67,35 +67,27 @@ public class BlockReplaceBrushMenu extends InventoryProvider {
 	}
 
 	private void dyeBrush(ColorType brushColor) {
-		if (brushItem == null)
+		if (tool == null)
 			return;
 
-		ItemBuilder newBrush = new ItemBuilder(getBrushItem()).dyeColor(brushColor);
-		List<String> finalLore = new ArrayList<>();
+		ItemBuilder resultBuilder = getBrushItem().clone().dyeColor(brushColor);
 
-		// change lore
-		List<String> lore = newBrush.getLore();
-		if (Nullables.isNotNullOrEmpty(lore))
-			lore = new ArrayList<>();
-
+		// fix color line
 		List<String> newLore = new ArrayList<>();
-		for (String line : lore) {
-			String _line = stripColor(line);
-			// remove color line
-			if (_line.contains("Color: "))
+		for (String line : resultBuilder.getLore()) {
+			String _line = StringUtils.stripColor(line);
+			if (_line.contains("Block:")) {
+				newLore.add("&3Block: " + getColorLabel(brushColor));
 				continue;
+			}
 
 			newLore.add(line);
 		}
 
-		// add color line
-		finalLore.add("&3Color: " + StringUtils.colorLabel(brushColor) + " Wool");
-
-		finalLore.addAll(newLore);
-		newBrush.lore(finalLore);
-
-		ItemStack result = newBrush.build();
-		brushItem.setItemMeta(result.getItemMeta());
+		// finalize item
+		resultBuilder.setLore(newLore);
+		ItemStack result = resultBuilder.build();
+		tool.setItemMeta(result.getItemMeta());
 	}
 
 	//
@@ -127,4 +119,8 @@ public class BlockReplaceBrushMenu extends InventoryProvider {
 			Material.LIME_WOOL, Material.GREEN_WOOL, Material.CYAN_WOOL, Material.LIGHT_BLUE_WOOL, Material.BLUE_WOOL,
 			Material.PURPLE_WOOL, Material.MAGENTA_WOOL, Material.PINK_WOOL, Material.BROWN_WOOL, Material.WHITE_WOOL,
 			Material.LIGHT_GRAY_WOOL, Material.GRAY_WOOL, Material.BLACK_WOOL);
+
+	private static @NotNull String getColorLabel(ColorType colorType) {
+		return StringUtils.colorLabel(colorType, StringUtils.camelCase(colorType.getWool()));
+	}
 }

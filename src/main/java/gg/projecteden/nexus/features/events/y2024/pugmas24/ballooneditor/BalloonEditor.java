@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.events.y2024.pugmas24.models;
+package gg.projecteden.nexus.features.events.y2024.pugmas24.ballooneditor;
 
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
@@ -6,7 +6,6 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeavingRegionEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -33,40 +32,40 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 
 public class BalloonEditor implements Listener {
-	private static final String REGION_EDIT = Pugmas24.get().getRegionName() + "_balloon_edit";  // TODO FINAL: DEFINE REGION
-	private static final String REGION_SCHEM = Pugmas24.get().getRegionName() + "_balloon_schem";  // TODO FINAL: DEFINE REGION
-	private static final Location SCHEM_PASTE = Pugmas24.get().location(-620, 162, -3214); // TODO FINAL: LOCATION
-	private static final String SCHEM_BASE = "pugmas24/balloons/";
-	private static final String SCHEM_TEMPLATE = SCHEM_BASE + "template/";
+	protected static final String REGION_EDIT = Pugmas24.get().getRegionName() + "_balloon_edit";  // TODO FINAL: DEFINE REGION
+	protected static final String REGION_SCHEM = Pugmas24.get().getRegionName() + "_balloon_schem";  // TODO FINAL: DEFINE REGION
+	protected static final Location SCHEM_PASTE = Pugmas24.get().location(-620, 162, -3214); // TODO FINAL: LOCATION
+	protected static final String SCHEM_BASE = "pugmas24/balloons/";
+	protected static final String SCHEM_TEMPLATE = SCHEM_BASE + "template/";
 	public static final int TEMPLATE_SIZE = 1;
+	protected static final ColorType defaultBrushColor = ColorType.RED;
 
-	private static final WorldEditUtils worldedit = Pugmas24.get().worldedit();
-	private static final WorldGuardUtils worldguard = Pugmas24.get().worldguard();
-	private static final String PREFIX = StringUtils.getPrefix("BalloonEditor");
-	private static final TeleportCause ignoreTeleportCause = TeleportCause.NETHER_PORTAL;
+	protected static final WorldEditUtils worldedit = Pugmas24.get().worldedit();
+	protected static final WorldGuardUtils worldguard = Pugmas24.get().worldguard();
+	public static final String PREFIX = StringUtils.getPrefix("BalloonEditor");
 
 	@Getter
 	private static boolean beingUsed = false;
 	@Getter
 	private static boolean stopping = false;
-	private static int schemId = 1;
+	protected static int schemId = 1;
 	@Getter
 	private static Nerd editor;
-	private static boolean flying = false;
-	private static boolean allowedFlight = false;
-	private static boolean lostEditor = false;
-	private static int lostEditorTask;
-	private static boolean savingSchem = false;
+	protected static boolean flying = false;
+	protected static boolean allowedFlight = false;
+	protected static boolean lostEditor = false;
+	protected static int lostEditorTask;
+	@Getter
+	protected static boolean savingSchem = false;
 
 	@Getter
 	@Setter
-	private static ColorType brushColor = ColorType.RED;
+	private static ColorType brushColor = defaultBrushColor;
 
 	public BalloonEditor() {
 		Nexus.registerListener(this);
@@ -95,28 +94,26 @@ public class BalloonEditor implements Listener {
 		return true;
 	}
 
-	public static void editBalloon(Nerd editor) {
+	public static void editBalloon(Nerd nerd) {
 		beingUsed = true;
-		BalloonEditor.editor = editor;
+		editor = nerd;
 
 		flying = editor.getPlayer().isFlying();
 		allowedFlight = editor.getPlayer().getAllowFlight();
 
-
 		File file = worldedit.getSchematicFile(getSchematicPath(), true);
 		if (file.exists()) {
 			pasteBalloon(getSchematicPath());
-			send("pasted previous balloon");
+			BalloonEditorUtils.send("pasted previous balloon");
 		} else {
 			resetBalloon();
-			send("pasted template");
+			BalloonEditorUtils.send("pasted template");
 		}
 
-		PlayerUtils.giveItem(editor, getReplaceBrush());
-		editor.getPlayer().setAllowFlight(true);
-		editor.getPlayer().setFlying(true);
+		BalloonEditorUtils.giveBrush();
+		BalloonEditorUtils.enableFlight();
 
-		send("editing");
+		BalloonEditorUtils.send("editing");
 	}
 
 	public static void saveBalloon() {
@@ -124,7 +121,10 @@ public class BalloonEditor implements Listener {
 		if (player == null)
 			throw new InvalidInputException(PREFIX + "player cannot be null");
 
-		PlayerUtils.removeItem(player, getReplaceBrush());
+		if (savingSchem)
+			throw new InvalidInputException(PREFIX + "schematic is already saving");
+
+		BalloonEditorUtils.removeBrush();
 
 		String filePath = getSchematicPath();
 		Region region = worldguard.convert(worldguard.getProtectedRegion(REGION_SCHEM));
@@ -139,29 +139,35 @@ public class BalloonEditor implements Listener {
 		Location location = worldedit.toLocation(region.getMinimumPoint());
 
 		player.setGameMode(GameMode.SPECTATOR);
-		player.teleport(location, ignoreTeleportCause);
+		player.teleport(location);
 
-		savingSchem = true;
+		Tasks.wait(1, () -> {
+			savingSchem = true;
 
-		PlayerUtils.runCommandAsOp(player, multiCommand);
-		Tasks.wait(30, () -> {
-			PlayerUtils.runCommandAsOp(player, "/deselect");
-			savingSchem = false;
+			PlayerUtils.runCommandAsOp(player, multiCommand);
+			Tasks.wait(30, () -> {
+				PlayerUtils.runCommandAsOp(player, "/deselect");
+				savingSchem = false;
 
-			player.teleportAsync(originalLocation);
-			player.setGameMode(originalGameMode);
+				player.teleport(originalLocation);
+				player.setGameMode(originalGameMode);
 
-			Tasks.wait(1, () -> {
-				send("Schematic saved");
-				reset();
+				Tasks.wait(1, () -> {
+					BalloonEditorUtils.send("Schematic saved");
+					reset();
+				});
 			});
 		});
 	}
 
 	public static void reset() {
-		editor.getPlayer().setAllowFlight(allowedFlight);
-		editor.getPlayer().setFlying(flying);
+		Player player = editor.getPlayer();
+		if (player != null && player.isOnline()) {
+			BalloonEditorUtils.resetFlight();
+			BalloonEditorUtils.removeBrush();
+		}
 
+		brushColor = defaultBrushColor;
 		stopping = false;
 		lostEditor = false;
 		if (lostEditorTask != -1)
@@ -183,17 +189,6 @@ public class BalloonEditor implements Listener {
 
 	//
 
-	private static void sendCooldown(String message, String key) {
-		if (!new CooldownService().check(editor.getUuid(), key, TickTime.SECOND))
-			return;
-
-		send(message);
-	}
-
-	private static void send(String message) {
-		editor.sendMessage(PREFIX + message);
-	}
-
 	private static void pasteBalloon(String filePath) {
 		clearSchemRegion();
 		Tasks.wait(1, () -> worldedit.paster().file(filePath).at(SCHEM_PASTE).pasteAsync());
@@ -211,56 +206,36 @@ public class BalloonEditor implements Listener {
 		return SCHEM_BASE + editor.getUniqueId();
 	}
 
-	public static boolean isEditing(Player player) {
-		if (!Pugmas24.get().isAtEvent(player))
-			return false;
-
-		if (!isBeingUsed())
-			return false;
-
-		if (editor == null || player == null)
-			return false;
-
-		return player.getUniqueId().toString().equalsIgnoreCase(editor.getUniqueId().toString());
-	}
-
-	public static String getEditorName() {
-		return editor.getNickname();
-	}
-
-	public static ItemStack getReplaceBrush() {
-		return BlockReplaceBrushMenu.getBrushItem().dyeColor(brushColor).build();
-	}
-
 	//
 
 	@EventHandler
 	public void onSavingSchem(PlayerMoveEvent event) {
-		if (!isEditing(event.getPlayer()))
+		if (!BalloonEditorUtils.isEditing(event.getPlayer()))
 			return;
 
 		if (!savingSchem)
 			return;
 
 		event.setCancelled(true);
-		sendCooldown("&cPlease wait while the schematic is saving", "pugmas24_balloon_editor-schem");
+		BalloonEditorUtils.sendCooldown("&cPlease wait while the schematic is saving (Move)", "pugmas24_balloon_editor-schem");
 	}
 
 	@EventHandler
 	public void onSavingSchem(PlayerTeleportEvent event) {
-		if (!isEditing(event.getPlayer()))
+		if (!BalloonEditorUtils.isEditing(event.getPlayer()))
 			return;
 
 		if (!savingSchem)
 			return;
 
 		event.setCancelled(true);
-		send("&cPlease wait while the schematic is saving");
+		BalloonEditorUtils.sendCooldown("&cPlease wait while the schematic is saving (Teleport)", "pugmas24_balloon_editor-schem");
 	}
 
 	@EventHandler
 	public void onUseBrush(PlayerInteractEvent event) {
-		if (!isEditing(event.getPlayer()))
+		Player player = event.getPlayer();
+		if (!BalloonEditorUtils.isEditing(player))
 			return;
 
 		ItemStack item = event.getItem();
@@ -278,7 +253,7 @@ public class BalloonEditor implements Listener {
 
 		Action action = event.getAction();
 		if (action.isLeftClick()) {
-			new BlockReplaceBrushMenu(item).open(editor.getPlayer());
+			new BlockReplaceBrushMenu(item).open(player);
 			return;
 		}
 
@@ -286,8 +261,8 @@ public class BalloonEditor implements Listener {
 			return;
 
 		clickedBlock.setType(brushColor.getWool());
-		new SoundBuilder(Sound.BLOCK_WOOL_PLACE).receiver(editor).location(clickedBlock).volume(0.5).play();
-		event.getPlayer().swingMainHand();
+		new SoundBuilder(Sound.BLOCK_WOOL_PLACE).receiver(player).location(clickedBlock).volume(0.5).play();
+		player.swingMainHand();
 	}
 
 	private boolean canEditBlock(Block block) {
@@ -302,34 +277,33 @@ public class BalloonEditor implements Listener {
 
 	@EventHandler
 	public void whenEditing(PlayerLeavingRegionEvent event) {
-		if (!isEditing(event.getPlayer()))
+		if (!BalloonEditorUtils.isEditing(event.getPlayer()))
 			return;
 
 		if (!event.getRegion().getId().equalsIgnoreCase(REGION_EDIT) || savingSchem)
 			return;
 
 		event.setCancelled(true);
-		sendCooldown("&cYou're still editing your balloon (Region)", "pugmas24_balloon_editor-leaving_region");
+		BalloonEditorUtils.sendCooldown("&cYou're still editing your balloon (Region)", "pugmas24_balloon_editor-editing");
 	}
 
 	@EventHandler
 	public void whenEditing(PlayerTeleportEvent event) {
-		if (!isEditing(event.getPlayer()))
+		if (!BalloonEditorUtils.isEditing(event.getPlayer()))
 			return;
 
-		if (event.getCause() == ignoreTeleportCause || savingSchem)
+		if (worldguard.isInRegion(event.getTo(), REGION_EDIT) || savingSchem)
 			return;
 
 		event.setCancelled(true);
-		sendCooldown("&cYou're still editing your balloon (Teleport)", "pugmas24_balloon_editor-leaving_teleport");
+		BalloonEditorUtils.sendCooldown("&cYou're still editing your balloon (Teleport)", "pugmas24_balloon_editor-editing");
 	}
 
 	@EventHandler
 	public void whenEditing(PlayerQuitEvent event) {
-		if (!isEditing(event.getPlayer()))
+		Player player = event.getPlayer();
+		if (!BalloonEditorUtils.isEditing(player))
 			return;
-
-		PlayerUtils.removeItem(event.getPlayer(), getReplaceBrush());
 
 		lostEditor = true;
 		lostEditorTask = Tasks.wait(TickTime.SECOND.x(30), () -> {
@@ -342,13 +316,17 @@ public class BalloonEditor implements Listener {
 
 	@EventHandler
 	public void whenEditing(PlayerJoinEvent event) {
-		if (!isEditing(event.getPlayer()))
+		Player player = event.getPlayer();
+		if (!BalloonEditorUtils.isEditing(player)) {
+			if (worldguard.isInRegion(player, REGION_EDIT)) {
+				BalloonEditorUtils.removeBrush(player);
+				BalloonEditorUtils.disableFlight(player);
+			}
 			return;
+		}
 
 		lostEditor = false;
 		Tasks.cancel(lostEditorTask);
 		lostEditorTask = -1;
-
-		PlayerUtils.giveItem(event.getPlayer(), getReplaceBrush());
 	}
 }

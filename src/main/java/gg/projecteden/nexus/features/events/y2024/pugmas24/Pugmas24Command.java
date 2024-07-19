@@ -4,7 +4,8 @@ import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.IEventCommand;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24Menu;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.models.BalloonEditor;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.ballooneditor.BalloonEditor;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.ballooneditor.BalloonEditorUtils;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.District;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Geyser;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Train24;
@@ -109,7 +110,7 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 		if (nearestPresent == null)
 			error("None found");
 
-		send("Nearest: #" + nearestPresent.getDay());
+		send(PREFIX + "Nearest: #" + nearestPresent.getDay());
 	}
 
 	@Path("advent get <day>")
@@ -153,14 +154,14 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	@Path("geyser start")
 	@Permission(Group.STAFF)
 	void startGeyser() {
-		send("Starting geyser animation");
+		send(PREFIX + "Starting geyser animation");
 		Geyser.animate();
 	}
 
 	@Path("geyser stop")
 	@Permission(Group.STAFF)
 	void stopGeyser() {
-		send("Stopping geyser animation");
+		send(PREFIX + "Stopping geyser animation");
 		Geyser.reset();
 	}
 
@@ -174,9 +175,9 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	@Permission(Group.ADMIN)
 	void balloon_edit() {
 		if (BalloonEditor.isBeingUsed())
-			error(BalloonEditor.getEditorName() + " is currently using this");
+			error(BalloonEditorUtils.getEditorName() + " is currently using this");
 
-		if (BalloonEditor.isEditing(player()))
+		if (BalloonEditorUtils.isEditing(player()))
 			error("You're already editing your balloon");
 
 		BalloonEditor.editBalloon(nerd());
@@ -185,8 +186,11 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	@Path("balloon save")
 	@Permission(Group.ADMIN)
 	void balloon_save() {
-		if (!BalloonEditor.isEditing(player()))
+		if (!BalloonEditorUtils.isEditing(player()))
 			error("You're not currently editing a balloon");
+
+		if (BalloonEditor.isSavingSchem())
+			error("Please wait while the schematic is saving (Save)");
 
 		BalloonEditor.saveBalloon();
 	}
@@ -194,7 +198,7 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	@Path("balloon reset")
 	@Permission(Group.ADMIN)
 	void balloon_reset() {
-		if (!BalloonEditor.isEditing(player()))
+		if (!BalloonEditorUtils.isEditing(player()))
 			error("You're not currently editing a balloon");
 
 		BalloonEditor.resetBalloon();
@@ -203,7 +207,7 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	@Path("balloon paste <id>")
 	@Permission(Group.ADMIN)
 	void balloon_template_paste(@Arg(min = 1, max = BalloonEditor.TEMPLATE_SIZE, value = "1") int id) {
-		if (!BalloonEditor.isEditing(player()))
+		if (!BalloonEditorUtils.isEditing(player()))
 			error("You're not currently editing a balloon");
 
 		BalloonEditor.selectTemplate(id);
@@ -212,7 +216,10 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	@Path("balloon exit")
 	@Permission(Group.ADMIN)
 	void balloon_exit() {
-		send("Exited without saving");
+		if (BalloonEditor.isSavingSchem())
+			error("Please wait while the schematic is saving (Exit)");
+
+		send(PREFIX + "Exited without saving");
 		BalloonEditor.reset();
 	}
 }

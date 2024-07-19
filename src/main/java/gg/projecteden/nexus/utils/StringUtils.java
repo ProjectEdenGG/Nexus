@@ -115,8 +115,8 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 		return "#" + hex;
 	}
 
-	public static String colorLabel(ColorType colorType) {
-		return "&" + toHex(colorType.getBukkitColor()) + camelCase(colorType);
+	public static String colorLabel(ColorType labelColor, String label) {
+		return "&" + toHex(labelColor.getBukkitColor()) + label;
 	}
 
 	public static String stripColor(String input) {

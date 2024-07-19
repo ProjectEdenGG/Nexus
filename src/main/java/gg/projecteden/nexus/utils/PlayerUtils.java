@@ -8,6 +8,7 @@ import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -947,6 +948,19 @@ public class PlayerUtils {
 		final Player _player = player.getPlayer();
 		final PlayerInventory inv = _player.getInventory();
 		inv.removeItem(item);
+		if (_player.getItemOnCursor().equals(item))
+			_player.setItemOnCursor(null);
+	}
+
+	public static void removeItem(HasPlayer player, CustomMaterial customMaterial) {
+		final Player _player = player.getPlayer();
+		final PlayerInventory inv = _player.getInventory();
+		ItemStack item = searchInventory(player, customMaterial.getCustomModel());
+
+		if (isNullOrAir(item))
+			return;
+
+		inv.removeItemAnySlot(item);
 		if (_player.getItemOnCursor().equals(item))
 			_player.setItemOnCursor(null);
 	}

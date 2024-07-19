@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Depends({Events.class, EdenEvent.class})
 @NoArgsConstructor
@@ -40,13 +41,17 @@ public class ChunkLoader extends Feature {
 		WorldEditUtils worldedit = new WorldEditUtils(world);
 		WorldGuardUtils worldguard = new WorldGuardUtils(world);
 
-		loadChunks(getChunks(worldedit.getBlocks(worldguard.getProtectedRegion(region))));
+		ProtectedRegion protectedRegion = worldguard.getProtectedRegion(region);
+		List<Block> blocks = worldedit.getBlocks(protectedRegion);
+		loadChunks(blocks);
+	}
+
+	public static void loadChunks(List<Block> blocks) {
+		loadChunks(blocks.stream().map(Block::getChunk).collect(Collectors.toSet()));
 	}
 
 	public static void loadChunks(Set<Chunk> chunks) {
-		for (Chunk chunk : chunks) {
-			loadChunk(chunk);
-		}
+		chunks.forEach(ChunkLoader::loadChunk);
 	}
 
 	public static void loadChunk(Chunk chunk) {
@@ -56,14 +61,6 @@ public class ChunkLoader extends Feature {
 		chunks.add(chunk.getChunkKey());
 
 		loadedChunks.put(chunk.getWorld(), chunks);
-	}
-
-	private static Set<Chunk> getChunks(List<Block> blocks) {
-		Set<Chunk> chunks = new HashSet<>();
-		for (Block block : blocks) {
-			chunks.add(block.getChunk());
-		}
-		return chunks;
 	}
 
 }
