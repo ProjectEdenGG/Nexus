@@ -13,6 +13,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Color;
 import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
@@ -114,6 +115,18 @@ public interface IDyeMenu {
 		if (colorPage > 0)
 			contents.set(SLOT_STAIN_PREVIOUS, ClickableItem.of(STAIN_PREVIOUS, e -> reopenMenu(contents, colorPage - 1)));
 
+	}
+
+	default void addCheatButtons(InventoryContents contents) {
+		for (ChoiceType choiceType : ChoiceType.values()) {
+			ItemStack displayItem = new ItemBuilder(choiceType.getBottleMaterial()).resetLore().build();
+
+			contents.set(choiceType.getSlotPos(), ClickableItem.of(displayItem,
+					e -> updateDyeChoice(contents, displayItem, choiceType)));
+		}
+	}
+
+	default void updateDyeChoice(InventoryContents contents, ItemStack item, ChoiceType choiceType) {
 	}
 
 	default void fillChoices(InventoryContents contents, ColorChoice.DyeChoice dyeChoice, ColorChoice.ChoiceType choiceType) {

@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.workbenches.dyestation;
 
-import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
@@ -63,7 +62,7 @@ public class CreativeBrushMenu extends InventoryProvider implements IDyeMenu {
 			return false;
 		}
 
-		if (!isMasterPaintbrush(ItemUtils.getToolRequired(player)))
+		if (!isCreativePaintbrush(ItemUtils.getToolRequired(player)))
 			return false;
 
 		return true;
@@ -127,13 +126,11 @@ public class CreativeBrushMenu extends InventoryProvider implements IDyeMenu {
 		if (choiceType.equals(ColorChoice.ChoiceType.DYE) && dyeChoice != null)
 			fillChoices(contents, dyeChoice, ChoiceType.DYE);
 
-		contents.set(SLOT_CHEAT_DYE, ClickableItem.of(DyeStation.getMagicDye().resetLore().build(),
-				e -> updateDyeChoice(ChoiceType.DYE)));
-		contents.set(SLOT_CHEAT_STAIN, ClickableItem.of(DyeStation.getMagicStain().resetLore().build(),
-				e -> updateDyeChoice(ChoiceType.STAIN)));
+		addCheatButtons(contents);
 	}
 
-	private void updateDyeChoice(ChoiceType choiceType) {
+	@Override
+	public void updateDyeChoice(InventoryContents contents, ItemStack item, ChoiceType choiceType) {
 		validatePaintbrush();
 
 		this.choiceType = choiceType;
@@ -175,14 +172,14 @@ public class CreativeBrushMenu extends InventoryProvider implements IDyeMenu {
 	}
 
 	private void validatePaintbrush() {
-		if (isMasterPaintbrush(this.paintbrush))
+		if (isCreativePaintbrush(this.paintbrush))
 			return;
 
 		close();
 		throw new InvalidInputException("You are not holding a master brush!");
 	}
 
-	public static boolean isMasterPaintbrush(ItemStack item) {
+	public static boolean isCreativePaintbrush(ItemStack item) {
 		return getCreativeBrush().modelId() == ModelId.of(item);
 	}
 }

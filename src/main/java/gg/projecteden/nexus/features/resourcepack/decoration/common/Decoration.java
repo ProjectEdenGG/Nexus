@@ -145,7 +145,7 @@ public class Decoration {
 		final Decoration decoration = new Decoration(config, itemFrame);
 
 		ItemStack tool = ItemUtils.getTool(player);
-		if (CreativeBrushMenu.isMasterPaintbrush(tool)) {
+		if (CreativeBrushMenu.isCreativePaintbrush(tool)) {
 			CreativeBrushMenu.copyDye(player, tool, decoration);
 			return false;
 		}

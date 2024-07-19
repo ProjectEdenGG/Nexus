@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.workbenches.dyestation;
 
+import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.utils.ColorType;
@@ -24,12 +25,13 @@ public interface ColorChoice {
 	@Getter
 	@AllArgsConstructor
 	enum ChoiceType {
-		DYE(ColorType.hexToBukkit("#FF5555"), CustomMaterial.DYE_STATION_BOTTLE_DYE, CustomMaterial.DYE_STATION_BUTTON_DYE),
-		STAIN(ColorType.hexToBukkit("#F4C57A"), CustomMaterial.DYE_STATION_BOTTLE_STAIN, CustomMaterial.DYE_STATION_BUTTON_STAIN),
-		MINERAL(ColorType.hexToBukkit("#6a6a6a"), CustomMaterial.DYE_STATION_BOTTLE_MINERAL, CustomMaterial.DYE_STATION_BUTTON_MINERAL),
+		DYE(ColorType.hexToBukkit("#FF5555"), IDyeMenu.SLOT_CHEAT_DYE, CustomMaterial.DYE_STATION_BOTTLE_DYE, CustomMaterial.DYE_STATION_BUTTON_DYE),
+		STAIN(ColorType.hexToBukkit("#F4C57A"), IDyeMenu.SLOT_CHEAT_STAIN, CustomMaterial.DYE_STATION_BOTTLE_STAIN, CustomMaterial.DYE_STATION_BUTTON_STAIN),
+		MINERAL(ColorType.hexToBukkit("#6a6a6a"), IDyeMenu.SLOT_CHEAT_MINERAL, CustomMaterial.DYE_STATION_BOTTLE_MINERAL, CustomMaterial.DYE_STATION_BUTTON_MINERAL),
 		;
 
 		final Color defaultColor;
+		private final SlotPos slotPos;
 		private final CustomMaterial bottleMaterial;
 		private final CustomMaterial buttonMaterial;
 

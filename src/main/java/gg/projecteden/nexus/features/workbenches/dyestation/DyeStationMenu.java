@@ -59,7 +59,7 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 	}
 
 	public static ItemBuilder decreaseUses(ItemBuilder builder) {
-		if (CreativeBrushMenu.isMasterPaintbrush(builder.build()))
+		if (CreativeBrushMenu.isCreativePaintbrush(builder.build()))
 			return builder;
 
 		List<String> newLore = new ArrayList<>();
@@ -98,7 +98,7 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 	}
 
 	public static int getUses(ItemStack itemStack) {
-		if (CreativeBrushMenu.isMasterPaintbrush(itemStack))
+		if (CreativeBrushMenu.isCreativePaintbrush(itemStack))
 			return DyeStation.MAX_USES_PAINTBRUSH;
 
 		for (String line : new ItemBuilder(itemStack).getLore()) {
@@ -191,18 +191,12 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 			fillChoices(contents, data.getDyeChoice(), ChoiceType.DYE);
 
 		if (data.isCheatMode() && data.isShowButtons()) {
-			contents.set(SLOT_CHEAT_DYE, ClickableItem.of(DyeStation.getMagicDye().resetLore().build(),
-					e -> updateDyeChoice(contents, DyeStation.getMagicDye().build(), ChoiceType.DYE)));
-
-			contents.set(SLOT_CHEAT_STAIN, ClickableItem.of(DyeStation.getMagicStain().resetLore().build(),
-					e -> updateDyeChoice(contents, DyeStation.getMagicStain().build(), ChoiceType.STAIN)));
-
-			contents.set(SLOT_CHEAT_MINERAL, ClickableItem.of(DyeStation.getMagicMineral().resetLore().build(),
-					e -> updateDyeChoice(contents, DyeStation.getMagicMineral().build(), ChoiceType.MINERAL)));
+			addCheatButtons(contents);
 		}
 	}
 
-	private void updateDyeChoice(InventoryContents contents, ItemStack item, ChoiceType choiceType) {
+	@Override
+	public void updateDyeChoice(InventoryContents contents, ItemStack item, ChoiceType choiceType) {
 		data.setDyeType(choiceType);
 		if (data.isShowDye())
 			contents.set(SLOT_DYE, ClickableItem.empty(item));
