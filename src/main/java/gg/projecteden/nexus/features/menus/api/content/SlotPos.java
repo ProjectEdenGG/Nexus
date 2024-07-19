@@ -32,4 +32,11 @@ public class SlotPos {
 		return new SlotPos(row, column);
 	}
 
+	public boolean matches(int row, int column) {
+		return this.row == row && this.column == column;
+	}
+
+	public boolean matches(SlotPos slotPos) {
+		return this.row == slotPos.row && this.column == slotPos.column;
+	}
 }

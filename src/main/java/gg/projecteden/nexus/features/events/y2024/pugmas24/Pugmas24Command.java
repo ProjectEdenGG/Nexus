@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.IEventCommand;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24Menu;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.BalloonEditor;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.District;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Geyser;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Train24;
@@ -169,4 +170,49 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 		Train24.start();
 	}
 
+	@Path("balloon edit")
+	@Permission(Group.ADMIN)
+	void balloon_edit() {
+		if (BalloonEditor.isBeingUsed())
+			error(BalloonEditor.getEditorName() + " is currently using this");
+
+		if (BalloonEditor.isEditing(player()))
+			error("You're already editing your balloon");
+
+		BalloonEditor.editBalloon(nerd());
+	}
+
+	@Path("balloon save")
+	@Permission(Group.ADMIN)
+	void balloon_save() {
+		if (!BalloonEditor.isEditing(player()))
+			error("You're not currently editing a balloon");
+
+		BalloonEditor.saveBalloon();
+	}
+
+	@Path("balloon reset")
+	@Permission(Group.ADMIN)
+	void balloon_reset() {
+		if (!BalloonEditor.isEditing(player()))
+			error("You're not currently editing a balloon");
+
+		BalloonEditor.resetBalloon();
+	}
+
+	@Path("balloon paste <id>")
+	@Permission(Group.ADMIN)
+	void balloon_template_paste(@Arg(min = 1, max = BalloonEditor.TEMPLATE_SIZE, value = "1") int id) {
+		if (!BalloonEditor.isEditing(player()))
+			error("You're not currently editing a balloon");
+
+		BalloonEditor.selectTemplate(id);
+	}
+
+	@Path("balloon exit")
+	@Permission(Group.ADMIN)
+	void balloon_exit() {
+		send("Exited without saving");
+		BalloonEditor.reset();
+	}
 }

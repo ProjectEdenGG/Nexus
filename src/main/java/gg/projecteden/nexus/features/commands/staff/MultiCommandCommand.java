@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -23,14 +24,14 @@ public class MultiCommandCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<commands...>")
+	@Path("<commands...> [--asOp]")
 	@Description("Run multiple commands at once separated by ' ;; '")
-	void run(String input) {
-		runMultiCommand(input.split(" ;; "));
+	void run(String input, @Switch boolean asOp) {
+		runMultiCommandAsOp(input.split(" ;; "));
 	}
 
-	public static void run(CommandSender sender, List<String> commands) {
-		if (commands.size() == 0)
+	public static void run(CommandSender sender, List<String> commands, boolean asOp) {
+		if (commands.isEmpty())
 			return;
 
 		AtomicInteger wait = new AtomicInteger(0);
@@ -38,7 +39,12 @@ public class MultiCommandCommand extends CustomCommand {
 			if (command.toLowerCase().matches("^wait \\d+$"))
 				wait.getAndAdd(Integer.parseInt(command.toLowerCase().replace("wait ", "")));
 			else
-				Tasks.wait(wait.getAndAdd(3), () -> PlayerUtils.runCommand(sender, command));
+				Tasks.wait(wait.getAndAdd(3), () -> {
+					if (asOp)
+						PlayerUtils.runCommandAsOp(sender, command);
+					else
+						PlayerUtils.runCommand(sender, command);
+				});
 		});
 	}
 

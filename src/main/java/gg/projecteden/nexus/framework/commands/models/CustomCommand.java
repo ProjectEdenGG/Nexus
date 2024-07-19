@@ -618,12 +618,20 @@ public abstract class CustomCommand extends ICustomCommand {
 		PlayerUtils.runCommand(sender, commandNoSlash);
 	}
 
+	protected void runMultiCommandAsOp(String... commands) {
+		runMultiCommandAsOp(sender(), commands);
+	}
+
 	protected void runMultiCommand(String... commands) {
 		runMultiCommand(sender(), commands);
 	}
 
+	protected void runMultiCommandAsOp(CommandSender sender, String... commands) {
+		MultiCommandCommand.run(sender, List.of(commands), true);
+	}
+
 	protected void runMultiCommand(CommandSender sender, String... commands) {
-		MultiCommandCommand.run(sender, List.of(commands));
+		MultiCommandCommand.run(sender, List.of(commands), false);
 	}
 
 	protected void runCommandAsOp(String commandNoSlash) {

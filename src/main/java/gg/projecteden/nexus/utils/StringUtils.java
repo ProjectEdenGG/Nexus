@@ -23,7 +23,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
+import java.awt.*;
 import java.text.DecimalFormat;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -113,6 +113,10 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 		hex = org.apache.commons.lang.StringUtils.leftPad(hex, 6, "0");
 
 		return "#" + hex;
+	}
+
+	public static String colorLabel(ColorType colorType) {
+		return "&" + toHex(colorType.getBukkitColor()) + camelCase(colorType);
 	}
 
 	public static String stripColor(String input) {

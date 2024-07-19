@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.crates.CrateHandler;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.TrainBackground;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.BalloonEditor;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Geyser;
 import gg.projecteden.nexus.features.listeners.common.TemporaryListener;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
@@ -276,6 +277,10 @@ public class NexusCommand extends CustomCommand implements Listener {
 				for (gg.projecteden.nexus.features.events.models.Train train : new ArrayList<>(gg.projecteden.nexus.features.events.models.Train.getInstances()))
 					train.stop();
 			}
+		}),
+		PUGMAS24_BALLOON_EDITOR(() -> {
+			if (BalloonEditor.reload())
+				throw new InvalidInputException("A balloon is being editing at pugmas, saving session...");
 		}),
 		CHAT_GAMES(() -> {
 			if (ChatGamesConfig.getCurrentGame() != null)
