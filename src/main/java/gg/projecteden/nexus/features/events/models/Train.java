@@ -127,6 +127,10 @@ public class Train {
 							continue;
 
 						player.setVelocity(EntityUtils.getForcefieldVelocity(player, armorStand.getLocation()));
+						new SoundBuilder(CustomSound.BONK)
+								.location(player.getLocation())
+								.receiver(player)
+								.play();
 					}
 				}
 			}));

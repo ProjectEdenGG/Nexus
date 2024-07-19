@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2024.pugmas24.models;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
@@ -32,11 +33,14 @@ public class Train24 {
 	}
 
 	public static void schedule() {
-		final Supplier<Long> delay = () -> TickTime.MINUTE.x(randomInt(5, 10));
+		final Supplier<Long> delay = () -> TickTime.MINUTE.x(randomInt(10, 20));
 
 		Tasks.wait(delay.get(), new AtomicReference<Runnable>() {{
 			set(() -> {
 				if (!Pugmas24.get().anyActivePlayers())
+					return;
+
+				if (Nexus.isMaintenanceQueued())
 					return;
 
 				getDefault().build().start();

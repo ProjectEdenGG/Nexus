@@ -25,6 +25,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
 /*
 	TODO:
 		- GEYSER ERUPTING GIVES BETTER CHANCES TO FISHING?
+		- TELL PLAYERS THAT GEYSER HELP WITH ELYTRA
  */
 @NoArgsConstructor
 public class Geyser implements Listener {
@@ -133,7 +135,12 @@ public class Geyser implements Listener {
 					if (player.getLocation().getBlockY() <= geyserPushLoc.getBlockY())
 						fromLoc.setY(player.getLocation().getY() - 2);
 
-					Vector launchVector = EntityUtils.getForcefieldVelocity(player, fromLoc, 2.5);
+					ItemStack chestplate = player.getInventory().getChestplate();
+					double yVelocity = 2.5;
+					if (Nullables.isNotNullOrAir(chestplate) && chestplate.getType() == Material.ELYTRA)
+						yVelocity = 4;
+
+					Vector launchVector = EntityUtils.getForcefieldVelocity(player, fromLoc, yVelocity);
 					Vector randomDir = new Vector(RandomUtils.randomDouble(-0.5, 0.5), RandomUtils.randomDouble(0.2, 0.6), RandomUtils.randomDouble(-0.5, 0.5));
 					launchVector.add(randomDir);
 					player.setVelocity(launchVector);
