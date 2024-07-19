@@ -13,39 +13,42 @@ import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
 
 @Rows(3)
 public class BalloonEditorMenu extends InventoryProvider {
-	private static final ItemBuilder TEMPLATE_RESET = new ItemBuilder(CustomMaterial.GUI_ROTATE_LEFT).name("Reset to Template").dyeColor(ColorType.LIGHT_RED).itemFlags(ItemFlags.HIDE_ALL);
+	private static final ItemBuilder PASTE_SCHEM = new ItemBuilder(CustomMaterial.GUI_ROTATE_LEFT).name("Reset").dyeColor(ColorType.LIGHT_RED).itemFlags(ItemFlags.HIDE_ALL);
 	private static final ItemBuilder TEMPLATE_NEXT = new ItemBuilder(CustomMaterial.GUI_ARROW_NEXT).name("Next Template").dyeColor(ColorType.CYAN).itemFlags(ItemFlags.HIDE_ALL);
 	private static final ItemBuilder TEMPLATE_PREVIOUS = new ItemBuilder(CustomMaterial.GUI_ARROW_PREVIOUS).name("Previous Template").dyeColor(ColorType.CYAN).itemFlags(ItemFlags.HIDE_ALL);
 	private static final ItemBuilder EDITOR_EXIT = new ItemBuilder(CustomMaterial.GUI_TRASHCAN).name("Exit").lore("&c(Doesn't save your progress)").dyeColor(ColorType.RED).itemFlags(ItemFlags.HIDE_ALL);
 	private static final ItemBuilder EDITOR_SAVE = new ItemBuilder(CustomMaterial.GUI_CHECK).name("Save").dyeColor(ColorType.LIGHT_GREEN).itemFlags(ItemFlags.HIDE_ALL);
+	private static final String cooldownKeyButton = "pugmas24_balloon_editor-template_paste";
 
-	private static final String cooldownKey = "pugmas24_balloon_editor-template_paste";
+	private static final int row = 1;
 
 	@Override
 	public String getTitle() {
 		return "Chosen Template: #" + BalloonEditor.schemId;
 	}
 
-	int row = 1;
-
 	@Override
 	public void init() {
 		addCloseItem();
 
-		contents.set(SlotPos.of(row, 1), ClickableItem.of(TEMPLATE_RESET, e -> {
-			if (!new CooldownService().check(BalloonEditor.getEditor().getUuid(), cooldownKey, TickTime.SECOND.x(2))) {
-				BalloonEditorUtils.sendCooldown("&cSlow down", cooldownKey);
+		contents.set(SlotPos.of(row, 1), ClickableItem.of(PASTE_SCHEM, e -> {
+			if (!new CooldownService().check(BalloonEditor.getEditor().getUuid(), cooldownKeyButton, TickTime.SECOND)) {
+				BalloonEditorUtils.send("&cSlow down");
 				return;
 			}
 
-			BalloonEditorUtils.send("Reset template");
-			BalloonEditor.resetBalloon();
+			BalloonEditorUtils.send("Reset Balloon");
+			if (BalloonEditor.hasSchematic())
+				BalloonEditor.pasteBalloon(BalloonEditor.getSchematicPath());
+			else
+				BalloonEditor.resetBalloon();
+
 			close();
 		}));
 
 		contents.set(SlotPos.of(row, 2), ClickableItem.of(TEMPLATE_PREVIOUS, e -> {
-			if (!new CooldownService().check(BalloonEditor.getEditor().getUuid(), cooldownKey, TickTime.SECOND.x(2))) {
-				BalloonEditorUtils.sendCooldown("&cSlow down", cooldownKey);
+			if (!new CooldownService().check(BalloonEditor.getEditor().getUuid(), cooldownKeyButton, TickTime.SECOND)) {
+				BalloonEditorUtils.send("&cSlow down");
 				return;
 			}
 
@@ -55,8 +58,8 @@ public class BalloonEditorMenu extends InventoryProvider {
 		}));
 
 		contents.set(SlotPos.of(row, 3), ClickableItem.of(TEMPLATE_NEXT, e -> {
-			if (!new CooldownService().check(BalloonEditor.getEditor().getUuid(), cooldownKey, TickTime.SECOND.x(2))) {
-				BalloonEditorUtils.sendCooldown("&cSlow down", cooldownKey);
+			if (!new CooldownService().check(BalloonEditor.getEditor().getUuid(), cooldownKeyButton, TickTime.SECOND)) {
+				BalloonEditorUtils.send("&cSlow down");
 				return;
 			}
 

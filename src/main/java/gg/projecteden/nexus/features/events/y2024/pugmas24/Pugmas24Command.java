@@ -186,7 +186,7 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 			if (Nexus.isMaintenanceQueued())
 				error("Server maintenance is queued, try again later");
 
-			if (PlayerUtils.hasRoomFor(player(), BlockReplaceBrushMenu.getBrushItem().build()))
+			if (!PlayerUtils.hasRoomFor(player(), BlockReplaceBrushMenu.getBrushItem().build()))
 				error("Not enough room in your inventory to do this");
 
 			BalloonEditor.editBalloon(nerd());

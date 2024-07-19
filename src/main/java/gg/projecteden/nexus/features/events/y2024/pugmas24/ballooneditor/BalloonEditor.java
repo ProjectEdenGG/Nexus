@@ -42,7 +42,7 @@ public class BalloonEditor implements Listener {
 	protected static final Location SCHEM_PASTE = Pugmas24.get().location(-620, 162, -3214); // TODO FINAL: LOCATION
 	protected static final String SCHEM_BASE = "pugmas24/balloons/";
 	protected static final String SCHEM_TEMPLATE = SCHEM_BASE + "template/";
-	public static final int TEMPLATE_SIZE = 1;
+	public static final int TEMPLATE_SIZE = 5;
 	protected static final ColorType defaultBrushColor = ColorType.RED;
 
 	protected static final WorldEditUtils worldedit = Pugmas24.get().worldedit();
@@ -71,8 +71,6 @@ public class BalloonEditor implements Listener {
 		Nexus.registerListener(this);
 
 		Pugmas24.get().forceLoadChunks(REGION_EDIT);
-
-		resetBalloon();
 	}
 
 	public static void shutdown() {
@@ -101,14 +99,18 @@ public class BalloonEditor implements Listener {
 		flying = editor.getPlayer().isFlying();
 		allowedFlight = editor.getPlayer().getAllowFlight();
 
-		File file = worldedit.getSchematicFile(getSchematicPath(), true);
-		if (file.exists())
+		if (hasSchematic())
 			pasteBalloon(getSchematicPath());
 		else
 			resetBalloon();
 
 		BalloonEditorUtils.giveBrush();
 		BalloonEditorUtils.enableFlight();
+	}
+
+	public static boolean hasSchematic() {
+		File file = worldedit.getSchematicFile(getSchematicPath(), true);
+		return file.exists();
 	}
 
 	public static void saveBalloon() {
@@ -212,7 +214,7 @@ public class BalloonEditor implements Listener {
 
 	//
 
-	private static void pasteBalloon(String filePath) {
+	protected static void pasteBalloon(String filePath) {
 		clearSchemRegion();
 		Tasks.wait(1, () -> worldedit.paster().file(filePath).at(SCHEM_PASTE).pasteAsync());
 
@@ -225,7 +227,7 @@ public class BalloonEditor implements Listener {
 		}
 	}
 
-	private static String getSchematicPath() {
+	protected static String getSchematicPath() {
 		return SCHEM_BASE + editor.getUniqueId();
 	}
 
