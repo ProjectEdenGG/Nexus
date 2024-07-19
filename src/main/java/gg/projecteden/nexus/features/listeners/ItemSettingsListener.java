@@ -29,6 +29,7 @@ public class ItemSettingsListener implements Listener {
 			return;
 
 		event.setCancelled(true);
+		// TODO: IF YOUR INVENTORY IS FULL, THE ITEM GETS DELETED
 	}
 
 	@EventHandler

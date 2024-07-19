@@ -1,11 +1,14 @@
 package gg.projecteden.nexus.features.events.y2024.pugmas24;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.IEventCommand;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24Menu;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.ballooneditor.BalloonEditor;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.ballooneditor.BalloonEditorMenu;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.ballooneditor.BalloonEditorUtils;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.ballooneditor.BlockReplaceBrushMenu;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.District;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Geyser;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Train24;
@@ -18,11 +21,13 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.pugmas24.Advent24Config;
 import gg.projecteden.nexus.models.pugmas24.Advent24ConfigService;
 import gg.projecteden.nexus.models.pugmas24.Advent24Present;
 import gg.projecteden.nexus.models.pugmas24.Pugmas24User;
 import gg.projecteden.nexus.models.pugmas24.Pugmas24UserService;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -171,55 +176,36 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 		Train24.start();
 	}
 
-	@Path("balloon edit")
-	@Permission(Group.ADMIN)
-	void balloon_edit() {
-		if (BalloonEditor.isBeingUsed())
-			error(BalloonEditorUtils.getEditorName() + " is currently using this");
+	@Permission(Group.STAFF)
+	@Path("balloon menu")
+	void balloon_menu() {
+		if (BalloonEditor.isBeingUsed()) {
+			if (!BalloonEditorUtils.isEditing(player()))
+				error(BalloonEditorUtils.getEditorName() + " is currently using this");
+		} else {
+			if (Nexus.isMaintenanceQueued())
+				error("Server maintenance is queued, try again later");
 
-		if (BalloonEditorUtils.isEditing(player()))
-			error("You're already editing your balloon");
+			if (PlayerUtils.hasRoomFor(player(), BlockReplaceBrushMenu.getBrushItem().build()))
+				error("Not enough room in your inventory to do this");
 
-		BalloonEditor.editBalloon(nerd());
-	}
-
-	@Path("balloon save")
-	@Permission(Group.ADMIN)
-	void balloon_save() {
-		if (!BalloonEditorUtils.isEditing(player()))
-			error("You're not currently editing a balloon");
+			BalloonEditor.editBalloon(nerd());
+		}
 
 		if (BalloonEditor.isSavingSchem())
-			error("Please wait while the schematic is saving (Save)");
+			throw new InvalidInputException("Please wait while your balloon is saving");
 
-		BalloonEditor.saveBalloon();
+		new BalloonEditorMenu().open(player());
 	}
 
-	@Path("balloon reset")
+	@Path("balloon endSession")
+	@Description("End the session without saving")
 	@Permission(Group.ADMIN)
-	void balloon_reset() {
-		if (!BalloonEditorUtils.isEditing(player()))
-			error("You're not currently editing a balloon");
+	void balloon_end() {
+		if (!BalloonEditor.isBeingUsed())
+			error("The editor is not being used");
 
-		BalloonEditor.resetBalloon();
-	}
-
-	@Path("balloon paste <id>")
-	@Permission(Group.ADMIN)
-	void balloon_template_paste(@Arg(min = 1, max = BalloonEditor.TEMPLATE_SIZE, value = "1") int id) {
-		if (!BalloonEditorUtils.isEditing(player()))
-			error("You're not currently editing a balloon");
-
-		BalloonEditor.selectTemplate(id);
-	}
-
-	@Path("balloon exit")
-	@Permission(Group.ADMIN)
-	void balloon_exit() {
-		if (BalloonEditor.isSavingSchem())
-			error("Please wait while the schematic is saving (Exit)");
-
-		send(PREFIX + "Exited without saving");
+		send(PREFIX + "Ended " + BalloonEditorUtils.getEditorName() + "'s session without saving");
 		BalloonEditor.reset();
 	}
 }

@@ -25,16 +25,17 @@ public class BlockReplaceBrushMenu extends InventoryProvider {
 
 	public static final CustomMaterial BRUSH_MATERIAL = CustomMaterial.EVENT_PAINTBRUSH;
 	private static final ItemBuilder BRUSH = new ItemBuilder(BRUSH_MATERIAL)
+			.undroppable().unframeable().unplaceable().unstorable().untrashable().untradeable()
 			.name("&eBlock Replacer Brush")
 			.lore("&3Block: " + getColorLabel(BalloonEditor.defaultBrushColor))
 			.lore("")
 			.lore("&3How to use:")
 			.lore("&eLClick &3a block to change the brush color")
-			.lore("&eRClick &3a block to replace it")
+			.lore("&eRClick &3wool to replace it")
 			.dyeColor(BalloonEditor.defaultBrushColor)
-			.glow()
 			.itemFlags(ItemBuilder.ItemFlags.HIDE_ALL)
-			.updateDecorationLore(false);
+			.updateDecorationLore(false)
+			.glow();
 
 	public static ItemBuilder getBrushItem() {
 		return BRUSH.clone();
@@ -70,7 +71,7 @@ public class BlockReplaceBrushMenu extends InventoryProvider {
 		if (tool == null)
 			return;
 
-		ItemBuilder resultBuilder = getBrushItem().clone().dyeColor(brushColor);
+		ItemBuilder resultBuilder = getBrushItem().dyeColor(brushColor);
 
 		// fix color line
 		List<String> newLore = new ArrayList<>();

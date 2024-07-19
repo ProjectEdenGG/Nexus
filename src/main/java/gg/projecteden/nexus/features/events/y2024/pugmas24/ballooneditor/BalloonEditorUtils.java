@@ -38,7 +38,7 @@ public class BalloonEditorUtils {
 	}
 
 	public static ItemStack getReplaceBrush() {
-		return BlockReplaceBrushMenu.getBrushItem().clone().dyeColor(BalloonEditor.getBrushColor()).build();
+		return BlockReplaceBrushMenu.getBrushItem().dyeColor(BalloonEditor.getBrushColor()).build();
 	}
 
 	static void giveBrush() {
@@ -92,5 +92,23 @@ public class BalloonEditorUtils {
 
 		player.setAllowFlight(false);
 		player.setFlying(false);
+	}
+
+	public static void nextTemplate() {
+		int id = BalloonEditor.schemId;
+		id++;
+		if (id > BalloonEditor.TEMPLATE_SIZE)
+			id = 1;
+
+		BalloonEditor.selectTemplate(id);
+	}
+
+	public static void previousTemplate() {
+		int id = BalloonEditor.schemId;
+		id--;
+		if (id < 1)
+			id = BalloonEditor.TEMPLATE_SIZE;
+
+		BalloonEditor.selectTemplate(id);
 	}
 }

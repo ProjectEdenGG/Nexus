@@ -102,18 +102,13 @@ public class BalloonEditor implements Listener {
 		allowedFlight = editor.getPlayer().getAllowFlight();
 
 		File file = worldedit.getSchematicFile(getSchematicPath(), true);
-		if (file.exists()) {
+		if (file.exists())
 			pasteBalloon(getSchematicPath());
-			BalloonEditorUtils.send("pasted previous balloon");
-		} else {
+		else
 			resetBalloon();
-			BalloonEditorUtils.send("pasted template");
-		}
 
 		BalloonEditorUtils.giveBrush();
 		BalloonEditorUtils.enableFlight();
-
-		BalloonEditorUtils.send("editing");
 	}
 
 	public static void saveBalloon() {
@@ -122,7 +117,7 @@ public class BalloonEditor implements Listener {
 			throw new InvalidInputException(PREFIX + "player cannot be null");
 
 		if (savingSchem)
-			throw new InvalidInputException(PREFIX + "schematic is already saving");
+			throw new InvalidInputException(PREFIX + "balloon is already saving");
 
 		BalloonEditorUtils.removeBrush();
 
@@ -132,7 +127,7 @@ public class BalloonEditor implements Listener {
 		String selectCommand = "rg select " + REGION_SCHEM;
 		String copyCommand = "/copy";
 		String saveCommand = "/schem save " + filePath + " -f";
-		String multiCommand = "mcmd " + selectCommand + " ;; wait 10 ;; " + copyCommand + " ;; wait 10 ;; " + saveCommand + " --asOp";
+		String deselectCommand = "/deselect";
 
 		GameMode originalGameMode = player.getGameMode();
 		Location originalLocation = player.getLocation().clone();
@@ -142,19 +137,47 @@ public class BalloonEditor implements Listener {
 		player.teleport(location);
 
 		Tasks.wait(1, () -> {
+			if (!player.isOnline()) {
+				return;
+			}
+
 			savingSchem = true;
 
-			PlayerUtils.runCommandAsOp(player, multiCommand);
-			Tasks.wait(30, () -> {
-				PlayerUtils.runCommandAsOp(player, "/deselect");
-				savingSchem = false;
+			PlayerUtils.runCommandAsOp(player, selectCommand);
+			Tasks.wait(10, () -> {
+				if (!player.isOnline()) {
+					savingSchem = false;
+					return;
+				}
 
-				player.teleport(originalLocation);
-				player.setGameMode(originalGameMode);
+				PlayerUtils.runCommandAsOp(player, copyCommand);
 
-				Tasks.wait(1, () -> {
-					BalloonEditorUtils.send("Schematic saved");
-					reset();
+				Tasks.wait(10, () -> {
+					if (!player.isOnline()) {
+						savingSchem = false;
+						return;
+					}
+
+					PlayerUtils.runCommandAsOp(player, saveCommand);
+
+					Tasks.wait(10, () -> {
+						savingSchem = false;
+
+						if (!player.isOnline()) {
+							reset();
+							return;
+						}
+
+						PlayerUtils.runCommandAsOp(player, deselectCommand);
+
+						player.teleport(originalLocation);
+						player.setGameMode(originalGameMode);
+
+						Tasks.wait(1, () -> {
+							BalloonEditorUtils.send("Balloon saved");
+							reset();
+						});
+					});
 				});
 			});
 		});
@@ -217,7 +240,7 @@ public class BalloonEditor implements Listener {
 			return;
 
 		event.setCancelled(true);
-		BalloonEditorUtils.sendCooldown("&cPlease wait while the schematic is saving (Move)", "pugmas24_balloon_editor-schem");
+		BalloonEditorUtils.sendCooldown("&cPlease wait while your balloon is saving", "pugmas24_balloon_editor-schem");
 	}
 
 	@EventHandler
@@ -229,7 +252,7 @@ public class BalloonEditor implements Listener {
 			return;
 
 		event.setCancelled(true);
-		BalloonEditorUtils.sendCooldown("&cPlease wait while the schematic is saving (Teleport)", "pugmas24_balloon_editor-schem");
+		BalloonEditorUtils.sendCooldown("&cPlease wait while your balloon is saving", "pugmas24_balloon_editor-schem");
 	}
 
 	@EventHandler
@@ -284,7 +307,7 @@ public class BalloonEditor implements Listener {
 			return;
 
 		event.setCancelled(true);
-		BalloonEditorUtils.sendCooldown("&cYou're still editing your balloon (Region)", "pugmas24_balloon_editor-editing");
+		BalloonEditorUtils.sendCooldown("&cYou're still editing your balloon", "pugmas24_balloon_editor-editing");
 	}
 
 	@EventHandler
@@ -296,7 +319,7 @@ public class BalloonEditor implements Listener {
 			return;
 
 		event.setCancelled(true);
-		BalloonEditorUtils.sendCooldown("&cYou're still editing your balloon (Teleport)", "pugmas24_balloon_editor-editing");
+		BalloonEditorUtils.sendCooldown("&cYou're still editing your balloon", "pugmas24_balloon_editor-editing");
 	}
 
 	@EventHandler
@@ -320,7 +343,9 @@ public class BalloonEditor implements Listener {
 		if (!BalloonEditorUtils.isEditing(player)) {
 			if (worldguard.isInRegion(player, REGION_EDIT)) {
 				BalloonEditorUtils.removeBrush(player);
+				player.setGameMode(GameMode.SURVIVAL);
 				BalloonEditorUtils.disableFlight(player);
+				PlayerUtils.runCommandAsOp(player, "/deselect");
 			}
 			return;
 		}
