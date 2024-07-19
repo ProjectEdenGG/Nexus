@@ -27,7 +27,7 @@ public class MultiCommandCommand extends CustomCommand {
 	@Path("<commands...> [--asOp]")
 	@Description("Run multiple commands at once separated by ' ;; '")
 	void run(String input, @Switch boolean asOp) {
-		runMultiCommandAsOp(input.split(" ;; "));
+		runMultiCommand(asOp, input.split(" ;; "));
 	}
 
 	public static void run(CommandSender sender, List<String> commands, boolean asOp) {
