@@ -74,6 +74,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat.FAST;
 import static com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat.MCEDIT_SCHEMATIC;
 import static com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat.SPONGE_SCHEMATIC;
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
@@ -131,7 +132,7 @@ public class WorldEditUtils {
 		return getEditSessionBuilder().build();
 	}
 
-	private File getSchematicFile(String fileName, boolean lookForExisting) {
+	public File getSchematicFile(String fileName, boolean lookForExisting) {
 		final String fileNoExtension = schematicsDirectory + fileName + ".";
 		File file = new File(fileNoExtension + SPONGE_SCHEMATIC.getPrimaryFileExtension());
 		if (!file.exists() && lookForExisting)
@@ -733,10 +734,11 @@ public class WorldEditUtils {
 		save(fileName, region.getMinimumPoint(), region.getMaximumPoint());
 	}
 
+	// TODO: Doesn't work? schematic just pastes air
 	@SneakyThrows
 	public void save(String fileName, BlockVector3 min, BlockVector3 max) {
 		CuboidRegion region = new CuboidRegion(worldEditWorld, min, max);
-		new BlockArrayClipboard(region).save(getSchematicFile(fileName, false), SPONGE_SCHEMATIC);
+		new BlockArrayClipboard(region).save(getSchematicFile(fileName, false), FAST);
 	}
 
 	public CompletableFuture<Void> set(String region, BlockType blockType) {
