@@ -89,4 +89,16 @@ public class SpawnerCommand extends CustomCommand {
 		Block block = getTargetBlockRequired();
 		runCommand("data merge block %d %d %d {SpawnRange:%s}".formatted(block.getX(), block.getY(), block.getZ(), range));
 	}
+
+	@Path("spawnCount <count>")
+	void spawnCount(int count) {
+		Block block = getTargetBlockRequired();
+		runCommand("data merge block %d %d %d {SpawnCount:%d}".formatted(block.getX(), block.getY(), block.getZ(), count));
+	}
+
+	@Path("minSpawnDelay <seconds>")
+	void minSpawnDelay(int seconds) {
+		Block block = getTargetBlockRequired();
+		runCommand("data merge block %d %d %d {MinSpawnDelay:%d}".formatted(block.getX(), block.getY(), block.getZ(), seconds * 20));
+	}
 }

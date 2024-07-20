@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Quest;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestItem;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestReward;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestTask;
+import gg.projecteden.nexus.features.listeners.events.LivingEntityKilledByPlayerEvent;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.models.warps.WarpType;
@@ -18,6 +19,10 @@ import gg.projecteden.nexus.utils.ToolType.ToolGrade;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Pillager;
+import org.bukkit.event.EventHandler;
 import org.bukkit.loot.LootTables;
 
 import java.util.List;
@@ -69,6 +74,21 @@ public class VuLan24 extends EdenEvent {
 		LootTables.DESERT_PYRAMID_ARCHAEOLOGY,
 		LootTables.DESERT_WELL_ARCHAEOLOGY
 	);
+
+	@EventHandler
+	public void on(LivingEntityKilledByPlayerEvent event) {
+		if (!shouldHandle(event.getAttacker()))
+			return;
+
+		final LivingEntity entity = event.getEntity();
+		if (entity.getType() == EntityType.RAVAGER)
+			event.getAttacker().getWorld().dropItem(entity.getLocation(), VuLan24QuestItem.RAVAGER_DROP.get());
+		else if (entity.getType() == EntityType.PILLAGER)
+			if (MaterialTag.BANNERS.isTagged(((Pillager) entity).getEquipment().getHelmet().getType()))
+				event.getAttacker().getWorld().dropItem(entity.getLocation(), VuLan24QuestItem.CAPTAIN_DROP.get());
+			else
+				event.getAttacker().getWorld().dropItem(entity.getLocation(), VuLan24QuestItem.PILLAGER_DROP.get());
+	}
 
 	@Override
 	public void registerInteractHandlers() {

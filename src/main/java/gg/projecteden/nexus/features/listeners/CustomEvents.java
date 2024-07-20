@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.listeners.events.FirstWorldGroupVisitEvent;
 import gg.projecteden.nexus.features.listeners.events.GolemBuildEvent.IronGolemBuildEvent;
 import gg.projecteden.nexus.features.listeners.events.GolemBuildEvent.SnowGolemBuildEvent;
 import gg.projecteden.nexus.features.listeners.events.LivingEntityDamageByPlayerEvent;
+import gg.projecteden.nexus.features.listeners.events.LivingEntityKilledByPlayerEvent;
 import gg.projecteden.nexus.features.listeners.events.PlayerChangingWorldEvent;
 import gg.projecteden.nexus.features.listeners.events.PlayerDamageByPlayerEvent;
 import gg.projecteden.nexus.features.listeners.events.SubWorldGroupChangedEvent;
@@ -96,8 +97,12 @@ public class CustomEvents implements Listener {
 
 		if (event.getEntity() instanceof Player player)
 			new PlayerDamageByPlayerEvent(player, attacker, event).callEvent();
-		else if (event.getEntity() instanceof LivingEntity livingEntity)
+		else if (event.getEntity() instanceof LivingEntity livingEntity) {
 			new LivingEntityDamageByPlayerEvent(livingEntity, attacker, event).callEvent();
+
+			if (livingEntity.getHealth() - event.getFinalDamage() <= 0)
+				new LivingEntityKilledByPlayerEvent(livingEntity, attacker, event).callEvent();
+		}
 	}
 
 	@EventHandler
