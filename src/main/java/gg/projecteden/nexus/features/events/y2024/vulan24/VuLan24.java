@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events.y2024.vulan24;
 
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.models.EventBreakable;
+import gg.projecteden.nexus.features.events.models.EventPlaceable;
 import gg.projecteden.nexus.features.events.y2024.vulan24.models.BoatTracker;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Entity;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24NPC;
@@ -197,6 +198,13 @@ public class VuLan24 extends EdenEvent {
 			.blockMaterials(Material.COBWEB)
 			.requiredTool(ToolType.SWORD)
 			.sound(Sound.BLOCK_STONE_BREAK, 1f, .8f) // TODO 1.21 new sound BLOCK_COBWEB_BREAK
+		);
+	}
+
+	@Override
+	protected void registerPlaceableBlocks() {
+		registerPlaceable(EventPlaceable.builder()
+			.blockMaterials(Material.SUSPICIOUS_SAND)
 		);
 	}
 

@@ -9,6 +9,8 @@ import gg.projecteden.nexus.features.events.models.EventErrors;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventDefaultFishingLoot;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.FishingLoot;
+import gg.projecteden.nexus.features.events.models.EventPlaceable;
+import gg.projecteden.nexus.features.events.models.EventPlaceable.EventPlaceableBuilder;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
 import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
@@ -50,6 +52,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -74,6 +77,7 @@ import static gg.projecteden.nexus.utils.Extensions.isStaff;
 
 public abstract class EdenEvent extends Feature implements Listener {
 	protected List<EventBreakable> breakables = new ArrayList<>();
+	protected List<EventPlaceable> placeables = new ArrayList<>();
 	@Getter
 	protected List<FishingLoot> fishingLoot = new ArrayList<>();
 	@Getter
@@ -384,22 +388,46 @@ public abstract class EdenEvent extends Feature implements Listener {
 	@EventHandler
 	public void _onBlockBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
-		Block block = event.getBlock();
 
 		if (!shouldHandle(player))
 			return;
-
-		if (event.isCancelled()) return;
-		if (!isAtEvent(block)) return;
-		if (canWorldGuardEdit(player)) return;
+		if (event.isCancelled())
+			return;
+		if (canWorldGuardEdit(player))
+			return;
 
 		event.setCancelled(true);
 
-		if (breakBlock(event)) return;
-		if (handleBlockBreak(event)) return;
+		if (breakBlock(event))
+			return;
+		if (handleBlockBreak(event))
+			return;
 
 		if (new CooldownService().check(player, "event_cantbreak", TickTime.MINUTE)) {
 			errorMessage(player, EventErrors.CANT_BREAK);
+			EventSounds.VILLAGER_NO.play(player);
+		}
+	}
+
+	@EventHandler
+	public void _onBlockPlace(BlockPlaceEvent event) {
+		Player player = event.getPlayer();
+
+		if (!shouldHandle(player))
+			return;
+		if (event.isCancelled())
+			return;
+		if (canWorldGuardEdit(player))
+			return;
+		if (placeBlock(event))
+			return;
+		if (handleBlockPlace(event))
+			return;
+
+		event.setCancelled(true);
+
+		if (new CooldownService().check(player, "event_cantplace", TickTime.MINUTE)) {
+			errorMessage(player, EventErrors.CANT_PLACE);
 			EventSounds.VILLAGER_NO.play(player);
 		}
 	}
@@ -417,6 +445,10 @@ public abstract class EdenEvent extends Feature implements Listener {
 		return false;
 	}
 
+	public boolean handleBlockPlace(BlockPlaceEvent event) {
+		return false;
+	}
+
 	public void errorMessage(Player player, String message) {
 		PlayerUtils.send(player, PREFIX + message);
 	}
@@ -425,21 +457,42 @@ public abstract class EdenEvent extends Feature implements Listener {
 		this.breakables.add(builder.build());
 	}
 
+	public void registerPlaceable(EventPlaceableBuilder builder) {
+		this.placeables.add(builder.build());
+	}
+
 	protected void registerBreakableBlocks() {}
+
+	protected void registerPlaceableBlocks() {}
 
 	private @Nullable EventBreakable getBreakable(Block block) {
 		return breakables.stream().filter(breakable -> {
-			if (!breakable.getBlockMaterials().contains(block.getType()))
-				return false;
-
-			if (breakable.getBlockPredicate() != null)
-				if (!breakable.getBlockPredicate().test(block))
+				if (!breakable.getBlockMaterials().contains(block.getType()))
 					return false;
 
-			return true;
-		})
-		.findFirst()
-		.orElse(null);
+				if (breakable.getBlockPredicate() != null)
+					if (!breakable.getBlockPredicate().test(block))
+						return false;
+
+				return true;
+			})
+			.findFirst()
+			.orElse(null);
+	}
+
+	private @Nullable EventPlaceable getPlaceable(Block block) {
+		return placeables.stream().filter(placeable -> {
+				if (!placeable.getBlockMaterials().contains(block.getType()))
+					return false;
+
+				if (placeable.getBlockPredicate() != null)
+					if (!placeable.getBlockPredicate().test(block))
+						return false;
+
+				return true;
+			})
+			.findFirst()
+			.orElse(null);
 	}
 
 	private static final Set<Material> CROP_SINGLE_BLOCK = new HashSet<>(Arrays.asList(Material.PUMPKIN, Material.MELON));
@@ -510,6 +563,10 @@ public abstract class EdenEvent extends Feature implements Listener {
 			}
 		}
 		return true;
+	}
+
+	public boolean placeBlock(BlockPlaceEvent event) {
+		return getBreakable(event.getBlock()) != null;
 	}
 
 	protected void registerFishingLoot() {}
