@@ -755,8 +755,10 @@ public class PlayerUtils {
 	}
 
 	public static boolean playerHas(OptionalPlayer player, ItemStack itemStack) {
-		if (player.getPlayer() == null) return false;
-		return Arrays.asList(player.getPlayer().getInventory().getContents()).contains(itemStack);
+		if (player.getPlayer() == null)
+			return false;
+
+		return player.getPlayer().getInventory().containsAtLeast(itemStack, itemStack.getAmount());
 	}
 
 	public static ItemStack searchInventory(OptionalPlayer player, CustomModel customModel) {
