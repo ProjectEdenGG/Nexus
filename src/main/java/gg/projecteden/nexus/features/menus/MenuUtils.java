@@ -131,27 +131,35 @@ public abstract class MenuUtils {
 
 	public static void openAnvilMenu(Player player, String text, BiFunction<Player, String, Response> onComplete, Consumer<Player> onClose) {
 		new AnvilGUI.Builder()
-				.text(text)
-				.onComplete(onComplete)
-				.onClose(onClose)
-				.plugin(Nexus.getInstance())
-				.open(player);
+			.text(text)
+			.onComplete(onComplete)
+			.onClose(onClose)
+			.plugin(Nexus.getInstance())
+			.open(player);
 	}
 
 	@Builder
 	@RequiredArgsConstructor
 	public static class AnvilMenu<T> {
-		private @NotNull final InventoryProvider menu;
-		private @NotNull final ItemClickData click;
-		private @NotNull final Supplier<@Nullable ?> getter;
-		private @NotNull final Consumer<@Nullable T> setter;
-		private @Nullable final Predicate<@NotNull String> checker;
-		private @NotNull final Function<@NotNull String, @Nullable T> converter;
+		private @NotNull
+		final InventoryProvider menu;
+		private @NotNull
+		final ItemClickData click;
+		private @NotNull
+		final Supplier<@Nullable ?> getter;
+		private @NotNull
+		final Consumer<@Nullable T> setter;
+		private @Nullable
+		final Predicate<@NotNull String> checker;
+		private @NotNull
+		final Function<@NotNull String, @Nullable T> converter;
 		/**
 		 * Runs a method after the {@link #setter} is called, i.e. {@link Arena#write()}
 		 */
-		private @Nullable final Runnable writer;
-		private @NotNull final String error;
+		private @Nullable
+		final Runnable writer;
+		private @NotNull
+		final String error;
 
 		public void open() {
 			openAnvilMenu(click.getPlayer(), String.valueOf(getter.get()), (p, text) -> {
@@ -162,7 +170,8 @@ public abstract class MenuUtils {
 							writer.run();
 						return Response.close();
 					}
-				} catch(Exception ignored){}
+				} catch (Exception ignored) {
+				}
 				PlayerUtils.send(p, error);
 				return Response.close();
 			}, p -> Tasks.wait(1, () -> menu.open(p)));
@@ -172,6 +181,7 @@ public abstract class MenuUtils {
 			public void open() {
 				build().open();
 			}
+
 		}
 
 		public static class IntegerBuilder extends AnvilMenuBuilder<Integer> {
@@ -201,7 +211,9 @@ public abstract class MenuUtils {
 				error("Input must be a positive integer");
 				return this;
 			}
+
 		}
+
 	}
 
 	@Rows(3)
@@ -296,6 +308,7 @@ public abstract class MenuUtils {
 			if (additionalContents != null)
 				additionalContents.accept(contents);
 		}
+
 	}
 
 
@@ -323,6 +336,7 @@ public abstract class MenuUtils {
 			public NPCShopMenu build() {
 				throw new UnsupportedOperationException("Use open(player)");
 			}
+
 		}
 
 		@Override
@@ -345,24 +359,24 @@ public abstract class MenuUtils {
 				items.add(ClickableItem.of(displayItem, e -> {
 					if (canAfford)
 						ConfirmationMenu.builder()
-								.titleWithSlot("&4Are you sure?")
-								.displayItem(displayItem.build())
+							.titleWithSlot("&4Are you sure?")
+							.displayItem(displayItem.build())
 							.onConfirm(e2 -> {
 								try {
 									currency.withdraw(viewer, price, shopGroup, product);
 
-									if (product.isVirtual() && onPurchase != null) {
-										onPurchase.accept(viewer, this);
+									if (product.isVirtual()) {
+										if (onPurchase != null)
+											onPurchase.accept(viewer, this);
 										return;
 									}
-
-									PlayerUtils.giveItem(viewer, item);
 
 									currency.log(viewer, price, product, shopGroup);
 
 									if (onPurchase != null)
 										onPurchase.accept(viewer, this);
 
+									PlayerUtils.giveItem(viewer, item);
 								} catch (Exception ex) {
 									MenuUtils.handleException(viewer, StringUtils.getPrefix("NPCShopMenu"), ex);
 								}
@@ -378,14 +392,18 @@ public abstract class MenuUtils {
 		@Data
 		@AllArgsConstructor
 		public static class Product {
-			@Nullable ItemStack itemStack;
-			@Nullable ItemStack displayItemStack;
+			@Nullable
+			ItemStack itemStack;
+			@Nullable
+			ItemStack displayItemStack;
 			boolean virtual = false;
 
 			Currency currency;
-			@Nullable Currency.Price price;
+			@Nullable
+			Currency.Price price;
 
-			@Nullable BiConsumer<Player, InventoryProvider> onPurchase;
+			@Nullable
+			BiConsumer<Player, InventoryProvider> onPurchase;
 
 			public Product() {
 				this(null, null);
@@ -477,6 +495,7 @@ public abstract class MenuUtils {
 			public ItemStack getDisplayItemStack() {
 				return displayItemStack == null ? itemStack : displayItemStack;
 			}
+
 		}
 
 	}

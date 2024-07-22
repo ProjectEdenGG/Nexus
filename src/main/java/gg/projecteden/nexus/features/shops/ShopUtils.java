@@ -39,7 +39,7 @@ public class ShopUtils {
 
 	public static String prettyMoney(Number number, boolean free) {
 		if (free && number.doubleValue() == 0)
-			return "free";
+			return "Free";
 		return "$" + pretty(number);
 	}
 

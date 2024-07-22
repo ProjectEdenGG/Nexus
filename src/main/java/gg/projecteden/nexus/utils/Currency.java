@@ -25,7 +25,7 @@ public enum Currency {
 	FREE() {
 		@Override
 		public String getPriceLore(Price price, boolean canAfford) {
-			return "&3Price: &afree";
+			return "&3Price: &aFree";
 		}
 
 		@Override

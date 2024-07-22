@@ -67,7 +67,6 @@ public class BoatTracker implements Listener {
 		userService.save(user);
 
 		PlayerUtils.removeItem(player, oldBoat);
-		PlayerUtils.giveItem(user, newBoat);
 	}
 
 	//
@@ -78,7 +77,7 @@ public class BoatTracker implements Listener {
 			return;
 
 		Player player = event.getPlayer();
-		if (!VuLan24.get().isAtEvent(player))
+		if (!VuLan24.get().shouldHandle(player))
 			return;
 
 		Block clickedBlock = event.getClickedBlock();
@@ -116,7 +115,7 @@ public class BoatTracker implements Listener {
 		if (!(event.getVehicle() instanceof Boat boat))
 			return;
 
-		if (!VuLan24.get().isAtEvent(player))
+		if (!VuLan24.get().shouldHandle(player))
 			return;
 
 		VuLan24User user = userService.get(player);
@@ -137,7 +136,7 @@ public class BoatTracker implements Listener {
 		if (!(event.getVehicle() instanceof Boat boat))
 			return;
 
-		if (!VuLan24.get().isAtEvent(player))
+		if (!VuLan24.get().shouldHandle(player))
 			return;
 
 		event.setCancelled(true);

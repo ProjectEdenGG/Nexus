@@ -23,14 +23,12 @@ public class VuLan24Menus {
 
 	public static NPCShopMenuBuilder getBoatPicker() {
 		return NPCShopMenu.builder()
-				.title("Pick a boat")
+				.title("Boat Picker")
 				.npcId(VuLan24NPC.BOAT_SALESMAN.getNpcId())
 				.shopGroup(null)
 				.products(new ArrayList<>() {{
-					for (BoatType boatType : BoatType.values()) {
-						add(Product.free(new ItemStack(boatType.getBoatMaterial()))
-								.onPurchase((player, provider) -> BoatTracker.selectBoat(player, boatType)));
-					}
+					for (BoatType boatType : BoatType.values())
+						add(Product.free(new ItemStack(boatType.getBoatMaterial())).onPurchase((player, provider) -> BoatTracker.selectBoat(player, boatType)));
 				}});
 	}
 
