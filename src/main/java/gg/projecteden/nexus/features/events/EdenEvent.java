@@ -200,6 +200,20 @@ public abstract class EdenEvent extends Feature implements Listener {
 		getPlayers().forEach(player -> ActionBarUtils.sendActionBar(player, message, ticks));
 	}
 
+	public void forceLoadChunks(Set<ProtectedRegion> regions) {
+		forceLoadChunks(new ArrayList<>(regions));
+	}
+
+	public void forceLoadChunks(List<ProtectedRegion> regions) {
+		for (ProtectedRegion region : regions) {
+			forceLoadChunks(region.getId());
+		}
+	}
+
+	public void forceLoadChunks(ProtectedRegion region) {
+		forceLoadChunks(region.getId());
+	}
+
 	public void forceLoadChunks(String regionId) {
 		ChunkLoader.loadChunks(getWorld(), regionId);
 	}

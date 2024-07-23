@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.events.y2024.pugmas24.ballooneditor;
+package gg.projecteden.nexus.features.events.y2024.pugmas24.balloons;
 
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
@@ -14,13 +14,10 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -37,16 +34,13 @@ import org.bukkit.inventory.ItemStack;
 import java.io.File;
 
 public class BalloonEditor implements Listener {
-	protected static final String REGION_EDIT = Pugmas24.get().getRegionName() + "_balloon_edit";  // TODO FINAL: DEFINE REGION
-	protected static final String REGION_SCHEM = Pugmas24.get().getRegionName() + "_balloon_schem";  // TODO FINAL: DEFINE REGION
+	private static final Location WARP = Pugmas24.get().location(-614.5, 156.0, -3216.5, 0, 0);
+	protected static final String REGION_EDIT = BalloonManager.REGION_BASE + "edit";  // TODO FINAL: DEFINE REGION
+	protected static final String REGION_SCHEM = BalloonManager.REGION_BASE + "schem";  // TODO FINAL: DEFINE REGION
 	protected static final Location SCHEM_PASTE = Pugmas24.get().location(-620, 162, -3214); // TODO FINAL: LOCATION
-	protected static final String SCHEM_BASE = "pugmas24/balloons/";
-	protected static final String SCHEM_TEMPLATE = SCHEM_BASE + "template/";
-	public static final int TEMPLATE_SIZE = 5;
+	protected static final int TEMPLATE_SIZE = BalloonManager.getTotalTemplateSchematics();
 	protected static final ColorType defaultBrushColor = ColorType.RED;
 
-	protected static final WorldEditUtils worldedit = Pugmas24.get().worldedit();
-	protected static final WorldGuardUtils worldguard = Pugmas24.get().worldguard();
 	public static final String PREFIX = StringUtils.getPrefix("BalloonEditor");
 
 	@Getter
@@ -109,7 +103,7 @@ public class BalloonEditor implements Listener {
 	}
 
 	public static boolean hasSchematic() {
-		File file = worldedit.getSchematicFile(getSchematicPath(), true);
+		File file = BalloonManager.worldedit.getSchematicFile(getSchematicPath(), true);
 		return file.exists();
 	}
 
@@ -124,7 +118,7 @@ public class BalloonEditor implements Listener {
 		BalloonEditorUtils.removeBrush();
 
 		String filePath = getSchematicPath();
-		Region region = worldguard.convert(worldguard.getProtectedRegion(REGION_SCHEM));
+		Region region = BalloonManager.worldguard.convert(BalloonManager.worldguard.getProtectedRegion(REGION_SCHEM));
 
 		String selectCommand = "rg select " + REGION_SCHEM;
 		String copyCommand = "/copy";
@@ -132,8 +126,7 @@ public class BalloonEditor implements Listener {
 		String deselectCommand = "/deselect";
 
 		GameMode originalGameMode = player.getGameMode();
-		Location originalLocation = player.getLocation().clone();
-		Location location = worldedit.toLocation(region.getMinimumPoint());
+		Location location = BalloonManager.worldedit.toLocation(region.getMinimumPoint());
 
 		player.setGameMode(GameMode.SPECTATOR);
 		player.teleport(location);
@@ -172,7 +165,7 @@ public class BalloonEditor implements Listener {
 
 						PlayerUtils.runCommandAsOp(player, deselectCommand);
 
-						player.teleport(originalLocation);
+						player.teleport(WARP);
 						player.setGameMode(originalGameMode);
 
 						Tasks.wait(1, () -> {
@@ -209,26 +202,18 @@ public class BalloonEditor implements Listener {
 
 	public static void selectTemplate(int id) {
 		schemId = id;
-		pasteBalloon(SCHEM_TEMPLATE + schemId);
+		pasteBalloon(BalloonManager.SCHEM_TEMPLATE + schemId);
 	}
 
 	//
 
 	protected static void pasteBalloon(String filePath) {
-		clearSchemRegion();
-		Tasks.wait(1, () -> worldedit.paster().file(filePath).at(SCHEM_PASTE).pasteAsync());
+		BalloonManager.pasteBalloonAsync(filePath, SCHEM_PASTE);
 
-	}
-
-	private static void clearSchemRegion() {
-		// templates are different sizes, so clear region before paste
-		for (Block block : worldedit.getBlocks(worldguard.getRegion(REGION_SCHEM))) {
-			block.setType(Material.AIR);
-		}
 	}
 
 	protected static String getSchematicPath() {
-		return SCHEM_BASE + editor.getUniqueId();
+		return BalloonManager.SCHEM_USER + editor.getUniqueId();
 	}
 
 	//
@@ -291,7 +276,7 @@ public class BalloonEditor implements Listener {
 	}
 
 	private boolean canEditBlock(Block block) {
-		if (!worldguard.isInRegion(block, REGION_SCHEM))
+		if (!BalloonManager.worldguard.isInRegion(block, REGION_SCHEM))
 			return false;
 
 		if (block.getType() == brushColor.getWool())
@@ -317,7 +302,7 @@ public class BalloonEditor implements Listener {
 		if (!BalloonEditorUtils.isEditing(event.getPlayer()))
 			return;
 
-		if (worldguard.isInRegion(event.getTo(), REGION_EDIT) || savingSchem)
+		if (BalloonManager.worldguard.isInRegion(event.getTo(), REGION_EDIT) || savingSchem)
 			return;
 
 		event.setCancelled(true);
@@ -343,7 +328,7 @@ public class BalloonEditor implements Listener {
 	public void whenEditing(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		if (!BalloonEditorUtils.isEditing(player)) {
-			if (worldguard.isInRegion(player, REGION_EDIT)) {
+			if (BalloonManager.worldguard.isInRegion(player, REGION_EDIT)) {
 				BalloonEditorUtils.removeBrush(player);
 				player.setGameMode(GameMode.SURVIVAL);
 				BalloonEditorUtils.disableFlight(player);

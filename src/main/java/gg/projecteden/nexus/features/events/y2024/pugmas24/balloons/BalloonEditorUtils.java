@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.events.y2024.pugmas24.ballooneditor;
+package gg.projecteden.nexus.features.events.y2024.pugmas24.balloons;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;

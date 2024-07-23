@@ -5,10 +5,11 @@ import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.IEventCommand;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24Menu;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.ballooneditor.BalloonEditor;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.ballooneditor.BalloonEditorMenu;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.ballooneditor.BalloonEditorUtils;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.ballooneditor.BlockReplaceBrushMenu;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.BalloonEditor;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.BalloonEditorMenu;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.BalloonEditorUtils;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.BalloonManager;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.BlockReplaceBrushMenu;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.District;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Geyser;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Train24;
@@ -22,6 +23,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redi
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.pugmas24.Advent24Config;
 import gg.projecteden.nexus.models.pugmas24.Advent24ConfigService;
 import gg.projecteden.nexus.models.pugmas24.Advent24Present;
@@ -207,5 +209,19 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 
 		send(PREFIX + "Ended " + BalloonEditorUtils.getEditorName() + "'s session without saving");
 		BalloonEditor.reset();
+	}
+
+	@Path("balloon listPlacements")
+	@Description("List the currently placed balloons and their regions")
+	@Permission(Group.ADMIN)
+	void balloon_listPlacements() {
+		send("Placed balloons:");
+		for (String regionId : BalloonManager.getUserPlacementRegions().keySet()) {
+			Nerd nerd = Nerd.of(BalloonManager.getUserPlacementRegions().get(regionId));
+			String uuid = nerd.getUniqueId().toString();
+			String nickname = nerd.getNickname();
+
+			send(json(" - " + regionId + " = ").group().next(nickname).hover(uuid).insert(uuid));
+		}
 	}
 }

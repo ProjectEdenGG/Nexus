@@ -4,7 +4,8 @@ import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.ballooneditor.BalloonEditor;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.BalloonEditor;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.BalloonManager;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Fairgrounds;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Rides;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Train24;
@@ -70,7 +71,7 @@ public class Pugmas24 extends EdenEvent {
 	public void onStart() {
 		new Advent24();
 		new Fairgrounds();
-		new BalloonEditor();
+		new BalloonManager();
 		Rides.startup();
 		Train24.startup();
 	}

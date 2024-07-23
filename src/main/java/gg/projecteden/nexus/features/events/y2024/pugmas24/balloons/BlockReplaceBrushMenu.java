@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.events.y2024.pugmas24.ballooneditor;
+package gg.projecteden.nexus.features.events.y2024.pugmas24.balloons;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
