@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.events.y2024.vulan24;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import gg.projecteden.api.common.annotations.Environments;
+import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.features.effects.Effects;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -12,6 +14,7 @@ import org.bukkit.World;
 import java.util.List;
 
 @NoArgsConstructor
+@Environments(Env.PROD)
 public class VuLan24Effects extends Effects {
 
 	private final List<Location> SMOKE_STACKS = List.of(

@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.events.y2024.vulan24;
 
+import gg.projecteden.api.common.annotations.Environments;
+import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.models.EventBreakable;
 import gg.projecteden.nexus.features.events.models.EventPlaceable;
@@ -39,12 +41,13 @@ import static gg.projecteden.nexus.features.events.models.EventFishingLoot.Event
 	entities = VuLan24Entity.class,
 	items = VuLan24QuestItem.class,
 	rewards = VuLan24QuestReward.class,
-	start = @Date(m = 8, d = 1, y = 2024), // TODO If ready in time, change to 7/15
+	start = @Date(m = 8, d = 1, y = 2024),
 	end = @Date(m = 8, d = 31, y = 2024),
 	world = "vu_lan",
 	region = "vu_lan",
 	warpType = WarpType.VULAN24
 )
+@Environments(Env.PROD)
 public class VuLan24 extends EdenEvent {
 	private static VuLan24 instance;
 

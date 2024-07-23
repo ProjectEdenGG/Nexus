@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.events.y2024.pugmas24;
 
+import gg.projecteden.api.common.annotations.Environments;
+import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.effects.Effects;
 import gg.projecteden.nexus.features.effects.Effects.RotatingStand.StandRotationAxis;
@@ -18,6 +20,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @NoArgsConstructor
+@Environments(Env.PROD)
 public class Pugmas24Effects extends Effects {
 
 	@Override

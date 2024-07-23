@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.events.y2024.pugmas24;
 
+import gg.projecteden.api.common.annotations.Environments;
+import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.ballooneditor.BalloonEditor;
@@ -41,6 +43,7 @@ import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
 		region = "pugmas24",
 	warpType = WarpType.PUGMAS24
 )
+@Environments(Env.PROD)
 public class Pugmas24 extends EdenEvent {
 	private static Pugmas24 instance;
 	public static final String PREFIX = StringUtils.getPrefix("Pugmas 2024");
