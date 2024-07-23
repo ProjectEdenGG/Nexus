@@ -1,13 +1,10 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.store;
 
-import gg.projecteden.nexus.features.events.y2024.vulan24.VuLan24;
-import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,12 +18,12 @@ import java.util.UUID;
 @AllArgsConstructor
 public enum DecorationStoreType {
 	CATALOG(null, null, null, DecorationStoreCurrencyType.MONEY, 0),
-	SURVIVAL(Survival.getWorld(), DecorationStore.getStoreRegionSchematic(), null, DecorationStoreCurrencyType.MONEY, 0),
-	VU_LAN_FLORIST(VuLan24.get().getWorld(), VuLan24.getStoreRegionFlorist(), "Vu Lan", DecorationStoreCurrencyType.TOKENS, 25),
-	VU_LAN_MARKET(VuLan24.get().getWorld(), VuLan24.getStoreRegionMarket(), "Vu Lan", DecorationStoreCurrencyType.TOKENS, 25),
+	SURVIVAL("survival", DecorationStore.getStoreRegionSchematic(), null, DecorationStoreCurrencyType.MONEY, 0),
+	VU_LAN_FLORIST("vu_lan", "vu_lan_decor_store_florist", "Vu Lan", DecorationStoreCurrencyType.TOKENS, 25),
+	VU_LAN_MARKET("vu_lan", "vu_lan_decor_store_market", "Vu Lan", DecorationStoreCurrencyType.TOKENS, 25),
 	;
 
-	private final @Nullable World world;
+	private final @Nullable String worldName;
 	private final @Nullable String glowRegionId;
 	private final @Nullable String id;
 	private final @NonNull DecorationStoreCurrencyType currency;
@@ -50,11 +47,11 @@ public enum DecorationStoreType {
 	}
 
 	public List<Player> getPlayers() {
-		if (world == null || glowRegionId == null)
+		if (worldName == null || glowRegionId == null)
 			return new ArrayList<>();
 
 		return OnlinePlayers.where()
-				.world(world)
+				.world(worldName)
 				.region(glowRegionId)
 				.vanished(false)
 				.get();

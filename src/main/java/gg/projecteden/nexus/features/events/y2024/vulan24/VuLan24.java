@@ -19,7 +19,6 @@ import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.ToolType;
 import gg.projecteden.nexus.utils.ToolType.ToolGrade;
-import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
@@ -50,11 +49,6 @@ import static gg.projecteden.nexus.features.events.models.EventFishingLoot.Event
 @Environments(Env.PROD)
 public class VuLan24 extends EdenEvent {
 	private static VuLan24 instance;
-
-	@Getter
-	private static final String storeRegionFlorist = "vu_lan_decor_store_florist";
-	@Getter
-	private static final String storeRegionMarket = "vu_lan_decor_store_market";
 
 	public VuLan24() {
 		instance = this;

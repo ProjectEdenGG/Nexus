@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.store;
 
+import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
@@ -18,6 +19,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -65,12 +67,18 @@ public class DecorationStoreManager implements Listener {
 	}
 
 	public static void glowTask() {
+		if (Nexus.getEnv() != Env.PROD)
+			return;
+
 		Tasks.repeat(0, TickTime.TICK.x(4), () -> {
 			if (Decorations.isServerReloading())
 				return;
 
 			for (DecorationStoreType storeType : DecorationStoreType.values()) {
-				if (storeType.getWorld() == null)
+				if (storeType.getWorldName() == null)
+					continue;
+
+				if (Bukkit.getWorld(storeType.getWorldName()) == null)
 					continue;
 
 				if (storeType.getGlowRegionId() == null)
@@ -262,7 +270,7 @@ public class DecorationStoreManager implements Listener {
 			return true;
 		}
 
-		WorldGroup worldGroup = WorldGroup.of(storeType.getWorld());
+		WorldGroup worldGroup = WorldGroup.of(storeType.getWorldName());
 		shopGroup = ShopGroup.of(worldGroup);
 
 		if (shopGroup == null) {
