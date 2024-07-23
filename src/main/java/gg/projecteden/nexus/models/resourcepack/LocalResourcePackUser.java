@@ -156,11 +156,14 @@ public class LocalResourcePackUser implements PlayerOwnedObject {
 	}
 
 	private static final Map<Status, ChatColor> STATUS_COLORS = Map.of(
-			Status.SUCCESSFULLY_LOADED, ChatColor.GREEN,
-			Status.DOWNLOADED, ChatColor.YELLOW,
-			Status.FAILED_DOWNLOAD, ChatColor.RED,
-			Status.ACCEPTED, ChatColor.GOLD,
-			Status.DECLINED, ChatColor.DARK_RED
+		Status.SUCCESSFULLY_LOADED, ChatColor.GREEN,
+		Status.DECLINED, ChatColor.RED,
+		Status.FAILED_DOWNLOAD, ChatColor.RED,
+		Status.ACCEPTED, ChatColor.GOLD,
+		Status.DOWNLOADED, ChatColor.YELLOW,
+		Status.INVALID_URL, ChatColor.RED,
+		Status.FAILED_RELOAD, ChatColor.RED,
+		Status.DISCARDED, ChatColor.RED
 	);
 
 }
