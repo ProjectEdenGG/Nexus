@@ -64,6 +64,11 @@ public class VuLan24 extends EdenEvent {
 	@Override
 	public void onStart() {
 		super.onStart();
+		customGenericGreetings = List.of(
+			"Xin Chao stranger!",
+			"Cau Chao!",
+			"Tieng Chao traveler. Welcome to Vinh Luc!"
+		);
 		new BoatTracker();
 	}
 

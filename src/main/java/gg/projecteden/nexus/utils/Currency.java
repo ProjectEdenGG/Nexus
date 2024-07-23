@@ -12,6 +12,7 @@ import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.store.ContributorService;
 import gg.projecteden.nexus.models.voter.VoterService;
 import lombok.Getter;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -199,7 +200,10 @@ public enum Currency {
 				return result;
 			}
 
-			if (value instanceof ItemStack) {
+			if (value instanceof Material material) {
+				result.item = new ItemStack(material);
+				result.empty = false;
+			} else if (value instanceof ItemStack) {
 				result.item = (ItemStack) value;
 				result.empty = false;
 			} else if (value instanceof Integer) {

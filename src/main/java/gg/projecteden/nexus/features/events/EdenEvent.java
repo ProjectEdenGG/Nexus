@@ -82,6 +82,8 @@ public abstract class EdenEvent extends Feature implements Listener {
 	protected List<FishingLoot> fishingLoot = new ArrayList<>();
 	@Getter
 	protected EventFishingListener fishingListener;
+	@Getter
+	protected List<String> customGenericGreetings = new ArrayList<>();
 
 	public static List<EdenEvent> EVENTS = new ArrayList<>();
 

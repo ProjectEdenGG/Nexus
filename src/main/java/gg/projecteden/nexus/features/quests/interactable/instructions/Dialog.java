@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.quests.interactable.instructions;
 
+import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.quests.QuestItem;
 import gg.projecteden.nexus.features.quests.QuestReward;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
@@ -208,6 +209,9 @@ public class Dialog {
 
 	public static DialogInstance genericGreeting(Quester quester, Interactable interactable) {
 		List<String> genericGreetings = new ArrayList<>(Dialog.genericGreetings);
+		final EdenEvent event = EdenEvent.of(quester.getOnlinePlayer());
+		if (event != null)
+			genericGreetings.addAll(event.getCustomGenericGreetings());
 
 		if (quester.getLocation() != null) {
 			final long time = quester.getLocation().getWorld().getTime();
