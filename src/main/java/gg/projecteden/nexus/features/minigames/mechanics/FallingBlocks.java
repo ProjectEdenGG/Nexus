@@ -758,31 +758,6 @@ public class FallingBlocks extends TeamlessMechanic {
 		}
 	);
 
-	PowerUpUtils.PowerUp REVIVE_ALL = new PowerUpUtils.PowerUp("&bRevive All", null,
-			new ItemBuilder(Material.TOTEM_OF_UNDYING).glow().build(),
-
-			minigamer -> {
-				pickupPowerup(minigamer);
-
-				Match match = minigamer.getMatch();
-
-				for (Minigamer _minigamer : new ArrayList<>(match.getDeadMinigamers())) {
-
-					match.getDeadMinigamers().remove(_minigamer);
-					match.getAliveMinigamers().add(_minigamer);
-					_minigamer.setAlive(true);
-					_minigamer.unhideAll();
-
-
-					_minigamer.teleportAsync(minigamer.getLocation());
-					_minigamer.getPlayer().setVelocity(minigamer.getPlayer().getVelocity());
-					minigamer.tell("&aYou have been revived!");
-				}
-
-				match.broadcast("&bAll dead players have been revived!");
-			}
-	);
-
 	Map<PowerUp, Double> powerUpWeights = new HashMap<>() {{
 		put(JUMP, 25.0);
 		put(SPEED_SELF, 25.0);
@@ -800,7 +775,6 @@ public class FallingBlocks extends TeamlessMechanic {
 		put(PAUSE_BLOCKS, 12.5);
 		put(ADD_LAYER, 12.5);
 		put(MORE_POWERUPS, 12.5);
-		put(REVIVE_ALL, 12.5);
 
 		put(CLEAR_ARENA, 10.0);
 		put(LINE_THICKENER, 10.0);
