@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegion
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.InventoryUtils.BlockInventoryType;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -40,6 +41,7 @@ import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -226,6 +228,22 @@ public class WorldGuardFlags implements Listener {
 				return;
 			event.setCancelled(true);
 		}
+	}
+
+	@EventHandler
+	public void onBlockInventoryOpen(InventoryOpenEvent event) {
+		if (event.getInventory().getLocation() == null)
+			return;
+
+		if (canWorldGuardEdit(event.getPlayer()))
+			return;
+
+		Set<BlockInventoryType> blockInventoryTypes = WorldGuardFlagUtils.queryValue(event.getInventory().getLocation(), ALLOWED_BLOCK_INVENTORIES);
+		if (blockInventoryTypes == null)
+			return;
+
+		if (!blockInventoryTypes.stream().map(BlockInventoryType::getInventoryType).toList().contains(event.getInventory().getType()))
+			event.setCancelled(true);
 	}
 
 	@EventHandler
