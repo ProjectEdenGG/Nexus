@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
+import gg.projecteden.nexus.features.events.models.EventErrors;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
@@ -238,12 +239,15 @@ public class WorldGuardFlags implements Listener {
 		if (canWorldGuardEdit(event.getPlayer()))
 			return;
 
-		Set<BlockInventoryType> blockInventoryTypes = WorldGuardFlagUtils.queryValue(event.getInventory().getLocation(), ALLOWED_BLOCK_INVENTORIES);
+		Set<String> blockInventoryTypes = WorldGuardFlagUtils.queryValue(event.getInventory().getLocation(), ALLOWED_BLOCK_INVENTORIES);
 		if (blockInventoryTypes == null)
 			return;
 
-		if (!blockInventoryTypes.stream().map(BlockInventoryType::getInventoryType).toList().contains(event.getInventory().getType()))
-			event.setCancelled(true);
+		if (blockInventoryTypes.stream().map(BlockInventoryType::valueOf).map(BlockInventoryType::getInventoryType).toList().contains(event.getInventory().getType()))
+			return;
+
+		event.setCancelled(true);
+		PlayerUtils.send(event.getPlayer(), EventErrors.CANT_OPEN);
 	}
 
 	@EventHandler

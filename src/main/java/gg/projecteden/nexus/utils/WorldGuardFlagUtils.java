@@ -19,7 +19,6 @@ import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.SimpleFlagRegistry;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.utils.InventoryUtils.BlockInventoryTypeFlag;
 import gg.projecteden.parchment.HasPlayer;
 import gg.projecteden.parchment.OptionalPlayer;
 import lombok.AllArgsConstructor;
@@ -87,7 +86,7 @@ public class WorldGuardFlagUtils {
 		/**
 		 * Sets which inventories a player can access (i.e. chest, furnace, shulker box, hopper, etc.)
 		 */
-		ALLOWED_BLOCK_INVENTORIES(registerFlag(new SetFlag<>("allowed-block-inventories", new BlockInventoryTypeFlag(null)))),
+		ALLOWED_BLOCK_INVENTORIES(registerFlag(new SetFlag<>("allowed-block-inventories", new StringFlag(null)))),
 		/**
 		 * Toggles if players get damaged while inside water
 		 */
