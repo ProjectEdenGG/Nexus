@@ -39,6 +39,7 @@ import net.luckperms.api.context.ContextConsumer;
 import net.luckperms.api.context.ContextSet;
 import net.luckperms.api.context.ImmutableContextSet;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.SoundCategory;
@@ -200,21 +201,29 @@ public abstract class EdenEvent extends Feature implements Listener {
 		getPlayers().forEach(player -> ActionBarUtils.sendActionBar(player, message, ticks));
 	}
 
-	public void forceLoadChunks(Set<ProtectedRegion> regions) {
-		forceLoadChunks(new ArrayList<>(regions));
+	public void forceLoadChunk(Chunk chunk) {
+		ChunkLoader.loadChunk(chunk);
 	}
 
-	public void forceLoadChunks(List<ProtectedRegion> regions) {
+	public void forceLoadChunks(Set<Chunk> chunks) {
+		ChunkLoader.loadChunks(chunks);
+	}
+
+	public void forceLoadRegions(Set<ProtectedRegion> regions) {
+		forceLoadRegions(new ArrayList<>(regions));
+	}
+
+	public void forceLoadRegions(List<ProtectedRegion> regions) {
 		for (ProtectedRegion region : regions) {
-			forceLoadChunks(region.getId());
+			forceLoadRegions(region.getId());
 		}
 	}
 
-	public void forceLoadChunks(ProtectedRegion region) {
-		forceLoadChunks(region.getId());
+	public void forceLoadRegion(ProtectedRegion region) {
+		forceLoadRegions(region.getId());
 	}
 
-	public void forceLoadChunks(String regionId) {
+	public void forceLoadRegions(String regionId) {
 		ChunkLoader.loadChunks(getWorld(), regionId);
 	}
 

@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationSto
 import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
+import gg.projecteden.nexus.utils.ChunkLoader;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
@@ -52,6 +53,8 @@ public class DecorationStoreLayouts {
 	}
 
 	public static void pasteLayout(String schematic, StoreLocation storeLocation) {
+		ChunkLoader.loadChunks(storeLocation.getLocation().getWorld(), storeLocation.getRegionId());
+
 		// TODO: Interaction/Display entities
 		List<EntityType> deleteEntities = List.of(EntityType.ITEM_FRAME, EntityType.ARMOR_STAND, EntityType.PAINTING, EntityType.GLOW_ITEM_FRAME);
 		for (Entity entity : new WorldGuardUtils(storeLocation.getLocation()).getEntitiesInRegion(storeLocation.getRegionId())) {

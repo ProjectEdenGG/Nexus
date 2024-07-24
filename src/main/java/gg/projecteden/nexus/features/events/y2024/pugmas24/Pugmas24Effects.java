@@ -74,6 +74,8 @@ public class Pugmas24Effects extends Effects {
 				armorStand.getEquipment().setItemInMainHand(new ItemBuilder(Material.PAPER).modelId(6247).build());
 				angle += 90;
 			}
+
+			Pugmas24.get().forceLoadChunk(rotatingStand.getArmorStand().getLocation().getChunk());
 		}
 	}
 

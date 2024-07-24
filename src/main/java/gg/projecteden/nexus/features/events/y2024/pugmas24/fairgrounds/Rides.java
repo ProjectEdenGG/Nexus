@@ -55,8 +55,8 @@ public class Rides {
 	@NoArgsConstructor
 	@AllArgsConstructor
 	public enum Ride {
-		CHAIRSWING(loc(-744, -2867), 50),
-		FERRISWHEEL(loc(-817, -2918), 50),
+		CHAIRSWING(loc(-744, -2867), 100),
+		FERRISWHEEL(loc(-817, -2918), 100),
 		;
 
 		Location location;

@@ -3,7 +3,13 @@ package gg.projecteden.nexus.features.minigolf.models;
 import gg.projecteden.nexus.utils.ColorType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bukkit.Color;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+@Getter
 @AllArgsConstructor
 public enum GolfBallColor {
 	WHITE(901, ColorType.WHITE),
@@ -18,8 +24,19 @@ public enum GolfBallColor {
 	PINK(910, ColorType.PINK),
 	RAINBOW(911, ColorType.WHITE);
 
-	@Getter
 	private final int modelId;
-	@Getter
 	private final ColorType colorType;
+
+	public List<Color> getFireworkColors() {
+		if (this == RAINBOW) {
+			List<GolfBallColor> ignore = Arrays.asList(RAINBOW, WHITE, BLACK);
+			return Arrays.stream(values())
+					.filter(color -> !ignore.contains(color))
+					.map(color -> color.getColorType().getBukkitColor())
+					.toList();
+		}
+
+		return Collections.singletonList(colorType.getBukkitColor());
+	}
+
 }

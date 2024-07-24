@@ -19,7 +19,12 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 /*
  TODO:
@@ -29,6 +34,10 @@ import java.util.*;
   - Allow golfball to not go out of bounds in regions using regex
   - Golfball can get stuck on boost/conveyor blocks
   - Golfballs that roll off of slabs, stay in the air
+  -
+  - Make Teleport blocks parse an item in the block instead of a sign below it
+  	- Add more lines such as yaw and speed
+  	- Make a command to generate this item
 */
 
 public class MiniGolf extends Feature {
@@ -99,7 +108,8 @@ public class MiniGolf extends Feature {
 
 				powerMap.put(user.getUuid(), exp);
 
-				player.sendExperienceChange(exp, 0);
+				player.sendExperienceChange(exp, 0); // TODO: PLAYER EXP NEVER FILLS TO 100%
+
 			}
 		});
 	}

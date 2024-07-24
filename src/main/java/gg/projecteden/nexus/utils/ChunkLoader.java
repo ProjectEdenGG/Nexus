@@ -33,15 +33,14 @@ public class ChunkLoader extends Feature {
 		}
 	}
 
-	public static void loadChunks(World world, ProtectedRegion region) {
-		loadChunks(world, region.getId());
+	public static void loadChunks(World world, String region) {
+		WorldGuardUtils worldguard = new WorldGuardUtils(world);
+		ProtectedRegion protectedRegion = worldguard.getProtectedRegion(region);
+		loadChunks(world, protectedRegion);
 	}
 
-	public static void loadChunks(World world, String region) {
+	public static void loadChunks(World world, ProtectedRegion protectedRegion) {
 		WorldEditUtils worldedit = new WorldEditUtils(world);
-		WorldGuardUtils worldguard = new WorldGuardUtils(world);
-
-		ProtectedRegion protectedRegion = worldguard.getProtectedRegion(region);
 		List<Block> blocks = worldedit.getBlocks(protectedRegion);
 		loadChunks(blocks);
 	}
@@ -55,11 +54,14 @@ public class ChunkLoader extends Feature {
 	}
 
 	public static void loadChunk(Chunk chunk) {
-		chunk.setForceLoaded(true);
+		long chunkKey = chunk.getChunkKey();
 
 		Set<Long> chunks = loadedChunks.getOrDefault(chunk.getWorld(), new HashSet<>());
-		chunks.add(chunk.getChunkKey());
+		if (chunks.contains(chunkKey) && chunk.isForceLoaded())
+			return;
 
+		chunk.setForceLoaded(true);
+		chunks.add(chunkKey);
 		loadedChunks.put(chunk.getWorld(), chunks);
 	}
 

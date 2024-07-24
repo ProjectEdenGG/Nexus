@@ -64,7 +64,7 @@ public class BalloonEditor implements Listener {
 	public BalloonEditor() {
 		Nexus.registerListener(this);
 
-		Pugmas24.get().forceLoadChunks(REGION_EDIT);
+		Pugmas24.get().forceLoadRegions(REGION_EDIT);
 	}
 
 	public static void shutdown() {

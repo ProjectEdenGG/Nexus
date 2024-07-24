@@ -19,7 +19,7 @@ public class Train24 {
 	private static final String trainTrackRegion = Pugmas24.get().getRegionName() + "_train_track";  // TODO FINAL: DEFINE REGION
 
 	public static void startup() {
-		Pugmas24.get().forceLoadChunks(trainTrackRegion);
+		Pugmas24.get().forceLoadRegions(trainTrackRegion);
 
 		schedule();
 	}
