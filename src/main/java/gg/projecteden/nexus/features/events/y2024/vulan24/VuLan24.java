@@ -5,6 +5,7 @@ import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.models.EventBreakable;
 import gg.projecteden.nexus.features.events.models.EventPlaceable;
+import gg.projecteden.nexus.features.events.y2024.vulan24.lantern.LanternAnimationManager;
 import gg.projecteden.nexus.features.events.y2024.vulan24.models.BoatTracker;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Entity;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24NPC;
@@ -67,6 +68,7 @@ public class VuLan24 extends EdenEvent {
 			"Tieng Chao traveler. Welcome to Vinh Luc!"
 		);
 		new BoatTracker();
+		new LanternAnimationManager();
 	}
 
 	public static final List<LootTables> ARCHAEOLOGY_LOOT_TABLES = List.of(
