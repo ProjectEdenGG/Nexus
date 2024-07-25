@@ -5,8 +5,7 @@ import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.models.EventBreakable;
 import gg.projecteden.nexus.features.events.models.EventPlaceable;
-import gg.projecteden.nexus.features.events.y2024.vulan24.lantern.LanternAnimationManager;
-import gg.projecteden.nexus.features.events.y2024.vulan24.models.BoatTracker;
+import gg.projecteden.nexus.features.events.y2024.vulan24.models.VuLan24BoatTracker;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Entity;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24NPC;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Quest;
@@ -15,7 +14,10 @@ import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestRew
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestTask;
 import gg.projecteden.nexus.features.listeners.events.LivingEntityKilledByPlayerEvent;
 import gg.projecteden.nexus.features.quests.QuestConfig;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.annotations.Date;
+import gg.projecteden.nexus.models.scheduledjobs.jobs.VuLan24LanternAnimationJob;
+import gg.projecteden.nexus.models.vulan24.VuLan24ConfigService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.ToolType;
@@ -26,6 +28,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Pillager;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.loot.LootTables;
 
 import java.util.List;
@@ -67,8 +70,8 @@ public class VuLan24 extends EdenEvent {
 			"Cau Chao!",
 			"Tieng Chao traveler. Welcome to Vinh Luc!"
 		);
-		new BoatTracker();
-		new LanternAnimationManager();
+		new VuLan24BoatTracker();
+		new VuLan24LanternAnimationJob();
 	}
 
 	public static final List<LootTables> ARCHAEOLOGY_LOOT_TABLES = List.of(
@@ -79,6 +82,19 @@ public class VuLan24 extends EdenEvent {
 		LootTables.DESERT_PYRAMID_ARCHAEOLOGY,
 		LootTables.DESERT_WELL_ARCHAEOLOGY
 	);
+
+	@EventHandler
+	public void onRightClick(PlayerInteractEvent event) {
+		if (!VuLan24.get().isInRegion(event.getPlayer(), "vulan_lanternanimation_place"))
+			return;
+
+		if (CustomMaterial.of(event.getPlayer().getInventory().getItemInMainHand()) != CustomMaterial.of(VuLan24QuestItem.PAPER_LANTERN_FLOATING.get()))
+			return;
+
+		event.setCancelled(true);
+		event.getPlayer().getInventory().getItemInMainHand().subtract(1);
+		new VuLan24ConfigService().edit0(user -> user.setLanterns(user.getLanterns() + 1));
+	}
 
 	@EventHandler
 	public void on(LivingEntityKilledByPlayerEvent event) {

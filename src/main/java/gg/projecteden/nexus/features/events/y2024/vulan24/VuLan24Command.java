@@ -2,14 +2,14 @@ package gg.projecteden.nexus.features.events.y2024.vulan24;
 
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.IEventCommand;
-import gg.projecteden.nexus.features.events.y2024.vulan24.lantern.LanternAnimation;
+import gg.projecteden.nexus.features.events.y2024.vulan24.lantern.VuLan24LanternAnimation;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -30,33 +30,37 @@ public class VuLan24Command extends IEventCommand {
 		return VuLan24.get();
 	}
 
-
-	@Path("lanternanimation debugPoints <id>")
+	@Path("lantern animation debug path <id>")
 	@Permission(Group.ADMIN)
-	void debugPoints(int id) {
-		if (LanternAnimation.getInstance() == null)
-			new LanternAnimation();
+	void lantern_animation_debug_path(int id) {
+		if (VuLan24LanternAnimation.getInstance() == null)
+			VuLan24LanternAnimation.builder().build();
 
-		for (List<Location> path : LanternAnimation.getInstance().getPaths()) {
+		for (List<Location> path : VuLan24LanternAnimation.getInstance().getPaths()) {
 			Location loc = path.get(id);
 			player().sendBlockChange(loc, Material.RED_CONCRETE.createBlockData());
 		}
 	}
 
-	@Path("lanternanimation start")
+	@Path("lantern animation start [--count] [--moveSpeed]")
 	@Permission(Group.ADMIN)
-	void startAnimation() {
-		if (LanternAnimation.getInstance() != null)
+	void lantern_animation_start(
+		@Switch @Arg("10") int count,
+		@Switch @Arg("2") int moveSpeed
+	) {
+		if (VuLan24LanternAnimation.getInstance() != null)
 			error("There is already an active animation");
-		new LanternAnimation();
-		LanternAnimation.getInstance().start();
+
+		VuLan24LanternAnimation.builder().startingLanterns(count).moveSpeed(moveSpeed).start();
 	}
 
-	@Path("lanternanimation stop")
+	@Path("lantern animation stop")
 	@Permission(Group.ADMIN)
-	void stopAnimation() {
-		if (LanternAnimation.getInstance() != null)
-			LanternAnimation.getInstance().cleanup();
+	void lantern_animation_stop() {
+		if (VuLan24LanternAnimation.getInstance() == null)
+			error("There is no active animation");
+
+		VuLan24LanternAnimation.getInstance().cleanup();
 	}
 
 }

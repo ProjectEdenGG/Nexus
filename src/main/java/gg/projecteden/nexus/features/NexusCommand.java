@@ -11,7 +11,7 @@ import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.TrainBackground;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.BalloonEditor;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Geyser;
-import gg.projecteden.nexus.features.events.y2024.vulan24.lantern.LanternAnimation;
+import gg.projecteden.nexus.features.events.y2024.vulan24.lantern.VuLan24LanternAnimation;
 import gg.projecteden.nexus.features.listeners.common.TemporaryListener;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
@@ -288,9 +288,9 @@ public class NexusCommand extends CustomCommand implements Listener {
 				if (ChatGamesConfig.getCurrentGame().isStarted())
 					throw new InvalidInputException("There is an active chat game");
 		}),
-		VULAN_LANTERN_ANIMATION(() -> {
-			if (LanternAnimation.getInstance() != null)
-				throw new InvalidInputException("There is an active lantern animation");
+		VU_LAN_LANTERN_ANIMATION(() -> {
+			if (VuLan24LanternAnimation.getInstance() != null)
+				throw new InvalidInputException("There is an active Vu Lan lantern animation");
 		}),
 		;
 

@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.events.y2024.vulan24;
 
-import gg.projecteden.nexus.features.events.y2024.vulan24.models.BoatTracker;
+import gg.projecteden.nexus.features.events.y2024.vulan24.models.VuLan24BoatTracker;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24NPC;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu.NPCShopMenuBuilder;
@@ -27,7 +27,7 @@ public class VuLan24Menus {
 			.shopGroup(null)
 			.products(new ArrayList<>() {{
 				for (BoatType boatType : BoatType.values())
-					add(Product.free(boatType.getBoatMaterial()).onPurchase((player, provider) -> BoatTracker.selectBoat(player, boatType)));
+					add(Product.free(boatType.getBoatMaterial()).onPurchase((player, provider) -> VuLan24BoatTracker.selectBoat(player, boatType)));
 			}});
 	}
 

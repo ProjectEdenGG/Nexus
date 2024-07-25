@@ -3,8 +3,10 @@ package gg.projecteden.nexus.features.events.y2024.vulan24.lantern;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.features.events.y2024.vulan24.VuLan24;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.models.vulan24.VuLan24ConfigService;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -15,51 +17,78 @@ import org.bukkit.block.data.type.Light;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.util.Vector;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class LanternAnimation {
+@Builder(buildMethodName = "_build")
+public class VuLan24LanternAnimation {
 
-	private static final int STARTING_LANTERNS = 10;
-	private static final List<CustomMaterial> lanternMaterials = List.of(CustomMaterial.VULAN_WATER_LANTERN_SMALL, CustomMaterial.VULAN_WATER_LANTERN_SMALL_NO_BASE,
-																			CustomMaterial.VULAN_WATER_LANTERN_LARGE, CustomMaterial.VULAN_WATER_LANTERN_LARGE_NO_BASE);
+	public static final int DEFAULT_STARTING_LANTERNS = 10;
+
+	// Lower values will make it move faster
+	private static final int MOVE_SPEED = 2;
+
+	private static final List<CustomMaterial> LANTERN_MATERIALS = List.of(
+		CustomMaterial.VULAN_WATER_LANTERN_SMALL,
+		CustomMaterial.VULAN_WATER_LANTERN_SMALL_NO_BASE,
+		CustomMaterial.VULAN_WATER_LANTERN_LARGE,
+		CustomMaterial.VULAN_WATER_LANTERN_LARGE_NO_BASE
+	);
+
 	// How far to move the armor stand down from the surface
-	private static final double armorStandOffset = 2.15;
+	private static final double ARMOR_STAND_OFFSET = 2.15;
 	// How long should lanterns spawn in for
-	private static final int spawn_over_ticks = 200;
+	private static final int SPAWN_OVER_TICKS = 200;
 	// How close should a lantern get to another before it slows down to make room
-	private static final float range_check = 1.75f;
+	private static final float RANGE_CHECK = 1.75f;
 
-	private static final List<ProtectedRegion> startRegions;
-	private static final List<ProtectedRegion> checkpointRegions;
+	private static final List<ProtectedRegion> START_REGIONS;
+	private static final List<ProtectedRegion> CHECKPOINT_REGIONS;
 
 	@Getter
-	private static LanternAnimation instance;
+	private static VuLan24LanternAnimation instance;
 
 	static  {
-		startRegions = new ArrayList<>(VuLan24.get().worldguard().getRegionsLike("^vulan_lanternanimation_start(_[\\d]+)?$")).stream().sorted().toList();
-		checkpointRegions = new ArrayList<>(VuLan24.get().worldguard().getRegionsLike("^vulan_lanternanimation_checkpoint(_[\\d]+)?$")).stream()
+		START_REGIONS = new ArrayList<>(VuLan24.get().worldguard().getRegionsLike("^vulan_lanternanimation_start(_[\\d]+)?$")).stream().sorted().toList();
+		CHECKPOINT_REGIONS = new ArrayList<>(VuLan24.get().worldguard().getRegionsLike("^vulan_lanternanimation_checkpoint(_[\\d]+)?$")).stream()
 			.sorted(Comparator.comparingInt(region -> {
 				String[] parts = region.getId().split("_");
 				return Integer.parseInt(parts[parts.length - 1]);
 			})).toList();
 	}
 
+	@Builder.Default
+	private int startingLanterns = DEFAULT_STARTING_LANTERNS;
+	@Builder.Default
+	private int moveSpeed = MOVE_SPEED;
+
 	@Getter
 	private List<Location>[] paths;
-	private List<VulanLantern> lanterns;
+	private List<VuLan24Lantern> lanterns;
 
-	public LanternAnimation() {
+	public static class VuLan24LanternAnimationBuilder {
+
+		public VuLan24LanternAnimation build() {
+			return _build().build();
+		}
+
+		public VuLan24LanternAnimation start() {
+			return build().start();
+		}
+
+	}
+
+	public VuLan24LanternAnimation build() {
 		if (instance != null) {
 			instance.cleanup();
 		}
 		instance = this;
-		setup();
-	}
 
-	public void setup() {
-		int amount = STARTING_LANTERNS + getAdditionalPlayerLanterns();
+		int amount = startingLanterns + getAdditionalPlayerLanterns();
 		this.paths = generatePaths(10 + amount);
 
 		List<Integer> ids = new ArrayList<>();
@@ -71,31 +100,35 @@ public class LanternAnimation {
 		for (int i = 0; i < amount; i++) {
 			int id = ids.remove(0);
 			List<Location> path = new ArrayList<>();
-			for (List<Location> locs : LanternAnimation.getInstance().getPaths())
+			for (List<Location> locs : VuLan24LanternAnimation.getInstance().getPaths())
 				path.add(locs.get(Math.min(id, locs.size() - 1)));
-			lanterns.add(new VulanLantern(path));
+			lanterns.add(new VuLan24Lantern(path, moveSpeed));
 		}
+
+		return this;
 	}
 
-	public void start() {
+	public VuLan24LanternAnimation start() {
 		if (lanterns != null && !lanterns.isEmpty()) {
 			List<CompletableFuture<Void>> futures = new ArrayList<>();
-			for (VulanLantern lantern : lanterns) {
+			for (VuLan24Lantern lantern : lanterns) {
 				futures.add(lantern.start());
 			}
 			CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()])).thenRun(this::cleanup);
 		}
+
+		return this;
 	}
 
 	private int getAdditionalPlayerLanterns() {
-		return LanternAnimationManager.getPlayerLanternsAndReset();
+		return new VuLan24ConfigService().get0().getLanterns();
 	}
 
 	private List<Location>[] generatePaths(int amount) {
-		List<Location>[] locations = new List[checkpointRegions.size() + 1];
-		locations[0] = getRandomBlocksInRegions(amount, startRegions.toArray(new ProtectedRegion[0]));
-		for (int i = 0; i < checkpointRegions.size(); i++) {
-			locations[i + 1] = getRandomBlocksInRegions(amount, checkpointRegions.get(i));
+		List<Location>[] locations = new List[CHECKPOINT_REGIONS.size() + 1];
+		locations[0] = getRandomBlocksInRegions(amount, START_REGIONS.toArray(new ProtectedRegion[0]));
+		for (int i = 0; i < CHECKPOINT_REGIONS.size(); i++) {
+			locations[i + 1] = getRandomBlocksInRegions(amount, CHECKPOINT_REGIONS.get(i));
 		}
 		return locations;
 	}
@@ -116,18 +149,18 @@ public class LanternAnimation {
 
 	public void cleanup() {
 		if (lanterns != null && !lanterns.isEmpty())
-			lanterns.forEach(VulanLantern::stop);
+			lanterns.forEach(VuLan24Lantern::stop);
 		instance = null;
 	}
 
 	@RequiredArgsConstructor
-	public static class VulanLantern {
-
-		// Lower values will make it move faster
-		private static int MOVE_SPEED = 2;
+	public static class VuLan24Lantern {
 
 		@NonNull
 		private List<Location> path;
+		@NonNull
+		private int moveSpeed;
+
 		private int currentPathIndex = 0;
 
 		private List<Location> currentSplinePath;
@@ -139,8 +172,11 @@ public class LanternAnimation {
 		private CompletableFuture<Void> animationCompletable;
 
 		private CompletableFuture<Void> start() {
-			Tasks.wait(RandomUtils.randomInt(0, spawn_over_ticks), () -> {
+			Tasks.wait(RandomUtils.randomInt(0, SPAWN_OVER_TICKS), () -> {
 				onStart().thenRun(() -> {
+					if (instance == null)
+						return;
+
 					AtomicInteger iteration = new AtomicInteger();
 					taskID = Tasks.repeat(0, 1, () -> tick(iteration.getAndIncrement()));
 				});
@@ -159,11 +195,15 @@ public class LanternAnimation {
 			CompletableFuture<Void> cf = new CompletableFuture<>();
 			newSpline().thenRun(() -> {
 				Tasks.sync(() -> {
-					stand = currentSplinePath.get(0).getWorld().spawn(currentSplinePath.get(0).clone().subtract(0, armorStandOffset, 0), ArmorStand.class, as -> {
+					if (instance == null)
+						cf.complete(null);
+
+					stand = currentSplinePath.get(0).getWorld().spawn(currentSplinePath.get(0).clone().subtract(0, ARMOR_STAND_OFFSET, 0), ArmorStand.class, as -> {
 						as.setGravity(false);
 						as.setVisible(false);
-						as.getEquipment().setHelmet(RandomUtils.randomElement(lanternMaterials).getItem());
+						as.getEquipment().setHelmet(RandomUtils.randomElement(LANTERN_MATERIALS).getItem());
 					});
+
 					cf.complete(null);
 				});
 			});
@@ -176,7 +216,7 @@ public class LanternAnimation {
 				Tasks.sync(() -> {
 					for (int x = -1; x <= 1; x++) {
 						for (int z = -1; z <= 1; z++) {
-							Block block = stand.getLocation().clone().add(x, armorStandOffset, z).getBlock();
+							Block block = stand.getLocation().clone().add(x, ARMOR_STAND_OFFSET, z).getBlock();
 							if (block.getType() == Material.LIGHT)
 								block.setType(Material.AIR);
 						}
@@ -192,24 +232,24 @@ public class LanternAnimation {
 					return;
 				}
 
-				var nearby = stand.getLocation().getNearbyEntitiesByType(ArmorStand.class, range_check);
+				var nearby = stand.getLocation().getNearbyEntitiesByType(ArmorStand.class, RANGE_CHECK);
 				if (!nearby.isEmpty()) {
 					ArmorStand max = nearby.stream().max(Comparator.comparingDouble(as -> as.getLocation().getZ())).get();
 					if (max.getEntityId() != stand.getEntityId()) {
-						if (iteration % (MOVE_SPEED * 2) != 0)
+						if (iteration % (moveSpeed * 2) != 0)
 							return;;
 					}
 				}
 
-				if (iteration % MOVE_SPEED != 0)
+				if (iteration % moveSpeed != 0)
 					return;
 
 				Location loc = currentSplinePath.remove(0);
-				stand.teleport(loc.clone().subtract(0, armorStandOffset, 0));
+				stand.teleport(loc.clone().subtract(0, ARMOR_STAND_OFFSET, 0));
 
 				for (int x = -1; x <= 1; x++) {
 					for (int z = -1; z <= 1; z++) {
-						Block block = stand.getLocation().clone().add(x, armorStandOffset, z).getBlock();
+						Block block = stand.getLocation().clone().add(x, ARMOR_STAND_OFFSET, z).getBlock();
 						if (block.getType() == Material.LIGHT)
 							block.setType(Material.AIR);
 					}
@@ -217,7 +257,7 @@ public class LanternAnimation {
 
 				Light light = (Light) Material.LIGHT.createBlockData();
 				light.setLevel(5);
-				stand.getLocation().clone().add(0, armorStandOffset, 0).getBlock().setBlockData(light);
+				stand.getLocation().clone().add(0, ARMOR_STAND_OFFSET, 0).getBlock().setBlockData(light);
 			});
 		}
 
@@ -248,7 +288,7 @@ public class LanternAnimation {
 				return locations;
 
 			if (currentPathIndex > 0) {
-				locations.add(stand.getLocation().clone().add(0, armorStandOffset, 0));
+				locations.add(stand.getLocation().clone().add(0, ARMOR_STAND_OFFSET, 0));
 				currentPathIndex--;
 			}
 

@@ -24,11 +24,11 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 
-public class BoatTracker implements Listener {
+public class VuLan24BoatTracker implements Listener {
 
 	private static final VuLan24UserService userService = new VuLan24UserService();
 
-	public BoatTracker() {
+	public VuLan24BoatTracker() {
 		Nexus.registerListener(this);
 	}
 

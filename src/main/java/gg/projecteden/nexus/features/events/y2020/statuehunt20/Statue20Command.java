@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.warps.commands;
+package gg.projecteden.nexus.features.events.y2020.statuehunt20;
 
 import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.discord.Discord;
@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.warps.commands._WarpCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
