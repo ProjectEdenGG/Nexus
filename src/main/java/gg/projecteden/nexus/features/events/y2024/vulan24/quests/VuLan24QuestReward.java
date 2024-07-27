@@ -15,7 +15,6 @@ public enum VuLan24QuestReward implements QuestReward {
 	}),
 	POTTERY_QUEST((uuid, amount) -> {
 		QuestReward.eventTokens(uuid, 50);
-		QuestReward.item(uuid, VuLan24QuestItem.POT.get());
 	}),
 	HERO_QUEST((uuid, amount) -> {
 		QuestReward.eventTokens(uuid, 150);
