@@ -135,7 +135,7 @@ public abstract class Effects extends Feature implements Listener {
 
 		onLoadRotatingStands();
 
-		Tasks.repeat(TickTime.SECOND, TickTime.TICK, () -> {
+		Tasks.repeat(TickTime.SECOND.x(2), TickTime.TICK, () -> {
 			for (RotatingStand rotatingStand : rotatingStands) {
 				ArmorStand armorStand = rotatingStand.getArmorStand();
 				if (armorStand == null)

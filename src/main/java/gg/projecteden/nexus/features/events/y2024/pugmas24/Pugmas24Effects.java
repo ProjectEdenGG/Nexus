@@ -11,6 +11,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
@@ -41,6 +42,7 @@ public class Pugmas24Effects extends Effects {
 	@Override
 	public void animations() {
 		geyser();
+		minigolfWindmill();
 	}
 
 	@Override
@@ -95,6 +97,18 @@ public class Pugmas24Effects extends Effects {
 			tries.set(0);
 			Geyser.animate();
 		});
+	}
+
+	private void minigolfWindmill() {
+		Location animationLoc = Pugmas24.get().location(-755, 71, -2915);
+
+		Tasks.repeat(TickTime.SECOND.x(2), TickTime.TICK.x(38), () -> {
+			if (!shouldAnimate(animationLoc))
+				return;
+
+			animationLoc.getBlock().setType(Material.REDSTONE_BLOCK);
+		});
+
 	}
 
 
