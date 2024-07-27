@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events.y2024.vulan24;
 
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.models.EventBreakable;
 import gg.projecteden.nexus.features.events.models.EventPlaceable;
@@ -14,12 +15,17 @@ import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestRew
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestTask;
 import gg.projecteden.nexus.features.listeners.events.LivingEntityKilledByPlayerEvent;
 import gg.projecteden.nexus.features.quests.QuestConfig;
+import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
+import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomEmoji;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.VuLan24LanternAnimationJob;
 import gg.projecteden.nexus.models.vulan24.VuLan24ConfigService;
+import gg.projecteden.nexus.models.vulan24.VuLan24UserService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.ToolType;
 import gg.projecteden.nexus.utils.ToolType.ToolGrade;
 import org.bukkit.Material;
@@ -111,12 +117,80 @@ public class VuLan24 extends EdenEvent {
 				event.getAttacker().getWorld().dropItem(entity.getLocation(), VuLan24QuestItem.PILLAGER_DROP.get());
 	}
 
+	@EventHandler
+	public void on(PlayerEnteredRegionEvent event) {
+		if (!event.getRegion().getId().equals("avontyre_vu_lan_ship"))
+			return;
+
+		final VuLan24UserService userService = new VuLan24UserService();
+		if (!userService.get(event.getPlayer()).isReadyToVisit())
+			return;
+
+		new TitleBuilder()
+			.title(CustomEmoji.SCREEN_BLACK.getChar())
+			.fade(TickTime.TICK.x(10))
+			.players(event.getPlayer())
+			.stay(TickTime.TICK.x(10))
+			.send()
+			.thenRun(() -> {
+				WarpType.VULAN24.get("spawn").teleportAsync(event.getPlayer());
+				userService.edit(event.getPlayer(), user -> user.setVisited(true));
+			});
+	}
+
 	@Override
 	public void registerInteractHandlers() {
 		handleInteract(VuLan24NPC.BOAT_SALESMAN, (player, npc) -> VuLan24Menus.getBoatPicker().open(player));
 		handleInteract(VuLan24NPC.TOUR_GUIDE, (player, npc) -> VuLan24Menus.getGuideShop().open(player));
 		handleInteract(VuLan24NPC.MINER, (player, npc) -> VuLan24Menus.getMinerShop().open(player));
 		handleInteract(VuLan24NPC.HAT_SALESMAN, (player, npc) -> VuLan24Menus.getBambooHatShop(player).open(player));
+		handleInteract(VuLan24NPC.CAPTAIN_LAI_AVONTYRE, (player, npc) -> {
+			final VuLan24UserService userService = new VuLan24UserService();
+			if (userService.get(player).isReadyToVisit())
+				new Dialog(npc)
+					.npc("Climb aboard when you are ready to visit Vinh Luc for the Vu Lan Festival!")
+					.send(player);
+			else
+				new Dialog(npc)
+					.npc("Xin Chao adventurer! We arrive from the far east with goods and wares that your eyes have never seen! We had heard of this place and thought we'd stop by on our way back to Vietuda!")
+					.player("Welcome to Avontyre! I can't say I've heard of Vietuda.")
+					.npc("Well, specifically, we're headed back to Vinh Luc, an island south of the mainland.")
+					.npc("We're collecting some goods and materials to bring back to the island for the Vu Lan Festival that's going to start in a few days. You should visit!")
+					.player("That sounds awesome! I'd love to go... but I don't have a ship... or a boat.")
+					.npc("Not to worry, If you'd like, feel free to come back with us! Our island would love to have you. Climb aboard when you are ready.")
+					.thenRun(quester -> userService.edit(quester, user -> user.setReadyToVisit(true)))
+					.send(player);
+			}
+		);
+		handleInteract(VuLan24NPC.CAPTAIN_LAI_VINH_LUC, (player, npc) -> new Dialog(npc)
+			.npc("Ah... home sweet home. I hope this year's Vu Lan is just as great as the last!")
+			.send(player)
+		);
+		handleInteract(VuLan24NPC.MAYOR_HOA, (player, npc) -> new Dialog(npc)
+			.npc("Xin Chao! Welcome to Vinh Luc, the isle of tombs! I hope you have a lovely stay here for the festival!")
+			.npc("Please take your time to explore our beautiful island. There are plenty of things to do here and everyone is so welcoming!")
+			.player("Thank you! There’s a lot to do… where should I start?")
+			.npc("I recommend you talk to Anh first to find out about the Community Quest! Then, visit the quest boards for more.")
+			.send(player)
+		);
+		handleInteract(VuLan24NPC.FLORIST, (player, npc) -> new Dialog(npc)
+			.npc("The Banyan Tree is a symbol of Vietudan villages! The Snake plant is even better but nothing takes the cake like a China Rose. Beautiful flowers!")
+			.send(player)
+		);
+		handleInteract(VuLan24NPC.STONE_MASON, (player, npc) -> new Dialog(npc)
+			.npc("Looking for work? Visit Truong near the building site! He's always after some help.")
+			.send(player)
+		);
+		handleInteract(VuLan24NPC.PLUNDERED_VILLAGE_VILLAGER, (player, npc) -> new Dialog(npc)
+			.npc("You! These bandits sacked our village on the eve of Vu Lan! Can you help? Find Xuam in the Market!")
+			.send(player)
+		);
+		handleInteract(VuLan24NPC.PLUNDERED_VILLAGE_FARMER, (player, npc) -> new Dialog(npc)
+			.npc("I can't wait to harvest these carrots. If I can get enough gold from the caves I could even make gold ones this year!")
+			.send(player)
+		);
+//		handleInteract(VuLan24NPC.STUDENT, (player, npc) -> new Dialog(npc).npc("").send(Quester.of(player)));
+//		handleInteract(VuLan24NPC.CULTURE_GUY, (player, npc) -> new Dialog(npc).npc("").send(Quester.of(player)));
 	}
 
 	@Override

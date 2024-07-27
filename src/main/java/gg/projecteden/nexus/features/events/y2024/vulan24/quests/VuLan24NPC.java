@@ -10,18 +10,25 @@ import java.util.function.Predicate;
 @Getter
 @AllArgsConstructor
 public enum VuLan24NPC implements InteractableNPC {
-	CAPTAIN_LAI("Captain Lai", 5176),
-	MAYOR_HOA("Mayor Hoa", 5177),
-	TRUONG("Truong", 5178),
-	XUAM("Xuam", 5179),
-	HAT_SALESMAN("Hat Salesman", 5180),
+	TRUONG("Truong", 5178), // Stone Quest
+	XUAM("Xuam", 5179), // Hero Quest
+	HANH("Hanh", 5182), // Fishing Quest
+	THAM("Tham", 5241), // Pottery Quest
+	PHUONG("Phuong", 5183), // Paper Quest
+
 	ANH("Anh", 5181), // Community Quest
-	HANH("Hanh", 5182),
-	PHUONG("Phuong", 5183),
-	THAM("Tham", 5241),
+
+	CAPTAIN_LAI_AVONTYRE("Captain Lai", 4928),
+	CAPTAIN_LAI_VINH_LUC("Captain Lai", 5176),
+	MAYOR_HOA("Mayor Hoa", 5177),
+	HAT_SALESMAN("Hat Salesman", 5180),
 	BOAT_SALESMAN("Boat Salesman", 5240),
 	MINER("Miner", 5309),
-	TOUR_GUIDE("Tour Guide", 5311)
+	TOUR_GUIDE("Tour Guide", 5311),
+	FLORIST("Florist", 5257),
+	STONE_MASON("Stone Mason", 5259),
+	PLUNDERED_VILLAGE_VILLAGER("", 5304),
+	PLUNDERED_VILLAGE_FARMER("", 5313),
 	;
 
 	private final String name;

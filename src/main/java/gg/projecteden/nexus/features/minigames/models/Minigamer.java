@@ -57,7 +57,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -211,7 +211,7 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		}
 
 		TitleBuilder fadeToBlack = new TitleBuilder()
-				.title(CustomEmoji.SCREEN_BLACK.getChar())
+			.title(CustomEmoji.SCREEN_BLACK.getChar())
 			.fade(TickTime.TICK.x(10))
 			.players(getOnlinePlayer())
 			.stay(TickTime.TICK.x(10));

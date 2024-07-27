@@ -14,10 +14,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.Location;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -30,7 +27,8 @@ public class VuLan24User implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Set<Location> found = new HashSet<>();
+	private boolean readyToVisit;
+	private boolean visited;
 
 	private UUID boatUUID;
 	private BoatType boatType = BoatType.OAK;

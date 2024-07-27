@@ -11,6 +11,8 @@ import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.parchment.HasPlayer;
+import gg.projecteden.parchment.OptionalPlayerLike;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -163,8 +165,15 @@ public class Dialog {
 		return instruction(quester -> PlayerUtils.removeItem(quester.getOnlinePlayer(), item), -1);
 	}
 
-	public DialogInstance send(Quester quester) {
-		return new DialogInstance(quester, this);
+	public DialogInstance send(OptionalPlayerLike player) {
+		return send(player.getPlayer());
+	}
+
+	public DialogInstance send(HasPlayer player) {
+		final Quester quester = Quester.of(player.getPlayer());
+		final DialogInstance dialogInstance = new DialogInstance(quester, this);
+		quester.setDialog(dialogInstance);
+		return dialogInstance;
 	}
 
 	@AllArgsConstructor

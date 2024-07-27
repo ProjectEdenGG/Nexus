@@ -10,6 +10,9 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.vulan24.VuLan24User;
+import gg.projecteden.nexus.models.vulan24.VuLan24UserService;
+import gg.projecteden.nexus.models.warps.WarpType;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,14 +23,27 @@ import java.util.List;
 @NoArgsConstructor
 @Permission(Group.STAFF)
 public class VuLan24Command extends IEventCommand {
+	private VuLan24UserService service = new VuLan24UserService();
+	private VuLan24User user;
 
 	public VuLan24Command(CommandEvent event) {
 		super(event);
+		if (isPlayerCommandEvent())
+			user = service.get(player());
 	}
 
 	@Override
 	public EdenEvent getEdenEvent() {
 		return VuLan24.get();
+	}
+
+	@Path
+	void warp() {
+		if (!user.isVisited()) {
+			WarpType.VULAN24.get("Avontyre").teleportAsync(player());
+		} else {
+			WarpType.VULAN24.get("VinhLuc").teleportAsync(player());
+		}
 	}
 
 	@Path("lantern animation debug path <id>")

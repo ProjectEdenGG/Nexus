@@ -21,6 +21,7 @@ import gg.projecteden.nexus.features.quests.tasks.common.IQuest;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ChunkLoader;
@@ -370,16 +371,18 @@ public abstract class EdenEvent extends Feature implements Listener {
 	@EventHandler
 	public void _onNPCRightClick(NPCRightClickEvent event) {
 		final Player player = event.getClicker();
-		if (!shouldHandle(player))
-			return;
-
-		final InteractableNPC npc = interactableOf(event.getNPC());
-		if (npc == null)
-			return;
-
-		event.setCancelled(true);
 
 		try {
+			final InteractableNPC npc = interactableOf(event.getNPC());
+			if (npc == null)
+				return;
+
+			event.setCancelled(true);
+
+			if (Quester.of(player).tryAdvanceDialog(npc)) {
+				return;
+			}
+
 			if (interactHandlers.containsKey(npc)) {
 				interactHandlers.get(npc).accept(player, npc);
 				return;
@@ -394,16 +397,17 @@ public abstract class EdenEvent extends Feature implements Listener {
 	@EventHandler
 	public void _onPlayerInteractAtEntity(PlayerInteractAtEntityEvent event) {
 		final Player player = event.getPlayer();
-		if (!shouldHandle(player))
-			return;
-
-		final InteractableEntity entity = interactableOf(event.getRightClicked());
-		if (entity == null)
-			return;
-
-		event.setCancelled(true);
-
 		try {
+			final InteractableEntity entity = interactableOf(event.getRightClicked());
+			if (entity == null)
+				return;
+
+			event.setCancelled(true);
+
+			if (Quester.of(player).tryAdvanceDialog(entity)) {
+				return;
+			}
+
 			if (interactHandlers.containsKey(entity)) {
 				interactHandlers.get(entity).accept(player, entity);
 				return;

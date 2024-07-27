@@ -65,6 +65,16 @@ public class Quester implements PlayerOwnedObject {
 		return new QuesterService().get(uuid);
 	}
 
+	public boolean tryAdvanceDialog(Interactable interactable) {
+		if (dialog != null && dialog.getTaskId().get() > 0) {
+			if (dialog.getDialog().getInteractable().equals(interactable))
+				dialog.advance();
+			return true;
+		}
+
+		return false;
+	}
+
 	public Quest getQuest(IQuest quest) {
 		return quests.stream()
 			.filter(startedQuest -> startedQuest.getQuest() == quest)
@@ -126,11 +136,6 @@ public class Quester implements PlayerOwnedObject {
 	}
 
 	public <E extends Event> void interact(Interactable interactable, E event) {
-		if (dialog != null && dialog.getTaskId().get() > 0) {
-			dialog.advance();
-			return;
-		}
-
 		for (Quest quest : quests) {
 			if (quest.isComplete())
 				continue;
