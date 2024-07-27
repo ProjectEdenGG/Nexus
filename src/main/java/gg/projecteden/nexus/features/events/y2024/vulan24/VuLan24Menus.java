@@ -31,7 +31,8 @@ public class VuLan24Menus {
 			.products(new ArrayList<>() {{
 				for (BoatType boatType : BoatType.values())
 					add(Product.free(boatType.getBoatMaterial()).onPurchase((player, provider) -> VuLan24BoatTracker.selectBoat(player, boatType)));
-			}});
+			}})
+			.closeAfterPurchase(true);
 	}
 
 	public static NPCShopMenuBuilder getBambooHatShop(Player player) {
@@ -55,21 +56,24 @@ public class VuLan24Menus {
 					new CostumeUserService().edit(player.getUniqueId(), user -> user.getOwnedCostumes().add(costume.getId()));
 					VuLan24.get().send(player, "You now own the Bamboo Hat costume!");
 				}));
-			}});
+			}})
+			.closeAfterPurchase(true);
 	}
 
 	public static NPCShopMenuBuilder getMinerShop() {
 		return NPCShopMenu.builder()
 			.title("Trade for a pickaxe?")
 			.npcId(VuLan24NPC.MINER.getNpcId())
-			.products(List.of(new Product(Material.IRON_PICKAXE).price(Currency.ITEM, Price.of(Material.APPLE))));
+			.products(List.of(new Product(Material.IRON_PICKAXE).price(Currency.ITEM, Price.of(Material.APPLE))))
+			.closeAfterPurchase(true);
 	}
 
 	public static NPCShopMenuBuilder getGuideShop() {
 		return NPCShopMenu.builder()
 			.title("Want a backpack?")
 			.npcId(VuLan24NPC.TOUR_GUIDE.getNpcId())
-			.products(List.of(Product.free(Backpacks.getBackpack())));
+			.products(List.of(Product.free(Backpacks.getBackpack())))
+			.closeAfterPurchase(true);
 	}
 
 

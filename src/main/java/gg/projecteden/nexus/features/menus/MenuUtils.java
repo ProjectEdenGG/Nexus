@@ -324,6 +324,7 @@ public abstract class MenuUtils {
 		private final List<Product> products;
 		@Nullable
 		private final ShopGroup shopGroup;
+		private final boolean closeAfterPurchase;
 
 		private final BankerService bankerService = new BankerService();
 
@@ -381,7 +382,12 @@ public abstract class MenuUtils {
 									MenuUtils.handleException(viewer, StringUtils.getPrefix("NPCShopMenu"), ex);
 								}
 							})
-							.onFinally(e2 -> refresh())
+							.onFinally(e2 -> {
+								if (closeAfterPurchase)
+									close();
+								else
+									refresh();
+							})
 							.open(viewer);
 				}));
 			});
