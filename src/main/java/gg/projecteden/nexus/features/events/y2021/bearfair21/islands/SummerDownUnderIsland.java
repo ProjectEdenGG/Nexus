@@ -223,7 +223,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 						setNextNpc(user, KYLIE);
 					}
 					return List.of(
-						"Struth! I’m glad you’re here!",
+						"Struth! I'm glad you're here!",
 						"wait 60",
 						"<self> Is something wrong?",
 						"wait 60",
@@ -339,7 +339,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 					);
 				} else {
 					return List.of(
-						"No way! Daisy, we’re saved!",
+						"No way! Daisy, we're saved!",
 						"wait 40",
 						"<name:Daisy>Moo!"
 					);
@@ -421,9 +421,9 @@ public class SummerDownUnderIsland implements BearFair21Island {
 					);
 				} else if (stage == QuestStage.STEPS_DONE) {
 					taught(user);
-					return Collections.singletonList("Woah, that’s why there was no rain? She was sad we had forgotten ‘er? I feel kinda bad now… I won’t forget about this.");
+					return Collections.singletonList("Woah, that's why there was no rain? She was sad we had forgotten ‘er? I feel kinda bad now... I won't forget about this.");
 				} else {
-					return Collections.singletonList("Sick! Any more of that drought and we’d be goners! Thanks!");
+					return Collections.singletonList("Sick! Any more of that drought and we'd be goners! Thanks!");
 				}
 			}
 		}

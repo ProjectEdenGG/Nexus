@@ -46,11 +46,11 @@ public enum VuLan24QuestTask implements IQuestTask {
 	STONE(GatherQuestTask.builder()
 		.talkTo(TRUONG)
 		.dialog(dialog -> dialog
-			.npc("Welcome traveller! I could use some help if you have the time. I need some materials to finish this house here but I just don’t have the time to get it all myself. Can you help?")
+			.npc("Welcome traveller! I could use some help if you have the time. I need some materials to finish this house here but I just don't have the time to get it all myself. Can you help?")
 			.player("Certainly. What did you need?")
 			.npc("I need 128 stone, 64 tuff and 32 terracotta to be able to finish construction. You should be able to find stone and tuff in some of the caves nearby.")
 			.npc("And you can find clay along the shore of the north-eastern side of the Island. Smelting it in the furnace at the Stone Mason will give you the terracotta.")
-			.player("Awesome - I’ll get right on it!")
+			.player("Awesome - I'll get right on it!")
 		)
 		.objective("Gather 128 stone, 64 tuff & 32 terracotta")
 		.gather(Map.of(Material.STONE, 128, Material.TUFF, 64, Material.TERRACOTTA, 32))
@@ -65,12 +65,12 @@ public enum VuLan24QuestTask implements IQuestTask {
 	POTTERY(GatherQuestTask.builder()
 		.talkTo(THAM)
 		.dialog(dialog -> dialog
-			.npc("Hello! We need to prepare as much pottery as possible for the festival! We’ve been searching for it for months now but have come up short on the final day! Can you help us?")
-			.player("Absolutely I can. I’m the master of pottery back home. What can I do?")
-			.npc("Fantastic! We need 12 shards to craft this final piece. Bring them here and we’ll help you however we can!")
+			.npc("Hello! We need to prepare as much pottery as possible for the festival! We've been searching for it for months now but have come up short on the final day! Can you help us?")
+			.player("Absolutely I can. I'm the master of pottery back home. What can I do?")
+			.npc("Fantastic! We need 12 shards to craft this final piece. Bring them here and we'll help you however we can!")
 			.player("Right... how do I get those shards again?")
 			.npc("You will have to craft a brush and use it on suspicious sand to get the pottery sherds.")
-			.player("Of course, that’s right! I’ll get them to you as soon as I can.")
+			.player("Of course, that's right! I'll get them to you as soon as I can.")
 		)
 		.objective("Gather 12 pottery sherds by brushing suspicious sand")
 		.gather(MaterialTag.POTTERY_SHERDS, 12)
@@ -87,17 +87,17 @@ public enum VuLan24QuestTask implements IQuestTask {
 			.npc("I need 12 pottery sherds for the festival, can you find them for me? You will have to brush suspicious sand to extract them")
 		)
 		.complete(dialog -> dialog
-			.npc("Beautiful! We’ll get to work right away, here are some Event Tokens for your help!")
+			.npc("Beautiful! We'll get to work right away, here are some Event Tokens for your help!")
 			.reward(POTTERY_QUEST)
 		)
 	),
 	HERO(GatherQuestTask.builder()
 		.talkTo(XUAM)
 		.dialog(dialog -> dialog
-			.npc("Help! Please! Bandits have stolen my goods at my village Vinh Thai! There’s at least 10 of them and my people don’t have the tools to fight them.")
-			.player("Bandits? Where? I’m a professional bandit-butt-kicker!")
-			.npc("You’ll help? Thank you! You’ll find Vinh Thai on the other side of the  mountain, head up past the temple and you’ll find it. Be careful!")
-			.player("Thanks, {{NPC_NAME}}. I’ll do what I can!")
+			.npc("Help! Please! Bandits have stolen my goods at my village Vinh Thai! There's at least 10 of them and my people don't have the tools to fight them.")
+			.player("Bandits? Where? I'm a professional bandit-butt-kicker!")
+			.npc("You'll help? Thank you! You'll find Vinh Thai on the other side of the  mountain, head up past the temple and you'll find it. Be careful!")
+			.player("Thanks, {{NPC_NAME}}. I'll do what I can!")
 			.npc("Wait! You might need this first.")
 			.give(Material.GOLDEN_APPLE, 1)
 		)
@@ -106,7 +106,7 @@ public enum VuLan24QuestTask implements IQuestTask {
 		.gather(CAPTAIN_DROP, 1)
 		.gather(RAVAGER_DROP, 1)
 		.reminder(dialog -> dialog
-			.npc("The bandits should be by the Lagoon near our village across the mountain, come back to me with the gems they stole from me and I’ll be sure to pay you handsomely!")
+			.npc("The bandits should be by the Lagoon near our village across the mountain, come back to me with the gems they stole from me and I'll be sure to pay you handsomely!")
 		)
 		.complete(dialog -> dialog
 			.npc("You are a hero, a dragon from the far south. May you be showered with gifts! We put together what we could. Please take this as a sign of our gratitude!")
@@ -115,11 +115,11 @@ public enum VuLan24QuestTask implements IQuestTask {
 	PAPER(GatherQuestTask.builder()
 		.talkTo(PHUONG)
 		.dialog(dialog -> dialog
-			.player("Hi! I’d like to buy a paper lantern for the ceremony?")
-			.npc("You want a lantern? Sorry my friend, we’re all out of supplies. I don’t think the Lantern Lighting Ceremony will happen this year if we can’t find any soon.")
+			.player("Hi! I'd like to buy a paper lantern for the ceremony?")
+			.npc("You want a lantern? Sorry my friend, we're all out of supplies. I don't think the Lantern Lighting Ceremony will happen this year if we can't find any soon.")
 			.npc("But, if you really want one, maybe you can help us find the materials?")
 			.player("Yes, please! What did you need?")
-			.npc("We need 32 paper, 32 string, and 16 coal. If you can bring them back we’ll be sure to make some for you!")
+			.npc("We need 32 paper, 32 string, and 16 coal. If you can bring them back we'll be sure to make some for you!")
 		)
 		.objective("Gather 32 paper, 32 string, and 16 coal")
 		.gather(Map.of(Material.PAPER, 32, Material.STRING, 32, Material.COAL, 16))
@@ -127,16 +127,16 @@ public enum VuLan24QuestTask implements IQuestTask {
 			.npc("If you can find 32 paper, 32 string, and 16 coal, we can make your lanterns in no time!")
 		)
 		.complete(dialog -> dialog
-			.npc("Thank you so much! Here’s some lanterns we made for you, as a reward for your effort, as well as 2 lanterns for you to place at this year's lantern ceremony!")
+			.npc("Thank you so much! Here's some lanterns we made for you, as a reward for your effort, as well as 2 lanterns for you to place at this year's lantern ceremony!")
 			.give(PAPER_LANTERN_FLOATING, 2)
 			.reward(PAPER_QUEST)
 		)),
 	FISH(GatherQuestTask.builder()
 		.talkTo(HANH)
 		.dialog(dialog -> dialog
-			.npc("Ever since Vu Lan started these fish haven’t been catching all day, maybe you might have better luck than I do.")
-			.player("I’m pretty good at fishing, I can give it a go if you like?")
-			.npc("Bring a few fish back to me and I’ll be sure to pay you generously!")
+			.npc("Ever since Vu Lan started these fish haven't been catching all day, maybe you might have better luck than I do.")
+			.player("I'm pretty good at fishing, I can give it a go if you like?")
+			.npc("Bring a few fish back to me and I'll be sure to pay you generously!")
 		)
 		.objective("Go fishing") // TODO
 		.gather(

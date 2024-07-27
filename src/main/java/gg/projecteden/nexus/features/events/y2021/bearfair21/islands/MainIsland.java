@@ -201,9 +201,9 @@ public class MainIsland implements BearFair21Island {
 				} else if (user.getQuestStage_MGN() == QuestStage.STEP_SEVEN) {
 					script.add("<self> Mission complete!");
 					script.add("wait 50");
-					script.add("Good work, I’m reading the nav beacons now. I’ll contact the Federation Science Division and get a team out here to settle the geothermal activity and re-stabilize the island.");
+					script.add("Good work, I'm reading the nav beacons now. I'll contact the Federation Science Division and get a team out here to settle the geothermal activity and re-stabilize the island.");
 					script.add("wait 130");
-					script.add("Thank you for your help <player>, You’ve saved Bear Fair and definitely earned your pay.");
+					script.add("Thank you for your help <player>, You've saved Bear Fair and definitely earned your pay.");
 					script.add("wait 70");
 					int wait = 50 + 130 + 70;
 					Tasks.wait(wait, () -> Quests.pay(user, Merchants.goldIngot.clone().amount(6).build()));
@@ -471,9 +471,9 @@ public class MainIsland implements BearFair21Island {
 				List<String> facts = Arrays.asList(
 					"Did you know, honey bees fly at up to 15 miles per hour?",
 					"Did you know, bees have an exceptional sense of smell.",
-					"Did you know, Bombus Dahlbomii are the world’s largest bumblebees",
-					"Did you know, it takes one ounce of honey to fuel a bee’s flight around the world, they're quite efficient.",
-					"Did you know, the honey bee’s wings stroke 11,400 times per minute, thus making their distinctive buzz.",
+					"Did you know, Bombus Dahlbomii are the world's largest bumblebees",
+					"Did you know, it takes one ounce of honey to fuel a bee's flight around the world, they're quite efficient.",
+					"Did you know, the honey bee's wings stroke 11,400 times per minute, thus making their distinctive buzz.",
 					"Did you know, the honey bee is the only insect that produces food eaten by man."
 				);
 				script.add(RandomUtils.randomElement(facts));

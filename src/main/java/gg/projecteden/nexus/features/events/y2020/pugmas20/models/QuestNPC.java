@@ -72,7 +72,7 @@ public enum QuestNPC {
 					return Arrays.asList(
 							Script.wait(getGreeting()),
 
-							Script.wait(40, "I can't find the Ceremonial Lighter… Ooooh Santa is gonna be SO mad at me if I've lost it."),
+							Script.wait(40, "I can't find the Ceremonial Lighter... Ooooh Santa is gonna be SO mad at me if I've lost it."),
 
 							Script.wait(80, "We haven't used it since last year. Could you search in the basement to help me find it?")
 					);
