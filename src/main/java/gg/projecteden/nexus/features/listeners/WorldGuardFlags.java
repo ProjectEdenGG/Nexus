@@ -49,6 +49,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -237,6 +238,9 @@ public class WorldGuardFlags implements Listener {
 			return;
 
 		if (canWorldGuardEdit(event.getPlayer()))
+			return;
+
+		if (Arrays.stream(BlockInventoryType.values()).noneMatch(blockInventoryType -> blockInventoryType.getInventoryType() == event.getInventory().getType()))
 			return;
 
 		Set<String> blockInventoryTypes = WorldGuardFlagUtils.queryValue(event.getInventory().getLocation(), ALLOWED_BLOCK_INVENTORIES);
