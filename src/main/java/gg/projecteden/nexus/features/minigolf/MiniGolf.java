@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlockType;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallModifierBlockEvent;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallMoveEvent;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import org.bukkit.Location;
@@ -141,9 +142,13 @@ public class MiniGolf extends Feature {
 					ball.setVelocity(ball.getVelocity());
 				}
 
+				MiniGolfUtils.debugDot(ball.getLocation(), ColorType.ORANGE);
+
+				if (ball.hasGravity())
+					continue;
+
 				Block below = golfBall.getBlockBelow();
 				Material belowType = below.getType();
-
 				applyRollModifiers(golfBall, below, belowType);
 			}
 		});

@@ -84,7 +84,7 @@ public class RadioConfig implements PlayerOwnedObject {
 		@Default
 		private boolean particles = false;
 		private List<Location> locations = new ArrayList<>();
-		private int radius;
+		private int radius = 5;
 		@Embedded
 		@Default
 		private Set<String> songs = new HashSet<>();
@@ -92,6 +92,9 @@ public class RadioConfig implements PlayerOwnedObject {
 		private transient List<SongPlayer> songPlayers = new ArrayList<>();
 
 		public void addSongPlayer(SongPlayer songPlayer) {
+			if (songPlayers == null)
+				songPlayers = new ArrayList<>();
+
 			this.songPlayers.add(songPlayer);
 		}
 

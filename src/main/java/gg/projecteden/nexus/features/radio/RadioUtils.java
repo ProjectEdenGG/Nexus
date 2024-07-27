@@ -192,7 +192,13 @@ public class RadioUtils {
 	}
 
 	public static boolean isInRangeOfRadiusRadio(HasPlayer player, Radio radio) {
+		if (Nullables.isNullOrEmpty(radio.getSongPlayers()))
+			return false;
+
 		for (SongPlayer songPlayer : radio.getSongPlayers()) {
+			if (songPlayer == null)
+				continue;
+
 			if (!(songPlayer instanceof PositionSongPlayer positionSongPlayer))
 				continue;
 

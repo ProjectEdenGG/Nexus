@@ -1,12 +1,16 @@
 package gg.projecteden.nexus.features.minigolf.models;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
+import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
+import org.bukkit.Location;
 
 import java.util.UUID;
 
@@ -24,13 +28,24 @@ public class MiniGolfUser implements PlayerOwnedObject {
 	private boolean debug;
 
 	public void debug(boolean bool, String debug) {
-		if (bool)
-			debug(debug);
+		if (!bool)
+			return;
+
+		debug(debug);
 	}
 
 	public void debug(String message) {
-		if (debug)
-			sendMessage(message);
+		if (!debug)
+			return;
+
+		sendMessage(message);
+	}
+
+	public void debugDot(Location location, ColorType color) {
+		if (!debug)
+			return;
+
+		DotEffect.debug(getPlayer(), location.clone(), color.getBukkitColor(), TickTime.SECOND.x(1));
 	}
 
 	public void giveKit() {

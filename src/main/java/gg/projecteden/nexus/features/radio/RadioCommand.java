@@ -305,8 +305,8 @@ public class RadioCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	@Description("Set the radius of the radio")
 	void configSetRadius(Radio radio, int radius) {
-		if (!radio.getType().equals(RadioType.RADIUS))
-			error("You can only set radius of a radius radio");
+		if (!radio.getType().isRadiusBased())
+			error("You can only set radius of a radius based radio");
 
 		radio.setRadius(radius);
 		if (radio.isEnabled())

@@ -4,7 +4,13 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigolf.models.GolfBallColor;
 import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,6 +26,12 @@ import java.util.List;
 import java.util.UUID;
 
 public class MiniGolfUtils {
+
+	public static void debugDot(Location location, ColorType color) {
+		for (MiniGolfUser user : MiniGolf.getUsers()) {
+			user.debugDot(location, color);
+		}
+	}
 
 	@Getter
 	private static final ItemStack putter = new ItemBuilder(CustomMaterial.MINIGOLF_PUTTER)

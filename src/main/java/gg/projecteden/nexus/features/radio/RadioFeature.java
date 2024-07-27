@@ -95,15 +95,15 @@ public class RadioFeature extends Feature {
 
 			// Radius Radio User Task
 			RadioUserService service = new RadioUserService();
-			Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
+			Tasks.repeat(0, TickTime.SECOND.x(1), () -> {
 				for (Radio radio : getRadios()) {
-					if (radio == null)
+					if (radio == null || !radio.isEnabled())
 						continue;
 
 					if (!radio.getType().isRadiusBased())
 						continue;
 
-					if (Nullables.isNullOrEmpty(radio.getLocations()))
+					if (Nullables.isNullOrEmpty(radio.getSongPlayers()) || Nullables.isNullOrEmpty(radio.getLocations()))
 						continue;
 
 					for (Player player : OnlinePlayers.getAll()) {
