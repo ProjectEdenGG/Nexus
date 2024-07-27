@@ -27,6 +27,7 @@ import gg.projecteden.nexus.utils.ChunkLoader;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.parchment.HasLocation;
@@ -79,6 +80,9 @@ import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand
 import static gg.projecteden.nexus.utils.Extensions.isStaff;
 
 public abstract class EdenEvent extends Feature implements Listener {
+	public static final String PREFIX_EVENTS = StringUtils.getPrefix("Events");
+	public static final String PREFIX_STORE = StringUtils.getPrefix("Event Store");
+
 	protected List<EventBreakable> breakables = new ArrayList<>();
 	protected List<EventPlaceable> placeables = new ArrayList<>();
 	@Getter

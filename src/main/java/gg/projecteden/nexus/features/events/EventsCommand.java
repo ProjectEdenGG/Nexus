@@ -33,7 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.features.events.Events.STORE_PREFIX;
+import static gg.projecteden.nexus.features.events.EdenEvent.PREFIX_STORE;
 import static gg.projecteden.nexus.features.events.store.models.EventStoreImage.IMAGES;
 import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
 
@@ -57,7 +57,7 @@ public class EventsCommand extends CustomCommand {
 	@Override
 	public String getPrefix() {
 		if ("store".equalsIgnoreCase(arg(1)))
-			return STORE_PREFIX;
+			return PREFIX_STORE;
 		return super.getPrefix();
 	}
 
@@ -180,7 +180,7 @@ public class EventsCommand extends CustomCommand {
 	@Description("Reload event store images")
 	void store_images_reload() {
 		EventStoreImage.reload();
-		send(STORE_PREFIX + "Loaded " + IMAGES.size() + " maps");
+		send(PREFIX_STORE + "Loaded " + IMAGES.size() + " maps");
 	}
 
 	@Path("store images get <image...>")

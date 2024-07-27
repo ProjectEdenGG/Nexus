@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gg.projecteden.nexus.features.events.Events.STORE_PREFIX;
+import static gg.projecteden.nexus.features.events.EdenEvent.PREFIX_STORE;
 import static gg.projecteden.nexus.features.menus.MenuUtils.handleException;
 import static gg.projecteden.nexus.utils.PlayerUtils.send;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
@@ -43,15 +43,15 @@ public class EventStoreEmojiHatProvider extends EventStoreMenu {
 				try {
 					if (e.isShiftClick()) {
 						chargeAndAddPermissions(player, price, type.getPermission());
-						send(player, STORE_PREFIX + "Purchased &e" + camelCase(type) + "&3, use with &c/emojihats " + type.name().toLowerCase());
+						send(player, PREFIX_STORE + "Purchased &e" + camelCase(type) + "&3, use with &c/emojihats " + type.name().toLowerCase());
 						open(player);
 					} else {
 						player.closeInventory();
 						type.runSelf(player);
-						send(player, STORE_PREFIX + "Use F5 to view the emoji");
+						send(player, PREFIX_STORE + "Use F5 to view the emoji");
 					}
 				} catch (Exception ex) {
-					handleException(player, STORE_PREFIX, ex);
+					handleException(player, PREFIX_STORE, ex);
 				}
 			}));
 		}

@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gg.projecteden.nexus.features.events.Events.STORE_PREFIX;
+import static gg.projecteden.nexus.features.events.EdenEvent.PREFIX_STORE;
 import static gg.projecteden.nexus.features.menus.MenuUtils.handleException;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
@@ -49,7 +49,7 @@ public class EventStoreParticlesProvider extends EventStoreMenu {
 				try {
 					if (e.isShiftClick()) {
 						chargeAndAddPermissions(player, price, type.getPermission());
-						PlayerUtils.send(player, STORE_PREFIX + "Purchased " + camelCase(type) + " particle, manage with &c/particles");
+						PlayerUtils.send(player, PREFIX_STORE + "Purchased " + camelCase(type) + " particle, manage with &c/particles");
 						open(player);
 					} else {
 						player.closeInventory();
@@ -57,7 +57,7 @@ public class EventStoreParticlesProvider extends EventStoreMenu {
 						Tasks.wait(TickTime.SECOND.x(15), () -> particleOwner.cancel(type));
 					}
 				} catch (Exception ex) {
-					handleException(player, STORE_PREFIX, ex);
+					handleException(player, PREFIX_STORE, ex);
 				}
 			}));
 		}

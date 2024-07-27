@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.features.events.Events.STORE_PREFIX;
+import static gg.projecteden.nexus.features.events.EdenEvent.PREFIX_STORE;
 import static gg.projecteden.nexus.models.jukebox.JukeboxSong.SONGS;
 
 @NoArgsConstructor
@@ -137,7 +137,7 @@ public class JukeboxCommand extends CustomCommand implements Listener {
 	@Description("Preview a song")
 	void store_preview(JukeboxSong song) {
 		user.preview(song);
-		send(json(STORE_PREFIX + "Playing &e" + song.getName() + " ")
+		send(json(PREFIX_STORE + "Playing &e" + song.getName() + " ")
 			.group().next(stopButton())
 			.group().next(" ")
 			.group().next(buyButton(song)));
@@ -153,14 +153,14 @@ public class JukeboxCommand extends CustomCommand implements Listener {
 		new EventUserService().edit(user, eventUser -> eventUser.charge(EventStoreItem.SONGS.getPrice()));
 		user.give(song);
 		service.save(user);
-		send(STORE_PREFIX + "Purchased song &e" + song.getName() + "&3. Play with &c/song play " + song.getName());
+		send(PREFIX_STORE + "Purchased song &e" + song.getName() + "&3. Play with &c/song play " + song.getName());
 	}
 
 	@Path("stop")
 	@Description("Stop playing a song")
 	void stop() {
 		if (user.cancel())
-			send(STORE_PREFIX + "Song stopped");
+			send(PREFIX_STORE + "Song stopped");
 		else
 			error("No song is playing");
 	}
@@ -212,7 +212,7 @@ public class JukeboxCommand extends CustomCommand implements Listener {
 	@Override
 	public String getPrefix() {
 		if ("store".equalsIgnoreCase(arg(1)))
-			return STORE_PREFIX;
+			return PREFIX_STORE;
 		return super.getPrefix();
 	}
 

@@ -6,7 +6,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PreLoad;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.features.events.Events;
+import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.ActionBarUtils;
@@ -90,7 +90,7 @@ public class EventUser implements PlayerOwnedObject {
 	public void giveTokens(int tokens, boolean actionBar) {
 		this.tokens += tokens;
 		if (isOnline()) {
-			sendMessage(Events.PREFIX + "You have &areceived &e" + tokens + " event tokens&3. New balance: &e" + this.tokens);
+			sendMessage(EdenEvent.PREFIX_EVENTS + "You have &areceived &e" + tokens + " event tokens&3. New balance: &e" + this.tokens);
 
 			if (actionBar)
 				ActionBarUtils.sendActionBar(getOnlinePlayer(), "&e+" + tokens + plural(" event token", tokens));
@@ -99,7 +99,7 @@ public class EventUser implements PlayerOwnedObject {
 
 	public void takeTokens(int tokens) {
 		this.tokens -= tokens;
-		sendMessage(Events.STORE_PREFIX + "You have &cspent &e" + tokens + " event tokens&3. New balance: &e" + this.tokens);
+		sendMessage(EdenEvent.PREFIX_STORE + "You have &cspent &e" + tokens + " event tokens&3. New balance: &e" + this.tokens);
 	}
 
 	public boolean hasTokens(int tokens) {

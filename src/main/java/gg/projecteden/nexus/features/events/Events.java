@@ -4,12 +4,10 @@ import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.aeveonproject.AeveonProject;
 import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Timer;
 
+@Deprecated
 public class Events extends Feature {
-	public static final String PREFIX = StringUtils.getPrefix("Events");
-	public static final String STORE_PREFIX = StringUtils.getPrefix("Event Store");
 
 	@Override
 	public void onStart() {

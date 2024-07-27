@@ -22,7 +22,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.List;
 
-import static gg.projecteden.nexus.features.events.Events.STORE_PREFIX;
+import static gg.projecteden.nexus.features.events.EdenEvent.PREFIX_STORE;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.PlayerUtils.send;
@@ -36,10 +36,10 @@ public class EventStoreListener implements Listener {
 
 	private void handleException(Player player, Exception ex) {
 		if (ex instanceof EdenException) {
-			send(player, STORE_PREFIX + "&c" + ex.getMessage());
+			send(player, PREFIX_STORE + "&c" + ex.getMessage());
 		} else {
 			ex.printStackTrace();
-			send(player, STORE_PREFIX + "An unknown error occurred");
+			send(player, PREFIX_STORE + "An unknown error occurred");
 		}
 	}
 
@@ -125,7 +125,7 @@ public class EventStoreListener implements Listener {
 						user.charge(price);
 						service.save(user);
 						Mail.fromServer(player.getUniqueId(), WorldGroup.SURVIVAL, image.getSplatterMap()).send();
-						send(player, STORE_PREFIX + "Your image has been mailed to you in the Survival world");
+						send(player, PREFIX_STORE + "Your image has been mailed to you in the Survival world");
 					} catch (Exception ex) {
 						handleException(player, ex);
 					}

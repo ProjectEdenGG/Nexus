@@ -14,6 +14,8 @@ import gg.projecteden.nexus.features.NexusCommand;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
 import gg.projecteden.nexus.features.discord.Discord;
+import gg.projecteden.nexus.features.events.EdenEvent;
+import gg.projecteden.nexus.features.events.Events;
 import gg.projecteden.nexus.features.listeners.common.TemporaryListener;
 import gg.projecteden.nexus.features.menus.api.SignMenuFactory;
 import gg.projecteden.nexus.framework.commands.Commands;
@@ -231,6 +233,7 @@ public class Nexus extends JavaPlugin {
 			new Timer(" Features", () -> {
 				features = new Features(this, "gg.projecteden.nexus.features");
 				features.register(Chat.class, Discord.class); // prioritize
+				features.register(EdenEvent.class, Events.class);
 				features.registerAll();
 			});
 			new Timer(" Commands", () -> {

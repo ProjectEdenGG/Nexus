@@ -99,7 +99,7 @@ public enum DecorationStoreCurrencyType {
 		String priceStr = this.priceLabel.apply(price) + this.pricePretty.apply(price);
 
 		if (price <= 0)
-			priceStr = "Free";
+			priceStr = "&aFree";
 
 		return config.getItemBuilder().lore("", priceStr).build();
 	}

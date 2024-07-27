@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static gg.projecteden.nexus.features.events.Events.STORE_PREFIX;
+import static gg.projecteden.nexus.features.events.EdenEvent.PREFIX_STORE;
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommand;
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsOp;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
@@ -149,8 +149,8 @@ public enum EventStoreItem {
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
 			player.closeInventory();
-			PlayerUtils.send(player, STORE_PREFIX + "Send custom emojis in chat! &f👀 💯 🔥 👍 👏 😍 😎");
-			PlayerUtils.send(player, new JsonBuilder(STORE_PREFIX + "Browse the &c/emoji store")
+			PlayerUtils.send(player, PREFIX_STORE + "Send custom emojis in chat! &f👀 💯 🔥 👍 👏 😍 😎");
+			PlayerUtils.send(player, new JsonBuilder(PREFIX_STORE + "Browse the &c/emoji store")
 				.command("/emoji store")
 				.hover("Click to open the Emoji store")
 				.group()
