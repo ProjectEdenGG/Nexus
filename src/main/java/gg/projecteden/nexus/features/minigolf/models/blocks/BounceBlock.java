@@ -12,6 +12,8 @@ import org.bukkit.util.Vector;
 import java.util.Set;
 
 public class BounceBlock extends ModifierBlock {
+	public static final double BOUNCE_Y = 0.40; // 0.30
+	public static final double BOUNCE_XZ = 0.35; // 0.25
 
 	@Override
 	public ColorType getDebugDotColor() {
@@ -24,7 +26,7 @@ public class BounceBlock extends ModifierBlock {
 
 		new SoundBuilder(Sound.BLOCK_SLIME_BLOCK_HIT).location(golfBall.getLocation()).volume(0.5).play();
 
-		golfBall.setVelocity(golfBall.getVelocity().setY(0.30));
+		golfBall.setVelocity(golfBall.getVelocity().setY(BOUNCE_Y));
 	}
 
 	@Override
@@ -35,10 +37,10 @@ public class BounceBlock extends ModifierBlock {
 
 		Vector velocity = golfBall.getVelocity();
 		switch (blockFace) {
-			case NORTH, SOUTH -> velocity.setZ(Math.copySign(0.25, -velocity.getZ()));
-			case EAST, WEST -> velocity.setX(Math.copySign(0.25, -velocity.getX()));
-			case UP -> velocity.setY(0.30);
-			case DOWN -> velocity.setY(-0.30);
+			case NORTH, SOUTH -> velocity.setZ(Math.copySign(BOUNCE_XZ, -velocity.getZ()));
+			case EAST, WEST -> velocity.setX(Math.copySign(BOUNCE_XZ, -velocity.getX()));
+			case UP -> velocity.setY(BOUNCE_Y);
+			case DOWN -> velocity.setY(-BOUNCE_Y);
 			default -> {
 				super.handleBounce(golfBall, block, blockFace);
 				return;

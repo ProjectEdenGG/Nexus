@@ -7,9 +7,16 @@ import gg.projecteden.nexus.features.minigolf.MiniGolf;
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
 import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
+import gg.projecteden.nexus.features.minigolf.models.blocks.BounceBlock;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallSpawnEvent;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfUserPlaceBallEvent;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.Distance;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -176,7 +183,7 @@ public class InteractListener implements Listener {
 
 		dir.multiply(power);
 		if (isWedge)
-			dir.setY(0.25);
+			dir.setY(BounceBlock.BOUNCE_XZ); // 0.25
 
 		// Update stroke
 		golfBall.incStrokes();
@@ -191,6 +198,7 @@ public class InteractListener implements Listener {
 		new SoundBuilder(Sound.BLOCK_METAL_HIT).location(entityLoc).volume(0.75).pitch(1.25).play();
 
 		ActionBarUtils.sendActionBar(player, "&6Power: " + MiniGolfUtils.getPowerDisplay(power), TimeUtils.TickTime.SECOND.x(3));
+		user.debug("&6Power: " + MiniGolfUtils.getPowerDisplay(power));
 	}
 
 	private static boolean isLookingAtGolfBall(MiniGolfUser user) {
