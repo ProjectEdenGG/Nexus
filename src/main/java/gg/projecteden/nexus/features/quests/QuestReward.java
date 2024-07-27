@@ -24,7 +24,7 @@ public interface QuestReward {
 		final var diff = newItemCount - oldItemCount;
 		if (oldItemCount < newItemCount) {
 			eventUser.sendMessage(StringUtils.getPrefix("Events") + "Claim your item reward" + (diff > 1 ? "s" : "") +
-				" with &c/event rewards claim &ein the world of your choice");
+				" with &c/event rewards claim &3in the world of your choice");
 		}
 	}
 
