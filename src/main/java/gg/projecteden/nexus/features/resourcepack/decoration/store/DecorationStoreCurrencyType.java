@@ -33,7 +33,7 @@ public enum DecorationStoreCurrencyType {
 
 	),
 
-	TOKENS(50,
+	TOKENS(15,
 			vars -> new EventUserService().get(vars.getPlayer()).getTokens() >= vars.getPrice(),
 			vars -> new EventUserService().get(vars.getPlayer()).charge((int) Math.ceil(vars.getPrice())),
 			typeConfig -> typeConfig.tokens(),

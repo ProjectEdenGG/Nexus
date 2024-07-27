@@ -47,7 +47,7 @@ public enum EventStoreItem {
 			PlayerUtils.runCommand(player, "warp images");
 		}
 	},
-	DECORATION_HEADS(50, Material.PLAYER_HEAD) {
+	DECORATION_HEADS(15, Material.PLAYER_HEAD) {
 		@Override
 		@NotNull
 		public ItemBuilder getRawDisplayItem() {
