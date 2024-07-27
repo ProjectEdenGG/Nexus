@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigolf.models.blocks;
 
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
+import gg.projecteden.nexus.utils.ColorType;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Directional;
@@ -11,6 +12,12 @@ import java.util.Set;
 
 // TODO: Apply some velocity on bounce as well?
 public class ConveyorBlock extends ModifierBlock {
+
+	@Override
+	public ColorType getDebugDotColor() {
+		return ColorType.MAGENTA;
+	}
+
 	@Override
 	public void handleRoll(GolfBall golfBall) {
 		rollDebug(golfBall);

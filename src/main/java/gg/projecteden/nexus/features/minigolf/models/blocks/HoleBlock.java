@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.minigolf.models.blocks;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallSinkEvent;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Color;
@@ -17,6 +18,11 @@ import java.util.Collections;
 import java.util.Set;
 
 public class HoleBlock extends ModifierBlock {
+
+	@Override
+	public ColorType getDebugDotColor() {
+		return ColorType.PURPLE;
+	}
 
 	@Override
 	public void handleRoll(GolfBall golfBall) {

@@ -34,6 +34,18 @@ public class JMiniGolfCommand extends CustomCommand {
 		}
 	}
 
+	@Path("play")
+	void play() {
+		if (MiniGolf.isPlaying(user)) {
+			send("already playing minigolf");
+			return;
+		}
+
+		MiniGolf.join(user);
+		user.giveKit();
+		send("started playing minigolf");
+	}
+
 	@Path("join")
 	void join() {
 		if (MiniGolf.isPlaying(user)) {
@@ -77,14 +89,17 @@ public class JMiniGolfCommand extends CustomCommand {
 		user.setGolfBallColor(color);
 	}
 
-	@Path("debug <boolean>")
-	void debug(boolean bool) {
+	@Path("debug [enable]")
+	void debug(Boolean enable) {
+		if (enable == null)
+			enable = !user.isDebug();
+
 		if (!MiniGolf.isPlaying(user)) {
 			send("not playing minigolf");
 			return;
 		}
 
-		user.setDebug(bool);
+		user.setDebug(enable);
 		send("set debug to: " + user.isDebug());
 	}
 
@@ -111,6 +126,7 @@ public class JMiniGolfCommand extends CustomCommand {
 		send("Alive: " + golfBall.isAlive());
 		send("Active: " + golfBall.isActive());
 		send("Loc: " + StringUtils.getPerciseCoordinateString(golfBall.getLocation(), 2));
+		send("Last Loc: " + (golfBall.getLastLocation() == null ? "null" : StringUtils.getPerciseCoordinateString(golfBall.getLastLocation(), 2)));
 		send("Vel: " + golfBall.getVelocity());
 		send("Below: " + golfBall.getBlockBelow().getType());
 		send("Inside: " + golfBall.getBlock().getType());

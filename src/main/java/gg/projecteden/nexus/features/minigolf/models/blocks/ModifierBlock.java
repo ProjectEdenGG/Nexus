@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.minigolf.models.blocks;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolf;
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -134,11 +135,17 @@ public abstract class ModifierBlock {
 		if (golfBall.isMinVelocity())
 			return;
 
+		MiniGolfUtils.debugDot(golfBall.getLocation(), getDebugDotColor());
+
 		String debug = "on roll";
 		if (!this.equals(ModifierBlockType.DEFAULT.getModifierBlock()))
 			debug += " on " + this.getName();
 
 		golfBall.debug("&o" + debug);
+	}
+
+	public ColorType getDebugDotColor() {
+		return ColorType.WHITE;
 	}
 
 	public void bounceDebug(GolfBall golfBall) {

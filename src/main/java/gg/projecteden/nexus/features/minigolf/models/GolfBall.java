@@ -13,7 +13,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
@@ -135,7 +134,11 @@ public class GolfBall {
 	public Block getBlockBelow() {
 		if (!isAlive()) return null;
 
-		return getBlock().getRelative(BlockFace.DOWN);
+		Location location = getLocation().clone();
+		location.setY(this.snowball.getLocation().getY() - 0.25);
+		return location.getBlock();
+
+		//return getBlock().getRelative(BlockFace.DOWN);
 	}
 
 	public boolean isNotMaxVelocity() {
@@ -181,7 +184,7 @@ public class GolfBall {
 	private void respawnBall() {
 		this.snowball.setVelocity(new Vector(0, 0, 0));
 		this.snowball.setGravity(false);
-		this.snowball.teleportAsync(lastLocation);
+		this.snowball.teleport(lastLocation);
 		this.snowball.setFireTicks(0);
 		this.snowball.setTicksLived(1);
 		this.active = false;

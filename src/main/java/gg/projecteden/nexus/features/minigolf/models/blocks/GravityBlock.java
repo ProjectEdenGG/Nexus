@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigolf.models.blocks;
 
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Material;
 
@@ -8,6 +9,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class GravityBlock extends ModifierBlock {
+
+	@Override
+	public ColorType getDebugDotColor() {
+		return ColorType.GRAY;
+	}
 
 	@Override
 	public void handleRoll(GolfBall golfBall) {

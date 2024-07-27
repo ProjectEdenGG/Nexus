@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigolf.models.blocks;
 
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -11,6 +12,11 @@ import org.bukkit.util.Vector;
 import java.util.Set;
 
 public class BounceBlock extends ModifierBlock {
+
+	@Override
+	public ColorType getDebugDotColor() {
+		return ColorType.LIGHT_GREEN;
+	}
 
 	@Override
 	public void handleRoll(GolfBall golfBall) {

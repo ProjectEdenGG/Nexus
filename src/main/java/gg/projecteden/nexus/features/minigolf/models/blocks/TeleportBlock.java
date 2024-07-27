@@ -12,6 +12,7 @@ import org.bukkit.util.Vector;
 import java.util.Set;
 
 public class TeleportBlock extends ModifierBlock {
+
 	@Override
 	public void handleRoll(GolfBall golfBall) {
 		rollDebug(golfBall);

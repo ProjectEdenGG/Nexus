@@ -10,7 +10,6 @@ import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlockType;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallModifierBlockEvent;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallMoveEvent;
 import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import org.bukkit.Location;
@@ -34,7 +33,6 @@ import java.util.UUID;
   - don't bounce off of paintings or itemframes
   - Allow golfball to not go out of bounds in regions using regex
   - Golfball can get stuck on boost/conveyor blocks
-  - Golfballs that roll off of slabs, stay in the air
   -
   - Make Teleport blocks parse an item in the block instead of a sign below it
   	- Add more lines such as yaw and speed
@@ -142,11 +140,6 @@ public class MiniGolf extends Feature {
 					ball.setVelocity(ball.getVelocity());
 				}
 
-				MiniGolfUtils.debugDot(ball.getLocation(), ColorType.ORANGE);
-
-				if (ball.hasGravity())
-					continue;
-
 				Block below = golfBall.getBlockBelow();
 				Material belowType = below.getType();
 				applyRollModifiers(golfBall, below, belowType);
@@ -158,12 +151,11 @@ public class MiniGolf extends Feature {
 		for (ModifierBlockType modifierBlockType : ModifierBlockType.values()) {
 			ModifierBlock modifierBlock = modifierBlockType.getModifierBlock();
 
-
 			if (checkApplies(below, belowType, modifierBlockType, modifierBlock)) {
 				MiniGolfBallModifierBlockEvent modifierBlockEvent = new MiniGolfBallModifierBlockEvent(golfBall, modifierBlockType);
 				if (modifierBlockEvent.callEvent()) {
 					modifierBlock.handleRoll(golfBall);
-					break;
+					return;
 				}
 			}
 		}
