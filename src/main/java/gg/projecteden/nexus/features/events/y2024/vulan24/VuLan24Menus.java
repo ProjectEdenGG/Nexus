@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events.y2024.vulan24;
 
 import gg.projecteden.nexus.features.events.y2024.vulan24.models.VuLan24BoatTracker;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24NPC;
+import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Quest;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu.NPCShopMenuBuilder;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu.Product;
@@ -9,11 +10,13 @@ import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.CostumeUserService;
+import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.utils.BoatType;
 import gg.projecteden.nexus.utils.Currency;
 import gg.projecteden.nexus.utils.Currency.Price;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +34,11 @@ public class VuLan24Menus {
 			}});
 	}
 
-	public static NPCShopMenuBuilder getBambooHatShop() {
+	public static NPCShopMenuBuilder getBambooHatShop(Player player) {
+		for (VuLan24Quest quest : VuLan24Quest.values())
+			if (!Quester.of(player).hasCompleted(quest))
+				throw new InvalidInputException("You must complete all Vu Lan quests to buy this costume. &c/vulan quest progress");
+
 		String costumeId = "hat/misc/bamboo_hat";
 		Costume costume = Costume.of(costumeId);
 		if (costume == null)

@@ -76,6 +76,10 @@ public class Quester implements PlayerOwnedObject {
 		return getQuest(quest) != null;
 	}
 
+	public boolean hasCompleted(IQuest quest) {
+		return hasStarted(quest) && getQuest(quest).isComplete();
+	}
+
 	public void interact(PlayerInteractEvent event) {
 		final Block block = event.getClickedBlock();
 		if (isNullOrAir(block))

@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.exceptions.EdenException;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.models.EventBreakable;
@@ -11,6 +12,7 @@ import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishing
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.FishingLoot;
 import gg.projecteden.nexus.features.events.models.EventPlaceable;
 import gg.projecteden.nexus.features.events.models.EventPlaceable.EventPlaceableBuilder;
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
 import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
@@ -373,12 +375,16 @@ public abstract class EdenEvent extends Feature implements Listener {
 
 		event.setCancelled(true);
 
-		if (interactHandlers.containsKey(npc)) {
-			interactHandlers.get(npc).accept(player, npc);
-			return;
-		}
+		try {
+			if (interactHandlers.containsKey(npc)) {
+				interactHandlers.get(npc).accept(player, npc);
+				return;
+			}
 
-		new QuesterService().edit(event.getClicker(), quester -> quester.interact(npc, event));
+			new QuesterService().edit(event.getClicker(), quester -> quester.interact(npc, event));
+		} catch (EdenException ex) {
+			MenuUtils.handleException(player, getPrefix(), ex);
+		}
 	}
 
 	@EventHandler
@@ -393,12 +399,16 @@ public abstract class EdenEvent extends Feature implements Listener {
 
 		event.setCancelled(true);
 
-		if (interactHandlers.containsKey(entity)) {
-			interactHandlers.get(entity).accept(player, entity);
-			return;
-		}
+		try {
+			if (interactHandlers.containsKey(entity)) {
+				interactHandlers.get(entity).accept(player, entity);
+				return;
+			}
 
-		new QuesterService().edit(event.getPlayer(), quester -> quester.interact(entity, event));
+			new QuesterService().edit(player, quester -> quester.interact(entity, event));
+		} catch (EdenException ex) {
+			MenuUtils.handleException(player, getPrefix(), ex);
+		}
 	}
 
 	@EventHandler

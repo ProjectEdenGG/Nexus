@@ -190,6 +190,18 @@ public class EventsCommand extends CustomCommand {
 		PlayerUtils.giveItem(player(), image.getSplatterMap());
 	}
 
+	@ConverterFor(EventStoreImage.class)
+	EventStoreImage convertToEventStoreImage(String value) {
+		return EventStoreImage.of(value);
+	}
+
+	@TabCompleterFor(EventStoreImage.class)
+	List<String> tabCompleteEventStoreImage(String filter) {
+		return IMAGES.keySet().stream()
+			.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
+			.collect(Collectors.toList());
+	}
+
 	// Rewards
 
 	private static final List<WorldGroup> CAN_CLAIM_REWARDS_IN = List.of(
@@ -246,18 +258,6 @@ public class EventsCommand extends CustomCommand {
 
 			service.save(user);
 		}
-	}
-
-	@ConverterFor(EventStoreImage.class)
-	EventStoreImage convertToEventStoreImage(String value) {
-		return EventStoreImage.of(value);
-	}
-
-	@TabCompleterFor(EventStoreImage.class)
-	List<String> tabCompleteEventStoreImage(String filter) {
-		return IMAGES.keySet().stream()
-			.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
-			.collect(Collectors.toList());
 	}
 
 }
