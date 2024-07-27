@@ -265,13 +265,14 @@ public class NexusCommand extends CustomCommand implements Listener {
 				throw new InvalidInputException("Resource pack is reloading");
 		}),
 		ANIMATIONS(() -> {
+
 			if (DecorationStoreLayouts.isAnimating())
 				throw new InvalidInputException("Decoration store is animating");
 
-			if (Geyser.isAnimating())
-				throw new InvalidInputException("Pugmas24 geyser is animating");
-
 			if (Nexus.getEnv() == Env.PROD) {
+				if (Geyser.isAnimating())
+					throw new InvalidInputException("Pugmas24 geyser is animating");
+
 				if (gg.projecteden.nexus.features.events.models.Train.anyActiveInstances())
 					throw new InvalidInputException("There is an active train");
 			} else {
@@ -280,8 +281,10 @@ public class NexusCommand extends CustomCommand implements Listener {
 			}
 		}),
 		PUGMAS24_BALLOON_EDITOR(() -> {
-			if (BalloonEditor.reload())
-				throw new InvalidInputException("A balloon is being editing at pugmas, saving session...");
+			if (Nexus.getEnv() == Env.PROD) {
+				if (BalloonEditor.reload())
+					throw new InvalidInputException("A balloon is being editing at pugmas, saving session...");
+			}
 		}),
 		CHAT_GAMES(() -> {
 			if (ChatGamesConfig.getCurrentGame() != null)
@@ -289,8 +292,10 @@ public class NexusCommand extends CustomCommand implements Listener {
 					throw new InvalidInputException("There is an active chat game");
 		}),
 		VU_LAN_LANTERN_ANIMATION(() -> {
-			if (VuLan24LanternAnimation.getInstance() != null)
-				throw new InvalidInputException("There is an active Vu Lan lantern animation");
+			if (Nexus.getEnv() == Env.PROD) {
+				if (VuLan24LanternAnimation.getInstance() != null)
+					throw new InvalidInputException("There is an active Vu Lan lantern animation");
+			}
 		}),
 		;
 
