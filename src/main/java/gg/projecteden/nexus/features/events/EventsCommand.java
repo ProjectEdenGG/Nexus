@@ -5,6 +5,8 @@ import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.events.store.EventStoreListener;
 import gg.projecteden.nexus.features.events.store.models.EventStoreImage;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreProvider;
+import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -15,16 +17,25 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import lombok.Getter;
 import lombok.NonNull;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.events.Events.STORE_PREFIX;
 import static gg.projecteden.nexus.features.events.store.models.EventStoreImage.IMAGES;
+import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
 
 @Aliases("event")
 public class EventsCommand extends CustomCommand {
@@ -177,6 +188,64 @@ public class EventsCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	void store_images_get(EventStoreImage image) {
 		PlayerUtils.giveItem(player(), image.getSplatterMap());
+	}
+
+	// Rewards
+
+	private static final List<WorldGroup> CAN_CLAIM_REWARDS_IN = List.of(
+		WorldGroup.SURVIVAL,
+		WorldGroup.CREATIVE,
+		WorldGroup.SKYBLOCK
+	);
+
+	@Path("rewards claim")
+	@Description("Claim reward items from events")
+	@Permission(Group.ADMIN)
+	void rewards_claim() {
+		if (!CAN_CLAIM_REWARDS_IN.contains(worldGroup()))
+			error("You cannot claim event item rewards in this world");
+
+		new EventItemRewardsMenu(player());
+	}
+
+	@Title("Event Item Rewards")
+	public static class EventItemRewardsMenu implements TemporaryMenuListener {
+		@Getter
+		private final Player player;
+
+		public EventItemRewardsMenu(Player player) {
+			this.player = player;
+
+			EventUserService service = new EventUserService();
+			EventUser user = service.get(player);
+
+			if (user.getRewardItems().isEmpty())
+				throw new InvalidInputException("No reward items available to claim");
+
+			List<ItemStack> items = new ArrayList<>();
+			final int max = Math.min(54, user.getRewardItems().size());
+			final Iterator<ItemStack> iterator = user.getRewardItems().iterator();
+			while (items.size() < max && iterator.hasNext()) {
+				items.add(iterator.next());
+				iterator.remove();
+			}
+
+			service.save(user);
+
+			open(items);
+		}
+
+		@Override
+		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
+			EventUserService service = new EventUserService();
+			EventUser user = service.get(player);
+
+			for (ItemStack content : event.getInventory().getContents())
+				if (isNotNullOrAir(content))
+					user.addRewardItem(content);
+
+			service.save(user);
+		}
 	}
 
 	@ConverterFor(EventStoreImage.class)

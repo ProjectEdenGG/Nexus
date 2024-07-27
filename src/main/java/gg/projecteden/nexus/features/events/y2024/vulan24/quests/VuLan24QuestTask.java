@@ -128,7 +128,7 @@ public enum VuLan24QuestTask implements IQuestTask {
 		)
 		.complete(dialog -> dialog
 			.npc("Thank you so much! Here’s some lanterns we made for you, as a reward for your effort, as well as 2 lanterns for you to place at this year's lantern ceremony!")
-			.give(PAPER_LANTERN_FLOATING, 2) // TODO more models?
+			.give(PAPER_LANTERN_FLOATING, 2)
 			.reward(PAPER_QUEST)
 		)),
 	FISH(GatherQuestTask.builder()

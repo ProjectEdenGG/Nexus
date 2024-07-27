@@ -15,8 +15,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,6 +37,7 @@ public class EventUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private int tokens;
+	private List<ItemStack> rewardItems = new ArrayList<>();
 
 	@PreLoad
 	void fix(DBObject dbObject) {
@@ -41,6 +45,10 @@ public class EventUser implements PlayerOwnedObject {
 			dbObject.put("tokensReceivedByDate", dbObject.get("tokensReceivedToday"));
 			dbObject.removeField("tokensReceivedToday");
 		}
+	}
+
+	public void addRewardItem(ItemStack item) {
+		rewardItems.add(item);
 	}
 
 	private Map<String, Map<LocalDate, Integer>> tokensReceivedByDate = new ConcurrentHashMap<>();

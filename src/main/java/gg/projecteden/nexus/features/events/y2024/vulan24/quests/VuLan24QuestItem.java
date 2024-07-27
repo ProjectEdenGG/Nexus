@@ -19,7 +19,7 @@ public enum VuLan24QuestItem implements QuestItem {
 	PAPER_LANTERN_SINGLE(new ItemBuilder(CustomMaterial.PAPER_LANTERN_SINGLE).name("&ePaper Lantern Single")),
 	PAPER_LANTERN_DOUBLE(new ItemBuilder(CustomMaterial.PAPER_LANTERN_DOUBLE).name("&ePaper Lantern Double")),
 	PAPER_LANTERN_TRIPLE(new ItemBuilder(CustomMaterial.PAPER_LANTERN_TRIPLE).name("&ePaper Lantern Triple")),
-	POT(new ItemBuilder(Material.DECORATED_POT).name("Pot"))
+	POT(new ItemBuilder(Material.DECORATED_POT).name("Pot")) // TODO
 	;
 
 	private final ItemBuilder itemBuilder;
