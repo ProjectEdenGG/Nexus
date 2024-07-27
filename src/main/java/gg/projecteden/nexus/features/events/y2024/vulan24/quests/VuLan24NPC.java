@@ -23,7 +23,7 @@ public enum VuLan24NPC implements InteractableNPC {
 	MAYOR_HOA("Mayor Hoa", 5177),
 	HAT_SALESMAN("Hat Salesman", 5180),
 	BOAT_SALESMAN("Boat Salesman", 5240),
-	MINER("Miner", 5309),
+	MINER("Hungry Miner", 5309),
 	TOUR_GUIDE("Tour Guide", 5311),
 	FLORIST("Florist", 5257),
 	STONE_MASON("Stone Mason", 5259),

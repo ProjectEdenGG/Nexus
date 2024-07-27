@@ -17,6 +17,7 @@ import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestTas
 import gg.projecteden.nexus.features.listeners.events.LivingEntityKilledByPlayerEvent;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
+import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomEmoji;
@@ -40,6 +41,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.loot.LootTables;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventDefaultFishingLoot.STONEFISH;
@@ -158,7 +160,14 @@ public class VuLan24 extends EdenEvent {
 	@Override
 	public void registerInteractHandlers() {
 		handleInteract(VuLan24NPC.BOAT_SALESMAN, (player, npc) -> VuLan24Menus.getBoatPicker().open(player));
-		handleInteract(VuLan24NPC.TOUR_GUIDE, (player, npc) -> VuLan24Menus.getGuideShop().open(player));
+		handleInteract(VuLan24NPC.TOUR_GUIDE, (player, npc) -> new Dialog(npc)
+			.npc("Tour Guide stuff")
+			.thenRun(quester -> {
+				if (Arrays.stream(player.getInventory().getContents()).noneMatch(Backpacks::isBackpack))
+					VuLan24Menus.getGuideShop().open(player);
+			})
+			.send(player)
+		);
 		handleInteract(VuLan24NPC.MINER, (player, npc) -> VuLan24Menus.getMinerShop().open(player));
 		handleInteract(VuLan24NPC.HAT_SALESMAN, (player, npc) -> VuLan24Menus.getBambooHatShop(player).open(player));
 		handleInteract(VuLan24NPC.CAPTAIN_LAI_AVONTYRE, (player, npc) -> {
