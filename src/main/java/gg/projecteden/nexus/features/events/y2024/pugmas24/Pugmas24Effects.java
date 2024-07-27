@@ -6,12 +6,12 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.effects.Effects;
 import gg.projecteden.nexus.features.effects.Effects.RotatingStand.StandRotationAxis;
 import gg.projecteden.nexus.features.effects.Effects.RotatingStand.StandRotationType;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Fairgrounds;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Geyser;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
@@ -100,13 +100,11 @@ public class Pugmas24Effects extends Effects {
 	}
 
 	private void minigolfWindmill() {
-		Location animationLoc = Pugmas24.get().location(-755, 71, -2915);
-
 		Tasks.repeat(TickTime.SECOND.x(2), TickTime.TICK.x(38), () -> {
-			if (!shouldAnimate(animationLoc))
+			if (!shouldAnimate(Fairgrounds.minigolfAnimationLoc))
 				return;
 
-			animationLoc.getBlock().setType(Material.REDSTONE_BLOCK);
+			Fairgrounds.minigolfAnimationLoc.getBlock().setType(Material.REDSTONE_BLOCK);
 		});
 
 	}
