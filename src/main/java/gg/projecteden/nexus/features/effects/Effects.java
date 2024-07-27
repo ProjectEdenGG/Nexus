@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.effects.Effects.RotatingStand.StandRotationType;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
 import gg.projecteden.nexus.features.events.y2024.vulan24.VuLan24;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
@@ -32,7 +33,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-@Depends(VuLan24.class) // TODO Fix
+@Depends({VuLan24.class, Pugmas24.class}) // TODO Fix
 @NoArgsConstructor
 public abstract class Effects extends Feature implements Listener {
 
