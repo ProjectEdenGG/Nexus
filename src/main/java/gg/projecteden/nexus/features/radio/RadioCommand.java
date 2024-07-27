@@ -23,9 +23,11 @@ import gg.projecteden.nexus.models.radio.RadioConfigService;
 import gg.projecteden.nexus.models.radio.RadioUser;
 import gg.projecteden.nexus.models.radio.RadioUserService;
 import gg.projecteden.nexus.utils.StringUtils;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -125,7 +127,7 @@ public class RadioCommand extends CustomCommand {
 		if (radio == null)
 			error("You are not listening to a radio!");
 
-		SongPlayer songPlayer = radio.getSongPlayer();
+		SongPlayer songPlayer = radio.getSongPlayers().get(0); // only difference is their locations
 		Song song = songPlayer.getSong();
 
 		send(PREFIX + "Radio Info:");
@@ -159,8 +161,11 @@ public class RadioCommand extends CustomCommand {
 	@Permission(Group.STAFF)
 	@Description("Lists all players listening to the server radio")
 	void listListeners(Radio radio) {
-		Set<UUID> uuids = radio.getSongPlayer().getPlayerUUIDs();
-		if (uuids.size() == 0)
+		if (radio.getType() != RadioType.SERVER)
+			error("This command can only be used with server radios");
+
+		Set<UUID> uuids = radio.getSongPlayers().get(0).getPlayerUUIDs();
+		if (uuids.isEmpty())
 			error("No players are listening to " + radio.getId());
 
 		send(PREFIX + "Players listening to " + radio.getId() + ":");
@@ -170,13 +175,15 @@ public class RadioCommand extends CustomCommand {
 		}
 	}
 
-	@Path("teleport <radio>")
+	@Path("teleport <radio> [index]")
 	@Permission(Group.STAFF)
 	@Description("Teleport to the location of the radio")
-	void teleport(Radio radio) {
-		if (!radio.getType().equals(RadioType.RADIUS))
-			error("You can only teleport to a radius radio");
-		player().teleportAsync(radio.getLocation(), TeleportCause.COMMAND);
+	void teleport(Radio radio, @Arg("0") Integer index) {
+		switch (radio.getType()) {
+			case SERVER -> error("This radio type doesn't have a location");
+			case RADIUS -> player().teleportAsync(radio.getRadiusLocation(), TeleportCause.COMMAND);
+			case STATION -> player().teleportAsync(radio.getStationLocations().get(index), TeleportCause.COMMAND);
+		}
 	}
 
 	@Path("debugUser <player>")
@@ -204,7 +211,16 @@ public class RadioCommand extends CustomCommand {
 		send("&3Type: &e" + StringUtils.camelCase(radio.getType()));
 
 		if (radio.getType().equals(RadioType.RADIUS)) {
-			send("&3Location: &e" + StringUtils.getShortLocationString(radio.getLocation()));
+			send("&3Location: &e" + StringUtils.getShortLocationString(radio.getRadiusLocation()));
+			send("&3Radius: &e" + radio.getRadius());
+			send("&3Particles: &e" + radio.isParticles());
+		}
+
+		if (radio.getType() == RadioType.STATION) {
+			send("&3Locations:");
+			for (Location location : radio.getStationLocations()) {
+				send("&3- &e" + StringUtils.getShortLocationString(location));
+			}
 			send("&3Radius: &e" + radio.getRadius());
 			send("&3Particles: &e" + radio.isParticles());
 		}
@@ -239,21 +255,24 @@ public class RadioCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	@Description("Create a radio")
 	void configCreate(RadioType type, String id, @Arg("0") int radius) {
-		if (type.equals(RadioType.RADIUS)) {
-			config.add(Radio.builder()
-					.id(id)
-					.type(RadioType.RADIUS)
-					.radius(radius)
-					.location(location())
-					.build());
+		switch (type) {
+			case SERVER -> {
+				config.add(Radio.builder()
+						.id(id)
+						.type(RadioType.SERVER)
+						.build());
+			}
 
-		} else if (type.equals(RadioType.SERVER)) {
-			config.add(Radio.builder()
-					.id(id)
-					.type(RadioType.SERVER)
-					.build());
-
+			case RADIUS, STATION -> {
+				config.add(Radio.builder()
+						.id(id)
+						.type(type)
+						.radius(radius)
+						.locations(Collections.singletonList(location()))
+						.build());
+			}
 		}
+
 		configService.save(config);
 
 		send(PREFIX + StringUtils.camelCase(type) + " Radio &e" + id + " &3created");
@@ -263,8 +282,8 @@ public class RadioCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	@Description("Toggle the particles of the radio")
 	void configSetParticles(Radio radio, boolean enable) {
-		if (!radio.getType().equals(RadioType.RADIUS))
-			error("You can only set particles of a radius radio");
+		if (radio.getType().isRadiusBased())
+			error("You can only set particles of a radius based radio");
 
 		radio.setParticles(enable);
 		configService.save(config);
@@ -298,20 +317,64 @@ public class RadioCommand extends CustomCommand {
 		send(PREFIX + "Radius set to " + radio.getRadius() + " for " + radio.getId());
 	}
 
-	@Path("config setLocation <radio>")
+	@Path("config setRadiusLocation <radio>")
 	@Permission(Group.ADMIN)
-	@Description("Set the location of the radio to your current location")
+	@Description("Set the location of the radius radio to your current location")
 	void configSetLocation(Radio radio) {
-		if (!radio.getType().equals(RadioType.RADIUS))
-			error("You can only set location of a radius radio");
+		if (radio.getType() != RadioType.RADIUS)
+			error("This radio type is not a radius radio");
 
-		radio.setLocation(location());
+		radio.setRadiusLocation(location());
+
 		if (radio.isEnabled())
 			radio.reload();
 
 		configService.save(config);
+		send(PREFIX + "Location set to " + StringUtils.getShortLocationString(radio.getRadiusLocation()) + " for " + radio.getId());
+	}
 
-		send(PREFIX + "Location set to " + StringUtils.getShortLocationString(radio.getLocation()) + " for " + radio.getId());
+	@Path("config addStationLocation <radio>")
+	@Permission(Group.ADMIN)
+	@Description("Adds your current location to the station radio")
+	void configAddStationLocation(Radio radio) {
+		if (radio.getType() != RadioType.STATION)
+			error("This radio type is not a station radio");
+
+		radio.addStationLocation(location());
+		if (radio.isEnabled())
+			radio.reload();
+
+		configService.save(config);
+		send(PREFIX + "Added location at " + StringUtils.getShortLocationString(radio.getRadiusLocation()) + " to " + radio.getId());
+	}
+
+	@Path("config removeStationLocation <radio> <index>")
+	@Permission(Group.ADMIN)
+	@Description("Removes the location from the station radio")
+	void configRemoveStationLocation(Radio radio, int index) {
+		if (radio.getType() != RadioType.STATION)
+			error("This radio type is not a station radio");
+
+		radio.removeStationLocation(location());
+		if (radio.isEnabled())
+			radio.reload();
+
+		configService.save(config);
+		send(PREFIX + "Removed location at " + StringUtils.getShortLocationString(radio.getRadiusLocation()) + " from " + radio.getId());
+	}
+
+	@Path("config removeStationLocation <radio>")
+	@Permission(Group.ADMIN)
+	@Description("Lists the locations of this station radio")
+	void configListStationLocation(Radio radio) {
+		if (radio.getType() != RadioType.STATION)
+			error("This radio type is not a station radio");
+
+		send("&3Locations: ");
+		int index = 0;
+		for (Location location : radio.getLocations()) {
+			send(" &3" + index + " - " + StringUtils.getShortLocationString(location));
+		}
 	}
 
 	@Path("config addSong <radio> <song>")

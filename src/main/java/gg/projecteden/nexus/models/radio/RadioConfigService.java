@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.models.radio;
 
+import com.xxmicloxx.NoteBlockAPI.songplayer.SongPlayer;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
 import gg.projecteden.nexus.models.radio.RadioConfig.Radio;
@@ -19,11 +21,17 @@ public class RadioConfigService extends MongoPlayerService<RadioConfig> {
 	@Override
 	public void clearCache() {
 		for (RadioConfig config : getCache().values())
-			for (Radio radio : config.getRadios())
-				if (radio.getSongPlayer() != null) {
-					radio.getSongPlayer().destroy();
-					radio.setSongPlayer(null);
+			for (Radio radio : config.getRadios()) {
+				if (Nullables.isNullOrEmpty(radio.getSongPlayers()))
+					continue;
+
+				for (SongPlayer songPlayer : radio.getSongPlayers()) {
+					if (songPlayer != null)
+						songPlayer.destroy();
 				}
+
+				radio.getSongPlayers().clear();
+			}
 
 		super.clearCache();
 	}

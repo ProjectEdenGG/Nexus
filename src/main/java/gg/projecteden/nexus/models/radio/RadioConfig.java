@@ -16,7 +16,9 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -77,21 +79,46 @@ public class RadioConfig implements PlayerOwnedObject {
 	public static class Radio {
 		private String id;
 		private RadioType type;
-		@Builder.Default
+		@Default
 		private boolean enabled = false;
-		@Builder.Default
+		@Default
 		private boolean particles = false;
-		private Location location;
+		private List<Location> locations = new ArrayList<>();
 		private int radius;
-		@Embedded @Builder.Default
+		@Embedded
+		@Default
 		private Set<String> songs = new HashSet<>();
 
-		private transient SongPlayer songPlayer;
+		private transient List<SongPlayer> songPlayers = new ArrayList<>();
 
-		public Location getLocation() {
-			if (this.location == null)
+		public void addSongPlayer(SongPlayer songPlayer) {
+			this.songPlayers.add(songPlayer);
+		}
+
+		public Location getRadiusLocation() {
+			if (this.locations == null || this.locations.isEmpty())
 				return null;
-			return this.location.clone();
+
+			return this.locations.get(0).clone();
+		}
+
+		public List<Location> getStationLocations() {
+			if (this.locations == null || this.locations.isEmpty())
+				return null;
+
+			return new ArrayList<>(this.locations);
+		}
+
+		public void setRadiusLocation(Location location) {
+			this.locations = Collections.singletonList(location);
+		}
+
+		public void addStationLocation(Location location) {
+			this.locations.add(location);
+		}
+
+		public void removeStationLocation(Location location) {
+			this.locations.remove(location);
 		}
 
 		public void setEnabled(boolean bool) {
@@ -100,7 +127,7 @@ public class RadioConfig implements PlayerOwnedObject {
 			if (bool) {
 				RadioFeature.createSongPlayer(this, getPlaylist());
 			} else
-				getSongPlayer().setPlaying(false);
+				getSongPlayers().forEach(songPlayer -> songPlayer.setPlaying(false));
 		}
 
 		public Set<String> getSongs() {
@@ -146,9 +173,15 @@ public class RadioConfig implements PlayerOwnedObject {
 		}
 	}
 
+	@Getter
+	@AllArgsConstructor
 	public enum RadioType {
-		SERVER,
-		RADIUS
+		SERVER(false), // No location
+		RADIUS(true), // Single location
+		STATION(true), // Multi location
+		;
+
+		final boolean radiusBased;
 	}
 
 	@Data
