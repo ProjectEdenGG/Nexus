@@ -40,6 +40,7 @@ public class EconomyCommand extends CustomCommand {
 		send("&3Each player starts out with &e$500&3.");
 		send("&3There are multiple ways to make money, such as:");
 		line();
+		send(json("&3[+] &eSelling items at the &c/market &3in the &eresource world").hover("&3Non auto-farmable resources sell for more in this world").suggest("/warp resource"));
 		send(json("&3[+] &eSelling items to other players").command("/economy selling").hover("&3Click for a few tips on how to sell to other players"));
 		// TODO Jobs
 		send(json("&3[+] &eKilling mobs").url(WikiType.SERVER.getBasePath() + "Economy#Mobs").hover("&3Click to open the wiki section on mobs"));
