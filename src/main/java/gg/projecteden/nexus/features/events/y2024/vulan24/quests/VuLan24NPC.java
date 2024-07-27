@@ -27,8 +27,8 @@ public enum VuLan24NPC implements InteractableNPC {
 	TOUR_GUIDE("Tour Guide", 5311),
 	FLORIST("Florist", 5257),
 	STONE_MASON("Stone Mason", 5259),
-	PLUNDERED_VILLAGE_VILLAGER("", 5304),
-	PLUNDERED_VILLAGE_FARMER("", 5313),
+	PLUNDERED_VILLAGE_VILLAGER("Villager", 5304),
+	PLUNDERED_VILLAGE_FARMER("Farmer", 5313),
 	;
 
 	private final String name;
