@@ -27,12 +27,15 @@ import gg.projecteden.nexus.models.vulan24.VuLan24ConfigService;
 import gg.projecteden.nexus.models.vulan24.VuLan24UserService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.ToolType;
 import gg.projecteden.nexus.utils.ToolType.ToolGrade;
+import net.minecraft.world.entity.raid.Raid;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Pillager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -43,6 +46,7 @@ import org.bukkit.loot.LootTables;
 import java.util.Arrays;
 import java.util.List;
 
+import static gg.projecteden.api.common.utils.RandomUtils.chanceOf;
 import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventDefaultFishingLoot.STONEFISH;
 import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory.FISH;
 import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory.JUNK;
@@ -114,6 +118,12 @@ public class VuLan24 extends EdenEvent {
 
 		if (event.getEntity().getEntitySpawnReason() != SpawnReason.SPAWNER)
 			return;
+
+		if (event.getEntity() instanceof Pillager pillager)
+			if (chanceOf(2)) {
+				pillager.setPatrolLeader(true);
+				pillager.getEquipment().setHelmet(NMSUtils.fromNMS(Raid.getLeaderBannerInstance()));
+			}
 
 		for (var player : worldguard().getPlayersInRegion("vu_lan_raid")) {
 			final Quester quester = Quester.of(player);

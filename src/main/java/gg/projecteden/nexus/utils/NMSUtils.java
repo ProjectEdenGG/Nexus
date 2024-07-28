@@ -105,6 +105,10 @@ public class NMSUtils {
 		return CraftItemStack.asNMSCopy(itemStack);
 	}
 
+	public static org.bukkit.inventory.ItemStack fromNMS(ItemStack itemStack) {
+		return itemStack.asBukkitCopy();
+	}
+
 	@NotNull
 	public static Rotations toNMS(EulerAngle angle) {
 		final Function<Double, Float> toDegrees = value -> (float) Math.toDegrees(value);
