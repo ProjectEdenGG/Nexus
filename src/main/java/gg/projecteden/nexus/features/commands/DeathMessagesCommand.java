@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
-import com.gmail.nossr50.mcMMO;
+import com.gmail.nossr50.util.MetadataConstants;
 import com.google.gson.Gson;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
@@ -350,8 +350,8 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 
 		if (entity != null) {
 			// get mcMMO's saved entity name
-			if (entity.hasMetadata(mcMMO.customNameKey)) {
-				String name = entity.getMetadata(mcMMO.customNameKey).get(0).asString();
+			if (entity.hasMetadata(MetadataConstants.METADATA_KEY_CUSTOM_NAME)) {
+				String name = entity.getMetadata(MetadataConstants.METADATA_KEY_CUSTOM_NAME).get(0).asString();
 				if (!name.isEmpty())
 					finalComponent = new JsonBuilder().content(name).hover(HoverEvent.showEntity(hover.type(), hover.id(), finalComponent)).build();
 			}

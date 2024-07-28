@@ -43,6 +43,8 @@ repositories {
     maven { url = uri("https://maven.enginehub.org/repo/") }
     maven { url = uri("https://eldonexus.de/repository/maven-public/") }
     maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
+    maven { url = uri("https://nexus.neetgames.com/repository/maven-releases/") }
+    maven { url = uri("https://repo.phoenix616.dev/") }
 //    maven { url = uri("https://ci.ender.zone/plugin/repository/everything/") }
 //    maven { url = uri("https://ci.ender.zone/plugin/repository/project/") }
     maven { url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/") }
@@ -78,7 +80,7 @@ dependencies {
     compileOnly("tech.blastmc.holograms:HologramsAPI:1.0.0-SNAPSHOT")
     compileOnly("fr.moribus:ImageOnMap:4.3.1-EDEN")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
-    compileOnly("com.github.mcMMO-Dev:mcMMO:dc94fedee1")
+    compileOnly("com.gmail.nossr50.mcMMO:mcMMO:2.1.231")
     compileOnly("net.luckperms:api:5.4")
     compileOnly("com.sk89q.worldguard:worldguard-core:7.0.6-SNAPSHOT")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.6-SNAPSHOT")
@@ -92,7 +94,7 @@ dependencies {
     compileOnly("com.github.BlueMap-Minecraft:BlueMapAPI:v1.3.1")
     compileOnly("com.arcaniax:HeadDatabase-API:1.3.1")
     compileOnly("com.viaversion:viaversion-api:4.0.1")
-    compileOnly("com.github.jikoo.OpenInv:openinvapi:4.1.8")
+    compileOnly("com.lishid:openinvapi:4.4.4-SNAPSHOT")
     compileOnly("world.bentobox:bentobox:1.20.1-SNAPSHOT")
     compileOnly("nl.pim16aap2:BigDoors:0.1.8.39")
     compileOnly("net.coreprotect:CoreProtect:22.3.1")
