@@ -131,5 +131,4 @@ public class JMiniGolfCommand extends CustomCommand {
 		send("Below: " + golfBall.getBlockBelow().getType());
 		send("Inside: " + golfBall.getBlock().getType());
 	}
-
 }

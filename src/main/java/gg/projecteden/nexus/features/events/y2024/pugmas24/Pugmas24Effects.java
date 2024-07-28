@@ -55,7 +55,7 @@ public class Pugmas24Effects extends Effects {
 		return result;
 	}
 
-	private static final List<String> windmill1 = new ArrayList<>() {{ // TODO FINAL: ENTITY UUID
+	private final List<String> windmill1 = new ArrayList<>() {{ // TODO FINAL: ENTITY UUID
 		add("3b7fe81c-5188-4288-9dc2-158c2be784cc");
 		add("1deb9bca-4a35-4732-aa7a-fc643518055a");
 		add("68d182c3-b76a-4a38-959d-35a81e4ad582");
@@ -70,14 +70,14 @@ public class Pugmas24Effects extends Effects {
 			if (armorStand == null)
 				continue;
 
-			if (windmill1.contains(armorStand.getUniqueId().toString())) {
+			Pugmas24.get().forceLoadChunk(armorStand.getLocation().getChunk());
+
+			if (windmill1.contains(rotatingStand.getUuid())) {
 				rotatingStand.resetRightArmPose();
 				rotatingStand.addRightArmPose(0, Math.toRadians(angle), 0);
 				armorStand.getEquipment().setItemInMainHand(new ItemBuilder(Material.PAPER).modelId(6247).build());
 				angle += 90;
 			}
-
-			Pugmas24.get().forceLoadChunk(rotatingStand.getArmorStand().getLocation().getChunk());
 		}
 	}
 

@@ -60,7 +60,7 @@ public class ProjectileListener implements Listener {
 		boolean hasHitEntity = hitBlockFace == null;
 		Entity hitEntity = event.getHitEntity();
 
-		var ignoreTypes = List.of(EntityType.PLAYER, EntityType.PAINTING, EntityType.ITEM_FRAME, EntityType.GLOW_ITEM_FRAME);
+		var ignoreTypes = List.of(EntityType.PLAYER, EntityType.PAINTING, EntityType.ITEM_FRAME, EntityType.GLOW_ITEM_FRAME, EntityType.ARMOR_STAND);
 		if (hasHitEntity && hitEntity != null && ignoreTypes.contains(hitEntity.getType())) {
 			user.debug("ball hit an ignored type");
 			event.setCancelled(true);
@@ -91,22 +91,19 @@ public class ProjectileListener implements Listener {
 				user.debug("ball hit an entity");
 
 				EntityType hitEntityType = hitEntity.getType();
-				if (hitEntityType != EntityType.PLAYER) {
-
-					if (hitEntityType == EntityType.MINECART_TNT) {
-						user.debug("  tnt minecart -> kill");
-						golfBall.respawn("&cBoom!");
-						return;
-					}
-
-					user.debug("  generic -> bounce");
-
-					Vector direction = hitEntity.getVelocity().multiply(0.7);
-					velocity.multiply(-1).multiply(0.7).add(direction);
-
-					golfBall.setVelocity(velocity);
+				if (hitEntityType == EntityType.MINECART_TNT) {
+					user.debug("  tnt minecart -> kill");
+					golfBall.respawn("&cBoom!");
 					return;
 				}
+
+				user.debug("  generic -> bounce");
+
+				Vector direction = hitEntity.getVelocity().multiply(0.7);
+				velocity.multiply(-1).multiply(0.7).add(direction);
+
+				golfBall.setVelocity(velocity);
+				return;
 			}
 
 			return;

@@ -44,8 +44,8 @@ public class Frogger implements Listener {
 	private static final String roadRg2 = gameRg + "_road_2";  // TODO FINAL: DEFINE REGION
 	private static final String checkpointRg = gameRg + "_checkpoint";  // TODO FINAL: DEFINE REGION
 	//
-	private static final Location respawnLoc = Pugmas24.get().location(-520.5, 250.0, -2719.5, 90, 0);  // TODO FINAL: LOCATION
-	private static final Location checkpointLoc = Pugmas24.get().location(-540.5, 250.0, -2719.5, 90, 0);  // TODO FINAL: LOCATION
+	private static final Location respawnLoc = Pugmas24.get().location(-787.5, 78.0, -2858.5, 90, 0);  // TODO FINAL: LOCATION
+	private static final Location checkpointLoc = Pugmas24.get().location(-807.5, 78.0, -2858.5, 90, 0);  // TODO FINAL: LOCATION
 	private static final Set<Player> checkpointList = new HashSet<>();
 	private static boolean enabled = false;
 	private static int animationTaskId;

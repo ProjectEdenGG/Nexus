@@ -133,7 +133,7 @@ public class AvontyreEffects extends Effects {
 		if (Survival.isNotAtSpawn(location))
 			return;
 
-		if (Survival.worldguard().getRegionsLikeAt("spawn_crypt_trigger", location).size() == 0)
+		if (Survival.worldguard().getRegionsLikeAt("spawn_crypt_trigger", location).isEmpty())
 			return;
 
 		nl.pim16aap2.bigDoors.Door door = BigDoorManager.getDoor("spawn_crypt_secret");

@@ -30,13 +30,16 @@ import java.util.UUID;
  TODO:
   - persistent data
   - better entity collision detection than ProjectileHitEvent
-  - don't bounce off of paintings or itemframes
   - Allow golfball to not go out of bounds in regions using regex
   - Golfball can get stuck on boost/conveyor blocks
   -
   - Make Teleport blocks parse an item in the block instead of a sign below it
   	- Add more lines such as yaw and speed
   	- Make a command to generate this item
+  - on place ball, get par, save in a list "cache" (world, region id, par)
+  - when the ball is placed for the first time, or has stopped moving, spawn a display entity instead --> fixes visual float into ground?
+  - splash sound when ball dies in water
+  - when ball respawns from out of bounce, it gets stuck in some kind of loop, only fix is to whistle 1 time, and then you can hit it again
 */
 
 public class MiniGolf extends Feature {

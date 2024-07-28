@@ -169,6 +169,7 @@ public abstract class Effects extends Feature implements Listener {
 		StandRotationAxis axis;
 		StandRotationType rotationType;
 		boolean resetPose;
+		ArmorStand armorStand;
 
 		public RotatingStand(String uuid, StandRotationAxis axis, StandRotationType rotationType, boolean resetPose) {
 			this.uuid = uuid;
@@ -177,11 +178,17 @@ public abstract class Effects extends Feature implements Listener {
 			this.resetPose = resetPose;
 		}
 
-		public ArmorStand getArmorStand() {
-			final Entity entity = Bukkit.getEntity(UUID.fromString(uuid));
-			if (entity != null && entity.isValid() && entity instanceof ArmorStand stand)
-				return stand;
+		public @Nullable ArmorStand getArmorStand() {
+			if (this.armorStand != null)
+				return this.armorStand;
 
+			final Entity entity = Bukkit.getEntity(UUID.fromString(uuid));
+			if (entity != null && entity.isValid() && entity instanceof ArmorStand stand) {
+				this.armorStand = stand;
+				return this.armorStand;
+			}
+
+			this.armorStand = null;
 			return null;
 		}
 
