@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.exceptions.EdenException;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.customboundingboxes.events.CustomBoundingBoxEntityInteractEvent;
 import gg.projecteden.nexus.features.events.models.EventBreakable;
 import gg.projecteden.nexus.features.events.models.EventBreakable.EventBreakableBuilder;
 import gg.projecteden.nexus.features.events.models.EventErrors;
@@ -53,6 +54,7 @@ import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -336,6 +338,23 @@ public abstract class EdenEvent extends Feature implements Listener {
 
 	public ProtectedRegion getProtectedRegion() {
 		return worldguard().getProtectedRegion(getRegionName());
+	}
+
+	@EventHandler
+	public void on(CustomBoundingBoxEntityInteractEvent event) {
+		if (!shouldHandle(event.getPlayer()))
+			return;
+
+		if (!event.getEntity().getId().contains("quest_board"))
+			return;
+
+		if (event.getOriginalEvent() instanceof Cancellable cancellable)
+			cancellable.setCancelled(true);
+
+		if (new CooldownService().check(event.getPlayer(), "quest_board", 20))
+			return;
+
+		PlayerUtils.runCommand(event.getPlayer(), this.getName().toLowerCase() + " quest progress");
 	}
 
 	public <T extends InteractableEntity> T interactableOf(Entity entity) {

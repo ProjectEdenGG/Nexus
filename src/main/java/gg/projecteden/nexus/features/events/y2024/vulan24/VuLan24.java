@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.events.y2024.vulan24;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.features.customboundingboxes.events.CustomBoundingBoxEntityInteractEvent;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.models.EventBreakable;
 import gg.projecteden.nexus.features.events.models.EventPlaceable;
@@ -27,7 +26,6 @@ import gg.projecteden.nexus.models.vulan24.VuLan24ConfigService;
 import gg.projecteden.nexus.models.vulan24.VuLan24UserService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.ToolType;
 import gg.projecteden.nexus.utils.ToolType.ToolGrade;
@@ -36,7 +34,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Pillager;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.loot.LootTables;
@@ -105,20 +102,6 @@ public class VuLan24 extends EdenEvent {
 		event.setCancelled(true);
 		event.getPlayer().getInventory().getItemInMainHand().subtract(1);
 		new VuLan24ConfigService().edit0(user -> user.setLanterns(user.getLanterns() + 1));
-	}
-
-	@EventHandler
-	public void on(CustomBoundingBoxEntityInteractEvent event) {
-		if (!shouldHandle(event.getPlayer()))
-			return;
-
-		if (!event.getEntity().getId().contains("quest_board"))
-			return;
-
-		if (event.getOriginalEvent() instanceof Cancellable cancellable)
-			cancellable.setCancelled(true);
-
-		PlayerUtils.runCommand(event.getPlayer(), "vulan quest progress");
 	}
 
 	@EventHandler
