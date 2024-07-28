@@ -13,14 +13,15 @@ import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Quest;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestItem;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestReward;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestTask;
-import gg.projecteden.nexus.features.listeners.events.LivingEntityKilledByPlayerEvent;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
+import gg.projecteden.nexus.features.regionapi.events.entity.EntityLeavingRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomEmoji;
 import gg.projecteden.nexus.framework.annotations.Date;
+import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.VuLan24LanternAnimationJob;
 import gg.projecteden.nexus.models.vulan24.VuLan24ConfigService;
 import gg.projecteden.nexus.models.vulan24.VuLan24UserService;
@@ -32,9 +33,10 @@ import gg.projecteden.nexus.utils.ToolType.ToolGrade;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Pillager;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.loot.LootTables;
 
@@ -44,6 +46,7 @@ import java.util.List;
 import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventDefaultFishingLoot.STONEFISH;
 import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory.FISH;
 import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory.JUNK;
+import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Quest.TRAGEDY_AT_VINH_THAI_LAGOON;
 
 @QuestConfig(
 	quests = VuLan24Quest.class,
@@ -92,8 +95,8 @@ public class VuLan24 extends EdenEvent {
 	);
 
 	@EventHandler
-	public void onRightClick(PlayerInteractEvent event) {
-		if (!VuLan24.get().isInRegion(event.getPlayer(), "vulan_lanternanimation_place"))
+	public void on(PlayerInteractEvent event) {
+		if (!VuLan24.get().isInRegion(event.getPlayer(), "vu_lan_lantern_animation_place"))
 			return;
 
 		if (CustomMaterial.of(event.getPlayer().getInventory().getItemInMainHand()) != CustomMaterial.of(VuLan24QuestItem.PAPER_LANTERN_FLOATING.get()))
@@ -105,18 +108,45 @@ public class VuLan24 extends EdenEvent {
 	}
 
 	@EventHandler
-	public void on(LivingEntityKilledByPlayerEvent event) {
-		if (!shouldHandle(event.getAttacker()))
+	public void on(EntitySpawnEvent event) {
+		if (!isAtEvent(event.getEntity()))
 			return;
 
-		final LivingEntity entity = event.getEntity();
-		if (entity.getType() == EntityType.RAVAGER)
-			event.getAttacker().getWorld().dropItem(entity.getLocation(), VuLan24QuestItem.RAVAGER_DROP.get());
-		else if (entity.getType() == EntityType.PILLAGER)
-			if (MaterialTag.BANNERS.isTagged(((Pillager) entity).getEquipment().getHelmet().getType()))
-				event.getAttacker().getWorld().dropItem(entity.getLocation(), VuLan24QuestItem.CAPTAIN_DROP.get());
-			else
-				event.getAttacker().getWorld().dropItem(entity.getLocation(), VuLan24QuestItem.PILLAGER_DROP.get());
+		if (event.getEntity().getEntitySpawnReason() != SpawnReason.SPAWNER)
+			return;
+
+		for (var player : worldguard().getPlayersInRegion("vu_lan_raid")) {
+			final Quester quester = Quester.of(player);
+			if (quester.hasStarted(TRAGEDY_AT_VINH_THAI_LAGOON) && !quester.hasCompleted(TRAGEDY_AT_VINH_THAI_LAGOON))
+				return;
+		}
+
+		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void on(EntityLeavingRegionEvent event) {
+		if (!isAtEvent(event.getEntity()))
+			return;
+
+		if (event.getEntityType() != EntityType.RAVAGER && event.getEntityType() != EntityType.PILLAGER)
+			return;
+
+		if (!event.getRegion().getId().equals("vu_lan_raid"))
+			return;
+
+		event.setCancelled(true);
+	}
+	
+	@EventHandler
+	public void on(EntityDeathEvent event) {
+		if (!isAtEvent(event.getEntity()))
+			return;
+
+		if (event.getEntityType() != EntityType.RAVAGER && event.getEntityType() != EntityType.PILLAGER)
+			return;
+
+		event.getDrops().clear();
 	}
 
 	@EventHandler

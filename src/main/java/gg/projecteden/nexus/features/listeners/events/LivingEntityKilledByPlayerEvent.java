@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class LivingEntityKilledByPlayerEvent extends EntityEvent {
@@ -27,6 +28,10 @@ public class LivingEntityKilledByPlayerEvent extends EntityEvent {
 		this.entity = victim;
 		this.attacker = attacker;
 		this.originalEvent = event;
+	}
+
+	public void drop(ItemStack item) {
+		attacker.getWorld().dropItem(entity.getLocation(), item);
 	}
 
 	private static final HandlerList handlers = new HandlerList();

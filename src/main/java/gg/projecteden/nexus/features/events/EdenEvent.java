@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishing
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.FishingLoot;
 import gg.projecteden.nexus.features.events.models.EventPlaceable;
 import gg.projecteden.nexus.features.events.models.EventPlaceable.EventPlaceableBuilder;
+import gg.projecteden.nexus.features.listeners.events.LivingEntityKilledByPlayerEvent;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
@@ -278,7 +279,13 @@ public abstract class EdenEvent extends Feature implements Listener {
 			builder.add("current-world-event-active", "false");
 			return builder.build();
 		}
+	}
 
+	public boolean shouldHandle(HasLocation location) {
+		if (!isAtEvent(location))
+			return false;
+
+		return isEventActive();
 	}
 
 	public boolean shouldHandle(Player player) {
@@ -499,10 +506,19 @@ public abstract class EdenEvent extends Feature implements Listener {
 	@EventHandler
 	public void _onBlockDropItemEvent(BlockDropItemEvent event) {
 		Player player = event.getPlayer();
-		if (!shouldHandle(event.getPlayer()))
+		if (!shouldHandle(player))
 			return;
 
 		new QuesterService().edit(player, quester -> quester.handleBlockEvent(event));
+	}
+
+	@EventHandler
+	public void _onLivingEntityKilledByPlayerEvent(LivingEntityKilledByPlayerEvent event) {
+		Player player = event.getAttacker();
+		if (!shouldHandle(player))
+			return;
+
+		new QuesterService().edit(player, quester -> quester.handleEntityEvent(event));
 	}
 
 	public boolean handleBlockBreak(BlockBreakEvent event) {

@@ -5,6 +5,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.events.EdenEvent;
+import gg.projecteden.nexus.features.listeners.events.LivingEntityKilledByPlayerEvent;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
 import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
 import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
@@ -29,6 +30,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockEvent;
+import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -130,6 +132,25 @@ public class Quester implements PlayerOwnedObject {
 
 						taskStep.getOnBlockDropItem().get(materials).accept(blockDropItemEvent, event.getBlock());
 					}
+				}
+			}
+		}
+	}
+
+	public void handleEntityEvent(EntityEvent event) {
+		for (Quest quest : quests) {
+			if (quest.isComplete())
+				continue;
+
+			final QuestTaskProgress taskProgress = quest.getCurrentTaskProgress();
+			final QuestTaskStep<?, ?> taskStep = taskProgress.get().getSteps().get(taskProgress.getStep());
+
+			if (event instanceof LivingEntityKilledByPlayerEvent killEvent) {
+				for (var entityClass : taskStep.getOnLivingEntityKilledByPlayer().keySet()) {
+					if (!entityClass.isAssignableFrom(event.getEntity().getClass()))
+						continue;
+
+					taskStep.getOnLivingEntityKilledByPlayer().get(entityClass).accept(killEvent, killEvent.getEntity());
 				}
 			}
 		}

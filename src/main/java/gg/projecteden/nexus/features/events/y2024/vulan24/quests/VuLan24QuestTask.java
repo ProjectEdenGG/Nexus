@@ -10,6 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.block.BrushableBlock;
+import org.bukkit.entity.Pillager;
+import org.bukkit.entity.Ravager;
 import org.bukkit.event.block.Action;
 
 import java.util.Map;
@@ -105,6 +107,8 @@ public enum VuLan24QuestTask implements IQuestTask {
 		.gather(PILLAGER_DROP, 10)
 		.gather(CAPTAIN_DROP, 1)
 		.gather(RAVAGER_DROP, 1)
+		.onLivingEntityKilledByPlayer(Ravager.class, (event, ravager) -> event.drop(VuLan24QuestItem.RAVAGER_DROP.get()))
+		.onLivingEntityKilledByPlayer(Pillager.class, (event, pillager) -> event.drop(pillager.isPatrolLeader() ? CAPTAIN_DROP.get() : PILLAGER_DROP.get()))
 		.reminder(dialog -> dialog
 			.npc("The bandits should be by the Lagoon near our village across the mountain, come back to me with the gems they stole from me and I'll be sure to pay you handsomely!")
 		)

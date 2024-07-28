@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.quests.tasks.common;
 
+import gg.projecteden.nexus.features.listeners.events.LivingEntityKilledByPlayerEvent;
 import gg.projecteden.nexus.features.quests.QuestReward;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
 import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
@@ -14,6 +15,7 @@ import lombok.NoArgsConstructor;
 import net.citizensnpcs.api.event.NPCClickEvent;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -132,6 +134,11 @@ public abstract class QuestTask<
 
 		public TaskBuilderType onBlockDropItem(MaterialTag materials, BiConsumer<BlockDropItemEvent, Block> event) {
 			currentStep.onBlockDropItem.put(materials.getValues().stream().toList(), event);
+			return (TaskBuilderType) this;
+		}
+
+		public <T extends LivingEntity> TaskBuilderType onLivingEntityKilledByPlayer(Class<T> entityType, BiConsumer<LivingEntityKilledByPlayerEvent, T> event) {
+			currentStep.onLivingEntityKilledByPlayer.put(entityType, (BiConsumer<LivingEntityKilledByPlayerEvent, LivingEntity>) event);
 			return (TaskBuilderType) this;
 		}
 

@@ -100,7 +100,7 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 	@EventHandler
 	public void onEntityMove(EntityMoveEvent event) {
 		// TODO Config option? Taking up quite a bit of tick runtime
-		if ("bearfair21".equals(event.getTo().getWorld().getName()))
+		if ("vu_lan".equals(event.getTo().getWorld().getName()))
 			updateRegions(event.getEntity(), MovementType.MOVE, event.getTo(), event);
 	}
 
@@ -123,7 +123,7 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 
 	@EventHandler
 	public void onEntitySpawn(EntitySpawnEvent event) {
-		if ("bearfair21".equals(event.getLocation().getWorld().getName()))
+		if ("vu_lan".equals(event.getLocation().getWorld().getName()))
 			updateRegions(event.getEntity(), MovementType.SPAWN, event.getLocation(), event);
 	}
 
