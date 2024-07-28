@@ -351,10 +351,12 @@ public abstract class EdenEvent extends Feature implements Listener {
 		if (event.getOriginalEvent() instanceof Cancellable cancellable)
 			cancellable.setCancelled(true);
 
-		if (new CooldownService().check(event.getPlayer(), "quest_board", 20))
+		if (!new CooldownService().check(event.getPlayer().getUniqueId(), "quest_board", 20, false))
 			return;
 
 		PlayerUtils.runCommand(event.getPlayer(), this.getName().toLowerCase() + " quest progress");
+
+		new CooldownService().check(event.getPlayer(), "quest_board", 20);
 	}
 
 	public <T extends InteractableEntity> T interactableOf(Entity entity) {
