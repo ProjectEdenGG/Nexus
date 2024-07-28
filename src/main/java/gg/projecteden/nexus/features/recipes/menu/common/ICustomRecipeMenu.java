@@ -23,18 +23,15 @@ public abstract class ICustomRecipeMenu extends ICustomRecipesMenu {
 		this.recipe = recipe;
 	}
 
-	private int ticks = 0;
+	@Override
+	public int getUpdateFrequency() {
+		return 20;
+	}
+
 	private int index = 0;
 
 	@Override
 	public void update() {
-		ticks++;
-		if (ticks == 20)
-			ticks = 0;
-
-		if (ticks != 1)
-			return;
-
 		index++;
 		List<NexusRecipe> recipes = recipe.getType().getRecipes().stream()
 			.filter(nexusRecipe -> nexusRecipe.hasPermission(viewer))
