@@ -1,12 +1,14 @@
-package gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory;
+package gg.projecteden.nexus.features.virtualinventory.managers;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories.FurnaceProperties;
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories.VirtualFurnace;
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.tiles.FurnaceTile;
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.tiles.Tile;
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.tiles.VirtualChunk;
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.tiles.VirtualChunkKey;
+import gg.projecteden.nexus.features.virtualinventory.models.inventories.VirtualInventoryType;
+import gg.projecteden.nexus.features.virtualinventory.models.inventories.impl.VirtualFurnace;
+import gg.projecteden.nexus.features.virtualinventory.models.tiles.Tile;
+import gg.projecteden.nexus.features.virtualinventory.models.tiles.VirtualChunk;
+import gg.projecteden.nexus.features.virtualinventory.models.tiles.VirtualChunkKey;
+import gg.projecteden.nexus.features.virtualinventory.models.tiles.impl.FurnaceTile;
+import gg.projecteden.nexus.framework.features.Depends;
+import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -21,13 +23,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class VirtualTileManager {
+// Inventories shared by all players, behaves like a real inventory - mostly used for decoration blocks
+// TODO Untested & broken
+@Depends(VirtualInventoryManager.class)
+public class VirtualSharedInventoryManager extends Feature {
 	private static final Map<VirtualChunkKey, VirtualChunk> chunkMap = new ConcurrentHashMap<>();
 	private static final List<VirtualChunk> loadedChunks = new ArrayList<>();
 	private static final List<Tile<?>> tiles = new ArrayList<>();
 	private static int taskId;
 
-	public static void onStart() {
+	public void onStart() {
 		loadChunks();
 
 		taskId = Tasks.repeat(TickTime.TICK.x(20), TickTime.TICK, () -> {
@@ -40,7 +45,7 @@ public class VirtualTileManager {
 		});
 	}
 
-	public static void onStop() {
+	public void onStop() {
 		Tasks.cancel(taskId);
 		chunkMap.clear(); // temp
 		loadedChunks.clear(); // temp
@@ -130,16 +135,10 @@ public class VirtualTileManager {
 		return false;
 	}
 
-	public static FurnaceTile createFurnaceTile(@NotNull Block block, @NotNull String title, @NotNull FurnaceProperties properties) {
-		VirtualFurnace virtualFurnace = new VirtualFurnace(title, properties);
-		return createFurnaceTile(virtualFurnace, block.getLocation());
-	}
+	public static FurnaceTile createFurnaceTile(VirtualInventoryType type, Block block) {
+		VirtualFurnace furnace = new VirtualFurnace(type);
+		Location location = block.getLocation();
 
-	public static FurnaceTile createFurnaceTile(@NotNull VirtualFurnace furnace, @NotNull Block block) {
-		return createFurnaceTile(furnace, block.getLocation());
-	}
-
-	public static FurnaceTile createFurnaceTile(@NotNull VirtualFurnace furnace, Location location) {
 		FurnaceTile tile = new FurnaceTile(furnace, location);
 
 		tiles.add(tile);

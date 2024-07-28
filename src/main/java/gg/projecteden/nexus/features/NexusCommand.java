@@ -25,6 +25,7 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBloc
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.models.files.FontFile.CustomCharacter;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts;
+import gg.projecteden.nexus.features.virtualinventory.VirtualInventoryUtils.VirtualInventoryHolder;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.framework.commands.CommandMapUtils;
 import gg.projecteden.nexus.framework.commands.Commands;
@@ -233,11 +234,17 @@ public class NexusCommand extends CustomCommand implements Listener {
 			}).count();
 
 			if (count > 0)
-				throw new InvalidInputException(new JsonBuilder("There are " + count + " SmartInvs menus open").command("/nexus smartInvs").hover("&eClick to view"));
+				throw new InvalidInputException(new JsonBuilder("There are " + count + " smart menus open").command("/nexus invs").hover("&eClick to view"));
 		}),
 		SIGN_MENUS(() -> {
 			if (!Nexus.getSignMenuFactory().getInputReceivers().isEmpty())
 				throw new InvalidInputException("There are " + Nexus.getSignMenuFactory().getInputReceivers().size() + " sign menus open");
+		}),
+		VIRTUAL_INVENTORIES(() -> {
+			var count = OnlinePlayers.getAll().stream().filter(player -> player.getOpenInventory().getTopInventory().getHolder() instanceof VirtualInventoryHolder).count();
+
+			if (count > 0)
+				throw new InvalidInputException(new JsonBuilder("There are " + count + " virtual inventories open").command("/nexus invs").hover("&eClick to view"));
 		}),
 		CRATES(() -> {
 			for (CrateAnimation animation : CrateHandler.ANIMATIONS.values())
@@ -355,30 +362,46 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Class " + Class.forName(clazz).getSimpleName() + " initialized");
 	}
 
-	@Path("smartInvs")
-	@Description("View open SmartInvs")
+	@Path("invs")
+	@Description("View open custom inventories")
 	void smartInvs() {
-		Map<String, String> playerInventoryMap = new HashMap<>();
-		OnlinePlayers.getAll().stream()
-			.filter(player -> SmartInvsPlugin.manager().getInventory(player).isPresent())
-			.forEach(player -> playerInventoryMap.put(player.getName(),
-				SmartInvsPlugin.manager().getInventory(player).map(SmartInventory::getTitle).map(AdventureUtils::asLegacyText).orElse(null)));
+		var anySmartInventories = OnlinePlayers.getAll()
+			.stream()
+			.anyMatch(player ->  SmartInvsPlugin.manager().getInventory(player).isPresent());
 
-		if (playerInventoryMap.isEmpty())
-			error("No SmartInvs open");
+		var anyVirtualInventories = OnlinePlayers.getAll()
+			.stream()
+			.anyMatch(player -> player.getOpenInventory().getTopInventory().getHolder() instanceof VirtualInventoryHolder);
 
-		send(PREFIX + "Open SmartInvs:");
-		for (Map.Entry<String, String> entry : playerInventoryMap.entrySet()) {
-			String title = stripColor(entry.getValue());
-			for (CustomCharacter character : ResourcePack.getFontFile().getProviders()) {
-				if (character.getChars() == null)
+		if (!anySmartInventories && !anyVirtualInventories)
+			error("No custom inventories open");
+
+		if (anySmartInventories) {
+			send(PREFIX + "Open Smart Menus:");
+			for (Player player : OnlinePlayers.getAll()) {
+				var inv = SmartInvsPlugin.manager().getInventory(player);
+				if (inv.isEmpty())
 					continue;
-				for (String _char : character.getChars())
-					try { title = title.replaceAll(_char, ""); }
-					catch (Exception ignore) { }
-			}
 
-			send(" &7- " + entry.getKey() + " - " + title);
+				String title = stripColor(inv.map(SmartInventory::getTitle).map(AdventureUtils::asLegacyText).orElse(null));
+				for (CustomCharacter character : ResourcePack.getFontFile().getProviders()) {
+					if (character.getChars() == null)
+						continue;
+
+					for (String _char : character.getChars())
+						try { title = title.replaceAll(_char, ""); } catch (Exception ignore) {}
+				}
+
+				send(" &7- " + Nickname.of(player) + " - " + title);
+			}
+		}
+
+		if (anyVirtualInventories) {
+			send(PREFIX + "Open Virtual Inventories:");
+			for (Player player : OnlinePlayers.getAll()) {
+				if (player.getOpenInventory().getTopInventory().getHolder() instanceof VirtualInventoryHolder holder)
+					send(" &7- " + Nickname.of(player) + " - " + camelCase(holder.getVirtualInventory().getType()));
+			}
 		}
 	}
 

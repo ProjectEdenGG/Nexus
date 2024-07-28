@@ -1,6 +1,7 @@
-package gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.events;
+package gg.projecteden.nexus.features.virtualinventory.events.furnace;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories.VirtualInventory;
+import gg.projecteden.nexus.features.virtualinventory.events.VirtualInventoryEvent;
+import gg.projecteden.nexus.features.virtualinventory.models.inventories.impl.VirtualFurnace;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -11,7 +12,7 @@ public class VirtualFurnaceExtractEvent extends VirtualInventoryEvent {
 	private final ItemStack itemStack;
 	private final int experience;
 
-	public VirtualFurnaceExtractEvent(VirtualInventory inventory, Player player, ItemStack itemStack, int experience) {
+	public VirtualFurnaceExtractEvent(VirtualFurnace inventory, Player player, ItemStack itemStack, int experience) {
 		super(inventory);
 		this.player = player;
 		this.itemStack = itemStack;

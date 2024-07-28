@@ -88,6 +88,10 @@ public class WorldGuardFlagUtils {
 		 */
 		ALLOWED_BLOCK_INVENTORIES(registerFlag(new SetFlag<>("allowed-block-inventories", new StringFlag(null)))),
 		/**
+		 * Sets which inventories a player can access (i.e. chest, furnace, shulker box, hopper, etc.)
+		 */
+		VIRTUAL_BLOCK_INVENTORIES(registerFlag(new SetFlag<>("virtual-block-inventories", new StringFlag(null)))),
+		/**
 		 * Toggles if players get damaged while inside water
 		 */
 		MINIGAMES_WATER_DAMAGE(registerFlag(new StateFlag("minigames-water-damage", false))),

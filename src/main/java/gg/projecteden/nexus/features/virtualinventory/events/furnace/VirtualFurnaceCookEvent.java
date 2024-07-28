@@ -1,6 +1,7 @@
-package gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.events;
+package gg.projecteden.nexus.features.virtualinventory.events.furnace;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories.VirtualInventory;
+import gg.projecteden.nexus.features.virtualinventory.events.VirtualInventoryEvent;
+import gg.projecteden.nexus.features.virtualinventory.models.inventories.impl.VirtualFurnace;
 import lombok.Getter;
 import org.bukkit.event.Cancellable;
 import org.bukkit.inventory.ItemStack;
@@ -13,7 +14,7 @@ public class VirtualFurnaceCookEvent extends VirtualInventoryEvent implements Ca
 
 	private boolean cancelled;
 
-	public VirtualFurnaceCookEvent(VirtualInventory inventory, ItemStack source, ItemStack result) {
+	public VirtualFurnaceCookEvent(VirtualFurnace inventory, ItemStack source, ItemStack result) {
 		super(inventory);
 		this.source = source;
 		this.result = result;

@@ -9,6 +9,8 @@ import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.virtualinventory.managers.VirtualPersonalInventoryManager;
+import gg.projecteden.nexus.features.virtualinventory.models.inventories.VirtualInventoryType;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.InventoryUtils.BlockInventoryType;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -18,7 +20,9 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
+import gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -255,6 +259,36 @@ public class WorldGuardFlags implements Listener {
 	}
 
 	@EventHandler
+	public void onBlockInteract(PlayerInteractEvent event) {
+		final Player player = event.getPlayer();
+
+		if (canWorldGuardEdit(player))
+			return;
+
+		if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
+			return;
+
+		final Block block = event.getClickedBlock();
+		if (isNullOrAir(block))
+			return;
+
+		var type = Arrays.stream(VirtualInventoryType.values()).filter(virtualInventoryType -> virtualInventoryType.getMaterial() == block.getType()).findFirst();
+		if (type.isEmpty())
+			return;
+
+		final Location location = block.getLocation();
+		Set<String> virtualInventoryTypes = WorldGuardFlagUtils.queryValue(location, CustomFlags.VIRTUAL_BLOCK_INVENTORIES);
+		if (virtualInventoryTypes == null)
+			return;
+
+		if (!virtualInventoryTypes.stream().map(String::toUpperCase).map(VirtualInventoryType::valueOf).toList().contains(type.get()))
+			return;
+
+		event.setCancelled(true);
+		VirtualPersonalInventoryManager.getOrCreate(location, player, type.get()).openInventory(player);
+	}
+
+	@EventHandler
 	public void onInteractFenceGate(PlayerInteractEvent event) {
 		Block block = event.getClickedBlock();
 		if (isNullOrAir(block) || !(MaterialTag.FENCE_GATES.isTagged(block.getType())))
@@ -391,3 +425,4 @@ public class WorldGuardFlags implements Listener {
 	}
 
 }
+

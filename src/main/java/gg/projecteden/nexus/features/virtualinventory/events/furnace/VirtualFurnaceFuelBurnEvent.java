@@ -1,6 +1,7 @@
-package gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.events;
+package gg.projecteden.nexus.features.virtualinventory.events.furnace;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories.VirtualInventory;
+import gg.projecteden.nexus.features.virtualinventory.events.VirtualInventoryEvent;
+import gg.projecteden.nexus.features.virtualinventory.models.inventories.impl.VirtualFurnace;
 import gg.projecteden.nexus.utils.ItemUtils;
 import lombok.Getter;
 import org.bukkit.event.Cancellable;
@@ -13,7 +14,7 @@ public class VirtualFurnaceFuelBurnEvent extends VirtualInventoryEvent implement
 	private final int burnTime;
 	private boolean cancelled;
 
-	public VirtualFurnaceFuelBurnEvent(VirtualInventory inventory, ItemStack fuel) {
+	public VirtualFurnaceFuelBurnEvent(VirtualFurnace inventory, ItemStack fuel) {
 		super(inventory);
 		this.fuel = fuel;
 		this.burnTime = ItemUtils.getBurnTime(fuel);

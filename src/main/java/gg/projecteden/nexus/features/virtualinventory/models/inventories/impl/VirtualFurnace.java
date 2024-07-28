@@ -1,27 +1,31 @@
-package gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories;
+package gg.projecteden.nexus.features.virtualinventory.models.inventories.impl;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.VirtualInventoryUtils;
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.events.VirtualFurnaceCookEvent;
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.events.VirtualFurnaceFuelBurnEvent;
+import dev.morphia.annotations.Converters;
+import gg.projecteden.nexus.features.virtualinventory.VirtualInventoryUtils;
+import gg.projecteden.nexus.features.virtualinventory.events.furnace.VirtualFurnaceCookEvent;
+import gg.projecteden.nexus.features.virtualinventory.events.furnace.VirtualFurnaceEndEvent;
+import gg.projecteden.nexus.features.virtualinventory.events.furnace.VirtualFurnaceFuelBurnEvent;
+import gg.projecteden.nexus.features.virtualinventory.events.furnace.VirtualFurnaceStartEvent;
+import gg.projecteden.nexus.features.virtualinventory.events.furnace.VirtualFurnaceTickEvent;
+import gg.projecteden.nexus.features.virtualinventory.models.inventories.VirtualInventory;
+import gg.projecteden.nexus.features.virtualinventory.models.inventories.VirtualInventoryType;
+import gg.projecteden.nexus.features.virtualinventory.models.properties.impl.FurnaceProperties;
+import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.StringUtils;
-import lombok.Getter;
-import org.bukkit.Bukkit;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.UUID;
-
-@Getter
-public class VirtualFurnace extends VirtualInventory {
-	private final FurnaceProperties furnaceProperties;
+@Data
+@NoArgsConstructor
+@Converters(ItemStackConverter.class)
+public class VirtualFurnace extends VirtualInventory<FurnaceProperties> {
 	private ItemStack fuel = null;
 	private ItemStack input = null;
 	private ItemStack output = null;
@@ -33,27 +37,15 @@ public class VirtualFurnace extends VirtualInventory {
 	private float experience = 0f;
 	private boolean isLit = false;
 
-	public VirtualFurnace(String title, FurnaceProperties properties) {
-		super(VirtualInventoryType.FURNACE, title, UUID.randomUUID(),
-			Bukkit.createInventory(null, InventoryType.FURNACE, StringUtils.colorize(title)));
-
-		this.furnaceProperties = properties;
-
+	public VirtualFurnace(VirtualInventoryType type) {
+		this.type = type;
 		this.updateInventory();
 	}
 
 	public float extractExperience() {
 		float exp = this.experience;
 		this.experience = 0.0f;
-
 		return exp;
-	}
-
-	@Override
-	public void openInventory(Player player) {
-		super.openInventory(player);
-
-		updateInventory();
 	}
 
 	@Override
@@ -100,15 +92,17 @@ public class VirtualFurnace extends VirtualInventory {
 			this.fuelTime--;
 
 			if (canCook()) {
+				if (!this.isLit)
+					new VirtualFurnaceStartEvent(this).callEvent();
+
 				this.isLit = true;
 				this.cookTime++;
 				if (this.cookTime >= this.cookTimeTotal) {
 					this.cookTime = 0;
 					processCook();
 				}
-			} else {
+			} else
 				this.cookTime = 0;
-			}
 
 		} else if (canBurn() && canCook()) {
 			processBurn();
@@ -120,7 +114,10 @@ public class VirtualFurnace extends VirtualInventory {
 				this.cookTime = 0;
 		} else {
 			this.isLit = false;
+			new VirtualFurnaceEndEvent(this).callEvent();
 		}
+
+		new VirtualFurnaceTickEvent(this).callEvent();
 
 		if (this.isOpened())
 			updateInventoryView();
@@ -142,7 +139,7 @@ public class VirtualFurnace extends VirtualInventory {
 
 		this.fuel.subtract();
 
-		int burn = (int) (burnEvent.getBurnTime() / furnaceProperties.getFuelMultiplier());
+		int burn = (int) (burnEvent.getBurnTime() / properties().fuelMultiplier());
 		this.fuelTime = burn;
 		this.fuelTimeTotal = burn;
 
@@ -159,7 +156,7 @@ public class VirtualFurnace extends VirtualInventory {
 			return false;
 		}
 
-		this.cookTimeTotal = (int) (furnaceRecipe.getCookingTime() / furnaceProperties.getCookMultiplier());
+		this.cookTimeTotal = (int) (furnaceRecipe.getCookingTime() / properties().cookMultiplier());
 		if (this.output == null) {
 			return true;
 		}
@@ -197,20 +194,5 @@ public class VirtualFurnace extends VirtualInventory {
 
 		updateInventory();
 	}
-
-	@Override
-	public String toString() {
-		return "Furnace{" +
-			"name=" + getTitle() +
-			", uuid=" + getUuid().toString() +
-			", properties=" + furnaceProperties.toString() +
-			", fuel=" + (fuel == null ? "null" : fuel) +
-			", input=" + (input == null ? "null" : input) +
-			", output=" + (output == null ? "null" : output) +
-			", cookTime=" + cookTime +
-			", fuelTime=" + fuelTime +
-			'}';
-	}
-
 
 }

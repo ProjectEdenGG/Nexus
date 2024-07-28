@@ -1,6 +1,6 @@
-package gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.tiles;
+package gg.projecteden.nexus.features.virtualinventory.models.tiles;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.VirtualTileManager;
+import gg.projecteden.nexus.features.virtualinventory.managers.VirtualSharedInventoryManager;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Chunk;
@@ -56,7 +56,7 @@ public class VirtualChunk {
 	}
 
 	public boolean isLoaded() {
-		return VirtualTileManager.isChunkLoaded(this);
+		return VirtualSharedInventoryManager.isChunkLoaded(this);
 	}
 
 	public boolean isBukkitChunkLoaded() {
@@ -69,12 +69,4 @@ public class VirtualChunk {
 		}
 	}
 
-	@Override
-	public String toString() {
-		return "VirtualChunk{" +
-			", x=" + x +
-			", z=" + z +
-			", world=" + world.getName() +
-			'}';
-	}
 }

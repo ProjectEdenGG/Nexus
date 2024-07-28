@@ -6,8 +6,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxSingle;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Addition;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.HasVirtualInventory;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Structure;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.VirtualInventory;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlacedEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPrePlaceEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreCurrencyType;
@@ -227,7 +227,7 @@ public class DecorationConfig {
 	}
 
 	public boolean hasInventory() {
-		return this.getClass().getAnnotation(VirtualInventory.class) != null;
+		return this.getClass().getAnnotation(HasVirtualInventory.class) != null;
 	}
 
 	// validation

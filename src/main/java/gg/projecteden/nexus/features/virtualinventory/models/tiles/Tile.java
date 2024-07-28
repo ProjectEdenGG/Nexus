@@ -1,8 +1,8 @@
-package gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.tiles;
+package gg.projecteden.nexus.features.virtualinventory.models.tiles;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.VirtualInventoryManager;
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.VirtualTileManager;
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories.VirtualInventory;
+import gg.projecteden.nexus.features.virtualinventory.managers.VirtualInventoryManager;
+import gg.projecteden.nexus.features.virtualinventory.managers.VirtualSharedInventoryManager;
+import gg.projecteden.nexus.features.virtualinventory.models.inventories.VirtualInventory;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -13,15 +13,15 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
-public abstract class Tile<V extends VirtualInventory> {
-	final V virtualInv;
-	final int x;
-	final int y;
-	final int z;
-	final String world;
+public abstract class Tile<V extends VirtualInventory<?>> {
+	protected final V virtualInv;
+	protected final int x;
+	protected final int y;
+	protected final int z;
+	protected final String world;
 	private final BlockData blockData;
 
-	Tile(@NotNull V virtualInv, @NotNull Location location) {
+	public Tile(@NotNull V virtualInv, @NotNull Location location) {
 		this.virtualInv = virtualInv;
 
 		Block block = location.getBlock();
@@ -53,7 +53,7 @@ public abstract class Tile<V extends VirtualInventory> {
 	}
 
 	public void breakTile() {
-		VirtualTileManager.removeTile(this);
+		VirtualSharedInventoryManager.removeTile(this);
 		VirtualInventoryManager.destroy(getVirtualInv(), null);
 	}
 
@@ -69,15 +69,4 @@ public abstract class Tile<V extends VirtualInventory> {
 		}
 	}
 
-	@Override
-	public String toString() {
-		return "Tile{" +
-			"virtualInv=" + virtualInv +
-			", x=" + x +
-			", y=" + y +
-			", z=" + z +
-			", world='" + world + '\'' +
-			", blockData=" + blockData +
-			'}';
-	}
 }

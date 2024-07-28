@@ -1,6 +1,10 @@
-package gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory;
+package gg.projecteden.nexus.features.virtualinventory;
 
+import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener.CustomInventoryHolder;
+import gg.projecteden.nexus.features.virtualinventory.models.inventories.VirtualInventory;
 import gg.projecteden.nexus.utils.ItemUtils;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.CookingRecipe;
 import org.bukkit.inventory.FurnaceRecipe;
@@ -13,6 +17,12 @@ import java.util.Iterator;
 import java.util.List;
 
 public class VirtualInventoryUtils {
+
+	@Data
+	@AllArgsConstructor
+	public static class VirtualInventoryHolder extends CustomInventoryHolder {
+		private final VirtualInventory<?> virtualInventory;
+	}
 
 	public static List<CookingRecipe<?>> getCookingRecipe(ItemStack ingredient) {
 		List<CookingRecipe<?>> recipes = new ArrayList<>();

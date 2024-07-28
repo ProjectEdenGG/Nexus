@@ -1,10 +1,11 @@
-package gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.tiles;
+package gg.projecteden.nexus.features.virtualinventory.models.tiles.impl;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationInteractData;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories.VirtualFurnace;
+import gg.projecteden.nexus.features.virtualinventory.models.inventories.impl.VirtualFurnace;
+import gg.projecteden.nexus.features.virtualinventory.models.tiles.Tile;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -18,8 +19,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class FurnaceTile extends Tile<VirtualFurnace> {
-	SoundBuilder crackle = DecorationUtils.getSoundBuilder(Sound.BLOCK_FURNACE_FIRE_CRACKLE);
-	ParticleBuilder flames = new ParticleBuilder(Particle.FLAME).count(2).extra(0).offset(0.1, 0.05, 0.1);
+	private final SoundBuilder crackle = DecorationUtils.getSoundBuilder(Sound.BLOCK_FURNACE_FIRE_CRACKLE);
+	private final ParticleBuilder flames = new ParticleBuilder(Particle.FLAME).count(2).extra(0).offset(0.1, 0.05, 0.1);
 
 	public FurnaceTile(@NotNull VirtualFurnace virtualInv, Location location) {
 		super(virtualInv, location);
@@ -80,14 +81,4 @@ public class FurnaceTile extends Tile<VirtualFurnace> {
 		super.breakTile();
 	}
 
-	@Override
-	public String toString() {
-		return "FurnaceTile{" +
-			"virtualInv=" + getVirtualInv() +
-			", x=" + x +
-			", y=" + y +
-			", z=" + z +
-			", world='" + world + '\'' +
-			"} ";
-	}
 }
