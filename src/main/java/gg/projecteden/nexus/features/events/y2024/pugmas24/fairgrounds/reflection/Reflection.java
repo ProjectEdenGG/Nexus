@@ -42,11 +42,11 @@ public class Reflection {
 	private static final String prefix = "&8&l[&eReflection&8&l] &f";
 
 	@Getter
-	private static final String gameRg = Pugmas24.get().getRegionName() + "_reflection";  // TODO FINAL: DEFINE REGION
+	private static final String gameRg = Pugmas24.get().getRegionName() + "_reflection";
 	@Getter
-	private static final String bannerRg = gameRg + "_banner"; // in gray glass // TODO FINAL: DEFINE REGION
+	private static final String bannerRg = gameRg + "_banner";
 	@Getter
-	private static final Location center = Pugmas24.get().location(-744, 75, -2936); // in gray glass // TODO FINAL: LOCATION
+	private static final Location center = Pugmas24.get().location(-744, 75, -2936);
 	@Getter
 	private static final List<BlockFace> angles = Arrays.asList(NORTH, NORTH_EAST, EAST, SOUTH_EAST, SOUTH, SOUTH_WEST, WEST, NORTH_WEST);
 

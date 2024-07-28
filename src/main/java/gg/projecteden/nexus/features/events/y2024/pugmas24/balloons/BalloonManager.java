@@ -23,8 +23,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class BalloonManager {
-	protected static final String REGION_BASE = Pugmas24.get().getRegionName() + "_balloon_";  // TODO FINAL: DEFINE REGION
-	protected static final String REGION_PLACEMENT_REGEX = REGION_BASE + "placement_[0-9]+";  // TODO FINAL: DEFINE REGIONS
+	protected static final String REGION_BASE = Pugmas24.get().getRegionName() + "_balloon_";
+	protected static final String REGION_PLACEMENT_REGEX = REGION_BASE + "placement_[0-9]+";
 	protected static final String DIRECTORY = "pugmas24/balloons/";
 	protected static final String SCHEM_TEMPLATE = DIRECTORY + "template/";
 	protected static final String SCHEM_USER = DIRECTORY + "user/";

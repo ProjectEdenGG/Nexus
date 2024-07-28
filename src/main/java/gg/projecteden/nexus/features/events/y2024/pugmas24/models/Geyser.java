@@ -53,13 +53,13 @@ public class Geyser implements Listener {
 	private static final WorldEditUtils worldedit = Pugmas24.get().worldedit();
 	private static final WorldGuardUtils worldguard = Pugmas24.get().worldguard();
 	//
-	public static final Location geyserOrigin = Pugmas24.get().location(-501, 93, -3046); // TODO FINAL: LOC, NORTH WEST CORNER
-	public static final Location geyserPaste = Pugmas24.get().location(-505, 93, -3050); // TODO FINAL: LOC, NORTH WEST CORNER
+	public static final Location geyserOrigin = Pugmas24.get().location(-501, 93, -3046);
+	public static final Location geyserPaste = Pugmas24.get().location(-505, 93, -3050);
 	private static final int maxHeight = 8;
 	private static final int frameSpeed = 2;
-	private static final String geyserPoolsRegion = Pugmas24.get().getRegionName() + "_geyser";  // TODO FINAL: DEFINE REGION
-	private static final String geyserInsideRegion = Pugmas24.get().getRegionName() + "_geyser_inside";  // TODO FINAL: DEFINE REGION
-	private static final String geyserColumnRegion = Pugmas24.get().getRegionName() + "_geyser_column";  // TODO FINAL: DEFINE REGION
+	private static final String geyserPoolsRegion = Pugmas24.get().getRegionName() + "_geyser";
+	private static final String geyserInsideRegion = Pugmas24.get().getRegionName() + "_geyser_inside";
+	private static final String geyserColumnRegion = Pugmas24.get().getRegionName() + "_geyser_column";
 	private static final String schemReset = "pugmas24/geyser/empty";
 	private static final String schemRunning = "pugmas24/geyser/running_";
 	private static final String schemIntro = "pugmas24/geyser/intro_";

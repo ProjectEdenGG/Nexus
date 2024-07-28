@@ -31,6 +31,13 @@ import java.time.LocalDate;
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
 
+/*
+	TODO FINAL:
+		- CHANGE WORLD STRING
+		- PASTE BUILD IN EXACT SAME COORDINATES AS BUILD ADMIN
+		- COPY REGIONS FROM BUILDADMIN INTO NEW WORLD FILE
+		- ENTITY UUIDS
+ */
 @QuestConfig(
 	quests = Pugmas24Quest.class,
 	tasks = Pugmas24QuestTask.class,
@@ -52,7 +59,7 @@ public class Pugmas24 extends EdenEvent {
 	public static final LocalDate _25TH = LocalDate.of(2024, 12, 25);
 
 	public static final String LORE = "&ePugmas 2024 Item";
-	public final Location warp = location(-688.5, 82, -2964.5); // TODO FINAL: WARP LOCATION
+	public final Location warp = location(-688.5, 82, -2964.5);
 
 	@Getter
 	private static boolean ridesEnabled = true;

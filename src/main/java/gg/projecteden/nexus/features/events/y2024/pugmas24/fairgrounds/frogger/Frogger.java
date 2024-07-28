@@ -33,19 +33,19 @@ import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand
 
 // TODO SETUP: MAKE SURE TO DISABLE SITTING IN GAME REGION
 public class Frogger implements Listener {
-	private static final String gameRg = Pugmas24.get().getRegionName() + "_frogger";  // TODO FINAL: DEFINE REGION
-	private static final String winRg = gameRg + "_win";  // TODO FINAL: DEFINE REGION
-	private static final String damageRg = gameRg + "_damage";  // TODO FINAL: DEFINE REGION
-	private static final String killRg = gameRg + "_kill";  // TODO FINAL: DEFINE REGION
-	private static final String logsRg = gameRg + "_logs";  // TODO FINAL: DEFINE REGION
-	private static final String carsRg1 = gameRg + "_cars_1";  // TODO FINAL: DEFINE REGION
-	private static final String roadRg1 = gameRg + "_road_1";  // TODO FINAL: DEFINE REGION
-	private static final String carsRg2 = gameRg + "_cars_2";  // TODO FINAL: DEFINE REGION
-	private static final String roadRg2 = gameRg + "_road_2";  // TODO FINAL: DEFINE REGION
-	private static final String checkpointRg = gameRg + "_checkpoint";  // TODO FINAL: DEFINE REGION
+	private static final String gameRg = Pugmas24.get().getRegionName() + "_frogger";
+	private static final String winRg = gameRg + "_win";
+	private static final String damageRg = gameRg + "_damage";
+	private static final String killRg = gameRg + "_kill";
+	private static final String logsRg = gameRg + "_logs";
+	private static final String carsRg1 = gameRg + "_cars_1";
+	private static final String roadRg1 = gameRg + "_road_1";
+	private static final String carsRg2 = gameRg + "_cars_2";
+	private static final String roadRg2 = gameRg + "_road_2";
+	private static final String checkpointRg = gameRg + "_checkpoint";
 	//
-	private static final Location respawnLoc = Pugmas24.get().location(-787.5, 78.0, -2858.5, 90, 0);  // TODO FINAL: LOCATION
-	private static final Location checkpointLoc = Pugmas24.get().location(-807.5, 78.0, -2858.5, 90, 0);  // TODO FINAL: LOCATION
+	private static final Location respawnLoc = Pugmas24.get().location(-787.5, 78.0, -2858.5, 90, 0);
+	private static final Location checkpointLoc = Pugmas24.get().location(-807.5, 78.0, -2858.5, 90, 0);
 	private static final Set<Player> checkpointList = new HashSet<>();
 	private static boolean enabled = false;
 	private static int animationTaskId;

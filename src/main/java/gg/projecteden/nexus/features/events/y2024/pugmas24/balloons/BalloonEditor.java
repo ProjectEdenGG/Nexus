@@ -35,9 +35,9 @@ import java.io.File;
 
 public class BalloonEditor implements Listener {
 	private static final Location WARP = Pugmas24.get().location(-614.5, 156.0, -3216.5, 0, 0);
-	protected static final String REGION_EDIT = BalloonManager.REGION_BASE + "edit";  // TODO FINAL: DEFINE REGION
-	protected static final String REGION_SCHEM = BalloonManager.REGION_BASE + "schem";  // TODO FINAL: DEFINE REGION
-	protected static final Location SCHEM_PASTE = Pugmas24.get().location(-620, 162, -3214); // TODO FINAL: LOCATION
+	protected static final String REGION_EDIT = BalloonManager.REGION_BASE + "edit";
+	protected static final String REGION_SCHEM = BalloonManager.REGION_BASE + "schem";
+	protected static final Location SCHEM_PASTE = Pugmas24.get().location(-620, 162, -3214);
 	protected static final int TEMPLATE_SIZE = BalloonManager.getTotalTemplateSchematics();
 	protected static final ColorType defaultBrushColor = ColorType.RED;
 
