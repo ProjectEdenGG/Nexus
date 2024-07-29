@@ -251,7 +251,7 @@ public class NMSUtils {
 	public static void awardExperience(@NonNull Player player, Location location, int experience, @NonNull SpawnReason spawnReason) {
 		Vec3 pos = Vec3.atCenterOf(toNMS(location));
 		ServerLevel level = toNMS(player.getWorld());
-		net.minecraft.world.entity.ExperienceOrb.award(level, pos, experience, spawnReason, (Entity) player);
+		net.minecraft.world.entity.ExperienceOrb.award(level, pos, experience, spawnReason, ((CraftPlayer) player).getHandle());
 	}
 
 	public static List<Pair<EquipmentSlot, ItemStack>> getArmorEquipmentList() {
