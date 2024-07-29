@@ -25,7 +25,6 @@ public class BlockReplaceBrushMenu extends InventoryProvider {
 
 	public static final CustomMaterial BRUSH_MATERIAL = CustomMaterial.EVENT_PAINTBRUSH;
 	private static final ItemBuilder BRUSH = new ItemBuilder(BRUSH_MATERIAL)
-			.undroppable().unframeable().unplaceable().unstorable().untrashable().untradeable()
 			.name("&eBlock Replacer Brush")
 			.lore("&3Block: " + getColorLabel(BalloonEditor.defaultBrushColor))
 			.lore("")
@@ -33,6 +32,7 @@ public class BlockReplaceBrushMenu extends InventoryProvider {
 			.lore("&eLClick &3a block to change the brush color")
 			.lore("&eRClick &3wool to replace it")
 			.dyeColor(BalloonEditor.defaultBrushColor)
+			.undroppable().unframeable().unplaceable().unstorable().untrashable().untradeable()
 			.itemFlags(ItemBuilder.ItemFlags.HIDE_ALL)
 			.updateDecorationLore(false)
 			.glow();

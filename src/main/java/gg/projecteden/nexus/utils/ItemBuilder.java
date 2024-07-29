@@ -750,7 +750,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	// NBT
 
 	public ItemBuilder nbt(Consumer<NBTItem> consumer) {
-		final NBTItem nbtItem = nbtItem();
+		final NBTItem nbtItem = nbtItem(false);
 		consumer.accept(nbtItem);
 		itemStack = nbtItem.getItem();
 		itemMeta = itemStack.getItemMeta();
@@ -760,6 +760,11 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	@NotNull
 	private NBTItem nbtItem() {
 		return new NBTItem(build());
+	}
+
+	@NotNull
+	private NBTItem nbtItem(boolean buildLore) {
+		return new NBTItem(build(buildLore));
 	}
 
 	public Rarity rarity() {
@@ -951,8 +956,13 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemStack build() {
+		return build(true);
+	}
+
+	public ItemStack build(boolean buildLore) {
 		if (update) {
-			buildLore();
+			if (buildLore)
+				buildLore();
 			if (itemMeta != null)
 				itemStack.setItemMeta(itemMeta);
 			if (dyeColor() != null && updateDecorationLore)
@@ -960,7 +970,8 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 			return itemStack;
 		} else {
 			ItemStack result = itemStack.clone();
-			buildLore();
+			if (buildLore)
+				buildLore();
 			if (itemMeta != null)
 				result.setItemMeta(itemMeta);
 			if (dyeColor() != null && updateDecorationLore)
