@@ -4,6 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.FishingLoot;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Material;
@@ -14,14 +15,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.event.player.PlayerFishEvent.State;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventDefaultFishingLoot.CARP;
-import static gg.projecteden.nexus.utils.ItemUtils.getTool;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class EventFishingListener implements Listener {
@@ -64,21 +68,17 @@ public class EventFishingListener implements Listener {
 		return RandomUtils.getWeightedRandom(categoryMap);
 	}
 
+	Map<Player, List<ItemStack>> playerCatchMap = new HashMap<>();
+
+	// Hand == NULL on State.BITE
 	@EventHandler
-	public void onFishCatch(PlayerFishEvent event) {
+	public void onBite(PlayerFishEvent event) {
+		State state = event.getState();
+		if (state != State.BITE)
+			return;
+
 		Player player = event.getPlayer();
 		if (!this.event.shouldHandle(player))
-			return;
-
-		ItemStack rod = getTool(player);
-		if (rod == null)
-			return;
-
-		if (!event.getState().equals(PlayerFishEvent.State.CAUGHT_FISH))
-			return;
-
-		Entity caught = event.getCaught();
-		if (!(caught instanceof Item item))
 			return;
 
 		ItemStack tool = ItemUtils.getTool(player, Material.FISHING_ROD);
@@ -87,23 +87,66 @@ public class EventFishingListener implements Listener {
 
 		ItemMeta meta = tool.getItemMeta();
 
-		int loops = 0;
+		List<ItemStack> loot = new ArrayList<>();
+		loot.add(getFishingItem(player));
+
 		if (meta != null && meta.hasEnchants()) {
 			if (meta.getEnchants().keySet().stream().anyMatch(enchantment -> enchantment.equals(Enchantment.LUCK))) {
-				loops = RandomUtils.randomInt(0, meta.getEnchants().get(Enchantment.LUCK));
+				int loops = RandomUtils.randomInt(0, meta.getEnchants().get(Enchantment.LUCK));
+
+				for (int i = 0; i < loops; i++) {
+					loot.add(getFishingItem(player));
+				}
 			}
 		}
 
-		ItemStack loot = getFishingItem(player);
-		ItemStack itemStack = item.getItemStack();
-		itemStack.setType(loot.getType());
-		itemStack.setItemMeta(loot.getItemMeta());
+		PlayerEventFishingBiteEvent biteEvent = new PlayerEventFishingBiteEvent(player, loot);
+		if (biteEvent.callEvent()) {
+			playerCatchMap.put(player, loot);
+		}
 
-		for (int i = 0; i < loops; i++) {
+	}
+
+	@EventHandler
+	public void onHook(PlayerFishEvent event) {
+		State state = event.getState();
+		if (state == State.BITE)
+			return;
+
+		if (!EquipmentSlot.HAND.equals(event.getHand()))
+			return;
+
+		Player player = event.getPlayer();
+		if (!this.event.shouldHandle(player))
+			return;
+
+		ItemStack tool = ItemUtils.getTool(player, Material.FISHING_ROD);
+		if (isNullOrAir(tool))
+			return;
+
+		Entity caught = event.getCaught();
+		if (!(caught instanceof Item item))
+			return;
+
+		if (state == State.CAUGHT_FISH) {
+
+			List<ItemStack> loot = playerCatchMap.remove(player);
+			if (Nullables.isNullOrEmpty(loot))
+				return;
+
+			ItemStack loot0 = loot.remove(0);
+			ItemStack originalItem = item.getItemStack();
+			originalItem.setType(loot0.getType());
+			originalItem.setItemMeta(loot0.getItemMeta());
+
 			Tasks.wait(1, () -> {
-				Item _item = player.getWorld().dropItem(item.getLocation(), getFishingItem(player));
-				_item.setVelocity(item.getVelocity());
+				for (ItemStack itemStack : loot) {
+					Item _item = player.getWorld().dropItem(item.getLocation(), itemStack);
+					_item.setVelocity(item.getVelocity());
+				}
 			});
+		} else {
+			playerCatchMap.remove(player);
 		}
 	}
 

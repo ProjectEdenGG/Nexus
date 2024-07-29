@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.BalloonEdito
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.BalloonManager;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Fairgrounds;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Rides;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Fishing;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Train24;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24Entity;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24NPC;
@@ -29,6 +30,8 @@ import org.bukkit.entity.Player;
 import java.time.LocalDate;
 
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
+import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory.FISH;
+import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory.JUNK;
 import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
 
 /*
@@ -37,6 +40,9 @@ import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
 		- PASTE BUILD IN EXACT SAME COORDINATES AS BUILD ADMIN
 		- COPY REGIONS FROM BUILDADMIN INTO NEW WORLD FILE
 		- ENTITY UUIDS
+
+
+	FIND THE NUT CRACKERS
  */
 @QuestConfig(
 	quests = Pugmas24Quest.class,
@@ -76,9 +82,11 @@ public class Pugmas24 extends EdenEvent {
 
 	@Override
 	public void onStart() {
+		super.onStart();
 		new Advent24();
 		new Fairgrounds();
 		new BalloonManager();
+		new Fishing();
 		Rides.startup();
 		Train24.startup();
 	}
@@ -88,6 +96,11 @@ public class Pugmas24 extends EdenEvent {
 		Train24.shutdown();
 		Advent24.shutdown();
 		BalloonEditor.shutdown();
+	}
+
+	@Override
+	protected void registerFishingLoot() {
+		registerFishingLoot(FISH, JUNK);
 	}
 
 	public static void send(String message, Player to) {
