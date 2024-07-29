@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.minigames.models.Lobby;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import lombok.Getter;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 public class LobbyTimerTickEvent extends LobbyEvent {
 	@Getter
@@ -14,15 +15,12 @@ public class LobbyTimerTickEvent extends LobbyEvent {
 		this.time = time;
 	}
 
-	private static final HandlerList handlers = new HandlerList();
-
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
+	@Getter
+	private static final HandlerList handlerList = new HandlerList();
 
 	@Override
-	public HandlerList getHandlers() {
-		return handlers;
+	public @NotNull HandlerList getHandlers() {
+		return handlerList;
 	}
 
 }

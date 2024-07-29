@@ -31,15 +31,11 @@ public class MinigamerVoteEvent extends MinigamerMatchEvent implements Cancellab
 		this.cancelled = cancelled;
 	}
 
-	private static final HandlerList handlers = new HandlerList();
-
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
+	private static final HandlerList handlerList = new HandlerList();
 
 	@Override
-	public HandlerList getHandlers() {
-		return handlers;
+	public @NotNull HandlerList getHandlers() {
+		return handlerList;
 	}
 
 }

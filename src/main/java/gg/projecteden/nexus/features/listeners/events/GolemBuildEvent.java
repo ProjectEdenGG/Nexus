@@ -20,16 +20,13 @@ public class GolemBuildEvent extends PlayerEvent {
 		this.entity = entity;
 	}
 
-	private static final HandlerList handlers = new HandlerList();
-
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
+	@Getter
+	private static final HandlerList handlerList = new HandlerList();
 
 	@NotNull
 	@Override
 	public HandlerList getHandlers() {
-		return handlers;
+		return handlerList;
 	}
 
 	public static class IronGolemBuildEvent extends GolemBuildEvent {

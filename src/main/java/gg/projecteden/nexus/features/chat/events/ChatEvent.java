@@ -3,10 +3,12 @@ package gg.projecteden.nexus.features.chat.events;
 import gg.projecteden.nexus.models.chat.Channel;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
@@ -57,16 +59,13 @@ public abstract class ChatEvent extends Event implements Cancellable {
 	public abstract void setFiltered(boolean wasFilitered);
 
 	//<editor-fold desc="Boilerplate Bukkit">
-	private static final HandlerList handlers = new HandlerList();
+	@Getter
+	private static final HandlerList handlerList = new HandlerList();
 	private boolean cancelled = false;
 
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
-
 	@Override
-	public HandlerList getHandlers() {
-		return handlers;
+	public @NotNull HandlerList getHandlers() {
+		return handlerList;
 	}
 
 	@Override

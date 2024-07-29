@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Data
 public class AFKEvent extends Event {
-	private static final HandlerList handlers = new HandlerList();
+	private static final HandlerList handlerList = new HandlerList();
 	@NonNull
 	protected final AFKUser user;
 
@@ -18,12 +18,8 @@ public class AFKEvent extends Event {
 		this.user = user;
 	}
 
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
-
 	@Override
-	public HandlerList getHandlers() {
-		return handlers;
+	public @NotNull HandlerList getHandlers() {
+		return handlerList;
 	}
 }

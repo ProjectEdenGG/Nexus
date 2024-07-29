@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 public class FirstSubWorldGroupVisitEvent extends PlayerEvent {
-	private static final HandlerList handlers = new HandlerList();
+	private static final HandlerList handlerList = new HandlerList();
 	private final SubWorldGroup subWorldGroup;
 
 	public FirstSubWorldGroupVisitEvent(@NotNull Player player, SubWorldGroup subWorldGroup) {
@@ -17,13 +17,9 @@ public class FirstSubWorldGroupVisitEvent extends PlayerEvent {
 		this.subWorldGroup = subWorldGroup;
 	}
 
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
-
 	@Override
-	public HandlerList getHandlers() {
-		return handlers;
+	public @NotNull HandlerList getHandlers() {
+		return handlerList;
 	}
 
 }

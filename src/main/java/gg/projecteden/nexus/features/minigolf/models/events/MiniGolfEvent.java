@@ -7,19 +7,16 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+@Setter
 public class MiniGolfEvent extends Event implements Cancellable {
 	@Getter
-	@Setter
 	protected boolean cancelled = false;
 
-	private static final HandlerList handlers = new HandlerList();
-
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
+	@Getter
+	private static final HandlerList handlerList = new HandlerList();
 
 	@Override
 	public @NotNull HandlerList getHandlers() {
-		return handlers;
+		return handlerList;
 	}
 }

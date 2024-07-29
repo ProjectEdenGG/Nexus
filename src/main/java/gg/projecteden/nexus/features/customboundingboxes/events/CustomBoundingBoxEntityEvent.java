@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 @Setter
 public abstract class CustomBoundingBoxEntityEvent extends PlayerEvent implements Cancellable {
-	private static final HandlerList handlers = new HandlerList();
+	private static final HandlerList handlerList = new HandlerList();
 	private final CustomBoundingBoxEntity entity;
 	private boolean cancelled;
 
@@ -21,13 +21,9 @@ public abstract class CustomBoundingBoxEntityEvent extends PlayerEvent implement
 		this.entity = entity;
 	}
 
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
-
 	@Override
-	public HandlerList getHandlers() {
-		return handlers;
+	public @NotNull HandlerList getHandlers() {
+		return handlerList;
 	}
 
 }

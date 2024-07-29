@@ -40,6 +40,7 @@ import java.util.UUID;
   - when the ball is placed for the first time, or has stopped moving, spawn a display entity instead --> fixes visual float into ground?
   - splash sound when ball dies in water
   - when ball respawns from out of bounce, it gets stuck in some kind of loop, only fix is to whistle 1 time, and then you can hit it again
+  - every 20 ticks, loop all balls and check if they are within a course region, if not --> out of bounds
 */
 
 public class MiniGolf extends Feature {

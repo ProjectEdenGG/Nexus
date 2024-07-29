@@ -10,20 +10,16 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 @Setter
 public class CustomBoundingBoxEntityTargetTickEvent extends CustomBoundingBoxEntityEvent {
-	private static final HandlerList handlers = new HandlerList();
+	private static final HandlerList handlerList = new HandlerList();
 	private boolean cancelled;
 
 	public CustomBoundingBoxEntityTargetTickEvent(@NotNull Player who, CustomBoundingBoxEntity entity) {
 		super(who, entity);
 	}
 
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
-
 	@Override
-	public HandlerList getHandlers() {
-		return handlers;
+	public @NotNull HandlerList getHandlers() {
+		return handlerList;
 	}
 
 }

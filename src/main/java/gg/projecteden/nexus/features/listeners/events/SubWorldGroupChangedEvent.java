@@ -9,7 +9,8 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 public class SubWorldGroupChangedEvent extends PlayerEvent {
-	private static final HandlerList handlers = new HandlerList();
+	@Getter
+	private static final HandlerList handlerList = new HandlerList();
 	private final SubWorldGroup oldSubWorldGroup, newSubWorldGroup;
 
 	public SubWorldGroupChangedEvent(@NotNull Player player, SubWorldGroup oldSubWorldGroup, SubWorldGroup newSubWorldGroup) {
@@ -19,13 +20,9 @@ public class SubWorldGroupChangedEvent extends PlayerEvent {
 		this.newSubWorldGroup = newSubWorldGroup;
 	}
 
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
-
 	@Override
-	public HandlerList getHandlers() {
-		return handlers;
+	public @NotNull HandlerList getHandlers() {
+		return handlerList;
 	}
 
 }

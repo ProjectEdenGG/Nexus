@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 @Setter
 public class CustomBoundingBoxEntityInteractEvent extends CustomBoundingBoxEntityEvent {
-	private static final HandlerList handlers = new HandlerList();
+	private static final HandlerList handlerList = new HandlerList();
 	private final EquipmentSlot hand;
 	private final PlayerEvent originalEvent;
 
@@ -30,13 +30,9 @@ public class CustomBoundingBoxEntityInteractEvent extends CustomBoundingBoxEntit
 			this.hand = null;
 	}
 
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
-
 	@Override
-	public HandlerList getHandlers() {
-		return handlers;
+	public @NotNull HandlerList getHandlers() {
+		return handlerList;
 	}
 
 }

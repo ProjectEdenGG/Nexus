@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.minigames.models.perks.common.GadgetPerk;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Setter
@@ -17,15 +18,11 @@ public class MinigamerUseGadgetEvent extends MinigamerLobbyEvent {
 		this.perk = perk;
 	}
 
-	private static final HandlerList handlers = new HandlerList();
-
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
+	private static final HandlerList handlerList = new HandlerList();
 
 	@Override
-	public HandlerList getHandlers() {
-		return handlers;
+	public @NotNull HandlerList getHandlers() {
+		return handlerList;
 	}
 
 }

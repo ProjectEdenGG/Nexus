@@ -6,20 +6,17 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @RequiredArgsConstructor
 public class GodmodeEvent extends Event {
-	private static final HandlerList handlers = new HandlerList();
+	private static final HandlerList handlerList = new HandlerList();
 	@NonNull
 	protected final Godmode user;
 
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
-
 	@Override
-	public HandlerList getHandlers() {
-		return handlers;
+	public @NotNull HandlerList getHandlers() {
+		return handlerList;
 	}
 }

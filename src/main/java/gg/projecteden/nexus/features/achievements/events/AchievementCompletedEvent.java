@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Data
 public class AchievementCompletedEvent extends Event {
-	private static final HandlerList handlers = new HandlerList();
+	private static final HandlerList handlerList = new HandlerList();
 	private AchievementPlayer achievementPlayer;
 	private Achievement achievement;
 
@@ -18,13 +18,9 @@ public class AchievementCompletedEvent extends Event {
 		this.achievement = achievement;
 	}
 
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
-
 	@Override
 	public @NotNull HandlerList getHandlers() {
-		return handlers;
+		return handlerList;
 	}
 
 }

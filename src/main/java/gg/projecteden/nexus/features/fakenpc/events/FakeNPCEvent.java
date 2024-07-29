@@ -14,14 +14,10 @@ public abstract class FakeNPCEvent extends Event {
 		this.npc = npc;
 	}
 
-	private static final HandlerList handlers = new HandlerList();
-
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
+	private static final HandlerList handlerList = new HandlerList();
 
 	@Override
 	public @NotNull HandlerList getHandlers() {
-		return handlers;
+		return handlerList;
 	}
 }

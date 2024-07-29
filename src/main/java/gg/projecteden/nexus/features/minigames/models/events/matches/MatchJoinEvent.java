@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 public class MatchJoinEvent extends MatchEvent {
 	@Getter
@@ -16,15 +17,12 @@ public class MatchJoinEvent extends MatchEvent {
 		this.minigamer = minigamer;
 	}
 
-	private static final HandlerList handlers = new HandlerList();
-
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
+	@Getter
+	private static final HandlerList handlerList = new HandlerList();
 
 	@Override
-	public HandlerList getHandlers() {
-		return handlers;
+	public @NotNull HandlerList getHandlers() {
+		return handlerList;
 	}
 
 }

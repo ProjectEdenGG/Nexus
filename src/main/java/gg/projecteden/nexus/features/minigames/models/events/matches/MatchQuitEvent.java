@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigames.models.events.matches;
 
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerMatchEvent;
+import lombok.Getter;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,15 +12,12 @@ public class MatchQuitEvent extends MinigamerMatchEvent {
 		super(minigamer);
 	}
 
-	private static final HandlerList handlers = new HandlerList();
-
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
+	@Getter
+	private static final HandlerList handlerList = new HandlerList();
 
 	@Override
-	public HandlerList getHandlers() {
-		return handlers;
+	public @NotNull HandlerList getHandlers() {
+		return handlerList;
 	}
 
 }

@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 @Setter
 public class DecorationEvent extends PlayerEvent implements Cancellable {
+	private static final HandlerList handlerList = new HandlerList();
 	protected boolean cancelled = false;
 	protected final Decoration decoration;
 
@@ -20,14 +21,8 @@ public class DecorationEvent extends PlayerEvent implements Cancellable {
 		this.decoration = decoration;
 	}
 
-	private static final HandlerList handlers = new HandlerList();
-
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
-
 	@Override
 	public @NotNull HandlerList getHandlers() {
-		return handlers;
+		return handlerList;
 	}
 }

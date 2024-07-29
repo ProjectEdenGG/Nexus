@@ -29,16 +29,13 @@ public class LivingEntityDamageByPlayerEvent extends EntityEvent {
 		this.originalEvent = event;
 	}
 
-	private static final HandlerList handlers = new HandlerList();
-
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
+	@Getter
+	private static final HandlerList handlerList = new HandlerList();
 
 	@NotNull
 	@Override
 	public HandlerList getHandlers() {
-		return handlers;
+		return handlerList;
 	}
 
 }

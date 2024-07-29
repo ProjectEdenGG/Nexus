@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
  */
 @Getter
 public class PlayerChangingWorldEvent extends PlayerEvent implements Cancellable {
-	private static final HandlerList handlers = new HandlerList();
+	private static final HandlerList handlerList = new HandlerList();
 	private final World fromWorld, toWorld;
 	@Setter
 	private boolean cancelled;
@@ -26,13 +26,9 @@ public class PlayerChangingWorldEvent extends PlayerEvent implements Cancellable
 		this.toWorld = toWorld;
 	}
 
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
-
 	@Override
-	public HandlerList getHandlers() {
-		return handlers;
+	public @NotNull HandlerList getHandlers() {
+		return handlerList;
 	}
 
 }

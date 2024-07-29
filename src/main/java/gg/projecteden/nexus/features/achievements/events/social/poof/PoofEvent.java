@@ -4,10 +4,11 @@ import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
 public class PoofEvent extends Event {
-	private static final HandlerList handlers = new HandlerList();
+	private static final HandlerList handlerList = new HandlerList();
 	private final Player initiator, acceptor;
 
 	public PoofEvent(Player initiator, Player acceptor) {
@@ -15,13 +16,9 @@ public class PoofEvent extends Event {
 		this.acceptor = acceptor;
 	}
 
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
-
 	@Override
-	public HandlerList getHandlers() {
-		return handlers;
+	public @NotNull HandlerList getHandlers() {
+		return handlerList;
 	}
 
 }

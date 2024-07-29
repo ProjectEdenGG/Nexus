@@ -13,18 +13,15 @@ public class NoteBlockEvent extends Event implements Cancellable {
 	@Getter
 	@Setter
 	protected boolean cancelled = false;
-	private static final HandlerList handlers = new HandlerList();
+	@Getter
+	private static final HandlerList handlerList = new HandlerList();
 
 	@Getter
 	protected NoteBlock noteBlock;
 
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
-
 	@Override
 	public @NotNull HandlerList getHandlers() {
-		return handlers;
+		return handlerList;
 	}
 
 	public NoteBlockEvent(final Block block) {

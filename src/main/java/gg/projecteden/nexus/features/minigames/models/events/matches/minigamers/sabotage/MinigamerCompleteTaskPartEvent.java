@@ -15,14 +15,10 @@ public class MinigamerCompleteTaskPartEvent extends MinigamerMatchEvent {
 		this.taskPart = taskPart;
 	}
 
-	private static final HandlerList handlers = new HandlerList();
-
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
+	private static final HandlerList handlerList = new HandlerList();
 
 	@Override
-	public HandlerList getHandlers() {
-		return handlers;
+	public @NotNull HandlerList getHandlers() {
+		return handlerList;
 	}
 }

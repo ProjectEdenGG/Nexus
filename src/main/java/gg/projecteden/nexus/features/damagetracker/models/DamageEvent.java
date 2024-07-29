@@ -1,21 +1,36 @@
 package gg.projecteden.nexus.features.damagetracker.models;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class DamageEvent extends Event {
-	private static final HandlerList handlers = new HandlerList();
+	@Getter
+	private static final HandlerList handlerList = new HandlerList();
+	@Setter
+	@Getter
 	private LivingEntity entity;
+	@Setter
+	@Getter
 	private Object damager;
+	@Setter
+	@Getter
 	private double damage;
+	@Setter
+	@Getter
 	private DamageCause damageCause;
+	@Setter
+	@Getter
 	private LocalDateTime time;
+	@Getter
 	private EntityDamageEvent event;
 
 	public DamageEvent(LivingEntity entity, Object damager, DamageCause damageCause, double damage, EntityDamageEvent event) {
@@ -27,57 +42,9 @@ public class DamageEvent extends Event {
 		this.event = event;
 	}
 
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
-
-	public LivingEntity getEntity() {
-		return entity;
-	}
-
-	public void setEntity(LivingEntity entity) {
-		this.entity = entity;
-	}
-
-	public Object getDamager() {
-		return damager;
-	}
-
-	public void setDamager(Object damager) {
-		this.damager = damager;
-	}
-
-	public double getDamage() {
-		return damage;
-	}
-
-	public void setDamage(double damage) {
-		this.damage = damage;
-	}
-
-	public DamageCause getDamageCause() {
-		return damageCause;
-	}
-
-	public void setDamageCause(DamageCause damageCause) {
-		this.damageCause = damageCause;
-	}
-
-	public LocalDateTime getTime() {
-		return time;
-	}
-
-	public void setTime(LocalDateTime time) {
-		this.time = time;
-	}
-
-	public EntityDamageEvent getEvent() {
-		return event;
-	}
-
 	@Override
-	public HandlerList getHandlers() {
-		return handlers;
+	public @NotNull HandlerList getHandlers() {
+		return handlerList;
 	}
 
 	public boolean existsIn(List<DamageEvent> events) {

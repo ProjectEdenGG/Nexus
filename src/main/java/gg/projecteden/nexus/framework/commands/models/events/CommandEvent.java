@@ -44,7 +44,7 @@ public abstract class CommandEvent extends Event implements Cancellable {
 	}
 
 	protected boolean cancelled = false;
-	protected static final HandlerList handlers = new HandlerList();
+	protected static final HandlerList handlerList = new HandlerList();
 
 	public void reply(String message) {
 		reply(new JsonBuilder(message));
@@ -79,11 +79,7 @@ public abstract class CommandEvent extends Event implements Cancellable {
 
 	@Override
 	public @NotNull HandlerList getHandlers() {
-		return handlers;
-	}
-
-	public static HandlerList getHandlerList() {
-		return handlers;
+		return handlerList;
 	}
 
 	abstract public void handleException(Throwable ex);

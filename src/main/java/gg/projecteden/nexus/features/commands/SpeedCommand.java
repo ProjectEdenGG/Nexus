@@ -171,7 +171,7 @@ public class SpeedCommand extends CustomCommand {
 	@Getter
 	@Setter
 	public static class SpeedChangeEvent extends PlayerEvent implements Cancellable {
-		private static final HandlerList handlers = new HandlerList();
+		private static final HandlerList handlerList = new HandlerList();
 		private final SpeedType speedType;
 		private final float oldSpeed, newSpeed;
 		private boolean cancelled;
@@ -184,13 +184,9 @@ public class SpeedCommand extends CustomCommand {
 			this.newSpeed = newSpeed;
 		}
 
-		public static HandlerList getHandlerList() {
-			return handlers;
-		}
-
 		@Override
-		public HandlerList getHandlers() {
-			return handlers;
+		public @NotNull HandlerList getHandlers() {
+			return handlerList;
 		}
 
 	}
