@@ -71,7 +71,7 @@ public class VirtualInventoryListener implements Listener {
 		event.setCurrentItem(extractEvent.getItemStack());
 	}
 
-//	@EventHandler
+	@EventHandler
 	public void on(VirtualFurnaceTickEvent event) {
 		if (!(event.getInventory() instanceof VirtualPersonalFurnace furnace))
 			return;
