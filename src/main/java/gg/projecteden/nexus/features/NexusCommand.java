@@ -25,7 +25,7 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBloc
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.models.files.FontFile.CustomCharacter;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts;
-import gg.projecteden.nexus.features.virtualinventory.VirtualInventoryUtils.VirtualInventoryHolder;
+import gg.projecteden.nexus.features.virtualinventories.VirtualInventoryUtils.VirtualInventoryHolder;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.framework.commands.CommandMapUtils;
 import gg.projecteden.nexus.framework.commands.Commands;

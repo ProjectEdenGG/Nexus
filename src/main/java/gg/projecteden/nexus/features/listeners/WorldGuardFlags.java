@@ -9,8 +9,8 @@ import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
-import gg.projecteden.nexus.features.virtualinventory.managers.VirtualPersonalInventoryManager;
-import gg.projecteden.nexus.features.virtualinventory.models.inventories.VirtualInventoryType;
+import gg.projecteden.nexus.features.virtualinventories.managers.VirtualPersonalInventoryManager;
+import gg.projecteden.nexus.features.virtualinventories.models.inventories.VirtualInventoryType;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.InventoryUtils.BlockInventoryType;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -272,8 +272,8 @@ public class WorldGuardFlags implements Listener {
 		if (isNullOrAir(block))
 			return;
 
-		var type = Arrays.stream(VirtualInventoryType.values()).filter(virtualInventoryType -> virtualInventoryType.getMaterial() == block.getType()).findFirst();
-		if (type.isEmpty())
+		var type = VirtualInventoryType.of(block);
+		if (type == null)
 			return;
 
 		final Location location = block.getLocation();
@@ -281,11 +281,11 @@ public class WorldGuardFlags implements Listener {
 		if (virtualInventoryTypes == null)
 			return;
 
-		if (!virtualInventoryTypes.stream().map(String::toUpperCase).map(VirtualInventoryType::valueOf).toList().contains(type.get()))
+		if (!virtualInventoryTypes.stream().map(String::toUpperCase).map(VirtualInventoryType::valueOf).toList().contains(type))
 			return;
 
 		event.setCancelled(true);
-		VirtualPersonalInventoryManager.getOrCreate(location, player, type.get()).openInventory(player);
+		VirtualPersonalInventoryManager.getOrCreate(location, player, type).openInventory(player);
 	}
 
 	@EventHandler
