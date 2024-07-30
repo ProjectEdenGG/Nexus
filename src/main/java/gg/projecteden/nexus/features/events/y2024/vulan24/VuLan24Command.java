@@ -60,6 +60,7 @@ public class VuLan24Command extends IEventCommand {
 			.seamless(true)
 			.build();
 
+		line();
 		send(json(" &3Server daily quest goal: " + progressBar + " &e" + sum + "&3/&e" + VuLan24.DAILY_QUEST_GOAL)
 			.hover("&eReach the goal together for a reward!"));
 	}

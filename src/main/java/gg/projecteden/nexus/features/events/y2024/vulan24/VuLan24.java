@@ -212,7 +212,7 @@ public class VuLan24 extends EdenEvent {
 					.take(user.getDailyQuest().getPredicate(), 32)
 					.npc("Thank you so much! Come back tomorrow, I'm sure I'll need more help!");
 			else
-				dialog.npc("I am low on " + camelCase(user.getDailyQuest()) + ", can you help me restock?");
+				dialog.npc("I am low on " + camelCase(user.getDailyQuest()).toLowerCase() + ", can you help me restock?");
 
 			dialog.send(player);
 		});
