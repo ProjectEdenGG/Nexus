@@ -125,13 +125,17 @@ public class VuLan24 extends EdenEvent {
 				pillager.getEquipment().setHelmet(NMSUtils.fromNMS(Raid.getLeaderBannerInstance()));
 			}
 
-		for (var player : worldguard().getPlayersInRegion("vu_lan_raid")) {
-			final Quester quester = Quester.of(player);
-			if (quester.hasStarted(TRAGEDY_AT_VINH_THAI_LAGOON) && !quester.hasCompleted(TRAGEDY_AT_VINH_THAI_LAGOON))
-				return;
-		}
+		if (worldguard().isInRegion(event.getLocation(), "vu_lan_raid")) {
+			boolean allowSpawn = false;
+			for (var player : worldguard().getPlayersInRegion("vu_lan_raid")) {
+				final Quester quester = Quester.of(player);
+				if (quester.hasStarted(TRAGEDY_AT_VINH_THAI_LAGOON) && !quester.hasCompleted(TRAGEDY_AT_VINH_THAI_LAGOON))
+					allowSpawn = true;
+			}
 
-		event.setCancelled(true);
+			if (!allowSpawn)
+				event.setCancelled(true);
+		}
 	}
 
 	@EventHandler
