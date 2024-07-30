@@ -55,6 +55,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ArmorStand;
@@ -596,7 +597,7 @@ public class SabotageMatchData extends MatchData {
 	}
 
 	private static final Duration fade = Duration.ofSeconds(1).dividedBy(2);
-	private static final Supplier<ItemStack> EXCLAMATION_ITEM = () -> new ItemBuilder(CustomMaterial.EXCLAMATION).build();
+	private static final Supplier<ItemStack> EXCLAMATION_ITEM = () -> new ItemBuilder(CustomMaterial.EXCLAMATION).dyeColor(Color.RED).build();
 
 	public void setRoundStarted() {
 		setRoundStarted(LocalDateTime.now());
