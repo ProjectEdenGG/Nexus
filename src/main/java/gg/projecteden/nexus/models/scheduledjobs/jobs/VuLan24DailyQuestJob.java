@@ -20,7 +20,7 @@ public class VuLan24DailyQuestJob extends AbstractJob implements Listener {
 		final VuLan24UserService userService = new VuLan24UserService();
 		for (VuLan24User user : userService.getAll())
 			user.newDailyQuest();
-		userService.saveCacheSync();
+		userService.saveCache();
 		return completed();
 	}
 

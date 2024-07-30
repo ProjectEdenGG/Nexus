@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.UUID;
 
 @Data
-@Entity(value = "vulan24", noClassnameStored = true)
+@Entity(value = "vulan24_user", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor

@@ -171,9 +171,12 @@ public class Dialog {
 					continue;
 
 				if (predicate.test(content)) {
-					PlayerUtils.removeItem(quester.getOnlinePlayer(), content);
+					var clone = content.clone();
+					clone.setAmount(Math.min(amount - count, content.getAmount()));
+					PlayerUtils.removeItem(quester.getOnlinePlayer(), clone);
 
-					if (++count == amount)
+					count += clone.getAmount();
+					if (count == amount)
 						return;
 				}
 			}
