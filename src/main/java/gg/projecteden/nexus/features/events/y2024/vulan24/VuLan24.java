@@ -238,8 +238,10 @@ public class VuLan24 extends EdenEvent {
 			.npc("I can't wait to harvest these carrots. If I can get enough gold from the caves I could even make gold ones this year!")
 			.send(player)
 		);
-//		handleInteract(VuLan24NPC.STUDENT, (player, npc) -> new Dialog(npc).npc("").send(Quester.of(player)));
-//		handleInteract(VuLan24NPC.CULTURE_GUY, (player, npc) -> new Dialog(npc).npc("").send(Quester.of(player)));
+		handleInteract(VuLan24NPC.STUDENT, (player, npc) -> new Dialog(npc)
+			.npc("This place is amazing! If you haven’t seen it yet, check out the floating fishing village near the beach!")
+			.send(Quester.of(player))
+		);
 	}
 
 	@Override

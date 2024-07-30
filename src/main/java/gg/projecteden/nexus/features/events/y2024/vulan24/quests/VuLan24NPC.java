@@ -29,6 +29,7 @@ public enum VuLan24NPC implements InteractableNPC {
 	STONE_MASON("Stone Mason", 5259),
 	PLUNDERED_VILLAGE_VILLAGER("Villager", 5304),
 	PLUNDERED_VILLAGE_FARMER("Farmer", 5313),
+	STUDENT("Student", 5290),
 	;
 
 	private final String name;
