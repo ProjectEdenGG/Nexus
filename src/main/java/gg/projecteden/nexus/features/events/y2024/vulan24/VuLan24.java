@@ -23,7 +23,9 @@ import gg.projecteden.nexus.features.resourcepack.models.font.CustomEmoji;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.VuLan24LanternAnimationJob;
+import gg.projecteden.nexus.models.vulan24.VuLan24Config;
 import gg.projecteden.nexus.models.vulan24.VuLan24ConfigService;
+import gg.projecteden.nexus.models.vulan24.VuLan24User;
 import gg.projecteden.nexus.models.vulan24.VuLan24UserService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -47,6 +49,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static gg.projecteden.api.common.utils.RandomUtils.chanceOf;
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventDefaultFishingLoot.STONEFISH;
 import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory.FISH;
 import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory.JUNK;
@@ -68,6 +71,8 @@ import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Q
 @Environments(Env.PROD)
 public class VuLan24 extends EdenEvent {
 	private static VuLan24 instance;
+
+	public static final int DAILY_QUEST_GOAL = 250;
 
 	public VuLan24() {
 		instance = this;
@@ -186,6 +191,32 @@ public class VuLan24 extends EdenEvent {
 
 	@Override
 	public void registerInteractHandlers() {
+		handleInteract(VuLan24NPC.ANH, (player, npc) -> {
+			final VuLan24UserService userService = new VuLan24UserService();
+			final VuLan24User user = userService.get(player);
+
+			final VuLan24ConfigService configService = new VuLan24ConfigService();
+			final VuLan24Config config = configService.get0();
+
+			final Dialog dialog = new Dialog(npc);
+			if (user.isFinishedDailyQuest())
+				dialog.npc("I dont need any more help today, come back tomorrow!");
+			else if (Quester.of(player).has(user.getDailyQuest().getPredicate(), 32))
+				dialog
+					.thenRun(quester -> {
+						user.setFinishedDailyQuest(true);
+						userService.save(user);
+						config.incrementDailyQuestCounter();
+						configService.save(config);
+					})
+					.take(user.getDailyQuest().getPredicate(), 32)
+					.npc("Thank you so much! Come back tomorrow, I'm sure I'll need more help!");
+			else
+				dialog.npc("I am low on " + camelCase(user.getDailyQuest()) + ", can you help me restock?");
+
+			dialog.send(player);
+		});
+
 		handleInteract(VuLan24NPC.BOAT_SALESMAN, (player, npc) -> VuLan24Menus.getBoatPicker().open(player));
 		handleInteract(VuLan24NPC.TOUR_GUIDE, (player, npc) -> new Dialog(npc)
 			.npc("Tour Guide stuff")

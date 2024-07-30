@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
@@ -253,13 +254,17 @@ public class Quester implements PlayerOwnedObject {
 	}
 
 	public boolean has(MaterialTag materials, int amount) {
+		return has(item -> materials.isTagged(item.getType()), amount);
+	}
+
+	public boolean has(Predicate<ItemStack> predicate, int amount) {
 		int found = 0;
 
 		for (ItemStack content : getOnlinePlayer().getInventory().getContents()) {
 			if (isNullOrAir(content))
 				continue;
 
-			if (materials.isTagged(content.getType())) {
+			if (predicate.test(content)) {
 				found += content.getAmount();
 			}
 		}

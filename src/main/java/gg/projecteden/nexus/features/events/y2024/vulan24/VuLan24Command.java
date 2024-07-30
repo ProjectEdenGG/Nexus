@@ -10,31 +10,58 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.quests.Quester;
+import gg.projecteden.nexus.models.vulan24.VuLan24Config;
+import gg.projecteden.nexus.models.vulan24.VuLan24ConfigService;
 import gg.projecteden.nexus.models.vulan24.VuLan24User;
 import gg.projecteden.nexus.models.vulan24.VuLan24UserService;
 import gg.projecteden.nexus.models.warps.WarpType;
+import gg.projecteden.nexus.utils.StringUtils.ProgressBar;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
 import java.util.List;
 
+import static gg.projecteden.nexus.utils.StringUtils.ProgressBar.SummaryStyle.NONE;
+
 @Aliases("vulan")
 @NoArgsConstructor
 @Permission(Group.STAFF)
 public class VuLan24Command extends IEventCommand {
-	private VuLan24UserService service = new VuLan24UserService();
+	private final VuLan24ConfigService configService = new VuLan24ConfigService();
+	private final VuLan24Config config = configService.get0();
+	private final VuLan24UserService userService = new VuLan24UserService();
 	private VuLan24User user;
 
 	public VuLan24Command(CommandEvent event) {
 		super(event);
 		if (isPlayerCommandEvent())
-			user = service.get(player());
+			user = userService.get(player());
 	}
 
 	@Override
 	public EdenEvent getEdenEvent() {
 		return VuLan24.get();
+	}
+
+	@Override
+	@Path("quest progress [player]")
+	protected void quest_progress(@Arg(value = "self", permission = Group.STAFF) Quester quester) {
+		super.quest_progress(quester);
+
+		var sum = config.getCompletedDailyQuests();
+
+		var progressBar = ProgressBar.builder()
+			.progress(sum)
+			.goal(VuLan24.DAILY_QUEST_GOAL)
+			.summaryStyle(NONE)
+			.length(300)
+			.seamless(true)
+			.build();
+
+		send(json(" &3Server daily quest goal: " + progressBar + " &e" + sum + "&3/&e" + VuLan24.DAILY_QUEST_GOAL)
+			.hover("&eReach the goal together for a reward!"));
 	}
 
 	@Path

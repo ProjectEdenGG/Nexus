@@ -25,5 +25,10 @@ public class VuLan24Config implements DatabaseObject {
 	@NonNull
 	private UUID uuid;
 	private int lanterns;
+	private int completedDailyQuests;
+
+	public void incrementDailyQuestCounter() {
+		++completedDailyQuests;
+	}
 
 }

@@ -57,7 +57,7 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 	abstract public EdenEvent getEdenEvent();
 
 	@Path("quest progress [player]")
-	void quest_progress(@Arg(value = "self", permission = Group.STAFF) Quester quester) {
+	protected void quest_progress(@Arg(value = "self", permission = Group.STAFF) Quester quester) {
 		send(PREFIX + "Quest Progress");
 		for (IQuest iQuest : getEdenEvent().getQuests()) {
 			final boolean started = quester.hasStarted(iQuest);
@@ -71,7 +71,8 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 
 			if (!quest.isComplete()) {
 				var objective = quest.getCurrentTaskStep().getObjective();
-				send("&3 " + iQuest.getName() + " &7- &eStarted (" + quest.getCompletedSteps() + "/" + quest.getTotalSteps() + " steps) &7- " + objective);
+				send("&3 " + iQuest.getName() + " &7- &eStarted (" + quest.getCompletedSteps() + "/" + quest.getTotalSteps() + " steps)");
+				send("&7   - " + objective);
 				continue;
 			}
 

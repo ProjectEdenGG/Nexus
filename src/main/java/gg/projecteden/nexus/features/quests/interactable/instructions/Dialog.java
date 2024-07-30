@@ -29,7 +29,9 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.PlayerUtils.playerHas;
 
 @Data
@@ -154,11 +156,28 @@ public class Dialog {
 	}
 
 	public Dialog take(Material material) {
-		return give(new ItemStack(material));
+		return take(new ItemStack(material));
 	}
 
 	public Dialog take(Material material, int amount) {
-		return give(new ItemStack(material, amount));
+		return take(new ItemStack(material, amount));
+	}
+
+	public Dialog take(Predicate<ItemStack> predicate, int amount) {
+		return instruction(quester -> {
+			int count = 0;
+			for (ItemStack content : quester.getOnlinePlayer().getInventory().getContents()) {
+				if (isNullOrAir(content))
+					continue;
+
+				if (predicate.test(content)) {
+					PlayerUtils.removeItem(quester.getOnlinePlayer(), content);
+
+					if (++count == amount)
+						return;
+				}
+			}
+		}, -1);
 	}
 
 	public Dialog take(ItemStack item) {
