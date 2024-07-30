@@ -18,7 +18,7 @@ public class VuLan24DailyQuestJob extends AbstractJob implements Listener {
 	@Override
 	protected CompletableFuture<JobStatus> run() {
 		final VuLan24UserService userService = new VuLan24UserService();
-		for (VuLan24User user : userService.getAll())
+		for (VuLan24User user : userService.cacheAll())
 			user.newDailyQuest();
 		userService.saveCache();
 		return completed();
