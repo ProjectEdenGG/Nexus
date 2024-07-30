@@ -400,7 +400,8 @@ public class LuckPermsUtils {
 
 		@Getter
 		public static class PlayerRankChangeEvent extends Event {
-			private static final HandlerList handlers = new HandlerList();
+			@Getter
+			private static final HandlerList handlerList = new HandlerList();
 			private final UUID uuid;
 			private final Rank oldRank;
 			private final Rank newRank;
@@ -412,13 +413,9 @@ public class LuckPermsUtils {
 				this.newRank = newRank;
 			}
 
-			public static HandlerList getHandlerList() {
-				return handlers;
-			}
-
 			@Override
 			public @NotNull HandlerList getHandlers() {
-				return handlers;
+				return handlerList;
 			}
 		}
 	}

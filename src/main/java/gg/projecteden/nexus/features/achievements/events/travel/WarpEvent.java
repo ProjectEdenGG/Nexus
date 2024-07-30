@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 public class WarpEvent extends Event {
+	@Getter
 	private static final HandlerList handlerList = new HandlerList();
 	private final Player player;
 

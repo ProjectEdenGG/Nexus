@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 public class FirstSubWorldGroupVisitEvent extends PlayerEvent {
+	@Getter
 	private static final HandlerList handlerList = new HandlerList();
 	private final SubWorldGroup subWorldGroup;
 

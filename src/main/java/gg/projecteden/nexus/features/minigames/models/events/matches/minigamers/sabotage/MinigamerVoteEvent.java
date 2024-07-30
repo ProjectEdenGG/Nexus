@@ -31,6 +31,7 @@ public class MinigamerVoteEvent extends MinigamerMatchEvent implements Cancellab
 		this.cancelled = cancelled;
 	}
 
+	@Getter
 	private static final HandlerList handlerList = new HandlerList();
 
 	@Override

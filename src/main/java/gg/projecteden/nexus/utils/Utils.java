@@ -88,7 +88,7 @@ public class Utils extends gg.projecteden.api.common.utils.Utils {
 					Nexus.registerListener(listener);
 				else
 					Nexus.warn("Cannot register listener on " + clazz.getSimpleName() + ", needs @NoArgsConstructor");
-			} else if (methodsAnnotatedWith(clazz, EventHandler.class).size() > 0)
+			} else if (!methodsAnnotatedWith(clazz, EventHandler.class).isEmpty())
 				Nexus.warn("Found @EventHandlers in " + clazz.getSimpleName() + " which does not implement Listener"
 					+ (hasNoArgsConstructor ? "" : " or have a @NoArgsConstructor"));
 		} catch (Exception ex) {
@@ -96,6 +96,7 @@ public class Utils extends gg.projecteden.api.common.utils.Utils {
 		}
 	}
 
+	@Getter
 	@AllArgsConstructor
 	public enum ItemFrameRotation {
 		DEGREE_0(Rotation.NONE, BlockFace.NORTH),
@@ -108,9 +109,7 @@ public class Utils extends gg.projecteden.api.common.utils.Utils {
 		DEGREE_315(Rotation.COUNTER_CLOCKWISE_45, BlockFace.NORTH_WEST),
 		;
 
-		@Getter
 		final Rotation rotation;
-		@Getter
 		final BlockFace blockFace;
 
 		public ItemFrameRotation getOppositeRotation() {

@@ -276,17 +276,14 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 	@Getter
 	@AllArgsConstructor
 	public static class ImageStandInteractEvent extends Event {
-		private static final HandlerList handlers = new HandlerList();
+		@Getter
+		private static final HandlerList handlerList = new HandlerList();
 		private final Player player;
 		private final ImageStand imageStand;
 
-		public static HandlerList getHandlerList() {
-			return handlers;
-		}
-
 		@Override
-		public HandlerList getHandlers() {
-			return handlers;
+		public @NotNull HandlerList getHandlers() {
+			return handlerList;
 		}
 
 	}

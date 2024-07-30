@@ -171,6 +171,7 @@ public class SpeedCommand extends CustomCommand {
 	@Getter
 	@Setter
 	public static class SpeedChangeEvent extends PlayerEvent implements Cancellable {
+		@Getter
 		private static final HandlerList handlerList = new HandlerList();
 		private final SpeedType speedType;
 		private final float oldSpeed, newSpeed;

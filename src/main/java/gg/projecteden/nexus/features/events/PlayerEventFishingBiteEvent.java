@@ -13,6 +13,7 @@ import java.util.List;
 
 @Getter
 public class PlayerEventFishingBiteEvent extends PlayerEvent implements Cancellable {
+	@Getter
 	private static final HandlerList handlerList = new HandlerList();
 	@Setter
 	private boolean cancelled;

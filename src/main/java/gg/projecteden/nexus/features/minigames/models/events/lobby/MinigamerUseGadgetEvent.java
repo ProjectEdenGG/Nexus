@@ -18,6 +18,7 @@ public class MinigamerUseGadgetEvent extends MinigamerLobbyEvent {
 		this.perk = perk;
 	}
 
+	@Getter
 	private static final HandlerList handlerList = new HandlerList();
 
 	@Override

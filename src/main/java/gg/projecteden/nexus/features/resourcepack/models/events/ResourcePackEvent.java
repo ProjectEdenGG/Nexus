@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 public abstract class ResourcePackEvent extends Event {
+	@Getter
 	private static final HandlerList handlerList = new HandlerList();
 
 	public ResourcePackEvent() {

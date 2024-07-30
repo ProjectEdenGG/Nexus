@@ -27,7 +27,7 @@ public class UnlimitedElytraCommand extends CustomCommand {
 
 	static {
 		Tasks.repeat(0, TickTime.TICK.x(2), () -> {
-			if (FLYING.size() == 0)
+			if (FLYING.isEmpty())
 				return;
 
 			for (UUID uuid : FLYING) {

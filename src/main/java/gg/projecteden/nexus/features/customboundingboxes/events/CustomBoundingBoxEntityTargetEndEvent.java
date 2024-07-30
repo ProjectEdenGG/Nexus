@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 @Setter
 public class CustomBoundingBoxEntityTargetEndEvent extends CustomBoundingBoxEntityEvent {
+	@Getter
 	private static final HandlerList handlerList = new HandlerList();
 	private boolean cancelled;
 

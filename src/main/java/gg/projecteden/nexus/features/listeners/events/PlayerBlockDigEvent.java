@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 public class PlayerBlockDigEvent extends PlayerEvent {
+	@Getter
 	private static final HandlerList handlerList = new HandlerList();
 	private final Block block;
 	private final PlayerDigType digType;

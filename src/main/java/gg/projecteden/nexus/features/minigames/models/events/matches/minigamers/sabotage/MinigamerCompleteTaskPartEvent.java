@@ -15,6 +15,7 @@ public class MinigamerCompleteTaskPartEvent extends MinigamerMatchEvent {
 		this.taskPart = taskPart;
 	}
 
+	@Getter
 	private static final HandlerList handlerList = new HandlerList();
 
 	@Override

@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
  */
 @Getter
 public class PlayerChangingWorldEvent extends PlayerEvent implements Cancellable {
+	@Getter
 	private static final HandlerList handlerList = new HandlerList();
 	private final World fromWorld, toWorld;
 	@Setter

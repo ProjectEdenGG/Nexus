@@ -14,6 +14,7 @@ public abstract class FakeNPCEvent extends Event {
 		this.npc = npc;
 	}
 
+	@Getter
 	private static final HandlerList handlerList = new HandlerList();
 
 	@Override

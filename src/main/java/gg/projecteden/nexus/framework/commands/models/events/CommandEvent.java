@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeIngameExcep
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.kyori.adventure.text.ComponentLike;
@@ -44,6 +45,7 @@ public abstract class CommandEvent extends Event implements Cancellable {
 	}
 
 	protected boolean cancelled = false;
+	@Getter
 	protected static final HandlerList handlerList = new HandlerList();
 
 	public void reply(String message) {

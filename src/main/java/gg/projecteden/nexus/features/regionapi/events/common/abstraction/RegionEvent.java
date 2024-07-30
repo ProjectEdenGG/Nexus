@@ -35,11 +35,8 @@ public abstract class RegionEvent extends EntityEvent {
 		this.parentEvent = parentEvent;
 	}
 
+	@Getter
 	private static final HandlerList handlerList = new HandlerList();
-
-	public static HandlerList getHandlerList() {
-		return handlerList;
-	}
 
 	@Override
 	public @NotNull HandlerList getHandlers() {

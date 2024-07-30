@@ -15,6 +15,7 @@ public class MinigamerLoadoutEvent extends MinigamerMatchEvent {
 		this.loadout = loadout;
 	}
 
+	@Getter
 	private static final HandlerList handlerList = new HandlerList();
 
 
