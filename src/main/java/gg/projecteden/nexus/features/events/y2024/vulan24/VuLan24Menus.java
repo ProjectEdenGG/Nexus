@@ -74,7 +74,11 @@ public class VuLan24Menus {
 	}
 
 	public static NPCShopMenuBuilder getGuideShop() {
-		var backpack = Backpacks.setTier(Backpacks.getBackpack(), BackpackTier.DIAMOND);
+		var backpack = new ItemBuilder(Backpacks.setTier(Backpacks.getBackpack(), BackpackTier.DIAMOND))
+			.undroppable()
+			.unstorable()
+			.untrashable();
+
 		return NPCShopMenu.builder()
 			.title("Want a backpack?")
 			.npcId(VuLan24NPC.TOUR_GUIDE.getNpcId())
