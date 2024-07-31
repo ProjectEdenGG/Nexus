@@ -5,10 +5,9 @@ import lombok.Getter;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+@Getter
 public class DecorationInteractEvent extends DecorationEvent {
-	@Getter
 	private final InteractType interactType;
-	@Getter
 	private final Block clickedBlock;
 
 	public DecorationInteractEvent(Player player, Block block, Decoration decoration, InteractType type) {
