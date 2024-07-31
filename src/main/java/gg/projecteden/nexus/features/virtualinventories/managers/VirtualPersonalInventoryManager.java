@@ -44,7 +44,8 @@ public class VirtualPersonalInventoryManager extends Feature {
 				.flatMap(map -> map.values().stream())
 				.flatMap(map -> map.values().stream())
 				.toList()
-				.stream().filter(virtualInventory -> {
+				.stream()
+				.filter(virtualInventory -> {
 					if (!(virtualInventory instanceof VirtualPersonalInventory virtualPersonalInventory))
 						return true;
 

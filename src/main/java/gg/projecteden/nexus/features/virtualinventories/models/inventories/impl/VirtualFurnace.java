@@ -12,7 +12,6 @@ import gg.projecteden.nexus.features.virtualinventories.models.inventories.Virtu
 import gg.projecteden.nexus.features.virtualinventories.models.properties.impl.FurnaceProperties;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.Nullables;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
@@ -21,6 +20,8 @@ import org.bukkit.inventory.CookingRecipe;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Data
 @NoArgsConstructor
@@ -105,8 +106,9 @@ public class VirtualFurnace extends VirtualInventory<FurnaceProperties> {
 			else
 				this.cookTime = 0;
 		} else {
+			if (this.isLit)
+				new VirtualFurnaceEndEvent(this).callEvent();
 			this.isLit = false;
-			new VirtualFurnaceEndEvent(this).callEvent();
 		}
 
 		new VirtualFurnaceTickEvent(this).callEvent();
@@ -116,9 +118,8 @@ public class VirtualFurnace extends VirtualInventory<FurnaceProperties> {
 	}
 
 	private boolean canBurn() {
-		if (this.fuel == null) {
+		if (isNullOrAir(this.fuel))
 			return false;
-		}
 
 		return ItemUtils.getBurnTime(fuel) > 0;
 	}
@@ -138,9 +139,8 @@ public class VirtualFurnace extends VirtualInventory<FurnaceProperties> {
 	}
 
 	private boolean canCook() {
-		if (Nullables.isNullOrAir(this.input)) {
+		if (isNullOrAir(this.input))
 			return false;
-		}
 
 		var recipe = VirtualInventoryUtils.getCookingRecipes(this.input, properties().recipeClass());
 		if (recipe == null)

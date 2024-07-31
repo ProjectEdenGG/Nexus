@@ -315,8 +315,8 @@ public class VuLan24 extends EdenEvent {
 		);
 
 		registerBreakable(EventBreakable.builder()
-			.blockMaterials(Material.COAL_ORE, Material.DEEPSLATE_COAL_ORE)
-			.drops(Material.COAL, 1, 3)
+			.blockMaterials(Material.LAPIS_ORE, Material.DEEPSLATE_LAPIS_ORE)
+			.drops(Material.LAPIS_LAZULI, 2, 5)
 			.placeholderTypes(Material.COBBLESTONE)
 			.requiredTool(ToolType.PICKAXE, ToolGrade.STONE)
 		);
