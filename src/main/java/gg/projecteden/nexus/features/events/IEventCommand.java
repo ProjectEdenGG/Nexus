@@ -99,6 +99,14 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 	}
 
 	@Permission(Group.ADMIN)
+	@Path("quest reset <quest>")
+	@Description("Reset an event's quest progress")
+	void quest_reset(IQuest quest) {
+		Quester.of(player()).getQuests().removeIf(_quest -> _quest.getQuest() == quest);
+		send(PREFIX + "Quest reset");
+	}
+
+	@Permission(Group.ADMIN)
 	@Path("quest interactable tp <interactable>")
 	@Description("Teleport to an interactable")
 	void quest_interactable_tp(Interactable interactable) {
