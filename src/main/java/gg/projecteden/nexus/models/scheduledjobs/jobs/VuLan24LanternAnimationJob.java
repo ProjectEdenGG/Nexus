@@ -18,7 +18,7 @@ public class VuLan24LanternAnimationJob extends AbstractJob implements Listener 
 
 	@Override
 	protected CompletableFuture<JobStatus> run() {
-		if (!VuLan24.get().isEventActive())
+		if (VuLan24.get().isAfterEvent())
 			return completed();
 
 		long currentTime = VuLan24.get().getWorld().getTime();
