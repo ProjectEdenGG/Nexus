@@ -18,7 +18,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationRo
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.workbenches.dyestation.CreativeBrushMenu;
-import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -28,7 +27,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import io.papermc.paper.entity.TeleportFlag.EntityState;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -204,31 +202,26 @@ public class Decoration {
 		if (canEdit != null)
 			return canEdit;
 
+		boolean isWGEdit = WorldGuardEditCommand.canWorldGuardEdit(player);
+		boolean isInRegion = !new WorldGuardUtils(player).getRegionsAt(this.getOrigin()).isEmpty();
+
+		if (isWGEdit)
+			return setCanEdit(true);
+
 		if (Nullables.isNullOrAir(getItem(player)))
 			return setCanEdit(true);
 
-		Rank playerRank = Rank.of(player);
 		UUID owner = getOwner(player);
 
 		if (owner == null)
 			return setCanEdit(true);
 
-		if (player.getUniqueId().equals(owner))
-			return setCanEdit(true);
-
-		boolean isTrusted = new TrustService().get(owner).trusts(Type.DECORATIONS, player);
-
-		if (playerRank.isStaff()) {
-			if (WorldGroup.STAFF == WorldGroup.of(player) && isTrusted)
-				return setCanEdit(true);
-
-			if (playerRank.isSeniorStaff() || playerRank.equals(Rank.ARCHITECT) || player.isOp())
-				return setCanEdit(true);
-
-			if (WorldGuardEditCommand.canWorldGuardEdit(player) && new WorldGuardUtils(player).getRegionsAt(this.getOrigin()).size() > 0)
+		if (player.getUniqueId().equals(owner)) {
+			if (!isInRegion) // TODO || flag == allow
 				return setCanEdit(true);
 		}
 
+		boolean isTrusted = new TrustService().get(owner).trusts(Type.DECORATIONS, player);
 		return setCanEdit(isTrusted);
 	}
 

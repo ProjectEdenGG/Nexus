@@ -21,6 +21,5 @@ public class CustomContentUtils {
 			return true;
 
 		return false;
-
 	}
 }
