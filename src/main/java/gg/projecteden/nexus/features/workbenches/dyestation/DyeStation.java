@@ -1,14 +1,11 @@
 package gg.projecteden.nexus.features.workbenches.dyestation;
 
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.workbenches.CustomBench;
 import gg.projecteden.nexus.features.workbenches.ICraftableCustomBench;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.ChoiceType;
-import gg.projecteden.nexus.framework.features.Unreleased;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
@@ -26,12 +23,6 @@ import java.util.List;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
 
-/*
-	TODO:
-	- ADD MINERAL DYE CRAFTING RECIPE
-	- ADD MORE MINERAL TYPES, REDSTONE, LAPIS, DIAMOND, COAL, QUARTZ?, SCRAP?
- */
-@Unreleased
 @NoArgsConstructor
 public class DyeStation extends CustomBench implements ICraftableCustomBench {
 	public static final String USAGE_LORE = "&3Used in Dye Station";
@@ -116,15 +107,12 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 				.toMake(DyeStation.getMagicStain().build())
 		);
 
+		// TODO DECORATION: MINERAL RECIPE
+
 		return recipes;
 	}
 
 	public static void open(Player player) {
-		if (!DecorationUtils.canUseFeature(player, DecorationType.DYE_STATION.getConfig())) {
-			DecorationError.UNRELEASED_FEATURE.send(player);
-			return;
-		}
-
 		DyeStationMenu.DyeStationMode mode = DyeStationMenu.DyeStationMode.NORMAL;
 		if (DecorationUtils.hasBypass(player))
 			mode = DyeStationMenu.DyeStationMode.CHEAT;

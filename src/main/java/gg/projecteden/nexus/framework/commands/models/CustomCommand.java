@@ -975,12 +975,10 @@ public abstract class CustomCommand extends ICustomCommand {
 			if (isStaff()) // TODO Custom Blocks
 				addAll(tabCompleteCustomBlock(filter));
 
-			if (isStaff()) { // TODO Decorations - Remove on release
-				addAll(Arrays.stream(DecorationType.values())
-						.map(type -> type.name().toLowerCase())
-						.filter(name -> name.toLowerCase().contains(filter.toLowerCase()))
+			addAll(Arrays.stream(DecorationType.values())
+					.map(type -> type.name().toLowerCase())
+					.filter(name -> name.toLowerCase().contains(filter.toLowerCase()))
 					.toList());
-			}
 		}};
 	}
 

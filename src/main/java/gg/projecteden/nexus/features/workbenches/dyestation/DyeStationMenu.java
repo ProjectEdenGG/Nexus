@@ -11,7 +11,6 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.ChoiceType;
-import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -164,9 +163,6 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 
 	@Override
 	public void init() {
-		if (!DecorationUtils.canUseFeature(viewer) && mode != DyeStationMode.COSTUME)
-			throw new InvalidInputException("Temporarily disabled"); // TODO DECORATIONS - Remove on release
-
 		dyePage = data.getDyePage();
 
 		addCloseItem();

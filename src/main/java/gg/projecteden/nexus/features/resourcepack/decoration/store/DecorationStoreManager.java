@@ -219,8 +219,8 @@ public class DecorationStoreManager implements Listener {
 	}
 
 	private boolean prompt(Player player, DecorationStoreType storeType) {
-		// TODO DECORATION: REMOVE ON RELEASE
-		if (!DecorationUtils.canUseFeature(player))
+		// TODO DECORATION: REMOVE ON RELEASE prompt
+		if (!DecorationUtils.canBuyDecoration(player))
 			return false;
 		//
 

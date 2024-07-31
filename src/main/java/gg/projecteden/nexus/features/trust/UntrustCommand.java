@@ -1,7 +1,5 @@
 package gg.projecteden.nexus.features.trust;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.trust.providers.TrustProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -74,9 +72,6 @@ public class UntrustCommand extends CustomCommand {
 	@Path("decorations <players>")
 	@Description("Remove a player's access to your decorations")
 	void decorations(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
-		if (!DecorationUtils.canUseFeature(player())) // TODO Decorations - Remove perm on release
-			DecorationError.UNRELEASED_FEATURE.send(player());
-
 		process(players, Type.DECORATIONS);
 	}
 

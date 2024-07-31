@@ -4,7 +4,6 @@ import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.trust.Trust;
 import gg.projecteden.nexus.models.trust.Trust.Type;
@@ -55,13 +54,6 @@ public class TrustPlayerProvider extends InventoryProvider {
 			builder.lore("").lore("&fClick to toggle");
 
 			int column = type.getColumn();
-			// TODO Decorations - Remove on release
-			if (!DecorationUtils.canUseFeature(viewer)) {
-				++column;
-				if (type == Type.DECORATIONS)
-					continue;
-			}
-			//
 
 			contents.set(2, column, ClickableItem.of(builder.build(), e -> {
 				if (list.contains(trusted.getUniqueId()))

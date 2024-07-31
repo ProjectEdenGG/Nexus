@@ -120,12 +120,6 @@ public class DecorationTypeListener implements Listener {
 		if (!DyeStation.isPaintbrush(tool))
 			return;
 
-		// TODO DECORATIONS - Remove on release
-		if (!DecorationUtils.canUseFeature(event.getPlayer())) {
-			return;
-		}
-		//
-
 		if (!DecorationUtils.canUsePaintbrush(player, tool))
 			return;
 

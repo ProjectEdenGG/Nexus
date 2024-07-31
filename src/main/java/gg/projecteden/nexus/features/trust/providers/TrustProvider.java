@@ -5,7 +5,6 @@ import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.trust.TrustFeature;
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -63,11 +62,6 @@ public class TrustProvider extends InventoryProvider {
 					.skullOwner(trusted)
 					.name("&e" + Nickname.of(trusted));
 				for (Trust.Type type : Trust.Type.values()) {
-					// TODO Decorations - Remove on release
-					if (type.equals(Type.DECORATIONS) && DecorationUtils.canUseFeature(trust.getPlayer()))
-						continue;
-					//
-
 					if (trust.trusts(type, trusted))
 						builder.lore("&a" + type.camelCase());
 					else
@@ -87,7 +81,7 @@ public class TrustProvider extends InventoryProvider {
 			Nexus.getSignMenuFactory().lines("", ARROWS, "Enter a", "player's name")
 				.prefix(Features.get(TrustFeature.class).getPrefix())
 				.response(lines -> {
-					if (lines[0].length() > 0) {
+					if (!lines[0].isEmpty()) {
 						OfflinePlayer trusted = PlayerUtils.getPlayer(lines[0]);
 						new TrustPlayerProvider(trusted, back).open(viewer);
 					} else

@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.workbenches.dyestation;
 
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
@@ -55,11 +54,6 @@ public class CreativeBrushMenu extends InventoryProvider implements IDyeMenu {
 
 			if (!player.getGameMode().equals(GameMode.CREATIVE))
 				return false;
-		}
-
-		if (!DecorationUtils.canUseFeature(player)) { // TODO DECORATIONS - Remove on release
-			DecorationError.UNRELEASED_FEATURE.send(player);
-			return false;
 		}
 
 		if (!isCreativePaintbrush(ItemUtils.getToolRequired(player)))

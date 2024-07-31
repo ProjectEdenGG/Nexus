@@ -102,10 +102,6 @@ public class DecorationListener implements Listener {
 	@EventHandler
 	public void on(CreativePickBlockEvent event) {
 		Player player = event.getPlayer();
-		// TODO DECORATIONS - Remove on release
-		if (!DecorationUtils.canUseFeature(player))
-			return;
-		//
 
 		Block clicked = player.getTargetBlockExact(5);
 		if (isNullOrAir(clicked))
@@ -140,11 +136,6 @@ public class DecorationListener implements Listener {
 		ItemStack tool = ItemUtils.getTool(player);
 
 		DecorationConfig toolConfig = DecorationConfig.of(tool);
-		// TODO DECORATIONS - Remove on release
-		if (!DecorationUtils.canUseFeature(event.getPlayer(), toolConfig))
-			return;
-		//
-
 		boolean playerHoldingDecor = toolConfig != null;
 
 		Entity entity = event.getRightClicked();
@@ -359,11 +350,6 @@ public class DecorationListener implements Listener {
 		if (!data.isDecorationValid())
 			return false;
 
-		// TODO DECORATIONS - Remove on release
-		if (!DecorationUtils.canUseFeature(data.getPlayer(), data.getDecoration().getConfig()))
-			return false;
-		//
-
 		if (!data.playerCanWGEdit()) {
 			DecorationError.WORLDGUARD_USAGE.send(data.getPlayer());
 			return false;
@@ -436,13 +422,6 @@ public class DecorationListener implements Listener {
 			debug(data.getPlayer(), "config == null");
 			return false;
 		}
-
-		// TODO DECORATIONS - Remove on release
-		if (!DecorationUtils.canUseFeature(data.getPlayer(), config)) {
-			debug(data.getPlayer(), "can't use feature");
-			return false;
-		}
-		//
 
 		data.setDecoration(new Decoration(config, null));
 

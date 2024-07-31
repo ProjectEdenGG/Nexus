@@ -5,12 +5,9 @@ import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.resourcepack.CustomContentUtils;
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreUtils;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Backpack;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.special.PlayerPlushie;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.MineralChoice;
@@ -346,69 +343,18 @@ public class DecorationUtils {
 		return _location.getNearbyEntitiesByType(ItemFrame.class, _radius).stream().findFirst().orElse(null);
 	}
 
-	// TODO DECORATIONS - Remove on release
-	private static final List<DecorationType> BYPASS_LIST = List.of(
-			DecorationType.ENCHANTED_BOOK_SPLITTER,
-			DecorationType.BIRDHOUSE_FOREST_HORIZONTAL,
-			DecorationType.BIRDHOUSE_FOREST_VERTICAL,
-			DecorationType.BIRDHOUSE_FOREST_HANGING,
-			DecorationType.BIRDHOUSE_ENCHANTED_HORIZONTAL,
-			DecorationType.BIRDHOUSE_ENCHANTED_VERTICAL,
-			DecorationType.BIRDHOUSE_ENCHANTED_HANGING,
-			DecorationType.BIRDHOUSE_DEPTHS_HORIZONTAL,
-			DecorationType.BIRDHOUSE_DEPTHS_VERTICAL,
-			DecorationType.BIRDHOUSE_DEPTHS_HANGING,
-			DecorationType.WINDCHIME_IRON,
-			DecorationType.WINDCHIME_GOLD,
-			DecorationType.WINDCHIME_COPPER,
-			DecorationType.WINDCHIME_AMETHYST,
-			DecorationType.WINDCHIME_LAPIS,
-			DecorationType.WINDCHIME_NETHERITE,
-			DecorationType.WINDCHIME_DIAMOND,
-			DecorationType.WINDCHIME_REDSTONE,
-			DecorationType.WINDCHIME_EMERALD,
-			DecorationType.WINDCHIME_QUARTZ,
-			DecorationType.WINDCHIME_COAL,
-			DecorationType.WINDCHIME_ICE
-	);
-
-	// TODO DECORATIONS: Remove on release
+	// TODO DECORATIONS: REMOVE ON RELEASE util
 	@Deprecated
-	public static boolean canUseFeature(Player player) {
-		return canUseFeature(player, null);
-	}
-
-	@Deprecated
-	public static boolean canUseFeature(Player player, @Nullable DecorationConfig config) {
-		if (config != null) {
-			if (config instanceof PlayerPlushie)
-				return true;
-
-			if (config instanceof Backpack)
-				return true;
-
-			DecorationType type = DecorationType.of(config);
-			if (type != null && BYPASS_LIST.contains(type))
-				return true;
-		}
-
+	public static boolean canBuyDecoration(Player player) {
 		EdenEvent edenEvent = EdenEvent.of(player);
 		if (edenEvent != null && edenEvent.isEventActive())
 			return true;
 
-		String champeon = "3da17df8-f688-46e6-a033-20adb1d1acf0";
-		return Rank.of(player).isStaff() || Rank.of(player).isBuilder() || player.getUniqueId().toString().equals(champeon);
+		return Rank.of(player).isStaff() || Rank.of(player).isBuilder();
 	}
 	//
 
 	public static boolean hasBypass(Player player) {
-		// TODO DECORATIONS: Remove on release
-		if (!canUseFeature(player)) {
-			DecorationError.UNRELEASED_FEATURE.send(player);
-			return false;
-		}
-		//
-
 		return CustomContentUtils.hasBypass(player);
 	}
 

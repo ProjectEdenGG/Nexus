@@ -70,8 +70,8 @@ public class DecorationStore implements Listener {
 		if (!AvontyreNPCs.DECORATION__NULL.is(event.getNPC()))
 			return;
 
-		// TODO DECORATIONS: REMOVE
-		if (!DecorationUtils.hasBypass(event.getClicker()))
+		// TODO DECORATIONS: REMOVE ON RELEASE npc shop
+		if (!DecorationUtils.canBuyDecoration(event.getClicker()))
 			return;
 		//
 
