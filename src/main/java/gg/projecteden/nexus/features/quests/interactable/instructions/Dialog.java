@@ -31,7 +31,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.PlayerUtils.playerHas;
 
 @Data
@@ -164,27 +163,15 @@ public class Dialog {
 	}
 
 	public Dialog take(Predicate<ItemStack> predicate, int amount) {
-		return instruction(quester -> {
-			int count = 0;
-			for (ItemStack content : quester.getOnlinePlayer().getInventory().getContents()) {
-				if (isNullOrAir(content))
-					continue;
-
-				if (predicate.test(content)) {
-					var clone = content.clone();
-					clone.setAmount(Math.min(amount - count, content.getAmount()));
-					PlayerUtils.removeItem(quester.getOnlinePlayer(), clone);
-
-					count += clone.getAmount();
-					if (count == amount)
-						return;
-				}
-			}
-		}, -1);
+		return instruction(quester -> quester.take(predicate, amount), -1);
 	}
 
 	public Dialog take(ItemStack item) {
-		return instruction(quester -> PlayerUtils.removeItem(quester.getOnlinePlayer(), item), -1);
+		return instruction(quester -> quester.take(item), -1);
+	}
+
+	public Dialog take(List<ItemStack> items) {
+		return instruction(quester -> quester.take(items), -1);
 	}
 
 	public DialogInstance send(OptionalPlayerLike player) {

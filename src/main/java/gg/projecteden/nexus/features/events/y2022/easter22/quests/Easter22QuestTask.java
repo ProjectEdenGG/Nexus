@@ -86,7 +86,7 @@ public enum Easter22QuestTask implements IQuestTask {
 			.npc("Awesome! I would warn you about the difficulty but it seems you have a talent when it comes to finding things...")
 		)
 		.objective("Find all 20 eggs")
-		.gather(quester -> Easter22User.of(quester).getFound().size() >= TOTAL_EASTER_EGGS)
+		.check(quester -> Easter22User.of(quester).getFound().size() >= TOTAL_EASTER_EGGS)
 		.onEntityInteract(EASTER_EGG, event -> {
 			event.setCancelled(true);
 			Location location = event.getRightClicked().getLocation().toBlockLocation();

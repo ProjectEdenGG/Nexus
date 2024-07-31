@@ -34,7 +34,9 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 
 	@Data
 	public static class GatherQuestTaskStep extends QuestTaskStep<GatherQuestTask, GatherQuestTaskStep> {
-		private Predicate<Quester> predicate;
+		private Predicate<Quester> questerPredicate;
+		private Predicate<ItemStack> itemPredicate;
+		private int amount;
 		private List<ItemStack> items = new ArrayList<>();
 		private boolean take = true;
 		private Dialog complete;
@@ -54,12 +56,15 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 
 		@Override
 		public boolean shouldAdvance(Quester quester, QuestTaskStepProgress stepProgress) {
-			if (predicate != null) {
-				if (!stepProgress.isFirstInteraction() && predicate.test(quester))
+			if (questerPredicate != null) {
+				if (!stepProgress.isFirstInteraction() && questerPredicate.test(quester))
+					return true;
+			} else if (itemPredicate != null && amount > 0) {
+				if (!stepProgress.isFirstInteraction() && quester.has(itemPredicate, amount))
 					return true;
 			} else {
 				if (Nullables.isNullOrEmpty(items))
-						return true;
+					return true;
 
 				if (!stepProgress.isFirstInteraction() && quester.has(items))
 					return true;
@@ -71,7 +76,10 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 		@Override
 		public void afterComplete(Quester quester) {
 			if (take)
-				quester.remove(items);
+				if (itemPredicate != null)
+					quester.take(itemPredicate, amount);
+				else
+					quester.take(items);
 		}
 
 	}
@@ -130,12 +138,17 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 		}
 
 		public GatherTaskBuilder gather(MaterialTag materials, int amount) {
-			currentStep.predicate = quester -> quester.has(materials, amount);
+			return gather(materials::isTagged, amount);
+		}
+
+		public GatherTaskBuilder gather(Predicate<ItemStack> predicate, int amount) {
+			currentStep.itemPredicate = predicate;
+			currentStep.amount = amount;
 			return this;
 		}
 
-		public GatherTaskBuilder gather(Predicate<Quester> predicate) {
-			currentStep.predicate = predicate;
+		public GatherTaskBuilder check(Predicate<Quester> predicate) {
+			currentStep.questerPredicate = predicate;
 			return this;
 		}
 

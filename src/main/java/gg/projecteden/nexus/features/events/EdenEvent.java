@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events;
 
+import com.destroystokyo.paper.event.block.AnvilDamagedEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.exceptions.EdenException;
 import gg.projecteden.api.common.utils.EnumUtils;
@@ -27,6 +28,7 @@ import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ChunkLoader;
+import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -66,6 +68,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,6 +83,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
+import static gg.projecteden.api.common.utils.RandomUtils.chanceOf;
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static gg.projecteden.nexus.utils.Extensions.isStaff;
 
@@ -601,6 +605,12 @@ public abstract class EdenEvent extends Feature implements Listener {
 			if (!breakable.isCorrectTool(tool))
 				throw new BreakException("event_break_wrong_tool", EventErrors.CANT_BREAK + " with this tool. Needs either: " + breakable.getAvailableTools());
 
+			if (tool.getItemMeta() instanceof Damageable damageable)
+				if (chanceOf(100 / tool.getEnchantmentLevel(Enchant.UNBREAKING) + 1)) {
+					damageable.setDamage(damageable.getDamage() + 1);
+					tool.setItemMeta(damageable);
+				}
+
 			if (blockData instanceof Ageable ageable) {
 				if (!CROP_MULTI_BLOCK.contains(material))
 					if (ageable.getAge() != ageable.getMaximumAge())
@@ -677,6 +687,18 @@ public abstract class EdenEvent extends Feature implements Listener {
 
 	public FishingLoot getFishingLoot(Material material, int modelId) {
 		return this.fishingLoot.stream().filter(fishingLoot -> fishingLoot.getMaterial() == material && fishingLoot.getModelId() == modelId).findFirst().orElse(null);
+	}
+
+	@EventHandler
+	public void on(AnvilDamagedEvent event) {
+		final Location location = event.getInventory().getLocation();
+		if (location == null)
+			return;
+
+		if (!shouldHandle(location))
+			return;
+
+		event.setCancelled(true);
 	}
 
 }

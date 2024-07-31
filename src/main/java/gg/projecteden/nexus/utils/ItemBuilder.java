@@ -1023,7 +1023,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 			double damage = (percentage / 100.0) * maxDurability;
 			damageable.setDamage((int) damage);
 
-			item.setItemMeta((ItemMeta) damageable);
+			item.setItemMeta(damageable);
 		}
 
 		return item;

@@ -36,7 +36,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +45,7 @@ import java.util.function.Predicate;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static java.util.Collections.singletonList;
 
 @Data
 @Entity(value = "quester", noClassnameStored = true)
@@ -272,17 +272,39 @@ public class Quester implements PlayerOwnedObject {
 		return found >= amount;
 	}
 
-	public void remove(List<ItemStack> items) {
+	public void take(ItemStack item) {
+		take(singletonList(item));
+	}
+
+	public void take(List<ItemStack> items) {
 		if (!isNullOrEmpty(items))
 			for (ItemStack item : items)
 				PlayerUtils.removeItem(getOnlinePlayer(), item);
+	}
+
+	public void take(Predicate<ItemStack> predicate, int amount) {
+		int count = 0;
+		for (ItemStack content : getOnlinePlayer().getInventory().getContents()) {
+			if (isNullOrAir(content))
+				continue;
+
+			if (predicate.test(content)) {
+				var clone = content.clone();
+				clone.setAmount(Math.min(amount - count, content.getAmount()));
+				PlayerUtils.removeItem(getOnlinePlayer(), clone);
+
+				count += clone.getAmount();
+				if (count == amount)
+					return;
+			}
+		}
 	}
 
 	public List<ItemStack> getRemainingItems(List<ItemStack> items) {
 		List<ItemStack> remaining = new ArrayList<>();
 
 		for (var item : items)
-			if (!has(Collections.singletonList(item)))
+			if (!has(singletonList(item)))
 				remaining.add(item);
 
 		return remaining;

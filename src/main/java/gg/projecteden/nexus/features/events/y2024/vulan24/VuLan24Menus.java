@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu.NPCShopMenuBuilder;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu.Product;
 import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
+import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks.BackpackTier;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.CostumeUserService;
@@ -45,6 +46,10 @@ public class VuLan24Menus {
 		if (costume == null)
 			throw new InvalidInputException("Costume '" + costumeId + "' is null");
 
+		final CostumeUserService costumeUserService = new CostumeUserService();
+		if (costumeUserService.get(player).owns(costume))
+			throw new InvalidInputException("You already own that costume");
+
 		ItemBuilder costumeItem = new ItemBuilder(costume.getItem()).name("&eBamboo Hat Costume");
 
 		return NPCShopMenu.builder()
@@ -53,7 +58,7 @@ public class VuLan24Menus {
 			.shopGroup(null)
 			.products(new ArrayList<>() {{
 				add(Product.virtual(costumeItem, Currency.EVENT_TOKENS, Price.of(100), (player, provider) -> {
-					new CostumeUserService().edit(player.getUniqueId(), user -> user.getOwnedCostumes().add(costume.getId()));
+					costumeUserService.edit(player.getUniqueId(), user -> user.getOwnedCostumes().add(costume.getId()));
 					VuLan24.get().send(player, "You now own the Bamboo Hat costume!");
 				}));
 			}})
@@ -69,10 +74,11 @@ public class VuLan24Menus {
 	}
 
 	public static NPCShopMenuBuilder getGuideShop() {
+		var backpack = Backpacks.setTier(Backpacks.getBackpack(), BackpackTier.DIAMOND);
 		return NPCShopMenu.builder()
 			.title("Want a backpack?")
 			.npcId(VuLan24NPC.TOUR_GUIDE.getNpcId())
-			.products(List.of(Product.free(Backpacks.getBackpack())))
+			.products(List.of(Product.free(backpack)))
 			.closeAfterPurchase(true);
 	}
 
