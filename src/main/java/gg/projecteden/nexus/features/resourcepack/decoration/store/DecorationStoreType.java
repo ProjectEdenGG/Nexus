@@ -5,6 +5,7 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,6 +49,9 @@ public enum DecorationStoreType {
 
 	public List<Player> getPlayers() {
 		if (worldName == null || glowRegionId == null)
+			return new ArrayList<>();
+
+		if (Bukkit.getWorld(worldName) == null)
 			return new ArrayList<>();
 
 		return OnlinePlayers.where()

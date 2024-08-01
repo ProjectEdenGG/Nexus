@@ -1,7 +1,9 @@
 package gg.projecteden.nexus.models.scheduledjobs.jobs;
 
+import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob;
 import gg.projecteden.api.mongodb.models.scheduledjobs.common.Schedule;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2024.vulan24.VuLan24;
 import gg.projecteden.nexus.features.events.y2024.vulan24.lantern.VuLan24LanternAnimation;
 import gg.projecteden.nexus.utils.Tasks;
@@ -18,6 +20,9 @@ public class VuLan24LanternAnimationJob extends AbstractJob implements Listener 
 
 	@Override
 	protected CompletableFuture<JobStatus> run() {
+		if (Nexus.getEnv() != Env.PROD)
+			return completed();
+
 		if (VuLan24.get().isAfterEvent())
 			return completed();
 
