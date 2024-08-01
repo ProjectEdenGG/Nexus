@@ -1,10 +1,12 @@
 package gg.projecteden.nexus.models.scheduledjobs.jobs;
 
+import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.api.mongodb.models.scheduledjobs.ScheduledJobsService;
 import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob;
 import gg.projecteden.api.mongodb.models.scheduledjobs.common.Schedule;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2024.vulan24.VuLan24;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,6 +23,9 @@ public class VuLan24LanternAnimationHologramJob extends AbstractJob implements L
 
 	@Override
 	protected CompletableFuture<JobStatus> run() {
+		if (Nexus.getEnv() != Env.PROD)
+			return completed();
+
 		if (VuLan24.get().isAfterEvent())
 			return completed();
 
