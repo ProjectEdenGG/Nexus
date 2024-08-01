@@ -62,7 +62,7 @@ import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Q
 	entities = VuLan24Entity.class,
 	items = VuLan24QuestItem.class,
 	rewards = VuLan24QuestReward.class,
-	start = @Date(m = 8, d = 1, y = 2024),
+		start = @Date(m = 8, d = 2, y = 2024),
 	end = @Date(m = 8, d = 31, y = 2024),
 	world = "vu_lan",
 	region = "vu_lan",
