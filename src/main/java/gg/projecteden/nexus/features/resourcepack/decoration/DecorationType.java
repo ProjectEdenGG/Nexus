@@ -105,6 +105,7 @@ import java.util.Map;
  */
 
 // @formatter:off
+@Getter
 @AllArgsConstructor
 public enum DecorationType {
 // 	------------------------------------------------------------------------------------------------------
@@ -1862,7 +1863,6 @@ public enum DecorationType {
 	;
 	// @formatter:on
 
-	@Getter
 	private final DecorationConfig config;
 
 	@SneakyThrows
