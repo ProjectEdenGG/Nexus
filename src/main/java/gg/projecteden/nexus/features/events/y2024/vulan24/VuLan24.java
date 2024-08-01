@@ -219,7 +219,8 @@ public class VuLan24 extends EdenEvent {
 
 		handleInteract(VuLan24NPC.BOAT_SALESMAN, (player, npc) -> VuLan24Menus.getBoatPicker().open(player));
 		handleInteract(VuLan24NPC.TOUR_GUIDE, (player, npc) -> new Dialog(npc)
-			.npc("Tour Guide stuff")
+				.npc("Hey there! Did you need a hand at all?")
+				.npc("Here, take this. It might be useful to you!")
 			.thenRun(quester -> {
 				if (Arrays.stream(player.getInventory().getContents()).noneMatch(Backpacks::isBackpack))
 					VuLan24Menus.getGuideShop().open(player);
