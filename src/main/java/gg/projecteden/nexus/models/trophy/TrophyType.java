@@ -48,7 +48,10 @@ public enum TrophyType {
 	},
 
 	PUGMAS_2021(CustomMaterial.PUGMAS_2021_TROPHY),
-	EASTER_2022(CustomMaterial.EASTER_2022_TROPHY);
+	EASTER_2022(CustomMaterial.EASTER_2022_TROPHY),
+	VULAN_2024(CustomMaterial.VULAN_2024_TROPHY),
+
+	;
 
 	@NonNull
 	private final CustomMaterial material;
