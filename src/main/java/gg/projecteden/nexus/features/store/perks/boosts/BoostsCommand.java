@@ -121,10 +121,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 		}
 
 		if (VoteParty.isFeatureEnabled(player())) {
-			if (booster.getActivePersonalBoosts().isEmpty()) {
-				line();
-				send("&c - You have no active personal boosts");
-			} else {
+			if (!booster.getActivePersonalBoosts().isEmpty()) {
 				line();
 				send("Active Personal Boosts:");
 
@@ -144,7 +141,8 @@ public class BoostsCommand extends CustomCommand implements Listener {
 		}
 
 		line();
-		send(json("&e&lClick here to view your boosts").command("boosts menu"));
+		send(json("&3Click here to view your boosts").command("boosts menu"));
+		line();
 	}
 
 	@Path("menu")

@@ -34,6 +34,7 @@ public class VuLan24User implements PlayerOwnedObject {
 	private UUID boatUUID;
 	private BoatType boatType = BoatType.OAK;
 
+	private boolean receivedDailyQuestInstructions;
 	private VuLan24DailyQuest dailyQuest;
 	private boolean finishedDailyQuest;
 

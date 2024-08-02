@@ -64,7 +64,7 @@ import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Q
 	entities = VuLan24Entity.class,
 	items = VuLan24QuestItem.class,
 	rewards = VuLan24QuestReward.class,
-		start = @Date(m = 8, d = 2, y = 2024),
+	start = @Date(m = 8, d = 2, y = 2024),
 	end = @Date(m = 8, d = 31, y = 2024),
 	world = "vu_lan",
 	region = "vu_lan",
@@ -180,7 +180,7 @@ public class VuLan24 extends EdenEvent {
 
 		event.setCancelled(true);
 	}
-	
+
 	@EventHandler
 	public void on(EntityDeathEvent event) {
 		if (!isAtEvent(event.getEntity()))
@@ -222,7 +222,22 @@ public class VuLan24 extends EdenEvent {
 			final VuLan24ConfigService configService = new VuLan24ConfigService();
 			final VuLan24Config config = configService.get0();
 
+			final String item = camelCase(user.getDailyQuest()).toLowerCase();
 			final Dialog dialog = new Dialog(npc);
+
+			if (!user.isReceivedDailyQuestInstructions()) {
+				dialog
+					.npc("Hi! My name is Anh, I'm running the concession stand for the Vu Lan Festival!")
+					.player("Nice to meet you! Is there anything I can do to help?")
+					.npc("Definitely! We will need help restocking our food every day. Come talk to me and I'll let you know what we need that day!")
+					.npc("You can find these delicacies around the island. Some of them may need to be crafted, too!")
+					.player("You got it!")
+					.thenRun(quester -> {
+						user.setReceivedDailyQuestInstructions(true);
+						userService.save(user);
+					});
+			}
+
 			if (user.isFinishedDailyQuest())
 				dialog.npc("I dont need any more help today, come back tomorrow!");
 			else if (Quester.of(player).has(user.getDailyQuest().getPredicate(), 32))
@@ -234,17 +249,19 @@ public class VuLan24 extends EdenEvent {
 						configService.save(config);
 					})
 					.take(user.getDailyQuest().getPredicate(), 32)
-					.npc("Thank you so much! Come back tomorrow, I'm sure I'll need more help!");
+					.npc("Thank you so much for the food! Come back tomorrow, I'm sure I'll need more help!");
+			else if (Quester.of(player).has(user.getDailyQuest().getPredicate(), 1))
+				dialog.npc("Hey, thanks for the food! But we could use a little more. Please come back once you've found 32 " + item + "!");
 			else
-				dialog.npc("I am low on " + camelCase(user.getDailyQuest()).toLowerCase() + ", can you help me restock?");
+				dialog.npc("I am low on " + item + " today, can you help me restock?");
 
 			dialog.send(player);
 		});
 
 		handleInteract(VuLan24NPC.BOAT_SALESMAN, (player, npc) -> VuLan24Menus.getBoatPicker().open(player));
 		handleInteract(VuLan24NPC.TOUR_GUIDE, (player, npc) -> new Dialog(npc)
-				.npc("Hey there! Did you need a hand at all?")
-				.npc("Here, take this. It might be useful to you!")
+			.npc("Hey there! Did you need a hand at all?")
+			.npc("Here, take this. It might be useful to you!")
 			.thenRun(quester -> {
 				if (Arrays.stream(player.getInventory().getContents()).noneMatch(Backpacks::isBackpack))
 					VuLan24Menus.getGuideShop().open(player);
