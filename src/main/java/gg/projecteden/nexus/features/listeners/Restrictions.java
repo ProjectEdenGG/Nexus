@@ -8,15 +8,18 @@ import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.entity.Player;
@@ -30,6 +33,7 @@ import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent.Cause;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -39,6 +43,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -269,6 +274,32 @@ public class Restrictions implements Listener {
 			used.forEach(material ->
 					PlayerUtils.send(event.getPlayer(), "&7 - &c" + camelCase(material.name())));
 		}
+	}
+
+	@EventHandler
+	public void onNPCInvOpen(InventoryOpenEvent event) {
+		Player player = (Player) event.getPlayer();
+		NPC selectedNPC = CitizensUtils.getSelectedNPC(player);
+		if (selectedNPC == null)
+			return;
+
+		net.citizensnpcs.api.trait.trait.Inventory inventory = selectedNPC.getTraitNullable(net.citizensnpcs.api.trait.trait.Inventory.class);
+		if (inventory == null)
+			return;
+
+		InventoryHolder npcHolder = inventory.getInventoryView().getHolder();
+		if (npcHolder == null)
+			return;
+
+		if (!npcHolder.equals(event.getInventory().getHolder()))
+			return;
+
+		World world = player.getWorld();
+		if (selectedNPC.getStoredLocation().getWorld().equals(world))
+			return;
+
+		event.setCancelled(true);
+		PlayerUtils.send(player, StringUtils.getPrefix("NPC") + "&cYou must be in the same world as your selected NPC (" + world + ")");
 	}
 
 	private static final Set<Material> disallowedInWorldEdit = Set.of(
