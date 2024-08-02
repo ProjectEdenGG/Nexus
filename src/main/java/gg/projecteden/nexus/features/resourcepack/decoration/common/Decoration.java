@@ -199,29 +199,45 @@ public class Decoration {
 	}
 
 	public boolean canEdit(Player player) {
-		if (canEdit != null)
+		DecorationLang.debug(player, "CanEdit?");
+		if (canEdit != null) {
+			DecorationLang.debug(player, " --> " + canEdit);
 			return canEdit;
+		}
 
 		boolean isWGEdit = WorldGuardEditCommand.canWorldGuardEdit(player);
 		boolean isInRegion = !new WorldGuardUtils(player).getRegionsAt(this.getOrigin()).isEmpty();
 
-		if (isWGEdit)
+		if (isWGEdit) {
+			DecorationLang.debug(player, " WGEdit is on --> yes");
 			return setCanEdit(true);
+		}
 
-		if (Nullables.isNullOrAir(getItem(player)))
+		if (!isInRegion) { // TODO || flag == allow
+			DecorationLang.debug(player, " Is in region --> no");
+			return setCanEdit(false);
+		}
+
+		if (Nullables.isNullOrAir(getItem(player))) {
+			DecorationLang.debug(player, " Item is null --> yes");
 			return setCanEdit(true);
+		}
 
 		UUID owner = getOwner(player);
 
-		if (owner == null)
+		if (owner == null) {
+			DecorationLang.debug(player, " Owner is null --> yes");
 			return setCanEdit(true);
+		}
 
 		if (player.getUniqueId().equals(owner)) {
-			if (!isInRegion) // TODO || flag == allow
-				return setCanEdit(true);
+			DecorationLang.debug(player, " Is owner --> yes");
+			return setCanEdit(true);
 		}
 
 		boolean isTrusted = new TrustService().get(owner).trusts(Type.DECORATIONS, player);
+		DecorationLang.debug(player, " Is trusted --> " + isTrusted);
+
 		return setCanEdit(isTrusted);
 	}
 

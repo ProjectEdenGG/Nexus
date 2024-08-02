@@ -358,37 +358,48 @@ public abstract class MenuUtils {
 				final ItemBuilder displayItem = new ItemBuilder(product.getDisplayItemStack()).lore(priceLore);
 
 				items.add(ClickableItem.of(displayItem, e -> {
-					if (canAfford)
-						ConfirmationMenu.builder()
-							.titleWithSlot("&4Are you sure?")
-							.displayItem(displayItem.build())
-							.onConfirm(e2 -> {
-								try {
-									currency.withdraw(viewer, price, shopGroup, product);
+					try {
+						if (currency.canAfford(viewer, price, shopGroup)) {
+							ConfirmationMenu.builder()
+								.titleWithSlot("&4Are you sure?")
+								.displayItem(displayItem.build())
+								.onConfirm(e2 -> {
+									try {
+										if (currency.canAfford(viewer, price, shopGroup)) {
+											currency.withdraw(viewer, price, shopGroup, product);
 
-									if (product.isVirtual()) {
-										if (onPurchase != null)
-											onPurchase.accept(viewer, this);
-										return;
+											if (product.isVirtual()) {
+												if (onPurchase != null)
+													onPurchase.accept(viewer, this);
+												return;
+											}
+
+											currency.log(viewer, price, product, shopGroup);
+
+											if (onPurchase != null)
+												onPurchase.accept(viewer, this);
+
+											PlayerUtils.giveItem(viewer, item);
+										} else {
+											throw new InvalidInputException("You cannot afford that!");
+										}
+									} catch (Exception ex) {
+										MenuUtils.handleException(viewer, StringUtils.getPrefix("NPCShopMenu"), ex);
 									}
-
-									currency.log(viewer, price, product, shopGroup);
-
-									if (onPurchase != null)
-										onPurchase.accept(viewer, this);
-
-									PlayerUtils.giveItem(viewer, item);
-								} catch (Exception ex) {
-									MenuUtils.handleException(viewer, StringUtils.getPrefix("NPCShopMenu"), ex);
-								}
-							})
-							.onFinally(e2 -> {
-								if (closeAfterPurchase)
-									close();
-								else
-									refresh();
-							})
-							.open(viewer);
+								})
+								.onFinally(e2 -> {
+									if (closeAfterPurchase)
+										close();
+									else
+										refresh();
+								})
+								.open(viewer);
+						} else {
+							throw new InvalidInputException("You cannot afford that!");
+						}
+					} catch (Exception ex) {
+						MenuUtils.handleException(viewer, StringUtils.getPrefix("NPCShopMenu"), ex);
+					}
 				}));
 			});
 
