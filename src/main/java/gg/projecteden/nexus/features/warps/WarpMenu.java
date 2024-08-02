@@ -1,7 +1,8 @@
 package gg.projecteden.nexus.features.warps;
 
-import gg.projecteden.nexus.models.buildcontest.BuildContest;
+import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.models.buildcontest.BuildContestService;
+import org.bukkit.entity.Player;
 
 public enum WarpMenu {
 	MAIN(4),
@@ -22,10 +23,11 @@ public enum WarpMenu {
 		this.size = size;
 	}
 
-	public int getSize() {
+	public int getSize(Player player) {
 		if (this == MAIN) {
-			BuildContest buildContest = new BuildContestService().get0();
-			if (buildContest.isActive())
+			var event = EdenEvent.getActiveEvent(player);
+			var buildContest = new BuildContestService().get0();
+			if (event != null || buildContest.isActive())
 				return size + 2;
 		}
 		return size;

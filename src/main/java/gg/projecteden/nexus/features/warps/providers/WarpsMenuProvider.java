@@ -19,7 +19,7 @@ public class WarpsMenuProvider extends InventoryProvider {
 
 	@Override
 	protected int getRows(Integer page) {
-		return menu.getSize();
+		return menu.getSize(viewer);
 	}
 
 	@Override

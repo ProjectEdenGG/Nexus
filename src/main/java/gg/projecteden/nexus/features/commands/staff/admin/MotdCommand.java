@@ -126,7 +126,7 @@ public class MotdCommand extends CustomCommand implements Listener {
 //		}
 
 		EdenEvent edenEvent = EdenEvent.getActiveEvent(nerd);
-		if (edenEvent.isEventActive(nerd) && edenEvent.getMotd() != null)
+		if (edenEvent != null && edenEvent.getMotd() != null)
 			line2 = edenEvent.getMotd();
 
 		if (new MinigameNight().isNow())

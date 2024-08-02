@@ -102,20 +102,20 @@ public class VuLan24 extends EdenEvent {
 
 	@Override
 	public String getTabLine() {
-		return "&eVu Lan Festival &7- &3On Now! &c/vulan";
+		return "&6&lVu Lan Festival &7- &3On Now! &c/vulan";
 	}
 
 	@Override
 	public ItemStack getWarpMenuItem() {
 		return new ItemBuilder(CustomMaterial.COSTUMES_BAMBOO_HAT)
-			.name("&3Current Event: &eVu Lan Festival")
+			.name("&eCurrent Event: &6&lVu Lan Festival")
 			.lore("&3Quests, rewards, and more!")
 			.build();
 	}
 
 	@Override
 	public String getMotd() {
-		return "&eVu Lan Festival &7- &3On Now!";
+		return "&6&lVu Lan Festival &7- &3On Now!";
 	}
 
 	public static final List<LootTables> ARCHAEOLOGY_LOOT_TABLES = List.of(

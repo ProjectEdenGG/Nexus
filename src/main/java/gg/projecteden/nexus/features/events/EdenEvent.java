@@ -163,25 +163,18 @@ public abstract class EdenEvent extends Feature implements Listener {
 			.toList();
 	}
 
+	// We can assume there's only one truly active event, so sort
+	// by date and get the one the starts the earliest
 	public static EdenEvent getActiveEvent() {
-		return EVENTS.stream()
-			.filter(EdenEvent::isEventActive)
+		return getActiveEvents().stream()
 			.min(Comparator.comparing(EdenEvent::getStart))
 			.orElse(null);
 	}
 
 	public static EdenEvent getActiveEvent(HasUniqueId player) {
-		return EVENTS.stream()
-			.filter(edenEvent -> edenEvent.isEventActive(player))
+		return getActiveEvents(player).stream()
 			.min(Comparator.comparing(EdenEvent::getStart))
 			.orElse(null);
-	}
-
-	public boolean isEventActive(Player player) {
-		if (isBeforeEvent() && Rank.of(player).isStaff())
-			return true;
-
-		return isEventActive();
 	}
 
 	public boolean isEventActive(HasUniqueId player) {
