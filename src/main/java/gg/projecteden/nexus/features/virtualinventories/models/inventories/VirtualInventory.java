@@ -29,7 +29,7 @@ public abstract class VirtualInventory<T extends VirtualInventoryProperties> {
 			inventory =  Bukkit.createInventory(
 				new VirtualInventoryHolder(this),
 				properties().inventoryType(),
-				colorize("Virtual " + camelCase(type.name()))
+				colorize("Personal " + camelCase(type.name()))
 			);
 
 		return inventory;
