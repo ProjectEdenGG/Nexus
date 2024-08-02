@@ -50,8 +50,8 @@ public enum VuLan24QuestTask implements IQuestTask {
 		.dialog(dialog -> dialog
 			.npc("Welcome traveller! I could use some help if you have the time. I need some materials to finish this house here but I just don't have the time to get it all myself. Can you help?")
 			.player("Certainly. What did you need?")
-			.npc("I need 128 stone, 64 tuff and 32 terracotta to be able to finish construction. You should be able to find stone and tuff in some of the caves nearby.")
-			.npc("And you can find clay along the shore of the north-eastern side of the Island. Smelting it in the furnace at the Stone Mason will give you the terracotta.")
+			.npc("I need &e128 stone, 64 tuff and 32 terracotta &fto be able to finish construction. You should be able to find stone and tuff in some of &ethe caves nearby&f.")
+			.npc("And you can find &eclay &falong the &enorth-eastern shore &fof the Island. Smelting it in the furnace at the Stone Mason will give you the terracotta.")
 			.player("Awesome - I'll get right on it!")
 		)
 		.objective("Gather 128 stone, 64 tuff & 32 terracotta")
@@ -69,9 +69,9 @@ public enum VuLan24QuestTask implements IQuestTask {
 		.dialog(dialog -> dialog
 			.npc("Hello! We need to prepare as much pottery as possible for the festival! We've been searching for it for months now but have come up short on the final day! Can you help us?")
 			.player("Absolutely I can. I'm the master of pottery back home. What can I do?")
-			.npc("Fantastic! We need 12 shards to craft this final piece. Bring them here and we'll help you however we can!")
-			.player("Right... how do I get those shards again?")
-			.npc("You will have to craft a brush and use it on suspicious sand to get the pottery sherds.")
+			.npc("Fantastic! We need &e12 sherds &fto craft this final piece. Bring them here and we'll help you however we can!")
+			.player("Right... how do I get those sherds again?")
+			.npc("You will have to &ecraft a brush &fand use it on &esuspicious sand &fto get the pottery sherds.")
 			.player("Of course, that's right! I'll get them to you as soon as I can.")
 		)
 		.objective("Gather 12 pottery sherds by brushing suspicious sand")
@@ -98,7 +98,7 @@ public enum VuLan24QuestTask implements IQuestTask {
 		.dialog(dialog -> dialog
 			.npc("Help! Please! Bandits have stolen my goods at my village Vinh Thai! There's at least 10 of them and my people don't have the tools to fight them.")
 			.player("Bandits? Where? I'm a professional bandit-butt-kicker!")
-			.npc("You'll help? Thank you! You'll find Vinh Thai on the other side of the  mountain, head up past the temple and you'll find it. Be careful!")
+			.npc("You'll help? Thank you! You'll find Vinh Thai on the other side of the mountain, head up past the temple and you'll find it. Be careful!")
 			.player("Thanks, {{NPC_NAME}}. I'll do what I can!")
 			.npc("Wait! You might need this first.")
 			.give(Material.GOLDEN_APPLE, 1)

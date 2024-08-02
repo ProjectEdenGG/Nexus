@@ -8,7 +8,6 @@ import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
-import gg.projecteden.nexus.features.resourcepack.ResourcePack.RainbowBlockOrder;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
@@ -52,6 +51,7 @@ import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,6 +91,10 @@ public class Backpacks extends FunctionalRecipe {
 			.add('4', Material.CHEST)
 			.toMake(getResult())
 			.getRecipe();
+	}
+
+	public static boolean hasBackpack(Player player) {
+		return Arrays.stream(player.getInventory().getContents()).anyMatch(Backpacks::isBackpack);
 	}
 
 	public static boolean isOldBackpack(ItemStack item) {

@@ -52,6 +52,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -61,6 +62,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
@@ -68,6 +70,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -88,6 +91,7 @@ import java.util.function.BiConsumer;
 
 import static gg.projecteden.api.common.utils.RandomUtils.chanceOf;
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public abstract class EdenEvent extends Feature implements Listener {
 	public static final String PREFIX_EVENTS = StringUtils.getPrefix("Events");
@@ -654,11 +658,17 @@ public abstract class EdenEvent extends Feature implements Listener {
 			if (!breakable.isCorrectTool(tool))
 				throw new BreakException("event_break_wrong_tool", EventErrors.CANT_BREAK + " with this tool. Needs either: " + breakable.getAvailableTools());
 
-			if (tool.getItemMeta() instanceof Damageable damageable)
-				if (chanceOf(100 / tool.getEnchantmentLevel(Enchant.UNBREAKING) + 1)) {
+			if (tool.getItemMeta() instanceof Damageable damageable && tool.getType().getMaxDurability() != 0) {
+				if (chanceOf(100 / Math.max(tool.getEnchantmentLevel(Enchant.UNBREAKING) + 1, 1))) {
 					damageable.setDamage(damageable.getDamage() + 1);
-					tool.setItemMeta(damageable);
+					if (damageable.getDamage() >= tool.getType().getMaxDurability()) {
+						tool.subtract();
+						new SoundBuilder(Sound.ENTITY_ITEM_BREAK).category(SoundCategory.PLAYERS).location(player.getLocation()).play();
+					} else {
+						tool.setItemMeta(damageable);
+					}
 				}
+			}
 
 			if (blockData instanceof Ageable ageable) {
 				if (!CROP_MULTI_BLOCK.contains(material))
@@ -692,7 +702,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 				}
 			}
 
-			new SoundBuilder(breakable.getSound()).location(player.getLocation()).volume(breakable.getVolume()).pitch(breakable.getPitch()).category(SoundCategory.BLOCKS).play();
+//			new SoundBuilder(breakable.getSound()).location(player.getLocation()).volume(breakable.getVolume()).pitch(breakable.getPitch()).category(SoundCategory.BLOCKS).play();
 			breakable.giveDrops(player);
 			breakable.regen(regenBlocks);
 		} catch (BreakException ex) {
@@ -746,6 +756,51 @@ public abstract class EdenEvent extends Feature implements Listener {
 			return;
 
 		if (!shouldHandle(location))
+			return;
+
+		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onClickPot(PlayerInteractEvent event) {
+		if (!shouldHandle(event.getPlayer()))
+			return;
+
+		final Block block = event.getClickedBlock();
+		if (isNullOrAir(block))
+			return;
+
+		if (block.getType() != Material.DECORATED_POT)
+			return;
+
+		event.setCancelled(true);
+	}
+
+	public Location getRespawnLocation() {
+		return null;
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerRespawn(PlayerRespawnEvent event) {
+		if (!shouldHandle(event.getPlayer()))
+			return;
+
+		if (!event.getPlayer().getWorld().equals(getWorld()))
+			return;
+
+		final Location respawnLocation = getRespawnLocation();
+		event.setRespawnLocation(respawnLocation);
+	}
+
+	@EventHandler
+	public void on(BlockBreakEvent event) {
+		if (!shouldHandle(event.getPlayer()))
+			return;
+
+		if (event.getBlock().getType() != Material.LILY_PAD)
+			return;
+
+		if (getBreakable(event.getBlock()) != null)
 			return;
 
 		event.setCancelled(true);

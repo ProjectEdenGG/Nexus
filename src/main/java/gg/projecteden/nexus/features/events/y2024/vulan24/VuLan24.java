@@ -15,7 +15,6 @@ import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestRew
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestTask;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
-import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
 import gg.projecteden.nexus.features.regionapi.events.entity.EntityLeavingRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -35,6 +34,7 @@ import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.ToolType;
 import gg.projecteden.nexus.utils.ToolType.ToolGrade;
 import net.minecraft.world.entity.raid.Raid;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
@@ -47,7 +47,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.loot.LootTables;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static gg.projecteden.api.common.utils.RandomUtils.chanceOf;
@@ -56,6 +55,7 @@ import static gg.projecteden.nexus.features.events.models.EventFishingLoot.Event
 import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory.FISH;
 import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory.JUNK;
 import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Quest.TRAGEDY_AT_VINH_THAI_LAGOON;
+import static gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks.hasBackpack;
 
 @QuestConfig(
 	quests = VuLan24Quest.class,
@@ -116,6 +116,11 @@ public class VuLan24 extends EdenEvent {
 	@Override
 	public String getMotd() {
 		return "&6&lVu Lan Festival &7- &3On Now!";
+	}
+
+	@Override
+	public Location getRespawnLocation() {
+		return WarpType.VULAN24.get("VinhLuc").getLocation();
 	}
 
 	public static final List<LootTables> ARCHAEOLOGY_LOOT_TABLES = List.of(
@@ -259,14 +264,21 @@ public class VuLan24 extends EdenEvent {
 		});
 
 		handleInteract(VuLan24NPC.BOAT_SALESMAN, (player, npc) -> VuLan24Menus.getBoatPicker().open(player));
-		handleInteract(VuLan24NPC.TOUR_GUIDE, (player, npc) -> new Dialog(npc)
-			.npc("Hey there! Did you need a hand at all?")
-			.npc("Here, take this. It might be useful to you!")
-			.thenRun(quester -> {
-				if (Arrays.stream(player.getInventory().getContents()).noneMatch(Backpacks::isBackpack))
-					VuLan24Menus.getGuideShop().open(player);
-			})
-			.send(player)
+		handleInteract(VuLan24NPC.TOUR_GUIDE, (player, npc) -> {
+				if (hasBackpack(player))
+					new Dialog(npc)
+						.npc("Hey, you haven't seen a tour group have you? About 20 people? No?")
+						.send(player);
+				else
+					new Dialog(npc)
+						.npc("Hey there! Did you need a hand at all?")
+						.npc("Here, take this. It might be useful to you!")
+						.thenRun(quester -> {
+							if (!hasBackpack(player))
+								VuLan24Menus.getGuideShop().open(player);
+						})
+						.send(player);
+			}
 		);
 		handleInteract(VuLan24NPC.MINER, (player, npc) -> VuLan24Menus.getMinerShop().open(player));
 		handleInteract(VuLan24NPC.HAT_SALESMAN, (player, npc) -> VuLan24Menus.getBambooHatShop(player).open(player));
@@ -292,13 +304,14 @@ public class VuLan24 extends EdenEvent {
 		});
 		handleInteract(VuLan24NPC.CAPTAIN_LAI_VINH_LUC, (player, npc) -> new Dialog(npc)
 			.npc("Ah... home sweet home. I hope this year's Vu Lan is just as great as the last!")
+			.npc("Talk to Mayor Hoa to get started")
 			.send(player)
 		);
 		handleInteract(VuLan24NPC.MAYOR_HOA, (player, npc) -> new Dialog(npc)
 			.npc("Xin Chao! Welcome to Vinh Luc, the isle of tombs! I hope you have a lovely stay here for the festival!")
 			.npc("Please take your time to explore our beautiful island. There are plenty of things to do here and everyone is so welcoming!")
 			.player("Thank you! There's a lot to do… where should I start?")
-			.npc("I recommend you talk to Anh first to find out about the Community Quest! Then, visit the quest boards for more.")
+			.npc("I recommend you talk to Anh at the concession stand first to find out about the Community Quest! Then, visit the quest boards for more.")
 			.send(player)
 		);
 		handleInteract(VuLan24NPC.FLORIST, (player, npc) -> new Dialog(npc)
