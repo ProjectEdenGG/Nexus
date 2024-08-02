@@ -440,6 +440,7 @@ public class VuLan24 extends EdenEvent {
 		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.COBWEB)
 			.requiredTool(ToolType.SWORD)
+			.regenerationDelay(30, 60)
 			.sound(Sound.BLOCK_STONE_BREAK, 1f, .8f) // TODO 1.21 new sound BLOCK_COBWEB_BREAK
 		);
 	}

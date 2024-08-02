@@ -27,7 +27,6 @@ import static gg.projecteden.nexus.utils.StringUtils.ProgressBar.SummaryStyle.NO
 
 @Aliases("vulan")
 @NoArgsConstructor
-@Permission(Group.STAFF)
 public class VuLan24Command extends IEventCommand {
 	private final VuLan24ConfigService configService = new VuLan24ConfigService();
 	private final VuLan24Config config = configService.get0();
