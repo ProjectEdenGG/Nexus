@@ -67,6 +67,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -793,8 +794,8 @@ public abstract class EdenEvent extends Feature implements Listener {
 	}
 
 	@EventHandler
-	public void on(BlockBreakEvent event) {
-		if (!shouldHandle(event.getPlayer()))
+	public void on(EntityChangeBlockEvent event) {
+		if (!shouldHandle(event.getBlock().getLocation()))
 			return;
 
 		if (event.getBlock().getType() != Material.LILY_PAD)
