@@ -299,7 +299,7 @@ public class Restrictions implements Listener {
 			return;
 
 		event.setCancelled(true);
-		PlayerUtils.send(player, StringUtils.getPrefix("NPC") + "&cYou must be in the same world as your selected NPC (" + world + ")");
+		PlayerUtils.send(player, StringUtils.getPrefix("NPC") + "&cYou must be in the same world as your selected NPC (" + world.getName() + ")");
 	}
 
 	private static final Set<Material> disallowedInWorldEdit = Set.of(
