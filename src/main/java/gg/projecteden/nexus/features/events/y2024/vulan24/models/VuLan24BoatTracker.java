@@ -142,6 +142,9 @@ public class VuLan24BoatTracker implements Listener {
 		event.setCancelled(true);
 		VuLan24User user = userService.get(player);
 
+		if (user.getBoatUUID() == null)
+			return;
+
 		if (!boat.getUniqueId().toString().equalsIgnoreCase(user.getBoatUUID().toString()))
 			return;
 
