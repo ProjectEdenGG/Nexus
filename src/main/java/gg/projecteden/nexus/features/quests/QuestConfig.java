@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.quests;
 
+import gg.projecteden.nexus.features.effects.Effects;
 import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
 import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuest;
@@ -19,6 +20,8 @@ public @interface QuestConfig {
 	Class<? extends Enum<? extends InteractableEntity>> entities();
 	Class<? extends Enum<? extends QuestItem>> items();
 	Class<? extends Enum<? extends QuestReward>> rewards();
+
+	Class<? extends Effects> effects();
 
 	Date start();
 	Date end();

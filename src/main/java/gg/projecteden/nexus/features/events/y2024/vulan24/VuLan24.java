@@ -64,6 +64,7 @@ import static gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpa
 	entities = VuLan24Entity.class,
 	items = VuLan24QuestItem.class,
 	rewards = VuLan24QuestReward.class,
+	effects = VuLan24Effects.class,
 	start = @Date(m = 8, d = 2, y = 2024),
 	end = @Date(m = 8, d = 31, y = 2024),
 	world = "vu_lan",

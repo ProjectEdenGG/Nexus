@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2022.halloween22;
 
 import gg.projecteden.nexus.features.events.EdenEvent;
+import gg.projecteden.nexus.features.events.NullEventEffects;
 import gg.projecteden.nexus.features.events.y2022.halloween22.quests.Halloween22Entity;
 import gg.projecteden.nexus.features.events.y2022.halloween22.quests.Halloween22NPC;
 import gg.projecteden.nexus.features.events.y2022.halloween22.quests.Halloween22Quest;
@@ -19,6 +20,7 @@ import gg.projecteden.nexus.models.warps.WarpType;
 	entities = Halloween22Entity.class,
 	items = Halloween22QuestItem.class,
 	rewards = Halloween22QuestReward.class,
+	effects = NullEventEffects.class,
 	start = @Date(m = 10, d = 15, y = 2022),
 	end = @Date(m = 11, d = 10, y = 2022),
 	world = "events",

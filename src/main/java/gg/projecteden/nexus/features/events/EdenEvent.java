@@ -7,6 +7,7 @@ import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.customboundingboxes.events.CustomBoundingBoxEntityInteractEvent;
+import gg.projecteden.nexus.features.effects.Effects;
 import gg.projecteden.nexus.features.events.models.EventBreakable;
 import gg.projecteden.nexus.features.events.models.EventBreakable.EventBreakableBuilder;
 import gg.projecteden.nexus.features.events.models.EventErrors;
@@ -107,6 +108,8 @@ public abstract class EdenEvent extends Feature implements Listener {
 	@Getter
 	protected List<String> customGenericGreetings = new ArrayList<>();
 
+	protected Effects effects;
+
 	public static List<EdenEvent> EVENTS = new ArrayList<>();
 
 	public static EdenEvent of(Player player) {
@@ -136,6 +139,13 @@ public abstract class EdenEvent extends Feature implements Listener {
 		super.onStart();
 		EVENTS.add(this);
 
+		try {
+			effects = getConfig().effects().getConstructor().newInstance();
+			effects.onStart();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
 		registerFishingLoot();
 		registerInteractHandlers();
 		registerBreakableBlocks();
@@ -144,6 +154,14 @@ public abstract class EdenEvent extends Feature implements Listener {
 			fishingListener = new EventFishingListener(this);
 
 		LuckPermsUtils.registerContext(new EventActiveCalculator());
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+
+		if (effects != null)
+			effects.onStop();
 	}
 
 	public QuestConfig getConfig() {

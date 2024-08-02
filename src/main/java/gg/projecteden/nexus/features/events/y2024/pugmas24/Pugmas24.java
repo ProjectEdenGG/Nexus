@@ -51,10 +51,11 @@ import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
 	entities = Pugmas24Entity.class,
 	items = Pugmas24QuestItem.class,
 	rewards = Pugmas24QuestReward.class,
+	effects = Pugmas24Effects.class,
 	start = @Date(m = 12, d = 1, y = 2024),
 	end = @Date(m = 1, d = 10, y = 2025),
-		world = "buildadmin", // TODO FINAL: WORLD
-		region = "pugmas24",
+	world = "buildadmin", // TODO FINAL: WORLD
+	region = "pugmas24",
 	warpType = WarpType.PUGMAS24
 )
 @Environments(Env.PROD)

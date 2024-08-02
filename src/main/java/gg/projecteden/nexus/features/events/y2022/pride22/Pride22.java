@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2022.pride22;
 
 import gg.projecteden.nexus.features.events.EdenEvent;
+import gg.projecteden.nexus.features.events.NullEventEffects;
 import gg.projecteden.nexus.features.events.y2022.pride22.quests.Pride22Entity;
 import gg.projecteden.nexus.features.events.y2022.pride22.quests.Pride22NPC;
 import gg.projecteden.nexus.features.events.y2022.pride22.quests.Pride22Quest;
@@ -19,6 +20,7 @@ import gg.projecteden.nexus.models.warps.WarpType;
 	entities = Pride22Entity.class,
 	items = Pride22QuestItem.class,
 	rewards = Pride22QuestReward.class,
+	effects = NullEventEffects.class,
 	start = @Date(m = 6, d = 1, y = 2022),
 	end = @Date(m = 6, d = 30, y = 2022),
 	world = "events",

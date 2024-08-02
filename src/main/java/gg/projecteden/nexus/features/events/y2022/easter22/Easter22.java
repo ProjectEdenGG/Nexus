@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events.y2022.easter22;
 
 import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.events.EdenEvent;
+import gg.projecteden.nexus.features.events.NullEventEffects;
 import gg.projecteden.nexus.features.events.y2022.easter22.Easter22Command.Easter22StoreProvider;
 import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22Entity;
 import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22NPC;
@@ -38,6 +39,7 @@ import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilde
 	entities = Easter22Entity.class,
 	items = Easter22QuestItem.class,
 	rewards = Easter22QuestReward.class,
+	effects = NullEventEffects.class,
 	start = @Date(m = 4, d = 10, y = 2022),
 	end = @Date(m = 4, d = 25, y = 2022),
 	world = "server",
