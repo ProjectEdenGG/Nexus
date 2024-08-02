@@ -30,6 +30,7 @@ public enum VuLan24NPC implements InteractableNPC {
 	PLUNDERED_VILLAGE_VILLAGER("Villager", 5304),
 	PLUNDERED_VILLAGE_FARMER("Farmer", 5313),
 	STUDENT("Student", 5290),
+	TRAPPED_EXPLORER("Explorer", 5308),
 	;
 
 	private final String name;

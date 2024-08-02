@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 import com.destroystokyo.paper.event.server.PaperServerListPingEvent;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.minigames.utils.MinigameNight;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -12,6 +13,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
+import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.models.punishments.PunishmentsService;
@@ -123,13 +125,15 @@ public class MotdCommand extends CustomCommand implements Listener {
 //			message = "&f\u797E";
 //		}
 
-		if (new MinigameNight().isNow()) {
-			line2 = "&3Join us in &eMinigame Night! &3Use &e/gl";
-		}
+		EdenEvent edenEvent = EdenEvent.getActiveEvent(nerd);
+		if (edenEvent.isEventActive(nerd) && edenEvent.getMotd() != null)
+			line2 = edenEvent.getMotd();
 
-		if (nerd.getBirthday() != null && LocalDate.now().isEqual(nerd.getBirthday())) {
+		if (new MinigameNight().isNow())
+			line2 = "&3Join us in &eMinigame Night! &3Use &e/gl";
+
+		if (nerd.getBirthday() != null && LocalDate.now().isEqual(nerd.getBirthday()))
 			line2 = "&3Happy birthday &e" + nerd.getNickname() + "&3!";
-		}
 
 		if (line2 != null) {
 			int padding = (int) (((MAX_CHARS_ISH - stripColor(line2).length()) / 2.0) * SPACE_WIDTH_MULTIPLIER);
@@ -231,8 +235,7 @@ public class MotdCommand extends CustomCommand implements Listener {
 		if (geoIPList.isEmpty())
 			return null;
 
-		// return newest timestamp in geoip
-		return Collections.max(geoIPList, Comparator.comparing(GeoIP::getTimestamp));
+		return Collections.max(geoIPList, Comparator.comparing(geoip -> new HoursService().get(geoip).getTotal()));
 	}
 
 }

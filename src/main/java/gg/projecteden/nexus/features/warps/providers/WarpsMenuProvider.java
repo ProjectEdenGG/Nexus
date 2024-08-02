@@ -1,14 +1,16 @@
 package gg.projecteden.nexus.features.warps.providers;
 
+import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.warps.WarpMenu;
-import gg.projecteden.nexus.models.buildcontest.BuildContest;
 import gg.projecteden.nexus.models.buildcontest.BuildContestService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
+
+import java.util.function.Supplier;
 
 @Title("&3Warps")
 @RequiredArgsConstructor
@@ -46,9 +48,21 @@ public class WarpsMenuProvider extends InventoryProvider {
 				contents.set(1, 5, ClickableItem.of(creative, e -> warp("creative")));
 				contents.set(1, 7, ClickableItem.of(skyblock, e -> command("ob")));
 				contents.set(2, 4, ClickableItem.of(other, e -> new WarpsMenuProvider(WarpMenu.OTHER).open(viewer)));
-				BuildContest buildContest = new BuildContestService().get0();
-				if (buildContest.isActive() && buildContest.getItemStack() != null)
-					contents.set(4, 4, ClickableItem.of(buildContest.getItemStack(), e -> warp("buildcontest")));
+
+				var event = EdenEvent.getActiveEvent(viewer);
+				var buildContest = new BuildContestService().get0();
+
+				Supplier<ClickableItem> eventItem = () -> ClickableItem.of(event.getWarpMenuItem(), e -> command(event.getName().toLowerCase()));
+				Supplier<ClickableItem> buildContestItem = () -> ClickableItem.of(buildContest.getItemStack(), e -> warp("buildcontest"));
+
+				if (buildContest.isActive() && buildContest.getItemStack() != null && event != null && event.getWarpMenuItem() != null) {
+					contents.set(4, 3, buildContestItem.get());
+					contents.set(4, 5, eventItem.get());
+				} else if (buildContest.isActive() && buildContest.getItemStack() != null) {
+					contents.set(4, 4, buildContestItem.get());
+				} else if (event != null && event.getWarpMenuItem() != null) {
+					contents.set(4, 4, eventItem.get());
+				}
 			}
 			case SURVIVAL -> {
 				ItemBuilder survival = new ItemBuilder(Material.GRASS_BLOCK).name("&3Survival").lore("&eClick to teleport to random spot in survival");

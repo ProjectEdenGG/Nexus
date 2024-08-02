@@ -5,6 +5,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.exceptions.EdenException;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.customboundingboxes.events.CustomBoundingBoxEntityInteractEvent;
 import gg.projecteden.nexus.features.events.models.EventBreakable;
 import gg.projecteden.nexus.features.events.models.EventBreakable.EventBreakableBuilder;
@@ -24,6 +25,7 @@ import gg.projecteden.nexus.features.quests.tasks.common.IQuest;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.utils.ActionBarUtils;
@@ -76,6 +78,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -85,7 +88,6 @@ import java.util.function.BiConsumer;
 
 import static gg.projecteden.api.common.utils.RandomUtils.chanceOf;
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
-import static gg.projecteden.nexus.utils.Extensions.isStaff;
 
 public abstract class EdenEvent extends Feature implements Listener {
 	public static final String PREFIX_EVENTS = StringUtils.getPrefix("Events");
@@ -112,6 +114,18 @@ public abstract class EdenEvent extends Feature implements Listener {
 		return null;
 	}
 
+	public String getTabLine() {
+		return null;
+	}
+
+	public ItemStack getWarpMenuItem() {
+		return null;
+	}
+
+	public String getMotd() {
+		return null;
+	}
+
 	@Override
 	public void onStart() {
 		super.onStart();
@@ -133,8 +147,48 @@ public abstract class EdenEvent extends Feature implements Listener {
 
 	public List<IQuest> getQuests() {
 		return Arrays.stream(getConfig().quests().getEnumConstants())
-				.map(value -> (IQuest) EnumUtils.valueOf(getConfig().quests(), value.name()))
-				.toList();
+			.map(value -> (IQuest) EnumUtils.valueOf(getConfig().quests(), value.name()))
+			.toList();
+	}
+
+	public static List<EdenEvent> getActiveEvents() {
+		return EVENTS.stream()
+			.filter(EdenEvent::isEventActive)
+			.toList();
+	}
+
+	public static List<EdenEvent> getActiveEvents(HasUniqueId player) {
+		return EVENTS.stream()
+			.filter(edenEvent -> edenEvent.isEventActive(player))
+			.toList();
+	}
+
+	public static EdenEvent getActiveEvent() {
+		return EVENTS.stream()
+			.filter(EdenEvent::isEventActive)
+			.min(Comparator.comparing(EdenEvent::getStart))
+			.orElse(null);
+	}
+
+	public static EdenEvent getActiveEvent(HasUniqueId player) {
+		return EVENTS.stream()
+			.filter(edenEvent -> edenEvent.isEventActive(player))
+			.min(Comparator.comparing(EdenEvent::getStart))
+			.orElse(null);
+	}
+
+	public boolean isEventActive(Player player) {
+		if (isBeforeEvent() && Rank.of(player).isStaff())
+			return true;
+
+		return isEventActive();
+	}
+
+	public boolean isEventActive(HasUniqueId player) {
+		if (isBeforeEvent() && Rank.of(player).isStaff())
+			return true;
+
+		return isEventActive();
 	}
 
 	public boolean isEventActive() {
@@ -283,6 +337,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 			builder.add("current-world-event-active", "false");
 			return builder.build();
 		}
+
 	}
 
 	public boolean shouldHandle(HasLocation location) {
@@ -296,10 +351,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 		if (!isAtEvent(player))
 			return false;
 
-		if (isStaff(player))
-			return true;
-
-		return isEventActive();
+		return isEventActive(player);
 	}
 
 	public Location location(double x, double y, double z) {
@@ -398,7 +450,8 @@ public abstract class EdenEvent extends Feature implements Listener {
 		interactHandlers.put(npc, handler);
 	}
 
-	public void registerInteractHandlers() {}
+	public void registerInteractHandlers() {
+	}
 
 	@EventHandler
 	public void _onNPCRightClick(NPCRightClickEvent event) {
@@ -545,9 +598,11 @@ public abstract class EdenEvent extends Feature implements Listener {
 		this.placeables.add(builder.build());
 	}
 
-	protected void registerBreakableBlocks() {}
+	protected void registerBreakableBlocks() {
+	}
 
-	protected void registerPlaceableBlocks() {}
+	protected void registerPlaceableBlocks() {
+	}
 
 	private @Nullable EventBreakable getBreakable(Block block) {
 		return breakables.stream().filter(breakable -> {
@@ -587,6 +642,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 	private static class BreakException extends RuntimeException {
 		private final String cooldownId;
 		private final String errorMessage;
+
 	}
 
 	public boolean breakBlock(BlockBreakEvent event) {
@@ -659,7 +715,8 @@ public abstract class EdenEvent extends Feature implements Listener {
 		return getBreakable(event.getBlock()) != null;
 	}
 
-	protected void registerFishingLoot() {}
+	protected void registerFishingLoot() {
+	}
 
 	public void registerFishingLoot(EventFishingLootCategory... categories) {
 		List<EventFishingLootCategory> categoriesList = Arrays.asList(categories);

@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.listeners;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
@@ -64,7 +65,20 @@ public class Tab implements Listener {
 	}
 
 	public static String getHeader(Player player) {
-		return "%s%n%n%n%n%n%n%n%s%n".formatted("貔", ScoreboardLine.ONLINE.render(player));
+		StringBuilder eventLines = new StringBuilder();
+		for (EdenEvent event : EdenEvent.getActiveEvents(player)) {
+			final String tabLine = event.getTabLine();
+			if (tabLine == null)
+				continue;
+
+			if (eventLines.isEmpty())
+				eventLines.append(System.lineSeparator());
+
+			final String spacer = "&f ".repeat(3);
+			eventLines.append(spacer).append(tabLine).append(spacer).append(System.lineSeparator());
+		}
+
+		return "%s%n%n%n%n%n%n%n%s%n%s".formatted("貔", ScoreboardLine.ONLINE.render(player), eventLines.toString());
 	}
 
 	public static String getFooter(Player player) {

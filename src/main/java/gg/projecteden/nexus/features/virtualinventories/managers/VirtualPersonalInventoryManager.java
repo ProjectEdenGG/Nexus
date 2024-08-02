@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.virtualinventories.models.inventories.Virtu
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.virtualinventories.VirtualInventoriesConfigService;
 import gg.projecteden.nexus.utils.Tasks;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -32,11 +33,15 @@ public class VirtualPersonalInventoryManager extends Feature {
 
 	@Override
 	public void onStart() {
+		var service = new VirtualInventoriesConfigService();
+
 		taskId = Tasks.repeat(TickTime.TICK.x(5), TickTime.TICK, () -> {
 			if (!VirtualInventoryManager.isTicking())
 				return;
 
-			new VirtualInventoriesConfigService().edit0(config -> config.getPersonalInventories()
+			var config = service.get0();
+
+			config.getPersonalInventories()
 				.values()
 				.stream()
 				.flatMap(map -> map.values().stream())
@@ -51,7 +56,10 @@ public class VirtualPersonalInventoryManager extends Feature {
 
 					return virtualPersonalInventory.getLocation().isChunkLoaded();
 				})
-				.forEach(VirtualInventory::tick));
+				.forEach(VirtualInventory::tick);
+
+			if (Bukkit.getCurrentTick() % 40 == 0)
+				service.save(config);
 		});
 	}
 

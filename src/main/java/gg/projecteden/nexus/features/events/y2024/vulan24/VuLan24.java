@@ -28,6 +28,7 @@ import gg.projecteden.nexus.models.vulan24.VuLan24ConfigService;
 import gg.projecteden.nexus.models.vulan24.VuLan24User;
 import gg.projecteden.nexus.models.vulan24.VuLan24UserService;
 import gg.projecteden.nexus.models.warps.WarpType;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.TitleBuilder;
@@ -43,6 +44,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.loot.LootTables;
 
 import java.util.Arrays;
@@ -85,13 +87,35 @@ public class VuLan24 extends EdenEvent {
 	@Override
 	public void onStart() {
 		super.onStart();
-		customGenericGreetings = List.of(
+		new VuLan24BoatTracker();
+		new VuLan24LanternAnimationJob();
+	}
+
+	@Override
+	public List<String> getCustomGenericGreetings() {
+		return List.of(
 			"Xin Chao stranger!",
 			"Cau Chao!",
 			"Tieng Chao traveler. Welcome to Vinh Luc!"
 		);
-		new VuLan24BoatTracker();
-		new VuLan24LanternAnimationJob();
+	}
+
+	@Override
+	public String getTabLine() {
+		return "&eVu Lan Festival &7- &3On Now! &c/vulan";
+	}
+
+	@Override
+	public ItemStack getWarpMenuItem() {
+		return new ItemBuilder(CustomMaterial.COSTUMES_BAMBOO_HAT)
+			.name("&3Current Event: &eVu Lan Festival")
+			.lore("&3Quests, rewards, and more!")
+			.build();
+	}
+
+	@Override
+	public String getMotd() {
+		return "&eVu Lan Festival &7- &3On Now!";
 	}
 
 	public static final List<LootTables> ARCHAEOLOGY_LOOT_TABLES = List.of(
@@ -231,22 +255,24 @@ public class VuLan24 extends EdenEvent {
 		handleInteract(VuLan24NPC.HAT_SALESMAN, (player, npc) -> VuLan24Menus.getBambooHatShop(player).open(player));
 		handleInteract(VuLan24NPC.CAPTAIN_LAI_AVONTYRE, (player, npc) -> {
 			final VuLan24UserService userService = new VuLan24UserService();
-			if (userService.get(player).isReadyToVisit())
-				new Dialog(npc)
-					.npc("Climb aboard when you are ready to visit Vinh Luc for the Vu Lan Festival!")
-					.send(player);
+			final VuLan24User user = userService.get(player);
+			final Dialog dialog = new Dialog(npc);
+			if (user.isVisited())
+				dialog.npc("What a strange city! I can’t believe we’ve never been here before. I wonder where the tavern is?");
+			else if (user.isReadyToVisit())
+				dialog.npc("Climb aboard when you are ready to visit Vinh Luc for the Vu Lan Festival!");
 			else
-				new Dialog(npc)
-					.npc("Xin Chao adventurer! We arrive from the far east with goods and wares that your eyes have never seen! We had heard of this place and thought we'd stop by on our way back to Vietuda!")
+				dialog
+					.npc("Xin Chao adventurer! We arrive from the far east with goods and wares that your eyes have never seen!")
+					.npc("We had heard of this place and thought we'd stop by on our way back to Vietuda!")
 					.player("Welcome to Avontyre! I can't say I've heard of Vietuda.")
 					.npc("Well, specifically, we're headed back to Vinh Luc, an island south of the mainland.")
 					.npc("We're collecting some goods and materials to bring back to the island for the Vu Lan Festival that's going to start in a few days. You should visit!")
 					.player("That sounds awesome! I'd love to go... but I don't have a ship... or a boat.")
 					.npc("Not to worry, If you'd like, feel free to come back with us! Our island would love to have you. Climb aboard when you are ready.")
-					.thenRun(quester -> userService.edit(quester, user -> user.setReadyToVisit(true)))
-					.send(player);
-			}
-		);
+					.thenRun(quester -> userService.edit(quester, _user -> _user.setReadyToVisit(true)));
+			dialog.send(player);
+		});
 		handleInteract(VuLan24NPC.CAPTAIN_LAI_VINH_LUC, (player, npc) -> new Dialog(npc)
 			.npc("Ah... home sweet home. I hope this year's Vu Lan is just as great as the last!")
 			.send(player)
@@ -254,7 +280,7 @@ public class VuLan24 extends EdenEvent {
 		handleInteract(VuLan24NPC.MAYOR_HOA, (player, npc) -> new Dialog(npc)
 			.npc("Xin Chao! Welcome to Vinh Luc, the isle of tombs! I hope you have a lovely stay here for the festival!")
 			.npc("Please take your time to explore our beautiful island. There are plenty of things to do here and everyone is so welcoming!")
-			.player("Thank you! There’s a lot to do… where should I start?")
+			.player("Thank you! There's a lot to do… where should I start?")
 			.npc("I recommend you talk to Anh first to find out about the Community Quest! Then, visit the quest boards for more.")
 			.send(player)
 		);
@@ -275,7 +301,13 @@ public class VuLan24 extends EdenEvent {
 			.send(player)
 		);
 		handleInteract(VuLan24NPC.STUDENT, (player, npc) -> new Dialog(npc)
-			.npc("This place is amazing! If you haven’t seen it yet, check out the floating fishing village near the beach!")
+			.npc("This place is amazing! If you haven't seen it yet, check out the floating fishing village near the beach!")
+			.send(Quester.of(player))
+		);
+		handleInteract(VuLan24NPC.TRAPPED_EXPLORER, (player, npc) -> new Dialog(npc)
+			.npc("Are you trapped down here too?")
+			.npc("I've been down here for days but I haven't been able to punch through these leaves from being so malnourished.")
+			.npc("Are you able to break them for me?")
 			.send(Quester.of(player))
 		);
 	}

@@ -347,7 +347,7 @@ public class DecorationUtils {
 	@Deprecated
 	public static boolean canBuyDecoration(Player player) {
 		EdenEvent edenEvent = EdenEvent.of(player);
-		if (edenEvent != null && edenEvent.isEventActive())
+		if (edenEvent != null && edenEvent.isEventActive(player))
 			return true;
 
 		return Rank.of(player).isStaff() || Rank.of(player).isBuilder();

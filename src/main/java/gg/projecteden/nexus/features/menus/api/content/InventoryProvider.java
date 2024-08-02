@@ -260,8 +260,8 @@ public abstract class InventoryProvider {
 		PlayerUtils.runCommand(viewer, "warp " + warp);
 	}
 
-	public void command(String command) {
-		PlayerUtils.runCommand(viewer, command);
+	public void command(String commandNoSlash) {
+		PlayerUtils.runCommand(viewer, commandNoSlash);
 	}
 	
 	public final void paginate(Collection<ClickableItem> items) {

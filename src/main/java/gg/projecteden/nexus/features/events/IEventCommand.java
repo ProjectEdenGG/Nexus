@@ -46,9 +46,8 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 	public IEventCommand(CommandEvent event) {
 		super(event);
 		if (isPlayerCommandEvent()) {
-			if (!isStaff() && !getEdenEvent().isEventActive()) {
+			if (!getEdenEvent().isEventActive(player()))
 				error("This event is not currently active");
-			}
 
 			quester = questerService.get(player());
 		}
