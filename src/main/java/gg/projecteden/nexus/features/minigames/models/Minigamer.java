@@ -57,7 +57,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -239,6 +239,9 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 	}
 
 	private void checkCanJoin(Match match) {
+		if (Nexus.isMaintenanceQueued())
+			throw new InvalidInputException("Server maintenance is queued, cannot join match");
+
 		if (this.match != null)
 			throw new InvalidInputException("You are already in a match");
 

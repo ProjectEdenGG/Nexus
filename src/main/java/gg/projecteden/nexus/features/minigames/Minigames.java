@@ -194,8 +194,6 @@ public class Minigames extends Feature implements Listener {
 
 	public static void broadcast(String announcement) {
 		getPlayers().forEach(player -> PlayerUtils.send(player, Minigames.PREFIX + announcement));
-
-		// TODO: If arena is public, announce to discord and whole server
 	}
 
 	public static void broadcast(ComponentLike component) {
