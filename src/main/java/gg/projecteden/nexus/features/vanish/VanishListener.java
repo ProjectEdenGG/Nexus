@@ -28,6 +28,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockReceiveGameEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -213,6 +214,21 @@ public class VanishListener implements Listener {
 			for (ItemStack content : original.getContents())
 				contents.set(index++, ClickableItem.empty(content));
 		}
+	}
+
+	@EventHandler
+	public void on(BlockReceiveGameEvent event) {
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
+		final VanishUser user = service.get(player);
+		if (!user.isVanished())
+			return;
+
+		if (user.getSetting(Setting.INTERACT))
+			return;
+
+		event.setCancelled(true);
 	}
 
 }
