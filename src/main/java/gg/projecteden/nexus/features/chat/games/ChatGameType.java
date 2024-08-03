@@ -111,7 +111,7 @@ public enum ChatGameType {
 			"Myanmar", "Colombia", "Kenya", "South Korea", "Spain", "Argentina", "Algeria", "Uganda", "Iraq", "Sudan",
 			"Canada", "Poland", "Morocco", "Uzbekistan", "Ukraine", "Angola", "Afghanistan", "Peru", "Malaysia",
 			"Mozambique", "Saudi Arabia", "Yemen", "Ghana", "Madagascar", "Ivory Coast", "Nepal", "Cameroon",
-			"Venezuela", "Australia", "Niger", "North Korea", "Burkina Faso", "Syria", "Mali", "Malawi", "Sri Lanka",
+			"Venezuela", "Australia", "North Korea", "Burkina Faso", "Syria", "Mali", "Malawi", "Sri Lanka",
 			"Kazakhstan", "Chile", "Zambia", "Romania", "Chad", "Somalia", "Senegal", "Netherlands", "Guatemala",
 			"Cambodia", "Ecuador", "Zimbabwe", "South Sudan", "Guinea", "Rwanda", "Benin", "Burundi", "Bolivia",
 			"Tunisia", "Belgium", "Papua New Guinea", "Haiti", "Jordan", "Cuba", "Czech Republic", "Dominican Republic",
