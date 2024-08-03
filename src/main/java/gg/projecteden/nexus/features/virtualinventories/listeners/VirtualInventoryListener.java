@@ -86,6 +86,9 @@ public class VirtualInventoryListener implements Listener {
 		if (furnace.getPlayer() == null || !furnace.getPlayer().isOnline())
 			return;
 
+		if (!furnace.getPlayer().getWorld().equals(location.getWorld()))
+			return;
+
 		blockData.setLit(furnace.isLit());
 		furnace.getPlayer().sendBlockChange(location, blockData);
 	}
