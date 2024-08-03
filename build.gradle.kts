@@ -6,7 +6,7 @@ val edenApiVersion: String by project
 plugins {
     `java-library`
     `maven-publish`
-    id("io.freefair.lombok") version "6.5.0-rc1"
+    id("io.freefair.lombok") version "8.6"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("io.papermc.paperweight.userdev") version "1.5.11"
 }
@@ -129,7 +129,7 @@ publishing {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
 tasks {
@@ -139,7 +139,7 @@ tasks {
 
     compileJava {
         options.encoding = Charsets.UTF_8.name()
-        options.release.set(17)
+        options.release.set(21)
         options.compilerArgs.add("-parameters")
     }
 

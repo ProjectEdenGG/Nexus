@@ -49,4 +49,15 @@ public class RandomUtils extends gg.projecteden.api.common.utils.RandomUtils {
 			throw new InvalidInputException(exc.getMessage());
 		}
 	}
+
+	/**
+	 * Generates a random value based on a triangular distribution.
+	 *
+	 * @param mode      the mode (peak) of the distribution
+	 * @param deviation the deviation from the mode
+	 * @return a random value based on a triangular distribution
+	 */
+	public static double triangle(double mode, double deviation) {
+		return mode + deviation * (randomDouble(0, 1) - randomDouble(0, 1));
+	}
 }
