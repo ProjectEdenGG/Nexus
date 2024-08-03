@@ -799,6 +799,9 @@ public abstract class EdenEvent extends Feature implements Listener {
 		if (block.getType() != Material.DECORATED_POT)
 			return;
 
+		if (canWorldGuardEdit(event.getPlayer()))
+			return;
+
 		event.setCancelled(true);
 	}
 
