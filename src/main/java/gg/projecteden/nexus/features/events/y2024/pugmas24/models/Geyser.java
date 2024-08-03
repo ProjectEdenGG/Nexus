@@ -58,6 +58,7 @@ public class Geyser implements Listener {
 	private static final int maxHeight = 8;
 	private static final int frameSpeed = 2;
 	private static final String geyserPoolsRegion = Pugmas24.get().getRegionName() + "_geyser";
+	private static final String geyserCreekRegion = Pugmas24.get().getRegionName() + "_geyser_creek";
 	private static final String geyserInsideRegion = Pugmas24.get().getRegionName() + "_geyser_inside";
 	private static final String geyserColumnRegion = Pugmas24.get().getRegionName() + "_geyser_column";
 	private static final String schemReset = "pugmas24/geyser/empty";
@@ -74,7 +75,7 @@ public class Geyser implements Listener {
 		erupting = false;
 		status = GeyserStatus.INACTIVE;
 		hurtPlayers = false;
-		smokeFailChance = 99;
+		poolSmokeFailChance = 99;
 		animating = false;
 		worldedit.paster().file(schemReset).at(geyserPaste).pasteAsync();
 	}
@@ -165,7 +166,8 @@ public class Geyser implements Listener {
 	private static void startIntro() {
 		status = GeyserStatus.ANIMATING;
 		hurtPlayers = true;
-		smokeFailChance = 95;
+		poolSmokeFailChance = 95;
+		creekSmokeFailChance = 98;
 		long wait = 0;
 
 		wait += TickTime.SECOND.x(7);
@@ -292,27 +294,38 @@ public class Geyser implements Listener {
 		;
 	}
 
-	private static Set<Location> waterLocations = new HashSet<>();
-	private static int smokeFailChance = 99;
+	private static Set<Location> poolSmokeLocations = new HashSet<>();
+	private static Set<Location> creekSmokeLocations = new HashSet<>();
+	private static int creekSmokeFailChance = 99;
+	private static int poolSmokeFailChance = 99;
 
 	public static void animateSmoke() {
-		if (Nullables.isNullOrEmpty(waterLocations)) {
-			waterLocations = getSmokeLocations();
+		if (Nexus.isMaintenanceQueued())
+			return;
+
+		if (Nullables.isNullOrEmpty(poolSmokeLocations)) {
+			poolSmokeLocations = getSmokeLocations();
 		}
 
-		for (Location location : waterLocations) {
-			if (Nexus.isMaintenanceQueued())
-				return;
+		if (Nullables.isNullOrEmpty(creekSmokeLocations)) {
+			creekSmokeLocations = getCreekSmokeLocations();
+		}
 
+		playSmoke(creekSmokeLocations, creekSmokeFailChance, 1, 3);
+		playSmoke(poolSmokeLocations, poolSmokeFailChance, 3, 4);
+	}
+
+	private static void playSmoke(Set<Location> creekSmokeLocations, int smokeFailChance, int heightMin, int heightMax) {
+		for (Location location : creekSmokeLocations) {
 			if (RandomUtils.chanceOf(smokeFailChance))
 				continue;
 
 			new ParticleBuilder(Particle.CAMPFIRE_COSY_SMOKE)
-					.location(location.clone().toCenterLocation().add(0, 0.4, 0))
-					.count(0)
-					.offset(0, RandomUtils.randomInt(3, 4), 0)
-					.extra(RandomUtils.randomDouble(0.01, 0.03))
-					.spawn();
+				.location(location.clone().toCenterLocation().add(0, 0.4, 0))
+				.count(0)
+				.offset(0, RandomUtils.randomInt(heightMin, heightMax), 0)
+				.extra(RandomUtils.randomDouble(0.01, 0.03))
+				.spawn();
 		}
 	}
 
@@ -365,6 +378,14 @@ public class Geyser implements Listener {
 
 	private static Location relativeLoc(BlockFace blockFace) {
 		return Geyser.geyserOrigin.getBlock().getRelative(blockFace).getLocation();
+	}
+
+	private static Set<Location> getCreekSmokeLocations() {
+		return worldedit.getBlocksPoly(worldguard.getRegion(geyserCreekRegion)).stream()
+			.filter(block -> block.getType() == Material.WATER)
+			.filter(block -> block.getRelative(BlockFace.UP).getType() == Material.AIR)
+			.map(Block::getLocation)
+			.collect(Collectors.toSet());
 	}
 
 	private static Set<Location> getSmokeLocations() {
