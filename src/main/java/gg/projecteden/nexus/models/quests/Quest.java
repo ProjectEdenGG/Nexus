@@ -2,6 +2,7 @@ package gg.projecteden.nexus.models.quests;
 
 import dev.morphia.annotations.Converters;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.quests.events.QuestCompletedEvent;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuest;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -64,6 +65,7 @@ public class Quest implements PlayerOwnedObject {
 
 	public void complete() {
 		incrementTask();
+		new QuestCompletedEvent(quester(), this).callEvent();
 	}
 
 	public boolean isComplete() {

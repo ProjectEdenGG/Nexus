@@ -19,6 +19,7 @@ import gg.projecteden.nexus.models.trophy.TrophyType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 
@@ -30,6 +31,12 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Aliases("trophies")
 public class TrophyCommand extends CustomCommand {
+	private static final List<WorldGroup> CAN_CLAIM_IN = List.of(
+		WorldGroup.SURVIVAL,
+		WorldGroup.CREATIVE,
+		WorldGroup.SKYBLOCK
+	);
+
 	private final TrophyHolderService service = new TrophyHolderService();
 	private TrophyHolder holder;
 
@@ -44,6 +51,9 @@ public class TrophyCommand extends CustomCommand {
 	void menu() {
 		if (holder.getEarned().isEmpty())
 			error("You have not earned any event trophies! Participate in server hosted events to earn them");
+
+		if (!CAN_CLAIM_IN.contains(worldGroup()))
+			error("You can't use this command in this world");
 
 		new TrophyMenu().open(player());
 	}
@@ -131,6 +141,7 @@ public class TrophyCommand extends CustomCommand {
 						items.add(ClickableItem.empty(item.build()));
 					} else {
 						item.lore("", "&eClick to receive a copy");
+						item.lore("", "&cYou can only claim one copy, so make", "&csure you are in the correct world");
 						items.add(ClickableItem.of(item.build(), e -> {
 							try {
 								holder.claim(trophy);

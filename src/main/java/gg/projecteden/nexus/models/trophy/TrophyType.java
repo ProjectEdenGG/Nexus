@@ -67,7 +67,7 @@ public enum TrophyType {
 	}
 
 	public ItemBuilder getItem() {
-		return new ItemBuilder(material).name(toString()).untradeable();
+		return new ItemBuilder(material).name(toString()).untradeable().untrashable();
 	}
 
 	public String getEvent() {

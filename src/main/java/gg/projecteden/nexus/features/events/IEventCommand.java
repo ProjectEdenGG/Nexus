@@ -24,8 +24,12 @@ import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.StringUtils.ProgressBar;
+import gg.projecteden.nexus.utils.StringUtils.ProgressBar.ProgressBarBuilder;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,7 +39,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
 
 @NoArgsConstructor
 public abstract class IEventCommand extends _WarpSubCommand implements Listener {
@@ -78,6 +85,39 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 			send("&3 " + iQuest.getName() + " &7- &aCompleted");
 		}
 	}
+
+	@Permission(Group.ADMIN)
+	@Path("stats quest progress [page]")
+	@Description("Print all users' quest progress")
+	void quests_completed(@Arg("1") int page) {
+		send(PREFIX + "Quest progress");
+
+		final List<IQuest> quests = getEdenEvent().getQuests();
+
+		Map<Quester, Integer> counts = new HashMap<>() {{
+			for (Quester quester : new QuesterService().getAll()) {
+				var completed = 0;
+				for (IQuest quest : quests)
+					if (quester.hasCompleted(quest))
+						++completed;
+
+				if (completed > 0)
+					put(quester, completed);
+			}
+		}};
+
+		final BiFunction<Quester, String, JsonBuilder> formatter = (user, index) -> {
+			final ProgressBarBuilder bar = ProgressBar.builder()
+				.goal(quests.size())
+				.progress(counts.get(user))
+				.seamless(true)
+				.length(150);
+
+			return json(bar.build()).next(" &e" + counts.get(user) + "/" + quests.size() + " &7- &e" + user.getNickname());
+		};
+
+		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/" + getEdenEvent().getName().toLowerCase() + " stats quests progress", page);
+}
 
 	@Permission(Group.ADMIN)
 	@Path("quest debug <quest>")

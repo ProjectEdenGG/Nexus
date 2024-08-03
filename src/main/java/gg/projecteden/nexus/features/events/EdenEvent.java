@@ -19,6 +19,7 @@ import gg.projecteden.nexus.features.events.models.EventPlaceable.EventPlaceable
 import gg.projecteden.nexus.features.listeners.events.LivingEntityKilledByPlayerEvent;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.quests.QuestConfig;
+import gg.projecteden.nexus.features.quests.events.QuestCompletedEvent;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
 import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
 import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
@@ -29,6 +30,8 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.quests.QuesterService;
+import gg.projecteden.nexus.models.trophy.TrophyHolderService;
+import gg.projecteden.nexus.models.trophy.TrophyType;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ChunkLoader;
 import gg.projecteden.nexus.utils.Enchant;
@@ -131,6 +134,10 @@ public abstract class EdenEvent extends Feature implements Listener {
 	}
 
 	public String getMotd() {
+		return null;
+	}
+
+	public TrophyType getTrophy() {
 		return null;
 	}
 
@@ -823,6 +830,19 @@ public abstract class EdenEvent extends Feature implements Listener {
 			return;
 
 		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void on(QuestCompletedEvent event) {
+		final TrophyType trophy = getTrophy();
+		if (trophy == null)
+			return;
+
+		for (IQuest eventQuest : getQuests())
+			if (!event.getQuester().hasCompleted(eventQuest))
+				return;
+
+		new TrophyHolderService().edit(event.getQuester(), user -> user.earnAndMessage(trophy));
 	}
 
 }

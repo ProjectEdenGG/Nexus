@@ -23,6 +23,7 @@ import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.VuLan24LanternAnimationJob;
+import gg.projecteden.nexus.models.trophy.TrophyType;
 import gg.projecteden.nexus.models.vulan24.VuLan24Config;
 import gg.projecteden.nexus.models.vulan24.VuLan24ConfigService;
 import gg.projecteden.nexus.models.vulan24.VuLan24User;
@@ -118,6 +119,11 @@ public class VuLan24 extends EdenEvent {
 	@Override
 	public String getMotd() {
 		return "&6&lVu Lan Festival &7- &3On Now!";
+	}
+
+	@Override
+	public TrophyType getTrophy() {
+		return TrophyType.VULAN_2024;
 	}
 
 	@Override
