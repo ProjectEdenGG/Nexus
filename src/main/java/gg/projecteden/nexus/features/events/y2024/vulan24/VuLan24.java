@@ -20,6 +20,7 @@ import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegion
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomEmoji;
 import gg.projecteden.nexus.framework.annotations.Date;
+import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.VuLan24LanternAnimationJob;
 import gg.projecteden.nexus.models.vulan24.VuLan24Config;
@@ -253,6 +254,7 @@ public class VuLan24 extends EdenEvent {
 						userService.save(user);
 						config.incrementDailyQuestCounter();
 						configService.save(config);
+						new EventUserService().edit(quester, eventUser -> eventUser.giveTokens(10));
 					})
 					.take(user.getDailyQuest().getPredicate(), 32)
 					.npc("Thank you so much for the food! Come back tomorrow, I'm sure I'll need more help!");
