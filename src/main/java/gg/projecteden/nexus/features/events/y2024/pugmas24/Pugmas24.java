@@ -35,14 +35,8 @@ import static gg.projecteden.nexus.features.events.models.EventFishingLoot.Event
 import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
 
 /*
-	TODO FINAL:
-		- CHANGE WORLD STRING
-		- PASTE BUILD IN EXACT SAME COORDINATES AS BUILD ADMIN
-		- COPY REGIONS FROM BUILDADMIN INTO NEW WORLD FILE
-		- ENTITY UUIDS
-
-
-	FIND THE NUT CRACKERS
+	TODO:
+		FIND THE NUT CRACKERS
  */
 @QuestConfig(
 	quests = Pugmas24Quest.class,
@@ -54,7 +48,7 @@ import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
 	effects = Pugmas24Effects.class,
 	start = @Date(m = 12, d = 1, y = 2024),
 	end = @Date(m = 1, d = 10, y = 2025),
-	world = "buildadmin", // TODO FINAL: WORLD
+	world = "pugmas24",
 	region = "pugmas24",
 	warpType = WarpType.PUGMAS24
 )
@@ -70,8 +64,6 @@ public class Pugmas24 extends EdenEvent {
 
 	@Getter
 	private static boolean ridesEnabled = true;
-
-	//
 
 	public Pugmas24() {
 		instance = this;

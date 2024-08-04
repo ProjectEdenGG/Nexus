@@ -6,19 +6,22 @@ import org.bukkit.Location;
 
 @AllArgsConstructor
 public enum Waystone {
-	HOT_SPRINGS(
-			Pugmas24.get().location(-474, 127, -3060),
-			Pugmas24.get().location(-474, 127, -3059, 45, 0).toCenterLocation()),
-
+	HOT_SPRINGS(loc(-474, 127, -3060), loc(-474, 127, -3059, 45).toCenterLocation()),
 	TRAIN_STATION(null, null),
-
 	FAIRGROUNDS(null, null),
-
 	TOWN(null, null),
-
-	RIDGE(null, null);
+	RIDGE(null, null),
+	;
 
 	final Location frameLoc;
 	final Location warpLoc;
+
+	private static Location loc(int x, int y, int z) {
+		return Pugmas24.get().location(x, y, z);
+	}
+
+	private static Location loc(int x, int y, int z, int yaw) {
+		return Pugmas24.get().location(x, y, z, yaw, 0);
+	}
 
 }

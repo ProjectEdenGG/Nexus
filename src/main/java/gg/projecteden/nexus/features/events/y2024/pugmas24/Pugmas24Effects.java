@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,36 +50,35 @@ public class Pugmas24Effects extends Effects {
 	public List<RotatingStand> getRotatingStands() {
 		List<RotatingStand> result = new ArrayList<>();
 		for (String uuid : windmill1) {
-			result.add(new RotatingStand(uuid, StandRotationAxis.HORIZONTAL, StandRotationType.NEGATIVE, false));
+			result.add(new RotatingStand(uuid, StandRotationAxis.HORIZONTAL, StandRotationType.NEGATIVE, true));
 		}
 
 		return result;
 	}
 
-	private final List<String> windmill1 = new ArrayList<>() {{ // TODO FINAL: ENTITY UUID
-		add("3b7fe81c-5188-4288-9dc2-158c2be784cc");
-		add("1deb9bca-4a35-4732-aa7a-fc643518055a");
-		add("68d182c3-b76a-4a38-959d-35a81e4ad582");
-		add("1e654874-66f7-4935-8cb3-47afd039ebc9");
+	private final List<String> windmill1 = new ArrayList<>() {{
+		add("1d7d22db-f6ad-4f64-b844-7e6e017efeaa");
+		add("47c88b92-4708-4b1c-b654-b09ff8a95cef");
+		add("c00b3308-4989-4e36-91f1-1dfe8304a849");
+		add("99a0f5b9-420e-483f-acc2-c81e48663c3c");
 	}};
 
+	private static int angle = 0;
 	@Override
-	public void onLoadRotatingStands() {
-		int angle = 0;
-		for (RotatingStand rotatingStand : getRotatingStands()) {
-			ArmorStand armorStand = rotatingStand.getArmorStand();
-			if (armorStand == null)
-				continue;
+	public void onLoadRotatingStands(List<RotatingStand> rotatingStands) {
+		angle = 0;
+	}
 
-			Pugmas24.get().forceLoadChunk(armorStand.getLocation().getChunk());
+	@Override
+	public boolean customResetPose(RotatingStand rotatingStand, @NotNull ArmorStand armorStand) {
+		if (!windmill1.contains(rotatingStand.getUuid()))
+			return true;
 
-			if (windmill1.contains(rotatingStand.getUuid())) {
-				rotatingStand.resetRightArmPose();
-				rotatingStand.addRightArmPose(0, Math.toRadians(angle), 0);
-				armorStand.getEquipment().setItemInMainHand(new ItemBuilder(Material.PAPER).modelId(6247).build());
-				angle += 90;
-			}
-		}
+		rotatingStand.resetRightArmPose();
+		rotatingStand.addRightArmPose(0, Math.toRadians(angle), 0);
+		armorStand.getEquipment().setItemInMainHand(new ItemBuilder(Material.PAPER).modelId(6247).build());
+		angle += 90;
+		return true;
 	}
 
 	//

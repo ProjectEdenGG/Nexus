@@ -22,6 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.util.EulerAngle;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -117,7 +118,11 @@ public abstract class Effects implements Listener {
 		return new ArrayList<>();
 	}
 
-	public void onLoadRotatingStands() {
+	public void onLoadRotatingStands(List<RotatingStand> rotatingStands) {
+	}
+
+	public boolean customResetPose(RotatingStand rotatingStand, @NotNull ArmorStand armorStand) {
+		return true;
 	}
 
 	public void rotatingStands() {
@@ -125,14 +130,11 @@ public abstract class Effects implements Listener {
 
 		List<String> resetPoses = new ArrayList<>() {{
 			for (RotatingStand rotatingStand : rotatingStands) {
-				if (!rotatingStand.isResetPose())
-					continue;
-
 				add(rotatingStand.getUuid());
 			}
 		}};
 
-		onLoadRotatingStands();
+		onLoadRotatingStands(rotatingStands);
 
 		Tasks.repeat(TickTime.SECOND.x(2), TickTime.TICK, () -> {
 			for (RotatingStand rotatingStand : rotatingStands) {
@@ -142,9 +144,14 @@ public abstract class Effects implements Listener {
 
 				String UUID = rotatingStand.getUuid();
 				if (resetPoses.contains(UUID)) {
-					switch (rotatingStand.getAxis()) {
-						case HORIZONTAL -> rotatingStand.resetRightArmPose();
-						case VERTICAL -> rotatingStand.resetHeadPose();
+					if (rotatingStand.isCustomResetPose()) {
+						if (!customResetPose(rotatingStand, armorStand))
+							continue;
+					} else {
+						switch (rotatingStand.getAxis()) {
+							case HORIZONTAL -> rotatingStand.resetRightArmPose();
+							case VERTICAL -> rotatingStand.resetHeadPose();
+						}
 					}
 
 					resetPoses.remove(UUID);
@@ -166,14 +173,14 @@ public abstract class Effects implements Listener {
 		String uuid;
 		StandRotationAxis axis;
 		StandRotationType rotationType;
-		boolean resetPose;
+		boolean customResetPose;
 		ArmorStand armorStand;
 
-		public RotatingStand(String uuid, StandRotationAxis axis, StandRotationType rotationType, boolean resetPose) {
+		public RotatingStand(String uuid, StandRotationAxis axis, StandRotationType rotationType, boolean customResetPose) {
 			this.uuid = uuid;
 			this.axis = axis;
 			this.rotationType = rotationType;
-			this.resetPose = resetPose;
+			this.customResetPose = customResetPose;
 		}
 
 		public @Nullable ArmorStand getArmorStand() {
