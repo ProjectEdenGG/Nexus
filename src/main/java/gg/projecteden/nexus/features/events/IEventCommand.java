@@ -116,7 +116,7 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 			return json(bar.build()).next(" &e" + counts.get(user) + "/" + quests.size() + " &7- &e" + user.getNickname());
 		};
 
-		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/" + getEdenEvent().getName().toLowerCase() + " stats quests progress", page);
+		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/" + getEdenEvent().getName().toLowerCase() + " stats quest progress", page);
 }
 
 	@Permission(Group.ADMIN)
