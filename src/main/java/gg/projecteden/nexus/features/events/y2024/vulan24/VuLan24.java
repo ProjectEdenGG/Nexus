@@ -251,9 +251,11 @@ public class VuLan24 extends EdenEvent {
 					});
 			}
 
-			if (user.isFinishedDailyQuest())
+			if (user.isFinishedDailyQuest()) {
 				dialog.npc("I dont need any more help today, come back tomorrow!");
-			else if (Quester.of(player).has(user.getDailyQuest().getPredicate(), 32))
+				if (!hasCompletedAllQuests(user))
+					dialog.npc("There are also some other people on the island that could use your help today!");
+			} else if (Quester.of(player).has(user.getDailyQuest().getPredicate(), 32)) {
 				dialog
 					.thenRun(quester -> {
 						user.setFinishedDailyQuest(true);
@@ -264,7 +266,10 @@ public class VuLan24 extends EdenEvent {
 					})
 					.take(user.getDailyQuest().getPredicate(), 32)
 					.npc("Thank you so much for the food! Come back tomorrow, I'm sure I'll need more help!");
-			else if (Quester.of(player).has(user.getDailyQuest().getPredicate(), 1))
+
+				if (!hasCompletedAllQuests(user))
+					dialog.npc("There are also some other people on the island that could use your help today!");
+			} else if (Quester.of(player).has(user.getDailyQuest().getPredicate(), 1))
 				dialog.npc("Hey, thanks for the food! But we could use a little more. Please come back once you've found 32 " + item + "!");
 			else
 				dialog.npc("I am low on " + item + " today, can you help me restock?");

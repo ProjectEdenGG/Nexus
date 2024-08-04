@@ -3,6 +3,7 @@ package gg.projecteden.nexus.models.quests;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.listeners.events.LivingEntityKilledByPlayerEvent;
@@ -26,7 +27,6 @@ import lombok.RequiredArgsConstructor;
 import net.citizensnpcs.api.event.NPCClickEvent;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockEvent;
@@ -60,7 +60,7 @@ public class Quester implements PlayerOwnedObject {
 
 	private transient DialogInstance dialog;
 
-	public static Quester of(Player player) {
+	public static Quester of(HasUniqueId player) {
 		return of(player.getUniqueId());
 	}
 

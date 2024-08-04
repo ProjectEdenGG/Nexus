@@ -841,11 +841,19 @@ public abstract class EdenEvent extends Feature implements Listener {
 		if (trophy == null)
 			return;
 
-		for (IQuest eventQuest : getQuests())
-			if (!event.getQuester().hasCompleted(eventQuest))
-				return;
+		if (!hasCompletedAllQuests(event.getQuester()))
+			return;
 
 		new TrophyHolderService().edit(event.getQuester(), user -> user.earnAndMessage(trophy));
+	}
+
+	public boolean hasCompletedAllQuests(HasUniqueId player) {
+		final Quester quester = Quester.of(player);
+		for (IQuest eventQuest : getQuests()) {
+			if (!quester.hasCompleted(eventQuest))
+				return false;
+		}
+		return true;
 	}
 
 }
