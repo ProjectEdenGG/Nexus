@@ -52,6 +52,7 @@ public enum VuLan24QuestTask implements IQuestTask {
 			.player("Certainly. What did you need?")
 			.npc("I need &e128 stone, 64 tuff and 32 terracotta &fto be able to finish construction. You should be able to find stone and tuff in some of &ethe caves nearby&f.")
 			.npc("And you can find &eclay &falong the &enorth-eastern shore &fof the Island. Smelting it in the furnace at the Stone Mason will give you the terracotta.")
+			.npc("I think there are some miners in the cave that can you can bargain with to get pickaxe")
 			.player("Awesome - I'll get right on it!")
 		)
 		.objective("Gather 128 stone, 64 tuff & 32 terracotta")
