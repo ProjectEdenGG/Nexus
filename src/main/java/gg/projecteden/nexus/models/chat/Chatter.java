@@ -50,6 +50,10 @@ public class Chatter implements PlayerOwnedObject {
 	private PrivateChannel lastPrivateMessage;
 	private Language language;
 
+	public static Chatter of(UUID uuid) {
+		return uuid == null ? null : new ChatterService().get(uuid);
+	}
+
 	public static Chatter of(HasUniqueId hasUniqueId) {
 		return hasUniqueId == null ? null : new ChatterService().get(hasUniqueId);
 	}
