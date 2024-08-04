@@ -91,12 +91,17 @@ public class VuLan24Command extends IEventCommand {
 	@Permission(Group.ADMIN)
 	void lantern_animation_start(
 		@Switch @Arg("10") int count,
-		@Switch @Arg("2") int moveSpeed
+		@Switch @Arg("2") int moveSpeed,
+		@Switch @Arg("5") int lightLevel
 	) {
 		if (VuLan24LanternAnimation.getInstance() != null)
 			error("There is already an active animation");
 
-		VuLan24LanternAnimation.builder().startingLanterns(count).moveSpeed(moveSpeed).start();
+		VuLan24LanternAnimation.builder()
+			.startingLanterns(count)
+			.moveSpeed(moveSpeed)
+			.lightLevel(lightLevel)
+			.start();
 	}
 
 	@Path("lantern animation stop")

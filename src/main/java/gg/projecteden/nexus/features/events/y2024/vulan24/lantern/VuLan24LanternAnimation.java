@@ -45,6 +45,8 @@ public class VuLan24LanternAnimation {
 	private static final int SPAWN_OVER_TICKS = 200;
 	// How close should a lantern get to another before it slows down to make room
 	private static final float RANGE_CHECK = 1.75f;
+	// Default light block level
+	private static final int LIGHT_LEVEL = 5;
 
 	private static final List<ProtectedRegion> START_REGIONS;
 	private static final List<ProtectedRegion> CHECKPOINT_REGIONS;
@@ -65,6 +67,8 @@ public class VuLan24LanternAnimation {
 	private int startingLanterns = DEFAULT_STARTING_LANTERNS;
 	@Builder.Default
 	private int moveSpeed = MOVE_SPEED;
+	@Builder.Default
+	private int lightLevel = LIGHT_LEVEL;
 
 	@Getter
 	private List<Location>[] paths;
@@ -102,7 +106,7 @@ public class VuLan24LanternAnimation {
 			List<Location> path = new ArrayList<>();
 			for (List<Location> locs : VuLan24LanternAnimation.getInstance().getPaths())
 				path.add(locs.get(Math.min(id, locs.size() - 1)));
-			lanterns.add(new VuLan24Lantern(path, moveSpeed));
+			lanterns.add(new VuLan24Lantern(path, moveSpeed, lightLevel));
 		}
 
 		return this;
@@ -160,6 +164,8 @@ public class VuLan24LanternAnimation {
 		private List<Location> path;
 		@NonNull
 		private int moveSpeed;
+		@NonNull
+		private int lightLevel;
 
 		private int currentPathIndex = 0;
 
@@ -256,7 +262,7 @@ public class VuLan24LanternAnimation {
 				}
 
 				Light light = (Light) Material.LIGHT.createBlockData();
-				light.setLevel(5);
+				light.setLevel(lightLevel);
 				stand.getLocation().clone().add(0, ARMOR_STAND_OFFSET, 0).getBlock().setBlockData(light);
 			});
 		}
