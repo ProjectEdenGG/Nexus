@@ -86,7 +86,7 @@ public class DecoratedPot implements Listener {
 			pot.setSherd(side, sherd.getType());
 
 		event.setCancelled(true);
-		pot.update();
+		pot.update(true);
 	}
 
 	/*
