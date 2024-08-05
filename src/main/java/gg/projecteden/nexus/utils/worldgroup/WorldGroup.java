@@ -66,7 +66,7 @@ public enum WorldGroup implements IWorldGroup {
 	ADVENTURE("stranded", "aeveon_project"),
 
 	@Icon("star")
-	EVENTS("bearfair21", "pugmas21", "vu_lan"),
+	EVENTS("bearfair21", "pugmas21", "pugmas24", "vu_lan"),
 
 	@Icon("lock")
 	STAFF("buildadmin", "jail", "pirate", "tiger"),
