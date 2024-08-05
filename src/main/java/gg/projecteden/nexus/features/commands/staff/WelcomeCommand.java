@@ -25,6 +25,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +44,7 @@ import static gg.projecteden.nexus.features.chat.Chat.StaticChannel.GLOBAL;
 @Aliases("welc")
 @NoArgsConstructor
 @Permission(Group.STAFF)
-public class WelcomeCommand extends CustomCommand {
+public class WelcomeCommand extends CustomCommand implements Listener {
 	private static String lastLongMessage = null;
 	private static String lastShortMessage = null;
 
