@@ -213,7 +213,7 @@ public class Decoration {
 			return setCanEdit(true);
 		}
 
-		if (!isInRegion) { // TODO || flag == allow
+		if (isInRegion) { // TODO || flag == allow
 			DecorationLang.debug(player, " Is in region --> no");
 			return setCanEdit(false);
 		}
