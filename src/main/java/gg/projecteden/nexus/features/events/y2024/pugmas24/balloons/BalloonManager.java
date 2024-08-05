@@ -38,8 +38,6 @@ public class BalloonManager {
 	public BalloonManager() {
 		new BalloonEditor();
 
-		Pugmas24.get().forceLoadRegions(getPlacementRegions());
-
 		// TODO: SOME SORT OF ANIMATION/PARTICLES?
 		Tasks.repeat(TickTime.SECOND.x(2), TickTime.MINUTE, () -> {
 			List<ProtectedRegion> regions = new ArrayList<>(getPlacementRegions());
