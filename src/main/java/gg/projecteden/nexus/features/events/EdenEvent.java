@@ -741,7 +741,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 	}
 
 	public boolean placeBlock(BlockPlaceEvent event) {
-		return getBreakable(event.getBlock()) != null;
+		return getPlaceable(event.getBlock()) != null;
 	}
 
 	protected void registerFishingLoot() {
