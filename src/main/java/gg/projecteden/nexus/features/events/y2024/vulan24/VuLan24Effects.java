@@ -51,24 +51,27 @@ public class VuLan24Effects extends Effects {
 	@Override
 	public void particles() {
 		Tasks.repeat(0, 2, () -> {
-			if (this.SMOKE_STACKS != null) {
-				for (Location location : SMOKE_STACKS) {
-					if (location == null || !location.isChunkLoaded())
-						continue;
+			if (this.SMOKE_STACKS == null)
+				return;
 
-					if (RandomUtils.chanceOf(25))
-						continue;
+			for (Location location : SMOKE_STACKS) {
+				if (location == null || !location.isChunkLoaded())
+					continue;
 
-					if (hasPlayersNearby(location, 25))
-						new ParticleBuilder(Particle.CAMPFIRE_COSY_SMOKE)
-								.location(location.toCenterLocation())
-								.offset(0, 4, 0)
-								.extra(0.01)
-								.count(0)
-								.spawn();
-				}
+				if (RandomUtils.chanceOf(25))
+					continue;
+
+				if (!hasPlayersNearby(location, 25))
+					continue;
+
+				new ParticleBuilder(Particle.CAMPFIRE_COSY_SMOKE)
+					.location(location.toCenterLocation())
+					.offset(0, 4, 0)
+					.extra(0.01)
+					.count(0)
+					.spawn();
 			}
 		});
-
 	}
+
 }

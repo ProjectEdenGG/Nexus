@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.chat.bridge.DiscordBridgeListener;
 import gg.projecteden.nexus.features.discord.commands.TwitterAppCommand.TweetApprovalListener;
 import gg.projecteden.nexus.features.store.perks.chat.NicknameCommand.NicknameApprovalListener;
 import gg.projecteden.nexus.utils.Tasks;
+import lombok.Data;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
@@ -15,6 +16,8 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
@@ -42,6 +45,7 @@ public enum Bot {
 
 		@Override
 		void onConnect() {
+			super.onConnect();
 			Discord.registerAppCommands();
 		}
 	},
@@ -66,7 +70,22 @@ public enum Bot {
 
 	abstract JDABuilder build();
 
-	void onConnect() {}
+	void onConnect() {
+		new DiscordConnectedEvent(this).callEvent();
+	}
+
+	@Data
+	public static class DiscordConnectedEvent extends Event {
+		private final Bot bot;
+
+		@Getter
+		private static final HandlerList handlerList = new HandlerList();
+
+		@Override
+		public @NotNull HandlerList getHandlers() {
+			return handlerList;
+		}
+	}
 
 	@SneakyThrows
 	void connect() {

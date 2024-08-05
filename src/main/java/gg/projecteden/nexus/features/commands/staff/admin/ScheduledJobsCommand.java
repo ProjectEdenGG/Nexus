@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.mongodb.models.scheduledjobs.ScheduledJobs;
 import gg.projecteden.api.mongodb.models.scheduledjobs.ScheduledJobsRunner;
 import gg.projecteden.api.mongodb.models.scheduledjobs.ScheduledJobsService;
@@ -16,6 +17,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFo
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.Data;
 import lombok.NonNull;
 
@@ -52,6 +54,13 @@ public class ScheduledJobsCommand extends CustomCommand {
 	private class JobType {
 		@NonNull
 		private Class<? extends AbstractJob> clazz;
+	}
+
+	@Path("restart")
+	void restart() {
+		send(PREFIX + "Restarting tasks...");
+		ScheduledJobsRunner.stop();
+		Tasks.wait(TickTime.SECOND.x(2), ScheduledJobsRunner::start);
 	}
 
 	@Path("schedule <job> <time> [data...]")
