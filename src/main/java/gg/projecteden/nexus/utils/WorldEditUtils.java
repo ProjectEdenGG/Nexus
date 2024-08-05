@@ -33,6 +33,7 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.CompletableFutures;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -44,6 +45,7 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -227,7 +229,7 @@ public class WorldEditUtils {
 		VERTICAL {
 			@Override
 			BlockVector3[] getVectors() {
-				return new BlockVector3[]{ BlockVector3.UNIT_Y, BlockVector3.UNIT_MINUS_Y };
+				return new BlockVector3[]{BlockVector3.UNIT_Y, BlockVector3.UNIT_MINUS_Y};
 			}
 		},
 		ALL {
@@ -243,8 +245,8 @@ public class WorldEditUtils {
 
 		public BlockVector3[] apply(int amount) {
 			return Stream.of(getVectors())
-					.map(vector -> vector.multiply(amount))
-					.toArray(BlockVector3[]::new);
+				.map(vector -> vector.multiply(amount))
+				.toArray(BlockVector3[]::new);
 		}
 	}
 
@@ -280,7 +282,8 @@ public class WorldEditUtils {
 
 	/**
 	 * Sets player's selection to one block
-	 * @param player player selection to modify
+	 *
+	 * @param player   player selection to modify
 	 * @param location location to set primary and secondary coordinates
 	 */
 	public void setSelection(HasPlayer player, Location location) {
@@ -289,6 +292,7 @@ public class WorldEditUtils {
 
 	/**
 	 * Sets player's selection to one block
+	 *
 	 * @param player player selection to modify
 	 * @param vector location to set primary and secondary coordinates
 	 */
@@ -298,9 +302,10 @@ public class WorldEditUtils {
 
 	/**
 	 * Sets player's selection
+	 *
 	 * @param player player selection to modify
-	 * @param min primary point
-	 * @param max secondary point
+	 * @param min    primary point
+	 * @param max    secondary point
 	 */
 	public void setSelection(HasPlayer player, Location min, Location max) {
 		setSelection(player, toBlockVector3(min), toBlockVector3(max));
@@ -308,9 +313,10 @@ public class WorldEditUtils {
 
 	/**
 	 * Sets player's selection
+	 *
 	 * @param player player selection to modify
-	 * @param min primary point
-	 * @param max secondary point
+	 * @param min    primary point
+	 * @param max    secondary point
 	 */
 	public void setSelection(HasPlayer player, BlockVector3 min, BlockVector3 max) {
 		setSelection(player, new CuboidRegion(min, max));
@@ -318,6 +324,7 @@ public class WorldEditUtils {
 
 	/**
 	 * Sets player's selection
+	 *
 	 * @param player player selection to modify
 	 * @param region region to set
 	 */
@@ -406,7 +413,9 @@ public class WorldEditUtils {
 	public CompletableFuture<Clipboard> copy(Region region, Paster paster) {
 		return CompletableFuture.supplyAsync(() -> {
 			synchronized (Nexus.getInstance()) {
-				Consumer<String> debug = message -> { if (paster != null) paster.debug(message); };
+				Consumer<String> debug = message -> {
+					if (paster != null) paster.debug(message);
+				};
 				debug.accept("Copying");
 
 				Clipboard clipboard = new BlockArrayClipboard(region);
@@ -451,6 +460,7 @@ public class WorldEditUtils {
 		private boolean biomes = false;
 		private Transform transform;
 		private Region[] regionMask = new Region[]{RegionWrapper.GLOBAL()};
+		private Map<Chunk, Boolean> forceLoadedStates = new HashMap<>();
 
 		private final UUID uuid = UUID.randomUUID();
 		private final AtomicInteger i = new AtomicInteger(1000);
@@ -464,6 +474,7 @@ public class WorldEditUtils {
 
 		private long ticks;
 		private CompletableFuture<Map<Location, BlockData>> computedBlocks;
+		private CompletableFuture<List<Location>> locations;
 
 		public Paster file(String fileName) {
 			return clipboard(getSchematic(fileName));
@@ -535,10 +546,10 @@ public class WorldEditUtils {
 		/**
 		 * Duration during which to build the clipboard
 		 *
-		 * @see Paster#buildQueue
-		 * @see Paster#buildQueueClientSide
 		 * @param time duration
 		 * @return this
+		 * @see Paster#buildQueue
+		 * @see Paster#buildQueueClientSide
 		 */
 		public Paster duration(TickTime time) {
 			return duration(time.get());
@@ -556,6 +567,7 @@ public class WorldEditUtils {
 
 		/**
 		 * Get the clipboard's completable future
+		 *
 		 * @return future
 		 */
 		private CompletableFuture<Clipboard> getClipboard() {
@@ -566,30 +578,44 @@ public class WorldEditUtils {
 
 		/**
 		 * Pastes the clipboard using FAWE
+		 *
 		 * @return future
 		 */
 		public CompletableFuture<Void> pasteAsync() {
-			CompletableFuture<Void> future = new CompletableFuture<>();
-			getClipboard().thenAcceptAsync(clipboard -> {
-				debug("Pasting");
-				try (EditSession editSession = getEditSessionBuilder().allowedRegions(regionMask).build()) {
-					debug("Extent: " + editSession.getExtent().getClass().getSimpleName());
-					if (transform == null)
-						clipboard.paste(editSession, at, air, entities, biomes);
-					else
-						clipboard.paste(editSession, at, air, transform);
-					debug("Done pasting");
-					future.complete(null);
-				} catch (WorldEditException ex) {
-					ex.printStackTrace();
-				}
-			}, Tasks::async);
+			return forceLoadChunks(true)
+				.thenCompose($ -> getClipboard().thenAcceptAsync(clipboard -> {
+					debug("Pasting");
+					try (EditSession editSession = getEditSessionBuilder().allowedRegions(regionMask).build()) {
+						debug("Extent: " + editSession.getExtent().getClass().getSimpleName());
+						if (transform == null)
+							clipboard.paste(editSession, at, air, entities, biomes);
+						else
+							clipboard.paste(editSession, at, air, transform);
+						debug("Done pasting");
+					} catch (WorldEditException ex) {
+						ex.printStackTrace();
+					}
+				}, Tasks::async))
+				.thenCompose($ -> forceLoadChunks(false));
+		}
 
-			return future;
+		private CompletableFuture<Void> forceLoadChunks(boolean state) {
+			return getLocations().thenApply(locations -> locations.stream()
+					.map(location -> world.getChunkAtAsync(location).thenApply(chunk -> {
+						var finalState = state;
+						if (state)
+							forceLoadedStates.put(chunk, chunk.isForceLoaded());
+						else
+							finalState = forceLoadedStates.get(chunk);
+						chunk.setForceLoaded(finalState);
+						return CompletableFuture.completedFuture(null);
+					})).toList())
+				.thenAccept(CompletableFutures::joinAll);
 		}
 
 		/**
 		 * Builds the clipboard using the bukkit API
+		 *
 		 * @return future
 		 */
 		public CompletableFuture<Void> build() {
@@ -611,6 +637,7 @@ public class WorldEditUtils {
 
 		/**
 		 * Builds the clipboard for a certain player
+		 *
 		 * @param player player
 		 */
 		public void buildClientSide(HasPlayer player) {
@@ -620,6 +647,7 @@ public class WorldEditUtils {
 
 		/**
 		 * Builds the clipboard over the specified duration
+		 *
 		 * @return future
 		 */
 		public CompletableFuture<Void> buildQueue() {
@@ -629,6 +657,7 @@ public class WorldEditUtils {
 
 		/**
 		 * Builds the clipboard for a certain player over the specified duration
+		 *
 		 * @param player player
 		 * @return future
 		 */
@@ -685,6 +714,31 @@ public class WorldEditUtils {
 			fallingBlock.setGravity(false);
 			fallingBlock.setInvulnerable(true);
 			return fallingBlock;
+		}
+
+		public CompletableFuture<List<Location>> getLocations() {
+			if (locations == null) {
+				locations = new CompletableFuture<>();
+				getClipboard().thenAcceptAsync(clipboard -> {
+					debug("Clipboard completed");
+					Iterator<BlockVector3> iterator = clipboard.iterator();
+
+					BlockVector3 origin = clipboard.getOrigin();
+					int relX = at.getBlockX() - origin.getBlockX();
+					int relY = at.getBlockY() - origin.getBlockY();
+					int relZ = at.getBlockZ() - origin.getBlockZ();
+
+					List<Location> data = new ArrayList<>();
+
+					while (iterator.hasNext())
+						data.add(toLocation(iterator.next()).add(relX, relY, relZ));
+
+					debug("Finished computing " + data.size() + " blocks");
+					locations.complete(data);
+				}, Tasks::async);
+			}
+
+			return locations;
 		}
 
 		public CompletableFuture<Map<Location, BlockData>> computeBlocks() {
