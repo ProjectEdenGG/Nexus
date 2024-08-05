@@ -13,7 +13,7 @@ public class CustomContentUtils {
 		if (Nexus.getEnv() == Env.TEST)
 			return true;
 
-		if (Rank.of(player).isAdmin() && player.getGameMode().equals(GameMode.CREATIVE))
+		if (Rank.of(player).isStaff() && player.getGameMode().equals(GameMode.CREATIVE))
 			return true;
 
 		WorldGroup worldGroup = WorldGroup.of(player);

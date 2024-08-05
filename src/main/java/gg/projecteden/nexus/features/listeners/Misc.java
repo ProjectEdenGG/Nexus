@@ -19,6 +19,7 @@ import gg.projecteden.nexus.models.tip.TipService;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.LocationUtils.CardinalDirection;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -38,6 +39,9 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
+import org.bukkit.block.DecoratedPot;
+import org.bukkit.block.DecoratedPot.Side;
+import org.bukkit.block.data.Directional;
 import org.bukkit.boss.BarColor;
 import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
 import org.bukkit.entity.AbstractHorse;
@@ -456,6 +460,60 @@ public class Misc implements Listener {
 			return;
 
 		SpawnType.HUB.teleport(player);
+	}
+
+	@EventHandler
+	public void on(PlayerInteractEvent event) {
+		var block = event.getClickedBlock();
+		var sherd = event.getItem();
+		var player = event.getPlayer();
+
+		if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
+			return;
+
+		if (isNullOrAir(block))
+			return;
+
+		if (!(block.getBlockData() instanceof Directional directional))
+			return;
+
+		if (!(block.getState() instanceof DecoratedPot pot))
+			return;
+
+		if (!MaterialTag.POTTERY_SHERDS.isTagged(sherd))
+			return;
+
+		if (!player.isSneaking())
+			return;
+
+		if (!Rank.of(player).isStaff())
+			return;
+
+		if (player.getGameMode() != GameMode.CREATIVE)
+			return;
+
+		var blockFace = event.getBlockFace();
+		var facing = directional.getFacing().getOppositeFace();
+
+		Side side = null;
+		if (facing == blockFace)
+			side = Side.FRONT;
+
+		if (CardinalDirection.of(facing).turnLeft().toBlockFace() == blockFace)
+			side = Side.RIGHT;
+
+		if (CardinalDirection.of(facing).turnRight().toBlockFace() == blockFace)
+			side = Side.LEFT;
+
+		if (facing.getOppositeFace() == blockFace)
+			side = Side.BACK;
+
+		if (side == null)
+			return;
+
+		event.setCancelled(true);
+		pot.setSherd(side, sherd.getType());
+		pot.update();
 	}
 
 
