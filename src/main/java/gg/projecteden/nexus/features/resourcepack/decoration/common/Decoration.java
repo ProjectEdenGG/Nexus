@@ -271,21 +271,23 @@ public class Decoration {
 			return false;
 		}
 
-		if (config instanceof Seat && type == InteractType.RIGHT_CLICK && !player.isSneaking()) {
-			DecorationLang.debug(player, "attempting to sit...");
-			DecorationSitEvent sitEvent = new DecorationSitEvent(player, block, decoration, bukkitRotation);
-			if (trySit(sitEvent, player, block))
-				return true;
-			else
-				DecorationLang.debug(player, "&6DecorationSitEvent was cancelled 1");
-		}
+		if (type == InteractType.RIGHT_CLICK) {
+			if (config instanceof Seat && !player.isSneaking()) {
+				DecorationLang.debug(player, "attempting to sit...");
+				DecorationSitEvent sitEvent = new DecorationSitEvent(player, block, decoration, bukkitRotation);
+				if (trySit(sitEvent, player, block))
+					return true;
+				else
+					DecorationLang.debug(player, "&6DecorationSitEvent was cancelled 1");
+			}
 
-		if (config.isRotatable() && canEdit(player)) {
-			DecorationRotateEvent rotateEvent = new DecorationRotateEvent(player, block, decoration, InteractType.RIGHT_CLICK);
-			if (!rotateEvent.callEvent())
-				return false;
+			if (config.isRotatable() && canEdit(player)) {
+				DecorationRotateEvent rotateEvent = new DecorationRotateEvent(player, block, decoration, InteractType.RIGHT_CLICK);
+				if (!rotateEvent.callEvent())
+					return false;
 
-			itemFrame.setRotation(itemFrame.getRotation().rotateClockwise());
+				itemFrame.setRotation(itemFrame.getRotation().rotateClockwise());
+			}
 		}
 
 		return true;
