@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.store.perks.inventory.workbenches;
 
+import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.workbenches.CustomBench.CustomBenchType;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -21,8 +22,11 @@ public abstract class _WorkbenchCommand extends CustomCommand {
 	public _WorkbenchCommand(@NonNull CommandEvent event) {
 		super(event);
 		if (isPlayerCommandEvent())
-			if (worldGroup() == WorldGroup.EVENTS)
-				permissionError();
+			if (worldGroup() == WorldGroup.EVENTS) {
+				EdenEvent edenEvent = EdenEvent.of(player());
+				if (edenEvent != null && edenEvent.isEventActive())
+					permissionError();
+			}
 	}
 
 	@Path
