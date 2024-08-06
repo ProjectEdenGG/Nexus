@@ -24,7 +24,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
@@ -42,7 +41,7 @@ import java.util.stream.Collectors;
 		- TELL PLAYERS THAT GEYSER HELP WITH ELYTRA
  */
 @NoArgsConstructor
-public class Geyser implements Listener {
+public class Pugmas24Geyser {
 
 	@Getter
 	private static boolean animating = false;
@@ -95,7 +94,7 @@ public class Geyser implements Listener {
 		status = GeyserStatus.START_INTRO;
 		players();
 
-		Tasks.async(Geyser::incrementGeyser);
+		Tasks.async(Pugmas24Geyser::incrementGeyser);
 	}
 
 	private static void players() {
@@ -202,7 +201,7 @@ public class Geyser implements Listener {
 
 		Tasks.wait(wait, () -> {
 			status = GeyserStatus.START_RUNNING;
-			Tasks.async(Geyser::incrementGeyser);
+			Tasks.async(Pugmas24Geyser::incrementGeyser);
 		});
 	}
 
@@ -225,7 +224,7 @@ public class Geyser implements Listener {
 
 		Tasks.wait(wait, () -> {
 			status = GeyserStatus.START_OUTRO;
-			Tasks.async(Geyser::incrementGeyser);
+			Tasks.async(Pugmas24Geyser::incrementGeyser);
 		});
 	}
 
@@ -248,7 +247,7 @@ public class Geyser implements Listener {
 		Tasks.wait(wait - TickTime.SECOND.x(2), () -> erupting = false);
 		Tasks.wait(wait, () -> {
 			status = GeyserStatus.ENDING;
-			Tasks.async(Geyser::incrementGeyser);
+			Tasks.async(Pugmas24Geyser::incrementGeyser);
 		});
 	}
 
@@ -279,7 +278,7 @@ public class Geyser implements Listener {
 			}
 		}
 
-		Tasks.async(Geyser::incrementGeyser);
+		Tasks.async(Pugmas24Geyser::incrementGeyser);
 	}
 
 	//
@@ -377,7 +376,7 @@ public class Geyser implements Listener {
 	}
 
 	private static Location relativeLoc(BlockFace blockFace) {
-		return Geyser.geyserOrigin.getBlock().getRelative(blockFace).getLocation();
+		return Pugmas24Geyser.geyserOrigin.getBlock().getRelative(blockFace).getLocation();
 	}
 
 	private static Set<Location> getCreekSmokeLocations() {

@@ -3,13 +3,14 @@ package gg.projecteden.nexus.features.events.y2024.pugmas24;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.features.events.EdenEvent;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.BalloonEditor;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.BalloonManager;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Fairgrounds;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Rides;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Fishing;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Train24;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Pugmas24Advent;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonEditor;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonManager;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24Fairgrounds;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24Rides;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.items.Pugmas24ItemsManager;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Fishing;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Train;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24Entity;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24NPC;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24Quest;
@@ -76,19 +77,20 @@ public class Pugmas24 extends EdenEvent {
 	@Override
 	public void onStart() {
 		super.onStart();
-		new Advent24();
-		new Fairgrounds();
-		new BalloonManager();
-		new Fishing();
-		Rides.startup();
-		Train24.startup();
+		new Pugmas24Advent();
+		new Pugmas24Fairgrounds();
+		new Pugmas24BalloonManager();
+		new Pugmas24Fishing();
+		new Pugmas24ItemsManager();
+		Pugmas24Rides.startup();
+		Pugmas24Train.startup();
 	}
 
 	@Override
 	public void onStop() {
-		Train24.shutdown();
-		Advent24.shutdown();
-		BalloonEditor.shutdown();
+		Pugmas24Train.shutdown();
+		Pugmas24Advent.shutdown();
+		Pugmas24BalloonEditor.shutdown();
 	}
 
 	@Override

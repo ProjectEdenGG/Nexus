@@ -9,8 +9,8 @@ import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.crates.CrateHandler;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.TrainBackground;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.BalloonEditor;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Geyser;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonEditor;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Geyser;
 import gg.projecteden.nexus.features.events.y2024.vulan24.lantern.VuLan24LanternAnimation;
 import gg.projecteden.nexus.features.listeners.common.TemporaryListener;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
@@ -277,7 +277,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 				throw new InvalidInputException("Decoration store is animating");
 
 			if (Nexus.getEnv() == Env.PROD) {
-				if (Geyser.isAnimating())
+				if (Pugmas24Geyser.isAnimating())
 					throw new InvalidInputException("Pugmas24 geyser is animating");
 
 				if (gg.projecteden.nexus.features.events.models.Train.anyActiveInstances())
@@ -289,7 +289,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		}),
 		PUGMAS24_BALLOON_EDITOR(() -> {
 			if (Nexus.getEnv() == Env.PROD) {
-				if (BalloonEditor.reload())
+				if (Pugmas24BalloonEditor.reload())
 					throw new InvalidInputException("A balloon is being editing at pugmas, saving session...");
 			}
 		}),

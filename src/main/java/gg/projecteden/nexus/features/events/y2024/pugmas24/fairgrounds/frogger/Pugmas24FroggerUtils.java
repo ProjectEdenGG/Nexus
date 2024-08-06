@@ -8,7 +8,7 @@ import org.bukkit.block.BlockFace;
 
 import java.util.List;
 
-public class FroggerUtils {
+public class Pugmas24FroggerUtils {
 
 	static void buildCar(Location loc, BlockFace blockFace, Material material, int currentLength) {
 		blockFace = blockFace.getOppositeFace();

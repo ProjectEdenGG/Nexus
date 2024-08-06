@@ -16,17 +16,17 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class ReflectionListeners implements Listener {
+public class Pugmas24ReflectionListeners implements Listener {
 
-	public ReflectionListeners() {
+	public Pugmas24ReflectionListeners() {
 		Nexus.registerListener(this);
 	}
 
 	@EventHandler
 	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		String regionId = event.getRegion().getId();
-		if (regionId.equalsIgnoreCase(Reflection.getGameRg()))
-			Pugmas24.send(Reflection.getPrefix() + Reflection.getMessage(), event.getPlayer());
+		if (regionId.equalsIgnoreCase(Pugmas24Reflection.getGameRg()))
+			Pugmas24.send(Pugmas24Reflection.getPrefix() + Pugmas24Reflection.getMessage(), event.getPlayer());
 	}
 
 	@EventHandler
@@ -47,11 +47,11 @@ public class ReflectionListeners implements Listener {
 		Material type = block.getType();
 
 		if (type.equals(Material.IRON_BLOCK))
-			ReflectionUtils.rotateBanner(block.getRelative(0, 2, 0));
-		else if (type.equals(Material.NETHERITE_BLOCK) && !Reflection.isActive()) {
+			Pugmas24ReflectionUtils.rotateBanner(block.getRelative(0, 2, 0));
+		else if (type.equals(Material.NETHERITE_BLOCK) && !Pugmas24Reflection.isActive()) {
 			Location skullLoc = LocationUtils.getCenteredLocation(block.getRelative(0, 3, 0).getLocation());
 			skullLoc.setY(skullLoc.getY() + 0.25);
-			Reflection.setLaserStart(skullLoc);
+			Pugmas24Reflection.setLaserStart(skullLoc);
 
 			BlockData blockDataDir = skullLoc.getBlock().getBlockData();
 			if (!(blockDataDir instanceof Rotatable skullDir))
@@ -59,8 +59,8 @@ public class ReflectionListeners implements Listener {
 
 			BlockFace skullFace = skullDir.getRotation().getOppositeFace();
 
-			Reflection.startLaser(event.getPlayer(), skullFace);
-			Reflection.setButtonPresser(event.getPlayer());
+			Pugmas24Reflection.startLaser(event.getPlayer(), skullFace);
+			Pugmas24Reflection.setButtonPresser(event.getPlayer());
 		}
 	}
 }

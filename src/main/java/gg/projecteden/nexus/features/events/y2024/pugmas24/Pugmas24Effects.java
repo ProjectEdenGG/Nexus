@@ -6,8 +6,8 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.effects.Effects;
 import gg.projecteden.nexus.features.effects.Effects.RotatingStand.StandRotationAxis;
 import gg.projecteden.nexus.features.effects.Effects.RotatingStand.StandRotationType;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Fairgrounds;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Geyser;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24Fairgrounds;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Geyser;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -37,7 +37,7 @@ public class Pugmas24Effects extends Effects {
 
 	@Override
 	public void particles() {
-		Tasks.repeat(0, 10, Geyser::animateSmoke);
+		Tasks.repeat(0, 10, Pugmas24Geyser::animateSmoke);
 	}
 
 	@Override
@@ -86,7 +86,7 @@ public class Pugmas24Effects extends Effects {
 	private void geyser() {
 		AtomicInteger tries = new AtomicInteger(0);
 		Tasks.repeat(0, TickTime.MINUTE.x(2), () -> {
-			if (!shouldAnimate(Geyser.geyserOrigin))
+			if (!shouldAnimate(Pugmas24Geyser.geyserOrigin))
 				return;
 
 			if (RandomUtils.chanceOf(75) && tries.get() < 5) {
@@ -95,16 +95,16 @@ public class Pugmas24Effects extends Effects {
 			}
 
 			tries.set(0);
-			Geyser.animate();
+			Pugmas24Geyser.animate();
 		});
 	}
 
 	private void minigolfWindmill() {
 		Tasks.repeat(TickTime.SECOND.x(2), TickTime.TICK.x(38), () -> {
-			if (!shouldAnimate(Fairgrounds.minigolfAnimationLoc))
+			if (!shouldAnimate(Pugmas24Fairgrounds.minigolfAnimationLoc))
 				return;
 
-			Fairgrounds.minigolfAnimationLoc.getBlock().setType(Material.REDSTONE_BLOCK);
+			Pugmas24Fairgrounds.minigolfAnimationLoc.getBlock().setType(Material.REDSTONE_BLOCK);
 		});
 
 	}

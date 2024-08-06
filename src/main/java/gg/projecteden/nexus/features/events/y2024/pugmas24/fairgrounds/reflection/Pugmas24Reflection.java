@@ -37,7 +37,7 @@ import static org.bukkit.block.BlockFace.SOUTH_EAST;
 import static org.bukkit.block.BlockFace.SOUTH_WEST;
 import static org.bukkit.block.BlockFace.WEST;
 
-public class Reflection {
+public class Pugmas24Reflection {
 	@Getter
 	private static final String prefix = "&8&l[&eReflection&8&l] &f";
 
@@ -67,7 +67,7 @@ public class Reflection {
 	// Game
 	@Getter
 	@Setter
-	private static ReflectionLamp lamp = RandomUtils.randomElement(Arrays.asList(ReflectionLamp.values()));
+	private static Pugmas24ReflectionLamp lamp = RandomUtils.randomElement(Arrays.asList(Pugmas24ReflectionLamp.values()));
 	@Getter
 	@Setter
 	private static int reflections;
@@ -76,17 +76,17 @@ public class Reflection {
 	private static String message;
 
 
-	public Reflection() {
+	public Pugmas24Reflection() {
 		Pugmas24.get().worldguard().getRegion(gameRg);
 		Pugmas24.get().worldguard().getRegion(bannerRg);
 		if (center.getBlock().getType() != Material.NETHERITE_BLOCK)
 			throw new InvalidInputException("[Reflection] Center location not set to correct location");
 		//
 
-		new ReflectionListeners();
+		new Pugmas24ReflectionListeners();
 
 		// New Objective
-		ReflectionUtils.newObjective();
+		Pugmas24ReflectionUtils.newObjective();
 	}
 
 	// TODO: 2024
@@ -104,7 +104,7 @@ public class Reflection {
 
 	protected static void startLaser(Player player, BlockFace startFace) {
 		active = true;
-		ReflectionUtils.clearLamps();
+		Pugmas24ReflectionUtils.clearLamps();
 		AtomicInteger cooldown = new AtomicInteger(5);
 		AtomicInteger lifespan = new AtomicInteger(750);
 		final BlockFace[] blockFace = {startFace};
@@ -127,7 +127,7 @@ public class Reflection {
 				if (middle == 0.5 && !blockType.equals(Material.AIR) && cooldown.get() == 0) {
 					boolean broadcast = true;
 					if (blockType.equals(Material.REDSTONE_LAMP)) {
-						if (ReflectionUtils.checkObjective(reflections.get(), block.getRelative(0, 1, 0).getType())) {
+						if (Pugmas24ReflectionUtils.checkObjective(reflections.get(), block.getRelative(0, 1, 0).getType())) {
 							BlockData blockData = block.getBlockData();
 							Lightable lightable = (Lightable) blockData;
 							lightable.setLit(true);
@@ -138,12 +138,12 @@ public class Reflection {
 							Lightable lightable1 = (Lightable) blockData1;
 							lightable1.setLit(true);
 							block1.setBlockData(lightable1);
-							ReflectionUtils.win(reflections.get());
+							Pugmas24ReflectionUtils.win(reflections.get());
 							broadcast = false;
 						}
 					}
 					if (broadcast)
-						ReflectionUtils.broadcastObjective();
+						Pugmas24ReflectionUtils.broadcastObjective();
 					endLaser();
 					return;
 				}
@@ -154,7 +154,7 @@ public class Reflection {
 					loc[0] = LocationUtils.getCenteredLocation(loc[0]);
 					loc[0].setY(loc[0].getY() + 0.25);
 					Rotatable rotatable = (Rotatable) below.getBlockData();
-					BlockFace newFace = ReflectionUtils.getReflection(blockFace[0], rotatable.getRotation());
+					BlockFace newFace = Pugmas24ReflectionUtils.getReflection(blockFace[0], rotatable.getRotation());
 					if (newFace == null) {
 						endLaser();
 						return;

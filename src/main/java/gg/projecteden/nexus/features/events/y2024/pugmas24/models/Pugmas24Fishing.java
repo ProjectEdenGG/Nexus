@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Fishing implements Listener {
+public class Pugmas24Fishing implements Listener {
 
 	private static final ItemBuilder ROD_WOOD = new ItemBuilder(CustomMaterial.FISHING_ROD_WOOD)
 			.name("Wood Fishing Rod");
@@ -48,7 +48,7 @@ public class Fishing implements Listener {
 			.name("Golden Fishing Rod")
 			.unbreakable();
 
-	public Fishing() {
+	public Pugmas24Fishing() {
 		Nexus.registerListener(this);
 
 		lavaFishing();

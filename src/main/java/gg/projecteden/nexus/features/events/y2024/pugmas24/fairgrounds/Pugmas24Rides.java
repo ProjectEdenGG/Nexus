@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import static gg.projecteden.nexus.utils.Distance.distance;
 
 @NoArgsConstructor
-public class Rides {
+public class Pugmas24Rides {
 
 	private static final Map<Ride, Boolean> rideMap = new HashMap<>();
 

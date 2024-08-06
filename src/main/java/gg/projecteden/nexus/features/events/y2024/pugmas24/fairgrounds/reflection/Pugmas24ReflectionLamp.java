@@ -8,7 +8,7 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
 @AllArgsConstructor
-public enum ReflectionLamp {
+public enum Pugmas24ReflectionLamp {
 	// @formatter:off
 	KELP(Material.DRIED_KELP_BLOCK, 		8, 8, 1, 9, ChatColor.of("#314a18")),
 	MAGMA(Material.MAGMA_BLOCK, 			8, 5, 5, 9, ChatColor.of("#b04609")),
@@ -41,11 +41,11 @@ public enum ReflectionLamp {
 	private final ChatColor chatColor;
 
 	public Location getLocation() {
-		return Reflection.getCenter().clone().add(xDiff, 3, zDiff);
+		return Pugmas24Reflection.getCenter().clone().add(xDiff, 3, zDiff);
 	}
 
-	public static @Nullable ReflectionLamp from(Material material) {
-		for (ReflectionLamp lamp : values()) {
+	public static @Nullable Pugmas24ReflectionLamp from(Material material) {
+		for (Pugmas24ReflectionLamp lamp : values()) {
 			if (lamp.getType().equals(material))
 				return lamp;
 		}

@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class BalloonManager {
+public class Pugmas24BalloonManager {
 	protected static final String REGION_BASE = Pugmas24.get().getRegionName() + "_balloon_";
 	protected static final String REGION_PLACEMENT_REGEX = REGION_BASE + "placement_[0-9]+";
 	protected static final String DIRECTORY = "pugmas24/balloons/";
@@ -35,8 +35,8 @@ public class BalloonManager {
 	@Getter
 	private static final Map<String, String> userPlacementRegions = new HashMap<>();
 
-	public BalloonManager() {
-		new BalloonEditor();
+	public Pugmas24BalloonManager() {
+		new Pugmas24BalloonEditor();
 
 		// TODO: SOME SORT OF ANIMATION/PARTICLES?
 		Tasks.repeat(TickTime.SECOND.x(2), TickTime.MINUTE, () -> {

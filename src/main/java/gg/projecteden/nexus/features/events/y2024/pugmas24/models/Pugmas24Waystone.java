@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import org.bukkit.Location;
 
 @AllArgsConstructor
-public enum Waystone {
+public enum Pugmas24Waystone {
 	HOT_SPRINGS(loc(-474, 127, -3060), loc(-474, 127, -3059, 45).toCenterLocation()),
 	TRAIN_STATION(null, null),
 	FAIRGROUNDS(null, null),

@@ -28,10 +28,10 @@ import static org.bukkit.block.BlockFace.SOUTH;
 import static org.bukkit.block.BlockFace.SOUTH_WEST;
 import static org.bukkit.block.BlockFace.WEST;
 
-public class ReflectionUtils {
+public class Pugmas24ReflectionUtils {
 
 	public static void clearLamps() {
-		for (ReflectionLamp lamp : ReflectionLamp.values()) {
+		for (Pugmas24ReflectionLamp lamp : Pugmas24ReflectionLamp.values()) {
 			Block block = lamp.getLocation().getBlock();
 			Block block1 = block.getRelative(0, -6, 0);
 
@@ -51,54 +51,54 @@ public class ReflectionUtils {
 
 	public static void newObjective() {
 		clearLamps();
-		ReflectionLamp newLamp = RandomUtils.randomElement(Arrays.asList(ReflectionLamp.values()));
+		Pugmas24ReflectionLamp newLamp = RandomUtils.randomElement(Arrays.asList(Pugmas24ReflectionLamp.values()));
 		for (int i = 0; i < 10; i++) {
-			if (Reflection.getLamp().equals(newLamp))
-				newLamp = RandomUtils.randomElement(Arrays.asList(ReflectionLamp.values()));
+			if (Pugmas24Reflection.getLamp().equals(newLamp))
+				newLamp = RandomUtils.randomElement(Arrays.asList(Pugmas24ReflectionLamp.values()));
 			else
 				break;
 		}
-		Reflection.setLamp(newLamp);
+		Pugmas24Reflection.setLamp(newLamp);
 
-		String type = Reflection.getLamp().getChatColor() + StringUtils.camelCase(Reflection.getLamp().getType());
-		Reflection.setReflections(0);
+		String type = Pugmas24Reflection.getLamp().getChatColor() + StringUtils.camelCase(Pugmas24Reflection.getLamp().getType());
+		Pugmas24Reflection.setReflections(0);
 		if (RandomUtils.chanceOf(50))
-			Reflection.setReflections(Reflection.getLamp().getMin());
+			Pugmas24Reflection.setReflections(Pugmas24Reflection.getLamp().getMin());
 		else if (RandomUtils.chanceOf(50))
-			Reflection.setReflections(Reflection.getLamp().getMax());
+			Pugmas24Reflection.setReflections(Pugmas24Reflection.getLamp().getMax());
 
 		String count = "";
-		if (Reflection.getReflections() > 0)
-			count = " in " + Reflection.getReflections() + "+ reflections";
+		if (Pugmas24Reflection.getReflections() > 0)
+			count = " in " + Pugmas24Reflection.getReflections() + "+ reflections";
 
-		Reflection.setMessage("Hit " + type + "&f" + count);
+		Pugmas24Reflection.setMessage("Hit " + type + "&f" + count);
 	}
 
 
 	public static boolean checkObjective(int reflectCount, Material material) {
 		boolean reflectBool = true;
-		if (Reflection.getReflections() != 0)
-			reflectBool = reflectCount >= Reflection.getReflections();
+		if (Pugmas24Reflection.getReflections() != 0)
+			reflectBool = reflectCount >= Pugmas24Reflection.getReflections();
 
-		ReflectionLamp hitLamp = ReflectionLamp.from(material);
+		Pugmas24ReflectionLamp hitLamp = Pugmas24ReflectionLamp.from(material);
 
-		return reflectBool && Reflection.getLamp().equals(hitLamp);
+		return reflectBool && Pugmas24Reflection.getLamp().equals(hitLamp);
 	}
 
 	public static void broadcastObjective() {
-		Collection<Player> players = Pugmas24.get().getPlayersIn(Reflection.getGameRg());
+		Collection<Player> players = Pugmas24.get().getPlayersIn(Pugmas24Reflection.getGameRg());
 		for (Player player : players) {
-			Pugmas24.send(Reflection.getPrefix() + Reflection.getMessage(), player);
+			Pugmas24.send(Pugmas24Reflection.getPrefix() + Pugmas24Reflection.getMessage(), player);
 		}
 	}
 
 	public static void win(int count) {
-		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).location(Reflection.getCenter()).volume(2.0).play();
+		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).location(Pugmas24Reflection.getCenter()).volume(2.0).play();
 
-		String type = Reflection.getLamp().getChatColor() + StringUtils.camelCase(Reflection.getLamp().getType());
-		Collection<Player> players = Pugmas24.get().getPlayersIn(Reflection.getGameRg());
+		String type = Pugmas24Reflection.getLamp().getChatColor() + StringUtils.camelCase(Pugmas24Reflection.getLamp().getType());
+		Collection<Player> players = Pugmas24.get().getPlayersIn(Pugmas24Reflection.getGameRg());
 		for (Player player : players)
-			Pugmas24.send(Reflection.getPrefix() + type + " &fwas hit in " + count + " reflections!", player);
+			Pugmas24.send(Pugmas24Reflection.getPrefix() + type + " &fwas hit in " + count + " reflections!", player);
 
 		//BearFair21.giveDailyTokens(Reflection.getButtonPresser(), BF21PointSource.REFLECTION, 5);
 
@@ -110,7 +110,7 @@ public class ReflectionUtils {
 	}
 
 	private static void randomizeBanners() {
-		ProtectedRegion region = Pugmas24.get().worldguard().getProtectedRegion(Reflection.getBannerRg());
+		ProtectedRegion region = Pugmas24.get().worldguard().getProtectedRegion(Pugmas24Reflection.getBannerRg());
 		List<Block> blocks = Pugmas24.get().worldedit().getBlocks(region);
 		for (Block block : blocks) {
 			if (!block.getType().equals(Material.IRON_BLOCK))
@@ -125,7 +125,7 @@ public class ReflectionUtils {
 			Rotatable rotatable = (Rotatable) blockData;
 			Rotatable rotatable1 = (Rotatable) blockData1;
 
-			BlockFace newFace = RandomUtils.randomElement(Reflection.getAngles());
+			BlockFace newFace = RandomUtils.randomElement(Pugmas24Reflection.getAngles());
 
 			rotatable.setRotation(newFace);
 			rotatable1.setRotation(newFace);
@@ -154,10 +154,10 @@ public class ReflectionUtils {
 	}
 
 	private static BlockFace rotateBlockFace(BlockFace blockFace) {
-		int ndx = Reflection.getAngles().indexOf(blockFace) + 1;
-		if (ndx == Reflection.getAngles().size())
+		int ndx = Pugmas24Reflection.getAngles().indexOf(blockFace) + 1;
+		if (ndx == Pugmas24Reflection.getAngles().size())
 			ndx = 0;
-		return Reflection.getAngles().get(ndx);
+		return Pugmas24Reflection.getAngles().get(ndx);
 	}
 
 	static BlockFace getReflection(BlockFace from, BlockFace bannerFace) {

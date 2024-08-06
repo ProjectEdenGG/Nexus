@@ -21,17 +21,17 @@ import java.util.List;
 
 @Rows(4)
 @Title("Select a color")
-public class BlockReplaceBrushMenu extends InventoryProvider {
+public class Pugmas24BlockReplaceBrushMenu extends InventoryProvider {
 
 	public static final CustomMaterial BRUSH_MATERIAL = CustomMaterial.EVENT_PAINTBRUSH;
 	private static final ItemBuilder BRUSH = new ItemBuilder(BRUSH_MATERIAL)
 			.name("&eBlock Replacer Brush")
-			.lore("&3Block: " + getColorLabel(BalloonEditor.defaultBrushColor))
+		.lore("&3Block: " + getColorLabel(Pugmas24BalloonEditor.defaultBrushColor))
 			.lore("")
 			.lore("&3How to use:")
 			.lore("&eLClick &3a block to change the brush color")
 			.lore("&eRClick &3wool to replace it")
-			.dyeColor(BalloonEditor.defaultBrushColor)
+		.dyeColor(Pugmas24BalloonEditor.defaultBrushColor)
 			.undroppable().unframeable().unplaceable().unstorable().untrashable().untradeable()
 			.itemFlags(ItemBuilder.ItemFlags.HIDE_ALL)
 			.updateDecorationLore(false)
@@ -44,7 +44,7 @@ public class BlockReplaceBrushMenu extends InventoryProvider {
 	private SlotPos slotPos = SlotPos.of(1, 0);
 	private final ItemStack tool;
 
-	public BlockReplaceBrushMenu(ItemStack tool) {
+	public Pugmas24BlockReplaceBrushMenu(ItemStack tool) {
 		this.tool = tool;
 	}
 
@@ -54,10 +54,10 @@ public class BlockReplaceBrushMenu extends InventoryProvider {
 
 		for (Material woolType : colorOrder) {
 			contents.set(slotPos, ClickableItem.of(new ItemStack(woolType), e -> {
-				new SoundBuilder(Sound.UI_STONECUTTER_SELECT_RECIPE).receiver(BalloonEditor.getEditor()).play();
+				new SoundBuilder(Sound.UI_STONECUTTER_SELECT_RECIPE).receiver(Pugmas24BalloonEditor.getEditor()).play();
 
 				ColorType colorType = ColorType.of(woolType);
-				BalloonEditor.setBrushColor(colorType);
+				Pugmas24BalloonEditor.setBrushColor(colorType);
 				dyeBrush(colorType);
 
 				close();

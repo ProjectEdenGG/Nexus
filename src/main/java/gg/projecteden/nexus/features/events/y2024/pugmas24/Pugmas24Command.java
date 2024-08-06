@@ -3,16 +3,16 @@ package gg.projecteden.nexus.features.events.y2024.pugmas24;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.IEventCommand;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24Menu;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.BalloonEditor;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.BalloonEditorMenu;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.BalloonEditorUtils;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.BalloonManager;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.BlockReplaceBrushMenu;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.models.District;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Geyser;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Train24;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Pugmas24Advent;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Pugmas24AdventMenu;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonEditor;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonEditorMenu;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonEditorUtils;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonManager;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BlockReplaceBrushMenu;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24District;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Geyser;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Train;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -81,11 +81,11 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	@Path("district")
 	@Description("View which district you are currently in")
 	void district() {
-		District district = District.of(location());
+		Pugmas24District district = Pugmas24District.of(location());
 		if (district == null)
 			error("You must be in Pugmas to run this command");
 
-		send(PREFIX + "You are " + (district == District.UNKNOWN ? "not in a district" : "in the &e" + district.getFullName()));
+		send(PREFIX + "You are " + (district == Pugmas24District.UNKNOWN ? "not in a district" : "in the &e" + district.getFullName()));
 	}
 
 	@Path("advent")
@@ -99,7 +99,7 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 		if (date.isBefore(Pugmas24.get().getStart()) || day > 0)
 			date = Pugmas24.get().getStart().plusDays(day - 1);
 
-		new Advent24Menu(user, date, frameTicks).open(player());
+		new Pugmas24AdventMenu(user, date, frameTicks).open(player());
 	}
 
 	@Path("advent tp <day>")
@@ -129,7 +129,7 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	@Path("advent config updateItems")
 	@Permission(Group.ADMIN)
 	void advent_updateItems() {
-		Advent24.updateItems();
+		Pugmas24Advent.updateItems();
 
 		send(PREFIX + "updated items");
 	}
@@ -162,53 +162,53 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	@Permission(Group.STAFF)
 	void startGeyser() {
 		send(PREFIX + "Starting geyser animation");
-		Geyser.animate();
+		Pugmas24Geyser.animate();
 	}
 
 	@Path("geyser stop")
 	@Permission(Group.STAFF)
 	void stopGeyser() {
 		send(PREFIX + "Stopping geyser animation");
-		Geyser.reset();
+		Pugmas24Geyser.reset();
 	}
 
 	@Path("train start")
 	@Permission(Group.ADMIN)
 	void train_start() {
-		Train24.start();
+		Pugmas24Train.start();
 	}
 
 	@Permission(Group.STAFF)
 	@Path("balloon menu")
 	void balloon_menu() {
-		if (BalloonEditor.isBeingUsed()) {
-			if (!BalloonEditorUtils.isEditing(player()))
-				error(BalloonEditorUtils.getEditorName() + " is currently using this");
+		if (Pugmas24BalloonEditor.isBeingUsed()) {
+			if (!Pugmas24BalloonEditorUtils.isEditing(player()))
+				error(Pugmas24BalloonEditorUtils.getEditorName() + " is currently using this");
 		} else {
 			if (Nexus.isMaintenanceQueued())
 				error("Server maintenance is queued, try again later");
 
-			if (!PlayerUtils.hasRoomFor(player(), BlockReplaceBrushMenu.getBrushItem().build()))
+			if (!PlayerUtils.hasRoomFor(player(), Pugmas24BlockReplaceBrushMenu.getBrushItem().build()))
 				error("Not enough room in your inventory to do this");
 
-			BalloonEditor.editBalloon(nerd());
+			Pugmas24BalloonEditor.editBalloon(nerd());
 		}
 
-		if (BalloonEditor.isSavingSchem())
+		if (Pugmas24BalloonEditor.isSavingSchem())
 			throw new InvalidInputException("Please wait while your balloon is saving");
 
-		new BalloonEditorMenu().open(player());
+		new Pugmas24BalloonEditorMenu().open(player());
 	}
 
 	@Path("balloon endSession")
 	@Description("End the session without saving")
 	@Permission(Group.ADMIN)
 	void balloon_end() {
-		if (!BalloonEditor.isBeingUsed())
+		if (!Pugmas24BalloonEditor.isBeingUsed())
 			error("The editor is not being used");
 
-		send(PREFIX + "Ended " + BalloonEditorUtils.getEditorName() + "'s session without saving");
-		BalloonEditor.reset();
+		send(PREFIX + "Ended " + Pugmas24BalloonEditorUtils.getEditorName() + "'s session without saving");
+		Pugmas24BalloonEditor.reset();
 	}
 
 	@Path("balloon listPlacements")
@@ -216,8 +216,8 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	@Permission(Group.ADMIN)
 	void balloon_listPlacements() {
 		send("Placed balloons:");
-		for (String regionId : BalloonManager.getUserPlacementRegions().keySet()) {
-			Nerd nerd = Nerd.of(BalloonManager.getUserPlacementRegions().get(regionId));
+		for (String regionId : Pugmas24BalloonManager.getUserPlacementRegions().keySet()) {
+			Nerd nerd = Nerd.of(Pugmas24BalloonManager.getUserPlacementRegions().get(regionId));
 			String uuid = nerd.getUniqueId().toString();
 			String nickname = nerd.getNickname();
 

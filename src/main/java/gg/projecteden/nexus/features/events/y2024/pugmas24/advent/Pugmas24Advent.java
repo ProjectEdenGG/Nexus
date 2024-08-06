@@ -26,7 +26,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 // TODO
 @NoArgsConstructor
-public class Advent24 {
+public class Pugmas24Advent {
 
 	private static final Pugmas24UserService userService = new Pugmas24UserService();
 

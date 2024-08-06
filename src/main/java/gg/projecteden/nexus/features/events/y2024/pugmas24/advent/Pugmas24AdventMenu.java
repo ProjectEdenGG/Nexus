@@ -22,7 +22,7 @@ import java.time.LocalDate;
 
 import static gg.projecteden.nexus.features.menus.MenuUtils.innerSlotIterator;
 
-public class Advent24Menu extends InventoryProvider {
+public class Pugmas24AdventMenu extends InventoryProvider {
 
 	@NonNull
 	private final Pugmas24User user;
@@ -32,7 +32,7 @@ public class Advent24Menu extends InventoryProvider {
 	private final int frameTicks;
 	private Title title = Title.FRAME_1;
 
-	public Advent24Menu(@NonNull Pugmas24User user, @NonNull LocalDate today, int frameTicks) {
+	public Pugmas24AdventMenu(@NonNull Pugmas24User user, @NonNull LocalDate today, int frameTicks) {
 		this.user = user;
 		this.today = today;
 		this.frameTicks = frameTicks;

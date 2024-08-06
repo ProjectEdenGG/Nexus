@@ -31,8 +31,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 
-// TODO SETUP: MAKE SURE TO DISABLE SITTING IN GAME REGION
-public class Frogger implements Listener {
+public class Pugmas24Frogger implements Listener {
 	private static final String gameRg = Pugmas24.get().getRegionName() + "_frogger";
 	private static final String winRg = gameRg + "_win";
 	private static final String damageRg = gameRg + "_damage";
@@ -59,7 +58,7 @@ public class Frogger implements Listener {
 	private static final List<Integer> carTasks = new ArrayList<>();
 	private static final Set<Material> carMaterials = MaterialTag.CONCRETES.exclude(Material.BLACK_CONCRETE, Material.LIGHT_GRAY_CONCRETE).getValues();
 
-	public Frogger() {
+	public Pugmas24Frogger() {
 		WorldGuardUtils worldguard = Pugmas24.get().worldguard();
 
 		worldguard.getRegion(gameRg);
@@ -96,7 +95,7 @@ public class Frogger implements Listener {
 		// Log Animations
 		AtomicInteger taskId = new AtomicInteger();
 		taskId.set(Tasks.wait(0, () -> {
-			FroggerUtils.clearLogs(logsRg, logMaterial, riverMaterial);
+			Pugmas24FroggerUtils.clearLogs(logsRg, logMaterial, riverMaterial);
 			int lastLogLen = 3;
 
 			if (logSpawnMap.isEmpty())
@@ -118,8 +117,8 @@ public class Frogger implements Listener {
 			}
 
 			// Car Animations
-			FroggerUtils.clearCars(roadRg1);
-			FroggerUtils.clearCars(roadRg2);
+			Pugmas24FroggerUtils.clearCars(roadRg1);
+			Pugmas24FroggerUtils.clearCars(roadRg2);
 
 			if (carSpawnMap.isEmpty())
 				loadCarSpawns();
@@ -226,7 +225,7 @@ public class Frogger implements Listener {
 			Block next = currentLoc.get().clone().getBlock().getRelative(blockFace);
 			if (next.getType().equals(Material.BLACK_STAINED_GLASS)) {
 				Block behind = currentLoc.get().clone().getBlock().getRelative(blockFace.getOppositeFace(), currentLen.get());
-				FroggerUtils.removeCarSlice(behind);
+				Pugmas24FroggerUtils.removeCarSlice(behind);
 				currentLen.decrementAndGet();
 
 				// if currentLen < 0, LOOP
@@ -239,7 +238,7 @@ public class Frogger implements Listener {
 			// If block at next location is not bedrock, set it to car
 			else {
 				currentLoc.set(startLoc.clone().getBlock().getRelative(blockFace, distance.get()).getLocation());
-				FroggerUtils.buildCar(currentLoc.get().clone(), blockFace, carMaterial.get(), currentLen.get());
+				Pugmas24FroggerUtils.buildCar(currentLoc.get().clone(), blockFace, carMaterial.get(), currentLen.get());
 				distance.incrementAndGet();
 				currentLen.incrementAndGet();
 
@@ -247,7 +246,7 @@ public class Frogger implements Listener {
 				if (currentLen.get() > maxLen) {
 					Block behind = currentLoc.get().clone().getBlock().getRelative(blockFace.getOppositeFace(), currentLen.get());
 					if (!behind.getType().equals(Material.BLACK_STAINED_GLASS))
-						FroggerUtils.removeCarSlice(behind);
+						Pugmas24FroggerUtils.removeCarSlice(behind);
 					currentLen.decrementAndGet();
 				}
 			}

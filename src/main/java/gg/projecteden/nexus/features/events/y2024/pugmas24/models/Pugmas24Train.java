@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 
 @NoArgsConstructor
-public class Train24 {
+public class Pugmas24Train {
 
 	private static final String trainRevealRegion = Pugmas24.get().getRegionName() + "_train_reveal";
 	private static final String trainTrackRegion = Pugmas24.get().getRegionName() + "_train_track";
