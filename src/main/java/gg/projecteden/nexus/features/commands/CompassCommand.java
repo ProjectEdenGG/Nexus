@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -64,6 +65,11 @@ public class CompassCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
 		service.get(event.getPlayer()).stop();
+	}
+
+	@EventHandler
+	public void onChangeWorld(PlayerChangedWorldEvent event) {
+		service.get(event.getPlayer()).start();
 	}
 
 }

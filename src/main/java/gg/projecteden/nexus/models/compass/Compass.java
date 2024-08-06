@@ -45,13 +45,13 @@ public class Compass implements PlayerOwnedObject {
 	private transient BossBar bossBar;
 
 	public void start() {
+		stop();
+
 		if (!isEnabled())
 			return;
 
 		if (!isOnline())
 			return;
-
-		stop();
 
 		bossBar = Bukkit.createBossBar(getCompass(), BarColor.BLUE, BarStyle.SEGMENTED_6);
 		bossBar.addPlayer(getOnlinePlayer());
