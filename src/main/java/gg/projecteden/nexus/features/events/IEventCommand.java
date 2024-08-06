@@ -89,9 +89,7 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 	@Permission(Group.ADMIN)
 	@Path("stats quest progress [page]")
 	@Description("Print all users' quest progress")
-	void quests_completed(@Arg("1") int page) {
-		send(PREFIX + "Quest progress");
-
+	protected void stats_quest_progress(@Arg("1") int page) {
 		final List<IQuest> quests = getEdenEvent().getQuests();
 
 		Map<Quester, Integer> counts = new HashMap<>() {{
@@ -109,6 +107,16 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 					put(quester, completed);
 			}
 		}};
+
+		send(PREFIX + "Quest progress");
+
+		if (page == 1) {
+			final int completed = counts.values().stream().mapToInt(i -> i).sum();
+			send(" &7Questers: &e" + counts.keySet().size());
+			send(" &7Quests complete: &e" + completed);
+			send(" &7Quests incomplete: &e" + (quests.size() * counts.keySet().size() - completed));
+			line();
+		}
 
 		final BiFunction<Quester, String, JsonBuilder> formatter = (user, index) -> {
 			final ProgressBarBuilder bar = ProgressBar.builder()

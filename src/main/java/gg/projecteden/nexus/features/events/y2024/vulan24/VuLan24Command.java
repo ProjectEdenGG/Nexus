@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.events.IEventCommand;
 import gg.projecteden.nexus.features.events.y2024.vulan24.lantern.VuLan24LanternAnimation;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -49,21 +50,33 @@ public class VuLan24Command extends IEventCommand {
 	protected void quest_progress(@Arg(value = "self", permission = Group.STAFF) Quester quester) {
 		super.quest_progress(quester);
 
-		var sum = config.getCompletedDailyQuests();
+		line();
+		send(json(" &3Community daily quest goal: " + getCommunityQuestProgressBar() + " &e" + config.getCompletedDailyQuests() + "&3/&e" + VuLan24.DAILY_QUEST_GOAL)
+			.hover("&eReach the goal together for a reward!"));
+		if (!user.isFinishedDailyQuest())
+			send("&7   - Talk to Anh at the concession stand");
+	}
 
-		var progressBar = ProgressBar.builder()
-			.progress(sum)
+	@Permission(Group.ADMIN)
+	@Path("stats quest progress [page]")
+	@Description("Print all users' quest progress")
+	protected void stats_quest_progress(@Arg("1") int page) {
+		super.stats_quest_progress(page);
+
+		if (page == 1) {
+			line();
+			send(json(" &3Community daily quest goal: " + getCommunityQuestProgressBar() + " &e" + config.getCompletedDailyQuests() + "&3/&e" + VuLan24.DAILY_QUEST_GOAL));
+		}
+	}
+
+	private String getCommunityQuestProgressBar() {
+		return ProgressBar.builder()
+			.progress(config.getCompletedDailyQuests())
 			.goal(VuLan24.DAILY_QUEST_GOAL)
 			.summaryStyle(NONE)
 			.length(300)
 			.seamless(true)
 			.build();
-
-		line();
-		send(json(" &3Server daily quest goal: " + progressBar + " &e" + sum + "&3/&e" + VuLan24.DAILY_QUEST_GOAL)
-			.hover("&eReach the goal together for a reward!"));
-		if (!user.isFinishedDailyQuest())
-			send("&7   - Talk to Anh at the concession stand");
 	}
 
 	@Path
