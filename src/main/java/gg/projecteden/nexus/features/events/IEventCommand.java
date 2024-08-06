@@ -96,12 +96,16 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 
 		Map<Quester, Integer> counts = new HashMap<>() {{
 			for (Quester quester : new QuesterService().getAll()) {
+				var started = 0;
 				var completed = 0;
-				for (IQuest quest : quests)
+				for (IQuest quest : quests) {
+					if (quester.hasStarted(quest))
+						++started;
 					if (quester.hasCompleted(quest))
 						++completed;
+				}
 
-				if (completed > 0)
+				if (started > 0)
 					put(quester, completed);
 			}
 		}};
