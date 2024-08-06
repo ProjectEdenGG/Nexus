@@ -24,7 +24,7 @@ public abstract class _WorkbenchCommand extends CustomCommand {
 		if (isPlayerCommandEvent())
 			if (worldGroup() == WorldGroup.EVENTS) {
 				EdenEvent edenEvent = EdenEvent.of(player());
-				if (edenEvent != null && edenEvent.isEventActive())
+				if (edenEvent == null || !edenEvent.isEventActive())
 					permissionError();
 			}
 	}
