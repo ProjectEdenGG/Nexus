@@ -63,4 +63,10 @@ public class VirtualPersonalInventoryManager extends Feature {
 		});
 	}
 
+	@Override
+	public void onStop() {
+		var service = new VirtualInventoriesConfigService();
+		service.save(service.get0());
+	}
+
 }
