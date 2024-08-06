@@ -1,13 +1,11 @@
 package gg.projecteden.nexus.features.store.perks.inventory.workbenches;
 
-import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.workbenches.CustomBench.CustomBenchType;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -21,12 +19,7 @@ public abstract class _WorkbenchCommand extends CustomCommand {
 
 	public _WorkbenchCommand(@NonNull CommandEvent event) {
 		super(event);
-		if (isPlayerCommandEvent())
-			if (worldGroup() == WorldGroup.EVENTS) {
-				EdenEvent edenEvent = EdenEvent.of(player());
-				if (edenEvent == null || !edenEvent.isEventActive())
-					permissionError();
-			}
+		blockInActiveEvents();
 	}
 
 	@Path

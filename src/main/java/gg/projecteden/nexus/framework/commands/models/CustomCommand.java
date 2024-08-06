@@ -7,6 +7,7 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.api.mongodb.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.features.commands.staff.MultiCommandCommand;
+import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
@@ -86,7 +87,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
+import java.awt.Color;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -444,6 +445,20 @@ public abstract class CustomCommand extends ICustomCommand {
 	public void blockInMinigameWorld() throws BlockedInMinigamesException {
 		if (worldGroup() == WorldGroup.MINIGAMES)
 			throw new BlockedInMinigamesException(true);
+	}
+
+	public void blockInActiveEvents() throws BlockedInMinigamesException {
+		if (!isPlayerCommandEvent())
+			return;
+
+		if (worldGroup() != WorldGroup.EVENTS)
+			return;
+
+		EdenEvent edenEvent = EdenEvent.of(player());
+		if (edenEvent == null || !edenEvent.isEventActive())
+			return;
+
+		throw new InvalidInputException("This command cannot be used while participating in an event");
 	}
 
 	public boolean hasPermission(String permission) {

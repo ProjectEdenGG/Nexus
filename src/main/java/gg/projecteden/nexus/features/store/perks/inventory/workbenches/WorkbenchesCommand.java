@@ -13,7 +13,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 
 import static gg.projecteden.nexus.features.store.perks.inventory.workbenches._WorkbenchCommand.PERMISSION;
 
@@ -23,9 +22,7 @@ public class WorkbenchesCommand extends CustomCommand {
 
 	public WorkbenchesCommand(CommandEvent event) {
 		super(event);
-		if (isPlayerCommandEvent())
-			if (worldGroup() == WorldGroup.EVENTS)
-				permissionError();
+		blockInActiveEvents();
 	}
 
 	@Path
