@@ -25,7 +25,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -132,7 +134,7 @@ public class ScheduledJobsCommand extends CustomCommand {
 	@Path("stats")
 	@Description("View jobs stats")
 	void stats() {
-		if (jobs.getJobs().isEmpty())
+		if (jobs.getScheduledJobs().isEmpty())
 			error("No jobs found");
 
 		send(PREFIX + "Stats");
@@ -141,7 +143,13 @@ public class ScheduledJobsCommand extends CustomCommand {
 			if (list.isEmpty())
 				continue;
 
+			Map<Class<? extends AbstractJob>, Integer> byClass = new HashMap<>() {{
+				list.forEach(job -> put(job.getClass(), getOrDefault(job.getClass(), 0) + 1));
+			}};
+
 			send("&e " + camelCase(status) + " &7- &3" + list.size());
+			for (Class<? extends AbstractJob> clazz : byClass.keySet())
+				send("&f &f &7 " + clazz.getSimpleName() + " &ex" + byClass.get(clazz));
 		}
 	}
 

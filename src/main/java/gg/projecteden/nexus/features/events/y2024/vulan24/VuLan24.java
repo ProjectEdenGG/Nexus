@@ -3,6 +3,11 @@ package gg.projecteden.nexus.features.events.y2024.vulan24;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
+import gg.projecteden.api.mongodb.models.scheduledjobs.ScheduledJobsService;
+import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob.JobStatus;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.models.EventBreakable;
 import gg.projecteden.nexus.features.events.models.EventPlaceable;
@@ -32,6 +37,7 @@ import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.NMSUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.ToolType;
 import gg.projecteden.nexus.utils.ToolType.ToolGrade;
@@ -48,6 +54,8 @@ import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.loot.LootTables;
+import tech.blastmc.holograms.api.HologramsAPI;
+import tech.blastmc.holograms.api.models.Hologram;
 
 import java.util.List;
 
@@ -91,7 +99,26 @@ public class VuLan24 extends EdenEvent {
 	public void onStart() {
 		super.onStart();
 		new VuLan24BoatTracker();
-		new VuLan24LanternAnimationJob();
+		lanternAnimationHologramTask();
+	}
+
+	private static void lanternAnimationHologramTask() {
+		Tasks.repeat(0, TickTime.MINUTE, () -> {
+			if (Nexus.getEnv() != Env.PROD)
+				return;
+
+			if (VuLan24.get().isAfterEvent())
+				return;
+
+			final Hologram hologram = HologramsAPI.byId(VuLan24.get().getWorld(), "vu_lan_lantern_animation_place");
+
+			var next = new ScheduledJobsService().getApp().get(JobStatus.PENDING, VuLan24LanternAnimationJob.class);
+			if (next.isEmpty())
+				hologram.setLine(4, "Unknown");
+			else
+				hologram.setLine(4, "&e" + Timespan.of(next.iterator().next().getTimestamp()).format(FormatType.LONG));
+			hologram.save();
+		});
 	}
 
 	@Override
