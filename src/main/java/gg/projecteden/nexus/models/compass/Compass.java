@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.statusbar.StatusBar;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -14,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -32,11 +34,18 @@ public class Compass implements PlayerOwnedObject {
 	private UUID uuid;
 	private boolean enabled;
 
+	public boolean isEnabled() {
+		if (isOnline() && Pugmas24.get().isAtEvent(getLocation()))
+			return getOnlinePlayer().getInventory().contains(Material.COMPASS);
+
+		return enabled;
+	}
+
 	private transient int taskId;
 	private transient BossBar bossBar;
 
 	public void start() {
-		if (!enabled)
+		if (!isEnabled())
 			return;
 
 		if (!isOnline())

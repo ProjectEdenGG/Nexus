@@ -53,22 +53,17 @@ public class CompassCommand extends CustomCommand implements Listener {
 
 	static {
 		CompassService service = new CompassService();
-		OnlinePlayers.getAll().forEach(player -> {
-			Compass compass = service.get(player);
-			compass.start();
-		});
+		OnlinePlayers.getAll().forEach(player -> service.get(player).start());
 	}
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		Compass compass = service.get(event.getPlayer());
-		compass.start();
+		service.get(event.getPlayer()).start();
 	}
 
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
-		Compass compass = service.get(event.getPlayer());
-		compass.stop();
+		service.get(event.getPlayer()).stop();
 	}
 
 }
