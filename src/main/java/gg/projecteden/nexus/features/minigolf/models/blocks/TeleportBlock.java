@@ -34,6 +34,16 @@ public class TeleportBlock extends ModifierBlock {
 	}
 
 	@Override
+	public void handleBounce(GolfBall golfBall, Block block, BlockFace blockFace) {
+		if (blockFace.equals(BlockFace.UP)) {
+			handleRoll(golfBall, block);
+			return;
+		}
+
+		super.handleBounce(golfBall, block, blockFace);
+	}
+
+	@Override
 	public void handleRoll(GolfBall golfBall, Block below) {
 		rollDebug(golfBall);
 
