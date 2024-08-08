@@ -5,9 +5,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PostLoad;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.scoreboard.ScoreboardLine;
-import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.parchment.sidebar.Sidebar;
@@ -18,13 +16,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.apache.commons.collections4.map.ListOrderedMap;
-import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity(value = "scoreboard_user", noClassnameStored = true)
@@ -71,15 +70,6 @@ public class ScoreboardUser implements PlayerOwnedObject {
 	}
 
 	public void on() {
-//		if (UUID.fromString("75d63edb-84cc-4d4a-b761-4f81c91b2b7a").equals(uuid)) {
-//			try {
-//				throw new NexusException("Turning on keyhole's scoreboard");
-//			} catch (NexusException ex) {
-//				Nexus.log(ex.getMessage());
-//				ex.printStackTrace();
-//			}
-//		}
-
 		pause();
 		this.layout = new ScoreboardLayout();
 		active = true;

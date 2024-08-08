@@ -226,6 +226,10 @@ public class Quester implements PlayerOwnedObject {
 			Dialog.genericGreeting(this, interactable);
 	}
 
+	public boolean has(ItemStack item) {
+		return has(singletonList(item));
+	}
+
 	public boolean has(List<ItemStack> items) {
 		Map<ItemStack, Integer> amounts = new HashMap<>();
 
@@ -304,7 +308,7 @@ public class Quester implements PlayerOwnedObject {
 		List<ItemStack> remaining = new ArrayList<>();
 
 		for (var item : items)
-			if (!has(singletonList(item)))
+			if (!has(item))
 				remaining.add(item);
 
 		return remaining;

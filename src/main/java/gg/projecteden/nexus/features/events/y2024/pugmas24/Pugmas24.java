@@ -8,13 +8,13 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24Ball
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonManager;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24Fairgrounds;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24Rides;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.items.Pugmas24ItemsManager;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Fishing;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Train;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24Entity;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24NPC;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24Quest;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestItem;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestItemsListener;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestReward;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestTask;
 import gg.projecteden.nexus.features.quests.QuestConfig;
@@ -77,11 +77,12 @@ public class Pugmas24 extends EdenEvent {
 	@Override
 	public void onStart() {
 		super.onStart();
+
 		new Pugmas24Advent();
 		new Pugmas24Fairgrounds();
 		new Pugmas24BalloonManager();
 		new Pugmas24Fishing();
-		new Pugmas24ItemsManager();
+		new Pugmas24QuestItemsListener();
 		Pugmas24Rides.startup();
 		Pugmas24Train.startup();
 	}

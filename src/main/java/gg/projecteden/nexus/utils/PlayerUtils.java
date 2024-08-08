@@ -754,6 +754,11 @@ public class PlayerUtils {
 		return playerHas(player, new ItemStack(material));
 	}
 
+	public static boolean playerHas(OptionalPlayer player, CustomMaterial material) {
+		ItemStack item = searchInventory(player, material.getCustomModel());
+		return Nullables.isNotNullOrAir(item);
+	}
+
 	public static boolean playerHas(OptionalPlayer player, ItemStack itemStack) {
 		if (player.getPlayer() == null)
 			return false;

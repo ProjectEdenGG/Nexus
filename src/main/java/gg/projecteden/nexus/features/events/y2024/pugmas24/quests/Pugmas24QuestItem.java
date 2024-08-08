@@ -1,16 +1,21 @@
 package gg.projecteden.nexus.features.events.y2024.pugmas24.quests;
 
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.quests.QuestItem;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 @Getter
 @AllArgsConstructor
 public enum Pugmas24QuestItem implements QuestItem {
+
 	RED_BALLOON(new ItemBuilder(CustomMaterial.BALLOON_TALL).name("&oRed Balloon").lore("&7Negates fall damage").dyeColor(ColorType.RED)),
 	DISCOUNT_CARD(new ItemBuilder(CustomMaterial.EVENT_DISCOUNT_CARD).name("&oDiscount Card").name("&7Shop prices lowered by &e20%")),
 	MAGIC_MIRROR(new ItemBuilder(CustomMaterial.EVENT_MAGIC_MIRROR).name("&oMagic Mirror").lore("&7Opens the waystone warp menu")),
@@ -29,9 +34,29 @@ public enum Pugmas24QuestItem implements QuestItem {
 	;
 
 	private final ItemBuilder itemBuilder;
-
 	@Override
 	public ItemStack get() {
 		return itemBuilder.build();
+	}
+
+	public CustomMaterial getCustomMaterial() {
+		return CustomMaterial.of(get());
+	}
+
+	public boolean isInInventory(HasUniqueId uuid) {
+		return Quester.of(uuid).has(get());
+	}
+
+
+	public static Location getCompassLocation(Location location) {
+		int x = location.getBlockX();
+		int y = location.getBlockY();
+		int z = location.getBlockZ();
+
+		return new Location(location.getWorld(), x + 688, y - 8, z + 2965);
+	}
+
+	public static boolean canUseCompass(Player player) {
+		return COMPASS.isInInventory(player) || GPS.isInInventory(player);
 	}
 }
