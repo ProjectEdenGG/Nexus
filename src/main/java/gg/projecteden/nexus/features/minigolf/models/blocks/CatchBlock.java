@@ -17,7 +17,7 @@ public class CatchBlock extends ModifierBlock {
 	}
 
 	@Override
-	public void handleRoll(GolfBall golfBall) {
+	public void handleRoll(GolfBall golfBall, Block below) {
 		rollDebug(golfBall);
 	}
 

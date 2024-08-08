@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.minigolf.models.GolfBall;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -16,7 +17,7 @@ public class GravityBlock extends ModifierBlock {
 	}
 
 	@Override
-	public void handleRoll(GolfBall golfBall) {
+	public void handleRoll(GolfBall golfBall, Block below) {
 		// TODO: Utilize bounding box
 
 		if (!golfBall.getSnowball().hasGravity()) {

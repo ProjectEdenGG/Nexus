@@ -114,11 +114,11 @@ public class GolfBall {
 		return player;
 	}
 
-	public void teleportAsync(Location location) {
+	public void teleport(Location location) {
 		if (!isAlive())
 			return;
 
-		this.snowball.teleportAsync(location);
+		this.snowball.teleport(location);
 	}
 
 	public boolean isAlive() {
@@ -137,8 +137,6 @@ public class GolfBall {
 		Location location = getLocation().clone();
 		location.setY(this.snowball.getLocation().getY() - 0.25);
 		return location.getBlock();
-
-		//return getBlock().getRelative(BlockFace.DOWN);
 	}
 
 	public boolean isNotMaxVelocity() {

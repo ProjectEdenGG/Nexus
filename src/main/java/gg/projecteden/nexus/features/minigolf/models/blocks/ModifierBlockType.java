@@ -6,6 +6,7 @@ import org.bukkit.Material;
 
 import java.util.Set;
 
+@Getter
 @AllArgsConstructor
 public enum ModifierBlockType {
 	// Blocks
@@ -31,7 +32,6 @@ public enum ModifierBlockType {
 	DEFAULT(new DefaultBlock()),
 	;
 
-	@Getter
 	private final ModifierBlock modifierBlock;
 
 	public Set<Material> getMaterials() {

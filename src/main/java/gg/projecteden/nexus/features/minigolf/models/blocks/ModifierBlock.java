@@ -19,9 +19,8 @@ import java.util.Set;
 
 public abstract class ModifierBlock {
 
-	public void handleRoll(GolfBall golfBall) {
+	public void handleRoll(GolfBall golfBall, Block below) {
 		Vector velocity = golfBall.getVelocity();
-		Block below = golfBall.getBlockBelow();
 		Location location = golfBall.getLocation();
 
 		rollDebug(golfBall);
@@ -116,7 +115,7 @@ public abstract class ModifierBlock {
 			golfBall.getUser().debug(vel.length() != 0.0, "ball is too slow, stopping...");
 			golfBall.setVelocity(new Vector(0, 0, 0));
 			golfBall.setGravity(false);
-			golfBall.teleportAsync(golfBall.getLocation());
+			golfBall.teleport(golfBall.getLocation());
 
 			if (!golfBall.isInBounds()) {
 				golfBall.debug("ball is out of bounds, respawning...");

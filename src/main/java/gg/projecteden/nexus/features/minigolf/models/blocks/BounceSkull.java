@@ -12,9 +12,9 @@ public class BounceSkull extends ModifierSkull {
 	}
 
 	@Override
-	public void handleRoll(GolfBall golfBall) {
+	public void handleRoll(GolfBall golfBall, Block block) {
 		rollDebug(golfBall);
-		ModifierBlockType.BOUNCE_BLOCK.getModifierBlock().handleRoll(golfBall);
+		ModifierBlockType.BOUNCE_BLOCK.getModifierBlock().handleRoll(golfBall, block);
 	}
 
 	@Override

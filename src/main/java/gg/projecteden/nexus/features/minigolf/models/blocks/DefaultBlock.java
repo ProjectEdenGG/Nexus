@@ -16,8 +16,8 @@ public class DefaultBlock extends ModifierBlock {
 	}
 
 	@Override
-	public void handleRoll(GolfBall golfBall) {
-		super.handleRoll(golfBall);
+	public void handleRoll(GolfBall golfBall, Block below) {
+		super.handleRoll(golfBall, below);
 	}
 
 	@Override

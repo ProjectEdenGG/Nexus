@@ -21,7 +21,7 @@ public class BounceBlock extends ModifierBlock {
 	}
 
 	@Override
-	public void handleRoll(GolfBall golfBall) {
+	public void handleRoll(GolfBall golfBall, Block below) {
 		rollDebug(golfBall);
 
 		new SoundBuilder(Sound.BLOCK_SLIME_BLOCK_HIT).location(golfBall.getLocation()).volume(0.5).play();

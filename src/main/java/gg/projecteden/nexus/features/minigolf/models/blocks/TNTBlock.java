@@ -14,7 +14,7 @@ import java.util.Set;
 public class TNTBlock extends ModifierBlock {
 
 	@Override
-	public void handleRoll(GolfBall golfBall) {
+	public void handleRoll(GolfBall golfBall, Block below) {
 		Vector velocity = golfBall.getVelocity();
 		Vector randomDir = explode(golfBall);
 		velocity.add(randomDir);

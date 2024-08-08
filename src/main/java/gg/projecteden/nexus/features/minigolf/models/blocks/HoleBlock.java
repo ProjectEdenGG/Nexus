@@ -25,7 +25,7 @@ public class HoleBlock extends ModifierBlock {
 	}
 
 	@Override
-	public void handleRoll(GolfBall golfBall) {
+	public void handleRoll(GolfBall golfBall, Block below) {
 		rollDebug(golfBall);
 
 		Snowball snowball = golfBall.getSnowball();
@@ -69,7 +69,7 @@ public class HoleBlock extends ModifierBlock {
 	@Override
 	public void handleBounce(GolfBall golfBall, Block block, BlockFace blockFace) {
 		if (blockFace.equals(BlockFace.UP)) {
-			handleRoll(golfBall);
+			handleRoll(golfBall, block);
 			return;
 		}
 

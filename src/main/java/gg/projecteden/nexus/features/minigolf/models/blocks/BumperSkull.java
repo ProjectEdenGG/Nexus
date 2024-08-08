@@ -15,9 +15,9 @@ public class BumperSkull extends ModifierSkull {
 	}
 
 	@Override
-	public void handleRoll(GolfBall golfBall) {
+	public void handleRoll(GolfBall golfBall, Block below) {
 		rollDebug(golfBall);
-		bump(golfBall, null, BlockFace.UP, false);
+		bump(golfBall, below, BlockFace.UP, false);
 	}
 
 	@Override
@@ -33,6 +33,16 @@ public class BumperSkull extends ModifierSkull {
 		double randomX = 0;
 		double randomZ = 0;
 
+		if (!bounce) {
+			super.handleRoll(golfBall, block);
+			return;
+		}
+
+//		if(blockFace == BlockFace.DOWN){
+//			super.handleBounce(golfBall, block, blockFace);
+//			return;
+//		}
+
 		switch (blockFace) {
 			case NORTH, SOUTH -> {
 				velocity.setZ(Math.copySign(0.5, -velocity.getZ()));
@@ -44,11 +54,10 @@ public class BumperSkull extends ModifierSkull {
 				randomZ = RandomUtils.randomDouble(-1, 1);
 			}
 
-			default -> {
-				if (bounce)
-					super.handleBounce(golfBall, block, blockFace);
-				else
-					super.handleRoll(golfBall);
+			case UP, DOWN -> {
+				velocity.setY(Math.copySign(0.5, -velocity.getY()));
+				randomX = RandomUtils.randomDouble(-1, 1);
+				randomZ = RandomUtils.randomDouble(-1, 1);
 			}
 		}
 

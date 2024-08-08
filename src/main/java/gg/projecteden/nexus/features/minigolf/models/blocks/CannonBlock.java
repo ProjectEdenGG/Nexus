@@ -22,11 +22,10 @@ import java.util.Set;
 public class CannonBlock extends ModifierBlock {
 
 	@Override
-	public void handleRoll(GolfBall golfBall) {
+	public void handleRoll(GolfBall golfBall, Block below) {
 		rollDebug(golfBall);
 
 		Vector velocity = golfBall.getVelocity();
-		Block below = golfBall.getBlockBelow();
 
 		if (!(below.getBlockData() instanceof Directional directional))
 			return;
@@ -42,7 +41,7 @@ public class CannonBlock extends ModifierBlock {
 		try {
 			Location newLoc = LocationUtils.getCenteredLocation(below.getRelative(facing).getLocation());
 			golfBall.setVelocity(new Vector(0, 0, 0));
-			golfBall.teleportAsync(LocationUtils.getCenteredLocation(newLoc));
+			golfBall.teleport(LocationUtils.getCenteredLocation(newLoc));
 			golfBall.setGravity(true);
 
 			double height = Double.parseDouble(heightStr);

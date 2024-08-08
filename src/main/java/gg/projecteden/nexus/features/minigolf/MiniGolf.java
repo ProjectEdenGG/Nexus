@@ -158,7 +158,7 @@ public class MiniGolf extends Feature {
 			if (checkApplies(below, belowType, modifierBlockType, modifierBlock)) {
 				MiniGolfBallModifierBlockEvent modifierBlockEvent = new MiniGolfBallModifierBlockEvent(golfBall, modifierBlockType);
 				if (modifierBlockEvent.callEvent()) {
-					modifierBlock.handleRoll(golfBall);
+					modifierBlock.handleRoll(golfBall, below);
 					return;
 				}
 			}

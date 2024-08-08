@@ -93,6 +93,9 @@ public class MiniGolfUtils {
 	}
 
 	public static boolean isFloatingOnUniqueCollision(Location location, Block below) {
+		if (below == null)
+			return false;
+
 		Material material = below.getType();
 
 		// Bottom Slab

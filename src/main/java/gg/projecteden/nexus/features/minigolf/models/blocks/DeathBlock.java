@@ -16,7 +16,7 @@ public class DeathBlock extends ModifierBlock {
 	}
 
 	@Override
-	public void handleRoll(GolfBall golfBall) {
+	public void handleRoll(GolfBall golfBall, Block below) {
 		rollDebug(golfBall);
 
 		golfBall.respawn();
@@ -31,6 +31,6 @@ public class DeathBlock extends ModifierBlock {
 
 	@Override
 	public Set<Material> getMaterials() {
-		return Set.of(Material.WATER, Material.LAVA, Material.BARRIER, Material.CRIMSON_HYPHAE, Material.MAGMA_BLOCK);
+		return Set.of(Material.WATER, Material.LAVA, Material.CRIMSON_HYPHAE, Material.MAGMA_BLOCK);
 	}
 }

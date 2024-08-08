@@ -18,11 +18,10 @@ public class DirectionalBoostBlock extends ModifierBlock {
 	}
 
 	@Override
-	public void handleRoll(GolfBall golfBall) {
+	public void handleRoll(GolfBall golfBall, Block below) {
 		rollDebug(golfBall);
 
 		Vector velocity = golfBall.getVelocity();
-		Block below = golfBall.getBlockBelow();
 
 		if (!(below.getBlockData() instanceof Directional directional))
 			return;

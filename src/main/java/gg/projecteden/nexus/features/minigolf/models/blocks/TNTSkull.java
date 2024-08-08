@@ -15,7 +15,7 @@ public class TNTSkull extends ModifierSkull {
 	}
 
 	@Override
-	public void handleRoll(GolfBall golfBall) {
+	public void handleRoll(GolfBall golfBall, Block below) {
 		rollDebug(golfBall);
 		explode(golfBall, false);
 	}
