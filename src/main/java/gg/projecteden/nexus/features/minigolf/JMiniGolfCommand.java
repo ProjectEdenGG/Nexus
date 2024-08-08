@@ -3,16 +3,21 @@ package gg.projecteden.nexus.features.minigolf;
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
 import gg.projecteden.nexus.features.minigolf.models.GolfBallColor;
 import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
+import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlockType;
+import gg.projecteden.nexus.features.minigolf.models.blocks.TeleportBlock.TeleportBlockArgs;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Skull;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
 
 @HideFromWiki // TODO?
@@ -101,6 +106,20 @@ public class JMiniGolfCommand extends CustomCommand {
 
 		user.setDebug(enable);
 		send("set debug to: " + user.isDebug());
+	}
+
+	@Permission(Group.STAFF)
+	@Path("getTeleportItem [--speed]")
+	void getTeleportItem(@Switch Double speed) {
+		Block block = getTargetBlockRequired();
+		if (!ModifierBlockType.TELEPORT.getMaterials().contains(block.getType()))
+			error("Must be looking at a Teleport Block");
+
+		BlockData blockData = block.getBlockData();
+		if (blockData instanceof Directional directional)
+			giveItem(TeleportBlockArgs.getItem(block, directional, speed));
+		else
+			error("That block is not directional ??");
 	}
 
 	@Permission(Group.ADMIN)
