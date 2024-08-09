@@ -12,6 +12,7 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24Ball
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BlockReplaceBrushMenu;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24District;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Geyser;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Train;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -156,6 +157,17 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 		adventService.save(adventConfig);
 
 		send(PREFIX + "Advent day #" + day + " configured");
+	}
+
+	@Path("slotMachine roll")
+	void slotMachine() {
+		Pugmas24SlotMachine.roll(player());
+	}
+
+	@Path("slotMachine setup")
+	@Permission(Group.ADMIN)
+	void slotMachine_setup() {
+		Pugmas24SlotMachine.setup(player());
 	}
 
 	@Path("geyser start")

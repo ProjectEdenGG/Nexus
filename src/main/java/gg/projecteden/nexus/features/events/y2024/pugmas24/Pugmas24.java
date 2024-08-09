@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24Ball
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24Fairgrounds;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24Rides;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Fishing;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Train;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24Entity;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24NPC;
@@ -17,6 +18,7 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestI
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestItemsListener;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestReward;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestTask;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24ShopMenu;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.models.godmode.GodmodeService;
@@ -82,6 +84,7 @@ public class Pugmas24 extends EdenEvent {
 		new Pugmas24Fairgrounds();
 		new Pugmas24BalloonManager();
 		new Pugmas24Fishing();
+		new Pugmas24SlotMachine();
 		new Pugmas24QuestItemsListener();
 		Pugmas24Rides.startup();
 		Pugmas24Train.startup();
@@ -97,6 +100,11 @@ public class Pugmas24 extends EdenEvent {
 	@Override
 	protected void registerFishingLoot() {
 		registerFishingLoot(FISH, JUNK);
+	}
+
+	@Override
+	public void registerInteractHandlers() {
+		handleInteract(Pugmas24NPC.BLACKSMITH, (player, npc) -> Pugmas24ShopMenu.BLACKSMITH.open(player));
 	}
 
 	public static void send(String message, Player to) {

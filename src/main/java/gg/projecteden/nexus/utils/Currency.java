@@ -193,6 +193,15 @@ public enum Currency {
 		boolean free;
 		boolean empty = true;
 
+		public static Price of(Object value, int amount) {
+			if (value instanceof Material material)
+				return of(new ItemBuilder(material).amount(amount).build());
+			else if (value instanceof ItemStack itemStack)
+				return of(new ItemBuilder(itemStack).amount(amount).build());
+
+			return of(value);
+		}
+
 		public static Price of(Object value) {
 			Price result = new Price();
 			if (value == null) {
