@@ -11,6 +11,7 @@ import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.parchment.HasPlayer;
 import gg.projecteden.parchment.OptionalPlayerLike;
 import lombok.AllArgsConstructor;
@@ -58,7 +59,7 @@ public class Dialog {
 	}
 
 	public Dialog npc(String message) {
-		return npc(quester -> message);
+		return npc(quester -> message, calculateDelay(message));
 	}
 
 	public Dialog npc(Interactable npc, String message) {
@@ -80,15 +81,15 @@ public class Dialog {
 	}
 
 	public Dialog player(String message) {
-		return instruction(quester -> PlayerUtils.send(quester, "&b&lYOU &7> &f" + interpolate(message, quester)), calculateDelay(message));
+		return instruction(quester -> quester.sendMessage("&b&lYOU &7> &f" + interpolate(message, quester)), calculateDelay(message));
 	}
 
 	public Dialog raw(String message) {
-		return instruction(quester -> PlayerUtils.send(quester, message), calculateDelay(message));
+		return instruction(quester -> quester.sendMessage(message), calculateDelay(message));
 	}
 
 	public Dialog raw(ComponentLike message) {
-		return instruction(quester -> PlayerUtils.send(quester, message), calculateDelay(AdventureUtils.asPlainText(message)));
+		return instruction(quester -> quester.sendMessage(message), calculateDelay(AdventureUtils.asPlainText(message)));
 	}
 
 	public Dialog pause(long ticks) {
@@ -217,9 +218,24 @@ public class Dialog {
 
 	public static final int DEFAULT_DELAY = 200;
 
+	// Just making shit up, IDK
+	private static final int LONG_WORD_LENGTH = 7;
+	private static final int SHORT_WORD_LENGTH = 3;
 	private int calculateDelay(String message) {
-		// TODO
-		return DEFAULT_DELAY;
+		message = StringUtils.stripColor(message);
+		List<String> words = new ArrayList<>(List.of(message.split(" ")));
+
+		List<String> longWords = words.stream().filter(word -> word.length() >= LONG_WORD_LENGTH).toList();
+		words.removeAll(longWords);
+
+		List<String> shortWords = words.stream().filter(word -> word.length() <= SHORT_WORD_LENGTH).toList();
+		words.removeAll(shortWords);
+
+		int shortWordsDelay = (int) Math.ceil((shortWords.size() * 0.2) * 20);
+		int averageWordsDelay = (int) Math.ceil((words.size() * 0.6) * 20);
+		int longWordsDelay = (int) Math.ceil((longWords.size() * 0.9) * 20);
+
+		return (shortWordsDelay + averageWordsDelay + longWordsDelay);
 	}
 
 	private static final List<String> genericGreetings = List.of("Hello!", "Hi!", "Greetings", "Hey there", "Hey!",
