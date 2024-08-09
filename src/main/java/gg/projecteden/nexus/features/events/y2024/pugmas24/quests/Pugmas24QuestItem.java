@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 public enum Pugmas24QuestItem implements QuestItem {
 
 	RED_BALLOON(new ItemBuilder(CustomMaterial.BALLOON_TALL).name("&oRed Balloon").lore("&7Negates fall damage").dyeColor(ColorType.RED)),
-	DISCOUNT_CARD(new ItemBuilder(CustomMaterial.EVENT_DISCOUNT_CARD).name("&oDiscount Card").name("&7Shop prices lowered by &e20%")),
+	DISCOUNT_CARD(new ItemBuilder(CustomMaterial.EVENT_DISCOUNT_CARD).name("&oDiscount Card").lore("&7Shop prices lowered by &e20%")),
 	MAGIC_MIRROR(new ItemBuilder(CustomMaterial.EVENT_MAGIC_MIRROR).name("&oMagic Mirror").lore("&7Opens the waystone warp menu")),
 	HEART_CRYSTAL(new ItemBuilder(CustomMaterial.EVENT_HEART_CRYSTAL).name("&oHeart Crystal").lore("&7Permanently increases max health by &e1 heart")),
 	LUCKY_HORSESHOE(new ItemBuilder(CustomMaterial.EVENT_LUCKY_HORSESHOE).name("&oLucky Horseshoe").lore("&7Higher chance to gain additional coins")),

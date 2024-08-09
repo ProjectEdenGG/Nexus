@@ -55,8 +55,11 @@ public class Pugmas24Rides {
 	@NoArgsConstructor
 	@AllArgsConstructor
 	public enum Ride {
-		CHAIRSWING(loc(-744, -2867), 100),
 		FERRISWHEEL(loc(-817, -2918), 100),
+		SWINGTOWER(loc(-744, -2867), 100),
+		PENDULUM(loc(-747, -2834), 100),
+		TEACUPS(loc(-729, -2919), 100),
+		CAROUSEL(loc(-729, -2885), 100),
 		;
 
 		Location location;

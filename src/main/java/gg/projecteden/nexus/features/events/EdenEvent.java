@@ -18,6 +18,7 @@ import gg.projecteden.nexus.features.events.models.EventPlaceable;
 import gg.projecteden.nexus.features.events.models.EventPlaceable.EventPlaceableBuilder;
 import gg.projecteden.nexus.features.listeners.events.LivingEntityKilledByPlayerEvent;
 import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.events.QuestCompletedEvent;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
@@ -34,6 +35,7 @@ import gg.projecteden.nexus.models.trophy.TrophyHolderService;
 import gg.projecteden.nexus.models.trophy.TrophyType;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ChunkLoader;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -173,6 +175,17 @@ public abstract class EdenEvent extends Feature implements Listener {
 
 	public QuestConfig getConfig() {
 		return getClass().getAnnotation(QuestConfig.class);
+	}
+
+	public void debugDot(Player player, Location location, ColorType color) {
+		debugDot(player, location, color, TickTime.SECOND.x(5));
+	}
+
+	public void debugDot(Player player, Location location, ColorType color, long ticks) {
+		if (player == null || location == null)
+			return;
+
+		DotEffect.debug(player, location.clone().toCenterLocation(), color.getBukkitColor(), ticks);
 	}
 
 	public List<IQuest> getQuests() {

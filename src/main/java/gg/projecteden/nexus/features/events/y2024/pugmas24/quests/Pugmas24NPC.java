@@ -10,6 +10,8 @@ import java.util.function.Predicate;
 @Getter
 @AllArgsConstructor
 public enum Pugmas24NPC implements InteractableNPC {
+	BLACKSMITH("Blacksmith", 5340),
+	ANGLER("Angler", 5341),
 	// TODO
 	;
 
