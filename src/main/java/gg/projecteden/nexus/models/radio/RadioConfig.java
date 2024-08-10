@@ -83,6 +83,8 @@ public class RadioConfig implements PlayerOwnedObject {
 		private boolean enabled = false;
 		@Default
 		private boolean particles = false;
+		@Default
+		private boolean updatePlaying = true;
 		private List<Location> locations = new ArrayList<>();
 		private int radius = 5;
 		@Embedded
@@ -120,8 +122,8 @@ public class RadioConfig implements PlayerOwnedObject {
 			this.locations.add(location);
 		}
 
-		public void removeStationLocation(Location location) {
-			this.locations.remove(location);
+		public void removeStationLocation(int index) {
+			this.locations.remove(index);
 		}
 
 		public void setEnabled(boolean bool) {

@@ -21,6 +21,7 @@ import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.parchment.HasPlayer;
 import org.bukkit.Location;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -96,12 +97,17 @@ public class RadioUtils {
 		return result;
 	}
 
-	public static Radio getRadio(SongPlayer songPlayer) {
+	public static List<Radio> getRadiosOf(SongPlayer songPlayer) {
+		List<Radio> result = new ArrayList<>();
 		for (Radio radio : getRadios()) {
-			if (songPlayer.equals(radio.getSongPlayers()))
-				return radio;
+			for (SongPlayer _songPlayer : radio.getSongPlayers()) {
+				if (_songPlayer.equals(songPlayer))
+					result.add(radio);
+			}
+
 		}
-		return null;
+
+		return result;
 	}
 
 	public static void setRadioDefaults(SongPlayer radio) {
@@ -136,12 +142,15 @@ public class RadioUtils {
 		for (SongPlayer songPlayer : radio.getSongPlayers()) {
 			songPlayer.addPlayer(player.getPlayer().getUniqueId());
 
-			if (songPlayer instanceof RadioSongPlayer)
-				actionBar(player, songPlayer.getSong());
+			if (!radio.isUpdatePlaying())
+				continue;
 
-			else if (songPlayer instanceof PositionSongPlayer) {
-				if (RadioUtils.isInRangeOfRadiusRadio(player, radio))
+			if (songPlayer instanceof RadioSongPlayer) {
+				actionBar(player, songPlayer.getSong());
+			} else if (songPlayer instanceof PositionSongPlayer) {
+				if (RadioUtils.isInRangeOfRadiusRadio(player, radio)) {
 					actionBar(player, songPlayer.getSong());
+				}
 			}
 		}
 	}
@@ -230,7 +239,7 @@ public class RadioUtils {
 		if (Nullables.isNullOrEmpty(radio.getSongPlayers()))
 			songList = radio.getSongs().stream().toList();
 		else
-			songList = radio.getSongPlayers().get(0).getPlaylist().getSongList().stream().map(Song::getTitle).toList();
+			songList = radio.getSongPlayers().getFirst().getPlaylist().getSongList().stream().map(Song::getTitle).toList();
 
 		return songList.stream().map(song -> "&3" + ndx.getAndIncrement() + " &e" + song).collect(Collectors.toList());
 	}

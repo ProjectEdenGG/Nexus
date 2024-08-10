@@ -209,6 +209,7 @@ public class RadioCommand extends CustomCommand {
 		send("&3Id: &e" + radio.getId());
 		send("&3Enabled: &e" + radio.isEnabled());
 		send("&3Type: &e" + StringUtils.camelCase(radio.getType()));
+		send("&3Updates Playing: &e" + radio.isUpdatePlaying());
 
 		if (radio.getType().equals(RadioType.RADIUS)) {
 			send("&3Location: &e" + StringUtils.getShortLocationString(radio.getRadiusLocation()));
@@ -282,13 +283,26 @@ public class RadioCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	@Description("Toggle the particles of the radio")
 	void configSetParticles(Radio radio, boolean enable) {
-		if (radio.getType().isRadiusBased())
+		if (!radio.getType().isRadiusBased())
 			error("You can only set particles of a radius based radio");
 
 		radio.setParticles(enable);
 		configService.save(config);
 
 		send(PREFIX + "Particles set to " + radio.isParticles() + " for " + radio.getId());
+	}
+
+	@Path("config setUpdatePlaying <radio> <enable>")
+	@Permission(Group.ADMIN)
+	@Description("Toggle the playing updates of the radio")
+	void configSetUpdatePlaying(Radio radio, boolean enable) {
+		if (!radio.getType().isRadiusBased())
+			error("You can only set this on a radius based radio");
+
+		radio.setUpdatePlaying(enable);
+		configService.save(config);
+
+		send(PREFIX + "Update Playing set to " + radio.isUpdatePlaying() + " for " + radio.getId());
 	}
 
 	@Path("config setType <radio> <type>")
@@ -355,7 +369,7 @@ public class RadioCommand extends CustomCommand {
 		if (radio.getType() != RadioType.STATION)
 			error("This radio type is not a station radio");
 
-		radio.removeStationLocation(location());
+		radio.removeStationLocation(index);
 		if (radio.isEnabled())
 			radio.reload();
 
@@ -386,6 +400,9 @@ public class RadioCommand extends CustomCommand {
 
 		configService.save(config);
 
+		if (radio.isEnabled())
+			radio.reload();
+
 		send(PREFIX + "Added " + radioSongs.stream().map(RadioSong::getName).collect(Collectors.joining(", ")) + " to " + radio.getId());
 	}
 
@@ -396,6 +413,10 @@ public class RadioCommand extends CustomCommand {
 		config.removeSong(radio, radioSong);
 
 		configService.save(config);
+
+		if (radio.isEnabled())
+			radio.reload();
+
 		send(PREFIX + "Removed " + radioSong.getName() + " from " + radio.getId());
 	}
 

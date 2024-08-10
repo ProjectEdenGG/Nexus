@@ -15,6 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -54,16 +55,20 @@ public class Listeners implements Listener {
 
 		for (UUID uuid : UUIDList) {
 			Player player = Bukkit.getPlayer(uuid);
-			if (player == null || !player.isOnline()) continue;
+			if (player == null || !player.isOnline())
+				continue;
 
 			if (songPlayer instanceof PositionSongPlayer) {
-				Radio radio = RadioUtils.getRadio(songPlayer);
-				if (radio != null) {
-					if (RadioUtils.isInRangeOfRadiusRadio(player, radio))
-						RadioUtils.actionBar(player, song, true);
+				List<Radio> radios = RadioUtils.getRadiosOf(songPlayer);
+				for (Radio radio : radios) {
+					if (radio == null || !radio.isUpdatePlaying() || !RadioUtils.isInRangeOfRadiusRadio(player, radio))
+						continue;
+
+					RadioUtils.actionBar(player, song, true);
 				}
-			} else
+			} else {
 				RadioUtils.actionBar(player, song, true);
+			}
 		}
 	}
 
