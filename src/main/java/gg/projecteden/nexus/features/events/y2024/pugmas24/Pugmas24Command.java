@@ -35,6 +35,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -77,6 +78,32 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 			error("You need to take the Pugmas train at Hub to unlock this warp.");
 
 		player().teleportAsync(Pugmas24.get().warp, TeleportCause.COMMAND);
+	}
+
+	@Path("health reset")
+	@Permission(Group.ADMIN)
+	void health_reset() {
+		player().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(10.0);
+		player().setHealth(player().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+	}
+
+	@Path("health add")
+	@Permission(Group.ADMIN)
+	void health_add() {
+		var attribute = player().getAttribute(Attribute.GENERIC_MAX_HEALTH);
+		attribute.setBaseValue(attribute.getBaseValue() + 2.0);
+		player().setHealth(player().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+	}
+
+	@Path("health remove")
+	@Permission(Group.ADMIN)
+	void health_remove() {
+		var attribute = player().getAttribute(Attribute.GENERIC_MAX_HEALTH);
+		if (attribute.getBaseValue() <= 2.0)
+			error("Probably don't do that");
+
+		attribute.setBaseValue(attribute.getBaseValue() - 2.0);
+		player().setHealth(player().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
 	}
 
 	@Path("district")
