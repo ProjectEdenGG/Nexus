@@ -5,7 +5,6 @@ import com.gmail.nossr50.events.skills.fishing.McMMOPlayerFishingTreasureEvent;
 import com.gmail.nossr50.events.skills.repair.McMMOPlayerRepairCheckEvent;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Bukkit;
@@ -187,7 +186,6 @@ public class ItemTagsListener implements Listener {
 		if (!(caught instanceof Item item)) return;
 
 		update(item.getItemStack());
-		PlayerUtils.send(event.getPlayer(), "Update itemtags: fishing");
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -207,11 +205,7 @@ public class ItemTagsListener implements Listener {
 			return;
 
 		ItemStack repaired = event.getRepairedObject();
-		Tasks.wait(1, () -> {
-			update(repaired);
-
-			PlayerUtils.send(event.getPlayer(), "Update itemtags: mcmmo repair");
-		});
+		Tasks.wait(1, () -> update(repaired));
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
