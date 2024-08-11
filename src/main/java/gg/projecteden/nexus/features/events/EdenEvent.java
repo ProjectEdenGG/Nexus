@@ -58,6 +58,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
@@ -303,6 +304,12 @@ public abstract class EdenEvent extends Feature implements Listener {
 
 	public void actionBar(String message, long ticks) {
 		getPlayers().forEach(player -> ActionBarUtils.sendActionBar(player, message, ticks));
+	}
+
+	public void poof(Location location) {
+		new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_BLAST).location(location).play();
+		location.getWorld().spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, location, 500, 0.5, 1, 0.5, 0);
+		location.getWorld().spawnParticle(Particle.FLASH, location, 10, 0, 0, 0);
 	}
 
 	public void forceLoadChunk(Chunk chunk) {
