@@ -420,6 +420,20 @@ public class RadioCommand extends CustomCommand {
 		send(PREFIX + "Removed " + radioSong.getName() + " from " + radio.getId());
 	}
 
+	@Path("config clearSongs <radio>")
+	@Permission(Group.ADMIN)
+	@Description("Remove all songs from a radio")
+	void configRemoveSong(Radio radio) {
+		config.clearSongs(radio);
+
+		configService.save(config);
+
+		if (radio.isEnabled())
+			radio.reload();
+
+		send(PREFIX + "Removed all songs from " + radio.getId());
+	}
+
 	@Path("config setId <radio> <id>")
 	@Permission(Group.ADMIN)
 	@Description("Set the id of the radio")

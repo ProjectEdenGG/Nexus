@@ -71,6 +71,11 @@ public class RadioConfig implements PlayerOwnedObject {
 		_radio.setSongs(songs);
 	}
 
+	public void clearSongs(Radio radio) {
+		Radio _radio = getById(radio.getId());
+		_radio.setSongs(new HashSet<>());
+	}
+
 	@Data
 	@Builder
 	@NoArgsConstructor
@@ -153,8 +158,12 @@ public class RadioConfig implements PlayerOwnedObject {
 						}
 			}};
 
-			if (!unloadedSongs.isEmpty())
-				Nexus.log("[Radio] [" + id + "] " + loadedSongs.size() + " unloaded songs: " + String.join(", ", unloadedSongs));
+			if (!unloadedSongs.isEmpty()) {
+				Nexus.log("[Radio] [" + id + "] " + unloadedSongs.size() + " unloaded songs: " + String.join(", ", unloadedSongs));
+				for (String unloadedSong : unloadedSongs) {
+					songs.remove(unloadedSong);
+				}
+			}
 
 			ArrayList<File> list = new ArrayList<>(loadedSongs);
 			Collections.shuffle(list);
