@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.survival;
 
+import gg.projecteden.nexus.features.survival.avontyre.AvontyreEffects;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.WorldEditUtils;
@@ -19,10 +20,18 @@ import java.util.Collection;
 public class Survival extends Feature implements Listener {
 	@Getter
 	private static final String spawnRegion = "spawn";
+	private static final AvontyreEffects avontyreEffects = new AvontyreEffects();
 
 	@Override
 	public void onStart() {
 		new DecorationStore();
+		avontyreEffects.onStart();
+	}
+
+	@Override
+	public void onStop() {
+		new DecorationStore();
+		avontyreEffects.onStop();
 	}
 
 	@NotNull
