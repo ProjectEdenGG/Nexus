@@ -4,9 +4,6 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.PlayerEventFishingBiteEvent;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.utils.Enchant;
-import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
@@ -36,17 +33,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Pugmas24Fishing implements Listener {
-
-	private static final ItemBuilder ROD_WOOD = new ItemBuilder(CustomMaterial.FISHING_ROD_WOOD)
-			.name("Wood Fishing Rod");
-
-	private static final ItemBuilder ROD_REINFORCED = new ItemBuilder(CustomMaterial.FISHING_ROD_REINFORCED)
-			.name("Reinforced Fishing Rod")
-			.enchant(Enchant.UNBREAKING, 1);
-
-	private static final ItemBuilder ROD_GOLDEN = new ItemBuilder(CustomMaterial.FISHING_ROD_GOLDEN)
-			.name("Golden Fishing Rod")
-			.unbreakable();
 
 	public Pugmas24Fishing() {
 		Nexus.registerListener(this);

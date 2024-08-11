@@ -5,7 +5,9 @@ import gg.projecteden.nexus.features.quests.QuestItem;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Location;
@@ -31,12 +33,17 @@ public enum Pugmas24QuestItem implements QuestItem {
 	WEATHER_RADIO(new ItemBuilder(CustomMaterial.EVENT_WEATHER_RADIO).name("&oWeather Radio").lore("&7Displays the current weather")),
 	SEXTANT(new ItemBuilder(CustomMaterial.EVENT_SEXTANT).name("&oSextant").lore("&7Displays the moon phase")),
 	FISH_FINDER(new ItemBuilder(CustomMaterial.EVENT_FISH_FINDER).name("&oFish Finder").lore("&7Displays your fishing power, the moon phase, and the current weather")),
+
+	FISHING_ROD_WOOD(new ItemBuilder(CustomMaterial.FISHING_ROD_WOOD).name("Wood Fishing Rod")),
+	FISHING_ROD_REINFORCED(new ItemBuilder(CustomMaterial.FISHING_ROD_REINFORCED).name("Reinforced Fishing Rod").enchant(Enchant.UNBREAKING, 2)),
+	FISHING_ROD_GOLDEN(new ItemBuilder(CustomMaterial.FISHING_ROD_GOLDEN).name("Golden Fishing Rod").lore("&7Unbreakable").unbreakable().glow());
+
 	;
 
 	private final ItemBuilder itemBuilder;
 	@Override
 	public ItemStack get() {
-		return itemBuilder.build();
+		return itemBuilder.itemFlags(ItemFlags.HIDE_ALL).build();
 	}
 
 	public CustomMaterial getCustomMaterial() {

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2024.pugmas24.models;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestItem;
@@ -8,9 +9,11 @@ import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomEmoji;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.TitleBuilder;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
@@ -80,10 +83,27 @@ public class Pugmas24Waystones implements Listener {
 			List<ClickableItem> items = new ArrayList<>();
 			for (WaystoneDestination waystone : WaystoneDestination.values()) {
 				ItemBuilder item = DecorationType.WAYSTONE_ACTIVATED.getConfig().getItemBuilder().name(StringUtils.camelCase(waystone)).resetLore();
-				items.add(ClickableItem.of(item, e -> viewer.teleportAsync(waystone.warpLoc, TeleportCause.PLUGIN)));
+				items.add(ClickableItem.of(item, e -> teleport(waystone)));
 			}
 
 			paginate(items);
+		}
+
+		private void teleport(WaystoneDestination waystone) {
+			close();
+
+			new TitleBuilder()
+				.title(CustomEmoji.SCREEN_BLACK.getChar())
+				.fade(TickTime.TICK.x(10))
+				.players(viewer)
+				.stay(TickTime.TICK.x(10))
+				.send()
+				.thenRun(() -> {
+					Pugmas24.get().poof(viewer.getLocation());
+					viewer.teleportAsync(waystone.warpLoc, TeleportCause.PLUGIN).thenRun(() -> {
+						Pugmas24.get().poof(waystone.warpLoc);
+					});
+				});
 		}
 	}
 
