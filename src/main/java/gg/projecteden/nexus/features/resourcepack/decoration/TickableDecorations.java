@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TickableDecorations implements Listener {
-	List<WorldGroup> activeWorldGroups = List.of(WorldGroup.SURVIVAL, WorldGroup.STAFF, WorldGroup.CREATIVE);
+	List<WorldGroup> activeWorldGroups = List.of(WorldGroup.SURVIVAL, WorldGroup.STAFF, WorldGroup.CREATIVE, WorldGroup.EVENTS);
 	DecorationUserService userService = new DecorationUserService();
 
 	public TickableDecorations() {
