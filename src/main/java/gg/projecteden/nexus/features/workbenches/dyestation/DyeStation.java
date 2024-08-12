@@ -107,7 +107,12 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 				.toMake(DyeStation.getMagicStain().build())
 		);
 
-		// TODO DECORATION: MINERAL RECIPE
+		// Magic Mineral
+		recipes.add(
+			shapeless(Material.GLASS_BOTTLE, Material.COAL, Material.IRON_INGOT, Material.COPPER_INGOT,
+				Material.GOLD_INGOT, Material.EMERALD, Material.LAPIS_LAZULI, Material.AMETHYST_SHARD, Material.QUARTZ)
+				.toMake(DyeStation.getMagicMineral().build())
+		);
 
 		return recipes;
 	}
