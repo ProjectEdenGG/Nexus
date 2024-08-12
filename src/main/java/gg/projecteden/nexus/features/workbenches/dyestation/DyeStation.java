@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.workbenches.dyestation;
 
+import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -77,6 +78,11 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 	@Override
 	public CustomBenchType getBenchType() {
 		return CustomBenchType.DYE_STATION;
+	}
+
+	@Override
+	public RecipeType getRecipeType() {
+		return RecipeType.DECORATION;
 	}
 
 	@Override
