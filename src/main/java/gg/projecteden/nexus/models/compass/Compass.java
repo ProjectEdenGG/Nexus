@@ -35,8 +35,10 @@ public class Compass implements PlayerOwnedObject {
 	private boolean enabled;
 
 	public boolean isEnabled() {
-		if (isOnline() && Pugmas24.get().isAtEvent(getLocation()))
-			return Pugmas24QuestItem.canUseCompass(getOnlinePlayer());
+		try {
+			if (isOnline() && Pugmas24.get().isAtEvent(getLocation()))
+				return Pugmas24QuestItem.canUseCompass(getOnlinePlayer());
+		} catch (Exception ignore) {}
 
 		return enabled;
 	}
