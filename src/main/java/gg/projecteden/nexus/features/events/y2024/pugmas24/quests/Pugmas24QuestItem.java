@@ -4,7 +4,6 @@ import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.quests.QuestItem;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.quests.Quester;
-import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
@@ -18,16 +17,16 @@ import org.bukkit.inventory.ItemStack;
 @AllArgsConstructor
 public enum Pugmas24QuestItem implements QuestItem {
 
-	RED_BALLOON(new ItemBuilder(CustomMaterial.BALLOON_TALL).name("&oRed Balloon").lore("&7Negates fall damage").dyeColor(ColorType.RED)),
+	RED_BALLOON(new ItemBuilder(CustomMaterial.EVENT_RED_BALLOON).name("&oRed Balloon").lore("&7Negates fall damage")),
 	DISCOUNT_CARD(new ItemBuilder(CustomMaterial.EVENT_DISCOUNT_CARD).name("&oDiscount Card").lore("&7Shop prices lowered by &e20%")),
 	MAGIC_MIRROR(new ItemBuilder(CustomMaterial.EVENT_MAGIC_MIRROR).name("&oMagic Mirror").lore("&7Opens the waystone warp menu")),
 	HEART_CRYSTAL(new ItemBuilder(CustomMaterial.EVENT_HEART_CRYSTAL).name("&oHeart Crystal").lore("&7Permanently increases max", " health by &d1 heart")),
 	LUCKY_HORSESHOE(new ItemBuilder(CustomMaterial.EVENT_LUCKY_HORSESHOE).name("&oLucky Horseshoe").lore("&7Higher chance to gain additional coins")),
 
-	DEPTH_METER(new ItemBuilder(CustomMaterial.EVENT_DEPTH_METER).name("&oDepth Meter").lore("&7Displays Y Coordinate")),
+	DEPTH_METER(new ItemBuilder(CustomMaterial.EVENT_DEPTH_METER).name("&oDepth Meter").lore("&7Displays your area designation")),
 	GOLD_WATCH(new ItemBuilder(CustomMaterial.EVENT_GOLD_WATCH).name("&oGold Watch").lore("&7Displays the current time")),
-	COMPASS(new ItemBuilder(CustomMaterial.EVENT_COMPASS).name("&oCompass").lore("&7Ability to see compass", "&7Displays X/Z Coordinates")), // to start it, call same method as compass#onjoin
-	GPS(new ItemBuilder(CustomMaterial.EVENT_GPS).name("&oGPS").lore("&7Ability to see compass", "&7Displays XYZ Coordinates, and current time")),
+	COMPASS(new ItemBuilder(CustomMaterial.EVENT_COMPASS).name("&oCompass").lore("&7Ability to see compass", "&7Displays Coordinates")), // to start it, call same method as compass#onjoin
+	GPS(new ItemBuilder(CustomMaterial.EVENT_GPS).name("&oGPS").lore("&7Ability to see compass", "&7- Displays your coordinates, area designation, and the current time")),
 
 	FISHING_POCKET_GUIDE(new ItemBuilder(CustomMaterial.EVENT_FISHING_POCKET_GUIDE).name("&oFisherman's Pocket Guide").lore("&7Displays your fishing power")),
 	WEATHER_RADIO(new ItemBuilder(CustomMaterial.EVENT_WEATHER_RADIO).name("&oWeather Radio").lore("&7Displays the current weather")),
@@ -36,7 +35,13 @@ public enum Pugmas24QuestItem implements QuestItem {
 
 	FISHING_ROD_WOOD(new ItemBuilder(CustomMaterial.FISHING_ROD_WOOD).name("Wood Fishing Rod")),
 	FISHING_ROD_REINFORCED(new ItemBuilder(CustomMaterial.FISHING_ROD_REINFORCED).name("Reinforced Fishing Rod").enchant(Enchant.UNBREAKING, 2)),
-	FISHING_ROD_GOLDEN(new ItemBuilder(CustomMaterial.FISHING_ROD_GOLDEN).name("Golden Fishing Rod").lore("&7Unbreakable").unbreakable().glow());
+	FISHING_ROD_GOLDEN(new ItemBuilder(CustomMaterial.FISHING_ROD_GOLDEN).name("Golden Fishing Rod").lore("&7Unbreakable").unbreakable().glow()),
+
+	// TODO: probably build these into fishing instead
+	CRATE_WOOD(new ItemBuilder(CustomMaterial.EVENT_CRATE_WOODEN).name("Wooden Crate")),
+	CRATE_IRON(new ItemBuilder(CustomMaterial.EVENT_CRATE_IRON).name("Iron Crate")),
+	CRATE_GOLD(new ItemBuilder(CustomMaterial.EVENT_CRATE_GOLDEN).name("Golden Crate")),
+	CRATE_DIAMOND(new ItemBuilder(CustomMaterial.EVENT_CRATE_DIAMOND).name("Diamond Crate")),
 
 	;
 

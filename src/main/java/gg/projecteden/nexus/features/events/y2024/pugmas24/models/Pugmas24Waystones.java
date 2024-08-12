@@ -51,7 +51,7 @@ public class Pugmas24Waystones implements Listener {
 	}
 
 	@AllArgsConstructor
-	private enum WaystoneDestination {
+	public enum Pugmas24Waystone {
 		HOT_SPRINGS(loc(-474, 127, -3060), loc(-474, 127, -3059, 45).toCenterLocation()),
 		TRAIN_STATION(loc(-689, 83, -2961), loc(-689, 82, -2966, 180).toCenterLocation()),
 		FAIRGROUNDS(loc(-763, 81, -2987), loc(-762, 81, -2896, -45).toCenterLocation()),
@@ -81,7 +81,7 @@ public class Pugmas24Waystones implements Listener {
 			addCloseItem();
 
 			List<ClickableItem> items = new ArrayList<>();
-			for (WaystoneDestination waystone : WaystoneDestination.values()) {
+			for (Pugmas24Waystone waystone : Pugmas24Waystone.values()) {
 				ItemBuilder item = DecorationType.WAYSTONE_ACTIVATED.getConfig().getItemBuilder().name(StringUtils.camelCase(waystone)).resetLore();
 				items.add(ClickableItem.of(item, e -> teleport(waystone)));
 			}
@@ -89,7 +89,7 @@ public class Pugmas24Waystones implements Listener {
 			paginate(items);
 		}
 
-		private void teleport(WaystoneDestination waystone) {
+		private void teleport(Pugmas24Waystone waystone) {
 			close();
 
 			new TitleBuilder()

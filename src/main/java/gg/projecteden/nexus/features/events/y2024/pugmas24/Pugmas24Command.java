@@ -10,7 +10,7 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24Ball
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonEditorUtils;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonManager;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BlockReplaceBrushMenu;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24District;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Districts.Pugmas24District;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Geyser;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Train;
@@ -74,7 +74,7 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 
 	@Path
 	void pugmas() {
-		if (!user.isFirstVisit())
+		if (!user.isVisited())
 			error("You need to take the Pugmas train at Hub to unlock this warp.");
 
 		player().teleportAsync(Pugmas24.get().warp, TeleportCause.COMMAND);
@@ -108,12 +108,13 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 
 	@Path("district")
 	@Description("View which district you are currently in")
+	@Permission(Group.ADMIN)
 	void district() {
 		Pugmas24District district = Pugmas24District.of(location());
 		if (district == null)
 			error("You must be in Pugmas to run this command");
 
-		send(PREFIX + "You are " + (district == Pugmas24District.UNKNOWN ? "not in a district" : "in the &e" + district.getFullName()));
+		send(PREFIX + "Area: &e" + district.getName());
 	}
 
 	@Path("advent")
