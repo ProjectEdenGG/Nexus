@@ -142,6 +142,11 @@ public class PlayerUtils {
 				send(message);
 		}
 
+		public void sendIf(boolean condition, Object message) {
+			if (condition)
+				send(message);
+		}
+
 		public void send(Object message) {
 			PlayerUtils.send(this, message);
 		}

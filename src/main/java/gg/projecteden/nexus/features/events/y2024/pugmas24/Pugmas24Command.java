@@ -187,7 +187,13 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 		send(PREFIX + "Advent day #" + day + " configured");
 	}
 
+	@Path("slotMachine rewards")
+	void slotMachine_rewards() {
+		send("TODO");
+	}
+
 	@Path("slotMachine roll")
+	@Permission(Group.ADMIN)
 	void slotMachine() {
 		Pugmas24SlotMachine.roll(player());
 	}

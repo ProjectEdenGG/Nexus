@@ -22,6 +22,7 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.DecoratedPot;
 import org.bukkit.block.DecoratedPot.Side;
+import org.bukkit.block.data.Powerable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -33,7 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// TODO: MAKE LIGHTS FLASH WHEN RUNNING
+// TODO: MAKE LIGHTS FLASH WHEN RUNNING, SETUP ROW REGION STUFF TO DETERMINE WINS, DISPLAY REWARDS SOMEWHERE SOMEHOW
 public class Pugmas24SlotMachine implements Listener {
 	private static final String potsRegion = Pugmas24.get().getRegionName() + "_slotmachine_pots";
 	private static final String leverRegion = Pugmas24.get().getRegionName() + "_slotmachine_lever";
@@ -111,13 +112,17 @@ public class Pugmas24SlotMachine implements Listener {
 
 	public static void reset() {
 		Tasks.cancel(rollingTaskId);
-		rollingPlayer = null;
+		slowingColumnSkips = 0;
+		for (SlotMachineColumn slotColumn : columns.values()) {
+			slotColumn.setStatus(SlotMachineColumnStatus.INACTIVE);
+		}
 		//
+		rollingPlayer = null;
 		rolling = false;
 	}
 
 	private static void reward() {
-		PlayerUtils.send(rollingPlayer, "Nerd. <reward stuff here>");
+		PlayerUtils.send(rollingPlayer, "TODO reward stuff here");
 		reset();
 	}
 
@@ -139,6 +144,7 @@ public class Pugmas24SlotMachine implements Listener {
 		rollSherdsSize = rollSherds.size();
 		Collections.shuffle(rollSherds);
 		tick = 0;
+		slowingColumnSkips = 0;
 
 		// Roll
 		for (SlotMachineColumn slotColumn : columns.values()) {
@@ -152,13 +158,14 @@ public class Pugmas24SlotMachine implements Listener {
 
 	}
 
+	private static int slowingColumnSkips = 0;
 	private static void update() {
-		int slowingColumnSkips = 0;
+
 		for (int column = 0; column < WIDTH; column++) {
 			SlotMachineColumn slotColumn = columns.get(column);
 			SlotMachineColumnStatus columnStatus = slotColumn.getStatus();
 
-			if (columnStatus == SlotMachineColumnStatus.INACTIVE)
+			if (columnStatus == SlotMachineColumnStatus.INACTIVE || columnStatus == SlotMachineColumnStatus.STOPPED)
 				continue;
 
 			if (columnStatus == SlotMachineColumnStatus.SLOWING) {
@@ -168,35 +175,41 @@ public class Pugmas24SlotMachine implements Listener {
 				}
 			}
 
-			if (slotColumn.isAbleToStop()) {
-				if (slotColumn.canSlow()) {
-					slotColumn.setStatus(SlotMachineColumnStatus.SLOWING);
-				} else if (slotColumn.canStop()) {
-					slowingColumnSkips = 0;
-					slotColumn.setStatus(SlotMachineColumnStatus.INACTIVE);
-					slotColumn.setStoppedTick(tick);
-					new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).location(soundLocation).volume(0.3).play();
-					if (slotColumn.getColumnIndex() == (columns.size() - 1)) {
-						reward();
-						return;
-					}
-					continue;
-				}
-			}
-
-			new SoundBuilder(Sound.UI_BUTTON_CLICK).location(soundLocation).volume(0.3).play();
-
-			int columnOffset = (int) ((tick / interval + column * HEIGHT) % rollSherdsSize);
+			int columnOffset = ((int) (((tick / interval + column * HEIGHT) - slowingColumnSkips) % rollSherdsSize));
 			for (int row = 0; row < HEIGHT; row++) {
-				int sherdIndex = ((columnOffset - slowingColumnSkips + row) % rollSherdsSize);
+				int sherdIndex = ((columnOffset + row) % rollSherdsSize);
 				Material sherd = rollSherds.get(sherdIndex);
 				setSides(slotColumn.getPots().get(row), sherd);
 			}
+
+			if (slotColumn.isAbleToStop()) {
+				if (slotColumn.canSlow()) {
+					slotColumn.setStatus(SlotMachineColumnStatus.SLOWING);
+					slotColumn.playSound(soundLocation);
+					continue;
+				}
+
+				if (slotColumn.canStop()) {
+					slotColumn.setStatus(SlotMachineColumnStatus.STOPPED);
+					slotColumn.playSound(soundLocation);
+					slotColumn.setStoppedTick(tick);
+
+					slowingColumnSkips = 0;
+
+					if (slotColumn.getColumnIndex() == (columns.size() - 1)) {
+						Tasks.cancel(rollingTaskId);
+						reward();
+						return;
+					}
+				}
+			}
+
+			slotColumn.playSound(soundLocation);
 		}
 	}
 
 	public static void shutdown() {
-		Tasks.cancel(rollingTaskId);
+		reset();
 	}
 
 	//
@@ -219,7 +232,7 @@ public class Pugmas24SlotMachine implements Listener {
 
 			int previousIndex = columnIndex - 1;
 			SlotMachineColumn previousColumn = columns.get(previousIndex);
-			if (previousColumn.getStatus() != SlotMachineColumnStatus.INACTIVE)
+			if (previousColumn.getStatus() != SlotMachineColumnStatus.STOPPED)
 				return false;
 
 			return previousColumn.getStoppedTick() < (tick + TickTime.SECOND.x(3));
@@ -239,10 +252,22 @@ public class Pugmas24SlotMachine implements Listener {
 			return tick > TickTime.SECOND.x(RandomUtils.randomInt((columnIndex + 1) * 7, (columnIndex + 1) * 10));
 		}
 
+		public void playSound(Location soundLocation) {
+			switch (status) {
+				case RUNNING ->
+					new SoundBuilder(Sound.UI_BUTTON_CLICK).location(soundLocation).volume(0.3).pitch(2).play();
+				case SLOWING ->
+					new SoundBuilder(Sound.UI_BUTTON_CLICK).location(soundLocation).volume(0.3).pitch(1.5).play();
+				case STOPPED ->
+					new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).location(soundLocation).volume(0.3).play();
+			}
+		}
+
 		protected enum SlotMachineColumnStatus {
 			INACTIVE,
 			RUNNING,
 			SLOWING,
+			STOPPED,
 		}
 	}
 
@@ -272,6 +297,17 @@ public class Pugmas24SlotMachine implements Listener {
 			return;
 
 		event.setCancelled(true);
+
+		if (block.getBlockData() instanceof Powerable powerable) {
+			powerable.setPowered(true);
+			block.setBlockData(powerable, true);
+
+			Tasks.wait(10, () -> {
+				powerable.setPowered(false);
+				block.setBlockData(powerable, true);
+			});
+		}
+
 		roll(player);
 	}
 
