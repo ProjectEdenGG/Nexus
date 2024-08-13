@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.TrainBackground;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonEditor;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Geyser;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine;
 import gg.projecteden.nexus.features.events.y2024.vulan24.lantern.VuLan24LanternAnimation;
 import gg.projecteden.nexus.features.listeners.common.TemporaryListener;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
@@ -291,6 +292,12 @@ public class NexusCommand extends CustomCommand implements Listener {
 			if (Nexus.getEnv() == Env.PROD) {
 				if (Pugmas24BalloonEditor.reload())
 					throw new InvalidInputException("A balloon is being editing at pugmas, saving session...");
+			}
+		}),
+		PUGMAS24_SLOT_MACHINE(() -> {
+			if (Nexus.getEnv() == Env.PROD) {
+				if (Pugmas24SlotMachine.isRolling())
+					throw new InvalidInputException("The slot machine is being rolled at pugmas");
 			}
 		}),
 		CHAT_GAMES(() -> {

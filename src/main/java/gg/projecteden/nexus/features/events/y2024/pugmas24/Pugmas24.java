@@ -95,6 +95,7 @@ public class Pugmas24 extends EdenEvent {
 
 	@Override
 	public void onStop() {
+		Pugmas24SlotMachine.shutdown();
 		Pugmas24Train.shutdown();
 		Pugmas24Advent.shutdown();
 		Pugmas24BalloonEditor.shutdown();

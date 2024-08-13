@@ -195,7 +195,13 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	@Path("slotMachine setup")
 	@Permission(Group.ADMIN)
 	void slotMachine_setup() {
-		Pugmas24SlotMachine.setup(player());
+		Pugmas24SlotMachine.init(player());
+	}
+
+	@Path("slotMachine reset")
+	@Permission(Group.ADMIN)
+	void slotMachine_reset() {
+		Pugmas24SlotMachine.reset();
 	}
 
 	@Path("geyser start")
