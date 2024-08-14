@@ -5,6 +5,7 @@ import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24.Pugmas24DeathCause;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.NMSUtils;
@@ -114,8 +115,10 @@ public class Pugmas24Geyser {
 
 					float damageAmount = 0.5f;
 					double newHealth = player.getHealth() - damageAmount;
-					if (newHealth <= 0)
-						continue; // TODO: INSTEAD FAKE KILL THE PLAYER - RESPAWN SOMEWHERE IN PUGMAS?
+					if (newHealth <= 0) {
+						Pugmas24.get().onDeath(player, Pugmas24DeathCause.GEYSER);
+						continue;
+					}
 
 					NMSUtils.hurtPlayer(player, NMSUtils.getDamageSources(player).hotFloor(), damageAmount);
 				}

@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24Ball
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonManager;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24Fairgrounds;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24Rides;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Districts.Pugmas24District;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Fishing;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Train;
@@ -21,15 +22,21 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestR
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestTask;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24ShopMenu;
 import gg.projecteden.nexus.features.quests.QuestConfig;
+import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.models.godmode.GodmodeService;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.warps.WarpType;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 
@@ -64,7 +71,8 @@ public class Pugmas24 extends EdenEvent {
 	public static final LocalDate _25TH = LocalDate.of(2024, 12, 25);
 
 	public static final String LORE = "&ePugmas 2024 Item";
-	public final Location warp = location(-688.5, 82, -2964.5);
+	public final Location warp = location(-688.5, 82, -2964.5, 180, 0);
+	public final Location deathLoc = location(-637.5, 66.0, -3260.5, 180, 0);
 
 	@Getter
 	private static boolean ridesEnabled = true;
@@ -132,4 +140,72 @@ public class Pugmas24 extends EdenEvent {
 	public static boolean is25thOrAfter(LocalDate date) {
 		return date.isAfter(_25TH.plusDays(-1));
 	}
+
+	// Death
+
+	@Override
+	public Location getRespawnLocation(Player player) {
+		return warp; // TODO: GET PLAYER CABIN, IF SET
+	}
+
+	public void onDeath(Player player, @NotNull Pugmas24.Pugmas24DeathCause deathType) {
+		player.teleportAsync(deathLoc);
+		broadcast(deathType.getMessage(player));
+
+		fadeToBlack(player, "&cYou died.", 30).thenRun(() -> player.teleportAsync(getRespawnLocation(player)));
+	}
+
+	@Override
+	public void onPlayerDeath(PlayerDeathEvent event) {
+		event.setCancelled(true);
+		EntityDamageEvent damageEvent = event.getEntity().getLastDamageCause();
+
+		Pugmas24DeathCause deathCause = Pugmas24DeathCause.UNKNOWN;
+		if (damageEvent != null) {
+			deathCause = switch (damageEvent.getCause()) {
+				case FALL -> Pugmas24DeathCause.FALL;
+				case STARVATION -> Pugmas24DeathCause.STARVATION;
+				case FLY_INTO_WALL -> Pugmas24DeathCause.ELYTRA;
+				default -> Pugmas24DeathCause.UNKNOWN;
+			};
+		}
+
+
+		onDeath(event.getPlayer(), deathCause);
+	}
+
+	@AllArgsConstructor
+	public enum Pugmas24DeathCause {
+		UNKNOWN("<player> died"),
+		GEYSER("<player> was boiled alive"),
+		RANDOM_DEATH("<player> randomly died?"),
+		INSTANT_DEATH("<player> had really bad luck"),
+		FALL("<player> forgot fall damage existed"),
+		STARVATION("<player> forgot to eat"),
+		ELYTRA("<player> needs more practice with an elytra");
+
+		final String message;
+
+		public String getMessage(Player player) {
+			return message.replaceAll("<player>", Nickname.of(player));
+		}
+	}
+
+	//
+
+	@EventHandler
+	public void on(PlayerEnteredRegionEvent event) {
+		Player player = event.getPlayer();
+		if (!shouldHandle(player))
+			return;
+
+		Pugmas24District district = Pugmas24District.of(player.getLocation());
+		if (district == null)
+			return;
+
+		actionBar(player, "Area: &e" + district.getName(), 40);
+	}
+
+
+
 }

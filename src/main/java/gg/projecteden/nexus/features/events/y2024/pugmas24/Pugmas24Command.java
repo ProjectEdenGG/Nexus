@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.y2024.pugmas24;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.IEventCommand;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24.Pugmas24DeathCause;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Pugmas24Advent;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Pugmas24AdventMenu;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonEditor;
@@ -185,6 +186,12 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 		adventService.save(adventConfig);
 
 		send(PREFIX + "Advent day #" + day + " configured");
+	}
+
+	@Path("death <cause>")
+	@Permission(Group.ADMIN)
+	void death_test(Pugmas24DeathCause deathCause) {
+		Pugmas24.get().onDeath(player(), deathCause);
 	}
 
 	@Path("slotMachine rewards")

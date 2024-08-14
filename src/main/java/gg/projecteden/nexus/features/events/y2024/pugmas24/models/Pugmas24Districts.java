@@ -43,7 +43,7 @@ public class Pugmas24Districts implements Listener {
 		SAWMILL("sawmill"),
 		RIVER("river"),
 		//
-		UNDERGROUND("underground"), // requires sky block light == 0
+		UNDERGROUND("underground"),
 		WILDERNESS(null);
 
 		final String regionId;
@@ -56,19 +56,18 @@ public class Pugmas24Districts implements Listener {
 			return regionPrefix + regionId;
 		}
 
-		/*
-			 TODO: CHECK IF UNDERGROUND RESTRICTIONS APPLY
-
-		 */
-
 		public static Pugmas24District of(Location location) {
 			if (!location.getWorld().equals(Pugmas24.get().getWorld()))
 				return null;
 
-			for (ProtectedRegion region : Pugmas24.get().worldguard().getRegionsAt(location))
+			for (ProtectedRegion region : Pugmas24.get().worldguard().getRegionsAt(location)) {
 				for (Pugmas24District district : Pugmas24District.values())
-					if (region.getId().equalsIgnoreCase(district.getRegionId()))
+					if (region.getId().equalsIgnoreCase(district.getRegionId())) {
+						if (district == UNDERGROUND && location.getBlock().getLightFromSky() > 0)
+							continue;
 						return district;
+					}
+			}
 
 			return Pugmas24District.WILDERNESS;
 		}
