@@ -7,7 +7,6 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Pugmas24Advent
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonEditor;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonManager;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24Fairgrounds;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24Rides;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Districts.Pugmas24District;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Fishing;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine;
@@ -97,7 +96,6 @@ public class Pugmas24 extends EdenEvent {
 		new Pugmas24QuestItemsListener();
 		new Pugmas24Waystones();
 
-		Pugmas24Rides.startup();
 		Pugmas24Train.startup();
 	}
 
