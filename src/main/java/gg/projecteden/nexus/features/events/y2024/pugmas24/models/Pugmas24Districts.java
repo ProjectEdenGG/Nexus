@@ -31,27 +31,15 @@ public class Pugmas24Districts implements Listener {
 
 	@EventHandler
 	public void on(PlayerEnteredRegionEvent event) {
-		Player player = event.getPlayer();
-		if (!Pugmas24.get().shouldHandle(player))
-			return;
-
-		Pugmas24District newDistrict = Pugmas24District.of(player.getLocation());
-		if (newDistrict == null)
-			return;
-
-		Pugmas24District currentDistrict = playerDistrictMap.get(player);
-		if (currentDistrict != null) {
-			if (newDistrict == currentDistrict)
-				return;
-		}
-
-		playerDistrictMap.put(player, newDistrict);
-		Pugmas24.get().actionBarBroadcast("&3Area Designation: &e" + newDistrict.getName(), TickTime.SECOND.x(2));
+		updateDistrict(event.getPlayer());
 	}
 
 	@EventHandler
 	public void on(PlayerLeftRegionEvent event) {
-		Player player = event.getPlayer();
+		updateDistrict(event.getPlayer());
+	}
+
+	private void updateDistrict(Player player) {
 		if (!Pugmas24.get().shouldHandle(player))
 			return;
 
