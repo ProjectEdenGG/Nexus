@@ -111,10 +111,6 @@ public class Pugmas24 extends EdenEvent {
 		handleInteract(Pugmas24NPC.BLACKSMITH, (player, npc) -> Pugmas24ShopMenu.BLACKSMITH.open(player));
 	}
 
-	public static void send(String message, Player to) {
-		PlayerUtils.send(to, message);
-	}
-
 	public static String isCheatingMsg(Player player) {
 		if (canWorldGuardEdit(player)) return "wgedit";
 		if (!player.getGameMode().equals(GameMode.SURVIVAL)) return "creative";

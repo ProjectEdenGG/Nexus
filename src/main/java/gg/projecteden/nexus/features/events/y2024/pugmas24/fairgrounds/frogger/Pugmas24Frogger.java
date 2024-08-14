@@ -10,6 +10,7 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -32,6 +33,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 
 public class Pugmas24Frogger implements Listener {
+	@Getter
+	private static final String prefix = "&8&l[&eFrogger&8&l] &f";
 	private static final String gameRg = Pugmas24.get().getRegionName() + "_frogger";
 	private static final String winRg = gameRg + "_win";
 	private static final String damageRg = gameRg + "_damage";
@@ -275,7 +278,7 @@ public class Pugmas24Frogger implements Listener {
 			String cheatingMsg = Pugmas24.isCheatingMsg(player);
 			if (cheatingMsg != null && !cheatingMsg.contains("wgedit")) {
 				player.teleportAsync(respawnLoc);
-				Pugmas24.send("Don't cheat, turn " + cheatingMsg + " off!", player);
+				Pugmas24.get().sendNoPrefix(player, Pugmas24Frogger.getPrefix() + "Don't cheat, turn " + cheatingMsg + " off!");
 				EventSounds.VILLAGER_NO.play(player);
 			}
 
@@ -294,7 +297,7 @@ public class Pugmas24Frogger implements Listener {
 			player.teleportAsync(respawnLoc);
 			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(player).volume(10).pitch(2.0).play();
 
-			//BearFair21.giveDailyTokens(player, BF21PointSource.FROGGER, 5);
+			// TODO: GIVE DAILY TOKENS
 		}
 	}
 

@@ -26,7 +26,7 @@ public class Pugmas24ReflectionListeners implements Listener {
 	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		String regionId = event.getRegion().getId();
 		if (regionId.equalsIgnoreCase(Pugmas24Reflection.getGameRg()))
-			Pugmas24.send(Pugmas24Reflection.getPrefix() + Pugmas24Reflection.getMessage(), event.getPlayer());
+			Pugmas24.get().sendNoPrefix(event.getPlayer(), Pugmas24Reflection.getPrefix() + Pugmas24Reflection.getMessage());
 	}
 
 	@EventHandler

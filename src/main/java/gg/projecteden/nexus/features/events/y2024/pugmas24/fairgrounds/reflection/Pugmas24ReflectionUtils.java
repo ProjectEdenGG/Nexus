@@ -88,7 +88,7 @@ public class Pugmas24ReflectionUtils {
 	public static void broadcastObjective() {
 		Collection<Player> players = Pugmas24.get().getPlayersIn(Pugmas24Reflection.getGameRg());
 		for (Player player : players) {
-			Pugmas24.send(Pugmas24Reflection.getPrefix() + Pugmas24Reflection.getMessage(), player);
+			Pugmas24.get().sendNoPrefix(player, Pugmas24Reflection.getPrefix() + Pugmas24Reflection.getMessage());
 		}
 	}
 
@@ -98,7 +98,7 @@ public class Pugmas24ReflectionUtils {
 		String type = Pugmas24Reflection.getLamp().getChatColor() + StringUtils.camelCase(Pugmas24Reflection.getLamp().getType());
 		Collection<Player> players = Pugmas24.get().getPlayersIn(Pugmas24Reflection.getGameRg());
 		for (Player player : players)
-			Pugmas24.send(Pugmas24Reflection.getPrefix() + type + " &fwas hit in " + count + " reflections!", player);
+			Pugmas24.get().sendNoPrefix(player, Pugmas24Reflection.getPrefix() + type + " &fwas hit in " + count + " reflections!");
 
 		//BearFair21.giveDailyTokens(Reflection.getButtonPresser(), BF21PointSource.REFLECTION, 5);
 

@@ -44,7 +44,7 @@ public class Pugmas24Train {
 					return;
 
 				getDefault().build().start();
-				Pugmas24.get().actionBar("&c&lA train is passing by...", TickTime.SECOND.x(10));
+				Pugmas24.get().actionBarBroadcast("&c&lA train is passing by...", TickTime.SECOND.x(10));
 				Tasks.wait(delay.get(), get());
 			});
 		}}.get());

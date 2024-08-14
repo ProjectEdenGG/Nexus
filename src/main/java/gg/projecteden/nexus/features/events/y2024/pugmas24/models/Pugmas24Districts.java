@@ -20,7 +20,7 @@ public class Pugmas24Districts implements Listener {
 
 		for (Pugmas24District district : Pugmas24District.values()) {
 			if (district.getRegionId().equalsIgnoreCase(event.getRegion().getId())) {
-				Pugmas24.get().actionBar("Area Designation: " + district.getName(), TickTime.SECOND.x(2));
+				Pugmas24.get().actionBarBroadcast("Area Designation: " + district.getName(), TickTime.SECOND.x(2));
 				return;
 			}
 		}
