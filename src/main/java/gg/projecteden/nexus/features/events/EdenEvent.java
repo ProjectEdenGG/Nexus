@@ -25,6 +25,7 @@ import gg.projecteden.nexus.features.quests.interactable.Interactable;
 import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
 import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuest;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomEmoji;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
@@ -41,6 +42,7 @@ import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.parchment.HasLocation;
@@ -75,6 +77,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -95,6 +98,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
 import static gg.projecteden.api.common.utils.RandomUtils.chanceOf;
@@ -302,8 +306,20 @@ public abstract class EdenEvent extends Feature implements Listener {
 		PlayerUtils.send(player, PREFIX + message);
 	}
 
-	public void actionBar(String message, long ticks) {
-		getPlayers().forEach(player -> ActionBarUtils.sendActionBar(player, message, ticks));
+	public void sendNoPrefix(Player player, String message) {
+		PlayerUtils.send(player, message);
+	}
+
+	public void broadcast(String message) {
+		getPlayers().forEach(player -> send(player, message));
+	}
+
+	public void actionBar(Player player, String message, long ticks) {
+		ActionBarUtils.sendActionBar(player, message, ticks);
+	}
+
+	public void actionBarBroadcast(String message, long ticks) {
+		getPlayers().forEach(player -> actionBar(player, message, ticks));
 	}
 
 	public void poof(Location location) {
@@ -825,8 +841,23 @@ public abstract class EdenEvent extends Feature implements Listener {
 		event.setCancelled(true);
 	}
 
-	public Location getRespawnLocation() {
+	public Location getRespawnLocation(Player player) {
 		return null;
+	}
+
+	public void onPlayerDeath(PlayerDeathEvent event) {
+
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void on(PlayerDeathEvent event) {
+		if (!shouldHandle(event.getPlayer()))
+			return;
+
+		if (!event.getPlayer().getWorld().equals(getWorld()))
+			return;
+
+		onPlayerDeath(event);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -837,7 +868,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 		if (!event.getPlayer().getWorld().equals(getWorld()))
 			return;
 
-		final Location respawnLocation = getRespawnLocation();
+		final Location respawnLocation = getRespawnLocation(event.getPlayer());
 		event.setRespawnLocation(respawnLocation);
 	}
 
@@ -874,6 +905,29 @@ public abstract class EdenEvent extends Feature implements Listener {
 				return false;
 		}
 		return true;
+	}
+
+	public CompletableFuture<Void> fadeToBlack(Player player) {
+		return new TitleBuilder()
+			.title(CustomEmoji.SCREEN_BLACK.getChar())
+			.fade(TickTime.TICK.x(10))
+			.players(player)
+			.stay(TickTime.TICK.x(10))
+			.send();
+	}
+
+	public CompletableFuture<Void> fadeToBlack(Player player, String title) {
+		return fadeToBlack(player, title, 10);
+	}
+
+	public CompletableFuture<Void> fadeToBlack(Player player, String title, int stayTicks) {
+		return new TitleBuilder()
+			.title(title)
+			.subtitle(CustomEmoji.SCREEN_BLACK.getChar())
+			.fade(TickTime.TICK.x(10))
+			.players(player)
+			.stay(TickTime.TICK.x(stayTicks))
+			.send();
 	}
 
 }
