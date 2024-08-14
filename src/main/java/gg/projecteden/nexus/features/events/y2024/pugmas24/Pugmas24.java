@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Pugmas24Advent
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonEditor;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonManager;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24Fairgrounds;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Districts.Pugmas24District;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Districts;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Fishing;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Train;
@@ -21,7 +21,6 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestR
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestTask;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24ShopMenu;
 import gg.projecteden.nexus.features.quests.QuestConfig;
-import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.models.godmode.GodmodeService;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -32,7 +31,6 @@ import lombok.Getter;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.jetbrains.annotations.NotNull;
@@ -88,6 +86,7 @@ public class Pugmas24 extends EdenEvent {
 	public void onStart() {
 		super.onStart();
 
+		new Pugmas24Districts();
 		new Pugmas24Advent();
 		new Pugmas24Fairgrounds();
 		new Pugmas24BalloonManager();
@@ -186,21 +185,6 @@ public class Pugmas24 extends EdenEvent {
 		public String getMessage(Player player) {
 			return message.replaceAll("<player>", Nickname.of(player));
 		}
-	}
-
-	//
-
-	@EventHandler
-	public void on(PlayerEnteredRegionEvent event) {
-		Player player = event.getPlayer();
-		if (!shouldHandle(player))
-			return;
-
-		Pugmas24District district = Pugmas24District.of(player.getLocation());
-		if (district == null)
-			return;
-
-		actionBar(player, "Area: &e" + district.getName(), 40);
 	}
 
 

@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24Ball
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonEditorUtils;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonManager;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BlockReplaceBrushMenu;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Districts;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Districts.Pugmas24District;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Geyser;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine;
@@ -111,11 +112,8 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	@Description("View which district you are currently in")
 	@Permission(Group.ADMIN)
 	void district() {
-		Pugmas24District district = Pugmas24District.of(location());
-		if (district == null)
-			error("You must be in Pugmas to run this command");
-
-		send(PREFIX + "Area: &e" + district.getName());
+		Pugmas24District district = Pugmas24Districts.of(player());
+		send(PREFIX + "Area Designation: &e" + district.getName());
 	}
 
 	@Path("advent")
