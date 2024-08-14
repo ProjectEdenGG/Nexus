@@ -23,7 +23,6 @@ import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.features.regionapi.events.entity.EntityLeavingRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.resourcepack.models.font.CustomEmoji;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.quests.Quester;
@@ -38,7 +37,6 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.ToolType;
 import gg.projecteden.nexus.utils.ToolType.ToolGrade;
 import net.minecraft.world.entity.raid.Raid;
@@ -47,6 +45,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Pillager;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -154,7 +153,7 @@ public class VuLan24 extends EdenEvent {
 	}
 
 	@Override
-	public Location getRespawnLocation() {
+	public Location getRespawnLocation(Player player) {
 		return WarpType.VULAN24.get("VinhLuc").getLocation();
 	}
 
@@ -241,12 +240,7 @@ public class VuLan24 extends EdenEvent {
 		if (!userService.get(event.getPlayer()).isReadyToVisit())
 			return;
 
-		new TitleBuilder()
-			.title(CustomEmoji.SCREEN_BLACK.getChar())
-			.fade(TickTime.TICK.x(10))
-			.players(event.getPlayer())
-			.stay(TickTime.TICK.x(10))
-			.send()
+		fadeToBlack(event.getPlayer())
 			.thenRun(() -> {
 				WarpType.VULAN24.get("spawn").teleportAsync(event.getPlayer());
 				userService.edit(event.getPlayer(), user -> user.setVisited(true));
