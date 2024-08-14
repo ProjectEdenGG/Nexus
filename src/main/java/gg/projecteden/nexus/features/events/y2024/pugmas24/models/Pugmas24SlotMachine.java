@@ -147,8 +147,6 @@ public class Pugmas24SlotMachine implements Listener {
 		SlotMachineRewardType rewardType = null;
 		for (Material material : winningSherdMap.keySet()) {
 			int count = winningSherdMap.get(material);
-			Pugmas24.get().send(rollingPlayer, "Sherd = " + material + " | count = " + count);
-
 			if (count < halfCount)
 				continue;
 
