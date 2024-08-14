@@ -23,6 +23,7 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.DecoratedPot;
 import org.bukkit.block.DecoratedPot.Side;
+import org.bukkit.block.data.Lightable;
 import org.bukkit.block.data.Powerable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -40,7 +41,7 @@ import java.util.function.Consumer;
 
 /*
 	TODO:
-		- MAKE LIGHTS FLASH WHEN RUNNING
+		- REWARDS + SOUNDS
  */
 public class Pugmas24SlotMachine implements Listener {
 	private static final String potsRegion = Pugmas24.get().getRegionName() + "_slotmachine_pots";
@@ -56,6 +57,7 @@ public class Pugmas24SlotMachine implements Listener {
 	@Getter
 	private static boolean rolling = false;
 	private static Player rollingPlayer;
+	@Getter
 	private static Location soundLocation;
 
 	public Pugmas24SlotMachine() {
@@ -258,8 +260,37 @@ public class Pugmas24SlotMachine implements Listener {
 		}
 	}
 
-	public static void shutdown() {
-		reset();
+	private static final List<Location> LIGHTS = new ArrayList<>(List.of(
+		Pugmas24.get().location(-733, 85, -2904),
+		Pugmas24.get().location(-735, 86, -2904),
+		Pugmas24.get().location(-737, 85, -2904)));
+
+	private static final List<Location> activatedLights = new ArrayList<>();
+
+	public static void nextLight() {
+		List<Location> nextLights = new ArrayList<>(LIGHTS);
+
+		if (!activatedLights.isEmpty()) {
+			Location previousLightLoc = activatedLights.getLast();
+			setPowerable(previousLightLoc, false);
+		}
+
+		nextLights.removeAll(activatedLights);
+		if (nextLights.isEmpty()) {
+			activatedLights.clear();
+			nextLights = new ArrayList<>(LIGHTS);
+		}
+
+		Location nextLightLoc = nextLights.getFirst();
+		setPowerable(nextLightLoc, true);
+		activatedLights.add(nextLightLoc);
+	}
+
+	private static void setPowerable(Location location, boolean lit) {
+		Block light = location.getBlock();
+		Lightable lightable = (Lightable) light.getBlockData();
+		lightable.setLit(lit);
+		light.setBlockData(lightable, false);
 	}
 
 	//

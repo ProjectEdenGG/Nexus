@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.effects.Effects.RotatingStand.StandRotation
 import gg.projecteden.nexus.features.effects.Effects.RotatingStand.StandRotationType;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24Fairgrounds;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Geyser;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -43,6 +44,7 @@ public class Pugmas24Effects extends Effects {
 	@Override
 	public void animations() {
 		geyser();
+		slotMachine();
 		minigolfWindmill();
 	}
 
@@ -107,6 +109,15 @@ public class Pugmas24Effects extends Effects {
 			Pugmas24Fairgrounds.minigolfAnimationLoc.getBlock().setType(Material.REDSTONE_BLOCK);
 		});
 
+	}
+
+	private void slotMachine() {
+		Tasks.repeat(0, TickTime.SECOND, () -> {
+			if (!shouldAnimate(Pugmas24SlotMachine.getSoundLocation()))
+				return;
+
+			Pugmas24SlotMachine.nextLight();
+		});
 	}
 
 
