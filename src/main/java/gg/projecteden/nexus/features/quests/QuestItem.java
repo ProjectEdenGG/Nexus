@@ -9,7 +9,7 @@ public interface QuestItem {
 	ItemStack get();
 
 	default ItemStack amount(int amount) {
-		return new ItemBuilder(get()).amount(4).build();
+		return new ItemBuilder(get()).amount(amount).build();
 	}
 
 	default boolean fuzzyMatch(ItemStack item) {
