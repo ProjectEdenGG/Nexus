@@ -17,6 +17,7 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Geyser
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine.Pugmas24SlotMachineReward;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine.Pugmas24SlotMachineReward.Pugmas24SlotMachineRewardType;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine.Pugmas24SlotMachineRewardMenu;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Train;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -193,7 +194,7 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 
 	@Path("slotMachine rewards")
 	void slotMachine_rewards() {
-		send("TODO");
+		new Pugmas24SlotMachineRewardMenu().open(player());
 	}
 
 	@Path("slotMachine roll")

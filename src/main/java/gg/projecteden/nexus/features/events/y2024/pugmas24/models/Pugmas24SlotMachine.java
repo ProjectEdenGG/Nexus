@@ -6,8 +6,18 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24.Pugmas24DeathCause;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine.Pugmas24SlotMachineReward.Pugmas24SlotMachineRewardType;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine.SlotMachineColumn.SlotMachineColumnStatus;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestItem;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.menus.api.content.SlotPos;
+import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.FireworkLauncher;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -17,6 +27,7 @@ import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -41,7 +52,7 @@ import java.util.function.Consumer;
 
 /*
 	TODO:
-		- REWARDS + SOUNDS
+		- REWARDS
  */
 public class Pugmas24SlotMachine implements Listener {
 	private static final String potsRegion = Pugmas24.get().getRegionName() + "_slotmachine_pots";
@@ -62,7 +73,6 @@ public class Pugmas24SlotMachine implements Listener {
 
 	public Pugmas24SlotMachine() {
 		Nexus.registerListener(this);
-
 		init(null);
 	}
 
@@ -145,20 +155,20 @@ public class Pugmas24SlotMachine implements Listener {
 
 		int fullCount = winningRow.size();
 		int halfCount = (int) Math.ceil(fullCount / 2.0);
-		SlotMachineReward reward = null;
-		SlotMachineRewardType rewardType = null;
+		Pugmas24SlotMachineReward reward = null;
+		Pugmas24SlotMachineRewardType rewardType = null;
 		for (Material material : winningSherdMap.keySet()) {
 			int count = winningSherdMap.get(material);
 			if (count < halfCount)
 				continue;
 
 			if (count == halfCount) {
-				reward = SlotMachineReward.of(material);
-				rewardType = SlotMachineRewardType.HALF;
+				reward = Pugmas24SlotMachineReward.of(material);
+				rewardType = Pugmas24SlotMachineReward.Pugmas24SlotMachineRewardType.HALF;
 				break;
 			} else if (count == fullCount) {
-				reward = SlotMachineReward.of(material);
-				rewardType = SlotMachineRewardType.FULL;
+				reward = Pugmas24SlotMachineReward.of(material);
+				rewardType = Pugmas24SlotMachineReward.Pugmas24SlotMachineRewardType.FULL;
 				break;
 			}
 		}
@@ -168,7 +178,6 @@ public class Pugmas24SlotMachine implements Listener {
 		} else {
 			new SoundBuilder(Sound.ENTITY_VILLAGER_NO).location(soundLocation).volume(0.5).play();
 		}
-
 
 		reset();
 	}
@@ -181,18 +190,20 @@ public class Pugmas24SlotMachine implements Listener {
 
 	public static void roll(Player player) {
 		if (Nexus.isMaintenanceQueued()) {
-			Pugmas24.get().send(rollingPlayer, "&cServer maintenance is queued, try again later");
+			Pugmas24.get().send(player, "&cServer maintenance is queued, try again later");
 			return;
 		}
 
 		if (rolling) {
-			Pugmas24.get().send(rollingPlayer, "&cThe slot machine is already being rolled");
+			Pugmas24.get().send(player, "&cThe slot machine is already being rolled");
 			return;
 		}
 
+		// TODO: BALANCE CHECK & WITHDRAW
+
 		rolling = true;
 		rollingPlayer = player;
-		rollSherds = new ArrayList<>(SlotMachineReward.getAllSherds());
+		rollSherds = new ArrayList<>(Pugmas24SlotMachineReward.getAllSherds());
 		rollSherdsSize = rollSherds.size();
 		Collections.shuffle(rollSherds);
 		tick = 0;
@@ -260,24 +271,45 @@ public class Pugmas24SlotMachine implements Listener {
 		}
 	}
 
-	private static final List<Location> LIGHTS = new ArrayList<>(List.of(
+	private static List<Location> LIGHTS = new ArrayList<>(List.of(
 		Pugmas24.get().location(-733, 85, -2904),
 		Pugmas24.get().location(-735, 86, -2904),
 		Pugmas24.get().location(-737, 85, -2904)));
 
 	private static final List<Location> activatedLights = new ArrayList<>();
-
+	private static int loopCounter = 0;
+	private static boolean transitioning = false;
 	public static void nextLight() {
 		List<Location> nextLights = new ArrayList<>(LIGHTS);
+
+		if (transitioning) {
+			transitioning = false;
+			LIGHTS.forEach(location -> setPowerable(location, false));
+			return;
+		}
 
 		if (!activatedLights.isEmpty()) {
 			Location previousLightLoc = activatedLights.getLast();
 			setPowerable(previousLightLoc, false);
 		}
 
+		if (loopCounter >= 3) {
+			loopCounter = 0;
+			transitioning = true;
+			LIGHTS.forEach(location -> setPowerable(location, true));
+			LIGHTS = LIGHTS.reversed();
+			activatedLights.clear();
+			return;
+		}
+
 		nextLights.removeAll(activatedLights);
+
 		if (nextLights.isEmpty()) {
 			activatedLights.clear();
+			loopCounter++;
+			if (loopCounter >= 3)
+				return;
+
 			nextLights = new ArrayList<>(LIGHTS);
 		}
 
@@ -299,114 +331,127 @@ public class Pugmas24SlotMachine implements Listener {
 		X, Z
 	}
 
-	private enum SlotMachineRewardType {
-		HALF, FULL
-	}
-
 
 	@AllArgsConstructor
-	private enum SlotMachineReward {
-		JACKPOT(Material.PRIZE_POTTERY_SHERD,
+	public enum Pugmas24SlotMachineReward {
+		JACKPOT(SlotPos.of(1, 2), new ItemBuilder(Material.PRIZE_POTTERY_SHERD).name("&aTODO")
+			.lore("&eHalf&3: &eTODO", "&eFull&3: &eTODO"),
 			(player) -> {
-				Pugmas24.get().send(rollingPlayer, "TODO HALF REWARD - JACKPOT");
+				Pugmas24.get().send(player, "TODO HALF REWARD - JACKPOT");
 			},
 			(player) -> {
-				Pugmas24.get().send(rollingPlayer, "TODO FULL REWARD - JACKPOT");
+				Pugmas24.get().send(player, "TODO FULL REWARD - JACKPOT");
 			}
 		),
 
-		CURRENCY(Material.ARMS_UP_POTTERY_SHERD,
+		HEARTS(SlotPos.of(2, 2), new ItemBuilder(Material.HEART_POTTERY_SHERD).name("&aHeart Crystals")
+			.lore("&eHalf&3: 2 Heart Crystals", "&eFull&3: 5 Heart Crystals"),
+			(player) -> Pugmas24.get().give(player, Pugmas24QuestItem.HEART_CRYSTAL.getItemBuilder().amount(2)),
+			(player) -> Pugmas24.get().give(player, Pugmas24QuestItem.HEART_CRYSTAL.getItemBuilder().amount(5))
+		),
+
+		CURRENCY(SlotPos.of(3, 2), new ItemBuilder(Material.ARMS_UP_POTTERY_SHERD).name("&aCurrency")
+			.lore("&eHalf&3: &eTODO", "&eFull&3: &eTODO"),
 			(player) -> {
-				Pugmas24.get().send(rollingPlayer, "TODO HALF REWARD - CURRENCY");
+				Pugmas24.get().send(player, "TODO HALF REWARD - CURRENCY");
 			},
 			(player) -> {
-				Pugmas24.get().send(rollingPlayer, "TODO FULL REWARD - CURRENCY");
+				Pugmas24.get().send(player, "TODO FULL REWARD - CURRENCY");
 			}
 		),
 
-		HEARTS(Material.HEART_POTTERY_SHERD,
+		PICKAXE(SlotPos.of(1, 4), new ItemBuilder(Material.MINER_POTTERY_SHERD).name("&eRandom Pickaxe Enchant")
+			.lore("&eHalf&3: Uncommon", "&eFull&3: Rare", "", "&3Enchants: ", "&3- TODO"),
 			(player) -> {
-				Pugmas24.get().send(rollingPlayer, "TODO HALF REWARD - HEARTS");
+				Pugmas24.get().send(player, "TODO HALF REWARD - PICKAXE");
 			},
 			(player) -> {
-				Pugmas24.get().send(rollingPlayer, "TODO FULL REWARD - HEARTS");
+				Pugmas24.get().send(player, "TODO FULL REWARD - PICKAXE");
 			}
 		),
-		PICKAXE(Material.MINER_POTTERY_SHERD,
+
+		FISHING_ROD(SlotPos.of(2, 4), new ItemBuilder(Material.ANGLER_POTTERY_SHERD).name("&eRandom Fishing Rod Enchant")
+			.lore("&eHalf&3: &eUncommon", "&eFull&3: &eRare", "", "&3Enchants: ", "&3- TODO"),
 			(player) -> {
-				Pugmas24.get().send(rollingPlayer, "TODO HALF REWARD - PICKAXE");
+				Pugmas24.get().send(player, "TODO HALF REWARD - FISHING_ROD");
 			},
 			(player) -> {
-				Pugmas24.get().send(rollingPlayer, "TODO FULL REWARD - PICKAXE");
+				Pugmas24.get().send(player, "TODO FULL REWARD - FISHING_ROD");
 			}
 		),
-		FISHING_ROD(Material.ANGLER_POTTERY_SHERD,
+
+		SWORD(SlotPos.of(3, 4), new ItemBuilder(Material.BLADE_POTTERY_SHERD).name("&eRandom Sword Enchant")
+			.lore("&eHalf&3: &eUncommon", "&eFull&3: &eRare", "", "&3Enchants: ", "&3- TODO"),
 			(player) -> {
-				Pugmas24.get().send(rollingPlayer, "TODO HALF REWARD - FISHING_ROD");
+				Pugmas24.get().send(player, "TODO HALF REWARD - SWORD");
 			},
 			(player) -> {
-				Pugmas24.get().send(rollingPlayer, "TODO FULL REWARD - FISHING_ROD");
+				Pugmas24.get().send(player, "TODO FULL REWARD - SWORD");
 			}
 		),
-		SWORD(Material.BLADE_POTTERY_SHERD,
+
+		HALF_MAX_HEALTH(SlotPos.of(1, 6), new ItemBuilder(Material.HEARTBREAK_POTTERY_SHERD).name("&cHalf Max Health")
+			.lore("&eHalf&3: &aMax Health &3set to &e75%", "&eFull&3: &aMax Health &3set to &e50%"),
+			(player) -> Pugmas24.get().setMaxHealth(player, Pugmas24.get().getMaxHealth(player) * 0.75),
+			(player) -> Pugmas24.get().setMaxHealth(player, Pugmas24.get().getMaxHealth(player) * 0.50)
+		),
+
+		RANDOM_DEATH(SlotPos.of(2, 6), new ItemBuilder(Material.MOURNER_POTTERY_SHERD).name("&cRandom Death")
+			.lore("&eHalf&3: In the future, lose half health", "&eFull&3: In the future, instantly die"),
 			(player) -> {
-				Pugmas24.get().send(rollingPlayer, "TODO HALF REWARD - SWORD");
+				Pugmas24.get().send(player, "TODO HALF REWARD - RANDOM_DEATH");
 			},
 			(player) -> {
-				Pugmas24.get().send(rollingPlayer, "TODO FULL REWARD - SWORD");
+				Pugmas24.get().send(player, "TODO FULL REWARD - RANDOM_DEATH");
 			}
 		),
-		INSTANT_DEATH(Material.DANGER_POTTERY_SHERD,
-			(player) -> {
-				Pugmas24.get().send(rollingPlayer, "TODO HALF REWARD - INSTANT_DEATH");
-			},
-			(player) -> {
-				Pugmas24.get().onDeath(player, Pugmas24DeathCause.INSTANT_DEATH);
-			}
-		),
-		RANDOM_DEATH(Material.MOURNER_POTTERY_SHERD,
-			(player) -> {
-				Pugmas24.get().send(rollingPlayer, "TODO HALF REWARD - RANDOM_DEATH");
-			},
-			(player) -> {
-				Pugmas24.get().send(rollingPlayer, "TODO FULL REWARD - RANDOM_DEATH");
-			}
-		),
-		HALF_MAX_HEALTH(Material.HEARTBREAK_POTTERY_SHERD,
-			(player) -> {
-				Pugmas24.get().send(rollingPlayer, "TODO HALF REWARD - HALF_MAX_HEALTH");
-			},
-			(player) -> {
-				Pugmas24.get().send(rollingPlayer, "TODO FULL REWARD - HALF_MAX_HEALTH");
-			}
+
+		INSTANT_DEATH(SlotPos.of(3, 6), new ItemBuilder(Material.DANGER_POTTERY_SHERD).name("&cInstant Death")
+			.lore("&eHalf&3: &eHealth &3set to &e50%", "&eFull&3: &eHealth &3set to &e0%"),
+			(player) -> player.setHealth(player.getHealth() / 2),
+			(player) -> Pugmas24.get().onDeath(player, Pugmas24DeathCause.INSTANT_DEATH)
 		),
 		;
 
 		@Getter
-		final Material sherd;
+		final SlotPos displaySlot;
+		@Getter
+		final ItemBuilder displayItem;
 		final Consumer<Player> halfReward;
 		final Consumer<Player> fullReward;
 
 		public static List<Material> getAllSherds() {
-			return Arrays.stream(values()).map(SlotMachineReward::getSherd).toList();
+			return Arrays.stream(values()).map(reward -> reward.getDisplayItem().material()).toList();
 		}
 
-		public static @Nullable SlotMachineReward of(Material sherd) {
-			for (SlotMachineReward reward : values()) {
-				if (reward.getSherd() == sherd)
+		public static @Nullable Pugmas24SlotMachine.Pugmas24SlotMachineReward of(Material sherd) {
+			for (Pugmas24SlotMachineReward reward : values()) {
+				if (reward.getDisplayItem().material() == sherd)
 					return reward;
 			}
 			return null;
 		}
 
-		public void give(Player player, SlotMachineRewardType type) {
-			if (type == SlotMachineRewardType.HALF) {
-				// TODO: GOOD SOUND
-				halfReward.accept(player);
-			} else {
-				// TODO: HOORAY SOUND
-				fullReward.accept(player);
+		private static final List<Location> fireworkLocations = List.of(
+			Pugmas24.get().location(-732.5, 82.2, -2907.5),
+			Pugmas24.get().location(-736.5, 82.2, -2907.5));
+
+		public void give(Player player, Pugmas24SlotMachineRewardType type) {
+			switch (type) {
+				case HALF -> {
+					new SoundBuilder(Sound.ENTITY_VILLAGER_CELEBRATE).location(soundLocation).volume(0.5).play();
+					halfReward.accept(player);
+				}
+				case FULL -> {
+					new SoundBuilder(CustomSound.PARTY_HOORAY).location(soundLocation).volume(0.5).play();
+					fireworkLocations.forEach(location -> new FireworkLauncher(location).power(1).detonateAfter(TickTime.TICK.x(13)).rainbow().flickering(true).type(Type.BALL).launch());
+					fullReward.accept(player);
+				}
 			}
+		}
+
+		public enum Pugmas24SlotMachineRewardType {
+			FULL, HALF;
 		}
 	}
 
@@ -498,14 +543,38 @@ public class Pugmas24SlotMachine implements Listener {
 		if (block.getBlockData() instanceof Powerable powerable) {
 			powerable.setPowered(true);
 			block.setBlockData(powerable, true);
+			new SoundBuilder(Sound.BLOCK_LEVER_CLICK).location(block).volume(0.3).pitch(0.6).play();
 
 			Tasks.wait(10, () -> {
 				powerable.setPowered(false);
 				block.setBlockData(powerable, true);
+				new SoundBuilder(Sound.BLOCK_LEVER_CLICK).location(block).volume(0.3).pitch(0.5).play();
 			});
 		}
 
 		roll(player);
+	}
+
+	@Rows(5)
+	@Title("Slot Machine Rewards")
+	public static class Pugmas24SlotMachineRewardMenu extends InventoryProvider {
+		ItemBuilder infoItem = new ItemBuilder(Material.BOOK).name("&eInfo").lore("&e2 &3of a kind -> &eHalf reward", "&e3 &3of a kind -> &eFull reward");
+		ItemBuilder categoryTool = new ItemBuilder(Material.IRON_PICKAXE).name("&eTool Rewards");
+		ItemBuilder categoryPrize = new ItemBuilder(Material.DIAMOND).name("&aPrizes");
+		ItemBuilder categoryPenalty = new ItemBuilder(Material.TNT).name("&cPenalties");
+
+		@Override
+		public void init() {
+			addCloseItem();
+			contents.set(SlotPos.of(0, 8), ClickableItem.empty(infoItem));
+			contents.set(SlotPos.of(0, 2), ClickableItem.empty(categoryPrize));
+			contents.set(SlotPos.of(0, 4), ClickableItem.empty(categoryTool));
+			contents.set(SlotPos.of(0, 6), ClickableItem.empty(categoryPenalty));
+
+			for (Pugmas24SlotMachineReward reward : Pugmas24SlotMachineReward.values()) {
+				contents.set(reward.getDisplaySlot(), ClickableItem.empty(reward.getDisplayItem().loreize(false)));
+			}
+		}
 	}
 
 

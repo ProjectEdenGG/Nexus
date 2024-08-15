@@ -54,8 +54,16 @@ public abstract class Effects implements Listener {
 	public void animations() {
 	}
 
+	public boolean shouldAnimate() {
+		return !Nexus.isMaintenanceQueued();
+	}
+
 	public boolean shouldAnimate(Location location) {
-		return !Nexus.isMaintenanceQueued() && location.isChunkLoaded() && hasPlayersNearby(location, 75);
+		return shouldAnimate() && shouldAnimate(location, 75);
+	}
+
+	public boolean shouldAnimate(Location location, int radius) {
+		return shouldAnimate() && location.isChunkLoaded() && hasPlayersNearby(location, radius);
 	}
 
 	public void onEnterRegion(Player player) {}

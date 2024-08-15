@@ -113,7 +113,7 @@ public class Pugmas24Effects extends Effects {
 
 	private void slotMachine() {
 		Tasks.repeat(0, TickTime.SECOND, () -> {
-			if (!shouldAnimate(Pugmas24SlotMachine.getSoundLocation()))
+			if (!shouldAnimate(Pugmas24SlotMachine.getSoundLocation(), 25))
 				return;
 
 			Pugmas24SlotMachine.nextLight();
