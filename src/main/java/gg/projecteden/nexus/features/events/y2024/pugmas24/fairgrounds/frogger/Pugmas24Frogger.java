@@ -275,7 +275,7 @@ public class Pugmas24Frogger implements Listener {
 			checkpointList.add(player);
 
 		} else if (regionId.equalsIgnoreCase(damageRg)) {
-			String cheatingMsg = Pugmas24.isCheatingMsg(player);
+			String cheatingMsg = Pugmas24.get().isCheatingMsg(player);
 			if (cheatingMsg != null && !cheatingMsg.contains("wgedit")) {
 				player.teleportAsync(respawnLoc);
 				Pugmas24.get().sendNoPrefix(player, Pugmas24Frogger.getPrefix() + "Don't cheat, turn " + cheatingMsg + " off!");

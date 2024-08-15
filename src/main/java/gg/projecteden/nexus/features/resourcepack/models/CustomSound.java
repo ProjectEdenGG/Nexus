@@ -49,6 +49,7 @@ public enum CustomSound {
 	// MISC
 	BURP(								"custom.misc.burp"),
 	BONK(								"custom.misc.bonk"),
+	PARTY_HOORAY(						"custom.misc.party_hooray"),
 	PARTY_HORN(							"custom.misc.party_horn"),
 	YOU_GOT_MAIL(						"custom.misc.you_got_mail"),
 	FLASH_BANG(							"custom.misc.flashbang"),

@@ -63,7 +63,7 @@ public class Advent24User implements PlayerOwnedObject {
 		if (hasCollected(present))
 			throw new InvalidInputException("You already collected this present");
 
-		if (Pugmas24.is25thOrAfter()) {
+		if (Pugmas24.get().is25thOrAfter()) {
 			if (present.getDay() == 25 && collected.size() != 24)
 				throw new InvalidInputException("You need to find the rest of the presents to open this one");
 		} else if (present.getDay() != LocalDate.now().getDayOfMonth())

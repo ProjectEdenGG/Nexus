@@ -15,6 +15,8 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Distri
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Districts.Pugmas24District;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Geyser;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine.Pugmas24SlotMachineReward;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine.Pugmas24SlotMachineReward.Pugmas24SlotMachineRewardType;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Train;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -37,7 +39,6 @@ import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -85,27 +86,25 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	@Path("health reset")
 	@Permission(Group.ADMIN)
 	void health_reset() {
-		player().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(10.0);
-		player().setHealth(player().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+		Pugmas24.get().healthReset(player());
 	}
 
 	@Path("health add")
 	@Permission(Group.ADMIN)
 	void health_add() {
-		var attribute = player().getAttribute(Attribute.GENERIC_MAX_HEALTH);
-		attribute.setBaseValue(attribute.getBaseValue() + 2.0);
-		player().setHealth(player().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+		Pugmas24.get().addMaxHealth(player(), 2.0);
 	}
 
-	@Path("health remove")
+	@Path("health subtract")
 	@Permission(Group.ADMIN)
-	void health_remove() {
-		var attribute = player().getAttribute(Attribute.GENERIC_MAX_HEALTH);
-		if (attribute.getBaseValue() <= 2.0)
-			error("Probably don't do that");
+	void health_subtract() {
+		Pugmas24.get().subtractMaxHealth(player(), 2.0);
+	}
 
-		attribute.setBaseValue(attribute.getBaseValue() - 2.0);
-		player().setHealth(player().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+	@Path("health set <amount>")
+	@Permission(Group.ADMIN)
+	void health_set(@Arg(value = "20", min = 1, max = 40) int amount) {
+		Pugmas24.get().setMaxHealth(player(), amount);
 	}
 
 	@Path("district")
@@ -201,6 +200,12 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	@Permission(Group.ADMIN)
 	void slotMachine() {
 		Pugmas24SlotMachine.roll(player());
+	}
+
+	@Path("slotMachine simulateWin <reward> <type>")
+	@Permission(Group.ADMIN)
+	void slotMachine_reward(Pugmas24SlotMachineReward reward, Pugmas24SlotMachineRewardType type) {
+		reward.give(player(), type);
 	}
 
 	@Path("slotMachine setup")

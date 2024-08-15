@@ -106,7 +106,7 @@ public class Pugmas24AdventMenu extends InventoryProvider {
 				icon = Icon.OPENED;
 			else if (date.isAfter(today))
 				icon = Icon.LOCKED;
-			else if (date.equals(today) || Pugmas24.is25thOrAfter(today))
+			else if (date.equals(today) || Pugmas24.get().is25thOrAfter(today))
 				icon = Icon.AVAILABLE;
 			else
 				icon = Icon.MISSED;

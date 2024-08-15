@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 
 public class Pugmas24QuestItemsListener implements Listener {
 
@@ -29,6 +30,19 @@ public class Pugmas24QuestItemsListener implements Listener {
 			return;
 
 		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void on(PlayerItemConsumeEvent event) {
+		if (!Pugmas24.get().shouldHandle(event.getPlayer()))
+			return;
+
+		if (!Pugmas24QuestItem.HEART_CRYSTAL.fuzzyMatch(event.getItem()))
+			return;
+
+		event.setCancelled(true);
+		event.getItem().subtract();
+		Pugmas24.get().addMaxHealth(event.getPlayer(), 2.0); // TODO: CHECK IF THEY WILL HIT MAX HEALTH --> 40.0
 	}
 
 

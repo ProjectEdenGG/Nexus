@@ -30,6 +30,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -115,7 +117,7 @@ public class Pugmas24 extends EdenEvent {
 		handleInteract(Pugmas24NPC.BLACKSMITH, (player, npc) -> Pugmas24ShopMenu.BLACKSMITH.open(player));
 	}
 
-	public static String isCheatingMsg(Player player) {
+	public String isCheatingMsg(Player player) {
 		if (canWorldGuardEdit(player)) return "wgedit";
 		if (!player.getGameMode().equals(GameMode.SURVIVAL)) return "creative";
 		if (player.isFlying()) return "fly";
@@ -125,19 +127,51 @@ public class Pugmas24 extends EdenEvent {
 		return null;
 	}
 
-	public static boolean isAdventActive(LocalDate date) {
+	public boolean isAdventActive(LocalDate date) {
 		return get().isEventActive() && !date.isAfter(_25TH);
 	}
 
-	public static boolean is25thOrAfter() {
+	public boolean is25thOrAfter() {
 		return is25thOrAfter(LocalDate.now());
 	}
 
-	public static boolean is25thOrAfter(LocalDate date) {
+	public boolean is25thOrAfter(LocalDate date) {
 		return date.isAfter(_25TH.plusDays(-1));
 	}
 
+	// Health
+
+	public void addMaxHealth(Player player, double amount) {
+		setMaxHealthAttribute(player, getMaxHealth(player) + amount);
+	}
+
+	public void subtractMaxHealth(Player player, double amount) {
+		setMaxHealthAttribute(player, Math.max(getMaxHealth(player) - amount, 1.0));
+	}
+
+	public void setMaxHealth(Player player, double amount) {
+		setMaxHealthAttribute(player, amount);
+	}
+
+	public double getMaxHealth(Player player) {
+		return getMaxHealthAttribute(player).getBaseValue();
+	}
+
+	public void healthReset(Player player) {
+		setMaxHealthAttribute(player, 20.0);
+	}
+
+	public AttributeInstance getMaxHealthAttribute(Player player) {
+		return player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+	}
+
+	private void setMaxHealthAttribute(Player player, double amount) {
+		getMaxHealthAttribute(player).setBaseValue(amount);
+		player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+	}
+
 	// Death
+
 
 	@Override
 	public Location getRespawnLocation(Player player) {

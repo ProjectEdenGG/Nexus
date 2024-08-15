@@ -46,9 +46,14 @@ public enum Pugmas24QuestItem implements QuestItem {
 	;
 
 	private final ItemBuilder itemBuilder;
+
+	public ItemBuilder getItemBuilder() {
+		return itemBuilder.clone().itemFlags(ItemFlags.HIDE_ALL);
+	}
+
 	@Override
 	public ItemStack get() {
-		return itemBuilder.itemFlags(ItemFlags.HIDE_ALL).build();
+		return getItemBuilder().build();
 	}
 
 	public CustomMaterial getCustomMaterial() {

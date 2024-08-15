@@ -6,6 +6,8 @@ import org.bukkit.inventory.ItemStack;
 
 public interface QuestItem {
 
+	ItemBuilder getItemBuilder();
+
 	ItemStack get();
 
 	default ItemStack amount(int amount) {

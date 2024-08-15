@@ -37,6 +37,20 @@ public class FireworkLauncher {
 		this.location = location;
 	}
 
+	private static List<ColorType> ignoreColors = List.of(ColorType.BLACK, ColorType.WHITE, ColorType.GRAY, ColorType.LIGHT_GRAY);
+
+	public FireworkLauncher rainbow() {
+		List<Color> colors = new ArrayList<>();
+		for (ColorType colorType : ColorType.values()) {
+			if (ignoreColors.contains(colorType))
+				continue;
+
+			colors.add(colorType.getBukkitColor());
+		}
+		this.colors = colors;
+		return this;
+	}
+
 	public FireworkLauncher color(Color color) {
 		this.colors = Collections.singletonList(color);
 		return this;
@@ -95,7 +109,7 @@ public class FireworkLauncher {
 			.power(RandomUtils.randomInt(1, 3));
 	}
 
-	private static List<Color> getRandomColors() {
+	public static List<Color> getRandomColors() {
 		List<Color> colorList = new ArrayList<>();
 		if (RandomUtils.chanceOf(50)) {
 			for (ColorType colorType : ColorType.values())

@@ -38,6 +38,7 @@ import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ChunkLoader;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Enchant;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -352,6 +353,14 @@ public abstract class EdenEvent extends Feature implements Listener {
 
 	public void forceLoadRegions(String regionId) {
 		ChunkLoader.loadChunks(getWorld(), regionId);
+	}
+
+	public void give(Player player, ItemBuilder item) {
+		give(player, item.build());
+	}
+
+	public void give(Player player, ItemStack item) {
+		PlayerUtils.giveItem(player, item);
 	}
 
 	public class EventActiveCalculator implements ContextCalculator<Player> {

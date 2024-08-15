@@ -106,6 +106,8 @@ public class SoundBuilder implements Cloneable {
 		this.sound = sound.key().asString();
 	}
 
+	// use CustomSound when possible
+	@Deprecated
 	public SoundBuilder(String sound) {
 		this.sound = sound;
 	}
