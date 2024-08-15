@@ -32,6 +32,7 @@ public class Pugmas24User implements PlayerOwnedObject {
 	private boolean visited = false;
 
 	private Set<Pugmas24Waystone> foundWaystones = new HashSet<>();
+	private int randomDeaths = 0;
 
 	@Getter(AccessLevel.PRIVATE)
 	private Advent24User advent;

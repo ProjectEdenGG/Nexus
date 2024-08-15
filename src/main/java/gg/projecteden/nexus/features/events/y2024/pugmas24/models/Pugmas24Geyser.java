@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 	TODO:
 		- GEYSER ERUPTING GIVES BETTER CHANCES TO FISHING?
 		- TELL PLAYERS THAT GEYSER HELP WITH ELYTRA
+		- MAYBE SOME POINTED DRIPSTONE FALL IN THE DRIPSTONE CAVE BEHIND THE GEYSER, when it's building pressure?
  */
 @NoArgsConstructor
 public class Pugmas24Geyser {
