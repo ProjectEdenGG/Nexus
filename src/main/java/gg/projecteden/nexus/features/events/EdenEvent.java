@@ -47,6 +47,7 @@ import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.parchment.HasLocation;
+import gg.projecteden.parchment.HasPlayer;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
@@ -303,11 +304,22 @@ public abstract class EdenEvent extends Feature implements Listener {
 		return new HashSet<>(worldguard().getPlayersInRegion(region));
 	}
 
-	public void send(Player player, String message) {
+	public void sendCooldown(HasPlayer player, String message, String key) {
+		sendCooldown(player, message, key, TickTime.SECOND.get());
+	}
+
+	public void sendCooldown(HasPlayer player, String message, String key, long time) {
+		if (!new CooldownService().check(player.getPlayer().getUniqueId(), key, time))
+			return;
+
+		send(player, message);
+	}
+
+	public void send(HasPlayer player, String message) {
 		PlayerUtils.send(player, PREFIX + message);
 	}
 
-	public void sendNoPrefix(Player player, String message) {
+	public void sendNoPrefix(HasPlayer player, String message) {
 		PlayerUtils.send(player, message);
 	}
 
@@ -315,8 +327,8 @@ public abstract class EdenEvent extends Feature implements Listener {
 		getPlayers().forEach(player -> send(player, message));
 	}
 
-	public void actionBar(Player player, String message, long ticks) {
-		ActionBarUtils.sendActionBar(player, message, ticks);
+	public void actionBar(HasPlayer player, String message, long ticks) {
+		ActionBarUtils.sendActionBar(player.getPlayer(), message, ticks);
 	}
 
 	public void actionBarBroadcast(String message, long ticks) {
