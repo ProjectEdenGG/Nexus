@@ -11,6 +11,8 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 
 public class Pugmas24QuestItemsListener implements Listener {
 
+	public static String COIN_POUCH_NBT_KEY = "pugmas24_coins";
+
 	public Pugmas24QuestItemsListener() {
 		Nexus.registerListener(this);
 	}

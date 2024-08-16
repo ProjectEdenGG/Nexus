@@ -20,7 +20,6 @@ public class Pugmas24Train {
 
 	public static void startup() {
 		Pugmas24.get().forceLoadRegions(trainTrackRegion);
-
 		schedule();
 	}
 

@@ -5,12 +5,14 @@ import gg.projecteden.nexus.features.events.EventSounds;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
+import gg.projecteden.nexus.models.godmode.GodmodeService;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -31,6 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
+import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
 
 public class Pugmas24Frogger implements Listener {
 	@Getter
@@ -275,7 +278,7 @@ public class Pugmas24Frogger implements Listener {
 			checkpointList.add(player);
 
 		} else if (regionId.equalsIgnoreCase(damageRg)) {
-			String cheatingMsg = Pugmas24.get().isCheatingMsg(player);
+			String cheatingMsg = isCheatingMsg(player);
 			if (cheatingMsg != null && !cheatingMsg.contains("wgedit")) {
 				player.teleportAsync(respawnLoc);
 				Pugmas24.get().sendNoPrefix(player, Pugmas24Frogger.getPrefix() + "Don't cheat, turn " + cheatingMsg + " off!");
@@ -327,6 +330,16 @@ public class Pugmas24Frogger implements Listener {
 		else
 			player.teleportAsync(respawnLoc);
 		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(player).volume(10).play();
+	}
+
+	private static String isCheatingMsg(Player player) {
+		if (canWorldGuardEdit(player)) return "wgedit";
+		if (!player.getGameMode().equals(GameMode.SURVIVAL)) return "creative";
+		if (player.isFlying()) return "fly";
+		if (isVanished(player)) return "vanish";
+		if (new GodmodeService().get(player).isActive()) return "godmode";
+
+		return null;
 	}
 
 }

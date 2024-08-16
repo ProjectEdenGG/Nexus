@@ -53,7 +53,7 @@ public class Pugmas24BalloonEditor implements Listener {
 	protected static boolean flying = false;
 	protected static boolean allowedFlight = false;
 	protected static boolean lostEditor = false;
-	protected static int lostEditorTask;
+	protected static int lostEditorTask = -1;
 	@Getter
 	protected static boolean savingSchem = false;
 
@@ -227,7 +227,7 @@ public class Pugmas24BalloonEditor implements Listener {
 			return;
 
 		event.setCancelled(true);
-		Pugmas24BalloonEditorUtils.sendCooldown("&cPlease wait while your balloon is saving", "pugmas24_balloon_editor-schem");
+		Pugmas24.get().sendCooldown(editor.getPlayer(), "&cPlease wait while your balloon is saving", "pugmas24_balloon_editor-schem");
 	}
 
 	@EventHandler
@@ -239,7 +239,7 @@ public class Pugmas24BalloonEditor implements Listener {
 			return;
 
 		event.setCancelled(true);
-		Pugmas24BalloonEditorUtils.sendCooldown("&cPlease wait while your balloon is saving", "pugmas24_balloon_editor-schem");
+		Pugmas24.get().sendCooldown(editor.getPlayer(), "&cPlease wait while your balloon is saving", "pugmas24_balloon_editor-schem");
 	}
 
 	@EventHandler
@@ -294,7 +294,7 @@ public class Pugmas24BalloonEditor implements Listener {
 			return;
 
 		event.setCancelled(true);
-		Pugmas24BalloonEditorUtils.sendCooldown("&cYou're still editing your balloon", "pugmas24_balloon_editor-editing");
+		Pugmas24.get().sendCooldown(editor.getPlayer(), "&cYou're still editing your balloon", "pugmas24_balloon_editor-editing");
 	}
 
 	@EventHandler
@@ -306,7 +306,7 @@ public class Pugmas24BalloonEditor implements Listener {
 			return;
 
 		event.setCancelled(true);
-		Pugmas24BalloonEditorUtils.sendCooldown("&cYou're still editing your balloon", "pugmas24_balloon_editor-editing");
+		Pugmas24.get().sendCooldown(editor.getPlayer(), "&cYou're still editing your balloon", "pugmas24_balloon_editor-editing");
 	}
 
 	@EventHandler

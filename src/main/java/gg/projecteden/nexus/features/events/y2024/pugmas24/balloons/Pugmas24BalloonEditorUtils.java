@@ -1,23 +1,14 @@
 package gg.projecteden.nexus.features.events.y2024.pugmas24.balloons;
 
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
-import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class Pugmas24BalloonEditorUtils {
 
-	static void sendCooldown(String message, String key) {
-		if (!new CooldownService().check(Pugmas24BalloonEditor.getEditor().getUuid(), key, TickTime.SECOND))
-			return;
-
-		send(message);
-	}
-
 	static void send(String message) {
-		Pugmas24BalloonEditor.getEditor().sendMessage(Pugmas24BalloonEditor.PREFIX + message);
+		Pugmas24.get().sendNoPrefix(Pugmas24BalloonEditor.getEditor().getPlayer(), Pugmas24BalloonEditor.PREFIX + message);
 	}
 
 	public static boolean isEditing(Player player) {
