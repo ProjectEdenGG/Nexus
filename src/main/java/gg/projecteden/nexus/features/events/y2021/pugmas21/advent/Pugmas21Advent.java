@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.events.y2021.pugmas21.advent;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.models.District;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21District;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeavingRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -36,10 +36,10 @@ import java.util.stream.Collectors;
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
-public class Advent implements Listener {
+public class Pugmas21Advent implements Listener {
 	private static final Pugmas21UserService userService = new Pugmas21UserService();
 
-	public Advent() {
+	public Pugmas21Advent() {
 		Nexus.registerListener(this);
 	}
 
@@ -93,7 +93,7 @@ public class Advent implements Listener {
 	}
 
 	public static void openPresent(Player player, int day) {
-		AdventAnimation.builder()
+		Pugmas21AdventAnimation.builder()
 			.location(player.getLocation())
 			.player(player)
 			.present(Advent21Config.get().get(day))
@@ -179,8 +179,8 @@ public class Advent implements Listener {
 		Player player = event.getPlayer();
 		if (!Pugmas21.isAtPugmas(player)) return;
 
-		District district = District.of(player.getLocation());
-		if (district != null && district != District.UNKNOWN)
+		Pugmas21District district = Pugmas21District.of(player.getLocation());
+		if (district != null && district != Pugmas21District.UNKNOWN)
 			ActionBarUtils.sendActionBar(player, "&a&lEntering " + district.getFullName());
 	}
 
@@ -189,8 +189,8 @@ public class Advent implements Listener {
 		Player player = event.getPlayer();
 		if (!Pugmas21.isAtPugmas(player)) return;
 
-		District district = District.of(player.getLocation());
-		if (district != null && district != District.UNKNOWN)
+		Pugmas21District district = Pugmas21District.of(player.getLocation());
+		if (district != null && district != Pugmas21District.UNKNOWN)
 			ActionBarUtils.sendActionBar(player, "&c&lExiting " + district.getFullName());
 	}
 

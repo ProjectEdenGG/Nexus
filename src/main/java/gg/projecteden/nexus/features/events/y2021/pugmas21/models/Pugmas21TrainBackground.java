@@ -30,7 +30,7 @@ import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.EntityUtils.forcePacket;
 
-public class TrainBackground {
+public class Pugmas21TrainBackground {
 	@Getter
 	private static final String REGION = Pugmas21.region("train_background");
 	private static final String LOOP_REGION = REGION + "_loop";
@@ -59,7 +59,7 @@ public class TrainBackground {
 	@Getter
 	private static final List<Player> chugs = new ArrayList<>();
 
-	public TrainBackground() {
+	public Pugmas21TrainBackground() {
 		Tasks.repeat(1, TickTime.TICK.x(2), () -> {
 			if (WGUtils.getPlayersInRegion(REGION).size() == 0)
 				stop();
@@ -72,7 +72,7 @@ public class TrainBackground {
 
 		loadArmorStands();
 
-		Tasks.wait(2, () -> taskIds.add(Tasks.repeat(0, 1, TrainBackground::move)));
+		Tasks.wait(2, () -> taskIds.add(Tasks.repeat(0, 1, Pugmas21TrainBackground::move)));
 
 		taskIds.add(Tasks.repeat(0, TickTime.SECOND, () -> {
 			for (Player player : chugs) {

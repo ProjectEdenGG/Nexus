@@ -9,7 +9,7 @@ import lombok.Getter;
 import org.bukkit.Location;
 
 @AllArgsConstructor
-	public enum District {
+public enum Pugmas21District {
 		GARDENS,
 		FROZEN,
 		HARBOR,
@@ -17,7 +17,7 @@ import org.bukkit.Location;
 		UNKNOWN;
 
 		@Getter
-		private static final String PREFIX = Pugmas21.REGION + "_" + District.class.getSimpleName().toLowerCase();
+		private static final String PREFIX = Pugmas21.REGION + "_" + Pugmas21District.class.getSimpleName().toLowerCase();
 
 		public String getName() {
 			return StringUtils.camelCase(this);
@@ -27,15 +27,15 @@ import org.bukkit.Location;
 			return getName() + " District";
 		}
 
-		public static District of(Location location) {
+	public static Pugmas21District of(Location location) {
 			if (!location.getWorld().equals(Pugmas21.getWorld()))
 				return null;
 
 			for (ProtectedRegion region : new WorldGuardUtils(location).getRegionsAt(location))
-				for (District district : District.values())
+				for (Pugmas21District district : Pugmas21District.values())
 					if (region.getId().matches(PREFIX + "_" + district.name().toLowerCase()))
 						return district;
 
-			return District.UNKNOWN;
+		return Pugmas21District.UNKNOWN;
 		}
 	}

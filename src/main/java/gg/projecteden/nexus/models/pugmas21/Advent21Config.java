@@ -6,7 +6,7 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.models.District;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21District;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
@@ -89,8 +89,8 @@ public class Advent21Config implements PlayerOwnedObject {
 			return new ItemBuilder(CustomMaterial.PUGMAS_PRESENT_ADVENT).name("Advent Present").lore("&eDay #" + day, "&f", Pugmas21.LORE);
 		}
 
-		public District getDistrict() {
-			return District.of(getLocation());
+		public Pugmas21District getDistrict() {
+			return Pugmas21District.of(getLocation());
 		}
 
 		@NotNull ItemFrame sendPacket(Advent21User user) {

@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Builder
-public class AdventAnimation {
+public class Pugmas21AdventAnimation {
 	private final Location location;
 	@Builder.Default
 	private final double length1 = 0.25;

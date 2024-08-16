@@ -8,7 +8,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.crates.CrateHandler;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.models.TrainBackground;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21TrainBackground;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonEditor;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Geyser;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine;
@@ -258,7 +258,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		}),
 		PUGMAS21_TRAIN_BACKGROUND(() -> {
 			if (Nexus.getEnv() == Env.PROD) {
-				if (TrainBackground.isActive())
+				if (Pugmas21TrainBackground.isActive())
 					throw new InvalidInputException("Someone is traveling to Pugmas");
 			}
 		}),

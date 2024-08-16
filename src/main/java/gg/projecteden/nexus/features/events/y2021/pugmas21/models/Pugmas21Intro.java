@@ -17,13 +17,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.potion.PotionEffectType;
 
-public class Intro implements Listener {
+public class Pugmas21Intro implements Listener {
 	Pugmas21UserService userService = new Pugmas21UserService();
 	private static final Location transitionLoc = new Location(Bukkit.getWorld("legacy2"), 0.5, 126.5, -195.5, 0F, 0);
 	private static final String TRANSITION_REGION_REGEX = "spawn_pugmas_train_[0-9]+";
 	private static final Location introLoc = Pugmas21.location(-7.5, 12.5, -69.5, -90, 0);
 
-	public Intro() {
+	public Pugmas21Intro() {
 		Nexus.registerListener(this);
 	}
 
@@ -52,11 +52,11 @@ public class Intro implements Listener {
 
 			Tasks.wait(TickTime.SECOND.x(2), () -> {
 				player.teleport(introLoc);
-				TrainBackground.start();
-				TrainBackground.getChugs().add(player);
+				Pugmas21TrainBackground.start();
+				Pugmas21TrainBackground.getChugs().add(player);
 
 				Tasks.wait(TickTime.SECOND.x(15), () -> {
-					TrainBackground.getChugs().remove(player);
+					Pugmas21TrainBackground.getChugs().remove(player);
 					player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(80).amplifier(250).build());
 
 					Tasks.wait(TickTime.SECOND, () -> {

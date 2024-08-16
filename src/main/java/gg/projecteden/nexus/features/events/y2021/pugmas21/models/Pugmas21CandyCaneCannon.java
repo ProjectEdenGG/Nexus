@@ -28,9 +28,9 @@ import java.util.Set;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 // TODO Recipe: Sugar + Dye + ?
-public class CandyCaneCannon implements Listener {
+public class Pugmas21CandyCaneCannon implements Listener {
 
-	public CandyCaneCannon() {
+	public Pugmas21CandyCaneCannon() {
 		Nexus.registerListener(this);
 	}
 

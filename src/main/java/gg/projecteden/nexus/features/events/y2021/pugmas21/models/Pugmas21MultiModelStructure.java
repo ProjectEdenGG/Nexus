@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Data
-public class MultiModelStructure {
+public class Pugmas21MultiModelStructure {
 	private Location location;
 	private final List<Model> models = new ArrayList<>();
 
@@ -53,27 +53,27 @@ public class MultiModelStructure {
 
 	}
 
-	public static MultiModelStructure builder() {
-		return new MultiModelStructure();
+	public static Pugmas21MultiModelStructure builder() {
+		return new Pugmas21MultiModelStructure();
 	}
 
-	public MultiModelStructure from(Location location) {
+	public Pugmas21MultiModelStructure from(Location location) {
 		this.location = location;
 		return this;
 	}
 
-	public MultiModelStructure add(Map<BlockFace, Integer> modifier, Integer modelId) {
+	public Pugmas21MultiModelStructure add(Map<BlockFace, Integer> modifier, Integer modelId) {
 		models.add(new Model(modifier, modelId));
 		return this;
 	}
 
-	public MultiModelStructure cardinal(Function<BlockFace, Model> function) {
+	public Pugmas21MultiModelStructure cardinal(Function<BlockFace, Model> function) {
 		for (BlockFace direction : CardinalDirection.blockFaces())
 			models.add(function.apply(direction));
 		return this;
 	}
 
-	public MultiModelStructure spawn() {
+	public Pugmas21MultiModelStructure spawn() {
 		for (Model model : models)
 			model.spawn(location);
 		return this;

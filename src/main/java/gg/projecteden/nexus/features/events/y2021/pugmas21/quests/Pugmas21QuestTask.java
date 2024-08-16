@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21.quests;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.models.TreeType;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21TreeType;
 import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.InteractQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
@@ -210,7 +210,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		.reminder(dialog -> dialog
 			.npc("TODO Reminder") // TODO
 		)
-		.gather(new ItemStack(Material.IRON_INGOT, 32), TreeType.CRYSTAL.item(64))
+		.gather(new ItemStack(Material.IRON_INGOT, 32), Pugmas21TreeType.CRYSTAL.item(64))
 		.complete(dialog -> dialog
 			.npc("These materials look perfect.")
 			.player("Awesome does this mean I'm done here?")
@@ -246,7 +246,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		.reminder(dialog -> dialog
 			.npc("TODO Reminder") // TODO
 		)
-		.gather(TreeType.OAK.item(50))
+		.gather(Pugmas21TreeType.OAK.item(50))
 		.complete(dialog -> dialog
 			.npc("Ah perfect! It's pretty good quality too. You sure you wanna continue being " + BELLAMY + "'s assistant? I could use someone like you working around the shop.")
 			.player("I'm sorry but I think I'll have to pass.")
@@ -381,7 +381,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		.reminder(dialog -> dialog
 			.npc("TODO Reminder") // TODO
 		)
-		.gather(new ItemStack(Material.STRING, 32), new ItemStack(Material.GOLD_INGOT, 64), TreeType.CRYSTAL.item(45))
+		.gather(new ItemStack(Material.STRING, 32), new ItemStack(Material.GOLD_INGOT, 64), Pugmas21TreeType.CRYSTAL.item(45))
 		.complete(dialog -> dialog
 			.npc("Perfect! Let me work my magic for you, it won't take long.")
 			// TODO Sounds
@@ -483,7 +483,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		.reminder(dialog -> dialog
 			.npc("TODO Reminder") // TODO
 		)
-		.gather(new ItemStack(Material.STRING, 32), new ItemStack(Material.GOLD_INGOT, 64), TreeType.CRYSTAL.item(45))
+		.gather(new ItemStack(Material.STRING, 32), new ItemStack(Material.GOLD_INGOT, 64), Pugmas21TreeType.CRYSTAL.item(45))
 		.complete(dialog -> dialog
 			.npc("Perfect! Let me work my magic for you, it won't take long.")
 			// TODO Sounds
@@ -584,7 +584,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		.reminder(dialog -> dialog
 			.npc("TODO Reminder") // TODO
 		)
-		.gather(new ItemStack(Material.EMERALD), TreeType.CRYSTAL.item(), new ItemStack(Material.WHITE_WOOL))
+		.gather(new ItemStack(Material.EMERALD), Pugmas21TreeType.CRYSTAL.item(), new ItemStack(Material.WHITE_WOOL))
 		.take(false)
 		.complete(dialog -> dialog
 			.player("I have found all the ingredients. What do we do next?")

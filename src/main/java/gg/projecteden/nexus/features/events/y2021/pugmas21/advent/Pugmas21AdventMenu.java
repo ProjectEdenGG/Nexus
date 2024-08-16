@@ -25,7 +25,7 @@ import java.time.LocalDate;
 import static gg.projecteden.nexus.features.menus.MenuUtils.innerSlotIterator;
 
 @RequiredArgsConstructor
-public class AdventMenu extends InventoryProvider {
+public class Pugmas21AdventMenu extends InventoryProvider {
 	@NonNull
 	private Pugmas21User user;
 	@NonNull
@@ -33,7 +33,7 @@ public class AdventMenu extends InventoryProvider {
 	private int frameTicks;
 	private Title title = Title.FRAME_1;
 
-	public AdventMenu(@NonNull Pugmas21User user, @NonNull LocalDate today, int frameTicks) {
+	public Pugmas21AdventMenu(@NonNull Pugmas21User user, @NonNull LocalDate today, int frameTicks) {
 		this.user = user;
 		this.today = today;
 		this.frameTicks = frameTicks;
@@ -63,7 +63,7 @@ public class AdventMenu extends InventoryProvider {
 
 				clickableItem = ClickableItem.of(item.build(), e -> {
 					viewer.closeInventory();
-					Advent.glow(user, _day);
+					Pugmas21Advent.glow(user, _day);
 				});
 			}
 

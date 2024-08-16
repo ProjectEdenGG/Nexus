@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 
-public class Train21 {
+public class Pugmas21Train {
 
 	public static void schedule() {
 		final Supplier<Long> delay = () -> TickTime.MINUTE.x(randomInt(5, 10));

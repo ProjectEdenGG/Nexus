@@ -33,7 +33,7 @@ import static gg.projecteden.nexus.utils.BlockUtils.createDistanceSortedQueue;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
-public enum TreeType {
+public enum Pugmas21TreeType {
 	BLISTERWOOD(Material.BONE_BLOCK, Material.QUARTZ_SLAB, Material.QUARTZ_STAIRS, Material.HONEY_BLOCK),
 	BLOODWOOD(Material.CRIMSON_HYPHAE, Material.BLACK_STAINED_GLASS),
 	CRYSTAL(Material.ICE, Material.BLUE_STAINED_GLASS, Material.BLUE_STAINED_GLASS_PANE, Material.PURPLE_STAINED_GLASS,
@@ -61,7 +61,7 @@ public enum TreeType {
 
 	private static final long animationTime = TickTime.SECOND.x(3);
 
-	TreeType(Material logs, Material... others) {
+	Pugmas21TreeType(Material logs, Material... others) {
 		this.logs = logs;
 		this.others = Arrays.asList(others);
 
@@ -94,8 +94,8 @@ public enum TreeType {
 		return getAllMaterials().stream().map(material -> material.name().toLowerCase()).collect(Collectors.joining(","));
 	}
 
-	public static TreeType of(Material logs) {
-		for (TreeType treeType : TreeType.values())
+	public static Pugmas21TreeType of(Material logs) {
+		for (Pugmas21TreeType treeType : Pugmas21TreeType.values())
 			if (treeType.getLogs() == logs)
 				return treeType;
 

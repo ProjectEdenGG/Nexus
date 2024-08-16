@@ -4,15 +4,15 @@ import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.Advent;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.AdventAnimation;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.AdventMenu;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.models.CandyCaneCannon;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.models.District;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.models.MultiModelStructure;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.models.MultiModelStructure.Model;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Train21;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.models.TrainBackground;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.Pugmas21Advent;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.Pugmas21AdventAnimation;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.Pugmas21AdventMenu;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21CandyCaneCannon;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21District;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21MultiModelStructure;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21MultiModelStructure.Model;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21Train;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21TrainBackground;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21NPC;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestItem;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestLine;
@@ -142,7 +142,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	@Permission(Group.ADMIN)
 	@Description("Start a moving train")
 	void train_start_default() {
-		Train21.getDefault().build().start();
+		Pugmas21Train.getDefault().build().start();
 	}
 
 	@Path("train start here")
@@ -165,20 +165,20 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	@Path("trainBackground start")
 	@Permission(Group.ADMIN)
 	void trainBackground_start() {
-		TrainBackground.start();
+		Pugmas21TrainBackground.start();
 	}
 
 	@Path("trainBackground stop")
 	@Permission(Group.ADMIN)
 	void trainBackground_stop() {
-		TrainBackground.stop();
+		Pugmas21TrainBackground.stop();
 	}
 
-	private MultiModelStructure getBalloonStructure() {
+	private Pugmas21MultiModelStructure getBalloonStructure() {
 		final AtomicInteger i = new AtomicInteger();
 		final int baseModelId = PUGMAS21_HOT_AIR_BALLOON_1.getModelId();
 
-		return MultiModelStructure.builder()
+		return Pugmas21MultiModelStructure.builder()
 			.from(location().subtract(BlockFace.UP.getDirection().multiply(1.5)))
 			.add(Map.of(BlockFace.UP, 0), baseModelId + i.getAndIncrement())
 			.add(Map.of(BlockFace.UP, 1), baseModelId + i.getAndIncrement())
@@ -196,7 +196,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	@Path("balloon move [--seconds]")
 	@Permission(Group.ADMIN)
 	void balloon_move(@Arg("20") @Switch int seconds) {
-		final MultiModelStructure structure = getBalloonStructure().spawn();
+		final Pugmas21MultiModelStructure structure = getBalloonStructure().spawn();
 
 		player().setGravity(false);
 		int taskId = Tasks.repeat(0, 1, () -> {
@@ -217,17 +217,17 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	@Path("candycane cannon")
 	@Permission(Group.ADMIN)
 	void candycane_cannon() {
-		giveItem(CandyCaneCannon.getItem().build());
+		giveItem(Pugmas21CandyCaneCannon.getItem().build());
 	}
 
 	@Path("district")
 	@Description("View which district you are currently in")
 	void district() {
-		District district = District.of(location());
+		Pugmas21District district = Pugmas21District.of(location());
 		if (district == null)
 			error("You must be in Pugmas to run this command");
 
-		send(PREFIX + "You are " + (district == District.UNKNOWN ? "not in a district" : "in the &e" + district.getFullName()));
+		send(PREFIX + "You are " + (district == Pugmas21District.UNKNOWN ? "not in a district" : "in the &e" + district.getFullName()));
 	}
 
 	@Path("advent animation [--twice] [--height1] [--length1] [--particle1] [--ticks1] [--height2] [--length2] [--particle2] [--ticks2] [--randomMax] [--day]")
@@ -245,7 +245,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 		@Arg("40") @Switch int randomMax,
 		@Arg("1") @Switch int day
 	) {
-		final AdventAnimation animation = AdventAnimation.builder()
+		final Pugmas21AdventAnimation animation = Pugmas21AdventAnimation.builder()
 			.location(location())
 			.length1(length1)
 			.height1(height1)
@@ -278,7 +278,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 		if (date.isBefore(Pugmas21.EPOCH) || day > 0)
 			date = Pugmas21.EPOCH.plusDays(day - 1);
 
-		new AdventMenu(user, date, frameTicks).open(player());
+		new Pugmas21AdventMenu(user, date, frameTicks).open(player());
 	}
 
 	@Path("advent waypoint <day>")
@@ -289,7 +289,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 		if (!user.advent().hasFound(day))
 			error("You have not found day &e#" + day);
 
-		Advent.glow(user, day);
+		Pugmas21Advent.glow(user, day);
 	}
 
 	@Path("advent nearest")
@@ -339,7 +339,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	@Path("advent config updateItems")
 	@Permission(Group.ADMIN)
 	void advent_updateItems() {
-		Advent.updateItems();
+		Pugmas21Advent.updateItems();
 
 		send(PREFIX + "updated items");
 	}
