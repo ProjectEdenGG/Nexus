@@ -34,6 +34,7 @@ import gg.projecteden.nexus.features.shops.Shops;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -245,11 +246,11 @@ public abstract class InventoryProvider {
 	}
 
 	protected ItemStack backItem() {
-		return new ItemBuilder(CustomMaterial.GUI_ARROW_PREVIOUS).dyeColor(ColorType.RED).itemFlags(ItemFlag.HIDE_DYE).name("&cBack").build();
+		return new ItemBuilder(CustomMaterial.GUI_ARROW_PREVIOUS).dyeColor(ColorType.RED).itemFlags(ItemFlags.HIDE_ALL).name("&cBack").build();
 	}
 
 	protected ItemStack closeItem() {
-		return new ItemBuilder(CustomMaterial.GUI_CLOSE).dyeColor(ColorType.RED).itemFlags(ItemFlag.HIDE_DYE).name("&cClose").build();
+		return new ItemBuilder(CustomMaterial.GUI_CLOSE).dyeColor(ColorType.RED).itemFlags(ItemFlags.HIDE_ALL).name("&cClose").build();
 	}
 
 	public static ItemBuilder checkmark() {

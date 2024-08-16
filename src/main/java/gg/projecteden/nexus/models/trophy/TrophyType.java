@@ -5,10 +5,13 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Troph
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,6 +62,14 @@ public enum TrophyType {
 	public static void initDecorations() {
 		for (TrophyType trophy : values())
 			new Trophy(trophy);
+	}
+
+	public static @Nullable TrophyType of(ItemStack itemStack) {
+		for (TrophyType type : values()) {
+			if (ItemUtils.isFuzzyMatch(type.getItem().build(), itemStack))
+				return type;
+		}
+		return null;
 	}
 
 	@Override
