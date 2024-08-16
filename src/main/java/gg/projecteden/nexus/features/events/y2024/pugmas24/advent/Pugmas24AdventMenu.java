@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.y2024.pugmas24.advent;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Districts.Pugmas24District;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
@@ -64,11 +65,23 @@ public class Pugmas24AdventMenu extends InventoryProvider {
 
 		final SlotIterator slotIterator = innerSlotIterator(contents, SlotPos.of(row, column));
 		for (int dayNdx = 1; dayNdx <= 25; dayNdx++) {
-			final LocalDate date = Pugmas24.get().getStart().plusDays(dayNdx - 1);
-			final Icon icon = Icon.fromDate(user, today, date);
-			final ItemBuilder item = new ItemBuilder(icon.getItem(dayNdx));
+			final int _day = dayNdx;
 
-			slotIterator.next().set(ClickableItem.empty(item.build()));
+			final LocalDate date = Pugmas24.get().getStart().plusDays(_day - 1);
+			final Icon icon = Icon.fromDate(user, today, date);
+			final ItemBuilder item = new ItemBuilder(icon.getItem(_day));
+
+			ClickableItem clickableItem = ClickableItem.empty(item.build());
+			if (user.advent().hasFound(_day)) {
+				item.lore("", "&aShow Waypoint");
+
+				clickableItem = ClickableItem.of(item.build(), e -> {
+					viewer.closeInventory();
+					Pugmas24Advent.glow(user, _day);
+				});
+			}
+
+			slotIterator.next().set(clickableItem);
 		}
 
 		Tasks.wait(frameTicks, () -> {
@@ -93,11 +106,18 @@ public class Pugmas24AdventMenu extends InventoryProvider {
 
 		public ItemBuilder getItem(int day) {
 			Advent24Present present = Advent24Config.get().get(day);
+			Pugmas24District district = present.getDistrict();
+			String districtName = "null";
+			if (district != null) {
+				districtName = district.getName();
+				if (this == LOCKED)
+					districtName = "???";
+			}
 
 			return new ItemBuilder(material)
 					.name("&3Day: &e" + present.getDay())
 					.lore("&3Status: &e" + status)
-					.lore("&3District: &e" + present.getDistrict().getName());
+				.lore("&3District: &e" + districtName);
 		}
 
 		public static Icon fromDate(Pugmas24User user, LocalDate today, LocalDate date) {
