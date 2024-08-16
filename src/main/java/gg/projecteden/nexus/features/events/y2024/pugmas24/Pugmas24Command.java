@@ -87,7 +87,7 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	@Path("health reset")
 	@Permission(Group.ADMIN)
 	void health_reset() {
-		Pugmas24.get().healthReset(player());
+		Pugmas24.get().resetHealth(player());
 	}
 
 	@Path("health add")
@@ -128,6 +128,15 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 			date = Pugmas24.get().getStart().plusDays(day - 1);
 
 		new Pugmas24AdventMenu(user, date, frameTicks).open(player());
+	}
+
+	@Path("advent waypoint <day>")
+	@Description("Get directions to a present you've already found")
+	void advent_waypoint(int day) {
+		if (!user.advent().hasFound(day))
+			error("You have not found day &e#" + day);
+
+		Pugmas24Advent.glow(user, day);
 	}
 
 	@Path("advent tp <day>")

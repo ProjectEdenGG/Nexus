@@ -9,6 +9,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import lombok.NonNull;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 
@@ -35,12 +37,20 @@ public class HealCommand extends CustomCommand {
 	}
 
 	public static void healPlayer(Player player) {
-		player.setHealth(20);
+		player.setHealth(getMaxHealth(player));
 		player.setFoodLevel(20);
 		player.setFireTicks(0);
 		for (PotionEffect effect : player.getActivePotionEffects())
 			player.removePotionEffect(effect.getType());
 		player.setRemainingAir(player.getMaximumAir());
+	}
+
+	public static double getMaxHealth(Player player) {
+		return getMaxHealthAttribute(player).getBaseValue();
+	}
+
+	public static AttributeInstance getMaxHealthAttribute(Player player) {
+		return player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
 	}
 
 }

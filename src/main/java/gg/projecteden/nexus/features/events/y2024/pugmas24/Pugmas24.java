@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events.y2024.pugmas24;
 
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.nexus.features.commands.staff.HealCommand;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Pugmas24Advent;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonEditor;
@@ -22,27 +23,31 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestT
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24ShopMenu;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.framework.annotations.Date;
-import gg.projecteden.nexus.models.godmode.GodmodeService;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.pugmas24.Advent24Config;
+import gg.projecteden.nexus.models.pugmas24.Advent24Present;
+import gg.projecteden.nexus.models.pugmas24.Pugmas24User;
+import gg.projecteden.nexus.models.pugmas24.Pugmas24UserService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 
-import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory.FISH;
 import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory.JUNK;
-import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
 
 /*
 	TODO:
@@ -66,6 +71,9 @@ import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
 public class Pugmas24 extends EdenEvent {
 	private static Pugmas24 instance;
 	public static final String PREFIX = StringUtils.getPrefix("Pugmas 2024");
+
+	@Getter
+	final Pugmas24UserService userService = new Pugmas24UserService();
 
 	public static final LocalDate _25TH = LocalDate.of(2024, 12, 25);
 
@@ -98,14 +106,71 @@ public class Pugmas24 extends EdenEvent {
 		new Pugmas24Waystones();
 
 		Pugmas24Train.startup();
+
+		getPlayers().forEach(this::onArrive);
 	}
 
 	@Override
 	public void onStop() {
 		Pugmas24Train.shutdown();
-		Pugmas24Advent.shutdown();
 		Pugmas24BalloonEditor.shutdown();
+
+		getPlayers().forEach(this::onDepart);
 	}
+
+	public void onArrive(Player player) {
+		Tasks.wait(1, () -> {
+			Pugmas24User user = userService.get(player);
+			user.updateHealth();
+
+			Pugmas24Advent.sendPackets(player);
+		});
+	}
+
+	public void onDepart(Player player) {
+		resetHealth(player);
+
+		final Pugmas24User user = userService.get(player);
+		for (Advent24Present present : Advent24Config.get().getPresents())
+			user.advent().hide(present);
+	}
+
+	@EventHandler
+	public void on(PlayerLoginEvent event) {
+		if (!shouldHandle(event.getPlayer()))
+			return;
+
+		onArrive(event.getPlayer());
+	}
+
+	@EventHandler
+	public void on(PlayerQuitEvent event) {
+		if (!shouldHandle(event.getPlayer()))
+			return;
+
+		onDepart(event.getPlayer());
+	}
+
+	@EventHandler
+	public void on(PlayerChangedWorldEvent event) {
+		Player player = event.getPlayer();
+		World fromWorld = event.getFrom();
+		World toWorld = player.getWorld();
+
+		if (fromWorld.equals(toWorld))
+			return;
+
+		if (Pugmas24.get().getWorld().getName().equalsIgnoreCase(fromWorld.getName())) {
+			onDepart(player);
+			return;
+		}
+
+		if (shouldHandle(player)) {
+			onArrive(player);
+		}
+	}
+
+	//
 
 	@Override
 	protected void registerFishingLoot() {
@@ -115,20 +180,6 @@ public class Pugmas24 extends EdenEvent {
 	@Override
 	public void registerInteractHandlers() {
 		handleInteract(Pugmas24NPC.BLACKSMITH, (player, npc) -> Pugmas24ShopMenu.BLACKSMITH.open(player));
-	}
-
-	public String isCheatingMsg(Player player) {
-		if (canWorldGuardEdit(player)) return "wgedit";
-		if (!player.getGameMode().equals(GameMode.SURVIVAL)) return "creative";
-		if (player.isFlying()) return "fly";
-		if (isVanished(player)) return "vanish";
-		if (new GodmodeService().get(player).isActive()) return "godmode";
-
-		return null;
-	}
-
-	public boolean isAdventActive(LocalDate date) {
-		return get().isEventActive() && !date.isAfter(_25TH);
 	}
 
 	public boolean is25thOrAfter() {
@@ -142,36 +193,34 @@ public class Pugmas24 extends EdenEvent {
 	// Health
 
 	public void addMaxHealth(Player player, double amount) {
-		setMaxHealthAttribute(player, getMaxHealth(player) + amount);
+		setMaxHealthAttribute(player, HealCommand.getMaxHealth(player) + amount, true);
 	}
 
 	public void subtractMaxHealth(Player player, double amount) {
-		setMaxHealthAttribute(player, Math.max(getMaxHealth(player) - amount, 1.0));
+		setMaxHealthAttribute(player, Math.max(HealCommand.getMaxHealth(player) - amount, 1.0), true);
 	}
 
 	public void setMaxHealth(Player player, double amount) {
-		setMaxHealthAttribute(player, amount);
+		setMaxHealthAttribute(player, amount, true);
 	}
 
-	public double getMaxHealth(Player player) {
-		return getMaxHealthAttribute(player).getBaseValue();
+	public void resetHealth(Player player) {
+		setMaxHealthAttribute(player, 20.0, false);
 	}
 
-	public void healthReset(Player player) {
-		setMaxHealthAttribute(player, 20.0);
-	}
+	private void setMaxHealthAttribute(Player player, double amount, boolean save) {
+		HealCommand.getMaxHealthAttribute(player).setBaseValue(amount);
+		if (player.getHealth() > amount)
+			player.setHealth(amount);
 
-	public AttributeInstance getMaxHealthAttribute(Player player) {
-		return player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-	}
-
-	private void setMaxHealthAttribute(Player player, double amount) {
-		getMaxHealthAttribute(player).setBaseValue(amount);
-		player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+		if (save) {
+			Pugmas24User user = userService.get(player);
+			user.setMaxHealth(amount);
+			userService.save(user);
+		}
 	}
 
 	// Death
-
 
 	@Override
 	public Location getRespawnLocation(Player player) {
@@ -208,7 +257,6 @@ public class Pugmas24 extends EdenEvent {
 	public enum Pugmas24DeathCause {
 		UNKNOWN("<player> died"),
 		GEYSER("<player> was boiled alive"),
-		RANDOM_DEATH("<player> randomly died?"),
 		INSTANT_DEATH("<player> had really bad luck"),
 		FALL("<player> forgot fall damage existed"),
 		STARVATION("<player> forgot to eat"),

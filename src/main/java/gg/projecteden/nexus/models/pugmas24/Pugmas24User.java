@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.commands.staff.HealCommand;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Waystones.Pugmas24Waystone;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
@@ -13,6 +14,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -32,7 +35,7 @@ public class Pugmas24User implements PlayerOwnedObject {
 	private boolean visited = false;
 
 	private Set<Pugmas24Waystone> foundWaystones = new HashSet<>();
-	private int randomDeaths = 0;
+	private double maxHealth = 10;
 
 	@Getter(AccessLevel.PRIVATE)
 	private Advent24User advent;
@@ -44,4 +47,14 @@ public class Pugmas24User implements PlayerOwnedObject {
 		return advent;
 	}
 
+	public void updateHealth() {
+		Player player = getPlayer();
+		if (player == null || !player.isOnline())
+			return;
+
+		AttributeInstance maxHealth = HealCommand.getMaxHealthAttribute(player);
+		maxHealth.setBaseValue(this.maxHealth);
+		if (player.getHealth() > this.maxHealth)
+			player.setHealth(this.maxHealth);
+	}
 }
