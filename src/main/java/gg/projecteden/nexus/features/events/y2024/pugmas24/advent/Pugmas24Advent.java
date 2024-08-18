@@ -31,7 +31,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 /*
  	TODO:
  		- GLOWING / WAYPOINT
- 		- CLIENTSIDE PRESENTS
+ 		- CLIENTSIDE PRESENTS --> /clientside convert
  */
 public class Pugmas24Advent implements Listener {
 
@@ -58,7 +58,6 @@ public class Pugmas24Advent implements Listener {
 			.open();
 	}
 
-	// TODO: CAUSING ERROR
 	public static void sendPackets(Player player) {
 		final Pugmas24User user = userService.get(player);
 		for (Advent24Present present : Advent24Config.get().getPresents())
