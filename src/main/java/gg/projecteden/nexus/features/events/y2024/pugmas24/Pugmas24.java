@@ -10,7 +10,6 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24Ball
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24Fairgrounds;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Districts;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Fishing;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Train;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Waystones;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24Entity;
@@ -101,7 +100,6 @@ public class Pugmas24 extends EdenEvent {
 		new Pugmas24Fairgrounds();
 		new Pugmas24BalloonManager();
 		new Pugmas24Fishing();
-		new Pugmas24SlotMachine();
 		new Pugmas24QuestItemsListener();
 		new Pugmas24Waystones();
 

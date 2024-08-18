@@ -27,9 +27,11 @@ public class Pugmas24Fairgrounds {
 	public Pugmas24Fairgrounds() {
 		rides();
 
+		new Pugmas24SlotMachine();
+
+		new Pugmas24WacAMole();
 		new Pugmas24Frogger();
 		new Pugmas24Reflection();
-		// TODO: WAC-A-MOLE
 		// TODO: MINIGOLF
 	}
 

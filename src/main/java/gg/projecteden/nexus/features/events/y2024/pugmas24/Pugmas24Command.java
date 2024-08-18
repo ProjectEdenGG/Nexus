@@ -11,13 +11,14 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24Ball
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonEditorUtils;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonManager;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BlockReplaceBrushMenu;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24SlotMachine;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24SlotMachine.Pugmas24SlotMachineReward;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24SlotMachine.Pugmas24SlotMachineReward.Pugmas24SlotMachineRewardType;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24SlotMachine.Pugmas24SlotMachineRewardMenu;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24WacAMole;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Districts;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Districts.Pugmas24District;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Geyser;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine.Pugmas24SlotMachineReward;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine.Pugmas24SlotMachineReward.Pugmas24SlotMachineRewardType;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine.Pugmas24SlotMachineRewardMenu;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Train;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -209,7 +210,7 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	@Path("slotMachine roll")
 	@Permission(Group.ADMIN)
 	void slotMachine() {
-		Pugmas24SlotMachine.roll(player());
+		Pugmas24SlotMachine.start(player());
 	}
 
 	@Path("slotMachine simulateWin <reward> <type>")
@@ -229,6 +230,27 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	void slotMachine_reset() {
 		Pugmas24SlotMachine.reset();
 	}
+
+	@Path("wacamole setup")
+	@Permission(Group.ADMIN)
+	void wacAMole_setup() {
+		Pugmas24WacAMole.init(player());
+	}
+
+	@Path("wacamole start")
+	@Permission(Group.ADMIN)
+	void wacAMole_start() {
+		Pugmas24WacAMole.start(player());
+	}
+
+	@Path("wacamole reset")
+	@Permission(Group.ADMIN)
+	void wacAMole_reset() {
+		Pugmas24WacAMole.reset();
+	}
+
+
+
 
 	@Path("geyser start")
 	@Permission(Group.STAFF)

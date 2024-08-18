@@ -28,7 +28,11 @@ import java.util.stream.Collectors;
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
-// TODO
+/*
+ 	TODO:
+ 		- GLOWING / WAYPOINT
+ 		- CLIENTSIDE PRESENTS
+ */
 public class Pugmas24Advent implements Listener {
 
 	private static final Pugmas24UserService userService = new Pugmas24UserService();
@@ -54,13 +58,12 @@ public class Pugmas24Advent implements Listener {
 			.open();
 	}
 
+	// TODO: CAUSING ERROR
 	public static void sendPackets(Player player) {
 		final Pugmas24User user = userService.get(player);
 		for (Advent24Present present : Advent24Config.get().getPresents())
 			user.advent().show(present);
 	}
-
-	// TODO: REPLACE PUGMAS21 CHECKS
 
 	@EventHandler
 	public void onOpenPresent(PlayerInteractEvent event) {

@@ -375,6 +375,10 @@ public abstract class EdenEvent extends Feature implements Listener {
 		PlayerUtils.giveItem(player, item);
 	}
 
+	public void give(Player player, List<ItemStack> items) {
+		PlayerUtils.giveItems(player, items);
+	}
+
 	public class EventActiveCalculator implements ContextCalculator<Player> {
 
 		@Override

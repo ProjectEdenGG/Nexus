@@ -1,15 +1,16 @@
-package gg.projecteden.nexus.features.events.y2024.pugmas24.models;
+package gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds;
 
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.HealCommand;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24.Pugmas24DeathCause;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine.Pugmas24SlotMachineReward.Pugmas24SlotMachineRewardEnchant;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine.Pugmas24SlotMachineReward.Pugmas24SlotMachineRewardType;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24SlotMachine.SlotMachineColumn.SlotMachineColumnStatus;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24SlotMachine.Pugmas24SlotMachineReward.Pugmas24SlotMachineRewardEnchant;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24SlotMachine.Pugmas24SlotMachineReward.Pugmas24SlotMachineRewardType;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24SlotMachine.SlotMachineColumn.SlotMachineColumnStatus;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestItem;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
@@ -63,43 +64,48 @@ import java.util.function.Consumer;
 		- REWARDS
  */
 public class Pugmas24SlotMachine implements Listener {
-	private static final String potsRegion = Pugmas24.get().getRegionName() + "_slotmachine_pots";
-	private static final String leverRegion = Pugmas24.get().getRegionName() + "_slotmachine_lever";
-	private static final String soundRegion = Pugmas24.get().getRegionName() + "_slotmachine_sound";
-	private static final String rowRegion = Pugmas24.get().getRegionName() + "_slotmachine_row";
-	private static final String playRegion = Pugmas24.get().getRegionName() + "_slotmachine_play";
+	private static final WorldGuardUtils worldguard = Pugmas24.get().worldguard();
+	private static final WorldEditUtils worldedit = Pugmas24.get().worldedit();
 
-	private static final List<Location> winningRow = new ArrayList<>();
-	private static final Map<Integer, SlotMachineColumn> columns = new HashMap<>();
+	private static final String REGION = Pugmas24.get().getRegionName() + "_slotmachine_";
+	private static final String POTS_REGION = REGION + "pots";
+	private static final String LEVER_REGION = REGION + "lever";
+	private static final String SOUNDS_REGION = REGION + "sound";
+	private static final String ROW_REGION = REGION + "row";
+	private static final String PLAY_REGION = REGION + "play";
+
 	private static int WIDTH;
 	private static int HEIGHT;
 	private static SlotMachineAxis AXIS;
 	private static boolean REVERSED = true;
+	private static final List<Location> winningRow = new ArrayList<>();
+	private static final Map<Integer, SlotMachineColumn> columns = new HashMap<>();
+
 	@Getter
-	private static boolean rolling = false;
-	private static Player rollingPlayer;
+	private static boolean playing = false;
+	private static Player gamer;
+	private static int gameTaskId = -1;
 	@Getter
 	private static Location soundLocation;
+	private static Block lever;
 
 	public Pugmas24SlotMachine() {
 		Nexus.registerListener(this);
 		init(null);
 	}
 
-	public static void init(Player player) {
+	public static void init(Player debugger) {
 		columns.clear();
-		WorldGuardUtils worldguard = Pugmas24.get().worldguard();
-		WorldEditUtils worldedit = Pugmas24.get().worldedit();
 
-		ProtectedRegion rowRg = worldguard.getProtectedRegion(rowRegion);
+		ProtectedRegion rowRg = worldguard.getProtectedRegion(ROW_REGION);
 		worldedit.getBlocks(rowRg).forEach(block -> {
 			if (block.getState() instanceof DecoratedPot)
 				winningRow.add(block.getLocation());
 		});
 
-		soundLocation = worldedit.getBlocks(worldguard.getRegion(soundRegion)).getFirst().getLocation();
+		soundLocation = worldedit.getBlocks(worldguard.getRegion(SOUNDS_REGION)).getFirst().getLocation();
 
-		ProtectedRegion potsRg = worldguard.getProtectedRegion(potsRegion);
+		ProtectedRegion potsRg = worldguard.getProtectedRegion(POTS_REGION);
 		BlockVector3 potsMin = potsRg.getMinimumPoint();
 		BlockVector3 potsMax = potsRg.getMaximumPoint();
 
@@ -146,41 +152,48 @@ public class Pugmas24SlotMachine implements Listener {
 	}
 
 	public static void reset() {
-		Tasks.cancel(rollingTaskId);
+		Tasks.cancel(gameTaskId);
 		slowingColumnSkips = 0;
 		for (SlotMachineColumn slotColumn : columns.values()) {
 			slotColumn.setStatus(SlotMachineColumnStatus.INACTIVE);
 		}
+
+		if (lever != null && lever.getBlockData() instanceof Powerable powerable) {
+			powerable.setPowered(false);
+			lever.setBlockData(powerable, true);
+			new SoundBuilder(Sound.BLOCK_LEVER_CLICK).location(lever).volume(0.3).pitch(0.5).play();
+		}
 		//
-		rollingPlayer = null;
-		rolling = false;
+		gameTicks = 0;
+		gamer = null;
+		playing = false;
 	}
 
-	private static int rollingTaskId;
 	private static List<Material> rollSherds;
 	private static int rollSherdsSize;
-	private static long tick;
-	private static final long interval = TickTime.TICK.x(4);
+	private static long gameTicks;
+	private static final long UPDATE_INTERVAL = TimeUtils.TickTime.TICK.x(4);
 
-	public static void roll(Player player) {
+	public static void start(Player player) {
+		Pugmas24 pugmas = Pugmas24.get();
 		if (Nexus.isMaintenanceQueued()) {
-			Pugmas24.get().send(player, "&cServer maintenance is queued, try again later");
+			pugmas.send(player, "&cServer maintenance is queued, try again later");
 			return;
 		}
 
-		if (rolling) {
-			Pugmas24.get().send(player, "&cThe slot machine is already being rolled");
+		if (playing) {
+			pugmas.send(player, "&cThe slot machine is already being rolled");
 			return;
 		}
 
 		// TODO: BALANCE CHECK & WITHDRAW
 
-		rolling = true;
-		rollingPlayer = player;
+		playing = true;
+		gamer = player;
+		gameTicks = 0;
 		rollSherds = new ArrayList<>(Pugmas24SlotMachineReward.getAllSherds());
 		rollSherdsSize = rollSherds.size();
 		Collections.shuffle(rollSherds);
-		tick = 0;
 		slowingColumnSkips = 0;
 
 		// Roll
@@ -188,16 +201,15 @@ public class Pugmas24SlotMachine implements Listener {
 			slotColumn.setStatus(SlotMachineColumnStatus.RUNNING);
 		}
 
-		rollingTaskId = Tasks.repeat(0, interval, () -> {
+		gameTaskId = Tasks.repeat(0, UPDATE_INTERVAL, () -> {
 			update();
-			tick += interval;
+			gameTicks += UPDATE_INTERVAL;
 		});
 
 	}
 
 	private static int slowingColumnSkips = 0;
 	private static void update() {
-
 		for (int column = 0; column < WIDTH; column++) {
 			SlotMachineColumn slotColumn = columns.get(column);
 			SlotMachineColumnStatus columnStatus = slotColumn.getStatus();
@@ -206,13 +218,13 @@ public class Pugmas24SlotMachine implements Listener {
 				continue;
 
 			if (columnStatus == SlotMachineColumnStatus.SLOWING) {
-				if (tick % (interval * 2) != 0) {
+				if (gameTicks % (UPDATE_INTERVAL * 2) != 0) {
 					slowingColumnSkips++;
 					continue;
 				}
 			}
 
-			int columnOffset = ((int) (((tick / interval + column * HEIGHT) - slowingColumnSkips) % rollSherdsSize));
+			int columnOffset = ((int) (((gameTicks / UPDATE_INTERVAL + column * HEIGHT) - slowingColumnSkips) % rollSherdsSize));
 			for (int row = 0; row < HEIGHT; row++) {
 				int sherdIndex = ((columnOffset + row) % rollSherdsSize);
 				Material sherd = rollSherds.get(sherdIndex);
@@ -229,13 +241,12 @@ public class Pugmas24SlotMachine implements Listener {
 				if (slotColumn.canStop()) {
 					slotColumn.setStatus(SlotMachineColumnStatus.STOPPED);
 					slotColumn.playSound(soundLocation);
-					slotColumn.setStoppedTick(tick);
+					slotColumn.setStoppedTick(gameTicks);
 
 					slowingColumnSkips = 0;
 
 					if (slotColumn.getColumnIndex() == (columns.size() - 1)) {
-						Tasks.cancel(rollingTaskId);
-						reward();
+						end();
 						return;
 					}
 				}
@@ -245,7 +256,9 @@ public class Pugmas24SlotMachine implements Listener {
 		}
 	}
 
-	private static void reward() {
+	private static void end() {
+		Tasks.cancel(gameTaskId);
+
 		Map<Material, Integer> winningSherdMap = new HashMap<>();
 		for (Location potLoc : winningRow) {
 			if (!(potLoc.getBlock().getState() instanceof DecoratedPot decoratedPot))
@@ -278,7 +291,7 @@ public class Pugmas24SlotMachine implements Listener {
 		}
 
 		if (reward != null) {
-			reward.give(rollingPlayer, rewardType);
+			reward.give(gamer, rewardType);
 		} else {
 			new SoundBuilder(Sound.ENTITY_VILLAGER_NO).location(soundLocation).volume(0.5).play();
 		}
@@ -527,7 +540,7 @@ public class Pugmas24SlotMachine implements Listener {
 			if (previousColumn.getStatus() != SlotMachineColumnStatus.STOPPED)
 				return false;
 
-			return previousColumn.getStoppedTick() < (tick + getRandomTicks(2, 5));
+			return previousColumn.getStoppedTick() < (gameTicks + getRandomTicks(2, 5));
 		}
 
 		public boolean canSlow() {
@@ -535,14 +548,14 @@ public class Pugmas24SlotMachine implements Listener {
 				return false;
 
 
-			return tick > getRandomTicks(3, 5);
+			return gameTicks > getRandomTicks(3, 5);
 		}
 
 		public boolean canStop() {
 			if (status != SlotMachineColumnStatus.SLOWING)
 				return false;
 
-			return tick > getRandomTicks(7, 10);
+			return gameTicks > getRandomTicks(7, 10);
 		}
 
 		private long getRandomTicks(int secondsMin, int secondsMax) {
@@ -587,31 +600,26 @@ public class Pugmas24SlotMachine implements Listener {
 		if (Nullables.isNullOrAir(block) || block.getType() != Material.LEVER)
 			return;
 
-		if (!Pugmas24.get().worldguard().isInRegion(player, playRegion))
+		if (!Pugmas24.get().worldguard().isInRegion(player, PLAY_REGION))
 			return;
 
-		if (!Pugmas24.get().worldguard().isInRegion(block, leverRegion))
+		if (!Pugmas24.get().worldguard().isInRegion(block, LEVER_REGION))
 			return;
 
 		event.setCancelled(true);
-		if (rolling) {
+		if (playing) {
 			Pugmas24.get().send(player, "&cThe slot machine is already being rolled");
 			return;
 		}
 
 		if (block.getBlockData() instanceof Powerable powerable) {
+			lever = block;
 			powerable.setPowered(true);
-			block.setBlockData(powerable, true);
-			new SoundBuilder(Sound.BLOCK_LEVER_CLICK).location(block).volume(0.3).pitch(0.6).play();
-
-			Tasks.wait(10, () -> {
-				powerable.setPowered(false);
-				block.setBlockData(powerable, true);
-				new SoundBuilder(Sound.BLOCK_LEVER_CLICK).location(block).volume(0.3).pitch(0.5).play();
-			});
+			lever.setBlockData(powerable, true);
+			new SoundBuilder(Sound.BLOCK_LEVER_CLICK).location(lever).volume(0.3).pitch(0.6).play();
 		}
 
-		roll(player);
+		start(player);
 	}
 
 	@EventHandler
@@ -619,11 +627,11 @@ public class Pugmas24SlotMachine implements Listener {
 		if (!shouldHandle(event.getPlayer()))
 			return;
 
-		if (!event.getRegion().getId().equalsIgnoreCase(playRegion))
+		if (!event.getRegion().getId().equalsIgnoreCase(PLAY_REGION))
 			return;
 
 		event.setCancelled(true);
-		Pugmas24.get().sendCooldown(rollingPlayer, "&cYou can't leave while the slot machine is rolling", "pugmas24_slot_machine_rolling");
+		Pugmas24.get().sendCooldown(gamer, "&cYou can't leave while the slot machine is rolling", "pugmas24_slotmachine_playing");
 	}
 
 	@EventHandler
@@ -635,13 +643,13 @@ public class Pugmas24SlotMachine implements Listener {
 	}
 
 	private static boolean shouldHandle(Player player) {
-		if (!rolling)
+		if (!playing)
 			return false;
 
 		if (!Pugmas24.get().shouldHandle(player))
 			return false;
 
-		return rollingPlayer.getUniqueId().equals(player.getUniqueId());
+		return gamer.getUniqueId().equals(player.getUniqueId());
 	}
 
 	@Rows(5)
