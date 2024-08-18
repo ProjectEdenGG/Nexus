@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.events.y2024.pugmas24.models;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.sk89q.worldguard.protection.regions.RegionType;
 import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
@@ -45,32 +47,39 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class Pugmas24Geyser {
 
+	private static final Pugmas24 PUGMAS = Pugmas24.get();
+	private static final WorldEditUtils worldedit = PUGMAS.worldedit();
+	private static final WorldGuardUtils worldguard = PUGMAS.worldguard();
+
 	@Getter
 	private static boolean animating = false;
 	private static boolean erupting = false;
 	private static boolean hurtPlayers = false;
 	private static GeyserStatus status = GeyserStatus.INACTIVE;
 	private static List<Location> base;
-	private static final WorldEditUtils worldedit = Pugmas24.get().worldedit();
-	private static final WorldGuardUtils worldguard = Pugmas24.get().worldguard();
+
 	//
-	public static final Location geyserOrigin = Pugmas24.get().location(-501, 93, -3046);
-	public static final Location geyserPaste = Pugmas24.get().location(-505, 93, -3050);
-	private static final int maxHeight = 8;
-	private static final int frameSpeed = 2;
-	private static final String geyserPoolsRegion = Pugmas24.get().getRegionName() + "_geyser";
-	private static final String geyserCreekRegion = Pugmas24.get().getRegionName() + "_geyser_creek";
-	private static final String geyserInsideRegion = Pugmas24.get().getRegionName() + "_geyser_inside";
-	private static final String geyserColumnRegion = Pugmas24.get().getRegionName() + "_geyser_column";
-	private static final String schemReset = "pugmas24/geyser/empty";
-	private static final String schemRunning = "pugmas24/geyser/running_";
-	private static final String schemIntro = "pugmas24/geyser/intro_";
-	private static final String schemOutro = "pugmas24/geyser/outro_";
+	public static final Location GEYSER_ORIGIN = PUGMAS.location(-501, 93, -3046);
+	public static final Location GEYSER_PASTE = PUGMAS.location(-505, 93, -3050);
+	private static final int MAX_HEIGHT = 8;
+	private static final int FRAME_SPEED = 2;
+
+	private static final String BASE_REGION = PUGMAS.getRegionName() + "_";
+	private static final String POOLS_REGION = BASE_REGION + "geyser";
+	private static final String EXTRA_SMOKE_REGION_REGEX = "^" + BASE_REGION + "geyser_smoke_[0-9]+";
+	private static final String INSIDE_GEYSER_REGION = BASE_REGION + "geyser_inside";
+	private static final String GEYSER_COLUMN_REGION = BASE_REGION + "geyser_column";
+
+	private static final String SCHEM_FOLDER = "pugmas/geyser/";
+	private static final String SCHEM_RESET = SCHEM_FOLDER + "empty";
+	private static final String SCHEM_RUNNING = SCHEM_FOLDER + "running_";
+	private static final String SCHEM_INTRO = SCHEM_FOLDER + "intro_";
+	private static final String SCHEM_OUTRO = SCHEM_FOLDER + "outro_";
 	//
-	private static final SoundBuilder geyserSound = new SoundBuilder(CustomSound.AMBIENT_GEYSER).volume(2).category(SoundCategory.AMBIENT).location(geyserOrigin.clone());
-	private static final SoundBuilder rumbleSound = new SoundBuilder(CustomSound.AMBIENT_GROUND_RUMBLE).volume(4).pitch(2).category(SoundCategory.AMBIENT).location(geyserOrigin.clone().subtract(0, 2, 0));
-	private static final SoundBuilder bubbleSound = new SoundBuilder(Sound.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_AMBIENT).category(SoundCategory.AMBIENT).location(geyserOrigin.clone());
-	private static final SoundBuilder splashSound = new SoundBuilder(Sound.ENTITY_PLAYER_SPLASH_HIGH_SPEED).pitch(2).category(SoundCategory.AMBIENT).location(geyserOrigin.clone());
+	private static final SoundBuilder geyserSound = new SoundBuilder(CustomSound.AMBIENT_GEYSER).volume(2).category(SoundCategory.AMBIENT).location(GEYSER_ORIGIN.clone());
+	private static final SoundBuilder rumbleSound = new SoundBuilder(CustomSound.AMBIENT_GROUND_RUMBLE).volume(4).pitch(2).category(SoundCategory.AMBIENT).location(GEYSER_ORIGIN.clone().subtract(0, 2, 0));
+	private static final SoundBuilder bubbleSound = new SoundBuilder(Sound.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_AMBIENT).category(SoundCategory.AMBIENT).location(GEYSER_ORIGIN.clone());
+	private static final SoundBuilder splashSound = new SoundBuilder(Sound.ENTITY_PLAYER_SPLASH_HIGH_SPEED).pitch(2).category(SoundCategory.AMBIENT).location(GEYSER_ORIGIN.clone());
 
 	public static void reset() {
 		erupting = false;
@@ -78,7 +87,7 @@ public class Pugmas24Geyser {
 		hurtPlayers = false;
 		poolSmokeFailChance = 99;
 		animating = false;
-		worldedit.paster().file(schemReset).at(geyserPaste).pasteAsync();
+		worldedit.paster().file(SCHEM_RESET).at(GEYSER_PASTE).pasteAsync();
 	}
 
 	public static void animate() {
@@ -87,7 +96,7 @@ public class Pugmas24Geyser {
 
 		animating = true;
 
-		base = new ArrayList<>(List.of(geyserOrigin, relativeLoc(BlockFace.EAST),
+		base = new ArrayList<>(List.of(GEYSER_ORIGIN, relativeLoc(BlockFace.EAST),
 				relativeLoc(BlockFace.SOUTH), relativeLoc(BlockFace.SOUTH_EAST)));
 		Collections.shuffle(base);
 
@@ -110,7 +119,7 @@ public class Pugmas24Geyser {
 			ticks.addAndGet(5);
 
 			if (hurtPlayers) {
-				for (Player player : Pugmas24.get().getPlayersIn(geyserPoolsRegion)) {
+				for (Player player : PUGMAS.getPlayersIn(POOLS_REGION)) {
 					if (!isWater(player.getLocation()))
 						continue;
 
@@ -126,10 +135,10 @@ public class Pugmas24Geyser {
 			}
 
 			if (erupting) {
-				var players = Pugmas24.get().getPlayersIn(geyserInsideRegion);
-				players.addAll(Pugmas24.get().getPlayersIn(geyserColumnRegion));
+				var players = PUGMAS.getPlayersIn(INSIDE_GEYSER_REGION);
+				players.addAll(PUGMAS.getPlayersIn(GEYSER_COLUMN_REGION));
 
-				Location geyserPushLoc = geyserOrigin.clone();
+				Location geyserPushLoc = GEYSER_ORIGIN.clone();
 				geyserPushLoc.add(0.5, 0, 0.5);
 				for (Player player : players) {
 					if (!isWater(player.getLocation()))
@@ -170,7 +179,7 @@ public class Pugmas24Geyser {
 		status = GeyserStatus.ANIMATING;
 		hurtPlayers = true;
 		poolSmokeFailChance = 95;
-		creekSmokeFailChance = 98;
+		extraSmokeFailChance = 98;
 		long wait = 0;
 
 		wait += TickTime.SECOND.x(7);
@@ -193,14 +202,14 @@ public class Pugmas24Geyser {
 		}
 
 		Tasks.wait(wait - TickTime.SECOND.x(1), () -> erupting = true);
-		wait = geyserRaise(wait, frameSpeed, maxHeight, false);
+		wait = geyserRaise(wait, FRAME_SPEED, MAX_HEIGHT, false);
 
 		for (int frame = 1; frame <= 5; frame++) {
 			int finalFrame = frame;
 			Tasks.waitAsync(wait, () ->
-					worldedit.paster().file(schemIntro + finalFrame).at(geyserPaste).pasteAsync());
+				worldedit.paster().file(SCHEM_INTRO + finalFrame).at(GEYSER_PASTE).pasteAsync());
 
-			wait += frameSpeed;
+			wait += FRAME_SPEED;
 		}
 
 		Tasks.wait(wait, () -> {
@@ -220,9 +229,9 @@ public class Pugmas24Geyser {
 			for (int frame = 1; frame <= 7; frame++) {
 				int finalFrame = frame;
 				Tasks.waitAsync(wait, () ->
-						worldedit.paster().file(schemRunning + finalFrame).at(geyserPaste).pasteAsync());
+					worldedit.paster().file(SCHEM_RUNNING + finalFrame).at(GEYSER_PASTE).pasteAsync());
 
-				wait += frameSpeed;
+				wait += FRAME_SPEED;
 			}
 		}
 
@@ -240,13 +249,13 @@ public class Pugmas24Geyser {
 		for (int frame = 1; frame <= 13; frame++) {
 			int finalFrame = frame;
 			Tasks.waitAsync(wait, () ->
-					worldedit.paster().file(schemOutro + finalFrame).at(geyserPaste).pasteAsync());
+				worldedit.paster().file(SCHEM_OUTRO + finalFrame).at(GEYSER_PASTE).pasteAsync());
 
-			wait += frameSpeed;
+			wait += FRAME_SPEED;
 		}
 
 		Tasks.waitAsync(wait, () ->
-				worldedit.paster().file(schemReset).at(geyserPaste).pasteAsync());
+			worldedit.paster().file(SCHEM_RESET).at(GEYSER_PASTE).pasteAsync());
 
 		Tasks.wait(wait - TickTime.SECOND.x(2), () -> erupting = false);
 		Tasks.wait(wait, () -> {
@@ -298,8 +307,8 @@ public class Pugmas24Geyser {
 	}
 
 	private static Set<Location> poolSmokeLocations = new HashSet<>();
-	private static Set<Location> creekSmokeLocations = new HashSet<>();
-	private static int creekSmokeFailChance = 99;
+	private static Set<Location> extraSmokeLocations = new HashSet<>();
+	private static int extraSmokeFailChance = 99;
 	private static int poolSmokeFailChance = 99;
 
 	public static void animateSmoke() {
@@ -310,11 +319,11 @@ public class Pugmas24Geyser {
 			poolSmokeLocations = getSmokeLocations();
 		}
 
-		if (Nullables.isNullOrEmpty(creekSmokeLocations)) {
-			creekSmokeLocations = getCreekSmokeLocations();
+		if (Nullables.isNullOrEmpty(extraSmokeLocations)) {
+			extraSmokeLocations = getExtraSmokeLocations();
 		}
 
-		playSmoke(creekSmokeLocations, creekSmokeFailChance, 1, 3);
+		playSmoke(extraSmokeLocations, extraSmokeFailChance, 1, 3);
 		playSmoke(poolSmokeLocations, poolSmokeFailChance, 3, 4);
 	}
 
@@ -380,11 +389,20 @@ public class Pugmas24Geyser {
 	}
 
 	private static Location relativeLoc(BlockFace blockFace) {
-		return Pugmas24Geyser.geyserOrigin.getBlock().getRelative(blockFace).getLocation();
+		return Pugmas24Geyser.GEYSER_ORIGIN.getBlock().getRelative(blockFace).getLocation();
 	}
 
-	private static Set<Location> getCreekSmokeLocations() {
-		return worldedit.getBlocksPoly(worldguard.getRegion(geyserCreekRegion)).stream()
+	private static Set<Location> getExtraSmokeLocations() {
+		Set<ProtectedRegion> smokeRegions = worldguard.getRegionsLike(EXTRA_SMOKE_REGION_REGEX);
+		List<Block> blocks = new ArrayList<>();
+		for (ProtectedRegion region : smokeRegions) {
+			if (region.getType() == RegionType.POLYGON)
+				blocks.addAll(worldedit.getBlocksPoly(region));
+			else
+				blocks.addAll(worldedit.getBlocks(region));
+		}
+
+		return blocks.stream()
 			.filter(block -> block.getType() == Material.WATER)
 			.filter(block -> block.getRelative(BlockFace.UP).getType() == Material.AIR)
 			.map(Block::getLocation)
@@ -392,7 +410,7 @@ public class Pugmas24Geyser {
 	}
 
 	private static Set<Location> getSmokeLocations() {
-		return worldedit.getBlocksPoly(worldguard.getRegion(geyserPoolsRegion)).stream()
+		return worldedit.getBlocksPoly(worldguard.getRegion(POOLS_REGION)).stream()
 				.filter(block -> block.getType() == Material.WATER)
 				.filter(block -> block.getRelative(BlockFace.UP).getType() == Material.AIR)
 				.map(Block::getLocation)

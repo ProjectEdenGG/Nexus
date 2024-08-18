@@ -15,8 +15,9 @@ import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 @NoArgsConstructor
 public class Pugmas24Train {
 
-	private static final String trainRevealRegion = Pugmas24.get().getRegionName() + "_train_reveal";
-	private static final String trainTrackRegion = Pugmas24.get().getRegionName() + "_train_track";
+	private static final String BASE_REGION = Pugmas24.get().getRegionName() + "_train_";
+	private static final String trainRevealRegion = BASE_REGION + "reveal";
+	private static final String trainTrackRegion = BASE_REGION + "track";
 
 	public static void startup() {
 		Pugmas24.get().forceLoadRegions(trainTrackRegion);

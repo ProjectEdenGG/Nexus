@@ -222,7 +222,7 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	@Path("slotMachine setup")
 	@Permission(Group.ADMIN)
 	void slotMachine_setup() {
-		Pugmas24SlotMachine.init(player());
+		Pugmas24SlotMachine.init();
 	}
 
 	@Path("slotMachine reset")
@@ -234,7 +234,7 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	@Path("wacamole setup")
 	@Permission(Group.ADMIN)
 	void wacAMole_setup() {
-		Pugmas24WacAMole.init(player());
+		Pugmas24WacAMole.init();
 	}
 
 	@Path("wacamole start")

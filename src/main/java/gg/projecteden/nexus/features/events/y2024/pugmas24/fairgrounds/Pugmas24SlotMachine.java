@@ -64,10 +64,11 @@ import java.util.function.Consumer;
 		- REWARDS
  */
 public class Pugmas24SlotMachine implements Listener {
-	private static final WorldGuardUtils worldguard = Pugmas24.get().worldguard();
-	private static final WorldEditUtils worldedit = Pugmas24.get().worldedit();
+	private static final Pugmas24 PUGMAS = Pugmas24.get();
+	private static final WorldGuardUtils worldguard = PUGMAS.worldguard();
+	private static final WorldEditUtils worldedit = PUGMAS.worldedit();
 
-	private static final String REGION = Pugmas24.get().getRegionName() + "_slotmachine_";
+	private static final String REGION = PUGMAS.getRegionName() + "_slotmachine_";
 	private static final String POTS_REGION = REGION + "pots";
 	private static final String LEVER_REGION = REGION + "lever";
 	private static final String SOUNDS_REGION = REGION + "sound";
@@ -91,10 +92,10 @@ public class Pugmas24SlotMachine implements Listener {
 
 	public Pugmas24SlotMachine() {
 		Nexus.registerListener(this);
-		init(null);
+		init();
 	}
 
-	public static void init(Player debugger) {
+	public static void init() {
 		columns.clear();
 
 		ProtectedRegion rowRg = worldguard.getProtectedRegion(ROW_REGION);
@@ -132,7 +133,7 @@ public class Pugmas24SlotMachine implements Listener {
 				int y = potsMin.getBlockY();
 				y += vertical;
 
-				Location loc = Pugmas24.get().location(x, y, z);
+				Location loc = PUGMAS.location(x, y, z);
 
 				Block block = loc.getBlock();
 				if (!(block.getState() instanceof DecoratedPot decoratedPot))
@@ -175,7 +176,7 @@ public class Pugmas24SlotMachine implements Listener {
 	private static final long UPDATE_INTERVAL = TimeUtils.TickTime.TICK.x(4);
 
 	public static void start(Player player) {
-		Pugmas24 pugmas = Pugmas24.get();
+		Pugmas24 pugmas = PUGMAS;
 		if (Nexus.isMaintenanceQueued()) {
 			pugmas.send(player, "&cServer maintenance is queued, try again later");
 			return;
@@ -300,9 +301,9 @@ public class Pugmas24SlotMachine implements Listener {
 	}
 
 	private static List<Location> LIGHTS = new ArrayList<>(List.of(
-		Pugmas24.get().location(-733, 85, -2904),
-		Pugmas24.get().location(-735, 86, -2904),
-		Pugmas24.get().location(-737, 85, -2904)));
+		PUGMAS.location(-733, 85, -2904),
+		PUGMAS.location(-735, 86, -2904),
+		PUGMAS.location(-737, 85, -2904)));
 
 	private static final List<Location> activatedLights = new ArrayList<>();
 	private static int loopCounter = 0;
@@ -365,78 +366,78 @@ public class Pugmas24SlotMachine implements Listener {
 		JACKPOT(SlotPos.of(1, 2), new ItemBuilder(Material.PRIZE_POTTERY_SHERD).name("&bTODO")
 			.lore("&3Half: &eTODO", "&3Full: &eTODO"),
 			(player) -> {
-				Pugmas24.get().send(player, "TODO HALF REWARD - JACKPOT");
+				PUGMAS.send(player, "TODO HALF REWARD - JACKPOT");
 			},
 			(player) -> {
-				Pugmas24.get().send(player, "TODO FULL REWARD - JACKPOT");
+				PUGMAS.send(player, "TODO FULL REWARD - JACKPOT");
 			}
 		),
 
 		HEARTS(SlotPos.of(2, 2), new ItemBuilder(Material.HEART_POTTERY_SHERD).name("&bHeart Crystals")
 			.lore("&3Half: &a2 &eHeart Crystals", "&3Full: &a5 &eHeart Crystals"),
-			(player) -> Pugmas24.get().give(player, Pugmas24QuestItem.HEART_CRYSTAL.getItemBuilder().amount(2)),
-			(player) -> Pugmas24.get().give(player, Pugmas24QuestItem.HEART_CRYSTAL.getItemBuilder().amount(5))
+			(player) -> PUGMAS.give(player, Pugmas24QuestItem.HEART_CRYSTAL.getItemBuilder().amount(2)),
+			(player) -> PUGMAS.give(player, Pugmas24QuestItem.HEART_CRYSTAL.getItemBuilder().amount(5))
 		),
 
 		COINS(SlotPos.of(3, 2), new ItemBuilder(Material.ARMS_UP_POTTERY_SHERD).name("&bCoins")
 			.lore("&3Half: &eTODO", "&3Full: &eTODO"),
 			(player) -> {
-				Pugmas24.get().send(player, "TODO HALF REWARD - CURRENCY");
+				PUGMAS.send(player, "TODO HALF REWARD - CURRENCY");
 			},
 			(player) -> {
-				Pugmas24.get().send(player, "TODO FULL REWARD - CURRENCY");
+				PUGMAS.send(player, "TODO FULL REWARD - CURRENCY");
 			}
 		),
 
 		PICKAXE(SlotPos.of(1, 4), new ItemBuilder(Material.MINER_POTTERY_SHERD).name("&dRandom Pickaxe Enchant")
 			.lore("&3Half: &eUncommon", "&3Full: &eRare", "", "&eEnchants&3: "),
 			(player) -> {
-				Pugmas24.get().send(player, "TODO HALF REWARD - PICKAXE");
+				PUGMAS.send(player, "TODO HALF REWARD - PICKAXE");
 			},
 			(player) -> {
-				Pugmas24.get().send(player, "TODO FULL REWARD - PICKAXE");
+				PUGMAS.send(player, "TODO FULL REWARD - PICKAXE");
 			}
 		),
 
 		FISHING_ROD(SlotPos.of(2, 4), new ItemBuilder(Material.ANGLER_POTTERY_SHERD).name("&dRandom Fishing Rod Enchant")
 			.lore("&3Half: &eUncommon", "&3Full: &eRare", "", "&eEnchants&3: "),
 			(player) -> {
-				Pugmas24.get().send(player, "TODO HALF REWARD - FISHING_ROD");
+				PUGMAS.send(player, "TODO HALF REWARD - FISHING_ROD");
 			},
 			(player) -> {
-				Pugmas24.get().send(player, "TODO FULL REWARD - FISHING_ROD");
+				PUGMAS.send(player, "TODO FULL REWARD - FISHING_ROD");
 			}
 		),
 
 		SWORD(SlotPos.of(3, 4), new ItemBuilder(Material.BLADE_POTTERY_SHERD).name("&dRandom Sword Enchant")
 			.lore("&3Half: &eUncommon", "&3Full: &eRare", "", "&eEnchants&3: "),
 			(player) -> {
-				Pugmas24.get().send(player, "TODO HALF REWARD - SWORD");
+				PUGMAS.send(player, "TODO HALF REWARD - SWORD");
 			},
 			(player) -> {
-				Pugmas24.get().send(player, "TODO FULL REWARD - SWORD");
+				PUGMAS.send(player, "TODO FULL REWARD - SWORD");
 			}
 		),
 
 		INSTANT_DEATH(SlotPos.of(1, 6), new ItemBuilder(Material.DANGER_POTTERY_SHERD).name("&cInstant Death")
 			.lore("&3Half: &aHealth &3set to &c50%", "&3Full: &aHealth &3set to &c0%"),
 			(player) -> player.setHealth(player.getHealth() / 2),
-			(player) -> Pugmas24.get().onDeath(player, Pugmas24DeathCause.INSTANT_DEATH)
+			(player) -> PUGMAS.onDeath(player, Pugmas24DeathCause.INSTANT_DEATH)
 		),
 
 		HALF_MAX_HEALTH(SlotPos.of(2, 6), new ItemBuilder(Material.HEARTBREAK_POTTERY_SHERD).name("&cHalve Max Health")
 			.lore("&3Half: &aMax Health &3set to &c75%", "&3Full: &aMax Health &3set to &c50%"),
-			(player) -> Pugmas24.get().setMaxHealth(player, HealCommand.getMaxHealth(player) * 0.75),
-			(player) -> Pugmas24.get().setMaxHealth(player, HealCommand.getMaxHealth(player) * 0.50)
+			(player) -> PUGMAS.setMaxHealth(player, HealCommand.getMaxHealth(player) * 0.75),
+			(player) -> PUGMAS.setMaxHealth(player, HealCommand.getMaxHealth(player) * 0.50)
 		),
 
 		HALF_CURRENCY(SlotPos.of(3, 6), new ItemBuilder(Material.MOURNER_POTTERY_SHERD).name("&cHalve Currency")
 			.lore("&3Half: &aCoin Pouch &3set to &c75% Coins", "&3Full: &aCoin Pouch &3set to &c50% Coins"),
 			(player) -> {
-				Pugmas24.get().send(player, "TODO HALF REWARD - RANDOM_DEATH");
+				PUGMAS.send(player, "TODO HALF REWARD - RANDOM_DEATH");
 			},
 			(player) -> {
-				Pugmas24.get().send(player, "TODO FULL REWARD - RANDOM_DEATH");
+				PUGMAS.send(player, "TODO FULL REWARD - RANDOM_DEATH");
 			}
 		),
 		;
@@ -497,8 +498,8 @@ public class Pugmas24SlotMachine implements Listener {
 		}
 
 		private static final List<Location> fireworkLocations = List.of(
-			Pugmas24.get().location(-732.5, 82.2, -2907.5),
-			Pugmas24.get().location(-736.5, 82.2, -2907.5));
+			PUGMAS.location(-732.5, 82.2, -2907.5),
+			PUGMAS.location(-736.5, 82.2, -2907.5));
 
 		public void give(Player player, Pugmas24SlotMachineRewardType type) {
 			switch (type) {
@@ -593,22 +594,22 @@ public class Pugmas24SlotMachine implements Listener {
 	public void on(PlayerInteractEvent event) {
 
 		Player player = event.getPlayer();
-		if (!Pugmas24.get().shouldHandle(player))
+		if (!PUGMAS.shouldHandle(player))
 			return;
 
 		Block block = event.getClickedBlock();
 		if (Nullables.isNullOrAir(block) || block.getType() != Material.LEVER)
 			return;
 
-		if (!Pugmas24.get().worldguard().isInRegion(player, PLAY_REGION))
+		if (!PUGMAS.worldguard().isInRegion(player, PLAY_REGION))
 			return;
 
-		if (!Pugmas24.get().worldguard().isInRegion(block, LEVER_REGION))
+		if (!PUGMAS.worldguard().isInRegion(block, LEVER_REGION))
 			return;
 
 		event.setCancelled(true);
 		if (playing) {
-			Pugmas24.get().send(player, "&cThe slot machine is already being rolled");
+			PUGMAS.send(player, "&cThe slot machine is already being rolled");
 			return;
 		}
 
@@ -631,7 +632,7 @@ public class Pugmas24SlotMachine implements Listener {
 			return;
 
 		event.setCancelled(true);
-		Pugmas24.get().sendCooldown(gamer, "&cYou can't leave while the slot machine is rolling", "pugmas24_slotmachine_playing");
+		PUGMAS.sendCooldown(gamer, "&cYou can't leave while the slot machine is rolling", "pugmas24_slotmachine_playing");
 	}
 
 	@EventHandler
@@ -646,7 +647,7 @@ public class Pugmas24SlotMachine implements Listener {
 		if (!playing)
 			return false;
 
-		if (!Pugmas24.get().shouldHandle(player))
+		if (!PUGMAS.shouldHandle(player))
 			return false;
 
 		return gamer.getUniqueId().equals(player.getUniqueId());

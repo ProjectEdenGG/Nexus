@@ -34,10 +34,11 @@ import org.bukkit.inventory.ItemStack;
 import java.io.File;
 
 public class Pugmas24BalloonEditor implements Listener {
-	private static final Location WARP = Pugmas24.get().location(-614.5, 156.0, -3216.5, 0, 0);
+	private static final Pugmas24 PUGMAS = Pugmas24.get();
+	private static final Location WARP = PUGMAS.location(-614.5, 156.0, -3216.5, 0, 0);
 	protected static final String REGION_EDIT = Pugmas24BalloonManager.REGION_BASE + "edit";
 	protected static final String REGION_SCHEM = Pugmas24BalloonManager.REGION_BASE + "schem";
-	protected static final Location SCHEM_PASTE = Pugmas24.get().location(-620, 162, -3214);
+	protected static final Location SCHEM_PASTE = PUGMAS.location(-620, 162, -3214);
 	protected static final int TEMPLATE_SIZE = Pugmas24BalloonManager.getTotalTemplateSchematics();
 	protected static final ColorType defaultBrushColor = ColorType.RED;
 
@@ -64,7 +65,7 @@ public class Pugmas24BalloonEditor implements Listener {
 	public Pugmas24BalloonEditor() {
 		Nexus.registerListener(this);
 
-		Pugmas24.get().forceLoadRegions(REGION_EDIT);
+		PUGMAS.forceLoadRegions(REGION_EDIT);
 	}
 
 	public static void shutdown() {
@@ -227,7 +228,7 @@ public class Pugmas24BalloonEditor implements Listener {
 			return;
 
 		event.setCancelled(true);
-		Pugmas24.get().sendCooldown(editor.getPlayer(), "&cPlease wait while your balloon is saving", "pugmas24_balloon_editor-schem");
+		PUGMAS.sendCooldown(editor.getPlayer(), "&cPlease wait while your balloon is saving", "pugmas24_balloon_editor-schem");
 	}
 
 	@EventHandler
@@ -239,7 +240,7 @@ public class Pugmas24BalloonEditor implements Listener {
 			return;
 
 		event.setCancelled(true);
-		Pugmas24.get().sendCooldown(editor.getPlayer(), "&cPlease wait while your balloon is saving", "pugmas24_balloon_editor-schem");
+		PUGMAS.sendCooldown(editor.getPlayer(), "&cPlease wait while your balloon is saving", "pugmas24_balloon_editor-schem");
 	}
 
 	@EventHandler
@@ -294,7 +295,7 @@ public class Pugmas24BalloonEditor implements Listener {
 			return;
 
 		event.setCancelled(true);
-		Pugmas24.get().sendCooldown(editor.getPlayer(), "&cYou're still editing your balloon", "pugmas24_balloon_editor-editing");
+		PUGMAS.sendCooldown(editor.getPlayer(), "&cYou're still editing your balloon", "pugmas24_balloon_editor-editing");
 	}
 
 	@EventHandler
@@ -306,7 +307,7 @@ public class Pugmas24BalloonEditor implements Listener {
 			return;
 
 		event.setCancelled(true);
-		Pugmas24.get().sendCooldown(editor.getPlayer(), "&cYou're still editing your balloon", "pugmas24_balloon_editor-editing");
+		PUGMAS.sendCooldown(editor.getPlayer(), "&cYou're still editing your balloon", "pugmas24_balloon_editor-editing");
 	}
 
 	@EventHandler

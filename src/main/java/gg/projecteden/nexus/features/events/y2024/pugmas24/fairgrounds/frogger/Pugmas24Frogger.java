@@ -36,21 +36,26 @@ import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand
 import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
 
 public class Pugmas24Frogger implements Listener {
+
 	@Getter
-	private static final String prefix = "&8&l[&eFrogger&8&l] &f";
-	private static final String gameRg = Pugmas24.get().getRegionName() + "_frogger";
-	private static final String winRg = gameRg + "_win";
-	private static final String damageRg = gameRg + "_damage";
-	private static final String killRg = gameRg + "_kill";
-	private static final String logsRg = gameRg + "_logs";
-	private static final String carsRg1 = gameRg + "_cars_1";
-	private static final String roadRg1 = gameRg + "_road_1";
-	private static final String carsRg2 = gameRg + "_cars_2";
-	private static final String roadRg2 = gameRg + "_road_2";
-	private static final String checkpointRg = gameRg + "_checkpoint";
+	private static final String PREFIX = "&8&l[&eFrogger&8&l] &f";
+	private static final Pugmas24 PUGMAS = Pugmas24.get();
+
+	private static final String GAME_REGION = PUGMAS.getRegionName() + "_frogger";
+
+	private static final String BASE_REGION = GAME_REGION + "_";
+	private static final String WIN_REGION = BASE_REGION + "win";
+	private static final String DAMAGE_REGION = BASE_REGION + "damage";
+	private static final String KILL_REGION = BASE_REGION + "kill";
+	private static final String LOGS_REGION = BASE_REGION + "logs";
+	private static final String CARS_REGION_1 = BASE_REGION + "cars_1";
+	private static final String ROAD_REGION_1 = BASE_REGION + "road_1";
+	private static final String CARS_REGION_2 = BASE_REGION + "cars_2";
+	private static final String ROAD_REGION_2 = BASE_REGION + "road_2";
+	private static final String CHECKPOINT_REGION = BASE_REGION + "checkpoint";
 	//
-	private static final Location respawnLoc = Pugmas24.get().location(-787.5, 78.0, -2858.5, 90, 0);
-	private static final Location checkpointLoc = Pugmas24.get().location(-807.5, 78.0, -2858.5, 90, 0);
+	private static final Location RESPAWN_LOC = PUGMAS.location(-787.5, 78.0, -2858.5, 90, 0);
+	private static final Location CHECKPOINT_LOC = PUGMAS.location(-807.5, 78.0, -2858.5, 90, 0);
 	private static final Set<Player> checkpointList = new HashSet<>();
 	private static boolean enabled = false;
 	private static int animationTaskId;
@@ -65,33 +70,33 @@ public class Pugmas24Frogger implements Listener {
 	private static final Set<Material> carMaterials = MaterialTag.CONCRETES.exclude(Material.BLACK_CONCRETE, Material.LIGHT_GRAY_CONCRETE).getValues();
 
 	public Pugmas24Frogger() {
-		WorldGuardUtils worldguard = Pugmas24.get().worldguard();
+		WorldGuardUtils worldguard = PUGMAS.worldguard();
 
-		worldguard.getRegion(gameRg);
-		worldguard.getRegion(winRg);
-		worldguard.getRegion(damageRg);
-		worldguard.getRegion(killRg);
-		worldguard.getRegion(logsRg);
-		worldguard.getRegion(carsRg1);
-		worldguard.getRegion(roadRg1);
-		worldguard.getRegion(carsRg2);
-		worldguard.getRegion(roadRg2);
-		worldguard.getRegion(checkpointRg);
-		worldguard.getProtectedRegion(gameRg);
+		worldguard.getRegion(GAME_REGION);
+		worldguard.getRegion(WIN_REGION);
+		worldguard.getRegion(DAMAGE_REGION);
+		worldguard.getRegion(KILL_REGION);
+		worldguard.getRegion(LOGS_REGION);
+		worldguard.getRegion(CARS_REGION_1);
+		worldguard.getRegion(ROAD_REGION_1);
+		worldguard.getRegion(CARS_REGION_2);
+		worldguard.getRegion(ROAD_REGION_2);
+		worldguard.getRegion(CHECKPOINT_REGION);
+		worldguard.getProtectedRegion(GAME_REGION);
 		Nexus.registerListener(this);
 	}
 
 	private void loadLogSpawns() {
-		loadSpawns(logsRg, logSpawnMap);
+		loadSpawns(LOGS_REGION, logSpawnMap);
 	}
 
 	private void loadCarSpawns() {
-		loadSpawns(carsRg1, carSpawnMap);
-		loadSpawns(carsRg2, carSpawnMap);
+		loadSpawns(CARS_REGION_1, carSpawnMap);
+		loadSpawns(CARS_REGION_2, carSpawnMap);
 	}
 
 	private void loadSpawns(String regionId, Map<Location, Material> spawnMap) {
-		List<Block> blocks = Pugmas24.get().worldedit().getBlocks(Pugmas24.get().worldguard().getRegion(regionId));
+		List<Block> blocks = PUGMAS.worldedit().getBlocks(PUGMAS.worldguard().getRegion(regionId));
 		for (Block block : blocks)
 			if (block.getType().equals(Material.DIAMOND_BLOCK) || block.getType().equals(Material.EMERALD_BLOCK))
 				spawnMap.put(block.getLocation(), block.getType());
@@ -101,7 +106,7 @@ public class Pugmas24Frogger implements Listener {
 		// Log Animations
 		AtomicInteger taskId = new AtomicInteger();
 		taskId.set(Tasks.wait(0, () -> {
-			Pugmas24FroggerUtils.clearLogs(logsRg, logMaterial, riverMaterial);
+			Pugmas24FroggerUtils.clearLogs(LOGS_REGION, logMaterial, riverMaterial);
 			int lastLogLen = 3;
 
 			if (logSpawnMap.isEmpty())
@@ -123,8 +128,8 @@ public class Pugmas24Frogger implements Listener {
 			}
 
 			// Car Animations
-			Pugmas24FroggerUtils.clearCars(roadRg1);
-			Pugmas24FroggerUtils.clearCars(roadRg2);
+			Pugmas24FroggerUtils.clearCars(ROAD_REGION_1);
+			Pugmas24FroggerUtils.clearCars(ROAD_REGION_2);
 
 			if (carSpawnMap.isEmpty())
 				loadCarSpawns();
@@ -268,36 +273,36 @@ public class Pugmas24Frogger implements Listener {
 	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		String regionId = event.getRegion().getId();
 		Player player = event.getPlayer();
-		if (regionId.equalsIgnoreCase(gameRg)) {
+		if (regionId.equalsIgnoreCase(GAME_REGION)) {
 			if (enabled)
 				return;
 			enabled = true;
 			startAnimations();
 
-		} else if (regionId.equalsIgnoreCase(checkpointRg)) {
+		} else if (regionId.equalsIgnoreCase(CHECKPOINT_REGION)) {
 			checkpointList.add(player);
 
-		} else if (regionId.equalsIgnoreCase(damageRg)) {
+		} else if (regionId.equalsIgnoreCase(DAMAGE_REGION)) {
 			String cheatingMsg = isCheatingMsg(player);
 			if (cheatingMsg != null && !cheatingMsg.contains("wgedit")) {
-				player.teleportAsync(respawnLoc);
-				Pugmas24.get().sendNoPrefix(player, Pugmas24Frogger.getPrefix() + "Don't cheat, turn " + cheatingMsg + " off!");
+				player.teleportAsync(RESPAWN_LOC);
+				PUGMAS.sendNoPrefix(player, Pugmas24Frogger.getPREFIX() + "Don't cheat, turn " + cheatingMsg + " off!");
 				EventSounds.VILLAGER_NO.play(player);
 			}
 
-		} else if (regionId.equalsIgnoreCase(killRg)) {
+		} else if (regionId.equalsIgnoreCase(KILL_REGION)) {
 			if (canWorldGuardEdit(player)) return;
 			if (checkpointList.contains(player))
-				player.teleportAsync(checkpointLoc);
+				player.teleportAsync(CHECKPOINT_LOC);
 			else
-				player.teleportAsync(respawnLoc);
+				player.teleportAsync(RESPAWN_LOC);
 			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(player).volume(10).play();
 
-		} else if (regionId.equalsIgnoreCase(winRg)) {
+		} else if (regionId.equalsIgnoreCase(WIN_REGION)) {
 			if (canWorldGuardEdit(player)) return;
 
 			checkpointList.remove(player);
-			player.teleportAsync(respawnLoc);
+			player.teleportAsync(RESPAWN_LOC);
 			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(player).volume(10).pitch(2.0).play();
 
 			// TODO: GIVE DAILY TOKENS
@@ -307,8 +312,8 @@ public class Pugmas24Frogger implements Listener {
 	@EventHandler
 	public void onRegionExit(PlayerLeftRegionEvent event) {
 		String regionId = event.getRegion().getId();
-		if (regionId.equalsIgnoreCase(gameRg)) {
-			int size = Pugmas24.get().worldguard().getPlayersInRegion(gameRg).size();
+		if (regionId.equalsIgnoreCase(GAME_REGION)) {
+			int size = PUGMAS.worldguard().getPlayersInRegion(GAME_REGION).size();
 			if (size == 0) {
 				enabled = false;
 				stopAnimations();
@@ -320,15 +325,15 @@ public class Pugmas24Frogger implements Listener {
 	public void onDamage(EntityDamageEvent event) {
 		if (!(event.getEntity() instanceof Player player)) return;
 
-		if (!Pugmas24.get().isInRegion(player, damageRg)) return;
+		if (!PUGMAS.isInRegion(player, DAMAGE_REGION)) return;
 		if (event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)) return;
 
 		event.setDamage(0);
 		event.setCancelled(true);
 		if (checkpointList.contains(player))
-			player.teleportAsync(checkpointLoc);
+			player.teleportAsync(CHECKPOINT_LOC);
 		else
-			player.teleportAsync(respawnLoc);
+			player.teleportAsync(RESPAWN_LOC);
 		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(player).volume(10).play();
 	}
 

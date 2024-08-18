@@ -88,7 +88,7 @@ public class Pugmas24Effects extends Effects {
 	private void geyser() {
 		AtomicInteger tries = new AtomicInteger(0);
 		Tasks.repeat(0, TickTime.MINUTE.x(2), () -> {
-			if (!shouldAnimate(Pugmas24Geyser.geyserOrigin))
+			if (!shouldAnimate(Pugmas24Geyser.GEYSER_ORIGIN))
 				return;
 
 			if (RandomUtils.chanceOf(75) && tries.get() < 5) {
