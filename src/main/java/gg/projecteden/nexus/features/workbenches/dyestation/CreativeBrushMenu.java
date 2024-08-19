@@ -15,6 +15,7 @@ import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
@@ -56,7 +57,7 @@ public class CreativeBrushMenu extends InventoryProvider implements IDyeMenu {
 				return false;
 		}
 
-		if (!isCreativePaintbrush(ItemUtils.getToolRequired(player)))
+		if (!isCreativePaintbrush(ItemUtils.getTool(player)))
 			return false;
 
 		return true;
@@ -174,6 +175,9 @@ public class CreativeBrushMenu extends InventoryProvider implements IDyeMenu {
 	}
 
 	public static boolean isCreativePaintbrush(ItemStack item) {
+		if (Nullables.isNullOrAir(item))
+			return false;
+
 		return getCreativeBrush().modelId() == ModelId.of(item);
 	}
 }
