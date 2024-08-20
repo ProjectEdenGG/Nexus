@@ -15,7 +15,7 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24S
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24SlotMachine.Pugmas24SlotMachineReward;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24SlotMachine.Pugmas24SlotMachineReward.Pugmas24SlotMachineRewardType;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24SlotMachine.Pugmas24SlotMachineRewardMenu;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24WacAMole;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24WhacAMole;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Districts;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Districts.Pugmas24District;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Geyser;
@@ -231,26 +231,23 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 		Pugmas24SlotMachine.reset();
 	}
 
-	@Path("wacamole setup")
+	@Path("whacamole setup")
 	@Permission(Group.ADMIN)
-	void wacAMole_setup() {
-		Pugmas24WacAMole.init();
+	void whacAMole_setup() {
+		Pugmas24WhacAMole.init();
 	}
 
-	@Path("wacamole start")
+	@Path("whacamole start")
 	@Permission(Group.ADMIN)
-	void wacAMole_start() {
-		Pugmas24WacAMole.start(player());
+	void whacAMole_start() {
+		Pugmas24WhacAMole.start(player());
 	}
 
-	@Path("wacamole reset")
+	@Path("whacamole reset")
 	@Permission(Group.ADMIN)
-	void wacAMole_reset() {
-		Pugmas24WacAMole.reset();
+	void whacAMole_reset() {
+		Pugmas24WhacAMole.reset();
 	}
-
-
-
 
 	@Path("geyser start")
 	@Permission(Group.STAFF)

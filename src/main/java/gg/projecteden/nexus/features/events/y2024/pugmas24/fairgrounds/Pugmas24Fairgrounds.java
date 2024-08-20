@@ -29,7 +29,7 @@ public class Pugmas24Fairgrounds {
 
 		new Pugmas24SlotMachine();
 
-		new Pugmas24WacAMole();
+		new Pugmas24WhacAMole();
 		new Pugmas24Frogger();
 		new Pugmas24Reflection();
 		// TODO: MINIGOLF

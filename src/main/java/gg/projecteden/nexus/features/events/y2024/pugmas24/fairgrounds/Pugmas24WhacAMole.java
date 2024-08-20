@@ -43,12 +43,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static gg.projecteden.nexus.utils.EntityUtils.forcePacket;
 
-public class Pugmas24WacAMole implements Listener {
+public class Pugmas24WhacAMole implements Listener {
 	private static final Pugmas24 PUGMAS = Pugmas24.get();
 	private static final WorldGuardUtils worldguard = PUGMAS.worldguard();
 	private static final WorldEditUtils worldedit = PUGMAS.worldedit();
 
-	private static final String BASE_REGION = PUGMAS.getRegionName() + "_wacamole_";
+	private static final String BASE_REGION = PUGMAS.getRegionName() + "_whacamole_";
 	private static final String STANDS_REGION = BASE_REGION + "stands";
 	private static final String PLAY_REGION = BASE_REGION + "play";
 	private static final String CLEAN_ARROWS_REGION = BASE_REGION + "arrows";
@@ -70,10 +70,10 @@ public class Pugmas24WacAMole implements Listener {
 
 	private static List<ItemStack> kit = new ArrayList<>();
 
-	private static final Hologram holoTimeLeft = HologramsAPI.byId(PUGMAS.getWorld(), "pugmas24_wacamole_time_left");
-	private static final Hologram holoScore = HologramsAPI.byId(PUGMAS.getWorld(), "pugmas24_wacamole_score");
+	private static final Hologram holoTimeLeft = HologramsAPI.byId(PUGMAS.getWorld(), "pugmas24_whacamole_time_left");
+	private static final Hologram holoScore = HologramsAPI.byId(PUGMAS.getWorld(), "pugmas24_whacamole_score");
 
-	public Pugmas24WacAMole() {
+	public Pugmas24WhacAMole() {
 		Nexus.registerListener(this);
 
 		kit = List.of(
@@ -285,7 +285,7 @@ public class Pugmas24WacAMole implements Listener {
 			return;
 
 		event.setCancelled(true);
-		PUGMAS.sendCooldown(gamer, "&cYou can't leave while playing the game", "pugmas24_wacamole_playing");
+		PUGMAS.sendCooldown(gamer, "&cYou can't leave while playing the game", "pugmas24_whacamole_playing");
 	}
 
 	@EventHandler
