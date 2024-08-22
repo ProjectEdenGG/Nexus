@@ -54,7 +54,7 @@ public class Pugmas24Districts implements Listener {
 		}
 
 		playerDistrictMap.put(player, newDistrict);
-		Pugmas24.get().actionBarBroadcast("&3Area Designation: &e" + newDistrict.getName(), TickTime.SECOND.x(2));
+		Pugmas24.get().actionBar(player, "&3Area Designation: &e" + newDistrict.getName(), TickTime.SECOND.x(2));
 	}
 
 

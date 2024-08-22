@@ -11,11 +11,11 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24Ball
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonEditorUtils;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonManager;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BlockReplaceBrushMenu;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24SlotMachine;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24SlotMachine.Pugmas24SlotMachineReward;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24SlotMachine.Pugmas24SlotMachineReward.Pugmas24SlotMachineRewardType;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24SlotMachine.Pugmas24SlotMachineRewardMenu;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24WhacAMole;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.slotmachine.Pugmas24SlotMachine;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.slotmachine.Pugmas24SlotMachineReward;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.slotmachine.Pugmas24SlotMachineReward.Pugmas24SlotMachineRewardType;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.slotmachine.Pugmas24SlotMachineRewardMenu;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Districts;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Districts.Pugmas24District;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Geyser;
@@ -210,7 +210,7 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	@Path("slotMachine roll")
 	@Permission(Group.ADMIN)
 	void slotMachine() {
-		Pugmas24SlotMachine.start(player());
+		Pugmas24SlotMachine.get().start(player());
 	}
 
 	@Path("slotMachine simulateWin <reward> <type>")
@@ -222,31 +222,31 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	@Path("slotMachine setup")
 	@Permission(Group.ADMIN)
 	void slotMachine_setup() {
-		Pugmas24SlotMachine.init();
+		Pugmas24SlotMachine.get().init();
 	}
 
 	@Path("slotMachine reset")
 	@Permission(Group.ADMIN)
 	void slotMachine_reset() {
-		Pugmas24SlotMachine.reset();
+		Pugmas24SlotMachine.get().reset();
 	}
 
 	@Path("whacamole setup")
 	@Permission(Group.ADMIN)
 	void whacAMole_setup() {
-		Pugmas24WhacAMole.init();
+		Pugmas24WhacAMole.get().init();
 	}
 
 	@Path("whacamole start")
 	@Permission(Group.ADMIN)
 	void whacAMole_start() {
-		Pugmas24WhacAMole.start(player());
+		Pugmas24WhacAMole.get().start(player());
 	}
 
 	@Path("whacamole reset")
 	@Permission(Group.ADMIN)
 	void whacAMole_reset() {
-		Pugmas24WhacAMole.reset();
+		Pugmas24WhacAMole.get().reset();
 	}
 
 	@Path("geyser start")
