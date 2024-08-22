@@ -2,19 +2,16 @@ package gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds;
 
 import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.events.EdenEventGameConfig;
+import gg.projecteden.nexus.features.events.EdenEventSinglePlayerGame;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
-import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeavingRegionEvent;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
-import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -26,9 +23,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
@@ -43,50 +38,65 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static gg.projecteden.nexus.utils.EntityUtils.forcePacket;
 
-public class Pugmas24WhacAMole implements Listener {
-	private static final Pugmas24 PUGMAS = Pugmas24.get();
-	private static final WorldGuardUtils worldguard = PUGMAS.worldguard();
-	private static final WorldEditUtils worldedit = PUGMAS.worldedit();
+@EdenEventGameConfig(
+	prefix = "Wakk'a Mole",
+	world = "pugmas24",
+	playRegion = "pugmas24_whacamole_play"
+)
+public class Pugmas24WhacAMole extends EdenEventSinglePlayerGame {
+	private static Pugmas24WhacAMole instance;
 
-	private static final String BASE_REGION = PUGMAS.getRegionName() + "_whacamole_";
+	private static final String BASE_REGION = "pugmas24_whacamole_";
 	private static final String STANDS_REGION = BASE_REGION + "stands";
-	private static final String PLAY_REGION = BASE_REGION + "play";
 	private static final String CLEAN_ARROWS_REGION = BASE_REGION + "arrows";
 
-	@Getter
-	private static boolean playing = false;
-	private static Player gamer;
-	private static int score = 0;
-	private static int gameTaskId = -1;
-	private static long gameTicks;
+	private final Material targetGood = Material.PLAYER_HEAD;
+	private final Material targetBad = Material.ZOMBIE_HEAD;
+	private List<ItemStack> targetItems;
+	private final long MAX_LIFE_TICKS = TickTime.SECOND.x(3);
+	private static final Map<ArmorStand, Long> activeStands = new ConcurrentHashMap<>();
+	private int score = 0;
 
-	private static final List<Location> spawnLocations = new ArrayList<>();
-	private static final List<ArmorStand> armorStands = new ArrayList<>();
-	private static final long UPDATE_INTERVAL = TimeUtils.TickTime.TICK.x(4);
 
-	private static final Material targetGood = Material.TARGET;
-	private static final Material targetBad = Material.TNT;
-	private static final List<Material> targetItems = java.util.List.of(targetGood, targetGood, targetBad);
-
-	private static List<ItemStack> kit = new ArrayList<>();
-
-	private static final Hologram holoTimeLeft = HologramsAPI.byId(PUGMAS.getWorld(), "pugmas24_whacamole_time_left");
-	private static final Hologram holoScore = HologramsAPI.byId(PUGMAS.getWorld(), "pugmas24_whacamole_score");
+	private final List<Location> spawnLocations = new ArrayList<>();
+	private final List<ArmorStand> armorStands = new ArrayList<>();
+	private List<ItemStack> kit = new ArrayList<>();
+	private Hologram holoTimeLeft;
+	private Hologram holoScore;
 
 	public Pugmas24WhacAMole() {
-		Nexus.registerListener(this);
+		instance = this;
+	}
+
+	public static Pugmas24WhacAMole get() {
+		return instance;
+	}
+
+	@Override
+	public long getMaxGameTicks() {
+		return TickTime.MINUTE.x(1);
+	}
+
+	@Override
+	public void init() {
+		super.init();
+
+		holoTimeLeft = HologramsAPI.byId(getWorld(), "pugmas24_whacamole_time_left");
+		holoScore = HologramsAPI.byId(getWorld(), "pugmas24_whacamole_score");
 
 		kit = List.of(
 			new ItemBuilder(Material.BOW).enchant(Enchant.INFINITY).unbreakable().build(),
 			new ItemBuilder(Material.ARROW).unbreakable().build());
 
-		init();
-	}
+		ItemBuilder head = new ItemBuilder(targetGood).skullOwner(Dev.WAKKA.getUniqueId());
+		targetItems = List.of(
+			new ItemBuilder(targetBad).build(),
+			head.clone().build(),
+			head.clone().build()
+		);
 
-	public static void init() {
 		spawnLocations.clear();
-
-		worldedit.getBlocks(worldguard.getProtectedRegion(STANDS_REGION)).forEach(block -> {
+		worldedit().getBlocks(worldguard().getProtectedRegion(STANDS_REGION)).forEach(block -> {
 			if ((block.getBlockData() instanceof Piston piston)) {
 				if (piston.isExtended()) {
 					Location location = block.getLocation().clone();
@@ -98,47 +108,36 @@ public class Pugmas24WhacAMole implements Listener {
 		});
 	}
 
-	public static void reset() {
-		Tasks.cancel(gameTaskId);
+	@Override
+	public void reset() {
 		armorStands.forEach(Entity::remove);
+		armorStands.clear();
 		if (gamer != null)
 			PlayerUtils.removeItems(gamer, kit);
-		worldguard.getEntitiesInRegion(CLEAN_ARROWS_REGION).stream()
+		worldguard().getEntitiesInRegion(CLEAN_ARROWS_REGION).stream()
 			.filter(entity -> entity.getType() == EntityType.ARROW)
 			.forEach(Entity::remove);
-		//
 		score = 0;
-		gameTicks = 0;
-		gamer = null;
-		playing = false;
+
+		super.reset();
 	}
 
-	public static void start(Player player) {
-		Pugmas24 pugmas = Pugmas24.get();
-		if (Nexus.isMaintenanceQueued()) {
-			pugmas.send(player, "&cServer maintenance is queued, try again later");
-			return;
-		}
-
-		if (playing) {
-			pugmas.send(player, "&cThe game is already being played");
-			return;
-		}
-
+	@Override
+	protected boolean startChecks(Player player) {
 		if (!PlayerUtils.hasRoomFor(player, kit)) {
-			pugmas.send(player, "&cYou don't have enough room for the kit");
-			return;
+			send(player, "&cYou don't have enough room for the kit");
+			return false;
 		}
 
-		playing = true;
-		gamer = player;
-		gameTicks = 0;
+		return super.startChecks(player);
+	}
+
+	@Override
+	protected void preStart() {
 		score = 0;
 		updateScore();
 		updateTime();
-		PUGMAS.give(gamer, kit);
-		armorStands.forEach(Entity::remove);
-		armorStands.clear();
+		give(kit);
 
 		for (Location location : spawnLocations) {
 
@@ -155,23 +154,12 @@ public class Pugmas24WhacAMole implements Listener {
 
 			armorStands.add(armorStand);
 		}
-
-		gameTaskId = Tasks.repeat(0, UPDATE_INTERVAL, () -> {
-			update();
-			gameTicks += UPDATE_INTERVAL;
-		});
 	}
 
-	private static final Map<ArmorStand, Long> activeStands = new ConcurrentHashMap<>();
-	private static final long MAX_LIFE_TICKS = TickTime.SECOND.x(3);
-
-	private static void update() {
+	@Override
+	protected void update() {
 		updateTime();
-
-		if (gameTicks >= TimeUtils.TickTime.MINUTE.get()) {
-			end();
-			return;
-		}
+		super.update();
 
 		Map<ArmorStand, Long> _activeStands = new HashMap<>(activeStands);
 
@@ -179,43 +167,67 @@ public class Pugmas24WhacAMole implements Listener {
 		if (!_activeStands.isEmpty()) {
 			for (ArmorStand stand : _activeStands.keySet()) {
 				long ticks = _activeStands.get(stand);
-				long tickDiff = gameTicks - ticks;
+				long tickDiff = getGameTicks() - ticks;
 				if (tickDiff >= MAX_LIFE_TICKS) {
 					resetStand(stand);
 				}
 			}
 		}
 
-		if (gameTicks % TimeUtils.TickTime.SECOND.x(3) == 0) {
+		if (getGameTicks() % TimeUtils.TickTime.SECOND.x(3) == 0) {
 			List<ArmorStand> standChoices = new ArrayList<>(armorStands);
 			standChoices.removeAll(_activeStands.keySet());
+			if (!standChoices.isEmpty()) {
+				int standCount = RandomUtils.randomInt(3, 5);
+				for (int i = 0; i < standCount; i++) {
+					ArmorStand stand = RandomUtils.randomElement(standChoices);
+					stand.getEquipment().setHelmet(new ItemStack(RandomUtils.randomElement(targetItems)));
 
-			int standCount = RandomUtils.randomInt(3, 5);
-			for (int i = 0; i < standCount; i++) {
-				ArmorStand stand = RandomUtils.randomElement(standChoices);
-				stand.getEquipment().setHelmet(new ItemStack(RandomUtils.randomElement(targetItems)));
+					forcePacket(stand);
+					stand.teleport(getStandBaseLocation(stand).add(0, 1, 0));
 
-				forcePacket(stand);
-				stand.teleport(getStandBaseLocation(stand).add(0, 1, 0));
-
-				activeStands.put(stand, gameTicks);
+					activeStands.put(stand, getGameTicks());
+				}
 			}
 		}
 	}
 
-	private static Location getStandBaseLocation(ArmorStand stand) {
-		return spawnLocations.get(armorStands.indexOf(stand)).clone();
+	@Override
+	public void end() {
+		armorStands.forEach(Entity::remove);
+
+		super.end();
+	}
+
+	private void updateScore() {
+		if (holoScore == null)
+			return;
+
+		holoScore.setLine(0, "&3Score: &e" + score);
+	}
+
+	private void updateTime() {
+		if (holoTimeLeft == null)
+			return;
+
+		if (getGameTicks() % TickTime.SECOND.get() == 0) {
+			int secondsLeft = (int) ((TickTime.MINUTE.get() - getGameTicks()) / TickTime.SECOND.get());
+			holoTimeLeft.setLine(0, "&3Time Left: &e" + secondsLeft + "s");
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on(ProjectileHitEvent event) {
+		if (!Pugmas24.get().isAtEvent(event.getEntity().getLocation()))
+			return;
+
 		if (!(event.getEntity() instanceof Arrow arrow))
 			return;
 
 		if (!(arrow.getShooter() instanceof Player player))
 			return;
 
-		if (!shouldHandle(player))
+		if (!playing || !gamer.getUniqueId().equals(player.getUniqueId()))
 			return;
 
 		if (!(event.getHitEntity() instanceof ArmorStand armorStand))
@@ -227,9 +239,8 @@ public class Pugmas24WhacAMole implements Listener {
 				exists = true;
 		}
 
-		if (!exists) {
+		if (!exists)
 			return;
-		}
 
 		event.setCancelled(true);
 		arrow.remove();
@@ -251,60 +262,13 @@ public class Pugmas24WhacAMole implements Listener {
 		resetStand(armorStand);
 	}
 
-	private static void resetStand(ArmorStand stand) {
+	private void resetStand(ArmorStand stand) {
 		activeStands.remove(stand);
 		stand.teleport(getStandBaseLocation(stand).subtract(0, 1, 0));
 		stand.getEquipment().setHelmet(null);
 	}
 
-	private static void end() {
-		armorStands.forEach(Entity::remove);
-		Tasks.cancel(gameTaskId);
-		PUGMAS.send(gamer, "Ending Score = " + score);
-		//
-		reset();
+	private Location getStandBaseLocation(ArmorStand stand) {
+		return spawnLocations.get(armorStands.indexOf(stand)).clone();
 	}
-
-	private static void updateScore() {
-		holoScore.setLine(0, "&3Score: &e" + score);
-	}
-
-	private static void updateTime() {
-		if (gameTicks % TickTime.SECOND.get() == 0) {
-			int secondsLeft = (int) ((TickTime.MINUTE.get() - gameTicks) / TickTime.SECOND.get());
-			holoTimeLeft.setLine(0, "&3Time Left: &e" + secondsLeft + "s");
-		}
-	}
-
-	@EventHandler
-	public void on(PlayerLeavingRegionEvent event) {
-		if (!shouldHandle(event.getPlayer()))
-			return;
-
-		if (!event.getRegion().getId().equalsIgnoreCase(PLAY_REGION))
-			return;
-
-		event.setCancelled(true);
-		PUGMAS.sendCooldown(gamer, "&cYou can't leave while playing the game", "pugmas24_whacamole_playing");
-	}
-
-	@EventHandler
-	public void on(PlayerQuitEvent event) {
-		Player player = event.getPlayer();
-		if (!shouldHandle(player)) return;
-
-		reset();
-	}
-
-	private static boolean shouldHandle(Player player) {
-		if (!playing)
-			return false;
-
-		if (!PUGMAS.shouldHandle(player))
-			return false;
-
-		return gamer.getUniqueId().equals(player.getUniqueId());
-	}
-
-
 }

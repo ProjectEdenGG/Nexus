@@ -10,8 +10,8 @@ import gg.projecteden.nexus.features.crates.CrateHandler;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21TrainBackground;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonEditor;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24SlotMachine;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24WhacAMole;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.slotmachine.Pugmas24SlotMachine;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Geyser;
 import gg.projecteden.nexus.features.events.y2024.vulan24.lantern.VuLan24LanternAnimation;
 import gg.projecteden.nexus.features.listeners.common.TemporaryListener;
@@ -297,14 +297,14 @@ public class NexusCommand extends CustomCommand implements Listener {
 		}),
 		PUGMAS24_SLOT_MACHINE(() -> {
 			if (Nexus.getEnv() == Env.PROD) {
-				if (Pugmas24SlotMachine.isPlaying())
+				if (Pugmas24SlotMachine.get().isPlaying())
 					throw new InvalidInputException("The slot machine is being rolled at pugmas");
 			}
 		}),
 		PUGMAS24_WAC_A_MOLE(() -> {
 			if (Nexus.getEnv() == Env.PROD) {
-				if (Pugmas24WhacAMole.isPlaying())
-					throw new InvalidInputException("Wac A Mole is being played at pugmas");
+				if (Pugmas24WhacAMole.get().isPlaying())
+					throw new InvalidInputException("Whac A Mole is being played at pugmas");
 			}
 		}),
 		CHAT_GAMES(() -> {

@@ -4,6 +4,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.frogger.Pugmas24Frogger;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.reflection.Pugmas24Reflection;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.slotmachine.Pugmas24SlotMachine;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -22,14 +23,14 @@ import java.util.stream.Collectors;
 import static gg.projecteden.nexus.utils.Distance.distance;
 
 public class Pugmas24Fairgrounds {
-	public static final Location minigolfAnimationLoc = Pugmas24.get().location(-755, 71, -2915);
+	public static final Location minigolfAnimationLoc = Pugmas24.get().location(-712, 67, -2882);
 
 	public Pugmas24Fairgrounds() {
 		rides();
 
+		new Pugmas24WhacAMole();
 		new Pugmas24SlotMachine();
 
-		new Pugmas24WhacAMole();
 		new Pugmas24Frogger();
 		new Pugmas24Reflection();
 		// TODO: MINIGOLF
