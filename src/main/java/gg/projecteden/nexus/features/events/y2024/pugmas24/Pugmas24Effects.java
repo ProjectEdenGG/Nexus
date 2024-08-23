@@ -170,6 +170,7 @@ public class Pugmas24Effects extends Effects {
 			if (!shouldAnimate(Pugmas24Fairgrounds.minigolfAnimationLoc))
 				return;
 
+			Pugmas24Fairgrounds.minigolfAnimationLoc.getBlock().setType(Material.AIR);
 			Pugmas24Fairgrounds.minigolfAnimationLoc.getBlock().setType(Material.REDSTONE_BLOCK);
 		});
 

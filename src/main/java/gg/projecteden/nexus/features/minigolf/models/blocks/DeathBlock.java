@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigolf.models.blocks;
 
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
+import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallDeathEvent.DeathCause;
 import gg.projecteden.nexus.utils.ColorType;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -20,14 +21,14 @@ public class DeathBlock extends ModifierBlock {
 	public void handleRoll(GolfBall golfBall, Block below) {
 		rollDebug(golfBall);
 
-		golfBall.respawn();
+		respawn(golfBall);
 	}
 
 	@Override
 	public void handleBounce(GolfBall golfBall, Block block, BlockFace blockFace) {
 		// ignore block face
 		golfBall.debug("&oon hit death block, respawning...");
-		golfBall.respawn();
+		respawn(golfBall);
 	}
 
 	@Override
@@ -42,5 +43,9 @@ public class DeathBlock extends ModifierBlock {
 	@Override
 	public Set<Material> getMaterials() {
 		return Set.of(Material.WATER, Material.LAVA, Material.CRIMSON_HYPHAE, Material.MAGMA_BLOCK, Material.SEAGRASS, Material.TALL_SEAGRASS);
+	}
+
+	private void respawn(GolfBall golfBall) {
+		golfBall.respawn(DeathCause.DEATH_BLOCK);
 	}
 }

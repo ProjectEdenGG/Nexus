@@ -19,8 +19,9 @@ public class MiniGolfBallDeathEvent extends MiniGolfBallEvent implements Cancell
 	}
 
 	public enum DeathCause {
-		DEATH_BLOCK,
 		OUT_OF_BOUNDS,
-		UNKNOWN,
+		RECALLED,
+		DEATH_BLOCK,
+		DEATH_ENTITY
 	}
 }

@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
 import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
 import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlockType;
+import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallDeathEvent.DeathCause;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -93,7 +94,7 @@ public class ProjectileListener implements Listener {
 				EntityType hitEntityType = hitEntity.getType();
 				if (hitEntityType == EntityType.MINECART_TNT) {
 					user.debug("  tnt minecart -> kill");
-					golfBall.respawn("&cBoom!");
+					golfBall.respawn("&cBoom!", DeathCause.DEATH_ENTITY);
 					return;
 				}
 
@@ -123,7 +124,7 @@ public class ProjectileListener implements Listener {
 		boolean isAboveAir = ModifierBlockType.GRAVITY.getMaterials().contains(golfBall.getBlockBelow().getType());
 		if (isInBlock && isAboveAir && golfBall.getVelocity().getY() == 0.0) {
 			golfBall.debug("ball stuck inside a block");
-			golfBall.respawn();
+			golfBall.respawn(DeathCause.OUT_OF_BOUNDS);
 			return;
 		}
 

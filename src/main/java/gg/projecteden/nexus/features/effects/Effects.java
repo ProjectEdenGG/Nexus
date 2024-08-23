@@ -63,7 +63,7 @@ public abstract class Effects implements Listener {
 	}
 
 	public boolean shouldAnimate(Location location, int radius) {
-		return shouldAnimate() && location.isChunkLoaded() && hasPlayersNearby(location, radius);
+		return shouldAnimate() && location != null && location.isChunkLoaded() && hasPlayersNearby(location, radius);
 	}
 
 	public void onEnterRegion(Player player) {}

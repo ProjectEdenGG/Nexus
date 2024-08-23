@@ -39,36 +39,15 @@ public class JMiniGolfCommand extends CustomCommand {
 		}
 	}
 
-	@Path("play")
+	@Path("join")
 	void play() {
-		if (MiniGolf.isPlaying(user)) {
-			send("already playing minigolf");
-			return;
-		}
-
 		MiniGolf.join(user);
 		user.giveKit();
 		send("started playing minigolf");
 	}
 
-	@Path("join")
-	void join() {
-		if (MiniGolf.isPlaying(user)) {
-			send("already playing minigolf");
-			return;
-		}
-
-		MiniGolf.join(user);
-		send("started playing minigolf");
-	}
-
 	@Path("quit")
 	void quit() {
-		if (!MiniGolf.isPlaying(user)) {
-			send("not playing minigolf");
-			return;
-		}
-
 		MiniGolf.quit(user);
 		send("stopped playing minigolf");
 	}
@@ -94,6 +73,7 @@ public class JMiniGolfCommand extends CustomCommand {
 		user.setGolfBallColor(color);
 	}
 
+	@Permission(Group.STAFF)
 	@Path("debug [enable]")
 	void debug(Boolean enable) {
 		if (enable == null)
@@ -133,6 +113,7 @@ public class JMiniGolfCommand extends CustomCommand {
 		send("BlockFace: " + facing);
 	}
 
+	@Permission(Group.STAFF)
 	@Path("debugBall")
 	void debugBall() {
 		if (!MiniGolf.isPlaying(user)) {

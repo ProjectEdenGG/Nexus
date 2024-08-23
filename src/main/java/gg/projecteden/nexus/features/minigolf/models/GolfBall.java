@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.minigolf.models;
 import gg.projecteden.nexus.features.minigolf.MiniGolf;
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
 import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlockType;
+import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallDeathEvent;
+import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallDeathEvent.DeathCause;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -159,18 +161,33 @@ public class GolfBall {
 		if (!isAlive()) return;
 		debug("resetting ball...");
 
+		// Death Event
+		MiniGolfBallDeathEvent ballDeathEvent = new MiniGolfBallDeathEvent(this, DeathCause.RECALLED);
+		if (!ballDeathEvent.callEvent()) {
+			debug("death event cancelled");
+			return;
+		}
+
 		respawnBall();
 
 		MiniGolfUtils.sendActionBar(getUser(), "&eReset ball");
 		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_CHIME).location(getPlayer()).volume(0.9).pitch(1.9).play();
 	}
 
-	public void respawn() {
-		respawn("&cOut of bounds!");
+	public void respawn(DeathCause deathCause) {
+		respawn("&cOut of bounds!", deathCause);
 	}
 
-	public void respawn(String reason) {
+	public void respawn(String reason, DeathCause deathCause) {
 		if (!isAlive()) return;
+
+		// Death Event
+		MiniGolfBallDeathEvent ballDeathEvent = new MiniGolfBallDeathEvent(this, deathCause);
+		if (!ballDeathEvent.callEvent()) {
+			debug("death event cancelled");
+			return;
+		}
+
 		debug("respawning ball...");
 
 		respawnBall();
@@ -222,7 +239,7 @@ public class GolfBall {
 			}
 		}
 
-		boolean isInRegion = new WorldGuardUtils(this.snowball).isInRegion(getLocation(), holeRegion);
+		boolean isInRegion = new WorldGuardUtils(this.snowball).isInRegionLikeAt(holeRegion + "(_[0-9]+)?", getLocation());
 		if (!isInRegion) {
 			debug("is not inbounds: ball is not in region");
 			return false;

@@ -117,7 +117,11 @@ public class InteractListener implements Listener {
 			return;
 		}
 
-		golfBall.setHoleRegion(region.getId());
+		String regionId = region.getId();
+		String extra = regionId.replaceAll(".*_minigolf_hole_[\\d]+", "");
+		regionId = regionId.replaceAll(extra, "");
+		golfBall.setHoleRegion(regionId);
+		user.debug("hole region = " + regionId);
 
 		// Place Event
 		MiniGolfUserPlaceBallEvent placeBallEvent = new MiniGolfUserPlaceBallEvent(user, golfBall, Set.of(Material.GREEN_WOOL));

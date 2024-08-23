@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigolf.models.blocks;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
+import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallDeathEvent.DeathCause;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallSinkEvent;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.FireworkLauncher;
@@ -35,7 +36,7 @@ public class HoleBlock extends ModifierBlock {
 
 
 		if (!golfBall.isInBounds()) {
-			golfBall.respawn();
+			golfBall.respawn(DeathCause.OUT_OF_BOUNDS);
 			return;
 		}
 

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigolf;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigolf.listeners.InteractListener;
 import gg.projecteden.nexus.features.minigolf.listeners.ProjectileListener;
@@ -9,8 +10,11 @@ import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlock;
 import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlockType;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallModifierBlockEvent;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallMoveEvent;
+import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfUserJoinEvent;
+import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfUserQuitEvent;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -79,10 +83,41 @@ public class MiniGolf extends Feature {
 	}
 
 	public static void join(MiniGolfUser user) {
+		if (isPlaying(user)) {
+			user.debug("already playing minigolf");
+			return;
+		}
+
+		ProtectedRegion courseRegion = new WorldGuardUtils(user.getOnlinePlayer()).getRegionsLikeAt(".*_minigolf_course", user.getOnlinePlayer()).stream().findFirst().orElse(null);
+		if (courseRegion == null) {
+			user.debug("not in a course region");
+			return;
+		}
+
+		// Join Event
+		MiniGolfUserJoinEvent userJoinEvent = new MiniGolfUserJoinEvent(user, courseRegion);
+		if (!userJoinEvent.callEvent()) {
+			user.debug("join event cancelled");
+			return;
+		}
+
 		getUsers().add(user);
 	}
 
 	public static void quit(MiniGolfUser user) {
+		if (!isPlaying(user)) {
+			user.debug("not playing minigolf");
+			return;
+		}
+
+		// Quit Event
+		MiniGolfUserQuitEvent userQuitEvent = new MiniGolfUserQuitEvent(user);
+		if (!userQuitEvent.callEvent()) {
+			user.debug("quit event cancelled");
+			return;
+		}
+
+
 		if (user.getGolfBall() != null) {
 			user.getGolfBall().remove();
 		}

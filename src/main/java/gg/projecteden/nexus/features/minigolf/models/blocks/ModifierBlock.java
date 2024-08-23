@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.minigolf.models.blocks;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolf;
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
+import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallDeathEvent.DeathCause;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -39,7 +40,7 @@ public abstract class ModifierBlock {
 
 		if (golfBall.getLocation().getY() < 0) {
 			golfBall.debug("ball is in void, respawning...");
-			golfBall.respawn();
+			golfBall.respawn(DeathCause.OUT_OF_BOUNDS);
 			return;
 		}
 
@@ -59,7 +60,7 @@ public abstract class ModifierBlock {
 		boolean ballStopped = velocity.getY() >= 0.0 && velocity.length() <= 0.0;
 		if (ballStopped && !golfBall.isInBounds()) {
 			golfBall.debug("ball stopped out of bounds");
-			golfBall.respawn();
+			golfBall.respawn(DeathCause.OUT_OF_BOUNDS);
 			return;
 		}
 
@@ -119,7 +120,7 @@ public abstract class ModifierBlock {
 
 			if (!golfBall.isInBounds()) {
 				golfBall.debug("ball is out of bounds, respawning...");
-				golfBall.respawn();
+				golfBall.respawn(DeathCause.OUT_OF_BOUNDS);
 			}
 
 			golfBall.setActive(false);

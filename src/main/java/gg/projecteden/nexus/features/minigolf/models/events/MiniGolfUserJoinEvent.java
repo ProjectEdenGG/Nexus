@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigolf.models.events;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +11,11 @@ public class MiniGolfUserJoinEvent extends MiniGolfUserEvent implements Cancella
 	@Setter
 	protected boolean cancelled = false;
 
-	public MiniGolfUserJoinEvent(MiniGolfUser user) {
+	@Getter
+	ProtectedRegion courseRegion;
+
+	public MiniGolfUserJoinEvent(MiniGolfUser user, ProtectedRegion courseRegion) {
 		super(user);
+		this.courseRegion = courseRegion;
 	}
 }

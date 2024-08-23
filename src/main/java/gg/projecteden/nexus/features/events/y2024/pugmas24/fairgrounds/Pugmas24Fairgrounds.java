@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 import static gg.projecteden.nexus.utils.Distance.distance;
 
 public class Pugmas24Fairgrounds {
-	public static final Location minigolfAnimationLoc = Pugmas24.get().location(-712, 67, -2882);
+	public static final Location minigolfAnimationLoc = Pugmas24.get().location(-712, 67, -2883);
 
 	public Pugmas24Fairgrounds() {
 		rides();
@@ -33,7 +33,7 @@ public class Pugmas24Fairgrounds {
 
 		new Pugmas24Frogger();
 		new Pugmas24Reflection();
-		// TODO: MINIGOLF
+		new Pugmas24Minigolf();
 	}
 
 	private static final Map<Ride, Boolean> rideMap = new HashMap<>();
