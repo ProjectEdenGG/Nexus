@@ -6,6 +6,7 @@ import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.events.DebugDotCommand;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginEvent;
@@ -13,7 +14,6 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartE
 import gg.projecteden.nexus.features.minigames.models.matchdata.MonsterMazeMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils;
-import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -184,7 +184,7 @@ public class MonsterMaze extends TeamlessMechanic {
 			return;
 
 		if (Dev.GRIFFIN.isOnline())
-			DotEffect.debug(Dev.GRIFFIN.getOnlinePlayer(), event.getLoc().toCenterLocation());
+			DebugDotCommand.play(Dev.GRIFFIN.getOnlinePlayer(), event.getLoc().toCenterLocation());
 
 		if (event.getTargetEntity() != null)
 			event.setCancelled(true);

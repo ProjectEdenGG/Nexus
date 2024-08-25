@@ -3,10 +3,10 @@ package gg.projecteden.nexus.features.ambience.effects.particles;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.ambience.effects.particles.common.ParticleEffect;
 import gg.projecteden.nexus.features.ambience.effects.particles.common.ParticleEffectType;
-import gg.projecteden.nexus.features.particles.effects.DotEffect;
+import gg.projecteden.nexus.features.events.DebugDotCommand;
 import gg.projecteden.nexus.models.ambience.AmbienceUser;
+import gg.projecteden.nexus.utils.ColorType;
 import lombok.NoArgsConstructor;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
@@ -45,7 +45,7 @@ public class Fireflies extends ParticleEffect {
 		player.spawnParticle(particle, xRange, yRange, zRange, 0, xVel, yVel, zVel, 1);
 
 		if (user.isDebug())
-			DotEffect.debug(player, new Location(player.getWorld(), xRange, yRange, zRange), Color.YELLOW);
+			DebugDotCommand.play(player, new Location(player.getWorld(), xRange, yRange, zRange), ColorType.YELLOW);
 	}
 
 }

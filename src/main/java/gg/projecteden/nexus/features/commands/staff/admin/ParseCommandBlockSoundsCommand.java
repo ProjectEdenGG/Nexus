@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
 import gg.projecteden.api.common.utils.EnumUtils;
-import gg.projecteden.nexus.features.particles.effects.DotEffect;
+import gg.projecteden.nexus.features.events.DebugDotCommand;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -123,10 +123,10 @@ public class ParseCommandBlockSoundsCommand extends CustomCommand implements Lis
 	}
 
 	void found(Block block) {
-		DotEffect.debug(
+		DebugDotCommand.play(
 			player(),
 			block.getRelative(BlockFace.UP).getLocation().toCenterLocation(),
-			EnumUtils.random(ColorType.class).getBukkitColor()
+			EnumUtils.random(ColorType.class)
 		);
 	}
 

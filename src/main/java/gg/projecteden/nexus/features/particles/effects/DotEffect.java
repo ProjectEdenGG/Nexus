@@ -7,13 +7,11 @@ import gg.projecteden.nexus.features.particles.ParticleUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.parchment.HasPlayer;
 import lombok.Builder;
 import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.block.Block;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
@@ -98,33 +96,4 @@ public class DotEffect {
 		});
 	}
 
-	public static void debug(HasPlayer player, Location location) {
-		debug(player.getPlayer(), location, Color.RED);
-	}
-
-	public static void debug(HasPlayer player, Block location) {
-		debug(player.getPlayer(), location.getLocation().toCenterLocation(), Color.RED);
-	}
-
-	public static void debug(HasPlayer player, Location location, Color color) {
-		debug(player.getPlayer(), location, color, TickTime.SECOND.x(3));
-	}
-
-	public static void debug(HasPlayer player, Block location, Color color) {
-		debug(player.getPlayer(), location.getLocation().toCenterLocation(), color, TickTime.SECOND.x(3));
-	}
-
-	public static void debug(HasPlayer player, Location location, Color color, long ticks) {
-		if (player == null)
-			return;
-
-		DotEffect.builder()
-			.player(player.getPlayer())
-			.location(location)
-			.color(color)
-			.clientSide(true)
-			.speed(.1)
-			.ticks(ticks)
-			.start();
-	}
 }

@@ -9,6 +9,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.events.DebugDotCommand;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
@@ -19,7 +20,6 @@ import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.matchdata.MonsterMazeMatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.PixelPaintersMatchData;
-import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.features.AutoTool;
 import gg.projecteden.nexus.features.store.perks.visuals.NPCListener;
@@ -42,6 +42,7 @@ import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.BiomeTag.BiomeClimateType;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
@@ -68,7 +69,6 @@ import lombok.SneakyThrows;
 import net.citizensnpcs.api.npc.NPC;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.advancement.Advancement;
@@ -564,7 +564,7 @@ public class TestCommand extends CustomCommand implements Listener {
 			error("No path found");
 
 		for (Location point : currentPath.getPoints())
-			DotEffect.debug(player(), point, Color.RED);
+			DebugDotCommand.play(player(), point, ColorType.RED);
 
 		send("Highlighted " + currentPath.getPoints().size() + " points");
 	}

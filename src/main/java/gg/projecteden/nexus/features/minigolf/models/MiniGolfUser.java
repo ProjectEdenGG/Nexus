@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.minigolf.models;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.events.DebugDotCommand;
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
-import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -45,7 +45,7 @@ public class MiniGolfUser implements PlayerOwnedObject {
 		if (!debug)
 			return;
 
-		DotEffect.debug(getPlayer(), location.clone(), color.getBukkitColor(), TickTime.SECOND.x(1));
+		DebugDotCommand.play(getPlayer(), location.clone(), color, TickTime.SECOND.x(1));
 	}
 
 	public void giveKit() {

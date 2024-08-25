@@ -221,13 +221,13 @@ public class DecorationUtils {
 			Location newLoc = maze.getBlock().getLocation();
 
 			if (newLoc.equals(maze.getOrigin().getLocation())) {
-				maze.debugDot(newLoc, Color.ORANGE);
+				maze.debugDot(newLoc, ColorType.ORANGE);
 				DecorationLang.debug(debugger, true, "&6Maze returned to origin");
 				return null;
 			}
 
 			maze.goBack();
-			maze.debugDot(newLoc, Color.RED);
+			maze.debugDot(newLoc, ColorType.RED);
 
 			maze.incTries();
 			return getConnectedHitboxes(maze, blockFaceOverride, debugger, isClientside);
@@ -263,7 +263,7 @@ public class DecorationUtils {
 		// Keep looking
 		maze.resetDirections();
 		maze.addToPath(currentLoc, maze.getDirectionsLeft());
-		maze.debugDot(currentLoc, Color.BLACK);
+		maze.debugDot(currentLoc, ColorType.BLACK);
 		return getConnectedHitboxes(maze, blockFaceOverride, debugger, isClientside);
 	}
 
@@ -314,7 +314,7 @@ public class DecorationUtils {
 			Block _block = hitbox.getOffsetBlock(currentLoc);
 			Location _blockLoc = _block.getLocation();
 
-			maze.debugDot(_blockLoc, Color.TEAL);
+			maze.debugDot(_blockLoc, ColorType.CYAN);
 
 			if (LocationUtils.isFuzzyEqual(_blockLoc, originLoc)) {
 				DecorationLang.debug(debugger, true, "&aorigin is in hitbox, returning item frame");

@@ -3,14 +3,14 @@ package gg.projecteden.nexus.features.ambience.effects.particles;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.ambience.effects.particles.common.ParticleEffect;
 import gg.projecteden.nexus.features.ambience.effects.particles.common.ParticleEffectType;
-import gg.projecteden.nexus.features.particles.effects.DotEffect;
+import gg.projecteden.nexus.features.events.DebugDotCommand;
 import gg.projecteden.nexus.models.ambience.AmbienceUser;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -53,7 +53,7 @@ public class FallingLeaves extends ParticleEffect {
 		player.spawnParticle(particle, xRange, yRange, zRange, 0, 0, 0, 0, 1, Bukkit.createBlockData(particleMaterial));
 
 		if (user.isDebug())
-			DotEffect.debug(player, new Location(player.getWorld(), xRange, yRange, zRange), Color.RED);
+			DebugDotCommand.play(player, new Location(player.getWorld(), xRange, yRange, zRange), ColorType.RED);
 	}
 
 	private enum LeavesParticle {

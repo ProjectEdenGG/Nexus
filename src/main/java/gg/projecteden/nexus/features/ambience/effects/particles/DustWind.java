@@ -4,10 +4,10 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.ambience.Wind;
 import gg.projecteden.nexus.features.ambience.effects.particles.common.ParticleEffect;
 import gg.projecteden.nexus.features.ambience.effects.particles.common.ParticleEffectType;
-import gg.projecteden.nexus.features.particles.effects.DotEffect;
+import gg.projecteden.nexus.features.events.DebugDotCommand;
 import gg.projecteden.nexus.models.ambience.AmbienceUser;
+import gg.projecteden.nexus.utils.ColorType;
 import lombok.NoArgsConstructor;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -51,7 +51,7 @@ public class DustWind extends ParticleEffect {
 		player.spawnParticle(particle, xRange, yRange, zRange, 0, xVel, yVel, zVel, 1, new ItemStack(material));
 
 		if (user.isDebug())
-			DotEffect.debug(player, new Location(player.getWorld(), xRange, yRange, zRange), Color.ORANGE);
+			DebugDotCommand.play(player, new Location(player.getWorld(), xRange, yRange, zRange), ColorType.ORANGE);
 	}
 
 }

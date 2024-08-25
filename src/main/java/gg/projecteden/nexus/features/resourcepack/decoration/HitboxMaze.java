@@ -2,12 +2,12 @@ package gg.projecteden.nexus.features.resourcepack.decoration;
 
 import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.features.particles.effects.DotEffect;
+import gg.projecteden.nexus.features.events.DebugDotCommand;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
@@ -70,7 +70,7 @@ class HitboxMaze {
 		this.getDirectionsLeft().remove(this.getBlockFace());
 	}
 
-	public void debugDot(Location location, Color color) {
+	public void debugDot(Location location, ColorType color) {
 		this.wait += 2;
 
 		Tasks.wait(this.wait, () ->
@@ -78,7 +78,7 @@ class HitboxMaze {
 						DecorationLang.getDebuggerUUIDs().forEach(uuid -> {
 							OfflinePlayer player = PlayerUtils.getPlayer(uuid);
 							if (player.isOnline())
-								DotEffect.debug(player.getPlayer(), location.clone().toCenterLocation(), color, TickTime.SECOND.x(1));
+								DebugDotCommand.play(player.getPlayer(), location.clone().toCenterLocation(), color, TickTime.SECOND.x(1));
 						})
 				)
 		);

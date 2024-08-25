@@ -9,7 +9,7 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.features.particles.effects.DotEffect;
+import gg.projecteden.nexus.features.events.DebugDotCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -198,7 +198,7 @@ public class ForestGeneratorConfig implements DatabaseObject {
 						return;
 
 					if (Dev.GRIFFIN.isOnline())
-						DotEffect.debug(Dev.GRIFFIN.getOnlinePlayer(), location);
+						DebugDotCommand.play(Dev.GRIFFIN.getOnlinePlayer(), location);
 
 					locations.add(location);
 					startLocation = location;
