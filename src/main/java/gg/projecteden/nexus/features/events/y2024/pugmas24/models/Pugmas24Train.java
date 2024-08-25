@@ -2,15 +2,17 @@ package gg.projecteden.nexus.features.events.y2024.pugmas24.models;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.events.models.Train.Crossing;
+import gg.projecteden.nexus.features.events.models.Train.Crossing.TrackSide;
+import gg.projecteden.nexus.features.events.models.Train.TrainCrossings;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
+import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import org.bukkit.block.BlockFace;
 
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
-
-import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 
 @NoArgsConstructor
 public class Pugmas24Train {
@@ -33,7 +35,7 @@ public class Pugmas24Train {
 	}
 
 	public static void schedule() {
-		final Supplier<Long> delay = () -> TickTime.MINUTE.x(randomInt(10, 20));
+		final Supplier<Long> delay = () -> TickTime.MINUTE.x(RandomUtils.randomInt(10, 20));
 
 		Tasks.wait(delay.get(), new AtomicReference<Runnable>() {{
 			set(() -> {
@@ -50,6 +52,13 @@ public class Pugmas24Train {
 		}}.get());
 	}
 
+	public static TrainCrossings trainCrossings = new TrainCrossings(
+		new Crossing(Pugmas24.get().location(-634, 82, -2978), "pugmas24_train_track_lights_1", TrackSide.NORTH_SIDE),
+		new Crossing(Pugmas24.get().location(-643, 82, -2966), "pugmas24_train_track_lights_1", TrackSide.SOUTH_SIDE),
+		new Crossing(Pugmas24.get().location(-707, 82, -2978), "pugmas24_train_track_lights_2", TrackSide.NORTH_SIDE),
+		new Crossing(Pugmas24.get().location(-717, 82, -2966), "pugmas24_train_track_lights_2", TrackSide.SOUTH_SIDE)
+	);
+
 	public static gg.projecteden.nexus.features.events.models.Train.TrainBuilder getDefault() {
 		return gg.projecteden.nexus.features.events.models.Train.builder()
 				.location(Pugmas24.get().location(-503.5, 84, -2971.5, 90, 0))
@@ -60,6 +69,7 @@ public class Pugmas24Train {
 				.regionTrack(trainTrackRegion)
 				.regionAnnounce(Pugmas24.get().getRegionName())
 				.regionReveal(trainRevealRegion)
+			.trainCrossings(trainCrossings)
 				.bonkPlayers(true);
 	}
 }

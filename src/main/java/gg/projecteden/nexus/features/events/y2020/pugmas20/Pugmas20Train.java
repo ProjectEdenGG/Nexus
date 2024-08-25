@@ -37,7 +37,7 @@ import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.world
  935,   482
 1826  2666
  */
-public class Train {
+public class Pugmas20Train {
 	// Options
 	private static final Location origin = location(900, 52, 375);
 	private static final int trainFrameTime = 0;
@@ -93,7 +93,7 @@ public class Train {
 	// Misc
 	private static final String animationPath = "Animations/Pugmas20/Train";
 
-	public Train() {
+	public Pugmas20Train() {
 //		Tasks.repeat(TickTime.SECOND.x(30), TickTime.MINUTE.x(5), () -> {
 //			if (Pugmas20.worldguard().getPlayersInRegion("pugmas20").size() == 0)
 //				return;
@@ -135,7 +135,7 @@ public class Train {
 	private static void animate(Queue<Paster> pasters) {
 		Paster paster = pasters.poll();
 		if (paster == null) {
-			Tasks.waitAsync(trainFrameTime, Train::resetTrain);
+			Tasks.waitAsync(trainFrameTime, Pugmas20Train::resetTrain);
 			return;
 		}
 

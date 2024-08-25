@@ -1,23 +1,34 @@
 package gg.projecteden.nexus.features.events.models;
 
+import com.mojang.datafixers.util.Pair;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.MathUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
+import gg.projecteden.nexus.features.events.DebugDotCommand;
+import gg.projecteden.nexus.features.events.models.Train.Crossing.TrackSide;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldEditUtils;
+import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Lightable;
 import org.bukkit.block.data.type.Light;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -28,7 +39,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import static gg.projecteden.nexus.utils.Distance.distance;
@@ -52,6 +67,7 @@ public class Train {
 	private final String regionTrack;
 	private final String regionAnnounce;
 	private final String regionReveal;
+	private final TrainCrossings trainCrossings;
 	private final boolean bonkPlayers;
 
 	private final List<ArmorStand> armorStands = new ArrayList<>();
@@ -73,8 +89,9 @@ public class Train {
 
 	@Builder
 	public Train(Location location, BlockFace direction, double speed, int seconds, boolean test, String regionAnnounce,
-				 String regionTrack, String regionReveal, boolean bonkPlayers) {
+				 String regionTrack, String regionReveal, TrainCrossings trainCrossings, boolean bonkPlayers) {
 		this.location = location.toCenterLocation();
+		this.worldguard = new WorldGuardUtils(location);
 		this.forwards = direction;
 		this.backwards = direction.getOppositeFace();
 		this.speed = speed;
@@ -82,11 +99,15 @@ public class Train {
 		this.test = test;
 		this.smokeBack = backwards.getDirection().multiply(4);
 		this.smokeUp = BlockFace.UP.getDirection().multiply(5.3);
-		this.worldguard = new WorldGuardUtils(location);
 		this.regionAnnounce = regionAnnounce;
 		this.regionTrack = regionTrack;
 		this.regionReveal = regionReveal;
+		this.trainCrossings = trainCrossings;
 		this.bonkPlayers = bonkPlayers;
+
+		if (this.trainCrossings != null) {
+			this.trainCrossings.allLightsOff();
+		}
 	}
 
 	private List<Player> getPlayers() {
@@ -116,9 +137,81 @@ public class Train {
 
 		taskIds.add(Tasks.repeat(0, 1, this::move));
 
+		if (trainCrossings != null) {
+			taskIds.add(Tasks.repeat(0, TickTime.SECOND, () -> {
+
+				if (trainCrossings.getCrossingsA().getFirst().isClosed()) {
+					trainCrossings.switchLights(true, trainCrossings.getCrossingLightsA1());
+					trainCrossings.switchLights(false, trainCrossings.getCrossingLightsA2());
+					trainCrossings.crossingSound(trainCrossings.getCrossingsA().getFirst().getArmLocation(), 1);
+					trainCrossings.crossingSound(trainCrossings.getCrossingsA().getSecond().getArmLocation(), 1);
+
+					Tasks.wait(10, () -> {
+						trainCrossings.switchLights(false, trainCrossings.getCrossingLightsA1());
+						trainCrossings.switchLights(true, trainCrossings.getCrossingLightsA2());
+						trainCrossings.crossingSound(trainCrossings.getCrossingsA().getFirst().getArmLocation(), 2);
+						trainCrossings.crossingSound(trainCrossings.getCrossingsA().getSecond().getArmLocation(), 2);
+					});
+				} else {
+					trainCrossings.switchLights(false, trainCrossings.getCrossingLightsA1());
+					trainCrossings.switchLights(false, trainCrossings.getCrossingLightsA2());
+				}
+
+				if (trainCrossings.getCrossingsB().getFirst().isClosed()) {
+					trainCrossings.switchLights(true, trainCrossings.getCrossingLightsB1());
+					trainCrossings.switchLights(false, trainCrossings.getCrossingLightsB2());
+					trainCrossings.crossingSound(trainCrossings.getCrossingsB().getFirst().getArmLocation(), 1);
+					trainCrossings.crossingSound(trainCrossings.getCrossingsB().getSecond().getArmLocation(), 1);
+
+					Tasks.wait(10, () -> {
+						trainCrossings.switchLights(false, trainCrossings.getCrossingLightsB1());
+						trainCrossings.switchLights(true, trainCrossings.getCrossingLightsB2());
+						trainCrossings.crossingSound(trainCrossings.getCrossingsB().getFirst().getArmLocation(), 2);
+						trainCrossings.crossingSound(trainCrossings.getCrossingsB().getSecond().getArmLocation(), 2);
+					});
+				} else {
+					trainCrossings.switchLights(false, trainCrossings.getCrossingLightsB1());
+					trainCrossings.switchLights(false, trainCrossings.getCrossingLightsB2());
+				}
+			}));
+
+			taskIds.add(Tasks.repeat(0, TickTime.TICK.x(10), () -> {
+				Set<Crossing> activateCrossings = new HashSet<>();
+				for (ArmorStand armorStand : getValidArmorStands()) {
+					for (ProtectedRegion region : worldguard.getRegionsAt(armorStand.getLocation())) {
+						Set<Crossing> crossings = trainCrossings.getCrossingsAt(region.getId());
+						if (crossings.isEmpty())
+							continue;
+
+						activateCrossings.addAll(crossings);
+					}
+				}
+
+				// Open any crossings that aren't near the train
+				List<Crossing> crossings = new ArrayList<>(trainCrossings.getCrossings());
+				crossings.removeAll(activateCrossings);
+				for (Crossing crossing : crossings) {
+					if (!crossing.isClosed())
+						continue;
+
+					crossing.open();
+				}
+
+				for (Crossing crossing : activateCrossings) {
+					if (crossing.isClosed())
+						continue;
+
+					crossing.close();
+				}
+			}));
+		}
+
 		if (bonkPlayers) {
 			taskIds.add(Tasks.repeat(0, TickTime.TICK.x(5), () -> {
 				for (ArmorStand armorStand : getValidArmorStands()) {
+					if (Nullables.isNullOrAir(armorStand.getEquipment().getHelmet()))
+						continue;
+
 					for (Entity entity : getNearbyEntities(armorStand.getLocation(), 4).keySet()) {
 						if (!(entity instanceof Player player))
 							continue;
@@ -289,4 +382,195 @@ public class Train {
 		}
 	}
 
+	@Getter
+	public static class TrainCrossings {
+		World world;
+		Pair<Crossing, Crossing> crossingsA;
+		List<Location> crossingLightsA1 = new ArrayList<>();
+		List<Location> crossingLightsA2 = new ArrayList<>();
+
+		Pair<Crossing, Crossing> crossingsB;
+
+		List<Location> crossingLightsB1 = new ArrayList<>();
+		List<Location> crossingLightsB2 = new ArrayList<>();
+
+		public TrainCrossings(Crossing crossingA1, Crossing crossingA2, Crossing crossingB1, Crossing crossingB2) {
+			this.world = crossingA1.getArmLocation().getWorld();
+
+			crossingsA = Pair.of(crossingA1, crossingA2);
+
+			crossingLightsA1 = List.of(lightLocation1(crossingA1), lightLocation1(crossingA2));
+			crossingLightsA2 = List.of(lightLocation2(crossingA1), lightLocation2(crossingA2));
+
+			crossingsB = Pair.of(crossingB1, crossingB2);
+
+			crossingLightsB1 = List.of(lightLocation1(crossingB1), lightLocation1(crossingB2));
+			crossingLightsB2 = List.of(lightLocation2(crossingB1), lightLocation2(crossingB2));
+		}
+
+		private Location lightLocation1(Crossing crossing) {
+			int lightY = crossing.getBlockY() + 5;
+
+			if (crossing.getTrackSide() == TrackSide.NORTH_SIDE) {
+				return location(crossing.getBlockX(), lightY, crossing.getBlockZ() + 1);
+			} else {
+				return location(crossing.getBlockX(), lightY, crossing.getBlockZ() - 1);
+			}
+		}
+
+		private Location lightLocation2(Crossing crossing) {
+			int lightY = crossing.getBlockY() + 5;
+
+			if (crossing.getTrackSide() == TrackSide.NORTH_SIDE) {
+				return location(crossing.getBlockX() - 2, lightY, crossing.getBlockZ() + 1);
+			} else {
+				return location(crossing.getBlockX() + 2, lightY, crossing.getBlockZ() - 1);
+			}
+		}
+
+		private Location location(double x, double y, double z) {
+			return new Location(world, x, y, z);
+		}
+
+		public void switchLights(boolean powered, List<Location> lights) {
+			Tasks.sync(() -> {
+				for (Location light : lights) {
+					DebugDotCommand.play(Dev.WAKKA.getPlayer(), light.getBlock().getLocation().toCenterLocation());
+					if (light.getBlock().getBlockData() instanceof Lightable lightable) {
+						lightable.setLit(powered);
+						light.getBlock().setBlockData(lightable);
+					}
+				}
+			});
+		}
+
+		public void allLightsOff() {
+			Tasks.sync(() -> {
+				switchLights(false, crossingLightsA1);
+				switchLights(false, crossingLightsA2);
+				switchLights(false, crossingLightsB1);
+				switchLights(false, crossingLightsB2);
+			});
+		}
+
+		public void crossingSound(Location location, double pitch) {
+			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL)
+				.location(location)
+				.volume(0.5)
+				.pitch(pitch)
+				.play();
+		}
+
+		private List<Crossing> getCrossings() {
+			return List.of(crossingsA.getFirst(), crossingsA.getSecond(), crossingsB.getFirst(), crossingsB.getSecond());
+
+		}
+
+		public Set<Crossing> getCrossingsAt(String regionId) {
+			Set<Crossing> result = new HashSet<>();
+
+			for (Crossing crossing : getCrossings()) {
+				if (crossing.getActivateRegion().equalsIgnoreCase(regionId))
+					result.add(crossing);
+			}
+
+			return result;
+		}
+
+		public void openCrossings() {
+			for (Crossing crossing : getCrossings()) {
+				crossing.open();
+			}
+		}
+
+		public void closeCrossings() {
+			for (Crossing crossing : getCrossings()) {
+				crossing.close();
+			}
+		}
+	}
+
+	@Getter
+	public static class Crossing {
+		@Setter
+		private boolean closed = false;
+		private final Location armLocation;
+		private final String activateRegion;
+		private final TrackSide trackSide;
+		private final String animationPath = "Animations/Train/Crossing/";
+		private final WorldEditUtils worldedit;
+
+		public Crossing(Location armLocation, String activateRegion, TrackSide trackSide) {
+			this.armLocation = armLocation;
+			this.activateRegion = activateRegion;
+			this.trackSide = trackSide;
+			this.worldedit = new WorldEditUtils(armLocation);
+		}
+
+		public int getBlockX() {
+			return armLocation.getBlockX();
+		}
+
+		public int getBlockY() {
+			return armLocation.getBlockY();
+		}
+
+		public int getBlockZ() {
+			return armLocation.getBlockZ();
+		}
+
+		public enum TrackSide {
+			NORTH_SIDE,
+			SOUTH_SIDE;
+		}
+
+		public void close() {
+			if (closed)
+				return;
+
+			closed = true;
+
+			Queue<Paster> pasters = new LinkedList<>();
+
+			String direction = trackSide == TrackSide.NORTH_SIDE ? "North" : "South";
+			for (int i = 1; i <= 7; i++) {
+				pasters.add(worldedit.paster().file(animationPath + direction + "_Closing_" + i).at(armLocation));
+			}
+
+			animateCrossings(pasters);
+		}
+
+		public void open() {
+			if (!closed)
+				return;
+
+			closed = false;
+
+			Queue<Paster> pasters = new LinkedList<>();
+
+			String direction = trackSide == TrackSide.NORTH_SIDE ? "North" : "South";
+			for (int i = 1; i <= 7; i++) {
+				pasters.add(worldedit.paster().file(animationPath + direction + "_Opening_" + i).at(armLocation));
+			}
+
+			animateCrossings(pasters);
+		}
+
+		private static void animateCrossings(Queue<Paster> pasters) {
+			if (!animateCrossing(pasters)) return;
+			if (!animateCrossing(pasters)) return;
+
+			Tasks.waitAsync(4, () -> animateCrossings(pasters));
+		}
+
+		private static boolean animateCrossing(Queue<Paster> pasters) {
+			Paster paster = pasters.poll();
+			if (paster == null) {
+				return false;
+			}
+
+			paster.build();
+			return true;
+		}
+	}
 }

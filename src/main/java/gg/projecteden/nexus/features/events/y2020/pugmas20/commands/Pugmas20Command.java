@@ -8,7 +8,7 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.features.events.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.AdventChests;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20;
-import gg.projecteden.nexus.features.events.y2020.pugmas20.Train;
+import gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20Train;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.menu.providers.AdventProvider;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.AdventChest;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.AdventChest.District;
@@ -347,13 +347,13 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	@Path("train")
 	@Permission(Group.ADMIN)
 	void train() {
-		if (Train.animating())
+		if (Pugmas20Train.animating())
 			error("Train is animating!");
 
 		if (Bukkit.getTPS()[0] < 19)
 			error("TPS is too low, must be 19+");
 
-		Train.animate();
+		Pugmas20Train.animate();
 	}
 
 	@Permission(Group.ADMIN)

@@ -33,8 +33,8 @@ public class Pugmas21Train {
 			.direction(BlockFace.WEST)
 			.seconds(60)
 			.speed(.3)
-				.regionAnnounce(Pugmas21.REGION)
-				.regionTrack(Pugmas21.REGION + "_track")
+			.regionAnnounce(Pugmas21.REGION)
+			.regionTrack(Pugmas21.REGION + "_track")
 			.test(false);
 	}
 

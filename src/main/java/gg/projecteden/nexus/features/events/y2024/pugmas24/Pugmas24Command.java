@@ -269,6 +269,18 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 		Pugmas24Train.start();
 	}
 
+	@Path("train crossings open")
+	@Permission(Group.ADMIN)
+	void train_crossings_open() {
+		Pugmas24Train.trainCrossings.openCrossings();
+	}
+
+	@Path("train crossings close")
+	@Permission(Group.ADMIN)
+	void train_crossings_close() {
+		Pugmas24Train.trainCrossings.closeCrossings();
+	}
+
 	@Permission(Group.STAFF)
 	@Path("balloon menu")
 	void balloon_menu() {

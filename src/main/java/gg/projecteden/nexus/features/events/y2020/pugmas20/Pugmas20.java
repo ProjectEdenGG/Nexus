@@ -53,6 +53,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
@@ -84,7 +85,7 @@ public class Pugmas20 implements Listener {
 		Nexus.registerListener(this);
 
 		new Quests();
-		new Train();
+		new Pugmas20Train();
 //		new Minecarts();
 		createNpcHolograms();
 		npcParticles();
