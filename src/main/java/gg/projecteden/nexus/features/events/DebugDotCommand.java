@@ -10,9 +10,10 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.parchment.HasPlayer;
 import lombok.NonNull;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
+import org.bukkit.block.Block;
 
 @Permission(Group.STAFF)
 public class DebugDotCommand extends CustomCommand {
@@ -35,7 +36,33 @@ public class DebugDotCommand extends CustomCommand {
 		play(player(), location, color, ticks);
 	}
 
-	public static void play(Player player, Location location, ColorType color, int ticks) {
-		DotEffect.debug(player, location, color.getBukkitColor(), TickTime.TICK.x(ticks));
+	public static void play(HasPlayer player, Block block) {
+		play(player.getPlayer(), block.getLocation().toCenterLocation());
+	}
+
+	public static void play(HasPlayer player, Location location) {
+		play(player.getPlayer(), location, ColorType.RED);
+	}
+
+	public static void play(HasPlayer player, Block location, ColorType color) {
+		play(player.getPlayer(), location.getLocation().toCenterLocation(), color);
+	}
+
+	public static void play(HasPlayer player, Location location, ColorType color) {
+		play(player.getPlayer(), location, color, TickTime.SECOND.x(3));
+	}
+
+	public static void play(HasPlayer player, Location location, ColorType color, long ticks) {
+		if (player == null)
+			return;
+
+		DotEffect.builder()
+			.player(player.getPlayer())
+			.location(location)
+			.color(color.getBukkitColor())
+			.clientSide(true)
+			.speed(.1)
+			.ticks(ticks)
+			.start();
 	}
 }
