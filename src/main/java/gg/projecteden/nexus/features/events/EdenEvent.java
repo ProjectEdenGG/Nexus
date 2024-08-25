@@ -18,7 +18,6 @@ import gg.projecteden.nexus.features.events.models.EventPlaceable;
 import gg.projecteden.nexus.features.events.models.EventPlaceable.EventPlaceableBuilder;
 import gg.projecteden.nexus.features.listeners.events.LivingEntityKilledByPlayerEvent;
 import gg.projecteden.nexus.features.menus.MenuUtils;
-import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.events.QuestCompletedEvent;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
@@ -41,6 +40,7 @@ import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.TitleBuilder;
@@ -192,7 +192,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 		if (player == null || location == null)
 			return;
 
-		DotEffect.debug(player, location.clone().toCenterLocation(), color.getBukkitColor(), ticks);
+		DebugDotCommand.play(player, location.clone().toCenterLocation(), color, ticks);
 	}
 
 	public List<IQuest> getQuests() {
@@ -290,7 +290,11 @@ public abstract class EdenEvent extends Feature implements Listener {
 	}
 
 	public Set<Player> getPlayers() {
-		return new HashSet<>(worldguard().getPlayersInRegion(getProtectedRegion()));
+		return new HashSet<>(getOnlinePlayers().get());
+	}
+
+	public OnlinePlayers getOnlinePlayers() {
+		return OnlinePlayers.where().world(getWorld()).region(getProtectedRegion());
 	}
 
 	public boolean hasPlayers() {

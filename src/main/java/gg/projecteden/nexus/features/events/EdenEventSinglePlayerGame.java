@@ -8,6 +8,7 @@ import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
@@ -28,9 +29,9 @@ import java.util.List;
 @Depends(EdenEvent.class)
 public abstract class EdenEventSinglePlayerGame extends Feature implements Listener {
 	@Getter
-	protected boolean playing = false;
+	private boolean playing = false;
 	@Getter
-	protected Player gamer;
+	private Player gamer;
 	protected boolean init = false;
 
 	protected int updateTaskId = -1;
@@ -111,7 +112,7 @@ public abstract class EdenEventSinglePlayerGame extends Feature implements Liste
 
 	}
 
-	public void start(Player player) {
+	public void start(@NonNull Player player) {
 		if (!init) {
 			init();
 		}
@@ -119,6 +120,7 @@ public abstract class EdenEventSinglePlayerGame extends Feature implements Liste
 		if (!startChecks(player))
 			return;
 
+		Dev.WAKKA.send("Started EdenEventSPGame = " + player.getName());
 		gamer = player;
 		gameTicks = 0;
 		preStart();

@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfUserJoinEven
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfUserQuitEvent;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 // TODO
 public class Pugmas24Minigolf implements Listener {
+	public static final Location minigolfAnimationLoc = Pugmas24.get().location(-712, 67, -2883);
 	private final Pugmas24 PUGMAS = Pugmas24.get();
 	private final WorldGuardUtils worldguard = PUGMAS.worldguard();
 

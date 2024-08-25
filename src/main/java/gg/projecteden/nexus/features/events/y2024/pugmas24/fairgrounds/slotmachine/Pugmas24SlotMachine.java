@@ -265,7 +265,7 @@ public class Pugmas24SlotMachine extends EdenEventSinglePlayerGame {
 		}
 
 		if (reward != null) {
-			reward.give(gamer, rewardType);
+			reward.give(getGamer(), rewardType);
 		} else {
 			new SoundBuilder(Sound.ENTITY_VILLAGER_NO).location(soundLocation).volume(0.5).play();
 		}
@@ -361,7 +361,7 @@ public class Pugmas24SlotMachine extends EdenEventSinglePlayerGame {
 
 		event.setCancelled(true);
 
-		if (playing)
+		if (isPlaying())
 			return;
 
 		if (block.getBlockData() instanceof Powerable powerable) {

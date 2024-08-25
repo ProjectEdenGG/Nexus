@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 import static gg.projecteden.nexus.utils.Distance.distance;
 
 public class Pugmas24Fairgrounds {
-	public static final Location minigolfAnimationLoc = Pugmas24.get().location(-712, 67, -2883);
 
 	public Pugmas24Fairgrounds() {
 		rides();

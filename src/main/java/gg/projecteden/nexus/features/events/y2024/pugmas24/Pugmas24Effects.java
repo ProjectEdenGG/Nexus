@@ -7,7 +7,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.effects.Effects;
 import gg.projecteden.nexus.features.effects.Effects.RotatingStand.StandRotationAxis;
 import gg.projecteden.nexus.features.effects.Effects.RotatingStand.StandRotationType;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24Fairgrounds;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24Minigolf;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.slotmachine.Pugmas24SlotMachine;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Geyser;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -31,7 +31,7 @@ public class Pugmas24Effects extends Effects {
 
 	private final List<Location> SMOKE_STACKS = List.of(
 		location(-459, 92, -2858),
-		location(-459, 93, -2960)
+		location(-459, 93, -2860)
 	);
 
 	private static int angle = 0;
@@ -57,6 +57,7 @@ public class Pugmas24Effects extends Effects {
 		Tasks.repeat(0, 10, Pugmas24Geyser::animateSmoke);
 		smokeStacks();
 		waterfall();
+		Tasks.repeat(0, 10, () -> checkGarageDoor());
 	}
 
 	@Override
@@ -167,11 +168,12 @@ public class Pugmas24Effects extends Effects {
 
 	private void minigolfWindmill() {
 		Tasks.repeat(TickTime.SECOND.x(2), TickTime.TICK.x(38), () -> {
-			if (!shouldAnimate(Pugmas24Fairgrounds.minigolfAnimationLoc))
+			if (!shouldAnimate(Pugmas24Minigolf.minigolfAnimationLoc))
 				return;
 
-			Pugmas24Fairgrounds.minigolfAnimationLoc.getBlock().setType(Material.AIR);
-			Pugmas24Fairgrounds.minigolfAnimationLoc.getBlock().setType(Material.REDSTONE_BLOCK);
+
+			Pugmas24Minigolf.minigolfAnimationLoc.getBlock().setType(Material.REDSTONE_BLOCK);
+			Tasks.wait(2, () -> Pugmas24Minigolf.minigolfAnimationLoc.getBlock().setType(Material.AIR));
 		});
 
 	}
@@ -188,6 +190,29 @@ public class Pugmas24Effects extends Effects {
 			Pugmas24SlotMachine.get().nextLight();
 		});
 	}
+
+	private final Location garageDoorLoc = location(-479, 75, -2871);
+	private final Location openGarageDoor = location(-465, 57, -2871);
+	private final Location closeGarageDoor = location(-484, 57, -2873);
+	boolean garageDoorOpen = false;
+
+	private void checkGarageDoor() {
+		if (Pugmas24.get().getOnlinePlayers().radius(garageDoorLoc, 7).get().isEmpty()) {
+			if (garageDoorOpen)
+				toggleGarageDoor(closeGarageDoor, false);
+			return;
+		}
+
+		if (!garageDoorOpen)
+			toggleGarageDoor(openGarageDoor, true);
+	}
+
+	private void toggleGarageDoor(Location location, boolean open) {
+		garageDoorOpen = open;
+		location.getBlock().setType(Material.REDSTONE_BLOCK);
+		Tasks.wait(2, () -> location.getBlock().setType(Material.AIR));
+	}
+
 
 
 }

@@ -37,9 +37,6 @@ import java.util.UUID;
   - Allow golfball to not go out of bounds in regions using regex
   - Golfball can get stuck on boost/conveyor blocks
   -
-  - Make Teleport blocks parse an item in the block instead of a sign below it
-  	- Add more lines such as yaw and speed
-  	- Make a command to generate this item
   - on place ball, get par, save in a list "cache" (world, region id, par)
   - when the ball is placed for the first time, or has stopped moving, spawn a display entity instead --> fixes visual float into ground?
   - splash sound when ball dies in water
@@ -88,7 +85,7 @@ public class MiniGolf extends Feature {
 			return;
 		}
 
-		ProtectedRegion courseRegion = new WorldGuardUtils(user.getOnlinePlayer()).getRegionsLikeAt(".*_minigolf_course", user.getOnlinePlayer()).stream().findFirst().orElse(null);
+		ProtectedRegion courseRegion = new WorldGuardUtils(user.getOnlinePlayer()).getRegionsLikeAt(".*_minigolf_course.*", user.getOnlinePlayer()).stream().findFirst().orElse(null);
 		if (courseRegion == null) {
 			user.debug("not in a course region");
 			return;

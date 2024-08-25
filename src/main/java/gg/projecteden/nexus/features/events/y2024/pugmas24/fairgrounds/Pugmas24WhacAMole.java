@@ -50,13 +50,12 @@ public class Pugmas24WhacAMole extends EdenEventSinglePlayerGame {
 	private static final String STANDS_REGION = BASE_REGION + "stands";
 	private static final String CLEAN_ARROWS_REGION = BASE_REGION + "arrows";
 
-	private final Material targetGood = Material.PLAYER_HEAD;
-	private final Material targetBad = Material.ZOMBIE_HEAD;
+	private final Material targetGood = Material.ZOMBIE_HEAD;
+	private final Material targetBad = Material.PLAYER_HEAD;
 	private List<ItemStack> targetItems;
 	private final long MAX_LIFE_TICKS = TickTime.SECOND.x(3);
 	private static final Map<ArmorStand, Long> activeStands = new ConcurrentHashMap<>();
 	private int score = 0;
-
 
 	private final List<Location> spawnLocations = new ArrayList<>();
 	private final List<ArmorStand> armorStands = new ArrayList<>();
@@ -88,9 +87,9 @@ public class Pugmas24WhacAMole extends EdenEventSinglePlayerGame {
 			new ItemBuilder(Material.BOW).enchant(Enchant.INFINITY).unbreakable().build(),
 			new ItemBuilder(Material.ARROW).unbreakable().build());
 
-		ItemBuilder head = new ItemBuilder(targetGood).skullOwner(Dev.WAKKA.getUniqueId());
+		ItemBuilder head = new ItemBuilder(targetBad).skullOwner(Dev.WAKKA.getUniqueId());
 		targetItems = List.of(
-			new ItemBuilder(targetBad).build(),
+			new ItemBuilder(targetGood).build(),
 			head.clone().build(),
 			head.clone().build()
 		);
@@ -112,8 +111,8 @@ public class Pugmas24WhacAMole extends EdenEventSinglePlayerGame {
 	public void reset() {
 		armorStands.forEach(Entity::remove);
 		armorStands.clear();
-		if (gamer != null)
-			PlayerUtils.removeItems(gamer, kit);
+		if (getGamer() != null)
+			PlayerUtils.removeItems(getGamer(), kit);
 		worldguard().getEntitiesInRegion(CLEAN_ARROWS_REGION).stream()
 			.filter(entity -> entity.getType() == EntityType.ARROW)
 			.forEach(Entity::remove);
@@ -141,7 +140,7 @@ public class Pugmas24WhacAMole extends EdenEventSinglePlayerGame {
 
 		for (Location location : spawnLocations) {
 
-			ArmorStand armorStand = gamer.getWorld().spawn(location, ArmorStand.class, stand -> {
+			ArmorStand armorStand = getGamer().getWorld().spawn(location, ArmorStand.class, stand -> {
 				stand.setRightArmPose(EulerAngle.ZERO);
 				stand.setLeftArmPose(EulerAngle.ZERO);
 				stand.setHeadPose(EulerAngle.ZERO);
@@ -181,7 +180,7 @@ public class Pugmas24WhacAMole extends EdenEventSinglePlayerGame {
 				int standCount = RandomUtils.randomInt(3, 5);
 				for (int i = 0; i < standCount; i++) {
 					ArmorStand stand = RandomUtils.randomElement(standChoices);
-					stand.getEquipment().setHelmet(new ItemStack(RandomUtils.randomElement(targetItems)));
+					stand.getEquipment().setHelmet(new ItemStack(RandomUtils.randomElement(targetItems)), true);
 
 					forcePacket(stand);
 					stand.teleport(getStandBaseLocation(stand).add(0, 1, 0));
@@ -216,22 +215,40 @@ public class Pugmas24WhacAMole extends EdenEventSinglePlayerGame {
 		}
 	}
 
+	// TODO: SEEMS TO HAVE STOPPED WORKING, DEBUG NEEDED
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on(ProjectileHitEvent event) {
-		if (!Pugmas24.get().isAtEvent(event.getEntity().getLocation()))
-			return;
-
 		if (!(event.getEntity() instanceof Arrow arrow))
 			return;
 
 		if (!(arrow.getShooter() instanceof Player player))
 			return;
 
-		if (!playing || !gamer.getUniqueId().equals(player.getUniqueId()))
+		if (!Pugmas24.get().shouldHandle(player))
 			return;
+
+		send(player, "pugmas");
+
+		if (!isPlaying()) {
+			send(player, "playing = false");
+			return;
+		}
+
+		if (getGamer() == null) {
+			send(player, "player = null");
+		}
+
+		if (!getGamer().getUniqueId().equals(player.getUniqueId())) {
+			send(player, "gamer = " + getGamer().getName());
+			return;
+		}
+
+		send(player, "playing");
 
 		if (!(event.getHitEntity() instanceof ArmorStand armorStand))
 			return;
+
+		send(player, "hit armorstand");
 
 		boolean exists = false;
 		for (ArmorStand stand : activeStands.keySet()) {
@@ -242,6 +259,8 @@ public class Pugmas24WhacAMole extends EdenEventSinglePlayerGame {
 		if (!exists)
 			return;
 
+		send(player, "handling...");
+
 		event.setCancelled(true);
 		arrow.remove();
 
@@ -249,10 +268,10 @@ public class Pugmas24WhacAMole extends EdenEventSinglePlayerGame {
 		if (Nullables.isNotNullOrAir(headItem)) {
 			Material type = headItem.getType();
 			if (type == targetGood) {
-				new SoundBuilder(Sound.ENTITY_ARROW_HIT_PLAYER).location(gamer).volume(0.5).play();
+				new SoundBuilder(Sound.ENTITY_ARROW_HIT_PLAYER).location(getGamer()).volume(0.5).play();
 				score++;
 			} else if (type == targetBad) {
-				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO).location(gamer).volume(0.5).pitch(0.5).play();
+				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO).location(getGamer()).volume(0.5).pitch(0.5).play();
 				score -= 2;
 			}
 
