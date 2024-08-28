@@ -42,6 +42,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -69,6 +70,7 @@ public class Train {
 	private final String regionReveal;
 	private final TrainCrossings trainCrossings;
 	private final boolean bonkPlayers;
+	private final Map<Integer, CustomMaterial> modelOverrides;
 
 	private final List<ArmorStand> armorStands = new ArrayList<>();
 	private final List<Integer> taskIds = new ArrayList<>();
@@ -89,7 +91,7 @@ public class Train {
 
 	@Builder
 	public Train(Location location, BlockFace direction, double speed, int seconds, boolean test, String regionAnnounce,
-				 String regionTrack, String regionReveal, TrainCrossings trainCrossings, boolean bonkPlayers) {
+				 String regionTrack, String regionReveal, TrainCrossings trainCrossings, boolean bonkPlayers, Map<Integer, CustomMaterial> modelOverrides) {
 		this.location = location.toCenterLocation();
 		this.worldguard = new WorldGuardUtils(location);
 		this.forwards = direction;
@@ -97,6 +99,7 @@ public class Train {
 		this.speed = speed;
 		this.seconds = seconds;
 		this.test = test;
+		this.modelOverrides = modelOverrides;
 		this.smokeBack = backwards.getDirection().multiply(4);
 		this.smokeUp = BlockFace.UP.getDirection().multiply(5.3);
 		this.regionAnnounce = regionAnnounce;
@@ -358,11 +361,17 @@ public class Train {
 		});
 	}
 
-	private void setTrainItem(ArmorStand armorStand, int model) {
+	private void setTrainItem(ArmorStand armorStand, int modelNdx) {
+		int modelId = CustomMaterial.PUGMAS21_TRAIN_1.getModelId() + modelNdx;
+		if (modelOverrides.containsKey(modelNdx)) {
+			modelId = modelOverrides.get(modelNdx).getModelId();
+		}
+
 		armorStand.setItem(EquipmentSlot.HEAD, new ItemBuilder(CustomMaterial.PUGMAS21_TRAIN_1)
-				.modelId(CustomMaterial.PUGMAS21_TRAIN_1.getModelId() + model)
+			.modelId(modelId)
 				.build());
 	}
+
 
 	public static class Smoke {
 		private static final Particle particle = Particle.CAMPFIRE_COSY_SMOKE;

@@ -6,11 +6,13 @@ import gg.projecteden.nexus.features.events.models.Train.Crossing;
 import gg.projecteden.nexus.features.events.models.Train.Crossing.TrackSide;
 import gg.projecteden.nexus.features.events.models.Train.TrainCrossings;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import org.bukkit.block.BlockFace;
 
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
@@ -62,14 +64,18 @@ public class Pugmas24Train {
 	public static gg.projecteden.nexus.features.events.models.Train.TrainBuilder getDefault() {
 		return gg.projecteden.nexus.features.events.models.Train.builder()
 			.location(Pugmas24.get().location(-410.5, 84, -2971.5, 90, 0))
-				.direction(BlockFace.WEST)
+			.direction(BlockFace.WEST)
 			.seconds(95)
-				.speed(.3)
-				.test(false)
-				.regionTrack(trainTrackRegion)
-				.regionAnnounce(Pugmas24.get().getRegionName())
-				.regionReveal(trainRevealRegion)
+			.speed(.3)
+			.test(false)
+			.regionTrack(trainTrackRegion)
+			.regionAnnounce(Pugmas24.get().getRegionName())
+			.regionReveal(trainRevealRegion)
 			.trainCrossings(trainCrossings)
-				.bonkPlayers(true);
+			.bonkPlayers(true)
+			.modelOverrides(new HashMap<>() {{
+				put(2, CustomMaterial.PUGMAS24_TRAIN_3);
+			}})
+			;
 	}
 }
