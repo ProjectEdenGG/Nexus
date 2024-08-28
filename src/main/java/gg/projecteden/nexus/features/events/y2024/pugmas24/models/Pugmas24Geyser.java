@@ -70,7 +70,7 @@ public class Pugmas24Geyser {
 	private static final String INSIDE_GEYSER_REGION = BASE_REGION + "geyser_inside";
 	private static final String GEYSER_COLUMN_REGION = BASE_REGION + "geyser_column";
 
-	private static final String SCHEM_FOLDER = "pugmas/geyser/";
+	private static final String SCHEM_FOLDER = "pugmas24/geyser/";
 	private static final String SCHEM_RESET = SCHEM_FOLDER + "empty";
 	private static final String SCHEM_RUNNING = SCHEM_FOLDER + "running_";
 	private static final String SCHEM_INTRO = SCHEM_FOLDER + "intro_";

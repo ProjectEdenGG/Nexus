@@ -61,9 +61,9 @@ public class Pugmas24Train {
 
 	public static gg.projecteden.nexus.features.events.models.Train.TrainBuilder getDefault() {
 		return gg.projecteden.nexus.features.events.models.Train.builder()
-				.location(Pugmas24.get().location(-503.5, 84, -2971.5, 90, 0))
+			.location(Pugmas24.get().location(-410.5, 84, -2971.5, 90, 0))
 				.direction(BlockFace.WEST)
-				.seconds(80)
+			.seconds(95)
 				.speed(.3)
 				.test(false)
 				.regionTrack(trainTrackRegion)
