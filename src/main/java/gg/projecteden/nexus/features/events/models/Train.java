@@ -5,14 +5,12 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.MathUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
-import gg.projecteden.nexus.features.events.DebugDotCommand;
 import gg.projecteden.nexus.features.events.models.Train.Crossing.TrackSide;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
@@ -444,7 +442,6 @@ public class Train {
 		public void switchLights(boolean powered, List<Location> lights) {
 			Tasks.sync(() -> {
 				for (Location light : lights) {
-					DebugDotCommand.play(Dev.WAKKA.getPlayer(), light.getBlock().getLocation().toCenterLocation());
 					if (light.getBlock().getBlockData() instanceof Lightable lightable) {
 						lightable.setLit(powered);
 						light.getBlock().setBlockData(lightable);
