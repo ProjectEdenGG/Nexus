@@ -71,7 +71,8 @@ public class Pugmas24Train {
 			.trainCrossings(trainCrossings)
 			.bonkPlayers(true)
 			.modelOverrides(new HashMap<>() {{
-				put(2, CustomMaterial.PUGMAS24_TRAIN_3);
+				put(3, CustomMaterial.PUGMAS24_TRAIN_3);
+				put(18, CustomMaterial.PUGMAS24_TRAIN_18);
 			}})
 			;
 	}
