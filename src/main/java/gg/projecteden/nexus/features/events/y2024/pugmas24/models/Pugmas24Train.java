@@ -41,14 +41,11 @@ public class Pugmas24Train {
 
 		Tasks.wait(delay.get(), new AtomicReference<Runnable>() {{
 			set(() -> {
-				if (!Pugmas24.get().anyActivePlayers())
-					return;
+				if (!Nexus.isMaintenanceQueued() && Pugmas24.get().anyActivePlayers()) {
+					getDefault().build().start();
+					Pugmas24.get().actionBarBroadcast("&c&lA train is passing by...", TickTime.SECOND.x(10));
+				}
 
-				if (Nexus.isMaintenanceQueued())
-					return;
-
-				getDefault().build().start();
-				Pugmas24.get().actionBarBroadcast("&c&lA train is passing by...", TickTime.SECOND.x(10));
 				Tasks.wait(delay.get(), get());
 			});
 		}}.get());
