@@ -233,37 +233,42 @@ public class VuLan24LanternAnimation {
 
 		private void tick(int iteration) {
 			newSpline().thenRun(() -> {
-				if (currentSplinePath.isEmpty()) {
-					stop();
-					return;
-				}
+				Tasks.sync(() -> {
+					if (!stand.getLocation().getChunk().isLoaded())
+						stand.getLocation().getChunk().load();
 
-				var nearby = stand.getLocation().getNearbyEntitiesByType(ArmorStand.class, RANGE_CHECK);
-				if (!nearby.isEmpty()) {
-					ArmorStand max = nearby.stream().max(Comparator.comparingDouble(as -> as.getLocation().getZ())).get();
-					if (max.getEntityId() != stand.getEntityId()) {
-						if (iteration % (moveSpeed * 2) != 0)
-							return;;
+					if (currentSplinePath.isEmpty()) {
+						stop();
+						return;
 					}
-				}
 
-				if (iteration % moveSpeed != 0)
-					return;
-
-				Location loc = currentSplinePath.remove(0);
-				stand.teleport(loc.clone().subtract(0, ARMOR_STAND_OFFSET, 0));
-
-				for (int x = -1; x <= 1; x++) {
-					for (int z = -1; z <= 1; z++) {
-						Block block = stand.getLocation().clone().add(x, ARMOR_STAND_OFFSET, z).getBlock();
-						if (block.getType() == Material.LIGHT)
-							block.setType(Material.AIR);
+					var nearby = stand.getLocation().getNearbyEntitiesByType(ArmorStand.class, RANGE_CHECK);
+					if (!nearby.isEmpty()) {
+						ArmorStand max = nearby.stream().max(Comparator.comparingDouble(as -> as.getLocation().getZ())).get();
+						if (max.getEntityId() != stand.getEntityId()) {
+							if (iteration % (moveSpeed * 2) != 0)
+								return;
+						}
 					}
-				}
 
-				Light light = (Light) Material.LIGHT.createBlockData();
-				light.setLevel(lightLevel);
-				stand.getLocation().clone().add(0, ARMOR_STAND_OFFSET, 0).getBlock().setBlockData(light);
+					if (iteration % moveSpeed != 0)
+						return;
+
+					Location loc = currentSplinePath.remove(0);
+					stand.teleport(loc.clone().subtract(0, ARMOR_STAND_OFFSET, 0));
+
+					for (int x = -1; x <= 1; x++) {
+						for (int z = -1; z <= 1; z++) {
+							Block block = stand.getLocation().clone().add(x, ARMOR_STAND_OFFSET, z).getBlock();
+							if (block.getType() == Material.LIGHT)
+								block.setType(Material.AIR);
+						}
+					}
+
+					Light light = (Light) Material.LIGHT.createBlockData();
+					light.setLevel(lightLevel);
+					stand.getLocation().clone().add(0, ARMOR_STAND_OFFSET, 0).getBlock().setBlockData(light);
+				});
 			});
 		}
 
