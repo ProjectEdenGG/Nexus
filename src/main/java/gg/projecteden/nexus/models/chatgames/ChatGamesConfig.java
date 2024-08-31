@@ -187,18 +187,18 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 			if (!completed.isEmpty()) {
 				message.next("&e" + Nickname.of(getCompleted().getFirst().getUuid()) + " &3was the " + (completed.size() == 1 ? "only" : "first") + " to answer correctly!");
 
-				if (completed.size() > 1) {
+				if (completed.size() > 1)
 					message.next(" &eHover for rankings");
 
-					message.hover(new ArrayList<>() {{
-						add("&eRankings:");
-						for (int i = 1; i <= completed.size(); i++) {
-							ChatGameUser user = getCompleted().get(i - 1);
-							String timespan = StringUtils.getTimeFormat(Duration.between(currentGame.getStartTime(), user.getDateTime()));
-							add("&3" + i + ": &e" + timespan + " &3- &e" + Nickname.of(user.getUuid()));
-						}
-					}});
-				}
+				message.hover(new ArrayList<>() {{
+					add("&eRankings:");
+					for (int i = 1; i <= completed.size(); i++) {
+						ChatGameUser user = getCompleted().get(i - 1);
+						String timespan = StringUtils.getTimeFormat(Duration.between(currentGame.getStartTime(), user.getDateTime()));
+						add("&3" + i + ": &e" + timespan + " &3- &e" + Nickname.of(user.getUuid()));
+					}
+				}});
+
 			}
 
 			Broadcast.ingame()
