@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2024.pugmas24.models;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.Nullables;
@@ -30,6 +31,9 @@ public class Pugmas24Cabin implements Listener {
 			return;
 
 		if (!CustomMaterial.PUGMAS24_CALENDAR.is(itemStack))
+			return;
+
+		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
 			return;
 
 		event.setCancelled(true);
