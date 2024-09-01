@@ -15,6 +15,7 @@ import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
@@ -118,10 +119,12 @@ public class InteractListener implements Listener {
 		}
 
 		String regionId = region.getId();
-		String extra = regionId.replaceAll(".*_minigolf_hole_[\\d]+", "");
-		regionId = regionId.replaceAll(extra, "");
+		user.debug("hole region original = " + regionId);
+		String extra = regionId.replaceAll(".*_minigolf_hole_[0-9]+", "");
+		user.debug("extra = " + extra);
+		regionId = StringUtils.replaceLast(regionId, extra, "");
 		golfBall.setHoleRegion(regionId);
-		user.debug("hole region = " + regionId);
+		user.debug("final = " + regionId);
 
 		// Place Event
 		MiniGolfUserPlaceBallEvent placeBallEvent = new MiniGolfUserPlaceBallEvent(user, golfBall, Set.of(Material.GREEN_WOOL));
