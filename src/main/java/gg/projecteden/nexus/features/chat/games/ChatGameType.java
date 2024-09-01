@@ -13,12 +13,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.entity.EntityType;
 import org.simmetrics.metrics.StringMetrics;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -102,7 +97,7 @@ public enum ChatGameType {
 	private static final Set<String> WORDS = new HashSet<>() {{
 		addAll(enumWordFormatter.apply(Arrays.stream(Material.values()).filter(Material::isItem)));
 		addAll(enumWordFormatter.apply(Arrays.stream(EntityType.values()).filter(type -> type.isAlive() && type != EntityType.PLAYER)));
-		addAll(enumWordFormatter.apply(Arrays.stream(Biome.values())));
+		addAll(enumWordFormatter.apply(Arrays.stream(Biome.values()).filter(type -> type != Biome.CUSTOM)));
 		// https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population - removed countries without number
 		addAll(List.of(
 			"China", "India", "United States", "Indonesia", "Pakistan", "Nigeria", "Brazil", "Bangladesh", "Russia",
