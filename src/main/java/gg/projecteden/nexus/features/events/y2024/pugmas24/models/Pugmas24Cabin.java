@@ -32,6 +32,7 @@ public class Pugmas24Cabin implements Listener {
 		if (!CustomMaterial.PUGMAS24_CALENDAR.is(itemStack))
 			return;
 
+		event.setCancelled(true);
 		PlayerUtils.runCommand(event.getPlayer(), "pugmas24 advent");
 	}
 }
