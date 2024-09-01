@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
 import gg.projecteden.nexus.features.menus.api.content.SlotIterator.Type;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.minigames.models.Arena;
+import gg.projecteden.nexus.features.quests.CommonQuestItem;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
@@ -352,21 +353,29 @@ public abstract class MenuUtils {
 				Price price = product.getPrice();
 				BiConsumer<Player, InventoryProvider> onPurchase = product.getOnPurchase();
 
-				boolean canAfford = currency.canAfford(viewer, price, shopGroup);
-				String priceLore = currency.getPriceLore(price, canAfford);
+				if (PlayerUtils.playerHas(viewer, CommonQuestItem.DISCOUNT_CARD.getCustomMaterial())) {
+					Price newPrice = price.clone();
+					newPrice.applyDiscount(CommonQuestItem.DISCOUNT_CARD_PERCENT);
+					price = newPrice;
+				}
+				Price finalPrice = price;
+
+				boolean canAfford = currency.canAfford(viewer, finalPrice, shopGroup);
+				String priceLore = currency.getPriceLore(finalPrice, canAfford);
 
 				final ItemBuilder displayItem = new ItemBuilder(product.getDisplayItemStack()).lore(priceLore);
 
+
 				items.add(ClickableItem.of(displayItem, e -> {
 					try {
-						if (currency.canAfford(viewer, price, shopGroup)) {
+						if (currency.canAfford(viewer, finalPrice, shopGroup)) {
 							ConfirmationMenu.builder()
 								.titleWithSlot("&4Are you sure?")
 								.displayItem(displayItem.build())
 								.onConfirm(e2 -> {
 									try {
-										if (currency.canAfford(viewer, price, shopGroup)) {
-											currency.withdraw(viewer, price, shopGroup, product);
+										if (currency.canAfford(viewer, finalPrice, shopGroup)) {
+											currency.withdraw(viewer, finalPrice, shopGroup, product);
 
 											if (product.isVirtual()) {
 												if (onPurchase != null)
@@ -374,7 +383,7 @@ public abstract class MenuUtils {
 												return;
 											}
 
-											currency.log(viewer, price, product, shopGroup);
+											currency.log(viewer, finalPrice, product, shopGroup);
 
 											if (onPurchase != null)
 												onPurchase.accept(viewer, this);

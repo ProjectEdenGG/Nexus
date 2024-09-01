@@ -36,6 +36,8 @@ import gg.projecteden.nexus.models.pugmas24.Advent24ConfigService;
 import gg.projecteden.nexus.models.pugmas24.Advent24Present;
 import gg.projecteden.nexus.models.pugmas24.Pugmas24User;
 import gg.projecteden.nexus.models.pugmas24.Pugmas24UserService;
+import gg.projecteden.nexus.utils.Currency;
+import gg.projecteden.nexus.utils.Currency.Price;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NoArgsConstructor;
@@ -107,6 +109,18 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	@Permission(Group.ADMIN)
 	void health_set(@Arg(value = "20", min = 1, max = 40) int amount) {
 		Pugmas24.get().setMaxHealth(player(), amount);
+	}
+
+	@Path("coins deposit <amount>")
+	@Permission(Group.ADMIN)
+	void coins_add(int amount) {
+		Currency.COIN_POUCH.deposit(player(), Price.of(amount));
+	}
+
+	@Path("coins withdraw <amount>")
+	@Permission(Group.ADMIN)
+	void coins_remove(int amount) {
+		Currency.COIN_POUCH.withdraw(player(), Price.of(amount), null, null);
 	}
 
 	@Path("district")

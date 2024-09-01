@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.utils;
 
+import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu.Product;
+import gg.projecteden.nexus.features.quests.CommonQuestItem;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
@@ -17,6 +19,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.features.shops.ShopUtils.prettyMoney;
@@ -53,6 +57,81 @@ public enum Currency {
 				return;
 
 			player.getInventory().removeItem(priceItem);
+		}
+	},
+	COIN_POUCH() {
+		@Override
+		protected String pretty(Price price) {
+			return price.asInteger() + " Coins";
+		}
+
+		@Override
+		protected void _deposit(Player player, Price price) {
+			ItemStack pouch = PlayerUtils.searchInventory(player, CommonQuestItem.COIN_POUCH.getCustomMaterial());
+			if (Nullables.isNullOrAir(pouch))
+				throw new InvalidInputException("Cannot deposit to " + player.getName() + ", couldn't find a pouch");
+
+			final NBTItem nbtItem = new NBTItem(pouch);
+			if (!nbtItem.hasKey(CommonQuestItem.COIN_POUCH_NBT_KEY))
+				throw new InvalidInputException("Cannot deposit to " + player.getName() + ", pouch is missing NBT KEY: " + CommonQuestItem.COIN_POUCH_NBT_KEY);
+
+			Integer pouchCoins = nbtItem.getInteger(CommonQuestItem.COIN_POUCH_NBT_KEY);
+			if (pouchCoins == null)
+				throw new InvalidInputException("Cannot deposit to " + player.getName() + ", pouch NBT KEY returned null");
+
+			pouchCoins += price.asInteger();
+			nbtItem.setInteger(CommonQuestItem.COIN_POUCH_NBT_KEY, pouchCoins);
+			nbtItem.applyNBT(pouch);
+
+			updateLore(pouch, pouchCoins);
+		}
+
+		@Override
+		protected boolean _canAfford(Player player, Price price, ShopGroup shopGroup) {
+			ItemStack pouch = PlayerUtils.searchInventory(player, CommonQuestItem.COIN_POUCH.getCustomMaterial());
+			if (Nullables.isNullOrAir(pouch))
+				return false;
+
+			final NBTItem nbtItem = new NBTItem(pouch);
+			if (!nbtItem.hasKey(CommonQuestItem.COIN_POUCH_NBT_KEY))
+				return false;
+
+			Integer coins = nbtItem.getInteger(CommonQuestItem.COIN_POUCH_NBT_KEY);
+			if (coins == null)
+				return false;
+
+			return coins >= price.asInteger();
+		}
+
+		@Override
+		protected void _withdraw(Player player, Price price, ShopGroup shopGroup, Product product) {
+			ItemStack pouch = PlayerUtils.searchInventory(player, CommonQuestItem.COIN_POUCH.getCustomMaterial());
+			if (Nullables.isNullOrAir(pouch))
+				throw new InvalidInputException("Cannot withdraw from " + player.getName() + ", couldn't find a pouch");
+
+			final NBTItem nbtItem = new NBTItem(pouch);
+			if (!nbtItem.hasKey(CommonQuestItem.COIN_POUCH_NBT_KEY))
+				throw new InvalidInputException("Cannot withdraw from " + player.getName() + ", pouch is missing NBT KEY: " + CommonQuestItem.COIN_POUCH_NBT_KEY);
+
+			Integer pouchCoins = nbtItem.getInteger(CommonQuestItem.COIN_POUCH_NBT_KEY);
+			if (pouchCoins == null)
+				throw new InvalidInputException("Cannot withdraw from " + player.getName() + ", pouch NBT KEY returned null");
+
+			pouchCoins -= price.asInteger();
+			nbtItem.setInteger(CommonQuestItem.COIN_POUCH_NBT_KEY, pouchCoins);
+			nbtItem.applyNBT(pouch);
+
+			updateLore(pouch, pouchCoins);
+		}
+
+		private void updateLore(ItemStack pouch, int amount) {
+			List<String> lore = CommonQuestItem.COIN_POUCH.getItemBuilder().getLore();
+			lore.addAll(List.of("", "&fCoins: &e" + StringUtils.getCnf().format(amount)));
+			List<String> coloredLore = new ArrayList<>();
+			for (String line : lore) {
+				coloredLore.add(StringUtils.colorize(line));
+			}
+			pouch.setLore(coloredLore);
 		}
 	},
 	BALANCE() {
@@ -146,6 +225,17 @@ public enum Currency {
 
 	Price price;
 
+	final public void deposit(Player player, Price price) {
+		if (price == null)
+			throw new InvalidInputException("price cannot be null");
+
+		_deposit(player, price);
+	}
+
+	protected void _deposit(Player player, Price price) {
+		throw new InvalidInputException("Deposit has not been defined for currency: " + this.name());
+	}
+
 	final public void withdraw(Player player, Price price, ShopGroup shopGroup, Product product) {
 		if (price == null)
 			throw new InvalidInputException("price cannot be null, set to 0 if wanted free");
@@ -154,6 +244,7 @@ public enum Currency {
 	}
 
 	protected void _withdraw(Player player, Price price, ShopGroup shopGroup, Product product) {
+		throw new InvalidInputException("Withdraw has not been defined for currency: " + this.name());
 	}
 
 	final public boolean canAfford(Player player, Price price, ShopGroup shopGroup) {
@@ -164,7 +255,7 @@ public enum Currency {
 	}
 
 	protected boolean _canAfford(Player player, Price price, ShopGroup shopGroup) {
-		return false;
+		throw new InvalidInputException("canAfford has not been defined for currency: " + this.name());
 	}
 
 	protected String pretty(Price price) {
@@ -186,7 +277,7 @@ public enum Currency {
 	}
 
 	@Getter
-	public static class Price {
+	public static class Price implements Cloneable {
 		ItemStack item;
 		int numInt;
 		double numDouble;
@@ -242,6 +333,51 @@ public enum Currency {
 			return item;
 		}
 
+		public void applyDiscount(double percentage) {
+			if (free || empty)
+				return;
+
+			if (!Nullables.isNullOrAir(item)) {
+				int amount = (int) (item.getAmount() - Math.ceil(item.getAmount() * percentage));
+				if (amount <= 0) {
+					amount = 0;
+					free = true;
+				}
+				item.setAmount(amount);
+			}
+
+			if (numInt != 0) {
+				int amount = (int) (numInt - Math.ceil(numInt * percentage));
+				if (amount <= 0) {
+					amount = 0;
+					free = true;
+				}
+
+				numInt = amount;
+			}
+
+			if (numDouble != 0) {
+				double amount = numDouble - (numDouble * percentage);
+				if (amount <= 0) {
+					amount = 0;
+					free = true;
+				}
+				numDouble = amount;
+			}
+		}
+
+		@SuppressWarnings("MethodDoesntCallSuperMethod")
+		public Price clone() {
+			Price price = new Price();
+			if (!Nullables.isNullOrAir(item))
+				price.item = item.clone();
+			price.numInt = numInt;
+			price.numDouble = numDouble;
+			price.free = free;
+			price.empty = empty;
+
+			return price;
+		}
 	}
 
 

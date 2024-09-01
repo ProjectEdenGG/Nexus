@@ -19,7 +19,7 @@ public enum Pugmas24ShopMenu implements QuestShopMenu {
 
 	BLACKSMITH(Pugmas24NPC.BLACKSMITH, NPCShopMenu.builder().title("Blacksmith")
 		.products(new ArrayList<>() {{
-			add(new Product(Material.STONE_PICKAXE).price(Currency.ITEM, Price.of(Material.APPLE, 2)));
+			add(new Product(Material.STONE_PICKAXE).price(Currency.COIN_POUCH, Price.of(10)));
 		}})),
 
 	;

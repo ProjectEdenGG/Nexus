@@ -760,7 +760,7 @@ public class PlayerUtils {
 	}
 
 	public static boolean playerHas(OptionalPlayer player, CustomMaterial material) {
-		ItemStack item = searchInventory(player, material.getCustomModel());
+		ItemStack item = searchInventory(player, material);
 		return Nullables.isNotNullOrAir(item);
 	}
 
@@ -769,6 +769,10 @@ public class PlayerUtils {
 			return false;
 
 		return player.getPlayer().getInventory().containsAtLeast(itemStack, itemStack.getAmount());
+	}
+
+	public static ItemStack searchInventory(OptionalPlayer player, CustomMaterial customMaterial) {
+		return searchInventory(player, customMaterial.getCustomModel());
 	}
 
 	public static ItemStack searchInventory(OptionalPlayer player, CustomModel customModel) {
@@ -967,7 +971,7 @@ public class PlayerUtils {
 	public static void removeItem(HasPlayer player, CustomMaterial customMaterial) {
 		final Player _player = player.getPlayer();
 		final PlayerInventory inv = _player.getInventory();
-		ItemStack item = searchInventory(player, customMaterial.getCustomModel());
+		ItemStack item = searchInventory(player, customMaterial);
 
 		if (isNullOrAir(item))
 			return;
