@@ -144,7 +144,9 @@ public class Decoration {
 
 		ItemStack tool = ItemUtils.getTool(player);
 		if (CreativeBrushMenu.isCreativePaintbrush(tool)) {
-			CreativeBrushMenu.copyDye(player, tool, decoration);
+			DecorationLang.debug(debugger, "is creative paintbrush (destroy)");
+			if (CreativeBrushMenu.copyDye(player, tool, decoration))
+				DecorationLang.debug(debugger, "  copying dye");
 			return false;
 		}
 
@@ -199,7 +201,7 @@ public class Decoration {
 	}
 
 	public boolean canEdit(Player player) {
-		DecorationLang.debug(player, "CanEdit?");
+		DecorationLang.debug(player, "Can Edit?");
 		if (canEdit != null) {
 			DecorationLang.debug(player, " --> " + canEdit);
 			return canEdit;
@@ -252,8 +254,7 @@ public class Decoration {
 			return true;
 		}
 
-		final Decoration decoration = new Decoration(config, itemFrame);
-		DecorationInteractEvent interactEvent = new DecorationInteractEvent(player, block, decoration, type);
+		DecorationInteractEvent interactEvent = new DecorationInteractEvent(player, block, this, type);
 		if (!interactEvent.callEvent()) {
 			DecorationLang.debug(player, "&6DecorationInteractEvent was cancelled");
 			return false;
@@ -274,7 +275,7 @@ public class Decoration {
 		if (type == InteractType.RIGHT_CLICK) {
 			if (config instanceof Seat && !player.isSneaking()) {
 				DecorationLang.debug(player, "attempting to sit...");
-				DecorationSitEvent sitEvent = new DecorationSitEvent(player, block, decoration, bukkitRotation);
+				DecorationSitEvent sitEvent = new DecorationSitEvent(player, block, this, bukkitRotation);
 				if (trySit(sitEvent, player, block))
 					return true;
 				else
@@ -282,7 +283,7 @@ public class Decoration {
 			}
 
 			if (config.isRotatable() && canEdit(player)) {
-				DecorationRotateEvent rotateEvent = new DecorationRotateEvent(player, block, decoration, InteractType.RIGHT_CLICK);
+				DecorationRotateEvent rotateEvent = new DecorationRotateEvent(player, block, this, InteractType.RIGHT_CLICK);
 				if (!rotateEvent.callEvent())
 					return false;
 
@@ -318,6 +319,13 @@ public class Decoration {
 	}
 
 	public boolean paint(Player player, Block block, ItemStack tool) {
+		if (CreativeBrushMenu.isCreativePaintbrush(tool)) {
+			DecorationLang.debug(player, "is creative paintbrush (interact)");
+			if (CreativeBrushMenu.copyDye(player, tool, this))
+				DecorationLang.debug(player, "  copying dye");
+			return false;
+		}
+
 		if (!DecorationUtils.canUsePaintbrush(player, tool)) {
 			return false;
 		}

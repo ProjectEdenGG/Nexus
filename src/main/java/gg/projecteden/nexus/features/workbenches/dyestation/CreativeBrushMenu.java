@@ -75,21 +75,22 @@ public class CreativeBrushMenu extends InventoryProvider implements IDyeMenu {
 		new CreativeBrushMenu().open(player);
 	}
 
-	public static void copyDye(Player player, ItemStack tool, Decoration decoration) {
+	public static boolean copyDye(Player player, ItemStack tool, Decoration decoration) {
 		if (!(decoration.getConfig() instanceof Dyeable))
-			return;
+			return false;
 
 		ItemStack itemStack = decoration.getItem(player);
 		if (itemStack == null)
-			return;
+			return false;
 
 		Color dyeColor = new ItemBuilder(itemStack).dyeColor();
 		if (dyeColor == null)
-			return;
+			return false;
 
 		ItemStack newTool = new ItemBuilder(tool.clone()).dyeColor(dyeColor).build();
 		DecorationUtils.updateLore(newTool, player);
 		tool.setItemMeta(newTool.getItemMeta());
+		return true;
 	}
 
 	@Override

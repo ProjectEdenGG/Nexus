@@ -398,7 +398,7 @@ public class DecorationListener implements Listener {
 		debug(data.getPlayer(), "attempting to interact...");
 
 		if (!data.isDecorationValid()) {
-			debug(data.getPlayer(), "invalid decoration 2");
+			debug(data.getPlayer(), "invalid decoration 2 (interact)");
 
 			if (CreativeBrushMenu.canOpenMenu(data.getPlayer())) {
 				CreativeBrushMenu.openMenu(data.getPlayer());
