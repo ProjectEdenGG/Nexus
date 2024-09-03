@@ -5,6 +5,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.MultiState;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -59,6 +60,10 @@ public class BuyableData {
 		String name = getName();
 		if (name == null)
 			return;
+
+		if (isDecoration() && decorationConfig instanceof Art art) {
+			name = art.getArtTitle();
+		}
 
 		Integer price = getPrice();
 		if (price == null)
