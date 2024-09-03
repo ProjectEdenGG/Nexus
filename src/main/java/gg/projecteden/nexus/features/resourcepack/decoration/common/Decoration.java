@@ -320,13 +320,6 @@ public class Decoration {
 	}
 
 	public boolean paint(Player player, Block block, ItemStack tool) {
-		if (CreativeBrushMenu.isCreativePaintbrush(tool)) {
-			DecorationLang.debug(player, "is creative paintbrush (interact)");
-			if (CreativeBrushMenu.copyDye(player, tool, this))
-				DecorationLang.debug(player, "  copying dye");
-			return false;
-		}
-
 		if (!DecorationUtils.canUsePaintbrush(player, tool)) {
 			return false;
 		}

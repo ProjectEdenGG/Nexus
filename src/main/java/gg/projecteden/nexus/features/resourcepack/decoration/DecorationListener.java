@@ -356,6 +356,13 @@ public class DecorationListener implements Listener {
 			return false;
 		}
 
+		if (CreativeBrushMenu.isCreativePaintbrush(data.getTool())) {
+			DecorationLang.debug(player, "is creative paintbrush (destroy)");
+			if (CreativeBrushMenu.copyDye(player, data.getTool(), data.getDecoration()))
+				DecorationLang.debug(player, "  copying dye");
+			return true;
+		}
+
 		if (!data.getDecoration().canEdit(player)) {
 			DecorationStoreType storeType = DecorationStoreType.of(player);
 			if (storeType == null) {
