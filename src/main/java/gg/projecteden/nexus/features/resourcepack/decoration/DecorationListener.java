@@ -346,24 +346,25 @@ public class DecorationListener implements Listener {
 
 	//
 
+	// Returning whether to cancel interact event
 	boolean destroy(DecorationInteractData data, Player debugger) {
-		if (!data.isDecorationValid())
-			return false;
-
-		if (!data.playerCanWGEdit()) {
-			DecorationError.WORLDGUARD_USAGE.send(data.getPlayer());
+		debug(data.getPlayer(), "try destroy");
+		if (!data.isDecorationValid()) {
+			debug(data.getPlayer(), "decoration invalid");
 			return false;
 		}
 
 		if (!data.getDecoration().canEdit(data.getPlayer())) {
 			if (!DecorationCooldown.LOCKED.isOnCooldown(data.getPlayer()))
 				DecorationError.LOCKED.send(data.getPlayer());
-			return false;
+			return true;
 		}
 
 		final GameMode gamemode = data.getPlayer().getGameMode();
-		if (!GameModeWrapper.of(gamemode).canBuild())
+		if (!GameModeWrapper.of(gamemode).canBuild()) {
+			debug(data.getPlayer(), "can't build in this gamemode");
 			return true;
+		}
 
 		if (gamemode == GameMode.SURVIVAL) {
 			if (!DecorationCooldown.DESTROY.isOnCooldown(data.getPlayer(), data.getDecoration().getItemFrame().getUniqueId())) {
