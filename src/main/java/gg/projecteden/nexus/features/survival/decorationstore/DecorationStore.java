@@ -13,6 +13,7 @@ import gg.projecteden.nexus.models.decoration.DecorationUser;
 import gg.projecteden.nexus.models.decoration.DecorationUserService;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfigService;
+import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.Currency;
 import gg.projecteden.nexus.utils.Currency.Price;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -85,10 +86,11 @@ public class DecorationStore implements Listener {
 
 	private void openDecorationShop(Player player) {
 		NPCShopMenu.builder()
-				.npcId(AvontyreNPCs.DECORATION__NULL.getNPCId())
-				.title("Decoration Shop")
-				.products(getProducts(player))
-				.open(player);
+			.npcId(AvontyreNPCs.DECORATION__NULL.getNPCId())
+			.title("Decoration Shop")
+			.shopGroup(ShopGroup.of(player))
+			.products(getProducts(player))
+			.open(player);
 	}
 
 	private List<Product> getProducts(Player player) {
