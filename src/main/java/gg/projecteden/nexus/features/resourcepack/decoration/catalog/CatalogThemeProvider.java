@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType.Cate
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Tab;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Theme;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreCurrencyType;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -139,14 +140,15 @@ public class CatalogThemeProvider extends InventoryProvider {
 			return new ArrayList<>();
 
 		List<ClickableItem> clickableItems = new ArrayList<>();
-		for (ItemStack itemStack : getBuyableDecoration(tree, theme)) {
-			clickableItems.add(ClickableItem.of(itemStack, e -> Catalog.tryBuySurvivalItem(viewer, itemStack, DecorationStoreType.CATALOG)));
+		for (DecorationConfig config : getBuyableDecoration(tree, theme)) {
+			ItemStack displayItem = config.getPricedCatalogItem(viewer, currency, DecorationStoreType.CATALOG);
+			clickableItems.add(ClickableItem.of(displayItem, e -> Catalog.tryBuySurvivalItem(viewer, config.getItem(), DecorationStoreType.CATALOG)));
 		}
 
 		return clickableItems;
 	}
 
-	private List<ItemStack> getBuyableDecoration(CategoryTree tree, Theme theme) {
+	private List<DecorationConfig> getBuyableDecoration(CategoryTree tree, Theme theme) {
 		if (tree.isInvisible())
 			return new ArrayList<>();
 
@@ -158,7 +160,7 @@ public class CatalogThemeProvider extends InventoryProvider {
 					return price != null && price != -1;
 				})
 
-				.map(type -> type.getConfig().getPricedCatalogItem(viewer, currency, DecorationStoreType.CATALOG))
+			.map(DecorationType::getConfig)
 				.toList();
 	}
 }

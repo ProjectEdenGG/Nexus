@@ -210,6 +210,7 @@ public class Decoration {
 		boolean isWGEdit = WorldGuardEditCommand.canWorldGuardEdit(player);
 		boolean isInRegion = !new WorldGuardUtils(player).getRegionsAt(this.getOrigin()).isEmpty();
 
+
 		if (isWGEdit) {
 			DecorationLang.debug(player, " WGEdit is on --> yes");
 			return setCanEdit(true);

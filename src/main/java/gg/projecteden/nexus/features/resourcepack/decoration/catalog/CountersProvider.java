@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType.CategoryTree;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreCurrencyType;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter;
@@ -104,11 +105,19 @@ public class CountersProvider extends InventoryProvider {
 				.collect(Collectors.toSet());
 
 		List<ClickableItem> clickableItems = new ArrayList<>();
-		filteredTypes.stream()
+		List<DecorationConfig> configs = filteredTypes.stream()
 			.sorted(Comparator.comparing(type -> type.getConfig().getName()))
-				.map(type -> type.getConfig().getPricedCatalogItem(viewer, currency, DecorationStoreType.CATALOG))
-			.toList()
-				.forEach(itemStack -> clickableItems.add(ClickableItem.of(itemStack, e -> Catalog.tryBuySurvivalItem(viewer, itemStack, DecorationStoreType.CATALOG))));
+			.map(DecorationType::getConfig)
+			.toList();
+
+		for (DecorationConfig config : configs) {
+			ItemStack displayItem = config.getPricedCatalogItem(viewer, currency, DecorationStoreType.CATALOG);
+			ClickableItem clickableItem = ClickableItem.of(displayItem, e -> {
+				Catalog.tryBuySurvivalItem(viewer, config.getItem(), DecorationStoreType.CATALOG);
+			});
+
+			clickableItems.add(clickableItem);
+		}
 
 		return clickableItems;
 	}

@@ -99,7 +99,6 @@ public class DecorationStore implements Listener {
 
 		NPCShopMenu.Product masterCatalog = new Product(Catalog.getMASTER_CATALOG()).price(Currency.BALANCE, 500); // TODO DECORATION: PRICE
 
-
 		DecorationUser user = service.get(player);
 		if (user.isBoughtMasterCatalog()) {
 			if (!PlayerUtils.playerHas(player, Catalog.getMASTER_CATALOG()))

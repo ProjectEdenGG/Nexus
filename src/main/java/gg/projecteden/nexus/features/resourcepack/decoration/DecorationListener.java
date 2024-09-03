@@ -16,6 +16,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPl
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPrePlaceEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationRotateEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreType;
 import gg.projecteden.nexus.features.workbenches.dyestation.CreativeBrushMenu;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.utils.GameModeWrapper;
@@ -348,37 +349,42 @@ public class DecorationListener implements Listener {
 
 	// Returning whether to cancel interact event
 	boolean destroy(DecorationInteractData data, Player debugger) {
-		debug(data.getPlayer(), "try destroy");
+		Player player = data.getPlayer();
+		debug(player, "try destroy");
 		if (!data.isDecorationValid()) {
-			debug(data.getPlayer(), "decoration invalid");
+			debug(player, "decoration invalid");
 			return false;
 		}
 
-		if (!data.getDecoration().canEdit(data.getPlayer())) {
-			if (!DecorationCooldown.LOCKED.isOnCooldown(data.getPlayer()))
-				DecorationError.LOCKED.send(data.getPlayer());
+		if (!data.getDecoration().canEdit(player)) {
+			DecorationStoreType storeType = DecorationStoreType.of(player);
+			if (storeType == null) {
+				if (!DecorationCooldown.LOCKED.isOnCooldown(player))
+					DecorationError.LOCKED.send(player);
+			}
+
 			return true;
 		}
 
-		final GameMode gamemode = data.getPlayer().getGameMode();
+		final GameMode gamemode = player.getGameMode();
 		if (!GameModeWrapper.of(gamemode).canBuild()) {
-			debug(data.getPlayer(), "can't build in this gamemode");
+			debug(player, "can't build in this gamemode");
 			return true;
 		}
 
 		if (gamemode == GameMode.SURVIVAL) {
-			if (!DecorationCooldown.DESTROY.isOnCooldown(data.getPlayer(), data.getDecoration().getItemFrame().getUniqueId())) {
-				debug(data.getPlayer(), "first punch, returning");
+			if (!DecorationCooldown.DESTROY.isOnCooldown(player, data.getDecoration().getItemFrame().getUniqueId())) {
+				debug(player, "first punch, returning");
 				DecorationUtils.getSoundBuilder(data.getDecoration().getConfig().getHitSound()).location(data.getLocation()).play();
 				data.interact(InteractType.LEFT_CLICK);
 				return true;
 			}
 		}
 
-		debug(data.getPlayer(), "attempting to destroy...");
+		debug(player, "attempting to destroy...");
 
-		if (DecorationCooldown.DESTROY.isOnCooldown(data.getPlayer())) {
-			debug(data.getPlayer(), "&cslow down (destroy)");
+		if (DecorationCooldown.DESTROY.isOnCooldown(player)) {
+			debug(player, "&cslow down (destroy)");
 			return true;
 		}
 

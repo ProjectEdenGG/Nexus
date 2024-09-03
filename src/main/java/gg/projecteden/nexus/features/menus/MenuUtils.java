@@ -389,6 +389,7 @@ public abstract class MenuUtils {
 												onPurchase.accept(viewer, this);
 
 											PlayerUtils.giveItem(viewer, item);
+											// TODO DECORATION: PLAY SOUND
 										} else {
 											throw new InvalidInputException("You cannot afford that!");
 										}
