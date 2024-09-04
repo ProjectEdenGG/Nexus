@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.special;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationTagType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.models.trophy.TrophyType;
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Trophy extends DecorationConfig {
@@ -22,7 +22,7 @@ public class Trophy extends DecorationConfig {
 		this.hitboxes = Hitbox.NONE();
 		this.disabledPlacements = PlacementType.FLOOR.getDisabledPlacements();
 
-		this.lore = new ArrayList<>(List.of("&7" + trophy, decorLore));
+		DecorationTagType.setLore(List.of("&7" + trophy), this);
 	}
 
 }

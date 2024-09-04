@@ -41,7 +41,7 @@ public class CatalogProvider extends InventoryProvider {
 			if (theme == Theme.ALL)
 				continue;
 
-			ItemBuilder catalogTheme = theme.getItemBuilder().name(StringUtils.camelCase(theme));
+			ItemBuilder catalogTheme = theme.getItemBuilder().name("&3" + StringUtils.camelCase(theme) + " Catalog");
 
 			items.add(ClickableItem.of(catalogTheme, e -> Catalog.openCatalog(e.getPlayer(), theme, currency, this)));
 		}

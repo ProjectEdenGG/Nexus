@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedA
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationTagType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Addition;
@@ -22,9 +23,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class BedAddition extends DyeableFloorThing implements Addition {
 	@Getter
 	private boolean wide;
@@ -41,7 +39,7 @@ public class BedAddition extends DyeableFloorThing implements Addition {
 		this.wide = wide;
 		this.additionType = additionType;
 
-		this.lore = new ArrayList<>(List.of("&3Can only be placed on a bed", decorLore));
+		DecorationTagType.setLore("&3Can only be placed on a bed", this);
 	}
 
 	@Override

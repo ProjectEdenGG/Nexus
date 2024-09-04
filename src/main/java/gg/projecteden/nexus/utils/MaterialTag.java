@@ -283,6 +283,8 @@ public class MaterialTag implements Tag<Material> {
 		TRIDENT, FIREWORK_ROCKET, ENDER_PEARL, ENDER_EYE, SPLASH_POTION, LINGERING_POTION, EXPERIENCE_BOTTLE, ARMOR_STAND, ITEM_FRAME,
 		GLOW_ITEM_FRAME, PAINTING);
 
+	public static final MaterialTag VEHICLES = new MaterialTag(BOATS, ITEMS_CHEST_BOATS, MINECARTS);
+
 	public static final MaterialTag WEARABLE = new MaterialTag(ARMOR, SKULLS).append(CARVED_PUMPKIN).exclude("_WALL_", MatchMode.CONTAINS);
 
 	public static final MaterialTag INTERACTABLES = new MaterialTag(BEDS, SHULKER_BOXES, CONTAINERS, WOOD_FENCE_GATES,

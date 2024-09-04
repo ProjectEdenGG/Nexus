@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationTagType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
@@ -52,7 +53,7 @@ import static gg.projecteden.nexus.utils.PlayerUtils.sendLine;
 public class DecorationConfig {
 	public static final String NBT_OWNER_KEY = "DecorationOwner";
 	public static final String NBT_DECOR_NAME = "DecorationName";
-	public static final String decorLore = "&eDecoration";
+
 	protected String id;
 	protected String name;
 	protected @NonNull Material material = Material.PAPER;
@@ -61,7 +62,7 @@ public class DecorationConfig {
 	protected String placeSound = Sound.ENTITY_ITEM_FRAME_ADD_ITEM.getKey().getKey();
 	protected String hitSound = Sound.ENTITY_ITEM_FRAME_ROTATE_ITEM.getKey().getKey();
 	protected String breakSound = Sound.ENTITY_ITEM_FRAME_REMOVE_ITEM.getKey().getKey();
-	protected List<String> lore = new ArrayList<>(List.of(decorLore));
+	protected List<String> lore = new ArrayList<>();
 
 	protected List<Hitbox> hitboxes = Hitbox.NONE();
 	protected RotationSnap rotationSnap = RotationSnap.BOTH;
@@ -93,6 +94,8 @@ public class DecorationConfig {
 
 		if (this.hitboxes.size() == 1 && this.hitboxes.get(0).getMaterial() != Material.BARRIER)
 			this.rotatable = true;
+
+		DecorationTagType.setLore(this);
 	}
 
 	public DecorationConfig(boolean multiBlock, String name, CustomMaterial material) {
@@ -468,7 +471,7 @@ public class DecorationConfig {
 
 		send(player, "&3Material: &e" + gg.projecteden.api.common.utils.StringUtils.camelCase(this.getMaterial()));
 		send(player, "&3Model Id: &e" + this.getModelId());
-		send(player, "&3Lore: &f[" + String.join(", ", this.getLore()) + "&f]");
+		send(player, "&3Lore: &f[" + String.join(",", this.getLore()) + "&f]");
 		sendLine(player);
 
 		send(player, "&3Place Sound: &e" + this.getPlaceSound());

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationTagType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -8,7 +9,6 @@ import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -31,16 +31,18 @@ public class Art extends WallThing {
 		if (vanilla)
 			this.name = "Custom Painting (Vanilla)";
 
-		String artSize = hitbox.getName().substring(1, 5);                // _1x3H_xxx -> 1x3H
-		this.direction = artSize.substring(3);                // 1x3H -> H
-		this.width = Integer.parseInt(artSize.substring(0, 1));            // 1x3H -> 1
-		this.height = Integer.parseInt(artSize.substring(2, 3));        // 1x3H -> 3
+		// @formatter:off
+		String artSize = hitbox.getName().substring(1, 5);			// _1x3H_xxx -> 1x3H
+		this.direction = artSize.substring(3);			// 1x3H -> H
+		this.width = Integer.parseInt(artSize.substring(0, 1));		// 1x3H -> 1
+		this.height = Integer.parseInt(artSize.substring(2, 3));	// 1x3H -> 3
+		// @formatter:on
 
 		String sizeFinal = this.width + "x" + this.height;
 		if (this.direction.equalsIgnoreCase("H"))
 			sizeFinal = this.height + "x" + this.width;
 
-		this.lore = new ArrayList<>(List.of("&f" + name, "&7" + sizeFinal, decorLore));
+		DecorationTagType.setLore(List.of("&f" + name, "&7" + sizeFinal), this);
 	}
 
 	public static ItemStack tabIcon_custom = new ItemBuilder(CustomMaterial.ART_PAINTING_CUSTOM_SKYBLOCK.getItem())

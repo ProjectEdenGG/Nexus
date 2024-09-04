@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.types.special;
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationTagType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
@@ -21,7 +22,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
@@ -42,7 +42,7 @@ public class PlayerPlushie extends DecorationConfig {
 		this.hitboxes = Hitbox.NONE();
 		this.disabledPlacements = PlacementType.FLOOR.getDisabledPlacements();
 
-		this.lore = new ArrayList<>(List.of("&f" + StringUtils.camelCase(pose), "&7Player Plushie", decorLore));
+		DecorationTagType.setLore(List.of("&f" + StringUtils.camelCase(pose), "&7Player Plushie"), this);
 	}
 
 	@Override
