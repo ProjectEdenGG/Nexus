@@ -88,7 +88,7 @@ public class DecorationStore implements Listener {
 		NPCShopMenu.builder()
 			.npcId(AvontyreNPCs.DECORATION__NULL.getNPCId())
 			.title("Decoration Shop")
-			.shopGroup(ShopGroup.of(player))
+			.shopGroup(ShopGroup.SURVIVAL)
 			.products(getProducts(player))
 			.open(player);
 	}
@@ -97,7 +97,7 @@ public class DecorationStore implements Listener {
 		DecorationUserService service = new DecorationUserService();
 		List<NPCShopMenu.Product> result = new ArrayList<>();
 
-		NPCShopMenu.Product masterCatalog = new Product(Catalog.getMASTER_CATALOG()).price(Currency.BALANCE, 500); // TODO DECORATION: PRICE
+		NPCShopMenu.Product masterCatalog = new Product(Catalog.getMASTER_CATALOG()).price(Currency.BALANCE, 250);
 
 		DecorationUser user = service.get(player);
 		if (user.isBoughtMasterCatalog()) {
@@ -111,19 +111,16 @@ public class DecorationStore implements Listener {
 				if (user.getOwnedThemes().contains(theme))
 					continue;
 
-				result.add(
-						new Product()
-								.displayItemStack(theme.getShopItem())
-								.price(Currency.BALANCE, Price.of(theme.getPrice()))
-								.onPurchase((_player, provider) -> {
-									DecorationUserService _service = new DecorationUserService();
-									DecorationUser _user = _service.get(_player);
-									_user.addOwnedThemes(theme);
-									_service.save(_user);
+				Product product = Product.virtual(theme.getShopItem(), Currency.BALANCE, Price.of(theme.getPrice()), (_player, provider) -> {
+					DecorationUserService _service = new DecorationUserService();
+					DecorationUser _user = _service.get(_player);
+					_user.addOwnedThemes(theme);
+					_service.save(_user);
 
-									openDecorationShop(player);
-								})
-				);
+					openDecorationShop(_player);
+				});
+
+				result.add(product);
 			}
 		} else {
 			result.add(
@@ -134,12 +131,12 @@ public class DecorationStore implements Listener {
 								_user.setBoughtMasterCatalog(true);
 								_service.save(_user);
 
-								openDecorationShop(player);
+								openDecorationShop(_player);
 							})
 			);
 		}
 
-		result.add(new Product(DyeStation.getPaintbrush().build()).price(Currency.BALANCE, 500)); // TODO DECORATION: PRICE
+		result.add(new Product(DyeStation.getPaintbrush().build()).price(Currency.BALANCE, 2500));
 
 		return result;
 	}

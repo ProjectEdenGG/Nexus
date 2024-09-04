@@ -137,7 +137,7 @@ public enum Currency {
 	BALANCE() {
 		@Override
 		public String pretty(Price price) {
-			return prettyMoney(price.asBalance());
+			return prettyMoney(price.asBalance(), price.isFree());
 		}
 
 		@Override
@@ -263,7 +263,7 @@ public enum Currency {
 	}
 
 	public String getPriceLore(Price price, boolean canAfford) {
-		return "&3Price: " + (canAfford ? "&a" : "&c") + pretty(price);
+		return "&3Price: " + (canAfford ? "&a" : "&c") + this.pretty(price);
 	}
 
 	public void log(Player viewer, Price price, Product product, ShopGroup shopGroup) {

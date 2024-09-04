@@ -130,21 +130,21 @@ public class Catalog implements Listener {
 	public enum Theme {
 		ALL(CustomMaterial.DECORATION_CATALOG_ALL, Integer.MAX_VALUE),
 
-		GENERAL(CustomMaterial.DECORATION_CATALOG_GENERAL, 100000),
+		GENERAL(CustomMaterial.DECORATION_CATALOG_GENERAL, 100000.0),
 		//
-		ART(CustomMaterial.DECORATION_CATALOG_ART, 65000),
-		MUSIC(CustomMaterial.DECORATION_CATALOG_MUSIC, 45000),
-		OUTDOORS(CustomMaterial.DECORATION_CATALOG_OUTDOORS, 30000),
+		ART(CustomMaterial.DECORATION_CATALOG_ART, 65000.0),
+		MUSIC(CustomMaterial.DECORATION_CATALOG_MUSIC, 45000.0),
+		OUTDOORS(CustomMaterial.DECORATION_CATALOG_OUTDOORS, 30000.0),
 		//
-		HOLIDAY(CustomMaterial.DECORATION_CATALOG_HOLIDAY, 20000),
-		SPOOKY(CustomMaterial.DECORATION_CATALOG_SPOOKY, 20000),
-		PRIDE(CustomMaterial.DECORATION_CATALOG_PRIDE, 20000),
+		HOLIDAY(CustomMaterial.DECORATION_CATALOG_HOLIDAY, 20000.0),
+		SPOOKY(CustomMaterial.DECORATION_CATALOG_SPOOKY, 20000.0),
+		PRIDE(CustomMaterial.DECORATION_CATALOG_PRIDE, 20000.0),
 
 		;
 
 		final CustomMaterial customMaterial;
 		@Getter
-		final int price;
+		final double price;
 
 		public ItemBuilder getItemBuilder() {
 			return new ItemBuilder(customMaterial).name("Decoration Catalog: " + StringUtils.camelCase(this));

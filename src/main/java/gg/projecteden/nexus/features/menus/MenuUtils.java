@@ -14,6 +14,7 @@ import gg.projecteden.nexus.features.menus.api.content.SlotIterator.Type;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.quests.CommonQuestItem;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
@@ -38,6 +39,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
@@ -364,8 +367,6 @@ public abstract class MenuUtils {
 				String priceLore = currency.getPriceLore(finalPrice, canAfford);
 
 				final ItemBuilder displayItem = new ItemBuilder(product.getDisplayItemStack()).lore(priceLore);
-
-
 				items.add(ClickableItem.of(displayItem, e -> {
 					try {
 						if (currency.canAfford(viewer, finalPrice, shopGroup)) {
@@ -389,7 +390,7 @@ public abstract class MenuUtils {
 												onPurchase.accept(viewer, this);
 
 											PlayerUtils.giveItem(viewer, item);
-											// TODO DECORATION: PLAY SOUND
+											DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();
 										} else {
 											throw new InvalidInputException("You cannot afford that!");
 										}

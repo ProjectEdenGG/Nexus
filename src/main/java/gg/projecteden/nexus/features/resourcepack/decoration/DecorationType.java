@@ -45,6 +45,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.LongCha
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Stump;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.BedAddition;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.BedAddition.AdditionType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Mailbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.TrashCan;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Waystone;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.WorkBench;
@@ -1751,7 +1752,7 @@ public enum DecorationType {
 	POSTBOX(new FloorThing(false, "Postbox", CustomMaterial.POSTBOX, HitboxFloor._1x2V)),
 
 	@TypeConfig(money = 90, tokens = 9)
-	MAILBOX(new DyeableFloorThing(false, "Mailbox", CustomMaterial.MAILBOX, ColorableType.DYE, "C7C7C7", HitboxFloor._1x2V)),
+	MAILBOX(new Mailbox(false, "Mailbox", CustomMaterial.MAILBOX, ColorableType.DYE, "C7C7C7", HitboxFloor._1x2V)),
 
 	@TypeConfig(money = 60, tokens = 6)
 	SANDWICH_SIGN(new FloorThing(false, "Sandwich Sign", CustomMaterial.SANDWICH_SIGN)),
