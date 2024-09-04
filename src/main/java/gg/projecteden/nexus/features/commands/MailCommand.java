@@ -5,8 +5,6 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
-import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -40,7 +38,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
@@ -282,42 +279,6 @@ public class MailCommand extends CustomCommand implements Listener {
 
 		if (!user.getMail().isEmpty())
 			Tasks.wait(3, user::sendNotification);
-	}
-
-	@EventHandler
-	public void on(DecorationInteractEvent event) {
-		final Player player = event.getPlayer();
-		final UUID owner = event.getDecoration().getOwner(player);
-
-		if (!event.getDecoration().is(DecorationType.MAILBOX))
-			return;
-
-		if (owner == null) {
-			PlayerUtils.send(player, PREFIX + "Could not determine owner of mailbox");
-			return;
-		}
-
-		if (player.getUniqueId().equals(owner)) {
-			PlayerUtils.runCommand(player, "mail box");
-			return;
-		}
-
-		event.setCancelled(true);
-		final MailerService service = new MailerService();
-		Mailer from = service.get(player);
-		Mailer to = service.get(owner);
-
-		if (from.hasPending()) {
-			if (!from.getPending().getUuid().equals(to.getUuid())) {
-				from.sendMessage(PREFIX + "&cYou already have pending mail to " + from.getPending().getNickname());
-				return;
-			}
-		} else
-			from.addPending(new Mail(to.getUuid(), from.getUuid(), WorldGroup.of(player), null));
-
-		save(from);
-
-		new EditItemsMenu(from.getPending());
 	}
 
 }
