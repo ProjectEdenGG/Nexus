@@ -13,7 +13,9 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.DyeChoice;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
+import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -35,6 +37,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class Catalog implements Listener {
 
@@ -241,13 +247,13 @@ public class Catalog implements Listener {
 		}
 
 		currency.withdraw(viewer, config, shopGroup, price);
+		log(viewer, shopGroup, currency, price, storeType, config);
 
 		PlayerUtils.mailItem(viewer, itemStack, null, worldGroup, eventName);
 	}
 
 	public static void tryBuySurvivalItem(Player viewer, ItemStack itemStack, DecorationStoreType storeType) {
 		DecorationStoreCurrencyType currency = DecorationStoreCurrencyType.MONEY;
-
 		DecorationConfig config = DecorationConfig.of(itemStack);
 		if (config == null)
 			return;
@@ -272,10 +278,28 @@ public class Catalog implements Listener {
 		}
 
 		currency.withdraw(viewer, config, shopGroup, price);
+		log(viewer, shopGroup, currency, price, storeType, config);
 
 		if (PlayerUtils.hasRoomFor(viewer, itemStack))
 			DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();
 
 		PlayerUtils.giveItemAndMailExcess(viewer, itemStack, WorldGroup.SURVIVAL);
+	}
+
+	private static void log(Player buyer, ShopGroup shopGroup, DecorationStoreCurrencyType currencyType, int price,
+							DecorationStoreType storeType, DecorationConfig config) {
+
+		List<String> columns = List.of(
+			DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()),
+			buyer.getUniqueId().toString(),
+			Nickname.of(buyer),
+			shopGroup.name(),
+			storeType.name(),
+			currencyType.name(),
+			String.valueOf(price),
+			config.getId()
+		);
+
+		IOUtils.csvAppend("decoration", String.join(",", columns));
 	}
 }
