@@ -66,9 +66,11 @@ public class CommandOverrideListener implements Listener {
 				if (args.size() >= 2 && args.get(1).equalsIgnoreCase("limit")) {
 					event.setCancelled(true);
 
-					if (WorldGroup.of(player) != WorldGroup.CREATIVE) {
-						send.accept("&cYou must be in the /creative world to use this command!");
-						break;
+					if (WorldGroup.of(player) != WorldGroup.SERVER) {
+						if (WorldGroup.of(player) != WorldGroup.CREATIVE) {
+							send.accept("&cYou must be in the /creative world to use this command!");
+							break;
+						}
 					}
 
 					int limit = 0;
