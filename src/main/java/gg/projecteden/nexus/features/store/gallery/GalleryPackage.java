@@ -581,12 +581,11 @@ public enum GalleryPackage {
 		}
 	},
 
-	// TODO Doesn't work (see listener)
 	@Category(GalleryCategory.MISC)
 	CREATIVE_PLOTS {
 		@Override
 		public void onImageInteract(Player player) {
-			PlayerUtils.runCommand(player, "plots limit");
+			PlayerUtils.runCommandAsOp(player, "plotslimit");
 		}
 	},
 

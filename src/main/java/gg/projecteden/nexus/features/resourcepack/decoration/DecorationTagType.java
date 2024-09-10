@@ -22,20 +22,14 @@ public enum DecorationTagType {
 	INTERACTABLE("晖"),
 	ADDITION("香"),
 	//
-	DECORATION("策"),
-	;
+	TOOL("鼬"),
+	//
+	DECORATION("策");
 
 	final String tag;
 
 	private String getTag() {
 		return "&f" + tag;
-	}
-
-	private List<String> getLore() {
-		if (this == DECORATION)
-			return List.of(DECORATION.getTag());
-
-		return List.of(this.getTag(), DECORATION.getTag());
 	}
 
 	public static void setLore(DecorationConfig config) {
@@ -54,6 +48,13 @@ public enum DecorationTagType {
 
 		lore.addAll(getLore(config));
 		config.setLore(lore);
+	}
+
+	public List<String> getLore() {
+		if (this == DECORATION)
+			return List.of(DECORATION.getTag());
+
+		return List.of(this.getTag(), DECORATION.getTag());
 	}
 
 	private static List<String> getLore(DecorationConfig config) {

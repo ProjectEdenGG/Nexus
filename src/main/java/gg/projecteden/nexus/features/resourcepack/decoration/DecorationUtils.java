@@ -328,9 +328,9 @@ public class DecorationUtils {
 
 	private static boolean hasNearbyItemFrames(Location location, double radius, boolean isClientside) {
 		if (isClientside)
-			return ClientSideConfig.getEntities(location, radius).size() > 0;
+			return !ClientSideConfig.getEntities(location, radius).isEmpty();
 
-		return location.getNearbyEntitiesByType(ItemFrame.class, radius).size() > 0;
+		return !location.getNearbyEntitiesByType(ItemFrame.class, radius).isEmpty();
 	}
 
 	public static @Nullable Object findNearbyItemFrame(Location location, boolean isClientside, Player debugger) {

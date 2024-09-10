@@ -124,15 +124,14 @@ public class DecorationStore implements Listener {
 			}
 		} else {
 			result.add(
-					masterCatalog
-							.onPurchase((_player, provider) -> {
-								DecorationUserService _service = new DecorationUserService();
-								DecorationUser _user = _service.get(_player);
-								_user.setBoughtMasterCatalog(true);
-								_service.save(_user);
+				masterCatalog.onPurchase((_player, provider) -> {
+					DecorationUserService _service = new DecorationUserService();
+					DecorationUser _user = _service.get(_player);
+					_user.setBoughtMasterCatalog(true);
+					_service.save(_user);
 
-								openDecorationShop(_player);
-							})
+					openDecorationShop(_player);
+				})
 			);
 		}
 

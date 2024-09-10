@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.workbenches.dyestation;
 
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationTagType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
@@ -31,15 +32,16 @@ public class CreativeBrushMenu extends InventoryProvider implements IDyeMenu {
 	private ItemStack paintbrush;
 
 	private static final ItemBuilder CREATIVE_BRUSH = new ItemBuilder(CustomMaterial.CREATIVE_PAINTBRUSH)
-			.name("&eMaster Brush")
-			.lore("")
-			.lore("&3How to use:")
-			.lore("&eSneak&3+&eRClick &3to dye the brush")
-			.lore("&eRClick &3decoration to dye it")
-			.lore("&eLClick &3decoration to copy the color")
-			.dyeColor(ColorType.WHITE)
-			.glow()
-			.itemFlags(ItemBuilder.ItemFlags.HIDE_ALL);
+		.name("&eMaster Brush")
+		.lore("")
+		.lore("&3How to use:")
+		.lore("&eSneak&3+&eRClick &3to dye the brush")
+		.lore("&eRClick &3decoration to dye it")
+		.lore("&eLClick &3decoration to copy the color")
+		.lore(DecorationTagType.TOOL.getLore())
+		.dyeColor(ColorType.WHITE)
+		.glow()
+		.itemFlags(ItemBuilder.ItemFlags.HIDE_ALL);
 
 	public static ItemBuilder getCreativeBrush() {
 		return CREATIVE_BRUSH.clone();

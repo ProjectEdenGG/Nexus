@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.workbenches.dyestation;
 
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationTagType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.workbenches.CustomBench;
@@ -31,43 +32,49 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 	public static final int MAX_USES_PAINTBRUSH = MAX_USES * 2;
 	public static final String USES_LORE = "&3Uses: &e";
 
-	private static final ItemBuilder WORKBENCH = new ItemBuilder(CustomMaterial.DYE_STATION).name("Dye Station");
+	private static final ItemBuilder WORKBENCH = new ItemBuilder(CustomMaterial.DYE_STATION)
+		.name("Dye Station")
+		.lore(DecorationTagType.INTERACTABLE.getLore());
 
 	public static ItemBuilder getWorkbench() {
 		return WORKBENCH.clone();
 	}
 
 	private static final ItemBuilder MAGIC_DYE = new ItemBuilder(ChoiceType.DYE.getBottleMaterial())
-			.name(Gradient.of(List.of(ChatColor.RED, ChatColor.YELLOW, ChatColor.AQUA)).apply("Magic Dye"))
-			.lore(USAGE_LORE, USES_LORE + MAX_USES);
+		.name(Gradient.of(List.of(ChatColor.RED, ChatColor.YELLOW, ChatColor.AQUA)).apply("Magic Dye"))
+		.lore(USAGE_LORE, USES_LORE + MAX_USES)
+		.lore(DecorationTagType.TOOL.getLore());
 
 	public static ItemBuilder getMagicDye() {
 		return MAGIC_DYE.clone();
 	}
 
 	private static final ItemBuilder MAGIC_STAIN = new ItemBuilder(ChoiceType.STAIN.getBottleMaterial())
-			.name(Gradient.of(List.of(ChatColor.of("#e0a175"), ChatColor.of("#5c371d"))).apply("Magic Stain"))
-			.lore(USAGE_LORE, USES_LORE + MAX_USES);
+		.name(Gradient.of(List.of(ChatColor.of("#e0a175"), ChatColor.of("#5c371d"))).apply("Magic Stain"))
+		.lore(USAGE_LORE, USES_LORE + MAX_USES)
+		.lore(DecorationTagType.TOOL.getLore());
 
 	public static ItemBuilder getMagicStain() {
 		return MAGIC_STAIN.clone();
 	}
 
 	private static final ItemBuilder MAGIC_MINERAL = new ItemBuilder(ChoiceType.MINERAL.getBottleMaterial())
-			.name(Gradient.of(List.of(ChatColor.of("#6A6A6A"), ChatColor.of("#D37A5A"), ChatColor.of("#E1C16E"))).apply("Magic Mineral"))
-			.lore(USAGE_LORE, USES_LORE + MAX_USES);
+		.name(Gradient.of(List.of(ChatColor.of("#6A6A6A"), ChatColor.of("#D37A5A"), ChatColor.of("#E1C16E"))).apply("Magic Mineral"))
+		.lore(USAGE_LORE, USES_LORE + MAX_USES)
+		.lore(DecorationTagType.TOOL.getLore());
 
 	public static ItemBuilder getMagicMineral() {
 		return MAGIC_MINERAL.clone();
 	}
 
 	private static final ItemBuilder PAINTBRUSH = new ItemBuilder(CustomMaterial.PAINTBRUSH)
-			.name("&ePaintbrush")
-			.lore(USES_LORE + 0)
-			.lore("")
-			.lore("&3How to use:")
-			.lore("&eDye &3this brush in the dye station")
-			.lore("&eRClick &3decoration to dye it")
+		.name("&ePaintbrush")
+		.lore(USES_LORE + 0)
+		.lore("")
+		.lore("&3How to use:")
+		.lore("&eDye &3this brush in the dye station")
+		.lore("&eRClick &3decoration to dye it")
+		.lore(DecorationTagType.TOOL.getLore())
 		.dyeColor(ColorType.WHITE)
 		.itemFlags(ItemBuilder.ItemFlags.HIDE_ALL);
 
