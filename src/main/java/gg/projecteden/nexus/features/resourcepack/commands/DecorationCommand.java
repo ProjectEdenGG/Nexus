@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreCurrencyType;
+import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreManager;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts.StoreLocation;
@@ -51,6 +52,13 @@ public class DecorationCommand extends CustomCommand {
 
 	public DecorationCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	@Path("wiki")
+	@Description("Open the wiki page for Decorations")
+	void wiki() {
+		send(json(PREFIX).group().next("https://wiki.projecteden.gg/wiki/Decoration")
+			.hover("Click to open").url("https://wiki.projecteden.gg/wiki/Decoration"));
 	}
 
 	@Path("[--theme] [--currency]")
@@ -265,6 +273,21 @@ public class DecorationCommand extends CustomCommand {
 
 	// STORE COMMANDS
 
+	@Path("store debug [enabled]")
+	@Permission(Group.ADMIN)
+	@Description("Toggle debugging the store")
+	void setDebug(Boolean enabled) {
+		if (enabled == null)
+			enabled = !DecorationStoreManager.getDebuggers().contains(player());
+
+		if (enabled)
+			DecorationStoreManager.getDebuggers().add(player());
+		else
+			DecorationStoreManager.getDebuggers().remove(player());
+
+		send(PREFIX + "Store Debug " + (enabled ? "&aEnabled" : "&cDisabled"));
+	}
+
 	@Path("store layout list")
 	@Permission(Group.STAFF)
 	@Description("Display a list of the layout schematics")
@@ -316,7 +339,7 @@ public class DecorationCommand extends CustomCommand {
 	@Permission(Group.STAFF)
 	@Description("Paste the next layout into the test store")
 	void testNext() {
-		checkRegion();
+		checkControlsRegion();
 		DecorationStoreConfig config = DecorationStore.getConfig();
 
 		int id = config.getSchematicIdTest();
@@ -337,7 +360,7 @@ public class DecorationCommand extends CustomCommand {
 	@Permission(Group.STAFF)
 	@Description("Paste the next layout into the test store")
 	void testPrevious() {
-		checkRegion();
+		checkControlsRegion();
 		DecorationStoreConfig config = DecorationStore.getConfig();
 
 		int id = config.getSchematicIdTest();
@@ -358,7 +381,7 @@ public class DecorationCommand extends CustomCommand {
 	@Permission(Group.STAFF)
 	@Description("Paste the next layout into the test store")
 	void testEmpty() {
-		checkRegion();
+		checkControlsRegion();
 		DecorationStoreLayouts.pasteLayout(DecorationStoreLayouts.getEmpty_schematic(), StoreLocation.TEST);
 		send(PREFIX + "Pasted empty schematic");
 	}
@@ -367,7 +390,8 @@ public class DecorationCommand extends CustomCommand {
 	@Permission(Group.STAFF)
 	@Description("Paste the next layout into the test store")
 	void testCreate() {
-		checkRegion();
+		checkControlsRegion();
+		selectSchemRegion();
 		int id = DecorationStore.getConfig().getSchematicIdTest() + 1;
 
 		ConfirmationMenu.builder().title("Create schematic " + id + "?").onConfirm(e -> {
@@ -382,7 +406,8 @@ public class DecorationCommand extends CustomCommand {
 	@Permission(Group.STAFF)
 	@Description("Paste the next layout into the test store")
 	void testSave() {
-		checkRegion();
+		checkControlsRegion();
+		selectSchemRegion();
 		int id = DecorationStore.getConfig().getSchematicIdTest();
 
 		ConfirmationMenu.builder().title("Overwrite schematic " + id + "?").onConfirm(e -> {
@@ -417,13 +442,17 @@ public class DecorationCommand extends CustomCommand {
 		sign.update();
 	}
 
-	public void checkRegion() {
+	public void checkControlsRegion() {
 		for (ProtectedRegion region : worldguard().getRegionsAt(player().getLocation())) {
 			if (region.getId().equalsIgnoreCase("buildadmin_decor_store_controls"))
 				return;
 		}
 
 		error("You not within the controls region!");
+	}
+
+	public void selectSchemRegion() {
+		runCommandAsOp("rg select buildadmin_decor_store_schem");
 	}
 
 	@ConverterFor(DecorationConfig.class)
