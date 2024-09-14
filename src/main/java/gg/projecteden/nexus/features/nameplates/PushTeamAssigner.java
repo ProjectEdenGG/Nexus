@@ -14,8 +14,8 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 public class PushTeamAssigner implements TeamAssigner {
 	private final PushService service = new PushService();
-	private final String pushTeamName = "NP_HIDE_PUSH";
-	private final String noPushTeamName = "NP_HIDE_NO_PUSH";
+	private final String pushTeamName = "NEXUS_PUSH";
+	private final String noPushTeamName = "NEXUS_NO_PUSH";
 	private final Team pushTeam;
 	private final Team noPushTeam;
 
@@ -25,9 +25,16 @@ public class PushTeamAssigner implements TeamAssigner {
 	}
 
 	public @NotNull Team teamFor(Player player) {
-		return (WorldGroup.of(player) != WorldGroup.MINIGAMES && !AFK.get(player).isLimbo() && service.get(player).isEnabled())
-			? pushTeam
-			: noPushTeam;
+		if (WorldGroup.of(player) == WorldGroup.MINIGAMES)
+			return noPushTeam;
+
+		if (AFK.get(player).isLimbo())
+			return noPushTeam;
+
+		if (!service.get(player).isEnabled())
+			return noPushTeam;
+
+		return pushTeam;
 	}
 
 	private Team initializeTeam(String name, boolean allowPush) {

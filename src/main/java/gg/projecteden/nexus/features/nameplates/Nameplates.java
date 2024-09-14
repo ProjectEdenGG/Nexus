@@ -72,7 +72,9 @@ public class Nameplates extends Feature {
 		Team oldTeam = TeamAssigner.scoreboard().getPlayerTeam(player);
 		Team newTeam = teamAssigners.getOrDefault(player.getUniqueId(), defaultTeamAssigner).teamFor(player);
 
-		if (oldTeam != null && !oldTeam.equals(newTeam)) {
+		if (oldTeam == null) {
+			newTeam.addPlayer(player);
+		} else if (!oldTeam.equals(newTeam)) {
 			oldTeam.removePlayer(player);
 			newTeam.addPlayer(player);
 		}
