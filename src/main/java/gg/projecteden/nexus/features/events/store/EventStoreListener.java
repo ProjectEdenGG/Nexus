@@ -11,6 +11,7 @@ import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import me.arcaniax.hdb.api.PlayerClickHeadEvent;
 import org.bukkit.GameMode;
@@ -27,6 +28,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.PlayerUtils.send;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
+import static java.util.Collections.singletonList;
 
 public class EventStoreListener implements Listener {
 
@@ -68,6 +70,10 @@ public class EventStoreListener implements Listener {
 				throw new InvalidInputException("You can not purchase heads in this world");
 
 			new EventUserService().edit(player, user -> user.charge(price));
+
+			event.setCancelled(true);
+			PlayerUtils.giveItemsAndMailExcess(player, singletonList(event.getHead()), WorldGroup.of(player));
+			player.closeInventory();
 		} catch (Exception ex) {
 			event.setCancelled(true);
 			handleException(player, ex);
