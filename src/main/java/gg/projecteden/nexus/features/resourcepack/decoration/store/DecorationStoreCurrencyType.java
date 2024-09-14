@@ -1,17 +1,21 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.store;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.TypeConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -26,7 +30,7 @@ import java.util.function.Predicate;
 public enum DecorationStoreCurrencyType {
 	MONEY(85,
 			vars -> new BankerService().has(vars.getPlayer(), vars.getPrice(), vars.getShopGroup()),
-			vars -> new BankerService().withdraw(TransactionCause.DECORATION_STORE.of(null, vars.getPlayer(), BigDecimal.valueOf(-vars.getPrice()), vars.getShopGroup(), vars.getConfig().getName())),
+		vars -> new BankerService().withdraw(TransactionCause.DECORATION_STORE.of(null, vars.getPlayer(), BigDecimal.valueOf(-vars.getPrice()), vars.getShopGroup(), vars.getProductName())),
 			typeConfig -> typeConfig.money(),
 			price -> StringUtils.prettyMoney(price),
 			price -> "&3Price: &a"
@@ -54,17 +58,34 @@ public enum DecorationStoreCurrencyType {
 	@AllArgsConstructor
 	private static class Variables {
 		Player player;
-		DecorationConfig config;
+		ItemStack itemStack;
 		ShopGroup shopGroup;
 		double price;
+
+		public String getProductName() {
+			if (this.itemStack.getType() == Material.PLAYER_HEAD) {
+				String id = Nexus.getHeadAPI().getItemID(this.itemStack);
+				if (id == null)
+					return "Player Head";
+
+				return id;
+			}
+
+			DecorationConfig config = DecorationConfig.of(itemStack);
+			if (config != null) {
+				return config.getName();
+			}
+
+			throw new InvalidInputException("Unknown decoration type of: " + itemStack.getType() + ", modelId = " + ModelId.of(itemStack));
+		}
 	}
 
-	public boolean hasFunds(Player player, DecorationConfig config, ShopGroup shopGroup, double price) {
-		return this.checkFunds.test(new Variables(player, config, shopGroup, price));
+	public boolean hasFunds(Player player, ItemStack itemStack, ShopGroup shopGroup, double price) {
+		return this.checkFunds.test(new Variables(player, itemStack, shopGroup, price));
 	}
 
-	public void withdraw(Player player, DecorationConfig config, ShopGroup shopGroup, double price) {
-		this.withdraw.accept(new Variables(player, config, shopGroup, price));
+	public void withdraw(Player player, ItemStack itemStack, ShopGroup shopGroup, double price) {
+		this.withdraw.accept(new Variables(player, itemStack, shopGroup, price));
 	}
 
 	public Integer getPriceSkull(DecorationStoreType storeType) {

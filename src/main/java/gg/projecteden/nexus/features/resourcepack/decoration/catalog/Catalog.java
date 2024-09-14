@@ -13,10 +13,12 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.DyeChoice;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -225,10 +227,7 @@ public class Catalog implements Listener {
 
 	public static void tryBuyEventItem(Player viewer, ItemStack itemStack, WorldGroup worldGroup, ShopGroup shopGroup,
 									   String eventName, DecorationStoreType storeType) {
-
-		DecorationConfig config = DecorationConfig.of(itemStack);
-		if (config == null)
-			return;
+		DecorationStoreCurrencyType currency = storeType.getCurrency();
 
 		if (DecorationUtils.hasBypass(viewer)) {
 			DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();
@@ -236,27 +235,32 @@ public class Catalog implements Listener {
 			return;
 		}
 
-		DecorationStoreCurrencyType currency = storeType.getCurrency();
-		Integer price = config.getCatalogPrice(storeType);
+		Integer price;
+		DecorationConfig _config = DecorationConfig.of(itemStack);
+		if (itemStack.getType() == Material.PLAYER_HEAD) {
+			price = currency.getPriceSkull(storeType);
+		} else if (_config != null) {
+			price = _config.getCatalogPrice(storeType);
+		} else {
+			throw new InvalidInputException("Unknown decoration type of: " + itemStack.getType() + ", modelId = " + ModelId.of(itemStack));
+		}
+
 		if (price == null)
 			return;
 
-		if (!currency.hasFunds(viewer, config, shopGroup, price)) {
+		if (!currency.hasFunds(viewer, itemStack, shopGroup, price)) {
 			DecorationError.LACKING_FUNDS.send(viewer);
 			return;
 		}
 
-		currency.withdraw(viewer, config, shopGroup, price);
-		log(viewer, shopGroup, currency, price, storeType, config);
+		currency.withdraw(viewer, itemStack, shopGroup, price);
+		log(viewer, shopGroup, currency, price, storeType, _config, itemStack);
 
 		PlayerUtils.mailItem(viewer, itemStack, null, worldGroup, eventName);
 	}
 
 	public static void tryBuySurvivalItem(Player viewer, ItemStack itemStack, DecorationStoreType storeType) {
 		DecorationStoreCurrencyType currency = DecorationStoreCurrencyType.MONEY;
-		DecorationConfig config = DecorationConfig.of(itemStack);
-		if (config == null)
-			return;
 
 		if (DecorationUtils.hasBypass(viewer)) {
 			DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();
@@ -264,7 +268,16 @@ public class Catalog implements Listener {
 			return;
 		}
 
-		Integer price = config.getCatalogPrice(storeType);
+		Integer price;
+		DecorationConfig _config = DecorationConfig.of(itemStack);
+		if (itemStack.getType() == Material.PLAYER_HEAD) {
+			price = currency.getPriceSkull(storeType);
+		} else if (_config != null) {
+			price = _config.getCatalogPrice(storeType);
+		} else {
+			throw new InvalidInputException("Unknown decoration type of: " + itemStack.getType() + ", modelId = " + ModelId.of(itemStack));
+		}
+
 		if (price == null)
 			return;
 
@@ -272,13 +285,13 @@ public class Catalog implements Listener {
 			return;
 
 		ShopGroup shopGroup = ShopGroup.SURVIVAL;
-		if (!currency.hasFunds(viewer, config, shopGroup, price)) {
+		if (!currency.hasFunds(viewer, itemStack, shopGroup, price)) {
 			DecorationError.LACKING_FUNDS.send(viewer);
 			return;
 		}
 
-		currency.withdraw(viewer, config, shopGroup, price);
-		log(viewer, shopGroup, currency, price, storeType, config);
+		currency.withdraw(viewer, itemStack, shopGroup, price);
+		log(viewer, shopGroup, currency, price, storeType, _config, itemStack);
 
 		if (PlayerUtils.hasRoomFor(viewer, itemStack))
 			DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();
@@ -287,7 +300,18 @@ public class Catalog implements Listener {
 	}
 
 	private static void log(Player buyer, ShopGroup shopGroup, DecorationStoreCurrencyType currencyType, int price,
-							DecorationStoreType storeType, DecorationConfig config) {
+							DecorationStoreType storeType, DecorationConfig config, ItemStack itemStack) {
+
+		String productId;
+		if (config != null) {
+			productId = config.getId();
+		} else {
+			String headId = Nexus.getHeadAPI().getItemID(itemStack);
+			if (headId == null)
+				headId = "Player Head";
+
+			productId = headId;
+		}
 
 		List<String> columns = List.of(
 			DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()),
@@ -297,7 +321,7 @@ public class Catalog implements Listener {
 			storeType.name(),
 			currencyType.name(),
 			String.valueOf(price),
-			config.getId()
+			productId
 		);
 
 		IOUtils.csvAppend("decoration", String.join(",", columns));
