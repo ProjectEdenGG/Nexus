@@ -131,7 +131,7 @@ public class ParkourCommand extends CustomCommand {
 		final BiFunction<CourseData, String, JsonBuilder> formatter = (run, index) ->
 			json("&3" + index + " &e" + run.getNickname() + " &7- " + TimespanBuilder.ofMillis(run.getBestRunTime()).displayMillis().build().format(FormatType.SHORT));
 
-		paginate(data, formatter, "/parkour top " + course.getName(), page);
+		paginate(data, formatter, "/parkour leaderboard " + course.getName(), page);
 	}
 
 	@Path("hologram update <course>")
