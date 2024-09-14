@@ -6,7 +6,6 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.Decorations;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
@@ -219,11 +218,6 @@ public class DecorationStoreManager implements Listener {
 	}
 
 	private boolean prompt(Player player, DecorationStoreType storeType) {
-		// TODO DECORATION: REMOVE ON RELEASE prompt
-		if (!DecorationUtils.canBuyDecoration(player))
-			return false;
-		//
-
 		BuyableData data = storeType.getTargetBuyable(player);
 		if (data == null) {
 			debug(player, "BuyableData is null");

@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.resourcepack.decoration;
 import gg.projecteden.api.common.utils.ReflectionUtils;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
-import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.resourcepack.CustomContentUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
@@ -15,7 +14,6 @@ import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStationMenu;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
-import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -342,17 +340,6 @@ public class DecorationUtils {
 
 		return _location.getNearbyEntitiesByType(ItemFrame.class, _radius).stream().findFirst().orElse(null);
 	}
-
-	// TODO DECORATIONS: REMOVE ON RELEASE util
-	@Deprecated
-	public static boolean canBuyDecoration(Player player) {
-		EdenEvent edenEvent = EdenEvent.of(player);
-		if (edenEvent != null && edenEvent.isEventActive(player))
-			return true;
-
-		return Rank.of(player).isStaff() || Rank.of(player).isBuilder();
-	}
-	//
 
 	public static boolean hasBypass(Player player) {
 		return CustomContentUtils.hasBypass(player);

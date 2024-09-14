@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.survival.decorationstore;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu.Product;
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreType;
 import gg.projecteden.nexus.features.survival.Survival;
@@ -70,11 +69,6 @@ public class DecorationStore implements Listener {
 	public void on(NPCRightClickEvent event) {
 		if (!AvontyreNPCs.DECORATION__NULL.is(event.getNPC()))
 			return;
-
-		// TODO DECORATIONS: REMOVE ON RELEASE npc shop
-		if (!DecorationUtils.canBuyDecoration(event.getClicker()))
-			return;
-		//
 
 		if (DecorationStoreLayouts.isAnimating()) {
 			PlayerUtils.send(event.getClicker(), DecorationStore.PREFIX + "The store is currently being remodelled, come back shortly!");
