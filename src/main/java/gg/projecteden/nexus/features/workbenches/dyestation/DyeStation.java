@@ -94,11 +94,12 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 
 	@Override
 	public RecipeBuilder<?> getBenchRecipe() {
-		return shaped("111", "232", "242")
-			.add('1', Material.WHITE_WOOL)
-			.add('2', Tag.PLANKS)
-			.add('3', getMagicDye().build())
-			.add('4', getMagicStain().build())
+		return shaped("123", "444", "555")
+			.add('1', getMagicDye().build())
+			.add('2', getMagicStain().build())
+			.add('3', getMagicMineral().build())
+			.add('4', Material.WHITE_WOOL)
+			.add('5', Tag.PLANKS)
 			.toMake(getWorkbench().build());
 	}
 
