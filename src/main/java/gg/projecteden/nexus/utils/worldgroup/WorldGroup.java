@@ -23,24 +23,14 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.BINGO;
-import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.DEATH_SWAP;
-import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.LEGACY1;
-import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.LEGACY2;
-import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.ONEBLOCK;
-import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.RESOURCE;
-import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.STAFF_SURVIVAL;
-import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.UHC;
+import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.*;
 
 public enum WorldGroup implements IWorldGroup {
 	@Icon("globe")
 	@Spawn(SpawnType.HUB)
+	@PushOff
 	SERVER("server"),
 
 	@Icon("ice")
@@ -57,6 +47,7 @@ public enum WorldGroup implements IWorldGroup {
 
 	@Icon("crossed_swords")
 	@Spawn(SpawnType.MINIGAMES)
+	@PushOff
 	MINIGAMES(List.of("gameworld"), List.of(DEATH_SWAP, UHC, BINGO)),
 
 	@Icon("grass_block")
@@ -196,6 +187,14 @@ public enum WorldGroup implements IWorldGroup {
 	@Retention(RetentionPolicy.RUNTIME)
 	private @interface Spawn {
 		SpawnType value();
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	private @interface PushOff {
+	}
+
+	public boolean isPushDisabled() {
+		return getField().isAnnotationPresent(PushOff.class);
 	}
 
 }

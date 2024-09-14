@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.nameplates;
 
-import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.models.push.PushService;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
@@ -25,13 +24,10 @@ public class PushTeamAssigner implements TeamAssigner {
 	}
 
 	public @NotNull Team teamFor(Player player) {
-		if (WorldGroup.of(player) == WorldGroup.MINIGAMES)
+		if (WorldGroup.of(player).isPushDisabled())
 			return noPushTeam;
 
-		if (AFK.get(player).isLimbo())
-			return noPushTeam;
-
-		if (!service.get(player).isEnabled())
+		if (service.get(player).isDisabled())
 			return noPushTeam;
 
 		return pushTeam;

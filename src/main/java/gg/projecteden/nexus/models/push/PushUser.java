@@ -5,11 +5,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -24,4 +20,8 @@ public class PushUser implements DatabaseObject {
 	@NonNull
 	private UUID uuid;
 	private boolean enabled;
+
+	public boolean isDisabled() {
+		return !enabled;
+	}
 }
