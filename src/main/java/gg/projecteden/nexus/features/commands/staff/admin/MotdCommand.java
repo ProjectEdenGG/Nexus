@@ -17,15 +17,10 @@ import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.models.punishments.PunishmentsService;
-import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.DateUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.SneakyThrows;
+import lombok.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -40,12 +35,7 @@ import java.net.InetAddress;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static gg.projecteden.nexus.utils.DateUtils.getEnd;
 import static gg.projecteden.nexus.utils.DateUtils.getStart;
@@ -56,7 +46,6 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 @Permission(Group.ADMIN)
 public class MotdCommand extends CustomCommand implements Listener {
 	GeoIPService geoIPService = new GeoIPService();
-	LocalResourcePackUserService rpUserService = new LocalResourcePackUserService();
 	PunishmentsService punishmentsService = new PunishmentsService();
 
 	private static final String motdTop = "&f &f &f &f &f &f &f &f &f &f &f &f &f &f &f &f &f " +
@@ -76,6 +65,13 @@ public class MotdCommand extends CustomCommand implements Listener {
 	@Description("Update the server's server list MOTD")
 	void motd(String text) {
 		motd = colorize(text.replace("\\n", System.lineSeparator()));
+		send(PREFIX + "Motd updated");
+	}
+
+	@Path("line2 <text...>")
+	@Description("Update the server's server list MOTD second line")
+	void motd_line2_(String text) {
+		motd = motdTop + colorize(text.replace("\\n", System.lineSeparator()));
 		send(PREFIX + "Motd updated");
 	}
 
@@ -134,6 +130,9 @@ public class MotdCommand extends CustomCommand implements Listener {
 
 		if (nerd.getBirthday() != null && LocalDate.now().isEqual(nerd.getBirthday()))
 			line2 = "&3Happy birthday &e" + nerd.getNickname() + "&3!";
+
+		if (LocalDate.now().isBefore(LocalDate.of(2024, 10, 15)))
+			line2 = "&3 &3 &3 &3 Now available: &6&lDecorations&3! &c/decor store";
 
 		if (line2 != null) {
 			int padding = (int) (((MAX_CHARS_ISH - stripColor(line2).length()) / 2.0) * SPACE_WIDTH_MULTIPLIER);
