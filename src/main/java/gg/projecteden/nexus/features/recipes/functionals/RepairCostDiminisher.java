@@ -91,13 +91,15 @@ public class RepairCostDiminisher extends FunctionalRecipe {
 
 		final ItemStack diminisher;
 		final ItemStack tool;
+		ItemStack itemInMainHand = inventory.getItemInMainHand();
+		ItemStack itemInOffHand = inventory.getItemInOffHand();
 
-		if (!isNullOrAir(inventory.getItemInMainHand()) && new ItemBuilder(inventory.getItemInMainHand()).modelId() == item.getItemMeta().getCustomModelData()) {
-			diminisher = inventory.getItemInMainHand();
-			tool = inventory.getItemInOffHand();
-		} else if (!isNullOrAir(inventory.getItemInOffHand()) && new ItemBuilder(inventory.getItemInOffHand()).modelId() == item.getItemMeta().getCustomModelData()) {
-			diminisher = inventory.getItemInOffHand();
-			tool = inventory.getItemInMainHand();
+		if (ItemUtils.isModelMatch(item, itemInMainHand)) {
+			diminisher = itemInMainHand;
+			tool = itemInOffHand;
+		} else if (ItemUtils.isModelMatch(item, itemInOffHand)) {
+			diminisher = itemInOffHand;
+			tool = itemInMainHand;
 		} else
 			return;
 
