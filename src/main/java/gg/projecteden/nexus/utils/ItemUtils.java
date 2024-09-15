@@ -90,6 +90,19 @@ public class ItemUtils {
 		return name.apply(itemStack1).equals(name.apply(itemStack2));
 	}
 
+	public static boolean isModelMatch(ItemStack itemStack1, ItemStack itemStack2) {
+		if (Nullables.isNullOrAir(itemStack1) || Nullables.isNullOrAir(itemStack2))
+			return false;
+
+		if (itemStack1.getType() != itemStack2.getType())
+			return false;
+
+		int modelId1 = new ItemBuilder(itemStack1).modelId();
+		int modelId2 = new ItemBuilder(itemStack2).modelId();
+
+		return modelId1 == modelId2;
+	}
+
 	public static boolean isFuzzyMatch(ItemStack itemStack1, ItemStack itemStack2) {
 		if (itemStack1 == null || itemStack2 == null)
 			return false;

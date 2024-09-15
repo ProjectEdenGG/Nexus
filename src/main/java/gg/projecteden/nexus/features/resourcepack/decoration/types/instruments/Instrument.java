@@ -16,6 +16,7 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundUtils;
 import lombok.Getter;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -102,6 +103,10 @@ public class Instrument extends DecorationConfig implements NoiseMaker {
 
 		@EventHandler
 		public void on(DecorationInteractEvent event) {
+			Block clickedBlock = event.getClickedBlock();
+			if (clickedBlock == null)
+				return;
+
 			if (event.getPlayer().isSneaking())
 				return;
 
@@ -121,7 +126,7 @@ public class Instrument extends DecorationConfig implements NoiseMaker {
 
 			double lastPitch = noiseMap.getOrDefault(event.getPlayer(), 1.0);
 
-			lastPitch = noiseMaker.playSound(event.getPlayer(), event.getClickedBlock().getLocation(), instrumentSound, lastPitch);
+			lastPitch = noiseMaker.playSound(event.getPlayer(), clickedBlock.getLocation(), instrumentSound, lastPitch);
 
 			noiseMap.put(event.getPlayer(), lastPitch);
 		}
