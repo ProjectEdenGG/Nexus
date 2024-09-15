@@ -21,20 +21,10 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.TurfWarsMatchDat
 import gg.projecteden.nexus.features.minigames.models.matchdata.TurfWarsMatchData.State;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.MathUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.TitleBuilder;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.parchment.event.entity.PreEntityShootBowEvent;
-import org.bukkit.EntityEffect;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
@@ -540,7 +530,7 @@ public class TurfWars extends TeamMechanic {
 
 	public void errorBlockPlace(BlockPlaceEvent event) {
 		event.setCancelled(true);
-		ActionBarUtils.sendActionBar(event.getPlayer(), "&cYou cannot shoot arrows during build time");
+		ActionBarUtils.sendActionBar(event.getPlayer(), "&cYou cannot build here");
 	}
 
 	@EventHandler
