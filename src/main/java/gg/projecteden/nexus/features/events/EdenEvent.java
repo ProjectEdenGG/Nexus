@@ -347,11 +347,11 @@ public abstract class EdenEvent extends Feature implements Listener {
 	}
 
 	public void forceLoadChunk(Chunk chunk) {
-		ChunkLoader.loadChunk(chunk);
+		ChunkLoader.setForceLoaded(chunk);
 	}
 
 	public void forceLoadChunks(Set<Chunk> chunks) {
-		ChunkLoader.loadChunks(chunks);
+		ChunkLoader.forceLoad(chunks);
 	}
 
 	public void forceLoadRegions(Set<ProtectedRegion> regions) {
@@ -369,7 +369,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 	}
 
 	public void forceLoadRegions(String regionId) {
-		ChunkLoader.loadChunks(getWorld(), regionId);
+		ChunkLoader.forceLoad(getWorld(), regionId);
 	}
 
 	public void give(Player player, ItemBuilder item) {

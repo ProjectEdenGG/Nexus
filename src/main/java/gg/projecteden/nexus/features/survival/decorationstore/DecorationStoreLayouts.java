@@ -53,7 +53,7 @@ public class DecorationStoreLayouts {
 	}
 
 	public static void pasteLayout(String schematic, StoreLocation storeLocation) {
-		ChunkLoader.loadChunks(storeLocation.getLocation().getWorld(), storeLocation.getRegionId());
+		ChunkLoader.forceLoad(storeLocation.getLocation().getWorld(), storeLocation.getRegionId());
 
 		// TODO: Interaction/Display entities
 		List<EntityType> deleteEntities = List.of(EntityType.ITEM_FRAME, EntityType.ARMOR_STAND, EntityType.PAINTING, EntityType.GLOW_ITEM_FRAME);
@@ -81,13 +81,13 @@ public class DecorationStoreLayouts {
 
 		List<Player> players = DecorationStoreType.SURVIVAL.getPlayers();
 		new TitleBuilder()
-				.title("鄜")
+			.title("鄜")
 			.fade(TickTime.TICK.x(10))
 			.stay(TickTime.TICK.x(10))
 			.players(players)
 			.send();
 
-		Tasks.wait(10, () -> {
+		Tasks.wait(TickTime.TICK.x(10), () -> {
 			for (Player player : DecorationStoreType.SURVIVAL.getPlayers()) {
 				player.teleportAsync(DecorationStore.getWarpLocation());
 				PlayerUtils.send(player, DecorationStore.PREFIX + "You have been removed for remodeling, &ecome back shortly&3!");

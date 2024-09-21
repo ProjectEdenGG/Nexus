@@ -29,20 +29,19 @@ import java.util.function.Predicate;
 @AllArgsConstructor
 public enum DecorationStoreCurrencyType {
 	MONEY(85,
-			vars -> new BankerService().has(vars.getPlayer(), vars.getPrice(), vars.getShopGroup()),
+		vars -> new BankerService().has(vars.getPlayer(), vars.getPrice(), vars.getShopGroup()),
 		vars -> new BankerService().withdraw(TransactionCause.DECORATION_STORE.of(null, vars.getPlayer(), BigDecimal.valueOf(-vars.getPrice()), vars.getShopGroup(), vars.getProductName())),
-			typeConfig -> typeConfig.money(),
-			price -> StringUtils.prettyMoney(price),
-			price -> "&3Price: &a"
-
+		typeConfig -> typeConfig.money(),
+		price -> StringUtils.prettyMoney(price),
+		price -> "&3Price: &a"
 	),
 
 	TOKENS(15,
-			vars -> new EventUserService().get(vars.getPlayer()).getTokens() >= vars.getPrice(),
-			vars -> new EventUserService().get(vars.getPlayer()).charge((int) Math.ceil(vars.getPrice())),
-			typeConfig -> typeConfig.tokens(),
-			price -> price + " tokens",
-			price -> "&3Tokens: &a" + price
+		vars -> new EventUserService().get(vars.getPlayer()).getTokens() >= vars.getPrice(),
+		vars -> new EventUserService().get(vars.getPlayer()).charge((int) Math.ceil(vars.getPrice())),
+		typeConfig -> typeConfig.tokens(),
+		price -> price + " tokens",
+		price -> "&3Tokens: &a" + price
 	),
 
 	;

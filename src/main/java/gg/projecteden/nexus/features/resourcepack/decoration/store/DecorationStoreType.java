@@ -64,7 +64,11 @@ public enum DecorationStoreType {
 	public void resetPlayerData() {
 		Map<UUID, TargetData> storeDataMap = DecorationStoreManager.getTargetDataMap().getOrDefault(this, new HashMap<>());
 		for (UUID uuid : storeDataMap.keySet()) {
-			storeDataMap.get(uuid).unglow();
+			TargetData targetData = storeDataMap.get(uuid);
+			if (targetData.getPlayer() == null || !targetData.getPlayer().isOnline())
+				continue;
+
+			targetData.unglow();
 		}
 
 		storeDataMap.clear();

@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.Deco
 import gg.projecteden.nexus.features.resourcepack.decoration.Decorations;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
+import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -81,6 +82,9 @@ public class DecorationStoreManager implements Listener {
 					continue;
 
 				if (storeType.getGlowRegionId() == null)
+					continue;
+
+				if (storeType == DecorationStoreType.SURVIVAL && DecorationStoreLayouts.isAnimating())
 					continue;
 
 				Map<UUID, TargetData> dataMap = targetDataMap.getOrDefault(storeType, new HashMap<>());

@@ -33,27 +33,27 @@ public class ChunkLoader extends Feature {
 		}
 	}
 
-	public static void loadChunks(World world, String region) {
+	public static void forceLoad(World world, String region) {
 		WorldGuardUtils worldguard = new WorldGuardUtils(world);
 		ProtectedRegion protectedRegion = worldguard.getProtectedRegion(region);
-		loadChunks(world, protectedRegion);
+		forceLoad(world, protectedRegion);
 	}
 
-	public static void loadChunks(World world, ProtectedRegion protectedRegion) {
+	public static void forceLoad(World world, ProtectedRegion protectedRegion) {
 		WorldEditUtils worldedit = new WorldEditUtils(world);
 		List<Block> blocks = worldedit.getBlocks(protectedRegion);
-		loadChunks(blocks);
+		forceLoad(blocks);
 	}
 
-	public static void loadChunks(List<Block> blocks) {
-		loadChunks(blocks.stream().map(Block::getChunk).collect(Collectors.toSet()));
+	public static void forceLoad(List<Block> blocks) {
+		forceLoad(blocks.stream().map(Block::getChunk).collect(Collectors.toSet()));
 	}
 
-	public static void loadChunks(Set<Chunk> chunks) {
-		chunks.forEach(ChunkLoader::loadChunk);
+	public static void forceLoad(Set<Chunk> chunks) {
+		chunks.forEach(ChunkLoader::setForceLoaded);
 	}
 
-	public static void loadChunk(Chunk chunk) {
+	public static void setForceLoaded(Chunk chunk) {
 		long chunkKey = chunk.getChunkKey();
 
 		Set<Long> chunks = loadedChunks.getOrDefault(chunk.getWorld(), new HashSet<>());
@@ -61,6 +61,7 @@ public class ChunkLoader extends Feature {
 			return;
 
 		chunk.setForceLoaded(true);
+		chunk.load();
 		chunks.add(chunkKey);
 		loadedChunks.put(chunk.getWorld(), chunks);
 	}
