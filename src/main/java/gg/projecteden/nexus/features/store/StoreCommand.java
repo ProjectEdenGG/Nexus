@@ -77,6 +77,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 		send("&eEnjoying the server and want to support us?");
 		line();
 		send(json().next("&3Visit our store: &e" + URL));
+		send(json().next("&3View interactable perks in-game at the ").group().next("&e/store gallery").command("/store gallery").hover("&3Click to teleport"));
 		line();
 		send(json(PLUS + "Terms and Conditions").hover(PLUS + "Click here before you purchase for anything").command("/store tac"));
 	}
