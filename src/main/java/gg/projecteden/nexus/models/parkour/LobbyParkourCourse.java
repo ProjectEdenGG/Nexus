@@ -8,10 +8,8 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.hub.Hub;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.parkour.LobbyParkourUser.CourseData;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -51,7 +49,7 @@ public class LobbyParkourCourse implements DatabaseObject {
 			.sorted(Comparator.comparing(CourseData::getBestRunTime))
 			.toList();
 
-		Hologram hologram = HologramsAPI.byId(Hub.getWorld(), "lobby_parkour_%s_leaderboard".formatted(name));
+		Hologram hologram = HologramsAPI.byId(checkpoints.getFirst().getWorld(), "lobby_parkour_%s_leaderboard".formatted(name));
 		if (hologram == null) {
 			Nexus.log("Invalid hologram: lobby_parkour_%s_leaderboard".formatted(name));
 			return;
