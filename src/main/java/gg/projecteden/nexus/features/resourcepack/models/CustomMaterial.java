@@ -166,6 +166,8 @@ public enum CustomMaterial {
 	COUNTER_WOODEN(Material.LEATHER_HORSE_ARMOR, 4998),
 	COUNTER_ALL(Material.PAPER, 2065),
 	HANDLE_ALL(Material.PAPER, 2066),
+	GLUE(Material.PAPER, 5909),
+
 
 	TRASH_CAN(Material.LEATHER_HORSE_ARMOR, 100),
 	TRASH_BAG(Material.PAPER, 6237),
