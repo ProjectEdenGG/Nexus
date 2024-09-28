@@ -88,7 +88,7 @@ dependencies {
     compileOnly("com.onarandombox.multiverseinventories:Multiverse-Inventories:3.0.0")
     compileOnly("com.dumptruckman.minecraft:JsonConfiguration:1.1")
     compileOnly("net.minidev:json-smart:2.4.10")
-    compileOnly("de.tr7zw:item-nbt-api-plugin:2.10.0")
+    compileOnly("de.tr7zw:item-nbt-api-plugin:2.13.2")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
     compileOnly("com.github.koca2000:NoteBlockAPI:1.4.4")
     compileOnly("com.github.BlueMap-Minecraft:BlueMapAPI:v1.3.1")
