@@ -100,5 +100,6 @@ public class Glue extends FunctionalRecipe {
 		NBT.modifyPersistentData(itemFrame, nbt -> {
 			nbt.setBoolean(NBT_KEY, true);
 		});
+		ItemUtils.subtract(player, tool);
 	}
 }
