@@ -5,8 +5,8 @@ import de.tr7zw.nbtapi.NBTCompoundList;
 import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTList;
-import de.tr7zw.nbtapi.NBTListCompound;
 import de.tr7zw.nbtapi.NBTType;
+import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -58,7 +58,7 @@ public class NBTPlayer implements PlayerOwnedObject {
 	@NotNull
 	private NBTFile loadNbtFile() {
 		try {
-			File file = Paths.get(Bukkit.getServer().getWorlds().get(0).getName() + "/playerdata/" + uuid + ".dat").toFile();
+			File file = Paths.get(Bukkit.getServer().getWorlds().getFirst().getName() + "/playerdata/" + uuid + ".dat").toFile();
 			if (file.exists())
 				return new NBTFile(file);
 			throw new InvalidInputException("[Nerd]" + getNickname() + "'s data file does not exist");
@@ -77,7 +77,7 @@ public class NBTPlayer implements PlayerOwnedObject {
 				final String dimension = getNbtFile().getString(NBT_KEY).replace("minecraft:", "");
 
 				if ("overworld".equals(dimension))
-					return Bukkit.getWorlds().get(0);
+					return Bukkit.getWorlds().getFirst();
 
 				final World result = Bukkit.getWorld(dimension);
 				if (result != null)
@@ -100,7 +100,7 @@ public class NBTPlayer implements PlayerOwnedObject {
 		final NBTCompound compound = getNbtFile().getCompound(NBT_KEY);
 		throw new InvalidInputException("[Nerd] %s is not in a valid world (Type: %s, Value: %s, UUID: %s)".formatted(
 			getNickname(), camelCase(dataType),
-			compound == null ? "null" : compound.asNBTString(),
+			compound == null ? "null" : compound.toString(),
 			uuid == null ? "null" : uuid.toString()
 		));
 	}
@@ -120,17 +120,18 @@ public class NBTPlayer implements PlayerOwnedObject {
 		final String NBT_KEY = "Inventory";
 		final ItemStack[] contents = new ItemStack[41];
 
-		if (getNbtFile().hasKey(NBT_KEY)) {
+		if (getNbtFile().hasTag(NBT_KEY)) {
 			final NBTCompoundList inventory = getNbtFile().getCompoundList(NBT_KEY);
-			for (NBTListCompound compound : inventory) {
-				int slot = compound.getInteger("Slot");
+
+			for (ReadWriteNBT nbt : inventory) {
+				int slot = nbt.getInteger("Slot");
 				slot = switch (slot) {
 					case 100, 101, 102, 103 -> slot - 64;
 					case -106 -> 40;
 					default -> slot;
 				};
 
-				contents[slot] = NBTItem.convertNBTtoItem(compound);
+				contents[slot] = NBTItem.convertNBTtoItem((NBTCompound) nbt);
 			}
 		}
 
@@ -141,9 +142,9 @@ public class NBTPlayer implements PlayerOwnedObject {
 		final String NBT_KEY = "EnderItems";
 		final ItemStack[] contents = new ItemStack[27];
 
-		if (getNbtFile().hasKey(NBT_KEY))
-			for (NBTListCompound compound : getNbtFile().getCompoundList(NBT_KEY))
-				contents[compound.getInteger("Slot")] = NBTItem.convertNBTtoItem(compound);
+		if (getNbtFile().hasTag(NBT_KEY))
+			for (ReadWriteNBT compound : getNbtFile().getCompoundList(NBT_KEY))
+				contents[compound.getInteger("Slot")] = NBTItem.convertNBTtoItem((NBTCompound) compound);
 
 		return Arrays.asList(contents);
 	}
