@@ -643,7 +643,7 @@ public class FallingBlocks extends TeamlessMechanic {
 			AtomicInteger min = new AtomicInteger(axis.getMin(blocksRg));
 			AtomicInteger max = new AtomicInteger(axis.getMax(blocksRg));
 
-			match.broadcast("&bA layer is being added by " + minigamer.getNickname() + "! (" + axis.name() + ")");
+			match.broadcast("&bA layer is being added by " + minigamer.getNickname());
 			matchData.addLayerTask.add(match.getTasks().repeat(0, TickTime.TICK.x(5), () -> {
 				for (Block block : new ArrayList<>(blocks)) {
 					if (!MaterialTag.ALL_AIR.isTagged(block)) {
