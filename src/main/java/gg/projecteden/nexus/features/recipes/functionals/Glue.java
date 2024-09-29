@@ -1,13 +1,21 @@
 package gg.projecteden.nexus.features.recipes.functionals;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import de.tr7zw.nbtapi.NBT;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
-import gg.projecteden.nexus.utils.ContainerPassThrough;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import org.bukkit.FluidCollisionMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.Container;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,7 +23,10 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.util.RayTraceResult;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 
@@ -62,17 +73,25 @@ public class Glue extends FunctionalRecipe {
 
 		boolean glued = NBT.getPersistentData(itemFrame, nbt -> nbt.getBoolean(NBT_KEY));
 		ItemStack item = itemFrame.getItem();
+		ItemStack tool = ItemUtils.getTool(player, getCustomMaterial());
 		if (!Nullables.isNullOrAir(item)) {
-			if (ContainerPassThrough.shouldRotate(event)) {
+			if (shouldRotate(event)) {
 				if (glued) {
 					event.setCancelled(true);
 					return;
 				}
+
+				if (!Nullables.isNullOrAir(tool)) {
+					event.setCancelled(true);
+					glue(itemFrame, player, tool);
+					return;
+				}
+
 				return;
 			}
 
-			if (ContainerPassThrough.tryOpeningContainerRaytrace(player)) {
-				event.setCancelled(true);
+			if (canOpenContainer(player)) {
+				// Let ContainerPassThrough handle the event
 				return;
 			}
 
@@ -82,7 +101,6 @@ public class Glue extends FunctionalRecipe {
 			}
 		}
 
-		ItemStack tool = ItemUtils.getTool(player, getCustomMaterial());
 		if (Nullables.isNullOrAir(tool)) {
 			return;
 		}
@@ -97,9 +115,39 @@ public class Glue extends FunctionalRecipe {
 		}
 
 		event.setCancelled(true);
+		glue(itemFrame, player, tool);
+	}
+
+	private void glue(ItemFrame itemFrame, Player player, ItemStack glue) {
 		NBT.modifyPersistentData(itemFrame, nbt -> {
 			nbt.setBoolean(NBT_KEY, true);
 		});
-		ItemUtils.subtract(player, tool);
+		ItemUtils.subtract(player, glue);
+
+		new SoundBuilder(Sound.ITEM_HONEYCOMB_WAX_ON).location(itemFrame).play();
+
+		BlockFace facing = itemFrame.getAttachedFace();
+		Location frameLoc = itemFrame.getLocation().toCenterLocation();
+		frameLoc.add(facing.getModX() * 0.4, facing.getModY() * 0.4, facing.getModZ() * 0.4);
+
+		new ParticleBuilder(Particle.COMPOSTER).location(frameLoc)
+			.offset(0.2, 0.2, 0.2).extra(0.1).count(7).spawn();
+	}
+
+	private static final Set<EntityType> passthroughEntities = Set.of(EntityType.PAINTING, EntityType.ITEM_FRAME);
+
+	private static boolean canOpenContainer(Player player) {
+		RayTraceResult result = player.rayTraceBlocks(5.0, FluidCollisionMode.NEVER);
+		if (result == null || result.getHitBlock() == null || !(result.getHitBlock().getState() instanceof Container)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private static boolean shouldRotate(PlayerInteractEntityEvent event) {
+		return event.getPlayer().isSneaking()
+			|| !passthroughEntities.contains(event.getRightClicked().getType())
+			|| event.getHand() == EquipmentSlot.OFF_HAND;
 	}
 }
