@@ -71,9 +71,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
+@SuppressWarnings("unused")
 public class FallingBlocks extends TeamlessMechanic {
 
-	ProtectedRegion ceilingRg;
+	ProtectedRegion ceilingWinRg;
 	ProtectedRegion blocksRg;
 
 	@Getter
@@ -109,7 +110,7 @@ public class FallingBlocks extends TeamlessMechanic {
 		super.onInitialize(event);
 		Match match = event.getMatch();
 		clearArena(match, null);
-		ceilingRg = match.getArena().getProtectedRegion("ceiling");
+		ceilingWinRg = match.getArena().getProtectedRegion("ceiling");
 		blocksRg = match.getArena().getProtectedRegion("blocks");
 	}
 
@@ -172,7 +173,7 @@ public class FallingBlocks extends TeamlessMechanic {
 		// falling blocks
 		match.getTasks().repeat(0, TickTime.TICK.x(3), () -> {
 			for (Minigamer minigamer : match.getAliveMinigamers()) {
-				if (minigamer.isDead()) // Race condition
+				if (minigamer.isDead())
 					continue;
 
 				final Location location = minigamer.getLocation();
@@ -319,7 +320,7 @@ public class FallingBlocks extends TeamlessMechanic {
 		if (!minigamer.isPlaying(this))
 			return;
 
-		if (event.getRegion().getId().contains(ceilingRg.getId())) {
+		if (event.getRegion().getId().contains(ceilingWinRg.getId())) {
 			minigamer.scored();
 			minigamer.getMatch().end();
 		}
@@ -513,16 +514,16 @@ public class FallingBlocks extends TeamlessMechanic {
 			Collections.shuffle(swapList);
 
 			if (swapList.size() % 2 != 0) {
-				Minigamer a = swapList.remove(0);
-				Minigamer b = swapList.remove(0);
-				Minigamer c = swapList.remove(0);
+				Minigamer a = swapList.removeFirst();
+				Minigamer b = swapList.removeFirst();
+				Minigamer c = swapList.removeFirst();
 
 				swapPlaces(a, b, c);
 			}
 
 			while (!swapList.isEmpty()) {
-				Minigamer a = swapList.remove(0);
-				Minigamer b = swapList.remove(0);
+				Minigamer a = swapList.removeFirst();
+				Minigamer b = swapList.removeFirst();
 
 				swapPlaces(a, b);
 			}
@@ -577,13 +578,14 @@ public class FallingBlocks extends TeamlessMechanic {
 			Match match = minigamer.getMatch();
 			FallingBlocksMatchData matchData = match.getMatchData();
 			for (Minigamer _minigamer : match.getAliveMinigamers()) {
-				if (_minigamer != minigamer) {
-					matchData.thickLines.add(_minigamer);
-					effectSound(_minigamer);
-					_minigamer.tell("&c" + minigamer.getNickname() + " has thickened your line for 5s!");
+				if (_minigamer.getUniqueId().equals(minigamer.getUniqueId()))
+					continue;
 
-					match.getTasks().wait(TickTime.SECOND.x(5), () -> matchData.thickLines.remove(_minigamer));
-				}
+				matchData.thickLines.add(_minigamer);
+				effectSound(_minigamer);
+				_minigamer.tell("&c" + minigamer.getNickname() + " has thickened your line for 5s!");
+
+				match.getTasks().wait(TickTime.SECOND.x(5), () -> matchData.thickLines.remove(_minigamer));
 			}
 
 			minigamer.tell("&aYou thickened other's lines!");
@@ -608,29 +610,20 @@ public class FallingBlocks extends TeamlessMechanic {
 
 	@Getter
 	@AllArgsConstructor
-	private enum Axis {
-		X(1),
-		Z(1),
-		X_NEG(-1),
-		Z_NEG(-1);
+	public enum Axis {
+		X, Z;
 
-		final int value;
-
-		private int getMin(ProtectedRegion region) {
+		public int getMin(ProtectedRegion region) {
 			return switch (this) {
 				case X -> region.getMinimumPoint().getBlockX();
 				case Z -> region.getMinimumPoint().getBlockZ();
-				case X_NEG -> region.getMaximumPoint().getBlockX();
-				case Z_NEG -> region.getMaximumPoint().getBlockZ();
 			};
 		}
 
-		private int getMax(ProtectedRegion region) {
+		public int getMax(ProtectedRegion region) {
 			return switch (this) {
 				case X -> region.getMaximumPoint().getBlockX();
 				case Z -> region.getMaximumPoint().getBlockZ();
-				case X_NEG -> region.getMinimumPoint().getBlockX();
-				case Z_NEG -> region.getMinimumPoint().getBlockZ();
 			};
 		}
 	}
@@ -649,7 +642,6 @@ public class FallingBlocks extends TeamlessMechanic {
 			Axis axis = RandomUtils.randomElement(Axis.values());
 			AtomicInteger min = new AtomicInteger(axis.getMin(blocksRg));
 			AtomicInteger max = new AtomicInteger(axis.getMax(blocksRg));
-			int value = axis.getValue();
 
 			match.broadcast("&bA layer is being added by " + minigamer.getNickname() + "! (" + axis.name() + ")");
 			matchData.addLayerTask.add(match.getTasks().repeat(0, TickTime.TICK.x(5), () -> {
@@ -661,8 +653,8 @@ public class FallingBlocks extends TeamlessMechanic {
 
 					boolean spawnBlock = false;
 					switch (axis) {
-						case X, X_NEG -> spawnBlock = block.getX() == min.get();
-						case Z, Z_NEG -> spawnBlock = block.getZ() == min.get();
+						case X -> spawnBlock = block.getX() == min.get();
+						case Z -> spawnBlock = block.getZ() == min.get();
 					}
 
 					if (spawnBlock) {
@@ -671,17 +663,12 @@ public class FallingBlocks extends TeamlessMechanic {
 					}
 				}
 
-				if (min.addAndGet(value) >= max.get()) {
-					cancelLayerTask(match);
+				if (min.addAndGet(1) >= max.get()) {
+					match.getTasks().cancel(matchData.addLayerTask.getFirst());
 				}
 			}));
 		}
 	);
-
-	private void cancelLayerTask(Match match) {
-		FallingBlocksMatchData matchData = match.getMatchData();
-		match.getTasks().cancel(matchData.addLayerTask.get(0));
-	}
 
 	PowerUpUtils.PowerUp MORE_POWERUPS = new PowerUpUtils.PowerUp("&bSpawn More PowerUps", null,
 		new ItemBuilder(Material.COOKIE).glow().build(),
@@ -831,7 +818,7 @@ public class FallingBlocks extends TeamlessMechanic {
 					return;
 				}
 
-				if (!worldguard.isInRegion(block.getLocation(), ceiling)) {
+				if (!worldguard.isInRegion(block.getLocation(), blocksRg)) {
 					return;
 				}
 
