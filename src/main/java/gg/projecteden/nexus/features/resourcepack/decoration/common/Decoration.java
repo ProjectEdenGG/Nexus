@@ -207,6 +207,11 @@ public class Decoration {
 			return canEdit;
 		}
 
+		if (this.getOrigin() == null) {
+			// Only seems to occur if the decoration is clientside, thus always return false
+			return setCanEdit(false);
+		}
+
 		boolean isWGEdit = WorldGuardEditCommand.canWorldGuardEdit(player);
 		boolean isInRegion = !new WorldGuardUtils(player).getRegionsAt(this.getOrigin()).isEmpty();
 
