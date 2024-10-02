@@ -37,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
@@ -283,7 +284,52 @@ public class Koda {
 					respond(event, StaticChannel.LOCAL.getChannel(), "[player], you are lagging (" + ping + "ms), not the server. Try relogging or rebooting your router.");
 				}
 				break;
+			case "jokes":
+				if (sentJokes.size() == JOKES.size())
+					sentJokes.clear();
+
+				Map<String, Integer> joke = RandomUtils.randomElement(JOKES);
+				String firstLine = joke.keySet().stream().toList().getFirst();
+				int SAFETY = 0;
+				while (sentJokes.contains(firstLine)) {
+					joke = RandomUtils.randomElement(JOKES);
+					firstLine = joke.keySet().stream().toList().getFirst();
+
+					if (SAFETY++ > 100)
+						sentJokes.clear();
+				}
+
+				sentJokes.add(firstLine);
+
+				for (String line : joke.keySet()) {
+					int waitSeconds = joke.get(line);
+					if (waitSeconds == 0 && line.equalsIgnoreCase("MOCK")) {
+						respond(event, StringUtils.randomizeCase(event.getMessage()));
+						Tasks.wait(TickTime.SECOND.x(2), () -> respond(event, "I'm not your personal jester"));
+						return;
+					}
+
+					Tasks.wait(TickTime.SECOND.x(waitSeconds), () -> respond(event, line));
+				}
 		}
 	}
+
+	private static final List<String> sentJokes = new ArrayList<>();
+
+	private static final List<Map<String, Integer>> JOKES = new ArrayList<>() {{
+		add(Map.of("MOCK", 0));
+		add(Map.of("Your face", 0));
+		add(Map.of("Your life", 0));
+		add(Map.of("Your existence", 0));
+		add(Map.of("Look in the mirror", 0));
+		add(Map.of("Today at the bank, an old lady asked me to help check her balance.", 0, "So I pushed her over", 2));
+		add(Map.of("Don’t trust anything atoms say", 0, "They make up everything", 2));
+		add(Map.of("Why do dolphins sing off-key?", 0, "Because you can't tuna fish", 4));
+		add(Map.of("I once met a giant. I didn't know what to say.", 0, "So I just used big words", 4));
+		add(Map.of("What do bees use to fix their hair?", 0, "Honeycombs!", 4));
+		add(Map.of("If there was ever a Minecraft movie, then it would be a blockbuster", 0));
+		add(Map.of("What is a witch's favorite subject at school?", 0, "Spelling!", 4));
+		add(Map.of("What do you get when you drop a piano into a mine shaft?", 0, "A Flat Miner", 4));
+	}};
 
 }

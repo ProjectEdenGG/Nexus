@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -274,6 +275,16 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 			return "&atrue";
 		else
 			return "&cfalse";
+	}
+
+	public static String randomizeCase(String message) {
+		Random rnd = new Random();
+		StringBuilder sb = new StringBuilder(message.length());
+
+		for (char c : message.toCharArray())
+			sb.append(rnd.nextBoolean() ? Character.toLowerCase(c) : Character.toUpperCase(c));
+
+		return sb.toString();
 	}
 
 	@Builder(buildMethodName = "_build")
