@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
@@ -27,7 +28,7 @@ public class FeedCommand extends CustomCommand {
 		player.setFoodLevel(20);
 		player.setSaturation(10);
 		player.setExhaustion(0);
-		send(PREFIX + "Fed " + player.getName());
+		send(PREFIX + "Fed " + Nickname.of(player));
 	}
 
 }

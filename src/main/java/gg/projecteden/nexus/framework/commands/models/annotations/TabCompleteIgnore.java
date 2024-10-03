@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * Hides a subcommand from tab-completion unless they have a required permission node
  */
-@Target(ElementType.METHOD)
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TabCompleteIgnore {
 	/**

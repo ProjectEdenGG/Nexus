@@ -19,6 +19,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Fallback;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.commands.models.events.CommandRunEvent;
@@ -87,7 +88,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
+import java.awt.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -975,7 +976,7 @@ public abstract class CustomCommand extends ICustomCommand {
 				.filter(customMaterial -> {
 					try {
 						Field field = CustomMaterial.class.getField(customMaterial.name());
-						if (field.isAnnotationPresent(Disabled.class) || field.isAnnotationPresent(Deprecated.class))
+						if (field.isAnnotationPresent(Disabled.class) || field.isAnnotationPresent(Deprecated.class) || field.isAnnotationPresent(TabCompleteIgnore.class))
 							return false;
 					} catch (Exception ignored) {
 					}
