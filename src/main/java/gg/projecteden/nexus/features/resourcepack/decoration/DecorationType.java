@@ -45,9 +45,12 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.LongCha
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Stump;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.BedAddition;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.BedAddition.AdditionType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Edible;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Edible.EdibleType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Mailbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.TrashCan;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Waystone;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Well;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.WorkBench;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Block;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.CeilingThing;
@@ -578,7 +581,7 @@ public enum DecorationType {
 	BED_SLEEPING_BAG(new DyeableFloorThing(false, "Sleeping Bag", CustomMaterial.BED_SLEEPING_BAG, ColorableType.DYE)),
 
 	@TypeConfig(money = 165, tokens = 16, theme = Theme.OUTDOORS)
-	WELL(new DyeableFloorThing(false, "Well", CustomMaterial.WELL, ColorableType.STAIN, HitboxFloor._1x2V)),
+	WELL(new Well(false, "Well", CustomMaterial.WELL, ColorableType.STAIN, HitboxFloor._1x2V)),
 
 
 	// 	------------------------------------------------------------------------------------------------------
@@ -1801,6 +1804,25 @@ public enum DecorationType {
 	PAPER_LANTERN_TRIPLE(new CeilingThing(false, "Paper Lanterns - Triple", CustomMaterial.PAPER_LANTERN_TRIPLE, HitboxUnique.PAPER_LANTERN_3V)),
 
 // 	------------------------------------------------------------------------------------------------------
+//											EDIBLE
+// 	------------------------------------------------------------------------------------------------------
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	ROAST_CHICKEN(new Edible(EdibleType.ROAST_CHICKEN, CustomMaterial.ROAST_CHICKEN_STAGE_0, 0)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	ROAST_CHICKEN_1(new Edible(EdibleType.ROAST_CHICKEN, CustomMaterial.ROAST_CHICKEN_STAGE_1, 1)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	ROAST_CHICKEN_2(new Edible(EdibleType.ROAST_CHICKEN, CustomMaterial.ROAST_CHICKEN_STAGE_2, 2)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	ROAST_CHICKEN_3(new Edible(EdibleType.ROAST_CHICKEN, CustomMaterial.ROAST_CHICKEN_STAGE_3, 3)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	ROAST_CHICKEN_4(new Edible(EdibleType.ROAST_CHICKEN, CustomMaterial.ROAST_CHICKEN_STAGE_4, 4)),
+
+// 	------------------------------------------------------------------------------------------------------
 //										INTERNAL USE ONLY
 // 	------------------------------------------------------------------------------------------------------
 
@@ -1941,7 +1963,7 @@ public enum DecorationType {
 			if (typeConfig != null && typeConfig.tabs().length != 0) {
 				List<Tab> tabs = new ArrayList<>(List.of(typeConfig.tabs()));
 
-				tab = tabs.remove(0);
+				tab = tabs.removeFirst();
 				subTabs.addAll(tabs);
 			}
 

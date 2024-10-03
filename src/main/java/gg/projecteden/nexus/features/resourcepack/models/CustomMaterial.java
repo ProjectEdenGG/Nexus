@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.models;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import lombok.AllArgsConstructor;
@@ -168,10 +169,17 @@ public enum CustomMaterial {
 	HANDLE_ALL(Material.PAPER, 2066),
 	GLUE(Material.PAPER, 5909),
 
+	// @formatter:off
+	@TabCompleteIgnore ROAST_CHICKEN_STAGE_0(Material.PAPER, 8600),
+	@TabCompleteIgnore ROAST_CHICKEN_STAGE_1(Material.PAPER, 8601),
+	@TabCompleteIgnore ROAST_CHICKEN_STAGE_2(Material.PAPER, 8602),
+	@TabCompleteIgnore ROAST_CHICKEN_STAGE_3(Material.PAPER, 8603),
+	@TabCompleteIgnore ROAST_CHICKEN_STAGE_4(Material.PAPER, 8604),
+	ROAST_CHICKEN_SERVING(Material.COOKIE, 501),
+	// @formatter:on
 
 	TRASH_CAN(Material.LEATHER_HORSE_ARMOR, 100),
 	TRASH_BAG(Material.PAPER, 6237),
-
 	AMPLIFIER(Material.PAPER, 30000),
 	GOLDEN_RECORD(Material.PAPER, 30001),
 	SPEAKER_LARGE(Material.PAPER, 30002),

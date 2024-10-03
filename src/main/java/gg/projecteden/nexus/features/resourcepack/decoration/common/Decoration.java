@@ -160,20 +160,22 @@ public class Decoration {
 			}
 		}
 
-		if (!canEdit(player)) {
-			if (!DecorationCooldown.LOCKED.isOnCooldown(player, TickTime.SECOND.x(2)))
-				DecorationError.LOCKED.send(player);
-			DecorationLang.debug(player, "locked decoration (destroy)");
-
-			return false;
-		}
-
 		if (DecorationEntityData.of(itemFrame).isProcessDestroy())
 			return false;
 
 		DecorationDestroyEvent destroyEvent = new DecorationDestroyEvent(player, decoration);
 		if (!destroyEvent.callEvent())
 			return false;
+
+		if (!destroyEvent.isIgnoreLocked()) {
+			if (!canEdit(player)) {
+				if (!DecorationCooldown.LOCKED.isOnCooldown(player, TickTime.SECOND.x(2)))
+					DecorationError.LOCKED.send(player);
+				DecorationLang.debug(player, "locked decoration (destroy)");
+
+				return false;
+			}
+		}
 
 		DecorationEntityData.of(itemFrame).setProcessDestroy(true);
 
@@ -191,8 +193,14 @@ public class Decoration {
 		Hitbox.destroy(decoration, finalFace, player);
 
 		Location origin = decoration.getOrigin();
-		if (!player.getGameMode().equals(GameMode.CREATIVE))
-			player.getWorld().dropItemNaturally(origin, decoration.getItemDrop(debugger));
+		if (!destroyEvent.getDrops().isEmpty()) {
+			if (!player.getGameMode().equals(GameMode.CREATIVE)) {
+				for (ItemStack item : destroyEvent.getDrops()) {
+					player.getWorld().dropItemNaturally(origin, item);
+				}
+			}
+
+		}
 
 		DecorationUtils.getSoundBuilder(config.getBreakSound()).location(origin).play();
 		itemFrame.remove();

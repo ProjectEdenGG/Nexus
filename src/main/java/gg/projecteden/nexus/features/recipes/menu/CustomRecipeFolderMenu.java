@@ -42,9 +42,13 @@ public class CustomRecipeFolderMenu extends ICustomRecipesMenu {
 
 		if (type == null) {
 			for (RecipeType type : RecipeType.getEnabled()) {
-				if (type.isFolder())
+
+				if (type.isFolder()) {
+					if (type.getRecipes().isEmpty())
+						continue;
+
 					items.add(ClickableItem.of(type.getItem(), e -> new CustomRecipeFolderMenu(type, this).open(viewer)));
-				else
+				} else
 					items.add(ClickableItem.of(type.getItem(), e -> getMenu(type.getRecipes().get(0)).open(viewer)));
 			}
 		} else {

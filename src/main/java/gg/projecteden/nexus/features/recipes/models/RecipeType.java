@@ -20,6 +20,7 @@ import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 @Getter
 @RequiredArgsConstructor
 public enum RecipeType {
+	FOOD(Material.COOKED_BEEF),
 	FUNCTIONAL(Material.CHEST),
 	BACKPACKS(CustomMaterial.BACKPACK_3D_BASIC),
 	FURNACE(Material.FURNACE),

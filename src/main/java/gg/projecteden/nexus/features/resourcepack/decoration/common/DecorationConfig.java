@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
+import de.tr7zw.nbtapi.NBT;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationTagType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
@@ -51,6 +52,7 @@ import static gg.projecteden.nexus.utils.PlayerUtils.sendLine;
 
 @Data
 public class DecorationConfig {
+	public static final String NBT_DECORATION_KEY = "DecorationFrame";
 	public static final String NBT_OWNER_KEY = "DecorationOwner";
 	public static final String NBT_DECOR_NAME = "DecorationName";
 
@@ -422,6 +424,10 @@ public class DecorationConfig {
 			_itemFrame.setSilent(true);
 			_itemFrame.setItem(finalItem, false);
 		});
+		NBT.modifyPersistentData(itemFrame, nbt -> {
+			nbt.setBoolean(NBT_DECORATION_KEY, true);
+		});
+
 		decoration.setItemFrame(itemFrame);
 
 		BlockFace placeFace = frameRotation.getBlockFace();

@@ -7,7 +7,9 @@ import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.TypeConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
+import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Tab;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreCurrencyType;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreManager;
@@ -42,6 +44,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -467,9 +470,20 @@ public class DecorationCommand extends CustomCommand {
 	@TabCompleterFor(DecorationConfig.class)
 	List<String> tabCompleteDecorationConfig(String filter) {
 		return DecorationConfig.getALL_DECOR_CONFIGS().stream()
-				.map(DecorationConfig::getId)
-				.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
-				.collect(Collectors.toList());
+			.filter(config -> {
+				DecorationType type = DecorationType.of(config);
+				if (type == null)
+					return true;
+
+				TypeConfig typeConfig = type.getTypeConfig();
+				if (typeConfig == null || typeConfig.tabs().length == 0)
+					return true;
+
+				return Arrays.stream(typeConfig.tabs()).toList().getLast() != Tab.INTERNAL;
+			})
+			.map(DecorationConfig::getId)
+			.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
+			.collect(Collectors.toList());
 	}
 
 }
