@@ -94,7 +94,7 @@ public class DecorationConfig {
 			this.rotatable = false;
 		}
 
-		if (this.hitboxes.size() == 1 && this.hitboxes.get(0).getMaterial() != Material.BARRIER)
+		if (this.hitboxes.size() == 1 && this.hitboxes.getFirst().getMaterial() != Material.BARRIER)
 			this.rotatable = true;
 
 		DecorationTagType.setLore(this);
@@ -491,7 +491,7 @@ public class DecorationConfig {
 		sendLine(player);
 
 		send(player, "&3Inherited Classes:");
-		for (String clazz : DecorationUtils.getInstancesOf(this)) {
+		for (String clazz : DecorationUtils.getSimpleNameInstancesOf(this)) {
 			send(player, " &e- " + clazz);
 		}
 		sendLine(player);

@@ -38,7 +38,7 @@ public class CreativeBrushMenu extends InventoryProvider implements IDyeMenu {
 		.lore("&eSneak&3+&eRClick &3to dye the brush")
 		.lore("&eRClick &3decoration to dye it")
 		.lore("&eLClick &3decoration to copy the color")
-		.lore(DecorationTagType.TOOL.getLore())
+		.lore(DecorationTagType.TOOL.getTags())
 		.dyeColor(ColorType.WHITE)
 		.glow()
 		.itemFlags(ItemBuilder.ItemFlags.HIDE_ALL);

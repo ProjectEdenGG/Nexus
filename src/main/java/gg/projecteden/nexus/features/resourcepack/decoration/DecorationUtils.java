@@ -167,12 +167,17 @@ public class DecorationUtils {
 		return directions.get(index);
 	}
 
-	public static List<String> getInstancesOf(DecorationConfig config) {
+	public static Set<Class<?>> getInstancesOf(DecorationConfig config) {
 		Set<Class<?>> classes = new HashSet<>();
 		for (Class<? extends DecorationConfig> clazz : ReflectionUtils.superclassesOf(config.getClass())) {
 			classes.add(clazz);
 			classes.addAll(List.of(clazz.getInterfaces()));
 		}
+		return classes;
+	}
+
+	public static List<String> getSimpleNameInstancesOf(DecorationConfig config) {
+		Set<Class<?>> classes = getInstancesOf(config);
 
 		List<String> result = new ArrayList<>();
 		for (Class<?> clazz : classes)

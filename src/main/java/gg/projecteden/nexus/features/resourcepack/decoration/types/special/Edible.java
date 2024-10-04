@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.CraftableDecoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.MultiState;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
@@ -46,9 +47,10 @@ public class Edible extends DecorationConfig implements MultiState, CraftableDec
 	public Edible(EdibleType edibleType, CustomMaterial stageMaterial, int stage) {
 		super(false, edibleType.getName(), stageMaterial);
 		this.breakSound = Sound.BLOCK_WOOD_BREAK.getKey().getKey();
-		;
+
 		this.edibleType = edibleType;
 		this.stage = stage;
+		this.disabledPlacements = PlacementType.FLOOR.getDisabledPlacements();
 
 		if (this.stage > edibleType.getMaxServings())
 			throw new InvalidInputException("Edible Decoration: " + name + " stage must be <= EdibleType#maxServings!");

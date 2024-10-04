@@ -34,7 +34,7 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 
 	private static final ItemBuilder WORKBENCH = new ItemBuilder(CustomMaterial.DYE_STATION)
 		.name("Dye Station")
-		.lore(DecorationTagType.INTERACTABLE.getLore());
+		.lore(DecorationTagType.INTERACTABLE.getTags());
 
 	public static ItemBuilder getWorkbench() {
 		return WORKBENCH.clone();
@@ -43,7 +43,7 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 	private static final ItemBuilder MAGIC_DYE = new ItemBuilder(ChoiceType.DYE.getBottleMaterial())
 		.name(Gradient.of(List.of(ChatColor.RED, ChatColor.YELLOW, ChatColor.AQUA)).apply("Magic Dye"))
 		.lore(USAGE_LORE, USES_LORE + MAX_USES)
-		.lore(DecorationTagType.TOOL.getLore());
+		.lore(DecorationTagType.TOOL.getTags());
 
 	public static ItemBuilder getMagicDye() {
 		return MAGIC_DYE.clone();
@@ -52,7 +52,7 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 	private static final ItemBuilder MAGIC_STAIN = new ItemBuilder(ChoiceType.STAIN.getBottleMaterial())
 		.name(Gradient.of(List.of(ChatColor.of("#e0a175"), ChatColor.of("#5c371d"))).apply("Magic Stain"))
 		.lore(USAGE_LORE, USES_LORE + MAX_USES)
-		.lore(DecorationTagType.TOOL.getLore());
+		.lore(DecorationTagType.TOOL.getTags());
 
 	public static ItemBuilder getMagicStain() {
 		return MAGIC_STAIN.clone();
@@ -61,7 +61,7 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 	private static final ItemBuilder MAGIC_MINERAL = new ItemBuilder(ChoiceType.MINERAL.getBottleMaterial())
 		.name(Gradient.of(List.of(ChatColor.of("#6A6A6A"), ChatColor.of("#D37A5A"), ChatColor.of("#E1C16E"))).apply("Magic Mineral"))
 		.lore(USAGE_LORE, USES_LORE + MAX_USES)
-		.lore(DecorationTagType.TOOL.getLore());
+		.lore(DecorationTagType.TOOL.getTags());
 
 	public static ItemBuilder getMagicMineral() {
 		return MAGIC_MINERAL.clone();
@@ -74,7 +74,7 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 		.lore("&3How to use:")
 		.lore("&eDye &3this brush in the dye station")
 		.lore("&eRClick &3decoration to dye it")
-		.lore(DecorationTagType.TOOL.getLore())
+		.lore(DecorationTagType.TOOL.getTags())
 		.dyeColor(ColorType.WHITE)
 		.itemFlags(ItemBuilder.ItemFlags.HIDE_ALL);
 

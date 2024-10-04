@@ -192,7 +192,7 @@ public class DecorationCommand extends CustomCommand {
 		Map<String, Integer> configInstanceSizeMap = new HashMap<>();
 		Map<String, Integer> instanceMap = new HashMap<>();
 		for (DecorationConfig config : DecorationConfig.getALL_DECOR_CONFIGS()) {
-			var clazzes = DecorationUtils.getInstancesOf(config);
+			var clazzes = DecorationUtils.getSimpleNameInstancesOf(config);
 			configInstanceMap.put(config.getId(), clazzes);
 			configInstanceSizeMap.put(config.getId(), clazzes.size());
 

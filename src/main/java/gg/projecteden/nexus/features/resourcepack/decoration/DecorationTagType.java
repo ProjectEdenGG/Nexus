@@ -7,7 +7,9 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.I
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Seat;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Toggleable;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.NoiseMaker;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Edible;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NonNull;
 
 import java.util.ArrayList;
@@ -15,17 +17,21 @@ import java.util.List;
 
 @AllArgsConstructor
 public enum DecorationTagType {
-	SEAT("谣"),
-	PLAYABLE("麒"),
-	CRAFTABLE("殷"),
-	TOGGLEABLE("腈"),
-	INTERACTABLE("晖"),
-	ADDITION("香"),
+	SEAT(Seat.class, "谣"),
+	PLAYABLE(NoiseMaker.class, "麒"),
+	CRAFTABLE(CraftableDecoration.class, "殷"),
+	EDIBLE(Edible.class, "诐"),
+	TOGGLEABLE(Toggleable.class, "腈"),
+	INTERACTABLE(Interactable.class, "晖"),
+	ADDITION(Addition.class, "香"),
 	//
-	TOOL("鼬"),
+	DECORATION(DecorationConfig.class, "策"),
 	//
-	DECORATION("策");
+	TOOL(null, "鼬"),
+	;
 
+	@Getter
+	final Class<?> clazz;
 	final String tag;
 
 	private String getTag() {
@@ -46,29 +52,47 @@ public enum DecorationTagType {
 			lore.addAll(preLore);
 		}
 
-		lore.addAll(getLore(config));
+		lore.addAll(getApplicableTags(config));
 		config.setLore(lore);
 	}
 
-	public List<String> getLore() {
+	private static final List<DecorationTagType> INTERACTABLE_SUB_TAGS = List.of(PLAYABLE, TOGGLEABLE, SEAT);
+	private static final List<DecorationTagType> IGNORED_TAGS = List.of(DecorationTagType.DECORATION, DecorationTagType.TOOL);
+
+	private static List<String> getApplicableTags(DecorationConfig config) {
+		if (config == null)
+			return new ArrayList<>();
+
+		List<String> applicableTags = new ArrayList<>(List.of(DECORATION.getTag()));
+		for (DecorationTagType tag : values()) {
+			if (IGNORED_TAGS.contains(tag))
+				continue;
+
+			if (INTERACTABLE_SUB_TAGS.contains(tag))
+				continue;
+
+			// Don't want to show interactable tag and its subtype tag
+			if (tag == INTERACTABLE && config instanceof Interactable interactable) {
+				switch (interactable) {
+					case NoiseMaker noiseMaker -> applicableTags.addFirst(PLAYABLE.getTag());
+					case Toggleable toggleable -> applicableTags.addFirst(TOGGLEABLE.getTag());
+					case Seat seat -> applicableTags.addFirst(SEAT.getTag());
+					default -> applicableTags.addFirst(INTERACTABLE.getTag());
+				}
+				continue;
+			}
+
+			if (DecorationUtils.getInstancesOf(config).contains(tag.getClazz()))
+				applicableTags.addFirst(tag.getTag());
+		}
+
+		return applicableTags;
+	}
+
+	public List<String> getTags() {
 		if (this == DECORATION)
 			return List.of(DECORATION.getTag());
 
 		return List.of(this.getTag(), DECORATION.getTag());
-	}
-
-	private static List<String> getLore(DecorationConfig config) {
-		if (config == null)
-			return new ArrayList<>();
-
-		return switch (config) {
-			case Seat $0 -> SEAT.getLore();
-			case NoiseMaker $1 -> PLAYABLE.getLore();
-			case CraftableDecoration $2 -> CRAFTABLE.getLore();
-			case Toggleable $3 -> TOGGLEABLE.getLore();
-			case Interactable $4 -> INTERACTABLE.getLore();
-			case Addition $5 -> ADDITION.getLore();
-			default -> DECORATION.getLore();
-		};
 	}
 }
