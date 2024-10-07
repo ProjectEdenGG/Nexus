@@ -124,7 +124,7 @@ public interface ICustomNoteBlock extends ICustomBlock {
 	}
 
 	@Override
-	default BlockData getBlockData(@Nullable BlockFace facing, Block underneath) {
+	default BlockData getBlockData(@Nullable BlockFace facing, @Nullable Block underneath) {
 		NoteBlock noteBlock = (NoteBlock) this.getVanillaBlockMaterial().createBlockData();
 		noteBlock.setInstrument(this.getNoteBlockInstrument());
 		noteBlock.setNote(this.getNoteBlockNote(facing));
@@ -142,7 +142,7 @@ public interface ICustomNoteBlock extends ICustomBlock {
 	}
 
 	@Override
-	default boolean equals(@NotNull BlockData blockData, @Nullable BlockFace facing, @NonNull Block underneath) {
+	default boolean equals(@NotNull BlockData blockData, @Nullable BlockFace facing, @Nullable Block underneath) {
 		if (!(blockData instanceof NoteBlock noteBlock))
 			return false;
 

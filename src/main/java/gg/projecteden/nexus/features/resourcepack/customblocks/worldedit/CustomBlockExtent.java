@@ -11,7 +11,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.entity.Player;
 
 public class CustomBlockExtent extends AbstractDelegateExtent {
 	protected final EditSessionEvent event;
@@ -33,22 +32,23 @@ public class CustomBlockExtent extends AbstractDelegateExtent {
 			previousCustomBlock.breakBlock(null, null, location, true, false, 0, false, false);
 		}
 
-		if (CustomBlockParser.isCustomBlockType(block.getBlockType())) {
-			if (setCustomBlock(location, block))
-				return true;
-		}
+		if (CustomBlockParser.isCustomBlockType(block.getBlockType()))
+			setCustomBlock(location, block);
 
 		return super.setBlock(x, y, z, block);
 	}
 
 
 	private boolean setCustomBlock(Location location, BlockStateHolder<?> block) {
-		BlockData blockData = BukkitAdapter.adapt(block);
-		CustomBlock customBlock = CustomBlock.from(blockData, null);
-		if (customBlock == null)
+		if (block == null)
 			return false;
 
-		if (!customBlock.placeBlock((Player) event.getActor(), location.getBlock(), null, BlockFace.UP, null))
+		BlockData blockData = BukkitAdapter.adapt(block);
+		if (blockData == null)
+			return false;
+
+		CustomBlock customBlock = CustomBlock.from(blockData, null);
+		if (customBlock == null)
 			return false;
 
 		CustomBlockUtils.placeBlockDatabaseAsServer(customBlock, location, BlockFace.UP);

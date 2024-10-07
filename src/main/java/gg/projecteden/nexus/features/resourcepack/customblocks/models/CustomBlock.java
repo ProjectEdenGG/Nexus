@@ -182,7 +182,6 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.bukkit.GameMode;
 import org.bukkit.Keyed;
@@ -515,7 +514,10 @@ public enum CustomBlock implements Keyed {
 		return from(block.getBlockData(), block.getRelative(BlockFace.DOWN));
 	}
 
-	public static @Nullable CustomBlock from(@NonNull BlockData blockData, Block underneath) {
+	public static @Nullable CustomBlock from(BlockData blockData, Block underneath) {
+		if (blockData == null)
+			return null;
+
 		if (blockData instanceof org.bukkit.block.data.type.NoteBlock noteBlock) {
 			List<CustomBlock> directional = new ArrayList<>();
 			for (CustomBlock customBlock : getBy(CustomBlockType.NOTE_BLOCK)) {

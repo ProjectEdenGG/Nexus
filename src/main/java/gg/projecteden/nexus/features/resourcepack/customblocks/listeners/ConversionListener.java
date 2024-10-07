@@ -4,6 +4,7 @@ import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
+import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksLang;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock.CustomBlockType;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.ICustomTripwire;
@@ -78,7 +79,10 @@ public class ConversionListener implements Listener {
 					CustomBlockUtils.createData(location, CustomBlock.NOTE_BLOCK, BlockFace.UP);
 					block.setBlockData(CustomBlock.NOTE_BLOCK.get().getBlockData(BlockFace.UP, below), false);
 
-					IOUtils.fileAppend("customblocks", "Creating CustomBlock NoteBlockData at " + StringUtils.getShortLocationString(location));
+					String logMessage = "Creating CustomBlock NoteBlockData at " + StringUtils.getShortLocationString(location);
+
+					CustomBlocksLang.debug(logMessage);
+					IOUtils.fileAppend("customblocks", logMessage);
 				}
 				case TRIPWIRE -> {
 					if (ICustomTripwire.isNotEnabled())
@@ -92,7 +96,10 @@ public class ConversionListener implements Listener {
 					CustomBlockUtils.createData(location, CustomBlock.TRIPWIRE, facing);
 					block.setBlockData(CustomBlock.TRIPWIRE.get().getBlockData(facing, below), false);
 
-					IOUtils.fileAppend("customblocks", "Creating CustomBlock TripwireData at " + StringUtils.getShortLocationString(location));
+					String logMessage = "Creating CustomBlock TripwireData at " + StringUtils.getShortLocationString(location);
+
+					CustomBlocksLang.debug(logMessage);
+					IOUtils.fileAppend("customblocks", logMessage);
 				}
 			}
 		}
