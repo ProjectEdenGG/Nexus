@@ -31,7 +31,6 @@ import java.util.Map;
 
 /*
 	TODO:
-		- Test World Conversion
 		- Release NoteBlock Custom Blocks
 		-
 		- Bugs:
@@ -64,7 +63,7 @@ public class CustomBlocks extends Feature {
 	public void onStart() {
 		CustomBlock.init();
 		new CustomBlockListener();
-		janitor();
+		startJanitor();
 
 //		WorldEditListener.register();
 	}
@@ -74,66 +73,68 @@ public class CustomBlocks extends Feature {
 //		WorldEditListener.unregister();
 	}
 
-	private static void janitor() {
-		Tasks.repeat(0, TickTime.MINUTE.x(3), () -> {
-			CustomBlocksLang.debug("&3CustomBlock Janitor:");
-			CustomBlockTrackerService trackerService = new CustomBlockTrackerService();
-			for (CustomBlockTracker tracker : new ArrayList<>(trackerService.getAll())) {
-				World world = tracker.getWorld();
-				if (world == null || world.getLoadedChunks().length == 0)
+	private static void startJanitor() {
+		Tasks.repeat(0, TickTime.MINUTE.x(3), CustomBlocks::janitor);
+	}
+
+	public static void janitor() {
+		CustomBlocksLang.debug("&3CustomBlock Janitor:");
+		CustomBlockTrackerService trackerService = new CustomBlockTrackerService();
+		for (CustomBlockTracker tracker : new ArrayList<>(trackerService.getAll())) {
+			World world = tracker.getWorld();
+			if (world == null || world.getLoadedChunks().length == 0)
+				continue;
+
+			Map<Location, CustomBlockData> locationMap = tracker.getLocationMap();
+			Map<Location, String> forRemoval = new HashMap<>();
+
+			for (Location location : locationMap.keySet()) {
+				if (!location.isChunkLoaded())
 					continue;
 
-				Map<Location, CustomBlockData> locationMap = tracker.getLocationMap();
-				Map<Location, String> forRemoval = new HashMap<>();
-
-				for (Location location : locationMap.keySet()) {
-					if (!location.isChunkLoaded())
-						continue;
-
-					Block block = location.getBlock();
-					if (Nullables.isNullOrAir(block)) {
-						forRemoval.put(location, "block is null or air");
-						continue;
-					}
-
-					if (!CustomBlockType.getBlockMaterials().contains(block.getType())) {
-						forRemoval.put(location, "block type is not a handled type");
-						continue;
-					}
-
-					CustomBlockData data = locationMap.get(location);
-
-					CustomBlock customBlock = CustomBlock.from(location.getBlock());
-					if (customBlock == null) {
-						forRemoval.put(location, "current block is not CustomBlock");
-						continue;
-					}
-
-					if (data.getCustomBlock() != customBlock)
-						forRemoval.put(location, "dbCustomBlock != blockCustomBlock");
-				}
-
-				if (forRemoval.isEmpty()) {
-					CustomBlocksLang.debug(" &3No entries to clean up in world: &e" + world.getName());
+				Block block = location.getBlock();
+				if (Nullables.isNullOrAir(block)) {
+					forRemoval.put(location, "block is null or air");
 					continue;
 				}
 
-				CustomBlocksLang.debug("");
-				CustomBlocksLang.debug(" &3Clearing up &e" + forRemoval.size() + " &3entries in world &e" + world.getName() + "&3...");
-				for (Location location : forRemoval.keySet()) {
-					tracker.remove(location);
-
-					String locationStr = StringUtils.getShortLocationString(location);
-					CustomBlocksLang.debug(new JsonBuilder("&3- ").group()
-							.next(StringUtils.getJsonLocation("&3&l[&e" + locationStr + "&3&l]", location.toCenterLocation())).hover("Click to teleport").group()
-							.next(" &3because &e" + forRemoval.get(location)).group()
-					);
+				if (!CustomBlockType.getBlockMaterials().contains(block.getType())) {
+					forRemoval.put(location, "block type is not a handled type");
+					continue;
 				}
 
-				trackerService.save(tracker);
-				CustomBlocksLang.debug("");
+				CustomBlockData data = locationMap.get(location);
+
+				CustomBlock customBlock = CustomBlock.from(location.getBlock());
+				if (customBlock == null) {
+					forRemoval.put(location, "current block is not CustomBlock");
+					continue;
+				}
+
+				if (data.getCustomBlock() != customBlock)
+					forRemoval.put(location, "dbCustomBlock != blockCustomBlock");
 			}
-		});
+
+			if (forRemoval.isEmpty()) {
+				CustomBlocksLang.debug(" &3No entries to clean up in world: &e" + world.getName());
+				continue;
+			}
+
+			CustomBlocksLang.debug("");
+			CustomBlocksLang.debug(" &3Clearing up &e" + forRemoval.size() + " &3entries in world &e" + world.getName() + "&3...");
+			for (Location location : forRemoval.keySet()) {
+				tracker.remove(location);
+
+				String locationStr = StringUtils.getShortLocationString(location);
+				CustomBlocksLang.debug(new JsonBuilder("&3- ").group()
+					.next(StringUtils.getJsonLocation("&3&l[&e" + locationStr + "&3&l]", location.toCenterLocation())).hover("Click to teleport").group()
+					.next(" &3because &e" + forRemoval.get(location)).group()
+				);
+			}
+
+			trackerService.save(tracker);
+			CustomBlocksLang.debug("");
+		}
 	}
 
 	@AllArgsConstructor

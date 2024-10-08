@@ -77,6 +77,9 @@ public class NoteBlockData {
 
 		noteBlockSound.play();
 
+		if (this.isInteracted())
+			this.setPowered(false);
+
 		this.setInteracted(false);
 	}
 }

@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.
 
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock;
 import lombok.NonNull;
@@ -21,7 +20,8 @@ import java.util.Set;
 public interface ICustomTripwire extends ICustomBlock {
 
 	static boolean isNotEnabled() {
-		return Nexus.getEnv() == Env.PROD;
+		return true;
+//		return Nexus.getEnv() == Env.PROD;
 	}
 
 	@Override

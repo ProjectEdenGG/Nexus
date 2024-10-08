@@ -34,7 +34,6 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.parchment.event.block.CustomBlockUpdateEvent;
-import net.coreprotect.event.CoreProtectPreLogBlockEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import org.bukkit.Instrument;
@@ -105,18 +104,6 @@ public class CustomBlockListener implements Listener {
 		boolean hasNeighborSignal = serverLevel.hasNeighborSignal(blockPos);
 		if (!isPowered && hasNeighborSignal) {
 			NoteBlockUtils.play(noteBlock, location, true);
-		}
-	}
-
-	@EventHandler
-	public void on(CoreProtectPreLogBlockEvent event) {
-		boolean isCustomBlock = event.getUser().endsWith("!");
-
-		if (isCustomBlock)
-			event.setUser(event.getUser().replace("!", ""));
-		else {
-			if (CustomBlockType.getBlockMaterials().contains(event.getType()))
-				event.setCancelled(true);
 		}
 	}
 

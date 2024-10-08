@@ -2,6 +2,8 @@ package gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.slotmach
 
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.annotations.Environments;
+import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.EdenEventGameConfig;
 import gg.projecteden.nexus.features.events.EdenEventSinglePlayerGame;
@@ -41,6 +43,7 @@ import java.util.Set;
 	world = "pugmas24",
 	playRegion = "pugmas24_slotmachine_play"
 )
+@Environments(Env.PROD)
 public class Pugmas24SlotMachine extends EdenEventSinglePlayerGame {
 	private static Pugmas24SlotMachine instance;
 

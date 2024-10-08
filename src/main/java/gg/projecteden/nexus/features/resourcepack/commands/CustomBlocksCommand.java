@@ -3,14 +3,19 @@ package gg.projecteden.nexus.features.resourcepack.commands;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.features.resourcepack.CustomContentUtils;
+import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksLang;
 import gg.projecteden.nexus.features.resourcepack.customblocks.customblockbreaking.BrokenBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.listeners.ConversionListener;
 import gg.projecteden.nexus.features.resourcepack.customblocks.menus.CustomBlockCreativeMenu;
 import gg.projecteden.nexus.features.resourcepack.customblocks.menus.CustomBlockSearchMenu;
 import gg.projecteden.nexus.features.resourcepack.customblocks.menus.CustomBlockTagMenu;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlockTab;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlockTag;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ICustomNoteBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -53,7 +58,7 @@ public class CustomBlocksCommand extends CustomCommand {
 			tracker = trackerService.fromWorld(location());
 	}
 
-	@Path("[tab]")
+	@Path("catalog [tab]")
 	@Description("Open the catalog menu")
 	void viewBlocks(@Arg("all") CustomBlockTab tab) {
 		checkPermissions();
@@ -106,6 +111,76 @@ public class CustomBlocksCommand extends CustomCommand {
 	}
 
 	// ADMIN COMMANDS
+
+	@Path("janitor")
+	@Permission(Group.ADMIN)
+	void janitor() {
+		CustomBlocks.janitor();
+	}
+
+	@Path("getTargetInfo")
+	@Permission(Group.ADMIN)
+	void targetInfo() {
+		Block block = getTargetBlockRequired();
+		CustomBlock customBlock = CustomBlock.from(block);
+		if (customBlock == null)
+			error("That is not a valid custom block");
+
+		ICustomBlock iCustomBlock = customBlock.get();
+
+		send("Type: " + customBlock.getType());
+		send("Item Name: " + iCustomBlock.getItemName());
+		send("Item Model Id: " + iCustomBlock.getModelId());
+		send("Item Material: " + iCustomBlock.getVanillaItemMaterial());
+		send("Creative Tab: " + customBlock.getCreativeTab());
+		line();
+		send("Block Info:");
+		send("- Material: " + iCustomBlock.getVanillaBlockMaterial());
+		send("- Hardness: " + iCustomBlock.getBlockHardness());
+		send("- Piston Action: " + iCustomBlock.getPistonPushedAction());
+		line();
+		if (iCustomBlock instanceof ICustomNoteBlock iNoteBlock) {
+			send(iNoteBlock.getStringBlockData(block.getBlockData()));
+			line();
+			send("Sounds: ");
+			send("- Place: " + iNoteBlock.getPlaceSound());
+			send("- Break: " + iNoteBlock.getBreakSound());
+			send("- Hit: " + iNoteBlock.getHitSound());
+			send("= Step: " + iNoteBlock.getStepSound());
+			send("- Fall: " + iNoteBlock.getFallSound());
+
+		} else if (iCustomBlock instanceof ICustomTripwire iTripWire) {
+			send(iTripWire.getStringBlockData(block.getBlockData()));
+			line();
+			send("Sounds: ");
+			send("- Place: " + iTripWire.getPlaceSound());
+			send("- Break: " + iTripWire.getBreakSound());
+			send("- Hit: " + iTripWire.getHitSound());
+			send("- Step: " + iTripWire.getStepSound());
+			send("- Fall: " + iTripWire.getFallSound());
+		}
+
+
+	}
+
+	@Path("convertChunk")
+	@Permission(Group.ADMIN)
+	void convertChunk() {
+		ConversionListener.convertCustomBlocks(player().getChunk());
+	}
+
+	@Path("deleteChunk")
+	@Permission(Group.ADMIN)
+	void deleteChunk() {
+		tracker = trackerService.fromWorld(world());
+		List<Location> locations = ConversionListener.getCustomBlockLocations(player().getChunk());
+		int count = 0;
+		for (Location location : locations) {
+			tracker.remove(location);
+			count++;
+		}
+		send("Deleted " + count + " custom blocks");
+	}
 
 	@Path("list [world]")
 	@Description("List all of the custom blocks in the world from the database")

@@ -37,17 +37,22 @@ public class NoteBlockUtils {
 
 	public static void play(NoteBlock noteBlock, Location location, boolean interacted) {
 		CustomBlockData data = CustomBlockUtils.getDataOrCreate(location, noteBlock);
-		if (data == null)
+		if (data == null) {
+			CustomBlocksLang.debug("-- data is null, returning");
 			return;
+		}
 
 		NoteBlockData noteBlockData = ((CustomNoteBlockData) data.getExtraData()).getNoteBlockData();
-		if (noteBlockData.isPowered())
+		if (noteBlockData.isPowered()) {
+			CustomBlocksLang.debug("-- is powered, returning");
 			return;
+		}
 
 		if (interacted)
 			noteBlockData.setInteracted(true);
 
 		noteBlockData.setPowered(true);
+		CustomBlocksLang.debug("playing...");
 		play(location.getBlock(), noteBlockData);
 	}
 
