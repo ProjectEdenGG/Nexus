@@ -62,6 +62,7 @@ public class CostumeUser implements PlayerOwnedObject {
 	private Map<CostumeType, String> activeDisplayCostumes = new ConcurrentHashMap<>();
 	private Set<String> ownedCostumes = new HashSet<>();
 	private Set<String> temporarilyOwnedCostumes = new HashSet<>();
+	private Set<String> birthdayCostumes = new HashSet<>();
 	private Map<String, Color> colors = new ConcurrentHashMap<>();
 
 	private static final List<WorldGroup> DISABLED_WORLDS = List.of(WorldGroup.MINIGAMES);
@@ -142,7 +143,7 @@ public class CostumeUser implements PlayerOwnedObject {
 	}
 
 	public boolean owns(String id) {
-		return ownedCostumes.contains(id) || temporarilyOwnedCostumes.contains(id);
+		return ownedCostumes.contains(id) || temporarilyOwnedCostumes.contains(id) || birthdayCostumes.contains(id);
 	}
 
 	public void dye(Costume costume, Color color) {

@@ -132,6 +132,17 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Loaded " + Costume.values().size() + " costumes");
 	}
 
+	@Path("list")
+	@Permission(Group.ADMIN)
+	@Description("List all Costumes by their Id")
+	void list() {
+		send(PREFIX + "Loaded Costumes: ");
+
+		Costume.values().stream().map(Costume::getId).sorted().toList().forEach(id -> {
+			send(" &7- &e" + id);
+		});
+	}
+
 	@Path("vouchers [player]")
 	@Description("View how many costume vouchers you have")
 	void vouchers(@Arg(value = "self", permission = Group.STAFF) CostumeUser user) {

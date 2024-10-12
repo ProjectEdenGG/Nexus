@@ -6,6 +6,9 @@ import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob;
 import gg.projecteden.api.mongodb.models.scheduledjobs.common.Schedule;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.BirthdaysCommand;
+import gg.projecteden.nexus.models.costume.Costume;
+import gg.projecteden.nexus.models.costume.CostumeUser;
+import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.geoip.GeoIP;
@@ -39,8 +42,16 @@ public class BirthdayBeginJob extends AbstractJob {
 		final LocalDateTime now = getTimestamp();
 
 		for (Nerd nerd : new NerdService().getNerdsWithBirthdays())
-			if (isBirthday(now, nerd))
+			if (isBirthday(now, nerd)) {
 				BirthdaysCommand.announcement(nerd);
+				Costume partyHat = Costume.of("hat/misc/party_hat");
+				if (partyHat != null) {
+					CostumeUserService userService = new CostumeUserService();
+					CostumeUser costumeUser = userService.get(nerd);
+					costumeUser.getBirthdayCostumes().add(partyHat.getId());
+					userService.save(costumeUser);
+				}
+			}
 		return completed();
 	}
 

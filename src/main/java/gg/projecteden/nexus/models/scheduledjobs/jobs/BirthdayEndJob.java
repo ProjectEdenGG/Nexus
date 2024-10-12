@@ -10,6 +10,9 @@ import gg.projecteden.nexus.features.discord.Bot.DiscordConnectedEvent;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
 import gg.projecteden.nexus.models.badge.BadgeUserService;
+import gg.projecteden.nexus.models.costume.Costume;
+import gg.projecteden.nexus.models.costume.CostumeUser;
+import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import lombok.AllArgsConstructor;
@@ -43,7 +46,8 @@ public class BirthdayEndJob extends AbstractJob {
 		var future = completable();
 
 		Runnable runnable = () -> {
-			final Role role = Nerd.of(uuid).getRank().isStaff() ? Role.STAFF_BIRTHDAY : Role.BIRTHDAY;
+			Nerd nerd = Nerd.of(uuid);
+			final Role role = nerd.getRank().isStaff() ? Role.STAFF_BIRTHDAY : Role.BIRTHDAY;
 			new DiscordUserService().get(uuid).removeRole(role);
 			new BadgeUserService().edit(uuid, user -> {
 				boolean usingBirthdayBadge = user.getActive() == Badge.BIRTHDAY;
@@ -51,6 +55,14 @@ public class BirthdayEndJob extends AbstractJob {
 				if (usingBirthdayBadge)
 					user.setActive(badge);
 			});
+
+			Costume partyHat = Costume.of("hat/misc/party_hat");
+			if (partyHat != null) {
+				CostumeUserService userService = new CostumeUserService();
+				CostumeUser costumeUser = userService.get(nerd);
+				costumeUser.getBirthdayCostumes().remove(partyHat.getId());
+				userService.save(costumeUser);
+			}
 
 			future.complete(JobStatus.COMPLETED);
 		};
