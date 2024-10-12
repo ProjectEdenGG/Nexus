@@ -52,26 +52,29 @@ public class EntitiesCommand extends CustomCommand {
 	@Path("find <type> [radius] [--uuid]")
 	@Description("Locate all nearby entities of a specific type")
 	void find(EntityType type, @Arg("200") int radius, @Switch @Arg("false") boolean uuid) {
-		getNearbyEntities(location(), radius).forEach((entity, count) -> {
+		var entityMap = getNearbyEntities(location(), radius);
+		entityMap.forEach((entity, count) -> {
 			if (entity.getType() != type)
 				return;
 
 			Location location = entity.getLocation();
 
-			String name = StringUtils.camelCase(entity.getType().name());
+			String name = StringUtils.camelCase(entity.getType());
 			if (!Nullables.isNullOrEmpty(entity.getCustomName()))
 				name = name + " named " + stripColor(entity.getCustomName());
 
-			JsonBuilder json = new JsonBuilder("&e" + name).hover("Click to TP")
-					.command("/tppos " + (int) location.getX() + " " + (int) location.getY() + " " + (int) location.getZ()).group();
+			JsonBuilder json = new JsonBuilder("&7 - &e" + name).hover("Click to TP")
+				.command(StringUtils.getTeleportCommandFloored(location)).group();
 
 			if (uuid) {
 				String entityUUID = entity.getUniqueId().toString();
-				json.next("&3 - &e").group().next(entityUUID).hover("Click to copy").suggest(entityUUID).group();
+				json.next("&3 - &e").group().next(entityUUID).hover("Click to insert").suggest(entityUUID).group();
 			}
 
 			json.send(player());
 		});
+
+		send(entityMap.size() + " found in radius of " + radius);
 	}
 
 	@Path("report [radius] [type]")
@@ -145,7 +148,8 @@ public class EntitiesCommand extends CustomCommand {
 	}
 
 	private JsonBuilder getChunkMessage(Chunk chunk, Integer count) {
-		return json("&e" + chunk.getX() + ", " + chunk.getZ() + " &7- " + count).command("/tppos " + (chunk.getX() * 16) + " 100 " + (chunk.getZ() * 16) + " " + chunk.getWorld().getName());
+		return json("&e" + chunk.getX() + ", " + chunk.getZ() + " &7- " + count)
+			.command("/tppos " + (chunk.getX() * 16) + " 100 " + (chunk.getZ() * 16) + " " + chunk.getWorld().getName());
 	}
 
 }

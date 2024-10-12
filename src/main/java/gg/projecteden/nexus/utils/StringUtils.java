@@ -507,8 +507,13 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	}
 
 	public static String getTeleportCommand(Location location) {
-		return "/tppos " + df.format(location.getX()) + " " + df.format(location.getY()) + " " + df.format(location.getZ()) + " " +
-			df.format(location.getYaw()) + " " + df.format(location.getPitch()) + " " + location.getWorld().getName();
+		return "/tppos " + df.format(location.getX()) + " " + df.format(location.getY()) + " " + df.format(location.getZ()) +
+			" " + df.format(location.getYaw()) + " " + df.format(location.getPitch()) + " " + location.getWorld().getName();
+	}
+
+	public static String getTeleportCommandFloored(Location location) {
+		return "/tppos " + (int) location.getX() + " " + (int) location.getY() + " " + (int) location.getZ() +
+			" " + (int) location.getYaw() + " " + (int) location.getPitch() + location.getWorld().getName();
 	}
 
 	public static String getTimeFormat(Duration duration) {

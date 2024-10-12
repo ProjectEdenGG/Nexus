@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.commands;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
@@ -10,6 +9,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.TypeConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Tab;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreCurrencyType;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreManager;
@@ -34,20 +34,28 @@ import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFo
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
+import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.EntityUtils;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Aliases("decor")
@@ -220,6 +228,74 @@ public class DecorationCommand extends CustomCommand {
 	// ADMIN COMMANDS
 
 	@HideFromWiki
+	@Path("near [radius] [--showOwner]")
+	@Permission(Group.ADMIN)
+	@Description("List all decoration within a radius")
+	void admin_find(@Arg("50") int radius, @Switch @Arg("false") boolean showOwner) {
+		var decorationMap = getNearbyDecoration(null, location(), radius);
+		sendNearbyDecoration(decorationMap, showOwner);
+		send(decorationMap.size() + " found in radius of " + radius);
+	}
+
+	@HideFromWiki
+	@Path("find <type> [radius] [--showOwner]")
+	@Permission(Group.ADMIN)
+	@Description("List all decoration within a radius of a specific type")
+	void admin_find_byType(DecorationType type, @Arg("50") int radius, @Switch @Arg("false") boolean showOwner) {
+		var decorationMap = getNearbyDecoration(type, location(), radius);
+		sendNearbyDecoration(decorationMap, showOwner);
+		send(decorationMap.size() + " found in radius of " + radius);
+	}
+
+	private void sendNearbyDecoration(LinkedHashMap<Decoration, Long> decorationMap, boolean showOwner) {
+		decorationMap.forEach((decoration, count) -> {
+			Location location = decoration.getOrigin().toCenterLocation();
+			location.setYaw(location().getYaw());
+			location.setPitch(location().getPitch());
+			String name = decoration.getConfig().getName();
+
+			JsonBuilder json = new JsonBuilder("&7 - &e" + name).hover("Click to TP")
+				.command(StringUtils.getTeleportCommand(location)).group();
+
+			if (showOwner) {
+				UUID ownerUUID = decoration.getOwner(player());
+				if (ownerUUID != null) {
+					String owner = Nickname.of(ownerUUID);
+					json.next("&3 - &e").group().next(owner).suggest(String.valueOf(ownerUUID)).hover("Click to insert uuid").group();
+				}
+			}
+
+			json.send(player());
+		});
+	}
+
+	private static LinkedHashMap<Decoration, Long> getNearbyDecoration(DecorationType type, Location location, double radius) {
+		LinkedHashMap<Decoration, Long> result = new LinkedHashMap<>();
+
+		EntityUtils.getNearbyEntities(location, radius).forEach((entity, count) -> {
+			if (entity.getType() != EntityType.ITEM_FRAME || !(entity instanceof ItemFrame itemFrame))
+				return;
+
+			DecorationConfig config = DecorationConfig.of(itemFrame);
+			if (config == null)
+				return;
+
+			if (type != null) {
+				if (DecorationType.of(config) != type)
+					return;
+			}
+
+			Decoration decoration = new Decoration(config, itemFrame);
+			if (decoration.getOrigin() == null)
+				return;
+
+			result.put(decoration, count);
+		});
+
+		return result;
+	}
+
+	@HideFromWiki
 	@Path("debug tabTypeMap")
 	@Permission(Group.ADMIN)
 	@Description("Display catalog tabs in console")
@@ -262,16 +338,19 @@ public class DecorationCommand extends CustomCommand {
 	@Path("debug [enabled] [--deep]")
 	@Permission(Group.ADMIN)
 	@Description("Toggle debugging decorations")
-	void debug(Boolean enabled, @Switch boolean deep) {
-		if (enabled == null)
-			enabled = !DecorationLang.isDebugging(uuid());
+	void debug(Boolean enable, @Switch @Arg("false") boolean deep) {
+		if (enable == null)
+			enable = !DecorationLang.isDebugging(uuid());
 
-		if (enabled) {
+		if (!enable && deep)
+			enable = true;
+
+		if (enable) {
 			DecorationLang.startDebugging(uuid(), deep);
 		} else
 			DecorationLang.stopDebugging(uuid());
 
-		send(PREFIX + "Debug " + (enabled ? "&aEnabled" : "&cDisabled"));
+		send(PREFIX + "Debug " + (enable ? "&aEnabled" : "&cDisabled"));
 	}
 
 	// STORE COMMANDS

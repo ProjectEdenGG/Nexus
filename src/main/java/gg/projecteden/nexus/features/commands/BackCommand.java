@@ -14,6 +14,7 @@ import gg.projecteden.nexus.models.back.BackService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -54,7 +55,7 @@ public class BackCommand extends CustomCommand implements Listener {
 	@Permission(Group.STAFF)
 	@Description("View your recent back locations")
 	void view(@Arg("self") Back back) {
-		if (back.getLocations() == null || back.getLocations().size() == 0)
+		if (back.getLocations() == null || back.getLocations().isEmpty())
 			error("You have no back locations");
 
 		int i = 0;
@@ -62,12 +63,11 @@ public class BackCommand extends CustomCommand implements Listener {
 
 		for (Location location : back.getLocations()) {
 			++i;
-			int x = (int) location.getX(), y = (int) location.getY(), z = (int) location.getZ(),
-					yaw = (int) location.getYaw(), pitch = (int) location.getPitch();
+			int x = (int) location.getX(), y = (int) location.getY(), z = (int) location.getZ();
 			json.group().newline()
 					.next("&3" + new DecimalFormat("#00").format(i) + " &e" + location.getWorld().getName() +
 							" &7/ &e" + x + " &7/ &e" + y + " &7/ &e" + z)
-					.command("/tppos " + x + " " + y + " " + z + " " + yaw + " " + pitch + " " + location.getWorld().getName())
+				.command(StringUtils.getTeleportCommandFloored(location))
 					.hover("&eClick to teleport");
 		}
 
