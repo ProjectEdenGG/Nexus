@@ -14,6 +14,7 @@ public class Events extends Feature {
 		if (Nexus.getEnv() == Env.PROD) {
 			new Timer("    Events.ScavHuntLegacy", ScavHuntLegacy::new);
 			new Timer("    Events.AeveonProject", AeveonProject::new);
+//			new Timer("    Events.BearFair21", BearFair21::new);
 		}
 	}
 }
