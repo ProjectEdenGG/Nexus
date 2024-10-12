@@ -5,6 +5,7 @@ import gg.projecteden.api.discord.DiscordId.Role;
 import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob;
 import gg.projecteden.api.mongodb.models.scheduledjobs.common.RetryIfInterrupted;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.commands.BirthdaysCommand;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Bot.DiscordConnectedEvent;
 import gg.projecteden.nexus.features.discord.Discord;
@@ -58,10 +59,14 @@ public class BirthdayEndJob extends AbstractJob {
 
 			Costume partyHat = Costume.of("hat/misc/party_hat");
 			if (partyHat != null) {
-				CostumeUserService userService = new CostumeUserService();
-				CostumeUser costumeUser = userService.get(nerd);
+				CostumeUserService costumeUserService = new CostumeUserService();
+				CostumeUser costumeUser = costumeUserService.get(nerd);
+
 				costumeUser.getBirthdayCostumes().remove(partyHat.getId());
-				userService.save(costumeUser);
+				if (!BirthdaysCommand.ownsPartyHat(costumeUser, partyHat) && costumeUser.hasCostumeActivated(partyHat))
+					costumeUser.setActiveCostume(partyHat.getType(), null);
+
+				costumeUserService.save(costumeUser);
 			}
 
 			future.complete(JobStatus.COMPLETED);
