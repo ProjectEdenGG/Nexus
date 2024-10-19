@@ -513,7 +513,7 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 
 	public static String getTeleportCommandFloored(Location location) {
 		return "/tppos " + (int) location.getX() + " " + (int) location.getY() + " " + (int) location.getZ() +
-			" " + (int) location.getYaw() + " " + (int) location.getPitch() + location.getWorld().getName();
+			" " + (int) location.getYaw() + " " + (int) location.getPitch() + " " + location.getWorld().getName();
 	}
 
 	public static String getTimeFormat(Duration duration) {

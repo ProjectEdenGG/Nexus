@@ -12,6 +12,7 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
@@ -38,6 +39,7 @@ import org.bukkit.event.player.PlayerQuitEvent.QuitReason;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -94,6 +96,14 @@ public class JoinQuit extends Feature implements Listener {
 				Jingle.FIRST_JOIN.playAll();
 			else
 				Jingle.JOIN.playAll();
+
+			Nerd nerd = Nerd.of(player);
+			if (player.hasPlayedBefore() && nerd.getLastQuit() != null) {
+				if (nerd.getLastQuit().isBefore(LocalDateTime.now().minusMonths(3))) {
+					Koda.sayIngame("&lLong time no see, welcome back " + nerd.getNickname() + "!");
+					Koda.sayDiscord("**Long time no see, welcome back " + nerd.getNickname() + "!**");
+				}
+			}
 
 			Tasks.async(() -> {
 				DiscordUser user = new DiscordUserService().get(player);
