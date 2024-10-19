@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.survival.decorationstore;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreType;
 import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -71,8 +72,11 @@ public class DecorationStoreLayouts {
 	}
 
 	public static void pasteNextLayout(boolean override) {
-		if (animating && !override)
+		Nexus.log("[Decoration Store] Pasting new layout");
+		if (animating && !override) {
+			Nexus.log("[Decoration Store] already pasting!");
 			throw new InvalidInputException("Decoration Store is already pasting the next layout!");
+		}
 
 		animating = true;
 		DecorationStoreConfig config = DecorationStore.getConfig();
@@ -94,17 +98,21 @@ public class DecorationStoreLayouts {
 			}
 			DecorationStoreType.SURVIVAL.resetPlayerData();
 
+			Nexus.log("[Decoration Store] Pasting reset schematic");
 			pasteLayout(reset_schematic, StoreLocation.SURVIVAL);
 
 			Tasks.wait(TickTime.MINUTE, () -> {
 				int schematicId = getNextSchematicId();
 
 				config.setSchematicId(schematicId);
+				Nexus.log("[Decoration Store] Pasting schematic id " + schematicId);
 				pasteLayout(getLayoutSchematic(schematicId), StoreLocation.SURVIVAL);
 
 				config.setActive(true);
 				DecorationStore.saveConfig();
 				animating = false;
+
+				Nexus.log("[Decoration Store] Finished");
 			});
 		});
 	}
