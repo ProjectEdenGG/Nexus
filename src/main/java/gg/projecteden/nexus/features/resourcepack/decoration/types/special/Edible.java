@@ -16,6 +16,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -86,7 +87,7 @@ public class Edible extends DecorationConfig implements MultiState, CraftableDec
 	public enum EdibleType {
 		//CAKE(null, 7, 14, 2.8, CustomMaterial.CAKE_SLICE, CustomMaterial.ITEM_WOODEN_PLATE), // These values are defined by vanilla
 		//PUMPKIN_PIE(CustomMaterial.CUSTOM_PUMPKIN_PIE, 4, 8, 0.3, CustomMaterial.PUMPKIN_PIE_SLICE, CustomMaterial.ITEM_WOODEN_PLATE), // These values are defined by vanilla
-		ROAST_CHICKEN("Roast Chicken", CustomMaterial.ROAST_CHICKEN_STAGE_0, CustomMaterial.ROAST_CHICKEN_SERVING, Material.BOWL, 4, 7, 18, null),
+		ROAST_CHICKEN("Roast Chicken", CustomMaterial.ROAST_CHICKEN_STAGE_0, CustomMaterial.ROAST_CHICKEN_SERVING, Material.BOWL, 4, 8, 18, null),
 		;
 
 		private final String name;
@@ -122,9 +123,20 @@ public class Edible extends DecorationConfig implements MultiState, CraftableDec
 			return CustomMaterial.of(new ItemBuilder(getStage0()).modelId(getStage0().getModelId() + stage));
 		}
 
-		public void eat(Player player, Location soundOrigin) {
+		public void eat(Player player, Location soundOrigin, ItemStack originalItem) {
+			int finalServingHunger = servingHunger;
+
+			// Since the consume event isn't cancelled, subtract the hunger obtained from the original food item
+			if (Nullables.isNullOrAir(originalItem)) {
+				var nmsItem = NMSUtils.toNMS(originalItem);
+				var nmsFoodProperties = nmsItem.getItem().getFoodProperties();
+				if (nmsFoodProperties != null) {
+					finalServingHunger = Math.abs(finalServingHunger - nmsFoodProperties.getNutrition());
+				}
+			}
+
 			int playerFoodLevel = player.getFoodLevel();
-			player.setFoodLevel(Math.min(20, playerFoodLevel + servingHunger));
+			player.setFoodLevel(Math.min(20, playerFoodLevel + finalServingHunger));
 			player.setSaturation((float) Math.min(playerFoodLevel, player.getSaturation() + servingSaturation - 0.4));
 			new SoundBuilder(Sound.ENTITY_GENERIC_EAT).location(soundOrigin).category(SoundCategory.PLAYERS).play();
 		}
@@ -147,7 +159,7 @@ public class Edible extends DecorationConfig implements MultiState, CraftableDec
 				return false;
 		}
 
-		edible.getEdibleType().eat(player, decoration.getOrigin());
+		edible.getEdibleType().eat(player, decoration.getOrigin(), null);
 		tryNextStage(player, edible, decoration);
 		return true;
 	}
@@ -235,7 +247,7 @@ public class Edible extends DecorationConfig implements MultiState, CraftableDec
 				return;
 
 			Player player = event.getPlayer();
-			edibleType.eat(player, player.getLocation());
+			edibleType.eat(player, player.getLocation(), event.getItem());
 			PlayerUtils.giveItem(player, edibleType.getPlateItem());
 		}
 	}
