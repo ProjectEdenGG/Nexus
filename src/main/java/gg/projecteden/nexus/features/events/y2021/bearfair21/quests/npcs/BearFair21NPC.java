@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs;
 
 import gg.projecteden.nexus.utils.CitizensUtils;
-import gg.projecteden.nexus.utils.PacketUtils;
+import gg.projecteden.nexus.utils.nms.PacketUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.citizensnpcs.api.npc.NPC;

@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.clientside.models;
 import dev.morphia.annotations.Entity;
 import fr.moribus.imageonmap.image.MapInitEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.NMSUtils;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;

@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.store.perks.inventory.autoinventory.features;
 
-import gg.projecteden.nexus.features.listeners.events.FakePlayerInteractEvent;
+import gg.projecteden.nexus.features.listeners.events.fake.FakePlayerInteractEvent;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventory;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventoryFeature;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.tasks.FindChestsThread.DepositRecord;

@@ -30,7 +30,7 @@ import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
 import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
 import gg.projecteden.nexus.utils.BlockUtils;
-import gg.projecteden.nexus.utils.NMSUtils;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Bukkit;

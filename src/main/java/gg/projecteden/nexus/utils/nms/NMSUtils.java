@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.utils;
+package gg.projecteden.nexus.utils.nms;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;

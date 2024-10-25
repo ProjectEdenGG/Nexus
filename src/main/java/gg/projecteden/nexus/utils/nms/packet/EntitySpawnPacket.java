@@ -1,8 +1,6 @@
-package gg.projecteden.nexus.features.nameplates.packet;
+package gg.projecteden.nexus.utils.nms.packet;
 
-import gg.projecteden.nexus.features.nameplates.packet.common.NameplatePacket;
 import lombok.Data;
-import lombok.Getter;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
@@ -15,18 +13,20 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-import static gg.projecteden.nexus.features.nameplates.NameplatesCommand.SPAWN_VERTICAL_OFFSET;
-
 @Data
-public class EntitySpawnPacket extends NameplatePacket {
-	public static int ENTITY_ID_COUNTER = 32333;
+public class EntitySpawnPacket extends EdenPacket {
 
-	@Getter
 	private final int entityId;
+	private final EntityType<?> entityType;
 	private Vector location = new Vector();
 
+
 	public EntitySpawnPacket at(@NotNull Player player) {
-		return at(player.getLocation().clone().add(0, SPAWN_VERTICAL_OFFSET, 0));
+		return at(player.getLocation());
+	}
+
+	public EntitySpawnPacket at(@NotNull Player player, double verticalOffset) {
+		return at(player.getLocation().clone().add(0, verticalOffset, 0));
 	}
 
 	public EntitySpawnPacket at(Location location) {
@@ -44,12 +44,10 @@ public class EntitySpawnPacket extends NameplatePacket {
 			location.getZ(),
 			0,
 			0,
-			EntityType.TEXT_DISPLAY,
+			entityType,
 			0,
 			Vec3.ZERO,
 			0
 		);
 	}
-
 }
-

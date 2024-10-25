@@ -1,6 +1,5 @@
-package gg.projecteden.nexus.features.nameplates.packet;
+package gg.projecteden.nexus.utils.nms.packet;
 
-import gg.projecteden.nexus.features.nameplates.packet.common.NameplatePacket;
 import lombok.Data;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -11,7 +10,7 @@ import net.minecraft.network.syncher.SynchedEntityData.DataValue;
 import java.util.List;
 
 @Data
-public class EntitySneakPacket extends NameplatePacket {
+public class EntitySneakPacket extends EdenPacket {
 	private final int entityId;
 	private boolean seeThroughWalls;
 

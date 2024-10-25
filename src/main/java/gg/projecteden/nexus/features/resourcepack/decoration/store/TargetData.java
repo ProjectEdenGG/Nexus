@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.store;
 
-import gg.projecteden.nexus.utils.PacketUtils;
+import gg.projecteden.nexus.utils.nms.PacketUtils;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

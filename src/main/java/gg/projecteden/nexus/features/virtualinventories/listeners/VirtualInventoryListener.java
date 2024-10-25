@@ -9,7 +9,7 @@ import gg.projecteden.nexus.features.virtualinventories.models.inventories.impl.
 import gg.projecteden.nexus.features.virtualinventories.models.inventories.impl.VirtualPersonalFurnace;
 import gg.projecteden.nexus.features.virtualinventories.models.tiles.Tile;
 import gg.projecteden.nexus.features.virtualinventories.models.tiles.VirtualChunk;
-import gg.projecteden.nexus.utils.NMSUtils;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import org.bukkit.Chunk;
 import org.bukkit.Location;

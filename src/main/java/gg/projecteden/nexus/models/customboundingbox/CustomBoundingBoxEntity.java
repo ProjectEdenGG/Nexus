@@ -21,8 +21,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static gg.projecteden.nexus.utils.NMSUtils.fromNMS;
-import static gg.projecteden.nexus.utils.NMSUtils.toNMS;
+import static gg.projecteden.nexus.utils.nms.NMSUtils.fromNMS;
+import static gg.projecteden.nexus.utils.nms.NMSUtils.toNMS;
 
 @Data
 @dev.morphia.annotations.Entity(value = "custom_bounding_box_entity", noClassnameStored = true)

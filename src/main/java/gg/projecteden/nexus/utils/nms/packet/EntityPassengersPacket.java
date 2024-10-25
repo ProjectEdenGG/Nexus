@@ -1,6 +1,5 @@
-package gg.projecteden.nexus.features.nameplates.packet;
+package gg.projecteden.nexus.utils.nms.packet;
 
-import gg.projecteden.nexus.features.nameplates.packet.common.NameplatePacket;
 import io.netty.buffer.Unpooled;
 import lombok.Data;
 import net.minecraft.network.FriendlyByteBuf;
@@ -9,7 +8,7 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
 
 @Data
-public class EntityPassengersPacket extends NameplatePacket {
+public class EntityPassengersPacket extends EdenPacket {
 	private final int entityId;
 	private final int passengerId;
 

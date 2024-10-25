@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static gg.projecteden.nexus.utils.NMSUtils.toNMS;
+import static gg.projecteden.nexus.utils.nms.NMSUtils.toNMS;
 
 public class NMSSpawnData {
 	@Getter

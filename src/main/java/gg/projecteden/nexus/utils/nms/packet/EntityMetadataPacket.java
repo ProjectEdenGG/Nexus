@@ -1,7 +1,6 @@
-package gg.projecteden.nexus.features.nameplates.packet;
+package gg.projecteden.nexus.utils.nms.packet;
 
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
-import gg.projecteden.nexus.features.nameplates.packet.common.NameplatePacket;
 import lombok.Data;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -16,7 +15,7 @@ import java.util.List;
 import static gg.projecteden.nexus.features.nameplates.NameplatesCommand.TRANSLATION_VERTICAL_OFFSET;
 
 @Data
-public class EntityMetadataPacket extends NameplatePacket {
+public class EntityMetadataPacket extends EdenPacket {
 	private final int entityId;
 	private String name;
 	private boolean seeThroughWalls;

@@ -3,11 +3,10 @@ package gg.projecteden.nexus.features.nameplates;
 import com.comphenix.protocol.ProtocolManager;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.features.nameplates.packet.EntityDestroyPacket;
-import gg.projecteden.nexus.features.nameplates.packet.EntityMetadataPacket;
-import gg.projecteden.nexus.features.nameplates.packet.EntityPassengersPacket;
-import gg.projecteden.nexus.features.nameplates.packet.EntitySneakPacket;
-import gg.projecteden.nexus.features.nameplates.packet.EntitySpawnPacket;
+import gg.projecteden.nexus.utils.nms.packet.EntityDestroyPacket;
+import gg.projecteden.nexus.utils.nms.packet.EntityMetadataPacket;
+import gg.projecteden.nexus.utils.nms.packet.EntityPassengersPacket;
+import gg.projecteden.nexus.utils.nms.packet.EntitySneakPacket;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nameplates.NameplateUserService;
@@ -172,7 +171,7 @@ public class NameplateManager {
 		NameplatePlayer(UUID uuid) {
 			Nameplates.debug("Now managing " + Nickname.of(uuid));
 			this.uuid = uuid;
-			this.entityId = EntitySpawnPacket.ENTITY_ID_COUNTER++;
+			this.entityId = NameplateSpawnPacket.ENTITY_ID_COUNTER++;
 		}
 
 		public boolean isViewing(Player player) {
@@ -224,7 +223,7 @@ public class NameplateManager {
 				return;
 			}
 
-			new EntitySpawnPacket(entityId).at(getOnlinePlayer()).send(viewer);
+			new NameplateSpawnPacket(entityId).at(getOnlinePlayer()).send(viewer);
 
 			viewedBy.add(viewer.getUniqueId());
 			NameplateManager.get(viewer).getViewing().add(uuid);

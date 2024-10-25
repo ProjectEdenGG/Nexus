@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.utils;
+package gg.projecteden.nexus.utils.nms;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
@@ -10,6 +10,12 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.parchment.HasPlayer;
 import io.papermc.paper.adventure.AdventureComponent;
 import lombok.NonNull;
@@ -62,7 +68,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.utils.NMSUtils.toNMS;
+import static gg.projecteden.nexus.utils.nms.NMSUtils.toNMS;
 
 @UtilityClass
 public class PacketUtils {

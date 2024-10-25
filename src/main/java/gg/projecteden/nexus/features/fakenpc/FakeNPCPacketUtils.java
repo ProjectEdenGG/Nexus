@@ -8,10 +8,10 @@ import gg.projecteden.nexus.models.fakenpcs.npcs.types.PlayerNPC;
 import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUser;
 import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.NMSUtils;
-import gg.projecteden.nexus.utils.NMSUtils.Property;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
+import gg.projecteden.nexus.utils.nms.NMSUtils.Property;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PacketUtils;
+import gg.projecteden.nexus.utils.nms.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.parchment.HasPlayer;
@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.PacketUtils.sendPacket;
+import static gg.projecteden.nexus.utils.nms.PacketUtils.sendPacket;
 
 public class FakeNPCPacketUtils {
 

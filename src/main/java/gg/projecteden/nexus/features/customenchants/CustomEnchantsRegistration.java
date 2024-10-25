@@ -32,8 +32,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
-import static gg.projecteden.nexus.utils.NMSUtils.setStaticFinal;
+import static gg.projecteden.nexus.utils.nms.NMSUtils.setStaticFinal;
 
 public class CustomEnchantsRegistration {
 	static final Field nmsFrozenField;
