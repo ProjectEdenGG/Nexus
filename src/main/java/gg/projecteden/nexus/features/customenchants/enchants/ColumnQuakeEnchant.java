@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.customenchants.enchants;
 
-import com.gmail.nossr50.events.fake.FakeBlockBreakEvent;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
+import gg.projecteden.nexus.features.listeners.events.fake.FakeBlockBreakEvent;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -18,7 +18,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Comparator;

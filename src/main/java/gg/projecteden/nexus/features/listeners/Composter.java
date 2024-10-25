@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.listeners;
 
 import com.comphenix.protocol.events.PacketContainer;
-import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.nms.PacketUtils;
 import net.minecraft.network.protocol.game.ClientboundLevelEventPacket;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -16,8 +16,8 @@ import org.bukkit.inventory.BlockInventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.api.common.utils.RandomUtils.chanceOf;
-import static gg.projecteden.nexus.utils.NMSUtils.toNMS;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.nms.NMSUtils.toNMS;
 
 public class Composter implements Listener {
 

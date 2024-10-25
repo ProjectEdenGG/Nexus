@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.customenchants.enchants;
 
-import com.gmail.nossr50.events.fake.FakeBlockBreakEvent;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.resourcepack.customblocks.customblockbreaking.BrokenBlock;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
+import gg.projecteden.nexus.features.listeners.events.fake.FakeBlockBreakEvent;
+import gg.projecteden.nexus.features.resourcepack.customblocks.customblockbreaking.BrokenBlock;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Enchant;
