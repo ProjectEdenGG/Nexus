@@ -101,7 +101,7 @@ public class JoinQuit extends Feature implements Listener {
 			if (player.hasPlayedBefore() && nerd.getLastQuit() != null) {
 				if (nerd.getLastQuit().isBefore(LocalDateTime.now().minusMonths(3))) {
 					Koda.sayIngame("&lLong time no see, welcome back " + nerd.getNickname() + "!");
-					Koda.sayDiscord("**Long time no see, welcome back " + nerd.getNickname() + "!**");
+					Koda.replyDiscord("**Long time no see, welcome back " + nerd.getNickname() + "!**");
 				}
 			}
 

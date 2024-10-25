@@ -131,7 +131,7 @@ public class Train {
 				new SoundBuilder(CustomSound.TRAIN_WHISTLE)
 						.receivers(getPlayers())
 						.category(SoundCategory.AMBIENT)
-						.volume(0.5)
+					.volume(0.25)
 						.play()));
 
 		spawnArmorStands();

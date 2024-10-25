@@ -99,10 +99,10 @@ public enum Pugmas24SlotMachineReward {
 	HALF_CURRENCY(SlotPos.of(3, 6), new ItemBuilder(Material.MOURNER_POTTERY_SHERD).name("&cHalve Currency")
 		.lore("&3Half: &aCoin Pouch &3set to &c75% Coins", "&3Full: &aCoin Pouch &3set to &c50% Coins"),
 		(player) -> {
-			Pugmas24SlotMachine.get().send(player, "TODO HALF REWARD - RANDOM_DEATH");
+			Pugmas24SlotMachine.get().send(player, "TODO HALF REWARD - HALF_CURRENCY");
 		},
 		(player) -> {
-			Pugmas24SlotMachine.get().send(player, "TODO FULL REWARD - RANDOM_DEATH");
+			Pugmas24SlotMachine.get().send(player, "TODO FULL REWARD - HALF_CURRENCY");
 		}
 	),
 	;
