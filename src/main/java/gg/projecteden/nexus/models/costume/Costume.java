@@ -56,6 +56,7 @@ public class Costume {
 	public enum CostumeType {
 		HAT(EquipmentSlot.HEAD, 2),
 		HAND(EquipmentSlot.OFF_HAND, 5),
+		BACK(EquipmentSlot.HEAD, 6),
 		;
 
 		private final EquipmentSlot slot;
@@ -75,6 +76,9 @@ public class Costume {
 	}
 
 	public static Costume of(String id) {
+		if (id == null)
+			return null;
+
 		for (Costume costume : costumes)
 			if (costume.getId().equalsIgnoreCase(id))
 				return costume;

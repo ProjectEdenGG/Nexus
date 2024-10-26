@@ -17,7 +17,9 @@ import gg.projecteden.nexus.models.costume.Costume.CostumeType;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorService;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorTask;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PacketUtils;
+import gg.projecteden.nexus.utils.nms.PacketUtils;
+import gg.projecteden.nexus.utils.nms.packet.EntityDestroyPacket;
+import gg.projecteden.nexus.utils.nms.packet.EntityPassengersPacket;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,11 +28,14 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.EulerAngle;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -60,9 +65,13 @@ public class CostumeUser implements PlayerOwnedObject {
 
 	private Map<CostumeType, String> activeCostumes = new ConcurrentHashMap<>();
 	private Map<CostumeType, String> activeDisplayCostumes = new ConcurrentHashMap<>();
+
+	private transient ArmorStand backCostumeStand;
+
 	private Set<String> ownedCostumes = new HashSet<>();
 	private Set<String> temporarilyOwnedCostumes = new HashSet<>();
 	private Set<String> birthdayCostumes = new HashSet<>();
+
 	private Map<String, Color> colors = new ConcurrentHashMap<>();
 
 	private static final List<WorldGroup> DISABLED_WORLDS = List.of(WorldGroup.MINIGAMES);
@@ -201,6 +210,11 @@ public class CostumeUser implements PlayerOwnedObject {
 			if (costume == null)
 				return;
 
+			if (costume.getType() == CostumeType.BACK) {
+				sendBackPacket(getCostumeItem(costume));
+				return;
+			}
+
 			sendPacket(getCostumeItem(costume), costume.getType().getSlot());
 		});
 	}
@@ -209,6 +223,11 @@ public class CostumeUser implements PlayerOwnedObject {
 		if (!isOnline())
 			return;
 
+		if (type == CostumeType.BACK) {
+			sendBackResetPacket();
+			return;
+		}
+
 		sendPacket(getOnlinePlayer().getInventory().getItem(type.getSlot()), type.getSlot());
 	}
 
@@ -216,6 +235,48 @@ public class CostumeUser implements PlayerOwnedObject {
 		final Player player = getOnlinePlayer();
 		final List<Player> players = player.getWorld().getPlayers();
 		PacketUtils.sendFakeItem(player, players, item, slot);
+	}
+
+	private void sendBackPacket(ItemStack item) {
+		final Player player = getOnlinePlayer();
+		Location spawnLoc = player.getLocation().clone().add(0, 1.5, 0);
+
+		if (this.backCostumeStand == null || !this.backCostumeStand.isValid()) {
+			this.backCostumeStand = player.getWorld().spawn(spawnLoc, org.bukkit.entity.ArmorStand.class, stand -> {
+				stand.setRightArmPose(EulerAngle.ZERO);
+				stand.setLeftArmPose(EulerAngle.ZERO);
+				stand.setHeadPose(EulerAngle.ZERO);
+				stand.setVisible(false);
+				stand.setInvulnerable(true);
+				stand.setGravity(false);
+				stand.setBasePlate(false);
+				stand.setDisabledSlots(EquipmentSlot.values());
+			});
+		}
+
+		this.backCostumeStand.getEquipment().setHelmet(item);
+		this.backCostumeStand.teleport(player.getLocation().clone().add(0, 1.5, 0));
+
+		final List<Player> players = player.getWorld().getPlayers();
+		for (Player _player : players) {
+			new EntityPassengersPacket(player.getEntityId(), this.backCostumeStand.getEntityId()).send(_player);
+		}
+	}
+
+	private void sendBackResetPacket() {
+		if (this.backCostumeStand == null)
+			return;
+
+		final Player player = getOnlinePlayer();
+		final List<Player> players = player.getWorld().getPlayers();
+		int entityId = this.backCostumeStand.getEntityId();
+
+		for (Player _player : players) {
+			new EntityDestroyPacket(entityId).send(_player);
+		}
+
+		this.backCostumeStand.remove();
+		this.backCostumeStand = null;
 	}
 
 	private boolean shouldSendPacket() {
