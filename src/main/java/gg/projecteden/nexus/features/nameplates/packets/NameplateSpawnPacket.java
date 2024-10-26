@@ -1,5 +1,6 @@
-package gg.projecteden.nexus.features.nameplates;
+package gg.projecteden.nexus.features.nameplates.packets;
 
+import gg.projecteden.nexus.features.nameplates.NameplatesCommand;
 import gg.projecteden.nexus.utils.nms.packet.EntitySpawnPacket;
 import net.minecraft.world.entity.EntityType;
 import org.bukkit.entity.Player;

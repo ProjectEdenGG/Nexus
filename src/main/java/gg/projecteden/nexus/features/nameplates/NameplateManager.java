@@ -3,10 +3,8 @@ package gg.projecteden.nexus.features.nameplates;
 import com.comphenix.protocol.ProtocolManager;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.utils.nms.packet.EntityDestroyPacket;
-import gg.projecteden.nexus.utils.nms.packet.EntityMetadataPacket;
-import gg.projecteden.nexus.utils.nms.packet.EntityPassengersPacket;
-import gg.projecteden.nexus.utils.nms.packet.EntitySneakPacket;
+import gg.projecteden.nexus.features.nameplates.packets.NameplateMetadataPacket;
+import gg.projecteden.nexus.features.nameplates.packets.NameplateSpawnPacket;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nameplates.NameplateUserService;
@@ -14,6 +12,9 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.nms.packet.EntityDestroyPacket;
+import gg.projecteden.nexus.utils.nms.packet.EntityPassengersPacket;
+import gg.projecteden.nexus.utils.nms.packet.EntitySneakPacket;
 import lombok.Data;
 import me.libraryaddict.disguise.DisguiseAPI;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
@@ -235,7 +236,7 @@ public class NameplateManager {
 				return;
 			}
 
-			new EntityMetadataPacket(entityId)
+			new NameplateMetadataPacket(entityId)
 				.setName(GsonComponentSerializer.gson().serialize(Nameplates.of(getOnlinePlayer(), viewer).build()))
 				.setSeeThroughWalls(getOnlinePlayer().isSneaking() || Minigamer.of(getOnlinePlayer()).isPlaying())
 				.send(viewer);
