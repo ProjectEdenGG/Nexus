@@ -119,7 +119,10 @@ public interface IDyeMenu {
 
 	default void addCheatButtons(InventoryContents contents) {
 		for (ChoiceType choiceType : ChoiceType.values()) {
-			ItemStack displayItem = new ItemBuilder(choiceType.getBottleMaterial()).resetLore().build();
+			ItemStack displayItem = new ItemBuilder(choiceType.getBottleMaterial())
+				.name(StringUtils.camelCase(choiceType))
+				.resetLore()
+				.build();
 
 			contents.set(choiceType.getSlotPos(), ClickableItem.of(displayItem,
 					e -> updateDyeChoice(contents, displayItem, choiceType)));
