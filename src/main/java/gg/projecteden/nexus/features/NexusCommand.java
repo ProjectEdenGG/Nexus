@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24Ball
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24WhacAMole;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.slotmachine.Pugmas24SlotMachine;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Geyser;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24TrainBackground;
 import gg.projecteden.nexus.features.events.y2024.vulan24.lantern.VuLan24LanternAnimation;
 import gg.projecteden.nexus.features.listeners.common.TemporaryListener;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
@@ -305,6 +306,12 @@ public class NexusCommand extends CustomCommand implements Listener {
 			if (Nexus.getEnv() == Env.PROD) {
 				if (Pugmas24WhacAMole.get().isPlaying())
 					throw new InvalidInputException("Whac A Mole is being played at pugmas");
+			}
+		}),
+		PUGMAS24_TRAIN_BACKGROUND(() -> {
+			if (Nexus.getEnv() == Env.PROD) {
+				if (Pugmas24TrainBackground.isAnimating())
+					throw new InvalidInputException("Pugmas24 Train Background is animating!");
 			}
 		}),
 		CHAT_GAMES(() -> {

@@ -938,11 +938,15 @@ public abstract class EdenEvent extends Feature implements Listener {
 	}
 
 	public CompletableFuture<Void> fadeToBlack(Player player) {
+		return fadeToBlack(player, 10);
+	}
+
+	public CompletableFuture<Void> fadeToBlack(Player player, int stayTicks) {
 		return new TitleBuilder()
 			.title(CustomEmoji.SCREEN_BLACK.getChar())
 			.fade(TickTime.TICK.x(10))
 			.players(player)
-			.stay(TickTime.TICK.x(10))
+			.stay(TickTime.TICK.x(stayTicks))
 			.send();
 	}
 

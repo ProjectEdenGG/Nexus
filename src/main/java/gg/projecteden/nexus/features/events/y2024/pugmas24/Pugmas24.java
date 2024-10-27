@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2024.pugmas24;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.features.commands.staff.HealCommand;
@@ -12,6 +13,7 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Cabin;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Districts;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Fishing;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Train;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24TrainBackground;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Waystones;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24Entity;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24NPC;
@@ -29,6 +31,7 @@ import gg.projecteden.nexus.models.pugmas24.Advent24Present;
 import gg.projecteden.nexus.models.pugmas24.Pugmas24User;
 import gg.projecteden.nexus.models.pugmas24.Pugmas24UserService;
 import gg.projecteden.nexus.models.warps.WarpType;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
@@ -52,6 +55,8 @@ import static gg.projecteden.nexus.features.events.models.EventFishingLoot.Event
 /*
 	TODO:
 		FIND THE NUT CRACKERS
+
+	"TODO: RELEASE" <-- CHECK FOR ANY COMMENTS
  */
 @QuestConfig(
 	quests = Pugmas24Quest.class,
@@ -106,6 +111,7 @@ public class Pugmas24 extends EdenEvent {
 		new Pugmas24Cabin();
 
 		Pugmas24Train.startup();
+		Pugmas24TrainBackground.startup();
 
 		getPlayers().forEach(this::onArrive);
 	}
@@ -113,6 +119,7 @@ public class Pugmas24 extends EdenEvent {
 	@Override
 	public void onStop() {
 		Pugmas24Train.shutdown();
+		Pugmas24TrainBackground.shutdown();
 		Pugmas24BalloonEditor.shutdown();
 
 		getPlayers().forEach(this::onDepart);
@@ -188,6 +195,17 @@ public class Pugmas24 extends EdenEvent {
 
 	public boolean is25thOrAfter(LocalDate date) {
 		return date.isAfter(_25TH.plusDays(-1));
+	}
+
+	@Override
+	public OnlinePlayers getOnlinePlayers() {
+		return super.getOnlinePlayers().filter(player -> {
+			for (ProtectedRegion region : worldguard().getRegionsAt(player.getLocation())) {
+				if (region.getId().startsWith("pugmas24_transition_"))
+					return false;
+			}
+			return true;
+		});
 	}
 
 	// Health

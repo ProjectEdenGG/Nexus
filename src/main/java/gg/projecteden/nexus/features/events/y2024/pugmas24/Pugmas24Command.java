@@ -19,6 +19,7 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.slotmachi
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Districts;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Districts.Pugmas24District;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Geyser;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Intro;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Train;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -275,6 +276,12 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	void stopGeyser() {
 		send(PREFIX + "Stopping geyser animation");
 		Pugmas24Geyser.reset();
+	}
+
+	@Path("intro start")
+	@Permission(Group.ADMIN)
+	void intro_start() {
+		Pugmas24Intro.play(player());
 	}
 
 	@Path("train start")
