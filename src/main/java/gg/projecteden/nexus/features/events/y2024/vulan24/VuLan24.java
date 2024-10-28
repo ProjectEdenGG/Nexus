@@ -35,10 +35,10 @@ import gg.projecteden.nexus.models.vulan24.VuLan24UserService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.ToolType;
 import gg.projecteden.nexus.utils.ToolType.ToolGrade;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
 import net.minecraft.world.entity.raid.Raid;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -234,6 +234,9 @@ public class VuLan24 extends EdenEvent {
 	@EventHandler
 	public void on(PlayerEnteredRegionEvent event) {
 		if (!event.getRegion().getId().equals("avontyre_vu_lan_ship"))
+			return;
+
+		if (VuLan24.get().isBeforeEvent() || VuLan24.get().isAfterEvent())
 			return;
 
 		final VuLan24UserService userService = new VuLan24UserService();
