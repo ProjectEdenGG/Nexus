@@ -1,13 +1,9 @@
-package gg.projecteden.nexus.features.listeners;
+package gg.projecteden.nexus.features.blockmechanics;
 
-import gg.projecteden.nexus.features.listeners.events.SourcedBlockRedstoneEvent;
-import gg.projecteden.nexus.features.listeners.events.fake.FakeBlockBreakEvent;
-import gg.projecteden.nexus.features.listeners.events.fake.FakeBlockPlaceEvent;
-import gg.projecteden.nexus.features.listeners.events.fake.FakeEvent;
+import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.blockmechanics.events.SourcedBlockRedstoneEvent;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -16,72 +12,26 @@ import org.bukkit.block.data.AnaloguePowerable;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Powerable;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 
-/*
-	Source: CraftBook
- */
-public class JackOLantern implements Listener {
+public class BlockMechanicsListener implements Listener {
 
-	@EventHandler(priority = EventPriority.HIGH)
-	public void onBlockRedstoneChange(SourcedBlockRedstoneEvent event) {
-		if (!passesFilter(event)) return;
-		if (event.isMinor())
-			return;
-
-		if (event.getBlock().getType() != Material.CARVED_PUMPKIN && event.getBlock().getType() != Material.JACK_O_LANTERN)
-			return;
-
-		if (event.isOn() == (event.getBlock().getType() == Material.JACK_O_LANTERN))
-			return;
-
-		setPowered(event.getBlock(), event.isOn());
+	public BlockMechanicsListener() {
+		Nexus.registerListener(this);
 	}
-
-	private static void setPowered(Block block, boolean on) {
-		BlockFace data = ((Directional) block.getBlockData()).getFacing();
-		block.setType(on ? Material.JACK_O_LANTERN : Material.CARVED_PUMPKIN);
-		Directional directional = (Directional) block.getBlockData();
-		directional.setFacing(data);
-		block.setBlockData(directional);
-	}
-
-	@EventHandler(priority = EventPriority.HIGH)
-	public void onPumpkinBreak(BlockBreakEvent event) {
-		if (!passesFilter(event)) return;
-
-		if (event.getBlock().getType() != Material.CARVED_PUMPKIN && event.getBlock().getType() != Material.JACK_O_LANTERN)
-			return;
-
-		if (event.getBlock().getType() == Material.JACK_O_LANTERN && (event.getBlock().isBlockIndirectlyPowered() || event.getBlock().isBlockPowered()))
-			event.setCancelled(true);
-	}
-
-	//
-	//
-	//
-
-	private static boolean INDIRECT_REDSTONE = false;
-	private static boolean ADVANCED_BLOCK_CHECKS = true;
-	private static boolean PENDANTIC_BLOCK_CHECKS = true;
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockBreak(BlockBreakEvent event) {
 
-		if (!passesFilter(event))
+		if (!BlockMechanicUtils.passesFilter(event))
 			return;
 
-		if (!(ADVANCED_BLOCK_CHECKS && event.isCancelled())) {
+		if (!(BlockMechanicUtils.ADVANCED_BLOCK_CHECKS && event.isCancelled())) {
 			checkBlockChange(event.getPlayer(), event.getBlock(), false);
 		}
 	}
@@ -89,10 +39,10 @@ public class JackOLantern implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockPlace(BlockPlaceEvent event) {
 
-		if (!passesFilter(event))
+		if (!BlockMechanicUtils.passesFilter(event))
 			return;
 
-		if (!(ADVANCED_BLOCK_CHECKS && event.isCancelled())) {
+		if (!(BlockMechanicUtils.ADVANCED_BLOCK_CHECKS && event.isCancelled())) {
 			checkBlockChange(event.getPlayer(), event.getBlock(), true);
 		}
 	}
@@ -102,7 +52,7 @@ public class JackOLantern implements Listener {
 			case REDSTONE_TORCH:
 			case REDSTONE_WALL_TORCH:
 			case REDSTONE_BLOCK:
-				if (PENDANTIC_BLOCK_CHECKS && !canBuild(player, block.getLocation(), build))
+				if (BlockMechanicUtils.PENDANTIC_BLOCK_CHECKS && !BlockMechanicUtils.canBuild(player, block.getLocation(), build))
 					break;
 				handleRedstoneForBlock(block, build ? 0 : 15, build ? 15 : 0);
 				break;
@@ -124,7 +74,7 @@ public class JackOLantern implements Listener {
 			case SPRUCE_PRESSURE_PLATE:
 			case COMPARATOR:
 			case REPEATER:
-				if (PENDANTIC_BLOCK_CHECKS && !canBuild(player, block.getLocation(), build))
+				if (BlockMechanicUtils.PENDANTIC_BLOCK_CHECKS && !BlockMechanicUtils.canBuild(player, block.getLocation(), build))
 					break;
 				Powerable powerable = (Powerable) block.getBlockData();
 				if (powerable.isPowered())
@@ -133,7 +83,7 @@ public class JackOLantern implements Listener {
 			case HEAVY_WEIGHTED_PRESSURE_PLATE:
 			case LIGHT_WEIGHTED_PRESSURE_PLATE:
 			case REDSTONE_WIRE:
-				if (PENDANTIC_BLOCK_CHECKS && !canBuild(player, block.getLocation(), build))
+				if (BlockMechanicUtils.PENDANTIC_BLOCK_CHECKS && !BlockMechanicUtils.canBuild(player, block.getLocation(), build))
 					break;
 				AnaloguePowerable analoguePowerable = (AnaloguePowerable) block.getBlockData();
 				if (analoguePowerable.getPower() > 0) {
@@ -148,7 +98,7 @@ public class JackOLantern implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockRedstoneChange(BlockRedstoneEvent event) {
 
-		if (!passesFilter(event))
+		if (!BlockMechanicUtils.passesFilter(event))
 			return;
 
 		handleRedstoneForBlock(event.getBlock(), event.getOldCurrent(), event.getNewCurrent());
@@ -177,7 +127,7 @@ public class JackOLantern implements Listener {
 		// block is requested -- it is quite ugly
 		switch (block.getType()) {
 			case REDSTONE_WIRE:
-				if (INDIRECT_REDSTONE) {
+				if (BlockMechanicUtils.INDIRECT_REDSTONE) {
 
 					// power all blocks around the redstone wire on the same y level
 					// north/south
@@ -303,45 +253,6 @@ public class JackOLantern implements Listener {
 			return;
 
 		new SourcedBlockRedstoneEvent(sourceBlock, block, oldLevel, newLevel).callEvent();
-	}
-
-	private static boolean passesFilter(Event event) {
-		if (event instanceof FakeEvent || event instanceof com.gmail.nossr50.events.fake.FakeEvent)
-			return false;
-
-		if (ADVANCED_BLOCK_CHECKS) {
-			if (event instanceof Cancellable && ((Cancellable) event).isCancelled())
-				return event instanceof PlayerInteractEvent && ((PlayerInteractEvent) event).getClickedBlock() == null;
-		}
-
-		return true;
-	}
-
-	private static boolean canBuild(Player player, Location loc, boolean build) {
-		return canBuild(player, loc.getBlock(), build);
-	}
-
-	private static boolean canBuild(Player player, Block block, boolean build) {
-		if (ADVANCED_BLOCK_CHECKS) {
-			BlockEvent event;
-			if (build)
-				event = new FakeBlockPlaceEvent(block, block.getState(), block.getRelative(0, -1, 0), player.getInventory().getItemInMainHand(), player, true, EquipmentSlot.HAND);
-			else
-				event = new FakeBlockBreakEvent(block, player);
-
-			event.callEvent();
-
-			return !(((Cancellable) event).isCancelled() || event instanceof BlockPlaceEvent && !((BlockPlaceEvent) event).canBuild());
-		}
-
-		if (WorldGuardUtils.plugin == null)
-			return false;
-
-		if (build)
-			return WorldGuardUtils.plugin.createProtectionQuery().testBlockPlace(player, block.getLocation(), block.getType());
-		else
-			return WorldGuardUtils.plugin.createProtectionQuery().testBlockBreak(player, block);
-
 	}
 
 }
