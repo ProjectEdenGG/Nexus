@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.events.y2024.pugmas24;
 
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.IEventCommand;
@@ -17,7 +16,6 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.slotmachi
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.slotmachine.Pugmas24SlotMachineReward;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.slotmachine.Pugmas24SlotMachineReward.Pugmas24SlotMachineRewardType;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.slotmachine.Pugmas24SlotMachineRewardMenu;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Cutscene;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Districts;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Districts.Pugmas24District;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Geyser;
@@ -45,7 +43,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.Listener;
@@ -285,25 +282,6 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	@Permission(Group.ADMIN)
 	void intro_start() {
 		Pugmas24Intro.play(player());
-	}
-
-	@Path("intro test")
-	@Permission(Group.ADMIN)
-	void intro_test() {
-		new Cutscene()
-			.next(0, _player -> {
-				_player.teleport(_player.getLocation().add(0, 10, 0));
-				_player.sendMessage("Ticks = " + Bukkit.getCurrentTick());
-			})
-			.next(TickTime.SECOND, _player -> {
-				_player.teleport(_player.getLocation().add(0, 10, 0));
-				_player.sendMessage("Ticks = " + Bukkit.getCurrentTick() + " (+20?)");
-			})
-			.next(TickTime.SECOND.x(2), _player -> {
-				_player.teleport(_player.getLocation().add(0, 10, 0));
-				_player.sendMessage("Ticks = " + Bukkit.getCurrentTick() + " (+40?)");
-			})
-			.start(player());
 	}
 
 	@Path("train start")
