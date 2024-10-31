@@ -12,6 +12,7 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24F
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Cabin;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Districts;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Fishing;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Intro;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Train;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24TrainBackground;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Waystones;
@@ -24,6 +25,7 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestR
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestTask;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24ShopMenu;
 import gg.projecteden.nexus.features.quests.QuestConfig;
+import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.pugmas24.Advent24Config;
@@ -31,6 +33,7 @@ import gg.projecteden.nexus.models.pugmas24.Advent24Present;
 import gg.projecteden.nexus.models.pugmas24.Pugmas24User;
 import gg.projecteden.nexus.models.pugmas24.Pugmas24UserService;
 import gg.projecteden.nexus.models.warps.WarpType;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -76,6 +79,7 @@ import static gg.projecteden.nexus.features.events.models.EventFishingLoot.Event
 public class Pugmas24 extends EdenEvent {
 	private static Pugmas24 instance;
 	public static final String PREFIX = StringUtils.getPrefix("Pugmas 2024");
+	public static final String EVENT_NAME = "Pugmas Village";
 
 	@Getter
 	final Pugmas24UserService userService = new Pugmas24UserService();
@@ -187,6 +191,23 @@ public class Pugmas24 extends EdenEvent {
 	@Override
 	public void registerInteractHandlers() {
 		handleInteract(Pugmas24NPC.BLACKSMITH, (player, npc) -> Pugmas24ShopMenu.BLACKSMITH.open(player));
+
+		handleInteract(Pugmas24NPC.TICKET_MASTER_HUB, (player, npc) -> {
+				if (PlayerUtils.playerHas(player, Pugmas24Intro.getTicketItem())) {
+					new Dialog(npc)
+						.npc("You already bought a ticket, make sure to board the train!")
+						.send(player);
+					return;
+				}
+
+				new Dialog(npc)
+					.npc("Hello! Where would you like to travel to?")
+					.player("1 Ticket to " + EVENT_NAME + ", please.")
+					.npc("Oh, it's wonderful there this time of year. Here you go.")
+					.give(Pugmas24Intro.getTicketItem())
+					.send(player);
+			}
+		);
 	}
 
 	public boolean is25thOrAfter() {

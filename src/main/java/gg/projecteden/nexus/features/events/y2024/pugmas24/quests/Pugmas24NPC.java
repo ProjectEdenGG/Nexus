@@ -12,6 +12,8 @@ import java.util.function.Predicate;
 public enum Pugmas24NPC implements InteractableNPC {
 	BLACKSMITH("Blacksmith", 5340),
 	ANGLER("Angler", 5341),
+	TICKET_MASTER("Ticket Master", 5358),
+	TICKET_MASTER_HUB("Ticket Master", 5359),
 	// TODO
 	;
 
