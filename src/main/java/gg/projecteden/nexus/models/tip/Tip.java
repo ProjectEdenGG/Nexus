@@ -66,6 +66,7 @@ public class Tip implements PlayerOwnedObject {
 		LWC_CHEST(1, TickTime.MINUTE.x(15), player -> Rank.of(player) == Rank.GUEST),
 		LWC_FURNACE(1, TickTime.MINUTE.x(15), player -> Rank.of(player) == Rank.GUEST),
 		RESOURCE_WORLD_STORAGE(15),
+		RESOURCE_WORLD_WARNING(15, TickTime.HOUR.get()),
 		SPAM_ATTACK(50, TickTime.MINUTE.x(5)),
 		AUTOSORT_SORT_INVENTORY(1, TickTime.WEEK, player -> player.hasPermission(AutoInventory.PERMISSION)),
 		AUTOSORT_SORT_CHESTS(1, TickTime.WEEK, player -> player.hasPermission(AutoInventory.PERMISSION)),
