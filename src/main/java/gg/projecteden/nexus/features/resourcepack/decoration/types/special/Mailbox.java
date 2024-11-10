@@ -37,8 +37,16 @@ public class Mailbox extends DyeableFloorThing implements Interactable {
 			final Player player = event.getPlayer();
 			final UUID owner = event.getDecoration().getOwner(player);
 
-			if (!event.getDecoration().is(DecorationType.MAILBOX))
+			boolean isMailbox = event.getDecoration().is(DecorationType.MAILBOX);
+			boolean isPostbox = event.getDecoration().is(DecorationType.POSTBOX);
+
+			if (!isMailbox && !isPostbox)
 				return;
+
+			if (isPostbox) {
+				PlayerUtils.runCommand(player, "mail box");
+				return;
+			}
 
 			if (owner == null) {
 				PlayerUtils.send(player, MailCommand.PREFIX + "Could not determine owner of mailbox");

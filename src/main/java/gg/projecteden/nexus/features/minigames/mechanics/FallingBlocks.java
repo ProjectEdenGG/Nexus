@@ -279,7 +279,7 @@ public class FallingBlocks extends TeamlessMechanic {
 	public void setPlayerBlock(PlayerInteractEvent event) {
 		if (event.getItem() == null) return;
 		if (!MaterialTag.CONCRETE_POWDERS.isTagged(event.getItem().getType())) return;
-		if (!ActionGroup.CLICK_AIR.applies(event)) return;
+		if (!ActionGroup.RIGHT_CLICK.applies(event)) return;
 
 		Player player = event.getPlayer();
 		if (!player.getWorld().equals(Minigames.getWorld())) return;
