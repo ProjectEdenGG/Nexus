@@ -35,7 +35,7 @@ public class TicketFeature {
 			.next("&3 |&3|   &3").group()
 			.next("&6&lTeleport").command("/tickets tp " + ticket.getId()).hover("&eClick to teleport").group()
 			.next("&3   |&3|   &3").group()
-			.next("&b&lMessage").suggest("/msg " + ticket.getNickname()).hover("&eClick to message the player").group()
+			.next("&b&lMessage").suggest("/msg " + ticket.getNickname() + " ").hover("&eClick to message the player").group()
 			.next("&3   |&3|   &3").group()
 			.next("&c&lClose").command("/tickets confirmclose " + ticket.getId()).hover("&eClick to close").group()
 			.next("&3   |&3|")
@@ -86,10 +86,14 @@ public class TicketFeature {
 		TELEPORT("&e<staff> &3teleported to ticket &e#<id>"),
 		;
 
-		String message;
+		final String message;
 
 		public void discordLog(Ticket ticket, String staff) {
-			Discord.log("**[Tickets]** " + StringUtils.stripColor(formatMessage(message, ticket, staff)));
+			String _message = "**[Tickets]** " + StringUtils.stripColor(formatMessage(message, ticket, staff));
+			Discord.log(_message);
+			if (this == CLOSE) {
+				Discord.staffLog(_message);
+			}
 		}
 
 		public void sendMessage(UUID receiver, Ticket ticket, String staffName) {

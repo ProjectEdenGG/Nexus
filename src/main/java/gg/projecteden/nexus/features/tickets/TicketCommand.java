@@ -64,7 +64,7 @@ public class TicketCommand extends CustomCommand {
 			List<Nerd> onlineMods = Rank.getOnlineMods();
 			String message = "**[Tickets]** " + name() + " (" + ticket.getId() + "): " + ticket.getDescription();
 			Discord.staffLog(message);
-			Discord.staffBridge(message + (onlineMods.size() == 0 ? " [ @here ]" : ""));
+			Discord.staffBridge(message + (onlineMods.isEmpty() ? " [ @here ]" : ""));
 
 			onlineMods.forEach(mod -> Jingle.PING.play(mod.getOnlinePlayer()));
 			Broadcast.staffIngame().message("").send();
