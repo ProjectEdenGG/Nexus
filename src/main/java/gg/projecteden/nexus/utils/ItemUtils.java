@@ -5,11 +5,11 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
-import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.survival.MendingIntegrity;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,6 +31,7 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_20_R3.potion.CraftPotionEffectType;
 import org.bukkit.craftbukkit.v1_20_R3.potion.CraftPotionUtil;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -760,16 +761,17 @@ public class ItemUtils {
 
 		@NotNull
 		public static MobEffectInstance toNMS(PotionEffect effect) {
-			return new MobEffectInstance(toNMS(effect.getType()), effect.getDuration(), effect.getAmplifier(), effect.isAmbient(), effect.hasParticles());
+			return CraftPotionUtil.fromBukkit(effect);
 		}
 
 		@NotNull
 		public static MobEffect toNMS(PotionEffectType effect) {
-			final MobEffect nmsEffect = BuiltInRegistries.MOB_EFFECT.byId(effect.getId());
-			if (nmsEffect != null)
-				return nmsEffect;
+			try {
+				return CraftPotionEffectType.bukkitToMinecraft(effect);
+			} catch (Exception ignored) {
+				throw new InvalidInputException("Unknown potion type " + effect);
+			}
 
-			throw new InvalidInputException("Unknown potion type " + effect);
 		}
 
 		@NotNull
