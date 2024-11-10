@@ -26,6 +26,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.Tasks;
@@ -143,6 +144,9 @@ public class HoursCommand extends CustomCommand {
 					service.update(hours);
 
 					if (Rank.of(player) == Rank.GUEST) {
+						if (Dev.of(player).is(Dev.WAKKA)) // I'm somehow broken
+							continue;
+
 						if (player.hasPermission("set.my.rank"))
 							continue;
 

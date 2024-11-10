@@ -98,7 +98,7 @@ public class Justice extends Feature implements Listener {
 			ban.received();
 			event.disallow(Result.KICK_BANNED, ban.getDisconnectMessage());
 
-			String message = "&e" + punishments.getName() + " &ctried to join, but is " + ban.getType().getPastTense();
+			String message = "&e" + punishments.getNickname() + " &ctried to join, but is " + ban.getType().getPastTense();
 			if (ban.hasReason())
 					message += " for &7" + ban.getReason();
 			message += " &c(" + ban.getTimeLeft() + ")";

@@ -62,7 +62,7 @@ public class TicketCommand extends CustomCommand {
 			send(" &eYour ticket (&c#" + ticket.getId() + "&e): &3" + ticket.getDescription());
 
 			List<Nerd> onlineMods = Rank.getOnlineMods();
-			String message = "**[Tickets]** " + name() + " (" + ticket.getId() + "): " + ticket.getDescription();
+			String message = "**[Tickets]** " + nickname() + " (" + ticket.getId() + "): " + ticket.getDescription();
 			Discord.staffLog(message);
 			Discord.staffBridge(message + (onlineMods.isEmpty() ? " [ @here ]" : ""));
 

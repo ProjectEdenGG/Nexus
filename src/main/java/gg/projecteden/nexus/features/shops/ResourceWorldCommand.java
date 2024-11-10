@@ -5,6 +5,7 @@ import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.homes.HomesFeature;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -62,6 +63,8 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -194,24 +197,24 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 
 		Tip tip = new TipService().get(event.getPlayer());
 		if (tip.show(TipType.RESOURCE_WORLD_WARNING)) {
-			new JsonBuilder(" &8&l[&4Notice&8&l] &cYou are entering the resource world!")
+
+			LocalDateTime now = LocalDateTime.now();
+			LocalDateTime nextReset = now.with(TemporalAdjusters.firstDayOfNextMonth());
+			String tillReset = Timespan.of(nextReset).format();
+
+			new JsonBuilder("&8&l[&4Notice&8&l] &fThis world regenerates in &c" + tillReset + "&f,hover for more info]")
 				.hover(List.of(
-						"&cThis world is regenerated on the &c&lfirst of every month&c,",
-						"&cso don't leave your stuff here or you will lose it!",
-						"",
-						"&cThe darkness is dangerous in this world"
+					"&cWelcome to the resource world!",
+					"",
+					"&cThis world is regenerated on the &c&lfirst of every month&c,",
+					"&cso don't leave your stuff here or you will lose it!",
+					"",
+					"&cThe darkness is dangerous in this world,",
+					"&cmob spawning has been increased."
 					)
 				)
 				.send(player);
 		}
-//
-//		PlayerUtils.send(player, " &4Warning |");
-//		PlayerUtils.send(player, " &4Warning | &cYou are entering the resource world!");
-//		PlayerUtils.send(player, " &4Warning | &cThis world is regenerated on the &c&lfirst of every month&c,");
-//		PlayerUtils.send(player, " &4Warning | &cso don't leave your stuff here or you will lose it!");
-//		PlayerUtils.send(player, " &4Warning |");
-//		PlayerUtils.send(player, " &4Warning | &cThe darkness is dangerous in this world");
-//		PlayerUtils.send(player, " &4Warning |");
 	}
 
 	private static final MaterialTag HOME_BLOCKS = new MaterialTag(Material.CHEST, Material.TRAPPED_CHEST, Material.FURNACE, Material.BARREL).append(MaterialTag.DOORS);
