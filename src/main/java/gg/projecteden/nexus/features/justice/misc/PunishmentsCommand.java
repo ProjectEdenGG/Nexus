@@ -17,22 +17,30 @@ public class PunishmentsCommand extends _JusticeCommand {
 	@Path
 	@Description("General guideline for punishments")
 	void run() {
+		send(PREFIX);
+		line();
 		send("&eGriefing");
-		send("    &c/calcban <# of past griefing bans> <# of blocks griefed>");
+		send("    &cFirst offense: &3Recommend &c/warn&3, max of &c1 day");
+		send("    &cSecond offense: &31 day if first was warning, max of 3 days");
+		send("    &cThird offense: &3Permanent");
 		line();
 		send("&eChat");
-		send("    &3Try to keep it to &cmutes &3for established members of the community. Give them time to cool down. Otherwise short bans");
+		send("    &3Mute initially, short ban if they continue");
 		line();
 		send("&eHacks / death traps / obscene structures/skins");
-		send("    &cMax of 3 days&3, then permanent");
+		send("    &3Max of 3 days, then permanent");
+		line();
+		send("&eSlurs / hate speech / racism / etc of any kind");
+		send("    &3Permanent");
 		line();
 		send("&eBan evasions");
-		send("    &cPermanently ban alt&3, add time to main account if it was malicious");
+		send("    &3Permanently ban alt, add time to main account if it was malicious");
 		line();
 		send("&eOther assholery");
-		send("    &3Generally &c1 day&3, max of 3 days for first ban");
+		send("    &3Generally 1 day ban, max of 3 days for first ban");
 		line();
-		send("&3If they are &enot active &3when you find reason to ban, make sure to send a &c/warning &3too/instead so they will receive the message instead of not knowing they were banned at all.");
+		send("Only Operators+ can authorize punishments that go beyond the guidelines");
+		line();
 	}
 
 }
