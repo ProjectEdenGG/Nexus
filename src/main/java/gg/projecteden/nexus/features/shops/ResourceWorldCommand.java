@@ -8,7 +8,11 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.homes.HomesFeature;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -24,8 +28,14 @@ import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.models.warps.Warps.Warp;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -42,7 +52,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.*;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
@@ -178,13 +192,26 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 		if (event.isCancelled())
 			return;
 
-		PlayerUtils.send(player, " &4Warning |");
-		PlayerUtils.send(player, " &4Warning | &cYou are entering the resource world!");
-		PlayerUtils.send(player, " &4Warning | &cThis world is regenerated on the &c&lfirst of every month&c,");
-		PlayerUtils.send(player, " &4Warning | &cso don't leave your stuff here or you will lose it!");
-		PlayerUtils.send(player, " &4Warning |");
-		PlayerUtils.send(player, " &4Warning | &cThe darkness is dangerous in this world");
-		PlayerUtils.send(player, " &4Warning |");
+		Tip tip = new TipService().get(event.getPlayer());
+		if (tip.show(TipType.RESOURCE_WORLD_WARNING)) {
+			new JsonBuilder(" &8&l[&4Notice&8&l] &cYou are entering the resource world!")
+				.hover(List.of(
+						"&cThis world is regenerated on the &c&lfirst of every month&c,",
+						"&cso don't leave your stuff here or you will lose it!",
+						"",
+						"&cThe darkness is dangerous in this world"
+					)
+				)
+				.send(player);
+		}
+//
+//		PlayerUtils.send(player, " &4Warning |");
+//		PlayerUtils.send(player, " &4Warning | &cYou are entering the resource world!");
+//		PlayerUtils.send(player, " &4Warning | &cThis world is regenerated on the &c&lfirst of every month&c,");
+//		PlayerUtils.send(player, " &4Warning | &cso don't leave your stuff here or you will lose it!");
+//		PlayerUtils.send(player, " &4Warning |");
+//		PlayerUtils.send(player, " &4Warning | &cThe darkness is dangerous in this world");
+//		PlayerUtils.send(player, " &4Warning |");
 	}
 
 	private static final MaterialTag HOME_BLOCKS = new MaterialTag(Material.CHEST, Material.TRAPPED_CHEST, Material.FURNACE, Material.BARREL).append(MaterialTag.DOORS);
