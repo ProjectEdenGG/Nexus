@@ -97,7 +97,7 @@ public class CitizensUtils {
 	}
 
 	public static void updateSkin(NPC npc, String name) {
-		updateSkin(npc, name, false);
+		updateSkin(npc, name, true);
 	}
 
 	public static void updateSkin(NPC npc, String name, boolean useLatest) {
