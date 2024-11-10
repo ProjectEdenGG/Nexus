@@ -39,7 +39,7 @@ public class PunishmentsCommand extends _JusticeCommand {
 		send("&eOther assholery");
 		send("    &3Generally 1 day ban, max of 3 days for first ban");
 		line();
-		send("Only Operators+ can authorize punishments that go beyond the guidelines");
+		send("&3Only Operators+ can authorize punishments that go beyond the guidelines");
 		line();
 	}
 

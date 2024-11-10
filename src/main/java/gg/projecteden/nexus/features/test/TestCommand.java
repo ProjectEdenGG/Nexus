@@ -46,6 +46,7 @@ import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
+import gg.projecteden.nexus.utils.ItemUtils.PotionWrapper;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -68,6 +69,9 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import net.citizensnpcs.api.npc.NPC;
 import net.md_5.bungee.api.ChatColor;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.item.alchemy.Potion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -90,6 +94,9 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
 import java.time.ZoneId;
@@ -112,6 +119,7 @@ import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.PlayerUtils.getHotbarContents;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
+import static java.util.stream.Collectors.joining;
 
 @HideFromWiki
 @Permission(Group.ADMIN)
@@ -130,6 +138,44 @@ public class TestCommand extends CustomCommand implements Listener {
 	@Path("hover")
 	void hover() {
 		player().setGravity(!player().hasGravity());
+	}
+
+	@Path("potionEffect")
+	void potion() {
+		send("&3Potion Data:");
+		ItemStack item = getToolRequired();
+		if (!(item.getItemMeta() instanceof PotionMeta potionMeta))
+			return;
+
+		String materialName = camelCase(item.getType().name());
+		send("&3 - Material = &e" + materialName);
+
+		PotionData potionData = potionMeta.getBasePotionData();
+		send("&3 - Potion Type = &e" + potionData.getType());
+
+		Potion potion = PotionWrapper.toNMS(potionData);
+		send("&3 - Potion Name = &e" + potion.getName(""));
+
+		send("&3 - Vanilla Effects:");
+		for (MobEffectInstance mobEffect : potion.getEffects()) {
+			send("&3 -- Desc = &e" + Arrays.stream(mobEffect.getDescriptionId().split("\\.")).toList().getLast());
+		}
+
+		send("&3 - Custom Effects:");
+		for (PotionEffect potionEffect : potionMeta.getCustomEffects()) {
+			send("&3 -- Type = &e" + potionEffect.getType().getKey().getKey());
+
+			MobEffect mobEffect = PotionWrapper.toNMS(potionEffect.getType());
+			MobEffectInstance mobEffectInst = new MobEffectInstance(mobEffect, potionEffect.getDuration(), potionEffect.getAmplifier(), potionEffect.isAmbient(), potionEffect.hasParticles());
+			send("&3 -- Inst Desc = &e" + Arrays.stream(mobEffectInst.getDescriptionId().split("\\.")).toList().getLast());
+		}
+
+		PotionWrapper potionWrapper = PotionWrapper.of(potion, potionMeta.getCustomEffects());
+		String potionName = potionWrapper.getEffects().stream()
+			.map(StringUtils::formatPotionData)
+			.collect(joining(", "));
+
+		send("&3Result = &e" + potionName + " " + materialName);
 	}
 
 	@EventHandler
