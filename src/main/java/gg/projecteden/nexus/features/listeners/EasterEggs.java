@@ -204,7 +204,7 @@ public class EasterEggs implements Listener {
 	}
 
 	/*
-	 	TODO: Filid, Bri, MaxAlex, Panda, JJ, Steve
+	 	TODO: Filid, MaxAlex, Steve, Vir
 	 */
 	@AllArgsConstructor
 	public enum StaffEasterEgg {
