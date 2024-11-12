@@ -18,7 +18,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationRo
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreType;
 import gg.projecteden.nexus.features.workbenches.dyestation.CreativeBrushMenu;
-import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
@@ -264,9 +263,11 @@ public class DecorationListener implements Listener {
 						shouldInteract = true;
 					else if (data.isInteractable())
 						shouldInteract = true;
+					else if (data.isToolInteractable())
+						shouldInteract = true;
 				}
 
-				boolean shouldInteractFinal = shouldInteract || DyeStation.isPaintbrush(tool);
+				final boolean shouldInteractFinal = shouldInteract;
 				debug(player, "should interact = " + shouldInteractFinal);
 
 				if (shouldInteractFinal)

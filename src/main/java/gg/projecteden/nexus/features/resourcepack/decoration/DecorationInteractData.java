@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Interactable;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
+import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -175,6 +176,25 @@ public class DecorationInteractData {
 			if (config instanceof Interactable) {
 				return true;
 			}
+		}
+
+		return false;
+	}
+
+	public boolean isToolInteractable() {
+		if (Nullables.isNullOrAir(tool))
+			return true;
+
+		// Custom items
+		if (DyeStation.isPaintbrush(tool))
+			return true;
+
+		// Vanilla items
+		switch (tool.getType()) {
+			case BUCKET -> {
+				return true;
+			}
+
 		}
 
 		return false;
