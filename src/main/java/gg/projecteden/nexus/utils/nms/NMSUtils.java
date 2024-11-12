@@ -109,10 +109,24 @@ public class NMSUtils {
 		return itemStack.asBukkitCopy();
 	}
 
-	@NotNull
 	public static Rotations toNMS(EulerAngle angle) {
 		final Function<Double, Float> toDegrees = value -> (float) Math.toDegrees(value);
-		return Rotations.createWithoutValidityChecks(toDegrees.apply(angle.getX()), toDegrees.apply(angle.getY()), toDegrees.apply(angle.getZ()));
+
+		return Rotations.createWithoutValidityChecks(
+			toDegrees.apply(angle.getX()),
+			toDegrees.apply(angle.getY()),
+			toDegrees.apply(angle.getZ())
+		);
+	}
+
+	public static EulerAngle fromNMS(Rotations rotations) {
+		final Function<Float, Double> toRadians = value -> (double) Math.toRadians(value);
+
+		return new EulerAngle(
+			toRadians.apply(rotations.getX()),
+			toRadians.apply(rotations.getY()),
+			toRadians.apply(rotations.getZ())
+		);
 	}
 
 	@NotNull

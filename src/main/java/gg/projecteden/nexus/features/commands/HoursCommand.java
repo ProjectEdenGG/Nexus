@@ -144,7 +144,7 @@ public class HoursCommand extends CustomCommand {
 					service.update(hours);
 
 					if (Rank.of(player) == Rank.GUEST) {
-						if (Dev.of(player).is(Dev.WAKKA)) // I'm somehow broken
+						if (Dev.WAKKA.is(player)) // I'm somehow broken
 							continue;
 
 						if (player.hasPermission("set.my.rank"))
