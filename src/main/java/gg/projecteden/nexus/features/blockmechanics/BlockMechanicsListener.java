@@ -28,7 +28,7 @@ public class BlockMechanicsListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockBreak(BlockBreakEvent event) {
 
-		if (!BlockMechanicUtils.passesFilter(event))
+		if (!BlockMechanicUtils.passesFilter(event, event.getBlock()))
 			return;
 
 		if (!(BlockMechanicUtils.ADVANCED_BLOCK_CHECKS && event.isCancelled())) {
@@ -39,7 +39,7 @@ public class BlockMechanicsListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockPlace(BlockPlaceEvent event) {
 
-		if (!BlockMechanicUtils.passesFilter(event))
+		if (!BlockMechanicUtils.passesFilter(event, event.getBlock()))
 			return;
 
 		if (!(BlockMechanicUtils.ADVANCED_BLOCK_CHECKS && event.isCancelled())) {
@@ -52,7 +52,7 @@ public class BlockMechanicsListener implements Listener {
 			case REDSTONE_TORCH:
 			case REDSTONE_WALL_TORCH:
 			case REDSTONE_BLOCK:
-				if (BlockMechanicUtils.PENDANTIC_BLOCK_CHECKS && !BlockMechanicUtils.canBuild(player, block.getLocation(), build))
+				if (BlockMechanicUtils.PEDANTIC_BLOCK_CHECKS && !BlockMechanicUtils.canBuild(player, block.getLocation(), build))
 					break;
 				handleRedstoneForBlock(block, build ? 0 : 15, build ? 15 : 0);
 				break;
@@ -74,7 +74,7 @@ public class BlockMechanicsListener implements Listener {
 			case SPRUCE_PRESSURE_PLATE:
 			case COMPARATOR:
 			case REPEATER:
-				if (BlockMechanicUtils.PENDANTIC_BLOCK_CHECKS && !BlockMechanicUtils.canBuild(player, block.getLocation(), build))
+				if (BlockMechanicUtils.PEDANTIC_BLOCK_CHECKS && !BlockMechanicUtils.canBuild(player, block.getLocation(), build))
 					break;
 				Powerable powerable = (Powerable) block.getBlockData();
 				if (powerable.isPowered())
@@ -83,7 +83,7 @@ public class BlockMechanicsListener implements Listener {
 			case HEAVY_WEIGHTED_PRESSURE_PLATE:
 			case LIGHT_WEIGHTED_PRESSURE_PLATE:
 			case REDSTONE_WIRE:
-				if (BlockMechanicUtils.PENDANTIC_BLOCK_CHECKS && !BlockMechanicUtils.canBuild(player, block.getLocation(), build))
+				if (BlockMechanicUtils.PEDANTIC_BLOCK_CHECKS && !BlockMechanicUtils.canBuild(player, block.getLocation(), build))
 					break;
 				AnaloguePowerable analoguePowerable = (AnaloguePowerable) block.getBlockData();
 				if (analoguePowerable.getPower() > 0) {
@@ -98,7 +98,7 @@ public class BlockMechanicsListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockRedstoneChange(BlockRedstoneEvent event) {
 
-		if (!BlockMechanicUtils.passesFilter(event))
+		if (!BlockMechanicUtils.passesFilter(event, event.getBlock()))
 			return;
 
 		handleRedstoneForBlock(event.getBlock(), event.getOldCurrent(), event.getNewCurrent());

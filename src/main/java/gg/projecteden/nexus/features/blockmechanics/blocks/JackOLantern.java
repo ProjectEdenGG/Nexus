@@ -20,7 +20,7 @@ public class JackOLantern implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockRedstoneChange(SourcedBlockRedstoneEvent event) {
-		if (!BlockMechanicUtils.passesFilter(event)) return;
+		if (!BlockMechanicUtils.passesFilter(event, event.getBlock())) return;
 		if (event.isMinor())
 			return;
 
@@ -43,7 +43,7 @@ public class JackOLantern implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onPumpkinBreak(BlockBreakEvent event) {
-		if (!BlockMechanicUtils.passesFilter(event)) return;
+		if (!BlockMechanicUtils.passesFilter(event, event.getBlock())) return;
 
 		if (event.getBlock().getType() != Material.CARVED_PUMPKIN && event.getBlock().getType() != Material.JACK_O_LANTERN)
 			return;

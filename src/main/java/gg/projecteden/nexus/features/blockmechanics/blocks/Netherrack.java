@@ -22,7 +22,7 @@ public class Netherrack implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockRedstoneChangeFire(SourcedBlockRedstoneEvent event) {
 
-		if (!BlockMechanicUtils.passesFilter(event))
+		if (!BlockMechanicUtils.passesFilter(event, event.getBlock()))
 			return;
 
 		if (event.isMinor())
@@ -43,7 +43,7 @@ public class Netherrack implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockRedstoneChangeSoulFire(SourcedBlockRedstoneEvent event) {
 
-		if (!BlockMechanicUtils.passesFilter(event))
+		if (!BlockMechanicUtils.passesFilter(event, event.getBlock()))
 			return;
 
 		if (event.isMinor())
@@ -64,7 +64,7 @@ public class Netherrack implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onLeftClickFire(PlayerInteractEvent event) {
 
-		if (!BlockMechanicUtils.passesFilter(event))
+		if (!BlockMechanicUtils.passesFilter(event, event.getPlayer()))
 			return;
 
 		if (event.getAction() != Action.LEFT_CLICK_BLOCK || event.getHand() != EquipmentSlot.HAND)
@@ -84,7 +84,7 @@ public class Netherrack implements Listener {
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onLeftClickSoulFire(PlayerInteractEvent event) {
 
-		if (!BlockMechanicUtils.passesFilter(event))
+		if (!BlockMechanicUtils.passesFilter(event, event.getPlayer()))
 			return;
 
 		if (event.getAction() != Action.LEFT_CLICK_BLOCK || event.getHand() != EquipmentSlot.HAND)

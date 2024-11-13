@@ -4,6 +4,8 @@ import gg.projecteden.nexus.features.listeners.events.fake.FakeBlockBreakEvent;
 import gg.projecteden.nexus.features.listeners.events.fake.FakeBlockPlaceEvent;
 import gg.projecteden.nexus.features.listeners.events.fake.FakeEvent;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import gg.projecteden.parchment.HasLocation;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -13,16 +15,23 @@ import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.jetbrains.annotations.Nullable;
 
 public class BlockMechanicUtils {
 
 	public static boolean INDIRECT_REDSTONE = false;
 	public static boolean ADVANCED_BLOCK_CHECKS = true;
-	public static boolean PENDANTIC_BLOCK_CHECKS = true;
+	public static boolean PEDANTIC_BLOCK_CHECKS = true;
 
-	public static boolean passesFilter(Event event) {
+	public static boolean passesFilter(Event event, @Nullable HasLocation hasLocation) {
 		if (event instanceof FakeEvent || event instanceof com.gmail.nossr50.events.fake.FakeEvent)
 			return false;
+
+		if (hasLocation != null) {
+			if (WorldGroup.SKYBLOCK.contains(hasLocation.getLocation().getWorld())) {
+				return false;
+			}
+		}
 
 		if (ADVANCED_BLOCK_CHECKS) {
 			if (event instanceof Cancellable && ((Cancellable) event).isCancelled())
