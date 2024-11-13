@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.hub.HubTreasureHunter;
 import gg.projecteden.nexus.models.hub.HubTreasureHunterService;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
@@ -32,22 +33,41 @@ public class HubTreasureHunt implements Listener {
 
 	@EventHandler
 	public void on(PlayerInteractEvent event) {
-		final Player player = event.getPlayer();
-		if (Hub.isNotAtHub(player))
-			return;
-
-		if (!ActionGroup.CLICK_BLOCK.applies(event))
-			return;
-
 		if (event.getHand() != EquipmentSlot.HAND)
 			return;
 
-		final Block block = event.getClickedBlock();
-		if (isNullOrAir(block) || block.getType() != Material.PLAYER_HEAD)
-			return;
+		final Player player = event.getPlayer();
+		debug(player, "PlayerInteractEvent: ");
 
-		if (!HEAD_ID.equals(Nexus.getHeadAPI().getBlockID(block)))
+		if (Hub.isNotAtHub(player)) {
+			debug(player, "<- Not at hub");
 			return;
+		}
+
+		debug(player, "- At hub");
+
+		if (!ActionGroup.CLICK_BLOCK.applies(event)) {
+			debug(player, "<- Action != CLICK_BLOCK");
+			return;
+		}
+
+		debug(player, "- Action == CLICK_BLOCK");
+
+		final Block block = event.getClickedBlock();
+		if (isNullOrAir(block) || block.getType() != Material.PLAYER_HEAD) {
+			debug(player, "<- Clicked Block != PLAYER_HEAD");
+			return;
+		}
+
+		debug(player, "- Clicked Block == PLAYER_HEAD");
+
+		String id = Nexus.getHeadAPI().getItemID(ItemUtils.getItem(block));
+		if (!HEAD_ID.equals(id)) {
+			debug(player, "<- Head ID " + id + " != " + HEAD_ID);
+			return;
+		}
+
+		debug(player, "- Matching Head ID");
 
 		final String PREFIX = Features.get(Hub.class).getPrefix();
 		final HubTreasureHunterService service = new HubTreasureHunterService();
@@ -74,6 +94,13 @@ public class HubTreasureHunt implements Listener {
 		new SoundBuilder(Sound.UI_TOAST_CHALLENGE_COMPLETE).receiver(player).volume(0.5).play();
 		PlayerUtils.send(player, PREFIX + "You found all the treasure chests!");
 		new EventUserService().edit(player, user -> user.giveTokens(100));
+	}
+
+	public static void debug(Player player, String debug) {
+		if (!HubCommand.debuggers.contains(player))
+			return;
+
+		player.sendMessage(debug);
 	}
 
 }

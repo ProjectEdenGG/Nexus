@@ -9,6 +9,10 @@ import gg.projecteden.nexus.models.hub.HubTreasureHunter;
 import gg.projecteden.nexus.models.hub.HubTreasureHunterService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import lombok.NonNull;
+import org.bukkit.entity.Player;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static gg.projecteden.nexus.features.hub.HubTreasureHunt.TOTAL_TREASURE_CHESTS;
 
@@ -28,6 +32,21 @@ public class HubCommand extends _WarpSubCommand {
 	@Description("Teleport to the hub")
 	void hub() {
 		teleport(WarpType.NORMAL.get("hub"));
+	}
+
+	public static Set<Player> debuggers = new HashSet<>();
+
+	@Path("treasurehunt debug [enable]")
+	void treasurehunt_debug(Boolean enable) {
+		if (enable == null)
+			enable = !debuggers.contains(player());
+
+		if (enable)
+			debuggers.add(player());
+		else
+			debuggers.remove(player());
+
+		send(PREFIX + "Debugging " + (enable ? "&aenabled" : "&cdisabled"));
 	}
 
 	@Path("treasurehunt")

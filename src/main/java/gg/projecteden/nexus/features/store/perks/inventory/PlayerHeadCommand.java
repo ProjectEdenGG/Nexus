@@ -16,6 +16,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownE
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NonNull;
 import org.bukkit.Material;
@@ -69,7 +70,7 @@ public class PlayerHeadCommand extends CustomCommand {
 		if (!isNullOrAir(tool))
 			id = Nexus.getHeadAPI().getItemID(tool);
 		else if (!isNullOrAir(block))
-			id = Nexus.getHeadAPI().getBlockID(block);
+			id = Nexus.getHeadAPI().getItemID(ItemUtils.getItem(block));
 		else
 			error("You must be holding or looking at a head");
 
