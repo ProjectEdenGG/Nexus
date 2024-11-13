@@ -8,11 +8,13 @@ import gg.projecteden.nexus.features.listeners.events.LivingEntityDamageByPlayer
 import gg.projecteden.nexus.features.listeners.events.LivingEntityKilledByPlayerEvent;
 import gg.projecteden.nexus.features.listeners.events.PlayerChangingWorldEvent;
 import gg.projecteden.nexus.features.listeners.events.PlayerDamageByPlayerEvent;
+import gg.projecteden.nexus.features.listeners.events.PlayerInteractHeadEvent;
 import gg.projecteden.nexus.features.listeners.events.SubWorldGroupChangedEvent;
 import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Location;
@@ -30,9 +32,13 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.List;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class CustomEvents implements Listener {
 
@@ -179,6 +185,21 @@ public class CustomEvents implements Listener {
 			return;
 
 		new SnowGolemBuildEvent(player, golem).callEvent();
+	}
+
+	@EventHandler
+	public void on(PlayerInteractEvent event) {
+		if (event.getHand() != EquipmentSlot.HAND)
+			return;
+
+		if (!ActionGroup.CLICK_BLOCK.applies(event))
+			return;
+
+		final Block block = event.getClickedBlock();
+		if (isNullOrAir(block) || block.getType() != Material.PLAYER_HEAD)
+			return;
+
+		new PlayerInteractHeadEvent(event.getPlayer(), block).callEvent();
 	}
 
 }
