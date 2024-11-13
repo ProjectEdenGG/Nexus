@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
-import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -21,10 +20,20 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.TurfWarsMatchDat
 import gg.projecteden.nexus.features.minigames.models.matchdata.TurfWarsMatchData.State;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.MathUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.TitleBuilder;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.parchment.event.entity.PreEntityShootBowEvent;
-import org.bukkit.*;
+import org.bukkit.EntityEffect;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
@@ -40,7 +49,13 @@ import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -566,11 +581,11 @@ public class TurfWars extends TeamMechanic {
 	}
 
 	@EventHandler
-	public void onArrowCollide(ProjectileCollideEvent event) {
+	public void on(ProjectileHitEvent event) {
 		if (!(event.getEntity() instanceof Arrow arrow))
 			return;
 
-		if (!(event.getCollidedWith() instanceof Player collidedWith))
+		if (!(event.getHitEntity() instanceof Player hitPlayer))
 			return;
 
 		if (!(arrow.getShooter() instanceof Player shooter))
@@ -579,7 +594,7 @@ public class TurfWars extends TeamMechanic {
 		if (!Minigamer.of(shooter).isPlaying(this))
 			return;
 
-		if (Minigamer.of(collidedWith).getTeam() == null)
+		if (Minigamer.of(hitPlayer).getTeam() == null)
 			event.setCancelled(true);
 	}
 

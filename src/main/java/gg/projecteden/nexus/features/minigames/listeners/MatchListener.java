@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigames.listeners;
 
-import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
 import gg.projecteden.nexus.Nexus;
@@ -43,6 +42,7 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -247,14 +247,14 @@ public class MatchListener implements Listener {
 	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-	public void onProjectileCollideWithPlayer(ProjectileCollideEvent event) {
-		if (!(event.getCollidedWith() instanceof Player))
+	public void onProjectileCollideWithPlayer(ProjectileHitEvent event) {
+		if (!(event.getHitEntity() instanceof Player hitPlayer))
 			return;
 
 		if (!(event.getEntity().getShooter() instanceof Player))
 			return;
 
-		Minigamer victim = Minigamer.of(event.getCollidedWith());
+		Minigamer victim = Minigamer.of(hitPlayer);
 		if (!victim.isPlaying())
 			return;
 
@@ -279,13 +279,13 @@ public class MatchListener implements Listener {
 	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-	public void onProjectileCollideWithEntity(ProjectileCollideEvent event) {
-		Entity collidedWith = event.getCollidedWith();
-		if (!(collidedWith instanceof Hanging
-			|| collidedWith instanceof ArmorStand
-			|| collidedWith instanceof Minecart
-			|| collidedWith instanceof Boat
-			|| collidedWith instanceof FallingBlock))
+	public void onProjectileCollideWithEntity(ProjectileHitEvent event) {
+		Entity hitEntity = event.getHitEntity();
+		if (!(hitEntity instanceof Hanging
+			|| hitEntity instanceof ArmorStand
+			|| hitEntity instanceof Minecart
+			|| hitEntity instanceof Boat
+			|| hitEntity instanceof FallingBlock))
 			return;
 
 		if (!(event.getEntity().getShooter() instanceof Player player))
