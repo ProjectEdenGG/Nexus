@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.store.perks.inventory;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.listeners.events.PlayerInteractHeadEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -17,10 +18,15 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -32,7 +38,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 @Permission(PERMISSION)
 @Redirect(from = "/donorskull", to = "/playerhead")
 @WikiConfig(rank = "Store", feature = "Inventory")
-public class PlayerHeadCommand extends CustomCommand {
+public class PlayerHeadCommand extends CustomCommand implements Listener {
 	public static final String PERMISSION = "essentials.skull";
 	private static final List<WorldGroup> allowedWorldGroups = List.of(
 		WorldGroup.SURVIVAL,
@@ -76,6 +82,21 @@ public class PlayerHeadCommand extends CustomCommand {
 
 		ItemStack item = Nexus.getHeadAPI().getItemHead(id);
 		send(json(PREFIX + item.getItemMeta().getDisplayName() + " &3head ID: &e" + id).copy(id).hover("&eClick to copy"));
+	}
+
+	@EventHandler
+	public void on(PlayerInteractEvent event) {
+		if (event.getHand() != EquipmentSlot.HAND)
+			return;
+
+		if (!ActionGroup.CLICK_BLOCK.applies(event))
+			return;
+
+		final Block block = event.getClickedBlock();
+		if (isNullOrAir(block) || block.getType() != Material.PLAYER_HEAD)
+			return;
+
+		new PlayerInteractHeadEvent(event.getPlayer(), block).callEvent();
 	}
 
 }

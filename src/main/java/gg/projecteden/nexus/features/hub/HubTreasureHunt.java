@@ -2,26 +2,20 @@ package gg.projecteden.nexus.features.hub;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.listeners.events.PlayerInteractHeadEvent;
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.hub.HubTreasureHunter;
 import gg.projecteden.nexus.models.hub.HubTreasureHunterService;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class HubTreasureHunt implements Listener {
 	private static final String HEAD_ID = "13379";
@@ -32,12 +26,10 @@ public class HubTreasureHunt implements Listener {
 	}
 
 	@EventHandler
-	public void on(PlayerInteractEvent event) {
-		if (event.getHand() != EquipmentSlot.HAND)
-			return;
-
+	public void on(PlayerInteractHeadEvent event) {
 		final Player player = event.getPlayer();
-		debug(player, "PlayerInteractEvent: ");
+
+		debug(player, "PlayerInteractHeadEvent:");
 
 		if (Hub.isNotAtHub(player)) {
 			debug(player, "<- Not at hub");
@@ -46,22 +38,8 @@ public class HubTreasureHunt implements Listener {
 
 		debug(player, "- At hub");
 
-		if (!ActionGroup.CLICK_BLOCK.applies(event)) {
-			debug(player, "<- Action != CLICK_BLOCK");
-			return;
-		}
-
-		debug(player, "- Action == CLICK_BLOCK");
-
-		final Block block = event.getClickedBlock();
-		if (isNullOrAir(block) || block.getType() != Material.PLAYER_HEAD) {
-			debug(player, "<- Clicked Block != PLAYER_HEAD");
-			return;
-		}
-
-		debug(player, "- Clicked Block == PLAYER_HEAD");
-
-		String id = Nexus.getHeadAPI().getItemID(ItemUtils.getItem(block));
+		Block block = event.getBlock();
+		String id = event.getHeadDatabaseId();
 		if (!HEAD_ID.equals(id)) {
 			debug(player, "<- Head ID " + id + " != " + HEAD_ID);
 			return;

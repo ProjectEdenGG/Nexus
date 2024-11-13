@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.socialmedia.commands;
 
-import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.listeners.events.PlayerInteractHeadEvent;
 import gg.projecteden.nexus.features.menus.BookBuilder.WrittenBookMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
@@ -17,25 +17,18 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser.Connection;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
 public class SocialMediaCommand extends CustomCommand implements Listener {
@@ -152,19 +145,8 @@ public class SocialMediaCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void on(PlayerInteractEvent event) {
-		final Player player = event.getPlayer();
-		if (!ActionGroup.CLICK_BLOCK.applies(event))
-			return;
-
-		if (event.getHand() != EquipmentSlot.HAND)
-			return;
-
-		final Block block = event.getClickedBlock();
-		if (isNullOrAir(block) || block.getType() != Material.PLAYER_HEAD)
-			return;
-
-		final String id = Nexus.getHeadAPI().getItemID(ItemUtils.getItem(block));
+	public void on(PlayerInteractHeadEvent event) {
+		final String id = event.getHeadDatabaseId();
 		if (isNullOrEmpty(id))
 			return;
 
@@ -172,7 +154,7 @@ public class SocialMediaCommand extends CustomCommand implements Listener {
 		if (site == null)
 			return;
 
-		PlayerUtils.send(player, new JsonBuilder("&e" + site.getUrl()).url(site.getUrl()));
+		PlayerUtils.send(event.getPlayer(), new JsonBuilder("&e" + site.getUrl()).url(site.getUrl()));
 	}
 
 }
