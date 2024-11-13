@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.blockmechanics.events;
+package gg.projecteden.nexus.features.listeners.events;
 
 import lombok.Getter;
 import org.bukkit.block.Block;

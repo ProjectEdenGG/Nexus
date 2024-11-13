@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.blockmechanics.blocks;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.blockmechanics.BlockMechanicUtils;
-import gg.projecteden.nexus.features.blockmechanics.events.SourcedBlockRedstoneEvent;
+import gg.projecteden.nexus.features.listeners.events.SourcedBlockRedstoneEvent;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;

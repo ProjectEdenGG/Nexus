@@ -1,7 +1,7 @@
-package gg.projecteden.nexus.features.blockmechanics;
+package gg.projecteden.nexus.features.listeners;
 
-import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.blockmechanics.events.SourcedBlockRedstoneEvent;
+import gg.projecteden.nexus.features.blockmechanics.BlockMechanicUtils;
+import gg.projecteden.nexus.features.listeners.events.SourcedBlockRedstoneEvent;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Material;
@@ -19,11 +19,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 
-public class BlockMechanicsListener implements Listener {
-
-	public BlockMechanicsListener() {
-		Nexus.registerListener(this);
-	}
+public class Redstone implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockBreak(BlockBreakEvent event) {
