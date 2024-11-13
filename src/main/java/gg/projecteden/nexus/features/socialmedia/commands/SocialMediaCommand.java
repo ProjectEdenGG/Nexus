@@ -17,6 +17,7 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser.Connection;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
@@ -163,7 +164,7 @@ public class SocialMediaCommand extends CustomCommand implements Listener {
 		if (isNullOrAir(block) || block.getType() != Material.PLAYER_HEAD)
 			return;
 
-		final String id = Nexus.getHeadAPI().getBlockID(block);
+		final String id = Nexus.getHeadAPI().getItemID(ItemUtils.getItem(block));
 		if (isNullOrEmpty(id))
 			return;
 
