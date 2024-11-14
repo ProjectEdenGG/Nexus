@@ -22,6 +22,7 @@ public class Hub extends Feature implements Listener {
 
 	@Getter
 	private static final String baseRegion = "hub";
+	private static final HubEffects hubEffects = new HubEffects();
 
 	@NotNull
 	public static WorldGuardUtils worldguard() {
@@ -31,6 +32,12 @@ public class Hub extends Feature implements Listener {
 	@Override
 	public void onStart() {
 		new HubTreasureHunt();
+		hubEffects.onStart();
+	}
+
+	@Override
+	public void onStop() {
+		hubEffects.onStop();
 	}
 
 	public static World getWorld() {
