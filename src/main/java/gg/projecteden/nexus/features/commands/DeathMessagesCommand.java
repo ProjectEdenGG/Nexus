@@ -32,6 +32,7 @@ import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Builder;
@@ -272,6 +273,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		if (deathString == null)
 			deathString = "☠ " + Nickname.of(player) + " died";
 		else {
+			deathString = StringUtils.stripColor(deathString);
 			deathString = ("☠ " + HEART_PATTERN.matcher(deathString).replaceAll("a mob"))
 				.replace(" " + player.getName() + " ", " " + Nickname.of(player) + " ");
 
