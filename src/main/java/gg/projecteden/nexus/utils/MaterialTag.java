@@ -56,7 +56,7 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag ALL_GLASS = new MaterialTag("GLASS", MatchMode.CONTAINS);
 
 	public static final MaterialTag FROGLIGHT = new MaterialTag("_FROGLIGHT", MatchMode.SUFFIX);
-	public static final MaterialTag TORCHES = new MaterialTag("TORCH", MatchMode.CONTAINS);
+	public static final MaterialTag TORCHES = new MaterialTag("TORCH", MatchMode.CONTAINS).exclude("FLOWER", MatchMode.CONTAINS);
 	public static final MaterialTag LANTERNS = new MaterialTag("LANTERN", MatchMode.CONTAINS); // torch, soul torch, jack-o, & sea
 	public static final MaterialTag CAMPFIRES = new MaterialTag("CAMPFIRE", MatchMode.CONTAINS);
 

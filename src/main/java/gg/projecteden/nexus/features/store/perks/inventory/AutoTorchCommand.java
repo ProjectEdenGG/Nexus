@@ -16,6 +16,7 @@ import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.CompletableTask;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.MaterialTag.MatchMode;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -51,7 +52,8 @@ public class AutoTorchCommand extends CustomCommand {
 	public static final String PERMISSION = "nexus.autotorch";
 
 	public static final MaterialTag AUTO_TORCH_TYPES = new MaterialTag(GLOWSTONE, SHROOMLIGHT, END_ROD, SEA_PICKLE, REDSTONE_LAMP, LIGHT)
-		.append(MaterialTag.TORCHES, MaterialTag.LANTERNS, MaterialTag.CANDLES, MaterialTag.FROGLIGHT, MaterialTag.CAMPFIRES);
+		.append(MaterialTag.TORCHES, MaterialTag.LANTERNS, MaterialTag.CANDLES, MaterialTag.FROGLIGHT, MaterialTag.CAMPFIRES)
+		.exclude("WALL_", MatchMode.CONTAINS);
 
 	private static final AutoTorchService service = new AutoTorchService();
 	private AutoTorchUser autoTorch;
