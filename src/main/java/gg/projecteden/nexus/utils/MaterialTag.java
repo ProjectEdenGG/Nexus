@@ -56,13 +56,15 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag ALL_GLASS = new MaterialTag("GLASS", MatchMode.CONTAINS);
 
 	public static final MaterialTag FROGLIGHT = new MaterialTag("_FROGLIGHT", MatchMode.SUFFIX);
-	public static final MaterialTag LIGHT_SOURCES = new MaterialTag(GLOWSTONE, MAGMA_BLOCK, CRYING_OBSIDIAN,
-		SEA_PICKLE, END_ROD, ENDER_CHEST, SHROOMLIGHT, REDSTONE_LAMP, BEACON, CONDUIT, LAVA_BUCKET, LIGHT)
-		.append("LANTERN", MatchMode.CONTAINS)
-		.append("TORCH", MatchMode.CONTAINS)
-		.append(CANDLES, FROGLIGHT);
+	public static final MaterialTag TORCHES = new MaterialTag("TORCH", MatchMode.CONTAINS);
+	public static final MaterialTag LANTERNS = new MaterialTag("LANTERN", MatchMode.CONTAINS); // torch, soul torch, jack-o, & sea
+	public static final MaterialTag CAMPFIRES = new MaterialTag("CAMPFIRE", MatchMode.CONTAINS);
 
-	public static final MaterialTag COLORABLE = new MaterialTag(WOOL, DYES, CARPETS, BEDS, ALL_BANNERS,
+	public static final MaterialTag LIGHT_SOURCES = new MaterialTag(GLOWSTONE, SHROOMLIGHT, END_ROD, SEA_PICKLE, REDSTONE_LAMP, LIGHT,
+		MAGMA_BLOCK, CRYING_OBSIDIAN, ENDER_CHEST, BEACON, CONDUIT, LAVA_BUCKET)
+		.append(TORCHES, LANTERNS, CANDLES, FROGLIGHT, CAMPFIRES);
+
+	public static final MaterialTag COLORABLE = new MaterialTag(WOOL, DYES, WOOL_CARPETS, BEDS, ALL_BANNERS,
 		ALL_STAINED_GLASS, ALL_TERRACOTTAS, ALL_CONCRETES, SHULKER_BOXES);
 
 	public static final MaterialTag FOODS = new MaterialTag(Material::isEdible);
@@ -267,8 +269,7 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag LIQUIDS = new MaterialTag(WATER, LAVA);
 	public static final MaterialTag CONTAINERS = new MaterialTag(ENDER_CHEST, Material.ANVIL, BREWING_STAND).append(INVENTORY_BLOCKS);
 	public static final MaterialTag PRESSURE_PLATES = new MaterialTag("_PRESSURE_PLATE", MatchMode.SUFFIX);
-	public static final MaterialTag TORCHES = new MaterialTag("TORCH", MatchMode.CONTAINS);
-	public static final MaterialTag CAMPFIRES = new MaterialTag("CAMPFIRE", MatchMode.CONTAINS);
+
 	public static final MaterialTag FLORA = new MaterialTag(SAPLINGS, FLOWERS, PLANTS, SEEDS, LEAVES);
 	public static final MaterialTag REDSTONE_ACTIVATORS = new MaterialTag(BUTTONS, PRESSURE_PLATES).append(LEVER);
 	public static final MaterialTag SUSPICIOUS_BLOCKS = new MaterialTag(SUSPICIOUS_SAND, SUSPICIOUS_GRAVEL);
@@ -282,7 +283,7 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag NEEDS_SUPPORT = new MaterialTag(Material.GRAVEL, VINE, LILY_PAD, TURTLE_EGG,
 		REPEATER, COMPARATOR, ITEM_FRAME, BELL, Material.SNOW, SCAFFOLDING, TRIPWIRE_HOOK, LADDER, LEVER, SOUL_LANTERN)
-		.append(SAPLINGS, DOORS, SIGNS, RAILS, ALL_BANNERS, CONCRETE_POWDERS, SAND, CORALS, CARPETS,
+		.append(SAPLINGS, DOORS, SIGNS, RAILS, ALL_BANNERS, CONCRETE_POWDERS, SAND, CORALS, WOOL_CARPETS,
 			PRESSURE_PLATES, BUTTONS, FLOWER_POTS, ANVIL, PLANTS, TORCHES);
 
 	public static final MaterialTag SPAWNS_ENTITY = new MaterialTag(SPAWN_EGGS, BOATS, MINECARTS).append(EGG, SNOWBALL, BOW, CROSSBOW,

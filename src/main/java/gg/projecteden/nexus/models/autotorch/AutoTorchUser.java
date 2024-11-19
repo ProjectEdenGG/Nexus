@@ -5,6 +5,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.parchment.HasHumanEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,6 +31,7 @@ public class AutoTorchUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private int lightLevel = 0;
+	private Material torchMaterial = Material.TORCH;
 	private boolean enabled = false;
 
 	/**
@@ -50,6 +52,10 @@ public class AutoTorchUser implements PlayerOwnedObject {
 	public boolean applies(HasHumanEntity player, Block block) {
 		return applies(block.getLightFromBlocks()) &&
 				!block.isLiquid() &&
-				Bukkit.getUnsafe().canPlaceItemOn(new ItemStack(Material.TORCH), player, block.getRelative(BlockFace.DOWN), BlockFace.UP).join();
+			Bukkit.getUnsafe().canPlaceItemOn(new ItemStack(torchMaterial), player, block.getRelative(BlockFace.DOWN), BlockFace.UP).join();
+	}
+
+	public String getTorchMaterialName() {
+		return StringUtils.camelCase(this.torchMaterial);
 	}
 }

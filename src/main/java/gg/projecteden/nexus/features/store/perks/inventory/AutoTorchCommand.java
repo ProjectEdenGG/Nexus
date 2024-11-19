@@ -2,22 +2,28 @@ package gg.projecteden.nexus.features.store.perks.inventory;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.autotorch.AutoTorchService;
 import gg.projecteden.nexus.models.autotorch.AutoTorchUser;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.CompletableTask;
 import gg.projecteden.nexus.utils.GameModeWrapper;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Material;
@@ -26,12 +32,26 @@ import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.bukkit.Material.END_ROD;
+import static org.bukkit.Material.GLOWSTONE;
+import static org.bukkit.Material.LIGHT;
+import static org.bukkit.Material.REDSTONE_LAMP;
+import static org.bukkit.Material.SEA_PICKLE;
+import static org.bukkit.Material.SHROOMLIGHT;
+
 @NoArgsConstructor
 @Permission("nexus.autotorch")
 @Description("Automatically place torches when it gets too dark")
 @WikiConfig(rank = "Store", feature = "Inventory")
 public class AutoTorchCommand extends CustomCommand {
 	public static final String PERMISSION = "nexus.autotorch";
+
+	public static final MaterialTag AUTO_TORCH_TYPES = new MaterialTag(GLOWSTONE, SHROOMLIGHT, END_ROD, SEA_PICKLE, REDSTONE_LAMP, LIGHT)
+		.append(MaterialTag.TORCHES, MaterialTag.LANTERNS, MaterialTag.CANDLES, MaterialTag.FROGLIGHT, MaterialTag.CAMPFIRES);
 
 	private static final AutoTorchService service = new AutoTorchService();
 	private AutoTorchUser autoTorch;
@@ -42,7 +62,7 @@ public class AutoTorchCommand extends CustomCommand {
 	}
 
 	@Path("<on|off>")
-	@Description("Toggle automatically placing torches when it gets too dark")
+	@Description("Toggle automatically placing light blocks when it gets too dark")
 	void toggle(Boolean state) {
 		if (state == null)
 			state = !autoTorch.isEnabled();
@@ -52,12 +72,48 @@ public class AutoTorchCommand extends CustomCommand {
 		send(PREFIX + (state ? "&aEnabled" : "&cDisabled"));
 	}
 
-	@Path("lightlevel [level]")
-	@Description("Adjust the light level at which torches are placed")
-	void lightlevel(@Arg(min = 0, max = 15) int level) {
+	@Path("lightLevel [level]")
+	@Description("Adjust the light level at which the light blocks are placed")
+	void lightLevel(@Arg(min = 0, max = 15) int level) {
 		autoTorch.setLightLevel(level);
 		service.save(autoTorch);
-		send(PREFIX + "Torches will now be automatically placed at your feet at light level &e"+level+"&3 or lower");
+		send(PREFIX + "A" + autoTorch.getTorchMaterialName() + " will now be automatically placed at your feet at light level &e" + level + "&3 or lower");
+	}
+
+	@Path("lightBlock <lightBlock>")
+	@Description("Set the block placed")
+	void material(LightBlock lightBlock) {
+		autoTorch.setTorchMaterial(lightBlock.getMaterial());
+		service.save(autoTorch);
+		send(PREFIX + "Set the placed light block to " + autoTorch.getTorchMaterialName());
+	}
+
+	@Data
+	@AllArgsConstructor
+	public static class LightBlock {
+		private Material material;
+	}
+
+	@ConverterFor(LightBlock.class)
+	LightBlock convertToLightBlock(String value) {
+		Material material = Material.matchMaterial(value);
+
+		if (material == null)
+			throw new InvalidInputException("Material from " + value + " not found");
+
+		if (!AUTO_TORCH_TYPES.getValues().contains(material))
+			throw new InvalidInputException("Light Block Material from " + value + " not found");
+
+		return new LightBlock(material);
+	}
+
+	@TabCompleterFor(LightBlock.class)
+	List<String> tabCompleteLightBlock(String filter) {
+		return Arrays.stream(Material.class.getEnumConstants())
+			.filter(material -> AUTO_TORCH_TYPES.getValues().contains(material))
+			.map(defaultTabCompleteEnumFormatter())
+			.filter(material -> material.toLowerCase().startsWith(filter.toLowerCase()))
+			.collect(Collectors.toList());
 	}
 
 	private static int taskId = -1;
