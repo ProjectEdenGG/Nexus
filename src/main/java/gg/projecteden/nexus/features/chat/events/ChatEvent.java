@@ -56,7 +56,7 @@ public abstract class ChatEvent extends Event implements Cancellable {
 
 	public abstract boolean isFiltered();
 
-	public abstract void setFiltered(boolean wasFilitered);
+	public abstract void setFiltered(boolean wasFiltered);
 
 	//<editor-fold desc="Boilerplate Bukkit">
 	@Getter

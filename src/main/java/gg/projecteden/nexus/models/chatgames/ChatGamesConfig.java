@@ -276,7 +276,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 
 		private ChatGameUser getUser(UUID uuid) {
 			for (ChatGameUser chatGameUser : new ArrayList<>(completed)) {
-				if (chatGameUser.getUuid().equals(uuid))
+				if (chatGameUser != null && chatGameUser.getUuid().equals(uuid))
 					return chatGameUser;
 			}
 
