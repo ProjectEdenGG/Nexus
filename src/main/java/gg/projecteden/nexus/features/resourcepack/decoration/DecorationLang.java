@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
@@ -133,28 +134,28 @@ public class DecorationLang {
 		return result;
 	}
 
-	public static void debug(String message) {
-		debug(false, message);
-	}
-
-	public static void debug(boolean deep, String message) {
-		for (DebuggerData debugger : debuggers) {
-			debugger.send(deep, message);
-		}
-	}
-
 	public static void debug(Player player, String message) {
-		debug(player, false, message);
+		debug(player, new JsonBuilder(message));
+	}
+
+	public static void debug(Player player, JsonBuilder json) {
+		debug(player, false, json);
 	}
 
 	public static void debug(Player player, boolean deep, String message) {
+		debug(player, deep, new JsonBuilder(message));
+	}
+
+	public static void debug(Player player, boolean deep, JsonBuilder json) {
 		if (player == null)
 			return;
 
 		DebuggerData data = getDebuggerData(player.getUniqueId());
 		if (data != null)
-			data.send(deep, message);
+			data.send(deep, json);
 	}
+
+	// Runnable
 
 	public static void debug(Player player, Runnable runnable) {
 		if (player == null)
@@ -165,6 +166,26 @@ public class DecorationLang {
 			data.run(runnable);
 	}
 
+	// All debuggers
+
+	public static void debug(String message) {
+		debug(false, message);
+	}
+
+	public static void debug(JsonBuilder json) {
+		debug(false, json);
+	}
+
+	public static void debug(boolean deep, String message) {
+		debug(deep, new JsonBuilder(message));
+	}
+
+	public static void debug(boolean deep, JsonBuilder json) {
+		for (DebuggerData debugger : debuggers) {
+			debugger.send(deep, json);
+		}
+	}
+
 	@AllArgsConstructor
 	private static class DebuggerData {
 		@Getter
@@ -173,14 +194,18 @@ public class DecorationLang {
 		private boolean deep;
 
 		public void send(boolean deep, String message) {
+			send(deep, new JsonBuilder(message));
+		}
+
+		public void send(boolean deep, JsonBuilder json) {
 			if (deep) {
 				if (this.deep)
-					PlayerUtils.send(uuid, message);
+					PlayerUtils.send(uuid, json);
 				else
 					return;
 			}
 
-			PlayerUtils.send(uuid, message);
+			PlayerUtils.send(uuid, json);
 		}
 
 		public void run(Runnable runnable) {

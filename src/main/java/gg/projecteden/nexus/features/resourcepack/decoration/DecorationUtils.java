@@ -17,6 +17,7 @@ import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -146,7 +147,11 @@ public class DecorationUtils {
 		ItemStack result = resultBuilder.build();
 		item.setItemMeta(result.getItemMeta());
 
-		DecorationLang.debug(debugger, "Item lore: " + item.getLore());
+		List<String> lore = item.getLore();
+		if (lore == null)
+			lore = new ArrayList<>();
+
+		DecorationLang.debug(debugger, new JsonBuilder("[Item Lore]").hover(lore));
 
 		return item;
 	}

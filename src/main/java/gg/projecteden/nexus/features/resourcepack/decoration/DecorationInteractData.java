@@ -185,17 +185,19 @@ public class DecorationInteractData {
 		if (Nullables.isNullOrAir(tool))
 			return true;
 
-		// Custom items
-		if (DyeStation.isPaintbrush(tool))
+		if (tool.getType() == Material.BUCKET)
 			return true;
 
-		// Vanilla items
-		switch (tool.getType()) {
-			case BUCKET -> {
-				return true;
-			}
+		return false;
+	}
 
-		}
+	public boolean isSpecialTool() {
+		boolean sneaking = player.isSneaking();
+		if (Nullables.isNullOrAir(tool))
+			return false;
+
+		if (DyeStation.isPaintbrush(tool))
+			return true;
 
 		return false;
 	}

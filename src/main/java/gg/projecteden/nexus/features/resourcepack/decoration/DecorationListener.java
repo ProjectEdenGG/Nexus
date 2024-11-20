@@ -258,7 +258,9 @@ public class DecorationListener implements Listener {
 			case LEFT_CLICK_BLOCK -> cancel = destroy(data, player);
 			case RIGHT_CLICK_BLOCK -> {
 				boolean shouldInteract = false;
-				if (!player.isSneaking()) {
+				if (data.isSpecialTool())
+					shouldInteract = true;
+				else if (!player.isSneaking()) {
 					if (isNullOrAir(tool))
 						shouldInteract = true;
 					else if (data.isInteractable())
