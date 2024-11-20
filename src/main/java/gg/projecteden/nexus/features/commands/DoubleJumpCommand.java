@@ -61,7 +61,7 @@ public class DoubleJumpCommand extends CustomCommand implements Listener {
 	private static final String DOUBLEJUMP_REGEX = ".*doublejump.*";
 
 	public static boolean isInDoubleJumpRegion(HasLocation location) {
-		return new WorldGuardUtils(location.getLocation()).getRegionsLikeAt(DOUBLEJUMP_REGEX, location.getLocation()).size() > 0;
+		return !new WorldGuardUtils(location.getLocation()).getRegionsLikeAt(DOUBLEJUMP_REGEX, location.getLocation()).isEmpty();
 	}
 
 	private static boolean isDoubleJumpRegion(ProtectedRegion event) {
@@ -102,7 +102,8 @@ public class DoubleJumpCommand extends CustomCommand implements Listener {
 		repeat.set(Tasks.repeat(10, 2, () -> {
 			if (player.isOnGround()) {
 				Tasks.cancel(repeat.get());
-				player.setAllowFlight(true);
+				if (isInDoubleJumpRegion(player))
+					player.setAllowFlight(true);
 			} else {
 				player.setAllowFlight(false);
 				player.setFlying(false);
