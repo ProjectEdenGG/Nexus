@@ -79,7 +79,7 @@ public class AutoTorchCommand extends CustomCommand {
 	void lightLevel(@Arg(min = 0, max = 15) int level) {
 		autoTorch.setLightLevel(level);
 		service.save(autoTorch);
-		send(PREFIX + "A" + autoTorch.getTorchMaterialName() + " will now be automatically placed at your feet at light level &e" + level + "&3 or lower");
+		send(PREFIX + "A &e" + autoTorch.getTorchMaterialName() + " &3will now be automatically placed at your feet at light level &e" + level + "&3 or lower");
 	}
 
 	@Path("lightBlock <lightBlock>")
@@ -87,7 +87,7 @@ public class AutoTorchCommand extends CustomCommand {
 	void material(LightBlock lightBlock) {
 		autoTorch.setTorchMaterial(lightBlock.getMaterial());
 		service.save(autoTorch);
-		send(PREFIX + "Set the placed light block to " + autoTorch.getTorchMaterialName());
+		send(PREFIX + "Set the placed light block to &e" + autoTorch.getTorchMaterialName());
 	}
 
 	@Data
