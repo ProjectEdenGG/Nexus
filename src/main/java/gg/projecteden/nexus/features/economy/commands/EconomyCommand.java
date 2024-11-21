@@ -81,7 +81,7 @@ public class EconomyCommand extends CustomCommand {
 	@Description("Modify a player's balance")
 	@Permission(Group.ADMIN)
 	void set(Banker banker, BigDecimal balance, @Arg("server") TransactionCause cause, String reason, @Switch  @Arg("current") ShopGroup world) {
-		service.setBalance(cause.of(banker, balance, world, reason));
+		service.setBalance(cause.of(null, banker, balance, world, reason));
 		send(PREFIX + "Set &e" + banker.getNickname() + "'s &3balance to &e" + banker.getBalanceFormatted(world));
 	}
 
