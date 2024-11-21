@@ -13,6 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -67,9 +68,9 @@ public abstract class SpleefMechanic extends TeamlessMechanic {
 	}
 
 	public void spawnTnt(Location location) {
-		Location spawnLocation = location.add(0.5, 0, 0.5);
-		TNTPrimed tnt = (TNTPrimed) location.getWorld().spawnEntity(spawnLocation, EntityType.PRIMED_TNT);
-		tnt.setYield(5);
+		Location spawnLocation = location.clone().toCenterLocation();
+		TNTPrimed tnt = (TNTPrimed) location.getWorld().spawnEntity(spawnLocation, EntityType.PRIMED_TNT, SpawnReason.DEFAULT);
+		tnt.setYield(4);
 		tnt.setFuseTicks(0);
 	}
 

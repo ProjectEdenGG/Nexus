@@ -47,7 +47,7 @@ public class TNTRun extends TeamlessMechanic {
 			return;
 
 		Arena arena = ArenaManager.getFromLocation(event.getLocation());
-		if (arena == null || arena.getMechanic().equals(this))
+		if (arena == null || !(arena.getMechanic() instanceof TNTRun))
 			return;
 
 		event.blockList().clear();
