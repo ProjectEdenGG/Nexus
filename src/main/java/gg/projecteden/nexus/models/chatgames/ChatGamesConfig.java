@@ -57,6 +57,7 @@ import static gg.projecteden.nexus.utils.StringUtils.prettyMoney;
 @Converters({UUIDConverter.class, LocationConverter.class, LocalDateTimeConverter.class})
 public class ChatGamesConfig implements PlayerOwnedObject {
 	public static final int REQUIRED_PLAYERS = 7;
+
 	@Id
 	@NonNull
 	private UUID uuid;
@@ -66,8 +67,12 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 	@Setter
 	private static ChatGame currentGame;
 
+	@Getter
+	@Setter
+	private static boolean ignorePlayers = false;
+
 	public static boolean hasRequiredPlayers() {
-		return OnlinePlayers.where().afk(false).vanished(false).get().size() >= REQUIRED_PLAYERS;
+		return ignorePlayers || OnlinePlayers.where().afk(false).vanished(false).get().size() >= REQUIRED_PLAYERS;
 	}
 
 	public static void processQueue() {
