@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.minigames.models.annotations.AntiCamp;
 import gg.projecteden.nexus.features.minigames.models.annotations.Regenerating;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import gg.projecteden.nexus.utils.RandomUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -62,8 +63,12 @@ public abstract class SpleefMechanic extends TeamlessMechanic {
 		Match match = MatchManager.getActiveMatchFromLocation(this, event.getLocation());
 		if (match == null) return;
 
-		// TODO: ensure these blocks are part of a floor region?
-		event.blockList().forEach(block -> breakBlock(match, block.getLocation()));
+		event.blockList().forEach(block -> {
+			if (RandomUtils.chanceOf(5))
+				return;
+
+			breakBlock(match, block.getLocation());
+		});
 		event.blockList().clear();
 	}
 
