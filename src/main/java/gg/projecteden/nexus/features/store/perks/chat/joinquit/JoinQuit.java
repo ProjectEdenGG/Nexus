@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.store.perks.chat.joinquit;
 
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.Koda;
@@ -100,8 +101,9 @@ public class JoinQuit extends Feature implements Listener {
 			Nerd nerd = Nerd.of(player);
 			if (player.hasPlayedBefore() && nerd.getLastQuit() != null) {
 				if (nerd.getLastQuit().isBefore(LocalDateTime.now().minusMonths(3))) {
-					Koda.sayIngame("&lLong time no see, welcome back " + nerd.getNickname() + "!");
-					Koda.replyDiscord("**Long time no see, welcome back " + nerd.getNickname() + "!**");
+					String timeDiff = "(" + Timespan.of(nerd.getLastQuit()).format() + ")";
+					Koda.sayIngame("&lLong time no see, welcome back " + nerd.getNickname() + "! " + timeDiff);
+					Koda.replyDiscord("**Long time no see, welcome back " + nerd.getNickname() + "! " + timeDiff + "**");
 				}
 			}
 
