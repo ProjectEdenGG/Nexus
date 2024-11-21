@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.info;
 
+import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.scoreboard.ScoreboardLine;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -26,13 +27,32 @@ public class WorldCommand extends CustomCommand {
 
 	@Path("[player]")
 	@Description("View what world you or another player are currently in")
-	void run(@Arg("self") Player player) {
-		String render = ScoreboardLine.WORLD.render(player).split(":")[1].trim();
-		WorldGroup worldGroup = WorldGroup.of(player);
-		if (!isStaff(player()) && isStaff(player) && worldGroup == WorldGroup.STAFF)
-			send("&3" + (isSelf(player) ? "You are" : Nickname.of(player) + " is") + " in a staff world");
+	void run(@Arg("self") Player target) {
+		String render = ScoreboardLine.WORLD.render(target).split(":")[1].trim();
+		WorldGroup worldGroup = WorldGroup.of(target);
+
+		boolean isSelf = isSelf(target);
+		boolean isSelfStaff = isStaff();
+		boolean isTargetStaff = isStaff(target);
+		boolean isTargetInHiddenWorld = isInHiddenWorld(target);
+		String targetNick = Nickname.of(target);
+
+		if (!isSelfStaff && isTargetStaff && isTargetInHiddenWorld)
+			send("&3" + (isSelf ? "You are" : targetNick + " is") + " in a staff world");
 		else
-			send("&3" + (isSelf(player) ? "You are" : Nickname.of(player) + " is") + " in world &e" + render + " &3in group &f" + worldGroup.getIcon() + " &e" + camelCase(worldGroup));
+			send("&3" + (isSelf ? "You are" : targetNick + " is") + " in world &e" + render + " &3in group &f" + worldGroup.getIcon() + " &e" + camelCase(worldGroup));
+	}
+
+	private boolean isInHiddenWorld(Player target) {
+		WorldGroup worldGroup = WorldGroup.of(target);
+		if (worldGroup == WorldGroup.STAFF || worldGroup == WorldGroup.UNKNOWN)
+			return true;
+
+		EdenEvent edenEvent = EdenEvent.of(target);
+		if (edenEvent != null && edenEvent.isBeforeEvent())
+			return true;
+
+		return false;
 	}
 
 	@Path("list")
