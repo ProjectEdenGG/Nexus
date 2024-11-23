@@ -421,7 +421,7 @@ public enum VPSMenu {
 							.lore("&3from the VPS or the server &c/store")
 							.lore("")
 							.lore("&6Price: &e150vp"))
-						.command("vps buy plot"));
+						.command("vote points store buy plot"));
 				}}).build());
 		}};
 	},
