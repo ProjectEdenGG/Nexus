@@ -12,6 +12,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,7 +39,7 @@ public class ScoreboardTeamUtilsCommand extends CustomCommand {
 			error(Nickname.of(player) + " doesn't belong to any teams");
 
 		send(PREFIX + "Teams of " + player.getName());
-		paginate(teams, (team, index) -> json("&3" + index + " &e" + team.getName()), "teamdebug teamsOf " + player.getName(), page);
+		paginate(teams, (team, index) -> json("&3" + index + " &e" + team.getName()), "scoreboardteamutils teamsOf " + player.getName(), page);
 	}
 
 	@Path("cleanup")
@@ -86,11 +87,31 @@ public class ScoreboardTeamUtilsCommand extends CustomCommand {
 		if (teams.isEmpty())
 			error("No teams found");
 
-		final String command = "teamdebug list"
+		final String command = "scoreboardteamutils list"
 			+ (empty == null ? "" : " --empty=" + empty);
 
 		send(PREFIX + "Found " + teams.size() + " teams");
 		paginate(teams, (team, index) -> json("&3" + index + " &e" + team.getName()), command, page);
+	}
+
+	@Path("teamsOfTargetEntity")
+	void of() {
+		LivingEntity entity = getTargetLivingEntityRequired();
+
+		List<Team> teams = new ArrayList<>();
+		for (Team team : teams()) {
+			if (team.hasEntity(entity))
+				teams.add(team);
+		}
+
+		if (teams.isEmpty())
+			error("That entity isn't on a team");
+
+		send("Teams:");
+		for (Team team : teams) {
+			send(" - " + team.getName());
+		}
+
 	}
 
 	@NotNull
