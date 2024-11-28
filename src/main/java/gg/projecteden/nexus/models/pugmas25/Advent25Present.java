@@ -9,7 +9,6 @@ import gg.projecteden.parchment.HasLocation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.minecraft.world.entity.decoration.ItemFrame;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.inventory.ItemStack;
@@ -43,16 +42,13 @@ public class Advent25Present implements HasLocation {
 		return Pugmas25District.of(getLocation());
 	}
 
-	@NotNull
-	ItemFrame sendPacket(Advent25User user) {
+	void sendPacket(Advent25User user) {
 		final CustomMaterial material = user.hasCollected(day) ? CustomMaterial.PUGMAS_PRESENT_ADVENT_OPENED : CustomMaterial.PUGMAS_PRESENT_ADVENT;
-		return ClientSideItemFrame.builder()
-				.location(getLocation())
-				.blockFace(BlockFace.UP)
-				.content(new ItemBuilder(material).build())
-				.invisible(true)
-				.send(user.getOnlinePlayer())
-				.entity();
+		ClientSideItemFrame.builder()
+			.location(getLocation())
+			.blockFace(BlockFace.UP)
+			.content(new ItemBuilder(material).build())
+			.invisible(true)
+			.send(user.getOnlinePlayer());
 	}
-
 }

@@ -59,6 +59,9 @@ public class ClientSideUser implements PlayerOwnedObject {
 	}
 
 	public boolean canAlreadySee(IClientSideEntity<?, ?, ?> entity) {
+		if (entity == null || entity.getUuid() == null)
+			return false;
+
 		return visibleEntities.contains(entity.getUuid());
 	}
 

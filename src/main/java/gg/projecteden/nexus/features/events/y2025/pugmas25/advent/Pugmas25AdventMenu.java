@@ -46,8 +46,8 @@ public class Pugmas25AdventMenu extends InventoryProvider {
 
 	@AllArgsConstructor
 	public enum Title implements IterableEnum {
-		FRAME_1(CustomTexture.GUI_PUGMAS24_ADVENT_1),
-		FRAME_2(CustomTexture.GUI_PUGMAS24_ADVENT_2),
+		FRAME_1(CustomTexture.GUI_PUGMAS25_ADVENT_1),
+		FRAME_2(CustomTexture.GUI_PUGMAS25_ADVENT_2),
 		;
 
 		private final CustomTexture character;

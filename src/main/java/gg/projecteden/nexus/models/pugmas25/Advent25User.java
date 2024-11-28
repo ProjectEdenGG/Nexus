@@ -102,9 +102,9 @@ public class Advent25User implements PlayerOwnedObject {
 		getOnlinePlayer().teleportAsync(present.getLocation().toCenterLocation());
 	}
 
-	public ItemFrame show(Advent25Present present) {
+	public void show(Advent25Present present) {
 		hide(present);
-		return frames.compute(present.getDay(), ($1, $2) -> present.sendPacket(this));
+		present.sendPacket(this);
 	}
 
 	public void hide(Advent25Present present) {
