@@ -16,6 +16,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.apache.commons.collections4.map.ListOrderedMap;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -135,11 +136,15 @@ public class ScoreboardUser implements PlayerOwnedObject {
 		}
 
 		private void renderLines(SidebarStage stage) {
+			Player player = getPlayer();
+			if (player == null || !player.isOnline())
+				return;
+
 			for (ScoreboardLine line : ScoreboardLine.values()) {
 				if (lines.getOrDefault(line, false)) {
 					if (index % line.getInterval() == 0 || flush)
 						if (getScore(line) < 15)
-							stage.setLine(getScore(line), line.render(getOnlinePlayer()));
+							stage.setLine(getScore(line), line.render(player));
 				}
 			}
 			flush = false;

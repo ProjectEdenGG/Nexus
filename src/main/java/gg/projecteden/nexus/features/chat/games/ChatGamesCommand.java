@@ -46,6 +46,17 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Ignoring players " + (ChatGamesConfig.isIgnorePlayers() ? "&aenabled" : "&cdisabled"));
 	}
 
+	@HideFromWiki
+	@Path("getAnswer")
+	@Permission(Group.ADMIN)
+	void getAnswer() {
+		ChatGame chatGame = ChatGamesConfig.getCurrentGame();
+		if (chatGame == null)
+			error("There isn't an active game");
+
+		send("Answer: " + chatGame.getAnswer());
+	}
+
 	@Path("enable")
 	@Description("Enables chat game")
 	void add() {
@@ -74,7 +85,7 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onChat(ChatEvent event) {
 		final ChatGame game = ChatGamesConfig.getCurrentGame();
-		if (game == null || game.getAnswer() == null)
+		if (game == null || game.getAnswer() == null || !game.isStarted())
 			return;
 
 		if (event.getOriginalMessage().equalsIgnoreCase(game.getAnswer())) {
