@@ -18,7 +18,6 @@ import org.bukkit.World;
 import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.util.BlockIterator;
@@ -164,23 +163,6 @@ public class LocationUtils {
 		}
 
 		return blockHit;
-	}
-
-	/**
-	 * Sets a player's pitch and yaw to look at the provided location.
-	 */
-	public static void lookAt(HasPlayer hasPlayer, Location lookAt) {
-		Player player = hasPlayer.getPlayer();
-		Vector direction = player.getEyeLocation().toVector().subtract(lookAt.toCenterLocation().toVector()).normalize();
-		double x = direction.getX();
-		double y = direction.getY();
-		double z = direction.getZ();
-
-		// Now change the angle
-		Location changed = player.getLocation().clone();
-		changed.setYaw(180 - toDegree(Math.atan2(x, z)));
-		changed.setPitch(90 - toDegree(Math.acos(y)));
-		player.teleport(changed);
 	}
 
 	/**

@@ -49,6 +49,7 @@ import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.ItemUtils.PotionWrapper;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerMovementUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -133,6 +134,11 @@ public class TestCommand extends CustomCommand implements Listener {
 	@Override
 	public void _shutdown() {
 		shutdownBossBars();
+	}
+
+	@Path("jump [player]")
+	void jump(@Arg("self") Player player) {
+		PlayerMovementUtils.jump(player);
 	}
 
 	@Path("hover")

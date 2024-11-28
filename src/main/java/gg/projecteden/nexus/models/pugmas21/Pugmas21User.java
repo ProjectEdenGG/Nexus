@@ -13,10 +13,10 @@ import gg.projecteden.nexus.models.pugmas21.Advent21Config.AdventPresent;
 import gg.projecteden.nexus.utils.GlowUtils;
 import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.nms.PacketUtils;
+import gg.projecteden.nexus.utils.PlayerMovementUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.nms.PacketUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -146,7 +146,7 @@ public class Pugmas21User implements PlayerOwnedObject {
 		// This is breaking advent presents, the server/database somehow loses reference to them when calling this method
 		@Deprecated
 		public void locate(AdventPresent present) {
-			LocationUtils.lookAt(getOnlinePlayer(), present.getLocation());
+			PlayerMovementUtils.lookAt(getOnlinePlayer(), present.getLocation());
 			glow(present);
 		}
 

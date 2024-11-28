@@ -15,7 +15,7 @@ import gg.projecteden.nexus.models.whereis.WhereIsService;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.GlowUtils;
 import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
-import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.PlayerMovementUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -51,7 +51,7 @@ public class WhereIsCommand extends CustomCommand {
 		if (distanceTo(playerArg).gt(Chat.getLocalRadius()))
 			error(StringUtils.camelCase(playerArg.getName() + " not found"));
 
-		LocationUtils.lookAt(player(), playerArgLoc);
+		PlayerMovementUtils.lookAt(player(), playerArgLoc);
 
 		GlowUtils.GlowTask.builder()
 				.duration(10 * 20)

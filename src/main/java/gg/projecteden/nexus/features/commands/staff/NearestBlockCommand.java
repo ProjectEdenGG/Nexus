@@ -10,7 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.GlowUtils;
 import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
-import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.PlayerMovementUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -72,7 +72,7 @@ public class NearestBlockCommand extends CustomCommand {
 					fallingBlock.setInvulnerable(true);
 					fallingBlock.setVelocity(new Vector(0, 0, 0));
 
-					LocationUtils.lookAt(player(), block.getLocation());
+					PlayerMovementUtils.lookAt(player(), block.getLocation());
 					StringUtils.sendJsonLocation(PREFIX + "&3&l[Click to Teleport]", block.getLocation(), player());
 
 					GlowUtils.GlowTask.builder()

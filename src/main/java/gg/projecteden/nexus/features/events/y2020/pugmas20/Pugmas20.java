@@ -17,7 +17,7 @@ import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.GlowUtils;
 import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.PlayerMovementUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -283,7 +283,7 @@ public class Pugmas20 implements Listener {
 			fallingBlock.setInvulnerable(true);
 			fallingBlock.setVelocity(new Vector(0, 0, 0));
 
-			LocationUtils.lookAt(player, blockLoc);
+			PlayerMovementUtils.lookAt(player, blockLoc);
 
 			GlowUtils.GlowTask.builder()
 					.duration(TickTime.SECOND.x(10))
