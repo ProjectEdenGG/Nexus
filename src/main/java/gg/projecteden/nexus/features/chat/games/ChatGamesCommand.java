@@ -21,7 +21,6 @@ import lombok.NoArgsConstructor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.simmetrics.metrics.StringMetrics;
 
 @NoArgsConstructor
 @Permission(Group.SENIOR_STAFF)
@@ -97,21 +96,17 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 
 		String message = event.getOriginalMessage();
 		final boolean correct = message.equalsIgnoreCase(game.getAnswer());
-		boolean alreadyGuessed = game.hasCompleted(nerd.getUuid());
 
-		if (!correct && !alreadyGuessed) {
-			final float similarity = StringMetrics.levenshtein().compare(game.getAnswer(), message);
-			double similarityThreshold = .6f;
-			if (similarity >= similarityThreshold) {
-				event.setCancelled(true);
-				PlayerUtils.send(event.getChatter(), PREFIX + "&3Your guess &e" + message + " &3is &aclose&3!");
-			}
-
+		if (correct) {
+			event.setCancelled(true);
+			game.onAnswer(nerd);
 			return;
 		}
 
-		event.setCancelled(true);
-		game.onAnswer(nerd);
+		if (game.isAnswerSimilar(message)) {
+			event.setCancelled(true);
+			PlayerUtils.send(event.getChatter(), PREFIX + "&3Your guess &e" + message + " &3is &aclose&3!");
+		}
 	}
 
 	@EventHandler

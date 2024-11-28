@@ -37,6 +37,7 @@ import lombok.Setter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import org.bukkit.Sound;
+import org.simmetrics.metrics.StringMetrics;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -101,7 +102,6 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 		private LocalDateTime startTime;
 		private boolean started;
 		private int taskId;
-
 		@Data
 		@AllArgsConstructor
 		private static class ChatGameUser {
@@ -287,6 +287,41 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 
 			return null;
 		}
+
+		public boolean isAnswerSimilar(String message) {
+			if (message == null)
+				return false;
+
+			switch (gameType) {
+				case MATH -> {
+					Float userAnswer = null;
+					try {
+						userAnswer = Float.parseFloat(message);
+					} catch (Exception ignored) {
+					}
+
+					if (userAnswer == null)
+						return false;
+
+					final float gameAnswer = Float.parseFloat(this.answer);
+					final float similarMin = gameAnswer - (gameAnswer * .20f);
+					final float similarMax = gameAnswer + (gameAnswer * .20f);
+
+					if (userAnswer > similarMin && userAnswer < similarMax)
+						return true;
+				}
+
+				default -> {
+					final float similarity = StringMetrics.levenshtein().compare(this.answer, message);
+					double similarityThreshold = .6f;
+					if (similarity >= similarityThreshold)
+						return true;
+				}
+			}
+
+			return false;
+		}
+
 	}
 
 }
