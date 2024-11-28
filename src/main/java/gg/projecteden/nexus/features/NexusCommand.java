@@ -9,12 +9,12 @@ import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.crates.CrateHandler;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21TrainBackground;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.balloons.Pugmas24BalloonEditor;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Pugmas24WhacAMole;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.slotmachine.Pugmas24SlotMachine;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24Geyser;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Pugmas24TrainBackground;
 import gg.projecteden.nexus.features.events.y2024.vulan24.lantern.VuLan24LanternAnimation;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.balloons.Pugmas25BalloonEditor;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.Pugmas25WhacAMole;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.slotmachine.Pugmas25SlotMachine;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Geyser;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25TrainBackground;
 import gg.projecteden.nexus.features.listeners.common.TemporaryListener;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
@@ -280,8 +280,8 @@ public class NexusCommand extends CustomCommand implements Listener {
 				throw new InvalidInputException("Decoration store is animating");
 
 			if (Nexus.getEnv() == Env.PROD) {
-				if (Pugmas24Geyser.isAnimating())
-					throw new InvalidInputException("Pugmas24 geyser is animating");
+				if (Pugmas25Geyser.isAnimating())
+					throw new InvalidInputException("Pugmas25 geyser is animating");
 
 				if (gg.projecteden.nexus.features.events.models.Train.anyActiveInstances())
 					throw new InvalidInputException("There is an active train");
@@ -290,28 +290,28 @@ public class NexusCommand extends CustomCommand implements Listener {
 					train.stop();
 			}
 		}),
-		PUGMAS24_BALLOON_EDITOR(() -> {
+		PUGMAS25_BALLOON_EDITOR(() -> {
 			if (Nexus.getEnv() == Env.PROD) {
-				if (Pugmas24BalloonEditor.reload())
+				if (Pugmas25BalloonEditor.reload())
 					throw new InvalidInputException("A balloon is being editing at pugmas, saving session...");
 			}
 		}),
-		PUGMAS24_SLOT_MACHINE(() -> {
+		PUGMAS25_SLOT_MACHINE(() -> {
 			if (Nexus.getEnv() == Env.PROD) {
-				if (Pugmas24SlotMachine.get().isPlaying())
+				if (Pugmas25SlotMachine.get().isPlaying())
 					throw new InvalidInputException("The slot machine is being rolled at pugmas");
 			}
 		}),
-		PUGMAS24_WAC_A_MOLE(() -> {
+		PUGMAS25_WAC_A_MOLE(() -> {
 			if (Nexus.getEnv() == Env.PROD) {
-				if (Pugmas24WhacAMole.get().isPlaying())
+				if (Pugmas25WhacAMole.get().isPlaying())
 					throw new InvalidInputException("Whac A Mole is being played at pugmas");
 			}
 		}),
-		PUGMAS24_TRAIN_BACKGROUND(() -> {
+		PUGMAS25_TRAIN_BACKGROUND(() -> {
 			if (Nexus.getEnv() == Env.PROD) {
-				if (Pugmas24TrainBackground.isAnimating())
-					throw new InvalidInputException("Pugmas24 Train Background is animating!");
+				if (Pugmas25TrainBackground.isAnimating())
+					throw new InvalidInputException("Pugmas25 Train Background is animating!");
 			}
 		}),
 		CHAT_GAMES(() -> {

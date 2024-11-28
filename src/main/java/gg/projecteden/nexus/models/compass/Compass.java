@@ -4,8 +4,8 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestItem;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.statusbar.StatusBar;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -36,8 +36,8 @@ public class Compass implements PlayerOwnedObject {
 
 	public boolean isEnabled() {
 		try {
-			if (isOnline() && Pugmas24.get().isAtEvent(getLocation()))
-				return Pugmas24QuestItem.canUseCompass(getOnlinePlayer());
+			if (isOnline() && Pugmas25.get().isAtEvent(getLocation()))
+				return Pugmas25QuestItem.canUseCompass(getOnlinePlayer());
 		} catch (Exception ignore) {}
 
 		return enabled;

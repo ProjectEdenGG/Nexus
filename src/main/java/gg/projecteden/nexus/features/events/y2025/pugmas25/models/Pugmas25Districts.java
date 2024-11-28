@@ -1,0 +1,106 @@
+package gg.projecteden.nexus.features.events.y2025.pugmas25.models;
+
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
+import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
+import gg.projecteden.nexus.utils.StringUtils;
+import lombok.AllArgsConstructor;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class Pugmas25Districts implements Listener {
+	private static final String regionPrefix = Pugmas25.get().getRegionName() + "_district_";
+	private static final Map<Player, Pugmas25District> playerDistrictMap = new HashMap<>();
+
+	public Pugmas25Districts() {
+		Nexus.registerListener(this);
+	}
+
+	public static Pugmas25District of(Player player) {
+		return playerDistrictMap.computeIfAbsent(player, k -> Pugmas25District.WILDERNESS);
+	}
+
+	@EventHandler
+	public void on(PlayerEnteredRegionEvent event) {
+		updateDistrict(event.getPlayer());
+	}
+
+	@EventHandler
+	public void on(PlayerLeftRegionEvent event) {
+		updateDistrict(event.getPlayer());
+	}
+
+	private void updateDistrict(Player player) {
+		if (!Pugmas25.get().shouldHandle(player))
+			return;
+
+		Pugmas25District newDistrict = Pugmas25District.of(player.getLocation());
+		if (newDistrict == null)
+			return;
+
+		Pugmas25District currentDistrict = playerDistrictMap.get(player);
+		if (currentDistrict != null) {
+			if (newDistrict == currentDistrict)
+				return;
+		}
+
+		playerDistrictMap.put(player, newDistrict);
+		Pugmas25.get().actionBar(player, "&3Area Designation: &e" + newDistrict.getName(), TickTime.SECOND.x(2));
+	}
+
+
+	@AllArgsConstructor
+	public enum Pugmas25District {
+		RIDGE("ridge"),
+		WEST_SIDE("west"),
+		EAST_SIDE("east"),
+		FARM("farm"),
+		MINES("mines"),
+		PORT("port"),
+		FROZEN_LAKE("lake"),
+		TRAIN_STATION("train_station"),
+		TRAIN_TRACKS("train_tracks"),
+		FAIRGROUNDS("fair"),
+		HOT_SPRING("spring"),
+		SAWMILL("sawmill"),
+		RIVER("river"),
+		//
+		UNDERGROUND("underground"),
+		WILDERNESS(null);
+
+		final String regionId;
+
+		public String getName() {
+			return StringUtils.camelCase(this);
+		}
+
+		public String getRegionId() {
+			return regionPrefix + regionId;
+		}
+
+		public static @Nullable Pugmas25Districts.Pugmas25District of(Location location) {
+			if (!location.getWorld().equals(Pugmas25.get().getWorld()))
+				return null;
+
+			for (ProtectedRegion region : Pugmas25.get().worldguard().getRegionsAt(location)) {
+				for (Pugmas25District district : Pugmas25District.values())
+					if (region.getId().equalsIgnoreCase(district.getRegionId())) {
+						if (district == UNDERGROUND && location.getBlock().getLightFromSky() > 0)
+							continue;
+						return district;
+					}
+			}
+
+			return Pugmas25District.WILDERNESS;
+		}
+	}
+}

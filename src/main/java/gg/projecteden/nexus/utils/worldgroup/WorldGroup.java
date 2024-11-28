@@ -23,9 +23,20 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.*;
+import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.BINGO;
+import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.DEATH_SWAP;
+import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.LEGACY1;
+import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.LEGACY2;
+import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.ONEBLOCK;
+import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.RESOURCE;
+import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.STAFF_SURVIVAL;
+import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.UHC;
 
 public enum WorldGroup implements IWorldGroup {
 	@Icon("globe")
@@ -57,7 +68,7 @@ public enum WorldGroup implements IWorldGroup {
 	ADVENTURE("stranded", "aeveon_project"),
 
 	@Icon("star")
-	EVENTS("bearfair21", "pugmas21", "pugmas24", "vu_lan"),
+	EVENTS("bearfair21", "pugmas21", "pugmas24", "pugmas25", "vu_lan"),
 
 	@Icon("lock")
 	STAFF("buildadmin", "jail", "pirate", "tiger"),
