@@ -1177,18 +1177,22 @@ public abstract class CustomCommand extends ICustomCommand {
 		if (first && last)
 			return;
 
+		command = command.trim();
+		final String commandNext = command + " " + (page + 1);
+		final String commandPrevious = command + " " + (page - 1);
+
 		JsonBuilder buttons = json();
 		if (first)
 			buttons.next("&7 « Previous  &3");
 		else
-			buttons.next("&e « Previous  &3").command(command + " " + (page - 1));
+			buttons.next("&e « Previous  &3").command(commandPrevious).hover("&c" + commandPrevious);
 
 		buttons.group().next("&3|&3|").group();
 
 		if (last)
 			buttons.next("  &7Next »");
 		else
-			buttons.next("  &eNext »").command(command + " " + (page + 1));
+			buttons.next("  &eNext »").command(commandNext).hover("&c" + commandNext);
 
 		send(buttons.group());
 	}
