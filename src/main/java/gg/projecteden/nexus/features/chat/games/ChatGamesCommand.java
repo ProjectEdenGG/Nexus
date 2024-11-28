@@ -15,11 +15,13 @@ import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig.ChatGame;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfigService;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NoArgsConstructor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.simmetrics.metrics.StringMetrics;
 
 @NoArgsConstructor
 @Permission(Group.SENIOR_STAFF)
@@ -84,16 +86,32 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onChat(ChatEvent event) {
+		if (event.getChatter() == null)
+			return;
+
+		Nerd nerd = Nerd.of(event.getChatter());
+
 		final ChatGame game = ChatGamesConfig.getCurrentGame();
 		if (game == null || game.getAnswer() == null || !game.isStarted())
 			return;
 
-		if (event.getOriginalMessage().equalsIgnoreCase(game.getAnswer())) {
-			if (event.getChatter() != null)
-				game.onAnswer(Nerd.of(event.getChatter()));
+		String message = event.getOriginalMessage();
+		final boolean correct = message.equalsIgnoreCase(game.getAnswer());
+		boolean alreadyGuessed = game.hasCompleted(nerd.getUuid());
 
-			event.setCancelled(true);
+		if (!correct && !alreadyGuessed) {
+			final float similarity = StringMetrics.levenshtein().compare(game.getAnswer(), message);
+			double similarityThreshold = .6f;
+			if (similarity >= similarityThreshold) {
+				event.setCancelled(true);
+				PlayerUtils.send(event.getChatter(), PREFIX + "&3Your guess &e" + message + " &3is &aclose&3!");
+			}
+
+			return;
 		}
+
+		event.setCancelled(true);
+		game.onAnswer(nerd);
 	}
 
 	@EventHandler

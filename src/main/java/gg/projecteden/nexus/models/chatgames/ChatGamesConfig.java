@@ -275,7 +275,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 			abstract String apply(ChatGame game, Nerd player);
 		}
 
-		private boolean hasCompleted(UUID uuid) {
+		public boolean hasCompleted(UUID uuid) {
 			return getUser(uuid) != null;
 		}
 
