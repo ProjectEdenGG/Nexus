@@ -52,7 +52,7 @@ public class AutoTorchCommand extends CustomCommand {
 	public static final String PERMISSION = "nexus.autotorch";
 
 	public static final MaterialTag AUTO_TORCH_TYPES = new MaterialTag(GLOWSTONE, SHROOMLIGHT, END_ROD, SEA_PICKLE, REDSTONE_LAMP, LIGHT)
-		.append(MaterialTag.TORCHES, MaterialTag.LANTERNS, MaterialTag.CANDLES, MaterialTag.FROGLIGHT, MaterialTag.CAMPFIRES)
+		.append(MaterialTag.TORCHES, MaterialTag.LANTERNS, MaterialTag.FROGLIGHT, MaterialTag.CAMPFIRES)
 		.exclude("WALL_", MatchMode.CONTAINS);
 
 	private static final AutoTorchService service = new AutoTorchService();
@@ -135,33 +135,37 @@ public class AutoTorchCommand extends CustomCommand {
 				if (!WorldGuardFlagUtils.canPlace(player))
 					return;
 
-				// ensures the player has a torch
+				AutoTorchUser autoTorchUser = service.get(player);
+
+				// ensures the player has a light block
 				ItemStack item = PlayerUtils.getNonNullInventoryContents(player).stream()
-					.filter(itemStack -> itemStack.getType() == Material.TORCH && itemStack.getAmount() > 0)
+					.filter(itemStack -> itemStack.getType() == autoTorchUser.getTorchMaterial() && itemStack.getAmount() > 0)
 					.findAny()
 					.orElse(null);
-				if (item == null) return;
+				if (item == null)
+					return;
 
-				AutoTorchUser autoTorchUser = service.get(player);
 				Block block = player.getLocation().getBlock();
 
-				CompletableTask.supplySync(() -> {
-					if (!autoTorchUser.applies(player, block)) // tests light level and for valid torch placing location
-						return false;
+				Tasks.wait(5, () -> {
+					CompletableTask.supplySync(() -> {
+						if (!autoTorchUser.applies(player, block)) // tests light level and for valid torch placing location
+							return false;
 
-					if (!BlockUtils.tryPlaceEvent(player, block, block.getRelative(0, -1, 0), Material.TORCH))
-						return false;
+						if (!BlockUtils.tryPlaceEvent(player, block, block.getRelative(0, -1, 0), autoTorchUser.getTorchMaterial()))
+							return false;
 
-					return true;
-				}).thenAccept(success -> {
-					if (success) {
-						// play sound
-						new SoundBuilder(Sound.BLOCK_WOOD_PLACE).location(block).category(SoundCategory.BLOCKS).play();
+						return true;
+					}).thenAccept(success -> {
+						if (success) {
+							// play sound
+							new SoundBuilder(Sound.BLOCK_WOOD_PLACE).location(block).category(SoundCategory.BLOCKS).play();
 
-						// remove a torch from player's inventory
-						if (gameMode.isSurvival())
-							item.subtract();
-					}
+							// remove a torch from player's inventory
+							if (gameMode.isSurvival())
+								item.subtract();
+						}
+					});
 				});
 			});
 		});

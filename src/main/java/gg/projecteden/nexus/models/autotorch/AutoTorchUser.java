@@ -5,6 +5,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.parchment.HasHumanEntity;
 import lombok.AllArgsConstructor;
@@ -50,9 +51,22 @@ public class AutoTorchUser implements PlayerOwnedObject {
 	 * @return whether you can place an auto torch
 	 */
 	public boolean applies(HasHumanEntity player, Block block) {
-		return applies(block.getLightFromBlocks()) &&
-				!block.isLiquid() &&
-			Bukkit.getUnsafe().canPlaceItemOn(new ItemStack(torchMaterial), player, block.getRelative(BlockFace.DOWN), BlockFace.UP).join();
+		if (!enabled)
+			return false;
+
+		if (block.isLiquid())
+			return false;
+
+		if (!applies(block.getLightFromBlocks())) {
+			return false;
+		}
+
+		if (MaterialTag.NEEDS_SUPPORT.isTagged(block)) {
+			if (!Bukkit.getUnsafe().canPlaceItemOn(new ItemStack(torchMaterial), player, block.getRelative(BlockFace.DOWN), BlockFace.UP).join())
+				return false;
+		}
+
+		return true;
 	}
 
 	public String getTorchMaterialName() {
