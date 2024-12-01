@@ -1,14 +1,16 @@
 package gg.projecteden.nexus.features.blockmechanics;
 
-import gg.projecteden.nexus.features.blockmechanics.blocks.JackOLantern;
-import gg.projecteden.nexus.features.blockmechanics.blocks.Netherrack;
+import gg.projecteden.nexus.features.blockmechanics.mechanics.BlockFireToggle;
+import gg.projecteden.nexus.features.blockmechanics.mechanics.FurnaceExperience;
+import gg.projecteden.nexus.features.blockmechanics.mechanics.JackOLanternToggle;
 import gg.projecteden.nexus.framework.features.Feature;
 
 public class BlockMechanics extends Feature {
 
 	@Override
 	public void onStart() {
-		new JackOLantern();
-		new Netherrack();
+		new JackOLanternToggle();
+		new BlockFireToggle();
+		new FurnaceExperience();
 	}
 }
