@@ -57,11 +57,10 @@ public class AutoTorchUser implements PlayerOwnedObject {
 		if (block.isLiquid())
 			return false;
 
-		if (!applies(block.getLightFromBlocks())) {
+		if (!applies(block.getLightFromBlocks()))
 			return false;
-		}
 
-		if (MaterialTag.NEEDS_SUPPORT.isTagged(block)) {
+		if (MaterialTag.NEEDS_SUPPORT.isTagged(torchMaterial)) {
 			if (!Bukkit.getUnsafe().canPlaceItemOn(new ItemStack(torchMaterial), player, block.getRelative(BlockFace.DOWN), BlockFace.UP).join())
 				return false;
 		}
