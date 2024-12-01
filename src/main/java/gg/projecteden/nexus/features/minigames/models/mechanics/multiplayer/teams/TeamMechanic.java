@@ -202,8 +202,10 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		JsonBuilder builder = new JsonBuilder();
 		builder.next(announcement == null ? getWinnersComponent(winners) : Component.text(announcement));
 		builder.next(arena);
-		if (winningScore != 0)
-			builder.next(" (" + winningScore + ")");
+
+		if (winningScore != 0) {
+			builder.next(getFinalScoresTeams(scores, winners, match));
+		}
 
 		Minigames.broadcast(builder);
 	}
@@ -417,8 +419,10 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 	public void onDeath(@NotNull MinigamerDeathEvent event) {
 		// auto-balancing
 		super.onDeath(event);
+
 		if (!usesAutoBalancing())
 			return;
+
 		Match match = event.getMatch();
 		Minigamer minigamer = event.getMinigamer();
 		if (!minigamer.isAlive() || match.isEnded() || minigamer.getTeam() == null)
@@ -433,18 +437,21 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 					wrapper.extraPlayerPercentDiscrepancy() >= 0)
 			// sort teams by closest to being equal (inverse of natural sort)
 			.sorted(Comparator.reverseOrder())
-			.collect(Collectors.toList());
+			.toList();
 		if (wrappers.isEmpty())
 			return;
+
 		// select randomly if multiple teams are equal
 		List<BalanceWrapper> randomWrappers = new ArrayList<>();
-		randomWrappers.add(wrappers.get(0));
-		double val = wrappers.get(0).extraPlayerPercentDiscrepancy();
+		randomWrappers.add(wrappers.getFirst());
+
+		double val = wrappers.getFirst().extraPlayerPercentDiscrepancy();
 		int index = 1; // iterator var
 		while (index < wrappers.size() && Math.abs(wrappers.get(index).extraPlayerPercentDiscrepancy() - val) < 0.0001d) {
 			randomWrappers.add(wrappers.get(index));
 			index++;
 		}
+
 		// assign team
 		Team team = RandomUtils.randomElement(randomWrappers).getTeam();
 		minigamer.setTeam(team);

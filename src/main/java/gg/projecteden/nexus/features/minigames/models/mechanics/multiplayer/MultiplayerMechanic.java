@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
@@ -17,10 +18,10 @@ import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Utils;
+import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -126,21 +127,30 @@ public abstract class MultiplayerMechanic extends Mechanic {
 		Map<Minigamer, Integer> scores = new HashMap<>();
 
 		match.getAliveMinigamers().forEach(minigamer -> scores.put(minigamer, minigamer.getScore()));
-		if (scores.size() == 0) return null;
+		if (scores.isEmpty()) return null;
 		int winningScore = getWinningScore(scores.values());
 		List<Minigamer> winners = getWinners(winningScore, scores);
 
 		String announcement = null;
-		if (winningScore == 0 && winners.size() != 1)
+		boolean displayScoreboard = true;
+		if (winningScore == 0 && winners.size() != 1) {
 			announcement = "No players scored in ";
-		else if (match.getAliveMinigamers().size() == winners.size() && match.getAliveMinigamers().size() > 1)
+			displayScoreboard = false;
+		} else if (match.getAliveMinigamers().size() == winners.size() && match.getAliveMinigamers().size() > 1) {
 			announcement = "All players tied in ";
+			displayScoreboard = false;
+		}
 
 		JsonBuilder builder = new JsonBuilder();
 		builder.next(announcement == null ? getWinnersComponent(winners) : Component.text(announcement));
 		builder.next(arena);
-		if (winningScore != 0)
-			builder.next(" (" + winningScore + ")");
+		if (winningScore != 0) {
+			if (displayScoreboard)
+				builder.next(getFinalScoresTeamless(scores));
+			else
+				builder.next(" (" + winningScore + ")");
+		}
+
 		return builder;
 	}
 
@@ -169,6 +179,7 @@ public abstract class MultiplayerMechanic extends Mechanic {
 						return Component.text(nickname, NamedTextColor.YELLOW);
 				})
 				.collect(Collectors.toList()));
+
 		if (winners.size() == 1)
 			return component.append(Component.text(" has won "));
 		else
@@ -177,6 +188,59 @@ public abstract class MultiplayerMechanic extends Mechanic {
 
 	protected @NotNull final TextComponent getWinnersComponent(@NotNull Named... components) {
 		return getWinnersComponent(Arrays.asList(components));
+	}
+
+	private @NonNull TextComponent getFinalScoresTeamless(Map<Minigamer, Integer> scores) {
+		JsonBuilder json = new JsonBuilder(" [Scoreboard]");
+		List<String> lines = new ArrayList<>();
+
+		for (Minigamer minigamer : scores.keySet()) {
+			lines.add("&3" + minigamer.getNickname() + ": &e" + scores.get(minigamer));
+		}
+
+		return json.hover(lines).build();
+	}
+
+	@NonNull
+	protected TextComponent getFinalScoresTeams(Map<Team, Integer> scores, List<Team> winningTeams, Match match) {
+		JsonBuilder json = new JsonBuilder(" [Scoreboard]");
+		List<String> lines = new ArrayList<>();
+
+		int count = 1;
+		for (Team team : winningTeams) {
+			count++;
+			lines.addAll(getTeamScores(scores, team, match));
+
+			if (count < winningTeams.size())
+				lines.add("");
+		}
+
+		lines.add("");
+
+		count = 0;
+		for (Team team : scores.keySet()) {
+			count++;
+			if (winningTeams.contains(team))
+				continue;
+
+			lines.addAll(getTeamScores(scores, team, match));
+
+			if (count < scores.keySet().size())
+				lines.add("");
+		}
+
+		return json.hover(lines).build();
+	}
+
+	protected List<String> getTeamScores(Map<Team, Integer> scores, Team team, Match match) {
+		List<String> lines = new ArrayList<>();
+
+		lines.add(team.getChatColor() + "&l" + team.getName() + " Team&3: &e" + scores.get(team));
+		for (Minigamer minigamer : team.getAliveMinigamers(match)) {
+			lines.add("&3- " + team.getChatColor() + minigamer.getNickname() + "&3: &e" + minigamer.getScore());
+		}
+
+		return lines;
 	}
 
 }

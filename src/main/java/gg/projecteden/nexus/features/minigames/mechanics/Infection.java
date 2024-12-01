@@ -129,13 +129,14 @@ public class Infection extends TeamMechanic {
 
 	@Override
 	public void announceWinners(@NotNull Match match) {
-		boolean humansAlive = getHumans(match).size() > 0;
+		boolean humansAlive = !getHumans(match).isEmpty();
 
 		Team winningTeam = !humansAlive || match.getTimer().getTime() != 0 ? getZombieTeam(match) : getHumanTeam(match);
-		Component broadcast = Component.text("The ").append(winningTeam.asComponent())
-				.append(Component.text(" have won "));
 
-		Minigames.broadcast(broadcast.append(match.getArena().asComponent()));
+		Component broadcast = Component.text("The ").append(winningTeam.asComponent())
+			.append(Component.text(" have won ").append(match.getArena().asComponent()));
+
+		Minigames.broadcast(broadcast);
 	}
 
 	// TODO: Validation on start (e.g. only two teams, one has lives, balance percentages)

@@ -24,7 +24,10 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 import static gg.projecteden.nexus.utils.Distance.distance;
 import static java.util.stream.Collectors.joining;
@@ -201,10 +204,10 @@ public final class TNTTag extends TeamMechanic {
 	@Override
 	public void announceWinners(@NotNull Match match) {
 		final List<Minigamer> minigamers = match.getAliveMinigamers();
-		if (minigamers.size() < 1) {
+		if (minigamers.isEmpty()) {
 			Minigames.broadcast("&3No one won in &e" + match.getArena().getDisplayName());
 		} else if (minigamers.size() == 1) {
-			final Minigamer minigamer = minigamers.get(0);
+			final Minigamer minigamer = minigamers.getFirst();
 			Minigames.broadcast(minigamer.getColoredName() + " &3has won &e" + match.getArena().getDisplayName());
 		} else {
 			Nexus.severe("Multiple players won TNT Tag: " + minigamers.stream().map(Minigamer::getColoredName).collect(joining("&3, ")));
