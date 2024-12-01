@@ -1,29 +1,82 @@
 package gg.projecteden.nexus.features.chat;
 
+import com.comphenix.protocol.PacketType.Play.Client;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.events.PacketEvent;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.events.ChatEvent;
 import gg.projecteden.nexus.features.chat.events.DiscordChatEvent;
 import gg.projecteden.nexus.features.chat.events.PublicChatEvent;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
+import gg.projecteden.nexus.models.punishments.Punishment;
+import gg.projecteden.nexus.models.punishments.PunishmentType;
+import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import lombok.NoArgsConstructor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Pattern;
 
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommand;
 import static gg.projecteden.nexus.utils.StringUtils.right;
 
 @NoArgsConstructor
 public class ChatListener implements Listener {
+
+	// TODO: Temp, fixed in later 1.20.4 paper versions
+	static {
+		Nexus.getProtocolManager().addPacketListener(new PacketAdapter(Nexus.getInstance(), Client.TAB_COMPLETE) {
+			@Override
+			public void onPacketReceiving(PacketEvent event) {
+				PacketContainer packet = event.getPacket();
+				String request = packet.getStrings().read(0);
+				Player player = event.getPlayer();
+
+				if (isRequestValid(request))
+					return;
+
+				event.setCancelled(true);
+
+				Punishments.of(player).add(Punishment.ofType(PunishmentType.KICK)
+					.punisher(UUID0)
+					.input("Attempted to crash the server using the tab complete exploit")
+					.now(true));
+			}
+		});
+	}
+
+	/**
+	 * Checks a string from a tab completion request for a brigadier stack overflow exploit
+	 *
+	 * @param request Received string from request
+	 * @return true - the request is harmless, false - contains an exploit
+	 */
+	public static boolean isRequestValid(@NotNull String request) {
+		if (request.contains("@")) {
+			return false;
+		}
+
+		int counter = 0;
+		for (char c : request.toCharArray()) {
+			if (c == '[') {
+				counter++;
+			}
+		}
+		return counter < 100;
+	}
 
 	/*
 	static {
