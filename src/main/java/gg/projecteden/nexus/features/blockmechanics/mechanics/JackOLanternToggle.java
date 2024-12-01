@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.blockmechanics.blocks;
+package gg.projecteden.nexus.features.blockmechanics.mechanics;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.blockmechanics.BlockMechanicUtils;
@@ -12,9 +12,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
-public class JackOLantern implements Listener {
+// When powering a carved pumpkin, change into jack-o-lantern, & vice-versa
+public class JackOLanternToggle implements Listener {
 
-	public JackOLantern() {
+	public JackOLanternToggle() {
 		Nexus.registerListener(this);
 	}
 

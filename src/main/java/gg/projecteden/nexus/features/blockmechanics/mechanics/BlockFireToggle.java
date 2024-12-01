@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.blockmechanics.blocks;
+package gg.projecteden.nexus.features.blockmechanics.mechanics;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.blockmechanics.BlockMechanicUtils;
@@ -13,9 +13,10 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
-public class Netherrack implements Listener {
+// When powering Netherrack & Soul Sand, fire is placed on top of the block if it can
+public class BlockFireToggle implements Listener {
 
-	public Netherrack() {
+	public BlockFireToggle() {
 		Nexus.registerListener(this);
 	}
 
