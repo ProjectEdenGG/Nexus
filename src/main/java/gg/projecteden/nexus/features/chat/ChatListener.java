@@ -65,8 +65,8 @@ public class ChatListener implements Listener {
 	 * @return true - the request is harmless, false - contains an exploit
 	 */
 	public static boolean isRequestValid(@NotNull String request) {
-		if (request.contains("@")) {
-			return false;
+		if (!request.contains("@")) {
+			return true;
 		}
 
 		int counter = 0;

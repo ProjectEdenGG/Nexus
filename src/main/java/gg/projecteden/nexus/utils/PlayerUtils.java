@@ -111,9 +111,9 @@ public class PlayerUtils {
 
 		Dev(String uuid) { this(uuid, false); }
 
-		Dev(String uuid, boolean notifyOfReloads) {
+		Dev(String uuid, boolean showDeveloperTools) {
 			this.uuid = UUID.fromString(uuid);
-			this.showDeveloperTools = notifyOfReloads;
+			this.showDeveloperTools = showDeveloperTools;
 		}
 
 		public void sendIfSelf(HasUniqueId player, Object message) {
@@ -178,6 +178,10 @@ public class PlayerUtils {
 
 		public static OnlinePlayers where(Predicate<Player> filter) {
 			return new OnlinePlayers().filter(filter);
+		}
+
+		public static OnlinePlayers onlyStaff() {
+			return where().filter(player -> Rank.of(player).isStaff() && Rank.of(player).isActive());
 		}
 
 		public static List<Player> getAll() {

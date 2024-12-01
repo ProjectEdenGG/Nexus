@@ -304,8 +304,18 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 						return false;
 
 					final float gameAnswer = Float.parseFloat(this.answer);
-					final float similarMin = gameAnswer - (gameAnswer * .20f);
-					final float similarMax = gameAnswer + (gameAnswer * .20f);
+
+					float min = gameAnswer - (gameAnswer * .20f);
+					float max = gameAnswer + (gameAnswer * .20f);
+
+					if (max < min) {
+						float temp = min;
+						min = max;
+						max = temp;
+					}
+
+					final float similarMin = min;
+					final float similarMax = max;
 
 					if (userAnswer > similarMin && userAnswer < similarMax)
 						return true;

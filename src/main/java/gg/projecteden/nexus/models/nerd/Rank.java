@@ -19,7 +19,7 @@ import lombok.SneakyThrows;
 import net.md_5.bungee.api.ChatColor;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -155,8 +155,7 @@ public enum Rank implements IsColoredAndNamed {
 	}
 
 	public static List<Nerd> getOnlineStaff() {
-		return OnlinePlayers.getAll().stream()
-				.filter(player -> Rank.of(player).isStaff() && Rank.of(player).isActive())
+		return OnlinePlayers.onlyStaff().get().stream()
 				.map(Nerd::of)
 				.sorted(Comparator.comparing(Nerd::getNickname))
 				.collect(Collectors.toList());
