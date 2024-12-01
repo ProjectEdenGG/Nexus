@@ -25,7 +25,6 @@ import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.models.nerd.Nerd;
-import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.GoogleUtils;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.Name;
@@ -48,6 +47,7 @@ import net.md_5.bungee.api.ChatColor;
 import nl.pim16aap2.bigDoors.BigDoors;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -275,16 +275,18 @@ public class Nexus extends JavaPlugin {
 		if (luckPerms == null)
 			return;
 
-		Rank.getOnlineStaff().stream()
-				.map(Nerd::getPlayer)
-				.forEach(player -> {
-					GeoIP geoip = new GeoIPService().get(player);
-					String message = " &c&l ! &c&l! &eReloading Nexus &c&l! &c&l!";
-					if (GeoIP.exists(geoip))
-						PlayerUtils.send(player, "&7 " + geoip.getCurrentTimeShort() + message);
-					else
-						PlayerUtils.send(player, message);
-				});
+		for (Player player : OnlinePlayers.onlyStaff().get()) {
+			Nerd nerd = Nerd.of(player);
+			if(!nerd.isReloadNotify())
+				continue;
+
+			GeoIP geoip = new GeoIPService().get(player);
+			String message = " &c&l ! &c&l! &eReloading Nexus &c&l! &c&l!";
+			if (GeoIP.exists(geoip))
+				PlayerUtils.send(player, "&7 " + geoip.getCurrentTimeShort() + message);
+			else
+				PlayerUtils.send(player, message);
+		}
 	}
 
 	public static boolean isMaintenanceQueued(){

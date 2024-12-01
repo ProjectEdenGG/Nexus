@@ -36,7 +36,12 @@ import net.dv8tion.jda.annotations.ReplaceWith;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.ComponentLike;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -52,8 +57,24 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.function.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.BiPredicate;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -74,11 +95,11 @@ public class PlayerUtils {
 		WAKKA("e9e07315-d32c-4df7-bd05-acfe51108234", true),
 		BLAST("a4274d94-10f2-4663-af3b-a842c7ec729c", true),
 		LEXI("d1de9ca8-78f6-4aae-87a1-8c112f675f12"),
-		ARBY("0a2221e4-000c-4818-82ea-cd43df07f0d4", true),
+		ARBY("0a2221e4-000c-4818-82ea-cd43df07f0d4"),
 		FILID("88f9f7f6-7703-49bf-ad83-a4dec7e8022c"),
-		CYN("1d70383f-21ba-4b8b-a0b4-6c327fbdade1", true),
+		CYN("1d70383f-21ba-4b8b-a0b4-6c327fbdade1"),
 		LUI("fd5d72f3-d599-49d4-9e7b-6e6d7f2ac5b9"),
-		POWER("79f66fc9-a975-4043-8b6d-b4823182de62", true),
+		POWER("79f66fc9-a975-4043-8b6d-b4823182de62"),
 		KODA("56cb00fd-4738-47bc-be08-cb7c4f9a5a94"),
 		SPIKE("e089a260-7aeb-488f-a641-ab5867ab5ccd"),
 		BRI("77966ca3-ac85-44b2-bcb0-b7c5f9342e86"),

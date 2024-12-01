@@ -47,6 +47,8 @@ import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.offline.OfflineMessage;
 import gg.projecteden.nexus.models.quests.Quester;
@@ -54,7 +56,6 @@ import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.Tasks;
@@ -96,7 +97,7 @@ import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
-@Permission(Group.ADMIN)
+@Permission(Group.STAFF)
 public class NexusCommand extends CustomCommand implements Listener {
 
 	private static boolean queued;
@@ -124,8 +125,21 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Up for &e" + Timespan.of(Nexus.EPOCH).format());
 	}
 
+	@Path("reload notify [enable]")
+	@Description("Toggle reload notifications")
+	void notifyReload(Boolean enable) {
+		if (enable == null)
+			enable = !nerd().isReloadNotify();
+
+		final Boolean finalEnable = enable;
+		new NerdService().edit(player(), nerd -> nerd.setReloadNotify(finalEnable));
+
+		send(PREFIX + "Reload notifications " + (enable ? "&aEnabled" : "&cDisabled"));
+	}
+
 	@Path("reload cancel")
 	@Description("Cancel a queued reload")
+	@Permission(Group.ADMIN)
 	void cancelReload() {
 		queued = false;
 		reloading = false;
@@ -136,6 +150,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@Path("reload [--excludedConditions]")
 	@Description("Reload Nexus, or queue a reload if applicable")
+	@Permission(Group.ADMIN)
 	void reload(@Switch @Arg(type = ReloadCondition.class) List<ReloadCondition> excludedConditions) {
 		NexusCommand.excludedConditions = excludedConditions;
 
@@ -153,11 +168,11 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 		reloading = true;
 
-		for (Dev dev : Dev.values()) {
-			if (!dev.isOnline() || !dev.isShowDeveloperTools())
+		for (Player player : OnlinePlayers.onlyStaff().get()) {
+			Nerd nerd = Nerd.of(player);
+			if (!nerd.isReloadNotify())
 				continue;
 
-			Player player = dev.getOnlinePlayer();
 			player.playSound(player.getLocation(), Sound.ENTITY_EVOKER_PREPARE_WOLOLO, SoundCategory.RECORDS, 1, 1);
 		}
 
@@ -360,6 +375,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@Path("debug [state]")
 	@Description("Toggle debug mode")
+	@Permission(Group.ADMIN)
 	void debug(Boolean state) {
 		if (state == null)
 			state = !Nexus.isDebug();
@@ -370,6 +386,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@Path("gc")
 	@Description("Force garbage collection")
+	@Permission(Group.ADMIN)
 	void gc() {
 		send("Collecting garbage...");
 		System.gc();
@@ -379,12 +396,14 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@SneakyThrows
 	@Path("initializeClass <class>")
 	@Description("Force initialize a class")
+	@Permission(Group.ADMIN)
 	void initializeClass(String clazz) {
 		send(PREFIX + "Class " + Class.forName(clazz).getSimpleName() + " initialized");
 	}
 
 	@Path("invs")
 	@Description("View open custom inventories")
+	@Permission(Group.SENIOR_STAFF)
 	void smartInvs() {
 		var anySmartInventories = OnlinePlayers.getAll()
 			.stream()
@@ -428,12 +447,14 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@Path("closeInventory [player]")
 	@Description("Force close a player's inventory")
+	@Permission(Group.SENIOR_STAFF)
 	void closeInventory(@Arg("self") Player player) {
 		player.closeInventory();
 	}
 
 	@Path("temporaryListeners")
 	@Description("View registered temporary listeners")
+	@Permission(Group.SENIOR_STAFF)
 	void temporaryListeners() {
 		if (Nexus.getTemporaryListeners().isEmpty())
 			error("No temporary listeners registered");
@@ -449,6 +470,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@Path("temporaryListeners unregisterOffline")
 	@Description("Unregister temporary listeners for offline players")
+	@Permission(Group.SENIOR_STAFF)
 	void temporaryListeners_unregisterOffline() {
 		List<TemporaryListener> unregistered = new ArrayList<>() {{
 			for (TemporaryListener temporaryListener : Nexus.getTemporaryListeners())
@@ -534,12 +556,14 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@Path("getEnv")
 	@Description("Print current environment")
+	@Permission(Group.SENIOR_STAFF)
 	void getEnv() {
 		send(Nexus.getEnv().name());
 	}
 
 	@Path("updateCommands")
 	@Description("Call Player#updateCommands")
+	@Permission(Group.SENIOR_STAFF)
 	void updateCommands() {
 		player().updateCommands();
 	}
@@ -551,6 +575,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("offlineMessage <player>")
+	@Permission(Group.ADMIN)
 	void offlineMessage(OfflinePlayer player) {
 		OfflineMessage.send(player, new JsonBuilder("&3Testing").hover("&eTesting"));
 	}
