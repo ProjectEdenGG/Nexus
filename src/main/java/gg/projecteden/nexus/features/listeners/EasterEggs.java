@@ -254,6 +254,12 @@ public class EasterEggs implements Listener {
 
 		// Moderators
 
+		VIR(new StaffEasterEggBuilder("545a4c9c-2499-43d6-8310-46586f543322")
+			.food(Material.GLOWSTONE_DUST)
+			.eatSound(Sound.BLOCK_SAND_BREAK)
+			.burpSound(Sound.ENTITY_ALLAY_ITEM_THROWN)
+		),
+
 		BOFFO(new StaffEasterEggBuilder("b83bae78-83d6-43a0-9316-014a0a702ab2")
 			.food(Set.of(Material.STONE, Material.COBBLESTONE, Material.ANDESITE, Material.GRANITE, Material.DIORITE))
 			.burpSound(Sound.ENTITY_VILLAGER_YES)
