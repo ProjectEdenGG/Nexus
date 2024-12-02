@@ -69,11 +69,11 @@ public class WeeklyWakkaCommand extends _WarpCommand {
 		WeeklyWakka weeklyWakka = service.get0();
 
 		if (!weeklyWakka.getFoundPlayers().contains(uuid())) {
-			send("You have not found the wakka this week! He resets in " + WeeklyWakkaFeature.getNextWeek() + ", hurry up!");
+			send(PREFIX + "You have &cnot &3found the wakka this week! He resets in &e" + WeeklyWakkaFeature.getNextWeek() + "&3, hurry up!");
 			return;
 		}
 
-		send("You have found wakka this week! He resets in " + WeeklyWakkaFeature.getNextWeek());
+		send(PREFIX + "You have found wakka this week! He resets in &e" + WeeklyWakkaFeature.getNextWeek());
 	}
 
 	@HideFromHelp
