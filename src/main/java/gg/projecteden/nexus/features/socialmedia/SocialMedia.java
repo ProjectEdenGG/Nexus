@@ -68,7 +68,7 @@ public class SocialMedia implements Listener {
 		TWITCH("Twitch", 25104, ChatColor.of("#6441a5"), CustomEmoji.SOCIAL_MEDIA_TWITCH, "https://twitch.tv", "https://twitch.tv/%s"),
 		TIKTOK("TikTok", 25105, ChatColor.of("#7f7f7f"), CustomEmoji.SOCIAL_MEDIA_TIKTOK, "https://tiktok.com", "https://tiktok.com/@%s"),
 		DISCORD("Discord", 25106, ChatColor.of("#5865F2"), CustomEmoji.SOCIAL_MEDIA_DISCORD, "https://discord.com", "%s"),
-		STEAM("Steam", 25107, ChatColor.of("#00adee"), CustomEmoji.SOCIAL_MEDIA_STEAM, "https://store.steampowered.com", "https://steamcommunity.com/id/%s"),
+		STEAM("Steam", 25107, ChatColor.of("#00adee"), CustomEmoji.SOCIAL_MEDIA_STEAM, "https://store.steampowered.com", "https://steamcommunity.com/profiles/%s"),
 		SPOTIFY("Spotify", 25108, ChatColor.of("#1ed760"), CustomEmoji.SOCIAL_MEDIA_SPOTIFY, "https://spotify.com", "https://open.spotify.com/user/%s"),
 		QUEUP("QueUp", 25109, ChatColor.of("#d42f8a"), CustomEmoji.SOCIAL_MEDIA_QUEUP, "https://queup.net", "https://queup.net/user/%s"),
 		REDDIT("Reddit", 25110, ChatColor.of("#ff5700"), CustomEmoji.SOCIAL_MEDIA_REDDIT, "https://reddit.com", "https://reddit.com/u/%s"),
