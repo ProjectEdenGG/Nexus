@@ -117,7 +117,7 @@ public class WeeklyWakkaFeature extends Feature implements Listener {
 
 	}
 
-	private static String getNextWeek() {
+	public static String getNextWeek() {
 		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime next = now.withHour(12).withMinute(0).withSecond(0).withNano(0);
 
