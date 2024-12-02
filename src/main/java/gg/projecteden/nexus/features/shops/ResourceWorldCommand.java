@@ -9,6 +9,7 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.homes.HomesFeature;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -17,7 +18,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.shop.ResourceMarketLogger;
 import gg.projecteden.nexus.models.shop.ResourceMarketLoggerService;
 import gg.projecteden.nexus.models.shop.Shop;
@@ -34,6 +34,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
@@ -74,6 +75,7 @@ import java.util.function.Consumer;
 import static gg.projecteden.nexus.features.shops.Market.RESOURCE_WORLD_PRODUCTS;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
+@Aliases("resource")
 @NoArgsConstructor
 public class ResourceWorldCommand extends CustomCommand implements Listener {
 	private static final ResourceMarketLoggerService service = new ResourceMarketLoggerService();
@@ -85,10 +87,39 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 			logger = getLogger(world());
 	}
 
+	public static JsonBuilder getNotice() {
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime nextReset = now.with(TemporalAdjusters.firstDayOfNextMonth()).withHour(0).withMinute(0).withSecond(0).withNano(0);
+		String tillReset = Timespan.of(nextReset).format();
+
+		String prefix = StringUtils.getPrefix("&cNotice");
+
+		return new JsonBuilder(prefix + "This world regenerates in &c" + tillReset + " &3[&eHover for more info&3]")
+			.hover(List.of(
+				"&3Welcome to the &eResource World!",
+				"",
+				"&3This world is regenerated on the &e&lfirst of every month&3,",
+				"&3so don't leave your stuff here or you will lose it!",
+				"",
+				"&cImportant Notes: ",
+				"&3- &eAuto Sell &3is &eON &3by default, change your setting in &e/market",
+				"&3- &eMob Spawning &3has been &eincreased",
+				"&3- &eExplosions &3cause &eblock damage"
+			))
+			.loreize(false);
+	}
+
 	@Path
 	@Description("Teleport to the resource world")
 	void warp() {
 		runCommand("warp resource");
+	}
+
+	@Path("notice")
+	void notice() {
+		line();
+		send(getNotice());
+		line();
 	}
 
 	@Confirm
@@ -181,7 +212,8 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onEnterResourceWorld(PlayerTeleportEvent event) {
-		Player player = event.getPlayer();
+		if (event.isCancelled())
+			return;
 
 		if (SubWorldGroup.of(event.getTo()) != SubWorldGroup.RESOURCE)
 			return;
@@ -189,31 +221,12 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 		if (SubWorldGroup.of(event.getFrom()) == SubWorldGroup.RESOURCE)
 			return;
 
-		if (Rank.of(player).isStaff())
-			return;
-
-		if (event.isCancelled())
-			return;
-
-		Tip tip = new TipService().get(event.getPlayer());
+		Player player = event.getPlayer();
+		Tip tip = new TipService().get(player);
 		if (tip.show(TipType.RESOURCE_WORLD_WARNING)) {
-
-			LocalDateTime now = LocalDateTime.now();
-			LocalDateTime nextReset = now.with(TemporalAdjusters.firstDayOfNextMonth());
-			String tillReset = Timespan.of(nextReset).format();
-
-			new JsonBuilder("&8&l[&4Notice&8&l] &fThis world regenerates in &c" + tillReset + "&f,hover for more info]")
-				.hover(List.of(
-					"&cWelcome to the resource world!",
-					"",
-					"&cThis world is regenerated on the &c&lfirst of every month&c,",
-					"&cso don't leave your stuff here or you will lose it!",
-					"",
-					"&cThe darkness is dangerous in this world,",
-					"&cmob spawning has been increased."
-					)
-				)
-				.send(player);
+			PlayerUtils.send(player, "");
+			getNotice().send(player);
+			PlayerUtils.send(player, "");
 		}
 	}
 
@@ -318,13 +331,21 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 		if (isNullOrAir(block.getType()) || isNullOrAir(drop))
 			return false;
 
-		final Shop shopper = new ShopService().get(player);
-		final boolean disabled = shopper.getDisabledResourceMarketItems().contains(drop.getType());
-		if (disabled)
-			return false;
-
 		if (getLogger(block.getWorld()).contains(block.getLocation()))
 			return false;
+
+		final Shop shopper = new ShopService().get(player);
+		switch (shopper.getResourceMarketAutoSellBehavior()) {
+			case INDIVIDUAL -> {
+				final boolean disabled = shopper.getDisabledResourceMarketItems().contains(drop.getType());
+				if (disabled)
+					return false;
+			}
+
+			case DISABLE_ALL -> {
+				return false;
+			}
+		}
 
 		return trySell(player, drop);
 	}

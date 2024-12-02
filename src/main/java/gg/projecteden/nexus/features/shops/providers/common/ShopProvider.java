@@ -59,7 +59,7 @@ public abstract class ShopProvider extends InventoryProvider {
 			addBackItem(e -> previousMenu.open(viewer));
 
 		contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.GOLD_INGOT).name("&e&lBalance")
-			.lore("&f" + new BankerService().getBalanceFormatted(viewer, shopGroup)).build()));
+			.lore("&f" + getBalanceFormatted(viewer, shopGroup)).build()));
 	}
 
 	protected boolean handleRightClick(Product product, ItemClickData clickData) {
@@ -74,6 +74,10 @@ public abstract class ShopProvider extends InventoryProvider {
 
 		new ShulkerContentsProvider(this, product).open(clickData.getPlayer());
 		return true;
+	}
+
+	protected String getBalanceFormatted(Player viewer, ShopGroup shopGroup) {
+		return new BankerService().getBalanceFormatted(viewer, shopGroup);
 	}
 
 }

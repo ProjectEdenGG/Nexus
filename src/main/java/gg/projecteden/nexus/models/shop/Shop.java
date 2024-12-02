@@ -10,6 +10,7 @@ import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
 import gg.projecteden.nexus.features.shops.ShopUtils;
+import gg.projecteden.nexus.features.shops.providers.ResourceWorldMarketProvider.AutoSellBehavior;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
@@ -88,6 +89,7 @@ public class Shop implements PlayerOwnedObject {
 	private Map<ShopGroup, List<ItemStack>> holding = new ConcurrentHashMap<>();
 	@Embedded
 	private List<Material> disabledResourceMarketItems = new ArrayList<>();
+	private AutoSellBehavior resourceMarketAutoSellBehavior = AutoSellBehavior.INDIVIDUAL;
 
 	// TODO holding for money, maybe? would make withdrawing money more complicated
 	// private double profit;
