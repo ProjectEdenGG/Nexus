@@ -464,6 +464,8 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 		Nexus.getMultiverseCore().getMVWorldManager().getMVWorld(worldName).setSpawnLocation(warp.getLocation());
 		new ResourceMarketLoggerService().deleteAll();
 
+		PlayerUtils.runCommandAsConsole("plugman reload holograms");
+
 		world.getWorldBorder().setCenter(0, 0);
 		world.getWorldBorder().setSize(RADIUS * 2);
 		PlayerUtils.runCommandAsConsole("bluemap purge " + worldName);
