@@ -125,7 +125,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Up for &e" + Timespan.of(Nexus.EPOCH).format());
 	}
 
-	@Path("reload notify [enable]")
+	@Path("reload notifySound [enable]")
 	@Description("Toggle reload notifications")
 	void notifyReload(Boolean enable) {
 		if (enable == null)
@@ -134,7 +134,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		final Boolean finalEnable = enable;
 		new NerdService().edit(player(), nerd -> nerd.setReloadNotify(finalEnable));
 
-		send(PREFIX + "Reload notifications " + (enable ? "&aEnabled" : "&cDisabled"));
+		send(PREFIX + "Reload sound notifications " + (enable ? "&aEnabled" : "&cDisabled"));
 	}
 
 	@Path("reload cancel")

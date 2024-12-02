@@ -24,7 +24,6 @@ import gg.projecteden.nexus.framework.persistence.mysql.MySQLPersistence;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.home.HomeService;
-import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.GoogleUtils;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.Name;
@@ -276,10 +275,6 @@ public class Nexus extends JavaPlugin {
 			return;
 
 		for (Player player : OnlinePlayers.onlyStaff().get()) {
-			Nerd nerd = Nerd.of(player);
-			if(!nerd.isReloadNotify())
-				continue;
-
 			GeoIP geoip = new GeoIPService().get(player);
 			String message = " &c&l ! &c&l! &eReloading Nexus &c&l! &c&l!";
 			if (GeoIP.exists(geoip))
