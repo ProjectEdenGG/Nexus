@@ -63,9 +63,9 @@ public class TrustProvider extends InventoryProvider {
 					.name("&e" + Nickname.of(trusted));
 				for (Trust.Type type : Trust.Type.values()) {
 					if (trust.trusts(type, trusted))
-						builder.lore("&a" + type.camelCase());
+						builder.lore("&f✅ &a" + type.camelCase());
 					else
-						builder.lore("&c" + type.camelCase());
+						builder.lore("&f❌ &c" + type.camelCase());
 				}
 
 				builder.lore("").lore("&fClick to edit");
