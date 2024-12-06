@@ -21,6 +21,13 @@ import java.util.stream.Stream;
 @Getter
 @AllArgsConstructor
 public enum ChatGameType {
+	// RANDOM type to allow random games in command
+	RANDOM(0) {
+		@Override
+		public ChatGame create() {
+			return null;
+		}
+	},
 	HOVER(15) {
 		@Override
 		public ChatGame create() {
@@ -83,7 +90,7 @@ public enum ChatGameType {
 	public abstract ChatGame create();
 
 	public static ChatGameType random() {
-		return EnumUtils.random(ChatGameType.class);
+		return RandomUtils.randomElement(EnumUtils.valuesExcept(ChatGameType.class, RANDOM));
 	}
 
 	private static final Function<Stream<String>, List<String>> wordFormatter = stream -> stream

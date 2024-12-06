@@ -1,13 +1,10 @@
 package gg.projecteden.nexus.features.chat.games;
 
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.features.chat.events.ChatEvent;
 import gg.projecteden.nexus.features.vanish.events.VanishToggleEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.afk.events.NotAFKEvent;
@@ -16,6 +13,7 @@ import gg.projecteden.nexus.models.chatgames.ChatGamesConfig.ChatGame;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfigService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NoArgsConstructor;
 import org.bukkit.event.EventHandler;
@@ -23,7 +21,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 @NoArgsConstructor
-@Permission(Group.SENIOR_STAFF)
 public class ChatGamesCommand extends CustomCommand implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("ChatGames");
 	private static final ChatGamesConfigService service = new ChatGamesConfigService();
@@ -60,6 +57,7 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 
 	@Path("enable")
 	@Description("Enables chat game")
+	@Permission(Group.SENIOR_STAFF)
 	void add() {
 		service.edit0(user -> user.setEnabled(true));
 		send(PREFIX + "&aEnabled");
@@ -68,19 +66,31 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 	@Confirm
 	@Path("disable")
 	@Description("Clear the queue")
+	@Permission(Group.SENIOR_STAFF)
 	void clear() {
 		service.edit0(user -> user.setEnabled(false));
 		send(PREFIX + "&cDisabled");
 	}
 
-	@Path("start <type>")
+	@Path("rewards [enabled]")
+	@Description("Toggles if chat games give rewards to players")
+	@Permission(Group.ADMIN)
+	void toggleRewards(@Switch @Arg("false") boolean enabled) {
+		service.edit0(user -> user.setRewardsEnabled(enabled));
+		send(PREFIX + "Rewards " + (enabled ? "&aenabled" : "&cdisabled"));
+	}
+
+	@Path("start [type]")
 	@Description("Start a chat game")
-	void start(ChatGameType type) {
+	void start(@Arg(value = "random", permission = Group.SENIOR_STAFF) ChatGameType type, @Switch @Arg(value = "false", permission = Group.SENIOR_STAFF) boolean now) {
 		if (ChatGamesConfig.getCurrentGame() != null && ChatGamesConfig.getCurrentGame().isStarted())
 			error("There is already an active game");
 
-		type.create().start();
-		send(PREFIX + "Game started");
+		if (type == ChatGameType.RANDOM)
+			type = ChatGameType.random();
+
+		type.create().queue(now ? 0.01 : RandomUtils.randomDouble(1, 3));
+		send(PREFIX + "Chat games have been " + (now ? "started" : "queued. They will start soon!"));
 	}
 
 	@EventHandler

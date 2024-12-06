@@ -20,13 +20,8 @@ import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -36,14 +31,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
+import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.bukkit.Sound;
 import org.simmetrics.metrics.StringMetrics;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.UUID;
+import java.util.*;
 
 import static gg.projecteden.nexus.features.discord.Discord.discordize;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
@@ -57,12 +51,16 @@ import static gg.projecteden.nexus.utils.StringUtils.prettyMoney;
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class, LocationConverter.class, LocalDateTimeConverter.class})
 public class ChatGamesConfig implements PlayerOwnedObject {
-	public static final int REQUIRED_PLAYERS = 7;
+	public static final int REQUIRED_PLAYERS = 2;
 
 	@Id
 	@NonNull
 	private UUID uuid;
 	private boolean enabled;
+	private boolean rewardsEnabled;
+	// Used to track if the game should delay for an hour
+	private int previousPlayerCount = -1;
+	private int previousPlayerCount2 = -1;
 
 	@Getter
 	@Setter
@@ -77,6 +75,10 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 	}
 
 	public static void processQueue() {
+		processQueue(false);
+	}
+
+	public static void processQueue(boolean overrideWait) {
 		if (!hasRequiredPlayers())
 			return;
 
@@ -88,7 +90,10 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 		if (!config.isEnabled())
 			return;
 
-		ChatGameType.random().create().queue();
+		double wait = overrideWait ? 0 : (config.previousPlayerCount == 0 && config.previousPlayerCount2 == 0 ? 60 : 0);
+		wait += RandomUtils.randomDouble(5, 15);
+
+		ChatGameType.random().create().queue(wait);
 		service.save(config);
 	}
 
@@ -120,9 +125,12 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 			this.discordBroadcast = discordize(discordBroadcast);
 		}
 
-		public void queue() {
+		public void queue(double waitInMinutes) {
+			if (ChatGamesConfig.getCurrentGame() != null)
+				ChatGamesConfig.getCurrentGame().cancel();
+
 			ChatGamesConfig.setCurrentGame(this);
-			taskId = Tasks.wait(TickTime.MINUTE.x(RandomUtils.randomDouble(5, 15)), this::start);
+			taskId = Tasks.wait(TickTime.MINUTE.x(waitInMinutes), this::start);
 		}
 
 		public void cancel() {
@@ -142,7 +150,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 				ChatGamesConfig.getCurrentGame().cancel();
 
 			if (!hasRequiredPlayers()) {
-				queue();
+				queue(RandomUtils.randomDouble(5, 15));
 				return;
 			}
 
@@ -183,6 +191,11 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 				.pitchStep(1)
 				.play();
 
+			new ChatGamesConfigService().edit0(config -> {
+				config.previousPlayerCount2 = config.previousPlayerCount;
+				config.previousPlayerCount = completed.size();
+			});
+
 			ChatGamesConfig.setCurrentGame(null);
 			Tasks.wait(TickTime.SECOND, ChatGamesConfig::processQueue);
 		}
@@ -220,7 +233,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 			if (completed.isEmpty())
 				message.append("No one answered correctly");
 			else {
-				message.append(String.format("%s was the %s to answer correctly!", Nickname.discordOf(getCompleted().getFirst().getUuid()), completed.size() == 1 ? "only" : "first"));
+				message.append(String.format("%s was the %s to answer correctly!", Nickname.discordOf(getCompleted().getFirst().getUuid()), completed.size() == 1 ? "only person" : "first"));
 
 				if (completed.size() > 1) {
 					message.setEmbeds(new EmbedBuilder() {{
