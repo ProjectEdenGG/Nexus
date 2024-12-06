@@ -86,6 +86,12 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 		if (ChatGamesConfig.getCurrentGame() != null && ChatGamesConfig.getCurrentGame().isStarted())
 			error("There is already an active game");
 
+		if (!now) {
+			ChatGamesConfig config = new ChatGamesConfigService().get0();
+			if (config.getPreviousPlayerCount() != 0 || config.getPreviousPlayerCount2() != 0)
+				error("Chat games are already running normally!");
+		}
+
 		if (type == ChatGameType.RANDOM)
 			type = ChatGameType.random();
 
