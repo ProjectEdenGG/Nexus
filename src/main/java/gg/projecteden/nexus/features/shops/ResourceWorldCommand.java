@@ -127,7 +127,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	@Path("reset")
 	@Description("Archive the existing resource world and generate a new world")
 	void reset() {
-		resetWorlds();
+		resetWorlds(player());
 	}
 
 	@Confirm
@@ -409,7 +409,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	public static final int RADIUS = 7500;
 	private static boolean resetting = false;
 
-	public static void resetWorlds() {
+	public static void resetWorlds(Player debugger) {
 		resetting = true;
 
 		getFilidNPC().despawn();
@@ -439,7 +439,10 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 
 				run.accept("mv create " + world + " " + args);
 
-				Tasks.wait(wait.getAndAdd(5), () -> resetting = false);
+				Tasks.wait(wait.getAndAdd(5), () -> {
+					resetting = false;
+					PlayerUtils.send(debugger, StringUtils.getPrefix(ResourceWorldCommand.class) + "When ready, do /nexus reload");
+				});
 			}
 		});
 	}
@@ -458,6 +461,8 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 			.thenRun(() -> Tasks.sync(() -> getFilidNPC().spawn(new Location(world, 3.5, 152, 5.5))));
 
 		HomesFeature.deleteFromWorld(worldName, null);
+		HomesFeature.deleteFromWorld(worldName + "_nether", null);
+		HomesFeature.deleteFromWorld(worldName + "_the_end", null);
 		world.getChunkAt(0, 0).setForceLoaded(true);
 
 		Warp warp = WarpType.NORMAL.get(worldName);
