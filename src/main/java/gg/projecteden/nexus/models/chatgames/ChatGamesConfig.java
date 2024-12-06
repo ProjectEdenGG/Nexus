@@ -248,7 +248,10 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 			completed.add(new ChatGameUser(nerd.getUuid(), LocalDateTime.now()));
 
 			Nexus.log(ChatGamesCommand.PREFIX + nerd.getNickname() + " answered correctly");
-			PlayerUtils.send(nerd, ChatGamesCommand.PREFIX + colorize("&3That's correct! You've been given &e" + Prize.random().apply(this, nerd)));
+
+			String place = StringUtils.getNumberWithSuffix(this.getCompleted().size()) + " place";
+			String prize = Prize.random().apply(this, nerd);
+			PlayerUtils.send(nerd, ChatGamesCommand.PREFIX + colorize("&3That's correct! You've been given &e" + prize + " &3(&e" + place + "&3)"));
 
 			if (nerd.getPlayer() != null)
 				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL)
