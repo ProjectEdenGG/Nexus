@@ -20,8 +20,13 @@ import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -31,13 +36,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
-import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.bukkit.Sound;
 import org.simmetrics.metrics.StringMetrics;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.UUID;
 
 import static gg.projecteden.nexus.features.discord.Discord.discordize;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
@@ -100,13 +108,18 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 	@Data
 	public static class ChatGame {
 		private final ChatGameType gameType;
-		private final String answer;
+		private final List<String> answers;
 		private final JsonBuilder broadcast;
 		private final String discordBroadcast;
 		private LinkedList<ChatGameUser> completed = new LinkedList<>();
 		private LocalDateTime startTime;
 		private boolean started;
 		private int taskId;
+
+		public String getAnswer() {
+			return answers.getFirst();
+		}
+
 		@Data
 		@AllArgsConstructor
 		private static class ChatGameUser {
@@ -120,7 +133,18 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 
 		public ChatGame(ChatGameType gameType, String answer, JsonBuilder broadcast, String discordBroadcast) {
 			this.gameType = gameType;
-			this.answer = answer;
+			this.answers = Collections.singletonList(answer);
+			this.broadcast = broadcast;
+			this.discordBroadcast = discordize(discordBroadcast);
+		}
+
+		public ChatGame(ChatGameType gameType, List<String> answers, JsonBuilder broadcast) {
+			this(gameType, answers, broadcast, discordize(broadcast));
+		}
+
+		public ChatGame(ChatGameType gameType, List<String> answers, JsonBuilder broadcast, String discordBroadcast) {
+			this.gameType = gameType;
+			this.answers = answers;
 			this.broadcast = broadcast;
 			this.discordBroadcast = discordize(discordBroadcast);
 		}
@@ -201,7 +225,20 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 		}
 
 		private void broadcastEndIngame() {
+			String answer = getAnswer();
 			JsonBuilder message = new JsonBuilder("&3Game over! The correct answer was &e" + answer + "&3. ");
+
+			if (this.getGameType() == ChatGameType.TRIVIA) {
+				if (answers.size() > 1) {
+					List<String> answersFormatted = new ArrayList<>(List.of("&3Acceptable answers:"));
+					answersFormatted.addAll(answers.stream().map(_answer -> "&3- &e" + _answer).toList());
+					String answerFinal = answer + " and " + (answers.size() - 1) + " more";
+
+					message = new JsonBuilder("&3Game over! Acceptable answers were ").group()
+						.next("&3[&e" + answerFinal + "&3]. ").hover(answersFormatted).group();
+				}
+			}
+
 			if (!completed.isEmpty()) {
 				message.next("&e" + Nickname.of(getCompleted().getFirst().getUuid()) + " &3was the " + (completed.size() == 1 ? "only" : "first") + " to answer correctly!");
 
@@ -227,6 +264,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 		}
 
 		private void broadcastEndDiscord() {
+			String answer = getAnswer();
 			final MessageBuilder message = new MessageBuilder(getDiscordPrefix("ChatGames") +
 				"Game over! The correct answer was **" + answer + "**. ");
 
@@ -304,9 +342,23 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 			return null;
 		}
 
+		public boolean isAnswerCorrect(String message) {
+			if (message.equalsIgnoreCase(getAnswer()))
+				return true;
+
+			for (String triviaAnswer : answers) {
+				if (triviaAnswer.equalsIgnoreCase(message))
+					return true;
+			}
+
+			return false;
+		}
+
 		public boolean isAnswerSimilar(String message) {
 			if (message == null)
 				return false;
+
+			String _answer = getAnswer();
 
 			switch (gameType) {
 				case MATH -> {
@@ -319,7 +371,8 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 					if (userAnswer == null)
 						return false;
 
-					final float gameAnswer = Float.parseFloat(this.answer);
+
+					final float gameAnswer = Float.parseFloat(_answer);
 
 					float min = gameAnswer - (gameAnswer * .20f);
 					float max = gameAnswer + (gameAnswer * .20f);
@@ -338,10 +391,20 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 				}
 
 				default -> {
-					final float similarity = StringMetrics.levenshtein().compare(this.answer, message);
 					double similarityThreshold = .6f;
-					if (similarity >= similarityThreshold)
-						return true;
+
+					if (answers.size() == 1) {
+						float similarity = StringMetrics.levenshtein().compare(_answer, message);
+						return similarity >= similarityThreshold;
+					}
+
+					for (String __answer : answers) {
+						float similarity = StringMetrics.levenshtein().compare(__answer, message);
+
+						if (similarity >= similarityThreshold)
+							return true;
+					}
+
 				}
 			}
 

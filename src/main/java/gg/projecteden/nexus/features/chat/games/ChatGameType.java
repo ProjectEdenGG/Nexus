@@ -13,7 +13,12 @@ import org.bukkit.block.Biome;
 import org.bukkit.entity.EntityType;
 import org.simmetrics.metrics.StringMetrics;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -83,6 +88,35 @@ public enum ChatGameType {
 			String answer = String.valueOf((add ? (num1 + num2) : (num1 - num2)));
 			return new ChatGame(this, answer, new JsonBuilder(String.format("&3What's %d %s %s?", num1, add ? "+" : "-", num2) + " &eAnswer in chat!"));
 		}
+	},
+	TRIVIA(30) {
+		@Override
+		public ChatGame create() {
+			Set<TriviaQuestion> potentialQuestions = new HashSet<>(List.of(TriviaQuestion.values()));
+			TriviaQuestion trivia = RandomUtils.randomElement(potentialQuestions);
+
+			if (previousQuestions.size() >= potentialQuestions.size()) {
+				previousQuestions.clear();
+			} else {
+				potentialQuestions.removeAll(previousQuestions);
+				trivia = RandomUtils.randomElement(potentialQuestions);
+			}
+
+			previousQuestions.add(trivia);
+			String question = trivia.getQuestion();
+			List<String> answers = trivia.getAcceptableAnswers();
+
+			if (trivia.name().startsWith("COMMAND_")) {
+				List<String> updatedAnswers = new ArrayList<>();
+				for (String answer : answers) {
+					updatedAnswers.add(answer);
+					updatedAnswers.add("/" + answer);
+				}
+				answers = updatedAnswers;
+			}
+
+			return new ChatGame(this, answers, new JsonBuilder("&3" + question));
+		}
 	};
 
 	private final int timeInSeconds;
@@ -133,5 +167,66 @@ public enum ChatGameType {
 			"Liechtenstein", "Monaco", "San Marino", "Palau", "Nauru", "Tuvalu", "Vatican City"
 		));
 	}};
+
+
+	private static final Set<TriviaQuestion> previousQuestions = new HashSet<>();
+
+	@Getter
+	private enum TriviaQuestion {
+		SERVER_OWNER("Who is the Owner of Project Eden?", List.of("Griffin", "GriffinCodes")),
+		SERVER_BIRTH_YEAR("What year was Project Eden born?", "2015"),
+		SERVER_PREVIOUS_NAME("What is the former name of Project Eden?", "Bear Nation"),
+		SERVER_WEBSITE("What's the link to the server website?", "projecteden.gg"),
+		SERVER_WEBSITE_MAP("What's the link to the server map?", "map.projecteden.gg"),
+		SERVER_WEBSITE_WIKI("What's the link to the server wiki?", "wiki.projecteden.gg"),
+		SERVER_WEBSITE_STORE("What's the link to the server store?", "store.projecteden.gg"),
+
+		TICKET("If you require staff assistance ingame, what should you make?", List.of("a ticket", "ticket")),
+		NERDS("What is the most common word referring to our players", List.of("nerd", "nerds")),
+		MASCOT("What is the name of the servers loveable pet and mascot?", List.of("Koda", "KodaBear")),
+		MOB_NET("Which item can be used to capture mobs in survival and helps transport them across large distances?", "mob net"),
+		MCMMO_MAX_SKILL("What is the max mcMMO skill level you can reach on the server?", "200"),
+		WEEKLY_WAKKA("What is the name of the admin who can be found hiding around survival spawn?", List.of("Wakka", "WakkaFlocka")),
+		MGN("What is the name of the weekly event where players gather to play various minigames together?", List.of("minigame night", "mgn")),
+		MEMBER_TIME("What is the time played required to achieve member rank?", List.of("1 day", "24 hours")),
+		EVENT_TOKENS("What is the currency earned by participating in server events, and are used to purchase various cosmetic items?", "event tokens"),
+		CHANNEL_DISCORD("If you see &5[D] in front of someone's username in chat, where are they chatting from?", "discord"),
+		BACKUP_TIME("How much time passes inbetween every automated server backup?", "4 hours"),
+		HOH("Which place on the server would you visit if you wanted to see the full list of former and current staff?", List.of("hall of history", "hoh")),
+		ONEBLOCK("What is the name of servers version of skyblock?", "Oneblock"),
+
+		VOTE_CRATE_RAREST("What is the least likely reward you can obtain from the Vote Crate?", List.of("dragon egg", "ender dragon egg", "enderdragon egg")),
+		VOTE_CRATE_MOST_EXPENSIVE("How many vote points does a beacon cost in the Vote Point Store (/vps)?", "250"),
+		VOTE_POINT_REWARD_MOST("What is the largest possible vote point bonus you can get from voting for the server (/vote)?", "50"),
+
+		RANK_ELITE("Which rank is after trusted, and is awarded to long time players who engage with the community and help others?", "Elite"),
+		RANK_VETERAN("Which rank is given to ex-staff members?", List.of("veteran", "vet")),
+
+		COMMAND_TRUST("What command allows you to manage permissions of other players accessing your homes and protections?", List.of("trusts", "trust")),
+		COMMAND_SCOREBOARD("What command allows you to edit the lines on your scoreboard?", List.of("sb edit", "scoreboard edit", "sidebar edit", "featherboard edit")),
+		COMMAND_TRASH("What command opens a container where you can deposit junk?", "trash"),
+		COMMAND_HOMES_LIMIT("What subcommand displays the maximum number of homes you can set?", "homes limit"),
+		COMMAND_MUTEMENU("What command allows you to toggle various messages and sound alerts on the server?", "mutemenu"),
+		COMMAND_LOCAL("What command only lets you talk to players within a 500 block radius?", List.of("ch l", "channel l", "channel local", "chat l", "chat local")),
+		COMMAND_DECOR_STORE("What subcommand takes you to the shop where you can buy many different custom modelled decorations for your builds", List.of("decor store", "decoration store")),
+		COMMAND_MAIL("What command can be used to send messages and items to other players?", List.of("mail", "mail send")),
+		COMMAND_APPLY("What command would you use if you wanted to submit an application to join the server's staff team?", "apply"),
+		COMMAND_SHOWITEM("What command can be used to display the item you're currently holding in chat?", "showitem"),
+		COMMAND_RESOURCE("What command takes you to a world that resets once a month and is commonly used to gather blocks and ores?", List.of("resourceworld", "resource")),
+		COMMAND_MODCHECK("What command allows you to see what mods we allow on the server?", List.of("modcheck", "modreview")),
+		;
+
+		final String question;
+		final List<String> acceptableAnswers;
+
+		TriviaQuestion(String question, String answer) {
+			this(question, new ArrayList<>(Collections.singleton(answer)));
+		}
+
+		TriviaQuestion(String question, List<String> answers) {
+			this.question = "&3Trivia: &e" + question;
+			this.acceptableAnswers = answers;
+		}
+	}
 
 }

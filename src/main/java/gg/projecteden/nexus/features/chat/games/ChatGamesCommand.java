@@ -1,11 +1,17 @@
 package gg.projecteden.nexus.features.chat.games;
 
-import gg.projecteden.api.common.utils.TimeUtils;
+import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.events.ChatEvent;
 import gg.projecteden.nexus.features.vanish.events.VanishToggleEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.afk.events.NotAFKEvent;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
@@ -110,10 +116,10 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 		if (game == null || game.getAnswer() == null || !game.isStarted())
 			return;
 
-		String message = event.getOriginalMessage();
-		final boolean correct = message.equalsIgnoreCase(game.getAnswer());
+		Censor.process(event);
 
-		if (correct) {
+		String message = event.getMessage();
+		if (game.isAnswerCorrect(message)) {
 			event.setCancelled(true);
 			game.onAnswer(nerd);
 			return;
