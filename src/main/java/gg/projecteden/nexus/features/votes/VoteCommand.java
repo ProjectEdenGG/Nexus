@@ -88,9 +88,11 @@ public class VoteCommand extends CustomCommand {
 				send(json("&e " + site.name() + " &7- &eClick here to vote").url(site.getUrl(Nerd.of(player()).getName())));
 		}
 		line();
-		send(json("&3Server goal: " + ProgressBar.builder().progress(sum).goal(GOAL).summaryStyle(NONE).length(300).seamless(true).build() + " &e" + sum + "&3/&e" + GOAL)
-			.hover("&eReach the goal together for a monthly reward!"));
-		line();
+		if (!VoteParty.isFeatureEnabled(player())) {
+			send(json("&3Server goal: " + ProgressBar.builder().progress(sum).goal(GOAL).summaryStyle(NONE).length(300).seamless(true).build() + " &e" + sum + "&3/&e" + GOAL)
+				.hover("&eReach the goal together for a monthly reward!"));
+			line();
+		}
 		send("&e[+] &3" + "You have &e" + voter.getPoints() + " &3vote points");
 		line();
 		send(json("&e[+] &3" + "Visit the &eVote Points Store").command("/vps"));

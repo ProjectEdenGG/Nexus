@@ -5,6 +5,7 @@ import gg.projecteden.api.discord.DiscordId.User;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
+import gg.projecteden.nexus.features.votes.party.VoteParty;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.voter.TopVoter;
@@ -174,10 +175,12 @@ public class EndOfMonth {
 //			msg += System.lineSeparator();
 //			msg += System.lineSeparator();
 
-			if (total > Votes.GOAL)
-				msg += "**You've reached the server wide voting goal, congratulations!** Stay tuned for further information from a staff member.";
-			else
-				msg += "**Unfortunately, the server wide goal was not reached. Get voting this month!**";
+			if (VoteParty.isFeatureEnabled(null)) {
+				if (total > Votes.GOAL)
+					msg += "**You've reached the server wide voting goal, congratulations!** Stay tuned for further information from a staff member.";
+				else
+					msg += "**Unfortunately, the server wide goal was not reached. Get voting this month!**";
+			}
 
 			msg += System.lineSeparator();
 			msg += System.lineSeparator();
