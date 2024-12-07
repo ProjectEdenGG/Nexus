@@ -104,9 +104,23 @@ public enum ChatGameType {
 
 			previousQuestions.add(trivia);
 			String question = trivia.getQuestion();
-			List<String> answers = trivia.getAcceptableAnswers();
+			List<String> answers = getAnswers(trivia);
 
-			if (trivia.name().startsWith("COMMAND_")) {
+			return new ChatGame(this, answers, new JsonBuilder("&3" + question));
+		}
+
+		private static List<String> getAnswers(TriviaQuestion trivia) {
+			List<String> answers = trivia.getAcceptableAnswers();
+			String id = trivia.name().toUpperCase();
+
+			if (id.startsWith("WEBSITE_")) {
+				List<String> updatedAnswers = new ArrayList<>();
+				for (String answer : answers) {
+					updatedAnswers.add(answer);
+					updatedAnswers.add("https://" + answer);
+				}
+				answers = updatedAnswers;
+			} else if (id.startsWith("COMMAND_")) {
 				List<String> updatedAnswers = new ArrayList<>();
 				for (String answer : answers) {
 					updatedAnswers.add(answer);
@@ -114,8 +128,7 @@ public enum ChatGameType {
 				}
 				answers = updatedAnswers;
 			}
-
-			return new ChatGame(this, answers, new JsonBuilder("&3" + question));
+			return answers;
 		}
 	};
 
@@ -176,10 +189,6 @@ public enum ChatGameType {
 		SERVER_OWNER("Who is the Owner of Project Eden?", List.of("Griffin", "GriffinCodes")),
 		SERVER_BIRTH_YEAR("What year was Project Eden born?", "2015"),
 		SERVER_PREVIOUS_NAME("What is the former name of Project Eden?", "Bear Nation"),
-		SERVER_WEBSITE("What's the link to the server website?", "projecteden.gg"),
-		SERVER_WEBSITE_MAP("What's the link to the server map?", "map.projecteden.gg"),
-		SERVER_WEBSITE_WIKI("What's the link to the server wiki?", "wiki.projecteden.gg"),
-		SERVER_WEBSITE_STORE("What's the link to the server store?", "store.projecteden.gg"),
 
 		TICKET("If you require staff assistance ingame, what should you make?", List.of("a ticket", "ticket")),
 		NERDS("What is the most common word referring to our players", List.of("nerd", "nerds")),
@@ -202,6 +211,13 @@ public enum ChatGameType {
 		RANK_ELITE("Which rank is after trusted, and is awarded to long time players who engage with the community and help others?", "Elite"),
 		RANK_VETERAN("Which rank is given to ex-staff members?", List.of("veteran", "vet")),
 
+		// WEBSITE_ --> "https://..." added to answers
+		WEBSITE_SERVER("What's the link to the server website?", "projecteden.gg"),
+		WEBSITE_MAP("What's the link to the server map?", "map.projecteden.gg"),
+		WEBSITE_WIKI("What's the link to the server wiki?", "wiki.projecteden.gg"),
+		WEBSITE_STORE("What's the link to the server store?", "store.projecteden.gg"),
+
+		// COMMAND_ --> "/..." added to answers
 		COMMAND_TRUST("What command allows you to manage permissions of other players accessing your homes and protections?", List.of("trusts", "trust")),
 		COMMAND_SCOREBOARD("What command allows you to edit the lines on your scoreboard?", List.of("sb edit", "scoreboard edit", "sidebar edit", "featherboard edit")),
 		COMMAND_TRASH("What command opens a container where you can deposit junk?", "trash"),
