@@ -408,7 +408,7 @@ public class TurfWars extends TeamMechanic {
 		while (rows.get(index).getTeam() == team)
 			index = clamp.apply(index + (rows.get(0).getTeam() == team ? 1 : -1));
 
-		amount = (int) Math.min(amount, rows.size() - rows.stream().filter(row -> row.getTeam() != team).count());
+		amount = (int) Math.min(amount, rows.stream().filter(row -> row.getTeam() != team).count());
 		for (int i = 0; i < amount; i++)
 			rows.get(index + (rows.get(0).getTeam() == team ? i : -i)).setTeam(team);
 
