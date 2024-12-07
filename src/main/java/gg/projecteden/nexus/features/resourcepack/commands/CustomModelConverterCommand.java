@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.resourcepack.commands;
 
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.clientside.models.ClientSideArmorStand;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
@@ -22,17 +21,13 @@ import gg.projecteden.nexus.models.custommodels.CustomModelConfigService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.ItemDisplay.ItemDisplayTransform;
 import org.bukkit.entity.ItemFrame;
@@ -56,21 +51,21 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 		super(event);
 	}
 
-	static {
-		Tasks.repeat(0, TickTime.MINUTE, () -> {
-			for (World world : Bukkit.getWorlds()) {
-				for (Entity entity : world.getEntities()) {
-					if (!entity.isValid())
-						continue;
-
-					switch (entity.getType()) {
-						case ITEM_FRAME -> ToDyeable.updateItemFrame((ItemFrame) entity);
-						case ARMOR_STAND -> ToDyeable.updateArmorStand((ArmorStand) entity);
-					}
-				}
-			}
-		});
-	}
+//	static {
+//		Tasks.repeat(0, TickTime.MINUTE, () -> {
+//			for (World world : Bukkit.getWorlds()) {
+//				for (Entity entity : world.getEntities()) {
+//					if (!entity.isValid())
+//						continue;
+//
+//					switch (entity.getType()) {
+//						case ITEM_FRAME -> ToDyeable.updateItemFrame((ItemFrame) entity);
+//						case ARMOR_STAND -> ToDyeable.updateArmorStand((ArmorStand) entity);
+//					}
+//				}
+//			}
+//		});
+//	}
 
 	@Path("compute")
 	void compute() {
