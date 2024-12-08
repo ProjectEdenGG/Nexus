@@ -208,6 +208,10 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		} catch (InvalidInputException ex) {
 			tell(ex.getMessage());
 			return;
+		} catch (Exception ex) {
+			tell("&cInternal error occurred, please report this issue.");
+			ex.printStackTrace();
+			return;
 		}
 
 		TitleBuilder fadeToBlack = new TitleBuilder()

@@ -20,6 +20,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEve
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchRegeneratedEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
@@ -33,8 +34,13 @@ import gg.projecteden.nexus.features.nameplates.TeamAssigner;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.interfaces.HasDescription;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
+import gg.projecteden.nexus.utils.TitleBuilder;
+import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
@@ -44,6 +50,7 @@ import net.kyori.adventure.title.Title;
 import net.kyori.adventure.title.Title.Times;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -56,11 +63,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 import static gg.projecteden.nexus.utils.StringUtils.left;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
-import static gg.projecteden.nexus.utils.Utils.getMin;
 
 public abstract class Mechanic implements Listener, Named, HasDescription, ComponentLike {
 
@@ -172,6 +183,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 
 		match.getTasks().register(MatchTaskType.SCOREBOARD, taskId);
 	}
+
 
 	public void onStart(@NotNull MatchStartEvent event) {
 		Match match = event.getMatch();
@@ -611,6 +623,11 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 
 	public boolean shouldTickParticlePerks() {
 		return true;
+	}
+
+	@EventHandler
+	public void on(MatchRegeneratedEvent event) {
+		Minigames.debug("MatchRegeneratedEvent(" + event.getMatch().getArena().getDisplayName() + ")");
 	}
 
 }

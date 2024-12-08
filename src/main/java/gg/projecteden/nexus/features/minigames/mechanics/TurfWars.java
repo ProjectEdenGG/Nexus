@@ -88,7 +88,6 @@ public class TurfWars extends TeamMechanic {
 
 	@EventHandler
 	public void on(MatchRegeneratedEvent event) {
-		debug("MatchRegeneratedEvent(" + event.getMatch().getArena().getDisplayName() + ")");
 		if (!event.getMatch().isMechanic(this))
 			return;
 

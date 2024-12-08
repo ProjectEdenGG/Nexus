@@ -347,8 +347,10 @@ public class Match implements ForwardingAudience {
 				arena.getMechanic().onInitialize(event);
 				initialized = true;
 			} catch (Exception ex) {
+				minigamers.forEach(minigamer -> minigamer.tell("&cError: " + ex.getMessage()));
 				ex.printStackTrace();
 				end();
+
 			}
 		}
 	}
