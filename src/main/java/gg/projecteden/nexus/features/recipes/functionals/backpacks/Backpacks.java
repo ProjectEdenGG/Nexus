@@ -186,8 +186,7 @@ public class Backpacks extends FunctionalRecipe {
 			return;
 
 		event.setCancelled(true);
-		player.closeInventory();
-		openBackpack(player, event.getCurrentItem());
+		Tasks.wait(1, () -> openBackpack(player, event.getCurrentItem()));
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
