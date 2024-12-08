@@ -219,7 +219,7 @@ public enum ChatGameType {
 
 		// COMMAND_ --> "/..." added to answers
 		COMMAND_TRUST("What command allows you to manage permissions of other players accessing your homes and protections?", List.of("trusts", "trust")),
-		COMMAND_SCOREBOARD("What command allows you to edit the lines on your scoreboard?", List.of("sb edit", "scoreboard edit", "sidebar edit", "featherboard edit")),
+		COMMAND_SCOREBOARD("What subcommand allows you to edit the lines on your scoreboard?", List.of("sb edit", "scoreboard edit", "sidebar edit", "featherboard edit")),
 		COMMAND_TRASH("What command opens a container where you can deposit junk?", "trash"),
 		COMMAND_HOMES_LIMIT("What subcommand displays the maximum number of homes you can set?", "homes limit"),
 		COMMAND_MUTEMENU("What command allows you to toggle various messages and sound alerts on the server?", "mutemenu"),
@@ -227,7 +227,7 @@ public enum ChatGameType {
 		COMMAND_DECOR_STORE("What subcommand takes you to the shop where you can buy many different custom modelled decorations for your builds", List.of("decor store", "decoration store")),
 		COMMAND_MAIL("What command can be used to send messages and items to other players?", List.of("mail", "mail send")),
 		COMMAND_APPLY("What command would you use if you wanted to submit an application to join the server's staff team?", "apply"),
-		COMMAND_SHOWITEM("What command can be used to display the item you're currently holding in chat?", "showitem"),
+		COMMAND_SHOWITEM("What command allows you to display the items in chat?", List.of("showitem", "showenchants")),
 		COMMAND_RESOURCE("What command takes you to a world that resets once a month and is commonly used to gather blocks and ores?", List.of("resourceworld", "resource")),
 		COMMAND_MODCHECK("What command allows you to see what mods we allow on the server?", List.of("modcheck", "modreview")),
 		;
