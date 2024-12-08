@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.nexus.features.listeners.events.FirstWorldGroupVisitEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -11,6 +12,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redi
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import lombok.NonNull;
 import org.bukkit.WeatherType;
+import org.bukkit.event.EventHandler;
 
 import java.util.Arrays;
 
@@ -52,6 +54,11 @@ public class PlayerWeatherCommand extends CustomCommand {
 		if (Arrays.asList("sun", "none").contains(value))
 			value = WeatherType.CLEAR.name();
 		return (WeatherType) convertToEnum(value, WeatherType.class);
+	}
+
+	@EventHandler
+	public void on(FirstWorldGroupVisitEvent event) {
+		event.getPlayer().resetPlayerWeather();
 	}
 
 }
