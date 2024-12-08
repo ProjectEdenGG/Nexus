@@ -627,7 +627,8 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 
 	@EventHandler
 	public void on(MatchRegeneratedEvent event) {
-		Minigames.debug("MatchRegeneratedEvent(" + event.getMatch().getArena().getDisplayName() + ")");
+		if (event.getMatch().getMechanic().equals(this))
+			Minigames.debug("MatchRegeneratedEvent(" + event.getMatch().getArena().getDisplayName() + ")");
 	}
 
 }

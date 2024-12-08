@@ -188,27 +188,27 @@ public class Match implements ForwardingAudience {
 		return arena.worldedit();
 	}
 
-	public void checkCanJoin() {
+	public void checkCanJoin(Minigamer debugger) {
 		if ("RavensNestEstate".equals(arena.getName()))
-			throw new InvalidInputException("This arena is temporarily disabled while we work out some bugs");
+			throw new InvalidInputException("&cThis arena is temporarily disabled while we work out some bugs");
 
 		if (!initialized && Nexus.isMaintenanceQueued())
-			throw new InvalidInputException("Server maintenance is queued, cannot start a new match");
+			throw new InvalidInputException("&cServer maintenance is queued, cannot start a new match");
 
-		if (!initialize()) {
-			throw new InvalidInputException("Minigame initialization failed");
+		if (!initialize(debugger)) {
+			throw new InvalidInputException("&cMinigame initialization failed");
 		}
 
 		if (started && !arena.canJoinLate())
-			throw new InvalidInputException("This match has already started");
+			throw new InvalidInputException("&cThis match has already started");
 
 		if (minigamers.size() >= arena.getMaxPlayers())
-			throw new InvalidInputException("This match is full");
+			throw new InvalidInputException("&cThis match is full");
 	}
 
 	public void join(Minigamer minigamer) {
 		if (minigamers.contains(minigamer))
-			throw new InvalidInputException("You are already in this match");
+			throw new InvalidInputException("&cYou are already in this match");
 
 		MatchJoinEvent event = new MatchJoinEvent(this, minigamer);
 		event.callEvent();
@@ -336,12 +336,13 @@ public class Match implements ForwardingAudience {
 		}
 	}
 
-	private boolean initialize() {
+	private boolean initialize(Minigamer debugger) {
 		if (!initialized) {
 			boolean errored = false;
 			try {
 				MatchInitializeEvent event = new MatchInitializeEvent(this);
-				if (!event.callEvent()) return;
+				if (!event.callEvent())
+					return false;
 
 				initializeMatchData();
 				tasks = new MatchTasks();
@@ -351,7 +352,7 @@ public class Match implements ForwardingAudience {
 				initialized = true;
 			} catch (InvalidInputException ex) {
 				errored = true;
-				minigamers.forEach(minigamer -> minigamer.tell("&cError: " + ex.getMessage()));
+				debugger.tell("&cError occurred: " + ex.getMessage());
 			} catch (Exception ex) {
 				errored = true;
 				ex.printStackTrace();

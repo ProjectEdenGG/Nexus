@@ -244,12 +244,12 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 
 	private void checkCanJoin(Match match) {
 		if (Nexus.isMaintenanceQueued())
-			throw new InvalidInputException("Server maintenance is queued, cannot join match");
+			throw new InvalidInputException("&cServer maintenance is queued, cannot join match");
 
 		if (this.match != null)
-			throw new InvalidInputException("You are already in a match");
+			throw new InvalidInputException("&cYou are already in a match");
 
-		match.checkCanJoin();
+		match.checkCanJoin(this);
 	}
 
 	public void quit() {
