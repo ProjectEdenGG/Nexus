@@ -3,7 +3,9 @@ package gg.projecteden.nexus.features.chat.games;
 import com.google.common.base.Joiner;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.RandomUtils;
+import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig.ChatGame;
+import gg.projecteden.nexus.models.chatgames.ChatGamesConfigService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
@@ -92,17 +94,24 @@ public enum ChatGameType {
 	TRIVIA(30) {
 		@Override
 		public ChatGame create() {
+			final ChatGamesConfigService service = new ChatGamesConfigService();
+			ChatGamesConfig config = service.get0();
+			Set<TriviaQuestion> previousQuestions = config.getPreviousTriviaQuestions();
+
 			Set<TriviaQuestion> potentialQuestions = new HashSet<>(List.of(TriviaQuestion.values()));
 			TriviaQuestion trivia = RandomUtils.randomElement(potentialQuestions);
 
 			if (previousQuestions.size() >= potentialQuestions.size()) {
+				config.getPreviousTriviaQuestions().clear();
 				previousQuestions.clear();
 			} else {
 				potentialQuestions.removeAll(previousQuestions);
 				trivia = RandomUtils.randomElement(potentialQuestions);
 			}
 
-			previousQuestions.add(trivia);
+			config.getPreviousTriviaQuestions().add(trivia);
+			service.save(config);
+
 			String question = trivia.getQuestion();
 			List<String> answers = getAnswers(trivia);
 
@@ -181,11 +190,8 @@ public enum ChatGameType {
 		));
 	}};
 
-
-	private static final Set<TriviaQuestion> previousQuestions = new HashSet<>();
-
 	@Getter
-	private enum TriviaQuestion {
+	public enum TriviaQuestion {
 		SERVER_OWNER("Who is the Owner of Project Eden?", List.of("Griffin", "GriffinCodes")),
 		SERVER_BIRTH_YEAR("What year was Project Eden born?", "2015"),
 		SERVER_PREVIOUS_NAME("What is the former name of Project Eden?", "Bear Nation"),
@@ -196,12 +202,12 @@ public enum ChatGameType {
 		MOB_NET("Which item can be used to capture mobs in survival and helps transport them across large distances?", "mob net"),
 		MCMMO_MAX_SKILL("What is the max mcMMO skill level you can reach on the server?", "200"),
 		WEEKLY_WAKKA("What is the name of the admin who can be found hiding around survival spawn?", List.of("Wakka", "WakkaFlocka")),
-		MGN("What is the name of the weekly event where players gather to play various minigames together?", List.of("minigame night", "mgn")),
+		MGN("What is the name of the weekly event where players gather to play various minigames together?", "minigame night"),
 		MEMBER_TIME("What is the time played required to achieve member rank?", List.of("1 day", "24 hours")),
 		EVENT_TOKENS("What is the currency earned by participating in server events, and are used to purchase various cosmetic items?", "event tokens"),
 		CHANNEL_DISCORD("If you see &5[D]&e in front of someone's username in chat, where are they chatting from?", "discord"),
 		BACKUP_TIME("How much time passes inbetween every automated server backup?", "4 hours"),
-		HOH("Which place on the server would you visit if you wanted to see the full list of former and current staff?", List.of("hall of history", "hoh")),
+		HOH("Which place on the server would you visit if you wanted to see the full list of former and current staff?", "hall of history"),
 		ONEBLOCK("What is the name of servers version of skyblock?", "Oneblock"),
 
 		VOTE_CRATE_RAREST("What is the least likely reward you can obtain from the Vote Crate?", List.of("dragon egg", "ender dragon egg", "enderdragon egg")),

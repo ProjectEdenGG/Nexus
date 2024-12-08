@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.chat.games;
 
 import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.events.ChatEvent;
+import gg.projecteden.nexus.features.chat.games.ChatGameType.TriviaQuestion;
 import gg.projecteden.nexus.features.vanish.events.VanishToggleEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -26,6 +27,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.util.Set;
+
 @NoArgsConstructor
 public class ChatGamesCommand extends CustomCommand implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("ChatGames");
@@ -40,14 +43,16 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 	}
 
 	@HideFromWiki
-	@Path("ignorePlayers [enable]")
+	@Path("listPreviousQuestions")
 	@Permission(Group.ADMIN)
-	void ignorePlayers(Boolean enable) {
-		if (enable == null)
-			enable = !ChatGamesConfig.isIgnorePlayers();
+	void listPreviousQuestions() {
+		ChatGamesConfig config = service.get0();
 
-		ChatGamesConfig.setIgnorePlayers(enable);
-		send(PREFIX + "Ignoring players " + (ChatGamesConfig.isIgnorePlayers() ? "&aenabled" : "&cdisabled"));
+		Set<TriviaQuestion> pastQuestions = config.getPreviousTriviaQuestions();
+		send("Total: " + pastQuestions.size());
+		for (TriviaQuestion trivia : pastQuestions) {
+			send("&3 - " + trivia.getQuestion());
+		}
 	}
 
 	@HideFromWiki

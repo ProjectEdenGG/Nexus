@@ -10,6 +10,7 @@ import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.games.ChatGameType;
+import gg.projecteden.nexus.features.chat.games.ChatGameType.TriviaQuestion;
 import gg.projecteden.nexus.features.chat.games.ChatGamesCommand;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.discord.Discord;
@@ -43,8 +44,10 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.features.discord.Discord.discordize;
@@ -71,15 +74,14 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 	private int previousPlayerCount2 = -1;
 
 	@Getter
-	@Setter
-	private static ChatGame currentGame;
+	private Set<TriviaQuestion> previousTriviaQuestions = new HashSet<>();
 
 	@Getter
 	@Setter
-	private static boolean ignorePlayers = false;
+	private static ChatGame currentGame;
 
 	public static boolean hasRequiredPlayers() {
-		return ignorePlayers || OnlinePlayers.where().afk(false).vanished(false).get().size() >= REQUIRED_PLAYERS;
+		return OnlinePlayers.where().afk(false).vanished(false).get().size() >= REQUIRED_PLAYERS;
 	}
 
 	public static void processQueue() {
