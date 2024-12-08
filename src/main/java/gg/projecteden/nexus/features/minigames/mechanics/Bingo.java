@@ -152,6 +152,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 	public void onEnd(@NotNull MatchEndEvent event) {
 		for (Player player : event.getMatch().getOnlinePlayers())
 			removeBedSpawnLocation(player);
+		super.onEnd(event);
 	}
 
 	private void removeBedSpawnLocation(Player player) {
