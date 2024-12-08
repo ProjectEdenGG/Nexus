@@ -195,7 +195,9 @@ public class Match implements ForwardingAudience {
 		if (!initialized && Nexus.isMaintenanceQueued())
 			throw new InvalidInputException("Server maintenance is queued, cannot start a new match");
 
-		initialize();
+		if (!initialize()) {
+			throw new InvalidInputException("Minigame initialization failed");
+		}
 
 		if (started && !arena.canJoinLate())
 			throw new InvalidInputException("This match has already started");
@@ -334,8 +336,9 @@ public class Match implements ForwardingAudience {
 		}
 	}
 
-	private void initialize() {
+	private boolean initialize() {
 		if (!initialized) {
+			boolean errored = false;
 			try {
 				MatchInitializeEvent event = new MatchInitializeEvent(this);
 				if (!event.callEvent()) return;
@@ -346,13 +349,21 @@ public class Match implements ForwardingAudience {
 				//scoreboardTeams = MinigameScoreboard.ITeams.Factory.create(this); // TODO: fix scoreboards
 				arena.getMechanic().onInitialize(event);
 				initialized = true;
-			} catch (Exception ex) {
+			} catch (InvalidInputException ex) {
+				errored = true;
 				minigamers.forEach(minigamer -> minigamer.tell("&cError: " + ex.getMessage()));
+			} catch (Exception ex) {
+				errored = true;
 				ex.printStackTrace();
-				end();
+			}
 
+			if (errored) {
+				end();
+				return false;
 			}
 		}
+
+		return true;
 	}
 
 	@SneakyThrows
