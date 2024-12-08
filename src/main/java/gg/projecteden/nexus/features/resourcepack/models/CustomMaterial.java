@@ -19,6 +19,9 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 public enum CustomMaterial {
 	TODO(Material.PAPER, 1),
 
+	ITEM_COOLDOWN_MIN(Material.LEATHER_HORSE_ARMOR, 20000),
+	ITEM_COOLDOWN_MAX(Material.LEATHER_HORSE_ARMOR, 20058),
+
 	PRESENCE_OFFLINE(Material.PAPER, 25000),
 	PRESENCE_ACTIVE(Material.PAPER, 25001),
 
