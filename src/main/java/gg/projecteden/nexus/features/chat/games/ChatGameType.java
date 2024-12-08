@@ -199,7 +199,7 @@ public enum ChatGameType {
 		MGN("What is the name of the weekly event where players gather to play various minigames together?", List.of("minigame night", "mgn")),
 		MEMBER_TIME("What is the time played required to achieve member rank?", List.of("1 day", "24 hours")),
 		EVENT_TOKENS("What is the currency earned by participating in server events, and are used to purchase various cosmetic items?", "event tokens"),
-		CHANNEL_DISCORD("If you see &5[D] in front of someone's username in chat, where are they chatting from?", "discord"),
+		CHANNEL_DISCORD("If you see &5[D]&e in front of someone's username in chat, where are they chatting from?", "discord"),
 		BACKUP_TIME("How much time passes inbetween every automated server backup?", "4 hours"),
 		HOH("Which place on the server would you visit if you wanted to see the full list of former and current staff?", List.of("hall of history", "hoh")),
 		ONEBLOCK("What is the name of servers version of skyblock?", "Oneblock"),

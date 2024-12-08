@@ -386,7 +386,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 					final float similarMin = min;
 					final float similarMax = max;
 
-					if (userAnswer > similarMin && userAnswer < similarMax)
+					if (userAnswer >= similarMin && userAnswer <= similarMax)
 						return true;
 				}
 
