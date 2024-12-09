@@ -34,6 +34,7 @@ import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Dropper;
 import org.bukkit.block.Hopper;
 import org.bukkit.block.ShulkerBox;
+import org.bukkit.entity.ChestBoat;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.inventory.Inventory;
@@ -152,6 +153,7 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 		TRAPPED_CHEST(Material.TRAPPED_CHEST),
 		TRAPPED_DOUBLE_CHEST(Material.TRAPPED_CHEST),
 		MINECART_CHEST(Material.CHEST_MINECART),
+		CHEST_BOAT(Material.OAK_CHEST_BOAT),
 		BARREL(Material.BARREL),
 		SHULKER_BOX(Material.SHULKER_BOX),
 		HOPPER(Material.HOPPER),
@@ -190,6 +192,9 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 
 			if (holder instanceof StorageMinecart)
 				return MINECART_CHEST;
+
+			if (holder instanceof ChestBoat)
+				return CHEST_BOAT;
 
 			if (holder instanceof Barrel)
 				return BARREL;
