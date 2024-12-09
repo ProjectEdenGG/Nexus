@@ -5,9 +5,11 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Data;
+import org.bukkit.Color;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -59,9 +61,17 @@ public class CustomItemCooldown {
 				meta.setDisplayName(COOLDOWN_SERVICE.getDiff(player, cooldownType));
 
 				float secondsLeft = Duration.between(cooldownTime, LocalDateTime.now()).toSeconds() * 20;
-				meta.setCustomModelData(interpolate(secondsLeft / tickTime));
+				float i = secondsLeft / tickTime;
+				meta.setCustomModelData(interpolate(i));
 
-				this.item.setItemMeta(meta);
+				int red = (int) (-i * 255);
+				int green = (int) ((1 + i) * 255);
+				int blue = 0;
+
+				LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) meta;
+				leatherArmorMeta.setColor(Color.fromRGB(red, green, blue));
+
+				this.item.setItemMeta(leatherArmorMeta);
 				player.getInventory().setItem(slot, item);
 			}
 		});

@@ -10,6 +10,7 @@ import lombok.Data;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -35,6 +36,7 @@ public class HideAndSeekMatchData extends MatchData {
 	private final Map<UUID, FallingBlock> solidBlocks = new HashMap<>();
 	private final Map<Minigamer, Location> solidPlayers = new HashMap<>();
 	private final List<Item> flashBangItems = new ArrayList<>();
+	private final List<HideAndSeek.Decoy.DecoyInstance> decoyLocations = new ArrayList<>();
 	private static final Random random = new Random();
 
 	static {

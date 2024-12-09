@@ -107,6 +107,12 @@ public class Cooldown implements PlayerOwnedObject {
 		return this;
 	}
 
+	public Cooldown create(String type, LocalDateTime time) {
+		type = checkType(type);
+		cooldowns.put(type, time);
+		return this;
+	}
+
 	/**
 	 * Clears a cooldown
 	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
