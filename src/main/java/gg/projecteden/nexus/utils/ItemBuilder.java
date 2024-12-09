@@ -826,15 +826,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		/**
 		 * Whether an item can be sold in shops
 		 */
-		TRADEABLE(true) {
-			@Override
-			public boolean of(ItemBuilder builder, boolean orDefault) {
-				if (Backpacks.isBackpack(builder.build()))
-					return false;
-
-				return super.of(builder, orDefault);
-			}
-		},
+		TRADEABLE(true),
+		/**
+		 * Whether an item can be repaired/salvaged with McMMO
+		 */
 		MCMMOABLE(true),
 		;
 
