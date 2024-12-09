@@ -244,9 +244,9 @@ public class FallingBlocks extends TeamlessMechanic {
 		Location location = null;
 		for (int i = 0; i < 10; i++) {
 			Block block = match.worldguard().getRandomBlock(ceiling);
-			if (block.getType().equals(Material.AIR)) {
-				location = block.getLocation().toHighestLocation().toCenterLocation();
-				break;
+			while (block.getType().equals(Material.AIR) && (location == null || location.getY() > -64)) {
+				block = block.getLocation().clone().subtract(0, 1, 0).getBlock();
+				location = block.getLocation().toCenterLocation();
 			}
 		}
 
