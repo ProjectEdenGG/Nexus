@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.chat.games;
 import com.google.common.base.Joiner;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.RandomUtils;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig.ChatGame;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfigService;
@@ -71,15 +72,17 @@ public enum ChatGameType {
 
 		private String shuffle(String word) {
 			String shuffled = word;
+			List<Character> chars = new ArrayList<>(word.chars().mapToObj(c -> (char) c).toList());
 
 			int SAFETY = 0;
 			while (StringMetrics.levenshtein().compare(word, shuffled) >= .5) {
-				List<Character> chars = new ArrayList<>(word.chars().mapToObj(c -> (char) c).toList());
 				Collections.shuffle(chars);
 				shuffled = Joiner.on("").join(chars);
 
-				if (SAFETY++ > 500)
+				if (SAFETY++ > 500) {
+					Nexus.log("Chat Games Unscramble hit SAFETY on " + word);
 					break;
+				}
 			}
 
 			return shuffled;
