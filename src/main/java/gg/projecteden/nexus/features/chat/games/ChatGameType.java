@@ -72,10 +72,14 @@ public enum ChatGameType {
 		private String shuffle(String word) {
 			String shuffled = word;
 
+			int SAFETY = 0;
 			while (StringMetrics.levenshtein().compare(word, shuffled) >= .5) {
 				List<Character> chars = new ArrayList<>(word.chars().mapToObj(c -> (char) c).toList());
 				Collections.shuffle(chars);
 				shuffled = Joiner.on("").join(chars);
+
+				if (SAFETY++ > 500)
+					break;
 			}
 
 			return shuffled;
@@ -198,17 +202,17 @@ public enum ChatGameType {
 
 		TICKET("If you require staff assistance ingame, what should you make?", List.of("a ticket", "ticket")),
 		NERDS("What is the most common word referring to our players", List.of("nerd", "nerds")),
-		MASCOT("What is the name of the servers loveable pet and mascot?", List.of("Koda", "KodaBear")),
+		MASCOT("What is the name of the server's loveable pet and mascot?", List.of("Koda", "KodaBear")),
 		MOB_NET("Which item can be used to capture mobs in survival and helps transport them across large distances?", "mob net"),
 		MCMMO_MAX_SKILL("What is the max mcMMO skill level you can reach on the server?", "200"),
 		WEEKLY_WAKKA("What is the name of the admin who can be found hiding around survival spawn?", List.of("Wakka", "WakkaFlocka")),
-		MGN("What is the name of the weekly event where players gather to play various minigames together?", "minigame night"),
+		MGN("What is the name of the weekly event where players gather to play various minigames together?", List.of("minigame night", "minigame nights")),
 		MEMBER_TIME("What is the time played required to achieve member rank?", List.of("1 day", "24 hours")),
 		EVENT_TOKENS("What is the currency earned by participating in server events, and are used to purchase various cosmetic items?", "event tokens"),
 		CHANNEL_DISCORD("If you see &5[D]&e in front of someone's username in chat, where are they chatting from?", "discord"),
 		BACKUP_TIME("How much time passes inbetween every automated server backup?", "4 hours"),
 		HOH("Which place on the server would you visit if you wanted to see the full list of former and current staff?", "hall of history"),
-		ONEBLOCK("What is the name of servers version of skyblock?", "Oneblock"),
+		ONEBLOCK("What is the name of server's version of skyblock?", "Oneblock"),
 
 		VOTE_CRATE_RAREST("What is the least likely reward you can obtain from the Vote Crate?", List.of("dragon egg", "ender dragon egg", "enderdragon egg")),
 		VOTE_CRATE_MOST_EXPENSIVE("How many vote points does a beacon cost in the Vote Point Store (/vps)?", "250"),
