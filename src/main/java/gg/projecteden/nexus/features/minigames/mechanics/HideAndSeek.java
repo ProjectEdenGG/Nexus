@@ -441,7 +441,6 @@ public class HideAndSeek extends Infection {
 				return;
 
 			blockLocation = event.getClickedBlock().getLocation();
-			Minigames.debug("Block Location: " + blockLocation);
 
 			for (Map.Entry<Minigamer, Location> entry : matchData.getSolidPlayers().entrySet()) {
 				Minigamer target = entry.getKey();
@@ -459,7 +458,6 @@ public class HideAndSeek extends Infection {
 				}
 			}
 
-			Minigames.debug("Decoy Locatoins: " + matchData.getDecoyLocations());
 			for (Decoy.DecoyInstance decoyLocation : new ArrayList<>(matchData.getDecoyLocations()))
 				if (blockLocationsEqual(blockLocation, decoyLocation.getLocation()))
 					decoyLocation.remove(matchData.getMatch());
@@ -611,8 +609,8 @@ public class HideAndSeek extends Infection {
 				new JsonBuilder("There is no seekers in range!").color(Color.RED).send(minigamer);
 				return;
 			}
-			minigamer.getLocation().getWorld().playSound(minigamer.getLocation(), Sound.ENTITY_CAT_AMBIENT, 1, 1);
 
+			playSound(minigamer);
 			for (int i = 0; i < 3; i++)
 				new ParticleBuilder(Particle.NOTE)
 					.offset(RandomUtils.randomDouble(1), RandomUtils.randomDouble(1), RandomUtils.randomDouble(1))
@@ -621,30 +619,35 @@ public class HideAndSeek extends Infection {
 					.location(minigamer.getLocation().toCenterLocation().add(RandomUtils.randomDouble(-0.3, 0.3), RandomUtils.randomDouble(.75, 1.25), RandomUtils.randomDouble(-0.3, 0.3)))
 					.spawn();
 
-			lowerCooldowns(minigamer, "hide-and-seek-stun");
-			lowerCooldowns(minigamer, "hide-and-seek-selector");
-			lowerCooldowns(minigamer, "hide-and-seek-decoy");
+			lowerCooldowns(minigamer, "hide-and-seek-stun", (StunGrenade.COOLDOWN_TIME / 20) / 4);
+			lowerCooldowns(minigamer, "hide-and-seek-selector", (SELECTOR_COOLDOWN / 20) / 4);
+			lowerCooldowns(minigamer, "hide-and-seek-decoy", (Decoy.COOLDOWN_TIME / 20) / 4);
 
 			match.getTasks().register(new CustomItemCooldown(TAUNT_SLOT, "hide-and-seek-taunt", COOLDOWN_TIME)
 				.onComplete(() -> minigamer.getPlayer().getInventory().setItem(TAUNT_SLOT, TAUNT))
 				.start(minigamer.getPlayer()));
 		}
 
-		private static void lowerCooldowns(Minigamer minigamer, String type) {
+		private static void lowerCooldowns(Minigamer minigamer, String type, long seconds) {
 			Cooldown cooldown = COOLDOWN_SERVICE.get(minigamer.getUuid());
 			if (!cooldown.exists(type))
 				return;
 
-			LocalDateTime cooldownTime = cooldown.get(type).minusSeconds(10);
+			LocalDateTime cooldownTime = cooldown.get(type).minusSeconds(seconds);
 			cooldown.create(type, cooldownTime);
 			COOLDOWN_SERVICE.save(cooldown);
+		}
+
+		private static void playSound(Minigamer minigamer) {
+			// TODO - cosmetic sounds
+			minigamer.getLocation().getWorld().playSound(minigamer.getLocation(), Sound.ENTITY_CAT_AMBIENT, 1, 1);
 		}
 
 	}
 
 	public static class Decoy {
 
-		private static final long COOLDOWN_TIME = TickTime.SECOND.x(60);
+		private static final long COOLDOWN_TIME = TickTime.SECOND.x(120);
 
 		public static void run(Minigamer minigamer) {
 			if (!COOLDOWN_SERVICE.check(minigamer.getUuid(), "hide-and-seek-decoy", COOLDOWN_TIME, false))
@@ -652,7 +655,7 @@ public class HideAndSeek extends Infection {
 
 			final Location blockLoc = minigamer.getLocation().toBlockLocation();
 			final Block down = minigamer.getLocation().getBlock().getRelative(BlockFace.DOWN);
-			if (isNullOrAir(down) || down.isLiquid()) {
+			if ((isNullOrAir(down) || down.isLiquid()) && MaterialTag.ALL_AIR.isTagged(blockLoc.getBlock().getType())) {
 				minigamer.sendMessage(new JsonBuilder("&cYou cannot place a decoy here"));
 				return;
 			}
@@ -668,7 +671,7 @@ public class HideAndSeek extends Infection {
 
 
 			DecoyInstance instance = new DecoyInstance(blockLoc, blockData);
-			int taskId = minigamer.getMatch().getTasks().wait(TickTime.MINUTE.x(2), () -> instance.remove(matchData.getMatch()));
+			int taskId = minigamer.getMatch().getTasks().wait(TickTime.MINUTE, () -> instance.remove(matchData.getMatch()));
 			instance.setTaskId(taskId);
 			matchData.getDecoyLocations().add(instance);
 
