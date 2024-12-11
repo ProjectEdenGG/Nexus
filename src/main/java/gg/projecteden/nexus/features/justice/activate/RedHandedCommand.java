@@ -13,6 +13,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.punishments.PunishmentType;
 import gg.projecteden.nexus.models.punishments.Punishments;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.GameMode;
 
@@ -45,8 +46,8 @@ public class RedHandedCommand extends _PunishmentCommand {
 
 		Vanish.unvanish(player());
 		player().setFallDistance(0);
-		player().setAllowFlight(true);
-		player().setFlying(true);
+		PlayerUtils.setAllowFlight(player(), true, RedHandedCommand.class);
+		PlayerUtils.setFlying(player(), true, RedHandedCommand.class);
 		Chat.setActiveChannel(player(), StaticChannel.LOCAL);
 
 		line();

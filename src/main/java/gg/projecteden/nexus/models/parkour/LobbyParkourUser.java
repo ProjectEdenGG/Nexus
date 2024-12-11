@@ -11,6 +11,7 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.TimespanConverter;
 import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
 import gg.projecteden.nexus.models.mode.ModeUserService;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -100,8 +101,10 @@ public class LobbyParkourUser implements PlayerOwnedObject {
 
 			if (isOnline() && getRank().isStaff()) {
 				FlightMode flightMode = new ModeUserService().get(this).getFlightMode(getWorldGroup());
-				getOnlinePlayer().setAllowFlight(flightMode.isAllowFlight());
-				getOnlinePlayer().setFlying(flightMode.isFlying());
+
+				PlayerUtils.setAllowFlight(getOnlinePlayer(), flightMode.isAllowFlight(), LobbyParkourUser.class);
+				PlayerUtils.setFlying(getOnlinePlayer(), flightMode.isFlying(), LobbyParkourUser.class);
+
 				getOnlinePlayer().getInventory().remove(ParkourListener.RESET_ITEM);
 			}
 		}

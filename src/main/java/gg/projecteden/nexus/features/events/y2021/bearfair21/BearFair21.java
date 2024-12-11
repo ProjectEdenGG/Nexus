@@ -206,8 +206,8 @@ public class BearFair21 implements Listener {
 
 				if (player.isFlying()) {
 					player.setFallDistance(0);
-					player.setAllowFlight(false);
-					player.setFlying(false);
+					PlayerUtils.setAllowFlight(player, false, BearFair21.class);
+					PlayerUtils.setFlying(player, false, BearFair21.class);
 					player.sendMessage(colorize("&cNo cheating!"));
 				}
 			}

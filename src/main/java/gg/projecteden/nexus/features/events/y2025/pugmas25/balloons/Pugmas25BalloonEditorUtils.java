@@ -57,8 +57,8 @@ public class Pugmas25BalloonEditorUtils {
 		Pugmas25BalloonEditor.allowedFlight = player.getAllowFlight();
 		Pugmas25BalloonEditor.flying = player.isFlying();
 
-		player.setAllowFlight(true);
-		player.setFlying(true);
+		PlayerUtils.setAllowFlight(player, true, Pugmas25BalloonEditorUtils.class);
+		PlayerUtils.setFlying(player, true, Pugmas25BalloonEditorUtils.class);
 	}
 
 	static void resetFlight() {
@@ -66,8 +66,8 @@ public class Pugmas25BalloonEditorUtils {
 		if (player == null)
 			return;
 
-		player.setAllowFlight(Pugmas25BalloonEditor.allowedFlight);
-		player.setFlying(Pugmas25BalloonEditor.flying);
+		PlayerUtils.setAllowFlight(player, Pugmas25BalloonEditor.allowedFlight, Pugmas25BalloonEditorUtils.class);
+		PlayerUtils.setFlying(player, Pugmas25BalloonEditor.flying, Pugmas25BalloonEditorUtils.class);
 	}
 
 	static void removeBrush(Player player) {
@@ -81,8 +81,8 @@ public class Pugmas25BalloonEditorUtils {
 		if (player == null)
 			return;
 
-		player.setAllowFlight(false);
-		player.setFlying(false);
+		PlayerUtils.setAllowFlight(player, false, Pugmas25BalloonEditorUtils.class);
+		PlayerUtils.setFlying(player, false, Pugmas25BalloonEditorUtils.class);
 	}
 
 	public static void nextTemplate() {

@@ -21,6 +21,7 @@ import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.Tasks;
@@ -401,8 +402,8 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		player.setFallDistance(0);
 
 		teleportAsync(Minigames.getLobby()).thenRun(() -> {
-			player.setAllowFlight(true);
-			player.setFlying(false);
+			PlayerUtils.setAllowFlight(player, true, Minigamer.class);
+			PlayerUtils.setFlying(player, false, Minigamer.class);
 		});
 	}
 
@@ -661,8 +662,8 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		player.getInventory().setHeldItemSlot(0);
 		player.setFoodLevel(20);
 		player.setFallDistance(0);
-		player.setAllowFlight(mechanic.allowFly());
-		player.setFlying(mechanic.allowFly());
+		PlayerUtils.setAllowFlight(player, mechanic.allowFly(), this.getClass());
+		PlayerUtils.setFlying(player, mechanic.allowFly(), this.getClass());
 		if (Vanish.isVanished(player))
 			Vanish.unvanish(player);
 		SpeedCommand.resetSpeed(player);

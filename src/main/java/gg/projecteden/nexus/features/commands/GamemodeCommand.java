@@ -18,6 +18,7 @@ import gg.projecteden.nexus.models.mode.ModeUser;
 import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
 import gg.projecteden.nexus.models.mode.ModeUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
@@ -79,16 +80,16 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 	public static void setGameMode(Player player, GameMode gamemode) {
 		boolean flight = player.getAllowFlight();
 		player.setGameMode(gamemode);
-		player.setAllowFlight(flight);
+		PlayerUtils.setAllowFlight(player, flight, GamemodeCommand.class);
 
 		if (gamemode.equals(GameMode.CREATIVE) || gamemode.equals(GameMode.SPECTATOR)) {
-			player.setAllowFlight(true);
-			player.setFlying(true);
+			PlayerUtils.setAllowFlight(player, true, GamemodeCommand.class);
+			PlayerUtils.setFlying(player, true, GamemodeCommand.class);
 		}
 
 		if (gamemode.equals(GameMode.SURVIVAL)) {
-			player.setAllowFlight(false);
-			player.setFlying(false);
+			PlayerUtils.setAllowFlight(player, false, GamemodeCommand.class);
+			PlayerUtils.setFlying(player, false, GamemodeCommand.class);
 		}
 	}
 
@@ -120,8 +121,8 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 			return;
 
 		final Consumer<Boolean> flying = state -> {
-			player.setAllowFlight(state);
-			player.setFlying(state);
+			PlayerUtils.setAllowFlight(player, state, GamemodeCommand.class);
+			PlayerUtils.setFlying(player, state, GamemodeCommand.class);
 		};
 
 		if (!Rank.of(player).isStaff()) {
@@ -151,11 +152,11 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 
 			setGameMode(player, gameMode);
 
-			player.setAllowFlight(flightMode.isAllowFlight());
-			player.setFlying(flightMode.isFlying());
+			PlayerUtils.setAllowFlight(player, flightMode.isAllowFlight(), GamemodeCommand.class);
+			PlayerUtils.setFlying(player, flightMode.isFlying(), GamemodeCommand.class);
 
 			if (DoubleJumpCommand.isInDoubleJumpRegion(player))
-				player.setAllowFlight(true);
+				PlayerUtils.setAllowFlight(player, true, GamemodeCommand.class);
 		});
 	}
 

@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.commands.SpeedCommand.SpeedType;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -41,7 +42,7 @@ public class WitherArmorListener implements Listener {
 	public WitherArmorListener() {
 		for (Player player : OnlinePlayers.getAll()) {
 			if (hasFullSet(player)) {
-				player.setAllowFlight(true);
+				PlayerUtils.setAllowFlight(player, true, WitherArmorListener.class);
 			}
 		}
 		startDoubleJumpTask();
@@ -113,7 +114,7 @@ public class WitherArmorListener implements Listener {
 		if (!isWitherArmor(event.getNewItem())) return;
 		Player player = event.getPlayer();
 		if (!hasFullSet(player)) return;
-		player.setAllowFlight(true);
+		PlayerUtils.setAllowFlight(player, true, WitherArmorListener.class);
 		SpeedType.FLY.reset(player);
 	}
 
@@ -125,7 +126,7 @@ public class WitherArmorListener implements Listener {
 		if (Rank.of(player).isStaff()) return;
 		if (!isWitherArmor(event.getOldItem())) return;
 		if (isWitherArmor(event.getNewItem())) return;
-		player.setAllowFlight(false);
+		PlayerUtils.setAllowFlight(player, false, WitherArmorListener.class);
 	}
 
 	@EventHandler
@@ -143,8 +144,8 @@ public class WitherArmorListener implements Listener {
 				if (player.getGameMode() != GameMode.SURVIVAL) continue;
 				if (!player.isFlying()) continue;
 
-				player.setAllowFlight(false);
-				player.setFlying(false);
+				PlayerUtils.setAllowFlight(player, false, WitherArmorListener.class);
+				PlayerUtils.setFlying(player, false, WitherArmorListener.class);
 
 				Vector vector = player.getEyeLocation().getDirection();
 				vector.multiply(1.15);
@@ -155,7 +156,7 @@ public class WitherArmorListener implements Listener {
 				player.playSound(player.getLocation(), Sound.ENTITY_GHAST_SHOOT, 0.8f, 0.7f);
 				Tasks.wait(TimeUtils.TickTime.SECOND.x(10), () -> {
 					if (hasFullSet(player)) {
-						player.setAllowFlight(true);
+						PlayerUtils.setAllowFlight(player, true, WitherArmorListener.class);
 					}
 				});
 			}
@@ -165,14 +166,14 @@ public class WitherArmorListener implements Listener {
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		if (!hasFullSet(event.getPlayer())) return;
-		event.getPlayer().setAllowFlight(true);
+		PlayerUtils.setAllowFlight(event.getPlayer(), true, WitherArmorListener.class);
 		SpeedType.FLY.reset(event.getPlayer());
 	}
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		if (!hasFullSet(event.getPlayer())) return;
-		event.getPlayer().setAllowFlight(false);
+		PlayerUtils.setAllowFlight(event.getPlayer(), false, WitherArmorListener.class);
 	}
 
 	@EventHandler

@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.lobby.MinigameInviter;
@@ -48,6 +49,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeIngameException;
+import gg.projecteden.nexus.models.checkpoint.CheckpointService;
 import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntity;
 import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntityService;
 import gg.projecteden.nexus.models.minigamersetting.MinigamerSetting;
@@ -149,25 +151,33 @@ public class MinigamesCommand extends _WarpSubCommand {
 				+ mgn.getTimeFormatted() + "&3. That is in &e" + mgn.getUntil());
 	}
 
-	@Path("list [filter] [--mechanic]")
+	@Path("list [filter] [--mechanic] [--inactive]")
 	@Permission(Group.MODERATOR)
 	@Description("List minigame maps, optionally filtered by name and/or mechanic")
-	void list(String filter, @Switch MechanicType mechanic) {
+	void list(String filter, @Switch MechanicType mechanic, @Switch boolean inactive) {
 		JsonBuilder json = json(PREFIX);
 		final List<Arena> arenas = ArenaManager.getAll(filter).stream()
 			.filter(arena -> mechanic == null || arena.getMechanicType() == mechanic)
-			.sorted(Comparator.comparing(Arena::getName).thenComparing(arena -> MatchManager.find(arena) != null))
+			.sorted(Comparator.comparing(Arena::getName))
 			.toList();
 
 		final Iterator<Arena> iterator = arenas.iterator();
 		while (iterator.hasNext()) {
 			Arena arena = iterator.next();
-
 			Match match = MatchManager.find(arena);
-			if (match == null)
-				json.next("&3" + arena.getName());
-			else
-				json.next("&e" + arena.getName()).hover(match.getMinigamers().stream().map(Minigamer::getNickname).collect(Collectors.joining(", ")));
+
+			if (match == null) {
+				if (inactive)
+					json.next("&3" + arena.getName());
+			} else {
+				json.next("&e" + arena.getName());
+
+				json.hover(new ArrayList<>() {{
+					add("Mechanic: " + match.getMechanic().getName());
+					add("Duration: " + Timespan.of(match.getCreated()).format());
+					add("Minigamers: " + match.getMinigamers().stream().map(Minigamer::getNickname).collect(Collectors.joining(", ")));
+				}});
+			}
 
 			if (iterator.hasNext())
 				json.group().next("&3, ").group();
@@ -906,6 +916,13 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Description("View the leaderboard for timed minigames")
 	void leaderboard(@Arg("current") CheckpointArena arena) {
 		new LeaderboardMenu(arena).open(player());
+	}
+
+	@Path("leaderboard delete <arena> <player>")
+	void leaderboard_remove(CheckpointArena arena, Player player) {
+		CheckpointService checkpointService = new CheckpointService();
+		//checkpointService.get()
+		send("TODO"); // TODO GRIFFIN
 	}
 
 	private Match getRunningMatch(Arena arena) {

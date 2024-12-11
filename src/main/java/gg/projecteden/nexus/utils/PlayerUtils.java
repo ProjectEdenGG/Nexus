@@ -6,6 +6,7 @@ import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.commands.FlyCommand;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -89,6 +90,21 @@ import static java.util.stream.Collectors.toList;
 
 @UtilityClass
 public class PlayerUtils {
+
+	// TODO: debug flying
+	public static void setFlying(Player player, boolean flying, Class<?> clazz) {
+		if (FlyCommand.getDebuggers().contains(player))
+			send(player, clazz.getSimpleName() + " | Flying = " + flying);
+
+		player.setFlying(flying);
+	}
+
+	public static void setAllowFlight(Player player, boolean allowFlight, Class<?> clazz) {
+		if (FlyCommand.getDebuggers().contains(player))
+			send(player, clazz.getSimpleName() + " | Flying = " + allowFlight);
+
+		player.setAllowFlight(allowFlight);
+	}
 
 	public enum Dev implements HasPlayer, PlayerOwnedObject {
 		GRIFFIN("86d7e0e2-c95e-4f22-8f99-a6e83b398307", true),

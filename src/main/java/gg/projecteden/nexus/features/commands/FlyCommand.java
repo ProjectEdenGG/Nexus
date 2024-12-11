@@ -17,9 +17,11 @@ import gg.projecteden.nexus.models.mode.ModeUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.IOUtils;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.GameMode;
@@ -29,6 +31,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Permission("essentials.fly")
 @WikiConfig(rank = "Guest", feature = "Creative")
 @NoArgsConstructor
@@ -36,10 +41,28 @@ public class FlyCommand extends CustomCommand implements Listener {
 	private final ModeUserService service = new ModeUserService();
 	private ModeUser user;
 
+	@Getter
+	public static Set<Player> debuggers = new HashSet<>();
+
+
 	public FlyCommand(@NonNull CommandEvent event) {
 		super(event);
 		if (isPlayerCommandEvent())
 			user = service.get(player());
+	}
+
+	@Permission(Group.STAFF)
+	@Path("debug [enable]")
+	void debug(Boolean enable) {
+		if (enable == null)
+			enable = !debuggers.contains(player());
+
+		if (enable)
+			debuggers.add(player());
+		else
+			debuggers.remove(player());
+
+		send(PREFIX + "Debugging " + (enable ? "&aenabled" : "&cdisabled"));
 	}
 
 	@Path("[enable] [player]")
@@ -77,14 +100,14 @@ public class FlyCommand extends CustomCommand implements Listener {
 
 	public static void off(Player player) {
 		player.setFallDistance(0);
-		player.setAllowFlight(false);
-		player.setFlying(false);
+		PlayerUtils.setAllowFlight(player, false, FlyCommand.class);
+		PlayerUtils.setFlying(player, false, FlyCommand.class);
 		IOUtils.fileAppend("cheats", Nickname.of(player) + " disabled fly at " + StringUtils.getShortLocationString(player.getLocation()));
 	}
 
 	public static void on(Player player) {
 		player.setFallDistance(0);
-		player.setAllowFlight(true);
+		PlayerUtils.setAllowFlight(player, true, FlyCommand.class);
 		IOUtils.fileAppend("cheats", Nickname.of(player) + " enabled fly at " + StringUtils.getShortLocationString(player.getLocation()));
 	}
 
@@ -116,10 +139,10 @@ public class FlyCommand extends CustomCommand implements Listener {
 
 		Tasks.wait(1, () -> { // Necessary
 			if (flightMode.isAllowFlight())
-				player.setAllowFlight(true);
+				PlayerUtils.setAllowFlight(player, true, FlyCommand.class);
 
 			if (flightMode.isFlying())
-				player.setFlying(true);
+				PlayerUtils.setFlying(player, true, FlyCommand.class);
 		});
 	}
 

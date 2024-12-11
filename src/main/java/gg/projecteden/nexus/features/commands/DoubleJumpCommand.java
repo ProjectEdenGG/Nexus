@@ -15,6 +15,7 @@ import gg.projecteden.nexus.models.doublejump.DoubleJumpUserService;
 import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
 import gg.projecteden.nexus.models.mode.ModeUserService;
 import gg.projecteden.nexus.utils.GameModeWrapper;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
@@ -87,8 +88,8 @@ public class DoubleJumpCommand extends CustomCommand implements Listener {
 			return;
 		}
 
-		player.setAllowFlight(false);
-		player.setFlying(false);
+		PlayerUtils.setAllowFlight(player, false, DoubleJumpCommand.class);
+		PlayerUtils.setFlying(player, false, DoubleJumpCommand.class);
 
 		final var velocity = DoubleJumpVelocity.of(player);
 		player.setVelocity(location.getDirection().multiply(velocity.getForward()).setY(velocity.getUp()));
@@ -103,10 +104,10 @@ public class DoubleJumpCommand extends CustomCommand implements Listener {
 			if (player.isOnGround()) {
 				Tasks.cancel(repeat.get());
 				if (isInDoubleJumpRegion(player))
-					player.setAllowFlight(true);
+					PlayerUtils.setAllowFlight(player, true, DoubleJumpCommand.class);
 			} else {
-				player.setAllowFlight(false);
-				player.setFlying(false);
+				PlayerUtils.setAllowFlight(player, false, DoubleJumpCommand.class);
+				PlayerUtils.setFlying(player, false, DoubleJumpCommand.class);
 			}
 		}));
 	}
@@ -120,8 +121,8 @@ public class DoubleJumpCommand extends CustomCommand implements Listener {
 		if (!GameModeWrapper.of(player.getGameMode()).isSurvival())
 			return;
 
-		player.setAllowFlight(true);
-		player.setFlying(false);
+		PlayerUtils.setAllowFlight(player, true, DoubleJumpCommand.class);
+		PlayerUtils.setFlying(player, false, DoubleJumpCommand.class);
 	}
 
 	@EventHandler
@@ -135,9 +136,9 @@ public class DoubleJumpCommand extends CustomCommand implements Listener {
 			return;
 
 		final FlightMode user = new ModeUserService().get(player).getFlightMode(WorldGroup.of(player));
-		player.setAllowFlight(user.isAllowFlight());
+		PlayerUtils.setAllowFlight(player, user.isAllowFlight(), DoubleJumpCommand.class);
 		if (!player.isFlying() && user.isFlying()) {
-			player.setFlying(true);
+			PlayerUtils.setFlying(player, true, DoubleJumpCommand.class);
 		}
 	}
 
@@ -153,7 +154,7 @@ public class DoubleJumpCommand extends CustomCommand implements Listener {
 
 		Tasks.wait(1, () -> {
 			if (GameModeWrapper.of(player.getGameMode()).isSurvival()) {
-				player.setAllowFlight(true);
+				PlayerUtils.setAllowFlight(player, true, DoubleJumpCommand.class);
 			}
 		});
 	}

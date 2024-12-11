@@ -20,6 +20,7 @@ import gg.projecteden.nexus.models.godmode.GodmodeService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.IOUtils;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -96,8 +97,8 @@ public class CheatsCommand extends CustomCommand implements Listener {
 			GamemodeCommand.setGameMode(player, GameMode.CREATIVE);
 
 		if (!player.getWorld().getEnvironment().equals(Environment.THE_END)) {
-			player.setAllowFlight(true);
-			player.setFlying(true);
+			PlayerUtils.setAllowFlight(player, true, CheatsCommand.class);
+			PlayerUtils.setFlying(player, true, CheatsCommand.class);
 		}
 
 		if (player.hasPermission("pv.use"))

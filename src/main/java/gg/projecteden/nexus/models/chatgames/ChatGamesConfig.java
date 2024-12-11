@@ -318,7 +318,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 				@Override
 				String apply(ChatGame game, Nerd player) {
 					int amount = Math.max(25, 150 - (50 * (game.getCompleted().size() - 1)));
-					Tasks.sync(() -> new BankerService().deposit(player, amount, ShopGroup.SURVIVAL, TransactionCause.SERVER));
+					Tasks.sync(() -> new BankerService().deposit(player, amount, ShopGroup.SURVIVAL, TransactionCause.CHAT_GAME));
 					return prettyMoney(amount);
 				}
 			},
