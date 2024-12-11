@@ -215,7 +215,7 @@ public class AccountTransferCommand extends CustomCommand {
 
 			for (ShopGroup shopGroup : ShopGroup.values()) {
 				double balance = service.getBalance(old, shopGroup);
-				service.transfer(old, target, balance, shopGroup, TransactionCause.SERVER);
+				service.transfer(old, target, balance, shopGroup, TransactionCause.ACCOUNT_TRANSFER);
 			}
 		}
 	}

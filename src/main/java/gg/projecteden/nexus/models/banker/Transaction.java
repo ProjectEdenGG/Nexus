@@ -227,10 +227,12 @@ public class Transaction {
 		EVENT,
 		COUPON,
 		SERVER,
+		ACCOUNT_TRANSFER,
 		CRATES,
 		DECORATION_STORE,
 		DECORATION_CATALOG,
-		MGM_TOKEN_EXCHANGE
+		MGM_TOKEN_EXCHANGE,
+		CHAT_GAME,
 		;
 
 		public static final List<TransactionCause> shopCauses = List.of(
