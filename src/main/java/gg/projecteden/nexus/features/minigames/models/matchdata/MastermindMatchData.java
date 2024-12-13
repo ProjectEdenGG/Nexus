@@ -66,7 +66,7 @@ public class MastermindMatchData extends IMastermindMatchData {
 		new JsonBuilder()
 				.newline()
 				.next("&a&l  Play Again")
-				.command("/mgm mastermind playAgain")
+				.command("/mgm mastermind reset")
 				.hover("Reset the board and play again")
 				.group()
 				.next("  &3||  &3")
