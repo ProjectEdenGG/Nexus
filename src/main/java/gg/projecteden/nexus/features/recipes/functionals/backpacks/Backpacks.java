@@ -186,7 +186,8 @@ public class Backpacks extends FunctionalRecipe {
 			return;
 
 		event.setCancelled(true);
-		openBackpack(player, event.getCurrentItem());
+		player.closeInventory();
+		Tasks.wait(1, () -> openBackpack(player, event.getCurrentItem()));
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -350,10 +351,14 @@ public class Backpacks extends FunctionalRecipe {
 
 			try {
 				verifyInventory(player);
-				if (inventoryHolder.getInventory() != null)
+				if (inventoryHolder.getInventory() != null) {
+					Nexus.debug("Backpacks: Inventory holder already exists: " + inventoryHolder.id);
 					open(inventoryHolder.getInventory());
-				else
+				}
+				else {
+					Nexus.debug("Backpacks: Creating new inventory holder: " + inventoryHolder.id);
 					open(getTier(backpack).getRows(), originalItems);
+				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				PlayerUtils.send(player, StringUtils.getPrefix("Backpacks") + "&c" + ex.getMessage());
