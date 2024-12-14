@@ -4,7 +4,6 @@ import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.MathUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -64,8 +63,6 @@ public class FurnaceExperience implements Listener {
 
 		Color color = generateTransitionColor(exp);
 		Location location = getParticleLocation(block, facing);
-
-		Dev.WAKKA.send("[" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + "]");
 
 		int randomLoops = RandomUtils.randomInt(2, 7);
 		for (int i = 0; i < randomLoops; i++) {
