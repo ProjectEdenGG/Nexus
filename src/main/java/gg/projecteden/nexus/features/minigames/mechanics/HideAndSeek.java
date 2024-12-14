@@ -190,7 +190,10 @@ public class HideAndSeek extends Infection {
 
 	public void applySelectorCooldown(Minigamer minigamer) {
 		minigamer.getMatch().getTasks().register(new CustomItemCooldown(SELECTOR_SLOT,"hide-and-seek-selector", SELECTOR_COOLDOWN)
-			.onComplete(() -> minigamer.getPlayer().getInventory().setItem(SELECTOR_SLOT, SELECTOR_ITEM))
+			.onComplete(() -> {
+				if (!isZombie(minigamer))
+					minigamer.getPlayer().getInventory().setItem(SELECTOR_SLOT, SELECTOR_ITEM);
+			})
 			.start(minigamer.getPlayer()));
 	}
 
