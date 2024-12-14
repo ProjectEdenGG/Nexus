@@ -373,7 +373,6 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 					if (userAnswer == null)
 						return false;
 
-
 					final float gameAnswer = Float.parseFloat(_answer);
 
 					float min = gameAnswer - (gameAnswer * .20f);

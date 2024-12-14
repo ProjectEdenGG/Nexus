@@ -207,22 +207,63 @@ public enum ChatGameType {
 		NERDS("What is the most common word referring to our players", List.of("nerd", "nerds")),
 		MASCOT("What is the name of the server's loveable pet and mascot?", List.of("Koda", "KodaBear")),
 		MOB_NET("Which item can be used to capture mobs in survival and helps transport them across large distances?", "mob net"),
-		MCMMO_MAX_SKILL("What is the max mcMMO skill level you can reach on the server?", "200"),
+		MCMMO_MAX_SKILL("What is the max mcMMO skill level you can reach on the server?", getNumberAnswers(200)),
 		WEEKLY_WAKKA("What is the name of the admin who can be found hiding around survival spawn?", List.of("Wakka", "WakkaFlocka")),
-		MGN("What is the name of the weekly event where players gather to play various minigames together?", List.of("minigame night", "minigame nights")),
+		MGN("What is the name of the weekly event where players gather to play various minigames together?", List.of("minigame night", "minigame nights", "minigames night", "minigames nights")),
 		MEMBER_TIME("What is the time played required to achieve member rank?", List.of("1 day", "24 hours")),
 		EVENT_TOKENS("What is the currency earned by participating in server events, and are used to purchase various cosmetic items?", "event tokens"),
 		CHANNEL_DISCORD("If you see &5[D]&e in front of someone's username in chat, where are they chatting from?", "discord"),
-		BACKUP_TIME("How much time passes inbetween every automated server backup?", "4 hours"),
+		BACKUP_TIME("How much time passes inbetween every automated server backup?", List.of("4 hours", "four hours")),
 		HOH("Which place on the server would you visit if you wanted to see the full list of former and current staff?", "hall of history"),
 		ONEBLOCK("What is the name of server's version of skyblock?", "Oneblock"),
 
 		VOTE_CRATE_RAREST("What is the least likely reward you can obtain from the Vote Crate?", List.of("dragon egg", "ender dragon egg", "enderdragon egg")),
-		VOTE_CRATE_MOST_EXPENSIVE("How many vote points does a beacon cost in the Vote Point Store (/vps)?", "250"),
-		VOTE_POINT_REWARD_MOST("What is the largest possible vote point bonus you can get from voting for the server (/vote)?", "50"),
+		VOTE_CRATE_MOST_EXPENSIVE("How many vote points does a beacon cost in the Vote Point Store (/vps)?", getNumberAnswers(250)),
+		VOTE_POINT_REWARD_MOST("What is the largest possible vote point bonus you can get from voting for the server (/vote)?", getNumberAnswers(50)),
 
 		RANK_ELITE("Which rank is after trusted, and is awarded to long time players who engage with the community and help others?", "Elite"),
-		RANK_VETERAN("Which rank is given to ex-staff members?", List.of("veteran", "vet")),
+		RANK_VETERAN("Which rank is given to ex-staff members?", "Veteran"),
+
+		// MINECRAFT
+		BREEDABLE_HOSTILE("What is the only breedable hostile mob?", "hoglin"),
+		BREED_CAMELS("What item is used to breed camels?", "cactus"),
+		TAME_PARROT("What do you feed a parrot to tame them?", List.of("seeds", "wheat seeds", "beetroot seeds", "melon seeds", "pumpkin seeds", "torchflower seeds", "pitcher pod")),
+		DISC_COLOR_MALL("What color is the music disc 'Mall'?", "purple"),
+		DISC_COLOR_STAL("What color is the music disc 'Stal'?", "black"),
+		DISC_COLOR_CAT("What color is the music disc 'Cat'?", "green"),
+		DISC_COLOR_WAIT("What color is the music disc 'Wait'?", "blue"),
+		AXOLOTL_COLORS("How many colors of Axolotl's are there?", List.of("5", "five")),
+		MAX_LEVEL_BLAST_PROTECTION("What is the maximum vanilla enchantment level for Blast Protection?", getEnchantLevelAnswers(4)),
+		MAX_LEVEL_FIRE_ASPECT("What is the maximum vanilla enchantment level for Fire Aspect?", getEnchantLevelAnswers(2)),
+		MAX_LEVEL_EFFICIENCY("What is the maximum vanilla enchantment level for Efficiency?", getEnchantLevelAnswers(5)),
+		MAX_LEVEL_UNBREAKING("What is the maximum vanilla enchantment level for Unbreaking?", getEnchantLevelAnswers(3)),
+		BEETROOT_SOUP("How many beetroot do you need to craft beetroot soup?", List.of("6", "six")),
+		CURE_EFFECT("What can you drink to cure a potion effect?", List.of("milk", "milk bucket")),
+		PISTON_MAX("What is the maximum amount of blocks a piston can push?", List.of("12", "twelve")),
+		SCARED_CREEPER("What mob scares creepers?", List.of("cat", "cats", "ocelot", "ocelots")),
+		CAKE_SLICES("How many slices does a cake have?", getNumberAnswers(7)),
+		MAX_BOOK_PAGES("What is the maximum number of pages in a writable book?", getNumberAnswers(100)),
+		FOOD_MOST_SATURATION("What vanilla food item gives the most saturation?", "golden carrot"),
+		VILLAGER_ORIGINAL_NAME("What was the original name for Villagers?", "testificates"),
+		WOLF_HEALTH_INDICATOR("What indicates the health level of a Wolf?", List.of("their tail", "tail")),
+		TAMEABLE_MOB_FALL_DMG_IMMUNE("What tameable mob is immune to fall damage?", "cat"),
+		SMITTEN_TURTLE_DROP("What item drops if lightning strikes a turtle?", List.of("a bowl", "bowl")),
+		SMITTEN_PIG_CONVERT("Which mob is created when lightning strikes a pig?", "zombified piglin"),
+		SMITTEN_RED_MOOSHROOM_CONVERT("Which mob is created when lightning strikes a red mushroom cow?", "brown mooshroom"),
+		SMITTEN_BROWN_MOOSHROOM_CONVERT("Which mob is created when lightning strikes a red mushroom cow?", "red mooshroom"),
+		SMITTEN_VILLAGER_CONVERT("Which mob is crated when lightning strikes a villager?", "witch"),
+		MAX_BUILD_HEIGHT("What is the build height limit?", getNumberAnswers(320)),
+		HOSTILE_DAY_PASSIVE("What hostile mob becomes passive during the day?", "spider"),
+		ANGERED_SPIT("When angered, what mob spits at you?", "llama"),
+		BIOME_PACKED_ICE("In which biome would you find packed ice?", List.of("ice spikes", "frozen ocean", "frozen peaks")),
+		INSOMNIA_MOB("What flying mob will spawn if you don't sleep for several in-game days?", "phantom"),
+		ITEM_GUIDE_PIG("What item is used to guide pigs when riding them?", "carrot on a stick"),
+		BLOCK_PLAYS_MUSIC("What vanilla block can be used to play music?", "jukebox"),
+		PILLAGER_STRUCTURE("Which structure is home to the Pillagers?", List.of("pillager outpost", "woodland mansion")),
+		PARROT_SPAWN_BIOME("Which biome is home to the parrot?", "jungle"),
+		VILLAGE_RAID("What in-game event brings waves of hostile mobs attacking a village?", List.of("a raid", "raid")),
+
+
 
 		// WEBSITE_ --> "https://..." added to answers
 		WEBSITE_SERVER("What's the link to the server website?", "projecteden.gg"),
@@ -256,6 +297,13 @@ public enum ChatGameType {
 			this.question = "&3Trivia: &e" + question;
 			this.acceptableAnswers = answers;
 		}
-	}
 
+		private static List<String> getNumberAnswers(int number) {
+			return StringUtils.getNumberDisplay(number).asTriviaAnswers();
+		}
+
+		private static List<String> getEnchantLevelAnswers(int level) {
+			return StringUtils.getNumberDisplay(level).asEnchantLevelTriviaAnswers();
+		}
+	}
 }

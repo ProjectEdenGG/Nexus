@@ -774,6 +774,37 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 		player.sendMessage(sb + message);
 	}
 
+	// Number Displays
+
+	public static NumberDisplay getNumberDisplay(int number) {
+		return new NumberDisplay(number);
+	}
+
+	public static class NumberDisplay {
+		int number;
+
+		public NumberDisplay(int number) {
+			this.number = number;
+		}
+
+		public String asWords() {
+			return toWords(number);
+		}
+
+		public String asRoman() {
+			return toRoman(number);
+		}
+
+		public List<String> asTriviaAnswers() {
+			return List.of(String.valueOf(number), asWords());
+		}
+
+		public List<String> asEnchantLevelTriviaAnswers() {
+			return List.of(String.valueOf(number), asWords(), asRoman());
+		}
+
+	}
+
 	private final static TreeMap<Integer, String> romanNumerals = new TreeMap<>();
 
 	static {
@@ -815,6 +846,105 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 		if (number.startsWith("IV")) return 4 + fromRoman(number.substring(2));
 		if (number.startsWith("I")) return 1 + fromRoman(number.substring(1));
 		throw new IllegalArgumentException(String.format("Could not process roman numeral of '%s'", number));
+	}
+
+	private static final String[] tensNames = {
+		"",
+		" ten",
+		" twenty",
+		" thirty",
+		" forty",
+		" fifty",
+		" sixty",
+		" seventy",
+		" eighty",
+		" ninety"
+	};
+
+	private static final String[] numNames = {
+		"",
+		" one",
+		" two",
+		" three",
+		" four",
+		" five",
+		" six",
+		" seven",
+		" eight",
+		" nine",
+		" ten",
+		" eleven",
+		" twelve",
+		" thirteen",
+		" fourteen",
+		" fifteen",
+		" sixteen",
+		" seventeen",
+		" eighteen",
+		" nineteen"
+	};
+
+	private static String convertLessThanOneThousand(int number) {
+		String soFar;
+
+		if (number % 100 < 20) {
+			soFar = numNames[number % 100];
+			number /= 100;
+		} else {
+			soFar = numNames[number % 10];
+			number /= 10;
+
+			soFar = tensNames[number % 10] + soFar;
+			number /= 10;
+		}
+		if (number == 0)
+			return soFar;
+
+		return numNames[number] + " hundred" + soFar;
+	}
+
+	public static String toWords(long number) {
+		// 0 to 999 999 999 999
+		if (number == 0) {
+			return "zero";
+		}
+
+		String snumber = Long.toString(number);
+
+		// pad with "0"
+		String mask = "000000000000";
+		DecimalFormat df = new DecimalFormat(mask);
+		snumber = df.format(number);
+
+		int billions = Integer.parseInt(snumber.substring(0, 3));            // XXXnnnnnnnnn
+		int millions = Integer.parseInt(snumber.substring(3, 6));            // nnnXXXnnnnnn
+		int hundredThousands = Integer.parseInt(snumber.substring(6, 9));    // nnnnnnXXXnnn
+		int thousands = Integer.parseInt(snumber.substring(9, 12));            // nnnnnnnnnXXX
+
+		String result = switch (billions) {
+			case 0 -> "";
+			default -> convertLessThanOneThousand(billions) + " billion ";
+		};
+
+		String tradMillions = switch (millions) {
+			case 0 -> "";
+			default -> convertLessThanOneThousand(millions) + " million ";
+		};
+		result = result + tradMillions;
+
+		String tradHundredThousands = switch (hundredThousands) {
+			case 0 -> "";
+			case 1 -> "one thousand ";
+			default -> convertLessThanOneThousand(hundredThousands) + " thousand ";
+		};
+		result = result + tradHundredThousands;
+
+		String tradThousand;
+		tradThousand = convertLessThanOneThousand(thousands);
+		result = result + tradThousand;
+
+		// remove extra spaces!
+		return result.replaceAll("^\\s+", "").replaceAll("\\b\\s{2,}\\b", " ");
 	}
 
 }
