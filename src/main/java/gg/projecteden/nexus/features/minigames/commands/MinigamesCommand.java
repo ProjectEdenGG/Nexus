@@ -158,8 +158,17 @@ public class MinigamesCommand extends _WarpSubCommand {
 		JsonBuilder json = json(PREFIX);
 		final List<Arena> arenas = ArenaManager.getAll(filter).stream()
 			.filter(arena -> mechanic == null || arena.getMechanicType() == mechanic)
+			.filter(arena -> inactive || MatchManager.find(arena) != null)
 			.sorted(Comparator.comparing(Arena::getName))
 			.toList();
+
+		if (arenas.isEmpty()) {
+			if (inactive)
+				error("No arenas active");
+			else
+				error("No active arenas active");
+			return;
+		}
 
 		final Iterator<Arena> iterator = arenas.iterator();
 		while (iterator.hasNext()) {
@@ -170,9 +179,13 @@ public class MinigamesCommand extends _WarpSubCommand {
 				if (inactive)
 					json.next("&3" + arena.getName());
 			} else {
-				json.next("&e" + arena.getName());
+				json.next("&a" + arena.getName());
+				json.command("/mgm warp arena " + arena.getName());
 
 				json.hover(new ArrayList<>() {{
+					add("[Click to teleport]");
+					add("");
+					add("Info:");
 					add("Mechanic: " + match.getMechanic().getName());
 					add("Duration: " + Timespan.of(match.getCreated()).format());
 					add("Minigamers: " + match.getMinigamers().stream().map(Minigamer::getNickname).collect(Collectors.joining(", ")));
