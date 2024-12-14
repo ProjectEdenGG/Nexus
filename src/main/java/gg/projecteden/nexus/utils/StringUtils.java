@@ -794,15 +794,6 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 		public String asRoman() {
 			return toRoman(number);
 		}
-
-		public List<String> asTriviaAnswers() {
-			return List.of(String.valueOf(number), asWords());
-		}
-
-		public List<String> asEnchantLevelTriviaAnswers() {
-			return List.of(String.valueOf(number), asWords(), asRoman());
-		}
-
 	}
 
 	private final static TreeMap<Integer, String> romanNumerals = new TreeMap<>();

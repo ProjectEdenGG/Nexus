@@ -9,6 +9,7 @@ import gg.projecteden.nexus.models.chatgames.ChatGamesConfig.ChatGame;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfigService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.StringUtils.NumberDisplay;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -299,11 +300,15 @@ public enum ChatGameType {
 		}
 
 		private static List<String> getNumberAnswers(int number) {
-			return StringUtils.getNumberDisplay(number).asTriviaAnswers();
+			NumberDisplay numberDisplay = StringUtils.getNumberDisplay(number);
+
+			return List.of(String.valueOf(number), numberDisplay.asWords());
 		}
 
 		private static List<String> getEnchantLevelAnswers(int level) {
-			return StringUtils.getNumberDisplay(level).asEnchantLevelTriviaAnswers();
+			NumberDisplay numberDisplay = StringUtils.getNumberDisplay(level);
+
+			return List.of(String.valueOf(level), numberDisplay.asWords(), numberDisplay.asRoman());
 		}
 	}
 }
