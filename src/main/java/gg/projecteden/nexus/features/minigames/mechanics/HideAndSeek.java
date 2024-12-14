@@ -394,6 +394,13 @@ public class HideAndSeek extends Infection {
 
 	public void cleanup(Minigamer minigamer) {
 		DisguiseAPI.undisguiseToAll(minigamer.getOnlinePlayer());
+		new CooldownService().edit(minigamer, cooldown -> {
+			cooldown.clear("hide-and-seek-selector");
+			cooldown.clear("hide-and-seek-stun");
+			cooldown.clear("hide-and-seek-decoy");
+			cooldown.clear("hide-and-seek-taunt");
+			cooldown.clear("hide-and-seek-radar");
+		});
 	}
 
 	public void cleanup(Match match) {
