@@ -7,7 +7,6 @@ import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.mobheads.common.MobHead;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.MobHeadConverter;
-import gg.projecteden.nexus.models.boost.BoostConfig;
 import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.models.boost.Booster;
 import gg.projecteden.nexus.models.mobheads.MobHeadUser.MobHeadData;
@@ -125,6 +124,9 @@ public class MobHeads extends Feature implements Listener {
 		ItemStack skull = mobHead.getNamedSkull();
 		double chance = mobHead.getType().getChance();
 
+		if (victim instanceof Player player2)
+			skull = new ItemBuilder(skull).name("&e" + Nickname.of(player2) + "'s Head").skullOwner(player2).build();
+
 		if (isNullOrAir(skull)) {
 			Nexus.warn("[MobHeads] Skull for " + camelCase(mobHead.getType()) + " is null");
 			return;
@@ -134,9 +136,6 @@ public class MobHeads extends Feature implements Listener {
 			Nexus.warn("[MobHeads] Chance for " + camelCase(mobHead.getType()) + " is 0");
 			return;
 		}
-
-		if (victim instanceof Player player2)
-			skull = new ItemBuilder(skull).name("&e" + Nickname.of(player2) + "'s Head").skullOwner(player2).build();
 
 		final double looting = getLooting(player);
 		final double beheading = getBeheading(player);
