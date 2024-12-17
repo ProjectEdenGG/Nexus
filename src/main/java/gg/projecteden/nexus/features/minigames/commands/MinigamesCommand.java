@@ -163,10 +163,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 			.toList();
 
 		if (arenas.isEmpty()) {
-			if (inactive)
-				error("No arenas active");
-			else
-				error("No active arenas active");
+			error("No arenas found");
 			return;
 		}
 
@@ -183,12 +180,11 @@ public class MinigamesCommand extends _WarpSubCommand {
 				json.command("/mgm warp arena " + arena.getName());
 
 				json.hover(new ArrayList<>() {{
-					add("[Click to teleport]");
-					add("");
-					add("Info:");
-					add("Mechanic: " + match.getMechanic().getName());
-					add("Duration: " + Timespan.of(match.getCreated()).format());
-					add("Minigamers: " + match.getMinigamers().stream().map(Minigamer::getNickname).collect(Collectors.joining(", ")));
+					add("&3[&eClick to teleport&3]");
+					add("&3Arena: &e" + match.getArena().getDisplayName());
+					add("&3Mechanic: &e" + match.getMechanic().getName());
+					add("&3Duration: &e" + Timespan.of(match.getCreated()).format());
+					add("&3Minigamers: &e" + match.getMinigamers().stream().map(Minigamer::getNickname).collect(Collectors.joining(", ")));
 				}});
 			}
 
