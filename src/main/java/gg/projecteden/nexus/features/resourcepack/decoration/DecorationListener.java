@@ -16,6 +16,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPl
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPrePlaceEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationRotateEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSpawnEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreType;
 import gg.projecteden.nexus.features.workbenches.dyestation.CreativeBrushMenu;
 import gg.projecteden.nexus.utils.GameModeWrapper;
@@ -59,15 +60,7 @@ public class DecorationListener implements Listener {
 		Nexus.registerListener(this);
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void on(DecorationPrePlaceEvent e) {
-		debug(e.getPlayer(), "&b" + e.getEventName() + " - PrePlace");
-	}
-
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void on(DecorationPlacedEvent e) {
-		debug(e.getPlayer(), "&b" + e.getEventName() + " - Placed");
-	}
+	//
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void on(DecorationDestroyEvent e) {
@@ -77,11 +70,6 @@ public class DecorationListener implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void on(DecorationInteractEvent e) {
 		debug(e.getPlayer(), "&b" + e.getEventName() + " - Interact");
-	}
-
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void on(DecorationSitEvent e) {
-		debug(e.getPlayer(), "&b" + e.getEventName() + " - Sit");
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -95,9 +83,31 @@ public class DecorationListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
+	public void on(DecorationPlacedEvent e) {
+		debug(e.getPlayer(), "&b" + e.getEventName() + " - Placed");
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void on(DecorationPrePlaceEvent e) {
+		debug(e.getPlayer(), "&b" + e.getEventName() + " - PrePlace");
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void on(DecorationRotateEvent e) {
 		debug(e.getPlayer(), "&b" + e.getEventName() + " - Rotate");
 	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void on(DecorationSitEvent e) {
+		debug(e.getPlayer(), "&b" + e.getEventName() + " - Sit");
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void on(DecorationSpawnEvent e) {
+		debug(e.getPlayer(), "&b" + e.getEventName() + " - Spawn");
+	}
+
+	//
 
 	@EventHandler
 	public void on(CreativePickBlockEvent event) {

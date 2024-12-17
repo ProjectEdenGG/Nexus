@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Tab;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSpawnEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreCurrencyType;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreManager;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
@@ -138,7 +139,11 @@ public class DecorationCommand extends CustomCommand {
 	void get(DecorationConfig config) {
 		checkPermissions();
 
-		giveItem(config.getItem());
+		DecorationSpawnEvent spawnEvent = new DecorationSpawnEvent(player(), new Decoration(config, null), config.getItem());
+		if (!spawnEvent.callEvent())
+			error("DecorationSpawnEvent was cancelled");
+
+		giveItem(spawnEvent.getItemStack());
 		send("&3Given: &e" + StringUtils.camelCase(config.getName()));
 	}
 

@@ -6,7 +6,9 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.Deco
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType.CategoryTree;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSpawnEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreCurrencyType;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
@@ -259,21 +261,24 @@ public class Catalog implements Listener {
 		PlayerUtils.mailItem(viewer, itemStack, null, worldGroup, eventName);
 	}
 
-	public static void tryBuySurvivalItem(Player viewer, ItemStack itemStack, DecorationStoreType storeType) {
+	public static void tryBuySurvivalItem(Player viewer, DecorationConfig config, ItemStack itemStack, DecorationStoreType storeType) {
 		DecorationStoreCurrencyType currency = DecorationStoreCurrencyType.MONEY;
 
 		if (DecorationUtils.hasBypass(viewer)) {
-			DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();
-			PlayerUtils.giveItem(viewer, itemStack);
+			DecorationSpawnEvent spawnEvent = new DecorationSpawnEvent(viewer, new Decoration(config, null), itemStack);
+			if (spawnEvent.callEvent()) {
+				itemStack = spawnEvent.getItemStack();
+				DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();
+				PlayerUtils.giveItem(viewer, itemStack);
+			}
 			return;
 		}
 
 		Integer price;
-		DecorationConfig _config = DecorationConfig.of(itemStack);
-		if (itemStack.getType() == Material.PLAYER_HEAD) {
+		if (itemStack.getType() == Material.PLAYER_HEAD && ModelId.of(itemStack) == 0) {
 			price = currency.getPriceSkull(storeType);
-		} else if (_config != null) {
-			price = _config.getCatalogPrice(storeType);
+		} else if (config != null) {
+			price = config.getCatalogPrice(storeType);
 		} else {
 			throw new InvalidInputException("Unknown decoration type of: " + itemStack.getType() + ", modelId = " + ModelId.of(itemStack));
 		}
@@ -290,8 +295,14 @@ public class Catalog implements Listener {
 			return;
 		}
 
+		DecorationSpawnEvent spawnEvent = new DecorationSpawnEvent(viewer, new Decoration(config, null), itemStack);
+		if (!spawnEvent.callEvent())
+			return;
+
+		itemStack = spawnEvent.getItemStack();
+
 		currency.withdraw(viewer, itemStack, shopGroup, price);
-		log(viewer, shopGroup, currency, price, storeType, _config, itemStack);
+		log(viewer, shopGroup, currency, price, storeType, config, itemStack);
 
 		if (PlayerUtils.hasRoomFor(viewer, itemStack))
 			DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();

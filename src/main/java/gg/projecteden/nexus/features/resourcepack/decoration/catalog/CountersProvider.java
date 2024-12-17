@@ -113,7 +113,7 @@ public class CountersProvider extends InventoryProvider {
 		for (DecorationConfig config : configs) {
 			ItemStack displayItem = config.getPricedCatalogItem(viewer, currency, DecorationStoreType.CATALOG);
 			ClickableItem clickableItem = ClickableItem.of(displayItem, e -> {
-				Catalog.tryBuySurvivalItem(viewer, config.getItem(), DecorationStoreType.CATALOG);
+				Catalog.tryBuySurvivalItem(viewer, config, config.getItem(), DecorationStoreType.CATALOG);
 			});
 
 			clickableItems.add(clickableItem);

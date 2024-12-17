@@ -288,7 +288,7 @@ public class DecorationStoreManager implements Listener {
 				.cancelText("&cCancel")
 				.confirmText("&aBuy")
 				.onConfirm(e -> {
-					Catalog.tryBuySurvivalItem(player, displayItem, storeType);
+					Catalog.tryBuySurvivalItem(player, data.getDecorationConfig(), displayItem, storeType);
 					e.getPlayer().closeInventory();
 				})
 				.open(player);
