@@ -50,6 +50,11 @@ public class CheckpointService extends MongoPlayerService<CheckpointUser> {
 		}
 	}
 
+	public static void removeBestTime(String arena, CheckpointUser user) {
+		RecordTotalTime recordTotalTime = globalBestTimes.get(arena);
+		// TODO GRIFFIN
+	}
+
 	public static void recordBestTotalTime(String arena, RecordTotalTime time) {
 		if (!globalBestTimes.containsKey(arena) || globalBestTimes.get(arena).compareTo(time) > 0)
 			globalBestTimes.put(arena, time);

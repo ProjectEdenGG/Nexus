@@ -929,9 +929,9 @@ public class MinigamesCommand extends _WarpSubCommand {
 
 	@Path("leaderboard delete <arena> <player>")
 	void leaderboard_remove(CheckpointArena arena, Player player) {
-		CheckpointService checkpointService = new CheckpointService();
-		//checkpointService.get()
-		send("TODO"); // TODO GRIFFIN
+		CheckpointService service = new CheckpointService();
+		CheckpointService.removeBestTime(arena.getName(), service.get(player));
+		send("TODO");
 	}
 
 	private Match getRunningMatch(Arena arena) {
