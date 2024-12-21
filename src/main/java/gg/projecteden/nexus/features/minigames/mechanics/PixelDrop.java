@@ -40,6 +40,7 @@ import org.simmetrics.metrics.StringMetrics;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
@@ -408,9 +409,9 @@ public class PixelDrop extends TeamlessMechanic {
 
 			// Inbetween Rounds
 			if (matchData.isRoundOver()) {
-				for (Minigamer minigamer : match.getMinigamers()) {
-					lines.put(minigamer.getNickname(), minigamer.getScore());
-				}
+				match.getMinigamers().stream().sorted(Comparator.comparingInt(mg -> ((Minigamer) mg).getScore()).reversed())
+					.forEachOrdered(mg -> lines.put(mg.getNickname(), mg.getScore()));
+
 				lines.put("&1", Integer.MIN_VALUE);
 				lines.put("&2&fRound: &c" + matchData.getCurrentRound() + "&f/&c" + MAX_ROUNDS, Integer.MIN_VALUE);
 
@@ -420,25 +421,25 @@ public class PixelDrop extends TeamlessMechanic {
 				else
 					lines.put("&3&fNext Round: &c" + timeLeft, Integer.MIN_VALUE);
 
-				// During Round
+			// During Round
 			} else {
 				for (Minigamer minigamer : match.getMinigamers()) {
 					if (matchData.getGuessed().contains(minigamer))
 						lines.put("&1&a" + minigamer.getNickname(), Integer.MIN_VALUE);
 					else
 						lines.put("&1&f" + minigamer.getNickname(), Integer.MIN_VALUE);
-
-					lines.put("&2", Integer.MIN_VALUE);
-
-					long timeLeft = matchData.getTimeLeft();
-					if (timeLeft <= 0)
-						lines.put("&3&fTime Left: ", Integer.MIN_VALUE);
-					else
-						lines.put("&4&fTime Left: &c" + timeLeft, Integer.MIN_VALUE);
 				}
+
+				lines.put("&2", Integer.MIN_VALUE);
+
+				long timeLeft = matchData.getTimeLeft();
+				if (timeLeft <= 0)
+					lines.put("&3&fTime Left: ", Integer.MIN_VALUE);
+				else
+					lines.put("&4&fTime Left: &c" + timeLeft, Integer.MIN_VALUE);
 			}
 
-			// In Lobby
+		// In Lobby
 		} else {
 			for (Minigamer minigamer : match.getMinigamers())
 				lines.put(minigamer.getVanillaColoredName(), Integer.MIN_VALUE);
