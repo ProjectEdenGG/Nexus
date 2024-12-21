@@ -18,6 +18,7 @@ import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 public enum MechanicType {
 	@Group(MechanicGroup.ARCADE)							ARCHERY(Archery.class),
 	@Group(MechanicGroup.ARCADE)							BATTLESHIP(Battleship.class),
+	@Group(MechanicGroup.ARCADE)							CHECKERS(Checkers.class),
 	@Group(MechanicGroup.ARCADE)							CONNECT4(Connect4.class),
 	@Group(MechanicGroup.ARCADE)							DROPPER(Dropper.class),
 	@Group(MechanicGroup.ARCADE)							FALLING_BLOCKS(FallingBlocks.class),
