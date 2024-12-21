@@ -1,12 +1,13 @@
 package gg.projecteden.nexus.features.recipes.models.builders;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlockTag;
 import gg.projecteden.nexus.features.recipes.CustomRecipes;
+import gg.projecteden.nexus.features.recipes.functionals.InfiniteWaterBucket;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeGroup;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlockTag;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -226,12 +227,18 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 	}
 
 	public static SurroundBuilder surround(Material center) {
+		if (center == Material.WATER_BUCKET)
+			return surround(List.of(new ItemStack(center), InfiniteWaterBucket.getCustomModel().getItem()));
+
 		final SurroundBuilder builder = surround(choiceOf(center));
 		builder.ingredientIds.add(keyOf(center));
 		return builder;
 	}
 
 	public static SurroundBuilder surround(ItemStack center) {
+		if (center.getType() == Material.WATER_BUCKET)
+			return surround(List.of(center, InfiniteWaterBucket.getCustomModel().getItem()));
+
 		final SurroundBuilder builder = surround(choiceOf(center));
 		builder.ingredientIds.add(keyOf(center));
 		return builder;

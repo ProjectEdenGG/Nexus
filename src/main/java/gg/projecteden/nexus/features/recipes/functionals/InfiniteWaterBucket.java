@@ -1,7 +1,5 @@
 package gg.projecteden.nexus.features.recipes.functionals;
 
-import com.viaversion.viaversion.api.minecraft.item.Item;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
@@ -70,12 +68,11 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 	@EventHandler
 	public void onCraftWith(CraftItemEvent event) {
 		ItemStack[] original = event.getInventory().getMatrix();
-		if (event.getRecipe() instanceof ShapedRecipe shaped) {
-			ItemStack[] items = shaped.getIngredientMap().values().toArray(new ItemStack[0]);
+		if (event.getRecipe() instanceof ShapedRecipe) {
 			boolean found = false;
-			for (int i = 0; i < items.length; i++) {
-				if (isNullOrAir(items[i])) continue;
-				if (new ItemBuilder(items[i]).modelId() == new ItemBuilder(getResult()).modelId()) {
+			for (int i = 0; i < original.length; i++) {
+				if (isNullOrAir(original[i])) continue;
+				if (new ItemBuilder(original[i]).modelId() == new ItemBuilder(getResult()).modelId()) {
 					original[i] = getResult();
 					found = true;
 				}
