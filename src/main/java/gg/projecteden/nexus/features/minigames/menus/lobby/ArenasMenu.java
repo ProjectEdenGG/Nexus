@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.menus.lobby;
 
+import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
@@ -16,10 +17,12 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicSubGroup;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -42,6 +45,8 @@ public class ArenasMenu extends ScrollableInventoryProvider {
 	private final List<Arena> arenas;
 	@Getter
 	private final int pages;
+
+	Pair<SlotPos, SlotPos> randomSlotsMinMax = Pair.of(SlotPos.of(0, 0), SlotPos.of(2, 3));
 
 	private static final Map<SlotPos, SlotPos> mapSlotsMinMax = new LinkedHashMap<>() {{
 		put(SlotPos.of(0, 0), SlotPos.of(2, 3));
@@ -96,11 +101,39 @@ public class ArenasMenu extends ScrollableInventoryProvider {
 			})
 			//
 			.filter(arena -> arena.getMenuImage() != null)
-			.collect(Collectors.toList());
+			.toList();
+
+		// Random Arena
+		if (page == 0) {
+			SlotPos min = randomSlotsMinMax.getFirst();
+			SlotPos max = randomSlotsMinMax.getSecond();
+
+			List<Arena> inactiveArenas = arenas.stream().filter(arena -> MatchManager.find(arena) == null).toList();
+
+			final Consumer<ItemClickData> consumer = e -> {
+				final Arena randomArena = RandomUtils.randomElement(inactiveArenas);
+				if (CustomMaterial.of(viewer.getItemOnCursor()) == CustomMaterial.ENVELOPE_1)
+					if (MinigameInviter.canSendInvite(viewer))
+						Tasks.wait(2, () -> inviteAll(e, randomArena));
+					else {
+						viewer.setItemOnCursor(new ItemStack(Material.AIR));
+						PlayerUtils.send(viewer, Minigames.PREFIX + "You cannot send invites right now!");
+					}
+				else
+					Minigamer.of(viewer).join(randomArena);
+			};
+
+			contents.fill(min, max, ClickableItem.of(getRandomArenaItem(false), consumer));
+			contents.set(min, ClickableItem.of(getRandomArenaItem(true), consumer));
+		}
+		//
 
 		final Iterator<Arena> arenaIterator = arenas.iterator();
 		mapSlotsMinMax.forEach((min, max) -> {
 			if (!arenaIterator.hasNext())
+				return;
+
+			if (page == 0 && min.matches(randomSlotsMinMax.getFirst()) && max.matches(randomSlotsMinMax.getSecond()))
 				return;
 
 			final Arena arena = arenaIterator.next();
@@ -115,8 +148,8 @@ public class ArenasMenu extends ScrollableInventoryProvider {
 				else
 					Minigamer.of(viewer).join(arena);
 			};
-			contents.fill(min, max, ClickableItem.of(getItem(arena, false), consumer));
-			contents.set(min, ClickableItem.of(getItem(arena, true), consumer));
+			contents.fill(min, max, ClickableItem.of(getArenaItem(arena, false), consumer));
+			contents.set(min, ClickableItem.of(getArenaItem(arena, true), consumer));
 		});
 
 		super.init();
@@ -157,7 +190,18 @@ public class ArenasMenu extends ScrollableInventoryProvider {
 		}
 	}
 
-	private ItemStack getItem(Arena arena, boolean main) {
+	private ItemStack getRandomArenaItem(boolean main) {
+		ItemBuilder randomMenuImage = new ItemBuilder(CustomModel.of(Material.PAPER, 1699));
+		ItemBuilder item = main ? randomMenuImage : new ItemBuilder(CustomMaterial.INVISIBLE);
+
+		item.name("&6&lRandom Map");
+		item.lore("");
+		item.lore("&fClick to play");
+
+		return item.build();
+	}
+
+	private ItemStack getArenaItem(Arena arena, boolean main) {
 		ItemBuilder item = main ? arena.getMenuImage() : new ItemBuilder(CustomMaterial.INVISIBLE);
 
 		Match match = MatchManager.find(arena);
@@ -186,7 +230,7 @@ public class ArenasMenu extends ScrollableInventoryProvider {
 		if (match == null)
 			return true;
 
-		if (match.getOnlinePlayers().size() == 0)
+		if (match.getOnlinePlayers().isEmpty())
 			return true;
 
 		if (match.getOnlinePlayers().size() >= match.getArena().getMaxPlayers())
