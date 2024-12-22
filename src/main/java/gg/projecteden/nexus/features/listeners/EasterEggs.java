@@ -4,28 +4,22 @@ import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.CitizensUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -272,7 +266,20 @@ public class EasterEggs implements Listener {
 
 		MARSHY(new StaffEasterEggBuilder("a7fa3c9c-d3cb-494e-bff6-8b6d416b18e3")
 			.food(Material.STONE_BRICKS)
-			.burpSound(Sound.ENTITY_WARDEN_AMBIENT)
+			.burpSound(Sound.ENTITY_FIREWORK_ROCKET_LAUNCH)
+			.burpEffect((player, itemStack) -> {
+				player.getWorld().spawn(player.getLocation(), Firework.class, firework -> {
+					FireworkMeta meta = firework.getFireworkMeta();
+					meta.addEffect(FireworkEffect.builder()
+						.with(FireworkEffect.Type.BALL_LARGE)
+						.withColor(Color.fromRGB(136, 0, 255))
+						.withFade(Color.BLUE)
+						.flicker(true)
+						.build());
+
+					firework.setFireworkMeta(meta);
+				});
+			})
 		),
 
 		// Architects
