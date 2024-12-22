@@ -218,7 +218,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 
 	@Path("spectate [arena]")
 	void spectate(@Arg("current") Arena arena) {
-		minigamer.spectate(arena);
+		minigamer.spectate(arena, true);
 	}
 
 	@Path("allJoin <arena>")

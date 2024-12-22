@@ -201,7 +201,7 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		try {
 			checkCanJoin(match);
 		} catch (InvalidInputException ex) {
-			tell(ex.getMessage());
+			tell(ex.getJson());
 			return;
 		} catch (Exception ex) {
 			tell("&cInternal error occurred, please report this issue.");
@@ -247,11 +247,11 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		match.checkCanJoin(this);
 	}
 
-	public void spectate(Arena arena) {
+	public void spectate(Arena arena, boolean direct) {
 		Match match = MatchManager.get(arena);
 
 		try {
-			checkCanSpectate(match);
+			checkCanSpectate(match, direct);
 		} catch (InvalidInputException ex) {
 			tell(ex.getMessage());
 			return;
@@ -269,7 +269,7 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 
 		final Runnable join = () -> {
 			try {
-				checkCanSpectate(match);
+				checkCanSpectate(match, direct);
 				if (this.match != null)
 					this.match.getMinigamers().remove(this);
 				this.match = match;
@@ -291,11 +291,11 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 			fadeToBlack.send().thenRun(join);
 	}
 
-	private void checkCanSpectate(Match match) {
+	public void checkCanSpectate(Match match, boolean direct) {
 		if (Nexus.isMaintenanceQueued())
 			throw new InvalidInputException("&cServer maintenance is queued, cannot join match");
 
-		if (match.getArena().canJoinLate() || !match.getMechanic().doesAllowSpectating(match) || match.getArena().getSpectateLocation() == null)
+		if ((!direct && match.getArena().canJoinLate()) || !match.getMechanic().doesAllowSpectating(match) || match.getArena().getSpectateLocation() == null)
 			throw new InvalidInputException("&cThat match does not support spectating");
 
 		if (match.getMinigamers().isEmpty())
@@ -473,7 +473,7 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 
 		return teleportAsync(dest).thenApply(success -> {
 			clearGameModeState(true);
-			getPlayer().setAllowFlight(true);
+			match.getTasks().wait(2, () -> getPlayer().setAllowFlight(true));
 			match.getMinigamersAndSpectators().forEach(minigamer -> {
 				if (minigamer.isAlive)
 					minigamer.getOnlinePlayer().hidePlayer(Nexus.getInstance(), getOnlinePlayer());

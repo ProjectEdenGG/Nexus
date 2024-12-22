@@ -61,6 +61,11 @@ public final class Mastermind extends SingleplayerMechanic {
 	}
 
 	@Override
+	public boolean doesAllowSpectating(Match match) {
+		return true;
+	}
+
+	@Override
 	public void onJoin(@NotNull MatchJoinEvent event) {
 		super.onJoin(event);
 

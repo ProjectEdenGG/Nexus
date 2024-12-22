@@ -53,7 +53,7 @@ public class Infection extends TeamMechanic {
 	}
 
 	@Override
-	public boolean doesAllowSpectating(Match match) { return false; }
+	public boolean doesAllowSpectating(Match match) { return true; }
 
 	public Team getZombieTeam(Arena arena) {
 		Optional<Team> teamOptional = arena.getTeams().stream().filter(team -> team.getChatColor() == ChatColor.RED).findFirst();

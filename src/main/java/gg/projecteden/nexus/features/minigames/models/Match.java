@@ -174,22 +174,29 @@ public class Match implements ForwardingAudience {
 		return arena.worldedit();
 	}
 
-	public void checkCanJoin(Minigamer debugger) {
+	public void checkCanJoin(Minigamer minigamer) {
 		if ("RavensNestEstate".equals(arena.getName()))
 			throw new InvalidInputException("&cThis arena is temporarily disabled while we work out some bugs");
 
 		if (!initialized && Nexus.isMaintenanceQueued())
 			throw new InvalidInputException("&cServer maintenance is queued, cannot start a new match");
 
-		if (!initialize(debugger)) {
+		if (!initialize(minigamer))
 			throw new InvalidInputException("&cMinigame initialization failed");
-		}
 
 		if (started && !arena.canJoinLate())
-			throw new InvalidInputException("&cThis match has already started");
+			throw new InvalidInputException(new JsonBuilder("&cThis match has already started").next(getSpectatorHover(minigamer)));
 
 		if (minigamers.size() >= arena.getMaxPlayers())
-			throw new InvalidInputException("&cThis match is full");
+			throw new InvalidInputException(new JsonBuilder("&cThis match is full").next(getSpectatorHover(minigamer)));
+	}
+
+	public JsonBuilder getSpectatorHover(@NotNull Minigamer minigamer) {
+		try {
+			minigamer.checkCanSpectate(this, false);
+			return new JsonBuilder(". &e&l[Spectate Instead]").command("mgm spectate " + getArena().getName()).hover("&3Spectate " + getArena().getName());
+		}
+		catch (InvalidInputException ignore) { return new JsonBuilder(); }
 	}
 
 	public void join(Minigamer minigamer) {

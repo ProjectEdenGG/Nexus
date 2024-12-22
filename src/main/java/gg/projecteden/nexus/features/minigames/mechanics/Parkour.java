@@ -15,9 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 @Scoreboard(teams = false, sidebarType = Type.MINIGAMER)
 public class Parkour extends CheckpointMechanic {
@@ -47,6 +45,11 @@ public class Parkour extends CheckpointMechanic {
 	public void onDeath(@NotNull MinigamerDeathEvent event) {
 		event.showDeathMessage(false);
 		super.onDeath(event);
+	}
+
+	@Override
+	public boolean doesAllowSpectating(Match match) {
+		return true;
 	}
 
 	@Override
