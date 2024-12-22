@@ -17,32 +17,13 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.BingoMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.Challenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.CustomChallenge.CustomTask;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.StructureChallenge;
-import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.BiomeChallengeProgress;
-import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.BreakChallengeProgress;
-import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.BreedChallengeProgress;
-import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.ConsumeChallengeProgress;
-import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.CraftChallengeProgress;
-import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.CustomChallengeProgress;
-import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.DeathChallengeProgress;
-import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.DimensionChallengeProgress;
-import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.KillChallengeProgress;
-import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.PlaceChallengeProgress;
-import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.StructureChallengeProgress;
-import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.TameChallengeProgress;
+import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.*;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessVanillaMechanic;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.MaterialUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PotionEffectBuilder;
-import gg.projecteden.nexus.utils.TitleBuilder;
+import gg.projecteden.nexus.utils.*;
 import io.papermc.paper.event.player.PlayerTradeEvent;
 import lombok.Getter;
-import org.bukkit.Difficulty;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.StructureType;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Horse;
@@ -54,14 +35,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityBreedEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityMountEvent;
-import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.bukkit.event.entity.EntityPotionEffectEvent;
-import org.bukkit.event.entity.EntityTameEvent;
-import org.bukkit.event.entity.PiglinBarterEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -93,6 +67,9 @@ public final class Bingo extends TeamlessVanillaMechanic {
 	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.CRAFTING_TABLE);
 	}
+
+	@Override
+	public boolean doesAllowSpectating(Match match) { return false; }
 
 	@Getter
 	public final int worldDiameter = 10000;

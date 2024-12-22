@@ -10,12 +10,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.
 import gg.projecteden.nexus.features.minigames.models.matchdata.DeathSwapMatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.DeathSwapMatchData.Swap;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessVanillaMechanic;
-import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.EntityUtils;
-import gg.projecteden.nexus.utils.PotionEffectBuilder;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.TitleBuilder;
+import gg.projecteden.nexus.utils.*;
 import lombok.Getter;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -43,6 +38,9 @@ public final class DeathSwap extends TeamlessVanillaMechanic {
 	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.ENDER_PEARL);
 	}
+
+	@Override
+	public boolean doesAllowSpectating(Match match) { return false; }
 
 	@Getter
 	public final int worldDiameter = 2000;

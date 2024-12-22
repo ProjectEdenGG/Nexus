@@ -33,6 +33,10 @@ public class TeamSidebar implements MinigameScoreboard {
 				team.getAliveMinigamers(match).forEach(minigamer ->
 					Sidebar.get(minigamer.getPlayer()).applyLayout(scoreboards.get(team))));
 
+		match.getSpectators().forEach(spectator -> {
+			Sidebar.get(spectator.getPlayer()).applyLayout(scoreboards.get(spectator.getMatch().getArena().getTeams().get(0)));
+		});
+
 		scoreboards.forEach((team, scoreboard) -> scoreboard.refresh());
 	}
 
@@ -45,15 +49,13 @@ public class TeamSidebar implements MinigameScoreboard {
 
 	@Override
 	public void handleQuit(Minigamer minigamer) {
-		if (minigamer.getTeam() != null)
-			if (scoreboards.containsKey(minigamer.getTeam()))
-				Sidebar.get(minigamer.getPlayer()).applyLayout(null);
+		Sidebar.get(minigamer.getPlayer()).applyLayout(null);
 		update();
 	}
 
 	@Override
 	public void handleEnd() {
-		match.getOnlinePlayers().forEach(player -> Sidebar.get(player).applyLayout(null));
+		match.getOnlineMinigamersAndSpectators().forEach(player -> Sidebar.get(player).applyLayout(null));
 		scoreboards.clear();
 	}
 

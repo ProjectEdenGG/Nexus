@@ -20,18 +20,14 @@ import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.scoreboard.NameTagVisibility;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.awt.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static gg.projecteden.nexus.features.minigames.menus.teams.TeamColorMenu.COLOR_TYPES;
+import static gg.projecteden.nexus.utils.PlayerUtils.hidePlayer;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Data
@@ -116,7 +112,11 @@ public class Team implements ConfigurationSerializable, IsColoredAndNamed, Color
 		});
 
 		if (loadout != null)
-			minigamers.forEach(minigamer -> loadout.apply(minigamer));
+			minigamers.forEach(minigamer -> {
+				loadout.apply(minigamer);
+				minigamer.getMatch().getSpectators().forEach(spectator -> hidePlayer(spectator.getOnlinePlayer()).from(minigamer.getOnlinePlayer()));
+			});
+
 
 		toSpawnpoints(minigamers);
 	}

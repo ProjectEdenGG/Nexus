@@ -9,13 +9,8 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.UHCMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessVanillaMechanic;
-import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.AdventureUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.BorderUtils.WorldBorderWrapper;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.MaterialUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.parchment.event.block.BlockDropResourcesEvent;
 import lombok.Getter;
 import net.kyori.adventure.audience.Audience;
@@ -57,6 +52,9 @@ public class UHC extends TeamlessVanillaMechanic {
 	public @NotNull String getDescription() {
 		return "Be the last person alive as you fight other players to death and escape the world border, all without regenerating health";
 	}
+
+	@Override
+	public boolean doesAllowSpectating(Match match) { return false; }
 
 	@Override
 	public @NotNull ItemStack getMenuItem() {

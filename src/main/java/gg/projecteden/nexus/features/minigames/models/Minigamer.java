@@ -19,15 +19,8 @@ import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNicknamed;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.Name;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.PotionEffectBuilder;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.TitleBuilder;
-import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.HasLocation;
 import gg.projecteden.parchment.HasOfflinePlayer;
@@ -87,6 +80,7 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 	@Accessors(fluent = true)
 	private boolean canTeleport;
 	private boolean respawning = false;
+	private boolean spectating = false;
 	private boolean isAlive = true;
 	private int lives;
 	private int immobileTicks = 0;
@@ -101,7 +95,7 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 	@NotNull
 	public static Minigamer of(@NotNull UUID uuid) throws PlayerNotOnlineException {
 		for (Match match : MatchManager.getAll())
-			for (Minigamer minigamer : match.getMinigamers())
+			for (Minigamer minigamer : match.getMinigamersAndSpectators())
 				if (minigamer.getUniqueId().equals(uuid))
 					return minigamer;
 
@@ -253,6 +247,64 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		match.checkCanJoin(this);
 	}
 
+	public void spectate(Arena arena) {
+		Match match = MatchManager.get(arena);
+
+		try {
+			checkCanSpectate(match);
+		} catch (InvalidInputException ex) {
+			tell(ex.getMessage());
+			return;
+		} catch (Exception ex) {
+			tell("&cInternal error occurred, please report this issue.");
+			ex.printStackTrace();
+			return;
+		}
+
+		TitleBuilder fadeToBlack = new TitleBuilder()
+			.title(CustomEmoji.SCREEN_BLACK.getChar())
+			.fade(TickTime.TICK.x(10))
+			.players(getOnlinePlayer())
+			.stay(TickTime.TICK.x(10));
+
+		final Runnable join = () -> {
+			try {
+				checkCanSpectate(match);
+				if (this.match != null)
+					this.match.getMinigamers().remove(this);
+				this.match = match;
+				this.match.spectate(this);
+			} catch (InvalidInputException ex) {
+				tell(ex.getMessage());
+			}
+		};
+
+		if (WorldGroup.of(getOnlinePlayer()) != WorldGroup.MINIGAMES) {
+			fadeToBlack
+				.stay(TickTime.TICK.x(20))
+				.send()
+				.thenRun(() -> {
+					toGamelobby();
+					Tasks.wait(10, join);
+				});
+		} else
+			fadeToBlack.send().thenRun(join);
+	}
+
+	private void checkCanSpectate(Match match) {
+		if (Nexus.isMaintenanceQueued())
+			throw new InvalidInputException("&cServer maintenance is queued, cannot join match");
+
+		if (match.getArena().canJoinLate() || !match.getMechanic().doesAllowSpectating(match) || match.getArena().getSpectateLocation() == null)
+			throw new InvalidInputException("&cThat match does not support spectating");
+
+		if (match.getMinigamers().isEmpty())
+			throw new InvalidInputException("&cThat match is currently not being played");
+
+		if (match.getMinigamers().size() == 1 && match.getMinigamers().get(0).getUuid().equals(this.getUuid()))
+			throw new InvalidInputException("&cYou cannot spectate while being the only player");
+	}
+
 	public void quit() {
 		if (match != null) {
 			match.quit(this);
@@ -400,6 +452,7 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 
 		player.setGameMode(GameMode.SURVIVAL);
 		player.setFallDistance(0);
+		this.spectating = false;
 
 		teleportAsync(Minigames.getLobby()).thenRun(() -> {
 			PlayerUtils.setAllowFlight(player, true, Minigamer.class);
@@ -412,9 +465,16 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		if (dest == null)
 			return CompletableFuture.completedFuture(false);
 
-		return teleportAsync(match.getArena().getSpectateLocation()).thenApply(success -> {
+		if (!match.isStarted()) {
+			if (!isInLobby(match))
+				return CompletableFuture.completedFuture(false);
+			dest = match.getArena().getLobby().getLocation();
+		}
+
+		return teleportAsync(dest).thenApply(success -> {
 			clearGameModeState(true);
-			match.getMinigamers().forEach(minigamer -> {
+			getPlayer().setAllowFlight(true);
+			match.getMinigamersAndSpectators().forEach(minigamer -> {
 				if (minigamer.isAlive)
 					minigamer.getOnlinePlayer().hidePlayer(Nexus.getInstance(), getOnlinePlayer());
 				else
@@ -534,7 +594,7 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 					unhideAll();
 					respawning = false;
 					// hides players who are still respawning (as unhideAll unhides them)
-					match.getMinigamers().forEach(minigamer -> {
+					match.getMinigamersAndSpectators().forEach(minigamer -> {
 						if (!minigamer.equals(this) && (minigamer.isRespawning() || !minigamer.isAlive())) {
 							hidePlayer(minigamer.getOnlinePlayer()).from(getOnlinePlayer());
 							if (minigamer.isAlive())
@@ -702,6 +762,12 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 
 	public boolean isSpectating() {
 		return false; // TODO
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Minigamer minigamer)) return false;
+		return minigamer.getUuid().equals(this.getUuid());
 	}
 
 }

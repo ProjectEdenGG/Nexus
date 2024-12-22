@@ -8,20 +8,9 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import gg.projecteden.api.interfaces.Named;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
-import gg.projecteden.nexus.features.minigames.models.Arena;
-import gg.projecteden.nexus.features.minigames.models.Match;
+import gg.projecteden.nexus.features.minigames.models.*;
 import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
-import gg.projecteden.nexus.features.minigames.models.MinigameMessageType;
-import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.features.minigames.models.RegenType;
-import gg.projecteden.nexus.features.minigames.models.Team;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchRegeneratedEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.*;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
@@ -34,13 +23,8 @@ import gg.projecteden.nexus.features.nameplates.TeamAssigner;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.interfaces.HasDescription;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
-import gg.projecteden.nexus.utils.TitleBuilder;
-import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
@@ -63,12 +47,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 import static gg.projecteden.nexus.utils.StringUtils.left;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
@@ -106,6 +85,8 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	public boolean canDropItem(@NotNull ItemStack item) {
 		return false;
 	}
+
+	public boolean doesAllowSpectating(Match match) { return !match.getArena().canJoinLate(); }
 
 	/**
 	 * Returns the type of regeneration this mechanic uses.

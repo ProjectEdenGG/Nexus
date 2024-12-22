@@ -10,13 +10,7 @@ import gg.projecteden.nexus.features.minigames.mechanics.Dropper;
 import gg.projecteden.nexus.features.minigames.mechanics.Thimble;
 import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
 import gg.projecteden.nexus.features.minigames.models.annotations.TeamGlowing;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBroadcastEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.*;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.teams.TeamScoredEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
@@ -25,32 +19,17 @@ import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifier
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
 import gg.projecteden.nexus.features.minigames.modifiers.NoModifier;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.AdventureUtils;
-import gg.projecteden.nexus.utils.BossBarBuilder;
-import gg.projecteden.nexus.utils.GlowUtils;
-import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown.CountdownBuilder;
-import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.SneakyThrows;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.ComponentLike;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -61,16 +40,7 @@ import tech.blastmc.holograms.api.models.Hologram;
 
 import java.lang.reflect.Constructor;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -85,6 +55,8 @@ public class Match implements ForwardingAudience {
 	private LocalDateTime created = LocalDateTime.now();
 	@ToString.Exclude
 	private final List<Minigamer> minigamers = new ArrayList<>();
+	@ToString.Exclude
+	private final List<Minigamer> spectators = new ArrayList<>();
 	@ToString.Exclude
 	private final List<Minigamer> allMinigamers = new ArrayList<>();
 	private boolean initialized = false;
@@ -111,6 +83,20 @@ public class Match implements ForwardingAudience {
 				return minigamer;
 
 		return null;
+	}
+
+	public List<Minigamer> getMinigamersAndSpectators() {
+		List<Minigamer> players = new ArrayList<>();
+		players.addAll(getMinigamers());
+		players.addAll(getSpectators());
+		return players;
+	}
+
+	public List<Player> getOnlineMinigamersAndSpectators() {
+		return getMinigamersAndSpectators().stream()
+			.filter(Minigamer::isOnline)
+			.map(Minigamer::getPlayer)
+			.collect(Collectors.toList());
 	}
 
 	/**
@@ -215,6 +201,7 @@ public class Match implements ForwardingAudience {
 
 		minigamer.getOnlinePlayer().closeInventory();
 		minigamers.add(minigamer);
+		spectators.remove(minigamer);
 
 		try {
 			arena.getMechanic().processJoin(minigamer);
@@ -229,17 +216,22 @@ public class Match implements ForwardingAudience {
 
 	void quit(Minigamer minigamer) {
 		Minigames.debug("Minigamer#quit 1 " + minigamer.getNickname() + " online: " + minigamer.isOnline());
-		if (!minigamers.contains(minigamer)) return;
+		if (!minigamers.contains(minigamer) && !spectators.contains(minigamer)) return;
 		Minigames.debug("Minigamer#quit 2 " + minigamer.getNickname() + " online: " + minigamer.isOnline());
 
 		minigamers.remove(minigamer);
+		spectators.remove(minigamer);
 		minigamer.clearState(true);
 		minigamer.toGamelobby();
 		minigamer.unhideAll();
 
 		MatchQuitEvent event = new MatchQuitEvent(minigamer);
 		event.callEvent();
-		try { arena.getMechanic().onQuit(event); } catch (Exception ex) { ex.printStackTrace(); }
+
+		if (!minigamer.isSpectating()) {
+			try { arena.getMechanic().onQuit(event); }
+			catch (Exception ex) { ex.printStackTrace(); }
+		}
 
 		if (modifierBar != null) minigamer.getOnlinePlayer().hideBossBar(modifierBar);
 		if (scoreboard != null) scoreboard.handleQuit(minigamer);
@@ -247,6 +239,24 @@ public class Match implements ForwardingAudience {
 
 		if (minigamers.size() == 0)
 			end();
+	}
+
+	public void spectate(Minigamer minigamer) {
+		if (minigamers.contains(minigamer))
+			throw new InvalidInputException("&cYou are already in this match");
+
+		MatchJoinEvent event = new MatchJoinEvent(this, minigamer);
+		event.callEvent();
+
+		minigamer.getOnlinePlayer().closeInventory();
+		minigamer.setAlive(false);
+		minigamer.setSpectating(true);
+		spectators.add(minigamer);
+
+		if (scoreboard != null)
+			scoreboard.handleJoin(minigamer);
+
+		minigamer.toSpectate();
 	}
 
 	public void start() {
@@ -302,13 +312,15 @@ public class Match implements ForwardingAudience {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		minigamers.clear();
 
 		if (scoreboard != null)
 			scoreboard.handleEnd();
 
 		List<Player> players = getOnlinePlayers();
 		GlowUtils.unglow(players).receivers(players).run();
+
+		minigamers.clear();
+		spectators.clear();
 
 		MatchManager.remove(this);
 		Minigames.debug("Match#end 4 " + getArena().getDisplayName());
@@ -386,7 +398,9 @@ public class Match implements ForwardingAudience {
 		modifierBarBuilder = new BossBarBuilder().title(modifier.asComponent()).color(BossBar.Color.BLUE);
 		modifierBar = modifierBarBuilder.build();
 
-		getMinigamers().forEach(minigamer -> minigamer.getOnlinePlayer().showBossBar(modifierBar));
+		getMinigamersAndSpectators().stream()
+			.filter(Minigamer::isOnline)
+			.forEach(minigamer -> minigamer.getOnlinePlayer().showBossBar(modifierBar));
 	}
 
 	public void refreshModifierBar() {
@@ -413,8 +427,8 @@ public class Match implements ForwardingAudience {
 
 	private void stopModifierBar() {
 		if (modifierBar == null) return;
-		getAllPlayers().stream()
-			.filter(OfflinePlayer::isOnline)
+		getMinigamersAndSpectators().stream()
+			.filter(Minigamer::isOnline)
 			.filter(player -> player.getPlayer() != null)
 			.forEach(player -> player.getPlayer().hideBossBar(modifierBar));
 	}
@@ -478,10 +492,14 @@ public class Match implements ForwardingAudience {
 	private void teleportIn() {
 		if (isMechanic(Thimble.class) || isMechanic(Dropper.class)) return; // TODO Fix
 		arena.getTeams().forEach(team -> team.spawn(this));
+		spectators.forEach(Minigamer::toSpectate);
 	}
 
 	public void teleportIn(Minigamer minigamer) {
-		minigamer.getTeam().spawn(minigamer);
+		if (minigamer.isSpectating())
+			minigamer.toSpectate();
+		else
+			minigamer.getTeam().spawn(minigamer);
 	}
 
 	public void clearStates() {
@@ -489,11 +507,11 @@ public class Match implements ForwardingAudience {
 	}
 
 	public void clearStates(boolean forceClearInventory) {
-		minigamers.forEach(minigamer -> minigamer.clearState(forceClearInventory));
+		getMinigamersAndSpectators().forEach(minigamer -> minigamer.clearState(forceClearInventory));
 	}
 
 	private void toGamelobby() {
-		minigamers.forEach(Minigamer::toGamelobby);
+		getMinigamersAndSpectators().forEach(Minigamer::toGamelobby);
 	}
 
 	public void scored(Team team) {
@@ -534,7 +552,7 @@ public class Match implements ForwardingAudience {
 		MatchBroadcastEvent event = new MatchBroadcastEvent(this, message);
 		event.callEvent();
 		if (!event.isCancelled())
-			minigamers.forEach(minigamer -> minigamer.tell(event.getMessage()));
+			getMinigamersAndSpectators().forEach(minigamer -> minigamer.tell(event.getMessage()));
 	}
 
 	public void broadcast(ComponentLike message, MinigameMessageType type) {
@@ -545,7 +563,7 @@ public class Match implements ForwardingAudience {
 	public void broadcastNoPrefix(String message) {
 		MatchBroadcastEvent event = new MatchBroadcastEvent(this, message);
 		if (event.callEvent())
-			minigamers.forEach(minigamer -> minigamer.sendMessage(event.getMessage()));
+			getMinigamersAndSpectators().forEach(minigamer -> minigamer.sendMessage(event.getMessage()));
 	}
 
 	public void broadcastNoPrefix(String message, MinigameMessageType type) {
@@ -593,12 +611,14 @@ public class Match implements ForwardingAudience {
 	public List<Minigamer> getDeadMinigamers() {
 		return minigamers.stream()
 			.filter(Minigamer::isDead)
+			.filter(minigamer -> !minigamer.isSpectating())
 			.collect(Collectors.toList());
 	}
 
 	public List<Player> getDeadOnlinePlayers() {
 		return minigamers.stream()
 			.filter(Minigamer::isDead)
+			.filter(minigamer -> !minigamer.isSpectating())
 			.map(Minigamer::getOnlinePlayer)
 			.collect(Collectors.toList());
 	}
@@ -691,11 +711,11 @@ public class Match implements ForwardingAudience {
 						if (broadcasts.contains(time)) {
 							if (match.getMechanic().shouldBroadcastTimeLeft()) {
 								broadcastTimeLeft();
-								match.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, .75F, .6F));
+								match.getOnlineMinigamersAndSpectators().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, .75F, .6F));
 							}
 						}
-						match.getOnlineMinigamers().forEach(player -> {
-							MinigamerDisplayTimerEvent event = new MinigamerDisplayTimerEvent(player, time);
+						match.getOnlineMinigamersAndSpectators().forEach(player -> {
+							MinigamerDisplayTimerEvent event = new MinigamerDisplayTimerEvent(Minigamer.of(player), time);
 							if (event.callEvent())
 								player.sendActionBar(event.getContents());
 						});
