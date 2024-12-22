@@ -20,13 +20,7 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
@@ -91,9 +85,9 @@ public class AutoCraft implements Listener {
 		return ingredients.get(material);
 	}
 
-	private static Material getAutoCraftResult(Material material) {
+	private static Material getAutoCraftResult(Material material, AutoInventoryUser user) {
 		for (Material result : autoCraftable.keySet())
-			if (autoCraftable.get(result).contains(material))
+			if (autoCraftable.get(result).contains(material) && !user.getAutoCraftExclude().contains(result))
 				return result;
 		return null;
 	}
@@ -109,7 +103,7 @@ public class AutoCraft implements Listener {
 			return;
 
 		final Material material = event.getItem().getItemStack().getType();
-		final Material result = getAutoCraftResult(material);
+		final Material result = getAutoCraftResult(material, user);
 		if (result == null)
 			return;
 
@@ -153,7 +147,7 @@ public class AutoCraft implements Listener {
 				continue;
 
 			final Material material = item.getType();
-			final Material result = getAutoCraftResult(material);
+			final Material result = getAutoCraftResult(material, user);
 			if (result == null)
 				continue;
 
