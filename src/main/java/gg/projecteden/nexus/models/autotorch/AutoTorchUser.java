@@ -8,11 +8,7 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.parchment.HasHumanEntity;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -62,6 +58,8 @@ public class AutoTorchUser implements PlayerOwnedObject {
 
 		if (MaterialTag.NEEDS_SUPPORT.isTagged(torchMaterial)) {
 			if (!Bukkit.getUnsafe().canPlaceItemOn(new ItemStack(torchMaterial), player, block.getRelative(BlockFace.DOWN), BlockFace.UP).join())
+				return false;
+			else if (!block.getRelative(BlockFace.DOWN).getType().isSolid())
 				return false;
 		}
 
