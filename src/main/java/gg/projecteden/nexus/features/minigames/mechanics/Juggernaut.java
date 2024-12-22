@@ -1,11 +1,7 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.minigames.models.Loadout;
-import gg.projecteden.nexus.features.minigames.models.Match;
-import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.features.minigames.models.RegenType;
-import gg.projecteden.nexus.features.minigames.models.Team;
+import gg.projecteden.nexus.features.minigames.models.*;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.JuggernautMatchData;
@@ -84,7 +80,7 @@ public class Juggernaut extends TeamMechanic {
 			attacker = minigamer.get();
 		}
 
-		victim.scored();
+//		victim.scored(); // This really should either not be here, or be attacker.scored() instead. This gives a point when anyone dies?
 		matchData.setLastAttacker(null);
 		super.onDeath(event);
 
