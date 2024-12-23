@@ -17,12 +17,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.entity.EntityType;
 import org.simmetrics.metrics.StringMetrics;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -57,7 +52,9 @@ public enum ChatGameType {
 					mutedPart = mutedPart.replaceFirst(RandomUtils.randomElement(mutedPart.split("")), "_");
 				muted.append(mutedPart).append(" ");
 			}
-			return new ChatGame(this, answer, new JsonBuilder("&3Complete the phrase: &e" + muted.toString().trim() + ". &eType the full phrase in chat!"));
+			return new ChatGame(this, answer,
+				new JsonBuilder("&3Complete the phrase: &e" + muted.toString().trim() + ". &3Type the full phrase in chat!"),
+				"Complete the phrase: **" + muted.toString().trim() + "**. Type the full phrase in chat!");
 		}
 	},
 	UNSCRAMBLE(30) {
@@ -68,7 +65,9 @@ public enum ChatGameType {
 			StringBuilder scrambled = new StringBuilder();
 			for (String string : split)
 				scrambled.append(shuffle(string)).append(" ");
-			return new ChatGame(this, answer, new JsonBuilder("&3Unscramble the phrase: &e" + scrambled.toString().trim() + ". &eType the full phrase in chat!"));
+			return new ChatGame(this, answer,
+				new JsonBuilder("&3Unscramble the phrase: &e" + scrambled.toString().trim() + ". &3Type the full phrase in chat!"),
+				"Unscramble the phrase: **" + scrambled.toString().trim() + "**. Type the full phrase in chat!");
 		}
 
 		private String shuffle(String word) {
@@ -96,7 +95,9 @@ public enum ChatGameType {
 			int num2 = RandomUtils.randomInt(11, 75);
 			boolean add = RandomUtils.getRandom().nextBoolean();
 			String answer = String.valueOf((add ? (num1 + num2) : (num1 - num2)));
-			return new ChatGame(this, answer, new JsonBuilder(String.format("&3What's %d %s %s?", num1, add ? "+" : "-", num2) + " &eAnswer in chat!"));
+			return new ChatGame(this, answer,
+				new JsonBuilder(String.format("&3What's &e%d %s %s&3?", num1, add ? "+" : "-", num2) + " Answer in chat!"),
+				String.format("What's **%d %s %s**?", num1, add ? "+" : "-", num2) + " Answer in chat!");
 		}
 	},
 	TRIVIA(30) {
