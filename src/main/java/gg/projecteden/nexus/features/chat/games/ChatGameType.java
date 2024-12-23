@@ -54,7 +54,7 @@ public enum ChatGameType {
 			}
 			return new ChatGame(this, answer,
 				new JsonBuilder("&3Complete the phrase: &e" + muted.toString().trim() + ". &3Type the full phrase in chat!"),
-				"Complete the phrase: **" + muted.toString().trim() + "**. Type the full phrase in chat!");
+				"Complete the phrase: `" + muted.toString().trim() + "`. Type the full phrase in chat!");
 		}
 	},
 	UNSCRAMBLE(30) {
@@ -67,7 +67,7 @@ public enum ChatGameType {
 				scrambled.append(shuffle(string)).append(" ");
 			return new ChatGame(this, answer,
 				new JsonBuilder("&3Unscramble the phrase: &e" + scrambled.toString().trim() + ". &3Type the full phrase in chat!"),
-				"Unscramble the phrase: **" + scrambled.toString().trim() + "**. Type the full phrase in chat!");
+				"Unscramble the phrase: `" + scrambled.toString().trim() + "`. Type the full phrase in chat!");
 		}
 
 		private String shuffle(String word) {
@@ -97,7 +97,7 @@ public enum ChatGameType {
 			String answer = String.valueOf((add ? (num1 + num2) : (num1 - num2)));
 			return new ChatGame(this, answer,
 				new JsonBuilder(String.format("&3What's &e%d %s %s&3?", num1, add ? "+" : "-", num2) + " Answer in chat!"),
-				String.format("What's **%d %s %s**?", num1, add ? "+" : "-", num2) + " Answer in chat!");
+				String.format("What's `%d %s %s`?", num1, add ? "+" : "-", num2) + " Answer in chat!");
 		}
 	},
 	TRIVIA(30) {
