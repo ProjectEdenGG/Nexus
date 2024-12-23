@@ -21,20 +21,9 @@ import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import org.bukkit.Sound;
@@ -42,18 +31,10 @@ import org.simmetrics.metrics.StringMetrics;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static gg.projecteden.nexus.features.discord.Discord.discordize;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.nexus.utils.StringUtils.getDiscordPrefix;
-import static gg.projecteden.nexus.utils.StringUtils.prettyMoney;
+import static gg.projecteden.nexus.utils.StringUtils.*;
 
 @Data
 @Entity(value = "chat_games_config", noClassnameStored = true)
@@ -137,7 +118,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 			this.gameType = gameType;
 			this.answers = Collections.singletonList(answer);
 			this.broadcast = broadcast;
-			this.discordBroadcast = discordize(discordBroadcast);
+			this.discordBroadcast = discordBroadcast;
 		}
 
 		public ChatGame(ChatGameType gameType, List<String> answers, JsonBuilder broadcast) {
@@ -148,7 +129,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 			this.gameType = gameType;
 			this.answers = answers;
 			this.broadcast = broadcast;
-			this.discordBroadcast = discordize(discordBroadcast);
+			this.discordBroadcast = discordBroadcast;
 		}
 
 		public void queue(double waitInMinutes) {
