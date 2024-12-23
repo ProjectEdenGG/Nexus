@@ -6,13 +6,11 @@ import gg.projecteden.api.discord.DiscordId.VoiceChannelCategory;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.minigames.Minigames;
-import gg.projecteden.nexus.features.minigames.models.Arena;
-import gg.projecteden.nexus.features.minigames.models.Match;
+import gg.projecteden.nexus.features.minigames.menus.spectate.SpectateMenu;
+import gg.projecteden.nexus.features.minigames.menus.spectate.TeamSpectateMenu;
+import gg.projecteden.nexus.features.minigames.models.*;
 import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks;
 import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
-import gg.projecteden.nexus.features.minigames.models.MatchData;
-import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
@@ -34,15 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class TeamMechanic extends MultiplayerMechanic {
@@ -592,4 +582,10 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 			return (int) ((otherWrapper.percentageDiscrepancy()-percentageDiscrepancy())*100);
 		}
 	}
+
+	@Override
+	public SpectateMenu getSpectateMenu(Match match) {
+		return new TeamSpectateMenu(match);
+	}
+
 }

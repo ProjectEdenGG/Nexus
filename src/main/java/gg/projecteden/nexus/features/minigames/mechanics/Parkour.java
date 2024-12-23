@@ -59,6 +59,9 @@ public class Parkour extends CheckpointMechanic {
 
 	@Override
 	public @NotNull LinkedHashMap<String, Integer> getScoreboardLines(@NotNull Minigamer minigamer) {
+		if (minigamer.isSpectating() && minigamer.getSpectatingMinigamer() != null)
+			minigamer = minigamer.getSpectatingMinigamer();
+
 		CheckpointMatchData matchData = getMatchData(minigamer);
 		Instant now = Instant.now();
 

@@ -159,6 +159,8 @@ public class MinigamesCommand extends _WarpSubCommand {
 					add("&3Mechanic: &e" + match.getMechanic().getName());
 					add("&3Duration: &e" + Timespan.of(match.getCreated()).format());
 					add("&3Minigamers: &e" + match.getMinigamers().stream().map(Minigamer::getNickname).collect(Collectors.joining(", ")));
+					if (!match.getSpectators().isEmpty())
+						add("&3Spectators: &e" + match.getSpectators().stream().map(Minigamer::getNickname).collect(Collectors.joining(", ")));
 				}});
 			}
 
@@ -219,6 +221,28 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Path("spectate [arena]")
 	void spectate(@Arg("current") Arena arena) {
 		minigamer.spectate(arena, true);
+	}
+
+	@Path("spectate player <player>")
+	void spectate(Player player) {
+		if (!minigamer.isSpectating())
+			error("You must be spectating a game to spectate players");
+
+		Minigamer mg2 = Minigamer.of(player);
+
+		if (!minigamer.getMatch().getArena().getName().equals(mg2.getMatch().getArena().getName()))
+			error("That player is not in this game");
+
+		if (!mg2.isAlive())
+			error("That player is dead");
+
+		if (!minigamer.getMatch().isStarted())
+			error("The match has not started yet");
+
+		minigamer.teleportAsync(mg2.getLocation(), false, true);
+		minigamer.getPlayer().setFlying(true);
+
+		minigamer.setSpectatingMinigamer(mg2);
 	}
 
 	@Path("allJoin <arena>")

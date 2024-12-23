@@ -66,6 +66,7 @@ public class Flag {
 			.filter(minigamer -> !minigamer.isRespawning())
 			.map(Minigamer::getOnlinePlayer)
 			.toList();
+		players.addAll(carrier.getMatch().getSpectators().stream().map(Minigamer::getOnlinePlayer).toList());
 
 		new ParticleBuilder(Particle.FLAME)
 				.location(carrier.getPlayer().getLocation().add(0, 1, 0))

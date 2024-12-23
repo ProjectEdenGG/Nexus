@@ -15,12 +15,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+
+import static gg.projecteden.nexus.utils.PlayerUtils.hidePlayer;
 
 @Data
 @NoArgsConstructor
@@ -48,6 +45,8 @@ public class Loadout implements ConfigurationSerializable {
 	public void apply(Minigamer minigamer) {
 		minigamer.clearState();
 		Player player = minigamer.getOnlinePlayer();
+
+		minigamer.getMatch().getSpectators().forEach(spectator -> hidePlayer(spectator.getOnlinePlayer()).from(minigamer));
 
 		if (!isLoadoutEmpty) {
 			PlayerInventory inventory = player.getInventory();

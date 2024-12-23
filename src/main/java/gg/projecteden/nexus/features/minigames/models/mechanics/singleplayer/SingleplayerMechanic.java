@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics.singleplayer;
 
+import gg.projecteden.nexus.features.minigames.menus.spectate.SpectateMenu;
+import gg.projecteden.nexus.features.minigames.menus.spectate.TeamlessSpectateMenu;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -50,5 +52,10 @@ public abstract class SingleplayerMechanic extends Mechanic {
 	public void onDeath(@NotNull MinigamerDeathEvent event) {
 		event.getMinigamer().clearState();
 		super.onDeath(event);
+	}
+
+	@Override
+	public SpectateMenu getSpectateMenu(Match match) {
+		return new TeamlessSpectateMenu(match);
 	}
 }

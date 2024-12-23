@@ -264,6 +264,7 @@ public class Match implements ForwardingAudience {
 			scoreboard.handleJoin(minigamer);
 
 		minigamer.toSpectate();
+		broadcast("&e" + minigamer.getNickname() + " &3started spectating");
 	}
 
 	public void start() {

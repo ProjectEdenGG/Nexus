@@ -8,11 +8,13 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import gg.projecteden.api.interfaces.Named;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
+import gg.projecteden.nexus.features.minigames.menus.spectate.SpectateMenu;
 import gg.projecteden.nexus.features.minigames.models.*;
 import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
 import gg.projecteden.nexus.features.minigames.models.events.matches.*;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerRespawnEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifier;
@@ -86,7 +88,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		return false;
 	}
 
-	public boolean doesAllowSpectating(Match match) { return !match.getArena().canJoinLate(); }
+	public boolean doesAllowSpectating(Match match) { return true; }
 
 	/**
 	 * Returns the type of regeneration this mechanic uses.
@@ -610,6 +612,36 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	public void on(MatchRegeneratedEvent event) {
 		if (event.getMatch().getMechanic().equals(this))
 			Minigames.debug("MatchRegeneratedEvent(" + event.getMatch().getArena().getDisplayName() + ")");
+	}
+
+	public abstract SpectateMenu getSpectateMenu(Match match);
+
+	@EventHandler
+	public void on(MinigamerDeathEvent event) {
+		process(event);
+	}
+
+	@EventHandler
+	public void on(MinigamerRespawnEvent event) {
+		process(event);
+	}
+
+	@EventHandler
+	public void on(MatchQuitEvent event) {
+		process(event);
+	}
+
+	@EventHandler
+	public void on(MatchJoinEvent event) {
+		process(event);
+	}
+
+	public void process(MatchEvent event) {
+		if (event.getMatch().getMechanic().equals(this))
+			event.getMatch().getSpectators().forEach(spectator -> {
+				if (spectator.getSpectateMenu() != null)
+					Tasks.wait(1, () -> spectator.getSpectateMenu().refresh());
+			});
 	}
 
 }

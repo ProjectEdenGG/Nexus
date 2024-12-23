@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.minigames.menus.spectate.SpectateMenu;
+import gg.projecteden.nexus.features.minigames.menus.spectate.TeamlessSpectateMenu;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -46,4 +48,8 @@ public abstract class TeamlessMechanic extends MultiplayerMechanic {
 		// TODO
 	}
 
+	@Override
+	public SpectateMenu getSpectateMenu(Match match) {
+		return new TeamlessSpectateMenu(match);
+	}
 }

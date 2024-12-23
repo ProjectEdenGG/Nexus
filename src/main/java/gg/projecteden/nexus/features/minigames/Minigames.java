@@ -41,6 +41,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
@@ -48,6 +49,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
 public class Minigames extends Feature implements Listener {
@@ -246,6 +248,28 @@ public class Minigames extends Feature implements Listener {
 
 		if (!Minigamer.of(hitPlayer).isPlaying() || Minigamer.of(hitPlayer).isSpectating())
 			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onClickSpectateCompass(PlayerInteractEvent event) {
+		if (isNullOrAir(event.getItem()))
+			return;
+		if (!Utils.ActionGroup.RIGHT_CLICK.applies(event))
+			return;
+
+		Player player = event.getPlayer();
+		if (!player.getWorld().equals(Minigames.getWorld()))
+			return;
+
+		Minigamer minigamer = Minigamer.of(player);
+		if (!minigamer.isSpectating())
+			return;
+
+		if (!event.getItem().getType().equals(Minigamer.SPECTATING_COMPASS.getType()))
+			return;
+
+		event.setCancelled(true);
+		minigamer.getMatch().getMechanic().getSpectateMenu(minigamer.getMatch()).open(player);
 	}
 
 }
