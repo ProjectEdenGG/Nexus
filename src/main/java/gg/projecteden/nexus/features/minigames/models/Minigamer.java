@@ -493,7 +493,7 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 					getOnlinePlayer().showPlayer(Nexus.getInstance(), minigamer.getOnlinePlayer());
 			});
 
-			if (isSpectating() && match.isStarted())
+			if (match.isStarted())
 				getPlayer().getInventory().setItem(0, Minigamer.SPECTATING_COMPASS);
 
 			return success;

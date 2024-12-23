@@ -262,7 +262,7 @@ public class Minigames extends Feature implements Listener {
 			return;
 
 		Minigamer minigamer = Minigamer.of(player);
-		if (!minigamer.isSpectating())
+		if (!minigamer.isDead())
 			return;
 
 		if (!event.getItem().getType().equals(Minigamer.SPECTATING_COMPASS.getType()))
