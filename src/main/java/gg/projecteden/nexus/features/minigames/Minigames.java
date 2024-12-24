@@ -24,8 +24,14 @@ import gg.projecteden.nexus.features.minigames.utils.MinigameNight;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.minigamessetting.MinigamesConfigService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.AdventureUtils;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.WorldEditUtils;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.OptionalLocation;
 import lombok.Getter;
@@ -40,16 +46,16 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
-
 import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
 public class Minigames extends Feature implements Listener {
@@ -233,43 +239,6 @@ public class Minigames extends Feature implements Listener {
 
 	public static @NotNull MinigameModifier getModifier() {
 		return new MinigamesConfigService().get0().getModifier().get();
-	}
-
-	@EventHandler
-	public void on(ProjectileHitEvent event) {
-		if (!(event.getHitEntity() instanceof Player hitPlayer))
-			return;
-
-		if (!(event.getEntity().getShooter() instanceof Player shooter))
-			return;
-
-		if (!Minigamer.of(shooter).isPlaying())
-			return;
-
-		if (!Minigamer.of(hitPlayer).isPlaying() || Minigamer.of(hitPlayer).isSpectating())
-			event.setCancelled(true);
-	}
-
-	@EventHandler
-	public void onClickSpectateCompass(PlayerInteractEvent event) {
-		if (isNullOrAir(event.getItem()))
-			return;
-		if (!Utils.ActionGroup.RIGHT_CLICK.applies(event))
-			return;
-
-		Player player = event.getPlayer();
-		if (!player.getWorld().equals(Minigames.getWorld()))
-			return;
-
-		Minigamer minigamer = Minigamer.of(player);
-		if (!minigamer.isDead())
-			return;
-
-		if (!event.getItem().getType().equals(Minigamer.SPECTATING_COMPASS.getType()))
-			return;
-
-		event.setCancelled(true);
-		minigamer.getMatch().getMechanic().getSpectateMenu(minigamer.getMatch()).open(player);
 	}
 
 }

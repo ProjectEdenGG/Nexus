@@ -21,8 +21,16 @@ import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNicknamed;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Name;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.TitleBuilder;
+import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.HasLocation;
 import gg.projecteden.parchment.HasOfflinePlayer;
@@ -50,11 +58,10 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.LocationUtils.blockLocationsEqual;
 import static gg.projecteden.nexus.utils.PlayerUtils.hidePlayer;
@@ -298,7 +305,7 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		if (Nexus.isMaintenanceQueued())
 			throw new InvalidInputException("&cServer maintenance is queued, cannot join match");
 
-		if (!direct && (match.getArena().canJoinLate() || !match.getMechanic().doesAllowSpectating(match)))
+		if ((!direct && match.getArena().canJoinLate()) || !match.getMechanic().doesAllowSpectating(match))
 			throw new InvalidInputException("&cThat match does not support spectating");
 
 		if (match.getArena().getSpectateLocation() == null)
@@ -493,7 +500,7 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 					getOnlinePlayer().showPlayer(Nexus.getInstance(), minigamer.getOnlinePlayer());
 			});
 
-			if (match.isStarted())
+			if (match.isStarted() && !match.isEnded())
 				getPlayer().getInventory().setItem(0, Minigamer.SPECTATING_COMPASS);
 
 			return success;

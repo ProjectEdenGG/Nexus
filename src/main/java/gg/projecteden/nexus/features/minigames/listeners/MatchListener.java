@@ -26,6 +26,7 @@ import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
 import gg.projecteden.nexus.utils.BorderUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Boat;
@@ -55,7 +56,6 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommand;
 import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
 
@@ -329,6 +329,43 @@ public class MatchListener implements Listener {
 
 		boolean cancel = !Minigames.getModifier().canJump(minigamer);
 		event.setCancelled(cancel);
+	}
+
+	@EventHandler
+	public void on(ProjectileHitEvent event) {
+		if (!(event.getHitEntity() instanceof Player hitPlayer))
+			return;
+
+		if (!(event.getEntity().getShooter() instanceof Player shooter))
+			return;
+
+		if (!Minigamer.of(shooter).isPlaying())
+			return;
+
+		if (!Minigamer.of(hitPlayer).isPlaying() || Minigamer.of(hitPlayer).isSpectating())
+			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onClickSpectateCompass(PlayerInteractEvent event) {
+		if (isNullOrAir(event.getItem()))
+			return;
+		if (!Utils.ActionGroup.RIGHT_CLICK.applies(event))
+			return;
+
+		Player player = event.getPlayer();
+		if (!player.getWorld().equals(Minigames.getWorld()))
+			return;
+
+		Minigamer minigamer = Minigamer.of(player);
+		if (!minigamer.isDead())
+			return;
+
+		if (!event.getItem().getType().equals(Minigamer.SPECTATING_COMPASS.getType()))
+			return;
+
+		event.setCancelled(true);
+		minigamer.getMatch().getMechanic().getSpectateMenu(minigamer.getMatch()).open(player);
 	}
 
 }
