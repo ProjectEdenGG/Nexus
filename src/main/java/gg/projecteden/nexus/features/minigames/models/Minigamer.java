@@ -21,16 +21,8 @@ import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNicknamed;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.Name;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.PotionEffectBuilder;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.TitleBuilder;
-import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.HasLocation;
 import gg.projecteden.parchment.HasOfflinePlayer;
@@ -44,11 +36,7 @@ import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.ComponentLike;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -495,7 +483,6 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 
 		return teleportAsync(dest).thenApply(success -> {
 			clearGameModeState(true);
-			getPlayer().setGameMode(GameMode.ADVENTURE);
 			match.getTasks().wait(2, () -> getPlayer().setAllowFlight(true));
 			match.getMinigamersAndSpectators().forEach(minigamer -> {
 				if (minigamer.isAlive)
@@ -504,8 +491,10 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 					getOnlinePlayer().showPlayer(Nexus.getInstance(), minigamer.getOnlinePlayer());
 			});
 
-			if (match.isStarted() && !match.isEnded())
+			if (match.isStarted() && !match.isEnded()) {
+				getPlayer().setGameMode(GameMode.ADVENTURE);
 				getPlayer().getInventory().setItem(0, Minigamer.SPECTATING_COMPASS);
+			}
 
 			return success;
 		});
