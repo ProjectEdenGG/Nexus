@@ -4,6 +4,8 @@ import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
+import com.gmail.nossr50.events.skills.repair.McMMOPlayerRepairCheckEvent;
+import com.gmail.nossr50.events.skills.salvage.McMMOPlayerSalvageCheckEvent;
 import com.gmail.nossr50.events.skills.unarmed.McMMOPlayerDisarmEvent;
 import com.gmail.nossr50.util.player.UserManager;
 import de.tr7zw.nbtapi.NBTItem;
@@ -60,6 +62,18 @@ public class McMMOListener implements Listener {
 
 	@EventHandler
 	public void onAfkGain(McMMOPlayerXpGainEvent event) {
+		if (AFK.get(event.getPlayer()).isAfk())
+			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onRepair(McMMOPlayerRepairCheckEvent event) {
+		if (AFK.get(event.getPlayer()).isAfk())
+			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onSalvage(McMMOPlayerSalvageCheckEvent event) {
 		if (AFK.get(event.getPlayer()).isAfk())
 			event.setCancelled(true);
 	}
