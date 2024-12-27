@@ -102,7 +102,6 @@ public class EnchantedBookSplitter extends CustomBench implements ICraftableCust
 				contents.set(5, 4, ClickableItem.of(rotateItem.build(), e -> rotateEnchants()));
 			}
 
-			// TODO Exp orb item
 			var levelsCost = getLevelsCost();
 			String expCostName = "&eExperience cost: " + (viewer.getLevel() < levelsCost ? "&c" : "&a") + levelsCost + " Levels";
 			contents.set(4, 8, ClickableItem.empty(new ItemBuilder(Material.EXPERIENCE_BOTTLE).name(expCostName).amount(Math.max(levelsCost, 1))));
@@ -263,14 +262,13 @@ public class EnchantedBookSplitter extends CustomBench implements ICraftableCust
 			var meta = getInputItem(Material.ENCHANTED_BOOK).getItemMeta();
 			var repairCost = ((Repairable) meta).getRepairCost();
 			var storedEnchants = new LinkedHashMap<>(((EnchantmentStorageMeta) meta).getStoredEnchants());
-			var levels = viewer.getLevel();
 
 			final int lapisAvailable = (lapis.getAmount() / LAPIS_COST) + 1;
-			final int levelsAvailable = (levels / LEVELS_COST) + 1;
+			final int levelsAvailable = (viewer.getLevel() / LEVELS_COST) + 1;
 			final int booksAvailable = books.getAmount() + 1;
 			final int slotsAvailable = getResultSlots().size();
 
-			if (lapisAvailable == 0 || levelsAvailable == 0)
+			if (lapisAvailable == 0)
 				return Collections.emptyList();
 
 			var rotation = this.rotation % storedEnchants.size();
@@ -279,7 +277,7 @@ public class EnchantedBookSplitter extends CustomBench implements ICraftableCust
 
 			final List<ItemBuilder> results = new ArrayList<>() {{
 				storedEnchants.forEach((enchant, level) -> {
-					if (size() == slotsAvailable || size() == booksAvailable || size() == lapisAvailable || size() == levelsAvailable)
+					if (size() == slotsAvailable || size() == booksAvailable || size() == lapisAvailable || (size() == levelsAvailable && viewer.getLevel() >= LEVELS_COST))
 						get(size() - 1).enchant(enchant, level);
 					else
 						add(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(enchant, level).repairCost(repairCost));
