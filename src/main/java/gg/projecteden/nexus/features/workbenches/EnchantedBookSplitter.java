@@ -105,7 +105,7 @@ public class EnchantedBookSplitter extends CustomBench implements ICraftableCust
 			// TODO Exp orb item
 			var levelsCost = getLevelsCost();
 			String expCostName = "&eExperience cost: " + (viewer.getLevel() < levelsCost ? "&c" : "&a") + levelsCost + " Levels";
-			contents.set(4, 8, ClickableItem.empty(new ItemBuilder(Material.EXPERIENCE_BOTTLE).name(expCostName).amount(levelsCost)));
+			contents.set(4, 8, ClickableItem.empty(new ItemBuilder(Material.EXPERIENCE_BOTTLE).name(expCostName).amount(Math.max(levelsCost, 1))));
 
 			var checkmark = checkmark();
 			if (!results || viewer.getLevel() < LEVELS_COST)
