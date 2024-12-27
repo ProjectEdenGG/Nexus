@@ -17,7 +17,7 @@ import net.minecraft.world.entity.decoration.Painting;
 import org.bukkit.Art;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPainting;
+import org.bukkit.craftbukkit.entity.CraftPainting;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

@@ -11,14 +11,18 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.parchment.HasPlayer;
+import io.papermc.paper.datacomponent.DataComponentTypes;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -26,13 +30,14 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.Material;
+import org.bukkit.Registry;
 import org.bukkit.StructureType;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
-import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_20_R3.potion.CraftPotionEffectType;
-import org.bukkit.craftbukkit.v1_20_R3.potion.CraftPotionUtil;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.potion.CraftPotionEffectType;
+import org.bukkit.craftbukkit.potion.CraftPotionUtil;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
@@ -634,22 +639,6 @@ public class ItemUtils {
 		};
 	}
 
-	public static final Map<PotionEffectType, String> fixedPotionNames = Map.of(
-		PotionEffectType.SLOW, "SLOWNESS",
-		PotionEffectType.FAST_DIGGING, "HASTE",
-		PotionEffectType.SLOW_DIGGING, "MINING_FATIGUE",
-		PotionEffectType.INCREASE_DAMAGE, "STRENGTH",
-		PotionEffectType.HEAL, "INSTANT_HEALTH",
-		PotionEffectType.HARM, "INSTANT_DAMAGE",
-		PotionEffectType.JUMP, "JUMP_BOOST",
-		PotionEffectType.CONFUSION, "NAUSEA",
-		PotionEffectType.DAMAGE_RESISTANCE, "RESISTANCE"
-	);
-
-	public static String getFixedPotionName(PotionEffectType effect) {
-		return fixedPotionNames.getOrDefault(effect, effect.getName());
-	}
-
 	public static ItemStack setNBTContentsOfNonInventoryItem(ItemStack mainItem, List<ItemStack> itemStacks) {
 		NonNullList<net.minecraft.world.item.ItemStack> minecraft = NonNullList.create();
 		for (int i = 0; i < itemStacks.size(); i++) {
@@ -683,13 +672,13 @@ public class ItemUtils {
 
 		List<ItemStack> bukkit = new ArrayList<>();
 
-		if (!handle.hasTag()) return bukkit;
-		if (!handle.getTag().contains("ProjectEden")) return bukkit;
+		if (!handle.has(DataComponents.CUSTOM_DATA)) return bukkit;
+		if (!handle.get(DataComponents.CUSTOM_DATA).contains("ProjectEden")) return bukkit;
 		if (!handle.getTag().getCompound("ProjectEden").contains("Items")) return bukkit;
 
 
 		NonNullList<net.minecraft.world.item.ItemStack> minecraft = NonNullList.withSize(expectedSize, net.minecraft.world.item.ItemStack.EMPTY);
-		ContainerHelper.loadAllItems(handle.getTag().getCompound("ProjectEden"), minecraft);
+		ContainerHelper.loadAllItems(handle.get(DataComponents.CUSTOM_DATA).getUnsafe().getCompound("ProjectEden"), minecraft);
 
 		for (int i = 0; i < Math.max(expectedSize, minecraft.size()); i++) {
 			if (i >= minecraft.size())
@@ -736,7 +725,7 @@ public class ItemUtils {
 		}
 
 		public boolean hasNegativeEffects() {
-			return effects.stream().anyMatch(effect -> !effect.getEffect().isBeneficial());
+			return effects.stream().anyMatch(effect -> !effect.getEffect().value().isBeneficial());
 		}
 
 		public boolean hasOnlyBeneficialEffects() {
@@ -776,7 +765,10 @@ public class ItemUtils {
 
 		@NotNull
 		public static Potion toNMS(PotionData basePotionData) {
-			return BuiltInRegistries.POTION.get(ResourceLocation.tryParse(CraftPotionUtil.fromBukkit(basePotionData).name()));
+			var potion = BuiltInRegistries.POTION.get(ResourceLocation.tryParse(CraftPotionUtil.fromBukkit(basePotionData).name())).orElse(null);
+			if (potion == null)
+				return null;
+			return potion.value();
 		}
 	}
 

@@ -41,8 +41,8 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
-import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemFactory;
-import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftMetaSpawnEgg;
+import org.bukkit.craftbukkit.inventory.CraftItemFactory;
+import org.bukkit.craftbukkit.inventory.CraftMetaSpawnEgg;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Entity;
@@ -360,7 +360,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder glow() {
-		enchant(Enchantment.ARROW_INFINITE);
+		enchant(Enchantment.INFINITY);
 		itemFlags(ItemFlag.HIDE_ENCHANTS);
 		return this;
 	}
@@ -370,7 +370,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public boolean isGlowing() {
-		return itemMeta.hasEnchant(Enchantment.ARROW_INFINITE) && itemMeta.hasItemFlag(ItemFlag.HIDE_ENCHANTS);
+		return itemMeta.hasEnchant(Enchantment.INFINITY) && itemMeta.hasItemFlag(ItemFlag.HIDE_ENCHANTS);
 	}
 
 	public ItemBuilder unbreakable() {

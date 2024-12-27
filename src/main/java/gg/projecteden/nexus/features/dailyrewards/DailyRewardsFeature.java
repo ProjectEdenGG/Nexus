@@ -21,19 +21,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static gg.projecteden.nexus.utils.Enchant.*;
 import static org.bukkit.Material.*;
-import static org.bukkit.enchantments.Enchantment.ARROW_DAMAGE;
-import static org.bukkit.enchantments.Enchantment.ARROW_INFINITE;
-import static org.bukkit.enchantments.Enchantment.ARROW_KNOCKBACK;
-import static org.bukkit.enchantments.Enchantment.DAMAGE_ALL;
-import static org.bukkit.enchantments.Enchantment.DIG_SPEED;
-import static org.bukkit.enchantments.Enchantment.DURABILITY;
-import static org.bukkit.enchantments.Enchantment.FIRE_ASPECT;
-import static org.bukkit.enchantments.Enchantment.KNOCKBACK;
-import static org.bukkit.enchantments.Enchantment.LUCK;
-import static org.bukkit.enchantments.Enchantment.LURE;
-import static org.bukkit.enchantments.Enchantment.MENDING;
-import static org.bukkit.enchantments.Enchantment.SILK_TOUCH;
 
 public class DailyRewardsFeature extends Feature {
 	private static final List<Reward> rewards1 = setupDailyRewards(1);
@@ -157,8 +146,8 @@ public class DailyRewardsFeature extends Feature {
 				/*  15 */ new Reward("3 Golden Apples")						.item(GOLDEN_APPLE, 3),
 				/*  16 */ new Reward("1 Diamond Pickaxe")						.item(DIAMOND_PICKAXE, 1),
 				/*  17 */ new Reward("2 Lava, Water, Milk, Empty buckets")	.item(LAVA_BUCKET, 2).item(WATER_BUCKET, 2).item(MILK_BUCKET, 2).item(BUCKET, 2),
-				/*  18 */ new Reward("4 Regen 2 Potions")						.item(new ItemBuilder(POTION).amount(4).potionType(PotionType.REGEN, false, true)),
-				/*  19 */ new Reward("4 Health 2 Potions")					.item(new ItemBuilder(POTION).amount(4).potionType(PotionType.INSTANT_HEAL, false, true)),
+				/*  18 */ new Reward("4 Regen 2 Potions")						.item(new ItemBuilder(POTION).amount(4).potionType(PotionType.REGENERATION, false, true)),
+				/*  19 */ new Reward("4 Health 2 Potions")					.item(new ItemBuilder(POTION).amount(4).potionType(PotionType.STRONG_HEALING, false, true)),
 				/*  20 */ new Reward("$2,000")								.money(2000),
 				/*  21 */ new Reward("10 Cooked Chicken")						.item(COOKED_CHICKEN, 10),
 				/*  22 */ new Reward("10 Steak")								.item(COOKED_BEEF, 10),
@@ -177,8 +166,8 @@ public class DailyRewardsFeature extends Feature {
 				/*  35 */ new Reward("4 Golden Apples")						.item(GOLDEN_APPLE, 4),
 				/*  36 */ new Reward("1 Silk Touch")							.item(new ItemBuilder(ENCHANTED_BOOK).enchant(SILK_TOUCH)),
 				/*  37 */ new Reward("1 Mending")								.item(new ItemBuilder(ENCHANTED_BOOK).enchant(MENDING)),
-				/*  38 */ new Reward("1 Unbreaking 3")						.item(new ItemBuilder(ENCHANTED_BOOK).enchant(DURABILITY, 3)),
-				/*  39 */ new Reward("1 Efficiency 5")						.item(new ItemBuilder(ENCHANTED_BOOK).enchant(DIG_SPEED, 5)),
+				/*  38 */ new Reward("1 Unbreaking 3")						.item(new ItemBuilder(ENCHANTED_BOOK).enchant(UNBREAKING, 3)),
+				/*  39 */ new Reward("1 Efficiency 5")						.item(new ItemBuilder(ENCHANTED_BOOK).enchant(EFFICIENCY, 5)),
 				/*  40 */ new Reward("$4,000")								.money(4000),
 				/*  41 */ new Reward("15 Cooked Chicken")						.item(COOKED_CHICKEN, 15),
 				/*  42 */ new Reward("15 Steak")								.item(COOKED_BEEF, 15),
@@ -207,7 +196,7 @@ public class DailyRewardsFeature extends Feature {
 				/*  65 */ new Reward("8 Golden Apples")						.item(GOLDEN_APPLE, 8),
 				/*  66 */ new Reward("Set of Chainmail Armor")				.item(MaterialTag.ARMOR_CHAINMAIL),
 				/*  67 */ new Reward("64 Spectral Arrows")					.item(SPECTRAL_ARROW, 64),
-				/*  68 */ new Reward("Power 5 Book")							.item(new ItemBuilder(ENCHANTED_BOOK).enchant(ARROW_DAMAGE, 5)),
+				/*  68 */ new Reward("Power 5 Book")							.item(new ItemBuilder(ENCHANTED_BOOK).enchant(POWER, 5)),
 				/*  69 */ new Reward("16 Name Tags")							.item(NAME_TAG, 16),
 				/*  70 */ new Reward("$8,000")								.money(8000),
 				/*  71 */ new Reward("25 Cooked Chicken")						.item(COOKED_CHICKEN, 25),
@@ -235,10 +224,10 @@ public class DailyRewardsFeature extends Feature {
 				/*  93 */ new Reward("200 Leather")							.item(LEATHER, 200),
 				/*  94 */ new Reward("Coupon for 5 McMMO levels")				.item(CouponCommand.getGenericCoupon("mcmmo", 5)),
 				/*  95 */ new Reward("5 Enchanted Golden Apples")				.item(ENCHANTED_GOLDEN_APPLE, 5),
-				/*  96 */ new Reward("Super Fishing Pole")					.item(new ItemBuilder(FISHING_ROD).enchant(LURE, 5).enchant(LUCK, 3).enchant(DURABILITY, 4)),
-				/*  97 */ new Reward("Maxed Diamond Sword")					.item(new ItemBuilder(DIAMOND_SWORD).enchantMax(DAMAGE_ALL).enchantMax(MENDING).enchantMax(FIRE_ASPECT).enchantMax(KNOCKBACK).enchant(DURABILITY, 4)),
+				/*  96 */ new Reward("Super Fishing Pole")					.item(new ItemBuilder(FISHING_ROD).enchant(LURE, 5).enchant(LUCK_OF_THE_SEA, 3).enchant(UNBREAKING, 4)),
+				/*  97 */ new Reward("Maxed Diamond Sword")					.item(new ItemBuilder(DIAMOND_SWORD).enchantMax(SHARPNESS).enchantMax(MENDING).enchantMax(FIRE_ASPECT).enchantMax(KNOCKBACK).enchant(UNBREAKING, 4)),
 				/*  98 */ new Reward("Full set of Diamond gear and tools")	.item(MaterialTag.ARMOR_DIAMOND).item(MaterialTag.TOOLS_DIAMOND),
-				/*  99 */ new Reward("Maxed Diamond Pickaxe")					.item(new ItemBuilder(DIAMOND_PICKAXE).enchantMax(DIG_SPEED).enchant(MENDING).enchant(DURABILITY, 4)),
+				/*  99 */ new Reward("Maxed Diamond Pickaxe")					.item(new ItemBuilder(DIAMOND_PICKAXE).enchantMax(EFFICIENCY).enchant(MENDING).enchant(UNBREAKING, 4)),
 				/* 100 */ new Reward("$20,000")								.money(20000)
 			);
 
@@ -439,7 +428,7 @@ public class DailyRewardsFeature extends Feature {
 				/*  91 */ new Reward("50 Bookshelves")						.item(BOOKSHELF, 50),
 				/*  92 */ new Reward("50 Chests")								.item(CHEST, 50),
 				/*  93 */ new Reward("5 Netherite Ingots")					.item(NETHERITE_INGOT, 5),
-				/*  94 */ new Reward("Maxed Bow")								.item(new ItemBuilder(BOW).enchantMax(ARROW_DAMAGE).enchantMax(ARROW_KNOCKBACK).enchantMax(ARROW_INFINITE).enchant(MENDING)),
+				/*  94 */ new Reward("Maxed Bow")								.item(new ItemBuilder(BOW).enchantMax(POWER).enchantMax(PUNCH).enchantMax(INFINITY).enchant(MENDING)),
 				/*  95 */ new Reward("5 Crying Obsidian")						.item(CRYING_OBSIDIAN, 5),
 				/*  96 */ new Reward("16 of each color Wool")					.item(MaterialTag.WOOL, 16),
 				/*  97 */ new Reward("150 Enchanting Levels")					.levels(150),

@@ -22,7 +22,7 @@ public class HalfKnockback implements MinigameModifier {
 
 			if (ItemUtils.getDefensePoints(itemStack.getType()) > 0) return;
 
-			meta.addAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE, new AttributeModifier(KNOCKBACK, "minigame_halfknockback", 0.5, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND));
+			meta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, new AttributeModifier(KNOCKBACK, "minigame_halfknockback", 0.5, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND));
 			itemStack.setItemMeta(meta);
 		});
 	}

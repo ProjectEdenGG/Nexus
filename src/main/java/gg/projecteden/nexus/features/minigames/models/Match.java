@@ -619,14 +619,12 @@ public class Match implements ForwardingAudience {
 	public List<Minigamer> getDeadMinigamers() {
 		return minigamers.stream()
 			.filter(Minigamer::isDead)
-			.filter(minigamer -> !minigamer.isSpectating())
 			.collect(Collectors.toList());
 	}
 
 	public List<Player> getDeadOnlinePlayers() {
 		return minigamers.stream()
 			.filter(Minigamer::isDead)
-			.filter(minigamer -> !minigamer.isSpectating())
 			.map(Minigamer::getOnlinePlayer)
 			.collect(Collectors.toList());
 	}

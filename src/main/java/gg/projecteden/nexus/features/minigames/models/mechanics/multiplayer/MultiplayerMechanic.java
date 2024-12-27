@@ -47,8 +47,10 @@ public abstract class MultiplayerMechanic extends Mechanic {
 				victim.setAlive(false);
 				if (victim.getMatch().getArena().getSpectateLocation() == null)
 					victim.quit();
-				else if (!victim.getMatch().isEnded())
+				else if (!victim.getMatch().isEnded()) {
+					victim.setSpectating(true);
 					victim.toSpectate();
+				}
 			} else if (!victim.getMatch().isEnded()) {
 				victim.respawn();
 			}

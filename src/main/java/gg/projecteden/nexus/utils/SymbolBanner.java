@@ -197,7 +197,7 @@ public class SymbolBanner {
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
 						.pattern(patternDye, STRIPE_RIGHT)
-						.pattern(baseDye, HALF_HORIZONTAL_MIRROR)
+						.pattern(baseDye, HALF_HORIZONTAL)
 						.pattern(patternDye, STRIPE_MIDDLE)
 						.pattern(patternDye, STRIPE_TOP)
 						.pattern(patternDye, STRIPE_LEFT)
@@ -210,7 +210,7 @@ public class SymbolBanner {
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
 					.material(ColorType.of(patternDye).getBanner())
-						.pattern(baseDye, RHOMBUS_MIDDLE)
+						.pattern(baseDye, RHOMBUS)
 						.pattern(patternDye, STRIPE_RIGHT)
 						.pattern(patternDye, STRIPE_LEFT)
 						.pattern(patternDye, SQUARE_BOTTOM_RIGHT)
@@ -225,7 +225,7 @@ public class SymbolBanner {
 						.pattern(patternDye, STRIPE_MIDDLE)
 						.pattern(patternDye, STRIPE_TOP)
 						.pattern(patternDye, STRIPE_RIGHT)
-						.pattern(baseDye, HALF_HORIZONTAL_MIRROR)
+						.pattern(baseDye, HALF_HORIZONTAL)
 						.pattern(patternDye, STRIPE_LEFT)
 						.pattern(patternDye, STRIPE_DOWNRIGHT)
 						.pattern(baseDye, BORDER);
@@ -237,7 +237,7 @@ public class SymbolBanner {
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
 					.material(ColorType.of(patternDye).getBanner())
-						.pattern(baseDye, RHOMBUS_MIDDLE)
+						.pattern(baseDye, RHOMBUS)
 						.pattern(baseDye, STRIPE_MIDDLE)
 						.pattern(patternDye, STRIPE_DOWNRIGHT)
 						.pattern(baseDye, BORDER);
@@ -303,7 +303,7 @@ public class SymbolBanner {
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
 						.pattern(patternDye, STRIPE_DOWNRIGHT)
-						.pattern(baseDye, HALF_HORIZONTAL_MIRROR)
+						.pattern(baseDye, HALF_HORIZONTAL)
 						.pattern(patternDye, STRIPE_DOWNLEFT)
 						.pattern(baseDye, BORDER);
 			}
@@ -350,7 +350,7 @@ public class SymbolBanner {
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
 						.pattern(patternDye, STRIPE_TOP)
-						.pattern(baseDye, RHOMBUS_MIDDLE)
+						.pattern(baseDye, RHOMBUS)
 						.pattern(patternDye, STRIPE_BOTTOM)
 						.pattern(patternDye, STRIPE_DOWNLEFT)
 						.pattern(baseDye, BORDER);
@@ -375,7 +375,7 @@ public class SymbolBanner {
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
 						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(baseDye, HALF_HORIZONTAL_MIRROR)
+						.pattern(baseDye, HALF_HORIZONTAL)
 						.pattern(patternDye, STRIPE_RIGHT)
 						.pattern(patternDye, STRIPE_MIDDLE)
 						.pattern(baseDye, BORDER);
@@ -387,7 +387,7 @@ public class SymbolBanner {
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
 						.pattern(patternDye, STRIPE_BOTTOM)
-						.pattern(baseDye, RHOMBUS_MIDDLE)
+						.pattern(baseDye, RHOMBUS)
 						.pattern(patternDye, STRIPE_TOP)
 						.pattern(patternDye, STRIPE_DOWNRIGHT)
 						.pattern(baseDye, BORDER);
@@ -436,7 +436,7 @@ public class SymbolBanner {
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
 						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(baseDye, HALF_HORIZONTAL_MIRROR)
+						.pattern(baseDye, HALF_HORIZONTAL)
 						.pattern(patternDye, STRIPE_MIDDLE)
 						.pattern(patternDye, STRIPE_TOP)
 						.pattern(patternDye, STRIPE_RIGHT)

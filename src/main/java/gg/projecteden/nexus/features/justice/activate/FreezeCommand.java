@@ -34,6 +34,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDismountEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -46,7 +47,6 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.spigotmc.event.entity.EntityDismountEvent;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -145,7 +145,7 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 				return;
 
 			if (!isFrozen(event.getPlayer())) {
-				PotionEffect jumpEffect = event.getPlayer().getPotionEffect(PotionEffectType.JUMP);
+				PotionEffect jumpEffect = event.getPlayer().getPotionEffect(PotionEffectType.JUMP_BOOST);
 				if (jumpEffect != null && event.getPlayer().getWalkSpeed() == 0)
 					if (get(event.getPlayer()).isInArea())
 						get(event.getPlayer()).unmount();

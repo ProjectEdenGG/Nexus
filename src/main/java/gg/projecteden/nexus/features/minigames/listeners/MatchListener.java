@@ -360,7 +360,7 @@ public class MatchListener implements Listener {
 			return;
 
 		Minigamer minigamer = Minigamer.of(player);
-		if (!minigamer.isDead())
+		if (!minigamer.isSpectating())
 			return;
 
 		if (!event.getItem().getType().equals(Minigamer.SPECTATING_COMPASS.getType()))

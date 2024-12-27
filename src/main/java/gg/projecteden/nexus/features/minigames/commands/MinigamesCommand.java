@@ -250,7 +250,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 
 	@Path("spectate player <player>")
 	void spectate(Player player) {
-		if (!minigamer.isDead())
+		if (!minigamer.isSpectating())
 			error("You must be spectating a game to spectate players");
 
 		Minigamer mg2 = Minigamer.of(player);
