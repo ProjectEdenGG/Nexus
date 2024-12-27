@@ -577,6 +577,67 @@ public enum DecorationType {
 	@TypeConfig(money = 95, tokens = 9, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
 	FLORA_POTTED_TULIPS(new Flora(false, "Potted Tulips", CustomMaterial.FLORA_POTTED_TULIPS, HitboxSingle._1x1_HEAD, PlacementType.FLOOR)),
 
+	// Stumps
+	@TypeConfig(money = 60, tokens = 6, theme = Theme.OUTDOORS, tabs = Tab.STUMPS)
+	STUMP_OAK(new Stump(false, "Oak Stump", CustomMaterial.STUMP_OAK)),
+
+	@TypeConfig(money = 75, tokens = 7, theme = Theme.OUTDOORS, tabs = Tab.STUMPS)
+	STUMP_OAK_ROOTS(new Stump(false, "Rooted Oak Stump", CustomMaterial.STUMP_OAK_ROOTS)),
+
+	@TypeConfig(money = 60, tokens = 6, theme = Theme.OUTDOORS, tabs = Tab.STUMPS)
+	STUMP_SPRUCE(new Stump(false, "Spruce Stump", CustomMaterial.STUMP_SPRUCE)),
+
+	@TypeConfig(money = 75, tokens = 7, theme = Theme.OUTDOORS, tabs = Tab.STUMPS)
+	STUMP_SPRUCE_ROOTS(new Stump(false, "Rooted Spruce Stump", CustomMaterial.STUMP_SPRUCE_ROOTS)),
+
+	@TypeConfig(money = 60, tokens = 6, theme = Theme.OUTDOORS, tabs = Tab.STUMPS)
+	STUMP_BIRCH(new Stump(false, "Birch Stump", CustomMaterial.STUMP_BIRCH)),
+
+	@TypeConfig(money = 75, tokens = 7, theme = Theme.OUTDOORS, tabs = Tab.STUMPS)
+	STUMP_BIRCH_ROOTS(new Stump(false, "Rooted Birch Stump", CustomMaterial.STUMP_BIRCH_ROOTS)),
+
+	@TypeConfig(money = 60, tokens = 6, theme = Theme.OUTDOORS, tabs = Tab.STUMPS)
+	STUMP_JUNGLE(new Stump(false, "Jungle Stump", CustomMaterial.STUMP_JUNGLE)),
+
+	@TypeConfig(money = 75, tokens = 7, theme = Theme.OUTDOORS, tabs = Tab.STUMPS)
+	STUMP_JUNGLE_ROOTS(new Stump(false, "Rooted Jungle Stump", CustomMaterial.STUMP_JUNGLE_ROOTS)),
+
+	@TypeConfig(money = 60, tokens = 6, theme = Theme.OUTDOORS, tabs = Tab.STUMPS)
+	STUMP_ACACIA(new Stump(false, "Acacia Stump", CustomMaterial.STUMP_ACACIA)),
+
+	@TypeConfig(money = 75, tokens = 7, theme = Theme.OUTDOORS, tabs = Tab.STUMPS)
+	STUMP_ACACIA_ROOTS(new Stump(false, "Rooted Acacia Stump", CustomMaterial.STUMP_ACACIA_ROOTS)),
+
+	@TypeConfig(money = 60, tokens = 6, theme = Theme.OUTDOORS, tabs = Tab.STUMPS)
+	STUMP_DARK_OAK(new Stump(false, "Dark Oak Stump", CustomMaterial.STUMP_DARK_OAK)),
+
+	@TypeConfig(money = 75, tokens = 7, theme = Theme.OUTDOORS, tabs = Tab.STUMPS)
+	STUMP_DARK_OAK_ROOTS(new Stump(false, "Rooted Dark Oak Stump", CustomMaterial.STUMP_DARK_OAK_ROOTS)),
+
+	@TypeConfig(money = 60, tokens = 6, theme = Theme.OUTDOORS, tabs = Tab.STUMPS)
+	STUMP_MANGROVE(new Stump(false, "Mangrove Stump", CustomMaterial.STUMP_MANGROVE)),
+
+	@TypeConfig(money = 75, tokens = 7, theme = Theme.OUTDOORS, tabs = Tab.STUMPS)
+	STUMP_MANGROVE_ROOTS(new Stump(false, "Rooted Mangrove Stump", CustomMaterial.STUMP_MANGROVE_ROOTS)),
+
+	@TypeConfig(money = 60, tokens = 6, theme = Theme.OUTDOORS, tabs = Tab.STUMPS)
+	STUMP_CRIMSON(new Stump(false, "Crimson Stump", CustomMaterial.STUMP_CRIMSON)),
+
+	@TypeConfig(money = 75, tokens = 7, theme = Theme.OUTDOORS, tabs = Tab.STUMPS)
+	STUMP_CRIMSON_ROOTS(new Stump(false, "Rooted Crimson Stump", CustomMaterial.STUMP_CRIMSON_ROOTS)),
+
+	@TypeConfig(money = 60, tokens = 6, theme = Theme.OUTDOORS, tabs = Tab.STUMPS)
+	STUMP_WARPED(new Stump(false, "Warped Stump", CustomMaterial.STUMP_WARPED)),
+
+	@TypeConfig(money = 75, tokens = 7, theme = Theme.OUTDOORS, tabs = Tab.STUMPS)
+	STUMP_WARPED_ROOTS(new Stump(false, "Rooted Warped Stump", CustomMaterial.STUMP_WARPED_ROOTS)),
+
+	@TypeConfig(money = 60, tokens = 6, theme = Theme.OUTDOORS, tabs = Tab.STUMPS)
+	STUMP_CHERRY(new Stump(false, "Cherry Stump", CustomMaterial.STUMP_CHERRY)),
+
+	@TypeConfig(money = 75, tokens = 7, theme = Theme.OUTDOORS, tabs = Tab.STUMPS)
+	STUMP_CHERRY_ROOTS(new Stump(false, "Rooted Cherry Stump", CustomMaterial.STUMP_CHERRY_ROOTS)),
+
 	// Misc
 	@TypeConfig(money = 115, tokens = 11, theme = Theme.OUTDOORS)
 	BED_SLEEPING_BAG(new DyeableFloorThing(false, "Sleeping Bag", CustomMaterial.BED_SLEEPING_BAG, ColorableType.DYE)),
@@ -584,8 +645,16 @@ public enum DecorationType {
 	@TypeConfig(money = 165, tokens = 16, theme = Theme.OUTDOORS)
 	WELL(new Well(false, "Well", CustomMaterial.WELL, ColorableType.STAIN, HitboxFloor._1x2V)),
 
+	@TypeConfig(money = 120, tokens = 12, theme = Theme.OUTDOORS)
+	CHAIR_METALLIC_BASIC(new DyeableChair(false, false, "Metallic Chair", CustomMaterial.CHAIR_METALLIC_BASIC, ColorableType.MINERAL)),
 
-	// 	------------------------------------------------------------------------------------------------------
+	@TypeConfig(money = 60, tokens = 6, theme = Theme.OUTDOORS)
+	TABLE_METALLIC_1x1(new Table(false, "Metallic Table - 1x1", CustomMaterial.TABLE_METALLIC_1X1, HitboxSingle._1x1_BARRIER, ColorableType.MINERAL)),
+
+	@TypeConfig(money = 225, tokens = 22, theme = Theme.OUTDOORS)
+	BENCH_WOODEN(new Bench(true, false, "Wooden Bench", CustomMaterial.BENCH_WOODEN, ColorableType.STAIN, HitboxFloor._1x2H)),
+
+// 	------------------------------------------------------------------------------------------------------
 //										CATALOG: Art
 // 	------------------------------------------------------------------------------------------------------
 	//	Custom
@@ -735,8 +804,6 @@ public enum DecorationType {
 //										CATALOG: General
 // 	------------------------------------------------------------------------------------------------------
 	// 	Tables
-	@TypeConfig(money = 60, tokens = 6, tabs = {Tab.FURNITURE, Tab.TABLES})
-	TABLE_METALLIC_1x1(new Table(false, "Metallic Table - 1x1", CustomMaterial.TABLE_METALLIC_1X1, HitboxSingle._1x1_BARRIER, ColorableType.MINERAL)),
 
 	@TypeConfig(money = 60, tokens = 6, tabs = {Tab.FURNITURE, Tab.TABLES})
 	TABLE_WOODEN_1x1(new Table(false, "Wooden Table - 1x1", CustomMaterial.TABLE_WOODEN_1X1, HitboxSingle._1x1_BARRIER)),
@@ -757,9 +824,6 @@ public enum DecorationType {
 	TABLE_WOODEN_3x3(new Table(true, "Wooden Table - 3x3", CustomMaterial.TABLE_WOODEN_3X3, HitboxFloor._3x3)),
 
 	// 	Chairs
-	@TypeConfig(money = 120, tokens = 12, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	CHAIR_METALLIC_BASIC(new DyeableChair(false, false, "Metallic Chair", CustomMaterial.CHAIR_METALLIC_BASIC, ColorableType.MINERAL)),
-
 	@TypeConfig(money = 120, tokens = 12, tabs = {Tab.FURNITURE, Tab.CHAIRS})
 	CHAIR_WOODEN_BASIC(new DyeableChair(false, false, "Wooden Chair", CustomMaterial.CHAIR_WOODEN_BASIC, ColorableType.STAIN)),
 
@@ -784,72 +848,6 @@ public enum DecorationType {
 
 	@TypeConfig(money = 165, tokens = 16, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STOOLS})
 	STOOL_BAR_WOODEN(new DyeableChair(false, true, "Wooden Bar Stool", CustomMaterial.STOOL_BAR_WOODEN, ColorableType.STAIN, 1.15)),
-
-	// Stumps
-	@TypeConfig(money = 60, tokens = 6, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
-	STUMP_OAK(new Stump(false, "Oak Stump", CustomMaterial.STUMP_OAK)),
-
-	@TypeConfig(money = 75, tokens = 7, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
-	STUMP_OAK_ROOTS(new Stump(false, "Rooted Oak Stump", CustomMaterial.STUMP_OAK_ROOTS)),
-
-	@TypeConfig(money = 60, tokens = 6, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
-	STUMP_SPRUCE(new Stump(false, "Spruce Stump", CustomMaterial.STUMP_SPRUCE)),
-
-	@TypeConfig(money = 75, tokens = 7, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
-	STUMP_SPRUCE_ROOTS(new Stump(false, "Rooted Spruce Stump", CustomMaterial.STUMP_SPRUCE_ROOTS)),
-
-	@TypeConfig(money = 60, tokens = 6, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
-	STUMP_BIRCH(new Stump(false, "Birch Stump", CustomMaterial.STUMP_BIRCH)),
-
-	@TypeConfig(money = 75, tokens = 7, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
-	STUMP_BIRCH_ROOTS(new Stump(false, "Rooted Birch Stump", CustomMaterial.STUMP_BIRCH_ROOTS)),
-
-	@TypeConfig(money = 60, tokens = 6, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
-	STUMP_JUNGLE(new Stump(false, "Jungle Stump", CustomMaterial.STUMP_JUNGLE)),
-
-	@TypeConfig(money = 75, tokens = 7, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
-	STUMP_JUNGLE_ROOTS(new Stump(false, "Rooted Jungle Stump", CustomMaterial.STUMP_JUNGLE_ROOTS)),
-
-	@TypeConfig(money = 60, tokens = 6, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
-	STUMP_ACACIA(new Stump(false, "Acacia Stump", CustomMaterial.STUMP_ACACIA)),
-
-	@TypeConfig(money = 75, tokens = 7, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
-	STUMP_ACACIA_ROOTS(new Stump(false, "Rooted Acacia Stump", CustomMaterial.STUMP_ACACIA_ROOTS)),
-
-	@TypeConfig(money = 60, tokens = 6, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
-	STUMP_DARK_OAK(new Stump(false, "Dark Oak Stump", CustomMaterial.STUMP_DARK_OAK)),
-
-	@TypeConfig(money = 75, tokens = 7, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
-	STUMP_DARK_OAK_ROOTS(new Stump(false, "Rooted Dark Oak Stump", CustomMaterial.STUMP_DARK_OAK_ROOTS)),
-
-	@TypeConfig(money = 60, tokens = 6, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
-	STUMP_MANGROVE(new Stump(false, "Mangrove Stump", CustomMaterial.STUMP_MANGROVE)),
-
-	@TypeConfig(money = 75, tokens = 7, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
-	STUMP_MANGROVE_ROOTS(new Stump(false, "Rooted Mangrove Stump", CustomMaterial.STUMP_MANGROVE_ROOTS)),
-
-	@TypeConfig(money = 60, tokens = 6, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
-	STUMP_CRIMSON(new Stump(false, "Crimson Stump", CustomMaterial.STUMP_CRIMSON)),
-
-	@TypeConfig(money = 75, tokens = 7, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
-	STUMP_CRIMSON_ROOTS(new Stump(false, "Rooted Crimson Stump", CustomMaterial.STUMP_CRIMSON_ROOTS)),
-
-	@TypeConfig(money = 60, tokens = 6, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
-	STUMP_WARPED(new Stump(false, "Warped Stump", CustomMaterial.STUMP_WARPED)),
-
-	@TypeConfig(money = 75, tokens = 7, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
-	STUMP_WARPED_ROOTS(new Stump(false, "Rooted Warped Stump", CustomMaterial.STUMP_WARPED_ROOTS)),
-
-	@TypeConfig(money = 60, tokens = 6, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
-	STUMP_CHERRY(new Stump(false, "Cherry Stump", CustomMaterial.STUMP_CHERRY)),
-
-	@TypeConfig(money = 75, tokens = 7, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
-	STUMP_CHERRY_ROOTS(new Stump(false, "Rooted Cherry Stump", CustomMaterial.STUMP_CHERRY_ROOTS)),
-
-
-	// 	Benches
-	@TypeConfig(money = 225, tokens = 22, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	BENCH_WOODEN(new Bench(true, false, "Wooden Bench", CustomMaterial.BENCH_WOODEN, ColorableType.STAIN, HitboxFloor._1x2H)),
 
 	// 	Couches
 	@TypeConfig(money = 150, tokens = 15, tabs = {Tab.FURNITURE, Tab.CHAIRS})
