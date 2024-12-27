@@ -333,7 +333,7 @@ public class ProfileProvider extends InventoryProvider {
 				SocialMediaUser user = socialMediaUserService.get(target);
 
 				List<SocialMediaSite> connectedSites = Arrays.stream(SocialMediaSite.values()).filter(site -> user.getConnection(site) != null).toList();
-				return connectedSites.size() != 0;
+				return !connectedSites.isEmpty();
 			}
 
 			@Override
@@ -351,7 +351,7 @@ public class ProfileProvider extends InventoryProvider {
 				SocialMediaUser user = socialMediaUserService.get(target);
 
 				List<SocialMediaSite> connectedSites = Arrays.stream(SocialMediaSite.values()).filter(site -> user.getConnection(site) != null).toList();
-				return connectedSites.size() == 0;
+				return connectedSites.isEmpty();
 			}
 
 			@Override
@@ -432,7 +432,7 @@ public class ProfileProvider extends InventoryProvider {
 				if (hasNoFriends(target))
 					return List.of("&c" + target.getNickname() + " has no friends ):");
 
-				return super.getLore(viewer, target);
+				return List.of("&3" + totalFriends(target));
 			}
 
 			@Override
@@ -452,7 +452,11 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			private boolean hasNoFriends(Nerd target) {
-				return friendService.get(target).getFriends().size() == 0;
+				return friendService.get(target).getFriends().isEmpty();
+			}
+
+			private int totalFriends(Nerd target) {
+				return friendService.get(target).getFriends().size();
 			}
 		},
 
@@ -685,10 +689,10 @@ public class ProfileProvider extends InventoryProvider {
 					super.getLore(viewer, target);
 
 				HomeOwner targetOwner = homeService.get(target);
-				if (targetOwner.getHomes().size() == 0)
+				if (targetOwner.getHomes().isEmpty())
 					return List.of("&c" + target.getNickname() + " has no homes set");
 
-				if (AccessibleHomesProvider.getAccessibleHomes(viewer, targetOwner).size() == 0)
+				if (AccessibleHomesProvider.getAccessibleHomes(viewer, targetOwner).isEmpty())
 					return List.of("&cYou don't have access to any of " + target.getNickname() + " homes");
 
 				return super.getLore(viewer, target);
@@ -703,10 +707,10 @@ public class ProfileProvider extends InventoryProvider {
 					return;
 				}
 
-				if (targetOwner.getHomes().size() == 0)
+				if (targetOwner.getHomes().isEmpty())
 					return;
 
-				if (AccessibleHomesProvider.getAccessibleHomes(viewer, targetOwner).size() == 0)
+				if (AccessibleHomesProvider.getAccessibleHomes(viewer, targetOwner).isEmpty())
 					return;
 
 				new AccessibleHomesProvider(targetOwner, previousMenu).open(viewer);
