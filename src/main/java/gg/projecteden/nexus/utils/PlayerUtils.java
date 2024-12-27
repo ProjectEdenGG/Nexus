@@ -3,6 +3,7 @@ package gg.projecteden.nexus.utils;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
@@ -17,6 +18,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundEx
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.afk.AFKUserService;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.models.mail.MailerService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -718,6 +720,16 @@ public class PlayerUtils {
 
 		else if (recipient instanceof Identified identified)
 			send(getPlayer(identified.identity()), message);
+	}
+
+	public static void sendWithCooldown(@NonNull String key, @NonNull TickTime time, @Nullable Player recipient, @Nullable Object message, @NotNull Object... objects) {
+		if (recipient == null || message == null)
+			return;
+
+		if (!new CooldownService().check(recipient, key, time))
+			return;
+
+		send(recipient, message, objects);
 	}
 
 	public static void sendLine(Object recipient) {
