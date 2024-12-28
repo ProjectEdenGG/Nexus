@@ -1,19 +1,11 @@
 package gg.projecteden.nexus.models.particle;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.features.particles.effects.BandsEffect;
-import gg.projecteden.nexus.features.particles.effects.CircleEffect;
-import gg.projecteden.nexus.features.particles.effects.DiscoEffect;
-import gg.projecteden.nexus.features.particles.effects.NyanCatEffect;
-import gg.projecteden.nexus.features.particles.effects.PolygonEffect;
-import gg.projecteden.nexus.features.particles.effects.SphereEffect;
-import gg.projecteden.nexus.features.particles.effects.SpiralEffect;
-import gg.projecteden.nexus.features.particles.effects.StarEffect;
-import gg.projecteden.nexus.features.particles.effects.StormEffect;
-import gg.projecteden.nexus.features.particles.effects.WingsEffect;
+import gg.projecteden.nexus.features.particles.effects.*;
 import gg.projecteden.nexus.features.particles.effects.WingsEffect.WingsEffectBuilder;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -26,8 +18,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.util.Vector;
 
 import java.util.Arrays;
-
-import static gg.projecteden.nexus.utils.PlayerUtils.isSelf;
 
 @Getter
 public enum ParticleType {
@@ -482,7 +472,7 @@ public enum ParticleType {
 		@Override
 		public int[] start(ParticleOwner particleOwner, HumanEntity entity) {
 			int taskId = builder(particleOwner, entity)
-				.ticks(isSelf(particleOwner, entity) ? -1 : TickTime.SECOND.x(15))
+				.ticks(PlayerUtils.isSelf(particleOwner, entity) ? -1 : TickTime.SECOND.x(15))
 				.start()
 				.getTaskId();
 			return new int[]{taskId};
@@ -583,7 +573,7 @@ public enum ParticleType {
 	}
 
 	public void run(ParticleOwner particleOwner, HumanEntity entity) {
-		if (isSelf(particleOwner, entity))
+		if (PlayerUtils.isSelf(particleOwner, entity))
 			particleOwner.start(this, start(particleOwner, entity));
 		else
 			particleOwner.addTaskIds(this, start(particleOwner, entity));

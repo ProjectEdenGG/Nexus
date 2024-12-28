@@ -10,7 +10,6 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.features.itemtags.Rarity;
-import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
@@ -29,13 +28,7 @@ import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.minecraft.nbt.CompoundTag;
 import org.apache.commons.lang3.function.TriConsumer;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.DyeColor;
-import org.bukkit.FireworkEffect;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.ShulkerBox;
@@ -50,20 +43,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.AxolotlBucketMeta;
-import org.bukkit.inventory.meta.BannerMeta;
-import org.bukkit.inventory.meta.BlockStateMeta;
-import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.*;
 import org.bukkit.inventory.meta.BookMeta.Generation;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
-import org.bukkit.inventory.meta.FireworkMeta;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.inventory.meta.MapMeta;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.inventory.meta.Repairable;
-import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 import org.bukkit.potion.PotionData;
@@ -74,22 +55,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static java.util.Comparator.comparing;
 
 @SuppressWarnings({"UnusedReturnValue", "ResultOfMethodCallIgnored", "CopyConstructorMissesField", "deprecation", "unused"})
 public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
@@ -217,7 +188,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		if (displayName == null)
 			itemMeta.setDisplayName(null);
 		else
-			itemMeta.setDisplayName(colorize("&f" + displayName));
+			itemMeta.setDisplayName(StringUtils.colorize("&f" + displayName));
 		return this;
 	}
 
@@ -262,12 +233,12 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		while (lore.size() < line)
 			lore.add("");
 
-		lore.set(line - 1, colorize(text));
+		lore.set(line - 1, StringUtils.colorize(text));
 		return this;
 	}
 
 	public ItemBuilder loreRemove(int line) {
-		if (isNullOrEmpty(lore)) throw new InvalidInputException("Item does not have lore");
+		if (Nullables.isNullOrEmpty(lore)) throw new InvalidInputException("Item does not have lore");
 		if (line - 1 > lore.size()) throw new InvalidInputException("Line " + line + " does not exist");
 
 		lore.remove(line - 1);
@@ -330,7 +301,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		Consumer<Enchantment> remover,
 		TriConsumer<Enchantment, Integer, Boolean> adder
 	) {
-		var sorted = ImmutableSortedMap.copyOf(getter.get(), comparing(enchant -> enchant.key().value()));
+		var sorted = ImmutableSortedMap.copyOf(getter.get(), Comparator.comparing(enchant -> enchant.key().value()));
 		sorted.forEach((enchant, level) -> remover.accept(enchant));
 		sorted.forEach((enchant, level) -> adder.accept(enchant, level, true));
 	}
@@ -911,7 +882,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	public static class ModelId {
 
 		public static int of(ItemStack item) {
-			if (isNullOrAir(item))
+			if (Nullables.isNullOrAir(item))
 				return 0;
 
 			return of(new ItemBuilder(item));
@@ -982,9 +953,9 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		List<String> colorized = new ArrayList<>();
 		for (String line : lore)
 			if (doLoreize)
-				colorized.addAll(StringUtils.loreize(colorize(line)));
+				colorized.addAll(StringUtils.loreize(StringUtils.colorize(line)));
 			else
-				colorized.add(colorize(line));
+				colorized.add(StringUtils.colorize(line));
 		itemMeta.setLore(colorized);
 
 		itemStack.setItemMeta(itemMeta);

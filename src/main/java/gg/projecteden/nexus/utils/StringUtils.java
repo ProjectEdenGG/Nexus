@@ -26,14 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -303,6 +297,13 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 		}
 
 		public static class ProgressBarBuilder {
+			private int progress;
+			private int goal;
+			private int length;
+			private SummaryStyle summaryStyle;
+			private ChatColor color;
+			private boolean seamless;
+
 			public String build() {
 				double percent = Math.min((double) progress / goal, 1);
 				if (color == null) {

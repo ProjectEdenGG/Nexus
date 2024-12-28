@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.models.punishments;
 
 import dev.morphia.annotations.Converters;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
@@ -18,8 +19,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @NoArgsConstructor
@@ -91,7 +90,7 @@ public class Punishment implements PlayerOwnedObject {
 	}
 
 	public boolean hasReason() {
-		return !isNullOrEmpty(reason);
+		return !Nullables.isNullOrEmpty(reason);
 	}
 
 	boolean hasBeenRemoved() {
@@ -141,7 +140,7 @@ public class Punishment implements PlayerOwnedObject {
 		if (seconds > 0)
 			message += " &cfor &e" + Timespan.ofSeconds(seconds).format(FormatType.LONG);
 
-		if (!isNullOrEmpty(reason))
+		if (!Nullables.isNullOrEmpty(reason))
 			message += " &cfor &7" + reason;
 		return message;
 	}
@@ -153,7 +152,7 @@ public class Punishment implements PlayerOwnedObject {
 
 	public Component getDisconnectMessage() {
 		String message = getType().getDisconnectMessage(this);
-		if (isNullOrEmpty(message))
+		if (Nullables.isNullOrEmpty(message))
 			return null;
 		return AdventureUtils.toComponent(message);
 	}

@@ -3,6 +3,7 @@ package gg.projecteden.nexus.models.punishments;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
@@ -15,30 +16,18 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.punishments.Punishment.PunishmentBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import net.md_5.bungee.api.ChatColor;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.justice.Justice.PREFIX;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static java.util.stream.Collectors.toList;
 
 @Data
 @Entity(value = "punishments", noClassnameStored = true)
@@ -104,7 +93,7 @@ public class Punishments implements PlayerOwnedObject {
 	public List<Punishment> getActive(PunishmentType... types) {
 		return punishments.stream()
 				.filter(punishment -> punishment.isActive() && Arrays.asList(types).contains(punishment.getType()))
-				.collect(toList());
+				.collect(Collectors.toList());
 	}
 
 	public Optional<Punishment> getMostRecentActive(PunishmentType... types) {
@@ -136,7 +125,7 @@ public class Punishments implements PlayerOwnedObject {
 	public List<Punishment> getNewWarnings() {
 		return getActive(PunishmentType.WARN).stream()
 				.filter(punishment -> !punishment.hasBeenReceived())
-				.collect(toList());
+				.collect(Collectors.toList());
 	}
 
 	public void add(PunishmentBuilder builder) {
@@ -169,7 +158,7 @@ public class Punishments implements PlayerOwnedObject {
 			old.setActive(false);
 			String typeName = old.getType().name().toLowerCase().replace("_", "-");
 			Nerd.of(punishment.getPunisher()).sendMessage(PREFIX + "Replacing previous " + typeName + " for &e"
-					+ Nickname.of(punishment.getUuid()) + (isNullOrEmpty(old.getReason()) ? "" : "&3: &7" + old.getReason()) + " &3(" + old.getTimeSince() + ")");
+					+ Nickname.of(punishment.getUuid()) + (Nullables.isNullOrEmpty(old.getReason()) ? "" : "&3: &7" + old.getReason()) + " &3(" + old.getTimeSince() + ")");
 		}
 	}
 
@@ -267,7 +256,7 @@ public class Punishments implements PlayerOwnedObject {
 	}
 
 	public List<String> getIps() {
-		return ipHistory.stream().map(IPHistoryEntry::getIp).collect(toList());
+		return ipHistory.stream().map(IPHistoryEntry::getIp).collect(Collectors.toList());
 	}
 
 	@NotNull
@@ -283,10 +272,10 @@ public class Punishments implements PlayerOwnedObject {
 			Set<UUID> toSearch = new HashSet<>(newMatches);
 			newMatches.clear();
 
-			List<Punishments> players = toSearch.stream().map(Punishments::of).collect(toList());
+			List<Punishments> players = toSearch.stream().map(Punishments::of).collect(Collectors.toList());
 			newMatches.addAll(service.getAlts(players).stream()
 					.map(Punishments::getUuid)
-					.collect(toList()));
+					.toList());
 
 			newMatches.removeAll(alts);
 			alts.addAll(newMatches);
@@ -347,7 +336,7 @@ public class Punishments implements PlayerOwnedObject {
 				json.initialize();
 
 			List<String> hover = new ArrayList<>();
-			hover.add(color + camelCase(description));
+			hover.add(color + StringUtils.camelCase(description));
 			if (!alt.getName().equals(alt.getNickname()))
 				hover.add("&3Real Name: &e" + alt.getName());
 

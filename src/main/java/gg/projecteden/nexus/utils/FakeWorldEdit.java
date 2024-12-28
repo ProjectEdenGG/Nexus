@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.utils;
 
-import gg.projecteden.nexus.utils.FakeWorldEdit.Clipboard.ClipboardBuilder;
 import gg.projecteden.parchment.HasLocation;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,8 +30,8 @@ public class FakeWorldEdit {
 		this(Objects.requireNonNull(Bukkit.getWorld(world)));
 	}
 
-	public ClipboardBuilder clipboard() {
-		return new ClipboardBuilder().world(world);
+	public Clipboard.ClipboardBuilder clipboard() {
+		return Clipboard.builder().world(world);
 	}
 
 	@RequiredArgsConstructor

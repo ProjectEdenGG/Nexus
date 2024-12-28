@@ -9,11 +9,7 @@ import gg.projecteden.nexus.features.particles.effects.PolygonEffect;
 import gg.projecteden.nexus.features.particles.effects.PolygonEffect.PolygonEffectBuilder;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.Tasks;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.bukkit.Color;
 import org.bukkit.Particle;
 
@@ -81,7 +77,7 @@ public class ForceFieldUser implements PlayerOwnedObject {
 			.player(getOnlinePlayer())
 			.radius(this.radius)
 			.whole(false)
-			.particle(Particle.REDSTONE)
+			.particle(Particle.DUST)
 			.color(Color.RED)
 			.rotateSpeed(0.7 * Math.round(radius));
 	}

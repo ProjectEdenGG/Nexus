@@ -6,7 +6,6 @@ val edenApiVersion: String by project
 plugins {
     `java-library`
     `maven-publish`
-    id("io.freefair.lombok") version "8.11"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.papermc.paperweight.userdev") version "1.7.5"
 }
@@ -35,6 +34,7 @@ repositories {
         content { includeGroup("org.inventivetalent") }
     }
     maven { url = uri("https://repo.codemc.io/repository/maven-public/") }
+    maven { url = uri("https://repo.codemc.io/repository/maven-releases/") }
     maven { url = uri("https://repo.codemc.io/repository/maven-snapshots/") }
     maven { url = uri("https://maven.citizensnpcs.co/repo") }
     maven { url = uri("https://repo.md-5.net/content/groups/public/") }
@@ -54,6 +54,8 @@ repositories {
 }
 
 dependencies {
+    compileOnly("org.projectlombok:lombok:1.18.36")
+    annotationProcessor("org.projectlombok:lombok:1.18.36")
     paperweightDevBundle("gg.projecteden.parchment", "${parchmentVersion}")
     compileOnly("gg.projecteden.parchment:parchment-api:${parchmentVersion}")
     implementation("io.papermc:paperlib:1.0.8-SNAPSHOT")
@@ -80,7 +82,6 @@ dependencies {
     compileOnly("tech.blastmc.holograms:HologramsAPI:1.0.0-SNAPSHOT")
     compileOnly("fr.moribus:ImageOnMap:4.3.1-EDEN")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
-    compileOnly("com.gmail.nossr50.mcMMO:mcMMO:2.1.231")
     compileOnly("net.luckperms:api:5.4")
     compileOnly("com.sk89q.worldguard:worldguard-core:7.0.6-SNAPSHOT")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.6-SNAPSHOT")
@@ -102,6 +103,7 @@ dependencies {
     compileOnly("com.magmaguy:BetterStructures:1.4.1-SNAPSHOT")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.5.2")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.5.2") { isTransitive = false }
+    compileOnly("com.griefcraft:lwc:2.3.2-dev")
     compileOnly("net.citizensnpcs:citizensapi:2.0.32-SNAPSHOT")
     compileOnly("net.citizensnpcs:citizens-main:2.0.32-SNAPSHOT") {
         exclude("*", "*")
@@ -110,7 +112,10 @@ dependencies {
         exclude("org.spigotmc", "spigot-api")
         exclude("org.spigotmc", "spigot")
     }
-    compileOnly("com.griefcraft:lwc:2.2.9-dev")
+    compileOnly("com.gmail.nossr50.mcMMO:mcMMO:2.2.004@jar") {
+        exclude("com.sk89q.worldedit", "worldedit-core")
+        exclude("com.sk89q.worldedit.worldedit-libs", "core")
+    }
     compileOnly(files("libs/BuycraftX.jar"))
     compileOnly(files("libs/GlowAPI.jar"))
     compileOnly(files("libs/nuvotifier-universal-2.3.4.jar"))
