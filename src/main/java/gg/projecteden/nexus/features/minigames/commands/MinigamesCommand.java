@@ -66,6 +66,7 @@ import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LocationUtils.RelativeLocation;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -94,9 +95,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Aliases({"mgm", "mg"})
 @Redirect(from = "/mgn", to = "/mgm night")
@@ -293,7 +291,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 
 		player.getWorld().strikeLightningEffect(player.getLocation());
 		Punishments.of(player).add(Punishment.ofType(PunishmentType.WARN).punisher(uuid())
-				.input("Please obey the rules of our minigames" + (isNullOrEmpty(reason) ? "" : ": " + reason)));
+			.input("Please obey the rules of our minigames" + (gg.projecteden.api.common.utils.Nullables.isNullOrEmpty(reason) ? "" : ": " + reason)));
 	}
 
 	@Path("settings bowInOffHand [boolean]")
@@ -596,7 +594,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 
 		final Set<Material> materials = new HashSet<>() {{
 			for (Block block : blocks)
-				if (!isNullOrAir(block))
+				if (!Nullables.isNullOrAir(block))
 					add(block.getType());
 		}};
 
@@ -693,16 +691,17 @@ public class MinigamesCommand extends _WarpSubCommand {
 				}
 			} else {
 				Sign sign = getTargetSignRequired();
-				String line2 = stripColor(sign.getLine(1)).toLowerCase();
+				String line2 = StringUtils.stripColor(sign.getLine(1)).toLowerCase();
 				if (line2.contains("screenshot"))
 					error("Stand in the screenshot area then run the command (sign not needed)");
 
-				String line1 = stripColor(sign.getLine(0)).toLowerCase();
+				String line1 = StringUtils.stripColor(sign.getLine(0)).toLowerCase();
 				if (!line1.contains("[minigame]") && !line1.contains("< minigames >"))
 					error("Cannot parse sign. If you believe this is an error, make a bug report with information and screenshots.");
 
 				switch (line2) {
-					case "join" -> arena = ArenaManager.get(stripColor(sign.getLine(2)) + stripColor(sign.getLine(3)));
+					case "join" ->
+						arena = ArenaManager.get(StringUtils.stripColor(sign.getLine(2)) + StringUtils.stripColor(sign.getLine(3)));
 					case "join random" -> arena = join(MechanicType.valueOf(sign.getLine(2).toUpperCase()));
 					default -> error("Cannot parse minigame sign. If you believe this is an error, make a bug report with information and screenshots.");
 				}

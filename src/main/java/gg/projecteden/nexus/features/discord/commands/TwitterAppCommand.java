@@ -7,6 +7,7 @@ import gg.projecteden.api.discord.appcommands.AppCommandEvent;
 import gg.projecteden.api.discord.appcommands.annotations.Command;
 import gg.projecteden.api.discord.appcommands.annotations.Desc;
 import gg.projecteden.api.discord.appcommands.annotations.RequiredRole;
+import gg.projecteden.nexus.features.discord.ReactionVoter;
 import gg.projecteden.nexus.features.discord.commands.common.NexusAppCommand;
 import gg.projecteden.nexus.features.socialmedia.integrations.Twitter;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -24,8 +25,6 @@ import twitter4j.v1.Status;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
-import static gg.projecteden.nexus.features.discord.ReactionVoter.addButtons;
 
 @RequiredRole("Staff")
 @Command("Manage twitter")
@@ -66,7 +65,7 @@ public class TwitterAppCommand extends NexusAppCommand {
 		reply(tweet).thenAccept(reply -> reply.retrieveOriginal().submit().thenAccept(message -> {
 			data.addPendingTweet(message, time);
 			service.save(data);
-			addButtons(message);
+			ReactionVoter.addButtons(message);
 		}));
 	}
 

@@ -26,6 +26,7 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.BattleshipMatchD
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard.Type;
 import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.LocationUtils.CardinalDirection;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -33,6 +34,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.ProgressBar;
 import gg.projecteden.nexus.utils.StringUtils.ProgressBar.SummaryStyle;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import org.bukkit.Bukkit;
@@ -54,13 +56,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.function.Consumer;
-
-import static gg.projecteden.nexus.utils.ItemUtils.getTool;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
-import static gg.projecteden.nexus.utils.Utils.attempt;
 
 /*
 	Regions:
@@ -242,8 +243,8 @@ public class Battleship extends TeamMechanic {
 			matchData.getShips().get(team).values().stream()
 					.filter(ship -> ship.getOrigin() == null)
 					.forEach(ship -> {
-						if (!attempt(100, () -> KitPlacer.of(match, team, ship.getType()).run()))
-							Nexus.warn("Could not place " + camelCase(ship.getType().name()) + " on team " + team.getName() + " in " + match.getArena().getName());
+						if (!Utils.attempt(100, () -> KitPlacer.of(match, team, ship.getType()).run()))
+							Nexus.warn("Could not place " + StringUtils.camelCase(ship.getType().name()) + " on team " + team.getName() + " in " + match.getArena().getName());
 					});
 		}
 
@@ -352,7 +353,7 @@ public class Battleship extends TeamMechanic {
 			if (shipType == null) {
 				if (event.getClickedBlock() != null) return;
 
-				ItemStack tool = getTool(minigamer.getOnlinePlayer());
+				ItemStack tool = ItemUtils.getTool(minigamer.getOnlinePlayer());
 				if (tool == null) return;
 
 				shipType = ShipType.of(tool.getType());
@@ -515,7 +516,7 @@ public class Battleship extends TeamMechanic {
 
 	public void pasteShip(ShipType shipType, Location location, CardinalDirection direction) {
 		String schematic = shipType.getFileName();
-		Nexus.debug("Pasting schematic " + schematic + " at " + getShortLocationString(location) + " with rotation " + direction.getRotation());
+		Nexus.debug("Pasting schematic " + schematic + " at " + StringUtils.getShortLocationString(location) + " with rotation " + direction.getRotation());
 		new WorldEditUtils(location).paster()
 				.file(schematic)
 				.at(location)

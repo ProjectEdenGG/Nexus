@@ -38,7 +38,7 @@ import gg.projecteden.nexus.utils.GlowUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.nms.PacketUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -47,6 +47,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.nms.PacketUtils;
 import gg.projecteden.parchment.event.sound.SoundEvent;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -85,13 +86,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 // TODO
 //  - admin table (imageonmap "api"?)
@@ -438,7 +439,7 @@ public class Sabotage extends TeamMechanic {
 		inventory.setItem(0, ResourcePackNumber.of(1, ColorType.RED).get().name("Crouch to Exit").lore("&f" + StringUtils.getFlooredCoordinateString(currentLoc) + " " + container.getCustomName() + " 0").loreize(false).build());
 		int count = 1;
 		for (ItemStack itemStack : container.getInventory()) {
-			if (isNullOrAir(itemStack)) continue;
+			if (Nullables.isNullOrAir(itemStack)) continue;
 			inventory.setItem(count, ResourcePackNumber.of(1 + count, ColorType.RED).get().name("Crouch to Exit").lore(itemStack.getItemMeta().getDisplayName()).loreize(false).build());
 			count += 1;
 			if (count > 8)
@@ -480,7 +481,7 @@ public class Sabotage extends TeamMechanic {
 		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 		ItemStack item = event.getPlayer().getInventory().getItem(event.getNewSlot());
-		if (isNullOrAir(item)) return;
+		if (Nullables.isNullOrAir(item)) return;
 		if (!item.hasItemMeta()) return;
 		ItemMeta itemMeta = item.getItemMeta();
 		if (!itemMeta.hasLore()) return;
@@ -523,7 +524,7 @@ public class Sabotage extends TeamMechanic {
 				}
 			} else if (SABOTAGE_MENU.get().isSimilar(item)) {
 				new ImpostorMenu(matchData.getArena()).open(minigamer.getOnlinePlayer());
-			} else if (minigamer.isAlive() && item != null && item.hasItemMeta() && item.getItemMeta().hasDisplayName() && item.getItemMeta().getDisplayName().equals(colorize("&eReport")) && item.getItemMeta().hasLore()) {
+			} else if (minigamer.isAlive() && item != null && item.hasItemMeta() && item.getItemMeta().hasDisplayName() && item.getItemMeta().getDisplayName().equals(StringUtils.colorize("&eReport")) && item.getItemMeta().hasLore()) {
 				//noinspection ConstantConditions - item lore cannot be null thanks to #hasLore check
 				String lore = AdventureUtils.asPlainText(item.getItemMeta().lore().get(0));
 				String color = lore.split(" ")[1].split("'")[0];
@@ -540,7 +541,7 @@ public class Sabotage extends TeamMechanic {
 		if (!minigamer.isAlive()) return;
 		if (!(event.getRightClicked() instanceof ArmorStand armorStand)) return;
 		ItemStack helmet = armorStand.getEquipment().getHelmet();
-		if (isNullOrAir(helmet) || helmet.getType() != Material.RED_CONCRETE) return;
+		if (Nullables.isNullOrAir(helmet) || helmet.getType() != Material.RED_CONCRETE) return;
 
 		SabotageMatchData matchData = minigamer.getMatch().getMatchData();
 		SabotageMatchData.ButtonState state = matchData.button(minigamer);
@@ -620,7 +621,7 @@ public class Sabotage extends TeamMechanic {
 		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 		if (!event.getRegion().getId().startsWith(minigamer.getMatch().getArena().getRegionBaseName()+"_room_")) return;
-		ActionBarUtils.sendActionBar(minigamer.getOnlinePlayer(), camelCase(event.getRegion().getId().split("_room_")[1]));
+		ActionBarUtils.sendActionBar(minigamer.getOnlinePlayer(), StringUtils.camelCase(event.getRegion().getId().split("_room_")[1]));
 	}
 
 	private static final Set<Key> BLOCKED_SOUNDS = Set.of(

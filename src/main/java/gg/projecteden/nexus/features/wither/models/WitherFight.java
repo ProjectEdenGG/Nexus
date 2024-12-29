@@ -5,6 +5,7 @@ import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
@@ -16,6 +17,7 @@ import gg.projecteden.nexus.features.wither.BeginningCutscene;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.features.wither.WitherChallenge.Difficulty;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.witherarena.WitherArenaConfig;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -25,8 +27,10 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
+import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -93,13 +97,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.api.common.utils.StringUtils.paste;
-import static gg.projecteden.nexus.features.wither.WitherChallenge.currentFight;
-import static gg.projecteden.nexus.models.witherarena.WitherArenaConfig.isBeta;
-import static gg.projecteden.nexus.utils.StringUtils.plural;
-import static gg.projecteden.nexus.utils.Utils.tryCalculate;
-
 @Data
 public abstract class WitherFight implements Listener {
 
@@ -138,7 +135,7 @@ public abstract class WitherFight implements Listener {
 			JsonBuilder message = new JsonBuilder(WitherChallenge.PREFIX + "The fight has started! &e&lClick here to spectate")
 				.command("/wither spectate").hover("&eYou will be teleported to the wither arena");
 
-			if (isBeta())
+			if (WitherArenaConfig.isBeta())
 				Broadcast.staffIngame().message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
 			else
 				Broadcast.ingame().message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
@@ -176,7 +173,7 @@ public abstract class WitherFight implements Listener {
 			if (logInfo) {
 				for (UUID uuid : getAlivePlayers()) {
 					Player player = PlayerUtils.getOnlinePlayer(uuid);
-					log(player.getName() + "'s starting inventory: " + paste(Json.toString(Json.serialize(Arrays.asList(player.getInventory().getContents())))));
+					log(player.getName() + "'s starting inventory: " + gg.projecteden.api.common.utils.StringUtils.paste(Json.toString(Json.serialize(Arrays.asList(player.getInventory().getContents())))));
 					lowestHealth.put(uuid, player.getHealth());
 				}
 			}
@@ -269,7 +266,7 @@ public abstract class WitherFight implements Listener {
 			DecimalFormat format = new DecimalFormat("#.0");
 			for (UUID uuid : getAlivePlayers()) {
 				Player player = PlayerUtils.getOnlinePlayer(uuid);
-				log(player.getName() + "'s ending inventory: " + paste(Json.toString(Json.serialize(Arrays.asList(player.getInventory().getContents())))));
+				log(player.getName() + "'s ending inventory: " + gg.projecteden.api.common.utils.StringUtils.paste(Json.toString(Json.serialize(Arrays.asList(player.getInventory().getContents())))));
 			}
 			getParty().stream().filter(uuid -> !getAlivePlayers().contains(uuid)).forEach(uuid -> log(PlayerUtils.getPlayer(uuid).getName() + " died"));
 			getParty().forEach(uuid -> log(PlayerUtils.getPlayer(uuid).getName() + "'s lowest health: " + format.format(lowestHealth.get(uuid))));
@@ -293,7 +290,7 @@ public abstract class WitherFight implements Listener {
 		final Region region = worldguard.getRegion("witherarena-pigmen");
 		final List<BlockVector3> blocks = worldguard.getAllBlocks(region);
 
-		final Location location = tryCalculate(100, () -> {
+		final Location location = Utils.tryCalculate(100, () -> {
 			Location spawnLocation = worldguard.toLocation(RandomUtils.randomElement(blocks));
 			if (spawnLocation.getBlock().getType().isEmpty() && spawnLocation.getBlock().getRelative(BlockFace.UP).getType().isEmpty())
 				return spawnLocation;
@@ -393,13 +390,13 @@ public abstract class WitherFight implements Listener {
 
 	static {
 		Tasks.repeat(TickTime.SECOND, TickTime.SECOND, () -> {
-			if (currentFight == null)
+			if (WitherChallenge.currentFight == null)
 				return;
 
-			if (!currentFight.isStarted())
+			if (!WitherChallenge.currentFight.isStarted())
 				return;
 
-			if (isNullOrEmpty(currentFight.getAlivePlayers()))
+			if (Nullables.isNullOrEmpty(WitherChallenge.currentFight.getAlivePlayers()))
 				return;
 
 			for (Entity entity : WitherChallenge.getEntities()) {
@@ -408,10 +405,10 @@ public abstract class WitherFight implements Listener {
 
 				if (mob.getTarget() != null)
 					if (mob.getTarget() instanceof Player player)
-						if (currentFight.getAlivePlayers().contains(player.getUniqueId()))
+						if (WitherChallenge.currentFight.getAlivePlayers().contains(player.getUniqueId()))
 							continue;
 
-				mob.setTarget(currentFight.getRandomAlivePlayer());
+				mob.setTarget(WitherChallenge.currentFight.getRandomAlivePlayer());
 			}
 		});
 	}
@@ -473,7 +470,7 @@ public abstract class WitherFight implements Listener {
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
 				" lost to the Wither in " + getDifficulty().getTitle() + " &3mode";
 
-			if (isBeta())
+			if (WitherArenaConfig.isBeta())
 				Broadcast.staff().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
 			else
 				Broadcast.all().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
@@ -481,7 +478,7 @@ public abstract class WitherFight implements Listener {
 			logFinal();
 			WitherChallenge.reset();
 		} else {
-			currentFight.broadcastToParty("&e" + Nickname.of(player) + " &chas " + reason + " and is out of the fight!");
+			WitherChallenge.currentFight.broadcastToParty("&e" + Nickname.of(player) + " &chas " + reason + " and is out of the fight!");
 			wither.setTarget(getRandomAlivePlayer());
 		}
 		alivePlayers.remove(player.getUniqueId());
@@ -491,7 +488,7 @@ public abstract class WitherFight implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onDeath(PlayerDeathEvent event) {
-		if (currentFight == null)
+		if (WitherChallenge.currentFight == null)
 			return;
 
 		Player player = event.getEntity();
@@ -521,10 +518,10 @@ public abstract class WitherFight implements Listener {
 		int partySize = party.size();
 
 		String message = "&e" + Nickname.of(getHostOfflinePlayer()) +
-			(partySize > 1 ? " and " + (partySize - 1) + plural(" other", partySize - 1) + " &3have" : " &3has") +
+			(partySize > 1 ? " and " + (partySize - 1) + StringUtils.plural(" other", partySize - 1) + " &3have" : " &3has") +
 			" successfully beaten the Wither in " + getDifficulty().getTitle() + " &3mode " + (gotStar ? "and got" : "but did not get") + " the star";
 
-		if (isBeta())
+		if (WitherArenaConfig.isBeta())
 			Broadcast.staff().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
 		else
 			Broadcast.all().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
@@ -539,8 +536,8 @@ public abstract class WitherFight implements Listener {
 
 		Tasks.wait(TickTime.SECOND.x(10), () -> {
 			started = false;
-			currentFight.alivePlayers().forEach(Warps::survival);
-			currentFight.sendSpectatorsToSpawn();
+			WitherChallenge.currentFight.alivePlayers().forEach(Warps::survival);
+			WitherChallenge.currentFight.sendSpectatorsToSpawn();
 			WitherChallenge.reset();
 		});
 	}
@@ -748,7 +745,7 @@ public abstract class WitherFight implements Listener {
 		KNOCKBACK {
 			@Override
 			public void execute(Player player) {
-				Location witherLocation = currentFight.wither.getLocation();
+				Location witherLocation = WitherChallenge.currentFight.wither.getLocation();
 				Location playerLocation = player.getLocation();
 				int x = (int) (playerLocation.getX() - witherLocation.getX());
 				int z = (int) (playerLocation.getZ() - witherLocation.getZ());
@@ -800,7 +797,7 @@ public abstract class WitherFight implements Listener {
 		DUPLICATE {
 			@Override
 			public void execute(List<Player> players) {
-				Location witherLoc = currentFight.wither.getLocation();
+				Location witherLoc = WitherChallenge.currentFight.wither.getLocation();
 				spawnMinion(witherLoc.clone().add(3, 0, 0));
 				spawnMinion(witherLoc.clone().add(-3, 0, 0));
 			}
@@ -818,7 +815,7 @@ public abstract class WitherFight implements Listener {
 		TNT {
 			@Override
 			public void execute(List<Player> players) {
-				Location witherLoc = currentFight.wither.getLocation();
+				Location witherLoc = WitherChallenge.currentFight.wither.getLocation();
 				TNTPrimed tnt = witherLoc.getWorld().spawn(witherLoc, TNTPrimed.class);
 				tnt.setFuseTicks(50);
 			}

@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -12,15 +13,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-
 public class SoulboundEnchant extends CustomEnchant implements Listener {
 	public static final String NBT_KEY = "soulbound";
 
 	@Override
 	public @NotNull String getDisplayName(int level) {
 		if (level >= getMaxLevel())
-			return camelCase(getName()) + " ∞";
+			return StringUtils.camelCase(getName()) + " ∞";
 
 		return super.getDisplayName(level);
 	}

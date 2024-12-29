@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.minigames.mechanics.common.SpleefMechanic;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import org.bukkit.Location;
@@ -22,8 +23,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
-
-import static gg.projecteden.nexus.utils.LocationUtils.getBlockHit;
 
 public final class Splegg extends SpleefMechanic {
 
@@ -94,7 +93,7 @@ public final class Splegg extends SpleefMechanic {
 		if (!minigamer.isPlaying(this)) return;
 
 		projectile.remove();
-		Block blockHit = getBlockHit(event);
+		Block blockHit = LocationUtils.getBlockHit(event);
 		if (blockHit == null) return;
 
 		breakBlock(minigamer.getMatch(), blockHit.getLocation());
