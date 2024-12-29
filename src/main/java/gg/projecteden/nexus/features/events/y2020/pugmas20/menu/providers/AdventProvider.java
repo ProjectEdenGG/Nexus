@@ -23,8 +23,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isSecondChance;
-
 @Title("Advent")
 @NoArgsConstructor
 @RequiredArgsConstructor
@@ -70,7 +68,7 @@ public class AdventProvider extends InventoryProvider {
 				if (user.getFoundDays().contains(dayIndex))
 					found(contents, slotPos, adventChest, skull, name, district, located);
 				else {
-					if (isSecondChance(date)) {
+					if (Pugmas20.isSecondChance(date)) {
 						if (dayIndex != 25 || user.getFoundDays().size() == 24)
 							find(contents, slotPos, adventChest, name, district, located);
 						else

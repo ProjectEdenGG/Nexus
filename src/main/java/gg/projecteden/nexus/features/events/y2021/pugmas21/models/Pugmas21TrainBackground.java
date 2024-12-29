@@ -3,13 +3,8 @@ package gg.projecteden.nexus.features.events.y2021.pugmas21.models;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
-import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
-import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -27,8 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.EntityUtils.forcePacket;
 
 public class Pugmas21TrainBackground {
 	@Getter
@@ -113,7 +106,7 @@ public class Pugmas21TrainBackground {
 	private static void move(ArmorStand armorStand) {
 		if (!armorStand.isValid()) return;
 
-		forcePacket(armorStand);
+		EntityUtils.forcePacket(armorStand);
 
 		Vector _forwards = forwards.getDirection().multiply(speed);
 		Location to = armorStand.getLocation().clone().add(_forwards);

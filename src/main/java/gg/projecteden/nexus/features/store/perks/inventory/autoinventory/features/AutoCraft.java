@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.recipes.RecipeUtils;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventory;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventoryFeature;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -21,10 +22,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static java.util.stream.Collectors.joining;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 public class AutoCraft implements Listener {
@@ -73,9 +71,9 @@ public class AutoCraft implements Listener {
 			if (get(material) == null) {
 				String ingredients = expectedMaterials.stream()
 						.map(StringUtils::camelCase)
-						.collect(joining(", "));
+						.collect(Collectors.joining(", "));
 
-				Nexus.severe("Could not find crafting recipe for " + camelCase(material) + " made of " + ingredients);
+				Nexus.severe("Could not find crafting recipe for " + StringUtils.camelCase(material) + " made of " + ingredients);
 				autoCraftable.remove(material);
 			}
 		}
@@ -143,7 +141,7 @@ public class AutoCraft implements Listener {
 			return;
 
 		for (ItemStack item : inventory.getContents()) {
-			if (isNullOrAir(item))
+			if (Nullables.isNullOrAir(item))
 				continue;
 
 			final Material material = item.getType();

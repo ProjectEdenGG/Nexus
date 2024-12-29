@@ -21,8 +21,6 @@ import gg.projecteden.nexus.utils.Utils;
 import java.util.Arrays;
 import java.util.List;
 
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-
 public class TicketCommand extends CustomCommand {
 	private final TicketsService service = new TicketsService();
 	private final Tickets tickets = service.get0();
@@ -55,7 +53,7 @@ public class TicketCommand extends CustomCommand {
 			error("Prevented accidental ticket (close)");
 
 		Runnable run = () -> {
-			Ticket ticket = new Ticket(player(), stripColor(description));
+			Ticket ticket = new Ticket(player(), StringUtils.stripColor(description));
 			service.save(tickets);
 
 			send(PREFIX + "You have submitted a ticket. Staff have been alerted, please wait patiently for a response. &eThank you!");

@@ -19,54 +19,46 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootCategory.FISH;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootCategory.JUNK;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootCategory.TREASURE;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootCategory.UNIQUE;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootTime.BOTH;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootTime.DAY;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootTime.NIGHT;
-
 @Getter
 @AllArgsConstructor
 public enum FishingLoot {
 	// Fish
-	CARP(FISH, 2, CustomMaterial.FISHING_LOOT_CARP, "Carp", 40),
-	SALMON(FISH, 2, CustomMaterial.FISHING_LOOT_SALMON, "Salmon", 30),
-	TROPICAL_FISH(FISH, 2, CustomMaterial.FISHING_LOOT_TROPICAL_FISH, "Tropical Fish", 20),
-	PUFFERFISH(FISH, 2, CustomMaterial.FISHING_LOOT_PUFFERFISH, "Pufferfish", 10),
-	BULLHEAD(FISH, 2, CustomMaterial.FISHING_LOOT_BULLHEAD, "Bullhead", 10),
-	STURGEON(FISH, 2, CustomMaterial.FISHING_LOOT_STURGEON, "Sturgeon", 10),
-	WOODSKIP(FISH, 2, CustomMaterial.FISHING_LOOT_WOODSKIP, "Woodskip", 10),
-	VOID_SALMON(FISH, 2, CustomMaterial.FISHING_LOOT_VOID_SALMON, "Void Salmon", 10),
-	RED_SNAPPER(FISH, 2, CustomMaterial.FISHING_LOOT_RED_SNAPPER, "Red Snapper", 10),
-	RED_MULLET(FISH, 2, CustomMaterial.FISHING_LOOT_RED_MULLET, "Red Mullet", 10),
+	CARP(FishingLootCategory.FISH, 2, CustomMaterial.FISHING_LOOT_CARP, "Carp", 40),
+	SALMON(FishingLootCategory.FISH, 2, CustomMaterial.FISHING_LOOT_SALMON, "Salmon", 30),
+	TROPICAL_FISH(FishingLootCategory.FISH, 2, CustomMaterial.FISHING_LOOT_TROPICAL_FISH, "Tropical Fish", 20),
+	PUFFERFISH(FishingLootCategory.FISH, 2, CustomMaterial.FISHING_LOOT_PUFFERFISH, "Pufferfish", 10),
+	BULLHEAD(FishingLootCategory.FISH, 2, CustomMaterial.FISHING_LOOT_BULLHEAD, "Bullhead", 10),
+	STURGEON(FishingLootCategory.FISH, 2, CustomMaterial.FISHING_LOOT_STURGEON, "Sturgeon", 10),
+	WOODSKIP(FishingLootCategory.FISH, 2, CustomMaterial.FISHING_LOOT_WOODSKIP, "Woodskip", 10),
+	VOID_SALMON(FishingLootCategory.FISH, 2, CustomMaterial.FISHING_LOOT_VOID_SALMON, "Void Salmon", 10),
+	RED_SNAPPER(FishingLootCategory.FISH, 2, CustomMaterial.FISHING_LOOT_RED_SNAPPER, "Red Snapper", 10),
+	RED_MULLET(FishingLootCategory.FISH, 2, CustomMaterial.FISHING_LOOT_RED_MULLET, "Red Mullet", 10),
 	// Junk
-	OLD_BOOTS(JUNK, 1, CustomMaterial.FISHING_LOOT_OLD_BOOTS, "Old Boots", 10),
-	RUSTY_SPOON(JUNK, 0, CustomMaterial.FISHING_LOOT_RUSTY_SPOON, "Rusty Spoon", 10),
-	BROKEN_CD(JUNK, 0, CustomMaterial.FISHING_LOOT_BROKEN_CD, "Broken CD", 10),
-	LOST_BOOK(JUNK, 1, CustomMaterial.FISHING_LOOT_LOST_BOOK, "Lost Book", 10),
-	SOGGY_NEWSPAPER(JUNK, 0, CustomMaterial.FISHING_LOOT_SOGGY_NEWSPAPER, "Soggy Newspaper", 10),
-	DRIFTWOOD(JUNK, 0, CustomMaterial.FISHING_LOOT_DRIFTWOOD, "Driftwood", 10),
-	SEAWEED(JUNK, 0, CustomMaterial.FISHING_LOOT_SEAWEED, "Seaweed", 10),
+	OLD_BOOTS(FishingLootCategory.JUNK, 1, CustomMaterial.FISHING_LOOT_OLD_BOOTS, "Old Boots", 10),
+	RUSTY_SPOON(FishingLootCategory.JUNK, 0, CustomMaterial.FISHING_LOOT_RUSTY_SPOON, "Rusty Spoon", 10),
+	BROKEN_CD(FishingLootCategory.JUNK, 0, CustomMaterial.FISHING_LOOT_BROKEN_CD, "Broken CD", 10),
+	LOST_BOOK(FishingLootCategory.JUNK, 1, CustomMaterial.FISHING_LOOT_LOST_BOOK, "Lost Book", 10),
+	SOGGY_NEWSPAPER(FishingLootCategory.JUNK, 0, CustomMaterial.FISHING_LOOT_SOGGY_NEWSPAPER, "Soggy Newspaper", 10),
+	DRIFTWOOD(FishingLootCategory.JUNK, 0, CustomMaterial.FISHING_LOOT_DRIFTWOOD, "Driftwood", 10),
+	SEAWEED(FishingLootCategory.JUNK, 0, CustomMaterial.FISHING_LOOT_SEAWEED, "Seaweed", 10),
 	// Treasure
-	GOLD_NUGGET(TREASURE, 1, Material.GOLD_NUGGET, 15),
-	UNBREAKING(TREASURE, 5, Material.ENCHANTED_BOOK, 10),
-	EFFICIENCY(TREASURE, 5, Material.ENCHANTED_BOOK, 10),
-	FORTUNE(TREASURE, 6, Material.ENCHANTED_BOOK, 8),
-	LURE(TREASURE, 6, Material.ENCHANTED_BOOK, 8),
-	DIAMOND(TREASURE, 7, Material.DIAMOND, 6),
-	NAUTILUS_SHELL(TREASURE, 7, Material.NAUTILUS_SHELL, 6),
-	TREASURE_CHEST(TREASURE, 8, CustomMaterial.FISHING_LOOT_TREASURE_CHEST, "Treasure Chest", 5),
+	GOLD_NUGGET(FishingLootCategory.TREASURE, 1, Material.GOLD_NUGGET, 15),
+	UNBREAKING(FishingLootCategory.TREASURE, 5, Material.ENCHANTED_BOOK, 10),
+	EFFICIENCY(FishingLootCategory.TREASURE, 5, Material.ENCHANTED_BOOK, 10),
+	FORTUNE(FishingLootCategory.TREASURE, 6, Material.ENCHANTED_BOOK, 8),
+	LURE(FishingLootCategory.TREASURE, 6, Material.ENCHANTED_BOOK, 8),
+	DIAMOND(FishingLootCategory.TREASURE, 7, Material.DIAMOND, 6),
+	NAUTILUS_SHELL(FishingLootCategory.TREASURE, 7, Material.NAUTILUS_SHELL, 6),
+	TREASURE_CHEST(FishingLootCategory.TREASURE, 8, CustomMaterial.FISHING_LOOT_TREASURE_CHEST, "Treasure Chest", 5),
 	// Unique
-	MIDNIGHT_CARP(UNIQUE, 8, CustomMaterial.FISHING_LOOT_MIDNIGHT_CARP, "Midnight Carp", 50, "main", NIGHT),
-	SUNFISH(UNIQUE, 8, CustomMaterial.FISHING_LOOT_SUNFISH, "Sunfish", 50, "main", DAY),
-	STONEFISH(UNIQUE, 10, CustomMaterial.FISHING_LOOT_STONEFISH, "Stonefish", 100, "main", 120),
-	TIGER_TROUT(UNIQUE, 8, CustomMaterial.FISHING_LOOT_TIGER_TROUT, "Tiger Trout", 50, "minigamenight"),
-	SEA_CUCUMBER(UNIQUE, 8, CustomMaterial.FISHING_LOOT_SEA_CUCUMBER, "Sea Cucumber", 50, "minigamenight"),
-	GLACIERFISH(UNIQUE, 10, CustomMaterial.FISHING_LOOT_GLACIERFISH, "Glacierfish", 100, "pugmas"),
-	CRIMSONFISH(UNIQUE, 10, CustomMaterial.FISHING_LOOT_CRIMSONFISH, "Crimsonfish", 100, "halloween"),
-	BLOBFISH(UNIQUE, 10, CustomMaterial.FISHING_LOOT_BLOBFISH, "Blobfish", 100, "summerdownunder"),
+	MIDNIGHT_CARP(FishingLootCategory.UNIQUE, 8, CustomMaterial.FISHING_LOOT_MIDNIGHT_CARP, "Midnight Carp", 50, "main", FishingLootTime.NIGHT),
+	SUNFISH(FishingLootCategory.UNIQUE, 8, CustomMaterial.FISHING_LOOT_SUNFISH, "Sunfish", 50, "main", FishingLootTime.DAY),
+	STONEFISH(FishingLootCategory.UNIQUE, 10, CustomMaterial.FISHING_LOOT_STONEFISH, "Stonefish", 100, "main", 120),
+	TIGER_TROUT(FishingLootCategory.UNIQUE, 8, CustomMaterial.FISHING_LOOT_TIGER_TROUT, "Tiger Trout", 50, "minigamenight"),
+	SEA_CUCUMBER(FishingLootCategory.UNIQUE, 8, CustomMaterial.FISHING_LOOT_SEA_CUCUMBER, "Sea Cucumber", 50, "minigamenight"),
+	GLACIERFISH(FishingLootCategory.UNIQUE, 10, CustomMaterial.FISHING_LOOT_GLACIERFISH, "Glacierfish", 100, "pugmas"),
+	CRIMSONFISH(FishingLootCategory.UNIQUE, 10, CustomMaterial.FISHING_LOOT_CRIMSONFISH, "Crimsonfish", 100, "halloween"),
+	BLOBFISH(FishingLootCategory.UNIQUE, 10, CustomMaterial.FISHING_LOOT_BLOBFISH, "Blobfish", 100, "summerdownunder"),
 	;
 
 	private final FishingLootCategory category;
@@ -84,11 +76,11 @@ public enum FishingLoot {
 	}
 
 	FishingLoot(FishingLootCategory category, int gold, CustomMaterial material, String customName, double weight) {
-		this(category, gold, material.getMaterial(), material.getModelId(), weight, customName, null, BOTH, null);
+		this(category, gold, material.getMaterial(), material.getModelId(), weight, customName, null, FishingLootTime.BOTH, null);
 	}
 
 	FishingLoot(FishingLootCategory category, int gold, CustomMaterial material, String customName, double weight, String region) {
-		this(category, gold, material.getMaterial(), material.getModelId(), weight, customName, region, BOTH, null);
+		this(category, gold, material.getMaterial(), material.getModelId(), weight, customName, region, FishingLootTime.BOTH, null);
 	}
 
 	FishingLoot(FishingLootCategory category, int gold, CustomMaterial material, String customName, double weight, String region, FishingLootTime time) {
@@ -96,7 +88,7 @@ public enum FishingLoot {
 	}
 
 	FishingLoot(FishingLootCategory category, int gold, CustomMaterial material, String customName, double weight, String region, Integer maxY) {
-		this(category, gold, material.getMaterial(), material.getModelId(), weight, customName, region, BOTH, maxY);
+		this(category, gold, material.getMaterial(), material.getModelId(), weight, customName, region, FishingLootTime.BOTH, maxY);
 	}
 
 	public static List<FishingLoot> of(FishingLootCategory category) {
@@ -109,7 +101,7 @@ public enum FishingLoot {
 	}
 
 	public static boolean isTrash(ItemStack itemStack) {
-		for (FishingLoot loot : of(JUNK)) {
+		for (FishingLoot loot : of(FishingLootCategory.JUNK)) {
 			if (ItemUtils.isFuzzyMatch(loot.getItem(), itemStack))
 				return true;
 		}
@@ -134,14 +126,14 @@ public enum FishingLoot {
 	private boolean timeApplies(Player player) {
 		World world = player.getWorld();
 		FishingLootTime time = this.getTime();
-		if (time == BOTH)
+		if (time == FishingLootTime.BOTH)
 			return true;
 
 		boolean isDay = world.isDayTime();
-		if (isDay && time == DAY)
+		if (isDay && time == FishingLootTime.DAY)
 			return true;
 		else
-			return !isDay && time == NIGHT;
+			return !isDay && time == FishingLootTime.NIGHT;
 	}
 
 	private boolean regionApplies(Player player) {

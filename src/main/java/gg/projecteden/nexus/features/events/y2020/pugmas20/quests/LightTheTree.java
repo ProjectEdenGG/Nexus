@@ -12,12 +12,8 @@ import gg.projecteden.nexus.features.events.y2020.pugmas20.models.QuestNPC;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20User;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20UserService;
-import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
 import lombok.Getter;
@@ -44,10 +40,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
-import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.PREFIX;
-import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isAtPugmas;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-
 @NoArgsConstructor
 public class LightTheTree implements Listener {
 	private static final String lighterRg = Pugmas20.getRegion() + "_lighter";
@@ -67,7 +59,7 @@ public class LightTheTree implements Listener {
 		if (!EquipmentSlot.HAND.equals(event.getHand())) return;
 
 		Player player = event.getPlayer();
-		if (!isAtPugmas(player)) return;
+		if (!Pugmas20.isAtPugmas(player)) return;
 
 		Entity entity = event.getRightClicked();
 		if (!entity.getType().equals(EntityType.ITEM_FRAME)) return;
@@ -89,7 +81,7 @@ public class LightTheTree implements Listener {
 
 		PlayerUtils.giveItem(player, lighter_broken);
 		Quests.sound_obtainItem(player);
-		user.sendMessage(PREFIX + "You have found the &3&l" + stripColor(lighter_broken.getItemMeta().getDisplayName()));
+		user.sendMessage(Pugmas20.PREFIX + "You have found the &3&l" + StringUtils.stripColor(lighter_broken.getItemMeta().getDisplayName()));
 
 		user.setLightTreeStage(QuestStage.STEP_TWO);
 		service.save(user);
@@ -118,14 +110,14 @@ public class LightTheTree implements Listener {
 					PlayerUtils.setPlayerTime(player, "14000ticks");
 					user.setLightingTorches(true);
 					String format = TimespanBuilder.ofSeconds(timerTicks / 20).format(FormatType.LONG);
-					user.sendMessage(PREFIX + "You have begun the Pugmas tree lighting ceremony. You have " + format + " to light all the torches!");
+					user.sendMessage(Pugmas20.PREFIX + "You have begun the Pugmas tree lighting ceremony. You have " + format + " to light all the torches!");
 				})
 				.onSecond(i -> ActionBarUtils.sendActionBar(player, "&3" + Timespan.ofSeconds(i).format()))
 				.onComplete(() -> {
 					user.resetLightTheTree();
 					service.save(user);
-					user.sendMessage(PREFIX + "You ran out of time!");
-					user.sendMessage(new JsonBuilder(PREFIX + "Click to teleport back to the start").command("/pugmas quests light_the_tree teleportToStart"));
+					user.sendMessage(Pugmas20.PREFIX + "You ran out of time!");
+					user.sendMessage(new JsonBuilder(Pugmas20.PREFIX + "Click to teleport back to the start").command("/pugmas quests light_the_tree teleportToStart"));
 				})
 				.start();
 
@@ -139,7 +131,7 @@ public class LightTheTree implements Listener {
 
 		Player player = event.getPlayer();
 		Block block = event.getClickedBlock();
-		if (!isAtPugmas(player)) return;
+		if (!Pugmas20.isAtPugmas(player)) return;
 		if (block == null) return;
 
 		Pugmas20UserService service = new Pugmas20UserService();
@@ -164,10 +156,10 @@ public class LightTheTree implements Listener {
 
 		// TODO PUGMAS Better wording
 		if (torch > user.getTorchesLit() + 1) {
-			user.sendMessage(PREFIX + "You missed a torch!");
+			user.sendMessage(Pugmas20.PREFIX + "You missed a torch!");
 			return;
 		} else if (torch == user.getTorchesLit() + 1) {
-			user.sendMessage(PREFIX + "Torch &e#" + torch + " &3of " + torches + " lit");
+			user.sendMessage(Pugmas20.PREFIX + "Torch &e#" + torch + " &3of " + torches + " lit");
 			new SoundBuilder(Sound.ENTITY_BLAZE_SHOOT).receiver(player).volume(0.5F).pitch(0.1F).play();
 			user.setTorchesLit(torch);
 			service.save(user);
@@ -203,7 +195,7 @@ public class LightTheTree implements Listener {
 				service.save(user);
 
 				// TODO PUGMAS Better wording
-				user.sendMessage(PREFIX + "You lit the tree!");
+				user.sendMessage(Pugmas20.PREFIX + "You lit the tree!");
 
 				Tasks.wait(TickTime.SECOND, () ->
 					new EventUserService().edit(player, eventUser -> eventUser.giveTokens(300)));
@@ -229,7 +221,7 @@ public class LightTheTree implements Listener {
 			Pugmas20UserService service = new Pugmas20UserService();
 
 			for (Player player : OnlinePlayers.getAll()) {
-				if (!isAtPugmas(player))
+				if (!Pugmas20.isAtPugmas(player))
 					continue;
 
 				Pugmas20User user = service.get(player);
@@ -302,14 +294,14 @@ public class LightTheTree implements Listener {
 			return;
 
 		Player player = event.getPlayer();
-		if (!isAtPugmas(player))
+		if (!Pugmas20.isAtPugmas(player))
 			return;
 
 		Entity entity = event.getRightClicked();
 		if (entity.getType() != EntityType.ARMOR_STAND)
 			return;
 
-		if (!isAtPugmas(entity.getLocation(), "minerskit"))
+		if (!Pugmas20.isAtPugmas(entity.getLocation(), "minerskit"))
 			return;
 
 		event.setCancelled(true);
@@ -338,8 +330,8 @@ public class LightTheTree implements Listener {
 		}
 
 		if (gavePickaxe || gaveSieve) {
-			String pickName = "&3&l" + stripColor(TheMines.getMinersPickaxe().getItemMeta().getDisplayName());
-			String sieveName = "&3&l" + stripColor(TheMines.getMinersSieve().getItemMeta().getDisplayName());
+			String pickName = "&3&l" + StringUtils.stripColor(TheMines.getMinersPickaxe().getItemMeta().getDisplayName());
+			String sieveName = "&3&l" + StringUtils.stripColor(TheMines.getMinersSieve().getItemMeta().getDisplayName());
 			String obtained = Pugmas20.PREFIX + " You have obtained a ";
 
 			if (gavePickaxe && gaveSieve)

@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.menus.api.annotations.Uncloseable;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
@@ -18,8 +19,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Rows(5)
 @Uncloseable
@@ -72,12 +71,12 @@ public class ArcadeMachineMenu extends InventoryProvider implements Listener {
 			}
 			contents.set(openSlots[i], ClickableItem.of(item, e -> {
 				if (e.getItem().getType().equals(Material.LIGHT_GRAY_STAINED_GLASS_PANE)) {
-					if (isNullOrAir(viewer.getItemOnCursor())) return;
+					if (Nullables.isNullOrAir(viewer.getItemOnCursor())) return;
 					contents.set(e.getSlot(), ClickableItem.empty(viewer.getItemOnCursor()));
 					viewer.setItemOnCursor(null);
 					getItems(viewer, contents);
 				} else {
-					if (isNullOrAir(viewer.getItemOnCursor()))
+					if (Nullables.isNullOrAir(viewer.getItemOnCursor()))
 						contents.set(e.getSlot(), ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE).name(" ").build()));
 					else {
 						contents.set(e.getSlot(), ClickableItem.empty(viewer.getItemOnCursor()));

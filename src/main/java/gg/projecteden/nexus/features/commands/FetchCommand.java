@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
@@ -20,8 +21,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @HideFromWiki
 @NoArgsConstructor
@@ -87,7 +86,7 @@ public class FetchCommand extends CustomCommand implements Listener {
 		if (event.getHand() != EquipmentSlot.HAND)
 			return;
 
-		if (isNullOrAir(event.getPlayer().getInventory().getItemInMainHand()))
+		if (Nullables.isNullOrAir(event.getPlayer().getInventory().getItemInMainHand()))
 			return;
 
 		if (event.getPlayer().getInventory().getItemInMainHand().getType() != Material.BONE)

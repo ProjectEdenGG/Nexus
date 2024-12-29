@@ -10,17 +10,8 @@ import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegion
 import gg.projecteden.nexus.models.bearfair20.BearFair20User;
 import gg.projecteden.nexus.models.bearfair20.BearFair20User.BF20PointSource;
 import gg.projecteden.nexus.models.bearfair20.BearFair20UserService;
-import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldEditUtils;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import gg.projecteden.nexus.utils.*;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -40,20 +31,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.giveDailyPoints;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.isAtBearFair;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.send;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static org.bukkit.block.BlockFace.EAST;
-import static org.bukkit.block.BlockFace.NORTH;
-import static org.bukkit.block.BlockFace.NORTH_EAST;
-import static org.bukkit.block.BlockFace.NORTH_WEST;
-import static org.bukkit.block.BlockFace.SOUTH;
-import static org.bukkit.block.BlockFace.SOUTH_EAST;
-import static org.bukkit.block.BlockFace.SOUTH_WEST;
-import static org.bukkit.block.BlockFace.WEST;
-
 public class Reflection implements Listener {
 
 	private WorldEditUtils worldedit = new WorldEditUtils(BearFair20.getWorld());
@@ -71,7 +48,7 @@ public class Reflection implements Listener {
 	//
 	private List<Location> lampLocList = new ArrayList<>();
 	private Location center = new Location(BearFair20.getWorld(), -950, 137, -1689);
-	private List<BlockFace> directions = Arrays.asList(NORTH, NORTH_EAST, EAST, SOUTH_EAST, SOUTH, SOUTH_WEST, WEST, NORTH_WEST);
+	private List<BlockFace> directions = Arrays.asList(BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST);
 	private String prefix = "&8&l[&eReflection&8&l] &f";
 	//
 	private String objMsg = "null";
@@ -86,7 +63,7 @@ public class Reflection implements Listener {
 	}
 
 	private void setLamps() {
-		ProtectedRegion region = worldguard().getProtectedRegion(powderRg);
+		ProtectedRegion region = BearFair20.worldguard().getProtectedRegion(powderRg);
 		List<Block> blocks = worldedit.getBlocks(region);
 		for (Block block : blocks) {
 			if (block.getType().equals(Material.YELLOW_CONCRETE_POWDER)) {
@@ -107,7 +84,7 @@ public class Reflection implements Listener {
 	}
 
 	private void randomizeBanners() {
-		ProtectedRegion region = worldguard().getProtectedRegion(powderRg);
+		ProtectedRegion region = BearFair20.worldguard().getProtectedRegion(powderRg);
 		List<Block> blocks = worldedit.getBlocks(region);
 		for (Block block : blocks) {
 			if (!MaterialTag.CONCRETE_POWDERS.isTagged(block.getType())) continue;
@@ -134,7 +111,7 @@ public class Reflection implements Listener {
 		if (!event.getClickedBlock().getType().equals(Material.STONE_BUTTON)) return;
 
 		Block button = event.getClickedBlock();
-		if (!isAtBearFair(button)) return;
+		if (!BearFair20.isAtBearFair(button)) return;
 
 		BlockData blockData = button.getBlockData();
 		Directional directional = (Directional) blockData;
@@ -271,7 +248,7 @@ public class Reflection implements Listener {
 
 	private void laserSound() {
 		soundTaskId = Tasks.repeat(0, TickTime.SECOND.x(5), () -> {
-			Collection<Player> players = worldguard().getPlayersInRegion(gameRg);
+			Collection<Player> players = BearFair20.worldguard().getPlayersInRegion(gameRg);
 			for (Player player : players)
 				player.playSound(laserSoundLoc, Sound.BLOCK_BEACON_AMBIENT, 1F, 1F);
 		});
@@ -280,7 +257,7 @@ public class Reflection implements Listener {
 	private void endLaser() {
 		Tasks.cancel(laserTaskId);
 		Tasks.cancel(soundTaskId);
-		Collection<Player> players = worldguard().getPlayersInRegion(gameRg);
+		Collection<Player> players = BearFair20.worldguard().getPlayersInRegion(gameRg);
 		for (Player player : players)
 			player.stopSound(Sound.BLOCK_BEACON_AMBIENT);
 		BearFair20.getWorld().playSound(center, Sound.BLOCK_BEACON_DEACTIVATE, 1F, 1F);
@@ -290,12 +267,12 @@ public class Reflection implements Listener {
 	private void win(int reflections) {
 		BearFair20.getWorld().playSound(center, Sound.BLOCK_NOTE_BLOCK_BELL, 1F, 1F);
 
-		String color = objColor.getChatColor() + camelCase(objColor.getName());
-		Collection<Player> players = worldguard().getPlayersInRegion(gameRg);
+		String color = objColor.getChatColor() + StringUtils.camelCase(objColor.getName());
+		Collection<Player> players = BearFair20.worldguard().getPlayersInRegion(gameRg);
 		for (Player player : players)
-			send(prefix + color + " " + objMob + " &fwas hit in " + reflections + " reflections!", player);
+			BearFair20.send(prefix + color + " " + objMob + " &fwas hit in " + reflections + " reflections!", player);
 
-		if (giveDailyPoints) {
+		if (BearFair20.giveDailyPoints) {
 			BearFair20User user = new BearFair20UserService().get(buttonPresser);
 			user.giveDailyPoints(SOURCE);
 			new BearFair20UserService().save(user);
@@ -327,7 +304,7 @@ public class Reflection implements Listener {
 
 		objMob = mobs.get(colors.indexOf(objColor));
 
-		String color = objColor.getChatColor() + camelCase(objColor.getName());
+		String color = objColor.getChatColor() + StringUtils.camelCase(objColor.getName());
 
 		objReflections = 0;
 		if (RandomUtils.chanceOf(50))
@@ -349,9 +326,9 @@ public class Reflection implements Listener {
 	}
 
 	private void broadcastObjective() {
-		Collection<Player> players = worldguard().getPlayersInRegion(gameRg);
+		Collection<Player> players = BearFair20.worldguard().getPlayersInRegion(gameRg);
 		for (Player player : players) {
-			send(prefix + objMsg, player);
+			BearFair20.send(prefix + objMsg, player);
 		}
 	}
 
@@ -359,7 +336,7 @@ public class Reflection implements Listener {
 	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		String regionId = event.getRegion().getId();
 		if (regionId.equalsIgnoreCase(gameRg)) {
-			send(prefix + objMsg, event.getPlayer());
+			BearFair20.send(prefix + objMsg, event.getPlayer());
 		}
 	}
 }

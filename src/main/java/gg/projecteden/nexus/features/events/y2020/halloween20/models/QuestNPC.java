@@ -9,6 +9,7 @@ import gg.projecteden.nexus.models.halloween20.Halloween20User;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -20,8 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public enum QuestNPC {
 
@@ -293,7 +292,7 @@ public enum QuestNPC {
 
 		AtomicInteger wait = new AtomicInteger(0);
 		script.forEach(line -> {
-			npcName.set(camelCase(name().replaceAll("_", " ")));
+			npcName.set(StringUtils.camelCase(name().replaceAll("_", " ")));
 			npcName.set(npcName.get().replaceAll("[\\d]+", ""));
 			if (line.toLowerCase().matches("^wait \\d+$"))
 				wait.getAndAdd(Integer.parseInt(line.toLowerCase().replace("wait ", "")));

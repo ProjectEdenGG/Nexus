@@ -6,10 +6,11 @@ import gg.projecteden.nexus.models.invisiblearmour.InvisibleArmor;
 import gg.projecteden.nexus.models.invisiblearmour.InvisibleArmorService;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.nms.PacketUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.ArmorSlot;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.nms.PacketUtils;
 import lombok.Builder;
 import lombok.Data;
 import org.bukkit.Color;
@@ -24,8 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Builder
@@ -98,7 +97,7 @@ public class RainbowArmorTask {
 	}
 
 	private boolean isEnabled(ArmorSlot slot) {
-		return isNullOrEmpty(disabledSlots) || !disabledSlots.contains(slot);
+		return Nullables.isNullOrEmpty(disabledSlots) || !disabledSlots.contains(slot);
 	}
 
 	@NotNull

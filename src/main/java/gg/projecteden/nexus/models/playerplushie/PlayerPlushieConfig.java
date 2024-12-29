@@ -20,35 +20,23 @@ import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.models.skincache.SkinCache;
 import gg.projecteden.nexus.utils.ImageUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import kotlin.Pair;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import lombok.*;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
-import static gg.projecteden.nexus.utils.StringUtils.getPrefix;
 
 @Data
 @Entity(value = "player_plushie_config", noClassnameStored = true)
@@ -101,7 +89,7 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 			else
 				instructions = "by &erelogging &3or running &c/rp &etwice ";
 
-			Nerd.of(uuid).sendMessage("%sPlease update your texture pack %s&3in order to see your Player Plushies".formatted(getPrefix("PlayerPlushies"), instructions));
+			Nerd.of(uuid).sendMessage("%sPlease update your texture pack %s&3in order to see your Player Plushies".formatted(StringUtils.getPrefix("PlayerPlushies"), instructions));
 			ResourcePack.read(); // reload resource pack cache
 		});
 	}
@@ -128,7 +116,7 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 
 		AtomicInteger modelId = new AtomicInteger(1);
 		Utils.attempt(100, () -> {
-			modelId.set(randomElement(ALL_MODELS.keySet()));
+			modelId.set(RandomUtils.randomElement(ALL_MODELS.keySet()));
 			return ALL_MODELS.get(modelId.get()).getFirst() != null;
 		});
 

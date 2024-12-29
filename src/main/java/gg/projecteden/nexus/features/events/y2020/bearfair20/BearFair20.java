@@ -8,22 +8,15 @@ import gg.projecteden.nexus.features.events.y2020.bearfair20.islands.IslandType;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.islands.MainIsland;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.EasterEggs;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.godmode.GodmodeService;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Timer;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
-import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Data;
 import lombok.Getter;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
@@ -37,10 +30,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
-import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Data
 public class BearFair20 implements Listener {
@@ -132,7 +121,7 @@ public class BearFair20 implements Listener {
 
 		if (ActionGroup.RIGHT_CLICK.applies(event)) {
 			ItemStack item = player.getInventory().getItemInMainHand();
-			if (!isNullOrAir(item)) {
+			if (!Nullables.isNullOrAir(item)) {
 				if (item.getType().equals(Material.ENDER_PEARL)) {
 					event.setCancelled(true);
 				}
@@ -210,7 +199,7 @@ public class BearFair20 implements Listener {
 		if (PlayerUtils.isWGEdit(player)) return "wgedit";
 		if (!player.getGameMode().equals(GameMode.SURVIVAL)) return "creative";
 		if (player.isFlying()) return "fly";
-		if (isVanished(player)) return "vanish";
+		if (Vanish.isVanished(player)) return "vanish";
 		if (new GodmodeService().get(player).isActive()) return "godemode";
 
 		return null;
@@ -241,7 +230,7 @@ public class BearFair20 implements Listener {
 	}
 
 	public static boolean isBFItem(ItemStack item) {
-		return item != null && item.getLore() != null && item.getLore().get(0).contains(itemLore);
+		return item != null && item.getLore() != null && item.getLore().get(0).contains(BFQuests.itemLore);
 	}
 
 	public static void send(String message, Player to) {

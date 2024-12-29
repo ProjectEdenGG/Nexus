@@ -14,16 +14,9 @@ import gg.projecteden.nexus.features.votes.party.RewardTier;
 import gg.projecteden.nexus.features.votes.party.VoteParty;
 import gg.projecteden.nexus.features.votes.vps.VPS;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -44,18 +37,9 @@ import org.bukkit.entity.Player;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.TimeUtils.shortishDateTimeFormat;
-import static gg.projecteden.nexus.features.votes.Votes.GOAL;
-import static gg.projecteden.nexus.utils.StringUtils.ProgressBar.SummaryStyle.NONE;
 
 @Aliases("votes")
 @Redirect(from = "/vps", to = "/vote points store")
@@ -89,7 +73,7 @@ public class VoteCommand extends CustomCommand {
 		}
 		line();
 		if (!VoteParty.isFeatureEnabled(player())) {
-			send(json("&3Server goal: " + ProgressBar.builder().progress(sum).goal(GOAL).summaryStyle(NONE).length(300).seamless(true).build() + " &e" + sum + "&3/&e" + GOAL)
+			send(json("&3Server goal: " + ProgressBar.builder().progress(sum).goal(Votes.GOAL).summaryStyle(ProgressBar.SummaryStyle.NONE).length(300).seamless(true).build() + " &e" + sum + "&3/&e" + Votes.GOAL)
 				.hover("&eReach the goal together for a monthly reward!"));
 			line();
 		}
@@ -117,7 +101,7 @@ public class VoteCommand extends CustomCommand {
 		voter.getVotes().sort(Comparator.comparing(Vote::getTimestamp).reversed());
 
 		final BiFunction<Vote, String, JsonBuilder> formatter = (vote, index) ->
-			json("&3" + index + " &7" + shortishDateTimeFormat(vote.getTimestamp()) + " - &e" + vote.getSite().name())
+			json("&3" + index + " &7" + TimeUtils.shortishDateTimeFormat(vote.getTimestamp()) + " - &e" + vote.getSite().name())
 				.hover("&3" + Timespan.of(vote.getTimestamp()).format() + " ago");
 
 		paginate(voter.getVotes(), formatter, "/vote history " + voter.getName(), page);

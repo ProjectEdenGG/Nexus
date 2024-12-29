@@ -8,23 +8,12 @@ import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
 import gg.projecteden.nexus.features.events.models.Train.Crossing.TrackSide;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
-import gg.projecteden.nexus.utils.EntityUtils;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldEditUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Lightable;
 import org.bukkit.block.data.type.Light;
@@ -35,21 +24,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Supplier;
-
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static gg.projecteden.nexus.utils.EntityUtils.forcePacket;
-import static gg.projecteden.nexus.utils.EntityUtils.getNearbyEntities;
-import static gg.projecteden.nexus.utils.RandomUtils.randomDouble;
-import static java.util.Comparator.comparing;
 
 public class Train {
 	@Getter
@@ -213,7 +189,7 @@ public class Train {
 					if (Nullables.isNullOrAir(armorStand.getEquipment().getHelmet()))
 						continue;
 
-					for (Entity entity : getNearbyEntities(armorStand.getLocation(), 4).keySet()) {
+					for (Entity entity : EntityUtils.getNearbyEntities(armorStand.getLocation(), 4).keySet()) {
 						if (!(entity instanceof Player player))
 							continue;
 
@@ -238,7 +214,7 @@ public class Train {
 								.receiver(player)
 								.location(nearest.getLocation())
 								.category(SoundCategory.AMBIENT)
-								.volume(MathUtils.clamp((63 - distance(player, nearest).getRealDistance()) * .03448275862, 0, 2))
+								.volume(MathUtils.clamp((63 - Distance.distance(player, nearest).getRealDistance()) * .03448275862, 0, 2))
 								.play();
 				})));
 
@@ -250,7 +226,7 @@ public class Train {
 		if (getValidArmorStands().isEmpty())
 			return null;
 
-		return Collections.min(getValidArmorStands(), comparing(armorStand -> distance(player, armorStand).get()));
+		return Collections.min(getValidArmorStands(), Comparator.comparing(armorStand -> Distance.distance(player, armorStand).get()));
 	}
 
 	private List<ArmorStand> getValidArmorStands() {
@@ -295,7 +271,7 @@ public class Train {
 		if (!armorStand.isValid())
 			return;
 
-		forcePacket(armorStand);
+		EntityUtils.forcePacket(armorStand);
 		final Location to = armorStand.getLocation().clone().add(forwards.getDirection().multiply(speed));
 
 		reveal(armorStand, to);
@@ -382,7 +358,7 @@ public class Train {
 
 		public Smoke(Location location) {
 			final World world = location.getWorld();
-			final Supplier<Double> random = () -> randomDouble(-.25, .25);
+			final Supplier<Double> random = () -> RandomUtils.randomDouble(-.25, .25);
 			final Supplier<Location> offset = () -> location.clone().add(random.get(), random.get(), random.get());
 
 			world.spawnParticle(particle, offset.get(), count, x, y, z, speed);

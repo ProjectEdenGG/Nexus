@@ -10,11 +10,8 @@ import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.ActionBarUtils;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import gg.projecteden.nexus.utils.StringUtils;
+import lombok.*;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDate;
@@ -23,8 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 @Data
 @Entity(value = "event_user", noClassnameStored = true)
@@ -93,7 +88,7 @@ public class EventUser implements PlayerOwnedObject {
 			sendMessage(EdenEvent.PREFIX_EVENTS + "You have &areceived &e" + tokens + " event tokens&3. New balance: &e" + this.tokens);
 
 			if (actionBar)
-				ActionBarUtils.sendActionBar(getOnlinePlayer(), "&e+" + tokens + plural(" event token", tokens));
+				ActionBarUtils.sendActionBar(getOnlinePlayer(), "&e+" + tokens + StringUtils.plural(" event token", tokens));
 		}
 	}
 

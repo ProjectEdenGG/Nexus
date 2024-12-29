@@ -1,15 +1,12 @@
 package gg.projecteden.nexus.features.events;
 
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -17,6 +14,7 @@ import gg.projecteden.nexus.models.trophy.TrophyHolder;
 import gg.projecteden.nexus.models.trophy.TrophyHolderService;
 import gg.projecteden.nexus.models.trophy.TrophyType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -25,9 +23,6 @@ import lombok.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static gg.projecteden.nexus.features.menus.MenuUtils.handleException;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Aliases("trophies")
 public class TrophyCommand extends CustomCommand {
@@ -125,7 +120,7 @@ public class TrophyCommand extends CustomCommand {
 
 			List<ClickableItem> items = new ArrayList<>();
 
-			if (isNullOrEmpty(event)) {
+			if (Nullables.isNullOrEmpty(event)) {
 				for (String event : TrophyType.getEvents()) {
 					if (TrophyType.getEarnedTrophies(holder, event).isEmpty())
 						continue;
@@ -147,7 +142,7 @@ public class TrophyCommand extends CustomCommand {
 								holder.claim(trophy);
 								service.save(holder);
 							} catch (InvalidInputException ex) {
-								handleException(viewer, Commands.getPrefix(TrophyCommand.class), ex);
+								MenuUtils.handleException(viewer, Commands.getPrefix(TrophyCommand.class), ex);
 							} finally {
 								open(viewer);
 							}

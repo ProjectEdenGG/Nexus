@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.feature
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.DescriptionExtra;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,8 +15,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @AllArgsConstructor
 @Getter
@@ -51,7 +50,7 @@ public enum AutoInventoryFeature {
 
 	@Override
 	public String toString() {
-		return camelCase(name().replaceFirst("AUTO", "AUTO_")).replaceFirst("Auto ", "Auto");
+		return StringUtils.camelCase(name().replaceFirst("AUTO", "AUTO_")).replaceFirst("Auto ", "Auto");
 	}
 
 	public void checkPermission(HasPlayer player) throws NoPermissionException {

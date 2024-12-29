@@ -4,6 +4,7 @@ import com.destroystokyo.paper.entity.Pathfinder;
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.PathfinderHelper;
 import gg.projecteden.nexus.features.particles.effects.LineEffect;
@@ -20,16 +21,9 @@ import gg.projecteden.nexus.models.bearfair21.BearFair21WebConfig.Route;
 import gg.projecteden.nexus.models.bearfair21.BearFair21WebConfig.Web;
 import gg.projecteden.nexus.models.bearfair21.BearFair21WebConfigService;
 import gg.projecteden.nexus.models.particle.ParticleService;
-import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.GlowUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
-import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -42,16 +36,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import static gg.projecteden.api.common.utils.Utils.getMax;
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
+import java.util.*;
 
 @Disabled
 @HideFromWiki
@@ -269,10 +254,10 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 
 		if (type.equals(Material.LIME_CONCRETE_POWDER) && selectedNode == null) {
 			PathfinderHelper.setSelectedLoc(currentNode.getLocation());
-			send(player, "&aSelected node at " + getShortLocationString(currentLoc));
+			send(player, "&aSelected node at " + StringUtils.getShortLocationString(currentLoc));
 
 		} else if (type.equals(Material.PURPLE_CONCRETE_POWDER) && selectedNode != null) {
-			double distance = distance(selectedNode, currentNode).get();
+			double distance = Distance.distance(selectedNode, currentNode).get();
 
 			selectedNode.getNeighbors().put(currentNode.getUuid(), distance);
 			currentNode.getNeighbors().put(selectedNode.getUuid(), distance);
@@ -357,7 +342,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 		}
 
 		if (Material.LIME_CONCRETE_POWDER.equals(type)) {
-			send(player, "&2Unselected node at " + getShortLocationString(selectedNode.getLocation()));
+			send(player, "&2Unselected node at " + StringUtils.getShortLocationString(selectedNode.getLocation()));
 			PathfinderHelper.setSelectedLoc(null);
 
 		} else if (Material.PURPLE_CONCRETE_POWDER.equals(type)) {
@@ -380,10 +365,10 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 				break;
 
 			List<Node> neighbors = new ArrayList<>(web.getNeighborNodes(furthest));
-			MinMaxResult<Node> temp = getMax(neighbors, neighbor -> distance(neighbor, origin).get());
+			MinMaxResult<Node> temp = Utils.getMax(neighbors, neighbor -> Distance.distance(neighbor, origin).get());
 			double furthestDistance = temp.getDouble();
 
-			if (distance(furthest, origin).gt(furthestDistance)) {
+			if (Distance.distance(furthest, origin).gt(furthestDistance)) {
 				break;
 			} else {
 				furthest = temp.getObject();

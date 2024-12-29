@@ -4,9 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
-import static gg.projecteden.nexus.features.store.perks.inventory.workbenches._WorkbenchCommand.PERMISSION;
-
-@Permission(PERMISSION)
+@Permission(_WorkbenchCommand.PERMISSION)
 @WikiConfig(rank = "Store", feature = "Inventory")
 public class GrindstoneCommand extends _WorkbenchCommand {
 

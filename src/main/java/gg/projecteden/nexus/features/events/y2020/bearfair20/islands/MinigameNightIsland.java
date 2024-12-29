@@ -9,23 +9,15 @@ import gg.projecteden.nexus.features.events.models.BearFairIsland.NPCClass;
 import gg.projecteden.nexus.features.events.models.Talker.TalkingNPC;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.islands.MinigameNightIsland.MinigameNightNPCs;
+import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.arcademachine.ArcadeMachineMenu;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.models.bearfair20.BearFair20User;
 import gg.projecteden.nexus.models.bearfair20.BearFair20UserService;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -38,17 +30,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.chime;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import java.util.*;
 
 @Region("minigamenight")
 @NPCClass(MinigameNightNPCs.class)
@@ -67,21 +49,21 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 	private static Location basementExit = new Location(BearFair20.getWorld(), -1183, 142, -1755, 0, 0);
 	private static boolean activeSolder = false;
 	// Quest Items
-	public static ItemBuilder cpu = new ItemBuilder(Material.IRON_TRAPDOOR).lore(itemLore).amount(1).name("CPU");
-	public static ItemBuilder processor = new ItemBuilder(Material.DAYLIGHT_DETECTOR).lore(itemLore).amount(1).name("Processor");
-	public static ItemBuilder memoryCard = new ItemBuilder(Material.IRON_INGOT).lore(itemLore).amount(1).name("Memory Card");
-	public static ItemBuilder motherboard = new ItemBuilder(Material.GREEN_CARPET).lore(itemLore).amount(1).name("Motherboard");
-	public static ItemBuilder powerSupply = new ItemBuilder(Material.BLAST_FURNACE).lore(itemLore).amount(1).name("Power Supply");
-	public static ItemBuilder speaker = new ItemBuilder(Material.NOTE_BLOCK).lore(itemLore).amount(1).name("Speaker");
-	public static ItemBuilder hardDrive = new ItemBuilder(Material.HOPPER_MINECART).lore(itemLore).amount(1).name("Hard Drive");
-	public static ItemBuilder diode = new ItemBuilder(Material.REPEATER).lore(itemLore).amount(1).name("Diode");
-	public static ItemBuilder joystick = new ItemBuilder(Material.LEVER).lore(itemLore).amount(1).name("Joystick");
+	public static ItemBuilder cpu = new ItemBuilder(Material.IRON_TRAPDOOR).lore(BFQuests.itemLore).amount(1).name("CPU");
+	public static ItemBuilder processor = new ItemBuilder(Material.DAYLIGHT_DETECTOR).lore(BFQuests.itemLore).amount(1).name("Processor");
+	public static ItemBuilder memoryCard = new ItemBuilder(Material.IRON_INGOT).lore(BFQuests.itemLore).amount(1).name("Memory Card");
+	public static ItemBuilder motherboard = new ItemBuilder(Material.GREEN_CARPET).lore(BFQuests.itemLore).amount(1).name("Motherboard");
+	public static ItemBuilder powerSupply = new ItemBuilder(Material.BLAST_FURNACE).lore(BFQuests.itemLore).amount(1).name("Power Supply");
+	public static ItemBuilder speaker = new ItemBuilder(Material.NOTE_BLOCK).lore(BFQuests.itemLore).amount(1).name("Speaker");
+	public static ItemBuilder hardDrive = new ItemBuilder(Material.HOPPER_MINECART).lore(BFQuests.itemLore).amount(1).name("Hard Drive");
+	public static ItemBuilder diode = new ItemBuilder(Material.REPEATER).lore(BFQuests.itemLore).amount(1).name("Diode");
+	public static ItemBuilder joystick = new ItemBuilder(Material.LEVER).lore(BFQuests.itemLore).amount(1).name("Joystick");
 	public static List<ItemBuilder> arcadePieces = Arrays.asList(cpu, processor, memoryCard, motherboard, powerSupply, speaker, hardDrive, diode, joystick);
 	//
-	private static ItemStack fakeMotherBoard = new ItemBuilder(Material.LIME_STAINED_GLASS_PANE).lore(itemLore).amount(1).name("Motherboard").build();
-	public static ItemStack solderingIron = new ItemBuilder(Material.END_ROD).lore(itemLore).amount(1).name("Soldering Iron").build();
+	private static ItemStack fakeMotherBoard = new ItemBuilder(Material.LIME_STAINED_GLASS_PANE).lore(BFQuests.itemLore).amount(1).name("Motherboard").build();
+	public static ItemStack solderingIron = new ItemBuilder(Material.END_ROD).lore(BFQuests.itemLore).amount(1).name("Soldering Iron").build();
 	//
-	public static ItemStack arcadeToken = new ItemBuilder(Material.SUNFLOWER).lore(itemLore).amount(1).name("Arcade Token").glow().build();
+	public static ItemStack arcadeToken = new ItemBuilder(Material.SUNFLOWER).lore(BFQuests.itemLore).amount(1).name("Arcade Token").glow().build();
 
 	public MinigameNightIsland() {
 		Nexus.registerListener(this);
@@ -141,7 +123,7 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 						user.setQuest_MGN_Finish(true);
 						service.save(user);
 						PlayerUtils.giveItem(player, arcadeToken);
-						chime(player);
+						BFQuests.chime(player);
 					}
 					return Collections.singletonList("Yo, thanks again for fixing the Arcade Cabinet! Next tourney is gonna be awesome!");
 				}
@@ -204,10 +186,10 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
 		Block clicked = event.getClickedBlock();
-		if (isNullOrAir(clicked)) return;
+		if (Nullables.isNullOrAir(clicked)) return;
 
-		ProtectedRegion region = worldguard().getProtectedRegion(arcadeRg);
-		if (!worldguard().getRegionsAt(clicked.getLocation()).contains(region)) return;
+		ProtectedRegion region = BearFair20.worldguard().getProtectedRegion(arcadeRg);
+		if (!BearFair20.worldguard().getRegionsAt(clicked.getLocation()).contains(region)) return;
 
 		if (!BearFair20.enableQuests) return;
 		event.setCancelled(true);
@@ -224,8 +206,8 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 	public void onInteract(PlayerInteractEvent event) {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
-		ProtectedRegion region = worldguard().getProtectedRegion(BearFair20.getRegion());
-		if (!worldguard().getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
+		ProtectedRegion region = BearFair20.worldguard().getProtectedRegion(BearFair20.getRegion());
+		if (!BearFair20.worldguard().getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
 
 		if (!BearFair20.enableQuests) return;
 		ItemStack tool = ItemUtils.getTool(event.getPlayer());
@@ -246,8 +228,8 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 
 		Player player = event.getPlayer();
 
-		ProtectedRegion region = worldguard().getProtectedRegion(BearFair20.getRegion());
-		if (!worldguard().getRegionsAt(player.getLocation()).contains(region)) return;
+		ProtectedRegion region = BearFair20.worldguard().getProtectedRegion(BearFair20.getRegion());
+		if (!BearFair20.worldguard().getRegionsAt(player.getLocation()).contains(region)) return;
 
 		if (!BearFair20.enableQuests) return;
 		Entity clicked = event.getRightClicked();
@@ -280,7 +262,7 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 
 		foundPiece(player, arcadePiece);
 		PlayerUtils.giveItem(player, piece);
-		chime(player);
+		BFQuests.chime(player);
 
 	}
 
@@ -305,10 +287,10 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
 		Block clicked = event.getClickedBlock();
-		if (isNullOrAir(clicked)) return;
+		if (Nullables.isNullOrAir(clicked)) return;
 
-		ProtectedRegion region = worldguard().getProtectedRegion(solderRg);
-		if (!worldguard().getRegionsAt(clicked.getLocation()).contains(region)) return;
+		ProtectedRegion region = BearFair20.worldguard().getProtectedRegion(solderRg);
+		if (!BearFair20.worldguard().getRegionsAt(clicked.getLocation()).contains(region)) return;
 
 		if (!BearFair20.enableQuests) return;
 
@@ -331,7 +313,7 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 
 		ArmorStand armorStand = null;
 		for (Entity nearbyEntity : player.getNearbyEntities(7, 7, 7)) {
-			if (nearbyEntity instanceof ArmorStand && worldguard().getRegionsAt(nearbyEntity.getLocation()).contains(region)) {
+			if (nearbyEntity instanceof ArmorStand && BearFair20.worldguard().getRegionsAt(nearbyEntity.getLocation()).contains(region)) {
 				armorStand = (ArmorStand) nearbyEntity;
 				break;
 			}
@@ -423,7 +405,7 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 
 	private void soundTasks() {
 		Tasks.repeat(0, TickTime.SECOND.x(5), () -> OnlinePlayers.getAll().stream()
-				.filter(player -> worldguard().getRegionsLikeAt(getRegion(), player.getLocation()).size() > 0)
+				.filter(player -> BearFair20.worldguard().getRegionsLikeAt(getRegion(), player.getLocation()).size() > 0)
 				.forEach(MinigameNightIsland::playArcadeEffects));
 	}
 

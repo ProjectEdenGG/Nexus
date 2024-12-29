@@ -8,14 +8,13 @@ import gg.projecteden.nexus.models.pugmas20.Pugmas20User;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20UserService;
 import gg.projecteden.nexus.utils.MerchantBuilder;
 import gg.projecteden.nexus.utils.MerchantBuilder.TradeBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public class Merchants {
 	public static void openMerchant(Player player, int id) {
@@ -32,7 +31,7 @@ public class Merchants {
 			return;
 		}
 
-		new MerchantBuilder(camelCase(merchantNPC.name())).trades(trades).open(player);
+		new MerchantBuilder(StringUtils.camelCase(merchantNPC.name())).trades(trades).open(player);
 	}
 
 	public enum MerchantNPC {

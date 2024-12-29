@@ -8,6 +8,8 @@ import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
@@ -17,17 +19,8 @@ import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static gg.projecteden.nexus.utils.PlayerUtils.runCommand;
-import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsConsole;
-import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsOp;
-import static gg.projecteden.nexus.utils.StringUtils.right;
 
 @Data
 @Entity(value = "interaction_command", noClassnameStored = true)
@@ -76,9 +69,9 @@ public class InteractionCommandConfig implements PlayerOwnedObject {
 
 		public String getTrimmedCommand(String command) {
 			if (isOp(command) || isConsole(command))
-				return right(command, command.length() - 2);
+				return StringUtils.right(command, command.length() - 2);
 			else if (isNormal(command))
-				return right(command, command.length() - 1);
+				return StringUtils.right(command, command.length() - 1);
 			else
 				return command;
 		}
@@ -104,11 +97,11 @@ public class InteractionCommandConfig implements PlayerOwnedObject {
 
 					String command = parse(event, original);
 					if (isOp(command))
-						runCommandAsOp(event.getPlayer(), getTrimmedCommand(command));
+						PlayerUtils.runCommandAsOp(event.getPlayer(), getTrimmedCommand(command));
 					else if (isConsole(command))
-						runCommandAsConsole(getTrimmedCommand(command));
+						PlayerUtils.runCommandAsConsole(getTrimmedCommand(command));
 					else if (isNormal(command))
-						runCommand(event.getPlayer(), getTrimmedCommand(command));
+						PlayerUtils.runCommand(event.getPlayer(), getTrimmedCommand(command));
 					else
 						Nerd.of(event.getPlayer()).sendMessage(command);
 				});

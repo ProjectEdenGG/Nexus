@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInv
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventoryFeature;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.tasks.FindChestsThread.DepositRecord;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NoArgsConstructor;
 import org.bukkit.Nameable;
 import org.bukkit.block.Block;
@@ -19,9 +20,6 @@ import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-
-import static gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventory.PREFIX;
-import static gg.projecteden.nexus.utils.PlayerUtils.send;
 
 @NoArgsConstructor
 public class AutoDepositQuick implements Listener {
@@ -53,18 +51,18 @@ public class AutoDepositQuick implements Listener {
 		String materialName = clickedBlock.getType().name().replace('_', ' ').toLowerCase();
 
 		if (!AutoInventory.canOpen(clickedBlock)) {
-			send(player, PREFIX + "&cThat " + materialName + " isn't accessible");
+			PlayerUtils.send(player, AutoInventory.PREFIX + "&cThat " + materialName + " isn't accessible");
 			return;
 		}
 
 		DepositRecord deposits = AutoInventory.depositMatching(AutoInventoryUser.of(player), inventory, true);
 
 		if (deposits.isDestinationFull() && deposits.getTotalItems() == 0)
-			send(player, PREFIX + "&cThat " + materialName + " is full");
+			PlayerUtils.send(player, AutoInventory.PREFIX + "&cThat " + materialName + " is full");
 		else if (deposits.getTotalItems() == 0)
-			send(player, PREFIX + "&cNo items deposited &3- none of your inventory items match items in that " + materialName);
+			PlayerUtils.send(player, AutoInventory.PREFIX + "&cNo items deposited &3- none of your inventory items match items in that " + materialName);
 		else
-			send(player, PREFIX + "Deposited &e%d &3items", deposits.getTotalItems());
+			PlayerUtils.send(player, AutoInventory.PREFIX + "Deposited &e%d &3items", deposits.getTotalItems());
 	}
 
 }

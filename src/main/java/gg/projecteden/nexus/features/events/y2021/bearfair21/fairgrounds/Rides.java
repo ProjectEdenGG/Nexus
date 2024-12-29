@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.features.vanish.Vanish;
+import gg.projecteden.nexus.models.bearfair21.BearFair21Config;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
@@ -19,9 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.RIDES;
-import static gg.projecteden.nexus.utils.Distance.distance;
 
 public class Rides {
 	private static final Map<Ride, Boolean> rideMap = new HashMap<>();
@@ -41,7 +40,7 @@ public class Rides {
 				if (oldStatus == curStatus) continue;
 
 				if (curStatus) {
-					if (!BearFair21.getConfig().isEnabled(RIDES))
+					if (!BearFair21.getConfig().isEnabled(BearFair21Config.BearFair21ConfigOption.RIDES))
 						continue;
 
 					PlayerUtils.runCommandAsConsole("rideadm " + ride.getId() + " enable");
@@ -116,7 +115,7 @@ public class Rides {
 		public boolean isWithinRadius(Player player) {
 			Location playerLocation = player.getLocation().clone();
 			playerLocation.setY(0);
-			return distance(playerLocation, this.location).lte(this.radius);
+			return Distance.distance(playerLocation, this.location).lte(this.radius);
 		}
 
 		public List<Player> getPlayersInRadius() {

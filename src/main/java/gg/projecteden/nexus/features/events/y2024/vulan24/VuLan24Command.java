@@ -3,13 +3,8 @@ package gg.projecteden.nexus.features.events.y2024.vulan24;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.IEventCommand;
 import gg.projecteden.nexus.features.events.y2024.vulan24.lantern.VuLan24LanternAnimation;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.vulan24.VuLan24Config;
@@ -23,8 +18,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.StringUtils.ProgressBar.SummaryStyle.NONE;
 
 @Aliases("vulan")
 @NoArgsConstructor
@@ -73,7 +66,7 @@ public class VuLan24Command extends IEventCommand {
 		return ProgressBar.builder()
 			.progress(config.getCompletedDailyQuests())
 			.goal(VuLan24.DAILY_QUEST_GOAL)
-			.summaryStyle(NONE)
+			.summaryStyle(ProgressBar.SummaryStyle.NONE)
 			.length(300)
 			.seamless(true)
 			.build();

@@ -10,11 +10,9 @@ import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpda
 import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.models.boost.Booster;
 import gg.projecteden.nexus.models.halloween21.Halloween21UserService;
-import gg.projecteden.nexus.utils.EntityUtils;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.nms.PacketUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.nms.PacketUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,9 +26,6 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.RandomUtils.chanceOf;
-import static gg.projecteden.nexus.utils.StringUtils.right;
 
 @Disabled
 public class Halloween21 implements Listener {
@@ -53,7 +48,7 @@ public class Halloween21 implements Listener {
 		if (MobHeads.shouldIgnore(killer, victim))
 			return;
 
-		if (!chanceOf(10 * Booster.getTotalBoost(killer, Boostable.HALLOWEEN_CANDY)))
+		if (!RandomUtils.chanceOf(10 * Booster.getTotalBoost(killer, Boostable.HALLOWEEN_CANDY)))
 			return;
 
 		event.getDrops().add(Candy.random().getDisplayItem());
@@ -93,7 +88,7 @@ public class Halloween21 implements Listener {
 			}
 
 			final String bits = String.valueOf(entity.getUniqueId().getLeastSignificantBits());
-			final int modelId = Pumpkin.MIN + Integer.parseInt(right(bits, 2));
+			final int modelId = Pumpkin.MIN + Integer.parseInt(StringUtils.right(bits, 2));
 			return Pumpkin.itemOf(modelId);
 		}
 

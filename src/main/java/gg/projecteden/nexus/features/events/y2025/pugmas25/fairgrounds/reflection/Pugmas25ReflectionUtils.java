@@ -20,14 +20,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static org.bukkit.block.BlockFace.EAST;
-import static org.bukkit.block.BlockFace.NORTH;
-import static org.bukkit.block.BlockFace.NORTH_EAST;
-import static org.bukkit.block.BlockFace.NORTH_WEST;
-import static org.bukkit.block.BlockFace.SOUTH;
-import static org.bukkit.block.BlockFace.SOUTH_WEST;
-import static org.bukkit.block.BlockFace.WEST;
-
 public class Pugmas25ReflectionUtils {
 
 	public static void clearLamps() {
@@ -167,41 +159,41 @@ public class Pugmas25ReflectionUtils {
 		if (from.getOppositeFace().equals(bannerFace))
 			return from.getOppositeFace();
 
-		if (from.equals(NORTH)) {
-			if (bannerFace.equals(WEST) || bannerFace.equals(EAST))
+		if (from.equals(BlockFace.NORTH)) {
+			if (bannerFace.equals(BlockFace.WEST) || bannerFace.equals(BlockFace.EAST))
 				return from;
 
-			if (bannerFace.equals(SOUTH_WEST))
-				return WEST;
+			if (bannerFace.equals(BlockFace.SOUTH_WEST))
+				return BlockFace.WEST;
 			else
-				return EAST;
+				return BlockFace.EAST;
 
-		} else if (from.equals(SOUTH)) {
-			if (bannerFace.equals(WEST) || bannerFace.equals(EAST))
+		} else if (from.equals(BlockFace.SOUTH)) {
+			if (bannerFace.equals(BlockFace.WEST) || bannerFace.equals(BlockFace.EAST))
 				return from;
 
-			if (bannerFace.equals(NORTH_WEST))
-				return WEST;
+			if (bannerFace.equals(BlockFace.NORTH_WEST))
+				return BlockFace.WEST;
 			else
-				return EAST;
+				return BlockFace.EAST;
 
-		} else if (from.equals(EAST)) {
-			if (bannerFace.equals(SOUTH) || bannerFace.equals(NORTH))
+		} else if (from.equals(BlockFace.EAST)) {
+			if (bannerFace.equals(BlockFace.SOUTH) || bannerFace.equals(BlockFace.NORTH))
 				return from;
 
-			if (bannerFace.equals(SOUTH_WEST))
-				return SOUTH;
+			if (bannerFace.equals(BlockFace.SOUTH_WEST))
+				return BlockFace.SOUTH;
 			else
-				return NORTH;
+				return BlockFace.NORTH;
 
-		} else if (from.equals(WEST)) {
-			if (bannerFace.equals(SOUTH) || bannerFace.equals(NORTH))
+		} else if (from.equals(BlockFace.WEST)) {
+			if (bannerFace.equals(BlockFace.SOUTH) || bannerFace.equals(BlockFace.NORTH))
 				return from;
 
-			if (bannerFace.equals(NORTH_EAST))
-				return NORTH;
+			if (bannerFace.equals(BlockFace.NORTH_EAST))
+				return BlockFace.NORTH;
 			else
-				return SOUTH;
+				return BlockFace.SOUTH;
 		}
 
 		return from;

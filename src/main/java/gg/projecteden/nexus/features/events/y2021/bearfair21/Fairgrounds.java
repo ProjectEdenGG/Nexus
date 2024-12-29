@@ -2,20 +2,13 @@ package gg.projecteden.nexus.features.events.y2021.bearfair21;
 
 import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.Archery;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.Frogger;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.Interactables;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.Rides;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
+import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.*;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolf;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.reflection.ReflectionGame;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.Timer;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -35,9 +28,6 @@ import org.bukkit.util.Vector;
 
 import java.util.Arrays;
 import java.util.List;
-
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class Fairgrounds implements Listener {
 
@@ -63,7 +53,7 @@ public class Fairgrounds implements Listener {
 		),
 		MINECART(
 				new ItemBuilder(Material.MINECART)
-						.lore(itemLore)
+						.lore(BFQuests.itemLore)
 						.build()
 		),
 		;
@@ -120,11 +110,11 @@ public class Fairgrounds implements Listener {
 		if (BearFair21.isNotAtBearFair(event)) return;
 
 		ItemStack item = event.getItem();
-		if (isNullOrAir(item) || !item.getType().equals(Material.MINECART))
+		if (Nullables.isNullOrAir(item) || !item.getType().equals(Material.MINECART))
 			return;
 
 		Block block = event.getClickedBlock();
-		if (isNullOrAir(block) || !MaterialTag.RAILS.isTagged(block.getType()))
+		if (Nullables.isNullOrAir(block) || !MaterialTag.RAILS.isTagged(block.getType()))
 			return;
 
 		Location blockLoc = block.getLocation();

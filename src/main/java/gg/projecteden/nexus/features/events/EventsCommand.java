@@ -8,18 +8,13 @@ import gg.projecteden.nexus.features.events.store.providers.EventStoreProvider;
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
@@ -32,10 +27,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.features.events.EdenEvent.PREFIX_STORE;
-import static gg.projecteden.nexus.features.events.store.models.EventStoreImage.IMAGES;
-import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
 
 @Aliases("event")
 public class EventsCommand extends CustomCommand {
@@ -57,7 +48,7 @@ public class EventsCommand extends CustomCommand {
 	@Override
 	public String getPrefix() {
 		if ("store".equalsIgnoreCase(arg(1)))
-			return PREFIX_STORE;
+			return EdenEvent.PREFIX_STORE;
 		return super.getPrefix();
 	}
 
@@ -180,7 +171,7 @@ public class EventsCommand extends CustomCommand {
 	@Description("Reload event store images")
 	void store_images_reload() {
 		EventStoreImage.reload();
-		send(PREFIX_STORE + "Loaded " + IMAGES.size() + " maps");
+		send(EdenEvent.PREFIX_STORE + "Loaded " + EventStoreImage.IMAGES.size() + " maps");
 	}
 
 	@Path("store images get <image...>")
@@ -197,7 +188,7 @@ public class EventsCommand extends CustomCommand {
 
 	@TabCompleterFor(EventStoreImage.class)
 	List<String> tabCompleteEventStoreImage(String filter) {
-		return IMAGES.keySet().stream()
+		return EventStoreImage.IMAGES.keySet().stream()
 			.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
 			.collect(Collectors.toList());
 	}
@@ -253,7 +244,7 @@ public class EventsCommand extends CustomCommand {
 			EventUser user = service.get(player);
 
 			for (ItemStack content : event.getInventory().getContents())
-				if (isNotNullOrAir(content))
+				if (Nullables.isNotNullOrAir(content))
 					user.addRewardItem(content);
 
 			service.save(user);

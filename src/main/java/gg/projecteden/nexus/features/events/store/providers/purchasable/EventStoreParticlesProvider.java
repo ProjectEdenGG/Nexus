@@ -2,8 +2,10 @@ package gg.projecteden.nexus.features.events.store.providers.purchasable;
 
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.store.EventStoreItem;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreMenu;
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.models.particle.ParticleOwner;
@@ -11,6 +13,7 @@ import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,10 +22,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static gg.projecteden.nexus.features.events.EdenEvent.PREFIX_STORE;
-import static gg.projecteden.nexus.features.menus.MenuUtils.handleException;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @AllArgsConstructor
 @Title("Event Store - Particles")
@@ -49,7 +48,7 @@ public class EventStoreParticlesProvider extends EventStoreMenu {
 				try {
 					if (e.isShiftClick()) {
 						chargeAndAddPermissions(player, price, type.getPermission());
-						PlayerUtils.send(player, PREFIX_STORE + "Purchased " + camelCase(type) + " particle, manage with &c/particles");
+						PlayerUtils.send(player, EdenEvent.PREFIX_STORE + "Purchased " + StringUtils.camelCase(type) + " particle, manage with &c/particles");
 						open(player);
 					} else {
 						player.closeInventory();
@@ -57,7 +56,7 @@ public class EventStoreParticlesProvider extends EventStoreMenu {
 						Tasks.wait(TickTime.SECOND.x(15), () -> particleOwner.cancel(type));
 					}
 				} catch (Exception ex) {
-					handleException(player, PREFIX_STORE, ex);
+					MenuUtils.handleException(player, EdenEvent.PREFIX_STORE, ex);
 				}
 			}));
 		}

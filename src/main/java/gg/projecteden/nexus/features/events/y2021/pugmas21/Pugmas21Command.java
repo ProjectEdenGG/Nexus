@@ -2,29 +2,22 @@ package gg.projecteden.nexus.features.events.y2021.pugmas21;
 
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.api.common.utils.RandomUtils;
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.Pugmas21Advent;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.Pugmas21AdventAnimation;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.Pugmas21AdventMenu;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21CandyCaneCannon;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21District;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21MultiModelStructure;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.*;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21MultiModelStructure.Model;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21Train;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21TrainBackground;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21NPC;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestItem;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestLine;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestTask;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config;
@@ -58,9 +51,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
-import static gg.projecteden.nexus.features.resourcepack.models.CustomMaterial.PUGMAS21_HOT_AIR_BALLOON_1;
 
 @HideFromWiki
 @NoArgsConstructor
@@ -176,7 +166,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 
 	private Pugmas21MultiModelStructure getBalloonStructure() {
 		final AtomicInteger i = new AtomicInteger();
-		final int baseModelId = PUGMAS21_HOT_AIR_BALLOON_1.getModelId();
+		final int baseModelId = CustomMaterial.PUGMAS21_HOT_AIR_BALLOON_1.getModelId();
 
 		return Pugmas21MultiModelStructure.builder()
 			.from(location().subtract(BlockFace.UP.getDirection().multiply(1.5)))
@@ -379,14 +369,14 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	@Permission(Group.ADMIN)
 	void simulate_today(int day) {
 		Pugmas21.TODAY = Pugmas21.EPOCH.plusDays(day - 1);
-		send(PREFIX + "Simulating date &e" + shortDateFormat(Pugmas21.TODAY));
+		send(PREFIX + "Simulating date &e" + TimeUtils.shortDateFormat(Pugmas21.TODAY));
 	}
 
 	@Path("simulate today reset")
 	@Permission(Group.ADMIN)
 	void simulate_today_reset() {
 		Pugmas21.TODAY = LocalDate.now();
-		send(PREFIX + "Simulating date &e" + shortDateFormat(Pugmas21.TODAY));
+		send(PREFIX + "Simulating date &e" + TimeUtils.shortDateFormat(Pugmas21.TODAY));
 	}
 
 	@Path("quest debug <task>")

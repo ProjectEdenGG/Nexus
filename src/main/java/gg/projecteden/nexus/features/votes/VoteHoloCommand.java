@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.votes;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.listeners.Restrictions;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -10,8 +11,6 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import lombok.NonNull;
 import tech.blastmc.holograms.api.HologramsAPI;
 import tech.blastmc.holograms.api.models.Hologram;
-
-import static gg.projecteden.nexus.features.listeners.Restrictions.isPerkAllowedAt;
 
 @Permission("vote.holo")
 @Description("Modify the hologram you received from vote rewards")
@@ -25,7 +24,7 @@ public class VoteHoloCommand extends CustomCommand {
 	@Path("create <text...>")
 	@Description("Create a hologram")
 	void create(String text) {
-		if (!isPerkAllowedAt(player(), location()))
+		if (!Restrictions.isPerkAllowedAt(player(), location()))
 			error("Holograms cannot be created here");
 
 		try {
@@ -65,7 +64,7 @@ public class VoteHoloCommand extends CustomCommand {
 	@Path("tphere")
 	@Description("Summon your hologram")
 	void tphere() {
-		if (!isPerkAllowedAt(player(), location()))
+		if (!Restrictions.isPerkAllowedAt(player(), location()))
 			error("Holograms cannot be teleported here");
 
 		getHologram().setLocation(location());

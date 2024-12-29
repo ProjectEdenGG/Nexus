@@ -18,14 +18,8 @@ import gg.projecteden.nexus.models.parkour.LobbyParkourCourseService;
 import gg.projecteden.nexus.models.parkour.LobbyParkourUser;
 import gg.projecteden.nexus.models.parkour.LobbyParkourUser.CourseData;
 import gg.projecteden.nexus.models.parkour.LobbyParkourUserService;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -46,9 +40,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 public class ParkourListener implements Listener {
 	final String PREFIX = StringUtils.getPrefix("Parkour");
@@ -85,7 +76,7 @@ public class ParkourListener implements Listener {
 		final Player player = event.getPlayer();
 
 		final Block block = event.getClickedBlock();
-		if (isNullOrAir(block) || block.getType() != Material.LIGHT_WEIGHTED_PRESSURE_PLATE)
+		if (Nullables.isNullOrAir(block) || block.getType() != Material.LIGHT_WEIGHTED_PRESSURE_PLATE)
 			return;
 
 		final Set<ProtectedRegion> regions = new WorldGuardUtils(player).getRegionsLikeAt("lobby_parkour_.*", block.getLocation());
@@ -101,7 +92,7 @@ public class ParkourListener implements Listener {
 			} catch (ArrayIndexOutOfBoundsException ignore) {}
 		}
 
-		if (isNullOrEmpty(courseName) || isNullOrEmpty(checkpoint))
+		if (Nullables.isNullOrEmpty(courseName) || Nullables.isNullOrEmpty(checkpoint))
 			return;
 
 		final LobbyParkourUserService service = new LobbyParkourUserService();

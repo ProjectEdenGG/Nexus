@@ -5,32 +5,21 @@ import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
+import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.bearfair20.BearFair20User;
 import gg.projecteden.nexus.models.bearfair20.BearFair20UserService;
 import gg.projecteden.nexus.models.jigsawjam.JigsawJamService;
 import gg.projecteden.nexus.models.jigsawjam.JigsawJammer;
-import gg.projecteden.nexus.utils.BlockUtils;
-import gg.projecteden.nexus.utils.EntityUtils;
-import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
-import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.Utils.MapRotation;
-import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -57,10 +46,6 @@ import org.bukkit.inventory.meta.MapMeta;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 // TODO Make logic common for minigames
 
@@ -145,7 +130,7 @@ public class JigsawJam20Command extends CustomCommand implements Listener {
 		if (!event.getEntity().getWorld().getName().equals(WORLD)) return;
 		if (!(event.getRemover() instanceof Player player)) return;
 		if (!new WorldGuardUtils(event.getEntity()).getRegionNamesAt(event.getEntity().getLocation()).contains("jigsawjam")) return;
-		if (canWorldGuardEdit(player)) return;
+		if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
 
 		event.setCancelled(true);
 	}
@@ -154,7 +139,7 @@ public class JigsawJam20Command extends CustomCommand implements Listener {
 	public void onBlockBreak(BlockBreakEvent event) {
 		if (!event.getBlock().getWorld().getName().equals(WORLD)) return;
 		if (!new WorldGuardUtils(event.getPlayer()).getRegionNamesAt(event.getPlayer().getLocation()).contains("jigsawjam")) return;
-		if (canWorldGuardEdit(event.getPlayer())) return;
+		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer())) return;
 
 		event.setCancelled(true);
 	}
@@ -163,7 +148,7 @@ public class JigsawJam20Command extends CustomCommand implements Listener {
 	public void onBlockPlace(BlockPlaceEvent event) {
 		if (!event.getBlock().getWorld().getName().equals(WORLD)) return;
 		if (!new WorldGuardUtils(event.getPlayer()).getRegionNamesAt(event.getPlayer().getLocation()).contains("jigsawjam")) return;
-		if (canWorldGuardEdit(event.getPlayer())) return;
+		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer())) return;
 
 		event.setCancelled(true);
 	}
@@ -175,15 +160,15 @@ public class JigsawJam20Command extends CustomCommand implements Listener {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 		if (event.getClickedBlock() == null || !MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType())) return;
 		Sign sign = (Sign) event.getClickedBlock().getState();
-		if (!stripColor(sign.getLine(0)).equals(stripColor(PREFIX.trim()))) return;
+		if (!StringUtils.stripColor(sign.getLine(0)).equals(StringUtils.stripColor(PREFIX.trim()))) return;
 
 		JigsawJamService service = new JigsawJamService();
 		JigsawJammer jammer = service.get(event.getPlayer());
 		if (sign.getLine(2).toLowerCase().contains("start")) {
 			if (!jammer.isPlaying()) {
 				start(jammer);
-				sign.setLine(1, colorize("&c&lClick me"));
-				sign.setLine(2, colorize("&c&lto finish"));
+				sign.setLine(1, StringUtils.colorize("&c&lClick me"));
+				sign.setLine(2, StringUtils.colorize("&c&lto finish"));
 				sign.update();
 			} else
 				jammer.sendMessage(PREFIX + "&cYou have already started a game");

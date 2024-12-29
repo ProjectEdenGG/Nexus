@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events.y2021.pugmas21.advent;
 
 import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
@@ -21,8 +22,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
-
-import static gg.projecteden.nexus.features.menus.MenuUtils.innerSlotIterator;
 
 @RequiredArgsConstructor
 public class Pugmas21AdventMenu extends InventoryProvider {
@@ -49,7 +48,7 @@ public class Pugmas21AdventMenu extends InventoryProvider {
 		int row = 1;
 		int column = Pugmas21.EPOCH.getDayOfWeek().getValue() + 1;
 
-		final SlotIterator slotIterator = innerSlotIterator(contents, SlotPos.of(row, column));
+		final SlotIterator slotIterator = MenuUtils.innerSlotIterator(contents, SlotPos.of(row, column));
 		for (int day = 1; day <= 25; day++) {
 			final int _day = day;
 

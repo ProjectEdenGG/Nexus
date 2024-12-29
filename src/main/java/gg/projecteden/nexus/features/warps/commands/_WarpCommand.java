@@ -2,30 +2,24 @@ package gg.projecteden.nexus.features.warps.commands;
 
 import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.models.warps.Warps;
 import gg.projecteden.nexus.models.warps.Warps.Warp;
 import gg.projecteden.nexus.models.warps.WarpsService;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.Utils.getMin;
 
 @NoArgsConstructor
 public abstract class _WarpCommand extends CustomCommand {
@@ -47,7 +41,7 @@ public abstract class _WarpCommand extends CustomCommand {
 			return;
 
 		String permission = getPermission();
-		if (!isNullOrEmpty(permission))
+		if (!Nullables.isNullOrEmpty(permission))
 			if (!sender().hasPermission(permission))
 				throw new NoPermissionException();
 	}
@@ -149,10 +143,10 @@ public abstract class _WarpCommand extends CustomCommand {
 	public Optional<Warp> getNearestWarp(Location location) {
 		List<Warp> warps = getWarpType().getAll();
 
-		MinMaxResult<Warp> result = getMin(warps, warp -> {
+		MinMaxResult<Warp> result = Utils.getMin(warps, warp -> {
 			if (location == null || location.getWorld() == null || warp.getLocation() == null) return null;
 			if (!location.getWorld().equals(warp.getLocation().getWorld())) return null;
-			return distance(location, warp).get();
+			return Distance.distance(location, warp).get();
 		});
 
 		return Optional.ofNullable(result.getObject());

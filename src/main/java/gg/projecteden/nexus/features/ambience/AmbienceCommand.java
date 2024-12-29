@@ -21,10 +21,7 @@ import gg.projecteden.nexus.models.ambience.AmbienceConfigService;
 import gg.projecteden.nexus.models.ambience.AmbienceUser;
 import gg.projecteden.nexus.models.ambience.AmbienceUserService;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -40,10 +37,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.getLocationString;
-import static gg.projecteden.nexus.utils.StringUtils.getTeleportCommand;
 
 @HideFromWiki // TODO
 @NoArgsConstructor
@@ -124,8 +117,8 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 
 		send(PREFIX + camelCase(type) + " ambience:");
 		final BiFunction<Ambience, String, JsonBuilder> formatter = (ambience, index) ->
-			json(index + " &e" + getLocationString(ambience.getLocation()))
-				.command(getTeleportCommand(ambience.getLocation()))
+			json(index + " &e" + StringUtils.getLocationString(ambience.getLocation()))
+				.command(StringUtils.getTeleportCommand(ambience.getLocation()))
 				.hover("&eClick to teleport");
 
 		paginate(ambiences, formatter, "/ambience list " + type.name().toLowerCase(), page);
@@ -149,8 +142,8 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 
 		send(PREFIX + "Nearby " + (type == null ? "" : camelCase(type) + " ") + "ambience:");
 		final BiFunction<Ambience, String, JsonBuilder> formatter = (ambience, index) ->
-			json(index + " &e" + getLocationString(ambience.getLocation()))
-				.command(getTeleportCommand(ambience.getLocation()))
+			json(index + " &e" + StringUtils.getLocationString(ambience.getLocation()))
+				.command(StringUtils.getTeleportCommand(ambience.getLocation()))
 				.hover("&eClick to teleport");
 
 		paginate(ambiences, formatter, "/ambience near " + (type == null ? "" : type.name().toLowerCase()) + " --radius=" + radius, page);
@@ -263,7 +256,7 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 	}
 
 	private void addAmbience(Player player, Location location, ItemStack item) {
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return;
 
 		final AmbienceConfigService service = new AmbienceConfigService();

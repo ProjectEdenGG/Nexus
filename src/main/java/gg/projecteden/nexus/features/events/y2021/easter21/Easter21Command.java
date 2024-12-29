@@ -13,6 +13,7 @@ import gg.projecteden.nexus.models.easter21.Easter21UserService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.models.warps.Warps.Warp;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
@@ -33,10 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
-
-import static gg.projecteden.nexus.utils.StringUtils.getCoordinateString;
-import static gg.projecteden.nexus.utils.StringUtils.getTeleportCommand;
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Collectors;
 
 @Disabled
 @HideFromWiki
@@ -62,7 +60,7 @@ public class Easter21Command extends _WarpSubCommand implements Listener {
 	void top(@Arg("1") int page) {
 		List<Easter21User> all = new Easter21UserService().getAll().stream()
 				.sorted(Comparator.<Easter21User>comparingInt(user -> user.getFound().size()).reversed())
-				.collect(toList());
+				.collect(Collectors.toList());
 
 		int sum = all.stream().mapToInt(user -> user.getFound().size()).sum();
 
@@ -81,8 +79,8 @@ public class Easter21Command extends _WarpSubCommand implements Listener {
 
 		send(PREFIX + "Most found eggs");
 		BiFunction<Location, String, JsonBuilder> formatter = (location, index) ->
-				json(index + " &e" + getCoordinateString(location) + " &7- " + counts.get(location))
-						.command(getTeleportCommand(location))
+				json(index + " &e" + StringUtils.getCoordinateString(location) + " &7- " + counts.get(location))
+						.command(StringUtils.getTeleportCommand(location))
 						.hover("&eClick to teleport");
 		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/easter topLocations", page);
 	}

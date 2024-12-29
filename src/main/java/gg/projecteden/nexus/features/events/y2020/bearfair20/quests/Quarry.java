@@ -3,10 +3,7 @@ package gg.projecteden.nexus.features.events.y2020.bearfair20.quests;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
-import gg.projecteden.nexus.utils.BlockUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -21,20 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.isAtBearFair;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.isBFItem;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.isInRegion;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.send;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.miningError;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.toolError;
-import static gg.projecteden.nexus.utils.ItemUtils.getTool;
+import java.util.*;
 
 public class Quarry implements Listener {
 
@@ -87,37 +71,37 @@ public class Quarry implements Listener {
 		Player player = event.getPlayer();
 
 		if (event.isCancelled()) return;
-		if (!isAtBearFair(player)) return;
+		if (!BearFair20.isAtBearFair(player)) return;
 		if (player.hasPermission("worldguard.region.bypass.*")) {
 			if (player.getInventory().getItemInMainHand().getType().equals(Material.NETHER_BRICK))
 				return;
 		}
 
 		// If you mined a block in the quarry that has an adj block that needs support
-		if (adjBlockNeedsSupport(block) && isInRegion(block, quarryRg)) {
+		if (adjBlockNeedsSupport(block) && BearFair20.isInRegion(block, quarryRg)) {
 			event.setCancelled(true);
 			return;
 		}
 
 		// If you mined diorite
 		if (!diorite.contains(block.getType())) {
-			if (isInRegion(block, quarryRg))
+			if (BearFair20.isInRegion(block, quarryRg))
 				event.setCancelled(true);
 			return;
 		}
 
 		// if your in the quarry
-		if (!isInRegion(block, quarryRg)) {
+		if (!BearFair20.isInRegion(block, quarryRg)) {
 			event.setCancelled(true);
-			send(miningError, player);
+			BearFair20.send(BFQuests.miningError, player);
 			return;
 		}
 
 		// If the tool is a bf20 item
-		ItemStack tool = getTool(player);
-		if (!isBFItem(tool)) {
+		ItemStack tool = ItemUtils.getTool(player);
+		if (!BearFair20.isBFItem(tool)) {
 			event.setCancelled(true);
-			send(toolError, player);
+			BearFair20.send(BFQuests.toolError, player);
 			return;
 		}
 

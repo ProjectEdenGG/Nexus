@@ -3,6 +3,7 @@ package gg.projecteden.nexus.models.imagestand;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -11,12 +12,7 @@ import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntity;
 import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntityService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.nms.PacketUtils;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import net.minecraft.world.phys.AABB;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -36,8 +32,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity(value = "image_stand", noClassnameStored = true)
@@ -79,7 +73,7 @@ public class ImageStand implements DatabaseObject {
 	}
 
 	public boolean isActive() {
-		return !isNullOrEmpty(id);
+		return !Nullables.isNullOrEmpty(id);
 	}
 
 	public boolean hasOutline() {

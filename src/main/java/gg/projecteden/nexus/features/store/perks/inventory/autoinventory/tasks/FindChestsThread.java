@@ -5,15 +5,12 @@ import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInv
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.bukkit.ChunkSnapshot;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Nameable;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -27,8 +24,6 @@ import org.bukkit.util.Vector;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
-import static gg.projecteden.nexus.utils.PlayerUtils.send;
 
 public class FindChestsThread extends Thread {
 	private final World world;
@@ -163,7 +158,7 @@ public class FindChestsThread extends Thread {
 
 			Location chestLocation = this.remainingChestLocations.poll();
 			if (chestLocation == null) {
-				send(autoInventoryUser, AutoInventory.PREFIX + "Deposited &e%d &3items into nearby chests", runningDepositRecord.totalItems);
+				PlayerUtils.send(autoInventoryUser, AutoInventory.PREFIX + "Deposited &e%d &3items into nearby chests", runningDepositRecord.totalItems);
 				autoInventoryUser.tip(TipType.AUTOSORT_DEPOSIT_QUICK);
 			} else {
 				Player player = autoInventoryUser.getOnlinePlayer();

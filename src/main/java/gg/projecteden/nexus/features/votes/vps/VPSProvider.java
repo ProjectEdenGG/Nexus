@@ -12,10 +12,7 @@ import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.voter.Voter;
 import gg.projecteden.nexus.models.voter.VoterService;
-import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.IOUtils;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -26,10 +23,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static gg.projecteden.nexus.features.votes.vps.VPS.PREFIX;
-import static gg.projecteden.nexus.utils.StringUtils.plural;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Title("&3Vote Point Store")
 public class VPSProvider extends InventoryProvider {
@@ -67,7 +60,7 @@ public class VPSProvider extends InventoryProvider {
 
 			contents.set(slot, ClickableItem.of(display, e -> {
 				if (voter.getPoints() < item.getPrice()) {
-					PlayerUtils.send(viewer, PREFIX + "&cYou do not have enough vote points! &3Use &c/vote &3to vote!");
+					PlayerUtils.send(viewer, VPS.PREFIX + "&cYou do not have enough vote points! &3Use &c/vote &3to vote!");
 					return;
 				}
 
@@ -87,8 +80,8 @@ public class VPSProvider extends InventoryProvider {
 				if (item.getPrice() > 0) {
 					voter.takePoints(item.getPrice());
 					service.save(voter);
-					PlayerUtils.send(viewer, PREFIX + "You spent &e" + item.getPrice() + plural(" &3point", item.getPrice())
-						+ " on &e" + stripColor(item.getName()) + "&3. &e" + voter.getPoints() + " &3points remaining.");
+					PlayerUtils.send(viewer, VPS.PREFIX + "You spent &e" + item.getPrice() + StringUtils.plural(" &3point", item.getPrice())
+						+ " on &e" + StringUtils.stripColor(item.getName()) + "&3. &e" + voter.getPoints() + " &3points remaining.");
 				}
 
 				log(viewer, item);

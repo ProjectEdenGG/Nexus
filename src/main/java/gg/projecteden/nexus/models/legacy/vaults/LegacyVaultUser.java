@@ -3,26 +3,17 @@ package gg.projecteden.nexus.models.legacy.vaults;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import static gg.projecteden.api.common.utils.StringUtils.plural;
+import java.util.*;
 
 @Data
 @Entity(value = "legacy_vault_user", noClassnameStored = true)
@@ -45,7 +36,7 @@ public class LegacyVaultUser implements PlayerOwnedObject {
 		if (!getRank().isAdmin())
 			if (page > limit) {
 				final String descriptor = PlayerUtils.isSelf(this, viewer) ? "You only own" : getNickname() + " only owns";
-				throw new InvalidInputException(descriptor + " &e" + limit + plural(" &cvault", limit));
+				throw new InvalidInputException(descriptor + " &e" + limit + StringUtils.plural(" &cvault", limit));
 			}
 
 		return vaults.computeIfAbsent(page, $ -> new ArrayList<>());

@@ -6,16 +6,10 @@ import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PostLoad;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import gg.projecteden.nexus.utils.Nullables;
+import lombok.*;
 
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity(value = "referral", noClassnameStored = true)
@@ -34,7 +28,7 @@ public class Referral implements PlayerOwnedObject {
 
 	@PostLoad
 	void fix() {
-		if (isNullOrEmpty(originalIp) && !isNullOrEmpty(ip))
+		if (Nullables.isNullOrEmpty(originalIp) && !Nullables.isNullOrEmpty(ip))
 			originalIp = ip;
 	}
 

@@ -23,10 +23,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.send;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.chime;
-
 // NPC BEES: 2730, 2731
 public class Beehive implements Listener {
 	private String allowedMsg = "The defending swarm seems calmed by the flower's pleasant aroma. The queen beckons you to enter.";
@@ -71,31 +67,31 @@ public class Beehive implements Listener {
 			ItemStack rareFlower = getRareFlower(player);
 
 			if (honeyBottle == null && rareFlower != null) {
-				send(queen + "What brings you to my grand halls, traveler?", player);
+				BearFair20.send(queen + "What brings you to my grand halls, traveler?", player);
 				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1F, 1F);
 
 				Tasks.wait(80, () -> {
-					send(you + "I humbly request a blessing of honey from you, your grace, " +
+					BearFair20.send(you + "I humbly request a blessing of honey from you, your grace, " +
 							"so I may make the greatest stroopwafel.", player);
 					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1F, 1F);
 				});
 
 				Tasks.wait(160, () -> {
-					send(queen + "I would gladly give you what you seek, but alas, your timing " +
+					BearFair20.send(queen + "I would gladly give you what you seek, but alas, your timing " +
 							"is poor for we are currently building our honey reserves for the winter and the new generation. " +
 							"If you would bring me a bottle of honey from the surface, I can bless it for you.", player);
 					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1F, 1F);
 				});
 
 				Tasks.wait(240, () -> {
-					send(you + "Of course, I will return soon.", player);
+					BearFair20.send(you + "Of course, I will return soon.", player);
 					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1F, 1F);
 				});
 			} else if (honeyBottle != null && rareFlower != null) {
 				player.getInventory().remove(MainIsland.rareFlower.clone());
 				player.getInventory().remove(honeyBottle);
 
-				send(queen + "May this blessing grant you a divine Stroopwafel. Now please, feel free to visit any time. " +
+				BearFair20.send(queen + "May this blessing grant you a divine Stroopwafel. Now please, feel free to visit any time. " +
 						"You've shown yourself to be a benefactor in the ways of the golden nectar.", player);
 				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1F, 1F);
 
@@ -107,7 +103,7 @@ public class Beehive implements Listener {
 
 				Tasks.wait(60, () -> {
 					PlayerUtils.giveItem(player, MainIsland.blessedHoneyBottle.clone());
-					chime(player);
+					BFQuests.chime(player);
 				});
 			}
 		}
@@ -117,8 +113,8 @@ public class Beehive implements Listener {
 	public void onUseFlower(PlayerInteractEntityEvent event) {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
-		ProtectedRegion region = worldguard().getProtectedRegion(BearFair20.getRegion());
-		if (!worldguard().getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
+		ProtectedRegion region = BearFair20.worldguard().getProtectedRegion(BearFair20.getRegion());
+		if (!BearFair20.worldguard().getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
 
 		ItemStack tool = ItemUtils.getTool(event.getPlayer());
 		if (!BearFair20.isBFItem(tool)) return;
@@ -134,14 +130,14 @@ public class Beehive implements Listener {
 
 	private void allowed(Player player) {
 		player.teleportAsync(enterLoc);
-		send(allowedMsg, player);
+		BearFair20.send(allowedMsg, player);
 	}
 
 	private void denied(Player player) {
 		player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(40).amplifier(250).build());
 		player.teleportAsync(exitLoc);
 		player.playSound(enterLoc, Sound.ENTITY_BEE_LOOP_AGGRESSIVE, 0.5F, 1F);
-		Tasks.wait(5, () -> send(deniedMsg, player));
+		Tasks.wait(5, () -> BearFair20.send(deniedMsg, player));
 	}
 
 	private ItemStack getHoneyBottle(Player player) {

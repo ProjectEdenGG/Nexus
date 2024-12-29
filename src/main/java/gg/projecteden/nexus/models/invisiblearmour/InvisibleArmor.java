@@ -9,14 +9,12 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.nms.PacketUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.ArmorSlot;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.nms.PacketUtils;
+import lombok.*;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -25,9 +23,6 @@ import org.bukkit.inventory.PlayerInventory;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Data
 @Entity(value = "invisible_armor", noClassnameStored = true)
@@ -77,7 +72,7 @@ public class InvisibleArmor implements PlayerOwnedObject {
 	public ItemStack getDisplayItem(ArmorSlot slot) {
 		final PlayerInventory inventory = getOnlinePlayer().getInventory();
 		final ItemStack item = inventory.getItem(slot.getSlot());
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return getHiddenIcon(slot);
 		else
 			return item;
@@ -86,14 +81,14 @@ public class InvisibleArmor implements PlayerOwnedObject {
 	public ItemStack getHiddenIcon(ArmorSlot slot) {
 		return new ItemBuilder(CustomMaterial.ARMOR_OUTLINE_HELMET)
 			.modelId(CustomMaterial.ARMOR_OUTLINE_HELMET.getModelId() + slot.ordinal())
-			.name(camelCase(slot))
+			.name(StringUtils.camelCase(slot))
 			.build();
 	}
 
 	public ItemStack getShownIcon(ArmorSlot slot) {
 		return new ItemBuilder(CustomMaterial.ARMOR_FILLED_HELMET)
 			.modelId(CustomMaterial.ARMOR_FILLED_HELMET.getModelId() + slot.ordinal())
-			.name(camelCase(slot))
+			.name(StringUtils.camelCase(slot))
 			.build();
 	}
 

@@ -8,12 +8,7 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigol
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfColor;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfHole;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21User;
-import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.GlowUtils;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -32,8 +27,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class PuttListener implements Listener {
 
@@ -60,7 +53,7 @@ public class PuttListener implements Listener {
 		}
 
 		ItemStack item = event.getItem();
-		if (isNullOrAir(item)) {
+		if (Nullables.isNullOrAir(item)) {
 			user.debug("PuttListener > item is null or air, returning");
 			return;
 		}
@@ -183,7 +176,7 @@ public class PuttListener implements Listener {
 				}
 
 				// Is placing on start position
-				if (isNullOrAir(block) || block.getType() != Material.GREEN_WOOL) {
+				if (Nullables.isNullOrAir(block) || block.getType() != Material.GREEN_WOOL) {
 					MiniGolfUtils.error(user, "You can only place golf balls on green wool");
 					return;
 				}

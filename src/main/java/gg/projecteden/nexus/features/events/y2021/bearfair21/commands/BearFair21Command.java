@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.commands;
 
 import gg.projecteden.api.common.annotations.Disabled;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.features.events.models.Quest;
@@ -16,24 +17,13 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFai
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.Collector;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.JunkWeight;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.models.bearfair21.BearFair21Config;
+import gg.projecteden.nexus.models.bearfair21.*;
 import gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption;
-import gg.projecteden.nexus.models.bearfair21.BearFair21ConfigService;
-import gg.projecteden.nexus.models.bearfair21.BearFair21User;
-import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
-import gg.projecteden.nexus.models.bearfair21.ClientsideContent;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
-import gg.projecteden.nexus.models.bearfair21.ClientsideContentService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -55,17 +45,9 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Disabled
 @HideFromWiki
@@ -213,7 +195,7 @@ public class BearFair21Command extends CustomCommand {
 	@Permission(Group.ADMIN)
 	public void metNPCs() {
 		Set<Integer> npcs = userService.get(player()).getMetNPCs();
-		if (isNullOrEmpty(npcs))
+		if (Nullables.isNullOrEmpty(npcs))
 			error("User has not met any npcs");
 
 		send("Has met: ");
@@ -228,7 +210,7 @@ public class BearFair21Command extends CustomCommand {
 	@Permission(Group.ADMIN)
 	public void nextStepNPCs() {
 		Set<Integer> npcs = userService.get(player()).getNextStepNPCs();
-		if (isNullOrEmpty(npcs))
+		if (Nullables.isNullOrEmpty(npcs))
 			error("User has not have any nextStepNPCs");
 
 		send("Next Step NPCs: ");
@@ -399,7 +381,7 @@ public class BearFair21Command extends CustomCommand {
 		Entity entity = getTargetEntity();
 		if (entity == null) {
 			Block block = getTargetBlock();
-			if (isNullOrAir(block))
+			if (gg.projecteden.nexus.utils.Nullables.isNullOrAir(block))
 				error("Entity is null && Block is null or air");
 
 			setupBlockContent(block, category);

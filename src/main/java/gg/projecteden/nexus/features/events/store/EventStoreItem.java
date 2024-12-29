@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.store;
 
 import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreMenu;
 import gg.projecteden.nexus.features.events.store.providers.purchasable.EventStoreEmojiHatProvider;
 import gg.projecteden.nexus.features.events.store.providers.purchasable.EventStoreParticlesProvider;
@@ -12,6 +13,7 @@ import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +23,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-
-import static gg.projecteden.nexus.features.events.EdenEvent.PREFIX_STORE;
-import static gg.projecteden.nexus.utils.PlayerUtils.runCommand;
-import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsOp;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Getter
 @AllArgsConstructor
@@ -63,7 +60,7 @@ public enum EventStoreItem {
 
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
-			runCommandAsOp(player, "hdb");
+			PlayerUtils.runCommandAsOp(player, "hdb");
 		}
 	},
 	EMOJI_HATS(75, Material.PLAYER_HEAD) {
@@ -149,8 +146,8 @@ public enum EventStoreItem {
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
 			player.closeInventory();
-			PlayerUtils.send(player, PREFIX_STORE + "Send custom emojis in chat! &f👀 💯 🔥 👍 👏 😍 😎");
-			PlayerUtils.send(player, new JsonBuilder(PREFIX_STORE + "Browse the &c/emoji store")
+			PlayerUtils.send(player, EdenEvent.PREFIX_STORE + "Send custom emojis in chat! &f👀 💯 🔥 👍 👏 😍 😎");
+			PlayerUtils.send(player, new JsonBuilder(EdenEvent.PREFIX_STORE + "Browse the &c/emoji store")
 				.command("/emoji store")
 				.hover("Click to open the Emoji store")
 				.group()
@@ -167,7 +164,7 @@ public enum EventStoreItem {
 
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
-			runCommand(player, "jukebox store");
+			PlayerUtils.runCommand(player, "jukebox store");
 			player.closeInventory();
 		}
 	},
@@ -191,7 +188,7 @@ public enum EventStoreItem {
 	}
 
 	public ItemBuilder getDisplayItem() {
-		return getRawDisplayItem().name(camelCase(name())).lore(getLore()).itemFlags(ItemFlag.HIDE_ATTRIBUTES);
+		return getRawDisplayItem().name(StringUtils.camelCase(name())).lore(getLore()).itemFlags(ItemFlag.HIDE_ATTRIBUTES);
 	}
 
 	public boolean canView(Player player) {

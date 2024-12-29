@@ -26,11 +26,7 @@ import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.bukkit.Chunk;
-import org.bukkit.ChunkSnapshot;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -41,8 +37,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.joining;
 
 @NoArgsConstructor
 @Aliases("autoinv")
@@ -274,7 +268,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 
 				item.lore("", "&f" + AutoCraft.getIngredients(material).stream()
 					.map(StringUtils::pretty)
-					.collect(joining(", ")));
+					.collect(Collectors.joining(", ")));
 
 				items.add(ClickableItem.of(item.build(), e -> {
 					if (user.getAutoCraftExclude().contains(material))

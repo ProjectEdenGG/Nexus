@@ -16,14 +16,13 @@ import gg.projecteden.nexus.models.halloween20.Halloween20Service;
 import gg.projecteden.nexus.models.halloween20.Halloween20User;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Title("Combination Lock")
 public class CombinationLockProvider extends InventoryProvider {
@@ -71,7 +70,7 @@ public class CombinationLockProvider extends InventoryProvider {
 		boolean[] correct = {false, false, false};
 
 		for (int i = 0; i < groups.length; i++) {
-			if (!isNullOrEmpty(playerCode) && playerCode.length() == CORRECT_CODE.length())
+			if (!Nullables.isNullOrEmpty(playerCode) && playerCode.length() == CORRECT_CODE.length())
 				for (int j = 0; j < groups[i].length; j++)
 					if (playerCode.charAt(groups[i][j]) == CORRECT_CODE.charAt(groups[i][j]))
 						correct[i] = true;

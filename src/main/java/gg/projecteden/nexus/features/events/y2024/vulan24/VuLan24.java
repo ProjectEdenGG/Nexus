@@ -2,6 +2,8 @@ package gg.projecteden.nexus.features.events.y2024.vulan24;
 
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.RandomUtils;
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
@@ -10,16 +12,13 @@ import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob.JobSta
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.models.EventBreakable;
+import gg.projecteden.nexus.features.events.models.EventFishingLoot;
 import gg.projecteden.nexus.features.events.models.EventPlaceable;
 import gg.projecteden.nexus.features.events.y2024.vulan24.models.VuLan24BoatTracker;
-import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Entity;
-import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24NPC;
-import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Quest;
-import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestItem;
-import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestReward;
-import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestTask;
+import gg.projecteden.nexus.features.events.y2024.vulan24.quests.*;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
+import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
 import gg.projecteden.nexus.features.regionapi.events.entity.EntityLeavingRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -57,14 +56,6 @@ import tech.blastmc.holograms.api.HologramsAPI;
 import tech.blastmc.holograms.api.models.Hologram;
 
 import java.util.List;
-
-import static gg.projecteden.api.common.utils.RandomUtils.chanceOf;
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventDefaultFishingLoot.STONEFISH;
-import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory.FISH;
-import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory.JUNK;
-import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Quest.TRAGEDY_AT_VINH_THAI_LAGOON;
-import static gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks.hasBackpack;
 
 @QuestConfig(
 	quests = VuLan24Quest.class,
@@ -188,7 +179,7 @@ public class VuLan24 extends EdenEvent {
 			return;
 
 		if (event.getEntity() instanceof Pillager pillager)
-			if (chanceOf(2)) {
+			if (RandomUtils.chanceOf(2)) {
 				pillager.setPatrolLeader(true);
 				pillager.getEquipment().setHelmet(NMSUtils.fromNMS(Raid.getLeaderBannerInstance()));
 			}
@@ -197,7 +188,7 @@ public class VuLan24 extends EdenEvent {
 			boolean allowSpawn = false;
 			for (var player : worldguard().getPlayersInRegion("vu_lan_raid")) {
 				final Quester quester = Quester.of(player);
-				if (quester.hasStarted(TRAGEDY_AT_VINH_THAI_LAGOON) && !quester.hasCompleted(TRAGEDY_AT_VINH_THAI_LAGOON))
+				if (quester.hasStarted(VuLan24Quest.TRAGEDY_AT_VINH_THAI_LAGOON) && !quester.hasCompleted(VuLan24Quest.TRAGEDY_AT_VINH_THAI_LAGOON))
 					allowSpawn = true;
 			}
 
@@ -259,7 +250,7 @@ public class VuLan24 extends EdenEvent {
 			final VuLan24ConfigService configService = new VuLan24ConfigService();
 			final VuLan24Config config = configService.get0();
 
-			final String item = camelCase(user.getDailyQuest()).toLowerCase();
+			final String item = StringUtils.camelCase(user.getDailyQuest()).toLowerCase();
 			final Dialog dialog = new Dialog(npc);
 
 			if (!user.isReceivedDailyQuestInstructions()) {
@@ -303,7 +294,7 @@ public class VuLan24 extends EdenEvent {
 
 		handleInteract(VuLan24NPC.BOAT_SALESMAN, (player, npc) -> VuLan24Menus.getBoatPicker().open(player));
 		handleInteract(VuLan24NPC.TOUR_GUIDE, (player, npc) -> {
-				if (hasBackpack(player))
+				if (Backpacks.hasBackpack(player))
 					new Dialog(npc)
 						.npc("Hey, you haven't seen a tour group have you? About 20 people? No?")
 						.send(player);
@@ -312,7 +303,7 @@ public class VuLan24 extends EdenEvent {
 						.npc("Hey there! Did you need a hand at all?")
 						.npc("Here, take this. It might be useful to you!")
 						.thenRun(quester -> {
-							if (!hasBackpack(player))
+							if (!Backpacks.hasBackpack(player))
 								VuLan24Menus.getGuideShop().open(player);
 						})
 						.send(player);
@@ -382,8 +373,8 @@ public class VuLan24 extends EdenEvent {
 
 	@Override
 	protected void registerFishingLoot() {
-		registerFishingLoot(FISH, JUNK);
-		getFishingLoot(STONEFISH).setMaxY(75);
+		registerFishingLoot(EventFishingLoot.EventFishingLootCategory.FISH, EventFishingLoot.EventFishingLootCategory.JUNK);
+		getFishingLoot(EventFishingLoot.EventDefaultFishingLoot.STONEFISH).setMaxY(75);
 	}
 
 	@Override

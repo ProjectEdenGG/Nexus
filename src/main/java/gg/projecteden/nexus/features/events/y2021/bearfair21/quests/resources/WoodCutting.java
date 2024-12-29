@@ -2,18 +2,15 @@ package gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.BearFair21TreeRegenJob;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,25 +22,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.RandomUtils.randomLong;
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
-import static gg.projecteden.nexus.utils.BlockUtils.createDistanceSortedQueue;
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.Utils.getMin;
 
 public class WoodCutting implements Listener {
 	private static final String tree_region = BearFair21.getRegion() + "_trees";
@@ -64,8 +46,8 @@ public class WoodCutting implements Listener {
 
 		Set<ProtectedRegion> regions = BearFair21.worldguard().getRegionsLike(tree_region + "_" + treeType.name() + "_[\\d]+");
 
-		MinMaxResult<ProtectedRegion> result = getMin(regions, region ->
-			distance(event.getBlock(), BearFair21.worldguard().toLocation(region.getMinimumPoint())).get());
+		MinMaxResult<ProtectedRegion> result = Utils.getMin(regions, region ->
+			Distance.distance(event.getBlock(), BearFair21.worldguard().toLocation(region.getMinimumPoint())).get());
 
 		ProtectedRegion region = result.getObject();
 		double distance = Math.sqrt(result.getValue().doubleValue());
@@ -116,15 +98,15 @@ public class WoodCutting implements Listener {
 		}
 
 		public ItemBuilder getDrop() {
-			return new ItemBuilder(logs).name(camelCase(name() + " Logs")).amount(1);
+			return new ItemBuilder(logs).name(StringUtils.camelCase(name() + " Logs")).amount(1);
 		}
 
 		public List<ItemStack> getDrops(ItemStack tool) {
 			List<ItemStack> drops = new ArrayList<>();
-			Material toolType = isNullOrAir(tool) ? Material.AIR : tool.getType();
+			Material toolType = Nullables.isNullOrAir(tool) ? Material.AIR : tool.getType();
 			boolean chance = Tool.from(toolType).chance();
 			if (chance) {
-				drops.add(new ItemBuilder(logs).name(camelCase(name() + " Logs")).amount(1).build());
+				drops.add(new ItemBuilder(logs).name(StringUtils.camelCase(name() + " Logs")).amount(1).build());
 				if (RandomUtils.chanceOf(25))
 					drops.add(new ItemBuilder(Material.STICK).amount(RandomUtils.randomInt(1, 3)).build());
 			}
@@ -166,7 +148,7 @@ public class WoodCutting implements Listener {
 					return null;
 
 				Location base = BearFair21.worldedit().toLocation(region.getMinimumPoint());
-				Queue<Location> queue = createDistanceSortedQueue(base);
+				Queue<Location> queue = BlockUtils.createDistanceSortedQueue(base);
 				getBlocks(id).thenAccept(blocks -> {
 					queue.addAll(blocks.keySet());
 					future.complete(queue);
@@ -209,7 +191,7 @@ public class WoodCutting implements Listener {
 		}
 
 		public void feller(Player player, int id) {
-			if (!new CooldownService().check(UUID0, getRegion(id).getId(), TickTime.SECOND.x(3)))
+			if (!new CooldownService().check(UUIDUtils.UUID0, getRegion(id).getId(), TickTime.SECOND.x(3)))
 				return;
 
 			treeAnimating = true;
@@ -234,7 +216,7 @@ public class WoodCutting implements Listener {
 				Tasks.wait(++wait, () -> treeAnimating = false);
 
 				Tasks.Countdown.builder()
-					.duration(randomLong(8, 12) * 4)
+					.duration(gg.projecteden.api.common.utils.RandomUtils.randomLong(8, 12) * 4)
 					.onTick(i -> {
 						if (i % 2 == 0)
 							PlayerUtils.giveItems(player, getDrops(ItemUtils.getTool(player)));
@@ -243,7 +225,7 @@ public class WoodCutting implements Listener {
 
 				Jingle.TREE_FELLER.play(player);
 
-				new BearFair21TreeRegenJob(this, id).schedule(randomInt(3 * 60, 5 * 60));
+				new BearFair21TreeRegenJob(this, id).schedule(RandomUtils.randomInt(3 * 60, 5 * 60));
 			}));
 		}
 

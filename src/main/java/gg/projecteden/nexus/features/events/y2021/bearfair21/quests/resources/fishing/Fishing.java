@@ -6,10 +6,7 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.Quests;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootCategory;
 import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
@@ -26,9 +23,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static gg.projecteden.nexus.utils.ItemUtils.getTool;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class Fishing implements Listener {
 
@@ -80,7 +74,7 @@ public class Fishing implements Listener {
 		Player player = event.getPlayer();
 		if (BearFair21.isNotAtBearFair(player)) return;
 
-		ItemStack rod = getTool(player);
+		ItemStack rod = ItemUtils.getTool(player);
 		if (rod == null) return;
 
 		if (!event.getState().equals(PlayerFishEvent.State.CAUGHT_FISH)) return;
@@ -89,7 +83,7 @@ public class Fishing implements Listener {
 		if (!(caught instanceof Item item)) return;
 
 		ItemStack tool = ItemUtils.getTool(player, Material.FISHING_ROD);
-		if (isNullOrAir(tool))
+		if (Nullables.isNullOrAir(tool))
 			return;
 
 		ItemMeta meta = tool.getItemMeta();
@@ -127,8 +121,8 @@ public class Fishing implements Listener {
 		if (BearFair21.isNotAtBearFair(event)) return;
 		Player player = event.getPlayer();
 
-		ItemStack item = getTool(player);
-		if (isNullOrAir(item)) return;
+		ItemStack item = ItemUtils.getTool(player);
+		if (Nullables.isNullOrAir(item)) return;
 		if (!ItemUtils.isFuzzyMatch(item, FishingLoot.TREASURE_CHEST.getItem())) return;
 
 		item.setAmount(item.getAmount() - 1);

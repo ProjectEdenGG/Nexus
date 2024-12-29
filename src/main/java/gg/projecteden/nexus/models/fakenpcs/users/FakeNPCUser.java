@@ -10,20 +10,10 @@ import gg.projecteden.nexus.features.fakenpc.FakeNPCUtils.SkinProperties;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC;
 import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPCService;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import static java.util.stream.Collectors.toSet;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Data
 @Entity(value = "fake_npc_user", noClassnameStored = true)
@@ -80,21 +70,21 @@ public class FakeNPCUser implements PlayerOwnedObject {
 		final FakeNPCService service = new FakeNPCService();
 		return npcSettings.keySet().stream()
 			.filter(uuid -> npcSettings.get(uuid).isInteracted())
-			.map(service::get).collect(toSet());
+			.map(service::get).collect(Collectors.toSet());
 	}
 
 	public Set<FakeNPC> getVisibleNPCs() {
 		final FakeNPCService service = new FakeNPCService();
 		return npcSettings.keySet().stream()
 			.filter(uuid -> npcSettings.get(uuid).isVisible())
-			.map(service::get).collect(toSet());
+			.map(service::get).collect(Collectors.toSet());
 	}
 
 	public Set<FakeNPC> getVisibleHolograms() {
 		final FakeNPCService service = new FakeNPCService();
 		return npcSettings.keySet().stream()
 			.filter(uuid -> npcSettings.get(uuid).isVisibleHologram())
-			.map(service::get).collect(toSet());
+			.map(service::get).collect(Collectors.toSet());
 	}
 
 	public boolean canSeeNPC(FakeNPC fakeNPC) {

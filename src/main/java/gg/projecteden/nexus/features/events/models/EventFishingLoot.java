@@ -16,12 +16,12 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.function.Predicate;
 
-import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory.FISH;
-import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory.JUNK;
-import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory.TREASURE;
-import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootTime.BOTH;
-import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootTime.DAY;
-import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootTime.NIGHT;
+ gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory.FISH;
+ gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory.JUNK;
+ gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory.TREASURE;
+ gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootTime.BOTH;
+ gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootTime.DAY;
+ gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootTime.NIGHT;
 
 public class EventFishingLoot {
 

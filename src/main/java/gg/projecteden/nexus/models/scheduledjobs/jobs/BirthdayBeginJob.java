@@ -2,6 +2,7 @@ package gg.projecteden.nexus.models.scheduledjobs.jobs;
 
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob;
 import gg.projecteden.api.mongodb.models.scheduledjobs.common.Schedule;
 import gg.projecteden.nexus.Nexus;
@@ -21,8 +22,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.concurrent.CompletableFuture;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @Data
 @NoArgsConstructor
@@ -55,7 +54,7 @@ public class BirthdayBeginJob extends AbstractJob {
 
 		ZoneId zone = ZoneId.systemDefault();
 		final GeoIP geoip = new GeoIPService().get(discordUser);
-		if (geoip.getTimezone() != null && !isNullOrEmpty(geoip.getTimezone().getId()))
+		if (geoip.getTimezone() != null && !Nullables.isNullOrEmpty(geoip.getTimezone().getId()))
 			zone = ZoneId.of(geoip.getTimezone().getId());
 
 		final ZonedDateTime zonedNow = now.atZone(ZoneId.systemDefault());

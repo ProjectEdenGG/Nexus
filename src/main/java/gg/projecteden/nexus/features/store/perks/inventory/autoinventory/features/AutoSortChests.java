@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.store.perks.inventory.autoinventory.featur
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventory;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventoryFeature;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.tasks.InventorySorter;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.utils.Tasks;
@@ -16,8 +17,6 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
-
-import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
 
 @NoArgsConstructor
 public class AutoSortChests implements Listener {
@@ -37,7 +36,7 @@ public class AutoSortChests implements Listener {
 		if (!user.hasFeatureEnabled(AutoInventoryFeature.SORT_OTHER_INVENTORIES))
 			return;
 
-		if (player.isSneaking() || isVanished(player))
+		if (player.isSneaking() || Vanish.isVanished(player))
 			return;
 
 		Inventory topInventory = event.getView().getTopInventory();

@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events.models;
 
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.BearFair21TalkingNPC;
+import gg.projecteden.nexus.models.bearfair21.BearFair21Config;
 import gg.projecteden.nexus.models.bearfair21.BearFair21ConfigService;
 import gg.projecteden.nexus.models.chat.Channel;
 import gg.projecteden.nexus.models.chat.Chatter;
@@ -19,8 +20,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
-
-import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.SKIP_WAITS;
 
 public class Talker {
 	/**
@@ -48,7 +47,7 @@ public class Talker {
 		AtomicInteger wait = new AtomicInteger(0);
 		script.forEach(line -> {
 			if (line.toLowerCase().matches("^wait \\d+$")) {
-				if (!(talker instanceof BearFair21TalkingNPC) || !new BearFair21ConfigService().get0().isEnabled(SKIP_WAITS))
+				if (!(talker instanceof BearFair21TalkingNPC) || !new BearFair21ConfigService().get0().isEnabled(BearFair21Config.BearFair21ConfigOption.SKIP_WAITS))
 					wait.getAndAdd(Integer.parseInt(line.toLowerCase().replace("wait ", "")));
 			} else {
 				line = line.replaceAll("<player>", playerName);
@@ -119,7 +118,7 @@ public class Talker {
 				Tasks.wait(wait.get(), () -> complete.accept(false));
 
 			} else if (line.toLowerCase().matches("^wait \\d+$")) {
-				if (!(talker instanceof BearFair21TalkingNPC) || !new BearFair21ConfigService().get0().isEnabled(SKIP_WAITS))
+				if (!(talker instanceof BearFair21TalkingNPC) || !new BearFair21ConfigService().get0().isEnabled(BearFair21Config.BearFair21ConfigOption.SKIP_WAITS))
 					wait.getAndAdd(Integer.parseInt(line.toLowerCase().replace("wait ", "")));
 				if (!iterator.hasNext())
 					Tasks.wait(wait.get(), () -> complete.accept(true));

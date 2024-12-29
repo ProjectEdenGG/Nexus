@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.features.titan.serverbound.TitanConfig;
@@ -11,22 +12,13 @@ import gg.projecteden.nexus.features.titan.serverbound.Versions;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.utils.StringUtils;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.UUID;
-
-import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.left;
 
 @Data
 @Entity(value = "local_resource_pack", noClassnameStored = true)
@@ -74,7 +66,7 @@ public class LocalResourcePackUser implements PlayerOwnedObject {
 		this.titanSettings.titanVersion = verions.getTitan();
 		this.titanSettings.saturnVersion = verions.getSaturn();
 
-		this.enabled = !isNullOrEmpty(getSaturnVersion());
+		this.enabled = !gg.projecteden.nexus.utils.Nullables.isNullOrEmpty(getSaturnVersion());
 		this.lastKnownSaturnVersion = getSaturnVersion();
 		this.lastKnownTitanVersion = getTitanVersion();
 	}
@@ -117,13 +109,13 @@ public class LocalResourcePackUser implements PlayerOwnedObject {
 
 	@ToString.Include
 	public boolean hasTitan() {
-		return titanSettings != null && isNotNullOrEmpty(getTitanVersion());
+		return titanSettings != null && Nullables.isNotNullOrEmpty(getTitanVersion());
 	}
 
 	@NotNull
 	public String getSaturnStatus() {
-		if (!isNullOrEmpty(getSaturnVersion()))
-			return "&aManual &3(&7" + left(getSaturnVersion(), 7) + "&3)";
+		if (!gg.projecteden.nexus.utils.Nullables.isNullOrEmpty(getSaturnVersion()))
+			return "&aManual &3(&7" + StringUtils.left(getSaturnVersion(), 7) + "&3)";
 		else if (isEnabled())
 			return "&aManual";
 		else {
@@ -138,7 +130,7 @@ public class LocalResourcePackUser implements PlayerOwnedObject {
 	}
 
 	public String getSaturnCommitUrl() {
-		if (isNullOrEmpty(getSaturnVersion()))
+		if (gg.projecteden.nexus.utils.Nullables.isNullOrEmpty(getSaturnVersion()))
 			return "";
 
 		return EdenSocialMediaSite.GITHUB.getUrl() + "/Saturn/commit/" + getSaturnVersion();
@@ -149,7 +141,7 @@ public class LocalResourcePackUser implements PlayerOwnedObject {
 	}
 
 	public String getTitanCommitUrl() {
-		if (isNullOrEmpty(getTitanVersion()))
+		if (gg.projecteden.nexus.utils.Nullables.isNullOrEmpty(getTitanVersion()))
 			return "";
 
 		return EdenSocialMediaSite.GITHUB.getUrl() + "/Titan/commit/" + getTitanVersion();

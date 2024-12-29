@@ -3,14 +3,13 @@ package gg.projecteden.nexus.features.events.aeveonproject.effects;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.aeveonproject.APUtils;
+import gg.projecteden.nexus.features.events.aeveonproject.AeveonProject;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
-
-import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.getWorld;
 
 public class PlayerTime implements Listener {
 
@@ -34,7 +33,7 @@ public class PlayerTime implements Listener {
 
 	@EventHandler
 	public void onWorldChange(PlayerChangedWorldEvent event) {
-		if (event.getFrom().equals(getWorld()))
+		if (event.getFrom().equals(AeveonProject.getWorld()))
 			event.getPlayer().resetPlayerTime();
 	}
 }

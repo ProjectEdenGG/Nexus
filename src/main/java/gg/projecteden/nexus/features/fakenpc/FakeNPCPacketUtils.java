@@ -8,24 +8,18 @@ import gg.projecteden.nexus.models.fakenpcs.npcs.types.PlayerNPC;
 import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUser;
 import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.nms.NMSUtils;
-import gg.projecteden.nexus.utils.nms.NMSUtils.Property;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.nms.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
+import gg.projecteden.nexus.utils.nms.NMSUtils.Property;
+import gg.projecteden.nexus.utils.nms.PacketUtils;
 import gg.projecteden.parchment.HasPlayer;
 import io.papermc.paper.adventure.AdventureComponent;
 import lombok.NonNull;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
+import net.minecraft.network.protocol.game.*;
 import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket.Rot;
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action;
-import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
-import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
-import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
@@ -38,9 +32,6 @@ import org.bukkit.entity.LivingEntity;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.nms.PacketUtils.sendPacket;
 
 public class FakeNPCPacketUtils {
 
@@ -64,13 +55,13 @@ public class FakeNPCPacketUtils {
 			synchedData.set(EntityDataSerializers.BYTE.createAccessor(17), (byte) 127); // TODO: skin layers
 			ClientboundSetEntityDataPacket metadataPacket = new ClientboundSetEntityDataPacket(serverPlayer.getId(), synchedData.packDirty());
 
-			sendPacket(hasPlayer, playerInfoPacket, spawnPacket, headRotationPacket, metadataPacket);
+			PacketUtils.sendPacket(hasPlayer, playerInfoPacket, spawnPacket, headRotationPacket, metadataPacket);
 
 			if (fakeNPC.getHologram().isSpawned())
 				spawnHologramFor(fakeNPC, hasPlayer);
 
 			// Remove npc from tab
-			Tasks.wait(2, () -> sendPacket(hasPlayer, new ClientboundPlayerInfoRemovePacket(Collections.singletonList(serverPlayer.getUUID()))));
+			Tasks.wait(2, () -> PacketUtils.sendPacket(hasPlayer, new ClientboundPlayerInfoRemovePacket(Collections.singletonList(serverPlayer.getUUID()))));
 		}
 	}
 
@@ -98,10 +89,10 @@ public class FakeNPCPacketUtils {
 
 	public static void updateHologram(FakeNPC fakeNPC) {
 		Hologram hologram = fakeNPC.getHologram();
-		if (hologram == null || isNullOrEmpty(hologram.getLines()))
+		if (hologram == null || gg.projecteden.api.common.utils.Nullables.isNullOrEmpty(hologram.getLines()))
 			return;
 
-		if (!isNullOrEmpty(hologram.getArmorStandList()))
+		if (!gg.projecteden.api.common.utils.Nullables.isNullOrEmpty(hologram.getArmorStandList()))
 			despawnHologram(fakeNPC);
 
 		Tasks.wait(1, () -> spawnHologram(fakeNPC));
@@ -127,10 +118,10 @@ public class FakeNPCPacketUtils {
 
 	public static void updateHologramFor(FakeNPC fakeNPC, @NonNull HasPlayer player) {
 		Hologram hologram = fakeNPC.getHologram();
-		if (isNullOrEmpty(hologram.getLines()))
+		if (gg.projecteden.api.common.utils.Nullables.isNullOrEmpty(hologram.getLines()))
 			return;
 
-		if (!isNullOrEmpty(hologram.getArmorStandList()))
+		if (!gg.projecteden.api.common.utils.Nullables.isNullOrEmpty(hologram.getArmorStandList()))
 			despawnHologramFor(fakeNPC, player);
 
 		spawnHologramFor(fakeNPC, player);
@@ -180,7 +171,7 @@ public class FakeNPCPacketUtils {
 		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData().packDirty());
 		ClientboundSetEquipmentPacket rawEquipmentPacket = new ClientboundSetEquipmentPacket(armorStand.getId(), NMSUtils.getArmorEquipmentList());
 
-		sendPacket(player, spawnArmorStand, rawMetadataPacket, rawEquipmentPacket);
+		PacketUtils.sendPacket(player, spawnArmorStand, rawMetadataPacket, rawEquipmentPacket);
 	}
 
 	public static void despawnHologramFor(FakeNPC fakeNPC, @NonNull UUID uuid) {
@@ -223,6 +214,6 @@ public class FakeNPCPacketUtils {
 		ClientboundRotateHeadPacket rotateHeadPacket = new ClientboundRotateHeadPacket(entity, _yaw);
 		ClientboundMoveEntityPacket moveEntityPacket = new Rot(fakeNPC.getEntity().getId(), _yaw, _pitch, false);
 
-		sendPacket(player, rotateHeadPacket, moveEntityPacket);
+		PacketUtils.sendPacket(player, rotateHeadPacket, moveEntityPacket);
 	}
 }

@@ -13,6 +13,7 @@ import gg.projecteden.nexus.models.bearfair20.BearFair20User;
 import gg.projecteden.nexus.models.bearfair20.BearFair20User.BF20PointSource;
 import gg.projecteden.nexus.models.bearfair20.BearFair20UserService;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
@@ -29,17 +30,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.giveDailyPoints;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.isInRegion;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.send;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import java.util.*;
 
 @Disabled
 public class Basketball implements Listener {
@@ -86,16 +77,16 @@ public class Basketball implements Listener {
 		removeBasketball(inv.getExtraContents(), player);
 		removeBasketball(inv.getArmorContents(), player);
 		removeBasketball(inv.getStorageContents(), player);
-		if (!isNullOrAir(inv.getHelmet()) && isBasketball(inv.getHelmet()))
+		if (!Nullables.isNullOrAir(inv.getHelmet()) && isBasketball(inv.getHelmet()))
 			inv.setHelmet(new ItemStack(Material.AIR));
-		if (!isNullOrAir(inv.getItemInOffHand()) && isBasketball(inv.getItemInOffHand()))
+		if (!Nullables.isNullOrAir(inv.getItemInOffHand()) && isBasketball(inv.getItemInOffHand()))
 			inv.setItemInOffHand(new ItemStack(Material.AIR));
 
 	}
 
 	private static void removeBasketball(ItemStack[] itemStacks, Player player) {
 		for (ItemStack item : itemStacks) {
-			if (isNullOrAir(item))
+			if (Nullables.isNullOrAir(item))
 				continue;
 			if (isBasketball(item)) {
 				player.getInventory().remove(item);
@@ -104,7 +95,7 @@ public class Basketball implements Listener {
 	}
 
 	private static void removeBasketballEntity(Player player) {
-		Collection<Entity> entities = worldguard().getEntitiesInRegion(gameRg);
+		Collection<Entity> entities = BearFair20.worldguard().getEntitiesInRegion(gameRg);
 		for (Entity entity : entities) {
 			if (entity instanceof Item item) {
 				if (!isBasketball(item.getItemStack()))
@@ -117,7 +108,7 @@ public class Basketball implements Listener {
 	}
 
 	private static boolean regionContainsBasketball(Player player) {
-		Collection<Entity> entities = worldguard().getEntitiesInRegion(gameRg);
+		Collection<Entity> entities = BearFair20.worldguard().getEntitiesInRegion(gameRg);
 		for (Entity entity : entities) {
 			if (entity instanceof Item item) {
 				if (!isBasketball(item.getItemStack()))
@@ -153,12 +144,12 @@ public class Basketball implements Listener {
 	}
 
 	private static Collection<Entity> getRegionEntities() {
-		return worldguard().getEntitiesInRegion(gameRg);
+		return BearFair20.worldguard().getEntitiesInRegion(gameRg);
 	}
 
 	private static void cleanupBasketballs() {
 		getRegionEntities().forEach(entity -> {
-			if (!worldguard().isInRegion(entity.getLocation(), courtRg))
+			if (!BearFair20.worldguard().isInRegion(entity.getLocation(), courtRg))
 				if (isBasketball(entity))
 					entity.remove();
 		});
@@ -171,11 +162,11 @@ public class Basketball implements Listener {
 			List<Player> players = OnlinePlayers.where().world(world).get();
 
 			players.forEach(player -> {
-				if (worldguard().isInRegion(player.getLocation(), courtRg)) {
+				if (BearFair20.worldguard().isInRegion(player.getLocation(), courtRg)) {
 					if (!hasBasketball(player)) {
 						boolean found = false;
 						for (Entity entity : getRegionEntities())
-							if (worldguard().isInRegion(entity.getLocation(), courtRg)) {
+							if (BearFair20.worldguard().isInRegion(entity.getLocation(), courtRg)) {
 								found = true;
 								break;
 							}
@@ -206,36 +197,36 @@ public class Basketball implements Listener {
 			taskId = Tasks.repeat(0, 1, () -> {
 				++iteration;
 
-				if (!worldguard().isInRegion(entity.getLocation(), courtRg)) {
+				if (!BearFair20.worldguard().isInRegion(entity.getLocation(), courtRg)) {
 					entity.remove();
 					giveBasketball(player);
 					stop();
-				} else if (worldguard().isInRegion(entity.getLocation(), hoopRg + "1")
-						|| worldguard().isInRegion(entity.getLocation(), hoopRg + "2")) {
+				} else if (BearFair20.worldguard().isInRegion(entity.getLocation(), hoopRg + "1")
+						|| BearFair20.worldguard().isInRegion(entity.getLocation(), hoopRg + "2")) {
 					entity.remove();
 					giveBasketball(player);
-					send("&eTouchdown!!", player);
+					BearFair20.send("&eTouchdown!!", player);
 
-					if (giveDailyPoints) {
+					if (BearFair20.giveDailyPoints) {
 						BearFair20User user = new BearFair20UserService().get(player);
 						user.giveDailyPoints(SOURCE);
 						new BearFair20UserService().save(user);
 					}
 
-					worldguard().getPlayersInRegion(courtRg).forEach(loopPlayer ->
+					BearFair20.worldguard().getPlayersInRegion(courtRg).forEach(loopPlayer ->
 							loopPlayer.spawnParticle(Particle.LAVA, entity.getLocation(), 50, 2, 2, 2, .01));
 					stop();
-				} else if (worldguard().isInRegion(entity.getLocation(), backboardRg + "1")
-						|| worldguard().isInRegion(entity.getLocation(), backboardRg + "2")) {
+				} else if (BearFair20.worldguard().isInRegion(entity.getLocation(), backboardRg + "1")
+						|| BearFair20.worldguard().isInRegion(entity.getLocation(), backboardRg + "2")) {
 					entity.remove();
 					giveBasketball(player);
-					send("&eSo close...", player);
+					BearFair20.send("&eSo close...", player);
 					stop();
 				}
 
 				if (iteration == 60) {
-					if (worldguard().isInRegion(entity.getLocation(), stuckRg + "1")
-							|| worldguard().isInRegion(entity.getLocation(), stuckRg + "2")) {
+					if (BearFair20.worldguard().isInRegion(entity.getLocation(), stuckRg + "1")
+							|| BearFair20.worldguard().isInRegion(entity.getLocation(), stuckRg + "2")) {
 						entity.remove();
 						giveBasketball(player);
 					}
@@ -255,7 +246,7 @@ public class Basketball implements Listener {
 		if (player.getWorld() != world) return;
 		if (!isBasketball(event.getItem().getItemStack())) return;
 
-		if (!isInRegion(player, courtRg))
+		if (!BearFair20.isInRegion(player, courtRg))
 			event.setCancelled(true);
 		else if (!ownsBasketball(player, event.getItem().getItemStack()))
 			event.setCancelled(true);
@@ -274,7 +265,7 @@ public class Basketball implements Listener {
 		if (!event.getRegion().getId().equalsIgnoreCase(courtRg)) return;
 		Player player = event.getPlayer();
 		if (new CooldownService().check(player, "basketball-doublejump-tip", TickTime.SECOND.x(30)))
-			send("&aDouble Jump enabled!", player);
+			BearFair20.send("&aDouble Jump enabled!", player);
 		if (!regionContainsBasketball(player))
 			giveBasketball(player);
 	}

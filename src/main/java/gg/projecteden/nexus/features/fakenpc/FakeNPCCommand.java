@@ -2,23 +2,14 @@ package gg.projecteden.nexus.features.fakenpc;
 
 import gg.projecteden.nexus.features.fakenpc.events.FakeNPCRightClickEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.fakenpcs.config.FakeNPCConfig;
 import gg.projecteden.nexus.models.fakenpcs.config.FakeNPCConfigService;
-import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC;
+import gg.projecteden.nexus.models.fakenpcs.npcs.*;
 import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC.Hologram;
 import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC.Hologram.VisibilityType;
-import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPCService;
-import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPCTraitType;
-import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPCType;
-import gg.projecteden.nexus.models.fakenpcs.npcs.Trait;
 import gg.projecteden.nexus.models.fakenpcs.npcs.traits.HologramTrait;
 import gg.projecteden.nexus.models.fakenpcs.npcs.traits.LookCloseTrait;
 import gg.projecteden.nexus.models.fakenpcs.npcs.types.PlayerNPC;
@@ -34,8 +25,6 @@ import org.bukkit.event.Listener;
 
 import java.util.List;
 import java.util.Set;
-
-import static gg.projecteden.nexus.features.fakenpc.FakeNPCUtils.getNameAndId;
 
 @HideFromWiki // TODO
 @NoArgsConstructor
@@ -97,7 +86,7 @@ public class FakeNPCCommand extends CustomCommand implements Listener {
 		if (!user.hasSelectedNPC())
 			error("Could not find an NPC to select");
 
-		send(PREFIX + "You selected " + getNameAndId(npc));
+		send(PREFIX + "You selected " + FakeNPCUtils.getNameAndId(npc));
 	}
 
 	@Path("info [--expand]")
@@ -137,7 +126,7 @@ public class FakeNPCCommand extends CustomCommand implements Listener {
 		FakeNPC npc = type.create(player(), name);
 		user.setSelectedNPC(npc);
 
-		send(PREFIX + "Created " + getNameAndId(npc));
+		send(PREFIX + "Created " + FakeNPCUtils.getNameAndId(npc));
 	}
 
 	@Path("delete")
@@ -146,7 +135,7 @@ public class FakeNPCCommand extends CustomCommand implements Listener {
 		FakeNPC npc = getSelectedNPC();
 		service.delete(npc);
 
-		send(PREFIX + "Deleted " + getNameAndId(npc));
+		send(PREFIX + "Deleted " + FakeNPCUtils.getNameAndId(npc));
 	}
 
 	@Path("tp")
@@ -376,7 +365,7 @@ public class FakeNPCCommand extends CustomCommand implements Listener {
 
 		user.setSelecting(false);
 		user.setSelectedNPC(npc);
-		user.sendMessage(PREFIX + "You selected " + getNameAndId(npc));
+		user.sendMessage(PREFIX + "You selected " + FakeNPCUtils.getNameAndId(npc));
 	}
 
 }

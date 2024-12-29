@@ -7,11 +7,8 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import gg.projecteden.nexus.utils.Nullables;
+import lombok.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -20,8 +17,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 import java.util.function.Function;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Data
 @NoArgsConstructor
@@ -89,7 +84,7 @@ public class LegacyHome implements PlayerOwnedObject {
 
 	public void teleportAsync(Player player) {
 		Location location = this.location.clone();
-		if (isNullOrAir(location.clone().add(0, 2, 0).getBlock()))
+		if (Nullables.isNullOrAir(location.clone().add(0, 2, 0).getBlock()))
 			location.add(0, .5, 0);
 		player.teleportAsync(location, TeleportCause.COMMAND);
 	}

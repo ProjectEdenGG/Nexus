@@ -3,12 +3,14 @@ package gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources;
 import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.Quests;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.Errors;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.BlockRegenJob;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,9 +29,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.send;
-import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 
 public class Mining implements Listener {
 
@@ -56,7 +55,7 @@ public class Mining implements Listener {
 		ItemStack tool = player.getInventory().getItemInMainHand();
 		if (!oreType.canBeMinedBy(tool.getType())) {
 			if (new CooldownService().check(player, "BF21_cantbreak_tool", TickTime.SECOND.x(15))) {
-				send(Errors.CANT_BREAK + " with this tool. Needs either: " + oreType.getCanBreak(), player);
+				BearFair21.send(Errors.CANT_BREAK + " with this tool. Needs either: " + oreType.getCanBreak(), player);
 				Quests.sound_villagerNo(player);
 			}
 			return true;
@@ -66,7 +65,7 @@ public class Mining implements Listener {
 		new SoundBuilder(Sound.BLOCK_STONE_BREAK).location(player.getLocation()).category(SoundCategory.BLOCKS).play();
 		PlayerUtils.giveItem(player, oreType.getIngotItemStack(tool));
 
-		new BlockRegenJob(block.getLocation(), block.getType()).schedule(randomInt(3 * 60, 5 * 60));
+		new BlockRegenJob(block.getLocation(), block.getType()).schedule(RandomUtils.randomInt(3 * 60, 5 * 60));
 		block.setType(Material.STONE);
 		return true;
 	}
@@ -104,7 +103,7 @@ public class Mining implements Listener {
 				}
 			}
 
-			int amount = randomInt(min, max) * randomInt(1, level);
+			int amount = RandomUtils.randomInt(min, max) * RandomUtils.randomInt(1, level);
 			return new ItemBuilder(ingot).amount(amount).build();
 		}
 

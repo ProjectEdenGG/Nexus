@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.trust.providers;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.SignMenuFactory;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.trust.TrustFeature;
@@ -21,8 +22,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static gg.projecteden.nexus.features.menus.api.SignMenuFactory.ARROWS;
 
 @Title("Trusts")
 @RequiredArgsConstructor
@@ -78,7 +77,7 @@ public class TrustProvider extends InventoryProvider {
 
 		ItemBuilder add = new ItemBuilder(Material.LIME_CONCRETE_POWDER).name("&aAdd Trust");
 		contents.set(0, 8, ClickableItem.of(add.build(), e ->
-			Nexus.getSignMenuFactory().lines("", ARROWS, "Enter a", "player's name")
+			Nexus.getSignMenuFactory().lines("", SignMenuFactory.ARROWS, "Enter a", "player's name")
 				.prefix(Features.get(TrustFeature.class).getPrefix())
 				.response(lines -> {
 					if (!lines[0].isEmpty()) {

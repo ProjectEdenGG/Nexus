@@ -1,17 +1,10 @@
 package gg.projecteden.nexus.features.tickets;
 
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.features.tickets.TicketFeature.TicketAction;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.ticket.Tickets;
@@ -22,15 +15,9 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
 
 public class TicketsCommand extends CustomCommand {
 	private final TicketsService service = new TicketsService();
@@ -77,7 +64,7 @@ public class TicketsCommand extends CustomCommand {
 	@Description("Teleport to the location a ticket was created")
 	void teleport(Ticket ticket) {
 		if (ticket.getLocation() == null)
-			if (isUUID0(ticket.getUuid()))
+			if (UUIDUtils.isUUID0(ticket.getUuid()))
 				error("That ticket was created by console, so you can not teleport to it");
 			else
 				error("That ticket does not have a location");

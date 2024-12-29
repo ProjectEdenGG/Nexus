@@ -6,22 +6,15 @@ import dev.dbassett.skullcreator.SkullCreator;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
-import gg.projecteden.nexus.utils.HttpUtils;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import gg.projecteden.nexus.utils.*;
+import lombok.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -37,10 +30,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static gg.projecteden.api.common.utils.UUIDUtils.uuidFormat;
-import static gg.projecteden.api.common.utils.UUIDUtils.uuidUnformat;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity(value = "skin_cache", noClassnameStored = true)
@@ -73,7 +62,7 @@ public class SkinCache implements PlayerOwnedObject {
 	}
 
 	public boolean isCached() {
-		return !isNullOrEmpty(value);
+		return !Nullables.isNullOrEmpty(value);
 	}
 
 	public ItemStack getHead() {
@@ -100,7 +89,7 @@ public class SkinCache implements PlayerOwnedObject {
 			return image;
 
 		final String url = getTextureUrl();
-		if (isNullOrEmpty(url))
+		if (Nullables.isNullOrEmpty(url))
 			return null;
 
 		image = ImageIO.read(new URL(url));
@@ -156,7 +145,7 @@ public class SkinCache implements PlayerOwnedObject {
 		private List<ProfileProperty> properties;
 
 		private UUID getUuid() {
-			return UUID.fromString(uuidFormat(id));
+			return UUID.fromString(UUIDUtils.uuidFormat(id));
 		}
 
 		PlayerProfile getPlayerProfile() {
@@ -174,7 +163,7 @@ public class SkinCache implements PlayerOwnedObject {
 		if (isOnline())
 			return getTextureProperty(getOnlinePlayer().getPlayerProfile());
 
-		FakePlayerProfile fakeProfile = HttpUtils.mapJson(FakePlayerProfile.class, URL, uuidUnformat(uuid.toString()));
+		FakePlayerProfile fakeProfile = HttpUtils.mapJson(FakePlayerProfile.class, URL, UUIDUtils.uuidUnformat(uuid.toString()));
 		return getTextureProperty(fakeProfile.getPlayerProfile());
 	}
 

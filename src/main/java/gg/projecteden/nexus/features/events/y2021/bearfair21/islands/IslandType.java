@@ -7,8 +7,6 @@ import org.bukkit.Location;
 
 import java.util.Set;
 
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.worldguard;
-
 @Getter
 public enum IslandType {
 	MAIN(MainIsland.class, BearFair21.locationOf(0, 0, -106)),
@@ -36,7 +34,7 @@ public enum IslandType {
 	}
 
 	public static IslandType of(Location location) {
-		Set<String> regions = worldguard().getRegionNamesAt(location);
+		Set<String> regions = BearFair21.worldguard().getRegionNamesAt(location);
 		for (IslandType island : values())
 			if (regions.contains(island.get().getRegion()))
 				return island;

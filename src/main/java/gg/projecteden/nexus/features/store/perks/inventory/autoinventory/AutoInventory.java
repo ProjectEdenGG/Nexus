@@ -5,10 +5,7 @@ import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.tasks.F
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser.AutoSortInventoryType;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Name;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -30,9 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.Utils.registerListeners;
-
 public class AutoInventory extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix("AutoSort");
 	public static final String PERMISSION = "store.autoinventory";
@@ -43,7 +37,7 @@ public class AutoInventory extends Feature {
 
 	@Override
 	public void onStart() {
-		Tasks.async(() -> registerListeners(getClass().getPackageName() + ".features"));
+		Tasks.async(() -> gg.projecteden.nexus.utils.Utils.registerListeners(getClass().getPackageName() + ".features"));
 	}
 
 	public static boolean isWorldDisabled(World world) {
@@ -120,7 +114,7 @@ public class AutoInventory extends Feature {
 
 		for (int i = sourceInventoryStartIndex; i < sourceInventorySize; i++) {
 			ItemStack sourceStack = source.getItem(i);
-			if (isNullOrAir(sourceStack))
+			if (Nullables.isNullOrAir(sourceStack))
 				continue;
 
 			if (autoInventoryUser.getAutoDepositExclude().contains(sourceStack.getType()))

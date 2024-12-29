@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs;
 
 import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.nms.PacketUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,8 +14,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @AllArgsConstructor
 public enum BearFair21NPC {
@@ -37,7 +36,7 @@ public enum BearFair21NPC {
 	MAYOR("John", 3838) {
 		@Override
 		public @NotNull String getNpcNameAndJob() {
-			return camelCase(this) + " " + getNpcName();
+			return StringUtils.camelCase(this) + " " + getNpcName();
 		}
 	},
 	LUMBERJACK("Flint", 3845),
@@ -154,7 +153,7 @@ public enum BearFair21NPC {
 
 	@NotNull
 	public String getNpcJob() {
-		return camelCase(this.name().toLowerCase()
+		return StringUtils.camelCase(this.name().toLowerCase()
 			.replaceAll("(pugmas_)|(mgn_)|(sdu_)|(halloween_)|(main_)", "")
 			.replaceAll("[\\d]+", "")).trim();
 	}

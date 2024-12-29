@@ -4,21 +4,19 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.commands.staff.operator.InventorySnapshotsCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.parchment.HasLocation;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -26,16 +24,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
-import static gg.projecteden.nexus.features.commands.staff.operator.InventorySnapshotsCommand.PREFIX;
-import static gg.projecteden.nexus.utils.ItemUtils.isInventoryEmpty;
 
 @Data
 @Entity(value = "inventory_history", noClassnameStored = true)
@@ -54,7 +44,7 @@ public class InventoryHistory implements PlayerOwnedObject {
 	public InventorySnapshot getSnapshot(LocalDateTime timestamp) {
 		Optional<InventorySnapshot> snapshot = snapshots.stream().filter(_snapshot -> _snapshot.getTimestamp().equals(timestamp)).findFirst();
 		if (!snapshot.isPresent())
-			throw new InvalidInputException("Snapshot from timestamp &e" + shortDateTimeFormat(timestamp) + " &3not found");
+			throw new InvalidInputException("Snapshot from timestamp &e" + TimeUtils.shortDateTimeFormat(timestamp) + " &3not found");
 		return snapshot.get();
 	}
 
@@ -98,19 +88,19 @@ public class InventoryHistory implements PlayerOwnedObject {
 		}
 
 		public void apply(Player applier, Player player) {
-			if (!isInventoryEmpty(player.getInventory())) {
-				PlayerUtils.send(player, PREFIX + "&cYour inventory must be empty to apply this inventory snapshot");
+			if (!ItemUtils.isInventoryEmpty(player.getInventory())) {
+				PlayerUtils.send(player, InventorySnapshotsCommand.PREFIX + "&cYour inventory must be empty to apply this inventory snapshot");
 				if (!applier.equals(player))
-					PlayerUtils.send(applier, PREFIX + "&c" + Nickname.of(player) + "'s inventory must be empty to apply this inventory snapshot");
+					PlayerUtils.send(applier, InventorySnapshotsCommand.PREFIX + "&c" + Nickname.of(player) + "'s inventory must be empty to apply this inventory snapshot");
 				return;
 			}
 
 			player.setLevel(level);
 			player.setExp(exp);
 			player.getInventory().setContents(contents.toArray(ItemStack[]::new));
-			PlayerUtils.send(player, PREFIX + "Snapshot applied");
+			PlayerUtils.send(player, InventorySnapshotsCommand.PREFIX + "Snapshot applied");
 			if (!applier.equals(player))
-				PlayerUtils.send(applier, PREFIX + "Snapshot applied to " + Nickname.of(player) + "'s inventory");
+				PlayerUtils.send(applier, InventorySnapshotsCommand.PREFIX + "Snapshot applied to " + Nickname.of(player) + "'s inventory");
 		}
 
 	}

@@ -12,6 +12,7 @@ import gg.projecteden.nexus.models.birthday21.Birthday21User;
 import gg.projecteden.nexus.models.birthday21.Birthday21UserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -27,16 +28,9 @@ import org.bukkit.util.Vector;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiFunction;
-
-import static gg.projecteden.nexus.utils.StringUtils.getCoordinateString;
-import static gg.projecteden.nexus.utils.StringUtils.getTeleportCommand;
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Collectors;
 
 @Disabled
 @HideFromWiki
@@ -58,7 +52,7 @@ public class BirthdayEventCommand extends CustomCommand implements Listener {
 	void top(@Arg("1") int page) {
 		List<Birthday21User> all = new Birthday21UserService().getAll().stream()
 			.sorted(Comparator.<Birthday21User>comparingInt(user -> user.getFound().size()).reversed())
-			.collect(toList());
+			.collect(Collectors.toList());
 
 		int sum = all.stream().mapToInt(user -> user.getFound().size()).sum();
 
@@ -77,8 +71,8 @@ public class BirthdayEventCommand extends CustomCommand implements Listener {
 
 		send(PREFIX + "Most found cakes");
 		BiFunction<Location, String, JsonBuilder> formatter = (location, index) ->
-			json(index + " &e" + getCoordinateString(location) + " &7- " + counts.get(location))
-				.command(getTeleportCommand(location))
+			json(index + " &e" + StringUtils.getCoordinateString(location) + " &7- " + counts.get(location))
+				.command(StringUtils.getTeleportCommand(location))
 				.hover("&eClick to teleport");
 		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/birthdayevent topLocations", page);
 	}

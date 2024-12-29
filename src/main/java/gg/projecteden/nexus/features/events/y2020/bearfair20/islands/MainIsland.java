@@ -8,22 +8,15 @@ import gg.projecteden.nexus.features.events.models.BearFairTalker;
 import gg.projecteden.nexus.features.events.models.Talker.TalkingNPC;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.islands.MainIsland.MainNPCs;
+import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests;
 import gg.projecteden.nexus.models.bearfair20.BearFair20User;
 import gg.projecteden.nexus.models.bearfair20.BearFair20UserService;
 import gg.projecteden.nexus.models.voter.VoterService;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.Getter;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -32,15 +25,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.chime;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
+import java.util.*;
 
 @Region("main")
 @NPCClass(MainNPCs.class)
@@ -51,17 +36,17 @@ public class MainIsland implements Listener, BearFairIsland {
 		return BearFair20.getRegion();
 	}
 
-	public static ItemStack honeyStroopWafel = new ItemBuilder(Material.COOKIE).lore(itemLore).name("Honey Stroopwafel").amount(1).glow().build();
-	public static ItemStack stroofWafel = new ItemBuilder(Material.COOKIE).lore(itemLore).name("Stoopwafel").amount(1).build();
-	public static ItemStack blessedHoneyBottle = new ItemBuilder(Material.HONEY_BOTTLE).lore(itemLore, " ", "Blessed by the Queen herself").name("Blessed Bottle Of Honey").amount(1).build();
-	public static ItemStack unpurifiedMarble = new ItemBuilder(Material.DIORITE).lore(itemLore).name("Unpurified Marble").amount(1).build();
-	public static ItemStack relic_arms = new ItemBuilder(Material.BLAZE_ROD).lore(itemLore).name("Ancient Relic Arms").amount(2).build();
-	public static ItemStack relic_base = new ItemBuilder(Material.LIGHT_WEIGHTED_PRESSURE_PLATE).lore(itemLore).name("Ancient Relic Base").amount(1).build();
-	public static ItemStack relic_body = new ItemBuilder(Material.GOLDEN_HORSE_ARMOR).lore(itemLore).name("Ancient Relic Body").amount(1).build();
-	public static ItemStack relic_eyes = new ItemBuilder(Material.EMERALD).lore(itemLore).name("Ancient Relic Eyes").amount(2).build();
-	public static ItemStack relic = new ItemBuilder(Material.TOTEM_OF_UNDYING).lore(itemLore).name("Ancient Relic").amount(1).build();
-	public static ItemStack ancientPickaxe = new ItemBuilder(Material.STONE_PICKAXE).lore(itemLore).name("Ancient Pickaxe").amount(1).build();
-	public static ItemStack rareFlower = new ItemBuilder(Material.BLUE_ORCHID).lore(itemLore).name("Rare Flower").amount(1).build();
+	public static ItemStack honeyStroopWafel = new ItemBuilder(Material.COOKIE).lore(BFQuests.itemLore).name("Honey Stroopwafel").amount(1).glow().build();
+	public static ItemStack stroofWafel = new ItemBuilder(Material.COOKIE).lore(BFQuests.itemLore).name("Stoopwafel").amount(1).build();
+	public static ItemStack blessedHoneyBottle = new ItemBuilder(Material.HONEY_BOTTLE).lore(BFQuests.itemLore, " ", "Blessed by the Queen herself").name("Blessed Bottle Of Honey").amount(1).build();
+	public static ItemStack unpurifiedMarble = new ItemBuilder(Material.DIORITE).lore(BFQuests.itemLore).name("Unpurified Marble").amount(1).build();
+	public static ItemStack relic_arms = new ItemBuilder(Material.BLAZE_ROD).lore(BFQuests.itemLore).name("Ancient Relic Arms").amount(2).build();
+	public static ItemStack relic_base = new ItemBuilder(Material.LIGHT_WEIGHTED_PRESSURE_PLATE).lore(BFQuests.itemLore).name("Ancient Relic Base").amount(1).build();
+	public static ItemStack relic_body = new ItemBuilder(Material.GOLDEN_HORSE_ARMOR).lore(BFQuests.itemLore).name("Ancient Relic Body").amount(1).build();
+	public static ItemStack relic_eyes = new ItemBuilder(Material.EMERALD).lore(BFQuests.itemLore).name("Ancient Relic Eyes").amount(2).build();
+	public static ItemStack relic = new ItemBuilder(Material.TOTEM_OF_UNDYING).lore(BFQuests.itemLore).name("Ancient Relic").amount(1).build();
+	public static ItemStack ancientPickaxe = new ItemBuilder(Material.STONE_PICKAXE).lore(BFQuests.itemLore).name("Ancient Pickaxe").amount(1).build();
+	public static ItemStack rareFlower = new ItemBuilder(Material.BLUE_ORCHID).lore(BFQuests.itemLore).name("Rare Flower").amount(1).build();
 	private static String witchDwellingRg = "bearfair2020_witchdwelling";
 	private static Location specialPrizeLoc = new Location(BearFair20.getWorld(), -1016, 120, -1605);
 	public static ItemStack specialPrize;
@@ -72,7 +57,7 @@ public class MainIsland implements Listener, BearFairIsland {
 
 		List<ItemStack> drops = new ArrayList<>(specialPrizeLoc.getBlock().getDrops());
 		if (!drops.isEmpty())
-			specialPrize = new ItemBuilder(drops.get(0)).clone().lore(itemLore, "&f", "RClick while holding to open").name("Special Prize").glow().build();
+			specialPrize = new ItemBuilder(drops.get(0)).clone().lore(BFQuests.itemLore, "&f", "RClick while holding to open").name("Special Prize").glow().build();
 	}
 
 	public enum MainNPCs implements TalkingNPC {
@@ -410,7 +395,7 @@ public class MainIsland implements Listener, BearFairIsland {
 	}
 
 	public static void witchQuestCraft() {
-		Collection<Player> players = worldguard().getPlayersInRegion(witchDwellingRg);
+		Collection<Player> players = BearFair20.worldguard().getPlayersInRegion(witchDwellingRg);
 		for (Player player : players) {
 			if (hasAllIngredients(player)) {
 				endMainQuest(player);
@@ -479,7 +464,7 @@ public class MainIsland implements Listener, BearFairIsland {
 		BearFair20.send("&e-&3 Song: &eOrientalDiscoBathtub", player);
 		BearFair20.send("&e-&3 Random Reward: &e" + getRandomReward(player), player);
 		BearFair20.send("", player);
-		chime(player);
+		BFQuests.chime(player);
 	}
 
 	private String getRandomReward(Player player) {
@@ -492,7 +477,7 @@ public class MainIsland implements Listener, BearFairIsland {
 				reward = "Song Coupon for " + songPerm;
 				ItemStack songCoupon = new ItemBuilder(Material.PAPER)
 						.name("Coupon For: " + songPerm)
-						.lore(itemLore, "&f", "&3Song: &e" + songPerm, "&3Redeem this with an admin", "&3to receive your song").amount(1).build();
+						.lore(BFQuests.itemLore, "&f", "&3Song: &e" + songPerm, "&3Redeem this with an admin", "&3to receive your song").amount(1).build();
 				PlayerUtils.giveItem(player, songCoupon);
 			}
 			case 2 -> {

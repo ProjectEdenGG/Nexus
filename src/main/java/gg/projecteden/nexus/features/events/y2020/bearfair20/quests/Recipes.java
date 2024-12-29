@@ -4,6 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.models.Ingredient;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.models.RecipeObject;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -14,8 +15,6 @@ import org.bukkit.inventory.ShapedRecipe;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 // Unused in BF2020
 public class Recipes {
@@ -65,7 +64,7 @@ public class Recipes {
 
 		// Remove nulls/air
 		for (ItemStack itemStack : itemStacks) {
-			if (!isNullOrAir(itemStack)) {
+			if (!Nullables.isNullOrAir(itemStack)) {
 				String displayName = null;
 				if (itemStack.getItemMeta().hasDisplayName())
 					displayName = StringUtils.stripColor(itemStack.getItemMeta().getDisplayName());

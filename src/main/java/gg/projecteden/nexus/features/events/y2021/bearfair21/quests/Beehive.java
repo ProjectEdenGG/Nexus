@@ -9,6 +9,7 @@ import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -19,9 +20,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.isNotAtBearFair;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class Beehive implements Listener {
 	private final BearFair21UserService userService = new BearFair21UserService();
@@ -46,7 +44,7 @@ public class Beehive implements Listener {
 		if (!(event.getEntity() instanceof Player player))
 			return;
 
-		if (isNotAtBearFair(player))
+		if (BearFair21.isNotAtBearFair(player))
 			return;
 
 		String id = event.getRegion().getId();
@@ -83,7 +81,7 @@ public class Beehive implements Listener {
 		if (BearFair21.isNotAtBearFair(event)) return;
 
 		Block block = event.getClickedBlock();
-		if (isNullOrAir(block)) return;
+		if (Nullables.isNullOrAir(block)) return;
 
 		if (BearFair21.worldguard().isInRegion(block.getLocation(), queenRg)) {
 			BearFair21User user = userService.get(event.getPlayer());

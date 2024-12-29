@@ -3,6 +3,7 @@ package gg.projecteden.nexus.models.pugmas21;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
@@ -10,33 +11,16 @@ import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestL
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config.AdventPresent;
-import gg.projecteden.nexus.utils.GlowUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerMovementUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.nms.PacketUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import org.bukkit.Sound;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
-import static gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21.PREFIX;
-import static java.util.Collections.singletonList;
+import java.util.*;
 
 @Data
 @Entity(value = "pugmas21_user", noClassnameStored = true)
@@ -80,14 +64,14 @@ public class Pugmas21User implements PlayerOwnedObject {
 			try {
 				collected(present);
 			} catch (InvalidInputException ex) {
-				sendMessage(new JsonBuilder(PREFIX + "&c").next(ex.getJson()));
+				sendMessage(new JsonBuilder(Pugmas21.PREFIX + "&c").next(ex.getJson()));
 				found(present.getDay());
 			}
 		}
 
 		public boolean hasCollected(LocalDate date) {
 			if (!Pugmas21.isAdvent(date))
-				throw new InvalidInputException("Advent date " + shortDateFormat(date) + " is invalid");
+				throw new InvalidInputException("Advent date " + TimeUtils.shortDateFormat(date) + " is invalid");
 
 			return hasCollected(date.getDayOfMonth());
 		}
@@ -112,11 +96,11 @@ public class Pugmas21User implements PlayerOwnedObject {
 
 			collected.add(present.getDay());
 			found.add(present.getDay());
-			sendMessage(PREFIX + "You found present &e#" + present.getDay() + "&3!");
+			sendMessage(Pugmas21.PREFIX + "You found present &e#" + present.getDay() + "&3!");
 			show(present);
 
 			PlayerUtils.mailItem(getOnlinePlayer(), present.getItem().build(), null, WorldGroup.SURVIVAL);
-			PlayerUtils.send(getOnlinePlayer(), PREFIX + "This present has been sent to your &esurvival &c/mail box");
+			PlayerUtils.send(getOnlinePlayer(), Pugmas21.PREFIX + "This present has been sent to your &esurvival &c/mail box");
 			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).receiver(getOnlinePlayer()).play();
 		}
 
@@ -133,7 +117,7 @@ public class Pugmas21User implements PlayerOwnedObject {
 				return;
 
 			found.add(day);
-			sendMessage(PREFIX + "Location of present &e#" + day + " &3saved. " +
+			sendMessage(Pugmas21.PREFIX + "Location of present &e#" + day + " &3saved. " +
 				"View with the &eAdvent Calendar menu &3or &c/pugmas advent waypoint " + day);
 
 			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).receiver(getOnlinePlayer()).play();
@@ -160,7 +144,7 @@ public class Pugmas21User implements PlayerOwnedObject {
 				.duration(TickTime.SECOND.x(15))
 				.entity(itemFrame.getBukkitEntity())
 				.color(GlowColor.RED)
-				.viewers(singletonList(getOnlinePlayer()))
+				.viewers(Collections.singletonList(getOnlinePlayer()))
 				.start();
 		}
 

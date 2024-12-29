@@ -21,10 +21,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.send;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.worldedit;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.worldguard;
-
 public class ReflectionGameUtils {
 
 	public static void clearLamps() {
@@ -82,9 +78,9 @@ public class ReflectionGameUtils {
 	}
 
 	public static void broadcastObjective() {
-		Collection<Player> players = worldguard().getPlayersInRegion(ReflectionGame.getGameRg());
+		Collection<Player> players = BearFair21.worldguard().getPlayersInRegion(ReflectionGame.getGameRg());
 		for (Player player : players) {
-			send(ReflectionGame.getPrefix() + ReflectionGame.getMessage(), player);
+			BearFair21.send(ReflectionGame.getPrefix() + ReflectionGame.getMessage(), player);
 		}
 	}
 
@@ -92,9 +88,9 @@ public class ReflectionGameUtils {
 		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).location(ReflectionGame.getCenter()).volume(2.0).play();
 
 		String type = ReflectionGame.getLamp().getChatColor() + StringUtils.camelCase(ReflectionGame.getLamp().getType());
-		Collection<Player> players = worldguard().getPlayersInRegion(ReflectionGame.getGameRg());
+		Collection<Player> players = BearFair21.worldguard().getPlayersInRegion(ReflectionGame.getGameRg());
 		for (Player player : players)
-			send(ReflectionGame.getPrefix() + type + " &fwas hit in " + count + " reflections!", player);
+			BearFair21.send(ReflectionGame.getPrefix() + type + " &fwas hit in " + count + " reflections!", player);
 
 		BearFair21.giveDailyTokens(ReflectionGame.getButtonPresser(), BF21PointSource.REFLECTION, 5);
 
@@ -106,8 +102,8 @@ public class ReflectionGameUtils {
 	}
 
 	private static void randomizeBanners() {
-		ProtectedRegion region = worldguard().getProtectedRegion(ReflectionGame.getPowderRg());
-		List<Block> blocks = worldedit().getBlocks(region);
+		ProtectedRegion region = BearFair21.worldguard().getProtectedRegion(ReflectionGame.getPowderRg());
+		List<Block> blocks = BearFair21.worldedit().getBlocks(region);
 		for (Block block : blocks) {
 			if (!block.getType().equals(Material.IRON_BLOCK))
 				continue;

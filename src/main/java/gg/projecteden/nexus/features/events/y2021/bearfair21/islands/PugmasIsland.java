@@ -20,12 +20,8 @@ import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContentService;
-import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
-import gg.projecteden.nexus.utils.TitleBuilder;
 import net.citizensnpcs.api.npc.NPC;
 import net.minecraft.world.entity.EntityType;
 import org.bukkit.Location;
@@ -41,8 +37,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Region("pugmas")
 @NPCClass(PugmasNPCs.class)
@@ -539,7 +533,7 @@ public class PugmasIsland implements BearFair21Island {
 		if (!BearFair21.isInRegion(event.getPlayer(), getRegion())) return;
 
 		Block block = event.getClickedBlock();
-		if (isNullOrAir(block)) return;
+		if (Nullables.isNullOrAir(block)) return;
 
 		BearFair21User user = userService.get(event.getPlayer());
 		if (user.getQuestStage_Pugmas() != QuestStage.STEP_TWO) return;

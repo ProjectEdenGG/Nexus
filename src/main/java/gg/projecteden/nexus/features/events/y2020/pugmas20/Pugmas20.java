@@ -13,28 +13,15 @@ import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20User;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20UserService;
-import gg.projecteden.nexus.utils.CitizensUtils;
-import gg.projecteden.nexus.utils.GlowUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PlayerMovementUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
@@ -47,15 +34,7 @@ import tech.blastmc.holograms.api.HologramsAPI;
 import tech.blastmc.holograms.api.models.Hologram;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import java.util.*;
 
 public class Pugmas20 implements Listener {
 	@Getter
@@ -274,8 +253,8 @@ public class Pugmas20 implements Listener {
 	public static void showWaypoint(AdventChest adventChest, Player player) {
 		Location chestLoc = adventChest.getLocation();
 		Block chest = chestLoc.getBlock();
-		if (!isNullOrAir(chest)) {
-			Location blockLoc = getCenteredLocation(chestLoc);
+		if (!Nullables.isNullOrAir(chest)) {
+			Location blockLoc = LocationUtils.getCenteredLocation(chestLoc);
 			World blockWorld = blockLoc.getWorld();
 			FallingBlock fallingBlock = blockWorld.spawnFallingBlock(blockLoc, Material.RED_CONCRETE.createBlockData());
 			fallingBlock.setDropItem(false);
