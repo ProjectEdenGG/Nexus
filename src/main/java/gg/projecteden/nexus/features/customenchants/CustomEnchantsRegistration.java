@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.customenchants.models.CraftCustomEnchant;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.features.customenchants.models.NMSCustomEnchant;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
 import lombok.SneakyThrows;
 import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
@@ -24,15 +25,8 @@ import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.IdentityHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.nms.NMSUtils.setStaticFinal;
 
 public class CustomEnchantsRegistration {
 	static final Field nmsFrozenField;
@@ -96,7 +90,7 @@ public class CustomEnchantsRegistration {
 					return CustomEnchants.get(key.key());
 			});
 			craftRegistries.put(Enchantment.class, craftRegistry);
-			setStaticFinal(org.bukkit.Registry.class.getDeclaredField("ENCHANTMENT"), craftRegistry);
+			NMSUtils.setStaticFinal(org.bukkit.Registry.class.getDeclaredField("ENCHANTMENT"), craftRegistry);
 			printRegistryContents("2.5");
 			nmsFrozenField.set(BuiltInRegistries.ENCHANTMENT, false);
 			unregisteredIntrusiveHolders.set(BuiltInRegistries.ENCHANTMENT,

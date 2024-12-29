@@ -1,52 +1,21 @@
 package gg.projecteden.nexus.features.mobheads;
 
+import gg.projecteden.api.common.utils.Nullables;
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.mobheads.common.HeadConfig;
 import gg.projecteden.nexus.features.mobheads.common.MobHead;
 import gg.projecteden.nexus.features.mobheads.common.MobHeadVariant;
-import gg.projecteden.nexus.features.mobheads.variants.AxolotlVariant;
-import gg.projecteden.nexus.features.mobheads.variants.CatVariant;
-import gg.projecteden.nexus.features.mobheads.variants.CreeperVariant;
-import gg.projecteden.nexus.features.mobheads.variants.FoxVariant;
-import gg.projecteden.nexus.features.mobheads.variants.FrogVariant;
-import gg.projecteden.nexus.features.mobheads.variants.HorseVariant;
-import gg.projecteden.nexus.features.mobheads.variants.LlamaVariant;
-import gg.projecteden.nexus.features.mobheads.variants.MooshroomVariant;
-import gg.projecteden.nexus.features.mobheads.variants.PandaVariant;
-import gg.projecteden.nexus.features.mobheads.variants.ParrotVariant;
-import gg.projecteden.nexus.features.mobheads.variants.RabbitVariant;
-import gg.projecteden.nexus.features.mobheads.variants.SheepVariant;
-import gg.projecteden.nexus.features.mobheads.variants.SnowmanVariant;
-import gg.projecteden.nexus.features.mobheads.variants.TraderLlamaVariant;
-import gg.projecteden.nexus.features.mobheads.variants.TropicalFishVariant;
-import gg.projecteden.nexus.features.mobheads.variants.VillagerVariant;
-import gg.projecteden.nexus.features.mobheads.variants.ZombieVillagerVariant;
+import gg.projecteden.nexus.features.mobheads.variants.*;
 import gg.projecteden.nexus.models.mobheads.MobHeadChanceConfigService;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.entity.Axolotl;
-import org.bukkit.entity.Cat;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Fox;
-import org.bukkit.entity.Frog;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Llama;
-import org.bukkit.entity.MushroomCow;
-import org.bukkit.entity.Panda;
-import org.bukkit.entity.Parrot;
-import org.bukkit.entity.Rabbit;
-import org.bukkit.entity.Sheep;
-import org.bukkit.entity.Snowman;
-import org.bukkit.entity.TraderLlama;
-import org.bukkit.entity.Villager;
-import org.bukkit.entity.ZombieVillager;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,12 +29,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
-
 @Getter
 public enum MobHeadType implements MobHead {
 	@HeadConfig(headId = "51477")
@@ -75,7 +38,7 @@ public enum MobHeadType implements MobHead {
 	AXOLOTL(
 		entity -> AxolotlVariant.of((Axolotl) entity),
 		(entity, type) -> ((Axolotl) entity).setVariant((Axolotl.Variant) type),
-		() -> randomElement(Axolotl.Variant.class),
+		() -> RandomUtils.randomElement(Axolotl.Variant.class),
 		Sound.ENTITY_AXOLOTL_IDLE_AIR
 	),
 
@@ -95,7 +58,7 @@ public enum MobHeadType implements MobHead {
 	CAT(
 		entity -> CatVariant.of((Cat) entity),
 		(entity, type) -> ((Cat) entity).setCatType((Cat.Type) type),
-		() -> randomElement(Cat.Type.class),
+		() -> RandomUtils.randomElement(Cat.Type.class),
 		Sound.ENTITY_CAT_AMBIENT
 	),
 
@@ -115,7 +78,7 @@ public enum MobHeadType implements MobHead {
 	CREEPER(
 		entity -> CreeperVariant.of((Creeper) entity),
 		(entity, type) -> ((Creeper) entity).setPowered((boolean) type),
-		() -> randomElement(true, false),
+		() -> RandomUtils.randomElement(true, false),
 		Sound.ENTITY_CREEPER_PRIMED
 	),
 
@@ -147,7 +110,7 @@ public enum MobHeadType implements MobHead {
 	FOX(
 		entity -> FoxVariant.of((Fox) entity),
 		(entity, type) -> ((Fox) entity).setFoxType((Fox.Type) type),
-		() -> randomElement(Fox.Type.class),
+		() -> RandomUtils.randomElement(Fox.Type.class),
 		Sound.ENTITY_FOX_AMBIENT
 	),
 
@@ -155,7 +118,7 @@ public enum MobHeadType implements MobHead {
 	FROG(
 		entity -> FrogVariant.of((Frog) entity),
 		(entity, type) -> ((Frog) entity).setVariant((Frog.Variant) type),
-		() -> randomElement(Frog.Variant.class),
+		() -> RandomUtils.randomElement(Frog.Variant.class),
 		Sound.ENTITY_FROG_AMBIENT
 	),
 
@@ -178,7 +141,7 @@ public enum MobHeadType implements MobHead {
 	HORSE(
 		entity -> HorseVariant.of((Horse) entity),
 		(entity, type) -> ((Horse) entity).setColor((Horse.Color) type),
-		() -> randomElement(Horse.Color.class),
+		() -> RandomUtils.randomElement(Horse.Color.class),
 		Sound.ENTITY_HORSE_AMBIENT
 	),
 
@@ -195,7 +158,7 @@ public enum MobHeadType implements MobHead {
 	LLAMA(
 		entity -> LlamaVariant.of((Llama) entity),
 		(entity, type) -> ((Llama) entity).setColor((Llama.Color) type),
-		() -> randomElement(Llama.Color.class),
+		() -> RandomUtils.randomElement(Llama.Color.class),
 		Sound.ENTITY_LLAMA_AMBIENT
 	),
 
@@ -206,7 +169,7 @@ public enum MobHeadType implements MobHead {
 	MUSHROOM_COW(
 		entity -> MooshroomVariant.of((MushroomCow) entity),
 		(entity, type) -> ((MushroomCow) entity).setVariant((MushroomCow.Variant) type),
-		() -> randomElement(MushroomCow.Variant.class),
+		() -> RandomUtils.randomElement(MushroomCow.Variant.class),
 		Sound.ENTITY_COW_AMBIENT
 	),
 
@@ -220,7 +183,7 @@ public enum MobHeadType implements MobHead {
 	PANDA(
 		entity -> PandaVariant.of((Panda) entity),
 		(entity, type) -> ((Panda) entity).setMainGene((Panda.Gene) type),
-		() -> randomElement(Panda.Gene.class),
+		() -> RandomUtils.randomElement(Panda.Gene.class),
 		Sound.ENTITY_PANDA_AMBIENT
 	),
 
@@ -228,7 +191,7 @@ public enum MobHeadType implements MobHead {
 	PARROT(
 		entity -> ParrotVariant.of((Parrot) entity),
 		(entity, type) -> ((Parrot) entity).setVariant((Parrot.Variant) type),
-		() -> randomElement(Parrot.Variant.class),
+		() -> RandomUtils.randomElement(Parrot.Variant.class),
 		Sound.ENTITY_PARROT_AMBIENT
 	),
 
@@ -260,7 +223,7 @@ public enum MobHeadType implements MobHead {
 	RABBIT(
 		entity -> RabbitVariant.of((Rabbit) entity),
 		(entity, type) -> ((Rabbit) entity).setRabbitType((Rabbit.Type) type),
-		() -> randomElement(Rabbit.Type.class),
+		() -> RandomUtils.randomElement(Rabbit.Type.class),
 		Sound.ENTITY_RABBIT_AMBIENT
 	),
 
@@ -274,7 +237,7 @@ public enum MobHeadType implements MobHead {
 	SHEEP(
 		entity -> SheepVariant.of((Sheep) entity),
 		(entity, type) -> ((Sheep) entity).setColor((DyeColor) type),
-		() -> randomElement(DyeColor.class),
+		() -> RandomUtils.randomElement(DyeColor.class),
 		Sound.ENTITY_SHEEP_AMBIENT
 	),
 
@@ -300,7 +263,7 @@ public enum MobHeadType implements MobHead {
 	SNOWMAN(
 		entity -> SnowmanVariant.of((Snowman) entity),
 		(entity, type) -> ((Snowman) entity).setDerp((boolean) type),
-		() -> randomElement(true, false),
+		() -> RandomUtils.randomElement(true, false),
 		Sound.ENTITY_SNOW_GOLEM_AMBIENT
 	),
 
@@ -323,7 +286,7 @@ public enum MobHeadType implements MobHead {
 	TRADER_LLAMA(
 		entity -> TraderLlamaVariant.of((TraderLlama) entity),
 		(entity, type) -> ((TraderLlama) entity).setColor((TraderLlama.Color) type),
-		() -> randomElement(TraderLlama.Color.class),
+		() -> RandomUtils.randomElement(TraderLlama.Color.class),
 		Sound.ENTITY_LLAMA_AMBIENT
 	),
 
@@ -346,7 +309,7 @@ public enum MobHeadType implements MobHead {
 	VILLAGER(
 		entity -> VillagerVariant.of((Villager) entity),
 		(entity, type) -> ((Villager) entity).setVillagerType((Villager.Type) type),
-		() -> randomElement(Villager.Type.class),
+		() -> RandomUtils.randomElement(Villager.Type.class),
 		Sound.ENTITY_VILLAGER_AMBIENT
 	),
 
@@ -384,7 +347,7 @@ public enum MobHeadType implements MobHead {
 	ZOMBIE_VILLAGER(
 		entity -> ZombieVillagerVariant.of((ZombieVillager) entity),
 		(entity, type) -> ((ZombieVillager) entity).setVillagerType((Villager.Type) type),
-		() -> randomElement(Villager.Type.class),
+		() -> RandomUtils.randomElement(Villager.Type.class),
 		Sound.ENTITY_ZOMBIE_VILLAGER_AMBIENT
 	),
 
@@ -426,12 +389,12 @@ public enum MobHeadType implements MobHead {
 		this.randomVariant = randomVariant;
 		this.ambientSound = ambientSound;
 
-		if (isNotNullOrEmpty(headId) || isNotNullOrAir(headType)) {
-			this.baseSkull = isNullOrAir(headType) ? Nexus.getHeadAPI().getItemHead(headId) : new ItemStack(headType);
+		if (Nullables.isNotNullOrEmpty(headId) || gg.projecteden.nexus.utils.Nullables.isNotNullOrAir(headType)) {
+			this.baseSkull = gg.projecteden.nexus.utils.Nullables.isNullOrAir(headType) ? Nexus.getHeadAPI().getItemHead(headId) : new ItemStack(headType);
 			this.namedSkull = new ItemBuilder(this.baseSkull).name("&e" + getDisplayName() + " Head").lore("&3Mob Head").build();
 		} else {
 			if (!"PLAYER".equals(name()))
-				Nexus.warn("No generic skull for MobType " + camelCase(this) + " defined");
+				Nexus.warn("No generic skull for MobType " + StringUtils.camelCase(this) + " defined");
 			this.baseSkull = null;
 			this.namedSkull = null;
 		}

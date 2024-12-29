@@ -15,21 +15,10 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
-import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.HttpUtils;
-import gg.projecteden.nexus.utils.IOUtils;
-import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.parchment.OptionalPlayerLike;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
+import lombok.*;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
@@ -44,17 +33,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.net.URI;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystemNotFoundException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static gg.projecteden.nexus.features.resourcepack.models.files.ResourcePackOverriddenMaterial.addCustomModelMaterial;
 
 @NoArgsConstructor
 public class ResourcePack extends Feature implements Listener {
@@ -167,7 +150,7 @@ public class ResourcePack extends Feature implements Listener {
 
 							try {
 								if (uri.contains(CustomModel.getVanillaSubdirectory()))
-									addCustomModelMaterial(path);
+									ResourcePackOverriddenMaterial.addCustomModelMaterial(path);
 							} catch (Exception ex) {
 								ex.printStackTrace();
 							}

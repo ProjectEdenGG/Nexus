@@ -8,12 +8,7 @@ import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -25,16 +20,7 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.Repairable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.Utils.moveLastToFirst;
+import java.util.*;
 
 public class EnchantedBookSplitter extends CustomBench implements ICraftableCustomBench {
 
@@ -51,7 +37,7 @@ public class EnchantedBookSplitter extends CustomBench implements ICraftableCust
 
 	@Override
 	public RecipeBuilder<?> getBenchRecipe() {
-		return shaped("123", "454", "464")
+		return RecipeBuilder.shaped("123", "454", "464")
 			.add('1', Material.PAPER)
 			.add('2', Material.LECTERN)
 			.add('3', Material.WRITABLE_BOOK)
@@ -127,7 +113,7 @@ public class EnchantedBookSplitter extends CustomBench implements ICraftableCust
 			var cursorItem = player.getItemOnCursor();
 			var slotItem = event.getItem();
 
-			if (isNullOrAir(slotItem) && isNullOrAir(cursorItem))
+			if (Nullables.isNullOrAir(slotItem) && Nullables.isNullOrAir(cursorItem))
 				return;
 
 			var expected = SLOTS.keySet().stream().filter(material -> SLOTS.get(material).equals(event.getSlot())).findFirst();
@@ -135,7 +121,7 @@ public class EnchantedBookSplitter extends CustomBench implements ICraftableCust
 			if (expected.isEmpty())
 				return;
 
-			if (!isNullOrAir(cursorItem))
+			if (!Nullables.isNullOrAir(cursorItem))
 				if (cursorItem.getType() != expected.get())
 					return;
 
@@ -144,7 +130,7 @@ public class EnchantedBookSplitter extends CustomBench implements ICraftableCust
 					return;
 
 			inputs.put(expected.get(), cursorItem.clone());
-			player.setItemOnCursor(isNullOrAir(slotItem) ? new ItemStack(Material.AIR) : slotItem.clone());
+			player.setItemOnCursor(Nullables.isNullOrAir(slotItem) ? new ItemStack(Material.AIR) : slotItem.clone());
 
 			init();
 		}
@@ -224,7 +210,7 @@ public class EnchantedBookSplitter extends CustomBench implements ICraftableCust
 
 		private boolean validateInputItem(Material material) {
 			var item = inputs.get(material);
-			if (isNullOrAir(item))
+			if (Nullables.isNullOrAir(item))
 				return false;
 			if (item.getType() != material)
 				return false;
@@ -273,7 +259,7 @@ public class EnchantedBookSplitter extends CustomBench implements ICraftableCust
 
 			var rotation = this.rotation % storedEnchants.size();
 			while (rotation-- > 0)
-				moveLastToFirst(storedEnchants);
+				Utils.moveLastToFirst(storedEnchants);
 
 			final List<ItemBuilder> results = new ArrayList<>() {{
 				storedEnchants.forEach((enchant, level) -> {

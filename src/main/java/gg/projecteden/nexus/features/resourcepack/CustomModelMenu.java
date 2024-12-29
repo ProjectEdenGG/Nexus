@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack;
 
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
@@ -14,13 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
+import java.util.*;
 
 @RequiredArgsConstructor
 public class CustomModelMenu extends InventoryProvider {
@@ -74,7 +69,7 @@ public class CustomModelMenu extends InventoryProvider {
 				continue;
 
 			ItemBuilder item = new ItemBuilder(model.getDisplayItem())
-					.lore("&e" + camelCase(model.getMaterial()) + ": " + model.getData())
+					.lore("&e" + StringUtils.camelCase(model.getMaterial()) + ": " + model.getData())
 					.lore("")
 					.lore("&7Click to obtain item")
 					.lore("&7Shift+Click to obtain item with name");

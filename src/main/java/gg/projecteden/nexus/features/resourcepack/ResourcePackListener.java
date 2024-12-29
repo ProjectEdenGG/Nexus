@@ -28,8 +28,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.features.resourcepack.ResourcePack.isCustomItem;
-
 public class ResourcePackListener implements Listener {
 	private static final Map<UUID, Map<Status, LocalDateTime>> statusUpdateTimes = new HashMap<>();
 
@@ -57,7 +55,7 @@ public class ResourcePackListener implements Listener {
 		if (customMaterial != null && customMaterial.canBePlaced())
 			return;
 
-		if (isCustomItem(event.getItemInHand()))
+		if (ResourcePack.isCustomItem(event.getItemInHand()))
 			event.setCancelled(true);
 	}
 
@@ -66,13 +64,13 @@ public class ResourcePackListener implements Listener {
 		if (event.getRightClicked() instanceof ItemFrame)
 			return;
 
-		if (isCustomItem(ItemUtils.getTool(event.getPlayer())))
+		if (ResourcePack.isCustomItem(ItemUtils.getTool(event.getPlayer())))
 			event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void on(PlayerFlowerPotManipulateEvent event) {
-		if (isCustomItem(event.getItem()))
+		if (ResourcePack.isCustomItem(event.getItem()))
 			event.setCancelled(true);
 	}
 

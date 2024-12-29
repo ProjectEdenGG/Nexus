@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.framework.features.Features;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,15 +21,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-
 @NoArgsConstructor
 public abstract class CustomBench extends Feature implements Listener {
 
 	public abstract CustomBenchType getBenchType();
 
 	public static @Nullable CustomBenchType getCustomBench(ItemStack item) {
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return null;
 
 		for (CustomBenchType customBenchType : CustomBenchType.values())
@@ -87,7 +86,7 @@ public abstract class CustomBench extends Feature implements Listener {
 			return;
 
 		ItemFrame itemFrame = event.getDecoration().getItemFrame();
-		if (itemFrame == null || isNullOrAir(itemFrame.getItem()))
+		if (itemFrame == null || Nullables.isNullOrAir(itemFrame.getItem()))
 			return;
 
 		CustomBenchType customBenchType = getCustomBench(itemFrame.getItem());

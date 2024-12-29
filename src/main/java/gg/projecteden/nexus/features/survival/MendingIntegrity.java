@@ -6,11 +6,7 @@ import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.features.survival.difficulty.Difficulty;
 import gg.projecteden.nexus.features.survival.difficulty.ForDifficulty;
 import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.MathUtils;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -31,8 +27,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 // TODO: if item is put on the shop, should it always show integrity lore ?
 @ForDifficulty(Difficulty.HARD)
@@ -73,7 +67,7 @@ public class MendingIntegrity extends Feature implements Listener {
 	public void on(McMMOPlayerSalvageCheckEvent event) {
 		ItemStack item = event.getSalvageItem();
 		ItemStack enchantedBook = event.getEnchantedBook();
-		if (isNullOrAir(enchantedBook))
+		if (Nullables.isNullOrAir(enchantedBook))
 			return;
 
 		ItemMeta meta = enchantedBook.getItemMeta();
@@ -109,14 +103,14 @@ public class MendingIntegrity extends Feature implements Listener {
 			return;
 
 		ItemStack result = event.getResult();
-		if (isNullOrAir(result))
+		if (Nullables.isNullOrAir(result))
 			return;
 
 		Inventory inv = event.getInventory();
 		if (inv instanceof AnvilInventory anvilInv) {
 			ItemStack firstItem = anvilInv.getFirstItem();
 			ItemStack secondItem = anvilInv.getSecondItem();
-			if (isNullOrAir(firstItem) || isNullOrAir(secondItem))
+			if (Nullables.isNullOrAir(firstItem) || Nullables.isNullOrAir(secondItem))
 				return;
 
 			if (hasIntegrity(firstItem) && hasIntegrity(secondItem)) {
@@ -321,7 +315,7 @@ public class MendingIntegrity extends Feature implements Listener {
 			return;
 
 		for (ItemStack drop : event.getDrops()) {
-			if (isNullOrAir(drop))
+			if (Nullables.isNullOrAir(drop))
 				continue;
 
 			if (drop.getType() != Material.TRIDENT)

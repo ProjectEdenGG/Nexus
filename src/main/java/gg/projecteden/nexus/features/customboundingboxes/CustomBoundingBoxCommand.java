@@ -1,20 +1,17 @@
 package gg.projecteden.nexus.features.customboundingboxes;
 
 import de.tr7zw.nbtapi.NBTEntity;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.features.resourcepack.commands.CustomModelConverterCommand;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntity;
 import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntityService;
 import gg.projecteden.nexus.utils.EntityUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -29,9 +26,6 @@ import org.bukkit.util.BoundingBox;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.an;
 
 @NoArgsConstructor
 @Permission(Group.ADMIN)
@@ -50,7 +44,7 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 	private CustomBoundingBoxEntity getEntity(String id, boolean nearest) {
 		if (nearest)
 			targetEntity = service.get(getNearestEntityRequired());
-		else if (!isNullOrEmpty(id))
+		else if (!Nullables.isNullOrEmpty(id))
 			targetEntity = service.getById(id);
 		else
 			targetEntity = service.get(getTargetEntityRequired());
@@ -89,7 +83,7 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 
 		if (!(targetEntity.getEntity() instanceof ArmorStand armorStand))
 			throw new InvalidInputException("Custom bounding box entity &e" + id + " &cis not an Armor Stand but is "
-				+ an(camelCase(targetEntity.getLoadedEntity().getType()), "&e"));
+				+ StringUtils.an(camelCase(targetEntity.getLoadedEntity().getType()), "&e"));
 
 		updateUuid(CustomModelConverterCommand.armorStandToItemDisplay(armorStand));
 	}
@@ -101,7 +95,7 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 
 		if (!(targetEntity.getEntity() instanceof ItemDisplay itemDisplay))
 			throw new InvalidInputException("Custom bounding box entity &e" + id + " &cis not an Item Display but is "
-				+ an(camelCase(targetEntity.getLoadedEntity().getType()), "&e"));
+				+ StringUtils.an(camelCase(targetEntity.getLoadedEntity().getType()), "&e"));
 
 		updateUuid(CustomModelConverterCommand.itemDisplayToArmorStand(itemDisplay));
 	}
@@ -112,7 +106,7 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 			targetEntity.setUuid(entity.getUniqueId());
 			service.saveSync(targetEntity);
 			service.cache(targetEntity);
-			send(PREFIX + "Entity successfully converted to " + an(camelCase(entity.getType()), "&e"));
+			send(PREFIX + "Entity successfully converted to " + StringUtils.an(camelCase(entity.getType()), "&e"));
 		});
 	}
 

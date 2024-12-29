@@ -19,23 +19,13 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerBedEnterEvent;
-import org.bukkit.event.player.PlayerBedLeaveEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
-
-import static java.time.LocalDateTime.now;
 
 public class Sleep extends Feature implements Listener {
 	public static final Map<World, Map<UUID, LocalDateTime>> recentQuits = new HashMap<>();
@@ -205,7 +195,7 @@ public class Sleep extends Feature implements Listener {
 	}
 
 	private static Map<UUID, LocalDateTime> janitorOffline(World world) {
-		final var twoMinutesAgo = now().minusMinutes(2);
+		final var twoMinutesAgo = LocalDateTime.now().minusMinutes(2);
 
 		final var map = recentQuits.getOrDefault(world, new HashMap<>());
 		new HashMap<>(map).forEach((uuid, timestamp) -> {
@@ -220,7 +210,7 @@ public class Sleep extends Feature implements Listener {
 	public void on(PlayerQuitEvent event) {
 		final var player = event.getPlayer();
 		if (canSleep(player))
-			recentQuits.computeIfAbsent(player.getWorld(), $ -> new HashMap<>()).put(player.getUniqueId(), now());
+			recentQuits.computeIfAbsent(player.getWorld(), $ -> new HashMap<>()).put(player.getUniqueId(), LocalDateTime.now());
 	}
 
 	@EventHandler

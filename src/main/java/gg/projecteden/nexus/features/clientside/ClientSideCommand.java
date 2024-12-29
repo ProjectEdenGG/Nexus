@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.clientside;
 import com.destroystokyo.paper.event.player.PlayerUseUnknownEntityEvent;
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
@@ -11,12 +12,8 @@ import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.models.clientside.ClientSideConfigService;
@@ -38,16 +35,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.potion.PotionType;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.features.clientside.ClientSideEntitiesManager.debug;
-import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
 
 @NoArgsConstructor
 public class ClientSideCommand extends CustomCommand implements Listener {
@@ -70,10 +59,10 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 	@Description("Toggle debug mode")
 	void debug(Boolean state) {
 		if (state == null)
-			state = !debug;
+			state = !ClientSideEntitiesManager.debug;
 
-		debug = state;
-		send(PREFIX + "Debug " + (debug ? "&aenabled" : "&cdisabled"));
+		ClientSideEntitiesManager.debug = state;
+		send(PREFIX + "Debug " + (ClientSideEntitiesManager.debug ? "&aenabled" : "&cdisabled"));
 	}
 
 	@Path("edit [state]")
@@ -110,7 +99,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 			.filter(entity -> !onlyShown || !entity.isHidden())
 			.toList();
 
-		if (isNullOrEmpty(entities))
+		if (Nullables.isNullOrEmpty(entities))
 			error("No matching entities found");
 
 		send(PREFIX + "Matching entities  |  Total: &e" + entities.size());
@@ -122,7 +111,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 		command += " --onlyHidden=" + onlyHidden;
 		command += " --onlyShown=" + onlyShown;
 
-		final BiFunction<IClientSideEntity<?, ?, ?>, String, JsonBuilder> formatter = (entity, index) -> json("&3" + index + " &e" + camelCase(entity.getType()) + " &7- " + getShortLocationString(entity.location()))
+		final BiFunction<IClientSideEntity<?, ?, ?>, String, JsonBuilder> formatter = (entity, index) -> json("&3" + index + " &e" + camelCase(entity.getType()) + " &7- " + StringUtils.getShortLocationString(entity.location()))
 			.command(StringUtils.getTeleportCommand(entity.location()));
 
 		paginate(entities, formatter, command, page);
@@ -187,7 +176,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 			if (ClientSideConfig.isIgnoredEntity(entity))
 				continue;
 
-			if (!isNullOrEmpty(types))
+			if (!Nullables.isNullOrEmpty(types))
 				if (!types.contains(ClientSideEntityType.of(entity.getType())))
 					continue;
 
@@ -221,7 +210,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 			if (!selection.contains(worldedit.toBlockVector3(entity.location())))
 				continue;
 
-			if (!isNullOrEmpty(types))
+			if (!Nullables.isNullOrEmpty(types))
 				if (!types.contains(entity.getType()))
 					continue;
 

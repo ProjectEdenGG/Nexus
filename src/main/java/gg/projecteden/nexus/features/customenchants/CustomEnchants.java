@@ -1,10 +1,13 @@
 package gg.projecteden.nexus.features.customenchants;
 
 import com.destroystokyo.paper.event.inventory.PrepareResultEvent;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.features.survival.MendingIntegrity;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.Enchant;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.key.Key;
@@ -24,27 +27,14 @@ import org.bukkit.inventory.meta.Repairable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static gg.projecteden.nexus.Nexus.singletonOf;
-import static gg.projecteden.nexus.features.customenchants.CustomEnchantsRegistration.register;
-import static gg.projecteden.nexus.features.customenchants.CustomEnchantsRegistration.unregister;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.camelToSnake;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
+import java.util.*;
 
 @NoArgsConstructor
 public class CustomEnchants extends Feature implements Listener {
 	private static final Map<Class<? extends CustomEnchant>, Enchantment> enchants = new HashMap<>();
 
 	public static Enchantment get(Class<? extends CustomEnchant> clazz) {
-		return enchants.computeIfAbsent(clazz, $ -> CustomEnchantsRegistration.register(singletonOf(clazz)));
+		return enchants.computeIfAbsent(clazz, $ -> CustomEnchantsRegistration.register(Nexus.singletonOf(clazz)));
 	}
 
 	public static Collection<Enchantment> getEnchants() {
@@ -61,12 +51,12 @@ public class CustomEnchants extends Feature implements Listener {
 
 	@Override
 	public void onStart() {
-		register();
+		CustomEnchantsRegistration.register();
 	}
 
 	@Override
 	public void onStop() {
-		unregister();
+		CustomEnchantsRegistration.unregister();
 	}
 
 	@NotNull
@@ -76,7 +66,7 @@ public class CustomEnchants extends Feature implements Listener {
 
 	@NotNull
 	public static String getId(Class<? extends CustomEnchant> enchant) {
-		return camelToSnake(enchant.getSimpleName()).toLowerCase().replace("_enchant", "");
+		return StringUtils.camelToSnake(enchant.getSimpleName()).toLowerCase().replace("_enchant", "");
 	}
 
 	@EventHandler
@@ -85,7 +75,7 @@ public class CustomEnchants extends Feature implements Listener {
 			return;
 
 		ItemStack result = event.getItem();
-		if (isNullOrAir(result))
+		if (Nullables.isNullOrAir(result))
 			return;
 
 		ItemStack updated = update(result, player);
@@ -99,7 +89,7 @@ public class CustomEnchants extends Feature implements Listener {
 			return;
 
 		ItemStack result = event.getInventory().getResult();
-		if (isNullOrAir(result))
+		if (Nullables.isNullOrAir(result))
 			return;
 
 		ItemStack updated = update(result, player);
@@ -114,7 +104,7 @@ public class CustomEnchants extends Feature implements Listener {
 			return;
 
 		ItemStack result = event.getResult();
-		if (isNullOrAir(result))
+		if (Nullables.isNullOrAir(result))
 			return;
 
 		ItemStack updated = update(result, player);
@@ -223,11 +213,11 @@ public class CustomEnchants extends Feature implements Listener {
 		final ItemMeta meta = item.getItemMeta();
 		final List<String> lore = new ArrayList<>();
 
-		if (!isNullOrEmpty(meta.getLore()))
+		if (!Nullables.isNullOrEmpty(meta.getLore()))
 			lines: for (String line : meta.getLore()) {
-				if (!isNullOrEmpty(line))
+				if (!Nullables.isNullOrEmpty(line))
 					for (Enchantment enchant : CustomEnchants.getEnchants())
-						if (stripColor(line).matches("(?i)^" + enchant.getName().replaceAll("_", " ") + ".*"))
+						if (StringUtils.stripColor(line).matches("(?i)^" + enchant.getName().replaceAll("_", " ") + ".*"))
 							continue lines;
 
 				lore.add(line);
@@ -241,7 +231,7 @@ public class CustomEnchants extends Feature implements Listener {
 			for (Enchantment enchant : CustomEnchants.getEnchants()) {
 				final int level = EnchantUtils.getLevel(enchant, item);
 				if (level > 0)
-					add(0, colorize("&7" + EnchantUtils.getDisplayName(enchant, level)));
+					add(0, StringUtils.colorize("&7" + EnchantUtils.getDisplayName(enchant, level)));
 			}
 		}};
 	}

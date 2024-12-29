@@ -1,14 +1,10 @@
 package gg.projecteden.nexus.features.dailyrewards;
 
 import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownException;
@@ -21,8 +17,6 @@ import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiFunction;
-
-import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
 
 @Aliases({"dr", "dailyreward"})
 public class DailyRewardsCommand extends CustomCommand {
@@ -48,7 +42,7 @@ public class DailyRewardsCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	@Description("View the last time the reward task ran")
 	void getLastTaskTime() {
-		send(shortDateTimeFormat(DailyRewardsFeature.getLastTaskTime()));
+		send(TimeUtils.shortDateTimeFormat(DailyRewardsFeature.getLastTaskTime()));
 	}
 
 	@Path("streak [player]")

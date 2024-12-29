@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.itemtags;
 
 import de.tr7zw.nbtapi.NBTItem;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.features.survival.MendingIntegrity;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -11,17 +12,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class ItemTagsUtils {
 
@@ -125,7 +117,7 @@ public class ItemTagsUtils {
 
 			while (iter.hasNext()) {
 				String line = iter.next();
-				String lineStrip = stripColor(line);
+				String lineStrip = StringUtils.stripColor(line);
 
 				if (conditionTag == null && Condition.ALL_TAGS_STRIPPED.contains(lineStrip)) {
 					conditionTag = line;
@@ -159,7 +151,7 @@ public class ItemTagsUtils {
 	}
 
 	private static void setLore(ItemStack item, List<String> lore) {
-		if (isNullOrEmpty(lore))
+		if (Nullables.isNullOrEmpty(lore))
 			lore = null;
 
 		item.setLore(lore);
@@ -171,11 +163,11 @@ public class ItemTagsUtils {
 	}
 
 	public static void clearTags(ItemStack item) {
-		if (isNullOrAir(item))
+		if (gg.projecteden.nexus.utils.Nullables.isNullOrAir(item))
 			return;
 
 		List<String> lore = item.getLore();
-		if (isNullOrEmpty(lore))
+		if (Nullables.isNullOrEmpty(lore))
 			return;
 
 		clearCondition(lore);
@@ -184,11 +176,11 @@ public class ItemTagsUtils {
 	}
 
 	public static void clearRarity(ItemStack item) {
-		if (isNullOrAir(item))
+		if (gg.projecteden.nexus.utils.Nullables.isNullOrAir(item))
 			return;
 
 		List<String> lore = item.getLore();
-		if (isNullOrEmpty(lore))
+		if (Nullables.isNullOrEmpty(lore))
 			return;
 
 		clearTags(lore, Rarity.ALL_TAGS);
@@ -196,11 +188,11 @@ public class ItemTagsUtils {
 	}
 
 	public static void clearCondition(ItemStack item) {
-		if (isNullOrAir(item))
+		if (gg.projecteden.nexus.utils.Nullables.isNullOrAir(item))
 			return;
 
 		List<String> lore = item.getLore();
-		if (isNullOrEmpty(lore))
+		if (Nullables.isNullOrEmpty(lore))
 			return;
 
 		clearTags(lore, Condition.ALL_TAGS);
@@ -210,8 +202,8 @@ public class ItemTagsUtils {
 	private static void clearTags(@NotNull List<String> lore, @NotNull Collection<String> tags) {
 		List<String> loreStrip = new ArrayList<>(lore.size());
 		for (String tag : tags)
-			loreStrip.add(stripColor(tag));
-		lore.removeIf(tag -> loreStrip.contains(stripColor(tag)));
+			loreStrip.add(StringUtils.stripColor(tag));
+		lore.removeIf(tag -> loreStrip.contains(StringUtils.stripColor(tag)));
 	}
 
 	public static void addTag(@NotNull List<String> lore, @Nullable ITag tag) {

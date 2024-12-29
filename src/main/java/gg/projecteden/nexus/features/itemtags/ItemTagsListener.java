@@ -5,16 +5,12 @@ import com.gmail.nossr50.events.skills.fishing.McMMOPlayerFishingTreasureEvent;
 import com.gmail.nossr50.events.skills.repair.McMMOPlayerRepairCheckEvent;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Hanging;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -32,9 +28,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.features.itemtags.ItemTagsUtils.update;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class ItemTagsListener implements Listener {
 
@@ -64,7 +57,7 @@ public class ItemTagsListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onItemDamage(PlayerItemDamageEvent event) {
 		ItemStack result = event.getItem();
-		if (isNullOrAir(result))
+		if (Nullables.isNullOrAir(result))
 			return;
 
 		if (WorldGroup.of(event.getPlayer()) != WorldGroup.SURVIVAL)
@@ -73,7 +66,7 @@ public class ItemTagsListener implements Listener {
 		if (!cooldown(event.getPlayer(), result.getType()))
 			return;
 
-		update(result);
+		ItemTagsUtils.update(result);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -85,9 +78,9 @@ public class ItemTagsListener implements Listener {
 			return;
 
 		ItemStack result = event.getItem();
-		if (isNullOrAir(result)) return;
+		if (Nullables.isNullOrAir(result)) return;
 
-		update(result);
+		ItemTagsUtils.update(result);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -96,7 +89,7 @@ public class ItemTagsListener implements Listener {
 			return;
 
 		ItemStack result = event.getInventory().getResult();
-		if (isNullOrAir(result))
+		if (Nullables.isNullOrAir(result))
 			return;
 
 		if (WorldGroup.of(player) != WorldGroup.SURVIVAL)
@@ -105,7 +98,7 @@ public class ItemTagsListener implements Listener {
 		if (!ItemTagsUtils.isArmor(result) && !ItemTagsUtils.isTool(result))
 			return;
 
-		update(result);
+		ItemTagsUtils.update(result);
 	}
 
 	// Includes Anvil, Grindstone, and Smithing Table
@@ -115,13 +108,13 @@ public class ItemTagsListener implements Listener {
 			return;
 
 		ItemStack result = event.getResult();
-		if (isNullOrAir(result))
+		if (Nullables.isNullOrAir(result))
 			return;
 
 		if (WorldGroup.of(player) != WorldGroup.SURVIVAL)
 			return;
 
-		update(result);
+		ItemTagsUtils.update(result);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -131,13 +124,13 @@ public class ItemTagsListener implements Listener {
 
 		ItemFrame itemFrame = (ItemFrame) event.getEntity();
 		ItemStack item = itemFrame.getItem();
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return;
 
 		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL)
 			return;
 
-		update(item);
+		ItemTagsUtils.update(item);
 
 		// frame returns a bukkit copy so we must set the item
 		itemFrame.setItem(item);
@@ -157,9 +150,9 @@ public class ItemTagsListener implements Listener {
 
 		ItemFrame itemFrame = (ItemFrame) entity;
 		ItemStack item = itemFrame.getItem();
-		if (isNullOrAir(item)) return;
+		if (Nullables.isNullOrAir(item)) return;
 
-		update(item);
+		ItemTagsUtils.update(item);
 
 		// frame returns a bukkit copy so we must set the item
 		itemFrame.setItem(item);
@@ -171,7 +164,7 @@ public class ItemTagsListener implements Listener {
 			return;
 
 		for (ItemStack item : event.getDrops())
-			update(item);
+			ItemTagsUtils.update(item);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -185,7 +178,7 @@ public class ItemTagsListener implements Listener {
 		Entity caught = event.getCaught();
 		if (!(caught instanceof Item item)) return;
 
-		update(item.getItemStack());
+		ItemTagsUtils.update(item.getItemStack());
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -196,7 +189,7 @@ public class ItemTagsListener implements Listener {
 		if (WorldGroup.of(event.getPlayer()) != WorldGroup.SURVIVAL)
 			return;
 
-		update(event.getItem());
+		ItemTagsUtils.update(event.getItem());
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -205,7 +198,7 @@ public class ItemTagsListener implements Listener {
 			return;
 
 		ItemStack repaired = event.getRepairedObject();
-		Tasks.wait(1, () -> update(repaired));
+		Tasks.wait(1, () -> ItemTagsUtils.update(repaired));
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -214,7 +207,7 @@ public class ItemTagsListener implements Listener {
 			return;
 
 		ItemStack item = event.getTreasure();
-		update(item);
+		ItemTagsUtils.update(item);
 	}
 
 	// TODO: uncomment if mythic mobs is added
@@ -232,7 +225,7 @@ public class ItemTagsListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onGenerateLoot(LootGenerateEvent event) {
 		for (ItemStack itemStack : event.getLoot())
-			update(itemStack);
+			ItemTagsUtils.update(itemStack);
 	}
 
 }

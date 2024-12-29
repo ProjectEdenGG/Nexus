@@ -2,14 +2,11 @@ package gg.projecteden.nexus.features.leashable;
 
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.Getter;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Vehicle;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -19,13 +16,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import java.util.*;
 
 public class Leashable extends Feature implements Listener {
 	@Getter
@@ -57,7 +48,7 @@ public class Leashable extends Feature implements Listener {
 		Player player = event.getPlayer();
 		Entity clickedEntity = event.getRightClicked();
 		ItemStack tool = ItemUtils.getTool(player);
-		boolean hasLeash = !isNullOrAir(tool) && tool.getType() == Material.LEAD;
+		boolean hasLeash = !Nullables.isNullOrAir(tool) && tool.getType() == Material.LEAD;
 
 		if (hasLeash && ignoreTypes.contains(clickedEntity.getType())) {
 			debug(player, "leashEntity -> cancelled");

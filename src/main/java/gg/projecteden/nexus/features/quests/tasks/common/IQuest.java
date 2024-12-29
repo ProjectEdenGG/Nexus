@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.quests.tasks.common;
 
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.models.quests.Quest;
 import gg.projecteden.nexus.models.quests.QuestTaskProgress;
@@ -7,14 +8,12 @@ import gg.projecteden.nexus.models.quests.QuesterService;
 
 import java.util.List;
 
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-
 public interface IQuest {
 
 	String name();
 
 	default String getName() {
-		return camelCase(name());
+		return StringUtils.camelCase(name());
 	}
 
 	List<IQuestTask> getTasks();

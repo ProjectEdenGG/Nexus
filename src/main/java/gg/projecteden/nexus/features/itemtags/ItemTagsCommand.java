@@ -8,10 +8,9 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class ItemTagsCommand extends CustomCommand {
 
@@ -58,7 +57,7 @@ public class ItemTagsCommand extends CustomCommand {
 		ItemStack[] contents = inventory().getContents();
 		int count = 0;
 		for (ItemStack item : contents) {
-			if (isNullOrAir(item))
+			if (Nullables.isNullOrAir(item))
 				continue;
 
 			ItemUtils.update(item, player());
