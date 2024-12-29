@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.islands;
 
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.annotations.Region;
@@ -45,11 +46,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.*;
-import static gg.projecteden.nexus.utils.ItemUtils.isSameHead;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-
 @Region("main")
 @NPCClass(MainNPCs.class)
 public class MainIsland implements BearFair21Island {
@@ -75,8 +71,8 @@ public class MainIsland implements BearFair21Island {
 	@Getter
 	private static final ItemBuilder invitation = new ItemBuilder(CustomMaterial.ENVELOPE_2).name("Anniversary Event Invitation").undroppable();
 	@Getter
-	private static final List<BearFair21NPC> invitees = Arrays.asList(ARCHITECT, ARTIST, BAKER, BARTENDER, BLACKSMITH, BOTANIST, CARPENTER, COLLECTOR,
-		CURATOR, FISHERMAN1, INVENTOR, PASTRY_CHEF, SORCERER, LUMBERJACK, BEEKEEPER, FISHERMAN2, AERONAUT, ADMIRAL, ORGANIZER, TRADER, JAMES);
+	private static final List<BearFair21NPC> invitees = Arrays.asList(BearFair21NPC.ARCHITECT, BearFair21NPC.ARTIST, BearFair21NPC.BAKER, BearFair21NPC.BARTENDER, BearFair21NPC.BLACKSMITH, BearFair21NPC.BOTANIST, BearFair21NPC.CARPENTER, BearFair21NPC.COLLECTOR,
+		BearFair21NPC.CURATOR, BearFair21NPC.FISHERMAN1, BearFair21NPC.INVENTOR, BearFair21NPC.PASTRY_CHEF, BearFair21NPC.SORCERER, BearFair21NPC.LUMBERJACK, BearFair21NPC.BEEKEEPER, BearFair21NPC.FISHERMAN2, BearFair21NPC.AERONAUT, BearFair21NPC.ADMIRAL, BearFair21NPC.ORGANIZER, BearFair21NPC.TRADER, BearFair21NPC.JAMES);
 
 	public enum MainNPCs implements BearFair21TalkingNPC {
 		WAKKAFLOCKA(BearFair21NPC.ORGANIZER) {
@@ -444,10 +440,10 @@ public class MainIsland implements BearFair21Island {
 				} else if (user.getQuestStage_BeeKeeper() == QuestStage.STEPS_DONE) {
 					ItemStack item = null;
 					for (ItemStack itemStack : user.getOnlinePlayer().getInventory().getContents()) {
-						if (isNullOrAir(itemStack)) continue;
+						if (gg.projecteden.nexus.utils.Nullables.isNullOrAir(itemStack)) continue;
 						if (!Material.PLAYER_HEAD.equals(itemStack.getType())) continue;
 
-						if (isSameHead(queenLarvae.get().build(), itemStack)) {
+						if (ItemUtils.isSameHead(queenLarvae.get().build(), itemStack)) {
 							item = itemStack;
 							break;
 						}
@@ -728,7 +724,7 @@ public class MainIsland implements BearFair21Island {
 						.toList().forEach(fishingLoot -> required.add(fishingLoot.getItemBuilder()));
 
 					List<ItemStack> items = Quests.getItemsLikeFrom(user, required);
-					if (isNullOrEmpty(items)) {
+					if (Nullables.isNullOrEmpty(items)) {
 						script.add("Tell ya what, I spend most of my time up in the skies, but I'll trade you those balloons you want, if you can get me a catch from the depths.");
 					} else {
 						Quests.removeItem(user, RandomUtils.randomElement(items));
@@ -949,7 +945,7 @@ public class MainIsland implements BearFair21Island {
 					return script;
 				} else if (user.getQuestStage_Main() == QuestStage.STEP_FOUR) {
 					ItemStack item = Quests.getItemLikeFrom(user, new ItemBuilder(Material.CAKE));
-					if (!isNullOrAir(item))
+					if (!gg.projecteden.nexus.utils.Nullables.isNullOrAir(item))
 						return script;
 
 					script.add("Oh my goodness, I totally forgot! Nor do I have the necessary supplies for a cake that size.");
@@ -1084,7 +1080,7 @@ public class MainIsland implements BearFair21Island {
 			if (user.getInvitees().contains(npcId))
 				return false;
 
-			return !isNullOrAir(tool) && ItemUtils.isFuzzyMatch(tool, invitation.build());
+			return !gg.projecteden.nexus.utils.Nullables.isNullOrAir(tool) && ItemUtils.isFuzzyMatch(tool, invitation.build());
 		}
 
 		private final BearFair21NPC npc;
@@ -1116,7 +1112,7 @@ public class MainIsland implements BearFair21Island {
 		if (BearFair21.isNotAtBearFair(event)) return;
 
 		Block block = event.getClickedBlock();
-		if (isNullOrAir(block)) return;
+		if (gg.projecteden.nexus.utils.Nullables.isNullOrAir(block)) return;
 		if (!MaterialTag.PLAYER_SKULLS.isTagged(block)) return;
 
 		BearFair21User user = userService.get(event.getPlayer());
@@ -1125,8 +1121,8 @@ public class MainIsland implements BearFair21Island {
 		if (BearFair21.worldguard().isInRegion(block.getLocation(), "bearfair21_main_beehive_nursery")) {
 			Quests.giveItem(event.getPlayer(), queenLarvae.get().clone().build());
 			user.setQuestStage_BeeKeeper(QuestStage.STEPS_DONE);
-			user.getNextStepNPCs().add(BEEKEEPER.getId());
-			user.getNextStepNPCs().remove(QUEEN_BEE.getId());
+			user.getNextStepNPCs().add(BearFair21NPC.BEEKEEPER.getId());
+			user.getNextStepNPCs().remove(BearFair21NPC.QUEEN_BEE.getId());
 			userService.save(user);
 		}
 	}
