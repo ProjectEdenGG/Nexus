@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events.y2020.bearfair20.quests;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -26,15 +27,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.isAtBearFair;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.isInRegion;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.send;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.bottomBlockError;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.cantBreakError;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.decorOnlyError;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.notFullyGrownError;
 
 public class RegenCrops implements Listener {
 
@@ -191,11 +183,11 @@ public class RegenCrops implements Listener {
 		Player player = event.getPlayer();
 
 		if (event.isCancelled()) return;
-		if (!isAtBearFair(block)) return;
-		if (isInRegion(block, Quarry.quarryRg)) return;
+		if (!BearFair20.isAtBearFair(block)) return;
+		if (BearFair20.isInRegion(block, Quarry.quarryRg)) return;
 		if (!breakList.contains(block.getType())) {
 			if (PlayerUtils.isWGEdit(player)) return;
-			send(cantBreakError, player);
+			BearFair20.send(BFQuests.cantBreakError, player);
 			event.setCancelled(true);
 			return;
 		}
@@ -211,7 +203,7 @@ public class RegenCrops implements Listener {
 			switch (material) {
 				case MELON, PUMPKIN -> {
 					if (!(block.getRelative(0, -1, 0).getType().equals(Material.COARSE_DIRT))) {
-						send(decorOnlyError, player);
+						BearFair20.send(BFQuests.decorOnlyError, player);
 						event.setCancelled(true);
 						return;
 					}
@@ -219,7 +211,7 @@ public class RegenCrops implements Listener {
 				}
 				case SUGAR_CANE -> {
 					if (!(block.getRelative(0, -1, 0).getType().equals(material))) {
-						send(bottomBlockError, player);
+						BearFair20.send(BFQuests.bottomBlockError, player);
 						event.setCancelled(true);
 						return;
 					}
@@ -231,7 +223,7 @@ public class RegenCrops implements Listener {
 							if (above.getType().equals(material)) {
 								Location aboveLoc = above.getLocation();
 								above.setType(Material.AIR, false);
-								above.getWorld().dropItemNaturally(aboveLoc, new ItemBuilder(material).lore(itemLore).build());
+								above.getWorld().dropItemNaturally(aboveLoc, new ItemBuilder(material).lore(BFQuests.itemLore).build());
 								multiRegenMap.put(aboveLoc, material);
 							} else {
 								break;
@@ -242,7 +234,7 @@ public class RegenCrops implements Listener {
 				}
 				default -> {
 					if (PlayerUtils.isWGEdit(player)) return;
-					send(cantBreakError, player);
+					BearFair20.send(BFQuests.cantBreakError, player);
 					player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
 					event.setCancelled(true);
 				}
@@ -252,7 +244,7 @@ public class RegenCrops implements Listener {
 
 		if (ageable.getAge() != ageable.getMaximumAge()) {
 			if (new CooldownService().check(player, "BF_notFullyGrown", TickTime.MINUTE)) {
-				send(notFullyGrownError, player);
+				BearFair20.send(BFQuests.notFullyGrownError, player);
 				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
 			}
 			event.setCancelled(true);

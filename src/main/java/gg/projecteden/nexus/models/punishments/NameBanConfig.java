@@ -3,6 +3,7 @@ package gg.projecteden.nexus.models.punishments;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -25,8 +26,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 
 @Data
 @Entity(value = "nameban_config", noClassnameStored = true)
@@ -70,7 +69,7 @@ public class NameBanConfig implements PlayerOwnedObject {
 	}
 
 	public void ban(UUID uuid, String name) {
-		ban(UUID0, uuid, name);
+		ban(UUIDUtils.UUID0, uuid, name);
 	}
 
 	public void ban(UUID executor, UUID uuid, String name) {

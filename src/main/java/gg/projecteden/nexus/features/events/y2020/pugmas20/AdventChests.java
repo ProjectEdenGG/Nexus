@@ -41,28 +41,20 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.PREFIX;
-import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isBeforePugmas;
-import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isPastPugmas;
-import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isSecondChance;
-import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.location;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-
 public class AdventChests implements Listener {
 	public static Map<Integer, Location> adventLootMap = new HashMap<>();
 	public static List<AdventChest> adventChestList = new ArrayList<>();
 	public static ItemBuilder adventLootHead;
 	//
-	public static final Block lootOrigin = location(867, 45, 579).getBlock();
+	public static final Block lootOrigin = Pugmas20.location(867, 45, 579).getBlock();
 	private static final String InvTitle = "Advent Chest #";
 	private static UUID adventLootHeadOwner = null;
 	private static final String adventLootHeadTitle = "Pugmas Advent Skull";
 	private static final String adventLootHeadLore = "Day #";
 	//
-	private static final String wrongDay = PREFIX + "You cannot open this chest, look for chest #<day>";
-	private static final String openPrevious = PREFIX + "Need to find the rest to open this one";
-	private static final String alreadyFound = PREFIX + "Already opened this chest!";
+	private static final String wrongDay = Pugmas20.PREFIX + "You cannot open this chest, look for chest #<day>";
+	private static final String openPrevious = Pugmas20.PREFIX + "Need to find the rest to open this one";
+	private static final String alreadyFound = Pugmas20.PREFIX + "Already opened this chest!";
 
 	public AdventChests() {
 //		Nexus.registerListener(this);
@@ -80,7 +72,7 @@ public class AdventChests implements Listener {
 		for (int z = 0; z <= 6; z++) {         // 0-3 col (Every other)
 			for (int x = 0; x <= 12; x++) {    // 0-6 row (Every other)
 				Block block = lootOrigin.getRelative(x, 0, z);
-				if (isNullOrAir(block.getType()) || !block.getType().equals(Material.CHEST))
+				if (Nullables.isNullOrAir(block.getType()) || !block.getType().equals(Material.CHEST))
 					continue;
 
 				adventLootMap.put(index++, block.getLocation());
@@ -90,31 +82,31 @@ public class AdventChests implements Listener {
 
 	private void loadlocationations() {
 		// @formatter:off
-		adventChestList.add(new AdventChest(1,  location(913, 50, 411)));	// Plaza
-		adventChestList.add(new AdventChest(2,  location(900, 45, 580)));	// Harbor
-		adventChestList.add(new AdventChest(3,  location(997, 50, 497)));	// Frozen
-		adventChestList.add(new AdventChest(4,  location(966, 51, 400)));	// Plaza
-		adventChestList.add(new AdventChest(5,  location(987, 74, 346)));	// Gardens
-		adventChestList.add(new AdventChest(6,  location(860, 50, 441)));	// Plaza
-		adventChestList.add(new AdventChest(7,  location(1001, 58, 534)));	// Frozen
-		adventChestList.add(new AdventChest(8,  location(847, 54, 583)));	// Harbor
-		adventChestList.add(new AdventChest(9,  location(986, 61, 415)));	// Plaza
-		adventChestList.add(new AdventChest(10, location(840, 60, 606)));	// Harbor
-		adventChestList.add(new AdventChest(11, location(1051, 49, 569)));	// Frozen
-		adventChestList.add(new AdventChest(12, location(839, 52, 542)));	// Harbor
-		adventChestList.add(new AdventChest(13, location(898, 58, 352)));	// Plaza
-		adventChestList.add(new AdventChest(14, location(1062, 60, 424)));	// Gardens
-		adventChestList.add(new AdventChest(15, location(964, 52, 441)));	// Plaza
-		adventChestList.add(new AdventChest(16, location(1009, 47, 567)));	// Frozen
-		adventChestList.add(new AdventChest(17, location(828, 51, 515)));	// Harbor
-		adventChestList.add(new AdventChest(18, location(862, 58, 457)));	// Plaza
-		adventChestList.add(new AdventChest(19, location(812, 52, 538)));	// Harbor
-		adventChestList.add(new AdventChest(20, location(849, 55, 384)));	// Plaza
-		adventChestList.add(new AdventChest(21, location(809, 68, 565)));	// Harbor
-		adventChestList.add(new AdventChest(22, location(1094, 45, 386)));	// Gardens
-		adventChestList.add(new AdventChest(23, location(866, 57, 395)));	// Plaza
-		adventChestList.add(new AdventChest(24, location(1056, 43, 531)));	// Frozen
-		adventChestList.add(new AdventChest(25, location(886, 95, 313)));	// Unknown
+		adventChestList.add(new AdventChest(1,  Pugmas20.location(913, 50, 411)));	// Plaza
+		adventChestList.add(new AdventChest(2,  Pugmas20.location(900, 45, 580)));	// Harbor
+		adventChestList.add(new AdventChest(3,  Pugmas20.location(997, 50, 497)));	// Frozen
+		adventChestList.add(new AdventChest(4,  Pugmas20.location(966, 51, 400)));	// Plaza
+		adventChestList.add(new AdventChest(5,  Pugmas20.location(987, 74, 346)));	// Gardens
+		adventChestList.add(new AdventChest(6,  Pugmas20.location(860, 50, 441)));	// Plaza
+		adventChestList.add(new AdventChest(7,  Pugmas20.location(1001, 58, 534)));	// Frozen
+		adventChestList.add(new AdventChest(8,  Pugmas20.location(847, 54, 583)));	// Harbor
+		adventChestList.add(new AdventChest(9,  Pugmas20.location(986, 61, 415)));	// Plaza
+		adventChestList.add(new AdventChest(10, Pugmas20.location(840, 60, 606)));	// Harbor
+		adventChestList.add(new AdventChest(11, Pugmas20.location(1051, 49, 569)));	// Frozen
+		adventChestList.add(new AdventChest(12, Pugmas20.location(839, 52, 542)));	// Harbor
+		adventChestList.add(new AdventChest(13, Pugmas20.location(898, 58, 352)));	// Plaza
+		adventChestList.add(new AdventChest(14, Pugmas20.location(1062, 60, 424)));	// Gardens
+		adventChestList.add(new AdventChest(15, Pugmas20.location(964, 52, 441)));	// Plaza
+		adventChestList.add(new AdventChest(16, Pugmas20.location(1009, 47, 567)));	// Frozen
+		adventChestList.add(new AdventChest(17, Pugmas20.location(828, 51, 515)));	// Harbor
+		adventChestList.add(new AdventChest(18, Pugmas20.location(862, 58, 457)));	// Plaza
+		adventChestList.add(new AdventChest(19, Pugmas20.location(812, 52, 538)));	// Harbor
+		adventChestList.add(new AdventChest(20, Pugmas20.location(849, 55, 384)));	// Plaza
+		adventChestList.add(new AdventChest(21, Pugmas20.location(809, 68, 565)));	// Harbor
+		adventChestList.add(new AdventChest(22, Pugmas20.location(1094, 45, 386)));	// Gardens
+		adventChestList.add(new AdventChest(23, Pugmas20.location(866, 57, 395)));	// Plaza
+		adventChestList.add(new AdventChest(24, Pugmas20.location(1056, 43, 531)));	// Frozen
+		adventChestList.add(new AdventChest(25, Pugmas20.location(886, 95, 313)));	// Unknown
 		// @formatter:on
 	}
 
@@ -132,7 +124,7 @@ public class AdventChests implements Listener {
 	public void onAdventChestOpen(PlayerInteractEvent event) {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
-		if (isNullOrAir(event.getClickedBlock())) return;
+		if (Nullables.isNullOrAir(event.getClickedBlock())) return;
 
 		Player player = event.getPlayer();
 		if (!Pugmas20.isAtPugmas(player)) return;
@@ -156,8 +148,8 @@ public class AdventChests implements Listener {
 		LocalDate now = LocalDate.now();
 		int today = LocalDate.now().getDayOfMonth();
 
-		if (isBeforePugmas(now)) return;
-		if (isPastPugmas(now)) return;
+		if (Pugmas20.isBeforePugmas(now)) return;
+		if (Pugmas20.isPastPugmas(now)) return;
 
 		boolean waypoint = !user.getLocatedDays().contains(chestDay);
 		user.getLocatedDays().add(chestDay);
@@ -168,7 +160,7 @@ public class AdventChests implements Listener {
 		if (user.getFoundDays().contains(chestDay))
 			reason = alreadyFound;
 		else {
-			if (isSecondChance(now))
+			if (Pugmas20.isSecondChance(now))
 				if (chestDay != 25 || user.getFoundDays().size() == 24)
 					openChest = true;
 				else
@@ -185,7 +177,7 @@ public class AdventChests implements Listener {
 			user.sendMessage(reason);
 
 			if (waypoint)
-				user.sendMessage(PREFIX + "Chest &e#" + chestDay + " &3saved as a waypoint");
+				user.sendMessage(Pugmas20.PREFIX + "Chest &e#" + chestDay + " &3saved as a waypoint");
 			return;
 		}
 
@@ -211,8 +203,8 @@ public class AdventChests implements Listener {
 		if (!ActionGroup.RIGHT_CLICK.applies(event)) return;
 
 		ItemStack skull = ItemUtils.getTool(player);
-		if (isNullOrAir(skull) || !skull.getType().equals(Material.PLAYER_HEAD)) return;
-		if (isNullOrEmpty(skull.getLore())) return;
+		if (Nullables.isNullOrAir(skull) || !skull.getType().equals(Material.PLAYER_HEAD)) return;
+		if (gg.projecteden.api.common.utils.Nullables.isNullOrEmpty(skull.getLore())) return;
 
 		UUID skullOwner = ItemUtils.getSkullOwner(skull);
 		if (skullOwner == null) return;

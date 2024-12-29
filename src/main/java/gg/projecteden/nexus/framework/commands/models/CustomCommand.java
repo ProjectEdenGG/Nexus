@@ -3,6 +3,7 @@ package gg.projecteden.nexus.framework.commands.models;
 import com.google.common.base.Strings;
 import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.api.common.utils.Nullables;
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.api.mongodb.interfaces.PlayerOwnedObject;
@@ -107,16 +108,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static gg.projecteden.api.common.utils.TimeUtils.parseDate;
-import static gg.projecteden.api.common.utils.TimeUtils.parseDateTime;
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.an;
-import static gg.projecteden.nexus.utils.StringUtils.trimFirst;
-import static java.util.stream.Collectors.toList;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -193,7 +186,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected Block getTargetBlockRequired() {
 		Block targetBlock = getTargetBlock();
-		if (isNullOrAir(targetBlock))
+		if (gg.projecteden.nexus.utils.Nullables.isNullOrAir(targetBlock))
 			error("You must be looking at a block");
 		return targetBlock;
 	}
@@ -201,7 +194,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	protected Sign getTargetSignRequired() {
 		Block targetBlock = getTargetBlock();
 		Material material = targetBlock.getType();
-		if (isNullOrAir(material) || !MaterialTag.ALL_SIGNS.isTagged(material))
+		if (gg.projecteden.nexus.utils.Nullables.isNullOrAir(material) || !MaterialTag.ALL_SIGNS.isTagged(material))
 			error("You must be looking at a sign");
 
 		return (Sign) targetBlock.getState();
@@ -222,7 +215,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	protected Entity getTargetEntityRequired(EntityType entityType) {
 		Entity targetEntity = getTargetEntity();
 		if (targetEntity == null || targetEntity.getType() != entityType)
-			error("You must be looking at " + an(camelCase(entityType)));
+			error("You must be looking at " + StringUtils.an(camelCase(entityType)));
 		return targetEntity;
 	}
 
@@ -300,11 +293,11 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected Distance distanceTo(HasLocation location) {
-		return distance(location(), location.getLocation());
+		return Distance.distance(location(), location.getLocation());
 	}
 
 	protected Distance distanceTo(OptionalLocation location) {
-		return distance(location(), location.getLocation());
+		return Distance.distance(location(), location.getLocation());
 	}
 
 	protected WorldEditUtils worldedit() {
@@ -893,7 +886,7 @@ public abstract class CustomCommand extends ICustomCommand {
 				.filter(player -> PlayerUtils.canSee(player(), player))
 				.map(Nickname::of)
 				.filter(name -> name.toLowerCase().startsWith(filter.replaceFirst("[pP]:", "").toLowerCase()))
-				.collect(toList());
+			.collect(Collectors.toList());
 	}
 
 	@TabCompleterFor(OfflinePlayer.class)
@@ -906,7 +899,7 @@ public abstract class CustomCommand extends ICustomCommand {
 			return new NerdService().find(filter.replaceFirst("[pP]:", "")).stream()
 				.map(Nickname::of)
 				.filter(name -> name.toLowerCase().startsWith(filter.replaceFirst("[pP]:", "").toLowerCase()))
-				.collect(toList());
+				.collect(Collectors.toList());
 		} catch (InvalidInputException ex) {
 			return Collections.emptyList();
 		}
@@ -939,14 +932,14 @@ public abstract class CustomCommand extends ICustomCommand {
 		return Bukkit.getWorlds().stream()
 				.map(World::getName)
 				.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
-				.collect(toList());
+			.collect(Collectors.toList());
 	}
 
 	@TabCompleterFor(Boolean.class)
 	List<String> tabCompleteBoolean(String filter) {
 		return Stream.of("true", "false")
 				.filter(bool -> bool.toLowerCase().startsWith(filter.toLowerCase()))
-				.collect(toList());
+			.collect(Collectors.toList());
 	}
 
 	@ConverterFor(ItemStack.class)
@@ -1077,7 +1070,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		return Arrays.stream(ColorType.values())
 				.map(ColorType::getName)
 				.filter(name -> name.replace(' ', '_').startsWith(filter.toLowerCase()))
-				.collect(toList());
+			.collect(Collectors.toList());
 	}
 
 	@ConverterFor(LocalDate.class)
@@ -1087,7 +1080,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		if (value.startsWith("-"))
 			return Timespan.of(value.replaceFirst("-", "")).sinceNow().toLocalDate();
 
-		return parseDate(value);
+		return TimeUtils.parseDate(value);
 	}
 
 	@ConverterFor(LocalDateTime.class)
@@ -1097,7 +1090,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		if (value.startsWith("-"))
 			return Timespan.of(value.replaceFirst("-", "")).sinceNow();
 
-		return parseDateTime(value);
+		return TimeUtils.parseDateTime(value);
 	}
 
 	@ConverterFor(Timespan.class)
@@ -1123,7 +1116,7 @@ public abstract class CustomCommand extends ICustomCommand {
 			List<String> enchants = ItemUtils.getApplicableEnchantments(getToolRequired()).stream()
 					.map(enchantment -> enchantment.getKey().getKey())
 					.filter(enchantment -> enchantment.toLowerCase().startsWith(filter.toLowerCase()))
-					.collect(toList());
+				.collect(Collectors.toList());
 			if (enchants.size() == 0)
 				return getAllEnchants(filter);
 			else
@@ -1137,7 +1130,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		return Arrays.stream(Enchantment.values())
 				.filter(enchantment -> enchantment.getKey().getKey().toLowerCase().startsWith(filter.toLowerCase()))
 				.map(enchantment -> enchantment.getKey().getKey())
-				.collect(toList());
+			.collect(Collectors.toList());
 	}
 
 	@TabCompleterFor(LivingEntity.class)
@@ -1242,14 +1235,14 @@ public abstract class CustomCommand extends ICustomCommand {
 			if (methods.size() == 1 && desc == null)
 				desc = this.getClass().getAnnotation(Description.class);
 
-			String usage = "/" + getAliasUsed().toLowerCase() + (isNullOrEmpty(path.value()) ? "" : " " + path.value());
+			String usage = "/" + getAliasUsed().toLowerCase() + (gg.projecteden.nexus.utils.Nullables.isNullOrEmpty(path.value()) ? "" : " " + path.value());
 			String description = (desc == null ? "" : " &7- " + desc.value());
 			StringBuilder suggestion = new StringBuilder();
 			for (String word : usage.split(" ")) {
 				if (word.startsWith("[") || word.startsWith("<"))
 					break;
 				if (word.startsWith("("))
-					suggestion.append(trimFirst(word.split("\\|")[0]));
+					suggestion.append(StringUtils.trimFirst(word.split("\\|")[0]));
 				else
 					suggestion.append(word).append(" ");
 			}

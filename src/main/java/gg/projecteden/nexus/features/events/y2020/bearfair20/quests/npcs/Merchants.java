@@ -2,6 +2,8 @@ package gg.projecteden.nexus.features.events.y2020.bearfair20.quests.npcs;
 
 import gg.projecteden.nexus.features.events.y2020.bearfair20.islands.MainIsland;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.islands.MinigameNightIsland;
+import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests;
+import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MerchantBuilder;
 import gg.projecteden.nexus.utils.MerchantBuilder.TradeBuilder;
@@ -15,32 +17,13 @@ import org.bukkit.potion.PotionType;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.bullhead;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.cod;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.crimsonfish;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.flathead;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.glacierfish;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.midnightCarp;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.pufferfish;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.redMullet;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.redSnapper;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.salmon;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.seaCucumber;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.sturgeon;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.sunfish;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.tigerTrout;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.tropicalFish;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.voidSalmon;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.woodskip;
-
 // TODO: Trades & Economy
 public class Merchants {
 
-	public static ItemBuilder goldNugget = new ItemBuilder(Material.GOLD_NUGGET).lore(itemLore);
-	public static ItemBuilder goldIngot = new ItemBuilder(Material.GOLD_INGOT).lore(itemLore);
-	public static ItemBuilder goldBlock = new ItemBuilder(Material.GOLD_BLOCK).lore(itemLore);
-	public static ItemBuilder TBD = new ItemBuilder(Material.STICK).name("To Be Determined").lore(itemLore).amount(1);
+	public static ItemBuilder goldNugget = new ItemBuilder(Material.GOLD_NUGGET).lore(BFQuests.itemLore);
+	public static ItemBuilder goldIngot = new ItemBuilder(Material.GOLD_INGOT).lore(BFQuests.itemLore);
+	public static ItemBuilder goldBlock = new ItemBuilder(Material.GOLD_BLOCK).lore(BFQuests.itemLore);
+	public static ItemBuilder TBD = new ItemBuilder(Material.STICK).name("To Be Determined").lore(BFQuests.itemLore).amount(1);
 
 	public static void openMerchant(Player player, int id) {
 		BFMerchant bfMerchant = BFMerchant.getFromId(id);
@@ -67,7 +50,7 @@ public class Merchants {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(2))
-							.ingredient(new ItemBuilder(Material.BREAD).lore(itemLore).amount(64)));
+						.ingredient(new ItemBuilder(Material.BREAD).lore(BFQuests.itemLore).amount(64)));
 				}};
 			}
 		},
@@ -76,13 +59,13 @@ public class Merchants {
 			public List<TradeBuilder> getTrades() {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.POTION).potionType(PotionType.POISON, true, false).lore(itemLore))
+						.result(new ItemBuilder(Material.POTION).potionType(PotionType.POISON, true, false).lore(BFQuests.itemLore))
 							.ingredient(goldNugget.clone().amount(3)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.POTION).potionType(PotionType.WEAKNESS).lore(itemLore))
+						.result(new ItemBuilder(Material.POTION).potionType(PotionType.WEAKNESS).lore(BFQuests.itemLore))
 							.ingredient(goldNugget.clone().amount(3)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.POTION).potionType(PotionType.SLOWNESS).lore(itemLore))
+						.result(new ItemBuilder(Material.POTION).potionType(PotionType.SLOWNESS).lore(BFQuests.itemLore))
 							.ingredient(goldNugget.clone().amount(3)));
 				}};
 			}
@@ -93,10 +76,10 @@ public class Merchants {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(16))
-							.ingredient(new ItemBuilder(Material.ANVIL).lore(itemLore)));
+						.ingredient(new ItemBuilder(Material.ANVIL).lore(BFQuests.itemLore)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.COAL_BLOCK).lore(itemLore).amount(2).build())
-							.ingredient(new ItemBuilder(Material.IRON_BLOCK).lore(itemLore).amount(1).build()));
+						.result(new ItemBuilder(Material.COAL_BLOCK).lore(BFQuests.itemLore).amount(2).build())
+						.ingredient(new ItemBuilder(Material.IRON_BLOCK).lore(BFQuests.itemLore).amount(1).build()));
 				}};
 			}
 		},
@@ -106,25 +89,25 @@ public class Merchants {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.MELON).amount(8).lore(itemLore)));
+						.ingredient(new ItemBuilder(Material.MELON).amount(8).lore(BFQuests.itemLore)));
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.PUMPKIN).amount(12).lore(itemLore)));
+						.ingredient(new ItemBuilder(Material.PUMPKIN).amount(12).lore(BFQuests.itemLore)));
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.HAY_BLOCK).amount(16).lore(itemLore)));
+						.ingredient(new ItemBuilder(Material.HAY_BLOCK).amount(16).lore(BFQuests.itemLore)));
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.SUGAR_CANE).amount(48).lore(itemLore)));
+						.ingredient(new ItemBuilder(Material.SUGAR_CANE).amount(48).lore(BFQuests.itemLore)));
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.BEETROOT).amount(32).lore(itemLore)));
+						.ingredient(new ItemBuilder(Material.BEETROOT).amount(32).lore(BFQuests.itemLore)));
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.POTATO).amount(64).lore(itemLore)));
+						.ingredient(new ItemBuilder(Material.POTATO).amount(64).lore(BFQuests.itemLore)));
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(1))
-							.ingredient(new ItemBuilder(Material.CARROT).amount(64).lore(itemLore)));
+						.ingredient(new ItemBuilder(Material.CARROT).amount(64).lore(BFQuests.itemLore)));
 				}};
 			}
 		},
@@ -134,10 +117,10 @@ public class Merchants {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(MainIsland.relic_eyes)
-							.ingredient(new ItemBuilder(Material.HONEYCOMB).amount(9).lore(itemLore)));
+						.ingredient(new ItemBuilder(Material.HONEYCOMB).amount(9).lore(BFQuests.itemLore)));
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(2))
-							.ingredient(new ItemBuilder(Material.COCOA_BEANS).amount(12).lore(itemLore)));
+						.ingredient(new ItemBuilder(Material.COCOA_BEANS).amount(12).lore(BFQuests.itemLore)));
 				}};
 			}
 		},
@@ -147,8 +130,8 @@ public class Merchants {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(18))
-							.ingredient(new ItemBuilder(Material.GLISTERING_MELON_SLICE).lore(itemLore))
-							.ingredient(new ItemBuilder(Material.GOLDEN_CARROT).lore(itemLore)));
+						.ingredient(new ItemBuilder(Material.GLISTERING_MELON_SLICE).lore(BFQuests.itemLore))
+						.ingredient(new ItemBuilder(Material.GOLDEN_CARROT).lore(BFQuests.itemLore)));
 					add(new TradeBuilder()
 							.result(MainIsland.rareFlower)
 							.ingredient(MainIsland.ancientPickaxe)
@@ -158,16 +141,16 @@ public class Merchants {
 							.ingredient(goldIngot.clone().amount(10)));
 					add(new TradeBuilder()
 							.result(goldBlock.clone().amount(1))
-							.ingredient(tigerTrout));
+						.ingredient(Loot.tigerTrout));
 					add(new TradeBuilder()
 							.result(goldBlock.clone().amount(1))
-							.ingredient(glacierfish));
+						.ingredient(Loot.glacierfish));
 					add(new TradeBuilder()
 							.result(goldBlock.clone().amount(1))
-							.ingredient(crimsonfish));
+						.ingredient(Loot.crimsonfish));
 					add(new TradeBuilder()
 							.result(goldBlock.clone().amount(1))
-							.ingredient(flathead));
+						.ingredient(Loot.flathead));
 				}};
 			}
 		},
@@ -176,50 +159,50 @@ public class Merchants {
 			public List<TradeBuilder> getTrades() {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.FISHING_ROD).enchant(Enchantment.LURE, 2).lore(itemLore))
+						.result(new ItemBuilder(Material.FISHING_ROD).enchant(Enchantment.LURE, 2).lore(BFQuests.itemLore))
 							.ingredient(goldIngot.clone().amount(2)));
 					// Default
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(1))
-							.ingredient(cod));
+						.ingredient(Loot.cod));
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(1))
-							.ingredient(salmon));
+						.ingredient(Loot.salmon));
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(1))
-							.ingredient(tropicalFish));
+						.ingredient(Loot.tropicalFish));
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(2))
-							.ingredient(pufferfish));
+						.ingredient(Loot.pufferfish));
 					// Generic
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(2))
-							.ingredient(bullhead));
+						.ingredient(Loot.bullhead));
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(2))
-							.ingredient(sturgeon));
+						.ingredient(Loot.sturgeon));
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(2))
-							.ingredient(woodskip));
+						.ingredient(Loot.woodskip));
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(2))
-							.ingredient(voidSalmon));
+						.ingredient(Loot.voidSalmon));
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(2))
-							.ingredient(redSnapper));
+						.ingredient(Loot.redSnapper));
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(2))
-							.ingredient(redMullet));
+						.ingredient(Loot.redMullet));
 					// Island
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(3))
-							.ingredient(seaCucumber));
+						.ingredient(Loot.seaCucumber));
 					add(new TradeBuilder()
 							.result(goldBlock.clone().amount(1))
-							.ingredient(midnightCarp));
+						.ingredient(Loot.midnightCarp));
 					add(new TradeBuilder()
 							.result(goldBlock.clone().amount(1))
-							.ingredient(sunfish));
+						.ingredient(Loot.sunfish));
 				}};
 			}
 		},
@@ -243,14 +226,14 @@ public class Merchants {
 			public List<TradeBuilder> getTrades() {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.IRON_PICKAXE).lore(itemLore).amount(1))
+						.result(new ItemBuilder(Material.IRON_PICKAXE).lore(BFQuests.itemLore).amount(1))
 							.ingredient(goldIngot.clone().amount(1)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.IRON_INGOT).lore(itemLore).amount(1))
-							.ingredient(new ItemBuilder(MainIsland.unpurifiedMarble).clone().lore(itemLore).amount(3)));
+						.result(new ItemBuilder(Material.IRON_INGOT).lore(BFQuests.itemLore).amount(1))
+						.ingredient(new ItemBuilder(MainIsland.unpurifiedMarble).clone().lore(BFQuests.itemLore).amount(3)));
 					add(new TradeBuilder()
 							.result(MainIsland.ancientPickaxe)
-							.ingredient(new ItemBuilder(Material.COAL_BLOCK).lore(itemLore).amount(4).build()));
+						.ingredient(new ItemBuilder(Material.COAL_BLOCK).lore(BFQuests.itemLore).amount(4).build()));
 				}};
 			}
 		},
@@ -264,14 +247,14 @@ public class Merchants {
 							.ingredient(MainIsland.blessedHoneyBottle));
 					add(new TradeBuilder()
 							.result(MainIsland.stroofWafel)
-							.ingredient(new ItemBuilder(Material.CAKE).lore(itemLore))
-							.ingredient(new ItemBuilder(Material.COOKIE).amount(8).lore(itemLore)));
+						.ingredient(new ItemBuilder(Material.CAKE).lore(BFQuests.itemLore))
+						.ingredient(new ItemBuilder(Material.COOKIE).amount(8).lore(BFQuests.itemLore)));
 					add(new TradeBuilder()
-							.result(new ItemBuilder(Material.EGG).lore(itemLore))
+						.result(new ItemBuilder(Material.EGG).lore(BFQuests.itemLore))
 							.ingredient(goldNugget.clone().amount(5)));
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(2))
-							.ingredient(new ItemBuilder(Material.EGG).lore(itemLore)));
+						.ingredient(new ItemBuilder(Material.EGG).lore(BFQuests.itemLore)));
 				}};
 			}
 		},
@@ -281,7 +264,7 @@ public class Merchants {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
 							.result(goldNugget.clone().amount(3))
-							.ingredient(new ItemBuilder(Material.CAULDRON).lore(itemLore)));
+						.ingredient(new ItemBuilder(Material.CAULDRON).lore(BFQuests.itemLore)));
 					add(new TradeBuilder()
 							.result(MainIsland.relic_arms)
 							.ingredient(goldIngot.clone().amount(2)));

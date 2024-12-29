@@ -3,11 +3,13 @@ package gg.projecteden.nexus.features.store.gallery;
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.features.chat.Emotes;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.particles.providers.EffectSettingProvider;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
+import gg.projecteden.nexus.features.store.BuycraftUtils;
 import gg.projecteden.nexus.features.store.Package;
 import gg.projecteden.nexus.features.store.StoreCommand;
 import gg.projecteden.nexus.features.store.annotations.Category.StoreCategory;
@@ -39,6 +41,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
@@ -76,12 +79,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import static gg.projecteden.api.common.utils.EnumUtils.random;
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
-import static gg.projecteden.nexus.features.store.BuycraftUtils.ADD_TO_CART_URL;
-import static gg.projecteden.nexus.features.store.BuycraftUtils.CATEGORY_URL;
-import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
 
 @Getter
 @NoArgsConstructor
@@ -328,8 +325,8 @@ public enum GalleryPackage {
 			if (!cooldown(TickTime.SECOND.x(3)))
 				return;
 
-			final boolean join = randomElement(true, false);
-			String message = randomElement(join ? JoinQuit.getJoinMessages() : JoinQuit.getQuitMessages());
+			final boolean join = RandomUtils.randomElement(true, false);
+			String message = RandomUtils.randomElement(join ? JoinQuit.getJoinMessages() : JoinQuit.getQuitMessages());
 			message = join ? JoinQuit.formatJoin(player, message) : JoinQuit.formatQuit(player, message);
 			PlayerUtils.send(player, "&6&l[Example] " + message);
 		}
@@ -339,10 +336,10 @@ public enum GalleryPackage {
 	EMOTES {
 		@Override
 		public void onImageInteract(Player player) {
-			final Emotes emote = random(Emotes.class);
+			final Emotes emote = EnumUtils.random(Emotes.class);
 			String result = emote.getEmote();
 			if (emote.getColors().size() > 0)
-				result = randomElement(emote.getColors()) + result;
+				result = RandomUtils.randomElement(emote.getColors()) + result;
 
 			PlayerUtils.send(player, "&6&l[Example] " + result);
 		}
@@ -529,7 +526,7 @@ public enum GalleryPackage {
 
 			// TODO Save last player?
 			final List<Player> players = OnlinePlayers.getAll();
-			builder.skullOwner(players.isEmpty() ? randomElement(EnumUtils.valuesExcept(Dev.class, Dev.SPIKE)) : randomElement(players));
+			builder.skullOwner(players.isEmpty() ? RandomUtils.randomElement(EnumUtils.valuesExcept(Dev.class, Dev.SPIKE)) : RandomUtils.randomElement(players));
 
 			hologram = HologramsAPI.builder()
 				.id("gallery_" + name().toLowerCase())
@@ -607,9 +604,9 @@ public enum GalleryPackage {
 	public void onClickCart(Player player) {
 		String url;
 		try {
-			url = ADD_TO_CART_URL.formatted(getStorePackage().getId());
+			url = BuycraftUtils.ADD_TO_CART_URL.formatted(getStorePackage().getId());
 		} catch (IllegalArgumentException ex) {
-			url = CATEGORY_URL.formatted(getCategoryId());
+			url = BuycraftUtils.CATEGORY_URL.formatted(getCategoryId());
 		}
 
 		new JsonBuilder(StoreCommand.PREFIX + "&eClick here &3to open the store").url(url).send(player);
@@ -631,7 +628,7 @@ public enum GalleryPackage {
 	}
 
 	protected boolean cooldown(long ticks) {
-		return new CooldownService().check(UUID0, getRegionId(), ticks);
+		return new CooldownService().check(UUIDUtils.UUID0, getRegionId(), ticks);
 	}
 
 	public NPC npc() {
