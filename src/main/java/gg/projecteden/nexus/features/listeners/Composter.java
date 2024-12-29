@@ -1,7 +1,10 @@
 package gg.projecteden.nexus.features.listeners;
 
 import com.comphenix.protocol.events.PacketContainer;
+import gg.projecteden.api.common.utils.RandomUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.nexus.utils.nms.PacketUtils;
 import net.minecraft.network.protocol.game.ClientboundLevelEventPacket;
 import org.bukkit.Material;
@@ -14,10 +17,6 @@ import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.BlockInventoryHolder;
 import org.bukkit.inventory.ItemStack;
-
-import static gg.projecteden.api.common.utils.RandomUtils.chanceOf;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.nms.NMSUtils.toNMS;
 
 public class Composter implements Listener {
 
@@ -47,10 +46,10 @@ public class Composter implements Listener {
 	}
 
 	public boolean handleBambooComposting(ItemStack item, Block block) {
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return false;
 
-		if (isNullOrAir(block))
+		if (Nullables.isNullOrAir(block))
 			return false;
 
 		if (item.getType() != Material.BAMBOO)
@@ -67,13 +66,13 @@ public class Composter implements Listener {
 
 		item.subtract();
 
-		final boolean increase = chanceOf(30);
+		final boolean increase = RandomUtils.chanceOf(30);
 		if (increase) {
 			composter.setLevel(composter.getLevel() + 1);
 			block.setBlockData(composter);
 		}
 
-		final var packet = new ClientboundLevelEventPacket(1500, toNMS(block.getLocation()), composter.getLevel(), true);
+		final var packet = new ClientboundLevelEventPacket(1500, NMSUtils.toNMS(block.getLocation()), composter.getLevel(), true);
 		OnlinePlayers.where()
 			.world(block.getWorld())
 			.radius(block.getLocation(), 100)

@@ -6,10 +6,12 @@ import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.minigames.Minigames;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -51,11 +53,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.PlayerUtils.getAdvancement;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public class Restrictions implements Listener {
 	private static final String PREFIX = Koda.getLocalFormat();
@@ -107,7 +104,7 @@ public class Restrictions implements Listener {
 
 	@EventHandler
 	public void onCommandMinecartInteract(PlayerInteractEvent event) {
-		if (isNullOrAir(event.getItem()))
+		if (Nullables.isNullOrAir(event.getItem()))
 			return;
 
 		if (event.getItem().getType() == Material.COMMAND_BLOCK_MINECART)
@@ -154,7 +151,7 @@ public class Restrictions implements Listener {
 
 		ItemStack item = event.getCurrentItem();
 
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return;
 
 		ItemMeta meta = item.getItemMeta();
@@ -203,7 +200,7 @@ public class Restrictions implements Listener {
 		if (WorldGroup.of(player) != WorldGroup.SKYBLOCK)
 			return;
 
-		if (isVanished(player))
+		if (Vanish.isVanished(player))
 			return;
 
 		if (player.getLocation().getY() < -1000)
@@ -224,7 +221,7 @@ public class Restrictions implements Listener {
 		if (Rank.of(event.getPlayer()).gte(Rank.TRUSTED))
 			return;
 
-		AdvancementProgress progress = event.getPlayer().getAdvancementProgress(getAdvancement("story/follow_ender_eye"));
+		AdvancementProgress progress = event.getPlayer().getAdvancementProgress(PlayerUtils.getAdvancement("story/follow_ender_eye"));
 		if (!progress.isDone()) {
 			event.setCancelled(true);
 			PlayerUtils.send(event.getPlayer(), "&cYou must enter an end portal before you can enter The End!");
@@ -233,10 +230,10 @@ public class Restrictions implements Listener {
 
 	@EventHandler
 	public void onInteractHoldingSpawnEgg(PlayerInteractEvent event) {
-		if (isNullOrAir(event.getItem())) return;
+		if (Nullables.isNullOrAir(event.getItem())) return;
 		if (!MaterialTag.SPAWN_EGGS.isTagged(event.getItem().getType())) return;
 		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
-		if (isNullOrAir(event.getClickedBlock())) return;
+		if (Nullables.isNullOrAir(event.getClickedBlock())) return;
 		if (!event.getClickedBlock().getType().equals(Material.SPAWNER)) return;
 
 		if (WorldGroup.STAFF.contains(event.getClickedBlock().getWorld()))
@@ -272,7 +269,7 @@ public class Restrictions implements Listener {
 			event.setCancelled(true);
 			PlayerUtils.send(event.getPlayer(), "&cYou cannot use the following materials with WorldEdit:");
 			used.forEach(material ->
-					PlayerUtils.send(event.getPlayer(), "&7 - &c" + camelCase(material.name())));
+				PlayerUtils.send(event.getPlayer(), "&7 - &c" + StringUtils.camelCase(material.name())));
 		}
 	}
 

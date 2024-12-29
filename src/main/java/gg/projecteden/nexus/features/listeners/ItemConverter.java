@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.listeners;
 
 import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.AllArgsConstructor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,8 +12,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class ItemConverter implements Listener {
 
@@ -30,7 +29,7 @@ public class ItemConverter implements Listener {
 		for (int i = 0; i < inventory.getSize(); i++) {
 			ItemStack item = inventory.getItem(i);
 
-			if (isNullOrAir(item)) continue;
+			if (Nullables.isNullOrAir(item)) continue;
 
 			for (Converter converter : Converter.values()) {
 				if (!converter.isOldItem.test(item)) continue;

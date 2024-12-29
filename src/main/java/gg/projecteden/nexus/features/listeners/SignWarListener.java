@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.listeners;
 
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import org.bukkit.block.Block;
@@ -12,9 +13,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-
 public class SignWarListener implements Listener {
 	@EventHandler
 	public void onClickOnSign(PlayerInteractEvent event) {
@@ -22,7 +20,7 @@ public class SignWarListener implements Listener {
 		if (!isSignWarSign(event.getClickedBlock())) return;
 
 		Sign sign = (Sign) event.getClickedBlock().getState();
-		String number = stripColor(sign.getLine(2));
+		String number = StringUtils.stripColor(sign.getLine(2));
 		if (!Utils.isLong(number)) return;
 
 		long value = Long.parseLong(number);
@@ -45,7 +43,7 @@ public class SignWarListener implements Listener {
 		if (block == null) return false;
 		if (!MaterialTag.SIGNS.isTagged(block.getType())) return false;
 		if (block.getState() instanceof Sign)
-			return ((Sign) block.getState()).getLine(0).equals(colorize("&1[Sign War]"));
+			return ((Sign) block.getState()).getLine(0).equals(StringUtils.colorize("&1[Sign War]"));
 		return false;
 	}
 

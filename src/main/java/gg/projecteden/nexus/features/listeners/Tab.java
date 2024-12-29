@@ -19,7 +19,9 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
@@ -35,9 +37,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
-
-import static gg.projecteden.nexus.utils.PlayerUtils.canSee;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 public class Tab implements Listener {
 
@@ -59,9 +58,9 @@ public class Tab implements Listener {
 	}
 
 	public static void update(@NotNull Player player) {
-		player.setPlayerListHeader(colorize(getHeader(player)));
-		player.setPlayerListFooter(colorize(getFooter(player)));
-		player.setPlayerListName(colorize(getFormat(player)));
+		player.setPlayerListHeader(StringUtils.colorize(getHeader(player)));
+		player.setPlayerListFooter(StringUtils.colorize(getFooter(player)));
+		player.setPlayerListName(StringUtils.colorize(getFormat(player)));
 	}
 
 	public static String getHeader(Player player) {
@@ -136,7 +135,7 @@ public class Tab implements Listener {
 		}
 
 		public static Presence of(OfflinePlayer player, Player viewer) {
-			if (player == null || !player.isOnline() || (viewer != null && !canSee(viewer, player)))
+			if (player == null || !player.isOnline() || (viewer != null && !PlayerUtils.canSee(viewer, player)))
 				return OFFLINE;
 
 			presences:

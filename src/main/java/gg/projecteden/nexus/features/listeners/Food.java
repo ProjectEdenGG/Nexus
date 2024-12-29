@@ -1,9 +1,11 @@
 package gg.projecteden.nexus.features.listeners;
 
 import de.tr7zw.nbtapi.NBTEntity;
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import kotlin.Pair;
@@ -19,9 +21,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.Map;
-
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class Food implements Listener {
 
@@ -63,7 +62,7 @@ public class Food implements Listener {
 
 		final Player player = event.getPlayer();
 		final ItemStack item = player.getInventory().getItem(event.getHand());
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return;
 
 		if (item.getType() != Material.BOWL)
@@ -76,7 +75,7 @@ public class Food implements Listener {
 
 	@EventHandler
 	public void on(PrepareItemCraftEvent event) {
-		if (isNullOrAir(event.getInventory().getResult()))
+		if (Nullables.isNullOrAir(event.getInventory().getResult()))
 			return;
 
 		for (CustomMaterial customMaterial : FOOD.keySet()) {
@@ -88,7 +87,7 @@ public class Food implements Listener {
 				continue;
 
 			event.getInventory().setResult(new ItemBuilder(customMaterial)
-				.name(camelCase(material.getKey().getKey()))
+				.name(StringUtils.camelCase(material.getKey().getKey()))
 				.amount(event.getInventory().getResult().getAmount())
 				.build());
 		}

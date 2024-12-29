@@ -1,9 +1,12 @@
 package gg.projecteden.nexus.features.listeners;
 
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Beehive;
@@ -18,14 +21,10 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 
 import java.util.List;
 
-import static gg.projecteden.nexus.utils.ItemUtils.getTool;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-
 public class Beehives implements Listener {
 
 	public static ItemStack addLore(ItemStack item) {
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return item;
 
 		if (!(item.getItemMeta() instanceof BlockStateMeta meta))
@@ -50,8 +49,8 @@ public class Beehives implements Listener {
 			return;
 
 		final Player player = event.getPlayer();
-		ItemStack tool = getTool(player);
-		if (isNullOrAir(tool))
+		ItemStack tool = ItemUtils.getTool(player);
+		if (Nullables.isNullOrAir(tool))
 			return;
 		if (!MaterialTag.ALL_BEEHIVES.isTagged(tool.getType()))
 			return;
@@ -65,7 +64,7 @@ public class Beehives implements Listener {
 			beehive.addEntity(bee);
 			meta.setBlockState(beehive);
 
-			meta.setLore(List.of(colorize(getLore(beehive))));
+			meta.setLore(List.of(StringUtils.colorize(getLore(beehive))));
 
 			if (tool.getAmount() == 1) {
 				tool.setItemMeta(meta);
