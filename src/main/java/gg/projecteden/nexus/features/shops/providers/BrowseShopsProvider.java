@@ -7,13 +7,12 @@ import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 @Title("&0Browse Shops")
 public class BrowseShopsProvider extends ShopProvider {
@@ -45,8 +44,8 @@ public class BrowseShopsProvider extends ShopProvider {
 			ItemBuilder head = new ItemBuilder(Material.PLAYER_HEAD)
 					.skullOwner(shop)
 					.name(new NerdService().get(shop).getColoredName())
-					.lore((inStock == 0 ? "&c" : "&a") + inStock + " " + plural("product", inStock) + " in stock")
-					.lore((outOfStock == 0 ? "&a" : "&c") + outOfStock + " " + plural("product", outOfStock) + " out of stock");
+					.lore((inStock == 0 ? "&c" : "&a") + inStock + " " + StringUtils.plural("product", inStock) + " in stock")
+					.lore((outOfStock == 0 ? "&a" : "&c") + outOfStock + " " + StringUtils.plural("product", outOfStock) + " out of stock");
 
 			List<String> description = shop.getDescription();
 			if (!description.isEmpty())

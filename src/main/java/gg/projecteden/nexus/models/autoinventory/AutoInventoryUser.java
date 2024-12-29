@@ -17,23 +17,13 @@ import gg.projecteden.nexus.models.tip.Tip;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import gg.projecteden.nexus.utils.StringUtils;
+import lombok.*;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.block.Barrel;
-import org.bukkit.block.Chest;
-import org.bukkit.block.Dispenser;
-import org.bukkit.block.DoubleChest;
-import org.bukkit.block.Dropper;
-import org.bukkit.block.Hopper;
-import org.bukkit.block.ShulkerBox;
+import org.bukkit.block.*;
 import org.bukkit.entity.ChestBoat;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.StorageMinecart;
@@ -44,9 +34,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Data
 @Entity(value = "auto_sort", noClassnameStored = true)
@@ -107,7 +94,7 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 				default -> null;
 			};
 
-			if (!isNullOrEmpty(message))
+			if (!Nullables.isNullOrEmpty(message))
 				sendMessage(AutoInventory.PREFIX + message);
 		}
 
@@ -215,7 +202,7 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 				return BACKPACK;
 
 			if (holder == null)
-				if (stripColor(title).contains("Ender Chest"))
+				if (StringUtils.stripColor(title).contains("Ender Chest"))
 					return ENDER_CHEST;
 
 			return null;

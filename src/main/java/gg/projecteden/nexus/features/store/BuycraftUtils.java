@@ -8,8 +8,7 @@ import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import okhttp3.Headers;
 
 import java.time.LocalDate;
-
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
+import java.time.format.DateTimeFormatter;
 
 public class BuycraftUtils {
 	public static final String ADD_TO_CART_URL = "https://store.projecteden.gg/checkout/packages/add/%s/single";
@@ -55,7 +54,7 @@ public class BuycraftUtils {
 		private final boolean expire_never = true;
 		private final double minimum = 0;
 		private final boolean redeem_unlimited = false;
-		private final String start_date = LocalDate.now().plusDays(-1).format(ISO_LOCAL_DATE);
+		private final String start_date = LocalDate.now().plusDays(-1).format(DateTimeFormatter.ISO_LOCAL_DATE);
 
 		public CouponCreator(Contributor user, double amount) {
 			this.username = user.getName();

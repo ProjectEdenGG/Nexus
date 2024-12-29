@@ -3,18 +3,18 @@ package gg.projecteden.nexus.features.shops.providers;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.ItemClickData;
+import gg.projecteden.nexus.features.menus.api.SignMenuFactory;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.shops.ShopUtils;
 import gg.projecteden.nexus.features.shops.Shops;
 import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.Shop.ExchangeType;
 import gg.projecteden.nexus.models.shop.Shop.Product;
-import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -25,12 +25,6 @@ import java.math.RoundingMode;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import static gg.projecteden.nexus.features.menus.api.SignMenuFactory.ARROWS;
-import static gg.projecteden.nexus.features.shops.ShopUtils.prettyMoney;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.StringUtils.pretty;
 
 @Title("&0Add Item")
 public class ExchangeConfigProvider extends ShopProvider {
@@ -88,7 +82,7 @@ public class ExchangeConfigProvider extends ShopProvider {
 			ItemBuilder confirm = new ItemBuilder(Material.LIME_CONCRETE_POWDER);
 			if (exchangeType == ExchangeType.TRADE) {
 				if (priceItem.get() != null) {
-					confirm.name("&3Trade &e" + pretty(item.get())).lore("&3for &e" + pretty(priceItem.get()));
+					confirm.name("&3Trade &e" + StringUtils.pretty(item.get())).lore("&3for &e" + StringUtils.pretty(priceItem.get()));
 					if (product == null)
 						product = new Product(player.getUniqueId(), shopGroup, item.get(), stock, exchangeType, priceItem.get());
 					else {
@@ -101,9 +95,9 @@ public class ExchangeConfigProvider extends ShopProvider {
 			} else
 				if (price >= 0) {
 					if (exchangeType == ExchangeType.BUY)
-						confirm.name("&3Buy &e" + pretty(item.get()) + " &3from").lore("&3customers for &e" + prettyMoney(price));
+						confirm.name("&3Buy &e" + StringUtils.pretty(item.get()) + " &3from").lore("&3customers for &e" + ShopUtils.prettyMoney(price));
 					else if (exchangeType == ExchangeType.SELL)
-						confirm.name("&3Sell &e" + pretty(item.get()) + " &3to").lore("&3customers for &e" + prettyMoney(price));
+						confirm.name("&3Sell &e" + StringUtils.pretty(item.get()) + " &3to").lore("&3customers for &e" + ShopUtils.prettyMoney(price));
 					if (product == null)
 						product = new Product(player.getUniqueId(), shopGroup, item.get(), stock, exchangeType, price);
 					else {
@@ -134,7 +128,7 @@ public class ExchangeConfigProvider extends ShopProvider {
 		if (price < 0)
 			item.name("&eClick to specify a dollar amount");
 		else
-			item.name("&e" + camelCase(prettyMoney(price)));
+			item.name("&e" + StringUtils.camelCase(ShopUtils.prettyMoney(price)));
 
 		contents.set(3, 4, ClickableItem.of(item.build(), e -> Nexus.getSignMenuFactory()
 				.lines("", "^ ^ ^ ^ ^ ^", "Enter a", "dollar amount")
@@ -156,9 +150,9 @@ public class ExchangeConfigProvider extends ShopProvider {
 
 	private void addExchangeControl(Player player, InventoryContents contents) {
 		ItemBuilder item = new ItemBuilder(Material.PAPER).name("&6Action: ")
-				.lore("&7⬇ " + camelCase(exchangeType.previousWithLoop().name()))
-				.lore("&e⬇ " + camelCase(exchangeType.name()))
-				.lore("&7⬇ " + camelCase(exchangeType.nextWithLoop().name()));
+				.lore("&7⬇ " + StringUtils.camelCase(exchangeType.previousWithLoop().name()))
+				.lore("&e⬇ " + StringUtils.camelCase(exchangeType.name()))
+				.lore("&7⬇ " + StringUtils.camelCase(exchangeType.nextWithLoop().name()));
 		contents.set(2, 4, ClickableItem.of(item.build(), e -> {
 			exchangeType = exchangeType.nextWithLoop();
 			open(player);
@@ -177,7 +171,7 @@ public class ExchangeConfigProvider extends ShopProvider {
 		else {
 			Consumer<ItemClickData> action = e -> {
 				((InventoryClickEvent) e.getEvent()).setCancelled(true);
-				if (!isNullOrAir(player.getItemOnCursor())) {
+				if (!Nullables.isNullOrAir(player.getItemOnCursor())) {
 					try {
 						ItemStack item = player.getItemOnCursor();
 						if (new ItemBuilder(item).isNot(ItemSetting.TRADEABLE))
@@ -193,7 +187,7 @@ public class ExchangeConfigProvider extends ShopProvider {
 					}
 				} else if (contents.get(row, 4).isPresent() && contents.get(row, 4).get().getItem().equals(placeholder)) {
 					Nexus.getSignMenuFactory()
-							.lines("", ARROWS, "Enter a", "search term")
+							.lines("", SignMenuFactory.ARROWS, "Enter a", "search term")
 							.prefix(Shops.PREFIX)
 							.onError(() -> open(player))
 							.response(lines -> {

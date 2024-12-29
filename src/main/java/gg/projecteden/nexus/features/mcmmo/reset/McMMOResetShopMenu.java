@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.mcmmo.reset;
 
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.content.ScrollableInventoryProvider;
@@ -12,8 +13,6 @@ import org.bukkit.Material;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
-
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 public class McMMOResetShopMenu extends ScrollableInventoryProvider {
 
@@ -37,7 +36,7 @@ public class McMMOResetShopMenu extends ScrollableInventoryProvider {
 			final int start = row * 9;
 			final Consumer<ItemClickData> consumer = e -> new McMMOResetShopRewardsMenu(filter, this).open(viewer);
 			final Consumer<ItemBuilder> format = item -> {
-				item.name(camelCase(filter));
+				item.name(StringUtils.camelCase(filter));
 				// Lore
 			};
 			contents.fillRow(start, ClickableItem.of(CustomMaterial.INVISIBLE.getItem(), consumer));

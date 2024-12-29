@@ -7,13 +7,12 @@ import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.StringUtils.pretty;
 
 public class ShopUtils {
 
@@ -40,7 +39,7 @@ public class ShopUtils {
 	public static String prettyMoney(Number number, boolean free) {
 		if (free && number.doubleValue() == 0)
 			return "Free";
-		return "$" + pretty(number);
+		return "$" + StringUtils.pretty(number);
 	}
 
 }

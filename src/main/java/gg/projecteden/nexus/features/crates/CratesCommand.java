@@ -7,14 +7,8 @@ import gg.projecteden.nexus.features.crates.menus.CrateEditMenu.CrateEditProvide
 import gg.projecteden.nexus.features.crates.menus.CrateGroupsProvider;
 import gg.projecteden.nexus.features.crates.menus.CratePreviewProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CrateOpeningException;
 import gg.projecteden.nexus.models.crate.CrateConfig;
@@ -44,8 +38,6 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.features.crates.CrateHandler.ANIMATIONS;
 
 @Aliases("crate")
 public class CratesCommand extends CustomCommand {
@@ -192,8 +184,8 @@ public class CratesCommand extends CustomCommand {
 			error("Could not create animation instance");
 
 		try {
-			ANIMATIONS.put(uuid, animation);
-			animation.play().thenRun(() -> ANIMATIONS.remove(uuid));
+			CrateHandler.ANIMATIONS.put(uuid, animation);
+			animation.play().thenRun(() -> CrateHandler.ANIMATIONS.remove(uuid));
 		} catch (Throwable ex) {
 			ex.printStackTrace();
 			animation.stop();

@@ -1,23 +1,15 @@
 package gg.projecteden.nexus.features.store.perks.visuals;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.DescriptionExtra;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.DescParseTickFormat;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.entity.Player;
 
-import static gg.projecteden.nexus.features.store.perks.visuals.PlayerTimeCommand.PERMISSION;
-
 @Aliases("ptime")
-@Permission(PERMISSION)
+@Permission(PlayerTimeCommand.PERMISSION)
 @WikiConfig(rank = "Store", feature = "Visuals")
 public class PlayerTimeCommand extends CustomCommand {
 	public static final String PERMISSION = "essentials.ptime";

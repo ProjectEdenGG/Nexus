@@ -7,19 +7,14 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import gg.projecteden.nexus.utils.ItemUtils;
+import lombok.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.ItemUtils.isFuzzyMatch;
 
 @Data
 @Entity(value = "coupon", noClassnameStored = true)
@@ -45,7 +40,7 @@ public class Coupons implements PlayerOwnedObject {
 	public Coupon of(ItemStack item) {
 		for (Coupon coupon : coupons) {
 			ItemStack couponItem = coupon.getItem();
-			if (isFuzzyMatch(item, couponItem)) return coupon;
+			if (ItemUtils.isFuzzyMatch(item, couponItem)) return coupon;
 			if (item.getType() != couponItem.getType())
 				continue;
 

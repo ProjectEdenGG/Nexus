@@ -12,6 +12,7 @@ import gg.projecteden.nexus.models.crate.CrateConfig.CrateGroup;
 import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
 import gg.projecteden.nexus.models.crate.CrateConfigService;
 import gg.projecteden.nexus.models.crate.CrateType;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NoArgsConstructor;
@@ -24,8 +25,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.Distance.distance;
 
 /*
 	TODO
@@ -69,7 +68,7 @@ public class Crates extends Feature implements Listener {
 				return;
 			event.setCancelled(true);
 
-			if (distance(armorStand, event.getPlayer()).gte(7))
+			if (Distance.distance(armorStand, event.getPlayer()).gte(7))
 				return;
 
 			if (!event.getHand().equals(EquipmentSlot.HAND)) return;

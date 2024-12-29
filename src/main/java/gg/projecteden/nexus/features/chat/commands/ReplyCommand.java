@@ -2,18 +2,12 @@ package gg.projecteden.nexus.features.chat.commands;
 
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.NonNull;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Aliases("r")
 public class ReplyCommand extends CustomCommand {
@@ -31,7 +25,7 @@ public class ReplyCommand extends CustomCommand {
 		if (chatter.getLastPrivateMessage() == null)
 			error("No one has messaged you");
 
-		if (isNullOrEmpty(message))
+		if (Nullables.isNullOrEmpty(message))
 			chatter.setActiveChannel(chatter.getLastPrivateMessage());
 		else
 			chatter.say(chatter.getLastPrivateMessage(), message);

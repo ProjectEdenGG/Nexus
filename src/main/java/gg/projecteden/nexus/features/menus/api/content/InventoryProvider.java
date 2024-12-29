@@ -17,12 +17,8 @@
 package gg.projecteden.nexus.features.menus.api.content;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.InventoryManager;
-import gg.projecteden.nexus.features.menus.api.ItemClickData;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.*;
 import gg.projecteden.nexus.features.menus.api.SmartInventory.Builder;
-import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener.CustomInventoryHolder;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
@@ -32,13 +28,8 @@ import gg.projecteden.nexus.features.resourcepack.ResourcePack.ResourcePackNumbe
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.shops.Shops;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.Data;
 import lombok.Getter;
@@ -58,8 +49,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
-
-import static gg.projecteden.nexus.features.menus.api.SignMenuFactory.ARROWS;
 
 public abstract class InventoryProvider {
 	@Getter
@@ -412,7 +401,7 @@ public abstract class InventoryProvider {
 
 		private void jumpToPage(int currentPage) {
 			Nexus.getSignMenuFactory()
-				.lines("", ARROWS, "Enter a", "page number")
+				.lines("", SignMenuFactory.ARROWS, "Enter a", "page number")
 				.prefix(Shops.PREFIX)
 				.onError(() -> open(viewer, currentPage))
 				.response(lines -> {

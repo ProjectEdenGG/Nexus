@@ -3,15 +3,12 @@ package gg.projecteden.nexus.models.changelog;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
@@ -21,8 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
 
 @Data
 @Entity(value = "changelog", noClassnameStored = true)
@@ -51,7 +46,7 @@ public class Changelog implements PlayerOwnedObject {
 		if (from.getTimestamp().isAfter(to.getTimestamp()))
 			throw new InvalidInputException("First entry cannot be before second entry");
 
-		String message = "**Changelog** " + shortDateTimeFormat(to.getTimestamp()) + nl + nl;
+		String message = "**Changelog** " + TimeUtils.shortDateTimeFormat(to.getTimestamp()) + nl + nl;
 		if (!from.getMinecraftVersion().equals(to.getMinecraftVersion()))
 			message += "**Minecraft version updated:** " + to.getMinecraftVersion() + nl;
 		if (!from.getPaperVersion().equals(to.getPaperVersion()))

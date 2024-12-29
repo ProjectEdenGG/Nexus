@@ -16,6 +16,7 @@ import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.PrivateChannel;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
@@ -25,13 +26,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import org.bukkit.event.player.*;
 
 @Aliases("away")
 @NoArgsConstructor
@@ -49,11 +44,11 @@ public class AFKCommand extends CustomCommand implements Listener {
 	void afk(String autoreply) {
 		AFKUser user = AFK.get(player());
 
-		if (!isNullOrEmpty(autoreply))
+		if (!Nullables.isNullOrEmpty(autoreply))
 			user.setMessage(autoreply);
 
 		if (user.isAfk())
-			if (isNullOrEmpty(autoreply))
+			if (Nullables.isNullOrEmpty(autoreply))
 				user.notAfk();
 			else
 				user.forceAfk(user::message);
@@ -73,7 +68,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 				.next(" &7- " + setting.getDescription());
 
 			final String extra = setting.getDescriptionExtra();
-			if (!isNullOrEmpty(extra))
+			if (!Nullables.isNullOrEmpty(extra))
 				json.hover("", "&7" + extra);
 			send(json.suggest("/afk settings " + setting.name().toLowerCase() + " "));
 		}

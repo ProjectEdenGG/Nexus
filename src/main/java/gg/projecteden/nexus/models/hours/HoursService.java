@@ -3,14 +3,14 @@ package gg.projecteden.nexus.models.hours;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.BsonField;
-import com.mongodb.client.model.Sorts;
+import com.mongodb.client.model.*;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -22,24 +22,10 @@ import org.jetbrains.annotations.NotNull;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
-import static com.mongodb.client.model.Aggregates.group;
-import static com.mongodb.client.model.Aggregates.limit;
-import static com.mongodb.client.model.Aggregates.match;
-import static com.mongodb.client.model.Aggregates.project;
-import static com.mongodb.client.model.Aggregates.sort;
-import static com.mongodb.client.model.Aggregates.unwind;
-import static com.mongodb.client.model.Filters.regex;
-import static com.mongodb.client.model.Projections.computed;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @ObjectClass(Hours.class)
 public class HoursService extends MongoPlayerService<Hours> {
@@ -112,11 +98,11 @@ public class HoursService extends MongoPlayerService<Hours> {
 	@NotNull
 	public List<Bson> getTopArguments(HoursTopArguments args) {
 		return new ArrayList<>(Arrays.asList(
-				project(computed("times", new BasicDBObject("$objectToArray", "$times"))),
-				unwind("$times"),
-				match(regex("times.k", args.getRegex())),
-				group("$_id", new BsonField("total", new BasicDBObject("$sum", "$times.v"))),
-				sort(Sorts.descending("total"))
+				Aggregates.project(Projections.computed("times", new BasicDBObject("$objectToArray", "$times"))),
+				Aggregates.unwind("$times"),
+				Aggregates.match(Filters.regex("times.k", args.getRegex())),
+				Aggregates.group("$_id", new BsonField("total", new BasicDBObject("$sum", "$times.v"))),
+				Aggregates.sort(Sorts.descending("total"))
 		));
 	}
 
@@ -126,7 +112,7 @@ public class HoursService extends MongoPlayerService<Hours> {
 	public List<UUID> getActivePlayers() {
 		if (activePlayers.isEmpty()) {
 			List<Bson> arguments = getTopArguments();
-			arguments.add(limit(100));
+			arguments.add(Aggregates.limit(100));
 
 			activePlayers.addAll(
 					getPageResults(collection().aggregate(arguments)).stream()
@@ -172,7 +158,7 @@ public class HoursService extends MongoPlayerService<Hours> {
 		YESTERDAY;
 
 		public String columnName() {
-			return camelCase(name()).replaceAll(" ", "");
+			return StringUtils.camelCase(name()).replaceAll(" ", "");
 		}
 
 		public static String valuesString() {

@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.chat.events;
 import gg.projecteden.nexus.models.chat.Channel;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -11,8 +12,6 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
-
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public abstract class ChatEvent extends Event implements Cancellable {
 
@@ -47,7 +46,7 @@ public abstract class ChatEvent extends Event implements Cancellable {
 	}
 
 	public boolean wasChanged() {
-		return !stripColor(getMessage()).equalsIgnoreCase(stripColor(getOriginalMessage()));
+		return !StringUtils.stripColor(getMessage()).equalsIgnoreCase(StringUtils.stripColor(getOriginalMessage()));
 	}
 
 	public abstract boolean isBad();

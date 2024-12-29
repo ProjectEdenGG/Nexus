@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.store.perks.inventory.stattrack;
 
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.features.store.perks.inventory.stattrack.models.Stat;
 import gg.projecteden.nexus.features.store.perks.inventory.stattrack.models.StatItem;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -15,8 +16,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.Objects;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @HideFromWiki // TODO
 @Permission("stat.track")
@@ -59,7 +58,7 @@ public class StatTrackCommand extends CustomCommand {
 
 		send(PREFIX + "Debug for " + camelCase(item.getType()));
 		send("&3ID: &e" + statItem.getId());
-		if (isNullOrEmpty(statItem.getStats()))
+		if (Nullables.isNullOrEmpty(statItem.getStats()))
 			send("&3Stats: &cNone");
 		else {
 			send("&3Stats:");

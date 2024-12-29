@@ -30,8 +30,8 @@ public class FakeWorldEdit {
 		this(Objects.requireNonNull(Bukkit.getWorld(world)));
 	}
 
-	public Clipboard.ClipboardBuilder clipboard() {
-		return Clipboard.builder().world(world);
+	public ClipboardBuilder clipboard() {
+		return new ClipboardBuilder().world(world);
 	}
 
 	@RequiredArgsConstructor

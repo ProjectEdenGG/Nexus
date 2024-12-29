@@ -1,9 +1,11 @@
 package gg.projecteden.nexus.features.store.perks.visuals;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.listeners.Restrictions;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.NoArgsConstructor;
@@ -20,9 +22,6 @@ import org.bukkit.event.Listener;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.features.listeners.Restrictions.isPerkAllowedAt;
-import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
 
 @NoArgsConstructor
 public class NPCListener implements Listener {
@@ -50,7 +49,7 @@ public class NPCListener implements Listener {
 		if (Rank.of(owner).gte(Rank.VETERAN) || Dev.of(owner.getUniqueId()) != null)
 			return;
 
-		if (isPerkAllowedAt(owner, owner.getLocation()))
+		if (Restrictions.isPerkAllowedAt(owner, owner.getLocation()))
 			return;
 
 		if ("events".equals(event.getCreator().getWorld().getName()) && new WorldGuardUtils(event.getCreator()).isInRegion(event.getCreator(), "pride21_parade"))
@@ -80,7 +79,7 @@ public class NPCListener implements Listener {
 			event.setCancelled(true);
 			PlayerUtils.send(owner, "&cNPCs cannot be teleported across worlds");
 			Nexus.warn("Preventing NPC cross-world teleport: " + event.getNPC().getId() + " from "
-					+ getShortLocationString(event.getFrom()) + " to " + getShortLocationString(event.getTo()));
+					+ StringUtils.getShortLocationString(event.getFrom()) + " to " + StringUtils.getShortLocationString(event.getTo()));
 			return;
 		}
 
@@ -90,13 +89,13 @@ public class NPCListener implements Listener {
 		if (Rank.of(owner).gte(Rank.VETERAN) || Dev.of(owner.getUniqueId()) != null)
 			return;
 
-		if (isPerkAllowedAt(owner, event.getTo()))
+		if (Restrictions.isPerkAllowedAt(owner, event.getTo()))
 			return;
 
 		event.setCancelled(true);
 		PlayerUtils.send(owner, "&cYou cannot teleport NPCs here");
 		Nexus.warn("Preventing NPC teleport: " + event.getNPC().getId() + " from "
-				+ getShortLocationString(event.getFrom()) + " to " + getShortLocationString(event.getTo()));
+				+ StringUtils.getShortLocationString(event.getFrom()) + " to " + StringUtils.getShortLocationString(event.getTo()));
 	}
 
 	@EventHandler
@@ -115,13 +114,13 @@ public class NPCListener implements Listener {
 		if (Rank.of(owner).gte(Rank.VETERAN) || Dev.of(owner.getUniqueId()) != null)
 			return;
 
-		if (isPerkAllowedAt(owner, event.getLocation()))
+		if (Restrictions.isPerkAllowedAt(owner, event.getLocation()))
 			return;
 
 		event.setCancelled(true);
 		PlayerUtils.send(owner, "&cYou cannot teleport NPCs here");
 		Nexus.warn("Preventing NPC spawn: " + event.getNPC().getId() + " from "
-				+ getShortLocationString(event.getNPC().getStoredLocation()) + " to " + getShortLocationString(event.getLocation()));
+				+ StringUtils.getShortLocationString(event.getNPC().getStoredLocation()) + " to " + StringUtils.getShortLocationString(event.getLocation()));
 	}
 
 }

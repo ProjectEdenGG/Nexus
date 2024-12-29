@@ -12,10 +12,9 @@ import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.models.warps.Warps.Warp;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Rows(5)
 @Title("&3Animal Teleport Pens")
@@ -86,7 +85,7 @@ public class ATPMenu extends InventoryProvider {
 					item = new ItemBuilder(Material.RED_CONCRETE);
 				else
 					item = new ItemBuilder(Material.LIME_CONCRETE);
-				item.name("&f" + camelCase(home.getName()));
+				item.name("&f" + StringUtils.camelCase(home.getName()));
 
 				contents.set(row, column, ClickableItem.of(item.build(), e ->
 					new AnimalTeleportPens(viewer).confirm(viewer, home.getLocation())));

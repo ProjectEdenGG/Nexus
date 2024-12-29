@@ -19,9 +19,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.features.radio.RadioUtils.addPlayer;
-import static gg.projecteden.nexus.features.radio.RadioUtils.removePlayer;
-
 public class Listeners implements Listener {
 
 	public Listeners() {
@@ -33,7 +30,7 @@ public class Listeners implements Listener {
 		Player player = event.getPlayer();
 		Radio radio = RadioUtils.getListenedRadio(player);
 		if (radio != null)
-			removePlayer(player, radio);
+			RadioUtils.removePlayer(player, radio);
 	}
 
 	@EventHandler
@@ -42,7 +39,7 @@ public class Listeners implements Listener {
 		RadioUser user = userService.get(event.getPlayer());
 		Radio radio = user.getLastServerRadio();
 		if (radio != null)
-			addPlayer(user.getOnlinePlayer(), radio);
+			RadioUtils.addPlayer(user.getOnlinePlayer(), radio);
 
 		user.getLeftRadiusRadios().clear();
 	}

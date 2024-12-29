@@ -9,12 +9,7 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.homes.HomesFeature;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -29,15 +24,8 @@ import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.models.warps.Warps.Warp;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -54,11 +42,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockDropItemEvent;
-import org.bukkit.event.block.BlockPistonExtendEvent;
-import org.bukkit.event.block.BlockPistonRetractEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
@@ -71,9 +55,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
-
-import static gg.projecteden.nexus.features.shops.Market.RESOURCE_WORLD_PRODUCTS;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Aliases("resource")
 @NoArgsConstructor
@@ -328,7 +309,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	}
 
 	private boolean trySell(Player player, BlockState block, ItemStack drop) {
-		if (isNullOrAir(block.getType()) || isNullOrAir(drop))
+		if (Nullables.isNullOrAir(block.getType()) || Nullables.isNullOrAir(drop))
 			return false;
 
 		if (getLogger(block.getWorld()).contains(block.getLocation()))
@@ -364,7 +345,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	}
 
 	private Optional<Product> getMatchingProduct(ItemStack item) {
-		return RESOURCE_WORLD_PRODUCTS.stream()
+		return Market.RESOURCE_WORLD_PRODUCTS.stream()
 			.filter(product -> product.getItem().isSimilar(item))
 			.findFirst();
 	}

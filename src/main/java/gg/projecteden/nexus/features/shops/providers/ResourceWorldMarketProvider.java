@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.shops.providers;
 
 import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -19,8 +20,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 @Title("Resource World Market Config")
 public class ResourceWorldMarketProvider extends ShopProvider {
@@ -95,9 +94,9 @@ public class ResourceWorldMarketProvider extends ShopProvider {
 
 		public ItemBuilder getSettingItem() {
 			return new ItemBuilder(CustomMaterial.GUI_GEAR).name("&6Auto Sell Behavior: ")
-				.lore("&7⬇ " + camelCase(this.previousWithLoop().name()))
-				.lore("&e⬇ " + camelCase(this.name()))
-				.lore("&7⬇ " + camelCase(this.nextWithLoop().name()))
+				.lore("&7⬇ " + StringUtils.camelCase(this.previousWithLoop().name()))
+				.lore("&e⬇ " + StringUtils.camelCase(this.name()))
+				.lore("&7⬇ " + StringUtils.camelCase(this.nextWithLoop().name()))
 				.lore("")
 				.lore(description);
 		}

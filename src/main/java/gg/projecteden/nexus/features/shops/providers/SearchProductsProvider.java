@@ -2,20 +2,19 @@ package gg.projecteden.nexus.features.shops.providers;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.SignMenuFactory;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.shops.Shops;
 import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterSearchType;
 import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 
 import java.util.function.Predicate;
-
-import static gg.projecteden.nexus.features.menus.api.SignMenuFactory.ARROWS;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Title("&0Search Items")
 public class SearchProductsProvider extends ShopProvider {
@@ -35,11 +34,11 @@ public class SearchProductsProvider extends ShopProvider {
 			browseItemsMenu = new BrowseProductsProvider(this);
 
 		contents.set(1, 1, ClickableItem.of(Material.NAME_TAG, "&6Search by item name", e -> Nexus.getSignMenuFactory()
-			.lines("", ARROWS, "Enter a", "search term")
+			.lines("", SignMenuFactory.ARROWS, "Enter a", "search term")
 			.prefix(Shops.PREFIX)
 			.onError(() -> open(viewer))
 			.response(lines -> {
-				String input = stripColor(lines[0]);
+				String input = StringUtils.stripColor(lines[0]);
 				if (input.length() > 0) {
 					browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of(input));
 					browseItemsMenu.open(viewer);

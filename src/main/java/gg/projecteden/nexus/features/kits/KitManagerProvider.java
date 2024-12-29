@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.kits;
 
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.anvilgui.AnvilGUI;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
@@ -8,6 +10,7 @@ import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +21,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.features.menus.MenuUtils.openAnvilMenu;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Title("Kit Manager")
 @Rows(3)
@@ -50,7 +49,7 @@ public class KitManagerProvider extends InventoryProvider {
 			List<ClickableItem> items = new ArrayList<>();
 
 			for (Kit kit : kits) {
-				ItemStack item = new ItemBuilder(Material.CHEST).name("&e" + camelCase(kit.getName())).lore(" ").lore("&7Shift-Right Click to delete").build();
+				ItemStack item = new ItemBuilder(Material.CHEST).name("&e" + StringUtils.camelCase(kit.getName())).lore(" ").lore("&7Shift-Right Click to delete").build();
 				items.add(ClickableItem.of(item, e -> {
 					if (e.isShiftClick())
 						ConfirmationMenu.builder().onCancel(itemClickData -> new KitManagerProvider().open(viewer))
@@ -73,7 +72,7 @@ public class KitManagerProvider extends InventoryProvider {
 
 			contents.set(0, 3, ClickableItem.of(new ItemBuilder(Material.BOOK).name("&e" + KitManager.get(id).getName()).lore("&3Click to set the").lore("&3name of the kit").build(), e -> {
 				Kit kit = KitManager.get(id);
-				openAnvilMenu(viewer, kit.getName(), (player1, response) -> {
+				MenuUtils.openAnvilMenu(viewer, kit.getName(), (player1, response) -> {
 					kit.setName(response);
 					KitManager.getConfig().set(id + "", kit);
 					KitManager.saveConfig();
@@ -85,7 +84,7 @@ public class KitManagerProvider extends InventoryProvider {
 			contents.set(0, 5, ClickableItem.of(new ItemBuilder(Material.CLOCK).name("&eDelay").lore("&e" + KitManager.get(id).getDelay())
 					.lore("&e(" + Timespan.ofSeconds(KitManager.get(id).getDelay() / 20).format() + ")").build(), e -> {
 				Kit kit = KitManager.get(id);
-				openAnvilMenu(viewer, "" + kit.getDelay(), (player1, response) -> {
+				MenuUtils.openAnvilMenu(viewer, "" + kit.getDelay(), (player1, response) -> {
 					try {
 						kit.setDelay(Integer.parseInt(response));
 					} catch (Exception ex) {
@@ -126,7 +125,7 @@ public class KitManagerProvider extends InventoryProvider {
 		Inventory inv = player.getOpenInventory().getTopInventory();
 		List<ItemStack> items = new ArrayList<>();
 		for (int i : editableSlots) {
-			if (isNullOrAir(inv.getItem(i))) continue;
+			if (Nullables.isNullOrAir(inv.getItem(i))) continue;
 			items.add(inv.getItem(i));
 		}
 		Kit kit = KitManager.get(id);

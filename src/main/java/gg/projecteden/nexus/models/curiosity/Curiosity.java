@@ -7,20 +7,14 @@ import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import gg.projecteden.nexus.utils.StringUtils;
+import lombok.*;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.StringUtils.pretty;
 
 @Data
 @Entity(value = "curiosity", noClassnameStored = true)
@@ -43,7 +37,7 @@ public class Curiosity implements PlayerOwnedObject {
 		if (isOnline()) {
 			PlayerUtils.giveItem(getOnlinePlayer(), reward.getItem());
 			PlayerUtils.send(getOnlinePlayer(), "");
-			PlayerUtils.send(getOnlinePlayer(), "&3You earned &e" + pretty(reward.getItem()) + " &3for learning!");
+			PlayerUtils.send(getOnlinePlayer(), "&3You earned &e" + StringUtils.pretty(reward.getItem()) + " &3for learning!");
 		}
 	}
 

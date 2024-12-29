@@ -13,12 +13,7 @@ import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.commands.worldedit.ExpandAllCommand;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -27,12 +22,7 @@ import gg.projecteden.nexus.models.honeypot.HoneyPotBans;
 import gg.projecteden.nexus.models.honeypot.HoneyPotBansService;
 import gg.projecteden.nexus.models.honeypot.HoneyPotGriefer;
 import gg.projecteden.nexus.models.honeypot.HoneyPotGrieferService;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.*;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.bukkit.Location;
@@ -60,8 +50,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
 @Permission(Group.MODERATOR)
@@ -235,7 +223,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	private static final String nbtTag = "honeyPotItem";
 
 	private static boolean isHoneyPotItem(ItemStack item) {
-		return !isNullOrAir(item) && new NBTItem(item).getBoolean(nbtTag);
+		return !Nullables.isNullOrAir(item) && new NBTItem(item).getBoolean(nbtTag);
 	}
 
 	public int removeHoneyPotItems(Player player) {

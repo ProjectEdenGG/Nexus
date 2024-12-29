@@ -8,15 +8,9 @@ import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.utils.Utils;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Collectors;
 
 @ObjectClass(Nerd.class)
 public class NerdService extends MongoPlayerService<Nerd> {
@@ -51,7 +45,7 @@ public class NerdService extends MongoPlayerService<Nerd> {
 			Set<UUID> sorted = Utils.sortByValueReverse(hoursMap).keySet();
 			return new ArrayList<>(sorted).stream()
 				.map(Nerd::of)
-				.collect(toList());
+				.collect(Collectors.toList());
 		}
 	}
 

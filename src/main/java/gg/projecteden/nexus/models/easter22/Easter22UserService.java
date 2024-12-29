@@ -4,14 +4,9 @@ import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
 import org.bukkit.Location;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Collectors;
 
 @ObjectClass(Easter22User.class)
 public class Easter22UserService extends MongoPlayerService<Easter22User> {
@@ -24,7 +19,7 @@ public class Easter22UserService extends MongoPlayerService<Easter22User> {
 	public List<Easter22User> getTop() {
 		return getAll().stream()
 			.sorted(Comparator.<Easter22User>comparingInt(user -> user.getFound().size()).reversed())
-			.collect(toList());
+			.collect(Collectors.toList());
 	}
 
 	public 	Map<Location, Integer> getTopLocations() {

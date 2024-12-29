@@ -17,15 +17,12 @@ import gg.projecteden.nexus.models.costume.Costume.CostumeType;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorService;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorTask;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.nms.PacketUtils;
 import gg.projecteden.nexus.utils.nms.packet.EntityDestroyPacket;
 import gg.projecteden.nexus.utils.nms.packet.EntityPassengersPacket;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -37,18 +34,9 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity(value = "costume_user", noClassnameStored = true)
@@ -124,7 +112,7 @@ public class CostumeUser implements PlayerOwnedObject {
 	}
 
 	public void setActiveCostumeId(CostumeType type, String activeCostume) {
-		if (isNullOrEmpty(activeCostume)) {
+		if (Nullables.isNullOrEmpty(activeCostume)) {
 			activeCostumes.remove(type);
 			sendResetPacket(type);
 		} else
@@ -136,7 +124,7 @@ public class CostumeUser implements PlayerOwnedObject {
 	}
 
 	public boolean hasActiveCostumes() {
-		return !isNullOrEmpty(activeCostumes);
+		return !Nullables.isNullOrEmpty(activeCostumes);
 	}
 
 	public boolean hasActiveCostume(CostumeType type) {
@@ -308,7 +296,7 @@ public class CostumeUser implements PlayerOwnedObject {
 	}
 
 	public void setActiveDisplayCostumeId(CostumeType type, String activeDisplayCostume) {
-		if (isNullOrEmpty(activeDisplayCostume)) {
+		if (Nullables.isNullOrEmpty(activeDisplayCostume)) {
 			activeDisplayCostumes.remove(type);
 			sendResetDisplayPacket(type);
 		} else
@@ -320,7 +308,7 @@ public class CostumeUser implements PlayerOwnedObject {
 	}
 
 	public boolean hasActiveDisplayCostumes() {
-		return !isNullOrEmpty(activeDisplayCostumes);
+		return !Nullables.isNullOrEmpty(activeDisplayCostumes);
 	}
 
 	public boolean hasActiveDisplayCostume(CostumeType type) {

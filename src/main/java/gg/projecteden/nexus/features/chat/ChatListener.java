@@ -4,6 +4,7 @@ import com.comphenix.protocol.PacketType.Play.Client;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.events.ChatEvent;
 import gg.projecteden.nexus.features.chat.events.DiscordChatEvent;
@@ -14,8 +15,7 @@ import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.punishments.Punishment;
 import gg.projecteden.nexus.models.punishments.PunishmentType;
 import gg.projecteden.nexus.models.punishments.Punishments;
-import gg.projecteden.nexus.utils.AdventureUtils;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import lombok.NoArgsConstructor;
 import org.bukkit.entity.Player;
@@ -27,11 +27,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Pattern;
-
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.PlayerUtils.runCommand;
-import static gg.projecteden.nexus.utils.StringUtils.right;
 
 @NoArgsConstructor
 public class ChatListener implements Listener {
@@ -51,7 +46,7 @@ public class ChatListener implements Listener {
 				event.setCancelled(true);
 
 				Punishments.of(player).add(Punishment.ofType(PunishmentType.KICK)
-					.punisher(UUID0)
+					.punisher(UUIDUtils.UUID0)
 					.input("Attempted to crash the server using the tab complete exploit")
 					.now(true));
 			}
@@ -98,7 +93,7 @@ public class ChatListener implements Listener {
 			// Prevents "t/command"
 			final String msg = AdventureUtils.asLegacyText(event.message());
 			if (Pattern.compile("^[tT]" + Commands.getPattern() + ".*").matcher(msg).matches())
-				runCommand(event.getPlayer(), right(msg, msg.length() - 2));
+				PlayerUtils.runCommand(event.getPlayer(), StringUtils.right(msg, msg.length() - 2));
 			else
 				chatter.say(msg);
 		});
@@ -113,7 +108,7 @@ public class ChatListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEmptyChat(ChatEvent event) {
-		if (!isNullOrEmpty(event.getMessage()))
+		if (!Nullables.isNullOrEmpty(event.getMessage()))
 			return;
 		if (event instanceof DiscordChatEvent discordChatEvent && discordChatEvent.hasAttachments())
 			return;

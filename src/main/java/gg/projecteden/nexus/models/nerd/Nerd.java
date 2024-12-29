@@ -26,20 +26,11 @@ import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.freeze.FreezeService;
 import gg.projecteden.nexus.models.godmode.Godmode;
 import gg.projecteden.nexus.models.vanish.VanishUserService;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.Name;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.ToString;
+import lombok.*;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -53,19 +44,9 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity(value = "nerd", noClassnameStored = true)
@@ -101,7 +82,7 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 			visitedSubWorldGroups.add("LEGACY1");
 
 		List<String> pronouns = (List<String>) dbObject.get("pronouns");
-		if (!isNullOrEmpty(pronouns)) {
+		if (!Nullables.isNullOrEmpty(pronouns)) {
 			List<String> fixed = new ArrayList<>() {{
 				for (String pronoun : pronouns) {
 					final Pronoun of = Pronoun.of(pronoun);
@@ -115,13 +96,13 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 		}
 
 		List<String> aliases = (List<String>) dbObject.get("aliases");
-		if (!isNullOrEmpty(aliases))
+		if (!Nullables.isNullOrEmpty(aliases))
 			dbObject.put("aliases", aliases.stream().map(String::toLowerCase).toList());
 	}
 
 	@PostLoad
 	void fix() {
-		if (!isNullOrEmpty(preferredName)) {
+		if (!Nullables.isNullOrEmpty(preferredName)) {
 			preferredNames.add(preferredName);
 			preferredName = null;
 		}
@@ -250,14 +231,14 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 
 		String prefix = this.prefix;
 
-		if (isNullOrEmpty(prefix))
+		if (Nullables.isNullOrEmpty(prefix))
 			prefix = getRank().getPrefix();
 
 		if (viewer != null)
 			if (getRank().isMod() && new FreezeService().get(viewer).isFrozen())
 				prefix = getRank().getPrefix();
 
-		if (!isNullOrEmpty(prefix))
+		if (!Nullables.isNullOrEmpty(prefix))
 			prefix = "&8&l[&f" + prefix + "&8&l] ";
 
 		return prefix;

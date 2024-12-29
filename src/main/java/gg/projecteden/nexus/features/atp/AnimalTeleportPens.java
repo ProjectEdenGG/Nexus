@@ -6,10 +6,7 @@ import gg.projecteden.nexus.models.banker.Banker;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.*;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -18,8 +15,6 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.CitizensUtils.isNPC;
 
 @NoArgsConstructor
 public class AnimalTeleportPens {
@@ -39,11 +34,11 @@ public class AnimalTeleportPens {
 	public List<Entity> getEntities() {
 		List<Entity> finalEntities = new ArrayList<>();
 		for (Entity entity : worldguard.getEntitiesInRegion(getRegion(player))) {
-			if (isNPC(entity))
+			if (CitizensUtils.isNPC(entity))
 				continue;
 
 			switch (entity.getType()) {
-				case PIG, RABBIT, FOX, TURTLE, COW, SHEEP, MUSHROOM_COW, POLAR_BEAR,
+				case PIG, RABBIT, FOX, TURTLE, COW, SHEEP, MOOSHROOM, POLAR_BEAR,
 					PANDA, GOAT, HORSE, DONKEY, MULE, LLAMA, TRADER_LLAMA, VILLAGER,
 					SHULKER ->
 					finalEntities.add(entity);

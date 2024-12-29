@@ -8,6 +8,7 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.parchment.OptionalLocation;
 import lombok.*;
@@ -20,8 +21,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Data
 @NoArgsConstructor
@@ -80,7 +79,7 @@ public class Home implements PlayerOwnedObject, OptionalLocation {
 		if (hasAccess(player)) {
 			Location location = this.location.clone();
 			location.getWorld().getChunkAtAsync(location).thenRun(() -> {
-				if (isNullOrAir(location.clone().add(0, 2, 0).getBlock()))
+				if (Nullables.isNullOrAir(location.clone().add(0, 2, 0).getBlock()))
 					location.add(0, .5, 0);
 				player.teleportAsync(location, TeleportCause.COMMAND);
 			});

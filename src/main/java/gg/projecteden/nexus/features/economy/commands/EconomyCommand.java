@@ -3,14 +3,8 @@ package gg.projecteden.nexus.features.economy.commands;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.features.wiki._WikiSearchCommand.WikiType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.banker.Banker;
 import gg.projecteden.nexus.models.banker.BankerService;
@@ -20,8 +14,6 @@ import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 
 import java.math.BigDecimal;
-
-import static gg.projecteden.nexus.utils.StringUtils.prettyMoney;
 
 @Aliases("eco")
 public class EconomyCommand extends CustomCommand {
@@ -90,7 +82,7 @@ public class EconomyCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	void give(Banker banker, BigDecimal balance, @Arg("server") TransactionCause cause, String reason, @Switch @Arg("current") ShopGroup world) {
 		service.deposit(cause.of(null, banker, balance, world, reason));
-		send(PREFIX + "Added &e" + prettyMoney(balance) + " &3to &e" + banker.getNickname() + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(world));
+		send(PREFIX + "Added &e" + StringUtils.prettyMoney(balance) + " &3to &e" + banker.getNickname() + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(world));
 	}
 
 	@Path("take <player> <balance> [cause] [reason...] [--world]")
@@ -98,7 +90,7 @@ public class EconomyCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	void take(Banker banker, BigDecimal balance, @Arg("server") TransactionCause cause, String reason, @Switch @Arg("current") ShopGroup world) {
 		service.withdraw(cause.of(null, banker, balance.multiply(new BigDecimal(-1)), world, reason));
-		send(PREFIX + "Removed &e" + prettyMoney(balance) + " &3from &e" + banker.getNickname() + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(world));
+		send(PREFIX + "Removed &e" + StringUtils.prettyMoney(balance) + " &3from &e" + banker.getNickname() + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(world));
 	}
 
 	@ConverterFor(ShopGroup.class)

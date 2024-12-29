@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.crates;
 
 import com.google.api.client.util.Strings;
 import com.google.common.collect.Lists;
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
 import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -14,9 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.StringUtils.loreize;
 
 public class CrateRecapBook {
 
@@ -48,12 +46,12 @@ public class CrateRecapBook {
 			if (Strings.isNullOrEmpty(loot.getTitle())) {
 				for (ItemStack item : loot.getItems()) {
 					int amount = value * item.getAmount();
-					List<String> rewardLines = loreize("&3" + amount + " &6x &3" + camelCase(item.getType()), 20);
+					List<String> rewardLines = gg.projecteden.nexus.utils.StringUtils.loreize("&3" + amount + " &6x &3" + StringUtils.camelCase(item.getType()), 20);
 					for (String rewardLine : rewardLines)
 						lines.add(new JsonBuilder(rewardLine).build());
 				}
 			} else {
-				List<String> rewardLines = loreize("&3" + value + " &6x &3" + loot.getTitle(), 20);
+				List<String> rewardLines = gg.projecteden.nexus.utils.StringUtils.loreize("&3" + value + " &6x &3" + loot.getTitle(), 20);
 				for (String rewardLine : rewardLines) {
 					JsonBuilder json = new JsonBuilder(rewardLine);
 					if (loot.getItems().size() == 1)
@@ -61,7 +59,7 @@ public class CrateRecapBook {
 					else if (!loot.getItems().isEmpty()) {
 						List<String> lore = new ArrayList<>();
 						for (ItemStack item : loot.getItems())
-							lore.add("&3" + value * item.getAmount() + " &6x &3" + camelCase(item.getType()));
+							lore.add("&3" + value * item.getAmount() + " &6x &3" + StringUtils.camelCase(item.getType()));
 						json.hover(lore);
 					}
 					lines.add(json.build());

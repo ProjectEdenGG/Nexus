@@ -8,13 +8,8 @@ import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.files.FontFile.CustomCharacter;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.chat.Chatter;
@@ -35,8 +30,6 @@ import org.bukkit.event.Listener;
 
 import java.util.List;
 
-import static gg.projecteden.nexus.models.emoji.EmojiUser.Emoji.EMOJIS;
-
 @NoArgsConstructor
 @Aliases("emoji")
 public class EmojisCommand extends CustomCommand implements Listener {
@@ -52,7 +45,7 @@ public class EmojisCommand extends CustomCommand implements Listener {
 	@Path("picker")
 	@Description("View your owned emojis")
 	void picker() {
-		final List<Emoji> emojis = EMOJIS.stream()
+		final List<Emoji> emojis = Emoji.EMOJIS.stream()
 			.filter(emoji -> isAdmin() || user.owns(emoji))
 			.toList();
 
@@ -82,7 +75,7 @@ public class EmojisCommand extends CustomCommand implements Listener {
 	void store() {
 		final WrittenBookMenu book = new WrittenBookMenu();
 
-		final List<Emoji> emojis = EMOJIS.stream()
+		final List<Emoji> emojis = Emoji.EMOJIS.stream()
 			.filter(Emoji::isPurchasable)
 			.filter(emoji -> !user.owns(emoji))
 			.toList();
@@ -132,7 +125,7 @@ public class EmojisCommand extends CustomCommand implements Listener {
 	@Description("Reload emojis from the resource pack")
 	void load() {
 		reload();
-		send(PREFIX + "Loaded " + EMOJIS.size() + " emojis");
+		send(PREFIX + "Loaded " + Emoji.EMOJIS.size() + " emojis");
 	}
 
 	@EventHandler
@@ -141,12 +134,12 @@ public class EmojisCommand extends CustomCommand implements Listener {
 		String message = event.getMessage();
 
 		if (chatter == null) {
-			for (Emoji emoji : EMOJIS)
+			for (Emoji emoji : Emoji.EMOJIS)
 				message = message.replaceAll(emoji.getEmoji(), "");
 		} else {
 			final EmojiUser user = new EmojiUserService().get(chatter);
 			if (!Rank.of(chatter).isAdmin())
-				for (Emoji emoji : EMOJIS) {
+				for (Emoji emoji : Emoji.EMOJIS) {
 					if (!message.contains(emoji.getEmoji()))
 						continue;
 					if (user.owns(emoji))
@@ -160,7 +153,7 @@ public class EmojisCommand extends CustomCommand implements Listener {
 			if (chatter != null)
 				Tasks.wait(1, () -> PlayerUtils.send(chatter, Chat.PREFIX + "&cYou do not own some of the emojis you used! &3Purchase in &c/emoji store"));
 
-		for (Emoji emoji : EMOJIS)
+		for (Emoji emoji : Emoji.EMOJIS)
 			message = message.replaceAll(emoji.getEmoji(), ChatColor.WHITE + emoji.getEmoji() + event.getChannel().getMessageColor());
 
 		if (!message.equals(event.getMessage()))
@@ -169,7 +162,7 @@ public class EmojisCommand extends CustomCommand implements Listener {
 
 	@ConverterFor(Emoji.class)
 	Emoji convertToEmoji(String value) {
-		return EMOJIS.stream()
+		return Emoji.EMOJIS.stream()
 			.filter(emoji -> emoji.getName().equalsIgnoreCase(value))
 			.findFirst()
 			.orElseThrow(() -> new InvalidInputException("Emoji &e" + value + " &cnot found"));
@@ -177,7 +170,7 @@ public class EmojisCommand extends CustomCommand implements Listener {
 
 	@TabCompleterFor(Emoji.class)
 	List<String> tabCompleteEmoji(String filter) {
-		return EMOJIS.stream()
+		return Emoji.EMOJIS.stream()
 			.map(Emoji::getName)
 			.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
 			.toList();
@@ -191,7 +184,7 @@ public class EmojisCommand extends CustomCommand implements Listener {
 	}
 
 	public static void reload() {
-		EMOJIS.clear();
+		Emoji.EMOJIS.clear();
 
 		for (CustomCharacter character : ResourcePack.getFontFile().getProviders()) {
 			if (!character.getType().equals("bitmap") || character.getFile() == null)
@@ -201,7 +194,7 @@ public class EmojisCommand extends CustomCommand implements Listener {
 				continue;
 
 			final Emoji emoji = new Emoji(character.fileName(), character.getChar(), character.isPurchasable());
-			EMOJIS.add(emoji);
+			Emoji.EMOJIS.add(emoji);
 		}
 	}
 

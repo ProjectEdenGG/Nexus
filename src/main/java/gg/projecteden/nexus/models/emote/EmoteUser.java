@@ -7,19 +7,14 @@ import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.chat.Emotes;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.RandomUtils;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import net.md_5.bungee.api.ChatColor;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Collectors;
 
 @Data
 @Entity(value = "emote_user", noClassnameStored = true)
@@ -51,7 +46,7 @@ public class EmoteUser implements PlayerOwnedObject {
 	}
 
 	public List<ChatColor> getEnabledColors(Emotes emote) {
-		return emote.getColors().stream().filter(color -> isEnabled(emote, color)).collect(toList());
+		return emote.getColors().stream().filter(color -> isEnabled(emote, color)).collect(Collectors.toList());
 	}
 
 	public ChatColor getRandomColor(Emotes emote) {

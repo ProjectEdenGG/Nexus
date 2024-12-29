@@ -1,12 +1,8 @@
 package gg.projecteden.nexus.models.nerd;
 
-import de.tr7zw.nbtapi.NBTCompound;
-import de.tr7zw.nbtapi.NBTCompoundList;
-import de.tr7zw.nbtapi.NBTFile;
-import de.tr7zw.nbtapi.NBTItem;
-import de.tr7zw.nbtapi.NBTList;
-import de.tr7zw.nbtapi.NBTType;
+import de.tr7zw.nbtapi.*;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -29,8 +25,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 @Data
 @NoArgsConstructor
@@ -99,7 +93,7 @@ public class NBTPlayer implements PlayerOwnedObject {
 
 		final NBTCompound compound = getNbtFile().getCompound(NBT_KEY);
 		throw new InvalidInputException("[Nerd] %s is not in a valid world (Type: %s, Value: %s, UUID: %s)".formatted(
-			getNickname(), camelCase(dataType),
+			getNickname(), StringUtils.camelCase(dataType),
 			compound == null ? "null" : compound.toString(),
 			uuid == null ? "null" : uuid.toString()
 		));

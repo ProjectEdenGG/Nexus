@@ -2,8 +2,7 @@ package gg.projecteden.nexus.utils;
 
 import lombok.Getter;
 import org.bukkit.DyeColor;
-
-import static org.bukkit.block.banner.PatternType.*;
+import org.bukkit.block.banner.PatternType;
 
 @Getter
 public class SymbolBanner {
@@ -13,11 +12,11 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_RIGHT)
-						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(patternDye, STRIPE_MIDDLE)
-						.pattern(patternDye, STRIPE_TOP)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_RIGHT)
+						.pattern(patternDye, PatternType.STRIPE_LEFT)
+						.pattern(patternDye, PatternType.STRIPE_MIDDLE)
+						.pattern(patternDye, PatternType.STRIPE_TOP)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -25,13 +24,13 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_RIGHT)
-						.pattern(patternDye, STRIPE_BOTTOM)
-						.pattern(patternDye, STRIPE_TOP)
-						.pattern(baseDye, CURLY_BORDER)
-						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(patternDye, STRIPE_MIDDLE)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_RIGHT)
+						.pattern(patternDye, PatternType.STRIPE_BOTTOM)
+						.pattern(patternDye, PatternType.STRIPE_TOP)
+						.pattern(baseDye, PatternType.CURLY_BORDER)
+						.pattern(patternDye, PatternType.STRIPE_LEFT)
+						.pattern(patternDye, PatternType.STRIPE_MIDDLE)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -39,12 +38,12 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_TOP)
-						.pattern(patternDye, STRIPE_BOTTOM)
-						.pattern(patternDye, STRIPE_RIGHT)
-						.pattern(baseDye, STRIPE_MIDDLE)
-						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_TOP)
+						.pattern(patternDye, PatternType.STRIPE_BOTTOM)
+						.pattern(patternDye, PatternType.STRIPE_RIGHT)
+						.pattern(baseDye, PatternType.STRIPE_MIDDLE)
+						.pattern(patternDye, PatternType.STRIPE_LEFT)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -52,12 +51,12 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_RIGHT)
-						.pattern(patternDye, STRIPE_BOTTOM)
-						.pattern(patternDye, STRIPE_TOP)
-						.pattern(baseDye, CURLY_BORDER)
-						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_RIGHT)
+						.pattern(patternDye, PatternType.STRIPE_BOTTOM)
+						.pattern(patternDye, PatternType.STRIPE_TOP)
+						.pattern(baseDye, PatternType.CURLY_BORDER)
+						.pattern(patternDye, PatternType.STRIPE_LEFT)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -65,11 +64,11 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(patternDye, STRIPE_TOP)
-						.pattern(patternDye, STRIPE_MIDDLE)
-						.pattern(patternDye, STRIPE_BOTTOM)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_LEFT)
+						.pattern(patternDye, PatternType.STRIPE_TOP)
+						.pattern(patternDye, PatternType.STRIPE_MIDDLE)
+						.pattern(patternDye, PatternType.STRIPE_BOTTOM)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -77,11 +76,11 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_MIDDLE)
-						.pattern(baseDye, STRIPE_RIGHT)
-						.pattern(patternDye, STRIPE_TOP)
-						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_MIDDLE)
+						.pattern(baseDye, PatternType.STRIPE_RIGHT)
+						.pattern(patternDye, PatternType.STRIPE_TOP)
+						.pattern(patternDye, PatternType.STRIPE_LEFT)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -89,12 +88,12 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_RIGHT)
-						.pattern(baseDye, HALF_HORIZONTAL)
-						.pattern(patternDye, STRIPE_BOTTOM)
-						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(patternDye, STRIPE_TOP)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_RIGHT)
+						.pattern(baseDye, PatternType.HALF_HORIZONTAL)
+						.pattern(patternDye, PatternType.STRIPE_BOTTOM)
+						.pattern(patternDye, PatternType.STRIPE_LEFT)
+						.pattern(patternDye, PatternType.STRIPE_TOP)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -103,11 +102,11 @@ public class SymbolBanner {
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
 					.material(ColorType.of(patternDye).getBanner())
-						.pattern(baseDye, STRIPE_TOP)
-						.pattern(baseDye, STRIPE_BOTTOM)
-						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(patternDye, STRIPE_RIGHT)
-						.pattern(baseDye, BORDER);
+						.pattern(baseDye, PatternType.STRIPE_TOP)
+						.pattern(baseDye, PatternType.STRIPE_BOTTOM)
+						.pattern(patternDye, PatternType.STRIPE_LEFT)
+						.pattern(patternDye, PatternType.STRIPE_RIGHT)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -115,10 +114,10 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_CENTER)
-						.pattern(patternDye, STRIPE_TOP)
-						.pattern(patternDye, STRIPE_BOTTOM)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_CENTER)
+						.pattern(patternDye, PatternType.STRIPE_TOP)
+						.pattern(patternDye, PatternType.STRIPE_BOTTOM)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -126,11 +125,11 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(baseDye, HALF_HORIZONTAL)
-						.pattern(patternDye, STRIPE_BOTTOM)
-						.pattern(patternDye, STRIPE_RIGHT)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_LEFT)
+						.pattern(baseDye, PatternType.HALF_HORIZONTAL)
+						.pattern(patternDye, PatternType.STRIPE_BOTTOM)
+						.pattern(patternDye, PatternType.STRIPE_RIGHT)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -138,11 +137,11 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_DOWNRIGHT)
-						.pattern(baseDye, HALF_HORIZONTAL)
-						.pattern(patternDye, STRIPE_DOWNLEFT)
-						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_DOWNRIGHT)
+						.pattern(baseDye, PatternType.HALF_HORIZONTAL)
+						.pattern(patternDye, PatternType.STRIPE_DOWNLEFT)
+						.pattern(patternDye, PatternType.STRIPE_LEFT)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -150,9 +149,9 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_BOTTOM)
-						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_BOTTOM)
+						.pattern(patternDye, PatternType.STRIPE_LEFT)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -160,11 +159,11 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, TRIANGLE_TOP)
-						.pattern(baseDye, TRIANGLES_TOP)
-						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(patternDye, STRIPE_RIGHT)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.TRIANGLE_TOP)
+						.pattern(baseDye, PatternType.TRIANGLES_TOP)
+						.pattern(patternDye, PatternType.STRIPE_LEFT)
+						.pattern(patternDye, PatternType.STRIPE_RIGHT)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -172,11 +171,11 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(baseDye, TRIANGLE_TOP)
-						.pattern(patternDye, STRIPE_DOWNRIGHT)
-						.pattern(patternDye, STRIPE_RIGHT)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_LEFT)
+						.pattern(baseDye, PatternType.TRIANGLE_TOP)
+						.pattern(patternDye, PatternType.STRIPE_DOWNRIGHT)
+						.pattern(patternDye, PatternType.STRIPE_RIGHT)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -184,11 +183,11 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(patternDye, STRIPE_RIGHT)
-						.pattern(patternDye, STRIPE_BOTTOM)
-						.pattern(patternDye, STRIPE_TOP)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_LEFT)
+						.pattern(patternDye, PatternType.STRIPE_RIGHT)
+						.pattern(patternDye, PatternType.STRIPE_BOTTOM)
+						.pattern(patternDye, PatternType.STRIPE_TOP)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -196,12 +195,12 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_RIGHT)
-						.pattern(baseDye, HALF_HORIZONTAL)
-						.pattern(patternDye, STRIPE_MIDDLE)
-						.pattern(patternDye, STRIPE_TOP)
-						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_RIGHT)
+						.pattern(baseDye, PatternType.HALF_HORIZONTAL)
+						.pattern(patternDye, PatternType.STRIPE_MIDDLE)
+						.pattern(patternDye, PatternType.STRIPE_TOP)
+						.pattern(patternDye, PatternType.STRIPE_LEFT)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -210,11 +209,11 @@ public class SymbolBanner {
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
 					.material(ColorType.of(patternDye).getBanner())
-						.pattern(baseDye, RHOMBUS)
-						.pattern(patternDye, STRIPE_RIGHT)
-						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(patternDye, SQUARE_BOTTOM_RIGHT)
-						.pattern(baseDye, BORDER);
+						.pattern(baseDye, PatternType.RHOMBUS)
+						.pattern(patternDye, PatternType.STRIPE_RIGHT)
+						.pattern(patternDye, PatternType.STRIPE_LEFT)
+						.pattern(patternDye, PatternType.SQUARE_BOTTOM_RIGHT)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -222,13 +221,13 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_MIDDLE)
-						.pattern(patternDye, STRIPE_TOP)
-						.pattern(patternDye, STRIPE_RIGHT)
-						.pattern(baseDye, HALF_HORIZONTAL)
-						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(patternDye, STRIPE_DOWNRIGHT)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_MIDDLE)
+						.pattern(patternDye, PatternType.STRIPE_TOP)
+						.pattern(patternDye, PatternType.STRIPE_RIGHT)
+						.pattern(baseDye, PatternType.HALF_HORIZONTAL)
+						.pattern(patternDye, PatternType.STRIPE_LEFT)
+						.pattern(patternDye, PatternType.STRIPE_DOWNRIGHT)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -237,10 +236,10 @@ public class SymbolBanner {
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
 					.material(ColorType.of(patternDye).getBanner())
-						.pattern(baseDye, RHOMBUS)
-						.pattern(baseDye, STRIPE_MIDDLE)
-						.pattern(patternDye, STRIPE_DOWNRIGHT)
-						.pattern(baseDye, BORDER);
+						.pattern(baseDye, PatternType.RHOMBUS)
+						.pattern(baseDye, PatternType.STRIPE_MIDDLE)
+						.pattern(patternDye, PatternType.STRIPE_DOWNRIGHT)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -248,9 +247,9 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_TOP)
-						.pattern(patternDye, STRIPE_CENTER)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_TOP)
+						.pattern(patternDye, PatternType.STRIPE_CENTER)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -258,10 +257,10 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_BOTTOM)
-						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(patternDye, STRIPE_RIGHT)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_BOTTOM)
+						.pattern(patternDye, PatternType.STRIPE_LEFT)
+						.pattern(patternDye, PatternType.STRIPE_RIGHT)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -269,11 +268,11 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_DOWNLEFT)
-						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(baseDye, TRIANGLE_BOTTOM)
-						.pattern(patternDye, STRIPE_DOWNLEFT)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_DOWNLEFT)
+						.pattern(patternDye, PatternType.STRIPE_LEFT)
+						.pattern(baseDye, PatternType.TRIANGLE_BOTTOM)
+						.pattern(patternDye, PatternType.STRIPE_DOWNLEFT)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -281,11 +280,11 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, TRIANGLE_BOTTOM)
-						.pattern(baseDye, TRIANGLES_BOTTOM)
-						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(patternDye, STRIPE_RIGHT)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.TRIANGLE_BOTTOM)
+						.pattern(baseDye, PatternType.TRIANGLES_BOTTOM)
+						.pattern(patternDye, PatternType.STRIPE_LEFT)
+						.pattern(patternDye, PatternType.STRIPE_RIGHT)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -293,8 +292,8 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, CROSS)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.CROSS)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -302,10 +301,10 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_DOWNRIGHT)
-						.pattern(baseDye, HALF_HORIZONTAL)
-						.pattern(patternDye, STRIPE_DOWNLEFT)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_DOWNRIGHT)
+						.pattern(baseDye, PatternType.HALF_HORIZONTAL)
+						.pattern(patternDye, PatternType.STRIPE_DOWNLEFT)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -313,10 +312,10 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_TOP)
-						.pattern(patternDye, STRIPE_DOWNLEFT)
-						.pattern(patternDye, STRIPE_BOTTOM)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_TOP)
+						.pattern(patternDye, PatternType.STRIPE_DOWNLEFT)
+						.pattern(patternDye, PatternType.STRIPE_BOTTOM)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -324,12 +323,12 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_BOTTOM)
-						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(patternDye, STRIPE_TOP)
-						.pattern(patternDye, STRIPE_RIGHT)
-						.pattern(patternDye, STRIPE_DOWNLEFT)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_BOTTOM)
+						.pattern(patternDye, PatternType.STRIPE_LEFT)
+						.pattern(patternDye, PatternType.STRIPE_TOP)
+						.pattern(patternDye, PatternType.STRIPE_RIGHT)
+						.pattern(patternDye, PatternType.STRIPE_DOWNLEFT)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -337,11 +336,11 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_CENTER)
-						.pattern(patternDye, SQUARE_TOP_LEFT)
-						.pattern(baseDye, CURLY_BORDER)
-						.pattern(patternDye, STRIPE_BOTTOM)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_CENTER)
+						.pattern(patternDye, PatternType.SQUARE_TOP_LEFT)
+						.pattern(baseDye, PatternType.CURLY_BORDER)
+						.pattern(patternDye, PatternType.STRIPE_BOTTOM)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -349,11 +348,11 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_TOP)
-						.pattern(baseDye, RHOMBUS)
-						.pattern(patternDye, STRIPE_BOTTOM)
-						.pattern(patternDye, STRIPE_DOWNLEFT)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_TOP)
+						.pattern(baseDye, PatternType.RHOMBUS)
+						.pattern(patternDye, PatternType.STRIPE_BOTTOM)
+						.pattern(patternDye, PatternType.STRIPE_DOWNLEFT)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -361,12 +360,12 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_BOTTOM)
-						.pattern(patternDye, STRIPE_MIDDLE)
-						.pattern(patternDye, STRIPE_TOP)
-						.pattern(baseDye, CURLY_BORDER)
-						.pattern(patternDye, STRIPE_RIGHT)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_BOTTOM)
+						.pattern(patternDye, PatternType.STRIPE_MIDDLE)
+						.pattern(patternDye, PatternType.STRIPE_TOP)
+						.pattern(baseDye, PatternType.CURLY_BORDER)
+						.pattern(patternDye, PatternType.STRIPE_RIGHT)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -374,11 +373,11 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(baseDye, HALF_HORIZONTAL)
-						.pattern(patternDye, STRIPE_RIGHT)
-						.pattern(patternDye, STRIPE_MIDDLE)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_LEFT)
+						.pattern(baseDye, PatternType.HALF_HORIZONTAL)
+						.pattern(patternDye, PatternType.STRIPE_RIGHT)
+						.pattern(patternDye, PatternType.STRIPE_MIDDLE)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -386,11 +385,11 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_BOTTOM)
-						.pattern(baseDye, RHOMBUS)
-						.pattern(patternDye, STRIPE_TOP)
-						.pattern(patternDye, STRIPE_DOWNRIGHT)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_BOTTOM)
+						.pattern(baseDye, PatternType.RHOMBUS)
+						.pattern(patternDye, PatternType.STRIPE_TOP)
+						.pattern(patternDye, PatternType.STRIPE_DOWNRIGHT)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -398,13 +397,13 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_BOTTOM)
-						.pattern(patternDye, STRIPE_RIGHT)
-						.pattern(baseDye, HALF_HORIZONTAL)
-						.pattern(patternDye, STRIPE_MIDDLE)
-						.pattern(patternDye, STRIPE_TOP)
-						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_BOTTOM)
+						.pattern(patternDye, PatternType.STRIPE_RIGHT)
+						.pattern(baseDye, PatternType.HALF_HORIZONTAL)
+						.pattern(patternDye, PatternType.STRIPE_MIDDLE)
+						.pattern(patternDye, PatternType.STRIPE_TOP)
+						.pattern(patternDye, PatternType.STRIPE_LEFT)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -412,9 +411,9 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_DOWNLEFT)
-						.pattern(patternDye, STRIPE_TOP)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_DOWNLEFT)
+						.pattern(patternDye, PatternType.STRIPE_TOP)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -422,12 +421,12 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_TOP)
-						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(patternDye, STRIPE_MIDDLE)
-						.pattern(patternDye, STRIPE_BOTTOM)
-						.pattern(patternDye, STRIPE_RIGHT)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_TOP)
+						.pattern(patternDye, PatternType.STRIPE_LEFT)
+						.pattern(patternDye, PatternType.STRIPE_MIDDLE)
+						.pattern(patternDye, PatternType.STRIPE_BOTTOM)
+						.pattern(patternDye, PatternType.STRIPE_RIGHT)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		},
 
@@ -435,13 +434,13 @@ public class SymbolBanner {
 			@Override
 			public ItemBuilder get(ItemBuilder itemBuilder, DyeColor baseDye, DyeColor patternDye) {
 				return itemBuilder
-						.pattern(patternDye, STRIPE_LEFT)
-						.pattern(baseDye, HALF_HORIZONTAL)
-						.pattern(patternDye, STRIPE_MIDDLE)
-						.pattern(patternDye, STRIPE_TOP)
-						.pattern(patternDye, STRIPE_RIGHT)
-						.pattern(patternDye, STRIPE_BOTTOM)
-						.pattern(baseDye, BORDER);
+						.pattern(patternDye, PatternType.STRIPE_LEFT)
+						.pattern(baseDye, PatternType.HALF_HORIZONTAL)
+						.pattern(patternDye, PatternType.STRIPE_MIDDLE)
+						.pattern(patternDye, PatternType.STRIPE_TOP)
+						.pattern(patternDye, PatternType.STRIPE_RIGHT)
+						.pattern(patternDye, PatternType.STRIPE_BOTTOM)
+						.pattern(baseDye, PatternType.BORDER);
 			}
 		};
 

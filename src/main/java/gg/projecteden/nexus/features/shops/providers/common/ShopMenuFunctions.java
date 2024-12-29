@@ -6,6 +6,7 @@ import gg.projecteden.nexus.models.shop.Shop.ExchangeType;
 import gg.projecteden.nexus.models.shop.Shop.Product;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LanguageUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -17,8 +18,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.function.Predicate;
-
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class ShopMenuFunctions {
 
@@ -74,7 +73,7 @@ public class ShopMenuFunctions {
 					return true;
 
 				if (item.getItemMeta().hasDisplayName())
-					if (contains(stripColor(item.getItemMeta().getDisplayName()), input))
+					if (contains(StringUtils.stripColor(item.getItemMeta().getDisplayName()), input))
 						return true;
 
 				for (Enchantment enchantment : item.getEnchantments().keySet())

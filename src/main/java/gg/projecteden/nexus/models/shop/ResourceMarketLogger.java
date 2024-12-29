@@ -3,26 +3,17 @@ package gg.projecteden.nexus.models.shop;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.bukkit.Location;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity("resource_market_logger")
@@ -67,11 +58,11 @@ public class ResourceMarketLogger implements PlayerOwnedObject {
 	private boolean run(Location location, BiFunction<List<Integer>, Integer, Boolean> function) {
 		validate(location);
 		final var x = coordinateMap.get(location.getBlockX());
-		if (isNullOrEmpty(x))
+		if (Nullables.isNullOrEmpty(x))
 			return false;
 
 		final var z = x.get(location.getBlockZ());
-		if (isNullOrEmpty(z))
+		if (Nullables.isNullOrEmpty(z))
 			return false;
 
 		return function.apply(z, location.getBlockY());

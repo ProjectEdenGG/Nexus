@@ -12,6 +12,7 @@ import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
@@ -24,8 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Title("&0Your shop")
 public class YourShopProvider extends ShopProvider {
@@ -132,7 +131,7 @@ public class YourShopProvider extends ShopProvider {
 			Shop shop = service.get(player);
 
 			for (ItemStack content : event.getInventory().getContents())
-				if (!isNullOrAir(content))
+				if (!Nullables.isNullOrAir(content))
 					shop.addHolding(ShopGroup.of(player), content);
 
 			service.save(shop);

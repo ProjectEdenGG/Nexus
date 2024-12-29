@@ -12,11 +12,7 @@ import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -28,8 +24,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.features.discord.Discord.getGuild;
 
 @Data
 @Entity(value = "discord_user", noClassnameStored = true)
@@ -98,7 +92,7 @@ public class DiscordUser implements PlayerOwnedObject {
 	@Nullable
 	public Member getMember() {
 		if (userId == null) return null;
-		Guild guild = getGuild();
+		Guild guild = Discord.getGuild();
 		if (guild == null) return null;
 		try {
 			return guild.retrieveMemberById(userId).complete();
@@ -113,7 +107,7 @@ public class DiscordUser implements PlayerOwnedObject {
 		if (member == null)
 			return;
 
-		Guild guild = getGuild();
+		Guild guild = Discord.getGuild();
 		if (guild == null)
 			return;
 

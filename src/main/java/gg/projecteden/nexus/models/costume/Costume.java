@@ -17,8 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-
-import static java.util.stream.Collectors.toSet;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -67,7 +66,7 @@ public class Costume {
 		}
 
 		public static Set<EquipmentSlot> getSlots() {
-			return Arrays.stream(values()).map(CostumeType::getSlot).collect(toSet());
+			return Arrays.stream(values()).map(CostumeType::getSlot).collect(Collectors.toSet());
 		}
 	}
 

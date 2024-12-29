@@ -5,6 +5,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.chat.ChatManager;
 import gg.projecteden.nexus.features.chat.translator.Language;
@@ -18,21 +19,15 @@ import gg.projecteden.nexus.models.party.PartyManager;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.features.chat.Chat.PREFIX;
-import static gg.projecteden.nexus.utils.StringUtils.trimFirst;
 
 @Data
 @Entity(value = "chatter", noClassnameStored = true)
@@ -66,7 +61,7 @@ public class Chatter implements PlayerOwnedObject {
 
 	public void say(String message) {
 		if (message.startsWith("/"))
-			PlayerUtils.runCommand(getOnlinePlayer(), trimFirst(message));
+			PlayerUtils.runCommand(getOnlinePlayer(), StringUtils.trimFirst(message));
 		else
 			say(getActiveChannel(), message);
 	}
@@ -82,13 +77,13 @@ public class Chatter implements PlayerOwnedObject {
 	public void setActiveChannel(Channel channel, boolean silent) {
 		if (channel == null) {
 			if (!silent)
-				sendMessage(PREFIX + "You are no longer speaking in a channel");
+				sendMessage(Chat.PREFIX + "You are no longer speaking in a channel");
 		} else {
 			if (channel instanceof PublicChannel publicChannel)
 				joinSilent(publicChannel);
 
 			if (!silent)
-				sendMessage(PREFIX + channel.getAssignMessage(this));
+				sendMessage(Chat.PREFIX + channel.getAssignMessage(this));
 		}
 
 		this.activeChannel = channel;
@@ -147,7 +142,7 @@ public class Chatter implements PlayerOwnedObject {
 
 	public void join(PublicChannel channel) {
 		joinSilent(channel);
-		sendMessage(PREFIX + "Joined " + channel.getColor() + channel.getName() + " &3channel");
+		sendMessage(Chat.PREFIX + "Joined " + channel.getColor() + channel.getName() + " &3channel");
 	}
 
 	public void joinSilent(PublicChannel channel) {
@@ -163,7 +158,7 @@ public class Chatter implements PlayerOwnedObject {
 		fixChannelSets();
 		joinedChannels.remove(channel);
 		leftChannels.add(channel);
-		sendMessage(PREFIX + "Left " + channel.getColor() + channel.getName() + " &3channel");
+		sendMessage(Chat.PREFIX + "Left " + channel.getColor() + channel.getName() + " &3channel");
 
 		if (channel.equals(activeChannel))
 			findNewActiveChannel();

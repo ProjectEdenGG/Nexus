@@ -4,18 +4,14 @@ import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.chat.Emotes;
 import gg.projecteden.nexus.features.chat.commands.EmotesCommand;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.emote.EmoteService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
 import gg.projecteden.nexus.utils.StringUtils.Rainbow;
@@ -23,11 +19,6 @@ import net.md_5.bungee.api.ChatColor;
 
 import java.util.List;
 import java.util.regex.Matcher;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.decolorize;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-import static gg.projecteden.nexus.utils.StringUtils.stripFormat;
 
 @WikiConfig(rank = "Store", feature = "Chat")
 public class PrefixCommand extends CustomCommand {
@@ -86,10 +77,10 @@ public class PrefixCommand extends CustomCommand {
 	void copy(@Arg("self") Nerd nerd) {
 		String prefix = nerd.getPrefix();
 
-		if (isNullOrEmpty(prefix))
+		if (Nullables.isNullOrEmpty(prefix))
 			prefix = Rank.of(player()).getPrefix();
 
-		if (isNullOrEmpty(prefix))
+		if (Nullables.isNullOrEmpty(prefix))
 			error((isSelf(nerd) ? "You do" : nerd.getNickname() + " does") + " not have a prefix");
 
 		String original = prefix;
@@ -102,7 +93,7 @@ public class PrefixCommand extends CustomCommand {
 			prefix = prefix.replace(group, group.replaceAll(StringUtils.getColorChar() + "x", "&#").replaceAll(StringUtils.getColorChar(), ""));
 		}
 
-		send(json(PREFIX + "Click here to copy " + (isSelf(nerd) ? "your" : nerd.getNickname() + "'s") + " current prefix: &f" + original).copy(decolorize(prefix)).hover("&7Click to copy"));
+		send(json(PREFIX + "Click here to copy " + (isSelf(nerd) ? "your" : nerd.getNickname() + "'s") + " current prefix: &f" + original).copy(StringUtils.decolorize(prefix)).hover("&7Click to copy"));
 	}
 
 	@Path("test <prefix...>")
@@ -131,11 +122,11 @@ public class PrefixCommand extends CustomCommand {
 		if (player().hasPermission(EmotesCommand.PERMISSION))
 			input = Emotes.process(new EmoteService().get(player()), input);
 
-		final int length = stripColor(input).length();
+		final int length = StringUtils.stripColor(input).length();
 		if (length > 10)
 			error("Your prefix cannot be more than 10 characters (was " + length + ")");
 
-		return stripFormat(input);
+		return StringUtils.stripFormat(input);
 	}
 
 }

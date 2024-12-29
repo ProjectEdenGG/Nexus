@@ -6,6 +6,7 @@ import com.gmail.nossr50.events.skills.salvage.McMMOPlayerSalvageCheckEvent;
 import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.util.player.UserManager;
 import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetProvider.ResetSkillType;
 import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetShopMenu;
@@ -18,11 +19,8 @@ import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUser;
 import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
 import org.bukkit.event.EventHandler;
@@ -33,9 +31,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
-
-import static gg.projecteden.api.common.utils.Utils.sortByValueReverse;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
 @Redirect(from = "/mcmmoreset", to = "/mcmmo reset")
@@ -182,7 +177,7 @@ public class McMMOCommand extends CustomCommand implements Listener {
 				.command("/mcmmo prestige " + Nickname.of(uuid))
 				.hover("Click to view user's prestiges");
 
-		paginate(sortByValueReverse(prestiges).keySet(), formatter, "/mcmmo prestige top" + (skill == null ? "" : " --skill=" + skill), page);
+		paginate(Utils.sortByValueReverse(prestiges).keySet(), formatter, "/mcmmo prestige top" + (skill == null ? "" : " --skill=" + skill), page);
 	}
 
 	@Path("reset")
@@ -213,7 +208,7 @@ public class McMMOCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void on(McMMOPlayerSalvageCheckEvent event) {
-		if (isNullOrAir(event.getSalvageItem()))
+		if (Nullables.isNullOrAir(event.getSalvageItem()))
 			return;
 
 		if (ItemSetting.MCMMOABLE.of(new ItemBuilder(event.getSalvageItem())))
@@ -225,7 +220,7 @@ public class McMMOCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void on(McMMOPlayerRepairCheckEvent event) {
-		if (isNullOrAir(event.getRepairedObject()))
+		if (Nullables.isNullOrAir(event.getRepairedObject()))
 			return;
 
 		if (ItemSetting.MCMMOABLE.of(new ItemBuilder(event.getRepairedObject())))

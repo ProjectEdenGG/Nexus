@@ -11,15 +11,13 @@ import gg.projecteden.nexus.models.home.HomeOwner;
 import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static gg.projecteden.nexus.features.homes.HomesMenu.getAccessListNames;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Title("&3Home Editor")
 @RequiredArgsConstructor
@@ -126,11 +124,11 @@ public class EditHomesProvider extends InventoryProvider {
 				item = new ItemBuilder(Material.LIME_CONCRETE);
 
 			if (home.isLocked())
-				item.glow().loreize(false).lore("", "&f&cLocked", "&f", "&eClick to edit").lore(getAccessListNames(home.getAccessList()));
+				item.glow().loreize(false).lore("", "&f&cLocked", "&f", "&eClick to edit").lore(HomesMenu.getAccessListNames(home.getAccessList()));
 			else
 				item.lore("", "&f&aUnlocked", "&f", "&eClick to edit");
 
-			item.name("&f" + camelCase(home.getName()));
+			item.name("&f" + StringUtils.camelCase(home.getName()));
 
 			items.add(ClickableItem.of(item.build(), e -> HomesMenu.edit(home)));
 		});

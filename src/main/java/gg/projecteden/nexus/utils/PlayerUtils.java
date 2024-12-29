@@ -59,9 +59,6 @@ import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static gg.projecteden.nexus.utils.Utils.getMin;
-import static java.util.stream.Collectors.toList;
-
 @UtilityClass
 public class PlayerUtils {
 
@@ -311,7 +308,7 @@ public class PlayerUtils {
 		}
 
 		public List<Player> get() {
-			final Supplier<List<UUID>> online = () -> Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).collect(toList());
+			final Supplier<List<UUID>> online = () -> Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).collect(Collectors.toList());
 			final List<UUID> uuids = include == null ? online.get() : include;
 
 			if (uuids.isEmpty())
@@ -336,11 +333,11 @@ public class PlayerUtils {
 			for (Predicate<Player> filter : filters)
 				stream = stream.filter(filter);
 
-			return stream.collect(toList());
+			return stream.collect(Collectors.toList());
 		}
 
 		public <T> List<T> map(Function<Player, T> mapper) {
-			return get().stream().map(mapper).collect(toList());
+			return get().stream().map(mapper).collect(Collectors.toList());
 		}
 
 		public int count() {
@@ -443,7 +440,7 @@ public class PlayerUtils {
 	public static List<String> getOnlineUuids() {
 		return OnlinePlayers.getAll().stream()
 				.map(player -> player.getUniqueId().toString())
-				.collect(toList());
+				.collect(Collectors.toList());
 	}
 
 	public static List<UUID> uuidsOf(Collection<Player> players) {
@@ -540,27 +537,27 @@ public class PlayerUtils {
 	}
 
 	public static MinMaxResult<Player> getNearestPlayer(Location location) {
-		return getMin(OnlinePlayers.where().world(location.getWorld()).get(), player -> Distance.distance(player, location).get());
+		return Utils.getMin(OnlinePlayers.where().world(location.getWorld()).get(), player -> Distance.distance(player, location).get());
 	}
 
 	public static MinMaxResult<Player> getNearestVisiblePlayer(Location location, Integer radius) {
 		List<Player> players = OnlinePlayers.where().world(location.getWorld()).get().stream()
 			.filter(_player -> !GameMode.SPECTATOR.equals(_player.getGameMode()))
 			.filter(_player -> !Vanish.isVanished(_player))
-			.collect(toList());
+			.collect(Collectors.toList());
 
 		if (radius > 0)
-			players = players.stream().filter(player -> Distance.distance(player, location).lte(radius)).collect(toList());
+			players = players.stream().filter(player -> Distance.distance(player, location).lte(radius)).collect(Collectors.toList());
 
-		return getMin(players, player -> Distance.distance(player, location).get());
+		return Utils.getMin(players, player -> Distance.distance(player, location).get());
 	}
 
 	public static MinMaxResult<Player> getNearestPlayer(HasPlayer original) {
 		Player _original = original.getPlayer();
 		List<Player> players = OnlinePlayers.where().world(_original.getWorld()).get().stream()
-			.filter(player -> !isSelf(_original, player)).collect(toList());
+			.filter(player -> !isSelf(_original, player)).collect(Collectors.toList());
 
-		return getMin(players, player -> Distance.distance(player, _original).get());
+		return Utils.getMin(players, player -> Distance.distance(player, _original).get());
 	}
 
 	public static ItemFrame getTargetItemFrame(Player player, int maxRadius, @Nullable Map<BlockFace, Integer> offsets) {
@@ -1121,7 +1118,7 @@ public class PlayerUtils {
 	 * @return list of players
 	 */
 	public static @NonNull List<Player> getPlayers(List<? extends @NonNull HasPlayer> hasPlayers) {
-		return hasPlayers.stream().map(HasPlayer::getPlayer).collect(toList());
+		return hasPlayers.stream().map(HasPlayer::getPlayer).collect(Collectors.toList());
 	}
 
 	/**
@@ -1130,7 +1127,7 @@ public class PlayerUtils {
 	 * @return list of non-null players
 	 */
 	public static @NonNull List<@NonNull Player> getNonNullPlayers(Collection<? extends @NonNull OptionalPlayer> hasPlayers) {
-		return hasPlayers.stream().map(OptionalPlayer::getPlayer).filter(Objects::nonNull).collect(toList());
+		return hasPlayers.stream().map(OptionalPlayer::getPlayer).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
 	@Getter

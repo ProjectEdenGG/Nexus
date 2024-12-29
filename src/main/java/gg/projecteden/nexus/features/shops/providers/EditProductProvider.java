@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.shops.providers;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.SignMenuFactory;
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
@@ -14,11 +15,7 @@ import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.Shop.ExchangeType;
 import gg.projecteden.nexus.models.shop.Shop.Product;
 import gg.projecteden.nexus.models.shop.ShopService;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.*;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -28,11 +25,6 @@ import org.bukkit.inventory.ItemStack;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
-
-import static gg.projecteden.nexus.features.menus.api.SignMenuFactory.ARROWS;
-import static gg.projecteden.nexus.utils.ItemUtils.isSimilar;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.pretty;
 
 @Rows(4)
 @Title("&0Edit Item")
@@ -58,7 +50,7 @@ public class EditProductProvider extends ShopProvider {
 				.loreize(false);
 
 			contents.set(1, 4, ClickableItem.of(builder.build(), e -> Nexus.getSignMenuFactory()
-				.lines("", ARROWS, "Enter an amount", "or -1 for no limit")
+				.lines("", SignMenuFactory.ARROWS, "Enter an amount", "or -1 for no limit")
 				.prefix(Shops.PREFIX)
 				.onError(() -> open(viewer))
 				.response(lines -> {
@@ -81,7 +73,7 @@ public class EditProductProvider extends ShopProvider {
 					viewer.closeInventory();
 					ShopCommand.getInteractStockMap().put(viewer.getUniqueId(), product);
 					PlayerUtils.send(viewer, new JsonBuilder(Shops.PREFIX + "Right click any container (ie chest, shulker box, etc) to stock &e"
-						+ pretty(product.getItem()) + "&3. &eClick here to end").command("/shop cancelInteractStock"));
+						+ StringUtils.pretty(product.getItem()) + "&3. &eClick here to end").command("/shop cancelInteractStock"));
 				} else {
 					new AddStockProvider(viewer, this, product);
 				}
@@ -150,10 +142,10 @@ public class EditProductProvider extends ShopProvider {
 		@Override
 		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
 			for (ItemStack content : contents) {
-				if (isNullOrAir(content))
+				if (Nullables.isNullOrAir(content))
 					continue;
 
-				if (isSimilar(product.getItem(), content))
+				if (ItemUtils.isSimilar(product.getItem(), content))
 					product.addStock(content.getAmount());
 				else
 					PlayerUtils.giveItem(player, content);
@@ -195,10 +187,10 @@ public class EditProductProvider extends ShopProvider {
 		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
 			int itemsLeft = 0;
 			for (ItemStack content : contents) {
-				if (isNullOrAir(content))
+				if (Nullables.isNullOrAir(content))
 					continue;
 
-				if (!isSimilar(product.getItem(), content)) {
+				if (!ItemUtils.isSimilar(product.getItem(), content)) {
 					PlayerUtils.giveItem(player, content);
 					continue;
 				}

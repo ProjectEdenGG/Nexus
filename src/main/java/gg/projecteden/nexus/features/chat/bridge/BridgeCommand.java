@@ -6,21 +6,14 @@ import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.IOUtils;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -32,16 +25,9 @@ import net.dv8tion.jda.api.entities.Role;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.OfflinePlayer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Permission(Group.ADMIN)
 public class BridgeCommand extends CustomCommand {
@@ -222,7 +208,7 @@ public class BridgeCommand extends CustomCommand {
 				Role role = Discord.getGuild().getRoleById(roleId);
 				DiscordUser user = new DiscordUserService().getFromRoleId(roleId);
 				String name = user == null ? role == null ? null : role.getName() : user.getIngameName();
-				if (!isNullOrEmpty(name)) {
+				if (!Nullables.isNullOrEmpty(name)) {
 					UUID uuid = PlayerUtils.getPlayer(name).getUniqueId();
 					List<String> roleIds = getOrDefault(uuid, new ArrayList<>());
 					roleIds.add(roleId);

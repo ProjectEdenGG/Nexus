@@ -24,8 +24,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static gg.projecteden.nexus.utils.StringUtils.plural;
-
 @Data
 @Entity(value = "bearfair20_user", noClassnameStored = true)
 @NoArgsConstructor
@@ -90,7 +88,7 @@ public class BearFair20User implements PlayerOwnedObject {
 
 	public void givePoints(int points, boolean actionBar) {
 		if (actionBar)
-			ActionBarUtils.sendActionBar(getOnlinePlayer(), "&e+" + points + plural(" point", points));
+			ActionBarUtils.sendActionBar(getOnlinePlayer(), "&e+" + points + StringUtils.plural(" point", points));
 		givePoints(points);
 	}
 
@@ -118,7 +116,7 @@ public class BearFair20User implements PlayerOwnedObject {
 		getPointsReceivedToday().get(source).put(LocalDate.now(), timesCompleted + 1);
 
 		givePoints(DAILY_SOURCE_POINTS);
-		ActionBarUtils.sendActionBar(getOnlinePlayer(), "&e+" + DAILY_SOURCE_POINTS + plural(" point", DAILY_SOURCE_POINTS));
+		ActionBarUtils.sendActionBar(getOnlinePlayer(), "&e+" + DAILY_SOURCE_POINTS + StringUtils.plural(" point", DAILY_SOURCE_POINTS));
 	}
 
 	public enum BF20PointSource {

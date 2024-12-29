@@ -3,11 +3,7 @@ package gg.projecteden.nexus.features.homes;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.home.Home;
@@ -24,8 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.Utils.getMin;
 
 public class HomesCommand extends CustomCommand {
 	private final HomeService service = new HomeService();
@@ -126,7 +120,7 @@ public class HomesCommand extends CustomCommand {
 	@Path("nearest [player]")
 	@Description("View your nearest home")
 	void nearest(@Arg(value = "self", permission = Group.STAFF) OfflinePlayer player) {
-		MinMaxResult<Home> result = getMin(service.get(player).getHomes(), home -> {
+		MinMaxResult<Home> result = Utils.getMin(service.get(player).getHomes(), home -> {
 			if (!world().equals(home.getLocation().getWorld()))
 				return null;
 			return distanceTo(home.getLocation()).get();

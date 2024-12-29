@@ -1,15 +1,13 @@
 package gg.projecteden.nexus.models.shop;
 
 import com.mongodb.DBObject;
-import dev.morphia.annotations.Converters;
-import dev.morphia.annotations.Embedded;
-import dev.morphia.annotations.Entity;
-import dev.morphia.annotations.Id;
-import dev.morphia.annotations.PostLoad;
+import dev.morphia.annotations.*;
 import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
 import gg.projecteden.nexus.features.shops.ShopUtils;
+import gg.projecteden.nexus.features.shops.Shops;
 import gg.projecteden.nexus.features.shops.providers.ResourceWorldMarketProvider.AutoSellBehavior;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -19,21 +17,10 @@ import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.IOUtils;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import lombok.*;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Axolotl;
@@ -50,27 +37,10 @@ import org.jetbrains.annotations.Nullable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
-import static gg.projecteden.nexus.features.shops.ShopUtils.giveItems;
-import static gg.projecteden.nexus.features.shops.ShopUtils.prettyMoney;
-import static gg.projecteden.nexus.features.shops.Shops.PREFIX;
-import static gg.projecteden.nexus.utils.ItemUtils.getShulkerContents;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.PlayerUtils.hasRoomFor;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.StringUtils.pretty;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Data
 @Entity(value = "shop", noClassnameStored = true)
@@ -105,13 +75,13 @@ public class Shop implements PlayerOwnedObject {
 	public void setDescription(List<String> description) {
 		this.description = new ArrayList<>() {{
 			for (String line : description)
-				if (!isNullOrEmpty(stripColor(line).replace(StringUtils.getColorChar(), "")))
+				if (!Nullables.isNullOrEmpty(StringUtils.stripColor(line).replace(StringUtils.getColorChar(), "")))
 					add(line.startsWith("&") ? line : "&f" + line);
 		}};
 	}
 
 	public boolean isMarket() {
-		return uuid.equals(UUID0);
+		return uuid.equals(UUIDUtils.UUID0);
 	}
 
 	public List<String> getDescriptionArray() {
@@ -336,7 +306,7 @@ public class Shop implements PlayerOwnedObject {
 					priceAmount = "";
 				}
 
-				Shop.log(uuid, customer.getUniqueId(), shopGroup, stripColor(pretty(item).split(" ", 2)[1]), item.getAmount(), exchangeType, price, priceAmount);
+				Shop.log(uuid, customer.getUniqueId(), shopGroup, StringUtils.stripColor(StringUtils.pretty(item).split(" ", 2)[1]), item.getAmount(), exchangeType, price, priceAmount);
 			}
 		}
 
@@ -366,10 +336,10 @@ public class Shop implements PlayerOwnedObject {
 					variant = meta.getVariant();
 
 				builder.modelId(variant.ordinal());
-				builder.lore("&7Axolotl Type: " + camelCase(variant));
+				builder.lore("&7Axolotl Type: " + StringUtils.camelCase(variant));
 			}
 
-			if (!getShulkerContents(item).isEmpty())
+			if (!ItemUtils.getShulkerContents(item).isEmpty())
 				builder.lore("&7Right click to view contents");
 
 			if (item.getLore() != null) {
@@ -504,7 +474,7 @@ public class Shop implements PlayerOwnedObject {
 
 		default void process(Player customer) {
 			processOne(customer);
-			PlayerUtils.send(customer, PREFIX + explainPurchase());
+			PlayerUtils.send(customer, Shops.PREFIX + explainPurchase());
 		}
 
 		default int processAll(Player customer) {
@@ -521,7 +491,7 @@ public class Shop implements PlayerOwnedObject {
 				}
 			}
 
-			PlayerUtils.send(customer, PREFIX + explainPurchase(count));
+			PlayerUtils.send(customer, Shops.PREFIX + explainPurchase(count));
 			return count;
 		}
 
@@ -540,7 +510,7 @@ public class Shop implements PlayerOwnedObject {
 				}
 			}
 
-			PlayerUtils.send(customer, PREFIX + explainPurchase(count));
+			PlayerUtils.send(customer, Shops.PREFIX + explainPurchase(count));
 			return count;
 		}
 
@@ -598,8 +568,8 @@ public class Shop implements PlayerOwnedObject {
 
 		@Override
 		public void validateProcessMany(Player customer) {
-			if (!hasRoomFor(customer, getProduct().getItem()))
-				throw new InvalidInputException("You do not have enough inventory space for " + pretty(getProduct().getItem()));
+			if (!PlayerUtils.hasRoomFor(customer, getProduct().getItem()))
+				throw new InvalidInputException("You do not have enough inventory space for " + StringUtils.pretty(getProduct().getItem()));
 		}
 
 		@Override
@@ -608,17 +578,17 @@ public class Shop implements PlayerOwnedObject {
 
 			product.setStock(product.getStock() - product.getItem().getAmount());
 			transaction(customer);
-			giveItems(customer.getUniqueId(), product.getShopGroup(), product.getItem());
+			ShopUtils.giveItems(customer.getUniqueId(), product.getShopGroup(), product.getItem());
 		}
 
 		@Override
 		public String prettyPrice(int count) {
-			return prettyMoney(price * count);
+			return ShopUtils.prettyMoney(price * count);
 		}
 
 		@Override
 		public String explainPurchase(int count) {
-			return "You purchased &e" + pretty(product.getItem(), count) + " &3for &e" + prettyPrice(count);
+			return "You purchased &e" + StringUtils.pretty(product.getItem(), count) + " &3for &e" + prettyPrice(count);
 		}
 
 		private void transaction(Player customer) {
@@ -626,7 +596,7 @@ public class Shop implements PlayerOwnedObject {
 				return;
 
 			TransactionCause cause = product.isMarket() ? TransactionCause.MARKET_SALE : TransactionCause.SHOP_SALE;
-			Transaction transaction = cause.of(customer, product.getShop(), BigDecimal.valueOf(price), product.getShopGroup(), pretty(product.getItem()));
+			Transaction transaction = cause.of(customer, product.getShop(), BigDecimal.valueOf(price), product.getShopGroup(), StringUtils.pretty(product.getItem()));
 			new BankerService().transfer(customer, product.getShop(), BigDecimal.valueOf(price), product.getShopGroup(), transaction);
 		}
 
@@ -689,8 +659,8 @@ public class Shop implements PlayerOwnedObject {
 
 		@Override
 		public void validateProcessMany(Player customer) {
-			if (!hasRoomFor(customer, getProduct().getItem()))
-				throw new InvalidInputException("You do not have enough inventory space for " + pretty(getProduct().getItem()));
+			if (!PlayerUtils.hasRoomFor(customer, getProduct().getItem()))
+				throw new InvalidInputException("You do not have enough inventory space for " + StringUtils.pretty(getProduct().getItem()));
 		}
 
 		@Override
@@ -700,17 +670,17 @@ public class Shop implements PlayerOwnedObject {
 			product.setStock(product.getStock() - product.getItem().getAmount());
 			customer.getInventory().removeItem(price);
 			product.getShop().addHolding(product.getShopGroup(), price);
-			giveItems(customer.getUniqueId(), product.getShopGroup(), product.getItem());
+			ShopUtils.giveItems(customer.getUniqueId(), product.getShopGroup(), product.getItem());
 		}
 
 		@Override
 		public String prettyPrice(int count) {
-			return pretty(price, count);
+			return StringUtils.pretty(price, count);
 		}
 
 		@Override
 		public String explainPurchase(int count) {
-			return "You purchased &e" + pretty(product.getItem(), count) + " &3for &e" + prettyPrice(count);
+			return "You purchased &e" + StringUtils.pretty(product.getItem(), count) + " &3for &e" + prettyPrice(count);
 		}
 
 		@Override
@@ -766,8 +736,8 @@ public class Shop implements PlayerOwnedObject {
 		public void validateProcessOne(Player customer) {
 			checkStock();
 
-			if (isNullOrEmpty(getMatchingItems(customer)))
-				throw new InvalidInputException("You do not have " + pretty(product.getItem()) + " to sell");
+			if (Nullables.isNullOrEmpty(getMatchingItems(customer)))
+				throw new InvalidInputException("You do not have " + StringUtils.pretty(product.getItem()) + " to sell");
 		}
 
 		@Override
@@ -793,7 +763,7 @@ public class Shop implements PlayerOwnedObject {
 			Supplier<Integer> count = () -> found.stream().mapToInt(ItemStack::getAmount).sum();
 			Supplier<Integer> left = () -> needed - count.get();
 			for (ItemStack item : customer.getInventory()) {
-				if (isNullOrAir(item))
+				if (Nullables.isNullOrAir(item))
 					continue;
 
 				ItemStack cloned = item.clone();
@@ -816,7 +786,7 @@ public class Shop implements PlayerOwnedObject {
 
 		public BigDecimal processResourceMarket(Player customer, ItemStack item) {
 			if (product.getItem().getAmount() != 1)
-				throw new InvalidInputException("Resource market product amount must be 1 (" + pretty(product.getItem()) + ")");
+				throw new InvalidInputException("Resource market product amount must be 1 (" + StringUtils.pretty(product.getItem()) + ")");
 
 			BigDecimal profit = new BigDecimal(0);
 			for (int i = 0; i < item.getAmount(); i++) {
@@ -831,19 +801,19 @@ public class Shop implements PlayerOwnedObject {
 
 		@Override
 		public String prettyPrice(int count) {
-			return prettyMoney(price * count);
+			return ShopUtils.prettyMoney(price * count);
 		}
 
 		@Override
 		public String explainPurchase(int count) {
-			return "You sold &e" + pretty(product.getItem(), count) + " &3for &e" + prettyPrice(count);
+			return "You sold &e" + StringUtils.pretty(product.getItem(), count) + " &3for &e" + prettyPrice(count);
 		}
 
 		private void transaction(Player customer) {
 			if (price <= 0)
 				return;
 			TransactionCause cause = product.isMarket() ? TransactionCause.MARKET_PURCHASE : TransactionCause.SHOP_PURCHASE;
-			Transaction transaction = cause.of(product.getShop(), customer, BigDecimal.valueOf(price), product.getShopGroup(), pretty(product.getItem()));
+			Transaction transaction = cause.of(product.getShop(), customer, BigDecimal.valueOf(price), product.getShopGroup(), StringUtils.pretty(product.getItem()));
 			new BankerService().transfer(product.getShop(), customer, BigDecimal.valueOf(price), product.getShopGroup(), transaction);
 		}
 
@@ -868,7 +838,7 @@ public class Shop implements PlayerOwnedObject {
 			else
 				return Arrays.asList(
 					desc,
-					"&7Stock: " + stockColor() + prettyMoney(product.getCalculatedStock(), false),
+					"&7Stock: " + stockColor() + ShopUtils.prettyMoney(product.getCalculatedStock(), false),
 					"&7Owner: &e" + Nickname.of(product.getShop())
 				);
 		}
@@ -877,7 +847,7 @@ public class Shop implements PlayerOwnedObject {
 		public List<String> getOwnLore() {
 			return Arrays.asList(
 				"&7Buying &e" + product.getItem().getAmount() + " &7for &a" + prettyPrice(),
-				"&7Stock: " + stockColor() + prettyMoney(product.getCalculatedStock(), false)
+				"&7Stock: " + stockColor() + ShopUtils.prettyMoney(product.getCalculatedStock(), false)
 			);
 		}
 

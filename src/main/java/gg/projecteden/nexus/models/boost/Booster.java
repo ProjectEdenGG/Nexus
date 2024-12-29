@@ -16,11 +16,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
@@ -29,8 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Data
 @Entity(value = "booster", noClassnameStored = true)
@@ -104,7 +98,7 @@ public class Booster implements PlayerOwnedObject {
 		}
 
 		public ItemBuilder getDisplayItem() {
-			return type.getDisplayItem().name("&e" + camelCase(type) + " &7- &6" + getMultiplierFormatted());
+			return type.getDisplayItem().name("&e" + StringUtils.camelCase(type) + " &7- &6" + getMultiplierFormatted());
 		}
 
 		@NotNull
@@ -118,7 +112,7 @@ public class Booster implements PlayerOwnedObject {
 
 			if (!isPersonal()) {
 				if (config().hasBoost(type))
-					throw new InvalidInputException("There is already an active " + camelCase(type) + " boost");
+					throw new InvalidInputException("There is already an active " + StringUtils.camelCase(type) + " boost");
 			}
 
 			config().addBoost(this);
@@ -127,11 +121,11 @@ public class Booster implements PlayerOwnedObject {
 			if (!isPersonal()) {
 				type.onActivate();
 				DiscordHandler.deleteHistoryAndSendMessage();
-				broadcast("&e" + getNickname() + " &3has &aactivated &3a &e" + getMultiplierFormatted() + " " + camelCase(type) + " boost &3for &e" + getTimeLeft() + "&3!");
+				broadcast("&e" + getNickname() + " &3has &aactivated &3a &e" + getMultiplierFormatted() + " " + StringUtils.camelCase(type) + " boost &3for &e" + getTimeLeft() + "&3!");
 			}
 			else {
 				sendMessage(new JsonBuilder(StringUtils.getPrefix("Boosts")).group()
-					.next("&3You have &aactivated &3a &epersonal" + getMultiplierFormatted() + " " + camelCase(type) + " boost &3for &e" + getTimeLeft() + "&3!"));
+					.next("&3You have &aactivated &3a &epersonal" + getMultiplierFormatted() + " " + StringUtils.camelCase(type) + " boost &3for &e" + getTimeLeft() + "&3!"));
 			}
 
 			save();
@@ -141,13 +135,13 @@ public class Booster implements PlayerOwnedObject {
 			config().removeBoost(this);
 			if (!isPersonal()) {
 				type.onExpire();
-				broadcast("&e" + getNickname() + "'s &e" + getMultiplierFormatted() + " " + camelCase(type) + " boost &3has &cexpired");
+				broadcast("&e" + getNickname() + "'s &e" + getMultiplierFormatted() + " " + StringUtils.camelCase(type) + " boost &3has &cexpired");
 				DiscordHandler.editMessage();
 				// TODO Auto start next in queue?
 			}
 			else {
 				sendMessage(new JsonBuilder(StringUtils.getPrefix("Boosts")).group()
-					.next("&3Your personal &e" + camelCase(type) + " boost &3has &cexpired"));
+					.next("&3Your personal &e" + StringUtils.camelCase(type) + " boost &3has &cexpired"));
 			}
 
 			save();
@@ -159,12 +153,12 @@ public class Booster implements PlayerOwnedObject {
 			cancelled = true;
 
 			if (!isPersonal()) {
-				broadcast("&e" + getNickname() + "'s &e" + getMultiplierFormatted() + " " + camelCase(type) + " boost &3has been &ccancelled");
+				broadcast("&e" + getNickname() + "'s &e" + getMultiplierFormatted() + " " + StringUtils.camelCase(type) + " boost &3has been &ccancelled");
 				DiscordHandler.editMessage();
 			}
 			else {
 				sendMessage(new JsonBuilder(StringUtils.getPrefix("Boosts")).group()
-					.next("&3Your personal &e" + camelCase(type) + " boost &3has been &ccancelled"));
+					.next("&3Your personal &e" + StringUtils.camelCase(type) + " boost &3has been &ccancelled"));
 			}
 
 			save();
