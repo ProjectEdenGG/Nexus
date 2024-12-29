@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 import com.mongodb.MongoNamespace;
 import gg.projecteden.api.common.EdenAPI;
 import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.ReflectionUtils;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.mongodb.MongoService;
@@ -20,6 +22,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFo
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
@@ -36,11 +39,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
-import static gg.projecteden.api.common.utils.UUIDUtils.isUuid;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Aliases("db")
 @Permission(Group.ADMIN)
@@ -269,7 +267,7 @@ public class DatabaseCommand extends CustomCommand {
 	public static final Map<String, MongoService<? extends DatabaseObject>> services = new HashMap<>();
 
 	static {
-		for (var service : subTypesOf(MongoService.class, "gg.projecteden")) {
+		for (var service : ReflectionUtils.subTypesOf(MongoService.class, "gg.projecteden")) {
 			if (Modifier.isAbstract(service.getModifiers()))
 				continue;
 
@@ -300,16 +298,16 @@ public class DatabaseCommand extends CustomCommand {
 
 	@ConverterFor(UUID.class)
 	UUID convertToUUID(String value) {
-		if (isNullOrEmpty(value))
+		if (Nullables.isNullOrEmpty(value))
 			return null;
 
 		if ("0".equals(value))
-			return UUID0;
+			return UUIDUtils.UUID0;
 
 		if ("app".equalsIgnoreCase(value))
 			return EdenAPI.get().getAppUuid();
 
-		if (isUuid(value))
+		if (UUIDUtils.isUuid(value))
 			return UUID.fromString(value);
 
 		if (value.startsWith("hash-"))

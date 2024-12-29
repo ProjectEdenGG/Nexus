@@ -16,10 +16,9 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.voter.VoterService;
+import gg.projecteden.nexus.utils.StringUtils;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
-
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Aliases("invited")
 public class InviteRewardsCommand extends CustomCommand {
@@ -40,7 +39,7 @@ public class InviteRewardsCommand extends CustomCommand {
 	void send(Player invited) {
 		Player inviter = player();
 		if (inviter.equals(invited))
-			error(colorize("You cannot invite yourself!"));
+			error(StringUtils.colorize("You cannot invite yourself!"));
 
 		if (Nerd.of(inviter).getFirstJoin().isAfter(Nerd.of(invited).getFirstJoin()))
 			error("You joined after &e" + invited.getName() + "&c, so you can't have invited them!");

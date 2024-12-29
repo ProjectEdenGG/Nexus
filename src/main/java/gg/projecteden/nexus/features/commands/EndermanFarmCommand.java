@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.features.regionapi.MovementType;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
 import gg.projecteden.nexus.features.warps.Warps;
@@ -37,8 +38,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID_REGEX;
 
 @NoArgsConstructor
 @Aliases("endfarm")
@@ -176,7 +175,7 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 	}
 
 	private boolean isEndermanFarmRegion(String region) {
-		return region.matches("endermanfarm-" + UUID_REGEX);
+		return region.matches("endermanfarm-" + UUIDUtils.UUID_REGEX);
 	}
 
 	private OfflinePlayer getOwner(Location location) {

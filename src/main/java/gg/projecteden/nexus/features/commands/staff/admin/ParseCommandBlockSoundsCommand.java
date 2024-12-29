@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.LocationUtils.CardinalDirection;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -27,8 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static gg.projecteden.nexus.utils.Utils.sortByKey;
-
 @HideFromWiki
 @NoArgsConstructor
 @Permission(Group.ADMIN)
@@ -44,7 +43,7 @@ public class ParseCommandBlockSoundsCommand extends CustomCommand implements Lis
 		look(start, null);
 		AtomicReference<String> all = new AtomicReference<>("");
 
-		sortByKey(sounds).forEach((wait, commands) -> {
+		Utils.sortByKey(sounds).forEach((wait, commands) -> {
 			String code = "Tasks.wait(" + wait + ", () -> {";
 			for (String command : commands) {
 				String[] args = command

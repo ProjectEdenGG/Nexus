@@ -25,8 +25,6 @@ import org.bukkit.entity.Player;
 
 import java.util.Collections;
 
-import static gg.projecteden.nexus.utils.Distance.distance;
-
 @Permission(Group.STAFF)
 public class WhereIsCommand extends CustomCommand {
 	private final WhereIsService service = new WhereIsService();
@@ -117,7 +115,7 @@ public class WhereIsCommand extends CustomCommand {
 			if (!viewer.getWorld().equals(glower.getWorld()))
 				continue;
 
-			Distance distance = distance(viewer, glower);
+			Distance distance = Distance.distance(viewer, glower);
 			if (distance.gte(threshold) && distance.lte(200))
 				glow(glower, viewer);
 			else

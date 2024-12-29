@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NoArgsConstructor;
@@ -18,8 +19,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
 @Aliases({"ci", "clear"})
@@ -76,7 +75,7 @@ public class ClearInventoryCommand extends CustomCommand implements Listener {
 
 			for (int i = 0; i < contents.length; i++) {
 				ItemStack content = contents[i];
-				if (isNullOrAir(content))
+				if (Nullables.isNullOrAir(content))
 					continue;
 
 				if (new ItemBuilder(content).is(ItemSetting.TRASHABLE))
@@ -98,7 +97,7 @@ public class ClearInventoryCommand extends CustomCommand implements Listener {
 			String PREFIX = StringUtils.getPrefix("ClearInventory");
 			if (cache.containsKey(getKey())) {
 				for (ItemStack itemStack : player.getInventory().getContents()) {
-					if (!isNullOrAir(itemStack)) {
+					if (!Nullables.isNullOrAir(itemStack)) {
 						PlayerUtils.send(player, PREFIX + "Your inventory must be empty to restore an undo");
 						return;
 					}

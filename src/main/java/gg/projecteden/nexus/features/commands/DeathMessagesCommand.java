@@ -9,6 +9,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
+import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -31,6 +32,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -67,10 +69,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.regex.Pattern;
-
-import static gg.projecteden.nexus.features.discord.Discord.discordize;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static org.apache.commons.lang.StringUtils.countMatches;
 
 @NoArgsConstructor
 public class DeathMessagesCommand extends CustomCommand implements Listener {
@@ -192,7 +190,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 	@Description("View custom death messages for a specific translation key")
 	void list(CustomDeathMessage config, @Arg("1") int page) {
 		final List<String> customMessages = config.getCustom();
-		if (isNullOrEmpty(customMessages))
+		if (Nullables.isNullOrEmpty(customMessages))
 			error("No custom messages for key &e" + config.getKey());
 
 		send(PREFIX + "Custom messages for key &e" + config.getKey());
@@ -203,8 +201,8 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 	@Path("suggest <key> <message...>")
 	@Description("Suggest a new custom death message for a specific translation key")
 	void suggest(CustomDeathMessage config, String message) {
-		final int expectedVariables = countMatches(config.getOriginal(), "%s");
-		final int foundVariables = countMatches(message, "%s");
+		final int expectedVariables = org.apache.commons.lang.StringUtils.countMatches(config.getOriginal(), "%s");
+		final int foundVariables = org.apache.commons.lang.StringUtils.countMatches(message, "%s");
 
 		if (expectedVariables != foundVariables)
 			error("Your message must contain the same amount of variables (&e%s&c) as the default message " +
@@ -280,7 +278,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 			if (player.getKiller() != null)
 				deathString = deathString.replace(player.getKiller().getName(), Nickname.of(player.getKiller()));
 		}
-		Broadcast.discord().message(discordize(deathString)).send();
+		Broadcast.discord().message(Discord.discordize(deathString)).send();
 	}
 
 	private void local(Player player, JsonBuilder output) {
@@ -301,7 +299,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		for (Component child : component.children()) {
 			if (child instanceof TextComponent childText) {
 				final String content = childText.content();
-				if (!isNullOrEmpty(content)) {
+				if (!Nullables.isNullOrEmpty(content)) {
 					playerName = content;
 					break;
 				}

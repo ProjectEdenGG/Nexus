@@ -12,13 +12,12 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.entity.Player;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Aliases("rank")
 public class RanksCommand extends CustomCommand {
@@ -84,9 +83,9 @@ public class RanksCommand extends CustomCommand {
 
 			String formattedRank = rank.getColoredName();
 			if (rank.equals(Rank.GUEST))
-				formattedRank = colorize("&8" + rank.getName());
+				formattedRank = StringUtils.colorize("&8" + rank.getName());
 			else if (rank.equals(Rank.MEMBER))
-				formattedRank = colorize("&7" + rank.getName());
+				formattedRank = StringUtils.colorize("&7" + rank.getName());
 
 			jsonBuilder.get().next("&3[+] " + formattedRank);
 			jsonBuilder.get().command("/" + rank.name().toLowerCase());

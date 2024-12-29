@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
@@ -25,8 +26,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static gg.projecteden.nexus.features.menus.MenuUtils.handleException;
 
 @HideFromWiki // TODO
 @NoArgsConstructor
@@ -86,7 +85,7 @@ public class DumpsterDivingCommand extends CustomCommand implements Listener {
 				try {
 					open(viewer);
 				} catch (Exception ex) {
-					handleException(viewer, PREFIX, ex);
+					MenuUtils.handleException(viewer, PREFIX, ex);
 				}
 			}));
 
@@ -103,7 +102,7 @@ public class DumpsterDivingCommand extends CustomCommand implements Listener {
 							service.save(dumpster);
 							PlayerUtils.giveItem(viewer, item);
 						} catch (Exception ex) {
-							handleException(viewer, PREFIX, ex);
+							MenuUtils.handleException(viewer, PREFIX, ex);
 						}
 					}));
 

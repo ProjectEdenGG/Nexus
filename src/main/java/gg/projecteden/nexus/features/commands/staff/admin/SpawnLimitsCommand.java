@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -10,13 +11,11 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.spawnlimits.SpawnLimits;
 import gg.projecteden.nexus.models.spawnlimits.SpawnLimits.SpawnLimitType;
 import gg.projecteden.nexus.models.spawnlimits.SpawnLimitsService;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
-
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
-import static gg.projecteden.nexus.utils.StringUtils.getWorldDisplayName;
 
 @Permission(Group.ADMIN)
 public class SpawnLimitsCommand extends CustomCommand {
@@ -60,7 +59,7 @@ public class SpawnLimitsCommand extends CustomCommand {
 	@Path("of [world]")
 	@Description("View a world's configured spawn limits")
 	void values(@Arg("current") World world) {
-		send(PREFIX + "&3" + getWorldDisplayName(world));
+		send(PREFIX + "&3" + StringUtils.getWorldDisplayName(world));
 
 		for (SpawnLimitType type : SpawnLimitType.values()) {
 			final int value = type.get(world);
@@ -76,7 +75,7 @@ public class SpawnLimitsCommand extends CustomCommand {
 	void set(SpawnLimitType type, int value, @Arg("current") World world) {
 		final int before = type.get(world);
 		type.set(world, value);
-		send(PREFIX + getWorldDisplayName(world.getName()) + " " + camelCase(type) + " spawn limit set to " + value + getDiff(before, value));
+		send(PREFIX + StringUtils.getWorldDisplayName(world.getName()) + " " + camelCase(type) + " spawn limit set to " + value + getDiff(before, value));
 	}
 
 	@Path("multiply <type> <multiplier> <fromWorld> <toWorld>")
@@ -97,7 +96,7 @@ public class SpawnLimitsCommand extends CustomCommand {
 		final int before = type.get(world);
 		final int value = type.getDefaultValue();
 		type.set(world, value);
-		send(PREFIX + getWorldDisplayName(world.getName()) + " " + camelCase(type) + " spawn limit reset to " + value + getDiff(before, value));
+		send(PREFIX + StringUtils.getWorldDisplayName(world.getName()) + " " + camelCase(type) + " spawn limit reset to " + value + getDiff(before, value));
 	}
 
 	@Path("reset all")
@@ -116,7 +115,7 @@ public class SpawnLimitsCommand extends CustomCommand {
 		for (SpawnLimitType value : SpawnLimitType.values())
 			value.set(world, value.getDefaultValue());
 
-		send(PREFIX + "All " + getWorldDisplayName(world) + " spawn limits reset to default");
+		send(PREFIX + "All " + StringUtils.getWorldDisplayName(world) + " spawn limits reset to default");
 	}
 
 	@Path("reset allWorlds [type]")
@@ -146,7 +145,7 @@ public class SpawnLimitsCommand extends CustomCommand {
 
 		service.save(limits);
 		send(PREFIX + "Saved");
-		send(service.asPrettyJson(UUID0));
+		send(service.asPrettyJson(UUIDUtils.UUID0));
 	}
 
 	@NotNull

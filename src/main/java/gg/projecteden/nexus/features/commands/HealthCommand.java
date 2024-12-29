@@ -16,8 +16,6 @@ import org.bukkit.entity.Player;
 
 import java.util.Collections;
 
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-
 @Redirect(from = "/entityhealth", to = "/health target")
 public class HealthCommand extends CustomCommand {
 
@@ -37,7 +35,7 @@ public class HealthCommand extends CustomCommand {
 					error("You cannot use cheats in this world");
 
 			player.setHealth(health);
-			send(PREFIX + stripColor(player.getName()) + "'s health set to &e" + healthFormat);
+			send(PREFIX + gg.projecteden.nexus.utils.StringUtils.stripColor(player.getName()) + "'s health set to &e" + healthFormat);
 		}
 	}
 
@@ -55,10 +53,10 @@ public class HealthCommand extends CustomCommand {
 
 		String healthFormat = getFormattedHealth(target);
 		if (health == null)
-			send(PREFIX + stripColor(target.getName()) + "'s health is &e" + healthFormat);
+			send(PREFIX + gg.projecteden.nexus.utils.StringUtils.stripColor(target.getName()) + "'s health is &e" + healthFormat);
 		else {
 			target.setHealth(health);
-			send(PREFIX + stripColor(target.getName()) + "'s health set to &e" + healthFormat);
+			send(PREFIX + gg.projecteden.nexus.utils.StringUtils.stripColor(target.getName()) + "'s health set to &e" + healthFormat);
 		}
 	}
 

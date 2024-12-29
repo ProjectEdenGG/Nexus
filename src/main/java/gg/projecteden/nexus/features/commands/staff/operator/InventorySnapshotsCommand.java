@@ -1,7 +1,9 @@
 package gg.projecteden.nexus.features.commands.staff.operator;
 
 import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -19,6 +21,7 @@ import gg.projecteden.nexus.models.inventoryhistory.InventoryHistory;
 import gg.projecteden.nexus.models.inventoryhistory.InventoryHistory.InventorySnapshot;
 import gg.projecteden.nexus.models.inventoryhistory.InventoryHistory.SnapshotReason;
 import gg.projecteden.nexus.models.inventoryhistory.InventoryHistoryService;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -52,14 +55,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
-import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
-import static gg.projecteden.api.common.utils.TimeUtils.shortishDateTimeFormat;
-import static gg.projecteden.nexus.features.menus.MenuUtils.formatInventoryContents;
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.PlayerUtils.getPlayer;
-import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
-
 @NoArgsConstructor
 @Permission(Group.SENIOR_STAFF)
 public class InventorySnapshotsCommand extends CustomCommand implements Listener {
@@ -80,13 +75,13 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 
 		send(PREFIX + "Snapshots for &e" + history.getName());
 		BiFunction<InventorySnapshot, String, JsonBuilder> formatter = (snapshot, index) -> {
-			String timestamp = shortishDateTimeFormat(snapshot.getTimestamp());
+			String timestamp = TimeUtils.shortishDateTimeFormat(snapshot.getTimestamp());
 			String timestampIso = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(snapshot.getTimestamp());
 			String worldName = snapshot.getLocation().getWorld().getName();
 			String reasonString = snapshot.getReason().getColor() + camelCase(snapshot.getReason());
 			return json(index + " &e" + timestamp + " &7- &3Reason: &e" + reasonString + "&3, World: &e" + worldName)
 					.hover("&3Time since: &e" + Timespan.of(snapshot.getTimestamp()).format())
-					.hover("&3Location: &e" + getShortLocationString(snapshot.getLocation()))
+					.hover("&3Location: &e" + StringUtils.getShortLocationString(snapshot.getLocation()))
 					.command("/inventorysnapshots view " + history.getName() + " " + timestampIso);
 		};
 		paginate(history.getSnapshots(), formatter, "/inventorysnapshots " + history.getName(), page);
@@ -120,18 +115,18 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 				if (!snapshot.getLocation().getWorld().equals(world()))
 					continue;
 
-				nearbyDeaths.put(snapshot, distance(snapshot, location()).getRealDistance());
+				nearbyDeaths.put(snapshot, Distance.distance(snapshot, location()).getRealDistance());
 			}
 			service.save(history);
 		}
 
 		BiFunction<InventorySnapshot, String, JsonBuilder> function = (snapshot, index) -> {
-			String name = getPlayer(snapshot.getUuid()).getName();
+			String name = PlayerUtils.getPlayer(snapshot.getUuid()).getName();
 			int distance = nearbyDeaths.get(snapshot).intValue();
 			String timeSince = Timespan.of(snapshot.getTimestamp()).format();
 			return json(index + " &e" + name + " &7- " + distance + "m / " + timeSince + " ago")
 					.hover("&eClick to teleport")
-					.command("/tppos " + getShortLocationString(snapshot.getLocation()));
+					.command("/tppos " + StringUtils.getShortLocationString(snapshot.getLocation()));
 		};
 
 		paginate(Utils.sortByValue(nearbyDeaths).keySet(), function, "/inventorysnapshots nearbyDeaths", page);
@@ -176,8 +171,8 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 			ItemStack teleport = new ItemBuilder(Material.COMPASS).name("&eTeleport").build();
 			ItemStack info = new ItemBuilder(Material.BOOK).name("&eInfo")
 				.lore("&3Reason: &e" + snapshot.getReason().getColor() + StringUtils.camelCase(snapshot.getReason()))
-				.lore("&3Time: &e" + shortDateTimeFormat(snapshot.getTimestamp()))
-				.lore("&3Location: &e" + getShortLocationString(snapshot.getLocation()))
+				.lore("&3Time: &e" + TimeUtils.shortDateTimeFormat(snapshot.getTimestamp()))
+				.lore("&3Location: &e" + StringUtils.getShortLocationString(snapshot.getLocation()))
 				.lore("&3Levels: &e" + snapshot.getLevel())
 				.loreize(false)
 				.build();
@@ -197,7 +192,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 			}));
 			contents.set(0, 7, ClickableItem.of(teleport, e -> viewer.teleportAsync(snapshot.getLocation(), TeleportCause.COMMAND)));
 			contents.set(0, 8, ClickableItem.empty(info));
-			formatInventoryContents(contents, snapshot.getContents().toArray(ItemStack[]::new));
+			MenuUtils.formatInventoryContents(contents, snapshot.getContents().toArray(ItemStack[]::new));
 		}
 	}
 
@@ -210,7 +205,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 		if (!applyingToChest.containsKey(uuid))
 			return;
 
-		if (isNullOrAir(block) || !MaterialTag.CHESTS.isTagged(block.getType()))
+		if (Nullables.isNullOrAir(block) || !MaterialTag.CHESTS.isTagged(block.getType()))
 			return;
 
 		if (!(block.getState() instanceof InventoryHolder holder))

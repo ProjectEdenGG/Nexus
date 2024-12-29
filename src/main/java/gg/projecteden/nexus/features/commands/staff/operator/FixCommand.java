@@ -6,12 +6,11 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.NonNull;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Permission(Group.SENIOR_STAFF)
 public class FixCommand extends CustomCommand {
@@ -40,7 +39,7 @@ public class FixCommand extends CustomCommand {
 	@Description("Repairs all items in a players inventory")
 	void all() {
 		for (ItemStack item : player().getInventory().getContents())
-			if (!isNullOrAir(item))
+			if (!Nullables.isNullOrAir(item))
 				fix(item);
 		send(PREFIX + "All items repaired");
 	}

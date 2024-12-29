@@ -5,12 +5,11 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Location;
 
 import java.text.DecimalFormat;
-
-import static gg.projecteden.nexus.utils.Distance.distance;
 
 public class CalcSpeedCommand extends CustomCommand {
 	private Location[] locations = new Location[4];
@@ -44,9 +43,9 @@ public class CalcSpeedCommand extends CustomCommand {
 	double dist1, dist2, dist3, bps, bph, kph, mph;
 
 	void calculate() {
-		dist1 = distance(locations[0], locations[1]).getRealDistance();
-		dist2 = distance(locations[1], locations[2]).getRealDistance();
-		dist3 = distance(locations[2], locations[3]).getRealDistance();
+		dist1 = Distance.distance(locations[0], locations[1]).getRealDistance();
+		dist2 = Distance.distance(locations[1], locations[2]).getRealDistance();
+		dist3 = Distance.distance(locations[2], locations[3]).getRealDistance();
 
 		bps = ((dist1 + dist2 + dist3) / 3) * 4;
 		bph = bps * 3600;

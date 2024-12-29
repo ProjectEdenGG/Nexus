@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -14,6 +15,7 @@ import gg.projecteden.nexus.utils.ItemUtils.PotionWrapper;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.HasPlayer;
@@ -51,9 +53,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-
 @NoArgsConstructor
 @Aliases({"spvp", "duel", "fight"})
 @Description("Toggle PVP in the survival world")
@@ -68,7 +67,7 @@ public class PVPCommand extends CustomCommand implements Listener {
 			for (Player player : OnlinePlayers.where().worldGroup(WorldGroup.SURVIVAL).get()) {
 				PVP pvp = service.get(player);
 				if (pvp.isEnabled() && pvp.isShowActionBar())
-					player.sendActionBar(colorize("&cPVP is enabled"));
+					player.sendActionBar(StringUtils.colorize("&cPVP is enabled"));
 			}
 		});
 	}
@@ -135,7 +134,7 @@ public class PVPCommand extends CustomCommand implements Listener {
 			return;
 		}
 
-		if (isVanished(victim.getOnlinePlayer()) || isVanished(attacker.getOnlinePlayer())) {
+		if (Vanish.isVanished(victim.getOnlinePlayer()) || Vanish.isVanished(attacker.getOnlinePlayer())) {
 			event.setCancelled(true);
 			return;
 		}

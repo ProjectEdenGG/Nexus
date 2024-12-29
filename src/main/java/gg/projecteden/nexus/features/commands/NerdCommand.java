@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -20,6 +21,7 @@ import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 import org.bukkit.OfflinePlayer;
 
@@ -27,11 +29,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
-import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
-import static gg.projecteden.nexus.utils.StringUtils.paste;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class NerdCommand extends CustomCommand {
 	private final NerdService service = new NerdService();
@@ -50,7 +47,7 @@ public class NerdCommand extends CustomCommand {
 	@Path("about <about...>")
 	@Description("Set your About Me")
 	void about(String about) {
-		service.edit(player(), nerd -> nerd.setAbout(stripColor(about)));
+		service.edit(player(), nerd -> nerd.setAbout(StringUtils.stripColor(about)));
 		send(PREFIX + "Set your about to: &e" + nerd().getAbout());
 	}
 
@@ -59,7 +56,7 @@ public class NerdCommand extends CustomCommand {
 	@Description("Update a player's first join date")
 	void setFirstJoin(Nerd nerd, LocalDateTime firstJoin) {
 		service.edit(nerd, _nerd -> _nerd.setFirstJoin(firstJoin));
-		send(PREFIX + "Set " + nerd.getNickname() + "'s first join date to &e" + shortDateTimeFormat(nerd.getFirstJoin()));
+		send(PREFIX + "Set " + nerd.getNickname() + "'s first join date to &e" + TimeUtils.shortDateTimeFormat(nerd.getFirstJoin()));
 	}
 
 	@Path("setPromotionDate <player> <date>")
@@ -67,7 +64,7 @@ public class NerdCommand extends CustomCommand {
 	@Description("Update a player's promotion date")
 	void setPromotionDate(Nerd nerd, LocalDate promotionDate) {
 		service.edit(nerd, _nerd -> _nerd.setPromotionDate(promotionDate));
-		send(PREFIX + "Set " + nerd.getNickname() + "'s promotion date to &e" + shortDateFormat(nerd.getPromotionDate()));
+		send(PREFIX + "Set " + nerd.getNickname() + "'s promotion date to &e" + TimeUtils.shortDateFormat(nerd.getPromotionDate()));
 	}
 
 	@Async
@@ -75,7 +72,7 @@ public class NerdCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	@Description("Generate a paste of a player's NBT data file")
 	void getDataFile(@Arg("self") Nerd nerd) {
-		send(json().next(paste(new NBTPlayer(nerd).getNbtFile().asNBTString())));
+		send(json().next(StringUtils.paste(new NBTPlayer(nerd).getNbtFile().asNBTString())));
 	}
 
 	@ConverterFor(Nerd.class)

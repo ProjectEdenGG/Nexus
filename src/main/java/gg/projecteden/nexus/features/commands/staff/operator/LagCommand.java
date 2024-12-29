@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.staff.operator;
 
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.scoreboard.ScoreboardLine;
@@ -19,8 +20,6 @@ import java.lang.management.ManagementFactory;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
-
 @Permission(Group.SENIOR_STAFF)
 @Aliases({"gc", "memory", "uptime"})
 public class LagCommand extends CustomCommand {
@@ -33,7 +32,7 @@ public class LagCommand extends CustomCommand {
 	@Description("View server performance information")
 	void lag() {
 		LocalDateTime startTime = Utils.epochSecond(ManagementFactory.getRuntimeMXBean().getStartTime());
-		send(json("&3Uptime: &e" + Timespan.of(startTime).format()).hover("&3" + shortDateTimeFormat(startTime)));
+		send(json("&3Uptime: &e" + Timespan.of(startTime).format()).hover("&3" + TimeUtils.shortDateTimeFormat(startTime)));
 		send(ScoreboardLine.TPS.render(null));
 		send("&3Max ram: &e" + Runtime.getRuntime().maxMemory() / 1024 / 1024);
 		send("&3Allocated ram: &e" + Runtime.getRuntime().totalMemory() / 1024 / 1024);

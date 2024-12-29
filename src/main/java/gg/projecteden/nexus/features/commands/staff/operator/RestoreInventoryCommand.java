@@ -16,6 +16,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -29,8 +30,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import static gg.projecteden.nexus.utils.ItemUtils.isInventoryEmpty;
 
 @Aliases("restoreinv")
 @Permission(Group.SENIOR_STAFF)
@@ -91,7 +90,7 @@ public class RestoreInventoryCommand extends CustomCommand {
 			try {
 				switch (type.toLowerCase()) {
 					case "inventory" -> {
-						if (!isInventoryEmpty(owner.getInventory())) {
+						if (!ItemUtils.isInventoryEmpty(owner.getInventory())) {
 							sendInventoryRestoreNotEmptyMessage(owner, "inventory");
 							break;
 						}
@@ -101,7 +100,7 @@ public class RestoreInventoryCommand extends CustomCommand {
 						sendInventoryRestoreSuccessMessage(owner, "inventory");
 					}
 					case "enderchest" -> {
-						if (!isInventoryEmpty(owner.getEnderChest())) {
+						if (!ItemUtils.isInventoryEmpty(owner.getEnderChest())) {
 							sendInventoryRestoreNotEmptyMessage(owner, "ender chest");
 							break;
 						}

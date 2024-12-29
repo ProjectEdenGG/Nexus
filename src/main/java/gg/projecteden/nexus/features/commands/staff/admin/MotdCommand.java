@@ -20,6 +20,7 @@ import gg.projecteden.nexus.models.punishments.PunishmentsService;
 import gg.projecteden.nexus.utils.DateUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -36,11 +37,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
-
-import static gg.projecteden.nexus.utils.DateUtils.getEnd;
-import static gg.projecteden.nexus.utils.DateUtils.getStart;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
 @Permission(Group.ADMIN)
@@ -64,14 +60,14 @@ public class MotdCommand extends CustomCommand implements Listener {
 	@Path("<text...>")
 	@Description("Update the server's server list MOTD")
 	void motd(String text) {
-		motd = colorize(text.replace("\\n", System.lineSeparator()));
+		motd = StringUtils.colorize(text.replace("\\n", System.lineSeparator()));
 		send(PREFIX + "Motd updated");
 	}
 
 	@Path("line2 <text...>")
 	@Description("Update the server's server list MOTD second line")
 	void motd_line2_(String text) {
-		motd = motdTop + colorize(text.replace("\\n", System.lineSeparator()));
+		motd = motdTop + StringUtils.colorize(text.replace("\\n", System.lineSeparator()));
 		send(PREFIX + "Motd updated");
 	}
 
@@ -93,7 +89,7 @@ public class MotdCommand extends CustomCommand implements Listener {
 		GeoIP geoIP = getBestMatch(ipAddress);
 		if (geoIP == null) {
 			if (motd != null)
-				event.setMotd(colorize(motd));
+				event.setMotd(StringUtils.colorize(motd));
 			return;
 		}
 
@@ -106,7 +102,7 @@ public class MotdCommand extends CustomCommand implements Listener {
 		// Message
 		String motd = getMOTD(nerd);
 		if (motd != null)
-			event.setMotd(colorize(motd));
+			event.setMotd(StringUtils.colorize(motd));
 
 		// Icon
 		event.setServerIcon(getIcon());
@@ -135,7 +131,7 @@ public class MotdCommand extends CustomCommand implements Listener {
 			line2 = "&3 &3 &3 &3 Now available: &6&lDecorations&3! &c/decor store";
 
 		if (line2 != null) {
-			int padding = (int) (((MAX_CHARS_ISH - stripColor(line2).length()) / 2.0) * SPACE_WIDTH_MULTIPLIER);
+			int padding = (int) (((MAX_CHARS_ISH - StringUtils.stripColor(line2).length()) / 2.0) * SPACE_WIDTH_MULTIPLIER);
 			message = motdTop + "&f ".repeat(padding) + line2;
 		}
 
@@ -155,15 +151,15 @@ public class MotdCommand extends CustomCommand implements Listener {
 	@AllArgsConstructor
 	private enum IconType {
 		DEFAULT(null, null),
-		PRIDE(getStart(Month.JUNE), getEnd(Month.JUNE)),
+		PRIDE(DateUtils.getStart(Month.JUNE), DateUtils.getEnd(Month.JUNE)),
 		//BEAR_FAIR(getStart(Month.JUNE, 29), getEnd(Month.JULY, 15)),
 
-		DECEMBER(getStart(Month.DECEMBER), getEnd(Month.DECEMBER)),
-		OCTOBER(getStart(Month.OCTOBER), getEnd(Month.OCTOBER)),
-		TESTING1(getStart(Month.APRIL), getEnd(Month.APRIL)),
-		TESTING2(getStart(Month.AUGUST), getEnd(Month.AUGUST)),
-		TESTING3(getStart(Month.JANUARY), getEnd(Month.JANUARY)),
-		TESTING4(getStart(Month.SEPTEMBER), getEnd(Month.SEPTEMBER)),
+		DECEMBER(DateUtils.getStart(Month.DECEMBER), DateUtils.getEnd(Month.DECEMBER)),
+		OCTOBER(DateUtils.getStart(Month.OCTOBER), DateUtils.getEnd(Month.OCTOBER)),
+		TESTING1(DateUtils.getStart(Month.APRIL), DateUtils.getEnd(Month.APRIL)),
+		TESTING2(DateUtils.getStart(Month.AUGUST), DateUtils.getEnd(Month.AUGUST)),
+		TESTING3(DateUtils.getStart(Month.JANUARY), DateUtils.getEnd(Month.JANUARY)),
+		TESTING4(DateUtils.getStart(Month.SEPTEMBER), DateUtils.getEnd(Month.SEPTEMBER)),
 		;
 
 		@Getter

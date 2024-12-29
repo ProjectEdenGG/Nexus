@@ -11,6 +11,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
@@ -25,9 +26,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @DoubleSlash
 @NoArgsConstructor
@@ -61,13 +59,13 @@ public class SchematicBrushCommand extends CustomCommand implements Listener {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
 		ItemStack tool = ItemUtils.getTool(player);
-		if (isNullOrAir(tool)) return;
+		if (Nullables.isNullOrAir(tool)) return;
 
 		ItemMeta meta = tool.getItemMeta();
 		if (!meta.getDisplayName().equals(brushName)) return;
 
 		List<String> lore = meta.getLore();
-		if (isNullOrEmpty(lore)) return;
+		if (gg.projecteden.api.common.utils.Nullables.isNullOrEmpty(lore)) return;
 
 		String schematic = StringUtils.stripColor(meta.getLore().get(0));
 		WorldEditUtils worldedit = new WorldEditUtils(player);

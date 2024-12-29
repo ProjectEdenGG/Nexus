@@ -20,8 +20,6 @@ import org.bukkit.entity.EntityType;
 import java.awt.Color;
 import java.util.Arrays;
 
-import static gg.projecteden.nexus.utils.StringUtils.decolorize;
-
 @Permission(Group.STAFF)
 @Description("Test rank color updates")
 public class NewRankColorsCommand extends CustomCommand {
@@ -78,7 +76,7 @@ public class NewRankColorsCommand extends CustomCommand {
 		line(5);
 		Arrays.asList(Rank.values()).forEach(rank -> {
 			if (!rank.isActive() && rank != Rank.NOBLE) return;
-			String color = decolorize(newRankColors.getColors().getOrDefault(rank, rank.getChatColor().toString()));
+			String color = StringUtils.decolorize(newRankColors.getColors().getOrDefault(rank, rank.getChatColor().toString()));
 			String hex;
 			if (StringUtils.getHexPattern().matcher(color).matches()) {
 				hex = color.replace("&", "");

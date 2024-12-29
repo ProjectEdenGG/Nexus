@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
@@ -38,8 +39,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @NoArgsConstructor
 @Aliases("delivery")
@@ -188,7 +187,7 @@ public class MailCommand extends CustomCommand implements Listener {
 
 		@Override
 		public void open(Player viewer, int page) {
-			if (isNullOrEmpty(mailer.getUnreadMail(worldGroup)))
+			if (Nullables.isNullOrEmpty(mailer.getUnreadMail(worldGroup)))
 				viewer.sendMessage(JsonBuilder.fromError("Mail", "There is no mail in your " + StringUtils.camelCase(worldGroup) + " mailbox"));
 			else
 				super.open(viewer, page);
@@ -264,7 +263,7 @@ public class MailCommand extends CustomCommand implements Listener {
 		Mailer mailer = service.get(player);
 
 		List<Mail> mails = new ArrayList<>(mailer.getMail(worldGroup));
-		if (isNullOrEmpty(mails))
+		if (Nullables.isNullOrEmpty(mails))
 			return;
 
 		if (!new CooldownService().check(player, "youhavemail", TickTime.MINUTE.x(5)))

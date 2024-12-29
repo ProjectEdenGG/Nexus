@@ -5,12 +5,11 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NoArgsConstructor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
-
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Aliases({"colours", "color"})
 @NoArgsConstructor
@@ -42,6 +41,6 @@ public class ColorsCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onSignEdit(SignChangeEvent event) {
 		for (int i = 0; i < event.getLines().length; i++)
-			event.setLine(i, colorize(event.getLine(i)));
+			event.setLine(i, StringUtils.colorize(event.getLine(i)));
 	}
 }

@@ -1,8 +1,10 @@
 package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
+import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -37,9 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
-import static gg.projecteden.nexus.features.chat.Chat.StaticChannel.GLOBAL;
 
 @Aliases("welc")
 @NoArgsConstructor
@@ -78,7 +77,7 @@ public class WelcomeCommand extends CustomCommand implements Listener {
 			if (OnlinePlayers.where(player -> Rank.of(player).isMod() && Dev.KODA.isNot(player) && AFK.get(player).isNotAfk()).count() < 4)
 				return;
 
-			if (!new CooldownService().check(UUID0, "bumpReminder", TickTime.DAY))
+			if (!new CooldownService().check(UUIDUtils.UUID0, "bumpReminder", TickTime.DAY))
 				return;
 
 			String url = "https://docs.google.com/document/d/1MVFG2ipdpCY42cUzZyVsIbjVlPRCiN0gmYL89sJNRTw/edit?usp=sharing";
@@ -130,10 +129,10 @@ public class WelcomeCommand extends CustomCommand implements Listener {
 	}
 
 	private void sayWelcome(@NotNull Player welcomer, @Nullable Player welcomee) {
-		if (new CooldownService().check(UUID0, "welc", TickTime.SECOND.x(20)))
-			Chatter.of(welcomer).say(GLOBAL.getChannel(), getLongMessage(welcomee));
+		if (new CooldownService().check(UUIDUtils.UUID0, "welc", TickTime.SECOND.x(20)))
+			Chatter.of(welcomer).say(StaticChannel.GLOBAL.getChannel(), getLongMessage(welcomee));
 		else
-			Chatter.of(welcomer).say(GLOBAL.getChannel(), welcomee == null ? genericMessage : getShortMessage(welcomee));
+			Chatter.of(welcomer).say(StaticChannel.GLOBAL.getChannel(), welcomee == null ? genericMessage : getShortMessage(welcomee));
 	}
 
 	private static boolean isPastResourcePackScreen(Player player) {

@@ -4,13 +4,12 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class EmptyBucketCommand extends CustomCommand {
 
@@ -25,7 +24,7 @@ public class EmptyBucketCommand extends CustomCommand {
 		ItemStack bucket = new ItemStack(Material.BUCKET);
 
 		ItemStack heldItem = playerInv.getItem(playerInv.getHeldItemSlot());
-		if (isNullOrAir(heldItem) || !isBucket(heldItem))
+		if (Nullables.isNullOrAir(heldItem) || !isBucket(heldItem))
 			error("You must be holding a bucket type");
 
 		if (heldItem == bucket) error("Nothing to empty");

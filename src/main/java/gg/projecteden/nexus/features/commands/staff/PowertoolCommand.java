@@ -11,6 +11,7 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.powertool.PowertoolService;
 import gg.projecteden.nexus.models.powertool.PowertoolUser;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Material;
@@ -24,8 +25,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @NoArgsConstructor
 @Permission(Group.STAFF)
@@ -46,7 +45,7 @@ public class PowertoolCommand extends CustomCommand implements Listener {
 	void run(String command) {
 		Material material = getToolRequired().getType();
 
-		if (isNullOrEmpty(command))
+		if (Nullables.isNullOrEmpty(command))
 			if (user.getPowertools().containsKey(material)) {
 				user.getPowertools().remove(material);
 				service.save(user);

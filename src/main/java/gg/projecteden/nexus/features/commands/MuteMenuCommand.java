@@ -39,8 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 public class MuteMenuCommand extends CustomCommand implements Listener {
@@ -316,7 +315,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 			MuteMenuItem(@NotNull String title, @NotNull Material material, List<String> lore) {
 				this.title = title;
 				this.material = material;
-				this.lore = lore.stream().map(line -> "&f" + line).collect(toList());
+				this.lore = lore.stream().map(line -> "&f" + line).collect(Collectors.toList());
 				if (!this.lore.isEmpty())
 					this.lore.add(0, "");
 			}

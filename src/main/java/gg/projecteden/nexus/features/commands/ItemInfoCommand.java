@@ -16,22 +16,17 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.SerializationUtils.Json.serialize;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.nexus.utils.StringUtils.paste;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-import static gg.projecteden.nexus.utils.Utils.dump;
 
 @Aliases({"nbt", "itemdb"})
 public class ItemInfoCommand extends CustomCommand {
@@ -87,7 +82,7 @@ public class ItemInfoCommand extends CustomCommand {
 		try {
 			BlockData blockData = material.createBlockData();
 			send(" BlockData: " + material.data.getSimpleName());
-			dump(blockData).forEach((method, output) -> send(" - " + method + "(): " + output));
+			Utils.dump(blockData).forEach((method, output) -> send(" - " + method + "(): " + output));
 			line();
 		} catch (Exception ignored) {}
 		send("Is Decoration: " + (DecorationConfig.of(tool) != null));
@@ -97,7 +92,7 @@ public class ItemInfoCommand extends CustomCommand {
 		line();
 		send("Material: " + tool.getType() + " (" + tool.getType().ordinal() + ")");
 
-		if (!isNullOrAir(tool)) {
+		if (!Nullables.isNullOrAir(tool)) {
 			final String nbtString = getNBTString(tool);
 
 			if (nbtString != null && !"{}".equals(nbtString)) {
@@ -105,12 +100,12 @@ public class ItemInfoCommand extends CustomCommand {
 				if (length > 256) {
 					Tasks.async(() -> {
 						if (length < 32000) // max char limit in command blocks
-							send("NBT: " + colorize(nbtString));
-						String url = paste(stripColor(nbtString));
+							send("NBT: " + StringUtils.colorize(nbtString));
+						String url = StringUtils.paste(StringUtils.stripColor(nbtString));
 						send(json("&e&l[Click to Open NBT]").url(url).hover(url));
 					});
 				} else {
-					send("NBT: " + colorize(nbtString));
+					send("NBT: " + StringUtils.colorize(nbtString));
 					send(json("&e&l[Click to Copy NBT]").hover("&e&l[Click to Copy NBT]").copy(nbtString));
 				}
 			}
@@ -123,7 +118,7 @@ public class ItemInfoCommand extends CustomCommand {
 	void serializeJson(Material material, @Arg("1") int amount) {
 		ItemStack tool = material == null ? getToolRequired() : new ItemStack(material);
 
-		send(json("&e&l[Click to Copy NBT]").hover("&e&l[Click to Copy NBT]").copy(Json.toString(serialize(tool))));
+		send(json("&e&l[Click to Copy NBT]").hover("&e&l[Click to Copy NBT]").copy(Json.toString(Json.serialize(tool))));
 	}
 
 	@Nullable

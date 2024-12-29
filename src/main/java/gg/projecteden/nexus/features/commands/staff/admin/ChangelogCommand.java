@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -25,8 +26,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
 
 @Permission(Group.ADMIN)
 public class ChangelogCommand extends CustomCommand {
@@ -79,7 +78,7 @@ public class ChangelogCommand extends CustomCommand {
 
 		send(PREFIX + "Changelog entries");
 		BiFunction<ChangelogEntry, String, JsonBuilder> formatter = (entry, index) -> {
-			String timestamp = shortDateTimeFormat(entry.getTimestamp());
+			String timestamp = TimeUtils.shortDateTimeFormat(entry.getTimestamp());
 			String timestampIso = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(entry.getTimestamp());
 			return json(index + " &e" + timestamp + " &7- &3" + entry.getMinecraftVersion() + " #" + entry.getPaperVersion())
 					.hover("&3Plugins: &e" + entry.getPluginVersions().size())
@@ -100,7 +99,7 @@ public class ChangelogCommand extends CustomCommand {
 	ChangelogEntry convertToChangelogEntry(String value) {
 		LocalDateTime timestamp = convertToLocalDateTime(value);
 		return changelog.getEntries().stream().filter(entry -> entry.getTimestamp().isEqual(timestamp)).findAny()
-				.orElseThrow(() -> new InvalidInputException("Changelog entry not found with timestamp " + shortDateTimeFormat(timestamp)));
+				.orElseThrow(() -> new InvalidInputException("Changelog entry not found with timestamp " + TimeUtils.shortDateTimeFormat(timestamp)));
 	}
 
 	@TabCompleterFor(ChangelogEntry.class)

@@ -7,14 +7,13 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
-
-import static gg.projecteden.nexus.utils.PlayerUtils.getPlayer;
 
 public class BookCommand extends CustomCommand {
 	private EquipmentSlot hand;
@@ -72,7 +71,7 @@ public class BookCommand extends CustomCommand {
 	}
 
 	private boolean canEdit() {
-		return isSelf(getPlayer(meta.getAuthor())) || hasPermission(Group.STAFF);
+		return isSelf(PlayerUtils.getPlayer(meta.getAuthor())) || hasPermission(Group.STAFF);
 	}
 
 }

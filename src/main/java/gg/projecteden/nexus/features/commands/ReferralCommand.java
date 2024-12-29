@@ -29,8 +29,10 @@ import gg.projecteden.nexus.models.referral.ReferralService;
 import gg.projecteden.nexus.models.rule.HasReadRules;
 import gg.projecteden.nexus.models.rule.HasReadRulesService;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -52,9 +54,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.Utils.sortByValueReverse;
 
 @NoArgsConstructor
 public class ReferralCommand extends CustomCommand implements Listener {
@@ -126,7 +125,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	@Description("View all manual inputs")
 	void others(@Arg("1") int page) {
 		List<Referral> referrals = service.getAll().stream()
-				.filter(referral -> !isNullOrEmpty(referral.getExtra()))
+				.filter(referral -> !Nullables.isNullOrEmpty(referral.getExtra()))
 				.toList();
 
 		if (referrals.isEmpty())
@@ -162,10 +161,10 @@ public class ReferralCommand extends CustomCommand implements Listener {
 		line();
 		send(PREFIX + "Stats:");
 		send(" &3Manual input:");
-		sortByValueReverse(manuals).forEach((origin, count) -> send("&7  " + count + " - &e" + origin.getDisplay()));
+		Utils.sortByValueReverse(manuals).forEach((origin, count) -> send("&7  " + count + " - &e" + origin.getDisplay()));
 		line();
 		send(" &3IPs:");
-		sortByValueReverse(ips).forEach((ip, count) -> send("&7  " + count + " - &e" + ip));
+		Utils.sortByValueReverse(ips).forEach((ip, count) -> send("&7  " + count + " - &e" + ip));
 	}
 
 	@Data
@@ -399,7 +398,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 		new ReferralService().edit(event.getPlayer(), referral -> {
 			referral.setIp(ip);
 
-			if (isNullOrEmpty(referral.getOriginalIp()))
+			if (Nullables.isNullOrEmpty(referral.getOriginalIp()))
 				referral.setOriginalIp(ip);
 		});
 	}

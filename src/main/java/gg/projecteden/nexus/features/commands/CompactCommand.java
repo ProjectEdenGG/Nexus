@@ -7,13 +7,12 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Aliases("condense")
 @Permission(Group.STAFF)
@@ -43,7 +42,7 @@ public class CompactCommand extends CustomCommand {
 	public void combineItems() {
 		Loop:
 		for (int slot = 0; slot < inventory().getContents().length; slot++) {
-			if (isNullOrAir(inventory().getContents()[slot])) continue;
+			if (Nullables.isNullOrAir(inventory().getContents()[slot])) continue;
 			if (inventory().getContents()[slot].getMaxStackSize() == 1) continue;
 			ItemStack item = inventory().getContents()[slot].clone();
 			int amount = item.getAmount();
@@ -69,7 +68,7 @@ public class CompactCommand extends CustomCommand {
 	@Path("hand")
 	@Description("Combine the item in your hand into an existing stack")
 	void hand() {
-		if (isNullOrAir(inventory().getItemInMainHand()))
+		if (Nullables.isNullOrAir(inventory().getItemInMainHand()))
 			error("You cannot be holding air while running this command");
 		compact(inventory().getItemInMainHand());
 	}

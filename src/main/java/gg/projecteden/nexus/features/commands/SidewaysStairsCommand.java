@@ -14,6 +14,7 @@ import gg.projecteden.nexus.models.blockorientation.BlockOrientationUser.Stairs.
 import gg.projecteden.nexus.models.blockorientation.BlockOrientationUserService;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -26,8 +27,6 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Aliases("sws")
 @NoArgsConstructor
@@ -99,7 +98,7 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 			return;
 
 		final Block block = event.getClickedBlock();
-		if (isNullOrAir(block))
+		if (Nullables.isNullOrAir(block))
 			return;
 
 		final Player player = event.getPlayer();

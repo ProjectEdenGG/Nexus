@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
@@ -18,6 +19,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.Utils;
@@ -32,9 +34,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @NoArgsConstructor
 @Permission(Group.SENIOR_STAFF)
@@ -90,7 +89,7 @@ public class RebootCommand extends CustomCommand implements Listener {
 			return;
 
 		final List<ReloadCondition> conditions = RebootCommand.conditions.stream()
-			.filter(condition -> isNullOrEmpty(excludedConditions) || !excludedConditions.contains(condition))
+			.filter(condition -> Nullables.isNullOrEmpty(excludedConditions) || !excludedConditions.contains(condition))
 			.toList();
 
 		conditions.forEach(ReloadCondition::run);
@@ -113,7 +112,7 @@ public class RebootCommand extends CustomCommand implements Listener {
 	}
 
 	public static void kick(Player player) {
-		player.kickPlayer(colorize("&6&lRebooting server!\n&eCome back in about " + TIME + "\n&f\n&7" + TimeUtils.shortDateTimeFormat(LocalDateTime.now()) + " EST"));
+		player.kickPlayer(StringUtils.colorize("&6&lRebooting server!\n&eCome back in about " + TIME + "\n&f\n&7" + TimeUtils.shortDateTimeFormat(LocalDateTime.now()) + " EST"));
 	}
 
 	private static void title() {

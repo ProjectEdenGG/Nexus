@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands.staff;
 import com.destroystokyo.paper.ClientOption;
 import com.destroystokyo.paper.ClientOption.ChatVisibility;
 import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -28,16 +29,14 @@ import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.getLocationString;
 
 @Aliases({"whotf", "whothefuck"})
 @Permission(Group.STAFF)
@@ -67,7 +66,7 @@ public class WhoIsCommand extends CustomCommand {
 
 		Hours hours = hoursService.get(nerd);
 		String rank = nerd.getRank().getColoredName();
-		String firstJoin = shortDateTimeFormat(nerd.getFirstJoin());
+		String firstJoin = TimeUtils.shortDateTimeFormat(nerd.getFirstJoin());
 		String lastJoinQuitLabel = null;
 		String lastJoinQuitDate = null;
 		String lastJoinQuitDiff = null;
@@ -75,12 +74,12 @@ public class WhoIsCommand extends CustomCommand {
 		if (nerd.isOnline()) {
 			if (nerd.getLastQuit() != null) {
 				lastJoinQuitLabel = "Last Quit";
-				lastJoinQuitDate = shortDateTimeFormat(nerd.getLastQuit());
+				lastJoinQuitDate = TimeUtils.shortDateTimeFormat(nerd.getLastQuit());
 				lastJoinQuitDiff = Timespan.of(nerd.getLastQuit()).format();
 			}
 		} else {
 			lastJoinQuitLabel = "Last Join";
-			lastJoinQuitDate = shortDateTimeFormat(nerd.getLastQuit());
+			lastJoinQuitDate = TimeUtils.shortDateTimeFormat(nerd.getLastQuit());
 			lastJoinQuitDiff = Timespan.of(nerd.getLastJoin()).format();
 		}
 		Set<String> pastNames = nerd.getPastNames();
@@ -111,14 +110,14 @@ public class WhoIsCommand extends CustomCommand {
 
 		try {
 			GeoIP geoip = geoipService.get(nerd);
-			if (!isNullOrEmpty(geoip.getIp()))
+			if (!Nullables.isNullOrEmpty(geoip.getIp()))
 				json.newline().next("&3GeoIP: &e" + geoip.getFriendlyLocationString()).hover("&e" + geoip.getIp()).suggest(geoip.getIp()).group();
 		} catch (InvalidInputException ex) {
 			json.newline().next("&3GeoIP: &c" + ex.getMessage()).group();
 		}
 
 		try {
-			json.newline().next("&3Location: &e" + getLocationString(nerd.getLocation())).hover("&eClick to TP").command("/tp " + nerd.getName()).group();
+			json.newline().next("&3Location: &e" + StringUtils.getLocationString(nerd.getLocation())).hover("&eClick to TP").command("/tp " + nerd.getName()).group();
 		} catch (InvalidInputException ex) {
 			json.newline().next("&3Location: &c" + ex.getMessage()).group();
 		}

@@ -17,8 +17,6 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static gg.projecteden.nexus.utils.StringUtils.getCoordinateString;
-
 @Permission(Group.STAFF)
 public class LocationsCommand extends CustomCommand {
 	public LocationsCommand(CommandEvent event) {
@@ -46,7 +44,7 @@ public class LocationsCommand extends CustomCommand {
 						.copy(target.getUniqueId().toString())
 						.hover("&fClick to copy UUID")
 						.group()
-						.next(Component.text(getCoordinateString(target.getLocation()), NamedTextColor.YELLOW))
+						.next(Component.text(StringUtils.getCoordinateString(target.getLocation()), NamedTextColor.YELLOW))
 						.next(Component.text("  " + TimespanBuilder.ofSeconds(playtimeSeconds).noneDisplay(true).format(), playtimeColor))
 						.command("/tp " + target.getName()));
 			});
