@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.safecracker.menus;
 
 import gg.projecteden.api.common.annotations.Disabled;
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
@@ -12,8 +13,6 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-
-import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
 
 @Disabled
 @Title("SafeCracker")
@@ -37,7 +36,7 @@ public class SafeCrackerCheckProvider extends InventoryProvider {
 				++found;
 				SafeCrackerPlayer.SafeCrackerPlayerNPC playerNPC = safeCrackerPlayer.getGames().get(game.getName()).getNpcs().get(npc.getName());
 				item = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(PlayerUtils.getPlayer(npc.getName())).name("&e" + npc.getName())
-						.lore("&3Found: &e" + shortDateTimeFormat(playerNPC.getFound()))
+						.lore("&3Found: &e" + TimeUtils.shortDateTimeFormat(playerNPC.getFound()))
 						.lore("&3Question: &e" + npc.getQuestion())
 						.lore("&3Answer: &e" + playerNPC.getAnswer())
 						.lore("")

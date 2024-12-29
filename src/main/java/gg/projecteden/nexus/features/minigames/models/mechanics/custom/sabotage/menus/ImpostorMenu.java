@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.SabotageMatchDat
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.Tasks;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -19,8 +20,6 @@ import org.bukkit.SoundCategory;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 // this should be called SabotageMenu but there's already a SabotageMenu so oh well
 @Getter
@@ -51,7 +50,7 @@ public class ImpostorMenu extends InventoryProvider {
 			boolean canSabotage = matchData.getSabotage() == null;
 			ItemBuilder builder = new ItemBuilder(canSabotage ? Material.WHITE_CONCRETE : Material.BLACK_CONCRETE);
 			for (Tasks tasks : sabotages) {
-				contents.set(row, col, ClickableItem.of(builder.clone().name(camelCase(tasks.name())).build(), $ -> sabotage(minigamer, tasks)));
+				contents.set(row, col, ClickableItem.of(builder.clone().name(StringUtils.camelCase(tasks.name())).build(), $ -> sabotage(minigamer, tasks)));
 				row += 1;
 				if (row == 9) {
 					row = 0;

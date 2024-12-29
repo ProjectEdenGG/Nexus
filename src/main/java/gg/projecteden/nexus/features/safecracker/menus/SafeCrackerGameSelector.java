@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.safecracker.menus;
 
 import gg.projecteden.api.common.annotations.Disabled;
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.anvilgui.AnvilGUI;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
@@ -14,8 +15,6 @@ import org.bukkit.inventory.ItemStack;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
-import static gg.projecteden.nexus.features.menus.MenuUtils.openAnvilMenu;
-
 @Disabled
 @Title("SafeCracker Game Selector")
 public class SafeCrackerGameSelector extends InventoryProvider {
@@ -27,7 +26,7 @@ public class SafeCrackerGameSelector extends InventoryProvider {
 		addBackItem(e -> new SafeCrackerAdminProvider().open(viewer));
 
 		contents.set(0, 4, ClickableItem.of(new ItemBuilder(Material.EMERALD_BLOCK).name("&aNew Event").build(), e -> {
-			openAnvilMenu(viewer, "New Game...", (player1, response) -> {
+			MenuUtils.openAnvilMenu(viewer, "New Game...", (player1, response) -> {
 				service.getActiveEvent().setActive(false);
 				service.get0().getGames().put(response, new SafeCrackerEvent.SafeCrackerGame(response, true, LocalDateTime.now(), "", "", new HashMap<>()));
 				service.save(event);

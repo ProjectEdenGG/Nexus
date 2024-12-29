@@ -14,6 +14,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.objective.ObjectiveUser;
 import gg.projecteden.nexus.models.objective.ObjectiveUser.Objective;
 import gg.projecteden.nexus.models.objective.ObjectiveUserService;
+import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
@@ -25,8 +26,6 @@ import org.bukkit.util.Vector;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.LocationUtils.toDegree;
 
 @Aliases("objective")
 @Permission(Group.ADMIN)
@@ -157,7 +156,7 @@ public class ObjectivesCommand extends CustomCommand {
 				return COMPASS_EMPTY;
 
 			Vector direction = player.getEyeLocation().toVector().subtract(objective.clone().add(0.5, 0.5, 0.5).toVector()).normalize();
-			final float heading = toDegree(Math.atan2(direction.getX(), direction.getZ()));
+			final float heading = LocationUtils.toDegree(Math.atan2(direction.getX(), direction.getZ()));
 
 			float yaw = Location.normalizeYaw(player.getLocation().getYaw());
 

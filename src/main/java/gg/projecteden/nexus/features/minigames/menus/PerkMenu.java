@@ -11,11 +11,10 @@ import gg.projecteden.nexus.features.minigames.menus.perks.PlayerPerksMenu;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
 
 import java.text.DecimalFormat;
-
-import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 @Rows(3)
 @Title("Minigame Collectibles")
@@ -31,7 +30,7 @@ public class PerkMenu extends InventoryProvider {
 
 		PerkOwner perkOwner = new PerkOwnerService().get(viewer);
 		contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.EMERALD).name("&2&lBalance")
-			.lore("&f" + FORMATTER.format(perkOwner.getTokens()) + plural(" token", perkOwner.getTokens()))
+			.lore("&f" + FORMATTER.format(perkOwner.getTokens()) + StringUtils.plural(" token", perkOwner.getTokens()))
 			.build()));
 	}
 }

@@ -51,9 +51,6 @@ import java.lang.annotation.Annotation;
 import java.time.Duration;
 import java.util.*;
 
-import static gg.projecteden.nexus.utils.StringUtils.left;
-import static gg.projecteden.nexus.utils.StringUtils.plural;
-
 public abstract class Mechanic implements Listener, Named, HasDescription, ComponentLike {
 
 	public Mechanic() {
@@ -197,7 +194,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 			int taskId = match.getTasks().countdown(Countdown.builder()
 					.duration(TickTime.SECOND.x(beginDelay))
 					.onSecond(i -> {
-						Component message = new JsonBuilder("&7Starting in &e" + plural(i + " second", i)).build();
+						Component message = new JsonBuilder("&7Starting in &e" + StringUtils.plural(i + " second", i)).build();
 						match.showTitle(Title.title(Component.empty(), message, Times.times(Duration.ZERO, Duration.ofSeconds(1), TickTime.TICK.duration(5))));
 						if (List.of(60, 30, 15, 5, 4, 3, 2, 1).contains(Math.toIntExact(i)))
 							match.broadcast(message);
@@ -339,7 +336,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	public abstract void balance(@NotNull List<Minigamer> minigamers);
 
 	public @NotNull String getScoreboardTitle(@NotNull Match match) {
-		return left(match.getArena().getName(), 16);
+		return StringUtils.left(match.getArena().getName(), 16);
 	}
 
 	/**

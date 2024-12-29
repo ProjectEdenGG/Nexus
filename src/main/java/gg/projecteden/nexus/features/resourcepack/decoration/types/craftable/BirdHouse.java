@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.craftable;
 
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.models.RecipeGroup;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
@@ -22,8 +23,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 public class BirdHouse extends DecorationConfig implements CraftableDecoration, MultiState {
 	@Getter
@@ -67,7 +66,7 @@ public class BirdHouse extends DecorationConfig implements CraftableDecoration, 
 		private final Material roof, hole, siding;
 
 		public String getName() {
-			return camelCase(this) + " Birdhouse";
+			return StringUtils.camelCase(this) + " Birdhouse";
 		}
 	}
 

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.utils;
 
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import lombok.Data;
@@ -12,9 +13,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
-
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-import static gg.projecteden.api.common.utils.StringUtils.getNumberWithSuffix;
 
 @Data
 public class MinigameNight {
@@ -54,7 +52,7 @@ public class MinigameNight {
 		until += ((hours > 0 || days > 0) ? "and " : "") + minutes + " minute" + ((minutes == 1) ? "" : "s");
 		this.until = until;
 
-		dateFormatted = camelCase(next.getDayOfWeek().name()) + ", " + camelCase(next.getMonth().name()) + " " + getNumberWithSuffix(next.getDayOfMonth());
+		dateFormatted = StringUtils.camelCase(next.getDayOfWeek().name()) + ", " + StringUtils.camelCase(next.getMonth().name()) + " " + StringUtils.getNumberWithSuffix(next.getDayOfMonth());
 		timeFormatted = next.format(DateTimeFormatter.ofPattern("h:mm a z"));
 	}
 

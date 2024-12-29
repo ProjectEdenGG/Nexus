@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.recipes.functionals;
 
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
+import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Material;
@@ -9,8 +10,6 @@ import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
-
-import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
 
 public class UncraftingShulkerBox extends FunctionalRecipe {
 
@@ -25,7 +24,7 @@ public class UncraftingShulkerBox extends FunctionalRecipe {
 
 	@Override
 	public @NotNull Recipe getRecipe() {
-		return shapeless()
+		return RecipeBuilder.shapeless()
 			.add(getMaterialTag())
 			.toMake(getResult())
 			.getRecipe();

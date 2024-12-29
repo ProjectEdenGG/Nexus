@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.Challenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.BiomeChallenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.common.IChallengeProgress;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -13,9 +14,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.StringUtils.an;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Data
 @RequiredArgsConstructor
@@ -32,7 +30,7 @@ public class BiomeChallengeProgress implements IChallengeProgress {
 				return Collections.emptySet();
 
 		return Set.of("Visit " + required.stream()
-			.map(biome -> an(camelCase(biome)) + " biome")
+			.map(biome -> StringUtils.an(camelCase(biome)) + " biome")
 			.collect(Collectors.joining(" or ")));
 	}
 

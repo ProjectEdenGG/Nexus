@@ -24,12 +24,10 @@ import org.bukkit.entity.Player;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.features.menus.MenuUtils.getLocationLore;
-import static java.util.Collections.singletonList;
 
 @Rows(5)
 public class ArenaMenu extends InventoryProvider {
@@ -168,8 +166,8 @@ public class ArenaMenu extends InventoryProvider {
 			@Override
 			List<String> getLore(Player player, Arena arena) {
 				if (arena.getSpectateLocation() == null)
-					return singletonList("null");
-				return getLocationLore(arena.getSpectateLocation());
+					return Collections.singletonList("null");
+				return MenuUtils.getLocationLore(arena.getSpectateLocation());
 			}
 
 		},
@@ -184,8 +182,8 @@ public class ArenaMenu extends InventoryProvider {
 			@Override
 			List<String> getLore(Player player, Arena arena) {
 				if (arena.getRespawnLocation() == null)
-					return singletonList("null");
-				return getLocationLore(arena.getRespawnLocation());
+					return Collections.singletonList("null");
+				return MenuUtils.getLocationLore(arena.getRespawnLocation());
 			}
 		},
 		RESPAWN_SECONDS(5, 3, Material.TOTEM_OF_UNDYING),

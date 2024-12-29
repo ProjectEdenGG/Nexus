@@ -13,14 +13,13 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 @Rows(2)
 @Title("Submit Scan")
@@ -63,7 +62,7 @@ public class MedicalScanTask extends AbstractTaskMenu {
 				});
 
 			int secondsLeft = (int) Math.ceil(rawSecondsLeft);
-			String duration = "&e" + secondsLeft + plural(" second", secondsLeft) + "&3 left";
+			String duration = "&e" + secondsLeft + StringUtils.plural(" second", secondsLeft) + "&3 left";
 			ClickableItem bar1 = ClickableItem.empty(new ItemBuilder(Material.GREEN_CONCRETE).name(duration).build());
 			ClickableItem bar2 = ClickableItem.empty(new ItemBuilder(Material.WHITE_CONCRETE).name(duration).build());
 			int greenBars = 8 - ((int) (rawSecondsLeft * .9) - 1);

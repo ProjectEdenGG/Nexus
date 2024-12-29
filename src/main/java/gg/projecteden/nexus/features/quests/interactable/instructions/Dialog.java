@@ -32,8 +32,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static gg.projecteden.nexus.utils.PlayerUtils.playerHas;
-
 @Data
 @RequiredArgsConstructor
 public class Dialog {
@@ -150,7 +148,7 @@ public class Dialog {
 
 	public Dialog giveIfMissing(ItemStack item) {
 		return instruction(quester -> {
-			if (!playerHas(quester, item))
+			if (!PlayerUtils.playerHas(quester, item))
 				PlayerUtils.giveItem(quester, item);
 		}, -1);
 	}

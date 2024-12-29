@@ -9,8 +9,6 @@ import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
-import static gg.projecteden.nexus.utils.SerializationUtils.Json.serialize;
-
 public class ItemStackConverter extends TypeConverter implements SimpleValueConverter {
 
 	public ItemStackConverter(Mapper mapper) {
@@ -21,7 +19,7 @@ public class ItemStackConverter extends TypeConverter implements SimpleValueConv
 	public Object encode(Object value, MappedField optionalExtraInfo) {
 		if (value == null) return null;
 
-		return BasicDBObject.parse(Json.toString(serialize((ItemStack) value)));
+		return BasicDBObject.parse(Json.toString(Json.serialize((ItemStack) value)));
 	}
 
 	@Override

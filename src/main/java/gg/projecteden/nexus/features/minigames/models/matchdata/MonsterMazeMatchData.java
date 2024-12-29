@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.monstermaze.MonsterMazePathfinder;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.Data;
@@ -18,8 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.Distance.distance;
 
 @Data
 @MatchDataFor(MonsterMaze.class)
@@ -58,7 +57,7 @@ public class MonsterMazeMatchData extends MatchData {
 
 	private Location getNewGoal(Location start, List<Location> goals) {
 		HashMap<Location, Double> distances = new HashMap<>();
-		goals.forEach(goal -> distances.put(goal, distance(start, goal).get()));
+		goals.forEach(goal -> distances.put(goal, Distance.distance(start, goal).get()));
 
 		List<Location> sorted = distances.entrySet().stream()
 			.sorted(Map.Entry.comparingByValue())

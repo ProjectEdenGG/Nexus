@@ -16,6 +16,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
@@ -37,8 +38,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Disabled
 @NoArgsConstructor
@@ -62,8 +61,8 @@ public class BasketballCommand extends CustomCommand implements Listener {
 	void save() {
 		ItemStack basketball = inventory().getItemInMainHand();
 		ItemMeta meta = basketball.getItemMeta();
-		meta.setDisplayName(colorize("&6&lBasketball"));
-		meta.setLore(Collections.singletonList(colorize("&eMinigame Lobby Basketball")));
+		meta.setDisplayName(StringUtils.colorize("&6&lBasketball"));
+		meta.setLore(Collections.singletonList(StringUtils.colorize("&eMinigame Lobby Basketball")));
 		basketball.setItemMeta(meta);
 		Nexus.getInstance().getConfig().set("minigames.lobby.basketball.item", basketball);
 		Nexus.getInstance().saveConfig();

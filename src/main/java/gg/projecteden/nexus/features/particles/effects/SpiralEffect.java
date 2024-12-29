@@ -17,9 +17,6 @@ import org.bukkit.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
-
 public class SpiralEffect {
 	@Getter
 	private int taskId;
@@ -95,9 +92,9 @@ public class SpiralEffect {
 			phi.updateAndGet(v -> v + Math.PI / 16);
 			for (double t = 0; t <= 2 * Math.PI; t += Math.PI / 16) {
 				for (double i = 0; i < 2; i += 1) {
-					double x = finalRadius * (2 * Math.PI - t) * cos(t + phi.get() + i * Math.PI);
+					double x = finalRadius * (2 * Math.PI - t) * Math.cos(t + phi.get() + i * Math.PI);
 					double y = 0.5 * t;
-					double z = finalRadius * (2 * Math.PI - t) * sin(t + phi.get() + i * Math.PI);
+					double z = finalRadius * (2 * Math.PI - t) * Math.sin(t + phi.get() + i * Math.PI);
 
 					newLoc.add(x, y, z);
 

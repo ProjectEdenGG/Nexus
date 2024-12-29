@@ -14,15 +14,14 @@ import gg.projecteden.nexus.models.punishments.PunishmentType;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.models.punishments.PunishmentsService;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.BiFunction;
-
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Collectors;
 
 public class HistoryCommand extends _JusticeCommand {
 	private final PunishmentsService service = new PunishmentsService();
@@ -47,7 +46,7 @@ public class HistoryCommand extends _JusticeCommand {
 
 		BiFunction<Punishment, String, JsonBuilder> formatter = (punishment, index) -> {
 			JsonBuilder json = punishment.getType().getHistoryDisplay(punishment);
-			int indexInt = Integer.parseInt(stripColor(index));
+			int indexInt = Integer.parseInt(StringUtils.stripColor(index));
 			if (indexInt % perPage != 0 && indexInt != player.getPunishments().size())
 				json.newline();
 			return json;
@@ -56,7 +55,7 @@ public class HistoryCommand extends _JusticeCommand {
 		List<Punishment> sorted = player.getPunishments().stream()
 				.sorted(Comparator.comparing(Punishment::getTimestamp).reversed())
 				.filter(punishment -> isStaff() || !isSelf(player) || punishment.getType() != PunishmentType.WATCHLIST)
-				.collect(toList());
+				.collect(Collectors.toList());
 
 		paginate(sorted, formatter, "/history " + player.getName(), page, perPage);
 	}

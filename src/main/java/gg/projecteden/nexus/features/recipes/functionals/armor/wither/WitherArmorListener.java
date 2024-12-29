@@ -7,12 +7,8 @@ import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.features.commands.SpeedCommand.SpeedType;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
@@ -35,8 +31,6 @@ import org.bukkit.util.Vector;
 
 import java.util.Arrays;
 
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-
 public class WitherArmorListener implements Listener {
 
 	public WitherArmorListener() {
@@ -57,7 +51,7 @@ public class WitherArmorListener implements Listener {
 	}
 
 	public boolean isWitherArmor(ItemStack item) {
-		if (isNullOrAir(item)) return false;
+		if (Nullables.isNullOrAir(item)) return false;
 		NBTItem nbtItem = new NBTItem(item);
 		if (!nbtItem.hasKey("wither-armor"))
 			return false;
@@ -89,7 +83,7 @@ public class WitherArmorListener implements Listener {
 
 	private void handleEvent(Player player) {
 		if (!hasFullSet(player)) return;
-		if (!isNullOrAir(player.getInventory().getItemInMainHand())) return;
+		if (!Nullables.isNullOrAir(player.getInventory().getItemInMainHand())) return;
 		if (new WorldGuardUtils(player).getRegionsAt(player.getLocation()).stream().anyMatch(region -> !region.getId().contains("wither"))) return;
 		if (!new CooldownService().check(player.getUniqueId(), "wither-armor-attack", TimeUtils.TickTime.SECOND.x(3))) return;
 		shootSkull(player, true);

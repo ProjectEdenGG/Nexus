@@ -34,8 +34,6 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-
 public class PlayerPlushieStoreMenu extends InventoryProvider {
 	private final PlayerPlushieUserService userService = new PlayerPlushieUserService();
 	private PlayerPlushieUser user;
@@ -54,7 +52,7 @@ public class PlayerPlushieStoreMenu extends InventoryProvider {
 		final List<ClickableItem> items = new ArrayList<>();
 		for (Tier tier : EnumUtils.valuesExcept(Tier.class, Tier.SERVER)) {
 			items.add(ClickableItem.empty(ResourcePackNumber.of(tier.ordinal() + 1, ColorType.CYAN).get()
-				.name(camelCase(tier))
+				.name(gg.projecteden.api.common.utils.StringUtils.camelCase(tier))
 				.itemFlags(ItemFlags.HIDE_ALL)));
 
 			for (Pose pose : Pose.of(tier)) {

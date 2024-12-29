@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.recipes.functionals;
 import com.destroystokyo.paper.ParticleBuilder;
 import de.tr7zw.nbtapi.NBT;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
+import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -28,8 +29,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
-
 public class Glue extends FunctionalRecipe {
 
 	private static final String NBT_KEY = "Glued";
@@ -49,7 +48,7 @@ public class Glue extends FunctionalRecipe {
 
 	@Override
 	public @NotNull Recipe getRecipe() {
-		return shaped("12", "34")
+		return RecipeBuilder.shaped("12", "34")
 			.add('1', Material.SLIME_BALL)
 			.add('2', Material.PAPER)
 			.add('3', Material.IRON_NUGGET)

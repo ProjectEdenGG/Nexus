@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.pr
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.Challenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.common.IItemChallenge;
 import gg.projecteden.nexus.utils.FuzzyItemStack;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.inventory.ItemStack;
 
@@ -10,8 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public interface IItemChallengeProgress extends IChallengeProgress {
 
@@ -42,7 +41,7 @@ public interface IItemChallengeProgress extends IChallengeProgress {
 
 		required.stream().map(FuzzyItemStack::clone).forEach(fuzzy -> {
 			for (ItemStack item : provided) {
-				if (isNullOrAir(item))
+				if (Nullables.isNullOrAir(item))
 					continue;
 
 				if (!fuzzy.getMaterials().contains(item.getType()))

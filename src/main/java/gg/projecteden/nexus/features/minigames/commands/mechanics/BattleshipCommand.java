@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigames.commands.mechanics;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.menus.api.SignMenuFactory;
 import gg.projecteden.nexus.features.minigames.mechanics.Battleship;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -21,6 +22,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.LocationUtils.CardinalDirection;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.Getter;
@@ -29,9 +31,6 @@ import lombok.NonNull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.features.menus.api.SignMenuFactory.ARROWS;
-import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
 
 @Aliases("bs")
 @HideFromWiki
@@ -64,7 +63,7 @@ public class BattleshipCommand extends CustomCommand {
 			error("You must be playing Battleship to use this command");
 	}
 
-	private static final String[] aimMenuLines = {"", ARROWS, "Enter a", "coordinate (A0)"};
+	private static final String[] aimMenuLines = {"", SignMenuFactory.ARROWS, "Enter a", "coordinate (A0)"};
 
 	@Path("aim [coordinate]")
 	void aim(@Arg(permission = Group.MODERATOR) Coordinate coordinate) {
@@ -152,13 +151,13 @@ public class BattleshipCommand extends CustomCommand {
 	@Permission(Group.MODERATOR)
 	@Path("toKitLocation <coordinate>")
 	void toKitLocation(Coordinate coordinate) {
-		minigamer.teleportAsync(getCenteredLocation(coordinate.getKitLocation()));
+		minigamer.teleportAsync(LocationUtils.getCenteredLocation(coordinate.getKitLocation()));
 	}
 
 	@Permission(Group.MODERATOR)
 	@Path("toPegLocation <coordinate>")
 	void toPegLocation(Coordinate coordinate) {
-		minigamer.teleportAsync(getCenteredLocation(coordinate.getPegLocation()));
+		minigamer.teleportAsync(LocationUtils.getCenteredLocation(coordinate.getPegLocation()));
 	}
 
 	@ConverterFor(Coordinate.class)

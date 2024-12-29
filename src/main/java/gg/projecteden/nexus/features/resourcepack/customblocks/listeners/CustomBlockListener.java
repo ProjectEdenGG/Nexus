@@ -70,8 +70,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-
 public class CustomBlockListener implements Listener {
 
 	public CustomBlockListener() {
@@ -123,7 +121,7 @@ public class CustomBlockListener implements Listener {
 			return;
 
 		ItemStack item = event.getCursor();
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return;
 
 		if (!CustomBlock.CustomBlockType.getItemMaterials().contains(item.getType()))
@@ -131,7 +129,7 @@ public class CustomBlockListener implements Listener {
 
 		Player player = (Player) event.getWhoClicked();
 		Block block = player.getTargetBlockExact(5);
-		if (isNullOrAir(block))
+		if (Nullables.isNullOrAir(block))
 			return;
 
 		CustomBlock customBlock = CustomBlock.from(block);
@@ -231,7 +229,7 @@ public class CustomBlockListener implements Listener {
 		if (ICustomTripwire.isNotEnabled() && clickedBlock.getType() == Material.TRIPWIRE)
 			return;
 
-		if (isNullOrAir(clickedBlock))
+		if (Nullables.isNullOrAir(clickedBlock))
 			return;
 
 		CustomBlocksLang.debug("\nPlayer Interact Event:");
@@ -465,7 +463,7 @@ public class CustomBlockListener implements Listener {
 		}
 
 		ItemStack itemInHand = event.getItem();
-		if (isNullOrAir(itemInHand)) {
+		if (Nullables.isNullOrAir(itemInHand)) {
 			return false;
 		}
 
@@ -540,7 +538,7 @@ public class CustomBlockListener implements Listener {
 		}
 
 		ItemStack itemInHand = event.getItem();
-		if (isNullOrAir(itemInHand)) {
+		if (Nullables.isNullOrAir(itemInHand)) {
 //			debug(" isPlacingBlock: item in hand is null or air");
 			return false;
 		}
@@ -608,11 +606,11 @@ public class CustomBlockListener implements Listener {
 			} else if (underneath.getType() == Material.WATER && Nullables.isNullOrAir(preBlock)) {
 				clickedBlock = underneath;
 
-			} else if (!isNullOrAir(preBlock)) {
+			} else if (!Nullables.isNullOrAir(preBlock)) {
 				return false;
 			}
 		} else {
-			if (!isNullOrAir(preBlock)) {
+			if (!Nullables.isNullOrAir(preBlock)) {
 				return false;
 			}
 		}
@@ -656,7 +654,7 @@ public class CustomBlockListener implements Listener {
 	private boolean placedVanillaBlock(PlayerInteractEvent event, Block clickedBlock, Player player, Block preBlock, boolean didClickedCustomBlock, Material material) {
 		CustomBlocksLang.debug("Placing vanilla block");
 
-		if (!isNullOrAir(preBlock)) {
+		if (!Nullables.isNullOrAir(preBlock)) {
 //			debug(" isPlacingBlock: preBlock is not air");
 			return false;
 		}
@@ -709,7 +707,7 @@ public class CustomBlockListener implements Listener {
 		if (!action.equals(Action.RIGHT_CLICK_BLOCK))
 			return false;
 
-		return !sneaking || isNullOrAir(itemInHand) || !itemInHand.getType().isBlock();
+		return !sneaking || Nullables.isNullOrAir(itemInHand) || !itemInHand.getType().isBlock();
 	}
 
 	private void changePitch(NoteBlock noteBlock, Location location, boolean sneaking) {

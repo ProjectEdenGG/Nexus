@@ -9,11 +9,10 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.SabotageMatchDat
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.SabotageColor;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.parchment.HasPlayer;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Material;
-
-import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 public abstract class AbstractVoteScreen extends InventoryProvider {
 
@@ -31,7 +30,7 @@ public abstract class AbstractVoteScreen extends InventoryProvider {
 
 	protected ClickableItem getClock(String prefix, int seconds) {
 		seconds = Math.max(1, seconds);
-		return ClickableItem.empty(new ItemBuilder(Material.CLOCK).name("&3" + prefix + " in &e" + plural(seconds + " second", seconds)).amount(seconds).build());
+		return ClickableItem.empty(new ItemBuilder(Material.CLOCK).name("&3" + prefix + " in &e" + StringUtils.plural(seconds + " second", seconds)).amount(seconds).build());
 	}
 
 	protected void setClock(String prefix, int seconds) {

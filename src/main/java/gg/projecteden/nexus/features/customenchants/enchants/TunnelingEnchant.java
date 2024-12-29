@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.customenchants.enchants;
 
+import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
@@ -11,6 +12,7 @@ import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,14 +21,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.meta.Damageable;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
-
-import static gg.projecteden.api.common.utils.RandomUtils.chanceOf;
-import static java.util.Collections.emptyList;
-import static org.bukkit.block.BlockFace.EAST;
-import static org.bukkit.block.BlockFace.NORTH;
-import static org.bukkit.block.BlockFace.SOUTH;
-import static org.bukkit.block.BlockFace.WEST;
 
 public class TunnelingEnchant extends CustomEnchant implements Listener {
 
@@ -82,7 +78,7 @@ public class TunnelingEnchant extends CustomEnchant implements Listener {
 				continue;
 
 			block.breakNaturally(tool, true, true);
-			if (chanceOf(100 / (unbreaking + 1)))
+			if (RandomUtils.chanceOf(100 / (unbreaking + 1)))
 				durability.setDamage(durability.getDamage() + 1);
 		}
 
@@ -95,13 +91,13 @@ public class TunnelingEnchant extends CustomEnchant implements Listener {
 
 		if (pitch < -45 || pitch > 45) {
 			return BlockUtils.getBlocksInRadius(block, 1, 0, 1);
-		} else if (facing == EAST || facing == WEST) {
+		} else if (facing == BlockFace.EAST || facing == BlockFace.WEST) {
 			return BlockUtils.getBlocksInRadius(block, 0, 1, 1);
-		} else if (facing == NORTH || facing == SOUTH) {
+		} else if (facing == BlockFace.NORTH || facing == BlockFace.SOUTH) {
 			return BlockUtils.getBlocksInRadius(block, 1, 1, 0);
 		} else {
 			Nexus.severe("Unhandled tunneling direction (Player: %s, Pitch: %s, Facing: %s)".formatted(Nickname.of(player), pitch, facing));
-			return emptyList();
+			return Collections.emptyList();
 		}
 	}
 

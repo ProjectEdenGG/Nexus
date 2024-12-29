@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.IMastermindMatch
 import gg.projecteden.nexus.features.minigames.models.matchdata.MastermindMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.singleplayer.SingleplayerMechanic;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.GameMode;
@@ -27,8 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Function;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 // TODO Lobby
 
@@ -173,7 +172,7 @@ public final class Mastermind extends SingleplayerMechanic {
 			}
 
 			Block placed = event.getClickedBlock().getRelative(event.getBlockFace());
-			if (!isNullOrAir(event.getItem()) && !canBuild(minigamer, placed))
+			if (!Nullables.isNullOrAir(event.getItem()) && !canBuild(minigamer, placed))
 				event.setCancelled(true);
 		}
 	}

@@ -12,6 +12,7 @@ import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.MathUtils;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -24,10 +25,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.PlayerUtils.send;
-import static gg.projecteden.nexus.utils.PlayerUtils.sendLine;
-
 public class PlayerPlushie extends DecorationConfig {
 	@Getter
 	private final Pose pose;
@@ -35,7 +32,7 @@ public class PlayerPlushie extends DecorationConfig {
 	public PlayerPlushie(Pose pose) {
 		this.pose = pose;
 		this.id = "player_plushie_" + pose.name().toLowerCase();
-		this.name = camelCase(pose) + " Player Plushie";
+		this.name = gg.projecteden.api.common.utils.StringUtils.camelCase(pose) + " Player Plushie";
 		this.material = PlayerPlushieConfig.MATERIAL;
 		this.modelId = pose.getStartingIndex() + 1;
 		this.modelIdPredicate = modelId -> MathUtils.isBetween(modelId, pose.getStartingIndex(), pose.getEndingIndex());
@@ -49,9 +46,9 @@ public class PlayerPlushie extends DecorationConfig {
 	public void sendInfo(Player player) {
 		super.sendInfo(player);
 
-		send(player, "&3[&ePlayer Plushie&3]");
-		send(player, "&3Pose: &e" + StringUtils.camelCase(pose));
-		sendLine(player);
+		PlayerUtils.send(player, "&3[&ePlayer Plushie&3]");
+		PlayerUtils.send(player, "&3Pose: &e" + StringUtils.camelCase(pose));
+		PlayerUtils.sendLine(player);
 	}
 
 	@Override

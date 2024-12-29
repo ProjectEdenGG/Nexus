@@ -2,10 +2,13 @@ package gg.projecteden.nexus.features.recipes.functionals.backpacks;
 
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.recipes.CustomRecipes;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
+import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NoArgsConstructor;
@@ -19,10 +22,6 @@ import org.bukkit.inventory.Recipe;
 
 import java.util.Arrays;
 import java.util.List;
-
-import static gg.projecteden.nexus.features.recipes.CustomRecipes.choiceOf;
-import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
-import static gg.projecteden.nexus.utils.ItemUtils.find;
 
 public class IronBackpack extends FunctionalRecipe {
 
@@ -40,10 +39,10 @@ public class IronBackpack extends FunctionalRecipe {
 
 	@Override
 	public @NonNull Recipe getRecipe() {
-		return shaped("121", "232", "121")
+		return RecipeBuilder.shaped("121", "232", "121")
 			.add('1', Material.SHULKER_SHELL)
 			.add('2', getUpgradeMaterial())
-			.add('3', choiceOf(getPreviousBackpack().getType()))
+			.add('3', CustomRecipes.choiceOf(getPreviousBackpack().getType()))
 			.toMake(getResult())
 			.getRecipe();
 	}
@@ -75,7 +74,7 @@ public class IronBackpack extends FunctionalRecipe {
 			.filter(Nullables::isNotNullOrAir)
 			.toList();
 
-		ItemStack backpack = find(matrix, Backpacks::isBackpack);
+		ItemStack backpack = ItemUtils.find(matrix, Backpacks::isBackpack);
 		if (backpack == null) {
 			event.getInventory().setResult(null);
 			return;

@@ -4,6 +4,7 @@ import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.recipes.CustomRecipes;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -14,8 +15,6 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Getter
 @RequiredArgsConstructor
@@ -71,7 +70,7 @@ public enum RecipeType {
 	}
 
 	public ItemStack getItem() {
-		return new ItemBuilder(material).modelId(modelId).name("&e" + camelCase(this)).build();
+		return new ItemBuilder(material).modelId(modelId).name("&e" + StringUtils.camelCase(this)).build();
 	}
 
 	public List<NexusRecipe> getRecipes() {

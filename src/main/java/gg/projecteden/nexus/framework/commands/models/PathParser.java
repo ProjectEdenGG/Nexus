@@ -11,6 +11,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgn
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.commands.models.events.CommandTabEvent;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,12 +33,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static gg.projecteden.nexus.framework.commands.models.CustomCommand.getSwitchPattern;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.COMMA_SPLIT_REGEX;
-import static gg.projecteden.nexus.utils.StringUtils.left;
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Collectors;
 
 @Data
 class PathParser {
@@ -84,7 +81,7 @@ class PathParser {
 					arg.setParamIndex(paramIndex++);
 					Parameter parameter = method.getParameters()[arg.getParamIndex()];
 					Arg annotation = parameter.getAnnotation(Arg.class);
-					if (annotation != null && !isNullOrEmpty(annotation.permission()))
+					if (annotation != null && !Nullables.isNullOrEmpty(annotation.permission()))
 						if (!event.getSender().hasPermission(annotation.permission()))
 							break;
 
@@ -163,7 +160,7 @@ class PathParser {
 				if (switchAnnotation == null)
 					continue;
 
-				Pattern pattern = getSwitchPattern(parameter);
+				Pattern pattern = CustomCommand.getSwitchPattern(parameter);
 				boolean found = false;
 				for (String arg : event.getArgs()) {
 					Matcher matcher = pattern.matcher(arg);
@@ -187,7 +184,7 @@ class PathParser {
 					arg.setList(Collection.class.isAssignableFrom(parameter.getType()));
 
 					if (argAnnotation != null) {
-						if (!isNullOrEmpty(argAnnotation.permission()))
+						if (!Nullables.isNullOrEmpty(argAnnotation.permission()))
 							if (!event.getSender().hasPermission(argAnnotation.permission()))
 								break;
 
@@ -203,11 +200,11 @@ class PathParser {
 					final boolean matchesLong = lastArg.toLowerCase().startsWith("--" + parameter.getName().toLowerCase() + "=");
 					final boolean matchesShort = switchAnnotation.shorthand() != '-' && lastArg.toLowerCase().startsWith("-" + switchAnnotation.shorthand() + "=");
 					if (matchesLong || matchesShort)
-						switches.addAll(arg.tabComplete().stream().map(completion -> lastArg.split("=")[0] + "=" + completion).collect(toList()));
+						switches.addAll(arg.tabComplete().stream().map(completion -> lastArg.split("=")[0] + "=" + completion).collect(Collectors.toList()));
 				}
 			}
 
-			return switches.stream().filter(completion -> completion.toLowerCase().startsWith(lastArg.toLowerCase())).collect(toList());
+			return switches.stream().filter(completion -> completion.toLowerCase().startsWith(lastArg.toLowerCase())).collect(Collectors.toList());
 		}
 
 	}
@@ -244,11 +241,11 @@ class PathParser {
 
 		@ToString.Include
 		boolean matches() {
-			if (isNullOrEmpty(pathArg) || isVariable())
+			if (Nullables.isNullOrEmpty(pathArg) || isVariable())
 				return true;
 
 			if (isCompletionIndex)
-				if (isNullOrEmpty(realArg))
+				if (Nullables.isNullOrEmpty(realArg))
 					return true;
 				else
 					if (isLiteral())
@@ -264,7 +261,7 @@ class PathParser {
 		private List<String> getSplitPathArg(String filter) {
 			List<String> options = Arrays.asList(pathArg.replaceAll("\\(", "").replaceAll("\\)", "").split("\\|"));
 			if (filter != null)
-				options = options.stream().filter(option -> option.toLowerCase().startsWith(filter.toLowerCase())).collect(toList());
+				options = options.stream().filter(option -> option.toLowerCase().startsWith(filter.toLowerCase())).collect(Collectors.toList());
 			return options;
 		}
 
@@ -281,7 +278,7 @@ class PathParser {
 				if (realArg.lastIndexOf(",") == realArg.length() - 1)
 					realArg = "";
 				else {
-					String[] split = realArg.split(COMMA_SPLIT_REGEX);
+					String[] split = realArg.split(StringUtils.COMMA_SPLIT_REGEX);
 					realArg = split[split.length - 1];
 				}
 			}
@@ -301,7 +298,7 @@ class PathParser {
 				results.addAll(command.tabCompleteEnum(realArg.toLowerCase(), (Class<? extends Enum<?>>) type));
 
 			if (isList) {
-				List<String> realArgs = new ArrayList<>(Arrays.asList(this.realArg.split(COMMA_SPLIT_REGEX)));
+				List<String> realArgs = new ArrayList<>(Arrays.asList(this.realArg.split(StringUtils.COMMA_SPLIT_REGEX)));
 				if (!this.realArg.endsWith(","))
 					realArgs.remove(realArgs.size() - 1);
 				String realArgBeginning = String.join(",", realArgs);
@@ -339,7 +336,7 @@ class PathParser {
 				continue;
 			TabCompleteIgnore tabCompleteIgnore = method.getAnnotation(TabCompleteIgnore.class);
 			if (tabCompleteIgnore != null)
-				if (isNullOrEmpty(tabCompleteIgnore.permission()) || !event.getSender().hasPermission(tabCompleteIgnore.permission()))
+				if (Nullables.isNullOrEmpty(tabCompleteIgnore.permission()) || !event.getSender().hasPermission(tabCompleteIgnore.permission()))
 					continue;
 
 			TabCompleteHelper helper = new TabCompleteHelper(method, event.getArgs());
@@ -350,7 +347,7 @@ class PathParser {
 			completions.addAll(helper.tabComplete());
 		}
 
-		return completions.stream().distinct().collect(toList());
+		return completions.stream().distinct().collect(Collectors.toList());
 	}
 
 	Method match(List<String> args) {
@@ -404,7 +401,7 @@ class PathParser {
 		String literalWords = "";
 		if (path.length() > 0)
 			pathArgLoop: for (String pathArg : pathArgs)
-				switch (left(pathArg, 1)) {
+				switch (StringUtils.left(pathArg, 1)) {
 					case "[":
 					case "<":
 						break pathArgLoop;

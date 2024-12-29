@@ -44,8 +44,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
-
-import static java.util.stream.Collectors.toSet;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("deprecation")
 public class PixelDrop extends TeamlessMechanic {
@@ -303,7 +302,7 @@ public class PixelDrop extends TeamlessMechanic {
 		ChatterService chatService = new ChatterService();
 		Set<Chatter> recipients = match.getMinigamers().stream()
 				.map(_minigamer -> chatService.get(_minigamer.getOnlinePlayer()))
-				.collect(toSet());
+				.collect(Collectors.toSet());
 
 		PublicChatEvent publicChatEvent = new PublicChatEvent(
 				chatService.get(minigamer.getOnlinePlayer()),

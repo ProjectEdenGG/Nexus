@@ -19,8 +19,6 @@ import org.bukkit.Material;
 
 import java.util.ArrayList;
 
-import static gg.projecteden.nexus.features.menus.MenuUtils.openAnvilMenu;
-
 @Rows(3)
 @Disabled
 @RequiredArgsConstructor
@@ -66,7 +64,7 @@ public class SafeCrackerNPCEditProvider extends InventoryProvider {
 			npc.getAnswers().forEach(answer -> builder.lore("&3 - " + answer));
 
 		contents.set(1, 4, ClickableItem.of(builder.build(), e -> {
-			openAnvilMenu(viewer, "Add Answer", (player1, response) -> {
+			MenuUtils.openAnvilMenu(viewer, "Add Answer", (player1, response) -> {
 				if (npc.getAnswers() == null)
 					npc.setAnswers(new ArrayList<>());
 				npc.getAnswers().add(response);
@@ -78,7 +76,7 @@ public class SafeCrackerNPCEditProvider extends InventoryProvider {
 		}));
 
 		contents.set(1, 6, ClickableItem.of(new ItemBuilder(Material.DIAMOND).name("&eRiddle").loreize(true).lore("&3" + npc.getRiddle()).build(), e -> {
-			openAnvilMenu(viewer, npc.getRiddle(), (player1, response) -> {
+			MenuUtils.openAnvilMenu(viewer, npc.getRiddle(), (player1, response) -> {
 				npc.setRiddle(response);
 				service.save(service.get0());
 				new SafeCrackerNPCEditProvider(npc).open(viewer);

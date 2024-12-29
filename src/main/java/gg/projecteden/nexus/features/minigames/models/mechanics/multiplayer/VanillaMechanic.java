@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartE
 import gg.projecteden.nexus.features.minigames.models.exceptions.MinigameException;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.WorldUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameRule;
 import org.bukkit.Location;
@@ -22,8 +23,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
-
-import static gg.projecteden.nexus.utils.WorldUtils.getRandomLocationInBorder;
 
 /**
  * Represents a mechanic which takes place in a separate world
@@ -45,7 +44,7 @@ public interface VanillaMechanic<T> extends Listener {
 	void spreadPlayers(@NotNull Match match);
 
 	default void randomTeleport(@NotNull Match match, @NotNull T t) {
-		Location random = getRandomLocationInBorder(getWorld());
+		Location random = WorldUtils.getRandomLocationInBorder(getWorld());
 		getWorld().getChunkAtAsync(random, true).thenRun(() -> {
 			Location location = getWorld().getHighestBlockAt(random).getLocation();
 			if (location.getBlock().getType().isSolid())

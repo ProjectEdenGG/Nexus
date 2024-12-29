@@ -6,6 +6,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.FireworkLauncher;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.enchantments.EnchantmentTarget;
@@ -22,8 +23,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-
 public class FireworkEnchant extends CustomEnchant implements Listener {
 	private static final int DURATION = 30;
 	private static final long DELAY = 5;
@@ -32,7 +31,7 @@ public class FireworkEnchant extends CustomEnchant implements Listener {
 	@EventHandler
 	public void onEntityShootBow(EntityShootBowEvent event) {
 		ItemStack bow = event.getBow();
-		if (isNullOrAir(bow))
+		if (Nullables.isNullOrAir(bow))
 			return;
 
 		int level = getLevel(bow);

@@ -10,8 +10,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.stoneCutter;
-
 public interface IStonePillar extends ICraftableNoteBlock {
 
 	@NonNull Material getMaterial();
@@ -29,7 +27,7 @@ public interface IStonePillar extends ICraftableNoteBlock {
 	@Override
 	default List<NexusRecipe> getOtherRecipes() {
 		return List.of(
-			stoneCutter(getMaterial()).toMake(getItemStack())
+			RecipeBuilder.stoneCutter(getMaterial()).toMake(getItemStack())
 				.unlockedBy(getItemStack())
 				.unlockedBy(getMaterial())
 				.build()

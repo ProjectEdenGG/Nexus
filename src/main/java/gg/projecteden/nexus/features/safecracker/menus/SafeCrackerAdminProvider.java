@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.safecracker.menus;
 
 import gg.projecteden.api.common.annotations.Disabled;
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.anvilgui.AnvilGUI;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
@@ -21,8 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static gg.projecteden.nexus.features.menus.MenuUtils.openAnvilMenu;
-
 @Disabled
 @Title("SafeCracker Admin")
 public class SafeCrackerAdminProvider extends InventoryProvider {
@@ -32,7 +31,7 @@ public class SafeCrackerAdminProvider extends InventoryProvider {
 	@Override
 	public void init() {
 		if (game == null) {
-			openAnvilMenu(viewer, "New Game...", (player1, response) -> {
+			MenuUtils.openAnvilMenu(viewer, "New Game...", (player1, response) -> {
 				service.get0().getGames().put(response, new SafeCrackerEvent.SafeCrackerGame(response, true, LocalDateTime.now(), "", "", new HashMap<>()));
 				service.save(service.get0());
 				new SafeCrackerAdminProvider().open(viewer);
@@ -64,7 +63,7 @@ public class SafeCrackerAdminProvider extends InventoryProvider {
 		}));
 
 		contents.set(0, 4, ClickableItem.of(new ItemBuilder(Material.EMERALD_BLOCK).name("&aNew NPC").build(), e -> {
-			openAnvilMenu(viewer, "New NPC...", (player1, response) -> {
+			MenuUtils.openAnvilMenu(viewer, "New NPC...", (player1, response) -> {
 				int id = NPCHandler.createNPC(response, viewer.getLocation());
 				SafeCrackerEvent.SafeCrackerNPC npc = new SafeCrackerEvent.SafeCrackerNPC(id, response, "", new ArrayList<>(), "");
 				game.getNpcs().put(response, npc);
@@ -76,7 +75,7 @@ public class SafeCrackerAdminProvider extends InventoryProvider {
 		}));
 
 		contents.set(0, 3, ClickableItem.of(new ItemBuilder(Material.PAPER).name("&eRiddle Answer").lore("&3" + game.getAnswer()).build(), e -> {
-			openAnvilMenu(viewer, game.getAnswer(), (player1, response) -> {
+			MenuUtils.openAnvilMenu(viewer, game.getAnswer(), (player1, response) -> {
 				game.setAnswer(response);
 				service.save(service.get0());
 				new SafeCrackerAdminProvider().open(viewer);

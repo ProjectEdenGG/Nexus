@@ -1,15 +1,14 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.compacted.crate;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.compacted.ICompacted;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelToSnake;
 
 public interface ICrate extends ICompacted {
 
 	default @NotNull Material getMaterial() {
-		return Material.valueOf(camelToSnake(getClass().getSimpleName().replace("Crate", "")).toUpperCase());
+		return Material.valueOf(StringUtils.camelToSnake(getClass().getSimpleName().replace("Crate", "")).toUpperCase());
 	}
 
 	@Override

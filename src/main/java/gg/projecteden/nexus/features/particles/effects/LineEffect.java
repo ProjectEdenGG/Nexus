@@ -19,8 +19,6 @@ import org.bukkit.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static gg.projecteden.nexus.utils.Distance.distance;
-
 public class LineEffect {
 	@Getter
 	private int taskId;
@@ -74,7 +72,7 @@ public class LineEffect {
 		}
 
 		World world = startLoc.getWorld();
-		Distance diffDistance = distance(startLoc, endLoc);
+		Distance diffDistance = Distance.distance(startLoc, endLoc);
 		double diff;
 		if (diffDistance.gt(maxLineLength))
 			diff = maxLineLength;

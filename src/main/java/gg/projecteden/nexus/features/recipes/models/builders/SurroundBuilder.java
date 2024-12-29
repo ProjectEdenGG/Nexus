@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.recipes.models.builders;
 
+import gg.projecteden.nexus.features.recipes.CustomRecipes;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlockTag;
 import org.bukkit.Material;
@@ -8,9 +9,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.jetbrains.annotations.NotNull;
-
-import static gg.projecteden.nexus.features.recipes.CustomRecipes.choiceOf;
-import static gg.projecteden.nexus.features.recipes.CustomRecipes.keyOf;
 
 public class SurroundBuilder extends RecipeBuilder<SurroundBuilder> {
 	private final RecipeChoice center;
@@ -21,28 +19,28 @@ public class SurroundBuilder extends RecipeBuilder<SurroundBuilder> {
 	}
 
 	public SurroundBuilder with(CustomBlockTag surround) {
-		ingredientIds.add(keyOf(surround));
-		return with(choiceOf(surround));
+		ingredientIds.add(CustomRecipes.keyOf(surround));
+		return with(CustomRecipes.choiceOf(surround));
 	}
 
 	public SurroundBuilder with(Tag<Material> surround) {
-		ingredientIds.add(keyOf(surround));
-		return with(choiceOf(surround));
+		ingredientIds.add(CustomRecipes.keyOf(surround));
+		return with(CustomRecipes.choiceOf(surround));
 	}
 
 	public SurroundBuilder with(CustomBlock surround) {
-		ingredientIds.add(keyOf(surround));
-		return with(choiceOf(surround));
+		ingredientIds.add(CustomRecipes.keyOf(surround));
+		return with(CustomRecipes.choiceOf(surround));
 	}
 
 	public SurroundBuilder with(Material surround) {
-		ingredientIds.add(keyOf(surround));
-		return with(choiceOf(surround));
+		ingredientIds.add(CustomRecipes.keyOf(surround));
+		return with(CustomRecipes.choiceOf(surround));
 	}
 
 	public SurroundBuilder with(ItemStack surround) {
-		ingredientIds.add(keyOf(surround));
-		return with(choiceOf(surround));
+		ingredientIds.add(CustomRecipes.keyOf(surround));
+		return with(CustomRecipes.choiceOf(surround));
 	}
 
 	protected SurroundBuilder with(RecipeChoice surround) {

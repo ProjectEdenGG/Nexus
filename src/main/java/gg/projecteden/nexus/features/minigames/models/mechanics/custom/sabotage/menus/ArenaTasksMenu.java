@@ -8,13 +8,12 @@ import gg.projecteden.nexus.features.minigames.menus.MechanicsMenu;
 import gg.projecteden.nexus.features.minigames.models.arenas.SabotageArena;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.Tasks;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Title("Enabled Tasks")
 @RequiredArgsConstructor
@@ -36,7 +35,7 @@ public class ArenaTasksMenu extends InventoryProvider {
 			contents.set(row, col, ClickableItem.of(
 				new ItemBuilder(enabled ? Material.WHITE_CONCRETE : Material.BLACK_CONCRETE)
 					.name("&e" + task.name())
-					.lore("&e" + camelCase(task.getTaskType()) + "&3 task")
+					.lore("&e" + StringUtils.camelCase(task.getTaskType()) + "&3 task")
 					.lore("", "&3Parts:")
 					.lore(Arrays.stream(task.getParts())
 						.map(taskPart -> "&e" + taskPart.getName())

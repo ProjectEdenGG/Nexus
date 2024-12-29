@@ -16,10 +16,9 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.queup.QueUp;
 import gg.projecteden.nexus.models.queup.QueUpService;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NonNull;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Aliases("dubtrack")
 @SuppressWarnings("SameParameterValue")
@@ -39,7 +38,7 @@ public class QueUpCommand extends CustomCommand {
 	void run() {
 		send(json("&e" + URL));
 
-		if (!isNullOrEmpty(queup.getLastSong()))
+		if (!Nullables.isNullOrEmpty(queup.getLastSong()))
 			send("&3Currently playing: " + queup.getLastSong());
 	}
 

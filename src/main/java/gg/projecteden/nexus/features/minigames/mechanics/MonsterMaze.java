@@ -14,6 +14,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartE
 import gg.projecteden.nexus.features.minigames.models.matchdata.MonsterMazeMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -35,8 +36,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.Distance.distance;
 
 /*
 	TODO:
@@ -142,7 +141,7 @@ public class MonsterMaze extends TeamlessMechanic {
 		match.getTasks().repeat(0, 2, () -> {
 			for (Minigamer minigamer : match.getMinigamers())
 				for (Mob mob : match.getEntities(Mob.class))
-					if (distance(mob, minigamer).lt(.7)) {
+					if (Distance.distance(mob, minigamer).lt(.7)) {
 						minigamer.getOnlinePlayer().damage(4);
 						matchData.launch(minigamer, mob);
 					}

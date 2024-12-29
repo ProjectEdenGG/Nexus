@@ -11,6 +11,7 @@ import gg.projecteden.nexus.models.particle.ParticleTask;
 import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,8 +28,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static gg.projecteden.nexus.utils.PlayerUtils.isSelf;
 
 public class WingsEffect {
 
@@ -77,7 +76,7 @@ public class WingsEffect {
 		long finalTicks = ticks;
 		int finalFlapRange = flapRange;
 
-		final Player receiver = isSelf(owner, entity) ? null : owner == null ? null : owner.getOnlinePlayer();
+		final Player receiver = PlayerUtils.isSelf(owner, entity) ? null : owner == null ? null : owner.getOnlinePlayer();
 
 		taskId = Tasks.repeatAsync(startDelay, pulseDelay, () -> {
 			if (finalTicks != -1 && ticksElapsed.get() >= finalTicks) {

@@ -10,14 +10,7 @@ import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
 import gg.projecteden.nexus.features.minigolf.models.blocks.BounceBlock;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallSpawnEvent;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfUserPlaceBallEvent;
-import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.Distance;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -31,8 +24,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.Set;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class InteractListener implements Listener {
 
@@ -50,7 +41,7 @@ public class InteractListener implements Listener {
 			return;
 
 		ItemStack item = event.getItem();
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return;
 
 		Block block = event.getClickedBlock();
@@ -100,7 +91,7 @@ public class InteractListener implements Listener {
 			return;
 		}
 
-		if (isNullOrAir(block)) {
+		if (Nullables.isNullOrAir(block)) {
 			user.debug("placed on block is air or null");
 			event.setCancelled(true);
 			return;

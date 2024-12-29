@@ -26,8 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Set;
-
-import static java.util.stream.Collectors.toSet;
+import java.util.stream.Collectors;
 
 public class WindChime extends CeilingThing implements CraftableDecoration {
 	@Getter
@@ -41,7 +40,7 @@ public class WindChime extends CeilingThing implements CraftableDecoration {
 	public static Set<Integer> ids() {
 		return Arrays.stream(WindChimeType.values())
 			.map(type -> type.getCustomMaterial().getModelId())
-			.collect(toSet());
+			.collect(Collectors.toSet());
 	}
 
 	@Getter

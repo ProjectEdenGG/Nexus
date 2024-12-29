@@ -46,10 +46,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-
 @SuppressWarnings("deprecation")
 public class DecorationUtils {
 	@Getter
@@ -106,7 +102,7 @@ public class DecorationUtils {
 		// Change lore
 		List<String> newLore = new ArrayList<>();
 		for (String line : resultBuilder.getLore()) {
-			String _line = stripColor(line);
+			String _line = StringUtils.stripColor(line);
 			// remove color line
 			if (_line.contains("Color: "))
 				continue;
@@ -116,7 +112,7 @@ public class DecorationUtils {
 				continue;
 
 			// reset uses
-			if (isPaintbrush && _line.contains(stripColor(DyeStation.USES_LORE))) {
+			if (isPaintbrush && _line.contains(StringUtils.stripColor(DyeStation.USES_LORE))) {
 				newLore.add(DyeStation.USES_LORE + DyeStation.MAX_USES_PAINTBRUSH);
 				handledPaintbrushUses = true;
 				continue;
@@ -193,7 +189,7 @@ public class DecorationUtils {
 
 	@Nullable
 	public static Object getItemFrame(Block clicked, int radius, BlockFace blockFaceOverride, Player debugger, boolean isClientside) {
-		if (isNullOrAir(clicked))
+		if (Nullables.isNullOrAir(clicked))
 			return null;
 
 		Location location = clicked.getLocation().toCenterLocation();
@@ -251,7 +247,7 @@ public class DecorationUtils {
 		Location currentLoc = currentBlock.getLocation().clone();
 		Material currentType = currentBlock.getType();
 
-		Distance distance = distance(maze.getOrigin(), currentLoc);
+		Distance distance = Distance.distance(maze.getOrigin(), currentLoc);
 		Set<Material> hitboxTypes = DecorationConfig.getHitboxTypes();
 		if (maze.getTried().contains(currentLoc) || !hitboxTypes.contains(currentType) || distance.gt(6)) {
 			maze.setBlock(previousBlock);
@@ -297,7 +293,7 @@ public class DecorationUtils {
 			itemStack = _itemFrame.getItem();
 		}
 
-		if (isNullOrAir(itemStack)) {
+		if (Nullables.isNullOrAir(itemStack)) {
 			DecorationLang.debug(debugger, true, "&6- item frame is empty");
 			return null;
 		}

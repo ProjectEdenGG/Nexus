@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models;
 
+import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICraftable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock;
@@ -49,8 +50,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import static gg.projecteden.api.common.utils.Utils.collect;
-
 public class CustomBlockTag implements Tag<CustomBlock> {
 	// NOTE BLOCKS
 	public static final CustomBlockTag COMPACTED = new CustomBlockTag(ICompacted.class);
@@ -87,7 +86,7 @@ public class CustomBlockTag implements Tag<CustomBlock> {
 
 	@SneakyThrows
 	public static Map<String, Tag<CustomBlock>> getApplicable(CustomBlock customBlock) {
-		return collect(tags.entrySet().stream().filter(entry -> entry.getValue().isTagged(customBlock)));
+		return Utils.collect(tags.entrySet().stream().filter(entry -> entry.getValue().isTagged(customBlock)));
 	}
 
 	@Getter

@@ -210,9 +210,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.surround;
-import static gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksLang.debug;
-
 public enum CustomBlock implements Keyed {
 
 	// NOTE BLOCKS
@@ -828,7 +825,7 @@ public enum CustomBlock implements Keyed {
 			soundBuilder.receiver(source);
 		}
 
-		debug(source, "Playing sound " + sound);
+		CustomBlocksLang.debug(source, "Playing sound " + sound);
 		soundBuilder.category(SoundCategory.BLOCKS).play();
 	}
 
@@ -887,7 +884,7 @@ public enum CustomBlock implements Keyed {
 			if (color != null) {
 				final Material dye = color.switchColor(Material.WHITE_DYE);
 				final CustomBlockTag tagExcludingSelf = new CustomBlockTag(tag).exclude(this).key(tag);
-				final NexusRecipe recipe = surround(dye).with(tagExcludingSelf).toMake(color.switchColor(tag), 8).build();
+				final NexusRecipe recipe = RecipeBuilder.surround(dye).with(tagExcludingSelf).toMake(color.switchColor(tag), 8).build();
 				recipe.type(RecipeType.DYES).register();
 				recipes.put(craftable.getClass(), recipe);
 			}

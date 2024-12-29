@@ -13,14 +13,7 @@ import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.ChoiceType;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.CostumeUser;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -36,9 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
 public class DyeStationMenu extends InventoryProvider implements Listener, IDyeMenu {
@@ -66,9 +56,9 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 
 		boolean handledUses = false;
 		for (String line : builder.getLore()) {
-			String _line = stripColor(line);
+			String _line = StringUtils.stripColor(line);
 
-			if (_line.contains(stripColor(DyeStation.USES_LORE))) {
+			if (_line.contains(StringUtils.stripColor(DyeStation.USES_LORE))) {
 				if (!handledUses) {
 					handledUses = true;
 					int uses = Integer.parseInt(_line.replaceAll("Uses: ", ""));
@@ -101,8 +91,8 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 			return DyeStation.MAX_USES_PAINTBRUSH;
 
 		for (String line : new ItemBuilder(itemStack).getLore()) {
-			String _line = stripColor(line);
-			if (_line.contains(stripColor(DyeStation.USES_LORE)))
+			String _line = StringUtils.stripColor(line);
+			if (_line.contains(StringUtils.stripColor(DyeStation.USES_LORE)))
 				return Integer.parseInt(_line.replaceAll("Uses: ", ""));
 		}
 
@@ -205,14 +195,14 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 			return;
 
 		ItemStack cursorItem = player.getItemOnCursor();
-		boolean emptyCursor = isNullOrAir(cursorItem);
+		boolean emptyCursor = Nullables.isNullOrAir(cursorItem);
 		ItemStack slotItem = e.getItem();
 
-		if (isNullOrAir(slotItem) && emptyCursor)
+		if (Nullables.isNullOrAir(slotItem) && emptyCursor)
 			return;
 
 		// if slot is empty
-		if (isNullOrAir(slotItem)) {
+		if (Nullables.isNullOrAir(slotItem)) {
 			contents.set(slot, ClickableItem.empty(cursorItem));
 			player.setItemOnCursor(null);
 
@@ -320,7 +310,7 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 			return false;
 
 		ItemStack dye = dyeOptional.get().getItem();
-		if (isNullOrAir(dye))
+		if (Nullables.isNullOrAir(dye))
 			return false;
 
 		if (!Material.PAPER.equals(dye.getType()))
@@ -338,7 +328,7 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 			return false;
 
 		ItemStack input = inputOptional.get().getItem();
-		if (isNullOrAir(input))
+		if (Nullables.isNullOrAir(input))
 			return false;
 
 		return MaterialTag.DYEABLE.isTagged(input);

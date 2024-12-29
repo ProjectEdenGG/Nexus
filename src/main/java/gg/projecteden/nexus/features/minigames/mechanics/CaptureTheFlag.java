@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEve
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.CaptureTheFlagMatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.Flag;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -18,8 +19,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Optional;
-
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 	@Override
@@ -44,7 +43,7 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 		Arena arena = match.getArena();
 
 		Optional<Team> optionalTeam = arena.getTeams().stream()
-				.filter(team -> team.getName().equalsIgnoreCase(stripColor(sign.getLine(2))))
+				.filter(team -> team.getName().equalsIgnoreCase(StringUtils.stripColor(sign.getLine(2))))
 				.findFirst();
 
 		if (optionalTeam.isPresent()) {

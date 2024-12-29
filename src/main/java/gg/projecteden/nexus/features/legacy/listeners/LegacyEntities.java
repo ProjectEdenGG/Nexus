@@ -4,6 +4,7 @@ import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -22,8 +23,6 @@ import org.bukkit.inventory.meta.BookMeta;
 
 import java.util.List;
 
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-
 public class LegacyEntities implements Listener {
 
 	@EventHandler
@@ -35,7 +34,7 @@ public class LegacyEntities implements Listener {
 			return;
 
 		ItemStack item = itemFrame.getItem();
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return;
 
 		if (item.getType() == Material.WRITABLE_BOOK) {
@@ -96,13 +95,13 @@ public class LegacyEntities implements Listener {
 			return;
 
 		final ItemStack mainHand = player.getInventory().getItemInMainHand();
-		if (isNullOrAir(itemFrame.getItem())) {
-			if (!isNullOrAir(mainHand)) {
+		if (Nullables.isNullOrAir(itemFrame.getItem())) {
+			if (!Nullables.isNullOrAir(mainHand)) {
 				itemFrame.setItem(mainHand.clone());
 				player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
 			}
 		} else {
-			if (isNullOrAir(mainHand)) {
+			if (Nullables.isNullOrAir(mainHand)) {
 				player.getInventory().setItemInMainHand(itemFrame.getItem().clone());
 				itemFrame.setItem(new ItemStack(Material.AIR));
 			}

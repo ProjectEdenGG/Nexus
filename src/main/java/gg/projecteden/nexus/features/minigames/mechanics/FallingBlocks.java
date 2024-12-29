@@ -69,8 +69,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-
 @SuppressWarnings("unused")
 public class FallingBlocks extends TeamlessMechanic {
 
@@ -393,7 +391,7 @@ public class FallingBlocks extends TeamlessMechanic {
 			player.getInventory().setItem(0, colorItem);
 			matchData.setColor(minigamer, colorItem.getType());
 
-			minigamer.tell("You chose " + camelCase(colorItem.getType().name().replace(filter, "")) + "!");
+			minigamer.tell("You chose " + gg.projecteden.api.common.utils.StringUtils.camelCase(colorItem.getType().name().replace(filter, "")) + "!");
 
 			player.closeInventory();
 		}

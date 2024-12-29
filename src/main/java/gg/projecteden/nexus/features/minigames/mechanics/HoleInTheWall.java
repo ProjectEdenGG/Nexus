@@ -16,6 +16,7 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.team
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeavingRegionEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import org.bukkit.GameMode;
@@ -36,9 +37,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.StringUtils.getLocationString;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class HoleInTheWall extends TeamlessMechanic {
 	@Override
@@ -94,7 +92,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 					for (Location location : arena.getDesignHangerLocation()) {
 						Set<ProtectedRegion> trackRegions = arena.getRegionsLikeAt("track", location);
 						if (trackRegions.size() != 1)
-							throw new MinigameException("Was expecting 1 track region at " + getLocationString(location) + ", but found " + trackRegions.size());
+							throw new MinigameException("Was expecting 1 track region at " + StringUtils.getLocationString(location) + ", but found " + trackRegions.size());
 
 						Track track = matchData.new Track(trackRegions.iterator().next(), location);
 						track.reset();
@@ -224,7 +222,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 			if (ActionGroup.CLICK_BLOCK.applies(event))
 				if (MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType())) {
 					Sign sign = (Sign) event.getClickedBlock().getState();
-					if (stripColor(sign.getLine(2)).contains("Fast Forward")) {
+					if (StringUtils.stripColor(sign.getLine(2)).contains("Fast Forward")) {
 						Track track = matchData.getTrack(minigamer);
 						if (track != null) {
 							UUID uuid = minigamer.getOnlinePlayer().getUniqueId();

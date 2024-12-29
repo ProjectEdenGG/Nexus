@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.minigames.models.perks.PerkType;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -20,8 +21,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 @Title("Purchase Collectibles")
 public class BuyPerksMenu extends CommonPerksMenu {
@@ -43,7 +42,7 @@ public class BuyPerksMenu extends CommonPerksMenu {
 		PerkOwner perkOwner = service.get(viewer);
 
 		contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.EMERALD).name("&2&lBalance")
-				.lore("&f"+FORMATTER.format(perkOwner.getTokens()) + plural(" token", perkOwner.getTokens()))
+				.lore("&f"+FORMATTER.format(perkOwner.getTokens()) + StringUtils.plural(" token", perkOwner.getTokens()))
 				.build()));
 
 		// get perks and sort them
@@ -59,7 +58,7 @@ public class BuyPerksMenu extends CommonPerksMenu {
 				boolean userOwned = perkOwner.getPurchasedPerks().containsKey(perkType);
 
 				List<String> lore = getLore(viewer, perk);
-				lore.add(1, userOwned ? "&cPurchased" : ("&aPurchase for &e" + perk.getPrice() + "&a " + plural("token", perk.getPrice())));
+				lore.add(1, userOwned ? "&cPurchased" : ("&aPurchase for &e" + perk.getPrice() + "&a " + StringUtils.plural("token", perk.getPrice())));
 				if (lore.size() > 2)
 					lore.add(2, "");
 
@@ -75,7 +74,7 @@ public class BuyPerksMenu extends CommonPerksMenu {
 		if (perkOwner.getPurchasedPerks().containsKey(perkType))
 			error(player, "You already own that item");
 		else if (perkOwner.purchase(perkType)) {
-			send(player, "You purchased the &e"+perk.getName()+"&3 collectible for &e"+perk.getPrice()+ plural(" token", perk.getPrice()));
+			send(player, "You purchased the &e"+perk.getName()+"&3 collectible for &e"+perk.getPrice()+ StringUtils.plural(" token", perk.getPrice()));
 			open(player, contents.pagination().getPage());
 		} else
 			error(player, "You don't have enough tokens to purchase that");

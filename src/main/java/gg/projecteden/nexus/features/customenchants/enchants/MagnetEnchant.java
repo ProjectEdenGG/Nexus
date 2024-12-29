@@ -4,6 +4,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.features.vanish.Vanish;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -34,8 +35,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.Distance.distance;
 
 public class MagnetEnchant extends CustomEnchant implements Listener {
 	public static final NamespacedKey NBT_KEY_OWNER = new NamespacedKey(Nexus.getInstance(), "nexus.magnet.owner");
@@ -71,7 +70,7 @@ public class MagnetEnchant extends CustomEnchant implements Listener {
 
 	@Nullable
 	private static Vector getVector(Player player, Entity entity) {
-		final double distance = distance(player, entity).getRealDistance();
+		final double distance = Distance.distance(player, entity).getRealDistance();
 		if (distance < 1)
 			return null;
 

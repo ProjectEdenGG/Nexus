@@ -1,7 +1,9 @@
 package gg.projecteden.nexus.features.recipes.functionals;
 
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
+import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
@@ -13,9 +15,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
-
-import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.surround;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class DiamondTotemOfUndying extends FunctionalRecipe {
 
@@ -33,7 +32,7 @@ public class DiamondTotemOfUndying extends FunctionalRecipe {
 
 	@Override
 	public @NotNull Recipe getRecipe() {
-		return surround(Material.TOTEM_OF_UNDYING)
+		return RecipeBuilder.surround(Material.TOTEM_OF_UNDYING)
 			.with(Material.DIAMOND)
 			.toMake(getResult())
 			.getRecipe();
@@ -50,7 +49,7 @@ public class DiamondTotemOfUndying extends FunctionalRecipe {
 		PlayerInventory inv = player.getInventory();
 
 		final ItemStack item = PlayerUtils.searchInventory(player, getCustomModel());
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return;
 
 		event.setCancelled(false);

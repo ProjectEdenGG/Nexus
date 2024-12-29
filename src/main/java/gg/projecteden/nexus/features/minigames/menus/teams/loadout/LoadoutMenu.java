@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.menus.teams.loadout;
 
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
@@ -15,8 +16,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-
-import static gg.projecteden.nexus.features.menus.MenuUtils.formatInventoryContents;
 
 @Title("Loadout Menu")
 @RequiredArgsConstructor
@@ -113,7 +112,7 @@ public class LoadoutMenu extends InventoryProvider {
 				})
 				.open(viewer)));
 
-		formatInventoryContents(contents, team.getLoadout().getInventory());
+		MenuUtils.formatInventoryContents(contents, team.getLoadout().getInventory());
 	}
 
 }

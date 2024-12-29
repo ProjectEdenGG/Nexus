@@ -14,8 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-
 @Data
 public class StatisticIncreaseChallengeProgress implements IChallengeProgress {
 	@NonNull
@@ -48,10 +46,10 @@ public class StatisticIncreaseChallengeProgress implements IChallengeProgress {
 			return Collections.emptySet();
 
 		if (key.contains("_one_cm"))
-			return Set.of(camelCase(key.replace("_one_cm", "")) + " " + StringUtils.getDf().format(remaining / 100d) + " meters");
+			return Set.of(gg.projecteden.nexus.utils.StringUtils.camelCase(key.replace("_one_cm", "")) + " " + StringUtils.getDf().format(remaining / 100d) + " meters");
 
 		if (statistic == Statistic.BREAK_ITEM)
-			return Set.of("Break " + remaining + " " + camelCase(statChallenge.getMaterial()));
+			return Set.of("Break " + remaining + " " + gg.projecteden.nexus.utils.StringUtils.camelCase(statChallenge.getMaterial()));
 
 		return Set.of(key);
 	}

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.menus;
 
+import gg.projecteden.api.common.utils.ReflectionUtils;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
@@ -19,8 +20,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
 
 @Title("Game Mechanic Type")
 @RequiredArgsConstructor
@@ -61,7 +60,7 @@ public class MechanicsMenu extends InventoryProvider {
 		Class<? extends InventoryProvider> provider = null;
 
 		customMenus:
-		for (Class<? extends InventoryProvider> menu : subTypesOf(InventoryProvider.class, ICustomMechanicMenu.class.getPackageName())) {
+		for (Class<? extends InventoryProvider> menu : ReflectionUtils.subTypesOf(InventoryProvider.class, ICustomMechanicMenu.class.getPackageName())) {
 			for (Class<? extends Mechanic> superclass : arena.getMechanic().getSuperclasses()) {
 				if (menu.getAnnotation(CustomMechanicSettings.class) != null) {
 					List<Class<? extends Mechanic>> classes = Arrays.asList(menu.getAnnotation(CustomMechanicSettings.class).value());

@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigames.lobby;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.features.commands.BoopCommand;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Arena;
@@ -19,8 +20,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 
 public class MinigameInviter {
 	private Player inviter;
@@ -70,7 +69,7 @@ public class MinigameInviter {
 				throw new InvalidInputException("You must be in the Minigame Lobby to use this command");
 		}
 
-		if (!new CooldownService().check(UUID0, "minigame_invite", TickTime.SECOND.x(3)))
+		if (!new CooldownService().check(UUIDUtils.UUID0, "minigame_invite", TickTime.SECOND.x(3)))
 			throw new InvalidInputException("Another minigame invite was recently created, please wait before sending another");
 	}
 

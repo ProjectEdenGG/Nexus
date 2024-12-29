@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.minigames.models.perks.common.HatMaterialPe
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LanguageUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
@@ -12,8 +13,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Getter
 public class HatMaterialImpl implements HatMaterialPerk {
@@ -47,7 +46,7 @@ public class HatMaterialImpl implements HatMaterialPerk {
 		try {
 			name = LanguageUtils.translate(material);
 		} catch (NullPointerException e) { // ensure compatibility with tests (catches NPE from Bukkit.getServer())
-			name = camelCase(material.name());
+			name = StringUtils.camelCase(material.name());
 		}
 		this.name = name;
 		customName = false;

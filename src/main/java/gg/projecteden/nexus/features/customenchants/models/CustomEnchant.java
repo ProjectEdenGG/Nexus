@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.customenchants.models;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.EnchantUtils;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.StringUtils;
 import io.papermc.paper.enchantments.EnchantmentRarity;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.key.Key;
@@ -21,9 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.StringUtils.toRoman;
 
 @NoArgsConstructor
 public abstract class CustomEnchant extends Enchantment implements Translatable {
@@ -65,7 +63,7 @@ public abstract class CustomEnchant extends Enchantment implements Translatable 
 
 	@NotNull
 	public String getDisplayName(int level) {
-		return camelCase(getName()) + (level > 1 ? " " + toRoman(level) : "");
+		return StringUtils.camelCase(getName()) + (level > 1 ? " " + StringUtils.toRoman(level) : "");
 	}
 
 	public int getLevel(ItemStack item) {

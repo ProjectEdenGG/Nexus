@@ -4,6 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.features.listeners.events.fake.FakeBlockBreakEvent;
 import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Location;
@@ -19,15 +20,7 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static java.util.Collections.singletonList;
-import static java.util.Comparator.comparing;
+import java.util.*;
 
 public class ColumnQuakeEnchant extends CustomEnchant implements Listener {
 
@@ -61,12 +54,12 @@ public class ColumnQuakeEnchant extends CustomEnchant implements Listener {
 		var level = Math.min(tool.getItemMeta().getEnchantLevel(Enchant.COLUMN_QUAKE), getMaxLevel());
 		var breakLimit = BREAK_LIMIT + ((level - 1) * LEVEL_BONUS);
 
-		var blocks = new ArrayList<>(singletonList(original));
+		var blocks = new ArrayList<>(Collections.singletonList(original));
 		while (blocks.size() <= breakLimit)
 			if (!explore(blocks))
 				break;
 
-		blocks.sort(comparing(neighbor -> distance(original, neighbor)));
+		blocks.sort(Comparator.comparing(neighbor -> Distance.distance(original, neighbor)));
 		var toBreak = blocks.subList(0, Math.min(blocks.size(), breakLimit));
 
 		final Map<Location, BlockData> fallingBlockData = new HashMap<>();

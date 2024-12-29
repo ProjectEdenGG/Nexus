@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.wither.fights;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.features.wither.models.WitherFight;
@@ -42,9 +43,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.api.common.utils.RandomUtils.chanceOf;
 
 @NoArgsConstructor
 public class CorruptedFight extends WitherFight {
@@ -112,7 +110,7 @@ public class CorruptedFight extends WitherFight {
 
 	@Override
 	public boolean shouldGiveStar() {
-		return chanceOf(75);
+		return gg.projecteden.api.common.utils.RandomUtils.chanceOf(75);
 	}
 
 	@Override
@@ -129,13 +127,13 @@ public class CorruptedFight extends WitherFight {
 		if (!event.getEntity().equals(wither))
 			return;
 
-		if (chanceOf(30))
-			if (chanceOf(35))
+		if (gg.projecteden.api.common.utils.RandomUtils.chanceOf(30))
+			if (gg.projecteden.api.common.utils.RandomUtils.chanceOf(35))
 				EnumUtils.random(CounterAttack.class).execute(alivePlayers());
 			else
 				EnumUtils.random(CorruptedCounterAttacks.class).execute(alivePlayers());
 
-		if (chanceOf(phase.getDodgeChance()))
+		if (gg.projecteden.api.common.utils.RandomUtils.chanceOf(phase.getDodgeChance()))
 			event.setCancelled(true);
 	}
 
@@ -234,7 +232,7 @@ public class CorruptedFight extends WitherFight {
 			@Override
 			public void execute(Player player) {
 				List<ItemStack> armor = new ArrayList<>(Arrays.asList(player.getInventory().getArmorContents()));
-				if (isNullOrEmpty(armor))
+				if (Nullables.isNullOrEmpty(armor))
 					return;
 
 				ItemStack item = RandomUtils.randomElement(armor);

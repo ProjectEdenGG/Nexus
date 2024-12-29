@@ -8,10 +8,9 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NonNull;
+import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-
-import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 
 @Permission(Permission.Group.ADMIN)
 public class FixBackpackCommand extends CustomCommand {
@@ -57,7 +56,7 @@ public class FixBackpackCommand extends CustomCommand {
 		return new ItemBuilder(item)
 			.nbt(nbt -> {
 				nbt.removeKey(LegacyShulkerBoxes.NBT_KEY);
-				nbt.setString(Backpacks.NBT_KEY, randomAlphabetic(10));
+				nbt.setString(Backpacks.NBT_KEY, RandomStringUtils.randomAlphabetic(10));
 			})
 			.build();
 	}

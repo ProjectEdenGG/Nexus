@@ -12,8 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.features.wither.models.WitherFight.subtitle;
-
 @RequiredArgsConstructor
 public class AntiCamping {
 
@@ -44,7 +42,7 @@ public class AntiCamping {
 						int seconds = secondsCamping.containsKey(uuid) ? secondsCamping.get(uuid) + 1 : 1;
 
 						if (seconds == anticampingTeleport) {
-							subtitle(player, "&8&kbbb &4&lThe Wither Pulls You Closer &8&kbbb");
+							WitherFight.subtitle(player, "&8&kbbb &4&lThe Wither Pulls You Closer &8&kbbb");
 
 							Vector vector = currentFight.getWither().getLocation().toVector().subtract(player.getLocation().toVector());
 							vector.add(new Vector(0, .3, 0)).normalize().multiply(1.1);

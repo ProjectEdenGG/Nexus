@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.recipes.functionals.armor.wither;
 import gg.projecteden.nexus.features.itemtags.Rarity;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
+import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.models.CustomArmorType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.Enchant;
@@ -16,8 +17,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
-
-import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 
 public class WitherBoots extends FunctionalRecipe {
 
@@ -42,7 +41,7 @@ public class WitherBoots extends FunctionalRecipe {
 
 	@Override
 	public @NotNull Recipe getRecipe() {
-		return shaped("   ", "1 1", "1 1")
+		return RecipeBuilder.shaped("   ", "1 1", "1 1")
 			.add('1', CraftedWitherSkull.getItem())
 			.toMake(getResult())
 			.getRecipe();

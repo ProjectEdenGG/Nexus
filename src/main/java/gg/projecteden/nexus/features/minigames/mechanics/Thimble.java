@@ -24,10 +24,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.
 import gg.projecteden.nexus.features.minigames.models.matchdata.ThimbleMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
-import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.FireworkLauncher;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.Getter;
 import org.bukkit.FireworkEffect;
@@ -45,9 +42,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 //TODO: Show turn timer to turn player
 //TODO: Gamemode description messages onm lobby join
@@ -547,7 +541,7 @@ public final class Thimble extends TeamlessMechanic {
 
 			minigamer.scored(points);
 			if (points > 1) {
-				minigamer.tell("You recieved " + (points - 1) + plural(" bonus point", points - 1) + "!");
+				minigamer.tell("You recieved " + (points - 1) + StringUtils.plural(" bonus point", points - 1) + "!");
 			}
 		}
 
@@ -654,7 +648,7 @@ public final class Thimble extends TeamlessMechanic {
 			player.getInventory().setItem(0, colorItem);
 			matchData.setColor(minigamer, colorItem.getType());
 
-			minigamer.tell("You chose " + camelCase(colorItem.getType().name().replace(filter, "")) + "!");
+			minigamer.tell("You chose " + StringUtils.camelCase(colorItem.getType().name().replace(filter, "")) + "!");
 
 			player.closeInventory();
 		}

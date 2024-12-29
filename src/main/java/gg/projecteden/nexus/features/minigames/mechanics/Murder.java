@@ -18,15 +18,9 @@ import gg.projecteden.nexus.features.minigames.models.exceptions.MinigameExcepti
 import gg.projecteden.nexus.features.minigames.models.matchdata.MurderMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard.Type;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PotionEffectBuilder;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -61,10 +55,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static gg.projecteden.nexus.utils.LocationUtils.getBlockHit;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Railgun
 @Scoreboard(teams = false, sidebarType = Type.MINIGAMER)
@@ -129,7 +119,7 @@ public class Murder extends TeamMechanic {
 						if (_minigamer == minigamer || !_minigamer.isAlive())
 							return Double.MAX_VALUE;
 
-						return distance(minigamer, _minigamer).get();
+						return Distance.distance(minigamer, _minigamer).get();
 					}));
 
 					if (target != null)
@@ -402,7 +392,7 @@ public class Murder extends TeamMechanic {
 		// If it was an arrow, it was from a knife throw, so we want to spawn a knife item
 		if (event.getEntityType() == EntityType.ARROW) {
 			World world = attacker.getPlayer().getWorld();
-			Block hitBlock = getBlockHit(event);
+			Block hitBlock = LocationUtils.getBlockHit(event);
 			if (hitBlock != null) {
 				world.dropItem(hitBlock.getLocation(), knife);
 				event.getEntity().remove();
@@ -530,7 +520,7 @@ public class Murder extends TeamMechanic {
 		public Retriever(Player player) {
 			this.player = player;
 			String[] name = player.getInventory().getItem(1).getItemMeta().getDisplayName().split(" in ");
-			this.time = Integer.parseInt(stripColor(name[1]));
+			this.time = Integer.parseInt(StringUtils.stripColor(name[1]));
 		}
 
 		@Override

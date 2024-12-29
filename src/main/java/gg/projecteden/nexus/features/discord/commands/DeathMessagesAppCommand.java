@@ -12,8 +12,6 @@ import gg.projecteden.nexus.models.deathmessages.DeathMessages.Behavior;
 import gg.projecteden.nexus.models.deathmessages.DeathMessagesService;
 import gg.projecteden.nexus.utils.StringUtils;
 
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-
 @Command("Manage death messages")
 public class DeathMessagesAppCommand extends NexusAppCommand {
 
@@ -34,7 +32,7 @@ public class DeathMessagesAppCommand extends NexusAppCommand {
 		new DeathMessagesService().save(player);
 
 		replyEphemeral("%sSet %s's death message behavior to %s%s".formatted(StringUtils.getDiscordPrefix("DeathMessages"),
-			player.getNickname(), camelCase(behavior), timespan.isNull() ? "" : " for " + timespan.format()));
+			player.getNickname(), StringUtils.camelCase(behavior), timespan.isNull() ? "" : " for " + timespan.format()));
 	}
 
 }

@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.menus.anvilgui.AnvilGUI;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -21,8 +22,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.function.BiFunction;
-
-import static gg.projecteden.nexus.features.minigames.Minigames.PREFIX;
 
 @AllArgsConstructor
 @Title("Potion Effect Editor Menu")
@@ -56,7 +55,7 @@ public class PotionEffectEditorMenu extends InventoryProvider {
 					});
 					return AnvilGUI.Response.text(text);
 				} else {
-					PlayerUtils.send(viewer, PREFIX + "You must use an integer for the duration.");
+					PlayerUtils.send(viewer, Minigames.PREFIX + "You must use an integer for the duration.");
 					return AnvilGUI.Response.close();
 				}
 			})));
@@ -76,7 +75,7 @@ public class PotionEffectEditorMenu extends InventoryProvider {
 					});
 					return AnvilGUI.Response.text(text);
 				} else {
-					PlayerUtils.send(viewer, PREFIX + "You must use an integer for the amplifier.");
+					PlayerUtils.send(viewer, Minigames.PREFIX + "You must use an integer for the amplifier.");
 					return AnvilGUI.Response.close();
 				}
 			})));

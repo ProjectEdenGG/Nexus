@@ -46,9 +46,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-
 public final class Bingo extends TeamlessVanillaMechanic {
 
 	private static final String NBT_KEY = "nexus.bingo.obtained";
@@ -98,7 +95,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 		new TitleBuilder().players(victim).title("&cYou died!").stay(150).send();
 
 		for (ItemStack itemStack : player.getInventory())
-			if (!isNullOrAir(itemStack))
+			if (!Nullables.isNullOrAir(itemStack))
 				player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
 
 		victim.clearInventory();
@@ -391,10 +388,10 @@ public final class Bingo extends TeamlessVanillaMechanic {
 					found.setY(location.getY());
 
 					if (structureType == StructureType.NETHER_FORTRESS) {
-						if (distance(found, location).gt(100))
+						if (Distance.distance(found, location).gt(100))
 							continue;
 					} else {
-						if (distance(found, location).gt(32))
+						if (Distance.distance(found, location).gt(32))
 							continue;
 					}
 
@@ -527,7 +524,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 		if (!(player.getVehicle() instanceof Horse horse))
 			return;
 
-		if (isNullOrAir(horse.getInventory().getSaddle()))
+		if (Nullables.isNullOrAir(horse.getInventory().getSaddle()))
 			return;
 
 		final BingoMatchData matchData = minigamer.getMatch().getMatchData();

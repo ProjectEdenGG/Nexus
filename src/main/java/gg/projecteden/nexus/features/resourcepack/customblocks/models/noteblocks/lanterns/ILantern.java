@@ -1,10 +1,9 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.IDirectionalNoteBlock;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelToSnake;
 
 public interface ILantern extends IDirectionalNoteBlock {
 
@@ -14,7 +13,7 @@ public interface ILantern extends IDirectionalNoteBlock {
 			.replace("Paper", "")
 			.replace("Shroom", "")
 			.replace("Lantern", "");
-		return Material.valueOf(camelToSnake(woodType).toUpperCase() + "_PLANKS");
+		return Material.valueOf(StringUtils.camelToSnake(woodType).toUpperCase() + "_PLANKS");
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.survival.structures.models;
 
+import gg.projecteden.nexus.utils.nms.NMSUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.nbt.CompoundTag;
@@ -12,8 +13,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
-import static gg.projecteden.nexus.utils.nms.NMSUtils.toNMS;
 
 public class NMSSpawnData {
 	@Getter
@@ -149,7 +148,7 @@ public class NMSSpawnData {
 
 		ListTag localArmorList = new ListTag();
 		for (ItemStack armorItem : armorItems) {
-			CompoundTag itemTag = armorItem == null ? new CompoundTag() : toNMS(armorItem).save(new CompoundTag());
+			CompoundTag itemTag = armorItem == null ? new CompoundTag() : NMSUtils.toNMS(armorItem).save(new CompoundTag());
 
 			localArmorList.add(itemTag);
 		}
@@ -165,8 +164,8 @@ public class NMSSpawnData {
 		String tag = SpawnDataEnum.ENTITY.getTag();
 
 		ListTag localHandList = new ListTag();
-		localHandList.add(mainHand == null ? new CompoundTag() : toNMS(mainHand).save(new CompoundTag()));
-		localHandList.add(offHand == null ? new CompoundTag() : toNMS(offHand).save(new CompoundTag()));
+		localHandList.add(mainHand == null ? new CompoundTag() : NMSUtils.toNMS(mainHand).save(new CompoundTag()));
+		localHandList.add(offHand == null ? new CompoundTag() : NMSUtils.toNMS(offHand).save(new CompoundTag()));
 
 		CompoundTag localCompound = compound.getCompound(tag);
 		localCompound.put("HandItems", localHandList);

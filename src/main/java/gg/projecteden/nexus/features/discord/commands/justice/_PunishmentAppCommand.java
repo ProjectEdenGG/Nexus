@@ -9,8 +9,7 @@ import gg.projecteden.nexus.features.discord.commands.common.NexusAppCommand;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.punishments.PunishmentType;
 import gg.projecteden.nexus.models.punishments.Punishments;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import gg.projecteden.nexus.utils.Nullables;
 
 @RequiredRole("Staff")
 public abstract class _PunishmentAppCommand extends NexusAppCommand {
@@ -34,7 +33,7 @@ public abstract class _PunishmentAppCommand extends NexusAppCommand {
 		@Desc("Reason/Time") @Optional String reason
 	) {
 		boolean now = false;
-		if (!isNullOrEmpty(reason) && reason.contains(" --now")) {
+		if (!Nullables.isNullOrEmpty(reason) && reason.contains(" --now")) {
 			now = true;
 			reason = reason.replaceFirst(" --now", "");
 		}

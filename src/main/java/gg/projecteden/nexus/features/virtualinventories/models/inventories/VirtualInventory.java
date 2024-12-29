@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.virtualinventories.models.inventories;
 
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.features.virtualinventories.VirtualInventoryUtils.VirtualInventoryHolder;
 import gg.projecteden.nexus.features.virtualinventories.models.properties.VirtualInventoryProperties;
 import lombok.Data;
@@ -7,9 +8,6 @@ import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Data
 @NoArgsConstructor
@@ -29,7 +27,7 @@ public abstract class VirtualInventory<T extends VirtualInventoryProperties> {
 			inventory =  Bukkit.createInventory(
 				new VirtualInventoryHolder(this),
 				properties().inventoryType(),
-				colorize("Personal " + camelCase(type.name()))
+				gg.projecteden.nexus.utils.StringUtils.colorize("Personal " + StringUtils.camelCase(type.name()))
 			);
 
 		return inventory;

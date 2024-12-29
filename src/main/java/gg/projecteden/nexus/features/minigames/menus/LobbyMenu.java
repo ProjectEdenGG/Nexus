@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -16,9 +17,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.function.BiFunction;
-
-import static gg.projecteden.nexus.features.menus.MenuUtils.getLocationLore;
-import static gg.projecteden.nexus.features.minigames.Minigames.PREFIX;
 
 @Rows(2)
 @Title("Lobby Menu")
@@ -37,7 +35,7 @@ public class LobbyMenu extends InventoryProvider {
 		contents.set(1, 2, ClickableItem.of(new ItemBuilder(Material.OAK_DOOR)
 				.name("&eLobby Location")
 				.lore("&3Current Lobby Location:")
-				.lore(getLocationLore(arena.getLobby().getLocation()))
+				.lore(MenuUtils.getLocationLore(arena.getLobby().getLocation()))
 				.lore("")
 				.lore("&eClick to set to current location"),
 			e -> {
@@ -56,7 +54,7 @@ public class LobbyMenu extends InventoryProvider {
 					new LobbyMenu(arena).open(viewer);
 					return AnvilGUI.Response.text(text);
 				} else {
-					PlayerUtils.send(viewer, PREFIX + "You must use an integer for wait time.");
+					PlayerUtils.send(viewer, Minigames.PREFIX + "You must use an integer for wait time.");
 					return AnvilGUI.Response.close();
 				}
 			})));

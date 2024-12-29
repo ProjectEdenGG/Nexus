@@ -9,14 +9,13 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @RequiredArgsConstructor
 public abstract class CommonPerksMenu extends InventoryProvider {
@@ -35,7 +34,7 @@ public abstract class CommonPerksMenu extends InventoryProvider {
 	}
 
 	protected static void send(Player player, String message) {
-		player.sendMessage(Minigames.PREFIX + colorize(message));
+		player.sendMessage(Minigames.PREFIX + StringUtils.colorize(message));
 	}
 
 	@Getter

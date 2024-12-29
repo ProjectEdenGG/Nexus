@@ -15,10 +15,9 @@ import gg.projecteden.nexus.models.freeze.Freeze;
 import gg.projecteden.nexus.models.punishments.Punishment;
 import gg.projecteden.nexus.models.punishments.PunishmentType;
 import gg.projecteden.nexus.models.punishments.Punishments;
+import gg.projecteden.nexus.utils.Nullables;
 
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Aliases("ymc")
 @Permission(Group.MODERATOR)
@@ -36,7 +35,7 @@ public class YouMayContinueCommand extends _JusticeCommand {
 
 			Chat.setActiveChannel(freeze, StaticChannel.GLOBAL);
 
-			if (!isNullOrEmpty(reason))
+			if (!Nullables.isNullOrEmpty(reason))
 				Punishments.of(freeze).add(Punishment.ofType(PunishmentType.WARN).punisher(uuid()).input(reason));
 		}
 

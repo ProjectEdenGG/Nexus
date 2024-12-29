@@ -53,8 +53,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-
 @NoArgsConstructor
 public class Structures extends Feature implements Listener {
 	private static final String region_buildadmin = "structures";
@@ -70,14 +68,14 @@ public class Structures extends Feature implements Listener {
 	@EventHandler
 	public void onPlaceUnsafe(PlayerInteractEvent event) {
 		ItemStack item = event.getItem();
-		if (isNullOrAir(item)) return;
+		if (Nullables.isNullOrAir(item)) return;
 		Material type = item.getType();
 
 		if (!MUSHROOMS.contains(type)) return;
 		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 
 		Block clickedBlock = event.getClickedBlock();
-		if (isNullOrAir(clickedBlock)) return;
+		if (Nullables.isNullOrAir(clickedBlock)) return;
 		if (!isInBuildRegion(event.getPlayer())) return;
 
 		Block block = clickedBlock.getRelative(event.getBlockFace());
@@ -91,12 +89,12 @@ public class Structures extends Feature implements Listener {
 	@EventHandler
 	public void onUseSpawnEgg(PlayerInteractEvent event) {
 		ItemStack item = event.getItem();
-		if (isNullOrAir(item)) return;
+		if (Nullables.isNullOrAir(item)) return;
 		if (!spawnEggTypes.contains(item.getType())) return;
 		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 
 		Block clickedBlock = event.getClickedBlock();
-		if (isNullOrAir(clickedBlock)) return;
+		if (Nullables.isNullOrAir(clickedBlock)) return;
 		if (clickedBlock.getType().equals(Material.SPAWNER)) return;
 		if (!isInBuildRegion(event.getPlayer())) return;
 

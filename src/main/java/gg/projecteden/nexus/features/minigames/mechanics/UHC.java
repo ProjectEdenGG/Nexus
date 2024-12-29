@@ -37,9 +37,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static gg.projecteden.api.common.utils.Utils.getMin;
-import static gg.projecteden.nexus.utils.Distance.distance;
-
 @Getter
 public class UHC extends TeamlessVanillaMechanic {
 
@@ -98,7 +95,7 @@ public class UHC extends TeamlessVanillaMechanic {
 		PlayerInventory inv = event.getMinigamer().getPlayer().getInventory();
 		if (inv.getItemInMainHand().getType() == Material.COMPASS || inv.getItemInOffHand().getType() == Material.COMPASS) {
 			final var otherPlayers = event.getMatch().getAliveMinigamersExcluding(List.of(event.getMinigamer()));
-			final var result = getMin(otherPlayers, minigamer -> distance(event.getMinigamer(), minigamer).get());
+			final var result = gg.projecteden.api.common.utils.Utils.getMin(otherPlayers, minigamer -> Distance.distance(event.getMinigamer(), minigamer).get());
 			actionBarText = "&3The nearest player is &e" + result.getObject().getNickname() + "&3 (&6" + (int) Math.sqrt(result.getDouble()) + "m&3)";
 		} else {
 			LocalDateTime start = event.getMatch().<UHCMatchData>getMatchData().getStartTime();

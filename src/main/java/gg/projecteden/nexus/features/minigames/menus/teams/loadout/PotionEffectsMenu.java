@@ -6,12 +6,10 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Team;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PotionEffectBuilder;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -22,9 +20,6 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.BiFunction;
-
-import static gg.projecteden.nexus.features.minigames.Minigames.PREFIX;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Rows(3)
 @Title("Potion Effects Menu")
@@ -56,8 +51,8 @@ public class PotionEffectsMenu extends InventoryProvider {
 				potions.append(potion.getName().substring(0, 1).toUpperCase()).append(potion.getName().substring(1).toLowerCase()).append(", ");
 
 			potions = new StringBuilder(potions.substring(0, potions.lastIndexOf(", ")));
-			PlayerUtils.send(viewer, PREFIX + "&3Available Potion Effect Types:");
-			PlayerUtils.send(viewer, PREFIX + "&e" + potions);
+			PlayerUtils.send(viewer, Minigames.PREFIX + "&3Available Potion Effect Types:");
+			PlayerUtils.send(viewer, Minigames.PREFIX + "&e" + potions);
 		}));
 
 		contents.set(0, 4, ClickableItem.of(Material.EMERALD_BLOCK, "&eAdd Potion Effect",
@@ -75,7 +70,7 @@ public class PotionEffectsMenu extends InventoryProvider {
 		contents.set(0, 8, ClickableItem.of(deleteItem, e -> Tasks.wait(2, () -> {
 			if (viewer.getItemOnCursor().getType().equals(Material.TNT)) {
 				viewer.setItemOnCursor(new ItemStack(Material.AIR));
-			} else if (isNullOrAir(viewer.getItemOnCursor())) {
+			} else if (Nullables.isNullOrAir(viewer.getItemOnCursor())) {
 				viewer.setItemOnCursor(deleteItem.build());
 			}
 		})));

@@ -7,11 +7,10 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.scoreboard.NameTagVisibility;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Rows(2)
 @Title("Team Visibility Menu")
@@ -36,7 +35,7 @@ public class TeamVisibilityMenu extends InventoryProvider {
 		int column = 0;
 		for (NameTagVisibility visibility : NameTagVisibility.values()) {
 			ItemBuilder item = new ItemBuilder(getIcon(visibility))
-				.name("&e" + camelCase(visibility))
+				.name("&e" + StringUtils.camelCase(visibility))
 				.glow(team.getNameTagVisibility() == visibility);
 			contents.set(1, column, ClickableItem.of(item, e -> {
 				team.setNameTagVisibility(visibility);

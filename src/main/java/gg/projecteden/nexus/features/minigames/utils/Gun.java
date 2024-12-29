@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.minigames.utils;
 import gg.projecteden.nexus.features.minigames.mechanics.Murder;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.matchdata.MurderMatchData;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
@@ -19,8 +20,6 @@ import org.bukkit.util.Vector;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static gg.projecteden.nexus.utils.Distance.distance;
 
 @Data
 public class Gun {
@@ -48,7 +47,7 @@ public class Gun {
 
 		Location location = minigamer.getOnlinePlayer().getLocation();
 		List<Block> los = minigamer.getOnlinePlayer().getLineOfSight(passthroughMaterials, range);
-		double blockDistance = distance(los.get(los.size() - 1), location).getRealDistance();
+		double blockDistance = Distance.distance(los.get(los.size() - 1), location).getRealDistance();
 
 		Location start = minigamer.getOnlinePlayer().getEyeLocation();
 		Vector increase = start.getDirection();
@@ -75,7 +74,7 @@ public class Gun {
 
 			boolean notTargetingSelf = target != minigamer.getOnlinePlayer();
 			boolean sameMatch = minigamer.getMatch().getOnlinePlayers().contains(target);
-			boolean inGunRange = distance(target, location).lt(blockDistance);
+			boolean inGunRange = Distance.distance(target, location).lt(blockDistance);
 			if (notTargetingSelf && inGunRange && sameMatch)
 				if (Vector3D.hasIntersection(observerStart, observerEnd, minimum, maximum)) {
 					if (minigamer.getMatch().getMechanic() instanceof Murder) {

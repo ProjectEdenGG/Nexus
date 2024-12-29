@@ -6,6 +6,8 @@ import gg.projecteden.nexus.features.minigames.commands.MinigamesCommand.Minigam
 import gg.projecteden.nexus.features.minigames.utils.MinigameNight;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.HologramTrait;
@@ -16,9 +18,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static gg.projecteden.nexus.utils.CitizensUtils.isNPC;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public class ActionBar {
 	private static final long DELAY = TickTime.SECOND.x(5);
@@ -42,7 +41,7 @@ public class ActionBar {
 			messages.iterator().forEachRemaining(message ->
 					Tasks.wait(wait.getAndAdd(DELAY), () ->
 							Minigames.getWorld().getPlayers().forEach(player -> {
-								if (Minigames.isInMinigameLobby(player) && !isNPC(player))
+								if (Minigames.isInMinigameLobby(player) && !CitizensUtils.isNPC(player))
 									ActionBarUtils.sendActionBar(player, interpolate(message, player), DELAY);
 							})));
 		});
@@ -62,7 +61,7 @@ public class ActionBar {
 
 		MinigameNight mgn = new MinigameNight(player);
 		message = message.replace("{local_mgn_time}", mgn.getTimeFormatted());
-		message = message.replace("{local_mgn_day}", camelCase(mgn.getNext().getDayOfWeek().name()));
+		message = message.replace("{local_mgn_day}", StringUtils.camelCase(mgn.getNext().getDayOfWeek().name()));
 		return message;
 	}
 

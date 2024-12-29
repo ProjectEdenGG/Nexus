@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigames.perks.loadouts;
 
 import gg.projecteden.nexus.features.minigames.models.perks.common.HatPerk;
 import gg.projecteden.nexus.utils.AdventureUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.inventory.ItemStack;
@@ -10,8 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Getter
 @RequiredArgsConstructor
@@ -42,7 +41,7 @@ public class HatImpl implements HatPerk {
 			if (name == null)
 				name = item.getI18NDisplayName();
 		} catch (NullPointerException e) { // ensure compatibility with tests (catches NPE from Bukkit.getServer())
-			name = camelCase(item.getType().name());
+			name = StringUtils.camelCase(item.getType().name());
 		}
 		this.name = name;
 	}

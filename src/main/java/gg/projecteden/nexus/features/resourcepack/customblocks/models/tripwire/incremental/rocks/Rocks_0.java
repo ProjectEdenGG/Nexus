@@ -11,8 +11,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
-
 @CustomBlockConfig(
 	name = "Rocks",
 	modelId = 21103
@@ -36,7 +34,7 @@ public class Rocks_0 implements IRocks, ICraftableTripwire {
 	@Override
 	public List<NexusRecipe> getOtherRecipes() {
 		return List.of(
-			shaped("11", "11").add('1', getItemStack())
+			RecipeBuilder.shaped("11", "11").add('1', getItemStack())
 				.toMake(Material.COBBLESTONE, 1)
 				.unlockedBy(getItemStack())
 				.unlockedBy(Material.COBBLESTONE)

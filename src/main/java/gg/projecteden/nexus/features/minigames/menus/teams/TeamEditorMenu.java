@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigames.menus.teams;
 
 import gg.projecteden.api.common.utils.MathUtils;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.anvilgui.AnvilGUI;
@@ -12,19 +13,12 @@ import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.menus.teams.loadout.LoadoutMenu;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Team;
-import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.*;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.function.BiFunction;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Rows(3)
 @Title("Team Editor Menu")
@@ -56,7 +50,7 @@ public class TeamEditorMenu extends InventoryProvider {
 		contents.set(1, 0, ClickableItem.of(new ItemBuilder(Material.BOOK)
 				.name("&eTeam Name")
 				.lore("", "&3Current Name:", "&e" + team.getName()),
-			e -> openAnvilMenu(viewer, arena, team, (isNullOrEmpty(team.getName())) ? "Default" : team.getName(), (p, text) -> {
+			e -> openAnvilMenu(viewer, arena, team, (Nullables.isNullOrEmpty(team.getName())) ? "Default" : team.getName(), (p, text) -> {
 				team.setName(text);
 				arena.write();
 				new TeamEditorMenu(arena, team).open(viewer);
@@ -153,7 +147,7 @@ public class TeamEditorMenu extends InventoryProvider {
 
 		contents.set(2, 8, ClickableItem.of(new ItemBuilder(Material.GLASS)
 				.name("&eVisibility")
-				.lore("&7Sets the visibility of", "&7the team's name tags", "", "&3Current Value:", "&e" + camelCase(team.getNameTagVisibility())),
+				.lore("&7Sets the visibility of", "&7the team's name tags", "", "&3Current Value:", "&e" + StringUtils.camelCase(team.getNameTagVisibility())),
 			e -> new TeamVisibilityMenu(arena, team).open(viewer)));
 	}
 
