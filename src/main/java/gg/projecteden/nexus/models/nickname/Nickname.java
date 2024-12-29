@@ -3,17 +3,21 @@ package gg.projecteden.nexus.models.nickname;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import gg.projecteden.api.common.EdenAPI;
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.api.discord.DiscordId;
 import gg.projecteden.api.discord.DiscordId.Role;
 import gg.projecteden.api.discord.EmojiUtils;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.discord.Bot;
+import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
@@ -34,13 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-
-import static gg.projecteden.api.common.utils.TimeUtils.shortishDateTimeFormat;
-import static gg.projecteden.api.common.utils.UUIDUtils.isAppUuid;
-import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
-import static gg.projecteden.nexus.features.discord.Discord.discordize;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Data
 @Entity(value = "nickname", noClassnameStored = true)
@@ -103,15 +100,15 @@ public class Nickname extends gg.projecteden.api.mongodb.models.nickname.Nicknam
 	 * @return nickname or username
 	 */
 	public static String discordOf(UUID uuid) {
-		return discordize(of(uuid));
+		return Discord.discordize(of(uuid));
 	}
 
 	public @NotNull String getNickname() {
-		if (isAppUuid(uuid))
+		if (UUIDUtils.isAppUuid(uuid))
 			return EdenAPI.get().getAppName();
-		if (isUUID0(uuid))
+		if (UUIDUtils.isUUID0(uuid))
 			return "Console";
-		if (isNullOrEmpty(nickname))
+		if (Nullables.isNullOrEmpty(nickname))
 			return getName();
 		return nickname;
 	}
@@ -125,8 +122,8 @@ public class Nickname extends gg.projecteden.api.mongodb.models.nickname.Nicknam
 	}
 
 	public void setNickname(String nickname) {
-		nickname = stripColor(nickname);
-		if (!isNullOrEmpty(nickname)) {
+		nickname = StringUtils.stripColor(nickname);
+		if (!Nullables.isNullOrEmpty(nickname)) {
 			this.nickname = nickname;
 			this.nicknameHistory.add(new NicknameHistoryEntry(this, nickname));
 		} else
@@ -134,11 +131,11 @@ public class Nickname extends gg.projecteden.api.mongodb.models.nickname.Nicknam
 	}
 
 	public void setNickname(NicknameHistoryEntry entry) {
-		this.nickname = stripColor(entry.getNickname());
+		this.nickname = StringUtils.stripColor(entry.getNickname());
 	}
 
 	public boolean hasNickname() {
-		return !isNullOrEmpty(nickname);
+		return !Nullables.isNullOrEmpty(nickname);
 	}
 
 	public Optional<NicknameHistoryEntry> getPending() {
@@ -166,9 +163,9 @@ public class Nickname extends gg.projecteden.api.mongodb.models.nickname.Nicknam
 
 		public NicknameHistoryEntry(Nickname data, String nickname, String nicknameQueueId) {
 			this.uuid = data.getUuid();
-			this.nickname = stripColor(nickname);
+			this.nickname = StringUtils.stripColor(nickname);
 			this.requestedTimestamp = LocalDateTime.now();
-			if (isNullOrEmpty(nicknameQueueId)) {
+			if (Nullables.isNullOrEmpty(nicknameQueueId)) {
 				pending = false;
 				accepted = true;
 				seenResult = true;
@@ -236,7 +233,7 @@ public class Nickname extends gg.projecteden.api.mongodb.models.nickname.Nicknam
 				embed.appendDescription("**Time since last change:** " + Timespan.of(lastChange).format() + System.lineSeparator());
 				embed.appendDescription("**Past nick names:**" + System.lineSeparator());
 				nicknameHistory.forEach(entry -> {
-					String timestamp = shortishDateTimeFormat(entry.getRequestedTimestamp());
+					String timestamp = TimeUtils.shortishDateTimeFormat(entry.getRequestedTimestamp());
 					String status = entry.isPending() ? "Pending" : entry.isAccepted() ? "Accepted" : "Denied";
 					embed.appendDescription("\t" + timestamp + " - " + entry.getNickname() + " (" + status + ")" + System.lineSeparator());
 				});

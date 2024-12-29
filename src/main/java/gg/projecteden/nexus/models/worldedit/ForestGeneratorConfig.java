@@ -15,6 +15,7 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationCon
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
@@ -40,9 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
 
 @Data
 @Entity(value = "forest_generator_config", noClassnameStored = true)
@@ -90,14 +88,14 @@ public class ForestGeneratorConfig implements DatabaseObject {
 				location.setY(4);
 				final var regions = new WorldGuardUtils(location).getRegionsLikeAt("tree_\\d+", location);
 				if (regions.isEmpty())
-					throw new InvalidInputException("Unable to determine id for tree at " + getShortLocationString(location));
+					throw new InvalidInputException("Unable to determine id for tree at " + StringUtils.getShortLocationString(location));
 
 				return new Tree(Integer.parseInt(regions.iterator().next().getId().replace("tree_", "")));
 
 			}
 
 			public Map<Vector, BlockData> getBlocks() {
-				if (isNullOrEmpty(blocks))
+				if (gg.projecteden.api.common.utils.Nullables.isNullOrEmpty(blocks))
 					blocks = new TreeScanner().scan(this);
 
 				return blocks;
@@ -159,7 +157,7 @@ public class ForestGeneratorConfig implements DatabaseObject {
 						} catch (StackOverflowError ignore) {}
 
 					if (tree == null)
-						throw new InvalidInputException("Unable to determine id for tree at " + getShortLocationString(start));
+						throw new InvalidInputException("Unable to determine id for tree at " + StringUtils.getShortLocationString(start));
 
 					return compute();
 				}

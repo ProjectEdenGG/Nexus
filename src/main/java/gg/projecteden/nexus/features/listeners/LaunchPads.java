@@ -2,8 +2,10 @@ package gg.projecteden.nexus.features.listeners;
 
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
+import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
 import kotlin.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,9 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
-import static gg.projecteden.nexus.utils.Utils.isDouble;
 
 public class LaunchPads implements Listener {
 	private static final Map<UUID, Pair<FallingBlock, Integer>> launchPadPlayers = new HashMap<>();
@@ -75,12 +74,13 @@ public class LaunchPads implements Listener {
 			Sign sign = (Sign) block.getState();
 			String[] lines = sign.getLines();
 
-			if (!lines[0].equalsIgnoreCase("[LaunchPad]") || !isDouble(lines[1]) || !isDouble(lines[2])) return;
+			if (!lines[0].equalsIgnoreCase("[LaunchPad]") || !Utils.isDouble(lines[1]) || !Utils.isDouble(lines[2]))
+				return;
 
 			power = Double.parseDouble(lines[1]);
 			angle = Double.parseDouble(lines[2]);
 
-			if (isDouble(lines[3]))
+			if (Utils.isDouble(lines[3]))
 				direction = Double.parseDouble(lines[3]);
 		}
 	}
@@ -100,7 +100,7 @@ public class LaunchPads implements Listener {
 			direction = (double) player.getLocation().getYaw();
 		power *= 2;
 
-		Location launchLocation = getCenteredLocation(player.getLocation());
+		Location launchLocation = LocationUtils.getCenteredLocation(player.getLocation());
 		launchLocation.setPitch((float) -angle);
 		launchLocation.setYaw(direction.floatValue());
 
