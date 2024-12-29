@@ -19,33 +19,16 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationCon
 import gg.projecteden.nexus.models.ambience.AmbienceConfig.Ambience.AmbienceType;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.parchment.HasLocation;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
+import java.util.*;
 
 @Data
 @Entity(value = "ambience_config", noClassnameStored = true)
@@ -106,7 +89,7 @@ public class AmbienceConfig implements PlayerOwnedObject {
 
 		public boolean validate() {
 			if (!type.getType().validate(this)) {
-				Nexus.warn("[Ambience] " + camelCase(type) + " at " + getShortLocationString(location) + " invalid, removing");
+				Nexus.warn("[Ambience] " + StringUtils.camelCase(type) + " at " + StringUtils.getShortLocationString(location) + " invalid, removing");
 				config().delete(this);
 				return false;
 			}
@@ -140,7 +123,7 @@ public class AmbienceConfig implements PlayerOwnedObject {
 			BIRDHOUSE(AmbienceLocationType.ITEM_FRAME, Material.PAPER, BirdHouse.ids()) {
 				@Override
 				public void play(Location location) {
-					Tasks.wait(TickTime.SECOND.x(randomInt(0, 45)), () -> BirdSound.randomBirdhouse().play(location));
+					Tasks.wait(TickTime.SECOND.x(RandomUtils.randomInt(0, 45)), () -> BirdSound.randomBirdhouse().play(location));
 				}
 			},
 			;
@@ -188,7 +171,7 @@ public class AmbienceConfig implements PlayerOwnedObject {
 						if (!frameLocation.toBlockLocation().equals(location.toBlockLocation()))
 							return false;
 
-						if (isNullOrAir(frameItem))
+						if (Nullables.isNullOrAir(frameItem))
 							return false;
 
 						if (!ambience.getType().matches(frameItem))

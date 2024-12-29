@@ -1,12 +1,9 @@
 package gg.projecteden.nexus.models.banker;
 
 import com.mongodb.DBObject;
-import dev.morphia.annotations.Converters;
-import dev.morphia.annotations.Entity;
-import dev.morphia.annotations.Id;
-import dev.morphia.annotations.PostLoad;
-import dev.morphia.annotations.PreLoad;
+import dev.morphia.annotations.*;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.BigDecimalConverter;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
@@ -19,24 +16,14 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
-import static gg.projecteden.nexus.models.banker.BankerService.rounded;
-import static gg.projecteden.nexus.utils.StringUtils.prettyMoney;
 
 @Data
 @Entity(value = "banker", noClassnameStored = true)
@@ -83,11 +70,11 @@ public class Banker implements PlayerOwnedObject {
 	}
 
 	public boolean isMarket() {
-		return isUUID0(uuid);
+		return UUIDUtils.isUUID0(uuid);
 	}
 
 	public String getBalanceFormatted(ShopGroup shopGroup) {
-		return prettyMoney(getBalance(shopGroup));
+		return StringUtils.prettyMoney(getBalance(shopGroup));
 	}
 
 	public BigDecimal getBalance(ShopGroup shopGroup) {
@@ -140,7 +127,7 @@ public class Banker implements PlayerOwnedObject {
 		if (balance.signum() == -1)
 			throw new NegativeBalanceException();
 
-		BigDecimal newBalance = rounded(balance);
+		BigDecimal newBalance = BankerService.rounded(balance);
 		BigDecimal difference = newBalance.subtract(getBalance(shopGroup));
 
 		if (new BalanceChangeEvent(uuid, getBalance(shopGroup), newBalance, shopGroup).callEvent()) {
@@ -173,7 +160,7 @@ public class Banker implements PlayerOwnedObject {
 
 			if (profit.signum() != 0) {
 				Tasks.cancel(taskId);
-				final String message = (profit.signum() > 0 ? "&a+" : "&c") + prettyMoney(profit);
+				final String message = (profit.signum() > 0 ? "&a+" : "&c") + StringUtils.prettyMoney(profit);
 				ActionBarUtils.sendActionBar(getOnlinePlayer(), message);
 				taskId = Tasks.wait(TickTime.SECOND.x(3.5), () -> profit = new BigDecimal(0));
 			}

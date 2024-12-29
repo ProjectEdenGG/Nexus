@@ -11,18 +11,15 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.parchment.HasPlayer;
-import io.papermc.paper.datacomponent.DataComponentTypes;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -30,7 +27,6 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.Material;
-import org.bukkit.Registry;
 import org.bukkit.StructureType;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
@@ -55,28 +51,16 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-
 public class ItemUtils {
 
 	public static boolean isPreferredTool(ItemStack tool, Block block) {
-		if (isNullOrAir(tool) || isNullOrAir(block))
+		if (Nullables.isNullOrAir(tool) || Nullables.isNullOrAir(block))
 			return false;
 
 		final ToolType toolType = ToolType.of(tool);
@@ -91,9 +75,9 @@ public class ItemUtils {
 
 	@Contract("_, null -> false; null, _ -> false")
 	public static boolean isTypeAndNameEqual(ItemStack itemStack1, ItemStack itemStack2) {
-		if (isNullOrAir(itemStack1) || isNullOrAir(itemStack2)) return false;
+		if (Nullables.isNullOrAir(itemStack1) || Nullables.isNullOrAir(itemStack2)) return false;
 		if (itemStack1.getType() != itemStack2.getType()) return false;
-		Function<ItemStack, String> name = item -> stripColor(item.getItemMeta().getDisplayName());
+		Function<ItemStack, String> name = item -> StringUtils.stripColor(item.getItemMeta().getDisplayName());
 		return name.apply(itemStack1).equals(name.apply(itemStack2));
 	}
 
@@ -130,9 +114,9 @@ public class ItemUtils {
 			List<String> lore1 = itemMeta1.getLore();
 			List<String> lore2 = itemMeta2.getLore();
 
-			final List<String> conditionTags = Arrays.stream(Condition.values()).map(condition -> stripColor(condition.getTag())).toList();
+			final List<String> conditionTags = Arrays.stream(Condition.values()).map(condition -> StringUtils.stripColor(condition.getTag())).toList();
 			final Function<List<String>, List<String>> filter = lore -> lore.stream()
-				.filter(line -> !conditionTags.contains(stripColor(line)))
+				.filter(line -> !conditionTags.contains(StringUtils.stripColor(line)))
 				.filter(line -> !Nullables.isNullOrEmpty(line.trim()))
 				.toList();
 
@@ -153,7 +137,7 @@ public class ItemUtils {
 	}
 
 	public static @Nullable ItemStack clone(@Nullable ItemStack itemStack) {
-		if (isNullOrAir(itemStack))
+		if (Nullables.isNullOrAir(itemStack))
 			return null;
 
 		return itemStack.clone();
@@ -161,7 +145,7 @@ public class ItemUtils {
 
 	@Contract("null, _ -> null; !null, _ -> _")
 	public static @Nullable ItemStack clone(@Nullable ItemStack itemStack, int amount) {
-		if (isNullOrAir(itemStack))
+		if (Nullables.isNullOrAir(itemStack))
 			return null;
 
 		final ItemStack clone = itemStack.clone();
@@ -175,13 +159,13 @@ public class ItemUtils {
 
 	public static void combine(List<ItemStack> itemStacks, List<ItemStack> newItemStacks) {
 		for (ItemStack newItemStack : newItemStacks) {
-			if (isNullOrAir(newItemStack))
+			if (Nullables.isNullOrAir(newItemStack))
 				continue;
 
 			final Iterator<ItemStack> iterator = itemStacks.iterator();
 			while (iterator.hasNext()) {
 				final ItemStack next = iterator.next();
-				if (isNullOrAir(next))
+				if (Nullables.isNullOrAir(next))
 					continue;
 				if (next.getAmount() >= next.getType().getMaxStackSize())
 					continue;
@@ -222,7 +206,7 @@ public class ItemUtils {
 	public static List<ItemStack> getRawShulkerContents(ItemStack itemStack) {
 		List<ItemStack> contents = new ArrayList<>();
 
-		if (isNullOrAir(itemStack))
+		if (Nullables.isNullOrAir(itemStack))
 			return contents;
 
 		if (!MaterialTag.SHULKER_BOXES.isTagged(itemStack.getType()))
@@ -251,9 +235,9 @@ public class ItemUtils {
 		Player _player = player.getPlayer();
 		ItemStack mainHand = _player.getInventory().getItemInMainHand();
 		ItemStack offHand = _player.getInventory().getItemInOffHand();
-		if (!isNullOrAir(mainHand) && (material == null || material.is(mainHand)))
+		if (!Nullables.isNullOrAir(mainHand) && (material == null || material.is(mainHand)))
 			return mainHand;
-		else if (!isNullOrAir(offHand) && (material == null || material.is(offHand)))
+		else if (!Nullables.isNullOrAir(offHand) && (material == null || material.is(offHand)))
 			return offHand;
 		return null;
 	}
@@ -262,16 +246,16 @@ public class ItemUtils {
 		Player _player = player.getPlayer();
 		ItemStack mainHand = _player.getInventory().getItemInMainHand();
 		ItemStack offHand = _player.getInventory().getItemInOffHand();
-		if (!isNullOrAir(mainHand) && (material == null || mainHand.getType() == material))
+		if (!Nullables.isNullOrAir(mainHand) && (material == null || mainHand.getType() == material))
 			return mainHand;
-		else if (!isNullOrAir(offHand) && (material == null || offHand.getType() == material))
+		else if (!Nullables.isNullOrAir(offHand) && (material == null || offHand.getType() == material))
 			return offHand;
 		return null;
 	}
 
 	public static ItemStack getToolRequired(HasPlayer player) {
 		ItemStack item = getTool(player);
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			throw new InvalidInputException("You are not holding anything");
 		return item;
 	}
@@ -284,9 +268,9 @@ public class ItemUtils {
 		Player _player = player.getPlayer();
 		ItemStack mainHand = _player.getInventory().getItemInMainHand();
 		ItemStack offHand = _player.getInventory().getItemInOffHand();
-		if (!isNullOrAir(mainHand) && (material == null || mainHand.getType() == material))
+		if (!Nullables.isNullOrAir(mainHand) && (material == null || mainHand.getType() == material))
 			return EquipmentSlot.HAND;
-		else if (!isNullOrAir(offHand) && (material == null || offHand.getType() == material))
+		else if (!Nullables.isNullOrAir(offHand) && (material == null || offHand.getType() == material))
 			return EquipmentSlot.OFF_HAND;
 		return null;
 	}
@@ -300,7 +284,7 @@ public class ItemUtils {
 
 	public static boolean isInventoryEmpty(Inventory inventory) {
 		for (ItemStack itemStack : inventory.getContents())
-			if (!isNullOrAir(itemStack))
+			if (!Nullables.isNullOrAir(itemStack))
 				return false;
 		return true;
 	}
@@ -341,7 +325,7 @@ public class ItemUtils {
 	}
 
 	public static boolean isSimilar(ItemStack item1, ItemStack item2) {
-		if (isNullOrAir(item1) || isNullOrAir(item2))
+		if (Nullables.isNullOrAir(item1) || Nullables.isNullOrAir(item2))
 			return false;
 
 		if (item1.getType() != item2.getType())
@@ -390,7 +374,7 @@ public class ItemUtils {
 	public static List<ItemStack> fixMaxStackSize(List<ItemStack> items) {
 		List<ItemStack> fixed = new ArrayList<>();
 		for (ItemStack item : items) {
-			if (isNullOrAir(item))
+			if (Nullables.isNullOrAir(item))
 				continue;
 
 			final Material material = item.getType();
@@ -466,7 +450,7 @@ public class ItemUtils {
 	}
 
 	public static boolean isSameHead(ItemStack itemStack1, ItemStack itemStack2) {
-		if (isNullOrAir(itemStack1) || isNullOrAir(itemStack2)) return false;
+		if (Nullables.isNullOrAir(itemStack1) || Nullables.isNullOrAir(itemStack2)) return false;
 		if (itemStack1.getType() != Material.PLAYER_HEAD || itemStack2.getType() != Material.PLAYER_HEAD) return false;
 		return Nexus.getHeadAPI().getItemID(itemStack1).equals(Nexus.getHeadAPI().getItemID(itemStack2));
 	}

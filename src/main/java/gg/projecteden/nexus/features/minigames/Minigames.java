@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigames;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.ReflectionUtils;
 import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Bot;
@@ -24,14 +25,8 @@ import gg.projecteden.nexus.features.minigames.utils.MinigameNight;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.minigamessetting.MinigamesConfigService;
-import gg.projecteden.nexus.utils.AdventureUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.OptionalLocation;
 import lombok.Getter;
@@ -49,13 +44,8 @@ import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
-import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
 
 @NoArgsConstructor
 public class Minigames extends Feature implements Listener {
@@ -214,7 +204,7 @@ public class Minigames extends Feature implements Listener {
 	public static void registerMatchDatas() {
 		try {
 			String path = Minigames.class.getPackage().getName();
-			Set<Class<? extends MatchData>> matchDataTypes = subTypesOf(MatchData.class, path + ".models.matchdata");
+			Set<Class<? extends MatchData>> matchDataTypes = ReflectionUtils.subTypesOf(MatchData.class, path + ".models.matchdata");
 
 			for (Class<?> matchDataType : matchDataTypes) {
 				if (matchDataType.getAnnotation(MatchDataFor.class) == null)

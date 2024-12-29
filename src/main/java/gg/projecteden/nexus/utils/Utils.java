@@ -5,6 +5,7 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import gg.projecteden.api.common.utils.ReflectionUtils;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
@@ -28,27 +29,12 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.annotation.Annotation;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-
-import static gg.projecteden.api.common.utils.ReflectionUtils.methodsAnnotatedWith;
-import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
-import static gg.projecteden.api.common.utils.ReflectionUtils.superclassesOf;
-import static gg.projecteden.api.common.utils.ReflectionUtils.typesAnnotatedWith;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 public class Utils extends gg.projecteden.api.common.utils.Utils {
 
@@ -57,7 +43,7 @@ public class Utils extends gg.projecteden.api.common.utils.Utils {
 	}
 
 	public static void registerSerializables(String packageName) {
-		typesAnnotatedWith(SerializableAs.class, packageName).forEach(clazz -> {
+		ReflectionUtils.typesAnnotatedWith(SerializableAs.class, packageName).forEach(clazz -> {
 			String alias = clazz.getAnnotation(SerializableAs.class).value();
 			ConfigurationSerialization.registerClass((Class<? extends ConfigurationSerializable>) clazz, alias);
 		});
@@ -68,7 +54,7 @@ public class Utils extends gg.projecteden.api.common.utils.Utils {
 	}
 
 	public static void registerListeners(String packageName) {
-		subTypesOf(Listener.class, packageName).forEach(Utils::tryRegisterListener);
+		ReflectionUtils.subTypesOf(Listener.class, packageName).forEach(Utils::tryRegisterListener);
 	}
 
 	public static void tryRegisterListener(Class<?> clazz) {
@@ -88,7 +74,7 @@ public class Utils extends gg.projecteden.api.common.utils.Utils {
 					Nexus.registerListener(listener);
 				else
 					Nexus.warn("Cannot register listener on " + clazz.getSimpleName() + ", needs @NoArgsConstructor");
-			} else if (!methodsAnnotatedWith(clazz, EventHandler.class).isEmpty())
+			} else if (!ReflectionUtils.methodsAnnotatedWith(clazz, EventHandler.class).isEmpty())
 				Nexus.warn("Found @EventHandlers in " + clazz.getSimpleName() + " which does not implement Listener"
 					+ (hasNoArgsConstructor ? "" : " or have a @NoArgsConstructor"));
 		} catch (Exception ex) {
@@ -206,7 +192,7 @@ public class Utils extends gg.projecteden.api.common.utils.Utils {
 	public static boolean equalsInvViewTitle(InventoryView view, String title) {
 		String viewTitle = getInvTitle(view);
 
-		if (isNullOrEmpty(viewTitle))
+		if (Nullables.isNullOrEmpty(viewTitle))
 			return false;
 
 		return viewTitle.equals(title);
@@ -215,7 +201,7 @@ public class Utils extends gg.projecteden.api.common.utils.Utils {
 	public static boolean containsInvViewTitle(InventoryView view, String title) {
 		String viewTitle = getInvTitle(view);
 
-		if (isNullOrEmpty(viewTitle))
+		if (Nullables.isNullOrEmpty(viewTitle))
 			return false;
 
 		return viewTitle.contains(title);
@@ -353,7 +339,7 @@ public class Utils extends gg.projecteden.api.common.utils.Utils {
 		if (annotation == null)
 			return null;
 
-		for (Class<? extends T> superclass : superclassesOf(clazz))
+		for (Class<? extends T> superclass : ReflectionUtils.superclassesOf(clazz))
 			if (superclass.isAnnotationPresent(annotation))
 				return superclass.getAnnotation(annotation);
 

@@ -1,10 +1,6 @@
 package gg.projecteden.nexus.utils;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
@@ -12,8 +8,6 @@ import net.kyori.adventure.text.ComponentLike;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Getter
 @Setter
@@ -62,7 +56,7 @@ public class BossBarBuilder {
 	 */
 	@NonNull
 	public BossBarBuilder title(@NonNull String title) {
-		this.title = AdventureUtils.fromLegacyText(colorize(title));
+		this.title = AdventureUtils.fromLegacyText(StringUtils.colorize(title));
 		return this;
 	}
 

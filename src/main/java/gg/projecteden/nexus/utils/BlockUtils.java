@@ -1,23 +1,16 @@
 package gg.projecteden.nexus.utils;
 
-import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks.SoundAction;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomToolBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IHarvestable;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.Getter;
 import lombok.NonNull;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.ChunkSnapshot;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -36,17 +29,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.ItemUtils.isPreferredTool;
 
 public class BlockUtils {
 
@@ -381,7 +366,7 @@ public class BlockUtils {
 			return changedBlock.canHarvestWith(tool);
 		}
 
-		boolean preferred = isPreferredTool(tool, block);
+		boolean preferred = ItemUtils.isPreferredTool(tool, block);
 		//debug("NMS PreferredTool = " + preferred);
 		return preferred;
 	}
@@ -432,10 +417,10 @@ public class BlockUtils {
 			int fatigueLevel = 0;
 			for (PotionEffect potionEffect : player.getActivePotionEffects()) {
 				int amplifier = potionEffect.getAmplifier();
-				if (potionEffect.getType().equals(PotionEffectType.FAST_DIGGING)) {
+				if (potionEffect.getType().equals(PotionEffectType.HASTE)) {
 					if (amplifier > hasteLevel)
 						hasteLevel = amplifier;
-				} else if (potionEffect.getType().equals(PotionEffectType.SLOW_DIGGING)) {
+				} else if (potionEffect.getType().equals(PotionEffectType.MINING_FATIGUE)) {
 					if (amplifier > fatigueLevel)
 						fatigueLevel = amplifier;
 				}

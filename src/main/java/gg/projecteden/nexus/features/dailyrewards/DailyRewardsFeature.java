@@ -8,6 +8,7 @@ import gg.projecteden.nexus.models.dailyreward.DailyRewardUser.DailyStreak;
 import gg.projecteden.nexus.models.dailyreward.DailyRewardUserService;
 import gg.projecteden.nexus.models.dailyreward.Reward;
 import gg.projecteden.nexus.models.hours.HoursService;
+import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -21,7 +22,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static gg.projecteden.nexus.utils.Enchant.*;
 import static org.bukkit.Material.*;
 
 public class DailyRewardsFeature extends Feature {
@@ -164,10 +164,10 @@ public class DailyRewardsFeature extends Feature {
 				/*  33 */ new Reward("20 Leather")							.item(LEATHER, 20),
 				/*  34 */ new Reward("20 Bread")								.item(BREAD, 20),
 				/*  35 */ new Reward("4 Golden Apples")						.item(GOLDEN_APPLE, 4),
-				/*  36 */ new Reward("1 Silk Touch")							.item(new ItemBuilder(ENCHANTED_BOOK).enchant(SILK_TOUCH)),
-				/*  37 */ new Reward("1 Mending")								.item(new ItemBuilder(ENCHANTED_BOOK).enchant(MENDING)),
-				/*  38 */ new Reward("1 Unbreaking 3")						.item(new ItemBuilder(ENCHANTED_BOOK).enchant(UNBREAKING, 3)),
-				/*  39 */ new Reward("1 Efficiency 5")						.item(new ItemBuilder(ENCHANTED_BOOK).enchant(EFFICIENCY, 5)),
+				/*  36 */ new Reward("1 Silk Touch")							.item(new ItemBuilder(ENCHANTED_BOOK).enchant(Enchant.SILK_TOUCH)),
+				/*  37 */ new Reward("1 Mending")								.item(new ItemBuilder(ENCHANTED_BOOK).enchant(Enchant.MENDING)),
+				/*  38 */ new Reward("1 Unbreaking 3")						.item(new ItemBuilder(ENCHANTED_BOOK).enchant(Enchant.UNBREAKING, 3)),
+				/*  39 */ new Reward("1 Efficiency 5")						.item(new ItemBuilder(ENCHANTED_BOOK).enchant(Enchant.EFFICIENCY, 5)),
 				/*  40 */ new Reward("$4,000")								.money(4000),
 				/*  41 */ new Reward("15 Cooked Chicken")						.item(COOKED_CHICKEN, 15),
 				/*  42 */ new Reward("15 Steak")								.item(COOKED_BEEF, 15),
@@ -196,7 +196,7 @@ public class DailyRewardsFeature extends Feature {
 				/*  65 */ new Reward("8 Golden Apples")						.item(GOLDEN_APPLE, 8),
 				/*  66 */ new Reward("Set of Chainmail Armor")				.item(MaterialTag.ARMOR_CHAINMAIL),
 				/*  67 */ new Reward("64 Spectral Arrows")					.item(SPECTRAL_ARROW, 64),
-				/*  68 */ new Reward("Power 5 Book")							.item(new ItemBuilder(ENCHANTED_BOOK).enchant(POWER, 5)),
+				/*  68 */ new Reward("Power 5 Book")							.item(new ItemBuilder(ENCHANTED_BOOK).enchant(Enchant.POWER, 5)),
 				/*  69 */ new Reward("16 Name Tags")							.item(NAME_TAG, 16),
 				/*  70 */ new Reward("$8,000")								.money(8000),
 				/*  71 */ new Reward("25 Cooked Chicken")						.item(COOKED_CHICKEN, 25),
@@ -224,10 +224,10 @@ public class DailyRewardsFeature extends Feature {
 				/*  93 */ new Reward("200 Leather")							.item(LEATHER, 200),
 				/*  94 */ new Reward("Coupon for 5 McMMO levels")				.item(CouponCommand.getGenericCoupon("mcmmo", 5)),
 				/*  95 */ new Reward("5 Enchanted Golden Apples")				.item(ENCHANTED_GOLDEN_APPLE, 5),
-				/*  96 */ new Reward("Super Fishing Pole")					.item(new ItemBuilder(FISHING_ROD).enchant(LURE, 5).enchant(LUCK_OF_THE_SEA, 3).enchant(UNBREAKING, 4)),
-				/*  97 */ new Reward("Maxed Diamond Sword")					.item(new ItemBuilder(DIAMOND_SWORD).enchantMax(SHARPNESS).enchantMax(MENDING).enchantMax(FIRE_ASPECT).enchantMax(KNOCKBACK).enchant(UNBREAKING, 4)),
+				/*  96 */ new Reward("Super Fishing Pole")					.item(new ItemBuilder(FISHING_ROD).enchant(Enchant.LURE, 5).enchant(Enchant.LUCK_OF_THE_SEA, 3).enchant(Enchant.UNBREAKING, 4)),
+				/*  97 */ new Reward("Maxed Diamond Sword")					.item(new ItemBuilder(DIAMOND_SWORD).enchantMax(Enchant.SHARPNESS).enchantMax(Enchant.MENDING).enchantMax(Enchant.FIRE_ASPECT).enchantMax(Enchant.KNOCKBACK).enchant(Enchant.UNBREAKING, 4)),
 				/*  98 */ new Reward("Full set of Diamond gear and tools")	.item(MaterialTag.ARMOR_DIAMOND).item(MaterialTag.TOOLS_DIAMOND),
-				/*  99 */ new Reward("Maxed Diamond Pickaxe")					.item(new ItemBuilder(DIAMOND_PICKAXE).enchantMax(EFFICIENCY).enchant(MENDING).enchant(UNBREAKING, 4)),
+				/*  99 */ new Reward("Maxed Diamond Pickaxe")					.item(new ItemBuilder(DIAMOND_PICKAXE).enchantMax(Enchant.EFFICIENCY).enchant(Enchant.MENDING).enchant(Enchant.UNBREAKING, 4)),
 				/* 100 */ new Reward("$20,000")								.money(20000)
 			);
 
@@ -428,7 +428,7 @@ public class DailyRewardsFeature extends Feature {
 				/*  91 */ new Reward("50 Bookshelves")						.item(BOOKSHELF, 50),
 				/*  92 */ new Reward("50 Chests")								.item(CHEST, 50),
 				/*  93 */ new Reward("5 Netherite Ingots")					.item(NETHERITE_INGOT, 5),
-				/*  94 */ new Reward("Maxed Bow")								.item(new ItemBuilder(BOW).enchantMax(POWER).enchantMax(PUNCH).enchantMax(INFINITY).enchant(MENDING)),
+				/*  94 */ new Reward("Maxed Bow")								.item(new ItemBuilder(BOW).enchantMax(Enchant.POWER).enchantMax(Enchant.PUNCH).enchantMax(Enchant.INFINITY).enchant(Enchant.MENDING)),
 				/*  95 */ new Reward("5 Crying Obsidian")						.item(CRYING_OBSIDIAN, 5),
 				/*  96 */ new Reward("16 of each color Wool")					.item(MaterialTag.WOOL, 16),
 				/*  97 */ new Reward("150 Enchanting Levels")					.levels(150),

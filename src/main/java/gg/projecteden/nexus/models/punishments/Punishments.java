@@ -8,6 +8,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
+import gg.projecteden.nexus.features.justice.Justice;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
@@ -26,8 +27,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.features.justice.Justice.PREFIX;
 
 @Data
 @Entity(value = "punishments", noClassnameStored = true)
@@ -157,7 +156,7 @@ public class Punishments implements PlayerOwnedObject {
 			old.setReplacedBy(punishment.getId());
 			old.setActive(false);
 			String typeName = old.getType().name().toLowerCase().replace("_", "-");
-			Nerd.of(punishment.getPunisher()).sendMessage(PREFIX + "Replacing previous " + typeName + " for &e"
+			Nerd.of(punishment.getPunisher()).sendMessage(Justice.PREFIX + "Replacing previous " + typeName + " for &e"
 					+ Nickname.of(punishment.getUuid()) + (Nullables.isNullOrEmpty(old.getReason()) ? "" : "&3: &7" + old.getReason()) + " &3(" + old.getTimeSince() + ")");
 		}
 	}
@@ -295,7 +294,7 @@ public class Punishments implements PlayerOwnedObject {
 	public void sendAltsMessage(Consumer<JsonBuilder> sender, Runnable ifNull) {
 		JsonBuilder altsMessage = getAltsMessage();
 
-		JsonBuilder message = new JsonBuilder(PREFIX + "Alts of &e" + getNickname() + " ");
+		JsonBuilder message = new JsonBuilder(Justice.PREFIX + "Alts of &e" + getNickname() + " ");
 		if (!getName().equals(getNickname()))
 			message.hover("&3Real Name: &e" + getName()).group();
 

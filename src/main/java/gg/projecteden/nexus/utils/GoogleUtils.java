@@ -35,17 +35,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
-import static gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils.ValueInputOption.USER_ENTERED;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import java.util.*;
 
 /**
  * https://developers.google.com/sheets/api/quickstart/java
@@ -158,7 +148,7 @@ public class GoogleUtils {
 			clearSheet(spreadsheet, sheetId);
 			return values()
 				.update(spreadsheet.getId(), sheetId, values)
-				.setValueInputOption(USER_ENTERED.name())
+				.setValueInputOption(ValueInputOption.USER_ENTERED.name())
 				.execute();
 		}
 
@@ -183,7 +173,7 @@ public class GoogleUtils {
 
 		@NotNull
 		public static Object valueOf(Collection<String> strings) {
-			return isNullOrEmpty(strings) ? "" : valueOf(String.join("\n", strings));
+			return Nullables.isNullOrEmpty(strings) ? "" : valueOf(String.join("\n", strings));
 		}
 
 		@NotNull

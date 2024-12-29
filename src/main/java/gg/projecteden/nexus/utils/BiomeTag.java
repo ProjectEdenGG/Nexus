@@ -17,8 +17,6 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-
 @Getter
 @AllArgsConstructor
 public enum BiomeTag {
@@ -87,7 +85,7 @@ public enum BiomeTag {
 				if (Range.between(type.getMinTemperature(), type.getMaxTemperature()).contains(temperature))
 					return type;
 
-			throw new InvalidInputException("Biome " + camelCase(biome) + " with temperature "
+			throw new InvalidInputException("Biome " + StringUtils.camelCase(biome.name()) + " with temperature "
 				+ StringUtils.getDf().format(temperature) + " does not match any biome climate type");
 		}
 	}

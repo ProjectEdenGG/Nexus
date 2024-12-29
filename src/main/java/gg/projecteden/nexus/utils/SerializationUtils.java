@@ -1,11 +1,7 @@
 package gg.projecteden.nexus.utils;
 
 import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import com.google.gson.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -19,17 +15,8 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
-import static java.util.stream.Collectors.toList;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class SerializationUtils {
 
@@ -59,7 +46,7 @@ public class SerializationUtils {
 
 		public static List<String> serializeMaterialSet(Set<Material> materials) {
 			if (materials == null) return null;
-			return materials.stream().map(Material::name).sorted().collect(toList());
+			return materials.stream().map(Material::name).sorted().collect(Collectors.toList());
 		}
 
 		public static Set<Material> deserializeMaterialSet(List<String> materials) {

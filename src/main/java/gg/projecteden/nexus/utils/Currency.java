@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.utils;
 
 import de.tr7zw.nbtapi.NBTItem;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu.Product;
 import gg.projecteden.nexus.features.quests.CommonQuestItem;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -22,7 +23,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.features.shops.ShopUtils.prettyMoney;
 
 @Getter
@@ -273,7 +273,7 @@ public enum Currency {
 			return;
 
 		double priceNum = price.asBalance();
-		Shop.log(UUID0, viewer.getUniqueId(), shopGroup, StringUtils.pretty(item).split(" ", 2)[1], 1, ExchangeType.SELL, String.valueOf(priceNum), "");
+		Shop.log(UUIDUtils.UUID0, viewer.getUniqueId(), shopGroup, StringUtils.pretty(item).split(" ", 2)[1], 1, ExchangeType.SELL, String.valueOf(priceNum), "");
 	}
 
 	@Getter

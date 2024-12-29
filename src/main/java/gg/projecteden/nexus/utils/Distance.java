@@ -5,7 +5,7 @@ import gg.projecteden.parchment.OptionalLocation;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
-import static java.util.Objects.requireNonNull;
+import java.util.Objects;
 
 public class Distance implements Comparable<Distance> {
 	private final Location from;
@@ -23,15 +23,15 @@ public class Distance implements Comparable<Distance> {
 	}
 
 	public static Distance distance(OptionalLocation from, HasLocation to) {
-		return new Distance(requireNonNull(from.getLocation()), to.getLocation());
+		return new Distance(Objects.requireNonNull(from.getLocation()), to.getLocation());
 	}
 
 	public static Distance distance(HasLocation from, OptionalLocation to) {
-		return new Distance(from.getLocation(), requireNonNull(to.getLocation()));
+		return new Distance(from.getLocation(), Objects.requireNonNull(to.getLocation()));
 	}
 
 	public static Distance distance(OptionalLocation from, OptionalLocation to) {
-		return new Distance(requireNonNull(from.getLocation()), to.getLocation());
+		return new Distance(Objects.requireNonNull(from.getLocation()), to.getLocation());
 	}
 
 	public double get() {

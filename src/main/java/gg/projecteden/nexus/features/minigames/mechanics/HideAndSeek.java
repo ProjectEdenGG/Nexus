@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.destroystokyo.paper.ParticleBuilder;
-import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.menus.MenuUtils;
@@ -23,7 +22,6 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.models.cooldown.Cooldown;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -32,14 +30,7 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Color;
-import org.bukkit.FluidCollisionMode;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -60,20 +51,8 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static gg.projecteden.nexus.utils.LocationUtils.blockLocationsEqual;
-import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 public class HideAndSeek extends Infection {
 
@@ -184,7 +163,7 @@ public class HideAndSeek extends Infection {
 		match.getScoreboard().update();
 		if (midgame) {
 			player.getWorld().playSound(player.getLocation(), Sound.BLOCK_LAVA_EXTINGUISH, 1F, 0.1F);
-			player.getWorld().spawnParticle(Particle.SMOKE_NORMAL, player.getLocation(), 50, .5, .5, .5, 0.01F);
+			player.getWorld().spawnParticle(Particle.SMOKE, player.getLocation(), 50, .5, .5, .5, 0.01F);
 		}
 	}
 
@@ -231,7 +210,7 @@ public class HideAndSeek extends Infection {
 
 				Location location = player.getLocation();
 				final Block down = location.getBlock().getRelative(BlockFace.DOWN);
-				if (isNullOrAir(down) || down.isLiquid()) {
+				if (Nullables.isNullOrAir(down) || down.isLiquid()) {
 					sendActionBarWithTimer(minigamer, new JsonBuilder("&cYou cannot solidify here"));
 				// check how long they've been still
 				} else if (immobileTicks < TickTime.SECOND.x(2)) {
@@ -240,7 +219,7 @@ public class HideAndSeek extends Infection {
 				} else if (immobileTicks < SOLIDIFY_PLAYER_AT) {
 					// countdown until solidification
 					int seconds = (int) Math.ceil((SOLIDIFY_PLAYER_AT - immobileTicks) / 20d);
-					String display = String.format(plural("&dFully disguising in %d second", seconds) + "...", seconds);
+					String display = String.format(StringUtils.plural("&dFully disguising in %d second", seconds) + "...", seconds);
 					sendActionBarWithTimer(minigamer, display);
 				} else {
 					if (!solidPlayers.containsKey(minigamer))
@@ -320,7 +299,7 @@ public class HideAndSeek extends Infection {
 					}
 				}
 
-				FallingBlock fallingBlock = player.getWorld().spawnFallingBlock(getCenteredLocation(location), blockData);
+				FallingBlock fallingBlock = player.getWorld().spawnFallingBlock(LocationUtils.getCenteredLocation(location), blockData);
 				fallingBlock.setGravity(false);
 				fallingBlock.setHurtEntities(false);
 				fallingBlock.setDropItem(false);
@@ -388,7 +367,7 @@ public class HideAndSeek extends Infection {
 			Material blockChoice = matchData.getBlockChoice(minigamer);
 			blockCounts.compute(blockChoice, ($, integer) -> integer == null ? 1 : integer+1);
 		});
-		blockCounts.forEach((material, integer) -> lines.put(camelCase(material), integer));
+		blockCounts.forEach((material, integer) -> lines.put(StringUtils.camelCase(material), integer));
 		return lines;
 	}
 
@@ -455,7 +434,7 @@ public class HideAndSeek extends Infection {
 			for (Map.Entry<Minigamer, Location> entry : matchData.getSolidPlayers().entrySet()) {
 				Minigamer target = entry.getKey();
 				Location location = entry.getValue();
-				if (blockLocationsEqual(blockLocation, location)) {
+				if (LocationUtils.blockLocationsEqual(blockLocation, location)) {
 					EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(minigamer.getOnlinePlayer(), target.getPlayer(), EntityDamageEvent.DamageCause.ENTITY_ATTACK, 1);
 					e.callEvent();
 					if (e.isCancelled()) return;
@@ -469,7 +448,7 @@ public class HideAndSeek extends Infection {
 			}
 
 			for (Decoy.DecoyInstance decoyLocation : new ArrayList<>(matchData.getDecoyLocations()))
-				if (blockLocationsEqual(blockLocation, decoyLocation.getLocation()))
+				if (LocationUtils.blockLocationsEqual(blockLocation, decoyLocation.getLocation()))
 					decoyLocation.remove(matchData.getMatch());
 
 		}
@@ -540,14 +519,14 @@ public class HideAndSeek extends Infection {
 					item.getLocation().getWorld().playSound(item.getLocation(), Sound.ENTITY_WITCH_THROW, 1, 1);
 					new SoundBuilder(CustomSound.FLASH_BANG)
 						.location(item.getLocation())
-						.receivers(match.getOnlinePlayers().stream().filter(p -> distance(p, item).lte(16)).toList())
+						.receivers(match.getOnlinePlayers().stream().filter(p -> Distance.distance(p, item).lte(16)).toList())
 						.muteMenuItem(MuteMenuItem.JOKES)
 						.play();
 					item.setVelocity(minigamer.getLocation().getDirection().normalize());
 				}
 
 				if (iteration.get() < 20)
-					item.getLocation().getWorld().spawnParticle(Particle.SMOKE_NORMAL, item.getLocation(), 1, 0, 0, 0, 0.1);
+					item.getLocation().getWorld().spawnParticle(Particle.SMOKE, item.getLocation(), 1, 0, 0, 0, 0.1);
 
 				if (iteration.getAndIncrement() == 20) {
 					item.getLocation().getWorld().spawnParticle(Particle.FLASH, item.getLocation(), 2, 0, 0, 0, 0.1);
@@ -555,7 +534,7 @@ public class HideAndSeek extends Infection {
 					Tasks.wait(1, () -> item.getLocation().getWorld().playSound(item.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST, 1, 1));
 
 					for (Minigamer minigamer1 : hideAndSeek.getZombies(match)) {
-						if (distance(minigamer1, item).lt(RANGE)) {
+						if (Distance.distance(minigamer1, item).lt(RANGE)) {
 							minigamer1.addPotionEffect(STUN_EFFECT);
 						}
 					}
@@ -586,7 +565,7 @@ public class HideAndSeek extends Infection {
 			
 			Match match = minigamer.getMatch();
 			HideAndSeek hideAndSeek = match.getMechanic();
-			if (hideAndSeek.getHumans(match).stream().anyMatch(_minigamer -> distance(minigamer, _minigamer).lt(RANGE))) {
+			if (hideAndSeek.getHumans(match).stream().anyMatch(_minigamer -> Distance.distance(minigamer, _minigamer).lt(RANGE))) {
 				minigamer.sendMessage(new JsonBuilder("There is a hider nearby!").color(Color.LIME));
 				minigamer.getOnlinePlayer().playSound(minigamer.getOnlinePlayer().getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1, 1);
 			} else {
@@ -665,7 +644,7 @@ public class HideAndSeek extends Infection {
 
 			final Location blockLoc = minigamer.getLocation().toBlockLocation();
 			final Block down = minigamer.getLocation().getBlock().getRelative(BlockFace.DOWN);
-			if ((isNullOrAir(down) || down.isLiquid()) && MaterialTag.ALL_AIR.isTagged(blockLoc.getBlock().getType())) {
+			if ((Nullables.isNullOrAir(down) || down.isLiquid()) && MaterialTag.ALL_AIR.isTagged(blockLoc.getBlock().getType())) {
 				minigamer.sendMessage(new JsonBuilder("&cYou cannot place a decoy here"));
 				return;
 			}
@@ -707,7 +686,7 @@ public class HideAndSeek extends Infection {
 				match.getMinigamers().forEach(minigamer -> minigamer.getPlayer().sendBlockChange(location, Material.AIR.createBlockData()));
 				location.getWorld().playSound(location, Sound.BLOCK_FIRE_EXTINGUISH, 1, 1);
 				for (int i = 0; i < 10; i++)
-					new ParticleBuilder(Particle.SMOKE_NORMAL)
+					new ParticleBuilder(Particle.SMOKE)
 						.location(location.toCenterLocation())
 						.allPlayers()
 						.extra(.1)

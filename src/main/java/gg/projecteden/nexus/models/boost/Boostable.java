@@ -4,6 +4,7 @@ import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.shops.Market;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -11,8 +12,6 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Getter
 @AllArgsConstructor
@@ -69,7 +68,7 @@ public enum Boostable {
 
 	@NotNull
 	public ItemBuilder getDisplayItem() {
-		return new ItemBuilder(material).modelId(modelId).name("&6" + camelCase(name()));
+		return new ItemBuilder(material).modelId(modelId).name("&6" + StringUtils.camelCase(name()));
 	}
 
 	public void onActivate() {}

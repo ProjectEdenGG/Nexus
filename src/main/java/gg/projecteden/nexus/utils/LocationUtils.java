@@ -11,11 +11,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.WorldBorder;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Projectile;
@@ -30,9 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.RandomUtils.randomDouble;
 
 public class LocationUtils {
 	/**
@@ -259,7 +252,7 @@ public class LocationUtils {
 		final double minZ = center.getZ() - radius;
 		final double maxX = center.getX() + radius;
 		final double maxZ = center.getZ() + radius;
-		return new Location(world, randomDouble(minX, maxX), 0, randomDouble(minZ, maxZ));
+		return new Location(world, RandomUtils.randomDouble(minX, maxX), 0, RandomUtils.randomDouble(minZ, maxZ));
 	}
 
 	public enum EgocentricDirection {
@@ -473,16 +466,16 @@ public class LocationUtils {
 				location.setX((x.startsWith("~") ? location.getX() + trim(x) : trim(x)));
 				location.setY((y.startsWith("~") ? location.getY() + trim(y) : trim(y)));
 				location.setZ((z.startsWith("~") ? location.getZ() + trim(z) : trim(z)));
-				if (!isNullOrEmpty(yaw))
+				if (!Nullables.isNullOrEmpty(yaw))
 					location.setYaw((float) (yaw.startsWith("~") ? location.getYaw() + trim(yaw) : trim(yaw)));
-				if (!isNullOrEmpty(pitch))
+				if (!Nullables.isNullOrEmpty(pitch))
 					location.setPitch((float) (pitch.startsWith("~") ? location.getPitch() + trim(pitch) : trim(pitch)));
 				return location;
 			}
 		}
 
 		private static double trim(String string) {
-			if (isNullOrEmpty(string))
+			if (Nullables.isNullOrEmpty(string))
 				return 0;
 
 			if (Utils.isDouble(string))
@@ -490,7 +483,7 @@ public class LocationUtils {
 
 			string = string.replaceAll("~", "").replaceAll(",", "");
 
-			if (isNullOrEmpty(string))
+			if (Nullables.isNullOrEmpty(string))
 				return 0;
 
 			return Double.parseDouble(string);

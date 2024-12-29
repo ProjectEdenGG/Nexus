@@ -6,6 +6,7 @@ val edenApiVersion: String by project
 plugins {
     `java-library`
     `maven-publish`
+    id("io.freefair.lombok") version "8.11"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.papermc.paperweight.userdev") version "1.7.5"
 }
@@ -54,8 +55,6 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.projectlombok:lombok:1.18.36")
-    annotationProcessor("org.projectlombok:lombok:1.18.36")
     paperweightDevBundle("gg.projecteden.parchment", "${parchmentVersion}")
     compileOnly("gg.projecteden.parchment:parchment-api:${parchmentVersion}")
     implementation("io.papermc:paperlib:1.0.8-SNAPSHOT")

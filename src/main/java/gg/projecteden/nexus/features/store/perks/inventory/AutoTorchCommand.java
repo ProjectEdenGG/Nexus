@@ -1,27 +1,14 @@
 package gg.projecteden.nexus.features.store.perks.inventory;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.autotorch.AutoTorchService;
 import gg.projecteden.nexus.models.autotorch.AutoTorchUser;
-import gg.projecteden.nexus.utils.BlockUtils;
-import gg.projecteden.nexus.utils.CompletableTask;
-import gg.projecteden.nexus.utils.GameModeWrapper;
-import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.MaterialTag.MatchMode;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,13 +24,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.bukkit.Material.END_ROD;
-import static org.bukkit.Material.GLOWSTONE;
-import static org.bukkit.Material.LIGHT;
-import static org.bukkit.Material.REDSTONE_LAMP;
-import static org.bukkit.Material.SEA_PICKLE;
-import static org.bukkit.Material.SHROOMLIGHT;
-
 @NoArgsConstructor
 @Permission("nexus.autotorch")
 @Description("Automatically place torches when it gets too dark")
@@ -51,7 +31,7 @@ import static org.bukkit.Material.SHROOMLIGHT;
 public class AutoTorchCommand extends CustomCommand {
 	public static final String PERMISSION = "nexus.autotorch";
 
-	public static final MaterialTag AUTO_TORCH_TYPES = new MaterialTag(GLOWSTONE, SHROOMLIGHT, END_ROD, SEA_PICKLE, REDSTONE_LAMP, LIGHT)
+	public static final MaterialTag AUTO_TORCH_TYPES = new MaterialTag(Material.GLOWSTONE, Material.SHROOMLIGHT, Material.END_ROD, Material.SEA_PICKLE, Material.REDSTONE_LAMP, Material.LIGHT)
 		.append(MaterialTag.TORCHES, MaterialTag.LANTERNS, MaterialTag.FROGLIGHT, MaterialTag.CAMPFIRES)
 		.exclude("WALL_", MatchMode.CONTAINS);
 

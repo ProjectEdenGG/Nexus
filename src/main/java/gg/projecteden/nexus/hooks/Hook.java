@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.hooks;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.hooks.citizens.CitizensHook;
 import gg.projecteden.nexus.hooks.citizens.CitizensHookImpl;
 import gg.projecteden.nexus.hooks.glowapi.GlowAPIHook;
@@ -10,8 +11,6 @@ import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
-
-import static gg.projecteden.nexus.Nexus.singletonOf;
 
 @Getter
 public class Hook {
@@ -24,9 +23,9 @@ public class Hook {
 		final IHook<T> hook;
 
 		if (isEnabled(plugin))
-			hook = singletonOf(workingImpl);
+			hook = Nexus.singletonOf(workingImpl);
 		else
-			hook = singletonOf(defaultImpl);
+			hook = Nexus.singletonOf(defaultImpl);
 
 		Utils.tryRegisterListener(hook);
 		return (T) hook;

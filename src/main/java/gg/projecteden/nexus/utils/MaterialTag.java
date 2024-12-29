@@ -15,16 +15,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import static gg.projecteden.nexus.utils.Utils.collect;
 import static org.bukkit.Material.*;
 
 @SuppressWarnings("unused")
@@ -119,7 +113,7 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag COMMAND_BLOCKS = new MaterialTag("COMMAND_BLOCK", MatchMode.CONTAINS);
 	public static final MaterialTag MINECARTS = new MaterialTag("_MINECART", MatchMode.SUFFIX);
 
-	public static final MaterialTag UNOBTAINABLE = new MaterialTag(WATER, LAVA, AIR,
+	public static final MaterialTag UNOBTAINABLE = new MaterialTag(WATER, LAVA, Material.AIR,
 		STRUCTURE_BLOCK, STRUCTURE_VOID, JIGSAW, BARRIER, BEDROCK,
 		COMMAND_BLOCK, CHAIN_COMMAND_BLOCK, REPEATING_COMMAND_BLOCK, COMMAND_BLOCK_MINECART,
 		END_PORTAL, END_PORTAL_FRAME, NETHER_PORTAL, KNOWLEDGE_BOOK,
@@ -239,7 +233,7 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag FISH_BUCKETS = new MaterialTag(TROPICAL_FISH_BUCKET, PUFFERFISH_BUCKET, COD_BUCKET, SALMON_BUCKET);
 
-	public static final MaterialTag ALL_OCEAN = new MaterialTag(SOUL_SAND, MAGMA_BLOCK, TURTLE_EGG, CONDUIT, SCUTE,
+	public static final MaterialTag ALL_OCEAN = new MaterialTag(SOUL_SAND, MAGMA_BLOCK, TURTLE_EGG, CONDUIT, TURTLE_SCUTE,
 		PUFFERFISH_BUCKET, SALMON_BUCKET, COD_BUCKET, TROPICAL_FISH_BUCKET, NAUTILUS_SHELL, COD, SALMON, PUFFERFISH,
 		TROPICAL_FISH, COOKED_COD, COOKED_SALMON, LILY_PAD, TURTLE_HELMET, FISHING_ROD, INK_SAC, GRAVEL, Material.SAND)
 		.append("PRISMARINE", MatchMode.CONTAINS)
@@ -301,7 +295,7 @@ public class MaterialTag implements Tag<Material> {
 
 	@SneakyThrows
 	public static Map<String, Tag<Material>> getApplicable(Material material) {
-		return collect(tags.entrySet().stream().filter(entry -> entry.getValue().isTagged(material)));
+		return Utils.collect(tags.entrySet().stream().filter(entry -> entry.getValue().isTagged(material)));
 	}
 
 	@Getter

@@ -3,6 +3,7 @@ package gg.projecteden.nexus.utils;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
@@ -37,12 +38,7 @@ import net.dv8tion.jda.annotations.ReplaceWith;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.ComponentLike;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -58,33 +54,11 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.BiPredicate;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.*;
+import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.api.common.utils.UUIDUtils.isUuid;
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static gg.projecteden.nexus.utils.ItemUtils.fixMaxStackSize;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static gg.projecteden.nexus.utils.Utils.getMin;
 import static java.util.stream.Collectors.toList;
 
@@ -408,7 +382,7 @@ public class PlayerUtils {
 				(search, player) -> new WorldGuardUtils(search.world).isInRegion(player, search.region)),
 			RADIUS(
 				search -> search.origin != null && search.radius != null,
-				(search, player) -> search.origin.getWorld().equals(player.getWorld()) && distance(player, search.origin).lte(search.radius)),
+				(search, player) -> search.origin.getWorld().equals(player.getWorld()) && Distance.distance(player, search.origin).lte(search.radius)),
 			;
 
 			private final Predicate<OnlinePlayers> canFilter;
@@ -499,11 +473,11 @@ public class PlayerUtils {
 		if (partialName == null || partialName.length() == 0)
 			throw new InvalidInputException("No player name given");
 
-		partialName = stripColor(partialName);
+		partialName = StringUtils.stripColor(partialName);
 		String original = partialName;
 		partialName = partialName.toLowerCase().trim();
 
-		if (isUuid(partialName))
+		if (UUIDUtils.isUuid(partialName))
 			return getPlayer(UUID.fromString(partialName));
 
 		final List<Player> players = OnlinePlayers.getAll();
@@ -566,7 +540,7 @@ public class PlayerUtils {
 	}
 
 	public static MinMaxResult<Player> getNearestPlayer(Location location) {
-		return getMin(OnlinePlayers.where().world(location.getWorld()).get(), player -> distance(player, location).get());
+		return getMin(OnlinePlayers.where().world(location.getWorld()).get(), player -> Distance.distance(player, location).get());
 	}
 
 	public static MinMaxResult<Player> getNearestVisiblePlayer(Location location, Integer radius) {
@@ -576,9 +550,9 @@ public class PlayerUtils {
 			.collect(toList());
 
 		if (radius > 0)
-			players = players.stream().filter(player -> distance(player, location).lte(radius)).collect(toList());
+			players = players.stream().filter(player -> Distance.distance(player, location).lte(radius)).collect(toList());
 
-		return getMin(players, player -> distance(player, location).get());
+		return getMin(players, player -> Distance.distance(player, location).get());
 	}
 
 	public static MinMaxResult<Player> getNearestPlayer(HasPlayer original) {
@@ -586,7 +560,7 @@ public class PlayerUtils {
 		List<Player> players = OnlinePlayers.where().world(_original.getWorld()).get().stream()
 			.filter(player -> !isSelf(_original, player)).collect(toList());
 
-		return getMin(players, player -> distance(player, _original).get());
+		return getMin(players, player -> Distance.distance(player, _original).get());
 	}
 
 	public static ItemFrame getTargetItemFrame(Player player, int maxRadius, @Nullable Map<BlockFace, Integer> offsets) {
@@ -600,7 +574,7 @@ public class PlayerUtils {
 		final double searchRadius = 0.5;
 		List<Block> blocks = player.getLineOfSight(Set.of(Material.BARRIER, Material.AIR, Material.CAVE_AIR, Material.VOID_AIR), maxRadius)
 			.stream()
-			.sorted(Comparator.comparing(block -> distance(player, block).get()))
+			.sorted(Comparator.comparing(block -> Distance.distance(player, block).get()))
 			.collect(Collectors.toList());
 
 		if (offsets != null && !offsets.isEmpty()) {
@@ -620,7 +594,7 @@ public class PlayerUtils {
 				continue;
 
 			for (ItemFrame itemFrame : itemFrames) {
-				if (isNullOrAir(itemFrame.getItem()))
+				if (Nullables.isNullOrAir(itemFrame.getItem()))
 					continue;
 
 				return itemFrame;
@@ -818,7 +792,7 @@ public class PlayerUtils {
 	public static void giveItemPreferNonHotbar(Player player, ItemStack item) {
 		Set<Integer> openSlots = new HashSet<>();
 		for (int i = 9; i < 36; i++) {
-			if (isNullOrAir(player.getInventory().getContents()[i]))
+			if (Nullables.isNullOrAir(player.getInventory().getContents()[i]))
 				openSlots.add(i);
 		}
 		if (openSlots.size() > 0)
@@ -954,7 +928,7 @@ public class PlayerUtils {
 
 	public static boolean selectHotbarItem(Player player, ItemStack toSelect) {
 		final ItemStack mainHand = player.getInventory().getItemInMainHand();
-		if (isNullOrAir(toSelect) || toSelect.equals(mainHand)) {
+		if (Nullables.isNullOrAir(toSelect) || toSelect.equals(mainHand)) {
 			return false;
 		}
 
@@ -993,7 +967,7 @@ public class PlayerUtils {
 		final PlayerInventory inv = _player.getInventory();
 		ItemStack item = searchInventory(player, customMaterial);
 
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return;
 
 		inv.removeItemAnySlot(item);
@@ -1040,7 +1014,7 @@ public class PlayerUtils {
 	}
 
 	public static void giveItems(HasOfflinePlayer player, Collection<ItemStack> items, String nbt) {
-		if (isNullOrEmpty(items))
+		if (Nullables.isNullOrEmpty(items))
 			return;
 
 		List<ItemStack> finalItems = new ArrayList<>(items);
@@ -1077,8 +1051,8 @@ public class PlayerUtils {
 	@NotNull
 	public static List<ItemStack> giveItemsAndGetExcess(Inventory inventory, List<ItemStack> items) {
 		return new ArrayList<>() {{
-			for (ItemStack item : fixMaxStackSize(items))
-				if (!isNullOrAir(item))
+			for (ItemStack item : ItemUtils.fixMaxStackSize(items))
+				if (!Nullables.isNullOrAir(item))
 					addAll(inventory.addItem(item.clone()).values());
 		}};
 	}
@@ -1106,9 +1080,9 @@ public class PlayerUtils {
 			excess = giveItemsAndGetExcess(offlinePlayer.getPlayer(), finalItems);
 		else
 			excess = Utils.clone(items);
-		if (isNullOrEmpty(excess)) return;
+		if (Nullables.isNullOrEmpty(excess)) return;
 
-		mailItems(offlinePlayer, fixMaxStackSize(excess), message, worldGroup);
+		mailItems(offlinePlayer, ItemUtils.fixMaxStackSize(excess), message, worldGroup);
 		String send = alwaysMail ? "Items have been given to you as &c/mail" : "Your inventory was full. Excess items were given to you as &c/mail";
 		PlayerUtils.send(player, StringUtils.getPrefix("Items") + send);
 	}
@@ -1135,9 +1109,9 @@ public class PlayerUtils {
 	}
 
 	public static void dropItems(Location location, List<ItemStack> items) {
-		if (!isNullOrEmpty(items))
+		if (!Nullables.isNullOrEmpty(items))
 			for (ItemStack item : items)
-				if (!isNullOrAir(item) && item.getAmount() > 0)
+				if (!Nullables.isNullOrAir(item) && item.getAmount() > 0)
 					location.getWorld().dropItemNaturally(location, item);
 	}
 

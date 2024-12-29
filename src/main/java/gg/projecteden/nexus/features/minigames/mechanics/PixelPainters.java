@@ -36,8 +36,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static gg.projecteden.nexus.utils.StringUtils.plural;
-
 public class PixelPainters extends TeamlessMechanic {
 	private static final int MAX_ROUNDS = 5;
 	private static final int TIME_BETWEEN_ROUNDS = 8 * 20;
@@ -225,7 +223,7 @@ public class PixelPainters extends TeamlessMechanic {
 						matchData.setTimeLeft(i);
 						match.getScoreboard().update();
 
-						ActionBarUtils.sendActionBar(player, "&cNext round starts in...&c&l " + plural(i + " second", i));
+						ActionBarUtils.sendActionBar(player, "&cNext round starts in...&c&l " + StringUtils.plural(i + " second", i));
 						if (i <= 3)
 							player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F);
 					}))
@@ -373,7 +371,7 @@ public class PixelPainters extends TeamlessMechanic {
 				matchData.setTimeLeft(i);
 				match.getScoreboard().update();
 
-				ActionBarUtils.sendActionBar(player, "&cRound ends in...&c&l " + plural(i + " second", i));
+				ActionBarUtils.sendActionBar(player, "&cRound ends in...&c&l " + StringUtils.plural(i + " second", i));
 				if (i <= 3)
 					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F);
 			}))

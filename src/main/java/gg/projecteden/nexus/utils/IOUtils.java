@@ -1,22 +1,21 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.Nexus;
 import lombok.SneakyThrows;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
-
-import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.time.LocalDateTime.now;
 
 public class IOUtils {
 	public final static String PLUGIN_ROOT = "plugins/" + Nexus.class.getSimpleName() + "/";
@@ -24,7 +23,7 @@ public class IOUtils {
 
 	public static void fileAppend(String file, String message) {
 		write(LOGS_ROOT + file + ".log", List.of(StandardOpenOption.APPEND), writer ->
-			writer.append(String.format("%n[%s] %s", shortDateTimeFormat(now()), message)));
+			writer.append(String.format("%n[%s] %s", TimeUtils.shortDateTimeFormat(LocalDateTime.now()), message)));
 	}
 
 	public static void csvAppend(String file, String message) {
@@ -53,7 +52,7 @@ public class IOUtils {
 					}
 
 					final StandardOpenOption[] options = openOptions.toArray(StandardOpenOption[]::new);
-					try (BufferedWriter writer = Files.newBufferedWriter(path, UTF_8, options)) {
+					try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, options)) {
 						consumer.accept(writer);
 					} catch (Exception ex) {
 						ex.printStackTrace();

@@ -3,14 +3,13 @@ package gg.projecteden.nexus.framework.interfaces.impl;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
+import java.awt.*;
 
 @AllArgsConstructor
 public class ColoredImpl implements Colored {
-	@Getter @Accessors(fluent = true)
+	@Getter
 	private final int value;
 
 	@Override
