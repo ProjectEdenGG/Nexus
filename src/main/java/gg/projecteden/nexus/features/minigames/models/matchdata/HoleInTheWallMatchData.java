@@ -14,6 +14,8 @@ import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.LocationUtils.CardinalDirection;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;
 import lombok.NonNull;
 import org.bukkit.DyeColor;
@@ -31,10 +33,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
-import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
-import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 @Data
 @MatchDataFor(HoleInTheWall.class)
@@ -83,7 +81,7 @@ public class HoleInTheWallMatchData extends MatchData {
 		private int taskId = -1;
 		private boolean validating;
 		private Material wallMaterial;
-		private Material buildMaterial = ColorType.of(randomElement(colors)).getStainedGlass();
+		private Material buildMaterial = ColorType.of(RandomUtils.randomElement(colors)).getStainedGlass();
 
 		public Track(@NonNull ProtectedRegion region, @NonNull Location designHangerLocation) {
 			this.region = region;
@@ -157,7 +155,7 @@ public class HoleInTheWallMatchData extends MatchData {
 
 			int delay = HoleInTheWall.BASE_TICK_SPEED - (wallIndex / HoleInTheWall.TICK_DECREASE_EVERY_X_WALLS);
 			trackIndex.set(0);
-			wallMaterial = ColorType.of(randomElement(colors)).getConcrete();
+			wallMaterial = ColorType.of(RandomUtils.randomElement(colors)).getConcrete();
 
 			taskId = getMatch().getTasks().repeat(0, delay, () -> {
 				Minigames.debug("[%s] %s nextWall task 1".formatted(getClass().getSimpleName(), minigamer.getNickname()));
@@ -266,7 +264,7 @@ public class HoleInTheWallMatchData extends MatchData {
 			int points = (correct - 1) + (allCorrect ? 1 : 0);
 			if (points > 0) {
 				minigamer.scored(points);
-				minigamer.tell("You earned &e" + points + " " + plural("point", points));
+				minigamer.tell("You earned &e" + points + " " + StringUtils.plural("point", points));
 
 				ActionBarUtils.sendActionBar(player, allCorrect ? "&a&lCorrect" : "&c&lIncorrect");
 			}
@@ -300,8 +298,8 @@ public class HoleInTheWallMatchData extends MatchData {
 				Arrays.fill(block, false);
 
 			for (int i = 0; i < empty; i++) {
-				int x = randomInt(0, HEIGHT - 1);
-				int y = randomInt(0, LENGTH - 1);
+				int x = RandomUtils.randomInt(0, HEIGHT - 1);
+				int y = RandomUtils.randomInt(0, LENGTH - 1);
 				if (blocks[x][y])
 					++empty;
 				else

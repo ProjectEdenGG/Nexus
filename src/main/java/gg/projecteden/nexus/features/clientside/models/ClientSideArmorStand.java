@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.clientside.models;
 import com.mojang.datafixers.util.Pair;
 import dev.morphia.annotations.Entity;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.nexus.utils.nms.PacketUtils;
 import io.papermc.paper.adventure.AdventureComponent;
@@ -30,8 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity
@@ -118,7 +117,7 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 		entity.setLeftLegPose(NMSUtils.toNMS(leftLegPose));
 		entity.setRightLegPose(NMSUtils.toNMS(rightLegPose));
 
-		if (!isNullOrEmpty(customName)) {
+		if (!Nullables.isNullOrEmpty(customName)) {
 			entity.setCustomName(new AdventureComponent(new JsonBuilder(customName).build()));
 			entity.setCustomNameVisible(true);
 		}

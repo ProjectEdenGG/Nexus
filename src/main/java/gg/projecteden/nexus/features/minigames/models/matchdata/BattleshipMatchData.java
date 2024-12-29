@@ -19,6 +19,8 @@ import gg.projecteden.nexus.utils.LocationUtils.Axis;
 import gg.projecteden.nexus.utils.LocationUtils.CardinalDirection;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Data;
 import lombok.Getter;
@@ -39,14 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.features.minigames.mechanics.Battleship.LETTERS;
-import static gg.projecteden.nexus.utils.BlockUtils.getDirection;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.nexus.utils.StringUtils.left;
-import static gg.projecteden.nexus.utils.StringUtils.right;
-import static gg.projecteden.nexus.utils.Utils.isInt;
 
 @Data
 @MatchDataFor(Battleship.class)
@@ -112,11 +106,11 @@ public class BattleshipMatchData extends MatchData {
 
 		@Override
 		public String toString() {
-			return camelCase(name());
+			return StringUtils.camelCase(name());
 		}
 
 		public String getColoredName() {
-			return color.getChatColor() + camelCase(name());
+			return color.getChatColor() + StringUtils.camelCase(name());
 		}
 
 		public int getKitLength() {
@@ -222,9 +216,9 @@ public class BattleshipMatchData extends MatchData {
 
 				Axis axis = Axis.of(a0, block.getLocation());
 				if (axis == Axis.Z)
-					letterDirection = getDirection(a0, block.getLocation());
+					letterDirection = BlockUtils.getDirection(a0, block.getLocation());
 				else if (axis == Axis.X)
-					numberDirection = getDirection(a0, block.getLocation());
+					numberDirection = BlockUtils.getDirection(a0, block.getLocation());
 			});
 
 			if (letterDirection == null)
@@ -233,7 +227,7 @@ public class BattleshipMatchData extends MatchData {
 			if (numberDirection == null)
 				throw new MinigameException("Could not determine number direction of " + arena.getName() + " - " + team.getName());
 
-			for (String letter : LETTERS.split(""))
+			for (String letter : Battleship.LETTERS.split(""))
 				for (int number = 0; number < 10; number++)
 					coordinates.add(new Coordinate(letter, number));
 		}
@@ -261,9 +255,9 @@ public class BattleshipMatchData extends MatchData {
 		public Coordinate getCoordinate(String input) {
 			if (input.length() != 2)
 				throw invalidCoordinate(input);
-			String letter = left(input, 1);
-			String number = right(input, 1);
-			if (!isInt(number))
+			String letter = StringUtils.left(input, 1);
+			String number = StringUtils.right(input, 1);
+			if (!Utils.isInt(number))
 				throw invalidCoordinate(input);
 
 			return getCoordinate(letter, Integer.parseInt(number));
@@ -273,7 +267,7 @@ public class BattleshipMatchData extends MatchData {
 			Region region = arena.getRegion("a0_ships_" + team.getName());
 			Location a0 = worldedit().toLocation(region.getCenter());
 			int over = (int) Math.round(Math.abs(location.getX() - a0.getX()) / 4);
-			String letter = LETTERS.substring(over, over + 1);
+			String letter = Battleship.LETTERS.substring(over, over + 1);
 			int number = (int) Math.round(Math.abs(location.getZ() - a0.getZ()) / 4);
 			return getCoordinate(letter, number);
 		}
@@ -328,7 +322,7 @@ public class BattleshipMatchData extends MatchData {
 				Region region = arena.getRegion("a0_ships_" + team.getName());
 				Location a0 = worldedit().toLocation(region.getCenter());
 
-				int over = LETTERS.indexOf(letter) * 4;
+				int over = Battleship.LETTERS.indexOf(letter) * 4;
 				int down = number * 4;
 
 				return a0.getBlock()
@@ -342,7 +336,7 @@ public class BattleshipMatchData extends MatchData {
 				Region region = arena.getRegion("a0_pegs_" + team.getName());
 				Location a0 = worldedit().toLocation(region.getCenter());
 
-				int over = LETTERS.indexOf(letter) * 4;
+				int over = Battleship.LETTERS.indexOf(letter) * 4;
 				int down = number * 4;
 
 				return a0.getBlock()
@@ -411,7 +405,7 @@ public class BattleshipMatchData extends MatchData {
 				String teamName = getOtherTeam().getColoredName();
 				if (teamName.contains("Alpha"))
 					teamName += " ";
-				history.add(0, teamName + " "  + (state == State.HIT ? "&4" : "&f") + getName() + " " + camelCase(state));
+				history.add(0, teamName + " " + (state == State.HIT ? "&4" : "&f") + getName() + " " + StringUtils.camelCase(state));
 			}
 
 			private void sendChat() {
@@ -421,8 +415,8 @@ public class BattleshipMatchData extends MatchData {
 				String target = "&eYour " + ship.getName() + " &ewas " + (ship.getHealth() == 0 ? "sunk" : "hit");
 				String shooter = ship.getHealth() == 0 ? "&eYou sunk their " + ship.getName() : "&eYou hit an enemy ship";
 
-				team.broadcast(match, colorize(target));
-				getOtherTeam().broadcast(match, colorize(shooter));
+				team.broadcast(match, StringUtils.colorize(target));
+				getOtherTeam().broadcast(match, StringUtils.colorize(shooter));
 			}
 
 			private void sendSubtitle() {
@@ -435,8 +429,8 @@ public class BattleshipMatchData extends MatchData {
 				String target = "Your " + ship.getName() + " &fwas " + (ship.getHealth() == 0 ? "sunk" : "hit");
 				String shooter = ship.getHealth() == 0 ? "You sunk their " + ship.getName() : "You hit an enemy ship";
 
-				team.title(match, new Title("", colorize(target), 10, 40, 10));
-				getOtherTeam().title(match, new Title("", colorize(shooter), 10, 40, 10));
+				team.title(match, new Title("", StringUtils.colorize(target), 10, 40, 10));
+				getOtherTeam().title(match, new Title("", StringUtils.colorize(shooter), 10, 40, 10));
 			}
 
 			public void aim() {

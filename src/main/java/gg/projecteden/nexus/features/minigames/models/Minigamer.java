@@ -21,8 +21,17 @@ import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNicknamed;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.Name;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.TitleBuilder;
+import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.HasLocation;
 import gg.projecteden.parchment.HasOfflinePlayer;
@@ -36,7 +45,11 @@ import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.ComponentLike;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -53,11 +66,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.LocationUtils.blockLocationsEqual;
-import static gg.projecteden.nexus.utils.PlayerUtils.hidePlayer;
-import static gg.projecteden.nexus.utils.PlayerUtils.showPlayer;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -375,7 +383,7 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 	public boolean isInMatchRegion(@Nullable String type) {
 		return new WorldGuardUtils(getOnlinePlayer()).getRegionsAt(getOnlinePlayer().getLocation()).stream()
 				.anyMatch(region -> {
-					if (!isNullOrEmpty(type))
+					if (!gg.projecteden.api.common.utils.Nullables.isNullOrEmpty(type))
 						return match.getArena().ownsRegion(region.getId(), type);
 					else
 						return region.getId().matches("^" + match.getArena().getRegionBaseName() + ".*");
@@ -613,9 +621,9 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 					// hides players who are still respawning (as unhideAll unhides them)
 					match.getMinigamersAndSpectators().forEach(minigamer -> {
 						if (!minigamer.equals(this) && (minigamer.isRespawning() || !minigamer.isAlive())) {
-							hidePlayer(minigamer.getOnlinePlayer()).from(getOnlinePlayer());
+							PlayerUtils.hidePlayer(minigamer.getOnlinePlayer()).from(getOnlinePlayer());
 							if (minigamer.isAlive())
-								hidePlayer(getOnlinePlayer()).from(minigamer.getOnlinePlayer());
+								PlayerUtils.hidePlayer(getOnlinePlayer()).from(minigamer.getOnlinePlayer());
 						}
 					});
 				}
@@ -642,7 +650,7 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 
 	public void tick() {
 		Location playerLocation = getRotationlessLocation();
-		if (lastLocation == null || !blockLocationsEqual(playerLocation, lastLocation))
+		if (lastLocation == null || !LocationUtils.blockLocationsEqual(playerLocation, lastLocation))
 			immobileTicks = 0;
 		else
 			immobileTicks++;
@@ -692,16 +700,16 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		final Player player = getOnlinePlayer();
 		if (respawning)
 			OnlinePlayers.getAll().forEach(_player -> {
-				hidePlayer(_player).from(player);
-				hidePlayer(player).from(_player);
+				PlayerUtils.hidePlayer(_player).from(player);
+				PlayerUtils.hidePlayer(player).from(_player);
 			});
 		else if (!isAlive)
 			OnlinePlayers.getAll().forEach(_player -> {
-				showPlayer(_player).to(player);
+				PlayerUtils.showPlayer(_player).to(player);
 
 				Minigamer minigamer = of(_player);
 				if (minigamer.isPlaying(match) && minigamer.isAlive())
-					hidePlayer(_player).from(player);
+					PlayerUtils.hidePlayer(_player).from(player);
 			});
 		 else
 			unhideAll();
@@ -709,9 +717,9 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 
 	public void unhideAll() {
 		OnlinePlayers.getAll().forEach(_player -> {
-			showPlayer(getOnlinePlayer()).to(_player);
+			PlayerUtils.showPlayer(getOnlinePlayer()).to(_player);
 			if (!Vanish.isVanished(_player) || getOnlinePlayer().hasPermission("pv.see"))
-				showPlayer(_player).to(getOnlinePlayer());
+				PlayerUtils.showPlayer(_player).to(getOnlinePlayer());
 		});
 	}
 
