@@ -6,6 +6,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import gg.projecteden.api.common.utils.Nullables;
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
@@ -18,47 +19,15 @@ import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.features.wither.WitherChallenge.Difficulty;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.witherarena.WitherArenaConfig;
-import gg.projecteden.nexus.utils.BlockUtils;
-import gg.projecteden.nexus.utils.EntityUtils;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.PotionEffectBuilder;
-import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.TitleBuilder;
-import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Data;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Blaze;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.Hoglin;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Mob;
-import org.bukkit.entity.PigZombie;
-import org.bukkit.entity.PiglinBrute;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.TNTPrimed;
-import org.bukkit.entity.Wither;
-import org.bukkit.entity.WitherSkeleton;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -66,17 +35,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
-import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
-import org.bukkit.event.entity.ItemSpawnEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
@@ -88,13 +48,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @Data
@@ -159,7 +113,7 @@ public abstract class WitherFight implements Listener {
 					for (Block face : BlockUtils.getAdjacentBlocks(block))
 						if (MaterialTag.NEEDS_SUPPORT.isTagged(face.getType()))
 							face.setType(Material.AIR);
-					new ParticleBuilder(Particle.BLOCK_DUST)
+					new ParticleBuilder(Particle.BLOCK_CRUMBLE)
 						.location(loc)
 						.data(block.getBlockData())
 						.count(10)
@@ -173,7 +127,7 @@ public abstract class WitherFight implements Listener {
 			if (logInfo) {
 				for (UUID uuid : getAlivePlayers()) {
 					Player player = PlayerUtils.getOnlinePlayer(uuid);
-					log(player.getName() + "'s starting inventory: " + gg.projecteden.api.common.utils.StringUtils.paste(Json.toString(Json.serialize(Arrays.asList(player.getInventory().getContents())))));
+					log(player.getName() + "'s starting inventory: " + StringUtils.paste(Json.toString(Json.serialize(Arrays.asList(player.getInventory().getContents())))));
 					lowestHealth.put(uuid, player.getHealth());
 				}
 			}
@@ -266,7 +220,7 @@ public abstract class WitherFight implements Listener {
 			DecimalFormat format = new DecimalFormat("#.0");
 			for (UUID uuid : getAlivePlayers()) {
 				Player player = PlayerUtils.getOnlinePlayer(uuid);
-				log(player.getName() + "'s ending inventory: " + gg.projecteden.api.common.utils.StringUtils.paste(Json.toString(Json.serialize(Arrays.asList(player.getInventory().getContents())))));
+				log(player.getName() + "'s ending inventory: " + StringUtils.paste(Json.toString(Json.serialize(Arrays.asList(player.getInventory().getContents())))));
 			}
 			getParty().stream().filter(uuid -> !getAlivePlayers().contains(uuid)).forEach(uuid -> log(PlayerUtils.getPlayer(uuid).getName() + " died"));
 			getParty().forEach(uuid -> log(PlayerUtils.getPlayer(uuid).getName() + "'s lowest health: " + format.format(lowestHealth.get(uuid))));
@@ -518,7 +472,7 @@ public abstract class WitherFight implements Listener {
 		int partySize = party.size();
 
 		String message = "&e" + Nickname.of(getHostOfflinePlayer()) +
-			(partySize > 1 ? " and " + (partySize - 1) + StringUtils.plural(" other", partySize - 1) + " &3have" : " &3has") +
+			(partySize > 1 ? " and " + (partySize - 1) + gg.projecteden.nexus.utils.StringUtils.plural(" other", partySize - 1) + " &3have" : " &3has") +
 			" successfully beaten the Wither in " + getDifficulty().getTitle() + " &3mode " + (gotStar ? "and got" : "but did not get") + " the star";
 
 		if (WitherArenaConfig.isBeta())

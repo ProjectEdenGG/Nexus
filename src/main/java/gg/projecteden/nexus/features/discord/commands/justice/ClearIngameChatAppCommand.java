@@ -4,8 +4,7 @@ import gg.projecteden.api.discord.appcommands.AppCommandEvent;
 import gg.projecteden.api.discord.appcommands.annotations.Command;
 import gg.projecteden.api.discord.appcommands.annotations.RequiredRole;
 import gg.projecteden.nexus.features.discord.commands.common.NexusAppCommand;
-
-import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsConsole;
+import gg.projecteden.nexus.utils.PlayerUtils;
 
 @RequiredRole("Staff")
 @Command("Clear ingame chat")
@@ -17,7 +16,7 @@ public class ClearIngameChatAppCommand extends NexusAppCommand {
 
 	@Command(value = "Clear ingame chat", literals = false)
 	void run() {
-		runCommandAsConsole("clearchat");
+		PlayerUtils.runCommandAsConsole("clearchat");
 	}
 
 }

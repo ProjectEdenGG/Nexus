@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.framework.commands;
 
+import gg.projecteden.api.common.utils.ReflectionUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.ICustomCommand;
@@ -13,15 +14,7 @@ import lombok.Getter;
 import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static gg.projecteden.api.common.utils.ReflectionUtils.methodsAnnotatedWith;
-import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
+import java.util.*;
 
 @SuppressWarnings({"unused", "unchecked"})
 public class Commands {
@@ -43,7 +36,7 @@ public class Commands {
 	public Commands(Plugin plugin, String path) {
 		this.plugin = plugin;
 		this.mapUtils = new CommandMapUtils(plugin);
-		this.commandSet = subTypesOf(CustomCommand.class, path);
+		this.commandSet = ReflectionUtils.subTypesOf(CustomCommand.class, path);
 		registerConvertersAndTabCompleters();
 		plugin.getServer().getPluginManager().registerEvents(new CommandListener(), plugin);
 	}
@@ -166,7 +159,7 @@ public class Commands {
 	}
 
 	private void registerTabCompleters(Class<?> clazz) {
-		methodsAnnotatedWith(clazz, TabCompleterFor.class).forEach(method -> {
+		ReflectionUtils.methodsAnnotatedWith(clazz, TabCompleterFor.class).forEach(method -> {
 			for (Class<?> classFor : method.getAnnotation(TabCompleterFor.class).value()) {
 				method.setAccessible(true);
 				tabCompleters.put(classFor, method);
@@ -175,7 +168,7 @@ public class Commands {
 	}
 
 	private void registerConverters(Class<?> clazz) {
-		methodsAnnotatedWith(clazz, ConverterFor.class).forEach(method -> {
+		ReflectionUtils.methodsAnnotatedWith(clazz, ConverterFor.class).forEach(method -> {
 			for (Class<?> classFor : method.getAnnotation(ConverterFor.class).value()) {
 				method.setAccessible(true);
 				converters.put(classFor, method);

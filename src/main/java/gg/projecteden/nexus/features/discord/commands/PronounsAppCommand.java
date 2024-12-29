@@ -6,12 +6,11 @@ import gg.projecteden.api.discord.appcommands.annotations.Choices;
 import gg.projecteden.api.discord.appcommands.annotations.Command;
 import gg.projecteden.api.discord.appcommands.annotations.Desc;
 import gg.projecteden.api.mongodb.models.nerd.Nerd.Pronoun;
+import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.discord.commands.common.NexusAppCommand;
 import gg.projecteden.nexus.features.discord.commands.common.annotations.Verify;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import org.jetbrains.annotations.NotNull;
-
-import static gg.projecteden.nexus.features.discord.Discord.discordize;
 
 @Verify
 @Command("Manage your pronouns")
@@ -23,7 +22,7 @@ public class PronounsAppCommand extends NexusAppCommand {
 
 	@NotNull
 	private String format(Pronoun pronoun) {
-		return discordize(pronoun.toString()).replaceAll("[*`@]", "");
+		return Discord.discordize(pronoun.toString()).replaceAll("[*`@]", "");
 	}
 
 	@Command("Add a pronoun")

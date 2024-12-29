@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.legacy.listeners;
 
 import de.tr7zw.nbtapi.NBTItem;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.legacy.Legacy;
@@ -10,13 +11,8 @@ import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
@@ -93,13 +89,13 @@ public class LegacyShulkerBoxes implements Listener {
 	public static final String NBT_KEY = "ShulkerBoxId";
 
 	private static boolean isShulkerBox(ItemStack item) {
-		if (Nullables.isNullOrAir(item))
+		if (gg.projecteden.nexus.utils.Nullables.isNullOrAir(item))
 			return false;
 
 		if (Backpacks.isBackpack(item))
 			return false;
 
-		return !gg.projecteden.api.common.utils.Nullables.isNullOrEmpty(new NBTItem(item).getString(NBT_KEY));
+		return !Nullables.isNullOrEmpty(new NBTItem(item).getString(NBT_KEY));
 	}
 
 	public static String getShulkerBoxId(ItemStack item) {
@@ -138,7 +134,7 @@ public class LegacyShulkerBoxes implements Listener {
 		@Override
 		public String getTitle() {
 			final String displayName = shulkerBox.getItemMeta().getDisplayName();
-			if (!gg.projecteden.api.common.utils.Nullables.isNullOrEmpty(displayName))
+			if (!Nullables.isNullOrEmpty(displayName))
 				return displayName;
 
 			return "Shulker Box";

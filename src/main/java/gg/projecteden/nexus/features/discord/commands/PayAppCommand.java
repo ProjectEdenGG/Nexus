@@ -15,11 +15,10 @@ import gg.projecteden.nexus.models.banker.Transaction;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 
 import java.math.BigDecimal;
-
-import static gg.projecteden.nexus.utils.StringUtils.prettyMoney;
 
 @Verify
 @Command("Pay a player")
@@ -50,7 +49,7 @@ public class PayAppCommand extends NexusAppCommand {
 				throw new NotEnoughMoneyException();
 			}
 
-			String formatted = prettyMoney(amount);
+			String formatted = StringUtils.prettyMoney(amount);
 			PlayerUtils.send(player, "&a" + formatted + " has been received from " + nickname());
 
 			reply("Successfully sent " + formatted + " to " + player.getNickname());

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.legacy.menus.itemtransfer;
 
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.features.legacy.Legacy;
 import gg.projecteden.nexus.features.legacy.listeners.LegacyItems;
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
@@ -21,8 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 @Title("Legacy Item Transfer")
 public class ItemTransferMenu implements TemporaryMenuListener {
@@ -89,7 +88,7 @@ public class ItemTransferMenu implements TemporaryMenuListener {
 			if (!newCrateKeys.isEmpty()) {
 				newCrateKeys.forEach((crateType, amount) -> {
 					user.getCrateKeys().put(crateType, user.getCrateKeys().getOrDefault(crateType, 0) + amount);
-					user.sendMessage(Legacy.PREFIX + "Successfully stored " + amount + " " + camelCase(crateType) + " Crate keys for conversion");
+					user.sendMessage(Legacy.PREFIX + "Successfully stored " + amount + " " + StringUtils.camelCase(crateType) + " Crate keys for conversion");
 				});
 			}
 		});
