@@ -13,26 +13,14 @@ import gg.projecteden.nexus.features.survival.structures.models.Spawner;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.structure.Structure;
 import gg.projecteden.nexus.models.structure.StructureService;
-import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.LocationUtils.NeighborDirection;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.Waterlogged;
@@ -113,7 +101,7 @@ public class Structures extends Feature implements Listener {
 				return;
 			}
 		} else if (item.getType().equals(Material.END_CRYSTAL)) {
-			entityType = EntityType.ENDER_CRYSTAL;
+			entityType = EntityType.END_CRYSTAL;
 		}
 
 		if (entityType == null) return;

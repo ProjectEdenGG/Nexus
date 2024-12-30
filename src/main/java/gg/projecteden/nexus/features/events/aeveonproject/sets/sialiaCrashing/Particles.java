@@ -80,7 +80,7 @@ public class Particles {
 			if (!APSetType.SIALIA_CRASHING.get().isActive())
 				return;
 
-			new ParticleBuilder(Particle.DRIP_LAVA).location(ventExit).count(1).offset(0.15, 0, 0.15).extra(0.1).spawn();
+			new ParticleBuilder(Particle.DRIPPING_LAVA).location(ventExit).count(1).offset(0.15, 0, 0.15).extra(0.1).spawn();
 		});
 
 		Tasks.repeatAsync(0, TickTime.TICK.x(2), () -> {
@@ -91,52 +91,52 @@ public class Particles {
 			new ParticleBuilder(Particle.DOLPHIN).location(gravLift_1).count(10).offset(0.5, 4, 0.5).extra(0.1).spawn();
 			new ParticleBuilder(Particle.NAUTILUS).location(nautilisLoc).count(5).offset(0.1, 0.5, 0.1).extra(0.1).spawn();
 			new ParticleBuilder(Particle.PORTAL).location(portalLoc).count(5).offset(0.15, 1, 0.15).extra(0.1).spawn();
-			new ParticleBuilder(Particle.TOWN_AURA).location(myceliumLoc).count(15).offset(0.15, 0.5, 0.15).extra(0.1).spawn();
+			new ParticleBuilder(Particle.MYCELIUM).location(myceliumLoc).count(15).offset(0.15, 0.5, 0.15).extra(0.1).spawn();
 			new ParticleBuilder(Particle.SNEEZE).location(sneeze).count(5).offset(0.25, 1, 0.25).extra(0.01).spawn();
 			// Vent Particles
 			new ParticleBuilder(Particle.FLAME).location(ventSmoke1).count(0).offset(0, 0, -3).extra(0.1).spawn();
-			new ParticleBuilder(Particle.SMOKE_LARGE).location(ventSmoke1).count(0).offset(0, 0, -3).extra(0.1).spawn();
+			new ParticleBuilder(Particle.LARGE_SMOKE).location(ventSmoke1).count(0).offset(0, 0, -3).extra(0.1).spawn();
 			new ParticleBuilder(Particle.FLAME).location(ventSmoke2).count(0).offset(0, 0, -3).extra(0.1).spawn();
-			new ParticleBuilder(Particle.SMOKE_LARGE).location(ventSmoke2).count(0).offset(0, 0, -3).extra(0.1).spawn();
+			new ParticleBuilder(Particle.LARGE_SMOKE).location(ventSmoke2).count(0).offset(0, 0, -3).extra(0.1).spawn();
 			new ParticleBuilder(Particle.FLAME).location(ventSmoke3).count(0).offset(-3, 0, 0).extra(0.1).spawn();
-			new ParticleBuilder(Particle.SMOKE_LARGE).location(ventSmoke3).count(0).offset(-3, 0, 0).extra(0.1).spawn();
+			new ParticleBuilder(Particle.LARGE_SMOKE).location(ventSmoke3).count(0).offset(-3, 0, 0).extra(0.1).spawn();
 
 			// Pipes
-			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe1).count(0).offset(3, -3, 0).extra(0.3).spawn();
-			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe1_poof).count(1).offset(0.2, 0, 0.2).extra(0.2).spawn();
-			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe2).count(0).offset(-3, -3, 0).extra(0.3).spawn();
-			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe2_poof).count(1).offset(0.2, 0, 0.2).extra(0.2).spawn();
+			new ParticleBuilder(Particle.EXPLOSION).location(pipe1).count(0).offset(3, -3, 0).extra(0.3).spawn();
+			new ParticleBuilder(Particle.EXPLOSION).location(pipe1_poof).count(1).offset(0.2, 0, 0.2).extra(0.2).spawn();
+			new ParticleBuilder(Particle.EXPLOSION).location(pipe2).count(0).offset(-3, -3, 0).extra(0.3).spawn();
+			new ParticleBuilder(Particle.EXPLOSION).location(pipe2_poof).count(1).offset(0.2, 0, 0.2).extra(0.2).spawn();
 			// Pipe3 extras
-			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe3).count(0).offset(3, -3, 0).extra(0.3).spawn();
-			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe3_poof).count(1).offset(0.2, 0, 0.2).extra(0.2).spawn();
+			new ParticleBuilder(Particle.EXPLOSION).location(pipe3).count(0).offset(3, -3, 0).extra(0.3).spawn();
+			new ParticleBuilder(Particle.EXPLOSION).location(pipe3_poof).count(1).offset(0.2, 0, 0.2).extra(0.2).spawn();
 			new ParticleBuilder(Particle.LAVA).location(pipe3).count(1).offset(0, 0, 0).extra(0.1).spawn();
-			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe3).count(0).offset(0, 0, 0).extra(0.1).spawn();
+			new ParticleBuilder(Particle.EXPLOSION).location(pipe3).count(0).offset(0, 0, 0).extra(0.1).spawn();
 			//
-			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe4).count(0).offset(-3, -3, 0).extra(0.3).spawn();
-			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe4_poof).count(1).offset(0.2, 0, 0.2).extra(0.2).spawn();
-			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe5).count(0).offset(3, -3, 0).extra(0.3).spawn();
-			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe5_poof).count(1).offset(0.2, 0, 0.2).extra(0.2).spawn();
-			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe6).count(0).offset(3, -3, 0).extra(0.3).spawn();
-			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe6_poof).count(1).offset(0.2, 0, 0.2).extra(0.2).spawn();
-			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe7).count(0).offset(-3, -3, 0).extra(0.3).spawn();
-			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe7_poof).count(1).offset(0.2, 0, 0.2).extra(0.2).spawn();
-			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe8).count(0).offset(3, 0, 0).extra(0.3).spawn();
-			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe8_poof).count(1).offset(0.2, 0, 0.2).extra(0.2).spawn();
-			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe9).count(0).offset(-3, 0, 0).extra(0.3).spawn();
-			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe9_poof).count(1).offset(0.2, 0, 0.2).extra(0.2).spawn();
-			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe10).count(0).offset(3, 0, 0).extra(0.3).spawn();
-			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe10_poof).count(1).offset(0.2, 0, 0.2).extra(0.2).spawn();
-			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe11).count(0).offset(-3, 0, 0).extra(0.3).spawn();
-			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe11_poof).count(1).offset(0.2, 0, 0.2).extra(0.2).spawn();
+			new ParticleBuilder(Particle.EXPLOSION).location(pipe4).count(0).offset(-3, -3, 0).extra(0.3).spawn();
+			new ParticleBuilder(Particle.EXPLOSION).location(pipe4_poof).count(1).offset(0.2, 0, 0.2).extra(0.2).spawn();
+			new ParticleBuilder(Particle.EXPLOSION).location(pipe5).count(0).offset(3, -3, 0).extra(0.3).spawn();
+			new ParticleBuilder(Particle.EXPLOSION).location(pipe5_poof).count(1).offset(0.2, 0, 0.2).extra(0.2).spawn();
+			new ParticleBuilder(Particle.EXPLOSION).location(pipe6).count(0).offset(3, -3, 0).extra(0.3).spawn();
+			new ParticleBuilder(Particle.EXPLOSION).location(pipe6_poof).count(1).offset(0.2, 0, 0.2).extra(0.2).spawn();
+			new ParticleBuilder(Particle.EXPLOSION).location(pipe7).count(0).offset(-3, -3, 0).extra(0.3).spawn();
+			new ParticleBuilder(Particle.EXPLOSION).location(pipe7_poof).count(1).offset(0.2, 0, 0.2).extra(0.2).spawn();
+			new ParticleBuilder(Particle.EXPLOSION).location(pipe8).count(0).offset(3, 0, 0).extra(0.3).spawn();
+			new ParticleBuilder(Particle.EXPLOSION).location(pipe8_poof).count(1).offset(0.2, 0, 0.2).extra(0.2).spawn();
+			new ParticleBuilder(Particle.EXPLOSION).location(pipe9).count(0).offset(-3, 0, 0).extra(0.3).spawn();
+			new ParticleBuilder(Particle.EXPLOSION).location(pipe9_poof).count(1).offset(0.2, 0, 0.2).extra(0.2).spawn();
+			new ParticleBuilder(Particle.EXPLOSION).location(pipe10).count(0).offset(3, 0, 0).extra(0.3).spawn();
+			new ParticleBuilder(Particle.EXPLOSION).location(pipe10_poof).count(1).offset(0.2, 0, 0.2).extra(0.2).spawn();
+			new ParticleBuilder(Particle.EXPLOSION).location(pipe11).count(0).offset(-3, 0, 0).extra(0.3).spawn();
+			new ParticleBuilder(Particle.EXPLOSION).location(pipe11_poof).count(1).offset(0.2, 0, 0.2).extra(0.2).spawn();
 
 			Tasks.waitAsync(TickTime.TICK.x(1), () -> {
-				new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe1).count(0).offset(3, -3, 0).extra(0.3).spawn();
-				new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe2).count(0).offset(-3, -3, 0).extra(0.3).spawn();
-				new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe3).count(0).offset(3, -3, 0).extra(0.3).spawn();
-				new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe4).count(0).offset(-3, -3, 0).extra(0.3).spawn();
-				new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe5).count(0).offset(3, -3, 0).extra(0.3).spawn();
-				new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe6).count(0).offset(3, -3, 0).extra(0.3).spawn();
-				new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe7).count(0).offset(-3, -3, 0).extra(0.3).spawn();
+				new ParticleBuilder(Particle.EXPLOSION).location(pipe1).count(0).offset(3, -3, 0).extra(0.3).spawn();
+				new ParticleBuilder(Particle.EXPLOSION).location(pipe2).count(0).offset(-3, -3, 0).extra(0.3).spawn();
+				new ParticleBuilder(Particle.EXPLOSION).location(pipe3).count(0).offset(3, -3, 0).extra(0.3).spawn();
+				new ParticleBuilder(Particle.EXPLOSION).location(pipe4).count(0).offset(-3, -3, 0).extra(0.3).spawn();
+				new ParticleBuilder(Particle.EXPLOSION).location(pipe5).count(0).offset(3, -3, 0).extra(0.3).spawn();
+				new ParticleBuilder(Particle.EXPLOSION).location(pipe6).count(0).offset(3, -3, 0).extra(0.3).spawn();
+				new ParticleBuilder(Particle.EXPLOSION).location(pipe7).count(0).offset(-3, -3, 0).extra(0.3).spawn();
 			});
 
 			// Engine Smoke
@@ -149,7 +149,7 @@ public class Particles {
 
 			// Explosions
 			explosions.forEach(explosionLoc ->
-					new ParticleBuilder(Particle.EXPLOSION_LARGE).location(explosionLoc).count(1).offset(1, 1, 1).extra(0.1).spawn());
+					new ParticleBuilder(Particle.EXPLOSION).location(explosionLoc).count(1).offset(1, 1, 1).extra(0.1).spawn());
 		});
 	}
 }

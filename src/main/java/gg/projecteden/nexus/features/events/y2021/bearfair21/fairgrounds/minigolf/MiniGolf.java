@@ -148,7 +148,7 @@ public class MiniGolf {
 					if (particle != null) {
 						ParticleBuilder particleBuilder = new ParticleBuilder(particle).location(particleLoc)
 							.count(50).extra(0.01).offset(0.2, 0.2, 0.2);
-						if (particle.equals(Particle.REDSTONE))
+						if (particle.equals(Particle.DUST))
 							particleBuilder.color(Color.RED);
 
 						particleBuilder.spawn();
@@ -288,7 +288,7 @@ public class MiniGolf {
 								.count(1)
 								.extra(0);
 
-						if (particle.equals(Particle.REDSTONE)) {
+						if (particle.equals(Particle.DUST)) {
 							if (user.getMiniGolfColor().equals(MiniGolfColor.RAINBOW)) {
 								int[] rgb = ParticleUtils.incRainbow(ball.getTicksLived());
 								DustOptions dustOptions = ParticleUtils.newDustOption(particle, rgb[0], rgb[1], rgb[2]);
@@ -482,7 +482,7 @@ public class MiniGolf {
 
 								ball.setVelocity(ball.getVelocity().multiply(9.3).add(newVel).setY(height));
 								new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(ball.getLocation()).volume(3.0).play();
-								new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(ball.getLocation()).count(25).spawn();
+								new ParticleBuilder(Particle.EXPLOSION).location(ball.getLocation()).count(25).spawn();
 							} catch (Exception ignored) {
 
 							}

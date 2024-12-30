@@ -90,8 +90,8 @@ public class Fishing implements Listener {
 
 		int loops = 0;
 		if (meta != null && meta.hasEnchants()) {
-			if (meta.getEnchants().keySet().stream().anyMatch(enchantment -> enchantment.equals(Enchantment.LUCK))) {
-				loops = RandomUtils.randomInt(0, meta.getEnchants().get(Enchantment.LUCK));
+			if (meta.getEnchants().keySet().stream().anyMatch(enchantment -> enchantment.equals(Enchantment.LUCK_OF_THE_SEA))) {
+				loops = RandomUtils.randomInt(0, meta.getEnchants().get(Enchantment.LUCK_OF_THE_SEA));
 			}
 		}
 

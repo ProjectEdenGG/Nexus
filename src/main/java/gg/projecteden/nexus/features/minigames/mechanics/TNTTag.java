@@ -254,7 +254,7 @@ public final class TNTTag extends TeamMechanic {
 
 	@Override
 	public void kill(@NotNull Minigamer victim, @Nullable Minigamer attacker) {
-		victim.getOnlinePlayer().getWorld().spawnParticle(Particle.EXPLOSION_LARGE, victim.getLocation().add(0, 1, 0), 1);
+		victim.getOnlinePlayer().getWorld().spawnParticle(Particle.EXPLOSION, victim.getLocation().add(0, 1, 0), 1);
 		// TODO sound?
 		super.kill(victim, attacker);
 	}

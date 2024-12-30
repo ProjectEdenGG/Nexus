@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common;
 
 import org.bukkit.Instrument;
-import org.bukkit.Sound;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -17,23 +16,23 @@ public @interface CustomNoteBlockConfig {
 
 	boolean powered() default false;
 
-	Sound breakSound() default Sound.UI_BUTTON_CLICK;
+	String breakSound() default "ui.button.click";
 
 	String customBreakSound() default "custom.block.wood.break";
 
-	Sound placeSound() default Sound.UI_BUTTON_CLICK;
+	String placeSound() default "ui.button.click";
 
 	String customPlaceSound() default "custom.block.wood.place";
 
-	Sound stepSound() default Sound.UI_BUTTON_CLICK;
+	String stepSound() default "ui.button.click";
 
 	String customStepSound() default "custom.block.wood.step";
 
-	Sound hitSound() default Sound.UI_BUTTON_CLICK;
+	String hitSound() default "ui.button.click";
 
 	String customHitSound() default "custom.block.wood.hit";
 
-	Sound fallSound() default Sound.UI_BUTTON_CLICK;
+	String fallSound() default "ui.button.click";
 
 	String customFallSound() default "custom.block.wood.fall";
 }

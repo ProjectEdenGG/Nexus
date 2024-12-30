@@ -665,7 +665,7 @@ public class TurfWars extends TeamMechanic {
 			return;
 		}
 
-		location.getWorld().spawnParticle(Particle.BLOCK_CRACK, location.toCenterLocation(), 50, block.getType().createBlockData());
+		location.getWorld().spawnParticle(Particle.BLOCK, location.toCenterLocation(), 50, block.getType().createBlockData());
 		block.setType(Material.AIR);
 	}
 

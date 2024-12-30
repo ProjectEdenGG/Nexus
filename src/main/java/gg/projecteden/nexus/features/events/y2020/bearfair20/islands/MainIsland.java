@@ -340,8 +340,8 @@ public class MainIsland implements Listener, BearFairIsland {
 						Location loc = new Location(BearFair20.getWorld(), -1015.5, 136.8, -1602.5);
 						for (int i = 0; i < 8; i++) {
 							Tasks.wait(i * 10, () -> {
-								world.spawnParticle(Particle.BLOCK_CRACK, loc, 40, 0.2, 0.2, 0.2, 0.000001, Material.OAK_LOG.createBlockData());
-								world.spawnParticle(Particle.VILLAGER_HAPPY, loc, 5, 0.25, 0.25, 0.25, 0.01);
+								world.spawnParticle(Particle.BLOCK, loc, 40, 0.2, 0.2, 0.2, 0.000001, Material.OAK_LOG.createBlockData());
+								world.spawnParticle(Particle.HAPPY_VILLAGER, loc, 5, 0.25, 0.25, 0.25, 0.01);
 								world.playSound(loc, Sound.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, 1F, 0.1F);
 							});
 						}

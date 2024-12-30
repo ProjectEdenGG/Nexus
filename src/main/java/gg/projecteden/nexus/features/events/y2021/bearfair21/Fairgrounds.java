@@ -45,7 +45,7 @@ public class Fairgrounds implements Listener {
 	public enum BearFair21Kit {
 		ARCHERY(
 				new ItemBuilder(Material.BOW)
-						.enchant(Enchantment.ARROW_INFINITE)
+						.enchant(Enchantment.INFINITY)
 						.unbreakable()
 						.build(),
 				new ItemBuilder(Material.ARROW)

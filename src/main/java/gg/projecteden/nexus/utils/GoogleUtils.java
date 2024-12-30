@@ -219,7 +219,7 @@ public class GoogleUtils {
 			String string = asString(iterator, null);
 			if (string != null)
 				string = string.trim();
-			if (isNullOrEmpty(string))
+			if (Nullables.isNullOrEmpty(string))
 				return null;
 			return string;
 		}
@@ -294,7 +294,7 @@ public class GoogleUtils {
 
 		@Nullable
 		private static LocalDate asLocalDate(String value, LocalDate defaultValue) {
-			if (isNullOrEmpty(value))
+			if (Nullables.isNullOrEmpty(value))
 				return defaultValue;
 
 			try {
@@ -317,7 +317,7 @@ public class GoogleUtils {
 
 		@Nullable
 		private static LocalTime asLocalTime(String value, LocalTime defaultValue) {
-			if (isNullOrEmpty(value))
+			if (Nullables.isNullOrEmpty(value))
 				return defaultValue;
 
 			try {

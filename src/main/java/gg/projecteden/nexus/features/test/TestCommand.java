@@ -44,12 +44,15 @@ import gg.projecteden.nexus.utils.StringUtils.ProgressBar;
 import gg.projecteden.nexus.utils.StringUtils.ProgressBar.SummaryStyle;
 import gg.projecteden.nexus.utils.Tasks.ExpBarCountdown;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import net.citizensnpcs.api.npc.NPC;
 import net.md_5.bungee.api.ChatColor;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.alchemy.Potion;
@@ -76,7 +79,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
@@ -123,11 +125,10 @@ public class TestCommand extends CustomCommand implements Listener {
 		String materialName = camelCase(item.getType().name());
 		send("&3 - Material = &e" + materialName);
 
-		PotionData potionData = potionMeta.getBasePotionData();
-		send("&3 - Potion Type = &e" + potionData.getType());
+		send("&3 - Potion Type = &e" + potionMeta.getBasePotionType());
 
-		Potion potion = PotionWrapper.toNMS(potionData);
-		send("&3 - Potion Name = &e" + potion.getName(""));
+		Potion potion = NMSUtils.toNMS(item).get(DataComponents.POTION_CONTENTS).potion().orElse(null).value();
+		send("&3 - Potion Name = &e" + potion.name());
 
 		send("&3 - Vanilla Effects:");
 		for (MobEffectInstance mobEffect : potion.getEffects()) {
@@ -139,7 +140,7 @@ public class TestCommand extends CustomCommand implements Listener {
 			send("&3 -- Type = &e" + potionEffect.getType().getKey().getKey());
 
 			MobEffect mobEffect = PotionWrapper.toNMS(potionEffect.getType());
-			MobEffectInstance mobEffectInst = new MobEffectInstance(mobEffect, potionEffect.getDuration(), potionEffect.getAmplifier(), potionEffect.isAmbient(), potionEffect.hasParticles());
+			MobEffectInstance mobEffectInst = new MobEffectInstance(Holder.direct(mobEffect), potionEffect.getDuration(), potionEffect.getAmplifier(), potionEffect.isAmbient(), potionEffect.hasParticles());
 			send("&3 -- Inst Desc = &e" + Arrays.stream(mobEffectInst.getDescriptionId().split("\\.")).toList().getLast());
 		}
 

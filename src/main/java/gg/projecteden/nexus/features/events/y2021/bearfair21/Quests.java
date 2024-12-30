@@ -116,7 +116,7 @@ public class Quests implements Listener {
 						continue;
 
 					Location loc = npc.getEntity().getLocation().add(0, 1, 0);
-					ParticleBuilder particles = new ParticleBuilder(Particle.VILLAGER_HAPPY)
+					ParticleBuilder particles = new ParticleBuilder(Particle.HAPPY_VILLAGER)
 						.location(loc)
 						.count(10)
 						.receivers(player)

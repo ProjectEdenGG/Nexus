@@ -34,7 +34,7 @@ public class Particles {
 
 			new ParticleBuilder(Particle.NAUTILUS).location(nautilisLoc).count(5).offset(0.1, 0.5, 0.1).extra(0.1).spawn();
 			new ParticleBuilder(Particle.PORTAL).location(portalLoc).count(5).offset(0.15, 1, 0.15).extra(0.1).spawn();
-			new ParticleBuilder(Particle.TOWN_AURA).location(myceliumLoc).count(15).offset(0.15, 0.5, 0.15).extra(0.1).spawn();
+			new ParticleBuilder(Particle.MYCELIUM).location(myceliumLoc).count(15).offset(0.15, 0.5, 0.15).extra(0.1).spawn();
 			new ParticleBuilder(Particle.SNEEZE).location(sneeze).count(5).offset(0.25, 1, 0.25).extra(0.01).spawn();
 			new ParticleBuilder(Particle.DOLPHIN).location(gravLift_1).count(10).offset(0.5, 4, 0.5).extra(0.1).spawn();
 			new ParticleBuilder(Particle.DOLPHIN).location(gravLift_2).count(10).offset(0.75, 1.5, 0.75).extra(0.1).spawn();

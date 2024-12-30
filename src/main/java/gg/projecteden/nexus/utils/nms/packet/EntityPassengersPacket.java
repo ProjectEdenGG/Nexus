@@ -7,6 +7,8 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
 
+import java.lang.reflect.Constructor;
+
 @Data
 public class EntityPassengersPacket extends EdenPacket {
 	private final int entityId;
@@ -14,9 +16,16 @@ public class EntityPassengersPacket extends EdenPacket {
 
 	@Override
 	protected Packet<ClientGamePacketListener> build() {
-		return new ClientboundSetPassengersPacket(new FriendlyByteBuf(Unpooled.buffer())
-			.writeVarInt(entityId)
-			.writeVarIntArray(new int[]{passengerId}));
+		try {
+			Constructor<ClientboundSetPassengersPacket> constructor = ClientboundSetPassengersPacket.class.getDeclaredConstructor(FriendlyByteBuf.class);
+			constructor.setAccessible(true);
+			return constructor.newInstance(new FriendlyByteBuf(Unpooled.buffer())
+				.writeVarInt(entityId)
+				.writeVarIntArray(new int[]{passengerId}));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
 	}
 
 }

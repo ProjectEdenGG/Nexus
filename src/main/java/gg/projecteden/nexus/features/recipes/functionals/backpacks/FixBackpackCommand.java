@@ -40,7 +40,7 @@ public class FixBackpackCommand extends CustomCommand {
 		ItemStack item = player().getInventory().getItemInMainHand();
 		if (!Backpacks.isBackpack(item)) return;
 
-		player().getInventory().setItemInMainHand(Backpacks.convertOldToNew(item));
+		player().getInventory().setItemInMainHand(Backpacks.convertOldToNew(item, world()));
 		player().updateInventory();
 	}
 

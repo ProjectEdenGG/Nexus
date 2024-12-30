@@ -13,21 +13,12 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationIn
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.GameModeWrapper;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
+import net.minecraft.core.component.DataComponents;
+import org.bukkit.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -129,9 +120,9 @@ public class Edible extends DecorationConfig implements MultiState, CraftableDec
 			// Since the consume event isn't cancelled, subtract the hunger obtained from the original food item
 			if (Nullables.isNullOrAir(originalItem)) {
 				var nmsItem = NMSUtils.toNMS(originalItem);
-				var nmsFoodProperties = nmsItem.getItem().getFoodProperties();
-				if (nmsFoodProperties != null) {
-					finalServingHunger = Math.abs(finalServingHunger - nmsFoodProperties.getNutrition());
+				if (nmsItem.has(DataComponents.FOOD)) {
+					var nmsFoodProperties = nmsItem.get(DataComponents.FOOD);
+					finalServingHunger = Math.abs(finalServingHunger - nmsFoodProperties.nutrition());
 				}
 			}
 

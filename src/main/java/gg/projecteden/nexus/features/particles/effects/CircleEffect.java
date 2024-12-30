@@ -4,7 +4,6 @@ import com.google.common.util.concurrent.AtomicDouble;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.particles.ParticleUtils;
 import gg.projecteden.nexus.features.particles.VectorUtils;
-import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Builder;
@@ -49,9 +48,9 @@ public class CircleEffect {
 		if (speed <= 0) speed = 0.1;
 		if (count <= 0) count = 1;
 		if (ticks == 0) ticks = TickTime.SECOND.x(5);
-		if (particle == null) particle = Particle.REDSTONE;
+		if (particle == null) particle = Particle.DUST;
 
-		if (particle.equals(Particle.REDSTONE)) {
+		if (particle.equals(Particle.DUST)) {
 			count = 0;
 			speed = 1;
 			if (rainbow) {

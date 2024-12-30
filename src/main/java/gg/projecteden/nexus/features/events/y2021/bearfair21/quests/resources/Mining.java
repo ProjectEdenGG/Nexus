@@ -98,8 +98,8 @@ public class Mining implements Listener {
 			ItemMeta meta = tool.getItemMeta();
 			int level = 1;
 			if (meta.hasEnchants()) {
-				if (meta.getEnchants().keySet().stream().anyMatch(enchantment -> enchantment.equals(Enchantment.LOOT_BONUS_BLOCKS))) {
-					level = meta.getEnchants().get(Enchantment.LOOT_BONUS_BLOCKS);
+				if (meta.getEnchants().keySet().stream().anyMatch(enchantment -> enchantment.equals(Enchantment.FORTUNE))) {
+					level = meta.getEnchants().get(Enchantment.FORTUNE);
 				}
 			}
 

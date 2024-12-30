@@ -18,16 +18,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
-
 public class WitherLeggings extends FunctionalRecipe {
 
 	@Getter
 	private static final ItemStack item = new ItemBuilder(CustomMaterial.WITHER_LEGGINGS)
 		.dyeColor(Color.fromRGB(CustomArmorType.WITHER.getId()))
 		.itemFlags(ItemFlag.HIDE_DYE)
-		.attribute(Attribute.GENERIC_ARMOR, "wither-armor-points", 6, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS)
-		.attribute(Attribute.GENERIC_ARMOR_TOUGHNESS, "wither-armor-toughness", 2, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS)
+		.attribute(Attribute.ARMOR, "wither-armor-points", 6, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS)
+		.attribute(Attribute.ARMOR_TOUGHNESS, "wither-armor-toughness", 2, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS)
 		.enchant(Enchant.PROTECTION, 4)
 		.enchant(Enchant.UNBREAKING, 4)
 		.name("&eWither Leggings")

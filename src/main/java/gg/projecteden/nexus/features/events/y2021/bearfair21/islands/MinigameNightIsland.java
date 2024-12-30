@@ -76,7 +76,7 @@ public class MinigameNightIsland implements BearFair21Island {
 	public MinigameNightIsland() {
 		Nexus.registerListener(this);
 
-		ParticleBuilder particles = new ParticleBuilder(Particle.REDSTONE).color(Color.RED).count(15).offset(0.3, 0.3, 0.3);
+		ParticleBuilder particles = new ParticleBuilder(Particle.DUST).color(Color.RED).count(15).offset(0.3, 0.3, 0.3);
 		Location gravWellLoc = BearFair21.worldguard().toLocation(BearFair21.worldguard().getProtectedRegion(gravwellRegion).getMinimumPoint());
 		Tasks.repeat(TickTime.SECOND, TickTime.SECOND.x(5), () -> {
 			for (Player player : BearFair21.getPlayers()) {
@@ -104,7 +104,7 @@ public class MinigameNightIsland implements BearFair21Island {
 						.play();
 				} else {
 					if (player.getInventory().containsAtLeast(MainIsland.getGravwell().build(), 1))
-						new ParticleBuilder(Particle.VILLAGER_HAPPY)
+						new ParticleBuilder(Particle.HAPPY_VILLAGER)
 							.receivers(player)
 							.location(gravWellLoc.toCenterLocation())
 							.count(10)
@@ -783,7 +783,7 @@ public class MinigameNightIsland implements BearFair21Island {
 	}
 
 	private static ParticleBuilder getPhoneParticles() {
-		return new ParticleBuilder(Particle.VILLAGER_HAPPY)
+		return new ParticleBuilder(Particle.HAPPY_VILLAGER)
 			.location(getPhoneLocation().toCenterLocation())
 			.offset(.25, .25, .25)
 			.count(2)

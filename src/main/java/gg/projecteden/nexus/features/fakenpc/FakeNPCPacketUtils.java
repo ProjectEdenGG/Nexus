@@ -22,6 +22,8 @@ import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket.Rot;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ChunkMap;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import org.bukkit.Location;
@@ -47,7 +49,11 @@ public class FakeNPCPacketUtils {
 			final ServerPlayer serverPlayer = _serverPlayer;
 
 			ClientboundPlayerInfoUpdatePacket playerInfoPacket = new ClientboundPlayerInfoUpdatePacket(Action.ADD_PLAYER, serverPlayer); // required
-			ClientboundAddEntityPacket spawnPacket = new ClientboundAddEntityPacket(serverPlayer);
+
+			ServerLevel world = (ServerLevel) serverPlayer.level();
+			ChunkMap.TrackedEntity entityTracker = world.getChunkSource().chunkMap.entityMap.get(serverPlayer.getId());
+
+			ClientboundAddEntityPacket spawnPacket = new ClientboundAddEntityPacket(serverPlayer, entityTracker.serverEntity);
 			ClientboundRotateHeadPacket headRotationPacket =
 				new ClientboundRotateHeadPacket(serverPlayer, PacketUtils.encodeAngle(fakeNPC.getLocation().getYaw()));
 
@@ -167,7 +173,11 @@ public class FakeNPCPacketUtils {
 		armorStand.setCustomNameVisible(true);
 		armorStand.setCustomName(new AdventureComponent(new JsonBuilder(line).build()));
 
-		ClientboundAddEntityPacket spawnArmorStand = new ClientboundAddEntityPacket(armorStand, PacketUtils.getObjectId(armorStand));
+		ServerLevel world = (ServerLevel) armorStand.level();
+		ChunkMap.TrackedEntity entityTracker = world.getChunkSource().chunkMap.entityMap.get(armorStand.getId());
+
+
+		ClientboundAddEntityPacket spawnArmorStand = new ClientboundAddEntityPacket(armorStand, entityTracker.serverEntity, PacketUtils.getObjectId(armorStand));
 		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData().packDirty());
 		ClientboundSetEquipmentPacket rawEquipmentPacket = new ClientboundSetEquipmentPacket(armorStand.getId(), NMSUtils.getArmorEquipmentList());
 

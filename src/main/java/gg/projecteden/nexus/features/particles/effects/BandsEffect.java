@@ -37,9 +37,9 @@ public class BandsEffect {
 		if (pulseDelay < 1) pulseDelay = 1;
 		if (speed <= 0) speed = 0.1;
 		if (ticks == 0) ticks = TickTime.SECOND.x(5);
-		if (particle == null) particle = Particle.REDSTONE;
+		if (particle == null) particle = Particle.DUST;
 
-		if (particle.equals(Particle.REDSTONE)) {
+		if (particle.equals(Particle.DUST)) {
 			count = 0;
 			speed = 1;
 			if (rainbow) {

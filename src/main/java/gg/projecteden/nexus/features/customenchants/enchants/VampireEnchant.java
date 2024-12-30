@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.models.pvp.PVPService;
 import gg.projecteden.nexus.utils.Nullables;
-import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrowableProjectile;
@@ -12,7 +11,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 public class VampireEnchant extends CustomEnchant implements Listener {
 
@@ -47,7 +45,7 @@ public class VampireEnchant extends CustomEnchant implements Listener {
 			return;
 
 		double newHealth = player.getHealth() + (.5 * level);
-		double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+		double maxHealth = player.getAttribute(Attribute.MAX_HEALTH).getValue();
 		player.setHealth(Math.min(newHealth, maxHealth));
 	}
 

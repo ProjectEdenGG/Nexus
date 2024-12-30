@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.utils.FakeWorldEdit.Clipboard.ClipboardBuilder;
 import gg.projecteden.parchment.HasLocation;
 import lombok.Builder;
 import lombok.Getter;

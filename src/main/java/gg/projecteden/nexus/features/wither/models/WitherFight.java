@@ -715,7 +715,7 @@ public abstract class WitherFight implements Listener {
 		CONFUSION {
 			@Override
 			public void execute(Player player) {
-				player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.CONFUSION).duration(TickTime.SECOND.x(10)).amplifier(0).ambient(true).build());
+				player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.NAUSEA).duration(TickTime.SECOND.x(10)).amplifier(0).ambient(true).build());
 			}
 		},
 		TAKE_POTIONS {

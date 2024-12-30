@@ -15,12 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -246,6 +241,7 @@ public class MaterialTag implements Tag<Material> {
 		.append(ALL_CORALS, ALL_FISH);
 
 	public static final MaterialTag MUSIC = new MaterialTag("DISC", MatchMode.CONTAINS).append(Material.NOTE_BLOCK, Material.JUKEBOX, Material.BELL);
+	public static final MaterialTag ITEMS_MUSIC_DISCS = new MaterialTag("DISC", MatchMode.CONTAINS);
 
 	public static final MaterialTag BLOCKS = new MaterialTag(Material::isSolid)
 		.exclude(Material.CACTUS, Material.BAMBOO, Material.DRAGON_EGG, Material.TURTLE_EGG, Material.CONDUIT, Material.CAKE)

@@ -14,12 +14,7 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -69,7 +64,7 @@ public class AvontyreEffects extends Effects {
 	public void particles() {
 		List<ParticleBuilder> particles = new ArrayList<>() {{
 			add(new ParticleBuilder(Particle.DRIPPING_DRIPSTONE_WATER).location(location(90.12, 66.3, 118.5)));
-			add(new ParticleBuilder(Particle.ENCHANTMENT_TABLE).location(location(212.5, 65.5, 41.5)));
+			add(new ParticleBuilder(Particle.ENCHANT).location(location(212.5, 65.5, 41.5)));
 		}};
 
 		Tasks.repeat(0, 2, () -> {

@@ -105,7 +105,10 @@ public class CustomEnchantsRegistration {
 
 	@NotNull
 	public static Registry<net.minecraft.world.item.enchantment.Enchantment> nmsRegistry() {
-		return ((CraftServer) Bukkit.getServer()).getHandle().getServer().registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+		var value = ((CraftServer) Bukkit.getServer()).getHandle().getServer().registryAccess().get(Registries.ENCHANTMENT).orElse(null);
+		if (value == null)
+			return null;
+		return value.value();
 	}
 
 	public static void unregister() {

@@ -96,7 +96,7 @@ public class LoadoutMenu extends InventoryProvider {
 		contents.set(0, 4, ClickableItem.of(
 			new ItemBuilder(Material.POTION)
 				.name("&ePotion Effects")
-				.itemFlags(ItemFlag.HIDE_POTION_EFFECTS)
+				.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
 				.build(),
 			e -> new PotionEffectsMenu(arena, team).open(viewer)));
 

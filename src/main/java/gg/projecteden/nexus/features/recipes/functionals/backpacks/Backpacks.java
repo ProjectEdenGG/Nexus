@@ -18,16 +18,10 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationIn
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Backpack;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -35,6 +29,7 @@ import net.kyori.adventure.text.Component;
 import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -46,19 +41,10 @@ import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.*;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class Backpacks extends FunctionalRecipe {
 
@@ -97,14 +83,14 @@ public class Backpacks extends FunctionalRecipe {
 		return MaterialTag.SHULKER_BOXES.isTagged(item);
 	}
 
-	public static ItemStack convertOldToNew(ItemStack old) {
+	public static ItemStack convertOldToNew(ItemStack old, World world) {
 		ItemBuilder newBuilder = new ItemBuilder(defaultBackpack);
 		ItemBuilder oldBuilder = new ItemBuilder(old);
 
 		newBuilder.name(oldBuilder.name());
 		newBuilder.nbt(nbt -> nbt.setString(NBT_KEY, getBackpackId(old)));
 
-		return copyContents(oldBuilder.build(), newBuilder.build());
+		return copyContents(oldBuilder.build(), newBuilder.build(), world);
 	}
 
 	public static boolean isBackpack(ItemStack item) {
@@ -154,12 +140,12 @@ public class Backpacks extends FunctionalRecipe {
 			.build();
 	}
 
-	private static ItemStack copyContents(ItemStack oldBackpack, ItemStack newBackpack) {
-		List<ItemStack> contents = ItemUtils.getNBTContentsOfNonInventoryItem(oldBackpack, getTier(newBackpack).getRows() * 9);
+	private static ItemStack copyContents(ItemStack oldBackpack, ItemStack newBackpack, World world) {
+		List<ItemStack> contents = ItemUtils.getNBTContentsOfNonInventoryItem(oldBackpack, getTier(newBackpack).getRows() * 9, NMSUtils.toNMS(world).registryAccess());
 		if (MaterialTag.SHULKER_BOXES.isTagged(oldBackpack) && contents.isEmpty())
 			contents = new ItemBuilder(oldBackpack).shulkerBoxContents();
 
-		return ItemUtils.setNBTContentsOfNonInventoryItem(newBackpack, contents);
+		return ItemUtils.setNBTContentsOfNonInventoryItem(newBackpack, contents, NMSUtils.toNMS(world).registryAccess());
 	}
 
 	@EventHandler
@@ -204,7 +190,13 @@ public class Backpacks extends FunctionalRecipe {
 
 		ItemStack newBackpack = new ItemBuilder(event.getInventory().getResult().clone()).name(displayName).build();
 
-		ItemStack newBackpackFinal = copyContents(backpack, newBackpack);
+		World world;
+		if (event.getInventory().getLocation() != null)
+			world = event.getInventory().getLocation().getWorld();
+		else
+			world = event.getInventory().getViewers().getFirst().getWorld();
+
+		ItemStack newBackpackFinal = copyContents(backpack, newBackpack, world);
         DecorationUtils.updateLore(newBackpackFinal, null);
         event.getInventory().setResult(newBackpackFinal);
 	}
@@ -340,8 +332,7 @@ public class Backpacks extends FunctionalRecipe {
 			this.player = player;
 			this.backpack = backpack;
 			this.frame = frame;
-			this.originalItems = ItemUtils.getNBTContentsOfNonInventoryItem(backpack, getTier(backpack).getRows() * 9);
-
+			this.originalItems = ItemUtils.getNBTContentsOfNonInventoryItem(backpack, getTier(backpack).getRows() * 9, NMSUtils.toNMS(player).registryAccess());
 			this.inventoryHolder = HOLDERS.computeIfAbsent(getBackpackId(backpack), BackpackHolder::new);
 
 			try {
@@ -436,7 +427,7 @@ public class Backpacks extends FunctionalRecipe {
 				return;
 			}
 
-			ItemUtils.setNBTContentsOfNonInventoryItem(backpack, contents);
+			ItemUtils.setNBTContentsOfNonInventoryItem(backpack, contents, NMSUtils.toNMS(player).registryAccess());
 			if (frame != null)
 				frame.setItem(backpack);
 

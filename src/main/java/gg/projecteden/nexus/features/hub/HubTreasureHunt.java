@@ -60,7 +60,7 @@ public class HubTreasureHunt implements Listener {
 		hunter.getFound().add(location);
 		service.save(hunter);
 
-		new ParticleBuilder(Particle.VILLAGER_HAPPY).location(location.toCenterLocation()).offset(0.25, 0.25, 0.25).count(15).spawn();
+		new ParticleBuilder(Particle.HAPPY_VILLAGER).location(location.toCenterLocation()).offset(0.25, 0.25, 0.25).count(15).spawn();
 
 		final int found = hunter.getFound().size();
 		if (found != TOTAL_TREASURE_CHESTS) {

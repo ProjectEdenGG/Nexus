@@ -25,11 +25,7 @@ import lombok.Getter;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
@@ -53,7 +49,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Railgun
@@ -552,8 +547,8 @@ public class Murder extends TeamMechanic {
 		player.getLocation().getWorld().dropItem(player.getLocation(), gun);
 
 		// Make drunk
-		player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.CONFUSION).duration(1200).amplifier(2).build());
-		player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.SLOW).duration(1200).amplifier(4).build());
+		player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.NAUSEA).duration(1200).amplifier(2).build());
+		player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.SLOWNESS).duration(1200).amplifier(4).build());
 		// Glass bottle will signify that they are 'drunk' and can't pick up guns
 		player.getInventory().setItem(17, new ItemStack(Material.GLASS_BOTTLE));
 	}

@@ -44,8 +44,8 @@ public class NyanCatEffect {
 				int g = rgb[1];
 				int b = rgb[2];
 
-				Particle.DustOptions dustOptions = ParticleUtils.newDustOption(Particle.REDSTONE, r, g, b);
-				ParticleUtils.display(Particle.REDSTONE, loc, 0, r, g, b, 1, dustOptions);
+				Particle.DustOptions dustOptions = ParticleUtils.newDustOption(Particle.DUST, r, g, b);
+				ParticleUtils.display(Particle.DUST, loc, 0, r, g, b, 1, dustOptions);
 
 				loc = loc.add(0, 0.1, 0);
 			}

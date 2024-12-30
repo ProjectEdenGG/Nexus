@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock;
 import lombok.NonNull;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -189,9 +188,8 @@ public interface ICustomTripwire extends ICustomBlock {
 
 	@Override
 	default @NonNull String getBreakSound() {
-		Sound sound = getConfig().breakSound();
-		String customSound = sound.getKey().getKey();
-		if (sound.equals(Sound.UI_BUTTON_CLICK)) {
+		String customSound = getConfig().breakSound();
+		if (customSound.equals("ui.button.click")) {
 			customSound = getConfig().customBreakSound();
 		}
 
@@ -200,9 +198,8 @@ public interface ICustomTripwire extends ICustomBlock {
 
 	@Override
 	default @NonNull String getPlaceSound() {
-		Sound sound = getConfig().placeSound();
-		String customSound = sound.getKey().getKey();
-		if (sound.equals(Sound.UI_BUTTON_CLICK)) {
+		String customSound = getConfig().placeSound();
+		if (customSound.equals("ui.button.click")) {
 			customSound = getConfig().customPlaceSound();
 		}
 
@@ -211,9 +208,8 @@ public interface ICustomTripwire extends ICustomBlock {
 
 	@Override
 	default @NonNull String getStepSound() {
-		Sound sound = getConfig().stepSound();
-		String customSound = sound.getKey().getKey();
-		if (sound.equals(Sound.UI_BUTTON_CLICK)) {
+		String customSound = getConfig().stepSound();
+		if (customSound.equals("ui.button.click")) {
 			customSound = getConfig().customStepSound();
 		}
 
@@ -222,9 +218,8 @@ public interface ICustomTripwire extends ICustomBlock {
 
 	@Override
 	default @NonNull String getHitSound() {
-		Sound sound = getConfig().hitSound();
-		String customSound = sound.getKey().getKey();
-		if (sound.equals(Sound.UI_BUTTON_CLICK)) {
+		String customSound = getConfig().hitSound();
+		if (customSound.equals("ui.button.click")) {
 			customSound = getConfig().customHitSound();
 		}
 
@@ -233,9 +228,8 @@ public interface ICustomTripwire extends ICustomBlock {
 
 	@Override
 	default @NonNull String getFallSound() {
-		Sound sound = getConfig().fallSound();
-		String customSound = sound.getKey().getKey();
-		if (sound.equals(Sound.UI_BUTTON_CLICK)) {
+		String customSound = getConfig().fallSound();
+		if (customSound.equals("ui.button.click")) {
 			customSound = getConfig().customFallSound();
 		}
 

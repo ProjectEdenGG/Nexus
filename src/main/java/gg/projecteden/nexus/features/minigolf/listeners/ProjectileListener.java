@@ -91,7 +91,7 @@ public class ProjectileListener implements Listener {
 				user.debug("ball hit an entity");
 
 				EntityType hitEntityType = hitEntity.getType();
-				if (hitEntityType == EntityType.MINECART_TNT) {
+				if (hitEntityType == EntityType.TNT_MINECART) {
 					user.debug("  tnt minecart -> kill");
 					golfBall.respawn("&cBoom!", DeathCause.DEATH_ENTITY);
 					return;

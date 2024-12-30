@@ -61,15 +61,15 @@ public class DiscoEffect {
 
 		if (lineSpeed <= 0) lineSpeed = 0.1;
 		if (lineDensity <= 0) lineDensity = 15;
-		if (lineParticle == null) lineParticle = Particle.REDSTONE;
+		if (lineParticle == null) lineParticle = Particle.DUST;
 
 		if (sphereSpeed <= 0) sphereSpeed = 0.1;
 		if (sphereDensity <= 0) sphereDensity = 25;
-		if (sphereParticle == null) sphereParticle = Particle.REDSTONE;
+		if (sphereParticle == null) sphereParticle = Particle.DUST;
 
 		int lineCount = lineDensity;
 		int sphereCount = sphereDensity;
-		if (lineParticle.equals(Particle.REDSTONE)) {
+		if (lineParticle.equals(Particle.DUST)) {
 			lineCount = 0;
 			lineSpeed = 1;
 			if (lineRainbow) {
@@ -79,7 +79,7 @@ public class DiscoEffect {
 			}
 		}
 
-		if (sphereParticle.equals(Particle.REDSTONE)) {
+		if (sphereParticle.equals(Particle.DUST)) {
 			sphereCount = 0;
 			sphereSpeed = 1;
 			if (sphereRainbow) {

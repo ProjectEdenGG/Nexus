@@ -23,11 +23,7 @@ import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Sheep;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -160,7 +156,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 			if (entity instanceof Player) ((Player) entity).setLevel(0);
 			Entity newEntity = entity.getPassengers().get(0);
 			entity.removePassenger(newEntity);
-			if (entity.getType() == EntityType.DROPPED_ITEM) {
+			if (entity.getType() == EntityType.ITEM) {
 				matchData.getItems().remove(entity);
 				entity.remove();
 			}

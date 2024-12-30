@@ -34,7 +34,7 @@ public abstract class SkullHuntEvent implements Listener {
 	protected List<ProtectedRegion> activeRegions = null;
 
 	// Particles
-	protected Particle notFoundParticle = Particle.VILLAGER_HAPPY;
+	protected Particle notFoundParticle = Particle.HAPPY_VILLAGER;
 	protected Particle foundAlreadyParticle = null;
 
 	// Messages

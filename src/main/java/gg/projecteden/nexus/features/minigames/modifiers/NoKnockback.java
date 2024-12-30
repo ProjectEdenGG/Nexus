@@ -27,14 +27,14 @@ public class NoKnockback implements MinigameModifier {
 				int defense = ItemUtils.getDefensePoints(itemStack.getType());
 				int toughness = ItemUtils.getArmorToughness(itemStack.getType());
 				if (defense > 0)
-					meta.addAttributeModifier(Attribute.GENERIC_ARMOR, new AttributeModifier(DEFENSE, "minigame_fix_armor", defense, AttributeModifier.Operation.ADD_NUMBER, slot));
+					meta.addAttributeModifier(Attribute.ARMOR, new AttributeModifier(DEFENSE, "minigame_fix_armor", defense, AttributeModifier.Operation.ADD_NUMBER, slot));
 				if (toughness > 0)
-					meta.addAttributeModifier(Attribute.GENERIC_ARMOR_TOUGHNESS, new AttributeModifier(TOUGHNESS, "minigame_fix_armor_toughness", toughness, AttributeModifier.Operation.ADD_NUMBER, slot));
+					meta.addAttributeModifier(Attribute.ARMOR_TOUGHNESS, new AttributeModifier(TOUGHNESS, "minigame_fix_armor_toughness", toughness, AttributeModifier.Operation.ADD_NUMBER, slot));
 
-				meta.addAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE, new AttributeModifier(KNOCKBACK_A, "minigame_noknockback", 10, AttributeModifier.Operation.ADD_NUMBER, slot));
+				meta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, new AttributeModifier(KNOCKBACK_A, "minigame_noknockback", 10, AttributeModifier.Operation.ADD_NUMBER, slot));
 			} else {
-				meta.addAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE, new AttributeModifier(KNOCKBACK_A, "minigame_noknockback", 10, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND));
-				meta.addAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE, new AttributeModifier(KNOCKBACK_B, "minigame_noknockback_b", 10, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.OFF_HAND));
+				meta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, new AttributeModifier(KNOCKBACK_A, "minigame_noknockback", 10, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND));
+				meta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, new AttributeModifier(KNOCKBACK_B, "minigame_noknockback_b", 10, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.OFF_HAND));
 			}
 
 			itemStack.setItemMeta(meta);

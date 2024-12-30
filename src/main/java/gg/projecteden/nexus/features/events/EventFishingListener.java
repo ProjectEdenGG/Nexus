@@ -89,8 +89,8 @@ public class EventFishingListener implements Listener {
 		loot.add(getFishingItem(player));
 
 		if (meta != null && meta.hasEnchants()) {
-			if (meta.getEnchants().keySet().stream().anyMatch(enchantment -> enchantment.equals(Enchantment.LUCK))) {
-				int loops = RandomUtils.randomInt(0, meta.getEnchants().get(Enchantment.LUCK));
+			if (meta.getEnchants().keySet().stream().anyMatch(enchantment -> enchantment.equals(Enchantment.LUCK_OF_THE_SEA))) {
+				int loops = RandomUtils.randomInt(0, meta.getEnchants().get(Enchantment.LUCK_OF_THE_SEA));
 
 				for (int i = 0; i < loops; i++) {
 					loot.add(getFishingItem(player));

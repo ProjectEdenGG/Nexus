@@ -7,13 +7,13 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig.ChatGame;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfigService;
+import gg.projecteden.nexus.utils.BiomeUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.NumberDisplay;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
-import org.bukkit.block.Biome;
 import org.bukkit.entity.EntityType;
 import org.simmetrics.metrics.StringMetrics;
 
@@ -169,7 +169,7 @@ public enum ChatGameType {
 	private static final Set<String> WORDS = new HashSet<>() {{
 		addAll(enumWordFormatter.apply(Arrays.stream(Material.values()).filter(Material::isItem)));
 		addAll(enumWordFormatter.apply(Arrays.stream(EntityType.values()).filter(type -> type.isAlive() && type != EntityType.PLAYER)));
-		addAll(enumWordFormatter.apply(Arrays.stream(Biome.values()).filter(type -> type != Biome.CUSTOM)));
+		addAll(Arrays.stream(BiomeUtils.values()).map(BiomeUtils::name).toList());
 		// https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population - removed countries without number
 		addAll(List.of(
 			"China", "India", "United States", "Indonesia", "Pakistan", "Nigeria", "Brazil", "Bangladesh", "Russia",

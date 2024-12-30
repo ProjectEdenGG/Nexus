@@ -40,7 +40,7 @@ public class Minecarts {
 
 			// Full
 			loc = RandomUtils.randomElement(spawnLoc_full);
-			minecart = loc.getWorld().spawnEntity(loc, EntityType.MINECART_CHEST);
+			minecart = loc.getWorld().spawnEntity(loc, EntityType.CHEST_MINECART);
 
 			Entity finalMinecart1 = minecart;
 			Location finalLoc1 = loc;

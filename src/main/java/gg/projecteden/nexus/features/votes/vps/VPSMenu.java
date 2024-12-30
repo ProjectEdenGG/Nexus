@@ -14,11 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
@@ -189,11 +185,11 @@ public enum VPSMenu {
 					.price(30));
 				put(14, VPSSlot.builder()
 					.name("Enchanted Book")
-					.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.DURABILITY, 3))
+					.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.UNBREAKING, 3))
 					.price(30));
 				put(15, VPSSlot.builder()
 					.name("Enchanted Book")
-					.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.ARROW_INFINITE))
+					.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.INFINITY))
 					.price(40));
 				put(16, VPSSlot.builder()
 					.name("Enchanted Book")

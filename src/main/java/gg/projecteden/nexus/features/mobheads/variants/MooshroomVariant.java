@@ -22,7 +22,7 @@ public enum MooshroomVariant implements MobHeadVariant {
 
 	@Override
 	public @NotNull EntityType getEntityType() {
-		return EntityType.MUSHROOM_COW;
+		return EntityType.MOOSHROOM;
 	}
 
 	public static MooshroomVariant of(MushroomCow mushroomCow) {

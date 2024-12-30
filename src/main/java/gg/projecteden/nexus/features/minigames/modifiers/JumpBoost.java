@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public class JumpBoost implements MinigameModifier {
 	@Override
 	public void afterLoadout(@NotNull Minigamer minigamer) {
-		minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.JUMP).infinite().amplifier(2).ambient(true).icon(true));
+		minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.JUMP_BOOST).infinite().amplifier(2).ambient(true).icon(true));
 	}
 
 	@Override

@@ -24,7 +24,7 @@ public class StormEffect {
 	public StormEffect(HumanEntity player, Location location, boolean updateLoc, Vector updateVector, RainPartile rainParticle,
 					   int density, double radius, long ticks, int startDelay, int pulseDelay) {
 
-		Particle cloudParticle = Particle.REDSTONE;
+		Particle cloudParticle = Particle.DUST;
 		Color cloudColor = Color.fromRGB(127, 127, 127);
 		int cloudRed = cloudColor.getRed();
 		int cloudGreen = cloudColor.getGreen();
@@ -102,10 +102,10 @@ public class StormEffect {
 
 	@Getter
 	public enum RainPartile {
-		RAIN(Particle.WATER_DROP),
-		SNOW(Particle.SNOW_SHOVEL),
-		SLIME(Particle.SLIME),
-		SYMBOLS(Particle.ENCHANTMENT_TABLE);
+		RAIN(Particle.DRIPPING_WATER),
+		SNOW(Particle.ITEM_SNOWBALL),
+		SLIME(Particle.ITEM_SLIME),
+		SYMBOLS(Particle.ENCHANT);
 
 		Particle particle;
 

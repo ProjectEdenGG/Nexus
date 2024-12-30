@@ -147,7 +147,7 @@ public class CratePinatas implements Listener {
 			AtomicInteger taskId = new AtomicInteger();
 			taskId.set(
 				Tasks.repeat(4, 2, () -> {
-					new ParticleBuilder(Particle.REDSTONE)
+					new ParticleBuilder(Particle.DUST)
 						.color(RandomUtils.randomInt(0, 255), RandomUtils.randomInt(0, 255), RandomUtils.randomInt(0, 255))
 						.location(item.getLocation())
 						.extra(1)
@@ -170,7 +170,7 @@ public class CratePinatas implements Listener {
 		double totalAnimationTime = 150;
 
 		private void spawn(Item item) {
-			new ParticleBuilder(Particle.EXPLOSION_HUGE)
+			new ParticleBuilder(Particle.EXPLOSION)
 				.location(item.getLocation().clone().add(0, .5, 0))
 				.count(10)
 				.offset(.5, .5, .5)
@@ -283,7 +283,7 @@ public class CratePinatas implements Listener {
 						if (i.isOnGround())
 							Tasks.cancel(taskId.get());
 
-						new ParticleBuilder(Particle.REDSTONE)
+						new ParticleBuilder(Particle.DUST)
 							.color(color)
 							.location(i.getLocation().clone().add(0, .25, 0))
 							.extra(1)

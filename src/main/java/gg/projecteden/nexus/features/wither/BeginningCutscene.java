@@ -110,7 +110,7 @@ public class BeginningCutscene implements Listener {
 				witherEntity.getBossBar().setVisible(false);
 			wither.set(witherEntity);
 			for (int i = 0; i < 5; i++)
-				cageLoc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, cageLoc, 1, 1, 1, 1);
+				cageLoc.getWorld().spawnParticle(Particle.EXPLOSION, cageLoc, 1, 1, 1, 1);
 		});
 
 		Tasks.wait(TickTime.SECOND.x(waitSeconds += 2), () -> {

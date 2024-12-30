@@ -86,7 +86,7 @@ public class ShopMenuFunctions {
 							return true;
 
 				if (item.getItemMeta() instanceof PotionMeta meta) {
-					final PotionEffectType effectType = meta.getBasePotionData().getType().getEffectType();
+					final PotionEffectType effectType = meta.getBasePotionType().getEffectType();
 					if (effectType != null)
 						if (contains(ItemUtils.getFixedPotionName(effectType), input))
 							return true;

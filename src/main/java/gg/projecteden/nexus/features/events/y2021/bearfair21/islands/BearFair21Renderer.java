@@ -42,7 +42,7 @@ public class BearFair21Renderer extends MapRenderer {
 
 	public static void init() {}
 
-	@Getter private final MapCursor cursor = new MapCursor((byte) 0, (byte) 0, MapPointerDirection.SOUTH.val(), Type.WHITE_POINTER, true, "You");
+	@Getter private final MapCursor cursor = new MapCursor((byte) 0, (byte) 0, MapPointerDirection.SOUTH.val(), Type.BANNER_WHITE, true, "You");
 	@Getter @Setter private boolean initialized = false;
 	@Getter @Setter private boolean active = true;
 	@Getter @Setter private boolean updating = true;

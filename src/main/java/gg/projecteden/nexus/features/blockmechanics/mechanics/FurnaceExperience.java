@@ -22,7 +22,7 @@ import org.bukkit.inventory.CookingRecipe;
 // Displays particles in front of furnace if ...
 public class FurnaceExperience implements Listener {
 
-	private final ParticleBuilder particle = new ParticleBuilder(Particle.REDSTONE).count(5).extra(0).offset(0.1, 0.05, 0.1);
+	private final ParticleBuilder particle = new ParticleBuilder(Particle.DUST).count(5).extra(0).offset(0.1, 0.05, 0.1);
 	private static final int MIN_EXPERIENCE = (int) getTotalExperience(10);
 	private static final int MAX_EXPERIENCE = (int) getTotalExperience(30);
 

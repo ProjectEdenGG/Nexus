@@ -162,7 +162,7 @@ public class ShootingRange implements Listener {
 
     enum Item {
 
-        BOW(new ItemBuilder(Material.BOW).enchant(Enchantment.ARROW_INFINITE).lore(itemLore).unbreakable().build()),
+        BOW(new ItemBuilder(Material.BOW).enchant(Enchantment.INFINITY).lore(itemLore).unbreakable().build()),
         ARROW(new ItemBuilder(Material.ARROW).lore(itemLore).build());
 
         private ItemStack is;

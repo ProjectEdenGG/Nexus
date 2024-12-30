@@ -79,8 +79,8 @@ public class McMMOResetProvider extends InventoryProvider {
 				void onClick(Player player) {
 					PlayerUtils.giveItem(player, new ItemBuilder(Material.FISHING_ROD)
 							.enchant(Enchantment.LURE, 4)
-							.enchant(Enchantment.LUCK, 5)
-							.enchant(Enchantment.DURABILITY, 3)
+							.enchant(Enchantment.LUCK_OF_THE_SEA, 5)
+							.enchant(Enchantment.UNBREAKING, 3)
 							.enchant(Enchantment.MENDING).build());
 				}
 		},
@@ -203,7 +203,7 @@ public class McMMOResetProvider extends InventoryProvider {
 
 		var user = service.get(viewer);
 		for (ResetSkillType skill : ResetSkillType.values()) {
-			ItemBuilder item = new ItemBuilder(skill.getMaterial()).itemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ATTRIBUTES)
+			ItemBuilder item = new ItemBuilder(skill.getMaterial()).itemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP, ItemFlag.HIDE_ATTRIBUTES)
 				.name("&e" + StringUtils.camelCase(skill.name()))
 				.lore(
 					"&3Level: &e" + mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())),

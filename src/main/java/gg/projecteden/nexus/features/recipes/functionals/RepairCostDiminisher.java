@@ -14,11 +14,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.Repairable;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +30,7 @@ public class RepairCostDiminisher extends FunctionalRecipe {
 		.lore("&7cost of the item")
 		.lore("&7")
 		.lore("&cRequires 30 XP Levels to Craft")
-		.enchant(Enchantment.ARROW_INFINITE, 1)
+		.enchant(Enchantment.INFINITY, 1)
 		.itemFlags(ItemFlag.values())
 		.nbt(nbt -> nbt.setBoolean(NBT_KEY, true))
 		.build();

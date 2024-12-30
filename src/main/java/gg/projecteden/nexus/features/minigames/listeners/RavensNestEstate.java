@@ -15,12 +15,7 @@ import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -198,8 +193,8 @@ public class RavensNestEstate implements Listener {
 				World world = fireplaceTrigger1.getWorld();
 				Location loc1 = LocationUtils.getCenteredLocation(fireplaceTrigger1).add(0, 0.5, 0);
 				Location loc2 = LocationUtils.getCenteredLocation(fireplaceTrigger2).add(0, 0.5, 0);
-				world.spawnParticle(Particle.VILLAGER_HAPPY, loc1, 50, 0.5, 0.5, 0.5, 0.1);
-				world.spawnParticle(Particle.VILLAGER_HAPPY, loc2, 50, 0.5, 0.5, 0.5, 0.1);
+				world.spawnParticle(Particle.HAPPY_VILLAGER, loc1, 50, 0.5, 0.5, 0.5, 0.1);
+				world.spawnParticle(Particle.HAPPY_VILLAGER, loc2, 50, 0.5, 0.5, 0.5, 0.1);
 			}
 		});
 	}

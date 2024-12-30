@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -24,10 +25,11 @@ import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
+import net.minecraft.world.item.component.CustomData;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.Material;
 import org.bukkit.StructureType;
+import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
@@ -92,6 +94,10 @@ public class ItemUtils {
 		int modelId2 = new ItemBuilder(itemStack2).modelId();
 
 		return modelId1 == modelId2;
+	}
+
+	public static String getFixedPotionName(PotionEffectType effect) {
+		return effect.getName();
 	}
 
 	public static boolean isFuzzyMatch(ItemStack itemStack1, ItemStack itemStack2) {
@@ -425,8 +431,8 @@ public class ItemUtils {
 		ItemTagsUtils.update(item);
 	}
 
-	public static int getBurnTime(ItemStack itemStack) {
-		return AbstractFurnaceBlockEntity.getFuel().getOrDefault(NMSUtils.toNMS(itemStack).getItem(), 0);
+	public static int getBurnTime(ItemStack itemStack, World world) {
+		return NMSUtils.toNMS(world).fuelValues().burnDuration(NMSUtils.toNMS(itemStack));
 	}
 
 	public static class ItemStackComparator implements Comparator<ItemStack> {
@@ -623,7 +629,7 @@ public class ItemUtils {
 		};
 	}
 
-	public static ItemStack setNBTContentsOfNonInventoryItem(ItemStack mainItem, List<ItemStack> itemStacks) {
+	public static ItemStack setNBTContentsOfNonInventoryItem(ItemStack mainItem, List<ItemStack> itemStacks, HolderLookup.Provider registryAccess) {
 		NonNullList<net.minecraft.world.item.ItemStack> minecraft = NonNullList.create();
 		for (int i = 0; i < itemStacks.size(); i++) {
 			if (Nullables.isNullOrAir(itemStacks.get(i)))
@@ -635,34 +641,34 @@ public class ItemUtils {
 		net.minecraft.world.item.ItemStack handle = CraftItemStack.asNMSCopy(mainItem);
 		CompoundTag tag = new CompoundTag();
 
-		tag = handle.save(tag).getCompound("tag");
+		tag = handle.get(DataComponents.CUSTOM_DATA).copyTag().getCompound("tag");
 
 		CompoundTag pe = new CompoundTag();
 		if (tag.contains("ProjectEden"))
 			pe = tag.getCompound("ProjectEden");
 
-		ContainerHelper.saveAllItems(pe, minecraft);
+		ContainerHelper.saveAllItems(pe, minecraft, registryAccess);
 		tag.put("ProjectEden", pe);
 
-		handle.setTag(tag);
+		handle.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
 		ItemStack bukkit = handle.getBukkitStack();
 		mainItem.setItemMeta(bukkit.getItemMeta());
 		return handle.asBukkitCopy();
 	}
 
-	public static List<ItemStack> getNBTContentsOfNonInventoryItem(ItemStack backpack, int expectedSize) {
+	public static List<ItemStack> getNBTContentsOfNonInventoryItem(ItemStack backpack, int expectedSize, HolderLookup.Provider registryAccess) {
 		net.minecraft.world.item.ItemStack handle = CraftItemStack.asNMSCopy(backpack);
 
 		List<ItemStack> bukkit = new ArrayList<>();
 
 		if (!handle.has(DataComponents.CUSTOM_DATA)) return bukkit;
-		if (!handle.get(DataComponents.CUSTOM_DATA).contains("ProjectEden")) return bukkit;
-		if (!handle.getTag().getCompound("ProjectEden").contains("Items")) return bukkit;
+		if (!handle.get(DataComponents.CUSTOM_DATA).copyTag().contains("ProjectEden")) return bukkit;
+		if (!((CompoundTag) handle.get(DataComponents.CUSTOM_DATA).copyTag().get("ProjectEden")).contains("Items")) return bukkit;
 
 
 		NonNullList<net.minecraft.world.item.ItemStack> minecraft = NonNullList.withSize(expectedSize, net.minecraft.world.item.ItemStack.EMPTY);
-		ContainerHelper.loadAllItems(handle.get(DataComponents.CUSTOM_DATA).getUnsafe().getCompound("ProjectEden"), minecraft);
+		ContainerHelper.loadAllItems(handle.get(DataComponents.CUSTOM_DATA).copyTag().getCompound("ProjectEden"), minecraft, registryAccess);
 
 		for (int i = 0; i < Math.max(expectedSize, minecraft.size()); i++) {
 			if (i >= minecraft.size())

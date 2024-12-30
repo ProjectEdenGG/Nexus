@@ -2,9 +2,9 @@ package gg.projecteden.nexus.features.survival.structures.models;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.minecraft.core.BlockPos;
@@ -127,16 +127,16 @@ public class Spawner {
 			add(new ItemStack(Material.GOLDEN_LEGGINGS));
 			add(new ItemStack(Material.LEATHER_BOOTS));
 		}};
-		nmsSpawnData.setArmorItems(armorItems);
+		nmsSpawnData.setArmorItems(armorItems, world.registryAccess());
 
-		nmsSpawnData.setHandItems(new ItemStack(Material.STONE_SWORD), null);
+		nmsSpawnData.setHandItems(new ItemStack(Material.STONE_SWORD), null, world.registryAccess());
 
 		nmsSpawnData.setSilent(true);
 		nmsSpawnData.setLeftHanded(true);
 		//
 
 		// NMSSpawnData#getMobSpawnerData
-		SpawnData spawnData = new SpawnData(nmsSpawnData.getCompound(), Optional.empty());
+		SpawnData spawnData = new SpawnData(nmsSpawnData.getCompound(), Optional.empty(), Optional.empty());
 
 		// new NMSSpawner()
 		CompoundTag snapshot = new CompoundTag();

@@ -6,7 +6,6 @@ import lombok.NonNull;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.bukkit.Note;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -70,9 +69,8 @@ public interface ICustomNoteBlock extends ICustomBlock {
 
 	@Override
 	default @NonNull String getBreakSound() {
-		Sound sound = getNoteBlockConfig().breakSound();
-		String customSound = sound.getKey().getKey();
-		if (sound.equals(Sound.UI_BUTTON_CLICK)) {
+		String customSound = getNoteBlockConfig().breakSound();
+		if (customSound.equals("ui.button.click")) {
 			customSound = getNoteBlockConfig().customBreakSound();
 		}
 
@@ -81,9 +79,8 @@ public interface ICustomNoteBlock extends ICustomBlock {
 
 	@Override
 	default @NonNull String getPlaceSound() {
-		Sound sound = getNoteBlockConfig().placeSound();
-		String customSound = sound.getKey().getKey();
-		if (sound.equals(Sound.UI_BUTTON_CLICK)) {
+		String customSound = getNoteBlockConfig().placeSound();
+		if (customSound.equals("ui.button.click")) {
 			customSound = getNoteBlockConfig().customPlaceSound();
 		}
 
@@ -92,9 +89,8 @@ public interface ICustomNoteBlock extends ICustomBlock {
 
 	@Override
 	default @NonNull String getStepSound() {
-		Sound sound = getNoteBlockConfig().stepSound();
-		String customSound = sound.getKey().getKey();
-		if (sound.equals(Sound.UI_BUTTON_CLICK)) {
+		String customSound = getNoteBlockConfig().stepSound();
+		if (customSound.equals("ui.button.click")) {
 			customSound = getNoteBlockConfig().customStepSound();
 		}
 
@@ -103,9 +99,8 @@ public interface ICustomNoteBlock extends ICustomBlock {
 
 	@Override
 	default @NonNull String getHitSound() {
-		Sound sound = getNoteBlockConfig().hitSound();
-		String customSound = sound.getKey().getKey();
-		if (sound.equals(Sound.UI_BUTTON_CLICK)) {
+		String customSound = getNoteBlockConfig().hitSound();
+		if (customSound.equals("ui.button.click")) {
 			customSound = getNoteBlockConfig().customHitSound();
 		}
 
@@ -114,9 +109,8 @@ public interface ICustomNoteBlock extends ICustomBlock {
 
 	@Override
 	default @NonNull String getFallSound() {
-		Sound sound = getNoteBlockConfig().fallSound();
-		String customSound = sound.getKey().getKey();
-		if (sound.equals(Sound.UI_BUTTON_CLICK)) {
+		String customSound = getNoteBlockConfig().fallSound();
+		if (customSound.equals("ui.button.click")) {
 			customSound = getNoteBlockConfig().customFallSound();
 		}
 

@@ -4,11 +4,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.particles.ParticleUtils;
 import gg.projecteden.nexus.features.particles.ParticleUtils.ParticleColor;
 import gg.projecteden.nexus.features.particles.VectorUtils;
-import gg.projecteden.nexus.models.particle.ParticleOwner;
-import gg.projecteden.nexus.models.particle.ParticleService;
-import gg.projecteden.nexus.models.particle.ParticleSetting;
-import gg.projecteden.nexus.models.particle.ParticleTask;
-import gg.projecteden.nexus.models.particle.ParticleType;
+import gg.projecteden.nexus.models.particle.*;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -61,7 +57,7 @@ public class WingsEffect {
 		final double space = 0.2;
 		final double height = 0;
 		final int wingAngle = 125;
-		Particle wingParticle = Particle.REDSTONE;
+		Particle wingParticle = Particle.DUST;
 
 		if (ticks == 0)
 			ticks = TickTime.SECOND.x(5);

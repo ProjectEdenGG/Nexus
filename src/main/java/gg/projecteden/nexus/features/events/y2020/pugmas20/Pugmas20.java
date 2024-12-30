@@ -113,7 +113,7 @@ public class Pugmas20 implements Listener {
 
 	private void npcParticles() {
 		Pugmas20UserService service = new Pugmas20UserService();
-		Particle particle = Particle.VILLAGER_HAPPY;
+		Particle particle = Particle.HAPPY_VILLAGER;
 
 		Tasks.repeatAsync(0, TickTime.SECOND.x(2), () -> {
 			for (Player player : worldguard().getPlayersInRegion(region)) {

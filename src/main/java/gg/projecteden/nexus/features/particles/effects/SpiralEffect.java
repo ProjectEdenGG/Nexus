@@ -43,10 +43,10 @@ public class SpiralEffect {
 		if (speed <= 0) speed = 0.1;
 		if (count <= 0) count = 1;
 		if (ticks == 0) ticks = TickTime.SECOND.x(5);
-		if (particle == null) particle = Particle.REDSTONE;
+		if (particle == null) particle = Particle.DUST;
 		if (radius <= 0) radius = 1;
 
-		if (particle.equals(Particle.REDSTONE)) {
+		if (particle.equals(Particle.DUST)) {
 			count = 0;
 			speed = 1;
 			if (rainbow) {

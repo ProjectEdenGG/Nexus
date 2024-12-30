@@ -133,7 +133,7 @@ public class Recycler implements Listener {
 		for (int i = 0; i < loops; i++) {
 			Tasks.wait(wait.addAndGet(5), () -> {
 				new SoundBuilder(Sound.BLOCK_COMPOSTER_READY).location(composter).play();
-				ParticleUtils.display(Particle.VILLAGER_HAPPY, LocationUtils.getCenteredLocation(above.getLocation()), 15, 0.5, 0.5, 0.5, 0.1);
+				ParticleUtils.display(Particle.HAPPY_VILLAGER, LocationUtils.getCenteredLocation(above.getLocation()), 15, 0.5, 0.5, 0.5, 0.1);
 			});
 		}
 

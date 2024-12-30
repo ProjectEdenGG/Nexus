@@ -29,8 +29,8 @@
 		.name("&eWither Chestplate")
 		.setLore(WitherHelmet.getLore())
 		.rarity(Rarity.ARTIFACT)
-		.attribute(Attribute.GENERIC_ARMOR, "wither-armor-points", 8, Operation.ADD_NUMBER, EquipmentSlot.CHEST)
-		.attribute(Attribute.GENERIC_ARMOR_TOUGHNESS, "wither-armor-toughness", 2, Operation.ADD_NUMBER, EquipmentSlot.CHEST)
+		.attribute(Attribute.ARMOR, "wither-armor-points", 8, Operation.ADD_NUMBER, EquipmentSlot.CHEST)
+		.attribute(Attribute.ARMOR_TOUGHNESS, "wither-armor-toughness", 2, Operation.ADD_NUMBER, EquipmentSlot.CHEST)
 		.nbt(nbtItem -> nbtItem.setBoolean("wither-armor", true))
 		.build();
 

@@ -33,7 +33,7 @@ public class BubbleTrail implements ParticleProjectilePerk {
 
 	@Override
 	public Particle getParticle() {
-		return Particle.WATER_BUBBLE;
+		return Particle.BUBBLE;
 	}
 
 	@Override

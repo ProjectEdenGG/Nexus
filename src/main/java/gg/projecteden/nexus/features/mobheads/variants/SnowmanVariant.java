@@ -18,7 +18,7 @@ public enum SnowmanVariant implements MobHeadVariant {
 
 	@Override
 	public @NotNull EntityType getEntityType() {
-		return EntityType.SNOWMAN;
+		return EntityType.SNOW_GOLEM;
 	}
 
 	public static SnowmanVariant of(Snowman snowman) {

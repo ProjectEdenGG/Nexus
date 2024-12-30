@@ -107,7 +107,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 			victim.teleportAsync(matchData.getData(victim).getSpawnpoint());
 
 		victim.getTeam().getLoadout().apply(victim);
-		player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+		player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
 	}
 
 	@Override

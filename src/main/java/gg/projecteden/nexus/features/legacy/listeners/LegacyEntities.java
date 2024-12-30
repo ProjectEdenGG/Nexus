@@ -9,11 +9,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -75,9 +71,9 @@ public class LegacyEntities implements Listener {
 		EntityType.MULE,
 		EntityType.DONKEY,
 		EntityType.LLAMA,
-		EntityType.MINECART_CHEST,
-		EntityType.MINECART_FURNACE,
-		EntityType.MINECART_HOPPER
+		EntityType.CHEST_MINECART,
+		EntityType.FURNACE_MINECART,
+		EntityType.HOPPER_MINECART
 	);
 
 	// TODO 1.19 Fix interacting with item frames

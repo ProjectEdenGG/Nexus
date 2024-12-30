@@ -30,7 +30,7 @@ public class BiomeChallengeProgress implements IChallengeProgress {
 				return Collections.emptySet();
 
 		return Set.of("Visit " + required.stream()
-			.map(biome -> StringUtils.an(camelCase(biome)) + " biome")
+			.map(biome -> StringUtils.an(StringUtils.camelCase(biome.name())) + " biome")
 			.collect(Collectors.joining(" or ")));
 	}
 

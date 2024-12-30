@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 public class MoonGravity extends BulletArrows {
 	@Override
 	public void afterLoadout(@NotNull Minigamer minigamer) {
-		minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.JUMP).infinite().ambient(true).icon(true));
+		minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.JUMP_BOOST).infinite().ambient(true).icon(true));
 		minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.SLOW_FALLING).infinite().amplifier(0).ambient(true).icon(true));
 	}
 

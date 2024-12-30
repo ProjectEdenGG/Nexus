@@ -42,6 +42,6 @@ public class SplashParticle implements PlayerParticlePerk {
 
 	@Override
 	public Particle getParticle() {
-		return Particle.WATER_WAKE;
+		return Particle.UNDERWATER;
 	}
 }

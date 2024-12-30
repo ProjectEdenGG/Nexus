@@ -11,11 +11,11 @@ import lombok.SneakyThrows;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Rotations;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ClientInformation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.*;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageSources;
@@ -218,7 +218,7 @@ public class NMSUtils {
 	public static @Nullable Sound getSound(SoundAction soundAction, org.bukkit.block.Block block) {
 		try {
 			Block nmsBlock = toNMS(block);
-			SoundType soundEffectType = nmsBlock.getSoundType(toNMS(block.getBlockData()));
+			SoundType soundEffectType = nmsBlock.defaultBlockState().getSoundType();
 			SoundEvent nmsSound = switch (soundAction) {
 				case BREAK -> soundEffectType.getBreakSound();
 				case STEP -> soundEffectType.getStepSound();
@@ -227,7 +227,7 @@ public class NMSUtils {
 				case FALL -> soundEffectType.getFallSound();
 			};
 
-			ResourceLocation nmsString = nmsSound.getLocation();
+			ResourceLocation nmsString = nmsSound.location();
 			String soundString = nmsString.getPath().replace(".", "_").toUpperCase();
 			return Sound.valueOf(soundString);
 		} catch (Exception ex) {
@@ -330,6 +330,16 @@ public class NMSUtils {
 		final Unsafe unsafe = (Unsafe) unsafeField.get(null);
 		var offset = unsafe.staticFieldOffset(field);
 		unsafe.putObject(unsafe.staticFieldBase(field), offset, newValue);
+	}
+
+	public static Packet<ClientGamePacketListener> getSpawnPacket(Entity entity) {
+		return entity.getAddEntityPacket(getServerEntity(entity));
+	}
+
+	public static ServerEntity getServerEntity(Entity entity) {
+		ServerLevel world = (ServerLevel) entity.level();
+		ChunkMap.TrackedEntity entityTracker = world.getChunkSource().chunkMap.entityMap.get(entity.getId());
+		return entityTracker.serverEntity;
 	}
 
 }

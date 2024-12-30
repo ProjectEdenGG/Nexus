@@ -282,18 +282,18 @@ public class PugmasIsland implements Listener, BearFairIsland {
 								if (!isFoundPresent(present, player)) {
 									Location loc = LocationUtils.getCenteredLocation(present);
 									loc.setY(loc.getBlockY() + 0.25);
-									player.spawnParticle(Particle.VILLAGER_HAPPY, loc, 10, 0.25, 0.25, 0.25, 0.01);
+									player.spawnParticle(Particle.HAPPY_VILLAGER, loc, 10, 0.25, 0.25, 0.25, 0.01);
 										}
 									});
 								} else {
 									if (!hasFoundTreePresent(player))
-										player.spawnParticle(Particle.VILLAGER_HAPPY, treeLoc, 50, 2, 1, 2, 0.01);
+										player.spawnParticle(Particle.HAPPY_VILLAGER, treeLoc, 50, 2, 1, 2, 0.01);
 
 									presents_house.forEach(present -> {
 										if (!isFoundPresent(present, player)) {
 											Location loc = LocationUtils.getCenteredLocation(present);
 											loc.setY(loc.getBlockY() + 0.25);
-											player.spawnParticle(Particle.VILLAGER_HAPPY, loc, 10, 0.25, 0.25, 0.25, 0.01);
+											player.spawnParticle(Particle.HAPPY_VILLAGER, loc, 10, 0.25, 0.25, 0.25, 0.01);
 										}
 									});
 								}

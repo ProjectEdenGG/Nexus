@@ -77,7 +77,7 @@ public class Fairgrounds implements Listener {
 	public enum BearFairKit {
 		BOW_AND_ARROW(
 				new ItemBuilder(Material.BOW)
-						.enchant(Enchantment.ARROW_INFINITE)
+						.enchant(Enchantment.INFINITY)
 						.lore(BFQuests.itemLore)
 						.unbreakable()
 						.build(),

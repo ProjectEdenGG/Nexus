@@ -37,8 +37,6 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.ToolType;
 import gg.projecteden.nexus.utils.ToolType.ToolGrade;
-import gg.projecteden.nexus.utils.nms.NMSUtils;
-import net.minecraft.world.entity.raid.Raid;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -181,7 +179,7 @@ public class VuLan24 extends EdenEvent {
 		if (event.getEntity() instanceof Pillager pillager)
 			if (RandomUtils.chanceOf(2)) {
 				pillager.setPatrolLeader(true);
-				pillager.getEquipment().setHelmet(NMSUtils.fromNMS(Raid.getLeaderBannerInstance()));
+//				pillager.getEquipment().setHelmet(NMSUtils.fromNMS(Raid.getLeaderBannerInstance()));
 			}
 
 		if (worldguard().isInRegion(event.getLocation(), "vu_lan_raid")) {

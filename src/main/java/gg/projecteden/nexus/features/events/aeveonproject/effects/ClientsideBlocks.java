@@ -43,7 +43,7 @@ public class ClientsideBlocks implements Listener {
 
 	private void updateTask() {
 		Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
-			if (getPlayersInAPWorld() == 0)
+			if (APUtils.getPlayersInAPWorld() == 0)
 				return;
 
 			for (APSetType APSetType : APSetType.values()) {
@@ -52,7 +52,7 @@ public class ClientsideBlocks implements Listener {
 				if (updateRegions == null)
 					continue;
 
-				Collection<Player> setPlayers = getPlayersInSet(set);
+				Collection<Player> setPlayers = APUtils.getPlayersInSet(set);
 				if (setPlayers.size() == 0)
 					continue;
 
