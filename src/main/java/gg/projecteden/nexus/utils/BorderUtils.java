@@ -2,7 +2,6 @@ package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import io.papermc.lib.PaperLib;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -55,7 +54,7 @@ public class BorderUtils {
 			throw new InvalidInputException("Could not move inside border, intersection point is null");
 
 		final Location newLocation = new Location(world, point.getX(), 0, point.getY());
-		PaperLib.getChunkAtAsync(newLocation, true).thenAccept(chunk -> {
+		newLocation.getWorld().getChunkAtAsync(newLocation, true).thenAccept(chunk -> {
 			Block highestBlock = world.getHighestBlockAt(newLocation);
 
 			if (!highestBlock.getType().isSolid()) {

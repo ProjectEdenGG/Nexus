@@ -6,9 +6,9 @@ val edenApiVersion: String by project
 plugins {
     `java-library`
     `maven-publish`
-    id("io.freefair.lombok") version "8.6"
+    id("io.freefair.lombok") version "8.11"
     id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("io.papermc.paperweight.userdev") version "1.7.5"
+    id("io.papermc.paperweight.userdev") version "1.7.7"
 }
 
 repositories {
@@ -55,9 +55,8 @@ repositories {
 }
 
 dependencies {
-    paperweightDevBundle("gg.projecteden.parchment", "${parchmentVersion}")
+    paperweight.paperDevBundle("${parchmentVersion}", "gg.projecteden.parchment")
     compileOnly("gg.projecteden.parchment:parchment-api:${parchmentVersion}")
-    implementation("io.papermc:paperlib:1.0.8-SNAPSHOT")
     implementation("gg.projecteden:eden-common:${edenApiVersion}")
     implementation("gg.projecteden:eden-db:${edenApiVersion}")
     implementation("gg.projecteden:eden-discord:${edenApiVersion}")
@@ -119,12 +118,17 @@ dependencies {
     compileOnly(files("libs/GlowAPI.jar"))
     compileOnly(files("libs/nuvotifier-universal-2.3.4.jar"))
 
+    compileOnly("org.projectlombok:lombok:1.18.36")
+    annotationProcessor("org.projectlombok:lombok:1.18.36")
+
 //    implementation("com.ticxo:PlayerAnimator:R1.2.7")
 }
 
 group = "gg.projecteden"
 description = "Nexus"
 version = "2.0.0"
+
+paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
 
 publishing {
     publications.create<MavenPublication>("maven") {
@@ -137,14 +141,11 @@ java {
 }
 
 tasks {
-    assemble {
-        dependsOn(reobfJar)
-    }
-
     compileJava {
         options.encoding = Charsets.UTF_8.name()
         options.release.set(21)
         options.compilerArgs.add("-parameters")
+        options.compilerArgs.add("-proc:full")
     }
 
     javadoc { options.encoding = Charsets.UTF_8.name() }

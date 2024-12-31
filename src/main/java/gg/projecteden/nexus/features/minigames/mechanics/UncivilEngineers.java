@@ -15,12 +15,7 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.CheckpointData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.UncivilEngineersMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
-import io.papermc.lib.PaperLib;
-import org.bukkit.DyeColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
@@ -110,7 +105,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 					continue;
 
 				Location location = offset(point.getLocation(), i);
-				PaperLib.getChunkAtAsync(location).thenRun(() ->
+				location.getWorld().getChunkAtAsync(location).thenRun(() ->
 					match.spawn(location, point.getType().getEntityClass(), entity -> {
 					if (entity instanceof Sheep sheep)
 						sheep.setColor(DyeColor.WHITE);

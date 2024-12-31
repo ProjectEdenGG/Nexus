@@ -8,12 +8,7 @@ import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.utils.Tasks;
-import io.papermc.lib.PaperLib;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
@@ -60,7 +55,7 @@ public class RainbowBeacon implements PlayerOwnedObject {
 			Tasks.cancel(taskId);
 
 		if (location != null)
-			PaperLib.getChunkAtAsync(location).thenRun(() -> location.getBlock().setType(Material.AIR));
+			location.getWorld().getChunkAtAsync(location).thenRun(() -> location.getBlock().setType(Material.AIR));
 	}
 
 	private static final List<Material> COLORS = List.of(
