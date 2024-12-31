@@ -62,6 +62,10 @@ public abstract class CustomEnchant extends Enchantment implements Translatable 
 		return getKey().getKey();
 	}
 
+	public Component displayName() {
+		return Component.text(getName());
+	}
+
 	@Override
 	public @NotNull Component displayName(int level) {
 		return Component.text(getDisplayName(level));
