@@ -67,7 +67,7 @@ public class TNTRun extends TeamlessMechanic {
 				if (match.isEnded())
 					stop();
 
-				match.getMinigamers().forEach(minigamer -> {
+				match.getAliveMinigamers().forEach(minigamer -> {
 					Block standingOn = BlockUtils.getBlockStandingOn(minigamer.getOnlinePlayer());
 					if (standingOn == null)
 						return;

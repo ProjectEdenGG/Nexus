@@ -22,7 +22,7 @@ repositories {
     maven { url = uri("https://sonatype.projecteden.gg/repository/maven-public/") }
     maven { url = uri("https://jitpack.io") }
     maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
-    maven { url = uri("https://papermc.io/repo/repository/maven-public/") }
+    maven { url = uri("https://repo.papermc.io/repository/maven-public/") }
     maven { url = uri("https://repo.onarandombox.com/content/groups/public/") }
     maven { url = uri("https://github.com/deanveloper/SkullCreator/raw/mvn-repo/") }
     maven { url = uri("https://repo.aikar.co/content/groups/aikar/") }
@@ -76,8 +76,8 @@ dependencies {
     implementation("dev.dbassett:skullcreator:3.0.1")
     implementation("com.github.mpkorstanje:simmetrics-core:4.1.1")
     implementation("org.jetbrains:annotations:24.0.1")
-    compileOnly("gg.projecteden.crates:api:1.0.6-SNAPSHOT")
-    compileOnly("tech.blastmc.holograms:HologramsAPI:1.0.0-SNAPSHOT")
+    compileOnly("gg.projecteden.crates:api:1.0.7-SNAPSHOT")
+    compileOnly("tech.blastmc.holograms:HologramsAPI:1.1.0-SNAPSHOT")
     compileOnly("fr.moribus:ImageOnMap:4.3.1-EDEN")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("net.luckperms:api:5.4")
@@ -87,7 +87,7 @@ dependencies {
     compileOnly("com.onarandombox.multiverseinventories:Multiverse-Inventories:3.0.0")
     compileOnly("com.dumptruckman.minecraft:JsonConfiguration:1.1")
     compileOnly("net.minidev:json-smart:2.4.10")
-    compileOnly("de.tr7zw:item-nbt-api-plugin:2.13.2")
+    compileOnly("de.tr7zw:item-nbt-api-plugin:2.14.1")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
     compileOnly("com.github.koca2000:NoteBlockAPI:1.4.4")
     compileOnly("com.github.BlueMap-Minecraft:BlueMapAPI:v1.3.1")
