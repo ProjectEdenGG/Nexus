@@ -90,13 +90,20 @@ public class CustomEnchantsRegistration {
 			Method method = clazz.getMethod("unbound");
 			Object unbound = method.invoke(nmsRegistry());
 
-			nmsRegistry().getClass().getDeclaredField("allTags").set(nmsRegistry(), unbound);
+			Field allTags = nmsRegistry().getClass().getDeclaredField("allTags");
+			allTags.set(nmsRegistry(), unbound);
 
 			nmsRegistry().freeze();
 
 			frozenTags.forEach(tagsMap::putIfAbsent);
-			tagSet.getClass().getDeclaredField("val$map").set(tagSet, tagsMap);
-			nmsRegistry().getClass().getDeclaredField("allTags").set(nmsRegistry(), tagSet);
+
+			Field valMapField = tagSet.getClass().getDeclaredField("val$map");
+			valMapField.setAccessible(true);
+			valMapField.set(tagSet, tagsMap);
+
+			Field allTagsField = nmsRegistry().getClass().getDeclaredField("allTags");
+			allTagsField.setAccessible(true);
+			allTagsField.set(nmsRegistry(), tagSet);
 
 		} catch (NoSuchMethodException | NoSuchFieldException | InvocationTargetException | IllegalAccessException e) {
 			Nexus.severe("Could not unbound custom enchant registry");
@@ -163,7 +170,9 @@ public class CustomEnchantsRegistration {
 	@SuppressWarnings("unchecked")
 	static <T> Map<TagKey<T>, HolderSet.Named<T>> getFrozenTags(@NotNull MappedRegistry<T> registry) {
 		try {
-			return (Map<TagKey<T>, HolderSet.Named<T>>) registry.getClass().getDeclaredField("frozenTags").get(registry);
+			Field field = registry.getClass().getDeclaredField("frozenTags");
+			field.setAccessible(true);
+			return (Map<TagKey<T>, HolderSet.Named<T>>) field.get(registry);
 		} catch (NoSuchFieldException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
@@ -185,7 +194,9 @@ public class CustomEnchantsRegistration {
 
 	static <T> Object getAllTags(@NotNull MappedRegistry<T> registry) {
 		try {
-			return registry.getClass().getDeclaredField("allTags").get(registry);
+			Field field = registry.getClass().getDeclaredField("allTags");
+			field.setAccessible(true);
+			return field.get(registry);
 		} catch (IllegalAccessException | NoSuchFieldException e) {
 			throw new RuntimeException(e);
 		}
@@ -195,7 +206,9 @@ public class CustomEnchantsRegistration {
 	static <T> Map<TagKey<T>, HolderSet.Named<T>> getTagsMap(@NotNull Object tagSet) {
 		// new HashMap, because original is ImmutableMap.
 		try {
-			return new HashMap<>((Map<TagKey<T>, HolderSet.Named<T>>) tagSet.getClass().getDeclaredField("val$map").get(tagSet));
+			Field field = tagSet.getClass().getDeclaredField("tags");
+			field.setAccessible(true);
+			return new HashMap<>((Map<TagKey<T>, HolderSet.Named<T>>) field.get(tagSet));
 		} catch (IllegalAccessException | NoSuchFieldException e) {
 			throw new RuntimeException(e);
 		}
