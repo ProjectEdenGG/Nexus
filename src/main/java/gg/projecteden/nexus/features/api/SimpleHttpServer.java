@@ -50,7 +50,7 @@ public class SimpleHttpServer extends Feature {
 	private static final Map<HttpMethod, Map<String, Function<HttpExchange, Object>>> HANDLERS = Map.of(
 		HttpMethod.GET, Map.of(
 			"/status", exchange -> Map.of(
-				"players", OnlinePlayers.getAll().size(),
+				"players", OnlinePlayers.where().vanished(false).count(),
 				"version", Bukkit.getServer().getMinecraftVersion()
 			),
 			"/votes/sites", exchange -> {
