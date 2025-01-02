@@ -112,7 +112,7 @@ public class Enchant {
 	/**
 	 * Increases damage against targets when using a sweep attack
 	 */
-	public static final Enchantment SWEEPING_EDGE = getEnchantment("sweeping");
+	public static final Enchantment SWEEPING_EDGE = getEnchantment("sweeping_edge");
 
 	/**
 	 * Increases the rate at which you mine/dig

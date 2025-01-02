@@ -59,7 +59,7 @@ public class Merchants {
 			public List<TradeBuilder> getTrades() {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
-						.result(new ItemBuilder(Material.POTION).potionType(PotionType.POISON, true, false).lore(BFQuests.itemLore))
+						.result(new ItemBuilder(Material.POTION).potionType(PotionType.POISON).lore(BFQuests.itemLore))
 							.ingredient(goldNugget.clone().amount(3)));
 					add(new TradeBuilder()
 						.result(new ItemBuilder(Material.POTION).potionType(PotionType.WEAKNESS).lore(BFQuests.itemLore))

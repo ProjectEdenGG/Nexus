@@ -47,7 +47,6 @@ import org.bukkit.inventory.meta.*;
 import org.bukkit.inventory.meta.BookMeta.Generation;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
@@ -408,13 +407,8 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	// Potions
-
 	public ItemBuilder potionType(PotionType potionType) {
-		return potionType(potionType, false, false);
-	}
-
-	public ItemBuilder potionType(PotionType potionType, boolean extended, boolean upgraded) {
-		((PotionMeta) itemMeta).setBasePotionData(new PotionData(potionType, extended, upgraded));
+		((PotionMeta) itemMeta).setBasePotionType(potionType);
 		return this;
 	}
 

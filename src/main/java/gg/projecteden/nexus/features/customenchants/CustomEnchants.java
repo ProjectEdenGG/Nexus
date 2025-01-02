@@ -51,8 +51,6 @@ public class CustomEnchants extends Feature implements Listener {
 
 	@Override
 	public void onStart() {
-		CustomEnchantsRegistration.unfreeze();
-		Enchant.values();
 		CustomEnchantsRegistration.freeze();
 	}
 

@@ -84,7 +84,7 @@ public class Merchants {
 			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
-						.result(new ItemBuilder(Material.POTION).potionType(PotionType.POISON, true, false))
+						.result(new ItemBuilder(Material.POTION).potionType(PotionType.LONG_POISON))
 						.ingredient(goldNugget.clone().amount(2)));
 					add(new TradeBuilder()
 						.result(new ItemBuilder(Material.POTION).potionType(PotionType.WEAKNESS))

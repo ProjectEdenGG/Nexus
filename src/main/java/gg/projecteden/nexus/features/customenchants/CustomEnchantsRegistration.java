@@ -53,11 +53,18 @@ public class CustomEnchantsRegistration {
 
 	public static void unfreeze() {
 		try {
+			Nexus.log("[Enchants] NMSFrozen - " + nmsFrozenField.get(nmsRegistry()));
 			if (!(boolean) nmsFrozenField.get(nmsRegistry())) // Don't replace if we already have (reloads)
 				return;
 
 			nmsFrozenField.set(nmsRegistry(), false);
 			unregisteredIntrusiveHolders.set(nmsRegistry(), new IdentityHashMap<>());
+
+			nmsFrozenField.set(nmsItemRegistry(), false);
+			unregisteredIntrusiveHolders.set(nmsItemRegistry(), new IdentityHashMap<>());
+
+			Nexus.log("[Enchants] NMSFrozen - " + nmsFrozenField.get(nmsRegistry()));
+			Nexus.log("[Enchants] unregisteredIntrusiveHolders - " + unregisteredIntrusiveHolders.get(nmsRegistry()));
 
 		} catch (Exception ex) {
 			Nexus.severe("Error setting up custom enchant registry");
@@ -121,8 +128,12 @@ public class CustomEnchantsRegistration {
 
 	@SneakyThrows
 	static Enchantment register(CustomEnchant customEnchant) {
+		unfreeze();
+		Nexus.log("Registering " + customEnchant.getClass().getSimpleName());
+
 		Component display = CraftChatMessage.fromJSONOrString(customEnchant.getName());
-		HolderSet.Named<Item> items = createItemsSet("enchant_supported", customEnchant);
+		HolderSet.Named<Item> supported = createItemsSet("enchant_supported", customEnchant);
+		HolderSet.Named<Item> primary = createItemsSet("enchant_primary", customEnchant);
 
 		int weight = customEnchant.getWeight();
 		int maxLevel = customEnchant.getMaxLevel();
@@ -132,7 +143,7 @@ public class CustomEnchantsRegistration {
 		EquipmentSlotGroup[] slotGroup = getNMSSlots();
 
 		net.minecraft.world.item.enchantment.Enchantment.EnchantmentDefinition definition = net.minecraft.world.item.enchantment.Enchantment.definition(
-			items, items, weight, maxLevel, minCost, maxCost, anvilCost, slotGroup
+			supported, primary, weight, maxLevel, minCost, maxCost, anvilCost, slotGroup
 		);
 		HolderSet<net.minecraft.world.item.enchantment.Enchantment> exclusiveSet = createExclusiveSet(customEnchant);
 		net.minecraft.world.item.enchantment.Enchantment enchantment = new net.minecraft.world.item.enchantment.Enchantment(
@@ -170,7 +181,7 @@ public class CustomEnchantsRegistration {
 	@SuppressWarnings("unchecked")
 	static <T> Map<TagKey<T>, HolderSet.Named<T>> getFrozenTags(@NotNull MappedRegistry<T> registry) {
 		try {
-			Field field = registry.getClass().getDeclaredField("frozenTags");
+			Field field = MappedRegistry.class.getDeclaredField("frozenTags");
 			field.setAccessible(true);
 			return (Map<TagKey<T>, HolderSet.Named<T>>) field.get(registry);
 		} catch (NoSuchFieldException | IllegalAccessException e) {
