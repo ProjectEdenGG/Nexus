@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
 import static gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 
@@ -76,7 +77,7 @@ public class SimpleHttpServer extends Feature {
 							"uuidNoDashes", nerd.getUuid().toString().replaceAll("-", ""),
 							"username", nerd.getName(),
 							"nickname", nerd.getNickname(),
-							"rank", nerd.getRank().name(),
+							"rank", camelCase(nerd.getRank()),
 							"about", nerd.getAbout() == null ? "" : nerd.getAbout(),
 							"birthday", nerd.getBirthday() == null ? "" : "%s (%d years)".formatted(shortDateFormat(nerd.getBirthday()), nerd.getBirthday().until(LocalDate.now()).getYears()),
 							"pronouns", nerd.getPronouns() == null ? "" : String.join(", ", nerd.getPronouns().stream().map(Nerd.Pronoun::toString).toList()),
