@@ -55,4 +55,9 @@ public class IceAspectEnchant extends CustomEnchant implements Listener {
 			.build()
 			.apply(entity);
 	}
+
+	@Override
+	public int getMaxLevel() {
+		return 3;
+	}
 }

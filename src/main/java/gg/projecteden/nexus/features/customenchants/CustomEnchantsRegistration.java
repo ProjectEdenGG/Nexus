@@ -21,7 +21,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.CraftEquipmentSlot;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.enchantments.CraftEnchantment;
-import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
@@ -122,7 +121,7 @@ public class CustomEnchantsRegistration {
 		unfreeze();
 		Nexus.log("Registering " + customEnchant.getClass().getSimpleName());
 
-		Component display = CraftChatMessage.fromJSONOrString(customEnchant.getName());
+		Component display = Component.translatable("enchantment.nexus." + customEnchant.getId(), customEnchant.getName());
 		HolderSet.Named<Item> supported = createItemsSet("enchant_supported", customEnchant);
 		HolderSet.Named<Item> primary = createItemsSet("enchant_primary", customEnchant);
 

@@ -92,7 +92,7 @@ dependencies {
     compileOnly("com.github.BlueMap-Minecraft:BlueMapAPI:v1.3.1")
     compileOnly("com.arcaniax:HeadDatabase-API:1.3.1")
     compileOnly("com.viaversion:viaversion-api:4.0.1")
-    compileOnly("com.lishid:openinvapi:4.4.4-SNAPSHOT")
+    compileOnly("com.github.jikoo.OpenInv:openinvapi:5.1.4")
     compileOnly("world.bentobox:bentobox:1.20.1-SNAPSHOT")
     compileOnly("nl.pim16aap2:BigDoors:0.1.8.39")
     compileOnly("net.coreprotect:CoreProtect:22.3.1")

@@ -49,4 +49,8 @@ public class VampireEnchant extends CustomEnchant implements Listener {
 		player.setHealth(Math.min(newHealth, maxHealth));
 	}
 
+	@Override
+	public int getMaxLevel() {
+		return 3;
+	}
 }

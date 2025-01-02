@@ -8,7 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.potion.PotionEffectType;
 
-public class EnergizingEnchant  extends CustomEnchant implements Listener {
+public class EnergizingEnchant extends CustomEnchant implements Listener {
 
 	@EventHandler
 	public void on(BlockBreakEvent event) {
@@ -32,4 +32,8 @@ public class EnergizingEnchant  extends CustomEnchant implements Listener {
 			.apply(player);
 	}
 
+	@Override
+	public int getMaxLevel() {
+		return 5;
+	}
 }

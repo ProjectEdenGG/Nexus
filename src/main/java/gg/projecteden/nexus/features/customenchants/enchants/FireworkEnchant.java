@@ -85,6 +85,11 @@ public class FireworkEnchant extends CustomEnchant implements Listener {
 	}
 
 	@Override
+	public int getMaxLevel() {
+		return 1;
+	}
+
+	@Override
 	public @NotNull EnchantmentTarget getItemTarget() {
 		return EnchantmentTarget.BOW;
 	}

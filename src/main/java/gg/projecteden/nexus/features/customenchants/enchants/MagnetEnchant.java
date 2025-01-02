@@ -30,11 +30,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class MagnetEnchant extends CustomEnchant implements Listener {
 	public static final NamespacedKey NBT_KEY_OWNER = new NamespacedKey(Nexus.getInstance(), "nexus.magnet.owner");
@@ -192,4 +188,8 @@ public class MagnetEnchant extends CustomEnchant implements Listener {
 			item.getItemStack().setItemMeta(meta);
 	}
 
+	@Override
+	public int getMaxLevel() {
+		return 3;
+	}
 }

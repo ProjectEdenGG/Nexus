@@ -64,4 +64,8 @@ public class SoulboundEnchant extends CustomEnchant implements Listener {
 		}
 	}
 
+	@Override
+	public int getMaxLevel() {
+		return 1;
+	}
 }
