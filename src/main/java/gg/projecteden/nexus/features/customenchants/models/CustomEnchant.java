@@ -92,12 +92,12 @@ public abstract class CustomEnchant extends Enchantment implements Translatable 
 
 	@Override
 	public int getMinModifiedCost(int level) {
-		return 0;
+		return 1;
 	}
 
 	@Override
 	public int getMaxModifiedCost(int level) {
-		return 0;
+		return 2;
 	}
 
 	@Override
@@ -194,7 +194,7 @@ public abstract class CustomEnchant extends Enchantment implements Translatable 
 
 	@Override
 	public int getWeight() {
-		return 0;
+		return 1;
 	}
 
 	@Override

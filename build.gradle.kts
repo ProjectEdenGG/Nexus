@@ -24,7 +24,6 @@ repositories {
     maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
     maven { url = uri("https://repo.papermc.io/repository/maven-public/") }
     maven { url = uri("https://repo.onarandombox.com/content/groups/public/") }
-    maven { url = uri("https://github.com/deanveloper/SkullCreator/raw/mvn-repo/") }
     maven { url = uri("https://repo.aikar.co/content/groups/aikar/") }
     maven {
         url = uri("https://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/")
@@ -102,8 +101,8 @@ dependencies {
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.5.2")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.5.2") { isTransitive = false }
     compileOnly("com.griefcraft:lwc:2.3.2-dev")
-    compileOnly("net.citizensnpcs:citizensapi:2.0.32-SNAPSHOT")
-    compileOnly("net.citizensnpcs:citizens-main:2.0.32-SNAPSHOT") {
+    compileOnly("net.citizensnpcs:citizensapi:2.0.37-SNAPSHOT")
+    compileOnly("net.citizensnpcs:citizens-main:2.0.37-SNAPSHOT") {
         exclude("*", "*")
     }
     compileOnly("LibsDisguises:LibsDisguises:10.0.31") {

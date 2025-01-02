@@ -11,18 +11,17 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.item.Item;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.CraftEquipmentSlot;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
-import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +52,6 @@ public class CustomEnchantsRegistration {
 
 	public static void unfreeze() {
 		try {
-			Nexus.log("[Enchants] NMSFrozen - " + nmsFrozenField.get(nmsRegistry()));
 			if (!(boolean) nmsFrozenField.get(nmsRegistry())) // Don't replace if we already have (reloads)
 				return;
 
@@ -62,10 +60,6 @@ public class CustomEnchantsRegistration {
 
 			nmsFrozenField.set(nmsItemRegistry(), false);
 			unregisteredIntrusiveHolders.set(nmsItemRegistry(), new IdentityHashMap<>());
-
-			Nexus.log("[Enchants] NMSFrozen - " + nmsFrozenField.get(nmsRegistry()));
-			Nexus.log("[Enchants] unregisteredIntrusiveHolders - " + unregisteredIntrusiveHolders.get(nmsRegistry()));
-
 		} catch (Exception ex) {
 			Nexus.severe("Error setting up custom enchant registry");
 			ex.printStackTrace();
@@ -73,34 +67,31 @@ public class CustomEnchantsRegistration {
 	}
 
 	public static void freeze() {
-		try {
-			Object tagSet = getAllTags(nmsRegistry());
+		freeze(nmsItemRegistry());
+		freeze(nmsRegistry());
+	}
 
-			Map<TagKey<net.minecraft.world.item.enchantment.Enchantment>, HolderSet.Named<net.minecraft.world.item.enchantment.Enchantment>> tagsMap = getTagsMap(tagSet);
+	private static <T> void freeze(MappedRegistry<T> registry) {
+		try {
+			Object tagSet = getAllTags(registry);
+
+			Map<TagKey<T>, HolderSet.Named<T>> tagsMap = getTagsMap(tagSet);
 			// Get 'frozenTags' map with all tags of the registry.
-			Map<TagKey<net.minecraft.world.item.enchantment.Enchantment>, HolderSet.Named<net.minecraft.world.item.enchantment.Enchantment>> frozenTags = getFrozenTags(nmsRegistry());
+			Map<TagKey<T>, HolderSet.Named<T>> frozenTags = getFrozenTags(registry);
 
 			tagsMap.forEach(frozenTags::putIfAbsent);
 
-			Class<?> clazz = null;
-			for (Class<?> aClass : MappedRegistry.class.getClasses()) {
-				if (aClass.getSimpleName().equalsIgnoreCase("TagSet")) {
-					clazz = aClass;
-					break;
-				}
-			}
-			if (clazz == null) {
-				Nexus.severe("Could not freeze custom enchant registry");
-				return;
-			}
+			Class<?> clazz = Class.forName(MappedRegistry.class.getName() + "$TagSet");
 
 			Method method = clazz.getMethod("unbound");
-			Object unbound = method.invoke(nmsRegistry());
+			method.setAccessible(true);
+			Object unbound = method.invoke(registry);
 
-			Field allTags = nmsRegistry().getClass().getDeclaredField("allTags");
-			allTags.set(nmsRegistry(), unbound);
+			Field allTags = MappedRegistry.class.getDeclaredField("allTags");
+			allTags.setAccessible(true);
+			allTags.set(registry, unbound);
 
-			nmsRegistry().freeze();
+			registry.freeze();
 
 			frozenTags.forEach(tagsMap::putIfAbsent);
 
@@ -108,11 +99,11 @@ public class CustomEnchantsRegistration {
 			valMapField.setAccessible(true);
 			valMapField.set(tagSet, tagsMap);
 
-			Field allTagsField = nmsRegistry().getClass().getDeclaredField("allTags");
+			Field allTagsField = MappedRegistry.class.getDeclaredField("allTags");
 			allTagsField.setAccessible(true);
-			allTagsField.set(nmsRegistry(), tagSet);
+			allTagsField.set(registry, tagSet);
 
-		} catch (NoSuchMethodException | NoSuchFieldException | InvocationTargetException | IllegalAccessException e) {
+		} catch (NoSuchMethodException | NoSuchFieldException | ClassNotFoundException | InvocationTargetException | IllegalAccessException e) {
 			Nexus.severe("Could not unbound custom enchant registry");
 			e.printStackTrace();
 		}
@@ -137,8 +128,8 @@ public class CustomEnchantsRegistration {
 
 		int weight = customEnchant.getWeight();
 		int maxLevel = customEnchant.getMaxLevel();
-		net.minecraft.world.item.enchantment.Enchantment.Cost minCost = new net.minecraft.world.item.enchantment.Enchantment.Cost(customEnchant.getMinModifiedCost(0), 0);
-		net.minecraft.world.item.enchantment.Enchantment.Cost maxCost = new net.minecraft.world.item.enchantment.Enchantment.Cost(customEnchant.getMaxModifiedCost(0), 0);
+		net.minecraft.world.item.enchantment.Enchantment.Cost minCost = new net.minecraft.world.item.enchantment.Enchantment.Cost(customEnchant.getMinModifiedCost(0), 1);
+		net.minecraft.world.item.enchantment.Enchantment.Cost maxCost = new net.minecraft.world.item.enchantment.Enchantment.Cost(customEnchant.getMaxModifiedCost(0), 1);
 		int anvilCost = customEnchant.getAnvilCost();
 		EquipmentSlotGroup[] slotGroup = getNMSSlots();
 
@@ -160,13 +151,13 @@ public class CustomEnchantsRegistration {
 		TagKey<Item> customKey = getTagKey(nmsItemRegistry(), prefix + "/" + customEnchantment.getId());
 		List<Holder<Item>> holders = new ArrayList<>();
 
-		Arrays.stream(Material.values()).forEach(material -> {
-			ResourceLocation location = CraftNamespacedKey.toMinecraft(material.getKey());
-			Holder.Reference<Item> holder = nmsItemRegistry().get(location).orElse(null);
-			if (holder == null) return;
-
-			holders.add(holder);
-		});
+//		Arrays.stream(Material.values()).forEach(material -> {
+//			ResourceLocation location = CraftNamespacedKey.toMinecraft(material.getKey());
+//			Holder.Reference<Item> holder = nmsItemRegistry().get(location).orElse(null);
+//			if (holder == null) return;
+//
+//			holders.add(holder);
+//		});
 
 		// Creates new tag, puts it in the 'frozenTags' map and binds holders to it.
 		nmsItemRegistry().bindTag(customKey, holders);
@@ -205,7 +196,7 @@ public class CustomEnchantsRegistration {
 
 	static <T> Object getAllTags(@NotNull MappedRegistry<T> registry) {
 		try {
-			Field field = registry.getClass().getDeclaredField("allTags");
+			Field field = MappedRegistry.class.getDeclaredField("allTags");
 			field.setAccessible(true);
 			return field.get(registry);
 		} catch (IllegalAccessException | NoSuchFieldException e) {
@@ -217,12 +208,17 @@ public class CustomEnchantsRegistration {
 	static <T> Map<TagKey<T>, HolderSet.Named<T>> getTagsMap(@NotNull Object tagSet) {
 		// new HashMap, because original is ImmutableMap.
 		try {
-			Field field = tagSet.getClass().getDeclaredField("tags");
+			Field field = tagSet.getClass().getDeclaredField("val$map");
 			field.setAccessible(true);
 			return new HashMap<>((Map<TagKey<T>, HolderSet.Named<T>>) field.get(tagSet));
 		} catch (IllegalAccessException | NoSuchFieldException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@NotNull
+	private static <T> ResourceKey<T> getResourceKey(@NotNull Registry<T> registry, @NotNull String name) {
+		return ResourceKey.create(registry.key(), ResourceLocation.withDefaultNamespace(name));
 	}
 
 	@NotNull
