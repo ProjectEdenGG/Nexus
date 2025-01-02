@@ -7,7 +7,7 @@ plugins {
     `java-library`
     `maven-publish`
     id("io.freefair.lombok") version "8.11"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("com.gradleup.shadow") version "8.3.0"
     id("io.papermc.paperweight.userdev") version "1.7.7"
 }
 
@@ -141,6 +141,10 @@ java {
 }
 
 tasks {
+    assemble {
+        dependsOn(shadowJar)
+    }
+
     compileJava {
         options.encoding = Charsets.UTF_8.name()
         options.release.set(21)
@@ -172,5 +176,8 @@ tasks {
 //        }
 //    }
 
-    shadowJar { exclude("gg/projecteden/api/interfaces/**") }
+    shadowJar {
+        archiveClassifier.set("")
+        exclude("gg/projecteden/api/interfaces/**")
+    }
 }
