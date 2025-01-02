@@ -3,8 +3,10 @@ package gg.projecteden.nexus.features.api;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import gg.projecteden.api.mongodb.models.nerd.Nerd;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.voter.VoteSite;
 import gg.projecteden.nexus.utils.Utils;
 import org.bukkit.Bukkit;
@@ -12,10 +14,14 @@ import org.bukkit.Bukkit;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
+import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
 import static gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 
 public class SimpleHttpServer extends Feature {
@@ -57,6 +63,31 @@ public class SimpleHttpServer extends Feature {
 				HashMap<Object, Object> map = new HashMap<>();
 				VoteSite.getActiveSites().forEach(site -> map.put(site.getName(), site.getUrl()));
 				return map;
+			},
+			"/staff", exchange -> {
+				try {
+					return Rank.getStaffNerds().get().values().stream()
+						.flatMap(List::stream)
+						.toList()
+						.stream()
+						.filter(Objects::nonNull)
+						.map(nerd -> Map.of(
+							"uuid", nerd.getUuid(),
+							"uuidNoDashes", nerd.getUuid().toString().replaceAll("-", ""),
+							"username", nerd.getName(),
+							"nickname", nerd.getNickname(),
+							"rank", nerd.getRank().name(),
+							"about", nerd.getAbout() == null ? "" : nerd.getAbout(),
+							"birthday", nerd.getBirthday() == null ? "" : "%s (%d years)".formatted(shortDateFormat(nerd.getBirthday()), nerd.getBirthday().until(LocalDate.now()).getYears()),
+							"pronouns", nerd.getPronouns() == null ? "" : String.join(", ", nerd.getPronouns().stream().map(Nerd.Pronoun::toString).toList()),
+							"preferredName", nerd.getPreferredName() == null ? "" : nerd.getPreferredName(),
+							"promotionDate", nerd.getPromotionDate() == null ? "" : shortDateFormat(nerd.getPromotionDate())
+						)).toList();
+				} catch (Exception e) {
+					Nexus.severe("Error while getting staff list");
+					e.printStackTrace();
+					return null;
+				}
 			}
 		)
 	);
@@ -91,7 +122,7 @@ public class SimpleHttpServer extends Feature {
 				}
 
 				var responseString = Utils.getGson().toJson(response);
-				Nexus.log("[API] Response: " + responseString);
+				Nexus.debug("[API] Response: " + responseString);
 				exchange.sendResponseHeaders(200, responseString.getBytes().length);
 				try (OutputStream os = exchange.getResponseBody()) {
 					os.write(responseString.getBytes());
