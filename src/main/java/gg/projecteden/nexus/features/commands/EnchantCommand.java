@@ -1,15 +1,8 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.nexus.features.survival.MendingIntegrity;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -47,9 +40,6 @@ public class EnchantCommand extends CustomCommand {
 
 			tool.setItemMeta(meta);
 
-			if (enchantment.equals(Enchantment.MENDING))
-				MendingIntegrity.setMaxIntegrity(tool);
-
 			ItemUtils.update(tool, player());
 
 			send(PREFIX + "Added enchant &e" + camelCase(enchantment.getKey().getKey()) + " " + level);
@@ -63,9 +53,6 @@ public class EnchantCommand extends CustomCommand {
 	void remove(Enchantment enchantment) {
 		final ItemStack tool = getToolRequired();
 		tool.removeEnchantment(enchantment);
-
-		if (enchantment.equals(Enchantment.MENDING))
-			MendingIntegrity.removeIntegrity(tool);
 
 		ItemUtils.update(tool, player());
 

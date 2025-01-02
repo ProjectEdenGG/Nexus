@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.itemtags;
 
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.api.common.utils.Nullables;
-import gg.projecteden.nexus.features.survival.MendingIntegrity;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -54,8 +53,6 @@ public class ItemTagsUtils {
 	}
 
 	public static void update(@NotNull ItemStack itemStack, @Nullable Player debugger) {
-		MendingIntegrity.update(itemStack, debugger);
-
 		ItemTags.debug(debugger, "");
 		Condition condition = Condition.of(itemStack, debugger);
 		Rarity rarity = Rarity.of(itemStack, condition, debugger);

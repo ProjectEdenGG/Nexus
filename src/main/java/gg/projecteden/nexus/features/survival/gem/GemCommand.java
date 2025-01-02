@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.survival.gem;
 
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.survival.MendingIntegrity;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -115,10 +114,6 @@ public class GemCommand extends CustomCommand implements Listener {
 
 				level++;
 			}
-		}
-
-		if (Enchantment.MENDING.equals(enchantment)) {
-			MendingIntegrity.setMaxIntegrity(tool);
 		}
 
 		ComponentLike displayName = gem.getItemMeta().displayName();

@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.customenchants.enchants;
 
 import de.tr7zw.nbtapi.NBTItem;
-import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.event.EventHandler;
@@ -43,7 +42,6 @@ public class SoulboundEnchant extends CustomEnchant implements Listener {
 				meta.addEnchant(this, level, true);
 
 			drop.setItemMeta(meta);
-			CustomEnchants.update(drop, event.getPlayer());
 
 			drops.remove();
 			event.getItemsToKeep().add(drop);

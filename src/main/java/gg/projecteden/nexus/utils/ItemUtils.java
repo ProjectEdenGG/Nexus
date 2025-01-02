@@ -2,11 +2,9 @@ package gg.projecteden.nexus.utils;
 
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.survival.MendingIntegrity;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
@@ -424,10 +422,6 @@ public class ItemUtils {
 	}
 
 	public static void update(ItemStack item, @Nullable Player player) {
-		CustomEnchants.update(item, player);
-		MendingIntegrity.update(item, player);
-
-		// keep last
 		ItemTagsUtils.update(item);
 	}
 
