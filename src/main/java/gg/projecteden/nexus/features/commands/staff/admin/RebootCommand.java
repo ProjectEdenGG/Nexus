@@ -10,13 +10,8 @@ import gg.projecteden.nexus.features.NexusCommand.ReloadCondition;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -107,7 +102,7 @@ public class RebootCommand extends CustomCommand implements Listener {
 			rebooting = false;
 			conditions.forEach(ReloadCondition::run);
 			OnlinePlayers.getAll().forEach(RebootCommand::kick);
-			Utils.bash("mark2 send -n " + (Nexus.getEnv() == Env.PROD ? "smp" : "test") + " ~restart");
+			Utils.bash("mark2 send -n " + (Nexus.getEnv() == Env.PROD ? "smp" : "update") + " ~restart");
 		});
 	}
 
