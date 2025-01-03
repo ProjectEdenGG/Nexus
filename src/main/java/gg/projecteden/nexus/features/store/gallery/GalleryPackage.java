@@ -475,7 +475,6 @@ public enum GalleryPackage {
 		public void init() {
 			final Location location = StoreGallery.location(950.5, 70.5, 972.5);
 			hologram = HologramsAPI.builder()
-				.id("gallery_" + name().toLowerCase())
 				.location(location)
 				.lines("&eBob", new ItemStack(Material.DIAMOND_SWORD))
 				.spawn();
@@ -504,7 +503,6 @@ public enum GalleryPackage {
 			builder.skullOwner(players.isEmpty() ? RandomUtils.randomElement(EnumUtils.valuesExcept(Dev.class, Dev.SPIKE)) : RandomUtils.randomElement(players));
 
 			hologram = HologramsAPI.builder()
-				.id("gallery_" + name().toLowerCase())
 				.lines(builder.build())
 				.location(location).build();
 
