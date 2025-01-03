@@ -51,7 +51,10 @@ public class CustomEnchantsRegistration {
 
 	public static void unfreeze() {
 		try {
-			if (!(boolean) nmsFrozenField.get(nmsRegistry())) // Don't replace if we already have (reloads)
+			if (areCustomEnchantsRegistered())
+				return;
+
+			if (!(boolean) nmsFrozenField.get(nmsRegistry()))
 				return;
 
 			nmsFrozenField.set(nmsRegistry(), false);
@@ -66,8 +69,15 @@ public class CustomEnchantsRegistration {
 	}
 
 	public static void freeze() {
-		freeze(nmsItemRegistry());
-		freeze(nmsRegistry());
+		try {
+			if ((boolean) nmsFrozenField.get(nmsRegistry()))
+				return;
+
+			freeze(nmsItemRegistry());
+			freeze(nmsRegistry());
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private static <T> void freeze(MappedRegistry<T> registry) {
@@ -98,14 +108,19 @@ public class CustomEnchantsRegistration {
 			valMapField.setAccessible(true);
 			valMapField.set(tagSet, tagsMap);
 
-			Field allTagsField = MappedRegistry.class.getDeclaredField("allTags");
-			allTagsField.setAccessible(true);
-			allTagsField.set(registry, tagSet);
+			allTags.set(registry, tagSet);
 
 		} catch (NoSuchMethodException | NoSuchFieldException | ClassNotFoundException | InvocationTargetException | IllegalAccessException e) {
 			Nexus.severe("Could not unbound custom enchant registry");
 			e.printStackTrace();
 		}
+	}
+
+	public static boolean areCustomEnchantsRegistered() {
+		for (HolderSet.Named<?> tag : nmsRegistry().listTags().toList())
+			if (tag.key().toString().contains("exclusive_set/glowing"))
+				return true;
+		return false;
 	}
 
 	public static MappedRegistry<net.minecraft.world.item.enchantment.Enchantment> nmsRegistry() {
@@ -119,7 +134,10 @@ public class CustomEnchantsRegistration {
 	@SneakyThrows
 	static Enchantment register(CustomEnchant customEnchant) {
 		unfreeze();
-		Nexus.log("Registering " + customEnchant.getClass().getSimpleName());
+
+		Optional<Holder.Reference<net.minecraft.world.item.enchantment.Enchantment>> lookup = nmsRegistry().get(getResourceKey(nmsRegistry(), customEnchant.getId()));
+		if (lookup.isPresent())
+			return CraftEnchantment.minecraftToBukkit(lookup.get().value());
 
 		Component display = Component.translatable("enchantment.nexus." + customEnchant.getId(), customEnchant.getName());
 		HolderSet.Named<Item> supported = createItemsSet("enchant_supported", customEnchant);
