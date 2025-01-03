@@ -1,7 +1,5 @@
 package gg.projecteden.nexus.features.commands;
 
-import de.tr7zw.nbtapi.NBTItem;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -44,7 +42,7 @@ public class AxolotlBucketCommand extends CustomCommand implements Listener {
 			return;
 
 		final ItemStack bucket = event.getEntityBucket();
-		new NBTItem(bucket, true).setInteger(CustomModel.NBT_KEY, axolotl.getVariant().ordinal());
+		new ItemBuilder(bucket, true).axolotl(axolotl.getVariant()).build();
 	}
 
 }

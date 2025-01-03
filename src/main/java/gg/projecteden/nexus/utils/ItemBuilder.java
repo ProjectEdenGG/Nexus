@@ -863,14 +863,14 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	public ItemBuilder modelId(int id) {
 		if (id > 0)
-			nbt(item -> item.setInteger(CustomModel.NBT_KEY, id));
+			itemMeta.setCustomModelData(id);
 		return this;
 	}
 
 	public int modelId() {
-		NBTItem nbtItem = nbtItem();
-		final Integer modelId = nbtItem.getInteger(CustomModel.NBT_KEY);
-		return modelId == null ? 0 : modelId;
+		if (!itemMeta.hasCustomModelData())
+			return 0;
+		return itemMeta.getCustomModelData();
 	}
 
 	public static class ModelId {

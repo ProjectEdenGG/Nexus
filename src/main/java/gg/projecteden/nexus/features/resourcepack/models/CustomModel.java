@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.resourcepack.models;
 
-import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
 import gg.projecteden.nexus.features.resourcepack.models.files.ResourcePackOverriddenMaterial;
@@ -89,7 +88,7 @@ public class CustomModel implements Comparable<CustomModel> {
 	}
 
 	public static boolean exists(ItemStack item) {
-		return new NBTItem(item).hasKey(NBT_KEY);
+		return item.getItemMeta().hasCustomModelData();
 	}
 
 	public static CustomModel of(ItemStack item) {
@@ -121,8 +120,7 @@ public class CustomModel implements Comparable<CustomModel> {
 		if (itemStack.getType() != material)
 			return false;
 
-		final NBTItem nbtItem = new NBTItem(itemStack);
-		return nbtItem.hasKey(NBT_KEY) && nbtItem.getInteger(NBT_KEY) == data;
+		return ModelId.of(itemStack) == data;
 	}
 
 	public ItemStack getItem() {
