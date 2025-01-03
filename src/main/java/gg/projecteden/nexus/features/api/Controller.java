@@ -30,10 +30,10 @@ public class Controller {
 
 	@Get("/votes/sites")
 	Object votes_sites() {
-		return new HashMap<>() {{
-			for (VoteSite site : VoteSite.getActiveSites())
-				put(site.getName(), site.getUrl());
-		}};
+		var sites = new HashMap<>();
+		for (VoteSite site : VoteSite.getActiveSites())
+			sites.put(site.getName(), site.getUrl());
+		return sites;
 	}
 
 	@Get("/staff")
