@@ -50,10 +50,7 @@ public class FakeNPCPacketUtils {
 
 			ClientboundPlayerInfoUpdatePacket playerInfoPacket = new ClientboundPlayerInfoUpdatePacket(Action.ADD_PLAYER, serverPlayer); // required
 
-			ServerLevel world = (ServerLevel) serverPlayer.level();
-			ChunkMap.TrackedEntity entityTracker = world.getChunkSource().chunkMap.entityMap.get(serverPlayer.getId());
-
-			ClientboundAddEntityPacket spawnPacket = new ClientboundAddEntityPacket(serverPlayer, entityTracker.serverEntity);
+			ClientboundAddEntityPacket spawnPacket = new ClientboundAddEntityPacket(serverPlayer, 0, serverPlayer.blockPosition());
 			ClientboundRotateHeadPacket headRotationPacket =
 				new ClientboundRotateHeadPacket(serverPlayer, PacketUtils.encodeAngle(fakeNPC.getLocation().getYaw()));
 
@@ -177,7 +174,7 @@ public class FakeNPCPacketUtils {
 		ChunkMap.TrackedEntity entityTracker = world.getChunkSource().chunkMap.entityMap.get(armorStand.getId());
 
 
-		ClientboundAddEntityPacket spawnArmorStand = new ClientboundAddEntityPacket(armorStand, entityTracker.serverEntity, PacketUtils.getObjectId(armorStand));
+		ClientboundAddEntityPacket spawnArmorStand = new ClientboundAddEntityPacket(armorStand, 0, armorStand.blockPosition());
 		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData().packDirty());
 		ClientboundSetEquipmentPacket rawEquipmentPacket = new ClientboundSetEquipmentPacket(armorStand.getId(), NMSUtils.getArmorEquipmentList());
 

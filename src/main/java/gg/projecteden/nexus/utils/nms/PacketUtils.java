@@ -409,7 +409,7 @@ public class PacketUtils {
 		ServerLevel world = (ServerLevel) armorStand.level();
 		ChunkMap.TrackedEntity entityTracker = world.getChunkSource().chunkMap.entityMap.get(armorStand.getId());
 
-		ClientboundAddEntityPacket spawnArmorStand = new ClientboundAddEntityPacket(armorStand, entityTracker.serverEntity, getObjectId(armorStand));
+		ClientboundAddEntityPacket spawnArmorStand = new ClientboundAddEntityPacket(armorStand, 0, armorStand.blockPosition());
 		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData().packDirty());
 		ClientboundSetEquipmentPacket rawEquipmentPacket = new ClientboundSetEquipmentPacket(armorStand.getId(), NMSUtils.getArmorEquipmentList());
 
@@ -438,7 +438,7 @@ public class PacketUtils {
 		slime.setNoGravity(true);
 		slime.setPersistenceRequired();
 
-		ClientboundAddEntityPacket rawSpawnPacket = new ClientboundAddEntityPacket(slime, NMSUtils.getServerEntity(slime), getObjectId(slime));
+		ClientboundAddEntityPacket rawSpawnPacket = new ClientboundAddEntityPacket(slime, 0, slime.blockPosition());
 		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(slime.getId(), slime.getEntityData().packDirty());
 
 		sendPacket(player, rawSpawnPacket, rawMetadataPacket);
@@ -458,7 +458,7 @@ public class PacketUtils {
 		fallingBlock.getBukkitEntity().setGlowing(true);
 		fallingBlock.getBukkitEntity().setVelocity(new Vector(0, 0, 0));
 
-		ClientboundAddEntityPacket rawSpawnPacket = new ClientboundAddEntityPacket(fallingBlock, NMSUtils.getServerEntity(fallingBlock), getObjectId(fallingBlock));
+		ClientboundAddEntityPacket rawSpawnPacket = new ClientboundAddEntityPacket(fallingBlock, net.minecraft.world.level.block.Block.getId(fallingBlock.blockState), fallingBlock.blockPosition());
 		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(fallingBlock.getId(), fallingBlock.getEntityData().packDirty());
 
 		sendPacket(player, rawSpawnPacket, rawMetadataPacket);
@@ -511,7 +511,7 @@ public class PacketUtils {
 			armorStand.setHeadPose(NMSUtils.toNMS(EulerAngle.ZERO));
 		}
 
-		ClientboundAddEntityPacket spawnArmorStand = new ClientboundAddEntityPacket(armorStand, NMSUtils.getServerEntity(armorStand), getObjectId(armorStand));
+		ClientboundAddEntityPacket spawnArmorStand = new ClientboundAddEntityPacket(armorStand, 0, armorStand.blockPosition());
 		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData().packDirty());
 
 		sendPacket(player, spawnArmorStand, rawMetadataPacket);
