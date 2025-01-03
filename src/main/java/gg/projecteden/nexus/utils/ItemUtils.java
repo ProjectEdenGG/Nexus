@@ -44,9 +44,9 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -690,12 +690,12 @@ public class ItemUtils {
 			if (!(item.getItemMeta() instanceof PotionMeta potionMeta))
 				return new PotionWrapper();
 
-			return of(toNMS(potionMeta.getBasePotionData()), potionMeta.getCustomEffects());
+			return of(toNMS(potionMeta.getBasePotionType()), potionMeta.getCustomEffects());
 		}
 
 		@NotNull
 		public static PotionWrapper of(AreaEffectCloudApplyEvent event) {
-			final Potion potion = toNMS(event.getEntity().getBasePotionData());
+			final Potion potion = toNMS(event.getEntity().getBasePotionType());
 			final List<PotionEffect> customEffects = event.getEntity().getCustomEffects();
 			return of(potion, customEffects);
 		}
@@ -747,9 +747,8 @@ public class ItemUtils {
 
 		}
 
-		@NotNull
-		public static Potion toNMS(PotionData basePotionData) {
-			var potion = BuiltInRegistries.POTION.get(ResourceLocation.tryParse(CraftPotionUtil.fromBukkit(basePotionData).name())).orElse(null);
+		public static Potion toNMS(PotionType basePotionData) {
+			var potion = BuiltInRegistries.POTION.get(ResourceLocation.withDefaultNamespace(basePotionData.getKey().getKey())).orElse(null);
 			if (potion == null)
 				return null;
 			return potion.value();
