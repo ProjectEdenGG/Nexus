@@ -633,9 +633,7 @@ public class ItemUtils {
 		}
 
 		net.minecraft.world.item.ItemStack handle = CraftItemStack.asNMSCopy(mainItem);
-		CompoundTag tag = new CompoundTag();
-
-		tag = handle.get(DataComponents.CUSTOM_DATA).copyTag().getCompound("tag");
+		CompoundTag tag = handle.get(DataComponents.CUSTOM_DATA).copyTag();
 
 		CompoundTag pe = new CompoundTag();
 		if (tag.contains("ProjectEden"))
