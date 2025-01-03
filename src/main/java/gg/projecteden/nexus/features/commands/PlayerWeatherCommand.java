@@ -2,23 +2,22 @@ package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.features.listeners.events.FirstWorldGroupVisitEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.DescriptionExtra;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.WeatherType;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import java.util.Arrays;
 
 @Aliases({"rain", "snow", "pweather"})
 @Redirect(from = { "/rainoff", "/snowoff" }, to = "/rain off")
-public class PlayerWeatherCommand extends CustomCommand {
+@NoArgsConstructor()
+public class PlayerWeatherCommand extends CustomCommand implements Listener {
 
 	public PlayerWeatherCommand(@NonNull CommandEvent event) {
 		super(event);
