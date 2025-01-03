@@ -38,7 +38,6 @@ repositories {
     maven { url = uri("https://repo.codemc.io/repository/maven-snapshots/") }
     maven { url = uri("https://maven.citizensnpcs.co/repo") }
     maven { url = uri("https://repo.md-5.net/content/groups/public/") }
-    maven { url = uri("https://github.com/deanveloper/SkullCreator/raw/mvn-repo/") }
     maven { url = uri("https://repo.viaversion.com") }
     maven { url = uri("https://maven.enginehub.org/repo/") }
     maven { url = uri("https://eldonexus.de/repository/maven-public/") }
@@ -72,7 +71,6 @@ dependencies {
     implementation("com.google.api-client:google-api-client:2.2.0")
     implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
     implementation("com.google.apis:google-api-services-sheets:v4-rev20221216-2.0.0")
-    implementation("dev.dbassett:skullcreator:3.0.1")
     implementation("com.github.mpkorstanje:simmetrics-core:4.1.1")
     implementation("org.jetbrains:annotations:24.0.1")
     compileOnly("gg.projecteden.crates:api:1.0.7-SNAPSHOT")

@@ -2,7 +2,6 @@ package gg.projecteden.nexus.models.skincache;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
-import dev.dbassett.skullcreator.SkullCreator;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
@@ -72,7 +71,7 @@ public class SkinCache implements PlayerOwnedObject {
 		if (!isCached())
 			return getHeadFromPlayer();
 
-		return new ItemBuilder(SkullCreator.itemFromBase64(value)).name(getNickname() + "'s Head").build();
+		return new ItemBuilder(Material.PLAYER_HEAD).skullOwnerBase64(value).name(getNickname() + "'s Head").build();
 	}
 
 	public SkullMeta getHeadMeta() {

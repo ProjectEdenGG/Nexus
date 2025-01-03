@@ -1,9 +1,10 @@
 package gg.projecteden.nexus.utils;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
 import com.google.common.collect.ImmutableSortedMap;
 import de.tr7zw.nbtapi.NBTEntity;
 import de.tr7zw.nbtapi.NBTItem;
-import dev.dbassett.skullcreator.SkullCreator;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
@@ -54,6 +55,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -466,8 +468,16 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder skullOwnerUrl(String url) {
-		final ItemStack skull = SkullCreator.itemFromUrl(StringUtils.listLast(url, "/"));
-		((SkullMeta) itemMeta).setPlayerProfile(((SkullMeta) skull.getItemMeta()).getPlayerProfile());
+		String base64Texture = Base64.getEncoder().encodeToString((
+			"{\"textures\":{\"SKIN\":{\"url\":\"" + url + "\"}}}"
+		).getBytes(StandardCharsets.UTF_8));
+		return skullOwnerBase64(base64Texture);
+	}
+
+	public ItemBuilder skullOwnerBase64(String base64) {
+		PlayerProfile profile = Bukkit.createProfile(UUID.randomUUID());
+		profile.setProperty(new ProfileProperty("textures", base64));
+		((SkullMeta) itemMeta).setPlayerProfile(profile);
 		return this;
 	}
 
