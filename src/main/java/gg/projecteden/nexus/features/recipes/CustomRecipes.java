@@ -22,52 +22,27 @@ import gg.projecteden.nexus.features.workbenches.CustomBench;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Depends;
 import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.CopperState;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.CopperState.CopperBlockType;
-import gg.projecteden.nexus.utils.IOUtils;
-import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.ItemUtils.ItemStackComparator;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WoodType;
 import lombok.Getter;
 import lombok.NonNull;
-import org.bukkit.Bukkit;
-import org.bukkit.Keyed;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Tag;
+import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.inventory.PrepareItemCraftEvent;
-import org.bukkit.inventory.CraftingInventory;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.RecipeChoice;
+import org.bukkit.event.inventory.*;
+import org.bukkit.inventory.*;
 import org.bukkit.inventory.RecipeChoice.ExactChoice;
 import org.bukkit.inventory.RecipeChoice.MaterialChoice;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Depends({ResourcePack.class, CustomEnchants.class})
@@ -124,7 +99,7 @@ public class CustomRecipes extends Feature implements Listener {
 						recipe.register();
 						recipes.put(recipe.getKey(), recipe);
 					} catch (Exception ex) {
-						System.out.println("Error registering FunctionalRecipe " + recipe.getClass().getSimpleName());
+						Nexus.severe("Error registering FunctionalRecipe " + recipe.getClass().getSimpleName());
 						ex.printStackTrace();
 					}
 				});

@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.resourcepack.CustomContentUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreUtils;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.MineralChoice;
@@ -14,25 +15,12 @@ import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStationMenu;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
-import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.Distance;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.Getter;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.DyeColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.sign.SignSide;
@@ -94,7 +82,7 @@ public class DecorationUtils {
 
 		DecorationLang.debug(debugger, "Color Name: " + colorName);
 
-		boolean isPaintbrush = resultBuilder.modelId() == DyeStation.getPaintbrush().modelId();
+		boolean isPaintbrush = resultBuilder.modelId() == CustomMaterial.PAINTBRUSH.getModelId();
 		boolean handledPaintbrushUses = false;
 
 		List<String> finalLore = new ArrayList<>();
