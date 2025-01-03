@@ -13,6 +13,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Rotations;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.*;
@@ -23,6 +24,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -333,7 +335,9 @@ public class NMSUtils {
 	}
 
 	public static Packet<ClientGamePacketListener> getSpawnPacket(Entity entity) {
-		return entity.getAddEntityPacket(getServerEntity(entity));
+		if (entity instanceof HangingEntity hangingEntity)
+			return new ClientboundAddEntityPacket(entity, hangingEntity.getDirection().get3DDataValue(), entity.blockPosition());
+		return new ClientboundAddEntityPacket(entity, 0, entity.blockPosition());
 	}
 
 	public static ServerEntity getServerEntity(Entity entity) {
