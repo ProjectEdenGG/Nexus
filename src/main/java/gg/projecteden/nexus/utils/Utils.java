@@ -36,6 +36,7 @@ import java.lang.annotation.Target;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
@@ -369,6 +370,13 @@ public class Utils extends gg.projecteden.api.common.utils.Utils {
 		map.clear();
 		map.put(key, value);
 		map.putAll(oldOrder);
+	}
+
+	public static <T> List<T> flatten(Collection<? extends Collection<T>> list) {
+		return list.stream()
+			.flatMap(Collection::stream)
+			.filter(Objects::nonNull)
+			.toList();
 	}
 
 }
