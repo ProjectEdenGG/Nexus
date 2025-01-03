@@ -10,11 +10,13 @@ import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
+import static gg.projecteden.nexus.utils.StringUtils.toHex;
 
 public class Controller {
 
@@ -52,5 +54,13 @@ public class Controller {
 				"promotionDate", nerd.getPromotionDate() == null ? "" : "%s (%d years)".formatted(shortDateFormat(nerd.getPromotionDate()), nerd.getPromotionDate().until(LocalDate.now()).getYears())
 			))
 			.toList();
+	}
+
+	@Get("/ranks")
+	Object ranks() {
+		return Arrays.stream(Rank.values()).map(rank -> Map.of(
+			"name", rank.getName(),
+			"color", toHex(rank.getChatColor())
+		)).toList();
 	}
 }
