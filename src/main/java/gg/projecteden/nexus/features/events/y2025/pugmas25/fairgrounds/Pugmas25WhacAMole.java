@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds;
 
+import gg.projecteden.api.common.annotations.Environments;
+import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.EdenEventGameConfig;
@@ -32,6 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 	world = "pugmas25",
 	playRegion = "pugmas25_whacamole_play"
 )
+@Environments(Env.PROD)
 public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 	private static Pugmas25WhacAMole instance;
 
