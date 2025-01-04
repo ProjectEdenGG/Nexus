@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.chat.games;
 import com.google.common.base.Joiner;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.RandomUtils;
+import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig.ChatGame;
@@ -91,12 +92,25 @@ public enum ChatGameType {
 	MATH(15) {
 		@Override
 		public ChatGame create() {
-			int num1 = RandomUtils.randomInt(11, 75);
-			int num2 = RandomUtils.randomInt(11, 75);
+			int num1 = 0, num2 = 0, answer;
+			Utils.ArithmeticOperator operator = RandomUtils.randomElement(EnumUtils.valuesExcept(Utils.ArithmeticOperator.class, Utils.ArithmeticOperator.POWER));
+			switch (operator) {
+				case ADD, SUBTRACT -> { num1 = RandomUtils.randomInt(11, 75); num2 = RandomUtils.randomInt(11, 75); }
+				case MULTIPLY, DIVIDE -> { num1 = RandomUtils.randomInt(2, 12); num2 = RandomUtils.randomInt(2, 12); }
+			}
+
+			if (operator == Utils.ArithmeticOperator.DIVIDE) {
+				int temp = num1;
+				num1 = num1 * num2;
+				answer = temp;
+			}
+			else {
+				answer = operator.run(num1, num2).intValue();
+			}
+
 			boolean add = RandomUtils.getRandom().nextBoolean();
-			String answer = String.valueOf((add ? (num1 + num2) : (num1 - num2)));
-			return new ChatGame(this, answer,
-				new JsonBuilder(String.format("&3What's &e%d %s %s&3?", num1, add ? "+" : "-", num2) + " Answer in chat!"),
+			return new ChatGame(this, String.valueOf(answer),
+				new JsonBuilder(String.format("&3What's &e%d %s %s&3?", num1, operator.getSymbol(), num2) + " Answer in chat!"),
 				String.format("What's `%d %s %s`?", num1, add ? "+" : "-", num2) + " Answer in chat!");
 		}
 	},
