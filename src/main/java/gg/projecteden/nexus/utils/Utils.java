@@ -390,9 +390,14 @@ public class Utils extends gg.projecteden.api.common.utils.Utils {
 		int minutes = seconds % 3600 / 60;
 
 		var pm = false;
-		if (!is24HourFormat && hours >= 12) {
-			hours -= 12;
-			pm = true;
+		if (!is24HourFormat) {
+			if (hours >= 12) {
+				hours -= 12;
+				pm = true;
+			}
+
+			if (hours == 0)
+				hours = 12;
 		}
 
 		return String.format("%02d:%02d %s", hours, minutes, is24HourFormat ? "" : pm ? "PM" : "AM").trim();
