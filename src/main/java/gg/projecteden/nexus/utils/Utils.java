@@ -379,4 +379,23 @@ public class Utils extends gg.projecteden.api.common.utils.Utils {
 			.toList();
 	}
 
+
+	public static String minecraftTimeToHumanTime(int value, boolean is24HourFormat) {
+		value += 6000;
+		if (value >= 24000) {
+			value -= 24000;
+		}
+		int seconds = (value * 86400) / 24000;
+		int hours = seconds / 3600;
+		int minutes = seconds % 3600 / 60;
+
+		var pm = false;
+		if (!is24HourFormat && hours >= 12) {
+			hours -= 12;
+			pm = true;
+		}
+
+		return String.format("%02d:%02d %s", hours, minutes, is24HourFormat ? "" : pm ? "PM" : "AM").trim();
+	}
+
 }
