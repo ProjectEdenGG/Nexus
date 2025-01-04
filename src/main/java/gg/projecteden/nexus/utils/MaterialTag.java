@@ -292,6 +292,10 @@ public class MaterialTag implements Tag<Material> {
 		Material.REPEATER, Material.COMPARATOR, Material.NOTE_BLOCK, Material.JUKEBOX, Material.DAYLIGHT_DETECTOR, Material.LEVER, Material.REDSTONE_WIRE, Material.CHISELED_BOOKSHELF,
 		Material.COMPOSTER, Material.DECORATED_POT);
 
+	public static final MaterialTag BUNDLES = new MaterialTag("BUNDLE", MatchMode.CONTAINS);
+
+	public static final MaterialTag BACKPACK_DENY = new MaterialTag(SHULKER_BOXES, BUNDLES);
+
 	@SneakyThrows
 	public static Map<String, Tag<Material>> getApplicable(Material material) {
 		return Utils.collect(tags.entrySet().stream().filter(entry -> entry.getValue().isTagged(material)));

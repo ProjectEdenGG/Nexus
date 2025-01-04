@@ -21,7 +21,6 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
-import gg.projecteden.nexus.utils.nms.NMSUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -141,11 +140,11 @@ public class Backpacks extends FunctionalRecipe {
 	}
 
 	private static ItemStack copyContents(ItemStack oldBackpack, ItemStack newBackpack, World world) {
-		List<ItemStack> contents = ItemUtils.getNBTContentsOfNonInventoryItem(oldBackpack, getTier(newBackpack).getRows() * 9, NMSUtils.toNMS(world).registryAccess());
+		List<ItemStack> contents = ItemUtils.getNBTContentsOfNonInventoryItem(oldBackpack, getTier(newBackpack).getRows() * 9);
 		if (MaterialTag.SHULKER_BOXES.isTagged(oldBackpack) && contents.isEmpty())
 			contents = new ItemBuilder(oldBackpack).shulkerBoxContents();
 
-		return ItemUtils.setNBTContentsOfNonInventoryItem(newBackpack, contents, NMSUtils.toNMS(world).registryAccess());
+		return ItemUtils.setNBTContentsOfNonInventoryItem(newBackpack, contents);
 	}
 
 	@EventHandler
@@ -332,7 +331,7 @@ public class Backpacks extends FunctionalRecipe {
 			this.player = player;
 			this.backpack = backpack;
 			this.frame = frame;
-			this.originalItems = ItemUtils.getNBTContentsOfNonInventoryItem(backpack, getTier(backpack).getRows() * 9, NMSUtils.toNMS(player).registryAccess());
+			this.originalItems = ItemUtils.getNBTContentsOfNonInventoryItem(backpack, getTier(backpack).getRows() * 9);
 			this.inventoryHolder = HOLDERS.computeIfAbsent(getBackpackId(backpack), BackpackHolder::new);
 
 			try {
@@ -395,7 +394,7 @@ public class Backpacks extends FunctionalRecipe {
 			if (event.getClick() == ClickType.NUMBER_KEY)
 				item = player.getInventory().getContents()[event.getHotbarButton()];
 
-			if (!MaterialTag.SHULKER_BOXES.isTagged(item) && !isBackpack(item))
+			if (!MaterialTag.BACKPACK_DENY.isTagged(item) && !isBackpack(item))
 				return;
 
 			event.setCancelled(true);
@@ -427,7 +426,7 @@ public class Backpacks extends FunctionalRecipe {
 				return;
 			}
 
-			ItemUtils.setNBTContentsOfNonInventoryItem(backpack, contents, NMSUtils.toNMS(player).registryAccess());
+			ItemUtils.setNBTContentsOfNonInventoryItem(backpack, contents);
 			if (frame != null)
 				frame.setItem(backpack);
 
@@ -462,6 +461,7 @@ public class Backpacks extends FunctionalRecipe {
 		}
 	}
 
+	@Getter
 	@AllArgsConstructor
 	public enum BackpackTier {
 		BASIC(3),
@@ -470,7 +470,6 @@ public class Backpacks extends FunctionalRecipe {
 		DIAMOND(6),
 		NETHERITE(6);
 
-		@Getter
 		final int rows;
 
 		public int getModelID() {
