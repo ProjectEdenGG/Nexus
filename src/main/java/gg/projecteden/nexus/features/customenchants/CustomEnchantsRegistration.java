@@ -22,6 +22,7 @@ import org.bukkit.craftbukkit.CraftEquipmentSlot;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.enchantments.CraftEnchantment;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 
@@ -136,8 +137,12 @@ public class CustomEnchantsRegistration {
 		unfreeze();
 
 		Optional<Holder.Reference<net.minecraft.world.item.enchantment.Enchantment>> lookup = nmsRegistry().get(getResourceKey(nmsRegistry(), customEnchant.getId()));
-		if (lookup.isPresent())
+		if (lookup.isPresent()) {
+			if (customEnchant instanceof Listener listener)
+				Nexus.registerListener(listener);
+
 			return CraftEnchantment.minecraftToBukkit(lookup.get().value());
+		}
 
 		Component display = Component.translatable("enchantment.nexus." + customEnchant.getId(), customEnchant.getName());
 		HolderSet.Named<Item> supported = createItemsSet("enchant_supported", customEnchant);
