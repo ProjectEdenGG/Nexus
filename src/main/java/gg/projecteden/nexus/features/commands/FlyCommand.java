@@ -1,9 +1,11 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.features.commands.staff.CheatsCommand;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -37,6 +39,7 @@ import java.util.Set;
 @Permission("essentials.fly")
 @WikiConfig(rank = "Guest", feature = "Creative")
 @NoArgsConstructor
+@Cooldown(value = TimeUtils.TickTime.SECOND, x = 10, bypass = Group.SENIOR_STAFF)
 public class FlyCommand extends CustomCommand implements Listener {
 	private final ModeUserService service = new ModeUserService();
 	private ModeUser user;
