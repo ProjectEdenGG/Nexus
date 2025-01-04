@@ -1,8 +1,10 @@
 package gg.projecteden.nexus.models.mutemenu;
 
+import com.mongodb.DBObject;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import dev.morphia.annotations.PreLoad;
 import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
@@ -50,6 +52,13 @@ public class MuteMenuUser implements PlayerOwnedObject {
 			return !new ChatterService().get(uuid).hasJoined(StaticChannel.valueOf(item.name().replace("CHANNEL_", "")).getChannel());
 		else
 			return muted.contains(item);
+	}
+
+	@PreLoad
+	void fixPreLoad(DBObject dbObject) {
+		DBObject map = (DBObject) dbObject.get("entityVolumes");
+		if (map != null && map.containsField("SNOWMAN"))
+			map.put(EntityType.SNOW_GOLEM.name(), map.removeField("SNOWMAN"));
 	}
 
 	public void setVolume(MuteMenuItem item, int volume) {

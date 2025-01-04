@@ -75,6 +75,8 @@ public enum ScoreboardLine {
 	MSPT {
 		@Override
 		public String render(Player player) {
+			if (Nexus.getSpark() == null)
+				return "&3MSPT: &cnull";
 			final var mspt = Nexus.getSpark().mspt();
 			if (mspt == null)
 				return "&3MSPT: &cnull";
