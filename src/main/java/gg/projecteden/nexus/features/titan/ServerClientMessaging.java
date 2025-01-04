@@ -23,16 +23,15 @@ import java.util.*;
 
 public class ServerClientMessaging extends Feature {
 
-	public final static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-	public final static String CHANNEL_CLIENTBOUND = "titan:clientbound";
-	public final static String CHANNEL_SERVERBOUND = "titan:serverbound";
+	public final static Gson GSON = new GsonBuilder().create();
+	public final static String CHANNEL = "titan:networking";
 
 	private final LocalResourcePackUserService service = new LocalResourcePackUserService();
 
 	@Override
 	public void onStart() {
-		Bukkit.getMessenger().registerIncomingPluginChannel(Nexus.getInstance(), CHANNEL_SERVERBOUND, new ServerboundListener());
-		Bukkit.getMessenger().registerOutgoingPluginChannel(Nexus.getInstance(), CHANNEL_CLIENTBOUND);
+		Bukkit.getMessenger().registerIncomingPluginChannel(Nexus.getInstance(), CHANNEL, new ServerboundListener());
+		Bukkit.getMessenger().registerOutgoingPluginChannel(Nexus.getInstance(), CHANNEL);
 
 		Tasks.repeat(1, 1, this::flush);
 
@@ -74,13 +73,14 @@ public class ServerClientMessaging extends Feature {
 
 		playerMap.forEach(((player, jsonObject) -> {
 			String json = GSON.toJson(jsonObject);
-			byte[] bytes = json.getBytes();
+			ByteArrayDataOutput out = ByteStreams.newDataOutput();
+			out.writeUTF(json);
 
 			Nexus.debug("Sending Titan Message to %s:".formatted(player.getName()));
 			Nexus.debug(GSON.toJson(jsonObject));
-			Nexus.debug(Arrays.toString(bytes));
+			Nexus.debug(Arrays.toString(out.toByteArray()));
 
-			player.sendPluginMessage(Nexus.getInstance(), CHANNEL_CLIENTBOUND, bytes);
+			player.sendPluginMessage(Nexus.getInstance(), CHANNEL, out.toByteArray());
 
 			toSend.forEach(message -> {
 				if (jsonObject.has(message.getMessage().getType().name().toLowerCase()))
@@ -97,7 +97,7 @@ public class ServerClientMessaging extends Feature {
 			ByteArrayDataOutput out = ByteStreams.newDataOutput();
 			out.writeUTF("saturn-update");
 
-			player.sendPluginMessage(Nexus.getInstance(), CHANNEL_CLIENTBOUND, out.toByteArray());
+			player.sendPluginMessage(Nexus.getInstance(), CHANNEL, out.toByteArray());
 		}
 	}
 
@@ -107,6 +107,7 @@ public class ServerClientMessaging extends Feature {
 		public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, byte[] bytes) {
 			try {
 				String string = new String(bytes);
+				string = string.substring(string.indexOf("{"));
 				JsonElement jsonElement = GSON.fromJson(string, JsonElement.class);
 				JsonObject json = jsonElement.getAsJsonObject();
 
