@@ -37,6 +37,7 @@ public final class Spleef extends SpleefMechanic {
 	public void onPlayerInteract(Minigamer minigamer, PlayerInteractEvent event) {
 		super.onPlayerInteract(minigamer, event);
 		if (event.isCancelled()) return;
+		if (!minigamer.isAlive()) return;
 
 		Location location = event.getClickedBlock().getLocation();
 

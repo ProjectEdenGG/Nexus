@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.api;
 
 import gg.projecteden.nexus.features.api.annotations.Get;
+import gg.projecteden.nexus.features.commands.StaffHallCommand;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.voter.VoteSite;
@@ -41,6 +42,7 @@ public class Controller {
 	Object staff() {
 		return Utils.flatten(Rank.getStaffNerds().get().values())
 			.stream()
+			.sorted(new StaffHallCommand.SeniorityComparator())
 			.map(nerd -> Map.of(
 				"uuid", nerd.getUuid(),
 				"uuidNoDashes", nerd.getUuid().toString().replaceAll("-", ""),
