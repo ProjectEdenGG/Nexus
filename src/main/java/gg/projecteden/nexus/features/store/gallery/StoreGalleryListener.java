@@ -18,6 +18,7 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityMountEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -93,6 +94,18 @@ public class StoreGalleryListener implements Listener {
 		event.setCancelled(true);
 
 		galleryPackage.onImageInteract(event.getPlayer());
+	}
+
+	@EventHandler
+	public void on(EntityMountEvent event) {
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
+		final WorldGuardUtils worldguard = new WorldGuardUtils(player.getWorld());
+		if (!worldguard.isInRegion(player, "store_gallery"))
+			return;
+
+		event.setCancelled(true);
 	}
 
 	@Nullable
