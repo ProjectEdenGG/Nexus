@@ -17,7 +17,6 @@ import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
-import io.papermc.lib.PaperLib;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -94,7 +93,7 @@ public class RandomTeleportCommand extends CustomCommand {
 			return;
 		}
 
-		PaperLib.getChunkAtAsync(best, true).thenAccept(chunk -> {
+		best.getWorld().getChunkAtAsync(best, true).thenAccept(chunk -> {
 			Block highestBlock = world.getHighestBlockAt(best);
 			if (!highestBlock.getType().isSolid() && count.get() < 10) {
 				Tasks.async(() -> rtp(overworld));

@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
@@ -14,7 +15,6 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.CheckpointData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.UncivilEngineersMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
-import io.papermc.lib.PaperLib;
 import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -34,8 +34,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 import java.util.Set;
 
-import static gg.projecteden.nexus.features.minigames.Minigames.getWorld;
-
 @Regenerating(value = "regen")
 public class UncivilEngineers extends TeamlessMechanic {
 	private static final int SLICES = 10;
@@ -43,7 +41,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 	private static final NamespacedKey NBT_KEY = new NamespacedKey(Nexus.getInstance(), "uncivilengineers-slice");
 
 	public static Location getStart() {
-		return new Location(getWorld(), 2554, 56, -2677, 90, 0);
+		return new Location(Minigames.getWorld(), 2554, 56, -2677, 90, 0);
 	}
 
 	@Override
@@ -111,7 +109,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 					continue;
 
 				Location location = offset(point.getLocation(), i);
-				PaperLib.getChunkAtAsync(location).thenRun(() ->
+				location.getWorld().getChunkAtAsync(location).thenRun(() ->
 					match.spawn(location, point.getType().getEntityClass(), entity -> {
 					if (entity instanceof Sheep sheep)
 						sheep.setColor(DyeColor.WHITE);

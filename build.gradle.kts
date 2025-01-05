@@ -56,7 +56,6 @@ repositories {
 dependencies {
     paperweightDevBundle("gg.projecteden.parchment", "${parchmentVersion}")
     compileOnly("gg.projecteden.parchment:parchment-api:${parchmentVersion}")
-    implementation("io.papermc:paperlib:1.0.8-SNAPSHOT")
     implementation("gg.projecteden:eden-common:${edenApiVersion}")
     implementation("gg.projecteden:eden-db:${edenApiVersion}")
     implementation("gg.projecteden:eden-discord:${edenApiVersion}")
