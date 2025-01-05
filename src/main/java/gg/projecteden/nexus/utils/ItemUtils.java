@@ -442,9 +442,6 @@ public class ItemUtils {
 			result = Integer.compare(ModelId.of(a), ModelId.of(b));
 			if (result != 0) return result;
 
-			result = b.getRarity().compareTo(a.getRarity());
-			if (result != 0) return result;
-
 			result = Integer.compare(b.getAmount(), a.getAmount());
 			return result;
 		}
