@@ -31,6 +31,8 @@ public class SignWarListener implements Listener {
 
 		sign.setLine(2, getColor(value) + value);
 		sign.update();
+
+		event.setCancelled(true);
 	}
 
 	@EventHandler
