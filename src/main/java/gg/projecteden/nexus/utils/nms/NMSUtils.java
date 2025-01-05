@@ -71,7 +71,7 @@ public class NMSUtils {
 
 	public static BlockPos toNMS(HasLocation hasLocation) {
 		final Location location = hasLocation.getLocation();
-		return new BlockPos((int) location.getX(), (int) location.getY(), (int) location.getZ());
+		return new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ());
 	}
 
 	public static Location fromNMS(World world, BlockPos pos) {

@@ -8,12 +8,19 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.MathUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.nexus.utils.nms.PacketUtils;
-import gg.projecteden.nexus.utils.*;
+import io.papermc.paper.adventure.AdventureComponent;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundOpenSignEditorPacket;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.level.block.entity.SignText;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -147,11 +154,20 @@ public final class SignMenuFactory {
 			while (lines.size() < 4)
 				lines.add(Component.text(""));
 
-			player.sendBlockChange(location, Material.OAK_SIGN.createBlockData());
-			player.sendSignChange(location, lines);
+			BlockPos pos = NMSUtils.toNMS(location);
 
-			var packet = new ClientboundOpenSignEditorPacket(NMSUtils.toNMS(location), true);
-			PacketUtils.sendPacket(player, packet);
+			SignBlockEntity sign = new SignBlockEntity(pos, Blocks.OAK_SIGN.defaultBlockState());
+			SignText signText = sign.getText(true);
+
+			for (int i = 0; i < lines.size(); i++)
+				signText = signText.setMessage(i, new AdventureComponent(lines.get(i)));
+			sign.setText(signText, true);
+
+			player.sendBlockChange(location, Material.OAK_SIGN.createBlockData());
+			sign.setLevel(NMSUtils.toNMS(player.getWorld()));
+			PacketUtils.sendPacket(player, sign.getUpdatePacket());
+			sign.setLevel(null);
+			PacketUtils.sendPacket(player, new ClientboundOpenSignEditorPacket(pos, true));
 
 			BlockPosition position = new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ());
 			Nexus.getSignMenuFactory().signLocations.put(player, position);
