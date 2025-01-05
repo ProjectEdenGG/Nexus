@@ -29,6 +29,7 @@ import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -235,8 +236,9 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 	}
 
 	@AllArgsConstructor
+	@RequiredArgsConstructor
 	public static class SeniorityComparator implements Comparator<Nerd> {
-		private final StaffHallRankGroup group;
+		private StaffHallRankGroup group;
 
 		@Override
 		public int compare(Nerd nerd1, Nerd nerd2) {
@@ -244,13 +246,13 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 
 			final RankHistory currentRank1 = service.get(nerd1).getRankHistory().stream()
 				.filter(RankHistory::isCurrent)
-				.filter(history -> StaffHallRankGroup.of(history.getRank()) == group)
+				.filter(history -> group == null || StaffHallRankGroup.of(history.getRank()) == group)
 				.findFirst()
 				.orElse(null);
 
 			final RankHistory currentRank2 = service.get(nerd2).getRankHistory().stream()
 				.filter(RankHistory::isCurrent)
-				.filter(history -> StaffHallRankGroup.of(history.getRank()) == group)
+				.filter(history -> group == null || StaffHallRankGroup.of(history.getRank()) == group)
 				.findFirst()
 				.orElse(null);
 

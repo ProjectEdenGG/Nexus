@@ -26,6 +26,7 @@ import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import me.lucko.spark.api.statistic.StatisticWindow.MillisPerTick;
@@ -289,6 +290,17 @@ public enum ScoreboardLine {
 		}
 	},
 
+	@Interval(5)
+	WORLD_TIME {
+		@Override
+		public String render(Player player) {
+			GeoIP geoIP = new GeoIPService().get(player);
+			int time = (int) player.getWorld().getTime();
+			boolean is24HourFormat = geoIP.getTimeFormat() == GeoIP.TimeFormat.TWENTY_FOUR;
+			return "&3World Time: &e" + Utils.minecraftTimeToHumanTime(time, is24HourFormat);
+		}
+	},
+
 	@Permission(Group.ADMIN)
 	SERVER_TIME {
 		@Override
@@ -450,4 +462,5 @@ public enum ScoreboardLine {
 			"&a⚘ &3P&br&3oject Eden &a⚘",
 			"&a⚘ &3&bP&3roject Eden &a⚘"
 	);
+
 }

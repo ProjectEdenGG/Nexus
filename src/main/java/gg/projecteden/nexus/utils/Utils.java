@@ -31,7 +31,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.*;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -355,6 +361,37 @@ public class Utils extends gg.projecteden.api.common.utils.Utils {
 		map.clear();
 		map.put(key, value);
 		map.putAll(oldOrder);
+	}
+
+	public static <T> List<T> flatten(Collection<? extends Collection<T>> list) {
+		return list.stream()
+			.flatMap(Collection::stream)
+			.filter(Objects::nonNull)
+			.toList();
+	}
+
+
+	public static String minecraftTimeToHumanTime(int value, boolean is24HourFormat) {
+		value += 6000;
+		if (value >= 24000) {
+			value -= 24000;
+		}
+		int seconds = (value * 86400) / 24000;
+		int hours = seconds / 3600;
+		int minutes = seconds % 3600 / 60;
+
+		var pm = false;
+		if (!is24HourFormat) {
+			if (hours >= 12) {
+				hours -= 12;
+				pm = true;
+			}
+
+			if (hours == 0)
+				hours = 12;
+		}
+
+		return String.format("%02d:%02d %s", hours, minutes, is24HourFormat ? "" : pm ? "PM" : "AM").trim();
 	}
 
 }

@@ -18,7 +18,6 @@ import org.bukkit.OfflinePlayer;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
 import java.util.List;
 
 public class VoteParty {
@@ -114,7 +113,10 @@ public class VoteParty {
 
 	// TODO - return true
 	public static boolean isFeatureEnabled(HasUniqueId player) {
-		return PlayerUtils.Dev.of(player) != null && Arrays.asList(PlayerUtils.Dev.BLAST, PlayerUtils.Dev.WAKKA, PlayerUtils.Dev.GRIFFIN, PlayerUtils.Dev.ARBY).contains(PlayerUtils.Dev.of(player));
+		if (player == null) // EndOfMonth
+			return true;
+
+		return Nerd.of(player).getRank().isAdmin();
 	}
 
 }

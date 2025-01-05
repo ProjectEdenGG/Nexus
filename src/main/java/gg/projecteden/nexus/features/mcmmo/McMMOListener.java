@@ -12,11 +12,17 @@ import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
+import gg.projecteden.nexus.features.afk.AFKCommand;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetProvider.ResetSkillType;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.*;
 import org.bukkit.World.Environment;
@@ -46,20 +52,32 @@ public class McMMOListener implements Listener {
 
 	@EventHandler
 	public void onAfkGain(McMMOPlayerXpGainEvent event) {
-		if (AFK.get(event.getPlayer()).isAfk())
+		if (AFK.get(event.getPlayer()).isAfk()) {
+			PlayerUtils.sendWithCooldown("afk_exp-gain", TickTime.MINUTE, event.getPlayer(),
+				StringUtils.getPrefix(AFKCommand.class) + "Exp gain is disabled while AFK");
+
 			event.setCancelled(true);
+		}
 	}
 
 	@EventHandler
 	public void onRepair(McMMOPlayerRepairCheckEvent event) {
-		if (AFK.get(event.getPlayer()).isAfk())
+		if (AFK.get(event.getPlayer()).isAfk()) {
+			PlayerUtils.sendWithCooldown("afk_cancel-repair", TickTime.MINUTE, event.getPlayer(),
+				StringUtils.getPrefix(AFKCommand.class) + "Prevented waste of materials on repair while AFK");
+
 			event.setCancelled(true);
+		}
 	}
 
 	@EventHandler
 	public void onSalvage(McMMOPlayerSalvageCheckEvent event) {
-		if (AFK.get(event.getPlayer()).isAfk())
+		if (AFK.get(event.getPlayer()).isAfk()) {
+			PlayerUtils.sendWithCooldown("afk_cancel-salvage", TickTime.MINUTE, event.getPlayer(),
+				StringUtils.getPrefix(AFKCommand.class) + "Prevented waste of materials on salvage while AFK");
+
 			event.setCancelled(true);
+		}
 	}
 
 	private static final List<PrimarySkillType> MELEE_SKILLS = List.of(PrimarySkillType.AXES, PrimarySkillType.SWORDS, PrimarySkillType.UNARMED);
