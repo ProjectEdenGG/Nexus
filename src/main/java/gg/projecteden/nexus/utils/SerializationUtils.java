@@ -1,7 +1,11 @@
 package gg.projecteden.nexus.utils;
 
 import com.google.common.collect.ImmutableList;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,7 +19,15 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class SerializationUtils {
@@ -129,7 +141,7 @@ public class SerializationUtils {
 			if (value == null) return null;
 			value.computeIfPresent("meta", ($, meta) -> {
 				Map<String, Object> metaMap = meta instanceof String ? fromString((String) meta) : (Map<String, Object>) meta;
-				fixItemMetaClasses(metaMap);
+				fixItemMeta(metaMap);
 				return deserializeRecursive(metaMap);
 			});
 
@@ -188,7 +200,7 @@ public class SerializationUtils {
 			}));
 
 			if (fixed.containsKey("==")) {
-				try { fixItemMetaClasses(fixed); } catch (ClassCastException ignore) {}
+				try { fixItemMeta(fixed); } catch (ClassCastException ignore) {}
 				return ConfigurationSerialization.deserializeObject(fixed);
 			}
 
@@ -202,8 +214,15 @@ public class SerializationUtils {
 
 		private static final List<String> intKeys = Arrays.asList("power", "repair-cost", "Damage", "map-id", "generation", "custom-model-data",
 				"effect", "duration", "amplifier", "fish-variant", "LodestonePosX", "LodestonePosY", "LodestonePosZ", "axolotl-variant");
-		// MongoDB deserializes some properties as the wrong class, do conversion
-		private static void fixItemMetaClasses(Map<String, Object> deserialized) {
+		private static void fixItemMeta(Map<String, Object> deserialized) {
+			if (deserialized.containsKey("skull-owner")) {
+				Map<String, Object> skulLOwner = (Map<String, Object>) deserialized.get("skull-owner");
+				if (skulLOwner.containsKey("name")) {
+					skulLOwner.put("name", ((String) skulLOwner.get("name")).replaceAll(" ", ""));
+				}
+			}
+
+			// MongoDB deserializes some properties as the wrong class, do conversion
 			intKeys.forEach(key ->
 					deserialized.computeIfPresent(key, ($, metaValue) -> {
 						if (metaValue instanceof Number number)
