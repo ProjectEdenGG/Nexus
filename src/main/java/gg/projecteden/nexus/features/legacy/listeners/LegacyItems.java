@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.legacy.listeners;
 
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
+import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.features.legacy.LegacyCommand.LegacyVaultMenu.LegacyVaultHolder;
 import gg.projecteden.nexus.features.listeners.Beehives;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider.SmartInventoryHolder;
@@ -132,7 +133,7 @@ public class LegacyItems implements Listener {
 		if (equipment == null)
 			return;
 
-		for (EquipmentSlot slot : EquipmentSlot.values())
+		for (EquipmentSlot slot : EnumUtils.valuesExcept(EquipmentSlot.class, EquipmentSlot.BODY))
 			convert(world, equipment.getItem(slot), converted -> equipment.setItem(slot, converted, true));
 	}
 

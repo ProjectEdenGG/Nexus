@@ -76,6 +76,8 @@ public class RadioFeature extends Feature {
 					if (RandomUtils.chanceOf(20)) continue;
 
 					for (Location location : radio.getLocations()) {
+						if (location == null) continue;
+
 						new ParticleBuilder(Particle.NOTE)
 								.count(RandomUtils.randomInt(1, 3))
 								.offset(0.25, 0.25, 0.25)
