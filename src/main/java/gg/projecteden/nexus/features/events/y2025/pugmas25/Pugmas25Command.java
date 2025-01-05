@@ -54,6 +54,7 @@ import java.util.Comparator;
 
 @NoArgsConstructor
 @Aliases("pugmas")
+@Permission(Group.STAFF)
 @Redirect(from = "/advent", to = "/pugmas25 advent")
 public class Pugmas25Command extends IEventCommand implements Listener {
 	public String PREFIX = Pugmas25.PREFIX;

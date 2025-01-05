@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.api;
 
 import gg.projecteden.nexus.features.api.annotations.Get;
 import gg.projecteden.nexus.features.commands.StaffHallCommand;
+import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.voter.VoteSite;
@@ -43,18 +44,21 @@ public class Controller {
 		return Utils.flatten(Rank.getStaffNerds().get().values())
 			.stream()
 			.sorted(new StaffHallCommand.SeniorityComparator())
-			.map(nerd -> Map.of(
-				"uuid", nerd.getUuid(),
-				"uuidNoDashes", nerd.getUuid().toString().replaceAll("-", ""),
-				"username", nerd.getName(),
-				"nickname", nerd.getNickname(),
-				"rank", camelCase(nerd.getRank()),
-				"about", nerd.getAbout() == null ? "" : nerd.getAbout(),
-				"birthday", nerd.getBirthday() == null ? "" : "%s (%d years)".formatted(shortDateFormat(nerd.getBirthday()), nerd.getBirthday().until(LocalDate.now()).getYears()),
-				"pronouns", nerd.getPronouns() == null ? "" : String.join(", ", nerd.getPronouns().stream().map(Nerd.Pronoun::toString).toList()),
-				"preferredName", nerd.getPreferredName() == null ? "" : nerd.getPreferredName(),
-				"promotionDate", nerd.getPromotionDate() == null ? "" : "%s (%d years)".formatted(shortDateFormat(nerd.getPromotionDate()), nerd.getPromotionDate().until(LocalDate.now()).getYears())
-			))
+			.map(nerd -> {
+				var map = new HashMap<>();
+				map.put("uuid", nerd.getUuid());
+				map.put("uuidNoDashes", nerd.getUuid().toString().replaceAll("-", ""));
+				map.put("username", nerd.getName());
+				map.put("nickname", nerd.getNickname());
+				map.put("rank", camelCase(nerd.getRank()));
+				map.put("about", nerd.getAbout() == null ? "" : nerd.getAbout());
+				map.put("birthday", nerd.getBirthday() == null ? "" : "%s (%d years)".formatted(shortDateFormat(nerd.getBirthday()), nerd.getBirthday().until(LocalDate.now()).getYears()));
+				map.put("pronouns", nerd.getPronouns() == null ? "" : String.join(", ", nerd.getPronouns().stream().map(Nerd.Pronoun::toString).toList()));
+				map.put("preferredName", nerd.getPreferredName() == null ? "" : nerd.getPreferredName());
+				map.put("promotionDate", nerd.getPromotionDate() == null ? "" : "%s (%d years)".formatted(shortDateFormat(nerd.getPromotionDate()), nerd.getPromotionDate().until(LocalDate.now()).getYears()));
+				map.put("countryCode", new GeoIPService().get(nerd).getCountryCode());
+				return map;
+			})
 			.toList();
 	}
 
