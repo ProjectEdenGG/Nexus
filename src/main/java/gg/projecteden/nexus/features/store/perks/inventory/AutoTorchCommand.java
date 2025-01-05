@@ -128,24 +128,17 @@ public class AutoTorchCommand extends CustomCommand {
 				Block block = player.getLocation().getBlock();
 
 				Tasks.wait(5, () -> {
-					CompletableTask.supplySync(() -> {
-						if (!autoTorchUser.applies(player, block)) // tests light level and for valid torch placing location
-							return false;
+					if (!autoTorchUser.applies(player, block)) // tests light level and for valid torch placing location
+						return;
 
-						if (!BlockUtils.tryPlaceEvent(player, block, block.getRelative(0, -1, 0), autoTorchUser.getTorchMaterial()))
-							return false;
+					if (!BlockUtils.tryPlaceEvent(player, block, block.getRelative(0, -1, 0), autoTorchUser.getTorchMaterial()))
+						return;
 
-						return true;
-					}).thenAccept(success -> {
-						if (success) {
-							// play sound
-							new SoundBuilder(Sound.BLOCK_WOOD_PLACE).location(block).category(SoundCategory.BLOCKS).play();
+					new SoundBuilder(Sound.BLOCK_WOOD_PLACE).location(block).category(SoundCategory.BLOCKS).play();
 
-							// remove a torch from player's inventory
-							if (gameMode.isSurvival())
-								item.subtract();
-						}
-					});
+					// remove a torch from player's inventory
+					if (gameMode.isSurvival())
+						item.subtract();
 				});
 			});
 		});
