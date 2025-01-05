@@ -31,6 +31,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockReceiveGameEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.event.raid.RaidTriggerEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -222,6 +223,16 @@ public class VanishListener implements Listener {
 			return;
 
 		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void on(RaidTriggerEvent event) {
+		final VanishUser user = service.get(event.getPlayer());
+		if (!user.isVanished())
+			return;
+
+		event.setCancelled(true);
+		user.notifyDisabled(Setting.INTERACT, "Triggering raid");
 	}
 
 }
