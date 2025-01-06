@@ -7,23 +7,15 @@ import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.M
 import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.features.wither.fights.CorruptedFight;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.witherarena.WitherArenaConfig;
 import gg.projecteden.nexus.models.witherarena.WitherArenaConfigService;
-import gg.projecteden.nexus.utils.FuzzyItemStack;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.SneakyThrows;
 import org.bukkit.GameMode;
@@ -32,17 +24,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import static gg.projecteden.nexus.features.wither.WitherChallenge.currentFight;
-import static gg.projecteden.nexus.models.witherarena.WitherArenaConfig.isBeta;
-import static gg.projecteden.nexus.models.witherarena.WitherArenaConfig.isMaintenance;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import java.util.*;
 
 @Redirect(from = "/wchat", to = "/wither chat")
 public class WitherCommand extends CustomCommand {
@@ -55,7 +37,7 @@ public class WitherCommand extends CustomCommand {
 	@Path("challenge")
 	@Description("Challenge the wither to a fight")
 	void fight() {
-		if (!isStaff() && isBeta())
+		if (!isStaff() && WitherArenaConfig.isBeta())
 			error("The wither is currently being beta tested by staff. It should be back soon!");
 
 		if (Nexus.isMaintenanceQueued())
@@ -64,13 +46,13 @@ public class WitherCommand extends CustomCommand {
 		if (worldGroup() != WorldGroup.SURVIVAL)
 			error("You cannot fight the wither in " + camelCase(worldGroup()));
 
-		if (isMaintenance() && !isStaff())
+		if (WitherArenaConfig.isMaintenance() && !isStaff())
 			error("The wither arena is currently under maintenance, please wait");
 
 		if (!checkHasItems())
 			return;
 
-		if (currentFight != null)
+		if (WitherChallenge.currentFight != null)
 			error("The wither is already being fought, please try again later");
 
 		new DifficultySelectionMenu().open(player());
@@ -107,18 +89,18 @@ public class WitherCommand extends CustomCommand {
 	@Path("invite <player>")
 	@Description("Invite players to your party")
 	void invite(Player player) {
-		if (currentFight == null)
+		if (WitherChallenge.currentFight == null)
 			error("There is currently no challenging party. You can make one with &c/wither challenge");
 
-		if (!currentFight.getHostPlayer().equals(player()))
+		if (!WitherChallenge.currentFight.getHostPlayer().equals(player()))
 			error("You are not the host of the current party");
 
-		if (currentFight.isStarted())
+		if (WitherChallenge.currentFight.isStarted())
 			error("You cannot invite players after the fight has started");
 
 		send(PREFIX + "You have invited &e" + Nickname.of(player) + " &3to fight the wither with you");
 		send(player, json(PREFIX + "&e" + nickname() + " &3has invited you to challenge the wither in " +
-				currentFight.getDifficulty().getTitle() + " &3mode. ")
+				WitherChallenge.currentFight.getDifficulty().getTitle() + " &3mode. ")
 				.next("&e&lClick here to join").command("/wither join").hover("&eYou will be added to the wither queue"));
 	}
 
@@ -128,59 +110,59 @@ public class WitherCommand extends CustomCommand {
 	@TabCompleteIgnore
 	// TODO Only work if invited
 	void join() {
-		if (!Rank.of(player()).isStaff() && isBeta())
+		if (!Rank.of(player()).isStaff() && WitherArenaConfig.isBeta())
 			error("The wither is currently being beta tested by staff. It should be back soon!");
 
-		if (currentFight == null)
+		if (WitherChallenge.currentFight == null)
 			error("There is currently no challenging party. You can make one with &c/wither challenge");
 
-		if (currentFight.isInParty(player()))
+		if (WitherChallenge.currentFight.isInParty(player()))
 			error("You have already joined the current party! Please wait for the host to start the match.");
 
-		if (currentFight.getParty().size() == 4)
+		if (WitherChallenge.currentFight.getParty().size() == 4)
 			error("The current party is already full");
 
-		if (currentFight.isStarted())
+		if (WitherChallenge.currentFight.isStarted())
 			error("The party has already begun the fight!");
 
-		currentFight.getParty().add(uuid());
-		currentFight.broadcastToParty("&e" + nickname() + " &3has joined the party");
+		WitherChallenge.currentFight.getParty().add(uuid());
+		WitherChallenge.currentFight.broadcastToParty("&e" + nickname() + " &3has joined the party");
 	}
 
 	@Path("abandon")
 	@Description("Cancel your challenge")
 	void abandon() {
-		if (currentFight == null)
+		if (WitherChallenge.currentFight == null)
 			error("There is currently no challenging party. You can make one with &c/wither challenge");
 
-		if (!currentFight.getHostPlayer().equals(player()))
+		if (!WitherChallenge.currentFight.getHostPlayer().equals(player()))
 			error("You are not the host of the challenging party");
 
-		if (currentFight.isStarted())
+		if (WitherChallenge.currentFight.isStarted())
 			error("You cannot abandon the fight once it has already begun! Use &c/wither quit &3to resign");
 
-		currentFight.broadcastToParty("The host has abandoned the fight and the party has been disbanded");
-		currentFight.alivePlayers().forEach(Warps::survival);
+		WitherChallenge.currentFight.broadcastToParty("The host has abandoned the fight and the party has been disbanded");
+		WitherChallenge.currentFight.alivePlayers().forEach(Warps::survival);
 		WitherChallenge.reset();
 	}
 
 	@Path("quit")
 	@Description("Forfeit the fight")
 	void quit() {
-		if (currentFight == null)
+		if (WitherChallenge.currentFight == null)
 			error("There is currently no challenging party. You can make one with &c/wither challenge");
 
-		if (!currentFight.isInParty(player()))
+		if (!WitherChallenge.currentFight.isInParty(player()))
 			error("You are not in the current party.");
 
-		if (currentFight.isStarted())
-			currentFight.processPlayerQuit(player(), "quit");
-		else if (currentFight.getParty().size() == 1) {
+		if (WitherChallenge.currentFight.isStarted())
+			WitherChallenge.currentFight.processPlayerQuit(player(), "quit");
+		else if (WitherChallenge.currentFight.getParty().size() == 1) {
 			WitherChallenge.reset();
 			send(PREFIX + "You have forfeited the fight. You will keep your items");
 		} else {
-			currentFight.broadcastToParty("&e" + name() + " &3has left the party");
-			currentFight.getParty().remove(uuid());
+			WitherChallenge.currentFight.broadcastToParty("&e" + name() + " &3has left the party");
+			WitherChallenge.currentFight.getParty().remove(uuid());
 		}
 	}
 
@@ -189,13 +171,13 @@ public class WitherCommand extends CustomCommand {
 	@HideFromWiki
 	@TabCompleteIgnore
 	void start() {
-		if (currentFight == null)
+		if (WitherChallenge.currentFight == null)
 			error("There is currently no challenging party. You can make one with &c/wither challenge");
 
-		if (!currentFight.getHostPlayer().equals(player()))
+		if (!WitherChallenge.currentFight.getHostPlayer().equals(player()))
 			error("You are not the host of the challenging party");
 
-		if (currentFight.isStarted())
+		if (WitherChallenge.currentFight.isStarted())
 			error("The fight has already started!");
 
 		if (!checkHasItems())
@@ -203,30 +185,30 @@ public class WitherCommand extends CustomCommand {
 
 		removeRequiredItems();
 
-		int partySize = currentFight.getParty().size();
-		String message = "&e" + Nickname.of(currentFight.getHostPlayer()) +
+		int partySize = WitherChallenge.currentFight.getParty().size();
+		String message = "&e" + Nickname.of(WitherChallenge.currentFight.getHostPlayer()) +
 			(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3are" : " &3is") +
-			" challenging the wither to a fight in " + currentFight.getDifficulty().getTitle() + " &3mode";
+			" challenging the wither to a fight in " + WitherChallenge.currentFight.getDifficulty().getTitle() + " &3mode";
 
-		if (isBeta())
+		if (WitherArenaConfig.isBeta())
 			Broadcast.staffIngame().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
 		else
 			Broadcast.all().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
 
-		currentFight.teleportPartyToArena();
+		WitherChallenge.currentFight.teleportPartyToArena();
 		Tasks.Countdown.builder()
 			.duration(TickTime.SECOND.x(10))
 			.onSecond(i -> {
-				if (currentFight != null) {
+				if (WitherChallenge.currentFight != null) {
 					if (i == 10)
-						currentFight.broadcastToParty("The fight will begin in...");
-					currentFight.broadcastToParty("&e" + i + "s...");
+						WitherChallenge.currentFight.broadcastToParty("The fight will begin in...");
+					WitherChallenge.currentFight.broadcastToParty("&e" + i + "s...");
 				}
 			})
 			.doZero(false)
 			.onComplete(() -> {
-				if (currentFight != null)
-					currentFight.start();
+				if (WitherChallenge.currentFight != null)
+					WitherChallenge.currentFight.start();
 			})
 			.start();
 	}
@@ -268,7 +250,7 @@ public class WitherCommand extends CustomCommand {
 		for (Material material : item.getMaterials()) {
 			int removed = 0;
 			for (ItemStack content : inventory().getContents()) {
-				if (isNullOrAir(content))
+				if (Nullables.isNullOrAir(content))
 					continue;
 				if (content.getType() != material)
 					continue;
@@ -287,34 +269,34 @@ public class WitherCommand extends CustomCommand {
 	@Path("chat <message...>")
 	@Description("Send a message to all members of the party")
 	void chat(String message) {
-		if (currentFight == null)
+		if (WitherChallenge.currentFight == null)
 			error("There is currently no challenging party. You can make one with &c/wither challenge");
 
-		if (!currentFight.isInParty(player()))
+		if (!WitherChallenge.currentFight.isInParty(player()))
 			error("You are not in the challenging party.");
 
-		currentFight.broadcastToParty("&e" + name() + " &3> &e" + message);
+		WitherChallenge.currentFight.broadcastToParty("&e" + name() + " &3> &e" + message);
 	}
 
 	@Path("spectate")
 	@Description("Spectate the fight")
 	void spectate() {
-		if (!Rank.of(player()).isStaff() && isBeta())
+		if (!Rank.of(player()).isStaff() && WitherArenaConfig.isBeta())
 			error("The wither is currently being beta tested by staff. It should be back soon!");
 
-		if (currentFight == null)
+		if (WitherChallenge.currentFight == null)
 			error("There is currently no challenging party. You can make one with &c/wither challenge");
 
-		if (!currentFight.isStarted())
+		if (!WitherChallenge.currentFight.isStarted())
 			error("The current fight has not started yet. Please wait for it to start");
 
-		if (currentFight.isSpectating(player()))
+		if (WitherChallenge.currentFight.isSpectating(player()))
 			error("You are already spectating the current fight");
 
-		if (currentFight.isAlive(player()))
+		if (WitherChallenge.currentFight.isAlive(player()))
 			error("You cannot spectate the match as a party member");
 
-		currentFight.getSpectators().add(player().getUniqueId());
+		WitherChallenge.currentFight.getSpectators().add(player().getUniqueId());
 		player().teleportAsync(WitherChallenge.cageLoc).thenRun(() ->
 			Tasks.wait(3, () -> player().setGameMode(GameMode.SPECTATOR)));
 	}
@@ -342,16 +324,16 @@ public class WitherCommand extends CustomCommand {
 	@Permission(Group.STAFF)
 	@Description("Enable maintenance mode")
 	void maintenance() {
-		new WitherArenaConfigService().edit0(config -> config.setMaintenance(!isMaintenance()));
-		send(PREFIX + "Wither arena maintenance mode " + (isMaintenance() ? "&aenabled" : "&cdisabled"));
+		new WitherArenaConfigService().edit0(config -> config.setMaintenance(!WitherArenaConfig.isMaintenance()));
+		send(PREFIX + "Wither arena maintenance mode " + (WitherArenaConfig.isMaintenance() ? "&aenabled" : "&cdisabled"));
 	}
 
 	@Path("beta")
 	@Permission(Group.ADMIN)
 	@Description("Enable beta mode")
 	void beta() {
-		new WitherArenaConfigService().edit0(config -> config.setBeta(!isBeta()));
-		send(PREFIX + "Wither arena beta mode " + (isBeta() ? "&aenabled" : "&cdisabled"));
+		new WitherArenaConfigService().edit0(config -> config.setBeta(!WitherArenaConfig.isBeta()));
+		send(PREFIX + "Wither arena beta mode " + (WitherArenaConfig.isBeta() ? "&aenabled" : "&cdisabled"));
 	}
 
 	@Path("getFragment")
@@ -365,8 +347,8 @@ public class WitherCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	@Description("Test a counter attack")
 	void testCounterAttack(CorruptedFight.CorruptedCounterAttacks counterAttack) {
-		if (currentFight instanceof CorruptedFight)
-			counterAttack.execute(currentFight.alivePlayers());
+		if (WitherChallenge.currentFight instanceof CorruptedFight)
+			counterAttack.execute(WitherChallenge.currentFight.alivePlayers());
 	}
 
 }

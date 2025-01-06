@@ -1,7 +1,9 @@
 package gg.projecteden.nexus.features.events.y2020.pugmas20.menu;
 
+import gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -10,11 +12,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.LinkedHashMap;
 
-import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.location;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-
 public class AdventMenu {
-	private static final Location adventHeadsLoc = location(870, 44, 573);
+	private static final Location adventHeadsLoc = Pugmas20.location(870, 44, 573);
 	public static final Block origin = adventHeadsLoc.getBlock().getRelative(BlockFace.UP);
 	@Getter
 	private static final LinkedHashMap<SlotPos, ItemBuilder> adventHeadMap = new LinkedHashMap<>();
@@ -34,9 +33,9 @@ public class AdventMenu {
 		for (int z = 0; z <= 4; z++) {        // 0-4 col
 			for (int x = 1; x <= 7; x++) {    // 1-7 row
 				Block block = origin.getRelative(x, 0, z);
-				if (!isNullOrAir(block)) {
+				if (!Nullables.isNullOrAir(block)) {
 					ItemStack drop = block.getDrops().stream().findFirst().orElse(null);
-					if (!isNullOrAir(drop)) {
+					if (!Nullables.isNullOrAir(drop)) {
 						ItemBuilder skull = new ItemBuilder(drop);
 						int size = adventHeadMap.size();
 						if (size <= 6)

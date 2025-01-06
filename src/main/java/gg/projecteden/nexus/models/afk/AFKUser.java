@@ -18,14 +18,10 @@ import gg.projecteden.nexus.models.back.Back;
 import gg.projecteden.nexus.models.back.BackService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -38,8 +34,6 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
-
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Data
 @Entity(value = "afk_user", noClassnameStored = true)
@@ -168,7 +162,7 @@ public class AFKUser implements PlayerOwnedObject {
 	}
 
 	public void setMessage(String message) {
-		this.message = stripColor(message);
+		this.message = StringUtils.stripColor(message);
 	}
 
 	public void setTime() {

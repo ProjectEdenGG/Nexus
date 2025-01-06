@@ -29,19 +29,9 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.models.chat.PublicChannel;
-import gg.projecteden.nexus.utils.BossBarBuilder;
-import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.GlowUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.nms.PacketUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.SoundUtils;
-import gg.projecteden.nexus.utils.Utils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -88,10 +78,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.api.common.utils.TimeUtils.TickTime.TICK;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static net.kyori.adventure.title.Title.Times.times;
-
 @EqualsAndHashCode(callSuper = true)
 @Data
 @MatchDataFor(Sabotage.class)
@@ -104,7 +90,7 @@ public class SabotageMatchData extends MatchData {
 	public static final int BRIGHT_LIGHT_LEVEL = 6;
 	public static final int DARK_LIGHT_LEVEL = 0;
 	private static final Sound ALARM_SOUND = Sound.sound(Key.key("minecraft", "custom.minigames.sabotage.alarm"), Sound.Source.MASTER, .25F, 1F);
-	private static final Title ALARM_TITLE = Title.title(Component.text('滍'), Component.empty(), times(TICK.duration(2), TICK.duration(12), TICK.duration(2)));
+	private static final Title ALARM_TITLE = Title.title(Component.text('滍'), Component.empty(), Title.Times.times(TimeUtils.TickTime.TICK.duration(2), TimeUtils.TickTime.TICK.duration(12), TimeUtils.TickTime.TICK.duration(2)));
 
 	private final Map<UUID, UUID> votes = new HashMap<>();
 	private final BiMap<UUID, SabotageColor> playerColors = HashBiMap.create();
@@ -149,7 +135,7 @@ public class SabotageMatchData extends MatchData {
 		Set<ArmorStandTask> set = new HashSet<>();
 		getArena().worldguard().getEntitiesInRegionByClass(getArena().getProtectedRegion(), ArmorStand.class).forEach(armorStand -> {
 			ItemStack item = armorStand.getEquipment().getHelmet();
-			if (isNullOrAir(item)) return;
+			if (Nullables.isNullOrAir(item)) return;
 			TaskPart part = TaskPart.get(item);
 			if (part == null) return;
 			BlockFace facing = armorStand.getFacing();
@@ -463,7 +449,7 @@ public class SabotageMatchData extends MatchData {
 				display += " (" + (tie ? "Tied" : "Skipped") + ")";
 
 			// TODO: true animation
-			match.showTitle(Title.title(Component.empty(), new JsonBuilder(display).build(), times(fade, Duration.ofSeconds(7), fade)));
+			match.showTitle(Title.title(Component.empty(), new JsonBuilder(display).build(), Title.Times.times(fade, Duration.ofSeconds(7), fade)));
 			match.playSound(Sound.sound(org.bukkit.Sound.ENTITY_PLAYER_SPLASH_HIGH_SPEED, Sound.Source.PLAYER, 1.0F, 1.0F));
 			clearVotes();
 			votingScreen = null;

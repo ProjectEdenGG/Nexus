@@ -40,6 +40,11 @@ public class GlowingEnchant extends CustomEnchant {
 	}
 
 	@Override
+	public int getMaxLevel() {
+		return 1;
+	}
+
+	@Override
 	public @NotNull EnchantmentTarget getItemTarget() {
 		return EnchantmentTarget.ARMOR_HEAD;
 	}

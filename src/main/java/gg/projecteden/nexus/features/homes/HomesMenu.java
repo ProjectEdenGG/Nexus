@@ -12,6 +12,7 @@ import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -23,9 +24,6 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static gg.projecteden.nexus.features.menus.api.SignMenuFactory.ARROWS;
-import static gg.projecteden.nexus.utils.StringUtils.loreize;
 
 public class HomesMenu {
 	private static final SignMenuFactory signMenuFactory = Nexus.getSignMenuFactory();
@@ -46,7 +44,7 @@ public class HomesMenu {
 		new SetHomeProvider(homeOwner).open(homeOwner.getOnlinePlayer());
 	}
 
-	private static final List<String> playerNameLines = List.of("", ARROWS, "Enter a", "player's name");
+	private static final List<String> playerNameLines = List.of("", SignMenuFactory.ARROWS, "Enter a", "player's name");
 
 	public static void allow(Home home, Consumer<String[]> onResponse) {
 		signMenuFactory.lines(playerNameLines)
@@ -112,7 +110,7 @@ public class HomesMenu {
 	}
 
 	public static void rename(Home home, Consumer<String[]> onResponse) {
-		signMenuFactory.lines("", ARROWS, "Enter the home's", "new name")
+		signMenuFactory.lines("", SignMenuFactory.ARROWS, "Enter the home's", "new name")
 				.prefix(HomesFeature.PREFIX)
 				.response(lines -> {
 					if (lines[0].length() > 0) {
@@ -129,7 +127,7 @@ public class HomesMenu {
 	}
 
 	public static void create(HomeOwner homeOwner, Consumer<String[]> onResponse) {
-		signMenuFactory.lines("", ARROWS, "Enter your new", "home's name")
+		signMenuFactory.lines("", SignMenuFactory.ARROWS, "Enter your new", "home's name")
 				.prefix(HomesFeature.PREFIX)
 				.response(lines -> {
 					if (lines[0].length() > 0) {
@@ -159,7 +157,7 @@ public class HomesMenu {
 
 			Supplier<Stream<String>> names = () -> accessList.stream().map(Nickname::of);
 			if (names.get().count() > 10)
-				lore.addAll(loreize(names.get().collect(Collectors.joining(", "))));
+				lore.addAll(StringUtils.loreize(names.get().collect(Collectors.joining(", "))));
 			else
 				lore.addAll(names.get().map(name -> "&f" + name).toList());
 		}

@@ -15,6 +15,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.
 import gg.projecteden.nexus.features.minigames.models.matchdata.TNTTagMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.nameplates.Nameplates;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.RandomUtils;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -28,9 +29,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static java.util.stream.Collectors.joining;
+import java.util.stream.Collectors;
 
 public final class TNTTag extends TeamMechanic {
 
@@ -157,7 +156,7 @@ public final class TNTTag extends TeamMechanic {
 					if (minigamer == tagged || !minigamer.isAlive() || minigamer.getTeam().equals(matchData.getTaggedTeam()))
 						return Double.MAX_VALUE;
 
-					return distance(minigamer, minigamer).get();
+					return Distance.distance(minigamer, minigamer).get();
 				}));
 
 				if (target != null)
@@ -210,7 +209,7 @@ public final class TNTTag extends TeamMechanic {
 			final Minigamer minigamer = minigamers.getFirst();
 			Minigames.broadcast(minigamer.getColoredName() + " &3has won &e" + match.getArena().getDisplayName());
 		} else {
-			Nexus.severe("Multiple players won TNT Tag: " + minigamers.stream().map(Minigamer::getColoredName).collect(joining("&3, ")));
+			Nexus.severe("Multiple players won TNT Tag: " + minigamers.stream().map(Minigamer::getColoredName).collect(Collectors.joining("&3, ")));
 		}
 	}
 
@@ -255,7 +254,7 @@ public final class TNTTag extends TeamMechanic {
 
 	@Override
 	public void kill(@NotNull Minigamer victim, @Nullable Minigamer attacker) {
-		victim.getOnlinePlayer().getWorld().spawnParticle(Particle.EXPLOSION_LARGE, victim.getLocation().add(0, 1, 0), 1);
+		victim.getOnlinePlayer().getWorld().spawnParticle(Particle.EXPLOSION, victim.getLocation().add(0, 1, 0), 1);
 		// TODO sound?
 		super.kill(victim, attacker);
 	}

@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.Nullables;
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
@@ -53,12 +54,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
-import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
-import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-
 @NoArgsConstructor
 public class StaffHallCommand extends CustomCommand implements Listener {
 	private final StaffHallConfigService service = new StaffHallConfigService();
@@ -86,20 +81,20 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 		send("&e&lNickname: &3" + nerd.getNickname());
 		send("&e&lIGN: &3" + nerd.getName());
 		send("&e&lRank: &3" + nerd.getRank().getColoredName());
-		if (isNotNullOrEmpty(nerd.getPronouns()))
+		if (Nullables.isNotNullOrEmpty(nerd.getPronouns()))
 			send("&e&lPronouns: &3" + String.join(",", nerd.getPronouns().stream().map(Enum::toString).toList()));
-		if (isNotNullOrEmpty(nerd.getFilteredPreferredNames()))
+		if (Nullables.isNotNullOrEmpty(nerd.getFilteredPreferredNames()))
 			send(plural("&e&lPreferred name", nerd.getFilteredPreferredNames().size()) + ": &3" + String.join(", ", nerd.getFilteredPreferredNames()));
 		if (nerd.getBirthday() != null)
-			send("&e&lBirthday: &3" + shortDateFormat(nerd.getBirthday()) + " (" + nerd.getBirthday().until(LocalDate.now()).getYears() + " years)");
+			send("&e&lBirthday: &3" + TimeUtils.shortDateFormat(nerd.getBirthday()) + " (" + nerd.getBirthday().until(LocalDate.now()).getYears() + " years)");
 		if (nerd.getFirstJoin() != null)
-			send("&e&lJoin date: &3" + shortDateTimeFormat(nerd.getFirstJoin()));
+			send("&e&lJoin date: &3" + TimeUtils.shortDateTimeFormat(nerd.getFirstJoin()));
 		if (nerd.getPromotionDate() != null)
-			send("&e&lPromotion date: &3" + shortDateFormat(nerd.getPromotionDate()));
+			send("&e&lPromotion date: &3" + TimeUtils.shortDateFormat(nerd.getPromotionDate()));
 
 		line();
 
-		if (!isNullOrEmpty(nerd.getAbout())) {
+		if (!gg.projecteden.nexus.utils.Nullables.isNullOrEmpty(nerd.getAbout())) {
 			send("&e&lAbout me: &3" + nerd.getAbout());
 			line();
 		}
@@ -124,9 +119,9 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 
 		if (worldguard.getRegionsLikeAt("staffhall", location).size() > 0) {
 			if (!npc.getName().contains(" "))
-				runCommand(event.getClicker(), "staffhall view " + stripColor(npc.getName()));
+				runCommand(event.getClicker(), "staffhall view " + StringUtils.stripColor(npc.getName()));
 		} else if (worldguard.getRegionsLikeAt("hallofhistory", location).size() > 0)
-			runCommand(event.getClicker(), "hoh view " + stripColor(npc.getName()));
+			runCommand(event.getClicker(), "hoh view " + StringUtils.stripColor(npc.getName()));
 		else if (npc.getId() == 2678 || npc.getId() == 4657)
 			runCommand(event.getClicker(), "griffinwelc");
 		else if (npc.getId() == 2697)
@@ -289,13 +284,13 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 				for (Nerd staff : ranks.get(rank))
 					try {
 						String html = "";
-						if (isNotNullOrEmpty(staff.getFilteredPreferredNames()))
+						if (Nullables.isNotNullOrEmpty(staff.getFilteredPreferredNames()))
 							html += "<span style=\"font-weight: bold;\">" + StringUtils.plural("Preferred name", staff.getFilteredPreferredNames().size()) + ":</span> " + String.join(", ", staff.getFilteredPreferredNames()) + "<br/>";
 						if (staff.getBirthday() != null)
-							html += "<span style=\"font-weight: bold;\">Birthday:</span> " + shortDateFormat(staff.getBirthday())
+							html += "<span style=\"font-weight: bold;\">Birthday:</span> " + TimeUtils.shortDateFormat(staff.getBirthday())
 								+ " (" + staff.getBirthday().until(LocalDate.now()).getYears() + " years)<br/>";
 						if (staff.getPromotionDate() != null)
-							html += "<span style=\"font-weight: bold;\">Promotion date:</span> " + shortDateFormat(staff.getPromotionDate()) + "<br/>";
+							html += "<span style=\"font-weight: bold;\">Promotion date:</span> " + TimeUtils.shortDateFormat(staff.getPromotionDate()) + "<br/>";
 						html += "<br/>";
 						if (!Nullables.isNullOrEmpty(staff.getAbout()))
 							html += "<span style=\"font-weight: bold;\">About me:</span> " + staff.getAbout();

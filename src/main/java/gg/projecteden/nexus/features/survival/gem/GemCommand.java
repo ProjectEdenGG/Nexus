@@ -1,22 +1,14 @@
 package gg.projecteden.nexus.features.survival.gem;
 
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.survival.MendingIntegrity;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.utils.Enchant;
-import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Utils;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Sound;
@@ -31,8 +23,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.Arrays;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
 @Permission(Group.ADMIN)
@@ -63,7 +53,7 @@ public class GemCommand extends CustomCommand implements Listener {
 			return;
 		if (event.getHand() != EquipmentSlot.HAND)
 			return;
-		if (event.getAction() == Action.RIGHT_CLICK_BLOCK && !isNullOrAir(event.getClickedBlock()))
+		if (event.getAction() == Action.RIGHT_CLICK_BLOCK && !Nullables.isNullOrAir(event.getClickedBlock()))
 			if (MaterialTag.CONTAINERS.isTagged(event.getClickedBlock().getType()))
 				return;
 
@@ -89,7 +79,7 @@ public class GemCommand extends CustomCommand implements Listener {
 	public void addGemEnchantToTool(Player player, ItemStack gem, ItemStack tool) {
 		Enchantment enchantment = gem.getEnchantments().entrySet().stream().findFirst().get().getKey();
 		int level = gem.getEnchantments().entrySet().stream().findFirst().get().getValue();
-		if (isNullOrAir(tool)) {
+		if (Nullables.isNullOrAir(tool)) {
 			PlayerUtils.send(player, "&cYou must hold an item in your other hand to apply the enchantment");
 			return;
 		}
@@ -126,10 +116,6 @@ public class GemCommand extends CustomCommand implements Listener {
 			}
 		}
 
-		if (Enchantment.MENDING.equals(enchantment)) {
-			MendingIntegrity.setMaxIntegrity(tool);
-		}
-
 		ComponentLike displayName = gem.getItemMeta().displayName();
 		gem.subtract();
 		tool.addUnsafeEnchantment(enchantment, level);
@@ -150,7 +136,7 @@ public class GemCommand extends CustomCommand implements Listener {
 	}
 
 	public boolean isGem(ItemStack item) {
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return false;
 
 		if (!item.getType().equals(CustomMaterial.GEM_SAPPHIRE.getMaterial()))

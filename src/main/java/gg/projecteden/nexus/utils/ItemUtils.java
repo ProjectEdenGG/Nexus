@@ -2,11 +2,9 @@ package gg.projecteden.nexus.utils;
 
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.survival.MendingIntegrity;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
@@ -16,6 +14,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -23,16 +22,19 @@ import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
+import net.minecraft.world.item.component.CustomData;
 import org.apache.logging.log4j.util.TriConsumer;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.StructureType;
+import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
-import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_20_R3.potion.CraftPotionEffectType;
-import org.bukkit.craftbukkit.v1_20_R3.potion.CraftPotionUtil;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.potion.CraftPotionEffectType;
+import org.bukkit.craftbukkit.potion.CraftPotionUtil;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
@@ -43,35 +45,23 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-
 public class ItemUtils {
 
 	public static boolean isPreferredTool(ItemStack tool, Block block) {
-		if (isNullOrAir(tool) || isNullOrAir(block))
+		if (Nullables.isNullOrAir(tool) || Nullables.isNullOrAir(block))
 			return false;
 
 		final ToolType toolType = ToolType.of(tool);
@@ -86,9 +76,9 @@ public class ItemUtils {
 
 	@Contract("_, null -> false; null, _ -> false")
 	public static boolean isTypeAndNameEqual(ItemStack itemStack1, ItemStack itemStack2) {
-		if (isNullOrAir(itemStack1) || isNullOrAir(itemStack2)) return false;
+		if (Nullables.isNullOrAir(itemStack1) || Nullables.isNullOrAir(itemStack2)) return false;
 		if (itemStack1.getType() != itemStack2.getType()) return false;
-		Function<ItemStack, String> name = item -> stripColor(item.getItemMeta().getDisplayName());
+		Function<ItemStack, String> name = item -> StringUtils.stripColor(item.getItemMeta().getDisplayName());
 		return name.apply(itemStack1).equals(name.apply(itemStack2));
 	}
 
@@ -103,6 +93,10 @@ public class ItemUtils {
 		int modelId2 = new ItemBuilder(itemStack2).modelId();
 
 		return modelId1 == modelId2;
+	}
+
+	public static String getFixedPotionName(PotionEffectType effect) {
+		return effect.getName();
 	}
 
 	public static boolean isFuzzyMatch(ItemStack itemStack1, ItemStack itemStack2) {
@@ -125,9 +119,9 @@ public class ItemUtils {
 			List<String> lore1 = itemMeta1.getLore();
 			List<String> lore2 = itemMeta2.getLore();
 
-			final List<String> conditionTags = Arrays.stream(Condition.values()).map(condition -> stripColor(condition.getTag())).toList();
+			final List<String> conditionTags = Arrays.stream(Condition.values()).map(condition -> StringUtils.stripColor(condition.getTag())).toList();
 			final Function<List<String>, List<String>> filter = lore -> lore.stream()
-				.filter(line -> !conditionTags.contains(stripColor(line)))
+				.filter(line -> !conditionTags.contains(StringUtils.stripColor(line)))
 				.filter(line -> !Nullables.isNullOrEmpty(line.trim()))
 				.toList();
 
@@ -148,7 +142,7 @@ public class ItemUtils {
 	}
 
 	public static @Nullable ItemStack clone(@Nullable ItemStack itemStack) {
-		if (isNullOrAir(itemStack))
+		if (Nullables.isNullOrAir(itemStack))
 			return null;
 
 		return itemStack.clone();
@@ -156,7 +150,7 @@ public class ItemUtils {
 
 	@Contract("null, _ -> null; !null, _ -> _")
 	public static @Nullable ItemStack clone(@Nullable ItemStack itemStack, int amount) {
-		if (isNullOrAir(itemStack))
+		if (Nullables.isNullOrAir(itemStack))
 			return null;
 
 		final ItemStack clone = itemStack.clone();
@@ -170,13 +164,13 @@ public class ItemUtils {
 
 	public static void combine(List<ItemStack> itemStacks, List<ItemStack> newItemStacks) {
 		for (ItemStack newItemStack : newItemStacks) {
-			if (isNullOrAir(newItemStack))
+			if (Nullables.isNullOrAir(newItemStack))
 				continue;
 
 			final Iterator<ItemStack> iterator = itemStacks.iterator();
 			while (iterator.hasNext()) {
 				final ItemStack next = iterator.next();
-				if (isNullOrAir(next))
+				if (Nullables.isNullOrAir(next))
 					continue;
 				if (next.getAmount() >= next.getType().getMaxStackSize())
 					continue;
@@ -217,7 +211,7 @@ public class ItemUtils {
 	public static List<ItemStack> getRawShulkerContents(ItemStack itemStack) {
 		List<ItemStack> contents = new ArrayList<>();
 
-		if (isNullOrAir(itemStack))
+		if (Nullables.isNullOrAir(itemStack))
 			return contents;
 
 		if (!MaterialTag.SHULKER_BOXES.isTagged(itemStack.getType()))
@@ -246,9 +240,9 @@ public class ItemUtils {
 		Player _player = player.getPlayer();
 		ItemStack mainHand = _player.getInventory().getItemInMainHand();
 		ItemStack offHand = _player.getInventory().getItemInOffHand();
-		if (!isNullOrAir(mainHand) && (material == null || material.is(mainHand)))
+		if (!Nullables.isNullOrAir(mainHand) && (material == null || material.is(mainHand)))
 			return mainHand;
-		else if (!isNullOrAir(offHand) && (material == null || material.is(offHand)))
+		else if (!Nullables.isNullOrAir(offHand) && (material == null || material.is(offHand)))
 			return offHand;
 		return null;
 	}
@@ -257,16 +251,16 @@ public class ItemUtils {
 		Player _player = player.getPlayer();
 		ItemStack mainHand = _player.getInventory().getItemInMainHand();
 		ItemStack offHand = _player.getInventory().getItemInOffHand();
-		if (!isNullOrAir(mainHand) && (material == null || mainHand.getType() == material))
+		if (!Nullables.isNullOrAir(mainHand) && (material == null || mainHand.getType() == material))
 			return mainHand;
-		else if (!isNullOrAir(offHand) && (material == null || offHand.getType() == material))
+		else if (!Nullables.isNullOrAir(offHand) && (material == null || offHand.getType() == material))
 			return offHand;
 		return null;
 	}
 
 	public static ItemStack getToolRequired(HasPlayer player) {
 		ItemStack item = getTool(player);
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			throw new InvalidInputException("You are not holding anything");
 		return item;
 	}
@@ -279,9 +273,9 @@ public class ItemUtils {
 		Player _player = player.getPlayer();
 		ItemStack mainHand = _player.getInventory().getItemInMainHand();
 		ItemStack offHand = _player.getInventory().getItemInOffHand();
-		if (!isNullOrAir(mainHand) && (material == null || mainHand.getType() == material))
+		if (!Nullables.isNullOrAir(mainHand) && (material == null || mainHand.getType() == material))
 			return EquipmentSlot.HAND;
-		else if (!isNullOrAir(offHand) && (material == null || offHand.getType() == material))
+		else if (!Nullables.isNullOrAir(offHand) && (material == null || offHand.getType() == material))
 			return EquipmentSlot.OFF_HAND;
 		return null;
 	}
@@ -295,7 +289,7 @@ public class ItemUtils {
 
 	public static boolean isInventoryEmpty(Inventory inventory) {
 		for (ItemStack itemStack : inventory.getContents())
-			if (!isNullOrAir(itemStack))
+			if (!Nullables.isNullOrAir(itemStack))
 				return false;
 		return true;
 	}
@@ -336,7 +330,7 @@ public class ItemUtils {
 	}
 
 	public static boolean isSimilar(ItemStack item1, ItemStack item2) {
-		if (isNullOrAir(item1) || isNullOrAir(item2))
+		if (Nullables.isNullOrAir(item1) || Nullables.isNullOrAir(item2))
 			return false;
 
 		if (item1.getType() != item2.getType())
@@ -385,7 +379,7 @@ public class ItemUtils {
 	public static List<ItemStack> fixMaxStackSize(List<ItemStack> items) {
 		List<ItemStack> fixed = new ArrayList<>();
 		for (ItemStack item : items) {
-			if (isNullOrAir(item))
+			if (Nullables.isNullOrAir(item))
 				continue;
 
 			final Material material = item.getType();
@@ -429,15 +423,11 @@ public class ItemUtils {
 	}
 
 	public static void update(ItemStack item, @Nullable Player player) {
-		CustomEnchants.update(item, player);
-		MendingIntegrity.update(item, player);
-
-		// keep last
 		ItemTagsUtils.update(item);
 	}
 
-	public static int getBurnTime(ItemStack itemStack) {
-		return AbstractFurnaceBlockEntity.getFuel().getOrDefault(NMSUtils.toNMS(itemStack).getItem(), 0);
+	public static int getBurnTime(ItemStack itemStack, World world) {
+		return NMSUtils.toNMS(world).fuelValues().burnDuration(NMSUtils.toNMS(itemStack));
 	}
 
 	public static class ItemStackComparator implements Comparator<ItemStack> {
@@ -452,16 +442,13 @@ public class ItemUtils {
 			result = Integer.compare(ModelId.of(a), ModelId.of(b));
 			if (result != 0) return result;
 
-			result = b.getRarity().compareTo(a.getRarity());
-			if (result != 0) return result;
-
 			result = Integer.compare(b.getAmount(), a.getAmount());
 			return result;
 		}
 	}
 
 	public static boolean isSameHead(ItemStack itemStack1, ItemStack itemStack2) {
-		if (isNullOrAir(itemStack1) || isNullOrAir(itemStack2)) return false;
+		if (Nullables.isNullOrAir(itemStack1) || Nullables.isNullOrAir(itemStack2)) return false;
 		if (itemStack1.getType() != Material.PLAYER_HEAD || itemStack2.getType() != Material.PLAYER_HEAD) return false;
 		return Nexus.getHeadAPI().getItemID(itemStack1).equals(Nexus.getHeadAPI().getItemID(itemStack2));
 	}
@@ -634,22 +621,6 @@ public class ItemUtils {
 		};
 	}
 
-	public static final Map<PotionEffectType, String> fixedPotionNames = Map.of(
-		PotionEffectType.SLOW, "SLOWNESS",
-		PotionEffectType.FAST_DIGGING, "HASTE",
-		PotionEffectType.SLOW_DIGGING, "MINING_FATIGUE",
-		PotionEffectType.INCREASE_DAMAGE, "STRENGTH",
-		PotionEffectType.HEAL, "INSTANT_HEALTH",
-		PotionEffectType.HARM, "INSTANT_DAMAGE",
-		PotionEffectType.JUMP, "JUMP_BOOST",
-		PotionEffectType.CONFUSION, "NAUSEA",
-		PotionEffectType.DAMAGE_RESISTANCE, "RESISTANCE"
-	);
-
-	public static String getFixedPotionName(PotionEffectType effect) {
-		return fixedPotionNames.getOrDefault(effect, effect.getName());
-	}
-
 	public static ItemStack setNBTContentsOfNonInventoryItem(ItemStack mainItem, List<ItemStack> itemStacks) {
 		NonNullList<net.minecraft.world.item.ItemStack> minecraft = NonNullList.create();
 		for (int i = 0; i < itemStacks.size(); i++) {
@@ -660,18 +631,16 @@ public class ItemUtils {
 		}
 
 		net.minecraft.world.item.ItemStack handle = CraftItemStack.asNMSCopy(mainItem);
-		CompoundTag tag = new CompoundTag();
-
-		tag = handle.save(tag).getCompound("tag");
+		CompoundTag tag = handle.get(DataComponents.CUSTOM_DATA).copyTag();
 
 		CompoundTag pe = new CompoundTag();
 		if (tag.contains("ProjectEden"))
 			pe = tag.getCompound("ProjectEden");
 
-		ContainerHelper.saveAllItems(pe, minecraft);
+		ContainerHelper.saveAllItems(pe, minecraft, ((CraftServer) Bukkit.getServer()).getServer().registryAccess());
 		tag.put("ProjectEden", pe);
 
-		handle.setTag(tag);
+		handle.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
 		ItemStack bukkit = handle.getBukkitStack();
 		mainItem.setItemMeta(bukkit.getItemMeta());
@@ -683,13 +652,13 @@ public class ItemUtils {
 
 		List<ItemStack> bukkit = new ArrayList<>();
 
-		if (!handle.hasTag()) return bukkit;
-		if (!handle.getTag().contains("ProjectEden")) return bukkit;
-		if (!handle.getTag().getCompound("ProjectEden").contains("Items")) return bukkit;
+		if (!handle.has(DataComponents.CUSTOM_DATA)) return bukkit;
+		if (!handle.get(DataComponents.CUSTOM_DATA).copyTag().contains("ProjectEden")) return bukkit;
+		if (!((CompoundTag) handle.get(DataComponents.CUSTOM_DATA).copyTag().get("ProjectEden")).contains("Items")) return bukkit;
 
 
 		NonNullList<net.minecraft.world.item.ItemStack> minecraft = NonNullList.withSize(expectedSize, net.minecraft.world.item.ItemStack.EMPTY);
-		ContainerHelper.loadAllItems(handle.getTag().getCompound("ProjectEden"), minecraft);
+		ContainerHelper.loadAllItems(handle.get(DataComponents.CUSTOM_DATA).copyTag().getCompound("ProjectEden"), minecraft, ((CraftServer) Bukkit.getServer()).getServer().registryAccess());
 
 		for (int i = 0; i < Math.max(expectedSize, minecraft.size()); i++) {
 			if (i >= minecraft.size())
@@ -717,12 +686,12 @@ public class ItemUtils {
 			if (!(item.getItemMeta() instanceof PotionMeta potionMeta))
 				return new PotionWrapper();
 
-			return of(toNMS(potionMeta.getBasePotionData()), potionMeta.getCustomEffects());
+			return of(toNMS(potionMeta.getBasePotionType()), potionMeta.getCustomEffects());
 		}
 
 		@NotNull
 		public static PotionWrapper of(AreaEffectCloudApplyEvent event) {
-			final Potion potion = toNMS(event.getEntity().getBasePotionData());
+			final Potion potion = toNMS(event.getEntity().getBasePotionType());
 			final List<PotionEffect> customEffects = event.getEntity().getCustomEffects();
 			return of(potion, customEffects);
 		}
@@ -736,7 +705,7 @@ public class ItemUtils {
 		}
 
 		public boolean hasNegativeEffects() {
-			return effects.stream().anyMatch(effect -> !effect.getEffect().isBeneficial());
+			return effects.stream().anyMatch(effect -> !effect.getEffect().value().isBeneficial());
 		}
 
 		public boolean hasOnlyBeneficialEffects() {
@@ -774,9 +743,11 @@ public class ItemUtils {
 
 		}
 
-		@NotNull
-		public static Potion toNMS(PotionData basePotionData) {
-			return BuiltInRegistries.POTION.get(ResourceLocation.tryParse(CraftPotionUtil.fromBukkit(basePotionData).name()));
+		public static Potion toNMS(PotionType basePotionData) {
+			var potion = BuiltInRegistries.POTION.get(ResourceLocation.withDefaultNamespace(basePotionData.getKey().getKey())).orElse(null);
+			if (potion == null)
+				return null;
+			return potion.value();
 		}
 	}
 

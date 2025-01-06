@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.models.punishments;
 
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.nexus.features.discord.Discord;
@@ -13,6 +14,7 @@ import gg.projecteden.nexus.models.freeze.FreezeService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
@@ -25,10 +27,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 import java.util.function.Function;
-
-import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Getter
 @AllArgsConstructor
@@ -46,7 +44,7 @@ public enum PunishmentType implements IsColoredAndNamed {
 				if (!Justice.isNewPlayer(punishment)) {
 					Nerd punisher = Nerd.of(punishment.getPunisher());
 					DiscordUser discordUser = new DiscordUserService().get(punisher);
-					if (!isNullOrEmpty(discordUser.getUserId()))
+					if (!Nullables.isNullOrEmpty(discordUser.getUserId()))
 						Discord.staffLog("<@" + discordUser.getUserId() + "> Please include any additional information about the " +
 								"ban here, such as screenshots, chat logs, and any other information that will help us understand the ban.");
 
@@ -66,9 +64,9 @@ public enum PunishmentType implements IsColoredAndNamed {
 			String nl = System.lineSeparator();
 			String message = "&4You are " + (punishment.getSeconds() == 0 ? "permanently " : "") + "banned from this server"
 					+ nl + nl
-					+ "&3Banned on &e" + shortDateTimeFormat(punishment.getTimestamp()) + " &3by &e" + Nickname.of(punishment.getPunisher());
+				+ "&3Banned on &e" + TimeUtils.shortDateTimeFormat(punishment.getTimestamp()) + " &3by &e" + Nickname.of(punishment.getPunisher());
 
-			if (!isNullOrEmpty(punishment.getReason()))
+			if (!Nullables.isNullOrEmpty(punishment.getReason()))
 					message += nl + "&3Reason: &c" + punishment.getReason();
 
 			if (punishment.getExpiration() != null)
@@ -102,7 +100,7 @@ public enum PunishmentType implements IsColoredAndNamed {
 		public String getDisconnectMessage(Punishment punishment) {
 			String nl = System.lineSeparator();
 			String message = "&3Kicked by &e" + Nickname.of(punishment.getPunisher());
-			if (!isNullOrEmpty(punishment.getReason()))
+			if (!Nullables.isNullOrEmpty(punishment.getReason()))
 				message += nl + "&3Reason: &c" + punishment.getReason();
 
 			message += nl + nl + "&3You may connect to the server again";
@@ -160,7 +158,7 @@ public enum PunishmentType implements IsColoredAndNamed {
 	}
 
 	public String getDisconnectMessage(Punishment punishment) {
-		throw new UnsupportedOperationException("Punishment type " + camelCase(this) + " does not have a disconnect message");
+		throw new UnsupportedOperationException("Punishment type " + StringUtils.camelCase(this) + " does not have a disconnect message");
 	}
 
 	void kick(Punishment punishment) {
@@ -191,7 +189,7 @@ public enum PunishmentType implements IsColoredAndNamed {
 		JsonBuilder json = new JsonBuilder("- " + getColoredName() + " &fby " + staff.apply(punishment.getPunisher()) + " ")
 				.group()
 				.next("&f" + punishment.getTimeSince())
-				.hover("&e" + shortDateTimeFormat(punishment.getTimestamp()))
+			.hover("&e" + TimeUtils.shortDateTimeFormat(punishment.getTimestamp()))
 				.group()
 				.next(hasTimespan && punishment.isActive() ? " &c[Active]" : "")
 				.group()
@@ -218,7 +216,7 @@ public enum PunishmentType implements IsColoredAndNamed {
 			json.newline().next("&7   Removed by " + staff.apply(punishment.getRemover()) + " ")
 					.group()
 					.next("&f" + punishment.getTimeSinceRemoved())
-					.hover("&e" + shortDateTimeFormat(punishment.getRemoved()))
+				.hover("&e" + TimeUtils.shortDateTimeFormat(punishment.getRemoved()))
 					.group();
 		}
 		if (punishment.hasBeenReplaced()) {
@@ -229,7 +227,7 @@ public enum PunishmentType implements IsColoredAndNamed {
 				json.newline().next("&7   Replaced by " + staff.apply(replacedBy.getPunisher()) + " ")
 						.group()
 						.next("&f" + replacedBy.getTimeSince())
-						.hover("&e" + shortDateTimeFormat(punishment.getTimestamp()))
+					.hover("&e" + TimeUtils.shortDateTimeFormat(punishment.getTimestamp()))
 						.group();
 		}
 
@@ -243,7 +241,7 @@ public enum PunishmentType implements IsColoredAndNamed {
 
 	@Override
 	public @NotNull String getName() {
-		return camelCase(pastTense);
+		return StringUtils.camelCase(pastTense);
 	}
 
 }

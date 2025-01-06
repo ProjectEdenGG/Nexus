@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MissingArgumentException;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.command.CommandSender;
@@ -16,8 +17,6 @@ import org.bukkit.command.CommandSender;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @RequiredArgsConstructor
@@ -51,7 +50,7 @@ public class CommandRunEvent extends CommandEvent {
 		}
 
 		String PREFIX = command.getPrefix();
-		if (isNullOrEmpty(PREFIX))
+		if (Nullables.isNullOrEmpty(PREFIX))
 			PREFIX = Commands.getPrefix(command);
 
 		if (ex instanceof MissingArgumentException) {

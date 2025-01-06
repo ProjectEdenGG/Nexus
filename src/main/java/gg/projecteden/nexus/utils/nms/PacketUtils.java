@@ -10,31 +10,23 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.parchment.HasPlayer;
 import io.papermc.paper.adventure.AdventureComponent;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
-import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
-import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
-import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
-import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
-import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
+import net.minecraft.network.protocol.game.*;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.network.syncher.SynchedEntityData.DataValue;
+import net.minecraft.server.level.ChunkMap;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.PositionMoveRotation;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.monster.Slime;
@@ -46,14 +38,15 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Skull;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
-import org.bukkit.craftbukkit.v1_20_R3.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftArmorStand;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftItemFrame;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.entity.CraftArmorStand;
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftItemFrame;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.NPC;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -62,13 +55,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.nms.NMSUtils.toNMS;
+import java.util.*;
 
 @UtilityClass
 public class PacketUtils {
@@ -177,6 +164,7 @@ public class PacketUtils {
 			case LEGS -> 7;
 			case CHEST -> 6;
 			case HEAD -> 5;
+			case BODY -> -1;
 		};
 	}
 
@@ -228,6 +216,7 @@ public class PacketUtils {
 			case LEGS -> EnumWrappers.ItemSlot.LEGS;
 			case CHEST -> EnumWrappers.ItemSlot.CHEST;
 			case HEAD -> EnumWrappers.ItemSlot.HEAD;
+			case BODY -> EnumWrappers.ItemSlot.MAINHAND;
 		};
 	}
 
@@ -335,7 +324,7 @@ public class PacketUtils {
 	}
 
 	public void sendFakeDisplayItem(Player player, org.bukkit.entity.Entity entity, ItemStack item) {
-		final var dataValue = new DataValue<>(23, EntityDataSerializers.ITEM_STACK, toNMS(item));
+		final var dataValue = new DataValue<>(23, EntityDataSerializers.ITEM_STACK, NMSUtils.toNMS(item));
 		final var packet = new ClientboundSetEntityDataPacket(entity.getEntityId(), Collections.singletonList(dataValue));
 		PacketUtils.sendPacket(player, packet);
 	}
@@ -354,12 +343,12 @@ public class PacketUtils {
 		entity.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 		entity.setOnGround(onGround);
 
-		sendPacket(player, new ClientboundTeleportEntityPacket(entity));
+		sendPacket(player, new ClientboundTeleportEntityPacket(entity.getId(), PositionMoveRotation.of(entity), Set.of(), entity.onGround));
 		entityLook(player, bukkitEntity, location.getYaw(), location.getPitch());
 	}
 
 	// TODO: if possible
-	public static void entityName(@NonNull HasPlayer player, org.bukkit.entity.NPC entity, String name) {
+	public static void entityName(@NonNull HasPlayer player, NPC entity, String name) {
 		ServerPlayer entityPlayer = ((CraftPlayer) entity).getHandle();
 		GameProfile profile = new GameProfile(UUID.randomUUID(), name);
 //		entityPlayer.setCustomName(new ChatComponentText(name));
@@ -401,7 +390,7 @@ public class PacketUtils {
 
 	public static ArmorStand entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, double distance, String customName, int index) {
 		ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
-		ArmorStand armorStand = new ArmorStand(net.minecraft.world.entity.EntityType.ARMOR_STAND, nmsPlayer.getCommandSenderWorld());
+		ArmorStand armorStand = new ArmorStand(EntityType.ARMOR_STAND, nmsPlayer.getCommandSenderWorld());
 		Location loc = bukkitEntity.getLocation();
 		double y = loc.getY() + (distance * index);
 		if (bukkitEntity instanceof Player)
@@ -417,7 +406,10 @@ public class PacketUtils {
 			armorStand.setCustomNameVisible(true);
 		}
 
-		ClientboundAddEntityPacket spawnArmorStand = new ClientboundAddEntityPacket(armorStand, getObjectId(armorStand));
+		ServerLevel world = (ServerLevel) armorStand.level();
+		ChunkMap.TrackedEntity entityTracker = world.getChunkSource().chunkMap.entityMap.get(armorStand.getId());
+
+		ClientboundAddEntityPacket spawnArmorStand = new ClientboundAddEntityPacket(armorStand, 0, armorStand.blockPosition());
 		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData().packDirty());
 		ClientboundSetEquipmentPacket rawEquipmentPacket = new ClientboundSetEquipmentPacket(armorStand.getId(), NMSUtils.getArmorEquipmentList());
 
@@ -438,7 +430,7 @@ public class PacketUtils {
 	public static Slime spawnSlime(Player player, Location location, int size, boolean invisible, boolean glowing) {
 		ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
 
-		Slime slime = new Slime(net.minecraft.world.entity.EntityType.SLIME, nmsPlayer.getCommandSenderWorld());
+		Slime slime = new Slime(EntityType.SLIME, nmsPlayer.getCommandSenderWorld());
 		slime.moveTo(location.getBlockX(), location.getBlockY(), location.getBlockZ(), 0, 0);
 		slime.setSize(size, true);
 		slime.setInvisible(invisible);
@@ -446,7 +438,7 @@ public class PacketUtils {
 		slime.setNoGravity(true);
 		slime.setPersistenceRequired();
 
-		ClientboundAddEntityPacket rawSpawnPacket = new ClientboundAddEntityPacket(slime, getObjectId(slime));
+		ClientboundAddEntityPacket rawSpawnPacket = new ClientboundAddEntityPacket(slime, 0, slime.blockPosition());
 		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(slime.getId(), slime.getEntityData().packDirty());
 
 		sendPacket(player, rawSpawnPacket, rawMetadataPacket);
@@ -466,7 +458,7 @@ public class PacketUtils {
 		fallingBlock.getBukkitEntity().setGlowing(true);
 		fallingBlock.getBukkitEntity().setVelocity(new Vector(0, 0, 0));
 
-		ClientboundAddEntityPacket rawSpawnPacket = new ClientboundAddEntityPacket(fallingBlock, getObjectId(fallingBlock));
+		ClientboundAddEntityPacket rawSpawnPacket = new ClientboundAddEntityPacket(fallingBlock, net.minecraft.world.level.block.Block.getId(fallingBlock.blockState), fallingBlock.blockPosition());
 		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(fallingBlock.getId(), fallingBlock.getEntityData().packDirty());
 
 		sendPacket(player, rawSpawnPacket, rawMetadataPacket);
@@ -505,7 +497,7 @@ public class PacketUtils {
 		@NonNull HasPlayer player, Location location,
 		boolean marker, boolean invulnerable, boolean invisible, boolean customNameVisible, boolean noGravity, boolean pose0) {
 		ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
-		ArmorStand armorStand = new ArmorStand(net.minecraft.world.entity.EntityType.ARMOR_STAND, nmsPlayer.getCommandSenderWorld());
+		ArmorStand armorStand = new ArmorStand(EntityType.ARMOR_STAND, nmsPlayer.getCommandSenderWorld());
 
 		armorStand.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 		armorStand.setMarker(marker);
@@ -514,12 +506,12 @@ public class PacketUtils {
 		armorStand.setCustomNameVisible(customNameVisible);
 		armorStand.setNoGravity(noGravity);
 		if (pose0) {
-			armorStand.setRightArmPose(toNMS(EulerAngle.ZERO));
-			armorStand.setLeftArmPose(toNMS(EulerAngle.ZERO));
-			armorStand.setHeadPose(toNMS(EulerAngle.ZERO));
+			armorStand.setRightArmPose(NMSUtils.toNMS(EulerAngle.ZERO));
+			armorStand.setLeftArmPose(NMSUtils.toNMS(EulerAngle.ZERO));
+			armorStand.setHeadPose(NMSUtils.toNMS(EulerAngle.ZERO));
 		}
 
-		ClientboundAddEntityPacket spawnArmorStand = new ClientboundAddEntityPacket(armorStand, getObjectId(armorStand));
+		ClientboundAddEntityPacket spawnArmorStand = new ClientboundAddEntityPacket(armorStand, 0, armorStand.blockPosition());
 		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData().packDirty());
 
 		sendPacket(player, spawnArmorStand, rawMetadataPacket);

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.menus.lobby;
 
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
@@ -20,8 +21,6 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-
 @RequiredArgsConstructor
 public class MechanicSubGroupMenu extends InventoryProvider {
 	private final MechanicSubGroup group;
@@ -38,7 +37,7 @@ public class MechanicSubGroupMenu extends InventoryProvider {
 
 	@Override
 	public String getTitle() {
-		return CustomTexture.MINIGAMES_MENU_SEPARATOR.getMenuTexture(getRows(null)) + "&8" + camelCase(group);
+		return CustomTexture.MINIGAMES_MENU_SEPARATOR.getMenuTexture(getRows(null)) + "&8" + StringUtils.camelCase(group);
 	}
 
 	@Override
@@ -60,7 +59,7 @@ public class MechanicSubGroupMenu extends InventoryProvider {
 				outlineMaterial = CustomMaterial.GUI_OUTLINE_6x3;
 			}
 			default ->
-				throw new InvalidInputException("Unsupported group size " + count + " for group " + camelCase(group));
+				throw new InvalidInputException("Unsupported group size " + count + " for group " + StringUtils.camelCase(group));
 		}
 
 		final Function<MechanicType, Consumer<ItemClickData>> onClick = mechanic -> e -> {

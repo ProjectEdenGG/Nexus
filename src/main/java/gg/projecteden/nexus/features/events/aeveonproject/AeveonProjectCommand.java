@@ -5,21 +5,14 @@ import gg.projecteden.nexus.features.events.aeveonproject.menus.ShipColorMenu;
 import gg.projecteden.nexus.features.events.aeveonproject.sets.APSet;
 import gg.projecteden.nexus.features.events.aeveonproject.sets.APSetType;
 import gg.projecteden.nexus.features.warps.commands._WarpSubCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.aeveonproject.AeveonProjectService;
 import gg.projecteden.nexus.models.aeveonproject.AeveonProjectUser;
 import gg.projecteden.nexus.models.warps.WarpType;
-import gg.projecteden.nexus.utils.BlockUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -28,15 +21,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.RandomUtils.getWeightedRandom;
+import java.util.*;
 
 @Aliases("ap")
 @HideFromWiki // TODO
@@ -107,7 +92,7 @@ public class AeveonProjectCommand extends _WarpSubCommand implements Listener {
 
 	@Path("warps [string...]")
 	public void warps(String arguments) {
-		if (isNullOrEmpty(arguments))
+		if (Nullables.isNullOrEmpty(arguments))
 			arguments = "";
 		else
 			arguments = " " + arguments;
@@ -159,12 +144,12 @@ public class AeveonProjectCommand extends _WarpSubCommand implements Listener {
 
 		for (Block block : blocks) {
 			Block above = block.getRelative(BlockFace.UP);
-			if (allowedFloraMaterials.contains(block.getType()) && isNullOrAir(above))
+			if (allowedFloraMaterials.contains(block.getType()) && Nullables.isNullOrAir(above))
 				placeFloraOn.add(above);
 		}
 
 		for (Block block : placeFloraOn) {
-			Material material = getWeightedRandom(floraChanceMap);
+			Material material = RandomUtils.getWeightedRandom(floraChanceMap);
 			Tasks.sync(() -> {
 				block.setType(material);
 				if (material.equals(Material.TWISTING_VINES_PLANT) && RandomUtils.chanceOf(75))

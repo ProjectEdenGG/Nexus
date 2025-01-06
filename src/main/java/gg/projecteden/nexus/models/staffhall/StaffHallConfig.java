@@ -8,11 +8,8 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.nerd.Rank;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import gg.projecteden.nexus.utils.StringUtils;
+import lombok.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -21,8 +18,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Data
 @Entity(value = "staff_hall_config", noClassnameStored = true)
@@ -44,7 +39,7 @@ public class StaffHallConfig implements PlayerOwnedObject {
 	public int getNpcId(StaffHallRankGroup group, int index) {
 		final List<Integer> npcs = getNpcIds(group);
 		if (npcs.size() < (index - 1))
-			throw new InvalidInputException(camelCase(group) + " only has " + npcs.size() + " npcs");
+			throw new InvalidInputException(StringUtils.camelCase(group) + " only has " + npcs.size() + " npcs");
 		return npcs.get(index);
 	}
 

@@ -9,13 +9,8 @@ import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.Costume.CostumeType;
 import gg.projecteden.nexus.models.hours.HoursService;
-import gg.projecteden.nexus.utils.CitizensUtils;
-import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
@@ -28,18 +23,9 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class StoreGalleryNPCs {
 	private static final String regionRegex = "store_gallery_npcdisplays_\\d+";
@@ -82,7 +68,7 @@ public class StoreGalleryNPCs {
 		for (DisplaySet _displaySet : displays)
 			for (Display _display : _displaySet.getDisplays())
 				for (ItemStack item : _display.getItems().values())
-					if (!isNullOrAir(item))
+					if (!Nullables.isNullOrAir(item))
 						if (item.isSimilar(costume.getItem()))
 							return false;
 

@@ -2,6 +2,8 @@ package gg.projecteden.nexus.features.store.perks.inventory.stattrack.models;
 
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
@@ -13,10 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Data
 public class StatItem {
@@ -42,11 +40,11 @@ public class StatItem {
 
 		id = UUID.fromString(nbt().getString(NBT_KEY));
 
-		if (!isNullOrEmpty(lore))
+		if (!Nullables.isNullOrEmpty(lore))
 			lore.stream()
 					.filter(line -> line.contains(": "))
 					.forEach(line -> {
-						String[] split = stripColor(line).split(": ");
+						String[] split = StringUtils.stripColor(line).split(": ");
 						stats.put(Stat.of(split[0]), Integer.parseInt(split[1]));
 					});
 	}
@@ -94,13 +92,13 @@ public class StatItem {
 		int notFound = -1;
 		int slot = notFound;
 
-		if (isNullOrAir(item1))
+		if (Nullables.isNullOrAir(item1))
 			return notFound;
 
 		try {
 			for (ItemStack item2 : player.getInventory().getContents()) {
 				++slot;
-				if (isNullOrAir(item2)) continue;
+				if (Nullables.isNullOrAir(item2)) continue;
 				if (item1.getType() != item2.getType()) continue;
 
 				final NBTItem nbtItem1 = new NBTItem(item1);
@@ -111,8 +109,8 @@ public class StatItem {
 
 				final String id1 = nbtItem1.getString(NBT_KEY);
 				final String id2 = nbtItem2.getString(NBT_KEY);
-				if (isNullOrEmpty(id1)) continue;
-				if (isNullOrEmpty(id2)) continue;
+				if (Nullables.isNullOrEmpty(id1)) continue;
+				if (Nullables.isNullOrEmpty(id2)) continue;
 
 				if (!id1.equals(id2)) continue;
 

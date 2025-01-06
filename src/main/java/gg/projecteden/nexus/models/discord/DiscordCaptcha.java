@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.discord.DiscordId.Role;
+import gg.projecteden.api.discord.EmojiUtils;
 import gg.projecteden.api.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
@@ -11,20 +12,13 @@ import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.DiscordCaptchaKickJob;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import net.dv8tion.jda.api.entities.User;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static gg.projecteden.api.discord.EmojiUtils.THUMBSUP;
-import static java.time.LocalDateTime.now;
 
 @Data
 @NoArgsConstructor
@@ -42,7 +36,7 @@ public class DiscordCaptcha implements PlayerOwnedObject {
 	private static final String taskId = "discord-unconfirmed-kick";
 
 	public void require(String id) {
-		unconfirmed.put(id, now());
+		unconfirmed.put(id, LocalDateTime.now());
 
 		User user = Bot.KODA.jda().retrieveUserById(id).complete();
 		if (user == null) {
@@ -50,15 +44,15 @@ public class DiscordCaptcha implements PlayerOwnedObject {
 		} else {
 			user.openPrivateChannel().complete()
 					.sendMessage("Please react to verify your account").complete()
-					.addReaction(THUMBSUP).queue();
+					.addReaction(EmojiUtils.THUMBSUP).queue();
 		}
 
-		new DiscordCaptchaKickJob(id).schedule(now().plusMinutes(9));
+		new DiscordCaptchaKickJob(id).schedule(LocalDateTime.now().plusMinutes(9));
 	}
 
 	public void confirm(String id) {
 		unconfirmed.remove(id);
-		confirmed.put(id, now());
+		confirmed.put(id, LocalDateTime.now());
 		Discord.addRole(id, Role.NERD);
 
 		User user = Bot.KODA.jda().retrieveUserById(id).complete();

@@ -8,14 +8,7 @@ import lombok.Data;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
+import java.util.*;
 
 public class ActionBarUtils {
 
@@ -24,7 +17,7 @@ public class ActionBarUtils {
 	// Main
 
 	private static void sendActionBarForReal(final HasPlayer player, final String message) {
-		player.getPlayer().sendActionBar(colorize(message));
+		player.getPlayer().sendActionBar(StringUtils.colorize(message));
 	}
 
 	private static void sendActionBarForReal(final HasPlayer player, final ComponentLike component) {
@@ -38,7 +31,7 @@ public class ActionBarUtils {
 	}
 
 	public static void sendActionBar(final HasPlayer player, final String message) {
-		sendActionBar(player, colorize(message), -1);
+		sendActionBar(player, StringUtils.colorize(message), -1);
 	}
 
 	public static void sendActionBar(final HasPlayer player, final ComponentLike component) {

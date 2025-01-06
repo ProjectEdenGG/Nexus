@@ -21,22 +21,10 @@ import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.Currency;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.Currency.Price;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.*;
 import lombok.Builder.Default;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -50,14 +38,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
+import java.util.function.*;
 
 public abstract class MenuUtils {
 
@@ -299,7 +280,7 @@ public abstract class MenuUtils {
 				try {
 					onConfirm.accept(e);
 
-					if (colorize(title).equals(e.getPlayer().getOpenInventory().getTitle()))
+					if (StringUtils.colorize(title).equals(e.getPlayer().getOpenInventory().getTitle()))
 						e.getPlayer().closeInventory();
 
 					if (onFinally != null)

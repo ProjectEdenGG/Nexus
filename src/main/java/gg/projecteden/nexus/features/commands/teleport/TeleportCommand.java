@@ -24,7 +24,9 @@ import gg.projecteden.nexus.models.teleport.TeleportUser;
 import gg.projecteden.nexus.models.teleport.TeleportUserService;
 import gg.projecteden.nexus.utils.LocationUtils.RelativeLocation;
 import gg.projecteden.nexus.utils.LocationUtils.RelativeLocation.Modify;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -46,9 +48,6 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.getTeleportCommand;
-
 @NoArgsConstructor
 @Aliases({"tp", "tppos"})
 @Redirect(from = "/tpo", to = "/tp override")
@@ -60,7 +59,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 	}
 
 	private boolean isCoord(String arg) {
-		if (isNullOrEmpty(arg)) return false;
+		if (Nullables.isNullOrEmpty(arg)) return false;
 		if ("~".equals(arg)) return true;
 		arg = arg.replace("~", "");
 		return isDouble(arg);
@@ -70,7 +69,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 	@Permission(Group.STAFF)
 	@Description("Print a copyable command that teleports you to your current location")
 	void getCoords() {
-		String message = getTeleportCommand(location());
+		String message = StringUtils.getTeleportCommand(location());
 		send(json(PREFIX + "Click to copy").copy(message).hover(message));
 	}
 
@@ -167,7 +166,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 					error("World &e" + arg(6) + " &cnot found");
 				location.setWorld(Bukkit.getWorld(arg(6)));
 			}
-		} else if (!isNullOrEmpty(arg(4))) {
+		} else if (!Nullables.isNullOrEmpty(arg(4))) {
 			if (Bukkit.getWorld(arg(4)) == null)
 				error("World &e" + arg(4) + " &cnot found");
 			else

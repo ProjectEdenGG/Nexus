@@ -11,13 +11,8 @@ import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.exceptions.MinigameException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.FireworkLauncher;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.LocationUtils.CardinalDirection;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bukkit.FireworkEffect.Type;
@@ -34,9 +29,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.nexus.utils.Utils.getFirstIndexOf;
 
 @Data
 @NoArgsConstructor
@@ -160,7 +152,7 @@ public abstract class IMastermindMatchData extends MatchData {
 					continue;
 				if (answer.contains(current)) {
 					++exists;
-					int firstIndexOf = getFirstIndexOf(answer, current);
+					int firstIndexOf = Utils.getFirstIndexOf(answer, current);
 					answer.set(firstIndexOf, null);
 				}
 			}
@@ -178,9 +170,9 @@ public abstract class IMastermindMatchData extends MatchData {
 
 			Block resultsSignBlock = worldedit.toLocation(resultsSignRegion.getMinimumPoint()).getBlock();
 			if (MaterialTag.SIGNS.isTagged(resultsSignBlock.getType()) && resultsSignBlock.getState() instanceof Sign resultsSign) {
-				resultsSign.setLine(1, colorize("&aCorrect: &f" + correct));
-				resultsSign.setLine(2, colorize("&eWrong spot: &f" + exists));
-				resultsSign.setLine(3, colorize("&cIncorrect: &f" + incorrect));
+				resultsSign.setLine(1, StringUtils.colorize("&aCorrect: &f" + correct));
+				resultsSign.setLine(2, StringUtils.colorize("&eWrong spot: &f" + exists));
+				resultsSign.setLine(3, StringUtils.colorize("&cIncorrect: &f" + incorrect));
 				resultsSign.update();
 			}
 
@@ -235,9 +227,9 @@ public abstract class IMastermindMatchData extends MatchData {
 			if (!(MaterialTag.SIGNS.isTagged(resultsSignBlock.getType()) && resultsSignBlock.getState() instanceof Sign resultsSign))
 				Nexus.warn("Mastermind results sign region not configured correctly");
 			else {
-				resultsSign.setLine(1, colorize("&aCorrect: &f0"));
-				resultsSign.setLine(2, colorize("&eWrong spot: &f0"));
-				resultsSign.setLine(3, colorize("&cIncorrect: &f0"));
+				resultsSign.setLine(1, StringUtils.colorize("&aCorrect: &f0"));
+				resultsSign.setLine(2, StringUtils.colorize("&eWrong spot: &f0"));
+				resultsSign.setLine(3, StringUtils.colorize("&cIncorrect: &f0"));
 				resultsSign.update();
 			}
 		}

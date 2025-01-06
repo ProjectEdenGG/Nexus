@@ -50,7 +50,7 @@ public class HealCommand extends CustomCommand {
 	}
 
 	public static AttributeInstance getMaxHealthAttribute(Player player) {
-		return player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+		return player.getAttribute(Attribute.MAX_HEALTH);
 	}
 
 }

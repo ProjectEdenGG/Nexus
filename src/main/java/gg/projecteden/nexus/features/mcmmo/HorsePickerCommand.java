@@ -114,9 +114,9 @@ public class HorsePickerCommand extends CustomCommand {
 		horse.setStyle(style);
 		horse.setOwner(player);
 		horse.setAdult();
-		horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.4f);
-		horse.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(30);
-		horse.getAttribute(Attribute.HORSE_JUMP_STRENGTH).setBaseValue(0.96f);
+		horse.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(0.4f);
+		horse.getAttribute(Attribute.MAX_HEALTH).setBaseValue(30);
+		horse.getAttribute(Attribute.JUMP_STRENGTH).setBaseValue(0.96f);
 		horse.setHealth(30.0);
 	}
 }

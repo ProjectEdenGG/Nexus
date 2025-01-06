@@ -9,11 +9,9 @@ import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand;
-import gg.projecteden.nexus.features.commands.staff.admin.Firework127Command;
 import gg.projecteden.nexus.features.listeners.common.TemporaryListener;
 import gg.projecteden.nexus.features.particles.effects.CircleEffect;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.models.cooldown.Cooldown;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.crate.CrateConfig;
 import gg.projecteden.nexus.models.crate.CrateType;
@@ -26,12 +24,10 @@ import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
-import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -39,8 +35,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class CratePinatas implements Listener {
 
@@ -69,13 +63,13 @@ public class CratePinatas implements Listener {
 		if (WorldGroup.of(event.getPlayer()) != WorldGroup.SURVIVAL)
 			return;
 
-		if (!isNullOrAir(event.getClickedBlock()))
+		if (!Nullables.isNullOrAir(event.getClickedBlock()))
 			return;
 
 		if (event.getHand() != EquipmentSlot.HAND)
 			return;
 
-		if (isNullOrAir(event.getPlayer().getInventory().getItemInMainHand()))
+		if (Nullables.isNullOrAir(event.getPlayer().getInventory().getItemInMainHand()))
 			return;
 
 		if (new ItemBuilder(event.getPlayer().getInventory().getItemInMainHand()).modelId() != PINATA_ITEM.modelId())
@@ -153,7 +147,7 @@ public class CratePinatas implements Listener {
 			AtomicInteger taskId = new AtomicInteger();
 			taskId.set(
 				Tasks.repeat(4, 2, () -> {
-					new ParticleBuilder(Particle.REDSTONE)
+					new ParticleBuilder(Particle.DUST)
 						.color(RandomUtils.randomInt(0, 255), RandomUtils.randomInt(0, 255), RandomUtils.randomInt(0, 255))
 						.location(item.getLocation())
 						.extra(1)
@@ -176,7 +170,7 @@ public class CratePinatas implements Listener {
 		double totalAnimationTime = 150;
 
 		private void spawn(Item item) {
-			new ParticleBuilder(Particle.EXPLOSION_HUGE)
+			new ParticleBuilder(Particle.EXPLOSION)
 				.location(item.getLocation().clone().add(0, .5, 0))
 				.count(10)
 				.offset(.5, .5, .5)
@@ -289,7 +283,7 @@ public class CratePinatas implements Listener {
 						if (i.isOnGround())
 							Tasks.cancel(taskId.get());
 
-						new ParticleBuilder(Particle.REDSTONE)
+						new ParticleBuilder(Particle.DUST)
 							.color(color)
 							.location(i.getLocation().clone().add(0, .25, 0))
 							.extra(1)

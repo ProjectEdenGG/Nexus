@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.nameplates.packets;
 
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import gg.projecteden.nexus.features.nameplates.NameplatesCommand;
 import gg.projecteden.nexus.utils.nms.packet.EdenPacket;
 import lombok.Data;
 import net.minecraft.network.chat.Component;
@@ -12,8 +13,6 @@ import net.minecraft.network.syncher.SynchedEntityData.DataValue;
 import org.joml.Vector3f;
 
 import java.util.List;
-
-import static gg.projecteden.nexus.features.nameplates.NameplatesCommand.TRANSLATION_VERTICAL_OFFSET;
 
 @Data
 public class NameplateMetadataPacket extends EdenPacket {
@@ -33,7 +32,7 @@ public class NameplateMetadataPacket extends EdenPacket {
 
 	@Override
 	protected Packet<ClientGamePacketListener> build() {
-		final var translation = new DataValue<>(11, EntityDataSerializers.VECTOR3, new Vector3f(0, TRANSLATION_VERTICAL_OFFSET, 0));
+		final var translation = new DataValue<>(11, EntityDataSerializers.VECTOR3, new Vector3f(0, NameplatesCommand.TRANSLATION_VERTICAL_OFFSET, 0));
 		final var billboard = new DataValue<>(15, EntityDataSerializers.BYTE, (byte) 3);
 		final var text = new DataValue<>(23, EntityDataSerializers.COMPONENT, (Component) WrappedChatComponent.fromJson(name).getHandle());
 		final var seeThroughWalls = new DataValue<>(27, EntityDataSerializers.BYTE, (byte) (this.seeThroughWalls ? 0 : 2));

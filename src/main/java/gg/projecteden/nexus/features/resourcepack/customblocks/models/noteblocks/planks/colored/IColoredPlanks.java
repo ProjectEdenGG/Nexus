@@ -6,11 +6,10 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBloc
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IDyeable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.IPlanks;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelToSnake;
 
 public interface IColoredPlanks extends IDyeable, IPlanks {
 
@@ -20,7 +19,7 @@ public interface IColoredPlanks extends IDyeable, IPlanks {
 	}
 
 	default @NotNull Material getMaterial() {
-		return Material.valueOf(camelToSnake(getClass().getSimpleName().replace("Planks", "")).toUpperCase() + "_DYE");
+		return Material.valueOf(StringUtils.camelToSnake(getClass().getSimpleName().replace("Planks", "")).toUpperCase() + "_DYE");
 	}
 
 	@Override

@@ -4,8 +4,8 @@ import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftMob;
+import org.bukkit.craftbukkit.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.entity.CraftMob;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +24,7 @@ public class MonsterMazePathfinder implements com.destroystokyo.paper.entity.Pat
 
     @Override
     public Mob getEntity() {
-        return entity.getBukkitMob();
+        return (Mob) entity.getBukkitEntity();
     }
 
     @Override
@@ -111,7 +111,12 @@ public class MonsterMazePathfinder implements com.destroystokyo.paper.entity.Pat
             return point != null ? toLoc(point) : null;
         }
 
-        @Override
+		@Override
+		public boolean canReachFinalPoint() {
+			return true;
+		}
+
+		@Override
         public List<Location> getPoints() {
             return new ArrayList<>() {{
 				for (Node point : path.nodes)

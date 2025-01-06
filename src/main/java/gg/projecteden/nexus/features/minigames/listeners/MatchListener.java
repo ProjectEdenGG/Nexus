@@ -23,19 +23,9 @@ import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
-import gg.projecteden.nexus.utils.BorderUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Boat;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.Hanging;
-import org.bukkit.entity.Minecart;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -47,19 +37,10 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.PlayerUtils.runCommand;
-import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
 
 public class MatchListener implements Listener {
 
@@ -90,11 +71,11 @@ public class MatchListener implements Listener {
 
 	public void disableCheats(Player player) {
 		if (player.hasPermission("voxelsniper.sniper"))
-			runCommand(player, "b paint");
+			PlayerUtils.runCommand(player, "b paint");
 		if (player.hasPermission("worldguard.region.bypass.*"))
-			runCommand(player, "wgedit off");
+			PlayerUtils.runCommand(player, "wgedit off");
 		if (Vanish.isVanished(player))
-			runCommand(player, "vanish off");
+			PlayerUtils.runCommand(player, "vanish off");
 	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
@@ -109,11 +90,11 @@ public class MatchListener implements Listener {
 				return;
 
 		if (event.getFrom().getWorld().equals(event.getTo().getWorld()))
-			if (distance(event.getFrom(), event.getTo()).lt(2))
+			if (Distance.distance(event.getFrom(), event.getTo()).lt(2))
 				return;
 
 		event.setCancelled(true);
-		Nexus.debug("Cancelled minigamer " + minigamer.getNickname() + " teleporting from " + getShortLocationString(event.getFrom()) + " to " + getShortLocationString(event.getTo()));
+		Nexus.debug("Cancelled minigamer " + minigamer.getNickname() + " teleporting from " + StringUtils.getShortLocationString(event.getFrom()) + " to " + StringUtils.getShortLocationString(event.getTo()));
 		minigamer.tell("&cYou cannot teleport while in a game! &3If you are trying to leave, use &c/mgm quit");
 	}
 
@@ -350,7 +331,7 @@ public class MatchListener implements Listener {
 
 	@EventHandler
 	public void onClickSpectateCompass(PlayerInteractEvent event) {
-		if (isNullOrAir(event.getItem()))
+		if (Nullables.isNullOrAir(event.getItem()))
 			return;
 		if (!Utils.ActionGroup.RIGHT_CLICK.applies(event))
 			return;
@@ -360,7 +341,7 @@ public class MatchListener implements Listener {
 			return;
 
 		Minigamer minigamer = Minigamer.of(player);
-		if (!minigamer.isDead())
+		if (!minigamer.isSpectating())
 			return;
 
 		if (!event.getItem().getType().equals(Minigamer.SPECTATING_COMPASS.getType()))

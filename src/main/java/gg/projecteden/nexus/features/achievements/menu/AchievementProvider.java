@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.achievements.menu;
 
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.achievement.Achievement;
@@ -10,8 +11,6 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-
-import static gg.projecteden.nexus.features.menus.MenuUtils.calculateRows;
 
 public class AchievementProvider extends InventoryProvider {
 	private final AchievementGroup group;
@@ -27,7 +26,7 @@ public class AchievementProvider extends InventoryProvider {
 
 	@Override
 	protected int getRows(Integer page) {
-		return calculateRows(group.getAchievements().size(), 2);
+		return MenuUtils.calculateRows(group.getAchievements().size(), 2);
 	}
 
 	@Override

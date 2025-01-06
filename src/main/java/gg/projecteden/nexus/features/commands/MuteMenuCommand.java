@@ -18,11 +18,7 @@ import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.parchment.event.sound.SoundEvent;
 import gg.projecteden.parchment.event.sound.SoundEvent.EntityEmitter;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -32,15 +28,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.function.Function;
-
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 public class MuteMenuCommand extends CustomCommand implements Listener {
@@ -316,7 +307,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 			MuteMenuItem(@NotNull String title, @NotNull Material material, List<String> lore) {
 				this.title = title;
 				this.material = material;
-				this.lore = lore.stream().map(line -> "&f" + line).collect(toList());
+				this.lore = lore.stream().map(line -> "&f" + line).collect(Collectors.toList());
 				if (!this.lore.isEmpty())
 					this.lore.add(0, "");
 			}
@@ -390,7 +381,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 		.sorted(Comparator.comparingInt(String::length).reversed())
 		.toArray(String[]::new);
 
-	private static final Map<Key, EntityType> cache = new HashMap<>();
+	private static final Map<Key, EntityType> cache = new ConcurrentSkipListMap<>();
 
 	private EntityType getEntityType(Key sound) {
 		return cache.computeIfAbsent(sound, $ -> {

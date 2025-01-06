@@ -28,7 +28,7 @@ public class EntityCannonCommand extends CustomCommand {
 	@Path("[entityType]")
 	@Description("Launch an exploding entity")
 	void run(EntityType type) {
-		if (!isSeniorStaff() && type == EntityType.THROWN_EXP_BOTTLE)
+		if (!isSeniorStaff() && type == EntityType.EXPERIENCE_BOTTLE)
 			permissionError();
 
 		final Entity entity = world().spawnEntity(player().getEyeLocation(), type);

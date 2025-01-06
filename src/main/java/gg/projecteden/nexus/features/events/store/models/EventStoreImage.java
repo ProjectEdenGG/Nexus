@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events.store.models;
 
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,9 +17,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @AllArgsConstructor
@@ -51,7 +49,7 @@ public class EventStoreImage {
 						continue;
 
 					String id = (sign.getLine(0).trim() + " " + sign.getLine(1).trim()).trim();
-					if (isNullOrEmpty(id))
+					if (Nullables.isNullOrEmpty(id))
 						continue;
 
 					if (!(block.getBlockData() instanceof WallSign wallSign))
@@ -63,7 +61,7 @@ public class EventStoreImage {
 
 					ItemStack map = inventory.getBlockInventory().getContents()[0];
 
-					if (isNullOrAir(map))
+					if (Nullables.isNullOrAir(map))
 						continue;
 
 					map = map.clone();

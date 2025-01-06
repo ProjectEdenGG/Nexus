@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.HttpUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -18,9 +19,6 @@ import org.apache.commons.lang.StringEscapeUtils;
 
 import java.util.List;
 import java.util.Map;
-
-import static gg.projecteden.nexus.utils.HttpUtils.unescapeHtml;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 public abstract class _WikiSearchCommand extends CustomCommand {
 	private final WikiType wikiType;
@@ -83,7 +81,7 @@ public abstract class _WikiSearchCommand extends CustomCommand {
 				}
 
 				String getSnippetFormatted() {
-					return unescapeHtml(snippet
+					return HttpUtils.unescapeHtml(snippet
 							.replaceAll("<span class='searchmatch'>", ChatColor.YELLOW.toString())
 							.replaceAll("</span>", ChatColor.DARK_AQUA.toString())
 							.replaceAll("\\[\\[(.*?)\\|", "")
@@ -106,7 +104,7 @@ public abstract class _WikiSearchCommand extends CustomCommand {
 	@Path("search <query...>")
 	@Description("Search the wiki for key words")
 	void search(String query) {
-		if (isNullOrEmpty(query))
+		if (Nullables.isNullOrEmpty(query))
 			error("You did not specify anything to search");
 
 		line();
@@ -114,13 +112,13 @@ public abstract class _WikiSearchCommand extends CustomCommand {
 
 		SearchResult results = SearchResult.of(wikiType, query);
 
-		if (isNullOrEmpty(results.getQuery().getResults()))
+		if (Nullables.isNullOrEmpty(results.getQuery().getResults()))
 			error("No results found");
 
 		for (Result result : results.getQuery().getResults()) {
 			var json = json().newline().next("&3Page: &e" + result.getTitle());
 
-			if (isNullOrEmpty(result.getSnippetFormatted().trim()))
+			if (Nullables.isNullOrEmpty(result.getSnippetFormatted().trim()))
 				json.newline().next("&e Snippet: &3" + result.getSnippetFormatted());
 
 			send(json.hover("&3Click to open").url(wikiType.getBasePath() + result.getPage()));

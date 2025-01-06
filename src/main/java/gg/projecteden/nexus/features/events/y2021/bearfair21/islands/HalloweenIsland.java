@@ -15,6 +15,7 @@ import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -29,9 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static gg.projecteden.nexus.features.events.models.QuestStage.STEP_ONE;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Region("halloween")
 @NPCClass(HalloweenNPCs.class)
@@ -151,7 +149,7 @@ public class HalloweenIsland implements BearFair21Island {
 						script.add("wait 60");
 						script.add("To enter the underworld, simply hop in this casket. The path you seek should reveal itself when inside.");
 
-						user.setQuestStage_Halloween(STEP_ONE);
+						user.setQuestStage_Halloween(QuestStage.STEP_ONE);
 						user.getNextStepNPCs().remove(JOSE.getNpcId());
 						user.getNextStepNPCs().add(ANA.getNpcId());
 						userService.save(user);
@@ -234,7 +232,7 @@ public class HalloweenIsland implements BearFair21Island {
 		FRANCISCO(BearFair21NPC.FRANCISCO) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
-				if (user.getQuestStage_Halloween() == STEP_ONE)
+				if (user.getQuestStage_Halloween() == QuestStage.STEP_ONE)
 					return getAnaResponse();
 				return getGreeting();
 			}
@@ -242,7 +240,7 @@ public class HalloweenIsland implements BearFair21Island {
 		ADRIAN(BearFair21NPC.ADRIAN) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
-				if (user.getQuestStage_Halloween() == STEP_ONE)
+				if (user.getQuestStage_Halloween() == QuestStage.STEP_ONE)
 					return getAnaResponse();
 				return getGreeting();
 			}
@@ -250,7 +248,7 @@ public class HalloweenIsland implements BearFair21Island {
 		MAXIM(BearFair21NPC.MAXIM) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
-				if (user.getQuestStage_Halloween() == STEP_ONE)
+				if (user.getQuestStage_Halloween() == QuestStage.STEP_ONE)
 					return getAnaResponse();
 				return getGreeting();
 			}
@@ -258,7 +256,7 @@ public class HalloweenIsland implements BearFair21Island {
 		ISABELLA(BearFair21NPC.ISABELLA) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
-				if (user.getQuestStage_Halloween() == STEP_ONE)
+				if (user.getQuestStage_Halloween() == QuestStage.STEP_ONE)
 					return getAnaResponse();
 				return getGreeting();
 			}
@@ -266,7 +264,7 @@ public class HalloweenIsland implements BearFair21Island {
 		JUAN(BearFair21NPC.JUAN) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
-				if (user.getQuestStage_Halloween() == STEP_ONE)
+				if (user.getQuestStage_Halloween() == QuestStage.STEP_ONE)
 					return getAnaResponse();
 				return getGreeting();
 			}
@@ -274,7 +272,7 @@ public class HalloweenIsland implements BearFair21Island {
 		LOLA(BearFair21NPC.LOLA) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
-				if (user.getQuestStage_Halloween() == STEP_ONE)
+				if (user.getQuestStage_Halloween() == QuestStage.STEP_ONE)
 					return getAnaResponse();
 				return getGreeting();
 			}
@@ -282,7 +280,7 @@ public class HalloweenIsland implements BearFair21Island {
 		JENNA(BearFair21NPC.JENNA) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
-				if (user.getQuestStage_Halloween() == STEP_ONE)
+				if (user.getQuestStage_Halloween() == QuestStage.STEP_ONE)
 					return getAnaResponse();
 				return getGreeting();
 			}
@@ -290,7 +288,7 @@ public class HalloweenIsland implements BearFair21Island {
 		RICARDO(BearFair21NPC.RICARDO) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
-				if (user.getQuestStage_Halloween() == STEP_ONE)
+				if (user.getQuestStage_Halloween() == QuestStage.STEP_ONE)
 					return getAnaResponse();
 				return getGreeting();
 			}
@@ -298,7 +296,7 @@ public class HalloweenIsland implements BearFair21Island {
 		LUIS(BearFair21NPC.LUIS) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
-				if (user.getQuestStage_Halloween() == STEP_ONE)
+				if (user.getQuestStage_Halloween() == QuestStage.STEP_ONE)
 					return getAnaResponse();
 				return getGreeting();
 			}
@@ -306,7 +304,7 @@ public class HalloweenIsland implements BearFair21Island {
 		MARIANA(BearFair21NPC.MARIANA) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
-				if (user.getQuestStage_Halloween() == STEP_ONE)
+				if (user.getQuestStage_Halloween() == QuestStage.STEP_ONE)
 					return getAnaResponse();
 				return getGreeting();
 			}
@@ -314,7 +312,7 @@ public class HalloweenIsland implements BearFair21Island {
 		HALLOWEEN_MAYOR(BearFair21NPC.HALLOWEEN_MAYOR) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
-				if (user.getQuestStage_Halloween() == STEP_ONE)
+				if (user.getQuestStage_Halloween() == QuestStage.STEP_ONE)
 					return getAnaResponse();
 				return getGreeting();
 			}
@@ -322,7 +320,7 @@ public class HalloweenIsland implements BearFair21Island {
 		RODRIGO(BearFair21NPC.RODRIGO) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
-				if (user.getQuestStage_Halloween() == STEP_ONE)
+				if (user.getQuestStage_Halloween() == QuestStage.STEP_ONE)
 					return getAnaResponse();
 				return getGreeting();
 			}
@@ -330,7 +328,7 @@ public class HalloweenIsland implements BearFair21Island {
 		DANIEL(BearFair21NPC.DANIEL) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
-				if (user.getQuestStage_Halloween() == STEP_ONE)
+				if (user.getQuestStage_Halloween() == QuestStage.STEP_ONE)
 					return getAnaResponse();
 				return getGreeting();
 			}
@@ -338,7 +336,7 @@ public class HalloweenIsland implements BearFair21Island {
 		SANDRA(BearFair21NPC.SANDRA) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
-				if (user.getQuestStage_Halloween() == STEP_ONE)
+				if (user.getQuestStage_Halloween() == QuestStage.STEP_ONE)
 					return getAnaResponse();
 				return getGreeting();
 			}
@@ -346,7 +344,7 @@ public class HalloweenIsland implements BearFair21Island {
 		MARTHA(BearFair21NPC.MARTHA) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
-				if (user.getQuestStage_Halloween() == STEP_ONE)
+				if (user.getQuestStage_Halloween() == QuestStage.STEP_ONE)
 					return getAnaResponse();
 				return getGreeting();
 			}
@@ -354,7 +352,7 @@ public class HalloweenIsland implements BearFair21Island {
 		PATRICIA(BearFair21NPC.PATRICIA) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
-				if (user.getQuestStage_Halloween() == STEP_ONE)
+				if (user.getQuestStage_Halloween() == QuestStage.STEP_ONE)
 					return getAnaResponse();
 				return getGreeting();
 			}
@@ -362,7 +360,7 @@ public class HalloweenIsland implements BearFair21Island {
 		NINA(BearFair21NPC.NINA) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
-				if (user.getQuestStage_Halloween() == STEP_ONE)
+				if (user.getQuestStage_Halloween() == QuestStage.STEP_ONE)
 					return getAnaResponse();
 				return getGreeting();
 			}
@@ -370,7 +368,7 @@ public class HalloweenIsland implements BearFair21Island {
 		RUBEN(BearFair21NPC.RUBEN) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
-				if (user.getQuestStage_Halloween() == STEP_ONE)
+				if (user.getQuestStage_Halloween() == QuestStage.STEP_ONE)
 					return getAnaResponse();
 				return getGreeting();
 			}
@@ -378,7 +376,7 @@ public class HalloweenIsland implements BearFair21Island {
 		CLARENCE(BearFair21NPC.CLARENCE) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
-				if (user.getQuestStage_Halloween() == STEP_ONE)
+				if (user.getQuestStage_Halloween() == QuestStage.STEP_ONE)
 					return getAnaResponse();
 				return getGreeting();
 			}
@@ -386,7 +384,7 @@ public class HalloweenIsland implements BearFair21Island {
 		CARLA(BearFair21NPC.CARLA) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
-				if (user.getQuestStage_Halloween() == STEP_ONE)
+				if (user.getQuestStage_Halloween() == QuestStage.STEP_ONE)
 					return getAnaResponse();
 				return getGreeting();
 			}
@@ -394,7 +392,7 @@ public class HalloweenIsland implements BearFair21Island {
 		ANTONIO(BearFair21NPC.ANTONIO) {
 			@Override
 			public List<String> getScript(BearFair21User user) {
-				if (user.getQuestStage_Halloween() == STEP_ONE)
+				if (user.getQuestStage_Halloween() == QuestStage.STEP_ONE)
 					return getAnaResponse();
 				return getGreeting();
 			}
@@ -469,7 +467,7 @@ public class HalloweenIsland implements BearFair21Island {
 			return;
 
 		Block block = event.getClickedBlock();
-		if (isNullOrAir(block)) return;
+		if (Nullables.isNullOrAir(block)) return;
 
 		BearFair21User user = userService.get(event.getPlayer());
 		if (user.getQuestStage_Halloween() != QuestStage.STEP_TWO) return;

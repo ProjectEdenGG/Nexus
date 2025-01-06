@@ -49,10 +49,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 
-import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.debug;
-import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-
 @SuppressWarnings("deprecation")
 public class DecorationListener implements Listener {
 
@@ -64,47 +60,47 @@ public class DecorationListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void on(DecorationDestroyEvent e) {
-		debug(e.getPlayer(), "&b" + e.getEventName() + " - Destroy");
+		DecorationLang.debug(e.getPlayer(), "&b" + e.getEventName() + " - Destroy");
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void on(DecorationInteractEvent e) {
-		debug(e.getPlayer(), "&b" + e.getEventName() + " - Interact");
+		DecorationLang.debug(e.getPlayer(), "&b" + e.getEventName() + " - Interact");
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void on(DecorationModifyEvent e) {
-		debug(e.getPlayer(), "&b" + e.getEventName() + " - Modify");
+		DecorationLang.debug(e.getPlayer(), "&b" + e.getEventName() + " - Modify");
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void on(DecorationPaintEvent e) {
-		debug(e.getPlayer(), "&b" + e.getEventName() + " - Paint");
+		DecorationLang.debug(e.getPlayer(), "&b" + e.getEventName() + " - Paint");
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void on(DecorationPlacedEvent e) {
-		debug(e.getPlayer(), "&b" + e.getEventName() + " - Placed");
+		DecorationLang.debug(e.getPlayer(), "&b" + e.getEventName() + " - Placed");
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void on(DecorationPrePlaceEvent e) {
-		debug(e.getPlayer(), "&b" + e.getEventName() + " - PrePlace");
+		DecorationLang.debug(e.getPlayer(), "&b" + e.getEventName() + " - PrePlace");
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void on(DecorationRotateEvent e) {
-		debug(e.getPlayer(), "&b" + e.getEventName() + " - Rotate");
+		DecorationLang.debug(e.getPlayer(), "&b" + e.getEventName() + " - Rotate");
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void on(DecorationSitEvent e) {
-		debug(e.getPlayer(), "&b" + e.getEventName() + " - Sit");
+		DecorationLang.debug(e.getPlayer(), "&b" + e.getEventName() + " - Sit");
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void on(DecorationSpawnEvent e) {
-		debug(e.getPlayer(), "&b" + e.getEventName() + " - Spawn");
+		DecorationLang.debug(e.getPlayer(), "&b" + e.getEventName() + " - Spawn");
 	}
 
 	//
@@ -114,13 +110,13 @@ public class DecorationListener implements Listener {
 		Player player = event.getPlayer();
 
 		Block clicked = player.getTargetBlockExact(5);
-		if (isNullOrAir(clicked))
+		if (Nullables.isNullOrAir(clicked))
 			return;
 
-		debug(player, "CreativePickBlock");
+		DecorationLang.debug(player, "CreativePickBlock");
 		DecorationInteractData data = new DecorationInteractData(clicked, BlockFace.UP);
 		if (data.getDecoration() == null) {
-			debug(player, " decoration == null");
+			DecorationLang.debug(player, " decoration == null");
 			return;
 		}
 
@@ -165,7 +161,7 @@ public class DecorationListener implements Listener {
 		if (frameHoldingItem && !frameHoldingDecor)
 			return;
 
-		debug(player, "onInteractItemFrame:");
+		DecorationLang.debug(player, "onInteractItemFrame:");
 
 		if (!frameHoldingItem) {
 			if (!playerHoldingDecor)
@@ -179,7 +175,7 @@ public class DecorationListener implements Listener {
 		final Decoration decoration = new Decoration(frameConfig, itemFrame);
 		decoration.interact(player, itemFrame.getLocation().getBlock(), InteractType.RIGHT_CLICK, tool);
 
-		debug(player, " cancelling PlayerInteractEntityEvent");
+		DecorationLang.debug(player, " cancelling PlayerInteractEntityEvent");
 		event.setCancelled(true); // cancel rotation
 	}
 
@@ -192,17 +188,17 @@ public class DecorationListener implements Listener {
 			return;
 
 		if (event.isCancelled()) {
-			debug(player, "entity damage event was cancelled");
+			DecorationLang.debug(player, "entity damage event was cancelled");
 			return;
 		}
 
 		ItemStack itemStack = itemFrame.getItem();
-		if (isNullOrAir(itemStack))
+		if (Nullables.isNullOrAir(itemStack))
 			return;
 
 		DecorationConfig config = DecorationConfig.of(itemStack);
 		if (config == null) {
-			debug(player, "config == null");
+			DecorationLang.debug(player, "config == null");
 			return;
 		}
 
@@ -240,7 +236,7 @@ public class DecorationListener implements Listener {
 		if (data.getDecoration() == null)
 			return;
 
-		debug(event.getPlayer(), "manipulate decoration hitbox (flowerpot)");
+		DecorationLang.debug(event.getPlayer(), "manipulate decoration hitbox (flowerpot)");
 		event.setCancelled(true);
 	}
 
@@ -261,7 +257,7 @@ public class DecorationListener implements Listener {
 
 		DecorationInteractData data = getData(event, player, tool, clicked);
 
-		debug(player, "onInteract:");
+		DecorationLang.debug(player, "onInteract:");
 		boolean cancel = false;
 
 		switch (event.getAction()) {
@@ -271,7 +267,7 @@ public class DecorationListener implements Listener {
 				if (data.isSpecialTool())
 					shouldInteract = true;
 				else if (!player.isSneaking()) {
-					if (isNullOrAir(tool))
+					if (Nullables.isNullOrAir(tool))
 						shouldInteract = true;
 					else if (data.isInteractable())
 						shouldInteract = true;
@@ -280,7 +276,7 @@ public class DecorationListener implements Listener {
 				}
 
 				final boolean shouldInteractFinal = shouldInteract;
-				debug(player, "should interact = " + shouldInteractFinal);
+				DecorationLang.debug(player, "should interact = " + shouldInteractFinal);
 
 				if (shouldInteractFinal)
 					cancel = interact(data, InteractType.RIGHT_CLICK);
@@ -290,7 +286,7 @@ public class DecorationListener implements Listener {
 		}
 
 		if (cancel) {
-			debug(player, "&aHandled interaction, cancelling original event");
+			DecorationLang.debug(player, "&aHandled interaction, cancelling original event");
 			event.setCancelled(true);
 		}
 	}
@@ -302,10 +298,10 @@ public class DecorationListener implements Listener {
 		String playerUUID = player.getUniqueId().toString();
 		InteractData interactData = playerInteractDataMap.getOrDefault(playerUUID, null);
 		if (interactData != null && interactData.equals(event)) {
-			debug(player, "\nuse cached DecorationInteractData");
+			DecorationLang.debug(player, "\nuse cached DecorationInteractData");
 			data = interactData.getData();
 		} else {
-			debug(player, "\ncreated new DecorationInteractData");
+			DecorationLang.debug(player, "\ncreated new DecorationInteractData");
 			data = new DecorationInteractData.DecorationInteractDataBuilder()
 					.player(player)
 					.block(clicked)
@@ -316,10 +312,10 @@ public class DecorationListener implements Listener {
 
 			// if decoration was not found, check for light hitbox next
 			if (!data.isDecorationValid()) {
-				debug(player, " invalid decoration 1, checking for light");
+				DecorationLang.debug(player, " invalid decoration 1, checking for light");
 				Block inFront = clicked.getRelative(event.getBlockFace());
 				if (inFront.getType() == Material.LIGHT) {
-					debug(player, " - found light in front");
+					DecorationLang.debug(player, " - found light in front");
 					data = new DecorationInteractData.DecorationInteractDataBuilder()
 							.player(player)
 							.block(inFront)
@@ -330,11 +326,11 @@ public class DecorationListener implements Listener {
 				}
 
 				if (data.isDecorationValid())
-					debug(player, " valid decoration 2");
+					DecorationLang.debug(player, " valid decoration 2");
 				else
-					debug(player, " invalid decoration 2");
+					DecorationLang.debug(player, " invalid decoration 2");
 			} else
-				debug(player, " valid decoration 1");
+				DecorationLang.debug(player, " valid decoration 1");
 
 			playerInteractDataMap.put(playerUUID, new InteractData(event, data));
 		}
@@ -363,9 +359,9 @@ public class DecorationListener implements Listener {
 	// Returning whether to cancel interact event
 	boolean destroy(DecorationInteractData data, Player debugger) {
 		Player player = data.getPlayer();
-		debug(player, "try destroy");
+		DecorationLang.debug(player, "try destroy");
 		if (!data.isDecorationValid()) {
-			debug(player, "decoration invalid");
+			DecorationLang.debug(player, "decoration invalid");
 			return false;
 		}
 
@@ -388,23 +384,23 @@ public class DecorationListener implements Listener {
 
 		final GameMode gamemode = player.getGameMode();
 		if (!GameModeWrapper.of(gamemode).canBuild()) {
-			debug(player, "can't build in this gamemode");
+			DecorationLang.debug(player, "can't build in this gamemode");
 			return true;
 		}
 
 		if (gamemode == GameMode.SURVIVAL) {
 			if (!DecorationCooldown.DESTROY.isOnCooldown(player, data.getDecoration().getItemFrame().getUniqueId())) {
-				debug(player, "first punch, returning");
+				DecorationLang.debug(player, "first punch, returning");
 				DecorationUtils.getSoundBuilder(data.getDecoration().getConfig().getHitSound()).location(data.getLocation()).play();
 				data.interact(InteractType.LEFT_CLICK);
 				return true;
 			}
 		}
 
-		debug(player, "attempting to destroy...");
+		DecorationLang.debug(player, "attempting to destroy...");
 
 		if (DecorationCooldown.DESTROY.isOnCooldown(player)) {
-			debug(player, "&cslow down (destroy)");
+			DecorationLang.debug(player, "&cslow down (destroy)");
 			return true;
 		}
 
@@ -412,7 +408,7 @@ public class DecorationListener implements Listener {
 			data.setBlockFaceOverride(null);
 
 		if (data.getBlockFaceOverride() != null)
-			debug(debugger, "BlockFace Override 2: " + data.getBlockFaceOverride());
+			DecorationLang.debug(debugger, "BlockFace Override 2: " + data.getBlockFaceOverride());
 
 		data.destroy(debugger);
 		return true;
@@ -422,10 +418,10 @@ public class DecorationListener implements Listener {
 		if (data == null)
 			return false;
 
-		debug(data.getPlayer(), "attempting to interact...");
+		DecorationLang.debug(data.getPlayer(), "attempting to interact...");
 
 		if (!data.isDecorationValid()) {
-			debug(data.getPlayer(), "invalid decoration 2 (interact)");
+			DecorationLang.debug(data.getPlayer(), "invalid decoration 2 (interact)");
 
 			if (CreativeBrushMenu.canOpenMenu(data.getPlayer())) {
 				CreativeBrushMenu.openMenu(data.getPlayer());
@@ -442,18 +438,18 @@ public class DecorationListener implements Listener {
 	}
 
 	private boolean place(DecorationInteractData data) {
-		debug(data.getPlayer(), "attempting to place...");
+		DecorationLang.debug(data.getPlayer(), "attempting to place...");
 
 		final DecorationConfig config = DecorationConfig.of(data.getTool());
 		if (config == null) {
-			debug(data.getPlayer(), "config == null");
+			DecorationLang.debug(data.getPlayer(), "config == null");
 			return false;
 		}
 
 		data.setDecoration(new Decoration(config, null));
 
 		if (DecorationCooldown.PLACE.isOnCooldown(data.getPlayer())) {
-			debug(data.getPlayer(), "&cslow down (place)");
+			DecorationLang.debug(data.getPlayer(), "&cslow down (place)");
 			return true;
 		}
 
@@ -499,7 +495,7 @@ public class DecorationListener implements Listener {
 			if (!interact1.equals(interact2))
 				return false;
 
-			if (isNotNullOrAir(_event.getItem())) {
+			if (Nullables.isNotNullOrAir(_event.getItem())) {
 				if (!ItemUtils.isFuzzyMatch(_event.getItem(), event.getItem()))
 					return false;
 			}

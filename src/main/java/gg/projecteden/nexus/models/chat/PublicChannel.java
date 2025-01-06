@@ -8,10 +8,12 @@ import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.models.party.PartyManager;
 import gg.projecteden.nexus.models.party.Party;
+import gg.projecteden.nexus.models.party.PartyManager;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Builder;
 import lombok.Builder.Default;
@@ -24,9 +26,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
-import static gg.projecteden.api.common.utils.StringUtils.plural;
 
 @Data
 @Builder
@@ -110,10 +109,10 @@ public class PublicChannel implements Channel {
 			json.hover("&3Rank: " + nerd.getRank().getColoredName());
 		if (nerd.hasNickname())
 			json.hover("&3Real name: &e" + nerd.getName());
-		if (isNotNullOrEmpty(nerd.getPronouns()))
+		if (Nullables.isNotNullOrEmpty(nerd.getPronouns()))
 			json.hover("&3Pronouns: " + nerd.getPronouns().stream().map(pronoun -> "&e" + pronoun + "&3").collect(Collectors.joining(", ")));
-		if (isNotNullOrEmpty(nerd.getFilteredPreferredNames()))
-			json.hover(plural("&3Preferred name", nerd.getFilteredPreferredNames().size()) + ": &e" + String.join("&3, &e", nerd.getFilteredPreferredNames()));
+		if (Nullables.isNotNullOrEmpty(nerd.getFilteredPreferredNames()))
+			json.hover(StringUtils.plural("&3Preferred name", nerd.getFilteredPreferredNames().size()) + ": &e" + String.join("&3, &e", nerd.getFilteredPreferredNames()));
 
 		return json;
 	}

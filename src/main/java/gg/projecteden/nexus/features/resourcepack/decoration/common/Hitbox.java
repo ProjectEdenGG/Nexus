@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
 import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,8 +22,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Data
 @RequiredArgsConstructor
@@ -231,7 +230,7 @@ public class Hitbox {
 
 		for (Hitbox hitbox : hitboxes) {
 			Material material = hitbox.getMaterial();
-			if (isNullOrAir(material)) {
+			if (Nullables.isNullOrAir(material)) {
 				continue; // don't set hitboxes that are air
 			}
 

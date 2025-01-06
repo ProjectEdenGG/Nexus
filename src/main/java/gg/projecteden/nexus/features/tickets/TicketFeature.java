@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.tickets;
 
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -13,8 +14,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
-
-import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
 
 public class TicketFeature {
 	public static final String PREFIX = StringUtils.getPrefix("Tickets");
@@ -63,7 +62,7 @@ public class TicketFeature {
 				action.sendMessage(_staff.getUniqueId(), ticket, staffNick);
 		}
 
-		if (isUUID0(ticket.getUuid()))
+		if (UUIDUtils.isUUID0(ticket.getUuid()))
 			return;
 
 		if (Rank.of(ticket.getUuid()).isStaff())

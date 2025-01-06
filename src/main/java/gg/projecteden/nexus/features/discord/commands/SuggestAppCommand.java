@@ -15,13 +15,12 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @RequiredRole("Staff")
 @Command("Suggest a player for promotion")
@@ -66,7 +65,7 @@ public class SuggestAppCommand extends NexusAppCommand {
 			name = "%s (%s)".formatted(nerd.getNickname(), name);
 
 		reply(new MessageBuilder()
-			.setContent("@here " + member().getAsMention() + " is suggesting **" + name + "** for **" + camelCase(rank.getName()) + "**")
+			.setContent("@here " + member().getAsMention() + " is suggesting **" + name + "** for **" + StringUtils.camelCase(rank.getName()) + "**")
 			.setEmbeds(embed.build()));
 	}
 

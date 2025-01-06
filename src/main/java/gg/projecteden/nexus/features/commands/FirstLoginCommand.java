@@ -18,8 +18,6 @@ import gg.projecteden.nexus.utils.IOUtils;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static gg.projecteden.api.common.utils.TimeUtils.longDateTimeFormat;
-
 @Aliases("firstjoin")
 public class FirstLoginCommand extends CustomCommand {
 
@@ -30,7 +28,7 @@ public class FirstLoginCommand extends CustomCommand {
 	@Path("[player]")
 	@Description("View when a player first joined the server")
 	void firstJoin(@Arg("self") Nerd nerd) {
-		send("&e&l" + Nickname.of(nerd) + " &3first joined Project Eden on &e" + longDateTimeFormat(nerd.getFirstJoin()) + " &3US Eastern Time");
+		send("&e&l" + Nickname.of(nerd) + " &3first joined Project Eden on &e" + TimeUtils.longDateTimeFormat(nerd.getFirstJoin()) + " &3US Eastern Time");
 	}
 
 	@Permission(Group.ADMIN)

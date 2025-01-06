@@ -48,7 +48,8 @@ public class PowerUpUtils {
 
 		hologram.onPickup(player -> {
 			Minigamer minigamer = Minigamer.of(player);
-			if (!minigamer.isPlaying(match)) return;
+			if (!minigamer.isPlaying(match)) return false;
+			if (!minigamer.isAlive()) return false;
 
 			if (message != null)
 				minigamer.tell(message);
@@ -60,6 +61,7 @@ public class PowerUpUtils {
 					if (!match.isEnded())
 						spawn(location, true);
 				});
+			return true;
 		});
 
 		hologram.spawn();

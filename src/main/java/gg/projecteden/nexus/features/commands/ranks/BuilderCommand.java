@@ -1,14 +1,13 @@
 package gg.projecteden.nexus.features.commands.ranks;
 
 import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
-
-import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
 
 @HideFromWiki
 public class BuilderCommand extends CustomCommand {
@@ -41,7 +40,7 @@ public class BuilderCommand extends CustomCommand {
 			line();
 			send("&3All current " + Rank.BUILDER.getChatColor() + "Builders &3and the date they were promoted:");
 			nerds.forEach(nerd ->
-				send(nerd.getColoredName() + " &7-&e " + shortDateFormat(nerd.getPromotionDate())));
+				send(nerd.getColoredName() + " &7-&e " + TimeUtils.shortDateFormat(nerd.getPromotionDate())));
 			line();
 			RanksCommand.ranksReturn(player());
 		});

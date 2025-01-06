@@ -42,7 +42,7 @@ public class EasterEggs implements Listener {
 		private @NonNull BiConsumer<Player, ItemStack> eatEffect = (player, itemstack) -> {
 			Location headLoc = player.getLocation().add(0, 1.45, 0);
 			Location mouthLoc = headLoc.add(player.getEyeLocation().getDirection().multiply(0.25));
-			new ParticleBuilder(Particle.ITEM_CRACK).data(itemstack).location(mouthLoc).count(15).extra(0.1).spawn();
+			new ParticleBuilder(Particle.ITEM).data(itemstack).location(mouthLoc).count(15).extra(0.1).spawn();
 		};
 		private int eatEffectCount = 5;
 		private int eatMaxCount = 5;
@@ -220,7 +220,7 @@ public class EasterEggs implements Listener {
 			.burpEffect((player, itemStack) -> {
 				new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(player).play();
 
-				new ParticleBuilder(Particle.EXPLOSION_HUGE)
+				new ParticleBuilder(Particle.EXPLOSION)
 					.count(10)
 					.offset(.5, .5, .5)
 					.location(player.getLocation())

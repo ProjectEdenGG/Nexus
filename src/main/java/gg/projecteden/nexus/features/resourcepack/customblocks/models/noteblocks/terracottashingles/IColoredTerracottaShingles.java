@@ -2,9 +2,8 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblock
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlockTag;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IDyeable;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelToSnake;
 
 public interface IColoredTerracottaShingles extends ITerracottaShingles, IDyeable {
 
@@ -15,7 +14,7 @@ public interface IColoredTerracottaShingles extends ITerracottaShingles, IDyeabl
 
 	@Override
 	default Material getMaterial() {
-		return Material.valueOf(camelToSnake(getClass().getSimpleName().replace("TerracottaShingles", "")).toUpperCase() + "_TERRACOTTA");
+		return Material.valueOf(StringUtils.camelToSnake(getClass().getSimpleName().replace("TerracottaShingles", "")).toUpperCase() + "_TERRACOTTA");
 	}
 
 }

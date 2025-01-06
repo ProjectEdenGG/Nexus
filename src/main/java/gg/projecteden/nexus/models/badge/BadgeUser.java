@@ -15,25 +15,13 @@ import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser.Connection;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.StringUtils;
+import lombok.*;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-import static gg.projecteden.api.common.utils.StringUtils.getNumberWithSuffix;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity(value = "badge_user", noClassnameStored = true)
@@ -55,7 +43,7 @@ public class BadgeUser implements PlayerOwnedObject {
 
 		final String emoji = active.getEmoji();
 
-		if (isNullOrEmpty(emoji))
+		if (Nullables.isNullOrEmpty(emoji))
 			return json;
 
 		json.next("&f" + emoji).hover("&f" + active.getName() + " Badge");
@@ -105,8 +93,8 @@ public class BadgeUser implements PlayerOwnedObject {
 		podiums.sort(Comparator.comparingInt(data -> data.getSpot().ordinal()));
 		podiums.forEach(podium -> json.hover("", "%s %s place &7| &e%s &7- %s".formatted(
 			podium.getSpot().getBadge().getEmoji(),
-			getNumberWithSuffix(podium.getSpot().ordinal() + 1),
-			camelCase(podium.getType()),
+			StringUtils.getNumberWithSuffix(podium.getSpot().ordinal() + 1),
+			StringUtils.camelCase(podium.getType()),
 			podium.getText())
 		));
 	};

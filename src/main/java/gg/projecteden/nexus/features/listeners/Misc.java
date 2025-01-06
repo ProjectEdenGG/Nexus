@@ -16,40 +16,17 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.tip.Tip;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
-import gg.projecteden.nexus.utils.Enchant;
-import gg.projecteden.nexus.utils.FireworkLauncher;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup.SpawnType;
 import me.libraryaddict.disguise.DisguiseAPI;
-import org.bukkit.Bukkit;
-import org.bukkit.Difficulty;
-import org.bukkit.GameMode;
-import org.bukkit.GameRule;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.World.Environment;
-import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
 import org.bukkit.boss.BarColor;
-import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
-import org.bukkit.entity.AbstractHorse;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.EnderDragon;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Firework;
-import org.bukkit.entity.Fox;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -77,9 +54,6 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import static gg.projecteden.nexus.utils.ItemUtils.getTool;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @SuppressWarnings("SwitchStatementWithTooFewBranches")
 public class Misc implements Listener {
@@ -121,7 +95,7 @@ public class Misc implements Listener {
 
 		final ItemStack item = event.getItem();
 		final Block block = event.getClickedBlock();
-		if (isNullOrAir(item) || isNullOrAir(block))
+		if (Nullables.isNullOrAir(item) || Nullables.isNullOrAir(block))
 			return;
 
 		if (item.getType() != Material.ENDER_EYE)
@@ -157,11 +131,11 @@ public class Misc implements Listener {
 			return;
 
 		final Block block = event.getClickedBlock();
-		if (isNullOrAir(block) || block.getType() != Material.LIGHT)
+		if (Nullables.isNullOrAir(block) || block.getType() != Material.LIGHT)
 			return;
 
 		final ItemStack item = event.getItem();
-		if (isNullOrAir(item) || item.getType() != Material.LIGHT)
+		if (Nullables.isNullOrAir(item) || item.getType() != Material.LIGHT)
 			return;
 
 		if (!new BlockBreakEvent(block, event.getPlayer()).callEvent())
@@ -173,7 +147,7 @@ public class Misc implements Listener {
 
 	@EventHandler
 	public void onVanishToggleEvent(VanishToggleEvent event) {
-		Nexus.getOpenInv().setPlayerSilentChestStatus(event.getPlayer(), event.getUser().isVanished());
+		Nexus.getOpenInv().setSilentContainerStatus(event.getPlayer(), event.getUser().isVanished());
 	}
 
 	@EventHandler
@@ -238,7 +212,7 @@ public class Misc implements Listener {
 				continue;
 
 			final ItemStack existing = ItemUtils.clone(inventory.getItem(slot));
-			if (!isNullOrAir(existing) && existing.getItemMeta().hasEnchant(Enchant.BINDING_CURSE))
+			if (!Nullables.isNullOrAir(existing) && existing.getItemMeta().hasEnchant(Enchant.BINDING_CURSE))
 				continue;
 
 			final PlayerArmorChangeEvent armorChangeEvent = new PlayerArmorChangeEvent(event.getPlayer(), SlotType.valueOf(slot.name()), existing, item);
@@ -390,7 +364,7 @@ public class Misc implements Listener {
 		if (!(entity instanceof ItemFrame itemFrame))
 			return;
 
-		ItemStack tool = getTool(event.getPlayer());
+		ItemStack tool = ItemUtils.getTool(event.getPlayer());
 		if (tool == null)
 			return;
 
@@ -401,7 +375,7 @@ public class Misc implements Listener {
 		if (!Paths.get("plugins/ImageOnMap/images/map" + mapId + ".png").toFile().exists())
 			return;
 
-		if (!isNullOrAir(itemFrame.getItem()))
+		if (!Nullables.isNullOrAir(itemFrame.getItem()))
 			return;
 
 		itemFrame.setRotation(itemFrame.getRotation().rotateCounterClockwise());

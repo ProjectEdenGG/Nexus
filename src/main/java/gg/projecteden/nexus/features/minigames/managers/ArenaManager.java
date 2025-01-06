@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigames.managers;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
@@ -25,8 +26,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
 
 public class ArenaManager {
 	@Getter
@@ -109,7 +108,7 @@ public class ArenaManager {
 	}
 
 	public static Arena find(String name) {
-		if (isNotNullOrEmpty(name)) {
+		if (Nullables.isNotNullOrEmpty(name)) {
 			for (Arena arena : arenas)
 				if (arena.getName().equalsIgnoreCase(name))
 					return arena;

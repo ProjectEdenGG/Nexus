@@ -3,11 +3,10 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblock
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.IPlanks;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelToSnake;
 
 public interface ICarvedPlanks extends IPlanks {
 
@@ -25,7 +24,7 @@ public interface ICarvedPlanks extends IPlanks {
 	@NotNull
 	private Material getMaterial() {
 		final String woodType = getClass().getSimpleName().replace("Carved", "").replace("Planks", "");
-		return Material.valueOf(camelToSnake(woodType).toUpperCase() + "_SLAB");
+		return Material.valueOf(StringUtils.camelToSnake(woodType).toUpperCase() + "_SLAB");
 	}
 
 }

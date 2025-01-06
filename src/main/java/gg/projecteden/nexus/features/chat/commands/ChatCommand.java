@@ -4,26 +4,18 @@ import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.chat.ChatManager;
 import gg.projecteden.nexus.features.chat.events.ChannelChangeEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.chat.Channel;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.chat.PublicChannel;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.NonNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Aliases({"ch", "channel"})
 @Redirect(from = "/qm", to = "/ch qm")
@@ -39,7 +31,7 @@ public class ChatCommand extends CustomCommand {
 	@Path("<channel> [message...]")
 	@Description("Switch to a channel or send a message without switching")
 	void changeChannel(PublicChannel channel, String message) {
-		if (!isNullOrEmpty(message)) {
+		if (!Nullables.isNullOrEmpty(message)) {
 			quickMessage(channel, message);
 			return;
 		}
@@ -59,7 +51,7 @@ public class ChatCommand extends CustomCommand {
 	@Description("List available channels")
 	void list(String filter) {
 		ChatManager.getChannels().forEach(channel -> {
-			if (!isNullOrEmpty(filter) && !channel.getName().toLowerCase().startsWith(filter))
+			if (!Nullables.isNullOrEmpty(filter) && !channel.getName().toLowerCase().startsWith(filter))
 				return;
 
 			if (chatter.canJoin(channel))

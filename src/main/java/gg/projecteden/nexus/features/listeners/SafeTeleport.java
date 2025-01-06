@@ -4,6 +4,7 @@ import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Location;
@@ -17,8 +18,6 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
-
-import static gg.projecteden.nexus.utils.Distance.distance;
 
 @Disabled
 public class SafeTeleport implements Listener {
@@ -48,7 +47,7 @@ public class SafeTeleport implements Listener {
 	public Location getSafeLocation(Location location) {
 		List<Block> blocks = BlockUtils.getBlocksInRadius(location, 5)
 			.stream().filter(block -> block.getLocation().getBlockY() == location.getBlockY())
-			.sorted(Comparator.comparing(block -> distance(block, location).get()))
+			.sorted(Comparator.comparing(block -> Distance.distance(block, location).get()))
 			.toList();
 
 		for (Block block : blocks) {

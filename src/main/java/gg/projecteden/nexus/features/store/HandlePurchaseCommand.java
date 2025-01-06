@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.store;
 
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.api.discord.DiscordId.Role;
 import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.Nexus;
@@ -24,9 +25,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
-import static gg.projecteden.api.common.utils.UUIDUtils.isV4Uuid;
-import static gg.projecteden.api.common.utils.UUIDUtils.uuidFormat;
-
 @HideFromWiki
 public class HandlePurchaseCommand extends CustomCommand {
 	private final String PREFIX = StringUtils.getPrefix("Store");
@@ -44,7 +42,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 		Purchase purchase = Purchase.builder()
 				.id(UUID.randomUUID())
 				.name(args[0])
-				.uuid(UUID.fromString(uuidFormat(args[1])))
+				.uuid(UUID.fromString(UUIDUtils.uuidFormat(args[1])))
 				.transactionId(args[2])
 				.price(Double.parseDouble(args[3]))
 				.currency(args[4])
@@ -56,7 +54,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 				.packageExpiry(args[11])
 				.packageName(args[12])
 				.purchaserName(args[13])
-				.purchaserUuid(UUID.fromString(uuidFormat(args[14])))
+				.purchaserUuid(UUID.fromString(UUIDUtils.uuidFormat(args[14])))
 				.build();
 
 		String discordMessage = purchase.toDiscordString();
@@ -89,7 +87,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 				if (packageType.getCategory() == StoreCategory.BOOSTS)
 					send(purchase.getUuid(), PREFIX + "Make sure you activate your boost with &c/boost menu");
 
-				if (isV4Uuid(purchase.getPurchaserUuid())) {
+				if (UUIDUtils.isV4Uuid(purchase.getPurchaserUuid())) {
 					new BadgeUserService().edit(purchase.getPurchaserUuid(), badgeUser -> badgeUser.give(Badge.SUPPORTER));
 
 					DiscordUser user = new DiscordUserService().get(purchase.getPurchaserUuid());

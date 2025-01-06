@@ -10,22 +10,11 @@ import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.pride21.Pride21User;
 import gg.projecteden.nexus.models.pride21.Pride21UserService;
 import gg.projecteden.nexus.models.trophy.TrophyType;
-import gg.projecteden.nexus.utils.DescParseTickFormat;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,8 +27,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 public class Quests implements Listener {
 	public Quests() {
@@ -100,7 +87,7 @@ public class Quests implements Listener {
 
 	private static @NotNull JsonBuilder addLeftToFind(JsonBuilder json, Pride21User user) {
 		int decorationsLeft = user.decorationsLeft();
-		return json.next(" You have").next(plural("&e " + decorationsLeft + " bag", decorationsLeft) + "&3 left to find.");
+		return json.next(" You have").next(StringUtils.plural("&e " + decorationsLeft + " bag", decorationsLeft) + "&3 left to find.");
 	}
 
 	@EventHandler

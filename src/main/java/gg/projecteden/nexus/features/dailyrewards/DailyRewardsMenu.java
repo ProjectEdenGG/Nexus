@@ -4,11 +4,11 @@ import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.ColorSelectMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.SignMenuFactory;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack.ResourcePackNumber;
-import gg.projecteden.nexus.features.votes.vps.VPSMenu;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.dailyreward.DailyRewardUser;
@@ -27,10 +27,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.features.menus.api.SignMenuFactory.ARROWS;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Title("&3Daily Rewards")
 @RequiredArgsConstructor
@@ -91,10 +87,10 @@ public class DailyRewardsMenu extends InventoryProvider {
 			for (int i = 0; i < 3; i++) {
 				int option = i;
 				Reward currentReward = rewards.get(i);
-				String rewardDescription = "&e" + camelCase(currentReward.getDescription());
+				String rewardDescription = "&e" + StringUtils.camelCase(currentReward.getDescription());
 
 				ItemBuilder item;
-				if (!isNullOrEmpty(currentReward.getItems()))
+				if (!Nullables.isNullOrEmpty(currentReward.getItems()))
 					item = new ItemBuilder(currentReward.getItems().get(0).clone()).name(rewardDescription).lore("&3Click to claim");
 				else
 					item = new ItemBuilder(Material.PAPER).name(rewardDescription).lore("&3Click to claim").glow();
@@ -115,7 +111,7 @@ public class DailyRewardsMenu extends InventoryProvider {
 
 			if (user.getCurrentStreak().hasClaimed(day)) return;
 
-			if (!isNullOrEmpty(items)) {
+			if (!Nullables.isNullOrEmpty(items)) {
 				for (ItemStack item : items) {
 					ItemStack clone = item.clone();
 					if (Reward.RequiredSubmenu.COLOR.contains(clone.getType())) {
@@ -125,7 +121,7 @@ public class DailyRewardsMenu extends InventoryProvider {
 											player.closeInventory();
 										}).open(player);
 					} else if (Reward.RequiredSubmenu.NAME.contains(clone.getType())) {
-						Nexus.getSignMenuFactory().lines("", ARROWS, "Enter a", "player's name").prefix(PREFIX).response(lines -> {
+						Nexus.getSignMenuFactory().lines("", SignMenuFactory.ARROWS, "Enter a", "player's name").prefix(PREFIX).response(lines -> {
 							PlayerUtils.giveItem(player, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(lines[0]).amount(clone.getAmount()).build());
 							saveAndReturn(day);
 						}).open(player);

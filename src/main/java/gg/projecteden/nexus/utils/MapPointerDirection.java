@@ -4,8 +4,6 @@ import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import static gg.projecteden.nexus.utils.LocationUtils.normalizeYaw;
-
 @Getter
 public
 enum MapPointerDirection {
@@ -55,7 +53,7 @@ enum MapPointerDirection {
 	}
 
 	public static MapPointerDirection of(Location location) {
-		float yaw = normalizeYaw(location);
+		float yaw = LocationUtils.normalizeYaw(location);
 
 		MapPointerDirection result = SOUTH;
 		for (MapPointerDirection direction : values())

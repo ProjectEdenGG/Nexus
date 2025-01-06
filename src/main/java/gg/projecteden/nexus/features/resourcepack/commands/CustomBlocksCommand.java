@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.resourcepack.commands;
 
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.features.resourcepack.CustomContentUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksLang;
@@ -44,8 +45,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 
 @Environments(Env.TEST)
 public class CustomBlocksCommand extends CustomCommand {
@@ -201,7 +200,7 @@ public class CustomBlocksCommand extends CustomCommand {
 
 			UUID uuid = data.getPlacerUUID();
 			String playerName = "Unknown";
-			if (!UUID0.equals(uuid))
+			if (!UUIDUtils.UUID0.equals(uuid))
 				playerName = PlayerUtils.getPlayer(uuid).getName();
 
 			send(" " + StringUtils.getCoordinateString(location) + ": " + StringUtils.camelCase(customBlock.name()) + " - " + playerName);

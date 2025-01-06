@@ -1,147 +1,246 @@
 package gg.projecteden.nexus.features.customenchants;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.customenchants.models.CraftCustomEnchant;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
-import gg.projecteden.nexus.features.customenchants.models.NMSCustomEnchant;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import lombok.SneakyThrows;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.item.Item;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.craftbukkit.v1_20_R3.CraftRegistry;
-import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R3.enchantments.CraftEnchantment;
-import org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.CraftEquipmentSlot;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.enchantments.CraftEnchantment;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.IdentityHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.nms.NMSUtils.setStaticFinal;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
 
 public class CustomEnchantsRegistration {
 	static final Field nmsFrozenField;
 	static final Field unregisteredIntrusiveHolders;
-	static final Field registriesField;
-	static final HashMap<Class<?>, org.bukkit.Registry<?>> craftRegistries;
-	static final Set<NamespacedKey> vanillaEnchantments;
 
 	static {
 		try {
 			Nexus.debug("Setting up custom enchant registry 1");
 
-			printRegistryContents("1");
-
 			nmsFrozenField = Arrays.stream(MappedRegistry.class.getDeclaredFields()).filter(field -> field.getType().isPrimitive()).findFirst().orElse(null);
 			unregisteredIntrusiveHolders = Arrays.stream(MappedRegistry.class.getDeclaredFields()).filter(field -> field.getType() == Map.class).reduce((f, s) -> s).orElse(null);
-			registriesField = CraftServer.class.getDeclaredField("registries");
 
 			nmsFrozenField.setAccessible(true);
 			unregisteredIntrusiveHolders.setAccessible(true);
-			registriesField.setAccessible(true);
-
-			craftRegistries = (HashMap<Class<?>, org.bukkit.Registry<?>>) registriesField.get(Bukkit.getServer());
-			vanillaEnchantments = Arrays.stream(Enchantments.class.getDeclaredFields())
-				.filter(field -> field.getType() == net.minecraft.world.item.enchantment.Enchantment.class)
-				.map(field -> {
-					try {
-						final var enchantment = (net.minecraft.world.item.enchantment.Enchantment) field.get(null);
-						final ResourceLocation key = BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
-						if (key == null)
-							return null;
-						return CraftNamespacedKey.fromMinecraft(key);
-					} catch (IllegalAccessException e) {
-						throw new RuntimeException(e);
-					}
-				})
-				.filter(Objects::nonNull)
-				.collect(Collectors.toSet());
 		} catch (Exception e) {
 			Nexus.severe("Error setting up custom enchant registry 1");
 			throw new RuntimeException(e);
 		}
 	}
 
-	public static void register() {
+	public static void unfreeze() {
 		try {
-			if (!(boolean) nmsFrozenField.get(BuiltInRegistries.ENCHANTMENT)) // Don't replace if we already have (reloads)
+			if (areCustomEnchantsRegistered())
 				return;
-			Nexus.debug("Setting up custom enchant registry 2");
-			printRegistryContents("2");
-			var craftRegistry = new CraftRegistry<>(Enchantment.class, nmsRegistry(), (key, handle) -> {
-				Nexus.debug("Converting " + key.getKey() + " to CraftEnchantment");
-				if (handle == null)
-					Nexus.debug("Handle is null");
-				else
-					Nexus.debug("handle classname: %s, category: %s, tostring: %s".formatted(handle.getClass().getSimpleName(), handle.category, handle.toString()));
 
-				if (vanillaEnchantments.contains(key))
-					return new CraftEnchantment(key, handle);
-				else
-					return CustomEnchants.get(key.key());
-			});
-			craftRegistries.put(Enchantment.class, craftRegistry);
-			setStaticFinal(org.bukkit.Registry.class.getDeclaredField("ENCHANTMENT"), craftRegistry);
-			printRegistryContents("2.5");
-			nmsFrozenField.set(BuiltInRegistries.ENCHANTMENT, false);
-			unregisteredIntrusiveHolders.set(BuiltInRegistries.ENCHANTMENT,
-				new IdentityHashMap<net.minecraft.world.item.enchantment.Enchantment,
-					Holder.Reference<net.minecraft.world.item.enchantment.Enchantment>>());
-			printRegistryContents("3");
+			if (!(boolean) nmsFrozenField.get(nmsRegistry()))
+				return;
+
+			nmsFrozenField.set(nmsRegistry(), false);
+			unregisteredIntrusiveHolders.set(nmsRegistry(), new IdentityHashMap<>());
+
+			nmsFrozenField.set(nmsItemRegistry(), false);
+			unregisteredIntrusiveHolders.set(nmsItemRegistry(), new IdentityHashMap<>());
 		} catch (Exception ex) {
-			Nexus.severe("Error setting up custom enchant registry 2");
+			Nexus.severe("Error setting up custom enchant registry");
 			ex.printStackTrace();
 		}
 	}
 
-	@NotNull
-	public static Registry<net.minecraft.world.item.enchantment.Enchantment> nmsRegistry() {
-		return ((CraftServer) Bukkit.getServer()).getHandle().getServer().registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+	public static void freeze() {
+		try {
+			if ((boolean) nmsFrozenField.get(nmsRegistry()))
+				return;
+
+			freeze(nmsItemRegistry());
+			freeze(nmsRegistry());
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
-	public static void unregister() {
-		/*
-		You can't unregister from a minecraft registry, so we simply leave the stale reference there.
-		This shouldn't cause many issues in production as the bukkit registry is replaced on each reload.
-		*/
+	private static <T> void freeze(MappedRegistry<T> registry) {
+		try {
+			Object tagSet = getAllTags(registry);
+
+			Map<TagKey<T>, HolderSet.Named<T>> tagsMap = getTagsMap(tagSet);
+			// Get 'frozenTags' map with all tags of the registry.
+			Map<TagKey<T>, HolderSet.Named<T>> frozenTags = getFrozenTags(registry);
+
+			tagsMap.forEach(frozenTags::putIfAbsent);
+
+			Class<?> clazz = Class.forName(MappedRegistry.class.getName() + "$TagSet");
+
+			Method method = clazz.getMethod("unbound");
+			method.setAccessible(true);
+			Object unbound = method.invoke(registry);
+
+			Field allTags = MappedRegistry.class.getDeclaredField("allTags");
+			allTags.setAccessible(true);
+			allTags.set(registry, unbound);
+
+			registry.freeze();
+
+			frozenTags.forEach(tagsMap::putIfAbsent);
+
+			Field valMapField = tagSet.getClass().getDeclaredField("val$map");
+			valMapField.setAccessible(true);
+			valMapField.set(tagSet, tagsMap);
+
+			allTags.set(registry, tagSet);
+
+		} catch (NoSuchMethodException | NoSuchFieldException | ClassNotFoundException | InvocationTargetException | IllegalAccessException e) {
+			Nexus.severe("Could not unbound custom enchant registry");
+			e.printStackTrace();
+		}
+	}
+
+	public static boolean areCustomEnchantsRegistered() {
+		for (HolderSet.Named<?> tag : nmsRegistry().listTags().toList())
+			if (tag.key().toString().contains("exclusive_set/glowing"))
+				return true;
+		return false;
+	}
+
+	public static MappedRegistry<net.minecraft.world.item.enchantment.Enchantment> nmsRegistry() {
+		return (MappedRegistry<net.minecraft.world.item.enchantment.Enchantment>) ((CraftServer) Bukkit.getServer()).getHandle().getServer().registryAccess().lookup(Registries.ENCHANTMENT).orElse(null);
+	}
+
+	public static MappedRegistry<net.minecraft.world.item.Item> nmsItemRegistry() {
+		return (MappedRegistry<Item>) ((CraftServer) Bukkit.getServer()).getHandle().getServer().registryAccess().lookup(Registries.ITEM).orElse(null);
 	}
 
 	@SneakyThrows
 	static Enchantment register(CustomEnchant customEnchant) {
-		Nexus.debug("Registering " + customEnchant.getClass().getSimpleName());
-		final String id = customEnchant.getId();
-		final NamespacedKey nmsKey = NamespacedKey.minecraft(id);
-		final ResourceLocation resourceLocation = CraftNamespacedKey.toMinecraft(nmsKey);
-		if (BuiltInRegistries.ENCHANTMENT.containsKey(resourceLocation)) {
+		unfreeze();
+
+		Optional<Holder.Reference<net.minecraft.world.item.enchantment.Enchantment>> lookup = nmsRegistry().get(getResourceKey(nmsRegistry(), customEnchant.getId()));
+		if (lookup.isPresent()) {
 			if (customEnchant instanceof Listener listener)
 				Nexus.registerListener(listener);
 
-			var nms = BuiltInRegistries.ENCHANTMENT.get(resourceLocation);
-			if (nms != null) {
-				return new CraftCustomEnchant(customEnchant, nms);
-			} else {
-				throw new IllegalStateException("Enchantment " + id + " wasn't registered");
-			}
+			return CraftEnchantment.minecraftToBukkit(lookup.get().value());
 		}
 
-		Registry.register(BuiltInRegistries.ENCHANTMENT, id, new NMSCustomEnchant(customEnchant));
+		Component display = Component.translatable("enchantment.nexus." + customEnchant.getId(), customEnchant.getName());
+		HolderSet.Named<Item> supported = createItemsSet("enchant_supported", customEnchant);
+		HolderSet.Named<Item> primary = createItemsSet("enchant_primary", customEnchant);
 
-		return register(customEnchant);
+		int weight = customEnchant.getWeight();
+		int maxLevel = customEnchant.getMaxLevel();
+		net.minecraft.world.item.enchantment.Enchantment.Cost minCost = new net.minecraft.world.item.enchantment.Enchantment.Cost(customEnchant.getMinModifiedCost(0), 1);
+		net.minecraft.world.item.enchantment.Enchantment.Cost maxCost = new net.minecraft.world.item.enchantment.Enchantment.Cost(customEnchant.getMaxModifiedCost(0), 1);
+		int anvilCost = customEnchant.getAnvilCost();
+		EquipmentSlotGroup[] slotGroup = getNMSSlots();
+
+		net.minecraft.world.item.enchantment.Enchantment.EnchantmentDefinition definition = net.minecraft.world.item.enchantment.Enchantment.definition(
+			supported, primary, weight, maxLevel, minCost, maxCost, anvilCost, slotGroup
+		);
+		HolderSet<net.minecraft.world.item.enchantment.Enchantment> exclusiveSet = createExclusiveSet(customEnchant);
+		net.minecraft.world.item.enchantment.Enchantment enchantment = new net.minecraft.world.item.enchantment.Enchantment(
+			display, definition, exclusiveSet, DataComponentMap.builder().build()
+		);
+
+		nmsRegistry().createIntrusiveHolder(enchantment);
+		Registry.register(nmsRegistry(), customEnchant.getId(), enchantment);
+
+		return CraftEnchantment.minecraftToBukkit(enchantment);
+	}
+
+	static HolderSet.Named<Item> createItemsSet(@NotNull String prefix, @NotNull CustomEnchant customEnchantment) {
+		TagKey<Item> customKey = getTagKey(nmsItemRegistry(), prefix + "/" + customEnchantment.getId());
+		List<Holder<Item>> holders = new ArrayList<>();
+
+//		Arrays.stream(Material.values()).forEach(material -> {
+//			ResourceLocation location = CraftNamespacedKey.toMinecraft(material.getKey());
+//			Holder.Reference<Item> holder = nmsItemRegistry().get(location).orElse(null);
+//			if (holder == null) return;
+//
+//			holders.add(holder);
+//		});
+
+		// Creates new tag, puts it in the 'frozenTags' map and binds holders to it.
+		nmsItemRegistry().bindTag(customKey, holders);
+
+		return getFrozenTags(nmsItemRegistry()).get(customKey);
+	}
+
+	static <T> TagKey<T> getTagKey(@NotNull Registry<T> registry, @NotNull String name) {
+		return TagKey.create(registry.key(), ResourceLocation.withDefaultNamespace(name));
+	}
+
+	@SuppressWarnings("unchecked")
+	static <T> Map<TagKey<T>, HolderSet.Named<T>> getFrozenTags(@NotNull MappedRegistry<T> registry) {
+		try {
+			Field field = MappedRegistry.class.getDeclaredField("frozenTags");
+			field.setAccessible(true);
+			return (Map<TagKey<T>, HolderSet.Named<T>>) field.get(registry);
+		} catch (NoSuchFieldException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	static EquipmentSlotGroup[] getNMSSlots() {
+		return Arrays.stream(EquipmentSlot.values()).map(slot -> CraftEquipmentSlot.getNMSGroup(slot.getGroup())).distinct().toArray(EquipmentSlotGroup[]::new);
+	}
+
+	static HolderSet.Named<net.minecraft.world.item.enchantment.Enchantment> createExclusiveSet(@NotNull CustomEnchant customEnchantment) {
+		TagKey<net.minecraft.world.item.enchantment.Enchantment> customKey = getTagKey(nmsRegistry(), "exclusive_set/" + customEnchantment.getId());
+		List<Holder<net.minecraft.world.item.enchantment.Enchantment>> holders = new ArrayList<>();
+
+		// Creates new tag, puts it in the 'frozenTags' map and binds holders to it.
+		nmsRegistry().bindTag(customKey, holders);
+
+		return getFrozenTags(nmsRegistry()).get(customKey);
+	}
+
+	static <T> Object getAllTags(@NotNull MappedRegistry<T> registry) {
+		try {
+			Field field = MappedRegistry.class.getDeclaredField("allTags");
+			field.setAccessible(true);
+			return field.get(registry);
+		} catch (IllegalAccessException | NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	static <T> Map<TagKey<T>, HolderSet.Named<T>> getTagsMap(@NotNull Object tagSet) {
+		// new HashMap, because original is ImmutableMap.
+		try {
+			Field field = tagSet.getClass().getDeclaredField("val$map");
+			field.setAccessible(true);
+			return new HashMap<>((Map<TagKey<T>, HolderSet.Named<T>>) field.get(tagSet));
+		} catch (IllegalAccessException | NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@NotNull
+	private static <T> ResourceKey<T> getResourceKey(@NotNull Registry<T> registry, @NotNull String name) {
+		return ResourceKey.create(registry.key(), ResourceLocation.withDefaultNamespace(name));
 	}
 
 	@NotNull
@@ -150,17 +249,6 @@ public class CustomEnchantsRegistration {
 		if (key == null)
 			throw new InvalidInputException("[CustomEnchants] Could not generate NamespacedKey for " + id);
 		return key;
-	}
-
-	public static void printRegistryContents(String number) {
-		Nexus.debug("Registry contents " + number + ":");
-		final String nmsEnchants = nmsRegistry().stream().map(enchantment -> {
-			final ResourceLocation resourceLocation = Objects.requireNonNull(BuiltInRegistries.ENCHANTMENT.getKey(enchantment));
-			return resourceLocation + "/" + BuiltInRegistries.ENCHANTMENT.get(resourceLocation);
-		}).collect(Collectors.joining(","));
-		final String bukkitEnchants = org.bukkit.Registry.ENCHANTMENT.stream().map(enchantment -> enchantment == null ? "null" : enchantment.getKey().getKey()).collect(Collectors.joining(","));
-		Nexus.debug("  nmsEnchants:" + nmsEnchants);
-		Nexus.debug("  bukkitEnchants:" + bukkitEnchants);
 	}
 
 }

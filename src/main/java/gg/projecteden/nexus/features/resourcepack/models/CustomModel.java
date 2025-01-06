@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.resourcepack.models;
 
-import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
 import gg.projecteden.nexus.features.resourcepack.models.files.ResourcePackOverriddenMaterial;
@@ -9,6 +8,8 @@ import gg.projecteden.nexus.models.custommodels.CustomModelConfig;
 import gg.projecteden.nexus.models.custommodels.CustomModelConfigService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -18,10 +19,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Data
 @AllArgsConstructor
@@ -74,7 +71,7 @@ public class CustomModel implements Comparable<CustomModel> {
 			return null;
 
 		final String model = oldModels.get(material).get(data);
-		if (isNullOrEmpty(model))
+		if (Nullables.isNullOrEmpty(model))
 			return null;
 
 		for (var map1 : newModels.entrySet())
@@ -91,18 +88,18 @@ public class CustomModel implements Comparable<CustomModel> {
 	}
 
 	public static boolean exists(ItemStack item) {
-		return new NBTItem(item).hasKey(NBT_KEY);
+		return item.getItemMeta().hasCustomModelData();
 	}
 
 	public static CustomModel of(ItemStack item) {
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return null;
 
 		return of(item.getType(), ModelId.of(item));
 	}
 
 	public static CustomModel of(String path) {
-		if (isNullOrEmpty(path))
+		if (Nullables.isNullOrEmpty(path))
 			return null;
 
 		return ResourcePack.getModels().get(path);
@@ -118,13 +115,12 @@ public class CustomModel implements Comparable<CustomModel> {
 	}
 
 	public boolean equals(ItemStack itemStack) {
-		if (isNullOrAir(itemStack))
+		if (Nullables.isNullOrAir(itemStack))
 			return false;
 		if (itemStack.getType() != material)
 			return false;
 
-		final NBTItem nbtItem = new NBTItem(itemStack);
-		return nbtItem.hasKey(NBT_KEY) && nbtItem.getInteger(NBT_KEY) == data;
+		return ModelId.of(itemStack) == data;
 	}
 
 	public ItemStack getItem() {
@@ -141,7 +137,7 @@ public class CustomModel implements Comparable<CustomModel> {
 
 	public ItemStack getDisplayItem() {
 		return new ItemBuilder(getItem())
-				.name(isNullOrEmpty(meta.getName()) ? camelCase(fileName) : meta.getName())
+				.name(Nullables.isNullOrEmpty(meta.getName()) ? StringUtils.camelCase(fileName) : meta.getName())
 				.build();
 	}
 
@@ -168,7 +164,7 @@ public class CustomModel implements Comparable<CustomModel> {
 		private String defaultColor;
 
 		public boolean hasDefaultColor() {
-			return !isNullOrEmpty(defaultColor);
+			return !Nullables.isNullOrEmpty(defaultColor);
 		}
 	}
 

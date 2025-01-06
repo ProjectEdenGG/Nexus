@@ -2,12 +2,11 @@ package gg.projecteden.nexus.features.minigames.models;
 
 import com.destroystokyo.paper.Title;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.minigames.menus.teams.TeamColorMenu;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNamed;
-import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.ActionBarUtils.ActionBar;
-import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.LocationUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -25,10 +24,6 @@ import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static gg.projecteden.nexus.features.minigames.menus.teams.TeamColorMenu.COLOR_TYPES;
-import static gg.projecteden.nexus.utils.PlayerUtils.hidePlayer;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Data
 @AllArgsConstructor
@@ -77,7 +72,7 @@ public class Team implements ConfigurationSerializable, IsColoredAndNamed, Color
 	@NotNull
 	public Map<String, Object> serialize() {
 		return new LinkedHashMap<>() {{
-			put("name", stripColor(getName()));
+			put("name", StringUtils.stripColor(getName()));
 			put("color", getChatColor().name());
 			put("objective", getObjective());
 			put("loadout", getLoadout());
@@ -114,7 +109,7 @@ public class Team implements ConfigurationSerializable, IsColoredAndNamed, Color
 		if (loadout != null)
 			minigamers.forEach(minigamer -> {
 				loadout.apply(minigamer);
-				minigamer.getMatch().getSpectators().forEach(spectator -> hidePlayer(spectator.getOnlinePlayer()).from(minigamer.getOnlinePlayer()));
+				minigamer.getMatch().getSpectators().forEach(spectator -> PlayerUtils.hidePlayer(spectator.getOnlinePlayer()).from(minigamer.getOnlinePlayer()));
 			});
 
 
@@ -208,7 +203,7 @@ public class Team implements ConfigurationSerializable, IsColoredAndNamed, Color
 	}
 
 	public ColorType getColorType() {
-		ColorType colorType = COLOR_TYPES.stream()
+		ColorType colorType = TeamColorMenu.COLOR_TYPES.stream()
 			.filter(colorType1 -> getChatColor().equals(colorType1.getChatColor()))
 			.findFirst()
 			.orElse(null);

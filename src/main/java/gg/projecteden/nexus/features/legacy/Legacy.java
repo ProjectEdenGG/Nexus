@@ -9,12 +9,11 @@ import gg.projecteden.nexus.features.commands.staff.admin.CreativeFlagsCommand;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.spawnlimits.SpawnLimits.SpawnLimitType;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.GameRule;
 import org.bukkit.World;
-
-import static gg.projecteden.nexus.utils.Utils.registerListeners;
 /*
 	TODO
 		Reset
@@ -53,7 +52,7 @@ public class Legacy extends Feature {
 
 	@Override
 	public void onStart() {
-		registerListeners(getClass().getPackage().getName() + ".listeners");
+		Utils.registerListeners(getClass().getPackage().getName() + ".listeners");
 
 		setGameRules();
 	}

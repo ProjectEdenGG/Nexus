@@ -4,6 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.mobheads.MobHeadType;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -11,8 +12,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public interface MobHead {
 
@@ -40,7 +39,7 @@ public interface MobHead {
 	}
 
 	default String getDisplayName() {
-		return camelCase(getType());
+		return StringUtils.camelCase(getType());
 	}
 
 	static @Nullable MobHead of(Entity entity) {

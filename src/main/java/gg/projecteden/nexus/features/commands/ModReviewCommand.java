@@ -22,6 +22,7 @@ import gg.projecteden.nexus.models.modreview.ModReview.ModReviewRequest;
 import gg.projecteden.nexus.models.modreview.ModReviewService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -33,9 +34,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.PlayerUtils.getPlayer;
 
 @NoArgsConstructor
 @Aliases({"modcheck", "checkmod"})
@@ -64,7 +62,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 		if (mod.getAliases().size() > 0)
 			send(" &3Also known as: &7" + String.join(", ", mod.getAliases()));
 		send(" &3Verdict: " + mod.getVerdict().getColor() + camelCase(mod.getVerdict()));
-		if (!isNullOrEmpty(mod.getNotes()))
+		if (!Nullables.isNullOrEmpty(mod.getNotes()))
 			send(" &3Notes: &7" + mod.getNotes());
 		line();
 	}
@@ -109,8 +107,8 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 			error("No pending review requests");
 
 		BiFunction<ModReviewRequest, String, JsonBuilder> formatter = (request, index) -> {
-			JsonBuilder json = json(index + " &3" + getPlayer(request.getRequester()).getName() + " &e" + request.getName() +
-					(isNullOrEmpty(request.getNotes()) ? "" : " &7- " + request.getNotes()));
+			JsonBuilder json = json(index + " &3" + PlayerUtils.getPlayer(request.getRequester()).getName() + " &e" + request.getName() +
+					(Nullables.isNullOrEmpty(request.getNotes()) ? "" : " &7- " + request.getNotes()));
 			if (isAdmin())
 				json.suggest("/modreview add " + request.getName() + " ").hover("&3Click to review");
 			return json;

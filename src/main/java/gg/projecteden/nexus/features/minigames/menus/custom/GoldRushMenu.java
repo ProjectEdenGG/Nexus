@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.minigames.menus.custom;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.anvilgui.AnvilGUI;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.mechanics.GoldRush;
 import gg.projecteden.nexus.features.minigames.menus.ArenaMenu;
@@ -18,8 +19,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.function.BiFunction;
-
-import static gg.projecteden.nexus.features.minigames.Minigames.PREFIX;
 
 @CustomMechanicSettings(GoldRush.class)
 public class GoldRushMenu extends ICustomMechanicMenu {
@@ -43,7 +42,7 @@ public class GoldRushMenu extends ICustomMechanicMenu {
 			openAnvilMenu(viewer, arena, currentValue, (Player p, String text) -> {
 				if (!Utils.isInt(text)) {
 					AnvilGUI.Response.close();
-					throw new InvalidInputException(PREFIX + "You must use an integer for Mine Stack Height.");
+					throw new InvalidInputException(Minigames.PREFIX + "You must use an integer for Mine Stack Height.");
 				}
 				arena.setMineStackHeight(Integer.parseInt(text));
 				ArenaManager.write(arena);

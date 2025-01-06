@@ -9,14 +9,12 @@ import gg.projecteden.nexus.features.events.models.BearFairIsland.NPCClass;
 import gg.projecteden.nexus.features.events.models.Talker.TalkingNPC;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.islands.HalloweenIsland.HalloweenNPCs;
+import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.models.bearfair20.BearFair20User;
 import gg.projecteden.nexus.models.bearfair20.BearFair20UserService;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -33,17 +31,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.chime;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import java.util.*;
 
 @Region("halloween")
 @NPCClass(HalloweenNPCs.class)
@@ -60,7 +48,7 @@ public class HalloweenIsland implements Listener, BearFairIsland {
 			Sound.ENTITY_WITCH_AMBIENT, Sound.ENTITY_ILLUSIONER_PREPARE_MIRROR, Sound.ENTITY_ILLUSIONER_PREPARE_BLINDNESS,
 			Sound.ENTITY_ILLUSIONER_CAST_SPELL, Sound.ENTITY_ELDER_GUARDIAN_AMBIENT, Sound.ENTITY_SHULKER_AMBIENT};
 	//
-	public static ItemStack atticKey = new ItemBuilder(Material.TRIPWIRE_HOOK).lore(itemLore).amount(1).name("Attic Key").build();
+	public static ItemStack atticKey = new ItemBuilder(Material.TRIPWIRE_HOOK).lore(BFQuests.itemLore).amount(1).name("Attic Key").build();
 	private String atticRg = getRegion() + "_atticdoor";
 	private Location atticDeniedLoc = new Location(BearFair20.getWorld(), -935.5, 159.5, -1916.5, -90, 32);
 	//
@@ -74,7 +62,7 @@ public class HalloweenIsland implements Listener, BearFairIsland {
 
 		List<ItemStack> drops = new ArrayList<>(basketLoc.getBlock().getDrops());
 		if (!drops.isEmpty())
-			basketItem = new ItemBuilder(drops.get(0)).clone().lore(itemLore).name("Basket of Halloween Candy").build();
+			basketItem = new ItemBuilder(drops.get(0)).clone().lore(BFQuests.itemLore).name("Basket of Halloween Candy").build();
 	}
 
 	public enum HalloweenNPCs implements TalkingNPC {
@@ -160,10 +148,10 @@ public class HalloweenIsland implements Listener, BearFairIsland {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
 		Block clicked = event.getClickedBlock();
-		if (isNullOrAir(clicked)) return;
+		if (Nullables.isNullOrAir(clicked)) return;
 
-		ProtectedRegion skullRegion = worldguard().getProtectedRegion(basketRg);
-		if (!worldguard().getRegionsAt(clicked.getLocation()).contains(skullRegion)) return;
+		ProtectedRegion skullRegion = BearFair20.worldguard().getProtectedRegion(basketRg);
+		if (!BearFair20.worldguard().getRegionsAt(clicked.getLocation()).contains(skullRegion)) return;
 
 		if (!BearFair20.enableQuests) return;
 		if (!clicked.getType().equals(Material.PLAYER_HEAD)) return;
@@ -178,9 +166,9 @@ public class HalloweenIsland implements Listener, BearFairIsland {
 		nextStep(player); // 2
 
 		List<ItemStack> drops = new ArrayList<>(basketLoc.getBlock().getDrops());
-		ItemStack basket = new ItemBuilder(drops.get(0)).clone().lore(itemLore).name("Basket of Halloween Candy").build();
+		ItemStack basket = new ItemBuilder(drops.get(0)).clone().lore(BFQuests.itemLore).name("Basket of Halloween Candy").build();
 		PlayerUtils.giveItem(player, basket);
-		chime(player);
+		BFQuests.chime(player);
 
 	}
 
@@ -203,8 +191,8 @@ public class HalloweenIsland implements Listener, BearFairIsland {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
-		ProtectedRegion region = worldguard().getProtectedRegion(getRegion());
-		if (!worldguard().getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
+		ProtectedRegion region = BearFair20.worldguard().getProtectedRegion(getRegion());
+		if (!BearFair20.worldguard().getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
 
 		if (event.getClickedBlock() == null) return;
 
@@ -249,8 +237,8 @@ public class HalloweenIsland implements Listener, BearFairIsland {
 
 		Player player = event.getPlayer();
 
-		ProtectedRegion region = worldguard().getProtectedRegion(BearFair20.getRegion());
-		if (!worldguard().getRegionsAt(player.getLocation()).contains(region)) return;
+		ProtectedRegion region = BearFair20.worldguard().getProtectedRegion(BearFair20.getRegion());
+		if (!BearFair20.worldguard().getRegionsAt(player.getLocation()).contains(region)) return;
 
 		if (!BearFair20.enableQuests) return;
 
@@ -269,7 +257,7 @@ public class HalloweenIsland implements Listener, BearFairIsland {
 		service.save(user);
 
 		PlayerUtils.giveItem(player, atticKey);
-		chime(player);
+		BFQuests.chime(player);
 	}
 
 	@EventHandler

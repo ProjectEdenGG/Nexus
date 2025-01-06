@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.profiles.providers;
 
 import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import gg.projecteden.nexus.features.chat.Koda;
@@ -67,8 +68,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
 
 // TODO: Customization
 @Rows(6)
@@ -294,7 +293,7 @@ public class ProfileProvider extends InventoryProvider {
 				}
 
 				// First Join
-				lines.add("&3First join: &e" + shortDateTimeFormat(target.getFirstJoin()));
+				lines.add("&3First join: &e" + TimeUtils.shortDateTimeFormat(target.getFirstJoin()));
 
 				// Hours
 				Hours hours = new HoursService().get(target);

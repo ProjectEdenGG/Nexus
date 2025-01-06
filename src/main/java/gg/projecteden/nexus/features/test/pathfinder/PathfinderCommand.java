@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.test.pathfinder;
 
 import com.sk89q.worldedit.regions.Region;
+import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
@@ -14,13 +15,8 @@ import gg.projecteden.nexus.models.webs.WebConfig.Node;
 import gg.projecteden.nexus.models.webs.WebConfig.Route;
 import gg.projecteden.nexus.models.webs.WebConfig.Web;
 import gg.projecteden.nexus.models.webs.WebConfigService;
-import gg.projecteden.nexus.utils.Distance;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -35,10 +31,6 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
-import static gg.projecteden.api.common.utils.Utils.getMax;
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
 
 @HideFromWiki
 @NoArgsConstructor
@@ -133,11 +125,11 @@ public class PathfinderCommand extends CustomCommand implements Listener {
 
 		if (type.equals(Material.LIME_CONCRETE_POWDER) && selectedNode == null) {
 			Pathfinder.setSelectedLoc(currentNode.getLocation());
-			send(player, "&aSelected node at " + getShortLocationString(currentLoc));
+			send(player, "&aSelected node at " + StringUtils.getShortLocationString(currentLoc));
 
 		} else if (type.equals(Material.PURPLE_CONCRETE_POWDER) && selectedNode != null) {
 			Location selectedLoc = selectedNode.getLocation();
-			Distance distance = distance(selectedLoc, currentLoc);
+			Distance distance = Distance.distance(selectedLoc, currentLoc);
 
 			selectedNode.getNeighbors().put(currentNode.getUuid(), distance.get());
 			currentNode.getNeighbors().put(selectedNode.getUuid(), distance.get());
@@ -215,7 +207,7 @@ public class PathfinderCommand extends CustomCommand implements Listener {
 		}
 
 		if (Material.LIME_CONCRETE_POWDER.equals(type)) {
-			send(player, "&2Unselected node at " + getShortLocationString(selectedNode.getLocation()));
+			send(player, "&2Unselected node at " + StringUtils.getShortLocationString(selectedNode.getLocation()));
 			Pathfinder.setSelectedLoc(null);
 
 		} else if (Material.PURPLE_CONCRETE_POWDER.equals(type)) {
@@ -238,10 +230,10 @@ public class PathfinderCommand extends CustomCommand implements Listener {
 				break;
 
 			List<Node> neighbors = new ArrayList<>(web.getNeighborNodes(furthest));
-			MinMaxResult<Node> temp = getMax(neighbors, neighbor -> distance(neighbor, origin).get());
+			MinMaxResult<Node> temp = Utils.getMax(neighbors, neighbor -> Distance.distance(neighbor, origin).get());
 			double furthestDistance = temp.getDouble();
 
-			if (distance(furthest, origin).gt(furthestDistance)) {
+			if (Distance.distance(furthest, origin).gt(furthestDistance)) {
 				break;
 			} else {
 				furthest = temp.getObject();

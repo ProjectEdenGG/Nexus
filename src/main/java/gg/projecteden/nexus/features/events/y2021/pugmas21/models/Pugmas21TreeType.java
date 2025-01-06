@@ -2,14 +2,13 @@ package gg.projecteden.nexus.features.events.y2021.pugmas21.models;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.Pugmas21TreeRegenJob;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
 import lombok.Getter;
 import org.bukkit.Location;
@@ -18,20 +17,9 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
-import static gg.projecteden.nexus.utils.BlockUtils.createDistanceSortedQueue;
-import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public enum Pugmas21TreeType {
 	BLISTERWOOD(Material.BONE_BLOCK, Material.QUARTZ_SLAB, Material.QUARTZ_STAIRS, Material.HONEY_BLOCK),
@@ -81,7 +69,7 @@ public enum Pugmas21TreeType {
 	}
 
 	public ItemStack item(int amount) {
-		return new ItemBuilder(logs).name(camelCase(name() + " Log")).amount(amount).build();
+		return new ItemBuilder(logs).name(StringUtils.camelCase(name() + " Log")).amount(amount).build();
 	}
 
 	public List<Material> getAllMaterials() {
@@ -116,7 +104,7 @@ public enum Pugmas21TreeType {
 				return null;
 
 			Location base = Pugmas21.worldedit().toLocation(region.getMinimumPoint());
-			Queue<Location> queue = createDistanceSortedQueue(base);
+			Queue<Location> queue = BlockUtils.createDistanceSortedQueue(base);
 			getBlocks(id).thenAccept(blocks -> {
 				queue.addAll(blocks.keySet());
 				future.complete(queue);
@@ -160,7 +148,7 @@ public enum Pugmas21TreeType {
 	}
 
 	public void feller(Player player, int id) {
-		if (!new CooldownService().check(UUID0, getRegion(id).getId(), TickTime.SECOND.x(3)))
+		if (!new CooldownService().check(UUIDUtils.UUID0, getRegion(id).getId(), TickTime.SECOND.x(3)))
 			return;
 
 		Pugmas21.setTreeAnimating(true);
@@ -185,7 +173,7 @@ public enum Pugmas21TreeType {
 			Tasks.wait(++wait, () -> Pugmas21.setTreeAnimating(false));
 
 			Tasks.Countdown.builder()
-				.duration(randomInt(8, 12) * 4)
+				.duration(RandomUtils.randomInt(8, 12) * 4)
 				.onTick(i -> {
 					if (i % 4 == 0)
 						PlayerUtils.giveItem(player, item());
@@ -194,7 +182,7 @@ public enum Pugmas21TreeType {
 
 			Jingle.TREE_FELLER.play(player);
 
-			new Pugmas21TreeRegenJob(this, id).schedule(randomInt(3 * 60, 5 * 60));
+			new Pugmas21TreeRegenJob(this, id).schedule(RandomUtils.randomInt(3 * 60, 5 * 60));
 		}));
 	}
 

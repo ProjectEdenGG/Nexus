@@ -7,35 +7,32 @@ import gg.projecteden.nexus.utils.nms.NMSUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.syncher.SynchedEntityData.DataValue;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.level.saveddata.maps.MapDecoration;
+import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData.MapPatch;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Rotation;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_20_R3.map.CraftMapView;
-import org.bukkit.craftbukkit.v1_20_R3.map.RenderData;
-import org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.map.CraftMapView;
+import org.bukkit.craftbukkit.map.RenderData;
+import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapCursor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Data
 @Entity
@@ -113,7 +110,7 @@ public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFram
 	@Override
 	public @NotNull List<Packet<ClientGamePacketListener>> getSpawnPackets(Player player) {
 		final List<Packet<ClientGamePacketListener>> packets = new ArrayList<>();
-		packets.add((ClientboundAddEntityPacket) entity.getAddEntityPacket());
+		packets.add(NMSUtils.getSpawnPacket(entity));
 
 		if (content.getType() == Material.FILLED_MAP) {
 			if (content.getItemMeta() instanceof MapMeta map && map.getMapView() instanceof CraftMapView view) {
@@ -131,11 +128,12 @@ public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFram
 		Collection<MapDecoration> icons = new ArrayList<>();
 		for (MapCursor cursor : data.cursors) {
 			if (cursor.isVisible()) {
-				icons.add(new MapDecoration(MapDecoration.Type.byIcon(cursor.getRawType()), cursor.getX(), cursor.getY(), cursor.getDirection(), CraftChatMessage.fromStringOrNull(cursor.getCaption())));
+
+				icons.add(new MapDecoration(BuiltInRegistries.MAP_DECORATION_TYPE.get(cursor.getRawType()).get(), cursor.getX(), cursor.getY(), cursor.getDirection(), Optional.of(CraftChatMessage.fromStringOrNull(cursor.getCaption()))));
 			}
 		}
 
-		return new ClientboundMapItemDataPacket(view.getId(), view.getScale().getValue(), view.isLocked(), icons, new MapPatch(0, 0, 128, 128, data.buffer));
+		return new ClientboundMapItemDataPacket(new MapId(view.getId()), view.getScale().getValue(), view.isLocked(), icons, new MapPatch(0, 0, 128, 128, data.buffer));
 	}
 
 	@Override

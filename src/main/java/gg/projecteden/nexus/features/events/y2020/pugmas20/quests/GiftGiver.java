@@ -3,14 +3,7 @@ package gg.projecteden.nexus.features.events.y2020.pugmas20.quests;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.AdventChests;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
-import gg.projecteden.nexus.utils.CitizensUtils;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
@@ -35,9 +28,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-
 @NoArgsConstructor
 public class GiftGiver implements Listener {
 	private static final String error = Pugmas20.PREFIX + "&cYou can't do that with this item";
@@ -50,17 +40,17 @@ public class GiftGiver implements Listener {
 
 	static {
 		if (skull != null) {
-			gift_locked = new ItemBuilder(skull.clone()).name(camelCase("Gift"))
+			gift_locked = new ItemBuilder(skull.clone()).name(StringUtils.camelCase("Gift"))
 					.lore(Pugmas20.getItemLore(), "&f", "&eRight Click another player while holding to give it to them")
 					.build();
-			gift_unlocked = new ItemBuilder(skull.clone()).name(camelCase("Gift"))
+			gift_unlocked = new ItemBuilder(skull.clone()).name(StringUtils.camelCase("Gift"))
 					.lore(Pugmas20.getItemLore(), "&f", "&aLeft Click to open", "&eRClick another player while holding to give it to them")
 					.build();
 		}
 
 		for (int i = 0; i < 9; i++) {
 			Block block = AdventChests.lootOrigin.getRelative(-3, 0, i);
-			if (isNullOrAir(block.getType()) || !block.getType().equals(Material.CHEST))
+			if (Nullables.isNullOrAir(block.getType()) || !block.getType().equals(Material.CHEST))
 				continue;
 			lootChestList.add(block.getLocation());
 		}
@@ -136,7 +126,7 @@ public class GiftGiver implements Listener {
 		Player clicker = event.getPlayer();
 		Player clicked = (Player) event.getRightClicked();
 		ItemStack gift = ItemUtils.getTool(clicker);
-		if (isNullOrAir(gift)) return;
+		if (Nullables.isNullOrAir(gift)) return;
 		if (gift_locked == null || gift_unlocked == null) return;
 		if (!ItemUtils.isFuzzyMatch(gift, gift_locked) && !ItemUtils.isFuzzyMatch(gift, gift_unlocked)) return;
 
@@ -147,7 +137,7 @@ public class GiftGiver implements Listener {
 	@EventHandler
 	public void onInteractWithGift(PlayerInteractEvent event) {
 		ItemStack gift = ItemUtils.getTool(event.getPlayer());
-		if (isNullOrAir(gift)) return;
+		if (Nullables.isNullOrAir(gift)) return;
 		if (gift_locked == null || gift_unlocked == null) return;
 		if (!ItemUtils.isFuzzyMatch(gift, gift_locked) && !ItemUtils.isFuzzyMatch(gift, gift_unlocked)) return;
 
@@ -161,7 +151,7 @@ public class GiftGiver implements Listener {
 	@EventHandler
 	public void onDropGift(PlayerDropItemEvent event) {
 		ItemStack gift = event.getItemDrop().getItemStack();
-		if (isNullOrAir(gift)) return;
+		if (Nullables.isNullOrAir(gift)) return;
 		if (gift_locked == null || gift_unlocked == null) return;
 		if (!ItemUtils.isFuzzyMatch(gift, gift_locked) && !ItemUtils.isFuzzyMatch(gift, gift_unlocked)) return;
 

@@ -8,6 +8,7 @@ import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.hub.Hub;
 import gg.projecteden.nexus.features.votes.EndOfMonth.TopVoterData;
@@ -25,11 +26,15 @@ import gg.projecteden.nexus.models.store.Contributor;
 import gg.projecteden.nexus.models.store.ContributorService;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang.NotImplementedException;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Statistic;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -41,14 +46,15 @@ import tech.blastmc.holograms.api.models.line.Offset;
 import java.text.NumberFormat;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
-import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsConsole;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.nexus.utils.StringUtils.decolorize;
 
 @NoArgsConstructor
 @Environments(Env.PROD)
@@ -273,7 +279,7 @@ public class Podiums implements Listener {
 
 		public void update() {
 			Tasks.async(() -> {
-				if (!new CooldownService().check(UUID0, "podiums_" + name(), TickTime.MINUTE.x(5)))
+				if (!new CooldownService().check(UUIDUtils.UUID0, "podiums_" + name(), TickTime.MINUTE.x(5)))
 					return;
 
 				updateActual();
@@ -294,7 +300,7 @@ public class Podiums implements Listener {
 					CitizensUtils.updateSkin(npcId, nerd.getName());
 
 					Hologram hologram = HologramsAPI.byId(Hub.getWorld(), "podiums_" + name().toLowerCase() + "_" + i.get());
-					hologram.setLines(Arrays.asList(decolorize(colorize(nerd.getColoredName())), colorize("&e" + value)));
+					hologram.setLines(Arrays.asList(StringUtils.decolorize(StringUtils.colorize(nerd.getColoredName())), StringUtils.colorize("&e" + value)));
 					hologram.save();
 				});
 

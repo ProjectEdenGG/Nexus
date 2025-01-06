@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.menus;
 
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
@@ -9,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 
 import java.util.function.Consumer;
-
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 @Title("Select Color")
 @RequiredArgsConstructor
@@ -27,7 +26,7 @@ public class ColorSelectMenu extends InventoryProvider {
 
 		for (ColorType color : ColorType.values()) {
 			if (color.getDyeColor() == null) continue;
-			contents.set(row, column, ClickableItem.of(color.switchColor(type), "&e" + camelCase(color.getName()), onClick));
+			contents.set(row, column, ClickableItem.of(color.switchColor(type), "&e" + StringUtils.camelCase(color.getName()), onClick));
 			if (column == 8) {
 				column = 0;
 				row++;

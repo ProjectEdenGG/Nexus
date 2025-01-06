@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.recipes.functionals.armor.wither;
 
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
+import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -11,8 +12,6 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
-
-import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
 
 public class CraftedWitherSkull extends FunctionalRecipe {
 
@@ -29,7 +28,7 @@ public class CraftedWitherSkull extends FunctionalRecipe {
 
 	@Override
 	public @NotNull Recipe getRecipe() {
-		return shapeless()
+		return RecipeBuilder.shapeless()
 			.add(WitherChallenge.WITHER_FRAGMENT, 4)
 			.toMake(getResult())
 			.getRecipe();

@@ -7,12 +7,9 @@ import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.parchment.OptionalLocation;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -24,8 +21,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Data
 @Entity(value = "warps", noClassnameStored = true)
@@ -74,9 +69,9 @@ public class Warps implements PlayerOwnedObject {
 
 		public @NotNull CompletableFuture<Boolean> teleportAsync(Player player, TeleportCause teleportCause) {
 			if (location == null)
-				throw new InvalidInputException("Location of " + camelCase(type) + " warp " + name + " is null!");
+				throw new InvalidInputException("Location of " + StringUtils.camelCase(type) + " warp " + name + " is null!");
 			if (location.getWorld() == null)
-				throw new InvalidInputException("World of " + camelCase(type) + " warp " + name + " is null!");
+				throw new InvalidInputException("World of " + StringUtils.camelCase(type) + " warp " + name + " is null!");
 
 			return player.teleportAsync(location, teleportCause);
 		}

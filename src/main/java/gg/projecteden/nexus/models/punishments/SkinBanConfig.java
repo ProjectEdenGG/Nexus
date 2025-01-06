@@ -3,17 +3,14 @@ package gg.projecteden.nexus.models.punishments;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.skincache.SkinCache;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -21,8 +18,6 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 
 @Data
 @Entity(value = "skinban_config", noClassnameStored = true)
@@ -44,7 +39,7 @@ public class SkinBanConfig implements DatabaseObject {
 	}
 
 	public void ban(UUID uuid) {
-		ban(UUID0, uuid);
+		ban(UUIDUtils.UUID0, uuid);
 	}
 
 	public void ban(UUID executor, UUID uuid) {
@@ -67,7 +62,7 @@ public class SkinBanConfig implements DatabaseObject {
 	}
 
 	public void unban(UUID uuid) {
-		unban(UUID0, uuid);
+		unban(UUIDUtils.UUID0, uuid);
 	}
 
 	public void unban(UUID executor, UUID uuid) {

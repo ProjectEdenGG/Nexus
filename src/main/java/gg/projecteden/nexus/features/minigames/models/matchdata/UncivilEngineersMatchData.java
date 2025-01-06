@@ -11,9 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.features.minigames.mechanics.UncivilEngineers.getStart;
-import static gg.projecteden.nexus.features.minigames.mechanics.UncivilEngineers.offset;
-
 @Getter
 @MatchDataFor(UncivilEngineers.class)
 public class UncivilEngineersMatchData extends CheckpointData {
@@ -25,7 +22,7 @@ public class UncivilEngineersMatchData extends CheckpointData {
 
 	public void assignSlice(Minigamer minigamer, int id) {
 		slices.put(minigamer.getUniqueId(), id);
-		minigamer.teleportAsync(offset(getStart(), id));
+		minigamer.teleportAsync(UncivilEngineers.offset(UncivilEngineers.getStart(), id));
 	}
 
 	public int getSlice(Minigamer minigamer) {

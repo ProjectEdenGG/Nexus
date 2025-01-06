@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.minigames.menus.annotations.CustomMechanicS
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.arenas.GrabAJumbuckArena;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Material;
@@ -19,8 +20,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @CustomMechanicSettings(GrabAJumbuck.class)
 public class GrabAJumbuckMenu extends ICustomMechanicMenu {
@@ -38,7 +37,7 @@ public class GrabAJumbuckMenu extends ICustomMechanicMenu {
 				.name("&eAdd Item")
 				.lore("&3Click me with an item", "&3in your hand to add it."),
 			e -> Tasks.wait(2, () -> {
-				if (isNullOrAir(viewer.getItemOnCursor())) return;
+				if (Nullables.isNullOrAir(viewer.getItemOnCursor())) return;
 				if (arena.getSheepSpawnBlocks().size() == 9) {
 					PlayerUtils.send(viewer, Minigames.PREFIX + "The max amount of blocks has already been set.");
 					return;

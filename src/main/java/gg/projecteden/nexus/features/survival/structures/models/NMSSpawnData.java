@@ -1,7 +1,10 @@
 package gg.projecteden.nexus.features.survival.structures.models;
 
+import gg.projecteden.nexus.utils.nms.NMSUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.level.SpawnData;
@@ -12,8 +15,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
-import static gg.projecteden.nexus.utils.nms.NMSUtils.toNMS;
 
 public class NMSSpawnData {
 	@Getter
@@ -143,13 +144,13 @@ public class NMSSpawnData {
 		return compound.getInt(tag);
 	}
 
-	public NMSSpawnData setArmorItems(List<org.bukkit.inventory.ItemStack> armorItems) {
+	public NMSSpawnData setArmorItems(List<org.bukkit.inventory.ItemStack> armorItems, HolderLookup.Provider registries) {
 		Collections.reverse(armorItems);
 		String tag = SpawnDataEnum.ENTITY.getTag();
 
 		ListTag localArmorList = new ListTag();
 		for (ItemStack armorItem : armorItems) {
-			CompoundTag itemTag = armorItem == null ? new CompoundTag() : toNMS(armorItem).save(new CompoundTag());
+			CompoundTag itemTag = armorItem == null ? new CompoundTag() : (CompoundTag) NMSUtils.toNMS(armorItem).save(registries, new CompoundTag());
 
 			localArmorList.add(itemTag);
 		}
@@ -161,12 +162,12 @@ public class NMSSpawnData {
 		return this;
 	}
 
-	public NMSSpawnData setHandItems(final @Nullable org.bukkit.inventory.ItemStack mainHand, final @Nullable org.bukkit.inventory.ItemStack offHand) {
+	public NMSSpawnData setHandItems(final @Nullable ItemStack mainHand, final @Nullable ItemStack offHand, RegistryAccess registryAccess) {
 		String tag = SpawnDataEnum.ENTITY.getTag();
 
 		ListTag localHandList = new ListTag();
-		localHandList.add(mainHand == null ? new CompoundTag() : toNMS(mainHand).save(new CompoundTag()));
-		localHandList.add(offHand == null ? new CompoundTag() : toNMS(offHand).save(new CompoundTag()));
+		localHandList.add(mainHand == null ? new CompoundTag() : NMSUtils.toNMS(mainHand).save(registryAccess, new CompoundTag()));
+		localHandList.add(offHand == null ? new CompoundTag() : NMSUtils.toNMS(offHand).save(registryAccess, new CompoundTag()));
 
 		CompoundTag localCompound = compound.getCompound(tag);
 		localCompound.put("HandItems", localHandList);
@@ -176,7 +177,7 @@ public class NMSSpawnData {
 	}
 
 	protected SpawnData getMobSpawnerData() {
-		return new SpawnData(compound, Optional.empty());
+		return new SpawnData(compound, Optional.empty(), Optional.empty());
 	}
 
 	@Override

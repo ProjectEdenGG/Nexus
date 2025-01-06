@@ -6,33 +6,18 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.BF21Poin
 import gg.projecteden.nexus.features.events.y2021.bearfair21.Fairgrounds.BearFair21Kit;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
-import gg.projecteden.nexus.utils.BlockUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.worldedit;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.worldguard;
+import java.util.*;
 
 public class Archery implements Listener {
 	private static final String gameRegion = BearFair21.getRegion() + "_archery";
@@ -81,7 +66,7 @@ public class Archery implements Listener {
 		String id = event.getRegion().getId();
 		if (id.equalsIgnoreCase(gameRegion)) {
 			if (!enabled) return;
-			if (worldguard().getPlayersInRegion(gameRegion).size() == 0) {
+			if (BearFair21.worldguard().getPlayersInRegion(gameRegion).size() == 0) {
 				enabled = false;
 				clearTargets();
 			}
@@ -109,7 +94,7 @@ public class Archery implements Listener {
 	}
 
 	private List<Location> getTargetLocations() {
-		List<Block> blocks = worldedit().getBlocks(worldguard().getRegion(targetRegion));
+		List<Block> blocks = BearFair21.worldedit().getBlocks(BearFair21.worldguard().getRegion(targetRegion));
 		List<Location> locs = new ArrayList<>();
 		for (Block block : blocks) {
 			Location loc = block.getLocation();
@@ -165,7 +150,7 @@ public class Archery implements Listener {
 
 	private void clearTargets() {
 		activeTargets = 0;
-		List<Block> blocks = worldedit().getBlocks(worldguard().getRegion(targetRegion));
+		List<Block> blocks = BearFair21.worldedit().getBlocks(BearFair21.worldguard().getRegion(targetRegion));
 		for (Block block : blocks) {
 			if (block.getType().equals(Material.TARGET))
 				removeTarget(block);

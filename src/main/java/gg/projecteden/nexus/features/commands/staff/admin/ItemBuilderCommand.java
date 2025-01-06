@@ -3,11 +3,7 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.features.itemtags.Rarity;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -21,13 +17,8 @@ import gg.projecteden.nexus.utils.SymbolBanner.Symbol;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.DyeColor;
-import org.bukkit.FireworkEffect;
+import org.bukkit.*;
 import org.bukkit.FireworkEffect.Type;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.attribute.AttributeModifier.Operation;
@@ -42,11 +33,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
-
-import static gg.projecteden.nexus.utils.ColorType.toBukkitColor;
-import static java.util.Objects.requireNonNull;
 
 @Permission("nexus.itembuilder")
 public class ItemBuilderCommand extends CustomCommand {
@@ -85,7 +74,7 @@ public class ItemBuilderCommand extends CustomCommand {
 	@Path("dye <color>")
 	@Description("Dye an item")
 	void dye(ChatColor color) {
-		item.dyeColor(toBukkitColor(color));
+		item.dyeColor(ColorType.toBukkitColor(color));
 	}
 
 	@Path("durability <durability>")
@@ -184,7 +173,11 @@ public class ItemBuilderCommand extends CustomCommand {
 	@Path("potion type <type> [--extended] [--upgraded]")
 	@Description("Set a potion's type")
 	void potion_type(PotionType potionType, @Switch boolean extended, @Switch boolean upgraded) {
-		item.potionType(potionType, extended, upgraded);
+		if (extended)
+			potionType = PotionType.valueOf("LONG_" + potionType.name());
+		if (upgraded)
+			potionType = PotionType.valueOf("STRONG_" + potionType.name());
+		item.potionType(potionType);
 	}
 
 	@Path("potion effect <type> <seconds> <amplifier>")
@@ -196,7 +189,7 @@ public class ItemBuilderCommand extends CustomCommand {
 	@Path("potion color <color>")
 	@Description("Set a potion's color")
 	void potion_color(ChatColor color) {
-		item.potionEffectColor(toBukkitColor(color));
+		item.potionEffectColor(ColorType.toBukkitColor(color));
 	}
 
 	@Path("firework power <power>")
@@ -215,7 +208,7 @@ public class ItemBuilderCommand extends CustomCommand {
 		@Switch @Arg(type = ChatColor.class) List<ChatColor> fadeColors
 	) {
 		final Function<List<ChatColor>, List<Color>> colorMapper = colors1 ->
-			colors1.stream().map(color -> requireNonNull(toBukkitColor(color))).toList();
+			colors1.stream().map(color -> Objects.requireNonNull(ColorType.toBukkitColor(color))).toList();
 
 		item.fireworkEffect(FireworkEffect.builder()
 			.with(type)

@@ -3,11 +3,13 @@ package gg.projecteden.nexus.features.store.gallery;
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.features.chat.Emotes;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.particles.providers.EffectSettingProvider;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
+import gg.projecteden.nexus.features.store.BuycraftUtils;
 import gg.projecteden.nexus.features.store.Package;
 import gg.projecteden.nexus.features.store.StoreCommand;
 import gg.projecteden.nexus.features.store.annotations.Category.StoreCategory;
@@ -30,36 +32,16 @@ import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorTask;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeacon;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeaconService;
 import gg.projecteden.nexus.models.vaults.VaultUserService;
-import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.CitizensUtils.NPCRandomizer;
-import gg.projecteden.nexus.utils.FireworkLauncher;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.Tasks;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.SneakyThrows;
+import lombok.*;
 import net.citizensnpcs.api.npc.NPC;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Display;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -71,17 +53,7 @@ import tech.blastmc.holograms.api.models.line.ItemLine;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import static gg.projecteden.api.common.utils.EnumUtils.random;
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
-import static gg.projecteden.nexus.features.store.BuycraftUtils.ADD_TO_CART_URL;
-import static gg.projecteden.nexus.features.store.BuycraftUtils.CATEGORY_URL;
-import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
+import java.util.*;
 
 @Getter
 @NoArgsConstructor
@@ -328,8 +300,8 @@ public enum GalleryPackage {
 			if (!cooldown(TickTime.SECOND.x(3)))
 				return;
 
-			final boolean join = randomElement(true, false);
-			String message = randomElement(join ? JoinQuit.getJoinMessages() : JoinQuit.getQuitMessages());
+			final boolean join = RandomUtils.randomElement(true, false);
+			String message = RandomUtils.randomElement(join ? JoinQuit.getJoinMessages() : JoinQuit.getQuitMessages());
 			message = join ? JoinQuit.formatJoin(player, message) : JoinQuit.formatQuit(player, message);
 			PlayerUtils.send(player, "&6&l[Example] " + message);
 		}
@@ -339,10 +311,10 @@ public enum GalleryPackage {
 	EMOTES {
 		@Override
 		public void onImageInteract(Player player) {
-			final Emotes emote = random(Emotes.class);
+			final Emotes emote = EnumUtils.random(Emotes.class);
 			String result = emote.getEmote();
 			if (emote.getColors().size() > 0)
-				result = randomElement(emote.getColors()) + result;
+				result = RandomUtils.randomElement(emote.getColors()) + result;
 
 			PlayerUtils.send(player, "&6&l[Example] " + result);
 		}
@@ -503,7 +475,6 @@ public enum GalleryPackage {
 		public void init() {
 			final Location location = StoreGallery.location(950.5, 70.5, 972.5);
 			hologram = HologramsAPI.builder()
-				.id("gallery_" + name().toLowerCase())
 				.location(location)
 				.lines("&eBob", new ItemStack(Material.DIAMOND_SWORD))
 				.spawn();
@@ -529,10 +500,9 @@ public enum GalleryPackage {
 
 			// TODO Save last player?
 			final List<Player> players = OnlinePlayers.getAll();
-			builder.skullOwner(players.isEmpty() ? randomElement(EnumUtils.valuesExcept(Dev.class, Dev.SPIKE)) : randomElement(players));
+			builder.skullOwner(players.isEmpty() ? RandomUtils.randomElement(EnumUtils.valuesExcept(Dev.class, Dev.SPIKE)) : RandomUtils.randomElement(players));
 
 			hologram = HologramsAPI.builder()
-				.id("gallery_" + name().toLowerCase())
 				.lines(builder.build())
 				.location(location).build();
 
@@ -607,9 +577,9 @@ public enum GalleryPackage {
 	public void onClickCart(Player player) {
 		String url;
 		try {
-			url = ADD_TO_CART_URL.formatted(getStorePackage().getId());
+			url = BuycraftUtils.ADD_TO_CART_URL.formatted(getStorePackage().getId());
 		} catch (IllegalArgumentException ex) {
-			url = CATEGORY_URL.formatted(getCategoryId());
+			url = BuycraftUtils.CATEGORY_URL.formatted(getCategoryId());
 		}
 
 		new JsonBuilder(StoreCommand.PREFIX + "&eClick here &3to open the store").url(url).send(player);
@@ -631,7 +601,7 @@ public enum GalleryPackage {
 	}
 
 	protected boolean cooldown(long ticks) {
-		return new CooldownService().check(UUID0, getRegionId(), ticks);
+		return new CooldownService().check(UUIDUtils.UUID0, getRegionId(), ticks);
 	}
 
 	public NPC npc() {

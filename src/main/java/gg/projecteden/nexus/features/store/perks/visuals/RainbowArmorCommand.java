@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.store.perks.visuals;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import gg.projecteden.api.common.utils.MathUtils;
+import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
@@ -10,13 +11,8 @@ import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmor;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorService;
@@ -35,11 +31,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.text.DecimalFormat;
 
-import static gg.projecteden.api.common.utils.RandomUtils.randomLong;
-import static gg.projecteden.nexus.features.store.perks.visuals.RainbowArmorCommand.PERMISSION;
-
 @NoArgsConstructor
-@Permission(PERMISSION)
+@Permission(RainbowArmorCommand.PERMISSION)
 @Aliases({"rainbowarmour", "rba"})
 @WikiConfig(rank = "Store", feature = "Visuals")
 public class RainbowArmorCommand extends CustomCommand implements Listener {
@@ -59,7 +52,7 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 	static {
 		for (RainbowArmor rainbowArmor : new RainbowArmorService().getOnline())
 			if (rainbowArmor.isEnabled())
-				Tasks.wait(randomLong(0, TickTime.SECOND.x(12)), rainbowArmor::start);
+				Tasks.wait(RandomUtils.randomLong(0, TickTime.SECOND.x(12)), rainbowArmor::start);
 	}
 
 	@Path

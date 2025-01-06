@@ -37,8 +37,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.features.resourcepack.ResourcePack.hash;
-
 @Aliases("rp")
 @NoArgsConstructor
 public class ResourcePackCommand extends CustomCommand implements Listener {
@@ -51,7 +49,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	@Path
 	@Description("Download the resource pack")
 	void run() {
-		if (hash == null)
+		if (ResourcePack.hash == null)
 			error("Resource pack hash is null");
 
 		if (Status.DECLINED == player().getResourcePackStatus())
@@ -128,7 +126,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 			Saturn.updateHash();
 		}
 
-		send(json(PREFIX + "Resource pack hash: &e" + hash).hover("&eClick to copy").copy(hash));
+		send(json(PREFIX + "Resource pack hash: &e" + ResourcePack.hash).hover("&eClick to copy").copy(ResourcePack.hash));
 	}
 
 	@Async

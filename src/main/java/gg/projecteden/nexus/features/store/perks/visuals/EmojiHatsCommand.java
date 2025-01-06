@@ -1,37 +1,24 @@
 package gg.projecteden.nexus.features.store.perks.visuals;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
-import dev.dbassett.skullcreator.SkullCreator;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
 import gg.projecteden.nexus.utils.nms.PacketUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
 import kotlin.Pair;
 import lombok.Getter;
 import lombok.NonNull;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 
@@ -811,7 +798,7 @@ public class EmojiHatsCommand extends CustomCommand {
 		private final static Map<String, ItemStack> loadedSkulls = new ConcurrentHashMap<>();
 
 		private ItemStack getSkull(String base64) {
-			return loadedSkulls.computeIfAbsent(base64, $ -> SkullCreator.itemFromUrl(URL + base64));
+			return loadedSkulls.computeIfAbsent(base64, $ -> new ItemBuilder(Material.PLAYER_HEAD).skullOwnerUrl(URL + base64).build());
 		}
 	}
 

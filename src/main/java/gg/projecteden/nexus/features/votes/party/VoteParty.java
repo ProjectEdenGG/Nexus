@@ -111,12 +111,8 @@ public class VoteParty {
 		});
 	}
 
-	// TODO - return true
 	public static boolean isFeatureEnabled(HasUniqueId player) {
-		if (player == null) // EndOfMonth
-			return true;
-
-		return Nerd.of(player).getRank().isAdmin();
+		return true;
 	}
 
 }

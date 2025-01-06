@@ -3,6 +3,7 @@ package gg.projecteden.nexus;
 import com.google.gson.GsonBuilder;
 import dev.morphia.converters.TypeConverter;
 import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.ReflectionUtils;
 import gg.projecteden.api.mongodb.DatabaseConfig;
 import gg.projecteden.api.mongodb.EdenDatabaseAPI;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
@@ -15,8 +16,6 @@ import org.bukkit.Location;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
-
-import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
 
 public class API extends EdenDatabaseAPI {
 
@@ -50,7 +49,7 @@ public class API extends EdenDatabaseAPI {
 
 	@Override
 	public Collection<? extends Class<? extends TypeConverter>> getMongoConverters() {
-		return subTypesOf(TypeConverter.class, ItemStackConverter.class.getPackageName());
+		return ReflectionUtils.subTypesOf(TypeConverter.class, ItemStackConverter.class.getPackageName());
 	}
 
 	@Override

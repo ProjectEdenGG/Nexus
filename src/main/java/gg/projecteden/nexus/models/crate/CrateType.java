@@ -3,10 +3,7 @@ package gg.projecteden.nexus.models.crate;
 import gg.projecteden.nexus.features.crates.Crates;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -17,9 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Map.Entry;
-
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Getter
 public enum CrateType {
@@ -50,7 +44,7 @@ public enum CrateType {
 
 	public ItemStack getKey() {
 		return new ItemBuilder(Material.PAPER)
-			.name("&e" + camelCase(this) + " Crate Key")
+			.name("&e" + gg.projecteden.api.common.utils.StringUtils.camelCase(this) + " Crate Key")
 			.glow()
 				.modelId(customMaterial.getModelId())
 			.lore("&7Use me at &e/crates &7to receive a reward")
@@ -65,7 +59,7 @@ public enum CrateType {
 	}
 
 	public static CrateType fromKey(ItemStack item) {
-		if (isNullOrAir(item)) return null;
+		if (Nullables.isNullOrAir(item)) return null;
 		for (CrateType type : values())
 			if (type.customMaterial.is(item))
 				return type;
@@ -73,7 +67,7 @@ public enum CrateType {
 	}
 
 	public static CrateType fromOldKey(ItemStack item) {
-		if (isNullOrAir(item)) return null;
+		if (Nullables.isNullOrAir(item)) return null;
 		for (CrateType type : values())
 			if (type.getOldKey().isSimilar(item))
 				return type;
@@ -113,7 +107,7 @@ public enum CrateType {
 			if (player.isOnline()) {
 				String error = WorldGroup.of(player.getPlayer()) == WorldGroup.SURVIVAL ? "&3 but your inventory was full. Use &c/delivery &3to claim it." : "&3. Use &c/delivery&3 in the survival world to claim it.";
 				PlayerUtils.send(player.getPlayer(), Crates.PREFIX + "You have been given &e" + amount + " " +
-						camelCase(name()) + " Crate Key" + ((amount > 1) ? "s" : "") + error);
+						gg.projecteden.api.common.utils.StringUtils.camelCase(name()) + " Crate Key" + ((amount > 1) ? "s" : "") + error);
 			}
 		}
 	}

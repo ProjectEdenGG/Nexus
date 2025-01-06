@@ -5,15 +5,13 @@ import gg.projecteden.nexus.features.chat.events.ChatEvent;
 import gg.projecteden.nexus.models.emote.EmoteService;
 import gg.projecteden.nexus.models.emote.EmoteUser;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static org.apache.commons.lang.StringUtils.indexOfIgnoreCase;
 
 public enum Emotes {
 	CHECKMARK("&2✔", ":yes:"),
@@ -96,14 +94,14 @@ public enum Emotes {
 			if (!(canUseAllEmotes || LuckPermsUtils.hasPermission(user, EmotesCommand.PERMISSION+"."+emote.name().toLowerCase())))
 				continue;
 
-			while (indexOfIgnoreCase(message, emote.getKey()) > -1) {
+			while (org.apache.commons.lang.StringUtils.indexOfIgnoreCase(message, emote.getKey()) > -1) {
 				String result = emote.getEmote();
 
 				if (emote.getColors().size() > 0)
 					result = user.getRandomColor(emote) + result;
 
-				result = colorize(result + reset);
-				int index = indexOfIgnoreCase(message, emote.getKey());
+				result = StringUtils.colorize(result + reset);
+				int index = org.apache.commons.lang.StringUtils.indexOfIgnoreCase(message, emote.getKey());
 				message = message.substring(0, index) + result + message.substring(index + emote.getKey().length());
 			}
 		}

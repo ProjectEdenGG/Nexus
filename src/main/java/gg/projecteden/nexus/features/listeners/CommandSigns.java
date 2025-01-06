@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.listeners;
 
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -15,9 +16,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import java.util.Arrays;
 import java.util.List;
 
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-
 public class CommandSigns implements Listener {
 
 	private static List<String> commands = Arrays.asList("[Disposal]", "[Trash]");
@@ -30,12 +28,12 @@ public class CommandSigns implements Listener {
 		int ndx = commandIndex(event.getLines(), command);
 		if (ndx == -1) return;
 
-		event.setLine(ndx, colorize("&1" + command));
+		event.setLine(ndx, StringUtils.colorize("&1" + command));
 	}
 
 	private String findCommand(String[] lines) {
 		for (String line : lines) {
-			line = stripColor(line);
+			line = StringUtils.stripColor(line);
 			if (commands.contains(line))
 				return line;
 		}
@@ -43,11 +41,11 @@ public class CommandSigns implements Listener {
 	}
 
 	private int commandIndex(String[] lines, String command) {
-		command = stripColor(command);
+		command = StringUtils.stripColor(command);
 		int ndx = -1;
 		int count = 0;
 		for (String line : lines) {
-			line = stripColor(line);
+			line = StringUtils.stripColor(line);
 			if (line.equalsIgnoreCase(command)) {
 				ndx = count;
 				break;
@@ -86,7 +84,7 @@ public class CommandSigns implements Listener {
 
 	private void disposal(Player player, Sign sign) {
 		int ndx = commandIndex(sign.getLines(), "[Disposal]");
-		sign.setLine(ndx, colorize("&1[Trash]"));
+		sign.setLine(ndx, StringUtils.colorize("&1[Trash]"));
 		sign.update();
 		trash(player);
 	}

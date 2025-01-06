@@ -8,13 +8,9 @@ import gg.projecteden.nexus.features.resourcepack.commands.ObjectivesCommand.Com
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.StringUtils;
+import lombok.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.boss.BarColor;
@@ -26,9 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Data
 @Entity(value = "objective_user", noClassnameStored = true)
@@ -135,12 +128,12 @@ public class ObjectiveUser implements PlayerOwnedObject {
 			final Player player = user.getOnlinePlayer();
 
 			if (objectiveBar == null)
-				if (!isNullOrEmpty(description))
-					objectiveBar = Bukkit.createBossBar(colorize(description), BarColor.PINK, BarStyle.SOLID);
+				if (!Nullables.isNullOrEmpty(description))
+					objectiveBar = Bukkit.createBossBar(StringUtils.colorize(description), BarColor.PINK, BarStyle.SOLID);
 
 			if (objectiveBar != null) {
 				objectiveBar.setVisible(true);
-				objectiveBar.setTitle(colorize(description));
+				objectiveBar.setTitle(StringUtils.colorize(description));
 				objectiveBar.addPlayer(player);
 			}
 

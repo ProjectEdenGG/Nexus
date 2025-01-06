@@ -26,19 +26,11 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static gg.projecteden.nexus.utils.ItemBuilder.ModelId.hasModelId;
-import static java.util.stream.Collectors.joining;
+import java.util.stream.Collectors;
 
 public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	@Getter
@@ -188,7 +180,7 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 		if (!(item.getItemMeta() instanceof PotionMeta))
 			return null;
 
-		return PotionWrapper.of(item).getEffects().stream().map(StringUtils::formatPotionData).collect(joining(", "));
+		return PotionWrapper.of(item).getEffects().stream().map(StringUtils::formatPotionData).collect(Collectors.joining(", "));
 	}
 
 	public static String formatPotionData(PotionEffect effect) {
@@ -220,7 +212,7 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	 * @return <amount> <description of item>
 	 */
 	public static String pretty(ItemStack item, int amount) {
-		if (hasModelId(item)) {
+		if (ItemBuilder.ModelId.hasModelId(item)) {
 			String displayName = item.getItemMeta().getDisplayName();
 
 			DecorationConfig config = DecorationConfig.of(item);
@@ -246,7 +238,7 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 					return key + " " + level;
 				else
 					return key;
-			}).collect(joining(", ")) + " " + name;
+			}).collect(Collectors.joining(", ")) + " " + name;
 
 		if (item.getItemMeta() instanceof PotionMeta)
 			name = formatPotionData(item) + " " + name;
@@ -262,7 +254,7 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	@NotNull
 	public static String pretty(FuzzyItemStack item, ChatColor color, ChatColor delimiterColor) {
 		final String delimiter = " %sor %s".formatted(delimiterColor, color);
-		final String materials = item.getMaterials().stream().map(StringUtils::camelCase).collect(joining(delimiter));
+		final String materials = item.getMaterials().stream().map(StringUtils::camelCase).collect(Collectors.joining(delimiter));
 		return materials + (item.getAmount() > 1 ? " %sx %s%d".formatted(delimiterColor, color, item.getAmount()) : "");
 	}
 
@@ -303,6 +295,13 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 		}
 
 		public static class ProgressBarBuilder {
+			private int progress;
+			private int goal;
+			private int length;
+			private SummaryStyle summaryStyle;
+			private ChatColor color;
+			private boolean seamless;
+
 			public String build() {
 				double percent = Math.min((double) progress / goal, 1);
 				if (color == null) {

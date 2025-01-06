@@ -1,8 +1,10 @@
 package gg.projecteden.nexus.features.economy.commands;
 
 import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -41,13 +43,6 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.api.common.utils.TimeUtils.shortishDateTimeFormat;
-import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
-import static gg.projecteden.api.common.utils.UUIDUtils.isV4Uuid;
-import static gg.projecteden.nexus.models.banker.Transaction.TransactionCause.shopCauses;
-import static gg.projecteden.nexus.models.banker.Transaction.combine;
-import static gg.projecteden.nexus.utils.StringUtils.prettyMoney;
-
 @NoArgsConstructor
 @Aliases({"transaction", "txn", "txns"})
 public class TransactionsCommand extends CustomCommand implements Listener {
@@ -74,7 +69,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 
 		BiFunction<Transaction, String, JsonBuilder> formatter = getFormatter(player(), banker);
 
-		paginate(combine(transactions), formatter, "/transaction history " + banker.getNickname() + " --world=" + world.name().toLowerCase(), page);
+		paginate(Transaction.combine(transactions), formatter, "/transaction history " + banker.getNickname() + " --world=" + world.name().toLowerCase(), page);
 	}
 
 	@Async
@@ -97,7 +92,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 				total = total.add(transaction.getAmount());
 			}
 
-		send(PREFIX + "Total volume" + (startTime != null ? " for " + Timespan.of(startTime, endTime).format() : "") + ": &e" + prettyMoney(total));
+		send(PREFIX + "Total volume" + (startTime != null ? " for " + Timespan.of(startTime, endTime).format() : "") + ": &e" + StringUtils.prettyMoney(total));
 	}
 
 	@Path("count [player]")
@@ -110,16 +105,16 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 	@NotNull
 	public static BiFunction<Transaction, String, JsonBuilder> getFormatter(Player player, Transactions banker) {
 		return (transaction, index) -> {
-			String timestamp = shortishDateTimeFormat(transaction.getTimestamp());
+			String timestamp = TimeUtils.shortishDateTimeFormat(transaction.getTimestamp());
 
 			boolean deposit = transaction.isDeposit(banker.getUuid());
 			boolean withdrawal = transaction.isWithdrawal(banker.getUuid());
 			TransactionCause cause = transaction.getCause();
 
-			String amount = prettyMoney(transaction.getAmount().abs());
+			String amount = StringUtils.prettyMoney(transaction.getAmount().abs());
 			String description = "";
 
-			if (shopCauses.contains(cause)) {
+			if (TransactionCause.shopCauses.contains(cause)) {
 				if (cause.name().contains("SALE"))
 					description = "Sold";
 				else if (cause.name().contains("PURCHASE"))
@@ -151,18 +146,18 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 			String fromPlayer = "&#dddddd" + getName(transaction.getSender(), cause);
 			String toPlayer = PlayerUtils.isSelf(player, banker) ? "&7&lYOU" : "&7" + banker.getNickname();
 			String symbol = "&a+";
-			String newBalance = prettyMoney(transaction.getReceiverNewBalance());
+			String newBalance = StringUtils.prettyMoney(transaction.getReceiverNewBalance());
 
 			if (transaction.getAmount().signum() == -1) {
 				symbol = "&c-";
 				fromPlayer = PlayerUtils.isSelf(player, banker) ? "&7&lYOU" : "&7" + banker.getNickname();
 				toPlayer = "&#dddddd" + getName(transaction.getSender(), cause);
-				newBalance = prettyMoney(transaction.getReceiverNewBalance());
+				newBalance = StringUtils.prettyMoney(transaction.getReceiverNewBalance());
 			} else if (withdrawal) {
 				symbol = "&c-";
 				fromPlayer = PlayerUtils.isSelf(player, banker) ? "&7&lYOU" : "&7" + banker.getNickname();
 				toPlayer = "&#dddddd" + getName(transaction.getReceiver(), cause);
-				newBalance = prettyMoney(transaction.getSenderNewBalance());
+				newBalance = StringUtils.prettyMoney(transaction.getSenderNewBalance());
 			}
 
 			amount = symbol + amount;
@@ -190,9 +185,9 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 			};
 		}
 
-		if (isV4Uuid(uuid))
+		if (UUIDUtils.isV4Uuid(uuid))
 			return Nickname.of(uuid);
-		else if (isUUID0(uuid))
+		else if (UUIDUtils.isUUID0(uuid))
 			return "Market";
 		else
 			return "Unknown";

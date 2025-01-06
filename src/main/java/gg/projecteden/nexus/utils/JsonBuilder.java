@@ -24,16 +24,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
-
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 @NoArgsConstructor
@@ -315,7 +308,7 @@ public class JsonBuilder implements ComponentLike {
 	@NotNull @Contract("_ -> this")
 	public JsonBuilder next(@Nullable String formattedText) {
 		if (formattedText != null)
-			builder.append(AdventureUtils.fromLegacyText(colorize(formattedText)));
+			builder.append(AdventureUtils.fromLegacyText(StringUtils.colorize(formattedText)));
 		return this;
 	}
 
@@ -461,9 +454,9 @@ public class JsonBuilder implements ComponentLike {
 			List<String> lines = new ArrayList<>();
 			lore.forEach(line -> {
 				if (loreize)
-					lines.addAll(StringUtils.loreize(colorize(line)));
+					lines.addAll(StringUtils.loreize(StringUtils.colorize(line)));
 				else
-					lines.add(colorize(line));
+					lines.add(StringUtils.colorize(line));
 			});
 
 			Builder hover = Component.text();

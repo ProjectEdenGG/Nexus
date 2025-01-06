@@ -50,7 +50,7 @@ public class CannonBlock extends ModifierBlock {
 
 			golfBall.setVelocity(velocity.multiply(9.3).add(newVel).setY(height));
 			new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(golfBall.getLocation()).volume(3.0).play();
-			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(golfBall.getLocation()).count(25).spawn();
+			new ParticleBuilder(Particle.EXPLOSION).location(golfBall.getLocation()).count(25).spawn();
 		} catch (Exception ignored) {
 
 		}

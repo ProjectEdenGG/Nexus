@@ -3,11 +3,8 @@ package gg.projecteden.nexus.features.store.perks.inventory.autoinventory.featur
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventoryFeature;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
-import gg.projecteden.nexus.utils.Enchant;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -30,8 +27,6 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
 public class AutoRefill implements Listener {
@@ -83,7 +78,7 @@ public class AutoRefill implements Listener {
 			return;
 
 		final Block block = event.getClickedBlock();
-		if (!isNullOrAir(block) && block.getType() != Material.COMPOSTER)
+		if (!Nullables.isNullOrAir(block) && block.getType() != Material.COMPOSTER)
 			return;
 
 		tryRefillStackInHand(event.getPlayer(), event.getHand());
@@ -116,7 +111,7 @@ public class AutoRefill implements Listener {
 		PlayerInventory inventory = player.getInventory();
 		int slotIndex = handWithTool == EquipmentSlot.OFF_HAND ? 40 : inventory.getHeldItemSlot();
 		ItemStack tool = player.getInventory().getItem(handWithTool);
-		if (isNullOrAir(tool))
+		if (Nullables.isNullOrAir(tool))
 			return;
 
 		ItemStack stack = tool.clone();
@@ -142,7 +137,7 @@ public class AutoRefill implements Listener {
 			int bestMatchStackSize = Integer.MAX_VALUE;
 			for (int i = 0; i < 36; i++) {
 				ItemStack itemInSlot = inventory.getItem(i);
-				if (isNullOrAir(itemInSlot))
+				if (Nullables.isNullOrAir(itemInSlot))
 					continue;
 
 				if (itemsAreSimilar(itemInSlot, stack)) {

@@ -3,24 +3,14 @@ package gg.projecteden.nexus.features.test;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ColorType;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import static java.lang.Math.pow;
+import java.util.*;
 
 @HideFromWiki
 @Permission(Group.ADMIN)
@@ -103,7 +93,7 @@ public class CurveTestCommand extends CustomCommand {
 			final Location location = new Location(controls.get(0).getWorld(), 0, 0, 0);
 
 			for (int i = 0; i <= size; i++)
-				location.add(controls.get(i).clone().multiply(binomial(size, i) * pow((1 - step), (size - i)) * pow(step, i)));
+				location.add(controls.get(i).clone().multiply(binomial(size, i) * Math.pow((1 - step), (size - i)) * Math.pow(step, i)));
 
 			return location;
 		}

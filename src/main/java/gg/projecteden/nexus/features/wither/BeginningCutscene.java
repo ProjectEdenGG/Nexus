@@ -2,24 +2,10 @@ package gg.projecteden.nexus.features.wither;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.utils.BlockUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PotionEffectBuilder;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.TitleBuilder;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
+import gg.projecteden.nexus.utils.*;
+import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Wither;
-import org.bukkit.entity.WitherSkeleton;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -33,9 +19,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static gg.projecteden.nexus.features.wither.WitherChallenge.currentFight;
-import static gg.projecteden.nexus.features.wither.WitherChallenge.location;
-
 public class BeginningCutscene implements Listener {
 
 	public BeginningCutscene() {
@@ -46,24 +29,24 @@ public class BeginningCutscene implements Listener {
 	public final List<FallingBlock> fallingBlocks = new ArrayList<>();
 	public static final Location[] LIGHTNING_LOCATIONS = {
 			// Group 1
-			location(-158, 69, -82),
-			location(-144, 69, -82),
+			WitherChallenge.location(-158, 69, -82),
+			WitherChallenge.location(-144, 69, -82),
 			// Group 2
-			location(-164, 69, -76),
-			location(-138, 69, -76),
+			WitherChallenge.location(-164, 69, -76),
+			WitherChallenge.location(-138, 69, -76),
 			// Group 3
-			location(-164, 69, -69),
-			location(-138, 69, -69),
+			WitherChallenge.location(-164, 69, -69),
+			WitherChallenge.location(-138, 69, -69),
 			// Group 4
-			location(-164, 69, -62),
-			location(-138, 69, -62),
+			WitherChallenge.location(-164, 69, -62),
+			WitherChallenge.location(-138, 69, -62),
 			// Group 5
-			location(-158, 69, -56),
-			location(-144, 69, -56),
+			WitherChallenge.location(-158, 69, -56),
+			WitherChallenge.location(-144, 69, -56),
 			// Final
-			location(-151, 69, -55.5),
+			WitherChallenge.location(-151, 69, -55.5),
 			// Alter
-			location(-150.5, 71, -68.5)
+			WitherChallenge.location(-150.5, 71, -68.5)
 	};
 
 	public CompletableFuture<Location> run() {
@@ -72,15 +55,15 @@ public class BeginningCutscene implements Listener {
 
 		hideAllPlayers();
 
-		for (Player player : currentFight.alivePlayers()) {
+		for (Player player : WitherChallenge.currentFight.alivePlayers()) {
 			player.setGameMode(GameMode.SPECTATOR);
 			player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(TickTime.SECOND.x(3)).ambient(true).build());
-			player.teleport(location(-150.5, 77, -82.5, 0, 20));
+			player.teleport(WitherChallenge.location(-150.5, 77, -82.5, 0, 20));
 
 			new TitleBuilder()
 				.players(player)
 				.title("&8&k%%%% &4&lWither &8&k%%%%")
-				.subtitle(currentFight.getDifficulty().getTitle())
+				.subtitle(WitherChallenge.currentFight.getDifficulty().getTitle())
 				.fade(15).stay(25)
 				.send();
 		}
@@ -116,7 +99,7 @@ public class BeginningCutscene implements Listener {
 						face.setType(Material.AIR);
 				block.setType(Material.AIR);
 			});
-			for (Player player : currentFight.alivePlayers())
+			for (Player player : WitherChallenge.currentFight.alivePlayers())
 				player.playSound(LIGHTNING_LOCATIONS[11], Sound.ENTITY_WITHER_SPAWN, 1, 1);
 
 			witherSkeleton.remove();
@@ -127,7 +110,7 @@ public class BeginningCutscene implements Listener {
 				witherEntity.getBossBar().setVisible(false);
 			wither.set(witherEntity);
 			for (int i = 0; i < 5; i++)
-				cageLoc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, cageLoc, 1, 1, 1, 1);
+				cageLoc.getWorld().spawnParticle(Particle.EXPLOSION, cageLoc, 1, 1, 1, 1);
 		});
 
 		Tasks.wait(TickTime.SECOND.x(waitSeconds += 2), () -> {
@@ -135,9 +118,9 @@ public class BeginningCutscene implements Listener {
 			Nexus.unregisterListener(this);
 			showAllPlayers();
 			wither.get().remove();
-			for (Player player : currentFight.alivePlayers()) {
+			for (Player player : WitherChallenge.currentFight.alivePlayers()) {
 				player.setGameMode(GameMode.SURVIVAL);
-				player.teleport(location(-150.5, 69, -80.5));
+				player.teleport(WitherChallenge.location(-150.5, 69, -80.5));
 			}
 		});
 		Tasks.wait(TickTime.SECOND.x(waitSeconds) + 2, () -> completableFuture.complete(cageLoc));
@@ -145,15 +128,15 @@ public class BeginningCutscene implements Listener {
 	}
 
 	public void hideAllPlayers() {
-		for (Player player1 : currentFight.alivePlayers())
-			for (Player player2 : currentFight.alivePlayers())
+		for (Player player1 : WitherChallenge.currentFight.alivePlayers())
+			for (Player player2 : WitherChallenge.currentFight.alivePlayers())
 				if (!player1.equals(player2))
 					player1.hidePlayer(Nexus.getInstance(), player2);
 	}
 
 	public void showAllPlayers() {
-		for (Player player1 : currentFight.alivePlayers())
-			for (Player player2 : currentFight.alivePlayers())
+		for (Player player1 : WitherChallenge.currentFight.alivePlayers())
+			for (Player player2 : WitherChallenge.currentFight.alivePlayers())
 				if (!player1.equals(player2))
 					player1.showPlayer(Nexus.getInstance(), player2);
 	}
@@ -161,7 +144,7 @@ public class BeginningCutscene implements Listener {
 	public void strike(Location location) {
 		location.getBlock().setType(Material.SOUL_FIRE);
 		location.getWorld().strikeLightningEffect(location);
-		for (Player player : currentFight.alivePlayers()) {
+		for (Player player : WitherChallenge.currentFight.alivePlayers()) {
 			player.playSound(location, Sound.ENTITY_LIGHTNING_BOLT_IMPACT, SoundCategory.MASTER, 1, 1);
 			player.playSound(location, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, SoundCategory.MASTER, 1, 1);
 		}
@@ -175,7 +158,7 @@ public class BeginningCutscene implements Listener {
 	 */
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event) {
-		if (!currentFight.isInParty(event.getPlayer()))
+		if (!WitherChallenge.currentFight.isInParty(event.getPlayer()))
 			return;
 
 		event.setCancelled(true);

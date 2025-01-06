@@ -23,6 +23,6 @@ public class Waystone extends FloorThing implements TickableDecoration {
 
 	@Override
 	public void tick(Location location) {
-		new ParticleBuilder(Particle.ENCHANTMENT_TABLE).location(location.add(0, 1, 0).toCenterLocation()).spawn();
+		new ParticleBuilder(Particle.ENCHANT).location(location.add(0, 1, 0).toCenterLocation()).spawn();
 	}
 }

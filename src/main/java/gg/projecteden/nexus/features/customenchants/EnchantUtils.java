@@ -1,13 +1,11 @@
 package gg.projecteden.nexus.features.customenchants;
 
+import gg.projecteden.api.common.utils.StringUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.jetbrains.annotations.NotNull;
-
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.StringUtils.toRoman;
 
 public class EnchantUtils {
 
@@ -34,7 +32,7 @@ public class EnchantUtils {
 
 	@NotNull
 	public static String getDisplayName(Enchantment enchantment, int level) {
-		return camelCase(enchantment.getKey().getKey()) + (level > 1 ? " " + toRoman(level) : "");
+		return StringUtils.camelCase(enchantment.getKey().getKey()) + (level > 1 ? " " + gg.projecteden.nexus.utils.StringUtils.toRoman(level) : "");
 	}
 
 }

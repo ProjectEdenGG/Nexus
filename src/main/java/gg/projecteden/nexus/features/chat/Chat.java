@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.chat;
 
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
@@ -17,13 +18,9 @@ import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.AdventureUtils;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.Timer;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,16 +33,8 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.AdventureUtils.asLegacyText;
-import static java.util.Collections.singletonList;
 
 public class Chat extends Feature {
 
@@ -215,7 +204,7 @@ public class Chat extends Feature {
 			this.messageFunction = messageFunction;
 			this.muteMenuItem = muteMenuItem == null ? this.channel.getMuteMenuItem() : muteMenuItem;
 			this.messageType = messageType == null ? MessageType.SYSTEM : messageType;
-			this.targets = isNullOrEmpty(targets) ? List.of(Target.INGAME, Target.DISCORD) : targets;
+			this.targets = Nullables.isNullOrEmpty(targets) ? List.of(Target.INGAME, Target.DISCORD) : targets;
 			this.include = include;
 			this.exclude = exclude;
 			this.checkCanSeeSender = checkCanSeeSender;
@@ -282,7 +271,7 @@ public class Chat extends Feature {
 
 						if (broadcast.messageType == MessageType.CHAT)
 							if (broadcast.muteMenuItem != null && broadcast.muteMenuItem.name().startsWith("CHANNEL_"))
-								new PublicChatEvent(sender, broadcast.channel, asLegacyText(component)).checkWasSeen();
+								new PublicChatEvent(sender, broadcast.channel, AdventureUtils.asLegacyText(component)).checkWasSeen();
 					}
 
 					players.stream()
@@ -411,7 +400,7 @@ public class Chat extends Feature {
 			}
 
 			public BroadcastBuilder include(UUID uuid) {
-				return include(singletonList(uuid));
+				return include(Collections.singletonList(uuid));
 			}
 
 			public BroadcastBuilder include(List<UUID> uuids) {
@@ -431,7 +420,7 @@ public class Chat extends Feature {
 			}
 
 			public BroadcastBuilder exclude(UUID uuid) {
-				return exclude(singletonList(uuid));
+				return exclude(Collections.singletonList(uuid));
 			}
 
 			public BroadcastBuilder exclude(List<UUID> uuids) {

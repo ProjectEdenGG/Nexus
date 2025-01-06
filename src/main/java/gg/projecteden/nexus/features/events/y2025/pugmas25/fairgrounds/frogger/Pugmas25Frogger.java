@@ -1,16 +1,14 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.frogger;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.events.EventSounds;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.models.godmode.GodmodeService;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.*;
 import lombok.Getter;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -23,17 +21,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
-import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
 
 public class Pugmas25Frogger implements Listener {
 
@@ -291,7 +281,7 @@ public class Pugmas25Frogger implements Listener {
 			}
 
 		} else if (regionId.equalsIgnoreCase(KILL_REGION)) {
-			if (canWorldGuardEdit(player)) return;
+			if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
 			if (checkpointList.contains(player))
 				player.teleportAsync(CHECKPOINT_LOC);
 			else
@@ -299,7 +289,7 @@ public class Pugmas25Frogger implements Listener {
 			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(player).volume(10).play();
 
 		} else if (regionId.equalsIgnoreCase(WIN_REGION)) {
-			if (canWorldGuardEdit(player)) return;
+			if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
 
 			checkpointList.remove(player);
 			player.teleportAsync(RESPAWN_LOC);
@@ -338,10 +328,10 @@ public class Pugmas25Frogger implements Listener {
 	}
 
 	private static String isCheatingMsg(Player player) {
-		if (canWorldGuardEdit(player)) return "wgedit";
+		if (WorldGuardEditCommand.canWorldGuardEdit(player)) return "wgedit";
 		if (!player.getGameMode().equals(GameMode.SURVIVAL)) return "creative";
 		if (player.isFlying()) return "fly";
-		if (isVanished(player)) return "vanish";
+		if (Vanish.isVanished(player)) return "vanish";
 		if (new GodmodeService().get(player).isActive()) return "godmode";
 
 		return null;

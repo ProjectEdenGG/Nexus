@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.chat.bridge;
 
 import com.vdurmont.emoji.EmojiParser;
+import gg.projecteden.api.common.utils.Nullables;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.api.discord.DiscordId.User;
 import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
@@ -15,8 +17,10 @@ import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
+import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -33,13 +37,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
-import static gg.projecteden.nexus.utils.AdventureUtils.asPlainText;
-import static gg.projecteden.nexus.utils.PlayerUtils.isSelf;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
 public class DiscordBridgeListener extends ListenerAdapter {
@@ -77,7 +74,7 @@ public class DiscordBridgeListener extends ListenerAdapter {
 		}
 
 		for (Message.Attachment attachment : event.getMessage().getAttachments()) {
-			final String plainText = asPlainText(json);
+			final String plainText = AdventureUtils.asPlainText(json);
 			if (!plainText.isEmpty() && !plainText.endsWith(" "))
 				json.next(" ");
 
@@ -129,8 +126,8 @@ public class DiscordBridgeListener extends ListenerAdapter {
 
 			if (!message.getEmbeds().isEmpty()) {
 				final String title = message.getEmbeds().iterator().next().getTitle();
-				if (!isNullOrEmpty(title))
-					content = (isNullOrEmpty(content) ? "" : content + " ") + "&f&l[" + title + "]";
+				if (!Nullables.isNullOrEmpty(title))
+					content = (Nullables.isNullOrEmpty(content) ? "" : content + " ") + "&f&l[" + title + "]";
 			}
 		} else {
 			replyAuthor = discordUserService.getFromUserId(message.getAuthor().getId());
@@ -149,7 +146,7 @@ public class DiscordBridgeListener extends ListenerAdapter {
 
 		if (replyAuthor != null && viewer != null)
 			if (replyAuthor.getUuid().equals(viewer.getUniqueId()))
-				if (!isSelf(viewer, discordUserService.getFromUserId(event.getAuthor().getId())))
+				if (!PlayerUtils.isSelf(viewer, discordUserService.getFromUserId(event.getAuthor().getId())))
 					new AlertsService().get(viewer).playSound();
 
 		return new JsonBuilder("&f&l[Reply]").hover(json);
@@ -158,7 +155,7 @@ public class DiscordBridgeListener extends ListenerAdapter {
 	private JsonBuilder getChatterFormat(Member author, PublicChannel channel, DiscordUser user, Player viewer, boolean isDiscord) {
 		final JsonBuilder chatterName;
 		if (author != null && author.getUser().isBot()) {
-			final BadgeUser badgeUser = new BadgeUser(UUID0, Badge.BOT, Set.of(Badge.BOT));
+			final BadgeUser badgeUser = new BadgeUser(UUIDUtils.UUID0, Badge.BOT, Set.of(Badge.BOT));
 			chatterName = new JsonBuilder(badgeUser.getBadgeJson(Chatter.of(viewer))).next("&5" + Discord.getName(author));
 		} else
 			chatterName = new JsonBuilder("&7" + Discord.getName(author));
@@ -173,7 +170,7 @@ public class DiscordBridgeListener extends ListenerAdapter {
 
 	@Contract("null -> null; !null -> !null")
 	private String getContent(String message) {
-		return message == null ? null : colorize(parseAliases(stripColor(message.trim())).replaceAll("&", "&&f"));
+		return message == null ? null : StringUtils.colorize(parseAliases(StringUtils.stripColor(message.trim())).replaceAll("&", "&&f"));
 	}
 
 	@Contract("null -> null; !null -> !null")

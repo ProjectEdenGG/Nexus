@@ -26,10 +26,6 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.features.economy.commands.TransactionsCommand.getFormatter;
-import static gg.projecteden.nexus.models.banker.Transaction.combine;
-import static gg.projecteden.nexus.utils.StringUtils.prettyMoney;
-
 public class PayCommand extends CustomCommand {
 	private final BankerService service = new BankerService();
 	private final Banker self;
@@ -53,9 +49,9 @@ public class PayCommand extends CustomCommand {
 		}
 
 		String description = (reason == null ? "" : " &3for &e" + reason) + " &3in &e" + camelCase(world);
-		send(PREFIX + "Sent &e" + prettyMoney(amount) + " &3to " + banker.getNickname() + description);
+		send(PREFIX + "Sent &e" + StringUtils.prettyMoney(amount) + " &3to " + banker.getNickname() + description);
 		if (banker.isOnline())
-			send(banker.getOnlinePlayer(), PREFIX + "Received &e" + prettyMoney(amount) + " &3from &e" + self.getNickname() + description);
+			send(banker.getOnlinePlayer(), PREFIX + "Received &e" + StringUtils.prettyMoney(amount) + " &3from &e" + self.getNickname() + description);
 	}
 
 	@Async
@@ -73,9 +69,9 @@ public class PayCommand extends CustomCommand {
 		send("");
 		send(PREFIX + camelCase(world) + " history" + (isSelf(banker) ? "" : " for &e" + banker.getNickname()));
 
-		BiFunction<Transaction, String, JsonBuilder> formatter = getFormatter(player(), banker);
+		BiFunction<Transaction, String, JsonBuilder> formatter = TransactionsCommand.getFormatter(player(), banker);
 
-		paginate(combine(transactions), formatter, "/pay history " + banker.getNickname() + " --world=" + world.name().toLowerCase(), page);
+		paginate(Transaction.combine(transactions), formatter, "/pay history " + banker.getNickname() + " --world=" + world.name().toLowerCase(), page);
 	}
 
 }

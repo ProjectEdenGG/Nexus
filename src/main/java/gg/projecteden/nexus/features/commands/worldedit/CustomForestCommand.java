@@ -21,6 +21,7 @@ import gg.projecteden.nexus.models.worldedit.ForestGeneratorConfigService;
 import gg.projecteden.nexus.models.worldedit.ForestGeneratorUser;
 import gg.projecteden.nexus.models.worldedit.ForestGeneratorUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -37,9 +38,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.List;
 import java.util.function.BiFunction;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 /*
 	TODO
@@ -110,7 +108,7 @@ public class CustomForestCommand extends CustomCommand implements Listener {
 			send(PREFIX + "Viewing trees");
 		} else {
 			final List<Tree> trees = user.getTreeList().getTrees();
-			if (isNullOrEmpty(trees))
+			if (gg.projecteden.api.common.utils.Nullables.isNullOrEmpty(trees))
 				error("No trees defined in list");
 			if (index > trees.size() + 1)
 				error("No index at index &e" + index);
@@ -137,7 +135,7 @@ public class CustomForestCommand extends CustomCommand implements Listener {
 			return;
 
 		final Block block = event.getClickedBlock();
-		if (isNullOrAir(block))
+		if (Nullables.isNullOrAir(block))
 			return;
 
 		final WorldGuardUtils worldguard = new WorldGuardUtils(player);

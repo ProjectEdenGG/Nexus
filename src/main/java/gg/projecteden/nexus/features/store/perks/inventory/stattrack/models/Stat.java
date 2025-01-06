@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.store.perks.inventory.stattrack.models;
 
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.ToolType;
 import gg.projecteden.nexus.utils.ToolType.ToolGroup;
 import lombok.Getter;
@@ -13,8 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public enum Stat {
 	BLOCKS_BROKEN(ToolGroup.TOOLS),
@@ -63,7 +62,7 @@ public enum Stat {
 
 	@Contract("null -> false; !null -> _")
 	public boolean isToolApplicable(ItemStack item) {
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return false;
 
 		return isToolApplicable(item.getType());
@@ -78,7 +77,7 @@ public enum Stat {
 
 	@Contract("null -> false; !null -> _")
 	public boolean isMaterialApplicable(ItemStack item) {
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return false;
 
 		return isMaterialApplicable(item.getType());

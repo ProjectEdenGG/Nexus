@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.legacy.listeners;
 
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
+import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.features.legacy.LegacyCommand.LegacyVaultMenu.LegacyVaultHolder;
 import gg.projecteden.nexus.features.listeners.Beehives;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider.SmartInventoryHolder;
@@ -8,34 +9,21 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.vaults.VaultCommand.VaultMenu.VaultHolder;
 import gg.projecteden.nexus.models.crate.CrateType;
-import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.*;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 
 public class LegacyItems implements Listener {
 
@@ -87,7 +75,7 @@ public class LegacyItems implements Listener {
 	}
 
 	private static void convert(World world, ItemStack item, Consumer<ItemStack> setter) {
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return;
 
 		ItemStack converted = convert(world, item);
@@ -98,7 +86,7 @@ public class LegacyItems implements Listener {
 	}
 
 	public static ItemStack convert(World world, ItemStack item) {
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return item;
 
 		item = convertIfShulkerBox(world, item, null);
@@ -134,7 +122,7 @@ public class LegacyItems implements Listener {
 				.nbt(nbt -> {
 					if (WorldGroup.of(world) == WorldGroup.LEGACY) {
 						nbt.removeKey("BackpackId");
-						nbt.setString(LegacyShulkerBoxes.NBT_KEY, randomAlphabetic(10));
+						nbt.setString(LegacyShulkerBoxes.NBT_KEY, RandomStringUtils.randomAlphabetic(10));
 					}
 				});
 
@@ -145,7 +133,7 @@ public class LegacyItems implements Listener {
 		if (equipment == null)
 			return;
 
-		for (EquipmentSlot slot : EquipmentSlot.values())
+		for (EquipmentSlot slot : EnumUtils.valuesExcept(EquipmentSlot.class, EquipmentSlot.BODY))
 			convert(world, equipment.getItem(slot), converted -> equipment.setItem(slot, converted, true));
 	}
 

@@ -24,9 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.SerializationUtils.Json.serialize;
-
 @Permission(Group.ADMIN)
 public class SerializeCommand extends CustomCommand {
 	private final SerializeTestService service = new SerializeTestService();
@@ -46,7 +43,7 @@ public class SerializeCommand extends CustomCommand {
 	@Path("item toJson")
 	@Description("Serialize an item to JSON")
 	void itemStackToJson() {
-		String serialized = Json.toString(serialize(getToolRequired()));
+		String serialized = Json.toString(Json.serialize(getToolRequired()));
 		send(json(serialized).copy(serialized).hover("Click to copy"));
 	}
 
@@ -82,7 +79,7 @@ public class SerializeCommand extends CustomCommand {
 		Chest state = (Chest) targetBlock.getState();
 		state.getInventory().clear();
 		for (ItemStack itemStack : test.getItemStacks())
-			if (!isNullOrAir(itemStack))
+			if (!Nullables.isNullOrAir(itemStack))
 				state.getInventory().addItem(itemStack);
 	}
 

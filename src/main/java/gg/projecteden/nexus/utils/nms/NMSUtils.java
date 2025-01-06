@@ -11,11 +11,12 @@ import lombok.SneakyThrows;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Rotations;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ClientInformation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.*;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageSources;
@@ -23,6 +24,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -37,12 +39,12 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
-import org.bukkit.craftbukkit.v1_20_R3.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.ExperienceOrb.SpawnReason;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
@@ -69,7 +71,7 @@ public class NMSUtils {
 
 	public static BlockPos toNMS(HasLocation hasLocation) {
 		final Location location = hasLocation.getLocation();
-		return new BlockPos((int) location.getX(), (int) location.getY(), (int) location.getZ());
+		return new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ());
 	}
 
 	public static Location fromNMS(World world, BlockPos pos) {
@@ -218,7 +220,7 @@ public class NMSUtils {
 	public static @Nullable Sound getSound(SoundAction soundAction, org.bukkit.block.Block block) {
 		try {
 			Block nmsBlock = toNMS(block);
-			SoundType soundEffectType = nmsBlock.getSoundType(toNMS(block.getBlockData()));
+			SoundType soundEffectType = nmsBlock.defaultBlockState().getSoundType();
 			SoundEvent nmsSound = switch (soundAction) {
 				case BREAK -> soundEffectType.getBreakSound();
 				case STEP -> soundEffectType.getStepSound();
@@ -227,7 +229,7 @@ public class NMSUtils {
 				case FALL -> soundEffectType.getFallSound();
 			};
 
-			ResourceLocation nmsString = nmsSound.getLocation();
+			ResourceLocation nmsString = nmsSound.location();
 			String soundString = nmsString.getPath().replace(".", "_").toUpperCase();
 			return Sound.valueOf(soundString);
 		} catch (Exception ex) {
@@ -330,6 +332,18 @@ public class NMSUtils {
 		final Unsafe unsafe = (Unsafe) unsafeField.get(null);
 		var offset = unsafe.staticFieldOffset(field);
 		unsafe.putObject(unsafe.staticFieldBase(field), offset, newValue);
+	}
+
+	public static Packet<ClientGamePacketListener> getSpawnPacket(Entity entity) {
+		if (entity instanceof HangingEntity hangingEntity)
+			return new ClientboundAddEntityPacket(entity, hangingEntity.getDirection().get3DDataValue(), entity.blockPosition());
+		return new ClientboundAddEntityPacket(entity, 0, entity.blockPosition());
+	}
+
+	public static ServerEntity getServerEntity(Entity entity) {
+		ServerLevel world = (ServerLevel) entity.level();
+		ChunkMap.TrackedEntity entityTracker = world.getChunkSource().chunkMap.entityMap.get(entity.getId());
+		return entityTracker.serverEntity;
 	}
 
 }

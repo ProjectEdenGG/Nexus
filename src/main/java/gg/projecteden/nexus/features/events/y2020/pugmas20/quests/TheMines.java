@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2020.pugmas20.quests;
 
+import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.events.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.Merchants.MerchantNPC;
@@ -9,12 +10,15 @@ import gg.projecteden.nexus.models.pugmas20.Pugmas20User;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20UserService;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.BlockRegenJob;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LocationUtils.CardinalDirection;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.MerchantBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.Getter;
@@ -43,28 +47,17 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Arrays;
 import java.util.List;
 
-import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
-import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.addTokenMax;
-import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isAtPugmas;
-import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.questItem;
-import static gg.projecteden.nexus.utils.ItemUtils.isFuzzyMatch;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-
 @NoArgsConstructor
 public class TheMines implements Listener {
 
 	static {
-		addTokenMax("themines_" + OreType.COAL.name(), 3);
-		addTokenMax("themines_" + OreType.IRON.name(), 3);
-		addTokenMax("themines_" + OreType.LUMINITE.name(), 3);
-		addTokenMax("themines_" + OreType.MITHRIL.name(), 3);
-		addTokenMax("themines_" + OreType.ADAMANTITE.name(), 3);
-		addTokenMax("themines_" + OreType.NECRITE.name(), 3);
-		addTokenMax("themines_" + OreType.LIGHT_ANIMICA.name(), 3);
+		Pugmas20.addTokenMax("themines_" + OreType.COAL.name(), 3);
+		Pugmas20.addTokenMax("themines_" + OreType.IRON.name(), 3);
+		Pugmas20.addTokenMax("themines_" + OreType.LUMINITE.name(), 3);
+		Pugmas20.addTokenMax("themines_" + OreType.MITHRIL.name(), 3);
+		Pugmas20.addTokenMax("themines_" + OreType.ADAMANTITE.name(), 3);
+		Pugmas20.addTokenMax("themines_" + OreType.NECRITE.name(), 3);
+		Pugmas20.addTokenMax("themines_" + OreType.LIGHT_ANIMICA.name(), 3);
 	}
 
 	@EventHandler
@@ -75,7 +68,7 @@ public class TheMines implements Listener {
 		if (!Pugmas20.isAtPugmas(player)) return;
 
 		Block block = event.getClickedBlock();
-		if (isNullOrAir(block)) return;
+		if (Nullables.isNullOrAir(block)) return;
 
 		Material type = block.getType();
 		String crateType = null;
@@ -100,7 +93,7 @@ public class TheMines implements Listener {
 
 		event.setCancelled(true);
 
-		Inventory inv = Bukkit.createInventory(null, 27, colorize("&eSell Crate - " + crateType));
+		Inventory inv = Bukkit.createInventory(null, 27, StringUtils.colorize("&eSell Crate - " + crateType));
 		player.openInventory(inv);
 	}
 
@@ -108,7 +101,7 @@ public class TheMines implements Listener {
 		Sign sign = (Sign) block.getState();
 		String line1 = sign.getLine(0);
 		String line2 = sign.getLine(1);
-		if ("[Sell Crate]".equals(stripColor(line1)) && stripColor(line2).contains("Ingots"))
+		if ("[Sell Crate]".equals(StringUtils.stripColor(line1)) && StringUtils.stripColor(line2).contains("Ingots"))
 			return line2;
 		return null;
 	}
@@ -116,8 +109,8 @@ public class TheMines implements Listener {
 	@EventHandler
 	public void onSellCrateClose(InventoryCloseEvent event) {
 		Player player = (Player) event.getPlayer();
-		String title = stripColor(event.getView().getTitle());
-		if (!title.contains(stripColor("Sell Crate - Ingots"))) return;
+		String title = StringUtils.stripColor(event.getView().getTitle());
+		if (!title.contains(StringUtils.stripColor("Sell Crate - Ingots"))) return;
 
 		List<MerchantBuilder.TradeBuilder> tradeBuilders = MerchantNPC.THEMINES_SELLCRATE.getTrades(null);
 
@@ -129,7 +122,7 @@ public class TheMines implements Listener {
 		int profit = 0;
 		OreType key;
 		for (ItemStack item : event.getInventory().getContents()) {
-			if (isNullOrAir(item)) {
+			if (Nullables.isNullOrAir(item)) {
 				continue;
 			}
 
@@ -140,8 +133,8 @@ public class TheMines implements Listener {
 				List<ItemStack> ingredients = tradeBuilder.getIngredients();
 				if (ingredients.size() != 1) continue;
 				ItemStack ingredient = ingredients.get(0);
-				if (isNullOrAir(ingredient)) continue;
-				if (isNullOrAir(result)) continue;
+				if (Nullables.isNullOrAir(ingredient)) continue;
+				if (Nullables.isNullOrAir(result)) continue;
 
 				key = OreType.ofIngot(ingredient.getType());
 				if (key == null) continue;
@@ -189,21 +182,21 @@ public class TheMines implements Listener {
 	}
 
 	@Getter
-	private static final ItemStack minersPickaxe = questItem(Material.IRON_PICKAXE).name("Miner's Pickaxe").enchant(Enchantment.DIG_SPEED, 4).build();
+	private static final ItemStack minersPickaxe = Pugmas20.questItem(Material.IRON_PICKAXE).name("Miner's Pickaxe").enchant(Enchantment.EFFICIENCY, 4).build();
 	@Getter
-	private static final ItemStack minersSieve = questItem(Material.HOPPER).name("Miner's Sieve").build();
+	private static final ItemStack minersSieve = Pugmas20.questItem(Material.HOPPER).name("Miner's Sieve").build();
 	@Getter
-	private static final ItemStack flint = questItem(Material.FLINT).build();
+	private static final ItemStack flint = Pugmas20.questItem(Material.FLINT).build();
 
 	private static final int orePerCoal = 2;
 
 	@EventHandler
 	public void onOreBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
-		if (!isAtPugmas(player, "cave"))
+		if (!Pugmas20.isAtPugmas(player, "cave"))
 			return;
 
-		if (canWorldGuardEdit(player))
+		if (WorldGuardEditCommand.canWorldGuardEdit(player))
 			return;
 
 		event.setCancelled(true);
@@ -214,10 +207,10 @@ public class TheMines implements Listener {
 		if (oreType == null)
 			return;
 
-		if (!isFuzzyMatch(minersPickaxe, player.getInventory().getItemInMainHand()))
+		if (!ItemUtils.isFuzzyMatch(minersPickaxe, player.getInventory().getItemInMainHand()))
 			return;
 
-		player.getInventory().getItemInMainHand().addEnchantment(Enchantment.DIG_SPEED, 4);
+		player.getInventory().getItemInMainHand().addEnchantment(Enchantment.EFFICIENCY, 4);
 
 		new SoundBuilder(Sound.BLOCK_STONE_BREAK).location(player.getLocation()).category(SoundCategory.BLOCKS).play();
 		ItemStack itemStack = oreType == OreType.COAL ? oreType.getIngot(RandomUtils.randomElement(1, 1, 2, 2, 2, 3)) : oreType.getOre();
@@ -230,7 +223,7 @@ public class TheMines implements Listener {
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
-		if (!isAtPugmas(player, "cave"))
+		if (!Pugmas20.isAtPugmas(player, "cave"))
 			return;
 
 		if (!minersSieve.equals(player.getInventory().getItemInMainHand()))
@@ -263,25 +256,25 @@ public class TheMines implements Listener {
 	}
 
 	public void scheduleRegen(Block block) {
-		new BlockRegenJob(block.getLocation(), block.getType()).schedule(randomInt(3 * 60, 5 * 60));
+		new BlockRegenJob(block.getLocation(), block.getType()).schedule(RandomUtils.randomInt(3 * 60, 5 * 60));
 	}
 
 	@EventHandler
 	public void onSmelt(FurnaceSmeltEvent event) {
-		if (!isAtPugmas(event.getBlock().getLocation()))
+		if (!Pugmas20.isAtPugmas(event.getBlock().getLocation()))
 			return;
 
 		OreType oreType = OreType.ofOre(event.getSource().getType());
 		if (oreType == null)
 			return;
 
-		if (isFuzzyMatch(event.getSource(), oreType.getOre()))
+		if (ItemUtils.isFuzzyMatch(event.getSource(), oreType.getOre()))
 			event.setResult(oreType.getIngot());
 	}
 
 	@EventHandler
 	public void onBurn(FurnaceBurnEvent event) {
-		if (!isAtPugmas(event.getBlock().getLocation()))
+		if (!Pugmas20.isAtPugmas(event.getBlock().getLocation()))
 			return;
 
 		if (!(event.getBlock().getState() instanceof BlastFurnace state))
@@ -292,10 +285,10 @@ public class TheMines implements Listener {
 			state.update();
 		}
 
-		if (isNullOrAir(event.getFuel()))
+		if (Nullables.isNullOrAir(event.getFuel()))
 			return;
 
-		if (!isFuzzyMatch(event.getFuel(), OreType.COAL.getIngot())) {
+		if (!ItemUtils.isFuzzyMatch(event.getFuel(), OreType.COAL.getIngot())) {
 			state.setCookTimeTotal(0);
 			state.update();
 			event.setCancelled(true);
@@ -303,20 +296,20 @@ public class TheMines implements Listener {
 		}
 
 		ItemStack smelting = state.getInventory().getSmelting();
-		if (isNullOrAir(smelting)) {
+		if (Nullables.isNullOrAir(smelting)) {
 			event.setCancelled(true);
 			return;
 		}
 
 		OreType oreType = OreType.ofOre(smelting.getType());
-		if (oreType == null || !isFuzzyMatch(oreType.getOre(), smelting)) {
+		if (oreType == null || !ItemUtils.isFuzzyMatch(oreType.getOre(), smelting)) {
 			event.setCancelled(true);
 			return;
 		}
 
 		ItemStack fuel = state.getInventory().getFuel();
 
-		if (!isNullOrAir(fuel)) {
+		if (!Nullables.isNullOrAir(fuel)) {
 			fuel.setAmount(fuel.getAmount() - 1);
 			state.getInventory().setFuel(fuel);
 		}
@@ -339,8 +332,8 @@ public class TheMines implements Listener {
 		private final ItemStack ingot;
 
 		OreType(Material ore, Material ingot) {
-			this.ore = questItem(ore).name(camelCase(name() + " Ore")).build();
-			this.ingot = questItem(ingot).name(camelCase(name())).build();
+			this.ore = Pugmas20.questItem(ore).name(StringUtils.camelCase(name() + " Ore")).build();
+			this.ingot = Pugmas20.questItem(ingot).name(StringUtils.camelCase(name())).build();
 		}
 
 		public static OreType ofOre(Material ore) {

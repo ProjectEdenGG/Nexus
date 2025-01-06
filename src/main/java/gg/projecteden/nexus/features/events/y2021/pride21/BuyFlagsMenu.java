@@ -9,10 +9,7 @@ import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.pride21.Pride21User;
 import gg.projecteden.nexus.models.pride21.Pride21UserService;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -25,8 +22,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 @Title("Pride Shop")
 public class BuyFlagsMenu extends InventoryProvider {
@@ -47,7 +42,7 @@ public class BuyFlagsMenu extends InventoryProvider {
 			ItemStack buntingItem = flagType.getBuntingItem();
 			String lore;
 			if (freebies > 0)
-				lore = "&3You have &e" + freebies + plural(" free item", freebies) + "&3 remaining";
+				lore = "&3You have &e" + freebies + StringUtils.plural(" free item", freebies) + "&3 remaining";
 			else
 				lore = "&3Cost: &e" + COST + " event tokens";
 			List<Component> itemLore = Collections.singletonList(new JsonBuilder(lore).decorate(false, TextDecoration.ITALIC).build());

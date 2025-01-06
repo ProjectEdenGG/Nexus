@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.GlowUtils;
 import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
+import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerMovementUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -23,8 +24,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.Collections;
-
-import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
 
 @Permission(Group.STAFF)
 public class NearestBlockCommand extends CustomCommand {
@@ -64,7 +63,7 @@ public class NearestBlockCommand extends CustomCommand {
 			Block block = nearestBlock;
 			Tasks.sync(() -> {
 				if (block != null) {
-					Location blockLoc = getCenteredLocation(block.getLocation());
+					Location blockLoc = LocationUtils.getCenteredLocation(block.getLocation());
 					World blockWorld = blockLoc.getWorld();
 					FallingBlock fallingBlock = blockWorld.spawnFallingBlock(blockLoc, block.getType().createBlockData());
 					fallingBlock.setDropItem(false);

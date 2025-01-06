@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.events.models.EventFishingLoot;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.FishingLoot;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -24,9 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventDefaultFishingLoot.CARP;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class EventFishingListener implements Listener {
 	private final EdenEvent event;
@@ -82,7 +80,7 @@ public class EventFishingListener implements Listener {
 			return;
 
 		ItemStack tool = ItemUtils.getTool(player, Material.FISHING_ROD);
-		if (isNullOrAir(tool))
+		if (Nullables.isNullOrAir(tool))
 			return;
 
 		ItemMeta meta = tool.getItemMeta();
@@ -91,8 +89,8 @@ public class EventFishingListener implements Listener {
 		loot.add(getFishingItem(player));
 
 		if (meta != null && meta.hasEnchants()) {
-			if (meta.getEnchants().keySet().stream().anyMatch(enchantment -> enchantment.equals(Enchantment.LUCK))) {
-				int loops = RandomUtils.randomInt(0, meta.getEnchants().get(Enchantment.LUCK));
+			if (meta.getEnchants().keySet().stream().anyMatch(enchantment -> enchantment.equals(Enchantment.LUCK_OF_THE_SEA))) {
+				int loops = RandomUtils.randomInt(0, meta.getEnchants().get(Enchantment.LUCK_OF_THE_SEA));
 
 				for (int i = 0; i < loops; i++) {
 					loot.add(getFishingItem(player));
@@ -121,7 +119,7 @@ public class EventFishingListener implements Listener {
 			return;
 
 		ItemStack tool = ItemUtils.getTool(player, Material.FISHING_ROD);
-		if (isNullOrAir(tool))
+		if (Nullables.isNullOrAir(tool))
 			return;
 
 		Entity caught = event.getCaught();
@@ -153,7 +151,7 @@ public class EventFishingListener implements Listener {
 	private ItemStack getFishingItem(Player player) {
 		ItemStack loot = getLoot(player);
 		if (loot == null)
-			loot = event.getFishingLoot(CARP).getItem();
+			loot = event.getFishingLoot(EventFishingLoot.EventDefaultFishingLoot.CARP).getItem();
 
 		return loot;
 	}

@@ -8,11 +8,8 @@ import gg.projecteden.nexus.framework.interfaces.EntityOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.utils.BoundingBoxUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
+import lombok.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.BoundingBox;
 
@@ -20,9 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
-
-import static gg.projecteden.nexus.utils.nms.NMSUtils.fromNMS;
-import static gg.projecteden.nexus.utils.nms.NMSUtils.toNMS;
 
 @Data
 @dev.morphia.annotations.Entity(value = "custom_bounding_box_entity", noClassnameStored = true)
@@ -44,7 +38,7 @@ public class CustomBoundingBoxEntity implements EntityOwnedObject {
 		if (!isLoaded())
 			return;
 
-		getNMSEntity().setBoundingBox(toNMS(boundingBox));
+		getNMSEntity().setBoundingBox(NMSUtils.toNMS(boundingBox));
 	}
 
 	public void modifyBoundingBox(Consumer<BoundingBox> consumer) {
@@ -57,7 +51,7 @@ public class CustomBoundingBoxEntity implements EntityOwnedObject {
 	}
 
 	public BoundingBox createBoundingBox() {
-		boundingBox = fromNMS(getNMSEntity().getBoundingBox());
+		boundingBox = NMSUtils.fromNMS(getNMSEntity().getBoundingBox());
 		return boundingBox;
 	}
 

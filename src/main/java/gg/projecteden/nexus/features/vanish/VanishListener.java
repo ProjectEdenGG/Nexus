@@ -14,6 +14,7 @@ import gg.projecteden.nexus.models.vanish.VanishUser.Setting;
 import gg.projecteden.nexus.models.vanish.VanishUserService;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.parchment.event.sound.SoundEvent;
 import lombok.AllArgsConstructor;
@@ -29,20 +30,14 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockReceiveGameEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerPickupArrowEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
+import org.bukkit.event.raid.RaidTriggerEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
 import java.util.function.Supplier;
-
-import static gg.projecteden.nexus.utils.Extensions.camelCase;
 
 public class VanishListener implements Listener {
 	private static final VanishUserService service = new VanishUserService();
@@ -204,7 +199,7 @@ public class VanishListener implements Listener {
 
 		@Override
 		public String getTitle() {
-			return "View only " + camelCase(type);
+			return "View only " + StringUtils.camelCase(type);
 		}
 
 		@Override
@@ -228,6 +223,16 @@ public class VanishListener implements Listener {
 			return;
 
 		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void on(RaidTriggerEvent event) {
+		final VanishUser user = service.get(event.getPlayer());
+		if (!user.isVanished())
+			return;
+
+		event.setCancelled(true);
+		user.notifyDisabled(Setting.INTERACT, "Triggering raid");
 	}
 
 }

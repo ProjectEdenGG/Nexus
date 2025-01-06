@@ -2,12 +2,11 @@ package gg.projecteden.nexus.models.worldban;
 
 import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
+import gg.projecteden.nexus.utils.Nullables;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @ObjectClass(WorldBan.class)
 public class WorldBanService extends MongoPlayerService<WorldBan> {
@@ -19,7 +18,7 @@ public class WorldBanService extends MongoPlayerService<WorldBan> {
 
 	@Override
 	protected boolean deleteIf(WorldBan worldBan) {
-		return isNullOrEmpty(worldBan.getBans());
+		return Nullables.isNullOrEmpty(worldBan.getBans());
 	}
 
 }

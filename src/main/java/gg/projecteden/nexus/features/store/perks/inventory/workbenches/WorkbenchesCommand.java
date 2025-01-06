@@ -14,9 +14,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 
-import static gg.projecteden.nexus.features.store.perks.inventory.workbenches._WorkbenchCommand.PERMISSION;
-
-@Permission(PERMISSION)
+@Permission(_WorkbenchCommand.PERMISSION)
 @WikiConfig(rank = "Store", feature = "Inventory")
 public class WorkbenchesCommand extends CustomCommand {
 

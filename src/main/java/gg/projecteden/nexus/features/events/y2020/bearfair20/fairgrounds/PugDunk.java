@@ -26,10 +26,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.giveDailyPoints;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.isInRegion;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
-
 public class PugDunk implements Listener {
 
 	private static boolean enabled = false;
@@ -72,7 +68,7 @@ public class PugDunk implements Listener {
 
 	public static void start() {
 		if (!enabled) {
-			if (worldguard().getPlayersInRegion(gameRg).size() > 0) {
+			if (BearFair20.worldguard().getPlayersInRegion(gameRg).size() > 0) {
 				enabled = true;
 			} else {
 				enabled = false;
@@ -84,7 +80,7 @@ public class PugDunk implements Listener {
 	private void buttonTask() {
 		Tasks.repeat(0, 5, () -> {
 			if (enabled) {
-				if (worldguard().getPlayersInRegion(gameRg).size() == 0)
+				if (BearFair20.worldguard().getPlayersInRegion(gameRg).size() == 0)
 					setPugDunkBool(false);
 				else {
 					if (RandomUtils.chanceOf(25)) {
@@ -109,7 +105,7 @@ public class PugDunk implements Listener {
 
 		BearFair20.getWorld().playSound(buttonLoc, Sound.ENTITY_ARROW_HIT_PLAYER, 0.3F, 0.1F);
 
-		if (giveDailyPoints) {
+		if (BearFair20.giveDailyPoints) {
 			BearFair20User user = new BearFair20UserService().get(player);
 			user.giveDailyPoints(SOURCE);
 			new BearFair20UserService().save(user);
@@ -137,7 +133,7 @@ public class PugDunk implements Listener {
 	public void onRegionLeave(PlayerLeftRegionEvent event) {
 		String regionId = event.getRegion().getId();
 		if (regionId.equalsIgnoreCase(gameRg)) {
-			int size = worldguard().getPlayersInRegion(gameRg).size();
+			int size = BearFair20.worldguard().getPlayersInRegion(gameRg).size();
 			if (size == 0)
 				setPugDunkBool(false);
 		}
@@ -152,7 +148,7 @@ public class PugDunk implements Listener {
 		if (hitBlock == null) return;
 		if (!hitBlock.getType().equals(Material.WHITE_CONCRETE)) return;
 
-		if (!isInRegion(hitBlock, targetRg)) return;
+		if (!BearFair20.isInRegion(hitBlock, targetRg)) return;
 		if (!(projectile.getShooter() instanceof Player shooter)) return;
 
 		projectile.remove();

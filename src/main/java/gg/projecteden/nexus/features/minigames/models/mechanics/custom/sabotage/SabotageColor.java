@@ -4,14 +4,13 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNamed;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @RequiredArgsConstructor
 public enum SabotageColor implements IsColoredAndNamed {
@@ -32,7 +31,7 @@ public enum SabotageColor implements IsColoredAndNamed {
 
 	@Override
 	public String toString() {
-		return camelCase(name());
+		return StringUtils.camelCase(name());
 	}
 
 	@Override

@@ -5,6 +5,8 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.bridge.DiscordBridgeListener;
 import gg.projecteden.nexus.features.discord.commands.TwitterAppCommand.TweetApprovalListener;
 import gg.projecteden.nexus.features.store.perks.chat.NicknameCommand.NicknameApprovalListener;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Data;
 import lombok.Getter;
@@ -21,9 +23,6 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public enum Bot {
 
@@ -94,7 +93,7 @@ public enum Bot {
 			return;
 		}
 
-		if (isNullOrEmpty(getToken())) {
+		if (Nullables.isNullOrEmpty(getToken())) {
 			log("Token empty, aborting connection");
 			return;
 		}
@@ -146,7 +145,7 @@ public enum Bot {
 
 	@NotNull
 	private String prefix() {
-		return "[Discord] [" + camelCase(this) + "] ";
+		return "[Discord] [" + StringUtils.camelCase(this) + "] ";
 	}
 
 }

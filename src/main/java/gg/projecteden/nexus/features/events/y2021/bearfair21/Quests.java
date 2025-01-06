@@ -5,16 +5,11 @@ import com.destroystokyo.paper.event.block.AnvilDamagedEvent;
 import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.events.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.MainIsland;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.PugmasIsland;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.BearFair21Talker;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.Beehive;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.Errors;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.RadioHeads;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.Recycler;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.SellCrates;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.TreasureChests;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.*;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.Collector;
@@ -25,23 +20,15 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fa
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.farming.RegenCrops;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.Fishing;
 import gg.projecteden.nexus.features.regionapi.events.common.EnteringRegionEvent;
+import gg.projecteden.nexus.models.bearfair21.BearFair21Config;
 import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21User;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.trophy.TrophyType;
-import gg.projecteden.nexus.utils.BlockUtils;
-import gg.projecteden.nexus.utils.CitizensUtils;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PotionEffectBuilder;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.Timer;
-import gg.projecteden.nexus.utils.TitleBuilder;
+import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
 import gg.projecteden.parchment.HasPlayer;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -62,20 +49,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.isNotAtBearFair;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.send;
-import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.EDIT;
-import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.GIVE_REWARDS;
-import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.QUESTS;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import java.util.*;
 
 public class Quests implements Listener {
 	BearFair21UserService userService = new BearFair21UserService();
@@ -142,7 +116,7 @@ public class Quests implements Listener {
 						continue;
 
 					Location loc = npc.getEntity().getLocation().add(0, 1, 0);
-					ParticleBuilder particles = new ParticleBuilder(Particle.VILLAGER_HAPPY)
+					ParticleBuilder particles = new ParticleBuilder(Particle.HAPPY_VILLAGER)
 						.location(loc)
 						.count(10)
 						.receivers(player)
@@ -179,7 +153,7 @@ public class Quests implements Listener {
 			return null;
 
 		Block block = event.getClickedBlock();
-		if (isNullOrAir(block))
+		if (Nullables.isNullOrAir(block))
 			return null;
 
 		Material type = block.getType();
@@ -201,11 +175,11 @@ public class Quests implements Listener {
 	public static List<ItemStack> getItemsLikeFrom(BearFair21User user, List<ItemBuilder> items) {
 		List<ItemStack> result = new ArrayList<>();
 		for (ItemBuilder item : items) {
-			if (isNullOrAir(item.build()))
+			if (Nullables.isNullOrAir(item.build()))
 				continue;
 
 			ItemStack itemLike = getItemLikeFrom(user, item);
-			if (!isNullOrAir(itemLike))
+			if (!Nullables.isNullOrAir(itemLike))
 				result.add(itemLike);
 		}
 
@@ -223,7 +197,7 @@ public class Quests implements Listener {
 	public static ItemStack getItemLikeFrom(BearFair21User user, ItemBuilder itemBuilder) {
 		ItemStack _item = itemBuilder.build();
 		for (ItemStack item : user.getOnlinePlayer().getInventory()) {
-			if (isNullOrAir(item))
+			if (Nullables.isNullOrAir(item))
 				continue;
 
 			if (ItemUtils.isFuzzyMatch(_item, item) && item.getAmount() >= _item.getAmount())
@@ -254,7 +228,7 @@ public class Quests implements Listener {
 
 	private static void removeItemStacks(Player player, List<ItemStack> items) {
 		for (ItemStack item : items) {
-			if (isNullOrAir(item))
+			if (Nullables.isNullOrAir(item))
 				continue;
 
 			player.getInventory().removeItemAnySlot(item);
@@ -295,17 +269,17 @@ public class Quests implements Listener {
 	}
 
 	public static void giveTrophy(MiniGolf21User user, TrophyType trophy) {
-		if (BearFair21.getConfig().isEnabled(GIVE_REWARDS))
+		if (BearFair21.getConfig().isEnabled(BearFair21Config.BearFair21ConfigOption.GIVE_REWARDS))
 			trophy.give(user.getPlayer());
 	}
 
 	public static void giveTrophy(BearFair21User user, TrophyType trophy) {
-		if (BearFair21.getConfig().isEnabled(GIVE_REWARDS))
+		if (BearFair21.getConfig().isEnabled(BearFair21Config.BearFair21ConfigOption.GIVE_REWARDS))
 			trophy.give(user.getPlayer());
 	}
 
 	public static void givePermission(BearFair21User user, String permission, String message) {
-		if (BearFair21.getConfig().isEnabled(GIVE_REWARDS)) {
+		if (BearFair21.getConfig().isEnabled(BearFair21Config.BearFair21ConfigOption.GIVE_REWARDS)) {
 			PermissionChange.set().permissions(permission).player(user).runAsync();
 			user.sendMessage(message);
 		}
@@ -347,7 +321,7 @@ public class Quests implements Listener {
 	@EventHandler
 	public void onRegionEnter(EnteringRegionEvent event) {
 		Entity entity = event.getEntity();
-		if (isNotAtBearFair(entity))
+		if (BearFair21.isNotAtBearFair(entity))
 			return;
 
 		String id = event.getRegion().getId();
@@ -366,7 +340,7 @@ public class Quests implements Listener {
 
 	@EventHandler
 	public void onRightClickNPC(NPCRightClickEvent event) {
-		if (!BearFair21.getConfig().isEnabled(QUESTS))
+		if (!BearFair21.getConfig().isEnabled(BearFair21Config.BearFair21ConfigOption.QUESTS))
 			return;
 
 		Player player = event.getClicker();
@@ -404,12 +378,12 @@ public class Quests implements Listener {
 
 		if (event.isCancelled()) return;
 		if (BearFair21.isNotAtBearFair(block)) return;
-		if (canWorldGuardEdit(player)) return;
+		if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
 
-		if (!BearFair21.getConfig().isEnabled(EDIT)) {
+		if (!BearFair21.getConfig().isEnabled(BearFair21Config.BearFair21ConfigOption.EDIT)) {
 			event.setCancelled(true);
 			if (new CooldownService().check(player, "BF21_cantbreak", TickTime.MINUTE)) {
-				send(Errors.CANT_BREAK, player);
+				BearFair21.send(Errors.CANT_BREAK, player);
 				sound_villagerNo(player);
 			}
 			return;
@@ -422,7 +396,7 @@ public class Quests implements Listener {
 		if (Farming.breakBlock(event)) return;
 
 		if (new CooldownService().check(player, "BF21_cantbreak", TickTime.MINUTE)) {
-			send(Errors.CANT_BREAK, player);
+			BearFair21.send(Errors.CANT_BREAK, player);
 			sound_villagerNo(player);
 		}
 	}
@@ -456,7 +430,7 @@ public class Quests implements Listener {
 	public void onAnvilBreak(AnvilDamagedEvent event) {
 		Location location = event.getInventory().getLocation();
 		if (location == null) return;
-		if (isNotAtBearFair(location)) return;
+		if (BearFair21.isNotAtBearFair(location)) return;
 
 		event.setCancelled(true);
 	}

@@ -43,4 +43,8 @@ public class AutoRepairEnchant extends CustomEnchant {
 		});
 	}
 
+	@Override
+	public int getMaxLevel() {
+		return 5;
+	}
 }

@@ -5,12 +5,11 @@ import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlockTag;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IDyeable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ICraftableNoteBlock;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelToSnake;
 
 public interface IQuiltedWool extends IDyeable, ICraftableNoteBlock {
 	@Override
@@ -19,7 +18,7 @@ public interface IQuiltedWool extends IDyeable, ICraftableNoteBlock {
 	}
 
 	default @NotNull Material getMaterial() {
-		return Material.valueOf(camelToSnake(getClass().getSimpleName().replace("QuiltedWool", "")).toUpperCase() + "_WOOL");
+		return Material.valueOf(StringUtils.camelToSnake(getClass().getSimpleName().replace("QuiltedWool", "")).toUpperCase() + "_WOOL");
 	}
 
 	@Override

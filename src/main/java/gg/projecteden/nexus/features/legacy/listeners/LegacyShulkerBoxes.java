@@ -1,18 +1,18 @@
 package gg.projecteden.nexus.features.legacy.listeners;
 
 import de.tr7zw.nbtapi.NBTItem;
+import gg.projecteden.api.common.utils.Nullables;
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.legacy.Legacy;
 import gg.projecteden.nexus.features.listeners.events.fake.FakePlayerInteractEvent;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
+import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
@@ -33,12 +33,6 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.api.common.utils.StringUtils.paste;
-import static gg.projecteden.nexus.features.legacy.Legacy.PREFIX;
-import static gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks.isBackpack;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class LegacyShulkerBoxes implements Listener {
 
@@ -95,13 +89,13 @@ public class LegacyShulkerBoxes implements Listener {
 	public static final String NBT_KEY = "ShulkerBoxId";
 
 	private static boolean isShulkerBox(ItemStack item) {
-		if (isNullOrAir(item))
+		if (gg.projecteden.nexus.utils.Nullables.isNullOrAir(item))
 			return false;
 
-		if (isBackpack(item))
+		if (Backpacks.isBackpack(item))
 			return false;
 
-		return !isNullOrEmpty(new NBTItem(item).getString(NBT_KEY));
+		return !Nullables.isNullOrEmpty(new NBTItem(item).getString(NBT_KEY));
 	}
 
 	public static String getShulkerBoxId(ItemStack item) {
@@ -131,7 +125,7 @@ public class LegacyShulkerBoxes implements Listener {
 				open(3, originalItems);
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				PlayerUtils.send(player, PREFIX + "&c" + ex.getMessage());
+				PlayerUtils.send(player, Legacy.PREFIX + "&c" + ex.getMessage());
 			}
 		}
 
@@ -140,7 +134,7 @@ public class LegacyShulkerBoxes implements Listener {
 		@Override
 		public String getTitle() {
 			final String displayName = shulkerBox.getItemMeta().getDisplayName();
-			if (!isNullOrEmpty(displayName))
+			if (!Nullables.isNullOrEmpty(displayName))
 				return displayName;
 
 			return "Shulker Box";
@@ -197,9 +191,9 @@ public class LegacyShulkerBoxes implements Listener {
 		private void handleError(List<ItemStack> contents) {
 			Nexus.warn("There was an error while saving ShulkerBox contents for " + player.getName());
 			Nexus.warn("Below is a serialized paste of the original and new contents in the shulker box:");
-			Nexus.warn("Old Contents: " + paste(Json.toString(Json.serialize(originalItems))));
-			Nexus.warn("New Contents: " + paste(Json.toString(Json.serialize(contents))));
-			PlayerUtils.send(player, PREFIX + "&cThere was an error while saving your shulker box items. Please report this to staff to retrieve your lost items.");
+			Nexus.warn("Old Contents: " + StringUtils.paste(Json.toString(Json.serialize(originalItems))));
+			Nexus.warn("New Contents: " + StringUtils.paste(Json.toString(Json.serialize(contents))));
+			PlayerUtils.send(player, Legacy.PREFIX + "&cThere was an error while saving your shulker box items. Please report this to staff to retrieve your lost items.");
 		}
 
 		private static void verifyInventory(Player player) {

@@ -10,20 +10,11 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.arenas.PixelPaintersArena;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.*;
 import gg.projecteden.nexus.features.minigames.models.matchdata.PixelPaintersMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
-import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
-import gg.projecteden.nexus.utils.Tasks.Countdown.CountdownBuilder;
 import org.apache.commons.lang.Validate;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -39,10 +30,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 public class PixelPainters extends TeamlessMechanic {
 	private static final int MAX_ROUNDS = 5;
@@ -231,7 +223,7 @@ public class PixelPainters extends TeamlessMechanic {
 						matchData.setTimeLeft(i);
 						match.getScoreboard().update();
 
-						ActionBarUtils.sendActionBar(player, "&cNext round starts in...&c&l " + plural(i + " second", i));
+						ActionBarUtils.sendActionBar(player, "&cNext round starts in...&c&l " + StringUtils.plural(i + " second", i));
 						if (i <= 3)
 							player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F);
 					}))
@@ -372,20 +364,18 @@ public class PixelPainters extends TeamlessMechanic {
 		minigamers.stream().map(Minigamer::getOnlinePlayer).forEach(player ->
 			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F));
 
-		CountdownBuilder countdown = Countdown.builder()
+		matchData.setRoundCountdownId(match.getTasks().countdown(Countdown.builder()
 			.duration(ROUND_COUNTDOWN)
 			.onSecond(i -> minigamers.stream().map(Minigamer::getOnlinePlayer).forEach(player -> {
 				if (match.isEnded()) return;
 				matchData.setTimeLeft(i);
 				match.getScoreboard().update();
 
-				ActionBarUtils.sendActionBar(player, "&cRound ends in...&c&l " + plural(i + " second", i));
+				ActionBarUtils.sendActionBar(player, "&cRound ends in...&c&l " + StringUtils.plural(i + " second", i));
 				if (i <= 3)
 					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F);
 			}))
-			.onComplete(() -> endOfRound(match));
-
-		matchData.setRoundCountdownId(match.getTasks().countdown(countdown));
+			.onComplete(() -> endOfRound(match))));
 	}
 
 	public void cancelCountdown(Match match) {

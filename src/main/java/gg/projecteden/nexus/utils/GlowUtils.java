@@ -18,8 +18,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-
 public class GlowUtils {
 
 	public static GlowBuilder glow(@NonNull Entity entity) {
@@ -50,7 +48,7 @@ public class GlowUtils {
 		List<Player> _viewers = PlayerUtils.getNonNullPlayers(viewers);
 
 		Material material = block.getType();
-		if (isNullOrAir(material))
+		if (Nullables.isNullOrAir(material))
 			material = Material.WHITE_CONCRETE;
 
 		Location location = block.getLocation();

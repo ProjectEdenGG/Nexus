@@ -9,20 +9,11 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import gg.projecteden.nexus.utils.StringUtils;
+import lombok.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.StringUtils.getPrefix;
+import java.util.*;
 
 @Data
 @Entity(value = "daily_reward_user", noClassnameStored = true)
@@ -68,7 +59,7 @@ public class DailyRewardUser implements PlayerOwnedObject {
 			earnedToday = true;
 			++streak;
 			sendMessage(new JsonBuilder()
-				.next(getPrefix("DailyRewards") + "Your streak has &eincreased&3! " + "Use &c/dailyrewards &3to claim your reward")
+				.next(StringUtils.getPrefix("DailyRewards") + "Your streak has &eincreased&3! " + "Use &c/dailyrewards &3to claim your reward")
 				.command("/dr"));
 		}
 

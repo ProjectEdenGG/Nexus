@@ -1,8 +1,11 @@
 package gg.projecteden.nexus.models.mutemenu;
 
+import com.mongodb.DBObject;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import dev.morphia.annotations.PreLoad;
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
@@ -11,12 +14,7 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -28,8 +26,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
-
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 @Data
 @Entity(value = "mute_menu_user", noClassnameStored = true)
@@ -56,6 +52,13 @@ public class MuteMenuUser implements PlayerOwnedObject {
 			return !new ChatterService().get(uuid).hasJoined(StaticChannel.valueOf(item.name().replace("CHANNEL_", "")).getChannel());
 		else
 			return muted.contains(item);
+	}
+
+	@PreLoad
+	void fixPreLoad(DBObject dbObject) {
+		DBObject map = (DBObject) dbObject.get("entityVolumes");
+		if (map != null && map.containsField("SNOWMAN"))
+			map.put(EntityType.SNOW_GOLEM.name(), map.removeField("SNOWMAN"));
 	}
 
 	public void setVolume(MuteMenuItem item, int volume) {
@@ -133,7 +136,7 @@ public class MuteMenuUser implements PlayerOwnedObject {
 		}
 
 		public ItemStack getItem() {
-			return new ItemBuilder(material).modelId(modelId).name(camelCase(this)).build();
+			return new ItemBuilder(material).modelId(modelId).name(StringUtils.camelCase(this)).build();
 		}
 	}
 

@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.TameablesCommand.PendingTameablesAction.PendingTameablesActionType;
+import gg.projecteden.nexus.features.listeners.Restrictions;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
@@ -16,6 +17,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.GlowUtils;
 import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -49,9 +51,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.features.listeners.Restrictions.isPerkAllowedAt;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @NoArgsConstructor
 public class TameablesCommand extends CustomCommand implements Listener {
@@ -117,7 +116,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	void moveHere() {
 		if (!moveQueue.containsKey(uuid()))
 			error("You do not have any animal pending teleport");
-		if (!isPerkAllowedAt(player(), location()))
+		if (!Restrictions.isPerkAllowedAt(player(), location()))
 			error("You cannot teleport that animal to this location");
 
 		Entity entity = moveQueue.remove(uuid());
@@ -146,7 +145,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	void summon(SummonableTameableEntityType entityType) {
 		int failed = 0, succeeded = 0;
 		for (Entity entity : list(entityType))
-			if (isPerkAllowedAt(player(), location())) {
+			if (Restrictions.isPerkAllowedAt(player(), location())) {
 				entity.teleportAsync(location());
 				++succeeded;
 			} else
@@ -327,7 +326,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 					}
 					case INFO -> {
 						String owner = getOwnerNames(entity);
-						send(player, PREFIX + "That " + entityName + " is " + (isNullOrEmpty(owner) ? "not tamed" : "owned by &e" + owner));
+						send(player, PREFIX + "That " + entityName + " is " + (Nullables.isNullOrEmpty(owner) ? "not tamed" : "owned by &e" + owner));
 					}
 				}
 				actions.remove(uuid);
@@ -413,7 +412,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 			if (Rank.of(owner.getUniqueId()).gte(Rank.NOBLE))
 				return;
 
-			if (isPerkAllowedAt(Nerd.of(owner), event.getTo()))
+			if (Restrictions.isPerkAllowedAt(Nerd.of(owner), event.getTo()))
 				return;
 		}
 

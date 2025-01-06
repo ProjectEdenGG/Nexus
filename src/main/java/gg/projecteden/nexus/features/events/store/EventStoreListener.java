@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.store;
 import gg.projecteden.api.common.exceptions.EdenException;
 import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.store.models.EventStoreImage;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -11,7 +12,9 @@ import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import me.arcaniax.hdb.api.PlayerClickHeadEvent;
 import org.bukkit.GameMode;
@@ -21,14 +24,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import java.util.Collections;
 import java.util.List;
-
-import static gg.projecteden.nexus.features.events.EdenEvent.PREFIX_STORE;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.PlayerUtils.send;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-import static java.util.Collections.singletonList;
 
 public class EventStoreListener implements Listener {
 
@@ -38,10 +35,10 @@ public class EventStoreListener implements Listener {
 
 	private void handleException(Player player, Exception ex) {
 		if (ex instanceof EdenException) {
-			send(player, PREFIX_STORE + "&c" + ex.getMessage());
+			PlayerUtils.send(player, EdenEvent.PREFIX_STORE + "&c" + ex.getMessage());
 		} else {
 			ex.printStackTrace();
-			send(player, PREFIX_STORE + "An unknown error occurred");
+			PlayerUtils.send(player, EdenEvent.PREFIX_STORE + "An unknown error occurred");
 		}
 	}
 
@@ -72,7 +69,7 @@ public class EventStoreListener implements Listener {
 			new EventUserService().edit(player, user -> user.charge(price));
 
 			event.setCancelled(true);
-			PlayerUtils.giveItemsAndMailExcess(player, singletonList(event.getHead()), WorldGroup.of(player));
+			PlayerUtils.giveItemsAndMailExcess(player, Collections.singletonList(event.getHead()), WorldGroup.of(player));
 			player.closeInventory();
 		} catch (Exception ex) {
 			event.setCancelled(true);
@@ -87,26 +84,26 @@ public class EventStoreListener implements Listener {
 		try {
 			if (!player.getWorld().getName().equalsIgnoreCase("server"))
 				return;
-			if (isNullOrAir(event.getClickedBlock()))
+			if (Nullables.isNullOrAir(event.getClickedBlock()))
 				return;
 			if (!MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType()))
 				return;
 			if (!(event.getClickedBlock().getState() instanceof Sign sign))
 				return;
 
-			final String prefix = stripColor(sign.getLine(0));
+			final String prefix = StringUtils.stripColor(sign.getLine(0));
 			if (!prefix.equalsIgnoreCase("[Purchase]"))
 				return;
 
 			final String title = (sign.getLine(2).trim() + " " + sign.getLine(3).trim()).trim();
-			if (isNullOrEmpty(title))
+			if (Nullables.isNullOrEmpty(title))
 				return;
 
 			final EventStoreImage image = EventStoreImage.of(title);
 			if (image == null)
 				return;
 
-			final String priceString = stripColor(sign.getLine(1)).split(" ")[0];
+			final String priceString = StringUtils.stripColor(sign.getLine(1)).split(" ")[0];
 			if (!Utils.isInt(priceString))
 				return;
 
@@ -122,7 +119,7 @@ public class EventStoreListener implements Listener {
 				.confirmText("&aBuy")
 				.confirmLore(List.of(
 					"&3Painting: &e" + title,
-					"&3Price: &e" + stripColor(sign.getLine(1)),
+					"&3Price: &e" + StringUtils.stripColor(sign.getLine(1)),
 					"&3Balance: &e" + user.getTokens() + " Event Tokens"
 				))
 				.cancelText("&cCancel")
@@ -131,7 +128,7 @@ public class EventStoreListener implements Listener {
 						user.charge(price);
 						service.save(user);
 						Mail.fromServer(player.getUniqueId(), WorldGroup.SURVIVAL, image.getSplatterMap()).send();
-						send(player, PREFIX_STORE + "Your image has been mailed to you in the Survival world");
+						PlayerUtils.send(player, EdenEvent.PREFIX_STORE + "Your image has been mailed to you in the Survival world");
 					} catch (Exception ex) {
 						handleException(player, ex);
 					}

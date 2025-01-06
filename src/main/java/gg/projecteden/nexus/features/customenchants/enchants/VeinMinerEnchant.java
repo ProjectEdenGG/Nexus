@@ -1,8 +1,10 @@
 package gg.projecteden.nexus.features.customenchants.enchants;
 
+import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.features.listeners.events.fake.FakeBlockBreakEvent;
 import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.block.Block;
@@ -13,12 +15,9 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.meta.Damageable;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-
-import static gg.projecteden.api.common.utils.RandomUtils.chanceOf;
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static java.util.Collections.singletonList;
-import static java.util.Comparator.comparing;
 
 public class VeinMinerEnchant extends CustomEnchant implements Listener {
 
@@ -56,12 +55,12 @@ public class VeinMinerEnchant extends CustomEnchant implements Listener {
 
 		var breakLimit = BREAK_LIMIT + ((level - 1) * LEVEL_BONUS);
 
-		var blocks = new ArrayList<>(singletonList(original));
+		var blocks = new ArrayList<>(Collections.singletonList(original));
 		while (blocks.size() <= breakLimit)
 			if (!explore(blocks))
 				break;
 
-		blocks.sort(comparing(neighbor -> distance(original, neighbor)));
+		blocks.sort(Comparator.comparing(neighbor -> Distance.distance(original, neighbor)));
 		var toBreak = blocks.subList(0, Math.min(blocks.size(), breakLimit));
 		var durability = (Damageable) tool.getItemMeta();
 		var unbreaking = tool.getEnchantmentLevel(Enchant.UNBREAKING);
@@ -74,7 +73,7 @@ public class VeinMinerEnchant extends CustomEnchant implements Listener {
 				continue;
 
 			block.breakNaturally(tool, true, true);
-			if (chanceOf(100 / (unbreaking + 1)))
+			if (RandomUtils.chanceOf(100 / (unbreaking + 1)))
 				durability.setDamage(durability.getDamage() + 1);
 		}
 

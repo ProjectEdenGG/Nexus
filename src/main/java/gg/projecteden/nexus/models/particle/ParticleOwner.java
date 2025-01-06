@@ -4,29 +4,17 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ColorConverter;
 import gg.projecteden.nexus.utils.Tasks;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.bukkit.Color;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity(value = "particle_owner", noClassnameStored = true)
@@ -48,7 +36,7 @@ public class ParticleOwner implements PlayerOwnedObject {
 	public Map<ParticleSetting, Object> getSettings(ParticleType particleType) {
 		Map<ParticleSetting, Object> map = settings.computeIfAbsent(particleType, $ -> new ConcurrentHashMap<>());
 
-		if (!isNullOrEmpty(map))
+		if (!Nullables.isNullOrEmpty(map))
 			deserialize(map);
 
 		return map;

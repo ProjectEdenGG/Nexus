@@ -2,14 +2,13 @@ package gg.projecteden.nexus.features.store.perks.inventory.stattrack.models;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Data;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Data
 public class StatIncreaseEvent {
@@ -38,11 +37,11 @@ public class StatIncreaseEvent {
 					player.updateInventory(); // TODO remove?
 					Nexus.log("StatTrack item " + item.getType() + " updated in slot " + slot);
 				} else
-					Nexus.warn("Could not update StatTrack item - slot " + slot + " is not correct type (" + camelCase(itemInSlot.getType()) + " != " + camelCase(item.getType()) + ")");
+					Nexus.warn("Could not update StatTrack item - slot " + slot + " is not correct type (" + StringUtils.camelCase(itemInSlot.getType()) + " != " + StringUtils.camelCase(item.getType()) + ")");
 			else
 				Nexus.warn("Could not update StatTrack item - slot " + slot + " is null");
 		} else
-			Nexus.warn("Could not update StatTrack item - " + camelCase(item.getType()) + " not found in inventory");
+			Nexus.warn("Could not update StatTrack item - " + StringUtils.camelCase(item.getType()) + " not found in inventory");
 	}
 
 }

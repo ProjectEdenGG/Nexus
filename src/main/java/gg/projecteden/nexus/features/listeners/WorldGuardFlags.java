@@ -12,6 +12,7 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.virtualinventories.managers.VirtualPersonalInventoryManager;
 import gg.projecteden.nexus.features.virtualinventories.models.inventories.VirtualInventoryType;
 import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.InventoryUtils.BlockInventoryType;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
@@ -57,17 +58,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
-import static gg.projecteden.nexus.utils.EntityUtils.isHostile;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.*;
-
 public class WorldGuardFlags implements Listener {
 
 	@EventHandler
 	public void onCandleModify(PlayerInteractEvent event) {
 		final Block block = event.getClickedBlock();
-		if (isNullOrAir(block))
+		if (Nullables.isNullOrAir(block))
 			return;
 
 		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
@@ -99,7 +95,7 @@ public class WorldGuardFlags implements Listener {
 		if (event.getDamager() instanceof Player) {
 			if (event.getEntity() instanceof ItemFrame itemFrame) {
 				ItemStack itemStack = itemFrame.getItem();
-				if (isNullOrAir(itemStack))
+				if (Nullables.isNullOrAir(itemStack))
 					return;
 
 				if (CustomModel.exists(itemStack))
@@ -113,12 +109,12 @@ public class WorldGuardFlags implements Listener {
 		if (RemoveCause.ENTITY.equals(event.getCause()))
 			return;
 
-		if (WorldGuardFlagUtils.query(event.getEntity().getLocation(), HANGING_BREAK) == State.DENY) {
+		if (WorldGuardFlagUtils.query(event.getEntity().getLocation(), CustomFlags.HANGING_BREAK) == State.DENY) {
 			event.setCancelled(true);
 
 		} else if (event.getEntity() instanceof ItemFrame itemFrame) {
 			ItemStack itemStack = itemFrame.getItem();
-			if (isNullOrAir(itemStack))
+			if (Nullables.isNullOrAir(itemStack))
 				return;
 
 			if (CustomModel.exists(itemStack)) {
@@ -141,17 +137,17 @@ public class WorldGuardFlags implements Listener {
 		if (!Action.RIGHT_CLICK_BLOCK.equals(event.getAction())) return;
 
 		ItemStack item = event.getItem();
-		if (isNullOrAir(item)) return;
+		if (Nullables.isNullOrAir(item)) return;
 		if (!item.getType().equals(Material.BONE_MEAL)) return;
 
 		Block clicked = event.getClickedBlock();
-		if (isNullOrAir(clicked)) return;
+		if (Nullables.isNullOrAir(clicked)) return;
 		if (!(clicked instanceof Ageable ageable)) return;
 
 		int age = ageable.getAge();
 		if (age == ageable.getMaximumAge()) return;
 
-		if (canWorldGuardEdit(event.getPlayer())) return;
+		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer())) return;
 		if (WorldGuardFlagUtils.query(clicked.getLocation(), Flags.CROP_GROWTH) != State.DENY) return;
 
 		ageable.setAge(++age);
@@ -161,7 +157,7 @@ public class WorldGuardFlags implements Listener {
 	@EventHandler
 	public void onCreatureSpawnAllow(CreatureSpawnEvent event) {
 		try {
-			Set<com.sk89q.worldedit.world.entity.EntityType> entityTypeSet = WorldGuardFlagUtils.queryValue(event.getLocation(), ALLOW_SPAWN);
+			Set<com.sk89q.worldedit.world.entity.EntityType> entityTypeSet = WorldGuardFlagUtils.queryValue(event.getLocation(), CustomFlags.ALLOW_SPAWN);
 			List<EntityType> entityTypeList = new ArrayList<>();
 			if (entityTypeSet == null) return;
 			entityTypeSet.forEach(entityType -> {
@@ -181,34 +177,34 @@ public class WorldGuardFlags implements Listener {
 		if (remover instanceof Player)
 			return;
 
-		if (WorldGuardFlagUtils.query(event.getEntity().getLocation(), HANGING_BREAK) == State.DENY)
+		if (WorldGuardFlagUtils.query(event.getEntity().getLocation(), CustomFlags.HANGING_BREAK) == State.DENY)
 			event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onGrassDecay(BlockFadeEvent event) {
 		if (event.getBlock().getType() == Material.GRASS_BLOCK && event.getNewState().getType() == Material.DIRT)
-			if (WorldGuardFlagUtils.query(event.getBlock().getLocation(), GRASS_DECAY) == State.DENY)
+			if (WorldGuardFlagUtils.query(event.getBlock().getLocation(), CustomFlags.GRASS_DECAY) == State.DENY)
 				event.setCancelled(true);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onCreatureSpawn(CreatureSpawnEvent event) {
-		if (isHostile(event.getEntity()))
-			if (WorldGuardFlagUtils.query(event.getLocation(), HOSTILE_SPAWN) == State.DENY)
+		if (EntityUtils.isHostile(event.getEntity()))
+			if (WorldGuardFlagUtils.query(event.getLocation(), CustomFlags.HOSTILE_SPAWN) == State.DENY)
 				event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onEntityTarget(EntityTargetEvent event) {
 		if (event.getTarget() != null)
-			if (WorldGuardFlagUtils.query(event.getTarget().getLocation(), MOB_AGGRESSION) == State.DENY)
+			if (WorldGuardFlagUtils.query(event.getTarget().getLocation(), CustomFlags.MOB_AGGRESSION) == State.DENY)
 				event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onEntityTame(EntityTameEvent event) {
-		if (WorldGuardFlagUtils.query(event.getEntity().getLocation(), TAMING) == State.DENY) {
+		if (WorldGuardFlagUtils.query(event.getEntity().getLocation(), CustomFlags.TAMING) == State.DENY) {
 			event.setCancelled(true);
 			PlayerUtils.send(event.getOwner(), "&c&lHey! &7Sorry, but you can't tame that here.");
 		}
@@ -218,7 +214,7 @@ public class WorldGuardFlags implements Listener {
 		Tasks.repeat(TickTime.SECOND, TickTime.SECOND, () ->
 				Minigames.getActiveMinigamers().forEach(minigamer -> {
 					if (minigamer.getOnlinePlayer().isInWater())
-						if (WorldGuardFlagUtils.query(minigamer.getOnlinePlayer().getLocation(), MINIGAMES_WATER_DAMAGE) == State.ALLOW)
+						if (WorldGuardFlagUtils.query(minigamer.getOnlinePlayer().getLocation(), CustomFlags.MINIGAMES_WATER_DAMAGE) == State.ALLOW)
 							minigamer.getOnlinePlayer().damage(1.25);
 				}));
 	}
@@ -226,11 +222,11 @@ public class WorldGuardFlags implements Listener {
 	@EventHandler
 	public void onInteractTrapDoor(PlayerInteractEvent event) {
 		Block block = event.getClickedBlock();
-		if (isNullOrAir(block) || !(MaterialTag.TRAPDOORS.isTagged(block.getType())))
+		if (Nullables.isNullOrAir(block) || !(MaterialTag.TRAPDOORS.isTagged(block.getType())))
 			return;
 
-		if (WorldGuardFlagUtils.query(block, USE_TRAP_DOORS) == State.DENY) {
-			if (canWorldGuardEdit(event.getPlayer()))
+		if (WorldGuardFlagUtils.query(block, CustomFlags.USE_TRAP_DOORS) == State.DENY) {
+			if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
 				return;
 			event.setCancelled(true);
 		}
@@ -241,13 +237,13 @@ public class WorldGuardFlags implements Listener {
 		if (event.getInventory().getLocation() == null)
 			return;
 
-		if (canWorldGuardEdit(event.getPlayer()))
+		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
 			return;
 
 		if (Arrays.stream(BlockInventoryType.values()).noneMatch(blockInventoryType -> blockInventoryType.getInventoryType() == event.getInventory().getType()))
 			return;
 
-		Set<String> blockInventoryTypes = WorldGuardFlagUtils.queryValue(event.getInventory().getLocation(), ALLOWED_BLOCK_INVENTORIES);
+		Set<String> blockInventoryTypes = WorldGuardFlagUtils.queryValue(event.getInventory().getLocation(), CustomFlags.ALLOWED_BLOCK_INVENTORIES);
 		if (blockInventoryTypes == null)
 			return;
 
@@ -262,14 +258,14 @@ public class WorldGuardFlags implements Listener {
 	public void onBlockInteract(PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
 
-		if (canWorldGuardEdit(player))
+		if (WorldGuardEditCommand.canWorldGuardEdit(player))
 			return;
 
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
 			return;
 
 		final Block block = event.getClickedBlock();
-		if (isNullOrAir(block))
+		if (Nullables.isNullOrAir(block))
 			return;
 
 		var type = VirtualInventoryType.of(block);
@@ -291,11 +287,11 @@ public class WorldGuardFlags implements Listener {
 	@EventHandler
 	public void onInteractFenceGate(PlayerInteractEvent event) {
 		Block block = event.getClickedBlock();
-		if (isNullOrAir(block) || !(MaterialTag.FENCE_GATES.isTagged(block.getType())))
+		if (Nullables.isNullOrAir(block) || !(MaterialTag.FENCE_GATES.isTagged(block.getType())))
 			return;
 
-		if (WorldGuardFlagUtils.query(block, USE_FENCE_GATES) == State.DENY) {
-			if (canWorldGuardEdit(event.getPlayer()))
+		if (WorldGuardFlagUtils.query(block, CustomFlags.USE_FENCE_GATES) == State.DENY) {
+			if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
 				return;
 			event.setCancelled(true);
 		}
@@ -304,11 +300,11 @@ public class WorldGuardFlags implements Listener {
 	@EventHandler
 	public void onInteractNoteBlock(PlayerInteractEvent event) {
 		Block block = event.getClickedBlock();
-		if (isNullOrAir(block) || !block.getType().equals(Material.NOTE_BLOCK))
+		if (Nullables.isNullOrAir(block) || !block.getType().equals(Material.NOTE_BLOCK))
 			return;
 
-		if (WorldGuardFlagUtils.query(block, USE_NOTE_BLOCKS) == State.DENY) {
-			if (canWorldGuardEdit(event.getPlayer()))
+		if (WorldGuardFlagUtils.query(block, CustomFlags.USE_NOTE_BLOCKS) == State.DENY) {
+			if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
 				return;
 			event.setCancelled(true);
 		}
@@ -334,9 +330,9 @@ public class WorldGuardFlags implements Listener {
 		Player player = event.getPlayer();
 
 		// Action Bar
-		String greeting_actionbar = event.getRegion().getFlag(GREETING_ACTIONBAR.get());
+		String greeting_actionbar = event.getRegion().getFlag(CustomFlags.GREETING_ACTIONBAR.get());
 		if (!Nullables.isNullOrEmpty(greeting_actionbar)) {
-			Integer actionbar_ticks = event.getRegion().getFlag(ACTIONBAR_TICKS.get());
+			Integer actionbar_ticks = event.getRegion().getFlag(CustomFlags.ACTIONBAR_TICKS.get());
 			if (actionbar_ticks == null)
 				actionbar_ticks = 60;
 			else if (actionbar_ticks < 1)
@@ -346,21 +342,21 @@ public class WorldGuardFlags implements Listener {
 		}
 
 		// Titles
-		String greeting_title = event.getRegion().getFlag(GREETING_TITLE.get());
-		String greeting_subtitle = event.getRegion().getFlag(GREETING_SUBTITLE.get());
+		String greeting_title = event.getRegion().getFlag(CustomFlags.GREETING_TITLE.get());
+		String greeting_subtitle = event.getRegion().getFlag(CustomFlags.GREETING_SUBTITLE.get());
 		if (!(Nullables.isNullOrEmpty(greeting_title) && Nullables.isNullOrEmpty(greeting_subtitle))) {
 			if (greeting_title == null)
 				greeting_title = "";
 			if (greeting_subtitle == null)
 				greeting_subtitle = "";
 
-			Integer title_ticks = event.getRegion().getFlag(TITLE_TICKS.get());
+			Integer title_ticks = event.getRegion().getFlag(CustomFlags.TITLE_TICKS.get());
 			if (title_ticks == null)
 				title_ticks = 200;
 			else if (title_ticks < 1)
 				title_ticks = 1;
 
-			Integer title_fade = event.getRegion().getFlag(TITLE_FADE.get());
+			Integer title_fade = event.getRegion().getFlag(CustomFlags.TITLE_FADE.get());
 			if (title_fade == null)
 				title_fade = 20;
 			else if (title_fade < 1)
@@ -378,10 +374,10 @@ public class WorldGuardFlags implements Listener {
 		if (world != null && !world.equals(player.getWorld()))
 			return;
 
-		String farewell_actionbar = event.getRegion().getFlag(FAREWELL_ACTIONBAR.get());
+		String farewell_actionbar = event.getRegion().getFlag(CustomFlags.FAREWELL_ACTIONBAR.get());
 		if (!Nullables.isNullOrEmpty(farewell_actionbar)) {
 
-			Integer actionbar_ticks = event.getRegion().getFlag(ACTIONBAR_TICKS.get());
+			Integer actionbar_ticks = event.getRegion().getFlag(CustomFlags.ACTIONBAR_TICKS.get());
 			if (actionbar_ticks == null)
 				actionbar_ticks = 60;
 			else if (actionbar_ticks < 1)
@@ -391,21 +387,21 @@ public class WorldGuardFlags implements Listener {
 		}
 
 		// Titles
-		String farewell_title = event.getRegion().getFlag(FAREWELL_TITLE.get());
-		String farewell_subtitle = event.getRegion().getFlag(FAREWELL_SUBTITLE.get());
+		String farewell_title = event.getRegion().getFlag(CustomFlags.FAREWELL_TITLE.get());
+		String farewell_subtitle = event.getRegion().getFlag(CustomFlags.FAREWELL_SUBTITLE.get());
 		if (!(Nullables.isNullOrEmpty(farewell_title) && Nullables.isNullOrEmpty(farewell_subtitle))) {
 			if (Nullables.isNullOrEmpty(farewell_title))
 				farewell_title = "";
 			if (Nullables.isNullOrEmpty(farewell_subtitle))
 				farewell_subtitle = "";
 
-			Integer title_ticks = event.getRegion().getFlag(TITLE_TICKS.get());
+			Integer title_ticks = event.getRegion().getFlag(CustomFlags.TITLE_TICKS.get());
 			if (title_ticks == null)
 				title_ticks = 200;
 			else if (title_ticks < 1)
 				title_ticks = 1;
 
-			Integer title_fade = event.getRegion().getFlag(TITLE_FADE.get());
+			Integer title_fade = event.getRegion().getFlag(CustomFlags.TITLE_FADE.get());
 			if (title_fade == null)
 				title_fade = 20;
 			else if (title_fade < 1)
@@ -417,8 +413,8 @@ public class WorldGuardFlags implements Listener {
 
 	@EventHandler
 	public void on(StructureGrowEvent event) {
-		if (WorldGuardFlagUtils.query(event.getLocation(), SAPLING_GROWTH) == State.DENY) {
-			if (event.isFromBonemeal() && canWorldGuardEdit(event.getPlayer()))
+		if (WorldGuardFlagUtils.query(event.getLocation(), CustomFlags.SAPLING_GROWTH) == State.DENY) {
+			if (event.isFromBonemeal() && WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
 				return;
 			event.setCancelled(true);
 		}

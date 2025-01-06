@@ -2,23 +2,12 @@ package gg.projecteden.nexus.features.votes;
 
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.voter.VoterService;
-import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.SymbolBanner;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.SymbolBanner.Symbol;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.DyeColor;
@@ -30,9 +19,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @NoArgsConstructor
 @Aliases("banners")
@@ -123,7 +109,7 @@ public class BannerCommand extends CustomCommand implements Listener {
 		Sign sign = (Sign) event.getClickedBlock().getState();
 		String id = sign.getLine(0);
 
-		if (isNullOrEmpty(id))
+		if (Nullables.isNullOrEmpty(id))
 			return;
 
 		Block banner = event.getClickedBlock().getLocation().add(0, -1, 0).getBlock();
@@ -141,7 +127,7 @@ public class BannerCommand extends CustomCommand implements Listener {
 					}
 
 					PlayerUtils.giveItems(event.getPlayer(), banner.getDrops());
-					send(event.getPlayer(), StringUtils.getPrefix("VPS") + colorize("You purchased banner &e" + id + " &3for &e5 vote points"));
+					send(event.getPlayer(), StringUtils.getPrefix("VPS") + StringUtils.colorize("You purchased banner &e" + id + " &3for &e5 vote points"));
 				}).open(event.getPlayer());
 	}
 

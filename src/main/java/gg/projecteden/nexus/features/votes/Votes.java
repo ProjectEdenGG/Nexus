@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.votes;
 
 import com.vexsoftware.votifier.model.VotifierEvent;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
@@ -12,7 +13,6 @@ import gg.projecteden.nexus.features.votes.party.VoteParty;
 import gg.projecteden.nexus.features.votes.vps.VPS;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.models.boost.BoostConfig;
 import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.models.boost.Booster;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
@@ -27,11 +27,7 @@ import gg.projecteden.nexus.models.voter.VoteSite;
 import gg.projecteden.nexus.models.voter.Voter;
 import gg.projecteden.nexus.models.voter.Voter.Vote;
 import gg.projecteden.nexus.models.voter.VoterService;
-import gg.projecteden.nexus.utils.IOUtils;
-import gg.projecteden.nexus.utils.Name;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
@@ -40,7 +36,6 @@ import net.dv8tion.jda.api.entities.User;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
@@ -52,12 +47,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
-import static gg.projecteden.nexus.features.discord.Discord.discordize;
-import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
-import static gg.projecteden.nexus.utils.StringUtils.plural;
-import static gg.projecteden.nexus.utils.Utils.epochSecond;
 
 @NoArgsConstructor
 public class Votes extends Feature implements Listener {
@@ -122,7 +111,7 @@ public class Votes extends Feature implements Listener {
 		OfflinePlayer player = null;
 		try { player = PlayerUtils.getPlayer(username); } catch (PlayerNotFoundException ignore) {}
 		String name = player != null ? Nickname.of(player) : "Unknown";
-		UUID uuid = player != null ? player.getUniqueId() : UUID0;
+		UUID uuid = player != null ? player.getUniqueId() : UUIDUtils.UUID0;
 		VoteSite site = VoteSite.getFromId(event.getVote().getServiceName());
 
 		boolean accepted = true;
@@ -131,7 +120,7 @@ public class Votes extends Feature implements Listener {
 
 		Nexus.log("[Votes] Vote %s from %s: %s (%s | %s)".formatted(accepted ? "accepted" : "rejected", event.getVote().getServiceName(), username, name, uuid));
 
-		LocalDateTime timestamp = epochSecond(event.getVote().getTimeStamp());
+		LocalDateTime timestamp = Utils.epochSecond(event.getVote().getTimeStamp());
 		if (site == VoteSite.MCBIZ)
 			timestamp = LocalDateTime.now(); // cant trust mcbiz timestamp
 
@@ -155,20 +144,20 @@ public class Votes extends Feature implements Listener {
 		voterService.save(voter);
 
 		if (new CooldownService().check(uuid, "vote-announcement", TickTime.HOUR)) {
-			String message = " &3for the server and received &b" + BASE_POINTS + plural(" &3vote point", BASE_POINTS) + " per site!";
+			String message = " &3for the server and received &b" + BASE_POINTS + StringUtils.plural(" &3vote point", BASE_POINTS) + " per site!";
 			if (left > 0)
 				message += " &e" + left + " &3more votes needed to hit the goal";
 
 			Broadcast.ingame().message("&a[✔] &e" + name + " &bvoted" + message).send();
-			Broadcast.discord().message(":white_check_mark: **" + discordize(name) + " voted**" + message).send();
+			Broadcast.discord().message(":white_check_mark: **" + Discord.discordize(name) + " voted**" + message).send();
 		}
 
-		PlayerUtils.send(player, VPS.PREFIX + "You have received " + points + plural(" point", points));
+		PlayerUtils.send(player, VPS.PREFIX + "You have received " + points + StringUtils.plural(" point", points));
 		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).receiver(voter).pitchStep(6).play();
 
 		if (vote.getExtra() > 0) {
 			Broadcast.ingame().message("&3[✦] &e" + name + " &3received &e" + vote.getExtra() + " extra &3vote points!").send();
-			Broadcast.discord().message(":star: **" + discordize(name) + "** received **" + vote.getExtra() + "** extra vote points!").send();
+			Broadcast.discord().message(":star: **" + Discord.discordize(name) + "** received **" + vote.getExtra() + "** extra vote points!").send();
 			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).receiver(voter).pitchStep(10).play();
 			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).receiver(voter).pitchStep(13).play();
 		}
@@ -211,7 +200,7 @@ public class Votes extends Feature implements Listener {
 
 	private int extraVotePoints(HasUniqueId player) {
 		for (var chances : getExtraChances(player).entrySet())
-			if (randomInt(chances.getKey()) == 1)
+			if (RandomUtils.randomInt(chances.getKey()) == 1)
 				return chances.getValue();
 		return 0;
 	}

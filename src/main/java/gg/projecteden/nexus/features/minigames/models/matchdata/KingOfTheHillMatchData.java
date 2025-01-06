@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigames.models.matchdata;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.mechanics.KingOfTheHill;
 import gg.projecteden.nexus.features.minigames.models.Match;
@@ -22,8 +23,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @Data
 @MatchDataFor(KingOfTheHill.class)
@@ -79,14 +78,14 @@ public class KingOfTheHillMatchData extends MatchData {
 		}
 
 		private void setText(String line) {
-			if (isNullOrEmpty(line))
+			if (Nullables.isNullOrEmpty(line))
 				HologramsAPI.byId(Minigames.getWorld(), "%s_point_%s_text".formatted(arena.getRegionBaseName(), id)).setLine(0, Offset.text());
 			else
 				HologramsAPI.byId(Minigames.getWorld(), "%s_point_%s_text".formatted(arena.getRegionBaseName(), id)).setLine(0, line);
 		}
 
 		private void setIcon(String color) {
-			if (isNullOrEmpty(color))
+			if (Nullables.isNullOrEmpty(color))
 				HologramsAPI.byId(Minigames.getWorld(), "%s_point_%s_icon".formatted(arena.getRegionBaseName(), id)).setLine(0, Offset.text());
 			else
 				HologramsAPI.byId(Minigames.getWorld(), "%s_point_%s_icon".formatted(arena.getRegionBaseName(), id)).setLine(0, "%s%s".formatted(color, getCharacter().getChar()));

@@ -13,26 +13,14 @@ import gg.projecteden.nexus.features.survival.structures.models.Spawner;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.structure.Structure;
 import gg.projecteden.nexus.models.structure.StructureService;
-import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.LocationUtils.NeighborDirection;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.Waterlogged;
@@ -53,8 +41,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-
 @NoArgsConstructor
 public class Structures extends Feature implements Listener {
 	private static final String region_buildadmin = "structures";
@@ -70,14 +56,14 @@ public class Structures extends Feature implements Listener {
 	@EventHandler
 	public void onPlaceUnsafe(PlayerInteractEvent event) {
 		ItemStack item = event.getItem();
-		if (isNullOrAir(item)) return;
+		if (Nullables.isNullOrAir(item)) return;
 		Material type = item.getType();
 
 		if (!MUSHROOMS.contains(type)) return;
 		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 
 		Block clickedBlock = event.getClickedBlock();
-		if (isNullOrAir(clickedBlock)) return;
+		if (Nullables.isNullOrAir(clickedBlock)) return;
 		if (!isInBuildRegion(event.getPlayer())) return;
 
 		Block block = clickedBlock.getRelative(event.getBlockFace());
@@ -91,12 +77,12 @@ public class Structures extends Feature implements Listener {
 	@EventHandler
 	public void onUseSpawnEgg(PlayerInteractEvent event) {
 		ItemStack item = event.getItem();
-		if (isNullOrAir(item)) return;
+		if (Nullables.isNullOrAir(item)) return;
 		if (!spawnEggTypes.contains(item.getType())) return;
 		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 
 		Block clickedBlock = event.getClickedBlock();
-		if (isNullOrAir(clickedBlock)) return;
+		if (Nullables.isNullOrAir(clickedBlock)) return;
 		if (clickedBlock.getType().equals(Material.SPAWNER)) return;
 		if (!isInBuildRegion(event.getPlayer())) return;
 
@@ -115,7 +101,7 @@ public class Structures extends Feature implements Listener {
 				return;
 			}
 		} else if (item.getType().equals(Material.END_CRYSTAL)) {
-			entityType = EntityType.ENDER_CRYSTAL;
+			entityType = EntityType.END_CRYSTAL;
 		}
 
 		if (entityType == null) return;

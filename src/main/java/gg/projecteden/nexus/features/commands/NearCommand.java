@@ -12,6 +12,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.AdventureUtils;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -24,9 +25,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static gg.projecteden.nexus.utils.PlayerUtils.uuidsOf;
 
 @Aliases("nearby")
 public class NearCommand extends CustomCommand {
@@ -93,7 +91,7 @@ public class NearCommand extends CustomCommand {
 		}
 
 		public Near sorted() {
-			this.results = new TreeSet<>(Comparator.comparing(player -> distance(origin, player).get()));
+			this.results = new TreeSet<>(Comparator.comparing(player -> Distance.distance(origin, player).get()));
 			return this;
 		}
 
@@ -103,7 +101,7 @@ public class NearCommand extends CustomCommand {
 			for (Player player : new ArrayList<>(results))
 				OnlinePlayers.where()
 					.radius(player.getLocation(), Chat.getLocalRadius())
-					.exclude(uuidsOf(results))
+					.exclude(PlayerUtils.uuidsOf(results))
 					.filter(chained -> includeUnseen || PlayerUtils.canSee(origin, chained))
 					.get()
 					.forEach(chained -> {
@@ -117,7 +115,7 @@ public class NearCommand extends CustomCommand {
 	}
 
 	private static long getDistance(Player from, Player to) {
-		return Math.round(distance(from, to).getRealDistance());
+		return Math.round(Distance.distance(from, to).getRealDistance());
 	}
 
 }

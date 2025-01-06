@@ -12,6 +12,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -20,8 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
-
-import static gg.projecteden.nexus.utils.Utils.sortByValue;
 
 @DoubleSlash
 @Aliases("distrfixed")
@@ -62,7 +61,7 @@ public class DistributionFixedCommand extends CustomCommand {
 		BiFunction<Material, String, JsonBuilder> formatter = (material, index) ->
 				json("&e - " + StringUtils.getDf().format(percentages.get(material)) + "% &7- " + camelCase(material));
 
-		paginate((sortByValue(percentages)).keySet(), formatter, "/distributionfixed", page);
+		paginate((Utils.sortByValue(percentages)).keySet(), formatter, "/distributionfixed", page);
 	}
 
 }

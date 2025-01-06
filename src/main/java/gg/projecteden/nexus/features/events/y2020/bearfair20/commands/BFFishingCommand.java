@@ -5,6 +5,7 @@ import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.models.WeightedLoot;
+import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Fishing;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
@@ -14,6 +15,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,24 +25,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Fishing.weightedList;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import java.util.*;
 
 @Disabled
 @HideFromWiki
 @Permission(Group.STAFF)
 public class BFFishingCommand extends CustomCommand {
 	static Map<UUID, LocalDateTime> timestamps = new HashMap<>();
-	ItemStack fishingRod = new ItemBuilder(Material.FISHING_ROD).enchant(Enchantment.LURE, 2).lore(itemLore).build();
+	ItemStack fishingRod = new ItemBuilder(Material.FISHING_ROD).enchant(Enchantment.LURE, 2).lore(BFQuests.itemLore).build();
 
 	public BFFishingCommand(CommandEvent event) {
 		super(event);
@@ -115,7 +107,7 @@ public class BFFishingCommand extends CustomCommand {
 
 		weightedList.forEach(weightedLoot -> itemStacks.add(weightedLoot.getItemStack()));
 		for (ItemStack content : contents) {
-			if (isNullOrAir(content))
+			if (Nullables.isNullOrAir(content))
 				continue;
 
 			int amount = content.getAmount();
@@ -150,7 +142,7 @@ public class BFFishingCommand extends CustomCommand {
 
 		// Remove fishing rod
 		for (ItemStack content : player.getInventory().getContents()) {
-			if (isNullOrAir(content)) continue;
+			if (Nullables.isNullOrAir(content)) continue;
 			if (!content.getType().equals(Material.FISHING_ROD)) continue;
 			if (BearFair20.isBFItem(content))
 				player.getInventory().remove(content);
@@ -276,7 +268,7 @@ public class BFFishingCommand extends CustomCommand {
 
 	private void giveAllLoot(Player player) {
 		List<ItemStack> items = new ArrayList<>();
-		weightedList.forEach(weightedLoot -> items.add(weightedLoot.getItemStack()));
+		Fishing.weightedList.forEach(weightedLoot -> items.add(weightedLoot.getItemStack()));
 		PlayerUtils.giveItems(player, items);
 	}
 

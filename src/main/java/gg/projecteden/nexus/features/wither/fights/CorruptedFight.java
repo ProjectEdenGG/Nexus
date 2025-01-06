@@ -2,28 +2,19 @@ package gg.projecteden.nexus.features.wither.fights;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.features.wither.models.WitherFight;
 import gg.projecteden.nexus.models.crate.CrateType;
-import gg.projecteden.nexus.utils.EntityUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PotionEffectBuilder;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Silverfish;
-import org.bukkit.entity.Wither;
-import org.bukkit.entity.WitherSkeleton;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -33,18 +24,9 @@ import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.api.common.utils.RandomUtils.chanceOf;
 
 @NoArgsConstructor
 public class CorruptedFight extends WitherFight {
@@ -112,7 +94,7 @@ public class CorruptedFight extends WitherFight {
 
 	@Override
 	public boolean shouldGiveStar() {
-		return chanceOf(75);
+		return gg.projecteden.api.common.utils.RandomUtils.chanceOf(75);
 	}
 
 	@Override
@@ -129,13 +111,13 @@ public class CorruptedFight extends WitherFight {
 		if (!event.getEntity().equals(wither))
 			return;
 
-		if (chanceOf(30))
-			if (chanceOf(35))
+		if (gg.projecteden.api.common.utils.RandomUtils.chanceOf(30))
+			if (gg.projecteden.api.common.utils.RandomUtils.chanceOf(35))
 				EnumUtils.random(CounterAttack.class).execute(alivePlayers());
 			else
 				EnumUtils.random(CorruptedCounterAttacks.class).execute(alivePlayers());
 
-		if (chanceOf(phase.getDodgeChance()))
+		if (gg.projecteden.api.common.utils.RandomUtils.chanceOf(phase.getDodgeChance()))
 			event.setCancelled(true);
 	}
 
@@ -234,7 +216,7 @@ public class CorruptedFight extends WitherFight {
 			@Override
 			public void execute(Player player) {
 				List<ItemStack> armor = new ArrayList<>(Arrays.asList(player.getInventory().getArmorContents()));
-				if (isNullOrEmpty(armor))
+				if (Nullables.isNullOrEmpty(armor))
 					return;
 
 				ItemStack item = RandomUtils.randomElement(armor);
@@ -270,7 +252,7 @@ public class CorruptedFight extends WitherFight {
 		NEGATIVE_EFFECT {
 			@Override
 			public void execute(List<Player> players) {
-				PotionEffectType type = RandomUtils.randomElement(PotionEffectType.WEAKNESS, PotionEffectType.DARKNESS, PotionEffectType.SLOW);
+				PotionEffectType type = RandomUtils.randomElement(PotionEffectType.WEAKNESS, PotionEffectType.DARKNESS, PotionEffectType.SLOWNESS);
 				players.forEach(pl -> pl.addPotionEffect(new PotionEffectBuilder(type).duration(TickTime.SECOND.x(10)).ambient(true).build()));
 			}
 		},
@@ -412,7 +394,7 @@ public class CorruptedFight extends WitherFight {
 
 				for (int i = 0; i < 25; i++) {
 					Location loc = worldguard.getRandomBlock(region).getLocation();
-					loc.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, loc, 1);
+					loc.getWorld().spawnParticle(Particle.EXPLOSION, loc, 1);
 				}
 
 				WitherChallenge.currentFight.getAlivePlayers().forEach(uuid -> {

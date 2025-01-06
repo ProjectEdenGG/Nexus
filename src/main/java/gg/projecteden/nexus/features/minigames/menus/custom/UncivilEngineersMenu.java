@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.menus.custom;
 
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
@@ -13,6 +14,8 @@ import gg.projecteden.nexus.features.minigames.models.arenas.UncivilEngineersAre
 import gg.projecteden.nexus.features.minigames.models.arenas.UncivilEngineersArena.MobPoint;
 import gg.projecteden.nexus.features.mobheads.MobHeadType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -20,10 +23,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static gg.projecteden.nexus.features.menus.MenuUtils.getLocationLore;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @CustomMechanicSettings(UncivilEngineers.class)
 public class UncivilEngineersMenu extends ICustomMechanicMenu {
@@ -58,13 +57,13 @@ public class UncivilEngineersMenu extends ICustomMechanicMenu {
 					skull = new ItemStack(Material.BARRIER);
 				else {
 					skull = mobHeadType.getBaseSkull();
-					if (isNullOrAir(skull))
+					if (Nullables.isNullOrAir(skull))
 						skull = new ItemStack(Material.BARRIER);
 				}
 
 				final ItemBuilder item = new ItemBuilder(skull)
-					.name("&3" + camelCase(mobPoint.getType()))
-					.lore(getLocationLore(mobPoint.getLocation()))
+					.name("&3" + StringUtils.camelCase(mobPoint.getType()))
+					.lore(MenuUtils.getLocationLore(mobPoint.getLocation()))
 					.lore("", "&7Click to remove");
 
 				items.add(ClickableItem.of(item, e -> {
@@ -98,10 +97,10 @@ public class UncivilEngineersMenu extends ICustomMechanicMenu {
 				if (mobHeadType == null)
 					continue;
 				final ItemStack skull = mobHeadType.getNamedSkull();
-				if (isNullOrAir(skull))
+				if (Nullables.isNullOrAir(skull))
 					continue;
 
-				final ItemStack item = new ItemBuilder(skull).name("&e" + camelCase(type)).build();
+				final ItemStack item = new ItemBuilder(skull).name("&e" + StringUtils.camelCase(type)).build();
 
 				items.add(ClickableItem.of(item, e -> {
 					arena.getMobPoints().add(new MobPoint(viewer.getLocation(), type));

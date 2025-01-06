@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.framework.interfaces;
 
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
@@ -26,10 +27,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.UUID;
-
-import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 /**
  * A mongo database object owned by a player
@@ -85,7 +82,7 @@ public interface PlayerOwnedObject extends gg.projecteden.api.mongodb.interfaces
 	}
 
 	default boolean isUuid0() {
-		return isUUID0(getUuid());
+		return UUIDUtils.isUUID0(getUuid());
 	}
 
 	default boolean isAfk() {
@@ -113,11 +110,11 @@ public interface PlayerOwnedObject extends gg.projecteden.api.mongodb.interfaces
 	}
 
 	default Distance distanceTo(HasLocation location) {
-		return distance(getOnlinePlayer(), location);
+		return Distance.distance(getOnlinePlayer(), location);
 	}
 
 	default Distance distanceTo(OptionalLocation location) {
-		return distance(getOnlinePlayer(), location);
+		return Distance.distance(getOnlinePlayer(), location);
 	}
 
 	@Override
@@ -138,7 +135,7 @@ public interface PlayerOwnedObject extends gg.projecteden.api.mongodb.interfaces
 	}
 
 	default boolean hasNickname() {
-		return !isNullOrEmpty(getNicknameData().getNicknameRaw());
+		return !Nullables.isNullOrEmpty(getNicknameData().getNicknameRaw());
 	}
 
 	default Presence presence() {
@@ -163,14 +160,14 @@ public interface PlayerOwnedObject extends gg.projecteden.api.mongodb.interfaces
 	}
 
 	default void sendMessage(String message) {
-		if (isUUID0(getUuid()))
+		if (UUIDUtils.isUUID0(getUuid()))
 			Nexus.log(message);
 		else
 			sendMessage(json(message));
 	}
 
 	default void sendOrMail(String message) {
-		if (isUUID0(getUuid())) {
+		if (UUIDUtils.isUUID0(getUuid())) {
 			Nexus.log(message);
 			return;
 		}
@@ -182,7 +179,7 @@ public interface PlayerOwnedObject extends gg.projecteden.api.mongodb.interfaces
 	}
 
 	default void sendMessage(UUID sender, ComponentLike component, MessageType type) {
-		if (isUUID0(getUuid()))
+		if (UUIDUtils.isUUID0(getUuid()))
 			Nexus.log(AdventureUtils.asPlainText(component));
 		else
 			// TODO - 1.19.2 Chat Validation Kick
@@ -191,7 +188,7 @@ public interface PlayerOwnedObject extends gg.projecteden.api.mongodb.interfaces
 	}
 
 	default void sendMessage(UUID sender, ComponentLike component) {
-		if (isUUID0(getUuid()))
+		if (UUIDUtils.isUUID0(getUuid()))
 			Nexus.log(AdventureUtils.asPlainText(component));
 		else
 			// TODO - 1.19.2 Chat Validation Kick
@@ -205,7 +202,7 @@ public interface PlayerOwnedObject extends gg.projecteden.api.mongodb.interfaces
 
 	default void sendMessage(int delay, ComponentLike component) {
 		Tasks.wait(delay, () -> {
-			if (isUUID0(getUuid()))
+			if (UUIDUtils.isUUID0(getUuid()))
 				Nexus.log(AdventureUtils.asPlainText(component));
 			else
 				sendMessage(component);

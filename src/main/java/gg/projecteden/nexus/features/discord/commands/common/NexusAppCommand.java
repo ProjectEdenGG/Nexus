@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.discord.commands.common;
 
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.discord.appcommands.AppCommand;
 import gg.projecteden.api.discord.appcommands.AppCommandEvent;
@@ -24,9 +25,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.UUID;
-
-import static gg.projecteden.api.common.utils.TimeUtils.parseDate;
-import static gg.projecteden.api.common.utils.TimeUtils.parseDateTime;
 
 @GuildCommand("132680070480396288")
 public abstract class NexusAppCommand extends AppCommand {
@@ -113,7 +111,7 @@ public abstract class NexusAppCommand extends AppCommand {
 			if (input.startsWith("-"))
 				return Timespan.of(input.replaceFirst("-", "")).sinceNow();
 
-			return parseDateTime(input);
+			return TimeUtils.parseDateTime(input);
 		});
 
 		AppCommandRegistry.registerConverter(LocalDate.class, argument -> {
@@ -123,7 +121,7 @@ public abstract class NexusAppCommand extends AppCommand {
 			if (input.startsWith("-"))
 				return Timespan.of(input.replaceFirst("-", "")).sinceNow();
 
-			return parseDate(input);
+			return TimeUtils.parseDate(input);
 		});
 
 		AppCommandRegistry.registerConverter(Timespan.class, argument -> Timespan.of(argument.getInput()));

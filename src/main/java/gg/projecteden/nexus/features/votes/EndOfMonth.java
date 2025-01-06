@@ -175,7 +175,7 @@ public class EndOfMonth {
 //			msg += System.lineSeparator();
 //			msg += System.lineSeparator();
 
-			if (VoteParty.isFeatureEnabled(null)) {
+			if (!VoteParty.isFeatureEnabled(null)) {
 				if (total > Votes.GOAL)
 					msg += "**You've reached the server wide voting goal, congratulations!** Stay tuned for further information from a staff member.";
 				else

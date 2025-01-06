@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.events.aeveonproject.effects;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.events.aeveonproject.APUtils;
+import gg.projecteden.nexus.features.events.aeveonproject.AeveonProject;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
@@ -16,9 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static gg.projecteden.nexus.features.events.aeveonproject.APUtils.isInWorld;
-import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.worldguard;
-
 public class GravLift implements Listener {
 
 	static List<Player> inGravlift = new ArrayList<>();
@@ -29,7 +28,7 @@ public class GravLift implements Listener {
 		Tasks.repeat(0, TickTime.TICK.x(5), () -> {
 			List<Player> inGravLiftCopy = new ArrayList<>(inGravlift);
 			for (Player player : inGravLiftCopy) {
-				Set<ProtectedRegion> regions = worldguard().getRegionsAt(player.getLocation());
+				Set<ProtectedRegion> regions = AeveonProject.worldguard().getRegionsAt(player.getLocation());
 				// Make sure they are in the region still
 				boolean verify = false;
 				for (ProtectedRegion region : regions) {
@@ -56,7 +55,7 @@ public class GravLift implements Listener {
 	@EventHandler
 	public void onEnterRegion_GravLift(PlayerEnteredRegionEvent event) {
 		Player player = event.getPlayer();
-		if (!isInWorld(player)) return;
+		if (!APUtils.isInWorld(player)) return;
 
 		String id = event.getRegion().getId();
 		if (!id.contains("gravlift")) return;
@@ -68,7 +67,7 @@ public class GravLift implements Listener {
 	@EventHandler
 	public void onExitRegion_GravLift(PlayerLeftRegionEvent event) {
 		Player player = event.getPlayer();
-		if (!isInWorld(player)) return;
+		if (!APUtils.isInWorld(player)) return;
 
 		String id = event.getRegion().getId();
 		if (!id.contains("gravlift")) return;

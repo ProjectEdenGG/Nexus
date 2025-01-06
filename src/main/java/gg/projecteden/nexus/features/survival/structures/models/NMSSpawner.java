@@ -2,15 +2,17 @@ package gg.projecteden.nexus.features.survival.structures.models;
 
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.SpawnData;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import org.bukkit.Material;
 import org.bukkit.block.CreatureSpawner;
-import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,13 +45,11 @@ public class NMSSpawner {
 		}
 
 		ItemStack nmsItemStack = CraftItemStack.asNMSCopy(item);
-		if (!nmsItemStack.hasTag()) {
+		if (!nmsItemStack.has(DataComponents.CUSTOM_DATA)) {
 			throw new SpawnerItemException();
 		}
 
-		CompoundTag tag = nmsItemStack.getTag();
-		if (tag == null)
-			throw new SpawnerItemException();
+		CompoundTag tag = nmsItemStack.get(DataComponents.CUSTOM_DATA).copyTag();
 
 		if (!tag.contains("BlockEntityTag")) {
 			snapshot = new CompoundTag();
@@ -206,12 +206,12 @@ public class NMSSpawner {
 			return null;
 
 		ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
-		CompoundTag tag = nmsItemStack.getTag();
-		if (tag == null)
-			tag = new CompoundTag();
+		CompoundTag tag = new CompoundTag();
+		if (nmsItemStack.has(DataComponents.CUSTOM_DATA))
+		 	tag = nmsItemStack.get(DataComponents.CUSTOM_DATA).copyTag();
 
 		tag.put("BlockEntityTag", snapshot);
-		nmsItemStack.setTag(tag);
+		nmsItemStack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
 		return CraftItemStack.asBukkitCopy(nmsItemStack);
 	}

@@ -38,6 +38,7 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import me.lucko.spark.api.Spark;
+import me.lucko.spark.api.SparkProvider;
 import net.buycraft.plugin.bukkit.BuycraftPluginBase;
 import net.coreprotect.CoreProtect;
 import net.coreprotect.CoreProtectAPI;
@@ -85,7 +86,8 @@ public class Nexus extends JavaPlugin {
 		return (T) singletons.computeIfAbsent(clazz, $ -> {
 			try {
 				return clazz.getConstructor().newInstance();
-			} catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException ex) {
+			} catch (InvocationTargetException | InstantiationException | IllegalAccessException |
+					 NoSuchMethodException ex) {
 				Nexus.log(Level.FINE, "Failed to create singleton of " + clazz.getName() + ", falling back to Objenesis", ex);
 				try {
 					return new ObjenesisStd().newInstance(clazz);
@@ -321,8 +323,6 @@ public class Nexus extends JavaPlugin {
 	@Getter
 	private static LuckPerms luckPerms = null;
 	@Getter
-	private static Spark spark = null;
-	@Getter
 	private static IOpenInv openInv = null;
 	@Getter
 	private static BigDoors bigDoors = null;
@@ -369,9 +369,15 @@ public class Nexus extends JavaPlugin {
 		RegisteredServiceProvider<LuckPerms> lpProvider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
 		if (lpProvider != null)
 			luckPerms = lpProvider.getProvider();
-		RegisteredServiceProvider<Spark> sparkProvider = Bukkit.getServicesManager().getRegistration(Spark.class);
-		if (sparkProvider != null)
-			spark = sparkProvider.getProvider();
+	}
+
+	public static Spark getSpark() {
+		try {
+			return SparkProvider.get();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
 	}
 
 }

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.store;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationInteractData;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.BedInteractionData;
@@ -21,18 +22,13 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.Map;
 
-import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationInteractData.MAX_RADIUS;
-import static gg.projecteden.nexus.features.resourcepack.decoration.store.BuyableData.isBuyable;
-import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-
 public class DecorationStoreUtils {
 	public static final int REACH_DISTANCE = 6;
 	public static final List<EntityType> glowTypes = List.of(EntityType.ITEM_FRAME);
 
 	public static boolean isApplicableBlock(Player player, Block targetBlock, ItemStack targetBlockItem, DecorationStoreType storeType) {
 		DecorationStoreManager.debug(player, "checking if applicable block");
-		if (isNullOrAir(targetBlock)) {
+		if (Nullables.isNullOrAir(targetBlock)) {
 			DecorationStoreManager.debug(player, "  target block == null");
 			return false;
 		}
@@ -42,12 +38,12 @@ public class DecorationStoreUtils {
 			return false;
 		}
 
-		if (isNullOrAir(targetBlockItem)) {
+		if (Nullables.isNullOrAir(targetBlockItem)) {
 			DecorationStoreManager.debug(player, "  item is null");
 			return false;
 		}
 
-		if (!isBuyable(player, targetBlockItem, storeType)) {
+		if (!BuyableData.isBuyable(player, targetBlockItem, storeType)) {
 			DecorationStoreManager.debug(player, "  not buyable");
 			return false;
 		}
@@ -85,12 +81,12 @@ public class DecorationStoreUtils {
 			return false;
 		}
 
-		if (isNullOrAir(targetEntityItem)) {
+		if (Nullables.isNullOrAir(targetEntityItem)) {
 			DecorationStoreManager.debug(player, "  item is null");
 			return false;
 		}
 
-		if (!isBuyable(player, targetEntityItem, storeType)) {
+		if (!BuyableData.isBuyable(player, targetEntityItem, storeType)) {
 			DecorationStoreManager.debug(player, "  not buyable");
 			return false;
 		}
@@ -142,7 +138,7 @@ public class DecorationStoreUtils {
 
 		// Target Decoration
 		Block targetBlock = player.getTargetBlockExact(REACH_DISTANCE);
-		if (isNotNullOrAir(targetBlock)) {
+		if (Nullables.isNotNullOrAir(targetBlock)) {
 
 			// Exact
 			ItemFrame itemFrame = checkForDecoration(player, targetBlock);
@@ -185,7 +181,7 @@ public class DecorationStoreUtils {
 		if (block.getType().equals(Material.LIGHT))
 			facing = player.getFacing();
 
-		ItemFrame itemFrame = (ItemFrame) DecorationUtils.getItemFrame(block, MAX_RADIUS, facing, player, false);
+		ItemFrame itemFrame = (ItemFrame) DecorationUtils.getItemFrame(block, DecorationInteractData.MAX_RADIUS, facing, player, false);
 		if (itemFrame == null)
 			return null;
 

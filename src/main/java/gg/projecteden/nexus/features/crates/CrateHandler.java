@@ -1,12 +1,11 @@
 package gg.projecteden.nexus.features.crates;
 
 import com.google.common.base.Strings;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.crates.api.models.CrateAnimation;
 import gg.projecteden.crates.api.models.CrateAnimationsAPI;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
-import gg.projecteden.nexus.features.minigames.Minigames;
-import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkCategory;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CrateOpeningException;
@@ -15,12 +14,7 @@ import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.*;
 import lombok.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -33,21 +27,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Data
 public class  CrateHandler {
@@ -193,14 +176,14 @@ public class  CrateHandler {
 
 	private static void giveItems(Player player, CrateLoot loot) {
 		PlayerUtils.giveItems(player, loot.getItems());
-		if (!isNullOrEmpty(loot.getCommandsNoSlash()))
+		if (!Nullables.isNullOrEmpty(loot.getCommandsNoSlash()))
 			loot.getCommandsNoSlash().forEach(command -> PlayerUtils.runCommandAsConsole(command.replaceAll("%player%", player.getName())));
 		if (loot.isShouldAnnounce())
 			Chat.Broadcast.all()
 				.prefix("Crates")
 				.muteMenuItem(MuteMenuItem.CRATES)
 				.message(Strings.isNullOrEmpty(loot.getAnnouncement()) ?
-					         "&e" + Nickname.of(player) + " &3has received a &e" + loot.getTitle() + " &3from the &e" + camelCase(loot.getType()) + " Crate" :
+					         "&e" + Nickname.of(player) + " &3has received a &e" + loot.getTitle() + " &3from the &e" + gg.projecteden.api.common.utils.StringUtils.camelCase(loot.getType()) + " Crate" :
 					         loot.getAnnouncement()
 						         .replaceAll("%player%", Nickname.of(player.getName()))
 						         .replaceAll("%title%", loot.getTitle()))
@@ -214,7 +197,7 @@ public class  CrateHandler {
 			boolean took = false;
 			ItemStack key = type.getKey();
 			for (ItemStack item : player.getInventory().getContents()) {
-				if (isNullOrAir(item)) continue;
+				if (gg.projecteden.nexus.utils.Nullables.isNullOrAir(item)) continue;
 				if (ItemUtils.isFuzzyMatch(key, item)) {
 					item.setAmount(item.getAmount() - 1);
 					took = true;

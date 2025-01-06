@@ -33,9 +33,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static gg.projecteden.nexus.features.discord.Discord.discordize;
-import static gg.projecteden.nexus.utils.StringUtils.*;
-
 @Data
 @Entity(value = "chat_games_config", noClassnameStored = true)
 @NoArgsConstructor
@@ -111,7 +108,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 		}
 
 		public ChatGame(ChatGameType gameType, String answer, JsonBuilder broadcast) {
-			this(gameType, answer, broadcast, discordize(broadcast));
+			this(gameType, answer, broadcast, Discord.discordize(broadcast));
 		}
 
 		public ChatGame(ChatGameType gameType, String answer, JsonBuilder broadcast, String discordBroadcast) {
@@ -122,7 +119,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 		}
 
 		public ChatGame(ChatGameType gameType, List<String> answers, JsonBuilder broadcast) {
-			this(gameType, answers, broadcast, discordize(broadcast));
+			this(gameType, answers, broadcast, Discord.discordize(broadcast));
 		}
 
 		public ChatGame(ChatGameType gameType, List<String> answers, JsonBuilder broadcast, String discordBroadcast) {
@@ -248,7 +245,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 
 		private void broadcastEndDiscord() {
 			String answer = getAnswer();
-			final MessageBuilder message = new MessageBuilder(getDiscordPrefix("ChatGames") +
+			final MessageBuilder message = new MessageBuilder(StringUtils.getDiscordPrefix("ChatGames") +
 				"Game over! The correct answer was **" + answer + "**. ");
 
 			if (completed.isEmpty())
@@ -275,7 +272,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 				return;
 
 			if (hasCompleted(nerd.getUuid())) {
-				PlayerUtils.send(nerd, ChatGamesCommand.PREFIX + colorize("&cYou've already correctly answered this game"));
+				PlayerUtils.send(nerd, ChatGamesCommand.PREFIX + StringUtils.colorize("&cYou've already correctly answered this game"));
 				return;
 			}
 
@@ -285,7 +282,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 
 			String place = StringUtils.getNumberWithSuffix(this.getCompleted().size()) + " place";
 			String prize = Prize.random().apply(this, nerd);
-			PlayerUtils.send(nerd, ChatGamesCommand.PREFIX + colorize("&3That's correct! You've been given &e" + prize + " &3(&e" + place + "&3)"));
+			PlayerUtils.send(nerd, ChatGamesCommand.PREFIX + StringUtils.colorize("&3That's correct! You've been given &e" + prize + " &3(&e" + place + "&3)"));
 
 			if (nerd.getPlayer() != null)
 				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL)
@@ -300,7 +297,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 				String apply(ChatGame game, Nerd player) {
 					int amount = Math.max(25, 150 - (50 * (game.getCompleted().size() - 1)));
 					Tasks.sync(() -> new BankerService().deposit(player, amount, ShopGroup.SURVIVAL, TransactionCause.CHAT_GAME));
-					return prettyMoney(amount);
+					return StringUtils.prettyMoney(amount);
 				}
 			},
 			;

@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.LocationUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,13 +21,7 @@ import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static java.util.Comparator.comparing;
+import java.util.*;
 
 @Builder
 @AllArgsConstructor
@@ -141,7 +136,7 @@ public class AntiCampingTask {
 
 			List<Block> blocks = BlockUtils.getBlocksInRadius(location.getBlock(), 4, yDiff, 4).stream()
 				.filter(block -> block.getType().isSolid())
-				.sorted(comparing(block -> distance(block, minigamer)))
+				.sorted(Comparator.comparing(block -> Distance.distance(block, minigamer)))
 				.toList();
 
 			// No blocks within required radius on below floor, try next one

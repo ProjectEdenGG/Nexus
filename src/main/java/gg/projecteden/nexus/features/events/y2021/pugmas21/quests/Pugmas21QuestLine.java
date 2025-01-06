@@ -7,22 +7,17 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestTask.CLEAR_SKIES;
-import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestTask.CRYSTAL_REPAIR_1;
-import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestTask.HOLIDAY_HEIST_ELVES;
-import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestTask.HOLIDAY_HEIST_PIRATES;
-
 @Getter
 public enum Pugmas21QuestLine {
 	ELVES(
-		CRYSTAL_REPAIR_1,
-		CLEAR_SKIES,
-		HOLIDAY_HEIST_ELVES
+		Pugmas21QuestTask.CRYSTAL_REPAIR_1,
+		Pugmas21QuestTask.CLEAR_SKIES,
+		Pugmas21QuestTask.HOLIDAY_HEIST_ELVES
 	),
 	PIRATES(
-		CRYSTAL_REPAIR_1,
-		CLEAR_SKIES,
-		HOLIDAY_HEIST_PIRATES
+		Pugmas21QuestTask.CRYSTAL_REPAIR_1,
+		Pugmas21QuestTask.CLEAR_SKIES,
+		Pugmas21QuestTask.HOLIDAY_HEIST_PIRATES
 	),
 	;
 

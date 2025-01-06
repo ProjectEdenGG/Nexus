@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.votes.party;
 
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.features.crates.CratePinatas;
 import gg.projecteden.nexus.models.banker.BankerService;
@@ -16,8 +17,6 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.parchment.HasOfflinePlayer;
 
 import java.util.Arrays;
-
-import static gg.projecteden.api.common.utils.StringUtils.plural;
 
 public enum VotePartyReward {
 	SIMPLE_BOOST {
@@ -145,7 +144,7 @@ public enum VotePartyReward {
 		public void give(HasOfflinePlayer player) {
 			int amount = RandomUtils.randomInt(1, 5);
 			CratePinatas.give(player.getOfflinePlayer(), CrateType.VOTE, 1);
-			OfflineMessage.send(player.getOfflinePlayer(), getRewardMessage(amount + plural(" Vote Piñata", amount), player));
+			OfflineMessage.send(player.getOfflinePlayer(), getRewardMessage(amount + StringUtils.plural(" Vote Piñata", amount), player));
 		}
 	}
 	;

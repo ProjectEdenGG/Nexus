@@ -4,6 +4,7 @@ import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts.Pugmas25District;
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
@@ -20,8 +21,6 @@ import lombok.NonNull;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-
-import static gg.projecteden.nexus.features.menus.MenuUtils.innerSlotIterator;
 
 public class Pugmas25AdventMenu extends InventoryProvider {
 
@@ -63,7 +62,7 @@ public class Pugmas25AdventMenu extends InventoryProvider {
 		int row = 1;
 		int column = EnumUtils.nextWithLoop(DayOfWeek.class, Pugmas25.get().getStart().getDayOfWeek().getValue()).getValue();
 
-		final SlotIterator slotIterator = innerSlotIterator(contents, SlotPos.of(row, column));
+		final SlotIterator slotIterator = MenuUtils.innerSlotIterator(contents, SlotPos.of(row, column));
 		for (int dayNdx = 1; dayNdx <= 25; dayNdx++) {
 			final int _day = dayNdx;
 

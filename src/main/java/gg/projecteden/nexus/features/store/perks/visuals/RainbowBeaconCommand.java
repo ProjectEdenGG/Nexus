@@ -1,12 +1,8 @@
 package gg.projecteden.nexus.features.store.perks.visuals;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeacon;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeaconService;
@@ -26,10 +22,8 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.List;
 
-import static gg.projecteden.nexus.features.store.perks.visuals.RainbowBeaconCommand.PERMISSION;
-
 @NoArgsConstructor
-@Permission(PERMISSION)
+@Permission(RainbowBeaconCommand.PERMISSION)
 @WikiConfig(rank = "Store", feature = "Visuals")
 public class RainbowBeaconCommand extends CustomCommand implements Listener {
 	public static final String PERMISSION = "rainbow.beacon";

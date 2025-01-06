@@ -14,15 +14,9 @@ import gg.projecteden.nexus.models.fakenpcs.npcs.Trait.UpdateType;
 import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUser;
 import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUserService;
 import gg.projecteden.nexus.utils.Distance;
-import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
+import lombok.*;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.decoration.ArmorStand;
@@ -30,14 +24,8 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC.Hologram.MAX_LINES;
 
 @Data
 @NoArgsConstructor
@@ -224,7 +212,7 @@ public abstract class FakeNPC implements DatabaseObject {
 		deleteHologramLines();
 
 		List<ArmorStand> armorStands = new ArrayList<>();
-		for (int i = 0; i < MAX_LINES; i++)
+		for (int i = 0; i < Hologram.MAX_LINES; i++)
 			armorStands.add(NMSUtils.createHologram(NMSUtils.toNMS(getBukkitEntity().getWorld())));
 
 		this.hologram.setArmorStandList(armorStands);

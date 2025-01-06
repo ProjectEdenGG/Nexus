@@ -13,8 +13,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import static gg.projecteden.nexus.features.events.y2020.halloween20.Halloween20.PREFIX;
-
 public enum ComboLockNumber {
 
 	PUZZLE_TWO(2, new Location(Bukkit.getWorld("safepvp"), 327.00, 56.00, -1956.00, .00F, .00F), 2) {
@@ -74,14 +72,14 @@ public enum ComboLockNumber {
 		Halloween20Service service = new Halloween20Service();
 		Halloween20User user = service.get(player);
 		switch (user.getCombinationStage()) {
-			case NOT_STARTED -> PlayerUtils.send(player, PREFIX + "This looks like a number from the combination lock close to where I entered this place...");
+			case NOT_STARTED -> PlayerUtils.send(player, Halloween20.PREFIX + "This looks like a number from the combination lock close to where I entered this place...");
 			case STARTED -> {
 				if (user.getFoundComboLockNumbers().contains(this)) {
-					PlayerUtils.send(player, PREFIX + "You already know of this number. Maybe there's some more.");
+					PlayerUtils.send(player, Halloween20.PREFIX + "You already know of this number. Maybe there's some more.");
 					break;
 				}
 				user.getFoundComboLockNumbers().add(this);
-				PlayerUtils.send(player, PREFIX + "&e" + this.getNumericalValue() + "&3 can now be used on the combination lock at the entrance to the city.");
+				PlayerUtils.send(player, Halloween20.PREFIX + "&e" + this.getNumericalValue() + "&3 can now be used on the combination lock at the entrance to the city.");
 				service.save(user);
 				player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1f, 1f);
 				if (user.getFoundComboLockNumbers().size() == 11)

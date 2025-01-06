@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
@@ -17,9 +18,6 @@ import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.Arrays;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.PlayerUtils.send;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class ScavHuntLegacy implements Listener {
 	private static final String SCAVHUNT_PREFIX = StringUtils.getPrefix("Scav Hunt Legacy");
@@ -58,14 +56,14 @@ public class ScavHuntLegacy implements Listener {
 
 		Sign sign = (Sign) block.getState();
 		Player player = event.getPlayer();
-		if ("[Scav Hunt '16]".equals(stripColor(sign.getLine(0))))
-			send(player, SCAVHUNT_PREFIX + "You've found a statue from the &eSummer 2016 &3scavenger hunt!");
-		else if ("[Scav Hunt '18]".equals(stripColor(sign.getLine(0))))
-			send(player, SCAVHUNT_PREFIX + "You've found a statue from the &eFebruary 2018 &3scavenger hunt!");
-		else if ("[Easter 2020]".equals(stripColor(sign.getLine(0))))
-			send(player, SCAVHUNT_PREFIX + "You've found an easter egg from the &e2020 Easter egg hunt!");
-		else if ("[StatueHunt 20]".equals(stripColor(sign.getLine(0))))
-			send(player, SCAVHUNT_PREFIX + "You've found an statue from the &e2020 scavenger hunt!");
+		if ("[Scav Hunt '16]".equals(StringUtils.stripColor(sign.getLine(0))))
+			PlayerUtils.send(player, SCAVHUNT_PREFIX + "You've found a statue from the &eSummer 2016 &3scavenger hunt!");
+		else if ("[Scav Hunt '18]".equals(StringUtils.stripColor(sign.getLine(0))))
+			PlayerUtils.send(player, SCAVHUNT_PREFIX + "You've found a statue from the &eFebruary 2018 &3scavenger hunt!");
+		else if ("[Easter 2020]".equals(StringUtils.stripColor(sign.getLine(0))))
+			PlayerUtils.send(player, SCAVHUNT_PREFIX + "You've found an easter egg from the &e2020 Easter egg hunt!");
+		else if ("[StatueHunt 20]".equals(StringUtils.stripColor(sign.getLine(0))))
+			PlayerUtils.send(player, SCAVHUNT_PREFIX + "You've found an statue from the &e2020 scavenger hunt!");
 	}
 
 	@EventHandler
@@ -80,9 +78,9 @@ public class ScavHuntLegacy implements Listener {
 		if (skull.getOwningPlayer() == null) return;
 		Player player = event.getPlayer();
 		if (easter17.contains(skull.getOwningPlayer().getUniqueId().toString())) {
-			send(player, SCAVHUNT_PREFIX + "You've found an easter egg from the &e2017 Easter egg Hunt!");
+			PlayerUtils.send(player, SCAVHUNT_PREFIX + "You've found an easter egg from the &e2017 Easter egg Hunt!");
 		} else if (easter19.contains(skull.getOwningPlayer().getUniqueId().toString())) {
-			send(player, SCAVHUNT_PREFIX + "You've found a bunny from the &e2019 Easter event!");
+			PlayerUtils.send(player, SCAVHUNT_PREFIX + "You've found a bunny from the &e2019 Easter event!");
 		}
 	}
 
@@ -104,7 +102,7 @@ public class ScavHuntLegacy implements Listener {
 
 		event.setCancelled(true);
 
-		send(event.getPlayer(), SCAVHUNT_PREFIX + "You've found an easter egg from the &e2021 Easter egg Hunt!");
+		PlayerUtils.send(event.getPlayer(), SCAVHUNT_PREFIX + "You've found an easter egg from the &e2021 Easter egg Hunt!");
 	}
 
 }

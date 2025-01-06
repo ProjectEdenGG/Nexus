@@ -1,16 +1,11 @@
 package gg.projecteden.nexus.features.customenchants.models;
 
-import io.papermc.paper.enchantments.EnchantmentRarity;
 import net.kyori.adventure.text.Component;
 import net.minecraft.world.item.enchantment.Enchantment;
-import org.bukkit.craftbukkit.v1_20_R3.enchantments.CraftEnchantment;
+import org.bukkit.craftbukkit.enchantments.CraftEnchantment;
 import org.bukkit.entity.EntityCategory;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
-import java.util.Set;
 
 public class CraftCustomEnchant extends CraftEnchantment {
 	private final CustomEnchant enchant;
@@ -85,19 +80,10 @@ public class CraftCustomEnchant extends CraftEnchantment {
 		return enchant.getMaxModifiedCost(level);
 	}
 
-	@Override
-	public @NotNull EnchantmentRarity getRarity() {
-		return enchant.getRarity();
-	}
 
 	@Override
 	public float getDamageIncrease(int level, EntityCategory entityCategory) {
 		return 0f;
-	}
-
-	@Override
-	public @NotNull Set<EquipmentSlot> getActiveSlots() {
-		return Collections.emptySet();
 	}
 
 }

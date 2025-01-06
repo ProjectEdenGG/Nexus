@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.wither.models.WitherFight;
 import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
@@ -20,8 +21,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static gg.projecteden.nexus.utils.RandomUtils.chanceOf;
 
 @NoArgsConstructor
 public class HardFight extends WitherFight {
@@ -47,7 +46,7 @@ public class HardFight extends WitherFight {
 		if (!event.getEntity().equals(wither))
 			return;
 
-		if (!chanceOf(10))
+		if (!RandomUtils.chanceOf(10))
 			return;
 
 		EnumUtils.random(CounterAttack.class).execute(alivePlayers());
@@ -55,7 +54,7 @@ public class HardFight extends WitherFight {
 
 	@Override
 	public boolean shouldGiveStar() {
-		return chanceOf(50);
+		return RandomUtils.chanceOf(50);
 	}
 
 	@Override

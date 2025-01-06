@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
 import lombok.NonNull;
@@ -16,8 +17,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Getter
 @RequiredArgsConstructor
@@ -74,7 +73,7 @@ public enum TrophyType {
 
 	@Override
 	public String toString() {
-		return camelCase(name()) + " Trophy";
+		return StringUtils.camelCase(name()) + " Trophy";
 	}
 
 	public ItemBuilder getItem() {

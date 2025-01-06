@@ -5,10 +5,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,8 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 // TODO Recipe: Sugar + Dye + ?
 public class Pugmas21CandyCaneCannon implements Listener {
@@ -93,7 +88,7 @@ public class Pugmas21CandyCaneCannon implements Listener {
 		}
 
 		public static CandyCane of(ItemStack item) {
-			if (isNullOrAir(item))
+			if (Nullables.isNullOrAir(item))
 				return null;
 
 			for (CandyCane candyCane : values())

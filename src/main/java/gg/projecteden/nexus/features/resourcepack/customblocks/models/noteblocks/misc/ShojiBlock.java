@@ -11,8 +11,6 @@ import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
-import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
-
 @CustomBlockConfig(
 	name = "Shoji Block",
 	modelId = 20122
@@ -29,7 +27,7 @@ public class ShojiBlock implements ICraftableNoteBlock, IDirectionalNoteBlock {
 
 	@Override
 	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
-		return new Pair<>(shaped("121", "212", "121")
+		return new Pair<>(RecipeBuilder.shaped("121", "212", "121")
 			.add('1', Material.STICK)
 			.add('2', Material.PAPER)
 			.unlockedBy(getItemStack())

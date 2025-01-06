@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.listeners;
 
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.utils.Nullables;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -19,9 +20,6 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
-
-import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class Technoblade implements Listener {
 
@@ -69,7 +67,7 @@ public class Technoblade implements Listener {
 			return;
 
 		if (!wasSaddled(pig))
-			event.getDrops().removeIf(itemStack -> isNotNullOrAir(itemStack) && itemStack.getType() == Material.SADDLE);
+			event.getDrops().removeIf(itemStack -> Nullables.isNotNullOrAir(itemStack) && itemStack.getType() == Material.SADDLE);
 	}
 
 	@EventHandler
@@ -92,7 +90,7 @@ public class Technoblade implements Listener {
 			return;
 
 		final ItemStack item = event.getPlayer().getInventory().getItem(event.getHand());
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return;
 
 		if (item.getType() != Material.SADDLE)

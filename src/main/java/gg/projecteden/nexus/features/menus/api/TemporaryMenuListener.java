@@ -1,9 +1,11 @@
 package gg.projecteden.nexus.features.menus.api;
 
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.common.TemporaryListener;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -16,10 +18,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
-import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 public interface TemporaryMenuListener extends TemporaryListener {
 
@@ -40,9 +38,9 @@ public interface TemporaryMenuListener extends TemporaryListener {
 
 	default void open(int rows, List<ItemStack> contents) {
 		final int slots = rows * 9;
-		Inventory inv = Bukkit.createInventory(getInventoryHolder(), slots, colorize(getTitle()));
+		Inventory inv = Bukkit.createInventory(getInventoryHolder(), slots, StringUtils.colorize(getTitle()));
 
-		if (isNotNullOrEmpty(contents))
+		if (Nullables.isNotNullOrEmpty(contents))
 			inv.setContents(contents.subList(0, Math.min(contents.size(), slots)).toArray(ItemStack[]::new));
 
 		if (getInventoryHolder() instanceof CustomInventoryHolder custom)
@@ -82,7 +80,7 @@ public interface TemporaryMenuListener extends TemporaryListener {
 			return;
 
 		List<ItemStack> contents = Arrays.stream(event.getInventory().getContents())
-				.filter(item -> keepAirSlots() || isNotNullOrAir(item))
+				.filter(item -> keepAirSlots() || gg.projecteden.nexus.utils.Nullables.isNotNullOrAir(item))
 				.collect(Collectors.toList());
 
 		Nexus.unregisterTemporaryListener(this);

@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.clientside.models;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.clientside.ClientSideUser;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.parchment.HasLocation;
 import lombok.AllArgsConstructor;
 import net.minecraft.network.protocol.Packet;
@@ -10,20 +11,14 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.world.entity.Entity;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Painting;
-import org.bukkit.entity.Player;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.entity.*;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
-
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 @SuppressWarnings("unchecked")
 public interface IClientSideEntity<
@@ -95,7 +90,7 @@ public interface IClientSideEntity<
 
 		public static ClientSideEntityType of(EntityType entityType) {
 			if (!isSupportedType(entityType))
-				throw new InvalidInputException("Unsupported entity type &e" + camelCase(entityType));
+				throw new InvalidInputException("Unsupported entity type &e" + StringUtils.camelCase(entityType));
 
 			return valueOf(entityType.name());
 		}

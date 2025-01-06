@@ -2,13 +2,12 @@ package gg.projecteden.nexus.features.minigames.models.perks;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Flag.PrideFlagType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @AllArgsConstructor
 @Getter
@@ -35,7 +34,7 @@ public enum PerkCategory implements IHasPerkCategory {
 
 	@Override
 	public String toString() {
-		return camelCase(name());
+		return StringUtils.camelCase(name());
 	}
 
 	public boolean isExclusive() {

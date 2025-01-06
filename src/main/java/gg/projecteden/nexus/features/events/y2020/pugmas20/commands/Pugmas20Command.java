@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.events.y2020.pugmas20.menu.providers.Advent
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.AdventChest;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.AdventChest.District;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.Merchants.MerchantNPC;
+import gg.projecteden.nexus.features.events.y2020.pugmas20.models.QuestNPC;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.quests.LightTheTree;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor.Ornament;
@@ -23,13 +24,8 @@ import gg.projecteden.nexus.features.events.y2020.pugmas20.quests.TheMines;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.quests.TheMines.OreType;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.quests.ToyTesting;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
@@ -47,18 +43,8 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isBeforePugmas;
-import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isPastPugmas;
-import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isSecondChance;
-import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.showWaypoint;
-import static gg.projecteden.nexus.features.events.y2020.pugmas20.models.QuestNPC.getUnplayedToysList;
 
 @Disabled
 @NoArgsConstructor
@@ -85,7 +71,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	@Path
 	void pugmas() {
 		LocalDate now = LocalDate.now();
-		if (isBeforePugmas(now) && !isStaff())
+		if (Pugmas20.isBeforePugmas(now) && !isStaff())
 			error("Soon™ (" + timeLeft + ")");
 
 		if (pugmasUser.isWarped()) {
@@ -113,13 +99,13 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	void progress(@Arg(value = "self", permission = Group.STAFF) Pugmas20User user) {
 		LocalDate now = LocalDate.now();
 
-		if (isBeforePugmas(now))
+		if (Pugmas20.isBeforePugmas(now))
 			now = now.withYear(2020).withMonth(12).withDayOfMonth(1);
 
-		if (isPastPugmas(now))
+		if (Pugmas20.isPastPugmas(now))
 			error("Next year!");
 
-		if (isSecondChance(now))
+		if (Pugmas20.isSecondChance(now))
 			now = now.withYear(2020).withMonth(12).withDayOfMonth(25);
 
 		int day = now.getDayOfMonth();
@@ -177,7 +163,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 				}
 
 				if (quest == Pugmas20QuestStageHelper.TOY_TESTING && stage == QuestStage.STARTED) {
-					List<String> toysLeft = getUnplayedToysList(user);
+					List<String> toysLeft = QuestNPC.getUnplayedToysList(user);
 					toysLeft.add(0, "&6Toys left to test:");
 					json.next(" &7&o(Hover for info)").hover(toysLeft, ChatColor.WHITE);
 				}
@@ -254,13 +240,13 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		LocalDate now = LocalDate.now();
 
 		if (!isAdmin()) {
-			if (isBeforePugmas(now))
+			if (Pugmas20.isBeforePugmas(now))
 				error("Soon™ (" + timeLeft + ")");
 
-			if (isPastPugmas(now))
+			if (Pugmas20.isPastPugmas(now))
 				error("Next year!");
 
-			if (isSecondChance(now))
+			if (Pugmas20.isSecondChance(now))
 				now = now.withYear(2020).withMonth(12).withDayOfMonth(25);
 		}
 
@@ -325,14 +311,14 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		if (adventChest == null)
 			error("Advent chest is null");
 
-		showWaypoint(adventChest, player());
+		Pugmas20.showWaypoint(adventChest, player());
 	}
 
 	@Permission(Group.ADMIN)
 	@Path("waypoints")
 	void waypoint() {
 		for (AdventChest adventChest : AdventChests.adventChestList)
-			showWaypoint(adventChest, player());
+			Pugmas20.showWaypoint(adventChest, player());
 	}
 
 	@HideFromHelp

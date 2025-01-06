@@ -14,15 +14,8 @@ import gg.projecteden.nexus.features.store.gallery.StoreGallery;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStationMenu;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.costume.Costume;
@@ -30,14 +23,8 @@ import gg.projecteden.nexus.models.costume.Costume.CostumeType;
 import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -55,9 +42,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.features.resourcepack.models.CustomModel.ICON;
-import static gg.projecteden.nexus.models.costume.Costume.EXCLUSIVE;
 
 @NoArgsConstructor
 @Aliases("costumes")
@@ -253,7 +237,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 			List<ClickableItem> items = new ArrayList<>();
 
 			for (CustomModelFolder subfolder : folder.getFolders()) {
-				if (subfolder.getPath().contains(EXCLUSIVE))
+				if (subfolder.getPath().contains(Costume.EXCLUSIVE))
 					continue;
 
 				CustomModel firstModel = subfolder.getIcon(model -> isAvailableCostume(user, Costume.of(model)));
@@ -280,7 +264,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 			}
 
 			for (Costume costume : Costume.values()) {
-				if (costume.getModel().getFileName().equals(ICON))
+				if (costume.getModel().getFileName().equals(CustomModel.ICON))
 					continue;
 
 				if (!isAvailableCostume(user, costume))

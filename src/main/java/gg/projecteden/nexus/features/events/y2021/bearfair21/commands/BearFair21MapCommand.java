@@ -18,6 +18,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
@@ -36,10 +37,6 @@ import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.isNotAtBearFair;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.islands.BearFair21Renderer.getRenderer;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-
 @Disabled
 @HideFromWiki
 @Aliases("bf21map")
@@ -51,7 +48,7 @@ public class BearFair21MapCommand extends CustomCommand implements Listener {
 	public BearFair21MapCommand(@NonNull CommandEvent event) {
 		super(event);
 		if (isPlayerCommandEvent())
-			myRenderer = getRenderer(uuid());
+			myRenderer = BearFair21Renderer.getRenderer(uuid());
 	}
 
 	@Path
@@ -120,7 +117,7 @@ public class BearFair21MapCommand extends CustomCommand implements Listener {
 			return;
 		if (!itemFrame.getItem().isSimilar(grabACopy.build()))
 			return;
-		if (!isNullOrAir(findMap(player)))
+		if (!Nullables.isNullOrAir(findMap(player)))
 			return;
 
 		ItemStack item = getMap(player);
@@ -150,7 +147,7 @@ public class BearFair21MapCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
 		final Player player = event.getPlayer();
-		if (!isNotAtBearFair(player))
+		if (!BearFair21.isNotAtBearFair(player))
 			waitAndFixMap(player);
 	}
 
@@ -163,14 +160,14 @@ public class BearFair21MapCommand extends CustomCommand implements Listener {
 	private void waitAndFixMap(Player player) {
 		Tasks.wait(TickTime.SECOND.x(1), () -> {
 			if (player.isOnline())
-				if (!isNotAtBearFair(player))
+				if (!BearFair21.isNotAtBearFair(player))
 					fixMap(player);
 		});
 	}
 
 	private static void fixMap(Player player) {
 		final ItemStack item = findMap(player);
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return;
 
 		setupMap(player, item);
@@ -189,7 +186,7 @@ public class BearFair21MapCommand extends CustomCommand implements Listener {
 			if (mapRenderer instanceof BearFair21Renderer renderer)
 				renderer.deactivate();
 		view.getRenderers().clear();
-		view.addRenderer(getRenderer(player.getUniqueId()));
+		view.addRenderer(BearFair21Renderer.getRenderer(player.getUniqueId()));
 	}
 
 	private static ItemStack findMap(Player player) {
@@ -200,7 +197,7 @@ public class BearFair21MapCommand extends CustomCommand implements Listener {
 	}
 
 	private static boolean isMap(ItemStack itemStack) {
-		if (isNullOrAir(itemStack))
+		if (Nullables.isNullOrAir(itemStack))
 			return false;
 		if (itemStack.getType() != Material.FILLED_MAP)
 			return false;

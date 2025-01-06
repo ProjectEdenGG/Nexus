@@ -10,27 +10,13 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.location;
-import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.worldedit;
 
 /*
 -890, -2186
@@ -39,7 +25,7 @@ import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.world
  */
 public class Pugmas20Train {
 	// Options
-	private static final Location origin = location(900, 52, 375);
+	private static final Location origin = Pugmas20.location(900, 52, 375);
 	private static final int trainFrameTime = 0;
 	private static final int crossingFrameTime = 4;
 	private static final int crossingThreshold = 30;
@@ -65,28 +51,28 @@ public class Pugmas20Train {
 	private static final int x = origin.getBlockX();
 	private static final int y = origin.getBlockY();
 	private static final int z = origin.getBlockZ();
-	private static final Location trackStart = location(x - 94, y, z);
-	private static final Location trainEnter = location(x + 13, y, z);
-	private static final Location trainExit = location(x, y, z);
-	private static final Location trainStart = location(x + 13, y, z);
-	private static final Location crossingSE = location(x + 71, y, z + 6);
-	private static final Location crossingNE = location(x + 79, y, z - 6);
-	private static final Location crossingSW = location(x - 47, y, z + 6);
-	private static final Location crossingNW = location(x - 39, y, z - 6);
+	private static final Location trackStart = Pugmas20.location(x - 94, y, z);
+	private static final Location trainEnter = Pugmas20.location(x + 13, y, z);
+	private static final Location trainExit = Pugmas20.location(x, y, z);
+	private static final Location trainStart = Pugmas20.location(x + 13, y, z);
+	private static final Location crossingSE = Pugmas20.location(x + 71, y, z + 6);
+	private static final Location crossingNE = Pugmas20.location(x + 79, y, z - 6);
+	private static final Location crossingSW = Pugmas20.location(x - 47, y, z + 6);
+	private static final Location crossingNW = Pugmas20.location(x - 39, y, z - 6);
 	// Lights
 	private static final int lightY = crossingSW.getBlockY() + 5;
 	private static final List<Location> crossingLights1_1 = Arrays.asList(
-			location(crossingSW.getBlockX(), lightY, crossingSW.getBlockZ() - 1),
-			location(crossingNW.getBlockX(), lightY, crossingNW.getBlockZ() + 1));
+			Pugmas20.location(crossingSW.getBlockX(), lightY, crossingSW.getBlockZ() - 1),
+			Pugmas20.location(crossingNW.getBlockX(), lightY, crossingNW.getBlockZ() + 1));
 	private static final List<Location> crossingLights1_2 = Arrays.asList(
-			location(crossingSW.getBlockX() + 2, lightY, crossingSW.getBlockZ() - 1),
-			location(crossingNW.getBlockX() - 2, lightY, crossingNW.getBlockZ() + 1));
+			Pugmas20.location(crossingSW.getBlockX() + 2, lightY, crossingSW.getBlockZ() - 1),
+			Pugmas20.location(crossingNW.getBlockX() - 2, lightY, crossingNW.getBlockZ() + 1));
 	private static final List<Location> crossingLights2_1 = Arrays.asList(
-			location(crossingSE.getBlockX(), lightY, crossingSE.getBlockZ() - 1),
-			location(crossingNE.getBlockX(), lightY, crossingNE.getBlockZ() + 1));
+			Pugmas20.location(crossingSE.getBlockX(), lightY, crossingSE.getBlockZ() - 1),
+			Pugmas20.location(crossingNE.getBlockX(), lightY, crossingNE.getBlockZ() + 1));
 	private static final List<Location> crossingLights2_2 = Arrays.asList(
-			location(crossingSE.getBlockX() + 2, lightY, crossingSE.getBlockZ() - 1),
-			location(crossingNE.getBlockX() - 2, lightY, crossingNE.getBlockZ() + 1));
+			Pugmas20.location(crossingSE.getBlockX() + 2, lightY, crossingSE.getBlockZ() - 1),
+			Pugmas20.location(crossingNE.getBlockX() - 2, lightY, crossingNE.getBlockZ() + 1));
 	// Smoke
 	private static final AtomicReference<Block> trackLoc = new AtomicReference<>(trackStart.clone().getBlock());
 	private static final AtomicReference<Block> smokeLoc = new AtomicReference<>(trackLoc.get().getRelative(-9, 8, 0));
@@ -121,13 +107,13 @@ public class Pugmas20Train {
 		Queue<Paster> pasters = new LinkedList<>();
 
 		for (int i = 1; i <= 109; i++)
-			pasters.add(worldedit().paster().file(animationPath + "/Enter/TrainEnter_" + i).at(trainEnter));
+			pasters.add(Pugmas20.worldedit().paster().file(animationPath + "/Enter/TrainEnter_" + i).at(trainEnter));
 
 		for (int i = 1; i <= 95; i++)
-			pasters.add(worldedit().paster().file(animationPath + "/Train").at(trainStart.getBlock().getRelative(i, 0, 0).getLocation()));
+			pasters.add(Pugmas20.worldedit().paster().file(animationPath + "/Train").at(trainStart.getBlock().getRelative(i, 0, 0).getLocation()));
 
 		for (int i = 1; i <= 110; i++)
-			pasters.add(worldedit().paster().file(animationPath + "/Exit/TrainExit_" + i).at(trainExit));
+			pasters.add(Pugmas20.worldedit().paster().file(animationPath + "/Exit/TrainExit_" + i).at(trainExit));
 
 		Tasks.async(() -> animate(pasters));
 	}
@@ -238,16 +224,16 @@ public class Pugmas20Train {
 				onComplete = () -> animateLights1 = false;
 
 				for (int i = 1; i <= 7; i++) {
-					pasters.add(worldedit().paster().file(animationPath + "/Crossing/North_Opening_" + i).at(crossingNW));
-					pasters.add(worldedit().paster().file(animationPath + "/Crossing/South_Opening_" + i).at(crossingSW));
+					pasters.add(Pugmas20.worldedit().paster().file(animationPath + "/Crossing/North_Opening_" + i).at(crossingNW));
+					pasters.add(Pugmas20.worldedit().paster().file(animationPath + "/Crossing/South_Opening_" + i).at(crossingSW));
 				}
 			} else {
 				crossing1_closed = true;
 				animateLights1 = true;
 
 				for (int i = 1; i <= 7; i++) {
-					pasters.add(worldedit().paster().file(animationPath + "/Crossing/North_Closing_" + i).at(crossingNW));
-					pasters.add(worldedit().paster().file(animationPath + "/Crossing/South_Closing_" + i).at(crossingSW));
+					pasters.add(Pugmas20.worldedit().paster().file(animationPath + "/Crossing/North_Closing_" + i).at(crossingNW));
+					pasters.add(Pugmas20.worldedit().paster().file(animationPath + "/Crossing/South_Closing_" + i).at(crossingSW));
 				}
 			}
 		} else if (crossing == 2) {
@@ -256,16 +242,16 @@ public class Pugmas20Train {
 				onComplete = () -> animateLights2 = false;
 
 				for (int i = 1; i <= 7; i++) {
-					pasters.add(worldedit().paster().file(animationPath + "/Crossing/North_Opening_" + i).at(crossingNE));
-					pasters.add(worldedit().paster().file(animationPath + "/Crossing/South_Opening_" + i).at(crossingSE));
+					pasters.add(Pugmas20.worldedit().paster().file(animationPath + "/Crossing/North_Opening_" + i).at(crossingNE));
+					pasters.add(Pugmas20.worldedit().paster().file(animationPath + "/Crossing/South_Opening_" + i).at(crossingSE));
 				}
 			} else {
 				crossing2_closed = true;
 				animateLights2 = true;
 
 				for (int i = 1; i <= 7; i++) {
-					pasters.add(worldedit().paster().file(animationPath + "/Crossing/North_Closing_" + i).at(crossingNE));
-					pasters.add(worldedit().paster().file(animationPath + "/Crossing/South_Closing_" + i).at(crossingSE));
+					pasters.add(Pugmas20.worldedit().paster().file(animationPath + "/Crossing/North_Closing_" + i).at(crossingNE));
+					pasters.add(Pugmas20.worldedit().paster().file(animationPath + "/Crossing/South_Closing_" + i).at(crossingSE));
 				}
 			}
 		}

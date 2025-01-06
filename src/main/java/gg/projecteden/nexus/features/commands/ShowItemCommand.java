@@ -16,6 +16,7 @@ import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;
 import lombok.NonNull;
@@ -39,11 +40,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static gg.projecteden.nexus.features.discord.Discord.discordize;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-
 @Aliases("showenchants")
 public class ShowItemCommand extends CustomCommand {
 
@@ -64,7 +60,7 @@ public class ShowItemCommand extends CustomCommand {
 	@Description("Display an item in chat")
 	void run(String slot, String message) {
 		ItemStack item = getItem(player(), slot);
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			error("You're not holding anything in that slot");
 
 		if (message == null)
@@ -76,7 +72,7 @@ public class ShowItemCommand extends CustomCommand {
 
 		String itemName = item.getItemMeta().getDisplayName();
 		String material = StringUtils.camelCase(itemId);
-		if (isNullOrEmpty(itemName))
+		if (Nullables.isNullOrEmpty(itemName))
 			itemName = material;
 
 		int amount = item.getAmount();
@@ -98,7 +94,7 @@ public class ShowItemCommand extends CustomCommand {
 			.message(viewer -> json()
 				.next(channel.getChatterFormat(chatter, viewer == null ? null : new ChatterService().get(viewer), false))
 				.group()
-				.next((isNullOrEmpty(finalMessage) ? "" : finalMessage + " "))
+				.next((Nullables.isNullOrEmpty(finalMessage) ? "" : finalMessage + " "))
 				.next(color + "&l[" + finalItemName + color + (amount > 1 ? " x" + amount : "") + "&l]")
 				.hover(item))
 			.messageType(MessageType.CHAT)
@@ -121,7 +117,7 @@ public class ShowItemCommand extends CustomCommand {
 			String durability = String.valueOf(((int) item.getType().getMaxDurability()) - ((Damageable) item.getItemMeta()).getDamage());
 			durability += "/" + item.getType().getMaxDurability();
 
-			String discordName = stripColor(itemName) + " ";
+			String discordName = StringUtils.stripColor(itemName) + " ";
 			if (itemName.equalsIgnoreCase(item.getItemMeta().getDisplayName()))
 				discordName += "(" + material + ")";
 			if (amount > 1) discordName += " x" + amount;
@@ -138,7 +134,7 @@ public class ShowItemCommand extends CustomCommand {
 			message = IngameBridgeListener.parseMentions(message);
 
 			MessageBuilder content = new MessageBuilder()
-				.setContent(stripColor(user.getBridgeName() + " **>** " + discordize(message)))
+				.setContent(StringUtils.stripColor(user.getBridgeName() + " **>** " + Discord.discordize(message)))
 				.setEmbeds(embed.build());
 
 			Discord.send(content, channel.getDiscordTextChannel());
@@ -171,14 +167,14 @@ public class ShowItemCommand extends CustomCommand {
 			}
 		string.append(getLoreDiscord(data));
 
-		return stripColor(string.toString());
+		return StringUtils.stripColor(string.toString());
 	}
 
 	private String getLoreDiscord(ItemData data) {
 		StringBuilder string = new StringBuilder();
 		List<String> enchants = data.getEnchantsMap().keySet().stream().map(enchantment -> enchantment.getKey().getKey()).toList();
 		for (String line : data.getLoreList()) {
-			String _line = stripColor(line)
+			String _line = StringUtils.stripColor(line)
 				.replaceAll(" [IVXLC]+", "")
 				.replaceAll(" ", "_")
 				.toLowerCase();
@@ -203,11 +199,11 @@ public class ShowItemCommand extends CustomCommand {
 			default -> error("Unknown slot &e" + slot);
 		}
 
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			error("Item in " + slot + " not found");
 
 		ItemMeta meta = item.getItemMeta();
-		if (!meta.hasEnchants() && !meta.hasLore() && isNullOrEmpty(meta.getDisplayName()))
+		if (!meta.hasEnchants() && !meta.hasLore() && Nullables.isNullOrEmpty(meta.getDisplayName()))
 			error("Item must have enchants, lore, or a custom name");
 
 		return item;

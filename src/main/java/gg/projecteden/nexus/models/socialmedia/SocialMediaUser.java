@@ -8,6 +8,7 @@ import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,9 +18,6 @@ import lombok.RequiredArgsConstructor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.StringUtils.getDiscordPrefix;
 
 @Data
 @Entity(value = "social_media_user", noClassnameStored = true)
@@ -44,8 +42,8 @@ public class SocialMediaUser implements PlayerOwnedObject {
 	public void addConnection(SocialMediaSite site, String username) {
 		final Connection connection = new Connection(uuid, site, username);
 		connections.put(site, connection);
-		Discord.staffLog(getDiscordPrefix("SocialMedia") + getNickname() + " linked their " +
-			camelCase(site) + " account to " + connection.getDiscordUrl());
+		Discord.staffLog(StringUtils.getDiscordPrefix("SocialMedia") + getNickname() + " linked their " +
+			StringUtils.camelCase(site) + " account to " + connection.getDiscordUrl());
 	}
 
 	public void removeConnection(SocialMediaSite site) {

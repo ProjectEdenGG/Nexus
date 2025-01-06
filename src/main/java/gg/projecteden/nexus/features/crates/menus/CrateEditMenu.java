@@ -14,11 +14,7 @@ import gg.projecteden.nexus.features.menus.api.content.Pagination;
 import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
 import gg.projecteden.nexus.models.crate.CrateConfigService;
 import gg.projecteden.nexus.models.crate.CrateType;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
@@ -30,9 +26,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.loreize;
 
 @Title("Crate Editing")
 public class CrateEditMenu {
@@ -163,7 +156,7 @@ public class CrateEditMenu {
 		public void save(List<ItemStack> contents) {
 			List<ItemStack> items = new ArrayList<>();
 			for (int i = 9; i < 27; i++)
-				if (!isNullOrAir(contents.get(i)))
+				if (!Nullables.isNullOrAir(contents.get(i)))
 					items.add(contents.get(i));
 			editing.setItems(items);
 			CrateConfigService.get().save();
@@ -203,7 +196,7 @@ public class CrateEditMenu {
 					.build();
 			contents.set(0, 2, ClickableItem.of(displayItem, e -> {
 				InventoryClickEvent event = (InventoryClickEvent) e.getEvent();
-				ItemStack display = isNullOrAir(event.getCursor()) ? null : event.getCursor();
+				ItemStack display = Nullables.isNullOrAir(event.getCursor()) ? null : event.getCursor();
 				editing.setDisplayItem(display);
 				CrateConfigService.get().save();
 				Tasks.wait(1, () -> {
@@ -277,7 +270,7 @@ public class CrateEditMenu {
 						add("&7Use &e%player% &7for a player name");
 						add("&7Use &e%title% &7for a loot title");
 						add("&3Current Value:");
-						addAll(loreize(Strings.isNullOrEmpty(editing.getAnnouncement()) ? "" : editing.getAnnouncement()));
+						addAll(StringUtils.loreize(Strings.isNullOrEmpty(editing.getAnnouncement()) ? "" : editing.getAnnouncement()));
 					}}).build(),
 				e -> {
 					viewer.closeInventory();

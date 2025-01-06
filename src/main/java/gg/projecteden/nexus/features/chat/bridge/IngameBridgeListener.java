@@ -18,8 +18,6 @@ import org.bukkit.event.Listener;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static gg.projecteden.nexus.features.discord.Discord.discordize;
-
 @NoArgsConstructor
 public class IngameBridgeListener implements Listener {
 
@@ -32,7 +30,7 @@ public class IngameBridgeListener implements Listener {
 		DiscordUser user = new DiscordUserService().get(player);
 		RoleManager.update(user);
 
-		Discord.send(user.getBridgeName() + " **>** " + discordize(parseMentions(event.getMessage())), discordTextChannel);
+		Discord.send(user.getBridgeName() + " **>** " + Discord.discordize(parseMentions(event.getMessage())), discordTextChannel);
 	}
 
 	public static String parseMentions(String message) {

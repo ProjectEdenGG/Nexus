@@ -2,6 +2,8 @@ package gg.projecteden.nexus.models.jukebox;
 
 import com.xxmicloxx.NoteBlockAPI.model.Song;
 import com.xxmicloxx.NoteBlockAPI.utils.NBSDecoder;
+import gg.projecteden.nexus.utils.IOUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +16,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Stream;
-
-import static gg.projecteden.nexus.utils.IOUtils.getPluginFolder;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @RequiredArgsConstructor
@@ -35,7 +34,7 @@ public class JukeboxSong {
 	}
 
 	public String getName() {
-		if (!isNullOrEmpty(author))
+		if (!Nullables.isNullOrEmpty(author))
 			return author + " - " + title;
 		return title;
 	}
@@ -44,7 +43,7 @@ public class JukeboxSong {
 		final CompletableFuture<Void> future = new CompletableFuture<>();
 		Tasks.async(() -> {
 			SONGS.clear();
-			try (Stream<Path> paths = Files.walk(getPluginFolder("jukebox").toPath())) {
+			try (Stream<Path> paths = Files.walk(IOUtils.getPluginFolder("jukebox").toPath())) {
 				paths.forEach(path -> {
 					String fileName = path.getFileName().toString();
 					if (!fileName.contains(".nbs"))

@@ -41,7 +41,7 @@ public class VuLan24BoatTracker implements Listener {
 	}
 
 	private static void placeBoat(VuLan24User user, Location location) {
-		Entity entity = location.getWorld().spawnEntity(location, EntityType.BOAT);
+		Entity entity = location.getWorld().spawnEntity(location, EntityType.OAK_BOAT);
 		Boat boat = (Boat) entity;
 
 		boat.addPassenger(user.getPlayer());

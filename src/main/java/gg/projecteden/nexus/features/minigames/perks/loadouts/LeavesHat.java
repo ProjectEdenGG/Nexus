@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigames.perks.loadouts;
 
 import gg.projecteden.nexus.features.minigames.models.perks.common.HatMaterialPerk;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
@@ -9,8 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-
 @Getter
 @RequiredArgsConstructor
 public class LeavesHat implements HatMaterialPerk {
@@ -18,7 +17,7 @@ public class LeavesHat implements HatMaterialPerk {
 
 	@Override
 	public @NotNull String getName() {
-		return camelCase(getMaterial());
+		return StringUtils.camelCase(getMaterial());
 	}
 
 	@Override

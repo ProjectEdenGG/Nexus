@@ -58,7 +58,7 @@ public abstract class SpleefMechanic extends TeamlessMechanic {
 
 	@EventHandler
 	public void onEntityExplode(EntityExplodeEvent event) {
-		if (!event.getEntityType().equals(EntityType.PRIMED_TNT)) return;
+		if (!event.getEntityType().equals(EntityType.TNT)) return;
 
 		Match match = MatchManager.getActiveMatchFromLocation(this, event.getLocation());
 		if (match == null) return;
@@ -74,7 +74,7 @@ public abstract class SpleefMechanic extends TeamlessMechanic {
 
 	public void spawnTnt(Location location) {
 		Location spawnLocation = location.clone().toCenterLocation();
-		TNTPrimed tnt = (TNTPrimed) location.getWorld().spawnEntity(spawnLocation, EntityType.PRIMED_TNT, SpawnReason.DEFAULT);
+		TNTPrimed tnt = (TNTPrimed) location.getWorld().spawnEntity(spawnLocation, EntityType.TNT, SpawnReason.DEFAULT);
 		tnt.setYield(4);
 		tnt.setFuseTicks(0);
 	}

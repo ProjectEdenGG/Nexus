@@ -299,7 +299,7 @@ public class Checkers extends TeamMechanic {
 			CheckersPiece jumpedPiece = checkersMove.getJumpedPiece();
 
 			BlockData particleData = jumpedPiece.getTeam() == 1 ? Material.RED_WOOL.createBlockData() : Material.BLACK_CONCRETE_POWDER.createBlockData();
-			new ParticleBuilder(Particle.BLOCK_CRACK)
+			new ParticleBuilder(Particle.BLOCK)
 				.location(jumpedPiece.getArmorStand().getLocation().clone().add(0, 2, 0))
 				.allPlayers()
 				.count(50)
@@ -580,7 +580,7 @@ public class Checkers extends TeamMechanic {
 				double x = RandomUtils.randomDouble(-.3, .3);
 				double y = RandomUtils.randomDouble(-.3, .3);
 				double z = RandomUtils.randomDouble(-.3, .3);
-				new ParticleBuilder(Particle.REDSTONE)
+				new ParticleBuilder(Particle.DUST)
 					.location(this.armorStand.getLocation().clone().add(x, 2 + y, z))
 					.allPlayers()
 					.data(options)

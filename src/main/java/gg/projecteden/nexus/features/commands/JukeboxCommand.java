@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands;
 
 import com.xxmicloxx.NoteBlockAPI.event.SongEndEvent;
+import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.store.EventStoreItem;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -30,9 +31,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.features.events.EdenEvent.PREFIX_STORE;
-import static gg.projecteden.nexus.models.jukebox.JukeboxSong.SONGS;
 
 @NoArgsConstructor
 @Aliases({"song", "songs"})
@@ -71,16 +69,16 @@ public class JukeboxCommand extends CustomCommand implements Listener {
 	@Path("reload")
 	@Permission(Group.ADMIN)
 	void reload() {
-		JukeboxSong.reload().thenRun(() -> send(PREFIX + "Loaded &e" + SONGS.size() + " &3songs"));
+		JukeboxSong.reload().thenRun(() -> send(PREFIX + "Loaded &e" + JukeboxSong.SONGS.size() + " &3songs"));
 	}
 
 	@Path("list [page]")
 	@Description("View your owned songs")
 	void list(@Arg("1") int page) {
-		if (SONGS.isEmpty())
+		if (JukeboxSong.SONGS.isEmpty())
 			error("No songs loaded");
 
-		final List<JukeboxSong> songs = SONGS.stream()
+		final List<JukeboxSong> songs = JukeboxSong.SONGS.stream()
 			.filter(song -> user.owns(song))
 			.toList();
 
@@ -111,10 +109,10 @@ public class JukeboxCommand extends CustomCommand implements Listener {
 	@Path("store [page]")
 	@Description("View the jukebox store")
 	void store(@Arg("1") int page) {
-		if (SONGS.isEmpty())
+		if (JukeboxSong.SONGS.isEmpty())
 			error("No songs loaded");
 
-		final List<JukeboxSong> songs = SONGS.stream()
+		final List<JukeboxSong> songs = JukeboxSong.SONGS.stream()
 			.filter(song -> !user.owns(song))
 			.toList();
 
@@ -137,7 +135,7 @@ public class JukeboxCommand extends CustomCommand implements Listener {
 	@Description("Preview a song")
 	void store_preview(JukeboxSong song) {
 		user.preview(song);
-		send(json(PREFIX_STORE + "Playing &e" + song.getName() + " ")
+		send(json(EdenEvent.PREFIX_STORE + "Playing &e" + song.getName() + " ")
 			.group().next(stopButton())
 			.group().next(" ")
 			.group().next(buyButton(song)));
@@ -153,14 +151,14 @@ public class JukeboxCommand extends CustomCommand implements Listener {
 		new EventUserService().edit(user, eventUser -> eventUser.charge(EventStoreItem.SONGS.getPrice()));
 		user.give(song);
 		service.save(user);
-		send(PREFIX_STORE + "Purchased song &e" + song.getName() + "&3. Play with &c/song play " + song.getName());
+		send(EdenEvent.PREFIX_STORE + "Purchased song &e" + song.getName() + "&3. Play with &c/song play " + song.getName());
 	}
 
 	@Path("stop")
 	@Description("Stop playing a song")
 	void stop() {
 		if (user.cancel())
-			send(PREFIX_STORE + "Song stopped");
+			send(EdenEvent.PREFIX_STORE + "Song stopped");
 		else
 			error("No song is playing");
 	}
@@ -212,7 +210,7 @@ public class JukeboxCommand extends CustomCommand implements Listener {
 	@Override
 	public String getPrefix() {
 		if ("store".equalsIgnoreCase(arg(1)))
-			return PREFIX_STORE;
+			return EdenEvent.PREFIX_STORE;
 		return super.getPrefix();
 	}
 
@@ -226,7 +224,7 @@ public class JukeboxCommand extends CustomCommand implements Listener {
 
 	@TabCompleterFor(JukeboxSong.class)
 	List<String> tabCompleteJukeboxSong(String filter) {
-		return SONGS.stream()
+		return JukeboxSong.SONGS.stream()
 				.map(JukeboxSong::getName)
 				.filter(song -> song.toLowerCase().contains(filter.toLowerCase()))
 			.collect(Collectors.toList());

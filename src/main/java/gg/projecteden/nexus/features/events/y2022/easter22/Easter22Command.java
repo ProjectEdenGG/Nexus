@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.y2022.easter22;
 import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.IEventCommand;
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
@@ -21,11 +22,7 @@ import gg.projecteden.nexus.models.easter22.Easter22UserService;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -37,10 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
-
-import static gg.projecteden.nexus.features.menus.MenuUtils.handleException;
-import static gg.projecteden.nexus.utils.StringUtils.getCoordinateString;
-import static gg.projecteden.nexus.utils.StringUtils.getTeleportCommand;
 
 @Disabled
 @NoArgsConstructor
@@ -78,8 +71,8 @@ public class Easter22Command extends IEventCommand {
 
 		send(PREFIX + "Most found eggs");
 		BiFunction<Location, String, JsonBuilder> formatter = (location, index) ->
-				json(index + " &e" + getCoordinateString(location) + " &7- " + counts.get(location))
-						.command(getTeleportCommand(location))
+				json(index + " &e" + StringUtils.getCoordinateString(location) + " &7- " + counts.get(location))
+						.command(StringUtils.getTeleportCommand(location))
 						.hover("&eClick to teleport");
 		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/easter topLocations", page);
 	}
@@ -119,7 +112,7 @@ public class Easter22Command extends IEventCommand {
 									Mail.fromServer(viewer.getUniqueId(), WorldGroup.SURVIVAL, egg).send();
 									PlayerUtils.send(viewer, PREFIX + "Your egg has been mailed to you in Survival");
 								} catch (InvalidInputException ex) {
-									handleException(viewer, PREFIX, ex);
+									MenuUtils.handleException(viewer, PREFIX, ex);
 								}
 							})
 							.onFinally(e2 -> open(viewer, contents.pagination().getPage()))

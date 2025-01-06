@@ -8,12 +8,8 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.utils.LocationUtils;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import gg.projecteden.nexus.utils.Nullables;
+import lombok.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Rotation;
@@ -24,8 +20,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity(value = "bearfair21_clientside_content", noClassnameStored = true)
@@ -82,7 +76,7 @@ public class ClientsideContent implements PlayerOwnedObject {
 		}
 
 		public boolean isSchematic() {
-			return !isNullOrEmpty(schematic);
+			return !Nullables.isNullOrEmpty(schematic);
 		}
 
 		public boolean isItemFrame() {

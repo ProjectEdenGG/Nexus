@@ -24,8 +24,6 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-
 public class DecoratedPot implements Listener {
 
 	/*
@@ -40,7 +38,7 @@ public class DecoratedPot implements Listener {
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
 			return;
 
-		if (isNullOrAir(block))
+		if (Nullables.isNullOrAir(block))
 			return;
 
 		if (!(block.getBlockData() instanceof Directional directional))
@@ -117,7 +115,7 @@ public class DecoratedPot implements Listener {
 			decoratedPot.getInventory().setItem(null);
 			tool.setType(Material.WATER_BUCKET);
 			new SoundBuilder(Sound.ITEM_BUCKET_FILL).location(block).volume(0.5).pitch(0.7).play();
-			new ParticleBuilder(Particle.REDSTONE).location(block.getLocation().clone().add(0.5, 1.2, 0.5)).count(7).color(Color.WHITE).extra(0).spawn();
+			new ParticleBuilder(Particle.DUST).location(block.getLocation().clone().add(0.5, 1.2, 0.5)).count(7).color(Color.WHITE).extra(0).spawn();
 
 			// Fill Pot
 		} else if (toolType == Material.WATER_BUCKET && !containsItem) {
@@ -126,7 +124,7 @@ public class DecoratedPot implements Listener {
 			tool.setType(Material.BUCKET);
 
 			new SoundBuilder(Sound.BLOCK_DECORATED_POT_INSERT).location(block).volume(0.5).pitch(0.7).play();
-			new ParticleBuilder(Particle.REDSTONE).location(block.getLocation().clone().add(0.5, 1.2, 0.5)).count(7).color(Color.WHITE).extra(0).spawn();
+			new ParticleBuilder(Particle.DUST).location(block.getLocation().clone().add(0.5, 1.2, 0.5)).count(7).color(Color.WHITE).extra(0).spawn();
 		}
 	}
 

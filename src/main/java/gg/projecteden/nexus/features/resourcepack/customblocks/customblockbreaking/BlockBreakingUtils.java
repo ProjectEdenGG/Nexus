@@ -12,21 +12,21 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class BlockBreakingUtils {
 	public static void addSlowDig(Player player, int duration) {
-		if (player.hasPotionEffect(PotionEffectType.SLOW_DIGGING))
+		if (player.hasPotionEffect(PotionEffectType.MINING_FATIGUE))
 			removeSlowDig(player);
 
-		player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, duration, -1, false, false, false));
+		player.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, duration, -1, false, false, false));
 	}
 
 	public static void removeSlowDig(Player player) {
-		player.removePotionEffect(PotionEffectType.SLOW_DIGGING);
+		player.removePotionEffect(PotionEffectType.MINING_FATIGUE);
 	}
 
 	public static void sendBreakPacket(int animation, Block block) {
@@ -50,7 +50,7 @@ public class BlockBreakingUtils {
 
 			// Block breaking particles appear for everyone except for the person breaking the block, most of the time
 			// 	so until a better solution if found, we'll just play particles for the player breaking the block
-			player.spawnParticle(Particle.BLOCK_CRACK, loc, 25, 0.25, 0.25, 0.25, 0.1, blockData);
+			player.spawnParticle(Particle.BLOCK, loc, 25, 0.25, 0.25, 0.25, 0.1, blockData);
 		}
 	}
 

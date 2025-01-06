@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.models;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.admin.BashCommand;
+import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.survival.MobNets;
 import gg.projecteden.nexus.features.titan.ClientMessage;
 import gg.projecteden.nexus.features.titan.clientbound.SaturnUpdate;
@@ -13,6 +14,7 @@ import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ImageUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.SneakyThrows;
 
@@ -26,10 +28,6 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.features.resourcepack.ResourcePack.URL;
-import static gg.projecteden.nexus.features.resourcepack.ResourcePack.hash;
-import static gg.projecteden.nexus.utils.StringUtils.listLast;
 
 public class Saturn {
 	public static final String DIRECTORY = "/home/minecraft/git/Saturn" + (Nexus.getEnv() == Env.PROD ? "" : "-" + Nexus.getEnv()) + "/";
@@ -131,7 +129,7 @@ public class Saturn {
 			final Consumer<String> writer = directory -> {
 				try {
 					final String path = directory + "/" + entry.getKey().replaceAll("//", "/").replaceAll("//", "/");
-					execute("mkdir -p " + path.replace(listLast(path, "/"), ""));
+					execute("mkdir -p " + path.replace(StringUtils.listLast(path, "/"), ""));
 
 					if (entry.getValue() instanceof String content)
 						Files.write(Paths.get(path), content.getBytes());
@@ -151,9 +149,9 @@ public class Saturn {
 	}
 
 	public static void updateHash() {
-		hash = Utils.createSha1(URL);
+		ResourcePack.hash = Utils.createSha1(ResourcePack.URL);
 
-		if (hash == null)
+		if (ResourcePack.hash == null)
 			throw new InvalidInputException("Resource pack hash is null");
 	}
 

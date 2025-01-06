@@ -22,9 +22,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
-import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
-
 @NoArgsConstructor
 public class DyeStation extends CustomBench implements ICraftableCustomBench {
 	public static final String USAGE_LORE = "&3Used in Dye Station";
@@ -94,7 +91,7 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 
 	@Override
 	public RecipeBuilder<?> getBenchRecipe() {
-		return shaped("123", "444", "555")
+		return RecipeBuilder.shaped("123", "444", "555")
 			.add('1', getMagicDye().build())
 			.add('2', getMagicStain().build())
 			.add('3', getMagicMineral().build())
@@ -109,21 +106,21 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 
 		// Magic Dye
 		recipes.add(
-			shapeless(Material.GLASS_BOTTLE, Material.RED_DYE, Material.ORANGE_DYE, Material.YELLOW_DYE,
+			RecipeBuilder.shapeless(Material.GLASS_BOTTLE, Material.RED_DYE, Material.ORANGE_DYE, Material.YELLOW_DYE,
 				Material.GREEN_DYE, Material.CYAN_DYE, Material.BLUE_DYE, Material.PURPLE_DYE, Material.PINK_DYE)
 				.toMake(DyeStation.getMagicDye().build())
 		);
 
 		// Magic Stain
 		recipes.add(
-			shapeless(Material.GLASS_BOTTLE, Material.OAK_PLANKS, Material.SPRUCE_PLANKS, Material.BIRCH_PLANKS,
+			RecipeBuilder.shapeless(Material.GLASS_BOTTLE, Material.OAK_PLANKS, Material.SPRUCE_PLANKS, Material.BIRCH_PLANKS,
 				Material.DARK_OAK_PLANKS, Material.OAK_SAPLING, Material.SPRUCE_SAPLING, Material.BIRCH_SAPLING, Material.DARK_OAK_SAPLING)
 				.toMake(DyeStation.getMagicStain().build())
 		);
 
 		// Magic Mineral
 		recipes.add(
-			shapeless(Material.GLASS_BOTTLE, Material.COAL, Material.IRON_INGOT, Material.COPPER_INGOT,
+			RecipeBuilder.shapeless(Material.GLASS_BOTTLE, Material.COAL, Material.IRON_INGOT, Material.COPPER_INGOT,
 				Material.GOLD_INGOT, Material.EMERALD, Material.LAPIS_LAZULI, Material.AMETHYST_SHARD, Material.QUARTZ)
 				.toMake(DyeStation.getMagicMineral().build())
 		);

@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.features.commands.AgeCommand.ServerAge;
@@ -22,6 +23,7 @@ import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
@@ -37,11 +39,6 @@ import java.util.Map;
 import java.util.OptionalDouble;
 import java.util.UUID;
 import java.util.function.BiFunction;
-
-import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
-import static gg.projecteden.api.common.utils.TimeUtils.dateFormat;
-import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Aliases("hoh")
 public class HallOfHistoryCommand extends CustomCommand {
@@ -70,9 +67,9 @@ public class HallOfHistoryCommand extends CustomCommand {
 
 		if (nerd.hasNickname())
 			send("  &eIGN: &3" + nerd.getName());
-		if (isNotNullOrEmpty(nerd.getPronouns()))
+		if (gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty(nerd.getPronouns()))
 			send("  &ePronouns: &3" + String.join(", ", nerd.getPronouns().stream().map(Enum::toString).toList()));
-		if (isNotNullOrEmpty(nerd.getFilteredPreferredNames()))
+		if (gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty(nerd.getFilteredPreferredNames()))
 			send(plural("  &ePreferred name", nerd.getFilteredPreferredNames().size()) + ": &3" + String.join(", ", nerd.getFilteredPreferredNames()));
 
 		line();
@@ -85,14 +82,14 @@ public class HallOfHistoryCommand extends CustomCommand {
 				builder.next("  &c[x]").command("/hoh removerank " + target.getName() + " " + getRankCommandArgs(rankHistory));
 
 			send(builder);
-			send("    &ePromotion Date: &3" + shortDateFormat(rankHistory.getPromotionDate()));
+			send("    &ePromotion Date: &3" + TimeUtils.shortDateFormat(rankHistory.getPromotionDate()));
 			if (rankHistory.getResignationDate() != null)
-				send("    &eResignation Date: &3" + shortDateFormat(rankHistory.getResignationDate()));
+				send("    &eResignation Date: &3" + TimeUtils.shortDateFormat(rankHistory.getResignationDate()));
 		}
 
 		line();
 
-		if (!isNullOrEmpty(nerd.getAbout()))
+		if (!Nullables.isNullOrEmpty(nerd.getAbout()))
 			send("  &eAbout me: &3" + nerd.getAbout());
 		if (nerd.isMeetMeVideo()) {
 			line();
@@ -144,9 +141,9 @@ public class HallOfHistoryCommand extends CustomCommand {
 	private String getRankCommandArgs(RankHistory rankHistory) {
 		String command = (rankHistory.isCurrent() ? "Current" : "Former") + " " + rankHistory.getRank() + " ";
 		if (rankHistory.getPromotionDate() != null)
-			command += dateFormat(rankHistory.getPromotionDate()) + " ";
+			command += TimeUtils.dateFormat(rankHistory.getPromotionDate()) + " ";
 		if (rankHistory.getResignationDate() != null)
-			command += dateFormat(rankHistory.getResignationDate());
+			command += TimeUtils.dateFormat(rankHistory.getResignationDate());
 		return command.trim();
 	}
 

@@ -4,9 +4,7 @@ import com.google.gson.Gson;
 import gg.projecteden.nexus.features.survival.strongholds.StrongholdFixer.OldStrongholdConfig.OldStrongholdWorld;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.utils.IOUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
@@ -23,12 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static java.util.Comparator.comparing;
 
 /*
 	To get all stronghold locations:
@@ -100,14 +94,14 @@ public class StrongholdFixer extends Feature implements Listener {
 		if (Vanish.isVanished(player))
 			return;
 
-		if (isNullOrAir(event.getItem()))
+		if (Nullables.isNullOrAir(event.getItem()))
 			return;
 
 		if (event.getItem().getType() != Material.ENDER_EYE)
 			return;
 
 		Block block = event.getClickedBlock();
-		if (isNotNullOrAir(block) && block.getType() == Material.END_PORTAL_FRAME)
+		if (Nullables.isNotNullOrAir(block) && block.getType() == Material.END_PORTAL_FRAME)
 			return;
 
 		OldStrongholdWorld handledWorld = config.getWorlds().stream()
@@ -127,7 +121,7 @@ public class StrongholdFixer extends Feature implements Listener {
 			.toList();
 
 
-		final Location nearest = Collections.min(reachable, comparing(stronghold -> distance(player, stronghold).get()));
+		final Location nearest = Collections.min(reachable, Comparator.comparing(stronghold -> Distance.distance(player, stronghold).get()));
 
 		if (nearest == null) {
 			PlayerUtils.send(player, "&cNo stronghold could be found");

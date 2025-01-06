@@ -13,36 +13,16 @@ import gg.projecteden.nexus.models.voter.Voter;
 import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.models.wallsofgrace.WallsOfGrace;
 import gg.projecteden.nexus.models.wallsofgrace.WallsOfGraceService;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import gg.projecteden.nexus.utils.*;
+import lombok.*;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
-
-import static gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils.asBoolean;
-import static gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils.asLocalDateTime;
-import static gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils.asString;
-import static gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils.asStringArrayList;
-import static gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils.asStringLinkedHashSet;
-import static gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils.asTrimmedString;
-import static gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils.valueOf;
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -66,19 +46,19 @@ public class ReminderConfig {
 	}
 
 	public List<Reminder> getReminders() {
-		return reminders.stream().filter(Reminder::isReminder).collect(toList());
+		return reminders.stream().filter(Reminder::isReminder).collect(Collectors.toList());
 	}
 
 	public List<Reminder> getMotds() {
-		return reminders.stream().filter(Reminder::isMotd).collect(toList());
+		return reminders.stream().filter(Reminder::isMotd).collect(Collectors.toList());
 	}
 
 	public List<Reminder> getReminders(Player player) {
-		return getReminders().stream().filter(reminder -> reminder.test(player)).collect(toList());
+		return getReminders().stream().filter(reminder -> reminder.test(player)).collect(Collectors.toList());
 	}
 
 	public List<Reminder> getMotds(Player player) {
-		return getMotds().stream().filter(reminder -> reminder.test(player)).collect(toList());
+		return getMotds().stream().filter(reminder -> reminder.test(player)).collect(Collectors.toList());
 	}
 
 	public void add(Reminder reminder) {
@@ -156,7 +136,7 @@ public class ReminderConfig {
 		);
 
 		private static ReminderCondition asReminderCondition(Iterator<Object> iterator, String id) {
-			String condition = asTrimmedString(iterator);
+			String condition = GoogleUtils.SheetsUtils.asTrimmedString(iterator);
 			try {
 				return condition != null ? Reminder.ReminderCondition.valueOf(condition) : null;
 			} catch (IllegalArgumentException ex) {
@@ -170,17 +150,17 @@ public class ReminderConfig {
 			final ReminderBuilder builder = Reminder.builder();
 
 			builder
-				.id(asTrimmedString(iterator))
-				.text(asTrimmedString(iterator))
-				.command(asTrimmedString(iterator))
-				.suggest(asString(iterator))
-				.url(asTrimmedString(iterator))
-				.hover(asStringArrayList(iterator))
-				.enabled(asBoolean(iterator, true))
-				.showPermissions(asStringLinkedHashSet(iterator))
-				.hidePermissions(asStringLinkedHashSet(iterator))
-				.startTime(asLocalDateTime(iterator))
-				.endTime(asLocalDateTime(iterator))
+				.id(GoogleUtils.SheetsUtils.asTrimmedString(iterator))
+				.text(GoogleUtils.SheetsUtils.asTrimmedString(iterator))
+				.command(GoogleUtils.SheetsUtils.asTrimmedString(iterator))
+				.suggest(GoogleUtils.SheetsUtils.asString(iterator))
+				.url(GoogleUtils.SheetsUtils.asTrimmedString(iterator))
+				.hover(GoogleUtils.SheetsUtils.asStringArrayList(iterator))
+				.enabled(GoogleUtils.SheetsUtils.asBoolean(iterator, true))
+				.showPermissions(GoogleUtils.SheetsUtils.asStringLinkedHashSet(iterator))
+				.hidePermissions(GoogleUtils.SheetsUtils.asStringLinkedHashSet(iterator))
+				.startTime(GoogleUtils.SheetsUtils.asLocalDateTime(iterator))
+				.endTime(GoogleUtils.SheetsUtils.asLocalDateTime(iterator))
 				.condition(asReminderCondition(iterator, builder.id))
 				.motd(motd);
 
@@ -189,20 +169,20 @@ public class ReminderConfig {
 
 		public List<Object> serialize() {
 			return List.of(
-				valueOf(id),
-				valueOf(text),
-				valueOf(command),
-				valueOf(suggest),
-				valueOf(url),
-				valueOf(hover),
-				valueOf(enabled),
-				valueOf(showPermissions),
-				valueOf(hidePermissions),
-				valueOf(startTime == null ? null : startTime.toLocalDate()),
-				valueOf(startTime == null ? null : startTime.toLocalTime()),
-				valueOf(endTime == null ? null : endTime.toLocalDate()),
-				valueOf(endTime == null ? null : endTime.toLocalTime()),
-				valueOf(condition)
+				GoogleUtils.SheetsUtils.valueOf(id),
+				GoogleUtils.SheetsUtils.valueOf(text),
+				GoogleUtils.SheetsUtils.valueOf(command),
+				GoogleUtils.SheetsUtils.valueOf(suggest),
+				GoogleUtils.SheetsUtils.valueOf(url),
+				GoogleUtils.SheetsUtils.valueOf(hover),
+				GoogleUtils.SheetsUtils.valueOf(enabled),
+				GoogleUtils.SheetsUtils.valueOf(showPermissions),
+				GoogleUtils.SheetsUtils.valueOf(hidePermissions),
+				GoogleUtils.SheetsUtils.valueOf(startTime == null ? null : startTime.toLocalDate()),
+				GoogleUtils.SheetsUtils.valueOf(startTime == null ? null : startTime.toLocalTime()),
+				GoogleUtils.SheetsUtils.valueOf(endTime == null ? null : endTime.toLocalDate()),
+				GoogleUtils.SheetsUtils.valueOf(endTime == null ? null : endTime.toLocalTime()),
+				GoogleUtils.SheetsUtils.valueOf(condition)
 			);
 		}
 

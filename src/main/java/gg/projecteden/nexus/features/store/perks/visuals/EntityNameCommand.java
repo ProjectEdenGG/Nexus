@@ -2,18 +2,15 @@ package gg.projecteden.nexus.features.store.perks.visuals;
 
 import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
+import gg.projecteden.nexus.features.listeners.Restrictions;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
 import gg.projecteden.nexus.utils.StringUtils.Rainbow;
 import lombok.NonNull;
@@ -27,14 +24,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-import static gg.projecteden.nexus.features.listeners.Restrictions.isPerkAllowedAt;
-import static gg.projecteden.nexus.features.store.perks.visuals.EntityNameCommand.PERMISSION;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.applyFormattingToAll;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-
 @Aliases("nameentity")
-@Permission(PERMISSION)
+@Permission(EntityNameCommand.PERMISSION)
 @WikiConfig(rank = "Store", feature = "Visuals")
 public class EntityNameCommand extends CustomCommand {
 	public static final String PERMISSION = "entityname.use";
@@ -74,17 +65,17 @@ public class EntityNameCommand extends CustomCommand {
 			@Switch boolean italic,
 			@Switch boolean magic
 	) {
-		input = applyFormattingToAll(input, bold, strikethrough, underline, italic, magic);
+		input = StringUtils.applyFormattingToAll(input, bold, strikethrough, underline, italic, magic);
 		verify(input);
 
 		if (targetEntity instanceof ItemFrame itemFrame) {
 			ItemStack item = itemFrame.getItem();
-			if (isNullOrAir(item))
+			if (Nullables.isNullOrAir(item))
 				error("Empty item frames cannot be renamed");
 			ItemBuilder.setName(item, input);
 			itemFrame.setItem(item);
 		} else {
-			targetEntity.setCustomName(colorize(input));
+			targetEntity.setCustomName(StringUtils.colorize(input));
 			targetEntity.setCustomNameVisible(input != null);
 
 			if (targetEntity instanceof LivingEntity livingEntity) {
@@ -147,7 +138,7 @@ public class EntityNameCommand extends CustomCommand {
 			error("Inappropriate input");
 		}
 
-		if (!isPerkAllowedAt(player(), location()))
+		if (!Restrictions.isPerkAllowedAt(player(), location()))
 			error("This command is not allowed here");
 	}
 

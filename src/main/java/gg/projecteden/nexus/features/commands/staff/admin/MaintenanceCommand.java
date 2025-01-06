@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
 import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
@@ -17,6 +18,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import lombok.Getter;
@@ -30,9 +32,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @NoArgsConstructor
 @Permission(Group.ADMIN)
@@ -69,7 +68,7 @@ public class MaintenanceCommand extends CustomCommand implements Listener {
 		if (!queued || shuttingDown) return;
 
 		final List<ReloadCondition> conditions = MaintenanceCommand.conditions.stream()
-			.filter(condition -> isNullOrEmpty(excludedConditions) || !excludedConditions.contains(condition))
+			.filter(condition -> Nullables.isNullOrEmpty(excludedConditions) || !excludedConditions.contains(condition))
 			.toList();
 
 		conditions.forEach(ReloadCondition::run);
@@ -83,7 +82,7 @@ public class MaintenanceCommand extends CustomCommand implements Listener {
 			shuttingDown = false;
 			conditions.forEach(ReloadCondition::run);
 			for (Player player : OnlinePlayers.getAll())
-				player.kickPlayer(colorize("&6&lShutting down server for maintenance!\n&eCheck Discord for updates\n&f\n&7" + TimeUtils.shortDateTimeFormat(LocalDateTime.now()) + " EST"));
+				player.kickPlayer(StringUtils.colorize("&6&lShutting down server for maintenance!\n&eCheck Discord for updates\n&f\n&7" + TimeUtils.shortDateTimeFormat(LocalDateTime.now()) + " EST"));
 			PlayerUtils.runCommandAsConsole("stop");
 		});
 	}

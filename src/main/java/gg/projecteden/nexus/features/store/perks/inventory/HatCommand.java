@@ -8,6 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -24,11 +25,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import static gg.projecteden.nexus.features.store.perks.inventory.HatCommand.PERMISSION;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-
 @NoArgsConstructor
-@Permission(PERMISSION)
+@Permission(HatCommand.PERMISSION)
 @WikiConfig(rank = "Store", feature = "Inventory")
 public class HatCommand extends CustomCommand implements Listener {
 	public static final String PERMISSION = "essentials.hat";
@@ -49,13 +47,13 @@ public class HatCommand extends CustomCommand implements Listener {
 		final ItemStack hand = inv.getItem(slot);
 		final ItemStack air = new ItemStack(Material.AIR);
 
-		if (!isNullOrAir(hat))
+		if (!Nullables.isNullOrAir(hat))
 			if (hat.getEnchantments().containsKey(Enchantment.BINDING_CURSE))
 				if (!isStaff())
 					error("You cannot remove your hat, as it has the Curse of Binding!");
 
-		if (isNullOrAir(hand))
-			if (isNullOrAir(hat))
+		if (Nullables.isNullOrAir(hand))
+			if (Nullables.isNullOrAir(hat))
 				error("There is nothing on your head or in your hand");
 			else {
 				inv.setHelmet(air);
@@ -77,11 +75,11 @@ public class HatCommand extends CustomCommand implements Listener {
 		final ItemStack hand = getTool();
 		final ItemStack air = new ItemStack(Material.AIR);
 
-		if (isNullOrAir(hat))
+		if (Nullables.isNullOrAir(hat))
 			error("You do not have a hat");
 
 		inv.setHelmet(air);
-		if (isNullOrAir(hand))
+		if (Nullables.isNullOrAir(hand))
 			inv.setItemInMainHand(hat);
 		else
 			PlayerUtils.giveItem(player(), hat);
@@ -97,7 +95,7 @@ public class HatCommand extends CustomCommand implements Listener {
 		Player player = (Player) event.getWhoClicked();
 		if (event.getClick() != ClickType.LEFT) return;
 		if (event.getSlot() != 39) return;
-		if (isNullOrAir(event.getCursor())) return;
+		if (Nullables.isNullOrAir(event.getCursor())) return;
 		if (MaterialTag.SKULLS.isTagged(event.getCursor().getType())) return;
 		if (!(clickedInventory instanceof PlayerInventory playerInventory)) return;
 		if (isPreventBindingHat(player, playerInventory))
@@ -106,7 +104,7 @@ public class HatCommand extends CustomCommand implements Listener {
 
 		event.setCancelled(true);
 		final PlayerInventory inv = (PlayerInventory) clickedInventory;
-		final ItemStack head = isNullOrAir(inv.getHelmet()) ? new ItemStack(Material.AIR) : inv.getHelmet().clone();
+		final ItemStack head = Nullables.isNullOrAir(inv.getHelmet()) ? new ItemStack(Material.AIR) : inv.getHelmet().clone();
 		inv.setHelmet(event.getCursor().clone());
 		event.setCursor(head);
 	}

@@ -61,7 +61,7 @@ public abstract class TeamVanillaMechanic extends TeamMechanic implements Vanill
 	@Override
 	public void spreadPlayers(@NotNull Match match) {
 		match.getMinigamers().forEach(minigamer -> {
-			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.DAMAGE_RESISTANCE).duration(TickTime.SECOND.x(20)).amplifier(10));
+			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.RESISTANCE).duration(TickTime.SECOND.x(20)).amplifier(10));
 			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(TickTime.SECOND.x(5)).amplifier(10));
 			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.LEVITATION).duration(TickTime.SECOND.x(5)).amplifier(255));
 

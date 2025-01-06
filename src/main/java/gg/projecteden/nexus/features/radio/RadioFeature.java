@@ -33,14 +33,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.features.radio.RadioUtils.addPlayer;
-import static gg.projecteden.nexus.features.radio.RadioUtils.getRadios;
-import static gg.projecteden.nexus.features.radio.RadioUtils.isInRangeOfRadiusRadio;
-import static gg.projecteden.nexus.features.radio.RadioUtils.isListening;
-import static gg.projecteden.nexus.features.radio.RadioUtils.removePlayer;
-import static gg.projecteden.nexus.features.radio.RadioUtils.setRadioDefaults;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-
 // TODO: fix bugs when switching between local and server radios
 // TODO: display what song of the playlist is currently playing
 
@@ -76,7 +68,7 @@ public class RadioFeature extends Feature {
 
 			// Radio Particles Task
 			Tasks.repeat(0, TickTime.TICK.x(5), () -> {
-				for (Radio radio : getRadios()) {
+				for (Radio radio : RadioUtils.getRadios()) {
 					if (!radio.getType().isRadiusBased()) continue;
 					if (!radio.isEnabled()) continue;
 					if (!radio.isParticles()) continue;
@@ -84,6 +76,8 @@ public class RadioFeature extends Feature {
 					if (RandomUtils.chanceOf(20)) continue;
 
 					for (Location location : radio.getLocations()) {
+						if (location == null) continue;
+
 						new ParticleBuilder(Particle.NOTE)
 								.count(RandomUtils.randomInt(1, 3))
 								.offset(0.25, 0.25, 0.25)
@@ -96,7 +90,7 @@ public class RadioFeature extends Feature {
 			// Radius Radio User Task
 			RadioUserService service = new RadioUserService();
 			Tasks.repeat(0, TickTime.TICK.x(5), () -> {
-				for (Radio radio : getRadios()) {
+				for (Radio radio : RadioUtils.getRadios()) {
 					if (radio == null || !radio.isEnabled())
 						continue;
 
@@ -112,20 +106,20 @@ public class RadioFeature extends Feature {
 						if (user.isMute() || user.getLeftRadiusRadios().contains(radio.getId()))
 							continue;
 
-						boolean isInRange = isInRangeOfRadiusRadio(player, radio);
-						boolean isListening = isListening(player, radio);
+						boolean isInRange = RadioUtils.isInRangeOfRadiusRadio(player, radio);
+						boolean isListening = RadioUtils.isListening(player, radio);
 
 						if (isInRange && !isListening) {
 							if (user.getServerRadio() != null)
-								removePlayer(player, user.getServerRadio());
+								RadioUtils.removePlayer(player, user.getServerRadio());
 
-							addPlayer(player, radio);
+							RadioUtils.addPlayer(player, radio);
 
 						} else if (!isInRange && isListening) {
-							removePlayer(player, radio);
+							RadioUtils.removePlayer(player, radio);
 
 							if (user.getLastServerRadio() != null)
-								addPlayer(player, user.getLastServerRadio());
+								RadioUtils.addPlayer(player, user.getLastServerRadio());
 						}
 					}
 				}
@@ -179,7 +173,7 @@ public class RadioFeature extends Feature {
 		switch (radio.getType()) {
 			case SERVER -> {
 				RadioSongPlayer radioSongPlayer = new RadioSongPlayer(playlist);
-				setRadioDefaults(radioSongPlayer);
+				RadioUtils.setRadioDefaults(radioSongPlayer);
 				radio.addSongPlayer(radioSongPlayer);
 			}
 
@@ -190,7 +184,7 @@ public class RadioFeature extends Feature {
 				PositionSongPlayer positionSongPlayer = new PositionSongPlayer(playlist);
 				positionSongPlayer.setTargetLocation(location);
 				positionSongPlayer.setDistance(radius);
-				setRadioDefaults(positionSongPlayer);
+				RadioUtils.setRadioDefaults(positionSongPlayer);
 
 				radio.addSongPlayer(positionSongPlayer);
 			}
@@ -202,7 +196,7 @@ public class RadioFeature extends Feature {
 					PositionSongPlayer positionSongPlayer = new PositionSongPlayer(playlist);
 					positionSongPlayer.setTargetLocation(location);
 					positionSongPlayer.setDistance(radius);
-					setRadioDefaults(positionSongPlayer);
+					RadioUtils.setRadioDefaults(positionSongPlayer);
 
 					radio.addSongPlayer(positionSongPlayer);
 				}
@@ -246,7 +240,7 @@ public class RadioFeature extends Feature {
 				throw new InvalidInputException(radioId + ": Radius is <= 0");
 		}
 
-		if (isNullOrEmpty(radio.getSongs()))
+		if (gg.projecteden.nexus.utils.Nullables.isNullOrEmpty(radio.getSongs()))
 			throw new InvalidInputException(radioId + ": Songs is null or empty");
 	}
 }

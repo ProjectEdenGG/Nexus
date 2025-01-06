@@ -2,8 +2,8 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.models.pvp.PVPService;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrowableProjectile;
@@ -13,9 +13,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
-import org.jetbrains.annotations.NotNull;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class IceAspectEnchant extends CustomEnchant implements Listener {
 
@@ -43,7 +40,7 @@ public class IceAspectEnchant extends CustomEnchant implements Listener {
 
 		if (player == null)
 			return;
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return;
 		if (event.getCause() == DamageCause.THORNS)
 			return;
@@ -52,10 +49,15 @@ public class IceAspectEnchant extends CustomEnchant implements Listener {
 		if (level == 0)
 			return;
 
-		new PotionEffectBuilder(PotionEffectType.SLOW)
+		new PotionEffectBuilder(PotionEffectType.SLOWNESS)
 			.amplifier(5)
 			.duration(5)
 			.build()
 			.apply(entity);
+	}
+
+	@Override
+	public int getMaxLevel() {
+		return 3;
 	}
 }

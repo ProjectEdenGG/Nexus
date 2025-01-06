@@ -3,6 +3,7 @@
 	import gg.projecteden.nexus.features.itemtags.Rarity;
 	import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 	import gg.projecteden.nexus.features.recipes.models.RecipeType;
+	import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 	import gg.projecteden.nexus.features.resourcepack.models.CustomArmorType;
 	import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 	import gg.projecteden.nexus.utils.Enchant;
@@ -17,9 +18,7 @@
 	import org.bukkit.inventory.Recipe;
 	import org.jetbrains.annotations.NotNull;
 
-	import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
-
-public class WitherChestplate extends FunctionalRecipe {
+	public class WitherChestplate extends FunctionalRecipe {
 
 	@Getter
 	private static final ItemStack item = new ItemBuilder(CustomMaterial.WITHER_CHESTPLATE)
@@ -30,8 +29,8 @@ public class WitherChestplate extends FunctionalRecipe {
 		.name("&eWither Chestplate")
 		.setLore(WitherHelmet.getLore())
 		.rarity(Rarity.ARTIFACT)
-		.attribute(Attribute.GENERIC_ARMOR, "wither-armor-points", 8, Operation.ADD_NUMBER, EquipmentSlot.CHEST)
-		.attribute(Attribute.GENERIC_ARMOR_TOUGHNESS, "wither-armor-toughness", 2, Operation.ADD_NUMBER, EquipmentSlot.CHEST)
+		.attribute(Attribute.ARMOR, "wither-armor-points", 8, Operation.ADD_NUMBER, EquipmentSlot.CHEST)
+		.attribute(Attribute.ARMOR_TOUGHNESS, "wither-armor-toughness", 2, Operation.ADD_NUMBER, EquipmentSlot.CHEST)
 		.nbt(nbtItem -> nbtItem.setBoolean("wither-armor", true))
 		.build();
 
@@ -42,7 +41,7 @@ public class WitherChestplate extends FunctionalRecipe {
 
 	@Override
 	public @NotNull Recipe getRecipe() {
-		return shaped("1 1", "111", "111")
+		return RecipeBuilder.shaped("1 1", "111", "111")
 			.add('1', CraftedWitherSkull.getItem())
 			.toMake(getResult())
 			.getRecipe();

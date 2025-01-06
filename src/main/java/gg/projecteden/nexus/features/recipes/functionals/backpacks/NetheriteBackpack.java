@@ -2,12 +2,12 @@ package gg.projecteden.nexus.features.recipes.functionals.backpacks;
 
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.entity.*;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
@@ -38,7 +38,7 @@ public class NetheriteBackpack extends DiamondBackpack {
 
 	@EventHandler
 	public void onItemBurn(EntityDamageEvent event) {
-		if (event.getEntity().getType() != EntityType.DROPPED_ITEM) return;
+		if (event.getEntity().getType() != EntityType.ITEM) return;
 
 		ItemStack item = ((Item) event.getEntity()).getItemStack();
 		if (!Backpacks.isBackpack(item)) return;
@@ -50,7 +50,7 @@ public class NetheriteBackpack extends DiamondBackpack {
 
 	@EventHandler
 	public void onItemBurn(EntityDamageByBlockEvent event) {
-		if (event.getEntity().getType() != EntityType.DROPPED_ITEM) return;
+		if (event.getEntity().getType() != EntityType.ITEM) return;
 
 		ItemStack item = ((Item) event.getEntity()).getItemStack();
 		if (!Backpacks.isBackpack(item)) return;

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.nexus.features.listeners.Restrictions;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -19,8 +20,6 @@ import org.bukkit.util.EulerAngle;
 
 import java.util.function.Consumer;
 
-import static gg.projecteden.nexus.features.listeners.Restrictions.isPerkAllowedAt;
-
 @Aliases({"ase", "armourstandeditor"})
 public class ArmorStandEditorCommand extends CustomCommand {
 
@@ -33,7 +32,7 @@ public class ArmorStandEditorCommand extends CustomCommand {
 	void arms(Boolean state) {
 		ArmorStand armorStand = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);
 
-		if (!isPerkAllowedAt(player(), armorStand.getLocation()))
+		if (!Restrictions.isPerkAllowedAt(player(), armorStand.getLocation()))
 			error("You cannot edit armor stands here");
 
 		if (state == null)
@@ -75,7 +74,7 @@ public class ArmorStandEditorCommand extends CustomCommand {
 	void position_arms() {
 		ArmorStand armorStand = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);
 
-		if (!isPerkAllowedAt(player(), armorStand.getLocation()))
+		if (!Restrictions.isPerkAllowedAt(player(), armorStand.getLocation()))
 			error("You cannot edit armor stands here");
 
 		float yaw = LocationUtils.normalizeYaw(location());
@@ -112,7 +111,7 @@ public class ArmorStandEditorCommand extends CustomCommand {
 		position_arms();
 		ArmorStand armorStand = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);
 
-		if (!isPerkAllowedAt(player(), armorStand.getLocation()))
+		if (!Restrictions.isPerkAllowedAt(player(), armorStand.getLocation()))
 			error("You cannot edit armor stands here");
 
 		EulerAngle ea = new EulerAngle(Math.toRadians(x), Math.toRadians(y), Math.toRadians(z));
@@ -124,7 +123,7 @@ public class ArmorStandEditorCommand extends CustomCommand {
 	void set_yaw(float yaw) {
 		final ArmorStand armorStand = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);
 
-		if (!isPerkAllowedAt(player(), armorStand.getLocation()))
+		if (!Restrictions.isPerkAllowedAt(player(), armorStand.getLocation()))
 			error("You cannot edit armor stands here");
 
 		final Location location = armorStand.getLocation();

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2022.easter22.quests;
 
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.features.events.y2022.easter22.Easter22;
 import gg.projecteden.nexus.features.quests.interactable.Inanimate;
 import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
@@ -13,9 +14,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 import java.util.function.Predicate;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Getter
 @AllArgsConstructor
@@ -32,7 +30,7 @@ public enum Easter22Entity implements InteractableEntity {
 			return false;
 
 		final ItemStack item = itemFrame.getItem();
-		if (isNullOrAir(item))
+		if (gg.projecteden.nexus.utils.Nullables.isNullOrAir(item))
 			return false;
 
 		if (item.getType() != Material.PAPER)
@@ -48,7 +46,7 @@ public enum Easter22Entity implements InteractableEntity {
 	private final Predicate<Entity> predicate;
 
 	Easter22Entity(String name, String uuid) {
-		this(name, UUID.fromString(uuid), isNullOrEmpty(uuid) ? null : entity -> entity.getUniqueId().equals(UUID.fromString(uuid)));
+		this(name, UUID.fromString(uuid), Nullables.isNullOrEmpty(uuid) ? null : entity -> entity.getUniqueId().equals(UUID.fromString(uuid)));
 	}
 
 	Easter22Entity(String name, Predicate<Entity> predicate) {

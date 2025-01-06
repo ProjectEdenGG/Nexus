@@ -23,20 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.BINGO;
-import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.DEATH_SWAP;
-import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.LEGACY1;
-import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.LEGACY2;
-import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.ONEBLOCK;
-import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.RESOURCE;
-import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.STAFF_SURVIVAL;
-import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.UHC;
+import java.util.*;
 
 public enum WorldGroup implements IWorldGroup {
 	@Icon("globe")
@@ -46,11 +33,11 @@ public enum WorldGroup implements IWorldGroup {
 
 	@Icon("ice")
 	@Spawn(SpawnType.SURVIVAL)
-	LEGACY(LEGACY1, LEGACY2),
+	LEGACY(SubWorldGroup.LEGACY1, SubWorldGroup.LEGACY2),
 
 	@Icon("diamond_pickaxe")
 	@Spawn(SpawnType.SURVIVAL)
-	SURVIVAL(List.of("safepvp", "events"), List.of(SubWorldGroup.SURVIVAL, RESOURCE, STAFF_SURVIVAL)),
+	SURVIVAL(List.of("safepvp", "events"), List.of(SubWorldGroup.SURVIVAL, SubWorldGroup.RESOURCE, SubWorldGroup.STAFF_SURVIVAL)),
 
 	@Icon("wooden_axe")
 	@Spawn(SpawnType.CREATIVE)
@@ -59,10 +46,10 @@ public enum WorldGroup implements IWorldGroup {
 	@Icon("crossed_swords")
 	@Spawn(SpawnType.MINIGAMES)
 	@PushOff
-	MINIGAMES(List.of("gameworld"), List.of(DEATH_SWAP, UHC, BINGO)),
+	MINIGAMES(List.of("gameworld"), List.of(SubWorldGroup.DEATH_SWAP, SubWorldGroup.UHC, SubWorldGroup.BINGO)),
 
 	@Icon("grass_block")
-	SKYBLOCK(SubWorldGroup.SKYBLOCK, ONEBLOCK),
+	SKYBLOCK(SubWorldGroup.SKYBLOCK, SubWorldGroup.ONEBLOCK),
 
 	@Icon("compass")
 	ADVENTURE("stranded", "aeveon_project"),

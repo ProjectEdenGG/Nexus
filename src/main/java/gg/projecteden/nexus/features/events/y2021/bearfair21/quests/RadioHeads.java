@@ -7,6 +7,7 @@ import gg.projecteden.nexus.models.radio.RadioConfig.Radio;
 import gg.projecteden.nexus.models.radio.RadioUser;
 import gg.projecteden.nexus.models.radio.RadioUserService;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,8 +16,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class RadioHeads implements Listener {
 	public RadioHeads() {
@@ -29,7 +28,7 @@ public class RadioHeads implements Listener {
 		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer())) return;
 
 		Block block = event.getClickedBlock();
-		if (isNullOrAir(block) || !block.getType().equals(Material.PLAYER_HEAD)) return;
+		if (Nullables.isNullOrAir(block) || !block.getType().equals(Material.PLAYER_HEAD)) return;
 
 		Location radioHeadLoc = new Location(BearFair21.getWorld(), 16, 119, -19);
 		ItemStack item = ItemUtils.getItem(block);

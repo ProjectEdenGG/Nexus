@@ -23,13 +23,11 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 public class AdventureUtils {
 	private static final PlainTextComponentSerializer PLAIN_SERIALIZER = PlainTextComponentSerializer.builder().flattener(Bukkit.getUnsafe().componentFlattener()).build();
@@ -236,6 +234,6 @@ public class AdventureUtils {
 		if (message == null)
 			return Component.empty();
 
-		return Component.text(colorize(message));
+		return Component.text(StringUtils.colorize(message));
 	}
 }

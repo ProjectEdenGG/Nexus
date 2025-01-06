@@ -23,17 +23,8 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.team
 import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils;
 import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils.PowerUp;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
-import gg.projecteden.nexus.utils.BlockUtils;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.MathUtils;
-import gg.projecteden.nexus.utils.PotionEffectBuilder;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -59,17 +50,8 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 @SuppressWarnings("unused")
 public class FallingBlocks extends TeamlessMechanic {
@@ -393,7 +375,7 @@ public class FallingBlocks extends TeamlessMechanic {
 			player.getInventory().setItem(0, colorItem);
 			matchData.setColor(minigamer, colorItem.getType());
 
-			minigamer.tell("You chose " + camelCase(colorItem.getType().name().replace(filter, "")) + "!");
+			minigamer.tell("You chose " + gg.projecteden.api.common.utils.StringUtils.camelCase(colorItem.getType().name().replace(filter, "")) + "!");
 
 			player.closeInventory();
 		}
@@ -427,7 +409,7 @@ public class FallingBlocks extends TeamlessMechanic {
 		minigamer -> {
 			pickupPowerup(minigamer);
 
-			applyPotionEffect(minigamer, PotionEffectType.JUMP, 2);
+			applyPotionEffect(minigamer, PotionEffectType.JUMP_BOOST, 2);
 			minigamer.tell("&aYou have picked up jump boost for 10s!");
 		}
 	);

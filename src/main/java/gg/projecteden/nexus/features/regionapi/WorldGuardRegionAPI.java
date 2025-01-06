@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.regionapi.events.common.EnteringRegionEvent
 import gg.projecteden.nexus.features.regionapi.events.common.LeavingRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.common.LeftRegionEvent;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import io.papermc.paper.event.entity.EntityMoveEvent;
@@ -19,25 +20,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.EntityTeleportEvent;
-import org.bukkit.event.player.PlayerBedEnterEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import java.util.*;
 
 @NoArgsConstructor
 public class WorldGuardRegionAPI extends Feature implements Listener {
@@ -129,7 +117,7 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 
 	private void clearRegions(Entity entity, MovementType movementType, Location newLocation, Event event) {
 		Set<ProtectedRegion> regions = entityRegions.remove(entity.getUniqueId());
-		if (isNullOrEmpty(regions))
+		if (Nullables.isNullOrEmpty(regions))
 			return;
 
 		for (ProtectedRegion region : regions) {

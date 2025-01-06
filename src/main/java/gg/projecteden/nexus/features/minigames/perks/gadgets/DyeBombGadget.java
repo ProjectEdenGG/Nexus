@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.minigames.perks.gadgets;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.DyeBombCommand;
 import gg.projecteden.nexus.features.minigames.models.perks.common.GadgetPerk;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -11,8 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 public class DyeBombGadget implements GadgetPerk {
 	@Override
@@ -34,7 +33,7 @@ public class DyeBombGadget implements GadgetPerk {
 	public ItemStack getItem() {
 		ItemStack item = DyeBombCommand.getDyeBomb();
 		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(colorize("&3Dye Bomb"));
+		meta.setDisplayName(StringUtils.colorize("&3Dye Bomb"));
 		item.setItemMeta(meta);
 		item.setLore(new ArrayList<>());
 		return item;

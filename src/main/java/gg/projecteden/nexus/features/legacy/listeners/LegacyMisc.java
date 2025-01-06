@@ -1,7 +1,9 @@
 package gg.projecteden.nexus.features.legacy.listeners;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.legacy.Legacy;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Material;
@@ -16,9 +18,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.List;
 
-import static gg.projecteden.nexus.features.legacy.Legacy.PREFIX;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-
 public class LegacyMisc implements Listener {
 
 	@EventHandler
@@ -28,7 +27,7 @@ public class LegacyMisc implements Listener {
 			return;
 
 		event.setCancelled(true);
-		PlayerUtils.send(player, PREFIX + "&c&lHey! &7You cannot drop items here");
+		PlayerUtils.send(player, Legacy.PREFIX + "&c&lHey! &7You cannot drop items here");
 	}
 
 	private static final List<Material> NO_INTERACT = List.of(
@@ -52,7 +51,7 @@ public class LegacyMisc implements Listener {
 			return;
 
 		final Block block = event.getClickedBlock();
-		if (isNullOrAir(block))
+		if (Nullables.isNullOrAir(block))
 			return;
 
 		if (!NO_INTERACT.contains(block.getType()))

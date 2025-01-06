@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Boat;
-import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.Nullable;
 
 @Getter
@@ -23,9 +22,6 @@ public enum BoatType {
 
 	private final Material boatMaterial;
 	private final Material chestBoatMaterial;
-
-	private final EntityType boatEntityType = EntityType.BOAT;
-	private final EntityType chestBoatEntityType = EntityType.CHEST_BOAT;
 
 	public Boat.Type getInternalBoatType() {
 		return Boat.Type.values()[this.ordinal()];

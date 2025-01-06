@@ -3,6 +3,7 @@ package gg.projecteden.nexus.models.vanish;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
@@ -13,12 +14,8 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import lombok.*;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,9 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
-
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.PlayerUtils.isSelf;
 
 @Data
 @Entity(value = "vanish", noClassnameStored = true)
@@ -63,7 +57,7 @@ public class VanishUser implements PlayerOwnedObject {
 	}
 
 	public boolean canHideFrom(VanishUser viewer) {
-		if (isSelf(this, viewer))
+		if (PlayerUtils.isSelf(this, viewer))
 			return false;
 
 		final int priority = getPriority();
@@ -150,7 +144,7 @@ public class VanishUser implements PlayerOwnedObject {
 			if (description != null)
 				return description.value();
 
-			return camelCase(this);
+			return StringUtils.camelCase(this);
 		}
 	}
 

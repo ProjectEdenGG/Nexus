@@ -3,6 +3,7 @@ package gg.projecteden.nexus.models.banker;
 import com.mongodb.DBObject;
 import com.mysql.cj.util.StringUtils;
 import dev.morphia.annotations.PreLoad;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
@@ -18,10 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-
-import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
-import static gg.projecteden.nexus.models.banker.BankerService.rounded;
-import static gg.projecteden.nexus.models.banker.Transaction.TransactionCause.shopCauses;
 
 @Data
 @Builder
@@ -66,16 +63,16 @@ public class Transaction {
 	}
 
 	public Transaction(HasUniqueId sender, HasUniqueId receiver, BigDecimal amount, ShopGroup shopGroup, String description, TransactionCause cause) {
-		if (receiver != null && !isUUID0(receiver.getUniqueId())) {
+		if (receiver != null && !UUIDUtils.isUUID0(receiver.getUniqueId())) {
 			this.receiver = receiver.getUniqueId();
-			this.receiverOldBalance = rounded(new BankerService().get(receiver).getBalance(shopGroup));
-			this.receiverNewBalance = rounded(this.receiverOldBalance.add(amount));
+			this.receiverOldBalance = BankerService.rounded(new BankerService().get(receiver).getBalance(shopGroup));
+			this.receiverNewBalance = BankerService.rounded(this.receiverOldBalance.add(amount));
 		}
 
-		if (sender != null && !isUUID0(sender.getUniqueId())) {
+		if (sender != null && !UUIDUtils.isUUID0(sender.getUniqueId())) {
 			this.sender = sender.getUniqueId();
-			this.senderOldBalance = rounded(new BankerService().get(sender).getBalance(shopGroup));
-			this.senderNewBalance = rounded(this.senderOldBalance.subtract(amount));
+			this.senderOldBalance = BankerService.rounded(new BankerService().get(sender).getBalance(shopGroup));
+			this.senderNewBalance = BankerService.rounded(this.senderOldBalance.subtract(amount));
 		}
 
 		this.amount = amount;
@@ -95,10 +92,10 @@ public class Transaction {
 
 	public Transaction(HasUniqueId receiver, BigDecimal newBalance, ShopGroup shopGroup, String description, TransactionCause cause) {
 		this.receiver = receiver.getUniqueId();
-		this.receiverOldBalance = rounded(new BankerService().get(receiver).getBalance(shopGroup));
-		this.receiverNewBalance = rounded(newBalance);
+		this.receiverOldBalance = BankerService.rounded(new BankerService().get(receiver).getBalance(shopGroup));
+		this.receiverNewBalance = BankerService.rounded(newBalance);
 
-		this.amount = rounded(this.receiverNewBalance.subtract(receiverOldBalance));
+		this.amount = BankerService.rounded(this.receiverNewBalance.subtract(receiverOldBalance));
 		this.description = description;
 		this.cause = cause;
 		this.shopGroup = shopGroup;
@@ -128,7 +125,7 @@ public class Transaction {
 		if (!Objects.equals(description, transaction.getDescription()))
 			return false;
 
-		if (shopCauses.contains(transaction.getCause()) && !Objects.equals(amount, transaction.getAmount()))
+		if (TransactionCause.shopCauses.contains(transaction.getCause()) && !Objects.equals(amount, transaction.getAmount()))
 			return false;
 
 		return true;
@@ -190,7 +187,7 @@ public class Transaction {
 	}
 
 	private static int calculateCount(Transaction previous, Transaction transaction) {
-		if (!shopCauses.contains(previous.getCause()))
+		if (!TransactionCause.shopCauses.contains(previous.getCause()))
 			return 0;
 
 		if (StringUtils.isNullOrEmpty(transaction.getDescription()))

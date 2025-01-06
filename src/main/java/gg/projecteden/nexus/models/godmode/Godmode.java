@@ -4,24 +4,18 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.models.bearfair21.BearFair21Config;
 import gg.projecteden.nexus.models.bearfair21.BearFair21ConfigService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.WARP;
 
 @Data
 @Entity(value = "godmode", noClassnameStored = true)
@@ -59,7 +53,7 @@ public class Godmode implements PlayerOwnedObject {
 		if (Vanish.isVanished(player))
 			return true;
 
-		if ("bearfair21".equals(player.getWorld().getName()) && new BearFair21ConfigService().get0().isEnabled(WARP) && !Vanish.isVanished(player))
+		if ("bearfair21".equals(player.getWorld().getName()) && new BearFair21ConfigService().get0().isEnabled(BearFair21Config.BearFair21ConfigOption.WARP) && !Vanish.isVanished(player))
 			return false;
 
 		if (Rank.of(player).lt(Rank.ARCHITECT))

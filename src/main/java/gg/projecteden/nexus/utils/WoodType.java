@@ -129,7 +129,7 @@ public enum WoodType {
 	public static Material saplingOfTree(TreeType treeType) {
 		return switch (treeType) {
 			case TREE, BIG_TREE, SWAMP -> Material.OAK_SAPLING;
-			case REDWOOD, TALL_REDWOOD, MEGA_REDWOOD -> Material.SPRUCE_SAPLING;
+			case REDWOOD, TALL_REDWOOD, MEGA_REDWOOD, MEGA_PINE -> Material.SPRUCE_SAPLING;
 			case BIRCH, TALL_BIRCH -> Material.BIRCH_SAPLING;
 			case JUNGLE, SMALL_JUNGLE, COCOA_TREE, JUNGLE_BUSH -> Material.JUNGLE_SAPLING;
 			case RED_MUSHROOM -> Material.RED_MUSHROOM;
@@ -142,6 +142,7 @@ public enum WoodType {
 			case AZALEA -> Material.AZALEA; // No way to tell if its flowering or not
 			case MANGROVE, TALL_MANGROVE -> Material.MANGROVE_PROPAGULE;
 			case CHERRY -> Material.CHERRY_SAPLING;
+			case PALE_OAK, PALE_OAK_CREAKING -> Material.PALE_OAK_SAPLING;
 		};
 	}
 

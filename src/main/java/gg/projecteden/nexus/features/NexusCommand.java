@@ -1,8 +1,10 @@
 package gg.projecteden.nexus.features;
 
 import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.crates.api.models.CrateAnimation;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
@@ -33,12 +35,8 @@ import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.framework.commands.CommandMapUtils;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownException;
@@ -53,14 +51,10 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.offline.OfflineMessage;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.quests.QuesterService;
-import gg.projecteden.nexus.utils.AdventureUtils;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
-import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -82,19 +76,9 @@ import org.bukkit.plugin.Plugin;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.zip.ZipFile;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
 @Permission(Group.STAFF)
@@ -177,8 +161,8 @@ public class NexusCommand extends CustomCommand implements Listener {
 		}
 
 		CooldownService cooldownService = new CooldownService();
-		if (!cooldownService.check(UUID0, "reload", TickTime.SECOND.x(15)))
-			throw new CommandCooldownException(UUID0, "reload");
+		if (!cooldownService.check(UUIDUtils.UUID0, "reload", TickTime.SECOND.x(15)))
+			throw new CommandCooldownException(UUIDUtils.UUID0, "reload");
 
 		runCommand("plugman reload Nexus");
 	}
@@ -362,7 +346,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 		public static void tryReload(List<ReloadCondition> excludedConditions) {
 			for (ReloadCondition condition : ReloadCondition.values())
-				if (isNullOrEmpty(excludedConditions) || !excludedConditions.contains(condition))
+				if (Nullables.isNullOrEmpty(excludedConditions) || !excludedConditions.contains(condition))
 					condition.run();
 		}
 
@@ -423,7 +407,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 				if (inv.isEmpty())
 					continue;
 
-				String title = stripColor(inv.map(SmartInventory::getTitle).map(AdventureUtils::asLegacyText).orElse(null));
+				String title = StringUtils.stripColor(inv.map(SmartInventory::getTitle).map(AdventureUtils::asLegacyText).orElse(null));
 				for (CustomCharacter character : ResourcePack.getFontFile().getProviders()) {
 					if (character.getChars() == null)
 						continue;

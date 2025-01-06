@@ -46,8 +46,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-
 @Data
 public class Match implements ForwardingAudience {
 	@NonNull
@@ -466,7 +464,7 @@ public class Match implements ForwardingAudience {
 		}
 	}
 
-	private static List<EntityType> deletableTypes = List.of(EntityType.ARROW, EntityType.SPECTRAL_ARROW, EntityType.DROPPED_ITEM, EntityType.FALLING_BLOCK);
+	private static List<EntityType> deletableTypes = List.of(EntityType.ARROW, EntityType.SPECTRAL_ARROW, EntityType.ITEM, EntityType.FALLING_BLOCK);
 
 	private void clearEntities() {
 		for (UUID uuid : entityUuids) {
@@ -552,7 +550,7 @@ public class Match implements ForwardingAudience {
 	}
 
 	public void broadcast(ComponentLike message) {
-		if (isNullOrEmpty(AdventureUtils.asPlainText(message))) {
+		if (Nullables.isNullOrEmpty(AdventureUtils.asPlainText(message))) {
 			broadcastNoPrefix("");
 			return;
 		}
@@ -619,14 +617,12 @@ public class Match implements ForwardingAudience {
 	public List<Minigamer> getDeadMinigamers() {
 		return minigamers.stream()
 			.filter(Minigamer::isDead)
-			.filter(minigamer -> !minigamer.isSpectating())
 			.collect(Collectors.toList());
 	}
 
 	public List<Player> getDeadOnlinePlayers() {
 		return minigamers.stream()
 			.filter(Minigamer::isDead)
-			.filter(minigamer -> !minigamer.isSpectating())
 			.map(Minigamer::getOnlinePlayer)
 			.collect(Collectors.toList());
 	}

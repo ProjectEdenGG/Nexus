@@ -13,6 +13,7 @@ import gg.projecteden.nexus.models.punishments.NameBanConfig;
 import gg.projecteden.nexus.models.punishments.NameBanConfigService;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.utils.Name;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.OfflinePlayer;
@@ -20,8 +21,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
-
-import static gg.projecteden.nexus.utils.PlayerUtils.getPlayer;
 
 // TODO All messaging
 
@@ -81,7 +80,7 @@ public class NameBanCommand extends _JusticeCommand implements Listener {
 	@Path("list names [page]")
 	@Description("List banned names")
 	void listNames(@Arg("1") int page) {
-		config.getBannedNames().forEach((uuid, names) -> send(getPlayer(uuid).getName() + ": " + String.join(", ", names)));
+		config.getBannedNames().forEach((uuid, names) -> send(PlayerUtils.getPlayer(uuid).getName() + ": " + String.join(", ", names)));
 	}
 
 	@Path("list words [page]")

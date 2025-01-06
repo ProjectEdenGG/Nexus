@@ -13,20 +13,11 @@ import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.npcs.Merchan
 import gg.projecteden.nexus.models.bearfair20.BearFair20User;
 import gg.projecteden.nexus.models.bearfair20.BearFair20UserService;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.CitizensUtils;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.*;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -51,12 +42,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.isAtBearFair;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.isBFItem;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.send;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class BFQuests implements Listener {
 	public static String itemLore = "BearFair20 Item";
@@ -143,7 +128,7 @@ public class BFQuests implements Listener {
 	@EventHandler
 	public void onBlockDropItemEvent(BlockDropItemEvent event) {
 		Location loc = event.getBlock().getLocation();
-		if (!isAtBearFair(loc)) return;
+		if (!BearFair20.isAtBearFair(loc)) return;
 		event.getItems().forEach(item -> {
 			Material type = item.getItemStack().getType();
 			if (type.equals(Material.WHEAT_SEEDS) || type.equals(Material.BEETROOT_SEEDS)) {
@@ -162,14 +147,14 @@ public class BFQuests implements Listener {
 	@EventHandler
 	public void onEntityDropItem(EntityDropItemEvent event) {
 		Location loc = event.getEntity().getLocation();
-		if (!isAtBearFair(loc)) return;
+		if (!BearFair20.isAtBearFair(loc)) return;
 		event.getItemDrop().getItemStack().setLore(Collections.singletonList(itemLore));
 	}
 
 	@EventHandler
 	public void onMilkCow(PlayerInteractEntityEvent event) {
 		Player player = event.getPlayer();
-		if (!isAtBearFair(player)) return;
+		if (!BearFair20.isAtBearFair(player)) return;
 		if (event.getHand() != EquipmentSlot.HAND) return;
 		if (!event.getRightClicked().getType().equals(EntityType.COW)) return;
 
@@ -187,14 +172,14 @@ public class BFQuests implements Listener {
 	@EventHandler
 	public void onHoneyBottleFill(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
-		if (!isAtBearFair(player)) return;
+		if (!BearFair20.isAtBearFair(player)) return;
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
 		Block clicked = event.getClickedBlock();
-		if (isNullOrAir(clicked)) return;
+		if (Nullables.isNullOrAir(clicked)) return;
 
-		ProtectedRegion beehiveRg = worldguard().getProtectedRegion(Beehive.beehiveRg);
-		if (worldguard().getRegionsAt(clicked.getLocation()).contains(beehiveRg)) {
+		ProtectedRegion beehiveRg = BearFair20.worldguard().getProtectedRegion(Beehive.beehiveRg);
+		if (BearFair20.worldguard().getRegionsAt(clicked.getLocation()).contains(beehiveRg)) {
 			event.setCancelled(true);
 			return;
 		}
@@ -211,21 +196,21 @@ public class BFQuests implements Listener {
 	@EventHandler
 	public void onBeeHiveShear(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
-		if (!isAtBearFair(player)) return;
+		if (!BearFair20.isAtBearFair(player)) return;
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
 		Block clicked = event.getClickedBlock();
-		if (isNullOrAir(clicked)) return;
+		if (Nullables.isNullOrAir(clicked)) return;
 
-		ProtectedRegion beehiveRg = worldguard().getProtectedRegion(Beehive.beehiveRg);
-		if (worldguard().getRegionsAt(clicked.getLocation()).contains(beehiveRg)) {
+		ProtectedRegion beehiveRg = BearFair20.worldguard().getProtectedRegion(Beehive.beehiveRg);
+		if (BearFair20.worldguard().getRegionsAt(clicked.getLocation()).contains(beehiveRg)) {
 			event.setCancelled(true);
 			return;
 		}
 
 		if (!clicked.getType().equals(Material.BEE_NEST) && !clicked.getType().equals(Material.BEEHIVE)) return;
 		if (event.getItem() == null || !event.getItem().getType().equals(Material.SHEARS)) return;
-		if (!isBFItem(event.getItem())) return;
+		if (!BearFair20.isBFItem(event.getItem())) return;
 
 		event.setCancelled(true);
 		ItemMeta meta = event.getItem().getItemMeta();
@@ -242,24 +227,24 @@ public class BFQuests implements Listener {
 	@EventHandler
 	public void onCraftItem(CraftItemEvent event) {
 		if (!(event.getView().getPlayer() instanceof Player player)) return;
-		if (!isAtBearFair(player)) return;
+		if (!BearFair20.isAtBearFair(player)) return;
 
 		ItemStack result = event.getInventory().getResult();
 		ItemStack[] ingredients = event.getInventory().getMatrix();
 
 		boolean questCrafting = true;
 		for (ItemStack ingredient : ingredients) {
-			if (isNullOrAir(ingredient))
+			if (Nullables.isNullOrAir(ingredient))
 				continue;
-			if (!isBFItem(ingredient))
+			if (!BearFair20.isBFItem(ingredient))
 				questCrafting = false;
 
 		}
 
 		if (!questCrafting) {
-			if (isBFItem(result)) {
+			if (BearFair20.isBFItem(result)) {
 				event.getInventory().setResult(new ItemStack(Material.AIR));
-				send(craftItemError, player);
+				BearFair20.send(craftItemError, player);
 			}
 		}
 	}
@@ -267,7 +252,7 @@ public class BFQuests implements Listener {
 	@EventHandler
 	public void onPrepareCraftItem(PrepareItemCraftEvent event) {
 		if (!(event.getView().getPlayer() instanceof Player player)) return;
-		if (!isAtBearFair(player)) return;
+		if (!BearFair20.isAtBearFair(player)) return;
 
 		ItemStack[] ingredients = event.getInventory().getMatrix();
 		ItemStack result = event.getInventory().getResult();
@@ -275,9 +260,9 @@ public class BFQuests implements Listener {
 		// Each item must be a BF20 item, for it to result in a BF20 item
 		boolean questCrafting = true;
 		for (ItemStack ingredient : ingredients) {
-			if (isNullOrAir(ingredient))
+			if (Nullables.isNullOrAir(ingredient))
 				continue;
-			if (!isBFItem(ingredient))
+			if (!BearFair20.isBFItem(ingredient))
 				questCrafting = false;
 		}
 
@@ -300,7 +285,7 @@ public class BFQuests implements Listener {
 	@EventHandler
 	public void onRightClickNPC(NPCRightClickEvent event) {
 		Player player = event.getClicker();
-		if (isAtBearFair(player)) {
+		if (BearFair20.isAtBearFair(player)) {
 			CooldownService cooldownService = new CooldownService();
 			if (!cooldownService.check(player, "BF_NPCInteract", TickTime.SECOND.x(2)))
 				return;
@@ -316,7 +301,7 @@ public class BFQuests implements Listener {
 		if (!event.getInventory().getType().equals(InventoryType.MERCHANT)) return;
 		if (!(event.getPlayer() instanceof Player player)) return;
 
-		if (!isAtBearFair(player)) return;
+		if (!BearFair20.isAtBearFair(player)) return;
 
 		BearFair20UserService service = new BearFair20UserService();
 		BearFair20User user = service.get(player);
@@ -338,7 +323,7 @@ public class BFQuests implements Listener {
 		Player player = event.getPlayer();
 		Location loc = player.getLocation();
 
-		if (isAtBearFair(player)) {
+		if (BearFair20.isAtBearFair(player)) {
 			event.setCancelled(true);
 		}
 	}
@@ -346,7 +331,7 @@ public class BFQuests implements Listener {
 	@EventHandler
 	public void onMcMMOXpGainEvent(McMMOPlayerXpGainEvent event) {
 		Location loc = event.getPlayer().getLocation();
-		if (!worldguard().getRegionsAt(loc).contains(BearFair20.getProtectedRegion())) return;
+		if (!BearFair20.worldguard().getRegionsAt(loc).contains(BearFair20.getProtectedRegion())) return;
 		event.setRawXpGained(0F);
 		event.setCancelled(true);
 	}

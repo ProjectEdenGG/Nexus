@@ -14,6 +14,7 @@ import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.SerializationUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.parchment.HasLocation;
@@ -44,9 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-
-import static gg.projecteden.nexus.utils.SerializationUtils.YML.deserializeMaterialSet;
-import static gg.projecteden.nexus.utils.SerializationUtils.YML.serializeMaterialSet;
 
 @Data
 @NoArgsConstructor
@@ -124,7 +122,7 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 		this.minWinningScore = (Integer) map.getOrDefault("minWinningScore", minWinningScore);
 		this.maxWinningScore = (Integer) map.getOrDefault("maxWinningScore", maxWinningScore);
 		this.lives = (Integer) map.getOrDefault("lives", lives);
-		this.blockList = deserializeMaterialSet((List<String>) map.getOrDefault("blockList", new ArrayList<>()));
+		this.blockList = SerializationUtils.YML.deserializeMaterialSet((List<String>) map.getOrDefault("blockList", new ArrayList<>()));
 		this.isWhitelist = (Boolean) map.getOrDefault("isWhitelist", isWhitelist);
 		this.canJoinLate = (Boolean) map.getOrDefault("canJoinLate", canJoinLate);
 		this.testMode = (Boolean) map.getOrDefault("testMode", testMode);
@@ -169,7 +167,7 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 			put("minWinningScore", getMinWinningScore());
 			put("maxWinningScore", getMaxWinningScore());
 			put("lives", getLives());
-			put("blockList", serializeMaterialSet(getBlockList()));
+			put("blockList", SerializationUtils.YML.serializeMaterialSet(getBlockList()));
 			put("isWhitelist", isWhitelist());
 			put("canJoinLate", canJoinLate());
 			put("testMode", isTestMode());

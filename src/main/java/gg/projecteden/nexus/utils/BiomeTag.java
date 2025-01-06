@@ -13,11 +13,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Getter
 @AllArgsConstructor
@@ -87,46 +85,46 @@ public enum BiomeTag {
 				if (Range.between(type.getMinTemperature(), type.getMaxTemperature()).contains(temperature))
 					return type;
 
-			throw new InvalidInputException("Biome " + camelCase(biome) + " with temperature "
+			throw new InvalidInputException("Biome " + StringUtils.camelCase(BiomeUtils.name(biome)) + " with temperature "
 				+ StringUtils.getDf().format(temperature) + " does not match any biome climate type");
 		}
 	}
 
 	protected static class Tag {
 
-		private final EnumSet<Biome> biomes;
+		private final Set<Biome> biomes;
 
 		public Tag() {
-			this.biomes = EnumSet.noneOf(Biome.class);
+			this.biomes = new HashSet<>();
 		}
 
 		public Tag(Biome... biomes) {
-			this.biomes = EnumSet.noneOf(Biome.class);
+			this.biomes = new HashSet<>();
 			append(biomes);
 		}
 
 		public Tag(BiomeTag... biomeTags) {
-			this.biomes = EnumSet.noneOf(Biome.class);
+			this.biomes = new HashSet<>();
 			append(biomeTags);
 		}
 
 		public Tag(Tag... biomeTags) {
-			this.biomes = EnumSet.noneOf(Biome.class);
+			this.biomes = new HashSet<>();
 			append(biomeTags);
 		}
 
 		public Tag(Predicate<Biome> predicate) {
-			this.biomes = EnumSet.noneOf(Biome.class);
+			this.biomes = new HashSet<>();
 			append(predicate);
 		}
 
 		public Tag(String segment, MatchMode mode) {
-			this.biomes = EnumSet.noneOf(Biome.class);
+			this.biomes = new HashSet<>();
 			append(segment, mode);
 		}
 
 		public Tag(String segment, MatchMode mode, Biome... biomes) {
-			this.biomes = EnumSet.noneOf(Biome.class);
+			this.biomes = new HashSet<>();
 			append(segment, mode, biomes);
 		}
 
@@ -150,14 +148,14 @@ public enum BiomeTag {
 		}
 
 		public Tag append(Predicate<Biome> predicate) {
-			for (Biome m : Biome.values())
+			for (Biome m : BiomeUtils.values())
 				if (predicate.test(m))
 					this.biomes.add(m);
 			return this;
 		}
 
 		public Tag append(String segment, MatchMode mode) {
-			append(segment, mode, Biome.values());
+			append(segment, mode, BiomeUtils.values());
 			return this;
 		}
 
@@ -167,19 +165,19 @@ public enum BiomeTag {
 			switch (mode) {
 				case PREFIX:
 					for (Biome m : biomes)
-						if (m.name().startsWith(segment))
+						if (BiomeUtils.name(m).startsWith(segment))
 							this.biomes.add(m);
 					break;
 
 				case SUFFIX:
 					for (Biome m : biomes)
-						if (m.name().endsWith(segment))
+						if (BiomeUtils.name(m).endsWith(segment))
 							this.biomes.add(m);
 					break;
 
 				case CONTAINS:
 					for (Biome m : biomes)
-						if (m.name().contains(segment))
+						if (BiomeUtils.name(m).contains(segment))
 							this.biomes.add(m);
 					break;
 			}
@@ -207,7 +205,7 @@ public enum BiomeTag {
 		}
 
 		public Tag exclude(String segment, MatchMode mode) {
-			exclude(segment, mode, Biome.values());
+			exclude(segment, mode, BiomeUtils.values());
 			return this;
 		}
 
@@ -217,19 +215,19 @@ public enum BiomeTag {
 			switch (mode) {
 				case PREFIX:
 					for (Biome m : biomes)
-						if (m.name().startsWith(segment))
+						if (BiomeUtils.name(m).startsWith(segment))
 							this.biomes.remove(m);
 					break;
 
 				case SUFFIX:
 					for (Biome m : biomes)
-						if (m.name().endsWith(segment))
+						if (BiomeUtils.name(m).endsWith(segment))
 							this.biomes.remove(m);
 					break;
 
 				case CONTAINS:
 					for (Biome m : biomes)
-						if (m.name().contains(segment))
+						if (BiomeUtils.name(m).contains(segment))
 							this.biomes.remove(m);
 					break;
 			}

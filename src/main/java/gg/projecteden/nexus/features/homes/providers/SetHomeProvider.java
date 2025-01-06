@@ -11,6 +11,7 @@ import gg.projecteden.nexus.models.home.Home;
 import gg.projecteden.nexus.models.home.HomeOwner;
 import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
@@ -20,8 +21,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Rows(5)
 @Title("&3Set a new home")
@@ -65,7 +64,7 @@ public class SetHomeProvider extends InventoryProvider {
 
 		AtomicInteger column = new AtomicInteger(1);
 		options.forEach((name, item) ->
-			contents.set(1, column.getAndIncrement(), ClickableItem.of(item, "&e" + camelCase(name), e -> {
+			contents.set(1, column.getAndIncrement(), ClickableItem.of(item, "&e" + StringUtils.camelCase(name), e -> {
 				try {
 					HomesMenu.edit(addHome(name, item));
 				} catch (Exception ex) {

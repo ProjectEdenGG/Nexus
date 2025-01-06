@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.mcmmo.reset;
 
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetShopMenu.SkillTokenFilterType;
 import gg.projecteden.nexus.features.mcmmo.reset.annotations.Cost;
 import gg.projecteden.nexus.features.mcmmo.reset.annotations.Reward;
@@ -16,8 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 public enum ResetReward {
 	@Cost.Alchemy(30)
@@ -237,7 +236,7 @@ public enum ResetReward {
 		getCosts().forEach((token, amount) -> {
 			item.lore(token + ": " + amount);
 		});
-		return item.name(camelCase(this));
+		return item.name(StringUtils.camelCase(this));
 	}
 
 	@NotNull

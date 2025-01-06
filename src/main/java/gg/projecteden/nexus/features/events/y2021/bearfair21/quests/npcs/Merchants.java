@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs;
 
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.features.events.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.BF21PointSource;
@@ -11,12 +12,8 @@ import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
 import gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption;
 import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
-import gg.projecteden.nexus.utils.Enchant;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.MerchantBuilder;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.MerchantBuilder.TradeBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -26,8 +23,6 @@ import org.bukkit.potion.PotionType;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 public class Merchants {
 
@@ -42,7 +37,7 @@ public class Merchants {
 			return;
 
 		List<TradeBuilder> trades = bfMerchant.getTrades(player);
-		if (isNullOrEmpty(trades))
+		if (Nullables.isNullOrEmpty(trades))
 			return;
 
 		new MerchantBuilder(StringUtils.camelCase(bfMerchant.getBearFair21NPC().name() + " " + bfMerchant.getBearFair21NPC().getNpcName()))
@@ -89,7 +84,7 @@ public class Merchants {
 			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
-						.result(new ItemBuilder(Material.POTION).potionType(PotionType.POISON, true, false))
+						.result(new ItemBuilder(Material.POTION).potionType(PotionType.LONG_POISON))
 						.ingredient(goldNugget.clone().amount(2)));
 					add(new TradeBuilder()
 						.result(new ItemBuilder(Material.POTION).potionType(PotionType.WEAKNESS))
@@ -147,7 +142,7 @@ public class Merchants {
 			@Override
 			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
-					if (!isNullOrEmpty(Collector.getRandomTrades()))
+					if (!Nullables.isNullOrEmpty(Collector.getRandomTrades()))
 						this.addAll(Collector.getRandomTrades());
 				}};
 			}

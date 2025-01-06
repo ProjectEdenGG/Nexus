@@ -18,12 +18,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.location;
-
 public class Minecarts {
-	private static final Location spawnLoc_empty = location(858, 53, 531, 0, 180);
-	private static final Location spawnLoc_full_1 = location(745, 52, 500, 0, 0);
-	private static final Location spawnLoc_full_2 = location(738, 42, 539, 0, 0);
+	private static final Location spawnLoc_empty = Pugmas20.location(858, 53, 531, 0, 180);
+	private static final Location spawnLoc_full_1 = Pugmas20.location(745, 52, 500, 0, 0);
+	private static final Location spawnLoc_full_2 = Pugmas20.location(738, 42, 539, 0, 0);
 	private static final List<Location> spawnLoc_full = Arrays.asList(spawnLoc_full_1, spawnLoc_full_2);
 	private static final List<Entity> minecarts = new ArrayList<>();
 
@@ -42,7 +40,7 @@ public class Minecarts {
 
 			// Full
 			loc = RandomUtils.randomElement(spawnLoc_full);
-			minecart = loc.getWorld().spawnEntity(loc, EntityType.MINECART_CHEST);
+			minecart = loc.getWorld().spawnEntity(loc, EntityType.CHEST_MINECART);
 
 			Entity finalMinecart1 = minecart;
 			Location finalLoc1 = loc;

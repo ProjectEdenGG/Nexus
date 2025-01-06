@@ -14,6 +14,7 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,10 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
-import static gg.projecteden.nexus.utils.PlayerUtils.canSee;
-import static gg.projecteden.nexus.utils.StringUtils.decolorize;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class ChatManager {
 	@Getter
@@ -65,7 +62,7 @@ public class ChatManager {
 			message = message.trim();
 
 			if (!Rank.of(chatter.getOnlinePlayer()).isAdmin())
-				message = decolorize(message).replaceAll("&", "&" + channel.getMessageColor());
+				message = StringUtils.decolorize(message).replaceAll("&", "&" + channel.getMessageColor());
 
 			if (message.isEmpty())
 				return;
@@ -137,7 +134,7 @@ public class ChatManager {
 		if (event.isFiltered())
 			json.next(" *");
 
-		Bukkit.getConsoleSender().sendMessage(stripColor(json.toString()));
+		Bukkit.getConsoleSender().sendMessage(StringUtils.stripColor(json.toString()));
 	}
 
 	public static void process(PrivateChatEvent event) {
@@ -151,7 +148,7 @@ public class ChatManager {
 			recipient.setLastPrivateMessage(event.getChannel());
 
 			if (!recipient.equals(event.getChatter())) {
-				boolean canSee = canSee(event.getChatter(), recipient);
+				boolean canSee = PlayerUtils.canSee(event.getChatter(), recipient);
 				JsonBuilder notOnline = new JsonBuilder(Chat.PREFIX).next(new PlayerNotOnlineException(recipient).getJson());
 
 				if (!recipient.isOnline())

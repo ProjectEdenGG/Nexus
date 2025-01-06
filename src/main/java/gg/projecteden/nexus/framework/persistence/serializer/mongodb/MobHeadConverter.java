@@ -9,12 +9,11 @@ import gg.projecteden.nexus.features.mobheads.MobHeadType;
 import gg.projecteden.nexus.features.mobheads.common.MobHead;
 import gg.projecteden.nexus.features.mobheads.common.MobHeadVariant;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.NoArgsConstructor;
 import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @NoArgsConstructor
 public class MobHeadConverter extends TypeConverter implements SimpleValueConverter {
@@ -61,7 +60,7 @@ public class MobHeadConverter extends TypeConverter implements SimpleValueConver
 		if (split.length > 1) {
 			String variantName = split[1];
 
-			if (!isNullOrEmpty(variantName) && mobHeadType.getVariantClass() != null)
+			if (!Nullables.isNullOrEmpty(variantName) && mobHeadType.getVariantClass() != null)
 				return EnumUtils.valueOf(mobHeadType.getVariantClass(), variantName);
 		}
 

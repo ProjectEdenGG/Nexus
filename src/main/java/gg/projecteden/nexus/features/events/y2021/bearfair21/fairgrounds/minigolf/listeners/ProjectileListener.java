@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigol
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21User;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21UserService;
 import gg.projecteden.nexus.utils.GlowUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -22,8 +23,6 @@ import org.bukkit.util.Vector;
 
 import java.util.Arrays;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class ProjectileListener implements Listener {
 	private final List<Material> killMaterial = Arrays.asList(Material.BARRIER, Material.CRIMSON_HYPHAE,
@@ -91,7 +90,7 @@ public class ProjectileListener implements Listener {
 			}
 
 			// Bounce off surfaces
-			if (!isNullOrAir(event.getHitBlock())) {
+			if (!Nullables.isNullOrAir(event.getHitBlock())) {
 				Material mat = event.getHitBlock().getType();
 				switch (event.getHitBlockFace()) {
 					case NORTH:

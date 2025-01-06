@@ -106,8 +106,8 @@ public class Pugmas25Effects extends Effects {
 		Tasks.repeat(0, 2, () -> {
 			waterfallEffect(Particle.FALLING_WATER, fallingWaterLoc1);
 			waterfallEffect(Particle.FALLING_WATER, fallingWaterLoc2);
-			waterfallEffect(Particle.WATER_SPLASH, splashLoc1);
-			waterfallEffect(Particle.WATER_SPLASH, splashLoc2);
+			waterfallEffect(Particle.SPLASH, splashLoc1);
+			waterfallEffect(Particle.SPLASH, splashLoc2);
 		});
 	}
 

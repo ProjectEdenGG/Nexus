@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.BF21PointSource;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.Quests;
@@ -20,20 +21,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.isInRegion;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.send;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.worldedit;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.worldguard;
 
 public class Frogger implements Listener {
 
@@ -74,7 +64,7 @@ public class Frogger implements Listener {
 	}
 
 	private void loadSpawns(String logsRg, Map<Location, Material> logSpawnMap) {
-		List<Block> blocks = worldedit().getBlocks(worldguard().getRegion(logsRg));
+		List<Block> blocks = BearFair21.worldedit().getBlocks(BearFair21.worldguard().getRegion(logsRg));
 		for (Block block : blocks)
 			if (block.getType().equals(Material.DIAMOND_BLOCK) || block.getType().equals(Material.EMERALD_BLOCK))
 				logSpawnMap.put(block.getLocation(), block.getType());
@@ -290,7 +280,7 @@ public class Frogger implements Listener {
 	}
 
 	private void clearLogs() {
-		List<Block> blocks = worldedit().getBlocks(worldguard().getRegion(logsRg));
+		List<Block> blocks = BearFair21.worldedit().getBlocks(BearFair21.worldguard().getRegion(logsRg));
 		for (Block block : blocks) {
 			if (block.getType().equals(logMaterial))
 				block.setType(riverMaterial);
@@ -298,7 +288,7 @@ public class Frogger implements Listener {
 	}
 
 	private void clearCars() {
-		List<Block> blocks = worldedit().getBlocks(worldguard().getRegion(roadRg));
+		List<Block> blocks = BearFair21.worldedit().getBlocks(BearFair21.worldguard().getRegion(roadRg));
 		for (Block block : blocks) {
 			if (!block.getType().equals(Material.AIR))
 				block.setType(Material.AIR);
@@ -324,12 +314,12 @@ public class Frogger implements Listener {
 			String cheatingMsg = BearFair21.isCheatingMsg(player);
 			if (cheatingMsg != null && !cheatingMsg.contains("wgedit")) {
 				player.teleportAsync(respawnLoc);
-				send("Don't cheat, turn " + cheatingMsg + " off!", player);
+				BearFair21.send("Don't cheat, turn " + cheatingMsg + " off!", player);
 				Quests.sound_villagerNo(player);
 			}
 
 		} else if (regionId.equalsIgnoreCase(killRg)) {
-			if (canWorldGuardEdit(player)) return;
+			if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
 			if (checkpointList.contains(player))
 				player.teleportAsync(checkpointLoc);
 			else
@@ -337,7 +327,7 @@ public class Frogger implements Listener {
 			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(player).volume(10).play();
 
 		} else if (regionId.equalsIgnoreCase(winRg)) {
-			if (canWorldGuardEdit(player)) return;
+			if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
 
 			checkpointList.remove(player);
 			player.teleportAsync(respawnLoc);
@@ -351,7 +341,7 @@ public class Frogger implements Listener {
 	public void onRegionExit(PlayerLeftRegionEvent event) {
 		String regionId = event.getRegion().getId();
 		if (regionId.equalsIgnoreCase(gameRg)) {
-			int size = worldguard().getPlayersInRegion(gameRg).size();
+			int size = BearFair21.worldguard().getPlayersInRegion(gameRg).size();
 			if (size == 0) {
 				enabled = false;
 				stopAnimations();
@@ -363,7 +353,7 @@ public class Frogger implements Listener {
 	public void onDamage(EntityDamageEvent event) {
 		if (!(event.getEntity() instanceof Player player)) return;
 
-		if (!isInRegion(player, damageRg)) return;
+		if (!BearFair21.isInRegion(player, damageRg)) return;
 		if (event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)) return;
 
 		event.setDamage(0);

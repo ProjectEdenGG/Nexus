@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.quests.clientside;
 
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.clientside.models.ClientSideArmorStand;
@@ -12,10 +13,11 @@ import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContentService;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.nms.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.nms.PacketUtils;
 import lombok.Getter;
 import net.citizensnpcs.api.npc.NPC;
 import net.minecraft.world.entity.Entity;
@@ -32,14 +34,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.Distance.distance;
+import java.util.*;
 
 public class ClientsideContentManager implements Listener {
 	private static final ClientsideContentService contentService = new ClientsideContentService();
@@ -156,7 +151,7 @@ public class ClientsideContentManager implements Listener {
 	}
 
 	private static boolean isNear(Player player, Location location, int distance) {
-		return distance(location, player).lt(distance);
+		return Distance.distance(location, player).lt(distance);
 	}
 
 	private static boolean canSee(Player player, Content content) {
@@ -197,7 +192,7 @@ public class ClientsideContentManager implements Listener {
 		if (!playerEntities.containsKey(player.getUniqueId()))
 			return;
 		List<Entity> entities = new ArrayList<>(playerEntities.get(player.getUniqueId()));
-		if (isNullOrEmpty(entities))
+		if (Nullables.isNullOrEmpty(entities))
 			return;
 
 		for (Content content : contentList) {

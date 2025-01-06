@@ -46,7 +46,7 @@ public class HubEffects extends Effects {
 					.location(location(100.5, 137.9, 39.5))
 				.offset(0.15, 0, 0.15),
 
-			new ParticleBuilder(Particle.WATER_SPLASH)
+			new ParticleBuilder(Particle.SPLASH)
 					.location(location(81.5, 130.3, 60.5))
 				.offset(0.15, 0, 0.15)
 

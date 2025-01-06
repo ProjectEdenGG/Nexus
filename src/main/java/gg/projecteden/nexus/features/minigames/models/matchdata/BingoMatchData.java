@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.Challenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.common.IChallenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.common.IChallengeProgress;
+import gg.projecteden.nexus.utils.LocationUtils;
 import lombok.Data;
 import org.bukkit.Location;
 
@@ -19,8 +20,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
 
 @Data
 @MatchDataFor(Bingo.class)
@@ -90,7 +89,7 @@ public class BingoMatchData extends MatchData {
 	}
 
 	public void setSpawnpoint(Minigamer minigamer, Location location) {
-		location = getCenteredLocation(location.clone().add(0, 2, 0));
+		location = LocationUtils.getCenteredLocation(location.clone().add(0, 2, 0));
 		getData(minigamer).setSpawnpoint(location);
 	}
 

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.recipes.menu.common;
 
+import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +11,6 @@ import org.bukkit.inventory.RecipeChoice.ExactChoice;
 import org.bukkit.inventory.RecipeChoice.MaterialChoice;
 
 import java.util.List;
-
-import static gg.projecteden.api.common.utils.RandomUtils.randomElement;
 
 @RequiredArgsConstructor
 public abstract class ICustomRecipeMenu extends ICustomRecipesMenu {
@@ -66,9 +65,9 @@ public abstract class ICustomRecipeMenu extends ICustomRecipesMenu {
 
 	protected ItemStack random(RecipeChoice choice) {
 		if (choice instanceof MaterialChoice materialChoice)
-			return new ItemStack(randomElement(materialChoice.getChoices()));
+			return new ItemStack(RandomUtils.randomElement(materialChoice.getChoices()));
 		else if (choice instanceof ExactChoice exactChoice)
-			return randomElement(exactChoice.getChoices());
+			return RandomUtils.randomElement(exactChoice.getChoices());
 		else
 			return new ItemStack(Material.BARRIER);
 	}

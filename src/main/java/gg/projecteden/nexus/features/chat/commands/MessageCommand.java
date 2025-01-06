@@ -13,10 +13,9 @@ import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.chat.PrivateChannel;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.NonNull;
 import org.bukkit.OfflinePlayer;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Aliases({"m", "msg", "w", "whisper", "t", "tell", "pm", "dm"})
 public class MessageCommand extends CustomCommand {
@@ -45,7 +44,7 @@ public class MessageCommand extends CustomCommand {
 			error(Nickname.of(to) + " has messages disabled!");
 
 		PrivateChannel dm = new PrivateChannel(chatter, new ChatterService().get(to));
-		if (isNullOrEmpty(message))
+		if (Nullables.isNullOrEmpty(message))
 			chatter.setActiveChannel(dm);
 		else
 			chatter.say(dm, message);

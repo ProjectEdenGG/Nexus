@@ -4,15 +4,10 @@ import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
 import gg.projecteden.nexus.utils.StringUtils.Rainbow;
@@ -24,13 +19,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
-import static gg.projecteden.nexus.features.store.perks.inventory.ItemNameCommand.PERMISSION;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.applyFormattingToAll;
-import static gg.projecteden.nexus.utils.StringUtils.decolorize;
-
 @Aliases("nameitem")
-@Permission(PERMISSION)
+@Permission(ItemNameCommand.PERMISSION)
 @WikiConfig(rank = "Store", feature = "Inventory")
 public class ItemNameCommand extends CustomCommand {
 	public static final String PERMISSION = "itemname.use";
@@ -50,7 +40,7 @@ public class ItemNameCommand extends CustomCommand {
 	void reset(Material material) {
 		int count = 0;
 		for (ItemStack content : inventory().getContents()) {
-			if (isNullOrAir(content))
+			if (Nullables.isNullOrAir(content))
 				continue;
 
 			if (content.getType() != material)
@@ -89,7 +79,7 @@ public class ItemNameCommand extends CustomCommand {
 		if (decorationConfig != null && input == null)
 			input = "&f" + decorationConfig.getName();
 
-		final String name = applyFormattingToAll(input, bold, strikethrough, underline, italic, magic);
+		final String name = StringUtils.applyFormattingToAll(input, bold, strikethrough, underline, italic, magic);
 		ItemBuilder.setName(tool, name);
 		send(PREFIX + "Name of &e" + camelCase(tool.getType()).toLowerCase() + " &3" + (name == null ? "reset" : "set to &e" + name));
 	}
@@ -145,7 +135,7 @@ public class ItemNameCommand extends CustomCommand {
 		if (!tool.getItemMeta().hasDisplayName())
 			error("This item does not have a custom name");
 		final String displayName = tool.getItemMeta().getDisplayName();
-		send(json(PREFIX + displayName).hover("&fClick to copy").copy(decolorize(displayName)));
+		send(json(PREFIX + displayName).hover("&fClick to copy").copy(StringUtils.decolorize(displayName)));
 	}
 
 }

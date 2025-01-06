@@ -7,31 +7,17 @@ import gg.projecteden.nexus.features.chat.commands.EmotesCommand;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand.NumericPermission;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.store.annotations.Category;
+import gg.projecteden.nexus.features.store.annotations.*;
 import gg.projecteden.nexus.features.store.annotations.Category.StoreCategory;
 import gg.projecteden.nexus.features.store.annotations.Commands.Command;
-import gg.projecteden.nexus.features.store.annotations.Display;
 import gg.projecteden.nexus.features.store.annotations.ExpirationCommands.ExpirationCommand;
-import gg.projecteden.nexus.features.store.annotations.ExpirationDays;
-import gg.projecteden.nexus.features.store.annotations.Id;
-import gg.projecteden.nexus.features.store.annotations.PermissionGroup;
 import gg.projecteden.nexus.features.store.annotations.Permissions.Permission;
-import gg.projecteden.nexus.features.store.annotations.World;
 import gg.projecteden.nexus.features.store.perks.chat.NicknameCommand;
 import gg.projecteden.nexus.features.store.perks.chat.PrefixCommand;
-import gg.projecteden.nexus.features.store.perks.inventory.AutoTorchCommand;
-import gg.projecteden.nexus.features.store.perks.inventory.HatCommand;
-import gg.projecteden.nexus.features.store.perks.inventory.InvisibleArmorCommand;
-import gg.projecteden.nexus.features.store.perks.inventory.ItemNameCommand;
-import gg.projecteden.nexus.features.store.perks.inventory.PlayerHeadCommand;
+import gg.projecteden.nexus.features.store.perks.inventory.*;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventory;
 import gg.projecteden.nexus.features.store.perks.inventory.workbenches._WorkbenchCommand;
-import gg.projecteden.nexus.features.store.perks.visuals.EntityNameCommand;
-import gg.projecteden.nexus.features.store.perks.visuals.FireworkCommand;
-import gg.projecteden.nexus.features.store.perks.visuals.PlayerTimeCommand;
-import gg.projecteden.nexus.features.store.perks.visuals.RainbowArmorCommand;
-import gg.projecteden.nexus.features.store.perks.visuals.RainbowBeaconCommand;
-import gg.projecteden.nexus.features.store.perks.visuals.WingsCommand;
+import gg.projecteden.nexus.features.store.perks.visuals.*;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.autotorch.AutoTorchService;
 import gg.projecteden.nexus.models.boost.Boostable;
@@ -47,14 +33,9 @@ import gg.projecteden.nexus.models.store.Contributor;
 import gg.projecteden.nexus.models.store.ContributorService;
 import gg.projecteden.nexus.models.vaults.VaultUser;
 import gg.projecteden.nexus.models.vaults.VaultUserService;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.LuckPermsUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
-import gg.projecteden.nexus.utils.Name;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
 import lombok.SneakyThrows;
 import net.luckperms.api.context.ImmutableContextSet;
 import org.bukkit.Bukkit;
@@ -63,16 +44,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static java.time.LocalDateTime.now;
 
 public enum Package {
 
@@ -832,13 +809,13 @@ public enum Package {
 			return false;
 
 		List<String> permissions = getPermissions();
-		if (!isNullOrEmpty(permissions)) {
+		if (!Nullables.isNullOrEmpty(permissions)) {
 			org.bukkit.World world = getWorld();
 			return LuckPermsUtils.hasPermission(player, permissions.get(0), world == null ? ImmutableContextSet.empty() : ImmutableContextSet.of("world", world.getName()));
 		}
 
 		String permissionGroup = getPermissionGroup();
-		if (!isNullOrEmpty(permissionGroup))
+		if (!Nullables.isNullOrEmpty(permissionGroup))
 			return LuckPermsUtils.hasGroup(player, permissionGroup);
 
 		throw new InvalidInputException("Could not determine if a player has the " + name().toLowerCase() + " package");
@@ -863,7 +840,7 @@ public enum Package {
 		Display annotation = getField().getAnnotation(Display.class);
 		if (annotation != null) {
 			amount = annotation.amount();
-			if (!isNullOrAir(annotation.value())) {
+			if (!Nullables.isNullOrAir(annotation.value())) {
 				material = annotation.value();
 			} else if (annotation.model() != CustomMaterial.INVISIBLE) {
 				material = annotation.model().getMaterial();
@@ -873,7 +850,7 @@ public enum Package {
 			}
 		}
 
-		return new ItemBuilder(material).modelId(modelId).name(camelCase(name())).amount(amount);
+		return new ItemBuilder(material).modelId(modelId).name(StringUtils.camelCase(name())).amount(amount);
 	}
 
 	@Nullable
@@ -944,7 +921,7 @@ public enum Package {
 		PermissionChange.set().uuid(uuid).permissions(getPermissions()).runAsync();
 
 		String permissionGroup = getPermissionGroup();
-		if (!isNullOrEmpty(permissionGroup))
+		if (!Nullables.isNullOrEmpty(permissionGroup))
 			GroupChange.add().uuid(uuid).group(permissionGroup).runAsync();
 
 		getCommands().stream()
@@ -954,14 +931,14 @@ public enum Package {
 		handleApply(uuid);
 
 		if (getExpirationDays() > 0)
-			new PackageExpireJob(uuid, getId()).schedule(now().plusDays(getExpirationDays()));
+			new PackageExpireJob(uuid, getId()).schedule(LocalDateTime.now().plusDays(getExpirationDays()));
 	}
 
 	public void expire(UUID uuid) {
 		PermissionChange.unset().uuid(uuid).permissions(getPermissions()).runAsync();
 
 		String permissionGroup = getPermissionGroup();
-		if (!isNullOrEmpty(permissionGroup))
+		if (!Nullables.isNullOrEmpty(permissionGroup))
 			GroupChange.remove().uuid(uuid).group(permissionGroup).runAsync();
 
 		handleExpire(uuid);

@@ -17,9 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static gg.projecteden.nexus.utils.Tasks.repeat;
-
 @Permission(Group.STAFF)
 @Description("Automatically follow a player")
 public class LeashCommand extends CustomCommand {
@@ -71,7 +68,7 @@ public class LeashCommand extends CustomCommand {
 	}
 
 	private void startLeash(Player staff, Player target) {
-		int taskId = repeat(10, 30, () -> {
+		int taskId = Tasks.repeat(10, 30, () -> {
 			if (!staff.isOnline() || !target.isOnline()) {
 				stopLeash(staff, "&3Leash cancelled. &e" + target.getDisplayName() + " &3is no longer online.");
 				return;
@@ -85,7 +82,7 @@ public class LeashCommand extends CustomCommand {
 			final Location staffLocation = staff.getLocation();
 			final Location targetLocation = target.getLocation();
 
-			final Distance distance = distance(staffLocation, targetLocation);
+			final Distance distance = Distance.distance(staffLocation, targetLocation);
 			if (distance.lte(7))
 				return;
 

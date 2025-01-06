@@ -32,8 +32,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-
 public class CountersProvider extends InventoryProvider {
 	@NonNull InventoryProvider previousMenu;
 	@NonNull Catalog.Theme catalogTheme;
@@ -144,9 +142,9 @@ public class CountersProvider extends InventoryProvider {
 		default ItemBuilder getFilterItem() {
 			return getItem()
 				.name("&6Filter by: ")
-				.lore("&7⬇ " + camelCase(this.previousWithLoop().name()))
-				.lore("&e⬇ " + camelCase(this.name()))
-				.lore("&7⬇ " + camelCase(this.nextWithLoop().name()));
+				.lore("&7⬇ " + gg.projecteden.api.common.utils.StringUtils.camelCase(this.previousWithLoop().name()))
+				.lore("&e⬇ " + gg.projecteden.api.common.utils.StringUtils.camelCase(this.name()))
+				.lore("&7⬇ " + gg.projecteden.api.common.utils.StringUtils.camelCase(this.nextWithLoop().name()));
 		}
 
 		boolean applies(DecorationType type);

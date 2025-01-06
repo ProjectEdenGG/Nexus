@@ -36,7 +36,7 @@ public class LostPumpkins implements Listener {
 				Halloween20User user = new Halloween20Service().get(player);
 				for (Pumpkin pumpkin : Pumpkin.values()) {
 					if (user.getFoundPumpkins().contains(pumpkin.getOriginal())) continue;
-					player.spawnParticle(Particle.REDSTONE, LocationUtils.getCenteredLocation(pumpkin.getOriginal()), 5, .5, .5, .5, new DustOptions(Color.ORANGE, 1));
+					player.spawnParticle(Particle.DUST, LocationUtils.getCenteredLocation(pumpkin.getOriginal()), 5, .5, .5, .5, new DustOptions(Color.ORANGE, 1));
 				}
 			}
 		});

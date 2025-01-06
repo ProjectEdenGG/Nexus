@@ -16,11 +16,8 @@ import gg.projecteden.nexus.models.boost.Booster;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundUtils;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import gg.projecteden.nexus.utils.StringUtils;
+import lombok.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -30,8 +27,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 @Data
 @Entity(value = "perk_owner", noClassnameStored = true)
@@ -124,7 +119,7 @@ public class PerkOwner implements PlayerOwnedObject {
 			try {
 				if (getOnlinePlayer() != null)
 					SoundUtils.Jingle.PING.play(getOnlinePlayer()); // TODO: unique jingle
-				PlayerUtils.send(uuid, Minigames.PREFIX + "You won &e" + amount + plural(" token", amount) + "&3 for scoring in &e" + arenaName);
+				PlayerUtils.send(uuid, Minigames.PREFIX + "You won &e" + amount + StringUtils.plural(" token", amount) + "&3 for scoring in &e" + arenaName);
 				if (dailyTokens >= MAX_DAILY_TOKENS)
 					PlayerUtils.send(uuid, Minigames.PREFIX + "You've earned the maximum tokens for today");
 			} catch (NullPointerException ignored) {/*failsafe to allow PerkOwnerTest to function*/}

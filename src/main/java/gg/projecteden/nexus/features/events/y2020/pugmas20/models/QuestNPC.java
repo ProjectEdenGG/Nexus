@@ -1,23 +1,17 @@
 package gg.projecteden.nexus.features.events.y2020.pugmas20.models;
 
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.models.QuestStage;
 import gg.projecteden.nexus.features.events.models.Script;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.Merchants.MerchantNPC;
-import gg.projecteden.nexus.features.events.y2020.pugmas20.quests.GiftGiver;
-import gg.projecteden.nexus.features.events.y2020.pugmas20.quests.LightTheTree;
-import gg.projecteden.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor;
+import gg.projecteden.nexus.features.events.y2020.pugmas20.quests.*;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor.Ornament;
-import gg.projecteden.nexus.features.events.y2020.pugmas20.quests.Quests;
-import gg.projecteden.nexus.features.events.y2020.pugmas20.quests.TheMines;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20User;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20UserService;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -29,10 +23,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 public enum QuestNPC {
@@ -447,7 +437,7 @@ public enum QuestNPC {
 
 	public void sendScript(Player player) {
 		List<Script> scripts = getScript(player);
-		if (isNullOrEmpty(scripts)) return;
+		if (Nullables.isNullOrEmpty(scripts)) return;
 
 		AtomicInteger wait = new AtomicInteger(0);
 
@@ -491,7 +481,7 @@ public enum QuestNPC {
 		if (this == QA_ELF)
 			npcName.set("Q.A. Elf");
 		else
-			npcName.set(camelCase(name()));
+			npcName.set(StringUtils.camelCase(name()));
 		npcName.set(npcName.get().replaceAll("[\\d]+", ""));
 
 		return npcName.get();
@@ -503,7 +493,7 @@ public enum QuestNPC {
 
 	public ItemStack getItem(Player player, ItemStack item) {
 		for (ItemStack content : player.getInventory().getContents()) {
-			if (isNullOrAir(content))
+			if (gg.projecteden.nexus.utils.Nullables.isNullOrAir(content))
 				continue;
 
 			if (ItemUtils.isFuzzyMatch(item, content))

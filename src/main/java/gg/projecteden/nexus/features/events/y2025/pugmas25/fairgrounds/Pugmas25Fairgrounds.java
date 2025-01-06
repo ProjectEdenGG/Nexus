@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.frogger.P
 import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.reflection.Pugmas25Reflection;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.slotmachine.Pugmas25SlotMachine;
 import gg.projecteden.nexus.features.vanish.Vanish;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
@@ -19,8 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.Distance.distance;
 
 public class Pugmas25Fairgrounds {
 
@@ -91,7 +90,7 @@ public class Pugmas25Fairgrounds {
 		public boolean isWithinRadius(Player player) {
 			Location playerLocation = player.getLocation().clone();
 			playerLocation.setY(0);
-			return distance(playerLocation, this.location).lte(this.radius);
+			return Distance.distance(playerLocation, this.location).lte(this.radius);
 		}
 
 		public List<Player> getPlayersInRadius() {

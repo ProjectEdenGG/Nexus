@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.resourcepack.CustomContentUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreUtils;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.MineralChoice;
@@ -14,25 +15,12 @@ import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStationMenu;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
-import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.Distance;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.Getter;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.DyeColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.sign.SignSide;
@@ -45,10 +33,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @SuppressWarnings("deprecation")
 public class DecorationUtils {
@@ -98,7 +82,7 @@ public class DecorationUtils {
 
 		DecorationLang.debug(debugger, "Color Name: " + colorName);
 
-		boolean isPaintbrush = resultBuilder.modelId() == DyeStation.getPaintbrush().modelId();
+		boolean isPaintbrush = resultBuilder.modelId() == CustomMaterial.PAINTBRUSH.getModelId();
 		boolean handledPaintbrushUses = false;
 
 		List<String> finalLore = new ArrayList<>();
@@ -106,7 +90,7 @@ public class DecorationUtils {
 		// Change lore
 		List<String> newLore = new ArrayList<>();
 		for (String line : resultBuilder.getLore()) {
-			String _line = stripColor(line);
+			String _line = StringUtils.stripColor(line);
 			// remove color line
 			if (_line.contains("Color: "))
 				continue;
@@ -116,7 +100,7 @@ public class DecorationUtils {
 				continue;
 
 			// reset uses
-			if (isPaintbrush && _line.contains(stripColor(DyeStation.USES_LORE))) {
+			if (isPaintbrush && _line.contains(StringUtils.stripColor(DyeStation.USES_LORE))) {
 				newLore.add(DyeStation.USES_LORE + DyeStation.MAX_USES_PAINTBRUSH);
 				handledPaintbrushUses = true;
 				continue;
@@ -193,7 +177,7 @@ public class DecorationUtils {
 
 	@Nullable
 	public static Object getItemFrame(Block clicked, int radius, BlockFace blockFaceOverride, Player debugger, boolean isClientside) {
-		if (isNullOrAir(clicked))
+		if (Nullables.isNullOrAir(clicked))
 			return null;
 
 		Location location = clicked.getLocation().toCenterLocation();
@@ -251,7 +235,7 @@ public class DecorationUtils {
 		Location currentLoc = currentBlock.getLocation().clone();
 		Material currentType = currentBlock.getType();
 
-		Distance distance = distance(maze.getOrigin(), currentLoc);
+		Distance distance = Distance.distance(maze.getOrigin(), currentLoc);
 		Set<Material> hitboxTypes = DecorationConfig.getHitboxTypes();
 		if (maze.getTried().contains(currentLoc) || !hitboxTypes.contains(currentType) || distance.gt(6)) {
 			maze.setBlock(previousBlock);
@@ -297,7 +281,7 @@ public class DecorationUtils {
 			itemStack = _itemFrame.getItem();
 		}
 
-		if (isNullOrAir(itemStack)) {
+		if (Nullables.isNullOrAir(itemStack)) {
 			DecorationLang.debug(debugger, true, "&6- item frame is empty");
 			return null;
 		}

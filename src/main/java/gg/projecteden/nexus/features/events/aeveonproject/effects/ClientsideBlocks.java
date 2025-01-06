@@ -5,12 +5,14 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.aeveonproject.APUtils;
+import gg.projecteden.nexus.features.events.aeveonproject.AeveonProject;
 import gg.projecteden.nexus.features.events.aeveonproject.sets.APSet;
 import gg.projecteden.nexus.features.events.aeveonproject.sets.APSetType;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.models.aeveonproject.AeveonProjectService;
 import gg.projecteden.nexus.models.aeveonproject.AeveonProjectUser;
 import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -28,14 +30,6 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import java.util.Collection;
 import java.util.List;
 
-import static gg.projecteden.nexus.features.events.aeveonproject.APUtils.getPlayersInAPWorld;
-import static gg.projecteden.nexus.features.events.aeveonproject.APUtils.getPlayersInSet;
-import static gg.projecteden.nexus.features.events.aeveonproject.APUtils.getShipColorRegion;
-import static gg.projecteden.nexus.features.events.aeveonproject.APUtils.isInWorld;
-import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.worldedit;
-import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.worldguard;
-import static gg.projecteden.nexus.utils.Distance.distance;
-
 public class ClientsideBlocks implements Listener {
 	private static final AeveonProjectService service = new AeveonProjectService();
 	private final int minBoundary = 20;
@@ -49,7 +43,7 @@ public class ClientsideBlocks implements Listener {
 
 	private void updateTask() {
 		Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
-			if (getPlayersInAPWorld() == 0)
+			if (APUtils.getPlayersInAPWorld() == 0)
 				return;
 
 			for (APSetType APSetType : APSetType.values()) {
@@ -58,20 +52,20 @@ public class ClientsideBlocks implements Listener {
 				if (updateRegions == null)
 					continue;
 
-				Collection<Player> setPlayers = getPlayersInSet(set);
+				Collection<Player> setPlayers = APUtils.getPlayersInSet(set);
 				if (setPlayers.size() == 0)
 					continue;
 
 				for (String updateRegion : updateRegions) {
-					Region region = worldguard().getRegion(updateRegion);
-					Location rgCenter = worldedit().toLocation(region.getCenter());
+					Region region = AeveonProject.worldguard().getRegion(updateRegion);
+					Location rgCenter = AeveonProject.worldedit().toLocation(region.getCenter());
 					double rgBoundary = Math.max(Math.min(Math.max(region.getWidth(), region.getLength()), maxBoundary), minBoundary);
 
 					for (Player player : setPlayers) {
 						if (!APUtils.isInWorld(player))
 							continue;
 
-						if (distance(player, rgCenter).lte(rgBoundary))
+						if (Distance.distance(player, rgCenter).lte(rgBoundary))
 							update(player, updateRegion);
 					}
 				}
@@ -82,7 +76,7 @@ public class ClientsideBlocks implements Listener {
 	@EventHandler
 	public void onEnterRegion(PlayerEnteredRegionEvent event) {
 		Player player = event.getPlayer();
-		if (!isInWorld(player)) return;
+		if (!APUtils.isInWorld(player)) return;
 
 		update(player, event.getRegion());
 	}
@@ -90,7 +84,7 @@ public class ClientsideBlocks implements Listener {
 	@EventHandler
 	public void onPlayerLogin(PlayerLoginEvent event) {
 		Player player = event.getPlayer();
-		if (!isInWorld(player)) return;
+		if (!APUtils.isInWorld(player)) return;
 
 		update(player);
 	}
@@ -98,14 +92,14 @@ public class ClientsideBlocks implements Listener {
 	@EventHandler
 	public void onPlayerWorldChange(PlayerChangedWorldEvent event) {
 		Player player = event.getPlayer();
-		if (!isInWorld(player)) return;
+		if (!APUtils.isInWorld(player)) return;
 
 		update(player);
 	}
 
 	@EventHandler
 	public void onPlayerTeleport(PlayerTeleportEvent event) {
-		if (!isInWorld(event.getTo()))
+		if (!APUtils.isInWorld(event.getTo()))
 			return;
 
 		update(event.getPlayer(), event.getTo());
@@ -158,7 +152,7 @@ public class ClientsideBlocks implements Listener {
 				}
 			}
 
-			List<Block> blocks = worldedit().getBlocks(worldguard().getRegion(getShipColorRegion(region)));
+			List<Block> blocks = AeveonProject.worldedit().getBlocks(AeveonProject.worldguard().getRegion(APUtils.getShipColorRegion(region)));
 
 			for (Block block : blocks) {
 				if (block.getType().equals(Material.WHITE_CONCRETE))
@@ -185,7 +179,7 @@ public class ClientsideBlocks implements Listener {
 
 		// Any Docking Ports Region
 		if (region.contains("dockingport") || region.contains("vent_door")) {
-			List<Block> blocks = worldedit().getBlocks(worldguard().getRegion(region));
+			List<Block> blocks = AeveonProject.worldedit().getBlocks(AeveonProject.worldguard().getRegion(region));
 			for (Block block : blocks) {
 				if (block.getType().equals(Material.WATER))
 					player.sendBlockChange(block.getLocation(), Material.AIR.createBlockData());

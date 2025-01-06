@@ -14,8 +14,6 @@ import org.bukkit.entity.Player;
 import java.util.HashSet;
 import java.util.Set;
 
-import static gg.projecteden.nexus.features.hub.HubTreasureHunt.TOTAL_TREASURE_CHESTS;
-
 @Redirect(from = {"/tphub", "/lobby"}, to = "/hub")
 public class HubCommand extends _WarpSubCommand {
 
@@ -55,8 +53,8 @@ public class HubCommand extends _WarpSubCommand {
 		final HubTreasureHunterService service = new HubTreasureHunterService();
 		final HubTreasureHunter hunter = service.get(player());
 		final int found = hunter.getFound().size();
-		if (found != TOTAL_TREASURE_CHESTS)
-			send(PREFIX + "You found %s of %s treasure chests".formatted(found, TOTAL_TREASURE_CHESTS));
+		if (found != HubTreasureHunt.TOTAL_TREASURE_CHESTS)
+			send(PREFIX + "You found %s of %s treasure chests".formatted(found, HubTreasureHunt.TOTAL_TREASURE_CHESTS));
 		else
 			send(PREFIX + "You found all the treasure chests");
 	}

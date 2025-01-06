@@ -3,24 +3,18 @@ package gg.projecteden.nexus.features.shops.providers;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.SignMenuFactory;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
-import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.Filter;
-import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterEmptyStock;
-import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterExchangeType;
-import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterMarketItems;
-import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterRequiredType;
-import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterSearchType;
-import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterType;
+import gg.projecteden.nexus.features.shops.Shops;
+import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.*;
 import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.Shop.Product;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.*;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -29,11 +23,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static gg.projecteden.nexus.features.menus.api.SignMenuFactory.ARROWS;
-import static gg.projecteden.nexus.features.shops.Shops.PREFIX;
-import static gg.projecteden.nexus.utils.ItemUtils.getRawShulkerContents;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Title("&0Browse Items")
 public class BrowseProductsProvider extends ShopProvider {
@@ -109,8 +98,8 @@ public class BrowseProductsProvider extends ShopProvider {
 		FilterEmptyStock next = filter.nextWithLoop();
 
 		ItemBuilder item = new ItemBuilder(Material.BUCKET).name("&6Empty Stock:")
-			.lore("&e⬇ " + camelCase(filter.name()))
-			.lore("&7⬇ " + camelCase(next.name()));
+			.lore("&e⬇ " + StringUtils.camelCase(filter.name()))
+			.lore("&7⬇ " + StringUtils.camelCase(next.name()));
 		contents.set(5, 3, ClickableItem.of(item.build(), e -> {
 			formatFilter(stockFilter, next);
 			open(player, contents.pagination().getPage());
@@ -123,9 +112,9 @@ public class BrowseProductsProvider extends ShopProvider {
 		FilterExchangeType next = filter.nextWithLoop();
 
 		ItemBuilder item = new ItemBuilder(Material.HOPPER).name("&6Filter by:")
-			.lore("&7⬇ " + camelCase(filter.previousWithLoop().name()))
-			.lore("&e⬇ " + camelCase(filter.name()))
-			.lore("&7⬇ " + camelCase(next.name()));
+			.lore("&7⬇ " + StringUtils.camelCase(filter.previousWithLoop().name()))
+			.lore("&e⬇ " + StringUtils.camelCase(filter.name()))
+			.lore("&7⬇ " + StringUtils.camelCase(next.name()));
 		contents.set(5, 4, ClickableItem.of(item.build(), e -> {
 			formatFilter(exchangeFilter, next);
 			open(player, contents.pagination().getPage());
@@ -138,8 +127,8 @@ public class BrowseProductsProvider extends ShopProvider {
 		FilterMarketItems next = filter.nextWithLoop();
 
 		ItemBuilder item = new ItemBuilder(Material.OAK_SIGN).name("&6Market Items:")
-			.lore("&e⬇ " + camelCase(filter.name()))
-			.lore("&7⬇ " + camelCase(next.name()));
+			.lore("&e⬇ " + StringUtils.camelCase(filter.name()))
+			.lore("&7⬇ " + StringUtils.camelCase(next.name()));
 		contents.set(5, 5, ClickableItem.of(item.build(), e -> {
 			formatFilter(marketFilter, next);
 			open(player, contents.pagination().getPage());
@@ -188,8 +177,8 @@ public class BrowseProductsProvider extends ShopProvider {
 								refresh();
 							} else if (e.isShiftLeftClick())
 								Nexus.getSignMenuFactory()
-									.lines("", ARROWS, "Enter amount to", product.getExchange().getCustomerAction().toLowerCase() + " or 'all'")
-									.prefix(PREFIX)
+									.lines("", SignMenuFactory.ARROWS, "Enter amount to", product.getExchange().getCustomerAction().toLowerCase() + " or 'all'")
+									.prefix(Shops.PREFIX)
 									.onError(this::refresh)
 									.response(lines -> {
 										if (lines[0].length() > 0) {
@@ -205,7 +194,7 @@ public class BrowseProductsProvider extends ShopProvider {
 									})
 									.open(player);
 						} catch (Exception ex) {
-							PlayerUtils.send(player, PREFIX + "&c" + ex.getMessage());
+							PlayerUtils.send(player, Shops.PREFIX + "&c" + ex.getMessage());
 						}
 					}));
 				} catch (Exception ex) {
@@ -227,7 +216,7 @@ public class BrowseProductsProvider extends ShopProvider {
 
 			product.processMany(viewer, amount / product.getItem().getAmount());
 		} catch (Exception ex) {
-			MenuUtils.handleException(viewer, PREFIX, ex);
+			MenuUtils.handleException(viewer, Shops.PREFIX, ex);
 		} finally {
 			refresh();
 		}
@@ -237,7 +226,7 @@ public class BrowseProductsProvider extends ShopProvider {
 		try {
 			product.processAll(viewer);
 		} catch (Exception ex) {
-			MenuUtils.handleException(viewer, PREFIX, ex);
+			MenuUtils.handleException(viewer, Shops.PREFIX, ex);
 		} finally {
 			refresh();
 		}
@@ -292,7 +281,7 @@ public class BrowseProductsProvider extends ShopProvider {
 
 			int row = 1;
 			int column = 0;
-			for (ItemStack itemStack : getRawShulkerContents(product.getItem())) {
+			for (ItemStack itemStack : ItemUtils.getRawShulkerContents(product.getItem())) {
 				contents.set(row, column, ClickableItem.empty(itemStack));
 
 				if (column == 8) {

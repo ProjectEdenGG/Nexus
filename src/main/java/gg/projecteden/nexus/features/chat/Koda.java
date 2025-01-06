@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.chat;
 
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.api.discord.DiscordId.Role;
 import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.api.interfaces.HasUniqueId;
@@ -16,13 +18,8 @@ import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.IOUtils;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -40,11 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-
 public class Koda {
 	@Getter @NotNull
 	private static final String PREFIX = StringUtils.getPrefix("KodaBear");
@@ -61,7 +53,7 @@ public class Koda {
 	@Getter @NotNull
 	private static final String localFormat = "&e[L] " + coloredName + " &e&l> &f";
 	@Getter @NotNull
-	private static final String dmFormat = colorize("&3&l[&bPM&3&l] &eFrom &3KodaBear &b&l> &e");
+	private static final String dmFormat = StringUtils.colorize("&3&l[&bPM&3&l] &eFrom &3KodaBear &b&l> &e");
 	@Getter @NotNull
 	private static final String discordFormat = "<@role" + Role.KODA.getId() + "> **>** ";
 	@Getter @NotNull
@@ -108,7 +100,7 @@ public class Koda {
 	}
 
 	public static void console(@NotNull String message) {
-		Bukkit.getConsoleSender().sendMessage("[KodaBear] " + stripColor(message));
+		Bukkit.getConsoleSender().sendMessage("[KodaBear] " + StringUtils.stripColor(message));
 	}
 
 	public static void dm(@Nullable Player player, @NotNull String message) {
@@ -167,14 +159,14 @@ public class Koda {
 					continue responses;
 
 			if (trigger.getCooldown() != null && trigger.getCooldown() > 0)
-				if (!new CooldownService().check(UUID0, "koda_" + trigger.getName(), TickTime.SECOND.x(trigger.getCooldown())))
+				if (!new CooldownService().check(UUIDUtils.UUID0, "koda_" + trigger.getName(), TickTime.SECOND.x(trigger.getCooldown())))
 					continue;
 
-			if (!isNullOrEmpty(trigger.getRoutine()))
+			if (!Nullables.isNullOrEmpty(trigger.getRoutine()))
 				routine(event, trigger.getRoutine());
 
 			String response = trigger.getResponse();
-			if (!isNullOrEmpty(response))
+			if (!Nullables.isNullOrEmpty(response))
 				respond(event, response);
 
 			break;

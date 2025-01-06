@@ -17,25 +17,12 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Directional;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.giveDailyPoints;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.isInRegion;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldedit;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
+import java.util.*;
 
 public class Archery implements Listener {
 	private static String gameRg = BearFair20.getRegion() + "_archery";
@@ -75,7 +62,7 @@ public class Archery implements Listener {
 	public void onRegionExit(PlayerLeftRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(gameRg)) return;
 		if (!archeryBool) return;
-		int size = worldguard().getPlayersInRegion(gameRg).size();
+		int size = BearFair20.worldguard().getPlayersInRegion(gameRg).size();
 		if (size == 0) {
 			archeryBool = false;
 			clearTargets();
@@ -89,7 +76,7 @@ public class Archery implements Listener {
 		Block hitBlock = event.getHitBlock();
 		if (hitBlock == null) return;
 		if (!hitBlock.getType().equals(Material.WHITE_CONCRETE)) return;
-		if (!isInRegion(hitBlock, targetsRg)) return;
+		if (!BearFair20.isInRegion(hitBlock, targetsRg)) return;
 		if (!(projectile.getShooter() instanceof Player player)) return;
 
 		projectile.remove();
@@ -97,7 +84,7 @@ public class Archery implements Listener {
 		removeTarget(hitBlock);
 		player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.3F, 0.1F);
 
-		if (giveDailyPoints) {
+		if (BearFair20.giveDailyPoints) {
 			BearFair20User user = new BearFair20UserService().get(player);
 			user.giveDailyPoints(SOURCE);
 			new BearFair20UserService().save(user);
@@ -105,7 +92,7 @@ public class Archery implements Listener {
 	}
 
 	private List<Location> getTargetLocs() {
-		List<Block> blocks = BearFair20.worldedit().getBlocks(worldguard().getRegion(targetsRg));
+		List<Block> blocks = BearFair20.worldedit().getBlocks(BearFair20.worldguard().getRegion(targetsRg));
 		List<Location> locs = new ArrayList<>();
 		for (Block block : blocks) {
 			Location loc = block.getLocation();
@@ -169,7 +156,7 @@ public class Archery implements Listener {
 
 	private void clearTargets() {
 		currentTargets = 0;
-		List<Block> blocks = worldedit().getBlocks(worldguard().getRegion(targetsRg));
+		List<Block> blocks = BearFair20.worldedit().getBlocks(BearFair20.worldguard().getRegion(targetsRg));
 		for (Block block : blocks) {
 			if (block.getType().equals(Material.WHITE_CONCRETE))
 				removeTarget(block);

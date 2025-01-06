@@ -1,13 +1,10 @@
 package gg.projecteden.nexus.features.events.models;
 
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.features.customenchants.EnchantUtils;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.BlockRegenJob;
-import gg.projecteden.nexus.utils.Enchant;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.ToolType;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.ToolType.ToolGrade;
 import lombok.Builder;
 import lombok.Data;
@@ -18,18 +15,9 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.api.common.utils.RandomUtils.chanceOf;
-import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
-import static java.util.stream.Collectors.toList;
 
 @Data
 @Builder
@@ -60,7 +48,7 @@ public class EventBreakable {
 
 	public void giveExp(Player player) {
 		if (minExp != 0 && maxExp != 0) {
-			if (chanceOf(expChance)) {
+			if (gg.projecteden.api.common.utils.RandomUtils.chanceOf(expChance)) {
 				int exp = RandomUtils.randomInt(minExp, maxExp);
 				player.giveExp(exp, true);
 			}
@@ -72,8 +60,8 @@ public class EventBreakable {
 	}
 
 	public void regen(List<Block> blocks) {
-		final int regenDelay = randomInt(minRegenerationDelay, maxRegenerationDelay);
-		final int placeholderDelay = randomInt(minPlaceholderDelay, maxPlaceholderDelay);
+		final int regenDelay = RandomUtils.randomInt(minRegenerationDelay, maxRegenerationDelay);
+		final int placeholderDelay = RandomUtils.randomInt(minPlaceholderDelay, maxPlaceholderDelay);
 
 		for (Block block : blocks) {
 			new BlockRegenJob(block.getLocation(), block.getType()).schedule(regenDelay);
@@ -214,11 +202,11 @@ public class EventBreakable {
 		private boolean useFortune = true;
 
 		public ItemStack getDrops(ItemStack tool) {
-			if (!chanceOf(chance))
+			if (!gg.projecteden.api.common.utils.RandomUtils.chanceOf(chance))
 				return null;
 
 			int fortuneLevel = EnchantUtils.getLevel(Enchant.FORTUNE, tool);
-			int amount = randomInt(min, max) * randomInt(1, fortuneLevel + 1);
+			int amount = RandomUtils.randomInt(min, max) * RandomUtils.randomInt(1, fortuneLevel + 1);
 			return new ItemBuilder(item).amount(amount).build();
 		}
 
@@ -267,10 +255,10 @@ public class EventBreakable {
 	}
 
 	public List<ItemStack> getDrops(ItemStack tool) {
-		if (isNullOrEmpty(drops))
+		if (Nullables.isNullOrEmpty(drops))
 			return null;
 
-		return drops.stream().map(drop -> drop.getDrops(tool)).filter(Objects::nonNull).collect(toList());
+		return drops.stream().map(drop -> drop.getDrops(tool)).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
 	public String getAvailableTools() {

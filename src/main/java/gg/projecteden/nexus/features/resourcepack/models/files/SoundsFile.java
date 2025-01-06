@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.resourcepack.models.files;
 
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.utils.AudioUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.Data;
 import lombok.Getter;
@@ -13,8 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-
-import static gg.projecteden.nexus.utils.SoundBuilder.SOUND_DURATIONS;
 
 @Data
 public class SoundsFile {
@@ -44,7 +43,7 @@ public class SoundsFile {
 					if (!file.getName().equals(filePath))
 						continue;
 
-					SOUND_DURATIONS.put(sound, (int) AudioUtils.getVorbisDuration(Files.readAllBytes(path)));
+					SoundBuilder.SOUND_DURATIONS.put(sound, (int) AudioUtils.getVorbisDuration(Files.readAllBytes(path)));
 					return;
 				} catch (Exception ex) {
 					ex.printStackTrace();

@@ -5,25 +5,13 @@ import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.features.commands.staff.HealCommand;
 import gg.projecteden.nexus.features.events.EdenEvent;
+import gg.projecteden.nexus.features.events.models.EventFishingLoot;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.advent.Pugmas25Advent;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.balloons.Pugmas25BalloonEditor;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.balloons.Pugmas25BalloonManager;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.Pugmas25Fairgrounds;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Cabin;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Fishing;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Intro;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Train;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25TrainBackground;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waystones;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25Entity;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25NPC;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25Quest;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItemsListener;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestReward;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestTask;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25ShopMenu;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.*;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.*;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.framework.annotations.Date;
@@ -51,9 +39,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
-
-import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory.FISH;
-import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory.JUNK;
 
 /*
 	TODO:
@@ -185,7 +170,7 @@ public class Pugmas25 extends EdenEvent {
 
 	@Override
 	protected void registerFishingLoot() {
-		registerFishingLoot(FISH, JUNK);
+		registerFishingLoot(EventFishingLoot.EventFishingLootCategory.FISH, EventFishingLoot.EventFishingLootCategory.JUNK);
 	}
 
 	@Override

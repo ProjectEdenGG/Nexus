@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.wither.fights;
 
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.features.wither.models.WitherFight;
+import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.entity.Wither;
@@ -9,8 +10,6 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.RandomUtils.chanceOf;
 
 @NoArgsConstructor
 public class EasyFight extends WitherFight {
@@ -27,7 +26,7 @@ public class EasyFight extends WitherFight {
 
 	@Override
 	public boolean shouldGiveStar() {
-		return chanceOf(12.5);
+		return RandomUtils.chanceOf(12.5);
 	}
 
 	@Override

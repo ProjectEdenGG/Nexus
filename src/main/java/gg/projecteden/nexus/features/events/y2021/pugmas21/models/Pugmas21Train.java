@@ -2,18 +2,17 @@ package gg.projecteden.nexus.features.events.y2021.pugmas21.models;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
+import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.block.BlockFace;
 
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
-import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
-
 public class Pugmas21Train {
 
 	public static void schedule() {
-		final Supplier<Long> delay = () -> TickTime.MINUTE.x(randomInt(5, 10));
+		final Supplier<Long> delay = () -> TickTime.MINUTE.x(RandomUtils.randomInt(5, 10));
 
 		Tasks.wait(delay.get(), new AtomicReference<Runnable>() {{
 			set(() -> {

@@ -9,9 +9,11 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.NonNull;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -24,11 +26,6 @@ import org.bukkit.entity.Villager.Profession;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-
-import static gg.projecteden.nexus.utils.EntityUtils.getNearbyEntities;
-import static gg.projecteden.nexus.utils.EntityUtils.getNearbyEntityTypes;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-import static gg.projecteden.nexus.utils.Utils.sortByValue;
 
 @Permission(Group.STAFF)
 @Description("Shows all nearby entities")
@@ -43,7 +40,7 @@ public class EntitiesCommand extends CustomCommand {
 	void run(@Arg("200") int radius) {
 		line();
 		send(PREFIX + "Found:");
-		LinkedHashMap<EntityType, Long> nearbyEntities = getNearbyEntityTypes(location(), radius);
+		LinkedHashMap<EntityType, Long> nearbyEntities = EntityUtils.getNearbyEntityTypes(location(), radius);
 		nearbyEntities.forEach((entityType, count) -> send("&e" + StringUtils.camelCase(entityType.name()) + " &7- " + count));
 		send("");
 		send("&3Total: &e" + nearbyEntities.values().stream().mapToLong(i -> i).sum());
@@ -52,7 +49,7 @@ public class EntitiesCommand extends CustomCommand {
 	@Path("find <type> [radius] [--uuid]")
 	@Description("Locate all nearby entities of a specific type")
 	void find(EntityType type, @Arg("200") int radius, @Switch @Arg("false") boolean uuid) {
-		var entityMap = getNearbyEntities(location(), radius);
+		var entityMap = EntityUtils.getNearbyEntities(location(), radius);
 		entityMap.forEach((entity, count) -> {
 			if (entity.getType() != type)
 				return;
@@ -61,7 +58,7 @@ public class EntitiesCommand extends CustomCommand {
 
 			String name = StringUtils.camelCase(entity.getType());
 			if (!Nullables.isNullOrEmpty(entity.getCustomName()))
-				name = name + " named " + stripColor(entity.getCustomName());
+				name = name + " named " + StringUtils.stripColor(entity.getCustomName());
 
 			JsonBuilder json = new JsonBuilder("&7 - &e" + name).hover("Click to TP")
 				.command(StringUtils.getTeleportCommandFloored(location)).group();
@@ -80,7 +77,7 @@ public class EntitiesCommand extends CustomCommand {
 	@Path("report [radius] [type]")
 	@Description("View the number of entities near each online player")
 	void report(@Arg("200") int radius, EntityType type) {
-		sortByValue(new HashMap<Player, Integer>() {{
+		Utils.sortByValue(new HashMap<Player, Integer>() {{
 			for (Player player : OnlinePlayers.getAll())
 				put(player, player.getWorld().getNearbyEntities(player.getLocation(), radius, radius, radius, entity -> type == null || type == entity.getType()).size());
 		}}).forEach((player, count) -> {
@@ -92,7 +89,7 @@ public class EntitiesCommand extends CustomCommand {
 	@Path("byChunk <type> [world]")
 	@Description("View entity counts by chunk")
 	void count(EntityType type, @Arg("current") World world) {
-		sortByValue(new HashMap<Chunk, Integer>() {{
+		Utils.sortByValue(new HashMap<Chunk, Integer>() {{
 			for (Entity entity : world.getEntities()) {
 				if (entity.getType() == type)
 					put(entity.getChunk(), getOrDefault(entity.getChunk(), 0) + 1);

@@ -7,10 +7,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.LocationUtils;
 import org.bukkit.Location;
-
-import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
-import static gg.projecteden.nexus.utils.LocationUtils.getIntercardinalCenteredLocation;
 
 @Aliases("lookcenter")
 @Permission(Group.STAFF)
@@ -19,8 +17,8 @@ public class BlockCenterCommand extends CustomCommand {
 
 	public BlockCenterCommand(CommandEvent event) {
 		super(event);
-		centered = getCenteredLocation(location());
-		intercardinalCentered = getIntercardinalCenteredLocation(location());
+		centered = LocationUtils.getCenteredLocation(location());
+		intercardinalCentered = LocationUtils.getIntercardinalCenteredLocation(location());
 	}
 
 	@Path

@@ -1,10 +1,9 @@
 package gg.projecteden.nexus.features.customenchants.enchants;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.models.pvp.PVPService;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrowableProjectile;
 import org.bukkit.entity.Trident;
@@ -13,9 +12,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class ThorEnchant extends CustomEnchant implements Listener {
 
@@ -40,7 +36,7 @@ public class ThorEnchant extends CustomEnchant implements Listener {
 
 		if (player == null)
 			return;
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return;
 		if (event.getCause() == DamageCause.THORNS)
 			return;
@@ -58,4 +54,8 @@ public class ThorEnchant extends CustomEnchant implements Listener {
 			player.getWorld().strikeLightning(event.getEntity().getLocation());
 	}
 
+	@Override
+	public int getMaxLevel() {
+		return 3;
+	}
 }

@@ -1,25 +1,16 @@
 package gg.projecteden.nexus.models.store;
 
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Sorts;
 import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
 import gg.projecteden.nexus.models.store.Contributor.Purchase;
 
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-
-import static com.mongodb.client.model.Aggregates.limit;
-import static com.mongodb.client.model.Aggregates.replaceRoot;
-import static com.mongodb.client.model.Aggregates.sort;
-import static com.mongodb.client.model.Aggregates.unwind;
-import static com.mongodb.client.model.Sorts.descending;
 
 @ObjectClass(Contributor.class)
 public class ContributorService extends MongoPlayerService<Contributor> {
@@ -35,12 +26,12 @@ public class ContributorService extends MongoPlayerService<Contributor> {
 
 	public List<Purchase> getRecent(int count) {
 		return map(getCollection().aggregate(new ArrayList<>(List.of(
-			unwind("$purchases"),
-			replaceRoot("$purchases"),
-			sort(descending("timestamp"))
+			Aggregates.unwind("$purchases"),
+			Aggregates.replaceRoot("$purchases"),
+			Aggregates.sort(Sorts.descending("timestamp"))
 		)) {{
 			if (count > 0)
-				add(limit(count));
+				add(Aggregates.limit(count));
 		}}), Purchase.class);
 	}
 

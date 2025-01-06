@@ -4,8 +4,10 @@ import com.destroystokyo.paper.event.block.AnvilDamagedEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.exceptions.EdenException;
 import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.interfaces.HasUniqueId;
+import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.customboundingboxes.events.CustomBoundingBoxEntityInteractEvent;
 import gg.projecteden.nexus.features.effects.Effects;
 import gg.projecteden.nexus.features.events.models.EventBreakable;
@@ -33,19 +35,8 @@ import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.models.trophy.TrophyHolderService;
 import gg.projecteden.nexus.models.trophy.TrophyType;
-import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.ChunkLoader;
-import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.Enchant;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.LuckPermsUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.TitleBuilder;
-import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.parchment.HasLocation;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.Data;
@@ -58,14 +49,7 @@ import net.luckperms.api.context.ContextCalculator;
 import net.luckperms.api.context.ContextConsumer;
 import net.luckperms.api.context.ContextSet;
 import net.luckperms.api.context.ImmutableContextSet;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.BlockData;
@@ -92,20 +76,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
-
-import static gg.projecteden.api.common.utils.RandomUtils.chanceOf;
-import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public abstract class EdenEvent extends Feature implements Listener {
 	public static final String PREFIX_EVENTS = StringUtils.getPrefix("Events");
@@ -610,7 +583,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 			return;
 		if (event.isCancelled())
 			return;
-		if (canWorldGuardEdit(player))
+		if (WorldGuardEditCommand.canWorldGuardEdit(player))
 			return;
 
 		event.setCancelled(true);
@@ -634,7 +607,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 			return;
 		if (event.isCancelled())
 			return;
-		if (canWorldGuardEdit(player))
+		if (WorldGuardEditCommand.canWorldGuardEdit(player))
 			return;
 		if (placeBlock(event))
 			return;
@@ -751,7 +724,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 				throw new BreakException("event_break_wrong_tool", EventErrors.CANT_BREAK + " with this tool. Needs either: " + breakable.getAvailableTools());
 
 			if (tool.getItemMeta() instanceof Damageable damageable && tool.getType().getMaxDurability() != 0) {
-				if (chanceOf(100 / Math.max(tool.getEnchantmentLevel(Enchant.UNBREAKING) + 1, 1))) {
+				if (RandomUtils.chanceOf(100 / Math.max(tool.getEnchantmentLevel(Enchant.UNBREAKING) + 1, 1))) {
 					damageable.setDamage(damageable.getDamage() + 1);
 					if (damageable.getDamage() >= tool.getType().getMaxDurability()) {
 						tool.subtract();
@@ -859,13 +832,13 @@ public abstract class EdenEvent extends Feature implements Listener {
 			return;
 
 		final Block block = event.getClickedBlock();
-		if (isNullOrAir(block))
+		if (Nullables.isNullOrAir(block))
 			return;
 
 		if (block.getType() != Material.DECORATED_POT)
 			return;
 
-		if (canWorldGuardEdit(event.getPlayer()))
+		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
 			return;
 
 		event.setCancelled(true);

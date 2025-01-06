@@ -12,20 +12,15 @@ import gg.projecteden.nexus.models.chat.Channel;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.chat.PublicChannel;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Data
 @Entity(value = "status_bar", noClassnameStored = true)
@@ -73,7 +68,7 @@ public class StatusBar implements PlayerOwnedObject {
 	}
 
 	public String getText() {
-		return colorize(
+		return StringUtils.colorize(
 				ScoreboardLine.PING.render(getOnlinePlayer()) + "  &8&l|  " +
 				ScoreboardLine.TPS.render(getOnlinePlayer()) + "  &8&l|  " +
 				ScoreboardLine.CHANNEL.render(getOnlinePlayer())

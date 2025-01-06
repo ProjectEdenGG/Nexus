@@ -8,16 +8,8 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fi
 import gg.projecteden.nexus.features.particles.ParticleUtils;
 import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
-import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import gg.projecteden.nexus.utils.*;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Levelled;
@@ -33,10 +25,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class Recycler implements Listener {
 	private static final String title = "&aRecycler";
@@ -68,14 +56,14 @@ public class Recycler implements Listener {
 	}
 
 	private void openRecycler(Player player) {
-		Inventory inv = Bukkit.createInventory(null, 27, colorize(title));
+		Inventory inv = Bukkit.createInventory(null, 27, StringUtils.colorize(title));
 		player.openInventory(inv);
 	}
 
 	@EventHandler
 	public void onSellCrateClose(InventoryCloseEvent event) {
-		String _title = stripColor(event.getView().getTitle());
-		if (!_title.contains(stripColor(title)))
+		String _title = StringUtils.stripColor(event.getView().getTitle());
+		if (!_title.contains(StringUtils.stripColor(title)))
 			return;
 
 		Player player = (Player) event.getPlayer();
@@ -83,7 +71,7 @@ public class Recycler implements Listener {
 		List<ItemStack> trash = new ArrayList<>();
 		List<ItemStack> giveBack = new ArrayList<>();
 		for (ItemStack itemStack : event.getInventory().getContents()) {
-			if (!isNullOrAir(itemStack)) {
+			if (!Nullables.isNullOrAir(itemStack)) {
 				if (FishingLoot.isTrash(itemStack))
 					trash.add(itemStack);
 				else
@@ -145,7 +133,7 @@ public class Recycler implements Listener {
 		for (int i = 0; i < loops; i++) {
 			Tasks.wait(wait.addAndGet(5), () -> {
 				new SoundBuilder(Sound.BLOCK_COMPOSTER_READY).location(composter).play();
-				ParticleUtils.display(Particle.VILLAGER_HAPPY, LocationUtils.getCenteredLocation(above.getLocation()), 15, 0.5, 0.5, 0.5, 0.1);
+				ParticleUtils.display(Particle.HAPPY_VILLAGER, LocationUtils.getCenteredLocation(above.getLocation()), 15, 0.5, 0.5, 0.5, 0.1);
 			});
 		}
 

@@ -4,7 +4,6 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.CompletableTask;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -28,11 +27,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -148,11 +143,11 @@ public class CreativeFilter implements Listener {
 		if (entities.size() <= MAX_DROPPED_ENTITIES)
 			return;
 
-		CompletableTask.supplyAsync(() -> {
+		Tasks.async(() -> {
 			List<Item> sortedEntities = new ArrayList<>(entities);
 			sortedEntities.sort(Comparator.comparing(Entity::getTicksLived).reversed());
-			return sortedEntities.subList(0, sortedEntities.size() - MAX_DROPPED_ENTITIES);
-		}).thenAcceptSync(items -> items.forEach(Item::remove));
+			Tasks.sync(() -> sortedEntities.subList(0, sortedEntities.size() - MAX_DROPPED_ENTITIES).forEach(Item::remove));
+		});
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

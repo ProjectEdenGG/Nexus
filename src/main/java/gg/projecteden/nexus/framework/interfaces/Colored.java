@@ -2,6 +2,7 @@ package gg.projecteden.nexus.framework.interfaces;
 
 import gg.projecteden.nexus.framework.interfaces.impl.ColoredImpl;
 import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.StringUtils;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.util.RGBLike;
 import net.md_5.bungee.api.ChatColor;
@@ -9,10 +10,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.Arrays;
-
-import static gg.projecteden.nexus.utils.StringUtils.toHex;
 
 public interface Colored extends TextColor, IsColored {
 	/**
@@ -54,7 +53,7 @@ public interface Colored extends TextColor, IsColored {
 	 * @return a string like "&#ABCDEF"
 	 */
 	default @NotNull String getHex() {
-		return "&" + toHex(getChatColor());
+		return "&" + StringUtils.toHex(getChatColor());
 	}
 
 	@Override

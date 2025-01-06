@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.store.perks.inventory.autoinventory.features;
 
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventoryFeature;
@@ -19,8 +20,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 import java.util.List;
 
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-
 @NoArgsConstructor
 public class AutoTrash implements Listener {
 
@@ -39,7 +38,7 @@ public class AutoTrash implements Listener {
 		ItemStack item = event.getItem().getItemStack();
 		ItemMeta meta = item.getItemMeta();
 		List<String> lore = item.clone().getLore();
-		if (meta.hasLore() && !isNullOrEmpty(lore)) {
+		if (meta.hasLore() && !Nullables.isNullOrEmpty(lore)) {
 			ItemTagsUtils.clearTags(lore);
 			if (lore.size() > 0)
 				return;

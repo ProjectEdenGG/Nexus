@@ -9,12 +9,9 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
-
-import static gg.projecteden.nexus.utils.StringUtils.pretty;
-import static gg.projecteden.nexus.utils.StringUtils.stripTrailingZeros;
-import static gg.projecteden.nexus.utils.StringUtils.trimFirst;
 
 @Aliases({"exp", "xp"})
 @Permission("experience.use")
@@ -95,7 +92,7 @@ public class ExperienceCommand extends CustomCommand {
 	}
 
 	private String getFormattedExp(Player player) {
-		String totalExp = stripTrailingZeros(pretty(Double.parseDouble(player.getLevel() + trimFirst(String.valueOf(player.getExp())))));
+		String totalExp = StringUtils.stripTrailingZeros(StringUtils.pretty(Double.parseDouble(player.getLevel() + StringUtils.trimFirst(String.valueOf(player.getExp())))));
 		return totalExp + plural(" level", Double.parseDouble(totalExp));
 	}
 

@@ -15,11 +15,7 @@ import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInst
 import gg.projecteden.nexus.features.quests.tasks.common.IQuest;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -35,17 +31,8 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Predicate;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static java.util.Collections.singletonList;
 
 @Data
 @Entity(value = "quester", noClassnameStored = true)
@@ -95,7 +82,7 @@ public class Quester implements PlayerOwnedObject {
 
 	public void interact(PlayerInteractEvent event) {
 		final Block block = event.getClickedBlock();
-		if (isNullOrAir(block))
+		if (Nullables.isNullOrAir(block))
 			return;
 
 		for (Quest quest : quests) {
@@ -227,7 +214,7 @@ public class Quester implements PlayerOwnedObject {
 	}
 
 	public boolean has(ItemStack item) {
-		return has(singletonList(item));
+		return has(Collections.singletonList(item));
 	}
 
 	public boolean has(List<ItemStack> items) {
@@ -237,7 +224,7 @@ public class Quester implements PlayerOwnedObject {
 			amounts.put(ItemBuilder.oneOf(item).build(), item.getAmount());
 
 		for (ItemStack content : getOnlinePlayer().getInventory().getContents()) {
-			if (isNullOrAir(content))
+			if (Nullables.isNullOrAir(content))
 				continue;
 
 			for (ItemStack item : items)
@@ -265,7 +252,7 @@ public class Quester implements PlayerOwnedObject {
 		int found = 0;
 
 		for (ItemStack content : getOnlinePlayer().getInventory().getContents()) {
-			if (isNullOrAir(content))
+			if (Nullables.isNullOrAir(content))
 				continue;
 
 			if (predicate.test(content)) {
@@ -277,11 +264,11 @@ public class Quester implements PlayerOwnedObject {
 	}
 
 	public void take(ItemStack item) {
-		take(singletonList(item));
+		take(Collections.singletonList(item));
 	}
 
 	public void take(List<ItemStack> items) {
-		if (!isNullOrEmpty(items))
+		if (!gg.projecteden.api.common.utils.Nullables.isNullOrEmpty(items))
 			for (ItemStack item : items)
 				PlayerUtils.removeItem(getOnlinePlayer(), item);
 	}
@@ -289,7 +276,7 @@ public class Quester implements PlayerOwnedObject {
 	public void take(Predicate<ItemStack> predicate, int amount) {
 		int count = 0;
 		for (ItemStack content : getOnlinePlayer().getInventory().getContents()) {
-			if (isNullOrAir(content))
+			if (Nullables.isNullOrAir(content))
 				continue;
 
 			if (predicate.test(content)) {

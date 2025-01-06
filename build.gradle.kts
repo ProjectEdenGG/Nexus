@@ -6,9 +6,9 @@ val edenApiVersion: String by project
 plugins {
     `java-library`
     `maven-publish`
-    id("io.freefair.lombok") version "8.6"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("io.papermc.paperweight.userdev") version "1.5.11"
+    id("io.freefair.lombok") version "8.11"
+    id("com.gradleup.shadow") version "8.3.0"
+    id("io.papermc.paperweight.userdev") version "1.7.7"
 }
 
 repositories {
@@ -22,9 +22,8 @@ repositories {
     maven { url = uri("https://sonatype.projecteden.gg/repository/maven-public/") }
     maven { url = uri("https://jitpack.io") }
     maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
-    maven { url = uri("https://papermc.io/repo/repository/maven-public/") }
+    maven { url = uri("https://repo.papermc.io/repository/maven-public/") }
     maven { url = uri("https://repo.onarandombox.com/content/groups/public/") }
-    maven { url = uri("https://github.com/deanveloper/SkullCreator/raw/mvn-repo/") }
     maven { url = uri("https://repo.aikar.co/content/groups/aikar/") }
     maven {
         url = uri("https://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/")
@@ -35,10 +34,10 @@ repositories {
         content { includeGroup("org.inventivetalent") }
     }
     maven { url = uri("https://repo.codemc.io/repository/maven-public/") }
+    maven { url = uri("https://repo.codemc.io/repository/maven-releases/") }
     maven { url = uri("https://repo.codemc.io/repository/maven-snapshots/") }
     maven { url = uri("https://maven.citizensnpcs.co/repo") }
     maven { url = uri("https://repo.md-5.net/content/groups/public/") }
-    maven { url = uri("https://github.com/deanveloper/SkullCreator/raw/mvn-repo/") }
     maven { url = uri("https://repo.viaversion.com") }
     maven { url = uri("https://maven.enginehub.org/repo/") }
     maven { url = uri("https://eldonexus.de/repository/maven-public/") }
@@ -54,7 +53,7 @@ repositories {
 }
 
 dependencies {
-    paperweightDevBundle("gg.projecteden.parchment", "${parchmentVersion}")
+    paperweight.paperDevBundle("${parchmentVersion}", "gg.projecteden.parchment")
     compileOnly("gg.projecteden.parchment:parchment-api:${parchmentVersion}")
     implementation("gg.projecteden:eden-common:${edenApiVersion}")
     implementation("gg.projecteden:eden-db:${edenApiVersion}")
@@ -72,14 +71,12 @@ dependencies {
     implementation("com.google.api-client:google-api-client:2.2.0")
     implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
     implementation("com.google.apis:google-api-services-sheets:v4-rev20221216-2.0.0")
-    implementation("dev.dbassett:skullcreator:3.0.1")
     implementation("com.github.mpkorstanje:simmetrics-core:4.1.1")
     implementation("org.jetbrains:annotations:24.0.1")
-    compileOnly("gg.projecteden.crates:api:1.0.6-SNAPSHOT")
-    compileOnly("tech.blastmc.holograms:HologramsAPI:1.0.0-SNAPSHOT")
+    compileOnly("gg.projecteden.crates:api:1.0.7-SNAPSHOT")
+    compileOnly("tech.blastmc.holograms:HologramsAPI:1.1.0-SNAPSHOT")
     compileOnly("fr.moribus:ImageOnMap:4.3.1-EDEN")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
-    compileOnly("com.gmail.nossr50.mcMMO:mcMMO:2.1.231")
     compileOnly("net.luckperms:api:5.4")
     compileOnly("com.sk89q.worldguard:worldguard-core:7.0.6-SNAPSHOT")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.6-SNAPSHOT")
@@ -87,32 +84,38 @@ dependencies {
     compileOnly("com.onarandombox.multiverseinventories:Multiverse-Inventories:3.0.0")
     compileOnly("com.dumptruckman.minecraft:JsonConfiguration:1.1")
     compileOnly("net.minidev:json-smart:2.4.10")
-    compileOnly("de.tr7zw:item-nbt-api-plugin:2.13.2")
+    compileOnly("de.tr7zw:item-nbt-api-plugin:2.14.1")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
     compileOnly("com.github.koca2000:NoteBlockAPI:1.4.4")
     compileOnly("com.github.BlueMap-Minecraft:BlueMapAPI:v1.3.1")
     compileOnly("com.arcaniax:HeadDatabase-API:1.3.1")
     compileOnly("com.viaversion:viaversion-api:4.0.1")
-    compileOnly("com.lishid:openinvapi:4.4.4-SNAPSHOT")
+    compileOnly("com.github.jikoo.OpenInv:openinvapi:5.1.4")
     compileOnly("world.bentobox:bentobox:1.20.1-SNAPSHOT")
     compileOnly("nl.pim16aap2:BigDoors:0.1.8.39")
     compileOnly("net.coreprotect:CoreProtect:22.3.1")
-    compileOnly("me.lucko:spark-api:0.1-SNAPSHOT")
     compileOnly("com.magmaguy:BetterStructures:1.4.1-SNAPSHOT")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.5.2")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.5.2") { isTransitive = false }
-    compileOnly("net.citizensnpcs:citizensapi:2.0.32-SNAPSHOT")
-    compileOnly("net.citizensnpcs:citizens-main:2.0.32-SNAPSHOT") {
+    compileOnly("com.griefcraft:lwc:2.3.2-dev")
+    compileOnly("net.citizensnpcs:citizensapi:2.0.37-SNAPSHOT")
+    compileOnly("net.citizensnpcs:citizens-main:2.0.37-SNAPSHOT") {
         exclude("*", "*")
     }
     compileOnly("LibsDisguises:LibsDisguises:10.0.31") {
         exclude("org.spigotmc", "spigot-api")
         exclude("org.spigotmc", "spigot")
     }
-    compileOnly("com.griefcraft:lwc:2.2.9-dev")
+    compileOnly("com.gmail.nossr50.mcMMO:mcMMO:2.2.004@jar") {
+        exclude("com.sk89q.worldedit", "worldedit-core")
+        exclude("com.sk89q.worldedit.worldedit-libs", "core")
+    }
     compileOnly(files("libs/BuycraftX.jar"))
     compileOnly(files("libs/GlowAPI.jar"))
     compileOnly(files("libs/nuvotifier-universal-2.3.4.jar"))
+
+    compileOnly("org.projectlombok:lombok:1.18.36")
+    annotationProcessor("org.projectlombok:lombok:1.18.36")
 
 //    implementation("com.ticxo:PlayerAnimator:R1.2.7")
 }
@@ -120,6 +123,8 @@ dependencies {
 group = "gg.projecteden"
 description = "Nexus"
 version = "2.0.0"
+
+paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
 
 publishing {
     publications.create<MavenPublication>("maven") {
@@ -133,13 +138,14 @@ java {
 
 tasks {
     assemble {
-        dependsOn(reobfJar)
+        dependsOn(shadowJar)
     }
 
     compileJava {
         options.encoding = Charsets.UTF_8.name()
         options.release.set(21)
         options.compilerArgs.add("-parameters")
+        options.compilerArgs.add("-proc:full")
     }
 
     javadoc { options.encoding = Charsets.UTF_8.name() }
@@ -166,5 +172,8 @@ tasks {
 //        }
 //    }
 
-    shadowJar { exclude("gg/projecteden/api/interfaces/**") }
+    shadowJar {
+        archiveClassifier.set("")
+        exclude("gg/projecteden/api/interfaces/**")
+    }
 }

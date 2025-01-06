@@ -7,31 +7,18 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.events.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.Quests;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.JunkWeight;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import gg.projecteden.nexus.utils.Tasks;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.bukkit.Location;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.AXEL;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.BEEKEEPER;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.BRUCE;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.FISHERMAN2;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.JOSE;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.LUMBERJACK;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.MAYOR;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.ORGANIZER;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.PUGMAS_MAYOR;
 
 @Data
 @Entity(value = "bearfair21_user", noClassnameStored = true)
@@ -53,15 +40,15 @@ public class BearFair21User implements PlayerOwnedObject {
 	));
 	private Set<Integer> metNPCs = new HashSet<>();
 	private Set<Integer> nextStepNPCs = new HashSet<>(Set.of(
-		ORGANIZER.getId(),        // Intro
-		MAYOR.getId(),            // Main
-		BEEKEEPER.getId(),        // Side
-		LUMBERJACK.getId(),        // Side
-		FISHERMAN2.getId(),        // Side
-		AXEL.getId(),            // MGN
-		PUGMAS_MAYOR.getId(),    // Pugmas
-		JOSE.getId(),            // HALLOWEEN
-		BRUCE.getId()            // SDU
+		BearFair21NPC.ORGANIZER.getId(),        // Intro
+		BearFair21NPC.MAYOR.getId(),            // Main
+		BearFair21NPC.BEEKEEPER.getId(),        // Side
+		BearFair21NPC.LUMBERJACK.getId(),        // Side
+		BearFair21NPC.FISHERMAN2.getId(),        // Side
+		BearFair21NPC.AXEL.getId(),            // MGN
+		BearFair21NPC.PUGMAS_MAYOR.getId(),    // Pugmas
+		BearFair21NPC.JOSE.getId(),            // HALLOWEEN
+		BearFair21NPC.BRUCE.getId()            // SDU
 	));
 	private int activeTaskId = -1;
 	private Set<Location> treasureChests = new HashSet<>();
@@ -124,7 +111,7 @@ public class BearFair21User implements PlayerOwnedObject {
 
 		if (this.recycledItems >= JunkWeight.MIN.getAmount() && questStage_Recycle != QuestStage.COMPLETE) {
 			questStage_Recycle = QuestStage.COMPLETE;
-			getNextStepNPCs().remove(FISHERMAN2.getId());
+			getNextStepNPCs().remove(BearFair21NPC.FISHERMAN2.getId());
 			Tasks.wait(TickTime.SECOND.x(2), () -> Quests.giveKey(this));
 		}
 

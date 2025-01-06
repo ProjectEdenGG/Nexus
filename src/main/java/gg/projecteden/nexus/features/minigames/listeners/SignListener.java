@@ -25,10 +25,12 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.nms.PacketUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
+import gg.projecteden.nexus.utils.nms.PacketUtils;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.text.Component;
@@ -48,12 +50,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType.BOUNDING_BOX_ID_PREFIX;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-
 @NoArgsConstructor
 public class SignListener implements Listener {
 	public static final String HEADER = "< Minigames >";
@@ -70,8 +66,8 @@ public class SignListener implements Listener {
 
 		Sign sign = (Sign) event.getClickedBlock().getState();
 
-		if (HEADER.equals(stripColor(sign.getLine(0)))) {
-			switch (stripColor(sign.getLine(1).toLowerCase())) {
+		if (HEADER.equals(StringUtils.stripColor(sign.getLine(0)))) {
+			switch (StringUtils.stripColor(sign.getLine(1).toLowerCase())) {
 				case "join" -> {
 					Arena arena;
 					try {
@@ -129,16 +125,16 @@ public class SignListener implements Listener {
 				return;
 
 			final String id = event.getEntity().getId();
-			if (isNullOrEmpty(id))
+			if (gg.projecteden.api.common.utils.Nullables.isNullOrEmpty(id))
 				return;
 
-			if (!id.startsWith(BOUNDING_BOX_ID_PREFIX))
+			if (!id.startsWith(MechanicType.BOUNDING_BOX_ID_PREFIX))
 				return;
 
 			final ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
 			final boolean holdingInvite = CustomMaterial.ENVELOPE_1.is(itemInMainHand);
 
-			if (!isNullOrAir(itemInMainHand) && !holdingInvite) {
+			if (!Nullables.isNullOrAir(itemInMainHand) && !holdingInvite) {
 				if (new CooldownService().check(player, "minigames-sign-interact-holding-item", TickTime.SECOND.x(3)))
 					PlayerUtils.send(player, Minigames.PREFIX + "Your hand must be empty to join a game");
 				return;
@@ -147,7 +143,7 @@ public class SignListener implements Listener {
 			if (!new CooldownService().check(player, "minigames-sign-interact", TickTime.SECOND))
 				return;
 
-			final String mechanicName = id.replace(BOUNDING_BOX_ID_PREFIX, "");
+			final String mechanicName = id.replace(MechanicType.BOUNDING_BOX_ID_PREFIX, "");
 
 			switch (mechanicName) {
 				case "mob_arena" -> PlayerUtils.send(player, Minigames.PREFIX + "&cComing soon!");
@@ -172,7 +168,7 @@ public class SignListener implements Listener {
 					} else {
 						final List<Arena> arenas = ArenaManager.getAllEnabled(mechanic);
 						if (arenas.size() == 0)
-							PlayerUtils.send(player, Minigames.PREFIX + "&cNo arenas found for " + camelCase(mechanic));
+							PlayerUtils.send(player, Minigames.PREFIX + "&cNo arenas found for " + gg.projecteden.api.common.utils.StringUtils.camelCase(mechanic));
 						else if (arenas.size() == 1) {
 							if (holdingInvite) {
 								invite(player, arenas.get(0));
@@ -220,14 +216,14 @@ public class SignListener implements Listener {
 	@EventHandler
 	public void on(CustomBoundingBoxEntityTargetTickEvent event) {
 		final String id = event.getEntity().getId();
-		if (isNullOrEmpty(id))
+		if (gg.projecteden.api.common.utils.Nullables.isNullOrEmpty(id))
 			return;
 
 		final Entity outline = event.getEntity().getAssociatedEntity("outline");
 		if (outline == null)
 			return;
 
-		final String mechanicName = id.replace(BOUNDING_BOX_ID_PREFIX, "");
+		final String mechanicName = id.replace(MechanicType.BOUNDING_BOX_ID_PREFIX, "");
 
 		switch (mechanicName) {
 			case "mob_arena" -> PacketUtils.sendFakeDisplayItem(event.getPlayer(), outline, new ItemBuilder(CustomMaterial.IMAGES_OUTLINE_3x2_COMING_SOON).dyeColor("#FD6A02").build());
@@ -255,10 +251,10 @@ public class SignListener implements Listener {
 	@EventHandler
 	public void on(CustomBoundingBoxEntityTargetEndEvent event) {
 		final String id = event.getEntity().getId();
-		if (isNullOrEmpty(id))
+		if (gg.projecteden.api.common.utils.Nullables.isNullOrEmpty(id))
 			return;
 
-		if (!id.startsWith(BOUNDING_BOX_ID_PREFIX))
+		if (!id.startsWith(MechanicType.BOUNDING_BOX_ID_PREFIX))
 			return;
 
 		final Entity outline = event.getEntity().getAssociatedEntity("outline");

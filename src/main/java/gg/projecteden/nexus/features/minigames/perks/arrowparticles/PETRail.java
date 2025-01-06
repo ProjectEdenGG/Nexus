@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.minigames.perks.arrowparticles;
 
 import gg.projecteden.nexus.features.minigames.models.perks.common.ParticleProjectilePerk;
-import gg.projecteden.nexus.features.particles.ParticleUtils;
 import gg.projecteden.nexus.utils.ColorType;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -10,7 +9,6 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +31,7 @@ public class PETRail implements ParticleProjectilePerk {
 
 	@Override
 	public Particle getParticle() {
-		return Particle.REDSTONE;
+		return Particle.DUST;
 	}
 
 	@Override

@@ -60,7 +60,7 @@ public class TurfWarsMatchData extends MatchData {
 						if (!MaterialTag.WOOL.isTagged(relative))
 							continue;
 
-						relative.getLocation().getWorld().spawnParticle(Particle.BLOCK_CRACK, relative.getLocation().toCenterLocation(), 50, relative.getType().createBlockData());
+						relative.getLocation().getWorld().spawnParticle(Particle.BLOCK, relative.getLocation().toCenterLocation(), 50, relative.getType().createBlockData());
 						relative.setType(Material.AIR);
 					}
 				}

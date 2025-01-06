@@ -4,6 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.itemtags.Rarity;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
+import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.models.CustomArmorType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.Enchant;
@@ -20,8 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 
 public class WitherHelmet extends FunctionalRecipe {
 
@@ -55,8 +54,8 @@ public class WitherHelmet extends FunctionalRecipe {
 	private static final ItemStack item = new ItemBuilder(CustomMaterial.WITHER_HELMET)
 		.dyeColor(Color.fromRGB(CustomArmorType.WITHER.getId()))
 		.itemFlags(ItemFlag.HIDE_DYE)
-		.attribute(Attribute.GENERIC_ARMOR, "wither-armor-points", 3, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD)
-		.attribute(Attribute.GENERIC_ARMOR_TOUGHNESS, "wither-armor-toughness", 2, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD)
+		.attribute(Attribute.ARMOR, "wither-armor-points", 3, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD)
+		.attribute(Attribute.ARMOR_TOUGHNESS, "wither-armor-toughness", 2, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD)
 		.enchant(Enchant.BLAST_PROTECTION, 4)
 		.enchant(Enchant.UNBREAKING, 4)
 		.name("&eWither Helmet")
@@ -72,7 +71,7 @@ public class WitherHelmet extends FunctionalRecipe {
 
 	@Override
 	public @NotNull Recipe getRecipe() {
-		return shaped("111", "1 1", "   ")
+		return RecipeBuilder.shaped("111", "1 1", "   ")
 			.add('1', CraftedWitherSkull.getItem())
 			.toMake(getResult())
 			.getRecipe();

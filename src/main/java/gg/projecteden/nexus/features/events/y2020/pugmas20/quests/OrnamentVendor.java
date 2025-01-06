@@ -2,7 +2,9 @@ package gg.projecteden.nexus.features.events.y2020.pugmas20.quests;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.api.common.utils.Utils.MinMaxResult;
+import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.events.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
@@ -12,10 +14,8 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20User;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20UserService;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.Pugmas20TreeRegenJob;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,29 +35,9 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
-import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
-import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isAtPugmas;
-import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.questItem;
-import static gg.projecteden.nexus.utils.BlockUtils.createDistanceSortedQueue;
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static gg.projecteden.nexus.utils.ItemUtils.isFuzzyMatch;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-import static gg.projecteden.nexus.utils.Utils.getMin;
 
 @NoArgsConstructor
 public class OrnamentVendor implements Listener {
@@ -91,10 +71,10 @@ public class OrnamentVendor implements Listener {
 
 		private void loadHead() {
 			ItemStack itemStack = AdventMenu.origin.getRelative(relative, 0, 0).getDrops().stream().findFirst().orElse(null);
-			if (isNullOrAir(itemStack))
+			if (Nullables.isNullOrAir(itemStack))
 				this.skull = null;
 			else
-				this.skull = Pugmas20.item(itemStack).name(camelCase(name() + " Ornament")).build();
+				this.skull = Pugmas20.item(itemStack).name(StringUtils.camelCase(name() + " Ornament")).build();
 		}
 
 		public static void loadHeads() {
@@ -127,14 +107,14 @@ public class OrnamentVendor implements Listener {
 			return;
 
 		Player player = event.getPlayer();
-		if (!isAtPugmas(player))
+		if (!Pugmas20.isAtPugmas(player))
 			return;
 
 		Entity entity = event.getRightClicked();
 		if (entity.getType() != EntityType.ITEM_FRAME)
 			return;
 
-		if (!isAtPugmas(entity.getLocation(), "lumberjacksaxe"))
+		if (!Pugmas20.isAtPugmas(entity.getLocation(), "lumberjacksaxe"))
 			return;
 
 		event.setCancelled(true);
@@ -149,7 +129,7 @@ public class OrnamentVendor implements Listener {
 			if (Quests.hasRoomFor(player, getLumberjacksAxe())) {
 				PlayerUtils.giveItem(player, getLumberjacksAxe());
 				Quests.sound_obtainItem(player);
-				user.sendMessage(Pugmas20.PREFIX + " You have obtained a &3&l" + stripColor(lumberjacksAxe.getItemMeta().getDisplayName()));
+				user.sendMessage(Pugmas20.PREFIX + " You have obtained a &3&l" + StringUtils.stripColor(lumberjacksAxe.getItemMeta().getDisplayName()));
 			} else {
 				Quests.sound_villagerNo(player);
 				user.sendMessage(Quests.fullInvError_obtain);
@@ -158,19 +138,19 @@ public class OrnamentVendor implements Listener {
 	}
 
 	@Getter
-	private static final ItemStack lumberjacksAxe = questItem(Material.IRON_AXE).name("Lumberjack's Axe").build();
+	private static final ItemStack lumberjacksAxe = Pugmas20.questItem(Material.IRON_AXE).name("Lumberjack's Axe").build();
 
 	@EventHandler
 	public void onTreeBreak(BlockBreakEvent event) {
-		if (!isAtPugmas(event.getBlock().getLocation(), "trees"))
+		if (!Pugmas20.isAtPugmas(event.getBlock().getLocation(), "trees"))
 			return;
 
-		if (!canWorldGuardEdit(event.getPlayer()))
+		if (!WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
 			return;
 
 		event.setCancelled(true);
 
-		if (!isFuzzyMatch(lumberjacksAxe, event.getPlayer().getInventory().getItemInMainHand()))
+		if (!ItemUtils.isFuzzyMatch(lumberjacksAxe, event.getPlayer().getInventory().getItemInMainHand()))
 			return;
 
 		PugmasTreeType treeType = PugmasTreeType.of(event.getBlock().getType());
@@ -179,7 +159,7 @@ public class OrnamentVendor implements Listener {
 
 		Set<ProtectedRegion> regions = Pugmas20.worldguard().getRegionsLike("pugmas20_trees_" + treeType.name() + "_[\\d]+");
 
-		MinMaxResult<ProtectedRegion> result = getMin(regions, region -> distance(event.getBlock(), Pugmas20.worldguard().toLocation(region.getMinimumPoint())).get());
+		MinMaxResult<ProtectedRegion> result = Utils.getMin(regions, region -> Distance.distance(event.getBlock(), Pugmas20.worldguard().toLocation(region.getMinimumPoint())).get());
 
 		ProtectedRegion region = result.getObject();
 		double distance = Math.sqrt(result.getValue().doubleValue());
@@ -243,7 +223,7 @@ public class OrnamentVendor implements Listener {
 		}
 
 		public ItemStack getLog(int amount) {
-			return Pugmas20.questItem(logs).name(camelCase(name() + " Logs")).amount(amount).build();
+			return Pugmas20.questItem(logs).name(StringUtils.camelCase(name() + " Logs")).amount(amount).build();
 		}
 
 		public List<Material> getAllMaterials() {
@@ -278,7 +258,7 @@ public class OrnamentVendor implements Listener {
 					return null;
 
 				Location base = Pugmas20.worldedit().toLocation(region.getMinimumPoint());
-				Queue<Location> queue = createDistanceSortedQueue(base);
+				Queue<Location> queue = BlockUtils.createDistanceSortedQueue(base);
 				getBlocks(id).thenAccept(blocks -> {
 					queue.addAll(blocks.keySet());
 					future.complete(queue);
@@ -322,7 +302,7 @@ public class OrnamentVendor implements Listener {
 		}
 
 		public void feller(Player player, int id) {
-			if (!new CooldownService().check(UUID0, getRegion(id).getId(), TickTime.SECOND.x(3)))
+			if (!new CooldownService().check(UUIDUtils.UUID0, getRegion(id).getId(), TickTime.SECOND.x(3)))
 				return;
 
 			Pugmas20.setTreeAnimating(true);
@@ -347,7 +327,7 @@ public class OrnamentVendor implements Listener {
 				Tasks.wait(++wait, () -> Pugmas20.setTreeAnimating(false));
 
 				Tasks.Countdown.builder()
-					.duration(randomInt(8, 12) * 4)
+					.duration(RandomUtils.randomInt(8, 12) * 4)
 					.onTick(i -> {
 						if (i % 4 == 0)
 							PlayerUtils.giveItem(player, getLog());
@@ -356,7 +336,7 @@ public class OrnamentVendor implements Listener {
 
 				Jingle.TREE_FELLER.play(player);
 
-				new Pugmas20TreeRegenJob(this, id).schedule(randomInt(3 * 60, 5 * 60));
+				new Pugmas20TreeRegenJob(this, id).schedule(RandomUtils.randomInt(3 * 60, 5 * 60));
 			}));
 		}
 
@@ -366,11 +346,11 @@ public class OrnamentVendor implements Listener {
 	@EventHandler
 	public void onMerchantTrade(InventoryClickEvent event) {
 		if (!event.getInventory().getType().equals(InventoryType.MERCHANT)) return;
-		if (!Utils.equalsInvViewTitle(event.getView(), camelCase(MerchantNPC.ORNAMENT_VENDOR.name()))) return;
+		if (!Utils.equalsInvViewTitle(event.getView(), StringUtils.camelCase(MerchantNPC.ORNAMENT_VENDOR.name()))) return;
 		if (event.getSlot() != 2) return;
 
 		Player player = (Player) event.getWhoClicked();
-		if (!isAtPugmas(player)) return;
+		if (!Pugmas20.isAtPugmas(player)) return;
 
 		if (Arrays.asList(ClickType.DROP, ClickType.CONTROL_DROP).contains(event.getClick())) {
 			event.setCancelled(true);
@@ -378,19 +358,19 @@ public class OrnamentVendor implements Listener {
 		}
 
 		if (event.getHotbarButton() > 0)
-			if (!isNullOrAir(player.getInventory().getItem(event.getHotbarButton())))
+			if (!Nullables.isNullOrAir(player.getInventory().getItem(event.getHotbarButton())))
 				return;
 
 		ItemStack result = event.getCurrentItem();
-		if (isNullOrAir(result))
+		if (Nullables.isNullOrAir(result))
 			return;
 		if (result.getType() != Material.PLAYER_HEAD)
 			return;
 
 		ItemStack source = event.getInventory().getItem(0);
-		if (isNullOrAir(source))
+		if (Nullables.isNullOrAir(source))
 			source = event.getInventory().getItem(1);
-		if (isNullOrAir(source))
+		if (Nullables.isNullOrAir(source))
 			return;
 
 		PugmasTreeType treeType = PugmasTreeType.of(source.getType());

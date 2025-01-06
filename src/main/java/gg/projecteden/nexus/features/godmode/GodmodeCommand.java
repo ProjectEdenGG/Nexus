@@ -3,12 +3,9 @@ package gg.projecteden.nexus.features.godmode;
 import gg.projecteden.nexus.features.commands.staff.CheatsCommand;
 import gg.projecteden.nexus.features.godmode.events.GodmodeActivatedEvent;
 import gg.projecteden.nexus.features.godmode.events.GodmodeDeactivatedEvent;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -29,19 +26,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityCombustByEntityEvent;
-import org.bukkit.event.entity.EntityCombustEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.entity.PotionSplashEvent;
+import org.bukkit.event.entity.*;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
 
 @Aliases("god")
 @Redirect(from = "/god", to = "/godmode") // WorldEdit overriding our alias
@@ -146,7 +135,7 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 	public void onPotionSplashEvent(final PotionSplashEvent event) {
 		for (LivingEntity entity : event.getAffectedEntities())
 			if (entity instanceof Player player)
-				if (hasGodmode(player) || player.getGameMode() == GameMode.CREATIVE || isVanished(player))
+				if (hasGodmode(player) || player.getGameMode() == GameMode.CREATIVE || Vanish.isVanished(player))
 					event.setIntensity(player, 0f);
 	}
 

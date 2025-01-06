@@ -7,11 +7,7 @@ import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEve
 import gg.projecteden.nexus.models.bearfair20.BearFair20User;
 import gg.projecteden.nexus.models.bearfair20.BearFair20User.BF20PointSource;
 import gg.projecteden.nexus.models.bearfair20.BearFair20UserService;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldEditUtils;
+import gg.projecteden.nexus.utils.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -22,19 +18,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.giveDailyPoints;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.isInRegion;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.send;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
 
 public class Frogger implements Listener {
 
@@ -70,7 +56,7 @@ public class Frogger implements Listener {
 	}
 
 	private void loadLogSpawns() {
-		List<Block> blocks = worldedit.getBlocks(worldguard().getRegion(logsRg));
+		List<Block> blocks = worldedit.getBlocks(BearFair20.worldguard().getRegion(logsRg));
 		for (Block block : blocks) {
 			if (block.getType().equals(Material.DIAMOND_BLOCK) || block.getType().equals(Material.EMERALD_BLOCK)) {
 				logSpawnMap.put(block.getLocation(), block.getType());
@@ -79,7 +65,7 @@ public class Frogger implements Listener {
 	}
 
 	private void loadCarSpawns() {
-		List<Block> blocks = worldedit.getBlocks(worldguard().getRegion(carsRg));
+		List<Block> blocks = worldedit.getBlocks(BearFair20.worldguard().getRegion(carsRg));
 		for (Block block : blocks) {
 			if (block.getType().equals(Material.DIAMOND_BLOCK) || block.getType().equals(Material.EMERALD_BLOCK)) {
 				carSpawnMap.put(block.getLocation(), block.getType());
@@ -274,7 +260,7 @@ public class Frogger implements Listener {
 	}
 
 	private void clearLogs() {
-		List<Block> blocks = worldedit.getBlocks(worldguard().getRegion(logsRg));
+		List<Block> blocks = worldedit.getBlocks(BearFair20.worldguard().getRegion(logsRg));
 		for (Block block : blocks) {
 			if (block.getType().equals(logMaterial))
 				block.setType(riverMaterial);
@@ -282,7 +268,7 @@ public class Frogger implements Listener {
 	}
 
 	private void clearCars() {
-		List<Block> blocks = worldedit.getBlocks(worldguard().getRegion(roadRg));
+		List<Block> blocks = worldedit.getBlocks(BearFair20.worldguard().getRegion(roadRg));
 		for (Block block : blocks) {
 			if (!block.getType().equals(Material.AIR))
 				block.setType(Material.AIR);
@@ -308,7 +294,7 @@ public class Frogger implements Listener {
 			String cheatingMsg = BearFair20.isCheatingMsg(player);
 			if (cheatingMsg != null && !cheatingMsg.contains("wgedit")) {
 				player.teleportAsync(respawnLoc);
-				send("Don't cheat, turn " + cheatingMsg + " off!", player);
+				BearFair20.send("Don't cheat, turn " + cheatingMsg + " off!", player);
 				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
 			}
 
@@ -325,7 +311,7 @@ public class Frogger implements Listener {
 			player.teleportAsync(respawnLoc);
 			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10F, 2F);
 
-			if (giveDailyPoints) {
+			if (BearFair20.giveDailyPoints) {
 				BearFair20User user = new BearFair20UserService().get(player);
 				user.giveDailyPoints(SOURCE);
 				new BearFair20UserService().save(user);
@@ -339,7 +325,7 @@ public class Frogger implements Listener {
 	public void onRegionExit(PlayerLeftRegionEvent event) {
 		String regionId = event.getRegion().getId();
 		if (regionId.equalsIgnoreCase(gameRg)) {
-			int size = worldguard().getPlayersInRegion(gameRg).size();
+			int size = BearFair20.worldguard().getPlayersInRegion(gameRg).size();
 			if (size == 0) {
 				doAnimation = false;
 				stopAnimations();
@@ -351,7 +337,7 @@ public class Frogger implements Listener {
 	public void onDamage(EntityDamageEvent event) {
 		if (!(event.getEntity() instanceof Player player)) return;
 
-		if (!isInRegion(player, damageRg)) return;
+		if (!BearFair20.isInRegion(player, damageRg)) return;
 		if (event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)) return;
 
 		event.setDamage(0);

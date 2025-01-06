@@ -9,14 +9,11 @@ import gg.projecteden.nexus.features.events.models.BearFairIsland.NPCClass;
 import gg.projecteden.nexus.features.events.models.Talker.TalkingNPC;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.islands.PugmasIsland.PugmasNPCs;
+import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests;
 import gg.projecteden.nexus.models.bearfair20.BearFair20User;
 import gg.projecteden.nexus.models.bearfair20.BearFair20UserService;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -33,12 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.chime;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Region("pugmas")
 @NPCClass(PugmasNPCs.class)
@@ -79,7 +70,7 @@ public class PugmasIsland implements Listener, BearFairIsland {
 
 		List<ItemStack> drops = new ArrayList<>(presentLoc.getBlock().getDrops());
 		if (!drops.isEmpty())
-			presentItem = new ItemBuilder(drops.get(0)).clone().lore(itemLore).name("Present").glow().build();
+			presentItem = new ItemBuilder(drops.get(0)).clone().lore(BFQuests.itemLore).name("Present").glow().build();
 
 	}
 
@@ -272,7 +263,7 @@ public class PugmasIsland implements Listener, BearFairIsland {
 
 	private void effectTasks() {
 		Tasks.repeat(0, TickTime.SECOND.x(3), () -> OnlinePlayers.getAll().stream()
-				.filter(player -> worldguard().getRegionsLikeAt(getRegion(), player.getLocation()).size() > 0)
+				.filter(player -> BearFair20.worldguard().getRegionsLikeAt(getRegion(), player.getLocation()).size() > 0)
 				.forEach(player -> {
 					BearFair20UserService service = new BearFair20UserService();
 					BearFair20User user = service.get(player);
@@ -291,18 +282,18 @@ public class PugmasIsland implements Listener, BearFairIsland {
 								if (!isFoundPresent(present, player)) {
 									Location loc = LocationUtils.getCenteredLocation(present);
 									loc.setY(loc.getBlockY() + 0.25);
-									player.spawnParticle(Particle.VILLAGER_HAPPY, loc, 10, 0.25, 0.25, 0.25, 0.01);
+									player.spawnParticle(Particle.HAPPY_VILLAGER, loc, 10, 0.25, 0.25, 0.25, 0.01);
 										}
 									});
 								} else {
 									if (!hasFoundTreePresent(player))
-										player.spawnParticle(Particle.VILLAGER_HAPPY, treeLoc, 50, 2, 1, 2, 0.01);
+										player.spawnParticle(Particle.HAPPY_VILLAGER, treeLoc, 50, 2, 1, 2, 0.01);
 
 									presents_house.forEach(present -> {
 										if (!isFoundPresent(present, player)) {
 											Location loc = LocationUtils.getCenteredLocation(present);
 											loc.setY(loc.getBlockY() + 0.25);
-											player.spawnParticle(Particle.VILLAGER_HAPPY, loc, 10, 0.25, 0.25, 0.25, 0.01);
+											player.spawnParticle(Particle.HAPPY_VILLAGER, loc, 10, 0.25, 0.25, 0.25, 0.01);
 										}
 									});
 								}
@@ -316,10 +307,10 @@ public class PugmasIsland implements Listener, BearFairIsland {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
 		Block clicked = event.getClickedBlock();
-		if (isNullOrAir(clicked)) return;
+		if (Nullables.isNullOrAir(clicked)) return;
 
-		ProtectedRegion region = worldguard().getProtectedRegion(getRegion());
-		if (!worldguard().getRegionsAt(clicked.getLocation()).contains(region)) return;
+		ProtectedRegion region = BearFair20.worldguard().getProtectedRegion(getRegion());
+		if (!BearFair20.worldguard().getRegionsAt(clicked.getLocation()).contains(region)) return;
 
 		if (!BearFair20.enableQuests) return;
 		if (!clicked.getType().equals(Material.PLAYER_HEAD)) return;
@@ -349,10 +340,10 @@ public class PugmasIsland implements Listener, BearFairIsland {
 		service.save(user);
 
 		List<ItemStack> drops = new ArrayList<>(clicked.getDrops());
-		ItemStack present = new ItemBuilder(drops.get(0)).clone().lore(itemLore).name("Present").build();
+		ItemStack present = new ItemBuilder(drops.get(0)).clone().lore(BFQuests.itemLore).name("Present").build();
 
 		PlayerUtils.giveItem(player, present);
-		chime(player);
+		BFQuests.chime(player);
 		event.setCancelled(true);
 	}
 
@@ -383,8 +374,8 @@ public class PugmasIsland implements Listener, BearFairIsland {
 	}
 
 	private boolean isTreePresent(Location location) {
-		ProtectedRegion treeRg = worldguard().getProtectedRegion(presents_treeRg);
-		return worldguard().getRegionsAt(location).contains(treeRg);
+		ProtectedRegion treeRg = BearFair20.worldguard().getProtectedRegion(presents_treeRg);
+		return BearFair20.worldguard().getRegionsAt(location).contains(treeRg);
 	}
 
 	private boolean isFoundPresent(Location location, Player player) {
@@ -419,7 +410,7 @@ public class PugmasIsland implements Listener, BearFairIsland {
 		service.save(user);
 
 		BearFair20.send("&b&lYOU &8> &fSure!", player);
-		chime(player);
+		BFQuests.chime(player);
 	}
 
 	public static void acceptQuest(Player player, boolean mayor) {
@@ -436,7 +427,7 @@ public class PugmasIsland implements Listener, BearFairIsland {
 		service.save(user);
 
 		BearFair20.send("&b&lYOU &8> &fSure!", player);
-		chime(player);
+		BFQuests.chime(player);
 	}
 
 	//
@@ -445,12 +436,12 @@ public class PugmasIsland implements Listener, BearFairIsland {
 		new BearFair20UserService().edit(player, user -> user.setQuest_Pugmas_Finish(true));
 
 		for (ItemStack content : player.getInventory().getContents()) {
-			if (BearFair20.isBFItem(content) && stripColor(content.getItemMeta().getDisplayName()).contains("Present"))
+			if (BearFair20.isBFItem(content) && StringUtils.stripColor(content.getItemMeta().getDisplayName()).contains("Present"))
 				player.getInventory().remove(content);
 		}
 
 		Tasks.wait(TickTime.SECOND.x(9), () -> {
-			chime(player);
+			BFQuests.chime(player);
 			PlayerUtils.giveItem(player, presentItem);
 		});
 

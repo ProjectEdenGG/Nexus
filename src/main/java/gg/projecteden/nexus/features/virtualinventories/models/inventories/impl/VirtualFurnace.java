@@ -2,16 +2,14 @@ package gg.projecteden.nexus.features.virtualinventories.models.inventories.impl
 
 import dev.morphia.annotations.Converters;
 import gg.projecteden.nexus.features.virtualinventories.VirtualInventoryUtils;
-import gg.projecteden.nexus.features.virtualinventories.events.furnace.VirtualFurnaceCookEvent;
-import gg.projecteden.nexus.features.virtualinventories.events.furnace.VirtualFurnaceEndEvent;
-import gg.projecteden.nexus.features.virtualinventories.events.furnace.VirtualFurnaceFuelBurnEvent;
-import gg.projecteden.nexus.features.virtualinventories.events.furnace.VirtualFurnaceStartEvent;
-import gg.projecteden.nexus.features.virtualinventories.events.furnace.VirtualFurnaceTickEvent;
+import gg.projecteden.nexus.features.virtualinventories.events.furnace.*;
 import gg.projecteden.nexus.features.virtualinventories.models.inventories.VirtualInventory;
 import gg.projecteden.nexus.features.virtualinventories.models.inventories.VirtualInventoryType;
 import gg.projecteden.nexus.features.virtualinventories.models.properties.impl.FurnaceProperties;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
@@ -20,8 +18,6 @@ import org.bukkit.inventory.CookingRecipe;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Data
 @NoArgsConstructor
@@ -118,10 +114,10 @@ public class VirtualFurnace extends VirtualInventory<FurnaceProperties> {
 	}
 
 	private boolean canBurn() {
-		if (isNullOrAir(this.fuel))
+		if (Nullables.isNullOrAir(this.fuel))
 			return false;
 
-		return ItemUtils.getBurnTime(fuel) > 0;
+		return ItemUtils.getBurnTime(fuel, WorldGroup.SURVIVAL.getWorlds().get(0)) > 0;
 	}
 
 	private void processBurn() {
@@ -139,7 +135,7 @@ public class VirtualFurnace extends VirtualInventory<FurnaceProperties> {
 	}
 
 	private boolean canCook() {
-		if (isNullOrAir(this.input))
+		if (Nullables.isNullOrAir(this.input))
 			return false;
 
 		var recipe = VirtualInventoryUtils.getCookingRecipes(this.input, properties().recipeClass());

@@ -16,8 +16,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.send;
-
 public class Listeners implements Listener {
 
 	public Listeners() {
@@ -28,7 +26,7 @@ public class Listeners implements Listener {
 	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		String regionId = event.getRegion().getId();
 		if (regionId.equalsIgnoreCase(ReflectionGame.getGameRg()))
-			send(ReflectionGame.getPrefix() + ReflectionGame.getMessage(), event.getPlayer());
+			BearFair21.send(ReflectionGame.getPrefix() + ReflectionGame.getMessage(), event.getPlayer());
 	}
 
 	@EventHandler

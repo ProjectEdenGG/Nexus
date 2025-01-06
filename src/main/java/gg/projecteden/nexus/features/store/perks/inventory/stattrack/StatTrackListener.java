@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.store.perks.inventory.stattrack.models.Stat
 import gg.projecteden.nexus.features.store.perks.inventory.stattrack.models.StatIncreaseEvent;
 import gg.projecteden.nexus.features.store.perks.inventory.stattrack.models.StatItem;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -19,8 +20,6 @@ import org.bukkit.event.player.PlayerItemMendEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 // Potion effect effect absorption, only apply absorption if they are wearing armor
 // damage and absorption for bow
@@ -70,7 +69,7 @@ public class StatTrackListener implements Listener {
 		final Player player = event.getPlayer();
 		final ItemStack tool = ItemUtils.getTool(player);
 
-		if (isNullOrAir(tool))
+		if (Nullables.isNullOrAir(tool))
 			return;
 
 		if (Stat.FISH_CAUGHT.isMaterialApplicable(item.getItemStack()))

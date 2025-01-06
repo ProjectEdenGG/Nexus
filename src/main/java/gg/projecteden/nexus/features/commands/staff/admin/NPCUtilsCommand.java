@@ -36,9 +36,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiFunction;
 
-import static gg.projecteden.nexus.utils.StringUtils.decolorize;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-
 @Permission(Group.SENIOR_STAFF)
 public class NPCUtilsCommand extends CustomCommand {
 
@@ -148,7 +145,7 @@ public class NPCUtilsCommand extends CustomCommand {
 	@Path("setPlayer withRankPrefix <player>")
 	@Description("Set an NPC's nameplate to a player's colored rank and nickname and updates the skin")
 	void setPlayer_withRankPrefix(Nerd nerd) {
-		runCommand("mcmd npc sel ;; npc skin -l " + nerd.getName() + " ;; npc rename " + decolorize("&8&l[" + nerd.getRank().getColoredName() + "&8&l] " + nerd.getColoredName()));
+		runCommand("mcmd npc sel ;; npc skin -l " + nerd.getName() + " ;; npc rename " + StringUtils.decolorize("&8&l[" + nerd.getRank().getColoredName() + "&8&l] " + nerd.getColoredName()));
 	}
 
 	@Path("setPlayer withColor <player>")
@@ -160,7 +157,7 @@ public class NPCUtilsCommand extends CustomCommand {
 	@Path("rename gradient <colors> <name...>")
 	@Description("Set an NPC's nameplate to your input with a color gradient")
 	void setName_gradient(@Arg(type = ChatColor.class) List<ChatColor> colors, String input) {
-		runCommand("npc rename " + decolorize(Gradient.of(colors).apply(input)));
+		runCommand("npc rename " + StringUtils.decolorize(Gradient.of(colors).apply(input)));
 	}
 
 	@Path("recreateNpc <player>")
@@ -220,7 +217,7 @@ public class NPCUtilsCommand extends CustomCommand {
 		int wait = 0;
 		for (NPC npc : npcs) {
 			Tasks.wait(wait += 20, () -> {
-				String name = stripColor(npc.getName());
+				String name = StringUtils.stripColor(npc.getName());
 				runCommand("npcutils recreateNpc withColor " + name);
 			});
 		}

@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.achievements.listeners;
 import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.models.achievement.Achievement;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -17,8 +18,6 @@ import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Set;
-
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Disabled
 public class MiscListener implements Listener {
@@ -55,7 +54,7 @@ public class MiscListener implements Listener {
 			Block block = event.getClickedBlock();
 			if (MaterialTag.SIGNS.isTagged(block.getType())) {
 				Sign sign = (Sign) block.getState();
-				String line1 = stripColor(sign.getLine(0));
+				String line1 = StringUtils.stripColor(sign.getLine(0));
 
 				Set<String> regions = new WorldGuardUtils(player).getRegionNamesAt(player.getLocation());
 

@@ -3,17 +3,14 @@ package gg.projecteden.nexus.utils;
 import com.fastasyncworldedit.core.extent.processor.lighting.RelightMode;
 import com.fastasyncworldedit.core.regions.RegionWrapper;
 import com.fastasyncworldedit.core.wrappers.WorldWrapper;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.EditSessionBuilder;
-import com.sk89q.worldedit.LocalSession;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.WorldEditException;
+import com.sk89q.worldedit.*;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
+import com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import com.sk89q.worldedit.function.operation.ForwardExtentCopy;
@@ -38,11 +35,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.parchment.HasPlayer;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.SneakyThrows;
+import lombok.*;
 import lombok.experimental.Accessors;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -57,17 +50,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Queue;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -75,13 +58,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat.MCEDIT_SCHEMATIC;
-import static com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat.SPONGE_SCHEMATIC;
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.BlockUtils.createDistanceSortedQueue;
-import static gg.projecteden.nexus.utils.StringUtils.getFlooredCoordinateString;
-import static gg.projecteden.nexus.utils.StringUtils.left;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
 public class WorldEditUtils {
@@ -135,9 +111,9 @@ public class WorldEditUtils {
 
 	public File getSchematicFile(String fileName, boolean lookForExisting) {
 		final String fileNoExtension = schematicsDirectory + fileName + ".";
-		File file = new File(fileNoExtension + SPONGE_SCHEMATIC.getPrimaryFileExtension());
+		File file = new File(fileNoExtension + BuiltInClipboardFormat.SPONGE_SCHEMATIC.getPrimaryFileExtension());
 		if (!file.exists() && lookForExisting)
-			file = new File(fileNoExtension + MCEDIT_SCHEMATIC.getPrimaryFileExtension());
+			file = new File(fileNoExtension + BuiltInClipboardFormat.MCEDIT_SCHEMATIC.getPrimaryFileExtension());
 		return file;
 	}
 
@@ -354,7 +330,7 @@ public class WorldEditUtils {
 	}
 
 	public List<Block> getBlocks(Region region, List<Material> materials) {
-		return getBlocks(region, block -> isNullOrEmpty(materials) || materials.contains(block.getType()));
+		return getBlocks(region, block -> Nullables.isNullOrEmpty(materials) || materials.contains(block.getType()));
 	}
 
 	public List<Block> getBlocksPoly(ProtectedRegion region) {
@@ -467,7 +443,7 @@ public class WorldEditUtils {
 
 		public void debug(String message) {
 			if (message != null) {
-				final String id = left(uuid.toString(), 8) + " " + i.getAndIncrement() + " " + (Bukkit.isPrimaryThread() ? " sync" : "async") + " ";
+				final String id = StringUtils.left(uuid.toString(), 8) + " " + i.getAndIncrement() + " " + (Bukkit.isPrimaryThread() ? " sync" : "async") + " ";
 				Nexus.debug(id + message);
 			}
 		}
@@ -625,7 +601,7 @@ public class WorldEditUtils {
 				Tasks.sync(() -> {
 					debug("Building " + blocks.size() + " blocks");
 					blocks.forEach((location, blockData) -> {
-						debug("  Setting " + blockData.getMaterial() + " at " + getFlooredCoordinateString(location));
+						debug("  Setting " + blockData.getMaterial() + " at " + StringUtils.getFlooredCoordinateString(location));
 						location.getBlock().setBlockData(blockData);
 					});
 					debug("Finished building " + blocks.size() + " blocks");
@@ -670,7 +646,7 @@ public class WorldEditUtils {
 			CompletableFuture<Void> future = new CompletableFuture<>();
 			Tasks.async(() ->
 				computeBlocks().thenAccept(blocks -> {
-					Queue<Location> queue = createDistanceSortedQueue(toLocation(at));
+					Queue<Location> queue = BlockUtils.createDistanceSortedQueue(toLocation(at));
 					queue.addAll(blocks.keySet());
 
 					int wait = 0;
@@ -765,7 +741,7 @@ public class WorldEditUtils {
 						Location location = toLocation(blockVector3).add(relX, relY, relZ);
 						final BlockData block = BukkitAdapter.adapt(baseBlock);
 
-						debug("  Found " + block.getMaterial() + "  at " + getFlooredCoordinateString(toLocation(blockVector3)) + " (" + baseBlock.getAsString() + ")");
+						debug("  Found " + block.getMaterial() + "  at " + StringUtils.getFlooredCoordinateString(toLocation(blockVector3)) + " (" + baseBlock.getAsString() + ")");
 						data.put(location, block);
 					}
 
@@ -791,7 +767,7 @@ public class WorldEditUtils {
 	@SneakyThrows
 	public void save(String fileName, BlockVector3 min, BlockVector3 max) {
 		CuboidRegion region = new CuboidRegion(worldEditWorld, min, max);
-		new BlockArrayClipboard(region).save(getSchematicFile(fileName, false), SPONGE_SCHEMATIC);
+		new BlockArrayClipboard(region).save(getSchematicFile(fileName, false), BuiltInClipboardFormat.SPONGE_SCHEMATIC);
 	}
 
 	public CompletableFuture<Void> set(String region, BlockType blockType) {

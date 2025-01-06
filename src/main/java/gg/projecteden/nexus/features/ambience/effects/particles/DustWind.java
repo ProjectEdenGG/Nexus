@@ -25,7 +25,7 @@ public class DustWind extends ParticleEffect {
 	private static final long LIFE = TickTime.SECOND.x(3);
 
 	public DustWind(AmbienceUser user, Block block, double chance) {
-		super(user, ParticleEffectType.DUST_WIND, Particle.ITEM_CRACK, LIFE, chance);
+		super(user, ParticleEffectType.DUST_WIND, Particle.ITEM, LIFE, chance);
 
 		this.material = block.getType();
 		this.x = block.getX();

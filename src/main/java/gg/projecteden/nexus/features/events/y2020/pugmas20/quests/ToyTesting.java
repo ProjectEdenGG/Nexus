@@ -10,7 +10,9 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartE
 import gg.projecteden.nexus.models.pugmas20.Pugmas20User;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20UserService;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,23 +31,19 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
-import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.location;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-
 // TODO PUGMAS: teleport back to pugmas
 @NoArgsConstructor
 public class ToyTesting implements Listener {
 	private static final String error = "Minigame has already started";
 	@Getter
-	private static final Location backLocation = location(931.50, 93.00, 328.50, 180.00F, .00F);
+	private static final Location backLocation = Pugmas20.location(931.50, 93.00, 328.50, 180.00F, .00F);
 
 	@AllArgsConstructor
 	private enum Toy {
-		BATTLESHIP(location(930, 94, 321), "mgm join alphavsomega", Pugmas20User::setBattleship),
-		MASTERMIND(location(930, 94, 320), "mgm join mastermind", Pugmas20User::setMasterMind),
-		CONNECT_4(location(930, 94, 319), "warp connect4", Pugmas20User::setConnectFour),
-		TIC_TAC_TOE(location(930, 94, 318), "warp tictactoe", Pugmas20User::setTicTacToe);
+		BATTLESHIP(Pugmas20.location(930, 94, 321), "mgm join alphavsomega", Pugmas20User::setBattleship),
+		MASTERMIND(Pugmas20.location(930, 94, 320), "mgm join mastermind", Pugmas20User::setMasterMind),
+		CONNECT_4(Pugmas20.location(930, 94, 319), "warp connect4", Pugmas20User::setConnectFour),
+		TIC_TAC_TOE(Pugmas20.location(930, 94, 318), "warp tictactoe", Pugmas20User::setTicTacToe);
 
 		@Getter
 		private final Location location;
@@ -73,7 +71,7 @@ public class ToyTesting implements Listener {
 		if (!Pugmas20.isAtPugmas(player)) return;
 
 		Block block = event.getClickedBlock();
-		if (isNullOrAir(block)) return;
+		if (Nullables.isNullOrAir(block)) return;
 
 		Toy toy = Toy.of(block.getLocation());
 		if (toy == null) return;
@@ -99,7 +97,7 @@ public class ToyTesting implements Listener {
 			lore.addAll(List.of("", "&fUse &c/pugmas toys &fto", "&freturn to this location"));
 
 		ConfirmationMenu.builder()
-				.title("Play " + camelCase(toy) + "?")
+			.title("Play " + StringUtils.camelCase(toy) + "?")
 				.confirmLore(lore)
 				.onConfirm(e -> PlayerUtils.runCommandAsOp(player, toy.getCommand()))
 				.open(player);
@@ -121,7 +119,7 @@ public class ToyTesting implements Listener {
 		if (!EquipmentSlot.HAND.equals(event.getHand())) return;
 
 		Block block = event.getClickedBlock();
-		if (isNullOrAir(block)) return;
+		if (Nullables.isNullOrAir(block)) return;
 
 		if (!MaterialTag.BUTTONS.isTagged(block.getType())) return;
 

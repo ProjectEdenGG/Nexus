@@ -17,10 +17,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 
-import static gg.projecteden.nexus.features.store.perks.visuals.WingsCommand.PERMISSION;
-
 @NoArgsConstructor
-@Permission(PERMISSION)
+@Permission(WingsCommand.PERMISSION)
 @WikiConfig(rank = "Store", feature = "Visuals")
 public class WingsCommand extends CustomCommand implements Listener {
 	public static final String PERMISSION = "wings.use";

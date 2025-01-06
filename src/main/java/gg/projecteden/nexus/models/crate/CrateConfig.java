@@ -6,17 +6,12 @@ import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PostLoad;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.models.boost.BoostConfig;
 import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.models.boost.Booster;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import joptsimple.internal.Strings;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -27,8 +22,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Data
 @Entity(value = "crate_config", noClassnameStored = true)
@@ -99,7 +92,7 @@ public class CrateConfig implements DatabaseObject {
 
 		@Override
 		public ItemStack getDisplayItem() {
-			if (!isNullOrAir(displayItem)) return displayItem;
+			if (!Nullables.isNullOrAir(displayItem)) return displayItem;
 			if (items.isEmpty()) return null;
 			return items.get(0).clone();
 		}

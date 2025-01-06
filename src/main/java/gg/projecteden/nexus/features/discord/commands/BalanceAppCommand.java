@@ -9,8 +9,7 @@ import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.PlayerUtils;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
+import gg.projecteden.nexus.utils.StringUtils;
 
 @Command("Check a player's balance")
 public class BalanceAppCommand extends NexusAppCommand {
@@ -26,7 +25,7 @@ public class BalanceAppCommand extends NexusAppCommand {
 	) {
 		boolean isSelf = PlayerUtils.isSelf(player, verify());
 		String formatted = new BankerService().getBalanceFormatted(player, gamemode);
-		replyEphemeral(camelCase(gamemode) + " balance" + (isSelf ? "" : " of " + player.getNickname()) + ": " + formatted);
+		replyEphemeral(StringUtils.camelCase(gamemode) + " balance" + (isSelf ? "" : " of " + player.getNickname()) + ": " + formatted);
 	}
 
 }

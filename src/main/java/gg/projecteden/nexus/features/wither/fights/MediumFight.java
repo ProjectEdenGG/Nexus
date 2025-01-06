@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.features.wither.models.WitherFight;
 import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.utils.EntityUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.entity.Wither;
@@ -15,8 +16,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.RandomUtils.chanceOf;
 
 @NoArgsConstructor
 public class MediumFight extends WitherFight {
@@ -37,7 +36,7 @@ public class MediumFight extends WitherFight {
 		if (!event.getEntity().equals(wither))
 			return;
 
-		if (!chanceOf(15))
+		if (!RandomUtils.chanceOf(15))
 			return;
 
 		EnumUtils.random(CounterAttack.class).execute(alivePlayers());
@@ -45,7 +44,7 @@ public class MediumFight extends WitherFight {
 
 	@Override
 	public boolean shouldGiveStar() {
-		return chanceOf(25);
+		return RandomUtils.chanceOf(25);
 	}
 
 	@Override

@@ -1,8 +1,10 @@
 package gg.projecteden.nexus.features.events.store.providers.purchasable;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.store.EventStoreItem;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreMenu;
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.particles.effects.WingsEffect.WingStyle;
@@ -19,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static gg.projecteden.nexus.features.events.EdenEvent.PREFIX_STORE;
-import static gg.projecteden.nexus.features.menus.MenuUtils.handleException;
 
 @AllArgsConstructor
 @Title("Event Store - Wings")
@@ -49,7 +48,7 @@ public class EventStoreWingsProvider extends EventStoreMenu {
 				try {
 					if (e.isShiftClick()) {
 						chargeAndAddPermissions(player, price, "wings.use", style.getPermission());
-						PlayerUtils.send(player, PREFIX_STORE + "Purchased wing style #" + (style.ordinal() + 1) + ", manage with &c/wings");
+						PlayerUtils.send(player, EdenEvent.PREFIX_STORE + "Purchased wing style #" + (style.ordinal() + 1) + ", manage with &c/wings");
 						open(player);
 					} else {
 						player.closeInventory();
@@ -57,7 +56,7 @@ public class EventStoreWingsProvider extends EventStoreMenu {
 						Tasks.wait(TickTime.SECOND.x(15), () -> particleOwner.cancel(ParticleType.WINGS));
 					}
 				} catch (Exception ex) {
-					handleException(player, PREFIX_STORE, ex);
+					MenuUtils.handleException(player, EdenEvent.PREFIX_STORE, ex);
 				}
 			}));
 		}

@@ -1,7 +1,5 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common;
 
-import org.bukkit.Sound;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -26,23 +24,23 @@ public @interface WaterLoggedConfig {
 
 	boolean ignorePowered() default false;
 
-	Sound breakSound() default Sound.UI_BUTTON_CLICK;
+	String breakSound() default "ui.button.block";
 
 	String customBreakSound() default "custom.block.stone.break";
 
-	Sound placeSound() default Sound.UI_BUTTON_CLICK;
+	String placeSound() default "ui.button.block";
 
 	String customPlaceSound() default "custom.block.stone.place";
 
-	Sound stepSound() default Sound.UI_BUTTON_CLICK;
+	String stepSound() default "ui.button.block";
 
 	String customStepSound() default "custom.block.stone.step";
 
-	Sound hitSound() default Sound.UI_BUTTON_CLICK;
+	String hitSound() default "ui.button.block";
 
 	String customHitSound() default "custom.block.stone.hit";
 
-	Sound fallSound() default Sound.UI_BUTTON_CLICK;
+	String fallSound() default "ui.button.block";
 
 	String customFallSound() default "custom.block.stone.fall";
 }

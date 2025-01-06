@@ -52,6 +52,12 @@ public class TickableDecorations implements Listener {
 				while (tickables.hasNext()) {
 					DecorationUser.Tickable tickable = tickables.next();
 
+					if (tickable.getLocation() == null) {
+						Nexus.warn("Removing " + user.getNickname() + "'s decoration " + tickable.getConfigId() + " because location is null");
+						tickables.remove();
+						continue;
+					}
+
 					if (!tickable.getLocation().isWorldLoaded())
 						continue;
 

@@ -1,12 +1,9 @@
 package gg.projecteden.nexus.features.recipes.functionals;
 
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
+import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.*;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -17,16 +14,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.Repairable;
 import org.jetbrains.annotations.NotNull;
-
-import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class RepairCostDiminisher extends FunctionalRecipe {
 
@@ -40,7 +30,7 @@ public class RepairCostDiminisher extends FunctionalRecipe {
 		.lore("&7cost of the item")
 		.lore("&7")
 		.lore("&cRequires 30 XP Levels to Craft")
-		.enchant(Enchantment.ARROW_INFINITE, 1)
+		.enchant(Enchantment.INFINITY, 1)
 		.itemFlags(ItemFlag.values())
 		.nbt(nbt -> nbt.setBoolean(NBT_KEY, true))
 		.build();
@@ -52,7 +42,7 @@ public class RepairCostDiminisher extends FunctionalRecipe {
 
 	@Override
 	public @NotNull Recipe getRecipe() {
-		return shaped("121", "232", "121")
+		return RecipeBuilder.shaped("121", "232", "121")
 			.add('1', Material.DIAMOND_BLOCK)
 			.add('2', Material.NETHERITE_INGOT)
 			.add('3', Material.GOLD_BLOCK)
@@ -82,7 +72,7 @@ public class RepairCostDiminisher extends FunctionalRecipe {
 			return;
 		if (event.getHand() != EquipmentSlot.HAND)
 			return;
-		if (event.getAction() == Action.RIGHT_CLICK_BLOCK && !isNullOrAir(event.getClickedBlock()))
+		if (event.getAction() == Action.RIGHT_CLICK_BLOCK && !Nullables.isNullOrAir(event.getClickedBlock()))
 			if (MaterialTag.CONTAINERS.isTagged(event.getClickedBlock().getType()))
 				return;
 
@@ -108,7 +98,7 @@ public class RepairCostDiminisher extends FunctionalRecipe {
 	}
 
 	public void lowerRepairCost(Player player, ItemStack diminisher, ItemStack tool) {
-		if (isNullOrAir(tool)) {
+		if (Nullables.isNullOrAir(tool)) {
 			PlayerUtils.send(player, "&cYou must hold an item in your other hand");
 			return;
 		}

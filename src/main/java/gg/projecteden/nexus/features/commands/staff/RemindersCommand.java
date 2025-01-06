@@ -4,6 +4,7 @@ import com.google.api.services.sheets.v4.model.ValueRange;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.exceptions.EdenException;
 import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -25,6 +26,7 @@ import gg.projecteden.nexus.models.reminders.ReminderConfig.Reminder;
 import gg.projecteden.nexus.models.reminders.ReminderConfig.Reminder.ReminderCondition;
 import gg.projecteden.nexus.utils.GoogleUtils;
 import gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils;
+import gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils.EdenSpreadsheet;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -45,11 +47,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
-
-import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
-import static gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils.EdenSpreadsheet.REMINDERS;
-import static gg.projecteden.nexus.utils.StringUtils.ellipsis;
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Aliases("reminder")
@@ -172,9 +170,9 @@ public class RemindersCommand extends CustomCommand implements Listener {
 		send(json(" &3Hide permissions ").group().next("&a[+]").hover("&aAdd permission").suggest("/reminders edit hidePermissions add " + reminder.getId() + " "));
 		showPermissionsEdit(reminder, reminder.getHidePermissions(), "hidePermissions");
 
-		send(json(" &3Start time: &e" + (reminder.getStartTime() == null ? "None" : shortDateTimeFormat(reminder.getStartTime())))
+		send(json(" &3Start time: &e" + (reminder.getStartTime() == null ? "None" : TimeUtils.shortDateTimeFormat(reminder.getStartTime())))
 				.hover("&3Click to edit").suggest("/reminders edit startTime " + reminder.getId() + " YYYY-MM-DDTHH:MM:SS"));
-		send(json(" &3End time: &e" + (reminder.getEndTime() == null ? "None" : shortDateTimeFormat(reminder.getEndTime())))
+		send(json(" &3End time: &e" + (reminder.getEndTime() == null ? "None" : TimeUtils.shortDateTimeFormat(reminder.getEndTime())))
 				.hover("&3Click to edit").suggest("/reminders edit endTime " + reminder.getId() + " YYYY-MM-DDTHH:MM:SS"));
 
 		send(json(" &3Condition: &e" + (reminder.getCondition() == null ? "None" : camelCase(reminder.getCondition())))
@@ -363,7 +361,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 		send(PREFIX + "Reminders");
 		BiFunction<Reminder, String, JsonBuilder> formatter = (reminder, index) ->
-				json(index + " " + (reminder.isMotd() ? "&6➤" : "&b⚡") + " &e" + reminder.getId() + " &7- " + ellipsis(reminder.getText(), 50))
+				json(index + " " + (reminder.isMotd() ? "&6➤" : "&b⚡") + " &e" + reminder.getId() + " &7- " + StringUtils.ellipsis(reminder.getText(), 50))
 						.hover("&3Type: &e" + (reminder.isMotd() ? "MOTD" : "Reminder"))
 						.hover("&7" + reminder.getText())
 						.command("/reminders edit " + reminder.getId());
@@ -412,7 +410,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 		return config.getAll().stream()
 				.map(Reminder::getId)
 				.filter(request -> request.toLowerCase().startsWith(filter.toLowerCase()))
-				.collect(toList());
+				.collect(Collectors.toList());
 	}
 
 	@Async
@@ -484,7 +482,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 		}
 
 		public void read() {
-			final ValueRange valueRange = SheetsUtils.sheetValues(REMINDERS, getSheetId(), "A:Z");
+			final ValueRange valueRange = SheetsUtils.sheetValues(EdenSpreadsheet.REMINDERS, getSheetId(), "A:Z");
 			final Iterator<List<Object>> iterator = valueRange.getValues().iterator();
 			if (iterator.hasNext())
 				iterator.next(); // Skip headers
@@ -511,7 +509,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 			for (Reminder reminder : getReminders())
 				rows.add(reminder.serialize());
 
-			SheetsUtils.updateEntireSheet(REMINDERS, getSheetId(), values);
+			SheetsUtils.updateEntireSheet(EdenSpreadsheet.REMINDERS, getSheetId(), values);
 		}
 	}
 }

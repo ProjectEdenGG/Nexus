@@ -14,6 +14,7 @@ import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -37,8 +38,6 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class CustomEvents implements Listener {
 
@@ -196,7 +195,7 @@ public class CustomEvents implements Listener {
 			return;
 
 		final Block block = event.getClickedBlock();
-		if (isNullOrAir(block) || block.getType() != Material.PLAYER_HEAD)
+		if (Nullables.isNullOrAir(block) || block.getType() != Material.PLAYER_HEAD)
 			return;
 
 		new PlayerInteractHeadEvent(event.getPlayer(), block).callEvent();

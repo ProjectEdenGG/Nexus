@@ -5,11 +5,7 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21User;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21UserService;
-import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Color;
@@ -29,15 +25,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.bukkit.block.BlockFace.EAST;
-import static org.bukkit.block.BlockFace.NORTH;
-import static org.bukkit.block.BlockFace.NORTH_EAST;
-import static org.bukkit.block.BlockFace.NORTH_WEST;
-import static org.bukkit.block.BlockFace.SOUTH;
-import static org.bukkit.block.BlockFace.SOUTH_EAST;
-import static org.bukkit.block.BlockFace.SOUTH_WEST;
-import static org.bukkit.block.BlockFace.WEST;
-
 public class ReflectionGame {
 	@Getter
 	private static final String gameRg = BearFair21.getRegion() + "_reflection";
@@ -48,7 +35,7 @@ public class ReflectionGame {
 	@Getter
 	private static final Location center = new Location(BearFair21.getWorld(), 49, 132, -93);
 	@Getter
-	private static final List<BlockFace> angles = Arrays.asList(NORTH, NORTH_EAST, EAST, SOUTH_EAST, SOUTH, SOUTH_WEST, WEST, NORTH_WEST);
+	private static final List<BlockFace> angles = Arrays.asList(BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST);
 	//
 	@Getter
 	@Setter
@@ -210,41 +197,41 @@ public class ReflectionGame {
 		if (from.getOppositeFace().equals(bannerFace))
 			return from.getOppositeFace();
 
-		if (from.equals(NORTH)) {
-			if (bannerFace.equals(WEST) || bannerFace.equals(EAST))
+		if (from.equals(BlockFace.NORTH)) {
+			if (bannerFace.equals(BlockFace.WEST) || bannerFace.equals(BlockFace.EAST))
 				return from;
 
-			if (bannerFace.equals(SOUTH_WEST))
-				return WEST;
+			if (bannerFace.equals(BlockFace.SOUTH_WEST))
+				return BlockFace.WEST;
 			else
-				return EAST;
+				return BlockFace.EAST;
 
-		} else if (from.equals(SOUTH)) {
-			if (bannerFace.equals(WEST) || bannerFace.equals(EAST))
+		} else if (from.equals(BlockFace.SOUTH)) {
+			if (bannerFace.equals(BlockFace.WEST) || bannerFace.equals(BlockFace.EAST))
 				return from;
 
-			if (bannerFace.equals(NORTH_WEST))
-				return WEST;
+			if (bannerFace.equals(BlockFace.NORTH_WEST))
+				return BlockFace.WEST;
 			else
-				return EAST;
+				return BlockFace.EAST;
 
-		} else if (from.equals(EAST)) {
-			if (bannerFace.equals(SOUTH) || bannerFace.equals(NORTH))
+		} else if (from.equals(BlockFace.EAST)) {
+			if (bannerFace.equals(BlockFace.SOUTH) || bannerFace.equals(BlockFace.NORTH))
 				return from;
 
-			if (bannerFace.equals(SOUTH_WEST))
-				return SOUTH;
+			if (bannerFace.equals(BlockFace.SOUTH_WEST))
+				return BlockFace.SOUTH;
 			else
-				return NORTH;
+				return BlockFace.NORTH;
 
-		} else if (from.equals(WEST)) {
-			if (bannerFace.equals(SOUTH) || bannerFace.equals(NORTH))
+		} else if (from.equals(BlockFace.WEST)) {
+			if (bannerFace.equals(BlockFace.SOUTH) || bannerFace.equals(BlockFace.NORTH))
 				return from;
 
-			if (bannerFace.equals(NORTH_EAST))
-				return NORTH;
+			if (bannerFace.equals(BlockFace.NORTH_EAST))
+				return BlockFace.NORTH;
 			else
-				return SOUTH;
+				return BlockFace.SOUTH;
 		}
 
 		return from;

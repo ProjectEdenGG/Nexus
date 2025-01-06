@@ -5,11 +5,7 @@ import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
@@ -31,9 +27,8 @@ import lombok.Getter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
-
-import static java.time.temporal.ChronoUnit.DAYS;
 
 @Aliases("birthday")
 public class BirthdaysCommand extends CustomCommand {
@@ -60,14 +55,14 @@ public class BirthdaysCommand extends CustomCommand {
 		List<Nerd> nerds = service.getNerdsWithBirthdays();
 		final LocalDate now = LocalDate.now();
 
-		nerds.sort((nerd1, nerd2) -> (int) DAYS.between(now, getNextBirthday(nerd1)) - (int) DAYS.between(now, getNextBirthday(nerd2)));
+		nerds.sort((nerd1, nerd2) -> (int) ChronoUnit.DAYS.between(now, getNextBirthday(nerd1)) - (int) ChronoUnit.DAYS.between(now, getNextBirthday(nerd2)));
 
 		line();
 		send(PREFIX + "Upcoming birthdays:");
 		paginate(nerds, (nerd, index) -> {
 			final JsonBuilder json = json("&3" + index + " &e" + nerd.getColoredName() + " &7- ");
 
-			long until = DAYS.between(now, getNextBirthday(nerd));
+			long until = ChronoUnit.DAYS.between(now, getNextBirthday(nerd));
 
 			if (until == 0)
 				json.next("&dToday!");

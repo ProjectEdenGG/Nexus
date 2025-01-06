@@ -9,6 +9,8 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.IMastermindMatch
 import gg.projecteden.nexus.features.minigames.models.matchdata.MultimindMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.singleplayer.SingleplayerMechanic;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -21,9 +23,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 // TODO Lobby
 
@@ -107,7 +106,7 @@ public final class Multimind extends SingleplayerMechanic {
 				int guess = matchData.getGuess(minigamer);
 				Sign sign = (Sign) block.getState();
 
-				String line1 = stripColor(sign.getLine(0));
+				String line1 = StringUtils.stripColor(sign.getLine(0));
 				if ("< Colorblind >".equals(line1)) {
 					if (guess != 1) {
 						minigamer.tell("You cannot change colorblind mode in the middle of the game");
@@ -124,7 +123,7 @@ public final class Multimind extends SingleplayerMechanic {
 						minigamer.tell("You cannot change the difficulty mode in the middle of the game");
 						return;
 					}
-					String line2 = stripColor(sign.getLine(1));
+					String line2 = StringUtils.stripColor(sign.getLine(1));
 					if ("Easy".equals(line2))
 						matchData.setRepeats(false);
 					else if ("Hard".equals(line2))
@@ -137,7 +136,7 @@ public final class Multimind extends SingleplayerMechanic {
 			}
 
 			Block placed = event.getClickedBlock().getRelative(event.getBlockFace());
-			if (!isNullOrAir(event.getItem()) && !canBuild(minigamer, placed))
+			if (!Nullables.isNullOrAir(event.getItem()) && !canBuild(minigamer, placed))
 				event.setCancelled(true);
 		}
 	}

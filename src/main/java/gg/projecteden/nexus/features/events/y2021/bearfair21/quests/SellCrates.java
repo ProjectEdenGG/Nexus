@@ -6,7 +6,9 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.Merchan
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.farming.FarmingLoot;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot;
 import gg.projecteden.nexus.utils.MerchantBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,11 +21,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.nexus.utils.StringUtils.decolorize;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class SellCrates implements Listener {
 	public SellCrates() {
@@ -47,22 +44,22 @@ public class SellCrates implements Listener {
 	private String getCrateType(String[] lines) {
 		String line1 = lines[0];
 		String line2 = lines[1];
-		if ("[Sell Crate]".equals(stripColor(line1)))
+		if ("[Sell Crate]".equals(StringUtils.stripColor(line1)))
 			return line2;
 		return null;
 	}
 
 	private void openSellCrate(Player player, String type) {
-		Inventory inv = Bukkit.createInventory(null, 27, colorize("&eSell Crate - " + type));
+		Inventory inv = Bukkit.createInventory(null, 27, StringUtils.colorize("&eSell Crate - " + type));
 		player.openInventory(inv);
 	}
 
 	@EventHandler
 	public void onSellCrateClose(InventoryCloseEvent event) {
-		String title = stripColor(event.getView().getTitle());
-		if (!title.contains(stripColor("Sell Crate - "))) return;
+		String title = StringUtils.stripColor(event.getView().getTitle());
+		if (!title.contains(StringUtils.stripColor("Sell Crate - "))) return;
 
-		String[] split = decolorize(title).toLowerCase().split(" - ");
+		String[] split = StringUtils.decolorize(title).toLowerCase().split(" - ");
 		String crateType = split[1];
 		List<MerchantBuilder.TradeBuilder> tradeBuilders = new ArrayList<>();
 
@@ -84,7 +81,7 @@ public class SellCrates implements Listener {
 
 		List<ItemStack> profit = new ArrayList<>();
 		for (ItemStack item : event.getInventory().getContents()) {
-			if (isNullOrAir(item))
+			if (Nullables.isNullOrAir(item))
 				continue;
 
 			boolean foundTrade = false;
@@ -95,8 +92,8 @@ public class SellCrates implements Listener {
 				if (ingredients.size() != 1) continue;
 
 				ItemStack ingredient = ingredients.get(0);
-				if (isNullOrAir(ingredient)) continue;
-				if (isNullOrAir(result)) continue;
+				if (Nullables.isNullOrAir(ingredient)) continue;
+				if (Nullables.isNullOrAir(result)) continue;
 
 				if (item.getType().equals(ingredient.getType())) {
 					if (item.getAmount() >= ingredient.getAmount()) {

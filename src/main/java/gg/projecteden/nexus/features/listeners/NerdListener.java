@@ -10,6 +10,7 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.punishments.Punishments;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
@@ -28,8 +29,6 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.Distance.distance;
 
 public class NerdListener implements Listener {
 
@@ -91,7 +90,7 @@ public class NerdListener implements Listener {
 
 	@EventHandler
 	public void on(PlayerTeleportEvent event) {
-		boolean nearbyTeleport = event.getFrom().getWorld().equals(event.getTo().getWorld()) && distance(event.getFrom(), event.getTo()).lte(128);
+		boolean nearbyTeleport = event.getFrom().getWorld().equals(event.getTo().getWorld()) && Distance.distance(event.getFrom(), event.getTo()).lte(128);
 
 		if (!nearbyTeleport)
 			new NerdService().edit(event.getPlayer(), nerd -> nerd.setTeleportLocation(event.getTo()));

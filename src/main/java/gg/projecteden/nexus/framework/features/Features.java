@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.framework.features;
 
+import gg.projecteden.api.common.utils.ReflectionUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.utils.Timer;
@@ -8,15 +9,7 @@ import lombok.Getter;
 import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
-import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
+import java.util.*;
 
 @SuppressWarnings("unchecked")
 public class Features {
@@ -27,7 +20,7 @@ public class Features {
 
 	public Features(Plugin plugin, String path) {
 		this.plugin = plugin;
-		this.featureSet = subTypesOf(Feature.class, path);
+		this.featureSet = ReflectionUtils.subTypesOf(Feature.class, path);
 	}
 
 	public static <T extends Feature> T get(Class<T> clazz) {

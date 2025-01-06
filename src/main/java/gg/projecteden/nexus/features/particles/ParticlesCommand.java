@@ -15,6 +15,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.particle.ParticleOwner;
 import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.models.particle.ParticleType;
+import gg.projecteden.nexus.utils.LocationUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -22,10 +23,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-
-import static gg.projecteden.nexus.features.particles.Particles.startParticles;
-import static gg.projecteden.nexus.features.particles.Particles.stopParticles;
-import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
 
 @NoArgsConstructor
 public class ParticlesCommand extends CustomCommand implements Listener {
@@ -64,22 +61,22 @@ public class ParticlesCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		startParticles(event.getPlayer());
+		Particles.startParticles(event.getPlayer());
 	}
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		stopParticles(event.getPlayer());
+		Particles.stopParticles(event.getPlayer());
 	}
 
 	@EventHandler
 	public void onMatchJoin(MatchJoinEvent event) {
-		stopParticles(event.getMinigamer().getPlayer());
+		Particles.stopParticles(event.getMinigamer().getPlayer());
 	}
 
 	@EventHandler
 	public void onMatchQuit(MatchQuitEvent event) {
-		startParticles(event.getMinigamer().getPlayer());
+		Particles.startParticles(event.getMinigamer().getPlayer());
 	}
 
 	@Path("line [distance] [density]")
@@ -93,7 +90,7 @@ public class ParticlesCommand extends CustomCommand implements Listener {
 	@Permission(Group.ADMIN)
 	@Description("Draw a particle dot")
 	void dot() {
-		Location loc = getCenteredLocation(location()).add(0, 1, 0);
+		Location loc = LocationUtils.getCenteredLocation(location()).add(0, 1, 0);
 		DotEffect.builder().player(player()).location(loc).ticks(10 * 20).rainbow(true).start();
 	}
 }

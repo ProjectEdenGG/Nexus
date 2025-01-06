@@ -22,9 +22,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import net.md_5.bungee.api.ChatColor;
 
-import static gg.projecteden.nexus.features.minigames.models.matchdata.Connect4MatchData.Board.HEIGHT;
-import static gg.projecteden.nexus.features.minigames.models.matchdata.Connect4MatchData.Board.WIDTH;
-
 @HideFromWiki
 @Aliases("c4")
 @Permission(Group.ADMIN)
@@ -71,9 +68,9 @@ public class Connect4Command extends CustomCommand {
 	@Path("debug board")
 	@Description("Print the in-memory copy of the board to chat")
 	void debug_board() {
-		for (int row = 0; row < HEIGHT; row++) {
+		for (int row = 0; row < Board.HEIGHT; row++) {
 			String columns = "&3Row &e" + row + "&3: ";
-			for (int column = 0; column < WIDTH; column++) {
+			for (int column = 0; column < Board.WIDTH; column++) {
 				InARowPiece piece = board.getPiece(row, column);
 				ChatColor color = ChatColor.WHITE;
 				if (!piece.isEmpty())

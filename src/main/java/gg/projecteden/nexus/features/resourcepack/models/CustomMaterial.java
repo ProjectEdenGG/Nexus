@@ -1,18 +1,17 @@
 package gg.projecteden.nexus.features.resourcepack.models;
 
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
-
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Getter
 @AllArgsConstructor
@@ -1034,14 +1033,14 @@ public enum CustomMaterial {
 	}
 
 	public static CustomMaterial of(ItemStack item) {
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return null;
 
 		return of(new ItemBuilder(item));
 	}
 
 	public static CustomMaterial of(ItemBuilder item) {
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return null;
 
 		for (CustomMaterial customMaterial : values())
@@ -1053,7 +1052,7 @@ public enum CustomMaterial {
 	}
 
 	public boolean is(@Nullable ItemStack item) {
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return false;
 
 		return item.getType() == material && ModelId.of(item) == modelId;
@@ -1090,7 +1089,7 @@ public enum CustomMaterial {
 	}
 
 	public ItemBuilder getNamedItemBuilder() {
-		return getItemBuilder().name(camelCase(this));
+		return getItemBuilder().name(StringUtils.camelCase(this));
 	}
 
 	public ItemStack getNamedItem() {

@@ -33,8 +33,6 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-import static gg.projecteden.nexus.utils.PlayerUtils.canSee;
-
 @Aliases({"tpr", "tprequest", "tpa", "tpask"})
 @Redirect(from = "/tpcancel", to = "/tpr cancel")
 @Redirect(from = {"/tpno", "/tpdeny"}, to = "/tpr deny")
@@ -66,7 +64,7 @@ public class TeleportRequestCommand extends ITeleportRequestCommand {
 		if (isSelf(target))
 			error("You cannot teleport to yourself");
 
-		if (!canSee(player(), target))
+		if (!PlayerUtils.canSee(player(), target))
 			throw new PlayerNotOnlineException(target);
 
 		if (MuteMenuUser.hasMuted(target, MuteMenuItem.TP_REQUESTS))

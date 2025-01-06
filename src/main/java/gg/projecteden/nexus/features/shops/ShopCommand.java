@@ -1,22 +1,12 @@
 package gg.projecteden.nexus.features.shops;
 
 import gg.projecteden.api.common.annotations.Async;
-import gg.projecteden.nexus.features.shops.providers.BrowseProductsProvider;
-import gg.projecteden.nexus.features.shops.providers.BrowseShopsProvider;
-import gg.projecteden.nexus.features.shops.providers.MainMenuProvider;
-import gg.projecteden.nexus.features.shops.providers.PlayerShopProvider;
-import gg.projecteden.nexus.features.shops.providers.YourShopProvider;
+import gg.projecteden.nexus.features.economy.commands.TransactionsCommand;
+import gg.projecteden.nexus.features.shops.providers.*;
 import gg.projecteden.nexus.features.shops.providers.YourShopProvider.CollectItemsProvider;
 import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterSearchType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.banker.Transaction;
@@ -26,7 +16,9 @@ import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.Shop.Product;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.shop.ShopService;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,20 +32,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import world.bentobox.bentobox.api.events.island.IslandResetEvent;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.features.economy.commands.TransactionsCommand.getFormatter;
-import static gg.projecteden.nexus.models.banker.Transaction.combine;
-import static gg.projecteden.nexus.utils.ItemUtils.isSimilar;
-import static gg.projecteden.nexus.utils.StringUtils.pretty;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Aliases("shops")
 @NoArgsConstructor
@@ -93,7 +74,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 	@Path("search <item...>")
 	@Description("Search the shop for an item")
 	void search(@Arg(tabCompleter = ItemStack.class) String text) {
-		new BrowseProductsProvider(null, FilterSearchType.SEARCH.of(stripColor(text))).open(player());
+		new BrowseProductsProvider(null, FilterSearchType.SEARCH.of(StringUtils.stripColor(text))).open(player());
 	}
 
 	@Path("items")
@@ -132,9 +113,9 @@ public class ShopCommand extends CustomCommand implements Listener {
 		send("");
 		send(PREFIX + camelCase(world) + " history" + (isSelf(banker) ? "" : " for &e" + banker.getName()));
 
-		BiFunction<Transaction, String, JsonBuilder> formatter = getFormatter(player(), banker);
+		BiFunction<Transaction, String, JsonBuilder> formatter = TransactionsCommand.getFormatter(player(), banker);
 
-		paginate(combine(transactions), formatter, "/shop history " + banker.getName() + " --world=" + world.name().toLowerCase(), page);
+		paginate(Transaction.combine(transactions), formatter, "/shop history " + banker.getName() + " --world=" + world.name().toLowerCase(), page);
 	}
 
 	@Getter
@@ -150,7 +131,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 
 		Product product = interactStockMap.get(uuid());
 		interactStockMap.remove(uuid());
-		send(PREFIX + "Stopped stocking " + pretty(product.getItem()));
+		send(PREFIX + "Stopped stocking " + StringUtils.pretty(product.getItem()));
 	}
 
 	@EventHandler
@@ -172,7 +153,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 
 		int stockToAdd = 0;
 		for (ItemStack content : container.getInventory().getContents()) {
-			if (isSimilar(product.getItem(), content)) {
+			if (ItemUtils.isSimilar(product.getItem(), content)) {
 				stockToAdd += content.getAmount();
 				content.setAmount(0);
 			}
@@ -182,7 +163,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 		service.save(product.getShop());
 
 		send(event.getPlayer(), new JsonBuilder(Shops.PREFIX + "Added &e" + stockToAdd + " &3stock to "
-				+ pretty(product.getItem()) + " (&e" + product.getStock() + " &3total). &eClick here to end")
+				+ StringUtils.pretty(product.getItem()) + " (&e" + product.getStock() + " &3total). &eClick here to end")
 				.command("/shop cancelInteractStock"));
 	}
 

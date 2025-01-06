@@ -2,6 +2,7 @@ package gg.projecteden.nexus.models.particle;
 
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.menus.api.SignMenuFactory;
 import gg.projecteden.nexus.features.particles.Particles;
 import gg.projecteden.nexus.features.particles.effects.DiscoEffect;
 import gg.projecteden.nexus.features.particles.effects.StormEffect;
@@ -19,13 +20,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import static gg.projecteden.nexus.features.menus.api.SignMenuFactory.ARROWS;
+import java.util.*;
 
 @Getter
 public enum ParticleSetting {
@@ -367,7 +362,7 @@ public enum ParticleSetting {
 	public void onClick(Player player, EffectSettingProvider menu) {
 		final ParticleType type = menu.getType();
 		if (value == Double.class || value == Integer.class) {
-			Nexus.getSignMenuFactory().lines("", ARROWS, "Enter new value for", getTitle())
+			Nexus.getSignMenuFactory().lines("", SignMenuFactory.ARROWS, "Enter new value for", getTitle())
 					.prefix(Features.get(Particles.class).getPrefix())
 					.response(lines -> {
 						setter(player, type, lines[0]);

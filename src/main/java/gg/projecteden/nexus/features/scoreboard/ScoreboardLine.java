@@ -6,15 +6,12 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.nameplates.Nameplates;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.features.votes.party.VoteParty;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.models.afk.AFKUser;
 import gg.projecteden.nexus.models.banker.BankerService;
-import gg.projecteden.nexus.models.chat.Channel;
-import gg.projecteden.nexus.models.chat.Chatter;
-import gg.projecteden.nexus.models.chat.ChatterService;
-import gg.projecteden.nexus.models.chat.PrivateChannel;
-import gg.projecteden.nexus.models.chat.PublicChannel;
+import gg.projecteden.nexus.models.chat.*;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
@@ -37,24 +34,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.lang.annotation.Annotation;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-
-import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.StringUtils.left;
-import static java.time.format.DateTimeFormatter.ofPattern;
 
 public enum ScoreboardLine {
 	ONLINE {
@@ -87,6 +76,8 @@ public enum ScoreboardLine {
 	MSPT {
 		@Override
 		public String render(Player player) {
+			if (Nexus.getSpark() == null)
+				return "&3MSPT: &cnull";
 			final var mspt = Nexus.getSpark().mspt();
 			if (mspt == null)
 				return "&3MSPT: &cnull";
@@ -159,7 +150,7 @@ public enum ScoreboardLine {
 	VANISHED {
 		@Override
 		public String render(Player player) {
-			return "&3Vanished: &e" + isVanished(player);
+			return "&3Vanished: &e" + Vanish.isVanished(player);
 		}
 	},
 
@@ -174,7 +165,7 @@ public enum ScoreboardLine {
 	GAMEMODE {
 		@Override
 		public String render(Player player) {
-			return "&3Mode: &e" + camelCase(player.getGameMode().name());
+			return "&3Mode: &e" + StringUtils.camelCase(player.getGameMode().name());
 		}
 	},
 
@@ -189,7 +180,7 @@ public enum ScoreboardLine {
 		@Override
 		public String render(Player player) {
 			Location location = player.getLocation();
-			return "&3Biome: &e" + camelCase(location.getWorld().getBiome(location.getBlockX(), location.getBlockY(), location.getBlockZ()).name());
+			return "&3Biome: &e" + StringUtils.camelCase(location.getWorld().getBiome(location.getBlockX(), location.getBlockY(), location.getBlockZ()).name());
 		}
 	},
 
@@ -223,7 +214,7 @@ public enum ScoreboardLine {
 				formatted = new DecimalFormat("###,###").format(balance);
 
 			if (formatted.endsWith(".00"))
-				formatted = left(formatted, formatted.length() - 3);
+				formatted = StringUtils.left(formatted, formatted.length() - 3);
 
 			return "&3Balance: &e$" + formatted;
 		}
@@ -255,7 +246,7 @@ public enum ScoreboardLine {
 	FACING {
 		@Override
 		public String render(Player player) {
-			return "&3Facing: &e" + camelCase(player.getFacing()) + " (" + LocationUtils.getShortFacingDirection(player) + ")";
+			return "&3Facing: &e" + StringUtils.camelCase(player.getFacing()) + " (" + LocationUtils.getShortFacingDirection(player) + ")";
 		}
 	},
 
@@ -316,7 +307,7 @@ public enum ScoreboardLine {
 		public String render(Player player) {
 			final GeoIP geoip = new GeoIPService().get(player);
 			final LocalDateTime now = LocalDateTime.now();
-			return "&3Server Time: &e" + now.format(ofPattern("MMM d ")) + geoip.getTimeFormat().formatShort(now);
+			return "&3Server Time: &e" + now.format(DateTimeFormatter.ofPattern("MMM d ")) + geoip.getTimeFormat().formatShort(now);
 		}
 	},
 
@@ -325,7 +316,7 @@ public enum ScoreboardLine {
 		public String render(Player player) {
 			final GeoIP geoip = new GeoIPService().get(player);
 			final ZonedDateTime now = geoip.getCurrentTime();
-			return "&7" + now.format(ofPattern("MMM d ")) + geoip.getTimeFormat().formatShort(now);
+			return "&7" + now.format(DateTimeFormatter.ofPattern("MMM d ")) + geoip.getTimeFormat().formatShort(now);
 		}
 	},
 

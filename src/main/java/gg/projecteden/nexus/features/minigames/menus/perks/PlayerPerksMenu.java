@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.menus.perks;
 
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -13,8 +14,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static gg.projecteden.nexus.features.menus.MenuUtils.calculateRows;
-
 @Title("Your Collectibles")
 public class PlayerPerksMenu extends CommonPerksMenu {
 
@@ -24,7 +23,7 @@ public class PlayerPerksMenu extends CommonPerksMenu {
 
 	@Override
 	protected int getRows(Integer page) {
-		return Math.max(3, calculateRows(service.get(viewer).getPurchasedPerkTypesByCategory(category).size(), 1));
+		return Math.max(3, MenuUtils.calculateRows(service.get(viewer).getPurchasedPerkTypesByCategory(category).size(), 1));
 	}
 
 	@Override

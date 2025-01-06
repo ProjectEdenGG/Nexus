@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-
 @NoArgsConstructor
 public class SocialMedia implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("SocialMedia");
@@ -136,7 +134,7 @@ public class SocialMedia implements Listener {
 		GITHUB("https://github.com/ProjectEdenGG"),
 		;
 
-		private String name = "&3" + camelCase(name());
+		private String name = "&3" + StringUtils.camelCase(name());
 		private final String url;
 		private final String headId;
 

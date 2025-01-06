@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.socialmedia.commands;
 
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.features.listeners.events.PlayerInteractHeadEvent;
 import gg.projecteden.nexus.features.menus.BookBuilder.WrittenBookMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
@@ -27,8 +28,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @NoArgsConstructor
 public class SocialMediaCommand extends CustomCommand implements Listener {
@@ -147,7 +146,7 @@ public class SocialMediaCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void on(PlayerInteractHeadEvent event) {
 		final String id = event.getHeadDatabaseId();
-		if (isNullOrEmpty(id))
+		if (Nullables.isNullOrEmpty(id))
 			return;
 
 		EdenSocialMediaSite site = EdenSocialMediaSite.ofHeadId(id);

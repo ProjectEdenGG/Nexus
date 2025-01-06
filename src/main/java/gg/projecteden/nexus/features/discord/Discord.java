@@ -22,17 +22,14 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.queup.QueUp;
 import gg.projecteden.nexus.models.queup.QueUpService;
 import gg.projecteden.nexus.utils.AdventureUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.Message.MentionType;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.utils.TimeUtil;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.entity.Player;
@@ -40,17 +37,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.OffsetDateTime;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class Discord extends Feature {
 	@Getter
@@ -186,7 +176,7 @@ public class Discord extends Feature {
 	}
 
 	public static CompletableFuture<Message> send(String message, TextChannel... targets) {
-		return send(new MessageBuilder(stripColor(message).replace("<@role", "<@&")), targets);
+		return send(new MessageBuilder(StringUtils.stripColor(message).replace("<@role", "<@&")), targets);
 	}
 
 	public static CompletableFuture<Message> send(MessageBuilder message, TextChannel... targets) {
@@ -198,7 +188,7 @@ public class Discord extends Feature {
 	}
 
 	public static CompletableFuture<Message> koda(String message, TextChannel... targets) {
-		return koda(new MessageBuilder(stripColor(message)), targets);
+		return koda(new MessageBuilder(StringUtils.stripColor(message)), targets);
 	}
 
 	public static CompletableFuture<Message> koda(MessageBuilder message, TextChannel... targets) {
@@ -289,8 +279,8 @@ public class Discord extends Feature {
 
 		QueUpService queupService = new QueUpService();
 		QueUp queup = queupService.get0();
-		if (!isNullOrEmpty(queup.getLastSong())) {
-			final String song = System.lineSeparator() + System.lineSeparator() + "Now playing on " + EdenSocialMediaSite.QUEUP.getUrl() + ": " + stripColor(queup.getLastSong());
+		if (!Nullables.isNullOrEmpty(queup.getLastSong())) {
+			final String song = System.lineSeparator() + System.lineSeparator() + "Now playing on " + EdenSocialMediaSite.QUEUP.getUrl() + ": " + StringUtils.stripColor(queup.getLastSong());
 			if ((topic + song).length() <= (1024 - timestamp().length()))
 				topic += song;
 		}
@@ -344,7 +334,7 @@ public class Discord extends Feature {
 
 		String url = getGuild().getVanityUrl();
 
-		if (isNullOrEmpty(url)) {
+		if (Nullables.isNullOrEmpty(url)) {
 			var textChannel = TextChannel.GENERAL.get(Bot.KODA.jda());
 			if (textChannel == null)
 				throw new InvalidInputException("General channel not found");
@@ -352,7 +342,7 @@ public class Discord extends Feature {
 			url = textChannel.createInvite().complete().getUrl();
 		}
 
-		if (isNullOrEmpty(url))
+		if (Nullables.isNullOrEmpty(url))
 			throw new InvalidInputException("Could not generate invite link");
 
 		return url;

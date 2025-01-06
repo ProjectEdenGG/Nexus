@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics;
 
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.mechanics.*;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -11,8 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @Getter
 public enum MechanicType {
@@ -95,7 +94,7 @@ public enum MechanicType {
 
 	public static MechanicType from(CustomBoundingBoxEntity entity) {
 		String id = entity.getId();
-		if (isNullOrEmpty(id))
+		if (Nullables.isNullOrEmpty(id))
 			return null;
 
 		if (!id.startsWith(BOUNDING_BOX_ID_PREFIX))

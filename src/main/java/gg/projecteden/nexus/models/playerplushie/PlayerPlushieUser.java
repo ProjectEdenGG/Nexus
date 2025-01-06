@@ -3,21 +3,16 @@ package gg.projecteden.nexus.models.playerplushie;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.PlayerPlushie;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
-
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 @Data
 @Entity(value = "player_plushie_user", noClassnameStored = true)
@@ -72,7 +67,7 @@ public class PlayerPlushieUser implements PlayerOwnedObject {
 				return plushie;
 			}
 
-		throw new InvalidInputException("Cannot spawn " + camelCase(pose) + " pose for " + getNickname() + ", model has not been generated");
+		throw new InvalidInputException("Cannot spawn " + StringUtils.camelCase(pose) + " pose for " + getNickname() + ", model has not been generated");
 	}
 
 	public boolean canPurchase(Pose pose) {

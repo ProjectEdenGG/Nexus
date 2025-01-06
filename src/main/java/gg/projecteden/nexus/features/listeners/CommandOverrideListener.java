@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.listeners;
 
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,9 +12,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static gg.projecteden.nexus.utils.StringUtils.plural;
-import static gg.projecteden.nexus.utils.StringUtils.trimFirst;
-
 public class CommandOverrideListener implements Listener {
 
 	@EventHandler
@@ -23,7 +21,7 @@ public class CommandOverrideListener implements Listener {
 		if (args.size() == 0) return;
 		String argsString = event.getMessage().replace(args.get(0) + " ", "");
 
-		Consumer<String> redirect = command -> PlayerUtils.runCommand(player, trimFirst(command));
+		Consumer<String> redirect = command -> PlayerUtils.runCommand(player, StringUtils.trimFirst(command));
 		Consumer<String> send = message -> PlayerUtils.send(player, message);
 
 		switch (args.get(0)) {
@@ -83,7 +81,7 @@ public class CommandOverrideListener implements Listener {
 						break;
 					}
 
-					send.accept("&3You can claim &e" + limit + plural(" &3plot", limit));
+					send.accept("&3You can claim &e" + limit + StringUtils.plural(" &3plot", limit));
 				}
 				break;
 		}

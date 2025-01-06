@@ -15,6 +15,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.FakeWorldEdit;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -41,8 +42,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
-
-import static gg.projecteden.nexus.utils.BlockUtils.getBlocksInRadius;
 
 @Aliases("weutils")
 @Permission(Group.STAFF)
@@ -247,7 +246,7 @@ public class WorldEditUtilsCommand extends CustomCommand {
 		);
 
 		int count = 0;
-		for (Block block : getBlocksInRadius(block(), radius, 0, radius)) {
+		for (Block block : BlockUtils.getBlocksInRadius(block(), radius, 0, radius)) {
 			final Location floor = world().getHighestBlockAt(block.getLocation()).getLocation();
 			while (KEEP_GOING_DOWN.contains(floor.getBlock().getType()))
 				floor.add(0, -1, 0);

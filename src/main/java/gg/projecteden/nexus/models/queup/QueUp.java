@@ -9,17 +9,10 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.queup.QueUp.API.ActiveSong;
 import gg.projecteden.nexus.utils.HttpUtils;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import gg.projecteden.nexus.utils.StringUtils;
+import lombok.*;
 
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.HttpUtils.unescapeHtml;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Data
 @Entity(value = "queup", noClassnameStored = true)
@@ -49,8 +42,8 @@ public class QueUp implements PlayerOwnedObject {
 		String song = activeSong.getData().getSongInfo().getName();
 		String user = activeSong.getData().getSong().getUserName();
 
-		song = stripColor(unescapeHtml(song));
-		user = stripColor(unescapeHtml(user));
+		song = StringUtils.stripColor(HttpUtils.unescapeHtml(song));
+		user = StringUtils.stripColor(HttpUtils.unescapeHtml(user));
 
 		return "&e" + song + " &3(Queued by &e" + user + "&3)";
 	}

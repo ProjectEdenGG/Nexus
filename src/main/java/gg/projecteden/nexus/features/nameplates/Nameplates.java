@@ -28,8 +28,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.utils.PlayerUtils.canSee;
-
 @Getter
 public class Nameplates extends Feature {
 	private final PushService pushService = new PushService();
@@ -208,14 +206,14 @@ public class Nameplates extends Feature {
 	public static OnlinePlayers getViewers(@NotNull Player holder) {
 		return getNearbyPlayers(holder)
 			.filter(viewer -> holder.getGameMode() != GameMode.SPECTATOR || viewer.getGameMode() == GameMode.SPECTATOR)
-			.filter(viewer -> canSee(viewer, holder));
+			.filter(viewer -> PlayerUtils.canSee(viewer, holder));
 	}
 
 	@NotNull
 	public static OnlinePlayers getViewable(@NotNull Player viewer) {
 		return getNearbyPlayers(viewer)
 			.filter(holder -> holder.getGameMode() != GameMode.SPECTATOR || viewer.getGameMode() == GameMode.SPECTATOR)
-			.filter(holder -> canSee(viewer, holder));
+			.filter(holder -> PlayerUtils.canSee(viewer, holder));
 	}
 
 	public static void fixNPCNameplates() {

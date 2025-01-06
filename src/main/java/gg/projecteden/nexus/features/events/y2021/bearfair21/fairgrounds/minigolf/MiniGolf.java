@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigo
 
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
@@ -16,27 +17,12 @@ import gg.projecteden.nexus.features.particles.ParticleUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21User;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21UserService;
-import gg.projecteden.nexus.utils.EntityUtils;
-import gg.projecteden.nexus.utils.FireworkLauncher;
-import gg.projecteden.nexus.utils.GlowUtils;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
-import org.bukkit.Color;
+import org.bukkit.*;
 import org.bukkit.FireworkEffect.Type;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -50,20 +36,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.Vector;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class MiniGolf {
 	// @formatter:off
@@ -138,7 +113,7 @@ public class MiniGolf {
 				.map(miniGolfColor -> (MiniGolf.getGolfBall().clone().modelId(miniGolfColor.getModelId()).build()))
 				.toList();
 
-			if (armorStand != null && !isNullOrEmpty(golfBalls)) {
+			if (armorStand != null && !Nullables.isNullOrEmpty(golfBalls)) {
 				armorStand.setSilent(true);
 
 				AtomicInteger index = new AtomicInteger();
@@ -147,7 +122,7 @@ public class MiniGolf {
 						return;
 
 					ItemStack golfBall = golfBalls.get(index.get());
-					if (!isNullOrAir(golfBall))
+					if (!gg.projecteden.nexus.utils.Nullables.isNullOrAir(golfBall))
 						armorStand.setItem(EquipmentSlot.HAND, golfBall);
 
 					index.getAndIncrement();
@@ -163,7 +138,7 @@ public class MiniGolf {
 				.filter(Objects::nonNull)
 				.toList();
 
-			if (!isNullOrEmpty(particles)) {
+			if (!Nullables.isNullOrEmpty(particles)) {
 				AtomicInteger index = new AtomicInteger(0);
 				Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
 					if (BearFair21.worldguard().getPlayersInRegion(gameRegion + "_play_top").size() <= 0)
@@ -173,7 +148,7 @@ public class MiniGolf {
 					if (particle != null) {
 						ParticleBuilder particleBuilder = new ParticleBuilder(particle).location(particleLoc)
 							.count(50).extra(0.01).offset(0.2, 0.2, 0.2);
-						if (particle.equals(Particle.REDSTONE))
+						if (particle.equals(Particle.DUST))
 							particleBuilder.color(Color.RED);
 
 						particleBuilder.spawn();
@@ -236,7 +211,7 @@ public class MiniGolf {
 
 				Player player = user.getOnlinePlayer();
 				ItemStack tool = ItemUtils.getTool(player);
-				if (isNullOrAir(tool))
+				if (gg.projecteden.nexus.utils.Nullables.isNullOrAir(tool))
 					continue;
 
 				// quick fix
@@ -313,7 +288,7 @@ public class MiniGolf {
 								.count(1)
 								.extra(0);
 
-						if (particle.equals(Particle.REDSTONE)) {
+						if (particle.equals(Particle.DUST)) {
 							if (user.getMiniGolfColor().equals(MiniGolfColor.RAINBOW)) {
 								int[] rgb = ParticleUtils.incRainbow(ball.getTicksLived());
 								DustOptions dustOptions = ParticleUtils.newDustOption(particle, rgb[0], rgb[1], rgb[2]);
@@ -507,7 +482,7 @@ public class MiniGolf {
 
 								ball.setVelocity(ball.getVelocity().multiply(9.3).add(newVel).setY(height));
 								new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(ball.getLocation()).volume(3.0).play();
-								new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(ball.getLocation()).count(25).spawn();
+								new ParticleBuilder(Particle.EXPLOSION).location(ball.getLocation()).count(25).spawn();
 							} catch (Exception ignored) {
 
 							}

@@ -25,8 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static gg.projecteden.nexus.utils.Distance.distance;
-
 @NoArgsConstructor
 @Permission(Group.MODERATOR)
 public class ReachWatchCommand extends CustomCommand implements Listener {
@@ -67,7 +65,7 @@ public class ReachWatchCommand extends CustomCommand implements Listener {
 
 		Entity victim = event.getEntity();
 		String victimName = victim.getType().equals(EntityType.PLAYER) ? victim.getName() : camelCase(victim.getType());
-		Distance distance = distance(attacker, victim);
+		Distance distance = Distance.distance(attacker, victim);
 
 		if (distance.gt(3)) {
 			String color = distance.gt(5) ? "&c" : distance.gt(3.7) ? "&6" : "&e";

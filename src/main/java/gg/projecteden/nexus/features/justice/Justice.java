@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.justice;
 
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.events.ChatEvent;
@@ -30,11 +32,8 @@ import gg.projecteden.nexus.models.punishments.Punishment;
 import gg.projecteden.nexus.models.punishments.PunishmentType;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.models.punishments.PunishmentsService;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
@@ -51,10 +50,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @NoArgsConstructor
 public class Justice extends Feature implements Listener {
@@ -119,7 +114,7 @@ public class Justice extends Feature implements Listener {
 	private void broadcastMute(Punishment mute, String message) {
 		JsonBuilder json = new JsonBuilder(message);
 
-		if (!isNullOrEmpty(mute.getReason()))
+		if (!Nullables.isNullOrEmpty(mute.getReason()))
 			json.hover("&eReason: &7" + mute.getReason()).hover("");
 
 		historyClick(mute, json);
@@ -183,7 +178,7 @@ public class Justice extends Feature implements Listener {
 
 			broadcastMute(mute, message);
 
-			punishments.sendMessage("&cYou are muted" + (isNullOrEmpty(mute.getReason()) ? "" : " for &7" + mute.getReason()) + " &c(" + mute.getTimeLeft() + ")");
+			punishments.sendMessage("&cYou are muted" + (Nullables.isNullOrEmpty(mute.getReason()) ? "" : " for &7" + mute.getReason()) + " &c(" + mute.getTimeLeft() + ")");
 		});
 	}
 
@@ -225,7 +220,7 @@ public class Justice extends Feature implements Listener {
 
 			Function<Punishment, JsonBuilder> notification = watchlist -> {
 				String punisher = Nickname.of(watchlist.getPunisher());
-				String timestamp = shortDateFormat(watchlist.getTimestamp().toLocalDate());
+				String timestamp = TimeUtils.shortDateFormat(watchlist.getTimestamp().toLocalDate());
 				return historyClick(watchlist, new JsonBuilder("&e" + watchlist.getName() + " &cwas watchlisted for &e"
 						+ watchlist.getReason() + " &cby &e" + punisher + " &con &e" + timestamp));
 			};
@@ -291,7 +286,7 @@ public class Justice extends Feature implements Listener {
 
 		if (fraudScore >= 75) {
 			punishments.add(Punishment.ofType(PunishmentType.MUTE)
-					.punisher(UUID0)
+					.punisher(UUIDUtils.UUID0)
 					.input("Suspected bot")
 					.now(true));
 

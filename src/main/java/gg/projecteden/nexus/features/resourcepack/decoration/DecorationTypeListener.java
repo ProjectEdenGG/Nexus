@@ -29,8 +29,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.isSameColor;
-
 @SuppressWarnings("deprecation")
 public class DecorationTypeListener implements Listener {
 
@@ -123,7 +121,7 @@ public class DecorationTypeListener implements Listener {
 		if (!DecorationUtils.canUsePaintbrush(player, tool))
 			return;
 
-		if (isSameColor(tool, side))
+		if (DecorationUtils.isSameColor(tool, side))
 			return;
 
 		event.setCancelled(true);

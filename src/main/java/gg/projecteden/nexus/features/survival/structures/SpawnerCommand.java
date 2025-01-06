@@ -47,7 +47,7 @@ public class SpawnerCommand extends CustomCommand {
 		List<Wrapper<SpawnData>> potentials = potentialsWeighted.unwrap();
 		send(potentials.size() + "");
 		for (Wrapper<SpawnData> spawnDataWrapper : potentials) {
-			send("- " + spawnDataWrapper.getData());
+			send("- " + spawnDataWrapper.data());
 		}
 
 		SpawnData spawnData = baseSpawner.nextSpawnData;
@@ -79,7 +79,7 @@ public class SpawnerCommand extends CustomCommand {
 		ServerLevel world = NMSUtils.toNMS(block.getLocation().getWorld());
 
 		InclusiveRange<Integer> allLightLevels = new InclusiveRange<>(min, max);
-		SpawnData spawnData = new SpawnData(spawner.nextSpawnData.getEntityToSpawn(), Optional.of(new CustomSpawnRules(allLightLevels, allLightLevels)));
+		SpawnData spawnData = new SpawnData(spawner.nextSpawnData.getEntityToSpawn(), Optional.of(new CustomSpawnRules(allLightLevels, allLightLevels)), Optional.empty());
 
 		spawner.setNextSpawnData(world, pos, spawnData);
 	}

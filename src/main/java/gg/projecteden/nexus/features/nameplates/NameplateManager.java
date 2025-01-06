@@ -10,6 +10,8 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nameplates.NameplateUserService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.Distance;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.nms.packet.EntityDestroyPacket;
@@ -27,9 +29,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static gg.projecteden.nexus.utils.PlayerUtils.isSelf;
 
 public class NameplateManager {
 	private final NameplateUserService service = new NameplateUserService();
@@ -202,7 +201,7 @@ public class NameplateManager {
 				return true;
 			if (!player.getWorld().equals(viewer.getWorld()))
 				return true;
-			if (distance(player, viewer).gte(100))
+			if (Distance.distance(player, viewer).gte(100))
 				return true;
 			final Minigamer minigamer = Minigamer.of(player);
 			if (minigamer.isPlaying() && !minigamer.getMatch().getMechanic().shouldShowNameplate(minigamer, Minigamer.of(viewer)))
@@ -211,7 +210,7 @@ public class NameplateManager {
 			if (!new NameplateUserService().get(viewer).isViewNameplates())
 				return true;
 
-			if (isSelf(this, viewer))
+			if (PlayerUtils.isSelf(this, viewer))
 				if (!new NameplateUserService().get(this).isViewOwnNameplate())
 					return true;
 

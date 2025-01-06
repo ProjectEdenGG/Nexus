@@ -62,7 +62,7 @@ public class FireworkLauncher {
 	}
 
 	public void launch() {
-		Firework firework = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
+		Firework firework = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK_ROCKET);
 		FireworkEffect.Builder builder = FireworkEffect.builder();
 		FireworkMeta meta = firework.getFireworkMeta();
 

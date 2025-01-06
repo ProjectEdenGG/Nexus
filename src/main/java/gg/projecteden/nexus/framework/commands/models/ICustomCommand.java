@@ -3,6 +3,8 @@ package gg.projecteden.nexus.framework.commands.models;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.api.common.annotations.Environments;
+import gg.projecteden.api.common.utils.ReflectionUtils;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.api.mongodb.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
@@ -27,10 +29,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineE
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MissingArgumentException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import lombok.SneakyThrows;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.command.CommandSender;
@@ -60,20 +59,6 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.ReflectionUtils.methodsAnnotatedWith;
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
-import static gg.projecteden.nexus.framework.commands.models.CustomCommand.getSwitchPattern;
-import static gg.projecteden.nexus.framework.commands.models.PathParser.getLiteralWords;
-import static gg.projecteden.nexus.framework.commands.models.PathParser.getPathString;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.COMMA_SPLIT_REGEX;
-import static gg.projecteden.nexus.utils.StringUtils.asParsableDecimal;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.Utils.getDefaultPrimitiveValue;
-import static gg.projecteden.nexus.utils.Utils.getMaxValue;
-import static gg.projecteden.nexus.utils.Utils.getMinValue;
-import static gg.projecteden.nexus.utils.Utils.isBoolean;
 
 @SuppressWarnings("unused")
 public abstract class ICustomCommand {
@@ -199,9 +184,9 @@ public abstract class ICustomCommand {
 		int i = 0;
 		for (Parameter parameter : switches) {
 			Arg annotation = parameter.getDeclaredAnnotation(Arg.class);
-			String defaultValue = annotation == null || isNullOrEmpty(annotation.value()) ? null : annotation.value();
+			String defaultValue = annotation == null || Nullables.isNullOrEmpty(annotation.value()) ? null : annotation.value();
 
-			Pattern pattern = getSwitchPattern(parameter);
+			Pattern pattern = CustomCommand.getSwitchPattern(parameter);
 
 			boolean found = false;
 			for (String arg : args) {
@@ -210,7 +195,7 @@ public abstract class ICustomCommand {
 				if (matcher.find()) {
 					found = true;
 					String group = matcher.group();
-					String value = isBoolean(parameter) ? "true" : defaultValue;
+					String value = Utils.isBoolean(parameter) ? "true" : defaultValue;
 					if (group.contains("="))
 						value = group.split("=", 2)[1];
 
@@ -221,9 +206,9 @@ public abstract class ICustomCommand {
 			}
 
 			if (objects[i] == null && parameter.getType().isPrimitive())
-				objects[i] = getDefaultPrimitiveValue(parameter.getType());
+				objects[i] = Utils.getDefaultPrimitiveValue(parameter.getType());
 
-			if (!found && !isNullOrEmpty(defaultValue))
+			if (!found && !Nullables.isNullOrEmpty(defaultValue))
 				objects[i] = convert(defaultValue, null, parameter.getType(), parameter, parameter.getName(), event, false);
 
 			i++;
@@ -254,14 +239,14 @@ public abstract class ICustomCommand {
 			Object contextArg = (contextArgIndex > 0 && objects.length >= contextArgIndex) ? objects[contextArgIndex - 1] : null;
 
 			if (args.size() >= pathIndex) {
-				if (annotation == null || isNullOrEmpty(annotation.permission()) || event.getSender().hasPermission(annotation.permission()))
+				if (annotation == null || Nullables.isNullOrEmpty(annotation.permission()) || event.getSender().hasPermission(annotation.permission()))
 					if (pathArg.contains("..."))
 						value = String.join(" ", args.subList(pathIndex - 1, args.size()));
 					else
 						value = args.get(pathIndex - 1);
 			}
 
-			boolean required = doValidation && (pathArg.startsWith("<") || (pathArg.startsWith("[") && !isNullOrEmpty(value)));
+			boolean required = doValidation && (pathArg.startsWith("<") || (pathArg.startsWith("[") && !Nullables.isNullOrEmpty(value)));
 			Object converted = convert(value, contextArg, parameter.getType(), parameter, pathArg.substring(1, pathArg.length() - 1), event, required);
 			if (required && converted == null)
 				throw new MissingArgumentException();
@@ -294,10 +279,10 @@ public abstract class ICustomCommand {
 
 			if (annotation.regex().length() > 0)
 				if (!value.matches(annotation.regex()))
-					throw new InvalidInputException(camelCase(name) + " must match regex " + annotation.regex());
+					throw new InvalidInputException(StringUtils.camelCase(name) + " must match regex " + annotation.regex());
 
 			if (!isNumber(type))
-				if (isNullOrEmpty(annotation.minMaxBypass()) || !event.getSender().hasPermission(annotation.minMaxBypass()))
+				if (Nullables.isNullOrEmpty(annotation.minMaxBypass()) || !event.getSender().hasPermission(annotation.minMaxBypass()))
 					if (value.length() < annotation.min() || value.length() > annotation.max()) {
 						DecimalFormat formatter = StringUtils.getFormatter(Integer.class);
 						String min = formatter.format(annotation.min());
@@ -305,7 +290,7 @@ public abstract class ICustomCommand {
 						double minDefault = (Double) Arg.class.getDeclaredMethod("min").getDefaultValue();
 						double maxDefault = (Double) Arg.class.getDeclaredMethod("max").getDefaultValue();
 
-						String error = camelCase(name) + " length must be ";
+						String error = StringUtils.camelCase(name) + " length must be ";
 						if (annotation.min() == minDefault && annotation.max() != maxDefault)
 							throw new InvalidInputException(error + "&e" + max + " &ccharacters or shorter");
 						else if (annotation.min() != minDefault && annotation.max() == maxDefault)
@@ -320,7 +305,7 @@ public abstract class ICustomCommand {
 				throw new InvalidInputException("Collection parameter must define concrete type with @Arg");
 
 			List<Object> values = new ArrayList<>();
-			for (String index : value.split(COMMA_SPLIT_REGEX))
+			for (String index : value.split(StringUtils.COMMA_SPLIT_REGEX))
 				values.add(convert(index, context, annotation.type(), parameter, name, event, required));
 			values.removeIf(Objects::isNull);
 			return values;
@@ -348,7 +333,7 @@ public abstract class ICustomCommand {
 			if (Nexus.isDebug())
 				ex.printStackTrace();
 			if (required)
-				if (!isNullOrEmpty(value) && conversionExceptions.contains(ex.getCause().getClass()))
+				if (!Nullables.isNullOrEmpty(value) && conversionExceptions.contains(ex.getCause().getClass()))
 					throw ex;
 				else
 					throw new MissingArgumentException();
@@ -356,12 +341,12 @@ public abstract class ICustomCommand {
 				return null;
 		}
 
-		if (isNullOrEmpty(value))
+		if (Nullables.isNullOrEmpty(value))
 			if (required)
 				throw new MissingArgumentException();
 			else
 				if (type.isPrimitive())
-					return getDefaultPrimitiveValue(type);
+					return Utils.getDefaultPrimitiveValue(type);
 				else
 					return null;
 
@@ -377,19 +362,19 @@ public abstract class ICustomCommand {
 			if (Short.class == type || Short.TYPE == type) number = Short.parseShort(value);
 			if (Long.class == type || Long.TYPE == type) number = Long.parseLong(value);
 			if (Byte.class == type || Byte.TYPE == type) number = Byte.parseByte(value);
-			if (BigDecimal.class == type) number = BigDecimal.valueOf(Double.parseDouble(asParsableDecimal(value)));
+			if (BigDecimal.class == type) number = BigDecimal.valueOf(Double.parseDouble(StringUtils.asParsableDecimal(value)));
 
 			if (number != null) {
 				if (annotation != null) {
-					if (isNullOrEmpty(annotation.minMaxBypass()) || !event.getSender().hasPermission(annotation.minMaxBypass())) {
+					if (Nullables.isNullOrEmpty(annotation.minMaxBypass()) || !event.getSender().hasPermission(annotation.minMaxBypass())) {
 						double annotationDefaultMin = (Double) Arg.class.getDeclaredMethod("min").getDefaultValue();
 						double annotationDefaultMax = (Double) Arg.class.getDeclaredMethod("max").getDefaultValue();
 
 						double annotationConfiguredMin = annotation.min();
 						double annotationConfiguredMax = annotation.max();
 
-						Number classDefaultMin = getMinValue(type);
-						Number classDefaultMax = getMaxValue(type);
+						Number classDefaultMin = Utils.getMinValue(type);
+						Number classDefaultMax = Utils.getMaxValue(type);
 
 						BigDecimal min = (annotationConfiguredMin != annotationDefaultMin ? BigDecimal.valueOf(annotationConfiguredMin) : new BigDecimal(classDefaultMin.toString()));
 						BigDecimal max = (annotationConfiguredMax != annotationDefaultMax ? BigDecimal.valueOf(annotationConfiguredMax) : new BigDecimal(classDefaultMax.toString()));
@@ -406,7 +391,7 @@ public abstract class ICustomCommand {
 							String minFormatted = formatter.format(annotation.min());
 							String maxFormatted = formatter.format(annotation.max());
 
-							String error = camelCase(name) + " must be ";
+							String error = StringUtils.camelCase(name) + " must be ";
 							if (usingDefaultMin && !usingDefaultMax)
 								throw new InvalidInputException(error + "&e" + maxFormatted + " &cor less");
 							else if (!usingDefaultMin && usingDefaultMax)
@@ -453,16 +438,16 @@ public abstract class ICustomCommand {
 
 	List<Method> getPathMethodsForExecution(CommandEvent event) {
 		return getPathMethods(event, Comparator.comparing(method ->
-				Arrays.stream(getLiteralWords(getPathString((Method) method)).split(" "))
+				Arrays.stream(PathParser.getLiteralWords(PathParser.getPathString((Method) method)).split(" "))
 					.filter(Nullables::isNotNullOrEmpty)
 					.count())
 			.thenComparing(method ->
-				Arrays.stream(getPathString((Method) method).split(" "))
+				Arrays.stream(PathParser.getPathString((Method) method).split(" "))
 					.filter(Nullables::isNotNullOrEmpty)
 					.count()));
 	}
 
-	public static final Comparator<Method> DISPLAY_SORTER = Comparator.comparing(method -> getLiteralWords(getPathString(method)));
+	public static final Comparator<Method> DISPLAY_SORTER = Comparator.comparing(method -> PathParser.getLiteralWords(PathParser.getPathString(method)));
 
 	List<Method> getPathMethodsForDisplay(CommandEvent event) {
 		return getPathMethods(event, DISPLAY_SORTER);
@@ -492,7 +477,7 @@ public abstract class ICustomCommand {
 	public List<Method> getPathMethods() {
 		final Map<String, Method> overridden = new HashMap<>();
 
-		methodsAnnotatedWith(this.getClass(), Path.class).forEach(method -> {
+		ReflectionUtils.methodsAnnotatedWith(this.getClass(), Path.class).forEach(method -> {
 			String key = method.getName() + "(" + Arrays.stream(method.getParameterTypes()).map(Class::getName).collect(Collectors.joining(",")) + ")";
 			if (!overridden.containsKey(key))
 				overridden.put(key, method);
@@ -549,7 +534,7 @@ public abstract class ICustomCommand {
 				long ticks = cooldown.value().x(cooldown.x());
 
 				CooldownService service = new CooldownService();
-				UUID uuid = cooldown.global() ? UUID0 : ((Player) command.getEvent().getSender()).getUniqueId();
+				UUID uuid = cooldown.global() ? UUIDUtils.UUID0 : ((Player) command.getEvent().getSender()).getUniqueId();
 				String type = "command:" + commandId;
 
 				if (!service.check(uuid, type, ticks))

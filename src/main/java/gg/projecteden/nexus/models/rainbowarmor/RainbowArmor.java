@@ -10,19 +10,14 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.ArmorSlot;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import gg.projecteden.nexus.utils.StringUtils;
+import lombok.*;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Data
 @Entity(value = "rainbow_armor", noClassnameStored = true)
@@ -87,13 +82,13 @@ public class RainbowArmor implements PlayerOwnedObject {
 	public ItemStack getHiddenIcon(ArmorSlot slot) {
 		return new ItemBuilder(CustomMaterial.ARMOR_OUTLINE_HELMET)
 			.modelId(CustomMaterial.ARMOR_OUTLINE_HELMET.getModelId() + slot.ordinal())
-			.name(camelCase(slot))
+			.name(StringUtils.camelCase(slot))
 			.build();
 	}
 
 	public ItemStack getShownIcon(ArmorSlot slot) {
 		return new ItemBuilder(Material.matchMaterial("LEATHER_" + slot.name()))
-			.name(camelCase(slot))
+			.name(StringUtils.camelCase(slot))
 			.build();
 	}
 

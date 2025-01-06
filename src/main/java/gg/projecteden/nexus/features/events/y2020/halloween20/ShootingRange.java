@@ -3,11 +3,7 @@ package gg.projecteden.nexus.features.events.y2020.halloween20;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.*;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -28,8 +24,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.features.events.y2020.halloween20.Halloween20.PREFIX;
 
 public class ShootingRange implements Listener {
     private static final WorldGuardUtils worldguard = new WorldGuardUtils(Halloween20.getWorld());
@@ -67,14 +61,14 @@ public class ShootingRange implements Listener {
         if (!event.getRegion().getId().equalsIgnoreCase(gameRg)) return;
         giveItem(event.getPlayer(), Item.BOW);
         giveItem(event.getPlayer(), Item.ARROW);
-        PlayerUtils.send(event.getPlayer(), PREFIX + "You received a bow. Hit the skull targets to get points!");
+        PlayerUtils.send(event.getPlayer(), Halloween20.PREFIX + "You received a bow. Hit the skull targets to get points!");
     }
 
     @EventHandler
     public void onRegionExit(PlayerLeftRegionEvent event) {
         if (!event.getRegion().getId().equalsIgnoreCase(gameRg)) return;
         removeItems(event.getPlayer());
-        PlayerUtils.send(event.getPlayer(), PREFIX + "You got a total of &e" + getPoints(event.getPlayer()) + " &3points");
+        PlayerUtils.send(event.getPlayer(), Halloween20.PREFIX + "You got a total of &e" + getPoints(event.getPlayer()) + " &3points");
         removePoints(event.getPlayer());
     }
 
@@ -168,7 +162,7 @@ public class ShootingRange implements Listener {
 
     enum Item {
 
-        BOW(new ItemBuilder(Material.BOW).enchant(Enchantment.ARROW_INFINITE).lore(itemLore).unbreakable().build()),
+        BOW(new ItemBuilder(Material.BOW).enchant(Enchantment.INFINITY).lore(itemLore).unbreakable().build()),
         ARROW(new ItemBuilder(Material.ARROW).lore(itemLore).build());
 
         private ItemStack is;

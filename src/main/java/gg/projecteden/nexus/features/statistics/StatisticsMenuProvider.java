@@ -19,16 +19,9 @@ import org.bukkit.Statistic;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 @AllArgsConstructor
 @RequiredArgsConstructor
@@ -40,7 +33,7 @@ public class StatisticsMenuProvider extends InventoryProvider {
 
 	@Override
 	public String getTitle() {
-		return Nickname.of(targetPlayer) + "'s Statistics - " + camelCase(menu.name());
+		return Nickname.of(targetPlayer) + "'s Statistics - " + gg.projecteden.api.common.utils.StringUtils.camelCase(menu.name());
 	}
 
 	@Override
@@ -183,7 +176,7 @@ public class StatisticsMenuProvider extends InventoryProvider {
 					stats.put(item, total);
 				}
 			} catch (Exception ex) {
-				Nexus.severe("Error occurred while getting %s's %s mob head statistics".formatted(Nickname.of(targetPlayer), camelCase(entity)));
+				Nexus.severe("Error occurred while getting %s's %s mob head statistics".formatted(Nickname.of(targetPlayer), gg.projecteden.api.common.utils.StringUtils.camelCase(entity)));
 				ex.printStackTrace();
 			}
 		});

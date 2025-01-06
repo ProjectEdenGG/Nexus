@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.minigolf.models.GolfBall;
 import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
 import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlockType;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallDeathEvent.DeathCause;
+import gg.projecteden.nexus.utils.Nullables;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -24,8 +25,6 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.util.Vector;
 
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class ProjectileListener implements Listener {
 
@@ -92,7 +91,7 @@ public class ProjectileListener implements Listener {
 				user.debug("ball hit an entity");
 
 				EntityType hitEntityType = hitEntity.getType();
-				if (hitEntityType == EntityType.MINECART_TNT) {
+				if (hitEntityType == EntityType.TNT_MINECART) {
 					user.debug("  tnt minecart -> kill");
 					golfBall.respawn("&cBoom!", DeathCause.DEATH_ENTITY);
 					return;
@@ -112,7 +111,7 @@ public class ProjectileListener implements Listener {
 
 		// Bounce off surfaces
 		Block hitBlock = event.getHitBlock();
-		if (isNullOrAir(hitBlock)) {
+		if (Nullables.isNullOrAir(hitBlock)) {
 			user.debug("golfball hit null or air block");
 			return;
 		}

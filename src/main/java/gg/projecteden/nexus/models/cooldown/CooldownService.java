@@ -5,6 +5,7 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.OfflinePlayer;
@@ -13,8 +14,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @ObjectClass(Cooldown.class)
 public class CooldownService extends MongoPlayerService<Cooldown> {
@@ -172,7 +171,7 @@ public class CooldownService extends MongoPlayerService<Cooldown> {
 
 	@Override
 	protected boolean deleteIf(Cooldown cooldown) {
-		return isNullOrEmpty(cooldown.getCooldowns());
+		return Nullables.isNullOrEmpty(cooldown.getCooldowns());
 	}
 
 	@Override

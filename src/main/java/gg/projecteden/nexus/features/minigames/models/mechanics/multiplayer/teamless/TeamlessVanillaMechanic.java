@@ -60,10 +60,10 @@ public abstract class TeamlessVanillaMechanic extends TeamlessMechanic implement
 	@Override
 	public void spreadPlayers(@NotNull Match match) {
 		for (Minigamer minigamer : match.getMinigamers()) {
-			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.DAMAGE_RESISTANCE).duration(TimeUtils.TickTime.SECOND.x(20)).amplifier(10));
+			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.RESISTANCE).duration(TimeUtils.TickTime.SECOND.x(20)).amplifier(10));
 			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(TimeUtils.TickTime.SECOND.x(5)).amplifier(10));
 			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.LEVITATION).duration(TimeUtils.TickTime.SECOND.x(5)).maxAmplifier());
-			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.DAMAGE_RESISTANCE).infinite().amplifier(254));
+			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.RESISTANCE).infinite().amplifier(254));
 
 			minigamer.getOnlinePlayer().setVelocity(new Vector(0, 0, 0));
 			Tasks.async(() -> randomTeleport(match, minigamer));
@@ -73,8 +73,8 @@ public abstract class TeamlessVanillaMechanic extends TeamlessMechanic implement
 	@Override
 	public @NotNull CompletableFuture<Boolean> onRandomTeleport(@NotNull Match match, @NotNull Minigamer minigamer, @NotNull Location location) {
 		return minigamer.teleportAsync(location).thenApply(result -> {
-			minigamer.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
-			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.DAMAGE_RESISTANCE).duration(400).amplifier(254));
+			minigamer.removePotionEffect(PotionEffectType.RESISTANCE);
+			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.RESISTANCE).duration(400).amplifier(254));
 			return result;
 		});
 	}

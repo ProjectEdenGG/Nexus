@@ -2,18 +2,11 @@ package gg.projecteden.nexus.features.events.y2020.bearfair20;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.events.y2020.bearfair20.fairgrounds.Archery;
-import gg.projecteden.nexus.features.events.y2020.bearfair20.fairgrounds.Basketball;
-import gg.projecteden.nexus.features.events.y2020.bearfair20.fairgrounds.Frogger;
-import gg.projecteden.nexus.features.events.y2020.bearfair20.fairgrounds.Interactables;
-import gg.projecteden.nexus.features.events.y2020.bearfair20.fairgrounds.PugDunk;
-import gg.projecteden.nexus.features.events.y2020.bearfair20.fairgrounds.Reflection;
+import gg.projecteden.nexus.features.events.y2020.bearfair20.fairgrounds.*;
+import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Timer;
+import gg.projecteden.nexus.utils.*;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -28,11 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 public class Fairgrounds implements Listener {
 
@@ -56,7 +44,7 @@ public class Fairgrounds implements Listener {
 		ItemStack[] items = player.getInventory().getContents();
 		int count = 0;
 		for (ItemStack item : items) {
-			if (item == null || isNullOrAir(item.getType())) continue;
+			if (item == null || Nullables.isNullOrAir(item.getType())) continue;
 			count++;
 		}
 		return count;
@@ -89,17 +77,17 @@ public class Fairgrounds implements Listener {
 	public enum BearFairKit {
 		BOW_AND_ARROW(
 				new ItemBuilder(Material.BOW)
-						.enchant(Enchantment.ARROW_INFINITE)
-						.lore(itemLore)
+						.enchant(Enchantment.INFINITY)
+						.lore(BFQuests.itemLore)
 						.unbreakable()
 						.build(),
 				new ItemBuilder(Material.ARROW)
-						.lore(itemLore)
+						.lore(BFQuests.itemLore)
 						.build()
 		),
 		MINECART(
 				new ItemBuilder(Material.MINECART)
-						.lore(itemLore)
+						.lore(BFQuests.itemLore)
 						.build()
 		),
 		BASKETBALL(
@@ -130,8 +118,8 @@ public class Fairgrounds implements Listener {
 		ItemStack basketball = basketballConfig.clone();
 
 		ItemMeta meta = basketball.getItemMeta();
-		meta.setLore(Collections.singletonList(colorize("&eBearFair20 Basketball")));
-		meta.setDisplayName(colorize("&6&lBasketball"));
+		meta.setLore(Collections.singletonList(StringUtils.colorize("&eBearFair20 Basketball")));
+		meta.setDisplayName(StringUtils.colorize("&6&lBasketball"));
 		basketball.setItemMeta(meta);
 
 		return basketball;
@@ -158,8 +146,8 @@ public class Fairgrounds implements Listener {
 
 	@EventHandler
 	public void onDrop(PlayerDropItemEvent event) {
-		ProtectedRegion region = worldguard().getProtectedRegion(BearFair20.getRegion());
-		if (worldguard().getRegionsAt(event.getPlayer().getLocation()).contains(region)) {
+		ProtectedRegion region = BearFair20.worldguard().getProtectedRegion(BearFair20.getRegion());
+		if (BearFair20.worldguard().getRegionsAt(event.getPlayer().getLocation()).contains(region)) {
 			ItemStack dropped = event.getItemDrop().getItemStack();
 			String droppedName = StringUtils.stripColor(dropped.getItemMeta().getDisplayName());
 			for (BearFairKit kit : BearFairKit.values()) {

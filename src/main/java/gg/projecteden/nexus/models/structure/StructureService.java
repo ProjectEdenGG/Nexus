@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.models.structure;
 
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.api.mongodb.MongoService;
 import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import lombok.NonNull;
@@ -10,8 +11,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 
 @ObjectClass(Structure.class)
 public class StructureService extends MongoService<Structure> {
@@ -28,7 +27,7 @@ public class StructureService extends MongoService<Structure> {
 	public @NonNull Structure getOrCreate(Location minPoint) {
 		Structure structure = get(minPoint);
 		if (structure == null) {
-			structure = new Structure(UUID0, minPoint);
+			structure = new Structure(UUIDUtils.UUID0, minPoint);
 			save(structure);
 		}
 

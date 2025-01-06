@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.store.annotations;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.store.Package;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -15,8 +16,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -45,7 +44,7 @@ public @interface Category {
 		}
 
 		public ItemBuilder getDisplayItem() {
-			return new ItemBuilder(material).modelId(modelId).name(camelCase(name()));
+			return new ItemBuilder(material).modelId(modelId).name(StringUtils.camelCase(name()));
 		}
 
 		public List<Package> getPackages() {

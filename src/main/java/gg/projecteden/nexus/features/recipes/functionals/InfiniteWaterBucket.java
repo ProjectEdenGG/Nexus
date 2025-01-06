@@ -1,9 +1,11 @@
 package gg.projecteden.nexus.features.recipes.functionals;
 
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
+import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -24,9 +26,6 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-
 public class InfiniteWaterBucket extends FunctionalRecipe {
 
 	public static CustomModel getCustomModel() {
@@ -40,7 +39,7 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 
 	@Override
 	public @NotNull Recipe getRecipe() {
-		return shapeless()
+		return RecipeBuilder.shapeless()
 			.add(Material.WATER_BUCKET, 2)
 			.add(Material.GOLD_INGOT)
 			.toMake(getResult())
@@ -57,7 +56,7 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 			ItemStack[] matrix = event.getInventory().getMatrix();
 
 			for (ItemStack itemStack : matrix)
-				if (!isNullOrAir(itemStack))
+				if (!Nullables.isNullOrAir(itemStack))
 					if (Material.BUCKET == itemStack.getType())
 						itemStack.setType(Material.AIR);
 
@@ -71,7 +70,7 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 		if (event.getRecipe() instanceof ShapedRecipe) {
 			boolean found = false;
 			for (int i = 0; i < original.length; i++) {
-				if (isNullOrAir(original[i])) continue;
+				if (Nullables.isNullOrAir(original[i])) continue;
 				if (new ItemBuilder(original[i]).modelId() == new ItemBuilder(getResult()).modelId()) {
 					original[i] = getResult();
 					found = true;
@@ -96,7 +95,7 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 			return;
 
 		final Block clickedBlock = event.getClickedBlock();
-		if (isNullOrAir(clickedBlock))
+		if (Nullables.isNullOrAir(clickedBlock))
 			return;
 
 		final BlockState clickedState = clickedBlock.getState();

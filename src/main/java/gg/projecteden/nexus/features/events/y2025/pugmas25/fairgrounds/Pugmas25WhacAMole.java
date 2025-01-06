@@ -1,26 +1,19 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds;
 
+import gg.projecteden.api.common.annotations.Environments;
+import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.EdenEventGameConfig;
 import gg.projecteden.nexus.features.events.EdenEventSinglePlayerGame;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
-import gg.projecteden.nexus.utils.Enchant;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.data.type.Piston;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -36,13 +29,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static gg.projecteden.nexus.utils.EntityUtils.forcePacket;
-
 @EdenEventGameConfig(
 	prefix = "Wakk'a Mole",
 	world = "pugmas25",
 	playRegion = "pugmas25_whacamole_play"
 )
+@Environments(Env.PROD)
 public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 	private static Pugmas25WhacAMole instance;
 
@@ -182,7 +174,7 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 					ArmorStand stand = RandomUtils.randomElement(standChoices);
 					stand.getEquipment().setHelmet(new ItemStack(RandomUtils.randomElement(targetItems)), true);
 
-					forcePacket(stand);
+					EntityUtils.forcePacket(stand);
 					stand.teleport(getStandBaseLocation(stand).add(0, 1, 0));
 
 					activeStands.put(stand, getGameTicks());

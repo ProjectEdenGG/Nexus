@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.resourcepack.commands;
 
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -44,8 +45,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @NoArgsConstructor
 @Aliases("imagestands")
@@ -201,7 +200,7 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 	}
 
 	private void getImageStand(String id) {
-		if (isNullOrEmpty(id))
+		if (Nullables.isNullOrEmpty(id))
 			imageStand = getTargetImageStandRequired();
 		else
 			imageStand = service.getById(id);

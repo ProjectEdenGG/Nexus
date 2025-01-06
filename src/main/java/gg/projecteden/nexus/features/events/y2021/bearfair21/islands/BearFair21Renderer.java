@@ -1,16 +1,13 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.islands;
 
 import gg.projecteden.nexus.utils.MapPointerDirection;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.map.MapCanvas;
-import org.bukkit.map.MapCursor;
+import org.bukkit.map.*;
 import org.bukkit.map.MapCursor.Type;
-import org.bukkit.map.MapCursorCollection;
-import org.bukkit.map.MapRenderer;
-import org.bukkit.map.MapView;
 import org.bukkit.map.MapView.Scale;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,9 +17,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.MapPointerDirection.SOUTH;
-import static gg.projecteden.nexus.utils.Utils.isWithinBounds;
 
 public class BearFair21Renderer extends MapRenderer {
 	@Getter
@@ -48,7 +42,7 @@ public class BearFair21Renderer extends MapRenderer {
 
 	public static void init() {}
 
-	@Getter private final MapCursor cursor = new MapCursor((byte) 0, (byte) 0, SOUTH.val(), Type.WHITE_POINTER, true, "You");
+	@Getter private final MapCursor cursor = new MapCursor((byte) 0, (byte) 0, MapPointerDirection.SOUTH.val(), Type.BANNER_WHITE, true, "You");
 	@Getter @Setter private boolean initialized = false;
 	@Getter @Setter private boolean active = true;
 	@Getter @Setter private boolean updating = true;
@@ -79,7 +73,7 @@ public class BearFair21Renderer extends MapRenderer {
 			int xOffset = getXOffset(location, center);
 			int yOffset = getYOffset(location, center);
 
-			boolean withinBounds = isWithinBounds(xOffset, Byte.class) && isWithinBounds(yOffset, Byte.class);
+			boolean withinBounds = Utils.isWithinBounds(xOffset, Byte.class) && Utils.isWithinBounds(yOffset, Byte.class);
 
 			if (withinBounds) {
 				cursor.setVisible(true);

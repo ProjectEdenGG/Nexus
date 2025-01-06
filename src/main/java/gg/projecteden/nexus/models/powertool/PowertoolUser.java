@@ -6,19 +6,14 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import lombok.*;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static gg.projecteden.nexus.utils.PlayerUtils.runCommand;
 
 @Data
 @Entity(value = "powertool", noClassnameStored = true)
@@ -37,7 +32,7 @@ public class PowertoolUser implements PlayerOwnedObject {
 		Player player = getPlayer();
 		if (player != null) {
 			String command = powertools.get(material);
-			runCommand(player, command);
+			PlayerUtils.runCommand(player, command);
 			Nexus.log("[PT] " + player.getName() + " issued server command: /" + command);
 		}
 	}

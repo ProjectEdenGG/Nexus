@@ -31,10 +31,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsConsole;
-import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
-
 public class CitizensUtils {
 
 	public static NPC getNPC(int id) {
@@ -144,7 +140,7 @@ public class CitizensUtils {
 
 	public static void respawnNPC(int npcId) {
 		if (!shouldSpawn(npcId))
-			runCommandAsConsole("npc spawn " + npcId);
+			PlayerUtils.runCommandAsConsole("npc spawn " + npcId);
 	}
 
 	private static boolean shouldSpawn(int npcId) {
@@ -164,7 +160,7 @@ public class CitizensUtils {
 	}
 
 	public static void despawnNPC(int npcId) {
-		runCommandAsConsole("npc despawn " + npcId);
+		PlayerUtils.runCommandAsConsole("npc despawn " + npcId);
 	}
 
 	public static Location locationOf(int id) {
@@ -231,7 +227,7 @@ public class CitizensUtils {
 			if (radius != null && from != null) {
 				if (!from.getWorld().equals(npc.getStoredLocation().getWorld()))
 					return false;
-				if (distance(from, npc.getStoredLocation()).gt(radius))
+				if (Distance.distance(from, npc.getStoredLocation()).gt(radius))
 					return false;
 			}
 
@@ -294,7 +290,7 @@ public class CitizensUtils {
 		private static final List<MobHeadType> availableTypes = EnumUtils.valuesExcept(MobHeadType.class, disabledEntityTypes.toArray(Enum<?>[]::new));
 
 		public static void randomize(int npcId, Player clicker) {
-			final MobHeadType mob = randomElement(availableTypes);
+			final MobHeadType mob = RandomUtils.randomElement(availableTypes);
 
 			final NPC npc = CitizensUtils.getNPC(npcId);
 			npc.setBukkitEntityType(mob.getEntityType());
@@ -309,7 +305,7 @@ public class CitizensUtils {
 		public static void randomize(int npcId) {
 			final ArrayList<MobHeadType> availableTypes = new ArrayList<>(NPCRandomizer.availableTypes);
 			availableTypes.remove(MobHeadType.PLAYER);
-			final MobHeadType mob = randomElement(availableTypes);
+			final MobHeadType mob = RandomUtils.randomElement(availableTypes);
 
 			final NPC npc = CitizensUtils.getNPC(npcId);
 			npc.setBukkitEntityType(mob.getEntityType());

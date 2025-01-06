@@ -9,11 +9,8 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.customblockbreaki
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventory;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventoryFeature;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
-import gg.projecteden.nexus.utils.Enchant;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.ToolType.ToolGrade;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
@@ -24,18 +21,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.PlayerUtils.getHotbarContents;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.StringUtils.pretty;
 
 @NoArgsConstructor
 public class AutoTool implements Listener {
@@ -79,7 +67,7 @@ public class AutoTool implements Listener {
 	}
 
 	void process(Player player, Block block) {
-		List<ItemStack> contents = Arrays.stream(getHotbarContents(player)).toList();
+		List<ItemStack> contents = Arrays.stream(PlayerUtils.getHotbarContents(player)).toList();
 		PlayerUtils.selectHotbarItem(player, getBestTool(player, contents, block));
 	}
 
@@ -106,12 +94,12 @@ public class AutoTool implements Listener {
 		final ItemStack currentItem = player.getInventory().getItemInMainHand();
 		final double currentToolBreakTime = getBreakTime.apply(currentItem);
 
-		debug.accept("Block: " + camelCase(block.getType()));
+		debug.accept("Block: " + StringUtils.camelCase(block.getType()));
 
 		final ItemStack bestTool = Collections.min(hotbar, Comparator.comparingDouble(item -> {
 			debug.accept("");
-			debug.accept("Item: " + (item == null ? "&cnull" : "&e" + camelCase(item.getType())));
-			if (isNullOrAir(item)) {
+			debug.accept("Item: " + (item == null ? "&cnull" : "&e" + StringUtils.camelCase(item.getType())));
+			if (Nullables.isNullOrAir(item)) {
 				debug.accept("  MAX_VALUE - 1 (is null or air)");
 				return Integer.MAX_VALUE - 1;
 			}
@@ -165,7 +153,7 @@ public class AutoTool implements Listener {
 
 		debug.accept("");
 		debug.accept("");
-		debug.accept("Best tool: " + (bestTool == null ? "null" : pretty(bestTool)));
+		debug.accept("Best tool: " + (bestTool == null ? "null" : StringUtils.pretty(bestTool)));
 		return bestTool;
 	}
 

@@ -34,7 +34,7 @@ public class RainbowTrail implements ParticleProjectilePerk {
 
 	@Override
 	public Particle getParticle() {
-		return Particle.REDSTONE;
+		return Particle.DUST;
 	}
 
 	@Override

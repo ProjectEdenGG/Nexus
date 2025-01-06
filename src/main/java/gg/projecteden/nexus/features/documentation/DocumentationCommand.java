@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.documentation;
 import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.API;
 import gg.projecteden.nexus.features.NexusCommand;
 import gg.projecteden.nexus.features.documentation.DocumentationCommand.AllCommands.CommandMeta;
@@ -11,47 +12,20 @@ import gg.projecteden.nexus.features.documentation.DocumentationCommand.AllComma
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.ICustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.DoubleSlash;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.IOUtils;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import gg.projecteden.nexus.utils.*;
+import lombok.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.api.common.utils.StringUtils.trimFirst;
 
 public class DocumentationCommand extends CustomCommand {
 	private static Map<CustomCommand, List<Method>> undocumented = new LinkedHashMap<>();
@@ -102,7 +76,7 @@ public class DocumentationCommand extends CustomCommand {
 						String path = method.getAnnotation(Path.class).value();
 						boolean doubleSlash = command.getClass().isAnnotationPresent(DoubleSlash.class);
 
-						if (isNullOrEmpty(path))
+						if (Nullables.isNullOrEmpty(path))
 							path = "!"; // sorting
 
 						final String markup = "<code>/" + (doubleSlash ? "/" : "") + commandName + " " + path + "</code> - " + description.value();
@@ -161,11 +135,11 @@ public class DocumentationCommand extends CustomCommand {
 	@NotNull
 	private static String getFeature(CustomCommand command, Method method) {
 		String feature = command.getClass().getPackageName().replace(NexusCommand.class.getPackageName(), "");
-		if (isNullOrEmpty(feature))
+		if (Nullables.isNullOrEmpty(feature))
 			feature = "misc";
 
 		if (feature.startsWith("."))
-			feature = trimFirst(feature);
+			feature = gg.projecteden.api.common.utils.StringUtils.trimFirst(feature);
 
 		if (feature.contains("."))
 			feature = StringUtils.listFirst(feature, "\\.");
@@ -183,11 +157,11 @@ public class DocumentationCommand extends CustomCommand {
 			feature = "World Edit";
 
 		WikiConfig wikiConfig = command.getClass().getAnnotation(WikiConfig.class);
-		if (wikiConfig != null && !isNullOrEmpty(wikiConfig.feature()))
+		if (wikiConfig != null && !Nullables.isNullOrEmpty(wikiConfig.feature()))
 			feature = wikiConfig.feature();
 
 		wikiConfig = method.getAnnotation(WikiConfig.class);
-		if (wikiConfig != null && !isNullOrEmpty(wikiConfig.feature()))
+		if (wikiConfig != null && !Nullables.isNullOrEmpty(wikiConfig.feature()))
 			feature = wikiConfig.feature();
 
 		return feature;
@@ -213,11 +187,11 @@ public class DocumentationCommand extends CustomCommand {
 				rank = "guest";
 
 		WikiConfig wikiConfig = command.getClass().getAnnotation(WikiConfig.class);
-		if (wikiConfig != null && !isNullOrEmpty(wikiConfig.rank()))
+		if (wikiConfig != null && !Nullables.isNullOrEmpty(wikiConfig.rank()))
 			rank = wikiConfig.rank();
 
 		wikiConfig = method.getAnnotation(WikiConfig.class);
-		if (wikiConfig != null && !isNullOrEmpty(wikiConfig.rank()))
+		if (wikiConfig != null && !Nullables.isNullOrEmpty(wikiConfig.rank()))
 			rank = wikiConfig.rank();
 
 		return StringUtils.camelCase(rank);
@@ -293,7 +267,7 @@ public class DocumentationCommand extends CustomCommand {
 				.name(command.getName())
 				.aliases(command.getAliases())
 				.paths(command.getPathMethods().stream()
-					.filter(method -> !isNullOrEmpty(method.getAnnotation(Path.class).value()))
+					.filter(method -> !Nullables.isNullOrEmpty(method.getAnnotation(Path.class).value()))
 					.map(method -> PathMeta.builder()
 						.arguments(new ArrayList<>() {{
 							for (String argument : method.getAnnotation(Path.class).value().split(" ")) {
@@ -365,7 +339,7 @@ public class DocumentationCommand extends CustomCommand {
 					private boolean required;
 
 					public boolean isLiteral() {
-						return !isNullOrEmpty(parameterName);
+						return !Nullables.isNullOrEmpty(parameterName);
 					}
 				}
 			}

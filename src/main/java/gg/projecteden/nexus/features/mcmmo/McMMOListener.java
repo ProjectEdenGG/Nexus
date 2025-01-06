@@ -16,9 +16,7 @@ import gg.projecteden.nexus.features.afk.AFKCommand;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetProvider.ResetSkillType;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.BlockUtils;
-import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -26,12 +24,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Tag;
-import org.bukkit.TreeSpecies;
-import org.bukkit.TreeType;
+import org.bukkit.*;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -49,12 +42,6 @@ import org.bukkit.material.Sapling;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_ONE;
-import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_TWO;
-import static gg.projecteden.nexus.utils.Distance.distance;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public class McMMOListener implements Listener {
 
@@ -132,8 +119,8 @@ public class McMMOListener implements Listener {
 	@EventHandler
 	public void onMcMMOLevelUp(McMMOPlayerLevelUpEvent event) {
 		int skillLevel = event.getSkillLevel();
-		if (skillLevel > 0 && skillLevel % TIER_ONE == 0)
-			Koda.say(Nickname.of(event.getPlayer()) + " reached level " + skillLevel + " in " + camelCase(event.getSkill().name()) + "! Congratulations!");
+		if (skillLevel > 0 && skillLevel % McMMO.TIER_ONE == 0)
+			Koda.say(Nickname.of(event.getPlayer()) + " reached level " + skillLevel + " in " + StringUtils.camelCase(event.getSkill().name()) + "! Congratulations!");
 
 		final McMMOPlayer mcMMOPlayer = UserManager.getOfflinePlayer(event.getPlayer());
 
@@ -141,18 +128,18 @@ public class McMMOListener implements Listener {
 		final List<ResetSkillType> tierTwo = new ArrayList<>();
 		for (ResetSkillType skillType : ResetSkillType.values()) {
 			final int level = mcMMOPlayer.getSkillLevel(skillType.asPrimarySkill());
-			if (level >= TIER_ONE)
+			if (level >= McMMO.TIER_ONE)
 				tierOne.add(skillType);
 
-			if (level >= TIER_TWO)
+			if (level >= McMMO.TIER_TWO)
 				tierTwo.add(skillType);
 		}
 
 		if (tierTwo.size() == ResetSkillType.values().length)
-			if (mcMMOPlayer.getSkillLevel(event.getSkill()) == TIER_TWO)
+			if (mcMMOPlayer.getSkillLevel(event.getSkill()) == McMMO.TIER_TWO)
 				Koda.say(Nickname.of(event.getPlayer()) + " has exceptionally mastered all their skills! Congratulations!");
 		else if (tierOne.size() == ResetSkillType.values().length)
-			if (mcMMOPlayer.getSkillLevel(event.getSkill()) == TIER_ONE)
+			if (mcMMOPlayer.getSkillLevel(event.getSkill()) == McMMO.TIER_ONE)
 				Koda.say(Nickname.of(event.getPlayer()) + " has mastered all their skills! Congratulations!");
 	}
 
@@ -193,7 +180,7 @@ public class McMMOListener implements Listener {
 
 	boolean canBootBonemeal(Player player) {
 		// If player is wearing boots
-		if (isNullOrAir(player.getInventory().getBoots()))
+		if (Nullables.isNullOrAir(player.getInventory().getBoots()))
 			return false;
 
 		// If player is wearing gold boots
@@ -318,13 +305,13 @@ public class McMMOListener implements Listener {
 		Location groundLoc = ground.getLocation();
 
 		Block above = block.getRelative(0, 1, 0);
-		if (distance(groundLoc, above).gt(3)) return false;
+		if (Distance.distance(groundLoc, above).gt(3)) return false;
 
 		// If the block above is air or same material
 		if ((above.getType().equals(Material.AIR) || above.getType().equals(blockType))) {
 			if (!above.getType().equals(Material.AIR)) {
 				above = above.getRelative(0, 1, 0);
-				if (distance(groundLoc, above).gt(3))
+				if (Distance.distance(groundLoc, above).gt(3))
 					return false;
 			}
 
@@ -339,7 +326,7 @@ public class McMMOListener implements Listener {
 
 	void showParticle(Player player, Location location) {
 		if (RandomUtils.chanceOf(50))
-			player.spawnParticle(Particle.VILLAGER_HAPPY, location, 5, 0.5, 0.5, 0.5, 0.01);
+			player.spawnParticle(Particle.HAPPY_VILLAGER, location, 5, 0.5, 0.5, 0.5, 0.01);
 	}
 
 	private TreeType getTreeType(TreeSpecies treeSpecies) {

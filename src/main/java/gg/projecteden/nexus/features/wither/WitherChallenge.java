@@ -14,23 +14,14 @@ import gg.projecteden.nexus.features.wither.models.WitherFight;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.witherarena.WitherArenaConfig;
 import gg.projecteden.nexus.models.witherarena.WitherArenaConfigService;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -48,8 +39,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.models.witherarena.WitherArenaConfig.isMaintenance;
 
 @NoArgsConstructor
 public class WitherChallenge extends Feature implements Listener {
@@ -90,7 +79,7 @@ public class WitherChallenge extends Feature implements Listener {
 
 		paste();
 
-		if (!isMaintenance() && processQueue)
+		if (!WitherArenaConfig.isMaintenance() && processQueue)
 			processQueue();
 	}
 

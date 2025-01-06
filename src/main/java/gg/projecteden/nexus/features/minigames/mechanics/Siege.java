@@ -8,6 +8,8 @@ import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.matchdata.Flag;
 import gg.projecteden.nexus.features.minigames.models.matchdata.OneFlagCaptureTheFlagMatchData;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.md_5.bungee.api.ChatColor;
@@ -17,9 +19,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-import static gg.projecteden.nexus.utils.Utils.getMax;
 
 public final class Siege extends FlagRush {
 
@@ -67,7 +66,7 @@ public final class Siege extends FlagRush {
 			builder.next(winningTeam == null ? Component.text("Defenders", NamedTextColor.BLUE) : winningTeam);
 			builder.next(" protected the flag on ");
 		} else {
-			winningTeam = getMax(match.getAliveTeams(), team -> team.getScore(match)).getObject();
+			winningTeam = Utils.getMax(match.getAliveTeams(), team -> team.getScore(match)).getObject();
 			builder.next(winningTeam).next(" captured the flag on ");
 		}
 		builder.next(match.getArena());
@@ -89,9 +88,9 @@ public final class Siege extends FlagRush {
 				return;
 
 			captureFlag(minigamer);
-		} else if (!minigamer.getTeam().getName().equalsIgnoreCase(stripColor(sign.getLine(2))))
+		} else if (!minigamer.getTeam().getName().equalsIgnoreCase(StringUtils.stripColor(sign.getLine(2))))
 			takeFlag(minigamer);
-		else if (minigamer.getTeam().getName().equalsIgnoreCase(stripColor(sign.getLine(2))) && !matchData.getFlag().getSpawnLocation().equals(sign.getLocation()))
+		else if (minigamer.getTeam().getName().equalsIgnoreCase(StringUtils.stripColor(sign.getLine(2))) && !matchData.getFlag().getSpawnLocation().equals(sign.getLocation()))
 			returnFlag(minigamer);
 	}
 

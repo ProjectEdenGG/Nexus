@@ -1,8 +1,10 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.Rides;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.IslandType;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.MainIsland.MainNPCs;
@@ -18,20 +20,11 @@ import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.godmode.GodmodeService;
-import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.PotionEffectBuilder;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.Timer;
-import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.Getter;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -46,21 +39,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
-import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
-import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.GIVE_DAILY_TOKENS;
-import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.GIVE_REWARDS;
-import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.QUESTS;
-import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.WARP;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
+import java.util.*;
 
 public class BearFair21 implements Listener {
 	private static final BearFair21ConfigService configService = new BearFair21ConfigService();
@@ -152,7 +131,7 @@ public class BearFair21 implements Listener {
 	}
 
 	public static boolean canDoBearFairQuest(Player player) {
-		if (!BearFair21.getConfig().isEnabled(QUESTS)) return false;
+		if (!BearFair21.getConfig().isEnabled(BearFair21Config.BearFair21ConfigOption.QUESTS)) return false;
 		return !isNotAtBearFair(player);
 	}
 
@@ -187,10 +166,10 @@ public class BearFair21 implements Listener {
 	}
 
 	public static String isCheatingMsg(Player player) {
-		if (canWorldGuardEdit(player)) return "wgedit";
+		if (WorldGuardEditCommand.canWorldGuardEdit(player)) return "wgedit";
 		if (!player.getGameMode().equals(GameMode.SURVIVAL)) return "creative";
 		if (player.isFlying()) return "fly";
-		if (isVanished(player)) return "vanish";
+		if (Vanish.isVanished(player)) return "vanish";
 		if (new GodmodeService().get(player).isActive()) return "godmode";
 
 		return null;
@@ -198,7 +177,7 @@ public class BearFair21 implements Listener {
 
 	static {
 		Tasks.repeat(TickTime.SECOND, TickTime.SECOND, () -> {
-			if (!config.isEnabled(WARP))
+			if (!config.isEnabled(BearFair21Config.BearFair21ConfigOption.WARP))
 				return;
 
 			for (Player player : BearFair21.getPlayers()) {
@@ -208,7 +187,7 @@ public class BearFair21 implements Listener {
 					player.setFallDistance(0);
 					PlayerUtils.setAllowFlight(player, false, BearFair21.class);
 					PlayerUtils.setFlying(player, false, BearFair21.class);
-					player.sendMessage(colorize("&cNo cheating!"));
+					player.sendMessage(StringUtils.colorize("&cNo cheating!"));
 				}
 			}
 		});
@@ -239,7 +218,7 @@ public class BearFair21 implements Listener {
 	}
 
 	public static void giveDailyTokens(Player player, BF21PointSource source, int amount) {
-		if (!config.isEnabled(GIVE_DAILY_TOKENS))
+		if (!config.isEnabled(BearFair21Config.BearFair21ConfigOption.GIVE_DAILY_TOKENS))
 			return;
 
 		EventUserService service = new EventUserService();
@@ -262,7 +241,7 @@ public class BearFair21 implements Listener {
 	}
 
 	public static void giveTokens(Player player, int amount) {
-		if (!config.isEnabled(GIVE_REWARDS))
+		if (!config.isEnabled(BearFair21Config.BearFair21ConfigOption.GIVE_REWARDS))
 			return;
 
 		new EventUserService().edit(player, user -> user.giveTokens(amount));
@@ -271,7 +250,7 @@ public class BearFair21 implements Listener {
 	}
 
 	public static boolean canWarp() {
-		return config.isEnabled(WARP);
+		return config.isEnabled(BearFair21Config.BearFair21ConfigOption.WARP);
 	}
 
 	public static void startup() {
@@ -315,7 +294,7 @@ public class BearFair21 implements Listener {
 		// Trader
 		{
 			List<ItemStack> items = Quests.getItemsLikeFrom(user, Collections.singletonList(Merchants.traderCoupon.clone()));
-			if (isNullOrEmpty(items))
+			if (Nullables.isNullOrEmpty(items))
 				return;
 
 			Quests.removeItemStacks(user, items);
@@ -326,7 +305,7 @@ public class BearFair21 implements Listener {
 		// James
 		{
 			List<ItemStack> items = Quests.getItemsLikeFrom(user, Collections.singletonList(MinigameNightIsland.getCarKey()));
-			if (isNullOrEmpty(items))
+			if (Nullables.isNullOrEmpty(items))
 				return;
 
 			user.setMgn_boughtCar(true);
@@ -337,7 +316,7 @@ public class BearFair21 implements Listener {
 
 	@EventHandler
 	public void onRegionEnterYacht(PlayerEnteredRegionEvent event) {
-		if (!config.isEnabled(WARP)) return;
+		if (!config.isEnabled(BearFair21Config.BearFair21ConfigOption.WARP)) return;
 		if (!event.getRegion().getId().equalsIgnoreCase("spawn_spaceyacht")) return;
 		Player player = event.getPlayer();
 		send("", player);
@@ -347,7 +326,7 @@ public class BearFair21 implements Listener {
 
 	@EventHandler
 	public void onRegionEnterQuarters(PlayerEnteredRegionEvent event) {
-		if (!config.isEnabled(WARP)) return;
+		if (!config.isEnabled(BearFair21Config.BearFair21ConfigOption.WARP)) return;
 		if (!event.getRegion().getId().equalsIgnoreCase("spawn_bearfair")) return;
 
 		Location spawnTransition = new Location(Bukkit.getWorld("legacy2"), 9.5, 100, -180.5);

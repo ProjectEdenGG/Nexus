@@ -2,24 +2,16 @@ package gg.projecteden.nexus.features.store.perks.visuals;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.Tasks;
 
-import static gg.projecteden.nexus.features.store.perks.visuals.FireworkCommand.PERMISSION;
-
 @Aliases("fw")
-@Permission(PERMISSION)
+@Permission(FireworkCommand.PERMISSION)
 @Cooldown(value = TickTime.SECOND, bypass = Group.STAFF)
 @WikiConfig(rank = "Store", feature = "Visuals")
 public class FireworkCommand extends CustomCommand {

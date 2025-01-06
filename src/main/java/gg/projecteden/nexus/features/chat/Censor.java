@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.chat;
 
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
@@ -29,9 +30,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
-import static gg.projecteden.nexus.utils.StringUtils.countUpperCase;
 
 public class Censor {
 	@Getter
@@ -140,7 +138,7 @@ public class Censor {
 								type = PunishmentType.WARN;
 
 							Punishments.of(event.getChatter()).add(Punishment.ofType(type)
-									.punisher(UUID0)
+									.punisher(UUIDUtils.UUID0)
 									.input(censorItem.getPunishReason() + ": " + event.getOriginalMessage())
 									.now(true));
 						}
@@ -176,7 +174,7 @@ public class Censor {
 		String characters = message.replaceAll(" ", "");
 		if (characters.length() == 0)
 			return;
-		int upper = countUpperCase(message);
+		int upper = StringUtils.countUpperCase(message);
 		int pct = (int) ((double) upper / characters.length() * 100);
 
 		if (upper > 7 && pct > 40)

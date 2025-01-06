@@ -11,13 +11,12 @@ import gg.projecteden.nexus.models.shop.Shop.Product;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
-
-import static gg.projecteden.nexus.utils.ItemUtils.getShulkerContents;
 
 public abstract class ShopProvider extends InventoryProvider {
 	protected final ShopService service = new ShopService();
@@ -69,7 +68,7 @@ public abstract class ShopProvider extends InventoryProvider {
 		if (event.getClick() != ClickType.RIGHT)
 			return false;
 
-		if (getShulkerContents(product.getItem()).isEmpty())
+		if (ItemUtils.getShulkerContents(product.getItem()).isEmpty())
 			return false;
 
 		new ShulkerContentsProvider(this, product).open(clickData.getPlayer());

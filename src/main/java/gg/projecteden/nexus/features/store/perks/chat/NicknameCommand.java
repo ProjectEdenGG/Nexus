@@ -5,14 +5,8 @@ import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.discord.ReactionVoter;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownException;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -28,10 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static gg.projecteden.nexus.features.store.perks.chat.NicknameCommand.PERMISSION;
-
 @Aliases("nick")
-@Permission(PERMISSION)
+@Permission(NicknameCommand.PERMISSION)
 @WikiConfig(rank = "Store", feature = "Chat")
 public class NicknameCommand extends CustomCommand {
 	public static final String PERMISSION = "nickname.use";

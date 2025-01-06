@@ -15,14 +15,10 @@ import gg.projecteden.nexus.features.minigames.models.perks.common.LoadoutPerk;
 import gg.projecteden.nexus.features.minigames.models.perks.common.TickablePerk;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.vanish.Vanish;
-import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
-import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
 import lombok.Data;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -47,10 +43,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static gg.projecteden.nexus.features.minigames.Minigames.isInMinigameLobbyRegion;
-import static gg.projecteden.nexus.features.minigames.Minigames.isInMinigameLobbyWorld;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class TickPerks implements Listener {
 	private static final PerkOwnerService service = new PerkOwnerService();
@@ -165,7 +157,7 @@ public class TickPerks implements Listener {
 	}
 
 	protected static GadgetPerk getGadgetPerk(ItemStack item) {
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return null;
 		return Arrays.stream(PerkType.values()).filter(perkType -> perkType.getPerk() instanceof GadgetPerk).map(perkType -> (GadgetPerk) perkType.getPerk()).filter(perk -> perk.getItem().equals(item)).findAny().orElse(null);
 	}

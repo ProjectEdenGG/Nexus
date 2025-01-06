@@ -3,9 +3,12 @@ package gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing;
 import com.gmail.nossr50.events.skills.fishing.McMMOPlayerFishingEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.islands.IslandType;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.models.WeightedLoot;
+import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -17,43 +20,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.isAtBearFair;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.isBFItem;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.send;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.toolError;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.cod;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.coral;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.crimsonfish;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.flathead;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.genericFish;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.glacierfish;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.heartOfTheSea;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.midnightCarp;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.nautilusShell;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.pufferfish;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.salmon;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.scales;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.seaCucumber;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.sunfish;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.tigerTrout;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.trash;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.tropicalFish;
-import static gg.projecteden.nexus.utils.ItemUtils.getTool;
+import java.util.*;
 
 public class Fishing implements Listener {
 	private List<ItemStack> lootList = new ArrayList<>();
 	public static Set<WeightedLoot> weightedList = new HashSet<>();
-	ItemStack safetyLoot = new ItemBuilder(Material.COD).lore(itemLore).build();
+	ItemStack safetyLoot = new ItemBuilder(Material.COD).lore(BFQuests.itemLore).build();
 	static Map<UUID, Integer> safeties = new HashMap<>();
 
 	public Fishing() {
@@ -72,33 +44,33 @@ public class Fishing implements Listener {
 		String sduIsland = IslandType.SUMMER_DOWN_UNDER.get().getRegion();
 
 		// Default Fish (Global)
-		weightedList.add(new WeightedLoot(cod,				25));
-		weightedList.add(new WeightedLoot(salmon,			18));
-		weightedList.add(new WeightedLoot(tropicalFish,		16));
-		weightedList.add(new WeightedLoot(pufferfish,		14));
+		weightedList.add(new WeightedLoot(Loot.cod,				25));
+		weightedList.add(new WeightedLoot(Loot.salmon,			18));
+		weightedList.add(new WeightedLoot(Loot.tropicalFish,		16));
+		weightedList.add(new WeightedLoot(Loot.pufferfish,		14));
 
 		// Island Specific
-		weightedList.add(new WeightedLoot(tigerTrout,		1, mgnIsland));
-		weightedList.add(new WeightedLoot(seaCucumber,		1, mgnIsland));
-		weightedList.add(new WeightedLoot(glacierfish,		1, pugmasIsland));
-		weightedList.add(new WeightedLoot(crimsonfish,		1, halloweenIsland));
-		weightedList.add(new WeightedLoot(flathead,			1, sduIsland));
-		weightedList.add(new WeightedLoot(midnightCarp,	 	1, mainIsland, false));
-		weightedList.add(new WeightedLoot(sunfish,		 	1, mainIsland, true));
+		weightedList.add(new WeightedLoot(Loot.tigerTrout,		1, mgnIsland));
+		weightedList.add(new WeightedLoot(Loot.seaCucumber,		1, mgnIsland));
+		weightedList.add(new WeightedLoot(Loot.glacierfish,		1, pugmasIsland));
+		weightedList.add(new WeightedLoot(Loot.crimsonfish,		1, halloweenIsland));
+		weightedList.add(new WeightedLoot(Loot.flathead,			1, sduIsland));
+		weightedList.add(new WeightedLoot(Loot.midnightCarp,	 	1, mainIsland, false));
+		weightedList.add(new WeightedLoot(Loot.sunfish,		 	1, mainIsland, true));
 
 		// Generic Fish
-		for (ItemStack genericItem : genericFish)
+		for (ItemStack genericItem : Loot.genericFish)
 			weightedList.add(new WeightedLoot(genericItem, 	2));
 
 		// Treasures
-		for (ItemStack coralItem : coral)
+		for (ItemStack coralItem : Loot.coral)
 			weightedList.add(new WeightedLoot(coralItem, 	3));
-		weightedList.add(new WeightedLoot(scales,			2));
-		weightedList.add(new WeightedLoot(heartOfTheSea,	1));
-		weightedList.add(new WeightedLoot(nautilusShell,	1));
+		weightedList.add(new WeightedLoot(Loot.scales,			2));
+		weightedList.add(new WeightedLoot(Loot.heartOfTheSea,	1));
+		weightedList.add(new WeightedLoot(Loot.nautilusShell,	1));
 
 		// Trash
-		for (ItemStack trashItem : trash)
+		for (ItemStack trashItem : Loot.trash)
 			weightedList.add(new WeightedLoot(trashItem, 	10));
 	}
 
@@ -148,7 +120,7 @@ public class Fishing implements Listener {
 		String regionCheck = weightedLoot.getRegionCheck();
 		String playerRegion = null;
 		if (regionCheck != null) {
-			Set<ProtectedRegion> regions = worldguard().getRegionsAt(player.getLocation());
+			Set<ProtectedRegion> regions = BearFair20.worldguard().getRegionsAt(player.getLocation());
 			for (ProtectedRegion region : regions) {
 				if (region.getId().equalsIgnoreCase(regionCheck)) {
 					playerRegion = region.getId();
@@ -170,12 +142,12 @@ public class Fishing implements Listener {
 	public void onFishCatch(PlayerFishEvent event) {
 		Player player = event.getPlayer();
 
-		if(!isAtBearFair(player)) return;
+		if(!BearFair20.isAtBearFair(player)) return;
 
-		ItemStack rod = getTool(player);
+		ItemStack rod = ItemUtils.getTool(player);
 		if(rod == null) return;
-		if(!isBFItem(rod)) {
-			send(toolError, player);
+		if(!BearFair20.isBFItem(rod)) {
+			BearFair20.send(BFQuests.toolError, player);
 			player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
 			event.setCancelled(true);
 			return;
@@ -197,7 +169,7 @@ public class Fishing implements Listener {
 	@EventHandler
 	public void onMcMMOFishing(McMMOPlayerFishingEvent event) {
 		Player player = event.getPlayer();
-		if(!isAtBearFair(player)) return;
+		if(!BearFair20.isAtBearFair(player)) return;
 		event.setCancelled(true);
 	}
 }

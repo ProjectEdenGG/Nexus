@@ -7,14 +7,13 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEve
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.Flag;
 import gg.projecteden.nexus.features.minigames.models.matchdata.OneFlagCaptureTheFlagMatchData;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class FlagRush extends CaptureTheFlagMechanic {
 
@@ -48,7 +47,7 @@ public class FlagRush extends CaptureTheFlagMechanic {
 			takeFlag(minigamer);
 		} else if ((ChatColor.GREEN + "Capture").equalsIgnoreCase(sign.getLine(2)))
 			if (minigamer.equals(matchData.getFlagCarrier()))
-				if (!stripColor(sign.getLine(3)).equalsIgnoreCase(minigamer.getTeam().getName()))
+				if (!StringUtils.stripColor(sign.getLine(3)).equalsIgnoreCase(minigamer.getTeam().getName()))
 					minigamer.tell("&cYou must capture the flag at the other team's base");
 				else
 					captureFlag(minigamer);

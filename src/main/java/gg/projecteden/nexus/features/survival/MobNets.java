@@ -1,20 +1,18 @@
 package gg.projecteden.nexus.features.survival;
 
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.TameablesCommand;
 import gg.projecteden.nexus.features.commands.TameablesCommand.SummonableTameableEntityType;
 import gg.projecteden.nexus.features.commands.TameablesCommand.TameableEntityType;
+import gg.projecteden.nexus.features.listeners.Restrictions;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.*;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.bukkit.Material;
@@ -37,11 +35,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.features.listeners.Restrictions.isPerkAllowedAt;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-
 @NoArgsConstructor
 public class MobNets extends Feature implements Listener {
 	private static final String PREFIX = StringUtils.getPrefix(MobNets.class);
@@ -61,20 +54,20 @@ public class MobNets extends Feature implements Listener {
 
 			final PlayerInventory inventory = player.getInventory();
 			final ItemStack tool = inventory.getItem(event.getHand());
-			if (isNullOrAir(tool))
+			if (gg.projecteden.nexus.utils.Nullables.isNullOrAir(tool))
 				return;
 
 			if (CustomMaterial.of(tool) != CustomMaterial.MOB_NET)
 				return;
 
-			if (!isPerkAllowedAt(event.getPlayer(), event.getRightClicked().getLocation()))
+			if (!Restrictions.isPerkAllowedAt(event.getPlayer(), event.getRightClicked().getLocation()))
 				throw new InvalidInputException("&cYou cannot use mob nets here!");
 
 			if (TameablesCommand.isTamed(entity))
 				TameablesCommand.checkOwner(player, entity);
 
 			if (new CooldownService().check(player, "mobnet-capture-" + entity.getUniqueId(), TickTime.SECOND.x(3))) {
-				final String entityName = camelCase(entity.getType()).toLowerCase();
+				final String entityName = gg.projecteden.api.common.utils.StringUtils.camelCase(entity.getType()).toLowerCase();
 				final JsonBuilder error = new JsonBuilder("&3Click again to capture this &e" + entityName);
 
 				if (SummonableTameableEntityType.isSummonable(entity.getType()))
@@ -88,7 +81,7 @@ public class MobNets extends Feature implements Listener {
 			final ItemStack mobNet = getMobNet(entity);
 			entity.remove();
 
-			if (isNullOrAir(inventory.getItem(event.getHand())))
+			if (gg.projecteden.nexus.utils.Nullables.isNullOrAir(inventory.getItem(event.getHand())))
 				inventory.setItem(event.getHand(), mobNet);
 			else
 				PlayerUtils.giveItem(player, mobNet);
@@ -112,7 +105,7 @@ public class MobNets extends Feature implements Listener {
 		if (entity.getEntitySpawnReason() != SpawnReason.SPAWNER_EGG)
 			return;
 
-		if (!isNullOrEmpty(entity.getCustomName()) && entity.getCustomName().contains("Mob Net"))
+		if (!Nullables.isNullOrEmpty(entity.getCustomName()) && entity.getCustomName().contains("Mob Net"))
 			entity.customName(null);
 
 		new SoundBuilder(Sound.ITEM_DYE_USE)
@@ -138,7 +131,7 @@ public class MobNets extends Feature implements Listener {
 	private ItemStack getMobNet(Entity entity) {
 		return new ItemBuilder(Material.PAPER)
 			.spawnEgg(entity)
-			.name(camelCase(entity.getType()) + " Mob Net")
+			.name(gg.projecteden.api.common.utils.StringUtils.camelCase(entity.getType()) + " Mob Net")
 			.modelId(1)
 			.build();
 	}

@@ -31,9 +31,6 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.nexus.utils.StringUtils.loreize;
-
 @SuppressWarnings("unused")
 public class ClickableItem {
 
@@ -112,7 +109,7 @@ public class ClickableItem {
 	}
 
 	public static ClickableItem of(ItemStack item, String name, String lore, Consumer<ItemClickData> consumer) {
-		return of(item, name, lore == null ? null : loreize(colorize(lore)), consumer);
+		return of(item, name, lore == null ? null : StringUtils.loreize(StringUtils.colorize(lore)), consumer);
 	}
 
 	public static ClickableItem of(ItemStack item, String name, List<String> lore, Consumer<ItemClickData> consumer) {
@@ -123,7 +120,7 @@ public class ClickableItem {
 
 		ItemMeta meta = item.getItemMeta();
 		if (name != null)
-			meta.setDisplayName(colorize("&f" + name));
+			meta.setDisplayName(StringUtils.colorize("&f" + name));
 		if (lore != null)
 			meta.setLore(lore);
 

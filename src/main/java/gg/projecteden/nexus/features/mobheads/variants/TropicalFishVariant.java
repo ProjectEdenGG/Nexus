@@ -2,14 +2,13 @@ package gg.projecteden.nexus.features.mobheads.variants;
 
 import gg.projecteden.nexus.features.mobheads.common.MobHeadVariant;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Getter
 @RequiredArgsConstructor
@@ -39,7 +38,7 @@ public enum TropicalFishVariant implements MobHeadVariant {
 
 	@Override
 	public String getDisplayName() {
-		return camelCase(getEntityType());
+		return StringUtils.camelCase(getEntityType());
 	}
 
 	public static TropicalFishVariant random() {

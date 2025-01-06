@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.minigames.models;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerLoadoutEvent;
 import gg.projecteden.nexus.models.minigamersetting.MinigamerSetting;
 import gg.projecteden.nexus.models.minigamersetting.MinigamerSettingService;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SerializationUtils.YML;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,8 +17,6 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.*;
-
-import static gg.projecteden.nexus.utils.PlayerUtils.hidePlayer;
 
 @Data
 @NoArgsConstructor
@@ -46,7 +45,7 @@ public class Loadout implements ConfigurationSerializable {
 		minigamer.clearState();
 		Player player = minigamer.getOnlinePlayer();
 
-		minigamer.getMatch().getSpectators().forEach(spectator -> hidePlayer(spectator.getOnlinePlayer()).from(minigamer));
+		minigamer.getMatch().getSpectators().forEach(spectator -> PlayerUtils.hidePlayer(spectator.getOnlinePlayer()).from(minigamer));
 
 		if (!isLoadoutEmpty) {
 			PlayerInventory inventory = player.getInventory();
