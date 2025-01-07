@@ -14,6 +14,9 @@ public abstract class _PunishmentActivateAppCommand extends _PunishmentAppComman
 	}
 
 	protected void execute(DiscordUser author, Punishments player, String reason, boolean now) {
+		if (!author.getRank().isStaff())
+			throw new AppCommandException("You do not have access to this command");
+		
 		if (player.getRank().isStaff())
 			if (!author.getRank().isAdmin())
 				throw new AppCommandException("You cannot " + getType().name().toLowerCase() + " staff members");
