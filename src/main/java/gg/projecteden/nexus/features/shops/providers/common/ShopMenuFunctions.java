@@ -15,7 +15,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 
 import java.util.function.Predicate;
 
@@ -86,7 +86,7 @@ public class ShopMenuFunctions {
 							return true;
 
 				if (item.getItemMeta() instanceof PotionMeta meta) {
-					final PotionEffectType effectType = meta.getBasePotionType().getEffectType();
+					final PotionType effectType = meta.getBasePotionType();
 					if (effectType != null)
 						if (contains(ItemUtils.getFixedPotionName(effectType), input))
 							return true;

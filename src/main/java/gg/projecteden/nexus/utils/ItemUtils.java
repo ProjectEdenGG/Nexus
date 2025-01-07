@@ -52,11 +52,21 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 public class ItemUtils {
 
@@ -97,6 +107,10 @@ public class ItemUtils {
 
 	public static String getFixedPotionName(PotionEffectType effect) {
 		return effect.getName();
+	}
+
+	public static String getFixedPotionName(PotionType effect) {
+		return camelCase(effect);
 	}
 
 	public static boolean isFuzzyMatch(ItemStack itemStack1, ItemStack itemStack2) {
