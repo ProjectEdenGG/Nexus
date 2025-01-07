@@ -17,6 +17,9 @@ public abstract class _PunishmentDeactivateAppCommand extends _PunishmentAppComm
 
 	@Override
 	protected void execute(DiscordUser author, Punishments player, String reason, boolean now) {
+		if (!author.getRank().isStaff())
+			throw new AppCommandException("You do not have access to this command");
+		
 		Optional<Punishment> punishment = player.getMostRecentActive(getType());
 		if (punishment.isEmpty())
 			throw new InvalidInputException(player.getNickname() + " is not " + getType().getPastTense());
