@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.discord.commands.justice.deactivate;
 
 import gg.projecteden.api.discord.appcommands.AppCommandEvent;
+import gg.projecteden.api.discord.appcommands.annotations.RequiredRole;
+import gg.projecteden.api.discord.appcommands.exceptions.AppCommandException;
 import gg.projecteden.nexus.features.discord.commands.justice._PunishmentAppCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.discord.DiscordUser;
@@ -9,6 +11,7 @@ import gg.projecteden.nexus.models.punishments.Punishments;
 
 import java.util.Optional;
 
+@RequiredRole("Staff")
 public abstract class _PunishmentDeactivateAppCommand extends _PunishmentAppCommand {
 
 	public _PunishmentDeactivateAppCommand(AppCommandEvent event) {
