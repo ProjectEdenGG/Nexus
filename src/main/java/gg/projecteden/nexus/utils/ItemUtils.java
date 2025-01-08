@@ -17,6 +17,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.effect.MobEffect;
@@ -654,11 +655,14 @@ public class ItemUtils {
 
 		if (!handle.has(DataComponents.CUSTOM_DATA)) return bukkit;
 		if (!handle.get(DataComponents.CUSTOM_DATA).copyTag().contains("ProjectEden")) return bukkit;
-		if (!((CompoundTag) handle.get(DataComponents.CUSTOM_DATA).copyTag().get("ProjectEden")).contains("Items")) return bukkit;
+		if (!handle.get(DataComponents.CUSTOM_DATA).copyTag().getCompound("ProjectEden").contains("Items")) return bukkit;
 
+		CompoundTag pe = handle.get(DataComponents.CUSTOM_DATA).copyTag().getCompound("ProjectEden");
+		ListTag listTag = pe.getList("Items", 10);
+		pe.put("Items", ItemStackSerializer.update(listTag));
 
 		NonNullList<net.minecraft.world.item.ItemStack> minecraft = NonNullList.withSize(expectedSize, net.minecraft.world.item.ItemStack.EMPTY);
-		ContainerHelper.loadAllItems(handle.get(DataComponents.CUSTOM_DATA).copyTag().getCompound("ProjectEden"), minecraft, ((CraftServer) Bukkit.getServer()).getServer().registryAccess());
+		ContainerHelper.loadAllItems(pe, minecraft, ((CraftServer) Bukkit.getServer()).getServer().registryAccess());
 
 		for (int i = 0; i < Math.max(expectedSize, minecraft.size()); i++) {
 			if (i >= minecraft.size())
