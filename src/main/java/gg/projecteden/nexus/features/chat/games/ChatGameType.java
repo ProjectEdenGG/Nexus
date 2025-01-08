@@ -108,10 +108,9 @@ public enum ChatGameType {
 				answer = operator.run(num1, num2).intValue();
 			}
 
-			boolean add = RandomUtils.getRandom().nextBoolean();
 			return new ChatGame(this, String.valueOf(answer),
 				new JsonBuilder(String.format("&3What's &e%d %s %s&3?", num1, operator.getSymbol(), num2) + " Answer in chat!"),
-				String.format("What's `%d %s %s`?", num1, add ? "+" : "-", num2) + " Answer in chat!");
+				String.format("What's `%d %s %s`?", num1, operator.getSymbol(), num2) + " Answer in chat!");
 		}
 	},
 	TRIVIA(30) {
@@ -216,7 +215,7 @@ public enum ChatGameType {
 	@Getter
 	public enum TriviaQuestion {
 		SERVER_OWNER("Who is the Owner of Project Eden?", List.of("Griffin", "GriffinCodes")),
-		SERVER_BIRTH_YEAR("What year was Project Eden born?", "2015"),
+		SERVER_BIRTH_YEAR("What year was Project Eden first opened?", "2015"),
 		SERVER_PREVIOUS_NAME("What is the former name of Project Eden?", "Bear Nation"),
 
 		TICKET("If you require staff assistance ingame, what should you make?", List.of("a ticket", "ticket")),
@@ -267,7 +266,7 @@ public enum ChatGameType {
 		SMITTEN_PIG_CONVERT("Which mob is created when lightning strikes a pig?", "zombified piglin"),
 		SMITTEN_RED_MOOSHROOM_CONVERT("Which mob is created when lightning strikes a red mooshroom?", "brown mooshroom"),
 		SMITTEN_BROWN_MOOSHROOM_CONVERT("Which mob is created when lightning strikes a brown mooshroom?", "red mooshroom"),
-		SMITTEN_VILLAGER_CONVERT("Which mob is crated when lightning strikes a villager?", "witch"),
+		SMITTEN_VILLAGER_CONVERT("Which mob is created when lightning strikes a villager?", "witch"),
 		MAX_BUILD_HEIGHT("What is the build height limit?", getNumberAnswers(320)),
 		HOSTILE_DAY_PASSIVE("What hostile mob becomes passive during the day?", "spider"),
 		ANGERED_SPIT("When angered, what mob spits at you?", "llama"),
