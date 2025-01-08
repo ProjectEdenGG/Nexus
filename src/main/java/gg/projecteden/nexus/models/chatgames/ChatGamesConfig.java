@@ -78,7 +78,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 		if (!config.isEnabled())
 			return;
 
-		double wait = overrideWait ? 0 : (config.previousPlayerCount == 0 && config.previousPlayerCount2 == 0 ? 60 : 0);
+		double wait = overrideWait ? 0 : (config.previousPlayerCount < 2 && config.previousPlayerCount2 < 2 ? 60 : 0);
 		wait += RandomUtils.randomDouble(5, 15);
 
 		ChatGameType.random().create().queue(wait);
