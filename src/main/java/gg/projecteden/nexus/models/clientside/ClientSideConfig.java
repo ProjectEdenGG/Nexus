@@ -44,13 +44,13 @@ public class ClientSideConfig implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Map<World, List<IClientSideEntity<?, ?, ?>>> entities = new ConcurrentHashMap<>();
+	private Map<String, List<IClientSideEntity<?, ?, ?>>> entities = new ConcurrentHashMap<>();
 
 	public static ClientSideConfig get() {
 		return new ClientSideConfigService().get0();
 	}
 
-	public static Map<World, List<IClientSideEntity<?, ?, ?>>> getEntities() {
+	public static Map<String, List<IClientSideEntity<?, ?, ?>>> getEntities() {
 		return get().entities;
 	}
 
@@ -82,7 +82,7 @@ public class ClientSideConfig implements PlayerOwnedObject {
 	}
 
 	public static List<IClientSideEntity<?, ?, ?>> getEntities(@NotNull World world) {
-		return getEntities().computeIfAbsent(world, $ -> new ArrayList<>());
+		return getEntities().computeIfAbsent(world.getName(), $ -> new ArrayList<>());
 	}
 
 	public static IClientSideEntity<?, ?, ?> getEntity(UUID uuid) {

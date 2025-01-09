@@ -6,6 +6,7 @@ import dev.morphia.converters.TypeConverter;
 import dev.morphia.mapping.MappedField;
 import dev.morphia.mapping.Mapper;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
+import gg.projecteden.nexus.utils.SerializationUtils.NBT;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
@@ -18,14 +19,20 @@ public class ItemStackConverter extends TypeConverter implements SimpleValueConv
 	@Override
 	public Object encode(Object value, MappedField optionalExtraInfo) {
 		if (value == null) return null;
-
-		return BasicDBObject.parse(Json.toString(Json.serialize((ItemStack) value)));
+		return NBT.serializeItemStack((ItemStack) value);
 	}
 
 	@Override
 	public Object decode(Class<?> aClass, Object value, MappedField mappedField) {
-		if (value == null) return null;
-		return Json.deserializeItemStack(((BasicDBObject) value).toJson());
+		if (value == null)
+			return null;
+
+		if (value instanceof String string)
+			return NBT.deserializeItemStack(string);
+		else if (value instanceof BasicDBObject object)
+			return Json.deserializeItemStack(object.toJson());
+
+		throw new RuntimeException("Unknown class for serialized item stack " + value.getClass().getSimpleName());
 	}
 
 }

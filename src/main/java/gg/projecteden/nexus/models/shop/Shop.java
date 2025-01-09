@@ -18,7 +18,7 @@ import gg.projecteden.nexus.models.banker.Transaction;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.*;
-import gg.projecteden.nexus.utils.SerializationUtils.Json;
+import gg.projecteden.nexus.utils.SerializationUtils.NBT;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.*;
 import org.bukkit.Material;
@@ -217,7 +217,7 @@ public class Shop implements PlayerOwnedObject {
 		@PostLoad
 		void fix(DBObject dbObject) {
 			if (!(price instanceof Number))
-				price = Json.deserializeItemStack((Map<String, Object>) dbObject.get("price"));
+				price = NBT.deserializeItemStack((String) dbObject.get("price"));
 		}
 
 		public Shop getShop() {

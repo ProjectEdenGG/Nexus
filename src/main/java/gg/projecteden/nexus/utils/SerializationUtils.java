@@ -6,11 +6,25 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.mojang.serialization.Dynamic;
+import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
+import lombok.NonNull;
+import lombok.SneakyThrows;
+import net.minecraft.SharedConstants;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.TagParser;
+import net.minecraft.util.datafix.DataFixers;
+import net.minecraft.util.datafix.fixes.References;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,37 +37,114 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import java.util.stream.Collectors;
 
 public class SerializationUtils {
 
-	public static class YML {
+	public static class NBT {
 
-		public static Map<String, ItemStack> serializeItems(ItemStack[] itemStacks) {
-			Map<String, ItemStack> items = new HashMap<>();
-			int slot = 0;
-			for (ItemStack item : itemStacks) {
-				if (item != null)
-					items.put(String.valueOf(slot), item);
-				slot++;
-			}
-
-			return items;
+		public static String serializeItemStack(ItemStack itemStack) {
+			net.minecraft.world.item.ItemStack nms = NMSUtils.toNMS(itemStack);
+			CompoundTag tag = (CompoundTag) nms.save(((CraftServer) Bukkit.getServer()).getServer().registryAccess());
+			tag.putInt("DataVersion", SharedConstants.getCurrentVersion().getDataVersion().getVersion());
+			return tag.toString();
 		}
 
-		public static ItemStack[] deserializeItems(Map<String, Object> items) {
-			ItemStack[] inventory = new ItemStack[41];
-			if (items == null) return inventory;
+		public static ItemStack deserializeItemStack(String string) {
+			try {
+				CompoundTag updated = deserializeItemStackToTagAndUpdate(string);
+				net.minecraft.world.item.ItemStack fixed = net.minecraft.world.item.ItemStack.parse(((CraftServer) Bukkit.getServer()).getServer().registryAccess(), updated).orElse(null);
+				if (fixed == null)
+					throw new RuntimeException("Deserialized item stack from " + string + " is null");
+				return fixed.asBukkitCopy();
+			} catch (Exception ex) {
+				Nexus.warn("Failed to parse ItemStack from String:");
+				ex.printStackTrace();
+				return null;
+			}
+		}
 
-			for (Map.Entry<String, Object> item : items.entrySet())
-				inventory[Integer.parseInt(item.getKey())] = (ItemStack) item.getValue();
+		private static CompoundTag deserializeItemStackToTagAndUpdate(String string) {
+			try {
+				CompoundTag tag = TagParser.parseTag(string);
+				return updateItemStack(tag);
+			} catch (Exception ex) {
+				Nexus.warn("Failed to parse ItemStack from String: " + string);
+				throw new RuntimeException(ex);
+			}
+		}
+
+		@SneakyThrows
+		public static CompoundTag updateItemStack(@NonNull CompoundTag data) {
+			return (CompoundTag) DataFixers.getDataFixer().update(
+				References.ITEM_STACK,
+				new Dynamic<>(NbtOps.INSTANCE, data),
+				data.contains("DataVersion") ? data.getInt("DataVersion") : 3700,
+				SharedConstants.getCurrentVersion().getDataVersion().getVersion()
+			).getValue();
+		}
+
+		public static ListTag updateItemStacks(ListTag data) {
+			ListTag updated = new ListTag();
+			for (int i = 0; i < data.size(); i++) {
+				CompoundTag item = data.getCompound(i);
+				updated.add(updateItemStack(item));
+			}
+			return updated;
+		}
+
+	}
+
+	public static class YML {
+
+		public static ItemStack[] asInventory(Map<String, ItemStack> items) {
+			return asArray(items, 41);
+		}
+
+		public static ItemStack[] asArray(Map<String, ItemStack> items) {
+			if (items == null) return new ItemStack[0];
+			return asArray(items, items.keySet().size());
+		}
+
+		public static ItemStack[] asArray(Map<String, ItemStack> items, int length) {
+			if (items == null) return new ItemStack[0];
+			ItemStack[] inventory = new ItemStack[length];
+
+			for (Map.Entry<String, ItemStack> item : items.entrySet())
+				inventory[Integer.parseInt(item.getKey())] = item.getValue();
 
 			return inventory;
+		}
+
+		public static Map<String, ItemStack> deserializeItemStacks(Map<String, Object> items) {
+			Map<String, ItemStack> deserialized = new LinkedHashMap<>();
+			for (String key : items.keySet()) {
+				var obj = items.get(key);
+				if (obj instanceof CraftItemStack itemStack) {
+					deserialized.put(key, itemStack);
+				} else if (obj instanceof String string) {
+					deserialized.put(key, NBT.deserializeItemStack(string));
+				} else {
+					Nexus.severe("Unknown class for serialized item stack: " + obj.getClass().getSimpleName());
+				}
+			}
+			return deserialized;
+		}
+
+		public static Map<String, String> serializeItemStacks(ItemStack[] items) {
+			Map<String, String> serialized = new LinkedHashMap<>();
+			for (int i = 0; i < items.length; i++) {
+				if (!isNullOrAir(items[i]))
+					serialized.put(String.valueOf(i), NBT.serializeItemStack(items[i]));
+			}
+			return serialized;
 		}
 
 		public static List<String> serializeMaterialSet(Set<Material> materials) {

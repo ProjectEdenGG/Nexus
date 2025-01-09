@@ -7,6 +7,7 @@ import gg.projecteden.nexus.models.clientside.ClientSideUser;
 import gg.projecteden.nexus.models.clientside.ClientSideUserService;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 /*
@@ -35,6 +36,9 @@ public class ClientSideFeature extends Feature {
 	@Override
 	public void onStop() {
 		ClientSideConfig.getEntities().forEach((world, entities) -> {
+			if (world == null || Bukkit.getWorld(world) == null)
+				return;
+
 			for (Player player : OnlinePlayers.where().world(world).get())
 				for (var entity : entities)
 					ClientSideUser.of(player).hide(entity);
