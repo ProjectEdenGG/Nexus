@@ -9,6 +9,7 @@ import gg.projecteden.nexus.models.clientside.ClientSideUserService;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
@@ -53,11 +54,14 @@ public class ClientSideEntitiesManager implements Listener {
 			final String id = "ClientSideEntities Radius Task";
 			new Timer(id, debug, () -> {
 				ClientSideConfig.getEntities().forEach((world, entities) -> {
+					if (world == null || Bukkit.getWorld(world) == null)
+						return;
+
 					if (entities.isEmpty())
 						return;
 
 					OnlinePlayers.where().world(world).forEach(player -> {
-						new Timer(id + " - " + world.getName() + " - " + player.getName(), debug, () -> {
+						new Timer(id + " - " + world + " - " + player.getName(), debug, () -> {
 							final var user = ClientSideUser.of(player);
 							if (!user.hasMoved())
 								return;
