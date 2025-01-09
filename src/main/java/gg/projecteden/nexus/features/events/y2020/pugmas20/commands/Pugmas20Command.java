@@ -62,7 +62,7 @@ import static gg.projecteden.nexus.features.events.y2020.pugmas20.models.QuestNP
 
 @Disabled
 @NoArgsConstructor
-@Environments(Env.PROD)
+@Environments({Env.PROD, Env.STAGING})
 //@Redirect(from = "/advent", to = "/pugmas advent")
 //@Redirect(from = "/district", to = "/pugmas district")
 //@Redirect(from = "/waypoint", to = "/pugmas waypoint")

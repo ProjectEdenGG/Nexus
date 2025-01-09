@@ -29,7 +29,10 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang.NotImplementedException;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Statistic;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -41,17 +44,22 @@ import tech.blastmc.holograms.api.models.line.Offset;
 import java.text.NumberFormat;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
-import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsConsole;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.decolorize;
 
 @NoArgsConstructor
-@Environments(Env.PROD)
+@Environments({Env.PROD, Env.STAGING})
 public class Podiums implements Listener {
 
 	static {

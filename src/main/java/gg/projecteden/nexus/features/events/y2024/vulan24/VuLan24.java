@@ -80,7 +80,7 @@ import static gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpa
 	region = "vu_lan",
 	warpType = WarpType.VULAN24
 )
-@Environments(Env.PROD)
+@Environments({Env.PROD, Env.STAGING})
 public class VuLan24 extends EdenEvent {
 	private static VuLan24 instance;
 

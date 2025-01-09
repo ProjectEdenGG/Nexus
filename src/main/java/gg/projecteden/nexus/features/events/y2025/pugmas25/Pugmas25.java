@@ -75,7 +75,7 @@ import static gg.projecteden.nexus.features.events.models.EventFishingLoot.Event
 	region = "pugmas25",
 	warpType = WarpType.PUGMAS25
 )
-@Environments(Env.PROD)
+@Environments({Env.PROD, Env.STAGING})
 public class Pugmas25 extends EdenEvent {
 	private static Pugmas25 instance;
 	public static final String PREFIX = StringUtils.getPrefix("Pugmas 2025");

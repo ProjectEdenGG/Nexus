@@ -69,7 +69,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Environments(Env.PROD)
+@Environments({Env.PROD, Env.STAGING})
 public class LegacyCommand extends _WarpSubCommand {
 	private final LegacyHomeService legacyHomeService = new LegacyHomeService();
 	private LegacyHomeOwner legacyHomeOwner;
