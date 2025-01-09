@@ -6,6 +6,18 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.mojang.serialization.Dynamic;
+import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
+import lombok.NonNull;
+import lombok.SneakyThrows;
+import net.minecraft.SharedConstants;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.TagParser;
+import net.minecraft.util.datafix.DataFixers;
+import net.minecraft.util.datafix.fixes.References;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -32,6 +44,58 @@ import java.util.Set;
 import static java.util.stream.Collectors.toList;
 
 public class SerializationUtils {
+
+	public static class NBT {
+
+		public static String serializeItemStack(ItemStack itemStack) {
+			net.minecraft.world.item.ItemStack nms = NMSUtils.toNMS(itemStack);
+			CompoundTag tag = nms.save(new CompoundTag());
+			tag.putInt("DataVersion", SharedConstants.getCurrentVersion().getDataVersion().getVersion());
+			return tag.toString();
+		}
+
+		public static ItemStack deserializeItemStack(String string) {
+			try {
+				CompoundTag updated = deserializeItemStackToTagAndUpdate(string);
+				net.minecraft.world.item.ItemStack fixed = net.minecraft.world.item.ItemStack.of(updated);
+				return fixed.asBukkitCopy();
+			} catch (Exception ex) {
+				Nexus.warn("Failed to parse ItemStack from String:");
+				ex.printStackTrace();
+				return null;
+			}
+		}
+
+		private static CompoundTag deserializeItemStackToTagAndUpdate(String string) {
+			try {
+				CompoundTag tag = TagParser.parseTag(string);
+				return updateItemStack(tag);
+			} catch (Exception ex) {
+				Nexus.warn("Failed to parse ItemStack from String: " + string);
+				throw new RuntimeException(ex);
+			}
+		}
+
+		@SneakyThrows
+		public static CompoundTag updateItemStack(@NonNull CompoundTag data) {
+			return (CompoundTag) DataFixers.getDataFixer().update(
+				References.ITEM_STACK,
+				new Dynamic<>(NbtOps.INSTANCE, data),
+				data.contains("DataVersion") ? data.getInt("DataVersion") : 3700,
+				SharedConstants.getCurrentVersion().getDataVersion().getVersion()
+			).getValue();
+		}
+
+		public static ListTag updateItemStacks(ListTag data) {
+			ListTag updated = new ListTag();
+			for (int i = 0; i < data.size(); i++) {
+				CompoundTag item = data.getCompound(i);
+				updated.add(updateItemStack(item));
+			}
+			return updated;
+		}
+
+	}
 
 	public static class YML {
 

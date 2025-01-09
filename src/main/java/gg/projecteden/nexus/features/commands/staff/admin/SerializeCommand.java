@@ -11,6 +11,7 @@ import gg.projecteden.nexus.models.serializetest.SerializeTestService;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
+import gg.projecteden.nexus.utils.SerializationUtils.NBT;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 import org.bukkit.Material;
@@ -41,6 +42,23 @@ public class SerializeCommand extends CustomCommand {
 		service.saveSync(test);
 		service.clearCache();
 		test = service.get(player());
+	}
+
+	@Path("item toNBT")
+	@Description("Serialize an item to NBT")
+	void itemStackToNBT() {
+		ItemStack item = getToolRequired();
+		String url = StringUtils.paste(NBT.serializeItemStack(item));
+		send(json(url).url(url).hover(url));
+	}
+
+	@Path("item fromNBT <nbt|paste>")
+	@Description("Deserialize an item from NBT")
+	void itemStackFromNBT(String input) {
+		if (!input.startsWith("{"))
+			input = StringUtils.getPaste(input);
+
+		giveItem(NBT.deserializeItemStack(input));
 	}
 
 	@Path("item toJson")
