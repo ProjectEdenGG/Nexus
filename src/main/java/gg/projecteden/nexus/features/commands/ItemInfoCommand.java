@@ -1,26 +1,15 @@
 package gg.projecteden.nexus.features.commands;
 
-import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.utils.Enchant;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.inventory.ItemStack;
@@ -123,31 +112,23 @@ public class ItemInfoCommand extends CustomCommand {
 
 	@Nullable
 	private String getNBTString(ItemStack itemStack) {
-		NBTItem nbtItem = new NBTItem(itemStack);
-		String nbtString = null;
+		String nbtString = SerializationUtils.NBT.serializeItemStack(itemStack);
 
-		if (nbtItem.hasNBTData()) {
-			nbtString = nbtItem.asNBTString();
-			nbtString = StringUtils.stripColor(nbtString);
-		}
+		nbtString = nbtString.replaceAll("run_command", "&crun_command&f");
+		nbtString = nbtString.replaceAll("suggest_command", "&csuggest_command&f");
+		nbtString = nbtString.replaceAll("insert_command", "&cinsert_command&f");
+		nbtString = nbtString.replaceAll("open_url", "&copen_url&f");
+		nbtString = nbtString.replaceAll("open_file", "&copen_file&f");
 
-		if (nbtString != null) {
-			// highlight keywords
-			nbtString = nbtString.replaceAll("run_command", "&crun_command&f");
-			nbtString = nbtString.replaceAll("suggest_command", "&csuggest_command&f");
-			nbtString = nbtString.replaceAll("insert_command", "&cinsert_command&f");
-			nbtString = nbtString.replaceAll("open_url", "&copen_url&f");
-			nbtString = nbtString.replaceAll("open_file", "&copen_file&f");
+		nbtString = nbtString.replaceAll("clickEvent", "&cclickEvent&f");
+		nbtString = nbtString.replaceAll("hoverEvent", "&choverEvent&f");
 
-			nbtString = nbtString.replaceAll("clickEvent", "&cclickEvent&f");
-			nbtString = nbtString.replaceAll("hoverEvent", "&choverEvent&f");
+		// clean up of garbage
+		nbtString = nbtString.replaceAll("\"\"", "");
+		nbtString = nbtString.replaceAll("\\{\"\"text\"\":\"\"\\n\"\"},", "");
+		nbtString = nbtString.replaceAll("\\n", "");
+		nbtString = nbtString.replaceAll("\\\\", "");
 
-			// clean up of garbage
-			nbtString = nbtString.replaceAll("\"\"", "");
-			nbtString = nbtString.replaceAll("\\{\"\"text\"\":\"\"\\n\"\"},", "");
-			nbtString = nbtString.replaceAll("\\n", "");
-			nbtString = nbtString.replaceAll("\\\\", "");
-		}
 		return nbtString;
 	}
 

@@ -40,6 +40,7 @@ public class Coupons implements PlayerOwnedObject {
 	public Coupon of(ItemStack item) {
 		for (Coupon coupon : coupons) {
 			ItemStack couponItem = coupon.getItem();
+			if (couponItem == null) return null;
 			if (ItemUtils.isFuzzyMatch(item, couponItem)) return coupon;
 			if (item.getType() != couponItem.getType())
 				continue;
