@@ -5,6 +5,7 @@ import dev.morphia.converters.SimpleValueConverter;
 import dev.morphia.converters.TypeConverter;
 import dev.morphia.mapping.MappedField;
 import dev.morphia.mapping.Mapper;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import gg.projecteden.nexus.utils.SerializationUtils.NBT;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
@@ -18,7 +19,7 @@ public class ItemStackConverter extends TypeConverter implements SimpleValueConv
 
 	@Override
 	public Object encode(Object value, MappedField optionalExtraInfo) {
-		if (value == null) return null;
+		if (Nullables.isNullOrAir((ItemStack) value)) return null;
 		return NBT.serializeItemStack((ItemStack) value);
 	}
 

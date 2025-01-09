@@ -1,11 +1,7 @@
 package gg.projecteden.nexus.utils;
 
 import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import com.google.gson.*;
 import com.mojang.serialization.Dynamic;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
@@ -33,18 +29,10 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class SerializationUtils {
 
@@ -60,6 +48,8 @@ public class SerializationUtils {
 		public static ItemStack deserializeItemStack(String string) {
 			try {
 				CompoundTag updated = deserializeItemStackToTagAndUpdate(string);
+				if (updated == null)
+					return null;
 				net.minecraft.world.item.ItemStack fixed = net.minecraft.world.item.ItemStack.parse(((CraftServer) Bukkit.getServer()).getServer().registryAccess(), updated).orElse(null);
 				if (fixed == null)
 					throw new RuntimeException("Deserialized item stack from " + string + " is null");
@@ -74,6 +64,8 @@ public class SerializationUtils {
 		private static CompoundTag deserializeItemStackToTagAndUpdate(String string) {
 			try {
 				CompoundTag tag = TagParser.parseTag(string);
+				if (tag.contains("id") && tag.getString("id").equals("minecraft:air"))
+					return null;
 				return updateItemStack(tag);
 			} catch (Exception ex) {
 				Nexus.warn("Failed to parse ItemStack from String: " + string);
