@@ -129,6 +129,9 @@ public class ItemInfoCommand extends CustomCommand {
 		nbtString = nbtString.replaceAll("\\n", "");
 		nbtString = nbtString.replaceAll("\\\\", "");
 
+		// Highlight components
+		nbtString = nbtString.replaceAll("(\"minecraft:[^\"]*\")", "&c$1&f");
+
 		return nbtString;
 	}
 
