@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
 
 @Disabled
 @NoArgsConstructor
-@Environments(Env.PROD)
+@Environments({Env.PROD, Env.STAGING})
 //@Redirect(from = "/advent", to = "/pugmas advent")
 //@Redirect(from = "/district", to = "/pugmas district")
 //@Redirect(from = "/waypoint", to = "/pugmas waypoint")

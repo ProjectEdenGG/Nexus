@@ -57,7 +57,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
-@Environments(Env.PROD)
+@Environments({Env.PROD, Env.STAGING})
 public class Podiums implements Listener {
 
 	static {

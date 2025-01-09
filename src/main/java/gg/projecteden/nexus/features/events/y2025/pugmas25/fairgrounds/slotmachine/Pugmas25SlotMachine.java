@@ -43,7 +43,7 @@ import java.util.Set;
 	world = "pugmas25",
 	playRegion = "pugmas25_slotmachine_play"
 )
-@Environments(Env.PROD)
+@Environments({Env.PROD, Env.STAGING})
 public class Pugmas25SlotMachine extends EdenEventSinglePlayerGame {
 	private static Pugmas25SlotMachine instance;
 

@@ -14,7 +14,7 @@ import org.bukkit.World;
 import java.util.List;
 
 @NoArgsConstructor
-@Environments(Env.PROD)
+@Environments({Env.PROD, Env.STAGING})
 public class VuLan24Effects extends Effects {
 
 	private final List<Location> SMOKE_STACKS = List.of(
