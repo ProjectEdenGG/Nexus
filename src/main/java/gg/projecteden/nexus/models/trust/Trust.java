@@ -6,7 +6,9 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,6 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -103,18 +106,34 @@ public class Trust implements PlayerOwnedObject {
 	}
 
 	@Getter
-	@AllArgsConstructor
 	public enum Type implements IterableEnum {
 		LOCKS(1, Material.CHEST),
 		HOMES(3, Material.CYAN_BED),
 		TELEPORTS(5, Material.COMPASS),
-		DECORATIONS(7, Material.SPRUCE_STAIRS);
+		DECORATIONS(7, CustomMaterial.CHAIR_CLOTH);
 
 		private final int column;
 		private final Material material;
+		private final int modelId;
+
+		Type(int column, CustomMaterial customMaterial) {
+			this.column = column;
+			this.material = customMaterial.getMaterial();
+			this.modelId = customMaterial.getModelId();
+		}
+
+		Type(int column, Material material) {
+			this.column = column;
+			this.material = material;
+			this.modelId = 0;
+		}
 
 		public String camelCase() {
 			return StringUtils.camelCase(name());
+		}
+
+		public ItemStack getDisplayItem() {
+			return new ItemBuilder(this.material).modelId(this.modelId).build();
 		}
 	}
 }

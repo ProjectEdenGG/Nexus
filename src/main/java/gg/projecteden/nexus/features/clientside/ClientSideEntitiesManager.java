@@ -78,6 +78,7 @@ public class ClientSideEntitiesManager implements Listener {
 				for (Player player : OnlinePlayers.where().world("survival").region("spawn").get()) {
 					final var user = ClientSideUser.of(player);
 					new Timer(id + " - " + player.getName(), debug, () -> {
+						user.updateVisibilityBox();
 						for (Entity entity : player.getNearbyEntities(100, 100, 100)) {
 							if (entity instanceof Player || entity instanceof FallingBlock)
 								continue;

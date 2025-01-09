@@ -46,7 +46,7 @@ public class TrustPlayerProvider extends InventoryProvider {
 		for (Trust.Type type : Trust.Type.values()) {
 			Set<UUID> list = trust.get(type);
 
-			ItemBuilder builder = new ItemBuilder(type.getMaterial()).name("&e" + type.camelCase());
+			ItemBuilder builder = new ItemBuilder(type.getDisplayItem()).name("&e" + type.camelCase());
 			if (list.contains(trusted.getUniqueId()))
 				builder.lore("&aTrusted");
 			else
