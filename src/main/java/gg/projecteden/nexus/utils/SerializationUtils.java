@@ -23,6 +23,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,12 +36,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static java.util.stream.Collectors.toList;
 
 public class SerializationUtils {
@@ -99,26 +102,47 @@ public class SerializationUtils {
 
 	public static class YML {
 
-		public static Map<String, ItemStack> serializeItems(ItemStack[] itemStacks) {
-			Map<String, ItemStack> items = new HashMap<>();
-			int slot = 0;
-			for (ItemStack item : itemStacks) {
-				if (item != null)
-					items.put(String.valueOf(slot), item);
-				slot++;
-			}
-
-			return items;
+		public static ItemStack[] asInventory(Map<String, ItemStack> items) {
+			return asArray(items, 41);
 		}
 
-		public static ItemStack[] deserializeItems(Map<String, Object> items) {
-			ItemStack[] inventory = new ItemStack[41];
-			if (items == null) return inventory;
+		public static ItemStack[] asArray(Map<String, ItemStack> items) {
+			if (items == null) return new ItemStack[0];
+			return asArray(items, items.keySet().size());
+		}
 
-			for (Map.Entry<String, Object> item : items.entrySet())
-				inventory[Integer.parseInt(item.getKey())] = (ItemStack) item.getValue();
+		public static ItemStack[] asArray(Map<String, ItemStack> items, int length) {
+			if (items == null) return new ItemStack[0];
+			ItemStack[] inventory = new ItemStack[length];
+
+			for (Map.Entry<String, ItemStack> item : items.entrySet())
+				inventory[Integer.parseInt(item.getKey())] = item.getValue();
 
 			return inventory;
+		}
+
+		public static Map<String, ItemStack> deserializeItemStacks(Map<String, Object> items) {
+			Map<String, ItemStack> deserialized = new LinkedHashMap<>();
+			for (String key : items.keySet()) {
+				var obj = items.get(key);
+				if (obj instanceof CraftItemStack itemStack) {
+					deserialized.put(key, itemStack);
+				} else if (obj instanceof String string) {
+					deserialized.put(key, NBT.deserializeItemStack(string));
+				} else {
+					Nexus.severe("Unknown class for serialized item stack: " + obj.getClass().getSimpleName());
+				}
+			}
+			return deserialized;
+		}
+
+		public static Map<String, String> serializeItemStacks(ItemStack[] items) {
+			Map<String, String> serialized = new LinkedHashMap<>();
+			for (int i = 0; i < items.length; i++) {
+				if (!isNullOrAir(items[i]))
+					serialized.put(String.valueOf(i), NBT.serializeItemStack(items[i]));
+			}
+			return serialized;
 		}
 
 		public static List<String> serializeMaterialSet(Set<Material> materials) {
