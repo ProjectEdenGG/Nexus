@@ -34,7 +34,7 @@ public abstract class _WikiSearchCommand extends CustomCommand {
 	@AllArgsConstructor
 	public enum WikiType {
 		SERVER("https://wiki." + Nexus.DOMAIN, "/w/api.php", "/wiki/"),
-		MINECRAFT("https://minecraft.fandom.com", "/api.php", "/");
+		MINECRAFT("https://minecraft.wiki", "/api.php", "/");
 
 		private final String url, apiPath, basePath;
 
