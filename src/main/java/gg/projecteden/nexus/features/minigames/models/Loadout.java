@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigames.models;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerLoadoutEvent;
 import gg.projecteden.nexus.models.minigamersetting.MinigamerSetting;
 import gg.projecteden.nexus.models.minigamersetting.MinigamerSettingService;
@@ -36,7 +35,6 @@ public class Loadout implements ConfigurationSerializable {
 
 	public Loadout(Map<String, Object> map) {
 		this.inventory = YML.asInventory(YML.deserializeItemStacks((Map<String, Object>) map.getOrDefault("inventory", new HashMap<>())));
-		Nexus.log(Arrays.asList(this.inventory).toString());
 		this.effects = (List<PotionEffect>) map.getOrDefault("effects", effects);
 		isLoadoutEmpty = Arrays.stream(this.inventory).noneMatch(Objects::nonNull);
 	}
