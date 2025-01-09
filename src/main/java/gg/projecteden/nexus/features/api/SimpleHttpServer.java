@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.api;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import gg.projecteden.api.common.annotations.Environments;
+import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.api.annotations.Get;
 import gg.projecteden.nexus.features.api.annotations.Post;
@@ -17,6 +19,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 
+@Environments(Env.PROD)
 public class SimpleHttpServer extends Feature {
 	private static final int PORT = 8181;
 	private static final Controller CONTROLLER = new Controller();
