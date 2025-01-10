@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.resourcepack.models.font;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import net.md_5.bungee.api.ChatColor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -20,7 +21,8 @@ public enum CustomTexture {
 	GUI_PUGMAS25_ADVENT_1("?"),
 	GUI_PUGMAS25_ADVENT_2("?"),
 
-	GUI_PROFILE_SELF("升"),
+	GUI_PROFILE("升"),
+	GUI_PROFILE_BACKGROUND("顼"),
 	GUI_PROFILE_RANK_UNKNOWN("笞"),
 	GUI_PROFILE_RANK_GUEST("砫"),
 	GUI_PROFILE_RANK_MEMBER("鼫"),
@@ -71,12 +73,20 @@ public enum CustomTexture {
 		return getMenuTexture(fontChar, rows);
 	}
 
+	public String getMenuTexture(ChatColor color, int rows) {
+		return getMenuTexture(fontChar, color, rows);
+	}
+
 	public String getNextMenuTexture() {
 		return getNextMenuTexture(this.rows);
 	}
 
 	public String getNextMenuTexture(int rows) {
 		return getNextMenuTexture(fontChar, rows);
+	}
+
+	public String getNextMenuTexture(ChatColor color, int rows) {
+		return getNextMenuTexture(fontChar, color, rows);
 	}
 
 	//
@@ -93,12 +103,24 @@ public enum CustomTexture {
 		return getMenuTexture(10, textureChar, rows);
 	}
 
+	private String getMenuTexture(String textureChar, ChatColor color, int rows) {
+		return getMenuTexture(10, textureChar, color, rows);
+	}
+
 	private static String getNextMenuTexture(String textureChar, int rows) {
 		return getMenuTexture(9, textureChar, rows);
 	}
 
 	private static String getMenuTexture(int minus, String textureChar, int rows) {
-		String title = minus(minus) + "&f" + textureChar;
+		return getMenuTexture(minus, textureChar, ChatColor.WHITE, rows);
+	}
+
+	private static String getNextMenuTexture(String textureChar, ChatColor color, int rows) {
+		return getMenuTexture(9, textureChar, color, rows);
+	}
+
+	private static String getMenuTexture(int minus, String textureChar, ChatColor color, int rows) {
+		String title = minus(minus) + color + textureChar;
 
 		// TODO: figure out all other row spacings
 		if (rows == 3) return title + minus(213); // 3

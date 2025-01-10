@@ -38,6 +38,8 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.party.Party;
 import gg.projecteden.nexus.models.party.PartyManager;
+import gg.projecteden.nexus.models.profile.ProfileUser;
+import gg.projecteden.nexus.models.profile.ProfileUserService;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmor;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorService;
 import gg.projecteden.nexus.models.shop.Shop;
@@ -81,7 +83,10 @@ public class ProfileProvider extends InventoryProvider {
 	private static final TrustService trustService = new TrustService();
 
 	InventoryProvider previousMenu = null;
-	private final Nerd target;
+
+	private final ProfileUser targetUser;
+	private final ChatColor backgroundColor;
+
 	private ItemStack armorHelmet = null;
 	private ItemStack armorChestplate = null;
 	private ItemStack armorLeggings = null;
@@ -89,104 +94,39 @@ public class ProfileProvider extends InventoryProvider {
 	private ItemStack costumeHat = null;
 	private ItemStack costumeHand = null;
 
+
 	public ProfileProvider(OfflinePlayer offlinePlayer, @Nullable InventoryProvider previousMenu) {
 		this(offlinePlayer);
 		this.previousMenu = previousMenu;
 	}
 
 	public ProfileProvider(OfflinePlayer offlinePlayer) {
-		this.target = Nerd.of(offlinePlayer);
+		this.targetUser = new ProfileUserService().get(offlinePlayer);
+		this.backgroundColor = targetUser.getBackgroundColor();
 
-		fillCostumes(target);
-		fillArmor(target);
-	}
-
-	@AllArgsConstructor
-	private enum SlotTexture {
-		// @formatter:off
-		ARMOR_HELMET(		CustomTexture.GUI_PROFILE_ARMOR_HELMET, new SlotPos(1, 8)),
-		ARMOR_CHESTPLATE(	CustomTexture.GUI_PROFILE_ARMOR_CHESTPLATE, new SlotPos(2, 8)),
-		ARMOR_LEGGINGS(		CustomTexture.GUI_PROFILE_ARMOR_LEGGINGS, new SlotPos(3, 8)),
-		ARMOR_BOOTS(		CustomTexture.GUI_PROFILE_ARMOR_BOOTS, new SlotPos(4, 8)),
-		COSTUME_HAT(		CustomTexture.GUI_PROFILE_COSTUME_HAT, new SlotPos(1, 7)),
-		COSTUME_HAND(		CustomTexture.GUI_PROFILE_COSTUME_HAND, new SlotPos(2, 7)),
-		;
-		// @formatter:on
-
-		final CustomTexture character;
-		final SlotPos itemSlot;
-
-		public String getMenuTexture(ProfileProvider provider) {
-			ItemStack itemStack = getItem(provider);
-
-			if (Nullables.isNotNullOrAir(itemStack))
-				return "";
-
-			return this.character.getNextMenuTexture(6);
-		}
-
-		public void setItem(ProfileProvider provider, InventoryContents contents) {
-			ItemStack itemStack = getItem(provider);
-
-			if (Nullables.isNullOrAir(itemStack))
-				return;
-
-			contents.set(this.itemSlot, ClickableItem.empty(itemStack.clone()));
-		}
-
-		private ItemStack getItem(ProfileProvider provider) {
-			return switch (this) {
-				case ARMOR_HELMET -> provider.armorHelmet;
-				case ARMOR_CHESTPLATE -> provider.armorChestplate;
-				case ARMOR_LEGGINGS -> provider.armorLeggings;
-				case ARMOR_BOOTS -> provider.armorBoots;
-				case COSTUME_HAT -> provider.costumeHat;
-				case COSTUME_HAND -> provider.costumeHand;
-			};
-		}
-	}
-
-	@AllArgsConstructor
-	private enum RankTexture {
-		UNKNOWN(CustomTexture.GUI_PROFILE_RANK_UNKNOWN),
-		GUEST(CustomTexture.GUI_PROFILE_RANK_GUEST),
-		MEMBER(CustomTexture.GUI_PROFILE_RANK_MEMBER),
-		TRUSTED(CustomTexture.GUI_PROFILE_RANK_TRUSTED),
-		ELITE(CustomTexture.GUI_PROFILE_RANK_ELITE),
-		VETERAN(CustomTexture.GUI_PROFILE_RANK_VETERAN),
-		NOBLE(CustomTexture.GUI_PROFILE_RANK_NOBLE),
-		BUILDER(CustomTexture.GUI_PROFILE_RANK_BUILDER),
-		ARCHITECT(CustomTexture.GUI_PROFILE_RANK_ARCHITECT),
-		MODERATOR(CustomTexture.GUI_PROFILE_RANK_MODERATOR),
-		OPERATOR(CustomTexture.GUI_PROFILE_RANK_OPERATOR),
-		ADMIN(CustomTexture.GUI_PROFILE_RANK_ADMIN),
-		OWNER(CustomTexture.GUI_PROFILE_RANK_OWNER),
-		;
-
-		final CustomTexture texture;
-
-		public static String getMenuTexture(ProfileProvider provider) {
-			String rankName = provider.target.getRank().name();
-			RankTexture rankTexture = Arrays.stream(RankTexture.values())
-				.filter(_rankTexture -> _rankTexture.name().equalsIgnoreCase(rankName))
-				.findFirst()
-				.orElse(RankTexture.UNKNOWN);
-
-			return rankTexture.texture.getNextMenuTexture(6);
-		}
+		fillCostumes(targetUser);
+		fillArmor(targetUser);
 	}
 
 	@Override
 	public JsonBuilder getTitleComponent() {
-		String titleName = "&f" + getProfileTitle(target.getNickname());
-		StringBuilder texture = new StringBuilder(CustomTexture.GUI_PROFILE_SELF.getMenuTexture());
+		String titleName = "&f" + getProfileTitle(targetUser.getNickname());
+		StringBuilder texture = new StringBuilder(CustomTexture.GUI_PROFILE.getMenuTexture());
+
+		texture.append(CustomTexture.GUI_PROFILE_BACKGROUND.getNextMenuTexture(backgroundColor, this.getRows()));
 
 		for (SlotTexture slotTexture : SlotTexture.values())
 			texture.append(slotTexture.getMenuTexture(this));
 
-		texture.append(RankTexture.getMenuTexture(this));
+		texture.append(RankTexture.getTexture(this));
 
 		return new JsonBuilder(texture.toString()).group().next(titleName).font(CustomFont.PROFILE_TITLE).group();
+	}
+
+	public static String getProfileTitle(String nickname) {
+		return nickname.toLowerCase().chars()
+			.mapToObj(c -> (char) c + "ꈃ")
+			.collect(Collectors.joining());
 	}
 
 	@Override
@@ -194,8 +134,8 @@ public class ProfileProvider extends InventoryProvider {
 		addBackOrCloseItem(previousMenu);
 
 		for (ProfileProvider.ProfileMenuItem menuItem : ProfileProvider.ProfileMenuItem.values()) {
-			menuItem.setClickableItem(viewer, target, contents, this);
-			menuItem.setExtraClickableItems(viewer, target, contents, this);
+			menuItem.setClickableItem(viewer, targetUser, contents, this);
+			menuItem.setExtraClickableItems(viewer, targetUser, contents, this);
 		}
 
 		for (SlotTexture slotTexture : SlotTexture.values()) {
@@ -203,26 +143,45 @@ public class ProfileProvider extends InventoryProvider {
 		}
 	}
 
+	//
+
 	@Getter
 	@AllArgsConstructor
 	enum ProfileMenuItem {
+		SETTINGS(0, 8, CustomMaterial.GUI_GEAR) {
+			@Override
+			public boolean shouldShow(Player viewer, ProfileUser target) {
+				return isSelf(viewer, target);
+			}
+
+			@Override
+			public void onClick(ItemClickData e, Player viewer, ProfileUser target, InventoryContents contents, InventoryProvider previousMenu) {
+				new ProfileSettingsProvider(viewer, previousMenu, target).open(viewer);
+			}
+
+
+		},
 		PLAYER(2, 1, CustomMaterial.GUI_PROFILE_PLAYER_HEAD) {
 			@Override
-			public String getName(Player viewer, Nerd target) {
-				String prefix = target.getFullPrefix(Chatter.of(target));
-				final ChatColor rankColor = target.isKoda() ? Koda.getChatColor() : target.getRank().getChatColor();
+			public String getName(Player viewer, ProfileUser target) {
+				Nerd targetNerd = getNerd(target);
+				String prefix = targetNerd.getFullPrefix(Chatter.of(targetNerd));
+				final ChatColor rankColor = targetNerd.isKoda() ? Koda.getChatColor() : targetNerd.getRank().getChatColor();
+
 				return prefix + rankColor + target.getNickname();
 			}
 
 			@Override
-			public List<String> getLore(Player viewer, Nerd target) {
+			public List<String> getLore(Player viewer, ProfileUser target) {
 				List<String> lines = new ArrayList<>();
+
+				Nerd targetNerd = getNerd(target);
 
 				if (target.hasNickname())
 					lines.add("&3Real name: &e" + target.getName());
 
-				if (Nullables.isNotNullOrEmpty(target.getPronouns()))
-					lines.add("&3Pronouns: " + target.getPronouns().stream().map(pronoun -> "&e" + pronoun + "&3").collect(Collectors.joining(", ")));
+				if (Nullables.isNotNullOrEmpty(targetNerd.getPronouns()))
+					lines.add("&3Pronouns: " + targetNerd.getPronouns().stream().map(pronoun -> "&e" + pronoun + "&3").collect(Collectors.joining(", ")));
 
 				if (PlayerUtils.canSee(viewer, target))
 					lines.add("&3WorldGroup: &e" + StringUtils.camelCase(target.getWorldGroup()));
@@ -231,12 +190,12 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public ItemBuilder getItemBuilder(Player viewer, Nerd target) {
+			public ItemBuilder getItemBuilder(Player viewer, ProfileUser target) {
 				return super.getItemBuilder(viewer, target).skullOwner(target);
 			}
 
 			@Override
-			public List<SlotPos> getExtraSlots(Player viewer, Nerd target) {
+			public List<SlotPos> getExtraSlots(Player viewer, ProfileUser target) {
 				int row = getRow();
 				int row0 = row - 1;
 				int row1 = row + 1;
@@ -252,30 +211,31 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public ItemBuilder getExtraSlotItemBuilder(Player viewer, Nerd target) {
+			public ItemBuilder getExtraSlotItemBuilder(Player viewer, ProfileUser target) {
 				return getInvisibleCopy(viewer, target);
 			}
 		},
 
 		PRESENCE(1, 2, CustomMaterial.PRESENCE_OFFLINE) {
 			@Override
-			public String getName(Player viewer, Nerd target) {
-				return "&e" + target.getPresence().getName();
+			public String getName(Player viewer, ProfileUser target) {
+				return "&e" + getNerd(target).getPresence().getName();
 			}
 
 			@Override
-			public int getModelId(Player viewer, Nerd target) {
+			public int getModelId(Player viewer, ProfileUser target) {
 				return Presence.of(target.getOfflinePlayer(), viewer).getModelId();
 			}
 
 			@Override
-			public List<String> getLore(Player viewer, Nerd target) {
+			public List<String> getLore(Player viewer, ProfileUser target) {
 				return getPresenceLore(viewer, target);
 			}
 
 			@NotNull
-			private List<String> getPresenceLore(Player viewer, Nerd target) {
+			private List<String> getPresenceLore(Player viewer, ProfileUser target) {
 				List<String> lines = new ArrayList<>();
+				Nerd targetNerd = getNerd(target);
 
 				// Current Time
 				GeoIP geoip = new GeoIPService().get(target);
@@ -284,16 +244,16 @@ public class ProfileProvider extends InventoryProvider {
 
 				// Last Seen / Online For
 				if (target.isOnline() && PlayerUtils.canSee(viewer, target)) {
-					LocalDateTime lastJoin = target.getLastJoin(viewer);
+					LocalDateTime lastJoin = targetNerd.getLastJoin(viewer);
 					lines.add("&3Online for: &e" + Timespan.of(lastJoin).format());
 				} else {
-					LocalDateTime lastQuit = target.getLastQuit(viewer);
+					LocalDateTime lastQuit = targetNerd.getLastQuit(viewer);
 					if (lastQuit != null)
 						lines.add("&3Last seen: &e" + Timespan.of(lastQuit).format());
 				}
 
 				// First Join
-				lines.add("&3First join: &e" + TimeUtils.shortDateTimeFormat(target.getFirstJoin()));
+				lines.add("&3First join: &e" + TimeUtils.shortDateTimeFormat(targetNerd.getFirstJoin()));
 
 				// Hours
 				Hours hours = new HoursService().get(target);
@@ -304,14 +264,14 @@ public class ProfileProvider extends InventoryProvider {
 
 		WALLET(3, 4, CustomMaterial.GOLD_COINS_9) {
 			@Override
-			public List<String> getLore(Player viewer, Nerd target) {
-				return BankCommand.getLines(Nerd.of(viewer), target);
+			public List<String> getLore(Player viewer, ProfileUser target) {
+				return BankCommand.getLines(Nerd.of(viewer), getNerd(target));
 			}
 		},
 
 		LEVELS(3, 5, Material.EXPERIENCE_BOTTLE, 0) {
 			@Override
-			public List<String> getLore(Player viewer, Nerd target) {
+			public List<String> getLore(Player viewer, ProfileUser target) {
 				List<String> lines = new ArrayList<>();
 
 				if (target.getPlayer() != null)
@@ -319,7 +279,7 @@ public class ProfileProvider extends InventoryProvider {
 
 				lines.add("&3McMMO:");
 				for (PrimarySkillType skill : PrimarySkillType.values()) {
-					lines.add("&3- " + StringUtils.camelCase(skill) + ": &e" + McMMOCommand.getSkillLevel(target, skill));
+					lines.add("&3- " + StringUtils.camelCase(skill) + ": &e" + McMMOCommand.getSkillLevel(getNerd(target), skill));
 				}
 
 				return lines;
@@ -328,7 +288,7 @@ public class ProfileProvider extends InventoryProvider {
 
 		VIEW_SOCIAL_MEDIA(3, 6, CustomMaterial.GUI_PROFILE_ICON_SOCIAL_MEDIA) {
 			@Override
-			public boolean shouldShow(Player viewer, Nerd target) {
+			public boolean shouldShow(Player viewer, ProfileUser target) {
 				SocialMediaUser user = socialMediaUserService.get(target);
 
 				List<SocialMediaSite> connectedSites = Arrays.stream(SocialMediaSite.values()).filter(site -> user.getConnection(site) != null).toList();
@@ -336,14 +296,14 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
+			public void onClick(ItemClickData e, Player viewer, ProfileUser target, InventoryContents contents, InventoryProvider previousMenu) {
 				SocialMediaCommand.open(viewer, target.getOfflinePlayer(), "/profile " + target.getNickname());
 			}
 		},
 
 		LINK_SOCIAL_MEDIA(3, 6, CustomMaterial.GUI_PROFILE_ICON_SOCIAL_MEDIA_LINK) {
 			@Override
-			public boolean shouldShow(Player viewer, Nerd target) {
+			public boolean shouldShow(Player viewer, ProfileUser target) {
 				if (!isSelf(viewer, target))
 					return false;
 
@@ -354,7 +314,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
+			public void onClick(ItemClickData e, Player viewer, ProfileUser target, InventoryContents contents, InventoryProvider previousMenu) {
 				viewer.closeInventory();
 				PlayerUtils.runCommand(viewer, "socialmedia help");
 			}
@@ -362,12 +322,12 @@ public class ProfileProvider extends InventoryProvider {
 
 		MODIFY_FRIEND(4, 1, CustomMaterial.GUI_PROFILE_ICON_FRIEND_MODIFY_ADD) {
 			@Override
-			public boolean shouldShow(Player viewer, Nerd target) {
+			public boolean shouldShow(Player viewer, ProfileUser target) {
 				return !isSelf(viewer, target);
 			}
 
 			@Override
-			public String getName(Player viewer, Nerd target) {
+			public String getName(Player viewer, ProfileUser target) {
 				if (hasSentRequest(viewer, target))
 					return "&eRequest Sent";
 
@@ -378,7 +338,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public List<String> getLore(Player viewer, Nerd target) {
+			public List<String> getLore(Player viewer, ProfileUser target) {
 				if (hasSentRequest(viewer, target))
 					return List.of("&eClick &3to cancel friend request");
 
@@ -389,7 +349,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public int getModelId(Player viewer, Nerd target) {
+			public int getModelId(Player viewer, ProfileUser target) {
 				if (isFriendsWith(friendService.get(target), viewer))
 					return CustomMaterial.GUI_PROFILE_ICON_FRIEND_MODIFY_REMOVE.getModelId();
 
@@ -397,7 +357,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
+			public void onClick(ItemClickData e, Player viewer, ProfileUser target, InventoryContents contents, InventoryProvider previousMenu) {
 				FriendsUser userFriend = friendService.get(viewer);
 				FriendsUser targetFriend = friendService.get(target);
 
@@ -416,7 +376,7 @@ public class ProfileProvider extends InventoryProvider {
 				reopenMenu(viewer, target, previousMenu);
 			}
 
-			private boolean hasSentRequest(Player viewer, Nerd target) {
+			private boolean hasSentRequest(Player viewer, ProfileUser target) {
 				return friendService.get(viewer).getRequests_sent().contains(target.getUniqueId());
 			}
 
@@ -427,7 +387,7 @@ public class ProfileProvider extends InventoryProvider {
 
 		VIEW_FRIENDS(4, 2, CustomMaterial.GUI_PROFILE_ICON_FRIENDS) {
 			@Override
-			public List<String> getLore(Player viewer, Nerd target) {
+			public List<String> getLore(Player viewer, ProfileUser target) {
 				if (hasNoFriends(target))
 					return List.of("&c" + target.getNickname() + " has no friends ):");
 
@@ -435,7 +395,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public int getModelId(Player viewer, Nerd target) {
+			public int getModelId(Player viewer, ProfileUser target) {
 				if (hasNoFriends(target))
 					return CustomMaterial.GUI_PROFILE_ICON_FRIENDS_ERROR.getModelId();
 
@@ -443,25 +403,25 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
+			public void onClick(ItemClickData e, Player viewer, ProfileUser target, InventoryContents contents, InventoryProvider previousMenu) {
 				if (hasNoFriends(target))
 					return;
 
 				new FriendsProvider(target.getOfflinePlayer(), viewer, previousMenu).open(viewer);
 			}
 
-			private boolean hasNoFriends(Nerd target) {
+			private boolean hasNoFriends(ProfileUser target) {
 				return friendService.get(target).getFriends().isEmpty();
 			}
 
-			private int totalFriends(Nerd target) {
+			private int totalFriends(ProfileUser target) {
 				return friendService.get(target).getFriends().size();
 			}
 		},
 
 		PARTY(4, 3, CustomMaterial.GUI_PROFILE_ICON_PARTY) {
 			@Override
-			public boolean shouldShow(Player viewer, Nerd target) {
+			public boolean shouldShow(Player viewer, ProfileUser target) {
 				Party partyTarget = getParty(target);
 				Party partyViewer = getParty(viewer);
 				boolean isSameParty = isInSameParty(partyTarget, viewer, target);
@@ -482,7 +442,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public int getModelId(Player viewer, Nerd target) {
+			public int getModelId(Player viewer, ProfileUser target) {
 				boolean isSelf = isSelf(viewer, target);
 				Party partyTarget = getParty(target);
 				Party partyViewer = getParty(viewer);
@@ -508,7 +468,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public String getName(Player viewer, Nerd target) {
+			public String getName(Player viewer, ProfileUser target) {
 				boolean isSelf = isSelf(viewer, target);
 				Party partyTarget = getParty(target);
 				Party partyViewer = getParty(viewer);
@@ -534,7 +494,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public List<String> getLore(Player viewer, Nerd target) {
+			public List<String> getLore(Player viewer, ProfileUser target) {
 				boolean isSelf = isSelf(viewer, target);
 				Party partyTarget = getParty(target);
 				Party partyViewer = getParty(viewer);
@@ -560,7 +520,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
+			public void onClick(ItemClickData e, Player viewer, ProfileUser target, InventoryContents contents, InventoryProvider previousMenu) {
 				boolean isSelf = isSelf(viewer, target);
 				Party partyTarget = getParty(target);
 				Party partyViewer = getParty(viewer);
@@ -598,15 +558,15 @@ public class ProfileProvider extends InventoryProvider {
 
 			//
 
-			private Party getParty(Nerd nerd) {
-				return PartyManager.of(nerd.getOfflinePlayer());
+			private Party getParty(ProfileUser user) {
+				return PartyManager.of(user.getOfflinePlayer());
 			}
 
 			private Party getParty(Player player) {
 				return PartyManager.of(player);
 			}
 
-			private boolean isInSameParty(Party party, Player viewer, Nerd target) {
+			private boolean isInSameParty(Party party, Player viewer, ProfileUser target) {
 				if (party == null)
 					return false;
 
@@ -623,7 +583,7 @@ public class ProfileProvider extends InventoryProvider {
 
 		TELEPORT(4, 6, Material.ENDER_PEARL, 0) {
 			@Override
-			public boolean shouldShow(Player viewer, Nerd target) {
+			public boolean shouldShow(Player viewer, ProfileUser target) {
 				if (ProfileMenuItem.isSelf(viewer, target))
 					return false;
 
@@ -631,7 +591,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public List<String> getLore(Player viewer, Nerd target) {
+			public List<String> getLore(Player viewer, ProfileUser target) {
 				if (Rank.of(viewer).isStaff())
 					return List.of("&eClick &3to teleport to &e" + target.getNickname());
 
@@ -639,14 +599,14 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
+			public void onClick(ItemClickData e, Player viewer, ProfileUser target, InventoryContents contents, InventoryProvider previousMenu) {
 				PlayerUtils.runCommand(viewer, "tp " + target.getName());
 			}
 		},
 
 		VIEW_SHOP(4, 4, Material.EMERALD, 0) {
 			@Override
-			public List<String> getLore(Player viewer, Nerd target) {
+			public List<String> getLore(Player viewer, ProfileUser target) {
 				Shop.ShopGroup shopGroup = Shop.ShopGroup.of(viewer.getWorld());
 				if (shopGroup == null)
 					return List.of("&cShops are not enabled in this world");
@@ -659,7 +619,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
+			public void onClick(ItemClickData e, Player viewer, ProfileUser target, InventoryContents contents, InventoryProvider previousMenu) {
 				Shop.ShopGroup shopGroup = Shop.ShopGroup.of(viewer.getWorld());
 				if (shopGroup == null)
 					return;
@@ -675,7 +635,7 @@ public class ProfileProvider extends InventoryProvider {
 
 		VIEW_HOMES(4, 0, CustomMaterial.GUI_PROFILE_ICON_HOMES) {
 			@Override
-			public String getName(Player viewer, Nerd target) {
+			public String getName(Player viewer, ProfileUser target) {
 				if (ProfileMenuItem.isSelf(viewer, target))
 					return "&eEdit Homes";
 
@@ -683,7 +643,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public List<String> getLore(Player viewer, Nerd target) {
+			public List<String> getLore(Player viewer, ProfileUser target) {
 				if (ProfileMenuItem.isSelf(viewer, target))
 					super.getLore(viewer, target);
 
@@ -698,7 +658,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
+			public void onClick(ItemClickData e, Player viewer, ProfileUser target, InventoryContents contents, InventoryProvider previousMenu) {
 				HomeOwner targetOwner = homeService.get(target);
 
 				if (ProfileMenuItem.isSelf(viewer, target)) {
@@ -718,7 +678,7 @@ public class ProfileProvider extends InventoryProvider {
 
 		EDIT_TRUSTS(4, 5, CustomMaterial.GUI_PROFILE_ICON_TRUSTS) {
 			@Override
-			public List<String> getLore(Player viewer, Nerd target) {
+			public List<String> getLore(Player viewer, ProfileUser target) {
 				if (isSelf(viewer, target))
 					return super.getLore(viewer, target);
 
@@ -726,7 +686,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
+			public void onClick(ItemClickData e, Player viewer, ProfileUser target, InventoryContents contents, InventoryProvider previousMenu) {
 				if (isSelf(viewer, target)) {
 					new TrustProvider(previousMenu).open(viewer);
 					return;
@@ -737,7 +697,11 @@ public class ProfileProvider extends InventoryProvider {
 		},
 		;
 
-		private static boolean isSelf(Player viewer, Nerd target) {
+		private static Nerd getNerd(ProfileUser user) {
+			return Nerd.of(user);
+		}
+
+		private static boolean isSelf(Player viewer, ProfileUser target) {
 			return PlayerUtils.isSelf(viewer, target);
 		}
 
@@ -749,62 +713,62 @@ public class ProfileProvider extends InventoryProvider {
 			this(row, col, customMaterial.getMaterial(), customMaterial.getModelId());
 		}
 
-		public int getCol(Player viewer, Nerd target) {
+		public int getCol(Player viewer, ProfileUser target) {
 			return col;
 		}
 
-		public int getRow(Player viewer, Nerd target) {
+		public int getRow(Player viewer, ProfileUser target) {
 			return row;
 		}
 
-		public boolean shouldShow(Player viewer, Nerd target) {
+		public boolean shouldShow(Player viewer, ProfileUser target) {
 			return true;
 		}
 
-		public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
+		public void onClick(ItemClickData e, Player viewer, ProfileUser target, InventoryContents contents, InventoryProvider previousMenu) {
 		}
 
-		public SlotPos getSlotPos(Player viewer, Nerd target) {
+		public SlotPos getSlotPos(Player viewer, ProfileUser target) {
 			return SlotPos.of(getRow(viewer, target), getCol(viewer, target));
 		}
 
-		public String getName(Player viewer, Nerd target) {
+		public String getName(Player viewer, ProfileUser target) {
 			return "&e" + StringUtils.camelCase(this);
 		}
 
-		public int getModelId(Player viewer, Nerd target) {
+		public int getModelId(Player viewer, ProfileUser target) {
 			return modelId;
 		}
 
-		public List<String> getLore(Player viewer, Nerd target) {
+		public List<String> getLore(Player viewer, ProfileUser target) {
 			return Collections.emptyList();
 		}
 
-		public ItemBuilder getItemBuilder(Player viewer, Nerd target) {
+		public ItemBuilder getItemBuilder(Player viewer, ProfileUser target) {
 			int modelId = getModelId(viewer, target);
 			if (modelId == -1)
 				return null;
 
 			return new ItemBuilder(getMaterial())
-				.modelId(getModelId(viewer, target))
+				.modelId(modelId)
 				.name(getName(viewer, target))
 				.lore(getLore(viewer, target))
 				.clone();
 		}
 
-		public List<SlotPos> getExtraSlots(Player viewer, Nerd target) {
+		public List<SlotPos> getExtraSlots(Player viewer, ProfileUser target) {
 			return Collections.emptyList();
 		}
 
-		public ItemBuilder getExtraSlotItemBuilder(Player viewer, Nerd target) {
+		public ItemBuilder getExtraSlotItemBuilder(Player viewer, ProfileUser target) {
 			return getItemBuilder(viewer, target).clone();
 		}
 
-		public ItemBuilder getInvisibleCopy(Player viewer, Nerd target) {
+		public ItemBuilder getInvisibleCopy(Player viewer, ProfileUser target) {
 			return getItemBuilder(viewer, target).clone().material(CustomMaterial.INVISIBLE);
 		}
 
-		public void setClickableItem(Player player, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
+		public void setClickableItem(Player player, ProfileUser target, InventoryContents contents, InventoryProvider previousMenu) {
 			ClickableItem clickableItem = getClickableItem(player, target, contents, previousMenu);
 			if (clickableItem == null)
 				return;
@@ -812,7 +776,7 @@ public class ProfileProvider extends InventoryProvider {
 			contents.set(getSlotPos(player, target), clickableItem);
 		}
 
-		public void setExtraClickableItems(Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
+		public void setExtraClickableItems(Player viewer, ProfileUser target, InventoryContents contents, InventoryProvider previousMenu) {
 			for (SlotPos slotPos : getExtraSlots(viewer, target)) {
 				ClickableItem clickableItem = getClickableItem(viewer, target, getExtraSlotItemBuilder(viewer, target), contents, previousMenu);
 				if (clickableItem == null)
@@ -822,18 +786,18 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		}
 
-		public ClickableItem getClickableItem(Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
+		public ClickableItem getClickableItem(Player viewer, ProfileUser target, InventoryContents contents, InventoryProvider previousMenu) {
 			return getClickableItem(viewer, target, getItemBuilder(viewer, target), contents, previousMenu);
 		}
 
-		public ClickableItem getClickableItem(Player viewer, Nerd target, ItemBuilder itemBuilder, InventoryContents contents, InventoryProvider previousMenu) {
+		public ClickableItem getClickableItem(Player viewer, ProfileUser target, ItemBuilder itemBuilder, InventoryContents contents, InventoryProvider previousMenu) {
 			if (Nullables.isNullOrAir(itemBuilder) || !shouldShow(viewer, target))
 				return null;
 
 			return ClickableItem.of(itemBuilder, e -> onClick(e, viewer, target, contents, previousMenu));
 		}
 
-		public void refresh(Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
+		public void refresh(Player viewer, ProfileUser target, InventoryContents contents, InventoryProvider previousMenu) {
 			this.setClickableItem(viewer, target, contents, previousMenu);
 			this.setExtraClickableItems(viewer, target, contents, previousMenu);
 		}
@@ -841,7 +805,7 @@ public class ProfileProvider extends InventoryProvider {
 
 	//
 
-	private void fillCostumes(Nerd target) {
+	private void fillCostumes(ProfileUser target) {
 		CostumeUser costumeUser = costumeService.get(target);
 		RainbowArmor rainbowArmor = rbaService.get(target);
 
@@ -849,7 +813,7 @@ public class ProfileProvider extends InventoryProvider {
 		this.costumeHand = getCostumeItem(Costume.CostumeType.HAND, costumeUser, rainbowArmor);
 	}
 
-	private void fillArmor(Nerd target) {
+	private void fillArmor(ProfileUser target) {
 		Player player = target.getPlayer();
 		if (player != null) {
 			PlayerInventory inventory = player.getInventory();
@@ -858,12 +822,6 @@ public class ProfileProvider extends InventoryProvider {
 			this.armorLeggings = inventory.getLeggings();
 			this.armorBoots = inventory.getBoots();
 		}
-	}
-
-	public static String getProfileTitle(String nickname) {
-		return nickname.toLowerCase().chars()
-			.mapToObj(c -> (char) c + "ꈃ")
-			.collect(Collectors.joining());
 	}
 
 	// Costume hat can sometimes also be actual helmet, which we want to prevent showing twice
@@ -913,8 +871,97 @@ public class ProfileProvider extends InventoryProvider {
 		return _item.build();
 	}
 
-	private static void reopenMenu(Player viewer, Nerd target, InventoryProvider previousMenu) {
+	private static void reopenMenu(Player viewer, ProfileUser target, InventoryProvider previousMenu) {
 		new ProfileProvider(target.getOfflinePlayer(), previousMenu).open(viewer);
+	}
+
+	// Textures
+
+	private interface ProfileTexture {
+		default String getMenuTexture(ProfileProvider provider) {
+			return "";
+		}
+
+	}
+
+	@AllArgsConstructor
+	private enum SlotTexture implements ProfileTexture {
+		// @formatter:off
+		ARMOR_HELMET(		CustomTexture.GUI_PROFILE_ARMOR_HELMET, new SlotPos(1, 8)),
+		ARMOR_CHESTPLATE(	CustomTexture.GUI_PROFILE_ARMOR_CHESTPLATE, new SlotPos(2, 8)),
+		ARMOR_LEGGINGS(		CustomTexture.GUI_PROFILE_ARMOR_LEGGINGS, new SlotPos(3, 8)),
+		ARMOR_BOOTS(		CustomTexture.GUI_PROFILE_ARMOR_BOOTS, new SlotPos(4, 8)),
+		COSTUME_HAT(		CustomTexture.GUI_PROFILE_COSTUME_HAT, new SlotPos(1, 7)),
+		COSTUME_HAND(		CustomTexture.GUI_PROFILE_COSTUME_HAND, new SlotPos(2, 7)),
+		;
+		// @formatter:on
+
+		final CustomTexture character;
+		final SlotPos itemSlot;
+
+		public String getMenuTexture(ProfileProvider provider) {
+			ItemStack itemStack = getItem(provider);
+
+			if (Nullables.isNotNullOrAir(itemStack))
+				return "";
+
+			return this.character.getNextMenuTexture(provider.getRows());
+		}
+
+		public void setItem(ProfileProvider provider, InventoryContents contents) {
+			ItemStack itemStack = getItem(provider);
+
+			if (Nullables.isNullOrAir(itemStack))
+				return;
+
+			contents.set(this.itemSlot, ClickableItem.empty(itemStack.clone()));
+		}
+
+		private ItemStack getItem(ProfileProvider provider) {
+			return switch (this) {
+				case ARMOR_HELMET -> provider.armorHelmet;
+				case ARMOR_CHESTPLATE -> provider.armorChestplate;
+				case ARMOR_LEGGINGS -> provider.armorLeggings;
+				case ARMOR_BOOTS -> provider.armorBoots;
+				case COSTUME_HAT -> provider.costumeHat;
+				case COSTUME_HAND -> provider.costumeHand;
+			};
+		}
+	}
+
+	@AllArgsConstructor
+	private enum RankTexture implements ProfileTexture {
+		UNKNOWN(CustomTexture.GUI_PROFILE_RANK_UNKNOWN),
+		GUEST(CustomTexture.GUI_PROFILE_RANK_GUEST),
+		MEMBER(CustomTexture.GUI_PROFILE_RANK_MEMBER),
+		TRUSTED(CustomTexture.GUI_PROFILE_RANK_TRUSTED),
+		ELITE(CustomTexture.GUI_PROFILE_RANK_ELITE),
+		VETERAN(CustomTexture.GUI_PROFILE_RANK_VETERAN),
+		NOBLE(CustomTexture.GUI_PROFILE_RANK_NOBLE),
+		BUILDER(CustomTexture.GUI_PROFILE_RANK_BUILDER),
+		ARCHITECT(CustomTexture.GUI_PROFILE_RANK_ARCHITECT),
+		MODERATOR(CustomTexture.GUI_PROFILE_RANK_MODERATOR),
+		OPERATOR(CustomTexture.GUI_PROFILE_RANK_OPERATOR),
+		ADMIN(CustomTexture.GUI_PROFILE_RANK_ADMIN),
+		OWNER(CustomTexture.GUI_PROFILE_RANK_OWNER),
+		;
+
+		final CustomTexture texture;
+
+		public String getMenuTexture(ProfileProvider provider) {
+			return texture.getNextMenuTexture(provider.getRows());
+		}
+
+		public static String getTexture(ProfileProvider provider) {
+			String rankName = provider.targetUser.getRank().name();
+
+			RankTexture rankTexture = Arrays.stream(RankTexture.values())
+				.filter(_rankTexture -> _rankTexture.name().equalsIgnoreCase(rankName))
+				.findFirst()
+				.orElse(RankTexture.UNKNOWN);
+
+			return rankTexture.getMenuTexture(provider);
+		}
 	}
 
 }

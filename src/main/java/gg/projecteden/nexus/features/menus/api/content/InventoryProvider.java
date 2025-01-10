@@ -17,8 +17,13 @@
 package gg.projecteden.nexus.features.menus.api.content;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.menus.api.*;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.InventoryManager;
+import gg.projecteden.nexus.features.menus.api.ItemClickData;
+import gg.projecteden.nexus.features.menus.api.SignMenuFactory;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.SmartInventory.Builder;
+import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener.CustomInventoryHolder;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
@@ -28,8 +33,13 @@ import gg.projecteden.nexus.features.resourcepack.ResourcePack.ResourcePackNumbe
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.shops.Shops;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.Data;
 import lombok.Getter;
@@ -123,6 +133,10 @@ public abstract class InventoryProvider {
 
 	public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {}
 
+	protected void back(InventoryProvider previousMenu) {
+		previousMenu.open(viewer, previousMenu.contents.pagination().getPage());
+	}
+
 	public void onPageTurn(Player viewer) {}
 
 	public SmartInventory.Builder getInventory(int page) {
@@ -161,6 +175,10 @@ public abstract class InventoryProvider {
 
 	public String getTitle(int page) {
 		return getTitle();
+	}
+
+	protected int getRows() {
+		return getRows(0);
 	}
 
 	protected int getRows(Integer page) {
