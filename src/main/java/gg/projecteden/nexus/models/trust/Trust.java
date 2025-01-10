@@ -8,6 +8,7 @@ import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
@@ -133,7 +134,12 @@ public class Trust implements PlayerOwnedObject {
 		}
 
 		public ItemStack getDisplayItem() {
-			return new ItemBuilder(this.material).modelId(this.modelId).build();
+			ItemBuilder itemBuilder = new ItemBuilder(this.material).modelId(this.modelId);
+
+			if (itemBuilder.isDyeable())
+				itemBuilder.dyeColor(ColorType.RED);
+
+			return itemBuilder.build();
 		}
 	}
 }
