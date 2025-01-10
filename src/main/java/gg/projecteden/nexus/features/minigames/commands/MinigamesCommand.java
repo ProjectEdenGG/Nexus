@@ -16,6 +16,7 @@ import gg.projecteden.nexus.features.minigames.mechanics.common.CheckpointMechan
 import gg.projecteden.nexus.features.minigames.menus.ArenaMenu;
 import gg.projecteden.nexus.features.minigames.menus.LeaderboardMenu;
 import gg.projecteden.nexus.features.minigames.menus.PerkMenu;
+import gg.projecteden.nexus.features.minigames.menus.lobby.ArenasMenu;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -214,6 +215,19 @@ public class MinigamesCommand extends _WarpSubCommand {
 		}
 
 		send(json);
+	}
+
+	@Permission(Group.ADMIN)
+	@Path("menu <mechanic>")
+	void mechanicMenu(MechanicType mechanic) {
+		final List<Arena> arenas = ArenaManager.getAllEnabled(mechanic);
+		if (arenas.isEmpty())
+			error(mechanic.getMechanic().getName() + " has no arenas to display");
+
+		if (arenas.size() == 1)
+			error(mechanic.getMechanic().getName() + " doesn't have enough arenas to have a menu");
+
+		new ArenasMenu(mechanic).open(player());
 	}
 
 	@Path("join <arena>")
