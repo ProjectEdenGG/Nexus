@@ -41,6 +41,8 @@ public class SerializationUtils {
 		public static String serializeItemStack(ItemStack itemStack) {
 			net.minecraft.world.item.ItemStack nms = NMSUtils.toNMS(itemStack);
 			CompoundTag tag = (CompoundTag) nms.save(((CraftServer) Bukkit.getServer()).getServer().registryAccess());
+			if (!validate(tag))
+				return null;
 			tag.putInt("DataVersion", SharedConstants.getCurrentVersion().getDataVersion().getVersion());
 			return tag.toString();
 		}
@@ -64,13 +66,23 @@ public class SerializationUtils {
 		private static CompoundTag deserializeItemStackToTagAndUpdate(String string) {
 			try {
 				CompoundTag tag = TagParser.parseTag(string);
-				if (tag.contains("id") && tag.getString("id").equals("minecraft:air"))
+				if (!validate(tag))
 					return null;
 				return updateItemStack(tag);
 			} catch (Exception ex) {
 				Nexus.warn("Failed to parse ItemStack from String: " + string);
 				throw new RuntimeException(ex);
 			}
+		}
+
+		private static boolean validate(CompoundTag tag) {
+			if (tag == null)
+				return false;
+			if (tag.contains("id") && tag.getString("id").equals("minecraft:air"))
+				return false;
+			if (tag.contains("count") && tag.getInt("count") <= 0) // Empty stack, should convert to null but is actually ItemStack.empty (air) which fails on deserialize
+				return false;
+			return true;
 		}
 
 		@SneakyThrows
