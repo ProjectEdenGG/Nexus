@@ -13,6 +13,7 @@ public class UpdateState extends Clientbound {
 	String mechanic;
 	Boolean vanished;
 	Boolean afk;
+	String channel;
 
 	@Override
 	public PluginMessage getType() {

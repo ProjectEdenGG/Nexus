@@ -9,6 +9,8 @@ import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.chat.ChatManager;
 import gg.projecteden.nexus.features.chat.translator.Language;
+import gg.projecteden.nexus.features.titan.ClientMessage;
+import gg.projecteden.nexus.features.titan.clientbound.UpdateState;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ChannelConverter;
@@ -88,6 +90,26 @@ public class Chatter implements PlayerOwnedObject {
 
 		this.activeChannel = channel;
 		save();
+		notifyTitanOfChannelChange();
+	}
+
+	public void notifyTitanOfChannelChange() {
+		if (this.getPlayer() == null)
+			return;
+
+		String channelName = "Unknown";
+		if (this.activeChannel != null)
+			if (this.activeChannel instanceof PublicChannel publicChannel)
+				channelName = publicChannel.getName();
+			else
+				channelName = "Private";
+
+		ClientMessage.builder()
+			.players(this.getOnlinePlayer())
+			.message(UpdateState.builder()
+				.channel(channelName)
+				.build())
+			.send();
 	}
 
 	public boolean canJoin(PublicChannel channel) {
