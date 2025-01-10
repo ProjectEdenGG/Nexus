@@ -11,12 +11,10 @@ import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.features.vanish.events.VanishToggleEvent;
 import gg.projecteden.nexus.models.afk.events.NotAFKEvent;
 import gg.projecteden.nexus.models.afk.events.NowAFKEvent;
-import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 
 public class ClientboundListeners implements Listener {
 
@@ -96,11 +94,5 @@ public class ClientboundListeners implements Listener {
 				.build())
 			.send();
 	}
-
-	@EventHandler
-	public void onJoin(PlayerJoinEvent event) {
-		Chatter.of(event.getPlayer().getUniqueId()).notifyTitanOfChannelChange();
-	}
-
 
 }
