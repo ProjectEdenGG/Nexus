@@ -325,7 +325,10 @@ public enum DecorationType {
 	DJ_TURNTABLE(new DyeableFloorThing(true, "DJ Turntable", CustomMaterial.DJ_TURNTABLE, ColorableType.DYE, HitboxFloor._1x3H_LIGHT)),
 
 	@TypeConfig(money = 155, tokens = 15, theme = Theme.MUSIC)
-	RECORD_PLAYER_MODERN(new RecordPlayer("Modern Record Player", RecordPlayerType.OFF)),
+	RECORD_PLAYER_MODERN_OFF(new RecordPlayer("Modern Record Player", RecordPlayerType.OFF)),
+
+	@TypeConfig(money = 155, tokens = 15, theme = Theme.MUSIC)
+	RECORD_PLAYER_MODERN_ON(new RecordPlayer("Modern Record Player", RecordPlayerType.ON)),
 
 	@TypeConfig(money = 300, tokens = 30, theme = Theme.MUSIC)
 	STUDIO_LIGHT_HANGING(new CeilingThing(false, "Hanging Studio Lights", CustomMaterial.STUDIO_LIGHTS_HANGING)),
@@ -1854,9 +1857,6 @@ public enum DecorationType {
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	WINDOW_CURTAINS_3x3_CLOSED(new Curtain("Window Curtains 3x3", CurtainType._3x3_CLOSED)),
-
-	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
-	RECORD_PLAYER_MODERN_ON(new RecordPlayer("Modern Record Player", RecordPlayerType.ON)),
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	BIRDHOUSE_FOREST_VERTICAL(new BirdHouse("Vertical Forest Birdhouse", CustomMaterial.BIRDHOUSE_FOREST_VERTICAL, false)),

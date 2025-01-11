@@ -53,7 +53,7 @@ public class HorsePickerCommand extends CustomCommand {
 			this.name = name();
 		}
 
-		public Horse.Color getColor() {
+		public Horse.Color getHorseColor() {
 			return Horse.Color.valueOf(name());
 		}
 	}
@@ -99,7 +99,7 @@ public class HorsePickerCommand extends CustomCommand {
 			int column = 2;
 			for (HorseMarking marking : HorseMarking.values()) {
 				contents.set(1, column++, ClickableItem.of(marking.getMaterial(), marking.getName(), e -> {
-					spawnHorse(viewer, color.getColor(), Horse.Style.valueOf(marking.name()));
+					spawnHorse(viewer, color.getHorseColor(), Horse.Style.valueOf(marking.name()));
 					LuckPermsUtils.PermissionChange.unset().permissions("horsepicker.pick").player(viewer).runAsync();
 					viewer.closeInventory();
 				}));
