@@ -363,6 +363,9 @@ public class CustomRecipes extends Feature implements Listener {
 		RecipeBuilder.shapeless(Material.DEEPSLATE_TILES).toMake(Material.DEEPSLATE_BRICKS).register(RecipeType.STONE_BRICK);
 		RecipeBuilder.shapeless(Material.DEEPSLATE_BRICKS).toMake(Material.POLISHED_DEEPSLATE).register(RecipeType.STONE_BRICK);
 		RecipeBuilder.shapeless(Material.POLISHED_DEEPSLATE).toMake(Material.COBBLED_DEEPSLATE).register(RecipeType.STONE_BRICK);
+		RecipeBuilder.shapeless(Material.POLISHED_TUFF).toMake(Material.TUFF).register(RecipeType.STONE_BRICK);
+		RecipeBuilder.shapeless(Material.TUFF_BRICKS).toMake(Material.POLISHED_TUFF).register(RecipeType.STONE_BRICK);
+		RecipeBuilder.shapeless(Material.DEEPSLATE).toMake(Material.COBBLED_DEEPSLATE).register(RecipeType.STONE_BRICK);
 	}
 
 	private void registerFurnace() {
