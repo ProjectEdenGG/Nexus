@@ -24,6 +24,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import gg.projecteden.nexus.utils.SerializationUtils.NBT;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -247,7 +248,10 @@ public class Shop implements PlayerOwnedObject {
 		@PostLoad
 		void fix(DBObject dbObject) {
 			if (!(price instanceof Number))
-				price = NBT.deserializeItemStack((String) dbObject.get("price"));
+				if (dbObject.get("price") instanceof String string)
+					price = NBT.deserializeItemStack(string);
+				else if (dbObject.get("price") instanceof Map<?, ?> map)
+					price = Json.deserializeItemStack((Map<String, Object>) map);
 		}
 
 		public Shop getShop() {
