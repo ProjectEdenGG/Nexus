@@ -174,6 +174,9 @@ public class Koda {
 	}
 
 	public static void respond(ChatEvent event, PublicChannel channel, String response) {
+		if (event.isCancelled())
+			return;
+
 		Tasks.waitAsync(TickTime.SECOND, () -> {
 			final String finalResponse = response.replaceAll("\\[player]", event.getOrigin());
 
