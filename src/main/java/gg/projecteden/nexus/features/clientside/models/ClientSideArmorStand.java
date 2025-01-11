@@ -146,7 +146,7 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 			entity.getRotationVector().y,
 			EntityType.ARMOR_STAND,
 			0,
-			new Vec3(0, 0, 0),
+			Vec3.ZERO,
 			0
 		));
 	}
