@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.store;
 
-import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
@@ -33,11 +32,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class DecorationStoreManager implements Listener {
 
@@ -67,7 +62,7 @@ public class DecorationStoreManager implements Listener {
 	}
 
 	public static void glowTask() {
-		if (Nexus.getEnv() != Env.PROD)
+		if (!Nexus.isProdOrStaging())
 			return;
 
 		Tasks.repeat(0, TickTime.TICK.x(4), () -> {

@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.models.scheduledjobs.jobs;
 
 import gg.projecteden.api.common.annotations.Async;
-import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob;
 import gg.projecteden.api.mongodb.models.scheduledjobs.common.Schedule;
 import gg.projecteden.nexus.Nexus;
@@ -21,7 +20,7 @@ public class DecorationStoreLayoutJob extends AbstractJob {
 
 	@Override
 	protected CompletableFuture<JobStatus> run() {
-		if (Nexus.getEnv() != Env.PROD)
+		if (!Nexus.isProdOrStaging())
 			return completed();
 
 		Nexus.log("[Decoration Store] running DecorationStoreLayoutJob");

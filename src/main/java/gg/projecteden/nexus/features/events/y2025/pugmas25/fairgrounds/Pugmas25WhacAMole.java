@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 	world = "pugmas25",
 	playRegion = "pugmas25_whacamole_play"
 )
-@Environments(Env.PROD)
+@Environments({Env.PROD, Env.STAGING})
 public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 	private static Pugmas25WhacAMole instance;
 

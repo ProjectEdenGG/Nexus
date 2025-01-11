@@ -24,13 +24,8 @@ import gg.projecteden.nexus.framework.persistence.mysql.MySQLPersistence;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.home.HomeService;
-import gg.projecteden.nexus.utils.GoogleUtils;
-import gg.projecteden.nexus.utils.LuckPermsUtils;
-import gg.projecteden.nexus.utils.Name;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags;
 import it.sauronsoftware.cron4j.Scheduler;
 import lombok.Getter;
@@ -127,6 +122,10 @@ public class Nexus extends JavaPlugin {
 			Nexus.severe("Defaulting to " + Env.DEV.name() + " environment");
 			return Env.DEV;
 		}
+	}
+
+	public static boolean isProdOrStaging() {
+		return getEnv() == Env.PROD || getEnv() == Env.STAGING;
 	}
 
 	@Getter
