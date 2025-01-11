@@ -2,28 +2,20 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
-import gg.projecteden.nexus.utils.BossBarBuilder;
-import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Sound;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +25,8 @@ import java.util.stream.Collectors;
 
 @Permission(Group.ADMIN)
 @HideFromWiki
-public class DeployCommand extends CustomCommand {
+@NoArgsConstructor
+public class DeployCommand extends CustomCommand implements Listener {
 
 	static int duplicateTaskId;
 	static final BossBar deployingBar = new BossBarBuilder().color(ColorType.PINK).title("&3Incoming Deploy").build();
@@ -105,6 +98,22 @@ public class DeployCommand extends CustomCommand {
 		else {
 			removeNoConsole(deployment);
 		}
+	}
+
+	@EventHandler
+	public void onJoin(PlayerJoinEvent event) {
+		PlayerUtils.Dev dev = PlayerUtils.Dev.of(event.getPlayer());
+		if (dev == null)
+			return;
+		if (!dev.isShowDeveloperTools())
+			return;
+		if (Deployment.currentDeployments.isEmpty())
+			return;
+
+		deployingBar.addViewer(dev.getPlayer());
+		Deployment.currentDeployments.forEach(deploy -> {
+			deploy.getBossBar().addViewer(dev.getPlayer());
+		});
 	}
 
 	public void removeNoConsole(Deployment deployment) {
