@@ -43,7 +43,8 @@ public enum RecipeType {
 	COPPER(Material.COPPER_BLOCK),
 	STONE_BRICK(Material.STONE_BRICKS),
 	CONCRETES(Material.CYAN_CONCRETE),
-	MISC(Material.BLUE_ICE);
+	MISC(Material.BLUE_ICE),
+	GLASS(Material.GLASS);
 
 	private final Material material;
 	private final int modelId;

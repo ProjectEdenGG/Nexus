@@ -67,6 +67,7 @@ public class CustomRecipes extends Feature implements Listener {
 				this::registerQuartz,
 				this::registerStoneBricks,
 				this::registerFurnace,
+				this::registerGlass,
 				this::misc
 			);
 
@@ -346,6 +347,15 @@ public class CustomRecipes extends Feature implements Listener {
 
 			RecipeBuilder.shaped("11", "11").add('1', slab).toMake(blockMaterial, 2).register(RecipeType.SLABS);
 		}
+	}
+
+	public void registerGlass() {
+		ColorType.getDyes().forEach(color -> {
+			Material pane = color.switchColor(Material.WHITE_STAINED_GLASS_PANE);
+			Material glass = color.switchColor(Material.WHITE_STAINED_GLASS);
+			RecipeBuilder.shapeless(pane, 8).toMake(glass, 3).register(RecipeType.GLASS);
+		});
+		RecipeBuilder.shapeless(Material.GLASS_PANE, 8).toMake(Material.GLASS, 3).register(RecipeType.GLASS);
 	}
 
 	public void registerQuartz() {
