@@ -17,6 +17,7 @@ import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.network.syncher.SynchedEntityData.DataValue;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
@@ -132,9 +133,22 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 		}};
 	}
 
+	// int entityId, UUID uuid, double x, double y, double z, float pitch, float yaw, EntityType<?> entityType, int entityData, Vec3 velocity, double headYaw
 	@Override
 	public @NotNull List<Packet<ClientGamePacketListener>> getSpawnPackets(Player player) {
-		return Collections.singletonList(new ClientboundAddEntityPacket(entity, 0, entity.blockPosition()));
+		return Collections.singletonList(new ClientboundAddEntityPacket(
+			entity.getId(),
+			entity.getUUID(),
+			entity.getX(),
+			entity.getY(),
+			entity.getZ(),
+			entity.getRotationVector().x,
+			entity.getRotationVector().y,
+			EntityType.ARMOR_STAND,
+			0,
+			new Vec3(0, 0, 0),
+			0
+		));
 	}
 
 	@Override
