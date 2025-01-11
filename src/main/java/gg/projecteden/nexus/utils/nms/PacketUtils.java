@@ -31,6 +31,7 @@ import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -511,7 +512,19 @@ public class PacketUtils {
 			armorStand.setHeadPose(NMSUtils.toNMS(EulerAngle.ZERO));
 		}
 
-		ClientboundAddEntityPacket spawnArmorStand = new ClientboundAddEntityPacket(armorStand, 0, armorStand.blockPosition());
+		ClientboundAddEntityPacket spawnArmorStand = new ClientboundAddEntityPacket(
+			armorStand.getId(),
+			armorStand.getUUID(),
+			location.getX(),
+			location.getY(),
+			location.getZ(),
+			location.getPitch(),
+			location.getYaw(),
+			EntityType.ARMOR_STAND,
+			0,
+			Vec3.ZERO,
+			0
+		);
 		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData().packDirty());
 
 		sendPacket(player, spawnArmorStand, rawMetadataPacket);
