@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.syncher.SynchedEntityData.DataValue;
 import net.minecraft.resources.ResourceLocation;
@@ -91,7 +92,7 @@ public class ClientSidePainting implements IClientSideEntity<ClientSidePainting,
 
 	@Override
 	public @NotNull List<Packet<ClientGamePacketListener>> getSpawnPackets(Player player) {
-		return Collections.singletonList(NMSUtils.getSpawnPacket(entity));
+		return Collections.singletonList(new ClientboundAddEntityPacket(entity, entity.getDirection().get3DDataValue(), entity.blockPosition().atY(entity.getBlockY() - (height - 1))));
 	}
 
 	@Override
