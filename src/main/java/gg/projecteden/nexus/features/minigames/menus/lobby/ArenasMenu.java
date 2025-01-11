@@ -26,11 +26,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -103,19 +99,28 @@ public class ArenasMenu extends ScrollableInventoryProvider {
 			SlotPos min = randomSlotsMinMax.getFirst();
 			SlotPos max = randomSlotsMinMax.getSecond();
 
-			List<Arena> inactiveArenas = arenas.stream().filter(arena -> MatchManager.find(arena) == null).toList();
-
 			final Consumer<ItemClickData> consumer = e -> {
-				final Arena randomArena = RandomUtils.randomElement(inactiveArenas);
+				final Optional<Match> mostPlayers = MatchManager.getAll().stream()
+					.filter(match -> mechanic == null || mechanic == match.getArena().getMechanicType())
+					.filter(match -> !match.getMinigamers().isEmpty())
+					.filter(match -> !match.isStarted() || match.getArena().canJoinLate())
+					.max(Comparator.comparingInt(match -> match.getMinigamers().size()));
+
+				final Arena arena;
+				if (mostPlayers.isPresent())
+					arena = mostPlayers.get().getArena();
+				else
+					arena = RandomUtils.randomElement(ArenaManager.getAllEnabled(mechanic));
+
 				if (CustomMaterial.of(viewer.getItemOnCursor()) == CustomMaterial.ENVELOPE_1)
 					if (MinigameInviter.canSendInvite(viewer))
-						Tasks.wait(2, () -> inviteAll(e, randomArena));
+						Tasks.wait(2, () -> inviteAll(e, arena));
 					else {
 						viewer.setItemOnCursor(new ItemStack(Material.AIR));
 						PlayerUtils.send(viewer, Minigames.PREFIX + "You cannot send invites right now!");
 					}
 				else
-					Minigamer.of(viewer).join(randomArena);
+					Minigamer.of(viewer).join(arena);
 			};
 
 			contents.fill(min, max, ClickableItem.of(getRandomArenaItem(false), consumer));
