@@ -315,6 +315,8 @@ public enum ChatGameType {
 		COMMAND_SHOWITEM("What command allows you to display the items in chat?", List.of("showitem", "showenchants")),
 		COMMAND_RESOURCE("What command takes you to a world that resets once a month and is commonly used to gather blocks and ores?", List.of("resourceworld", "resource")),
 		COMMAND_MODCHECK("What command allows you to see what mods we allow on the server?", List.of("modcheck", "modreview")),
+
+		// TODO Rank stuff - i.e. rank above/below rank
 		;
 
 		final String question;
