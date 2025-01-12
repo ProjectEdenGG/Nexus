@@ -3,12 +3,14 @@ package gg.projecteden.nexus.features.chat.games;
 import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.events.ChatEvent;
 import gg.projecteden.nexus.features.chat.games.ChatGameType.TriviaQuestion;
+import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
+import gg.projecteden.nexus.features.minigames.models.events.arenas.AllArenasLoadedEvent;
+import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.vanish.events.VanishToggleEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -42,10 +44,29 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@HideFromWiki
-	@Path("listPreviousQuestions")
+	@EventHandler
+	public void on(AllArenasLoadedEvent event) {
+		for (MechanicType type : MechanicType.values()) {
+			if (type.getMechanic().isTestMode())
+				continue;
+			if (ArenaManager.getAllEnabled(type).isEmpty())
+				continue;
+
+			ChatGameType.WORDS.add(type.getMechanic().getName());
+		}
+	}
+
+	@Path("list words")
+	@Description("List all words/phrases available in chat games")
 	@Permission(Group.ADMIN)
-	void listPreviousQuestions() {
+	void list_words() {
+		send(PREFIX + "&f" + String.join(", ", ChatGameType.WORDS));
+	}
+
+	@Path("list previousQuestions")
+	@Description("List previous trivia questions")
+	@Permission(Group.ADMIN)
+	void list_previousQuestions() {
 		ChatGamesConfig config = service.get0();
 
 		Set<TriviaQuestion> pastQuestions = config.getPreviousTriviaQuestions();
@@ -55,8 +76,8 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	@HideFromWiki
 	@Path("getAnswer")
+	@Description("Get the answer to the current chat game")
 	@Permission(Group.ADMIN)
 	void getAnswer() {
 		ChatGame chatGame = ChatGamesConfig.getCurrentGame();

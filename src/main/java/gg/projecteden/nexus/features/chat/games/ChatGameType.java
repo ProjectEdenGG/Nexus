@@ -8,6 +8,8 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig.ChatGame;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfigService;
+import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.BiomeUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -18,7 +20,12 @@ import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.simmetrics.metrics.StringMetrics;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -179,10 +186,10 @@ public enum ChatGameType {
 	private static final Function<Stream<? extends Enum<?>>, List<String>> enumWordFormatter = stream -> wordFormatter.apply(stream.map(Enum::name));
 
 	// Feel free to add
-	private static final Set<String> WORDS = new HashSet<>() {{
+	public static final Set<String> WORDS = new HashSet<>() {{
 		addAll(enumWordFormatter.apply(Arrays.stream(Material.values()).filter(Material::isItem)));
 		addAll(enumWordFormatter.apply(Arrays.stream(EntityType.values()).filter(type -> type.isAlive() && type != EntityType.PLAYER)));
-		addAll(Arrays.stream(BiomeUtils.values()).map(BiomeUtils::name).toList());
+		addAll(Arrays.stream(BiomeUtils.values()).map(BiomeUtils::name).map(String::toLowerCase).toList());
 		// https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population - removed countries without number
 		addAll(List.of(
 			"China", "India", "United States", "Indonesia", "Pakistan", "Nigeria", "Brazil", "Bangladesh", "Russia",
@@ -211,6 +218,15 @@ public enum ChatGameType {
 			"Liechtenstein", "Monaco", "San Marino", "Palau", "Nauru", "Tuvalu", "Vatican City"
 		));
 	}};
+
+	static {
+		try {
+			WORDS.addAll(Arrays.stream(Rank.values()).filter(Rank::isActive).map(Rank::getName).toList());
+			Rank.getStaffNerds().thenAccept((map) -> map.values().forEach(list -> WORDS.addAll(list.stream().map(Nerd::getNickname).toList())));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
 
 	@Getter
 	public enum TriviaQuestion {

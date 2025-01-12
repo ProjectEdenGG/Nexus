@@ -4,8 +4,10 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Arena;
+import gg.projecteden.nexus.features.minigames.models.events.arenas.AllArenasLoadedEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -195,6 +197,7 @@ public class ArenaManager {
 						ex.printStackTrace();
 				}
 			});
+			Tasks.sync(() -> new AllArenasLoadedEvent().callEvent());
 		} catch (Exception ex) {
 			Nexus.severe("An error occurred while trying to read arena configuration files: " + ex.getMessage());
 			if (Nexus.isDebug())
