@@ -26,8 +26,14 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
+import java.util.Random;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -113,7 +119,9 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	}
 
 	public static String stripColor(String input) {
-		return ChatColor.stripColor(colorize(input));
+		if (input == null)
+			return null;
+		return ChatColor.stripColor(colorize(input.replaceAll("<#[a-fA-F\\d]{6}>", "")));
 	}
 
 	public static String stripFormat(String input) {
