@@ -4,7 +4,12 @@ import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownException;
@@ -31,7 +36,7 @@ public class DailyRewardsCommand extends CustomCommand {
 
 	@Path
 	@Description("Open the daily rewards menu")
-	void main() {
+	void run() {
 		if (WorldGroup.SURVIVAL != worldGroup())
 			error("&cYou must be in the survival worlds to claim this reward.");
 
@@ -63,7 +68,7 @@ public class DailyRewardsCommand extends CustomCommand {
 	@Description("Mark a reward as unclaimed")
 	void unclaim(DailyRewardUser user, int day) {
 		user.getCurrentStreak().unclaim(day);
-		service.save(this.user);
+		service.save(user);
 		send(PREFIX + "Unclaimed day " + day + " for player " + user.getNickname());
 	}
 
@@ -72,8 +77,8 @@ public class DailyRewardsCommand extends CustomCommand {
 	@Description("Set a player's streak")
 	void setDay(DailyRewardUser user, int day) {
 		user.getCurrentStreak().setStreak(day);
-		service.save(this.user);
-		send(PREFIX + "Streak set to " + this.user.getCurrentStreak().getStreak() + " for player " + user.getNickname());
+		service.save(user);
+		send(PREFIX + "Streak set to " + user.getCurrentStreak().getStreak() + " for player " + user.getNickname());
 	}
 
 	private static final String resetCooldownType = "dailyRewards-reset";
