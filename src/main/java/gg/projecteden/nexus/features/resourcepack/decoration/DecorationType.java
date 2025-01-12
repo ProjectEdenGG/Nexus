@@ -48,7 +48,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAd
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Edible;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Edible.EdibleType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Mailbox;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.special.PlayerHead;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.PlayerHeadBlock;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.TrashCan;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Waystone;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Well;
@@ -1793,7 +1793,7 @@ public enum DecorationType {
 	FLAT_SCREEN_TV(new WallThing(true, "Flat Screen TV", CustomMaterial.FLAT_SCREEN_TV, HitboxWall._2x3H_LIGHT)),
 
 	@TypeConfig(money = 500, tokens = 50)
-	PLAYER_HEAD_BLOCK(new PlayerHead(false, "Player Head Block", CustomMaterial.PLAYER_HEAD_BLOCK, HitboxSingle._1x1_BARRIER)),
+	PLAYER_HEAD_BLOCK(new PlayerHeadBlock(false, "Player Head Block", CustomMaterial.PLAYER_HEAD_BLOCK, HitboxSingle._1x1_BARRIER)),
 
 // 	------------------------------------------------------------------------------------------------------
 //										UNBUYABLE THINGS

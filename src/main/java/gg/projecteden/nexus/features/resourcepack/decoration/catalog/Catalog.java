@@ -264,19 +264,11 @@ public class Catalog implements Listener {
 	public static void tryBuySurvivalItem(Player viewer, DecorationConfig config, ItemStack itemStack, DecorationStoreType storeType) {
 		DecorationStoreCurrencyType currency = DecorationStoreCurrencyType.MONEY;
 
-		if (DecorationUtils.hasBypass(viewer)) {
-			DecorationSpawnEvent spawnEvent = new DecorationSpawnEvent(viewer, new Decoration(config, null), itemStack);
-			if (spawnEvent.callEvent()) {
-				itemStack = spawnEvent.getItemStack();
-				DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();
-				PlayerUtils.giveItem(viewer, itemStack);
-			}
-			return;
-		}
-
+		boolean isSkull = false;
 		Integer price;
 		if (itemStack.getType() == Material.PLAYER_HEAD && ModelId.of(itemStack) == 0) {
 			price = currency.getPriceSkull(storeType);
+			isSkull = true;
 		} else if (config != null) {
 			price = config.getCatalogPrice(storeType);
 		} else {
@@ -286,6 +278,20 @@ public class Catalog implements Listener {
 		if (price == null)
 			return;
 
+		DecorationSpawnEvent spawnEvent = new DecorationSpawnEvent(viewer, new Decoration(config, null), itemStack, isSkull);
+		if (!spawnEvent.callEvent())
+			return;
+
+		itemStack = spawnEvent.getItemStack();
+
+		if (DecorationUtils.hasBypass(viewer)) {
+			DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();
+			PlayerUtils.giveItem(viewer, itemStack);
+			return;
+		}
+
+		//
+
 		if (!WorldGroup.of(viewer).equals(WorldGroup.SURVIVAL))
 			return;
 
@@ -294,12 +300,6 @@ public class Catalog implements Listener {
 			DecorationError.LACKING_FUNDS.send(viewer);
 			return;
 		}
-
-		DecorationSpawnEvent spawnEvent = new DecorationSpawnEvent(viewer, new Decoration(config, null), itemStack);
-		if (!spawnEvent.callEvent())
-			return;
-
-		itemStack = spawnEvent.getItemStack();
 
 		currency.withdraw(viewer, itemStack, shopGroup, price);
 		log(viewer, shopGroup, currency, price, storeType, config, itemStack);

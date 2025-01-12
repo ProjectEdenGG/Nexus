@@ -9,9 +9,9 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-public class PlayerHead extends FloorThing {
+public class PlayerHeadBlock extends FloorThing {
 
-	public PlayerHead(boolean multiblock, String name, CustomMaterial material, CustomHitbox hitbox) {
+	public PlayerHeadBlock(boolean multiblock, String name, CustomMaterial material, CustomHitbox hitbox) {
 		super(multiblock, name, material, hitbox);
 	}
 
@@ -26,7 +26,7 @@ public class PlayerHead extends FloorThing {
 			if (event.isCancelled())
 				return;
 
-			if (!(event.getDecoration().getConfig() instanceof PlayerHead))
+			if (!(event.getDecoration().getConfig() instanceof PlayerHeadBlock))
 				return;
 
 			ItemBuilder skullBuilder = new ItemBuilder(event.getItemStack()).skullOwner(event.getPlayer().getUniqueId());

@@ -31,7 +31,6 @@ import io.papermc.paper.entity.TeleportFlag.EntityState;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import lombok.NonNull;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -51,13 +50,12 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 public class Decoration {
-	@NonNull
 	private final DecorationConfig config;
 	private ItemFrame itemFrame;
 	private final Rotation bukkitRotation;
 	private Boolean canEdit;
 
-	public Decoration(@NonNull DecorationConfig config, ItemFrame itemFrame) {
+	public Decoration(DecorationConfig config, ItemFrame itemFrame) {
 		this(config, itemFrame, itemFrame == null ? null : itemFrame.getRotation(), null);
 	}
 
