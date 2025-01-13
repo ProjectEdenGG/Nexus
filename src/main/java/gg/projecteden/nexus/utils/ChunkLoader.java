@@ -29,40 +29,57 @@ public class ChunkLoader extends Feature {
 			for (Long chunkKey : loadedChunks.get(world)) {
 				world.getChunkAt(chunkKey).setForceLoaded(false);
 			}
-
 		}
 	}
-
 	public static void forceLoad(World world, String region) {
+		forceLoad(world, region, true);
+	}
+
+	public static void forceLoad(World world, String region, boolean forceLoaded) {
 		WorldGuardUtils worldguard = new WorldGuardUtils(world);
 		ProtectedRegion protectedRegion = worldguard.getProtectedRegion(region);
-		forceLoad(world, protectedRegion);
+		forceLoad(world, protectedRegion, forceLoaded);
 	}
 
 	public static void forceLoad(World world, ProtectedRegion protectedRegion) {
-		WorldEditUtils worldedit = new WorldEditUtils(world);
-		List<Block> blocks = worldedit.getBlocks(protectedRegion);
-		forceLoad(blocks);
+		forceLoad(world, protectedRegion, true);
 	}
 
-	public static void forceLoad(List<Block> blocks) {
-		forceLoad(blocks.stream().map(Block::getChunk).collect(Collectors.toSet()));
+	public static void forceLoad(World world, ProtectedRegion protectedRegion, boolean forceLoaded) {
+		WorldEditUtils worldedit = new WorldEditUtils(world);
+		List<Block> blocks = worldedit.getBlocks(protectedRegion);
+		forceLoad(blocks, forceLoaded);
+	}
+
+	public static void forceLoad(List<Block> blocks, boolean forceLoaded) {
+		forceLoad(blocks.stream().map(Block::getChunk).collect(Collectors.toSet()), forceLoaded);
 	}
 
 	public static void forceLoad(Set<Chunk> chunks) {
-		chunks.forEach(ChunkLoader::setForceLoaded);
+		forceLoad(chunks, true);
+	}
+
+	public static void forceLoad(Set<Chunk> chunks, boolean forceLoaded) {
+		for (Chunk chunk : chunks)
+			setForceLoaded(chunk, forceLoaded);
 	}
 
 	public static void setForceLoaded(Chunk chunk) {
+		setForceLoaded(chunk, true);
+	}
+
+	public static void setForceLoaded(Chunk chunk, boolean forceLoaded) {
 		long chunkKey = chunk.getChunkKey();
 
 		Set<Long> chunks = loadedChunks.getOrDefault(chunk.getWorld(), new HashSet<>());
-		if (chunks.contains(chunkKey) && chunk.isForceLoaded())
-			return;
-
-		chunk.setForceLoaded(true);
-		chunk.load();
-		chunks.add(chunkKey);
+		if (forceLoaded) {
+			chunk.setForceLoaded(true);
+			chunk.load();
+			chunks.add(chunkKey);
+		} else {
+			chunk.setForceLoaded(false);
+			chunks.remove(chunkKey);
+		}
 		loadedChunks.put(chunk.getWorld(), chunks);
 	}
 

@@ -22,12 +22,17 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.ChunkLoader;
+import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
+import net.citizensnpcs.api.npc.NPC;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.EntityType;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -234,6 +239,48 @@ public class HallOfHistoryCommand extends CustomCommand {
 		};
 
 		paginate(Utils.sortByValue(promotionTimeMap).keySet(), formatter, "/hoh promotionTimes", page);
+	}
+
+	@Path("npcs update")
+	@Permission(Group.ADMIN)
+	@Description("Update all Hall of History NPCs")
+	void npcs_update() {
+		var regionName = "hallofhistory";
+		var world = Bukkit.getWorld("events");
+
+		ChunkLoader.forceLoad(world, regionName);
+
+		Tasks.wait(40, () -> {
+			List<NPC> npcs = CitizensUtils.NPCFinder.builder()
+				.world(world)
+				.region(regionName)
+				.type(EntityType.PLAYER)
+				.predicate(npc -> npc.data().get(NPC.Metadata.NAMEPLATE_VISIBLE))
+				.find();
+
+			var wait = 0;
+			for (NPC npc : npcs) {
+				Tasks.wait(wait += 20, () -> {
+					if (!isOnline())
+						return;
+
+					String name = CitizensUtils.stripColor(npc.getName());
+
+					Nerd nerd = Nerd.of(CitizensUtils.stripColor(name));
+					if (nerd.getOfflinePlayer().hasPlayedBefore())
+						CitizensUtils.updateNameAndSkin(npc, nerd);
+					else
+						CitizensUtils.updateNameAndSkin(npc, name);
+
+					send(PREFIX + "Updated " + nerd.getColoredName());
+				});
+			}
+
+			Tasks.wait(wait + 100, () -> {
+				ChunkLoader.forceLoad(world, regionName, false);
+				send(PREFIX + "Done");
+			});
+		});
 	}
 
 }

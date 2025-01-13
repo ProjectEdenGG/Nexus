@@ -3,6 +3,7 @@ package gg.projecteden.nexus.utils;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.interfaces.HasUniqueId;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.mobheads.MobHeadType;
 import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -11,6 +12,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import lombok.Builder;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.Spawned;
 import net.citizensnpcs.trait.HologramTrait;
@@ -28,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -43,6 +46,10 @@ public class CitizensUtils {
 
 	public static boolean isNPC(Entity entity) {
 		return Hook.CITIZENS.isNPC(entity);
+	}
+
+	public static String stripColor(String input) {
+		return input == null ? null : StringUtils.stripColor(input.replaceAll("<[#\\w]+>", ""));
 	}
 
 	public static void updateNameAndSkin(int id, String name) {
@@ -195,9 +202,12 @@ public class CitizensUtils {
 		private final @Nullable UUID owner;
 		private final @Nullable Rank rankGte;
 		private final @Nullable Rank rankLte;
+		private final @Nullable EntityType type;
 
 		private final @Nullable Integer radius;
 		private final @Nullable Location from;
+
+		private final @Nullable List<Predicate<NPC>> predicates;
 
 		private boolean filter(NPC npc) {
 			final UUID ownerId = npc.getTrait(Owner.class).getOwnerId();
@@ -229,6 +239,27 @@ public class CitizensUtils {
 					return false;
 				if (Distance.distance(from, npc.getStoredLocation()).gt(radius))
 					return false;
+			}
+
+			if (type != null) {
+				MobType typeTrait = npc.getTraitNullable(MobType.class);
+				EntityType type = null;
+
+				if (npc.getEntity() != null)
+					type = npc.getEntity().getType();
+				else if (typeTrait != null)
+					type = typeTrait.getType();
+
+				if (type == null)
+					Nexus.warn("[NPCFinder] Could not determine entity type of %s (%d)".formatted(npc.getName(), npc.getId()));
+
+				return this.type == type;
+			}
+
+			if (this.predicates != null && !this.predicates.isEmpty()) {
+				for (var predicate : this.predicates)
+					if (!predicate.test(npc))
+						return false;
 			}
 
 			return true;
@@ -278,6 +309,18 @@ public class CitizensUtils {
 					throw new IllegalArgumentException("Call to #region(String) must be done after #world(World)");
 				region = new WorldGuardUtils(world).getProtectedRegion(regionName);
 				return this;
+			}
+
+			public @Contract("_ -> this") NPCFinderBuilder predicate(@Nullable Predicate<NPC> predicate) {
+				if (this.predicates == null)
+					this.predicates = new ArrayList<>();
+
+				this.predicates.add(predicate);
+				return this;
+			}
+
+			public List<NPC> find() {
+				return build().get();
 			}
 		}
 	}

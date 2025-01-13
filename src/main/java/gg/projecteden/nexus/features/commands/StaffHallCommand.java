@@ -119,9 +119,9 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 
 		if (worldguard.getRegionsLikeAt("staffhall", location).size() > 0) {
 			if (!npc.getName().contains(" "))
-				runCommand(event.getClicker(), "staffhall view " + StringUtils.stripColor(npc.getName()));
+				runCommand(event.getClicker(), "staffhall view " + CitizensUtils.stripColor(npc.getName()));
 		} else if (worldguard.getRegionsLikeAt("hallofhistory", location).size() > 0)
-			runCommand(event.getClicker(), "hoh view " + StringUtils.stripColor(npc.getName()));
+			runCommand(event.getClicker(), "hoh view " + CitizensUtils.stripColor(npc.getName()));
 		else if (npc.getId() == 2678 || npc.getId() == 4657)
 			runCommand(event.getClicker(), "griffinwelc");
 		else if (npc.getId() == 2697)

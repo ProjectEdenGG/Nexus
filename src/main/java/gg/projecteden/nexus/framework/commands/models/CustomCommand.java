@@ -485,6 +485,10 @@ public abstract class CustomCommand extends ICustomCommand {
 		return player().getOfflinePlayer();
 	}
 
+	protected boolean isOnline() {
+		return ((OfflinePlayer) event.getSender()).isOnline();
+	}
+
 	protected PlayerOwnedObject playerOwnedObject() {
 		return this::uuid;
 	}

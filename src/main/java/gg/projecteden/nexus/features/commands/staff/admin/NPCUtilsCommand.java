@@ -1,12 +1,10 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -14,13 +12,11 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.CitizensUtils.NPCFinder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.NonNull;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -28,6 +24,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.entity.EntityType;
 import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Field;
@@ -60,7 +57,7 @@ public class NPCUtilsCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("list [page] [--owner] [--rankGte] [--rankLte] [--world] [--radius] [--spawned]")
+	@Path("list [page] [--owner] [--rankGte] [--rankLte] [--world] [--radius] [--spawned] [--type]")
 	@Description("List NPCs with a filter")
 	void list(
 		@Arg("1") int page,
@@ -69,7 +66,8 @@ public class NPCUtilsCommand extends CustomCommand {
 		@Switch Rank rankLte,
 		@Switch World world,
 		@Switch Integer radius,
-		@Switch Boolean spawned
+		@Switch Boolean spawned,
+		@Switch EntityType type
 	) {
 		List<NPC> npcs = NPCFinder.builder()
 			.owner(owner)
@@ -79,6 +77,7 @@ public class NPCUtilsCommand extends CustomCommand {
 			.spawned(spawned)
 			.radius(radius)
 			.from(location())
+			.type(type)
 			.build().get();
 
 		if (npcs.isEmpty())
@@ -90,7 +89,8 @@ public class NPCUtilsCommand extends CustomCommand {
 			(rankLte == null ? "" : " --rankLte=" + rankLte) +
 			(world == null ? "" : " --world=" + world.getName()) +
 			(radius == null ? "" : " --radius=" + radius) +
-			(spawned == null ? "" : " --spawned=" + spawned);
+			(spawned == null ? "" : " --spawned=" + spawned) +
+			(type == null ? "" : " --type=" + type);
 
 		Comparator<NPC> comparator;
 		if (radius != null)
@@ -198,29 +198,6 @@ public class NPCUtilsCommand extends CustomCommand {
 		};
 
 		paginate(voidNpcs, formatter, "/npcutils void", page);
-	}
-
-	@HideFromWiki
-	@Path("updateAllHOHNpcs")
-	@Permission(Group.ADMIN)
-	@Description("Recreate all Hall of History NPCs")
-	void updateAllHOHNpcs() {
-		runCommand("hoh");
-		World safepvp = world();
-		WorldGuardUtils worldGuardUtils = new WorldGuardUtils(safepvp);
-		ProtectedRegion region = worldGuardUtils.getProtectedRegion("hallofhistory");
-		List<NPC> npcs = safepvp.getEntities().stream()
-			.filter(entity -> CitizensUtils.isNPC(entity) && worldGuardUtils.isInRegion(entity.getLocation(), region))
-			.map(entity -> CitizensAPI.getNPCRegistry().getNPC(entity))
-			.toList();
-
-		int wait = 0;
-		for (NPC npc : npcs) {
-			Tasks.wait(wait += 20, () -> {
-				String name = StringUtils.stripColor(npc.getName());
-				runCommand("npcutils recreateNpc withColor " + name);
-			});
-		}
 	}
 
 }

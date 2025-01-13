@@ -119,9 +119,7 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	}
 
 	public static String stripColor(String input) {
-		if (input == null)
-			return null;
-		return ChatColor.stripColor(colorize(input.replaceAll("<#[a-fA-F\\d]{6}>", "")));
+		return ChatColor.stripColor(colorize(input));
 	}
 
 	public static String stripFormat(String input) {
