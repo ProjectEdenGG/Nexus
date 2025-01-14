@@ -5,16 +5,22 @@ import gg.projecteden.nexus.features.commands.StaffHallCommand;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.models.voter.TopVoter;
+import gg.projecteden.nexus.models.voter.VotePartyService;
 import gg.projecteden.nexus.models.voter.VoteSite;
+import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
@@ -30,12 +36,39 @@ public class Controller {
 		);
 	}
 
-	@Get("/votes/sites")
-	Object votes_sites() {
+	@Get("/votes")
+	Object votes() {
+		var voterService = new VoterService();
+		var voteParty = new VotePartyService().get0();
 		var sites = new HashMap<>();
+
 		for (VoteSite site : VoteSite.getActiveSites())
 			sites.put(site.getName(), site.getUrl());
-		return sites;
+
+		Function<List<TopVoter>, List<Map<String, Object>>> transformer = input -> {
+			input = input.subList(0, Math.min(input.size(), 100));
+			List<Map<String, Object>> list = new ArrayList<>();
+			for (TopVoter voter : input)
+				list.add(Map.of(
+					"uuid", voter.getVoter().getUniqueId().toString(),
+					"name", voter.getNickname(),
+					"count", voter.getCount())
+				);
+			return list;
+		};
+
+		return Map.of(
+			"sites", sites,
+			"voteParty", Map.of(
+				"target", voteParty.getCurrentTarget(),
+				"current", voteParty.getCurrentAmount()
+			),
+			"topVoters", Map.of(
+				"voteParty", transformer.apply(voterService.getTopVotersSince(voteParty.getStartDate())),
+				"monthly", transformer.apply(voterService.getTopVoters(LocalDate.now().getMonth())),
+				"allTime", transformer.apply(voterService.getTopVoters())
+			)
+		);
 	}
 
 	@Get("/staff")

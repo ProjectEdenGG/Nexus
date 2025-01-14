@@ -4,19 +4,18 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundEx
 import gg.projecteden.nexus.models.voter.Voter.Vote;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import java.time.YearMonth;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@RequiredArgsConstructor
 public class TopVoter {
-	private Voter voter;
-
+	private final Voter voter;
+	private final List<Vote> votes;
 	private YearMonth yearMonth;
-	private List<Vote> votes;
 
 	public int getCount() {
 		return votes.size();

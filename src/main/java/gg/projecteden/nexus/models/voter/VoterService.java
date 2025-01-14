@@ -112,7 +112,7 @@ public class VoterService extends MongoPlayerService<Voter> {
 		return getCache().values().stream()
 			.filter(voter -> voter.getCount() > 0)
 			.sorted(Comparator.comparingInt(Voter::getCount).reversed())
-			.map(voter -> new TopVoter(voter, null, voter.getVotes()))
+			.map(voter -> new TopVoter(voter, voter.getVotes()))
 			.toList();
 	}
 
@@ -126,10 +126,21 @@ public class VoterService extends MongoPlayerService<Voter> {
 
 	public List<TopVoter> getTopVoters(YearMonth yearMonth) {
 		return getCache().values().stream()
-			.map(voter -> new TopVoter(voter, yearMonth, voter.getVotes().stream()
-				.filter(vote -> yearMonth.equals(YearMonth.from(vote.getTimestamp())))
-				.toList()
-			))
+			.map(voter -> {
+				var votes = voter.getVotes().stream().filter(vote -> yearMonth.equals(YearMonth.from(vote.getTimestamp())));
+				return new TopVoter(voter, votes.toList(), yearMonth);
+			})
+			.filter(topVoter -> topVoter.getCount() > 0)
+			.sorted(Comparator.comparingInt(TopVoter::getCount).reversed())
+			.toList();
+	}
+
+	public List<TopVoter> getTopVotersSince(LocalDateTime startTime) {
+		return getCache().values().stream()
+			.map(voter -> {
+				var votes = voter.getVotes().stream().filter(vote -> vote.getTimestamp().isAfter(startTime));
+				return new TopVoter(voter, votes.toList());
+			})
 			.filter(topVoter -> topVoter.getCount() > 0)
 			.sorted(Comparator.comparingInt(TopVoter::getCount).reversed())
 			.toList();
