@@ -129,7 +129,7 @@ public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFram
 		for (MapCursor cursor : data.cursors) {
 			if (cursor.isVisible()) {
 
-				icons.add(new MapDecoration(BuiltInRegistries.MAP_DECORATION_TYPE.get(cursor.getRawType()).get(), cursor.getX(), cursor.getY(), cursor.getDirection(), Optional.of(CraftChatMessage.fromStringOrNull(cursor.getCaption()))));
+				icons.add(new MapDecoration(BuiltInRegistries.MAP_DECORATION_TYPE.get(cursor.getRawType()).get(), cursor.getX(), cursor.getY(), cursor.getDirection(), Optional.ofNullable(CraftChatMessage.fromStringOrNull(cursor.getCaption()))));
 			}
 		}
 
