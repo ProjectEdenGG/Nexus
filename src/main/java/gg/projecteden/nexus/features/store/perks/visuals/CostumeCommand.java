@@ -34,6 +34,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -65,6 +66,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		Costume.loadAll();
 
 		final CostumeUserService service = new CostumeUserService();
+		service.getCache().values().forEach(user -> user.getCachedItems().clear());
 		taskId = Tasks.repeat(TickTime.TICK, TickTime.TICK, () -> {
 			for (Player player : OnlinePlayers.getAll())
 				service.get(player).sendCostumePacket();
@@ -113,6 +115,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	@Description("Reload costumes from the resource pack")
 	void reload() {
 		Costume.loadAll();
+		service.getCache().values().forEach(user -> user.getCachedItems().clear());
 		send(PREFIX + "Loaded " + Costume.values().size() + " costumes");
 	}
 
@@ -211,6 +214,13 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		for (CostumeType type : CostumeType.values())
 			if (!user.hasActiveCostume(type))
 				Tasks.wait(1, () -> user.sendResetPacket(type));
+	}
+
+	@EventHandler
+	public void onJoin(PlayerJoinEvent event) {
+		final CostumeUserService service = new CostumeUserService();
+		final CostumeUser user = service.get(event.getPlayer());
+		user.getCachedItems().clear();
 	}
 
 	@Title("Costumes")

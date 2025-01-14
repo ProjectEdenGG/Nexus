@@ -1,10 +1,7 @@
 package gg.projecteden.nexus.models.costume;
 
 import com.mongodb.DBObject;
-import dev.morphia.annotations.Converters;
-import dev.morphia.annotations.Entity;
-import dev.morphia.annotations.Id;
-import dev.morphia.annotations.PreLoad;
+import dev.morphia.annotations.*;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
@@ -65,6 +62,9 @@ public class CostumeUser implements PlayerOwnedObject {
 	private static final List<WorldGroup> DISABLED_WORLDS = List.of(WorldGroup.MINIGAMES);
 	private static final List<GameMode> DISABLED_GAMEMODES = List.of(GameMode.SPECTATOR);
 
+	@NotSaved
+	Map<String, ItemStack> cachedItems = new HashMap<>();
+
 	private static final Map<String, String> converter = new HashMap<>() {{
 		put("hat/lightsabers/red", "hat/misc/lightsaber");
 		put("hat/lightsabers/green", "hat/misc/lightsaber");
@@ -113,7 +113,8 @@ public class CostumeUser implements PlayerOwnedObject {
 
 	public void setActiveCostumeId(CostumeType type, String activeCostume) {
 		if (Nullables.isNullOrEmpty(activeCostume)) {
-			activeCostumes.remove(type);
+			String removed = activeCostumes.remove(type);
+			cachedItems.remove(removed);
 			sendResetPacket(type);
 		} else
 			activeCostumes.put(type, activeCostume);
@@ -156,6 +157,9 @@ public class CostumeUser implements PlayerOwnedObject {
 	}
 
 	public ItemStack getCostumeItem(Costume costume) {
+		if (cachedItems.containsKey(costume.getId()) && !costume.isDyeable())
+			return cachedItems.get(costume.getId());
+
 		ItemBuilder item = new ItemBuilder(costume.getItem());
 
 		if (costume.getItem().getType() == Material.PLAYER_HEAD)
@@ -170,7 +174,8 @@ public class CostumeUser implements PlayerOwnedObject {
 				item.dyeColor(rainbowArmorTask.getColor());
 		}
 
-		return item.build();
+		cachedItems.put(costume.getId(), item.build());
+		return cachedItems.get(costume.getId());
 	}
 
 	public ItemStack getCostumeDisplayItem(Costume costume) {
