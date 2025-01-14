@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.votes;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.votes.party.VotePartyReward;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -12,17 +13,22 @@ import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.models.dailyvotereward.DailyVoteReward;
 import gg.projecteden.nexus.models.dailyvotereward.DailyVoteReward.DailyVoteStreak;
 import gg.projecteden.nexus.models.dailyvotereward.DailyVoteRewardService;
+import gg.projecteden.nexus.models.mail.Mailer;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Aliases({"dailyvotereward", "dvr"})
@@ -81,8 +87,11 @@ public class DailyVoteRewardsCommand extends CustomCommand {
 	@Description("View the vote streak rewards")
 	void rewards() {
 		send(PREFIX + "Rewards:");
-		for (VoteStreakReward reward : VoteStreakReward.values())
-			send("&e" + camelCase(reward) + " &7- " + reward.getAmount() + " " + camelCase(reward.getCrateType()) + " Crate Keys");
+		send(" &eDay 3 &7- 5 Extra Vote Points");
+		send(" &eDay 5 &7- 5 Vote Crate Keys");
+		send(" &eDay 10 &7- 10 Vote Crate Keys");
+		send(" &eDay 15 &7- 20 Vote Crate Keys");
+		send(" &eDay 30 &7- 1 Random Personal Boost");
 	}
 
 	/*
@@ -146,23 +155,34 @@ public class DailyVoteRewardsCommand extends CustomCommand {
 	@Getter
 	@AllArgsConstructor
 	public enum VoteStreakReward {
-		DAY_3(CrateType.VOTE, 5),
-		DAY_5(CrateType.VOTE, 10),
-		DAY_10(CrateType.VOTE, 20),
-		DAY_15(CrateType.VOTE, 30),
-		DAY_30(CrateType.MYSTERY, 1),
+		DAY_3(player -> {
+			new VoterService().edit(player, voter -> voter.givePoints(5));
+			Mailer.Mail.fromServer(player, WorldGroup.SURVIVAL, "You received 5 extra vote points for your Vote Streak Reward");
+		}),
+		DAY_5(player -> giveVoteCrateKeys(player,  5,5)),
+		DAY_10(player -> giveVoteCrateKeys(player,  10,10)),
+		DAY_15(player -> giveVoteCrateKeys(player,  15,20)),
+		DAY_30(player -> {
+			VotePartyReward.GREAT_BOOST.give(PlayerUtils.getPlayer(player));
+			Mailer.Mail.fromServer(player, WorldGroup.SURVIVAL, "You received a random personal boost for your Vote Streak Reward");
+		}),
 		;
 
-		private final CrateType crateType;
-		private final int amount;
+		private final Consumer<UUID> onAchieve;
 
 		public int getDay() {
 			return Integer.parseInt(name().replace("DAY_", ""));
 		}
 
-		public ItemStack getKeys() {
-			return new ItemBuilder(crateType.getKey()).amount(amount).build();
+		private static void giveVoteCrateKeys(UUID player, int streak, int amount) {
+			Mailer.Mail.fromServer(
+				player,
+				WorldGroup.SURVIVAL,
+				"Vote Streak Reward (Day #" + streak + ")",
+				new ItemBuilder(CrateType.VOTE.getKey()).amount(amount).build()
+			).send();
 		}
+
 	}
 
 }

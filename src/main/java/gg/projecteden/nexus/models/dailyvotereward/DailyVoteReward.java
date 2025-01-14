@@ -8,15 +8,8 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.votes.DailyVoteRewardsCommand.VoteStreakReward;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -69,15 +62,13 @@ public class DailyVoteReward implements PlayerOwnedObject {
 
 			sendMessage(StringUtils.getPrefix("DailyVoteRewards") + "Your streak has &eincreased&3!");
 
-			if (true) // TODO 1.19 Rebalance
-				return;
-
 			if (streak % 30 == 0)
-				Mail.fromServer(uuid, WorldGroup.SURVIVAL, "Vote Streak Reward (Day #" + streak + ")", VoteStreakReward.DAY_30.getKeys()).send();
+				VoteStreakReward.DAY_30.getOnAchieve().accept(uuid);
 			else
 				for (VoteStreakReward reward : VoteStreakReward.values())
 					if (reward.getDay() == streak % 30)
-						Mail.fromServer(uuid, WorldGroup.SURVIVAL, "Vote Streak Reward (Day #" + streak + ")", reward.getKeys()).send();
+						reward.getOnAchieve().accept(uuid);
+
 		}
 
 		public void end() {
