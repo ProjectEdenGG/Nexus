@@ -23,11 +23,20 @@ import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.voter.TopVoter;
+import gg.projecteden.nexus.models.voter.VotePartyData;
+import gg.projecteden.nexus.models.voter.VotePartyService;
 import gg.projecteden.nexus.models.voter.VoteSite;
 import gg.projecteden.nexus.models.voter.Voter;
 import gg.projecteden.nexus.models.voter.Voter.Vote;
 import gg.projecteden.nexus.models.voter.VoterService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.IOUtils;
+import gg.projecteden.nexus.utils.Name;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
@@ -132,12 +141,15 @@ public class Votes extends Feature implements Listener {
 		Vote vote = new Vote(uuid, site, extraVotePoints(voter), timestamp);
 		voter.vote(vote);
 
-		int sum = voterService.getTopVoters(LocalDateTime.now().getMonth()).stream()
-			.mapToInt(topVoter -> Long.valueOf(topVoter.getCount()).intValue()).sum();
+		final VotePartyService votePartyService = new VotePartyService();
+		final VotePartyData voteParty = votePartyService.get0();
+
+		int sum = voteParty.getCurrentAmount();
+		int goal = voteParty.getCurrentTarget();
 
 		int left = 0;
-		if (GOAL > sum)
-			left = GOAL - sum;
+		if (goal > sum)
+			left = goal - sum;
 
 		int points = vote.getExtra() + BASE_POINTS;
 		voter.givePoints(points);
@@ -146,7 +158,7 @@ public class Votes extends Feature implements Listener {
 		if (new CooldownService().check(uuid, "vote-announcement", TickTime.HOUR)) {
 			String message = " &3for the server and received &b" + BASE_POINTS + StringUtils.plural(" &3vote point", BASE_POINTS) + " per site!";
 			if (left > 0)
-				message += " &e" + left + " &3more votes needed to hit the goal";
+				message += " &e" + left + " &3more votes needed to trigger a &eVote Party&3!";
 
 			Broadcast.ingame().message("&a[✔] &e" + name + " &bvoted" + message).send();
 			Broadcast.discord().message(":white_check_mark: **" + Discord.discordize(name) + " voted**" + message).send();

@@ -106,7 +106,7 @@ public class VoteParty {
 			int amount = (int) votes.stream().filter(vote -> vote.getNerd().getUniqueId().equals(nerd.getUniqueId())).count();
 			RewardTier tier = RewardTier.of(amount);
 			if (tier == null) return;
-//			tier.giveReward(nerd);
+			tier.giveReward(nerd);
 			Nexus.log("Tier: " + tier.name());
 		});
 	}
