@@ -71,11 +71,15 @@ public enum RewardTier {
 		int maxDailyVotes = 3;
 		int maxWeeklyVotes = maxDailyVotes * 7;
 
+		if (count >= maxWeeklyVotes)
+			return RewardTier.values()[RewardTier.values().length - 1];
+
 		for (int i = 0; i < RewardTier.values().length; i++) {
 			RewardTier tier = RewardTier.values()[i];
 			if (count <= maxWeeklyVotes * (i + 1) / RewardTier.values().length)
 				return tier;
 		}
+
 		return null;
 	}
 

@@ -102,12 +102,13 @@ public class VoteParty {
 			.toList();
 
 		nerds.forEach(nerd -> {
-			Nexus.log("Giving reward to " + nerd.getNickname());
 			int amount = (int) votes.stream().filter(vote -> vote.getNerd().getUniqueId().equals(nerd.getUniqueId())).count();
 			RewardTier tier = RewardTier.of(amount);
-			if (tier == null) return;
+			if (tier == null)
+				return;
+
 			tier.giveReward(nerd);
-			Nexus.log("Tier: " + tier.name());
+			Nexus.log("Giving " + StringUtils.camelCase(tier) + " reward to " + nerd.getNickname());
 		});
 	}
 
