@@ -7,12 +7,13 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.friends.FriendsUser;
 import gg.projecteden.nexus.models.friends.FriendsUserService;
+import gg.projecteden.nexus.models.profile.ProfileUser;
+import gg.projecteden.nexus.models.profile.ProfileUser.PrivacySettingType;
+import gg.projecteden.nexus.models.profile.ProfileUserService;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
@@ -22,6 +23,7 @@ public class FriendsCommand extends CustomCommand {
 	public static String PREFIX = StringUtils.getPrefix("Friends");
 	private static final FriendsUserService userService = new FriendsUserService();
 	private FriendsUser user;
+	private static final ProfileUserService profileUserService = new ProfileUserService();
 
 	public FriendsCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -45,8 +47,11 @@ public class FriendsCommand extends CustomCommand {
 
 	@Path("of <player>")
 	@Description("View a player's friends list")
-	@Permission(Group.STAFF)
 	void of(FriendsUser target) {
+		ProfileUser targetProfile = profileUserService.get(target);
+		if (!targetProfile.canView(PrivacySettingType.FRIENDS, player()))
+			error(target.getNickname() + "'s privacy settings prevent you from accessing this");
+
 		new FriendsProvider(target.getOfflinePlayer(), player(), null).open(player());
 	}
 

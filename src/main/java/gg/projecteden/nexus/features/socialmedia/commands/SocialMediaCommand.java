@@ -15,6 +15,9 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.profile.ProfileUser;
+import gg.projecteden.nexus.models.profile.ProfileUser.PrivacySettingType;
+import gg.projecteden.nexus.models.profile.ProfileUserService;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser.Connection;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
@@ -32,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 @NoArgsConstructor
 public class SocialMediaCommand extends CustomCommand implements Listener {
 	private static final SocialMediaUserService service = new SocialMediaUserService();
+	private static final ProfileUserService profileUserService = new ProfileUserService();
 
 	public SocialMediaCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -55,6 +59,10 @@ public class SocialMediaCommand extends CustomCommand implements Listener {
 	@Path("[player]")
 	@Description("View a player's linked social media accounts")
 	void menu(@Arg("self") Nerd target) {
+		ProfileUser targetProfile = profileUserService.get(target);
+		if (!targetProfile.canView(PrivacySettingType.SOCIAL_MEDIA, player()))
+			error(target.getNickname() + "'s privacy settings prevent you from accessing this");
+
 		open(player(), target.getOfflinePlayer(), null);
 	}
 

@@ -39,6 +39,7 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.party.Party;
 import gg.projecteden.nexus.models.party.PartyManager;
 import gg.projecteden.nexus.models.profile.ProfileUser;
+import gg.projecteden.nexus.models.profile.ProfileUser.PrivacySettingType;
 import gg.projecteden.nexus.models.profile.ProfileUserService;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmor;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorService;
@@ -71,7 +72,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// TODO: Customization
 @Rows(6)
 @SuppressWarnings({"deprecation", "unused"})
 public class ProfileProvider extends InventoryProvider {
@@ -296,7 +296,21 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
+			public List<String> getLore(Player viewer, ProfileUser target) {
+				if (ProfileMenuItem.isSelf(viewer, target))
+					return List.of("", "&3Privacy Setting: &e" + StringUtils.camelCase(target.getSocialMediaPrivacy()));
+
+				if (!target.canView(PrivacySettingType.SOCIAL_MEDIA, viewer))
+					return List.of("&c" + target.getNickname() + "'s privacy settings prevent", "&cyou from accessing this");
+
+				return super.getLore(viewer, target);
+			}
+
+			@Override
 			public void onClick(ItemClickData e, Player viewer, ProfileUser target, InventoryContents contents, InventoryProvider previousMenu) {
+				if (!target.canView(PrivacySettingType.SOCIAL_MEDIA, viewer))
+					return;
+
 				SocialMediaCommand.open(viewer, target.getOfflinePlayer(), "/profile " + target.getNickname());
 			}
 		},
@@ -388,10 +402,16 @@ public class ProfileProvider extends InventoryProvider {
 		VIEW_FRIENDS(4, 2, CustomMaterial.GUI_PROFILE_ICON_FRIENDS) {
 			@Override
 			public List<String> getLore(Player viewer, ProfileUser target) {
+				if (ProfileMenuItem.isSelf(viewer, target))
+					return List.of("", "&3Total: " + totalFriends(target), "&3Privacy Setting: &e" + StringUtils.camelCase(target.getSocialMediaPrivacy()));
+
+				if (!target.canView(PrivacySettingType.FRIENDS, viewer))
+					return List.of("&c" + target.getNickname() + "'s privacy settings prevent", "&cyou from accessing this");
+
 				if (hasNoFriends(target))
 					return List.of("&c" + target.getNickname() + " has no friends ):");
 
-				return List.of("&3" + totalFriends(target));
+				return List.of("&3Total: " + totalFriends(target));
 			}
 
 			@Override
@@ -404,18 +424,22 @@ public class ProfileProvider extends InventoryProvider {
 
 			@Override
 			public void onClick(ItemClickData e, Player viewer, ProfileUser target, InventoryContents contents, InventoryProvider previousMenu) {
-				if (hasNoFriends(target))
+				if (!target.canView(PrivacySettingType.FRIENDS, viewer) || hasNoFriends(target))
 					return;
 
 				new FriendsProvider(target.getOfflinePlayer(), viewer, previousMenu).open(viewer);
 			}
 
 			private boolean hasNoFriends(ProfileUser target) {
-				return friendService.get(target).getFriends().isEmpty();
+				return getFriendsUser(target).getFriends().isEmpty();
 			}
 
 			private int totalFriends(ProfileUser target) {
-				return friendService.get(target).getFriends().size();
+				return getFriendsUser(target).getFriends().size();
+			}
+
+			private FriendsUser getFriendsUser(ProfileUser target) {
+				return friendService.get(target);
 			}
 		},
 
