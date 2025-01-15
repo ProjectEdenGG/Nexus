@@ -1,7 +1,10 @@
 package gg.projecteden.nexus.models.costume;
 
 import com.mongodb.DBObject;
-import dev.morphia.annotations.*;
+import dev.morphia.annotations.Converters;
+import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
+import dev.morphia.annotations.PreLoad;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
@@ -19,7 +22,11 @@ import gg.projecteden.nexus.utils.nms.PacketUtils;
 import gg.projecteden.nexus.utils.nms.packet.EntityDestroyPacket;
 import gg.projecteden.nexus.utils.nms.packet.EntityPassengersPacket;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -31,7 +38,14 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -51,19 +65,17 @@ public class CostumeUser implements PlayerOwnedObject {
 	private Map<CostumeType, String> activeCostumes = new ConcurrentHashMap<>();
 	private Map<CostumeType, String> activeDisplayCostumes = new ConcurrentHashMap<>();
 
-	private transient ArmorStand backCostumeStand;
-
 	private Set<String> ownedCostumes = new HashSet<>();
 	private Set<String> temporarilyOwnedCostumes = new HashSet<>();
 	private Set<String> birthdayCostumes = new HashSet<>();
 
 	private Map<String, Color> colors = new ConcurrentHashMap<>();
 
+	private transient ArmorStand backCostumeStand;
+	private transient Map<String, ItemStack> cachedItems = new HashMap<>();
+
 	private static final List<WorldGroup> DISABLED_WORLDS = List.of(WorldGroup.MINIGAMES);
 	private static final List<GameMode> DISABLED_GAMEMODES = List.of(GameMode.SPECTATOR);
-
-	@NotSaved
-	Map<String, ItemStack> cachedItems = new HashMap<>();
 
 	private static final Map<String, String> converter = new HashMap<>() {{
 		put("hat/lightsabers/red", "hat/misc/lightsaber");
