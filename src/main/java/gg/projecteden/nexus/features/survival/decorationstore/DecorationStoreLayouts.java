@@ -72,9 +72,9 @@ public class DecorationStoreLayouts {
 	}
 
 	public static void pasteNextLayout(boolean override) {
-		Nexus.log("[Decoration Store] Pasting new layout");
+		Nexus.log("[Decoration Store] Starting new layout transition...");
 		if (animating && !override) {
-			Nexus.log("[Decoration Store] already pasting!");
+			Nexus.log("[Decoration Store] Error: Already pasting!");
 			throw new InvalidInputException("Decoration Store is already pasting the next layout!");
 		}
 
@@ -98,21 +98,20 @@ public class DecorationStoreLayouts {
 			}
 			DecorationStoreType.SURVIVAL.resetPlayerData();
 
-			Nexus.log("[Decoration Store] Pasting reset schematic");
 			pasteLayout(reset_schematic, StoreLocation.SURVIVAL);
 
 			Tasks.wait(TickTime.MINUTE, () -> {
 				int schematicId = getNextSchematicId();
 
 				config.setSchematicId(schematicId);
-				Nexus.log("[Decoration Store] Pasting schematic id " + schematicId);
 				pasteLayout(getLayoutSchematic(schematicId), StoreLocation.SURVIVAL);
 
 				config.setActive(true);
 				DecorationStore.saveConfig();
 				animating = false;
 
-				Nexus.log("[Decoration Store] Finished");
+				Nexus.log("[Decoration Store] Finished, pasted schematic id: " + schematicId);
+				;
 			});
 		});
 	}
