@@ -10,10 +10,18 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.arenas.PixelPaintersArena;
-import gg.projecteden.nexus.features.minigames.models.events.matches.*;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.PixelPaintersMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
 import org.apache.commons.lang.Validate;
 import org.bukkit.GameMode;
@@ -83,7 +91,7 @@ public class PixelPainters extends TeamlessMechanic {
 		super.onQuit(event);
 		Match match = event.getMatch();
 		PixelPaintersMatchData matchData = match.getMatchData();
-		if (matchData.isAnimateLobby() && match.getMinigamers().size() == 0)
+		if (matchData.isAnimateLobby() && match.getMinigamers().isEmpty())
 			matchData.setAnimateLobby(false);
 	}
 
