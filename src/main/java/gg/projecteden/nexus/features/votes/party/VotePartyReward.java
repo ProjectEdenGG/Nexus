@@ -143,7 +143,7 @@ public enum VotePartyReward {
 		@Override
 		public void give(HasOfflinePlayer player) {
 			int amount = RandomUtils.randomInt(1, 5);
-			CratePinatas.give(player.getOfflinePlayer(), CrateType.VOTE, 1);
+			CratePinatas.give(player.getOfflinePlayer(), CrateType.VOTE, amount);
 			OfflineMessage.send(player.getOfflinePlayer(), getRewardMessage(amount + StringUtils.plural(" Vote Piñata", amount), player));
 		}
 	}

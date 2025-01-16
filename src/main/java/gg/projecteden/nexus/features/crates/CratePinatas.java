@@ -4,7 +4,6 @@ import com.destroystokyo.paper.ParticleBuilder;
 import com.google.common.util.concurrent.AtomicDouble;
 import com.xxmicloxx.NoteBlockAPI.model.SoundCategory;
 import com.xxmicloxx.NoteBlockAPI.songplayer.PositionSongPlayer;
-import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
@@ -17,11 +16,30 @@ import gg.projecteden.nexus.models.crate.CrateConfig;
 import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.models.jukebox.JukeboxSong;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
-import org.bukkit.*;
-import org.bukkit.entity.*;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.component.CustomData;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Firework;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -52,10 +70,17 @@ public class CratePinatas implements Listener {
 
 	public static void give(OfflinePlayer player, CrateType type, int amount) {
 		ItemBuilder builder = PINATA_ITEM.clone();
-		builder.nbt(nbt -> nbt.setString(NBT_KEY, type.name()));
 		builder.amount(amount);
 
-		PlayerUtils.giveItemAndMailExcess(player, builder.build(), WorldGroup.SURVIVAL);
+		net.minecraft.world.item.ItemStack nms = NMSUtils.toNMS(builder.build());
+		CompoundTag tag = new CompoundTag();
+		if (nms.has(DataComponents.CUSTOM_DATA))
+			tag = nms.get(DataComponents.CUSTOM_DATA).copyTag();
+
+		tag.putString(NBT_KEY, type.name());
+		nms.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+
+		PlayerUtils.giveItemAndMailExcess(player, nms.asBukkitCopy(), WorldGroup.SURVIVAL);
 	}
 
 	@EventHandler
@@ -75,7 +100,11 @@ public class CratePinatas implements Listener {
 		if (new ItemBuilder(event.getPlayer().getInventory().getItemInMainHand()).modelId() != PINATA_ITEM.modelId())
 			return;
 
-		if (!new NBTItem(event.getPlayer().getInventory().getItemInMainHand()).hasKey(NBT_KEY))
+		net.minecraft.world.item.ItemStack nms = NMSUtils.toNMS(event.getPlayer().getInventory().getItemInMainHand());
+		if (!nms.has(DataComponents.CUSTOM_DATA))
+			return;
+
+		if (!nms.get(DataComponents.CUSTOM_DATA).copyTag().contains(NBT_KEY))
 			return;
 
 		if (!new CooldownService().check(event.getPlayer().getUniqueId(), "crate-pinata", TimeUtils.TickTime.MINUTE.get(), true)) {
@@ -87,7 +116,7 @@ public class CratePinatas implements Listener {
 	}
 
 	public void activate(Player player) {
-		String nbtType = new NBTItem(player.getInventory().getItemInMainHand()).getString(NBT_KEY);
+		String nbtType = NMSUtils.toNMS(player.getInventory().getItemInMainHand()).get(DataComponents.CUSTOM_DATA).copyTag().getString(NBT_KEY);
 		CrateType type;
 		try {
 			type = CrateType.valueOf(nbtType.toUpperCase());
