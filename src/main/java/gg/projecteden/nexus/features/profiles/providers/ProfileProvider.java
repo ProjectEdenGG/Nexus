@@ -403,7 +403,7 @@ public class ProfileProvider extends InventoryProvider {
 			@Override
 			public List<String> getLore(Player viewer, ProfileUser target) {
 				if (ProfileMenuItem.isSelf(viewer, target))
-					return List.of("", "&3Total: " + totalFriends(target), "&3Privacy Setting: &e" + StringUtils.camelCase(target.getSocialMediaPrivacy()));
+					return List.of("&3Total: &e" + totalFriends(target), "", "&3Privacy Setting: &e" + StringUtils.camelCase(target.getSocialMediaPrivacy()));
 
 				if (!target.canView(PrivacySettingType.FRIENDS, viewer))
 					return List.of("&c" + target.getNickname() + "'s privacy settings prevent", "&cyou from accessing this");
@@ -411,7 +411,7 @@ public class ProfileProvider extends InventoryProvider {
 				if (hasNoFriends(target))
 					return List.of("&c" + target.getNickname() + " has no friends ):");
 
-				return List.of("&3Total: " + totalFriends(target));
+				return List.of("&3Total: &e" + totalFriends(target));
 			}
 
 			@Override
