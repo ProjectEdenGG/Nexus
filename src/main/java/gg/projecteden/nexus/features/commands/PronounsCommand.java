@@ -53,7 +53,7 @@ public class PronounsCommand extends CustomCommand {
 	@ConverterFor(Pronoun.class)
 	Pronoun convertToPronoun(String value) {
 		try {
-			return (Pronoun) convertToEnum(value.replaceAll("/", "_"), Pronoun.class);
+			return convertToEnum(value.replaceAll("/", "_"), Pronoun.class);
 		} catch (InvalidInputException ex) {
 			throw new InvalidInputException("Pronoun &e" + value + " &cnot whitelisted");
 		}
