@@ -49,7 +49,7 @@ public class FriendsCommand extends CustomCommand {
 	@Description("View a player's friends list")
 	void of(FriendsUser target) {
 		ProfileUser targetProfile = profileUserService.get(target);
-		if (!targetProfile.canView(PrivacySettingType.FRIENDS, player()))
+		if (targetProfile.canNotView(PrivacySettingType.FRIENDS, player()))
 			error(target.getNickname() + "'s privacy settings prevent you from accessing this");
 
 		new FriendsProvider(target.getOfflinePlayer(), player(), null).open(player());

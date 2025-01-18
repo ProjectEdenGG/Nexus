@@ -8,7 +8,6 @@ import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.framework.interfaces.IsColored;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
@@ -23,13 +22,12 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 
-/*
-	TODO:
-		- Ability to save colors
- */
 @Rows(5)
 @Title("Color Creator")
 public class ColorCreatorProvider extends InventoryProvider {
@@ -37,31 +35,33 @@ public class ColorCreatorProvider extends InventoryProvider {
 	InventoryProvider previousMenu = null;
 	Color displayColor;
 	Consumer<Color> applyColor;
+	Set<Color> savedColors = new HashSet<>();
+	Consumer<Color> saveColor;
+	Consumer<Color> unSaveColor;
 
-	public ColorCreatorProvider(Player viewer, @Nullable InventoryProvider previousMenu, IsColored defaultColor, Consumer<Color> applyColor) {
-		this(viewer, previousMenu, defaultColor.colored().getBukkitColor(), applyColor);
+	public ColorCreatorProvider(Player viewer, @Nullable InventoryProvider previousMenu, ChatColor defaultColor, Consumer<Color> applyColor, Set<Color> savedColors, Consumer<Color> saveColor, Consumer<Color> unSaveColor) {
+		this(viewer, previousMenu, defaultColor.getColor(), applyColor, savedColors, saveColor, unSaveColor);
 	}
 
-	public ColorCreatorProvider(Player viewer, @Nullable InventoryProvider previousMenu, ChatColor defaultColor, Consumer<Color> applyColor) {
-		this(viewer, previousMenu, defaultColor.getColor(), applyColor);
+	public ColorCreatorProvider(Player viewer, @Nullable InventoryProvider previousMenu, java.awt.Color defaultColor, Consumer<Color> applyColor, Set<Color> savedColors, Consumer<Color> saveColor, Consumer<Color> unSaveColor) {
+		this(viewer, previousMenu, ColorType.toBukkit(defaultColor), applyColor, savedColors, saveColor, unSaveColor);
 	}
 
-	public ColorCreatorProvider(Player viewer, @Nullable InventoryProvider previousMenu, java.awt.Color defaultColor, Consumer<Color> applyColor) {
-		this(viewer, previousMenu, ColorType.toBukkit(defaultColor), applyColor);
-	}
-
-	public ColorCreatorProvider(Player viewer, @Nullable InventoryProvider previousMenu, Color defaultColor, Consumer<Color> applyColor) {
+	public ColorCreatorProvider(Player viewer, @Nullable InventoryProvider previousMenu, Color defaultColor, Consumer<Color> applyColor, Set<Color> savedColors, Consumer<Color> saveColor, Consumer<Color> unSaveColor) {
 		this.viewer = viewer;
 		this.previousMenu = previousMenu;
 		this.displayColor = defaultColor;
 		this.applyColor = applyColor;
+		this.savedColors = savedColors;
+		this.saveColor = saveColor;
+		this.unSaveColor = unSaveColor;
 	}
 
 	@Override
 	public void init() {
 		addBackItem(previousMenu);
 
-		ItemBuilder displayItem = new ItemBuilder(CustomMaterial.GUI_FILLER_DYEABLE).name("&fCurrent Color:")
+		ItemBuilder displayItem = new ItemBuilder(CustomMaterial.DYE_STATION_BUTTON_DYE).name("&fCurrent Color:")
 			.itemFlags(ItemFlags.HIDE_ALL)
 			.dyeColor(displayColor)
 			.lore(List.of(
@@ -70,13 +70,37 @@ public class ColorCreatorProvider extends InventoryProvider {
 				"&bB: " + displayColor.getBlue(),
 				"",
 				"&3Hex: &e" + StringUtils.toHex(displayColor),
-				"",
+				"&3- - -",
 				"&3&l[&eClick to Apply&3&l]"
 			));
-		contents.set(2, 4, ClickableItem.of(displayItem, e -> {
+		contents.set(SlotPos.of(2, 4), ClickableItem.of(displayItem, e -> {
 			applyColor.accept(displayColor);
 			back(previousMenu);
 		}));
+
+		// Save Color
+		if (!savedColors.contains(displayColor)) {
+			ItemBuilder saveColorButton = new ItemBuilder(CustomMaterial.GUI_PLUS).dyeColor(ColorType.LIGHT_GREEN)
+				.name("&aSave Color?").itemFlags(ItemFlags.HIDE_ALL);
+			contents.set(SlotPos.of(3, 4), ClickableItem.of(saveColorButton, e -> {
+				saveColor.accept(displayColor);
+				refresh();
+			}));
+		}
+
+		// Saved Colors
+		if(!savedColors.isEmpty()) {
+			ItemBuilder savedColorsMenu = new ItemBuilder(Material.CHEST).name("Saved Colors");
+			contents.set(SlotPos.of(3, 1), ClickableItem.of(savedColorsMenu, e -> {
+				Consumer<Color> applyColor = _color -> {
+					this.displayColor = _color;
+					refresh();
+				};
+
+				new SavedColorsMenu(viewer, this, savedColors, applyColor, unSaveColor).open(viewer);
+			}));
+		}
+
 
 		// Dyes
 		ItemBuilder dyeMenu = new ItemBuilder(Material.RED_DYE).name("Pick A Color");
@@ -88,8 +112,8 @@ public class ColorCreatorProvider extends InventoryProvider {
 		}));
 
 		// Hex
-		ItemBuilder inputHex = new ItemBuilder(Material.NAME_TAG).name("Input Hex");
-		contents.set(SlotPos.of(3, 1), ClickableItem.of(inputHex, e -> {
+		ItemBuilder inputHexMenu = new ItemBuilder(Material.NAME_TAG).name("Input Hex");
+		contents.set(SlotPos.of(2, 1), ClickableItem.of(inputHexMenu, e -> {
 			Nexus.getSignMenuFactory().lines(List.of("#", SignMenuFactory.ARROWS, "Enter a", "hex color"))
 				.prefix(PREFIX)
 				.response(lines -> {
@@ -176,6 +200,55 @@ public class ColorCreatorProvider extends InventoryProvider {
 			}
 
 			return newColor;
+		}
+	}
+
+	@Title("Saved Colors")
+	private static class SavedColorsMenu extends InventoryProvider {
+		Set<Color> choices = new HashSet<>();
+
+		InventoryProvider previousMenu = null;
+		Consumer<Color> applyColor;
+		Consumer<Color> unSaveColor;
+
+		public SavedColorsMenu(Player viewer, @Nullable InventoryProvider previousMenu, Set<Color> choices, Consumer<Color> applyColor, Consumer<Color> unSaveColor) {
+			this.viewer = viewer;
+			this.previousMenu = previousMenu;
+			this.choices = choices;
+			this.applyColor = applyColor;
+			this.unSaveColor = unSaveColor;
+		}
+
+		@Override
+		public void init() {
+			addBackItem(previousMenu);
+
+			List<ClickableItem> items = new ArrayList<>();
+			for (Color color : choices) {
+				ItemBuilder displayItem = new ItemBuilder(CustomMaterial.DYE_STATION_BUTTON_DYE).name("")
+					.itemFlags(ItemFlags.HIDE_ALL).dyeColor(color)
+					.lore(List.of(
+							"&cR: " + color.getRed(),
+							"&aG: " + color.getGreen(),
+							"&bB: " + color.getBlue(),
+							"",
+							"&3Hex: &e" + StringUtils.toHex(color),
+							"&3- - -",
+							"&eClick &3to &aapply",
+							"&eShift+Click &3to &cdelete"
+						));
+
+				items.add(ClickableItem.of(displayItem, e -> {
+					if(e.isShiftClick()){
+						unSaveColor.accept(color);
+						refresh();
+					} else {
+						applyColor.accept(color);
+						back(previousMenu);
+					}
+				}));
+			}
+			paginate(items);
 		}
 	}
 

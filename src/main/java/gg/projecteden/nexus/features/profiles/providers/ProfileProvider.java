@@ -72,6 +72,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/*
+	TODO:
+		- When entering settings, then going back, it goes into a "back" loop
+ */
 @Rows(6)
 @SuppressWarnings({"deprecation", "unused"})
 public class ProfileProvider extends InventoryProvider {
@@ -300,7 +304,7 @@ public class ProfileProvider extends InventoryProvider {
 				if (ProfileMenuItem.isSelf(viewer, target))
 					return List.of("", "&3Privacy Setting: &e" + StringUtils.camelCase(target.getSocialMediaPrivacy()));
 
-				if (!target.canView(PrivacySettingType.SOCIAL_MEDIA, viewer))
+				if (target.canNotView(PrivacySettingType.SOCIAL_MEDIA, viewer))
 					return List.of("&c" + target.getNickname() + "'s privacy settings prevent", "&cyou from accessing this");
 
 				return super.getLore(viewer, target);
@@ -308,7 +312,7 @@ public class ProfileProvider extends InventoryProvider {
 
 			@Override
 			public void onClick(ItemClickData e, Player viewer, ProfileUser target, InventoryContents contents, InventoryProvider previousMenu) {
-				if (!target.canView(PrivacySettingType.SOCIAL_MEDIA, viewer))
+				if (target.canNotView(PrivacySettingType.SOCIAL_MEDIA, viewer))
 					return;
 
 				SocialMediaCommand.open(viewer, target.getOfflinePlayer(), "/profile " + target.getNickname());
@@ -405,7 +409,7 @@ public class ProfileProvider extends InventoryProvider {
 				if (ProfileMenuItem.isSelf(viewer, target))
 					return List.of("&3Total: &e" + totalFriends(target), "", "&3Privacy Setting: &e" + StringUtils.camelCase(target.getSocialMediaPrivacy()));
 
-				if (!target.canView(PrivacySettingType.FRIENDS, viewer))
+				if (target.canNotView(PrivacySettingType.FRIENDS, viewer))
 					return List.of("&c" + target.getNickname() + "'s privacy settings prevent", "&cyou from accessing this");
 
 				if (hasNoFriends(target))
@@ -424,7 +428,7 @@ public class ProfileProvider extends InventoryProvider {
 
 			@Override
 			public void onClick(ItemClickData e, Player viewer, ProfileUser target, InventoryContents contents, InventoryProvider previousMenu) {
-				if (!target.canView(PrivacySettingType.FRIENDS, viewer) || hasNoFriends(target))
+				if (target.canNotView(PrivacySettingType.FRIENDS, viewer) || hasNoFriends(target))
 					return;
 
 				new FriendsProvider(target.getOfflinePlayer(), viewer, previousMenu).open(viewer);

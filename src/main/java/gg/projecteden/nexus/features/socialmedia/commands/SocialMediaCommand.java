@@ -60,7 +60,7 @@ public class SocialMediaCommand extends CustomCommand implements Listener {
 	@Description("View a player's linked social media accounts")
 	void menu(@Arg("self") Nerd target) {
 		ProfileUser targetProfile = profileUserService.get(target);
-		if (!targetProfile.canView(PrivacySettingType.SOCIAL_MEDIA, player()))
+		if (targetProfile.canNotView(PrivacySettingType.SOCIAL_MEDIA, player()))
 			error(target.getNickname() + "'s privacy settings prevent you from accessing this");
 
 		open(player(), target.getOfflinePlayer(), null);

@@ -19,6 +19,8 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.entity.Player;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -35,6 +37,7 @@ public class ProfileUser implements PlayerOwnedObject {
 	private ChatColor backgroundColor = ChatColor.WHITE;
 	private PrivacySetting friendsPrivacy = PrivacySetting.FRIENDS_ONLY;
 	private PrivacySetting socialMediaPrivacy = PrivacySetting.FRIENDS_ONLY;
+	private Set<Color> savedColors = new HashSet<>();
 
 	public Color getBukkitBackgroundColor() {
 		return ColorType.toBukkitColor(this.backgroundColor);
@@ -53,12 +56,12 @@ public class ProfileUser implements PlayerOwnedObject {
 		;
 	}
 
-	public boolean canView(PrivacySettingType settingType, Player viewer) {
+	public boolean canNotView(PrivacySettingType settingType, Player viewer) {
 		if (viewer.getUniqueId().equals(uuid))
-			return true;
+			return false;
 
 		if (Rank.of(viewer).isSeniorStaff())
-			return true;
+			return false;
 
 		PrivacySetting setting = switch (settingType) {
 			case FRIENDS -> this.friendsPrivacy;
@@ -66,18 +69,18 @@ public class ProfileUser implements PlayerOwnedObject {
 		};
 
 		return switch (setting) {
-			case PRIVATE -> false;
-			case PUBLIC -> true;
+			case PRIVATE -> true;
+			case PUBLIC -> false;
 			case FRIENDS_ONLY -> {
 				FriendsUserService friendsUserService = new FriendsUserService();
 				FriendsUser friendsUser = friendsUserService.get(this);
 				if (friendsUser.getFriends().isEmpty())
-					yield false;
+					yield true;
 
 				yield friendsUser.getFriends().contains(viewer.getUniqueId());
 
 			}
-			default -> false;
+			default -> true;
 		};
 	}
 

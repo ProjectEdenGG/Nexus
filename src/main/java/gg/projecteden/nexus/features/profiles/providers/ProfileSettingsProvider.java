@@ -23,6 +23,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 @Rows(3)
 @Title("Profile Settings")
@@ -67,20 +68,32 @@ public class ProfileSettingsProvider extends InventoryProvider {
 
 			@Override
 			public void onClick(Player viewer, ProfileUser user, InventoryProvider previousMenu, InventoryProvider provider, InventoryContents contents, ItemClickData e) {
-				new ColorCreatorProvider(viewer, provider, user.getBackgroundColor(), _color -> {
-					applyColor(_color, user);
+				Consumer<Color> applyColor = _color -> {
+					ProfileUserService userService = new ProfileUserService();
+					user.setBackgroundColor(ChatColor.of(ColorType.toJava(_color)));
+					userService.save(user);
 					refresh(viewer, user, previousMenu, provider, contents);
-				}).open(viewer);
+				};
+
+				Consumer<Color> saveColor = _color -> {
+					ProfileUserService userService = new ProfileUserService();
+					user.getSavedColors().add(_color);
+					userService.save(user);
+					refresh(viewer, user, previousMenu, provider, contents);
+				};
+
+				Consumer<Color> unSaveColor = _color -> {
+					ProfileUserService userService = new ProfileUserService();
+					user.getSavedColors().remove(_color);
+					userService.save(user);
+					refresh(viewer, user, previousMenu, provider, contents);
+				};
+
+				new ColorCreatorProvider(viewer, previousMenu, user.getBackgroundColor(), applyColor, user.getSavedColors(), saveColor, unSaveColor).open(viewer);
 			}
 
 			private Color getUserBackgroundColor(ProfileUser user) {
 				return user.getBukkitBackgroundColor();
-			}
-
-			private void applyColor(Color color, ProfileUser user) {
-				ProfileUserService userService = new ProfileUserService();
-				user.setBackgroundColor(ChatColor.of(ColorType.toJava(color)));
-				userService.save(user);
 			}
 		},
 
