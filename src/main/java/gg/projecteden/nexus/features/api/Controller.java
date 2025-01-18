@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
@@ -41,9 +42,13 @@ public class Controller {
 		var voterService = new VoterService();
 		var voteParty = new VotePartyService().get0();
 		var sites = new HashMap<>();
+		var activeVotes = new HashMap<UUID, List<VoteSite>>();
 
 		for (VoteSite site : VoteSite.getActiveSites())
 			sites.put(site.getName(), site.getUrl());
+
+		for (var vote : new VoterService().getActiveVotes())
+			activeVotes.computeIfAbsent(vote.getUuid(), $ -> new ArrayList<>()).add(vote.getSite());
 
 		Function<List<TopVoter>, List<Map<String, Object>>> transformer = input -> {
 			input = input.subList(0, Math.min(input.size(), 100));
@@ -67,7 +72,8 @@ public class Controller {
 				"voteParty", transformer.apply(voterService.getTopVotersSince(voteParty.getStartDate())),
 				"monthly", transformer.apply(voterService.getTopVoters(LocalDate.now().getMonth())),
 				"allTime", transformer.apply(voterService.getTopVoters())
-			)
+			),
+			"activeVotes", activeVotes
 		);
 	}
 
