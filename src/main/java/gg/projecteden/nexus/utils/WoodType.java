@@ -1,11 +1,16 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.TreeType;
 import org.bukkit.World.Environment;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Getter
 @AllArgsConstructor
@@ -24,8 +29,34 @@ public enum WoodType {
 	},
 	CRIMSON(Environment.NETHER),
 	WARPED(Environment.NETHER),
-	CHERRY(Environment.NORMAL)
+	CHERRY(Environment.NORMAL),
+	BAMBOO(Environment.NORMAL) {
+		@Override
+		public Material getLog() {
+			return Material.BAMBOO_BLOCK;
+		}
+
+		@Override
+		public Material getSapling() {
+			return Material.BAMBOO;
+		}
+
+		@Override
+		public Material getBoat() {
+			return Material.BAMBOO_RAFT;
+		}
+
+		@Override
+		public Material getChestBoat() {
+			return Material.BAMBOO_CHEST_RAFT;
+		}
+	},
+	PALE_OAK(Environment.NORMAL),
 	;
+
+	private final Environment environment;
+	private final Material log;
+	private final Material wood;
 
 	WoodType(Environment environment) {
 		this.environment = environment;
@@ -44,9 +75,24 @@ public enum WoodType {
 		}
 	}
 
-	private final Environment environment;
-	private final Material log;
-	private final Material wood;
+	public static WoodType of(ItemStack itemStack) {
+		if (isNullOrAir(itemStack)) return null;
+		return of(itemStack.getType());
+	}
+
+	public static WoodType of(Material material) {
+		if (isNullOrAir(material)) return null;
+
+		for (var value : values())
+			if (value != OAK) // Skip in case its dark oak or pale oak
+				if (material.name().contains(value.name()))
+					return value;
+
+		if (material.name().contains(OAK.name()))
+			return OAK;
+
+		return null;
+	}
 
 	public Material getLeaves() {
 		return switch (environment) {
@@ -64,66 +110,81 @@ public enum WoodType {
 		};
 	}
 
+	private @Nullable Material matchMaterial(String material) {
+		try {
+			return Material.matchMaterial(material);
+		} catch (Exception ex) {
+			Nexus.warn("Could not find material " + material);
+			return null;
+		}
+	}
+
 	public Material getPlanks() {
-		return Material.matchMaterial(name() + "_PLANKS");
+		return matchMaterial(name() + "_PLANKS");
 	}
 
 	public Material getStrippedLog() {
-		return Material.matchMaterial("STRIPPED_" + log.name());
+		return matchMaterial("STRIPPED_" + getLog().name());
 	}
 
 	public Material getStrippedWood() {
-		return Material.matchMaterial("STRIPPED_" + wood.name());
+		if (wood == null)
+			return null;
+		return matchMaterial("STRIPPED_" + wood.name());
 	}
 
 	public Material getSlab() {
-		return Material.matchMaterial(name() + "_SLAB");
+		return matchMaterial(name() + "_SLAB");
 	}
 
 	public Material getStair() {
-		return Material.matchMaterial(name() + "_STAIRS");
+		return matchMaterial(name() + "_STAIRS");
 	}
 
 	public Material getFence() {
-		return Material.matchMaterial(name() + "_FENCE");
+		return matchMaterial(name() + "_FENCE");
 	}
 
 	public Material getFenceGate() {
-		return Material.matchMaterial(name() + "_FENCE_GATE");
+		return matchMaterial(name() + "_FENCE_GATE");
 	}
 
 	public Material getButton() {
-		return Material.matchMaterial(name() + "_BUTTON");
+		return matchMaterial(name() + "_BUTTON");
 	}
 
 	public Material getPressurePlate() {
-		return Material.matchMaterial(name() + "_PRESSURE_PLATE");
+		return matchMaterial(name() + "_PRESSURE_PLATE");
 	}
 
 	public Material getDoor() {
-		return Material.matchMaterial(name() + "_DOOR");
+		return matchMaterial(name() + "_DOOR");
 	}
 
 	public Material getTrapDoor() {
-		return Material.matchMaterial(name() + "_TRAPDOOR");
+		return matchMaterial(name() + "_TRAPDOOR");
 	}
 
 	public Material getSign() {
-		return Material.matchMaterial(name() + "_SIGN");
+		return matchMaterial(name() + "_SIGN");
+	}
+
+	public Material getHangingSign() {
+		return matchMaterial(name() + "_HANGING_SIGN");
 	}
 
 	public Material getBoat() {
 		if (environment == Environment.NETHER)
 			return null;
 
-		return Material.matchMaterial(name() + "_BOAT");
+		return matchMaterial(name() + "_BOAT");
 	}
 
 	public Material getChestBoat() {
 		if (environment == Environment.NETHER)
 			return null;
 
-		return Material.matchMaterial(name() + "_CHEST_BOAT");
+		return matchMaterial(name() + "_CHEST_BOAT");
 	}
 
 	public static Material saplingOfTree(TreeType treeType) {

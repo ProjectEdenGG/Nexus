@@ -37,6 +37,12 @@ public enum RecipeType {
 			return new ItemBuilder(Material.CYAN_BED).name("&eBeds/Banners").build();
 		}
 	},
+	BOATS_MINECARTS(Material.OAK_CHEST_BOAT) {
+		@Override
+		public ItemStack getItem() {
+			return new ItemBuilder(Material.OAK_CHEST_BOAT).name("&eBoats/Minecarts").build();
+		}
+	},
 	DYES(Material.YELLOW_DYE),
 	WOOL(Material.WHITE_WOOL),
 	WOOD(Material.OAK_LOG),

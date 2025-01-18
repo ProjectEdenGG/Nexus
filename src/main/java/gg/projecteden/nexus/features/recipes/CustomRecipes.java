@@ -22,27 +22,53 @@ import gg.projecteden.nexus.features.workbenches.CustomBench;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Depends;
 import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.CopperState;
 import gg.projecteden.nexus.utils.CopperState.CopperBlockType;
+import gg.projecteden.nexus.utils.IOUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.ItemUtils.ItemStackComparator;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WoodType;
 import lombok.Getter;
 import lombok.NonNull;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Keyed;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Tag;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.bukkit.event.inventory.*;
-import org.bukkit.inventory.*;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.inventory.CraftingInventory;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.RecipeChoice.ExactChoice;
 import org.bukkit.inventory.RecipeChoice.MaterialChoice;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Depends({ResourcePack.class, CustomEnchants.class})
@@ -68,6 +94,7 @@ public class CustomRecipes extends Feature implements Listener {
 				this::registerStoneBricks,
 				this::registerFurnace,
 				this::registerGlass,
+				this::registerMinecartsAndBoats,
 				this::misc
 			);
 
@@ -388,6 +415,24 @@ public class CustomRecipes extends Feature implements Listener {
 		RecipeBuilder.blast(Material.RAW_GOLD_BLOCK).toMake(Material.GOLD_BLOCK).exp(9f).time(600).build().hideFromMenu().register();
 	}
 
+	private void registerMinecartsAndBoats() {
+		for (Material minecart : MaterialTag.MINECARTS.getValues()) {
+			if (minecart == Material.MINECART)
+				continue;
+
+			try {
+				Material result = Material.valueOf(minecart.name().replaceAll("_MINECART", ""));
+				RecipeBuilder.shapeless(minecart).toMake(result).register(RecipeType.BOATS_MINECARTS);
+			} catch (IllegalArgumentException ex) {
+				ex.printStackTrace();
+			}
+		}
+
+		for (WoodType woodType : WoodType.values())
+			if (woodType.getChestBoat() != null)
+				RecipeBuilder.shapeless(woodType.getChestBoat()).toMake(Material.CHEST).register(RecipeType.BOATS_MINECARTS);
+	}
+
 	public void misc() {
 		RecipeBuilder.shaped("SLS", "L L", "LLL").add('S', Material.STRING).add('L', Material.LEATHER).toMake(Material.BUNDLE).register(RecipeType.MISC);
 
@@ -437,11 +482,11 @@ public class CustomRecipes extends Feature implements Listener {
 		RecipeGroup strippedLogs2 = new RecipeGroup(5, "Stripped Logs from Wood", new ItemStack(Material.STRIPPED_OAK_LOG));
 		final List<ItemStack> sandpaper = List.of(CustomMaterial.SAND_PAPER.getNamedItem(), CustomMaterial.RED_SAND_PAPER.getNamedItem());
 		for (WoodType wood : WoodType.values()) {
-			RecipeBuilder.shapeless(wood.getStrippedLog(), 2).toMake(wood.getLog(), 2).register(RecipeType.WOOD, logs);
-			RecipeBuilder.shapeless(wood.getStrippedWood(), 2).toMake(wood.getWood(), 2).register(RecipeType.WOOD, woods);
-			RecipeBuilder.shapeless(wood.getStair(), 2).toMake(wood.getPlanks(), 3).register(RecipeType.WOOD, planks);
-			RecipeBuilder.surround(sandpaper).with(wood.getLog()).toMake(wood.getStrippedLog(), 8).register(RecipeType.WOOD, strippedLogs);
-			RecipeBuilder.surround(sandpaper).with(wood.getWood()).toMake(wood.getStrippedWood(), 8).register(RecipeType.WOOD, strippedLogs2);
+			if (wood.getStrippedLog() != null) RecipeBuilder.shapeless(wood.getStrippedLog(), 2).toMake(wood.getLog(), 2).register(RecipeType.WOOD, logs);
+			if (wood.getStrippedWood() != null) RecipeBuilder.shapeless(wood.getStrippedWood(), 2).toMake(wood.getWood(), 2).register(RecipeType.WOOD, woods);
+			if (wood.getStair() != null) RecipeBuilder.shapeless(wood.getStair(), 2).toMake(wood.getPlanks(), 3).register(RecipeType.WOOD, planks);
+			if (wood.getStrippedLog() != null) RecipeBuilder.surround(sandpaper).with(wood.getLog()).toMake(wood.getStrippedLog(), 8).register(RecipeType.WOOD, strippedLogs);
+			if (wood.getStrippedWood() != null) RecipeBuilder.surround(sandpaper).with(wood.getWood()).toMake(wood.getStrippedWood(), 8).register(RecipeType.WOOD, strippedLogs2);
 		}
 
 		RecipeBuilder.shapeless(Material.STRIPPED_BAMBOO_BLOCK, 2).toMake(Material.BAMBOO_BLOCK, 2).register(RecipeType.WOOD, logs);
@@ -576,6 +621,28 @@ public class CustomRecipes extends Feature implements Listener {
 				result += Math.max(stack.getMaxStackSize() - item.getAmount(), 0);
 
 		return result;
+	}
+
+	@EventHandler
+	public void onCraftWithBoatOrMinecart(CraftItemEvent event) {
+		ItemStack[] matrix = event.getInventory().getMatrix();
+
+		for (int i = 0; i < matrix.length; i++) {
+			ItemStack itemStack = matrix[i];
+			if (!Nullables.isNullOrAir(itemStack))
+				if (MaterialTag.MINECARTS.isTagged(itemStack))
+					matrix[i] = new ItemStack(Material.MINECART);
+				else if (MaterialTag.BOATS.isTagged(itemStack)) {
+					WoodType woodType = WoodType.of(itemStack);
+					if (woodType != null)
+						matrix[i] = new ItemStack(woodType.getBoat());
+				} else {
+					itemStack.setType(Material.AIR);
+				}
+		}
+
+		if (Arrays.stream(matrix).anyMatch(Nullables::isNotNullOrAir))
+			Tasks.wait(1, () -> event.getInventory().setMatrix(matrix));
 	}
 
 }

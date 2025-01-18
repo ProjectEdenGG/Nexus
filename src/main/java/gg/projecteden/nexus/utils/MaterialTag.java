@@ -15,7 +15,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -109,7 +114,7 @@ public class MaterialTag implements Tag<Material> {
 		Material.ANVIL, Material.CHIPPED_ANVIL, Material.DAMAGED_ANVIL, Material.BEACON);
 
 	public static final MaterialTag COMMAND_BLOCKS = new MaterialTag("COMMAND_BLOCK", MatchMode.CONTAINS);
-	public static final MaterialTag MINECARTS = new MaterialTag("_MINECART", MatchMode.SUFFIX);
+	public static final MaterialTag MINECARTS = new MaterialTag("_MINECART", MatchMode.SUFFIX).append(Material.MINECART);
 
 	public static final MaterialTag UNOBTAINABLE = new MaterialTag(Material.WATER, Material.LAVA, Material.AIR,
 		Material.STRUCTURE_BLOCK, Material.STRUCTURE_VOID, Material.JIGSAW, Material.BARRIER, Material.BEDROCK,
@@ -185,19 +190,19 @@ public class MaterialTag implements Tag<Material> {
 		Material.CARTOGRAPHY_TABLE, Material.BREWING_STAND, Material.COMPOSTER, Material.BARREL, Material.FLETCHING_TABLE,
 		Material.CAULDRON, Material.LECTERN, Material.STONECUTTER, Material.LOOM, Material.SMITHING_TABLE, Material.GRINDSTONE);
 
-	public static final MaterialTag TREE_LOGS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getLog).forEach(this::append); }};
-	public static final MaterialTag STRIPPED_LOGS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getStrippedLog).forEach(this::append); }};
-	public static final MaterialTag TREE_WOOD = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getWood).forEach(this::append); }};
-	public static final MaterialTag STRIPPED_WOOD = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getStrippedWood).forEach(this::append); }};
-	public static final MaterialTag WOOD_STAIRS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getStair).forEach(this::append); }};
-	public static final MaterialTag WOOD_SLABS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getSlab).forEach(this::append); }};
-	public static final MaterialTag WOOD_BUTTONS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getButton).forEach(this::append); }};
-	public static final MaterialTag WOOD_DOORS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getDoor).forEach(this::append); }};
-	public static final MaterialTag WOOD_TRAPDOORS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getTrapDoor).forEach(this::append); }};
-	public static final MaterialTag WOOD_FENCES = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getFence).forEach(this::append); }};
-	public static final MaterialTag WOOD_FENCE_GATES = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getFenceGate).forEach(this::append); }};
-	public static final MaterialTag WOOD_PRESSURE_PLATES = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getPressurePlate).forEach(this::append); }};
-	public static final MaterialTag WOOD_SIGNS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getSign).forEach(this::append); }};
+	public static final MaterialTag TREE_LOGS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getLog).filter(Nullables::isNotNullOrAir).forEach(this::append); }};
+	public static final MaterialTag STRIPPED_LOGS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getStrippedLog).filter(Nullables::isNotNullOrAir).forEach(this::append); }};
+	public static final MaterialTag TREE_WOOD = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getWood).filter(Nullables::isNotNullOrAir).forEach(this::append); }};
+	public static final MaterialTag STRIPPED_WOOD = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getStrippedWood).filter(Nullables::isNotNullOrAir).forEach(this::append); }};
+	public static final MaterialTag WOOD_STAIRS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getStair).filter(Nullables::isNotNullOrAir).forEach(this::append); }};
+	public static final MaterialTag WOOD_SLABS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getSlab).filter(Nullables::isNotNullOrAir).forEach(this::append); }};
+	public static final MaterialTag WOOD_BUTTONS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getButton).filter(Nullables::isNotNullOrAir).forEach(this::append); }};
+	public static final MaterialTag WOOD_DOORS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getDoor).filter(Nullables::isNotNullOrAir).forEach(this::append); }};
+	public static final MaterialTag WOOD_TRAPDOORS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getTrapDoor).filter(Nullables::isNotNullOrAir).forEach(this::append); }};
+	public static final MaterialTag WOOD_FENCES = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getFence).filter(Nullables::isNotNullOrAir).forEach(this::append); }};
+	public static final MaterialTag WOOD_FENCE_GATES = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getFenceGate).filter(Nullables::isNotNullOrAir).forEach(this::append); }};
+	public static final MaterialTag WOOD_PRESSURE_PLATES = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getPressurePlate).filter(Nullables::isNotNullOrAir).forEach(this::append); }};
+	public static final MaterialTag WOOD_SIGNS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getSign).filter(Nullables::isNotNullOrAir).forEach(this::append); }};
 
 	public static final MaterialTag LOGS = new MaterialTag(TREE_LOGS, STRIPPED_LOGS);
 	public static final MaterialTag WOOD = new MaterialTag(TREE_WOOD, STRIPPED_WOOD);
