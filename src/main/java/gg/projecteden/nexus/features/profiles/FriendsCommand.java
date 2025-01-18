@@ -132,7 +132,7 @@ public class FriendsCommand extends CustomCommand implements Listener {
 		if (unreadCount == 0)
 			return;
 
-		String message = "You have &3" + unreadCount + "&3 unread pending friend " + StringUtils.plural("request", unreadCount);
+		String message = "You have &e" + unreadCount + "&3 unread pending friend " + StringUtils.plural("request", unreadCount);
 		Tasks.wait(TickTime.SECOND.x(5), () ->
 			PlayerUtils.send(player, PREFIX + message));
 	}
