@@ -74,7 +74,7 @@ import java.util.stream.Collectors;
 
 /*
 	TODO:
-		- When entering settings, then going back, it goes into a "back" loop
+		= Background color not updating when applying saved color
  */
 @Rows(6)
 @SuppressWarnings({"deprecation", "unused"})

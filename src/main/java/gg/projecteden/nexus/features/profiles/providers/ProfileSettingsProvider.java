@@ -39,7 +39,7 @@ public class ProfileSettingsProvider extends InventoryProvider {
 
 	@Override
 	public void init() {
-		addBackItem(e -> new ProfileProvider(viewer, this).open(viewer));
+		addBackItem(previousMenu);
 
 		for (ProfileSetting setting : ProfileSetting.values()) {
 			setting.setClickableItem(viewer, user, previousMenu, this, contents);
