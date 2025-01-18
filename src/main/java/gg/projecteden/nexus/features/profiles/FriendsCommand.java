@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.profiles;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.profiles.providers.FriendsProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -14,12 +15,20 @@ import gg.projecteden.nexus.models.friends.FriendsUserService;
 import gg.projecteden.nexus.models.profile.ProfileUser;
 import gg.projecteden.nexus.models.profile.ProfileUser.PrivacySettingType;
 import gg.projecteden.nexus.models.profile.ProfileUserService;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 @Aliases("friend")
-public class FriendsCommand extends CustomCommand {
+@NoArgsConstructor
+public class FriendsCommand extends CustomCommand implements Listener {
 	public static String PREFIX = StringUtils.getPrefix("Friends");
 	private static final FriendsUserService userService = new FriendsUserService();
 	private FriendsUser user;
@@ -115,6 +124,17 @@ public class FriendsCommand extends CustomCommand {
 		user.cancelSent(target);
 	}
 
-	// TODO: notify player of missed friend requests while offline, if any received is false
+	@EventHandler
+	public void on(PlayerJoinEvent event) {
+		Player player = event.getPlayer();
+		FriendsUser user = new FriendsUserService().get(player);
+		int unreadCount = user.getUnreadReceived().size();
+		if (unreadCount == 0)
+			return;
+
+		String message = "You have &3" + unreadCount + "&3 unread pending friend " + StringUtils.plural("request", unreadCount);
+		Tasks.wait(TickTime.SECOND.x(5), () ->
+			PlayerUtils.send(player, PREFIX + message));
+	}
 
 }
