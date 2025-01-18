@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.TameablesCommand.PendingTameablesAction.PendingTameablesActionType;
 import gg.projecteden.nexus.features.listeners.Restrictions;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -27,6 +28,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Allay;
@@ -43,6 +45,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,6 +60,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	private static final Map<UUID, PendingTameablesAction> actions = new HashMap<>();
 	private static final Map<UUID, Entity> moveQueue = new HashMap<>();
 	private static final String PREFIX = StringUtils.getPrefix("Tameables");
+	private static final NamespacedKey SUMMON_LOCK_KEY = new NamespacedKey(Nexus.getInstance(), "summon-lock");
 
 	TameablesCommand(CommandEvent event) {
 		super(event);
@@ -143,18 +147,40 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	@Path("summon <entityType>")
 	@Description("Summon the animals you own (Must be in loaded chunks)")
 	void summon(SummonableTameableEntityType entityType) {
-		int failed = 0, succeeded = 0;
-		for (Entity entity : list(entityType))
-			if (Restrictions.isPerkAllowedAt(player(), location())) {
-				entity.teleportAsync(location());
-				++succeeded;
-			} else
-				++failed;
+		int failed = 0, succeeded = 0, locked = 0;
+		for (Entity entity : list(entityType)) {
+			if (!entity.getPersistentDataContainer().has(SUMMON_LOCK_KEY)) {
+				if (Restrictions.isPerkAllowedAt(player(), location())) {
+					entity.teleportAsync(location());
+					++succeeded;
+				} else {
+					++failed;
+				}
+			} else {
+				++locked;
+			}
+		}
 
 		if (succeeded > 0)
 			send(PREFIX + "Summoned &e" + succeeded + " " + entityType.plural(succeeded) + " &3in loaded chunks to your location");
 		if (failed > 0)
 			send(PREFIX + "Failed to teleport &e" + failed + " " + entityType.plural(failed) + " to your location &3(not allowed here)");
+		if (locked > 0)
+			send(PREFIX + "Ignored &e" + locked + " " + entityType.plural(locked) + " &3(locked with &c/tameables summon lock&3)");
+	}
+
+	@Path("summon lock")
+	@Description("Prevent an animal from being summoned")
+	void summon_lock() {
+		actions.put(uuid(), new PendingTameablesAction(PendingTameablesActionType.LOCK));
+		send(PREFIX + "Punch the animal you wish to lock");
+	}
+
+	@Path("summon unlock")
+	@Description("Allow a previously locked animal to be summoned again")
+	void summon_unlock() {
+		actions.put(uuid(), new PendingTameablesAction(PendingTameablesActionType.UNLOCK));
+		send(PREFIX + "Punch the animal you wish to unlock");
 	}
 
 	@Path("find <entityType>")
@@ -244,7 +270,8 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		DONKEY("Donkeys"),
 		MULE("Mules"),
 		LLAMA("Llamas"),
-		ALLAY("Allays")
+		ALLAY("Allays"),
+		CAMEL("Camels")
 		;
 
 		private final String plural;
@@ -280,6 +307,8 @@ public class TameablesCommand extends CustomCommand implements Listener {
 			TRANSFER,
 			UNTAME,
 			MOVE,
+			LOCK,
+			UNLOCK,
 			INFO
 		}
 	}
@@ -323,6 +352,26 @@ public class TameablesCommand extends CustomCommand implements Listener {
 						checkOwner(player, entity);
 						moveQueue.put(player.getUniqueId(), event.getEntity());
 						send(player, json(PREFIX + "Click here to summon your animal when you are ready").command("/tameables move here"));
+					}
+					case LOCK -> {
+						if (!SummonableTameableEntityType.isSummonable(event.getEntityType())) {
+							send(player, PREFIX + "&cThat animal is not summonable");
+							actions.remove(uuid);
+							return;
+						}
+						checkOwner(player, entity);
+						entity.getPersistentDataContainer().set(SUMMON_LOCK_KEY, PersistentDataType.BOOLEAN, true);
+						send(player, PREFIX + "That animal is now locked and will not be summoned until unlocked");
+					}
+					case UNLOCK -> {
+						if (!entity.getPersistentDataContainer().has(SUMMON_LOCK_KEY)) {
+							send(player, PREFIX + "&cThat animal is not locked");
+							actions.remove(uuid);
+							return;
+						}
+						checkOwner(player, entity);
+						entity.getPersistentDataContainer().remove(SUMMON_LOCK_KEY);
+						send(player, PREFIX + "That animal is now unlocked and can be summoned");
 					}
 					case INFO -> {
 						String owner = getOwnerNames(entity);
