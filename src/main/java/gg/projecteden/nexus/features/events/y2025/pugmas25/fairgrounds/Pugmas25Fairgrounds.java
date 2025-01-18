@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.frogger.Pugmas25Frogger;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.reflection.Pugmas25Reflection;
@@ -54,10 +55,12 @@ public class Pugmas25Fairgrounds {
 					if (!Pugmas25.isRidesEnabled())
 						continue;
 
+					Nexus.debug("[BF25Rides] Enabling Ride " + ride.getId() + "...");
 					PlayerUtils.runCommandAsConsole("rideadm " + ride.getId() + " enable");
-				} else
+				} else {
+					Nexus.debug("[BF25Rides] Disabling Ride " + ride.getId() + "...");
 					PlayerUtils.runCommandAsConsole("rideadm " + ride.getId() + " disable");
-
+				}
 				rideMap.put(ride, curStatus);
 			}
 		});
@@ -79,7 +82,7 @@ public class Pugmas25Fairgrounds {
 		int radius;
 
 		public String getId() {
-			return Pugmas25.get().getRegionName() + "_" + name().toLowerCase();
+			return "pugmas24_" + name().toLowerCase();
 		}
 
 		private static Location loc(int x, int z) {
