@@ -75,7 +75,6 @@ public class ColorCreatorProvider extends InventoryProvider {
 			));
 		contents.set(SlotPos.of(2, 4), ClickableItem.of(displayItem, e -> {
 			applyColor.accept(displayColor);
-			back(previousMenu);
 		}));
 
 		// Save Color

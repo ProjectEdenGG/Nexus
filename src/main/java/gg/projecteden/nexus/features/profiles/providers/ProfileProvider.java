@@ -72,10 +72,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/*
-	TODO:
-		= Background color not updating when applying saved color
- */
 @Rows(6)
 @SuppressWarnings({"deprecation", "unused"})
 public class ProfileProvider extends InventoryProvider {

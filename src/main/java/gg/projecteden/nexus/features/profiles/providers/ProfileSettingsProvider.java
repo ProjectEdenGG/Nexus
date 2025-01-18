@@ -39,7 +39,7 @@ public class ProfileSettingsProvider extends InventoryProvider {
 
 	@Override
 	public void init() {
-		addBackItem(previousMenu);
+		addBackItem(e -> new ProfileProvider(viewer, this).open(viewer));
 
 		for (ProfileSetting setting : ProfileSetting.values()) {
 			setting.setClickableItem(viewer, user, previousMenu, this, contents);
@@ -72,21 +72,19 @@ public class ProfileSettingsProvider extends InventoryProvider {
 					ProfileUserService userService = new ProfileUserService();
 					user.setBackgroundColor(ChatColor.of(ColorType.toJava(_color)));
 					userService.save(user);
-					refresh(viewer, user, previousMenu, provider, contents);
+					new ProfileSettingsProvider(viewer, previousMenu, user).open(viewer);
 				};
 
 				Consumer<Color> saveColor = _color -> {
 					ProfileUserService userService = new ProfileUserService();
 					user.getSavedColors().add(_color);
 					userService.save(user);
-					refresh(viewer, user, previousMenu, provider, contents);
 				};
 
 				Consumer<Color> unSaveColor = _color -> {
 					ProfileUserService userService = new ProfileUserService();
 					user.getSavedColors().remove(_color);
 					userService.save(user);
-					refresh(viewer, user, previousMenu, provider, contents);
 				};
 
 				new ColorCreatorProvider(viewer, previousMenu, user.getBackgroundColor(), applyColor, user.getSavedColors(), saveColor, unSaveColor).open(viewer);
