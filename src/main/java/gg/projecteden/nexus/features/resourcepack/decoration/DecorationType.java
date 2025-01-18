@@ -104,6 +104,7 @@ import java.util.Map;
 				- Multi-Block ceiling things
 			- Inventory support (cabinets = chests, ovens = furnaces, etc)
 			- Mob plushies
+			- Shop manager https://github.com/ProjectEdenGG/Suggestions/issues/266
 		- Ideas:
 			- Redstone activate instrument?
 			- Mailbox change model if have mail or not

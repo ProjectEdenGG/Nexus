@@ -120,7 +120,6 @@ public class EditProductProvider extends ShopProvider {
 				})
 				.onCancel(e2 -> open(viewer))
 				.open(viewer)));
-
 	}
 
 	@Title("&0Add Stock")
@@ -153,6 +152,47 @@ public class EditProductProvider extends ShopProvider {
 
 			product.setEditing(false);
 			new ShopService().save(product.getShop());
+
+			if (previousMenu != null)
+				Tasks.wait(1, () -> previousMenu.open(player));
+		}
+
+	}
+
+	@Title("&0Mass Add Stock")
+	public static class MassAddStockProvider implements TemporaryMenuListener {
+		@Getter
+		private final Player player;
+		private final ShopProvider previousMenu;
+		private final Shop shop;
+
+		public MassAddStockProvider(Player player, ShopProvider previousMenu, Shop shop) {
+			this.player = player;
+			this.previousMenu = previousMenu;
+			this.shop = shop;
+
+			shop.getProducts().forEach(product -> product.setEditing(true));
+			open();
+		}
+
+		@Override
+		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
+			contentsLoop: for (ItemStack content : contents) {
+				if (Nullables.isNullOrAir(content))
+					continue;
+
+				for (var product : shop.getProducts()) {
+					if (ItemUtils.isSimilar(product.getItem(), content)) {
+						product.addStock(content.getAmount());
+						continue contentsLoop;
+					}
+				}
+
+				PlayerUtils.giveItem(player, content);
+			}
+
+			shop.getProducts().forEach(product -> product.setEditing(false));
+			new ShopService().save(shop);
 
 			if (previousMenu != null)
 				Tasks.wait(1, () -> previousMenu.open(player));

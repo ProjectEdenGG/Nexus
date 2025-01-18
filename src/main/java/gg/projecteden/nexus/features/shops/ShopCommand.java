@@ -2,11 +2,23 @@ package gg.projecteden.nexus.features.shops;
 
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.features.economy.commands.TransactionsCommand;
-import gg.projecteden.nexus.features.shops.providers.*;
+import gg.projecteden.nexus.features.shops.providers.BrowseProductsProvider;
+import gg.projecteden.nexus.features.shops.providers.BrowseShopsProvider;
+import gg.projecteden.nexus.features.shops.providers.EditProductProvider;
+import gg.projecteden.nexus.features.shops.providers.MainMenuProvider;
+import gg.projecteden.nexus.features.shops.providers.PlayerShopProvider;
+import gg.projecteden.nexus.features.shops.providers.YourShopProvider;
 import gg.projecteden.nexus.features.shops.providers.YourShopProvider.CollectItemsProvider;
 import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterSearchType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.banker.Transaction;
@@ -32,7 +44,12 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import world.bentobox.bentobox.api.events.island.IslandResetEvent;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -93,6 +110,12 @@ public class ShopCommand extends CustomCommand implements Listener {
 	@Description("Collect items sold to you or items that didnt fit in your inventory")
 	void collect() {
 		new CollectItemsProvider(player(), null);
+	}
+
+	@Path("massRestock")
+	@Description("Restock any item in your shop in one menu")
+	void massRestock() {
+		new EditProductProvider.MassAddStockProvider(player(), null, service.get(player()));
 	}
 
 	@Async
