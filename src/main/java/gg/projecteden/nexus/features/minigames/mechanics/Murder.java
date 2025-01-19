@@ -18,14 +18,26 @@ import gg.projecteden.nexus.features.minigames.models.exceptions.MinigameExcepti
 import gg.projecteden.nexus.features.minigames.models.matchdata.MurderMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard.Type;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.Distance;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import net.md_5.bungee.api.ChatColor;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
@@ -48,8 +60,16 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Railgun
 @Scoreboard(teams = false, sidebarType = Type.MINIGAMER)
@@ -365,7 +385,7 @@ public class Murder extends TeamMechanic {
 			player.getInventory().setItem(1, retriever);
 			// Start countdown
 			ItemMeta meta = player.getInventory().getItem(1).getItemMeta();
-			meta.setDisplayName(ChatColor.YELLOW + "Retrieve the knife in " + ChatColor.RED + "10");
+			meta.setDisplayName(colorize("&eRetrieve the knife in &c10"));
 			player.getInventory().getItem(1).setItemMeta(meta);
 			// Sync delayed task that cancels once it reaches 0
 			new Retriever(player).runTaskTimer(Nexus.getInstance(), 0, 20);
@@ -531,10 +551,10 @@ public class Murder extends TeamMechanic {
 			ItemMeta meta = item.getItemMeta();
 
 			if (time > 0) {
-				meta.setDisplayName(ChatColor.YELLOW + "Retrieve the knife in &c" + time--);
+				meta.setDisplayName(colorize("&eRetrieve the knife in &c" + time--));
 				player.getInventory().getItem(1).setItemMeta(meta);
 			} else {
-				meta.setDisplayName(ChatColor.YELLOW + "Retrieve the knife");
+				meta.setDisplayName(colorize("&eRetrieve the knife"));
 				player.getInventory().getItem(1).setItemMeta(meta);
 				this.cancel();
 			}
