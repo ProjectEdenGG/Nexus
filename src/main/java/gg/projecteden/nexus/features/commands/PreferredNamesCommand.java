@@ -41,7 +41,7 @@ public class PreferredNamesCommand extends CustomCommand {
 			error("You have already added &e" + name + " &cas a preferred name");
 
 		if (Censor.isCensored(player(), name)) {
-			String message = "Preferred name of " + nickname() + " was censored: &e" + name;
+			String message = "&cPreferred name of " + nickname() + " was censored: &e" + name;
 			Broadcast.staff().prefix("Censor").message(message).send();
 			error("Inappropriate input");
 			return;
