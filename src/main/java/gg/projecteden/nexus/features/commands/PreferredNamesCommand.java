@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.nexus.features.chat.Censor;
+import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -7,6 +9,9 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
+import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 
 public class PreferredNamesCommand extends CustomCommand {
@@ -34,6 +39,13 @@ public class PreferredNamesCommand extends CustomCommand {
 
 		if (nerd().getPreferredNames().contains(name))
 			error("You have already added &e" + name + " &cas a preferred name");
+
+		if (Censor.isCensored(player(), name)) {
+			String message = "Preferred name of " + nickname() + "was censored: &e" + name;
+			Broadcast.staff().prefix("Censor").message(message).send();
+			error("Inappropriate input");
+			return;
+		}
 
 		nerd().getPreferredNames().add(name);
 		service.save(nerd());
