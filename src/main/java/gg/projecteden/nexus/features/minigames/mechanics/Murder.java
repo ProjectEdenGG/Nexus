@@ -130,7 +130,7 @@ public class Murder extends TeamMechanic {
 					if (minigamer.getMatch() == null)
 						return;
 
-					Minigamer target = Collections.min(minigamer.getMatch().getMinigamers(), Comparator.comparingDouble(_minigamer -> {
+					Minigamer target = Collections.min(minigamer.getMatch().getAliveMinigamers(), Comparator.comparingDouble(_minigamer -> {
 						if (_minigamer == minigamer || !_minigamer.isAlive())
 							return Double.MAX_VALUE;
 
@@ -434,12 +434,12 @@ public class Murder extends TeamMechanic {
 	public void onPickup(EntityPickupItemEvent event) {
 		if (!(event.getEntity() instanceof Player player)) return;
 		Minigamer minigamer = Minigamer.of(player);
-		if (!minigamer.isPlaying(this)) return;
+		if (!minigamer.isIn(this)) return;
 
 		event.setCancelled(true);
 
 		// prevent dead players from picking things up
-		if (!minigamer.isAlive()) return;
+		if (minigamer.isDead() || minigamer.isSpectating()) return;
 
 		// Picking up scrap
 		if (event.getItem().getItemStack().getType() == Material.IRON_INGOT) {
