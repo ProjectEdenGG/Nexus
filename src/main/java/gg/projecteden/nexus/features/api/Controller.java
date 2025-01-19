@@ -123,7 +123,8 @@ public class Controller {
 			return Map.of(
 				"uuid", nerd.getUniqueId().toString(),
 				"username", nerd.getName(),
-				"nickname", nerd.getNickname()
+				"nickname", nerd.getNickname(),
+				"rank", nerd.getRank().name().toLowerCase()
 			);
 		} catch (Exception ex) {
 			if (Nexus.isDebug())
