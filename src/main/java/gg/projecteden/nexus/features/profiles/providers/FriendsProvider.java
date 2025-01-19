@@ -5,9 +5,11 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.profiles.ProfileCommand;
 import gg.projecteden.nexus.features.profiles.providers.FriendRequestsProvider.FriendRequestType;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.friends.FriendsUser;
 import gg.projecteden.nexus.models.friends.FriendsUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
@@ -62,23 +64,23 @@ public class FriendsProvider extends InventoryProvider {
 			// Requests Sent
 			int sentCount = user.getRequests_sent().size();
 			if (sentCount > 0) {
-				ItemBuilder sent = new ItemBuilder(Material.STONE_BUTTON).name("&3Requests sent: &a" + sentCount);
+				ItemBuilder sent = new ItemBuilder(CustomMaterial.GUI_ARROW_UP).name("&3Requests sent: &a" + sentCount).dyeColor(ColorType.CYAN);
 
 				contents.set(0, 3, ClickableItem.of(sent,
 					e -> new FriendRequestsProvider(FriendRequestType.SENT, this).open(viewer)));
 			}
 
 			// Requests Received
-			int receivedCount = user.getRequests_received().keySet().size();
+			int receivedCount = user.getRequests_received().size();
 
 			if (receivedCount > 0) {
 				int unreadCount = user.getUnreadReceived().size();
-				ItemBuilder received = new ItemBuilder(Material.STONE_BUTTON).name("&3Requests received: &a" + receivedCount);
+				ItemBuilder received = new ItemBuilder(CustomMaterial.GUI_ARROW_DOWN).name("&3Requests received: &a" + receivedCount).dyeColor(ColorType.LIGHT_GREEN);
 
 				if (unreadCount > 0)
 					received.lore("&e" + unreadCount + " &3Unread");
 
-				contents.set(0, 7, ClickableItem.of(received,
+				contents.set(0, 5, ClickableItem.of(received,
 					e -> {
 						user.clearUnread();
 						new FriendRequestsProvider(FriendRequestType.RECEIVED, this).open(viewer);
@@ -91,6 +93,7 @@ public class FriendsProvider extends InventoryProvider {
 		for (UUID uuid : user.getFriends()) {
 			Nerd targetNerd = Nerd.of(uuid);
 			ItemBuilder skull = getFriendSkull(targetNerd, viewer);
+			skull.lore("", "&eClick &3to view profile");
 
 			items.add(ClickableItem.of(skull, e -> ProfileCommand.openProfile(targetNerd, viewer, this)));
 		}
@@ -118,7 +121,6 @@ public class FriendsProvider extends InventoryProvider {
 			}
 		}
 
-		skull.lore("", "&eClick &3to view profile");
 		return skull;
 	}
 }

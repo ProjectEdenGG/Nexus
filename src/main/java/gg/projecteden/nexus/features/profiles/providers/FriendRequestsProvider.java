@@ -51,20 +51,26 @@ public class FriendRequestsProvider extends InventoryProvider {
 		for (UUID uuid : requests) {
 			Nerd targetNerd = Nerd.of(uuid);
 			ItemBuilder skull = FriendsProvider.getFriendSkull(targetNerd, viewer);
-			skull.lore("&eShift Click &3to cancel request");
+
+			if (this.type == FriendRequestType.RECEIVED)
+				skull.lore("&eClick &3to &caccept request", "&eShift Click &3to &cdeny request");
+			else
+				skull.lore("&eShift Click &3to &ccancel request");
 
 			FriendsUser targetFriend = userService.get(uuid);
 
 			items.add(ClickableItem.of(skull, e -> {
-				if (e.isShiftClick()) {
-					if (this.type == FriendRequestType.RECEIVED)
+				if (this.type == FriendRequestType.RECEIVED) {
+					if (e.isShiftClick())
 						viewerFriend.denyRequest(targetFriend);
 					else
+						viewerFriend.sendRequest(targetFriend);
+				} else {
+					if (e.isShiftClick())
 						viewerFriend.cancelSent(targetFriend);
-
-					refresh();
-				} else
-					ProfileCommand.openProfile(targetNerd, viewer, this);
+					else
+						ProfileCommand.openProfile(targetNerd, viewer, this);
+				}
 			}));
 		}
 

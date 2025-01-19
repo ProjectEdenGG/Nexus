@@ -89,7 +89,7 @@ public class ColorCreatorProvider extends InventoryProvider {
 
 		// Saved Colors
 		if(!savedColors.isEmpty()) {
-			ItemBuilder savedColorsMenu = new ItemBuilder(Material.CHEST).name("Saved Colors");
+			ItemBuilder savedColorsMenu = new ItemBuilder(Material.CHEST).name("&3Saved Colors");
 			contents.set(SlotPos.of(3, 1), ClickableItem.of(savedColorsMenu, e -> {
 				Consumer<Color> applyColor = _color -> {
 					this.displayColor = _color;
@@ -102,7 +102,7 @@ public class ColorCreatorProvider extends InventoryProvider {
 
 
 		// Dyes
-		ItemBuilder dyeMenu = new ItemBuilder(Material.RED_DYE).name("Pick A Color");
+		ItemBuilder dyeMenu = new ItemBuilder(Material.RED_DYE).name("&3Pick A Color");
 		contents.set(SlotPos.of(1, 1), ClickableItem.of(dyeMenu, e -> {
 			new PickColorMenu(viewer, this, _color -> {
 				this.displayColor = _color;
@@ -111,7 +111,7 @@ public class ColorCreatorProvider extends InventoryProvider {
 		}));
 
 		// Hex
-		ItemBuilder inputHexMenu = new ItemBuilder(Material.NAME_TAG).name("Input Hex");
+		ItemBuilder inputHexMenu = new ItemBuilder(Material.NAME_TAG).name("&3Input Hex");
 		contents.set(SlotPos.of(2, 1), ClickableItem.of(inputHexMenu, e -> {
 			Nexus.getSignMenuFactory().lines(List.of("#", SignMenuFactory.ARROWS, "Enter a", "hex color"))
 				.prefix(PREFIX)

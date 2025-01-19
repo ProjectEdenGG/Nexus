@@ -72,6 +72,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/*
+	TODO:
+		- BADGE?
+		- FRIENDS GUI USE GUI BUTTONS INSTEAD OF LITERAL BUTTONS
+		- FRIEND REQUEST RECEIVED --> CANT ACCEPT
+ */
 @Rows(6)
 @SuppressWarnings({"deprecation", "unused"})
 public class ProfileProvider extends InventoryProvider {
