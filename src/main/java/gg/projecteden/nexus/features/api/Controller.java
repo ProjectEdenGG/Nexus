@@ -4,6 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.api.annotations.Get;
 import gg.projecteden.nexus.features.commands.StaffHallCommand;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
+import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.voter.TopVoter;
@@ -129,5 +130,31 @@ public class Controller {
 				ex.printStackTrace();
 			return null;
 		}
+	}
+
+	@Get("/diversity")
+	Object diversity() {
+		Map<String, Map<String, Integer>> data = new HashMap<>();
+
+		var geoipService = new GeoIPService();
+		var hoursService = new HoursService();
+
+		geoipService.getAll().forEach(geoip -> {
+			var countryCode = geoip.getCountryCode();
+			if (countryCode == null)
+				return;
+
+			var hours = hoursService.get(geoip);
+			int hoursPlayed = hours.getTotal() / 3600;
+
+			if (hoursPlayed < 1)
+				return;
+
+			Map<String, Integer> country = data.computeIfAbsent(countryCode, $ -> new HashMap<>());
+			country.put("players", country.getOrDefault("players", 0) + 1);
+			country.put("hours", country.getOrDefault("hours", 0) + hoursPlayed);
+		});
+
+		return data;
 	}
 }
