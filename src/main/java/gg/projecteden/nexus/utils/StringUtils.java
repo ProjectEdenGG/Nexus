@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.models.emoji.EmojiUser.Emoji;
 import gg.projecteden.nexus.utils.ItemUtils.PotionWrapper;
 import gg.projecteden.parchment.HasLocation;
 import gg.projecteden.parchment.HasPlayer;
@@ -124,6 +125,12 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 
 	public static String stripFormat(String input) {
 		return formatPattern.matcher(colorize(input)).replaceAll("");
+	}
+
+	public static String decolorizeEmojis(String input) {
+		for (Emoji emoji : Emoji.EMOJIS)
+			input = input.replaceAll(emoji.getEmoji(), "&f" + emoji.getEmoji());
+		return colorize(input);
 	}
 
 	private static final int APPROX_LORE_LINE_LENGTH = 40;

@@ -11,6 +11,7 @@ import gg.projecteden.nexus.models.voter.VotePartyService;
 import gg.projecteden.nexus.models.voter.VoteSite;
 import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
@@ -95,7 +96,7 @@ public class Controller {
 				map.put("username", nerd.getName());
 				map.put("nickname", nerd.getNickname());
 				map.put("rank", camelCase(nerd.getRank()));
-				map.put("about", nerd.getAbout() == null ? "" : nerd.getAbout());
+				map.put("about", nerd.getAbout() == null ? "" : StringUtils.stripColor(nerd.getAbout()));
 				map.put("birthday", nerd.getBirthday() == null ? "" : "%s (%d years)".formatted(shortDateFormat(nerd.getBirthday()), nerd.getBirthday().until(LocalDate.now()).getYears()));
 				map.put("pronouns", nerd.getPronouns() == null ? "" : String.join(", ", nerd.getPronouns().stream().map(Nerd.Pronoun::toString).toList()));
 				map.put("preferredName", nerd.getPreferredName() == null ? "" : nerd.getPreferredName());
