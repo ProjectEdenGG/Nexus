@@ -96,11 +96,11 @@ public class VPSProvider extends InventoryProvider {
 
 	public void addPagination(InventoryContents contents, Player player) {
 		if (!menu.isFirst(page)) {
-			ItemStack back = new ItemBuilder(CustomMaterial.GUI_ARROW_PREVIOUS).dyeColor(ColorType.CYAN).itemFlags(ItemFlag.HIDE_DYE).name("&fPrevious Page").build();
+			ItemStack back = new ItemBuilder(CustomMaterial.GUI_ARROW_LEFT).dyeColor(ColorType.CYAN).itemFlags(ItemFlag.HIDE_DYE).name("&fPrevious Page").build();
 			contents.set(5, 0, ClickableItem.of(back, e -> VPS.open(player, menu, index - 1)));
 		}
 		if (!menu.isLast(page)) {
-			ItemStack forward = new ItemBuilder(CustomMaterial.GUI_ARROW_NEXT).dyeColor(ColorType.CYAN).itemFlags(ItemFlag.HIDE_DYE).name("&fNext Page").build();
+			ItemStack forward = new ItemBuilder(CustomMaterial.GUI_ARROW_RIGHT).dyeColor(ColorType.CYAN).itemFlags(ItemFlag.HIDE_DYE).name("&fNext Page").build();
 			contents.set(5, 8, ClickableItem.of(forward, e -> VPS.open(player, menu, index + 1)));
 		}
 	}

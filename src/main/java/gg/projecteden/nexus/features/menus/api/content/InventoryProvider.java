@@ -253,7 +253,7 @@ public abstract class InventoryProvider {
 	}
 
 	protected ItemStack backItem() {
-		return new ItemBuilder(CustomMaterial.GUI_ARROW_PREVIOUS).dyeColor(ColorType.RED).itemFlags(ItemFlags.HIDE_ALL).name("&cBack").build();
+		return new ItemBuilder(CustomMaterial.GUI_ARROW_LEFT).dyeColor(ColorType.RED).itemFlags(ItemFlags.HIDE_ALL).name("&cBack").build();
 	}
 
 	protected ItemStack closeItem() {
@@ -385,8 +385,8 @@ public abstract class InventoryProvider {
 				.lore(lore);
 
 			if (guiArrows) {
-				previous.material(CustomMaterial.GUI_ARROW_PREVIOUS).dyeColor(ColorType.CYAN).itemFlags(ItemFlag.HIDE_DYE);
-				next.material(CustomMaterial.GUI_ARROW_NEXT).dyeColor(ColorType.CYAN).itemFlags(ItemFlag.HIDE_DYE);
+				previous.material(CustomMaterial.GUI_ARROW_LEFT).dyeColor(ColorType.CYAN).itemFlags(ItemFlag.HIDE_DYE);
+				next.material(CustomMaterial.GUI_ARROW_RIGHT).dyeColor(ColorType.CYAN).itemFlags(ItemFlag.HIDE_DYE);
 			}
 
 			page.setItemsPerPage(perPage);

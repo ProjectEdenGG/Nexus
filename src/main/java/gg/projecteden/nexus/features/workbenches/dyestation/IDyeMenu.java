@@ -31,12 +31,12 @@ public interface IDyeMenu {
 	SlotPos SLOT_DYE = new SlotPos(3, 1);
 	SlotPos SLOT_RESULT = new SlotPos(2, 7);
 
-	ItemBuilder STAIN_NEXT = new ItemBuilder(CustomMaterial.GUI_ARROW_NEXT)
+	ItemBuilder STAIN_NEXT = new ItemBuilder(CustomMaterial.GUI_ARROW_RIGHT)
 			.dyeColor(ColorType.CYAN)
 			.itemFlags(ItemFlag.HIDE_DYE)
 			.name("Next Page");
 
-	ItemBuilder STAIN_PREVIOUS = new ItemBuilder(CustomMaterial.GUI_ARROW_PREVIOUS)
+	ItemBuilder STAIN_PREVIOUS = new ItemBuilder(CustomMaterial.GUI_ARROW_LEFT)
 			.dyeColor(ColorType.CYAN)
 			.itemFlags(ItemFlag.HIDE_DYE)
 			.name("Previous Page");
