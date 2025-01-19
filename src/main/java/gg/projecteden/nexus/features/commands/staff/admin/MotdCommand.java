@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 import com.destroystokyo.paper.event.server.PaperServerListPingEvent;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.commands.staff.moderator.EnzlesCommand;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.minigames.utils.MinigameNight;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -127,9 +126,6 @@ public class MotdCommand extends CustomCommand implements Listener {
 
 		if (nerd.getBirthday() != null && LocalDate.now().isEqual(nerd.getBirthday()))
 			line2 = "&3Happy birthday &e" + nerd.getNickname() + "&3!";
-
-		if (EnzlesCommand.displayMOTD)
-			line2 = EnzlesCommand.MOTD;
 
 		if (line2 != null) {
 			int padding = (int) (((MAX_CHARS_ISH - StringUtils.stripColor(line2).length()) / 2.0) * SPACE_WIDTH_MULTIPLIER);
