@@ -12,10 +12,10 @@ public enum VoteSite {
 	PMC(false, "PlanetMinecraft.com", "PlanetMinecraft.com", "http://www.planetminecraft.com/server/projecteden/vote/&username={{USERNAME}}", 24),
 	TMCS(false, "TopMinecraftServers", "TopMinecraftServers", "https://topminecraftservers.org/vote/3738", 24),
 	MCSL(true, "Minecraft Server List", "MCSL", "http://minecraft-server-list.com/server/314528/vote/", 24),
-	MCMP(true, "Minecraft Multiplayer", "Minecraft-MP.com", "http://minecraft-mp.com/server/88565/vote/", 24),
+	MCMP(true, "Minecraft Multiplayer", "Minecraft-MP.com", "http://minecraft-mp.com/server/88565/vote?username={{USERNAME}}", 24),
 	MCSN(false, "Minecraft-Server.net", "Minecraft-Server.net", "https://minecraft-server.net/vote/ProjectEden/", 24),
 	MCBIZ(false, "MinecraftServers.biz", "MinecraftServers.biz", "https://minecraftservers.biz/servers/891/#vote_now", 24),
-	MCSO(true, "MinecraftServers.org", "MinecraftServers.org", "http://minecraftservers.org/vote/248930", 24),
+	MCSO(true, "MinecraftServers.org", "MinecraftServers.org", "http://minecraftservers.org/vote/248930?username={{USERNAME}}", 24),
 	TOPG(false, "TopG", "TopG.org", "https://topg.org/Minecraft/in-505487-{{USERNAME}}", 24),
 	FMCS(true, "FindMCServer", "FindMCServer", "https://findmcserver.com/server/projecteden?vote=true", 24),
 	MCF(false, null, null, null, -1),
@@ -33,6 +33,10 @@ public enum VoteSite {
 
 	public static List<VoteSite> getActiveSites() {
 		return Arrays.stream(values()).filter(VoteSite::isActive).toList();
+	}
+
+	public String getUrlRaw() {
+		return url;
 	}
 
 	public String getUrl(String username) {

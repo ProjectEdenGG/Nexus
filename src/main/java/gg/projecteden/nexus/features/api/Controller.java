@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.api;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.api.annotations.Get;
 import gg.projecteden.nexus.features.commands.StaffHallCommand;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
@@ -41,11 +42,15 @@ public class Controller {
 	Object votes() {
 		var voterService = new VoterService();
 		var voteParty = new VotePartyService().get0();
-		var sites = new HashMap<>();
+		var sites = new ArrayList<>();
 		var activeVotes = new HashMap<UUID, List<VoteSite>>();
 
 		for (VoteSite site : VoteSite.getActiveSites())
-			sites.put(site.getName(), site.getUrl());
+			sites.add(Map.of(
+				"id", site.name(),
+				"name", site.getName(),
+				"url", site.getUrlRaw())
+			);
 
 		for (var vote : new VoterService().getActiveVotes())
 			activeVotes.computeIfAbsent(vote.getUuid(), $ -> new ArrayList<>()).add(vote.getSite());
@@ -107,5 +112,21 @@ public class Controller {
 			"name", rank.getName(),
 			"color", toHex(rank.getChatColor())
 		)).toList();
+	}
+
+	@Get("/nerd/{name}")
+	Object nerd(String name) {
+		try {
+			Nerd nerd = Nerd.of(name);
+			return Map.of(
+				"uuid", nerd.getUniqueId().toString(),
+				"username", nerd.getName(),
+				"nickname", nerd.getNickname()
+			);
+		} catch (Exception ex) {
+			if (Nexus.isDebug())
+				ex.printStackTrace();
+			return null;
+		}
 	}
 }
