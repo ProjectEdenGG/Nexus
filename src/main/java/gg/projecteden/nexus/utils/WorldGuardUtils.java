@@ -135,11 +135,11 @@ public final class WorldGuardUtils {
 	}
 
 	public @NotNull Location toLocation(@NotNull Vector3 vector) {
-		return new Location(world, vector.getX(), vector.getY(), vector.getZ());
+		return new Location(world, vector.x(), vector.y(), vector.z());
 	}
 
 	public @NotNull Location toLocation(@NotNull BlockVector3 vector) {
-		return new Location(world, vector.getX(), vector.getY(), vector.getZ());
+		return new Location(world, vector.x(), vector.y(), vector.z());
 	}
 
 	public @NotNull Region getRegion(@NotNull String name) {
@@ -284,7 +284,7 @@ public final class WorldGuardUtils {
 		if (region instanceof ProtectedCuboidRegion)
 			return new CuboidRegion(worldEditWorld, region.getMaximumPoint(), region.getMinimumPoint());
 		else if (region instanceof ProtectedPolygonalRegion)
-			return new Polygonal2DRegion(worldEditWorld, region.getPoints(), region.getMinimumPoint().getY(), region.getMaximumPoint().getY());
+			return new Polygonal2DRegion(worldEditWorld, region.getPoints(), region.getMinimumPoint().y(), region.getMaximumPoint().y());
 		else
 			throw new InvalidInputException("Unsupported region type");
 	}
@@ -302,13 +302,13 @@ public final class WorldGuardUtils {
 	}
 
 	public @NotNull Block getRandomBlock(@NotNull Region region) {
-		int xMin = region.getMinimumPoint().getBlockX();
-		int yMin = region.getMinimumPoint().getBlockY();
-		int zMin = region.getMinimumPoint().getBlockZ();
+		int xMin = region.getMinimumPoint().x();
+		int yMin = region.getMinimumPoint().y();
+		int zMin = region.getMinimumPoint().z();
 
-		int xDiff = region.getMaximumPoint().getBlockX() - xMin;
-		int yDiff = region.getMaximumPoint().getBlockY() - yMin;
-		int zDiff = region.getMaximumPoint().getBlockZ() - zMin;
+		int xDiff = region.getMaximumPoint().x() - xMin;
+		int yDiff = region.getMaximumPoint().y() - yMin;
+		int zDiff = region.getMaximumPoint().z() - zMin;
 
 		int x = xMin + RandomUtils.randomInt(0, xDiff);
 		int y = yMin + RandomUtils.randomInt(0, yDiff);
@@ -353,12 +353,12 @@ public final class WorldGuardUtils {
 		Region region = convert(protectedRegion);
 		if (region instanceof CuboidRegion cuboidRegion) {
 			BlockVector3 min = cuboidRegion.getMinimumPoint();
-			int minX = min.getX();
-			int minZ = min.getZ();
+			int minX = min.x();
+			int minZ = min.z();
 
 			BlockVector3 max = cuboidRegion.getMaximumPoint();
-			int maxX = max.getX();
-			int maxZ = max.getZ();
+			int maxX = max.x();
+			int maxZ = max.z();
 
 			points.add(BlockVector2.at(minX, minZ));
 			points.add(BlockVector2.at(maxX, minZ));
@@ -370,7 +370,7 @@ public final class WorldGuardUtils {
 
 		List<Location> locations = new ArrayList<>();
 		for (BlockVector2 point : points) {
-			locations.add(new Location(world, point.getX(), yValue, point.getZ()));
+			locations.add(new Location(world, point.x(), yValue, point.z()));
 		}
 
 		return locations;

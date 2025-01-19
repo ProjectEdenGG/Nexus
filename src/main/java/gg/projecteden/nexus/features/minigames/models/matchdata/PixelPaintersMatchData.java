@@ -1,7 +1,9 @@
 package gg.projecteden.nexus.features.minigames.models.matchdata;
 
-import com.fastasyncworldedit.core.math.MutableBlockVector3;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.world.World;
 import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.features.minigames.mechanics.PixelPainters;
 import gg.projecteden.nexus.features.minigames.models.Match;
@@ -9,6 +11,8 @@ import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
 import gg.projecteden.nexus.features.minigames.models.arenas.PixelPaintersArena;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -58,12 +62,24 @@ public class PixelPaintersMatchData extends MatchData {
 		final PixelPaintersArena arena = match.getArena();
 		final Region designsRegion = arena.getDesignsRegion();
 
-		int y = designsRegion.getMinimumPoint().getBlockY() - 1 + design;
+		World worldEditWorld = worldedit().worldEditWorld;
+		int y = designsRegion.getMinimumPoint().y() - 1 + design;
 
-		final MutableBlockVector3 min = designsRegion.getMinimumPoint().mutY(y);
-		final MutableBlockVector3 max = designsRegion.getMaximumPoint().mutY(y);
+		BlockVector3 min = designsRegion.getMinimumPoint().mutY(y);
+		BlockVector3 max = designsRegion.getMaximumPoint().mutY(y);
 
-		return worldedit().region(min, max);
+		Dev.GRIFFIN.debug(new JsonBuilder("Design Min 1: " + min).command("//pos1 " + min.x() + "," + min.y() + "," + min.z()));
+		Dev.GRIFFIN.debug(new JsonBuilder("Design Max 1: " + max).command("//pos2 " + max.x() + "," + max.y() + "," + max.z()));
+
+		Region region = new CuboidRegion(worldEditWorld, min, max);
+
+		min = region.getMinimumPoint();
+		max = region.getMaximumPoint();
+
+		Dev.GRIFFIN.debug(new JsonBuilder("Design Min 2: " + min).command("//pos1 " + min.x() + "," + min.y() + "," + min.z()));
+		Dev.GRIFFIN.debug(new JsonBuilder("Design Max 2: " + max).command("//pos2 " + max.x() + "," + max.y() + "," + max.z()));
+
+		return region;
 	}
 
 	public int getRandomDesign(Predicate<Integer> predicate) {

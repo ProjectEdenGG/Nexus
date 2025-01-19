@@ -3,7 +3,11 @@ package gg.projecteden.nexus.utils;
 import com.fastasyncworldedit.core.extent.processor.lighting.RelightMode;
 import com.fastasyncworldedit.core.regions.RegionWrapper;
 import com.fastasyncworldedit.core.wrappers.WorldWrapper;
-import com.sk89q.worldedit.*;
+import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.EditSessionBuilder;
+import com.sk89q.worldedit.LocalSession;
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
@@ -35,7 +39,11 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.parchment.HasPlayer;
-import lombok.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -46,11 +54,22 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import org.enginehub.linbus.tree.LinTagType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Queue;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -64,7 +83,7 @@ public class WorldEditUtils {
 	@NonNull
 	private final org.bukkit.World world;
 	private final BukkitWorld bukkitWorld;
-	private final World worldEditWorld;
+	public final World worldEditWorld;
 	@Getter
 	@Accessors(fluent = true)
 	private final WorldGuardUtils worldguard;
@@ -135,7 +154,7 @@ public class WorldEditUtils {
 	}
 
 	public Vector toVector(BlockVector3 vector3) {
-		return new Vector(vector3.getX(), vector3.getY(), vector3.getZ());
+		return new Vector(vector3.x(), vector3.y(), vector3.z());
 	}
 
 	public Vector3 toVector3(Location location) {
@@ -147,7 +166,7 @@ public class WorldEditUtils {
 	}
 
 	public BlockVector3 toBlockVector3(Vector3 vector) {
-		return BlockVector3.at(vector.getX(), vector.getY(), vector.getZ());
+		return BlockVector3.at(vector.x(), vector.y(), vector.z());
 	}
 
 	public BlockVector3 toBlockVector3(Vector vector) {
@@ -155,7 +174,7 @@ public class WorldEditUtils {
 	}
 
 	public Location toLocation(Vector3 vector) {
-		return new Location(world, vector.getX(), vector.getY(), vector.getZ());
+		return new Location(world, vector.x(), vector.y(), vector.z());
 	}
 
 	public Location toLocation(Vector vector) {
@@ -163,7 +182,7 @@ public class WorldEditUtils {
 	}
 
 	public Location toLocation(BlockVector3 vector) {
-		return new Location(world, vector.getX(), vector.getY(), vector.getZ());
+		return new Location(world, vector.x(), vector.y(), vector.z());
 	}
 
 	public BukkitPlayer getPlayer(HasPlayer player) {
@@ -189,7 +208,7 @@ public class WorldEditUtils {
 		for (String nbtLine : linesNBT) {
 			var nbt = baseBlock.getNbt();
 			if (nbt != null)
-				lines.add(nbt.getString(nbtLine));
+				lines.add(nbt.getTag(nbtLine, LinTagType.stringTag()).value());
 		}
 
 		return lines;
@@ -314,7 +333,7 @@ public class WorldEditUtils {
 	}
 
 	public Material toMaterial(BaseBlock baseBlock) {
-		return Material.valueOf(baseBlock.getBlockType().getId().replace("minecraft:", "").toUpperCase());
+		return Material.valueOf(baseBlock.getBlockType().id().replace("minecraft:", "").toUpperCase());
 	}
 
 	public List<Block> getBlocks(ProtectedRegion region) {
@@ -344,9 +363,9 @@ public class WorldEditUtils {
 
 	public List<Block> getBlocks(Region region, Predicate<Block> predicate) {
 		List<Block> blockList = new ArrayList<>();
-		for (int x = region.getMinimumPoint().getBlockX(); x <= region.getMaximumPoint().getBlockX(); x++)
-			for (int y = region.getMinimumPoint().getBlockY(); y <= region.getMaximumPoint().getBlockY(); y++)
-				for (int z = region.getMinimumPoint().getBlockZ(); z <= region.getMaximumPoint().getBlockZ(); z++) {
+		for (int x = region.getMinimumPoint().x(); x <= region.getMaximumPoint().x(); x++)
+			for (int y = region.getMinimumPoint().y(); y <= region.getMaximumPoint().y(); y++)
+				for (int z = region.getMinimumPoint().z(); z <= region.getMaximumPoint().z(); z++) {
 					Block blockAt = world.getBlockAt(x, y, z);
 					if (predicate == null || predicate.test(blockAt))
 						blockList.add(blockAt);
@@ -392,11 +411,13 @@ public class WorldEditUtils {
 				Consumer<String> debug = message -> {
 					if (paster != null) paster.debug(message);
 				};
-				debug.accept("Copying");
+				BlockVector3 min = region.getMinimumPoint();
+				BlockVector3 max = region.getMaximumPoint();
+				debug.accept("Copying " + min.x() + " " + min.y() + " " + min.z() + " -> " + max.x() + " " + max.y() + " " + max.z());
 
 				Clipboard clipboard = new BlockArrayClipboard(region);
 				try (EditSession editSession = getEditSession()) {
-					ForwardExtentCopy copy = new ForwardExtentCopy(editSession, region, clipboard, region.getMinimumPoint());
+					ForwardExtentCopy copy = new ForwardExtentCopy(editSession, region, clipboard, min);
 
 					if (paster != null) {
 						copy.setCopyingEntities(paster.entities);
@@ -408,7 +429,7 @@ public class WorldEditUtils {
 					debug.accept("Done copying");
 				}
 
-				clipboard.setOrigin(region.getMinimumPoint());
+				clipboard.setOrigin(min);
 
 				return clipboard;
 			}
@@ -700,9 +721,9 @@ public class WorldEditUtils {
 					Iterator<BlockVector3> iterator = clipboard.iterator();
 
 					BlockVector3 origin = clipboard.getOrigin();
-					int relX = at.getBlockX() - origin.getBlockX();
-					int relY = at.getBlockY() - origin.getBlockY();
-					int relZ = at.getBlockZ() - origin.getBlockZ();
+					int relX = at.x() - origin.x();
+					int relY = at.y() - origin.y();
+					int relZ = at.z() - origin.z();
 
 					List<Location> data = new ArrayList<>();
 
@@ -726,9 +747,9 @@ public class WorldEditUtils {
 					Iterator<BlockVector3> iterator = clipboard.iterator();
 
 					BlockVector3 origin = clipboard.getOrigin();
-					int relX = at.getBlockX() - origin.getBlockX();
-					int relY = at.getBlockY() - origin.getBlockY();
-					int relZ = at.getBlockZ() - origin.getBlockZ();
+					int relX = at.x() - origin.x();
+					int relY = at.y() - origin.y();
+					int relZ = at.z() - origin.z();
 
 					Map<Location, BlockData> data = new HashMap<>();
 
@@ -844,9 +865,9 @@ public class WorldEditUtils {
 
 	public static Vector getSchematicOffset(Clipboard clipboard) {
 		return new Vector(
-			clipboard.getMinimumPoint().getX() - clipboard.getOrigin().getX(),
-			clipboard.getMinimumPoint().getY() - clipboard.getOrigin().getY(),
-			clipboard.getMinimumPoint().getZ() - clipboard.getOrigin().getZ());
+			clipboard.getMinimumPoint().x() - clipboard.getOrigin().x(),
+			clipboard.getMinimumPoint().y() - clipboard.getOrigin().y(),
+			clipboard.getMinimumPoint().z() - clipboard.getOrigin().z());
 	}
 
 }

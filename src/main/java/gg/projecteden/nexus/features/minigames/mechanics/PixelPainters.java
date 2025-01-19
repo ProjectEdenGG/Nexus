@@ -18,8 +18,10 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartE
 import gg.projecteden.nexus.features.minigames.models.matchdata.PixelPaintersMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
@@ -418,6 +420,12 @@ public class PixelPainters extends TeamlessMechanic {
 	public void setupNextDesign(Match match) {
 		PixelPaintersArena arena = match.getArena();
 		PixelPaintersMatchData matchData = match.getMatchData();
+
+		var min = match.worldedit().toLocation(arena.getNextDesignRegion().getMinimumPoint());
+		var max = match.worldedit().toLocation(arena.getNextDesignRegion().getMaximumPoint());
+
+		Dev.GRIFFIN.debug(new JsonBuilder("Design Min: " + min).command("//pos1 " + min.getX() + "," + min.getY() + "," + min.getZ()));
+		Dev.GRIFFIN.debug(new JsonBuilder("Design Max: " + max).command("//pos2 " + max.getX() + "," + max.getY() + "," + max.getZ()));
 
 		match.worldedit().paster("Setting up next design")
 			.clipboard(matchData.getRandomGameDesign())

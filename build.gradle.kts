@@ -95,8 +95,8 @@ dependencies {
     compileOnly("nl.pim16aap2:BigDoors:0.1.8.39")
     compileOnly("net.coreprotect:CoreProtect:22.3.1")
     compileOnly("com.magmaguy:BetterStructures:1.4.1-SNAPSHOT")
-    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.5.2")
-    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.5.2") { isTransitive = false }
+    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.12.4-SNAPSHOT")
+    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.12.4-SNAPSHOT") { isTransitive = false }
     compileOnly("com.griefcraft:lwc:2.3.2-dev")
     compileOnly("net.citizensnpcs:citizensapi:2.0.37-SNAPSHOT")
     compileOnly("net.citizensnpcs:citizens-main:2.0.37-SNAPSHOT") {
