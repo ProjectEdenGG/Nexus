@@ -65,8 +65,8 @@ public class PixelPaintersMatchData extends MatchData {
 		World worldEditWorld = worldedit().worldEditWorld;
 		int y = designsRegion.getMinimumPoint().y() - 1 + design;
 
-		BlockVector3 min = designsRegion.getMinimumPoint().mutY(y);
-		BlockVector3 max = designsRegion.getMaximumPoint().mutY(y);
+		BlockVector3 min = designsRegion.getMinimumPoint().withY(y);
+		BlockVector3 max = designsRegion.getMaximumPoint().withY(y);
 
 		Dev.GRIFFIN.debug(new JsonBuilder("Design Min 1: " + min).command("//pos1 " + min.x() + "," + min.y() + "," + min.z()));
 		Dev.GRIFFIN.debug(new JsonBuilder("Design Max 1: " + max).command("//pos2 " + max.x() + "," + max.y() + "," + max.z()));
