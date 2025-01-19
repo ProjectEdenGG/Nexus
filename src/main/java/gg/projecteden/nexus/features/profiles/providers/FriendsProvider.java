@@ -11,6 +11,7 @@ import gg.projecteden.nexus.models.friends.FriendsUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -64,7 +65,8 @@ public class FriendsProvider extends InventoryProvider {
 			// Requests Sent
 			int sentCount = user.getRequests_sent().size();
 			if (sentCount > 0) {
-				ItemBuilder sent = new ItemBuilder(CustomMaterial.GUI_PROFILE_ICON_FRIEND_REQUESTS_SENT).name("&3Requests sent: &a" + sentCount).dyeColor(ColorType.CYAN);
+				ItemBuilder sent = new ItemBuilder(CustomMaterial.GUI_PROFILE_ICON_FRIEND_REQUESTS_SENT).name("&3Requests sent: &a" + sentCount)
+					.dyeColor(ColorType.CYAN).itemFlags(ItemFlags.HIDE_ALL);
 
 				contents.set(0, 3, ClickableItem.of(sent,
 					e -> new FriendRequestsProvider(FriendRequestType.SENT, this).open(viewer)));
@@ -75,7 +77,8 @@ public class FriendsProvider extends InventoryProvider {
 
 			if (receivedCount > 0) {
 				int unreadCount = user.getUnreadReceived().size();
-				ItemBuilder received = new ItemBuilder(CustomMaterial.GUI_PROFILE_ICON_FRIEND_REQUESTS_RECEIVED).name("&3Requests received: &a" + receivedCount).dyeColor(ColorType.LIGHT_GREEN);
+				ItemBuilder received = new ItemBuilder(CustomMaterial.GUI_PROFILE_ICON_FRIEND_REQUESTS_RECEIVED).name("&3Requests received: &a" + receivedCount)
+					.dyeColor(ColorType.LIGHT_GREEN).itemFlags(ItemFlags.HIDE_ALL);
 
 				if (unreadCount > 0)
 					received.lore("&e" + unreadCount + " &3Unread");

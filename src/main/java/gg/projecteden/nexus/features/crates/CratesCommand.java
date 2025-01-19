@@ -62,7 +62,7 @@ public class CratesCommand extends CustomCommand {
 		send("&3To open a Crate, you must have a &eCrate Key&3. You can get these from &evoting&3, &eevents&3, &eand more&3!");
 		line();
 		send("&3To &epreview rewards&3, you can &eright-click with an empty hand &3to open a preview menu.");
-		send("&3To &eopen multiple at a time&3, simply &eshift-click &3with multiple keys in your hand.");
+		send("&3To &eopen multiple at a time&3, simply &eshift+click &3with multiple keys in your hand.");
 		line();
 		send("&3I hope you enjoy, and have a good day!");
 	}
@@ -267,7 +267,7 @@ public class CratesCommand extends CustomCommand {
 
 				String tpCommand = String.format("/tppos %s %s %s %s", loc.getX(), loc.getY(), loc.getZ(), loc.getWorld().getName());
 				send(json("&e" + camelCase(entity.getType())).hover("&eClick to teleport").command(tpCommand).group()
-					     .next(" &7[Copy UUID]").hover("&eShift-Click to copy").copy(entity.getUniqueId().toString()));
+					.next(" &7[Copy UUID]").hover("&eShift+Click to copy").copy(entity.getUniqueId().toString()));
 			}
 		}
 	}

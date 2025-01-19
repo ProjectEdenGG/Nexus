@@ -53,9 +53,9 @@ public class FriendRequestsProvider extends InventoryProvider {
 			ItemBuilder skull = FriendsProvider.getFriendSkull(targetNerd, viewer);
 
 			if (this.type == FriendRequestType.RECEIVED)
-				skull.lore("&eClick &3to &caccept request", "&eShift Click &3to &cdeny request");
+				skull.lore("", "&eClick &3to &aaccept request", "&eShift+Click &3to &cdeny request");
 			else
-				skull.lore("&eShift Click &3to &ccancel request");
+				skull.lore("", "&eClick &3to view profile", "&eShift+Click &3to &ccancel request");
 
 			FriendsUser targetFriend = userService.get(uuid);
 

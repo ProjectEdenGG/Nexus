@@ -162,7 +162,7 @@ public class ArenasMenu extends ScrollableInventoryProvider {
 			.lore("&fClick a map to send an invite");
 
 		if (Rank.of(player).isStaff())
-			inviteItem.lore("&eShift+click &fto invite all online players");
+			inviteItem.lore("&eShift+Click &fto invite all online players");
 
 		return inviteItem;
 	}
