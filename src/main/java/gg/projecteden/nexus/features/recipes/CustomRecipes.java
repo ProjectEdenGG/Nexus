@@ -435,6 +435,8 @@ public class CustomRecipes extends Feature implements Listener {
 
 	public void misc() {
 		RecipeBuilder.shaped("SLS", "L L", "LLL").add('S', Material.STRING).add('L', Material.LEATHER).toMake(Material.BUNDLE).register(RecipeType.MISC);
+		RecipeBuilder.shaped("SBS", "BFB", "SBS").add('B', Material.BRICK).add('F', MaterialTag.SMALL_FLOWERS).add('S', Material.SAND).toMake(Material.SUSPICIOUS_SAND, 4).register(RecipeType.MISC);
+		RecipeBuilder.shaped("GBG", "BFB", "GBG").add('B', Material.BRICK).add('F', MaterialTag.SMALL_FLOWERS).add('G', Material.GRAVEL).toMake(Material.SUSPICIOUS_GRAVEL, 4).register(RecipeType.MISC);
 
 		RecipeBuilder.surround(Material.WATER_BUCKET).with(MaterialTag.WOOL).toMake(Material.WHITE_WOOL, 8).register(RecipeType.WOOL);
 		RecipeBuilder.surround(Material.BLACKSTONE).with(Material.GOLD_NUGGET).toMake(Material.GILDED_BLACKSTONE).register(RecipeType.MISC);
