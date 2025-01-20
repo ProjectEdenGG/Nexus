@@ -39,6 +39,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Extensions.isNullOrEmpty;
+
 public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	@Getter
 	private static final String colorChar = "§";
@@ -128,6 +130,9 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	}
 
 	public static String decolorizeEmojis(String input) {
+		if (isNullOrEmpty(input))
+			return null;
+
 		for (Emoji emoji : Emoji.EMOJIS)
 			input = input.replaceAll(emoji.getEmoji(), "&f" + emoji.getEmoji());
 		return colorize(input);
