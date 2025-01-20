@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.listeners;
 
 import com.destroystokyo.paper.event.player.PlayerAdvancementCriterionGrantEvent;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
@@ -18,13 +19,16 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import net.citizensnpcs.api.npc.NPC;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.advancement.AdvancementProgress;
+import org.bukkit.craftbukkit.entity.CraftFishHook;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.entity.minecart.CommandMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -491,6 +495,22 @@ public class Restrictions implements Listener {
 	public void onVanillaAchievement(PlayerAdvancementCriterionGrantEvent event) {
 		if (!WorldGroup.SURVIVAL.contains(event.getPlayer().getWorld()) || event.getPlayer().getGameMode() != GameMode.SURVIVAL)
 			event.setCancelled(true);
+	}
+
+	static {
+		var ignored = List.of(CraftFishHook.class);
+
+		Tasks.repeat(0, TickTime.SECOND.x(5), () -> {
+			for (var world : Bukkit.getWorlds())
+				for (var projectile : world.getEntitiesByClass(Projectile.class)) {
+					if (ignored.contains(projectile.getClass()))
+						continue;
+					if (projectile.getTicksLived() <= TickTime.MINUTE.x(3))
+						continue;
+
+					projectile.remove();
+				}
+		});
 	}
 
 }
