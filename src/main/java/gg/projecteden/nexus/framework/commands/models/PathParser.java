@@ -160,6 +160,11 @@ class PathParser {
 				if (switchAnnotation == null)
 					continue;
 
+				if (argAnnotation != null)
+					if (!Nullables.isNullOrEmpty(argAnnotation.permission()))
+						if (!event.getSender().hasPermission(argAnnotation.permission()))
+							continue;
+
 				Pattern pattern = CustomCommand.getSwitchPattern(parameter);
 				boolean found = false;
 				for (String arg : event.getArgs()) {

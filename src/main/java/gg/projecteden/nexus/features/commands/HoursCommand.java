@@ -13,9 +13,11 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.hours.Hours;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.hours.HoursService.HoursTopArguments;
@@ -39,6 +41,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+
+import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
 
 @Aliases({"playtime", "days", "minutes", "seconds"})
 public class HoursCommand extends CustomCommand {
@@ -76,14 +80,23 @@ public class HoursCommand extends CustomCommand {
 	@Async
 	@Path("top [args...]")
 	@Description("View the play time leaderboard for any year, month, or day")
-	void top2(@Arg("1") HoursTopArguments args, @Switch boolean onlyStaff) {
+	void top(
+		@Arg("1") HoursTopArguments args,
+		@Switch boolean staff,
+		@Switch @Arg(permission = Group.STAFF) String countryCode
+	) {
 		int page = args.getPage();
 		List<PageResult> results = service.getPage(args);
 
 		String onlyStaffSwitch = "";
-		if (onlyStaff) {
+		if (staff) {
 			onlyStaffSwitch = " --onlyStaff";
 			results.removeIf(result -> !Rank.of(result.getUuid()).isStaff());
+		}
+
+		if (isNotNullOrEmpty(countryCode)) {
+			GeoIPService geoipService = new GeoIPService();
+			results.removeIf(result -> !countryCode.equals(geoipService.get(result.getUuid()).getCountryCode()));
 		}
 
 		if (results.size() == 0)
