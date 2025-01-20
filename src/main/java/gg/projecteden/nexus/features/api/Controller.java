@@ -93,7 +93,6 @@ public class Controller {
 			.map(nerd -> {
 				var map = new HashMap<>();
 				map.put("uuid", nerd.getUuid());
-				map.put("uuidNoDashes", nerd.getUuid().toString().replaceAll("-", ""));
 				map.put("username", nerd.getName());
 				map.put("nickname", nerd.getNickname());
 				map.put("rank", camelCase(nerd.getRank()));
