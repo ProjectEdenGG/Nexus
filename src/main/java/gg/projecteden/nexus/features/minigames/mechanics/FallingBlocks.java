@@ -23,8 +23,17 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.team
 import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils;
 import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils.PowerUp;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.MathUtils;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -50,14 +59,18 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @SuppressWarnings("unused")
 public class FallingBlocks extends TeamlessMechanic {
-
-	ProtectedRegion ceilingWinRg;
-	ProtectedRegion blocksRg;
 
 	@Getter
 	private final List<Material> COLOR_CHOICES = MaterialTag.CONCRETE_POWDERS.getValues().stream().toList();
@@ -91,9 +104,10 @@ public class FallingBlocks extends TeamlessMechanic {
 	public void onInitialize(@NotNull MatchInitializeEvent event) {
 		super.onInitialize(event);
 		Match match = event.getMatch();
+		FallingBlocksMatchData matchData = match.getMatchData();
 		clearArena(match, null);
-		ceilingWinRg = match.getArena().getProtectedRegion("ceiling");
-		blocksRg = match.getArena().getProtectedRegion("blocks");
+		matchData.ceilingWinRg = match.getArena().getProtectedRegion("ceiling");
+		matchData.blocksRg = match.getArena().getProtectedRegion("blocks");
 	}
 
 	@Override
@@ -150,7 +164,7 @@ public class FallingBlocks extends TeamlessMechanic {
 		final FallingBlocksMatchData matchData = match.getMatchData();
 		final WorldGuardUtils worldGuardUtils = match.worldguard();
 
-		final int y = (int) worldGuardUtils.toLocation(blocksRg.getMinimumPoint()).getY();
+		final int y = (int) worldGuardUtils.toLocation(matchData.blocksRg.getMinimumPoint()).getY();
 
 		// falling blocks
 		match.getTasks().repeat(0, TickTime.TICK.x(3), () -> {
@@ -160,7 +174,7 @@ public class FallingBlocks extends TeamlessMechanic {
 
 				final Location location = minigamer.getLocation();
 				location.setY(y);
-				if (!worldGuardUtils.isInRegion(location, blocksRg))
+				if (!worldGuardUtils.isInRegion(location, matchData.blocksRg))
 					continue;
 
 				if (matchData.pauseBlocks.contains(minigamer))
@@ -302,7 +316,9 @@ public class FallingBlocks extends TeamlessMechanic {
 		if (!minigamer.isPlaying(this))
 			return;
 
-		if (event.getRegion().getId().contains(ceilingWinRg.getId())) {
+		FallingBlocksMatchData matchData = minigamer.getMatch().getMatchData();
+
+		if (event.getRegion().getId().contains(matchData.ceilingWinRg.getId())) {
 			minigamer.scored();
 			minigamer.getMatch().end();
 		}
@@ -597,15 +613,15 @@ public class FallingBlocks extends TeamlessMechanic {
 
 		public int getMin(ProtectedRegion region) {
 			return switch (this) {
-				case X -> region.getMinimumPoint().getBlockX();
-				case Z -> region.getMinimumPoint().getBlockZ();
+				case X -> region.getMinimumPoint().x();
+				case Z -> region.getMinimumPoint().z();
 			};
 		}
 
 		public int getMax(ProtectedRegion region) {
 			return switch (this) {
-				case X -> region.getMaximumPoint().getBlockX();
-				case Z -> region.getMaximumPoint().getBlockZ();
+				case X -> region.getMaximumPoint().x();
+				case Z -> region.getMaximumPoint().z();
 			};
 		}
 	}
@@ -619,11 +635,11 @@ public class FallingBlocks extends TeamlessMechanic {
 			Match match = minigamer.getMatch();
 			FallingBlocksMatchData matchData = match.getMatchData();
 
-			List<Block> blocks = match.worldedit().getBlocks(blocksRg);
+			List<Block> blocks = match.worldedit().getBlocks(matchData.blocksRg);
 
 			Axis axis = RandomUtils.randomElement(Axis.values());
-			AtomicInteger min = new AtomicInteger(axis.getMin(blocksRg));
-			AtomicInteger max = new AtomicInteger(axis.getMax(blocksRg));
+			AtomicInteger min = new AtomicInteger(axis.getMin(matchData.blocksRg));
+			AtomicInteger max = new AtomicInteger(axis.getMax(matchData.blocksRg));
 
 			match.broadcast("&bA layer is being added by " + minigamer.getNickname());
 			matchData.addLayerTask.add(match.getTasks().repeat(0, TickTime.TICK.x(5), () -> {
@@ -800,7 +816,7 @@ public class FallingBlocks extends TeamlessMechanic {
 					return;
 				}
 
-				if (!worldguard.isInRegion(block.getLocation(), blocksRg)) {
+				if (!worldguard.isInRegion(block.getLocation(), matchData.blocksRg)) {
 					return;
 				}
 

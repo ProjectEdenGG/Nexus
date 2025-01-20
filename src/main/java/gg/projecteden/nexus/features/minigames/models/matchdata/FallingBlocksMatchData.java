@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models.matchdata;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.features.minigames.mechanics.FallingBlocks;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
@@ -31,6 +32,9 @@ public class FallingBlocksMatchData extends MatchData {
 	public List<Minigamer> thickLines = new ArrayList<>();
 	public List<Minigamer> pauseBlocks = new ArrayList<>();
 	public int inconsistentChance = 0;
+
+	public ProtectedRegion ceilingWinRg;
+	public ProtectedRegion blocksRg;
 
 	public FallingBlocksMatchData(Match match) {
 		super(match);
