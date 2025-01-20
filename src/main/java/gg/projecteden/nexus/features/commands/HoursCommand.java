@@ -94,9 +94,12 @@ public class HoursCommand extends CustomCommand {
 			results.removeIf(result -> !Rank.of(result.getUuid()).isStaff());
 		}
 
+		String countryCodeSwitch = "";
 		if (isNotNullOrEmpty(countryCode)) {
+			var code = countryCode.toUpperCase();
+			countryCodeSwitch = " --countryCode=" + code;
 			GeoIPService geoipService = new GeoIPService();
-			results.removeIf(result -> !countryCode.equals(geoipService.get(result.getUuid()).getCountryCode()));
+			results.removeIf(result -> !code.equals(geoipService.get(result.getUuid()).getCountryCode()));
 		}
 
 		if (results.size() == 0)
@@ -112,7 +115,7 @@ public class HoursCommand extends CustomCommand {
 		BiFunction<PageResult, String, JsonBuilder> formatter = (result, index) ->
 			json(index + " &e" + Nerd.of(result.getUuid()).getColoredName() + " &7- " + Timespan.ofSeconds(result.getTotal()).format());
 
-		paginate(results, formatter, "/hours top " + args.getInput() + onlyStaffSwitch, page);
+		paginate(results, formatter, "/hours top " + args.getInput() + onlyStaffSwitch + countryCodeSwitch, page);
 	}
 
 	@ConverterFor(HoursTopArguments.class)
