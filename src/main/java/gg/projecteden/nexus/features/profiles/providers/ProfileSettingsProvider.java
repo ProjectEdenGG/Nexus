@@ -8,12 +8,16 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.profile.ProfileUser;
 import gg.projecteden.nexus.models.profile.ProfileUser.PrivacySetting;
 import gg.projecteden.nexus.models.profile.ProfileUserService;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,6 +32,7 @@ import java.util.function.Consumer;
 @Rows(3)
 @Title("Profile Settings")
 public class ProfileSettingsProvider extends InventoryProvider {
+	private static final ProfileUserService service = new ProfileUserService();
 	InventoryProvider previousMenu = null;
 	ProfileUser user;
 
@@ -49,7 +54,7 @@ public class ProfileSettingsProvider extends InventoryProvider {
 	@Getter
 	@AllArgsConstructor
 	private enum ProfileSetting {
-		BACKGROUND_COLOR(1, 0, CustomMaterial.DYE_STATION_BUTTON_DYE) {
+		BACKGROUND_COLOR(CustomMaterial.DYE_STATION_BUTTON_DYE) {
 			@Override
 			public ItemBuilder getDisplayItem(Player viewer, ProfileUser user) {
 				Color backgroundColor = getUserBackgroundColor(user);
@@ -58,6 +63,7 @@ public class ProfileSettingsProvider extends InventoryProvider {
 					.dyeColor(user.getBukkitBackgroundColor())
 					.itemFlags(ItemFlags.HIDE_ALL)
 					.lore(List.of(
+						"",
 						"&cR: " + backgroundColor.getRed(),
 						"&aG: " + backgroundColor.getGreen(),
 						"&bB: " + backgroundColor.getBlue(),
@@ -69,22 +75,19 @@ public class ProfileSettingsProvider extends InventoryProvider {
 			@Override
 			public void onClick(Player viewer, ProfileUser user, InventoryProvider previousMenu, InventoryProvider provider, InventoryContents contents, ItemClickData e) {
 				Consumer<Color> applyColor = _color -> {
-					ProfileUserService userService = new ProfileUserService();
 					user.setBackgroundColor(ChatColor.of(ColorType.toJava(_color)));
-					userService.save(user);
+					service.save(user);
 					new ProfileSettingsProvider(viewer, previousMenu, user).open(viewer);
 				};
 
 				Consumer<Color> saveColor = _color -> {
-					ProfileUserService userService = new ProfileUserService();
 					user.getSavedColors().add(_color);
-					userService.save(user);
+					service.save(user);
 				};
 
 				Consumer<Color> unSaveColor = _color -> {
-					ProfileUserService userService = new ProfileUserService();
 					user.getSavedColors().remove(_color);
-					userService.save(user);
+					service.save(user);
 				};
 
 				new ColorCreatorProvider(viewer, previousMenu, user.getBackgroundColor(), applyColor, user.getSavedColors(), saveColor, unSaveColor).open(viewer);
@@ -95,13 +98,14 @@ public class ProfileSettingsProvider extends InventoryProvider {
 			}
 		},
 
-		FRIENDS_PRIVACY(1, 1, CustomMaterial.GUI_PROFILE_ICON_FRIENDS) {
+		FRIENDS_PRIVACY(CustomMaterial.GUI_PROFILE_ICON_FRIENDS) {
 			@Override
 			public ItemBuilder getDisplayItem(Player viewer, ProfileUser user) {
 				ItemBuilder displayItem = super.getDisplayItem(viewer, user);
 				PrivacySetting setting = getPrivacy(user);
 
 				return displayItem
+					.lore("")
 					.lore("&7⬇ " + StringUtils.camelCase(setting.previousWithLoop()))
 					.lore("&e⬇ " + StringUtils.camelCase(setting))
 					.lore("&7⬇ " + StringUtils.camelCase(setting.nextWithLoop()));
@@ -109,9 +113,8 @@ public class ProfileSettingsProvider extends InventoryProvider {
 
 			@Override
 			public void onClick(Player viewer, ProfileUser user, InventoryProvider previousMenu, InventoryProvider provider, InventoryContents contents, ItemClickData e) {
-				ProfileUserService userService = new ProfileUserService();
 				user.setFriendsPrivacy(getPrivacy(user).nextWithLoop());
-				userService.save(user);
+				service.save(user);
 
 				refresh(viewer, user, previousMenu, provider, contents);
 			}
@@ -121,13 +124,14 @@ public class ProfileSettingsProvider extends InventoryProvider {
 			}
 		},
 
-		SOCIAL_MEDIA_PRIVACY(1, 2, CustomMaterial.GUI_PROFILE_ICON_SOCIAL_MEDIA) {
+		SOCIAL_MEDIA_PRIVACY(CustomMaterial.GUI_PROFILE_ICON_SOCIAL_MEDIA) {
 			@Override
 			public ItemBuilder getDisplayItem(Player viewer, ProfileUser user) {
 				ItemBuilder displayItem = super.getDisplayItem(viewer, user);
 				PrivacySetting setting = getPrivacy(user);
 
 				return displayItem
+					.lore("")
 					.lore("&7⬇ " + StringUtils.camelCase(setting.previousWithLoop()))
 					.lore("&e⬇ " + StringUtils.camelCase(setting))
 					.lore("&7⬇ " + StringUtils.camelCase(setting.nextWithLoop()));
@@ -135,9 +139,8 @@ public class ProfileSettingsProvider extends InventoryProvider {
 
 			@Override
 			public void onClick(Player viewer, ProfileUser user, InventoryProvider previousMenu, InventoryProvider provider, InventoryContents contents, ItemClickData e) {
-				ProfileUserService userService = new ProfileUserService();
 				user.setSocialMediaPrivacy(getPrivacy(user).nextWithLoop());
-				userService.save(user);
+				service.save(user);
 
 				refresh(viewer, user, previousMenu, provider, contents);
 			}
@@ -145,10 +148,65 @@ public class ProfileSettingsProvider extends InventoryProvider {
 			private PrivacySetting getPrivacy(ProfileUser user) {
 				return user.getSocialMediaPrivacy();
 			}
+		},
+		STATUS(CustomMaterial.GUI_PROFILE_ICON_STATUS) {
+			@Override
+			public ItemBuilder getDisplayItem(Player viewer, ProfileUser user) {
+				String status = user.getStatus();
+				if (Nullables.isNullOrEmpty(status))
+					status = "Not set yet";
+
+				ItemBuilder itemBuilder = super.getDisplayItem(viewer, user);
+				itemBuilder.lore("", "&3Current Status:", "&e" + status);
+				return itemBuilder;
+			}
+
+			@Override
+			public void onClick(Player viewer, ProfileUser user, InventoryProvider previousMenu, InventoryProvider provider, InventoryContents contents, ItemClickData e) {
+				String status = "";
+				if (Nullables.isNotNullOrEmpty(user.getStatus()))
+					status = user.getStatus();
+
+				PlayerUtils.sendLine(viewer);
+				new JsonBuilder(StringUtils.getPrefix("Profile")).group()
+					.next("&eShift+Click &3here to set profile status").hover("&eShift+Click &3to set your profile status")
+					.insert("/profile setStatus " + status)
+					.send(viewer);
+				PlayerUtils.sendLine(viewer);
+
+				viewer.closeInventory();
+			}
+		},
+		ABOUT(CustomMaterial.GUI_PROFILE_ICON_ABOUT) {
+			@Override
+			public ItemBuilder getDisplayItem(Player viewer, ProfileUser user) {
+				Nerd nerd = Nerd.of(user);
+				String about = nerd.getAbout();
+				if (Nullables.isNullOrEmpty(about))
+					about = "Not set yet";
+
+				ItemBuilder itemBuilder = super.getDisplayItem(viewer, user);
+				itemBuilder.lore("", "&3Current About:", "&e" + about);
+				return itemBuilder;
+			}
+
+			@Override
+			public void onClick(Player viewer, ProfileUser user, InventoryProvider previousMenu, InventoryProvider provider, InventoryContents contents, ItemClickData e) {
+				String about = "";
+				if (Nullables.isNotNullOrEmpty(user.getNerd().getAbout()))
+					about = user.getNerd().getAbout();
+
+				PlayerUtils.sendLine(viewer);
+				new JsonBuilder(StringUtils.getPrefix("Profile")).group()
+					.next("&eShift+Click &3here to set profile about").hover("&eShift+Click &3to set your profile about")
+					.insert("/profile setAbout " + about)
+					.send(viewer);
+				PlayerUtils.sendLine(viewer);
+
+				viewer.closeInventory();
+			}
 		};
 
-		private final int row;
-		private final int col;
 		private final CustomMaterial displayMaterial;
 
 		public String getDisplayName() {
@@ -160,7 +218,7 @@ public class ProfileSettingsProvider extends InventoryProvider {
 		}
 
 		public SlotPos getSlotPos() {
-			return SlotPos.of(this.row, this.col);
+			return SlotPos.of(1, this.ordinal());
 		}
 
 		public void setClickableItem(Player viewer, ProfileUser user, InventoryProvider previousMenu, InventoryProvider provider, InventoryContents contents) {

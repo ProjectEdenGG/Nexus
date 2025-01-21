@@ -10,6 +10,7 @@ import gg.projecteden.api.mongodb.serializers.LocalDateConverter;
 import gg.projecteden.api.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.afk.AFK;
+import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.commands.BirthdaysCommand;
 import gg.projecteden.nexus.features.discord.Discord;
@@ -410,6 +411,19 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 	public void updatePronouns() {
 		new DiscordUserService().get(this).updatePronouns(pronouns);
 		new NerdService().save(this);
+	}
+
+	public void setAbout(String about) {
+		about = StringUtils.stripColor(about);
+		if (Censor.isCensored(getPlayer(), about))
+			throw new InvalidInputException("Inappropriate input in about me");
+
+		if (!about.equals(this.about)) {
+			super.setAbout(about);
+			Discord.staffLog(StringUtils.getDiscordPrefix("About") + getNickname() + " set their about me to `" + about + "`");
+
+			new NerdService().save(this);
+		}
 	}
 
 	@Data

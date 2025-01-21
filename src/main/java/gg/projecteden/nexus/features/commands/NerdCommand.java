@@ -47,7 +47,9 @@ public class NerdCommand extends CustomCommand {
 	@Path("about <about...>")
 	@Description("Set your About Me")
 	void about(String about) {
-		service.edit(player(), nerd -> nerd.setAbout(StringUtils.stripColor(about)));
+		Nerd nerd = service.get(about);
+		nerd.setAbout(about);
+
 		send(PREFIX + "Set your about to: &e" + nerd().getAbout());
 	}
 

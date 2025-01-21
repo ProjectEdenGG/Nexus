@@ -72,12 +72,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/*
-	TODO:
-		- BADGE?
-		- FRIENDS GUI USE GUI BUTTONS INSTEAD OF LITERAL BUTTONS
-		- FRIEND REQUEST RECEIVED --> CANT ACCEPT
- */
 @Rows(6)
 @SuppressWarnings({"deprecation", "unused"})
 public class ProfileProvider extends InventoryProvider {
@@ -189,8 +183,10 @@ public class ProfileProvider extends InventoryProvider {
 				if (Nullables.isNotNullOrEmpty(targetNerd.getPronouns()))
 					lines.add("&3Pronouns: " + targetNerd.getPronouns().stream().map(pronoun -> "&e" + pronoun + "&3").collect(Collectors.joining(", ")));
 
-				if (PlayerUtils.canSee(viewer, target))
-					lines.add("&3WorldGroup: &e" + StringUtils.camelCase(target.getWorldGroup()));
+				if (Nullables.isNotNullOrEmpty(targetNerd.getAbout())) {
+					lines.add("&3About Me:");
+					lines.add("&e" + targetNerd.getAbout());
+				}
 
 				return lines;
 			}
@@ -219,6 +215,27 @@ public class ProfileProvider extends InventoryProvider {
 			@Override
 			public ItemBuilder getExtraSlotItemBuilder(Player viewer, ProfileUser target) {
 				return getInvisibleCopy(viewer, target);
+			}
+		},
+
+		STATUS(2, 3, CustomMaterial.GUI_PROFILE_ICON_STATUS) {
+			@Override
+			public String getName(Player viewer, ProfileUser target) {
+				return "&3" + StringUtils.camelCase(this);
+			}
+
+			@Override
+			public boolean shouldShow(Player viewer, ProfileUser target) {
+				return Nullables.isNotNullOrEmpty(target.getStatus());
+			}
+
+			@Override
+			public List<String> getLore(Player viewer, ProfileUser target) {
+				String status = target.getStatus();
+				if (Nullables.isNullOrEmpty(status))
+					return super.getLore(viewer, target);
+
+				return List.of("&e" + status);
 			}
 		},
 
@@ -621,11 +638,23 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public List<String> getLore(Player viewer, ProfileUser target) {
+			public String getName(Player viewer, ProfileUser target) {
 				if (Rank.of(viewer).isStaff())
-					return List.of("&eClick &3to teleport to &e" + target.getNickname());
+					return "&eClick &3to teleport to &e" + target.getNickname();
+				else
+					return "&eClick &3to Send a teleport request to &e" + target.getNickname();
+			}
 
-				return List.of("&eClick &3to Send a teleport request to &e" + target.getNickname());
+			@Override
+			public List<String> getLore(Player viewer, ProfileUser target) {
+				List<String> lines = new ArrayList<>();
+
+				if (PlayerUtils.canSee(viewer, target)) {
+					lines.add("");
+					lines.add("&3WorldGroup: &e" + StringUtils.camelCase(target.getWorldGroup()));
+				}
+
+				return lines;
 			}
 
 			@Override

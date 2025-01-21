@@ -35,6 +35,7 @@ public class ProfileUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private ChatColor backgroundColor = ChatColor.WHITE;
+	private String status;
 	private PrivacySetting friendsPrivacy = PrivacySetting.FRIENDS_ONLY;
 	private PrivacySetting socialMediaPrivacy = PrivacySetting.FRIENDS_ONLY;
 	private Set<Color> savedColors = new HashSet<>();
