@@ -15,10 +15,21 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.HttpUtils;
+import gg.projecteden.nexus.utils.IOUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.parchment.OptionalPlayerLike;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
@@ -33,7 +44,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.net.URI;
-import java.nio.file.*;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +58,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ResourcePack extends Feature implements Listener {
 	public static final String ENV_SUFFIX = Nexus.getEnv() == Env.PROD ? "" : "-" + Nexus.getEnv();
 	public static final String FILE_NAME = "ResourcePack%s.zip".formatted(ENV_SUFFIX);
-	public static final String URL = "https://%s/%s".formatted(Nexus.DOMAIN, FILE_NAME);
+	public static final String URL = "https://cdn.%s/%s".formatted(Nexus.DOMAIN, FILE_NAME);
 	@Getter
 	static final String fileRegex = "[\\w-]+";
 	@Getter
