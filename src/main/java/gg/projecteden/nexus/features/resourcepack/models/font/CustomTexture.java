@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.models.font;
 
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
@@ -27,6 +28,7 @@ public enum CustomTexture {
 	GUI_PROFILE_TEXTURE_SHINE("疱"),
 	GUI_PROFILE_TEXTURE_STRIPES_VERTICAL("祯"),
 	GUI_PROFILE_TEXTURE_SPLIT("臭"),
+	GUI_PROFILE_IMAGE_TEST("糖"),
 
 	GUI_PROFILE_RANK_UNKNOWN("笞"),
 	GUI_PROFILE_RANK_GUEST("砫"),
@@ -58,6 +60,7 @@ public enum CustomTexture {
 	;
 
 	@NonNull
+	@Getter
 	final String fontChar;
 	int rows = 6;
 
@@ -124,13 +127,13 @@ public enum CustomTexture {
 		return getMenuTexture(9, textureChar, color, rows);
 	}
 
-	private static String getMenuTexture(int minus, String textureChar, ChatColor color, int rows) {
+	public static String getMenuTexture(int minus, String textureChar, ChatColor color, int rows) {
 		String title = minus(minus) + color + textureChar;
 
 		// TODO: figure out all other row spacings
-		if (rows == 3) return title + minus(213); // 3
+		if (rows == 3) return title + minus(213); // 3 rows
 
-		return title + minus(214); // 6
+		return title + minus(214); // 6 rows
 	}
 
 	//

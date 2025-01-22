@@ -100,23 +100,25 @@ public class ProfileUser implements PlayerOwnedObject {
 	@AllArgsConstructor
 	public enum ProfileTextureType {
 		NONE(false, null),
-		DOTS(true, CustomTexture.GUI_PROFILE_TEXTURE_DOTS),
-		SHINE(true, CustomTexture.GUI_PROFILE_TEXTURE_SHINE),
-		VERTICAL_STRIPES(true, CustomTexture.GUI_PROFILE_TEXTURE_STRIPES_VERTICAL),
-		SPLIT(true, CustomTexture.GUI_PROFILE_TEXTURE_SPLIT);
+		DOTS(false, CustomTexture.GUI_PROFILE_TEXTURE_DOTS),
+		SHINE(false, CustomTexture.GUI_PROFILE_TEXTURE_SHINE),
+		VERTICAL_STRIPES(false, CustomTexture.GUI_PROFILE_TEXTURE_STRIPES_VERTICAL),
+		SPLIT(false, CustomTexture.GUI_PROFILE_TEXTURE_SPLIT),
+		TEST(true, CustomTexture.GUI_PROFILE_IMAGE_TEST);
 
-		private final boolean dyeable;
+		private final boolean image;
 		private final CustomTexture texture;
+		private final int image_minus = 59;
 
 
 		public String getTexture(ChatColor color, int rows) {
 			if (this == NONE)
 				return "";
 
-			if (dyeable)
-				return texture.getNextMenuTexture(color, rows);
+			if (image)
+				return CustomTexture.getMenuTexture(59, texture.getFontChar(), ChatColor.WHITE, rows);
 
-			return texture.getNextMenuTexture(rows);
+			return texture.getNextMenuTexture(color, rows);
 		}
 	}
 
