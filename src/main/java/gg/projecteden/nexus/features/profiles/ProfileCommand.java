@@ -12,9 +12,12 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.profile.ProfileUser;
+import gg.projecteden.nexus.models.profile.ProfileUser.ProfileTextureType;
 import gg.projecteden.nexus.models.profile.ProfileUserService;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.Nullables;
@@ -39,6 +42,14 @@ public class ProfileCommand extends CustomCommand implements Listener {
 	@Description("View a player's profile")
 	public void open(@Arg("self") Nerd target) {
 		openProfile(target, player(), null);
+	}
+
+	@Path("setTexture <type>")
+	@Permission(Group.ADMIN)
+	public void setTexture(ProfileTextureType type) {
+		ProfileUser user = service.get(player());
+		user.setTextureType(type);
+		service.save(user);
 	}
 
 	@HideFromWiki

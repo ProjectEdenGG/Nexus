@@ -86,6 +86,7 @@ public class ProfileProvider extends InventoryProvider {
 
 	private final ProfileUser targetUser;
 	private final ChatColor backgroundColor;
+	private final ChatColor textureColor;
 
 	private ItemStack armorHelmet = null;
 	private ItemStack armorChestplate = null;
@@ -103,6 +104,7 @@ public class ProfileProvider extends InventoryProvider {
 	public ProfileProvider(OfflinePlayer offlinePlayer) {
 		this.targetUser = new ProfileUserService().get(offlinePlayer);
 		this.backgroundColor = targetUser.getBackgroundColor();
+		this.textureColor = targetUser.getTextureColor();
 
 		fillCostumes(targetUser);
 		fillArmor(targetUser);
@@ -114,6 +116,8 @@ public class ProfileProvider extends InventoryProvider {
 		StringBuilder texture = new StringBuilder(CustomTexture.GUI_PROFILE.getMenuTexture());
 
 		texture.append(CustomTexture.GUI_PROFILE_BACKGROUND.getNextMenuTexture(backgroundColor, this.getRows()));
+		if (targetUser.getTextureType() != null)
+			texture.append(targetUser.getTexture(targetUser.getTextureColor(), this.getRows()));
 
 		for (SlotTexture slotTexture : SlotTexture.values())
 			texture.append(slotTexture.getMenuTexture(this));

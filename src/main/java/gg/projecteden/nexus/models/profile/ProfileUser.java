@@ -5,6 +5,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.friends.FriendsUser;
 import gg.projecteden.nexus.models.friends.FriendsUserService;
@@ -35,13 +36,24 @@ public class ProfileUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private ChatColor backgroundColor = ChatColor.WHITE;
+	private ChatColor textureColor = ChatColor.WHITE;
+	private ProfileTextureType textureType;
 	private String status;
 	private PrivacySetting friendsPrivacy = PrivacySetting.FRIENDS_ONLY;
 	private PrivacySetting socialMediaPrivacy = PrivacySetting.FRIENDS_ONLY;
 	private Set<Color> savedColors = new HashSet<>();
+	private Set<ProfileTextureType> unlockedTextureTypes = new HashSet<>();
 
 	public Color getBukkitBackgroundColor() {
 		return ColorType.toBukkitColor(this.backgroundColor);
+	}
+
+	public Color getBukkitTextureColor() {
+		return ColorType.toBukkitColor(this.textureColor);
+	}
+
+	public String getTexture(ChatColor color, int rows) {
+		return textureType.getTexture(color, rows);
 	}
 
 	public enum PrivacySetting implements IterableEnum {
@@ -83,6 +95,29 @@ public class ProfileUser implements PlayerOwnedObject {
 			}
 			default -> true;
 		};
+	}
+
+	@AllArgsConstructor
+	public enum ProfileTextureType {
+		NONE(false, null),
+		DOTS(true, CustomTexture.GUI_PROFILE_TEXTURE_DOTS),
+		SHINE(true, CustomTexture.GUI_PROFILE_TEXTURE_SHINE),
+		VERTICAL_STRIPES(true, CustomTexture.GUI_PROFILE_TEXTURE_STRIPES_VERTICAL),
+		SPLIT(true, CustomTexture.GUI_PROFILE_TEXTURE_SPLIT);
+
+		private final boolean dyeable;
+		private final CustomTexture texture;
+
+
+		public String getTexture(ChatColor color, int rows) {
+			if (this == NONE)
+				return "";
+
+			if (dyeable)
+				return texture.getNextMenuTexture(color, rows);
+
+			return texture.getNextMenuTexture(rows);
+		}
 	}
 
 }

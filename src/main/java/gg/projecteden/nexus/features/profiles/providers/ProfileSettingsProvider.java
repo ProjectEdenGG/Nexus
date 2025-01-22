@@ -57,18 +57,18 @@ public class ProfileSettingsProvider extends InventoryProvider {
 		BACKGROUND_COLOR(CustomMaterial.DYE_STATION_BUTTON_DYE) {
 			@Override
 			public ItemBuilder getDisplayItem(Player viewer, ProfileUser user) {
-				Color backgroundColor = getUserBackgroundColor(user);
+				Color color = getUserBackgroundColor(user);
 
 				return super.getDisplayItem(viewer, user)
 					.dyeColor(user.getBukkitBackgroundColor())
 					.itemFlags(ItemFlags.HIDE_ALL)
 					.lore(List.of(
 						"",
-						"&cR: " + backgroundColor.getRed(),
-						"&aG: " + backgroundColor.getGreen(),
-						"&bB: " + backgroundColor.getBlue(),
+						"&cR: " + color.getRed(),
+						"&aG: " + color.getGreen(),
+						"&bB: " + color.getBlue(),
 						"",
-						"&3Hex: &e" + StringUtils.toHex(backgroundColor)
+						"&3Hex: &e" + StringUtils.toHex(color)
 					));
 			}
 
@@ -95,6 +95,50 @@ public class ProfileSettingsProvider extends InventoryProvider {
 
 			private Color getUserBackgroundColor(ProfileUser user) {
 				return user.getBukkitBackgroundColor();
+			}
+		},
+
+		TEXTURE_COLOR(CustomMaterial.DYE_STATION_BUTTON_DYE) {
+			@Override
+			public ItemBuilder getDisplayItem(Player viewer, ProfileUser user) {
+				Color color = getUserTextureColor(user);
+
+				return super.getDisplayItem(viewer, user)
+					.dyeColor(user.getBukkitTextureColor())
+					.itemFlags(ItemFlags.HIDE_ALL)
+					.lore(List.of(
+						"",
+						"&cR: " + color.getRed(),
+						"&aG: " + color.getGreen(),
+						"&bB: " + color.getBlue(),
+						"",
+						"&3Hex: &e" + StringUtils.toHex(color)
+					));
+			}
+
+			@Override
+			public void onClick(Player viewer, ProfileUser user, InventoryProvider previousMenu, InventoryProvider provider, InventoryContents contents, ItemClickData e) {
+				Consumer<Color> applyColor = _color -> {
+					user.setTextureColor(ChatColor.of(ColorType.toJava(_color)));
+					service.save(user);
+					new ProfileSettingsProvider(viewer, previousMenu, user).open(viewer);
+				};
+
+				Consumer<Color> saveColor = _color -> {
+					user.getSavedColors().add(_color);
+					service.save(user);
+				};
+
+				Consumer<Color> unSaveColor = _color -> {
+					user.getSavedColors().remove(_color);
+					service.save(user);
+				};
+
+				new ColorCreatorProvider(viewer, previousMenu, user.getTextureColor(), applyColor, user.getSavedColors(), saveColor, unSaveColor).open(viewer);
+			}
+
+			private Color getUserTextureColor(ProfileUser user) {
+				return user.getBukkitTextureColor();
 			}
 		},
 
