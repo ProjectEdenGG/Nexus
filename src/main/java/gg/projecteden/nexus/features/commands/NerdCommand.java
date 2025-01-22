@@ -47,10 +47,10 @@ public class NerdCommand extends CustomCommand {
 	@Path("about <about...>")
 	@Description("Set your About Me")
 	void about(String about) {
-		Nerd nerd = service.get(player());
+		Nerd nerd = nerd();
 		nerd.setAbout(about);
 
-		send(PREFIX + "Set your about to: &e" + nerd().getAbout());
+		send(PREFIX + "Set your about to: &e" + nerd.getAbout());
 	}
 
 	@Path("setFirstJoin <player> <date>")
