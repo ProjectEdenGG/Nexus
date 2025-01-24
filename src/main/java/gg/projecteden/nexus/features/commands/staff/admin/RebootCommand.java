@@ -8,10 +8,17 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.NexusCommand.ReloadCondition;
 import gg.projecteden.nexus.features.afk.AFK;
+import gg.projecteden.nexus.features.chat.Chat.Broadcast;
+import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -27,7 +34,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @NoArgsConstructor
@@ -83,18 +94,17 @@ public class RebootCommand extends CustomCommand implements Listener {
 		if (!queued || rebooting)
 			return;
 
+		if (passive)
+			if (!AFK.canPassiveReboot())
+				return;
+
 		final List<ReloadCondition> conditions = RebootCommand.conditions.stream()
 			.filter(condition -> Nullables.isNullOrEmpty(excludedConditions) || !excludedConditions.contains(condition))
 			.toList();
 
 		conditions.forEach(ReloadCondition::run);
 
-		if (passive)
-			if (AFK.getActivePlayers() != 0)
-				return;
-
 		rebooting = true;
-
 		Koda.say("Rebooting server, come back in " + TIME);
 		title();
 
@@ -130,6 +140,8 @@ public class RebootCommand extends CustomCommand implements Listener {
 		}));
 	}
 
+	private static final Map<LocalDateTime, Double> RAM_POLLS = new HashMap<>();
+
 	static {
 		Tasks.repeat(TickTime.SECOND.x(5), TickTime.SECOND.x(5), () -> {
 			try {
@@ -137,6 +149,33 @@ public class RebootCommand extends CustomCommand implements Listener {
 			} catch (Exception ex) {
 				Nexus.log("Reboot failed: " + ex.getMessage());
 			}
+		});
+
+		Tasks.repeat(TickTime.SECOND, TickTime.SECOND, () -> {
+			for (LocalDateTime time : new HashSet<>(RAM_POLLS.keySet()))
+				if (LocalDateTime.now().minusMinutes(2).isAfter(time))
+					RAM_POLLS.remove(time);
+
+			long total = Runtime.getRuntime().totalMemory();
+			long used = total - Runtime.getRuntime().freeMemory();
+			RAM_POLLS.put(LocalDateTime.now(), used / Math.pow(1024, 3));
+		});
+
+		Tasks.repeat(TickTime.MINUTE.x(2), TickTime.MINUTE, () -> {
+			if (queued)
+				return;
+
+			Double min = Collections.min(RAM_POLLS.values());
+			if (min < 8.5)
+				return;
+
+			passive = true;
+			queued = true;
+
+			Broadcast.all().channel(StaticChannel.STAFF).message(StringUtils.getPrefix("Reboot") +
+				"Passive reboot queued due to high RAM usage (Min usage from last 2 minutes: " + min + "GB)");
+
+			tryReboot();
 		});
 	}
 

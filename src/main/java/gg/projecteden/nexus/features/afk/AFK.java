@@ -5,6 +5,7 @@ import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.afk.AFKUser;
+import gg.projecteden.nexus.models.afk.AFKUser.AFKSetting;
 import gg.projecteden.nexus.models.afk.AFKUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -113,6 +114,16 @@ public class AFK extends Feature {
 
 	public static int getActivePlayers() {
 		return OnlinePlayers.where().afk(false).get().size();
+	}
+
+	public static boolean canPassiveReboot() {
+		return OnlinePlayers.where()
+			.filter(player -> {
+				AFKUser user = AFK.get(player);
+				return !user.isAfk() || user.getSetting(AFKSetting.PREVENT_REBOOTS);
+			})
+			.get()
+			.isEmpty();
 	}
 
 	public static int getActiveStaff() {

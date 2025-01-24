@@ -21,7 +21,12 @@ import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -131,17 +136,26 @@ public class AFKUser implements PlayerOwnedObject {
 			false,
 			"Disable mobs targeting you while you are AFK",
 			"Must be AFK for longer than 4 minutes",
-			value -> "&3Mobs " + (value ? "&awill" : "&cwill not") + " &3target you while you are AFK"),
+			value -> "&3Mobs " + (value ? "&awill" : "&cwill not") + " &3target you while you are AFK"
+		),
 		MOB_SPAWNING(
 			false,
 			"Disable mobs spawning near you while you are AFK. Helps with server lag and spawn rates for active players",
 			"Must be AFK for longer than 4 minutes",
-			value -> "&3Mobs " + (value ? "&awill" : "&cwill not") + " &3spawn near you while you are AFK"),
+			value -> "&3Mobs " + (value ? "&awill" : "&cwill not") + " &3spawn near you while you are AFK"
+		),
 		BROADCASTS(
 			true,
 			"Hides your AFK broadcasts from other players",
 			null,
-			value -> "&3Your own AFK broadcasts are now " + (value ? "&ashown" : "&chidden") + " &3from other players"),
+			value -> "&3Your own AFK broadcasts are now " + (value ? "&ashown" : "&chidden") + " &3from other players"
+		),
+		PREVENT_REBOOTS(
+			false,
+			"Prevents passive reboots from happening while you are AFK",
+			"Passive reboots only happen when there are no active players online",
+			value -> "&3Passive reboots are now " + (value ? "&cprevented" : "&aallowed") + " &3when you are AFK"
+		),
 		;
 
 		private final boolean defaultValue;
