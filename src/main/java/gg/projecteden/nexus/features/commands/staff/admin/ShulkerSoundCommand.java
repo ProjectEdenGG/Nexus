@@ -17,6 +17,12 @@ public class ShulkerSoundCommand extends CustomCommand {
 		super(event);
 	}
 
+	@Path
+	void shulkerSound() {
+		commandBlock();
+		world().playSound(location(), Sound.ENTITY_SHULKER_AMBIENT, 10F, (float) RandomUtils.randomDouble(0, 2));
+	}
+
 	@Path("<player>")
 	void shulkerSound(Player player) {
 		commandBlock();
