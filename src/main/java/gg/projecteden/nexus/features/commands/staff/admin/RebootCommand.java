@@ -68,6 +68,7 @@ public class RebootCommand extends CustomCommand implements Listener {
 	@Description("Queues a reboot as soon as possible")
 	void queue(@Switch @Arg(type = ReloadCondition.class) List<ReloadCondition> excludedConditions) {
 		queued = true;
+		passive = false;
 		RebootCommand.excludedConditions = excludedConditions;
 		tryReboot();
 	}
