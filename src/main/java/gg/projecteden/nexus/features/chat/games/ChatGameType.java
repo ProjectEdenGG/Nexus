@@ -247,6 +247,7 @@ public enum ChatGameType {
 		BACKUP_TIME("How much time passes inbetween every automated server backup?", List.of("4 hours", "four hours")),
 		HOH("Which place on the server would you visit if you wanted to see the full list of former and current staff?", "hall of history"),
 		ONEBLOCK("What is the name of server's version of skyblock?", "Oneblock"),
+		BARREL("What storage block has had it's storage space increased on Project Eden?", "barrel"),
 
 		VOTE_CRATE_RAREST("What is the least likely reward you can obtain from the Vote Crate?", List.of("dragon egg", "ender dragon egg", "enderdragon egg")),
 		VOTE_CRATE_MOST_EXPENSIVE("How many vote points does a beacon cost in the Vote Point Store (/vps)?", getNumberAnswers(250)),
