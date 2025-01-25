@@ -2,12 +2,20 @@ package gg.projecteden.nexus.features.store.perks.visuals;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.nms.PacketUtils;
 import kotlin.Pair;
 import lombok.Getter;
@@ -18,9 +26,12 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiFunction;
 
 @Aliases("emojihat")
 public class EmojiHatsCommand extends CustomCommand {
@@ -43,12 +54,15 @@ public class EmojiHatsCommand extends CustomCommand {
 		if (hats.isEmpty())
 			error("You do not own any emoji hats, purchase with &c/event store");
 
-		final BiFunction<EmojiHat, String, JsonBuilder> formatter = (hat, index) ->
-			json("&3" + index + " &a[Start] &e" + camelCase(hat))
+		new Paginator<EmojiHat>()
+			.values(hats)
+			.formatter((hat, index) -> json("&3" + index + " &a[Start] &e" + camelCase(hat))
 				.command("/emojihats " + hat.name().toLowerCase())
-				.hover("&eClick to start");
-
-		paginate(hats, formatter, "/emojihats", page);
+				.hover("&eClick to start")
+			)
+			.command("/emojihats")
+			.page(page)
+			.send();
 	}
 
 	@Path("<type>")

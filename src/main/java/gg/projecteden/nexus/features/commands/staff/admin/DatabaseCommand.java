@@ -82,7 +82,12 @@ public class DatabaseCommand extends CustomCommand {
 		final BiFunction<MongoService<? extends DatabaseObject>, String, JsonBuilder> formatter = (service, index) ->
 			json(index + " &e" + name(service) + " &7- " + counts.get(service));
 
-		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/database countAll", page);
+		new Paginator<MongoService<? extends DatabaseObject>>()
+			.values(Utils.sortByValueReverse(counts).keySet())
+			.formatter(formatter)
+			.command("/database countAll")
+			.page(page)
+			.send();
 	}
 
 	@Async
@@ -105,7 +110,12 @@ public class DatabaseCommand extends CustomCommand {
 		final BiFunction<MongoService<? extends DatabaseObject>, String, JsonBuilder> formatter = (service, index) ->
 			json("&e" + name(service) + " &7- " + service.getCache().size());
 
-		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/database countAllCaches", page);
+		new Paginator<MongoService<? extends DatabaseObject>>()
+			.values(Utils.sortByValueReverse(counts).keySet())
+			.formatter(formatter)
+			.command("/database countAllCaches")
+			.page(page)
+			.send();
 	}
 
 	@Async

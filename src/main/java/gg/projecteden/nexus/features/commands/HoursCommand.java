@@ -115,7 +115,12 @@ public class HoursCommand extends CustomCommand {
 		BiFunction<PageResult, String, JsonBuilder> formatter = (result, index) ->
 			json(index + " &e" + Nerd.of(result.getUuid()).getColoredName() + " &7- " + Timespan.ofSeconds(result.getTotal()).format());
 
-		paginate(results, formatter, "/hours top " + args.getInput() + onlyStaffSwitch + countryCodeSwitch, page);
+		new Paginator<PageResult>()
+			.values(results)
+			.formatter(formatter)
+			.command("/hours top " + args.getInput() + onlyStaffSwitch + countryCodeSwitch)
+			.page(page)
+			.send();
 	}
 
 	@ConverterFor(HoursTopArguments.class)

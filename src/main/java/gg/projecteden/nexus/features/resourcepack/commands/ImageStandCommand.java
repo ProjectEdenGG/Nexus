@@ -20,7 +20,6 @@ import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntityServ
 import gg.projecteden.nexus.models.imagestand.ImageStand;
 import gg.projecteden.nexus.models.imagestand.ImageStand.ImageSize;
 import gg.projecteden.nexus.models.imagestand.ImageStandService;
-import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
@@ -43,7 +42,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
@@ -67,12 +65,15 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 		if (imageStands.isEmpty())
 			error("No image stands found");
 
-		final BiFunction<ImageStand, String, JsonBuilder> formatter = (imageStand, index) ->
-			json("&3" + index + " &e" + imageStand.getId())
+		new Paginator<ImageStand>()
+			.values(imageStands)
+			.formatter((imageStand1, index) -> json("&3" + index + " &e" + imageStand1.getId())
 				.hover("Click for more information")
-				.command("/db debug ImageStandService " + imageStand.getUuid());
-
-		paginate(imageStands, formatter, "/imagestand list", page);
+				.command("/db debug ImageStandService " + imageStand1.getUuid())
+			)
+			.command("/imagestand list")
+			.page(page)
+			.send();
 	}
 
 	@Path("tp <id>")

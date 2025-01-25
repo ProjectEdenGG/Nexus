@@ -11,7 +11,6 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.banker.Banker;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 
@@ -21,7 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 @Aliases({"baltop", "moneytop", "btop"})
@@ -59,9 +57,12 @@ public class BalanceTopCommand extends CustomCommand {
 		double sum = bankers.stream().mapToDouble(banker -> banker.getBalance(world).doubleValue()).sum();
 
 		send(PREFIX + "Top " + camelCase(world) + " balances  &3|  Total: &e" + StringUtils.prettyMoney(sum));
-		BiFunction<Banker, String, JsonBuilder> formatter = (banker, index) ->
-			json(index + " &e" + banker.getNickname() + " &7- " + banker.getBalanceFormatted(world));
-		paginate(bankers, formatter, "/baltop --world=" + world.name().toLowerCase(), page);
+		new Paginator<Banker>()
+			.values(bankers)
+			.formatter((banker, index) -> json(index + " &e" + banker.getNickname() + " &7- " + banker.getBalanceFormatted(world)))
+			.command("/baltop --world=" + world.name().toLowerCase())
+			.page(page)
+			.send();
 
 		processing.remove(uuid());
 	}

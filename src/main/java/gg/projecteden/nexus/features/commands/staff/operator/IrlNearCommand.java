@@ -55,7 +55,12 @@ public class IrlNearCommand extends CustomCommand {
 			return json(index + " &e" + Nickname.of(uuid) + " &7- " + mi + "mi / " + km + "km");
 		};
 
-		paginate(Utils.sortByValue(near).keySet(), formatter, "/irlnear " + player.getNickname(), page);
+		new Paginator<UUID>()
+			.values(Utils.sortByValue(near).keySet())
+			.formatter(formatter)
+			.command("/irlnear " + player.getNickname())
+			.page(page)
+			.send();
 	}
 
 }

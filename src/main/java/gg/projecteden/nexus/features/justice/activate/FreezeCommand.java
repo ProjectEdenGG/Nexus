@@ -23,7 +23,6 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.punishments.PunishmentType;
 import gg.projecteden.nexus.models.punishments.Punishments;
-import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import org.bukkit.OfflinePlayer;
@@ -52,7 +51,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
@@ -98,11 +96,14 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 				.sorted(Comparator.<Freeze, LocalDateTime>comparing(freeze -> Nerd.of(freeze).getLastJoin()).reversed())
 				.collect(Collectors.toList());
 
-		BiFunction<Freeze, String, JsonBuilder> formatter = (freeze, index) ->
-				json(index + " &e" + freeze.getNickname() + " &7- "
-						+ Timespan.of(Nerd.of(freeze).getLastJoin()).format() + " ago");
-
-		paginate(all, formatter, "/freeze list", page);
+		new Paginator<Freeze>()
+			.values(all)
+			.formatter((freeze, index) ->
+				json(index + " &e" + freeze.getNickname() + " &7- " + Timespan.of(Nerd.of(freeze).getLastJoin()).format() + " ago")
+			)
+			.command("/freeze list")
+			.page(page)
+			.send();
 	}
 
 	public static int cleanup(World world) {

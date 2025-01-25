@@ -6,8 +6,13 @@ import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.features.titan.clientbound.SaturnUpdate;
 import gg.projecteden.nexus.features.titan.clientbound.UpdateState;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -19,7 +24,11 @@ import lombok.NonNull;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.BiFunction;
 
 @Permission(Group.ADMIN)
@@ -46,7 +55,12 @@ public class TitanCommand extends CustomCommand {
 				.url(version.getCommitUrl())
 				.hover("Click to open on GitHub");
 
-		paginate(usersByVersion.keySet(), formatter, "/titan installed", page);
+		new Paginator<TitanVersion>()
+			.values(usersByVersion.keySet())
+			.formatter(formatter)
+			.command("/titan installed")
+			.page(page)
+			.send();
 	}
 
 	@Async
@@ -63,7 +77,12 @@ public class TitanCommand extends CustomCommand {
 				.command("/titan settings " + Nickname.of(uuid))
 				.hover("Click to view user's settings");
 
-		paginate(users, formatter, "/titan installed with " + version, page);
+		new Paginator<UUID>()
+			.values(users)
+			.formatter(formatter)
+			.command("/titan installed with " + version)
+			.page(page)
+			.send();
 	}
 
 	@Async

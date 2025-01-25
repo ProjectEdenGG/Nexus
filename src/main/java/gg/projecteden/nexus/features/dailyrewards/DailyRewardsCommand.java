@@ -112,7 +112,12 @@ public class DailyRewardsCommand extends CustomCommand {
 			.sorted(Comparator.<DailyRewardUser>comparingInt(user -> user.getCurrentStreak().getStreak()).reversed())
 			.toList();
 
-		paginate(sorted, formatter, "/dailyrewards top", page);
+		new Paginator<DailyRewardUser>()
+			.values(sorted)
+			.formatter(formatter)
+			.command("/dailyrewards top")
+			.page(page)
+			.send();
 	}
 
 }

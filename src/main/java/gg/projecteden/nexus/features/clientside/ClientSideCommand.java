@@ -12,8 +12,12 @@ import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.models.clientside.ClientSideConfigService;
@@ -35,7 +39,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.potion.PotionType;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 
 @NoArgsConstructor
@@ -114,7 +122,12 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 		final BiFunction<IClientSideEntity<?, ?, ?>, String, JsonBuilder> formatter = (entity, index) -> json("&3" + index + " &e" + camelCase(entity.getType()) + " &7- " + StringUtils.getShortLocationString(entity.location()))
 			.command(StringUtils.getTeleportCommand(entity.location()));
 
-		paginate(entities, formatter, command, page);
+		new Paginator<IClientSideEntity<?, ?, ?>>()
+			.values(entities)
+			.formatter(formatter)
+			.command(command)
+			.page(page)
+			.send();
 	}
 
 	@Path("entities create")

@@ -3,13 +3,16 @@ package gg.projecteden.nexus.features.homes;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.home.Home;
 import gg.projecteden.nexus.models.home.HomeOwner;
 import gg.projecteden.nexus.models.home.HomeService;
-import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Utils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -18,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public class HomesCommand extends CustomCommand {
@@ -109,11 +111,15 @@ public class HomesCommand extends CustomCommand {
 				.collect(Collectors.toMap(home -> home, home -> distanceTo(home).getRealDistance()));
 		Map<Home, Double> homes = Utils.sortByValue(unsorted);
 
-		BiFunction<Home, String, JsonBuilder> formatter = (home, index) ->
-				json(index + " &e" + home.getOwner().getNickname() + " &7- " + home.getName() + " (" + homes.get(home).intValue() + "m)")
-						.command("/home " + home.getOwner().getNickname() + " " + home.getName())
-						.hover("&fClick to teleport");
-		paginate(homes.keySet(), formatter, "/homes near", page);
+		new Paginator<Home>()
+			.values(homes.keySet())
+			.formatter((home, index) -> json(index + " &e" + home.getOwner().getNickname() + " &7- " + home.getName() + " (" + homes.get(home).intValue() + "m)")
+				.command("/home " + home.getOwner().getNickname() + " " + home.getName())
+				.hover("&fClick to teleport")
+			)
+			.command("/homes near")
+			.page(page)
+			.send();
 	}
 
 	@Async

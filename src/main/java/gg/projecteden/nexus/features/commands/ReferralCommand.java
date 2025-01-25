@@ -135,7 +135,12 @@ public class ReferralCommand extends CustomCommand implements Listener {
 			json("&3" + index + " &e" + referral.getName() + " &7" + referral.getExtra());
 
 		send(PREFIX + "Extra inputs: ");
-		paginate(referrals, formatter, "/referral extraInputs", page);
+		new Paginator<Referral>()
+			.values(referrals)
+			.formatter(formatter)
+			.command("/referral extraInputs")
+			.page(page)
+			.send();
 	}
 
 	@Async
@@ -272,7 +277,12 @@ public class ReferralCommand extends CustomCommand implements Listener {
 			.toList();
 
 		BiFunction<Hours, String, JsonBuilder> formatter = (hours, index) -> json(index + " &e" + Nerd.of(hours).getColoredName());
-		paginate(players, formatter, "/referral who has rank " + rank.name().toLowerCase() + " from " + subdomain, page);
+		new Paginator<Hours>()
+			.values(players)
+			.formatter(formatter)
+			.command("/referral who has rank " + rank.name().toLowerCase() + " from " + subdomain)
+			.page(page)
+			.send();
 	}
 
 	@Path("who has read rules from <site> [page]")
@@ -286,7 +296,12 @@ public class ReferralCommand extends CustomCommand implements Listener {
 			.toList();
 
 		BiFunction<Hours, String, JsonBuilder> formatter = (hours, index) -> json(index + " &e" + Nerd.of(hours).getColoredName());
-		paginate(players, formatter, "/referral who has read rules from " + subdomain, page);
+		new Paginator<Hours>()
+			.values(players)
+			.formatter(formatter)
+			.command("/referral who has read rules from " + subdomain)
+			.page(page)
+			.send();
 	}
 
 	@Path("who has playtime <playtime> from <site> [page]")
@@ -303,7 +318,12 @@ public class ReferralCommand extends CustomCommand implements Listener {
 
 		BiFunction<Hours, String, JsonBuilder> formatter = (hours, index) -> json(index + " &e" + Nerd.of(hours).getColoredName() +
 				" &7- " + Timespan.ofSeconds(hours.getTotal()).format());
-		paginate(players, formatter, "/referral who has playtime " + playtime + " from " + subdomain, page);
+		new Paginator<Hours>()
+			.values(players)
+			.formatter(formatter)
+			.command("/referral who has playtime " + playtime + " from " + subdomain)
+			.page(page)
+			.send();
 	}
 
 	@NotNull

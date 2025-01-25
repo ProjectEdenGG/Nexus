@@ -61,7 +61,12 @@ public class DistributionFixedCommand extends CustomCommand {
 		BiFunction<Material, String, JsonBuilder> formatter = (material, index) ->
 				json("&e - " + StringUtils.getDf().format(percentages.get(material)) + "% &7- " + camelCase(material));
 
-		paginate((Utils.sortByValue(percentages)).keySet(), formatter, "/distributionfixed", page);
+		new Paginator<Material>()
+			.values((Utils.sortByValue(percentages)).keySet())
+			.formatter(formatter)
+			.command("/distributionfixed")
+			.page(page)
+			.send();
 	}
 
 }

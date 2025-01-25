@@ -13,7 +13,12 @@ import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.commands.worldedit.ExpandAllCommand;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -22,7 +27,13 @@ import gg.projecteden.nexus.models.honeypot.HoneyPotBans;
 import gg.projecteden.nexus.models.honeypot.HoneyPotBansService;
 import gg.projecteden.nexus.models.honeypot.HoneyPotGriefer;
 import gg.projecteden.nexus.models.honeypot.HoneyPotGrieferService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldEditUtils;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.bukkit.Location;
@@ -49,7 +60,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.function.BiFunction;
 
 @NoArgsConstructor
 @Permission(Group.MODERATOR)
@@ -147,13 +157,17 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 			error("There are no Honey Pots in your world");
 
 		send(PREFIX + "Honey Pots in your world:");
-		BiFunction<ProtectedRegion, String, JsonBuilder> formatter = (region, index) -> {
-			int bans = honeyPotBans.get(region.getId()).getBans();
-			return json(index + " &e" + region.getId() + " &7- " + bans + plural(" ban", bans))
-					.command("/honeypots teleport " + getName(region))
-					.hover("&3Click to Teleport");
-		};
-		paginate(regions, formatter, "/honeypots list", page);
+		new Paginator<ProtectedRegion>()
+			.values(regions)
+			.formatter((region, index) -> {
+				int bans = honeyPotBans.get(region.getId()).getBans();
+				return json(index + " &e" + region.getId() + " &7- " + bans + plural(" ban", bans))
+						.command("/honeypots teleport " + getName(region))
+						.hover("&3Click to Teleport");
+			})
+			.command("/honeypots list")
+			.page(page)
+			.send();
 	}
 
 	@Path("(teleport|tp) <honeypot>")

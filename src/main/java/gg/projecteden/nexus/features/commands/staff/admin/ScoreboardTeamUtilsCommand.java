@@ -39,7 +39,12 @@ public class ScoreboardTeamUtilsCommand extends CustomCommand {
 			error(Nickname.of(player) + " doesn't belong to any teams");
 
 		send(PREFIX + "Teams of " + player.getName());
-		paginate(teams, (team, index) -> json("&3" + index + " &e" + team.getName()), "scoreboardteamutils teamsOf " + player.getName(), page);
+		new Paginator<Team>()
+			.values(teams)
+			.formatter((team, index) -> json("&3" + index + " &e" + team.getName()))
+			.command("scoreboardteamutils teamsOf " + player.getName())
+			.page(page)
+			.send();
 	}
 
 	@Path("cleanup")
@@ -91,7 +96,12 @@ public class ScoreboardTeamUtilsCommand extends CustomCommand {
 			+ (empty == null ? "" : " --empty=" + empty);
 
 		send(PREFIX + "Found " + teams.size() + " teams");
-		paginate(teams, (team, index) -> json("&3" + index + " &e" + team.getName()), command, page);
+		new Paginator<Team>()
+			.values(teams)
+			.formatter((team, index) -> json("&3" + index + " &e" + team.getName()))
+			.command(command)
+			.page(page)
+			.send();
 	}
 
 	@Path("teamsOfTargetEntity")

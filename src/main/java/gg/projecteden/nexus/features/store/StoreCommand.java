@@ -10,9 +10,16 @@ import gg.projecteden.nexus.features.store.gallery.StoreGalleryNPCs;
 import gg.projecteden.nexus.features.store.gallery.StoreGalleryNPCs.DisplaySet;
 import gg.projecteden.nexus.features.store.perks.visuals.NPCListener;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.extraplots.ExtraPlotUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -21,8 +28,12 @@ import gg.projecteden.nexus.models.store.Contributor;
 import gg.projecteden.nexus.models.store.Contributor.Purchase;
 import gg.projecteden.nexus.models.store.ContributorService;
 import gg.projecteden.nexus.models.warps.WarpType;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
@@ -34,7 +45,6 @@ import org.bukkit.event.Listener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.BiFunction;
 
 @NoArgsConstructor
 @Aliases({"donate", "buy"})
@@ -79,10 +89,12 @@ public class StoreCommand extends CustomCommand implements Listener {
 	@Path("contributors recent [page]")
 	@Description("View recent contributors")
 	void contributors_recent(@Arg("1") int page) {
-		BiFunction<Purchase, String, JsonBuilder> formatter = (purchase, index) ->
-			json(index + " " + Nerd.of(purchase.getPurchaserUuid()).getColoredName() + " &7- " +
-				StringUtils.prettyMoney(purchase.getRealPrice()));
-		paginate(service.getRecent(), formatter, "/store contributors recent", page);
+		new Paginator<Purchase>()
+			.values(service.getRecent())
+			.formatter((purchase, index) -> json(index + " " + Nerd.of(purchase.getPurchaserUuid()).getColoredName() + " &7- " + StringUtils.prettyMoney(purchase.getRealPrice())))
+			.command("/store contributors recent")
+			.page(page)
+			.send();
 	}
 
 	@Path("credit [player]")

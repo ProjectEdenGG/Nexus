@@ -193,7 +193,12 @@ public class CouponCommand extends CustomCommand implements Listener {
 				.command("/coupons get " + coupon.getId())
 				.hover(coupon.getItem());
 
-		paginate(coupons.getCoupons(), json, "/coupon list", page);
+		new Paginator<Coupon>()
+			.values(coupons.getCoupons())
+			.formatter(json)
+			.command("/coupon list")
+			.page(page)
+			.send();
 	}
 
 	@Path("save <id>")

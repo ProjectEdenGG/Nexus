@@ -59,7 +59,12 @@ public class NewPlayersCommand extends CustomCommand {
 						.group()
 						.next(" &e" + player.getName() + " &7- " + Timespan.ofSeconds(sorted.get(player)).format());
 
-		paginate(sorted.keySet(), formatter, "/newplayers", page);
+		new Paginator<Player>()
+			.values(sorted.keySet())
+			.formatter(formatter)
+			.command("/newplayers")
+			.page(page)
+			.send();
 	}
 
 }

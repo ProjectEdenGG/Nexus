@@ -121,14 +121,24 @@ public class MobHeadsCommand extends CustomCommand implements Listener {
 	@Description("View the mob kill leaderboard")
 	void topKills(@Arg("1") int page) {
 		var top = getTop(MobHeadData::getKills);
-		paginate(Utils.sortByValueReverse(top).keySet(), getTopFormatter(top), "mobheads top kills", page);
+		new Paginator<Pair<MobHeadUser, MobHead>>()
+			.values(Utils.sortByValueReverse(top).keySet())
+			.formatter(getTopFormatter(top))
+			.command("mobheads top kills")
+			.page(page)
+			.send();
 	}
 
 	@Path("top heads [page]")
 	@Description("View the mob head leaderboard")
 	void topHeads(@Arg("1") int page) {
 		var top = getTop(MobHeadData::getHeads);
-		paginate(Utils.sortByValueReverse(top).keySet(), getTopFormatter(top), "mobheads top heads", page);
+		new Paginator<Pair<MobHeadUser, MobHead>>()
+			.values(Utils.sortByValueReverse(top).keySet())
+			.formatter(getTopFormatter(top))
+			.command("mobheads top heads")
+			.page(page)
+			.send();
 	}
 
 	@NotNull

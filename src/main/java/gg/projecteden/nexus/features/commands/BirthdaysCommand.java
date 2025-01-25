@@ -5,7 +5,11 @@ import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
@@ -59,18 +63,23 @@ public class BirthdaysCommand extends CustomCommand {
 
 		line();
 		send(PREFIX + "Upcoming birthdays:");
-		paginate(nerds, (nerd, index) -> {
-			final JsonBuilder json = json("&3" + index + " &e" + nerd.getColoredName() + " &7- ");
+		new Paginator<Nerd>()
+			.values(nerds)
+			.formatter((nerd, index) -> {
+				final JsonBuilder json = json("&3" + index + " &e" + nerd.getColoredName() + " &7- ");
 
-			long until = ChronoUnit.DAYS.between(now, getNextBirthday(nerd));
+				long until = ChronoUnit.DAYS.between(now, getNextBirthday(nerd));
 
-			if (until == 0)
-				json.next("&dToday!");
-			else
-				json.next("&7" + until + plural(" day", until));
+				if (until == 0)
+					json.next("&dToday!");
+				else
+					json.next("&7" + until + plural(" day", until));
 
-			return json.hover(formatter.format(nerd.getBirthday()));
-		}, "/birthdays", page);
+				return json.hover(formatter.format(nerd.getBirthday()));
+			})
+			.command("/birthdays")
+			.page(page)
+			.send();
 	}
 
 	@Path("set <birthday> [player]")

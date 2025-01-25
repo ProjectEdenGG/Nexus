@@ -3,20 +3,30 @@ package gg.projecteden.nexus.features.tickets;
 import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.features.tickets.TicketFeature.TicketAction;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.ticket.Tickets;
 import gg.projecteden.nexus.models.ticket.Tickets.Ticket;
 import gg.projecteden.nexus.models.ticket.TicketsService;
-import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
-import java.util.*;
-import java.util.function.BiFunction;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class TicketsCommand extends CustomCommand {
@@ -47,7 +57,12 @@ public class TicketsCommand extends CustomCommand {
 			.sorted(Comparator.comparingInt(Ticket::getId).reversed())
 				.collect(Collectors.toList());
 
-		paginate(collect, (ticket, index) -> TicketFeature.formatTicket(player(), ticket), "/tickets page", page);
+		new Paginator<Ticket>()
+			.values(collect)
+			.formatter((ticket, index) -> TicketFeature.formatTicket(player(), ticket))
+			.command("/tickets page")
+			.page(page)
+			.send();
 	}
 
 	@Path("view <id>")
@@ -142,9 +157,12 @@ public class TicketsCommand extends CustomCommand {
 			closers.put(ticket.getClosedBy(), closers.getOrDefault(ticket.getClosedBy(), 0) + 1);
 		}
 
-		BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) ->
-				json(index + " &e" + Nerd.of(uuid).getColoredName() + " &7- " + closers.get(uuid));
-		paginate(Utils.sortByValueReverse(closers).keySet(), formatter, "/tickets stats closed", page);
+		new Paginator<UUID>()
+			.values(Utils.sortByValueReverse(closers).keySet())
+			.formatter((uuid, index) -> json(index + " &e" + Nerd.of(uuid).getColoredName() + " &7- " + closers.get(uuid)))
+			.command("/tickets stats closed")
+			.page(page)
+			.send();
 	}
 
 	@ConverterFor(Ticket.class)

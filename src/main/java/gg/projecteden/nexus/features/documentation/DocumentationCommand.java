@@ -12,18 +12,42 @@ import gg.projecteden.nexus.features.documentation.DocumentationCommand.AllComma
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.ICustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.DoubleSlash;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.*;
-import lombok.*;
+import gg.projecteden.nexus.utils.IOUtils;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -226,7 +250,12 @@ public class DocumentationCommand extends CustomCommand {
 		final BiFunction<CustomCommand, String, JsonBuilder> formatter = (command, index) ->
 			json("&3" + index + " &e/" + command.getName().toLowerCase() + " &7- " + undocumented.get(command).size() + " undocumented paths");
 
-		paginate(undocumented.keySet(), formatter, "/documentation commands validate", page);
+		new Paginator<CustomCommand>()
+			.values(undocumented.keySet())
+			.formatter(formatter)
+			.command("/documentation commands validate")
+			.page(page)
+			.send();
 	}
 
 	@Path("commands info <command> [page]")
@@ -237,10 +266,12 @@ public class DocumentationCommand extends CustomCommand {
 			error("&c" + command.getName().toLowerCase() + " &ais fully documented");
 
 		send(PREFIX + "Undocumented paths on &c/" + command.getName().toLowerCase());
-		final BiFunction<Method, String, JsonBuilder> formatter = (method, index) ->
-			json("&3" + index + " &e" + method.getName());
-
-		paginate(undocumented.get(command), formatter, "/documentation commands info " + command.getName(), page);
+		new Paginator<Method>()
+			.values(undocumented.get(command))
+			.formatter((method, index) -> json("&3" + index + " &e" + method.getName()))
+			.command("/documentation commands info " + command.getName())
+			.page(page)
+			.send();
 	}
 
 	@TabCompleterFor(CustomCommand.class)

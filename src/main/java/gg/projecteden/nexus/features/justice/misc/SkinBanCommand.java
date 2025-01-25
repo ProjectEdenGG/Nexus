@@ -57,7 +57,12 @@ public class SkinBanCommand extends _JusticeCommand implements Listener {
 			return json("&3" + index + " &e" + Nickname.of(uuid) + " &7- [Click to view]").url(textureUrl);
 		};
 
-		paginate(config.getBanned(), formatter, "/skinban list", page);
+		new Paginator<UUID>()
+			.values(config.getBanned())
+			.formatter(formatter)
+			.command("/skinban list")
+			.page(page)
+			.send();
 	}
 
 	@EventHandler

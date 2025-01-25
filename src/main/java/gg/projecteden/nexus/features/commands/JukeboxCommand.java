@@ -92,7 +92,12 @@ public class JukeboxCommand extends CustomCommand implements Listener {
 				.group().next(playButton(song))
 				.group().next(" &e" + song.getName());
 
-		paginate(songs, formatter, "/jukebox list", page);
+		new Paginator<JukeboxSong>()
+			.values(songs)
+			.formatter(formatter)
+			.command("/jukebox list")
+			.page(page)
+			.send();
 	}
 
 	@Path("play <song...>")
@@ -128,7 +133,12 @@ public class JukeboxCommand extends CustomCommand implements Listener {
 				.group().next(buyButton(song))
 				.group().next(" &e" + song.getName());
 
-		paginate(songs, formatter, "/jukebox store", page);
+		new Paginator<JukeboxSong>()
+			.values(songs)
+			.formatter(formatter)
+			.command("/jukebox store")
+			.page(page)
+			.send();
 	}
 
 	@Path("store preview <song...>")

@@ -34,8 +34,12 @@ import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.framework.commands.CommandMapUtils;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownException;
@@ -50,10 +54,15 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.offline.OfflineMessage;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.quests.QuesterService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.AdventureUtils;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -75,8 +84,13 @@ import org.bukkit.plugin.Plugin;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.*;
-import java.util.function.BiFunction;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.zip.ZipFile;
 
 @NoArgsConstructor
@@ -515,8 +529,12 @@ public class NexusCommand extends CustomCommand implements Listener {
 		}
 
 		send(PREFIX + "Commands by plugin");
-		paginate(Utils.sortByValueReverse(commands).keySet(), (plugin, index) ->
-				json(index + " &e" + plugin.getName() + " &7- " + commands.get(plugin)), "/nexus stats commands", page);
+		new Paginator<Plugin>()
+			.values(Utils.sortByValueReverse(commands).keySet())
+			.formatter((plugin, index) -> json(index + " &e" + plugin.getName() + " &7- " + commands.get(plugin)))
+			.command("/nexus stats commands")
+			.page(page)
+			.send();
 	}
 
 	@Path("stats eventHandlers [page]")
@@ -532,9 +550,12 @@ public class NexusCommand extends CustomCommand implements Listener {
 		Map<Class<? extends Event>, Integer> sorted = Utils.sortByValueReverse(counts);
 
 		send(PREFIX + "Event Handlers");
-		BiFunction<Class<? extends Event>, String, JsonBuilder> formatter = (clazz, index) ->
-				json(index + " &e" + clazz.getSimpleName() + " &7- " + counts.get(clazz));
-		paginate(sorted.keySet(), formatter, "/nexus stats eventHandlers", page);
+		new Paginator<Class<? extends Event>>()
+			.values(sorted.keySet())
+			.formatter((clazz, index) -> json(index + " &e" + clazz.getSimpleName() + " &7- " + counts.get(clazz)))
+			.command("/nexus stats eventHandlers")
+			.page(page)
+			.send();
 	}
 
 	@Path("getEnv")

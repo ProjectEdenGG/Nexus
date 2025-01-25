@@ -57,11 +57,13 @@ import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.HasLocation;
 import gg.projecteden.parchment.OptionalLocation;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -1149,49 +1151,64 @@ public abstract class CustomCommand extends ICustomCommand {
 		}};
 	}
 
-	protected <T> void paginate(Collection<T> values, BiFunction<T, String, JsonBuilder> formatter, String command, int page) {
-		paginate(values, formatter, command, page, 10);
-	}
+	@Data
+	@Accessors(fluent = true, chain = true)
+	public class Paginator<T> {
+		private Collection<T> values;
+		private BiFunction<T, String, JsonBuilder> formatter;
+		private String command;
+		private int page;
+		private int perPage = 10;
+		private Runnable afterValues;
 
-	protected <T> void paginate(Collection<T> values, BiFunction<T, String, JsonBuilder> formatter, String command, int page, int amount) {
-		if (page < 1)
-			error("Page number must be 1 or greater");
+		public void send() {
+			if (page < 1)
+				error("Page number must be 1 or greater");
 
-		int start = (page - 1) * amount;
-		if (values.size() < start)
-			error("No results on page " + page);
+			int start = (page - 1) * perPage;
+			if (values.size() < start)
+				error("No results on page " + page);
 
-		int end = Math.min(values.size(), start + amount);
+			int end = Math.min(values.size(), start + perPage);
 
-		line();
-		AtomicInteger index = new AtomicInteger(start);
-		new LinkedList<>(values).subList(start, end).forEach(t -> send(formatter.apply(t, getLeadingZeroIndex(index))));
-		line();
+			line();
+			AtomicInteger index = new AtomicInteger(start);
+			new LinkedList<>(values).subList(start, end).forEach(t -> CustomCommand.this.send(formatter.apply(t, getLeadingZeroIndex(index))));
+			if (afterValues != null)
+				afterValues.run();
+			line();
 
-		boolean first = page == 1;
-		boolean last = end == values.size();
+			boolean first = page == 1;
+			boolean last = end == values.size();
 
-		if (first && last)
-			return;
+			if (first && last)
+				return;
 
-		command = command.trim();
-		final String commandNext = command + " " + (page + 1);
-		final String commandPrevious = command + " " + (page - 1);
+			command = command.trim();
 
-		JsonBuilder buttons = json();
-		if (first)
-			buttons.next("&7 « Previous  &3");
-		else
-			buttons.next("&e « Previous  &3").command(commandPrevious).hover("&c" + commandPrevious);
+			String space = " ";
+			if (command.endsWith("--page="))
+				space = "";
 
-		buttons.group().next("&3|&3|").group();
+			final String commandNext = command + space + (page + 1);
+			final String commandPrevious = command + space + (page - 1);
 
-		if (last)
-			buttons.next("  &7Next »");
-		else
-			buttons.next("  &eNext »").command(commandNext).hover("&c" + commandNext);
+			JsonBuilder buttons = json();
+			if (first)
+				buttons.next("&7 « Previous  &3");
+			else
+				buttons.next("&e « Previous  &3").command(commandPrevious).hover("&c" + commandPrevious);
 
-		send(buttons.group());
+			buttons.group().next("&3|&3|").group();
+
+			if (last)
+				buttons.next("  &7Next »");
+			else
+				buttons.next("  &eNext »").command(commandNext).hover("&c" + commandNext);
+
+			CustomCommand.this.send(buttons.group());
+		}
+
 	}
 
 	@NotNull

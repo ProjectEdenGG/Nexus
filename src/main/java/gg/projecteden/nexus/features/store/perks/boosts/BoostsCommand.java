@@ -31,7 +31,6 @@ import gg.projecteden.nexus.models.boost.Booster.Boost;
 import gg.projecteden.nexus.models.boost.BoosterService;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MathUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
@@ -55,7 +54,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiFunction;
 
 @Aliases("boost")
 @NoArgsConstructor
@@ -112,12 +110,16 @@ public class BoostsCommand extends CustomCommand implements Listener {
 					put(boostable, config.getBoost(boostable).getExpiration());
 			}};
 
-			BiFunction<Boostable, String, JsonBuilder> formatter = (type, index) -> {
-				Boost boost = config.getBoost(type);
-				return json(" &6" + boost.getMultiplierFormatted() + " &e" + camelCase(type) + " &7- " + boost.getNickname() + " &3(" + boost.getTimeLeft() + ")");
-			};
-
-			paginate(Utils.sortByValueReverse(timeLeft).keySet(), formatter, "/boosts", Math.min(page, MathUtils.ceil(timeLeft.size() / 10f)));
+			new Paginator<Boostable>()
+				.values(Utils.sortByValueReverse(timeLeft).keySet())
+				.formatter((type, index) -> {
+					Boost boost = config.getBoost(type);
+					return json(" &6" + boost.getMultiplierFormatted() + " &e" + camelCase(type) + " &7- " + boost.getNickname() + " &3(" + boost.getTimeLeft() + ")");
+				})
+				.command("/boosts")
+				.page(Math.min(page, MathUtils.ceil(timeLeft.size() / 10f)))
+				.perPage(10)
+				.send();
 		}
 
 		if (VoteParty.isFeatureEnabled(player())) {
@@ -131,12 +133,16 @@ public class BoostsCommand extends CustomCommand implements Listener {
 					});
 				}};
 
-				BiFunction<Boostable, String, JsonBuilder> formatter = (type, index) -> {
-					Boost boost = booster.getActivePersonalBoosts().stream().filter(_boost -> _boost.getType() == type).findFirst().orElse(null);
-					return json(" &6" + boost.getMultiplierFormatted() + " &e" + camelCase(boost.getType()) + " &7- " + boost.getNickname() + " &3(" + boost.getTimeLeft() + ")");
-				};
-
-				paginate(Utils.sortByValueReverse(timeLeft).keySet(), formatter, "/boosts", Math.min(page, MathUtils.roundPositive(timeLeft.size() / 10f)));
+				new Paginator<Boostable>()
+					.values(Utils.sortByValueReverse(timeLeft).keySet())
+					.formatter((type, index) -> {
+						Boost boost = booster.getActivePersonalBoosts().stream().filter(_boost -> _boost.getType() == type).findFirst().orElse(null);
+						return json(" &6" + boost.getMultiplierFormatted() + " &e" + camelCase(boost.getType()) + " &7- " + boost.getNickname() + " &3(" + boost.getTimeLeft() + ")");
+					})
+					.command("/boosts")
+					.page(Math.min(page, MathUtils.roundPositive(timeLeft.size() / 10f)))
+					.perPage(10)
+					.send();
 			}
 		}
 

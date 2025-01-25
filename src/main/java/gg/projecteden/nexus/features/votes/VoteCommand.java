@@ -34,7 +34,6 @@ import gg.projecteden.nexus.models.voter.VoteSite;
 import gg.projecteden.nexus.models.voter.Voter;
 import gg.projecteden.nexus.models.voter.Voter.Vote;
 import gg.projecteden.nexus.models.voter.VoterService;
-import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils.ProgressBar;
@@ -47,12 +46,12 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 @Aliases("votes")
@@ -114,11 +113,14 @@ public class VoteCommand extends CustomCommand {
 
 		voter.getVotes().sort(Comparator.comparing(Vote::getTimestamp).reversed());
 
-		final BiFunction<Vote, String, JsonBuilder> formatter = (vote, index) ->
-			json("&3" + index + " &7" + TimeUtils.shortishDateTimeFormat(vote.getTimestamp()) + " - &e" + vote.getSite().name())
-				.hover("&3" + Timespan.of(vote.getTimestamp()).format() + " ago");
-
-		paginate(voter.getVotes(), formatter, "/vote history " + voter.getName(), page);
+		new Paginator<Vote>()
+			.values(voter.getVotes())
+			.formatter((vote, index) -> json("&3" + index + " &7" + TimeUtils.shortishDateTimeFormat(vote.getTimestamp()) + " - &e" + vote.getSite().name())
+				.hover("&3" + Timespan.of(vote.getTimestamp()).format() + " ago")
+			)
+			.command("/vote history " + voter.getName())
+			.page(page)
+			.send();
 	}
 
 	@Async
@@ -152,10 +154,15 @@ public class VoteCommand extends CustomCommand {
 	}
 
 	private void showBestDays(int page, Map<LocalDate, Integer> days, String type) {
-		paginate(Utils.sortByValueReverse(days).keySet(), (date, index) -> {
+		new Paginator<LocalDate>()
+			.values(Utils.sortByValueReverse(days).keySet())
+			.formatter((date, index) -> {
 			String color = date.equals(LocalDate.now()) ? "&6" : "&e";
 			return json(index + " " + color + TimeUtils.shortishDateFormat(date) + " &7- " + days.get(date));
-		}, "/votes bestDays " + type, page);
+		})
+			.command("/votes bestDays " + type)
+			.page(page)
+			.send();
 	}
 
 	@Async
@@ -262,7 +269,13 @@ public class VoteCommand extends CustomCommand {
 	@Description("View the vote point leaderboard")
 	void points_top(@Arg("1") int page) {
 		send(PREFIX + "Top Vote Points");
-		paginate(service.getTopPoints(), (user, index) -> json(index + " &e" + user.getNickname() + " &7- " + user.getPoints()), "/vote points top", page);
+		Collection<Voter> values = service.getTopPoints();
+		new Paginator<Voter>()
+			.values(values)
+			.formatter((user, index) -> json(index + " &e" + user.getNickname() + " &7- " + user.getPoints()))
+			.command("/vote points top")
+			.page(page)
+			.send();
 	}
 
 	@Confirm

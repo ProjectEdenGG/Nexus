@@ -22,7 +22,10 @@ import gg.projecteden.nexus.models.easter22.Easter22UserService;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -33,7 +36,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
 
 @Disabled
 @NoArgsConstructor
@@ -61,7 +63,12 @@ public class Easter22Command extends IEventCommand {
 		final int sum = all.stream().mapToInt(user -> user.getFound().size()).sum();
 
 		send(PREFIX + "Top egg hunters  &3|  Total: &e" + sum);
-		paginate(all, (user, index) -> json(index + " &e" + user.getNickname() + " &7- " + user.getFound().size()), "/easter top", page);
+		new Paginator<Easter22User>()
+			.values(all)
+			.formatter((user, index) -> json(index + " &e" + user.getNickname() + " &7- " + user.getFound().size()))
+			.command("/easter top")
+			.page(page)
+			.send();
 	}
 
 	@Path("topLocations [page]")
@@ -70,11 +77,15 @@ public class Easter22Command extends IEventCommand {
 		Map<Location, Integer> counts = new Easter22UserService().getTopLocations();
 
 		send(PREFIX + "Most found eggs");
-		BiFunction<Location, String, JsonBuilder> formatter = (location, index) ->
-				json(index + " &e" + StringUtils.getCoordinateString(location) + " &7- " + counts.get(location))
-						.command(StringUtils.getTeleportCommand(location))
-						.hover("&eClick to teleport");
-		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/easter topLocations", page);
+		new Paginator<Location>()
+			.values(Utils.sortByValueReverse(counts).keySet())
+			.formatter((location, index) -> json(index + " &e" + StringUtils.getCoordinateString(location) + " &7- " + counts.get(location))
+				.command(StringUtils.getTeleportCommand(location))
+				.hover("&eClick to teleport")
+			)
+			.command("/easter topLocations")
+			.page(page)
+			.send();
 	}
 
 	@Path("store")

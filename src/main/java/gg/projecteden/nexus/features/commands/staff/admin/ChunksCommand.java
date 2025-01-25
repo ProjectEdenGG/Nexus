@@ -47,7 +47,12 @@ public class ChunksCommand extends CustomCommand {
 			json("&3" + index + " &e" + chunk.getX() + ", " + chunk.getZ())
 				.command("/tppos " + ((chunk.getX() << 4) + 8) + " 200 " + ((chunk.getZ() << 4) + 8) + " " + world.getName());
 
-		paginate(chunks, formatter, "/chunks forceLoaded list " + world.getName(), page);
+		new Paginator<@NotNull Chunk>()
+			.values(chunks)
+			.formatter(formatter)
+			.command("/chunks forceLoaded list " + world.getName())
+			.page(page)
+			.send();
 	}
 
 	@Path("forceLoaded get")

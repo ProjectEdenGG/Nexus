@@ -8,8 +8,14 @@ import gg.projecteden.nexus.features.events.store.providers.EventStoreProvider;
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.eventuser.EventUser;
@@ -81,7 +87,12 @@ public class EventsCommand extends CustomCommand {
 	@Description("View the event token leaderboard")
 	void tokens_top(@Arg("1") int page) {
 		send(PREFIX + "Top Token Earners");
-		paginate(service.getTopTokens(), (user, index) -> json(index + " &e" + user.getNickname() + " &7- " + user.getTokens()), "/event tokens top", page);
+		new Paginator<EventUser>()
+			.values(service.getTopTokens())
+			.formatter((user1, index) -> json(index + " &e" + user1.getNickname() + " &7- " + user1.getTokens()))
+			.command("/event tokens top")
+			.page(page)
+			.send();
 	}
 
 	/* TODO

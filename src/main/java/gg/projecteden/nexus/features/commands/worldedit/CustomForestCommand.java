@@ -98,7 +98,13 @@ public class CustomForestCommand extends CustomCommand implements Listener {
 			.next("&7  - %d trees".formatted(treeList.getTrees().size())).newline()
 			.next("&7  - Created by &e%s".formatted(Nickname.of(treeList.getCreator())));
 
-		paginate(config.getTreeLists(), formatter, "/cf lists view", page, 5);
+		new Paginator<TreeList>()
+			.values(config.getTreeLists())
+			.formatter(formatter)
+			.command("/cf lists view")
+			.page(page)
+			.perPage(5)
+			.send();
 	}
 
 	@Path("list trees view [index]")

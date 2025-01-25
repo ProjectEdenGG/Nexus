@@ -28,8 +28,11 @@ import org.bukkit.util.Vector;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.function.BiFunction;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Disabled
@@ -57,7 +60,12 @@ public class BirthdayEventCommand extends CustomCommand implements Listener {
 		int sum = all.stream().mapToInt(user -> user.getFound().size()).sum();
 
 		send(PREFIX + "Top cake hunters  &3|  Total: &e" + sum);
-		paginate(all, (user, index) -> json(index + " &e" + user.getNickname() + " &7- " + user.getFound().size()), "/birthdayevent top", page);
+		new Paginator<Birthday21User>()
+			.values(all)
+			.formatter((user, index) -> json(index + " &e" + user.getNickname() + " &7- " + user.getFound().size()))
+			.command("/birthdayevent top")
+			.page(page)
+			.send();
 	}
 
 	@Path("topLocations [page]")
@@ -70,11 +78,15 @@ public class BirthdayEventCommand extends CustomCommand implements Listener {
 		}};
 
 		send(PREFIX + "Most found cakes");
-		BiFunction<Location, String, JsonBuilder> formatter = (location, index) ->
-			json(index + " &e" + StringUtils.getCoordinateString(location) + " &7- " + counts.get(location))
+		new Paginator<Location>()
+			.values(Utils.sortByValueReverse(counts).keySet())
+			.formatter((location, index) -> json(index + " &e" + StringUtils.getCoordinateString(location) + " &7- " + counts.get(location))
 				.command(StringUtils.getTeleportCommand(location))
-				.hover("&eClick to teleport");
-		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/birthdayevent topLocations", page);
+				.hover("&eClick to teleport")
+			)
+			.command("/birthdayevent topLocations")
+			.page(page)
+			.send();
 	}
 
 	public static final LocalDateTime END = LocalDate.of(2021, 8, 11).atStartOfDay();

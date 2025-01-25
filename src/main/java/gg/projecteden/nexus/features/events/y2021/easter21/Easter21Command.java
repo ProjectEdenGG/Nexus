@@ -65,7 +65,12 @@ public class Easter21Command extends _WarpSubCommand implements Listener {
 		int sum = all.stream().mapToInt(user -> user.getFound().size()).sum();
 
 		send(PREFIX + "Top egg hunters  &3|  Total: &e" + sum);
-		paginate(all, (user, index) -> json(index + " &e" + user.getNickname() + " &7- " + user.getFound().size()), "/easter top", page);
+		new Paginator<Easter21User>()
+			.values(all)
+			.formatter((user, index) -> json(index + " &e" + user.getNickname() + " &7- " + user.getFound().size()))
+			.command("/easter top")
+			.page(page)
+			.send();
 	}
 
 	@Path("topLocations [page]")
@@ -82,7 +87,12 @@ public class Easter21Command extends _WarpSubCommand implements Listener {
 				json(index + " &e" + StringUtils.getCoordinateString(location) + " &7- " + counts.get(location))
 						.command(StringUtils.getTeleportCommand(location))
 						.hover("&eClick to teleport");
-		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/easter topLocations", page);
+		new Paginator<Location>()
+			.values(Utils.sortByValueReverse(counts).keySet())
+			.formatter(formatter)
+			.command("/easter topLocations")
+			.page(page)
+			.send();
 	}
 
 	@Path("start")

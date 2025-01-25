@@ -365,7 +365,13 @@ public class RemindersCommand extends CustomCommand implements Listener {
 						.hover("&3Type: &e" + (reminder.isMotd() ? "MOTD" : "Reminder"))
 						.hover("&7" + reminder.getText())
 						.command("/reminders edit " + reminder.getId());
-		paginate(config.getAll(), formatter, "/reminders list", page);
+
+		new Paginator<Reminder>()
+			.values(config.getAll())
+			.formatter(formatter)
+			.command("/reminders list")
+			.page(page)
+			.send();
 	}
 
 	@Async

@@ -189,7 +189,12 @@ public class McMMOCommand extends CustomCommand implements Listener {
 				.command("/mcmmo prestige " + Nickname.of(uuid))
 				.hover("Click to view user's prestiges");
 
-		paginate(Utils.sortByValueReverse(prestiges).keySet(), formatter, "/mcmmo prestige top" + (skill == null ? "" : " --skill=" + skill), page);
+		new Paginator<UUID>()
+			.values(Utils.sortByValueReverse(prestiges).keySet())
+			.formatter(formatter)
+			.command("/mcmmo prestige top" + (skill == null ? "" : " --skill=" + skill))
+			.page(page)
+			.send();
 	}
 
 	@Path("reset")

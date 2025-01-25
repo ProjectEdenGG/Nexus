@@ -183,7 +183,12 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 			return json.command("/deathmessages messages " + config.getKey());
 		};
 
-		paginate(messages, formatter, "/deathmessages list", page);
+		new Paginator<CustomDeathMessage>()
+			.values(messages)
+			.formatter(formatter)
+			.command("/deathmessages list")
+			.page(page)
+			.send();
 	}
 
 	@Path("messages <key> [page]")
@@ -195,7 +200,12 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 
 		send(PREFIX + "Custom messages for key &e" + config.getKey());
 
-		paginate(customMessages, (message, index) -> json(index + " &7" + message), "/deathmessages messages " + config.getKey(), page);
+		new Paginator<String>()
+			.values(customMessages)
+			.formatter((message, index) -> json(index + " &7" + message))
+			.command("/deathmessages messages " + config.getKey())
+			.page(page)
+			.send();
 	}
 
 	@Path("suggest <key> <message...>")

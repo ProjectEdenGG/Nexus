@@ -51,7 +51,12 @@ public class FAQCommand extends CustomCommand {
 		);
 
 		send("&6&lFrequently Asked Questions");
-		paginate(faqs, (faq, index) -> json(PLUS).next(faq), "/faq", page);
+		new Paginator<JsonBuilder>()
+			.values(faqs)
+			.formatter((faq, index) -> json(PLUS).next(faq))
+			.command("/faq")
+			.page(page)
+			.send();
 		line();
 		send(json("&3Simply &e&lclick &3on the question you want answered."));
 	}

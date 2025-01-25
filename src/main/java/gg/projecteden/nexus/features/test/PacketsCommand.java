@@ -72,7 +72,12 @@ public class PacketsCommand extends CustomCommand {
 			error("No matches found for &e" + filter);
 
 		send(PREFIX + "Matches for &e" + filter);
-		paginate(matches, (index, packet) -> json("&3" + index + " &7" + packet), "/packets search " + filter, page);
+		new Paginator<String>()
+			.values(matches)
+			.formatter((index, packet) -> json("&3" + index + " &7" + packet))
+			.command("/packets search " + filter)
+			.page(page)
+			.send();
 	}
 
 	@NotNull

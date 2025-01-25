@@ -84,7 +84,12 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 					.hover("&3Location: &e" + StringUtils.getShortLocationString(snapshot.getLocation()))
 					.command("/inventorysnapshots view " + history.getName() + " " + timestampIso);
 		};
-		paginate(history.getSnapshots(), formatter, "/inventorysnapshots " + history.getName(), page);
+		new Paginator<InventorySnapshot>()
+			.values(history.getSnapshots())
+			.formatter(formatter)
+			.command("/inventorysnapshots " + history.getName())
+			.page(page)
+			.send();
 	}
 
 	@HideFromWiki
@@ -129,7 +134,12 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 					.command("/tppos " + StringUtils.getShortLocationString(snapshot.getLocation()));
 		};
 
-		paginate(Utils.sortByValue(nearbyDeaths).keySet(), function, "/inventorysnapshots nearbyDeaths", page);
+		new Paginator<InventorySnapshot>()
+			.values(Utils.sortByValue(nearbyDeaths).keySet())
+			.formatter(function)
+			.command("/inventorysnapshots nearbyDeaths")
+			.page(page)
+			.send();
 	}
 
 	@EventHandler

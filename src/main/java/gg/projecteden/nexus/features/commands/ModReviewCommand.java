@@ -81,7 +81,12 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 				.command("/modreview " + mod.getName())
 				.hover("&3Click for more info");
 
-		paginate(mods, formatter, "/modreview list", page);
+		new Paginator<Mod>()
+			.values(mods)
+			.formatter(formatter)
+			.command("/modreview list")
+			.page(page)
+			.send();
 
 		if (page == 1)
 			send(PREFIX + "&3If your mod is not on this list, request it to be reviewed with &c/modreview request <name> [notes...]");
@@ -114,7 +119,12 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 			return json;
 		};
 
-		paginate(requests, formatter, "/modreview requests", page);
+		new Paginator<ModReviewRequest>()
+			.values(requests)
+			.formatter(formatter)
+			.command("/modreview requests")
+			.page(page)
+			.send();
 	}
 
 	@Confirm

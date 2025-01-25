@@ -104,7 +104,12 @@ public class EmotesCommand extends CustomCommand {
 		if (emotes.isEmpty())
 			error("You do not have access to any emotes");
 
-		paginate(emotes, this::format, "/emotes", page);
+		new Paginator<Emotes>()
+			.values(emotes)
+			.formatter(this::format)
+			.command("/emotes")
+			.page(page)
+			.send();
 	}
 
 	@Path("toggle")

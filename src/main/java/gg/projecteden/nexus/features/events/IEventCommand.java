@@ -128,8 +128,13 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 			return json(bar.build()).next(" &e" + counts.get(user) + "/" + quests.size() + " &7- &e" + user.getNickname());
 		};
 
-		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/" + getEdenEvent().getName().toLowerCase() + " stats quest progress", page);
-}
+		new Paginator<Quester>()
+			.values(Utils.sortByValueReverse(counts).keySet())
+			.formatter(formatter)
+			.command("/" + getEdenEvent().getName().toLowerCase() + " stats quest progress")
+			.page(page)
+			.send();
+	}
 
 	@Permission(Group.ADMIN)
 	@Path("quest debug <quest>")

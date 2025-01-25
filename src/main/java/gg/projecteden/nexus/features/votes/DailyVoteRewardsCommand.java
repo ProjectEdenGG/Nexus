@@ -17,7 +17,6 @@ import gg.projecteden.nexus.models.mail.Mailer;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
@@ -27,7 +26,6 @@ import lombok.NonNull;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -61,9 +59,12 @@ public class DailyVoteRewardsCommand extends CustomCommand {
 			.sorted(Comparator.<DailyVoteReward>comparingInt(rewards -> rewards.getCurrentStreak().getStreak()).reversed())
 			.collect(Collectors.toList());
 
-		final BiFunction<DailyVoteReward, String, JsonBuilder> formatter = (rewards, index) ->
-			json(index + " " + Nerd.of(rewards).getColoredName() + " &7- " + rewards.getCurrentStreak().getStreak());
-		paginate(all, formatter, "/dailyvoterewards top", page);
+		new Paginator<DailyVoteReward>()
+			.values(all)
+			.formatter((rewards, index) -> json(index + " " + Nerd.of(rewards).getColoredName() + " &7- " + rewards.getCurrentStreak().getStreak()))
+			.command("/dailyvoterewards top")
+			.page(page)
+			.send();
 	}
 
 	public static void dailyReset() {

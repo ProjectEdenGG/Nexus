@@ -86,7 +86,12 @@ public class ChangelogCommand extends CustomCommand {
 					.hover("&3Commits: &e" + entry.getCommits().size())
 					.command("/changelog database debug " + timestampIso);
 		};
-		paginate(changelog.getEntries(), formatter, "/changelog list ", page);
+		new Paginator<ChangelogEntry>()
+			.values(changelog.getEntries())
+			.formatter(formatter)
+			.command("/changelog list ")
+			.page(page)
+			.send();
 	}
 
 	@Path("database debug <entry>")

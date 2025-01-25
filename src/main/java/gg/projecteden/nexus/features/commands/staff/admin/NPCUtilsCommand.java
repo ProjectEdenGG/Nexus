@@ -114,7 +114,12 @@ public class NPCUtilsCommand extends CustomCommand {
 
 		send(PREFIX + "Total: &e" + npcs.size());
 
-		paginate(npcs, formatter, command, page);
+		new Paginator<NPC>()
+			.values(npcs)
+			.formatter(formatter)
+			.command(command)
+			.page(page)
+			.send();
 	}
 
 	@Async
@@ -197,7 +202,12 @@ public class NPCUtilsCommand extends CustomCommand {
 					.next("&e " + id + " &7- &3" + npc.getName() + " &7in " + npc.getEntity().getWorld().getName());
 		};
 
-		paginate(voidNpcs, formatter, "/npcutils void", page);
+		new Paginator<NPC>()
+			.values(voidNpcs)
+			.formatter(formatter)
+			.command("/npcutils void")
+			.page(page)
+			.send();
 	}
 
 }

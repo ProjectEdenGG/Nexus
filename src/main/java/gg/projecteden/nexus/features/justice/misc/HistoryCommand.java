@@ -57,7 +57,13 @@ public class HistoryCommand extends _JusticeCommand {
 				.filter(punishment -> isStaff() || !isSelf(player) || punishment.getType() != PunishmentType.WATCHLIST)
 				.collect(Collectors.toList());
 
-		paginate(sorted, formatter, "/history " + player.getName(), page, perPage);
+		new Paginator<Punishment>()
+			.values(sorted)
+			.formatter(formatter)
+			.command("/history " + player.getName())
+			.page(page)
+			.perPage(perPage)
+			.send();
 	}
 
 	@Confirm

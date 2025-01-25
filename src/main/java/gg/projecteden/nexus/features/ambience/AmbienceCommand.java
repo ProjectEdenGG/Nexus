@@ -11,8 +11,12 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.Bir
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.WindChime;
 import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.ambience.AmbienceConfig;
 import gg.projecteden.nexus.models.ambience.AmbienceConfig.Ambience;
@@ -21,7 +25,12 @@ import gg.projecteden.nexus.models.ambience.AmbienceConfigService;
 import gg.projecteden.nexus.models.ambience.AmbienceUser;
 import gg.projecteden.nexus.models.ambience.AmbienceUserService;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -106,7 +115,12 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 				.command("/ambience list " + type.name().toLowerCase())
 				.hover("&eClick to view");
 
-		paginate(types, formatter, "/ambience types", page);
+		new Paginator<AmbienceType>()
+			.values(types)
+			.formatter(formatter)
+			.command("/ambience types")
+			.page(page)
+			.send();
 	}
 
 	@Path("list <type> [page]")
@@ -121,7 +135,12 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 				.command(StringUtils.getTeleportCommand(ambience.getLocation()))
 				.hover("&eClick to teleport");
 
-		paginate(ambiences, formatter, "/ambience list " + type.name().toLowerCase(), page);
+		new Paginator<Ambience>()
+			.values(ambiences)
+			.formatter(formatter)
+			.command("/ambience list " + type.name().toLowerCase())
+			.page(page)
+			.send();
 	}
 
 	@Path("near [type] [page] [--radius]")
@@ -146,7 +165,12 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 				.command(StringUtils.getTeleportCommand(ambience.getLocation()))
 				.hover("&eClick to teleport");
 
-		paginate(ambiences, formatter, "/ambience near " + (type == null ? "" : type.name().toLowerCase()) + " --radius=" + radius, page);
+		new Paginator<Ambience>()
+			.values(ambiences)
+			.formatter(formatter)
+			.command("/ambience near " + (type == null ? "" : type.name().toLowerCase()) + " --radius=" + radius)
+			.page(page)
+			.send();
 	}
 
 	@Path("play")

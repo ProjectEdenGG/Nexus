@@ -207,7 +207,12 @@ public class HallOfHistoryCommand extends CustomCommand {
 			return json(index + " &e" + time + " &7- " + Nerd.of(uuid).getNameFormat());
 		};
 
-		paginate(Utils.sortByValueReverse(staffTimeMap).keySet(), formatter, "/hoh staffTime", page);
+		new Paginator<UUID>()
+			.values(Utils.sortByValueReverse(staffTimeMap).keySet())
+			.formatter(formatter)
+			.command("/hoh staffTime")
+			.page(page)
+			.send();
 	}
 
 	@Path("promotionTimes [page]")
@@ -238,7 +243,12 @@ public class HallOfHistoryCommand extends CustomCommand {
 			return json(index + " &e" + Nickname.of(uuid) + " &7- " + time);
 		};
 
-		paginate(Utils.sortByValue(promotionTimeMap).keySet(), formatter, "/hoh promotionTimes", page);
+		new Paginator<UUID>()
+			.values(Utils.sortByValue(promotionTimeMap).keySet())
+			.formatter(formatter)
+			.command("/hoh promotionTimes")
+			.page(page)
+			.send();
 	}
 
 	@Path("npcs update")
