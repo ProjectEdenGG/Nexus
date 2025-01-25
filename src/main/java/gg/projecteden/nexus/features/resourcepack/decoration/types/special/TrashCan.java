@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Interactable;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
@@ -29,6 +30,9 @@ public class TrashCan extends DyeableFloorThing implements Interactable {
 		@EventHandler
 		public void on(DecorationInteractEvent event) {
 			if (event.isCancelled())
+				return;
+
+			if (event.getInteractType() != InteractType.RIGHT_CLICK)
 				return;
 
 			if (!(event.getDecoration().getConfig() instanceof TrashCan))
