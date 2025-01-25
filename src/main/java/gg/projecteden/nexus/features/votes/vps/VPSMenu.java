@@ -14,7 +14,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
@@ -426,61 +430,16 @@ public enum VPSMenu {
 		@Getter
 		final List<VPSPage> pages = new ArrayList<>() {{
 			add(VPSPage.builder()
-				.rows(5)
+				.rows(3)
 				.items(new HashMap<>() {{
-					put(10, VPSSlot.builder()
-						.name("5 dirt")
-						.displayAndGive(Material.DIRT, 5)
-						.price(10));
-					put(11, VPSSlot.builder()
-						.name("1 grass")
-						.displayAndGive(Material.GRASS_BLOCK)
-						.price(5));
-					put(12, VPSSlot.builder()
-						.name("64 cobble")
-						.displayAndGive(Material.COBBLESTONE, 64)
-						.price(5));
-					put(14, VPSSlot.builder()
-						.name("1 water bucket")
-						.displayAndGive(Material.WATER_BUCKET)
-						.price(25));
-					put(15, VPSSlot.builder()
-						.name("1 lava bucket")
-						.displayAndGive(Material.LAVA_BUCKET)
-						.price(35));
-					put(16, VPSSlot.builder()
-						.name("1 iron pickaxe")
-						.displayAndGive(Material.IRON_PICKAXE)
-						.price(10));
-					put(28, VPSSlot.builder()
-						.name("5 seeds")
-						.displayAndGive(Material.WHEAT_SEEDS, 5)
-						.price(5));
-					put(29, VPSSlot.builder()
-						.name("1 pumpkin seeds")
-						.displayAndGive(Material.PUMPKIN_SEEDS)
-						.price(3));
-					put(30, VPSSlot.builder()
-						.name("1 melon seeds")
-						.displayAndGive(Material.MELON_SEEDS)
-						.price(3));
-					put(31, VPSSlot.builder()
-						.name("3 bone meal")
-						.displayAndGive(new ItemStack(Material.BONE_MEAL, 3))
-						.price(1));
-					put(32, VPSSlot.builder()
-						.name("8 bread")
-						.displayAndGive(Material.BREAD, 8)
-						.price(3));
-					put(33, VPSSlot.builder()
-						.name("16 torches")
-						.displayAndGive(Material.TORCH, 16)
-						.price(5));
-					put(34, VPSSlot.builder()
-						.name("Reset your deaths to 0")
-						.display(Material.TOTEM_OF_UNDYING)
-						.price(40)
-						.consoleCommand("asadmin setdeaths [player] 0"));
+					put(13, VPSSlot.builder()
+						.name("+25 Island Range")
+						.display(new ItemBuilder(Material.MAGENTA_GLAZED_TERRACOTTA)
+							.lore("&3By default, your island is &e100x100")
+							.lore("&3Purchase additional space up to &e400x400")
+							.lore("")
+							.lore("&6Price: &e50vp"))
+						.command("vote points store buy oneblock-expansion"));
 				}}).build());
 		}};
 	};

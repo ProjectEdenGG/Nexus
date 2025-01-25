@@ -110,6 +110,7 @@ dependencies {
         exclude("com.sk89q.worldedit", "worldedit-core")
         exclude("com.sk89q.worldedit.worldedit-libs", "core")
     }
+    compileOnly("world.bentobox:aoneblock:1.17.0-SNAPSHOT")
     compileOnly(files("libs/BuycraftX.jar"))
     compileOnly(files("libs/GlowAPI.jar"))
     compileOnly(files("libs/nuvotifier-universal-2.3.4.jar"))

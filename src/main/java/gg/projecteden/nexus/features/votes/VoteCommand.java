@@ -14,10 +14,19 @@ import gg.projecteden.nexus.features.votes.party.RewardTier;
 import gg.projecteden.nexus.features.votes.party.VoteParty;
 import gg.projecteden.nexus.features.votes.vps.VPS;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.hooks.Hook;
+import gg.projecteden.nexus.hooks.bentobox.BentoBoxHook;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.voter.VotePartyService;
@@ -37,7 +46,12 @@ import org.bukkit.entity.Player;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.YearMonth;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -192,6 +206,19 @@ public class VoteCommand extends CustomCommand {
 		new VoterService().edit(player(), voter -> voter.takePoints(150));
 		PermHelperCommand.add(NumericPermission.PLOTS, uuid(), 1);
 		send(PREFIX + "Purchased &e1 creative plot &3for &e150 vote points");
+	}
+
+	@Path("points store buy oneblock-expansion")
+	@Description("Buy a OneBlock island expansion from the vote points store")
+	void buy_oneblock_expansion() {
+		BentoBoxHook bentobox = Hook.BENTOBOX;
+		var range = bentobox.getIslandRange(bentobox.getOneBlockWorld(), player());
+		if (range >= 400)
+			error("You have already purchased the maximum amount of space for your island");
+
+		new VoterService().edit(player(), voter -> voter.takePoints(50));
+		bentobox.setIslandRange(bentobox.getOneBlockWorld(), player(), range += 25);
+		send(PREFIX + "Purchased &e+25 OneBlock island range &3for &e50 vote points&3. New range: &e" + range);
 	}
 
 	@Path("points [player]")
