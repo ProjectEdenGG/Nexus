@@ -173,8 +173,10 @@ public class RebootCommand extends CustomCommand implements Listener {
 			passive = true;
 			queued = true;
 
-			Broadcast.all().channel(StaticChannel.STAFF).message(StringUtils.getPrefix("Reboot") +
-				"Passive reboot queued due to high RAM usage (Min usage from last 2 minutes: " + min + "GB)");
+			Broadcast.all()
+				.channel(StaticChannel.STAFF)
+				.message(StringUtils.getPrefix("Reboot") + "Passive reboot queued due to high RAM usage (Min usage from last 2 minutes: " + min + "GB)")
+				.send();
 
 			tryReboot();
 		});
