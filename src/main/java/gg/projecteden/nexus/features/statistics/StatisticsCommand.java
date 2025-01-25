@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.statistics;
 
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.features.statistics.StatisticsMenu.StatsMenus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -21,6 +22,7 @@ import gg.projecteden.nexus.models.statistics.StatisticsUserService.StatisticGro
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.ProgressBar;
 import gg.projecteden.nexus.utils.StringUtils.ProgressBar.SummaryStyle;
 import gg.projecteden.nexus.utils.Tasks;
@@ -115,8 +117,19 @@ public class StatisticsCommand extends CustomCommand implements Listener {
 		if (values.isEmpty())
 			error("No results found");
 
-		BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) ->
-			json(index + " " + Nerd.of(uuid).getColoredName() + " &7- " + FORMATTER.format(values.get(uuid)));
+		BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) -> {
+			long value = values.get(uuid);
+			String string = FORMATTER.format(value);
+
+			if (isNotNullOrEmpty(stat)) {
+				if (stat.contains("time"))
+					string = Timespan.ofSeconds(value / 20).format();
+				if (stat.contains("one_cm"))
+					string = StringUtils.distanceMetricFormat((int) value);
+			}
+
+			return json(index + " " + Nerd.of(uuid).getColoredName() + " &7- " + string);
+		};
 
 		send();
 		send(PREFIX + "Leaderboard &7- &3" + camelCase(group) + (isNotNullOrEmpty(stat) ? " &7- &3" + camelCase(stat) : ""));
