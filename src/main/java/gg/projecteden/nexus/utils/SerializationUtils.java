@@ -1,8 +1,15 @@
 package gg.projecteden.nexus.utils;
 
 import com.google.common.collect.ImmutableList;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.JsonOps;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import lombok.NonNull;
@@ -29,7 +36,16 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
@@ -102,6 +118,17 @@ public class SerializationUtils {
 				updated.add(updateItemStack(item));
 			}
 			return updated;
+		}
+
+		@SneakyThrows
+		public static JsonElement updateStatistics(@NonNull String string) {
+			JsonObject json = JsonParser.parseString(string).getAsJsonObject();
+			return DataFixers.getDataFixer().update(
+				References.STATS,
+				new Dynamic<>(JsonOps.INSTANCE, json),
+				json.has("DataVersion") ? json.get("DataVersion").getAsInt() : 0,
+				SharedConstants.getCurrentVersion().getDataVersion().getVersion()
+			).getValue();
 		}
 
 	}

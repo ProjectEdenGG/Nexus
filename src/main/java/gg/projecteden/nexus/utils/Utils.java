@@ -29,7 +29,11 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -392,6 +396,16 @@ public class Utils extends gg.projecteden.api.common.utils.Utils {
 		}
 
 		return String.format("%02d:%02d %s", hours, minutes, is24HourFormat ? "" : pm ? "PM" : "AM").trim();
+	}
+
+	public static <K, V> int getIndexOfKey(LinkedHashMap<K, V> map, K key) {
+		int index = 0;
+		for (K currentKey : map.keySet()) {
+			if (currentKey.equals(key))
+				return index;
+			index++;
+		}
+		return -1;
 	}
 
 }
