@@ -77,7 +77,7 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag ARROWS = new MaterialTag("ARROW", MatchMode.SUFFIX);
 	public static final MaterialTag WEAPONS = new MaterialTag("_SWORD", MatchMode.SUFFIX)
-		.append(Material.BOW, Material.CROSSBOW, Material.TRIDENT).append(ARROWS);
+		.append(Material.BOW, Material.CROSSBOW, Material.TRIDENT, Material.MACE).append(ARROWS);
 
 	public static final MaterialTag ALL_HELMETS = new MaterialTag("_HELMET", MatchMode.SUFFIX);
 	public static final MaterialTag ALL_CHESTPLATES = new MaterialTag("_CHESTPLATE", MatchMode.SUFFIX);
