@@ -163,15 +163,16 @@ public class StatisticsCommand extends CustomCommand implements Listener {
 		if (user != null) {
 			MostLeaderboardsResult self = service.getMostLeaderboards().stream().filter(result -> result.getUuid().equals(user.getUuid())).findFirst().orElse(null);
 			if (self == null)
-				error("You do not lead any leaderboards");
+				error((isSelf(user) ? "You do": user.getNickname() + " does") + " not lead any leaderboards");
 
 			send();
 			send(PREFIX + "Leaderboards Led - " + Nerd.of(user).getColoredName());
 
 			new Paginator<LeaderboardStatistic>()
 				.values(self.getLeaderboards())
-				.formatter((stat, index) -> json("&3 " + stat.getGroup() + (stat.getStat() == null ? "" : " &7- &3" + stat.getStat())))
-				.command("/stats leaderboardsLed " + user.getNickname() + " --page=")
+				.formatter((stat, index) -> json("&3 " + camelCase(stat.getGroup()) + (stat.getStat() == null ? "" : " &7- &3" + camelCase(stat.getStat())))
+					.command("/stats leaderboard " + stat.getGroup() + " " + (stat.getStat() == null ? "" : stat.getStat()))
+					.hover("&eClick to view leaderboard"))
 				.page(page)
 				.send();
 		} else {
@@ -180,7 +181,9 @@ public class StatisticsCommand extends CustomCommand implements Listener {
 				error("No results found");
 
 			BiFunction<MostLeaderboardsResult, String, JsonBuilder> formatter = (result, index) ->
-				json(index + " " + Nerd.of(result.getUuid()).getColoredName() + " &7- " + FORMATTER.format(result.getCount()));
+				json(index + " " + Nerd.of(result.getUuid()).getColoredName() + " &7- " + FORMATTER.format(result.getCount()))
+					.command("/stats leaderboardsLed " + Nerd.of(result.getUuid()).getName() + " --page=")
+					.hover("&eClick to view leaderboards led");
 
 			send();
 			send(PREFIX + "Most Leaderboards Led");
