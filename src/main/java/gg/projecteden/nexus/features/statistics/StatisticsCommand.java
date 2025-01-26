@@ -173,6 +173,7 @@ public class StatisticsCommand extends CustomCommand implements Listener {
 				.formatter((stat, index) -> json("&3 " + camelCase(stat.getGroup()) + (stat.getStat() == null ? "" : " &7- &3" + camelCase(stat.getStat())))
 					.command("/stats leaderboard " + stat.getGroup() + " " + (stat.getStat() == null ? "" : stat.getStat()))
 					.hover("&eClick to view leaderboard"))
+				.command("/stats leaderboardsLed " + user.getNickname() + " --page=")
 				.page(page)
 				.send();
 		} else {
@@ -182,7 +183,7 @@ public class StatisticsCommand extends CustomCommand implements Listener {
 
 			BiFunction<MostLeaderboardsResult, String, JsonBuilder> formatter = (result, index) ->
 				json(index + " " + Nerd.of(result.getUuid()).getColoredName() + " &7- " + FORMATTER.format(result.getCount()))
-					.command("/stats leaderboardsLed " + Nerd.of(result.getUuid()).getName() + " --page=")
+					.command("/stats leaderboardsLed " + Nerd.of(result.getUuid()).getName())
 					.hover("&eClick to view leaderboards led");
 
 			send();

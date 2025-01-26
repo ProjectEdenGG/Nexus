@@ -30,7 +30,13 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
 
 public class MagnetEnchant extends CustomEnchant implements Listener {
 	public static final NamespacedKey NBT_KEY_OWNER = new NamespacedKey(Nexus.getInstance(), "nexus.magnet.owner");
@@ -41,7 +47,7 @@ public class MagnetEnchant extends CustomEnchant implements Listener {
 	static {
 		Tasks.repeat(TickTime.TICK.x(10), TickTime.TICK, () -> {
 			for (Player player : OnlinePlayers.getAll()) {
-				if (WorldGroup.of(player) != WorldGroup.SURVIVAL)
+				if (!List.of(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK).contains(WorldGroup.of(player)))
 					continue;
 
 				if (Vanish.isVanished(player) || player.getGameMode() == GameMode.SPECTATOR)
@@ -80,13 +86,19 @@ public class MagnetEnchant extends CustomEnchant implements Listener {
 		return new ArrayList<>() {{
 			for (Item item : player.getWorld().getNearbyEntitiesByType(Item.class, player.getLocation(), radius)) {
 				final PersistentDataContainer pdc = item.getPersistentDataContainer();
+
 				final Boolean enabled = pdc.get(NBT_KEY_ENABLED, PersistentDataType.BOOLEAN);
-				if (enabled == null || !enabled)
+				if (enabled != null && !enabled)
+					continue;
+
+				var players = item.getWorld().getNearbyPlayers(item.getLocation(), radius);
+				if (enabled == null && players.size() > 1)
 					continue;
 
 				final String uuid = pdc.get(NBT_KEY_OWNER, PersistentDataType.STRING);
-				if (!player.getUniqueId().toString().equals(uuid))
-					continue;
+				if (isNotNullOrEmpty(uuid))
+					if (!player.getUniqueId().toString().equals(uuid))
+						continue;
 
 				if (!hasRoomFor(player, item.getItemStack()))
 					continue;
