@@ -24,6 +24,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Train;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -52,6 +53,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Comparator;
 
+@HideFromWiki
 @NoArgsConstructor
 @Aliases("pugmas")
 @Permission(Group.STAFF)
