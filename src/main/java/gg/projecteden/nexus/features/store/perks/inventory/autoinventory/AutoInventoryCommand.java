@@ -66,6 +66,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("profile [profile]")
+	@Description("View your currently active profile or switch to another one")
 	void profile(@Arg(tabCompleter = AutoInventoryProfile.class) String profile) {
 		if (isNullOrEmpty(profile)) {
 			send(PREFIX + "Currently active profile: &e" + user.getActiveProfileId());
@@ -81,6 +82,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("profile create <profile>")
+	@Description("Create a new profile with default settings")
 	void profile_create(String profile) {
 		if (user.getProfiles().containsKey(profile))
 			error("Profile &e%s &calready exists".formatted(profile));
@@ -92,6 +94,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("profile clone <from> <to>")
+	@Description("Clone an existing profile")
 	void profile_clone(@Arg(tabCompleter = AutoInventoryProfile.class) String from, String to) {
 		if (!user.getProfiles().containsKey(from))
 			error("Profile &e%s &cnot found".formatted(from));
@@ -106,6 +109,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("profile rename <from> <to>")
+	@Description("Rename a profile")
 	void profile_rename(@Arg(tabCompleter = AutoInventoryProfile.class) String from, String to) {
 		if (!user.getProfiles().containsKey(from))
 			error("Profile &e%s &cnot found".formatted(from));
@@ -123,6 +127,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("profile delete <profile>")
+	@Description("Delete a profile")
 	void profile_delete(@Arg(tabCompleter = AutoInventoryProfile.class) String profile) {
 		if (!user.getProfiles().containsKey(profile))
 			error("Profile &e%s &cnot found".formatted(profile));
@@ -136,11 +141,18 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("profile list [page]")
+	@Description("List your profiles")
 	void profile_list(@Arg("1") int page) {
 		send(PREFIX + "Available profiles");
 		new Paginator<String>()
 			.values(user.getProfiles().keySet())
-			.formatter((name, index) -> json("&e " + name).command("/autoinv profile " + name).hover("&3Click to activate profile &e" + name))
+			.formatter((name, index) -> {
+				var active = user.getActiveProfileId().equals(name);
+				var message = json((active ? "&a" : "&3") + " " + name + (active ? " &e [Active]" : ""));
+				if (!active)
+					message.command("/autoinv profile " + name).hover("&3Click to activate profile &e" + name);
+				return message;
+			})
 			.command("/autoinv profile list")
 			.page(page)
 			.send();
