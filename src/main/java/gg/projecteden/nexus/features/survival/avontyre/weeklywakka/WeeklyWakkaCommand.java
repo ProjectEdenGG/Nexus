@@ -11,6 +11,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.warps.WarpType;
+import gg.projecteden.nexus.models.warps.Warps.Warp;
 import gg.projecteden.nexus.models.weeklywakka.WeeklyWakka;
 import gg.projecteden.nexus.models.weeklywakka.WeeklyWakkaService;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -127,6 +128,34 @@ public class WeeklyWakkaCommand extends _WarpCommand {
 	@Permission(Group.ADMIN)
 	void getTip(int index) {
 		WeeklyWakkaUtils.tell(player(), WeeklyWakkaUtils.getTips().get(index).get());
+	}
+
+	@Override
+	@Path("(teleport|tp|warp) <name>")
+	@Permission(Group.ADMIN)
+	public void teleport(Warp warp) {
+		super.teleport(warp);
+	}
+
+	@Override
+	@Path("<name>")
+	@Permission(Group.ADMIN)
+	public void tp(Warp warp) {
+		super.tp(warp);
+	}
+
+	@Path("tp nearest")
+	@Override
+	@Permission(Group.ADMIN)
+	public void teleportNearest() {
+		super.teleportNearest();
+	}
+
+	@Path("nearest")
+	@Override
+	@Permission(Group.ADMIN)
+	public void nearest() {
+		super.nearest();
 	}
 
 }
