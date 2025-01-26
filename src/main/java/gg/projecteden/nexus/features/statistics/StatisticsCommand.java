@@ -17,6 +17,8 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.statistics.StatisticsUser;
 import gg.projecteden.nexus.models.statistics.StatisticsUserService;
+import gg.projecteden.nexus.models.statistics.StatisticsUserService.MostLeaderboardsResult;
+import gg.projecteden.nexus.models.statistics.StatisticsUserService.MostLeaderboardsResult.LeaderboardStatistic;
 import gg.projecteden.nexus.models.statistics.StatisticsUserService.StatisticGroup;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.IOUtils;
@@ -152,6 +154,59 @@ public class StatisticsCommand extends CustomCommand implements Listener {
 			.send();
 	}
 
+	@Async
+	@Path("leaderboardsLed [player] [--page]")
+	void leaderboardsLed(
+		StatisticsUser user,
+		@Switch @Arg("1") int page
+	) {
+		if (user != null) {
+			MostLeaderboardsResult self = service.getMostLeaderboards().stream().filter(result -> result.getUuid().equals(user.getUuid())).findFirst().orElse(null);
+			if (self == null)
+				error("You do not lead any leaderboards");
+
+			send();
+			send(PREFIX + "Leaderboards Led - " + Nerd.of(user).getColoredName());
+
+			new Paginator<LeaderboardStatistic>()
+				.values(self.getLeaderboards())
+				.formatter((stat, index) -> json("&3 " + stat.getGroup() + (stat.getStat() == null ? "" : " &7- &3" + stat.getStat())))
+				.command("/stats leaderboardsLed " + user.getNickname() + " --page=")
+				.page(page)
+				.send();
+		} else {
+			var values = service.getMostLeaderboards();
+			if (values.isEmpty())
+				error("No results found");
+
+			BiFunction<MostLeaderboardsResult, String, JsonBuilder> formatter = (result, index) ->
+				json(index + " " + Nerd.of(result.getUuid()).getColoredName() + " &7- " + FORMATTER.format(result.getCount()));
+
+			send();
+			send(PREFIX + "Most Leaderboards Led");
+
+			new Paginator<MostLeaderboardsResult>()
+				.values(values)
+				.formatter(formatter)
+				.command("/stats leaderboardsLed --page=")
+				.page(page)
+				.afterValues(() -> {
+					if (page == 1) {
+						MostLeaderboardsResult self = values.stream().filter(result -> result.getUuid().equals(uuid())).findFirst().orElse(null);
+						if (self != null) {
+							int position = values.indexOf(self) + 1;
+							if (position > 10) {
+								send("&7•••");
+								send(formatter.apply(self, "&3" + position));
+							}
+						}
+					}
+				})
+				.send();
+		}
+	}
+
+
 	@Data
 	public static class AvailableStatistic {}
 
@@ -170,6 +225,8 @@ public class StatisticsCommand extends CustomCommand implements Listener {
 			OnlinePlayers.getAll().forEach(player -> new StatisticsUserService().edit(player, StatisticsUser::loadFromFile));
 			StatisticGroup.updateAvailableStats();
 		});
+
+		Tasks.repeatAsync(TickTime.SECOND, TickTime.MINUTE.x(5), () -> new StatisticsUserService().calculateMostLeaderboards());
 	}
 
 	@EventHandler

@@ -7,14 +7,20 @@ import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
+import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
+import gg.projecteden.nexus.models.statistics.StatisticsUserService.MostLeaderboardsResult.LeaderboardStatistic;
+import gg.projecteden.nexus.utils.Utils;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,9 +35,16 @@ import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
 @ObjectClass(StatisticsUser.class)
 public class StatisticsUserService extends MongoPlayerService<StatisticsUser> {
 	private final static Map<UUID, StatisticsUser> cache = new ConcurrentHashMap<>();
+	private static List<MostLeaderboardsResult> mostLeaderboards = new ArrayList<>();
 
 	public Map<UUID, StatisticsUser> getCache() {
 		return cache;
+	}
+
+	@Override
+	public void clearCache() {
+		super.clearCache();
+		mostLeaderboards = new ArrayList<>();
 	}
 
 	public enum StatisticGroup {
@@ -51,7 +64,7 @@ public class StatisticsUserService extends MongoPlayerService<StatisticsUser> {
 
 		public static void updateAvailableStats () {
 			try {
-				new StatisticsUserService().getAvailableStats().forEach((group, stats) -> group.availableStats = stats);
+				new StatisticsUserService().getAvailableStats().forEach((group, stats) -> group.availableStats = stats.stream().filter(stat -> !stat.equals("air")).toList());
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -86,7 +99,11 @@ public class StatisticsUserService extends MongoPlayerService<StatisticsUser> {
 				Projections.computed("subKeys", new Document("$objectToArray", "$allStats.v"))
 			)),
 			Aggregates.unwind("$subKeys"),
-			Aggregates.group("$parentKey", Accumulators.addToSet("keys", "$subKeys.k"))
+			Aggregates.group("$parentKey",
+				Accumulators.addToSet("keys", "$subKeys.k"),
+				Accumulators.max("maxValue", "$subKeys.v")
+			),
+			Aggregates.match(new Document("maxValue", new Document("$gt", 0)))
 		).toList();
 
 		var results = new HashMap<StatisticGroup, List<String>>();
@@ -95,6 +112,79 @@ public class StatisticsUserService extends MongoPlayerService<StatisticsUser> {
 			results.put(group, doc.getList("keys", String.class).stream().map(key -> key.replace("minecraft:", "")).toList());
 		});
 		return results;
+	}
+
+	@Data
+	public static class MostLeaderboardsResult {
+		private UUID uuid;
+		private List<LeaderboardStatistic> leaderboards;
+
+		public int getCount() {
+			return leaderboards.size();
+		}
+
+		@Data
+		@AllArgsConstructor
+		public static class LeaderboardStatistic {
+			private String group;
+			private String stat;
+		}
+	}
+
+	public List<MostLeaderboardsResult> getMostLeaderboards() {
+		return mostLeaderboards;
+	}
+
+	public <T> void calculateMostLeaderboards() {
+		List<Bson> arguments = Arrays.asList(
+			Aggregates.project(new Document("uuid", "$_id").append("allStats", new Document("$objectToArray", "$stats"))),
+			Aggregates.unwind("$allStats"),
+			Aggregates.project(new Document("uuid", 1)
+				.append("group", "$allStats.k")
+				.append("stats", new Document("$objectToArray", "$allStats.v"))
+			),
+			Aggregates.unwind("$stats"),
+			Aggregates.match(Filters.gt("stats.v", 0)),
+			Aggregates.group(
+				new Document("group", "$group").append("stat", "$stats.k"),
+				Accumulators.push("leaders", new Document("uuid", "$uuid").append("value", "$stats.v")),
+				Accumulators.max("maxValue", "$stats.v")
+			),
+			Aggregates.project(new Document("_id", 1)
+				.append("leader", new Document("$filter", new Document()
+					.append("input", "$leaders")
+					.append("as", "leader")
+					.append("cond", new Document("$eq", Arrays.asList("$$leader.value", "$maxValue")))
+				))
+			),
+			Aggregates.unwind("$leader"),
+			Aggregates.group(
+				"$leader.uuid",
+				Accumulators.sum("count", 1),
+				Accumulators.push("leaderboards", new Document("group", "$_id.group").append("stat", "$_id.stat"))
+			),
+			Aggregates.sort(Sorts.descending("count")),
+			Aggregates.project(new Document("uuid", "$_id")
+				.append("count", 1)
+				.append("leaderboards", 1)
+			)
+		);
+
+		List<MostLeaderboardsResult> list = collection().aggregate(arguments)
+			.map(doc -> Utils.getGson().fromJson(doc.toJson().replaceAll("minecraft:", ""), MostLeaderboardsResult.class))
+			.into(new ArrayList<>());
+
+		list = list.stream().filter(value -> value.getUuid() != null).toList();
+
+		for (StatisticGroup group : EnumUtils.valuesExcept(StatisticGroup.class, StatisticGroup.CUSTOM)) {
+			var leader = getLeaderboard(group, null).keySet().iterator().next();
+			list.stream()
+				.filter(result -> leader.equals(result.getUuid()))
+				.findFirst()
+				.ifPresent(result -> result.getLeaderboards().addFirst(new LeaderboardStatistic(group.name().toLowerCase(), null)));
+		}
+
+		mostLeaderboards = list;
 	}
 
 }

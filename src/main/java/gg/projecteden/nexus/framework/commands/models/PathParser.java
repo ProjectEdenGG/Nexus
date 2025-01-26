@@ -69,7 +69,7 @@ class PathParser {
 		private void createArgs() {
 			int index = 0;
 			int paramIndex = 0;
-			for (String realArg : realArgs) {
+			for (String realArg : new ArrayList<>(realArgs)) {
 				TabCompleteArg arg = new TabCompleteArg(method, realArg);
 				if (pathArgs.size() > index)
 					if (!pathArgs.get(index).startsWith("[-"))
