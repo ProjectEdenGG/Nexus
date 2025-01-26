@@ -21,7 +21,13 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
@@ -85,7 +91,7 @@ public class AutoCraft implements Listener {
 
 	private static Material getAutoCraftResult(Material material, AutoInventoryUser user) {
 		for (Material result : autoCraftable.keySet())
-			if (autoCraftable.get(result).contains(material) && !user.getAutoCraftExclude().contains(result))
+			if (autoCraftable.get(result).contains(material) && !user.getActiveProfile().getAutoCraftExclude().contains(result))
 				return result;
 		return null;
 	}
@@ -105,7 +111,7 @@ public class AutoCraft implements Listener {
 		if (result == null)
 			return;
 
-		if (user.getAutoCraftExclude().contains(result))
+		if (user.getActiveProfile().getAutoCraftExclude().contains(result))
 			return;
 
 		final Inventory inventory = player.getInventory();
@@ -149,7 +155,7 @@ public class AutoCraft implements Listener {
 			if (result == null)
 				continue;
 
-			if (user.getAutoCraftExclude().contains(result))
+			if (user.getActiveProfile().getAutoCraftExclude().contains(result))
 				continue;
 
 			final List<ItemStack> ingredients = getIngredients(result);

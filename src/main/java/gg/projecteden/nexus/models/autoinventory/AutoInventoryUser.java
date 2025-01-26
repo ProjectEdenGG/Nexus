@@ -20,10 +20,23 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import lombok.*;
+import gg.projecteden.nexus.utils.Utils;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.block.*;
+import org.bukkit.block.Barrel;
+import org.bukkit.block.Chest;
+import org.bukkit.block.Dispenser;
+import org.bukkit.block.DoubleChest;
+import org.bukkit.block.Dropper;
+import org.bukkit.block.Hopper;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.ChestBoat;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.StorageMinecart;
@@ -31,7 +44,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -45,26 +60,38 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Set<AutoInventoryFeature> disabledFeatures = new HashSet<>();
 
-	private Set<AutoSortInventoryType> disabledInventoryTypes = new HashSet<>();
+	private String activeProfile;
+	private Map<String, AutoInventoryProfile> profiles = new HashMap<>();
 
-	private Set<Material> autoDepositExclude = new HashSet<>() {{
-		addAll(MaterialTag.ITEMS_ARROWS.getValues());
-		addAll(MaterialTag.SHULKER_BOXES.getValues());
-		addAll(MaterialTag.TOOLS_NETHERITE.getValues());
-	}};
+	@Data
+	public static class AutoInventoryProfile implements Cloneable {
+		private Set<AutoInventoryFeature> disabledFeatures = new HashSet<>();
 
-	private Set<Material> autoRefillExclude = new HashSet<>();
+		private Set<AutoSortInventoryType> disabledInventoryTypes = new HashSet<>();
 
-	private Set<Material> autoCraftExclude = new HashSet<>() {{
-		add(Material.GLOWSTONE);
-	}};
+		private Set<Material> autoDepositExclude = new HashSet<>() {{
+			addAll(MaterialTag.ITEMS_ARROWS.getValues());
+			addAll(MaterialTag.SHULKER_BOXES.getValues());
+			addAll(MaterialTag.TOOLS_NETHERITE.getValues());
+		}};
 
-	private boolean autoToolIncludeSword;
+		private Set<Material> autoRefillExclude = new HashSet<>();
 
-	private Set<Material> autoTrashInclude = new HashSet<>();
-	private AutoTrashBehavior autoTrashBehavior = AutoTrashBehavior.TRASH;
+		private Set<Material> autoCraftExclude = new HashSet<>() {{
+			add(Material.GLOWSTONE);
+		}};
+
+		private boolean autoToolIncludeSword;
+
+		private Set<Material> autoTrashInclude = new HashSet<>();
+		private AutoTrashBehavior autoTrashBehavior = AutoTrashBehavior.TRASH;
+
+		@Override
+		public AutoInventoryProfile clone() {
+			return Utils.getGson().fromJson(Utils.getGson().toJson(this), AutoInventoryProfile.class);
+		}
+	}
 
 	private transient boolean sortingInventory;
 
@@ -78,6 +105,25 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 
 	public static AutoInventoryUser of(UUID uuid) {
 		return new AutoInventoryUserService().get(uuid);
+	}
+
+	public AutoInventoryProfile getActiveProfile() {
+		return profiles.get(getActiveProfileId());
+	}
+
+	public String getActiveProfileId() {
+		if (profiles.isEmpty()) {
+			profiles.put("default", new AutoInventoryProfile());
+			activeProfile = "default";
+		}
+
+		if (activeProfile == null)
+			activeProfile = profiles.keySet().iterator().next();
+
+		if (!profiles.containsKey(activeProfile))
+			profiles.put(activeProfile, new AutoInventoryProfile());
+
+		return activeProfile;
 	}
 
 	public void tip(TipType tipType) {
@@ -119,7 +165,7 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 	}
 
 	public boolean hasFeatureEnabledRaw(AutoInventoryFeature feature) {
-		return !disabledFeatures.contains(feature);
+		return !getActiveProfile().getDisabledFeatures().contains(feature);
 	}
 
 	public Inventory getInventory() {

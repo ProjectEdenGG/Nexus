@@ -8,12 +8,15 @@ import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.feature
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.tasks.FindChestsThread;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
+import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser.AutoInventoryProfile;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser.AutoSortInventoryType;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser.AutoTrashBehavior;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUserService;
@@ -26,7 +29,11 @@ import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.bukkit.*;
+import org.bukkit.Chunk;
+import org.bukkit.ChunkSnapshot;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -34,9 +41,12 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @NoArgsConstructor
 @Aliases("autoinv")
@@ -53,6 +63,97 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		super(event);
 		if (isPlayerCommandEvent())
 			user = service.get(player());
+	}
+
+	@Path("profile [profile]")
+	void profile(@Arg(tabCompleter = AutoInventoryProfile.class) String profile) {
+		if (isNullOrEmpty(profile)) {
+			send(PREFIX + "Currently active profile: &e" + user.getActiveProfileId());
+			return;
+		}
+
+		if (!user.getProfiles().containsKey(profile))
+			error("Profile &e%s &cnot found".formatted(profile));
+
+		user.setActiveProfile(profile);
+		service.save(user);
+		send(PREFIX + "Profile &e%s &aactivated".formatted(profile));
+	}
+
+	@Path("profile create <profile>")
+	void profile_create(String profile) {
+		if (user.getProfiles().containsKey(profile))
+			error("Profile &e%s &calready exists".formatted(profile));
+
+		user.getProfiles().put(profile, new AutoInventoryProfile());
+		user.setActiveProfile(profile);
+		service.save(user);
+		send(PREFIX + "Profile &e%s &acreated and activated".formatted(profile));
+	}
+
+	@Path("profile clone <from> <to>")
+	void profile_clone(@Arg(tabCompleter = AutoInventoryProfile.class) String from, String to) {
+		if (!user.getProfiles().containsKey(from))
+			error("Profile &e%s &cnot found".formatted(from));
+
+		if (user.getProfiles().containsKey(to))
+			error("Profile &e%s &calready exists. Delete it first if you wish to run this command.".formatted(to));
+
+		user.getProfiles().put(to, user.getProfiles().get(from).clone());
+		user.setActiveProfile(to);
+		service.save(user);
+		send(PREFIX + "Profile &e%s &acreated and activated &3from clone of &e%s".formatted(to, from));
+	}
+
+	@Path("profile rename <from> <to>")
+	void profile_rename(@Arg(tabCompleter = AutoInventoryProfile.class) String from, String to) {
+		if (!user.getProfiles().containsKey(from))
+			error("Profile &e%s &cnot found".formatted(from));
+
+		if (user.getProfiles().containsKey(to))
+			error("Profile &e%s &calready exists. Delete it first if you wish to run this command.".formatted(to));
+
+		if (user.getActiveProfileId().equals(from))
+			user.setActiveProfile(to);
+
+		user.getProfiles().put(to, user.getProfiles().remove(from));
+
+		service.save(user);
+		send(PREFIX + "Profile &e%s &3renamed to &e%s".formatted(from, to));
+	}
+
+	@Path("profile delete <profile>")
+	void profile_delete(@Arg(tabCompleter = AutoInventoryProfile.class) String profile) {
+		if (!user.getProfiles().containsKey(profile))
+			error("Profile &e%s &cnot found".formatted(profile));
+
+		if (user.getActiveProfileId().equals(profile))
+			error("Cannot delete your currently active profile. Please activate another profile first.");
+
+		user.getProfiles().remove(profile);
+		service.save(user);
+		send(PREFIX + "Profile &e%s &cdeleted".formatted(profile));
+	}
+
+	@Path("profile list [page]")
+	void profile_list(@Arg("1") int page) {
+		send(PREFIX + "Available profiles");
+		new Paginator<String>()
+			.values(user.getProfiles().keySet())
+			.formatter((name, index) -> json("&e " + name).command("/autoinv profile " + name).hover("&3Click to activate profile &e" + name))
+			.command("/autoinv profile list")
+			.page(page)
+			.send();
+	}
+
+	@TabCompleterFor(AutoInventoryProfile.class)
+	List<String> tabCompleteAutoInventoryProfile(String filter) {
+		if (!isPlayer())
+			return Collections.emptyList();
+
+		return service.get(player()).getProfiles().keySet().stream()
+			.filter(profile -> profile.toLowerCase().startsWith(filter.toLowerCase()))
+			.toList();
 	}
 
 	@Path("depositall")
@@ -109,15 +210,15 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 			enable = !user.hasFeatureEnabledRaw(feature);
 
 		if (enable)
-			if (!user.getDisabledFeatures().contains(feature))
+			if (!user.getActiveProfile().getDisabledFeatures().contains(feature))
 				error(feature + " is already enabled");
 			else
-				user.getDisabledFeatures().remove(feature);
+				user.getActiveProfile().getDisabledFeatures().remove(feature);
 		else
-			if (user.getDisabledFeatures().contains(feature))
+			if (user.getActiveProfile().getDisabledFeatures().contains(feature))
 				error(feature + " is already disabled");
 			else
-				user.getDisabledFeatures().add(feature);
+				user.getActiveProfile().getDisabledFeatures().add(feature);
 
 		service.save(user);
 		send(PREFIX + feature + " " + (enable ? "&aenabled" : "&cdisabled"));
@@ -138,6 +239,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		public void init() {
 			final AutoInventoryUserService service = new AutoInventoryUserService();
 			final AutoInventoryUser user = service.get(viewer);
+			final AutoInventoryProfile profile = user.getActiveProfile();
 
 			addCloseItem();
 
@@ -150,16 +252,16 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 				if (modelId > 0)
 					item.modelId(modelId);
 
-				if (!user.getDisabledInventoryTypes().contains(inventoryType))
+				if (!profile.getDisabledInventoryTypes().contains(inventoryType))
 					item.lore("&aEnabled");
 				else
 					item.lore("&cDisabled");
 
 				items.add(ClickableItem.of(item.build(), e -> {
-					if (user.getDisabledInventoryTypes().contains(inventoryType))
-						user.getDisabledInventoryTypes().remove(inventoryType);
+					if (profile.getDisabledInventoryTypes().contains(inventoryType))
+						profile.getDisabledInventoryTypes().remove(inventoryType);
 					else
-						user.getDisabledInventoryTypes().add(inventoryType);
+						profile.getDisabledInventoryTypes().add(inventoryType);
 
 					service.save(user);
 
@@ -177,9 +279,9 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		AutoInventoryFeature.AUTOTOOL.checkPermission(player());
 
 		if (enable == null)
-			enable = !user.isAutoToolIncludeSword();
+			enable = !user.getActiveProfile().isAutoToolIncludeSword();
 
-		user.setAutoToolIncludeSword(enable);
+		user.getActiveProfile().setAutoToolIncludeSword(enable);
 		service.save(user);
 		send(PREFIX + "AutoTool now " + (enable ? "&aincludes" : "&cexcludes") + " &3swords");
 	}
@@ -201,11 +303,11 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		AutoInventoryFeature.AUTOTRASH.checkPermission(player());
 
 		if (behavior == null) {
-			send("Current behavior is " + camelCase(user.getAutoTrashBehavior()));
+			send("Current behavior is " + camelCase(user.getActiveProfile().getAutoTrashBehavior()));
 			return;
 		}
 
-		user.setAutoTrashBehavior(behavior);
+		user.getActiveProfile().setAutoTrashBehavior(behavior);
 		service.save(user);
 		send(PREFIX + "AutoTrash behavior set to " + camelCase(behavior));
 	}
@@ -219,7 +321,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		public AutoTrashMaterialEditor(Player player) {
 			this.player = player;
 
-			open(service.get(player).getAutoTrashInclude().stream()
+			open(service.get(player).getActiveProfile().getAutoTrashInclude().stream()
 				.map(ItemStack::new)
 				.sorted(new ItemStackComparator())
 				.toList());
@@ -233,7 +335,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 				.collect(Collectors.toSet());
 
 			service.edit(player, user -> {
-				user.setAutoTrashInclude(materials);
+				user.getActiveProfile().setAutoTrashInclude(materials);
 				user.sendMessage(StringUtils.getPrefix("AutoTrash") + "Automatically trashing " + materials.size() + " materials");
 			});
 		}
@@ -254,6 +356,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		public void init() {
 			final AutoInventoryUserService service = new AutoInventoryUserService();
 			final AutoInventoryUser user = service.get(viewer);
+			final AutoInventoryProfile profile = user.getActiveProfile();
 
 			addCloseItem();
 
@@ -261,7 +364,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 			for (Material material : AutoCraft.getAutoCraftable().keySet()) {
 				ItemBuilder item = new ItemBuilder(material);
 
-				if (!user.getAutoCraftExclude().contains(material))
+				if (!profile.getAutoCraftExclude().contains(material))
 					item.lore("&aEnabled").glow();
 				else
 					item.lore("&cDisabled");
@@ -271,10 +374,10 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 					.collect(Collectors.joining(", ")));
 
 				items.add(ClickableItem.of(item.build(), e -> {
-					if (user.getAutoCraftExclude().contains(material))
-						user.getAutoCraftExclude().remove(material);
+					if (profile.getAutoCraftExclude().contains(material))
+						profile.getAutoCraftExclude().remove(material);
 					else
-						user.getAutoCraftExclude().add(material);
+						profile.getAutoCraftExclude().add(material);
 
 					service.save(user);
 

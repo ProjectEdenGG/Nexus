@@ -9,8 +9,13 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.customblockbreaki
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventory;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventoryFeature;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.Enchant;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.ToolType.ToolGrade;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
@@ -21,7 +26,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -52,7 +61,7 @@ public class AutoTool implements Listener {
 			if (!MaterialTag.SWORDS.isTagged(mainHand))
 				return;
 
-			if (!user.isAutoToolIncludeSword())
+			if (!user.getActiveProfile().isAutoToolIncludeSword())
 				return;
 		}
 

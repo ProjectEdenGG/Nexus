@@ -5,7 +5,11 @@ import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.tasks.F
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser.AutoSortInventoryType;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Name;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -87,7 +91,7 @@ public class AutoInventory extends Feature {
 		if (inventoryType == null)
 			return false;
 
-		if (user.getDisabledInventoryTypes().contains(inventoryType))
+		if (user.getActiveProfile().getDisabledInventoryTypes().contains(inventoryType))
 			return false;
 
 		if (title != null && title.contains("*"))
@@ -117,7 +121,7 @@ public class AutoInventory extends Feature {
 			if (Nullables.isNullOrAir(sourceStack))
 				continue;
 
-			if (autoInventoryUser.getAutoDepositExclude().contains(sourceStack.getType()))
+			if (autoInventoryUser.getActiveProfile().getAutoDepositExclude().contains(sourceStack.getType()))
 				continue;
 
 			String signature = getSignature(sourceStack);

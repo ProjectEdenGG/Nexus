@@ -47,11 +47,11 @@ public class AutoTrash implements Listener {
 		if (meta.hasDisplayName() || meta.hasEnchants() || CustomModel.exists(item))
 			return;
 
-		if (!user.getAutoTrashInclude().contains(item.getType()))
+		if (!user.getActiveProfile().getAutoTrashInclude().contains(item.getType()))
 			return;
 
 		event.setCancelled(true);
-		if (user.getAutoTrashBehavior() == AutoTrashBehavior.TRASH) {
+		if (user.getActiveProfile().getAutoTrashBehavior() == AutoTrashBehavior.TRASH) {
 			DumpsterService dumpsterService = new DumpsterService();
 			Dumpster dumpster = dumpsterService.get0();
 
