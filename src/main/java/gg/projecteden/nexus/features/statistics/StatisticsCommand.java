@@ -14,7 +14,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.statistics.StatisticsUser;
 import gg.projecteden.nexus.models.statistics.StatisticsUserService;
@@ -22,6 +21,7 @@ import gg.projecteden.nexus.models.statistics.StatisticsUserService.StatisticGro
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.ProgressBar;
 import gg.projecteden.nexus.utils.StringUtils.ProgressBar.SummaryStyle;
@@ -31,16 +31,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 
 import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -109,11 +106,15 @@ public class StatisticsCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("leaderboard <group> [stat] [--page]")
-	void leaderboard(StatisticGroup group, @Arg(tabCompleter = AvailableStatistic.class, context = 1) String stat, @Switch @Arg("1") int page) {
+	void leaderboard(
+		StatisticGroup group,
+		@Arg(tabCompleter = AvailableStatistic.class, context = 1) String stat,
+		@Switch @Arg("1") int page
+	) {
 		if (group == StatisticGroup.CUSTOM && isNullOrEmpty(stat))
 			error("Custom statistics are not summable, please choose a specific statistic");
 
-		LinkedHashMap<UUID, Long> values = service.getLeaderboard(group, stat);
+		var values = service.getLeaderboard(group, stat);
 		if (values.isEmpty())
 			error("No results found");
 
@@ -164,14 +165,10 @@ public class StatisticsCommand extends CustomCommand implements Listener {
 			.toList();
 	}
 
-	@EventHandler
-	public void on(PlayerStatisticIncrementEvent event) {
-		Tasks.async(() -> {
-			Player player = event.getPlayer();
-			if (new CooldownService().check(player.getUniqueId(), "statistics-cache", TickTime.SECOND.x(10))) {
-				new StatisticsUserService().edit(player, StatisticsUser::loadFromFile);
-				StatisticGroup.updateAvailableStats();
-			}
+	static {
+		Tasks.repeatAsync(TickTime.SECOND, TickTime.SECOND.x(10), () -> {
+			OnlinePlayers.getAll().forEach(player -> new StatisticsUserService().edit(player, StatisticsUser::loadFromFile));
+			StatisticGroup.updateAvailableStats();
 		});
 	}
 

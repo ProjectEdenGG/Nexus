@@ -15,9 +15,12 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.util.Map;
 import java.util.UUID;
+
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity(value = "statistics", noClassnameStored = true)
@@ -32,16 +35,28 @@ public class StatisticsUser implements PlayerOwnedObject {
 	private Map<String, Map<String, Long>> stats;
 
 	public void loadFromFile() {
-		this.stats = (Map<String, Map<String, Long>>) Utils.getGson().fromJson(getFileFixed(), Map.class).get("stats");
+		String file = getFileFixed();
+		if (isNullOrEmpty(file))
+			return;
+
+		this.stats = (Map<String, Map<String, Long>>) Utils.getGson().fromJson(file, Map.class).get("stats");
 	}
 
 	public String getFileFixed() {
-		return NBT.updateStatistics(getFile()).toString();
+		String file = getFile();
+		if (isNullOrEmpty(file))
+			return null;
+
+		return NBT.updateStatistics(file).toString();
 	}
 
 	@SneakyThrows
 	public String getFile() {
-		return Files.readString(IOUtils.getFile("server/stats/" + uuid + ".json").toPath());
+		File file = IOUtils.getFile("server/stats/" + uuid + ".json");
+		if (!file.exists())
+			return null;
+
+		return Files.readString(file.toPath());
 	}
 
 }
