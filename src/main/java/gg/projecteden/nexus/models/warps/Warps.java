@@ -9,7 +9,11 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.parchment.OptionalLocation;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -35,7 +39,7 @@ public class Warps implements PlayerOwnedObject {
 	private Map<WarpType, List<Warp>> warps = new ConcurrentHashMap<>();
 
 	public List<Warp> getAll(WarpType type) {
-		return warps.getOrDefault(type, new ArrayList<>());
+		return new ArrayList<>(warps.getOrDefault(type, new ArrayList<>()));
 	}
 
 	public Warp get(WarpType type, String name) {

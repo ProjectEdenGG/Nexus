@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.survival.avontyre.weeklywakka;
 import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.features.survival.avontyre.weeklywakka.WeeklyWakkaUtils.RadiusTier;
 import gg.projecteden.nexus.features.survival.avontyre.weeklywakka.WeeklyWakkaUtils.RadiusTier.AppliesResult;
@@ -178,9 +179,21 @@ public class WeeklyWakkaFeature extends Feature implements Listener {
 					newLocation.get().load();
 				}
 
-				Tasks.wait(1, () -> npc.teleport(newWarp.getLocation(), TeleportCause.PLUGIN));
+				Nexus.log("Weekly Wakka Entity: " + npc.getEntity());
+
+				List<Runnable> actions = List.of(
+					() -> npc.teleport(newWarp.getLocation(), TeleportCause.PLUGIN),
+					() -> npc.despawn(),
+					() -> npc.spawn(newWarp.getLocation()),
+					() -> npc.teleport(newWarp.getLocation(), TeleportCause.PLUGIN)
+				);
+
+				int wait = 0;
+				for (Runnable action : actions)
+					Tasks.wait(wait += 10, action);
 
 				String message = "The Weekly Wakka NPC has moved to location #" + newWarp.getName();
+				Koda.say("The Weekly Wakka has moved!");
 				if (debugger != null)
 					PlayerUtils.send(debugger, new JsonBuilder(message).command("/weeklywakka " + newWarp.getName()));
 				Nexus.log(message);
