@@ -5,6 +5,9 @@ import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot;
 import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot.VPSSlotBuilder;
 import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -432,7 +435,7 @@ public enum VPSMenu {
 			add(VPSPage.builder()
 				.rows(3)
 				.items(new HashMap<>() {{
-					put(13, VPSSlot.builder()
+					put(12, VPSSlot.builder()
 						.name("+25 Island Range")
 						.display(new ItemBuilder(Material.MAGENTA_GLAZED_TERRACOTTA)
 							.lore("&3By default, your island is &e100x100")
@@ -440,6 +443,14 @@ public enum VPSMenu {
 							.lore("")
 							.lore("&6Price: &e50vp"))
 						.command("vote points store buy oneblock-expansion"));
+					put(15, VPSSlot.builder()
+						.name("Random Armor Trim")
+						.display(Material.FLOW_ARMOR_TRIM_SMITHING_TEMPLATE)
+						.price(10)
+						.onPurchase((player, slot) -> {
+							PlayerUtils.giveItem(player, RandomUtils.randomMaterial(MaterialTag.ARMOR_TRIM));
+							return true;
+						}));
 				}}).build());
 		}};
 	};
