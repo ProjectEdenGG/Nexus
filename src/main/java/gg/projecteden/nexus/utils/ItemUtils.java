@@ -43,6 +43,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -458,6 +459,25 @@ public class ItemUtils {
 			if (result != 0) return result;
 
 			result = Integer.compare(b.getAmount(), a.getAmount());
+			if (result != 0) return result;
+
+			if (a.getItemMeta() instanceof EnchantmentStorageMeta metaA && b.getItemMeta() instanceof EnchantmentStorageMeta metaB) {
+				var enchantsA = metaA.getStoredEnchants();
+				var enchantsB = metaB.getStoredEnchants();
+
+				result = Integer.compare(enchantsA.size(), enchantsB.size());
+				if (result != 0) return result;
+
+				if (!enchantsA.isEmpty() && !enchantsB.isEmpty()) {
+					var firstA = enchantsA.entrySet().iterator().next();
+					var firstB = enchantsB.entrySet().iterator().next();
+					result = firstA.getKey().getKey().getKey().compareTo(firstB.getKey().getKey().getKey());
+					if (result != 0) return result;
+
+					return Integer.compare(firstB.getValue(), firstA.getValue());
+				}
+			}
+
 			return result;
 		}
 	}
