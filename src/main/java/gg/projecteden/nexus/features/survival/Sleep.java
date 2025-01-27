@@ -19,12 +19,20 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerBedEnterEvent;
+import org.bukkit.event.player.PlayerBedLeaveEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 public class Sleep extends Feature implements Listener {
@@ -82,7 +90,7 @@ public class Sleep extends Feature implements Listener {
 						worldGroup.getWorlds().forEach(Sleep::skipNight);
 					else
 						for (Player player : worldGroup.getPlayers())
-							ActionBarUtils.sendActionBar(player, "Sleepers needed to skip night: &e" + sleeping + "&3/&e" + needed);
+							ActionBarUtils.sendActionBar(player, "Sleepers needed to skip " + (isDayTime(player.getWorld()) ? "the storm" : "night") + ": &e" + sleeping + "&3/&e" + needed);
 			}
 		});
 	}
@@ -135,7 +143,7 @@ public class Sleep extends Feature implements Listener {
 
 		if (!event.getBedEnterResult().equals(PlayerBedEnterEvent.BedEnterResult.OK))
 			return;
-		if (isDayTime(world))
+		if (isDayTime(world) && !world.hasStorm())
 			return;
 		if (!isDaylightCycleEnabled(world))
 			return;
@@ -146,7 +154,7 @@ public class Sleep extends Feature implements Listener {
 			worldGroup.setState(State.SLEEPING);
 	}
 
-	private boolean isDayTime(World world) {
+	private static boolean isDayTime(World world) {
 		return !(world.getTime() >= 12541 && world.getTime() <= 23458);
 	}
 
