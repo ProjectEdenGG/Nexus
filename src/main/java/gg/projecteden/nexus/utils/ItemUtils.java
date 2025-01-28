@@ -465,7 +465,7 @@ public class ItemUtils {
 				var enchantsA = metaA.getStoredEnchants();
 				var enchantsB = metaB.getStoredEnchants();
 
-				result = Integer.compare(enchantsA.size(), enchantsB.size());
+				result = Integer.compare(enchantsB.size(), enchantsA.size());
 				if (result != 0) return result;
 
 				if (!enchantsA.isEmpty() && !enchantsB.isEmpty()) {
