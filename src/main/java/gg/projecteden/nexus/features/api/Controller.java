@@ -158,14 +158,4 @@ public class Controller {
 		return data;
 	}
 
-	@Get("/blockparty/current")
-	Object playerCurrent() {
-		return Map.of(
-			"url", "https://cdn.projecteden.gg/blockpartymusic/pegboard-nerds-razor-sharp.mp3",
-			"title", "Razor Sharp",
-			"artist", "Pegboard Nerds",
-			"time", 30
-		);
-	}
-
 }

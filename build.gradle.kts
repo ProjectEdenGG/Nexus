@@ -73,6 +73,7 @@ dependencies {
     implementation("com.google.apis:google-api-services-sheets:v4-rev20221216-2.0.0")
     implementation("com.github.mpkorstanje:simmetrics-core:4.1.1")
     implementation("org.jetbrains:annotations:24.0.1")
+    implementation("net.jthink:jaudiotagger:3.0.1")
     compileOnly("gg.projecteden.crates:api:1.0.7-SNAPSHOT")
     compileOnly("tech.blastmc.holograms:HologramsAPI:1.1.0-SNAPSHOT")
     compileOnly("fr.moribus:ImageOnMap:4.3.1-EDEN")

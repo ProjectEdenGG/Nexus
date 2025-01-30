@@ -1,8 +1,15 @@
 package gg.projecteden.nexus.features.api;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -10,10 +17,13 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class BlockPartyWebSocketServer {
@@ -81,9 +91,18 @@ public class BlockPartyWebSocketServer {
         client.write(ByteBuffer.wrap(handshakeResponse.getBytes()));
 
         log("New WebSocket client connected.");
+
+		Tasks.async(() -> syncClient(client));
     }
 
-    private static void handleMessage(SocketChannel client) {
+	private static void syncClient(SocketChannel client) {
+		BlockPartyClientConnectedEvent event = new BlockPartyClientConnectedEvent();
+		event.callEvent();
+
+		broadcast(client, event.toJson());
+	}
+
+	private static void handleMessage(SocketChannel client) {
         ByteBuffer buffer = ByteBuffer.allocate(1024);
         try {
             int bytesRead = client.read(buffer);
@@ -93,8 +112,6 @@ public class BlockPartyWebSocketServer {
                 return;
             }
             buffer.flip();
-//            String message = decodeWebSocketFrame(buffer);
-//            log("Received: " + message);
         } catch (IOException e) {
             clients.remove(client);
         }
@@ -107,7 +124,10 @@ public class BlockPartyWebSocketServer {
 
             for (SocketChannel client : clients) {
                 try {
-                    client.write(buffer.duplicate());
+					ByteBuffer sendBuffer = buffer.duplicate();
+					while (sendBuffer.hasRemaining()) {
+						client.write(sendBuffer);
+					}
                 } catch (IOException e) {
                     try {
                         client.close();
@@ -117,17 +137,52 @@ public class BlockPartyWebSocketServer {
         }
     }
 
-    private static byte[] encodeWebSocketFrame(String message) {
-        byte[] messageBytes = message.getBytes();
-        int frameSize = messageBytes.length + 2;
-        byte[] frame = new byte[frameSize];
+	public static void broadcast(SocketChannel client, Object message) {
+		synchronized (clients) {
+			String string = message instanceof String ? (String) message : Utils.getGson().toJson(message);
+			ByteBuffer buffer = ByteBuffer.wrap(encodeWebSocketFrame(string));
 
-        frame[0] = (byte) 0x81; // FIN + text frame
-        frame[1] = (byte) messageBytes.length; // No masking
+			try {
+				while (buffer.hasRemaining())
+					client.write(buffer);
+			} catch (IOException e) {
+				try {
+					client.close();
+				} catch (IOException ignored) {}
+			}
+		}
+	}
 
-        System.arraycopy(messageBytes, 0, frame, 2, messageBytes.length);
-        return frame;
-    }
+	private static byte[] encodeWebSocketFrame(String message) {
+		byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
+		int messageLength = messageBytes.length;
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+		// FIN + Text Frame opcode
+		outputStream.write(0x81);
+
+		if (messageLength <= 125) {
+			outputStream.write(messageLength);
+		} else if (messageLength <= 65535) {
+			outputStream.write(126);
+			outputStream.write((messageLength >> 8) & 0xFF);
+			outputStream.write((messageLength) & 0xFF);
+		} else {
+			outputStream.write(127);
+			for (int i = 7; i >= 0; i--) {
+				outputStream.write((messageLength >> (i * 8)) & 0xFF);
+			}
+		}
+
+		try {
+			outputStream.write(messageBytes);
+		} catch (IOException e) {
+			throw new RuntimeException("Failed to encode WebSocket frame", e);
+		}
+
+		return outputStream.toByteArray();
+	}
+
 
     private static String decodeWebSocketFrame(ByteBuffer buffer) {
         buffer.position(2); // Skip the first two bytes (FIN + opcode and length)
@@ -150,5 +205,90 @@ public class BlockPartyWebSocketServer {
 	private static void log(String message) {
 		Nexus.log("[WebSocket] " + message);
 	}
-	
+
+	public static class BlockPartyClientConnectedEvent extends Event {
+
+		private BlockPartyClientConnectedEvent() {
+			super(true);
+		}
+
+		private final List<BlockPartyClientMessage> messages = new ArrayList<>();
+
+		public void addSong(String id, String title, String artist, int time, String url, boolean playing) {
+			BlockPartyClientMessage message = BlockPartyClientMessage.from(id)
+				.song(new Song(title, artist, time, url));
+			if (playing)
+				message.play();
+			messages.add(message);
+		}
+
+		public void setBlock(String id, String block) {
+			messages.add(BlockPartyClientMessage.from(id).block(block));
+		}
+
+		private String toJson() {
+			BlockPartyClientMessage[] messageArray = messages.toArray(new BlockPartyClientMessage[0]);
+			return Utils.getGson().toJson(messageArray);
+		}
+
+		@Getter
+		private static final HandlerList handlerList = new HandlerList();
+
+		@Override
+		public @NotNull HandlerList getHandlers() {
+			return handlerList;
+		}
+
+	}
+
+	@Getter
+	public static class BlockPartyClientMessage {
+
+		private String id;
+		private String action;
+		private Song song;
+		private String block;
+
+		public static BlockPartyClientMessage from(String id) {
+			BlockPartyClientMessage message = new BlockPartyClientMessage();
+			message.id = id;
+			return message;
+		}
+
+		public BlockPartyClientMessage song(Song song) {
+			this.song = song;
+			return this;
+		}
+
+		public BlockPartyClientMessage play() {
+			this.action = "play";
+			return this;
+		}
+
+		public BlockPartyClientMessage pause() {
+			this.action = "pause";
+			return this;
+		}
+
+		public BlockPartyClientMessage stop() {
+			this.action = "stop";
+			return this;
+		}
+
+		public BlockPartyClientMessage block(String block) {
+			this.action = "block";
+			this.block = block;
+			return this;
+		}
+
+	}
+
+	@AllArgsConstructor
+	public static class Song {
+		String title;
+		String artist;
+		int time;
+		String url;
+	}
+
 }
