@@ -91,7 +91,10 @@ import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Statistic;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -163,6 +166,7 @@ public class AccountTransferCommand extends CustomCommand {
 		PLOTS(new PlotTransferer()),
 		PUNISHMENTS(new PunishmentsTransferer()),
 		SHOP(new ShopTransferer()),
+		STATISTICS(new StatisticsTransferer()),
 		TRANSACTIONS(new TransactionsTransferer()),
 		TRUSTS(new TrustsTransferer()),
 		VAULTS(new VaultsTransferer()),
@@ -216,6 +220,50 @@ public class AccountTransferCommand extends CustomCommand {
 			for (ShopGroup shopGroup : ShopGroup.values()) {
 				double balance = service.getBalance(old, shopGroup);
 				service.transfer(old, target, balance, shopGroup, TransactionCause.ACCOUNT_TRANSFER);
+			}
+		}
+	}
+
+	static class StatisticsTransferer implements Transferer {
+
+		@Override
+		public void transfer(Player executor, OfflinePlayer old, OfflinePlayer target) {
+			for (Statistic statistic : Statistic.values()) {
+				switch (statistic.getType()) {
+					case UNTYPED -> {
+						try {
+							int value = old.getStatistic(statistic);
+							target.incrementStatistic(statistic, value);
+							old.setStatistic(statistic, 0);
+						} catch (Exception ignored) {
+						}
+					}
+
+					case BLOCK, ITEM -> {
+						for (Material material : Material.values()) {
+							try {
+								int value = old.getStatistic(statistic, material);
+								target.incrementStatistic(statistic, value);
+								old.setStatistic(statistic, 0);
+							} catch (Exception ignored) {
+							}
+						}
+					}
+
+					case ENTITY -> {
+						for (EntityType entityType : EntityType.values()) {
+							if (entityType == EntityType.NPC)
+								continue;
+
+							try {
+								int value = old.getStatistic(statistic, entityType);
+								target.incrementStatistic(statistic, value);
+								old.setStatistic(statistic, 0);
+							} catch (Exception ignored) {
+							}
+						}
+					}
+				}
 			}
 		}
 	}
