@@ -120,7 +120,7 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 
 		if (!now) {
 			ChatGamesConfig config = new ChatGamesConfigService().get0();
-			if (config.getPreviousPlayerCount() != 0 || config.getPreviousPlayerCount2() != 0)
+			if (config.getPreviousPlayerCount() > 1 || config.getPreviousPlayerCount2() > 1)
 				error("Chat games are already running normally!");
 		}
 
