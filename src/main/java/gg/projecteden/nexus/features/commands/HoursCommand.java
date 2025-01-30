@@ -90,7 +90,7 @@ public class HoursCommand extends CustomCommand {
 
 		String onlyStaffSwitch = "";
 		if (staff) {
-			onlyStaffSwitch = " --onlyStaff";
+			onlyStaffSwitch = " --staff";
 			results.removeIf(result -> !Rank.of(result.getUuid()).isStaff());
 		}
 
