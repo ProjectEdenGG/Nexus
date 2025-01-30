@@ -9,6 +9,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.api.annotations.Get;
 import gg.projecteden.nexus.features.api.annotations.Post;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,9 @@ public class SimpleHttpServer extends Feature {
 			server.setExecutor(null);
 			server.start();
 			Nexus.log("HTTP server listening on port " + PORT);
+
+			Tasks.async(BlockPartyWebSocketServer::start);
+			Nexus.log("Websocket server listening on port " + BlockPartyWebSocketServer.PORT);
 		} catch (IOException e) {
 			Nexus.severe("Error starting HTTP server");
 			e.printStackTrace();
@@ -44,6 +48,7 @@ public class SimpleHttpServer extends Feature {
 	@Override
 	public void onStop() {
 		server.stop(0);
+		BlockPartyWebSocketServer.stop();
 	}
 
 	@Getter
