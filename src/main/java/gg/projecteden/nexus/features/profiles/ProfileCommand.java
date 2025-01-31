@@ -30,6 +30,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Set;
+
 @NoArgsConstructor
 public class ProfileCommand extends CustomCommand implements Listener {
 	private final ProfileUserService service = new ProfileUserService();
@@ -50,6 +52,16 @@ public class ProfileCommand extends CustomCommand implements Listener {
 		ProfileUser user = service.get(player());
 		user.setTextureType(type);
 		service.save(user);
+		send("Set texture to " + StringUtils.camelCase(type));
+	}
+
+	@Path("unlockAllTextures")
+	@Permission(Group.ADMIN)
+	public void unlockTextures() {
+		ProfileUser user = service.get(player());
+		user.setUnlockedTextureTypes(Set.of(ProfileTextureType.values()));
+		service.save(user);
+		send("Unlocked all texture types");
 	}
 
 	@HideFromWiki

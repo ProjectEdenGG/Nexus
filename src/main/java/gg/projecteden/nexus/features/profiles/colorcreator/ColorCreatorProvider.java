@@ -1,6 +1,7 @@
-package gg.projecteden.nexus.features.profiles.providers;
+package gg.projecteden.nexus.features.profiles.colorcreator;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SignMenuFactory;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
@@ -8,6 +9,7 @@ import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.models.decoration.DecorationUser.Tickable;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
@@ -15,11 +17,14 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.Setter;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -32,36 +37,86 @@ import java.util.function.Consumer;
 @Title("Color Creator")
 public class ColorCreatorProvider extends InventoryProvider {
 	private static final String PREFIX = StringUtils.getPrefix("ColorCreator");
-	InventoryProvider previousMenu = null;
-	Color displayColor;
-	Consumer<Color> applyColor;
-	Set<Color> savedColors = new HashSet<>();
-	Consumer<Color> saveColor;
-	Consumer<Color> unSaveColor;
+	private InventoryProvider previousMenu = null;
+	private Color displayColor;
+	private Consumer<Color> applyColor;
+	private Set<CreatedColor> createdColors;
+	private Consumer<CreatedColor> renameColor;
+	private Consumer<Color> saveColor;
+	private Consumer<Color> deleteColor;
 
-	public ColorCreatorProvider(Player viewer, @Nullable InventoryProvider previousMenu, ChatColor defaultColor, Consumer<Color> applyColor, Set<Color> savedColors, Consumer<Color> saveColor, Consumer<Color> unSaveColor) {
-		this(viewer, previousMenu, defaultColor.getColor(), applyColor, savedColors, saveColor, unSaveColor);
+	public ColorCreatorProvider(Player viewer, @Nullable InventoryProvider previousMenu, ChatColor defaultColor, Consumer<Color> applyColor, Set<CreatedColor> createdColors, Consumer<CreatedColor> renameColor, Consumer<Color> saveColor, Consumer<Color> deleteColor) {
+		this(viewer, previousMenu, defaultColor.getColor(), applyColor, createdColors, renameColor, saveColor, deleteColor);
 	}
 
-	public ColorCreatorProvider(Player viewer, @Nullable InventoryProvider previousMenu, java.awt.Color defaultColor, Consumer<Color> applyColor, Set<Color> savedColors, Consumer<Color> saveColor, Consumer<Color> unSaveColor) {
-		this(viewer, previousMenu, ColorType.toBukkit(defaultColor), applyColor, savedColors, saveColor, unSaveColor);
+	public ColorCreatorProvider(Player viewer, @Nullable InventoryProvider previousMenu, java.awt.Color defaultColor, Consumer<Color> applyColor, Set<CreatedColor> createdColors, Consumer<CreatedColor> renameColor, Consumer<Color> saveColor, Consumer<Color> deleteColor) {
+		this(viewer, previousMenu, ColorType.toBukkit(defaultColor), applyColor, createdColors, renameColor, saveColor, deleteColor);
 	}
 
-	public ColorCreatorProvider(Player viewer, @Nullable InventoryProvider previousMenu, Color defaultColor, Consumer<Color> applyColor, Set<Color> savedColors, Consumer<Color> saveColor, Consumer<Color> unSaveColor) {
+	public ColorCreatorProvider(Player viewer, @Nullable InventoryProvider previousMenu, Color defaultColor, Consumer<Color> applyColor, Set<CreatedColor> createdColors, Consumer<CreatedColor> renameColor, Consumer<Color> saveColor, Consumer<Color> deleteColor) {
 		this.viewer = viewer;
 		this.previousMenu = previousMenu;
 		this.displayColor = defaultColor;
 		this.applyColor = applyColor;
-		this.savedColors = savedColors;
+		this.createdColors = createdColors;
+		this.renameColor = renameColor;
 		this.saveColor = saveColor;
-		this.unSaveColor = unSaveColor;
+		this.deleteColor = deleteColor;
+	}
+
+	@Getter
+	@Setter
+	@NoArgsConstructor
+	public static class CreatedColor {
+		private Color color;
+		private String name = "Color";
+
+		public CreatedColor(@NotNull Color color) {
+			this.color = color;
+		}
+
+		public ChatColor getChatColor() {
+			return ChatColor.of(ColorType.toJava(this.color));
+		}
+
+		public @Nullable String getColoredName() {
+			return getChatColor() + this.name;
+		}
+
+		public boolean matches(Color color) {
+			return this.color.equals(color);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (!(obj instanceof CreatedColor createdColor))
+				return false;
+
+			return this.matches(createdColor.getColor());
+		}
+	}
+
+	private CreatedColor getSavedColor(@NotNull Color color) {
+		for (CreatedColor createdColor : createdColors) {
+			if (createdColor.matches(color)) {
+				return createdColor;
+			}
+		}
+		return null;
 	}
 
 	@Override
 	public void init() {
 		addBackItem(previousMenu);
 
-		ItemBuilder displayItem = new ItemBuilder(CustomMaterial.DYE_STATION_BUTTON_DYE).name("&fCurrent Color:")
+		String displayTitle = "&fColor: ";
+		CreatedColor createdColor = getSavedColor(displayColor);
+		boolean isColorSaved = createdColor != null;
+		if (isColorSaved && !createdColor.getName().equalsIgnoreCase("Color"))
+			displayTitle += createdColor.getColoredName();
+
+		ItemBuilder displayItem = new ItemBuilder(CustomMaterial.DYE_STATION_BUTTON_DYE)
+			.name(displayTitle)
 			.itemFlags(ItemFlags.HIDE_ALL)
 			.dyeColor(displayColor)
 			.lore(List.of(
@@ -78,9 +133,10 @@ public class ColorCreatorProvider extends InventoryProvider {
 		}));
 
 		// Save Color
-		if (!savedColors.contains(displayColor)) {
+		if (!isColorSaved) {
 			ItemBuilder saveColorButton = new ItemBuilder(CustomMaterial.GUI_PLUS).dyeColor(ColorType.LIGHT_GREEN)
 				.name("&aSave Color?").itemFlags(ItemFlags.HIDE_ALL);
+
 			contents.set(SlotPos.of(3, 4), ClickableItem.of(saveColorButton, e -> {
 				saveColor.accept(displayColor);
 				refresh();
@@ -88,7 +144,7 @@ public class ColorCreatorProvider extends InventoryProvider {
 		}
 
 		// Saved Colors
-		if(!savedColors.isEmpty()) {
+		if (!createdColors.isEmpty()) {
 			ItemBuilder savedColorsMenu = new ItemBuilder(Material.CHEST).name("&3Saved Colors");
 			contents.set(SlotPos.of(3, 1), ClickableItem.of(savedColorsMenu, e -> {
 				Consumer<Color> applyColor = _color -> {
@@ -96,7 +152,7 @@ public class ColorCreatorProvider extends InventoryProvider {
 					refresh();
 				};
 
-				new SavedColorsMenu(viewer, this, savedColors, applyColor, unSaveColor).open(viewer);
+				new SavedColorsMenu(viewer, this, createdColors, renameColor, applyColor, deleteColor).open(viewer);
 			}));
 		}
 
@@ -105,7 +161,7 @@ public class ColorCreatorProvider extends InventoryProvider {
 		ItemBuilder dyeMenu = new ItemBuilder(Material.RED_DYE).name("&3Pick A Color");
 		contents.set(SlotPos.of(1, 1), ClickableItem.of(dyeMenu, e -> {
 			new PickColorMenu(viewer, this, _color -> {
-				this.displayColor = _color;
+				this.displayColor = _color.getColor();
 				refresh();
 			}).open(viewer);
 		}));
@@ -204,17 +260,20 @@ public class ColorCreatorProvider extends InventoryProvider {
 
 	@Title("Saved Colors")
 	private static class SavedColorsMenu extends InventoryProvider {
-		Set<Color> choices = new HashSet<>();
+		Set<CreatedColor> choices = new HashSet<>();
 
 		InventoryProvider previousMenu = null;
+		Consumer<CreatedColor> renameColor;
 		Consumer<Color> applyColor;
 		Consumer<Color> unSaveColor;
 
-		public SavedColorsMenu(Player viewer, @Nullable InventoryProvider previousMenu, Set<Color> choices, Consumer<Color> applyColor, Consumer<Color> unSaveColor) {
+
+		public SavedColorsMenu(Player viewer, @Nullable InventoryProvider previousMenu, Set<CreatedColor> choices, Consumer<CreatedColor> renameColor, Consumer<Color> applyColor, Consumer<Color> unSaveColor) {
 			this.viewer = viewer;
 			this.previousMenu = previousMenu;
 			this.choices = choices;
 			this.applyColor = applyColor;
+			this.renameColor = renameColor;
 			this.unSaveColor = unSaveColor;
 		}
 
@@ -223,8 +282,10 @@ public class ColorCreatorProvider extends InventoryProvider {
 			addBackItem(previousMenu);
 
 			List<ClickableItem> items = new ArrayList<>();
-			for (Color color : choices) {
-				ItemBuilder displayItem = new ItemBuilder(CustomMaterial.DYE_STATION_BUTTON_DYE).name("")
+			for (CreatedColor createdColor : choices) {
+				Color color = createdColor.getColor();
+				ItemBuilder displayItem = new ItemBuilder(CustomMaterial.DYE_STATION_BUTTON_DYE)
+					.name(createdColor.getColoredName())
 					.itemFlags(ItemFlags.HIDE_ALL).dyeColor(color)
 					.lore(List.of(
 							"&cR: " + color.getRed(),
@@ -233,17 +294,36 @@ public class ColorCreatorProvider extends InventoryProvider {
 							"",
 							"&3Hex: &e" + StringUtils.toHex(color),
 							"&3- - -",
-							"&eClick &3to &aapply",
-							"&eShift+Click &3to &cdelete"
+						"&eLClick &3to &aapply",
+						"&eShift+LClick &3to &cdelete",
+						"&eRClick &3to &brename"
 						));
 
 				items.add(ClickableItem.of(displayItem, e -> {
-					if(e.isShiftClick()){
-						unSaveColor.accept(color);
-						refresh();
+					if (e.isRightClick()) {
+						Nexus.getSignMenuFactory().lines(List.of("", SignMenuFactory.ARROWS, "Enter a new name", "for the color"))
+							.prefix(PREFIX)
+							.response(lines -> {
+								String name = lines[0];
+								if (Censor.isCensored(e.getPlayer(), name)) {
+									PlayerUtils.send(viewer, PREFIX + "&cInappropriate input");
+								} else {
+									createdColor.setName(name);
+									renameColor.accept(createdColor);
+								}
+
+								refresh();
+							})
+							.open(viewer);
+
 					} else {
-						applyColor.accept(color);
-						back(previousMenu);
+						if (e.isShiftClick()) {
+							unSaveColor.accept(createdColor.getColor());
+							refresh();
+						} else {
+							applyColor.accept(createdColor.getColor());
+							back(previousMenu);
+						}
 					}
 				}));
 			}
@@ -260,9 +340,9 @@ public class ColorCreatorProvider extends InventoryProvider {
 			ColorType.BROWN, ColorType.BLACK, ColorType.GRAY, ColorType.LIGHT_GRAY, ColorType.WHITE);
 
 		InventoryProvider previousMenu = null;
-		Consumer<Color> applyColor;
+		Consumer<CreatedColor> applyColor;
 
-		public PickColorMenu(Player viewer, @Nullable InventoryProvider previousMenu, Consumer<Color> applyColor) {
+		public PickColorMenu(Player viewer, @Nullable InventoryProvider previousMenu, Consumer<CreatedColor> applyColor) {
 			this.viewer = viewer;
 			this.previousMenu = previousMenu;
 			this.applyColor = applyColor;
@@ -295,7 +375,7 @@ public class ColorCreatorProvider extends InventoryProvider {
 				}
 
 				contents.set(new SlotPos(row, col++), ClickableItem.of(colorItem, e -> {
-					applyColor.accept(colorType.getBukkitColor());
+					applyColor.accept(new CreatedColor(colorType.getBukkitColor()));
 					back(previousMenu);
 				}));
 			}

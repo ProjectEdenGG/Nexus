@@ -86,7 +86,6 @@ public class ProfileProvider extends InventoryProvider {
 
 	private final ProfileUser targetUser;
 	private final ChatColor backgroundColor;
-	private final ChatColor textureColor;
 
 	private ItemStack armorHelmet = null;
 	private ItemStack armorChestplate = null;
@@ -94,7 +93,6 @@ public class ProfileProvider extends InventoryProvider {
 	private ItemStack armorBoots = null;
 	private ItemStack costumeHat = null;
 	private ItemStack costumeHand = null;
-
 
 	public ProfileProvider(OfflinePlayer offlinePlayer, @Nullable InventoryProvider previousMenu) {
 		this(offlinePlayer);
@@ -104,7 +102,6 @@ public class ProfileProvider extends InventoryProvider {
 	public ProfileProvider(OfflinePlayer offlinePlayer) {
 		this.targetUser = new ProfileUserService().get(offlinePlayer);
 		this.backgroundColor = targetUser.getBackgroundColor();
-		this.textureColor = targetUser.getTextureColor();
 
 		fillCostumes(targetUser);
 		fillArmor(targetUser);
@@ -112,7 +109,7 @@ public class ProfileProvider extends InventoryProvider {
 
 	@Override
 	public JsonBuilder getTitleComponent() {
-		String titleName = "&f" + getProfileTitle(targetUser.getNickname());
+		String titleName = "&f" + getProfileTitle(targetUser);
 		StringBuilder texture = new StringBuilder(CustomTexture.GUI_PROFILE.getMenuTexture());
 
 		texture.append(CustomTexture.GUI_PROFILE_BACKGROUND.getNextMenuTexture(backgroundColor, this.getRows()));
@@ -127,10 +124,8 @@ public class ProfileProvider extends InventoryProvider {
 		return new JsonBuilder(texture.toString()).group().next(titleName).font(CustomFont.PROFILE_TITLE).group();
 	}
 
-	public static String getProfileTitle(String nickname) {
-		return nickname.toLowerCase().chars()
-			.mapToObj(c -> (char) c + "ꈃ")
-			.collect(Collectors.joining());
+	public static String getProfileTitle(ProfileUser user) {
+		return user.getTextureType().getShiftedTitleName(user);
 	}
 
 	@Override
@@ -154,8 +149,8 @@ public class ProfileProvider extends InventoryProvider {
 	enum ProfileMenuItem {
 		SETTINGS(0, 8, CustomMaterial.GUI_GEAR) {
 			@Override
-			public boolean shouldShow(Player viewer, ProfileUser target) {
-				return isSelf(viewer, target);
+			public boolean shouldNotShow(Player viewer, ProfileUser target) {
+				return !isSelf(viewer, target);
 			}
 
 			@Override
@@ -229,8 +224,8 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public boolean shouldShow(Player viewer, ProfileUser target) {
-				return Nullables.isNotNullOrEmpty(target.getStatus());
+			public boolean shouldNotShow(Player viewer, ProfileUser target) {
+				return !Nullables.isNotNullOrEmpty(target.getStatus());
 			}
 
 			@Override
@@ -315,11 +310,11 @@ public class ProfileProvider extends InventoryProvider {
 
 		VIEW_SOCIAL_MEDIA(3, 6, CustomMaterial.GUI_PROFILE_ICON_SOCIAL_MEDIA) {
 			@Override
-			public boolean shouldShow(Player viewer, ProfileUser target) {
+			public boolean shouldNotShow(Player viewer, ProfileUser target) {
 				SocialMediaUser user = socialMediaUserService.get(target);
 
 				List<SocialMediaSite> connectedSites = Arrays.stream(SocialMediaSite.values()).filter(site -> user.getConnection(site) != null).toList();
-				return !connectedSites.isEmpty();
+				return connectedSites.isEmpty();
 			}
 
 			@Override
@@ -344,14 +339,14 @@ public class ProfileProvider extends InventoryProvider {
 
 		LINK_SOCIAL_MEDIA(3, 6, CustomMaterial.GUI_PROFILE_ICON_SOCIAL_MEDIA_LINK) {
 			@Override
-			public boolean shouldShow(Player viewer, ProfileUser target) {
+			public boolean shouldNotShow(Player viewer, ProfileUser target) {
 				if (!isSelf(viewer, target))
-					return false;
+					return true;
 
 				SocialMediaUser user = socialMediaUserService.get(target);
 
 				List<SocialMediaSite> connectedSites = Arrays.stream(SocialMediaSite.values()).filter(site -> user.getConnection(site) != null).toList();
-				return connectedSites.isEmpty();
+				return !connectedSites.isEmpty();
 			}
 
 			@Override
@@ -363,8 +358,8 @@ public class ProfileProvider extends InventoryProvider {
 
 		MODIFY_FRIEND(4, 1, CustomMaterial.GUI_PROFILE_ICON_FRIEND_MODIFY_ADD) {
 			@Override
-			public boolean shouldShow(Player viewer, ProfileUser target) {
-				return !isSelf(viewer, target);
+			public boolean shouldNotShow(Player viewer, ProfileUser target) {
+				return isSelf(viewer, target);
 			}
 
 			@Override
@@ -472,24 +467,24 @@ public class ProfileProvider extends InventoryProvider {
 
 		PARTY(4, 3, CustomMaterial.GUI_PROFILE_ICON_PARTY) {
 			@Override
-			public boolean shouldShow(Player viewer, ProfileUser target) {
+			public boolean shouldNotShow(Player viewer, ProfileUser target) {
 				Party partyTarget = getParty(target);
 				Party partyViewer = getParty(viewer);
 				boolean isSameParty = isInSameParty(partyTarget, viewer, target);
 				boolean isViewerPartyOwner = isPartyOwner(partyViewer, viewer);
 
 				if (isSelf(viewer, target))
-					return partyViewer != null;
+					return partyViewer == null;
 
 				if (partyViewer != null) {
 					if (partyTarget != null) {
-						return isSameParty;
+						return !isSameParty;
 					}
 
-					return isViewerPartyOwner;
+					return !isViewerPartyOwner;
 				}
 
-				return true;
+				return false;
 			}
 
 			@Override
@@ -634,11 +629,11 @@ public class ProfileProvider extends InventoryProvider {
 
 		TELEPORT(4, 6, Material.ENDER_PEARL, 0) {
 			@Override
-			public boolean shouldShow(Player viewer, ProfileUser target) {
+			public boolean shouldNotShow(Player viewer, ProfileUser target) {
 				if (ProfileMenuItem.isSelf(viewer, target))
-					return false;
+					return true;
 
-				return super.shouldShow(viewer, target);
+				return super.shouldNotShow(viewer, target);
 			}
 
 			@Override
@@ -784,8 +779,8 @@ public class ProfileProvider extends InventoryProvider {
 			return row;
 		}
 
-		public boolean shouldShow(Player viewer, ProfileUser target) {
-			return true;
+		public boolean shouldNotShow(Player viewer, ProfileUser target) {
+			return false;
 		}
 
 		public void onClick(ItemClickData e, Player viewer, ProfileUser target, InventoryContents contents, InventoryProvider previousMenu) {
@@ -854,7 +849,7 @@ public class ProfileProvider extends InventoryProvider {
 		}
 
 		public ClickableItem getClickableItem(Player viewer, ProfileUser target, ItemBuilder itemBuilder, InventoryContents contents, InventoryProvider previousMenu) {
-			if (Nullables.isNullOrAir(itemBuilder) || !shouldShow(viewer, target))
+			if (Nullables.isNullOrAir(itemBuilder) || shouldNotShow(viewer, target))
 				return null;
 
 			return ClickableItem.of(itemBuilder, e -> onClick(e, viewer, target, contents, previousMenu));

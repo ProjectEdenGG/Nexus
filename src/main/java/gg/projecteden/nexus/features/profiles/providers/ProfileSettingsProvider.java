@@ -7,6 +7,8 @@ import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
+import gg.projecteden.nexus.features.profiles.colorcreator.ColorCreatorProvider;
+import gg.projecteden.nexus.features.profiles.colorcreator.ColorCreatorProvider.CreatedColor;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.profile.ProfileUser;
@@ -19,10 +21,10 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,13 +48,14 @@ public class ProfileSettingsProvider extends InventoryProvider {
 	public void init() {
 		addBackItem(e -> new ProfileProvider(viewer, this).open(viewer));
 
+		int col = 0;
 		for (ProfileSetting setting : ProfileSetting.values()) {
-			setting.setClickableItem(viewer, user, previousMenu, this, contents);
+			if (setting.setClickableItem(SlotPos.of(1, col), viewer, user, previousMenu, this, contents))
+				col++;
 		}
 	}
 
 	@Getter
-	@AllArgsConstructor
 	private enum ProfileSetting {
 		BACKGROUND_COLOR(CustomMaterial.DYE_STATION_BUTTON_DYE) {
 			@Override
@@ -81,16 +84,24 @@ public class ProfileSettingsProvider extends InventoryProvider {
 				};
 
 				Consumer<Color> saveColor = _color -> {
-					user.getSavedColors().add(_color);
+					user.getCreatedColors().add(new CreatedColor(_color));
 					service.save(user);
 				};
 
-				Consumer<Color> unSaveColor = _color -> {
-					user.getSavedColors().remove(_color);
+				Consumer<Color> deleteColor = _color -> {
+					user.getCreatedColors().removeIf(createdColor -> createdColor.matches(_color));
 					service.save(user);
 				};
 
-				new ColorCreatorProvider(viewer, previousMenu, user.getBackgroundColor(), applyColor, user.getSavedColors(), saveColor, unSaveColor).open(viewer);
+				Consumer<CreatedColor> renameColor = _createdColor -> {
+					for (CreatedColor createdColor : user.getCreatedColors()) {
+						if (createdColor.equals(_createdColor))
+							createdColor.setName(_createdColor.getName());
+					}
+					service.save(user);
+				};
+
+				new ColorCreatorProvider(viewer, previousMenu, user.getBackgroundColor(), applyColor, user.getCreatedColors(), renameColor, saveColor, deleteColor).open(viewer);
 			}
 
 			private Color getUserBackgroundColor(ProfileUser user) {
@@ -99,6 +110,11 @@ public class ProfileSettingsProvider extends InventoryProvider {
 		},
 
 		TEXTURE_COLOR(CustomMaterial.DYE_STATION_BUTTON_DYE) {
+			@Override
+			public boolean shouldNotShow(Player viewer, ProfileUser user) {
+				return user.getUnlockedTextureTypes().isEmpty() || user.getTextureType().isImage();
+			}
+
 			@Override
 			public ItemBuilder getDisplayItem(Player viewer, ProfileUser user) {
 				Color color = getUserTextureColor(user);
@@ -125,20 +141,45 @@ public class ProfileSettingsProvider extends InventoryProvider {
 				};
 
 				Consumer<Color> saveColor = _color -> {
-					user.getSavedColors().add(_color);
+					user.getCreatedColors().add(new CreatedColor(_color));
 					service.save(user);
 				};
 
-				Consumer<Color> unSaveColor = _color -> {
-					user.getSavedColors().remove(_color);
+				Consumer<Color> deleteColor = _color -> {
+					user.getCreatedColors().removeIf(createdColor -> createdColor.matches(_color));
 					service.save(user);
 				};
 
-				new ColorCreatorProvider(viewer, previousMenu, user.getTextureColor(), applyColor, user.getSavedColors(), saveColor, unSaveColor).open(viewer);
+				Consumer<CreatedColor> renameColor = _createdColor -> {
+					for (CreatedColor createdColor : user.getCreatedColors()) {
+						if (createdColor.getColor().equals(_createdColor.getColor()))
+							createdColor.setName(_createdColor.getName());
+					}
+					service.save(user);
+				};
+
+				new ColorCreatorProvider(viewer, previousMenu, user.getTextureColor(), applyColor, user.getCreatedColors(), renameColor, saveColor, deleteColor).open(viewer);
 			}
 
 			private Color getUserTextureColor(ProfileUser user) {
 				return user.getBukkitTextureColor();
+			}
+		},
+
+		TEXTURE_TYPE(Material.FIELD_MASONED_BANNER_PATTERN) {
+			@Override
+			public boolean shouldNotShow(Player viewer, ProfileUser user) {
+				return user.getUnlockedTextureTypes().isEmpty();
+			}
+
+			@Override
+			public ItemBuilder getDisplayItem(Player viewer, ProfileUser user) {
+				return super.getDisplayItem(viewer, user).lore("&eTODO");
+			}
+
+			@Override
+			public void onClick(Player viewer, ProfileUser user, InventoryProvider previousMenu, InventoryProvider provider, InventoryContents contents, ItemClickData e) {
+				PlayerUtils.send(viewer, "TODO");
 			}
 		},
 
@@ -251,29 +292,56 @@ public class ProfileSettingsProvider extends InventoryProvider {
 			}
 		};
 
-		private final CustomMaterial displayMaterial;
+		private final Material material;
+		private final int modelId;
+
+		ProfileSetting(CustomMaterial customMaterial) {
+			this(customMaterial.getMaterial(), customMaterial.getModelId());
+		}
+
+		ProfileSetting(Material material) {
+			this(material, 0);
+		}
+
+		ProfileSetting(Material material, int modelId) {
+			this.material = material;
+			this.modelId = modelId;
+		}
 
 		public String getDisplayName() {
 			return "&eSet " + StringUtils.camelCase(this.name());
 		}
 
 		public ItemBuilder getDisplayItem(Player viewer, ProfileUser user) {
-			return new ItemBuilder(getDisplayMaterial()).name(getDisplayName());
+			return new ItemBuilder(getMaterial()).modelId(getModelId()).name(getDisplayName());
 		}
 
-		public SlotPos getSlotPos() {
-			return SlotPos.of(1, this.ordinal());
+		public boolean shouldNotShow(Player viewer, ProfileUser user) {
+			return false;
 		}
 
-		public void setClickableItem(Player viewer, ProfileUser user, InventoryProvider previousMenu, InventoryProvider provider, InventoryContents contents) {
-			contents.set(getSlotPos(), ClickableItem.of(getDisplayItem(viewer, user), e -> onClick(viewer, user, previousMenu, provider, contents, e)));
+		public boolean setClickableItem(SlotPos slotPos, Player viewer, ProfileUser user, InventoryProvider previousMenu, InventoryProvider provider, InventoryContents contents) {
+			ItemBuilder itemBuilder = getDisplayItem(viewer, user);
+			if (itemBuilder == null || shouldNotShow(viewer, user))
+				return false;
+
+			contents.set(slotPos, ClickableItem.of(getDisplayItem(viewer, user), e -> onClick(viewer, user, previousMenu, provider, contents, e)));
+			return true;
 		}
 
 		public void onClick(Player viewer, ProfileUser user, InventoryProvider previousMenu, InventoryProvider provider, InventoryContents contents, ItemClickData e) {
 		}
 
 		public void refresh(Player viewer, ProfileUser user, InventoryProvider previousMenu, InventoryProvider provider, InventoryContents contents) {
-			this.setClickableItem(viewer, user, previousMenu, provider, contents);
+			for (int i = 0; i < 9; i++) {
+				contents.set(1, i, ClickableItem.AIR);
+			}
+
+			int col = 0;
+			for (ProfileSetting setting : ProfileSetting.values()) {
+				if (setting.setClickableItem(SlotPos.of(1, col), viewer, user, previousMenu, provider, contents))
+					col++;
+			}
 		}
 	}
 }
