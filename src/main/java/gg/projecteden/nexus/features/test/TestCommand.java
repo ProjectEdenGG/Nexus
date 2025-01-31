@@ -9,6 +9,7 @@ import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.api.BlockPartyWebSocketServer;
 import gg.projecteden.nexus.features.events.DebugDotCommand;
@@ -777,14 +778,14 @@ public class TestCommand extends CustomCommand implements Listener {
 
 	}
 
-	@Path("websocket play")
+	@Path("blockparty play")
 	void wsPlay() {
-		BlockPartyWebSocketServer.broadcast(Utils.getGson().toJson(Map.of("action", "play")));
+		BlockPartyWebSocketServer.broadcast(BlockPartyWebSocketServer.BlockPartyClientMessage.to(UUIDUtils.UUID0).play());
 	}
 
-	@Path("websocket pause")
+	@Path("blockparty pause")
 	void wsPause() {
-		BlockPartyWebSocketServer.broadcast(Utils.getGson().toJson(Map.of("action", "pause")));
+		BlockPartyWebSocketServer.broadcast(BlockPartyWebSocketServer.BlockPartyClientMessage.to(UUIDUtils.UUID0).pause());
 	}
 
 }

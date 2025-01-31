@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.api.BlockPartyWebSocketServer;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
@@ -35,6 +36,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class BlockParty extends TeamlessMechanic {
@@ -74,7 +77,7 @@ public class BlockParty extends TeamlessMechanic {
 
 		minigamer.getMatch().getTasks().wait(30, () ->
 			minigamer.tell(new JsonBuilder("&e&lClick Here &3to listen to the music in your browser!")
-				.url("https://projecteden.gg/blockparty?id=" + minigamer.getMatch().getArena().getName())
+				.url("https://projecteden.gg/blockparty")
 				.hover("&3Open in your browser")
 				.build()));
 	}
@@ -134,11 +137,15 @@ public class BlockParty extends TeamlessMechanic {
 		return false;
 	}
 
+	private List<UUID> getListenerUUIDs(Match match) {
+		return match.getMinigamersAndSpectators().stream().map(Minigamer::getUniqueId).collect(Collectors.toList());
+	}
+
 	private void setSongAndPlay(Match match) {
 		BlockPartySong song = ((BlockPartyMatchData) match.getMatchData()).getSong();
 
 		BlockPartyWebSocketServer.broadcast(
-			BlockPartyWebSocketServer.BlockPartyClientMessage.from(match.getArena().getName())
+			BlockPartyWebSocketServer.BlockPartyClientMessage.to(getListenerUUIDs(match))
 				.song(new BlockPartyWebSocketServer.Song(
 					song.title,
 					song.artist,
@@ -151,13 +158,13 @@ public class BlockParty extends TeamlessMechanic {
 
 	private void playSong(Match match) {
 		BlockPartyWebSocketServer.broadcast(
-			BlockPartyWebSocketServer.BlockPartyClientMessage.from(match.getArena().getName()).play()
+			BlockPartyWebSocketServer.BlockPartyClientMessage.to(getListenerUUIDs(match)).play()
 		);
 	}
 
 	private void pauseSong(Match match) {
 		BlockPartyWebSocketServer.broadcast(
-			BlockPartyWebSocketServer.BlockPartyClientMessage.from(match.getArena().getName()).pause()
+			BlockPartyWebSocketServer.BlockPartyClientMessage.to(getListenerUUIDs(match)).pause()
 		);
 	}
 
@@ -274,7 +281,7 @@ public class BlockParty extends TeamlessMechanic {
 				if (matchData.getSong() != null) {
 					BlockPartySong song = matchData.getSong();
 					event.addSong(
-						match.getArena().getName(),
+						getListenerUUIDs(match),
 						song.title,
 						song.artist,
 						matchData.getSongTimeInSeconds(),
@@ -283,14 +290,14 @@ public class BlockParty extends TeamlessMechanic {
 					);
 				}
 				if (matchData.getBlock() != null) {
-					event.setBlock(match.getArena().getName(), matchData.getBlock().name());
+					event.setBlock(getListenerUUIDs(match), matchData.getBlock().name());
 				}
 			});
 
 		// TODO - remove, temp for testing
 		BlockPartySong song = songList.stream().findFirst().orElse(null);
 		event.addSong(
-			"test",
+			List.of(UUIDUtils.UUID0),
 			song.title,
 			song.artist,
 			30,

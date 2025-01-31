@@ -1,10 +1,12 @@
 package gg.projecteden.nexus.features.api;
 
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -21,16 +23,16 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class BlockPartyWebSocketServer {
     static final int PORT = 8182;
     private static ServerSocketChannel serverSocket;
     private static Selector selector;
-    private static final Set<SocketChannel> clients = Collections.synchronizedSet(new HashSet<>());
+    private static final Map<UUID, SocketChannel> clients = new ConcurrentHashMap<>();;
     private static volatile boolean running = true;
 
     public static void start() {
@@ -67,39 +69,56 @@ public class BlockPartyWebSocketServer {
         }
     }
 
-    private static void acceptConnection() throws IOException {
-        SocketChannel client = serverSocket.accept();
-        client.configureBlocking(false);
-        client.register(selector, SelectionKey.OP_READ);
-        clients.add(client);
+	@SneakyThrows
+	private static void acceptConnection() {
+		SocketChannel client = serverSocket.accept();
+		client.configureBlocking(false);
+		client.register(selector, SelectionKey.OP_READ);
 
-        // Perform WebSocket handshake
-        ByteBuffer buffer = ByteBuffer.allocate(1024);
-        client.read(buffer);
-        String request = new String(buffer.array()).trim();
+		ByteBuffer buffer = ByteBuffer.allocate(1024);
+		client.read(buffer);
+		String request = new String(buffer.array()).trim();
 
-        // Extract WebSocket key
-        String webSocketKey = request.split("Sec-WebSocket-Key: ")[1].split("\r\n")[0];
-        String acceptKey = generateWebSocketAcceptKey(webSocketKey);
+		String webSocketKey = extractHeader(request);
 
-        // Send handshake response
-        String handshakeResponse = 
-            "HTTP/1.1 101 Switching Protocols\r\n" +
-            "Upgrade: websocket\r\n" +
-            "Connection: Upgrade\r\n" +
-            "Sec-WebSocket-Accept: " + acceptKey + "\r\n\r\n";
-        client.write(ByteBuffer.wrap(handshakeResponse.getBytes()));
+		UUID uuid = UUID.fromString(extractUUID(request));
+		clients.put(uuid, client);
 
-        log("New WebSocket client connected.");
+		String acceptKey = generateWebSocketAcceptKey(webSocketKey);
 
-		Tasks.async(() -> syncClient(client));
-    }
+		String handshakeResponse =
+			"HTTP/1.1 101 Switching Protocols\r\n" +
+				"Upgrade: websocket\r\n" +
+				"Connection: Upgrade\r\n" +
+				"Sec-WebSocket-Accept: " + acceptKey + "\r\n\r\n";
+		client.write(ByteBuffer.wrap(handshakeResponse.getBytes()));
 
-	private static void syncClient(SocketChannel client) {
-		BlockPartyClientConnectedEvent event = new BlockPartyClientConnectedEvent();
+		log("New WebSocket client connected with UUID: " + uuid);
+		Tasks.async(() -> syncClient(uuid));
+	}
+
+	private static String extractHeader(String request) {
+		for (String line : request.split("\r\n")) {
+			if (line.startsWith("Sec-WebSocket-Key")) {
+				return line.split(": ")[1];
+			}
+		}
+		return null;
+	}
+
+	private static String extractUUID(String request) {
+		String firstLine = request.split("\r\n")[0];
+		if (firstLine.contains("?uuid=")) {
+			return firstLine.split("\\?uuid=")[1].split(" ")[0];
+		}
+		return UUIDUtils.UUID0.toString();
+	}
+
+	private static void syncClient(UUID uuid) {
+		BlockPartyClientConnectedEvent event = new BlockPartyClientConnectedEvent(uuid);
 		event.callEvent();
 
-		broadcast(client, event.toJson());
+		broadcast(uuid, event.toJson());
 	}
 
 	private static void handleMessage(SocketChannel client) {
@@ -122,7 +141,7 @@ public class BlockPartyWebSocketServer {
 			String string = message instanceof String ? (String) message : Utils.getGson().toJson(message);
             ByteBuffer buffer = ByteBuffer.wrap(encodeWebSocketFrame(string));
 
-            for (SocketChannel client : clients) {
+            for (SocketChannel client : clients.values()) {
                 try {
 					ByteBuffer sendBuffer = buffer.duplicate();
 					while (sendBuffer.hasRemaining()) {
@@ -137,8 +156,10 @@ public class BlockPartyWebSocketServer {
         }
     }
 
-	public static void broadcast(SocketChannel client, Object message) {
+	public static void broadcast(UUID uuid, Object message) {
 		synchronized (clients) {
+			SocketChannel client = clients.get(uuid);
+			if (client == null) return;
 			String string = message instanceof String ? (String) message : Utils.getGson().toJson(message);
 			ByteBuffer buffer = ByteBuffer.wrap(encodeWebSocketFrame(string));
 
@@ -183,7 +204,6 @@ public class BlockPartyWebSocketServer {
 		return outputStream.toByteArray();
 	}
 
-
     private static String decodeWebSocketFrame(ByteBuffer buffer) {
         buffer.position(2); // Skip the first two bytes (FIN + opcode and length)
         byte[] messageBytes = new byte[buffer.remaining()];
@@ -208,22 +228,26 @@ public class BlockPartyWebSocketServer {
 
 	public static class BlockPartyClientConnectedEvent extends Event {
 
-		private BlockPartyClientConnectedEvent() {
+		@Getter
+		final UUID uuid;
+
+		private BlockPartyClientConnectedEvent(UUID uuid) {
 			super(true);
+			this.uuid = uuid;
 		}
 
 		private final List<BlockPartyClientMessage> messages = new ArrayList<>();
 
-		public void addSong(String id, String title, String artist, int time, String url, boolean playing) {
-			BlockPartyClientMessage message = BlockPartyClientMessage.from(id)
+		public void addSong(List<UUID> uuids, String title, String artist, int time, String url, boolean playing) {
+			BlockPartyClientMessage message = BlockPartyClientMessage.to(uuids)
 				.song(new Song(title, artist, time, url));
 			if (playing)
 				message.play();
 			messages.add(message);
 		}
 
-		public void setBlock(String id, String block) {
-			messages.add(BlockPartyClientMessage.from(id).block(block));
+		public void setBlock(List<UUID> uuids, String block) {
+			messages.add(BlockPartyClientMessage.to(uuids).block(block));
 		}
 
 		private String toJson() {
@@ -244,14 +268,20 @@ public class BlockPartyWebSocketServer {
 	@Getter
 	public static class BlockPartyClientMessage {
 
-		private String id;
+		private List<UUID> uuids;
 		private String action;
 		private Song song;
 		private String block;
 
-		public static BlockPartyClientMessage from(String id) {
+		public static BlockPartyClientMessage to(List<UUID> uuids) {
 			BlockPartyClientMessage message = new BlockPartyClientMessage();
-			message.id = id;
+			message.uuids = uuids;
+			return message;
+		}
+
+		public static BlockPartyClientMessage to(UUID uuids) {
+			BlockPartyClientMessage message = new BlockPartyClientMessage();
+			message.uuids = List.of(uuids);
 			return message;
 		}
 
