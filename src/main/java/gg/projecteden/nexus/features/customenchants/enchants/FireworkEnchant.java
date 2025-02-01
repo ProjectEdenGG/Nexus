@@ -91,7 +91,7 @@ public class FireworkEnchant extends CustomEnchant implements Listener {
 
 	@Override
 	public @NotNull EnchantmentTarget getItemTarget() {
-		return EnchantmentTarget.BOW;
+		return EnchantmentTarget.ALL; // TODO Paper's registry key shit is so fucking confusing
 	}
 
 }

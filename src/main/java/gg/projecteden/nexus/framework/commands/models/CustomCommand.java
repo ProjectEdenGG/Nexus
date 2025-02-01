@@ -113,6 +113,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
@@ -167,10 +169,11 @@ public abstract class CustomCommand extends ICustomCommand {
 		return ItemUtils.getToolRequired(player());
 	}
 
-	protected ItemStack getToolRequired(Material material) {
-		final ItemStack tool = getToolRequired();
-		if (tool.getType() != material)
-			error("You must be holding a " + camelCase(material));
+	protected ItemStack getToolRequired(Material... materials) {
+		final ItemStack tool = getTool();
+		var materialList = List.of(materials);
+		if (isNullOrAir(tool) || !materialList.contains(tool.getType()))
+			error("You must be holding a " + materialList.stream().map(this::camelCase).collect(Collectors.joining(" or ")));
 		return tool;
 	}
 
@@ -188,7 +191,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected Block getTargetBlockRequired() {
 		Block targetBlock = getTargetBlock();
-		if (gg.projecteden.nexus.utils.Nullables.isNullOrAir(targetBlock))
+		if (isNullOrAir(targetBlock))
 			error("You must be looking at a block");
 		return targetBlock;
 	}
@@ -196,7 +199,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	protected Sign getTargetSignRequired() {
 		Block targetBlock = getTargetBlock();
 		Material material = targetBlock.getType();
-		if (gg.projecteden.nexus.utils.Nullables.isNullOrAir(material) || !MaterialTag.ALL_SIGNS.isTagged(material))
+		if (isNullOrAir(material) || !MaterialTag.ALL_SIGNS.isTagged(material))
 			error("You must be looking at a sign");
 
 		return (Sign) targetBlock.getState();

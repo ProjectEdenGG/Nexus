@@ -18,29 +18,31 @@ public class FireworkBowCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Create a firework bow")
+	@Description("Create a firework bow or crossbow")
 	void add() {
 		if (!(hasPermission("fireworkbow.single") || hasPermission("fireworkbow.infinite")))
 			permissionError();
 
-		final ItemStack tool = getToolRequired(Material.BOW);
-		if (tool.getItemMeta().hasEnchant(Enchant.FIREWORK))
-			error("That bow is already enchanted with Firework");
+		final ItemStack tool = getToolRequired(Material.BOW, Material.CROSSBOW);
+		final String type = tool.getType().name().toLowerCase();
 
-		tool.addEnchantment(Enchant.FIREWORK, 1);
+		if (tool.getItemMeta().hasEnchant(Enchant.FIREWORK))
+			error("That " + type + " is already enchanted with Firework");
+
+		tool.addUnsafeEnchantment(Enchant.FIREWORK, 1);
 
 		if (player().hasPermission("fireworkbow.single")) {
-			send(PREFIX + "You have created your one firework bow! If you lose this bow, you won't be able to get another unless you purchase the command again.");
+			send(PREFIX + "You have created your one firework " + type + "! If you lose this " + type + ", you won't be able to get another unless you purchase the command again.");
 			PermissionChange.unset().uuid(uuid()).permissions("fireworkbow.single").runAsync();
 		}
 	}
 
 	@Path("remove")
-	@Description("Remove the firework enchantment from a bow")
+	@Description("Remove the firework enchantment from a bow or crossbow")
 	void remove() {
-		final ItemStack tool = getToolRequired(Material.BOW);
+		final ItemStack tool = getToolRequired(Material.BOW, Material.CROSSBOW);
 		if (!tool.getItemMeta().hasEnchant(Enchant.FIREWORK))
-			error("That bow is not enchanted with Firework");
+			error("That " + tool.getType().name().toLowerCase() + " is not enchanted with Firework");
 
 		tool.removeEnchantment(Enchant.FIREWORK);
 
