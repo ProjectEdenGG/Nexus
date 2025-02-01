@@ -17,7 +17,10 @@ public class WebsiteCommand extends CustomCommand {
 	@Path
 	@Description("Receive a link to the server's website")
 	void run() {
-		send(json().next("&e" + EdenSocialMediaSite.WEBSITE.getUrl()));
+		send(json()
+			.next("&ehttps:&e//&eprojecteden&e.gg") // Color codes to prevent client from auto detecting link
+			.url(EdenSocialMediaSite.WEBSITE.getUrl() + "?uuid=" + uuid())
+		);
 	}
 
 }
