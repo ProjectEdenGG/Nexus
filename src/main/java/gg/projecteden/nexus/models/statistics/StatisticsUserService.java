@@ -82,7 +82,7 @@ public class StatisticsUserService extends MongoPlayerService<StatisticsUser> {
 			Aggregates.unwind("$targetStats"),
 			isNotNullOrEmpty(stat) ? Aggregates.match(Filters.eq("targetStats.k", "minecraft:" + stat)) : null,
 			Aggregates.group("$_id", Accumulators.sum("count", "$targetStats.v")),
-			Aggregates.sort(Sorts.descending("count"))
+			Aggregates.sort(Sorts.descending("count", "_id"))
 		).filter(Objects::nonNull).toList();
 
 		var results = new LinkedHashMap<UUID, Long>();
@@ -163,7 +163,7 @@ public class StatisticsUserService extends MongoPlayerService<StatisticsUser> {
 				Accumulators.sum("count", 1),
 				Accumulators.push("leaderboards", new Document("group", "$_id.group").append("stat", "$_id.stat"))
 			),
-			Aggregates.sort(Sorts.descending("count")),
+			Aggregates.sort(Sorts.descending("count", "_id")),
 			Aggregates.project(new Document("uuid", "$_id")
 				.append("count", 1)
 				.append("leaderboards", 1)
