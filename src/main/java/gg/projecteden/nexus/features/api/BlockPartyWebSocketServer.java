@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.api;
 
-import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.Tasks;
@@ -30,50 +29,44 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class BlockPartyWebSocketServer {
-    static final int PORT = 8182;
-    private static ServerSocketChannel serverSocket;
-    private static Selector selector;
-    private static final Map<UUID, SocketChannel> clients = new ConcurrentHashMap<>();;
-    private static volatile boolean running = true;
+	static final int PORT = 8182;
+	private static ServerSocketChannel serverSocket;
+	private static Selector selector;
+	private static final Map<UUID, SocketChannel> clients = new ConcurrentHashMap<>();
+	private static volatile boolean running = true;
 
-    public static void start() {
-        try {
-            selector = Selector.open();
-            serverSocket = ServerSocketChannel.open();
-            serverSocket.bind(new InetSocketAddress(PORT));
-            serverSocket.configureBlocking(false);
-            serverSocket.register(selector, SelectionKey.OP_ACCEPT);
+	public static void start() {
+		try {
+			selector = Selector.open();
+			serverSocket = ServerSocketChannel.open();
+			serverSocket.bind(new InetSocketAddress(PORT));
+			serverSocket.configureBlocking(false);
+			serverSocket.register(selector, SelectionKey.OP_ACCEPT);
 
-			Tasks.repeat(TimeUtils.TickTime.SECOND.x(5), TimeUtils.TickTime.SECOND.x(5), BlockPartyWebSocketServer::pingClients);
+			while (running) {
+				selector.select();
+				for (SelectionKey key : selector.selectedKeys()) {
+					if (key.isAcceptable()) {
+						acceptConnection();
+					} else if (key.isReadable()) {
+						handleMessage((SocketChannel) key.channel());
+					}
+				}
+				selector.selectedKeys().clear();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
-            while (running) {
-                selector.select();
-                for (SelectionKey key : selector.selectedKeys()) {
-                    if (key.isAcceptable()) {
-                        acceptConnection();
-                    } else if (key.isReadable()) {
-                        handleMessage((SocketChannel) key.channel());
-                    }
-                }
-                selector.selectedKeys().clear();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void stop() {
-        running = false;
-        try {
-            selector.close();
-            serverSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-	public static void pingClients() {
-		new ArrayList<>(clients.keySet()).forEach(uuid -> broadcast(uuid, true));
+	public static void stop() {
+		running = false;
+		try {
+			selector.close();
+			serverSocket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@SneakyThrows
@@ -129,38 +122,38 @@ public class BlockPartyWebSocketServer {
 	}
 
 	private static void handleMessage(SocketChannel client) {
-        ByteBuffer buffer = ByteBuffer.allocate(1024);
-        try {
-            int bytesRead = client.read(buffer);
-            if (bytesRead == -1) {
-                clients.remove(client);
-                client.close();
-                return;
-            }
-        } catch (IOException e) {
-            clients.remove(client);
-        }
-    }
+		ByteBuffer buffer = ByteBuffer.allocate(1024);
+		try {
+			int bytesRead = client.read(buffer);
+			if (bytesRead == -1) {
+				clients.remove(client);
+				client.close();
+				return;
+			}
+		} catch (IOException e) {
+			clients.remove(client);
+		}
+	}
 
-    public static void broadcast(Object message) {
-        synchronized (clients) {
+	public static void broadcast(Object message) {
+		synchronized (clients) {
 			String string = message instanceof String ? (String) message : Utils.getGson().toJson(message);
-            ByteBuffer buffer = ByteBuffer.wrap(encodeWebSocketFrame(string));
+			ByteBuffer buffer = ByteBuffer.wrap(encodeWebSocketFrame(string));
 
-            for (SocketChannel client : clients.values()) {
-                try {
+			for (SocketChannel client : clients.values()) {
+				try {
 					ByteBuffer sendBuffer = buffer.duplicate();
 					while (sendBuffer.hasRemaining()) {
 						client.write(sendBuffer);
 					}
-                } catch (IOException e) {
-                    try {
-                        client.close();
-                    } catch (IOException ignored) {}
-                }
-            }
-        }
-    }
+				} catch (IOException e) {
+					try {
+						client.close();
+					} catch (IOException ignored) { }
+				}
+			}
+		}
+	}
 
 	public static void broadcast(UUID uuid, Object message) {
 		synchronized (clients) {
@@ -176,7 +169,7 @@ public class BlockPartyWebSocketServer {
 				try {
 					client.close();
 					clients.remove(uuid);
-				} catch (IOException ignored) {}
+				} catch (IOException ignored) { }
 			}
 		}
 	}
@@ -211,24 +204,24 @@ public class BlockPartyWebSocketServer {
 		return outputStream.toByteArray();
 	}
 
-    private static String decodeWebSocketFrame(ByteBuffer buffer) {
-        buffer.position(2); // Skip the first two bytes (FIN + opcode and length)
-        byte[] messageBytes = new byte[buffer.remaining()];
-        buffer.get(messageBytes);
-        return new String(messageBytes);
-    }
+	private static String decodeWebSocketFrame(ByteBuffer buffer) {
+		buffer.position(2); // Skip the first two bytes (FIN + opcode and length)
+		byte[] messageBytes = new byte[buffer.remaining()];
+		buffer.get(messageBytes);
+		return new String(messageBytes);
+	}
 
-    private static String generateWebSocketAcceptKey(String key) {
-        try {
-            String magic = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
-            MessageDigest digest = MessageDigest.getInstance("SHA-1");
-            byte[] hash = digest.digest((key + magic).getBytes());
-            return Base64.getEncoder().encodeToString(hash);
-        } catch (Exception e) {
-            throw new RuntimeException("Error generating WebSocket key", e);
-        }
-    }
-	
+	private static String generateWebSocketAcceptKey(String key) {
+		try {
+			String magic = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+			MessageDigest digest = MessageDigest.getInstance("SHA-1");
+			byte[] hash = digest.digest((key + magic).getBytes());
+			return Base64.getEncoder().encodeToString(hash);
+		} catch (Exception e) {
+			throw new RuntimeException("Error generating WebSocket key", e);
+		}
+	}
+
 	private static void log(String message) {
 		Nexus.log("[WebSocket] " + message);
 	}
