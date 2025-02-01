@@ -245,7 +245,7 @@ public enum ChatGameType {
 		EVENT_TOKENS("What is the currency earned by participating in server events, and are used to purchase various cosmetic items?", "event tokens"),
 		CHANNEL_DISCORD("If you see &5[D]&e in front of someone's username in chat, where are they chatting from?", "discord"),
 		BACKUP_TIME("How much time passes inbetween every automated server backup?", List.of("4 hours", "four hours")),
-		HOH("Which place on the server would you visit if you wanted to see the full list of former and current staff?", "hall of history"),
+		HOH("Which place on the server would you visit if you wanted to see the full list of former and current staff?", List.of("hall of history", "hoh", "hallofhistory")),
 		ONEBLOCK("What is the name of server's version of skyblock?", "Oneblock"),
 		BARREL("What storage block has had it's storage space increased on Project Eden?", "barrel"),
 
