@@ -1,14 +1,26 @@
 package gg.projecteden.nexus.features.store.perks.inventory;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.autotorch.AutoTorchService;
 import gg.projecteden.nexus.models.autotorch.AutoTorchUser;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.GameModeWrapper;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.MaterialTag.MatchMode;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -43,7 +55,7 @@ public class AutoTorchCommand extends CustomCommand {
 		autoTorch = service.get(player());
 	}
 
-	@Path("<on|off>")
+	@Path("[on|off]")
 	@Description("Toggle automatically placing light blocks when it gets too dark")
 	void toggle(Boolean state) {
 		if (state == null)
