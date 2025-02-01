@@ -8,6 +8,7 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.sql.PhysDB;
 import gg.projecteden.api.common.annotations.Sync;
 import gg.projecteden.api.mongodb.annotations.Service;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -75,6 +76,8 @@ import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.Shop.Product;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.shop.ShopService;
+import gg.projecteden.nexus.models.statistics.StatisticsUser;
+import gg.projecteden.nexus.models.statistics.StatisticsUserService;
 import gg.projecteden.nexus.models.store.Contributor;
 import gg.projecteden.nexus.models.store.Contributor.Purchase;
 import gg.projecteden.nexus.models.store.ContributorService;
@@ -91,15 +94,13 @@ import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Statistic;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -228,43 +229,34 @@ public class AccountTransferCommand extends CustomCommand {
 
 		@Override
 		public void transfer(Player executor, OfflinePlayer old, OfflinePlayer target) {
-			for (Statistic statistic : Statistic.values()) {
-				switch (statistic.getType()) {
-					case UNTYPED -> {
-						try {
-							int value = old.getStatistic(statistic);
-							target.incrementStatistic(statistic, value);
-							old.setStatistic(statistic, 0);
-						} catch (Exception ignored) {
-						}
-					}
+			var service = new StatisticsUserService();
+			var oldUser = service.get(old);
+			var targetUser = service.get(target);
 
-					case BLOCK, ITEM -> {
-						for (Material material : Material.values()) {
-							try {
-								int value = old.getStatistic(statistic, material);
-								target.incrementStatistic(statistic, value);
-								old.setStatistic(statistic, 0);
-							} catch (Exception ignored) {
-							}
-						}
-					}
+			var oldStats = oldUser.loadFromFile();
+			var newStats = targetUser.loadFromFile();
 
-					case ENTITY -> {
-						for (EntityType entityType : EntityType.values()) {
-							if (entityType == EntityType.NPC)
-								continue;
+			targetUser.writeToFile(targetUser.loadFromFile(), true);
 
-							try {
-								int value = old.getStatistic(statistic, entityType);
-								target.incrementStatistic(statistic, value);
-								old.setStatistic(statistic, 0);
-							} catch (Exception ignored) {
-							}
-						}
-					}
-				}
+			for (String group : oldStats.keySet()) {
+				if (!newStats.containsKey(group))
+					newStats.put(group, new HashMap<>());
+
+				oldStats.get(group).forEach((statistic, oldValue) -> {
+					long newValue = newStats.get(group).getOrDefault(statistic, 0L).longValue();
+					long combinedValue = oldValue.longValue() + newValue;
+					Nexus.debug("Stat: " + group + "." + statistic + ", Old: " + oldValue + ", New: " + newValue + ", Combined: " + combinedValue);
+					if (combinedValue != 0)
+						newStats.get(group).put(statistic, combinedValue);
+					else
+						Nexus.debug("Ignored because == 0");
+				});
 			}
+
+			targetUser.writeToFile(newStats, false);
+
+			service.delete(oldUser);
+			service.edit(targetUser, StatisticsUser::loadFromFile);
 		}
 	}
 

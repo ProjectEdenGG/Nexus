@@ -75,9 +75,11 @@ public class CustomBoundingBoxes extends Feature implements Listener {
 	}
 
 	private static void onLoad(UUID uuid) {
-		final CustomBoundingBoxEntity entity = service.get(uuid);
-		if (entity.hasCustomBoundingBox())
-			entity.updateBoundingBox();
+		Tasks.async(() -> {
+			final CustomBoundingBoxEntity entity = service.get(uuid);
+			if (entity.hasCustomBoundingBox())
+				Tasks.sync(entity::updateBoundingBox);
+		});
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)

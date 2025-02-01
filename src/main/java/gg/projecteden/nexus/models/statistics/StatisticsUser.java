@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import net.minecraft.SharedConstants;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -33,14 +35,18 @@ public class StatisticsUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Map<String, Map<String, Long>> stats;
+	private Map<String, Map<String, Number>> stats;
 
-	public Map<String, Map<String, Long>> loadFromFile() {
+	public Map<String, Map<String, Number>> loadFromFile() {
+		return this.stats = (Map<String, Map<String, Number>>) getAllFileData().get("stats");
+	}
+
+	public Map<String, Object> getAllFileData() {
 		String file = getFileFixed();
 		if (isNullOrEmpty(file))
 			return Collections.emptyMap();
 
-		return this.stats = (Map<String, Map<String, Long>>) Utils.getGson().fromJson(file, Map.class).get("stats");
+		return (Map<String, Object>) Utils.getGson().fromJson(file, Map.class);
 	}
 
 	public String getFileFixed() {
@@ -53,11 +59,25 @@ public class StatisticsUser implements PlayerOwnedObject {
 
 	@SneakyThrows
 	public String getFile() {
-		File file = IOUtils.getFile("server/stats/" + uuid + ".json");
+		File file = IOUtils.getFile(getFilePath());
 		if (!file.exists())
 			return null;
 
 		return Files.readString(file.toPath());
+	}
+
+	@SneakyThrows
+	public void writeToFile(Map<String, Map<String, Number>> stats, boolean bak) {
+		IOUtils.fileWrite(getFilePath() + (bak ? ".bak" : ""), (writer, outputs) -> {
+			outputs.add(Utils.getGson().toJson(Map.of(
+				"stats", stats,
+				"DataVersion", SharedConstants.getCurrentVersion().getDataVersion().getVersion()
+			)).replaceAll("\\.0", ""));
+		});
+	}
+
+	private @NotNull String getFilePath() {
+		return "server/stats/" + uuid + ".json";
 	}
 
 }

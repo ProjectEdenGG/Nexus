@@ -210,6 +210,13 @@ public class StatisticsCommand extends CustomCommand implements Listener {
 		}
 	}
 
+	@Path("update <player>")
+	@Permission(Group.ADMIN)
+	@Description("Copy a player's statistics to the database")
+	void update(Nerd nerd) {
+		service.edit(nerd, StatisticsUser::loadFromFile);
+		send(PREFIX + "Updated stats for " + nerd.getNickname() + " in database");
+	}
 
 	@Data
 	public static class AvailableStatistic {}
