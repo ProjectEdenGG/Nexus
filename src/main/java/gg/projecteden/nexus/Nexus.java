@@ -24,9 +24,16 @@ import gg.projecteden.nexus.framework.persistence.mysql.MySQLPersistence;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.home.HomeService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.GoogleUtils;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.LuckPermsUtils;
+import gg.projecteden.nexus.utils.Name;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags;
+import gg.projecteden.nexus.utils.nms.PacketUtils;
 import it.sauronsoftware.cron4j.Scheduler;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,6 +46,7 @@ import net.coreprotect.CoreProtect;
 import net.coreprotect.CoreProtectAPI;
 import net.luckperms.api.LuckPerms;
 import net.md_5.bungee.api.ChatColor;
+import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 import nl.pim16aap2.bigDoors.BigDoors;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -279,9 +287,9 @@ public class Nexus extends JavaPlugin {
 			GeoIP geoip = new GeoIPService().get(player);
 			String message = " &c&l ! &c&l! &eReloading Nexus &c&l! &c&l!";
 			if (GeoIP.exists(geoip))
-				PlayerUtils.send(player, "&7 " + geoip.getCurrentTimeShort() + message);
+				PacketUtils.sendPacket(player, new ClientboundSystemChatPacket(new JsonBuilder("&7 " + geoip.getCurrentTimeShort() + message).asComponent(), false));
 			else
-				PlayerUtils.send(player, message);
+				PacketUtils.sendPacket(player, new ClientboundSystemChatPacket(new JsonBuilder(message).asComponent(), false));
 		}
 	}
 
