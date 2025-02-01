@@ -17,6 +17,7 @@ import lombok.SneakyThrows;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 
@@ -34,12 +35,12 @@ public class StatisticsUser implements PlayerOwnedObject {
 	private UUID uuid;
 	private Map<String, Map<String, Long>> stats;
 
-	public void loadFromFile() {
+	public Map<String, Map<String, Long>> loadFromFile() {
 		String file = getFileFixed();
 		if (isNullOrEmpty(file))
-			return;
+			return Collections.emptyMap();
 
-		this.stats = (Map<String, Map<String, Long>>) Utils.getGson().fromJson(file, Map.class).get("stats");
+		return this.stats = (Map<String, Map<String, Long>>) Utils.getGson().fromJson(file, Map.class).get("stats");
 	}
 
 	public String getFileFixed() {

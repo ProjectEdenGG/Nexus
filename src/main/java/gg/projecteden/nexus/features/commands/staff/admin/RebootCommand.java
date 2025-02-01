@@ -76,8 +76,10 @@ public class RebootCommand extends CustomCommand implements Listener {
 	@Path("passive [--excludedConditions]")
 	@Description("Queues a reboot for when there are no active players")
 	void passive(@Switch @Arg(type = ReloadCondition.class) List<ReloadCondition> excludedConditions) {
-		RebootCommand.passive = true;
-		queue(excludedConditions);
+		queued = true;
+		passive = true;
+		RebootCommand.excludedConditions = excludedConditions;
+		tryReboot();
 		send(PREFIX + "Queued passive reboot");
 	}
 
@@ -175,7 +177,7 @@ public class RebootCommand extends CustomCommand implements Listener {
 
 			Broadcast.all()
 				.channel(StaticChannel.STAFF)
-				.message(StringUtils.getPrefix("Reboot") + "Passive reboot queued due to high RAM usage (Min usage from last 2 minutes: " + min + "GB)")
+				.message(StringUtils.getPrefix("Reboot") + "Passive reboot queued due to high RAM usage (Min usage from last 2 minutes: " + StringUtils.getDf().format(min) + "GB)")
 				.send();
 
 			tryReboot();
