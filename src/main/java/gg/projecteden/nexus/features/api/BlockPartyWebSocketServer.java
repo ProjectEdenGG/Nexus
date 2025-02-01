@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.api;
 
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.Tasks;
@@ -43,6 +44,8 @@ public class BlockPartyWebSocketServer {
             serverSocket.configureBlocking(false);
             serverSocket.register(selector, SelectionKey.OP_ACCEPT);
 
+			Tasks.repeat(TimeUtils.TickTime.SECOND.x(5), TimeUtils.TickTime.SECOND.x(5), BlockPartyWebSocketServer::pingClients);
+
             while (running) {
                 selector.select();
                 for (SelectionKey key : selector.selectedKeys()) {
@@ -68,6 +71,10 @@ public class BlockPartyWebSocketServer {
             e.printStackTrace();
         }
     }
+
+	public static void pingClients() {
+		new ArrayList<>(clients.keySet()).forEach(uuid -> broadcast(uuid, true));
+	}
 
 	@SneakyThrows
 	private static void acceptConnection() {
@@ -130,7 +137,6 @@ public class BlockPartyWebSocketServer {
                 client.close();
                 return;
             }
-            buffer.flip();
         } catch (IOException e) {
             clients.remove(client);
         }
@@ -169,6 +175,7 @@ public class BlockPartyWebSocketServer {
 			} catch (IOException e) {
 				try {
 					client.close();
+					clients.remove(uuid);
 				} catch (IOException ignored) {}
 			}
 		}
@@ -238,7 +245,7 @@ public class BlockPartyWebSocketServer {
 
 		private final List<BlockPartyClientMessage> messages = new ArrayList<>();
 
-		public void addSong(List<UUID> uuids, String title, String artist, int time, String url, boolean playing) {
+		public void addSong(List<UUID> uuids, String title, String artist, double time, String url, boolean playing) {
 			BlockPartyClientMessage message = BlockPartyClientMessage.to(uuids)
 				.song(new Song(title, artist, time, url));
 			if (playing)
@@ -271,6 +278,7 @@ public class BlockPartyWebSocketServer {
 		private List<UUID> uuids;
 		private String action;
 		private Song song;
+		private double time;
 		private String block;
 
 		public static BlockPartyClientMessage to(List<UUID> uuids) {
@@ -287,6 +295,11 @@ public class BlockPartyWebSocketServer {
 
 		public BlockPartyClientMessage song(Song song) {
 			this.song = song;
+			return this;
+		}
+
+		public BlockPartyClientMessage time(double time) {
+			this.time = time;
 			return this;
 		}
 
@@ -317,7 +330,7 @@ public class BlockPartyWebSocketServer {
 	public static class Song {
 		String title;
 		String artist;
-		int time;
+		double time;
 		String url;
 	}
 

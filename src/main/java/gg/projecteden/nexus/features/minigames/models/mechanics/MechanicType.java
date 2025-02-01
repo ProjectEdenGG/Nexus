@@ -17,6 +17,7 @@ import java.lang.reflect.Field;
 public enum MechanicType {
 	@Group(MechanicGroup.ARCADE)							ARCHERY(Archery.class),
 	@Group(MechanicGroup.ARCADE)							BATTLESHIP(Battleship.class),
+	@Group(MechanicGroup.ARCADE)							BLOCK_PARTY(BlockParty.class),
 	@Group(MechanicGroup.ARCADE)							CHECKERS(Checkers.class),
 	@Group(MechanicGroup.ARCADE)							CONNECT4(Connect4.class),
 	@Group(MechanicGroup.ARCADE)							DROPPER(Dropper.class),
