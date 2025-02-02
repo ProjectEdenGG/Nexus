@@ -743,6 +743,9 @@ public class WorldEditUtils {
 				debug("Computing blocks");
 				computedBlocks = new CompletableFuture<>();
 				getClipboard().thenAcceptAsync(clipboard -> {
+					if (this.transform != null)
+						clipboard = clipboard.transform(this.transform);
+
 					debug("Clipboard completed");
 					Iterator<BlockVector3> iterator = clipboard.iterator();
 

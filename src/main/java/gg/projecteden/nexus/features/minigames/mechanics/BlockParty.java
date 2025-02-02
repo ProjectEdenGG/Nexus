@@ -1,5 +1,10 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.math.transform.AffineTransform;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.Nexus;
@@ -15,7 +20,6 @@ import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.features.minigames.models.annotations.Regenerating;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
@@ -32,14 +36,13 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import lombok.SneakyThrows;
-import org.bukkit.Instrument;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Note;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -48,6 +51,7 @@ import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.TagOptionSingleton;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -59,19 +63,22 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Regenerating("color")
 public class BlockParty extends TeamlessMechanic {
 
 	public static List<BlockPartySong> songList = new ArrayList<>();
 	private static final String FOLDER = "plugins/Nexus/minigames/blockpartymusic/";
+	private static final int MAX_ROUNDS = 25;
 
 	// region minigame framework
 	@Override
@@ -92,13 +99,17 @@ public class BlockParty extends TeamlessMechanic {
 	@Override
 	public void onInitialize(@NotNull MatchInitializeEvent event) {
 		super.onInitialize(event);
-		pasteLogoFloor(event.getMatch());
 		selectSongsForVoting(event.getMatch());
-		setupColorChangingAreas(event.getMatch());
+		setupColorChangingAreas(event.getMatch()).thenRun(() -> {
+			pasteLogoFloor(event.getMatch());
+		});
+		updateEqWalls(event.getMatch(), 0);
 	}
 
-	@EventHandler
-	public void onPlayerJoin(MatchJoinEvent event) {
+	@Override
+	public void onJoin(@NotNull MatchJoinEvent event) {
+		super.onJoin(event);
+
 		Minigamer minigamer = event.getMinigamer();
 		Player player = minigamer.getOnlinePlayer();
 
@@ -110,11 +121,31 @@ public class BlockParty extends TeamlessMechanic {
 			player.getInventory().setItem(0, menuItem);
 		}
 
-		minigamer.getMatch().getTasks().wait(30, () ->
+		minigamer.getMatch().getTasks().wait(30, () -> {
 			minigamer.tell(new JsonBuilder("&e&lClick Here &3to listen to the music in your browser!")
 				.url("https://projecteden.gg/blockparty?uuid=" + player.getUniqueId())
 				.hover("&3Open in your browser")
-				.build()));
+				.build());
+		});
+	}
+
+	@EventHandler
+	public void onPlayerJoin(MatchJoinEvent event) {
+		Minigamer minigamer = event.getMinigamer();
+		Player player = minigamer.getOnlinePlayer();
+
+		if (!minigamer.isSpectating())
+			return;
+
+		if (!(minigamer.getMatch().getMechanic() instanceof BlockParty))
+			return;
+
+		minigamer.getMatch().getTasks().wait(30, () -> {
+			minigamer.tell(new JsonBuilder("&e&lClick Here &3to listen to the music in your browser!")
+				.url("https://projecteden.gg/blockparty?uuid=" + player.getUniqueId())
+				.hover("&3Open in your browser")
+				.build());
+		});
 	}
 
 	@Override
@@ -122,12 +153,13 @@ public class BlockParty extends TeamlessMechanic {
 		super.onStart(event);
 		selectSong(event.getMatch());
 		setSong(event.getMatch());
+		startActionBarTask(event.getMatch());
+		startEqAnimation(event.getMatch());
 	}
 
 	@Override
 	public void onBegin(@NotNull MatchBeginEvent event) {
 		super.onBegin(event);
-		playSong(event.getMatch());
 		waitWithMusic(event.getMatch());
 	}
 
@@ -138,6 +170,17 @@ public class BlockParty extends TeamlessMechanic {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void announceWinners(@NotNull Match match) {
+		BlockPartyMatchData matchData = match.getMatchData();
+		if (matchData.getWinners() != null)
+			Minigames.broadcast(
+				StringUtils.asOxfordList(matchData.getWinners().stream().map(Minigamer::getColoredName).toList(), ", ") +
+					(matchData.getWinners().size() > 1 ? " &3have tied" : " &3has won") +
+					" in &eBlock Party"
+			);
 	}
 
 	@Override
@@ -153,6 +196,48 @@ public class BlockParty extends TeamlessMechanic {
 
 		List<UUID> uuids = event.getMatch().getMinigamersAndSpectators().stream().map(Minigamer::getUuid).toList();
 		BlockPartyClientMessage.to(uuids).stop().send();
+
+		pasteColorChanging(event.getMatch());
+		updateEqWalls(event.getMatch(), 0);
+	}
+
+	@Override
+	public @NotNull String getScoreboardTitle(@NotNull Match match) {
+		return "&e&lBlock Party";
+	}
+
+	@Override
+	public boolean useScoreboardNumbers(Match match) {
+		return false;
+	}
+
+	@Override
+	public @NotNull LinkedHashMap<String, Integer> getScoreboardLines(@NotNull Match match) {
+		if (!match.isStarted())
+			return super.getScoreboardLines(match);
+
+		BlockPartyMatchData matchData = match.getMatchData();
+
+		LinkedHashMap<String, Integer> lines = new LinkedHashMap<>();
+		lines.put("&e", Integer.MIN_VALUE);
+		lines.put("&e&lGame Info", Integer.MIN_VALUE);
+		lines.put("&3Round: &e" + (matchData.getRound() + 1) + "/" + MAX_ROUNDS, Integer.MIN_VALUE);
+		lines.put("&3Speed: &e" + getRoundSpeed(matchData.getRound()) + "s", Integer.MIN_VALUE);
+		lines.put("&e&e", Integer.MIN_VALUE);
+		lines.put("&e&lDancers Left", Integer.MIN_VALUE);
+		lines.put("&3" + match.getAliveMinigamers().size(), Integer.MIN_VALUE);
+		lines.put("&e&e&e", Integer.MIN_VALUE);
+		lines.put("&e&lBlock", Integer.MIN_VALUE);
+
+		ColorType type = ColorType.of(matchData.getBlock());
+		if (type == null)
+			lines.put("", Integer.MIN_VALUE);
+		else {
+			ChatColor chatColor = type == ColorType.BLACK ? ChatColor.GRAY : type.getChatColor();
+			lines.put(chatColor + StringUtils.camelCase(type.name()), Integer.MIN_VALUE);
+		}
+
+		return lines;
 	}
 	// endregion
 
@@ -164,8 +249,12 @@ public class BlockParty extends TeamlessMechanic {
 	private void pasteNewFloor(Match match) {
 		BlockPartyMatchData matchData = match.getMatchData();
 		matchData.incRound();
-		if (matchData.getRound() % 2 == 1)
+		if (matchData.getRound() % 2 == 1 && (matchData.getRound() + 1) < MAX_ROUNDS)
 			match.broadcast("&3Round speed is now &e" + getRoundSpeed(matchData.getRound()) + "s");
+		if ((matchData.getRound() + 1) > MAX_ROUNDS) {
+			end(match);
+			return;
+		}
 		pasteFloor(match, RandomUtils.randomInt(1, matchData.countFloors()));
 		playSong(match);
 		waitWithMusic(match);
@@ -225,9 +314,7 @@ public class BlockParty extends TeamlessMechanic {
 		for (int i = 0; i < Math.ceil(time); i++)
 			builder.next(chatColor + "■");
 
-		match.getMinigamersAndSpectators().forEach(minigamer -> {
-			minigamer.getPlayer().sendActionBar(builder);
-		});
+		matchData.setActionBarMessage(builder);
 
 		if (time == 3.0)
 			pling(match, .7f);
@@ -235,6 +322,14 @@ public class BlockParty extends TeamlessMechanic {
 			pling(match, .6f);
 		if (time == 1.0 || getRoundSpeed(matchData.getRound()) < 1)
 			pling(match, .5f);
+	}
+
+	private void startActionBarTask(@NonNull Match match) {
+		BlockPartyMatchData matchData = match.getMatchData();
+		match.getTasks().repeat(0, 1, () -> {
+			if (matchData.getActionBarMessage() != null)
+				match.getMinigamersAndSpectators().forEach(minigamer -> minigamer.getPlayer().sendActionBar(matchData.getActionBarMessage()));
+		});
 	}
 
 	private void pling(Match match, float pitch) {
@@ -272,11 +367,12 @@ public class BlockParty extends TeamlessMechanic {
 	private boolean checkWin(Match match) {
 		BlockPartyMatchData matchData = match.getMatchData();
 		if (match.getAliveMinigamers().isEmpty()) {
-			matchData.getAliveAtStartOfRound().forEach(Minigamer::scored);
+			if (match.getAllMinigamers().size() > 1)
+				matchData.setWinners(matchData.getAliveAtStartOfRound());
 			return true;
 		}
 		else if (match.getAliveMinigamers().size() == 1 && match.getAllMinigamers().size() != 1) {
-			match.getAliveMinigamers().getFirst().scored();
+			matchData.setWinners(match.getAliveMinigamers());
 			return true;
 		}
 		return false;
@@ -284,22 +380,22 @@ public class BlockParty extends TeamlessMechanic {
 	// endregion
 
 	// region Arena changes
-	public void setupColorChangingAreas(Match match) {
-		pasteColorChanging(match);
-
-		BlockPartyMatchData matchData = match.getMatchData();
-		Arena arena = match.getArena();
-		arena.getRegionsLike("color").forEach(region -> {
-			arena.worldedit().getBlocks(region).forEach(block -> {
-				if (block.getType() == Material.BLACK_GLAZED_TERRACOTTA)
-					matchData.getColorChangingBlocks().add(block.getLocation());
+	public CompletableFuture<Void> setupColorChangingAreas(Match match) {
+		return pasteColorChanging(match).thenAccept($ -> {
+			BlockPartyMatchData matchData = match.getMatchData();
+			Arena arena = match.getArena();
+			arena.getRegionsLike("color").forEach(region -> {
+				arena.worldedit().getBlocks(region).forEach(block -> {
+					if (block.getType() == Material.BLACK_GLAZED_TERRACOTTA)
+						matchData.getColorChangingBlocks().add(block.getLocation());
+				});
 			});
+			setArenaColor(match);
 		});
-		setArenaColor(match);
 	}
 
-	public void pasteColorChanging(Match match) {
-		match.getArena().worldedit().paster()
+	public CompletableFuture<Void> pasteColorChanging(Match match) {
+		return match.getArena().worldedit().paster()
 			.at(match.getArena().getRegion().getMinimumPoint())
 			.file(match.getArena().getSchematicName("color"))
 			.air(false)
@@ -308,44 +404,70 @@ public class BlockParty extends TeamlessMechanic {
 
 	public void setArenaColor(Match match) {
 		BlockPartyMatchData matchData = match.getMatchData();
-		ColorType color = ColorType.of(matchData.getBlock());
-		if (color == null) color = ColorType.LIGHT_RED; // unused, will reset
-		int pitch = switch (color) {
-			case RED -> 1;
-			case ORANGE -> 2;
-			case YELLOW -> 3;
-			case LIGHT_GREEN -> 4;
-			case GREEN -> 5;
-			case CYAN -> 6;
-			case LIGHT_BLUE -> 7;
-			case BLUE -> 8;
-			case PURPLE -> 9;
-			case MAGENTA -> 10;
-			case PINK -> 11;
-			case BROWN -> 12;
-			case BLACK -> 13;
-			case GRAY -> 14;
-			case LIGHT_GRAY -> 15;
-			case WHITE -> 16;
-			default -> 0;
-		};
-
-		BlockData data;
-		if (pitch == 0)
-			data = Material.GRAY_CONCRETE_POWDER.createBlockData();
-		else {
-			data = Material.NOTE_BLOCK.createBlockData();
-			NoteBlock nb = (NoteBlock) data;
-			nb.setInstrument(Instrument.SNARE_DRUM);
-			nb.setNote(new Note(pitch));
-		}
-
+		BlockData data = matchData.getBlock() == null ? Material.GRAY_CONCRETE_POWDER.createBlockData() : matchData.getBlock().createBlockData();
 		matchData.getColorChangingBlocks().forEach(block -> {
 			block.getBlock().setBlockData(data, false);
 		});
 	}
-	// endregion
 
+	public void startEqAnimation(Match match) {
+		BlockPartyMatchData matchData = match.getMatchData();
+		if (matchData.getEqTaskId() > 0)
+			return;
+		matchData.setEqTaskId(match.getTasks().repeat(5, 5, () -> {
+			int frame = matchData.getEqCurrentFrame() + 1;
+
+			if (frame > getMaxFrames(match))
+				frame = 0;
+
+			updateEqWalls(match, frame);
+
+			matchData.setEqCurrentFrame(frame);
+		}));
+	}
+
+	private void updateEqWalls(Match match, int frame) {
+		Region frameRegion = match.getArena().getRegion("eq_frames");
+		BlockVector3 min, max;
+		var diff = frameRegion.getMaximumPoint().subtract(frameRegion.getMinimumPoint());
+		if (diff.x() > diff.z()) {
+			min = frameRegion.getMinimumPoint().withX(frameRegion.getMinimumPoint().x() + (frame * 2));
+			max = frameRegion.getMaximumPoint().withX(frameRegion.getMinimumPoint().x() + (frame * 2) + 1);
+		}
+		else {
+			min = frameRegion.getMinimumPoint().withZ(frameRegion.getMinimumPoint().z() + (frame * 2));
+			max = frameRegion.getMaximumPoint().withZ(frameRegion.getMinimumPoint().z() + (frame * 2) + 1);
+		}
+
+		CuboidRegion clipboard = new CuboidRegion(match.getArena().worldedit().worldEditWorld, min, max);
+		AtomicInteger rotation = new AtomicInteger(90);
+
+		match.getArena().getRegionsLike("eq_paste").stream()
+			.sorted(Comparator.comparing(ProtectedRegion::getId))
+			.forEachOrdered(region -> {
+				match.getArena().worldedit().paster()
+					.at(region.getMinimumPoint())
+					.clipboard(clipboard)
+					.transform(new AffineTransform().rotateX(0).rotateY(rotation.getAndAdd(90)).rotateZ(0))
+					.build();
+			});
+
+	}
+
+	private int getMaxFrames(Match match) {
+		Arena arena = match.getArena();
+		Region region = arena.getRegion("eq_frames");
+		var diff = region.getMaximumPoint().subtract(region.getMinimumPoint());
+		int length = Math.min(diff.x(), diff.z());
+		return length / 2;
+	}
+
+	public void stopEqAnimation(Match match) {
+		BlockPartyMatchData matchData = match.getMatchData();
+		match.getTasks().cancel(matchData.getEqTaskId());
+		matchData.setEqTaskId(0);
+	}
+	// endregion
 
 	//region Song playing/selection
 	private List<UUID> getListenerUUIDs(Match match) {
@@ -398,25 +520,28 @@ public class BlockParty extends TeamlessMechanic {
 				))
 				.play()
 				.send();
+
+		BlockPartyMatchData matchData = match.getMatchData();
+		matchData.setPlayTime(LocalDateTime.now());
 	}
 
 	private void playSong(Match match) {
-		match.sendActionBar(new JsonBuilder("&a♫ &f&lDANCE &a♫"));
-
 		BlockPartyMatchData matchData = match.getMatchData();
 		matchData.setPlayTime(LocalDateTime.now());
 
 		BlockPartyClientMessage.to(getListenerUUIDs(match)).play().send();
+		startEqAnimation(match);
+		matchData.setActionBarMessage(new JsonBuilder("&a♫ &f&lDANCE &a♫"));
 	}
 
 	private void pauseSong(Match match) {
-		match.sendActionBar(new JsonBuilder("&c&l✖ &f&lSTOP &c&l✖"));
-
 		BlockPartyMatchData matchData = match.getMatchData();
 		double seconds = Duration.between(matchData.getPlayTime(), LocalDateTime.now()).toSeconds();
 		matchData.setSongTimeInSeconds(matchData.getSongTimeInSeconds() + seconds);
 
 		BlockPartyClientMessage.to(getListenerUUIDs(match)).pause().send();
+		stopEqAnimation(match);
+		matchData.setActionBarMessage(new JsonBuilder("&c&l✖ &f&lSTOP &c&l✖"));
 	}
 	//endregion
 
@@ -489,11 +614,11 @@ public class BlockParty extends TeamlessMechanic {
 	}
 
 	static {
-		read();
+		read(false);
 	}
 
 	@SneakyThrows
-	public static void read() {
+	public static void read(boolean removePadding) {
 		Minigames.debug("Loading Block Party Music");
 		Path path = Paths.get(FOLDER);
 		File file = path.toFile();
@@ -508,7 +633,7 @@ public class BlockParty extends TeamlessMechanic {
 					if (name.startsWith(".")) return;
 					if (!name.endsWith(".mp3")) return;
 
-					read(name);
+					read(name, removePadding);
 				} catch (Exception ex) {
 					Nexus.severe("An error occurred while trying to read block party music file: " + filePath.getFileName().toFile(), ex);
 					if (Nexus.isDebug())
@@ -523,9 +648,16 @@ public class BlockParty extends TeamlessMechanic {
 	}
 
 	@SneakyThrows
-	private static void read(String name) {
+	private static void read(String name, boolean removePadding) {
 		String path = FOLDER + name;
 		Minigames.debug("Reading file: " + path);
+
+		if (removePadding) {
+			File mp3File = new File(path);
+			TagOptionSingleton.getInstance().setId3v2PaddingWillShorten(true);
+			AudioFile audioFile = AudioFileIO.read(mp3File);
+			audioFile.commit();
+		}
 
 		File mp3File = new File(path);
 		AudioFile audioFile = AudioFileIO.read(mp3File);

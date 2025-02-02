@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import lombok.Data;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -33,9 +34,13 @@ public class BlockPartyMatchData extends MatchData {
 	private List<BlockParty.BlockPartySong> possibleSongs = new ArrayList<>();
 	private Map<UUID, String> votes = new HashMap<>();
 	private List<Minigamer> aliveAtStartOfRound = new ArrayList<>();
+	private List<Minigamer> winners;
+	private JsonBuilder actionBarMessage;
 
 	private List<Location> colorChangingBlocks = new ArrayList<>();
 	private BlockData colorChangingBlockData;
+	private int eqTaskId = -1;
+	private int eqCurrentFrame = 0;
 
 	public BlockPartyMatchData(Match match) {
 		super(match);

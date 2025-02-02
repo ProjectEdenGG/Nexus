@@ -1007,9 +1007,17 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Permission(Group.ADMIN)
 	@Path("blockParty loadSongs")
 	void loadBlockPartySongs() {
-		BlockParty.read();
+		BlockParty.read(false);
 		send(PREFIX + "Loaded &e" + BlockParty.songList.size() + " &3block party songs");
 	}
+
+	@Permission(Group.ADMIN)
+	@Path("blockParty removePaddingInSongFiles")
+	void removePaddingInSongFiles() {
+		BlockParty.read(true);
+		send(PREFIX + "Done");
+	}
+
 
 	@ConverterFor(Arena.class)
 	Arena convertToArena(String value) {
