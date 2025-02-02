@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Data
 @Entity(value = "transactions", noClassnameStored = true)
@@ -27,7 +27,7 @@ public class Transactions implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private List<Transaction> transactions = new ArrayList<>();
+	private List<Transaction> transactions = new CopyOnWriteArrayList<>();
 
 	public List<Transaction> getUnreceivedTransactions() {
 		return transactions.stream().filter(transaction -> !transaction.isReceived()).toList();

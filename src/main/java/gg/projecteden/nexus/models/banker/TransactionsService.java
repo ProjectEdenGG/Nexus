@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @ObjectClass(Transactions.class)
 public class TransactionsService extends MongoPlayerService<Transactions> {
@@ -22,11 +23,13 @@ public class TransactionsService extends MongoPlayerService<Transactions> {
 	@Override
 	protected void beforeSave(Transactions transactions) {
 		try {
-			final List<Transaction> txns = transactions.getTransactions();
+			final List<Transaction> txns = new CopyOnWriteArrayList<>(transactions.getTransactions());
 			txns.removeIf(transaction -> transaction.getTimestamp().isBefore(LocalDateTime.now().minusDays(60)));
 
 			if (txns.size() > LIMIT)
-				transactions.setTransactions(txns.subList(txns.size() - LIMIT, txns.size()));
+				transactions.setTransactions(new CopyOnWriteArrayList<>(txns.subList(txns.size() - LIMIT, txns.size())));
+			else
+				transactions.setTransactions(new CopyOnWriteArrayList<>(txns));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

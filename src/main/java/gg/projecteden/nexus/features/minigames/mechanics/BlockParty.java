@@ -341,7 +341,7 @@ public class BlockParty extends TeamlessMechanic {
 		}
 
 		matchData.getColorChangingBlocks().forEach(block -> {
-			block.getBlock().setBlockData(data);
+			block.getBlock().setBlockData(data, false);
 		});
 	}
 	// endregion
