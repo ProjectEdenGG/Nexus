@@ -11,6 +11,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import lombok.Data;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -33,6 +34,9 @@ public class BlockPartyMatchData extends MatchData {
 	private Map<UUID, String> votes = new HashMap<>();
 	private List<Minigamer> aliveAtStartOfRound = new ArrayList<>();
 
+	private List<Location> colorChangingBlocks = new ArrayList<>();
+	private BlockData colorChangingBlockData;
+
 	public BlockPartyMatchData(Match match) {
 		super(match);
 	}
@@ -42,7 +46,7 @@ public class BlockPartyMatchData extends MatchData {
 	}
 
 	public Region getStackRegion() {
-		return getMatch().getArena().getRegion("stack");
+		return getMatch().getArena().worldguard().getRegion("blockparty_stack");
 	}
 
 	public int countFloors() {
