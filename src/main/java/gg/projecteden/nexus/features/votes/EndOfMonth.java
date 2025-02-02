@@ -5,7 +5,6 @@ import gg.projecteden.api.discord.DiscordId.User;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
-import gg.projecteden.nexus.features.votes.party.VoteParty;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.voter.TopVoter;
@@ -133,7 +132,7 @@ public class EndOfMonth {
 
 		public String getDiscordMessage() {
 			String msg = "";
-			msg += "## " + StringUtils.camelCase(yearMonth.getMonth().name()) + "";
+			msg += "## " + StringUtils.camelCase(yearMonth.getMonth().name());
 			msg += System.lineSeparator();
 			msg += "_ _";
 			msg += System.lineSeparator();
@@ -145,43 +144,6 @@ public class EndOfMonth {
 			msg += System.lineSeparator();
 			msg += System.lineSeparator();
 			msg += "Message <@" + User.GRIFFIN.getId() + "> to claim your reward!";
-//			msg += System.lineSeparator();
-//			msg += System.lineSeparator();
-//			msg += "Other top voter rewards have been disabled this month while we update them";
-			msg += System.lineSeparator();
-			msg += System.lineSeparator();
-
-//			msg += "***Time to congratulate the Top Voters of " + StringUtils.camelCase(yearMonth.getMonth().name()) + "!***";
-//			msg += System.lineSeparator();
-//			msg += System.lineSeparator();
-//			msg += ":first_place:   **First place** ($10/$30,000/3 MC): " + getAsString(first) + " (" + first.get(0).getCount() + ")";
-//			msg += System.lineSeparator();
-//			msg += ":second_place:   **Second place** ($5/$25,000/2 MC): " + getAsString(second) + " (" + second.get(0).getCount() + ")";
-//			msg += System.lineSeparator();
-//			msg += ":third_place:   **Third place** ($20,000/1 MC): " + getAsString(third) + " (" + third.get(0).getCount() + ")";
-//			msg += System.lineSeparator();
-//			msg += System.lineSeparator();
-//			msg += "Message <@" + User.GRIFFIN.getId() + "> to get your reward if you have won something above! (The below rewards are automatically applied)";
-//			msg += System.lineSeparator();
-//			msg += System.lineSeparator();
-//			msg += ":gift:   **Lucky mystery chest winner:** " + getAsString(mysteryChestWinner) + (mysteryChestWinner == null ? "" : " (" + mysteryChestWinner.getCount() + ")");
-//			msg += System.lineSeparator();
-//			msg += System.lineSeparator();
-//			msg += ":gem:   $15,000 bonus: " + getAsString(eco15kWinners);
-//			msg += System.lineSeparator();
-//			msg += ":moneybag:   $10,000 bonus: " + getAsString(eco10kWinners);
-//			msg += System.lineSeparator();
-//			msg += ":dollar:   $5,000 bonus: " + getAsString(eco05kWinners);
-//			msg += System.lineSeparator();
-//			msg += System.lineSeparator();
-
-			if (!VoteParty.isFeatureEnabled(null)) {
-				if (total > Votes.GOAL)
-					msg += "**You've reached the server wide voting goal, congratulations!** Stay tuned for further information from a staff member.";
-				else
-					msg += "**Unfortunately, the server wide goal was not reached. Get voting this month!**";
-			}
-
 			msg += System.lineSeparator();
 			msg += System.lineSeparator();
 			msg += "**<" + EdenSocialMediaSite.WEBSITE.getUrl() + "/vote>**";
