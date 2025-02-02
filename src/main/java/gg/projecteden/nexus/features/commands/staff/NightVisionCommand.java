@@ -16,11 +16,16 @@ import gg.projecteden.nexus.models.vanish.VanishUser.Setting;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.Tasks;
+import lombok.NoArgsConstructor;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.potion.PotionEffectType;
 
 @Aliases("nv")
 @Permission(Group.STAFF)
-public class NightVisionCommand extends CustomCommand {
+@NoArgsConstructor
+public class NightVisionCommand extends CustomCommand implements Listener {
 	private static final NerdService nerdService = new NerdService();
 	private static final PotionEffectType EFFECT_TYPE = PotionEffectType.NIGHT_VISION;
 	private static final PotionEffectBuilder NIGHT_VISION = new PotionEffectBuilder(EFFECT_TYPE).infinite();
@@ -51,6 +56,17 @@ public class NightVisionCommand extends CustomCommand {
 
 			nerdService.edit(player(), nerd -> nerd.setNightVision(false));
 		}
+	}
+
+	@EventHandler
+	public void onWorldChange(PlayerChangedWorldEvent event) {
+		Tasks.wait(5, () -> {
+			if (Nerd.of(event.getPlayer()).isNightVision()) {
+				event.getPlayer().removePotionEffect(EFFECT_TYPE);
+				Tasks.wait(1, () -> event.getPlayer().addPotionEffect(NIGHT_VISION.build()));
+			}
+		});
+
 	}
 
 }

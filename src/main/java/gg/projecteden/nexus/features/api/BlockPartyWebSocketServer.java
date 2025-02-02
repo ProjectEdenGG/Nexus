@@ -15,6 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedSelectorException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
@@ -54,7 +55,9 @@ public class BlockPartyWebSocketServer {
 				}
 				selector.selectedKeys().clear();
 			}
-		} catch (IOException e) {
+		}
+		catch (ClosedSelectorException ignored) {}
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -67,6 +70,13 @@ public class BlockPartyWebSocketServer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		clients.values().forEach(client -> {
+			try {
+				client.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 	@SneakyThrows
@@ -317,6 +327,12 @@ public class BlockPartyWebSocketServer {
 			return this;
 		}
 
+		public void send() {
+			if (uuids.size() > 1)
+				BlockPartyWebSocketServer.broadcast(this);
+			else if (!uuids.isEmpty())
+				BlockPartyWebSocketServer.broadcast(this.uuids.get(0), this);
+		}
 	}
 
 	@AllArgsConstructor
