@@ -77,7 +77,7 @@ import java.util.stream.Stream;
 public class BlockParty extends TeamlessMechanic {
 
 	public static List<BlockPartySong> songList = new ArrayList<>();
-	private static final String FOLDER = "plugins/Nexus/minigames/blockpartymusic/";
+	private static final String FOLDER = "plugins/Nexus/minigames/blockparty/music/";
 	private static final int MAX_ROUNDS = 25;
 
 	// region minigame framework
@@ -130,7 +130,7 @@ public class BlockParty extends TeamlessMechanic {
 	}
 
 	@EventHandler
-	public void onPlayerJoin(MatchJoinEvent event) {
+	public void onSpectatingJoin(MatchJoinEvent event) {
 		Minigamer minigamer = event.getMinigamer();
 		Player player = minigamer.getOnlinePlayer();
 
@@ -609,7 +609,7 @@ public class BlockParty extends TeamlessMechanic {
 		String fileName;
 
 		public String getUrl() {
-			return "https://cdn.projecteden.gg/blockpartymusic/" + fileName;
+			return "https://cdn.projecteden.gg/blockparty/music/" + fileName;
 		}
 	}
 
