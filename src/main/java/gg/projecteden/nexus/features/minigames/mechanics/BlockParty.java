@@ -648,6 +648,43 @@ public class BlockParty extends TeamlessMechanic {
 	}
 
 	@SneakyThrows
+	public static void removeSilence() {
+		Path path = Paths.get(FOLDER);
+		File file = path.toFile();
+		if (!file.exists()) file.createNewFile();
+		songList.clear();
+		try (Stream<Path> paths = Files.walk(path)) {
+			paths.forEach(filePath -> {
+				try {
+					if (!Files.isRegularFile(filePath)) return;
+
+					String name = filePath.getFileName().toString();
+					if (name.startsWith(".")) return;
+					if (!name.endsWith(".mp3")) return;
+
+					Nexus.log("Processing " + file.getAbsolutePath() + "/" + name);
+
+					ProcessBuilder pb = new ProcessBuilder(
+						"ffmpeg", "-y", "-i", file.getAbsolutePath() + "/" + name,
+						"-af", "silenceremove=start_periods=1:start_threshold=-30dB",
+						file.getAbsolutePath() + "/silenceRemoved/" + name
+					);
+					pb.inheritIO();
+					pb.start();
+				} catch (Exception ex) {
+					Nexus.severe("An error occurred while trying to remove the silence from bp music file: " + filePath.getFileName().toFile(), ex);
+					if (Nexus.isDebug())
+						ex.printStackTrace();
+				}
+			});
+		} catch (Exception ex) {
+			Nexus.severe("An error occurred while trying to read block party music files: " + ex.getMessage());
+			if (Nexus.isDebug())
+				ex.printStackTrace();
+		}
+	}
+
+	@SneakyThrows
 	private static void read(String name, boolean removePadding) {
 		String path = FOLDER + name;
 		Minigames.debug("Reading file: " + path);

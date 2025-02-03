@@ -1018,6 +1018,16 @@ public class MinigamesCommand extends _WarpSubCommand {
 		send(PREFIX + "Done");
 	}
 
+	@Permission(Group.ADMIN)
+	@Confirm(title = "Confirm? Please read the chat on yes!!!")
+	@Path("blockParty removeSilence")
+	void removeSilence() {
+		send(PREFIX + "Starting silence removal from all Block Party songs");
+		send("- There is no completion confirmation here, watch console for completion.");
+		send("- Output is in the plugins/Nexus/minigames/blockpartymusic/silenceRemoved directory. They must be copied over manually once complete.");
+		BlockParty.removeSilence();
+	}
+
 
 	@ConverterFor(Arena.class)
 	Arena convertToArena(String value) {
