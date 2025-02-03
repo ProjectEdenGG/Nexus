@@ -56,7 +56,6 @@ import org.jaudiotagger.tag.TagOptionSingleton;
 import org.jetbrains.annotations.NotNull;
 import org.joml.AxisAngle4d;
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -263,6 +262,9 @@ public class BlockParty extends TeamlessMechanic {
 		pasteFloor(match, RandomUtils.randomInt(1, matchData.countFloors()));
 		playSong(match);
 		waitWithMusic(match);
+
+		startEqAnimation(match);
+		setBlockInHand(match, null);
 	}
 
 	private void pasteFloor(Match match, int index) {
@@ -274,8 +276,9 @@ public class BlockParty extends TeamlessMechanic {
 
 		BlockPartyClientMessage.to(getListenerUUIDs(match)).block("").send();
 		matchData.setBlock(null);
+
 		setArenaColor(match);
-		setBlockInHand(match, null);
+		startDiscoBallAnimation(match);
 	}
 
 
@@ -369,6 +372,7 @@ public class BlockParty extends TeamlessMechanic {
 				block.setType(Material.AIR);
 		});
 		stopDiscoBallAnimation(match);
+		stopEqAnimation(match);
 
 		waitAfterClear(match);
 	}
@@ -505,14 +509,15 @@ public class BlockParty extends TeamlessMechanic {
 		if (matchData.getDiscoBallTaskId() > 0)
 			return;
 
-		matchData.setDiscoBallTaskId(match.getTasks().repeat(1,timeForOneRotation / 4, () -> {
+		matchData.setDiscoBallTaskId(match.getTasks().repeat(1,2, () -> {
 			matchData.getDiscoBalls().forEach(display -> {
 				Transformation transformation = display.getTransformation();
-				Matrix4f matrix = display.getTransformation().getLeftRotation().get(new Matrix4f()).scale(4);
+				Matrix4f matrix = display.getTransformation().getLeftRotation().get(new Matrix4f());
+				matrix.scale(transformation.getScale().x());
 
-				display.setTransformationMatrix(matrix.rotateY(((float) Math.toRadians(90)) + 0.1F));
+				display.setTransformationMatrix(matrix.rotateY(((float) Math.toRadians(360 / (timeForOneRotation * 2d))) + 0.01F));
 				display.setInterpolationDelay(0);
-				display.setInterpolationDuration(timeForOneRotation / 4);
+				display.setInterpolationDuration(2);
 			});
 		}));
 	}
@@ -521,18 +526,6 @@ public class BlockParty extends TeamlessMechanic {
 		BlockPartyMatchData matchData = match.getMatchData();
 		match.getTasks().cancel(matchData.getDiscoBallTaskId());
 		matchData.setDiscoBallTaskId(0);
-
-		matchData.getDiscoBalls().forEach(display -> {
-			display.setInterpolationDuration(0);
-
-			Transformation transformation = display.getTransformation();
-			Quaternionf currentRotation = transformation.getLeftRotation();
-			AxisAngle4d axisAngle = new AxisAngle4d();
-			currentRotation.get(axisAngle);
-
-			transformation.getLeftRotation().set(axisAngle);
-			display.setTransformation(transformation);
-		});
 	}
 	// endregion
 
@@ -597,7 +590,6 @@ public class BlockParty extends TeamlessMechanic {
 		matchData.setPlayTime(LocalDateTime.now());
 
 		BlockPartyClientMessage.to(getListenerUUIDs(match)).play().send();
-		startEqAnimation(match);
 		matchData.setActionBarMessage(new JsonBuilder("&a♫ &f&lDANCE &a♫"));
 	}
 
@@ -607,7 +599,6 @@ public class BlockParty extends TeamlessMechanic {
 		matchData.setSongTimeInSeconds(matchData.getSongTimeInSeconds() + seconds);
 
 		BlockPartyClientMessage.to(getListenerUUIDs(match)).pause().send();
-		stopEqAnimation(match);
 		matchData.setActionBarMessage(new JsonBuilder("&c&l✖ &f&lSTOP &c&l✖"));
 	}
 	//endregion
