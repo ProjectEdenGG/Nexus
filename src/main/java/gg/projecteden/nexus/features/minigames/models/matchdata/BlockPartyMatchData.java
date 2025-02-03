@@ -13,6 +13,7 @@ import lombok.Data;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.ItemDisplay;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -42,7 +43,6 @@ public class BlockPartyMatchData extends MatchData {
 	private int eqTaskId = -1;
 	private int eqCurrentFrame = 0;
 
-	private boolean animateDiscoBall;
 	private int discoBallTaskId = -1;
 
 	public BlockPartyMatchData(Match match) {
@@ -82,5 +82,12 @@ public class BlockPartyMatchData extends MatchData {
 
 	public void incRound() {
 		this.round++;
+	}
+
+	public List<ItemDisplay> getDiscoBalls() {
+		return match.worldguard().getEntitiesInRegion(match.getArena().getRegionBaseName() + "_disco_ball").stream()
+			.filter(entity -> entity instanceof ItemDisplay)
+			.map(entity -> (ItemDisplay) entity)
+			.toList();
 	}
 }

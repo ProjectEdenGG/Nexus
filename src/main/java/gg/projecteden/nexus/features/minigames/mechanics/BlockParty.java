@@ -24,7 +24,6 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginE
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.BlockPartyMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
@@ -39,8 +38,6 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -50,13 +47,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
+import org.bukkit.util.Transformation;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagOptionSingleton;
 import org.jetbrains.annotations.NotNull;
+import org.joml.AxisAngle4d;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -105,27 +105,26 @@ public class BlockParty extends TeamlessMechanic {
 	@Override
 	public void onInitialize(@NotNull MatchInitializeEvent event) {
 		super.onInitialize(event);
-		selectSongsForVoting(event.getMatch());
-		setupColorChangingAreas(event.getMatch()).thenRun(() -> {
-			pasteLogoFloor(event.getMatch());
+		Match match = event.getMatch();
+
+		selectSongsForVoting(match);
+		setupColorChangingAreas(match).thenRun(() -> {
+			pasteLogoFloor(match);
 		});
-		updateEqWalls(event.getMatch(), 0);
+		updateEqWalls(match, 0);
+		resetDiscoBalls(match);
+		startDiscoBallAnimation(match);
 	}
 
 	@Override
 	public void onJoin(@NotNull MatchJoinEvent event) {
 		super.onJoin(event);
 
-		Match match = event.getMatch();
 		Minigamer minigamer = event.getMinigamer();
 		Player player = minigamer.getOnlinePlayer();
 
 		if (!(minigamer.getMatch().getMechanic() instanceof BlockParty))
 			return;
-
-		BlockPartyMatchData matchData = match.getMatchData();
-		if (!matchData.isAnimateDiscoBall())
-			startDiscoBallAnimation(match);
 
 		if (!event.getMatch().isStarted()) {
 			ItemStack menuItem = new ItemBuilder(Material.MUSIC_DISC_CAT).name("Vote for a Song!").build();
@@ -195,18 +194,6 @@ public class BlockParty extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onQuit(@NotNull MatchQuitEvent event) {
-		super.onQuit(event);
-
-		BlockPartyClientMessage.to(event.getMinigamer().getUniqueId()).stop().send();
-
-		Match match = event.getMatch();
-		BlockPartyMatchData matchData = match.getMatchData();
-		if (matchData.isAnimateDiscoBall() && match.getMinigamers().isEmpty())
-			stopDiscoBallAnimation(match);
-	}
-
-	@Override
 	public void onEnd(@NotNull MatchEndEvent event) {
 		super.onEnd(event);
 
@@ -215,6 +202,8 @@ public class BlockParty extends TeamlessMechanic {
 
 		pasteColorChanging(event.getMatch());
 		updateEqWalls(event.getMatch(), 0);
+
+		stopDiscoBallAnimation(event.getMatch());
 	}
 
 	@Override
@@ -286,7 +275,9 @@ public class BlockParty extends TeamlessMechanic {
 		BlockPartyClientMessage.to(getListenerUUIDs(match)).block("").send();
 		matchData.setBlock(null);
 		setArenaColor(match);
+		setBlockInHand(match, null);
 	}
+
 
 	private void waitWithMusic(Match match) {
 		match.getTasks().wait(TimeUtils.TickTime.SECOND.x(5), () -> {
@@ -303,6 +294,17 @@ public class BlockParty extends TeamlessMechanic {
 
 		BlockPartyClientMessage.to(getListenerUUIDs(match)).block(matchData.getBlock().name()).send();
 		setArenaColor(match);
+		setBlockInHand(match, matchData.getBlock());
+	}
+
+	private void setBlockInHand(Match match, Material block) {
+		if (block != null) {
+			ItemBuilder item = new ItemBuilder(block).name("");
+			match.getAliveMinigamers().forEach(minigamer -> minigamer.getPlayer().getInventory().setItem(0, item.build()));
+		}
+		else {
+			match.getAliveMinigamers().forEach(minigamer -> minigamer.getPlayer().getInventory().setItem(0, null));
+		}
 	}
 
 	private void doCountdown(Match match) {
@@ -366,6 +368,7 @@ public class BlockParty extends TeamlessMechanic {
 			if (block.getType() != matchData.getBlock())
 				block.setType(Material.AIR);
 		});
+		stopDiscoBallAnimation(match);
 
 		waitAfterClear(match);
 	}
@@ -483,6 +486,54 @@ public class BlockParty extends TeamlessMechanic {
 		match.getTasks().cancel(matchData.getEqTaskId());
 		matchData.setEqTaskId(0);
 	}
+
+	public void resetDiscoBalls(Match match) {
+		BlockPartyMatchData matchData = match.getMatchData();
+		matchData.getDiscoBalls().forEach(display -> {
+			display.setInterpolationDuration(0);
+			Transformation transformation = display.getTransformation();
+			transformation.getLeftRotation().set(new AxisAngle4d(0, 0, 1, 0));
+			display.setTransformation(transformation);
+		});
+	}
+
+	int timeForOneRotation = (int) TimeUtils.TickTime.SECOND.x(10);
+
+	public void startDiscoBallAnimation(Match match) {
+		BlockPartyMatchData matchData = match.getMatchData();
+
+		if (matchData.getDiscoBallTaskId() > 0)
+			return;
+
+		matchData.setDiscoBallTaskId(match.getTasks().repeat(1,timeForOneRotation / 4, () -> {
+			matchData.getDiscoBalls().forEach(display -> {
+				Transformation transformation = display.getTransformation();
+				Matrix4f matrix = display.getTransformation().getLeftRotation().get(new Matrix4f()).scale(4);
+
+				display.setTransformationMatrix(matrix.rotateY(((float) Math.toRadians(90)) + 0.1F));
+				display.setInterpolationDelay(0);
+				display.setInterpolationDuration(timeForOneRotation / 4);
+			});
+		}));
+	}
+
+	public void stopDiscoBallAnimation(Match match) {
+		BlockPartyMatchData matchData = match.getMatchData();
+		match.getTasks().cancel(matchData.getDiscoBallTaskId());
+		matchData.setDiscoBallTaskId(0);
+
+		matchData.getDiscoBalls().forEach(display -> {
+			display.setInterpolationDuration(0);
+
+			Transformation transformation = display.getTransformation();
+			Quaternionf currentRotation = transformation.getLeftRotation();
+			AxisAngle4d axisAngle = new AxisAngle4d();
+			currentRotation.get(axisAngle);
+
+			transformation.getLeftRotation().set(axisAngle);
+			display.setTransformation(transformation);
+		});
+	}
 	// endregion
 
 	//region Song playing/selection
@@ -560,29 +611,6 @@ public class BlockParty extends TeamlessMechanic {
 		matchData.setActionBarMessage(new JsonBuilder("&c&l✖ &f&lSTOP &c&l✖"));
 	}
 	//endregion
-
-	public void startDiscoBallAnimation(Match match) {
-		discoBallStand = (ArmorStand) Bukkit.getEntity(UUID.fromString(discoBallStandUUID));
-		if (discoBallStand == null)
-			return;
-
-		BlockPartyMatchData matchData = match.getMatchData();
-		matchData.setAnimateDiscoBall(true);
-		int taskId = match.getTasks().repeat(0, 2, () -> {
-			Location rotated = discoBallStand.getLocation().clone();
-			float newYaw = rotated.getYaw() + 1;
-			newYaw = (newYaw + 360) % 360;
-			rotated.setYaw(newYaw);
-			discoBallStand.teleport(rotated);
-		});
-		matchData.setDiscoBallTaskId(taskId);
-	}
-
-	public void stopDiscoBallAnimation(Match match) {
-		BlockPartyMatchData matchData = match.getMatchData();
-		matchData.setAnimateDiscoBall(false);
-		match.getTasks().cancel(matchData.getDiscoBallTaskId());
-	}
 
 	@EventHandler
 	public void openVoteMenu(PlayerInteractEvent event) {
