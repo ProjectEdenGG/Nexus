@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.lobby.MinigameInviter;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
+import gg.projecteden.nexus.features.minigames.menus.annotations.Scroll;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -19,14 +20,23 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -68,7 +78,17 @@ public class ArenasMenu extends ScrollableInventoryProvider {
 	public void init() {
 		final MechanicSubGroup group = MechanicSubGroup.from(mechanic);
 		if (group != null)
-			addBackItemBottomInventory(new MechanicSubGroupMenu(group));
+			addBackItemBottomInventory(e -> {
+				boolean scroll = false;
+				try {
+					scroll = MechanicSubGroup.class.getField(group.name()).isAnnotationPresent(Scroll.class);
+				} catch (NoSuchFieldException | SecurityException ignored) {}
+
+				if (!scroll)
+					new MechanicSubGroupMenu(group).open(e.getPlayer());
+				else
+					new ScrollableMechanicSubGroupMenu(group).open(e.getPlayer());
+			});
 		else
 			addCloseItemBottomInventory();
 

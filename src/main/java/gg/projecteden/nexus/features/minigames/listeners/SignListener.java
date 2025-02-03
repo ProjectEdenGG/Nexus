@@ -9,8 +9,10 @@ import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.lobby.MinigameInviter;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
+import gg.projecteden.nexus.features.minigames.menus.annotations.Scroll;
 import gg.projecteden.nexus.features.minigames.menus.lobby.ArenasMenu;
 import gg.projecteden.nexus.features.minigames.menus.lobby.MechanicSubGroupMenu;
+import gg.projecteden.nexus.features.minigames.menus.lobby.ScrollableMechanicSubGroupMenu;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -128,7 +130,7 @@ public class SignListener implements Listener {
 			if (gg.projecteden.api.common.utils.Nullables.isNullOrEmpty(id))
 				return;
 
-			if (!id.startsWith(MechanicType.BOUNDING_BOX_ID_PREFIX))
+			if (!id.startsWith(MechanicType.BOUNDING_BOX_ID_PREFIX) && !id.startsWith(MechanicSubGroup.BOUNDING_BOX_ID_PREFIX))
 				return;
 
 			final ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
@@ -143,24 +145,39 @@ public class SignListener implements Listener {
 			if (!new CooldownService().check(player, "minigames-sign-interact", TickTime.SECOND))
 				return;
 
-			final String mechanicName = id.replace(MechanicType.BOUNDING_BOX_ID_PREFIX, "");
+			final String mechanicName = id.replace(MechanicType.BOUNDING_BOX_ID_PREFIX, "").replace(MechanicSubGroup.BOUNDING_BOX_ID_PREFIX, "");
 
 			switch (mechanicName) {
 				case "mob_arena" -> PlayerUtils.send(player, Minigames.PREFIX + "&cComing soon!");
 				case "tictactoe" -> PlayerUtils.runCommand(player, "warp " + mechanicName);
 				default -> {
-					final MechanicType mechanic = MechanicType.from(event.getEntity());
+					MechanicType mechanic = null;
+					MechanicSubGroup subGroup = null;
+					try { mechanic = MechanicType.from(event.getEntity()); }
+					catch (Exception ignore) {
+						try { subGroup = MechanicSubGroup.from(event.getEntity()); }
+						catch (Exception ignore2) { return; }
+					}
 
-					if (mechanic == null)
+					if (mechanic == null && subGroup == null)
 						return;
 
-					if (mechanic.get().isTestMode()) {
+					if (mechanic != null && mechanic.get().isTestMode()) {
 						PlayerUtils.send(player, Minigames.PREFIX + "&cComing soon!");
 						return;
 					}
 
-					if (MechanicSubGroup.isParent(mechanic)) {
-						new MechanicSubGroupMenu(MechanicSubGroup.from(mechanic)).open(player);
+					if (subGroup != null || MechanicSubGroup.isParent(mechanic)) {
+						boolean scroll = false;
+						try {
+							scroll = MechanicSubGroup.class.getField(subGroup.name()).isAnnotationPresent(Scroll.class);
+						} catch (NoSuchFieldException | SecurityException ignored) {}
+
+						if (!scroll)
+							new MechanicSubGroupMenu(subGroup).open(player);
+						else
+							new ScrollableMechanicSubGroupMenu(subGroup).open(player);
+
 						if (holdingInvite) {
 							if (MinigameInviter.canSendInvite(player))
 								Tasks.wait(1, () -> player.setItemOnCursor(ArenasMenu.getInviteItem(player).build()));
@@ -223,25 +240,38 @@ public class SignListener implements Listener {
 		if (outline == null)
 			return;
 
-		final String mechanicName = id.replace(MechanicType.BOUNDING_BOX_ID_PREFIX, "");
+		final String mechanicName = id.replace(MechanicType.BOUNDING_BOX_ID_PREFIX, "").replace(MechanicSubGroup.BOUNDING_BOX_ID_PREFIX, "");
 
 		switch (mechanicName) {
 			case "mob_arena" -> PacketUtils.sendFakeDisplayItem(event.getPlayer(), outline, new ItemBuilder(CustomMaterial.IMAGES_OUTLINE_3x2_COMING_SOON).dyeColor("#FD6A02").build());
 			case "tictactoe" -> PacketUtils.sendFakeDisplayItem(event.getPlayer(), outline, new ItemBuilder(CustomMaterial.IMAGES_OUTLINE_1x2).dyeColor("#FD6A02").build());
 			default -> {
-				final MechanicType mechanic = getMechanic(event.getEntity());
-				if (mechanic == null)
+				MechanicType mechanic = null;
+				MechanicSubGroup subGroup = null;
+				try { mechanic = MechanicType.from(event.getEntity()); }
+				catch (Exception ignore) {
+					try { subGroup = MechanicSubGroup.from(event.getEntity()); }
+					catch (Exception ignore2) { return; }
+				}
+
+				if (mechanic == null && subGroup == null)
 					return;
 
-				CustomMaterial outlineMaterial = CustomMaterial.IMAGES_OUTLINE_3x2;
-				if (mechanic.getGroup() == MechanicGroup.ARCADE)
-					outlineMaterial = CustomMaterial.IMAGES_OUTLINE_1x2;
+				if (mechanic == null)
+					mechanic = subGroup.getMechanics().get(0);
 
-				if (mechanic.get().isTestMode()) {
-					outlineMaterial = CustomMaterial.IMAGES_OUTLINE_3x2_COMING_SOON;
+				CustomMaterial outlineMaterial = CustomMaterial.IMAGES_OUTLINE_3x2;
+				if (mechanic != null) {
 					if (mechanic.getGroup() == MechanicGroup.ARCADE)
-						outlineMaterial = CustomMaterial.IMAGES_OUTLINE_1x2_COMING_SOON;
+						outlineMaterial = CustomMaterial.IMAGES_OUTLINE_1x2;
+
+					if (mechanic.get().isTestMode()) {
+						outlineMaterial = CustomMaterial.IMAGES_OUTLINE_3x2_COMING_SOON;
+						if (mechanic.getGroup() == MechanicGroup.ARCADE)
+							outlineMaterial = CustomMaterial.IMAGES_OUTLINE_1x2_COMING_SOON;
+					}
 				}
+
 
 				PacketUtils.sendFakeDisplayItem(event.getPlayer(), outline, new ItemBuilder(outlineMaterial).dyeColor("#FD6A02").build());
 			}
@@ -254,7 +284,7 @@ public class SignListener implements Listener {
 		if (gg.projecteden.api.common.utils.Nullables.isNullOrEmpty(id))
 			return;
 
-		if (!id.startsWith(MechanicType.BOUNDING_BOX_ID_PREFIX))
+		if (!id.startsWith(MechanicType.BOUNDING_BOX_ID_PREFIX) && !id.startsWith(MechanicSubGroup.BOUNDING_BOX_ID_PREFIX))
 			return;
 
 		final Entity outline = event.getEntity().getAssociatedEntity("outline");
