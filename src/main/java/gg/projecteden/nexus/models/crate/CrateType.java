@@ -1,9 +1,11 @@
 package gg.projecteden.nexus.models.crate;
 
-import gg.projecteden.nexus.features.crates.Crates;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.models.mail.Mailer.Mail;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -99,17 +101,7 @@ public enum CrateType {
 	public void give(OfflinePlayer player, int amount) {
 		ItemStack item = getKey().clone();
 		item.setAmount(amount);
-		if (player.isOnline() && player.getPlayer() != null && WorldGroup.of(player.getPlayer()) == WorldGroup.SURVIVAL && PlayerUtils.hasRoomFor(player.getPlayer(), item))
-			player.getPlayer().getInventory().addItem(item);
-		else {
-			Mail.fromServer(player.getUniqueId(), WorldGroup.SURVIVAL, item).send();
-
-			if (player.isOnline()) {
-				String error = WorldGroup.of(player.getPlayer()) == WorldGroup.SURVIVAL ? "&3 but your inventory was full. Use &c/delivery &3to claim it." : "&3. Use &c/delivery&3 in the survival world to claim it.";
-				PlayerUtils.send(player.getPlayer(), Crates.PREFIX + "You have been given &e" + amount + " " +
-						gg.projecteden.api.common.utils.StringUtils.camelCase(name()) + " Crate Key" + ((amount > 1) ? "s" : "") + error);
-			}
-		}
+		PlayerUtils.giveItem(player, item);
 	}
 
 	/*
