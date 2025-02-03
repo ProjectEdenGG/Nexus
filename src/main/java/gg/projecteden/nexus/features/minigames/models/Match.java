@@ -10,7 +10,14 @@ import gg.projecteden.nexus.features.minigames.mechanics.Dropper;
 import gg.projecteden.nexus.features.minigames.mechanics.Thimble;
 import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
 import gg.projecteden.nexus.features.minigames.models.annotations.TeamGlowing;
-import gg.projecteden.nexus.features.minigames.models.events.matches.*;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBroadcastEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerStartSpectatingEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.teams.TeamScoredEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
@@ -19,17 +26,33 @@ import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifier
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
 import gg.projecteden.nexus.features.minigames.modifiers.NoModifier;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.AdventureUtils;
+import gg.projecteden.nexus.utils.BossBarBuilder;
+import gg.projecteden.nexus.utils.GlowUtils;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown.CountdownBuilder;
-import lombok.*;
+import gg.projecteden.nexus.utils.WorldEditUtils;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.SneakyThrows;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.ComponentLike;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -40,7 +63,16 @@ import tech.blastmc.holograms.api.models.Hologram;
 
 import java.lang.reflect.Constructor;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -250,8 +282,7 @@ public class Match implements ForwardingAudience {
 		if (minigamers.contains(minigamer))
 			throw new InvalidInputException("&cYou are already in this match");
 
-		MatchJoinEvent event = new MatchJoinEvent(this, minigamer);
-		event.callEvent();
+		new MatchJoinEvent(this, minigamer).callEvent();
 
 		minigamer.getOnlinePlayer().closeInventory();
 		minigamer.setAlive(false);
@@ -261,6 +292,7 @@ public class Match implements ForwardingAudience {
 		if (scoreboard != null)
 			scoreboard.handleJoin(minigamer);
 
+		new MinigamerStartSpectatingEvent(minigamer).callEvent();
 		minigamer.toSpectate();
 		broadcast("&e" + minigamer.getNickname() + " &3started spectating");
 	}

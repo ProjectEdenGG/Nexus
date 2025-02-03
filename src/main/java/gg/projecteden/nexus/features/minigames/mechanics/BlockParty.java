@@ -8,6 +8,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.api.BlockPartyWebSocketServer;
 import gg.projecteden.nexus.features.api.BlockPartyWebSocketServer.BlockPartyClientConnectedEvent;
 import gg.projecteden.nexus.features.api.BlockPartyWebSocketServer.BlockPartyClientMessage;
 import gg.projecteden.nexus.features.api.BlockPartyWebSocketServer.Song;
@@ -25,6 +26,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEve
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerStartSpectatingEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.BlockPartyMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.utils.ColorType;
@@ -38,6 +40,7 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -81,7 +84,7 @@ public class BlockParty extends TeamlessMechanic {
 
 	public static List<BlockPartySong> songList = new ArrayList<>();
 	private static final String FOLDER = "plugins/Nexus/minigames/blockparty/music/";
-	private static final int MAX_ROUNDS = 25;
+	public static final int MAX_ROUNDS = 25;
 	private static final String discoBallStandUUID = "54a3b867-762f-45bd-9dfd-a3251f8c6de0";
 	private static ArmorStand discoBallStand;
 
@@ -130,28 +133,26 @@ public class BlockParty extends TeamlessMechanic {
 			player.getInventory().setItem(0, menuItem);
 		}
 
-		minigamer.getMatch().getTasks().wait(30, () -> {
-			minigamer.tell(new JsonBuilder("&e&lClick Here &3to listen to the music in your browser!")
-				.url("https://projecteden.gg/blockparty?uuid=" + player.getUniqueId())
-				.hover("&3Open in your browser")
-				.build());
-		});
+		sendMusicLink(minigamer);
 	}
 
 	@EventHandler
-	public void onSpectatingJoin(MatchJoinEvent event) {
+	public void onSpectatingJoin(MinigamerStartSpectatingEvent event) {
 		Minigamer minigamer = event.getMinigamer();
-		Player player = minigamer.getOnlinePlayer();
-
-		if (!minigamer.isSpectating())
-			return;
 
 		if (!(minigamer.getMatch().getMechanic() instanceof BlockParty))
 			return;
 
+		sendMusicLink(minigamer);
+	}
+
+	private void sendMusicLink(Minigamer minigamer) {
+		if (BlockPartyWebSocketServer.isConnected(minigamer.getUniqueId()))
+			return;
+
 		minigamer.getMatch().getTasks().wait(30, () -> {
 			minigamer.tell(new JsonBuilder("&e&lClick Here &3to listen to the music in your browser!")
-				.url("https://projecteden.gg/blockparty?uuid=" + player.getUniqueId())
+				.url("https://projecteden.gg/blockparty?uuid=" + minigamer.getUniqueId())
 				.hover("&3Open in your browser")
 				.build());
 		});
@@ -208,6 +209,16 @@ public class BlockParty extends TeamlessMechanic {
 	@Override
 	public @NotNull String getScoreboardTitle(@NotNull Match match) {
 		return "&e&lBlock Party";
+	}
+
+	@Override
+	public @NotNull GameMode getGameMode() {
+		return GameMode.SURVIVAL;
+	}
+
+	@Override
+	public boolean canUseBlock(@NotNull Minigamer minigamer, @NotNull Block block) {
+		return false;
 	}
 
 	@Override
@@ -357,7 +368,7 @@ public class BlockParty extends TeamlessMechanic {
 		match.getMinigamersAndSpectators().forEach(minigamer -> minigamer.getPlayer().playSound(minigamer.getLocation(), Sound.BLOCK_NOTE_BLOCK_HARP, 1, pitch));
 	}
 
-	private double getRoundSpeed(int round) {
+	public static double getRoundSpeed(int round) {
 		return Math.max(6 - 0.5 * ((round + 1) / 2), 0.5);
 	}
 
@@ -624,7 +635,7 @@ public class BlockParty extends TeamlessMechanic {
 		new SongVoteMenu(match).open(player);
 	}
 
-	@Rows(2)
+	@Rows(6)
 	@Title("Vote for a song")
 	@AllArgsConstructor
 	public static class SongVoteMenu extends InventoryProvider {
@@ -635,6 +646,22 @@ public class BlockParty extends TeamlessMechanic {
 			this.matchData = match.getMatchData();
 		}
 
+		private static final Material[] colors = {
+			Material.PURPLE_STAINED_GLASS_PANE,
+			Material.LIME_STAINED_GLASS_PANE,
+			Material.RED_STAINED_GLASS_PANE,
+			Material.LIGHT_BLUE_STAINED_GLASS_PANE,
+			Material.YELLOW_STAINED_GLASS_PANE,
+		};
+
+		private static final Material[] records = {
+			Material.MUSIC_DISC_MALL,
+			Material.MUSIC_DISC_CAT,
+			Material.MUSIC_DISC_BLOCKS,
+			Material.MUSIC_DISC_WAIT,
+			Material.MUSIC_DISC_13,
+		};
+
 		@Override
 		public void init() {
 			addCloseItem();
@@ -642,24 +669,53 @@ public class BlockParty extends TeamlessMechanic {
 			AtomicInteger col = new AtomicInteger(2);
 
 			matchData.getPossibleSongs().forEach(song -> {
-				contents.set(1, col.getAndIncrement(), ClickableItem.of(
-					new ItemBuilder(Material.PAPER)
-						.name("&e&l" + song.title)
-						.lore(
-							"&3Artist: &e" + song.artist,
-							"",
-							"&3Votes: &e" + matchData.getVotes().values().stream().filter(val -> val.equalsIgnoreCase(song.fileName)).count()
-						),
-					e -> {
-						matchData.getVotes().put(e.getPlayer().getUniqueId(), song.fileName);
-						refresh();
+				contents.set(5, col.get(), ClickableItem.of(
+					getItem(song, true, col.get(), getViewer().getPlayer()),
+					e -> vote(e.getPlayer(), song))
+				);
+				contents.set(4, col.get(), ClickableItem.of(
+					getItem(song, false, col.get(), getViewer().getPlayer()),
+					e -> vote(e.getPlayer(), song))
+				);
+				if (!matchData.getVotes().isEmpty()) {
+					int extra = (int) Math.ceil(((double) matchData.getVotes().values().stream()
+						.filter(vote -> vote.equalsIgnoreCase(song.fileName)).count()
+						/ matchData.getVotes().size()) * 3);
+					for (int i = 0; i < extra; i++) {
+						contents.set(3 - i, col.get(), ClickableItem.of(
+							getItem(song, false, col.get(), getViewer().getPlayer()),
+							e -> vote(e.getPlayer(), song))
+						);
 					}
-				));
+				}
+				col.getAndIncrement();
 			});
+		}
+
+		public ItemStack getItem(BlockPartySong song, boolean main, int col, Player player) {
+			ItemBuilder builder = new ItemBuilder(main ? records[col - 2] : colors[col - 2]);
+			builder
+				.name("&e&l" + song.title)
+				.itemFlags(ItemBuilder.ItemFlags.HIDE_ALL)
+				.lore(
+					"&3Artist: &e" + song.artist,
+					"",
+					"&3Votes: &e" + matchData.getVotes().values().stream().filter(val -> val.equalsIgnoreCase(song.fileName)).count()
+				);
+			if (matchData.getVotes().containsKey(player.getUniqueId()) && matchData.getVotes().get(player.getUniqueId()).equalsIgnoreCase(song.fileName))
+				builder.glow();
+			return builder.build();
+		}
+
+		private void vote(Player player, BlockPartySong song) {
+			matchData.getVotes().put(player.getUniqueId(), song.fileName);
+			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0F, 1.5F);
+			refresh();
 		}
 
 	}
 
+	// region Read song files
 	@AllArgsConstructor
 	public static class BlockPartySong {
 		String title;
@@ -669,10 +725,6 @@ public class BlockParty extends TeamlessMechanic {
 		public String getUrl() {
 			return "https://cdn.projecteden.gg/blockparty/music/" + fileName;
 		}
-	}
-
-	static {
-		read(false);
 	}
 
 	@SneakyThrows
@@ -766,11 +818,13 @@ public class BlockParty extends TeamlessMechanic {
 		String title = tag.getFirst(FieldKey.TITLE);
 		String artist = StringUtils.asOxfordList(Arrays.stream(tag.getFirst(FieldKey.ARTIST).split("/")).toList(), ", ");
 
+
 		BlockPartySong song = new BlockPartySong(title, artist, name);
 		songList.add(song);
 
 		Minigames.debug("Loaded BP song: %s by %s (%s)".formatted(title, artist, name));
 	}
+	// endregion
 
 	@EventHandler
 	public void onWebClientJoin(BlockPartyClientConnectedEvent event) {
@@ -805,6 +859,10 @@ public class BlockParty extends TeamlessMechanic {
 				true
 			);
 		}
+	}
+
+	static {
+		read(false);
 	}
 
 }

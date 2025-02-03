@@ -77,6 +77,7 @@ public class BlockPartyWebSocketServer {
 				e.printStackTrace();
 			}
 		});
+		clients.clear();
 	}
 
 	@SneakyThrows
@@ -132,17 +133,9 @@ public class BlockPartyWebSocketServer {
 	}
 
 	private static void handleMessage(SocketChannel client) {
-		ByteBuffer buffer = ByteBuffer.allocate(1024);
 		try {
-			int bytesRead = client.read(buffer);
-			if (bytesRead == -1) {
-				clients.remove(client);
-				client.close();
-				return;
-			}
-		} catch (IOException e) {
-			clients.remove(client);
-		}
+			client.close();
+		} catch (IOException ignored) { }
 	}
 
 	public static void broadcast(Object message) {
@@ -150,15 +143,16 @@ public class BlockPartyWebSocketServer {
 			String string = message instanceof String ? (String) message : Utils.getGson().toJson(message);
 			ByteBuffer buffer = ByteBuffer.wrap(encodeWebSocketFrame(string));
 
-			for (SocketChannel client : clients.values()) {
+			for (Map.Entry<UUID, SocketChannel> client : clients.entrySet()) {
 				try {
 					ByteBuffer sendBuffer = buffer.duplicate();
 					while (sendBuffer.hasRemaining()) {
-						client.write(sendBuffer);
+						client.getValue().write(sendBuffer);
 					}
 				} catch (IOException e) {
 					try {
-						client.close();
+						client.getValue().close();
+						clients.remove(client.getKey());
 					} catch (IOException ignored) { }
 				}
 			}
@@ -234,6 +228,10 @@ public class BlockPartyWebSocketServer {
 
 	private static void log(String message) {
 		Nexus.log("[WebSocket] " + message);
+	}
+
+	public static boolean isConnected(@NotNull UUID uniqueId) {
+		return clients.containsKey(uniqueId) && clients.get(uniqueId) != null && clients.get(uniqueId).isOpen();
 	}
 
 	public static class BlockPartyClientConnectedEvent extends Event {

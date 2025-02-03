@@ -1028,6 +1028,14 @@ public class MinigamesCommand extends _WarpSubCommand {
 		BlockParty.removeSilence();
 	}
 
+	@Permission(Group.ADMIN)
+	@Path("blockParty getMinimumSongLength")
+	void getMinimumSongLength() {
+		double seconds = 5;
+		for (int i = 0; i < BlockParty.MAX_ROUNDS; i++)
+			seconds += BlockParty.getRoundSpeed(i) + 5;
+		send(PREFIX + "Songs should be at least &e" + seconds + " &3seconds long &e(" + ((int) seconds / 60) + "m" + (seconds % 60) + "s)");
+	}
 
 	@ConverterFor(Arena.class)
 	Arena convertToArena(String value) {
