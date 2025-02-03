@@ -42,6 +42,9 @@ public class BlockPartyMatchData extends MatchData {
 	private int eqTaskId = -1;
 	private int eqCurrentFrame = 0;
 
+	private boolean animateDiscoBall;
+	private int discoBallTaskId = -1;
+
 	public BlockPartyMatchData(Match match) {
 		super(match);
 	}

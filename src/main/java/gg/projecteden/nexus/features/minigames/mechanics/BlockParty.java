@@ -39,14 +39,18 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.tag.FieldKey;
@@ -79,6 +83,8 @@ public class BlockParty extends TeamlessMechanic {
 	public static List<BlockPartySong> songList = new ArrayList<>();
 	private static final String FOLDER = "plugins/Nexus/minigames/blockparty/music/";
 	private static final int MAX_ROUNDS = 25;
+	private static final String discoBallStandUUID = "54a3b867-762f-45bd-9dfd-a3251f8c6de0";
+	private static ArmorStand discoBallStand;
 
 	// region minigame framework
 	@Override
@@ -110,11 +116,16 @@ public class BlockParty extends TeamlessMechanic {
 	public void onJoin(@NotNull MatchJoinEvent event) {
 		super.onJoin(event);
 
+		Match match = event.getMatch();
 		Minigamer minigamer = event.getMinigamer();
 		Player player = minigamer.getOnlinePlayer();
 
 		if (!(minigamer.getMatch().getMechanic() instanceof BlockParty))
 			return;
+
+		BlockPartyMatchData matchData = match.getMatchData();
+		if (!matchData.isAnimateDiscoBall())
+			startDiscoBallAnimation(match);
 
 		if (!event.getMatch().isStarted()) {
 			ItemStack menuItem = new ItemBuilder(Material.MUSIC_DISC_CAT).name("Vote for a Song!").build();
@@ -188,6 +199,11 @@ public class BlockParty extends TeamlessMechanic {
 		super.onQuit(event);
 
 		BlockPartyClientMessage.to(event.getMinigamer().getUniqueId()).stop().send();
+
+		Match match = event.getMatch();
+		BlockPartyMatchData matchData = match.getMatchData();
+		if (matchData.isAnimateDiscoBall() && match.getMinigamers().isEmpty())
+			stopDiscoBallAnimation(match);
 	}
 
 	@Override
@@ -544,6 +560,29 @@ public class BlockParty extends TeamlessMechanic {
 		matchData.setActionBarMessage(new JsonBuilder("&c&l✖ &f&lSTOP &c&l✖"));
 	}
 	//endregion
+
+	public void startDiscoBallAnimation(Match match) {
+		discoBallStand = (ArmorStand) Bukkit.getEntity(UUID.fromString(discoBallStandUUID));
+		if (discoBallStand == null)
+			return;
+
+		BlockPartyMatchData matchData = match.getMatchData();
+		matchData.setAnimateDiscoBall(true);
+		int taskId = match.getTasks().repeat(0, 2, () -> {
+			Location rotated = discoBallStand.getLocation().clone();
+			float newYaw = rotated.getYaw() + 1;
+			newYaw = (newYaw + 360) % 360;
+			rotated.setYaw(newYaw);
+			discoBallStand.teleport(rotated);
+		});
+		matchData.setDiscoBallTaskId(taskId);
+	}
+
+	public void stopDiscoBallAnimation(Match match) {
+		BlockPartyMatchData matchData = match.getMatchData();
+		matchData.setAnimateDiscoBall(false);
+		match.getTasks().cancel(matchData.getDiscoBallTaskId());
+	}
 
 	@EventHandler
 	public void openVoteMenu(PlayerInteractEvent event) {
