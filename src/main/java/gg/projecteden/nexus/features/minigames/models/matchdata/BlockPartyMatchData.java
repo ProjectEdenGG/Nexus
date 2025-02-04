@@ -75,7 +75,7 @@ public class BlockPartyMatchData extends MatchData {
 
 		min = min.clone();
 		min.setY(min.y() + index);
-		max.setY(min.y() + index);
+		max.setY(min.y());
 
 		return new CuboidRegion(arena.worldedit().toBlockVector3(min), arena.worldedit().toBlockVector3(max));
 	}

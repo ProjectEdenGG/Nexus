@@ -45,7 +45,6 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -85,10 +84,8 @@ public class BlockParty extends TeamlessMechanic {
 	public static List<BlockPartySong> songList = new ArrayList<>();
 	private static final String FOLDER = "plugins/Nexus/minigames/blockparty/music/";
 	public static final int MAX_ROUNDS = 25;
-	private static final String discoBallStandUUID = "54a3b867-762f-45bd-9dfd-a3251f8c6de0";
-	private static ArmorStand discoBallStand;
 
-	// region minigame framework
+	// region Minigame framework
 	@Override
 	public @NotNull ItemStack getMenuItem() {
 		return new ItemBuilder(Material.MUSIC_DISC_CAT).build();
@@ -256,7 +253,7 @@ public class BlockParty extends TeamlessMechanic {
 	}
 	// endregion
 
-	// region floor pasting
+	// region Floor pasting
 	private void pasteLogoFloor(Match match) {
 		pasteFloor(match, 0);
 	}
@@ -614,6 +611,7 @@ public class BlockParty extends TeamlessMechanic {
 	}
 	//endregion
 
+	// region Voting
 	@EventHandler
 	public void openVoteMenu(PlayerInteractEvent event) {
 		if (event.getItem() == null) return;
@@ -714,6 +712,7 @@ public class BlockParty extends TeamlessMechanic {
 		}
 
 	}
+	// endregion
 
 	// region Read song files
 	@AllArgsConstructor
