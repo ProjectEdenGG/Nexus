@@ -168,10 +168,14 @@ public class SignListener implements Listener {
 					}
 
 					if (subGroup != null || MechanicSubGroup.isParent(mechanic)) {
+						if (subGroup == null)
+							subGroup = MechanicSubGroup.from(mechanic);
+
 						boolean scroll = false;
 						try {
 							scroll = MechanicSubGroup.class.getField(subGroup.name()).isAnnotationPresent(Scroll.class);
-						} catch (NoSuchFieldException | SecurityException ignored) {}
+						} catch (NoSuchFieldException | SecurityException ignored) {
+						}
 
 						if (!scroll)
 							new MechanicSubGroupMenu(subGroup).open(player);
