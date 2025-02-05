@@ -101,15 +101,16 @@ public class Decoration {
 		if (Nullables.isNullOrAir(item))
 			return;
 
-		NBTItem nbtItem = new NBTItem(item);
-		if (!nbtItem.hasKey(DecorationConfig.NBT_OWNER_KEY)) {
+		if (!new NBTItem(item).hasKey(DecorationConfig.NBT_OWNER_KEY)) {
 			DecorationLang.debug(debugger, "&cMissing NBT Key: Owner");
 			return;
 		}
 
-		nbtItem.setString(DecorationConfig.NBT_OWNER_KEY, uuid.toString());
-		nbtItem.applyNBT(item);
-		itemFrame.setItem(item);
+		ItemStack newItem = new ItemBuilder(item)
+			.nbt(nbt -> nbt.setString(DecorationConfig.NBT_OWNER_KEY, uuid.toString()))
+			.build();
+
+		itemFrame.setItem(newItem);
 	}
 
 	public ItemStack getItem(OfflinePlayer debugger) {

@@ -210,7 +210,7 @@ public class DecorationCommand extends CustomCommand {
 			error("You are not looking at a decoration!");
 
 		decoration.setOwner(newOwner.getUniqueId(), player());
-		send("Set the owner of the decoration to " + Nickname.of(newOwner));
+		send(PREFIX + "Set the owner of the decoration to " + Nickname.of(decoration.getOwner(player())));
 	}
 
 	@Permission(Group.STAFF)
