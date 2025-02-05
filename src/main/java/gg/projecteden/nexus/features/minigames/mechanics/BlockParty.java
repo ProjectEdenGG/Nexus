@@ -17,6 +17,7 @@ import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.Minigames;
+import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
@@ -26,30 +27,47 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEve
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerStartSpectatingEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.BlockPartyMatchData;
+import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Snowball;
+import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Transformation;
+import org.bukkit.util.Vector;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.tag.FieldKey;
@@ -75,6 +93,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -84,6 +103,7 @@ public class BlockParty extends TeamlessMechanic {
 	public static List<BlockPartySong> songList = new ArrayList<>();
 	private static final String FOLDER = "plugins/Nexus/minigames/blockparty/music/";
 	public static final int MAX_ROUNDS = 25;
+	private static final CooldownService COOLDOWN_SERVICE = new CooldownService();
 
 	// region Minigame framework
 	@Override
@@ -113,6 +133,8 @@ public class BlockParty extends TeamlessMechanic {
 		updateEqWalls(match, 0);
 		resetDiscoBalls(match);
 		startDiscoBallAnimation(match);
+
+		setupPowerUps(match);
 	}
 
 	@Override
@@ -141,6 +163,23 @@ public class BlockParty extends TeamlessMechanic {
 			return;
 
 		sendMusicLink(minigamer);
+
+		BlockPartyMatchData matchData = event.getMatch().getMatchData();
+		if (matchData.getSong() != null) {
+			BlockPartySong song = matchData.getSong();
+			BlockPartyClientMessage.to(minigamer.getUniqueId()).song(
+				new Song(
+					song.title,
+					song.artist,
+					0,
+					song.getUrl()
+				)
+			).send();
+			if (matchData.isPlaying())
+				BlockPartyClientMessage.to(minigamer.getUniqueId()).play().send();
+			if (matchData.getBlock() != null)
+				BlockPartyClientMessage.to(minigamer.getUniqueId()).block(matchData.getBlock().name()).send();
+		}
 	}
 
 	private void sendMusicLink(Minigamer minigamer) {
@@ -251,6 +290,13 @@ public class BlockParty extends TeamlessMechanic {
 
 		return lines;
 	}
+
+	@EventHandler
+	public void onDamage(MinigamerDamageEvent event) {
+		if (!event.getMinigamer().isPlaying(this))
+			return;
+		event.setCancelled(true);
+	}
 	// endregion
 
 	// region Floor pasting
@@ -264,6 +310,7 @@ public class BlockParty extends TeamlessMechanic {
 		if (matchData.getRound() % 2 == 1 && (matchData.getRound() + 1) < MAX_ROUNDS)
 			match.broadcast("&3Round speed is now &e" + getRoundSpeed(matchData.getRound()) + "s");
 		if ((matchData.getRound() + 1) > MAX_ROUNDS) {
+			matchData.setWinners(match.getAliveMinigamers());
 			end(match);
 			return;
 		}
@@ -273,6 +320,7 @@ public class BlockParty extends TeamlessMechanic {
 
 		startEqAnimation(match);
 		setBlockInHand(match, null);
+		spawnPowerUp(match);
 	}
 
 	private void pasteFloor(Match match, int index) {
@@ -299,13 +347,18 @@ public class BlockParty extends TeamlessMechanic {
 
 	private void selectColor(Match match) {
 		BlockPartyMatchData matchData = match.getMatchData();
-		List<Material> types = match.getArena().worldedit().getBlocks(matchData.getPasteRegion())
-			.stream().map(Block::getType).distinct().toList();
-		matchData.setBlock(RandomUtils.randomElement(types));
+		matchData.setBlock(getRandomFloorColor(match));
 
 		BlockPartyClientMessage.to(getListenerUUIDs(match)).block(matchData.getBlock().name()).send();
 		setArenaColor(match);
 		setBlockInHand(match, matchData.getBlock());
+	}
+
+	private Material getRandomFloorColor(Match match) {
+		BlockPartyMatchData matchData = match.getMatchData();
+		List<Material> types = match.getArena().worldedit().getBlocks(matchData.getPasteRegion())
+			.stream().map(Block::getType).distinct().toList();
+		return RandomUtils.randomElement(types);
 	}
 
 	private void setBlockInHand(Match match, Material block) {
@@ -335,7 +388,7 @@ public class BlockParty extends TeamlessMechanic {
 		BlockPartyMatchData matchData = match.getMatchData();
 		ColorType color = ColorType.of(matchData.getBlock());
 
-		String chatColor = "&" + (color == ColorType.BLACK ? ColorType.GRAY.getBukkitColor().asHexString() : color.getBukkitColor().asHexString());
+		String chatColor = "&" + (color == ColorType.BLACK ? "#272727" : color.getBukkitColor().asHexString());
 		JsonBuilder builder = new JsonBuilder();
 		for (int i = 0; i < Math.ceil(time); i++)
 			builder.next(chatColor + "■");
@@ -381,6 +434,7 @@ public class BlockParty extends TeamlessMechanic {
 		});
 		stopDiscoBallAnimation(match);
 		stopEqAnimation(match);
+		removePowerUp(match);
 
 		waitAfterClear(match);
 	}
@@ -407,6 +461,264 @@ public class BlockParty extends TeamlessMechanic {
 			return true;
 		}
 		return false;
+	}
+	// endregion
+
+	// region Powerups
+	public void setupPowerUps(Match match) {
+		ItemStack item = new ItemBuilder(CustomMaterial.GUI_ARROW_UP).dyeColor("#6BD0FF").build();
+		Consumer<Minigamer> consumer = minigamer -> {
+			BlockPartyPowerUp powerUp = RandomUtils.randomElement(BlockPartyPowerUp.values());
+			ItemStack powerUpItem = powerUp.getItem();
+
+			if (Nullables.isNullOrAir(minigamer.getPlayer().getInventory().getItem(0))) {
+				minigamer.getPlayer().getInventory().setItem(0, new ItemBuilder(CustomMaterial.INVISIBLE).build());
+				minigamer.getPlayer().getInventory().addItem(powerUpItem);
+				minigamer.getPlayer().getInventory().setItem(0, null);
+			}
+			else
+				minigamer.getPlayer().getInventory().addItem(powerUpItem);
+
+			minigamer.getPlayer().playSound(minigamer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0F, 1.5F);
+			minigamer.tell("&3You picked up a " + StringUtils.camelCase(powerUp.name()) + " power up!");
+		};
+
+		PowerUpUtils.PowerUp powerUp = new PowerUpUtils.PowerUp(null, true, item, consumer);
+
+		((BlockPartyMatchData) match.getMatchData()).setPowerUpUtils(new PowerUpUtils(match, List.of(powerUp)));
+	}
+
+	public void spawnPowerUp(Match match) {
+		if (RandomUtils.chanceOf(50))
+			return;
+
+		BlockPartyMatchData matchData = match.getMatchData();
+		Location loc = match.getArena().worldguard().getRandomBlock(matchData.getPasteRegion()).getLocation().clone().toCenterLocation();
+		matchData.setPowerUp(matchData.getPowerUpUtils().spawn(loc, false, null));
+		match.broadcast("&e&lA power up has spawned!");
+	}
+
+	public void removePowerUp(Match match) {
+		BlockPartyMatchData matchData = match.getMatchData();
+		if (matchData.getPowerUp() != null) {
+			matchData.getPowerUp().remove();
+			matchData.setPowerUp(null);
+		}
+	}
+
+	@EventHandler
+	public void onClickPowerup(PlayerInteractEvent event) {
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
+
+		if (!minigamer.isPlaying(this))
+			return;
+
+		if (event.getHand() != EquipmentSlot.HAND)
+			return;
+
+		if (Nullables.isNullOrAir(event.getItem()))
+			return;
+
+		ItemStack item = event.getItem();
+		for (BlockPartyPowerUp powerUp : BlockPartyPowerUp.values()) {
+			if (!ItemUtils.isModelMatch(powerUp.getItem(), item))
+				continue;
+
+			if (!COOLDOWN_SERVICE.check(minigamer.getUuid(), "blockparty-powerup-" + powerUp.name().toLowerCase(), 10))
+				return;
+
+			event.setCancelled(true);
+
+			item.subtract();
+			powerUp.execute(minigamer, minigamer.getMatch());
+			return;
+		}
+	}
+
+	@EventHandler
+	public void onSnowballLand(ProjectileHitEvent event) {
+		if (!(event.getEntity() instanceof Snowball))
+			return;
+
+		Location location;
+		if (event.getHitBlock() != null)
+			location = event.getHitBlock().getLocation();
+		else if (event.getHitEntity() != null)
+			location = event.getHitEntity().getLocation();
+		else
+			return;
+
+		Arena arena = ArenaManager.getFromLocation(location);
+		if (arena == null)
+			return;
+
+		if (arena.getMechanicType() != MechanicType.BLOCK_PARTY)
+			return;
+
+		Match match = MatchManager.find(arena);
+		if (match == null)
+			return;
+
+		if (!match.isStarted() || match.isEnded())
+			return;
+
+		BlockPartyMatchData matchData = match.getMatchData();
+		if (!matchData.getPasteRegion().contains(location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
+			location.setY(matchData.getPasteRegion().getMinimumY());
+			if (!matchData.getPasteRegion().contains(location.getBlockX(), location.getBlockY(), location.getBlockZ()))
+				return;
+		}
+
+		List<Location> locations = new ArrayList<>() {{ add(location); }};
+		for (BlockFace face : faces)
+			if (RandomUtils.chanceOf(50))
+				locations.add(location.getBlock().getRelative(face).getLocation());
+		locations.removeIf(loc -> loc.getBlock().getType() == Material.AIR);
+
+		Material material;
+		if (matchData.getBlock() == null)
+			material = getRandomFloorColor(match);
+		else
+			material = matchData.getBlock();
+
+		locations.forEach(loc -> loc.getBlock().setType(material, false));
+	}
+
+	@EventHandler
+	public void onPaintBucketLand(ProjectileHitEvent event) {
+		if (!(event.getEntity() instanceof ThrownPotion potion))
+			return;
+
+		if (!ItemUtils.isModelMatch(potion.getItem(), BlockPartyPowerUp.COLOR_SPLASH.getItem()))
+			return;
+
+		Location location;
+		if (event.getHitBlock() != null)
+			location = event.getHitBlock().getLocation();
+		else if (event.getHitEntity() != null)
+			location = event.getHitEntity().getLocation();
+		else
+			return;
+
+		Arena arena = ArenaManager.getFromLocation(location);
+		if (arena == null)
+			return;
+
+		if (arena.getMechanicType() != MechanicType.BLOCK_PARTY)
+			return;
+
+		Match match = MatchManager.find(arena);
+		if (match == null)
+			return;
+
+		if (!match.isStarted() || match.isEnded())
+			return;
+
+		BlockPartyMatchData matchData = match.getMatchData();
+		if (!matchData.getPasteRegion().contains(location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
+			location.setY(matchData.getPasteRegion().getMinimumY());
+			if (!matchData.getPasteRegion().contains(location.getBlockX(), location.getBlockY(), location.getBlockZ()))
+				return;
+		}
+
+		List<Location> locations = spawnColorSplash(matchData, location, location, new ArrayList<>(), 5);
+		locations.removeIf(loc -> loc.distance(location.clone().toCenterLocation()) > 4 && RandomUtils.chanceOf(75));
+		locations.removeIf(loc -> loc.distance(location.clone().toCenterLocation()) > 3 && RandomUtils.chanceOf(50));
+
+		Material material;
+		if (matchData.getBlock() == null)
+			material = getRandomFloorColor(match);
+		else
+			material = matchData.getBlock();
+
+		locations.forEach(loc -> loc.getBlock().setType(material, false));
+	}
+
+	BlockFace[] faces = { BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST };
+	private List<Location> spawnColorSplash(BlockPartyMatchData matchData, Location origin, Location current, List<Location> checked, int maxDepth)  {
+		if (!matchData.getPasteRegion().contains(current.getBlockX(), current.getBlockY(), current.getBlockZ()))
+			return checked;
+
+		if (origin.toCenterLocation().distanceSquared(current.toCenterLocation()) > maxDepth * maxDepth)
+			return checked;
+
+		if (checked.contains(current.toBlockLocation()))
+			return checked;
+
+		checked.add(current.clone().toBlockLocation());
+		for (BlockFace blockFace : faces) {
+			spawnColorSplash(matchData, origin, current.getBlock().getRelative(blockFace).getLocation(), checked, maxDepth);
+		}
+		return checked;
+	}
+
+	public enum BlockPartyPowerUp {
+		LEAP {
+			@Getter
+			final ItemStack item = new ItemBuilder(Material.PAPER).modelId(7413).name("&eLeap").build();
+
+			@Override
+			void execute(Minigamer minigamer, Match match) {
+				minigamer.getPlayer().setVelocity(minigamer.getLocation().getDirection().normalize().multiply(1.2f));
+				minigamer.getPlayer().playSound(minigamer.getLocation(), Sound.ENTITY_GHAST_SHOOT, 1, 1);
+			}
+		},
+		COLOR_SPLASH {
+			@Getter
+			final ItemStack item = new ItemBuilder(Material.PAPER).modelId(7414).name("&eColor Splash").build();
+
+			@Override
+			void execute(Minigamer minigamer, Match match) {
+				Vector vector = minigamer.getLocation().getDirection().normalize().multiply(0.5f);
+				Location spawnLoc = minigamer.getPlayer().getEyeLocation().clone().add(vector);
+
+				spawnLoc.getWorld().spawn(spawnLoc, ThrownPotion.class, potion -> {
+					potion.setItem(item);
+					potion.setVelocity(vector);
+				});
+			}
+		},
+		JUMP_POTION {
+			@Getter
+			final ItemStack item = new ItemBuilder(Material.PAPER).modelId(7415).name("&eJump Potion").build();
+			final PotionEffect potion = new PotionEffect(PotionEffectType.JUMP_BOOST, (int) TimeUtils.TickTime.SECOND.x(15), 3, true, true);
+
+			@Override
+			void execute(Minigamer minigamer, Match match) {
+				minigamer.getPlayer().addPotionEffect(potion);
+				minigamer.getPlayer().playSound(minigamer.getLocation(), Sound.ITEM_BUCKET_FILL, 1, 1);
+			}
+		},
+		SPEED_POTION {
+			@Getter
+			final ItemStack item = new ItemBuilder(Material.PAPER).modelId(7416).name("&eSpeed Potion").build();
+			final PotionEffect potion = new PotionEffect(PotionEffectType.SPEED, (int) TimeUtils.TickTime.SECOND.x(8), 4, true, true);
+
+			@Override
+			void execute(Minigamer minigamer, Match match) {
+				minigamer.getPlayer().addPotionEffect(potion);
+				minigamer.getPlayer().playSound(minigamer.getLocation(), Sound.ITEM_BUCKET_FILL, 1, 1);
+			}
+		},
+		COLOR_STORM {
+			@Getter
+			final ItemStack item = new ItemBuilder(Material.PAPER).modelId(7417).name("&eColor Storm").build();
+
+			@Override
+			void execute(Minigamer minigamer, Match match) {
+				BlockPartyMatchData matchData = match.getMatchData();
+				for (int i = 0; i < 100; i++)
+					match.getTasks().wait(i / 5, () -> {
+						Location location = match.getArena().worldguard().getRandomBlock(matchData.getPasteRegion()).getLocation().clone().add(0, 15, 0);
+						location.getWorld().spawn(location, Snowball.class);
+					});
+			}
+		},
+		;
+
+		abstract ItemStack getItem();
+
+		abstract void execute(Minigamer minigamer, Match match);
 	}
 	// endregion
 
@@ -551,10 +863,10 @@ public class BlockParty extends TeamlessMechanic {
 
 		List<BlockPartySong> selectedSongs = new ArrayList<>();
 
+		List<BlockPartySong> random = new ArrayList<>(songList);
 		for (int i = 0; i < songCount; i++) {
-			List<BlockPartySong> random = new ArrayList<>(songList);
 			Collections.shuffle(random);
-			selectedSongs.add(random.getFirst());
+			selectedSongs.add(random.remove(0));
 		}
 
 		((BlockPartyMatchData) match.getMatchData()).setPossibleSongs(selectedSongs);

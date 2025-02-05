@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
+import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import lombok.Data;
@@ -14,6 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.ItemDisplay;
+import tech.blastmc.holograms.api.models.PowerUp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -37,12 +39,13 @@ public class BlockPartyMatchData extends MatchData {
 	private List<Minigamer> aliveAtStartOfRound = new ArrayList<>();
 	private List<Minigamer> winners;
 	private JsonBuilder actionBarMessage;
+	private PowerUpUtils powerUpUtils;
+	private PowerUp powerUp;
 
 	private List<Location> colorChangingBlocks = new ArrayList<>();
 	private BlockData colorChangingBlockData;
 	private int eqTaskId = -1;
 	private int eqCurrentFrame = 0;
-
 	private int discoBallTaskId = -1;
 
 	public BlockPartyMatchData(Match match) {

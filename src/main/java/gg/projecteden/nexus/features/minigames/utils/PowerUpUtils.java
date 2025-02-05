@@ -13,6 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import tech.blastmc.holograms.api.HologramsAPI;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -27,23 +28,27 @@ public class PowerUpUtils {
 		return RandomUtils.randomElement(powerUps);
 	}
 
-	public void spawn(Location location) {
-		spawn(location, false);
+	public tech.blastmc.holograms.api.models.PowerUp spawn(Location location) {
+		return spawn(location, false);
 	}
 
-	public void spawn(Location location, boolean recurring) {
-		spawn(location, recurring, "You picked up a power up!");
+	public tech.blastmc.holograms.api.models.PowerUp spawn(Location location, boolean recurring) {
+		return spawn(location, recurring, "You picked up a power up!");
 	}
 
-	public void spawn(Location location, boolean recurring, String message) {
-		spawn(location, recurring, message, getRandomPowerUp());
+	public tech.blastmc.holograms.api.models.PowerUp spawn(Location location, boolean recurring, String message) {
+		return spawn(location, recurring, message, getRandomPowerUp());
 	}
 
-	public void spawn(Location location, boolean recurring, String message, PowerUp powerUp) {
+	public tech.blastmc.holograms.api.models.PowerUp spawn(Location location, boolean recurring, String message, PowerUp powerUp) {
 		tech.blastmc.holograms.api.models.PowerUp hologram = HologramsAPI.powerup();
 		hologram.location(location.clone().add(0, 2, 0));
 		match.getHolograms().add(hologram);
-		hologram.title("&3&lPower Up", powerUp.getName());
+		List<String> title = new ArrayList<>();
+		title.add("&3&lPower Up");
+		if (powerUp.name != null)
+			title.add(powerUp.getName());
+		hologram.title(title.toArray(new String[0]));
 		hologram.item(powerUp.getItemStack());
 
 		hologram.onPickup(player -> {
@@ -65,6 +70,7 @@ public class PowerUpUtils {
 		});
 
 		hologram.spawn();
+		return hologram;
 	}
 
 	@Data
