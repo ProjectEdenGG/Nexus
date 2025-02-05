@@ -451,6 +451,11 @@ public class BlockParty extends TeamlessMechanic {
 
 	private boolean checkWin(Match match) {
 		BlockPartyMatchData matchData = match.getMatchData();
+		match.getAliveMinigamers().forEach(minigamer -> {
+			if (minigamer.getLocation().y() < matchData.getPasteRegion().getMinimumPoint().y())
+				kill(minigamer);
+		});
+
 		if (match.getAliveMinigamers().isEmpty()) {
 			if (match.getAllMinigamers().size() > 1)
 				matchData.setWinners(matchData.getAliveAtStartOfRound());
