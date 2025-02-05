@@ -35,6 +35,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFo
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -44,9 +45,11 @@ import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
@@ -196,6 +199,19 @@ public class DecorationCommand extends CustomCommand {
 	}
 
 	// STAFF COMMANDS
+
+	@Permission(Group.STAFF)
+	@Path("changeOwner <player>")
+	@Description("Change the owner of a decoration")
+	void changeOwner(OfflinePlayer newOwner) {
+		Decoration decoration = DecorationUtils.getTargetDecoration(player());
+
+		if (decoration == null || decoration.getConfig() == null)
+			error("You are not looking at a decoration!");
+
+		decoration.setOwner(newOwner.getUniqueId(), player());
+		send("Set the owner of the decoration to " + Nickname.of(newOwner));
+	}
 
 	@Permission(Group.STAFF)
 	@Path("stats")

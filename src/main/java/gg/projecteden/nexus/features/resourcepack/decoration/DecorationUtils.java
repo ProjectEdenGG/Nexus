@@ -4,6 +4,7 @@ import gg.projecteden.api.common.utils.ReflectionUtils;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
 import gg.projecteden.nexus.features.resourcepack.CustomContentUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreUtils;
@@ -24,6 +25,7 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.sign.SignSide;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -411,5 +413,20 @@ public class DecorationUtils {
 			return null;
 
 		return DecorationConfig.of(targetItemStack);
+	}
+
+	public static Decoration getTargetDecoration(Player player) {
+		Entity targetEntity = DecorationStoreUtils.getTargetEntity(player);
+		if (targetEntity == null)
+			return null;
+
+		if (!(targetEntity instanceof ItemFrame itemFrame))
+			return null;
+
+		DecorationConfig config = DecorationConfig.of(itemFrame);
+		if (config == null)
+			return null;
+
+		return new Decoration(config, itemFrame);
 	}
 }

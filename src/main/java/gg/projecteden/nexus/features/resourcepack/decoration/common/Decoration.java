@@ -34,6 +34,7 @@ import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Rotation;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -95,7 +96,22 @@ public class Decoration {
 		return UUID.fromString(owner);
 	}
 
-	public ItemStack getItem(Player debugger) {
+	public void setOwner(UUID uuid, Player debugger) {
+		ItemStack item = getItem(debugger);
+		if (Nullables.isNullOrAir(item))
+			return;
+
+		NBTItem nbtItem = new NBTItem(item);
+		if (!nbtItem.hasKey(DecorationConfig.NBT_OWNER_KEY)) {
+			DecorationLang.debug(debugger, "&cMissing NBT Key: Owner");
+			return;
+		}
+
+		nbtItem.setString(DecorationConfig.NBT_OWNER_KEY, uuid.toString());
+		nbtItem.applyNBT(item);
+	}
+
+	public ItemStack getItem(OfflinePlayer debugger) {
 		if (!isValidFrame())
 			return null;
 
