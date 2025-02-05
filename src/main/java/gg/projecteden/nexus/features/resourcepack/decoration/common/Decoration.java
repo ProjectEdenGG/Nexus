@@ -109,6 +109,7 @@ public class Decoration {
 
 		nbtItem.setString(DecorationConfig.NBT_OWNER_KEY, uuid.toString());
 		nbtItem.applyNBT(item);
+		itemFrame.setItem(item);
 	}
 
 	public ItemStack getItem(OfflinePlayer debugger) {
