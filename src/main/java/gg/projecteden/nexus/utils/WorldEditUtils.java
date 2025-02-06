@@ -458,6 +458,7 @@ public class WorldEditUtils {
 		private Transform transform;
 		private Region[] regionMask = new Region[]{RegionWrapper.GLOBAL()};
 		private Map<Chunk, Boolean> forceLoadedStates = new HashMap<>();
+		private Map<Material, Material> replaceMap;
 
 		private final UUID uuid = UUID.randomUUID();
 		private final AtomicInteger i = new AtomicInteger(1000);
@@ -540,6 +541,11 @@ public class WorldEditUtils {
 			return this;
 		}
 
+		public Paster replace(Map<Material, Material> replaceMap) {
+			this.replaceMap = replaceMap;
+			return this;
+		}
+
 		/**
 		 * Duration during which to build the clipboard
 		 *
@@ -579,6 +585,10 @@ public class WorldEditUtils {
 		 * @return future
 		 */
 		public CompletableFuture<Void> pasteAsync() {
+			// EditSession has no sort of replace functionality for the clipboard. The method exists, but requires a region, which is the input region.
+			if (replaceMap != null)
+				throw new UnsupportedOperationException("Replacing blocks is not supported for pasting. Use build instead.");
+
 			return forceLoadChunks(true)
 				.thenCompose($ -> getClipboard().thenAcceptAsync(clipboard -> {
 					debug("Pasting");
@@ -763,9 +773,11 @@ public class WorldEditUtils {
 							continue;
 
 						Location location = toLocation(blockVector3).add(relX, relY, relZ);
-						final BlockData block = BukkitAdapter.adapt(baseBlock);
+						BlockData block = BukkitAdapter.adapt(baseBlock);
 
 						debug("  Found " + block.getMaterial() + "  at " + StringUtils.getFlooredCoordinateString(toLocation(blockVector3)) + " (" + baseBlock.getAsString() + ")");
+						if (replaceMap != null)
+							block = replaceMap.getOrDefault(block.getMaterial(), block.getMaterial()).createBlockData();
 						data.put(location, block);
 					}
 

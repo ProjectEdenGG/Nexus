@@ -42,6 +42,7 @@ import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -90,6 +91,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -335,6 +337,7 @@ public class BlockParty extends TeamlessMechanic {
 		match.getArena().worldedit().paster("Block Party")
 			.clipboard(matchData.getFloorInStack(index))
 			.at(matchData.getPasteRegion().getMinimumPoint())
+			.replace(generateWoolReplacementMap())
 			.build();
 
 		BlockPartyClientMessage.to(getListenerUUIDs(match)).block("").send();
@@ -342,6 +345,21 @@ public class BlockParty extends TeamlessMechanic {
 
 		setArenaColor(match);
 		startDiscoBallAnimation(match);
+	}
+
+	private Map<Material, Material> generateWoolReplacementMap() {
+		Map<Material, Material> replacementMap = new HashMap<>();
+
+		List<Material> concretes = new ArrayList<>(MaterialTag.CONCRETES.getValues());
+		List<Material> wools = new ArrayList<>(MaterialTag.WOOL.getValues());
+
+		Collections.shuffle(wools);
+		Collections.shuffle(concretes);
+
+		for (int i = 0; i < concretes.size(); i++) {
+			replacementMap.put(wools.get(i), concretes.get(i));
+		}
+		return replacementMap;
 	}
 
 
