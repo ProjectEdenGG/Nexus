@@ -63,6 +63,8 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -101,6 +103,9 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 	private Minigamer spectatingMinigamer;
 	private SpectateMenu spectateMenu;
 	public static final ItemStack SPECTATING_COMPASS = new ItemBuilder(Material.RECOVERY_COMPASS).name("&3&lSpectate").build();
+
+	private LocalDateTime startTime;
+	private int secondsPlayed;
 
 	@NotNull
 	public static Minigamer of(@NotNull UUID uuid) throws PlayerNotOnlineException {
@@ -783,6 +788,17 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 
 	public void clearInventory() {
 		getOnlinePlayer().getInventory().setStorageContents(new ItemStack[36]);
+	}
+
+	public void startTimeTracking() {
+		this.startTime = LocalDateTime.now();
+	}
+
+	public void stopTimeTracking() {
+		if (this.startTime == null)
+			return;
+		this.secondsPlayed = (int) Duration.between(this.startTime, LocalDateTime.now()).getSeconds();
+		this.startTime = null;
 	}
 
 	@Override

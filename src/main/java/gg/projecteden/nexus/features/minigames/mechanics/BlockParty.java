@@ -26,6 +26,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginE
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerStartSpectatingEvent;
@@ -34,6 +35,8 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.models.blockparty.BlockPartyStatsService;
+import gg.projecteden.nexus.models.blockparty.BlockPartyStatsUser.BlockPartyStats;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -201,6 +204,8 @@ public class BlockParty extends TeamlessMechanic {
 		setSong(event.getMatch());
 		startActionBarTask(event.getMatch());
 		startEqAnimation(event.getMatch());
+
+		event.getMatch().getAliveMinigamers().forEach(Minigamer::startTimeTracking);
 	}
 
 	@Override
@@ -240,6 +245,8 @@ public class BlockParty extends TeamlessMechanic {
 		updateEqWalls(event.getMatch(), 0);
 
 		stopDiscoBallAnimation(event.getMatch());
+
+		reportStats(event.getMatch());
 	}
 
 	@Override
@@ -471,6 +478,8 @@ public class BlockParty extends TeamlessMechanic {
 
 	// region Powerups
 	public void setupPowerUps(Match match) {
+		BlockPartyMatchData matchData = match.getMatchData();
+
 		ItemStack item = new ItemBuilder(CustomMaterial.GUI_ARROW_UP).dyeColor("#6BD0FF").build();
 		Consumer<Minigamer> consumer = minigamer -> {
 			BlockPartyPowerUp powerUp = RandomUtils.randomElement(BlockPartyPowerUp.values());
@@ -485,12 +494,14 @@ public class BlockParty extends TeamlessMechanic {
 				minigamer.getPlayer().getInventory().addItem(powerUpItem);
 
 			minigamer.getPlayer().playSound(minigamer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0F, 1.5F);
-			minigamer.tell("&3You picked up a " + StringUtils.camelCase(powerUp.name()) + " power up!");
+			minigamer.tell("&3You picked up a &e" + StringUtils.camelCase(powerUp.name()) + " &3power up!");
+
+			matchData.getPowerUpsCollected().put(minigamer.getUniqueId(), matchData.getPowerUpsCollected().getOrDefault(minigamer.getUniqueId(), 0) + 1);
 		};
 
 		PowerUpUtils.PowerUp powerUp = new PowerUpUtils.PowerUp(null, true, item, consumer);
 
-		((BlockPartyMatchData) match.getMatchData()).setPowerUpUtils(new PowerUpUtils(match, List.of(powerUp)));
+		matchData.setPowerUpUtils(new PowerUpUtils(match, List.of(powerUp)));
 	}
 
 	public void spawnPowerUp(Match match) {
@@ -536,6 +547,9 @@ public class BlockParty extends TeamlessMechanic {
 
 			item.subtract();
 			powerUp.execute(minigamer, minigamer.getMatch());
+
+			BlockPartyMatchData matchData = minigamer.getMatch().getMatchData();
+			matchData.getPowerUpsUsed().put(minigamer.getUniqueId(), matchData.getPowerUpsUsed().getOrDefault(minigamer.getUniqueId(), 0) + 1);
 			return;
 		}
 	}
@@ -1181,4 +1195,46 @@ public class BlockParty extends TeamlessMechanic {
 		read(false);
 	}
 
+	// region Temp stats tracking
+	@Override
+	public void onDeath(@NotNull Minigamer victim) {
+		super.onDeath(victim);
+
+		BlockPartyMatchData matchData = victim.getMatch().getMatchData();
+		matchData.getRoundsSurvived().put(victim.getUniqueId(), matchData.getRound());
+		victim.stopTimeTracking();
+	}
+
+	@Override
+	public void onQuit(@NotNull MatchQuitEvent event) {
+		super.onQuit(event);
+		event.getMinigamer().stopTimeTracking();
+	}
+
+	private void reportStats(Match match) {
+		BlockPartyMatchData matchData = match.getMatchData();
+		BlockPartyStatsService service = new BlockPartyStatsService();
+
+		for (Minigamer minigamer : match.getAllMinigamers()) {
+			BlockPartyStats stats = new BlockPartyStats();
+			if (matchData.getWinners() != null && matchData.getWinners().contains(minigamer))
+				stats.setWin(true);
+
+			int rounds = matchData.getRoundsSurvived().getOrDefault(minigamer.getUniqueId(), 0);
+			stats.setRoundsSurvived(rounds);
+
+			int powerUpsCollected = matchData.getPowerUpsCollected().getOrDefault(minigamer.getUniqueId(), 0);
+			stats.setPowerUpsCollected(powerUpsCollected);
+
+			int powerUpsUsed = matchData.getPowerUpsUsed().getOrDefault(minigamer.getUniqueId(), 0);
+			stats.setPowerUpsUsed(powerUpsUsed);
+
+			minigamer.stopTimeTracking();
+			int seconds = minigamer.getSecondsPlayed();
+			stats.setPlayTimeInSeconds(seconds);
+
+			service.edit(minigamer, user -> user.add(stats));
+		}
+	}
+	// endregion
 }
