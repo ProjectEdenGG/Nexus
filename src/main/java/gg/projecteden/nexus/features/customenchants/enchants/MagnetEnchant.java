@@ -91,7 +91,9 @@ public class MagnetEnchant extends CustomEnchant implements Listener {
 				if (enabled != null && !enabled)
 					continue;
 
-				var players = item.getWorld().getNearbyPlayers(item.getLocation(), radius);
+				var players = item.getWorld().getNearbyPlayers(item.getLocation(), radius).stream()
+					.filter(player -> !(Vanish.isVanished(player) || player.getGameMode() == GameMode.SPECTATOR))
+					.toList();
 				if (enabled == null && players.size() > 1)
 					continue;
 
