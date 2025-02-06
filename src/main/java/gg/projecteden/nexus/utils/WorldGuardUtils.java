@@ -150,6 +150,10 @@ public final class WorldGuardUtils {
 		return new CuboidRegion(worldEditWorld, toBlockVector3(min), toBlockVector3(max));
 	}
 
+	public @NotNull Region getRegion(@NotNull BlockVector3 min, @NotNull BlockVector3 max) {
+		return new CuboidRegion(worldEditWorld, min, max);
+	}
+
 	public @NotNull Set<ProtectedRegion> getRegionsAt(@NotNull BlockVector3 location) {
 		try {
 			return REGIONS_AT_CACHE.get(world).get(location);

@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.minigames.commands;
 
+import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.annotations.Environments;
@@ -32,6 +34,7 @@ import gg.projecteden.nexus.features.minigames.models.perks.HideParticle;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkType;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
 import gg.projecteden.nexus.features.minigames.utils.MinigameNight;
+import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.features.warps.commands._WarpSubCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -96,6 +99,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 @Aliases({"mgm", "mg"})
@@ -1035,6 +1043,84 @@ public class MinigamesCommand extends _WarpSubCommand {
 		for (int i = 0; i < BlockParty.MAX_ROUNDS; i++)
 			seconds += BlockParty.getRoundSpeed(i) + 5;
 		send(PREFIX + "Songs should be at least &e" + seconds + " &3seconds long &e(" + ((int) seconds / 60) + "m" + (seconds % 60) + "s)");
+	}
+
+	private static boolean STOP;
+
+	@Path("blockParty createStack [--delay] [--stop]")
+	void blockParty_createStack(
+		@Switch @Arg("5") int delay,
+		@Switch boolean stop
+	) {
+		if (stop) {
+			STOP = true;
+			send(PREFIX + "Stopping...");
+			return;
+		}
+
+		STOP = false;
+		var floors = worldguard().getRegion("blockparty_floors");
+		var stack = worldguard().getRegion("blockparty_stack");
+		var logo = worldguard().getRegion("blockparty_logo");
+
+		int y = floors.getMinimumY();
+		AtomicInteger stackY = new AtomicInteger(stack.getMinimumY());
+
+		BiFunction<BlockVector2, BlockVector2, Integer> colors = (min, max) -> {
+			List<Block> blocks = worldedit().getBlocks(worldguard().getRegion(min.toBlockVector3(y), max.toBlockVector3(y)));
+			Set<Material> materials = new HashSet<>();
+			for (var block : blocks) {
+				materials.add(block.getType());
+				if (materials.size() > 1) // We only care that there's more than 1
+					return materials.size();
+			}
+			return materials.size();
+		};
+
+		BiPredicate<Integer, Integer> isOutOfBounds = (x, z) -> !floors.contains(x, y, z);
+
+		BiConsumer<BlockVector2, BlockVector2> paste = (min, max) -> {
+			worldedit().paster()
+				.clipboard(min.toBlockVector3(y), max.toBlockVector3(y))
+				.at(BlockVector3.at(stack.getMinimumPoint().x(), stackY.incrementAndGet(), stack.getMinimumPoint().z()))
+				.pasteAsync();
+		};
+
+		BiConsumer<Integer, Integer> copy = (minX, minZ) -> {
+			int maxX = minX + 47;
+			int maxZ = minZ + 47;
+
+			if (colors.apply(BlockVector2.at(minX, minZ), BlockVector2.at(maxX, maxZ)) == 1)
+				return;
+
+			paste.accept(BlockVector2.at(minX, minZ), BlockVector2.at(maxX, maxZ));
+		};
+
+		copy.accept(logo.getMinimumPoint().x(), logo.getMinimumPoint().z());
+
+		AtomicInteger originX = new AtomicInteger(floors.getMinimumPoint().x() + 1);
+		AtomicInteger originZ = new AtomicInteger(floors.getMinimumPoint().z() + 1);
+
+		AtomicReference<Runnable> loop = new AtomicReference<>();
+		loop.set(() -> {
+			if (STOP)
+				return;
+
+			copy.accept(originX.get(), originZ.get());
+			DotEffect.builder().player(player()).location(new Location(world(), originX.get(), y + 1, originZ.get())).start();
+
+			originZ.addAndGet(49);
+			if (isOutOfBounds.test(originX.get(), originZ.get())) {
+				originX.addAndGet(49);
+				originZ.set(floors.getMinimumPoint().z() + 1);
+
+				if (isOutOfBounds.test(originX.get(), originZ.get()))
+					return;
+			}
+			Tasks.wait(delay, loop.get());
+		});
+
+		Tasks.wait(delay, loop.get());
 	}
 
 	@ConverterFor(Arena.class)
