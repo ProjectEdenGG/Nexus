@@ -17,7 +17,7 @@ public enum MechanicSubGroup {
 //	MASTERMIND(MechanicType.MASTERMIND, MechanicType.MEGAMIND, MechanicType.MULTIMIND),
 	CAPTURE_THE_FLAG(MechanicType.CAPTURE_THE_FLAG, MechanicType.FLAG_RUSH, MechanicType.SIEGE),
 	TEAM_DEATHMATCH(MechanicType.TEAM_DEATHMATCH, MechanicType.FOUR_TEAM_DEATHMATCH),
-	@Scroll BOARD_GAMES(MechanicType.BATTLESHIP, MechanicType.CONNECT4, MechanicType.TICTACTOE),
+	@Scroll BOARD_GAMES(MechanicType.BATTLESHIP, MechanicType.CONNECT4, MechanicType.TICTACTOE/*, MechanicType.CHECKERS*/),
 	;
 
 	private final List<MechanicType> mechanics;
