@@ -24,6 +24,7 @@ import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -135,6 +136,16 @@ public class WorldEditUtilsCommand extends CustomCommand {
 				continue;
 
 			block.setBlockData(Bukkit.createBlockData(block.getBlockData().getAsString().replace(from.name().toLowerCase(), to.name().toLowerCase())));
+		}
+	}
+
+	@Path("colorReplace <from> <to>")
+	@Description("Swap colored materials (i.e. wool concrete)")
+	void smartReplace(String from, String to) {
+		for (DyeColor dyeColor : DyeColor.values()) {
+			String fromColored = (dyeColor.name() + "_" + from).toUpperCase();
+			String toColored = (dyeColor.name() + "_" + to).toUpperCase();
+			runCommand("/replace " + fromColored + " " + toColored);
 		}
 	}
 
