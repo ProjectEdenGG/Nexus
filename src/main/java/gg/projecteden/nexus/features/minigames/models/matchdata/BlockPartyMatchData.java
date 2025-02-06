@@ -29,6 +29,7 @@ import java.util.UUID;
 public class BlockPartyMatchData extends MatchData {
 
 	private int round;
+	private List<Integer> usedFloors = new ArrayList<>();
 	private BlockParty.BlockPartySong song;
 	private double songTimeInSeconds = 0;
 	private LocalDateTime playTime;

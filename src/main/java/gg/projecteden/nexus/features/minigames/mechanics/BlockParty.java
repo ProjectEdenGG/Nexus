@@ -323,7 +323,13 @@ public class BlockParty extends TeamlessMechanic {
 			end(match);
 			return;
 		}
-		pasteFloor(match, RandomUtils.randomInt(1, matchData.countFloors()));
+
+		List<Integer> unused = new ArrayList<>();
+		for (int i = 1; i <= matchData.countFloors(); i++)
+			if (!matchData.getUsedFloors().contains(i))
+				unused.add(i);
+
+		pasteFloor(match, RandomUtils.randomElement(unused));
 		playSong(match);
 		waitWithMusic(match);
 
@@ -339,6 +345,9 @@ public class BlockParty extends TeamlessMechanic {
 			.at(matchData.getPasteRegion().getMinimumPoint())
 			.replace(generateWoolReplacementMap(match))
 			.build();
+
+		if (index > 0)
+			matchData.getUsedFloors().add(index);
 
 		BlockPartyClientMessage.to(getListenerUUIDs(match)).block("").send();
 		matchData.setBlock(null);
