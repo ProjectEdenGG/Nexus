@@ -42,6 +42,10 @@ public class Warps implements PlayerOwnedObject {
 		return new ArrayList<>(warps.getOrDefault(type, new ArrayList<>()));
 	}
 
+	private List<Warp> _getAll(WarpType type) {
+		return warps.getOrDefault(type, new ArrayList<>());
+	}
+
 	public Warp get(WarpType type, String name) {
 		return getAll(type).stream().filter(warp -> warp.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
 	}
@@ -51,11 +55,11 @@ public class Warps implements PlayerOwnedObject {
 	}
 
 	public void delete(WarpType type, String name) {
-		getAll(type).removeIf(warp -> warp.getName().equalsIgnoreCase(name));
+		_getAll(type).removeIf(warp -> warp.getName().equalsIgnoreCase(name));
 	}
 
 	public void delete(Warp warp) {
-		getAll(warp.getType()).remove(warp);
+		_getAll(warp.getType()).remove(warp);
 	}
 
 	@Data
