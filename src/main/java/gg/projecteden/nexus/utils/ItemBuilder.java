@@ -28,7 +28,14 @@ import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.minecraft.nbt.CompoundTag;
 import org.apache.commons.lang3.function.TriConsumer;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.DyeColor;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.ShulkerBox;
@@ -44,8 +51,20 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.*;
+import org.bukkit.inventory.meta.AxolotlBucketMeta;
+import org.bukkit.inventory.meta.BannerMeta;
+import org.bukkit.inventory.meta.BlockStateMeta;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.BookMeta.Generation;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.Repairable;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 import org.bukkit.potion.PotionEffect;
@@ -56,7 +75,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -85,7 +112,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	public ItemBuilder(CustomModel customModel) {
 		this(customModel.getMaterial());
-		modelId(customModel.getData());
+		model(customModel.getData());
 	}
 
 	public ItemBuilder(Material material, int amount) {
@@ -93,7 +120,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder(CustomMaterial material, int amount) {
-		this(new ItemBuilder(material.getMaterial()).modelId(material.getModelId()).amount(amount));
+		this(new ItemBuilder(material.getMaterial()).model(material).amount(amount));
 	}
 
 	public ItemBuilder(ItemBuilder itemBuilder) {
@@ -113,14 +140,18 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		this.update = update;
 	}
 
+	public ItemBuilder(int number) {
+		this(Material.LEATHER_HORSE_ARMOR);
+		number(number);
+	}
+
 	public ItemBuilder material(CustomMaterial customMaterial) {
 		String displayName = itemMeta.getDisplayName();
 
 		itemStack.setType(customMaterial.getMaterial());
 		itemMeta = itemStack.getItemMeta();
 
-		itemMeta.setCustomModelData(customMaterial.getModelId());
-
+		model(customMaterial);
 		name(displayName);
 
 		return this;
@@ -688,7 +719,12 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	public ItemBuilder axolotl(Axolotl.Variant variant) {
 		final AxolotlBucketMeta bucketMeta = (AxolotlBucketMeta) itemMeta;
 		bucketMeta.setVariant(variant);
-		modelId(variant.ordinal());
+		switch (variant) {
+			case WILD -> model(CustomMaterial.AXOLOTL_BUCKET_BROWN);
+			case GOLD -> model(CustomMaterial.AXOLOTL_BUCKET_YELLOW);
+			case CYAN -> model(CustomMaterial.AXOLOTL_BUCKET_CYAN);
+			case BLUE -> model(CustomMaterial.AXOLOTL_BUCKET_BLUE);
+		}
 		return this;
 	}
 
@@ -875,37 +911,57 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return setting(ItemSetting.TRADEABLE, false);
 	}
 
-	public ItemBuilder modelId(int id) {
+	public ItemBuilder customModelData(int id) {
 		if (id > 0)
 			itemMeta.setCustomModelData(id);
 		return this;
 	}
 
-	public int modelId() {
+	public int customModelData() {
 		if (!itemMeta.hasCustomModelData())
 			return 0;
 		return itemMeta.getCustomModelData();
 	}
 
-	public static class ModelId {
+	public ItemBuilder model(String name) {
+		if (name != null)
+			itemMeta.setItemModel(NamespacedKey.minecraft(name));
+		return this;
+	}
 
-		public static int of(ItemStack item) {
+	public ItemBuilder model(CustomMaterial material) {
+		return model(material.getModel());
+	}
+
+	public String model() {
+		if (!itemMeta.hasItemModel())
+			return null;
+		return itemMeta.getItemModel().getKey();
+	}
+
+	public ItemBuilder number(int number) {
+		return model(CustomMaterial.UI_NUMBERS_0).customModelData(number);
+	}
+
+	public static class Model {
+
+		public static String of(ItemStack item) {
 			if (Nullables.isNullOrAir(item))
-				return 0;
+				return null;
 
 			return of(new ItemBuilder(item));
 		}
 
-		public static int of(ItemBuilder item) {
-			return item.modelId();
+		public static String of(ItemBuilder item) {
+			return item.model();
 		}
 
-		public static boolean hasModelId(ItemStack item) {
-			return of(item) != 0;
+		public static boolean hasModel(ItemStack item) {
+			return of(item) != null;
 		}
 
-		public static boolean hasModelId(ItemBuilder item) {
-			return of(item) != 0;
+		public static boolean hasModel(ItemBuilder item) {
+			return of(item) != null;
 		}
 
 	}

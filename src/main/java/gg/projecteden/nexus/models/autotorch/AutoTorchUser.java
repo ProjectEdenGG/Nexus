@@ -5,15 +5,15 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
-import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.parchment.HasHumanEntity;
-import lombok.*;
-import org.bukkit.Bukkit;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 
@@ -56,14 +56,16 @@ public class AutoTorchUser implements PlayerOwnedObject {
 		if (!applies(block.getLightFromBlocks()))
 			return false;
 
-		if (MaterialTag.NEEDS_SUPPORT.isTagged(torchMaterial)) {
-			if (!Bukkit.getUnsafe().canPlaceItemOn(new ItemStack(torchMaterial), player, block.getRelative(BlockFace.DOWN), BlockFace.UP).join())
-				return false;
-			else if (!block.getRelative(BlockFace.DOWN).getType().isSolid())
-				return false;
-		}
-
-		return true;
+//		TODO - 1.21.4
+//		if (MaterialTag.NEEDS_SUPPORT.isTagged(torchMaterial)) {
+//			if (!Bukkit.getUnsafe().canPlaceItemOn(new ItemStack(torchMaterial), player, block.getRelative(BlockFace.DOWN), BlockFace.UP).join())
+//				return false;
+//			else if (!block.getRelative(BlockFace.DOWN).getType().isSolid())
+//				return false;
+//		}
+//
+//		return true;
+		return false;
 	}
 
 	public String getTorchMaterialName() {

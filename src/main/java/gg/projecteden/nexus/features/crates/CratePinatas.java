@@ -51,6 +51,7 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -97,7 +98,7 @@ public class CratePinatas implements Listener {
 		if (Nullables.isNullOrAir(event.getPlayer().getInventory().getItemInMainHand()))
 			return;
 
-		if (new ItemBuilder(event.getPlayer().getInventory().getItemInMainHand()).modelId() != PINATA_ITEM.modelId())
+		if (!Objects.equals(new ItemBuilder(event.getPlayer().getInventory().getItemInMainHand()).model(), PINATA_ITEM.model()))
 			return;
 
 		net.minecraft.world.item.ItemStack nms = NMSUtils.toNMS(event.getPlayer().getInventory().getItemInMainHand());

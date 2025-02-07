@@ -11,7 +11,7 @@ import java.util.List;
 public interface IPebbles extends IIncremental, IRequireSupport {
 
 	@Override
-	default List<Integer> getModelIdList() {
+	default List<String> getModelIdList() {
 		return List.of(21106, 21107, 21108);
 	}
 

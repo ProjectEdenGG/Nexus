@@ -76,7 +76,7 @@ public enum FishingLoot {
 	}
 
 	FishingLoot(FishingLootCategory category, int gold, CustomMaterial material, String customName, double weight) {
-		this(category, gold, material.getMaterial(), material.getModelId(), weight, customName, null, FishingLootTime.BOTH, null);
+		this(category, gold, material.getMaterial(), material.getModel(), weight, customName, null, FishingLootTime.BOTH, null);
 	}
 
 	FishingLoot(FishingLootCategory category, int gold, CustomMaterial material, String customName, double weight, String region) {

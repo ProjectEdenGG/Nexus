@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 public @interface CustomBlockConfig {
 	String name();
 
-	int modelId();
+	String model();
 
 	PistonPushAction getPistonPushedAction() default PistonPushAction.MOVE;
 }

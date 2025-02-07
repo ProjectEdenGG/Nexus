@@ -199,11 +199,11 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 
 		@NonNull
 		private final Material material;
-		private int modelId;
+		private String model;
 
 		AutoSortInventoryType(@NonNull CustomMaterial material) {
 			this.material = material.getMaterial();
-			this.modelId = material.getModelId();
+			this.model = material.getModel();
 		}
 
 		@SneakyThrows

@@ -36,15 +36,15 @@ public @interface Category {
 
 		@NonNull
 		private final Material material;
-		private int modelId;
+		private String modelId;
 
 		StoreCategory(CustomMaterial material) {
 			this.material = material.getMaterial();
-			this.modelId = material.getModelId();
+			this.modelId = material.getModel();
 		}
 
 		public ItemBuilder getDisplayItem() {
-			return new ItemBuilder(material).modelId(modelId).name(StringUtils.camelCase(name()));
+			return new ItemBuilder(material).model(modelId).name(StringUtils.camelCase(name()));
 		}
 
 		public List<Package> getPackages() {

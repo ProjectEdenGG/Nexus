@@ -14,7 +14,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -24,6 +24,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.Objects;
 
 public class CreativeBrushMenu extends InventoryProvider implements IDyeMenu {
 	private ColorChoice.ChoiceType choiceType = ChoiceType.DYE;
@@ -181,6 +182,6 @@ public class CreativeBrushMenu extends InventoryProvider implements IDyeMenu {
 		if (Nullables.isNullOrAir(item))
 			return false;
 
-		return getCreativeBrush().modelId() == ModelId.of(item);
+		return Objects.equals(getCreativeBrush().model(), Model.of(item));
 	}
 }

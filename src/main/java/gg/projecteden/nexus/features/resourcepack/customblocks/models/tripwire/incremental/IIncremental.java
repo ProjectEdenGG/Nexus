@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface IIncremental extends ICustomTripwire {
 
-	List<Integer> getModelIdList();
+	List<String> getModelIdList();
 
 	default int getIndex() {
-		return getModelIdList().indexOf(getModelId());
+		return getModelIdList().indexOf(getModel());
 	}
 }

@@ -38,10 +38,10 @@ public class BirdHouse extends DecorationConfig implements CraftableDecoration, 
 
 	}
 
-	public static Set<Integer> ids() {
+	public static Set<String> ids() {
 		return DecorationConfig.getALL_DECOR_CONFIGS().stream()
 				.filter(config -> config instanceof BirdHouse)
-				.map(DecorationConfig::getModelId)
+				.map(DecorationConfig::getModel)
 				.collect(Collectors.toSet());
 	}
 
@@ -105,15 +105,15 @@ public class BirdHouse extends DecorationConfig implements CraftableDecoration, 
 			if (!(decoration.getConfig() instanceof BirdHouse birdHouse))
 				return;
 
-			int modelId = birdHouse.getType().getBaseMaterial().getModelId();
+			String modelId = birdHouse.getType().getBaseMaterial().getModel();
 			BlockFace facing = event.getAttachedFace().getOppositeFace();
 
 			if (facing == BlockFace.UP)
-				modelId += 2;
+				modelId = modelId.replace("horizontal", "hanging");
 			else if (facing != BlockFace.DOWN)
-				modelId += 1;
+				modelId = modelId.replace("horizontal", "vertical");
 
-			event.setItem(new ItemBuilder(event.getItem()).modelId(modelId).build());
+			event.setItem(new ItemBuilder(event.getItem()).model(modelId).build());
 
 			switch (facing) {
 				case NORTH, SOUTH, EAST, WEST -> event.setRotation(ItemFrameRotation.DEGREE_0);

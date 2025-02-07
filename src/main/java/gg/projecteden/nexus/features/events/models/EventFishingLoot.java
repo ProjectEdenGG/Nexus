@@ -61,30 +61,30 @@ public class EventFishingLoot {
 
 		private final EventFishingLootCategory category;
 		private final Material material;
-		private final int modelId;
+		private final String modelId;
 		private final double weight;
 		private final String customName;
 		private final EventFishingLootTime time;
 		private final Integer maxY;
 
 		EventDefaultFishingLoot(EventFishingLootCategory category, Material material, double weight) {
-			this(category, material, 0, weight, null, null, null);
+			this(category, material, null, weight, null, null, null);
 		}
 
 		EventDefaultFishingLoot(EventFishingLootCategory category, Material material, String customName, double weight) {
-			this(category, material, 0, weight, customName, null, null);
+			this(category, material, null, weight, customName, null, null);
 		}
 
 		EventDefaultFishingLoot(EventFishingLootCategory category, CustomMaterial material, String customName, double weight) {
-			this(category, material.getMaterial(), material.getModelId(), weight, customName, EventFishingLootTime.BOTH, null);
+			this(category, material.getMaterial(), material.getModel(), weight, customName, EventFishingLootTime.BOTH, null);
 		}
 
 		EventDefaultFishingLoot(EventFishingLootCategory category, CustomMaterial material, String customName, double weight, EventFishingLootTime time) {
-			this(category, material.getMaterial(), material.getModelId(), weight, customName, time, null);
+			this(category, material.getMaterial(), material.getModel(), weight, customName, time, null);
 		}
 
 		EventDefaultFishingLoot(EventFishingLootCategory category, CustomMaterial material, String customName, double weight, Integer maxY) {
-			this(category, material.getMaterial(), material.getModelId(), weight, customName, EventFishingLootTime.BOTH, maxY);
+			this(category, material.getMaterial(), material.getModel(), weight, customName, EventFishingLootTime.BOTH, maxY);
 		}
 
 		public FishingLoot build() {
@@ -100,7 +100,7 @@ public class EventFishingLoot {
 		private String id;
 		private EventFishingLootCategory category;
 		private Material material;
-		private int modelId;
+		private String modelId;
 		private double weight;
 		private String customName;
 		private EventFishingLootTime time;
@@ -108,23 +108,23 @@ public class EventFishingLoot {
 		private Predicate<Player> predicate;
 
 		FishingLoot(String id, EventFishingLootCategory category, Material material, double weight) {
-			this(id, category, material, 0, weight, null, null, null, null);
+			this(id, category, material, null, weight, null, null, null, null);
 		}
 
 		FishingLoot(String id, EventFishingLootCategory category, Material material, String customName, double weight) {
-			this(id, category, material, 0, weight, customName, null, null, null);
+			this(id, category, material, null, weight, customName, null, null, null);
 		}
 
 		FishingLoot(String id, EventFishingLootCategory category, CustomMaterial material, String customName, double weight) {
-			this(id, category, material.getMaterial(), material.getModelId(), weight, customName, EventFishingLootTime.BOTH, null, null);
+			this(id, category, material.getMaterial(), material.getModel(), weight, customName, EventFishingLootTime.BOTH, null, null);
 		}
 
 		FishingLoot(String id, EventFishingLootCategory category, CustomMaterial material, String customName, double weight, EventFishingLootTime time) {
-			this(id, category, material.getMaterial(), material.getModelId(), weight, customName, time, null, null);
+			this(id, category, material.getMaterial(), material.getModel(), weight, customName, time, null, null);
 		}
 
 		FishingLoot(String id, EventFishingLootCategory category, CustomMaterial material, String customName, double weight, Integer maxY) {
-			this(id, category, material.getMaterial(), material.getModelId(), weight, customName, EventFishingLootTime.BOTH, maxY, null);
+			this(id, category, material.getMaterial(), material.getModel(), weight, customName, EventFishingLootTime.BOTH, maxY, null);
 		}
 
 		public boolean applies(Player player) {
@@ -163,8 +163,8 @@ public class EventFishingLoot {
 			if (this.getCustomName() != null && !material.equals(Material.ENCHANTED_BOOK))
 				result.name(this.getCustomName());
 
-			if (this.getModelId() != 0)
-				result.modelId(this.getModelId());
+			if (this.getModelId() != null)
+				result.model(this.getModelId());
 
 			if (material.equals(Material.ENCHANTED_BOOK)) {
 				if (customName.equals("Unbreaking"))

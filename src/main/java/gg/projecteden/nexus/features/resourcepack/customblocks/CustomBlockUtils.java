@@ -17,10 +17,10 @@ import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
 import gg.projecteden.nexus.models.customblock.CustomNoteBlockData;
 import gg.projecteden.nexus.models.customblock.CustomTripwireData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
-import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -56,7 +56,7 @@ public class CustomBlockUtils {
 
 	public static CustomBlockData placeBlockDatabase(@NonNull UUID uuid, @NonNull CustomBlock customBlock, @NonNull Location location, BlockFace facing) {
 		tracker = trackerService.fromWorld(location);
-		CustomBlockData data = new CustomBlockData(uuid, customBlock.get().getModelId(), customBlock.getType());
+		CustomBlockData data = new CustomBlockData(uuid, customBlock.get().getModel(), customBlock.getType());
 		switch (customBlock.getType()) {
 			case NOTE_BLOCK -> {
 				CustomNoteBlockData extraData = new CustomNoteBlockData(facing);

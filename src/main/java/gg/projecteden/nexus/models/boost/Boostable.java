@@ -46,15 +46,15 @@ public enum Boostable {
 	;
 
 	private final Material material;
-	private final int modelId;
+	private final String model;
 	private final boolean possiblePersonal = true;
 
 	Boostable(Material material) {
-		this(material, 0);
+		this(material, null);
 	}
 
 	Boostable(CustomMaterial customMaterial) {
-		this(customMaterial.getMaterial(), customMaterial.getModelId());
+		this(customMaterial.getMaterial(), customMaterial.getModel());
 	}
 
 	@SneakyThrows
@@ -68,7 +68,7 @@ public enum Boostable {
 
 	@NotNull
 	public ItemBuilder getDisplayItem() {
-		return new ItemBuilder(material).modelId(modelId).name("&6" + StringUtils.camelCase(name()));
+		return new ItemBuilder(material).model(model).name("&6" + StringUtils.camelCase(name()));
 	}
 
 	public void onActivate() {}

@@ -45,7 +45,7 @@ public class WorkbenchesCommand extends CustomCommand {
 			for (Workbench workbench : Workbench.values()) {
 				final ItemBuilder builder = new ItemBuilder(workbench.getMaterial())
 					.name(StringUtils.camelCase(workbench))
-					.modelId(workbench.getModelId());
+					.model(workbench.getModel());
 
 				contents.set(index++, ClickableItem.of(builder.build(), e -> workbench.open(viewer)));
 			}

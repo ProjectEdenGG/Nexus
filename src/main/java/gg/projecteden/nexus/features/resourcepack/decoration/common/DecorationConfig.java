@@ -19,7 +19,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Dyea
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
@@ -44,6 +44,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -56,8 +57,8 @@ public class DecorationConfig {
 	protected String id;
 	protected String name;
 	protected @NonNull Material material = Material.PAPER;
-	protected int modelId;
-	protected Predicate<Integer> modelIdPredicate;
+	protected String model;
+	protected Predicate<String> modelPredicate;
 	protected String placeSound = Sound.ENTITY_ITEM_FRAME_ADD_ITEM.getKey().getKey();
 	protected String hitSound = Sound.ENTITY_ITEM_FRAME_ROTATE_ITEM.getKey().getKey();
 	protected String breakSound = Sound.ENTITY_ITEM_FRAME_REMOVE_ITEM.getKey().getKey();
@@ -76,14 +77,14 @@ public class DecorationConfig {
 		ALL_DECOR_CONFIGS.add(this);
 	}
 
-	public DecorationConfig(boolean multiBlock, String name, @NotNull Material material, int modelId, Predicate<Integer> modelIdPredicate, CustomHitbox hitbox) {
+	public DecorationConfig(boolean multiBlock, String name, @NotNull Material material, String model, Predicate<String> modelIdPredicate, CustomHitbox hitbox) {
 		this();
 		this.multiBlock = multiBlock;
 		this.id = name.toLowerCase().replaceAll(" ", "_");
 		this.name = name;
 		this.material = material;
-		this.modelId = modelId;
-		this.modelIdPredicate = modelIdPredicate;
+		this.model = model;
+		this.modelPredicate = modelIdPredicate;
 		this.hitboxes = hitbox.getHitboxes();
 
 		if (this.isMultiBlock()) {
@@ -102,7 +103,7 @@ public class DecorationConfig {
 	}
 
 	public DecorationConfig(boolean multiBlock, String name, @NonNull CustomMaterial customMaterial, CustomHitbox hitbox) {
-		this(multiBlock, name, customMaterial.getMaterial(), customMaterial.getModelId(), modelId -> modelId == customMaterial.getModelId(), hitbox);
+		this(multiBlock, name, customMaterial.getMaterial(), customMaterial.getModel(), modelId -> modelId == customMaterial.getModel(), hitbox);
 	}
 
 	@Getter
@@ -123,7 +124,7 @@ public class DecorationConfig {
 		if (Nullables.isNullOrAir(itemStack))
 			return null;
 
-		if (ModelId.of(itemStack) == 0)
+		if (!ItemBuilder.Model.hasModel(itemStack))
 			return null;
 
 		for (DecorationConfig decoration : ALL_DECOR_CONFIGS)
@@ -149,7 +150,7 @@ public class DecorationConfig {
 
 	public static DecorationConfig of(CustomMaterial material) {
 		for (DecorationConfig config : ALL_DECOR_CONFIGS)
-			if (config.getMaterial() == material.getMaterial() && config.getModelId() == material.getModelId())
+			if (config.getMaterial() == material.getMaterial() && config.getModel().equals(material.getModel()))
 				return config;
 
 		return null;
@@ -164,13 +165,13 @@ public class DecorationConfig {
 		if (!item1.getType().equals(item2.getType()))
 			return false;
 
-		int decorModelData = ModelId.of(item1);
-		int itemModelData = ModelId.of(item2);
+		String decorModelData = Model.of(item1);
+		String itemModelData = Model.of(item2);
 
-		if (modelIdPredicate != null)
-			return modelIdPredicate.test(itemModelData);
+		if (modelPredicate != null)
+			return modelPredicate.test(itemModelData);
 		else
-			return decorModelData == itemModelData;
+			return Objects.equals(decorModelData, itemModelData);
 	}
 
 	private static final Set<Material> hitboxTypes = new HashSet<>();
@@ -191,7 +192,7 @@ public class DecorationConfig {
 
 	public ItemBuilder getItemBuilder() {
 		ItemBuilder itemBuilder = new ItemBuilder(material)
-			.modelId(modelId)
+			.model(model)
 			.name(name)
 			.lore(lore)
 			.itemFlags(ItemBuilder.ItemFlags.HIDE_ALL)
@@ -473,7 +474,7 @@ public class DecorationConfig {
 		PlayerUtils.send(player, "&3Tokens: &e" + (priceTokens == null ? "Unbuyable" : priceTokens));
 
 		PlayerUtils.send(player, "&3Material: &e" + gg.projecteden.api.common.utils.StringUtils.camelCase(this.getMaterial()));
-		PlayerUtils.send(player, "&3Model Id: &e" + this.getModelId());
+		PlayerUtils.send(player, "&3Model: &e" + this.getModel());
 		PlayerUtils.send(player, "&3Lore: &f[" + String.join(",", this.getLore()) + "&f]");
 		PlayerUtils.sendLine(player);
 

@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.events.y2024.vulan24.quests.community;
 
 import gg.projecteden.nexus.features.events.y2024.vulan24.VuLan24;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -17,7 +17,7 @@ public enum VuLan24DailyQuest {
 	COOKED_MUTTON(Material.COOKED_MUTTON),
 	COOKED_CHICKEN(Material.COOKED_CHICKEN),
 	SUGAR(Material.SUGAR),
-	FISH(item -> VuLan24.get().getFishingLoot(item.getType(), ModelId.of(item)) != null),
+	FISH(item -> VuLan24.get().getFishingLoot(item.getType(), Model.of(item)) != null),
 	GOLDEN_CARROT(Material.GOLDEN_CARROT),
 	HAY_BALE(Material.HAY_BLOCK),
 	;

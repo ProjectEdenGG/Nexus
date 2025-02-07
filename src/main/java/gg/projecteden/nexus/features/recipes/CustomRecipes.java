@@ -27,7 +27,7 @@ import gg.projecteden.nexus.utils.CopperState;
 import gg.projecteden.nexus.utils.CopperState.CopperBlockType;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.ItemUtils.ItemStackComparator;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -549,7 +549,7 @@ public class CustomRecipes extends Feature implements Listener {
 			return;
 
 		for (ItemStack item : event.getInventory().getMatrix())
-			if (ModelId.of(item) != 0 && !(CustomMaterial.of(item) != null && CustomMaterial.of(item).isAllowedInVanillaRecipes()))
+			if (Model.of(item) != null && !(CustomMaterial.of(item) != null && CustomMaterial.of(item).isAllowedInVanillaRecipes()))
 				event.getInventory().setResult(new ItemStack(Material.AIR));
 	}
 

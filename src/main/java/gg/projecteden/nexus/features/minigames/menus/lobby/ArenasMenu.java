@@ -108,7 +108,7 @@ public class ArenasMenu extends ScrollableInventoryProvider {
 			// TODO Remove or placeholder image
 			.peek(arena -> {
 				if (arena.getMenuImage() == null)
-					arena.setMenuImage(new ItemBuilder(Material.PAPER).modelId(1700));
+					arena.setMenuImage(new ItemBuilder(Material.PAPER).model(CustomMaterial.GUI_GAMELOBBY_ARENAS_BLANK));
 			})
 			//
 			.filter(arena -> arena.getMenuImage() != null)

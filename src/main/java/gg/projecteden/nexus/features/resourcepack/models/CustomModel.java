@@ -26,7 +26,7 @@ public class CustomModel implements Comparable<CustomModel> {
 	private CustomModelFolder folder;
 	private ModelOverride override;
 	private Material material;
-	private int data;
+	private String data;
 	private CustomModelMeta meta;
 	private String fileName;
 

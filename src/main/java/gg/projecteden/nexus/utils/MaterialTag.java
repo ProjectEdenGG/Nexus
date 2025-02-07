@@ -149,7 +149,7 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag TULIPS = new MaterialTag("_TULIP", MatchMode.SUFFIX).exclude("POTTED", MatchMode.CONTAINS);
 
-	public static final MaterialTag ALL_FLOWERS = new MaterialTag(SMALL_FLOWERS, TALL_FLOWERS);
+	public static final MaterialTag ALL_FLOWERS = new MaterialTag(SMALL_FLOWERS, FLOWERS);
 
 	public static final MaterialTag ALL_BEEHIVES = new MaterialTag(Material.BEEHIVE, Material.BEE_NEST);
 

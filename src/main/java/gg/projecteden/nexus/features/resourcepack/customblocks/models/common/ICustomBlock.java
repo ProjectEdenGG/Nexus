@@ -29,12 +29,12 @@ public interface ICustomBlock extends IHarvestable {
 		return getCustomBlockConfig().name();
 	}
 
-	default int getModelId() {
-		return getCustomBlockConfig().modelId();
+	default String getModel() {
+		return getCustomBlockConfig().model();
 	}
 
 	default @NonNull ItemBuilder getItemBuilder() {
-		return new ItemBuilder(itemMaterial).modelId(getModelId()).name(getItemName());
+		return new ItemBuilder(itemMaterial).model(getModel()).name(getItemName());
 	}
 
 	default @NonNull ItemStack getItemStack() {

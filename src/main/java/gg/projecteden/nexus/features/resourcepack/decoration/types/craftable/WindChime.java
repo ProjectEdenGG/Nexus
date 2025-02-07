@@ -12,7 +12,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Ceil
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.ambience.AmbienceConfig.Ambience.AmbienceType;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import lombok.AllArgsConstructor;
@@ -25,6 +25,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -37,9 +38,9 @@ public class WindChime extends CeilingThing implements CraftableDecoration {
 		this.type = type;
 	}
 
-	public static Set<Integer> ids() {
+	public static Set<String> ids() {
 		return Arrays.stream(WindChimeType.values())
-			.map(type -> type.getCustomMaterial().getModelId())
+			.map(type -> type.getCustomMaterial().getModel())
 			.collect(Collectors.toSet());
 	}
 
@@ -67,11 +68,11 @@ public class WindChime extends CeilingThing implements CraftableDecoration {
 			if (Nullables.isNullOrAir(item))
 				return null;
 
-			int modelId = ModelId.of(item);
+			String modelId = Model.of(item);
 			Material material = item.getType();
 
 			return Arrays.stream(WindChimeType.values())
-				.filter(type -> type.customMaterial.getModelId() == modelId)
+				.filter(type -> Objects.equals(type.customMaterial.getModel(), modelId))
 				.filter(type -> type.customMaterial.getMaterial() == material)
 				.findFirst()
 				.orElse(null);

@@ -45,7 +45,7 @@ public class AccessibleHomesProvider extends InventoryProvider {
 				.lore("&eClick &3to teleport");
 
 			if (home.hasItem())
-				homeItem.material(home.getItem().getType()).modelId(0);
+				homeItem.material(home.getItem().getType());
 
 			items.add(ClickableItem.of(homeItem, e ->
 				PlayerUtils.runCommand(viewer, "home " + targetOwner.getName() + " " + home.getName())));
