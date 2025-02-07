@@ -167,7 +167,7 @@ public class StatisticsCommand extends CustomCommand implements Listener {
 				error((isSelf(user) ? "You do": user.getNickname() + " does") + " not lead any leaderboards");
 
 			send();
-			send(PREFIX + "Leaderboards Led - " + Nerd.of(user).getColoredName());
+			send(PREFIX + "Leaderboards Led &7- " + Nerd.of(user).getColoredName() + " &7- " + FORMATTER.format(self.getCount()));
 
 			new Paginator<LeaderboardStatistic>()
 				.values(self.getLeaderboards())
@@ -191,7 +191,7 @@ public class StatisticsCommand extends CustomCommand implements Listener {
 					.hover("&eClick to view leaderboards led");
 
 			send();
-			send(PREFIX + "Most Leaderboards Led");
+			send(PREFIX + "Most Leaderboards Led &7- " + StringUtils.getCnf().format(values.stream().map(MostLeaderboardsResult::getCount).mapToInt(Integer::valueOf).sum()) + " total leaderboards");
 
 			new Paginator<MostLeaderboardsResult>()
 				.values(values)
