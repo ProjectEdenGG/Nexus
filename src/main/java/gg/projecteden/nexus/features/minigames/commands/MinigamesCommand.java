@@ -1101,6 +1101,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 
 		BlockVector3 stackMin = stack.getMinimumPoint().withY(stack.getMinimumY() + 1);
 		BlockVector3 stackMax = stack.getMaximumPoint().withY(world().getMaxHeight());
+		worldedit().setSelection(player(), stackMin, stackMax);
 		worldedit().set(worldguard().getRegion(stackMin, stackMax), BlockTypes.AIR).thenRun(() -> {
 			copy.accept(logo.getMinimumPoint().x(), logo.getMinimumPoint().z());
 
@@ -1120,8 +1121,18 @@ public class MinigamesCommand extends _WarpSubCommand {
 					originX.addAndGet(49);
 					originZ.set(floors.getMinimumPoint().z() + 1);
 
-					if (isOutOfBounds.test(originX.get(), originZ.get()))
+					if (isOutOfBounds.test(originX.get(), originZ.get())) {
+						send(json(PREFIX + "Click to update real stack")
+							.command("mcmd " +
+								"tppos 1661.70 4 -4234.43 -90 0 buildadmin ;; " +
+								"/copy ;; " +
+								"wait 10 ;; " +
+								"tppos 1724.70 34 -4335.37 -90 0 gameworld ;; " +
+								"wait 5 ;; " +
+								"/paste"
+							));
 						return;
+					}
 				}
 				Tasks.wait(delay, loop.get());
 			});
