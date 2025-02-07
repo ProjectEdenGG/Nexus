@@ -118,6 +118,18 @@ public class BridgeCommand extends CustomCommand {
 		send(PREFIX + (test ? "Will update" : "Updated") + " " + count + " roles");
 	}
 
+	@Async
+	@Path("roleUpdates <user> [state]")
+	void roleUpdates(DiscordUser user, Boolean state) {
+		if (state == null)
+			state = user.isPreventRoleUpdates();
+
+		state = !state;
+		user.setPreventRoleUpdates(state);
+		service.save(user);
+		send(PREFIX + (state ? "&cPreventing" : "&aAllowing") + " role updates for " + user.getNerd().getColoredName());
+	}
+
 	private static BridgeArchive archive;
 	private static BridgeChannel loadedChannel;
 
@@ -137,15 +149,19 @@ public class BridgeCommand extends CustomCommand {
 		}
 	}
 
+	private static Map<String, List<String>> getRoleMap() {
+		return archive.getData().get(loadedChannel.getTextChannel().getId());
+	}
+
 	@Async
 	@SneakyThrows
 	@Path("archive load <channel>")
 	@Description("Load an archive into memory")
 	void archive_load(BridgeChannel channel) {
 		loadedChannel = channel;
-		String data = "{\"roleMap\":" + FileUtils.readFileToString(IOUtils.getPluginFile("role-archives/" + channel.getTextChannel().getId() + ".json")) + "}";
+		String data = "{\"data\":" + FileUtils.readFileToString(IOUtils.getPluginFile("role-archive.json")) + "}";
 		archive = new Gson().fromJson(data, BridgeArchive.class);
-		send(PREFIX + "Loaded " + archive.getRoleMap().size() + " roles from the archive");
+		send(PREFIX + "Loaded " + getRoleMap().size() + " roles from the archive");
 	}
 
 	@Async
@@ -159,14 +175,14 @@ public class BridgeCommand extends CustomCommand {
 			DiscordUser user = new DiscordUserService().getFromRoleId(roleId);
 			boolean tied = user != null;
 			String name = role == null ? roleId : user == null ? role.getName() : user.getIngameName();
-			int size = archive.getRoleMap().get(roleId).size();
+			int size = getRoleMap().get(roleId).size();
 			return json(index + " " + (tied ? "&e" : "&c") + name + " &7- " + size + " messages")
 					.insert(roleId)
 					.hover("Shift+Click to insert");
 		};
 
 		Set<String> values = Utils.sortByValue(new HashMap<String, Integer>() {{
-			archive.getRoleMap().forEach((k, v) -> put(k, v.size()));
+			getRoleMap().forEach((k, v) -> put(k, v.size()));
 		}}).keySet();
 
 		new Paginator<String>()
@@ -190,7 +206,7 @@ public class BridgeCommand extends CustomCommand {
 			else
 				name = Nickname.of(user);
 
-		List<String> messageIds = archive.getRoleMap().get(roleId);
+		List<String> messageIds = getRoleMap().get(roleId);
 		send(PREFIX + "Editing " + messageIds.size() + " messages for user " + name);
 		for (String messageId : messageIds)
 			updateRoleMention(roleId, "**" + name + "**", messageId);
@@ -204,7 +220,7 @@ public class BridgeCommand extends CustomCommand {
 	void archive_editMessages_updateReference(String oldRoleId, String newRoleId) {
 		if (archive == null) error("No archive loaded");
 
-		List<String> messageIds = archive.getRoleMap().get(oldRoleId);
+		List<String> messageIds = getRoleMap().get(oldRoleId);
 		send(PREFIX + "Editing " + messageIds.size() + " messages");
 		for (String messageId : messageIds)
 			updateRoleMention(oldRoleId, "<@&" + newRoleId + ">", messageId);
@@ -225,7 +241,7 @@ public class BridgeCommand extends CustomCommand {
 	@Description("Find duplicate roles")
 	void archive_findDuplicateRoles(@Arg("1") int page) {
 		Map<UUID, List<String>> duplicates = new HashMap<>() {{
-			for (String roleId : archive.getRoleMap().keySet()) {
+			for (String roleId : getRoleMap().keySet()) {
 				Role role = Discord.getGuild().getRoleById(roleId);
 				DiscordUser user = new DiscordUserService().getFromRoleId(roleId);
 				String name = user == null ? role == null ? null : role.getName() : user.getIngameName();
@@ -250,7 +266,7 @@ public class BridgeCommand extends CustomCommand {
 					.newline();
 
 			for (String roleId : duplicates.get(uuid))
-				json.next("    &7" + roleId + " - " + archive.getRoleMap().get(roleId).size() + " messages")
+				json.next("    &7" + roleId + " - " + getRoleMap().get(roleId).size() + " messages")
 						.newline();
 
 			return json;
@@ -287,7 +303,7 @@ public class BridgeCommand extends CustomCommand {
 
 	@Data
 	private static class BridgeArchive {
-		private Map<String, List<String>> roleMap;
+		private Map<String, Map<String, List<String>>> data;
 	}
 
 }

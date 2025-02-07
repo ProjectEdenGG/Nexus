@@ -12,7 +12,11 @@ import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -37,6 +41,7 @@ public class DiscordUser implements PlayerOwnedObject {
 	private UUID uuid;
 	private String userId;
 	private String roleId;
+	private boolean preventRoleUpdates;
 
 	public DiscordUser(@NonNull UUID uuid, String userId) {
 		this.uuid = uuid;

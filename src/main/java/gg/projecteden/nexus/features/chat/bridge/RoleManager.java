@@ -6,23 +6,12 @@ import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.Name;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import net.dv8tion.jda.api.entities.Role;
 
-import java.awt.Color;
-import java.util.Arrays;
+import java.awt.*;
 import java.util.List;
-import java.util.UUID;
 
 public class RoleManager {
-	public static final List<UUID> ignore = Arrays.asList(
-			Dev.GRIFFIN.getUuid(),
-			Dev.WAKKA.getUuid(),
-			Dev.FILID.getUuid(),
-			Dev.BLAST.getUuid(),
-			Dev.KODA.getUuid(),
-			Dev.ARBY.getUuid()
-	);
 
 	public static void update(DiscordUser user) {
 		if (Discord.getGuild() == null)
@@ -34,7 +23,7 @@ public class RoleManager {
 		if (name == null)
 			return;
 
-		if (ignore.contains(user.getUniqueId()))
+		if (user.isPreventRoleUpdates())
 			return;
 
 		String nickname = Nickname.of(user);
