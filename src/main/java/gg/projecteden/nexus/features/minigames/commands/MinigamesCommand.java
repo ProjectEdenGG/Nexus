@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigames.commands;
 
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.annotations.Environments;
@@ -1047,9 +1048,11 @@ public class MinigamesCommand extends _WarpSubCommand {
 
 	private static boolean STOP;
 
+	@Permission(Group.ADMIN)
 	@Path("blockParty createStack [--delay] [--stop]")
 	void blockParty_createStack(
 		@Switch @Arg("5") int delay,
+		@Switch @Arg("true") boolean clearStack,
 		@Switch boolean stop
 	) {
 		if (stop) {
@@ -1096,31 +1099,35 @@ public class MinigamesCommand extends _WarpSubCommand {
 			paste.accept(BlockVector2.at(minX, minZ), BlockVector2.at(maxX, maxZ));
 		};
 
-		copy.accept(logo.getMinimumPoint().x(), logo.getMinimumPoint().z());
+		BlockVector3 stackMin = stack.getMinimumPoint().withY(stack.getMinimumY() + 1);
+		BlockVector3 stackMax = stack.getMaximumPoint().withY(world().getMaxHeight());
+		worldedit().set(worldguard().getRegion(stackMin, stackMax), BlockTypes.AIR).thenRun(() -> {
+			copy.accept(logo.getMinimumPoint().x(), logo.getMinimumPoint().z());
 
-		AtomicInteger originX = new AtomicInteger(floors.getMinimumPoint().x() + 1);
-		AtomicInteger originZ = new AtomicInteger(floors.getMinimumPoint().z() + 1);
+			AtomicInteger originX = new AtomicInteger(floors.getMinimumPoint().x() + 1);
+			AtomicInteger originZ = new AtomicInteger(floors.getMinimumPoint().z() + 1);
 
-		AtomicReference<Runnable> loop = new AtomicReference<>();
-		loop.set(() -> {
-			if (STOP)
-				return;
-
-			copy.accept(originX.get(), originZ.get());
-			DotEffect.builder().player(player()).location(new Location(world(), originX.get(), y + 1, originZ.get())).start();
-
-			originZ.addAndGet(49);
-			if (isOutOfBounds.test(originX.get(), originZ.get())) {
-				originX.addAndGet(49);
-				originZ.set(floors.getMinimumPoint().z() + 1);
-
-				if (isOutOfBounds.test(originX.get(), originZ.get()))
+			AtomicReference<Runnable> loop = new AtomicReference<>();
+			loop.set(() -> {
+				if (STOP)
 					return;
-			}
+
+				copy.accept(originX.get(), originZ.get());
+				DotEffect.builder().player(player()).location(new Location(world(), originX.get(), y + 1, originZ.get())).start();
+
+				originZ.addAndGet(49);
+				if (isOutOfBounds.test(originX.get(), originZ.get())) {
+					originX.addAndGet(49);
+					originZ.set(floors.getMinimumPoint().z() + 1);
+
+					if (isOutOfBounds.test(originX.get(), originZ.get()))
+						return;
+				}
+				Tasks.wait(delay, loop.get());
+			});
+
 			Tasks.wait(delay, loop.get());
 		});
-
-		Tasks.wait(delay, loop.get());
 	}
 
 	@ConverterFor(Arena.class)
