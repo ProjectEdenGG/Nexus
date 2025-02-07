@@ -69,6 +69,13 @@ public class StatisticsUserService extends MongoPlayerService<StatisticsUser> {
 				ex.printStackTrace();
 			}
 		}
+
+		public String display() {
+			if (this == StatisticGroup.CUSTOM)
+				return "misc";
+
+			return name().toLowerCase();
+		}
 	}
 
 	@NotNull
@@ -76,7 +83,7 @@ public class StatisticsUserService extends MongoPlayerService<StatisticsUser> {
 		return database.getDatabase().getCollection("statistics");
 	}
 
-	public LinkedHashMap<UUID, Long> getLeaderboard(StatisticGroup group, String stat) {
+	public LinkedHashMap<UUID, Long> getLeaderboard(StatisticsUserService.StatisticGroup group, String stat) {
 		List<Bson> arguments = Stream.of(
 			Aggregates.project(Projections.computed("targetStats", new BasicDBObject("$objectToArray", "$stats.minecraft:" + group.name().toLowerCase()))),
 			Aggregates.unwind("$targetStats"),

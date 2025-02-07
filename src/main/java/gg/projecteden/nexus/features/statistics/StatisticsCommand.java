@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.statistics.StatisticsMenu.StatsMenus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -135,12 +136,12 @@ public class StatisticsCommand extends CustomCommand implements Listener {
 		};
 
 		send();
-		send(PREFIX + "Leaderboard &7- &3" + camelCase(group) + (isNotNullOrEmpty(stat) ? " &7- &3" + camelCase(stat) : ""));
+		send(PREFIX + "Leaderboard &7- &3" + camelCase(group.display()) + (isNotNullOrEmpty(stat) ? " &7- &3" + camelCase(stat) : ""));
 
 		new Paginator<UUID>()
 			.values(values.keySet())
 			.formatter(formatter)
-			.command("/stats leaderboard " + group.name().toLowerCase() + (isNotNullOrEmpty(stat) ? " " + stat : "") + " --page=")
+			.command("/stats leaderboard " + group.display().toLowerCase() + (isNotNullOrEmpty(stat) ? " " + stat : "") + " --page=")
 			.page(page)
 			.afterValues(() -> {
 				if (page == 1) {
@@ -170,9 +171,12 @@ public class StatisticsCommand extends CustomCommand implements Listener {
 
 			new Paginator<LeaderboardStatistic>()
 				.values(self.getLeaderboards())
-				.formatter((stat, index) -> json("&3 " + camelCase(stat.getGroup()) + (stat.getStat() == null ? "" : " &7- &3" + camelCase(stat.getStat())))
-					.command("/stats leaderboard " + stat.getGroup() + " " + (stat.getStat() == null ? "" : stat.getStat()))
-					.hover("&eClick to view leaderboard"))
+				.formatter((stat, index) -> {
+					String group = StatisticGroup.valueOf(stat.getGroup().toUpperCase()).display();
+					return json("&3 " + camelCase(group) + (stat.getStat() == null ? "" : " &7- &3" + camelCase(stat.getStat())))
+						.command("/stats leaderboard " + group + " " + (stat.getStat() == null ? "" : stat.getStat()))
+						.hover("&eClick to view leaderboard");
+				})
 				.command("/stats leaderboardsLed " + user.getNickname() + " --page=")
 				.page(page)
 				.send();
@@ -229,6 +233,19 @@ public class StatisticsCommand extends CustomCommand implements Listener {
 		return context.getAvailableStats().stream()
 			.filter(value -> value.toLowerCase().startsWith(filter.toLowerCase()))
 			.toList();
+	}
+
+	@TabCompleterFor(StatisticGroup.class)
+	List<String> tabCompleteStatisticGroup(String filter) {
+		return tabCompleteEnum(filter, StatisticGroup.class, StatisticGroup::display);
+	}
+
+	@ConverterFor(StatisticGroup.class)
+	StatisticGroup convertToStatisticGroup(String value) {
+		if ("misc".equalsIgnoreCase(value))
+			return StatisticGroup.CUSTOM;
+
+		return convertToEnum(value, StatisticGroup.class);
 	}
 
 	static {
