@@ -120,18 +120,21 @@ public class SignListener implements Listener {
 		final Player player = event.getPlayer();
 
 		try {
-			if (PlayerUtils.isWGEdit(player))
-				return;
-
 			if (!Minigames.isInMinigameLobby(player))
 				return;
 
 			final String id = event.getEntity().getId();
-			if (gg.projecteden.api.common.utils.Nullables.isNullOrEmpty(id))
+			if (Nullables.isNullOrEmpty(id))
 				return;
 
 			if (!id.startsWith(MechanicType.BOUNDING_BOX_ID_PREFIX) && !id.startsWith(MechanicSubGroup.BOUNDING_BOX_ID_PREFIX))
 				return;
+
+			if (PlayerUtils.isWGEdit(player)) {
+				if (new CooldownService().check(player, "minigames-sign-interact-holding-item", TickTime.SECOND.x(3)))
+					PlayerUtils.send(player, Minigames.PREFIX + "Please turn off WorldGuard Edit to join a game");
+				return;
+			}
 
 			final ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
 			final boolean holdingInvite = CustomMaterial.ENVELOPE_1.is(itemInMainHand);
