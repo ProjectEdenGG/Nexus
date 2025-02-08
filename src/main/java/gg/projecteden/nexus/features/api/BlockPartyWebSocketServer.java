@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.api;
 
 import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
@@ -33,6 +34,7 @@ public class BlockPartyWebSocketServer {
 	static final int PORT = 8182;
 	private static ServerSocketChannel serverSocket;
 	private static Selector selector;
+	@Getter
 	private static final Map<UUID, SocketChannel> clients = new ConcurrentHashMap<>();
 	private static volatile boolean running = true;
 
@@ -104,7 +106,8 @@ public class BlockPartyWebSocketServer {
 				"Sec-WebSocket-Accept: " + acceptKey + "\r\n\r\n";
 		client.write(ByteBuffer.wrap(handshakeResponse.getBytes()));
 
-		log("New WebSocket client connected with UUID: " + uuid);
+		Nerd nerd = Nerd.of(uuid);
+		log("New WebSocket client connected: %s - %s".formatted(uuid, nerd.getNickname()));
 		Tasks.async(() -> syncClient(uuid));
 	}
 
