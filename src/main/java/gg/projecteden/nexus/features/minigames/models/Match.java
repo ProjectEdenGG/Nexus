@@ -348,6 +348,7 @@ public class Match implements ForwardingAudience {
 		clearStates(true);
 		stopModifierBar();
 		toGamelobby();
+		getMinigamersAndSpectators().forEach(Minigamer::unhideAll);
 		arena.getLobby().onEnd();
 		try {
 			arena.getMechanic().onEnd(event);
