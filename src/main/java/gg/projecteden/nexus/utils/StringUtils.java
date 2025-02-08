@@ -230,7 +230,7 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	 * @return <amount> <description of item>
 	 */
 	public static String pretty(ItemStack item, int amount) {
-		if (ItemBuilder.ModelId.hasModelId(item)) {
+		if (ItemBuilder.Model.hasModel(item)) {
 			String displayName = item.getItemMeta().getDisplayName();
 
 			DecorationConfig config = DecorationConfig.of(item);

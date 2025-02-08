@@ -3,12 +3,10 @@ package gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus.tasks.AbstractTaskMenu;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus.tasks.DivertPower1Task;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus.tasks.DivertPower2Task;
-import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus.tasks.LightsTask;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus.tasks.MedicalScanTask;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus.tasks.ReactorTask;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus.tasks.SwipeCardTask;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.taskpartdata.DivertPower1TaskPartData;
-import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.taskpartdata.LightsTaskPartData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.taskpartdata.ReactorTaskPartData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.taskpartdata.TaskPartData;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -108,7 +106,7 @@ public class TaskPart {
 	}
 
 	public static final TaskPart SWIPE_CARD = add(builder().name("Swipe Card").interactionItem(EMPTY_ITEM("Swipe Card")).menu(SwipeCardTask.class));
-	public static final TaskPart LIGHTS = add(builder().name("Fix Lights").interactionItem(new ItemBuilder(CustomMaterial.SABOTAGE_FIX_LIGHTS)).data(LightsTaskPartData.class).menu(LightsTask.class));
+//	public static final TaskPart LIGHTS = add(builder().name("Fix Lights").interactionItem(new ItemBuilder(CustomMaterial.LIGHT)).data(LightsTaskPartData.class).menu(LightsTask.class));
 	public static final TaskPart REACTOR = add(builder().name("Reactor Meltdown").interactionItem(new ItemBuilder(CustomMaterial.SABOTAGE_REACTOR_MELTDOWN)).data(ReactorTaskPartData.class).menu(ReactorTask.class));
 	public static final TaskPart SUBMIT_SCAN = add(builder().name("Submit Scan").interactionItem(EMPTY_ITEM("Medical Scan")).menu(MedicalScanTask.class));
 	public static final TaskPart DIVERT_POWER_1 = add(builder().name("Divert Power").interactionItem(new ItemBuilder(CustomMaterial.SABOTAGE_DIVERT_POWER).name("1")).data(DivertPower1TaskPartData.class).menu(DivertPower1Task.class));

@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.resourcepack;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -55,7 +55,7 @@ public class TempCustomBlocks extends Feature implements Listener {
 		if (item.getType() != Material.NOTE_BLOCK)
 			return;
 
-		if (ModelId.of(item) != 0)
+		if (Model.of(item) != null)
 			return;
 
 		var block = event.getClickedBlock();
