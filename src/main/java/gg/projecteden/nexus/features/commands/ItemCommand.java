@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.recipes.RecipeUtils;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.models.CustomArmorType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -55,16 +55,18 @@ public class ItemCommand extends CustomCommand {
 	@Path("rp <material> <id>")
 	@Permission(Group.STAFF)
 	@Description("Spawn a resource pack item")
-	void rp(Material material, int id) {
-		PlayerUtils.giveItem(player(), new ItemBuilder(material).modelId(id).build());
+	void rp(Material material, String id) {
+		PlayerUtils.giveItem(player(), new ItemBuilder(material).model(id).build());
 	}
 
 	@Path("rp armor <piece> <type>")
 	@Permission(Group.STAFF)
 	@Description("Spawn a resource pack armor item or set")
 	void rp_armor(ArmorPiece piece, CustomArmorType type) {
-		for (Material material : piece.getMaterials().getValues())
-			PlayerUtils.giveItem(player(), new ItemBuilder(material).modelId(type.getId()).dyeColor(Color.fromRGB(type.getId())).build());
+		for (Material material : piece.getMaterials().getValues()) {
+			PlayerUtils.ArmorSlot slot = PlayerUtils.ArmorSlot.of(material);
+			PlayerUtils.giveItem(player(), new ItemBuilder(material).model(type.getId(slot)).dyeColor(Color.fromRGB(type.ordinal() + 1)).build());
+		}
 	}
 
 	@Path("tag <tag> [amount]")

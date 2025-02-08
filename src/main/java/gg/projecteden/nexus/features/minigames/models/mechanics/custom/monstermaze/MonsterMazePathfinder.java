@@ -132,7 +132,7 @@ public class MonsterMazePathfinder implements com.destroystokyo.paper.entity.Pat
         @Nullable
         @Override
         public Location getNextPoint() {
-            if (!path.hasNext())
+            if (!path.isDone())
                 return null;
 
             return toLoc(path.nodes.get(path.getNextNodeIndex()));

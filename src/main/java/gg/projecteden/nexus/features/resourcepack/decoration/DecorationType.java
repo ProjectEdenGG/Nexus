@@ -987,7 +987,7 @@ public enum DecorationType {
 	COOKIES_CHOCOLATE(new FloorThing(false, "Chocolate Cookies", CustomMaterial.FOOD_COOKIES_CHOCOLATE)),
 
 	@TypeConfig(money = 30, tokens = 3, tabs = Tab.FOOD)
-	COOKIES_CHOCOLATE_CHIP(new FloorThing(false, "Chocolate Chip Cookies", CustomMaterial.FOOD_COOKIES_CHOCOLATE_CHIP)),
+	COOKIES_CHOCOLATE_CHIP(new FloorThing(false, "Chocolate Chip Cookies", CustomMaterial.FOOD_COOKIE_TRAY_CHOCOLATE_CHIP)),
 
 	@TypeConfig(money = 30, tokens = 3, tabs = Tab.FOOD)
 	COOKIES_SUGAR(new FloorThing(false, "Sugar Cookies", CustomMaterial.FOOD_COOKIES_SUGAR)),

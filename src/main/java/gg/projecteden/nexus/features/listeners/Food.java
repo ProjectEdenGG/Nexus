@@ -25,9 +25,9 @@ import java.util.Map;
 public class Food implements Listener {
 
 	private static final Map<CustomMaterial, Pair<Integer, Double>> FOOD = Map.of(
-		CustomMaterial.FOOD_BEETROOT_SOUP, new Pair<>(6, 7.2d),
-		CustomMaterial.FOOD_MUSHROOM_STEW, new Pair<>(6, 7.2d),
-		CustomMaterial.FOOD_RABBIT_STEW, new Pair<>(10, 12d)
+		CustomMaterial.FOOD_SOUP_BEETROOT, new Pair<>(6, 7.2d),
+		CustomMaterial.FOOD_SOUP_MUSHROOM, new Pair<>(6, 7.2d),
+		CustomMaterial.FOOD_SOUP_RABBIT, new Pair<>(10, 12d)
 	);
 
 	@EventHandler
@@ -70,7 +70,7 @@ public class Food implements Listener {
 
 		event.setCancelled(true);
 		item.subtract();
-		player.getInventory().addItem(new ItemBuilder(CustomMaterial.FOOD_MUSHROOM_STEW).name("Mushroom Stew").build());
+		player.getInventory().addItem(new ItemBuilder(CustomMaterial.FOOD_SOUP_MUSHROOM).name("Mushroom Stew").build());
 	}
 
 	@EventHandler

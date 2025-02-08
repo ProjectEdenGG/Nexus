@@ -1176,6 +1176,18 @@ public class PlayerUtils {
 
 		private final EquipmentSlot slot;
 
+		public static ArmorSlot of(Material material) {
+			if (material.name().endsWith("HELMET"))
+				return HELMET;
+			if (material.name().endsWith("CHESTPLATE"))
+				return CHESTPLATE;
+			if (material.name().endsWith("LEGGINGS"))
+				return LEGGINGS;
+			if (material.name().endsWith("BOOTS"))
+				return BOOTS;
+			return null;
+		}
+
 		public Material getLeather() {
 			return Material.getMaterial("LEATHER_" + name());
 		}

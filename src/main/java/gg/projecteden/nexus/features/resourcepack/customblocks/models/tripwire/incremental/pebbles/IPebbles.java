@@ -12,13 +12,13 @@ public interface IPebbles extends IIncremental, IRequireSupport {
 
 	@Override
 	default List<String> getModelIdList() {
-		return List.of(21106, 21107, 21108);
+		return List.of(CustomMaterial.ROCKS_PEBBLES_0.getModel(), CustomMaterial.ROCKS_PEBBLES_1.getModel(), CustomMaterial.ROCKS_PEBBLES_2.getModel());
 	}
 
 	@Override
 	@NonNull
 	default ItemBuilder getItemBuilder() {
-		return new ItemBuilder(CustomMaterial.BLOCKS_ROCKS_PEBBLES).name("Pebbles");
+		return new ItemBuilder(CustomMaterial.ROCKS_PEBBLES_0).name("Pebbles");
 	}
 
 	@Override

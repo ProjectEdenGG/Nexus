@@ -22,7 +22,7 @@ public class WitherLeggings extends FunctionalRecipe {
 
 	@Getter
 	private static final ItemStack item = new ItemBuilder(CustomMaterial.WITHER_LEGGINGS)
-		.dyeColor(Color.fromRGB(CustomArmorType.WITHER.getId()))
+		.dyeColor(Color.fromRGB(CustomArmorType.WITHER.ordinal() + 1))
 		.itemFlags(ItemFlag.HIDE_DYE)
 		.attribute(Attribute.ARMOR, "wither-armor-points", 6, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS)
 		.attribute(Attribute.ARMOR_TOUGHNESS, "wither-armor-toughness", 2, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS)

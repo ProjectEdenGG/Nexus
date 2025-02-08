@@ -293,17 +293,17 @@ public class ProfileSettingsProvider extends InventoryProvider {
 		};
 
 		private final Material material;
-		private final int modelId;
+		private final String modelId;
 
 		ProfileSetting(CustomMaterial customMaterial) {
-			this(customMaterial.getMaterial(), customMaterial.getModelId());
+			this(customMaterial.getMaterial(), customMaterial.getModel());
 		}
 
 		ProfileSetting(Material material) {
-			this(material, 0);
+			this(material, null);
 		}
 
-		ProfileSetting(Material material, int modelId) {
+		ProfileSetting(Material material, String modelId) {
 			this.material = material;
 			this.modelId = modelId;
 		}
@@ -313,7 +313,7 @@ public class ProfileSettingsProvider extends InventoryProvider {
 		}
 
 		public ItemBuilder getDisplayItem(Player viewer, ProfileUser user) {
-			return new ItemBuilder(getMaterial()).modelId(getModelId()).name(getDisplayName());
+			return new ItemBuilder(getMaterial()).model(getModelId()).name(getDisplayName());
 		}
 
 		public boolean shouldNotShow(Player viewer, ProfileUser user) {

@@ -940,7 +940,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder number(int number) {
-		return model(CustomMaterial.UI_NUMBERS_0).customModelData(number);
+		return model(CustomMaterial.GUI_NUMBER).customModelData(number);
 	}
 
 	public static class Model {

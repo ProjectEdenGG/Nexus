@@ -14,7 +14,11 @@ import gg.projecteden.nexus.utils.PlayerUtils.ArmorSlot;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.nms.PacketUtils;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -79,15 +83,27 @@ public class InvisibleArmor implements PlayerOwnedObject {
 	}
 
 	public ItemStack getHiddenIcon(ArmorSlot slot) {
-		return new ItemBuilder(CustomMaterial.ARMOR_OUTLINE_HELMET)
-			.modelId(CustomMaterial.ARMOR_OUTLINE_HELMET.getModelId() + slot.ordinal())
+		CustomMaterial material = switch (slot) {
+			case HELMET -> CustomMaterial.ARMOR_OUTLINE_HELMET;
+			case CHESTPLATE -> CustomMaterial.ARMOR_OUTLINE_CHESTPLATE;
+			case LEGGINGS -> CustomMaterial.ARMOR_OUTLINE_LEGGINGS;
+			case BOOTS -> CustomMaterial.ARMOR_OUTLINE_BOOTS;
+		};
+
+		return new ItemBuilder(material)
 			.name(StringUtils.camelCase(slot))
 			.build();
 	}
 
 	public ItemStack getShownIcon(ArmorSlot slot) {
-		return new ItemBuilder(CustomMaterial.ARMOR_FILLED_HELMET)
-			.modelId(CustomMaterial.ARMOR_FILLED_HELMET.getModelId() + slot.ordinal())
+		CustomMaterial material = switch (slot) {
+			case HELMET -> CustomMaterial.ARMOR_FILLED_HELMET;
+			case CHESTPLATE -> CustomMaterial.ARMOR_FILLED_CHESTPLATE;
+			case LEGGINGS -> CustomMaterial.ARMOR_FILLED_LEGGINGS;
+			case BOOTS -> CustomMaterial.ARMOR_FILLED_BOOTS;
+		};
+
+		return new ItemBuilder(material)
 			.name(StringUtils.camelCase(slot))
 			.build();
 	}

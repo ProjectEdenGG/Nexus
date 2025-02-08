@@ -708,7 +708,7 @@ public class BlockParty extends TeamlessMechanic {
 	public enum BlockPartyPowerUp {
 		LEAP {
 			@Getter
-			final ItemStack item = new ItemBuilder(Material.PAPER).modelId(7413).name("&eLeap").build();
+			final ItemStack item = new ItemBuilder(CustomMaterial.BLOCKPARTY_POWERUPS_LEAP).name("&eLeap").build();
 
 			@Override
 			void execute(Minigamer minigamer, Match match) {
@@ -718,7 +718,7 @@ public class BlockParty extends TeamlessMechanic {
 		},
 		COLOR_SPLASH {
 			@Getter
-			final ItemStack item = new ItemBuilder(Material.PAPER).modelId(7414).name("&eColor Splash").build();
+			final ItemStack item = new ItemBuilder(CustomMaterial.BLOCKPARTY_POWERUPS_COLOR_SPLASH).name("&eColor Splash").build();
 
 			@Override
 			void execute(Minigamer minigamer, Match match) {
@@ -733,7 +733,7 @@ public class BlockParty extends TeamlessMechanic {
 		},
 		JUMP_POTION {
 			@Getter
-			final ItemStack item = new ItemBuilder(Material.PAPER).modelId(7415).name("&eJump Potion").build();
+			final ItemStack item = new ItemBuilder(CustomMaterial.BLOCKPARTY_POWERUPS_JUMP_POTION).name("&eJump Potion").build();
 			final PotionEffect potion = new PotionEffect(PotionEffectType.JUMP_BOOST, (int) TimeUtils.TickTime.SECOND.x(15), 3, true, true);
 
 			@Override
@@ -744,7 +744,7 @@ public class BlockParty extends TeamlessMechanic {
 		},
 		SPEED_POTION {
 			@Getter
-			final ItemStack item = new ItemBuilder(Material.PAPER).modelId(7416).name("&eSpeed Potion").build();
+			final ItemStack item = new ItemBuilder(CustomMaterial.BLOCKPARTY_POWERUPS_SPEED_POTION).name("&eSpeed Potion").build();
 			final PotionEffect potion = new PotionEffect(PotionEffectType.SPEED, (int) TimeUtils.TickTime.SECOND.x(8), 4, true, true);
 
 			@Override
@@ -755,7 +755,7 @@ public class BlockParty extends TeamlessMechanic {
 		},
 		COLOR_STORM {
 			@Getter
-			final ItemStack item = new ItemBuilder(Material.PAPER).modelId(7417).name("&eColor Storm").build();
+			final ItemStack item = new ItemBuilder(CustomMaterial.BLOCKPARTY_POWERUPS_COLOR_STORM).name("&eColor Storm").build();
 
 			@Override
 			void execute(Minigamer minigamer, Match match) {

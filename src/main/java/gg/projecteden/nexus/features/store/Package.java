@@ -7,17 +7,31 @@ import gg.projecteden.nexus.features.chat.commands.EmotesCommand;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand.NumericPermission;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.store.annotations.*;
+import gg.projecteden.nexus.features.store.annotations.Category;
 import gg.projecteden.nexus.features.store.annotations.Category.StoreCategory;
 import gg.projecteden.nexus.features.store.annotations.Commands.Command;
+import gg.projecteden.nexus.features.store.annotations.Display;
 import gg.projecteden.nexus.features.store.annotations.ExpirationCommands.ExpirationCommand;
+import gg.projecteden.nexus.features.store.annotations.ExpirationDays;
+import gg.projecteden.nexus.features.store.annotations.Id;
+import gg.projecteden.nexus.features.store.annotations.PermissionGroup;
 import gg.projecteden.nexus.features.store.annotations.Permissions.Permission;
+import gg.projecteden.nexus.features.store.annotations.World;
 import gg.projecteden.nexus.features.store.perks.chat.NicknameCommand;
 import gg.projecteden.nexus.features.store.perks.chat.PrefixCommand;
-import gg.projecteden.nexus.features.store.perks.inventory.*;
+import gg.projecteden.nexus.features.store.perks.inventory.AutoTorchCommand;
+import gg.projecteden.nexus.features.store.perks.inventory.HatCommand;
+import gg.projecteden.nexus.features.store.perks.inventory.InvisibleArmorCommand;
+import gg.projecteden.nexus.features.store.perks.inventory.ItemNameCommand;
+import gg.projecteden.nexus.features.store.perks.inventory.PlayerHeadCommand;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventory;
 import gg.projecteden.nexus.features.store.perks.inventory.workbenches._WorkbenchCommand;
-import gg.projecteden.nexus.features.store.perks.visuals.*;
+import gg.projecteden.nexus.features.store.perks.visuals.EntityNameCommand;
+import gg.projecteden.nexus.features.store.perks.visuals.FireworkCommand;
+import gg.projecteden.nexus.features.store.perks.visuals.PlayerTimeCommand;
+import gg.projecteden.nexus.features.store.perks.visuals.RainbowArmorCommand;
+import gg.projecteden.nexus.features.store.perks.visuals.RainbowBeaconCommand;
+import gg.projecteden.nexus.features.store.perks.visuals.WingsCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.autotorch.AutoTorchService;
 import gg.projecteden.nexus.models.boost.Boostable;
@@ -33,9 +47,15 @@ import gg.projecteden.nexus.models.store.Contributor;
 import gg.projecteden.nexus.models.store.ContributorService;
 import gg.projecteden.nexus.models.vaults.VaultUser;
 import gg.projecteden.nexus.models.vaults.VaultUserService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
+import gg.projecteden.nexus.utils.Name;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.SneakyThrows;
 import net.luckperms.api.context.ImmutableContextSet;
 import org.bukkit.Bukkit;
@@ -834,7 +854,7 @@ public enum Package {
 	@NotNull
 	public ItemBuilder getDisplayItem(UUID uuid) {
 		Material material = Material.PAPER;
-		int modelId = 0;
+		String modelId = null;
 		int amount = 1;
 
 		Display annotation = getField().getAnnotation(Display.class);
@@ -844,13 +864,13 @@ public enum Package {
 				material = annotation.value();
 			} else if (annotation.model() != CustomMaterial.INVISIBLE) {
 				material = annotation.model().getMaterial();
-				modelId = annotation.model().getModelId();
+				modelId = annotation.model().getModel();
 			} else {
 				Nexus.warn("Invalid @Display on Package." + name());
 			}
 		}
 
-		return new ItemBuilder(material).modelId(modelId).name(StringUtils.camelCase(name())).amount(amount);
+		return new ItemBuilder(material).model(modelId).name(StringUtils.camelCase(name())).amount(amount);
 	}
 
 	@Nullable

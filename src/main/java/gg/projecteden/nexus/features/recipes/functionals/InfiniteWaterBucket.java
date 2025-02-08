@@ -26,6 +26,8 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class InfiniteWaterBucket extends FunctionalRecipe {
 
 	public static CustomModel getCustomModel() {
@@ -71,7 +73,7 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 			boolean found = false;
 			for (int i = 0; i < original.length; i++) {
 				if (Nullables.isNullOrAir(original[i])) continue;
-				if (new ItemBuilder(original[i]).modelId() == new ItemBuilder(getResult()).modelId()) {
+				if (Objects.equals(new ItemBuilder(original[i]).model(), new ItemBuilder(getResult()).model())) {
 					original[i] = getResult();
 					found = true;
 				}

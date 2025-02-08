@@ -12,13 +12,13 @@ public interface IRocks extends IIncremental, IRequireSupport {
 
 	@Override
 	default List<String> getModelIdList() {
-		return List.of(21103, 21104, 21105);
+		return List.of(CustomMaterial.ROCKS_ROCKS_0.getModel(), CustomMaterial.ROCKS_ROCKS_1.getModel(), CustomMaterial.ROCKS_ROCKS_2.getModel());
 	}
 
 	@Override
 	@NonNull
 	default ItemBuilder getItemBuilder() {
-		return new ItemBuilder(CustomMaterial.BLOCKS_ROCKS).name("Rocks");
+		return new ItemBuilder(CustomMaterial.ROCKS_ROCKS_0).name("Rocks");
 	}
 
 	@Override

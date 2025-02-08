@@ -1,9 +1,8 @@
-package gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage;
+package gg.projecteden.nexus.features.minigames.models.events.matches.minigamers;
 
 import com.google.common.base.Preconditions;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerMatchEvent;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;

@@ -19,7 +19,7 @@ import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.HttpUtils;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
@@ -208,7 +208,7 @@ public class ResourcePack extends Feature implements Listener {
 	}
 
 	public static boolean isCustomItem(@Nullable ItemStack item) {
-		return item != null && !MaterialTag.ALL_AIR.isTagged(item.getType()) && ModelId.of(item) > 0;
+		return item != null && !MaterialTag.ALL_AIR.isTagged(item.getType()) && Model.of(item) != null;
 	}
 
 	public static boolean isEnabledFor(Player player) {
@@ -284,12 +284,11 @@ public class ResourcePack extends Feature implements Listener {
 			return this;
 		}
 
-		private static final CustomMaterial BASE_MODEL = CustomMaterial.UI_NUMBERS_0;
-		private static final int MODEL_ID_START = BASE_MODEL.getModelId();
+		private static final CustomMaterial BASE_MODEL = CustomMaterial.GUI_NUMBER;
 
 		public ItemBuilder get() {
 			return new ItemBuilder(BASE_MODEL)
-				.modelId(MODEL_ID_START + number)
+				.customModelData(number)
 				.dyeColor(color)
 				.itemFlags(ItemFlag.HIDE_ATTRIBUTES);
 		}

@@ -8,7 +8,13 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigol
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfColor;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfHole;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21User;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.GlowUtils;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -197,7 +203,7 @@ public class PuttListener implements Listener {
 
 				// Spawn golf ball and set data
 				Snowball ball = (Snowball) world.spawnEntity(loc, EntityType.SNOWBALL);
-				ball.setItem(MiniGolf.getGolfBall().clone().modelId(user.getMiniGolfColor().getModelId()).build());
+				ball.setItem(MiniGolf.getGolfBall().clone().model(user.getMiniGolfColor().getModel()).build());
 
 				ball.setGravity(false);
 				ball.setCustomName(MiniGolfUtils.getStrokeString(user));

@@ -9,17 +9,29 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.vaults.VaultCommand.VaultMenu.VaultHolder;
 import gg.projecteden.nexus.models.crate.CrateType;
-import gg.projecteden.nexus.utils.*;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -93,7 +105,7 @@ public class LegacyItems implements Listener {
 		item = Beehives.addLore(item);
 		item = convertCrateKeys(item);
 
-		if (ModelId.of(item) == 0)
+		if (Model.of(item) == null)
 			return item;
 
 		final CustomModel newModel = CustomModel.convert(item);
@@ -102,7 +114,7 @@ public class LegacyItems implements Listener {
 
 		final var converted = new ItemBuilder(item)
 			.material(newModel.getMaterial())
-			.modelId(newModel.getData());
+			.model(newModel.getData());
 
 		return convertIfShulkerBox(world, item, converted);
 	}

@@ -22,7 +22,7 @@
 
 	@Getter
 	private static final ItemStack item = new ItemBuilder(CustomMaterial.WITHER_CHESTPLATE)
-		.dyeColor(Color.fromRGB(CustomArmorType.WITHER.getId()))
+		.dyeColor(Color.fromRGB(CustomArmorType.WITHER.ordinal() + 1))
 		.itemFlags(ItemFlag.HIDE_DYE)
 		.enchant(Enchant.PROTECTION, 4)
 		.enchant(Enchant.UNBREAKING, 4)

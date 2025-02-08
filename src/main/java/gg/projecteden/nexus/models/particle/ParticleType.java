@@ -1,7 +1,16 @@
 package gg.projecteden.nexus.models.particle;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.features.particles.effects.*;
+import gg.projecteden.nexus.features.particles.effects.BandsEffect;
+import gg.projecteden.nexus.features.particles.effects.CircleEffect;
+import gg.projecteden.nexus.features.particles.effects.DiscoEffect;
+import gg.projecteden.nexus.features.particles.effects.NyanCatEffect;
+import gg.projecteden.nexus.features.particles.effects.PolygonEffect;
+import gg.projecteden.nexus.features.particles.effects.SphereEffect;
+import gg.projecteden.nexus.features.particles.effects.SpiralEffect;
+import gg.projecteden.nexus.features.particles.effects.StarEffect;
+import gg.projecteden.nexus.features.particles.effects.StormEffect;
+import gg.projecteden.nexus.features.particles.effects.WingsEffect;
 import gg.projecteden.nexus.features.particles.effects.WingsEffect.WingsEffectBuilder;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -511,35 +520,35 @@ public enum ParticleType {
 	};
 
 	private final Material material;
-	private final int modelId;
+	private final String modelId;
 	private final boolean isShape;
 	private final String commandName = name().replace("_", "").toLowerCase();
 	private final String displayName = StringUtils.camelCase(name().replace("_", " "));
 
 	ParticleType(Material material) {
-		this(material, 0, false);
+		this(material, null, false);
 	}
 
 	ParticleType(Material material, boolean isShape) {
-		this(material, 0, isShape);
+		this(material, null, isShape);
 	}
 
 	ParticleType(CustomMaterial material) {
-		this(material.getMaterial(), material.getModelId(), false);
+		this(material.getMaterial(), material.getModel(), false);
 	}
 
 	ParticleType(CustomMaterial material, boolean isShape) {
-		this(material.getMaterial(), material.getModelId(), isShape);
+		this(material.getMaterial(), material.getModel(), isShape);
 	}
 
-	ParticleType(Material material, int modelId, boolean isShape) {
+	ParticleType(Material material, String modelId, boolean isShape) {
 		this.material = material;
 		this.modelId = modelId;
 		this.isShape = isShape;
 	}
 
 	public ItemBuilder getDisplayItem() {
-		return new ItemBuilder(material).modelId(modelId).itemFlags(ItemFlag.HIDE_ATTRIBUTES).name("&3" + getDisplayName());
+		return new ItemBuilder(material).model(modelId).itemFlags(ItemFlag.HIDE_ATTRIBUTES).name("&3" + getDisplayName());
 	}
 
 	public static ParticleType[] getShapes() {

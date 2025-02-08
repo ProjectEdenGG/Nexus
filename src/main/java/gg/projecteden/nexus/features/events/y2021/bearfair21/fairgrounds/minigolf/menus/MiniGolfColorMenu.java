@@ -35,7 +35,7 @@ public class MiniGolfColorMenu extends InventoryProvider {
 
 		List<ClickableItem> items = new ArrayList<>();
 		for (MiniGolfColor miniGolfColor : MiniGolfColor.values()) {
-			ItemBuilder item = MiniGolf.getGolfBall().clone().modelId(miniGolfColor.getModelId());
+			ItemBuilder item = MiniGolf.getGolfBall().clone().model(miniGolfColor.getModel());
 
 			if (miniGolfColor.equals(MiniGolfColor.RAINBOW)) {
 				item.name(StringUtils.Rainbow.apply(StringUtils.camelCase(miniGolfColor)));

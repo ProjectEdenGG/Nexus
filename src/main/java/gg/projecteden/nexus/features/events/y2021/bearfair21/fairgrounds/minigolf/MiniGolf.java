@@ -17,12 +17,27 @@ import gg.projecteden.nexus.features.particles.ParticleUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21User;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21UserService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.EntityUtils;
+import gg.projecteden.nexus.utils.FireworkLauncher;
+import gg.projecteden.nexus.utils.GlowUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
-import org.bukkit.*;
+import org.bukkit.Color;
 import org.bukkit.FireworkEffect.Type;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -36,7 +51,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.Vector;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -110,7 +133,7 @@ public class MiniGolf {
 
 			List<ItemStack> golfBalls = Arrays.stream(MiniGolfColor.values())
 				.filter(Objects::nonNull)
-				.map(miniGolfColor -> (MiniGolf.getGolfBall().clone().modelId(miniGolfColor.getModelId()).build()))
+				.map(miniGolfColor -> (MiniGolf.getGolfBall().clone().model(miniGolfColor.getModel()).build()))
 				.toList();
 
 			if (armorStand != null && !Nullables.isNullOrEmpty(golfBalls)) {

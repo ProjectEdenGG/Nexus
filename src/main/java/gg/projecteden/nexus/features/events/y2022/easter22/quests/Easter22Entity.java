@@ -4,7 +4,6 @@ import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.features.events.y2022.easter22.Easter22;
 import gg.projecteden.nexus.features.quests.interactable.Inanimate;
 import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -35,9 +34,10 @@ public enum Easter22Entity implements InteractableEntity {
 
 		if (item.getType() != Material.PAPER)
 			return false;
-
-		final int modelId = ModelId.of(item);
-		return modelId >= 2001 && modelId <= 2020;
+//
+//		final int modelId = Model.of(item);
+//		return modelId >= 2001 && modelId <= 2020;
+		return false;
 	}),
 	;
 

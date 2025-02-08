@@ -20,7 +20,8 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -45,6 +46,7 @@ import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 public class Catalog implements Listener {
 
@@ -61,7 +63,7 @@ public class Catalog implements Listener {
 		if (MASTER_CATALOG.getType() != itemStack.getType())
 			return false;
 
-		return ItemBuilder.ModelId.of(MASTER_CATALOG) == ItemBuilder.ModelId.of(itemStack);
+		return Objects.equals(ItemBuilder.Model.of(MASTER_CATALOG), ItemBuilder.Model.of(itemStack));
 	}
 
 	public Catalog() {
@@ -175,7 +177,7 @@ public class Catalog implements Listener {
 			if (getItemBuilder().material() != itemStack.getType())
 				return false;
 
-			return ItemBuilder.ModelId.of(getItemBuilder()) == ItemBuilder.ModelId.of(itemStack);
+			return ItemUtils.isModelMatch(getItemBuilder().clone().build(), itemStack);
 		}
 
 		public void openCatalog(Player player, DecorationStoreCurrencyType currency) {
@@ -244,7 +246,7 @@ public class Catalog implements Listener {
 		} else if (_config != null) {
 			price = _config.getCatalogPrice(storeType);
 		} else {
-			throw new InvalidInputException("Unknown decoration type of: " + itemStack.getType() + ", modelId = " + ModelId.of(itemStack));
+			throw new InvalidInputException("Unknown decoration type of: " + itemStack.getType() + ", model = " + Model.of(itemStack));
 		}
 
 		if (price == null)
@@ -266,13 +268,13 @@ public class Catalog implements Listener {
 
 		boolean isSkull = false;
 		Integer price;
-		if (itemStack.getType() == Material.PLAYER_HEAD && ModelId.of(itemStack) == 0) {
+		if (itemStack.getType() == Material.PLAYER_HEAD && Model.of(itemStack) == null) {
 			price = currency.getPriceSkull(storeType);
 			isSkull = true;
 		} else if (config != null) {
 			price = config.getCatalogPrice(storeType);
 		} else {
-			throw new InvalidInputException("Unknown decoration type of: " + itemStack.getType() + ", modelId = " + ModelId.of(itemStack));
+			throw new InvalidInputException("Unknown decoration type of: " + itemStack.getType() + ", model = " + Model.of(itemStack));
 		}
 
 		if (price == null)

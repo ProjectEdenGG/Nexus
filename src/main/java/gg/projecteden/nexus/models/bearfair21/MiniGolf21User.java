@@ -106,7 +106,7 @@ public class MiniGolf21User implements PlayerOwnedObject {
 	}
 
 	public ItemStack getGolfBall() {
-		return MiniGolf.getGolfBall().modelId(miniGolfColor.getModelId()).build();
+		return MiniGolf.getGolfBall().model(miniGolfColor.getModel()).build();
 	}
 
 }

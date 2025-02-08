@@ -17,8 +17,8 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEv
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDisplayTimerEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerStartSpectatingEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.teams.TeamScoredEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;

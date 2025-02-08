@@ -4,7 +4,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
@@ -83,7 +83,7 @@ public class ResourcePackListener implements Listener {
 			return;
 
 		final ItemStack item = event.getPlayer().getInventory().getItem(EquipmentSlot.HAND);
-		if (ModelId.of(item) == 0)
+		if (Model.of(item) == null)
 			return;
 
 		if (!(event.getRightClicked() instanceof ArmorStand armorStand))

@@ -66,7 +66,7 @@ public class ProjectileListener implements Listener {
 			if (user == null || !user.isPlaying() || !user.isOnline())
 				return;
 
-			ball.setItem(MiniGolf.getGolfBall().clone().modelId(user.getMiniGolfColor().getModelId()).build());
+			ball.setItem(MiniGolf.getGolfBall().clone().model(user.getMiniGolfColor().getModel()).build());
 			if (!user.getMiniGolfColor().equals(MiniGolfColor.RAINBOW))
 				GlowUtils.glow(user.getSnowball()).color(user.getGlowColor()).receivers(user.getOnlinePlayer()).run();
 

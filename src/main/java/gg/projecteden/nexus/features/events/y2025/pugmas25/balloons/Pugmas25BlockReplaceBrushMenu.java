@@ -8,7 +8,7 @@ import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Rows(4)
 @Title("Select a color")
@@ -113,7 +114,7 @@ public class Pugmas25BlockReplaceBrushMenu extends InventoryProvider {
 	}
 
 	public static boolean isBrushItem(ItemStack item) {
-		return getBrushItem().modelId() == ModelId.of(item);
+		return Objects.equals(getBrushItem().model(), Model.of(item));
 	}
 
 	private static final List<Material> colorOrder = List.of(Material.RED_WOOL, Material.ORANGE_WOOL, Material.YELLOW_WOOL,

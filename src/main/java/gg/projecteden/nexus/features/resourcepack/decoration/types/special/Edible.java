@@ -13,12 +13,22 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationIn
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.GameModeWrapper;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.core.component.DataComponents;
-import org.bukkit.*;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -111,7 +121,7 @@ public class Edible extends DecorationConfig implements MultiState, CraftableDec
 		}
 
 		public CustomMaterial getModel(int stage) {
-			return CustomMaterial.of(new ItemBuilder(getStage0()).modelId(getStage0().getModelId() + stage));
+			return CustomMaterial.of(new ItemBuilder(getStage0()).model(getStage0().getModelId() + stage));
 		}
 
 		public void eat(Player player, Location soundOrigin, ItemStack originalItem) {

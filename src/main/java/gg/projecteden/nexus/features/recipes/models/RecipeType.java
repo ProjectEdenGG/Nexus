@@ -53,11 +53,11 @@ public enum RecipeType {
 	GLASS(Material.GLASS);
 
 	private final Material material;
-	private final int modelId;
+	private final String modelId;
 	private final boolean folder;
 
 	RecipeType() {
-		this(null, 0, true);
+		this(null, null, true);
 	}
 
 	RecipeType(Material material) {
@@ -65,19 +65,19 @@ public enum RecipeType {
 	}
 
 	RecipeType(Material material, boolean folder) {
-		this(material, 0, folder);
+		this(material, null, folder);
 	}
 
 	RecipeType(CustomMaterial material) {
-		this(material.getMaterial(), material.getModelId(), true);
+		this(material.getMaterial(), material.getModel(), true);
 	}
 
 	RecipeType(CustomMaterial material, boolean folder) {
-		this(material.getMaterial(), material.getModelId(), folder);
+		this(material.getMaterial(), material.getModel(), folder);
 	}
 
 	public ItemStack getItem() {
-		return new ItemBuilder(material).modelId(modelId).name("&e" + StringUtils.camelCase(this)).build();
+		return new ItemBuilder(material).model(modelId).name("&e" + StringUtils.camelCase(this)).build();
 	}
 
 	public List<NexusRecipe> getRecipes() {

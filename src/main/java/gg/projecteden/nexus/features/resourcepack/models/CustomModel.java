@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.resourcepack.models.files.ResourcePackOverr
 import gg.projecteden.nexus.models.custommodels.CustomModelConfig;
 import gg.projecteden.nexus.models.custommodels.CustomModelConfigService;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
@@ -19,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @AllArgsConstructor
@@ -49,18 +50,18 @@ public class CustomModel implements Comparable<CustomModel> {
 		this.fileName = override.getFileName();
 	}
 
-	public static CustomModel of(Material material, int data) {
+	public static CustomModel of(Material material, String data) {
 		return ResourcePack.getModels().values().stream()
-				.filter(model -> model.getMaterial() == material && model.getData() == data)
+				.filter(model -> model.getMaterial() == material && Objects.equals(model.getData(), data))
 				.findFirst()
 				.orElse(null);
 	}
 
 	public static CustomModel convert(ItemStack item) {
-		return convert(item.getType(), ModelId.of(item));
+		return convert(item.getType(), Model.of(item));
 	}
 
-	public static CustomModel convert(Material material, int data) {
+	public static CustomModel convert(Material material, String data) {
 		if (material == Material.LEATHER_BOOTS) // keeps converting custom armor to stockings
 			return null;
 
@@ -95,7 +96,7 @@ public class CustomModel implements Comparable<CustomModel> {
 		if (Nullables.isNullOrAir(item))
 			return null;
 
-		return of(item.getType(), ModelId.of(item));
+		return of(item.getType(), Model.of(item));
 	}
 
 	public static CustomModel of(String path) {
@@ -106,7 +107,7 @@ public class CustomModel implements Comparable<CustomModel> {
 	}
 
 	public static CustomModel of(CustomMaterial material) {
-		return of(material.getMaterial(), material.getModelId());
+		return of(material.getMaterial(), material.getModel());
 	}
 
 	@NotNull
@@ -120,12 +121,12 @@ public class CustomModel implements Comparable<CustomModel> {
 		if (itemStack.getType() != material)
 			return false;
 
-		return ModelId.of(itemStack) == data;
+		return Objects.equals(Model.of(itemStack), data);
 	}
 
 	public ItemStack getItem() {
 		final ItemBuilder builder = new ItemBuilder(material)
-			.modelId(data)
+			.model(data)
 			.name(meta.getName())
 			.lore(meta.getLore());
 
@@ -154,7 +155,7 @@ public class CustomModel implements Comparable<CustomModel> {
 		if (!material.equals(other.getMaterial()))
 			return material.compareTo(other.getMaterial());
 
-		return Integer.compare(data, other.getData());
+		return CharSequence.compare(data, other.getData());
 	}
 
 	@Data

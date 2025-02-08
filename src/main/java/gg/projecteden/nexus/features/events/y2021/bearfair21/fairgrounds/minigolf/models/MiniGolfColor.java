@@ -1,25 +1,26 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models;
 
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ColorType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
 public enum MiniGolfColor {
-	WHITE(901, ColorType.WHITE),
-	BLACK(902, ColorType.BLACK),
-	RED(903, ColorType.LIGHT_RED),
-	ORANGE(904, ColorType.ORANGE),
-	YELLOW(905, ColorType.YELLOW),
-	GREEN(906, ColorType.LIGHT_GREEN),
-	LIGHT_BLUE(907, ColorType.LIGHT_BLUE),
-	BLUE(908, ColorType.BLUE),
-	PURPLE(909, ColorType.PURPLE),
-	PINK(910, ColorType.PINK),
-	RAINBOW(911, ColorType.WHITE);
+	WHITE(CustomMaterial.MINIGOLF_BALL, ColorType.WHITE),
+	BLACK(CustomMaterial.MINIGOLF_BALL_BLACK, ColorType.BLACK),
+	RED(CustomMaterial.MINIGOLF_BALL_RED, ColorType.LIGHT_RED),
+	ORANGE(CustomMaterial.MINIGOLF_BALL_ORANGE, ColorType.ORANGE),
+	YELLOW(CustomMaterial.MINIGOLF_BALL_YELLOW, ColorType.YELLOW),
+	GREEN(CustomMaterial.MINIGOLF_BALL_GREEN, ColorType.LIGHT_GREEN),
+	LIGHT_BLUE(CustomMaterial.MINIGOLF_BALL_LIGHT_BLUE, ColorType.LIGHT_BLUE),
+	BLUE(CustomMaterial.MINIGOLF_BALL_BLUE, ColorType.BLUE),
+	PURPLE(CustomMaterial.MINIGOLF_BALL_PURPLE, ColorType.PURPLE),
+	PINK(CustomMaterial.MINIGOLF_BALL_PINK, ColorType.PINK),
+	RAINBOW(CustomMaterial.MINIGOLF_BALL_RAINBOW, ColorType.WHITE);
 
 	@Getter
-	private final int modelId;
+	private final CustomMaterial model;
 	@Getter
 	private final ColorType colorType;
 }

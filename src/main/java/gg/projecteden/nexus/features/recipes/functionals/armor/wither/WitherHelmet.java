@@ -52,7 +52,7 @@ public class WitherHelmet extends FunctionalRecipe {
 
 	@Getter
 	private static final ItemStack item = new ItemBuilder(CustomMaterial.WITHER_HELMET)
-		.dyeColor(Color.fromRGB(CustomArmorType.WITHER.getId()))
+		.dyeColor(Color.fromRGB(CustomArmorType.WITHER.ordinal() + 1))
 		.itemFlags(ItemFlag.HIDE_DYE)
 		.attribute(Attribute.ARMOR, "wither-armor-points", 3, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD)
 		.attribute(Attribute.ARMOR_TOUGHNESS, "wither-armor-toughness", 2, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HEAD)

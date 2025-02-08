@@ -84,7 +84,7 @@ public class MiniGolfUtils {
 
 	public static void giveBall(MiniGolf21User user) {
 		if (user.getOnlinePlayer().isOnline())
-			PlayerUtils.giveItem(user.getOnlinePlayer(), MiniGolf.getGolfBall().clone().modelId(user.getMiniGolfColor().getModelId()).build());
+			PlayerUtils.giveItem(user.getOnlinePlayer(), MiniGolf.getGolfBall().clone().model(user.getMiniGolfColor().getModel()).build());
 	}
 
 	public static void respawnBall(Snowball ball) {

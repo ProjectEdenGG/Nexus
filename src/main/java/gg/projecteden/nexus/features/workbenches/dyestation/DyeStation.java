@@ -10,7 +10,7 @@ import gg.projecteden.nexus.features.workbenches.ICraftableCustomBench;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.ChoiceType;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
 import lombok.NoArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
@@ -21,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @NoArgsConstructor
 public class DyeStation extends CustomBench implements ICraftableCustomBench {
@@ -141,7 +142,7 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 	}
 
 	public static boolean isMagicPaintbrush(ItemStack item) {
-		return getPaintbrush().modelId() == ModelId.of(item);
+		return Objects.equals(getPaintbrush().model(), Model.of(item));
 	}
 
 	public static boolean isPaintbrush(ItemStack item) {

@@ -18,7 +18,6 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicSubGroup;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
@@ -211,7 +210,7 @@ public class ArenasMenu extends ScrollableInventoryProvider {
 	}
 
 	private ItemStack getRandomArenaItem(boolean main) {
-		ItemBuilder randomMenuImage = new ItemBuilder(CustomModel.of(Material.PAPER, 1699));
+		ItemBuilder randomMenuImage = new ItemBuilder(CustomMaterial.GUI_GAMELOBBY_RANDOM);
 		ItemBuilder item = main ? randomMenuImage : new ItemBuilder(CustomMaterial.INVISIBLE);
 
 		item.name("&6&lRandom Map");

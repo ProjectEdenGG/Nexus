@@ -78,7 +78,7 @@ public class MiniGolfUtils {
 	}
 
 	public static ItemStack getGolfBall(GolfBallColor color) {
-		return getGolfBall().modelId(color.getModelId()).build();
+		return getGolfBall().model(color.getModel()).build();
 	}
 
 	public static boolean isBottomSlab(Block block) {

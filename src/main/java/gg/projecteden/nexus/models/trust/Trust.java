@@ -115,18 +115,18 @@ public class Trust implements PlayerOwnedObject {
 
 		private final int column;
 		private final Material material;
-		private final int modelId;
+		private final String modelId;
 
 		Type(int column, CustomMaterial customMaterial) {
 			this.column = column;
 			this.material = customMaterial.getMaterial();
-			this.modelId = customMaterial.getModelId();
+			this.modelId = customMaterial.getModel();
 		}
 
 		Type(int column, Material material) {
 			this.column = column;
 			this.material = material;
-			this.modelId = 0;
+			this.modelId = null;
 		}
 
 		public String camelCase() {
@@ -134,7 +134,7 @@ public class Trust implements PlayerOwnedObject {
 		}
 
 		public ItemStack getDisplayItem() {
-			ItemBuilder itemBuilder = new ItemBuilder(this.material).modelId(this.modelId);
+			ItemBuilder itemBuilder = new ItemBuilder(this.material).model(this.modelId);
 
 			if (itemBuilder.isDyeable())
 				itemBuilder.dyeColor(ColorType.RED);

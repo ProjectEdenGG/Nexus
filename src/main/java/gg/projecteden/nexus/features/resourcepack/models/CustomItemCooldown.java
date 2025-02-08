@@ -19,10 +19,6 @@ public class CustomItemCooldown {
 
 	private static final CooldownService COOLDOWN_SERVICE = new CooldownService();
 
-	private static final CustomMaterial FIRST = CustomMaterial.COOLDOWN;
-	private static final CustomMaterial LAST = CustomMaterial.ITEM_COOLDOWN_MAX;
-	private static final int TOTAL_FRAMES = LAST.getModelId() - FIRST.getModelId();
-
 	private int slot;
 	private long tickTime;
 	private String cooldownType;
@@ -36,7 +32,7 @@ public class CustomItemCooldown {
 		this.tickTime = tickTime;
 		this.cooldownType = cooldownType;
 
-		this.item = new ItemBuilder(FIRST).name(TimeUtils.Timespan.ofSeconds(tickTime / 20L).format()).build();
+		this.item = new ItemBuilder(CustomMaterial.COOLDOWN).name(TimeUtils.Timespan.ofSeconds(tickTime / 20L).format()).build();
 	}
 
 	public CustomItemCooldown onComplete(Runnable onComplete) {
@@ -79,7 +75,7 @@ public class CustomItemCooldown {
 	}
 
 	public int interpolate(float value) {
-		return (int) Math.ceil((1 - value) * FIRST.getModelId() + value * LAST.getModelId()) + (LAST.getModelId() - FIRST.getModelId());
+		return (int) Math.ceil((1 - value) * 0 + value * 58) + 58;
 	}
 
 

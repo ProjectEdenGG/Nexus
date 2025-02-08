@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.AllArgsConstructor;
@@ -101,10 +101,10 @@ public class ItemUtils {
 		if (itemStack1.getType() != itemStack2.getType())
 			return false;
 
-		int modelId1 = new ItemBuilder(itemStack1).modelId();
-		int modelId2 = new ItemBuilder(itemStack2).modelId();
+		String modelId1 = new ItemBuilder(itemStack1).model();
+		String modelId2 = new ItemBuilder(itemStack2).model();
 
-		return modelId1 == modelId2;
+		return Objects.equals(modelId1, modelId2);
 	}
 
 	public static String getFixedPotionName(PotionEffectType effect) {
@@ -455,7 +455,7 @@ public class ItemUtils {
 			result = b.getType().compareTo(a.getType());
 			if (result != 0) return result;
 
-			result = Integer.compare(ModelId.of(a), ModelId.of(b));
+			result = CharSequence.compare(Model.of(a), Model.of(b));
 			if (result != 0) return result;
 
 			result = Integer.compare(b.getAmount(), a.getAmount());

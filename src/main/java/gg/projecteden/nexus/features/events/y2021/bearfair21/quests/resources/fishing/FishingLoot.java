@@ -64,7 +64,7 @@ public enum FishingLoot {
 	private final FishingLootCategory category;
 	private final int gold;
 	private final Material material;
-	private final int modelId;
+	private final String modelId;
 	private final double weight;
 	private final String customName;
 	private final String region;
@@ -72,7 +72,7 @@ public enum FishingLoot {
 	private final Integer maxY;
 
 	FishingLoot(FishingLootCategory category, int gold, Material material, double weight) {
-		this(category, gold, material, 0, weight, null, null, null, null);
+		this(category, gold, material, null, weight, null, null, null, null);
 	}
 
 	FishingLoot(FishingLootCategory category, int gold, CustomMaterial material, String customName, double weight) {
@@ -80,15 +80,15 @@ public enum FishingLoot {
 	}
 
 	FishingLoot(FishingLootCategory category, int gold, CustomMaterial material, String customName, double weight, String region) {
-		this(category, gold, material.getMaterial(), material.getModelId(), weight, customName, region, FishingLootTime.BOTH, null);
+		this(category, gold, material.getMaterial(), material.getModel(), weight, customName, region, FishingLootTime.BOTH, null);
 	}
 
 	FishingLoot(FishingLootCategory category, int gold, CustomMaterial material, String customName, double weight, String region, FishingLootTime time) {
-		this(category, gold, material.getMaterial(), material.getModelId(), weight, customName, region, time, null);
+		this(category, gold, material.getMaterial(), material.getModel(), weight, customName, region, time, null);
 	}
 
 	FishingLoot(FishingLootCategory category, int gold, CustomMaterial material, String customName, double weight, String region, Integer maxY) {
-		this(category, gold, material.getMaterial(), material.getModelId(), weight, customName, region, FishingLootTime.BOTH, maxY);
+		this(category, gold, material.getMaterial(), material.getModel(), weight, customName, region, FishingLootTime.BOTH, maxY);
 	}
 
 	public static List<FishingLoot> of(FishingLootCategory category) {
@@ -163,8 +163,8 @@ public enum FishingLoot {
 		if (this.getCustomName() != null)
 			result.name(this.getCustomName());
 
-		if (this.getModelId() != 0)
-			result.modelId(this.getModelId());
+		if (this.getModelId() != null)
+			result.model(this.getModelId());
 
 		if (material.equals(Material.ENCHANTED_BOOK)) {
 			if (this.equals(UNBREAKING))

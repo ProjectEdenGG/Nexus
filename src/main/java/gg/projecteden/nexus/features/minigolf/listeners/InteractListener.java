@@ -10,7 +10,15 @@ import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
 import gg.projecteden.nexus.features.minigolf.models.blocks.BounceBlock;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallSpawnEvent;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfUserPlaceBallEvent;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.Distance;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -54,7 +62,7 @@ public class InteractListener implements Listener {
 		}
 
 		// Golfball
-		if (item.getType() == Material.SNOWBALL && ItemBuilder.ModelId.hasModelId(item)) {
+		if (item.getType() == Material.SNOWBALL && ItemBuilder.Model.hasModel(item)) {
 			placeBall(event, user, item, block);
 			event.setCancelled(true);
 			return;

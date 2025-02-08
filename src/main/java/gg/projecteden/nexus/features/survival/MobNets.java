@@ -12,7 +12,11 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.bukkit.Material;
@@ -132,10 +136,11 @@ public class MobNets extends Feature implements Listener {
 		return new ItemBuilder(Material.PAPER)
 			.spawnEgg(entity)
 			.name(gg.projecteden.api.common.utils.StringUtils.camelCase(entity.getType()) + " Mob Net")
-			.modelId(1)
+			.model("misc/mob_net/mobs/" + entity.getType().getKey().getKey())
 			.build();
 	}
 
+//	 TODO - 1.21.4
 	private static final String MODELS_DIRECTORY = "assets/minecraft/models/projecteden/items/mob_net/mobs";
 
 	public static final String MATERIAL_TEMPLATE = """

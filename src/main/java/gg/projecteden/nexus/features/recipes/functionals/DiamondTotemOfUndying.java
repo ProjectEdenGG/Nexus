@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.recipes.functionals;
 
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -22,7 +23,7 @@ public class DiamondTotemOfUndying extends FunctionalRecipe {
 	private static final ItemStack item = getCustomModel().getItem();
 
 	public static CustomModel getCustomModel() {
-		return CustomModel.of(Material.TOTEM_OF_UNDYING, 1);
+		return CustomModel.of(Material.TOTEM_OF_UNDYING, CustomMaterial.DIAMOND_TOTEM_OF_UNDYING.getModel());
 	}
 
 	@Override

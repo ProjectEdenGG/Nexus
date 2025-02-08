@@ -166,7 +166,7 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 		;
 
 
-		private final int oldId;
+		private final String oldId;
 		private final DecorationType type;
 
 		public Color getLeatherColor() {
@@ -178,15 +178,15 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 
 		public ItemStack getNewItem() {
 			return new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
-				.modelId(type.getConfig().getModelId())
+				.model(type.getConfig().getModel())
 				.dyeColor(getLeatherColor())
 				.build();
 		}
 
 		public static ToDyeable ofOld(ItemStack itemStack) {
-			int modelId = ModelId.of(itemStack);
+			String model = ItemBuilder.Model.of(itemStack);
 			for (ToDyeable dyeable : values()) {
-				if (modelId == dyeable.oldId)
+				if (model == dyeable.oldId)
 					return dyeable;
 			}
 			return null;
