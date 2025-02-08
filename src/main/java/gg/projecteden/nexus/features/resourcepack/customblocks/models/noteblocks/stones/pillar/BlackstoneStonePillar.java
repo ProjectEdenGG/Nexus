@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.stones.pillar;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
 import lombok.NonNull;
 import org.bukkit.Instrument;
@@ -8,7 +9,7 @@ import org.bukkit.Material;
 
 @CustomBlockConfig(
 	name = "Blackstone Pillar",
-	modelId = 20363
+	material = CustomMaterial.STONES_BLACKSTONE_BLACKSTONE_PILLAR
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.DIDGERIDOO,

@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.CustomTripwireConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.ICraftableTripwire;
 import org.bukkit.Material;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @CustomBlockConfig(
 	name = "Pebbles",
-	modelId = 21106
+	material = CustomMaterial.ROCKS_PEBBLES_0
 )
 @CustomTripwireConfig(
 	north_NS = false,

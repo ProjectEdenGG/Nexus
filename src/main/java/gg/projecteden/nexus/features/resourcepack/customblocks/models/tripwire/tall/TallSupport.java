@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.tall;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.Unobtainable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.CustomTripwireConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.ICustomTripwire;
@@ -10,7 +11,7 @@ import org.bukkit.Material;
 
 @CustomBlockConfig(
 	name = "Tall Support",
-	modelId = 21100
+	material = CustomMaterial.NULL
 )
 @CustomTripwireConfig(
 	north_NS = false,

@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.misc;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ICustomNoteBlock;
 import org.bukkit.Instrument;
@@ -8,7 +9,7 @@ import org.bukkit.Material;
 
 @CustomBlockConfig(
 	name = "Wireframe",
-	modelId = 20120
+	material = CustomMaterial.MISC_WIREFRAME
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.BASS_GUITAR,

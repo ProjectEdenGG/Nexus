@@ -1,16 +1,18 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.vertical;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import org.bukkit.Instrument;
 
 @CustomBlockConfig(
-		name = "Vertical Oak Planks",
-		modelId = 20001
+	name = "Vertical Oak Planks",
+	material = CustomMaterial.WOOD_OAK_VERTICAL_OAK_PLANKS
 )
 @CustomNoteBlockConfig(
-		instrument = Instrument.BANJO,
-		step = 1
+	instrument = Instrument.BANJO,
+	step = 1
 )
 public class VerticalOakPlanks implements IVerticalPlanks {
 }

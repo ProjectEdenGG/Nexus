@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.
 
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICraftable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.CustomTripwireConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.IRequireDirt;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 @CustomBlockConfig(
 	name = "Bluebell",
-	modelId = 21123
+	material = CustomMaterial.FLORA_BLUEBELL_ITEM
 )
 @CustomTripwireConfig(
 	north_NS = false,

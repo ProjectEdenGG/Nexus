@@ -58,7 +58,7 @@ public class MGMExchangeMenu extends InventoryProvider {
 				case 1 -> CustomMaterial.GOLD_COINS_2;
 				case 2 -> CustomMaterial.GOLD_COINS_6;
 				case 3 -> CustomMaterial.GOLD_COINS_9;
-				default -> CustomMaterial.TODO;
+				default -> CustomMaterial.NULL;
 			};
 
 			int finalI = i;
@@ -91,7 +91,7 @@ public class MGMExchangeMenu extends InventoryProvider {
 				case 1 -> CustomMaterial.SILVER_COINS_9;
 				case 2 -> CustomMaterial.SILVER_COINS_4;
 				case 3 -> CustomMaterial.SILVER_COINS_7;
-				default -> CustomMaterial.TODO;
+				default -> CustomMaterial.NULL;
 			};
 
 			int finalI = i;

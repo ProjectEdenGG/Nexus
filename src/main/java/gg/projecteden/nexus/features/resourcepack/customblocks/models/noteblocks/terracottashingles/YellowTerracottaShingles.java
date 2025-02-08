@@ -1,12 +1,13 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.terracottashingles;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
 import org.bukkit.Instrument;
 
 @CustomBlockConfig(
 	name = "Yellow Terracotta Shingles",
-	modelId = 20203
+	material = CustomMaterial.TERRACOTTA_SHINGLES_YELLOW
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.BIT,

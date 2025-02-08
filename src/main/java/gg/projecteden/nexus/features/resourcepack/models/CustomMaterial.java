@@ -16,7 +16,7 @@ import java.util.Objects;
 @Getter
 @AllArgsConstructor
 public enum CustomMaterial {
-	TODO("", Material.PAPER),
+	NULL("misc/null", Material.PAPER),
 // armor
 	BERSERKER_BOOTS("armor/berserker/boots", Material.LEATHER_BOOTS),
 	BERSERKER_CHESTPLATE("armor/berserker/chestplate", Material.LEATHER_CHESTPLATE),
@@ -224,6 +224,8 @@ public enum CustomMaterial {
 	COSTUMES_PIRATE_HAT_LEATHER_TRICORN("costumes/hat/pirate/tricorn_leather"),
 	ICON("costumes/icon", Material.MAP),
 	// customblocks
+	NOTE_BLOCK("customblocks/misc/note_block"),
+	TRIPWIRE("customblocks/misc/tripwire"),
 	CONCRETE_BRICKS_BLACK("customblocks/concrete/bricks/black"),
 	CONCRETE_BRICKS_BLUE("customblocks/concrete/bricks/blue"),
 	CONCRETE_BRICKS_BROWN("customblocks/concrete/bricks/brown"),

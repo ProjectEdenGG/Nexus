@@ -1,12 +1,13 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.stones.chiseled;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
 import org.bukkit.Instrument;
 
 @CustomBlockConfig(
 	name = "Chiseled Diorite",
-	modelId = 20356
+	material = CustomMaterial.STONES_DIORITE_CHISELED_DIORITE
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.DIDGERIDOO,

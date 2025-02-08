@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.stones.chiseled;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
@@ -8,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 @CustomBlockConfig(
 	name = "Chiseled Purpur",
-	modelId = 20364
+	material = CustomMaterial.STONES_PURPUR_CHISELED_PURPUR
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.DIDGERIDOO,

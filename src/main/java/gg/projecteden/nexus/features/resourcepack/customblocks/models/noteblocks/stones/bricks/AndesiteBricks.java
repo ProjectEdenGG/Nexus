@@ -1,12 +1,13 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.stones.bricks;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
 import org.bukkit.Instrument;
 
 @CustomBlockConfig(
 	name = "Andesite Bricks",
-	modelId = 20352
+	material = CustomMaterial.STONES_ANDESITE_ANDESITE_BRICKS
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.DIDGERIDOO,

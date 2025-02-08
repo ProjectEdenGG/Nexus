@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.misc;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ICustomNoteBlock;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -10,7 +11,7 @@ import org.bukkit.Material;
 
 @CustomBlockConfig(
 	name = "Note Block",
-	modelId = 20000
+	material = CustomMaterial.NOTE_BLOCK
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.PIANO,
