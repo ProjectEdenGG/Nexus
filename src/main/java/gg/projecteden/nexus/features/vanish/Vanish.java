@@ -115,4 +115,9 @@ public class Vanish extends Feature {
 		return get(player.getPlayer()).isVanished();
 	}
 
+	// See PlayerUtils#canSee
+	public static boolean canSee(Player viewer, Player target) {
+		return !Vanish.isVanished(target) || viewer.hasPermission("pv.see");
+	}
+
 }

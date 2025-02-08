@@ -3,8 +3,14 @@ package gg.projecteden.nexus.features.economy.commands;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.features.wiki._WikiSearchCommand.WikiType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.banker.Banker;
 import gg.projecteden.nexus.models.banker.BankerService;
@@ -37,7 +43,7 @@ public class EconomyCommand extends CustomCommand {
 		// TODO Jobs
 		send(json("&3[+] &eKilling mobs").url(WikiType.SERVER.getBasePath() + "Economy#Mobs").hover("&3Click to open the wiki section on mobs"));
 		send("&3[+] &eWorking for other players");
-		send(json("&3[+] &eVoting and getting &2&lTop Voter").command("/vote"));
+		send(json("&3[+] &eVoting").command("/vote"));
 		send(json("&3[+] &eWinning Events").hover("&3Make sure to check Discord's &e#announcements &3channel and the home page for upcoming events!"));
 		line();
 		send(json("&3[+] &eEconomy related commands").command("/economy commands"));

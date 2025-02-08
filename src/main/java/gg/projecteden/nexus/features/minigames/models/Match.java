@@ -78,6 +78,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.PlayerUtils.hidePlayer;
+import static gg.projecteden.nexus.utils.PlayerUtils.showPlayer;
+
 @Data
 public class Match implements ForwardingAudience {
 	@NonNull
@@ -122,10 +125,9 @@ public class Match implements ForwardingAudience {
 		return players;
 	}
 
-	public List<Player> getOnlineMinigamersAndSpectators() {
+	public List<Minigamer> getOnlineMinigamersAndSpectators() {
 		return getMinigamersAndSpectators().stream()
 			.filter(Minigamer::isOnline)
-			.map(Minigamer::getPlayer)
 			.collect(Collectors.toList());
 	}
 
@@ -239,6 +241,7 @@ public class Match implements ForwardingAudience {
 		minigamer.getOnlinePlayer().closeInventory();
 		minigamers.add(minigamer);
 		spectators.remove(minigamer);
+		updateVisibility();
 
 		try {
 			arena.getMechanic().processJoin(minigamer);
@@ -260,6 +263,7 @@ public class Match implements ForwardingAudience {
 		spectators.remove(minigamer);
 		minigamer.clearState(true);
 		minigamer.toGamelobby();
+		updateVisibility();
 		minigamer.unhideAll();
 
 		MatchQuitEvent event = new MatchQuitEvent(minigamer);
@@ -717,6 +721,46 @@ public class Match implements ForwardingAudience {
 		return getMinigamers();
 	}
 
+	// respawning
+	//     you see respawning players = false;
+	//     you see alive players = false;
+	//     you see dead players = false;
+	//     respawning players see you = false;
+	//     alive players see you = false;
+	//     dead players see you = false;
+	// dead
+	//     you see respawning players = false;
+	//     you see alive players = true;
+	//     you see dead players = true;
+	//     respawning players see you = false;
+	//     alive players see you = false;
+	//     dead players see you = true;
+
+	public void updateVisibility() {
+		getOnlineMinigamersAndSpectators().forEach(self -> {
+			getOnlineMinigamersAndSpectators().forEach(other -> {
+				if (self.equals(other))
+					return;
+
+				if (self.isRespawning() || other.isRespawning()) {
+					hidePlayer(other).from(self);
+					hidePlayer(self).from(other);
+				} else if (self.isDead()) {
+					if (other.isDead()) {
+						showPlayer(other).to(self);
+						showPlayer(self).to(other);
+					} else {
+						showPlayer(other).to(self);
+						hidePlayer(self).from(other);
+					}
+				} else {
+					showPlayer(self).to(other);
+					showPlayer(other).to(self);
+				}
+			});
+		});
+	}
+
 	public static class MatchTimer {
 		private final Match match;
 		private static final List<Integer> broadcasts = Arrays.asList((60 * 10), (60 * 5), 60, 30, 15, 5, 4, 3, 2, 1);
@@ -747,13 +791,13 @@ public class Match implements ForwardingAudience {
 						if (broadcasts.contains(time)) {
 							if (match.getMechanic().shouldBroadcastTimeLeft()) {
 								broadcastTimeLeft();
-								match.getOnlineMinigamersAndSpectators().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, .75F, .6F));
+								match.getOnlineMinigamersAndSpectators().stream().map(Minigamer::getOnlinePlayer).forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, .75F, .6F));
 							}
 						}
-						match.getOnlineMinigamersAndSpectators().forEach(player -> {
-							MinigamerDisplayTimerEvent event = new MinigamerDisplayTimerEvent(Minigamer.of(player), time);
+						match.getOnlineMinigamersAndSpectators().forEach(minigamer -> {
+							MinigamerDisplayTimerEvent event = new MinigamerDisplayTimerEvent(minigamer, time);
 							if (event.callEvent())
-								player.sendActionBar(event.getContents());
+								minigamer.sendActionBar(event.getContents());
 						});
 					} else {
 						if (match.getMechanic().shouldAutoEndOnZeroTimeLeft())

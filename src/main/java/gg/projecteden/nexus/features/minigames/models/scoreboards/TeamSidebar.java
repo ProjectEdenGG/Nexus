@@ -55,7 +55,7 @@ public class TeamSidebar implements MinigameScoreboard {
 
 	@Override
 	public void handleEnd() {
-		match.getOnlineMinigamersAndSpectators().forEach(player -> Sidebar.get(player).applyLayout(null));
+		match.getOnlineMinigamersAndSpectators().stream().map(Minigamer::getOnlinePlayer).forEach(player -> Sidebar.get(player).applyLayout(null));
 		scoreboards.clear();
 	}
 

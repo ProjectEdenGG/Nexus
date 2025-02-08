@@ -449,7 +449,7 @@ public class PlayerUtils {
 			if (!viewer.canSee(target))
 				return false;
 
-		return !Vanish.isVanished(target) || viewer.hasPermission("pv.see");
+		return Vanish.canSee(viewer, target);
 	}
 
 	/**
@@ -857,30 +857,36 @@ public class PlayerUtils {
 		return ticks;
 	}
 
-	public static HidePlayer hidePlayer(HasPlayer player) {
+	public static HidePlayer hidePlayer(OptionalPlayer player) {
 		return new HidePlayer(player);
 	}
 
-	public static void hidePlayers(HasPlayer hideFrom, HasPlayer... hide) {
+	public static void hidePlayers(OptionalPlayer hideFrom, OptionalPlayer... hide) {
 		hidePlayers(hideFrom, Arrays.asList(hide));
 	}
 
-	public static void hidePlayers(HasPlayer hideFrom, Collection<? extends HasPlayer> hide) {
+	public static void hidePlayers(OptionalPlayer hideFrom, Collection<? extends OptionalPlayer> hide) {
+		if (hideFrom.getPlayer() == null)
+			return;
+
 		UUID hideFromUUID = hideFrom.getPlayer().getUniqueId();
-		hide.stream().map(HasPlayer::getPlayer).filter(player -> !player.getUniqueId().equals(hideFromUUID)).forEach(hasPlayer -> hidePlayer(hasPlayer).from(hideFrom));
+		hide.stream().map(OptionalPlayer::getPlayer).filter(Objects::nonNull).filter(player -> !player.getUniqueId().equals(hideFromUUID)).forEach(hasPlayer -> hidePlayer(hasPlayer).from(hideFrom));
 	}
 
-	public static ShowPlayer showPlayer(HasPlayer player) {
+	public static ShowPlayer showPlayer(OptionalPlayer player) {
 		return new ShowPlayer(player);
 	}
 
-	public static void showPlayers(HasPlayer showTo, HasPlayer... show) {
+	public static void showPlayers(OptionalPlayer showTo, OptionalPlayer... show) {
 		showPlayers(showTo, Arrays.asList(show));
 	}
 
-	public static void showPlayers(HasPlayer showTo, Collection<? extends HasPlayer> show) {
+	public static void showPlayers(OptionalPlayer showTo, Collection<? extends OptionalPlayer> show) {
+		if (showTo.getPlayer() == null)
+			return;
+
 		UUID showToUUID = showTo.getPlayer().getUniqueId();
-		show.stream().map(HasPlayer::getPlayer).filter(player -> !player.getUniqueId().equals(showToUUID)).forEach(hasPlayer -> showPlayer(hasPlayer).to(showTo));
+		show.stream().map(OptionalPlayer::getPlayer).filter(Objects::nonNull).filter(player -> !player.getUniqueId().equals(showToUUID)).forEach(hasPlayer -> showPlayer(hasPlayer).to(showTo));
 	}
 
 	public static class HidePlayer {
