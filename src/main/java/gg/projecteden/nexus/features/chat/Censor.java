@@ -51,15 +51,16 @@ public class Censor {
 					Nexus.warn(PREFIX + "Configuration section " + key + " misconfigured");
 				else
 					censorItems.add(CensorItem.builder()
-							.name(key)
-							.find(section.getStringList("find"))
-							.replace(section.getStringList("replace"))
-							.bad(section.getBoolean("bad"))
-							.whole(section.getBoolean("whole"))
-							.cancel(section.getBoolean("cancel"))
-							.punish(section.getBoolean("punish"))
-							.punishReason(section.getString("punishReason"))
-							.build());
+						.name(key)
+						.find(section.getStringList("find"))
+						.replace(section.getStringList("replace"))
+						.bad(section.getBoolean("bad"))
+						.whole(section.getBoolean("whole"))
+						.cancel(section.getBoolean("cancel"))
+						.punish(section.getBoolean("punish"))
+						.punishReason(section.getString("punishReason"))
+						.channel(StaticChannel.of(section.getString("channel")))
+						.build());
 			}
 		}
 	}
@@ -74,6 +75,7 @@ public class Censor {
 		private boolean bad;
 		private boolean cancel;
 		private boolean punish;
+		private StaticChannel channel;
 		private String punishReason;
 
 		String getCensored() {
@@ -105,6 +107,11 @@ public class Censor {
 
 		int bad = 0;
 		for (CensorItem censorItem : censorItems) {
+			if (censorItem.getChannel() != null)
+				if (event.getChannel() instanceof PublicChannel publicChannel)
+					if (censorItem.getChannel() != StaticChannel.of(publicChannel))
+						continue;
+
 			for (String regex : censorItem.getFind()) {
 				boolean matches;
 				if (censorItem.isWhole())

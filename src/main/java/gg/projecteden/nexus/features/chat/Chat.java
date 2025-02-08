@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.chat;
 
-import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
@@ -18,9 +17,13 @@ import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.*;
-import gg.projecteden.nexus.utils.Timer;
+import gg.projecteden.nexus.utils.AdventureUtils;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,8 +36,15 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
+
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 public class Chat extends Feature {
 
@@ -166,6 +176,24 @@ public class Chat extends Feature {
 		StaticChannel(PublicChannel channel) {
 			this.channel = channel;
 		}
+
+		public static StaticChannel of(String channel) {
+			if (isNullOrEmpty(channel))
+				return null;
+
+			try {
+				return StaticChannel.valueOf(channel.toUpperCase());
+			} catch (IllegalArgumentException ex) {
+				return null;
+			}
+		}
+
+		public static StaticChannel of(PublicChannel channel) {
+			for (StaticChannel staticChannel : StaticChannel.values())
+				if (channel == staticChannel.getChannel())
+					return staticChannel;
+			return null;
+		}
 	}
 
 	public static int getLocalRadius() {
@@ -204,7 +232,7 @@ public class Chat extends Feature {
 			this.messageFunction = messageFunction;
 			this.muteMenuItem = muteMenuItem == null ? this.channel.getMuteMenuItem() : muteMenuItem;
 			this.messageType = messageType == null ? MessageType.SYSTEM : messageType;
-			this.targets = Nullables.isNullOrEmpty(targets) ? List.of(Target.INGAME, Target.DISCORD) : targets;
+			this.targets = isNullOrEmpty(targets) ? List.of(Target.INGAME, Target.DISCORD) : targets;
 			this.include = include;
 			this.exclude = exclude;
 			this.checkCanSeeSender = checkCanSeeSender;
