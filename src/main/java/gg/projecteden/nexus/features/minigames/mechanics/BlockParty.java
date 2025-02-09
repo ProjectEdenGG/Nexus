@@ -425,15 +425,43 @@ public class BlockParty extends TeamlessMechanic {
 				}).start();
 	}
 
+	private static final Map<ColorType, String> CONCRETE_CHAT_COLOR = new HashMap<>() {{
+		put(ColorType.WHITE, "#f2f8f9");
+		put(ColorType.ORANGE, "#ff9000");
+		put(ColorType.MAGENTA, "#ce3ac1");
+		put(ColorType.LIGHT_BLUE, "#2dadff");
+		put(ColorType.YELLOW, "#ffe719");
+		put(ColorType.LIGHT_GREEN, "#73ce1f");
+		put(ColorType.PINK, "#ff78aa");
+		put(ColorType.GRAY, "#3a3d41");
+		put(ColorType.LIGHT_GRAY, "#a2a295");
+		put(ColorType.CYAN, "#1b96ab");
+		put(ColorType.PURPLE, "#7b26bf");
+		put(ColorType.BLUE, "#3639b3");
+		put(ColorType.BROWN, "#86522e");
+		put(ColorType.GREEN, "#495b24");
+		put(ColorType.RED, "#8e2121");
+		put(ColorType.BLACK, "#272727");
+	}};
+
+	private static final Map<ColorType, String> COLOR_NAME_OVERRIDE = new HashMap<>() {{
+		put(ColorType.GRAY, "DARK_GRAY");
+		put(ColorType.LIGHT_GREEN, "LIME");
+	}};
+
 	private void sendCountdownActionBar(Match match, double time) {
 		BlockPartyMatchData matchData = match.getMatchData();
 		ColorType color = ColorType.of(matchData.getBlock());
+		if (color == null)
+			return;
 
-		String chatColor = "&" + (color == ColorType.BLACK ? "#272727" : color.getBukkitColor().asHexString());
+		String chatColor = "&" + CONCRETE_CHAT_COLOR.get(color);
+		String colorName = COLOR_NAME_OVERRIDE.getOrDefault(color, color.name()).replace("_", " ");
+
 		JsonBuilder builder = new JsonBuilder();
 		for (int i = 0; i < Math.ceil(time); i++)
 			builder.next(chatColor + "■");
-		builder.next(" &f&l" + color.name().replace("_", " ") + " ");
+		builder.next(" &f&l" + colorName + " ");
 		for (int i = 0; i < Math.ceil(time); i++)
 			builder.next(chatColor + "■");
 
@@ -1242,6 +1270,7 @@ public class BlockParty extends TeamlessMechanic {
 	@Override
 	public void onQuit(@NotNull MatchQuitEvent event) {
 		super.onQuit(event);
+		BlockPartyClientMessage.to(event.getMinigamer().getUuid()).stop().send();
 		event.getMinigamer().stopTimeTracking();
 	}
 
