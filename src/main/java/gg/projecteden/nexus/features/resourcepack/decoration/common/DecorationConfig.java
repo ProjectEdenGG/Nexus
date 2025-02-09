@@ -59,9 +59,9 @@ public class DecorationConfig {
 	protected @NonNull Material material = Material.PAPER;
 	protected String model;
 	protected Predicate<String> modelPredicate;
-	protected String placeSound = Sound.ENTITY_ITEM_FRAME_ADD_ITEM.getKey().getKey();
-	protected String hitSound = Sound.ENTITY_ITEM_FRAME_ROTATE_ITEM.getKey().getKey();
-	protected String breakSound = Sound.ENTITY_ITEM_FRAME_REMOVE_ITEM.getKey().getKey();
+	protected String placeSound = "entity.item_frame.add_item";
+	protected String hitSound = "entity.item_frame.rotate_item";
+	protected String breakSound = "entity.item_frame.remove_item";
 	protected List<String> lore = new ArrayList<>();
 
 	protected List<Hitbox> hitboxes = Hitbox.NONE();
