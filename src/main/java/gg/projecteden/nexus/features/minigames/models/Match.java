@@ -122,10 +122,9 @@ public class Match implements ForwardingAudience {
 		return players;
 	}
 
-	public List<Player> getOnlineMinigamersAndSpectators() {
+	public List<Minigamer> getOnlineMinigamersAndSpectators() {
 		return getMinigamersAndSpectators().stream()
 			.filter(Minigamer::isOnline)
-			.map(Minigamer::getPlayer)
 			.collect(Collectors.toList());
 	}
 
@@ -260,7 +259,6 @@ public class Match implements ForwardingAudience {
 		spectators.remove(minigamer);
 		minigamer.clearState(true);
 		minigamer.toGamelobby();
-		minigamer.unhideAll();
 
 		MatchQuitEvent event = new MatchQuitEvent(minigamer);
 		event.callEvent();
@@ -279,7 +277,7 @@ public class Match implements ForwardingAudience {
 	}
 
 	public void spectate(Minigamer minigamer) {
-		if (minigamers.contains(minigamer))
+		if (minigamers.contains(minigamer) || spectators.contains(minigamer))
 			throw new InvalidInputException("&cYou are already in this match");
 
 		new MatchJoinEvent(this, minigamer).callEvent();
@@ -747,13 +745,13 @@ public class Match implements ForwardingAudience {
 						if (broadcasts.contains(time)) {
 							if (match.getMechanic().shouldBroadcastTimeLeft()) {
 								broadcastTimeLeft();
-								match.getOnlineMinigamersAndSpectators().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, .75F, .6F));
+								match.getOnlineMinigamersAndSpectators().stream().map(Minigamer::getOnlinePlayer).forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, .75F, .6F));
 							}
 						}
-						match.getOnlineMinigamersAndSpectators().forEach(player -> {
-							MinigamerDisplayTimerEvent event = new MinigamerDisplayTimerEvent(Minigamer.of(player), time);
+						match.getOnlineMinigamersAndSpectators().forEach(minigamer -> {
+							MinigamerDisplayTimerEvent event = new MinigamerDisplayTimerEvent(minigamer, time);
 							if (event.callEvent())
-								player.sendActionBar(event.getContents());
+								minigamer.sendActionBar(event.getContents());
 						});
 					} else {
 						if (match.getMechanic().shouldAutoEndOnZeroTimeLeft())

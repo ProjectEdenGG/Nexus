@@ -26,7 +26,6 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
@@ -497,13 +496,6 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		return teleportAsync(dest).thenApply(success -> {
 			clearGameModeState(true);
 			match.getTasks().wait(2, () -> getPlayer().setAllowFlight(true));
-			match.getMinigamersAndSpectators().forEach(minigamer -> {
-				if (minigamer.isAlive)
-					minigamer.getOnlinePlayer().hidePlayer(Nexus.getInstance(), getOnlinePlayer());
-				else
-					getOnlinePlayer().showPlayer(Nexus.getInstance(), minigamer.getOnlinePlayer());
-			});
-
 			if (match.isStarted() && !match.isEnded()) {
 				getPlayer().setGameMode(GameMode.ADVENTURE);
 				getPlayer().getInventory().setItem(0, Minigamer.SPECTATING_COMPASS);
@@ -612,25 +604,16 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		if (match.getArena().getRespawnLocation() == null)
 			spawn();
 		else {
-			respawning = true;
+			setRespawning(true);
 			clearState();
-			hideAll();
 			teleportAsync(match.getArena().getRespawnLocation(), true);
 			addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(TickTime.SECOND.x(2)).amplifier(2));
 			Runnable respawn = () -> {
 				if (!match.isEnded()) {
 					new MinigamerRespawnEvent(this).callEvent();
 					spawn();
-					unhideAll();
-					respawning = false;
-					// hides players who are still respawning (as unhideAll unhides them)
-					match.getMinigamersAndSpectators().forEach(minigamer -> {
-						if (!minigamer.equals(this) && (minigamer.isRespawning() || !minigamer.isAlive())) {
-							PlayerUtils.hidePlayer(minigamer.getOnlinePlayer()).from(getOnlinePlayer());
-							if (minigamer.isAlive())
-								PlayerUtils.hidePlayer(getOnlinePlayer()).from(minigamer.getOnlinePlayer());
-						}
-					});
+					setRespawning(false);
+
 				}
 			};
 			int respawnIn = match.getArena().getRespawnSeconds() * 20;
@@ -692,42 +675,6 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		player.setHealth(Math.min(player.getMaxHealth(), player.getHealth()+amount));
 	}
 
-	// respawning
-	//     you see alive players = false;
-	//     you see dead players = false;
-	//     alive players see you = false;
-	// spectating
-	//     you see alive players = true;
-	//     you see dead players = true;
-	//     alive players see you = false;
-
-	private void hideAll() {
-		final Player player = getOnlinePlayer();
-		if (respawning)
-			OnlinePlayers.getAll().forEach(_player -> {
-				PlayerUtils.hidePlayer(_player).from(player);
-				PlayerUtils.hidePlayer(player).from(_player);
-			});
-		else if (!isAlive)
-			OnlinePlayers.getAll().forEach(_player -> {
-				PlayerUtils.showPlayer(_player).to(player);
-
-				Minigamer minigamer = of(_player);
-				if (minigamer.isPlaying(match) && minigamer.isAlive())
-					PlayerUtils.hidePlayer(_player).from(player);
-			});
-		 else
-			unhideAll();
-	}
-
-	public void unhideAll() {
-		OnlinePlayers.getAll().forEach(_player -> {
-			PlayerUtils.showPlayer(getOnlinePlayer()).to(_player);
-			if (!Vanish.isVanished(_player) || getOnlinePlayer().hasPermission("pv.see"))
-				PlayerUtils.showPlayer(_player).to(getOnlinePlayer());
-		});
-	}
-
 	public void clearState() {
 		clearState(false);
 	}
@@ -736,7 +683,6 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		// TODO: Possibly edit ConditionalPerms to disallow voxel?
 		getOnlinePlayer().setGameMode(match.getMechanic().getGameMode());
 		clearGameModeState(forceClearInventory);
-		unhideAll();
 	}
 
 	private void clearGameModeState(boolean forceClearInventory) {

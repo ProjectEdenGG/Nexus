@@ -9,6 +9,7 @@ import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.api.BlockPartyWebSocketServer;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.lobby.MinigameInviter;
 import gg.projecteden.nexus.features.minigames.lobby.exchange.MGMExchange;
@@ -106,6 +107,8 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
+
+import static com.mysql.cj.util.StringUtils.isNullOrEmpty;
 
 @Aliases({"mgm", "mg"})
 @Redirect(from = "/mgn", to = "/mgm night")
@@ -1044,6 +1047,16 @@ public class MinigamesCommand extends _WarpSubCommand {
 		for (int i = 0; i < BlockParty.MAX_ROUNDS; i++)
 			seconds += BlockParty.getRoundSpeed(i) + 5;
 		send(PREFIX + "Songs should be at least &e" + seconds + " &3seconds long &e(" + ((int) seconds / 60) + "m" + (seconds % 60) + "s)");
+	}
+
+	@Permission(Group.ADMIN)
+	@Path("blockParty webUsers")
+	void blockParty_webUsers() {
+		String collect = BlockPartyWebSocketServer.getClients().keySet().stream().map(Nerd::of).map(Nerd::getNickname).collect(Collectors.joining(", "));
+		if (isNullOrEmpty(collect))
+			error("No users connected to the web player");
+
+		send(PREFIX + collect);
 	}
 
 	private static boolean STOP;

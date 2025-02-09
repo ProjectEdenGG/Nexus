@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.vanish;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.vanish.events.PreVanishToggleEvent;
 import gg.projecteden.nexus.features.vanish.events.VanishToggleEvent;
 import gg.projecteden.nexus.framework.features.Feature;
@@ -11,9 +12,7 @@ import gg.projecteden.nexus.models.vanish.VanishUser;
 import gg.projecteden.nexus.models.vanish.VanishUser.Setting;
 import gg.projecteden.nexus.models.vanish.VanishUserService;
 import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.HidePlayer;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.PlayerUtils.ShowPlayer;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -21,6 +20,9 @@ import gg.projecteden.parchment.OptionalPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffectType;
+
+import static gg.projecteden.nexus.utils.PlayerUtils.hidePlayer;
+import static gg.projecteden.nexus.utils.PlayerUtils.showPlayer;
 
 public class Vanish extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix(Vanish.class);
@@ -31,9 +33,9 @@ public class Vanish extends Feature {
 	public void onStart() {
 		new VanishListener();
 
-		Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
-//			Vanish.refreshAll();
+		Tasks.repeat(0, TickTime.TICK, Vanish::refreshAll);
 
+		Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
 			OnlinePlayers.getAll().stream()
 				.map(Vanish::get)
 				.filter(VanishUser::isVanished)
@@ -102,10 +104,27 @@ public class Vanish extends Feature {
 	}
 
 	public static void refresh(VanishUser user) {
-		if (user.isVanished())
-			new HidePlayer(user).from(OnlinePlayers.where(user::canHideFrom).get());
-		else
-			new ShowPlayer(user).toAll();
+		Player target = user.getOnlinePlayer();
+		for (Player viewer : OnlinePlayers.getAll()) {
+			boolean hidden = false;
+			if (Minigamer.of(target).getMatch() != null) {
+				Minigamer targetMinigamer = Minigamer.of(target);
+				Minigamer viewerMinigamer = Minigamer.of(viewer);
+
+				if (viewerMinigamer.getMatch() != null)
+					if (!viewerMinigamer.getMatch().getMechanic().canSee(viewerMinigamer, targetMinigamer))
+						hidden = true;
+			}
+
+			// TODO Priority
+			if (user.isVanished() && !Vanish.canSee(viewer, target))
+				hidden = true;
+
+			if (hidden)
+				hidePlayer(target).from(viewer);
+			else
+				showPlayer(target).to(viewer);
+		}
 	}
 
 	public static boolean isVanished(OptionalPlayer player) {
@@ -113,6 +132,11 @@ public class Vanish extends Feature {
 			return false;
 
 		return get(player.getPlayer()).isVanished();
+	}
+
+	// See PlayerUtils#canSee
+	public static boolean canSee(Player viewer, Player target) {
+		return !Vanish.isVanished(target) || viewer.hasPermission("pv.see");
 	}
 
 }

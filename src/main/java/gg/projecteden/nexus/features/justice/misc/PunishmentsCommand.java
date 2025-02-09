@@ -25,10 +25,13 @@ public class PunishmentsCommand extends _JusticeCommand {
 		send("    &cThird offense: &3Permanent");
 		line();
 		send("&eChat");
-		send("    &3Mute initially, short ban if they continue");
+		send("    &3Short mute initially (~10m), short ban if they continue");
 		line();
 		send("&eHacks / death traps / obscene structures/skins");
 		send("    &3Max of 3 days, then permanent");
+		line();
+		send("&eLagging or attempting to crash the server");
+		send("    &3Permanent");
 		line();
 		send("&eSlurs / hate speech / racism / etc of any kind");
 		send("    &3Permanent");

@@ -10,16 +10,22 @@ import gg.projecteden.nexus.features.events.DebugDotCommand;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.MonsterMazeMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
-import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.attribute.AttributeModifier.Operation;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.EntityType;
@@ -31,8 +37,8 @@ import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -60,7 +66,7 @@ public class MonsterMaze extends TeamlessMechanic {
 	// MatchData
 
 	// Mechanic
-	private static final String NBT_KEY = "MonsterMaze";
+	private static final String NBT_KEY = "MonsterMazeEntity";
 
 	@Override
 	public @NotNull String getName() {
@@ -153,12 +159,41 @@ public class MonsterMaze extends TeamlessMechanic {
 			new PowerUpUtils(match, Arrays.asList(JUMPS)).spawn(block.getLocation().add(0, 1, 0), true);
 	}
 
+	@Override
+	public void onQuit(@NotNull MatchQuitEvent event) {
+		super.onQuit(event);
+		allowJump(event.getMinigamer());
+	}
+
+	@Override
+	public void onEnd(@NotNull MatchEndEvent event) {
+		super.onEnd(event);
+		for (Minigamer minigamer : event.getMatch().getMinigamers())
+			allowJump(minigamer);
+	}
+
+	// TODO Make minigame util, make more safe to use
+	private static final NamespacedKey JUMP_STRENGTH_MODIFIER = new NamespacedKey(Nexus.getInstance(), "monster-maze-jump");
+
 	private void allowJump(Minigamer minigamer) {
-		minigamer.getOnlinePlayer().removePotionEffect(PotionEffectType.JUMP_BOOST);
+		AttributeInstance attribute = getJumpStrengthAttribute(minigamer);
+		if (attribute != null)
+			attribute.removeModifier(JUMP_STRENGTH_MODIFIER);
 	}
 
 	private void preventJump(Minigamer minigamer) {
-		minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.JUMP_BOOST).infinite().amplifier(250));
+		AttributeInstance attribute = getJumpStrengthAttribute(minigamer);
+		if (attribute != null)
+			attribute.addModifier(new AttributeModifier(JUMP_STRENGTH_MODIFIER, -1, Operation.MULTIPLY_SCALAR_1));
+	}
+
+	private static @Nullable AttributeInstance getJumpStrengthAttribute(Minigamer minigamer) {
+		AttributeInstance attribute = minigamer.getOnlinePlayer().getAttribute(Attribute.JUMP_STRENGTH);
+		if (attribute == null) {
+			Nexus.severe("Attribute JUMP_STRENGTH not found on " + minigamer.getNickname());
+			return null;
+		}
+		return attribute;
 	}
 
 	@EventHandler

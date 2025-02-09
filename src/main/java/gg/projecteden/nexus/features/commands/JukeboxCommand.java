@@ -63,6 +63,7 @@ public class JukeboxCommand extends CustomCommand implements Listener {
 			user.pause();
 			service.saveSync(user);
 		}
+		JukeboxSong.SONGS.clear();
 	}
 
 	@HideFromWiki

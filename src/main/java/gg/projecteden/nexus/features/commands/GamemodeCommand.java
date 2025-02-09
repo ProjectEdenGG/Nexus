@@ -77,19 +77,23 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 		}
 	}
 
+	/*
+		TODO:
+			If enabled fly in survival, switched to creative mode, then switched back to survival, fly is now off, because of the gamemode change
+	 */
 	public static void setGameMode(Player player, GameMode gamemode) {
 		boolean flight = player.getAllowFlight();
 		player.setGameMode(gamemode);
 		PlayerUtils.setAllowFlight(player, flight, GamemodeCommand.class);
 
 		if (gamemode.equals(GameMode.CREATIVE) || gamemode.equals(GameMode.SPECTATOR)) {
-			PlayerUtils.setAllowFlight(player, true, GamemodeCommand.class);
-			PlayerUtils.setFlying(player, true, GamemodeCommand.class);
+			PlayerUtils.setAllowFlight(player, true, "Gamemode = Creative/Spectator");
+			PlayerUtils.setFlying(player, true, "Gamemode = Creative/Spectator");
 		}
 
 		if (gamemode.equals(GameMode.SURVIVAL)) {
-			PlayerUtils.setAllowFlight(player, false, GamemodeCommand.class);
-			PlayerUtils.setFlying(player, false, GamemodeCommand.class);
+			PlayerUtils.setAllowFlight(player, false, "Gamemode = Survival");
+			PlayerUtils.setFlying(player, false, "Gamemode = Survival");
 		}
 	}
 

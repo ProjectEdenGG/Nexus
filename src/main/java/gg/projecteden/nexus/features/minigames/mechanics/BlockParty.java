@@ -11,7 +11,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.api.BlockPartyWebSocketServer;
 import gg.projecteden.nexus.features.api.BlockPartyWebSocketServer.BlockPartyClientConnectedEvent;
 import gg.projecteden.nexus.features.api.BlockPartyWebSocketServer.BlockPartyClientMessage;
-import gg.projecteden.nexus.features.api.BlockPartyWebSocketServer.Song;
+import gg.projecteden.nexus.features.api.BlockPartyWebSocketServer.SongInstance;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
@@ -49,6 +49,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -70,6 +71,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
 import org.jaudiotagger.audio.AudioFile;
@@ -171,15 +173,7 @@ public class BlockParty extends TeamlessMechanic {
 
 		BlockPartyMatchData matchData = event.getMatch().getMatchData();
 		if (matchData.getSong() != null) {
-			BlockPartySong song = matchData.getSong();
-			BlockPartyClientMessage.to(minigamer.getUniqueId()).song(
-				new Song(
-					song.title,
-					song.artist,
-					0,
-					song.getUrl()
-				)
-			).send();
+			BlockPartyClientMessage.to(minigamer.getUniqueId()).song(matchData.getSongInstance()).send();
 			if (matchData.isPlaying())
 				BlockPartyClientMessage.to(minigamer.getUniqueId()).play().send();
 			if (matchData.getBlock() != null)
@@ -192,10 +186,12 @@ public class BlockParty extends TeamlessMechanic {
 			return;
 
 		minigamer.getMatch().getTasks().wait(30, () -> {
+			minigamer.tell("");
 			minigamer.tell(new JsonBuilder("&e&lClick Here &3to listen to the music in your browser!")
 				.url("https://projecteden.gg/blockparty?uuid=" + minigamer.getUniqueId())
 				.hover("&3Open in your browser")
 				.build());
+			minigamer.tell("");
 		});
 	}
 
@@ -207,7 +203,11 @@ public class BlockParty extends TeamlessMechanic {
 		startActionBarTask(event.getMatch());
 		startEqAnimation(event.getMatch());
 
-		event.getMatch().getAliveMinigamers().forEach(Minigamer::startTimeTracking);
+		BlockPartyMatchData matchData = event.getMatch().getMatchData();
+		for (Minigamer minigamer : event.getMatch().getAliveMinigamers()) {
+			matchData.getRoundsSurvived().put(minigamer.getUniqueId(), 0);
+			minigamer.startTimeTracking();
+		}
 	}
 
 	@Override
@@ -316,6 +316,10 @@ public class BlockParty extends TeamlessMechanic {
 	private void pasteNewFloor(Match match) {
 		BlockPartyMatchData matchData = match.getMatchData();
 		matchData.incRound();
+
+		for (Minigamer minigamer : match.getAliveMinigamers())
+			matchData.getRoundsSurvived().put(minigamer.getUniqueId(), matchData.getRound());
+
 		if (matchData.getRound() % 2 == 1 && (matchData.getRound() + 1) < MAX_ROUNDS)
 			match.broadcast("&3Round speed is now &e" + getRoundSpeed(matchData.getRound()) + "s");
 		if ((matchData.getRound() + 1) > MAX_ROUNDS) {
@@ -425,15 +429,43 @@ public class BlockParty extends TeamlessMechanic {
 				}).start();
 	}
 
+	private static final Map<ColorType, String> CONCRETE_CHAT_COLOR = new HashMap<>() {{
+		put(ColorType.WHITE, "#f2f8f9");
+		put(ColorType.ORANGE, "#ff9000");
+		put(ColorType.MAGENTA, "#ce3ac1");
+		put(ColorType.LIGHT_BLUE, "#2dadff");
+		put(ColorType.YELLOW, "#ffe719");
+		put(ColorType.LIGHT_GREEN, "#73ce1f");
+		put(ColorType.PINK, "#ff78aa");
+		put(ColorType.GRAY, "#3a3d41");
+		put(ColorType.LIGHT_GRAY, "#a2a295");
+		put(ColorType.CYAN, "#1b96ab");
+		put(ColorType.PURPLE, "#7b26bf");
+		put(ColorType.BLUE, "#3639b3");
+		put(ColorType.BROWN, "#86522e");
+		put(ColorType.GREEN, "#495b24");
+		put(ColorType.RED, "#8e2121");
+		put(ColorType.BLACK, "#272727");
+	}};
+
+	private static final Map<ColorType, String> COLOR_NAME_OVERRIDE = new HashMap<>() {{
+		put(ColorType.GRAY, "DARK_GRAY");
+		put(ColorType.LIGHT_GREEN, "LIME");
+	}};
+
 	private void sendCountdownActionBar(Match match, double time) {
 		BlockPartyMatchData matchData = match.getMatchData();
 		ColorType color = ColorType.of(matchData.getBlock());
+		if (color == null)
+			return;
 
-		String chatColor = "&" + (color == ColorType.BLACK ? "#272727" : color.getBukkitColor().asHexString());
+		String chatColor = "&" + CONCRETE_CHAT_COLOR.get(color);
+		String colorName = COLOR_NAME_OVERRIDE.getOrDefault(color, color.name()).replace("_", " ");
+
 		JsonBuilder builder = new JsonBuilder();
 		for (int i = 0; i < Math.ceil(time); i++)
 			builder.next(chatColor + "■");
-		builder.next(" &f&l" + color.name().replace("_", " ") + " ");
+		builder.next(" &f&l" + colorName + " ");
 		for (int i = 0; i < Math.ceil(time); i++)
 			builder.next(chatColor + "■");
 
@@ -492,8 +524,12 @@ public class BlockParty extends TeamlessMechanic {
 
 	private boolean checkWin(Match match) {
 		BlockPartyMatchData matchData = match.getMatchData();
+		BoundingBox boundingBox = match.worldedit().toBoundingBox(matchData.getPasteRegion()).expand(3, 20, 3);
+
 		match.getAliveMinigamers().forEach(minigamer -> {
 			if (minigamer.getLocation().y() < matchData.getPasteRegion().getMinimumPoint().y())
+				kill(minigamer);
+			else if (!boundingBox.contains(minigamer.getLocation().toVector()))
 				kill(minigamer);
 		});
 
@@ -942,24 +978,19 @@ public class BlockParty extends TeamlessMechanic {
 	}
 
 	private void setSong(Match match) {
-		BlockPartySong song = ((BlockPartyMatchData) match.getMatchData()).getSong();
-
+		BlockPartyMatchData matchData = match.getMatchData();
 		BlockPartyClientMessage.to(getListenerUUIDs(match))
-				.song(new Song(
-					song.title,
-					song.artist,
-					0,
-					song.getUrl()
-				))
+				.song(matchData.getSongInstance())
 				.play()
 				.send();
 
-		BlockPartyMatchData matchData = match.getMatchData();
 		matchData.setPlayTime(LocalDateTime.now());
 	}
 
 	private void playSong(Match match) {
 		BlockPartyMatchData matchData = match.getMatchData();
+		matchData.setPlaying(true);
+
 		matchData.setPlayTime(LocalDateTime.now());
 
 		BlockPartyClientMessage.to(getListenerUUIDs(match)).play().send();
@@ -968,6 +999,8 @@ public class BlockParty extends TeamlessMechanic {
 
 	private void pauseSong(Match match) {
 		BlockPartyMatchData matchData = match.getMatchData();
+		matchData.setPlaying(false);
+
 		double seconds = Duration.between(matchData.getPlayTime(), LocalDateTime.now()).toSeconds();
 		matchData.setSongTimeInSeconds(matchData.getSongTimeInSeconds() + seconds);
 
@@ -1055,6 +1088,17 @@ public class BlockParty extends TeamlessMechanic {
 			});
 		}
 
+		@Override
+		public void update() {
+			contents.fill(ClickableItem.AIR);
+			init();
+		}
+
+		@Override
+		public int getUpdateFrequency() {
+			return 5;
+		}
+
 		public ItemStack getItem(BlockPartySong song, boolean main, int col, Player player) {
 			ItemBuilder builder = new ItemBuilder(main ? records[col - 2] : colors[col - 2]);
 			builder
@@ -1080,11 +1124,12 @@ public class BlockParty extends TeamlessMechanic {
 	// endregion
 
 	// region Read song files
+	@Data
 	@AllArgsConstructor
 	public static class BlockPartySong {
-		String title;
-		String artist;
-		String fileName;
+		private String title;
+		private String artist;
+		private String fileName;
 
 		public String getUrl() {
 			return "https://cdn.projecteden.gg/blockparty/music/" + fileName;
@@ -1197,15 +1242,8 @@ public class BlockParty extends TeamlessMechanic {
 			.forEach(match -> {
 				BlockPartyMatchData matchData = match.getMatchData();
 				if (matchData.getSong() != null) {
-					BlockPartySong song = matchData.getSong();
-					event.addSong(
-						getListenerUUIDs(match),
-						song.title,
-						song.artist,
-						matchData.getSongTimeInSeconds(),
-						song.getUrl(),
-						matchData.isPlaying()
-					);
+					double seconds = matchData.getSongTimeInSeconds() + Duration.between(matchData.getPlayTime(), LocalDateTime.now()).toSeconds();
+					event.addSong(getListenerUUIDs(match), new SongInstance(matchData.getSong(), seconds), matchData.isPlaying());
 				}
 				if (matchData.getBlock() != null) {
 					event.setBlock(getListenerUUIDs(match), matchData.getBlock().name());
@@ -1216,10 +1254,7 @@ public class BlockParty extends TeamlessMechanic {
 		if (song != null) {
 			event.addSong(
 				List.of(UUIDUtils.UUID0),
-				song.title,
-				song.artist,
-				30,
-				song.getUrl(),
+				new SongInstance(song, 0),
 				true
 			);
 		}
@@ -1242,6 +1277,7 @@ public class BlockParty extends TeamlessMechanic {
 	@Override
 	public void onQuit(@NotNull MatchQuitEvent event) {
 		super.onQuit(event);
+		BlockPartyClientMessage.to(event.getMinigamer().getUuid()).stop().send();
 		event.getMinigamer().stopTimeTracking();
 	}
 
@@ -1254,7 +1290,7 @@ public class BlockParty extends TeamlessMechanic {
 			if (matchData.getWinners() != null && matchData.getWinners().contains(minigamer))
 				stats.setWin(true);
 
-			int rounds = matchData.getRoundsSurvived().getOrDefault(minigamer.getUniqueId(), 0);
+			int rounds = matchData.getRoundsSurvived().getOrDefault(minigamer.getUniqueId(), MAX_ROUNDS);
 			stats.setRoundsSurvived(rounds);
 
 			int powerUpsCollected = matchData.getPowerUpsCollected().getOrDefault(minigamer.getUniqueId(), 0);

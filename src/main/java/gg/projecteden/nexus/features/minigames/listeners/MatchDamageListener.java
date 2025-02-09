@@ -46,7 +46,6 @@ public class MatchDamageListener implements Listener {
 		}
 	}
 
-	// Purposefully not an @EventHandler, see on(EntityDamageEvent)
 	// TODO: Prevent damage of hanging entities/armor stands/etc
 	@EventHandler(ignoreCancelled = true)
 	public void on(EntityDamageEvent event) {
@@ -89,6 +88,7 @@ public class MatchDamageListener implements Listener {
 			event.setCancelled(true);
 	}
 
+	// Purposefully not an @EventHandler, see on(EntityDamageEvent)
 	public void on(EntityDamageByEntityEvent event) {
 		if (event.isCancelled())
 			return;

@@ -6,6 +6,8 @@ import gg.projecteden.nexus.features.minigames.models.arenas.DropperArena;
 import gg.projecteden.nexus.features.minigames.models.arenas.DropperMap;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.DropperMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
@@ -37,13 +39,11 @@ public class Dropper extends TeamlessMechanic {
 		return new ItemStack(Material.DROPPER);
 	}
 
-	@Override
-	public boolean isTestMode() {
-		return true;
-	}
-
 	private static void toSpawnpoint(@NotNull Minigamer minigamer) {
 		DropperArena arena = minigamer.getMatch().getArena();
+		minigamer.getOnlinePlayer().setFallDistance(0);
+		minigamer.getOnlinePlayer().setAllowFlight(false);
+		minigamer.getOnlinePlayer().setFlying(false);
 		minigamer.teleportAsync(RandomUtils.randomElement(arena.getCurrentMap().getSpawnpoints()));
 	}
 
@@ -64,6 +64,7 @@ public class Dropper extends TeamlessMechanic {
 		else if (matchData.getRound() != 1)
 			match.broadcast("Next round");
 
+		matchData.getFinished().clear();
 		for (Minigamer minigamer : match.getMinigamers())
 			toSpawnpoint(minigamer);
 	}
@@ -100,8 +101,14 @@ public class Dropper extends TeamlessMechanic {
 	}
 
 	@Override
-	public void onDeath(@NotNull Minigamer victim) {
-		toSpawnpoint(victim);
+	public void onDeath(@NotNull MinigamerDeathEvent event) {
+		event.showDeathMessage(false);
+		toSpawnpoint(event.getMinigamer());
+	}
+
+	@Override
+	public void onDamage(@NotNull MinigamerDamageEvent event) {
+		event.setCancelled(true);
 	}
 
 	@EventHandler
@@ -112,18 +119,33 @@ public class Dropper extends TeamlessMechanic {
 			return;
 
 		final Match match = minigamer.getMatch();
-		if (!event.getRegion().equals(match.getArena().getProtectedRegion("win")))
+		if (!(match.getArena() instanceof DropperArena arena))
 			return;
 
-		// TODO Points algo
-		minigamer.scored(1);
+		if (!event.getRegion().getId().equals(match.getArena().getProtectedRegion("win").getId()))
+			return;
+
+		final DropperMatchData matchData = match.getMatchData();
+		if (matchData.getFinished().contains(minigamer))
+			return;
+
+		matchData.getFinished().add(minigamer);
+
+		int size = matchData.getFinished().size();
+		minigamer.scored(Math.max(1, 1 + (4 - size)));
+
 		match.broadcast(minigamer.getNickname() + " reached the bottom");
 
-		if (match.getTimer().getTime() > 31)
+		if (matchData.getFinished().size() == match.getAliveMinigamers().size())
+			match.getTimer().setTime(6);
+		else if (match.getTimer().getTime() > 31)
 			match.getTimer().setTime(31);
 
-		if (match.getArena().getSpectateLocation() != null)
-			minigamer.teleportAsync(match.getArena().getSpectateLocation());
+		minigamer.getOnlinePlayer().setAllowFlight(true);
+		minigamer.getOnlinePlayer().setFlying(true);
+
+		if (arena.getCurrentMap().getSpectateLocation() != null)
+			minigamer.teleportAsync(arena.getCurrentMap().getSpectateLocation());
 	}
 
 }

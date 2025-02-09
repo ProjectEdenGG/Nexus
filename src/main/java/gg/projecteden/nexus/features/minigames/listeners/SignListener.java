@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigames.listeners;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.customboundingboxes.events.CustomBoundingBoxEntityInteractEvent;
 import gg.projecteden.nexus.features.customboundingboxes.events.CustomBoundingBoxEntityTargetEndEvent;
 import gg.projecteden.nexus.features.customboundingboxes.events.CustomBoundingBoxEntityTargetTickEvent;
@@ -20,6 +21,7 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicGroup;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicSubGroup;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntity;
@@ -29,6 +31,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
@@ -120,18 +123,27 @@ public class SignListener implements Listener {
 		final Player player = event.getPlayer();
 
 		try {
-			if (PlayerUtils.isWGEdit(player))
-				return;
-
 			if (!Minigames.isInMinigameLobby(player))
 				return;
 
 			final String id = event.getEntity().getId();
-			if (gg.projecteden.api.common.utils.Nullables.isNullOrEmpty(id))
+			if (Nullables.isNullOrEmpty(id))
 				return;
 
 			if (!id.startsWith(MechanicType.BOUNDING_BOX_ID_PREFIX) && !id.startsWith(MechanicSubGroup.BOUNDING_BOX_ID_PREFIX))
 				return;
+
+			if (PlayerUtils.isWGEdit(player)) {
+				if (new CooldownService().check(player, "minigames-sign-interact-wgedit", TickTime.SECOND.x(3))) {
+					PlayerUtils.send(player, Minigames.PREFIX + "Please turn off WorldGuard Edit to join a game");
+					new SoundBuilder(CustomSound.BONK)
+						.location(player.getLocation())
+						.receiver(player)
+						.muteMenuItem(MuteMenuItem.JOKES)
+						.play();
+				}
+				return;
+			}
 
 			final ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
 			final boolean holdingInvite = CustomMaterial.ENVELOPE_1.is(itemInMainHand);

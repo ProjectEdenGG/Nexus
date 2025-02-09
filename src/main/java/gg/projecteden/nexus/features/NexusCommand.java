@@ -35,15 +35,18 @@ import gg.projecteden.nexus.framework.commands.CommandMapUtils;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
@@ -583,5 +586,28 @@ public class NexusCommand extends CustomCommand implements Listener {
 	void offlineMessage(OfflinePlayer player) {
 		OfflineMessage.send(player, new JsonBuilder("&3Testing").hover("&eTesting"));
 	}
+
+	@Permission(Group.ADMIN)
+	@Path("feature reload <feature>")
+	void feature_reload(Feature feature) {
+		feature.reload();
+		send(PREFIX + "Reloaded " + feature.getName());
+	}
+
+	@TabCompleterFor(Feature.class)
+	List<String> tabCompleteFeature(String filter) {
+		return Features.getRegistered().values().stream()
+			.map(Feature::getName)
+			.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
+			.toList();
+	}
+
+	@ConverterFor(Feature.class)
+	Feature convertToFeature(String value) {
+		return Features.getRegistered().values().stream()
+			.filter(feature -> feature.getName().equalsIgnoreCase(value))
+			.findFirst().orElseThrow(() -> new InvalidInputException("Feature &e" + value + " &c not found"));
+	}
+
 
 }

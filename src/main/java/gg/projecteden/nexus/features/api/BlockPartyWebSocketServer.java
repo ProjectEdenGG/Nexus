@@ -2,9 +2,12 @@ package gg.projecteden.nexus.features.api;
 
 import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.minigames.mechanics.BlockParty.BlockPartySong;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.event.Event;
@@ -33,6 +36,7 @@ public class BlockPartyWebSocketServer {
 	static final int PORT = 8182;
 	private static ServerSocketChannel serverSocket;
 	private static Selector selector;
+	@Getter
 	private static final Map<UUID, SocketChannel> clients = new ConcurrentHashMap<>();
 	private static volatile boolean running = true;
 
@@ -104,7 +108,8 @@ public class BlockPartyWebSocketServer {
 				"Sec-WebSocket-Accept: " + acceptKey + "\r\n\r\n";
 		client.write(ByteBuffer.wrap(handshakeResponse.getBytes()));
 
-		log("New WebSocket client connected with UUID: " + uuid);
+		Nerd nerd = Nerd.of(uuid);
+		log("New WebSocket client connected: %s - %s".formatted(uuid, nerd.getNickname()));
 		Tasks.async(() -> syncClient(uuid));
 	}
 
@@ -246,9 +251,8 @@ public class BlockPartyWebSocketServer {
 
 		private final List<BlockPartyClientMessage> messages = new ArrayList<>();
 
-		public void addSong(List<UUID> uuids, String title, String artist, double time, String url, boolean playing) {
-			BlockPartyClientMessage message = BlockPartyClientMessage.to(uuids)
-				.song(new Song(title, artist, time, url));
+		public void addSong(List<UUID> uuids, SongInstance song, boolean playing) {
+			BlockPartyClientMessage message = BlockPartyClientMessage.to(uuids).song(song);
 			if (playing)
 				message.play();
 			messages.add(message);
@@ -278,8 +282,7 @@ public class BlockPartyWebSocketServer {
 
 		private List<UUID> uuids;
 		private String action;
-		private Song song;
-		private double time;
+		private SongInstance song;
 		private String block;
 
 		public static BlockPartyClientMessage to(List<UUID> uuids) {
@@ -294,13 +297,8 @@ public class BlockPartyWebSocketServer {
 			return message;
 		}
 
-		public BlockPartyClientMessage song(Song song) {
+		public BlockPartyClientMessage song(SongInstance song) {
 			this.song = song;
-			return this;
-		}
-
-		public BlockPartyClientMessage time(double time) {
-			this.time = time;
 			return this;
 		}
 
@@ -333,12 +331,20 @@ public class BlockPartyWebSocketServer {
 		}
 	}
 
+	@Data
 	@AllArgsConstructor
-	public static class Song {
+	public static class SongInstance {
 		String title;
 		String artist;
-		double time;
 		String url;
+		double startTime;
+
+		public SongInstance(BlockPartySong song, double startTime) {
+			this.title = song.getTitle();
+			this.artist = song.getArtist();
+			this.url = song.getUrl();
+			this.startTime = startTime;
+		}
 	}
 
 }

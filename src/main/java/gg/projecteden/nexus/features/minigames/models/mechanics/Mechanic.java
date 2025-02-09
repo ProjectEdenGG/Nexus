@@ -307,6 +307,10 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 
 	public final void kill(@NotNull Minigamer minigamer) {
 		Minigames.debug("Killing " + minigamer.getColoredName());
+		if (minigamer.isDead()) {
+			Minigames.debug("Not killing, already dead " + minigamer.getColoredName());
+			return;
+		}
 		kill(minigamer, null);
 	}
 
@@ -327,6 +331,19 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 
 	public boolean useNaturalDeathMessage() {
 		return false;
+	}
+
+	public boolean canSee(Minigamer viewer, Minigamer target) {
+		if (viewer.getMatch() == null || target.getMatch() == null)
+			return true;
+
+		if (viewer.isRespawning() || target.isRespawning())
+			return false;
+
+		if (viewer.isAlive() && target.isDead())
+			return false;
+
+		return true;
 	}
 
 	public void tellMapAndMechanic(@NotNull Minigamer minigamer) {

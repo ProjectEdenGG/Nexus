@@ -9,7 +9,13 @@ import lombok.Getter;
 import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 @SuppressWarnings("unchecked")
 public class Features {
@@ -36,7 +42,6 @@ public class Features {
 
 		return features;
 	}
-
 
 	public static String prettyName(Feature feature) {
 		return prettyName(feature.getClass());
