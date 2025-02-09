@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.events.DebugDotCommand;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.MonsterMazeMatchData;
@@ -162,6 +163,13 @@ public class MonsterMaze extends TeamlessMechanic {
 	public void onQuit(@NotNull MatchQuitEvent event) {
 		super.onQuit(event);
 		allowJump(event.getMinigamer());
+	}
+
+	@Override
+	public void onEnd(@NotNull MatchEndEvent event) {
+		super.onEnd(event);
+		for (Minigamer minigamer : event.getMatch().getMinigamers())
+			allowJump(minigamer);
 	}
 
 	// TODO Make minigame util, make more safe to use
