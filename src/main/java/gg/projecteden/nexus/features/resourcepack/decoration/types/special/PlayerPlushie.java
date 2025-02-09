@@ -32,7 +32,7 @@ public class PlayerPlushie extends DecorationConfig {
 	public PlayerPlushie(Pose pose) {
 		this.pose = pose;
 		this.id = "player_plushie_" + pose.name().toLowerCase();
-		this.name = gg.projecteden.api.common.utils.StringUtils.camelCase(pose) + " Player Plushie";
+		this.name = StringUtils.camelCase(pose) + " Player Plushie";
 		this.material = PlayerPlushieConfig.MATERIAL;
 		this.modelId = pose.getStartingIndex() + 1;
 		this.modelIdPredicate = modelId -> MathUtils.isBetween(modelId, pose.getStartingIndex(), pose.getEndingIndex());

@@ -336,15 +336,17 @@ public class Train {
 	}
 
 	private void setTrainItem(ArmorStand armorStand, int modelNdx) {
-		int newModelId = CustomMaterial.PUGMAS21_TRAIN_1.getModelId() + modelNdx;
+		CustomMaterial baseMaterial = CustomMaterial.TRAIN_1;
+		String baseEnum = baseMaterial.name().replace("_1", "");
+		CustomMaterial ndxMaterial = CustomMaterial.valueOf(baseEnum + modelNdx);
+
 		int modelIdOverride = modelNdx + 1;
 		if (modelOverrides.containsKey(modelIdOverride)) {
-			newModelId = modelOverrides.get(modelIdOverride).getModelId();
+			ndxMaterial = modelOverrides.get(modelIdOverride);
 		}
 
-		armorStand.setItem(EquipmentSlot.HEAD, new ItemBuilder(CustomMaterial.PUGMAS21_TRAIN_1)
-			.modelId(newModelId)
-				.build());
+		ItemBuilder itemBuilder = new ItemBuilder(CustomMaterial.TRAIN_1).model(ndxMaterial);
+		armorStand.setItem(EquipmentSlot.HEAD, itemBuilder.build());
 	}
 
 

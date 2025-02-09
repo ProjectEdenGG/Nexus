@@ -121,7 +121,10 @@ public class Edible extends DecorationConfig implements MultiState, CraftableDec
 		}
 
 		public CustomMaterial getModel(int stage) {
-			return CustomMaterial.of(new ItemBuilder(getStage0()).model(getStage0().getModelId() + stage));
+			String baseMaterialStr = getStage0().name().replaceAll("_STAGE_0", "");
+			String nextMaterialStr = baseMaterialStr + "_STAGE_" + stage;
+			CustomMaterial nextMaterial = CustomMaterial.valueOf(nextMaterialStr);
+			return CustomMaterial.of(new ItemBuilder(getStage0()).model(nextMaterial));
 		}
 
 		public void eat(Player player, Location soundOrigin, ItemStack originalItem) {

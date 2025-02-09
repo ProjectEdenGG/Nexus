@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.events.y2021.halloween21;
 import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.halloween21.models.Candy;
-import gg.projecteden.nexus.features.events.y2021.halloween21.models.Pumpkin;
+import gg.projecteden.nexus.features.events.y2021.halloween21.models.PumpkinType;
 import gg.projecteden.nexus.features.mobheads.MobHeads;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
@@ -87,9 +87,7 @@ public class Halloween21 implements Listener {
 				return null;
 			}
 
-			final String bits = String.valueOf(entity.getUniqueId().getLeastSignificantBits());
-			final int modelId = Pumpkin.MIN + Integer.parseInt(StringUtils.right(bits, 2));
-			return Pumpkin.itemOf(modelId);
+			return new ItemBuilder(RandomUtils.randomElement(PumpkinType.values()).getMaterial());
 		}
 
 		public static PumpkinableEntity of(LivingEntity entity) {
