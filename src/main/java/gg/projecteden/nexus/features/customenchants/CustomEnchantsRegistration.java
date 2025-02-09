@@ -21,6 +21,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.CraftEquipmentSlot;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.enchantments.CraftEnchantment;
+import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.EquipmentSlot;
@@ -29,7 +30,13 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class CustomEnchantsRegistration {
 	static final Field nmsFrozenField;
@@ -173,13 +180,14 @@ public class CustomEnchantsRegistration {
 		TagKey<Item> customKey = getTagKey(nmsItemRegistry(), prefix + "/" + customEnchantment.getId());
 		List<Holder<Item>> holders = new ArrayList<>();
 
-//		Arrays.stream(Material.values()).forEach(material -> {
-//			ResourceLocation location = CraftNamespacedKey.toMinecraft(material.getKey());
-//			Holder.Reference<Item> holder = nmsItemRegistry().get(location).orElse(null);
-//			if (holder == null) return;
-//
-//			holders.add(holder);
-//		});
+		if (customEnchantment.getSupportedMaterials() != null && !customEnchantment.getSupportedMaterials().isEmpty())
+			customEnchantment.getSupportedMaterials().forEach(material -> {
+				ResourceLocation location = CraftNamespacedKey.toMinecraft(material.getKey());
+				Holder.Reference<Item> holder = nmsItemRegistry().get(location).orElse(null);
+				if (holder == null) return;
+
+				holders.add(holder);
+			});
 
 		// Creates new tag, puts it in the 'frozenTags' map and binds holders to it.
 		nmsItemRegistry().bindTag(customKey, holders);
