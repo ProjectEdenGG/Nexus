@@ -10,7 +10,11 @@ import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import java.util.UUID;
 
@@ -47,27 +51,17 @@ public class PlayerPlushieUser implements PlayerOwnedObject {
 	}
 
 	public PlayerPlushie getOrDefault(Pose pose) {
-		final PlayerPlushie plushie = pose.asDecoration();
+		if (pose.getGenerated().contains(uuid))
+			return pose.asDecoration(this);
 
-		for (var entry : PlayerPlushieConfig.ALL_MODELS.entrySet())
-			if (entry.getValue().getFirst() == pose && entry.getValue().getSecond().equals(getUuid())) {
-				plushie.setModelId(entry.getKey());
-				break;
-			}
-
-		return plushie;
+		return PlayerPlushieConfig.random(pose);
 	}
 
 	public PlayerPlushie get(Pose pose) {
-		final PlayerPlushie plushie = pose.asDecoration();
+		if (!pose.getGenerated().contains(uuid))
+			throw new InvalidInputException("Cannot spawn " + StringUtils.camelCase(pose) + " pose for " + getNickname() + ", model has not been generated");
 
-		for (var entry : PlayerPlushieConfig.ALL_MODELS.entrySet())
-			if (entry.getValue().getFirst() == pose && entry.getValue().getSecond().equals(getUuid())) {
-				plushie.setModelId(entry.getKey());
-				return plushie;
-			}
-
-		throw new InvalidInputException("Cannot spawn " + StringUtils.camelCase(pose) + " pose for " + getNickname() + ", model has not been generated");
+		return pose.asDecoration(this);
 	}
 
 	public boolean canPurchase(Pose pose) {

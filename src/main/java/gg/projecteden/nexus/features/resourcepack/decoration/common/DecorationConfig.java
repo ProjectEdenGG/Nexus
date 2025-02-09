@@ -32,7 +32,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ItemFrame;
@@ -103,7 +102,7 @@ public class DecorationConfig {
 	}
 
 	public DecorationConfig(boolean multiBlock, String name, @NonNull CustomMaterial customMaterial, CustomHitbox hitbox) {
-		this(multiBlock, name, customMaterial.getMaterial(), customMaterial.getModel(), modelId -> modelId == customMaterial.getModel(), hitbox);
+		this(multiBlock, name, customMaterial.getMaterial(), customMaterial.getModel(), model -> Objects.equals(model, customMaterial.getModel()), hitbox);
 	}
 
 	@Getter
@@ -192,7 +191,7 @@ public class DecorationConfig {
 
 	public ItemBuilder getItemBuilder() {
 		ItemBuilder itemBuilder = new ItemBuilder(material)
-			.model(model)
+			.model(getModel())
 			.name(name)
 			.lore(lore)
 			.itemFlags(ItemBuilder.ItemFlags.HIDE_ALL)

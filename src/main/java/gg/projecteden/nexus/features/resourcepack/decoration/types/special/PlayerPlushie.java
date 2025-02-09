@@ -10,8 +10,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementTyp
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
-import gg.projecteden.nexus.utils.MathUtils;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
@@ -24,18 +23,23 @@ import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.UUID;
 
 public class PlayerPlushie extends DecorationConfig {
 	@Getter
 	private final Pose pose;
 
-	public PlayerPlushie(Pose pose) {
+	private static final String ITEM_MODEL_PATH = "decoration/plushies/player/";
+
+	public PlayerPlushie(Pose pose, UUID uuid) {
 		this.pose = pose;
 		this.id = "player_plushie_" + pose.name().toLowerCase();
 		this.name = StringUtils.camelCase(pose) + " Player Plushie";
 		this.material = PlayerPlushieConfig.MATERIAL;
-		this.modelId = pose.getStartingIndex() + 1;
-		this.modelIdPredicate = modelId -> MathUtils.isBetween(modelId, pose.getStartingIndex(), pose.getEndingIndex());
+		String poseBasePath = ITEM_MODEL_PATH + pose.name().toLowerCase() + "/";
+		String modelPath = pose.getCustomMaterial() != null ? pose.getCustomMaterial().getModel() : poseBasePath + "<UUID>";
+		this.model = modelPath.replace("<UUID>", uuid.toString());
+		this.modelPredicate = model -> model.startsWith(poseBasePath);
 		this.hitboxes = Hitbox.NONE();
 		this.disabledPlacements = PlacementType.FLOOR.getDisabledPlacements();
 
@@ -109,7 +113,8 @@ public class PlayerPlushie extends DecorationConfig {
 	}
 
 	public static boolean isPlayerPlushie(ItemStack item) {
-		return item.getType() == Material.LAPIS_LAZULI && ModelId.of(item) > 0;
+		String model = Model.of(item);
+		return item.getType() == Material.LAPIS_LAZULI && model != null && model.startsWith(ITEM_MODEL_PATH);
 	}
 
 }
