@@ -21,7 +21,19 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomItemCooldown;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.models.cooldown.Cooldown;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.Distance;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +42,14 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.FluidCollisionMode;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -51,7 +70,11 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class HideAndSeek extends Infection {
@@ -263,7 +286,6 @@ public class HideAndSeek extends Infection {
 		// if player just moved, break their disguise
 		if (immobileTicks < SOLIDIFY_PLAYER_AT && solidPlayers.containsKey(minigamer)) {
 			blockChange(minigamer, solidPlayers.remove(minigamer), Material.AIR);
-			PlayerUtils.showPlayer(minigamer.getPlayer()).to(minigamer.getMatch().getOnlinePlayers());
 			if (minigamer.getPlayer().hasPotionEffect(PotionEffectType.INVISIBILITY))
 				minigamer.getPlayer().removePotionEffect(PotionEffectType.INVISIBILITY);
 			FallingBlock fallingBlock = matchData.getSolidBlocks().remove(minigamer.getOnlinePlayer().getUniqueId());
@@ -310,11 +332,22 @@ public class HideAndSeek extends Infection {
 			}
 			// add invisibility to hide them/their falling block disguise
 			player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.INVISIBILITY).infinite().ambient(true).build());
-			PlayerUtils.hidePlayer(player).from(minigamer.getMatch().getOnlinePlayers());
 			// run usual ticking
 			disguisedBlockTick(minigamer);
 		} else
 			sendActionBarWithTimer(minigamer, "&cYou cannot fully disguise inside non-air blocks!");
+	}
+
+	@Override
+	public boolean canSee(Minigamer viewer, Minigamer target) {
+		if (!super.canSee(viewer, target))
+			return false;
+
+		if (viewer.isPlaying(this) && target.isPlaying(this))
+			if (target.getOnlinePlayer().hasPotionEffect(PotionEffectType.INVISIBILITY))
+				return false;
+
+		return true;
 	}
 
 	@Override

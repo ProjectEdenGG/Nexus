@@ -10,9 +10,21 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.events.PlayerDamageByPlayerEvent;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.menus.spectate.SpectateMenu;
-import gg.projecteden.nexus.features.minigames.models.*;
+import gg.projecteden.nexus.features.minigames.models.Arena;
+import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
-import gg.projecteden.nexus.features.minigames.models.events.matches.*;
+import gg.projecteden.nexus.features.minigames.models.MinigameMessageType;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.RegenType;
+import gg.projecteden.nexus.features.minigames.models.Team;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchRegeneratedEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerRespawnEvent;
@@ -26,8 +38,14 @@ import gg.projecteden.nexus.features.nameplates.TeamAssigner;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.interfaces.HasDescription;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
+import gg.projecteden.nexus.utils.TitleBuilder;
+import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.parchment.event.sound.SoundEvent;
 import net.kyori.adventure.text.Component;
@@ -52,7 +70,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 public abstract class Mechanic implements Listener, Named, HasDescription, ComponentLike {
 
@@ -308,6 +331,19 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 
 	public boolean useNaturalDeathMessage() {
 		return false;
+	}
+
+	public boolean canSee(Minigamer viewer, Minigamer target) {
+		if (viewer.getMatch() == null || target.getMatch() == null)
+			return true;
+
+		if (viewer.isRespawning() || target.isRespawning())
+			return false;
+
+		if (viewer.isAlive() && target.isDead())
+			return false;
+
+		return true;
 	}
 
 	public void tellMapAndMechanic(@NotNull Minigamer minigamer) {

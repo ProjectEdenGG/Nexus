@@ -26,7 +26,6 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
@@ -68,8 +67,6 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-
-import static gg.projecteden.nexus.utils.PlayerUtils.showPlayer;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -185,18 +182,6 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 
 	public boolean isDead() {
 		return !isAlive;
-	}
-
-	public void setAlive(boolean alive) {
-		isAlive = alive;
-		if (match != null)
-			match.updateVisibility();
-	}
-
-	public void setRespawning(boolean respawning) {
-		this.respawning = respawning;
-		if (match != null)
-			match.updateVisibility();
 	}
 
 	/**
@@ -511,13 +496,6 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		return teleportAsync(dest).thenApply(success -> {
 			clearGameModeState(true);
 			match.getTasks().wait(2, () -> getPlayer().setAllowFlight(true));
-			match.getMinigamersAndSpectators().forEach(minigamer -> {
-				if (minigamer.isAlive)
-					minigamer.getOnlinePlayer().hidePlayer(Nexus.getInstance(), getOnlinePlayer());
-				else
-					getOnlinePlayer().showPlayer(Nexus.getInstance(), minigamer.getOnlinePlayer());
-			});
-
 			if (match.isStarted() && !match.isEnded()) {
 				getPlayer().setGameMode(GameMode.ADVENTURE);
 				getPlayer().getInventory().setItem(0, Minigamer.SPECTATING_COMPASS);
@@ -628,7 +606,6 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		else {
 			setRespawning(true);
 			clearState();
-			match.updateVisibility();
 			teleportAsync(match.getArena().getRespawnLocation(), true);
 			addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(TickTime.SECOND.x(2)).amplifier(2));
 			Runnable respawn = () -> {
@@ -698,14 +675,6 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		player.setHealth(Math.min(player.getMaxHealth(), player.getHealth()+amount));
 	}
 
-	public void unhideAll() {
-		OnlinePlayers.getAll().forEach(other -> {
-			showPlayer(getOnlinePlayer()).to(other);
-			if (Vanish.canSee(getOnlinePlayer(), other))
-				showPlayer(other).to(getOnlinePlayer());
-		});
-	}
-
 	public void clearState() {
 		clearState(false);
 	}
@@ -714,7 +683,6 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		// TODO: Possibly edit ConditionalPerms to disallow voxel?
 		getOnlinePlayer().setGameMode(match.getMechanic().getGameMode());
 		clearGameModeState(forceClearInventory);
-		match.updateVisibility();
 	}
 
 	private void clearGameModeState(boolean forceClearInventory) {

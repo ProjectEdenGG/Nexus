@@ -78,9 +78,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.utils.PlayerUtils.hidePlayer;
-import static gg.projecteden.nexus.utils.PlayerUtils.showPlayer;
-
 @Data
 public class Match implements ForwardingAudience {
 	@NonNull
@@ -241,7 +238,6 @@ public class Match implements ForwardingAudience {
 		minigamer.getOnlinePlayer().closeInventory();
 		minigamers.add(minigamer);
 		spectators.remove(minigamer);
-		updateVisibility();
 
 		try {
 			arena.getMechanic().processJoin(minigamer);
@@ -263,8 +259,6 @@ public class Match implements ForwardingAudience {
 		spectators.remove(minigamer);
 		minigamer.clearState(true);
 		minigamer.toGamelobby();
-		updateVisibility();
-		minigamer.unhideAll();
 
 		MatchQuitEvent event = new MatchQuitEvent(minigamer);
 		event.callEvent();
@@ -283,7 +277,7 @@ public class Match implements ForwardingAudience {
 	}
 
 	public void spectate(Minigamer minigamer) {
-		if (minigamers.contains(minigamer))
+		if (minigamers.contains(minigamer) || spectators.contains(minigamer))
 			throw new InvalidInputException("&cYou are already in this match");
 
 		new MatchJoinEvent(this, minigamer).callEvent();
@@ -348,7 +342,6 @@ public class Match implements ForwardingAudience {
 		clearStates(true);
 		stopModifierBar();
 		toGamelobby();
-		getMinigamersAndSpectators().forEach(Minigamer::unhideAll);
 		arena.getLobby().onEnd();
 		try {
 			arena.getMechanic().onEnd(event);
@@ -720,46 +713,6 @@ public class Match implements ForwardingAudience {
 	@Override
 	public @NotNull Iterable<? extends Audience> audiences() {
 		return getMinigamers();
-	}
-
-	// respawning
-	//     you see respawning players = false;
-	//     you see alive players = false;
-	//     you see dead players = false;
-	//     respawning players see you = false;
-	//     alive players see you = false;
-	//     dead players see you = false;
-	// dead
-	//     you see respawning players = false;
-	//     you see alive players = true;
-	//     you see dead players = true;
-	//     respawning players see you = false;
-	//     alive players see you = false;
-	//     dead players see you = true;
-
-	public void updateVisibility() {
-		getOnlineMinigamersAndSpectators().forEach(self -> {
-			getOnlineMinigamersAndSpectators().forEach(other -> {
-				if (self.equals(other))
-					return;
-
-				if (self.isRespawning() || other.isRespawning()) {
-					hidePlayer(other).from(self);
-					hidePlayer(self).from(other);
-				} else if (self.isDead()) {
-					if (other.isDead()) {
-						showPlayer(other).to(self);
-						showPlayer(self).to(other);
-					} else {
-						showPlayer(other).to(self);
-						hidePlayer(self).from(other);
-					}
-				} else {
-					showPlayer(self).to(other);
-					showPlayer(other).to(self);
-				}
-			});
-		});
 	}
 
 	public static class MatchTimer {
