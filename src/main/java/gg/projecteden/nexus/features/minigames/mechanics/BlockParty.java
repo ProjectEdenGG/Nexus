@@ -201,7 +201,11 @@ public class BlockParty extends TeamlessMechanic {
 		startActionBarTask(event.getMatch());
 		startEqAnimation(event.getMatch());
 
-		event.getMatch().getAliveMinigamers().forEach(Minigamer::startTimeTracking);
+		BlockPartyMatchData matchData = event.getMatch().getMatchData();
+		for (Minigamer minigamer : event.getMatch().getAliveMinigamers()) {
+			matchData.getRoundsSurvived().put(minigamer.getUniqueId(), 0);
+			minigamer.startTimeTracking();
+		}
 	}
 
 	@Override
@@ -1269,7 +1273,7 @@ public class BlockParty extends TeamlessMechanic {
 			if (matchData.getWinners() != null && matchData.getWinners().contains(minigamer))
 				stats.setWin(true);
 
-			int rounds = matchData.getRoundsSurvived().getOrDefault(minigamer.getUniqueId(), 0);
+			int rounds = matchData.getRoundsSurvived().getOrDefault(minigamer.getUniqueId(), MAX_ROUNDS);
 			stats.setRoundsSurvived(rounds);
 
 			int powerUpsCollected = matchData.getPowerUpsCollected().getOrDefault(minigamer.getUniqueId(), 0);
