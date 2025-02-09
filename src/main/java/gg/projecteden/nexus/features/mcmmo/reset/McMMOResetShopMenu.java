@@ -41,7 +41,7 @@ public class McMMOResetShopMenu extends ScrollableInventoryProvider {
 			};
 			contents.fillRow(start, ClickableItem.of(CustomMaterial.INVISIBLE.getItem(), consumer));
 			contents.set(start, ClickableItem.of(filter.material, consumer));
-			contents.set(start + 1, ClickableItem.of(new ItemBuilder(Material.PAPER).modelId(32000 + filter.ordinal()), consumer));
+			contents.set(start + 1, ClickableItem.of(new ItemBuilder(Material.PAPER).model(filter.getModel()), consumer));
 			++row;
 		}
 
@@ -51,24 +51,25 @@ public class McMMOResetShopMenu extends ScrollableInventoryProvider {
 	@Getter
 	@AllArgsConstructor
 	public enum SkillTokenFilterType {
-		ALL(Material.BUNDLE),
-		GRANDMASTER(Material.NETHER_STAR),
-		ACROBATICS(Material.NETHERITE_BOOTS),
-		ALCHEMY(Material.BREWING_STAND),
-		ARCHERY(Material.BOW),
-		AXES(Material.NETHERITE_AXE),
-		EXCAVATION(Material.NETHERITE_SHOVEL),
-		FISHING(Material.FISHING_ROD),
-		HERBALISM(Material.NETHERITE_HOE),
-		MINING(Material.NETHERITE_PICKAXE),
-		REPAIR(Material.ANVIL),
-		SWORDS(Material.NETHERITE_SWORD),
-		TAMING(Material.BONE),
-		UNARMED(Material.STICK),
-		WOODCUTTING(Material.OAK_LOG),
+		ALL(Material.BUNDLE, CustomMaterial.GUI_MCMMO_ALL),
+		GRANDMASTER(Material.NETHER_STAR, CustomMaterial.GUI_MCMMO_GRANDMASTER),
+		ACROBATICS(Material.NETHERITE_BOOTS, CustomMaterial.GUI_MCMMO_ACROBATICS),
+		ALCHEMY(Material.BREWING_STAND, CustomMaterial.GUI_MCMMO_ALCHEMY),
+		ARCHERY(Material.BOW, CustomMaterial.GUI_MCMMO_ARCHERY),
+		AXES(Material.NETHERITE_AXE, CustomMaterial.GUI_MCMMO_AXES),
+		EXCAVATION(Material.NETHERITE_SHOVEL, CustomMaterial.GUI_MCMMO_EXCAVATION),
+		FISHING(Material.FISHING_ROD, CustomMaterial.GUI_MCMMO_FISHING),
+		HERBALISM(Material.NETHERITE_HOE, CustomMaterial.GUI_MCMMO_HERBALISM),
+		MINING(Material.NETHERITE_PICKAXE, CustomMaterial.GUI_MCMMO_MINING),
+		REPAIR(Material.ANVIL, CustomMaterial.GUI_MCMMO_REPAIR),
+		SWORDS(Material.NETHERITE_SWORD, CustomMaterial.GUI_MCMMO_SWORDS),
+		TAMING(Material.BONE, CustomMaterial.GUI_MCMMO_TAMING),
+		UNARMED(Material.STICK, CustomMaterial.GUI_MCMMO_UNARMED),
+		WOODCUTTING(Material.OAK_LOG, CustomMaterial.GUI_MCMMO_WOODCUTTING),
 		;
 
 		private final Material material;
+		private final CustomMaterial model;
 
 		public SkillTokenType toToken() {
 			return SkillTokenType.valueOf(name());
