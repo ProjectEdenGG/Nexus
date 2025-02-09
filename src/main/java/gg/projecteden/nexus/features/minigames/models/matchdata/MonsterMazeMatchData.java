@@ -42,7 +42,7 @@ public class MonsterMazeMatchData extends MatchData {
 		double y = playerCenterLocation.getY() - playerToThrowLocation.getY();
 		double z = playerCenterLocation.getZ() - playerToThrowLocation.getZ();
 
-		Vector throwVector = new Vector(x, y, z).normalize().multiply(1.1).setY(1.3);
+		Vector throwVector = new Vector(x, y, z).normalize().multiply(1.1).setY(1.25);
 
 		minigamer.getOnlinePlayer().setVelocity(throwVector);
 	}
