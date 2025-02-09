@@ -136,7 +136,9 @@ public class Dropper extends TeamlessMechanic {
 
 		match.broadcast(minigamer.getNickname() + " reached the bottom");
 
-		if (match.getTimer().getTime() > 31)
+		if (matchData.getFinished().size() == match.getAliveMinigamers().size())
+			match.getTimer().setTime(6);
+		else if (match.getTimer().getTime() > 31)
 			match.getTimer().setTime(31);
 
 		minigamer.getOnlinePlayer().setAllowFlight(true);
