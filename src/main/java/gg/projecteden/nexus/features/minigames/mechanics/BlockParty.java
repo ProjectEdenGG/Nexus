@@ -1086,6 +1086,17 @@ public class BlockParty extends TeamlessMechanic {
 			});
 		}
 
+		@Override
+		public void update() {
+			contents.fill(ClickableItem.AIR);
+			init();
+		}
+
+		@Override
+		public int getUpdateFrequency() {
+			return 5;
+		}
+
 		public ItemStack getItem(BlockPartySong song, boolean main, int col, Player player) {
 			ItemBuilder builder = new ItemBuilder(main ? records[col - 2] : colors[col - 2]);
 			builder
