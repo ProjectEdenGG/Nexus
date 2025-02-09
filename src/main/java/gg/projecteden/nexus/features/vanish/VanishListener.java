@@ -18,8 +18,10 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.parchment.event.sound.SoundEvent;
 import lombok.AllArgsConstructor;
+import org.bukkit.GameEvent;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -29,9 +31,11 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockReceiveGameEvent;
+import org.bukkit.event.block.SculkBloomEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.raid.RaidTriggerEvent;
+import org.bukkit.event.world.GenericGameEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -187,6 +191,32 @@ public class VanishListener implements Listener {
 		user.notifyDisabled(Setting.INTERACT, "Interacting");
 	}
 
+	@EventHandler
+	public void on(BlockReceiveGameEvent event) {
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
+		final VanishUser user = service.get(player);
+		if (!user.isVanished())
+			return;
+
+		if (user.getSetting(Setting.INTERACT))
+			return;
+
+		event.setCancelled(true);
+		user.notifyDisabled(Setting.INTERACT, "Triggering sculk sensor");
+	}
+
+	@EventHandler
+	public void on(RaidTriggerEvent event) {
+		final VanishUser user = service.get(event.getPlayer());
+		if (!user.isVanished())
+			return;
+
+		event.setCancelled(true);
+		user.notifyDisabled(Setting.INTERACT, "Triggering raid");
+	}
+
 	@AllArgsConstructor
 	private static class VanishInventory extends InventoryProvider {
 		private Material type;
@@ -208,31 +238,6 @@ public class VanishListener implements Listener {
 			for (ItemStack content : original.getContents())
 				contents.set(index++, ClickableItem.empty(content));
 		}
-	}
-
-	@EventHandler
-	public void on(BlockReceiveGameEvent event) {
-		if (!(event.getEntity() instanceof Player player))
-			return;
-
-		final VanishUser user = service.get(player);
-		if (!user.isVanished())
-			return;
-
-		if (user.getSetting(Setting.INTERACT))
-			return;
-
-		event.setCancelled(true);
-	}
-
-	@EventHandler
-	public void on(RaidTriggerEvent event) {
-		final VanishUser user = service.get(event.getPlayer());
-		if (!user.isVanished())
-			return;
-
-		event.setCancelled(true);
-		user.notifyDisabled(Setting.INTERACT, "Triggering raid");
 	}
 
 }
