@@ -11,7 +11,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.api.BlockPartyWebSocketServer;
 import gg.projecteden.nexus.features.api.BlockPartyWebSocketServer.BlockPartyClientConnectedEvent;
 import gg.projecteden.nexus.features.api.BlockPartyWebSocketServer.BlockPartyClientMessage;
-import gg.projecteden.nexus.features.api.BlockPartyWebSocketServer.Song;
+import gg.projecteden.nexus.features.api.BlockPartyWebSocketServer.SongInstance;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
@@ -49,6 +49,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -172,15 +173,7 @@ public class BlockParty extends TeamlessMechanic {
 
 		BlockPartyMatchData matchData = event.getMatch().getMatchData();
 		if (matchData.getSong() != null) {
-			BlockPartySong song = matchData.getSong();
-			BlockPartyClientMessage.to(minigamer.getUniqueId()).song(
-				new Song(
-					song.title,
-					song.artist,
-					0,
-					song.getUrl()
-				)
-			).send();
+			BlockPartyClientMessage.to(minigamer.getUniqueId()).song(matchData.getSongInstance()).send();
 			if (matchData.isPlaying())
 				BlockPartyClientMessage.to(minigamer.getUniqueId()).play().send();
 			if (matchData.getBlock() != null)
@@ -975,24 +968,19 @@ public class BlockParty extends TeamlessMechanic {
 	}
 
 	private void setSong(Match match) {
-		BlockPartySong song = ((BlockPartyMatchData) match.getMatchData()).getSong();
-
+		BlockPartyMatchData matchData = match.getMatchData();
 		BlockPartyClientMessage.to(getListenerUUIDs(match))
-				.song(new Song(
-					song.title,
-					song.artist,
-					0,
-					song.getUrl()
-				))
+				.song(matchData.getSongInstance())
 				.play()
 				.send();
 
-		BlockPartyMatchData matchData = match.getMatchData();
 		matchData.setPlayTime(LocalDateTime.now());
 	}
 
 	private void playSong(Match match) {
 		BlockPartyMatchData matchData = match.getMatchData();
+		matchData.setPlaying(true);
+
 		matchData.setPlayTime(LocalDateTime.now());
 
 		BlockPartyClientMessage.to(getListenerUUIDs(match)).play().send();
@@ -1001,6 +989,8 @@ public class BlockParty extends TeamlessMechanic {
 
 	private void pauseSong(Match match) {
 		BlockPartyMatchData matchData = match.getMatchData();
+		matchData.setPlaying(false);
+
 		double seconds = Duration.between(matchData.getPlayTime(), LocalDateTime.now()).toSeconds();
 		matchData.setSongTimeInSeconds(matchData.getSongTimeInSeconds() + seconds);
 
@@ -1113,11 +1103,12 @@ public class BlockParty extends TeamlessMechanic {
 	// endregion
 
 	// region Read song files
+	@Data
 	@AllArgsConstructor
 	public static class BlockPartySong {
-		String title;
-		String artist;
-		String fileName;
+		private String title;
+		private String artist;
+		private String fileName;
 
 		public String getUrl() {
 			return "https://cdn.projecteden.gg/blockparty/music/" + fileName;
@@ -1230,15 +1221,8 @@ public class BlockParty extends TeamlessMechanic {
 			.forEach(match -> {
 				BlockPartyMatchData matchData = match.getMatchData();
 				if (matchData.getSong() != null) {
-					BlockPartySong song = matchData.getSong();
-					event.addSong(
-						getListenerUUIDs(match),
-						song.title,
-						song.artist,
-						matchData.getSongTimeInSeconds(),
-						song.getUrl(),
-						matchData.isPlaying()
-					);
+					double seconds = matchData.getSongTimeInSeconds() + Duration.between(matchData.getPlayTime(), LocalDateTime.now()).toSeconds();
+					event.addSong(getListenerUUIDs(match), new SongInstance(matchData.getSong(), seconds), matchData.isPlaying());
 				}
 				if (matchData.getBlock() != null) {
 					event.setBlock(getListenerUUIDs(match), matchData.getBlock().name());
@@ -1249,10 +1233,7 @@ public class BlockParty extends TeamlessMechanic {
 		if (song != null) {
 			event.addSong(
 				List.of(UUIDUtils.UUID0),
-				song.title,
-				song.artist,
-				30,
-				song.getUrl(),
+				new SongInstance(song, 0),
 				true
 			);
 		}

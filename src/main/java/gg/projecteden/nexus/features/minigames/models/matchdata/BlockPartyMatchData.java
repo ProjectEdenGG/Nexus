@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigames.models.matchdata;
 
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
+import gg.projecteden.nexus.features.api.BlockPartyWebSocketServer.SongInstance;
 import gg.projecteden.nexus.features.minigames.mechanics.BlockParty;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
@@ -71,6 +72,10 @@ public class BlockPartyMatchData extends MatchData {
 		int highest = min.getWorld().getHighestBlockYAt(min);
 
 		return highest - (int) min.y();
+	}
+
+	public SongInstance getSongInstance() {
+		return new SongInstance(song, songTimeInSeconds);
 	}
 
 	public Region getFloorInStack(int index) {
