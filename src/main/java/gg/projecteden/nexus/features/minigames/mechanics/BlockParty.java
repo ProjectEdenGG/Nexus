@@ -314,6 +314,10 @@ public class BlockParty extends TeamlessMechanic {
 	private void pasteNewFloor(Match match) {
 		BlockPartyMatchData matchData = match.getMatchData();
 		matchData.incRound();
+
+		for (Minigamer minigamer : match.getAliveMinigamers())
+			matchData.getRoundsSurvived().put(minigamer.getUniqueId(), matchData.getRound());
+
 		if (matchData.getRound() % 2 == 1 && (matchData.getRound() + 1) < MAX_ROUNDS)
 			match.broadcast("&3Round speed is now &e" + getRoundSpeed(matchData.getRound()) + "s");
 		if ((matchData.getRound() + 1) > MAX_ROUNDS) {
