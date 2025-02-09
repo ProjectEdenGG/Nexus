@@ -85,17 +85,24 @@ import java.util.stream.Stream;
 @UtilityClass
 public class PlayerUtils {
 
-	// TODO: debug flying
 	public static void setFlying(Player player, boolean flying, Class<?> clazz) {
+		setFlying(player, flying, clazz.getSimpleName());
+	}
+
+	public static void setFlying(Player player, boolean flying, String debugReason) {
 		if (FlyCommand.getDebuggers().contains(player))
-			send(player, clazz.getSimpleName() + " | Flying = " + flying);
+			send(player, debugReason + " | Flying = " + flying);
 
 		player.setFlying(flying);
 	}
 
 	public static void setAllowFlight(Player player, boolean allowFlight, Class<?> clazz) {
+		setAllowFlight(player, allowFlight, clazz.getSimpleName());
+	}
+
+	public static void setAllowFlight(Player player, boolean allowFlight, String debugReason) {
 		if (FlyCommand.getDebuggers().contains(player))
-			send(player, clazz.getSimpleName() + " | Flying = " + allowFlight);
+			send(player, debugReason + " | Flying = " + allowFlight);
 
 		player.setAllowFlight(allowFlight);
 	}
