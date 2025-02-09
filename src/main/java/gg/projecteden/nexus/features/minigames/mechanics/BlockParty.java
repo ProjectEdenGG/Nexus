@@ -186,10 +186,12 @@ public class BlockParty extends TeamlessMechanic {
 			return;
 
 		minigamer.getMatch().getTasks().wait(30, () -> {
+			minigamer.tell("");
 			minigamer.tell(new JsonBuilder("&e&lClick Here &3to listen to the music in your browser!")
 				.url("https://projecteden.gg/blockparty?uuid=" + minigamer.getUniqueId())
 				.hover("&3Open in your browser")
 				.build());
+			minigamer.tell("");
 		});
 	}
 
