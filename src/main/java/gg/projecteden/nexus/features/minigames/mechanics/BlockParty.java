@@ -70,6 +70,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
 import org.jaudiotagger.audio.AudioFile;
@@ -520,8 +521,12 @@ public class BlockParty extends TeamlessMechanic {
 
 	private boolean checkWin(Match match) {
 		BlockPartyMatchData matchData = match.getMatchData();
+		BoundingBox boundingBox = match.worldedit().toBoundingBox(matchData.getPasteRegion()).expand(3, 20, 3);
+
 		match.getAliveMinigamers().forEach(minigamer -> {
 			if (minigamer.getLocation().y() < matchData.getPasteRegion().getMinimumPoint().y())
+				kill(minigamer);
+			if (!boundingBox.contains(minigamer.getLocation().toVector()))
 				kill(minigamer);
 		});
 

@@ -53,6 +53,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.enginehub.linbus.tree.LinTagType;
 import org.jetbrains.annotations.NotNull;
@@ -147,6 +148,14 @@ public class WorldEditUtils {
 			throw new InvalidInputException("Could not determine clipboard format for " + fileName);
 
 		return format.load(file);
+	}
+
+	public BoundingBox toBoundingBox(Region region) {
+		return toBoundingBox(region.getMinimumPoint(), region.getMaximumPoint());
+	}
+
+	public BoundingBox toBoundingBox(BlockVector3 min, BlockVector3 max) {
+		return BoundingBox.of(toLocation(min), toLocation(max));
 	}
 
 	public Vector toVector(Location location) {
