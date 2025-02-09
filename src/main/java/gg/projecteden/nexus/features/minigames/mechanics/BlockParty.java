@@ -523,7 +523,7 @@ public class BlockParty extends TeamlessMechanic {
 		match.getAliveMinigamers().forEach(minigamer -> {
 			if (minigamer.getLocation().y() < matchData.getPasteRegion().getMinimumPoint().y())
 				kill(minigamer);
-			if (!boundingBox.contains(minigamer.getLocation().toVector()))
+			else if (!boundingBox.contains(minigamer.getLocation().toVector()))
 				kill(minigamer);
 		});
 

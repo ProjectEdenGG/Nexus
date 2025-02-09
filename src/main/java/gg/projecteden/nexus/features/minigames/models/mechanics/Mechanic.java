@@ -284,6 +284,10 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 
 	public final void kill(@NotNull Minigamer minigamer) {
 		Minigames.debug("Killing " + minigamer.getColoredName());
+		if (minigamer.isDead()) {
+			Minigames.debug("Not killing, already dead " + minigamer.getColoredName());
+			return;
+		}
 		kill(minigamer, null);
 	}
 
