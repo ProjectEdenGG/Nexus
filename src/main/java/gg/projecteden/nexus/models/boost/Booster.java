@@ -16,7 +16,11 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
@@ -125,7 +129,7 @@ public class Booster implements PlayerOwnedObject {
 			}
 			else {
 				sendMessage(new JsonBuilder(StringUtils.getPrefix("Boosts")).group()
-					.next("&3You have &aactivated &3a &epersonal" + getMultiplierFormatted() + " " + StringUtils.camelCase(type) + " boost &3for &e" + getTimeLeft() + "&3!"));
+					.next("&3You have &aactivated &3a &epersonal " + getMultiplierFormatted() + " " + StringUtils.camelCase(type) + " boost &3for &e" + getTimeLeft() + "&3!"));
 			}
 
 			save();
