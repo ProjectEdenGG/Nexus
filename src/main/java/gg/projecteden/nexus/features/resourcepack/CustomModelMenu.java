@@ -6,8 +6,6 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
-import gg.projecteden.nexus.features.resourcepack.models.files.ResourcePackOverriddenMaterial;
-import gg.projecteden.nexus.features.resourcepack.models.files.ResourcePackOverriddenMaterial.ModelOverride;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NonNull;
@@ -15,7 +13,11 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 @RequiredArgsConstructor
 public class CustomModelMenu extends InventoryProvider {
@@ -88,10 +90,10 @@ public class CustomModelMenu extends InventoryProvider {
 	private static Set<String> getFolderPaths() {
 		Set<String> paths = new HashSet<>();
 
-		for (ResourcePackOverriddenMaterial group : ResourcePack.getModelGroups())
-			for (ModelOverride override : group.getOverrides())
-				if (override.getModel().startsWith("projecteden"))
-					paths.add(override.getFolderPath());
+//		for (ResourcePackOverriddenMaterial group : ResourcePack.getModelGroups())
+//			for (ModelOverride override : group.getOverrides())
+//				if (override.getModel().startsWith("projecteden"))
+//					paths.add(override.getFolderPath());
 
 		return new TreeSet<>(paths);
 	}

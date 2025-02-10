@@ -9,7 +9,6 @@ import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpda
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
 import gg.projecteden.nexus.features.resourcepack.models.files.FontFile;
-import gg.projecteden.nexus.features.resourcepack.models.files.ResourcePackOverriddenMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.files.SoundsFile;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Feature;
@@ -71,8 +70,6 @@ public class ResourcePack extends Feature implements Listener {
 	private static FileSystem zipFile;
 
 	@Getter
-	private static List<ResourcePackOverriddenMaterial> modelGroups;
-	@Getter
 	private static List<CustomModelFolder> folders;
 	@Getter
 	private static ConcurrentHashMap<String, CustomModel> models;
@@ -100,8 +97,6 @@ public class ResourcePack extends Feature implements Listener {
 		Bukkit.getMessenger().unregisterIncomingPluginChannel(Nexus.getInstance());
 		Bukkit.getMessenger().unregisterOutgoingPluginChannel(Nexus.getInstance());
 
-		if (modelGroups != null)
-			modelGroups.clear();
 		if (folders != null)
 			folders.clear();
 		if (models != null)
@@ -135,7 +130,6 @@ public class ResourcePack extends Feature implements Listener {
 	}
 
 	private static void setup() {
-		modelGroups = new ArrayList<>();
 		folders = new ArrayList<>();
 		models = new ConcurrentHashMap<>();
 		rootFolder = new CustomModelFolder("/");
@@ -164,8 +158,8 @@ public class ResourcePack extends Feature implements Listener {
 							final String uri = path.toUri().toString();
 
 							try {
-								if (uri.contains(CustomModel.getVanillaSubdirectory()))
-									ResourcePackOverriddenMaterial.addCustomModelMaterial(path);
+								if (uri.contains(CustomModel.getItemsSubdirectory()) && !uri.contains(".json"))
+									new CustomModelFolder(uri);
 							} catch (Exception ex) {
 								ex.printStackTrace();
 							}

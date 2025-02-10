@@ -1,13 +1,21 @@
 package gg.projecteden.nexus.features.resourcepack.models.files;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
-import gg.projecteden.nexus.features.resourcepack.models.files.ResourcePackOverriddenMaterial.ModelOverride;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.Data;
 import lombok.NonNull;
+import lombok.SneakyThrows;
+import org.bukkit.Material;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Data
 public class CustomModelFolder {
@@ -81,13 +89,50 @@ public class CustomModelFolder {
 	}
 
 	private void findModels() {
-		for (ResourcePackOverriddenMaterial group : ResourcePack.getModelGroups())
-			for (ModelOverride override : group.getOverrides())
-				if (override.getModel().matches("projecteden" + path + "/" + ResourcePack.getFileRegex()))
-					models.add(new CustomModel(this, override, group.getMaterial()));
+		try (Stream<Path> files = Files.list(Path.of(this.path))) {
+			files.forEach(path -> {
+				if (!path.endsWith(".json"))
+					return;
+
+				File file = path.toFile();
+				if (file.isDirectory())
+					return;
+
+				try {
+					CustomModel model = Utils.getGson().fromJson(String.join("", Files.readAllLines(path)), CustomModel.class);
+					model.setFolder(this);
+					if (model.getOldMaterial() == null)
+						model.setMaterial(Material.PAPER);
+					else
+						model.setMaterial(model.getOldMaterial());
+
+					model.setData(path.toString().replace("assets/minecraft/items", "").replace(".json", ""));
+
+					model.setMeta(getMeta(path.toString().replace(".json", ".meta")));
+
+					models.add(model);
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			});
+		} catch (IOException e) {
+			Nexus.log("Error while reading custom model folder");
+			e.printStackTrace();
+		}
 
 		models.sort(CustomModel::compareTo);
 		models.forEach(model -> ResourcePack.getModels().put(model.getId(), model));
+	}
+
+	@SneakyThrows
+	public CustomModel.CustomModelMeta getMeta(String model) {
+		String metaUri = CustomModel.getModelsSubdirectory() + "/" + model + ".meta";
+		Path metaPath = ResourcePack.getZipFile().getPath(metaUri);
+
+		if (Files.exists(metaPath))
+			return Utils.getGson().fromJson(String.join("", Files.readAllLines(metaPath)), CustomModel.CustomModelMeta.class);
+
+		return new CustomModel.CustomModelMeta();
 	}
 
 }

@@ -1,9 +1,8 @@
 package gg.projecteden.nexus.features.resourcepack.models;
 
+import com.google.gson.annotations.SerializedName;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
-import gg.projecteden.nexus.features.resourcepack.models.files.ResourcePackOverriddenMaterial;
-import gg.projecteden.nexus.features.resourcepack.models.files.ResourcePackOverriddenMaterial.ModelOverride;
 import gg.projecteden.nexus.models.custommodels.CustomModelConfig;
 import gg.projecteden.nexus.models.custommodels.CustomModelConfigService;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -13,7 +12,6 @@ import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -25,11 +23,14 @@ import java.util.Objects;
 @AllArgsConstructor
 public class CustomModel implements Comparable<CustomModel> {
 	private CustomModelFolder folder;
-	private ModelOverride override;
-	private Material material;
 	private String data;
 	private CustomModelMeta meta;
 	private String fileName;
+	@SerializedName("old_custom_model_data")
+	private int oldCustomModelData;
+	@SerializedName("old_material")
+	private Material oldMaterial;
+	private Material material; // this should eventually be removed... it doesn't actually matter what item the model is on
 
 	public static final String NBT_KEY = "CustomModelData";
 	public static final String ICON = "icon";
@@ -37,18 +38,7 @@ public class CustomModel implements Comparable<CustomModel> {
 	@Getter
 	private static final String modelsSubdirectory = "/assets/minecraft/models/";
 	@Getter
-	private static final String vanillaSubdirectory = modelsSubdirectory + "item";
-	@Getter
-	private static final String customSubdirectory = modelsSubdirectory + "projecteden";
-
-	public CustomModel(@NonNull CustomModelFolder folder, @NonNull ResourcePackOverriddenMaterial.ModelOverride override, @NonNull Material material) {
-		this.folder = folder;
-		this.override = override;
-		this.material = material;
-		this.data = override.getPredicate().getModelId();
-		this.meta = override.getMeta();
-		this.fileName = override.getFileName();
-	}
+	private static final String itemsSubdirectory = "/assets/minecraft/items/";
 
 	public static CustomModel of(Material material, String data) {
 		return ResourcePack.getModels().values().stream()
@@ -57,12 +47,22 @@ public class CustomModel implements Comparable<CustomModel> {
 				.orElse(null);
 	}
 
-	public static CustomModel convert(ItemStack item) {
-		return convert(item.getType(), Model.of(item));
+	public static CustomModel ofCustomModelData(Material material, int data) {
+		return null; // TODO 1.21.4
 	}
 
-	public static CustomModel convert(Material material, String data) {
-		if (material == Material.LEATHER_BOOTS) // keeps converting custom armor to stockings
+	public static CustomModel convert(ItemStack item) {
+		if (Model.hasModel(item))
+			return convert(item.getType(), Model.of(item));
+		return convertLegacy(item.getType(), new ItemBuilder(item).customModelData());
+	}
+
+	public static CustomModel convert(Material material, String model) {
+		return null; // TODO 1.21.4
+	}
+
+	public static CustomModel convertLegacy(Material material, int data) {
+		if (material == Material.LEATHER_BOOTS)  // keeps converting custom armor to stockings
 			return null;
 
 		final CustomModelConfig config = new CustomModelConfigService().get0();
@@ -78,12 +78,12 @@ public class CustomModel implements Comparable<CustomModel> {
 		for (var map1 : newModels.entrySet())
 			for (var map2 : map1.getValue().entrySet())
 				if (model.equals(map2.getValue()))
-					return CustomModel.of(map1.getKey(), map2.getKey());
+					return convert(new ItemBuilder(map1.getKey()).customModelData(map2.getKey()).build());
 
 		return null;
 	}
 
-	public static ItemStack itemOf(Material material, int data) {
+	public static ItemStack itemOf(Material material, String data) {
 		CustomModel model = of(material, data);
 		return model == null ? null : model.getItem();
 	}
@@ -147,7 +147,7 @@ public class CustomModel implements Comparable<CustomModel> {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		CustomModel that = (CustomModel) o;
-		return data == that.data && material == that.material;
+		return Objects.equals(data, that.data) && material == that.material;
 	}
 
 	@Override

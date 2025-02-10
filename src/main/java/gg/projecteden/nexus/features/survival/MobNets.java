@@ -176,7 +176,7 @@ public class MobNets extends Feature implements Listener {
 
 				final String predicate = process(PREDICATE_TEMPLATE, variables);
 				final String material = process(MATERIAL_TEMPLATE, Map.of("OVERRIDE", predicate));
-				put("%s/%s_spawn_egg.json".formatted(CustomModel.getVanillaSubdirectory(), entityTypeName), material);
+				put("%s/%s_spawn_egg.json".formatted(CustomModel.getModelsSubdirectory(), entityTypeName), material);
 
 				final String model = process(MODEL_TEMPLATE, variables);
 				put(MODELS_DIRECTORY + "/" + entityTypeName + ".json", model);
