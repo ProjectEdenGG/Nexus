@@ -125,7 +125,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 		if (VoteParty.isFeatureEnabled(player())) {
 			if (!booster.getActivePersonalBoosts().isEmpty()) {
 				line();
-				send("Active Personal Boosts:");
+				send("&3Active Personal Boosts:");
 
 				Map<Boostable, LocalDateTime> timeLeft = new HashMap<>() {{
 					booster.getActivePersonalBoosts().forEach(boost -> {
@@ -140,7 +140,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 						return json(" &6" + boost.getMultiplierFormatted() + " &e" + camelCase(boost.getType()) + " &7- " + boost.getNickname() + " &3(" + boost.getTimeLeft() + ")");
 					})
 					.command("/boosts")
-					.page(Math.min(page, MathUtils.roundPositive(timeLeft.size() / 10f)))
+					.page((int) Math.min(page, Math.ceil(timeLeft.size() / 10f)))
 					.perPage(10)
 					.send();
 			}
