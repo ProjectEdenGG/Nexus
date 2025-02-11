@@ -85,7 +85,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 					boost.expire();
 			}
 		});
-		Tasks.repeatAsync(TickTime.MINUTE, TickTime.MINUTE, () -> {
+		Tasks.repeatAsync(TickTime.MINUTE, TickTime.MINUTE.x(5), () -> {
 			BoostConfig config = BoostConfig.get();
 			if (config.getBoosts().isEmpty())
 				return;

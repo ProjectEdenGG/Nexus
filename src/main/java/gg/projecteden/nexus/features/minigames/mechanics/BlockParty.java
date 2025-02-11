@@ -363,7 +363,7 @@ public class BlockParty extends TeamlessMechanic {
 	private Map<Material, Material> generateWoolReplacementMap(Match match) {
 		BlockPartyMatchData matchData = match.getMatchData();
 		List<Material> originalConcretes = match.getArena().worldedit().getBlocks(matchData.getPasteRegion())
-			.stream().map(Block::getType).filter(MaterialTag.CONCRETES::isNotTagged).distinct().toList();
+			.stream().map(Block::getType).filter(MaterialTag.CONCRETES::isTagged).distinct().toList();
 
 		Map<Material, Material> replacementMap = new HashMap<>();
 
@@ -376,9 +376,9 @@ public class BlockParty extends TeamlessMechanic {
 		Collections.shuffle(wools);
 		Collections.shuffle(concretes);
 
-		for (int i = 0; i < concretes.size(); i++) {
+		for (int i = 0; i < concretes.size(); i++)
 			replacementMap.put(wools.get(i), concretes.get(i));
-		}
+
 		return replacementMap;
 	}
 

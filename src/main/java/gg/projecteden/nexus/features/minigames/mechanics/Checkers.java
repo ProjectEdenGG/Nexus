@@ -8,7 +8,6 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.annotations.Scoreboard;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.exceptions.MinigameException;
 import gg.projecteden.nexus.features.minigames.models.matchdata.CheckersMatchData;
@@ -16,13 +15,22 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.team
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.parchment.entity.EntityData;
 import gg.projecteden.parchment.entity.EntityDataFragment;
 import gg.projecteden.parchment.entity.EntityDataKey;
 import lombok.Data;
 import net.kyori.adventure.title.Title;
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -40,7 +48,10 @@ import org.jetbrains.annotations.NotNull;
 import tech.blastmc.holograms.api.HologramsAPI;
 import tech.blastmc.holograms.api.models.Hologram;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Scoreboard(sidebarType = MinigameScoreboard.Type.MINIGAMER)
@@ -93,14 +104,9 @@ public class Checkers extends TeamMechanic {
 	}
 
 	@Override
-	public void onInitialize(@NotNull MatchInitializeEvent event) {
-		super.onInitialize(event);
-		placePieces(event.getMatch());
-	}
-
-
-	@Override
 	public void onStart(@NotNull MatchStartEvent event) {
+		placePieces(event.getMatch());
+
 		event.getMatch().getArena().getTeams().forEach(team -> {
 			event.getMatch().setScore(team, 12);
 		});
@@ -131,7 +137,7 @@ public class Checkers extends TeamMechanic {
 					return true;
 				}
 
-		return false;
+		return match.getAlivePlayers().size() <= 1;
 	}
 
 	private Team getTeam(int team, Match match) {
@@ -300,7 +306,7 @@ public class Checkers extends TeamMechanic {
 
 			BlockData particleData = jumpedPiece.getTeam() == 1 ? Material.RED_WOOL.createBlockData() : Material.BLACK_CONCRETE_POWDER.createBlockData();
 			new ParticleBuilder(Particle.BLOCK)
-				.location(jumpedPiece.getArmorStand().getLocation().clone().add(0, 2, 0))
+				.location(jumpedPiece.getArmorStand().getLocation().clone().add(0, 1, 0))
 				.allPlayers()
 				.count(50)
 				.data(particleData)
@@ -581,7 +587,7 @@ public class Checkers extends TeamMechanic {
 				double y = RandomUtils.randomDouble(-.3, .3);
 				double z = RandomUtils.randomDouble(-.3, .3);
 				new ParticleBuilder(Particle.DUST)
-					.location(this.armorStand.getLocation().clone().add(x, 2 + y, z))
+					.location(this.armorStand.getLocation().clone().add(x, y + 1, z))
 					.allPlayers()
 					.data(options)
 					.spawn();
@@ -599,9 +605,8 @@ public class Checkers extends TeamMechanic {
 			for (CheckersMove move : this.getMoves()) {
 				if (move.isDidJump()) {
 					Hologram hologram = HologramsAPI.builder()
-						.id(UUID.randomUUID().toString())
 						.lines("§a§lJump")
-						.location(move.getJumpedPiece().getArmorStand().getLocation().clone().add(0, 2, 0))
+						.location(move.getJumpedPiece().getArmorStand().getLocation().clone().add(0, 1, 0))
 						.build();
 					hologram.spawn();
 					this.holograms.add(hologram);
@@ -630,7 +635,6 @@ public class Checkers extends TeamMechanic {
 					}));
 
 					Hologram hologram = HologramsAPI.builder()
-						.id(UUID.randomUUID().toString())
 						.lines("§a§lMove")
 						.location(spawnLoc.clone().add(0, 1.2, 0))
 						.build();
