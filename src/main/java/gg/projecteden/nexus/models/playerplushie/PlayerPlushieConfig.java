@@ -149,42 +149,42 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 		return template.get();
 	}
 
-	public static final String ITEM_TEMPLATE = """
-		{
-			"parent": "<SUBDIRECTORY>/<POSE>/template_<SKIN_TYPE>",
-			"textures": {
-				"0": "<TEXTURES_SUBDIRECTORY>/<UUID>"
-			}
+	public static final String MODEL_TEMPLATE = """
+	{
+		"parent": "projecteden/<SUBDIRECTORY>/<POSE>/template_<SKIN_TYPE>",
+		"textures": {
+			"0": "<TEXTURES_SUBDIRECTORY>/<UUID>"
 		}
+	}
 	""";
 
 	public static final String ANIMATED_ITEM_TEMPLATE = """
-		{
-			"parent": "<SUBDIRECTORY>/<POSE>/template_<SKIN_TYPE>",
-			"textures": {
-				"0": "<TEXTURES_SUBDIRECTORY>/<UUID>",
-				"1": "<TEXTURES_SUBDIRECTORY>/<POSE>/<UUID>"
-			}
+	{
+		"parent": "<SUBDIRECTORY>/<POSE>/template_<SKIN_TYPE>",
+		"textures": {
+			"0": "<TEXTURES_SUBDIRECTORY>/<UUID>",
+			"1": "<TEXTURES_SUBDIRECTORY>/<POSE>/<UUID>"
 		}
+	}
 	""";
 
 	public static final String ANIMATION_META_TEMPLATE = """
-		{
-			"animation": {
-				"frametime": <FRAME_TIME>,
-				"frames": <FRAMES>
-			}
+	{
+		"animation": {
+			"frametime": <FRAME_TIME>,
+			"frames": <FRAMES>
 		}
+	}
 	""";
 
-	public static final String ITEM_MODEL_TEMPLATE = """
-		{
-			"model": {
-				"type": "minecraft:model",
-				"model": "<SUBDIRECTORY>/<POSE>/<UUID>",
-				"tints": []
-			}
+	public static final String ITEM_TEMPLATE = """
+	{
+		"model": {
+			"type": "minecraft:model",
+			"model": "<SUBDIRECTORY>/<POSE>/<UUID>",
+			"tints": []
 		}
+	}
 	""";
 
 	@SneakyThrows
@@ -203,7 +203,7 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 						GENERATED.computeIfAbsent(pose, $ -> new ArrayList<>()).add(uuid);
 
 						var poseName = pose.name().toLowerCase();
-						var itemTemplate = pose.isAnimated() ? ANIMATED_ITEM_TEMPLATE : ITEM_TEMPLATE;
+						var itemTemplate = pose.isAnimated() ? ANIMATED_ITEM_TEMPLATE : MODEL_TEMPLATE;
 
 						put(MODELS_DIRECTORY + "/%s/%s.json".formatted(poseName, uuid), process(itemTemplate, Map.of(
 							"POSE", poseName,
@@ -211,7 +211,7 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 							"UUID", uuid)
 						));
 
-						put(ITEMS_DIRECTORY + "/%s/%s.json".formatted(poseName, uuid), process(ITEM_MODEL_TEMPLATE, Map.of(
+						put(ITEMS_DIRECTORY + "/%s/%s.json".formatted(poseName, uuid), process(ITEM_TEMPLATE, Map.of(
 							"POSE", poseName,
 							"UUID", uuid
 						)));
