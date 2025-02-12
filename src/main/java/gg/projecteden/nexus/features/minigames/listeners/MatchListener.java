@@ -19,13 +19,29 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.Vani
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.perks.ParticleProjectile;
 import gg.projecteden.nexus.features.minigames.models.perks.common.ParticleProjectilePerk;
+import gg.projecteden.nexus.features.regionapi.MovementType;
+import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeavingRegionEvent;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.BorderUtils;
+import gg.projecteden.nexus.utils.Distance;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import org.bukkit.entity.*;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Boat;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Hanging;
+import org.bukkit.entity.Minecart;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -37,7 +53,11 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -349,6 +369,27 @@ public class MatchListener implements Listener {
 
 		event.setCancelled(true);
 		minigamer.getMatch().getMechanic().getSpectateMenu(minigamer.getMatch()).open(player);
+	}
+
+	@EventHandler
+	public void on(PlayerLeavingRegionEvent event) {
+		Player player = event.getPlayer();
+		if (!player.getWorld().equals(Minigames.getWorld()))
+			return;
+
+		if (event.getMovementType() != MovementType.MOVE && event.getMovementType() != MovementType.RIDE)
+			return;
+
+		Minigamer minigamer = Minigamer.of(player);
+		if (!minigamer.isSpectating())
+			return;
+
+		if (!event.getRegion().equals(minigamer.getMatch().getArena().getProtectedRegion()))
+			return;
+
+		event.setCancelled(true);
+		minigamer.toSpectate();
+		minigamer.tell("&cYou cannot leave the arena!");
 	}
 
 }
