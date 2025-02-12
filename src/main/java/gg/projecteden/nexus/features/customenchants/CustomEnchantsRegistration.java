@@ -46,8 +46,8 @@ public class CustomEnchantsRegistration {
 		try {
 			Nexus.debug("Setting up custom enchant registry 1");
 
-			nmsFrozenField = Arrays.stream(MappedRegistry.class.getDeclaredFields()).filter(field -> field.getType().isPrimitive()).findFirst().orElse(null);
-			unregisteredIntrusiveHolders = Arrays.stream(MappedRegistry.class.getDeclaredFields()).filter(field -> field.getType() == Map.class).reduce((f, s) -> s).orElse(null);
+			nmsFrozenField = MappedRegistry.class.getDeclaredField("frozen");
+			unregisteredIntrusiveHolders = MappedRegistry.class.getDeclaredField("unregisteredIntrusiveHolders");
 
 			nmsFrozenField.setAccessible(true);
 			unregisteredIntrusiveHolders.setAccessible(true);
