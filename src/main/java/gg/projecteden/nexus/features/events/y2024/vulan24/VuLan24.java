@@ -15,7 +15,12 @@ import gg.projecteden.nexus.features.events.models.EventBreakable;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot;
 import gg.projecteden.nexus.features.events.models.EventPlaceable;
 import gg.projecteden.nexus.features.events.y2024.vulan24.models.VuLan24BoatTracker;
-import gg.projecteden.nexus.features.events.y2024.vulan24.quests.*;
+import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Entity;
+import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24NPC;
+import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Quest;
+import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestItem;
+import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestReward;
+import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestTask;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
@@ -69,7 +74,7 @@ import java.util.List;
 	region = "vu_lan",
 	warpType = WarpType.VULAN24
 )
-@Environments({Env.PROD, Env.STAGING})
+@Environments({Env.PROD, Env.UPDATE})
 public class VuLan24 extends EdenEvent {
 	private static VuLan24 instance;
 

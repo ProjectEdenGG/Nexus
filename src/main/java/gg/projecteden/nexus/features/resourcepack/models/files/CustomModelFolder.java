@@ -2,14 +2,15 @@ package gg.projecteden.nexus.features.resourcepack.models.files;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.bukkit.Material;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @Data
-public class CustomModelFolder {
+public class CustomModelFolder implements Comparable<CustomModelFolder> {
 
 	@NonNull
 	private String path;
@@ -88,27 +89,44 @@ public class CustomModelFolder {
 		return null;
 	}
 
-	private void findModels() {
-		try (Stream<Path> files = Files.list(Path.of(this.path))) {
-			files.forEach(path -> {
-				if (!path.endsWith(".json"))
-					return;
+	private String getFullPath() {
+		if (path.endsWith("/"))
+			return (CustomModel.getItemsSubdirectory() + path.substring(0, path.length() - 1)).replace("//", "/");
+		return (CustomModel.getItemsSubdirectory() + path).replace("//", "/");
+	}
 
-				File file = path.toFile();
-				if (file.isDirectory())
+	private void findModels() {
+		try (Stream<Path> files = Files.walk(ResourcePack.getZipFile().getPath(getFullPath()), 1)) {
+			files.forEach(path -> {
+				Nexus.debug("Full path: " + getFullPath());
+				if (path.toString().equals(getFullPath()))
 					return;
+				Nexus.debug("Find models path: " + path);
+
+				if (!path.toString().endsWith(".json")) {
+					Nexus.debug("Adding folder");
+					addFolder(path.toString().substring(path.toString().lastIndexOf("/") + 1));
+					return;
+				}
 
 				try {
+					Nexus.debug("Processing model file");
 					CustomModel model = Utils.getGson().fromJson(String.join("", Files.readAllLines(path)), CustomModel.class);
 					model.setFolder(this);
-					if (model.getOldMaterial() == null)
+
+					String data = path.toString().split("assets/minecraft/items/")[1].replace(".json", "");
+					model.setData(data);
+
+					CustomMaterial customMaterial = CustomMaterial.of(data);
+					if (customMaterial == null)
 						model.setMaterial(Material.PAPER);
 					else
-						model.setMaterial(model.getOldMaterial());
+						model.setMaterial(customMaterial.getMaterial());
 
-					model.setData(path.toString().replace("assets/minecraft/items", "").replace(".json", ""));
+					model.setFileName(path.toString().substring(path.toString().lastIndexOf("/") + 1).replace(".json", ""));
 
 					model.setMeta(getMeta(path.toString().replace(".json", ".meta")));
+					Nexus.debug("Adding model: " + data);
 
 					models.add(model);
 				} catch (IOException e) {
@@ -122,6 +140,7 @@ public class CustomModelFolder {
 
 		models.sort(CustomModel::compareTo);
 		models.forEach(model -> ResourcePack.getModels().put(model.getId(), model));
+		folders.sort(CustomModelFolder::compareTo);
 	}
 
 	@SneakyThrows
@@ -135,4 +154,8 @@ public class CustomModelFolder {
 		return new CustomModel.CustomModelMeta();
 	}
 
+	@Override
+	public int compareTo(@NotNull CustomModelFolder other) {
+		return CharSequence.compare(path, other.getPath());
+	}
 }

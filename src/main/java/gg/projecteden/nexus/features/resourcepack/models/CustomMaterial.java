@@ -224,7 +224,7 @@ public enum CustomMaterial {
 	COSTUMES_PIRATE_HAT_LEATHER_CAVALIER("costumes/hat/pirate/cavalier_leather"),
 	COSTUMES_PIRATE_HAT_TRICORN("costumes/hat/pirate/tricorn", true),
 	COSTUMES_PIRATE_HAT_LEATHER_TRICORN("costumes/hat/pirate/tricorn_leather"),
-	ICON("costumes/icon", Material.MAP),
+	COSTUMES_ICON("costumes/icon", Material.MAP),
 	// customblocks
 	NOTE_BLOCK("customblocks/misc/note_block"),
 	TRIPWIRE("customblocks/misc/tripwire"),
@@ -2287,7 +2287,7 @@ public enum CustomMaterial {
 	GUI_MCMMO_UNARMED("ui/gui/mcmmo/unarmed"),
 	GUI_MCMMO_WOODCUTTING("ui/gui/mcmmo/woodcutting"),
 	GUI_ARROW_RIGHT("ui/gui/next", true),
-	GUI_NUMBER("ui/gui/number"),
+	GUI_NUMBER("ui/gui/number", true),
 	GUI_PLAYER_HEAD("ui/gui/player_head", Material.PLAYER_HEAD),
 	PRESENCE_ACTIVE("ui/gui/presence/active"),
 	GUI_PRESENCE_AFK("ui/gui/presence/afk"),
@@ -2502,6 +2502,14 @@ public enum CustomMaterial {
 				if (Objects.equals(customMaterial.getModel(), item.model()))
 					return customMaterial;
 
+		return null;
+	}
+	
+	public static CustomMaterial of(String model) {
+		for (CustomMaterial value : values()) {
+			if (value.getModel().equals(model))
+				return value;
+		}
 		return null;
 	}
 

@@ -28,9 +28,9 @@ public class CustomModel implements Comparable<CustomModel> {
 	private String fileName;
 	@SerializedName("old_custom_model_data")
 	private int oldCustomModelData;
-	@SerializedName("old_material")
+	@SerializedName("old_base_material")
 	private Material oldMaterial;
-	private Material material; // this should eventually be removed... it doesn't actually matter what item the model is on
+	private Material material;
 
 	public static final String NBT_KEY = "CustomModelData";
 	public static final String ICON = "icon";
@@ -38,7 +38,7 @@ public class CustomModel implements Comparable<CustomModel> {
 	@Getter
 	private static final String modelsSubdirectory = "/assets/minecraft/models/";
 	@Getter
-	private static final String itemsSubdirectory = "/assets/minecraft/items/";
+	private static final String itemsSubdirectory = "/assets/minecraft/items";
 
 	public static CustomModel of(Material material, String data) {
 		return ResourcePack.getModels().values().stream()
@@ -112,7 +112,7 @@ public class CustomModel implements Comparable<CustomModel> {
 
 	@NotNull
 	public String getId() {
-		return folder.getDisplayPath() + "/" + fileName;
+		return data;
 	}
 
 	public boolean equals(ItemStack itemStack) {

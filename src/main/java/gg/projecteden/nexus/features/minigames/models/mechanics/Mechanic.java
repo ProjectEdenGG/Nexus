@@ -614,14 +614,14 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		final List<CustomModel> matches = new ArrayList<>();
 
 		for (CustomModel value : ResourcePack.getModels().values())
-			if (value.getFolder().getPath().contains("ui/images/gamelobby"))
+			if (value.getData().contains("ui/images/gamelobby"))
 				if (value.getFileName().equalsIgnoreCase(getId()))
 					matches.add(value);
 
 		if (matches.isEmpty())
 			return;
 
-		final Comparator<CustomModel> comparator = Comparator.comparing(model -> model.getFolder().getPath().length());
+		final Comparator<CustomModel> comparator = Comparator.comparing(model -> model.getId().length());
 		final CustomModel shallowestMatch = Collections.min(matches, comparator);
 		final CustomModel deepestMatch = Collections.max(matches, comparator);
 		this.displayImage = new ItemBuilder(shallowestMatch);

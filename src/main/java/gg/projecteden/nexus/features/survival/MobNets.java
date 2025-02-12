@@ -8,7 +8,6 @@ import gg.projecteden.nexus.features.commands.TameablesCommand.TameableEntityTyp
 import gg.projecteden.nexus.features.listeners.Restrictions;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
@@ -140,29 +139,29 @@ public class MobNets extends Feature implements Listener {
 			.build();
 	}
 
-//	 TODO - 1.21.4
 	private static final String MODELS_DIRECTORY = "assets/minecraft/models/projecteden/items/mob_net/mobs";
 
-	public static final String MATERIAL_TEMPLATE = """
-		{
-			"parent": "minecraft:item/template_spawn_egg",
-			"overrides": [
-				<OVERRIDE>
-			]
-		}
-	""";
+	private static final String ITEM_MODELS_DIRECTORY = "assets/minecraft/items/misc/mob_net/mobs";
 
-	public static final String PREDICATE_TEMPLATE = """
-		{"predicate": {"custom_model_data": 1}, "model": "projecteden/items/mob_net/mobs/<TYPE>"}
+	public static final String ITEM_MODEL_TEMPLATE = """
+	{
+		"old_base_material": "<TYPE>_spawn_egg",
+		"old_custom_model_data": 1,
+		"model": {
+			"type": "minecraft:model",
+			"model": "projecteden/items/mob_net/mobs/<TYPE>",
+			"tints": []
+		}
+	} 
 	""";
 
 	public static final String MODEL_TEMPLATE = """
-		{
-			"parent": "projecteden/items/mob_net/mob_net_closed",
-			"textures": {
-				"2": "projecteden/items/mob_net/mobs/<TYPE>"
-			}
+	{
+		"parent": "projecteden/items/mob_net/mob_net_closed",
+		"textures": {
+			"2": "projecteden/items/mob_net/mobs/<TYPE>"
 		}
+	}
 	""";
 
 	public static Map<String, Object> generate() {
@@ -174,9 +173,8 @@ public class MobNets extends Feature implements Listener {
 				final var entityTypeName = entityType.getKey().getKey();
 				final Map<String, Object> variables = Map.of("TYPE", entityTypeName);
 
-				final String predicate = process(PREDICATE_TEMPLATE, variables);
-				final String material = process(MATERIAL_TEMPLATE, Map.of("OVERRIDE", predicate));
-				put("%s/%s_spawn_egg.json".formatted(CustomModel.getModelsSubdirectory(), entityTypeName), material);
+				final String itemModel = process(ITEM_MODEL_TEMPLATE, variables);
+				put(ITEM_MODELS_DIRECTORY + "/" + entityTypeName + ".json", itemModel);
 
 				final String model = process(MODEL_TEMPLATE, variables);
 				put(MODELS_DIRECTORY + "/" + entityTypeName + ".json", model);

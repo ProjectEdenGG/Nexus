@@ -132,7 +132,6 @@ public class ResourcePack extends Feature implements Listener {
 	private static void setup() {
 		folders = new ArrayList<>();
 		models = new ConcurrentHashMap<>();
-		rootFolder = new CustomModelFolder("/");
 	}
 
 	static void readAllFiles() {
@@ -151,6 +150,7 @@ public class ResourcePack extends Feature implements Listener {
 				ex.printStackTrace();
 			}
 
+			Nexus.debug("Walking RP files...");
 			for (Path root : zipFile.getRootDirectories()) {
 				try (var walker = Files.walk(root)) {
 					walker.forEach(path -> {
@@ -158,8 +158,10 @@ public class ResourcePack extends Feature implements Listener {
 							final String uri = path.toUri().toString();
 
 							try {
-								if (uri.contains(CustomModel.getItemsSubdirectory()) && !uri.contains(".json"))
-									new CustomModelFolder(uri);
+								if (uri.endsWith(CustomModel.getItemsSubdirectory())) {
+									Nexus.debug("Found model folder: " + uri);
+									rootFolder = new CustomModelFolder("/");
+								}
 							} catch (Exception ex) {
 								ex.printStackTrace();
 							}

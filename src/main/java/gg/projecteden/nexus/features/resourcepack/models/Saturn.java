@@ -93,7 +93,11 @@ public class Saturn {
 	private static void pull(boolean force) {
 		final String hashBefore = HASH_SUPPLIER.get();
 
-		execute("git reset --hard origin/main");
+		if (Nexus.getEnv() == Env.PROD)
+			execute("git reset --hard origin/main");
+		else
+			execute("git reset --hard");
+
 		execute("git pull");
 
 		final String hashAfter = HASH_SUPPLIER.get();
@@ -110,7 +114,7 @@ public class Saturn {
 	}
 
 	private static void commitAndPush() {
-		if (Nexus.getEnv() == Env.PROD)
+		if (Nexus.getEnv() == Env.PROD || Nexus.getEnv() == Env.UPDATE)
 			execute("./commit.sh");
 	}
 

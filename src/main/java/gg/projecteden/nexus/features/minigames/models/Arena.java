@@ -130,7 +130,7 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 
 	public void findMenuImage() {
 		for (CustomModel value : ResourcePack.getModels().values())
-			if (value.getFolder().getPath().contains("gamelobby/arenas"))
+			if (value.getData().contains("gamelobby/arenas"))
 				if (value.getFileName().equalsIgnoreCase(name)) {
 					this.menuImage = new ItemBuilder(value);
 					return;
