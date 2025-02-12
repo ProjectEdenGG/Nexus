@@ -344,10 +344,11 @@ public class BlockParty extends TeamlessMechanic {
 
 	private void pasteFloor(Match match, int index) {
 		BlockPartyMatchData matchData = match.getMatchData();
+		Region copy = matchData.getFloorInStack(index);
 		match.getArena().worldedit().paster("Block Party")
-			.clipboard(matchData.getFloorInStack(index))
+			.clipboard(copy)
 			.at(matchData.getPasteRegion().getMinimumPoint())
-			.replace(generateWoolReplacementMap(match))
+			.replace(generateWoolReplacementMap(match, copy))
 			.build();
 
 		if (index > 0)
@@ -360,9 +361,8 @@ public class BlockParty extends TeamlessMechanic {
 		startDiscoBallAnimation(match);
 	}
 
-	private Map<Material, Material> generateWoolReplacementMap(Match match) {
-		BlockPartyMatchData matchData = match.getMatchData();
-		List<Material> originalConcretes = match.getArena().worldedit().getBlocks(matchData.getPasteRegion())
+	private Map<Material, Material> generateWoolReplacementMap(Match match, Region copy) {
+		List<Material> originalConcretes = match.getArena().worldedit().getBlocks(copy)
 			.stream().map(Block::getType).filter(MaterialTag.CONCRETES::isTagged).distinct().toList();
 
 		Map<Material, Material> replacementMap = new HashMap<>();
@@ -371,7 +371,6 @@ public class BlockParty extends TeamlessMechanic {
 		List<Material> wools = new ArrayList<>(MaterialTag.WOOL.getValues());
 
 		concretes.removeAll(originalConcretes);
-		wools.removeIf(wool -> originalConcretes.contains(Material.valueOf(wool.name().replace("WOOL", "CONCRETE"))));
 
 		Collections.shuffle(wools);
 		Collections.shuffle(concretes);
