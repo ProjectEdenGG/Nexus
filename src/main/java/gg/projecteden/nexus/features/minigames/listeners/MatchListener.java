@@ -19,6 +19,8 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.Vani
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.perks.ParticleProjectile;
 import gg.projecteden.nexus.features.minigames.models.perks.common.ParticleProjectilePerk;
+import gg.projecteden.nexus.features.regionapi.MovementType;
+import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeavingRegionEvent;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
@@ -367,6 +369,27 @@ public class MatchListener implements Listener {
 
 		event.setCancelled(true);
 		minigamer.getMatch().getMechanic().getSpectateMenu(minigamer.getMatch()).open(player);
+	}
+
+	@EventHandler
+	public void on(PlayerLeavingRegionEvent event) {
+		Player player = event.getPlayer();
+		if (!player.getWorld().equals(Minigames.getWorld()))
+			return;
+
+		if (event.getMovementType() != MovementType.MOVE && event.getMovementType() != MovementType.RIDE)
+			return;
+
+		Minigamer minigamer = Minigamer.of(player);
+		if (!minigamer.isSpectating())
+			return;
+
+		if (!event.getRegion().equals(minigamer.getMatch().getArena().getProtectedRegion()))
+			return;
+
+		event.setCancelled(true);
+		minigamer.toSpectate();
+		minigamer.tell("&cYou cannot leave the arena!");
 	}
 
 }
