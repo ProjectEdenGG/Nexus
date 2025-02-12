@@ -421,7 +421,7 @@ public class DailyRewardsFeature extends Feature {
 				/*  85 */ new Reward("35 Note Blocks")						.item(Material.NOTE_BLOCK, 35),
 				/*  86 */ new Reward("12 White Banners")						.item(Material.WHITE_BANNER, 12),
 				/*  87 */ new Reward("100 Enchanting Levels")					.levels(100),
-				/*  88 */ new Reward("2 Ocelot Spawn Eggs")					.item(Material.OCELOT_SPAWN_EGG, 2),
+				/*  88 */ new Reward("2 Cat Spawn Eggs")						.item(Material.CAT_SPAWN_EGG, 2),
 				/*  89 */ new Reward("16 Dragon's Breath")					.item(Material.DRAGON_BREATH, 16),
 				/*  90 */ new Reward("Custom Player Head")					.item(Material.PLAYER_HEAD, 1),
 				/*  91 */ new Reward("50 Bookshelves")						.item(Material.BOOKSHELF, 50),
