@@ -1188,7 +1188,15 @@ public class BlockParty extends TeamlessMechanic {
 						file.getAbsolutePath() + "/silenceRemoved/" + name
 					);
 					pb.inheritIO();
-					pb.start();
+					pb.start().onExit().thenRun(() -> {
+						try {
+							Files.move(Path.of(file.getAbsolutePath() + "/silenceRemoved/" + name), Path.of(file.getAbsolutePath() + "/" + name), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+						} catch (IOException ex) {
+							Nexus.severe("Error moving " + name + " to final destination");
+							if (Nexus.isDebug())
+								ex.printStackTrace();
+						}
+					});
 				} catch (Exception ex) {
 					Nexus.severe("An error occurred while trying to remove the silence from bp music file: " + filePath.getFileName().toFile(), ex);
 					if (Nexus.isDebug())

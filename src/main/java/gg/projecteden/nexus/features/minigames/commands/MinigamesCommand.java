@@ -1016,6 +1016,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 		MGMExchange.open(player());
 	}
 
+	@Async
 	@Permission(Group.ADMIN)
 	@Path("blockParty loadSongs")
 	void loadBlockPartySongs() {
@@ -1023,6 +1024,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 		send(PREFIX + "Loaded &e" + BlockParty.songList.size() + " &3block party songs");
 	}
 
+	@Async
 	@Permission(Group.ADMIN)
 	@Path("blockParty removePaddingInSongFiles")
 	void removePaddingInSongFiles() {
@@ -1030,16 +1032,16 @@ public class MinigamesCommand extends _WarpSubCommand {
 		send(PREFIX + "Done");
 	}
 
+	@Async
 	@Permission(Group.ADMIN)
-	@Confirm(title = "Confirm? Please read the chat on yes!!!")
 	@Path("blockParty removeSilence")
 	void removeSilence() {
 		send(PREFIX + "Starting silence removal from all Block Party songs");
-		send("- There is no completion confirmation here, watch console for completion.");
-		send("- Output is in the plugins/Nexus/minigames/blockpartymusic/silenceRemoved directory. They must be copied over manually once complete.");
 		BlockParty.removeSilence();
+		send(PREFIX + "Done");
 	}
 
+	@Async
 	@Permission(Group.ADMIN)
 	@Path("blockParty getMinimumSongLength")
 	void getMinimumSongLength() {
@@ -1049,6 +1051,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 		send(PREFIX + "Songs should be at least &e" + seconds + " &3seconds long &e(" + ((int) seconds / 60) + "m" + (seconds % 60) + "s)");
 	}
 
+	@Async
 	@Permission(Group.ADMIN)
 	@Path("blockParty webUsers")
 	void blockParty_webUsers() {
