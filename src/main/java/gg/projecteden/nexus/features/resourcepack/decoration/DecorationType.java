@@ -413,7 +413,7 @@ public enum DecorationType {
 	FLAG_PRIDE_QUEER(new Flag("Queer Pride Flag", PrideFlagType.QUEER)),
 
 	@TypeConfig(money = 75, tokens = 7, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_PRIDE(new Flag("Queer Pride Flag", PrideFlagType.PRIDE)),
+	FLAG_PRIDE_PRIDE(new Flag("Pride Flag", PrideFlagType.PRIDE)),
 
 	// Pride Bunting
 	@TypeConfig(money = 45, tokens = 4, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
@@ -489,7 +489,7 @@ public enum DecorationType {
 	BUNTING_PRIDE_QUEER(new Bunting("Queer Pride Bunting", PrideFlagType.QUEER)),
 
 	@TypeConfig(money = 45, tokens = 4, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_PRIDE(new Bunting("Queer Pride Bunting", PrideFlagType.PRIDE)),
+	BUNTING_PRIDE_PRIDE(new Bunting("Pride Bunting", PrideFlagType.PRIDE)),
 
 // 	------------------------------------------------------------------------------------------------------
 //										CATALOG: Outdoors

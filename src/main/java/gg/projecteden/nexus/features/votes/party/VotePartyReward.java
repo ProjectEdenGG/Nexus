@@ -30,6 +30,7 @@ public enum VotePartyReward {
 				TimeUtils.TickTime.MINUTE.x(RandomUtils.randomInt(30, 90)) / 20,
 				true
 			);
+			BOOSTER_SERVICE.save(booster);
 			OfflineMessage.send(player.getOfflinePlayer(), getRewardMessage(getBoostMessage(boost), player));
 		}
 
@@ -53,6 +54,7 @@ public enum VotePartyReward {
 				TimeUtils.TickTime.MINUTE.x(RandomUtils.randomInt(60, 120)) / 20,
 				true
 			);
+			BOOSTER_SERVICE.save(booster);
 			OfflineMessage.send(player.getOfflinePlayer(), getRewardMessage(getBoostMessage(boost), player));
 		}
 
@@ -76,6 +78,7 @@ public enum VotePartyReward {
 				TimeUtils.TickTime.MINUTE.x(RandomUtils.randomInt(90, 180)) / 20,
 				true
 			);
+			BOOSTER_SERVICE.save(booster);
 			OfflineMessage.send(player.getOfflinePlayer(), getRewardMessage(getBoostMessage(boost), player));
 		}
 
