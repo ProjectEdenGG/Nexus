@@ -365,6 +365,8 @@ public class BlockParty extends TeamlessMechanic {
 	private Map<Material, Material> generateWoolReplacementMap(Match match, Region copy) {
 		List<Material> originalConcretes = match.getArena().worldedit().getBlocks(copy)
 			.stream().map(Block::getType).filter(MaterialTag.CONCRETES::isTagged).distinct().toList();
+		List<Material> wools = match.getArena().worldedit().getBlocks(copy)
+			.stream().map(Block::getType).filter(MaterialTag.WOOL::isTagged).distinct().collect(Collectors.toList());
 
 		Map<Material, Material> replacementMap = new HashMap<>();
 
@@ -375,8 +377,17 @@ public class BlockParty extends TeamlessMechanic {
 		Collections.shuffle(wools);
 		Collections.shuffle(concretes);
 
-		for (int i = 0; i < concretes.size(); i++)
-			replacementMap.put(wools.get(i), concretes.get(i));
+		boolean warn = false;
+		for (int i = 0; i < wools.size(); i++) {
+			if (i >= concretes.size() && !warn) {
+				Nexus.warn("&cNot enough colors in BlockParty design at y=" + copy.getMinimumPoint().y());
+				Collections.shuffle(concretes);
+				warn = true;
+			}
+
+			int min = Math.min(i, concretes.size() - 1);
+			replacementMap.put(wools.get(i), concretes.get(min));
+		}
 
 		return replacementMap;
 	}
