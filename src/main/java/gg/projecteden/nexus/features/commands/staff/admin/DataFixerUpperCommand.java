@@ -6,7 +6,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.statistics.StatisticsUser;
-import gg.projecteden.nexus.utils.ItemStackSerializer;
 import gg.projecteden.nexus.utils.SerializationUtils.NBT;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
@@ -27,13 +26,13 @@ public class DataFixerUpperCommand extends CustomCommand {
 	@Path("item serialize")
 	void serialize() {
 		ItemStack item = getToolRequired();
-		String url = StringUtils.paste(ItemStackSerializer.serialize(item));
+		String url = StringUtils.paste(NBT.serializeItemStack(item));
 		send(json(url).url(url).hover(url));
 	}
 
 	@Path("item deserialize <paste>")
 	void deserialize(String paste) {
-		giveItem(ItemStackSerializer.deserialize(StringUtils.getPaste(paste)));
+		giveItem(NBT.deserializeItemStack(StringUtils.getPaste(paste)));
 	}
 
 	@SneakyThrows

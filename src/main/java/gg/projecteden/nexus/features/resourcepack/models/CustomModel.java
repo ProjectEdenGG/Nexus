@@ -2,6 +2,8 @@ package gg.projecteden.nexus.features.resourcepack.models;
 
 import com.google.gson.annotations.SerializedName;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.chat.Chat;
+import gg.projecteden.nexus.features.legacy.listeners.LegacyItems;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
 import gg.projecteden.nexus.models.custommodels.CustomModelConfig;
@@ -9,6 +11,7 @@ import gg.projecteden.nexus.models.custommodels.CustomModelConfigService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -44,9 +47,14 @@ public class CustomModel implements Comparable<CustomModel> {
 	@Getter
 	private static final String itemsSubdirectory = "/assets/minecraft/items";
 
-	private static final Map<Material, Map<Integer, String>> cmdToModelsConversionCache = new HashMap<>();
+	private static final Map<Material, Map<Integer, String>> cmdToModelsConversionCache = new HashMap<>() {{
+		put(Material.LAPIS_LAZULI, LegacyItems.PLUSHIES);
+	}};
 
 	public static CustomModel of(Material material, String data) {
+		if (ResourcePack.getModels() == null)
+			return null;
+
 		return ResourcePack.getModels().values().stream()
 				.filter(model -> model.getMaterial() == material && Objects.equals(model.getData(), data))
 				.findFirst()
@@ -54,7 +62,7 @@ public class CustomModel implements Comparable<CustomModel> {
 	}
 
 	public static CustomModel convertFromCustomModelData(Material material, int data, Location location) {
-		if (ResourcePack.isReloading())
+		if (ResourcePack.isReloading() || ResourcePack.getModels() == null)
 			return null;
 
 		var cachedModels = cmdToModelsConversionCache.get(material);
@@ -71,13 +79,41 @@ public class CustomModel implements Comparable<CustomModel> {
 			.orElse(null);
 
 		if (match == null) {
-			Nexus.warn("Could not find new model for custom model data " + data + " on material " + material + " at " + StringUtils.getShortLocationString(location));
+			warn(material, data, location);
 			return null;
 		}
 
 		cmdToModelsConversionCache.computeIfAbsent(material, k -> new HashMap<>()).put(data, match.getData());
 
 		return match;
+	}
+
+	private static Map<Material, List<Integer>> ignoredWarns = new HashMap<>() {{
+		put(Material.CRAFTING_TABLE, List.of(1));
+		put(Material.IRON_BOOTS, List.of(1));
+		put(Material.IRON_CHESTPLATE, List.of(1));
+		put(Material.IRON_HELMET, List.of(1));
+		put(Material.IRON_LEGGINGS, List.of(1));
+		put(Material.IRON_SWORD, List.of(2));
+		put(Material.LEATHER_HORSE_ARMOR, List.of(20000, 20001, 20003, 20012, 20018, 20022, 20029, 20031, 20033, 20037, 20058));
+		put(Material.PAPER, List.of(1321, 22000, 6042, 6219));
+		put(Material.RED_DYE, List.of(1));
+		put(Material.STONE_BUTTON, List.of(214));
+	}};
+
+	private static void warn(Material material, int data, Location location) {
+		String message = "Could not find new model for custom model data " + data + " on material " + material + " at " + StringUtils.getShortLocationString(location);
+		Nexus.warn(message);
+		if (ignoredWarns.containsKey(material) && ignoredWarns.get(material).contains(data))
+			return;
+
+		if (location != null && location.getWorld().getName().contains("pugmas"))
+			PlayerUtils.Dev.WAKKA.send("&e[Saturn] &c" + message);
+		else
+			Chat.Broadcast.ingame()
+				.channel(Chat.StaticChannel.GLOBAL)
+				.message("&e[Saturn] &c" + message)
+				.send();
 	}
 
 	public static CustomModel convert(ItemStack item, Location location) {

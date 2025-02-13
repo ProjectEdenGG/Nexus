@@ -107,10 +107,10 @@ public class ResourcePack extends Feature implements Listener {
 	}
 
 	public static void read() {
+		reloading = true;
 		Tasks.async(() -> {
 			try {
 				new ResourcePackUpdateStartEvent().callEvent();
-				reloading = true;
 
 				HttpUtils.saveFile(URL, FILE_NAME);
 				openZip();

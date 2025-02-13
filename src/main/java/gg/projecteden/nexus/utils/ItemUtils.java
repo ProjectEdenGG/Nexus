@@ -693,7 +693,7 @@ public class ItemUtils {
 
 		CompoundTag pe = handle.get(DataComponents.CUSTOM_DATA).copyTag().getCompound("ProjectEden");
 		ListTag listTag = pe.getList("Items", 10);
-		pe.put("Items", ItemStackSerializer.update(listTag));
+		pe.put("Items", SerializationUtils.NBT.updateItemStacks(listTag));
 
 		NonNullList<net.minecraft.world.item.ItemStack> minecraft = NonNullList.withSize(expectedSize, net.minecraft.world.item.ItemStack.EMPTY);
 		ContainerHelper.loadAllItems(pe, minecraft, ((CraftServer) Bukkit.getServer()).getServer().registryAccess());

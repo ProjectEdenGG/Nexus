@@ -76,8 +76,8 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 		Dev.ARBY,
 		Dev.FILID,
 		Dev.KODA,
-		Dev.POWER
-		// TODO 1.21.4 Dev.BRI
+		Dev.POWER,
+		Dev.BRI
 	);
 
 	public void addOwner(UUID uuid) {
@@ -133,7 +133,7 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 	private static final String TEXTURES_DIRECTORY = "assets/minecraft/textures/projecteden/decoration/plushies/player/players";
 
 	private static final Map<String, Object> GLOBAL_VARIABLES = Map.of(
-		"SUBDIRECTORY", "decoration/plushies/player",
+		"SUBDIRECTORY", "projecteden/decoration/plushies/player",
 		"TEXTURES_SUBDIRECTORY", "projecteden/decoration/plushies/player/players"
 	);
 
@@ -151,7 +151,7 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 
 	public static final String MODEL_TEMPLATE = """
 	{
-		"parent": "projecteden/<SUBDIRECTORY>/<POSE>/template_<SKIN_TYPE>",
+		"parent": "<SUBDIRECTORY>/<POSE>/template_<SKIN_TYPE>",
 		"textures": {
 			"0": "<TEXTURES_SUBDIRECTORY>/<UUID>"
 		}
