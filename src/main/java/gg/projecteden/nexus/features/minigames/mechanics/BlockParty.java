@@ -84,6 +84,7 @@ import org.joml.AxisAngle4d;
 import org.joml.Matrix4f;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -368,7 +369,6 @@ public class BlockParty extends TeamlessMechanic {
 		Map<Material, Material> replacementMap = new HashMap<>();
 
 		List<Material> concretes = new ArrayList<>(MaterialTag.CONCRETES.getValues());
-		List<Material> wools = new ArrayList<>(MaterialTag.WOOL.getValues());
 
 		concretes.removeAll(originalConcretes);
 
@@ -1171,7 +1171,7 @@ public class BlockParty extends TeamlessMechanic {
 		File file = path.toFile();
 		if (!file.exists()) file.createNewFile();
 		songList.clear();
-		try (Stream<Path> paths = Files.walk(path)) {
+		try (Stream<Path> paths = Files.walk(path, 1)) {
 			paths.forEach(filePath -> {
 				try {
 					if (!Files.isRegularFile(filePath)) return;
@@ -1182,21 +1182,31 @@ public class BlockParty extends TeamlessMechanic {
 
 					Nexus.log("Processing " + file.getAbsolutePath() + "/" + name);
 
-					ProcessBuilder pb = new ProcessBuilder(
-						"ffmpeg", "-y", "-i", file.getAbsolutePath() + "/" + name,
-						"-af", "silenceremove=start_periods=1:start_threshold=-30dB",
+					String[] command = {
+						"ffmpeg",
+						"-y",
+						"-i",
+						file.getAbsolutePath() + "/" + name,
+						"-af",
+						"silenceremove=start_periods=1:start_threshold=-30dB",
 						file.getAbsolutePath() + "/silenceRemoved/" + name
-					);
-					pb.inheritIO();
-					pb.start().onExit().thenRun(() -> {
-						try {
-							Files.move(Path.of(file.getAbsolutePath() + "/silenceRemoved/" + name), Path.of(file.getAbsolutePath() + "/" + name), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
-						} catch (IOException ex) {
-							Nexus.severe("Error moving " + name + " to final destination");
-							if (Nexus.isDebug())
-								ex.printStackTrace();
-						}
-					});
+					};
+
+					new ProcessBuilder(command)
+						.inheritIO()
+						.start()
+						.onExit()
+						.thenRun(() -> {
+							try {
+								new ProcessBuilder(
+									"mv",
+									file.getAbsolutePath() + "/silenceRemoved/" + name,
+									file.getAbsolutePath() + "/" + name
+								).inheritIO().start();
+							} catch (IOException e) {
+								throw new RuntimeException(e);
+							}
+						});
 				} catch (Exception ex) {
 					Nexus.severe("An error occurred while trying to remove the silence from bp music file: " + filePath.getFileName().toFile(), ex);
 					if (Nexus.isDebug())
