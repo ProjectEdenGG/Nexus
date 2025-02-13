@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @NoArgsConstructor
-@Environments({Env.PROD, Env.STAGING})
+@Environments({Env.PROD, Env.UPDATE})
 public class Pugmas25Effects extends Effects {
 
 	private final List<Location> SMOKE_STACKS = List.of(

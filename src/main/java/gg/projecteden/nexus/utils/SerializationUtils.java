@@ -2,8 +2,11 @@ package gg.projecteden.nexus.utils;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
@@ -418,6 +421,20 @@ public class SerializationUtils {
 				return new JsonPrimitive(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(timestamp));
 			}
 
+		}
+
+		public static class MaterialConverter implements JsonSerializer<Material>, JsonDeserializer<Material> {
+
+			@Override
+			public JsonElement serialize(Material src, Type typeOfSrc, JsonSerializationContext context) {
+				return new JsonPrimitive(src.name());
+			}
+
+			// Custom deserialization logic
+			@Override
+			public Material deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+				return Material.valueOf(json.getAsString().toUpperCase());
+			}
 		}
 
 	}

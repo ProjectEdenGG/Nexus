@@ -32,7 +32,11 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class DecorationStoreManager implements Listener {
 
@@ -62,7 +66,7 @@ public class DecorationStoreManager implements Listener {
 	}
 
 	public static void glowTask() {
-		if (!Nexus.isProdOrStaging())
+		if (!Nexus.isProdOrUpdate())
 			return;
 
 		Tasks.repeat(0, TickTime.TICK.x(4), () -> {

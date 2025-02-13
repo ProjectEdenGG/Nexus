@@ -81,7 +81,7 @@ public class ItemTransferMenu implements TemporaryMenuListener {
 		new LegacyItemTransferUserService().edit(player, user -> {
 			final int sum = contents.stream().mapToInt(ItemStack::getAmount).sum();
 			if (sum > 0) {
-				user.getItems(ReviewStatus.PENDING).addAll(LegacyItems.convert(player.getWorld(), contents));
+				user.getItems(ReviewStatus.PENDING).addAll(LegacyItems.convert(player.getLocation(), contents));
 				user.sendMessage(Legacy.PREFIX + "Successfully stored " + sum + " legacy items for staff review");
 			}
 

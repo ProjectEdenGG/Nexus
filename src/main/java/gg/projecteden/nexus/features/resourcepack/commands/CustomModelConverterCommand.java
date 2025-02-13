@@ -74,7 +74,7 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 
 	@Path("convert <material> <data>")
 	void convert(Material material, int data) {
-		final CustomModel newModel = CustomModel.convertLegacy(material, data);
+		final CustomModel newModel = CustomModel.convertLegacy(material, data, null);
 		if (newModel == null)
 			error("Unknown custom model");
 

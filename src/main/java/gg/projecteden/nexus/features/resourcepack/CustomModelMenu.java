@@ -72,6 +72,7 @@ public class CustomModelMenu extends InventoryProvider {
 
 			ItemBuilder item = new ItemBuilder(model.getDisplayItem())
 					.lore("&e" + StringUtils.camelCase(model.getMaterial()) + ": " + model.getData())
+					.lore("&eOld Data: %s (%d)".formatted(model.getOldMaterial(), model.getOldCustomModelData()))
 					.lore("")
 					.lore("&7Click to obtain item")
 					.lore("&7Shift+Click to obtain item with name");

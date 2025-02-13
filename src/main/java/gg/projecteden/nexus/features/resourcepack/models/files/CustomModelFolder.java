@@ -103,6 +103,9 @@ public class CustomModelFolder implements Comparable<CustomModelFolder> {
 					return;
 				Nexus.debug("Find models path: " + path);
 
+				if (path.toString().endsWith(".meta"))
+					return;
+
 				if (!path.toString().endsWith(".json")) {
 					Nexus.debug("Adding folder");
 					addFolder(path.toString().substring(path.toString().lastIndexOf("/") + 1));

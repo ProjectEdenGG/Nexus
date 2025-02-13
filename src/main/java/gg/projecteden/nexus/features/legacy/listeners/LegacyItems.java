@@ -10,7 +10,7 @@ import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpda
 import gg.projecteden.nexus.features.vaults.VaultCommand.VaultMenu.VaultHolder;
 import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.Model;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -18,20 +18,25 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -66,7 +71,7 @@ public class LegacyItems implements Listener {
 		if (holder instanceof SmartInventoryHolder)
 			return;
 
-		convert(event.getPlayer().getWorld(), event.getInventory());
+		convert(holder.getInventory().getLocation(), event.getInventory());
 	}
 
 	@EventHandler
@@ -77,38 +82,57 @@ public class LegacyItems implements Listener {
 		});
 	}
 
-	public static List<ItemStack> convert(World world, List<ItemStack> contents) {
-		return contents.stream().map(item -> convert(world, item)).toList();
+	@EventHandler
+	public void on(ChunkLoadEvent event) {
+		Tasks.sync(() -> {
+			for (@NotNull Entity entity : event.getChunk().getEntities())
+				convert(entity);
+		});
 	}
 
-	private static void convert(World world, Inventory inventory) {
+	public static List<ItemStack> convert(Location location, List<ItemStack> contents) {
+		return contents.stream().map(item -> convert(location, item)).toList();
+	}
+
+	private static void convert(Location location, Inventory inventory) {
 		for (var slot = new AtomicInteger(); slot.get() < inventory.getContents().length; slot.getAndIncrement())
-			convert(world, inventory.getItem(slot.get()), converted -> inventory.setItem(slot.get(), converted));
+			convert(location, inventory.getItem(slot.get()), converted -> inventory.setItem(slot.get(), converted));
 	}
 
-	private static void convert(World world, ItemStack item, Consumer<ItemStack> setter) {
+	private static void convert(Location location, ItemStack item, Consumer<ItemStack> setter) {
 		if (Nullables.isNullOrAir(item))
 			return;
 
-		ItemStack converted = convert(world, item);
-		if (item.equals(converted))
+		ItemStack converted = convert(location, item);
+		if (ItemUtils.isModelMatch(item, converted))
 			return;
 
 		setter.accept(converted);
 	}
 
-	public static ItemStack convert(World world, ItemStack item) {
+	public static ItemStack convert(Location location, ItemStack item) {
 		if (Nullables.isNullOrAir(item))
 			return item;
 
-		item = convertIfShulkerBox(world, item, null);
+		item = convertIfShulkerBox(location.getWorld(), item, null);
 		item = Beehives.addLore(item);
 		item = convertCrateKeys(item);
 
-		if (Model.of(item) == null)
+		ItemBuilder builder = new ItemBuilder(item);
+		if (builder.customModelData() == 0)
 			return item;
 
-		final CustomModel newModel = CustomModel.convert(item);
+		if (builder.material() == Material.LEATHER_HORSE_ARMOR && builder.customModelData() >= 2000 && builder.customModelData() < 3000)
+			return builder.number(builder.customModelData() - 2000).build();
+
+		CustomModel newModel;
+		try {
+			newModel = CustomModel.convert(item, location);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return item;
+		}
+
 		if (newModel == null)
 			return item;
 
@@ -116,7 +140,7 @@ public class LegacyItems implements Listener {
 			.material(newModel.getMaterial())
 			.model(newModel.getData());
 
-		return convertIfShulkerBox(world, item, converted);
+		return convertIfShulkerBox(location.getWorld(), item, converted);
 	}
 
 	private static ItemStack convertCrateKeys(ItemStack item) {
@@ -141,27 +165,30 @@ public class LegacyItems implements Listener {
 		return converted.build();
 	}
 
-	private static void convert(World world, EntityEquipment equipment) {
+	private static void convert(Location location, EntityEquipment equipment) {
 		if (equipment == null)
 			return;
 
 		for (EquipmentSlot slot : EnumUtils.valuesExcept(EquipmentSlot.class, EquipmentSlot.BODY))
-			convert(world, equipment.getItem(slot), converted -> equipment.setItem(slot, converted, true));
+			convert(location, equipment.getItem(slot), converted -> equipment.setItem(slot, converted, true));
 	}
 
 	private static void convert(Entity entity) {
-		final World world = entity.getWorld();
+		final Location location = entity.getLocation();
 		if (entity instanceof LivingEntity livingEntity)
-			convert(world, livingEntity.getEquipment());
+			convert(location, livingEntity.getEquipment());
 
 		if (entity instanceof InventoryHolder holder)
-			convert(world, holder.getInventory());
+			convert(location, holder.getInventory());
 
 		if (entity instanceof ItemFrame itemFrame)
-			convert(world, itemFrame.getItem(), itemFrame::setItem);
+			convert(location, itemFrame.getItem(), itemFrame::setItem);
 
 		if (entity instanceof Item droppedItem)
-			convert(world, droppedItem.getItemStack(), droppedItem::setItemStack);
+			convert(location, droppedItem.getItemStack(), droppedItem::setItemStack);
+
+		if (entity instanceof ItemDisplay display)
+			convert(location, display.getItemStack(), display::setItemStack);
 	}
 
 }

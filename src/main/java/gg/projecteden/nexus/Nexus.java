@@ -132,8 +132,8 @@ public class Nexus extends JavaPlugin {
 		}
 	}
 
-	public static boolean isProdOrStaging() {
-		return getEnv() == Env.PROD || getEnv() == Env.STAGING;
+	public static boolean isProdOrUpdate() {
+		return getEnv() == Env.PROD || getEnv() == Env.UPDATE;
 	}
 
 	@Getter

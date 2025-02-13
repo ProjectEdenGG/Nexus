@@ -10,8 +10,10 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackCo
 import gg.projecteden.nexus.utils.SerializationUtils.Json.LocalDateGsonSerializer;
 import gg.projecteden.nexus.utils.SerializationUtils.Json.LocalDateTimeGsonSerializer;
 import gg.projecteden.nexus.utils.SerializationUtils.Json.LocationGsonSerializer;
+import gg.projecteden.nexus.utils.SerializationUtils.Json.MaterialConverter;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Location;
+import org.bukkit.Material;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -57,7 +59,8 @@ public class API extends EdenDatabaseAPI {
 		return super.getPrettyPrinter()
 			.registerTypeAdapter(Location.class, new LocationGsonSerializer())
 			.registerTypeAdapter(LocalDate.class, new LocalDateGsonSerializer())
-			.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeGsonSerializer());
+			.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeGsonSerializer())
+			.registerTypeAdapter(Material.class, new MaterialConverter());
 	}
 
 	@Override

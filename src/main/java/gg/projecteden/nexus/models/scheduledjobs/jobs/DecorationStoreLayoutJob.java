@@ -20,7 +20,7 @@ public class DecorationStoreLayoutJob extends AbstractJob {
 
 	@Override
 	protected CompletableFuture<JobStatus> run() {
-		if (!Nexus.isProdOrStaging())
+		if (!Nexus.isProdOrUpdate())
 			return completed();
 
 		Nexus.log("[Decoration Store] running DecorationStoreLayoutJob");

@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.models;
 
 import com.google.gson.annotations.SerializedName;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
 import gg.projecteden.nexus.models.custommodels.CustomModelConfig;
@@ -12,11 +13,14 @@ import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Data
@@ -40,6 +44,8 @@ public class CustomModel implements Comparable<CustomModel> {
 	@Getter
 	private static final String itemsSubdirectory = "/assets/minecraft/items";
 
+	private static final Map<Material, Map<Integer, String>> cmdToModelsConversionCache = new HashMap<>();
+
 	public static CustomModel of(Material material, String data) {
 		return ResourcePack.getModels().values().stream()
 				.filter(model -> model.getMaterial() == material && Objects.equals(model.getData(), data))
@@ -47,21 +53,41 @@ public class CustomModel implements Comparable<CustomModel> {
 				.orElse(null);
 	}
 
-	public static CustomModel ofCustomModelData(Material material, int data) {
-		return null; // TODO 1.21.4
+	public static CustomModel convertFromCustomModelData(Material material, int data, Location location) {
+		if (ResourcePack.isReloading())
+			return null;
+
+		var cachedModels = cmdToModelsConversionCache.get(material);
+		if (cachedModels != null) {
+			var cachedData = cachedModels.get(data);
+			if (cachedData != null) {
+				return ResourcePack.getModels().get(cachedData);
+			}
+		}
+
+		CustomModel match = ResourcePack.getModels().values().stream()
+			.filter(model -> material.equals(model.getOldMaterial()) && model.getOldCustomModelData() == data)
+			.findFirst()
+			.orElse(null);
+
+		if (match == null) {
+			Nexus.warn("Could not find new model for custom model data " + data + " on material " + material + " at " + StringUtils.getShortLocationString(location));
+			return null;
+		}
+
+		cmdToModelsConversionCache.computeIfAbsent(material, k -> new HashMap<>()).put(data, match.getData());
+
+		return match;
 	}
 
-	public static CustomModel convert(ItemStack item) {
+	public static CustomModel convert(ItemStack item, Location location) {
 		if (Model.hasModel(item))
-			return convert(item.getType(), Model.of(item));
-		return convertLegacy(item.getType(), new ItemBuilder(item).customModelData());
+			return of(item);
+
+		return convertLegacy(item.getType(), new ItemBuilder(item).customModelData(), location);
 	}
 
-	public static CustomModel convert(Material material, String model) {
-		return null; // TODO 1.21.4
-	}
-
-	public static CustomModel convertLegacy(Material material, int data) {
+	public static CustomModel convertLegacy(Material material, int data, Location location) {
 		if (material == Material.LEATHER_BOOTS)  // keeps converting custom armor to stockings
 			return null;
 
@@ -69,16 +95,16 @@ public class CustomModel implements Comparable<CustomModel> {
 		final var oldModels = config.getOldModels();
 		final var newModels = config.getNewModels();
 		if (!oldModels.containsKey(material))
-			return null;
+			return convertFromCustomModelData(material, data, location);
 
 		final String model = oldModels.get(material).get(data);
 		if (Nullables.isNullOrEmpty(model))
-			return null;
+			return convertFromCustomModelData(material, data, location);
 
 		for (var map1 : newModels.entrySet())
 			for (var map2 : map1.getValue().entrySet())
 				if (model.equals(map2.getValue()))
-					return convert(new ItemBuilder(map1.getKey()).customModelData(map2.getKey()).build());
+					return convertFromCustomModelData(map1.getKey(), map2.getKey(), location);
 
 		return null;
 	}
