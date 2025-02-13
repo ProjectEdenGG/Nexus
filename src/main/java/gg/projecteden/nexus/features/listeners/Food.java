@@ -24,6 +24,8 @@ import java.util.Map;
 
 public class Food implements Listener {
 
+	// TODO 1.21.4 Set back to normal item, set max stack size to 64
+
 	private static final Map<CustomMaterial, Pair<Integer, Double>> FOOD = Map.of(
 		CustomMaterial.FOOD_BEETROOT_SOUP, new Pair<>(6, 7.2d),
 		CustomMaterial.FOOD_MUSHROOM_STEW, new Pair<>(6, 7.2d),
