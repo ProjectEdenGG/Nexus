@@ -43,7 +43,6 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -105,6 +104,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class BlockParty extends TeamlessMechanic {
 
@@ -409,7 +411,7 @@ public class BlockParty extends TeamlessMechanic {
 		setBlockInHand(match, matchData.getBlock());
 	}
 
-	private Material getRandomFloorColor(Match match) {
+	private static Material getRandomFloorColor(Match match) {
 		BlockPartyMatchData matchData = match.getMatchData();
 		List<Material> types = match.getArena().worldedit().getBlocks(matchData.getPasteRegion())
 			.stream().map(Block::getType).distinct().toList();
@@ -565,7 +567,7 @@ public class BlockParty extends TeamlessMechanic {
 			BlockPartyPowerUp powerUp = RandomUtils.randomElement(BlockPartyPowerUp.values());
 			ItemStack powerUpItem = powerUp.getItem();
 
-			if (Nullables.isNullOrAir(minigamer.getPlayer().getInventory().getItem(0))) {
+			if (isNullOrAir(minigamer.getPlayer().getInventory().getItem(0))) {
 				minigamer.getPlayer().getInventory().setItem(0, new ItemBuilder(CustomMaterial.INVISIBLE).build());
 				minigamer.getPlayer().getInventory().addItem(powerUpItem);
 				minigamer.getPlayer().getInventory().setItem(0, null);
@@ -612,7 +614,7 @@ public class BlockParty extends TeamlessMechanic {
 		if (event.getHand() != EquipmentSlot.HAND)
 			return;
 
-		if (Nullables.isNullOrAir(event.getItem()))
+		if (isNullOrAir(event.getItem()))
 			return;
 
 		ItemStack item = event.getItem();
@@ -626,7 +628,7 @@ public class BlockParty extends TeamlessMechanic {
 			event.setCancelled(true);
 
 			item.subtract();
-			powerUp.execute(minigamer, minigamer.getMatch());
+			powerUp.execute(minigamer, minigamer.getMatch(), event);
 
 			BlockPartyMatchData matchData = minigamer.getMatch().getMatchData();
 			matchData.getPowerUpsUsed().put(minigamer.getUniqueId(), matchData.getPowerUpsUsed().getOrDefault(minigamer.getUniqueId(), 0) + 1);
@@ -699,6 +701,10 @@ public class BlockParty extends TeamlessMechanic {
 		else
 			return;
 
+		splatterPaint(location);
+	}
+
+	public static void splatterPaint(Location location) {
 		Arena arena = ArenaManager.getFromLocation(location);
 		if (arena == null)
 			return;
@@ -733,8 +739,9 @@ public class BlockParty extends TeamlessMechanic {
 		locations.forEach(loc -> loc.getBlock().setType(material, false));
 	}
 
-	BlockFace[] faces = { BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST };
-	private List<Location> spawnColorSplash(BlockPartyMatchData matchData, Location origin, Location current, List<Location> checked, int maxDepth)  {
+	private static BlockFace[] faces = { BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST };
+
+	private static List<Location> spawnColorSplash(BlockPartyMatchData matchData, Location origin, Location current, List<Location> checked, int maxDepth)  {
 		if (!matchData.getPasteRegion().contains(current.getBlockX(), current.getBlockY(), current.getBlockZ()))
 			return checked;
 
@@ -757,7 +764,7 @@ public class BlockParty extends TeamlessMechanic {
 			final ItemStack item = new ItemBuilder(Material.PAPER).modelId(7413).name("&eLeap").build();
 
 			@Override
-			void execute(Minigamer minigamer, Match match) {
+			void execute(Minigamer minigamer, Match match, PlayerInteractEvent event) {
 				minigamer.getPlayer().setVelocity(minigamer.getLocation().getDirection().normalize().multiply(1.2f));
 				minigamer.getPlayer().playSound(minigamer.getLocation(), Sound.ENTITY_GHAST_SHOOT, 1, 1);
 			}
@@ -767,7 +774,12 @@ public class BlockParty extends TeamlessMechanic {
 			final ItemStack item = new ItemBuilder(Material.PAPER).modelId(7414).name("&eColor Splash").build();
 
 			@Override
-			void execute(Minigamer minigamer, Match match) {
+			void execute(Minigamer minigamer, Match match, PlayerInteractEvent event) {
+				if (isNotNullOrAir(event.getClickedBlock())) {
+					splatterPaint(event.getClickedBlock().getLocation());
+					return;
+				}
+
 				Vector vector = minigamer.getLocation().getDirection().normalize().multiply(0.5f);
 				Location spawnLoc = minigamer.getPlayer().getEyeLocation().clone().add(vector);
 
@@ -783,7 +795,7 @@ public class BlockParty extends TeamlessMechanic {
 			final PotionEffect potion = new PotionEffect(PotionEffectType.JUMP_BOOST, (int) TimeUtils.TickTime.SECOND.x(15), 3, true, true);
 
 			@Override
-			void execute(Minigamer minigamer, Match match) {
+			void execute(Minigamer minigamer, Match match, PlayerInteractEvent event) {
 				minigamer.getPlayer().addPotionEffect(potion);
 				minigamer.getPlayer().playSound(minigamer.getLocation(), Sound.ITEM_BUCKET_FILL, 1, 1);
 			}
@@ -794,7 +806,7 @@ public class BlockParty extends TeamlessMechanic {
 			final PotionEffect potion = new PotionEffect(PotionEffectType.SPEED, (int) TimeUtils.TickTime.SECOND.x(8), 4, true, true);
 
 			@Override
-			void execute(Minigamer minigamer, Match match) {
+			void execute(Minigamer minigamer, Match match, PlayerInteractEvent event) {
 				minigamer.getPlayer().addPotionEffect(potion);
 				minigamer.getPlayer().playSound(minigamer.getLocation(), Sound.ITEM_BUCKET_FILL, 1, 1);
 			}
@@ -804,7 +816,7 @@ public class BlockParty extends TeamlessMechanic {
 			final ItemStack item = new ItemBuilder(Material.PAPER).modelId(7417).name("&eColor Storm").build();
 
 			@Override
-			void execute(Minigamer minigamer, Match match) {
+			void execute(Minigamer minigamer, Match match, PlayerInteractEvent event) {
 				BlockPartyMatchData matchData = match.getMatchData();
 				for (int i = 0; i < 100; i++)
 					match.getTasks().wait(i / 5, () -> {
@@ -817,7 +829,7 @@ public class BlockParty extends TeamlessMechanic {
 
 		abstract ItemStack getItem();
 
-		abstract void execute(Minigamer minigamer, Match match);
+		abstract void execute(Minigamer minigamer, Match match, PlayerInteractEvent event);
 	}
 	// endregion
 
