@@ -16,15 +16,15 @@ import java.util.concurrent.CompletableFuture;
 @EqualsAndHashCode(callSuper = true)
 @Schedule("0 */2 * * *")
 @Async
-public class DecorationStoreLayoutJob extends AbstractJob {
+public class DecorationStoreLayoutPasteJob extends AbstractJob {
 
 	@Override
 	protected CompletableFuture<JobStatus> run() {
 		if (!Nexus.isProdOrUpdate())
 			return completed();
 
-		Nexus.log("[Decoration Store] Running DecorationStoreLayoutJob");
-		DecorationStoreLayouts.pasteNextLayout(true);
+		Nexus.log("[Decoration Store] Running DecorationStoreLayoutPasteJob");
+		DecorationStoreLayouts.doPasteNextLayout();
 		return completed();
 	}
 }
