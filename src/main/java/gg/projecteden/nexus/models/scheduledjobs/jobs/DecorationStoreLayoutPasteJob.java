@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.models.scheduledjobs.jobs;
 
-import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob;
 import gg.projecteden.api.mongodb.models.scheduledjobs.common.Schedule;
 import gg.projecteden.nexus.Nexus;
@@ -15,7 +14,6 @@ import java.util.concurrent.CompletableFuture;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Schedule("0 */2 * * *")
-@Async
 public class DecorationStoreLayoutPasteJob extends AbstractJob {
 
 	@Override
