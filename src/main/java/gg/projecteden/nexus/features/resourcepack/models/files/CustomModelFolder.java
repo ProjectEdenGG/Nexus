@@ -4,6 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel.CustomModelMeta;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.Data;
 import lombok.NonNull;
@@ -128,7 +129,7 @@ public class CustomModelFolder implements Comparable<CustomModelFolder> {
 
 					model.setFileName(path.toString().substring(path.toString().lastIndexOf("/") + 1).replace(".json", ""));
 
-					model.setMeta(getMeta(path.toString().replace(".json", ".meta")));
+					model.setMeta(getMeta(data));
 					Nexus.debug("Adding model: " + data);
 
 					models.add(model);
@@ -148,11 +149,11 @@ public class CustomModelFolder implements Comparable<CustomModelFolder> {
 
 	@SneakyThrows
 	public CustomModel.CustomModelMeta getMeta(String model) {
-		String metaUri = CustomModel.getModelsSubdirectory() + "/" + model + ".meta";
+		String metaUri = CustomModel.getItemsSubdirectory() + "/" + model + ".meta";
 		Path metaPath = ResourcePack.getZipFile().getPath(metaUri);
 
 		if (Files.exists(metaPath))
-			return Utils.getGson().fromJson(String.join("", Files.readAllLines(metaPath)), CustomModel.CustomModelMeta.class);
+			return Utils.getGson().fromJson(String.join("", Files.readAllLines(metaPath)), CustomModelMeta.class);
 
 		return new CustomModel.CustomModelMeta();
 	}

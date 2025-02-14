@@ -43,7 +43,7 @@ public class CustomModel implements Comparable<CustomModel> {
 	public static final String ICON = "icon";
 
 	@Getter
-	private static final String modelsSubdirectory = "/assets/minecraft/models/";
+	private static final String modelsSubdirectory = "/assets/minecraft/models";
 	@Getter
 	private static final String itemsSubdirectory = "/assets/minecraft/items";
 
