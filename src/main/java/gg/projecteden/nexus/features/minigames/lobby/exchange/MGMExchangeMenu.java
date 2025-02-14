@@ -88,9 +88,9 @@ public class MGMExchangeMenu extends InventoryProvider {
 		// VP
 		for (int i = 1; i < 4; i++) {
 			CustomMaterial material = switch(i) {
-				case 1 -> CustomMaterial.SILVER_COINS_9;
-				case 2 -> CustomMaterial.SILVER_COINS_4;
-				case 3 -> CustomMaterial.SILVER_COINS_7;
+				case 1 -> CustomMaterial.SILVER_COINS_2;
+				case 2 -> CustomMaterial.SILVER_COINS_6;
+				case 3 -> CustomMaterial.SILVER_COINS_9;
 				default -> CustomMaterial.NULL;
 			};
 
