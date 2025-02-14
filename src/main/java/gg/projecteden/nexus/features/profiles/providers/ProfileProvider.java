@@ -804,8 +804,6 @@ public class ProfileProvider extends InventoryProvider {
 
 		public ItemBuilder getItemBuilder(Player viewer, ProfileUser target) {
 			String modelId = getModelId(viewer, target);
-			if (modelId == null)
-				return null;
 
 			return new ItemBuilder(getMaterial())
 				.model(modelId)
