@@ -83,8 +83,8 @@ public enum Condition implements ITag {
 		ItemTagsUtils.updateCondition(nbtItem.getItem(), condition);
 	}
 
-	public static void setDurability(ItemStack item, Condition condition) {
-		ItemBuilder.setDurability(item, RandomUtils.randomInt(condition.getMin(), condition.getMax()));
+	public static ItemStack setDurability(ItemStack item, Condition condition) {
+		return ItemBuilder.setDurability(item, RandomUtils.randomInt(condition.getMin(), condition.getMax()));
 	}
 
 	public static final Set<String> ALL_TAGS;

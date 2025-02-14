@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
 import gg.projecteden.nexus.features.itemtags.Condition;
+import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
 import gg.projecteden.nexus.features.itemtags.Rarity;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -331,13 +332,14 @@ public class ItemBuilderCommand extends CustomCommand {
 	@Path("rarity <rarity>")
 	@Description("Set an item's rarity tag")
 	void rarity(Rarity rarity) {
-		item.rarity(rarity);
+		item = new ItemBuilder(ItemTagsUtils.updateRarity(item.build(), rarity));
 	}
 
 	@Path("condition <condition>")
 	@Description("Set an item's condition tag")
 	void condition(Condition condition) {
-		item.condition(condition);
+		item = new ItemBuilder(ItemTagsUtils.updateCondition(item.build(), condition));
+		item = new ItemBuilder(Condition.setDurability(item.build(), condition));
 	}
 
 	@Path("attribute <attribute> <name> <amount> <operation> [slot]")
