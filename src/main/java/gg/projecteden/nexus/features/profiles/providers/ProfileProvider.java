@@ -803,10 +803,8 @@ public class ProfileProvider extends InventoryProvider {
 		}
 
 		public ItemBuilder getItemBuilder(Player viewer, ProfileUser target) {
-			String modelId = getModelId(viewer, target);
-
 			return new ItemBuilder(getMaterial())
-				.model(modelId)
+				.model(getModelId(viewer, target))
 				.name(getName(viewer, target))
 				.lore(getLore(viewer, target))
 				.clone();
