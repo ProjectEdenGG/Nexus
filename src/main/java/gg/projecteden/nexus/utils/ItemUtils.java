@@ -150,8 +150,12 @@ public class ItemUtils {
 			if (!Objects.equals(lore1, lore2))
 				return false;
 
+			if (!ItemUtils.isModelMatch(itemStack1, itemStack2))
+				return false;
+
 			if (itemMeta1.hasCustomModelData() && itemMeta2.hasCustomModelData())
-				return itemMeta1.getCustomModelData() == itemMeta2.getCustomModelData();
+				if (itemMeta1.getCustomModelData() != itemMeta2.getCustomModelData())
+					return false;
 		}
 
 		return true;

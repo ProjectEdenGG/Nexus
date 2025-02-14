@@ -2,12 +2,12 @@ package gg.projecteden.nexus.features.store.perks.inventory.autoinventory.featur
 
 import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventoryFeature;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser.AutoTrashBehavior;
 import gg.projecteden.nexus.models.dumpster.Dumpster;
 import gg.projecteden.nexus.models.dumpster.DumpsterService;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
 import org.bukkit.entity.Player;
@@ -44,7 +44,7 @@ public class AutoTrash implements Listener {
 				return;
 		}
 
-		if (meta.hasDisplayName() || meta.hasEnchants() || CustomModel.exists(item))
+		if (meta.hasDisplayName() || meta.hasEnchants() || Model.hasModel(item))
 			return;
 
 		if (!user.getActiveProfile().getAutoTrashInclude().contains(item.getType()))

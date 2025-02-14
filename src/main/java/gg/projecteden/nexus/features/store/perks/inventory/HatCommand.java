@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.store.perks.inventory;
 
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -100,7 +100,7 @@ public class HatCommand extends CustomCommand implements Listener {
 		if (!(clickedInventory instanceof PlayerInventory playerInventory)) return;
 		if (isPreventBindingHat(player, playerInventory))
 			return;
-		if (!player.hasPermission("essentials.hat") && !CustomModel.exists(event.getCursor())) return;
+		if (!player.hasPermission("essentials.hat") && !Model.hasModel(event.getCursor())) return;
 
 		event.setCancelled(true);
 		final PlayerInventory inv = (PlayerInventory) clickedInventory;

@@ -8,12 +8,12 @@ import gg.projecteden.nexus.features.events.models.EventErrors;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.virtualinventories.managers.VirtualPersonalInventoryManager;
 import gg.projecteden.nexus.features.virtualinventories.models.inventories.VirtualInventoryType;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.InventoryUtils.BlockInventoryType;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -98,7 +98,7 @@ public class WorldGuardFlags implements Listener {
 				if (Nullables.isNullOrAir(itemStack))
 					return;
 
-				if (CustomModel.exists(itemStack))
+				if (Model.hasModel(itemStack))
 					itemFrame.setSilent(false);
 			}
 		}
@@ -111,13 +111,12 @@ public class WorldGuardFlags implements Listener {
 
 		if (WorldGuardFlagUtils.query(event.getEntity().getLocation(), CustomFlags.HANGING_BREAK) == State.DENY) {
 			event.setCancelled(true);
-
 		} else if (event.getEntity() instanceof ItemFrame itemFrame) {
 			ItemStack itemStack = itemFrame.getItem();
 			if (Nullables.isNullOrAir(itemStack))
 				return;
 
-			if (CustomModel.exists(itemStack)) {
+			if (Model.hasModel(itemStack)) {
 				itemFrame.setSilent(true);
 				event.setCancelled(true);
 			}

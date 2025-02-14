@@ -150,10 +150,6 @@ public class CustomModel implements Comparable<CustomModel> {
 		return model == null ? null : model.getItem();
 	}
 
-	public static boolean exists(ItemStack item) {
-		return item.getItemMeta().hasCustomModelData();
-	}
-
 	public static CustomModel of(ItemStack item) {
 		if (Nullables.isNullOrAir(item))
 			return null;

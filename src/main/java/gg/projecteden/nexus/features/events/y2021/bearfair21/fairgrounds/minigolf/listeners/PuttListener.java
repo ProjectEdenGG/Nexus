@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigol
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21User;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.GlowUtils;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
@@ -171,7 +172,7 @@ public class PuttListener implements Listener {
 					}
 				}
 			}
-		} else if (item.getType().equals(Material.SNOWBALL) && item.getItemMeta().hasCustomModelData()) {
+		} else if (item.getType().equals(Material.SNOWBALL) && Model.hasModel(item)) {
 			// Is player placing golf ball?
 			if (action == Action.RIGHT_CLICK_BLOCK) {
 				user.debug("PuttListener > Placing golf ball...");
