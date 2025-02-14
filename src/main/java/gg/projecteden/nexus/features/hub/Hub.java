@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.hub;
 
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.resourcepack.commands.ImageStandCommand.ImageStandInteractEvent;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.features.Feature;
@@ -53,26 +54,31 @@ public class Hub extends Feature implements Listener {
 
 	@EventHandler
 	public void on(ImageStandInteractEvent event) {
-		if (PlayerUtils.isWGEdit(event.getPlayer()))
-			return;
+		String PREFIX = StringUtils.getPrefix("SocialMedia");
+		try {
+			if (PlayerUtils.isWGEdit(event.getPlayer()))
+				return;
 
-		String id = event.getImageStand().getId();
-		if (!id.startsWith(baseRegion + "_"))
-			return;
+			String id = event.getImageStand().getId();
+			if (!id.startsWith(baseRegion + "_"))
+				return;
 
-		final String[] split = id.replaceFirst("hub_", "").split("_");
-		id = split[0];
+			final String[] split = id.replaceFirst("hub_", "").split("_");
+			id = split[0];
 
-		final Player player = event.getPlayer();
-		switch (id) {
-			case "minigames", "creative" -> WarpType.NORMAL.get(id).teleportAsync(player);
-			case "oneblock" -> PlayerUtils.runCommand(player, "ob");
-			case "survival" -> PlayerUtils.runCommand(player, "rtp");
-			case "socialmedia" -> {
-				final EdenSocialMediaSite site = EdenSocialMediaSite.valueOf(split[1].toUpperCase());
-				final String message = "&f" + site.getConfig().getEmoji() + " " + site.getName() + " &7- " + site.getUrl();
-				PlayerUtils.send(player, new JsonBuilder(StringUtils.getPrefix("SocialMedia") + message).url(site.getUrl()));
+			final Player player = event.getPlayer();
+			switch (id) {
+				case "minigames", "creative" -> WarpType.NORMAL.get(id).teleportAsync(player);
+				case "oneblock" -> PlayerUtils.runCommand(player, "ob");
+				case "survival" -> PlayerUtils.runCommand(player, "rtp");
+				case "socialmedia" -> {
+					final EdenSocialMediaSite site = EdenSocialMediaSite.valueOf(split[1].toUpperCase());
+					final String message = "&f" + site.getConfig().getEmoji() + " " + site.getName() + " &7- " + site.getUrl();
+					PlayerUtils.send(player, new JsonBuilder(PREFIX + message).url(site.getUrl()));
+				}
 			}
+		} catch (Exception ex) {
+			MenuUtils.handleException(event.getPlayer(), PREFIX, ex);
 		}
 	}
 
