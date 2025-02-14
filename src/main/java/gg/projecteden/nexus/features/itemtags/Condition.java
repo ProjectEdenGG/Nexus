@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.itemtags;
 
-import de.tr7zw.nbtapi.NBTItem;
+import de.tr7zw.nbtapi.NBT;
+import de.tr7zw.nbtapi.iface.ReadWriteItemNBT;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -16,6 +17,7 @@ import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Consumer;
 
 @AllArgsConstructor
 public enum Condition implements ITag {
@@ -78,9 +80,9 @@ public enum Condition implements ITag {
 		return null;
 	}
 
-	public static void setNBT(NBTItem nbtItem, Condition condition) {
-		nbtItem.setString(NBT_KEY, condition.name());
-		ItemTagsUtils.updateCondition(nbtItem.getItem(), condition);
+	public static void setNBT(ItemStack nbtItem, Condition condition) {
+		NBT.modify(nbtItem, (Consumer<ReadWriteItemNBT>) nbt -> nbt.setString(NBT_KEY, condition.name()));
+		ItemTagsUtils.updateCondition(nbtItem, condition);
 	}
 
 	public static ItemStack setDurability(ItemStack item, Condition condition) {

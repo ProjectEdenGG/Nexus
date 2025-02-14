@@ -963,13 +963,13 @@ public enum DecorationType {
 	PIZZA_BOX_STACK(new FloorThing(false, "Pizza Box Stack", CustomMaterial.FOOD_PIZZA_BOX_STACK)),
 
 	@TypeConfig(money = 30, tokens = 3, tabs = Tab.FOOD)
-	SOUP_MUSHROOM(new FloorThing(false, "Mushroom Soup", CustomMaterial.FOOD_SOUP_MUSHROOM)),
+	SOUP_MUSHROOM(new FloorThing(false, "Mushroom Soup", CustomMaterial.FOOD_MUSHROOM_STEW)),
 
 	@TypeConfig(money = 30, tokens = 3, tabs = Tab.FOOD)
-	SOUP_BEETROOT(new FloorThing(false, "Beetroot Soup", CustomMaterial.FOOD_SOUP_BEETROOT)),
+	SOUP_BEETROOT(new FloorThing(false, "Beetroot Soup", CustomMaterial.FOOD_BEETROOT_STEW)),
 
 	@TypeConfig(money = 30, tokens = 3, tabs = Tab.FOOD)
-	SOUP_RABBIT(new FloorThing(false, "Rabbit Soup", CustomMaterial.FOOD_SOUP_RABBIT)),
+	SOUP_RABBIT(new FloorThing(false, "Rabbit Soup", CustomMaterial.FOOD_RABBIT_STEW)),
 
 	@TypeConfig(money = 30, tokens = 3, tabs = Tab.FOOD)
 	BREAD_LOAF(new FloorThing(false, "Loaf of Bread", CustomMaterial.FOOD_BREAD_LOAF)),

@@ -375,4 +375,16 @@ public class ItemBuilderCommand extends CustomCommand {
 		item.soulbound();
 	}
 
+	@Path("customModelData <int>")
+	@Description("Set the Custom Model Data")
+	void customModelData(int data) {
+		item.customModelData(data);
+	}
+
+	@Path("maxStackSize <int>")
+	@Description("Set the max stack size")
+	void maxStackSize(int size) {
+		item.maxStackSize(size);
+	}
+
 }

@@ -105,7 +105,7 @@ public class Checkers extends TeamMechanic {
 
 	@Override
 	public void onStart(@NotNull MatchStartEvent event) {
-		placePieces(event.getMatch());
+		placePieces(event.getMatch(), true);
 
 		event.getMatch().getArena().getTeams().forEach(team -> {
 			event.getMatch().setScore(team, 12);
@@ -151,11 +151,11 @@ public class Checkers extends TeamMechanic {
 			.orElseThrow(() -> new MinigameException("Could not find opposite team of " + team.getName() + " in " + getName()));
 	}
 
-	private void placePieces(Match match) {
+	private void placePieces(Match match, boolean forGame) {
 		CheckersMatchData matchData = match.getMatchData();
 
 		BlockVector3 vector3 = match.getArena().getRegion("board").getMinimumPoint();
-		matchData.setZeroLoc(new Location(Minigames.getWorld(), vector3.getX(), vector3.getY(), vector3.getZ()));
+		matchData.setZeroLoc(new Location(Minigames.getWorld(), vector3.x(), vector3.y(), vector3.z()));
 		matchData.getZeroLoc().setYaw(0);
 
 		match.worldguard().getEntitiesInRegion(match.getArena().getProtectedRegion("board")).forEach(entity -> {
@@ -167,12 +167,12 @@ public class Checkers extends TeamMechanic {
 			for (int col = 0; col < matchData.getBoard()[row].length; col++)
 				if (col % 2 == ((row + 1) % 2))
 					if (row < 3)
-						spawnPiece(new CheckersPiece(1, row, col, match));
+						spawnPiece(new CheckersPiece(1, row, col, match), forGame);
 					else if (row > 4)
-						spawnPiece(new CheckersPiece(2, row, col, match));
+						spawnPiece(new CheckersPiece(2, row, col, match), forGame);
 	}
 
-	private void spawnPiece(CheckersPiece piece) {
+	private void spawnPiece(CheckersPiece piece, boolean forGame) {
 		CheckersMatchData matchData = piece.getMatch().getMatchData();
 
 		Location location = getPieceLocation(piece.getRow(), piece.getColumn(), piece.getMatch());
@@ -189,7 +189,8 @@ public class Checkers extends TeamMechanic {
 				armorStand.addEquipmentLock(slot, ArmorStand.LockType.REMOVING_OR_CHANGING);
 			}
 
-			CheckersFragment.get(armorStand).setPiece(piece);
+			if (forGame)
+				CheckersFragment.get(armorStand).setPiece(piece);
 		}));
 		matchData.getBoard()[piece.getRow()][piece.getColumn()] = piece;
 	}
@@ -211,7 +212,7 @@ public class Checkers extends TeamMechanic {
 				}
 			}
 		}
-		placePieces(event.getMatch());
+		placePieces(event.getMatch(), false);
 	}
 
 	public void sendActionBars(Match match) {

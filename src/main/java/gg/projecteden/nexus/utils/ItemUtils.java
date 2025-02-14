@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.utils;
 
-import de.tr7zw.nbtapi.NBTItem;
+import de.tr7zw.nbtapi.iface.ReadWriteItemNBT;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
@@ -798,8 +798,8 @@ public class ItemUtils {
 	@NoArgsConstructor
 	public static abstract class NBTDataType<T> {
 
-		private BiFunction<NBTItem, String, T> getter;
-		private TriConsumer<NBTItem, String, T> setter;
+		private BiFunction<ReadWriteItemNBT, String, T> getter;
+		private TriConsumer<ReadWriteItemNBT, String, T> setter;
 		private Function<String, T> converter;
 
 		@Getter
@@ -823,55 +823,55 @@ public class ItemUtils {
 
 		public static class StringType extends NBTDataType<String> {
 			public StringType() {
-				super(NBTItem::getString, NBTItem::setString, String::valueOf);
+				super(ReadWriteItemNBT::getString, ReadWriteItemNBT::setString, String::valueOf);
 			}
 		}
 
 		public static class UuidType extends NBTDataType<UUID> {
 			public UuidType() {
-				super(NBTItem::getUUID, NBTItem::setUUID, java.util.UUID::fromString);
+				super(ReadWriteItemNBT::getUUID, ReadWriteItemNBT::setUUID, java.util.UUID::fromString);
 			}
 		}
 
 		public static class BooleanType extends NBTDataType<Boolean> {
 			public BooleanType() {
-				super(NBTItem::getBoolean, NBTItem::setBoolean, Boolean::valueOf);
+				super(ReadWriteItemNBT::getBoolean, ReadWriteItemNBT::setBoolean, Boolean::valueOf);
 			}
 		}
 
 		public static class ByteType extends NBTDataType<Byte> {
 			public ByteType() {
-				super(NBTItem::getByte, NBTItem::setByte, Byte::valueOf);
+				super(ReadWriteItemNBT::getByte, ReadWriteItemNBT::setByte, Byte::valueOf);
 			}
 		}
 
 		public static class ShortType extends NBTDataType<Short> {
 			public ShortType() {
-				super(NBTItem::getShort, NBTItem::setShort, Short::valueOf);
+				super(ReadWriteItemNBT::getShort, ReadWriteItemNBT::setShort, Short::valueOf);
 			}
 		}
 
 		public static class IntegerType extends NBTDataType<Integer> {
 			public IntegerType() {
-				super(NBTItem::getInteger, NBTItem::setInteger, Integer::valueOf);
+				super(ReadWriteItemNBT::getInteger, ReadWriteItemNBT::setInteger, Integer::valueOf);
 			}
 		}
 
 		public static class LongType extends NBTDataType<Long> {
 			public LongType() {
-				super(NBTItem::getLong, NBTItem::setLong, Long::valueOf);
+				super(ReadWriteItemNBT::getLong, ReadWriteItemNBT::setLong, Long::valueOf);
 			}
 		}
 
 		public static class FloatType extends NBTDataType<Float> {
 			public FloatType() {
-				super(NBTItem::getFloat, NBTItem::setFloat, Float::valueOf);
+				super(ReadWriteItemNBT::getFloat, ReadWriteItemNBT::setFloat, Float::valueOf);
 			}
 		}
 
 		public static class DoubleType extends NBTDataType<Double> {
 			public DoubleType() {
-				super(NBTItem::getDouble, NBTItem::setDouble, Double::valueOf);
+				super(ReadWriteItemNBT::getDouble, ReadWriteItemNBT::setDouble, Double::valueOf);
 			}
 		}
 
@@ -885,7 +885,7 @@ public class ItemUtils {
 
 		public static class IntArrayType extends NBTDataType<int[]> {
 			public IntArrayType() {
-				super(NBTItem::getIntArray, NBTItem::setIntArray, string -> Arrays.stream(string.split(",")).mapToInt(Integer::valueOf).toArray());
+				super(ReadWriteItemNBT::getIntArray, ReadWriteItemNBT::setIntArray, string -> Arrays.stream(string.split(",")).mapToInt(Integer::valueOf).toArray());
 			}
 		}
 	}

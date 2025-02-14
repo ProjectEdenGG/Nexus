@@ -3,7 +3,10 @@ package gg.projecteden.nexus.utils;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import com.google.common.collect.ImmutableSortedMap;
+import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.NBTItem;
+import de.tr7zw.nbtapi.iface.ReadWriteItemNBT;
+import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
@@ -395,6 +398,11 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return itemFlags(flags.get());
 	}
 
+	public ItemBuilder maxStackSize(int i) {
+		itemMeta.setMaxStackSize(i);
+		return this;
+	}
+
 	@AllArgsConstructor
 	public enum ItemFlags {
 		HIDE_ALL(itemFlag -> itemFlag.name().startsWith("HIDE_")),
@@ -764,11 +772,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	// NBT
 
-	public ItemBuilder nbt(Consumer<NBTItem> consumer) {
-		final NBTItem nbtItem = nbtItem(false);
-		consumer.accept(nbtItem);
-		itemStack = nbtItem.getItem();
-		itemMeta = itemStack.getItemMeta();
+	public ItemBuilder nbt(Consumer<ReadWriteItemNBT> consumer) {
+		ItemStack item = build();
+		NBT.modify(item, consumer);
+		itemMeta = item.getItemMeta();
 		return this;
 	}
 
@@ -791,7 +798,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder rarity(Rarity rarity) {
-		return nbt(nbtItem -> Rarity.setNBT(nbtItem, rarity));
+		return nbt(nbtItem -> Rarity.setNBT(build(), rarity));
 	}
 
 	public Condition condition() {
@@ -813,7 +820,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder condition(Condition condition) {
-		return nbt(nbtItem -> Condition.setNBT(nbtItem, condition));
+		return nbt(nbtItem -> Condition.setNBT(build(), condition));
 	}
 
 	@AllArgsConstructor
@@ -914,6 +921,13 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	public ItemBuilder customModelData(int id) {
 		if (id > 0)
 			itemMeta.setCustomModelData(id);
+		return this;
+	}
+
+	public ItemBuilder removeCustomModelData() {
+		ItemStack item = build();
+		NBT.modifyComponents(item, (Consumer<ReadWriteNBT>) nbt -> nbt.removeKey("minecraft:custom_model_data"));
+		itemMeta = item.getItemMeta();
 		return this;
 	}
 

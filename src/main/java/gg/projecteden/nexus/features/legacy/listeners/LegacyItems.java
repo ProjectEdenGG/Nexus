@@ -5,6 +5,7 @@ import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.features.legacy.LegacyCommand.LegacyVaultMenu.LegacyVaultHolder;
 import gg.projecteden.nexus.features.listeners.Beehives;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider.SmartInventoryHolder;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.vaults.VaultCommand.VaultMenu.VaultHolder;
@@ -41,6 +42,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -125,12 +127,13 @@ public class LegacyItems implements Listener {
 		if (builder.customModelData() == 0)
 			return item;
 
-		if (builder.material() == Material.LEATHER_HORSE_ARMOR && builder.customModelData() >= 2000 && builder.customModelData() < 3000)
-			return builder.number(builder.customModelData() - 2000).build();
-		if (builder.material() == Material.LEATHER_HORSE_ARMOR && builder.customModelData() == 4009)
-			item = builder.customModelData(4027).build(); // Straw hat was duped
-		if (builder.material() == Material.LEATHER_HORSE_ARMOR && builder.customModelData() == 4005)
-			item = builder.customModelData(4023).build(); // Mushroom hat was duped
+		item = manualConversions(item);
+		builder = new ItemBuilder(item);
+		if (Objects.equals(new ItemBuilder(item).model(), CustomMaterial.GUI_NUMBER.getModel()))
+			return item;
+
+		if (builder.customModelData() == 0)
+			return item;
 
 		CustomModel newModel;
 		try {
@@ -150,6 +153,26 @@ public class LegacyItems implements Listener {
 		if (location == null)
 			return converted.build();
 		return convertIfShulkerBox(location.getWorld(), item, converted);
+	}
+
+	private static ItemStack manualConversions(ItemStack item) {
+		ItemBuilder builder = new ItemBuilder(item);
+		if (builder.material() == Material.LEATHER_HORSE_ARMOR && builder.customModelData() >= 2000 && builder.customModelData() < 3000)
+			item = builder.number(builder.customModelData() - 2000).build();
+		if (builder.material() == Material.LEATHER_HORSE_ARMOR && builder.customModelData() == 4009)
+			item = builder.customModelData(4027).build(); // Straw hat was duped
+		if (builder.material() == Material.LEATHER_HORSE_ARMOR && builder.customModelData() == 4005)
+			item = builder.customModelData(4023).build(); // Mushroom hat was duped
+
+		// stews
+		if (builder.material() == Material.COOKIE && builder.customModelData() == 10000)
+			item = builder.material(Material.BEETROOT_SOUP).maxStackSize(64).removeCustomModelData().resetName().build();
+		if (builder.material() == Material.COOKIE && builder.customModelData() == 10001)
+			item = builder.material(Material.MUSHROOM_STEW).maxStackSize(64).removeCustomModelData().resetName().build();
+		if (builder.material() == Material.COOKIE && builder.customModelData() == 10002)
+			item = builder.material(Material.RABBIT_STEW).maxStackSize(64).removeCustomModelData().resetName().build();
+
+		return item;
 	}
 
 	private static ItemStack convertCrateKeys(ItemStack item) {

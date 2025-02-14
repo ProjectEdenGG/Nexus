@@ -29,7 +29,7 @@ public class WitherLeggings extends FunctionalRecipe {
 		.enchant(Enchant.PROTECTION, 4)
 		.enchant(Enchant.UNBREAKING, 4)
 		.name("&eWither Leggings")
-		.setLore(WitherHelmet.getLore())
+		.setLore(WitherArmorListener.getLore())
 		.rarity(Rarity.ARTIFACT)
 		.nbt(nbtItem -> nbtItem.setBoolean("wither-armor", true))
 		.build();

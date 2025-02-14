@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.itemtags;
 
+import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.NBTItem;
+import de.tr7zw.nbtapi.iface.ReadWriteItemNBT;
 import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
@@ -15,7 +17,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
 
 public enum Rarity implements ITag {
 	// @formatter:off
@@ -273,9 +281,9 @@ public enum Rarity implements ITag {
 		}
 	}
 
-	public static void setNBT(NBTItem nbtItem, Rarity rarity) {
-		nbtItem.setString(NBT_KEY, rarity.name());
-		ItemTagsUtils.updateRarity(nbtItem.getItem(), rarity);
+	public static void setNBT(ItemStack nbtItem, Rarity rarity) {
+		NBT.modify(nbtItem, (Consumer<ReadWriteItemNBT>) nbt -> nbt.setString(NBT_KEY, rarity.name()));
+		ItemTagsUtils.updateRarity(nbtItem, rarity);
 	}
 
 	public static final Set<String> ALL_TAGS;

@@ -113,6 +113,9 @@ public class CustomModelFolder implements Comparable<CustomModelFolder> {
 					return;
 				}
 
+				if (this.path.equals("/"))
+					return;
+
 				try {
 					Nexus.debug("Processing model file");
 					CustomModel model = Utils.getGson().fromJson(String.join("", Files.readAllLines(path)), CustomModel.class);

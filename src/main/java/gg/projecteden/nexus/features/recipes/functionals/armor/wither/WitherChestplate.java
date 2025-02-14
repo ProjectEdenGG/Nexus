@@ -27,7 +27,7 @@
 		.enchant(Enchant.PROTECTION, 4)
 		.enchant(Enchant.UNBREAKING, 4)
 		.name("&eWither Chestplate")
-		.setLore(WitherHelmet.getLore())
+		.setLore(WitherArmorListener.getLore())
 		.rarity(Rarity.ARTIFACT)
 		.attribute(Attribute.ARMOR, "wither-armor-points", 8, Operation.ADD_NUMBER, EquipmentSlot.CHEST)
 		.attribute(Attribute.ARMOR_TOUGHNESS, "wither-armor-toughness", 2, Operation.ADD_NUMBER, EquipmentSlot.CHEST)
