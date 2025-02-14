@@ -126,7 +126,7 @@ public class DecorationConfig {
 		if (!ItemBuilder.Model.hasModel(itemStack))
 			return null;
 
-		for (DecorationConfig decoration : ALL_DECOR_CONFIGS)
+		for (DecorationConfig decoration : new ArrayList<>(ALL_DECOR_CONFIGS))
 			if (decoration.isFuzzyMatch(itemStack))
 				return decoration;
 
@@ -134,7 +134,7 @@ public class DecorationConfig {
 	}
 
 	public static DecorationConfig of(String id) {
-		for (DecorationConfig config : ALL_DECOR_CONFIGS) {
+		for (DecorationConfig config : new ArrayList<>(ALL_DECOR_CONFIGS)) {
 			if (config.getId().equalsIgnoreCase(id))
 				return config;
 		}
