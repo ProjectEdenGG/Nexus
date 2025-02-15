@@ -254,11 +254,6 @@ public class EasterEggs implements Listener {
 			.burpSound(Sound.ENTITY_ALLAY_ITEM_THROWN)
 		),
 
-		BOFFO(new StaffEasterEggBuilder("b83bae78-83d6-43a0-9316-014a0a702ab2")
-			.food(Set.of(Material.STONE, Material.COBBLESTONE, Material.ANDESITE, Material.GRANITE, Material.DIORITE))
-			.burpSound(Sound.ENTITY_VILLAGER_YES)
-		),
-
 		KNACK(new StaffEasterEggBuilder("32fc75e3-a278-43c4-99a7-90af03846dad")
 			.food(Material.EGG)
 			.burpSound(Sound.ENTITY_CHICKEN_AMBIENT)
