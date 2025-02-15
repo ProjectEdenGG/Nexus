@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.dailyrewards;
 import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.ColorSelectMenu;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SignMenuFactory;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
@@ -16,7 +17,11 @@ import gg.projecteden.nexus.models.dailyreward.DailyRewardUserService;
 import gg.projecteden.nexus.models.dailyreward.Reward;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.voter.VoterService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.IOUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -27,6 +32,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static net.minecraft.util.StringUtil.isNullOrEmpty;
 
 @Title("&3Daily Rewards")
 @RequiredArgsConstructor
@@ -121,10 +128,22 @@ public class DailyRewardsMenu extends InventoryProvider {
 											player.closeInventory();
 										}).open(player);
 					} else if (Reward.RequiredSubmenu.NAME.contains(clone.getType())) {
-						Nexus.getSignMenuFactory().lines("", SignMenuFactory.ARROWS, "Enter a", "player's name").prefix(PREFIX).response(lines -> {
-							PlayerUtils.giveItem(player, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(lines[0]).amount(clone.getAmount()).build());
-							saveAndReturn(day);
-						}).open(player);
+						Nexus.getSignMenuFactory()
+							.lines("", SignMenuFactory.ARROWS, "Enter a", "player's name")
+							.prefix(PREFIX)
+							.response(lines -> {
+								if (isNullOrEmpty(lines[0]))
+									open(player, page);
+								else
+									ConfirmationMenu.builder()
+										.title("Claim " + lines[0] + "'s head?")
+										.onCancel(e -> open(player, page))
+										.onConfirm(e -> {
+											PlayerUtils.giveItem(player, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(lines[0]).amount(clone.getAmount()).build());
+											saveAndReturn(day);
+										})
+										.open(player);
+							}).open(player);
 					} else {
 						PlayerUtils.giveItem(player, clone);
 						saveAndReturn(day);
