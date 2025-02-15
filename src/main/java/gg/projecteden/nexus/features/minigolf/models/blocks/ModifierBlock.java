@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.minigolf.models.blocks;
 
-import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolf;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.BearFair21MiniGolf;
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallDeathEvent.DeathCause;
@@ -74,7 +74,7 @@ public abstract class ModifierBlock {
 				if (velocity.getY() < 0.1) {
 					golfBall.debug("ball is no longer bouncing");
 					velocity.setY(0);
-					snowball.teleportAsync(snowball.getLocation().add(0, MiniGolf.getFloorOffset(), 0));
+					snowball.teleportAsync(snowball.getLocation().add(0, BearFair21MiniGolf.getFloorOffset(), 0));
 					snowball.setGravity(false);
 				}
 			}

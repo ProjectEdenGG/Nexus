@@ -6,16 +6,16 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.features.events.models.Quest;
 import gg.projecteden.nexus.features.events.models.QuestStage;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.Interactables;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.Seeker;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland.RouterMenu;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland.ScrambledCablesMenu;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.TreasureChests;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.BearFair21Interactables;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.BearFair21Seeker;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.BearFair21MinigameNightIsland;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.BearFair21MinigameNightIsland.RouterMenu;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.BearFair21MinigameNightIsland.ScrambledCablesMenu;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.BearFair21TreasureChests;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.clientside.BearFair21ClientsideContentManager;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.Collector;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.JunkWeight;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21Collector;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.BearFair21FishingLoot.JunkWeight;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -86,20 +86,20 @@ public class BearFair21Command extends CustomCommand {
 	@Path("strengthTest")
 	void strengthTest() {
 		commandBlock();
-		Interactables.strengthTest();
+		BearFair21Interactables.strengthTest();
 	}
 
 	@Permission(Group.ADMIN)
 	@Path("seeker")
 	void seeker() {
 		send("Find the crimson button");
-		Seeker.addPlayer(player());
+		BearFair21Seeker.addPlayer(player());
 	}
 
 	@Path("toCollector")
 	@Permission(Group.ADMIN)
 	public void toCollector() {
-		player().teleportAsync(Collector.getCurrentLoc());
+		player().teleportAsync(BearFair21Collector.getCurrentLoc());
 	}
 
 	@Path("progress [player]")
@@ -147,7 +147,7 @@ public class BearFair21Command extends CustomCommand {
 		line();
 		send("&6&lTreasure Chests");
 		final int found = user.getTreasureChests().size();
-		final int total = TreasureChests.getLocations().size();
+		final int total = BearFair21TreasureChests.getLocations().size();
 		send("&f  " + (found == total ? "&a☑" : "&7☐") + " &3Found: " + ProgressBar.builder().progress(found).goal(total).summaryStyle(SummaryStyle.COUNT).length(40).build());
 
 		line();
@@ -173,7 +173,7 @@ public class BearFair21Command extends CustomCommand {
 	@Permission(Group.ADMIN)
 	public void moveCollector() {
 		commandBlock();
-		Collector.move();
+		BearFair21Collector.move();
 	}
 
 	@Path("yachtHorn")
@@ -326,7 +326,7 @@ public class BearFair21Command extends CustomCommand {
 	@Permission(Group.ADMIN)
 	@Path("mgn solder reset")
 	void solderReset() {
-		MinigameNightIsland.setActiveSolder(false);
+		BearFair21MinigameNightIsland.setActiveSolder(false);
 		send("Solder reset");
 	}
 
@@ -337,7 +337,7 @@ public class BearFair21Command extends CustomCommand {
 		BearFair21User user = userService.get(uuid());
 		if (category == null) {
 			for (ContentCategory _category : ContentCategory.values()) {
-				ClientsideContentManager.removeCategory(user, _category);
+				BearFair21ClientsideContentManager.removeCategory(user, _category);
 			}
 
 			userService.save(user);
@@ -346,7 +346,7 @@ public class BearFair21Command extends CustomCommand {
 			return;
 		}
 
-		ClientsideContentManager.removeCategory(user, category);
+		BearFair21ClientsideContentManager.removeCategory(user, category);
 		userService.save(user);
 		send("removed " + category + " Content Category");
 	}
@@ -363,7 +363,7 @@ public class BearFair21Command extends CustomCommand {
 
 		send(player.getName() + " visible categories: " + Arrays.toString(user.getContentCategories().toArray()));
 
-		ClientsideContentManager.sendSpawnContent(player, contentService.getList(category));
+		BearFair21ClientsideContentManager.sendSpawnContent(player, contentService.getList(category));
 	}
 
 	@Confirm

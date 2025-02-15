@@ -6,7 +6,7 @@ import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.api.common.utils.Utils.MinMaxResult;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.PathfinderHelper;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.BearFair21PathfinderHelper;
 import gg.projecteden.nexus.features.particles.effects.LineEffect;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
@@ -99,15 +99,15 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 
 	@Path("entity select")
 	public void entitySelect() {
-		PathfinderHelper.setSelectedEntity(player().getTargetEntity(10, true));
-		send("Selected entity: " + PathfinderHelper.getSelectedEntity().getType());
+		BearFair21PathfinderHelper.setSelectedEntity(player().getTargetEntity(10, true));
+		send("Selected entity: " + BearFair21PathfinderHelper.getSelectedEntity().getType());
 	}
 
 	@Path("entity next")
 	public void entityNext() {
 		Node random = RandomUtils.randomElement(getWeb().getNodes());
 		Location location = random.getPathLocation();
-		Mob mob = (Mob) PathfinderHelper.getSelectedEntity();
+		Mob mob = (Mob) BearFair21PathfinderHelper.getSelectedEntity();
 		Pathfinder pathfinder = mob.getPathfinder();
 		pathfinder.moveTo(random.getPathLocation());
 		send("pathfinding to: " + StringUtils.getShortLocationString(random.getPathLocation()));
@@ -117,7 +117,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 
 	@Path("entity stop")
 	public void entityReset() {
-		Mob mob = (Mob) PathfinderHelper.getSelectedEntity();
+		Mob mob = (Mob) BearFair21PathfinderHelper.getSelectedEntity();
 		Pathfinder pathfinder = mob.getPathfinder();
 		pathfinder.stopPathfinding();
 		send("stopped entity pathfinding");
@@ -126,7 +126,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 	@Path("random")
 	public void random() {
 		Web web = getWeb();
-		Node startNode = web.getNodeByLocation(PathfinderHelper.getSelectedLoc());
+		Node startNode = web.getNodeByLocation(BearFair21PathfinderHelper.getSelectedLoc());
 		if (startNode == null)
 			error("selected node is null");
 
@@ -243,7 +243,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 			return;
 		}
 
-		Node selectedNode = web.getNodeByLocation(PathfinderHelper.getSelectedLoc());
+		Node selectedNode = web.getNodeByLocation(BearFair21PathfinderHelper.getSelectedLoc());
 
 		Location currentLoc = event.getBlock().getRelative(BlockFace.DOWN).getLocation();
 		Node currentNode = web.getNodeByLocation(currentLoc);
@@ -253,7 +253,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 		}
 
 		if (type.equals(Material.LIME_CONCRETE_POWDER) && selectedNode == null) {
-			PathfinderHelper.setSelectedLoc(currentNode.getLocation());
+			BearFair21PathfinderHelper.setSelectedLoc(currentNode.getLocation());
 			send(player, "&aSelected node at " + StringUtils.getShortLocationString(currentLoc));
 
 		} else if (type.equals(Material.PURPLE_CONCRETE_POWDER) && selectedNode != null) {
@@ -270,7 +270,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 				Block block = neighbor.getLocation().getBlock().getRelative(BlockFace.UP);
 				block.setType(Material.LIGHT_GRAY_CONCRETE_POWDER);
 
-				PathfinderHelper.getLineTasks().add(LineEffect.builder()
+				BearFair21PathfinderHelper.getLineTasks().add(LineEffect.builder()
 					.owner(new ParticleService().get(player))
 					.entity(player)
 					.startLoc(LocationUtils.getCenteredLocation(currentLoc.clone().add(0, 1, 0)))
@@ -329,13 +329,13 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 			for (Node neighbor : web.getNeighborNodes(currentNode))
 				neighbor.getLocation().getBlock().getRelative(BlockFace.UP).setType(Material.AIR);
 
-			for (Integer taskId : PathfinderHelper.getLineTasks())
+			for (Integer taskId : BearFair21PathfinderHelper.getLineTasks())
 				Tasks.cancel(taskId);
 
 			return;
 		}
 
-		Node selectedNode = web.getNodeByLocation(PathfinderHelper.getSelectedLoc());
+		Node selectedNode = web.getNodeByLocation(BearFair21PathfinderHelper.getSelectedLoc());
 		if (selectedNode == null) {
 			send(player, "&cYou don't have a node selected");
 			return;
@@ -343,7 +343,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 
 		if (Material.LIME_CONCRETE_POWDER.equals(type)) {
 			send(player, "&2Unselected node at " + StringUtils.getShortLocationString(selectedNode.getLocation()));
-			PathfinderHelper.setSelectedLoc(null);
+			BearFair21PathfinderHelper.setSelectedLoc(null);
 
 		} else if (Material.PURPLE_CONCRETE_POWDER.equals(type)) {
 			send(player, "&5Removed nodes as neighbors");

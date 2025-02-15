@@ -6,7 +6,7 @@ import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.Quests;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21Quests;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.BearFair21Renderer;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -122,7 +122,7 @@ public class BearFair21MapCommand extends CustomCommand implements Listener {
 
 		ItemStack item = getMap(player);
 		setupMap(player, item);
-		Quests.giveItem(player, item);
+		BearFair21Quests.giveItem(player, item);
 	}
 
 	private static ItemStack getMap(Player player) {
