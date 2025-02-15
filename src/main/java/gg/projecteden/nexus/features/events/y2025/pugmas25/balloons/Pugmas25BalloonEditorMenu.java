@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -13,11 +13,11 @@ import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
 
 @Rows(3)
 public class Pugmas25BalloonEditorMenu extends InventoryProvider {
-	private static final ItemBuilder PASTE_SCHEM = new ItemBuilder(CustomMaterial.GUI_ROTATE_LEFT).name("Reset").dyeColor(ColorType.LIGHT_RED).itemFlags(ItemFlags.HIDE_ALL);
-	private static final ItemBuilder TEMPLATE_NEXT = new ItemBuilder(CustomMaterial.GUI_ARROW_RIGHT).name("Next Template").dyeColor(ColorType.CYAN).itemFlags(ItemFlags.HIDE_ALL);
-	private static final ItemBuilder TEMPLATE_PREVIOUS = new ItemBuilder(CustomMaterial.GUI_ARROW_LEFT).name("Previous Template").dyeColor(ColorType.CYAN).itemFlags(ItemFlags.HIDE_ALL);
-	private static final ItemBuilder EDITOR_EXIT = new ItemBuilder(CustomMaterial.GUI_TRASHCAN).name("Exit").lore("&c(Doesn't save your progress)").dyeColor(ColorType.RED).itemFlags(ItemFlags.HIDE_ALL);
-	private static final ItemBuilder EDITOR_SAVE = new ItemBuilder(CustomMaterial.GUI_CHECK).name("Save").dyeColor(ColorType.LIGHT_GREEN).itemFlags(ItemFlags.HIDE_ALL);
+	private static final ItemBuilder PASTE_SCHEM = new ItemBuilder(ItemModelType.GUI_ROTATE_LEFT).name("Reset").dyeColor(ColorType.LIGHT_RED).itemFlags(ItemFlags.HIDE_ALL);
+	private static final ItemBuilder TEMPLATE_NEXT = new ItemBuilder(ItemModelType.GUI_ARROW_RIGHT).name("Next Template").dyeColor(ColorType.CYAN).itemFlags(ItemFlags.HIDE_ALL);
+	private static final ItemBuilder TEMPLATE_PREVIOUS = new ItemBuilder(ItemModelType.GUI_ARROW_LEFT).name("Previous Template").dyeColor(ColorType.CYAN).itemFlags(ItemFlags.HIDE_ALL);
+	private static final ItemBuilder EDITOR_EXIT = new ItemBuilder(ItemModelType.GUI_TRASHCAN).name("Exit").lore("&c(Doesn't save your progress)").dyeColor(ColorType.RED).itemFlags(ItemFlags.HIDE_ALL);
+	private static final ItemBuilder EDITOR_SAVE = new ItemBuilder(ItemModelType.GUI_CHECK).name("Save").dyeColor(ColorType.LIGHT_GREEN).itemFlags(ItemFlags.HIDE_ALL);
 	private static final String cooldownKeyButton = "pugmas25_balloon_editor-template_paste";
 
 	private static final int row = 1;

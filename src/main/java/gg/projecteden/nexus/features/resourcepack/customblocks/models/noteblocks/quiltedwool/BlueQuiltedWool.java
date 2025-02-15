@@ -1,13 +1,13 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.quiltedwool;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
 import org.bukkit.Instrument;
 
 @CustomBlockConfig(
 	name = "Blue Quilted Wool",
-	material = CustomMaterial.QUILTED_WOOL_BLUE
+	itemModel = ItemModelType.QUILTED_WOOL_BLUE
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.COW_BELL,

@@ -10,7 +10,7 @@ import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand;
 import gg.projecteden.nexus.features.listeners.common.TemporaryListener;
 import gg.projecteden.nexus.features.particles.effects.CircleEffect;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.crate.CrateConfig;
 import gg.projecteden.nexus.models.crate.CrateType;
@@ -59,10 +59,10 @@ public class CratePinatas implements Listener {
 
 	private static final String NBT_KEY = "CRATE_TYPE";
 
-	private static final ItemBuilder PINATA_ITEM = new ItemBuilder(CustomMaterial.PINATA_LLAMA)
+	private static final ItemBuilder PINATA_ITEM = new ItemBuilder(ItemModelType.PINATA_LLAMA)
 		.name("&3Crate Pinata").lore("&eRight click to activate!");
 
-	private static final CustomMaterial[] PINATAS = { CustomMaterial.PINATA_LLAMA, };
+	private static final ItemModelType[] PINATAS = { ItemModelType.PINATA_LLAMA, };
 
 	private static final String[] SONGS = { "Abba - Dancing Queen", "Village People - YMCA", "Toto - Africa", "Smash Mouth - All Star", "Luis Fonsi - Despacito", "Daft Punk - Get Lucky",
 		"Train - Hey Soul Sister", "LMFAO - Party Rock Anthem", "OMFG - Hello", "2 Unlimited - Get Ready for This", "Yifo123 - Oriental Disco Bathtub", "A-ha - Take On Me",

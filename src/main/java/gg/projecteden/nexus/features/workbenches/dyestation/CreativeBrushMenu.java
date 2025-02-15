@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationTagType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.ChoiceType;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.DyeChoice;
@@ -32,7 +32,7 @@ public class CreativeBrushMenu extends InventoryProvider implements IDyeMenu {
 	private int dyePage = 0;
 	private ItemStack paintbrush;
 
-	private static final ItemBuilder CREATIVE_BRUSH = new ItemBuilder(CustomMaterial.CREATIVE_PAINTBRUSH)
+	private static final ItemBuilder CREATIVE_BRUSH = new ItemBuilder(ItemModelType.CREATIVE_PAINTBRUSH)
 		.name("&eMaster Brush")
 		.lore("")
 		.lore("&3How to use:")

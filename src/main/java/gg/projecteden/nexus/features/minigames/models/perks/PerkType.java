@@ -22,7 +22,7 @@ import gg.projecteden.nexus.features.minigames.perks.particles.HeartParticle;
 import gg.projecteden.nexus.features.minigames.perks.particles.SoulFlameParticle;
 import gg.projecteden.nexus.features.minigames.perks.particles.SplashParticle;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Flag.PrideFlagType;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -43,11 +43,11 @@ public enum PerkType implements IHasPerkCategory, Named {
 	BASIC_TRAIL(new BasicTrail()),
 	SKELETON_SKULL(new HatMaterialImpl(Material.SKELETON_SKULL, 10, "Snipe your foes with the incredible prowess of a skeleton")),
 	CREEPER_SKULL(new HatMaterialImpl(Material.CREEPER_HEAD, 10, "A disguise so scary your enemies will be saying \"aww man!\"")),
-	BICORN_HAT(DyeableCustomModelHat.createPirateHat("Bicorn", CustomMaterial.COSTUMES_PIRATE_HAT_BICORN.getModel())),
-	BICORN_SIDE_HAT(DyeableCustomModelHat.createPirateHat("Bicorn Side", CustomMaterial.COSTUMES_PIRATE_HAT_BICORN_SIDE.getModel())),
-	CAVALIER_HAT(DyeableCustomModelHat.createPirateHat("Cavalier", CustomMaterial.COSTUMES_PIRATE_HAT_CAVALIER.getModel())),
-	TRICORN_HAT(DyeableCustomModelHat.createPirateHat("Tricorn", CustomMaterial.COSTUMES_PIRATE_HAT_TRICORN.getModel())),
-	MARKSMANS_HAT(new CustomModelHat(CustomMaterial.COSTUMES_PIRATE_HAT_LEATHER_CAVALIER, "Marksman's Hat", 20, "Shoot your targets with uncanny accuracy with this hat")),
+	BICORN_HAT(DyeableCustomModelHat.createPirateHat("Bicorn", ItemModelType.COSTUMES_PIRATE_HAT_BICORN.getModel())),
+	BICORN_SIDE_HAT(DyeableCustomModelHat.createPirateHat("Bicorn Side", ItemModelType.COSTUMES_PIRATE_HAT_BICORN_SIDE.getModel())),
+	CAVALIER_HAT(DyeableCustomModelHat.createPirateHat("Cavalier", ItemModelType.COSTUMES_PIRATE_HAT_CAVALIER.getModel())),
+	TRICORN_HAT(DyeableCustomModelHat.createPirateHat("Tricorn", ItemModelType.COSTUMES_PIRATE_HAT_TRICORN.getModel())),
+	MARKSMANS_HAT(new CustomModelHat(ItemModelType.COSTUMES_PIRATE_HAT_LEATHER_CAVALIER, "Marksman's Hat", 20, "Shoot your targets with uncanny accuracy with this hat")),
 	GREEN_TRAIL(new GreenTrail()),
 	RAINBOW_TRAIL(new RainbowTrail()),
 	FLAME_TRAIL(new FlameTrail()),
@@ -81,7 +81,7 @@ public enum PerkType implements IHasPerkCategory, Named {
 	SNOWBALLS(new SnowballGadget()),
 	SPRING(new SpringGadget()),
 	DYE_BOMB(new DyeBombGadget()),
-	TRAFFIC_CONE(new CustomModelHat(CustomMaterial.LEGACY_TRAFFIC_CONE, "Traffic Cone", 25, "Warn others of ongoing construction with this flashy hat")),
+	TRAFFIC_CONE(new CustomModelHat(ItemModelType.LEGACY_TRAFFIC_CONE, "Traffic Cone", 25, "Warn others of ongoing construction with this flashy hat")),
 	ACE_FLAG(new FlagHat(PrideFlagType.ACE)),
 	AGENDER_FLAG(new FlagHat(PrideFlagType.AGENDER)),
 	ARO_FLAG(new FlagHat(PrideFlagType.ARO)),

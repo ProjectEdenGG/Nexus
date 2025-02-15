@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.socialmedia;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomEmoji;
 import gg.projecteden.nexus.features.socialmedia.integrations.Twitch;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
@@ -60,20 +60,20 @@ public class SocialMedia implements Listener {
 	}
 
 	public enum SocialMediaSite {
-		TWITTER("Twitter", CustomMaterial.GUI_SOCIAL_MEDIA_TWITTER, ChatColor.of("#1da1f2"), CustomEmoji.SOCIAL_MEDIA_TWITTER, "https://twitter.com", "https://twitter.com/%s"),
-		INSTAGRAM("Instagram", CustomMaterial.GUI_SOCIAL_MEDIA_INSTAGRAM, ChatColor.of("#e1306c"), CustomEmoji.SOCIAL_MEDIA_INSTAGRAM, "https://instgram.com", "https://instgram.com/%s"),
-		SNAPCHAT("Snapchat", CustomMaterial.GUI_SOCIAL_MEDIA_SNAPCHAT, ChatColor.of("#fffc00"), CustomEmoji.SOCIAL_MEDIA_SNAPCHAT, "https://snapchat.com", "https://snapchat.com/add/%s"),
-		YOUTUBE("YouTube", CustomMaterial.GUI_SOCIAL_MEDIA_YOUTUBE, ChatColor.of("#ff0000"), CustomEmoji.SOCIAL_MEDIA_YOUTUBE, "https://youtube.com", "https://youtube.com/@%s"),
-		TWITCH("Twitch", CustomMaterial.GUI_SOCIAL_MEDIA_TWITCH, ChatColor.of("#6441a5"), CustomEmoji.SOCIAL_MEDIA_TWITCH, "https://twitch.tv", "https://twitch.tv/%s"),
-		TIKTOK("TikTok", CustomMaterial.GUI_SOCIAL_MEDIA_TIKTOK, ChatColor.of("#7f7f7f"), CustomEmoji.SOCIAL_MEDIA_TIKTOK, "https://tiktok.com", "https://tiktok.com/@%s"),
-		DISCORD("Discord", CustomMaterial.GUI_SOCIAL_MEDIA_DISCORD, ChatColor.of("#5865F2"), CustomEmoji.SOCIAL_MEDIA_DISCORD, "https://discord.com", "%s"),
-		STEAM("Steam", CustomMaterial.GUI_SOCIAL_MEDIA_STEAM, ChatColor.of("#00adee"), CustomEmoji.SOCIAL_MEDIA_STEAM, "https://store.steampowered.com", "https://steamcommunity.com/profiles/%s"),
-		SPOTIFY("Spotify", CustomMaterial.GUI_SOCIAL_MEDIA_SPOTIFY, ChatColor.of("#1ed760"), CustomEmoji.SOCIAL_MEDIA_SPOTIFY, "https://spotify.com", "https://open.spotify.com/user/%s"),
-		QUEUP("QueUp", CustomMaterial.GUI_SOCIAL_MEDIA_QUEUP, ChatColor.of("#d42f8a"), CustomEmoji.SOCIAL_MEDIA_QUEUP, "https://queup.net", "https://queup.net/user/%s"),
-		REDDIT("Reddit", CustomMaterial.GUI_SOCIAL_MEDIA_REDDIT, ChatColor.of("#ff5700"), CustomEmoji.SOCIAL_MEDIA_REDDIT, "https://reddit.com", "https://reddit.com/u/%s"),
-		GITHUB("GitHub", CustomMaterial.GUI_SOCIAL_MEDIA_GITHUB, ChatColor.of("#777777"), CustomEmoji.SOCIAL_MEDIA_GITHUB, "https://github.com", "https://github.com/%s"),
-		VENMO("Venmo", CustomMaterial.NULL, ChatColor.of("#008CFF"), CustomEmoji.SOCIAL_MEDIA_VENMO, "https://venmo.com", "https://account.venmo.com/u/%s"),
-		PAYPAL("PayPal", CustomMaterial.NULL, ChatColor.of("#498ebe"), CustomEmoji.SOCIAL_MEDIA_PAYPAL, "https://paypal.com", "https://paypal.me/%s"),
+		TWITTER("Twitter", ItemModelType.GUI_SOCIAL_MEDIA_TWITTER, ChatColor.of("#1da1f2"), CustomEmoji.SOCIAL_MEDIA_TWITTER, "https://twitter.com", "https://twitter.com/%s"),
+		INSTAGRAM("Instagram", ItemModelType.GUI_SOCIAL_MEDIA_INSTAGRAM, ChatColor.of("#e1306c"), CustomEmoji.SOCIAL_MEDIA_INSTAGRAM, "https://instgram.com", "https://instgram.com/%s"),
+		SNAPCHAT("Snapchat", ItemModelType.GUI_SOCIAL_MEDIA_SNAPCHAT, ChatColor.of("#fffc00"), CustomEmoji.SOCIAL_MEDIA_SNAPCHAT, "https://snapchat.com", "https://snapchat.com/add/%s"),
+		YOUTUBE("YouTube", ItemModelType.GUI_SOCIAL_MEDIA_YOUTUBE, ChatColor.of("#ff0000"), CustomEmoji.SOCIAL_MEDIA_YOUTUBE, "https://youtube.com", "https://youtube.com/@%s"),
+		TWITCH("Twitch", ItemModelType.GUI_SOCIAL_MEDIA_TWITCH, ChatColor.of("#6441a5"), CustomEmoji.SOCIAL_MEDIA_TWITCH, "https://twitch.tv", "https://twitch.tv/%s"),
+		TIKTOK("TikTok", ItemModelType.GUI_SOCIAL_MEDIA_TIKTOK, ChatColor.of("#7f7f7f"), CustomEmoji.SOCIAL_MEDIA_TIKTOK, "https://tiktok.com", "https://tiktok.com/@%s"),
+		DISCORD("Discord", ItemModelType.GUI_SOCIAL_MEDIA_DISCORD, ChatColor.of("#5865F2"), CustomEmoji.SOCIAL_MEDIA_DISCORD, "https://discord.com", "%s"),
+		STEAM("Steam", ItemModelType.GUI_SOCIAL_MEDIA_STEAM, ChatColor.of("#00adee"), CustomEmoji.SOCIAL_MEDIA_STEAM, "https://store.steampowered.com", "https://steamcommunity.com/profiles/%s"),
+		SPOTIFY("Spotify", ItemModelType.GUI_SOCIAL_MEDIA_SPOTIFY, ChatColor.of("#1ed760"), CustomEmoji.SOCIAL_MEDIA_SPOTIFY, "https://spotify.com", "https://open.spotify.com/user/%s"),
+		QUEUP("QueUp", ItemModelType.GUI_SOCIAL_MEDIA_QUEUP, ChatColor.of("#d42f8a"), CustomEmoji.SOCIAL_MEDIA_QUEUP, "https://queup.net", "https://queup.net/user/%s"),
+		REDDIT("Reddit", ItemModelType.GUI_SOCIAL_MEDIA_REDDIT, ChatColor.of("#ff5700"), CustomEmoji.SOCIAL_MEDIA_REDDIT, "https://reddit.com", "https://reddit.com/u/%s"),
+		GITHUB("GitHub", ItemModelType.GUI_SOCIAL_MEDIA_GITHUB, ChatColor.of("#777777"), CustomEmoji.SOCIAL_MEDIA_GITHUB, "https://github.com", "https://github.com/%s"),
+		VENMO("Venmo", ItemModelType.NULL, ChatColor.of("#008CFF"), CustomEmoji.SOCIAL_MEDIA_VENMO, "https://venmo.com", "https://account.venmo.com/u/%s"),
+		PAYPAL("PayPal", ItemModelType.NULL, ChatColor.of("#498ebe"), CustomEmoji.SOCIAL_MEDIA_PAYPAL, "https://paypal.com", "https://paypal.me/%s"),
 		// XBOX
 		// PLAYSTATION
 		// BATTLE.NET
@@ -82,7 +82,7 @@ public class SocialMedia implements Listener {
 		@Getter
 		private final String name;
 		@Getter
-		private final CustomMaterial model;
+		private final ItemModelType model;
 		@Getter
 		private final ChatColor color;
 		@Getter
@@ -92,7 +92,7 @@ public class SocialMedia implements Listener {
 		@Getter
 		private final String profileUrl;
 
-		SocialMediaSite(String name, CustomMaterial model, ChatColor color, CustomEmoji emoji, String url, String profileUrl) {
+		SocialMediaSite(String name, ItemModelType model, ChatColor color, CustomEmoji emoji, String url, String profileUrl) {
 			this.name = name;
 			this.model = model;
 			this.color = color;

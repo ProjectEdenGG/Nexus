@@ -5,8 +5,8 @@ import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.features.legacy.LegacyCommand.LegacyVaultMenu.LegacyVaultHolder;
 import gg.projecteden.nexus.features.listeners.Beehives;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider.SmartInventoryHolder;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.vaults.VaultCommand.VaultMenu.VaultHolder;
 import gg.projecteden.nexus.models.crate.CrateType;
@@ -129,15 +129,15 @@ public class LegacyItems implements Listener {
 
 		item = manualConversions(item);
 		builder = new ItemBuilder(item);
-		if (Objects.equals(new ItemBuilder(item).model(), CustomMaterial.GUI_NUMBER.getModel()))
+		if (Objects.equals(new ItemBuilder(item).model(), ItemModelType.GUI_NUMBER.getModel()))
 			return item;
 
 		if (builder.customModelData() == 0)
 			return item;
 
-		CustomModel newModel;
+		ItemModelInstance newModel;
 		try {
-			newModel = CustomModel.convert(item, location);
+			newModel = ItemModelInstance.convert(item, location);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return item;
@@ -148,7 +148,7 @@ public class LegacyItems implements Listener {
 
 		final var converted = new ItemBuilder(item)
 			.material(newModel.getMaterial())
-			.model(newModel.getData());
+			.model(newModel.getItemModel());
 
 		if (location == null)
 			return converted.build();

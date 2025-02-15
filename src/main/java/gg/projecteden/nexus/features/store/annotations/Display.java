@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.store.annotations;
 
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import org.bukkit.Material;
 
 import java.lang.annotation.ElementType;
@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Display {
 	Material value() default Material.AIR;
-	CustomMaterial model() default CustomMaterial.INVISIBLE;
+	ItemModelType model() default ItemModelType.INVISIBLE;
 	int amount() default 1;
 
 }

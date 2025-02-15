@@ -26,7 +26,7 @@ import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
 import gg.projecteden.nexus.features.regionapi.events.entity.EntityLeavingRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.quests.Quester;
@@ -130,7 +130,7 @@ public class VuLan24 extends EdenEvent {
 
 	@Override
 	public ItemStack getWarpMenuItem() {
-		return new ItemBuilder(CustomMaterial.COSTUMES_BAMBOO_HAT)
+		return new ItemBuilder(ItemModelType.COSTUMES_BAMBOO_HAT)
 			.name("&eCurrent Event: &6&lVu Lan Festival")
 			.lore("&3Quests, rewards, and more!")
 			.build();
@@ -165,7 +165,7 @@ public class VuLan24 extends EdenEvent {
 		if (!VuLan24.get().isInRegion(event.getPlayer(), "vu_lan_lantern_animation_place"))
 			return;
 
-		if (CustomMaterial.of(event.getPlayer().getInventory().getItemInMainHand()) != CustomMaterial.of(VuLan24QuestItem.PAPER_LANTERN_FLOATING.get()))
+		if (ItemModelType.of(event.getPlayer().getInventory().getItemInMainHand()) != ItemModelType.of(VuLan24QuestItem.PAPER_LANTERN_FLOATING.get()))
 			return;
 
 		event.setCancelled(true);

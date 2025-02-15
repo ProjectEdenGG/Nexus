@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
@@ -24,8 +24,8 @@ import java.util.Objects;
 @Title("Select a color")
 public class Pugmas25BlockReplaceBrushMenu extends InventoryProvider {
 
-	public static final CustomMaterial BRUSH_MATERIAL = CustomMaterial.EVENT_PAINTBRUSH;
-	private static final ItemBuilder BRUSH = new ItemBuilder(BRUSH_MATERIAL)
+	public static final ItemModelType BRUSH_ITEM_MODEL = ItemModelType.EVENT_PAINTBRUSH;
+	private static final ItemBuilder BRUSH = new ItemBuilder(BRUSH_ITEM_MODEL)
 			.name("&eBlock Replacer Brush")
 		.lore("&3Block: " + getColorLabel(Pugmas25BalloonEditor.defaultBrushColor))
 			.lore("")

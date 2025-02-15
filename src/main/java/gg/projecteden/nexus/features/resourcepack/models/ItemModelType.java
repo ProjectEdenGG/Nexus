@@ -15,7 +15,7 @@ import java.util.Objects;
 
 @Getter
 @AllArgsConstructor
-public enum CustomMaterial {
+public enum ItemModelType {
 	NULL("misc/null"),
 	GROWTH_RAY(""),
 	SHRINK_RAY(""),
@@ -2474,39 +2474,39 @@ public enum CustomMaterial {
 	private final String model;
 	private final boolean allowedInVanillaRecipes; // Dying backpacks in crafting table
 
-	CustomMaterial(String model) {
+	ItemModelType(String model) {
 		this(Material.PAPER, model, false);
 	}
 
-	CustomMaterial(String model, boolean dyeable) {
+	ItemModelType(String model, boolean dyeable) {
 		this(dyeable ? Material.LEATHER_HORSE_ARMOR : Material.PAPER, model, false);
 	}
 
-	CustomMaterial(String model, Material material) {
+	ItemModelType(String model, Material material) {
 		this(material, model, false);
 	}
 
-	public static CustomMaterial of(ItemStack item) {
+	public static ItemModelType of(ItemStack item) {
 		if (Nullables.isNullOrAir(item))
 			return null;
 
 		return of(new ItemBuilder(item));
 	}
 
-	public static CustomMaterial of(ItemBuilder item) {
+	public static ItemModelType of(ItemBuilder item) {
 		if (Nullables.isNullOrAir(item))
 			return null;
 
-		for (CustomMaterial customMaterial : values())
-			if (customMaterial.getMaterial() == item.material())
-				if (Objects.equals(customMaterial.getModel(), item.model()))
-					return customMaterial;
+		for (ItemModelType itemModelType : values())
+			if (itemModelType.getMaterial() == item.material())
+				if (Objects.equals(itemModelType.getModel(), item.model()))
+					return itemModelType;
 
 		return null;
 	}
 	
-	public static CustomMaterial of(String model) {
-		for (CustomMaterial value : values()) {
+	public static ItemModelType of(String model) {
+		for (ItemModelType value : values()) {
 			if (value.getModel().equals(model))
 				return value;
 		}
@@ -2527,8 +2527,8 @@ public enum CustomMaterial {
 		return config.getMaterial() == material && config.getModel() == model;
 	}
 
-	public CustomModel getCustomModel() {
-		return CustomModel.of(this);
+	public ItemModelInstance getCustomModel() {
+		return ItemModelInstance.of(this);
 	}
 
 	public boolean canBePlaced() {

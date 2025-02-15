@@ -4,7 +4,7 @@ import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.shops.Market;
 import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.models.shop.Shop;
@@ -93,7 +93,7 @@ public class ResourceWorldMarketProvider extends ShopProvider {
 		private final String description;
 
 		public ItemBuilder getSettingItem() {
-			return new ItemBuilder(CustomMaterial.GUI_GEAR).name("&6Auto Sell Behavior: ")
+			return new ItemBuilder(ItemModelType.GUI_GEAR).name("&6Auto Sell Behavior: ")
 				.lore("&7⬇ " + StringUtils.camelCase(this.previousWithLoop().name()))
 				.lore("&e⬇ " + StringUtils.camelCase(this.name()))
 				.lore("&7⬇ " + StringUtils.camelCase(this.nextWithLoop().name()))

@@ -4,7 +4,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.HealCommand;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.features.wither.fights.CorruptedFight;
 import gg.projecteden.nexus.features.wither.fights.EasyFight;
@@ -16,12 +16,22 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.witherarena.WitherArenaConfig;
 import gg.projecteden.nexus.models.witherarena.WitherArenaConfigService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldEditUtils;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -55,7 +65,7 @@ public class WitherChallenge extends Feature implements Listener {
 		return new Location(Bukkit.getWorld("events"), x, y, z, yaw, pitch);
 	}
 
-	public static final ItemStack WITHER_FRAGMENT = new ItemBuilder(CustomMaterial.WITHER_FRAGMENT)
+	public static final ItemStack WITHER_FRAGMENT = new ItemBuilder(ItemModelType.WITHER_FRAGMENT)
 		.name("&eWither Fragment")
 		.lore("&7Can be used to craft", "&7Wither Skeleton Skulls")
 		.build();

@@ -11,7 +11,7 @@ import gg.projecteden.nexus.features.minigames.models.annotations.Regenerating;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.SerializationUtils;
@@ -129,8 +129,8 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 	}
 
 	public void findMenuImage() {
-		for (CustomModel value : ResourcePack.getModels().values())
-			if (value.getData().contains("gamelobby/arenas"))
+		for (ItemModelInstance value : ResourcePack.getModels().values())
+			if (value.getItemModel().contains("gamelobby/arenas"))
 				if (value.getFileName().equalsIgnoreCase(name)) {
 					this.menuImage = new ItemBuilder(value);
 					return;

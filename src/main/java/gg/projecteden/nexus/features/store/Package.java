@@ -6,7 +6,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.commands.EmotesCommand;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand.NumericPermission;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.store.annotations.Category;
 import gg.projecteden.nexus.features.store.annotations.Category.StoreCategory;
 import gg.projecteden.nexus.features.store.annotations.Commands.Command;
@@ -387,7 +387,7 @@ public enum Package {
 
 	@Id("4610203")
 	@Category(StoreCategory.VISUALS)
-	@Display(model = CustomMaterial.COSTUMES_GG_HAT)
+	@Display(model = ItemModelType.COSTUMES_GG_HAT)
 	COSTUMES {
 		@Override
 		public void handleApply(UUID uuid) {
@@ -403,7 +403,7 @@ public enum Package {
 
 	@Id("4610206")
 	@Category(StoreCategory.VISUALS)
-	@Display(model = CustomMaterial.COSTUMES_GG_HAT)
+	@Display(model = ItemModelType.COSTUMES_GG_HAT)
 	COSTUMES_5 {
 		@Override
 		public void handleApply(UUID uuid) {
@@ -479,7 +479,7 @@ public enum Package {
 
 	@Id("5614793")
 	@Category(StoreCategory.VISUALS)
-	@Display(model = CustomMaterial.VOUCHER)
+	@Display(model = ItemModelType.VOUCHER)
 	PLAYER_PLUSHIES {
 		@Override
 		public void handleApply(UUID uuid) {
@@ -500,7 +500,7 @@ public enum Package {
 
 	@Id("5614796")
 	@Category(StoreCategory.VISUALS)
-	@Display(model = CustomMaterial.VOUCHER, amount = 5)
+	@Display(model = ItemModelType.VOUCHER, amount = 5)
 	PLAYER_PLUSHIES_5 {
 		@Override
 		public void handleApply(UUID uuid) {
@@ -862,7 +862,7 @@ public enum Package {
 			amount = annotation.amount();
 			if (!Nullables.isNullOrAir(annotation.value())) {
 				material = annotation.value();
-			} else if (annotation.model() != CustomMaterial.INVISIBLE) {
+			} else if (annotation.model() != ItemModelType.INVISIBLE) {
 				material = annotation.model().getMaterial();
 				modelId = annotation.model().getModel();
 			} else {

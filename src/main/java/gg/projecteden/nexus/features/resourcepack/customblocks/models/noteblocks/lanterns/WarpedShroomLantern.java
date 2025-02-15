@@ -1,14 +1,14 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.DirectionalConfig;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import org.bukkit.Instrument;
 
 @CustomBlockConfig(
 	name = "Warped Shroom Lantern",
-	material = CustomMaterial.LANTERNS_WARPED_LANTERN
+	itemModel = ItemModelType.LANTERNS_WARPED_LANTERN
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.FLUTE,

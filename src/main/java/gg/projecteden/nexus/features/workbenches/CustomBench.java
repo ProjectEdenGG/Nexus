@@ -4,7 +4,7 @@ import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.WorkBench;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.framework.features.Features;
@@ -31,7 +31,7 @@ public abstract class CustomBench extends Feature implements Listener {
 			return null;
 
 		for (CustomBenchType customBenchType : CustomBenchType.values())
-			if (CustomMaterial.of(item) == customBenchType.getMaterial())
+			if (ItemModelType.of(item) == customBenchType.getItemModelType())
 				return customBenchType;
 
 		return null;
@@ -40,13 +40,13 @@ public abstract class CustomBench extends Feature implements Listener {
 	@Getter
 	@AllArgsConstructor
 	public enum CustomBenchType {
-		DYE_STATION("Dye Station", CustomMaterial.DYE_STATION, DyeStation::open),
-		ENCHANTED_BOOK_SPLITTER("Enchanted Book Splitter", CustomMaterial.ENCHANTED_BOOK_SPLITTER, EnchantedBookSplitter::open),
-		TOOL_MODIFICATION_TABLE("Tool Modification Table", CustomMaterial.TOOL_MODIFICATION_TABLE, null), // TODO: BLAST
+		DYE_STATION("Dye Station", ItemModelType.DYE_STATION, DyeStation::open),
+		ENCHANTED_BOOK_SPLITTER("Enchanted Book Splitter", ItemModelType.ENCHANTED_BOOK_SPLITTER, EnchantedBookSplitter::open),
+		TOOL_MODIFICATION_TABLE("Tool Modification Table", ItemModelType.TOOL_MODIFICATION_TABLE, null), // TODO: BLAST
 		;
 
 		private final String name;
-		private final CustomMaterial material;
+		private final ItemModelType itemModelType;
 		private final Consumer<Player> interact;
 
 		public void interact(Player player) {

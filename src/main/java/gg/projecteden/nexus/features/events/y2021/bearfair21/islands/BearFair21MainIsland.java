@@ -13,12 +13,12 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.BearFai
 import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.BearFair21MainIsland.MainNPCs;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.BearFair21TalkingNPC;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.clientside.BearFair21ClientsideContentManager;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21Merchants;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.BearFair21FishingLoot;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.BearFair21FishingLoot.FishingLootCategory;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
@@ -57,19 +57,19 @@ public class BearFair21MainIsland implements BearFair21Island {
 	private static final BearFair21UserService userService = new BearFair21UserService();
 	//
 	@Getter
-	private static final ItemBuilder balloon_cyan = new ItemBuilder(CustomMaterial.BALLOON_MEDIUM).dyeColor(ColorType.CYAN).undroppable();
+	private static final ItemBuilder balloon_cyan = new ItemBuilder(ItemModelType.BALLOON_MEDIUM).dyeColor(ColorType.CYAN).undroppable();
 	@Getter
-	private static final ItemBuilder balloon_yellow = new ItemBuilder(CustomMaterial.BALLOON_MEDIUM).dyeColor(ColorType.YELLOW).undroppable();
+	private static final ItemBuilder balloon_yellow = new ItemBuilder(ItemModelType.BALLOON_MEDIUM).dyeColor(ColorType.YELLOW).undroppable();
 	@Getter
-	private static final ItemBuilder cakeItem = new ItemBuilder(CustomMaterial.BEARFAIR21_CAKE).name("Bear Fair Cake").undroppable();
+	private static final ItemBuilder cakeItem = new ItemBuilder(ItemModelType.BEARFAIR21_CAKE).name("Bear Fair Cake").undroppable();
 	@Getter
 	private static final ItemBuilder gravwell = new ItemBuilder(Material.LODESTONE).name("Grav-Well").undroppable();
 	@Getter
 	private static final Supplier<ItemBuilder> queenLarvae = () -> ItemBuilder.fromHeadId("33827").name("Queen Larva").undroppable();
 	@Getter
-	private static final ItemBuilder replacementSaw = new ItemBuilder(CustomMaterial.SAW_FULL).name("Replacement Saw").undroppable();
+	private static final ItemBuilder replacementSaw = new ItemBuilder(ItemModelType.SAW_FULL).name("Replacement Saw").undroppable();
 	@Getter
-	private static final ItemBuilder invitation = new ItemBuilder(CustomMaterial.ENVELOPE_2).name("Anniversary Event Invitation").undroppable();
+	private static final ItemBuilder invitation = new ItemBuilder(ItemModelType.ENVELOPE_2).name("Anniversary Event Invitation").undroppable();
 	@Getter
 	private static final List<BearFair21NPC> invitees = Arrays.asList(BearFair21NPC.ARCHITECT, BearFair21NPC.ARTIST, BearFair21NPC.BAKER, BearFair21NPC.BARTENDER, BearFair21NPC.BLACKSMITH, BearFair21NPC.BOTANIST, BearFair21NPC.CARPENTER, BearFair21NPC.COLLECTOR,
 		BearFair21NPC.CURATOR, BearFair21NPC.FISHERMAN1, BearFair21NPC.INVENTOR, BearFair21NPC.PASTRY_CHEF, BearFair21NPC.SORCERER, BearFair21NPC.LUMBERJACK, BearFair21NPC.BEEKEEPER, BearFair21NPC.FISHERMAN2, BearFair21NPC.AERONAUT, BearFair21NPC.ADMIRAL, BearFair21NPC.ORGANIZER, BearFair21NPC.TRADER, BearFair21NPC.JAMES);

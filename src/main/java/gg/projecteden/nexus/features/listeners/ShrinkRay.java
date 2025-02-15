@@ -13,8 +13,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.features.resourcepack.models.CustomMaterial.GROWTH_RAY;
-import static gg.projecteden.nexus.features.resourcepack.models.CustomMaterial.SHRINK_RAY;
+import static gg.projecteden.nexus.features.resourcepack.models.ItemModelType.GROWTH_RAY;
+import static gg.projecteden.nexus.features.resourcepack.models.ItemModelType.SHRINK_RAY;
 
 public class ShrinkRay implements Listener {
 

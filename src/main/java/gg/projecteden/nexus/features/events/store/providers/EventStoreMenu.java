@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.events.store.providers;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -27,7 +27,7 @@ public abstract class EventStoreMenu extends InventoryProvider {
 		else
 			addBackItem(e -> getPreviousMenu().open(viewer));
 
-		ItemStack tokens = new ItemBuilder(CustomMaterial.EVENT_TOKEN).name("&e&lEvent Tokens").lore("&f" + getUser(viewer).getTokens()).build();
+		ItemStack tokens = new ItemBuilder(ItemModelType.EVENT_TOKEN).name("&e&lEvent Tokens").lore("&f" + getUser(viewer).getTokens()).build();
 		contents.set(0, 8, ClickableItem.empty(tokens));
 
 		paginate(getItems(viewer));

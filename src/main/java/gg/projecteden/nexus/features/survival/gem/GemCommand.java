@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.survival.gem;
 
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -148,13 +148,13 @@ public class GemCommand extends CustomCommand implements Listener {
 		if (Nullables.isNullOrAir(item))
 			return false;
 
-		if (!item.getType().equals(CustomMaterial.GEM_SAPPHIRE.getMaterial()))
+		if (!item.getType().equals(ItemModelType.GEM_SAPPHIRE.getMaterial()))
 			return false;
 
 		if (item.getEnchantments().isEmpty())
 			return false;
 
-		return Objects.equals(CustomMaterial.GEM_SAPPHIRE.getModel(), Model.of(item));
+		return Objects.equals(ItemModelType.GEM_SAPPHIRE.getModel(), Model.of(item));
 	}
 
 	public static ItemStack makeGem(Enchantment enchantment) {
@@ -162,7 +162,7 @@ public class GemCommand extends CustomCommand implements Listener {
 	}
 
 	public static ItemStack makeGem(Enchantment enchantment, int level) {
-		return new ItemBuilder(CustomMaterial.GEM_SAPPHIRE)
+		return new ItemBuilder(ItemModelType.GEM_SAPPHIRE)
 			.name("&#0fa8ffGem of " + StringUtils.camelCase(enchantment.getKey().getKey()))
 			.enchant(enchantment, level)
 			.lore(" ", "&fHold this gem and a tool", "&fto apply this enchantment")

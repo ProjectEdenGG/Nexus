@@ -8,8 +8,7 @@ import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.models.decoration.DecorationUser.Tickable;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
@@ -115,7 +114,7 @@ public class ColorCreatorProvider extends InventoryProvider {
 		if (isColorSaved && !createdColor.getName().equalsIgnoreCase("Color"))
 			displayTitle += createdColor.getColoredName();
 
-		ItemBuilder displayItem = new ItemBuilder(CustomMaterial.DYE_STATION_BUTTON_DYE)
+		ItemBuilder displayItem = new ItemBuilder(ItemModelType.DYE_STATION_BUTTON_DYE)
 			.name(displayTitle)
 			.itemFlags(ItemFlags.HIDE_ALL)
 			.dyeColor(displayColor)
@@ -134,7 +133,7 @@ public class ColorCreatorProvider extends InventoryProvider {
 
 		// Save Color
 		if (!isColorSaved) {
-			ItemBuilder saveColorButton = new ItemBuilder(CustomMaterial.GUI_PLUS).dyeColor(ColorType.LIGHT_GREEN)
+			ItemBuilder saveColorButton = new ItemBuilder(ItemModelType.GUI_PLUS).dyeColor(ColorType.LIGHT_GREEN)
 				.name("&aSave Color?").itemFlags(ItemFlags.HIDE_ALL);
 
 			contents.set(SlotPos.of(3, 4), ClickableItem.of(saveColorButton, e -> {
@@ -284,7 +283,7 @@ public class ColorCreatorProvider extends InventoryProvider {
 			List<ClickableItem> items = new ArrayList<>();
 			for (CreatedColor createdColor : choices) {
 				Color color = createdColor.getColor();
-				ItemBuilder displayItem = new ItemBuilder(CustomMaterial.DYE_STATION_BUTTON_DYE)
+				ItemBuilder displayItem = new ItemBuilder(ItemModelType.DYE_STATION_BUTTON_DYE)
 					.name(createdColor.getColoredName())
 					.itemFlags(ItemFlags.HIDE_ALL).dyeColor(color)
 					.lore(List.of(

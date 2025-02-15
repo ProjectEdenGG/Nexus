@@ -1,13 +1,13 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.concretebricks;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import org.bukkit.Instrument;
 
 @CustomBlockConfig(
 	name = "White Concrete Bricks",
-	material = CustomMaterial.CONCRETE_BRICKS_WHITE
+	itemModel = ItemModelType.CONCRETE_BRICKS_WHITE
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.CHIME,

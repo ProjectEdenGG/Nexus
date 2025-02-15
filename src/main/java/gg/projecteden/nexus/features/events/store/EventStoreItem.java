@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.events.store.providers.purchasable.EventSto
 import gg.projecteden.nexus.features.events.store.providers.purchasable.EventStoreParticlesProvider;
 import gg.projecteden.nexus.features.events.store.providers.purchasable.EventStoreWingsProvider;
 import gg.projecteden.nexus.features.particles.effects.WingsEffect.WingStyle;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.store.perks.visuals.EmojiHatsCommand.EmojiHat;
 import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -135,7 +135,7 @@ public enum EventStoreItem {
 			new EventStoreWingsProvider(currentMenu).open(player);
 		}
 	},
-	CHAT_EMOJIS(5, CustomMaterial.EMOJI_100) {
+	CHAT_EMOJIS(5, ItemModelType.EMOJI_100) {
 		@Override
 		public List<String> getLore() {
 			return List.of("&eSend custom emojis in chat!", "&f👀 💯 🔥 👍 👏 😍 😎",
@@ -174,8 +174,8 @@ public enum EventStoreItem {
 	private final Material material;
 	private String modelId;
 
-	EventStoreItem(int price, CustomMaterial material) {
-		this(price, material.getMaterial(), material.getModel());
+	EventStoreItem(int price, ItemModelType itemModelType) {
+		this(price, itemModelType.getMaterial(), itemModelType.getModel());
 	}
 
 	protected List<String> getLore() {

@@ -17,7 +17,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationSto
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableWallThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -97,12 +97,12 @@ public class DecorationConfig {
 		DecorationTagType.setLore(this);
 	}
 
-	public DecorationConfig(boolean multiBlock, String name, CustomMaterial material) {
-		this(multiBlock, name, material, HitboxSingle.NONE);
+	public DecorationConfig(boolean multiBlock, String name, ItemModelType itemModelType) {
+		this(multiBlock, name, itemModelType, HitboxSingle.NONE);
 	}
 
-	public DecorationConfig(boolean multiBlock, String name, @NonNull CustomMaterial customMaterial, CustomHitbox hitbox) {
-		this(multiBlock, name, customMaterial.getMaterial(), customMaterial.getModel(), model -> Objects.equals(model, customMaterial.getModel()), hitbox);
+	public DecorationConfig(boolean multiBlock, String name, @NonNull ItemModelType itemModelType, CustomHitbox hitbox) {
+		this(multiBlock, name, itemModelType.getMaterial(), itemModelType.getModel(), model -> Objects.equals(model, itemModelType.getModel()), hitbox);
 	}
 
 	@Getter
@@ -147,9 +147,9 @@ public class DecorationConfig {
 		return null;
 	}
 
-	public static DecorationConfig of(CustomMaterial material) {
+	public static DecorationConfig of(ItemModelType itemModelType) {
 		for (DecorationConfig config : ALL_DECOR_CONFIGS)
-			if (config.getMaterial() == material.getMaterial() && config.getModel().equals(material.getModel()))
+			if (config.getMaterial() == itemModelType.getMaterial() && config.getModel().equals(itemModelType.getModel()))
 				return config;
 
 		return null;

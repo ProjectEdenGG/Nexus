@@ -4,7 +4,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
 import gg.projecteden.nexus.features.resourcepack.models.files.FontFile.CustomCharacter;
@@ -127,8 +127,8 @@ public class Tab implements Listener {
 			return id.equals(ACTIVE.getId());
 		}
 
-		public static final Presence OFFLINE = new Presence("presence_offline", "&#747f8dOffline", "汉", "1007078277921394720", CustomMaterial.PRESENCE_OFFLINE.getModel());
-		public static final Presence ACTIVE = new Presence("presence_active", "&#3ba55dActive", "", "896466289508356106", CustomMaterial.PRESENCE_ACTIVE.getModel());
+		public static final Presence OFFLINE = new Presence("presence_offline", "&#747f8dOffline", "汉", "1007078277921394720", ItemModelType.PRESENCE_OFFLINE.getModel());
+		public static final Presence ACTIVE = new Presence("presence_active", "&#3ba55dActive", "", "896466289508356106", ItemModelType.PRESENCE_ACTIVE.getModel());
 
 		public static Presence of(OfflinePlayer player) {
 			return of(player, null);

@@ -52,8 +52,8 @@ public abstract class _WorkbenchCommand extends CustomCommand {
 		}
 
 		Workbench(CustomBenchType customBenchType, Consumer<Player> open) {
-			this.material = customBenchType.getMaterial().getMaterial();
-			this.model = customBenchType.getMaterial().getModel();
+			this.material = customBenchType.getItemModelType().getMaterial();
+			this.model = customBenchType.getItemModelType().getModel();
 			this.open = open;
 		}
 

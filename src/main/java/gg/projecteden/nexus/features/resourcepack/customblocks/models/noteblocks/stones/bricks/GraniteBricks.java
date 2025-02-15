@@ -1,13 +1,13 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.stones.bricks;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import org.bukkit.Instrument;
 
 @CustomBlockConfig(
 	name = "Diorite Bricks",
-	material = CustomMaterial.STONES_GRANITE_GRANITE_BRICKS
+	itemModel = ItemModelType.STONES_GRANITE_GRANITE_BRICKS
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.DIDGERIDOO,

@@ -10,7 +10,7 @@ import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -126,9 +126,9 @@ public class MuteMenuUser implements PlayerOwnedObject {
 			this(material, null, predicate);
 		}
 
-		SoundGroup(CustomMaterial material, Predicate<Sound> predicate) {
-			this.material = material.getMaterial();
-			this.modelId = material.getModel();
+		SoundGroup(ItemModelType itemModelType, Predicate<Sound> predicate) {
+			this.material = itemModelType.getMaterial();
+			this.modelId = itemModelType.getModel();
 			this.predicate = predicate;
 		}
 

@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.commands.TameablesCommand.SummonableTameabl
 import gg.projecteden.nexus.features.commands.TameablesCommand.TameableEntityType;
 import gg.projecteden.nexus.features.listeners.Restrictions;
 import gg.projecteden.nexus.features.menus.MenuUtils;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
@@ -60,7 +60,7 @@ public class MobNets extends Feature implements Listener {
 			if (gg.projecteden.nexus.utils.Nullables.isNullOrAir(tool))
 				return;
 
-			if (CustomMaterial.of(tool) != CustomMaterial.MOB_NET)
+			if (ItemModelType.of(tool) != ItemModelType.MOB_NET)
 				return;
 
 			if (!Restrictions.isPerkAllowedAt(event.getPlayer(), event.getRightClicked().getLocation()))

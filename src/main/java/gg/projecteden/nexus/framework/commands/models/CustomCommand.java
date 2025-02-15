@@ -13,7 +13,7 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Fallback;
@@ -956,7 +956,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		List<Supplier<ItemStack>> converters = List.of(
 			() -> CustomBlock.valueofObtainable(value.toUpperCase()).get().getItemStack(),
 			() -> DecorationConfig.of(value).getItem(),
-			() -> new ItemBuilder(CustomMaterial.valueOf(value.toUpperCase())).build(),
+			() -> new ItemBuilder(ItemModelType.valueOf(value.toUpperCase())).build(),
 			() -> new ItemStack(convertToMaterial(value))
 		);
 
@@ -974,10 +974,10 @@ public abstract class CustomCommand extends ICustomCommand {
 		return new ArrayList<>() {{
 			addAll(tabCompleteMaterial(filter));
 
-			addAll(Arrays.stream(CustomMaterial.class.getEnumConstants())
+			addAll(Arrays.stream(ItemModelType.class.getEnumConstants())
 				.filter(customMaterial -> {
 					try {
-						Field field = CustomMaterial.class.getField(customMaterial.name());
+						Field field = ItemModelType.class.getField(customMaterial.name());
 						if (field.isAnnotationPresent(Disabled.class) || field.isAnnotationPresent(Deprecated.class) || field.isAnnotationPresent(TabCompleteIgnore.class))
 							return false;
 					} catch (Exception ignored) {

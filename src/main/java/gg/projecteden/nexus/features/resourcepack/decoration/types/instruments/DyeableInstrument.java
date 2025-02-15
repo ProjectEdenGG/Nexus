@@ -4,13 +4,13 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.Instrument.InstrumentSound;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 
 public class DyeableInstrument extends Dyeable implements NoiseMaker {
 	InstrumentSound sound;
 
-	public DyeableInstrument(boolean multiblock, String name, CustomMaterial material, InstrumentSound sound, ColorableType colorableType, CustomHitbox hitbox, PlacementType placementType) {
-		super(multiblock, name, material, colorableType, hitbox);
+	public DyeableInstrument(boolean multiblock, String name, ItemModelType itemModelType, InstrumentSound sound, ColorableType colorableType, CustomHitbox hitbox, PlacementType placementType) {
+		super(multiblock, name, itemModelType, colorableType, hitbox);
 		this.disabledPlacements = placementType.getDisabledPlacements();
 		this.sound = sound;
 	}

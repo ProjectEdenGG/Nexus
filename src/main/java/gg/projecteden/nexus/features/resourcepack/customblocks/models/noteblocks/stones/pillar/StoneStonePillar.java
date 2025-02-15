@@ -1,15 +1,15 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.stones.pillar;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import lombok.NonNull;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 
 @CustomBlockConfig(
 	name = "Stone Pillar",
-	material = CustomMaterial.STONES_STONE_STONE_PILLAR
+	itemModel = ItemModelType.STONES_STONE_STONE_PILLAR
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.DIDGERIDOO,

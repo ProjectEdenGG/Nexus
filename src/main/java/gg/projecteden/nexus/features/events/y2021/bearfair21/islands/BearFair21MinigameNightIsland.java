@@ -27,19 +27,37 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.trophy.TrophyType;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.Distance;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.SoundUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.ArmorStand;
@@ -60,7 +78,14 @@ import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -71,7 +96,7 @@ import java.util.function.Supplier;
 public class BearFair21MinigameNightIsland implements BearFair21Island {
 	static BearFair21UserService userService = new BearFair21UserService();
 
-	private static final ItemStack hat = new ItemBuilder(CustomMaterial.COSTUMES_GG_HAT).name("GG Hat").build();
+	private static final ItemStack hat = new ItemBuilder(ItemModelType.COSTUMES_GG_HAT).name("GG Hat").build();
 
 	public BearFair21MinigameNightIsland() {
 		Nexus.registerListener(this);
@@ -865,9 +890,9 @@ public class BearFair21MinigameNightIsland implements BearFair21Island {
 		@Override
 		public void init() {
 			addCloseItem();
-			contents.set(1, 1, ClickableItem.empty(new ItemBuilder(CustomMaterial.ELECTRONICS_MOTHERBOARD).name("Motherboard").undroppable().unplaceable().build()));
-			contents.set(1, 5, ClickableItem.empty(new ItemBuilder(CustomMaterial.ELECTRONICS_CPU).name("CPU").undroppable().unplaceable().build()));
-			contents.set(1, 7, ClickableItem.empty(new ItemBuilder(CustomMaterial.ELECTRONICS_HARD_DRIVE).name("Hard Drive").undroppable().unplaceable().build()));
+			contents.set(1, 1, ClickableItem.empty(new ItemBuilder(ItemModelType.ELECTRONICS_MOTHERBOARD).name("Motherboard").undroppable().unplaceable().build()));
+			contents.set(1, 5, ClickableItem.empty(new ItemBuilder(ItemModelType.ELECTRONICS_CPU).name("CPU").undroppable().unplaceable().build()));
+			contents.set(1, 7, ClickableItem.empty(new ItemBuilder(ItemModelType.ELECTRONICS_HARD_DRIVE).name("Hard Drive").undroppable().unplaceable().build()));
 
 			fixableItemSlot(viewer, contents, SlotPos.of(1, 3), FixableItem.BATTERY);
 		}
@@ -881,10 +906,10 @@ public class BearFair21MinigameNightIsland implements BearFair21Island {
 		@Override
 		public void init() {
 			addCloseItem();
-			contents.set(0, 3, ClickableItem.empty(new ItemBuilder(CustomMaterial.ELECTRONICS_BATTERY).name("Battery").undroppable().unplaceable().build()));
-			contents.set(1, 7, ClickableItem.empty(new ItemBuilder(CustomMaterial.ELECTRONICS_CPU).name("CPU").undroppable().unplaceable().build()));
+			contents.set(0, 3, ClickableItem.empty(new ItemBuilder(ItemModelType.ELECTRONICS_BATTERY).name("Battery").undroppable().unplaceable().build()));
+			contents.set(1, 7, ClickableItem.empty(new ItemBuilder(ItemModelType.ELECTRONICS_CPU).name("CPU").undroppable().unplaceable().build()));
 			contents.set(2, 3, ClickableItem.empty(new ItemBuilder(Material.IRON_TRAPDOOR).name("Keyboard").undroppable().unplaceable().build()));
-			contents.set(2, 5, ClickableItem.empty(new ItemBuilder(CustomMaterial.ELECTRONICS_HARD_DRIVE).name("Hard Drive").undroppable().unplaceable().build()));
+			contents.set(2, 5, ClickableItem.empty(new ItemBuilder(ItemModelType.ELECTRONICS_HARD_DRIVE).name("Hard Drive").undroppable().unplaceable().build()));
 
 			fixableItemSlot(viewer, contents, SlotPos.of(0, 5), FixableItem.SCREEN);
 			fixableItemSlot(viewer, contents, SlotPos.of(1, 1), FixableItem.MOTHERBOARD);
@@ -1115,8 +1140,8 @@ public class BearFair21MinigameNightIsland implements BearFair21Island {
 			}
 		),
 		LAPTOP(
-			new ItemBuilder(CustomMaterial.ELECTRONICS_LAPTOP).name("&cFredrickson's Broken Laptop").lore("&eClick to open").undroppable().unplaceable().build(),
-			new ItemBuilder(CustomMaterial.ELECTRONICS_LAPTOP).name("&aFredrickson's Fixed Laptop").lore("&eClick to open").undroppable().unplaceable().build(),
+			new ItemBuilder(ItemModelType.ELECTRONICS_LAPTOP).name("&cFredrickson's Broken Laptop").lore("&eClick to open").undroppable().unplaceable().build(),
+			new ItemBuilder(ItemModelType.ELECTRONICS_LAPTOP).name("&aFredrickson's Fixed Laptop").lore("&eClick to open").undroppable().unplaceable().build(),
 			user -> user.isMgn_laptopScreen() && user.isMgn_laptopMotherboard(),
 			user -> user.setQuestStage_MGN(QuestStage.STEP_FOUR)
 		),
@@ -1132,22 +1157,22 @@ public class BearFair21MinigameNightIsland implements BearFair21Island {
 	private enum FixableItem implements Fixable {
 		BATTERY(
 			FixableDevice.XBOX,
-			new ItemBuilder(CustomMaterial.ELECTRONICS_BATTERY).name("&cTrent's Broken Xbox One Battery").undroppable().unplaceable().build(),
-			new ItemBuilder(CustomMaterial.ELECTRONICS_BATTERY).name("&aTrent's Fixed Xbox One Battery").undroppable().unplaceable().build(),
+			new ItemBuilder(ItemModelType.ELECTRONICS_BATTERY).name("&cTrent's Broken Xbox One Battery").undroppable().unplaceable().build(),
+			new ItemBuilder(ItemModelType.ELECTRONICS_BATTERY).name("&aTrent's Fixed Xbox One Battery").undroppable().unplaceable().build(),
 			null,
 			null
 		),
 		SCREEN(
 			FixableDevice.LAPTOP,
-			new ItemBuilder(CustomMaterial.ELECTRONICS_SCREEN).name("&cFredrickson's Broken Laptop Screen").undroppable().unplaceable().build(),
-			new ItemBuilder(CustomMaterial.ELECTRONICS_SCREEN).name("&aFredrickson's Fixed Laptop Screen").undroppable().unplaceable().build(),
+			new ItemBuilder(ItemModelType.ELECTRONICS_SCREEN).name("&cFredrickson's Broken Laptop Screen").undroppable().unplaceable().build(),
+			new ItemBuilder(ItemModelType.ELECTRONICS_SCREEN).name("&aFredrickson's Fixed Laptop Screen").undroppable().unplaceable().build(),
 			user -> user.setMgn_laptopScreen(true),
 			BearFair21User::isMgn_laptopScreen
 		),
 		MOTHERBOARD(
 			FixableDevice.LAPTOP,
-			new ItemBuilder(CustomMaterial.ELECTRONICS_MOTHERBOARD).name("&cFredrickson's Broken Laptop Motherboard").undroppable().unplaceable().build(),
-			new ItemBuilder(CustomMaterial.ELECTRONICS_MOTHERBOARD).name("&aFredrickson's Fixed Laptop Motherboard").undroppable().unplaceable().build(),
+			new ItemBuilder(ItemModelType.ELECTRONICS_MOTHERBOARD).name("&cFredrickson's Broken Laptop Motherboard").undroppable().unplaceable().build(),
+			new ItemBuilder(ItemModelType.ELECTRONICS_MOTHERBOARD).name("&aFredrickson's Fixed Laptop Motherboard").undroppable().unplaceable().build(),
 			user -> user.setMgn_laptopMotherboard(true),
 			BearFair21User::isMgn_laptopMotherboard
 		),

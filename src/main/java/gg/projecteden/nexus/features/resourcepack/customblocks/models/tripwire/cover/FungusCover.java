@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.cover;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.CustomTripwireConfig;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 
 @CustomBlockConfig(
 	name = "Fungus Cover",
-	material = CustomMaterial.FLORA_COVER_FUNGUS_COVER_ITEM
+	itemModel = ItemModelType.FLORA_COVER_FUNGUS_COVER_ITEM
 )
 @CustomTripwireConfig(
 	north_NS = true,

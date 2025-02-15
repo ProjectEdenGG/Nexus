@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.events.models.Train.Crossing;
 import gg.projecteden.nexus.features.events.models.Train.Crossing.TrackSide;
 import gg.projecteden.nexus.features.events.models.Train.TrainCrossings;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
@@ -71,8 +71,8 @@ public class Pugmas25Train {
 			.trainCrossings(trainCrossings)
 			.bonkPlayers(true)
 			.modelOverrides(new HashMap<>() {{
-				put(3, CustomMaterial.PUGMAS25_TRAIN_3);
-				put(18, CustomMaterial.PUGMAS25_TRAIN_18);
+				put(3, ItemModelType.PUGMAS25_TRAIN_3);
+				put(18, ItemModelType.PUGMAS25_TRAIN_18);
 			}})
 			;
 	}

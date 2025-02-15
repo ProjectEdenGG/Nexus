@@ -5,7 +5,7 @@
 	import gg.projecteden.nexus.features.recipes.models.RecipeType;
 	import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 	import gg.projecteden.nexus.features.resourcepack.models.CustomArmorType;
-	import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+	import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 	import gg.projecteden.nexus.utils.Enchant;
 	import gg.projecteden.nexus.utils.ItemBuilder;
 	import lombok.Getter;
@@ -20,7 +20,7 @@
 	public class WitherChestplate extends FunctionalRecipe {
 
 	@Getter
-	private static final ItemStack item = new ItemBuilder(CustomMaterial.WITHER_CHESTPLATE)
+	private static final ItemStack item = new ItemBuilder(ItemModelType.WITHER_CHESTPLATE)
 		.dyeColor(CustomArmorType.WITHER.getShaderDyeColor())
 		.itemFlags(ItemFlag.HIDE_DYE)
 		.enchant(Enchant.PROTECTION, 4)

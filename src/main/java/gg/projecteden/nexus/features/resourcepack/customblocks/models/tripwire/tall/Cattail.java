@@ -1,15 +1,15 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.tall;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.CustomTripwireConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.IRequireDirt;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.IWaterLogged;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.WaterLoggedConfig;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 
 @CustomBlockConfig(
 	name = "Cattail",
-	material = CustomMaterial.FLORA_CATTAIL_ITEM
+	itemModel = ItemModelType.FLORA_CATTAIL_ITEM
 )
 @CustomTripwireConfig(
 	north_NS = true,

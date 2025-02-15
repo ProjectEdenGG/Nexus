@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.models.crate;
 
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -19,22 +19,22 @@ import java.util.Map.Entry;
 
 @Getter
 public enum CrateType {
-	VOTE(CustomMaterial.CRATE_KEY_VOTE, true),
-	WITHER(CustomMaterial.CRATE_KEY_WITHER),
-	MYSTERY(CustomMaterial.CRATE_KEY_MYSTERY),
-	WEEKLY_WAKKA(CustomMaterial.CRATE_KEY_WAKKA, true),
-	MINIGAMES(CustomMaterial.CRATE_KEY_MINIGAMES, true),
+	VOTE(ItemModelType.CRATE_KEY_VOTE, true),
+	WITHER(ItemModelType.CRATE_KEY_WITHER),
+	MYSTERY(ItemModelType.CRATE_KEY_MYSTERY),
+	WEEKLY_WAKKA(ItemModelType.CRATE_KEY_WAKKA, true),
+	MINIGAMES(ItemModelType.CRATE_KEY_MINIGAMES, true),
 	;
 
-	final CustomMaterial customMaterial;
+	final ItemModelType itemModelType;
 	final boolean enabled;
 
-	CrateType(CustomMaterial customMaterial) {
-		this(customMaterial, false);
+	CrateType(ItemModelType itemModelType) {
+		this(itemModelType, false);
 	}
 
-	CrateType(CustomMaterial customMaterial, boolean enabled) {
-		this.customMaterial = customMaterial;
+	CrateType(ItemModelType itemModelType, boolean enabled) {
+		this.itemModelType = itemModelType;
 		this.enabled = enabled;
 	}
 
@@ -48,7 +48,7 @@ public enum CrateType {
 		return new ItemBuilder(Material.PAPER)
 			.name("&e" + gg.projecteden.api.common.utils.StringUtils.camelCase(this) + " Crate Key")
 			.glow()
-			.model(customMaterial.getModel())
+			.model(itemModelType.getModel())
 			.lore("&7Use me at &e/crates &7to receive a reward")
 			.build();
 	}
@@ -63,7 +63,7 @@ public enum CrateType {
 	public static CrateType fromKey(ItemStack item) {
 		if (Nullables.isNullOrAir(item)) return null;
 		for (CrateType type : values())
-			if (type.customMaterial.is(item))
+			if (type.itemModelType.is(item))
 				return type;
 		return null;
 	}

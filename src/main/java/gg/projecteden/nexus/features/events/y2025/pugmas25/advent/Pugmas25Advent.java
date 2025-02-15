@@ -3,8 +3,12 @@ package gg.projecteden.nexus.features.events.y2025.pugmas25.advent;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.advent.AdventAnimation;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.models.pugmas25.*;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import gg.projecteden.nexus.models.pugmas25.Advent25Config;
+import gg.projecteden.nexus.models.pugmas25.Advent25ConfigService;
+import gg.projecteden.nexus.models.pugmas25.Advent25Present;
+import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
+import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Location;
@@ -68,8 +72,8 @@ public class Pugmas25Advent implements Listener {
 		if (Nullables.isNullOrAir(item))
 			return;
 
-		final CustomMaterial customMaterial = CustomMaterial.of(item);
-		if (customMaterial != CustomMaterial.PUGMAS_PRESENT_ADVENT)
+		final ItemModelType itemModelType = ItemModelType.of(item);
+		if (itemModelType != ItemModelType.PUGMAS_PRESENT_ADVENT)
 			return;
 
 		List<String> lore = item.getItemMeta().getLore();

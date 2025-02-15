@@ -1,13 +1,13 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.incremental.pebbles;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.Unobtainable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.CustomTripwireConfig;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 
 @CustomBlockConfig(
 	name = "Pebbles",
-	material = CustomMaterial.ROCKS_PEBBLES_2
+	itemModel = ItemModelType.ROCKS_PEBBLES_2
 )
 @CustomTripwireConfig(
 		north_NS = false,

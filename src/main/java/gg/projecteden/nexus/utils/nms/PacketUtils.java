@@ -9,7 +9,7 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -130,7 +130,7 @@ public class PacketUtils {
 			}
 		}
 
-		ItemStack standItem = new ItemBuilder(skullItem.clone()).model(CustomMaterial.GUI_PLAYER_HEAD).build();
+		ItemStack standItem = new ItemBuilder(skullItem.clone()).model(ItemModelType.GUI_PLAYER_HEAD).build();
 		List<Pair<net.minecraft.world.entity.EquipmentSlot, net.minecraft.world.item.ItemStack>> equipment = NMSUtils.getHandEquipmentList(standItem, null);
 
 		//

@@ -35,7 +35,7 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.BlockPartyMatchD
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.blockparty.BlockPartyStatsService;
 import gg.projecteden.nexus.models.blockparty.BlockPartyStatsUser.BlockPartyStats;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
@@ -563,13 +563,13 @@ public class BlockParty extends TeamlessMechanic {
 	public void setupPowerUps(Match match) {
 		BlockPartyMatchData matchData = match.getMatchData();
 
-		ItemStack item = new ItemBuilder(CustomMaterial.GUI_ARROW_UP).dyeColor("#6BD0FF").build();
+		ItemStack item = new ItemBuilder(ItemModelType.GUI_ARROW_UP).dyeColor("#6BD0FF").build();
 		Consumer<Minigamer> consumer = minigamer -> {
 			BlockPartyPowerUp powerUp = RandomUtils.randomElement(BlockPartyPowerUp.values());
 			ItemStack powerUpItem = powerUp.getItem();
 
 			if (isNullOrAir(minigamer.getPlayer().getInventory().getItem(0))) {
-				minigamer.getPlayer().getInventory().setItem(0, new ItemBuilder(CustomMaterial.INVISIBLE).build());
+				minigamer.getPlayer().getInventory().setItem(0, new ItemBuilder(ItemModelType.INVISIBLE).build());
 				minigamer.getPlayer().getInventory().addItem(powerUpItem);
 				minigamer.getPlayer().getInventory().setItem(0, null);
 			}
@@ -762,7 +762,7 @@ public class BlockParty extends TeamlessMechanic {
 	public enum BlockPartyPowerUp {
 		LEAP {
 			@Getter
-			final ItemStack item = new ItemBuilder(CustomMaterial.BLOCKPARTY_POWERUPS_LEAP).name("&eLeap").build();
+			final ItemStack item = new ItemBuilder(ItemModelType.BLOCKPARTY_POWERUPS_LEAP).name("&eLeap").build();
 
 			@Override
 			void execute(Minigamer minigamer, Match match, PlayerInteractEvent event) {
@@ -772,7 +772,7 @@ public class BlockParty extends TeamlessMechanic {
 		},
 		COLOR_SPLASH {
 			@Getter
-			final ItemStack item = new ItemBuilder(CustomMaterial.BLOCKPARTY_POWERUPS_COLOR_SPLASH).name("&eColor Splash").build();
+			final ItemStack item = new ItemBuilder(ItemModelType.BLOCKPARTY_POWERUPS_COLOR_SPLASH).name("&eColor Splash").build();
 
 			@Override
 			void execute(Minigamer minigamer, Match match, PlayerInteractEvent event) {
@@ -792,7 +792,7 @@ public class BlockParty extends TeamlessMechanic {
 		},
 		JUMP_POTION {
 			@Getter
-			final ItemStack item = new ItemBuilder(CustomMaterial.BLOCKPARTY_POWERUPS_JUMP_POTION).name("&eJump Potion").build();
+			final ItemStack item = new ItemBuilder(ItemModelType.BLOCKPARTY_POWERUPS_JUMP_POTION).name("&eJump Potion").build();
 			final PotionEffect potion = new PotionEffect(PotionEffectType.JUMP_BOOST, (int) TimeUtils.TickTime.SECOND.x(15), 3, true, true);
 
 			@Override
@@ -803,7 +803,7 @@ public class BlockParty extends TeamlessMechanic {
 		},
 		SPEED_POTION {
 			@Getter
-			final ItemStack item = new ItemBuilder(CustomMaterial.BLOCKPARTY_POWERUPS_SPEED_POTION).name("&eSpeed Potion").build();
+			final ItemStack item = new ItemBuilder(ItemModelType.BLOCKPARTY_POWERUPS_SPEED_POTION).name("&eSpeed Potion").build();
 			final PotionEffect potion = new PotionEffect(PotionEffectType.SPEED, (int) TimeUtils.TickTime.SECOND.x(8), 4, true, true);
 
 			@Override
@@ -814,7 +814,7 @@ public class BlockParty extends TeamlessMechanic {
 		},
 		COLOR_STORM {
 			@Getter
-			final ItemStack item = new ItemBuilder(CustomMaterial.BLOCKPARTY_POWERUPS_COLOR_STORM).name("&eColor Storm").build();
+			final ItemStack item = new ItemBuilder(ItemModelType.BLOCKPARTY_POWERUPS_COLOR_STORM).name("&eColor Storm").build();
 
 			@Override
 			void execute(Minigamer minigamer, Match match, PlayerInteractEvent event) {

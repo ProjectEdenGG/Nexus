@@ -2,17 +2,16 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.
 
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICraftable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.CustomTripwireConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.IRequireDirt;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
 @CustomBlockConfig(
 	name = "Blue Sage",
-	material = CustomMaterial.FLORA_BLUE_SAGE_ITEM
+	itemModel = ItemModelType.FLORA_BLUE_SAGE_ITEM
 )
 @CustomTripwireConfig(
 	north_NS = true,

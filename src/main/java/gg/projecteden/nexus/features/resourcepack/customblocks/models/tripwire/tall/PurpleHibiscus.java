@@ -2,16 +2,16 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.
 
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICraftable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.CustomTripwireConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.IRequireDirt;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
 @CustomBlockConfig(
 	name = "Purple Hibiscus",
-	material = CustomMaterial.FLORA_PURPLE_HIBISCUS_ITEM
+	itemModel = ItemModelType.FLORA_PURPLE_HIBISCUS_ITEM
 )
 @CustomTripwireConfig(
 	north_NS = true,

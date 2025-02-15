@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientS
 import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
@@ -74,11 +74,11 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 
 	@Path("convert <material> <data>")
 	void convert(Material material, int data) {
-		final CustomModel newModel = CustomModel.convertLegacy(material, data, null);
+		final ItemModelInstance newModel = ItemModelInstance.convertLegacy(material, data, null);
 		if (newModel == null)
 			error("Unknown custom model");
 
-		send(newModel.getMaterial() + " " + newModel.getData());
+		send(newModel.getMaterial() + " " + newModel.getItemModel());
 	}
 
 	@Path("toDyeable clientside")
@@ -231,7 +231,7 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 	@Path("item_displays <radius>")
 	void item_displays(@Arg int radius) {
 		for (ArmorStand armorStand : location().getNearbyEntitiesByType(ArmorStand.class, radius))
-			if (CustomModel.of(armorStand.getItem(EquipmentSlot.HEAD)) != null) {
+			if (ItemModelInstance.of(armorStand.getItem(EquipmentSlot.HEAD)) != null) {
 				armorStandToItemDisplay(armorStand);
 				armorStand.remove();
 			}

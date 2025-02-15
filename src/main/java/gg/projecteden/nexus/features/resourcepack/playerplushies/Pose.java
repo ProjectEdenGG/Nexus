@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.resourcepack.playerplushies;
 
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.PlayerPlushie;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfigService;
@@ -76,9 +76,9 @@ public enum Pose {
 		return PlayerPlushieConfig.GENERATED.getOrDefault(this, new ArrayList<>());
 	}
 
-	public CustomMaterial getCustomMaterial() {
+	public ItemModelType getItemModel() {
 		try {
-			return CustomMaterial.valueOf("PLAYER_PLUSHIE_" + name());
+			return ItemModelType.valueOf("PLAYER_PLUSHIE_" + name());
 		} catch (Exception ex) {
 			return null;
 		}

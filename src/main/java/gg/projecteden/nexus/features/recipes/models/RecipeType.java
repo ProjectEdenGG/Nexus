@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.recipes.models;
 
 import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.recipes.CustomRecipes;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
@@ -21,14 +21,14 @@ import java.util.stream.Collectors;
 public enum RecipeType {
 	FOOD(Material.COOKED_BEEF),
 	FUNCTIONAL(Material.CHEST),
-	BACKPACKS(CustomMaterial.BACKPACK_3D_BASIC),
+	BACKPACKS(ItemModelType.BACKPACK_3D_BASIC),
 	FURNACE(Material.FURNACE),
-	DECORATION(CustomMaterial.WINDCHIMES_AMETHYST),
+	DECORATION(ItemModelType.WINDCHIMES_AMETHYST),
 	ARMOR(Material.DIAMOND_CHESTPLATE),
 	@Disabled // TODO Custom Blocks
 	STONECUTTER(Material.STONECUTTER),
 	@Disabled // TODO Custom Blocks
-	CUSTOM_BLOCKS(CustomMaterial.BLOCKS_CRATE_APPLE),
+	CUSTOM_BLOCKS(ItemModelType.BLOCKS_CRATE_APPLE),
 	QUARTZ(Material.QUARTZ),
 	SLABS(Material.OAK_SLAB, false),
 	BEDS_BANNERS(Material.CYAN_BED) {
@@ -68,12 +68,12 @@ public enum RecipeType {
 		this(material, null, folder);
 	}
 
-	RecipeType(CustomMaterial material) {
-		this(material.getMaterial(), material.getModel(), true);
+	RecipeType(ItemModelType itemModelType) {
+		this(itemModelType.getMaterial(), itemModelType.getModel(), true);
 	}
 
-	RecipeType(CustomMaterial material, boolean folder) {
-		this(material.getMaterial(), material.getModel(), folder);
+	RecipeType(ItemModelType itemModelType, boolean folder) {
+		this(itemModelType.getMaterial(), itemModelType.getModel(), folder);
 	}
 
 	public ItemStack getItem() {

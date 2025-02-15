@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.models.CustomArmorType;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.Getter;
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 public class WitherLeggings extends FunctionalRecipe {
 
 	@Getter
-	private static final ItemStack item = new ItemBuilder(CustomMaterial.WITHER_LEGGINGS)
+	private static final ItemStack item = new ItemBuilder(ItemModelType.WITHER_LEGGINGS)
 		.dyeColor(CustomArmorType.WITHER.getShaderDyeColor())
 		.itemFlags(ItemFlag.HIDE_DYE)
 		.attribute(Attribute.ARMOR, "wither-armor-points", 6, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS)

@@ -11,8 +11,8 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.FlyCommand;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
@@ -792,8 +792,8 @@ public class PlayerUtils {
 		return playerHas(player, new ItemStack(material));
 	}
 
-	public static boolean playerHas(OptionalPlayer player, CustomMaterial material) {
-		ItemStack item = searchInventory(player, material);
+	public static boolean playerHas(OptionalPlayer player, ItemModelType itemModelType) {
+		ItemStack item = searchInventory(player, itemModelType);
 		return Nullables.isNotNullOrAir(item);
 	}
 
@@ -804,11 +804,11 @@ public class PlayerUtils {
 		return player.getPlayer().getInventory().containsAtLeast(itemStack, itemStack.getAmount());
 	}
 
-	public static ItemStack searchInventory(OptionalPlayer player, CustomMaterial customMaterial) {
-		return searchInventory(player, customMaterial.getCustomModel());
+	public static ItemStack searchInventory(OptionalPlayer player, ItemModelType itemModelType) {
+		return searchInventory(player, itemModelType.getCustomModel());
 	}
 
-	public static ItemStack searchInventory(OptionalPlayer player, CustomModel customModel) {
+	public static ItemStack searchInventory(OptionalPlayer player, ItemModelInstance customModel) {
 		if (player.getPlayer() == null)
 			return null;
 
@@ -1007,10 +1007,10 @@ public class PlayerUtils {
 			_player.setItemOnCursor(null);
 	}
 
-	public static void removeItem(HasPlayer player, CustomMaterial customMaterial) {
+	public static void removeItem(HasPlayer player, ItemModelType itemModelType) {
 		final Player _player = player.getPlayer();
 		final PlayerInventory inv = _player.getInventory();
-		ItemStack item = searchInventory(player, customMaterial);
+		ItemStack item = searchInventory(player, itemModelType);
 
 		if (Nullables.isNullOrAir(item))
 			return;

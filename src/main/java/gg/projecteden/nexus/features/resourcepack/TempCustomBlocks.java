@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack;
 
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -31,94 +31,94 @@ public class TempCustomBlocks extends Feature implements Listener {
 	public enum SupportedInstrument {
 		XLYPHONE(Instrument.XYLOPHONE) {
 			@Override
-			int getPitchFromCustomMaterial(CustomMaterial customMaterial) {
-				return switch (customMaterial) {
-					case CustomMaterial.SHULKER_RED -> 1;
-					case CustomMaterial.SHULKER_ORANGE -> 2;
-					case CustomMaterial.SHULKER_YELLOW -> 3;
-					case CustomMaterial.SHULKER_LIME -> 4;
-					case CustomMaterial.SHULKER_GREEN -> 5;
-					case CustomMaterial.SHULKER_CYAN -> 6;
-					case CustomMaterial.SHULKER_LIGHT_BLUE -> 7;
-					case CustomMaterial.SHULKER_BLUE -> 8;
-					case CustomMaterial.SHULKER_PURPLE -> 9;
-					case CustomMaterial.SHULKER_MAGENTA -> 10;
-					case CustomMaterial.SHULKER_PINK -> 11;
-					case CustomMaterial.SHULKER_BROWN -> 12;
-					case CustomMaterial.SHULKER_GRAY -> 13;
-					case CustomMaterial.SHULKER_LIGHT_GRAY -> 14;
-					case CustomMaterial.SHULKER_BLACK -> 15;
-					case CustomMaterial.SHULKER_WHITE -> 16;
+			int getPitchFromItemModel(ItemModelType itemModelType) {
+				return switch (itemModelType) {
+					case ItemModelType.SHULKER_RED -> 1;
+					case ItemModelType.SHULKER_ORANGE -> 2;
+					case ItemModelType.SHULKER_YELLOW -> 3;
+					case ItemModelType.SHULKER_LIME -> 4;
+					case ItemModelType.SHULKER_GREEN -> 5;
+					case ItemModelType.SHULKER_CYAN -> 6;
+					case ItemModelType.SHULKER_LIGHT_BLUE -> 7;
+					case ItemModelType.SHULKER_BLUE -> 8;
+					case ItemModelType.SHULKER_PURPLE -> 9;
+					case ItemModelType.SHULKER_MAGENTA -> 10;
+					case ItemModelType.SHULKER_PINK -> 11;
+					case ItemModelType.SHULKER_BROWN -> 12;
+					case ItemModelType.SHULKER_GRAY -> 13;
+					case ItemModelType.SHULKER_LIGHT_GRAY -> 14;
+					case ItemModelType.SHULKER_BLACK -> 15;
+					case ItemModelType.SHULKER_WHITE -> 16;
 					default -> 0;
 				};
 			}
 
 			@Override
-			CustomMaterial getCustomMaterialFromPitch(int pitch) {
+			ItemModelType getItemModelFromPitch(int pitch) {
 				return switch (pitch) {
-					case 1 -> CustomMaterial.SHULKER_RED;
-					case 2 -> CustomMaterial.SHULKER_ORANGE;
-					case 3 -> CustomMaterial.SHULKER_YELLOW;
-					case 4 -> CustomMaterial.SHULKER_LIME;
-					case 5 -> CustomMaterial.SHULKER_GREEN;
-					case 6 -> CustomMaterial.SHULKER_CYAN;
-					case 7 -> CustomMaterial.SHULKER_LIGHT_BLUE;
-					case 8 -> CustomMaterial.SHULKER_BLUE;
-					case 9 -> CustomMaterial.SHULKER_PURPLE;
-					case 10 -> CustomMaterial.SHULKER_MAGENTA;
-					case 11 -> CustomMaterial.SHULKER_PINK;
-					case 12 -> CustomMaterial.SHULKER_BROWN;
-					case 13 -> CustomMaterial.SHULKER_GRAY;
-					case 14 -> CustomMaterial.SHULKER_LIGHT_GRAY;
-					case 15 -> CustomMaterial.SHULKER_BLACK;
-					case 16 -> CustomMaterial.SHULKER_WHITE;
+					case 1 -> ItemModelType.SHULKER_RED;
+					case 2 -> ItemModelType.SHULKER_ORANGE;
+					case 3 -> ItemModelType.SHULKER_YELLOW;
+					case 4 -> ItemModelType.SHULKER_LIME;
+					case 5 -> ItemModelType.SHULKER_GREEN;
+					case 6 -> ItemModelType.SHULKER_CYAN;
+					case 7 -> ItemModelType.SHULKER_LIGHT_BLUE;
+					case 8 -> ItemModelType.SHULKER_BLUE;
+					case 9 -> ItemModelType.SHULKER_PURPLE;
+					case 10 -> ItemModelType.SHULKER_MAGENTA;
+					case 11 -> ItemModelType.SHULKER_PINK;
+					case 12 -> ItemModelType.SHULKER_BROWN;
+					case 13 -> ItemModelType.SHULKER_GRAY;
+					case 14 -> ItemModelType.SHULKER_LIGHT_GRAY;
+					case 15 -> ItemModelType.SHULKER_BLACK;
+					case 16 -> ItemModelType.SHULKER_WHITE;
 					default -> null;
 				};
 			}
 		},
 		SNARE(Instrument.SNARE_DRUM) {
 			@Override
-			int getPitchFromCustomMaterial(CustomMaterial customMaterial) {
-				return switch (customMaterial) {
-					case CustomMaterial.NEON_RED -> 1;
-					case CustomMaterial.NEON_ORANGE -> 2;
-					case CustomMaterial.NEON_YELLOW -> 3;
-					case CustomMaterial.NEON_LIME -> 4;
-					case CustomMaterial.NEON_GREEN -> 5;
-					case CustomMaterial.NEON_CYAN -> 6;
-					case CustomMaterial.NEON_LIGHT_BLUE -> 7;
-					case CustomMaterial.NEON_BLUE -> 8;
-					case CustomMaterial.NEON_PURPLE -> 9;
-					case CustomMaterial.NEON_MAGENTA -> 10;
-					case CustomMaterial.NEON_PINK -> 11;
-					case CustomMaterial.NEON_BROWN -> 12;
-					case CustomMaterial.NEON_GRAY -> 13;
-					case CustomMaterial.NEON_LIGHT_GRAY -> 14;
-					case CustomMaterial.NEON_BLACK -> 15;
-					case CustomMaterial.NEON_WHITE -> 16;
+			int getPitchFromItemModel(ItemModelType itemModelType) {
+				return switch (itemModelType) {
+					case ItemModelType.NEON_RED -> 1;
+					case ItemModelType.NEON_ORANGE -> 2;
+					case ItemModelType.NEON_YELLOW -> 3;
+					case ItemModelType.NEON_LIME -> 4;
+					case ItemModelType.NEON_GREEN -> 5;
+					case ItemModelType.NEON_CYAN -> 6;
+					case ItemModelType.NEON_LIGHT_BLUE -> 7;
+					case ItemModelType.NEON_BLUE -> 8;
+					case ItemModelType.NEON_PURPLE -> 9;
+					case ItemModelType.NEON_MAGENTA -> 10;
+					case ItemModelType.NEON_PINK -> 11;
+					case ItemModelType.NEON_BROWN -> 12;
+					case ItemModelType.NEON_GRAY -> 13;
+					case ItemModelType.NEON_LIGHT_GRAY -> 14;
+					case ItemModelType.NEON_BLACK -> 15;
+					case ItemModelType.NEON_WHITE -> 16;
 					default -> 0;
 				};
 			}
 
 			@Override
-			CustomMaterial getCustomMaterialFromPitch(int pitch) {
+			ItemModelType getItemModelFromPitch(int pitch) {
 				return switch (pitch) {
-					case 1 -> CustomMaterial.NEON_RED;
-					case 2 -> CustomMaterial.NEON_ORANGE;
-					case 3 -> CustomMaterial.NEON_YELLOW;
-					case 4 -> CustomMaterial.NEON_LIME;
-					case 5 -> CustomMaterial.NEON_GREEN;
-					case 6 -> CustomMaterial.NEON_CYAN;
-					case 7 -> CustomMaterial.NEON_LIGHT_BLUE;
-					case 8 -> CustomMaterial.NEON_BLUE;
-					case 9 -> CustomMaterial.NEON_PURPLE;
-					case 10 -> CustomMaterial.NEON_MAGENTA;
-					case 11 -> CustomMaterial.NEON_PINK;
-					case 12 -> CustomMaterial.NEON_BROWN;
-					case 13 -> CustomMaterial.NEON_GRAY;
-					case 14 -> CustomMaterial.NEON_LIGHT_GRAY;
-					case 15 -> CustomMaterial.NEON_BLACK;
-					case 16 -> CustomMaterial.NEON_WHITE;
+					case 1 -> ItemModelType.NEON_RED;
+					case 2 -> ItemModelType.NEON_ORANGE;
+					case 3 -> ItemModelType.NEON_YELLOW;
+					case 4 -> ItemModelType.NEON_LIME;
+					case 5 -> ItemModelType.NEON_GREEN;
+					case 6 -> ItemModelType.NEON_CYAN;
+					case 7 -> ItemModelType.NEON_LIGHT_BLUE;
+					case 8 -> ItemModelType.NEON_BLUE;
+					case 9 -> ItemModelType.NEON_PURPLE;
+					case 10 -> ItemModelType.NEON_MAGENTA;
+					case 11 -> ItemModelType.NEON_PINK;
+					case 12 -> ItemModelType.NEON_BROWN;
+					case 13 -> ItemModelType.NEON_GRAY;
+					case 14 -> ItemModelType.NEON_LIGHT_GRAY;
+					case 15 -> ItemModelType.NEON_BLACK;
+					case 16 -> ItemModelType.NEON_WHITE;
 					default -> null;
 				};
 			}
@@ -135,16 +135,16 @@ public class TempCustomBlocks extends Feature implements Listener {
 			return null;
 		}
 
-		public static SupportedInstrument of(CustomMaterial customMaterial) {
+		public static SupportedInstrument of(ItemModelType itemModelType) {
 			for (SupportedInstrument supported : values())
-				if (supported.getPitchFromCustomMaterial(customMaterial) != 0)
+				if (supported.getPitchFromItemModel(itemModelType) != 0)
 					return supported;
 			return null;
 		}
 
-		abstract int getPitchFromCustomMaterial(CustomMaterial customMaterial);
+		abstract int getPitchFromItemModel(ItemModelType itemModelType);
 
-		abstract CustomMaterial getCustomMaterialFromPitch(int pitch);
+		abstract ItemModelType getItemModelFromPitch(int pitch);
 	}
 
 	@EventHandler
@@ -185,7 +185,7 @@ public class TempCustomBlocks extends Feature implements Listener {
 		if (pitch == 0)
 			return;
 
-		CustomMaterial model = instrument.getCustomMaterialFromPitch(pitch);
+		ItemModelType model = instrument.getItemModelFromPitch(pitch);
 		if (model == null)
 			return;
 
@@ -209,7 +209,7 @@ public class TempCustomBlocks extends Feature implements Listener {
 		if (item.getType() != Material.NOTE_BLOCK)
 			return;
 		
-		CustomMaterial modelId = CustomMaterial.of(item);
+		ItemModelType modelId = ItemModelType.of(item);
 		if (modelId == null)
 			return;
 		
@@ -217,7 +217,7 @@ public class TempCustomBlocks extends Feature implements Listener {
 		if (instrument == null)
 			return;
 
-		var pitch = instrument.getPitchFromCustomMaterial(modelId);
+		var pitch = instrument.getPitchFromItemModel(modelId);
 		if (pitch == 0)
 			return;
 		

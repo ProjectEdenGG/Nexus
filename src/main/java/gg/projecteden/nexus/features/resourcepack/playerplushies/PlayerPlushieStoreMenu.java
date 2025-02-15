@@ -9,7 +9,7 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack.ResourcePackNumber;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.PlayerPlushie;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.store.gallery.StoreGallery;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieUser;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieUserService;
@@ -44,7 +44,7 @@ public class PlayerPlushieStoreMenu extends InventoryProvider {
 
 		user = userService.get(viewer);
 
-		contents.set(SlotPos.of(0, 8), ClickableItem.empty(new ItemBuilder(CustomMaterial.VOUCHER)
+		contents.set(SlotPos.of(0, 8), ClickableItem.empty(new ItemBuilder(ItemModelType.VOUCHER)
 			.dyeColor(Color.ORANGE)
 			.itemFlags(ItemFlags.HIDE_ALL)
 			.name("Vouchers: &e" + user.getVouchers())));

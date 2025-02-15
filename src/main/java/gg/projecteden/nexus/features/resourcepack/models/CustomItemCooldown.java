@@ -32,7 +32,7 @@ public class CustomItemCooldown {
 		this.tickTime = tickTime;
 		this.cooldownType = cooldownType;
 
-		this.item = new ItemBuilder(CustomMaterial.COOLDOWN).name(TimeUtils.Timespan.ofSeconds(tickTime / 20L).format()).build();
+		this.item = new ItemBuilder(ItemModelType.COOLDOWN).name(TimeUtils.Timespan.ofSeconds(tickTime / 20L).format()).build();
 	}
 
 	public CustomItemCooldown onComplete(Runnable onComplete) {

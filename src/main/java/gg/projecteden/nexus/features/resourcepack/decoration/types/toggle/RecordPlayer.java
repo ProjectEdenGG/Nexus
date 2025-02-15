@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.types.toggle;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxSingle;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Toggleable;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -12,30 +12,30 @@ public class RecordPlayer extends DyeableFloorThing implements Toggleable {
 	private final RecordPlayerType recordPlayerType;
 
 	public RecordPlayer(String name, RecordPlayerType recordPlayerType) {
-		super(false, name, recordPlayerType.getMaterial(), ColorableType.STAIN, HitboxSingle._1x1_BARRIER);
+		super(false, name, recordPlayerType.getItemModelType(), ColorableType.STAIN, HitboxSingle._1x1_BARRIER);
 		this.recordPlayerType = recordPlayerType;
 	}
 
 	@AllArgsConstructor
 	public enum RecordPlayerType {
-		OFF(CustomMaterial.RECORD_PLAYER_MODERN, CustomMaterial.RECORD_PLAYER_MODERN_ON),
-		ON(CustomMaterial.RECORD_PLAYER_MODERN_ON, CustomMaterial.RECORD_PLAYER_MODERN),
+		OFF(ItemModelType.RECORD_PLAYER_MODERN, ItemModelType.RECORD_PLAYER_MODERN_ON),
+		ON(ItemModelType.RECORD_PLAYER_MODERN_ON, ItemModelType.RECORD_PLAYER_MODERN),
 		;
 
 		@Getter
-		private final CustomMaterial material;
+		private final ItemModelType itemModelType;
 		@Getter
-		private final CustomMaterial oppositeMaterial;
+		private final ItemModelType oppositeItemModelType;
 	}
 
 
 	@Override
-	public CustomMaterial getBaseMaterial() {
-		return RecordPlayerType.OFF.getMaterial();
+	public ItemModelType getBaseItemModel() {
+		return RecordPlayerType.OFF.getItemModelType();
 	}
 
 	@Override
-	public CustomMaterial getToggledMaterial() {
-		return recordPlayerType.getOppositeMaterial();
+	public ItemModelType getToggledItemModel() {
+		return recordPlayerType.getOppositeItemModelType();
 	}
 }

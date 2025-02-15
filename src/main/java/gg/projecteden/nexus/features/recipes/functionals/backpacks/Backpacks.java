@@ -16,7 +16,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDe
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Backpack;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -64,7 +64,7 @@ import java.util.Optional;
 public class Backpacks extends FunctionalRecipe {
 
 	@Getter
-	public static ItemStack defaultBackpack = new ItemBuilder(CustomMaterial.BACKPACK_3D_BASIC).itemFlags(ItemFlag.HIDE_DYE).name("Backpack").build();
+	public static ItemStack defaultBackpack = new ItemBuilder(ItemModelType.BACKPACK_3D_BASIC).itemFlags(ItemFlag.HIDE_DYE).name("Backpack").build();
 	public static final String NBT_KEY = "BackpackId";
 
 	@Override
@@ -489,7 +489,7 @@ public class Backpacks extends FunctionalRecipe {
 		final int rows;
 
 		public String getModel() {
-			return CustomMaterial.valueOf("BACKPACK_3D_" + name()).getModel();
+			return ItemModelType.valueOf("BACKPACK_3D_" + name()).getModel();
 		}
 
 		public String getNBTKey() {

@@ -30,7 +30,7 @@ public interface ICustomBlock extends IHarvestable {
 	}
 
 	default String getModel() {
-		return getCustomBlockConfig().material().getModel();
+		return getCustomBlockConfig().itemModel().getModel();
 	}
 
 	default @NonNull ItemBuilder getItemBuilder() {

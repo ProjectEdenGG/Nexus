@@ -2,7 +2,7 @@ package gg.projecteden.nexus.models.trophy;
 
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Trophy;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -35,28 +35,28 @@ public enum TrophyType {
 //	EASTER_2021_COMPLETION(Material.STONE),
 
 	//	PRIDE_2021_PARTICIPATION(Material.STONE),
-	PRIDE_2021(CustomMaterial.PRIDE21_TROPHY),
+	PRIDE_2021(ItemModelType.PRIDE21_TROPHY),
 
 	//	BEAR_FAIR_2021_PARTICIPATION(Material.STONE),
-	BEAR_FAIR_2021(CustomMaterial.BEARFAIR21_CAKE),
-	BEAR_FAIR_2021_MINIGAME_NIGHT_QUEST(CustomMaterial.COSTUMES_GG_HAT),
-	BEAR_FAIR_2021_MINIGOLF(CustomMaterial.BEARFAIR21_MINIGOLF),
+	BEAR_FAIR_2021(ItemModelType.BEARFAIR21_CAKE),
+	BEAR_FAIR_2021_MINIGAME_NIGHT_QUEST(ItemModelType.COSTUMES_GG_HAT),
+	BEAR_FAIR_2021_MINIGOLF(ItemModelType.BEARFAIR21_MINIGOLF),
 
-	BIRTHDAY_PARTY_2021(CustomMaterial.BIRTHDAY21_TROPHY) {
+	BIRTHDAY_PARTY_2021(ItemModelType.BIRTHDAY21_TROPHY) {
 		@Override
 		public String toString() {
 			return "Griffin & Wakka Birthday Party 2021 Trophy";
 		}
 	},
 
-	PUGMAS_2021(CustomMaterial.PUGMAS_2021_TROPHY),
-	EASTER_2022(CustomMaterial.EASTER_2022_TROPHY),
-	VULAN_2024(CustomMaterial.VULAN_2024_TROPHY),
+	PUGMAS_2021(ItemModelType.PUGMAS_2021_TROPHY),
+	EASTER_2022(ItemModelType.EASTER_2022_TROPHY),
+	VULAN_2024(ItemModelType.VULAN_2024_TROPHY),
 
 	;
 
 	@NonNull
-	private final CustomMaterial material;
+	private final ItemModelType itemModelType;
 
 	public static void initDecorations() {
 		for (TrophyType trophy : values())
@@ -77,7 +77,7 @@ public enum TrophyType {
 	}
 
 	public ItemBuilder getItem() {
-		return new ItemBuilder(material).name(toString()).untradeable().untrashable();
+		return new ItemBuilder(itemModelType).name(toString()).untradeable().untrashable();
 	}
 
 	public String getEvent() {

@@ -14,7 +14,7 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigol
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.BearFair21MiniGolfHole;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.BearFair21MiniGolfParticle;
 import gg.projecteden.nexus.features.particles.ParticleUtils;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21User;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21UserService;
 import gg.projecteden.nexus.utils.EntityUtils;
@@ -65,10 +65,10 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class BearFair21MiniGolf {
 	// @formatter:off
-	@Getter private static final ItemStack putter = new ItemBuilder(CustomMaterial.MINIGOLF_PUTTER).name("Putter").lore("&7A specialized club", "&7for finishing holes.", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable().build();
-	@Getter private static final ItemStack wedge = new ItemBuilder(CustomMaterial.MINIGOLF_WEDGE).name("Wedge").lore("&7A specialized club", "&7for tall obstacles", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable().build();
-	@Getter private static final ItemStack whistle = new ItemBuilder(CustomMaterial.MINIGOLF_WHISTLE).name("Golf Whistle").lore("&7Returns your last", "&7hit golf ball to its", "&7previous location", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable().build();
-	@Getter private static final ItemBuilder golfBall = new ItemBuilder(CustomMaterial.MINIGOLF_BALL).name("Golf Ball").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable();
+	@Getter private static final ItemStack putter = new ItemBuilder(ItemModelType.MINIGOLF_PUTTER).name("Putter").lore("&7A specialized club", "&7for finishing holes.", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable().build();
+	@Getter private static final ItemStack wedge = new ItemBuilder(ItemModelType.MINIGOLF_WEDGE).name("Wedge").lore("&7A specialized club", "&7for tall obstacles", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable().build();
+	@Getter private static final ItemStack whistle = new ItemBuilder(ItemModelType.MINIGOLF_WHISTLE).name("Golf Whistle").lore("&7Returns your last", "&7hit golf ball to its", "&7previous location", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable().build();
+	@Getter private static final ItemBuilder golfBall = new ItemBuilder(ItemModelType.MINIGOLF_BALL).name("Golf Ball").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable();
 	@Getter private static final ItemStack scoreBook = new ItemBuilder(Material.WRITABLE_BOOK).name("Score Book").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable().build();
 	//
 	@Getter private static final List<ItemStack> clubs = Arrays.asList(putter, wedge);

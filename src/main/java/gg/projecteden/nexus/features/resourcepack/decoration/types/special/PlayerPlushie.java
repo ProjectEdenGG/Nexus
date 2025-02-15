@@ -37,7 +37,7 @@ public class PlayerPlushie extends DecorationConfig {
 		this.name = StringUtils.camelCase(pose) + " Player Plushie";
 		this.material = PlayerPlushieConfig.MATERIAL;
 		String poseBasePath = ITEM_MODEL_PATH + pose.name().toLowerCase() + "/";
-		String modelPath = pose.getCustomMaterial() != null ? pose.getCustomMaterial().getModel() : poseBasePath + "<UUID>";
+		String modelPath = pose.getItemModel() != null ? pose.getItemModel().getModel() : poseBasePath + "<UUID>";
 		this.model = modelPath.replace("<UUID>", uuid.toString());
 		this.modelPredicate = model -> model.startsWith(poseBasePath);
 		this.hitboxes = Hitbox.NONE();

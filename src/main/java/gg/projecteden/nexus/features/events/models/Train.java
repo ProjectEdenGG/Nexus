@@ -6,8 +6,8 @@ import gg.projecteden.api.common.utils.MathUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
 import gg.projecteden.nexus.features.events.models.Train.Crossing.TrackSide;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -65,7 +65,7 @@ public class Train {
 	private final String regionReveal;
 	private final TrainCrossings trainCrossings;
 	private final boolean bonkPlayers;
-	private final Map<Integer, CustomMaterial> modelOverrides;
+	private final Map<Integer, ItemModelType> modelOverrides;
 
 	private final List<ArmorStand> armorStands = new ArrayList<>();
 	private final List<Integer> taskIds = new ArrayList<>();
@@ -86,7 +86,7 @@ public class Train {
 
 	@Builder
 	public Train(Location location, BlockFace direction, double speed, int seconds, boolean test, String regionAnnounce,
-				 String regionTrack, String regionReveal, TrainCrossings trainCrossings, boolean bonkPlayers, Map<Integer, CustomMaterial> modelOverrides) {
+				 String regionTrack, String regionReveal, TrainCrossings trainCrossings, boolean bonkPlayers, Map<Integer, ItemModelType> modelOverrides) {
 		this.location = location.toCenterLocation();
 		this.worldguard = new WorldGuardUtils(location);
 		this.forwards = direction;
@@ -357,16 +357,16 @@ public class Train {
 	}
 
 	private void setTrainItem(ArmorStand armorStand, int modelNdx) {
-		CustomMaterial baseMaterial = CustomMaterial.TRAIN_1;
-		String baseEnum = baseMaterial.name().replace("1", "");
-		CustomMaterial ndxMaterial = CustomMaterial.valueOf(baseEnum + modelNdx);
+		ItemModelType baseItemModelType = ItemModelType.TRAIN_1;
+		String baseEnum = baseItemModelType.name().replace("1", "");
+		ItemModelType ndxItemModelType = ItemModelType.valueOf(baseEnum + modelNdx);
 
 		int modelIdOverride = modelNdx + 1;
 		if (modelOverrides.containsKey(modelIdOverride)) {
-			ndxMaterial = modelOverrides.get(modelIdOverride);
+			ndxItemModelType = modelOverrides.get(modelIdOverride);
 		}
 
-		ItemBuilder itemBuilder = new ItemBuilder(CustomMaterial.TRAIN_1).model(ndxMaterial);
+		ItemBuilder itemBuilder = new ItemBuilder(ItemModelType.TRAIN_1).model(ndxItemModelType);
 		armorStand.setItem(EquipmentSlot.HEAD, itemBuilder.build());
 	}
 

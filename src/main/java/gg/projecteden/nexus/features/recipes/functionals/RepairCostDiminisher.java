@@ -2,8 +2,13 @@ package gg.projecteden.nexus.features.recipes.functionals;
 
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -14,7 +19,11 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.Repairable;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +32,7 @@ public class RepairCostDiminisher extends FunctionalRecipe {
 	private static final String NBT_KEY = "REPAIR_COST_DIMINISHER";
 
 	@Getter
-	private final static ItemStack item = new ItemBuilder(CustomMaterial.GEM_BLACK_OPAL)
+	private final static ItemStack item = new ItemBuilder(ItemModelType.GEM_BLACK_OPAL)
 		.name("&eRepair Cost Diminisher")
 		.lore("&7Use with an equipment item in")
 		.lore("&7your offhand to reduce the repair")

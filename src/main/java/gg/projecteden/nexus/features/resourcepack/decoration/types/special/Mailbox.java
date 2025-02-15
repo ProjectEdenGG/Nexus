@@ -8,7 +8,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Interactable;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.mail.Mailer;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.models.mail.MailerService;
@@ -22,8 +22,8 @@ import java.util.UUID;
 
 public class Mailbox extends DyeableFloorThing implements Interactable {
 
-	public Mailbox(boolean multiblock, String name, CustomMaterial material, ColorableType colorableType, String hexOverride, HitboxFloor hitbox) {
-		super(multiblock, name, material, colorableType, hexOverride, hitbox);
+	public Mailbox(boolean multiblock, String name, ItemModelType itemModelType, ColorableType colorableType, String hexOverride, HitboxFloor hitbox) {
+		super(multiblock, name, itemModelType, colorableType, hexOverride, hitbox);
 	}
 
 	static {

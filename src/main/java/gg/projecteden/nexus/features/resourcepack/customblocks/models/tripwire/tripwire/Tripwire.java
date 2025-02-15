@@ -1,17 +1,17 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.tripwire;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.Unobtainable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.CustomTripwireConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.DirectionalConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.IDirectionalTripwire;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NonNull;
 
 @CustomBlockConfig(
 	name = "Tripwire",
-	material = CustomMaterial.TRIPWIRE
+	itemModel = ItemModelType.TRIPWIRE
 )
 @CustomTripwireConfig(
 	attached_NS = false,

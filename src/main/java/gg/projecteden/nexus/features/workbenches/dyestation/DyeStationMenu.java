@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.ChoiceType;
 import gg.projecteden.nexus.models.costume.Costume;
@@ -245,10 +245,10 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 		Optional<ClickableItem> dyeOptional = contents.get(SLOT_DYE);
 		ItemStack dye = dyeOptional.map(ClickableItem::getItem).orElse(null);
 		if (Nullables.isNotNullOrAir(dye)) {
-			CustomMaterial customMaterial = CustomMaterial.of(dye);
+			ItemModelType itemModelType = ItemModelType.of(dye);
 
 			for (ChoiceType choiceType : ChoiceType.values()) {
-				if (customMaterial == choiceType.getBottleMaterial()) {
+				if (itemModelType == choiceType.getBottleItemModelType()) {
 					data.setDyeType(choiceType);
 					break;
 				}

@@ -1,13 +1,13 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.stones.chiseled;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import org.bukkit.Instrument;
 
 @CustomBlockConfig(
 	name = "Chiseled Granite",
-	material = CustomMaterial.STONES_GRANITE_CHISELED_GRANITE
+	itemModel = ItemModelType.STONES_GRANITE_CHISELED_GRANITE
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.DIDGERIDOO,

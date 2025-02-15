@@ -8,7 +8,7 @@ import gg.projecteden.nexus.features.chat.Emotes;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.particles.providers.EffectSettingProvider;
-import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
+import gg.projecteden.nexus.features.resourcepack.models.files.ItemModelFolder;
 import gg.projecteden.nexus.features.store.BuycraftUtils;
 import gg.projecteden.nexus.features.store.Package;
 import gg.projecteden.nexus.features.store.StoreCommand;
@@ -90,12 +90,12 @@ public enum GalleryPackage {
 		@NoArgsConstructor
 		static class CostumeDisplayMenu extends CostumeMenu {
 
-			public CostumeDisplayMenu(CostumeMenu previousMenu, CustomModelFolder folder) {
+			public CostumeDisplayMenu(CostumeMenu previousMenu, ItemModelFolder folder) {
 				super(previousMenu, folder);
 			}
 
 			@Override
-			protected CostumeMenu newMenu(CostumeMenu previousMenu, CustomModelFolder subfolder) {
+			protected CostumeMenu newMenu(CostumeMenu previousMenu, ItemModelFolder subfolder) {
 				return new CostumeDisplayMenu(previousMenu, subfolder);
 			}
 

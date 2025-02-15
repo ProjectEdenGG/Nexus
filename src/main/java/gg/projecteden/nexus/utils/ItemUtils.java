@@ -4,7 +4,7 @@ import de.tr7zw.nbtapi.iface.ReadWriteItemNBT;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
@@ -256,13 +256,13 @@ public class ItemUtils {
 		return getTool(player, (Material) null);
 	}
 
-	public static ItemStack getTool(HasPlayer player, CustomMaterial material) {
+	public static ItemStack getTool(HasPlayer player, ItemModelType itemModelType) {
 		Player _player = player.getPlayer();
 		ItemStack mainHand = _player.getInventory().getItemInMainHand();
 		ItemStack offHand = _player.getInventory().getItemInOffHand();
-		if (!Nullables.isNullOrAir(mainHand) && (material == null || material.is(mainHand)))
+		if (!Nullables.isNullOrAir(mainHand) && (itemModelType == null || itemModelType.is(mainHand)))
 			return mainHand;
-		else if (!Nullables.isNullOrAir(offHand) && (material == null || material.is(offHand)))
+		else if (!Nullables.isNullOrAir(offHand) && (itemModelType == null || itemModelType.is(offHand)))
 			return offHand;
 		return null;
 	}

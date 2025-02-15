@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.Deco
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
@@ -18,7 +18,7 @@ import org.bukkit.inventory.ItemStack;
 
 public interface Toggleable extends Interactable, MultiState {
 
-	CustomMaterial getToggledMaterial();
+	ItemModelType getToggledItemModel();
 
 	default boolean tryToggle(Player player, Block soundOrigin, ItemFrame itemFrame) {
 		if (!Nullables.isNullOrAir(ItemUtils.getTool(player)))
@@ -31,8 +31,8 @@ public interface Toggleable extends Interactable, MultiState {
 		if (Nullables.isNullOrAir(item))
 			return false;
 
-		CustomMaterial toggledMaterial = getToggledMaterial();
-		if (toggledMaterial == null)
+		ItemModelType itemModelType = getToggledItemModel();
+		if (itemModelType == null)
 			return false;
 
 		Decoration decoration = new Decoration((DecorationConfig) this, itemFrame);
@@ -45,7 +45,7 @@ public interface Toggleable extends Interactable, MultiState {
 		}
 
 		ItemBuilder itemBuilder = new ItemBuilder(item);
-		itemBuilder.material(toggledMaterial);
+		itemBuilder.material(itemModelType);
 		itemBuilder.resetName();
 
 		itemFrame.setItem(itemBuilder.build(), false);

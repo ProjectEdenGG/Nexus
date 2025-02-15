@@ -8,8 +8,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreUtils;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.MineralChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
@@ -98,7 +98,7 @@ public class DecorationUtils {
 
 		DecorationLang.debug(debugger, "Color Name: " + colorName);
 
-		boolean isPaintbrush = Objects.equals(resultBuilder.model(), CustomMaterial.PAINTBRUSH.getModel());
+		boolean isPaintbrush = Objects.equals(resultBuilder.model(), ItemModelType.PAINTBRUSH.getModel());
 		boolean handledPaintbrushUses = false;
 
 		List<String> finalLore = new ArrayList<>();

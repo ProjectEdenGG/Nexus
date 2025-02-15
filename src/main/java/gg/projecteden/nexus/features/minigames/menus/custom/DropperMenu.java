@@ -15,7 +15,7 @@ import gg.projecteden.nexus.features.minigames.menus.teams.SpawnpointLocationsMe
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.arenas.DropperArena;
 import gg.projecteden.nexus.features.minigames.models.arenas.DropperMap;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +39,7 @@ public class DropperMenu extends ICustomMechanicMenu {
 	public void init() {
 		addBackItem(new ArenaMenu(arena));
 
-		contents.set(0, 8, ClickableItem.of(new ItemBuilder(CustomMaterial.GUI_PLUS)
+		contents.set(0, 8, ClickableItem.of(new ItemBuilder(ItemModelType.GUI_PLUS)
 			.dyeColor(Color.LIME)
 			.itemFlags(ItemFlag.HIDE_DYE)
 			.name("&eCreate Map"), e -> {

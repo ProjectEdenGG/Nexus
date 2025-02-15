@@ -7,8 +7,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxSingle;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
@@ -30,12 +30,12 @@ import java.util.Map;
 public class Instrument extends DecorationConfig implements NoiseMaker {
 	InstrumentSound sound;
 
-	public Instrument(boolean multiblock, String name, CustomMaterial material, InstrumentSound sound, PlacementType placementType) {
-		this(multiblock, name, material, sound, HitboxSingle.NONE, placementType);
+	public Instrument(boolean multiblock, String name, ItemModelType itemModelType, InstrumentSound sound, PlacementType placementType) {
+		this(multiblock, name, itemModelType, sound, HitboxSingle.NONE, placementType);
 	}
 
-	public Instrument(boolean multiblock, String name, CustomMaterial material, InstrumentSound sound, CustomHitbox hitbox, PlacementType placementType) {
-		super(multiblock, name, material, hitbox);
+	public Instrument(boolean multiblock, String name, ItemModelType itemModelType, InstrumentSound sound, CustomHitbox hitbox, PlacementType placementType) {
+		super(multiblock, name, itemModelType, hitbox);
 
 		this.disabledPlacements = placementType.getDisabledPlacements();
 		this.sound = sound;

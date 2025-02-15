@@ -12,7 +12,7 @@ import gg.projecteden.nexus.features.particles.effects.StarEffect;
 import gg.projecteden.nexus.features.particles.effects.StormEffect;
 import gg.projecteden.nexus.features.particles.effects.WingsEffect;
 import gg.projecteden.nexus.features.particles.effects.WingsEffect.WingsEffectBuilder;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -533,12 +533,12 @@ public enum ParticleType {
 		this(material, null, isShape);
 	}
 
-	ParticleType(CustomMaterial material) {
-		this(material.getMaterial(), material.getModel(), false);
+	ParticleType(ItemModelType itemModelType) {
+		this(itemModelType.getMaterial(), itemModelType.getModel(), false);
 	}
 
-	ParticleType(CustomMaterial material, boolean isShape) {
-		this(material.getMaterial(), material.getModel(), isShape);
+	ParticleType(ItemModelType itemModelType, boolean isShape) {
+		this(itemModelType.getMaterial(), itemModelType.getModel(), isShape);
 	}
 
 	ParticleType(Material material, String modelId, boolean isShape) {

@@ -2,8 +2,8 @@ package gg.projecteden.nexus.features.events.y2021.pugmas21.models;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
@@ -49,7 +49,7 @@ public class Pugmas21TrainBackground {
 	private static final Location loopLocation = LocationUtils.getCenteredLocation(Pugmas21.location(31, 11, -60, -180, 0));
 	private static final double speed = 0.2;
 	private static final BlockFace forwards = BlockFace.WEST;
-	private static final List<String> randomModels = Arrays.asList(CustomMaterial.PUGMAS21_TERRAIN_4.getModel(), CustomMaterial.PUGMAS21_TERRAIN_5.getModel(), CustomMaterial.PUGMAS21_TERRAIN_6.getModel());
+	private static final List<String> randomModels = Arrays.asList(ItemModelType.PUGMAS21_TERRAIN_4.getModel(), ItemModelType.PUGMAS21_TERRAIN_5.getModel(), ItemModelType.PUGMAS21_TERRAIN_6.getModel());
 	private static final WorldGuardUtils WGUtils = Pugmas21.worldguard();
 
 	@Getter

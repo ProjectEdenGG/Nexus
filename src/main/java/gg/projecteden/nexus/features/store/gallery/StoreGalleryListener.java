@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.store.gallery;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.store.gallery.annotations.Category.GalleryCategory;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
@@ -61,7 +61,7 @@ public class StoreGalleryListener implements Listener {
 			event.setCancelled(true);
 
 			if (entity instanceof ItemFrame itemFrame && List.of(BlockFace.NORTH, BlockFace.SOUTH).contains(itemFrame.getAttachedFace()))
-				if (!Nullables.isNullOrAir(itemFrame.getItem()) && Objects.equals(Model.of(itemFrame.getItem()), CustomMaterial.IMAGES_STOREGALLERY_CART.getModel()))
+				if (!Nullables.isNullOrAir(itemFrame.getItem()) && Objects.equals(Model.of(itemFrame.getItem()), ItemModelType.IMAGES_STOREGALLERY_CART.getModel()))
 					galleryPackage.onClickCart(player);
 				else
 					galleryPackage.onImageInteract(player);

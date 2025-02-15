@@ -15,8 +15,8 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBloc
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlockTag;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.workbenches.CustomBench;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -278,8 +278,8 @@ public class CustomRecipes extends Feature implements Listener {
 		return new ExactChoice(items);
 	}
 
-	public static RecipeChoice choiceOf(CustomMaterial material) {
-		return new MaterialChoice(material.getMaterial());
+	public static RecipeChoice choiceOf(ItemModelType itemModelType) {
+		return new MaterialChoice(itemModelType.getMaterial());
 	}
 
 	@NonNull
@@ -292,8 +292,8 @@ public class CustomRecipes extends Feature implements Listener {
 			return new MaterialChoice((List<Material>) choices);
 		else if (object instanceof ItemStack)
 			return new ExactChoice((List<ItemStack>) choices);
-		else if (object instanceof CustomMaterial)
-			return new ExactChoice(choices.stream().map(customMaterial -> ((CustomMaterial) customMaterial).getItem()).toList());
+		else if (object instanceof ItemModelType)
+			return new ExactChoice(choices.stream().map(customMaterial -> ((ItemModelType) customMaterial).getItem()).toList());
 		else if (object instanceof CustomBlock)
 			return new ExactChoice(choices.stream().map(customBlock -> ((CustomBlock) customBlock).get().getItemStack()).toList());
 		else if (object instanceof ICustomBlock)
@@ -310,8 +310,8 @@ public class CustomRecipes extends Feature implements Listener {
 		return material.name();
 	}
 
-	public static String keyOf(CustomMaterial material) {
-		return material.name();
+	public static String keyOf(ItemModelType itemModelType) {
+		return itemModelType.name();
 	}
 
 	public static String keyOf(ItemStack item) {
@@ -322,7 +322,7 @@ public class CustomRecipes extends Feature implements Listener {
 		return StringUtils.pretty(item, amount);
 	}
 
-	public static String keyOf(CustomModel item) {
+	public static String keyOf(ItemModelInstance item) {
 		return StringUtils.pretty(item.getItem());
 	}
 
@@ -460,8 +460,8 @@ public class CustomRecipes extends Feature implements Listener {
 		RecipeBuilder.shapeless(Material.PRISMARINE).toMake(Material.PRISMARINE_SHARD, 4).register(RecipeType.MISC);
 		RecipeBuilder.shapeless(Material.PRISMARINE_BRICKS).toMake(Material.PRISMARINE_SHARD, 9).register(RecipeType.MISC);
 		RecipeBuilder.shapeless(Material.MOSS_CARPET, 3).toMake(Material.MOSS_BLOCK, 2).register(RecipeType.MISC);
-		RecipeBuilder.shapeless(Material.SAND).add(Material.PAPER).toMake(CustomMaterial.SAND_PAPER.getNamedItem()).register(RecipeType.MISC);
-		RecipeBuilder.shapeless(Material.RED_SAND).add(Material.PAPER).toMake(CustomMaterial.RED_SAND_PAPER.getNamedItem()).register(RecipeType.MISC);
+		RecipeBuilder.shapeless(Material.SAND).add(Material.PAPER).toMake(ItemModelType.SAND_PAPER.getNamedItem()).register(RecipeType.MISC);
+		RecipeBuilder.shapeless(Material.RED_SAND).add(Material.PAPER).toMake(ItemModelType.RED_SAND_PAPER.getNamedItem()).register(RecipeType.MISC);
 		RecipeBuilder.shapeless(Material.SADDLE).toMake(Material.LEATHER, 4).register(RecipeType.MISC);
 		RecipeBuilder.shapeless(Material.CHEST).toMake(Material.BARREL).register(RecipeType.MISC);
 		RecipeBuilder.shapeless(Material.CLAY).toMake(Material.CLAY_BALL, 4).register(RecipeType.MISC);
@@ -485,7 +485,7 @@ public class CustomRecipes extends Feature implements Listener {
 		RecipeGroup planks = new RecipeGroup(3, "Planks from Stairs", new ItemStack(Material.OAK_PLANKS));
 		RecipeGroup strippedLogs = new RecipeGroup(4, "Stripped Logs from Logs", new ItemStack(Material.STRIPPED_OAK_LOG));
 		RecipeGroup strippedLogs2 = new RecipeGroup(5, "Stripped Logs from Wood", new ItemStack(Material.STRIPPED_OAK_LOG));
-		final List<ItemStack> sandpaper = List.of(CustomMaterial.SAND_PAPER.getNamedItem(), CustomMaterial.RED_SAND_PAPER.getNamedItem());
+		final List<ItemStack> sandpaper = List.of(ItemModelType.SAND_PAPER.getNamedItem(), ItemModelType.RED_SAND_PAPER.getNamedItem());
 		for (WoodType wood : WoodType.values()) {
 			if (wood.getStrippedLog() != null) RecipeBuilder.shapeless(wood.getStrippedLog(), 2).toMake(wood.getLog(), 2).register(RecipeType.WOOD, logs);
 			if (wood.getStrippedWood() != null) RecipeBuilder.shapeless(wood.getStrippedWood(), 2).toMake(wood.getWood(), 2).register(RecipeType.WOOD, woods);
@@ -549,7 +549,7 @@ public class CustomRecipes extends Feature implements Listener {
 			return;
 
 		for (ItemStack item : event.getInventory().getMatrix())
-			if (Model.of(item) != null && !(CustomMaterial.of(item) != null && CustomMaterial.of(item).isAllowedInVanillaRecipes()))
+			if (Model.of(item) != null && !(ItemModelType.of(item) != null && ItemModelType.of(item).isAllowedInVanillaRecipes()))
 				event.getInventory().setResult(new ItemStack(Material.AIR));
 	}
 

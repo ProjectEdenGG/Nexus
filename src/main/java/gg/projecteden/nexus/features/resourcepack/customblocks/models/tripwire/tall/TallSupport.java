@@ -1,17 +1,17 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.tall;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.Unobtainable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.CustomTripwireConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.ICustomTripwire;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NonNull;
 import org.bukkit.Material;
 
 @CustomBlockConfig(
 	name = "Tall Support",
-	material = CustomMaterial.NULL
+	itemModel = ItemModelType.NULL
 )
 @CustomTripwireConfig(
 	north_NS = false,

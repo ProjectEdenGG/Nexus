@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.events.y2021.halloween21.models;
 
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.Nullables;
 import lombok.AllArgsConstructor;
 import org.bukkit.Material;
@@ -17,8 +17,8 @@ public class Candy {
 		return modelId < MIN || modelId > MAX;
 	}
 
-	public static CustomModel random() {
-		return CustomModel.of(MATERIAL, /*RandomUtils.randomInt(MIN, MAX)*/ CustomMaterial.CANDY_GHOST_CHOCOLATE.getModel());
+	public static ItemModelInstance random() {
+		return ItemModelInstance.of(MATERIAL, /*RandomUtils.randomInt(MIN, MAX)*/ ItemModelType.CANDY_GHOST_CHOCOLATE.getModel());
 	}
 
 	public static boolean isCandy(ItemStack item) {

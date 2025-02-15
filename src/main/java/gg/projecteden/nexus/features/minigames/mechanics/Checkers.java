@@ -13,7 +13,7 @@ import gg.projecteden.nexus.features.minigames.models.exceptions.MinigameExcepti
 import gg.projecteden.nexus.features.minigames.models.matchdata.CheckersMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -59,7 +59,7 @@ public class Checkers extends TeamMechanic {
 
 	@Override
 	public @NotNull ItemStack getMenuItem() {
-		return new ItemBuilder(CustomMaterial.CHECKERS_KING).dyeColor(ColorType.RED).build();
+		return new ItemBuilder(ItemModelType.CHECKERS_KING).dyeColor(ColorType.RED).build();
 	}
 
 	@Override
@@ -196,7 +196,7 @@ public class Checkers extends TeamMechanic {
 	}
 
 	public static ItemStack getPiece(boolean king, Team team) {
-		return new ItemBuilder(king ? CustomMaterial.CHECKERS_KING : CustomMaterial.CHECKERS_NORMAL).dyeColor(team.getHex().substring(1)).build();
+		return new ItemBuilder(king ? ItemModelType.CHECKERS_KING : ItemModelType.CHECKERS_NORMAL).dyeColor(team.getHex().substring(1)).build();
 	}
 
 	@Override

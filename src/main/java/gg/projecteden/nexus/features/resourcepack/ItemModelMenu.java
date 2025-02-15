@@ -3,8 +3,8 @@ package gg.projecteden.nexus.features.resourcepack;
 import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
-import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
+import gg.projecteden.nexus.features.resourcepack.models.files.ItemModelFolder;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NonNull;
@@ -16,16 +16,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class CustomModelMenu extends InventoryProvider {
+public class ItemModelMenu extends InventoryProvider {
 	@NonNull
-	private final CustomModelFolder folder;
-	private final CustomModelMenu previousMenu;
+	private final ItemModelFolder folder;
+	private final ItemModelMenu previousMenu;
 
-	public CustomModelMenu() {
+	public ItemModelMenu() {
 		this(ResourcePack.getRootFolder(), null);
 	}
 
-	public CustomModelMenu(@NonNull CustomModelFolder folder) {
+	public ItemModelMenu(@NonNull ItemModelFolder folder) {
 		this(folder, null);
 	}
 
@@ -50,14 +50,14 @@ public class CustomModelMenu extends InventoryProvider {
 
 		List<ClickableItem> items = new ArrayList<>();
 
-		for (CustomModelFolder folder : folder.getFolders()) {
-			CustomModel firstModel = folder.getIcon();
+		for (ItemModelFolder folder : folder.getFolders()) {
+			ItemModelInstance firstModel = folder.getIcon();
 			ItemStack item = new ItemStack(Material.BARRIER);
 			if (firstModel != null)
 				item = firstModel.getDisplayItem();
 
 			ItemBuilder builder = new ItemBuilder(item).name(folder.getDisplayPath()).glow();
-			items.add(ClickableItem.of(builder.build(), e -> new CustomModelMenu(folder, this).open(viewer)));
+			items.add(ClickableItem.of(builder.build(), e -> new ItemModelMenu(folder, this).open(viewer)));
 		}
 
 		if (!items.isEmpty()) {
@@ -68,12 +68,12 @@ public class CustomModelMenu extends InventoryProvider {
 				items.add(ClickableItem.NONE);
 		}
 
-		for (CustomModel model : folder.getModels()) {
+		for (ItemModelInstance model : folder.getModels()) {
 			if ("icon".equals(model.getFileName()))
 				continue;
 
 			ItemBuilder item = new ItemBuilder(model.getDisplayItem())
-					.lore("&e" + StringUtils.camelCase(model.getMaterial()) + ": " + model.getData())
+					.lore("&e" + StringUtils.camelCase(model.getMaterial()) + ": " + model.getItemModel())
 					.lore("&eOld Data: %s (%d)".formatted(model.getOldMaterial(), model.getOldCustomModelData()))
 					.lore("")
 					.lore("&7Click to obtain item")

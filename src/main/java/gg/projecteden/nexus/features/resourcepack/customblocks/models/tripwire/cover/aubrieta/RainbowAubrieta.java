@@ -1,13 +1,13 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.cover.aubrieta;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.CustomTripwireConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.cover.ICover;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 
 @CustomBlockConfig(
 	name = "Rainbow Aubrieta",
-	material = CustomMaterial.FLORA_COVER_AUBRIETA_AUBRIETA_RAINBOW_ITEM
+	itemModel = ItemModelType.FLORA_COVER_AUBRIETA_AUBRIETA_RAINBOW_ITEM
 )
 @CustomTripwireConfig(
 	north_NS = false,

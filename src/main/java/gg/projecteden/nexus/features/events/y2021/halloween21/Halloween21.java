@@ -10,8 +10,11 @@ import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpda
 import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.models.boost.Booster;
 import gg.projecteden.nexus.models.halloween21.Halloween21UserService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.EntityUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.nms.PacketUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
@@ -87,7 +90,7 @@ public class Halloween21 implements Listener {
 				return null;
 			}
 
-			return new ItemBuilder(RandomUtils.randomElement(PumpkinType.values()).getMaterial());
+			return new ItemBuilder(RandomUtils.randomElement(PumpkinType.values()).getItemModelType());
 		}
 
 		public static PumpkinableEntity of(LivingEntity entity) {

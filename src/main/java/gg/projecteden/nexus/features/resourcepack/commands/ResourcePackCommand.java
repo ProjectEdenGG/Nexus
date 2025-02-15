@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.resourcepack.commands;
 
 import gg.projecteden.api.common.annotations.Async;
-import gg.projecteden.nexus.features.resourcepack.CustomModelMenu;
+import gg.projecteden.nexus.features.resourcepack.ItemModelMenu;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.Saturn;
-import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
+import gg.projecteden.nexus.features.resourcepack.models.files.ItemModelFolder;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -153,22 +153,22 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	@Path("menu [folder]")
 	@Description("Open the resource pack menu")
 	@Permission(Group.STAFF)
-	void menu(CustomModelFolder folder) {
+	void menu(ItemModelFolder folder) {
 		if (rank() == Rank.MODERATOR && worldGroup() != WorldGroup.STAFF)
 			permissionError();
 
-		new CustomModelMenu(folder).open(player());
+		new ItemModelMenu(folder).open(player());
 	}
 
-	@ConverterFor(CustomModelFolder.class)
-	CustomModelFolder convertToCustomModelFolder(String value) {
+	@ConverterFor(ItemModelFolder.class)
+	ItemModelFolder convertToCustomModelFolder(String value) {
 		return ResourcePack.getRootFolder().getFolder("/" + (value == null ? "" : value));
 	}
 
-	@TabCompleterFor(CustomModelFolder.class)
+	@TabCompleterFor(ItemModelFolder.class)
 	List<String> tabCompleteCustomModelFolder(String filter) {
 		return ResourcePack.getFolders().stream()
-				.map(CustomModelFolder::getDisplayPath)
+				.map(ItemModelFolder::getDisplayPath)
 				.filter(path -> path.toLowerCase().startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());
 	}

@@ -6,27 +6,27 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementTyp
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Colorable;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Seat;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 
 public class DyeableChair extends Dyeable implements Seat, Colorable {
 	private final ColorableType colorableType;
 	private final Double sitHeight;
 	private final boolean backless;
 
-	public DyeableChair(boolean multiblock, boolean backless, String name, CustomMaterial material, ColorableType colorableType) {
-		this(multiblock, backless, name, material, colorableType, null);
+	public DyeableChair(boolean multiblock, boolean backless, String name, ItemModelType itemModelType, ColorableType colorableType) {
+		this(multiblock, backless, name, itemModelType, colorableType, null);
 	}
 
-	public DyeableChair(boolean multiblock, boolean backless, String name, CustomMaterial material, ColorableType colorableType, Double sitHeight) {
-		this(multiblock, backless, name, material, colorableType, HitboxSingle._1x1_BARRIER, sitHeight);
+	public DyeableChair(boolean multiblock, boolean backless, String name, ItemModelType itemModelType, ColorableType colorableType, Double sitHeight) {
+		this(multiblock, backless, name, itemModelType, colorableType, HitboxSingle._1x1_BARRIER, sitHeight);
 	}
 
-	public DyeableChair(boolean multiblock, boolean backless, String name, CustomMaterial material, ColorableType colorableType, CustomHitbox hitbox, Double sitHeight) {
-		this(multiblock, backless, name, material, colorableType, null, hitbox, sitHeight);
+	public DyeableChair(boolean multiblock, boolean backless, String name, ItemModelType itemModelType, ColorableType colorableType, CustomHitbox hitbox, Double sitHeight) {
+		this(multiblock, backless, name, itemModelType, colorableType, null, hitbox, sitHeight);
 	}
 
-	public DyeableChair(boolean multiblock, boolean backless, String name, CustomMaterial material, ColorableType colorableType, String hexOverride, CustomHitbox hitbox, Double sitHeight) {
-		super(multiblock, name, material, colorableType, hexOverride, hitbox);
+	public DyeableChair(boolean multiblock, boolean backless, String name, ItemModelType itemModelType, ColorableType colorableType, String hexOverride, CustomHitbox hitbox, Double sitHeight) {
+		super(multiblock, name, itemModelType, colorableType, hexOverride, hitbox);
 		this.disabledPlacements = PlacementType.FLOOR.getDisabledPlacements();
 		this.colorableType = colorableType;
 		this.sitHeight = sitHeight;

@@ -7,7 +7,7 @@ import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21District;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
@@ -86,7 +86,7 @@ public class Advent21Config implements PlayerOwnedObject {
 		}
 
 		public ItemBuilder getItem() {
-			return new ItemBuilder(CustomMaterial.PUGMAS_PRESENT_ADVENT).name("Advent Present").lore("&eDay #" + day, "&f", Pugmas21.LORE);
+			return new ItemBuilder(ItemModelType.PUGMAS_PRESENT_ADVENT).name("Advent Present").lore("&eDay #" + day, "&f", Pugmas21.LORE);
 		}
 
 		public Pugmas21District getDistrict() {
@@ -94,11 +94,11 @@ public class Advent21Config implements PlayerOwnedObject {
 		}
 
 		@NotNull ItemFrame sendPacket(Advent21User user) {
-			final CustomMaterial material = user.hasCollected(day) ? CustomMaterial.PUGMAS_PRESENT_ADVENT_OPENED : CustomMaterial.PUGMAS_PRESENT_ADVENT;
+			final ItemModelType itemModelType = user.hasCollected(day) ? ItemModelType.PUGMAS_PRESENT_ADVENT_OPENED : ItemModelType.PUGMAS_PRESENT_ADVENT;
 			return ClientSideItemFrame.builder()
 				.location(getLocation())
 				.blockFace(BlockFace.UP)
-				.content(new ItemBuilder(material).build())
+				.content(new ItemBuilder(itemModelType).build())
 				.invisible(true)
 				.send(user.getOnlinePlayer())
 				.entity();

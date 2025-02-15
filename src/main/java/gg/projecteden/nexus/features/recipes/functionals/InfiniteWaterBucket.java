@@ -2,8 +2,8 @@ package gg.projecteden.nexus.features.recipes.functionals;
 
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
@@ -30,8 +30,8 @@ import java.util.Objects;
 
 public class InfiniteWaterBucket extends FunctionalRecipe {
 
-	public static CustomModel getCustomModel() {
-		return CustomMaterial.INFINITE_WATER_BUCKET.getCustomModel();
+	public static ItemModelInstance getCustomModel() {
+		return ItemModelType.INFINITE_WATER_BUCKET.getCustomModel();
 	}
 
 	@Override
@@ -137,7 +137,7 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 
 	@Contract("null -> false")
 	private static boolean isInfiniteWaterBucket(ItemStack item) {
-		return CustomMaterial.of(item) == CustomMaterial.INFINITE_WATER_BUCKET;
+		return ItemModelType.of(item) == ItemModelType.INFINITE_WATER_BUCKET;
 	}
 
 }

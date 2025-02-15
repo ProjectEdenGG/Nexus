@@ -14,8 +14,8 @@ import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.features.itemtags.Rarity;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.IsColored;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -109,21 +109,21 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		this(new ItemStack(material));
 	}
 
-	public ItemBuilder(CustomMaterial material) {
-		this(material, 1);
+	public ItemBuilder(ItemModelType itemModelType) {
+		this(itemModelType, 1);
 	}
 
-	public ItemBuilder(CustomModel customModel) {
+	public ItemBuilder(ItemModelInstance customModel) {
 		this(customModel.getMaterial());
-		model(customModel.getData());
+		model(customModel.getItemModel());
 	}
 
 	public ItemBuilder(Material material, int amount) {
 		this(new ItemStack(material, amount));
 	}
 
-	public ItemBuilder(CustomMaterial material, int amount) {
-		this(new ItemBuilder(material.getMaterial()).model(material).amount(amount));
+	public ItemBuilder(ItemModelType itemModelType, int amount) {
+		this(new ItemBuilder(itemModelType.getMaterial()).model(itemModelType).amount(amount));
 	}
 
 	public ItemBuilder(ItemBuilder itemBuilder) {
@@ -148,13 +148,13 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		number(number);
 	}
 
-	public ItemBuilder material(CustomMaterial customMaterial) {
+	public ItemBuilder material(ItemModelType itemModelType) {
 		String displayName = itemMeta.getDisplayName();
 
-		itemStack.setType(customMaterial.getMaterial());
+		itemStack.setType(itemModelType.getMaterial());
 		itemMeta = itemStack.getItemMeta();
 
-		model(customMaterial);
+		model(itemModelType);
 		name(displayName);
 
 		return this;
@@ -728,10 +728,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		final AxolotlBucketMeta bucketMeta = (AxolotlBucketMeta) itemMeta;
 		bucketMeta.setVariant(variant);
 		switch (variant) {
-			case WILD -> model(CustomMaterial.AXOLOTL_BUCKET_BROWN);
-			case GOLD -> model(CustomMaterial.AXOLOTL_BUCKET_YELLOW);
-			case CYAN -> model(CustomMaterial.AXOLOTL_BUCKET_CYAN);
-			case BLUE -> model(CustomMaterial.AXOLOTL_BUCKET_BLUE);
+			case WILD -> model(ItemModelType.AXOLOTL_BUCKET_BROWN);
+			case GOLD -> model(ItemModelType.AXOLOTL_BUCKET_YELLOW);
+			case CYAN -> model(ItemModelType.AXOLOTL_BUCKET_CYAN);
+			case BLUE -> model(ItemModelType.AXOLOTL_BUCKET_BLUE);
 		}
 		return this;
 	}
@@ -943,8 +943,8 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
-	public ItemBuilder model(CustomMaterial material) {
-		return model(material.getModel());
+	public ItemBuilder model(ItemModelType itemModelType) {
+		return model(itemModelType.getModel());
 	}
 
 	public String model() {
@@ -954,7 +954,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder number(int number) {
-		return model(CustomMaterial.GUI_NUMBER).customModelData(number);
+		return model(ItemModelType.GUI_NUMBER).customModelData(number);
 	}
 
 	public static class Model {

@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.workbenches.dyestation;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.ChoiceType;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.ColoredButton;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.MineralChoice;
@@ -31,12 +31,12 @@ public interface IDyeMenu {
 	SlotPos SLOT_DYE = new SlotPos(3, 1);
 	SlotPos SLOT_RESULT = new SlotPos(2, 7);
 
-	ItemBuilder STAIN_NEXT = new ItemBuilder(CustomMaterial.GUI_ARROW_RIGHT)
+	ItemBuilder STAIN_NEXT = new ItemBuilder(ItemModelType.GUI_ARROW_RIGHT)
 			.dyeColor(ColorType.CYAN)
 			.itemFlags(ItemFlag.HIDE_DYE)
 			.name("Next Page");
 
-	ItemBuilder STAIN_PREVIOUS = new ItemBuilder(CustomMaterial.GUI_ARROW_LEFT)
+	ItemBuilder STAIN_PREVIOUS = new ItemBuilder(ItemModelType.GUI_ARROW_LEFT)
 			.dyeColor(ColorType.CYAN)
 			.itemFlags(ItemFlag.HIDE_DYE)
 			.name("Previous Page");
@@ -119,7 +119,7 @@ public interface IDyeMenu {
 
 	default void addCheatButtons(InventoryContents contents) {
 		for (ChoiceType choiceType : ChoiceType.values()) {
-			ItemStack displayItem = new ItemBuilder(choiceType.getBottleMaterial())
+			ItemStack displayItem = new ItemBuilder(choiceType.getBottleItemModelType())
 				.name(StringUtils.camelCase(choiceType))
 				.resetLore()
 				.build();

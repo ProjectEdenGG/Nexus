@@ -8,7 +8,7 @@ import gg.projecteden.nexus.features.minigames.lobby.MinigameInviter;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicSubGroup;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ColorType;
@@ -47,23 +47,23 @@ public class MechanicSubGroupMenu extends InventoryProvider {
 		final int count = group.getMechanics().size();
 
 		final int slotInterval;
-		final CustomMaterial outlineMaterial;
+		final ItemModelType outlineItemModelType;
 
 		switch (count) {
 			case 2 -> {
 				slotInterval = 5;
-				outlineMaterial = CustomMaterial.GUI_OUTLINE_3x2;
+				outlineItemModelType = ItemModelType.GUI_OUTLINE_3x2;
 			}
 			case 3 -> {
 				slotInterval = 3;
-				outlineMaterial = CustomMaterial.GUI_OUTLINE_6x3;
+				outlineItemModelType = ItemModelType.GUI_OUTLINE_6x3;
 			}
 			default ->
 				throw new InvalidInputException("Unsupported group size " + count + " for group " + StringUtils.camelCase(group));
 		}
 
 		final Function<MechanicType, Consumer<ItemClickData>> onClick = mechanic -> e -> {
-			final boolean holdingInvite = CustomMaterial.ENVELOPE_1.is(viewer.getItemOnCursor());
+			final boolean holdingInvite = ItemModelType.ENVELOPE_1.is(viewer.getItemOnCursor());
 			new ArenasMenu(mechanic).open(viewer);
 			if (holdingInvite) {
 				if (MinigameInviter.canSendInvite(viewer))
@@ -77,8 +77,8 @@ public class MechanicSubGroupMenu extends InventoryProvider {
 				ClickableItem.of(itemBuilder.apply(mechanic, item), onClick.apply(mechanic));
 
 			final ClickableItem image = clickableItem.apply(mechanic.get().getMenuImage());
-			final ClickableItem filler = clickableItem.apply(new ItemBuilder(CustomMaterial.INVISIBLE));
-			final ClickableItem outline = clickableItem.apply(new ItemBuilder(outlineMaterial).dyeColor(ColorType.GRAY));
+			final ClickableItem filler = clickableItem.apply(new ItemBuilder(ItemModelType.INVISIBLE));
+			final ClickableItem outline = clickableItem.apply(new ItemBuilder(outlineItemModelType).dyeColor(ColorType.GRAY));
 
 			contents.fill(0, slot, 6, slot + (9 / count) - 1, filler);
 			contents.set(0, slot, image);

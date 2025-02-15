@@ -9,7 +9,7 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.models.pugmas25.Advent25Config;
 import gg.projecteden.nexus.models.pugmas25.Advent25Present;
@@ -94,13 +94,13 @@ public class Pugmas25AdventMenu extends InventoryProvider {
 
 	@AllArgsConstructor
 	public enum Icon {
-		MISSED(CustomMaterial.PUGMAS_PRESENT_OUTLINED, "&cMissed"),
-		OPENED(CustomMaterial.PUGMAS_PRESENT_OPENED, "&aOpened"),
-		AVAILABLE(CustomMaterial.PUGMAS_PRESENT_COLORED, "&a&oAvailable"),
-		LOCKED(CustomMaterial.PUGMAS_PRESENT_LOCKED, "&7Locked"),
+		MISSED(ItemModelType.PUGMAS_PRESENT_OUTLINED, "&cMissed"),
+		OPENED(ItemModelType.PUGMAS_PRESENT_OPENED, "&aOpened"),
+		AVAILABLE(ItemModelType.PUGMAS_PRESENT_COLORED, "&a&oAvailable"),
+		LOCKED(ItemModelType.PUGMAS_PRESENT_LOCKED, "&7Locked"),
 		;
 
-		private final CustomMaterial material;
+		private final ItemModelType itemModelType;
 		private final String status;
 
 		public ItemBuilder getItem(int day) {
@@ -113,7 +113,7 @@ public class Pugmas25AdventMenu extends InventoryProvider {
 					districtName = "???";
 			}
 
-			return new ItemBuilder(material)
+			return new ItemBuilder(itemModelType)
 					.name("&3Day: &e" + present.getDay())
 					.lore("&3Status: &e" + status)
 				.lore("&3District: &e" + districtName);

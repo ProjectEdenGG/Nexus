@@ -7,7 +7,7 @@ import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.legacy.LegacyCommand.LegacyVaultMenu.LegacyVaultHolder;
 import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks.BackpackMenu.BackpackHolder;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventory;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventoryFeature;
 import gg.projecteden.nexus.features.vaults.VaultCommand.VaultMenu.VaultHolder;
@@ -192,7 +192,7 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 		HOPPER(Material.HOPPER),
 		DROPPER(Material.DROPPER),
 		DISPENSER(Material.DISPENSER),
-		BACKPACK(CustomMaterial.BACKPACK_3D_BASIC),
+		BACKPACK(ItemModelType.BACKPACK_3D_BASIC),
 		VAULT(Material.IRON_BARS),
 		ENDER_CHEST(Material.ENDER_CHEST),
 		;
@@ -201,9 +201,9 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 		private final Material material;
 		private String model;
 
-		AutoSortInventoryType(@NonNull CustomMaterial material) {
-			this.material = material.getMaterial();
-			this.model = material.getModel();
+		AutoSortInventoryType(@NonNull ItemModelType itemModelType) {
+			this.material = itemModelType.getMaterial();
+			this.model = itemModelType.getModel();
 		}
 
 		@SneakyThrows
