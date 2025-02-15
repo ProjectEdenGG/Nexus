@@ -8,12 +8,25 @@ import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
 import gg.projecteden.nexus.features.events.models.Train.Crossing.TrackSide;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.Distance;
+import gg.projecteden.nexus.utils.EntityUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Lightable;
 import org.bukkit.block.data.type.Light;
@@ -24,7 +37,15 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public class Train {
@@ -289,7 +310,7 @@ public class Train {
 		if (!worldguard.isInRegion(location, regionReveal))
 			return;
 
-		int ndx = 0;
+		int ndx = 1;
 		for (ArmorStand _armorStand : armorStands) {
 			if (_armorStand.getUniqueId().toString().equalsIgnoreCase(armorStand.getUniqueId().toString())) {
 				setTrainItem(armorStand, ndx);
@@ -320,7 +341,7 @@ public class Train {
 	}
 
 	private void spawnArmorStands() {
-		for (int i = 0; i < TOTAL_MODELS; i++) {
+		for (int i = 1; i <= TOTAL_MODELS; i++) {
 			armorStands.add(armorStand(i, location));
 			location.add(backwards.getDirection().multiply(SEPARATOR));
 		}
@@ -337,7 +358,7 @@ public class Train {
 
 	private void setTrainItem(ArmorStand armorStand, int modelNdx) {
 		CustomMaterial baseMaterial = CustomMaterial.TRAIN_1;
-		String baseEnum = baseMaterial.name().replace("_1", "");
+		String baseEnum = baseMaterial.name().replace("1", "");
 		CustomMaterial ndxMaterial = CustomMaterial.valueOf(baseEnum + modelNdx);
 
 		int modelIdOverride = modelNdx + 1;
