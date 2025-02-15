@@ -2,6 +2,9 @@ package gg.projecteden.nexus.features.resourcepack.models;
 
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.AllArgsConstructor;
+import org.bukkit.Color;
+
+// ordinal == shader color - file must be in same order as texture
 
 @AllArgsConstructor
 public enum CustomArmorType {
@@ -24,7 +27,11 @@ public enum CustomArmorType {
 	private final String id;
 
 	public String getId(PlayerUtils.ArmorSlot slot) {
-		return id + "_" + slot.name().toLowerCase();
+		return id + "/" + slot.name().toLowerCase();
+	}
+
+	public Color getShaderDyeColor() {
+		return Color.fromRGB(ordinal() + 1);
 	}
 
 }

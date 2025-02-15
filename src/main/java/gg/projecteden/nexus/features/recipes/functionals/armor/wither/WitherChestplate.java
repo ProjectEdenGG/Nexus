@@ -9,7 +9,6 @@
 	import gg.projecteden.nexus.utils.Enchant;
 	import gg.projecteden.nexus.utils.ItemBuilder;
 	import lombok.Getter;
-	import org.bukkit.Color;
 	import org.bukkit.attribute.Attribute;
 	import org.bukkit.attribute.AttributeModifier.Operation;
 	import org.bukkit.inventory.EquipmentSlot;
@@ -22,7 +21,7 @@
 
 	@Getter
 	private static final ItemStack item = new ItemBuilder(CustomMaterial.WITHER_CHESTPLATE)
-		.dyeColor(Color.fromRGB(CustomArmorType.WITHER.ordinal() + 1))
+		.dyeColor(CustomArmorType.WITHER.getShaderDyeColor())
 		.itemFlags(ItemFlag.HIDE_DYE)
 		.enchant(Enchant.PROTECTION, 4)
 		.enchant(Enchant.UNBREAKING, 4)

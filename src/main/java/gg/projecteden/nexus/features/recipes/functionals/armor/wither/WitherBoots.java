@@ -9,7 +9,6 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.Getter;
-import org.bukkit.Color;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlot;
@@ -22,7 +21,7 @@ public class WitherBoots extends FunctionalRecipe {
 
 	@Getter
 	private static final ItemStack item = new ItemBuilder(CustomMaterial.WITHER_BOOTS)
-		.dyeColor(Color.fromRGB(CustomArmorType.WITHER.ordinal() + 1))
+		.dyeColor(CustomArmorType.WITHER.getShaderDyeColor())
 		.itemFlags(ItemFlag.HIDE_DYE)
 		.attribute(Attribute.ARMOR, "wither-armor-points", 3, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.FEET)
 		.attribute(Attribute.ARMOR_TOUGHNESS, "wither-armor-toughness", 2, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.FEET)
