@@ -117,7 +117,6 @@ public class ResourcePack extends Feature implements Listener {
 
 				setup();
 				readAllFiles();
-				CustomModelMenu.load();
 
 				reloading = false;
 				new ResourcePackUpdateCompleteEvent().callEvent();

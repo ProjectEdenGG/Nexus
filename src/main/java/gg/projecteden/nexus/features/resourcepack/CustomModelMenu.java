@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack;
 
 import gg.projecteden.api.common.utils.StringUtils;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
@@ -14,10 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 @RequiredArgsConstructor
 public class CustomModelMenu extends InventoryProvider {
@@ -81,50 +77,6 @@ public class CustomModelMenu extends InventoryProvider {
 		}
 
 		paginate(items);
-	}
-
-	public static void load() {
-		for (String path : getFolderPaths())
-			addFoldersRecursively(path);
-	}
-
-	private static Set<String> getFolderPaths() {
-		Set<String> paths = new HashSet<>();
-
-//		for (ResourcePackOverriddenMaterial group : ResourcePack.getModelGroups())
-//			for (ModelOverride override : group.getOverrides())
-//				if (override.getModel().startsWith("projecteden"))
-//					paths.add(override.getFolderPath());
-
-		return new TreeSet<>(paths);
-	}
-
-	private static void addFoldersRecursively(String path) {
-		String[] folders = path.split("/");
-
-		String walk = "";
-		for (String folder : folders) {
-			try {
-				if (folder.isEmpty() || "/".equals(folder))
-					continue;
-
-				String parent = walk;
-				walk += "/" + folder;
-				addFolder(walk, folder, parent);
-			} catch (Exception ex) {
-				 ex.printStackTrace();
-			}
-		}
-	}
-
-	private static void addFolder(String walk, String folder, String parent) {
-		Nexus.debug("addFolder(%s, %s, %s)".formatted(walk, folder, parent));
-		CustomModelFolder existing = ResourcePack.getRootFolder().getFolder(walk);
-		if (existing == null)
-			if (parent.isEmpty())
-				ResourcePack.getRootFolder().addFolder(folder);
-			else
-				ResourcePack.getRootFolder().getFolder(parent).addFolder(folder);
 	}
 
 }
