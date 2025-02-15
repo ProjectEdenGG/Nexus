@@ -43,7 +43,6 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -84,6 +83,7 @@ import org.joml.AxisAngle4d;
 import org.joml.Matrix4f;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -104,6 +104,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class BlockParty extends TeamlessMechanic {
 
@@ -364,19 +367,29 @@ public class BlockParty extends TeamlessMechanic {
 	private Map<Material, Material> generateWoolReplacementMap(Match match, Region copy) {
 		List<Material> originalConcretes = match.getArena().worldedit().getBlocks(copy)
 			.stream().map(Block::getType).filter(MaterialTag.CONCRETES::isTagged).distinct().toList();
+		List<Material> wools = match.getArena().worldedit().getBlocks(copy)
+			.stream().map(Block::getType).filter(MaterialTag.WOOL::isTagged).distinct().collect(Collectors.toList());
 
 		Map<Material, Material> replacementMap = new HashMap<>();
 
 		List<Material> concretes = new ArrayList<>(MaterialTag.CONCRETES.getValues());
-		List<Material> wools = new ArrayList<>(MaterialTag.WOOL.getValues());
 
 		concretes.removeAll(originalConcretes);
 
 		Collections.shuffle(wools);
 		Collections.shuffle(concretes);
 
-		for (int i = 0; i < concretes.size(); i++)
-			replacementMap.put(wools.get(i), concretes.get(i));
+		boolean warn = false;
+		for (int i = 0; i < wools.size(); i++) {
+			if (i >= concretes.size() && !warn) {
+				Nexus.warn("&cNot enough colors in BlockParty design at y=" + copy.getMinimumPoint().y());
+				Collections.shuffle(concretes);
+				warn = true;
+			}
+
+			int min = Math.min(i, concretes.size() - 1);
+			replacementMap.put(wools.get(i), concretes.get(min));
+		}
 
 		return replacementMap;
 	}
@@ -398,7 +411,7 @@ public class BlockParty extends TeamlessMechanic {
 		setBlockInHand(match, matchData.getBlock());
 	}
 
-	private Material getRandomFloorColor(Match match) {
+	private static Material getRandomFloorColor(Match match) {
 		BlockPartyMatchData matchData = match.getMatchData();
 		List<Material> types = match.getArena().worldedit().getBlocks(matchData.getPasteRegion())
 			.stream().map(Block::getType).distinct().toList();
@@ -554,7 +567,7 @@ public class BlockParty extends TeamlessMechanic {
 			BlockPartyPowerUp powerUp = RandomUtils.randomElement(BlockPartyPowerUp.values());
 			ItemStack powerUpItem = powerUp.getItem();
 
-			if (Nullables.isNullOrAir(minigamer.getPlayer().getInventory().getItem(0))) {
+			if (isNullOrAir(minigamer.getPlayer().getInventory().getItem(0))) {
 				minigamer.getPlayer().getInventory().setItem(0, new ItemBuilder(CustomMaterial.INVISIBLE).build());
 				minigamer.getPlayer().getInventory().addItem(powerUpItem);
 				minigamer.getPlayer().getInventory().setItem(0, null);
@@ -601,7 +614,7 @@ public class BlockParty extends TeamlessMechanic {
 		if (event.getHand() != EquipmentSlot.HAND)
 			return;
 
-		if (Nullables.isNullOrAir(event.getItem()))
+		if (isNullOrAir(event.getItem()))
 			return;
 
 		ItemStack item = event.getItem();
@@ -615,7 +628,7 @@ public class BlockParty extends TeamlessMechanic {
 			event.setCancelled(true);
 
 			item.subtract();
-			powerUp.execute(minigamer, minigamer.getMatch());
+			powerUp.execute(minigamer, minigamer.getMatch(), event);
 
 			BlockPartyMatchData matchData = minigamer.getMatch().getMatchData();
 			matchData.getPowerUpsUsed().put(minigamer.getUniqueId(), matchData.getPowerUpsUsed().getOrDefault(minigamer.getUniqueId(), 0) + 1);
@@ -688,6 +701,10 @@ public class BlockParty extends TeamlessMechanic {
 		else
 			return;
 
+		splatterPaint(location);
+	}
+
+	public static void splatterPaint(Location location) {
 		Arena arena = ArenaManager.getFromLocation(location);
 		if (arena == null)
 			return;
@@ -722,8 +739,9 @@ public class BlockParty extends TeamlessMechanic {
 		locations.forEach(loc -> loc.getBlock().setType(material, false));
 	}
 
-	BlockFace[] faces = { BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST };
-	private List<Location> spawnColorSplash(BlockPartyMatchData matchData, Location origin, Location current, List<Location> checked, int maxDepth)  {
+	private static BlockFace[] faces = { BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST };
+
+	private static List<Location> spawnColorSplash(BlockPartyMatchData matchData, Location origin, Location current, List<Location> checked, int maxDepth)  {
 		if (!matchData.getPasteRegion().contains(current.getBlockX(), current.getBlockY(), current.getBlockZ()))
 			return checked;
 
@@ -746,7 +764,7 @@ public class BlockParty extends TeamlessMechanic {
 			final ItemStack item = new ItemBuilder(CustomMaterial.BLOCKPARTY_POWERUPS_LEAP).name("&eLeap").build();
 
 			@Override
-			void execute(Minigamer minigamer, Match match) {
+			void execute(Minigamer minigamer, Match match, PlayerInteractEvent event) {
 				minigamer.getPlayer().setVelocity(minigamer.getLocation().getDirection().normalize().multiply(1.2f));
 				minigamer.getPlayer().playSound(minigamer.getLocation(), Sound.ENTITY_GHAST_SHOOT, 1, 1);
 			}
@@ -756,7 +774,12 @@ public class BlockParty extends TeamlessMechanic {
 			final ItemStack item = new ItemBuilder(CustomMaterial.BLOCKPARTY_POWERUPS_COLOR_SPLASH).name("&eColor Splash").build();
 
 			@Override
-			void execute(Minigamer minigamer, Match match) {
+			void execute(Minigamer minigamer, Match match, PlayerInteractEvent event) {
+				if (isNotNullOrAir(event.getClickedBlock())) {
+					splatterPaint(event.getClickedBlock().getLocation());
+					return;
+				}
+
 				Vector vector = minigamer.getLocation().getDirection().normalize().multiply(0.5f);
 				Location spawnLoc = minigamer.getPlayer().getEyeLocation().clone().add(vector);
 
@@ -772,7 +795,7 @@ public class BlockParty extends TeamlessMechanic {
 			final PotionEffect potion = new PotionEffect(PotionEffectType.JUMP_BOOST, (int) TimeUtils.TickTime.SECOND.x(15), 3, true, true);
 
 			@Override
-			void execute(Minigamer minigamer, Match match) {
+			void execute(Minigamer minigamer, Match match, PlayerInteractEvent event) {
 				minigamer.getPlayer().addPotionEffect(potion);
 				minigamer.getPlayer().playSound(minigamer.getLocation(), Sound.ITEM_BUCKET_FILL, 1, 1);
 			}
@@ -783,7 +806,7 @@ public class BlockParty extends TeamlessMechanic {
 			final PotionEffect potion = new PotionEffect(PotionEffectType.SPEED, (int) TimeUtils.TickTime.SECOND.x(8), 4, true, true);
 
 			@Override
-			void execute(Minigamer minigamer, Match match) {
+			void execute(Minigamer minigamer, Match match, PlayerInteractEvent event) {
 				minigamer.getPlayer().addPotionEffect(potion);
 				minigamer.getPlayer().playSound(minigamer.getLocation(), Sound.ITEM_BUCKET_FILL, 1, 1);
 			}
@@ -793,7 +816,7 @@ public class BlockParty extends TeamlessMechanic {
 			final ItemStack item = new ItemBuilder(CustomMaterial.BLOCKPARTY_POWERUPS_COLOR_STORM).name("&eColor Storm").build();
 
 			@Override
-			void execute(Minigamer minigamer, Match match) {
+			void execute(Minigamer minigamer, Match match, PlayerInteractEvent event) {
 				BlockPartyMatchData matchData = match.getMatchData();
 				for (int i = 0; i < 100; i++)
 					match.getTasks().wait(i / 5, () -> {
@@ -806,7 +829,7 @@ public class BlockParty extends TeamlessMechanic {
 
 		abstract ItemStack getItem();
 
-		abstract void execute(Minigamer minigamer, Match match);
+		abstract void execute(Minigamer minigamer, Match match, PlayerInteractEvent event);
 	}
 	// endregion
 
@@ -1171,7 +1194,7 @@ public class BlockParty extends TeamlessMechanic {
 		File file = path.toFile();
 		if (!file.exists()) file.createNewFile();
 		songList.clear();
-		try (Stream<Path> paths = Files.walk(path)) {
+		try (Stream<Path> paths = Files.walk(path, 1)) {
 			paths.forEach(filePath -> {
 				try {
 					if (!Files.isRegularFile(filePath)) return;
@@ -1182,13 +1205,31 @@ public class BlockParty extends TeamlessMechanic {
 
 					Nexus.log("Processing " + file.getAbsolutePath() + "/" + name);
 
-					ProcessBuilder pb = new ProcessBuilder(
-						"ffmpeg", "-y", "-i", file.getAbsolutePath() + "/" + name,
-						"-af", "silenceremove=start_periods=1:start_threshold=-30dB",
+					String[] command = {
+						"ffmpeg",
+						"-y",
+						"-i",
+						file.getAbsolutePath() + "/" + name,
+						"-af",
+						"silenceremove=start_periods=1:start_threshold=-30dB",
 						file.getAbsolutePath() + "/silenceRemoved/" + name
-					);
-					pb.inheritIO();
-					pb.start();
+					};
+
+					new ProcessBuilder(command)
+						.inheritIO()
+						.start()
+						.onExit()
+						.thenRun(() -> {
+							try {
+								new ProcessBuilder(
+									"mv",
+									file.getAbsolutePath() + "/silenceRemoved/" + name,
+									file.getAbsolutePath() + "/" + name
+								).inheritIO().start();
+							} catch (IOException e) {
+								throw new RuntimeException(e);
+							}
+						});
 				} catch (Exception ex) {
 					Nexus.severe("An error occurred while trying to remove the silence from bp music file: " + filePath.getFileName().toFile(), ex);
 					if (Nexus.isDebug())

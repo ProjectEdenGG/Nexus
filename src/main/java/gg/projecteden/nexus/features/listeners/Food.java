@@ -20,6 +20,8 @@ import java.util.List;
 
 public class Food implements Listener {
 
+	// TODO 1.21.4 Set back to normal item, set max stack size to 64
+
 	private static final List<Material> STACKABLE_FOODS = List.of(Material.BEETROOT_SOUP, Material.MUSHROOM_STEW, Material.RABBIT_STEW);
 
 	@EventHandler

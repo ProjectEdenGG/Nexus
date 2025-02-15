@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.survival;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
+import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreType;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.ActionBarUtils;
@@ -89,10 +90,21 @@ public class Sleep extends Feature implements Listener {
 					if (sleeping >= needed)
 						worldGroup.getWorlds().forEach(Sleep::skipNight);
 					else
-						for (Player player : worldGroup.getPlayers())
+						for (Player player : worldGroup.getPlayers()) {
+							if (shouldNotSeeActionBar(player))
+								continue;
+
 							ActionBarUtils.sendActionBar(player, "Sleepers needed to skip " + (isDayTime(player.getWorld()) ? "the storm" : "night") + ": &e" + sleeping + "&3/&e" + needed);
+						}
 			}
 		});
+	}
+
+	private static boolean shouldNotSeeActionBar(Player player) {
+		if (DecorationStoreType.of(player) != null)
+			return true;
+
+		return false;
 	}
 
 	private static boolean canSleep(Player player) {
