@@ -5,6 +5,7 @@ import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.CompletableFutures;
 import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.Nexus;
@@ -1189,12 +1190,14 @@ public class BlockParty extends TeamlessMechanic {
 	}
 
 	@SneakyThrows
-	public static void removeSilence() {
+	public static CompletableFuture<Void> removeSilence() {
 		Path path = Paths.get(FOLDER);
 		File file = path.toFile();
 		if (!file.exists()) file.createNewFile();
 		songList.clear();
+
 		try (Stream<Path> paths = Files.walk(path, 1)) {
+			List<CompletableFuture<Void>> commands = new ArrayList<>();
 			paths.forEach(filePath -> {
 				try {
 					if (!Files.isRegularFile(filePath)) return;
@@ -1215,17 +1218,25 @@ public class BlockParty extends TeamlessMechanic {
 						file.getAbsolutePath() + "/silenceRemoved/" + name
 					};
 
+					CompletableFuture<Void> future = new CompletableFuture<>();
+					commands.add(future);
 					new ProcessBuilder(command)
 						.inheritIO()
 						.start()
 						.onExit()
 						.thenRun(() -> {
 							try {
-								new ProcessBuilder(
+								String[] move = {
 									"mv",
 									file.getAbsolutePath() + "/silenceRemoved/" + name,
 									file.getAbsolutePath() + "/" + name
-								).inheritIO().start();
+								};
+
+								new ProcessBuilder(move)
+									.inheritIO()
+									.start()
+									.onExit()
+									.thenRun(() -> future.complete(null));
 							} catch (IOException e) {
 								throw new RuntimeException(e);
 							}
@@ -1236,10 +1247,12 @@ public class BlockParty extends TeamlessMechanic {
 						ex.printStackTrace();
 				}
 			});
+			return CompletableFutures.joinAll(commands);
 		} catch (Exception ex) {
 			Nexus.severe("An error occurred while trying to read block party music files: " + ex.getMessage());
 			if (Nexus.isDebug())
 				ex.printStackTrace();
+			return CompletableFuture.failedFuture(ex);
 		}
 	}
 
