@@ -670,8 +670,13 @@ public class ItemUtils {
 		}
 
 		net.minecraft.world.item.ItemStack handle = CraftItemStack.asNMSCopy(mainItem);
-		CompoundTag tag = handle.get(DataComponents.CUSTOM_DATA).copyTag();
+		CustomData customData = handle.get(DataComponents.CUSTOM_DATA);
+		if (customData == null) {
+			Nexus.warn("Custom data component on " + mainItem.getType() + " is null");
+			return mainItem;
+		}
 
+		CompoundTag tag = customData.copyTag();
 		CompoundTag pe = new CompoundTag();
 		if (tag.contains("ProjectEden"))
 			pe = tag.getCompound("ProjectEden");
