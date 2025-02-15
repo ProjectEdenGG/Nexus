@@ -32,8 +32,14 @@ public class CustomModelMenu extends InventoryProvider {
 	@Override
 	public String getTitle() {
 		String title = "Custom Models";
-		if (!"/".equals(folder.getPath()))
+		if (!"/".equals(folder.getPath())) {
 			title = folder.getDisplayPath();
+
+			String[] folders = title.split("/");
+			if (folders.length > 2) {
+				title = "../" + folders[folders.length - 2] + "/" + folders[folders.length - 1];
+			}
+		}
 
 		return "&0" + title;
 	}
