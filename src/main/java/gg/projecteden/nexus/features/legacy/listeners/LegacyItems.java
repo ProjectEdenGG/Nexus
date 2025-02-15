@@ -31,6 +31,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
@@ -60,8 +61,14 @@ public class LegacyItems implements Listener {
 	@EventHandler
 	public void on(InventoryOpenEvent event) {
 		final InventoryHolder holder = event.getInventory().getHolder();
+		Location location;
 		if (holder == null)
-			return;
+			if (event.getInventory().getType() != InventoryType.ENDER_CHEST)
+				return;
+			else
+				location = event.getPlayer().getLocation();
+		else
+			location = holder.getInventory().getLocation();
 
 		if (holder instanceof Player player && !PlayerUtils.isSelf(event.getPlayer(), player))
 			return;
@@ -75,7 +82,7 @@ public class LegacyItems implements Listener {
 		if (holder instanceof SmartInventoryHolder)
 			return;
 
-		convert(holder.getInventory().getLocation(), event.getInventory());
+		convert(location, event.getInventory());
 	}
 
 	@EventHandler
@@ -363,4 +370,3 @@ public class LegacyItems implements Listener {
 
 
 }
-
