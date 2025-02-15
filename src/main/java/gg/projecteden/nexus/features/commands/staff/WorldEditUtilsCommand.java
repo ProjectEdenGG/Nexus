@@ -5,6 +5,7 @@ import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.api.common.utils.CompletableFutures;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.features.AutoTool;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -16,7 +17,9 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.FakeWorldEdit;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -35,6 +38,7 @@ import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.Bisected.Half;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Waterlogged;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -111,9 +115,9 @@ public class WorldEditUtilsCommand extends CustomCommand {
 	}
 
 	@Confirm
-	@Path("breakNaturally")
+	@Path("breakNaturally [--silkTouch]")
 	@Description("Break all blocks in your selection with drops and particles")
-	void breakNaturally() {
+	void breakNaturally(@Arg("true") @Switch boolean silkTouch) {
 		Region selection = worldedit.getPlayerSelection(player());
 		if (selection.getArea() > 50000)
 			error("Max selection size is 50000");
@@ -122,7 +126,16 @@ public class WorldEditUtilsCommand extends CustomCommand {
 			if (block.getType() == Material.AIR)
 				continue;
 
-			block.breakNaturally();
+			List<Material> toolMaterials = new ArrayList<>();
+			toolMaterials.addAll(MaterialTag.TOOLS_NETHERITE.getValues());
+			toolMaterials.add(Material.NETHERITE_SWORD);
+			toolMaterials.add(Material.SHEARS);
+			List<ItemStack> tools = toolMaterials.stream().map(tool -> new ItemBuilder(tool).enchant(Enchant.SILK_TOUCH).build()).toList();
+
+			if (silkTouch)
+				block.breakNaturally(AutoTool.getBestTool(player(), tools, block));
+			else
+				block.breakNaturally();
 		}
 	}
 
