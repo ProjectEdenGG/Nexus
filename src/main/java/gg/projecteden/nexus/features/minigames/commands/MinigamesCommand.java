@@ -10,12 +10,14 @@ import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.api.BlockPartyWebSocketServer;
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.lobby.MinigameInviter;
 import gg.projecteden.nexus.features.minigames.lobby.exchange.MGMExchange;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.mechanics.BlockParty;
+import gg.projecteden.nexus.features.minigames.mechanics.BlockParty.BlockPartySong;
 import gg.projecteden.nexus.features.minigames.mechanics.Mastermind;
 import gg.projecteden.nexus.features.minigames.mechanics.common.CheckpointMechanic;
 import gg.projecteden.nexus.features.minigames.menus.ArenaMenu;
@@ -1026,6 +1028,18 @@ public class MinigamesCommand extends _WarpSubCommand {
 
 	@Async
 	@Permission(Group.ADMIN)
+	@Path("blockParty listSongs [page]")
+	void listBlockPartySongs(@Arg("1") int page) {
+		new Paginator<BlockPartySong>()
+			.values(BlockParty.songList.stream().sorted(Comparator.comparing(BlockPartySong::getTitle)).toList())
+			.formatter((song, index) -> json(index + " &e" + song.getTitle() + " &7- &e" + song.getArtist()))
+			.command("/mgm blockParty listSongs")
+			.page(page)
+			.send();
+	}
+
+	@Async
+	@Permission(Group.ADMIN)
 	@Path("blockParty removePaddingInSongFiles")
 	void removePaddingInSongFiles() {
 		BlockParty.read(true);
@@ -1037,8 +1051,12 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Path("blockParty removeSilence")
 	void removeSilence() {
 		send(PREFIX + "Starting silence removal from all Block Party songs");
-		BlockParty.removeSilence();
-		send(PREFIX + "Done");
+		BlockParty.removeSilence()
+			.thenRun(() -> send(PREFIX + "Done"))
+			.exceptionally(ex -> {
+				MenuUtils.handleException(player(), PREFIX, ex);
+				return null;
+			});
 	}
 
 	@Async
