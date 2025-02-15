@@ -189,8 +189,17 @@ public class EnchantedBookSplitter extends CustomBench implements ICraftableCust
 				PlayerUtils.giveItem(viewer, book.sortEnchants().build());
 
 			inputs.remove(Material.ENCHANTED_BOOK);
-			inputs.put(Material.LAPIS_LAZULI, new ItemStack(Material.LAPIS_LAZULI, lapis));
-			inputs.put(Material.BOOK, new ItemStack(Material.BOOK, books));
+
+			if (lapis <= 0)
+				inputs.remove(Material.LAPIS_LAZULI);
+			else
+				inputs.put(Material.LAPIS_LAZULI, new ItemStack(Material.LAPIS_LAZULI, lapis));
+
+			if (books <= 0)
+				inputs.remove(Material.BOOK);
+			else
+				inputs.put(Material.BOOK, new ItemStack(Material.BOOK, books));
+
 			viewer.setLevel(levels);
 
 			new SoundBuilder(Sound.ENTITY_ITEM_PICKUP).receiver(viewer).play();
