@@ -5,8 +5,8 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.parchment.HasHumanEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +14,9 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockSupport;
+import org.bukkit.block.data.Waterlogged;
 
 import java.util.UUID;
 
@@ -43,29 +46,32 @@ public class AutoTorchUser implements PlayerOwnedObject {
 	/**
 	 * Whether auto torches apply to the specified block. Considers the block's light level,
 	 * if it's replaceable (i.e. air or grass), and if the block below supports placing torches.
+	 *
 	 * @param block block where you want to place the torch
 	 * @return whether you can place an auto torch
 	 */
-	public boolean applies(HasHumanEntity player, Block block) {
+	public boolean applies(Block block) {
 		if (!enabled)
 			return false;
 
 		if (block.isLiquid())
 			return false;
 
+		if (block.getBlockData() instanceof Waterlogged waterlogged && waterlogged.isWaterlogged())
+			return false;
+
 		if (!applies(block.getLightFromBlocks()))
 			return false;
 
-//		TODO - 1.21.4
-//		if (MaterialTag.NEEDS_SUPPORT.isTagged(torchMaterial)) {
-//			if (!Bukkit.getUnsafe().canPlaceItemOn(new ItemStack(torchMaterial), player, block.getRelative(BlockFace.DOWN), BlockFace.UP).join())
-//				return false;
-//			else if (!block.getRelative(BlockFace.DOWN).getType().isSolid())
-//				return false;
-//		}
-//
-//		return true;
-		return false;
+		if (MaterialTag.NEEDS_SUPPORT.isTagged(torchMaterial)) {
+			if (!block.getRelative(BlockFace.DOWN).getBlockData().isFaceSturdy(BlockFace.UP, BlockSupport.CENTER))
+				return false;
+		}
+
+		if (!MaterialTag.REPLACEABLE.isTagged(block.getType()))
+			return false;
+
+		return true;
 	}
 
 	public String getTorchMaterialName() {
