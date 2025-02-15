@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.models;
 
 import com.google.gson.annotations.SerializedName;
+import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.legacy.listeners.LegacyItems;
@@ -117,7 +118,7 @@ public class CustomModel implements Comparable<CustomModel> {
 		put(Material.NETHERITE_HELMET, List.of(1));
 		put(Material.NETHERITE_LEGGINGS, List.of(1));
 		put(Material.NETHERITE_PICKAXE, List.of(1010));
-		put(Material.PAPER, List.of(4132, 4133, 4134, 4135, 4136, 6042, 6219, 6409, 6415, 22000));
+		put(Material.PAPER, List.of(4132, 4133, 4134, 4135, 4136, 6042, 6219, 6409, 6415, 6499, 22000));
 		put(Material.PLAYER_HEAD, List.of(12));
 		put(Material.RED_DYE, List.of(1));
 		put(Material.STICK, List.of(16));
@@ -133,7 +134,7 @@ public class CustomModel implements Comparable<CustomModel> {
 
 		if (location != null && location.getWorld().getName().contains("pugmas"))
 			PlayerUtils.Dev.WAKKA.send("&e[Saturn] &c" + message);
-		else
+		else if (Nexus.getEnv() != Env.PROD)
 			Chat.Broadcast.ingame()
 				.channel(Chat.StaticChannel.GLOBAL)
 				.message("&e[Saturn] &c" + message)
