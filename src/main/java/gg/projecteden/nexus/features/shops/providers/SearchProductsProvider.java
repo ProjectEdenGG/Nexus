@@ -74,7 +74,7 @@ public class SearchProductsProvider extends ShopProvider {
 		}));
 
 		contents.set(2, 4, ClickableItem.of(Material.SHROOMLIGHT, "&6Search for light sources", e -> {
-			browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of("Light sources", product -> filter(product.getItem(), MaterialTag.LIGHT_SOURCES)));
+			browseItemsMenu.getFilters().add(FilterSearchType.SEARCH.of("Light sources", product -> filter(product.getItem(), MaterialTag.DECORATIVE_LIGHT_SOURCES)));
 			browseItemsMenu.open(viewer);
 		}));
 
