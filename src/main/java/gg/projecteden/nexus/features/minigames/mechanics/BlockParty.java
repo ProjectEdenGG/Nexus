@@ -191,7 +191,7 @@ public class BlockParty extends TeamlessMechanic {
 
 		minigamer.getMatch().getTasks().wait(30, () -> {
 			minigamer.tell("");
-			minigamer.tell(new JsonBuilder("&e&lClick Here &3to listen to the music in your browser!")
+			minigamer.tell(new JsonBuilder("&6&lClick Here &eto listen to the music in your browser!")
 				.url("https://projecteden.gg/blockparty?uuid=" + minigamer.getUniqueId())
 				.hover("&3Open in your browser")
 				.build());
@@ -218,6 +218,8 @@ public class BlockParty extends TeamlessMechanic {
 	public void onBegin(@NotNull MatchBeginEvent event) {
 		super.onBegin(event);
 		waitWithMusic(event.getMatch());
+
+		event.getMatch().getAllMinigamers().forEach(this::sendMusicLink);
 	}
 
 	@Override
