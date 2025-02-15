@@ -12,7 +12,7 @@ import gg.projecteden.nexus.models.custommodels.CustomModelConfigService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -91,7 +91,6 @@ public class ItemModelInstance implements Comparable<ItemModelInstance> {
 
 	private static Map<Material, List<Integer>> ignoredWarns = new HashMap<>() {{
 		put(Material.ANVIL, List.of(2, 5, 6, 8, 9));
-		put(Material.ARROW, List.of(4001, 4002, 4003, 4004, 4005, 4006, 4007, 4008, 4009, 4010, 4011, 4012, 4013, 4014, 4015, 4016, 4017, 4018));
 		put(Material.BROWN_MUSHROOM, List.of(6));
 		put(Material.CLOCK, List.of(2));
 		put(Material.COCOA_BEANS, List.of(1));
@@ -102,15 +101,15 @@ public class ItemModelInstance implements Comparable<ItemModelInstance> {
 		put(Material.DIAMOND_SWORD, List.of(1010));
 		put(Material.ICE, List.of(905));
 		put(Material.IRON_AXE, List.of(1000, 1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010));
-		put(Material.IRON_BOOTS, List.of(1));
-		put(Material.IRON_CHESTPLATE, List.of(1));
-		put(Material.IRON_HELMET, List.of(1));
+		put(Material.IRON_BOOTS, List.of(1, 2));
+		put(Material.IRON_CHESTPLATE, List.of(1, 2));
+		put(Material.IRON_HELMET, List.of(1, 2));
 		put(Material.IRON_HOE, List.of(1000, 1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010));
-		put(Material.IRON_LEGGINGS, List.of(1));
+		put(Material.IRON_LEGGINGS, List.of(1, 2));
 		put(Material.IRON_PICKAXE, List.of(1000, 1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010));
 		put(Material.IRON_SHOVEL, List.of(1000, 1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010));
 		put(Material.IRON_SWORD, List.of(1000, 1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010));
-		put(Material.LEATHER_HORSE_ARMOR, List.of(11000, 13000, 20000, 20001, 20003, 20012, 20018, 20022, 20029, 20031, 20033, 20037, 20058));
+		put(Material.LEATHER_HORSE_ARMOR, List.of(1000, 1001, 1002, 11000, 13000, 20000, 20001, 20003, 20012, 20018, 20022, 20029, 20031, 20033, 20037, 20058, 50009));
 		put(Material.MINECART, List.of(207));
 		put(Material.MUSHROOM_STEW, List.of(10001));
 		put(Material.NETHERITE_BOOTS, List.of(1));
@@ -118,7 +117,7 @@ public class ItemModelInstance implements Comparable<ItemModelInstance> {
 		put(Material.NETHERITE_HELMET, List.of(1));
 		put(Material.NETHERITE_LEGGINGS, List.of(1));
 		put(Material.NETHERITE_PICKAXE, List.of(1010));
-		put(Material.PAPER, List.of(4132, 4133, 4134, 4135, 4136, 6042, 6219, 6409, 6415, 6499, 22000));
+		put(Material.PAPER, List.of(200, 4132, 4133, 4134, 4135, 4136, 6042, 6219, 6400, 6409, 6415, 6499, 19900, 20060, 22000));
 		put(Material.PLAYER_HEAD, List.of(12));
 		put(Material.RED_DYE, List.of(1));
 		put(Material.STICK, List.of(16));
@@ -132,8 +131,11 @@ public class ItemModelInstance implements Comparable<ItemModelInstance> {
 		if (ignoredWarns.containsKey(material) && ignoredWarns.get(material).contains(data))
 			return;
 
+		if (material == Material.ARROW && data >= 1000 && data <= 4999)
+			return;
+
 		if (location != null && location.getWorld().getName().contains("pugmas"))
-			PlayerUtils.Dev.WAKKA.send("&e[Saturn] &c" + message);
+			Dev.WAKKA.send("&e[Saturn] &c" + message);
 		else if (Nexus.getEnv() != Env.PROD)
 			Chat.Broadcast.ingame()
 				.channel(Chat.StaticChannel.GLOBAL)
