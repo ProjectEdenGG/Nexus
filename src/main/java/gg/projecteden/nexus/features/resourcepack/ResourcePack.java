@@ -3,13 +3,12 @@ package gg.projecteden.nexus.features.resourcepack;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.Decorations;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
-import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
 import gg.projecteden.nexus.features.resourcepack.models.files.FontFile;
-import gg.projecteden.nexus.features.resourcepack.models.files.ResourcePackOverriddenMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.files.ItemModelFolder;
 import gg.projecteden.nexus.features.resourcepack.models.files.SoundsFile;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Feature;
@@ -19,7 +18,7 @@ import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.HttpUtils;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
@@ -71,13 +70,11 @@ public class ResourcePack extends Feature implements Listener {
 	private static FileSystem zipFile;
 
 	@Getter
-	private static List<ResourcePackOverriddenMaterial> modelGroups;
+	private static List<ItemModelFolder> folders;
 	@Getter
-	private static List<CustomModelFolder> folders;
+	private static ConcurrentHashMap<String, ItemModelInstance> models;
 	@Getter
-	private static ConcurrentHashMap<String, CustomModel> models;
-	@Getter
-	private static CustomModelFolder rootFolder;
+	private static ItemModelFolder rootFolder;
 	@Getter
 	private static SoundsFile soundsFile;
 	@Getter
@@ -100,8 +97,6 @@ public class ResourcePack extends Feature implements Listener {
 		Bukkit.getMessenger().unregisterIncomingPluginChannel(Nexus.getInstance());
 		Bukkit.getMessenger().unregisterOutgoingPluginChannel(Nexus.getInstance());
 
-		if (modelGroups != null)
-			modelGroups.clear();
 		if (folders != null)
 			folders.clear();
 		if (models != null)
@@ -112,17 +107,16 @@ public class ResourcePack extends Feature implements Listener {
 	}
 
 	public static void read() {
+		reloading = true;
 		Tasks.async(() -> {
 			try {
 				new ResourcePackUpdateStartEvent().callEvent();
-				reloading = true;
 
 				HttpUtils.saveFile(URL, FILE_NAME);
 				openZip();
 
 				setup();
 				readAllFiles();
-				CustomModelMenu.load();
 
 				reloading = false;
 				new ResourcePackUpdateCompleteEvent().callEvent();
@@ -135,10 +129,8 @@ public class ResourcePack extends Feature implements Listener {
 	}
 
 	private static void setup() {
-		modelGroups = new ArrayList<>();
 		folders = new ArrayList<>();
 		models = new ConcurrentHashMap<>();
-		rootFolder = new CustomModelFolder("/");
 	}
 
 	static void readAllFiles() {
@@ -157,6 +149,7 @@ public class ResourcePack extends Feature implements Listener {
 				ex.printStackTrace();
 			}
 
+			Nexus.debug("Walking RP files...");
 			for (Path root : zipFile.getRootDirectories()) {
 				try (var walker = Files.walk(root)) {
 					walker.forEach(path -> {
@@ -164,8 +157,10 @@ public class ResourcePack extends Feature implements Listener {
 							final String uri = path.toUri().toString();
 
 							try {
-								if (uri.contains(CustomModel.getVanillaSubdirectory()))
-									ResourcePackOverriddenMaterial.addCustomModelMaterial(path);
+								if (uri.endsWith(ItemModelInstance.getItemsSubdirectory())) {
+									Nexus.debug("Found model folder: " + uri);
+									rootFolder = new ItemModelFolder("/");
+								}
 							} catch (Exception ex) {
 								ex.printStackTrace();
 							}
@@ -208,7 +203,7 @@ public class ResourcePack extends Feature implements Listener {
 	}
 
 	public static boolean isCustomItem(@Nullable ItemStack item) {
-		return item != null && !MaterialTag.ALL_AIR.isTagged(item.getType()) && ModelId.of(item) > 0;
+		return item != null && !MaterialTag.ALL_AIR.isTagged(item.getType()) && Model.of(item) != null;
 	}
 
 	public static boolean isEnabledFor(Player player) {
@@ -284,12 +279,11 @@ public class ResourcePack extends Feature implements Listener {
 			return this;
 		}
 
-		private static final CustomMaterial BASE_MODEL = CustomMaterial.UI_NUMBERS_0;
-		private static final int MODEL_ID_START = BASE_MODEL.getModelId();
+		private static final ItemModelType BASE_MODEL = ItemModelType.GUI_NUMBER;
 
 		public ItemBuilder get() {
 			return new ItemBuilder(BASE_MODEL)
-				.modelId(MODEL_ID_START + number)
+				.customModelData(number)
 				.dyeColor(color)
 				.itemFlags(ItemFlag.HIDE_ATTRIBUTES);
 		}

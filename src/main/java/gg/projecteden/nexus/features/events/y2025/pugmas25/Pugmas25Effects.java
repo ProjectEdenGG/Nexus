@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.effects.Effects.RotatingStand.StandRotation
 import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.Pugmas25Minigolf;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.slotmachine.Pugmas25SlotMachine;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Geyser;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -26,7 +27,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @NoArgsConstructor
-@Environments({Env.PROD, Env.STAGING})
+@Environments({Env.PROD, Env.UPDATE})
 public class Pugmas25Effects extends Effects {
 
 	private final List<Location> SMOKE_STACKS = List.of(
@@ -90,7 +91,7 @@ public class Pugmas25Effects extends Effects {
 
 		rotatingStand.resetRightArmPose();
 		rotatingStand.addRightArmPose(0, Math.toRadians(angle), 0);
-		armorStand.getEquipment().setItemInMainHand(new ItemBuilder(Material.PAPER).modelId(6247).build());
+		armorStand.getEquipment().setItemInMainHand(new ItemBuilder(Material.PAPER).model(ItemModelType.STRUCTURE_WIND_MILL_WIND_MILL_ARM).build());
 		angle += 90;
 		return true;
 	}

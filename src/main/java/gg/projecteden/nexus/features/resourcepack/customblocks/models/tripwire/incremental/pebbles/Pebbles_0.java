@@ -6,13 +6,14 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBloc
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.CustomTripwireConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.ICraftableTripwire;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import org.bukkit.Material;
 
 import java.util.List;
 
 @CustomBlockConfig(
 	name = "Pebbles",
-	modelId = 21106
+	itemModel = ItemModelType.ROCKS_PEBBLES_0
 )
 @CustomTripwireConfig(
 	north_NS = false,

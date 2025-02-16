@@ -35,8 +35,20 @@ import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.models.trophy.TrophyHolderService;
 import gg.projecteden.nexus.models.trophy.TrophyType;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.ChunkLoader;
+import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.Enchant;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.LuckPermsUtils;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.TitleBuilder;
+import gg.projecteden.nexus.utils.WorldEditUtils;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.parchment.HasLocation;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.Data;
@@ -49,7 +61,14 @@ import net.luckperms.api.context.ContextCalculator;
 import net.luckperms.api.context.ContextConsumer;
 import net.luckperms.api.context.ContextSet;
 import net.luckperms.api.context.ImmutableContextSet;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.BlockData;
@@ -76,7 +95,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
@@ -810,8 +837,8 @@ public abstract class EdenEvent extends Feature implements Listener {
 		return this.fishingLoot.stream().filter(fishingLoot -> fishingLoot.getMaterial() == material).findFirst().orElse(null);
 	}
 
-	public FishingLoot getFishingLoot(Material material, int modelId) {
-		return this.fishingLoot.stream().filter(fishingLoot -> fishingLoot.getMaterial() == material && fishingLoot.getModelId() == modelId).findFirst().orElse(null);
+	public FishingLoot getFishingLoot(Material material, String modelId) {
+		return this.fishingLoot.stream().filter(fishingLoot -> fishingLoot.getMaterial() == material && Objects.equals(fishingLoot.getModelId(), modelId)).findFirst().orElse(null);
 	}
 
 	@EventHandler

@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.minigames.lobby.exchange;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
@@ -54,17 +54,17 @@ public class MGMExchangeMenu extends InventoryProvider {
 
 		// ECO
 		for (int i = 1; i < 4; i++) {
-			CustomMaterial material = switch(i) {
-				case 1 -> CustomMaterial.GOLD_COINS_2;
-				case 2 -> CustomMaterial.GOLD_COINS_6;
-				case 3 -> CustomMaterial.GOLD_COINS_9;
-				default -> CustomMaterial.TODO;
+			ItemModelType itemModelType = switch(i) {
+				case 1 -> ItemModelType.GOLD_COINS_2;
+				case 2 -> ItemModelType.GOLD_COINS_6;
+				case 3 -> ItemModelType.GOLD_COINS_9;
+				default -> ItemModelType.NULL;
 			};
 
 			int finalI = i;
 			contents.set(9 + (2 * i),
 				ClickableItem.of(
-					new ItemBuilder(material)
+					new ItemBuilder(itemModelType)
 						.name("&e" + amounts[i] + " MGM Tokens")
 						.amount(amounts[i])
 						.lore(
@@ -87,17 +87,17 @@ public class MGMExchangeMenu extends InventoryProvider {
 
 		// VP
 		for (int i = 1; i < 4; i++) {
-			CustomMaterial material = switch(i) {
-				case 1 -> CustomMaterial.SILVER_COINS_9;
-				case 2 -> CustomMaterial.SILVER_COINS_4;
-				case 3 -> CustomMaterial.SILVER_COINS_7;
-				default -> CustomMaterial.TODO;
+			ItemModelType itemModelType = switch(i) {
+				case 1 -> ItemModelType.SILVER_COINS_2;
+				case 2 -> ItemModelType.SILVER_COINS_6;
+				case 3 -> ItemModelType.SILVER_COINS_9;
+				default -> ItemModelType.NULL;
 			};
 
 			int finalI = i;
 			contents.set(18 + (2 * i),
 				ClickableItem.of(
-					new ItemBuilder(material)
+					new ItemBuilder(itemModelType)
 						.name("&e" + amounts[i] + " MGM Tokens")
 						.amount(amounts[i])
 						.lore(

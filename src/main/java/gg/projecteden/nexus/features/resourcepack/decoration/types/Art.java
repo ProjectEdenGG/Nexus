@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.types;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationTagType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -19,12 +19,12 @@ public class Art extends WallThing {
 	int height;
 	String direction;
 
-	public Art(String name, CustomMaterial material, CustomHitbox hitbox) {
-		this(name, material, hitbox, true);
+	public Art(String name, ItemModelType itemModelType, CustomHitbox hitbox) {
+		this(name, itemModelType, hitbox, true);
 	}
 
-	public Art(String name, CustomMaterial material, CustomHitbox hitbox, boolean vanilla) {
-		super(true, name, material, hitbox);
+	public Art(String name, ItemModelType itemModelType, CustomHitbox hitbox, boolean vanilla) {
+		super(true, name, itemModelType, hitbox);
 
 		this.artTitle = name;
 		this.name = "Custom Painting";
@@ -45,7 +45,7 @@ public class Art extends WallThing {
 		DecorationTagType.setLore(List.of("&f" + name, "&7" + sizeFinal), this);
 	}
 
-	public static ItemStack tabIcon_custom = new ItemBuilder(CustomMaterial.ART_PAINTING_CUSTOM_SKYBLOCK.getItem())
+	public static ItemStack tabIcon_custom = new ItemBuilder(ItemModelType.ART_PAINTING_CUSTOM_SKYBLOCK.getItem())
 		.lore("&732x32, Framed")
 		.build();
 

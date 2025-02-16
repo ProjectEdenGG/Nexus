@@ -7,13 +7,14 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.DirectionalConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ICraftableNoteBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.IDirectionalNoteBlock;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
 @CustomBlockConfig(
 	name = "Shoji Block",
-	modelId = 20122
+	itemModel = ItemModelType.MISC_SHOJI_BLOCK
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.BASS_GUITAR,

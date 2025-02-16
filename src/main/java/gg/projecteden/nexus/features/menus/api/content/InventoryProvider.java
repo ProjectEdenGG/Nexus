@@ -30,7 +30,7 @@ import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.annotations.Uncloseable;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack.ResourcePackNumber;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.shops.Shops;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ColorType;
@@ -253,15 +253,15 @@ public abstract class InventoryProvider {
 	}
 
 	protected ItemStack backItem() {
-		return new ItemBuilder(CustomMaterial.GUI_ARROW_LEFT).dyeColor(ColorType.RED).itemFlags(ItemFlags.HIDE_ALL).name("&cBack").build();
+		return new ItemBuilder(ItemModelType.GUI_ARROW_LEFT).dyeColor(ColorType.RED).itemFlags(ItemFlags.HIDE_ALL).name("&cBack").build();
 	}
 
 	protected ItemStack closeItem() {
-		return new ItemBuilder(CustomMaterial.GUI_CLOSE).dyeColor(ColorType.RED).itemFlags(ItemFlags.HIDE_ALL).name("&cClose").build();
+		return new ItemBuilder(ItemModelType.GUI_CLOSE).dyeColor(ColorType.RED).itemFlags(ItemFlags.HIDE_ALL).name("&cClose").build();
 	}
 
 	public static ItemBuilder checkmark() {
-		return CustomMaterial.GUI_CHECK.getNoNamedItem().dyeColor(ColorType.LIGHT_GREEN);
+		return ItemModelType.GUI_CHECK.getNoNamedItem().dyeColor(ColorType.LIGHT_GREEN);
 	}
 
 	protected void warp(String warp) {
@@ -385,8 +385,8 @@ public abstract class InventoryProvider {
 				.lore(lore);
 
 			if (guiArrows) {
-				previous.material(CustomMaterial.GUI_ARROW_LEFT).dyeColor(ColorType.CYAN).itemFlags(ItemFlag.HIDE_DYE);
-				next.material(CustomMaterial.GUI_ARROW_RIGHT).dyeColor(ColorType.CYAN).itemFlags(ItemFlag.HIDE_DYE);
+				previous.material(ItemModelType.GUI_ARROW_LEFT).dyeColor(ColorType.CYAN).itemFlags(ItemFlag.HIDE_DYE);
+				next.material(ItemModelType.GUI_ARROW_RIGHT).dyeColor(ColorType.CYAN).itemFlags(ItemFlag.HIDE_DYE);
 			}
 
 			page.setItemsPerPage(perPage);

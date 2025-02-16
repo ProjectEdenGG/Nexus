@@ -18,17 +18,31 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.ambience.AmbienceConfig.Ambience.AmbienceType;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.parchment.HasLocation;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 @Data
 @Entity(value = "ambience_config", noClassnameStored = true)
@@ -130,7 +144,7 @@ public class AmbienceConfig implements PlayerOwnedObject {
 
 			private final AmbienceLocationType type;
 			private final Material material;
-			private final Set<Integer> modelIds;
+			private final Set<String> models;
 
 			abstract public void play(Location location);
 
@@ -138,7 +152,7 @@ public class AmbienceConfig implements PlayerOwnedObject {
 				if (itemStack.getType() != material)
 					return false;
 
-				if (!modelIds.contains(ModelId.of(itemStack)))
+				if (!models.contains(Model.of(itemStack)))
 					return false;
 
 				return true;

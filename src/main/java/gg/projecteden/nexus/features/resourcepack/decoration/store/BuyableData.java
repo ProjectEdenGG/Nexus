@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.MultiState;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -117,9 +117,9 @@ public class BuyableData {
 			return null;
 
 		if (config instanceof MultiState multiState) {
-			CustomMaterial baseMaterial = multiState.getBaseMaterial();
-			if (!baseMaterial.is(config))
-				return getPrice(DecorationConfig.of(baseMaterial), storeType);
+			ItemModelType itemModelType = multiState.getBaseItemModel();
+			if (!itemModelType.is(config))
+				return getPrice(DecorationConfig.of(itemModelType), storeType);
 		}
 
 		DecorationType type = DecorationType.of(config);

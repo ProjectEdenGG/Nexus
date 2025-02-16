@@ -8,7 +8,7 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.features.votes.party.VoteParty;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -296,14 +296,14 @@ public class BoostsCommand extends CustomCommand implements Listener {
 			if (personal == null && VoteParty.isFeatureEnabled(viewer)) {
 
 				contents.set(1, 2, ClickableItem.of(
-					new ItemBuilder(CustomMaterial.GUI_BOOSTS_GLOBAL).name("&eGlobal Boosts")
+					new ItemBuilder(ItemModelType.GUI_BOOSTS_GLOBAL).name("&eGlobal Boosts")
 						.lore("&3Available: &e" + (int) booster.getNonExpiredBoosts().stream().filter(boost -> !boost.isPersonal()).count())
 						.build(),
 					e -> new BoostMenu(null, this, false).open(viewer)
 				));
 
 				contents.set(1, 6, ClickableItem.of(
-					new ItemBuilder(CustomMaterial.GUI_BOOSTS_PERSONAL).name("&ePersonal Boosts")
+					new ItemBuilder(ItemModelType.GUI_BOOSTS_PERSONAL).name("&ePersonal Boosts")
 						.lore("&3Available: &e" + (int) booster.getNonExpiredBoosts().stream().filter(boost -> boost.isPersonal()).count())
 						.build(),
 					e -> new BoostMenu(null, this, true).open(viewer)

@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.recipes.models;
 
 import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.recipes.CustomRecipes;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
@@ -21,14 +21,14 @@ import java.util.stream.Collectors;
 public enum RecipeType {
 	FOOD(Material.COOKED_BEEF),
 	FUNCTIONAL(Material.CHEST),
-	BACKPACKS(CustomMaterial.BACKPACK_3D_BASIC),
+	BACKPACKS(ItemModelType.BACKPACK_3D_BASIC),
 	FURNACE(Material.FURNACE),
-	DECORATION(CustomMaterial.WINDCHIMES_AMETHYST),
+	DECORATION(ItemModelType.WINDCHIMES_AMETHYST),
 	ARMOR(Material.DIAMOND_CHESTPLATE),
 	@Disabled // TODO Custom Blocks
 	STONECUTTER(Material.STONECUTTER),
 	@Disabled // TODO Custom Blocks
-	CUSTOM_BLOCKS(CustomMaterial.BLOCKS_CRATE_APPLE),
+	CUSTOM_BLOCKS(ItemModelType.BLOCKS_CRATE_APPLE),
 	QUARTZ(Material.QUARTZ),
 	SLABS(Material.OAK_SLAB, false),
 	BEDS_BANNERS(Material.CYAN_BED) {
@@ -53,11 +53,11 @@ public enum RecipeType {
 	GLASS(Material.GLASS);
 
 	private final Material material;
-	private final int modelId;
+	private final String modelId;
 	private final boolean folder;
 
 	RecipeType() {
-		this(null, 0, true);
+		this(null, null, true);
 	}
 
 	RecipeType(Material material) {
@@ -65,19 +65,19 @@ public enum RecipeType {
 	}
 
 	RecipeType(Material material, boolean folder) {
-		this(material, 0, folder);
+		this(material, null, folder);
 	}
 
-	RecipeType(CustomMaterial material) {
-		this(material.getMaterial(), material.getModelId(), true);
+	RecipeType(ItemModelType itemModelType) {
+		this(itemModelType.getMaterial(), itemModelType.getModel(), true);
 	}
 
-	RecipeType(CustomMaterial material, boolean folder) {
-		this(material.getMaterial(), material.getModelId(), folder);
+	RecipeType(ItemModelType itemModelType, boolean folder) {
+		this(itemModelType.getMaterial(), itemModelType.getModel(), folder);
 	}
 
 	public ItemStack getItem() {
-		return new ItemBuilder(material).modelId(modelId).name("&e" + StringUtils.camelCase(this)).build();
+		return new ItemBuilder(material).model(modelId).name("&e" + StringUtils.camelCase(this)).build();
 	}
 
 	public List<NexusRecipe> getRecipes() {

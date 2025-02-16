@@ -17,8 +17,7 @@ import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicSubGroup;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
@@ -96,7 +95,7 @@ public class ArenasMenu extends ScrollableInventoryProvider {
 
 		if (MinigameInviter.canSendInvite(viewer))
 			selfContents.set(0, 1, ClickableItem.of(inviteItem, e -> Tasks.wait(2, () -> {
-				if (CustomMaterial.of(viewer.getItemOnCursor()) == CustomMaterial.ENVELOPE_1)
+				if (ItemModelType.of(viewer.getItemOnCursor()) == ItemModelType.ENVELOPE_1)
 					viewer.setItemOnCursor(new ItemStack(Material.AIR));
 				 else if (Nullables.isNullOrAir(viewer.getItemOnCursor()))
 					viewer.setItemOnCursor(inviteItem.build());
@@ -108,7 +107,7 @@ public class ArenasMenu extends ScrollableInventoryProvider {
 			// TODO Remove or placeholder image
 			.peek(arena -> {
 				if (arena.getMenuImage() == null)
-					arena.setMenuImage(new ItemBuilder(Material.PAPER).modelId(1700));
+					arena.setMenuImage(new ItemBuilder(Material.PAPER).model(ItemModelType.GUI_GAMELOBBY_ARENAS_BLANK));
 			})
 			//
 			.filter(arena -> arena.getMenuImage() != null)
@@ -132,7 +131,7 @@ public class ArenasMenu extends ScrollableInventoryProvider {
 				else
 					arena = RandomUtils.randomElement(ArenaManager.getAllEnabled(mechanic));
 
-				if (CustomMaterial.of(viewer.getItemOnCursor()) == CustomMaterial.ENVELOPE_1)
+				if (ItemModelType.of(viewer.getItemOnCursor()) == ItemModelType.ENVELOPE_1)
 					if (MinigameInviter.canSendInvite(viewer))
 						Tasks.wait(2, () -> inviteAll(e, arena));
 					else {
@@ -158,7 +157,7 @@ public class ArenasMenu extends ScrollableInventoryProvider {
 
 			final Arena arena = arenaIterator.next();
 			final Consumer<ItemClickData> consumer = e -> {
-				if (CustomMaterial.of(viewer.getItemOnCursor()) == CustomMaterial.ENVELOPE_1)
+				if (ItemModelType.of(viewer.getItemOnCursor()) == ItemModelType.ENVELOPE_1)
 					if (MinigameInviter.canSendInvite(viewer))
 						Tasks.wait(2, () -> inviteAll(e, arena));
 					else {
@@ -176,7 +175,7 @@ public class ArenasMenu extends ScrollableInventoryProvider {
 	}
 
 	public static ItemBuilder getInviteItem(Player player) {
-		final ItemBuilder inviteItem = new ItemBuilder(CustomMaterial.ENVELOPE_1)
+		final ItemBuilder inviteItem = new ItemBuilder(ItemModelType.ENVELOPE_1)
 			.name("&eInvite")
 			.lore("")
 			.lore("&fClick a map to send an invite");
@@ -211,8 +210,8 @@ public class ArenasMenu extends ScrollableInventoryProvider {
 	}
 
 	private ItemStack getRandomArenaItem(boolean main) {
-		ItemBuilder randomMenuImage = new ItemBuilder(CustomModel.of(Material.PAPER, 1699));
-		ItemBuilder item = main ? randomMenuImage : new ItemBuilder(CustomMaterial.INVISIBLE);
+		ItemBuilder randomMenuImage = new ItemBuilder(ItemModelType.GUI_GAMELOBBY_RANDOM);
+		ItemBuilder item = main ? randomMenuImage : new ItemBuilder(ItemModelType.INVISIBLE);
 
 		item.name("&6&lRandom Map");
 		item.lore("");
@@ -222,7 +221,7 @@ public class ArenasMenu extends ScrollableInventoryProvider {
 	}
 
 	private ItemStack getArenaItem(Arena arena, boolean main) {
-		ItemBuilder item = main ? arena.getMenuImage() : new ItemBuilder(CustomMaterial.INVISIBLE);
+		ItemBuilder item = main ? arena.getMenuImage() : new ItemBuilder(ItemModelType.INVISIBLE);
 
 		Match match = MatchManager.find(arena);
 

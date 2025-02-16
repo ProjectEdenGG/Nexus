@@ -20,8 +20,8 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicGroup;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicSubGroup;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntity;
@@ -146,7 +146,7 @@ public class SignListener implements Listener {
 			}
 
 			final ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
-			final boolean holdingInvite = CustomMaterial.ENVELOPE_1.is(itemInMainHand);
+			final boolean holdingInvite = ItemModelType.ENVELOPE_1.is(itemInMainHand);
 
 			if (!Nullables.isNullOrAir(itemInMainHand) && !holdingInvite) {
 				if (new CooldownService().check(player, "minigames-sign-interact-holding-item", TickTime.SECOND.x(3)))
@@ -259,8 +259,8 @@ public class SignListener implements Listener {
 		final String mechanicName = id.replace(MechanicType.BOUNDING_BOX_ID_PREFIX, "").replace(MechanicSubGroup.BOUNDING_BOX_ID_PREFIX, "");
 
 		switch (mechanicName) {
-			case "mob_arena" -> PacketUtils.sendFakeDisplayItem(event.getPlayer(), outline, new ItemBuilder(CustomMaterial.IMAGES_OUTLINE_3x2_COMING_SOON).dyeColor("#FD6A02").build());
-			case "tictactoe" -> PacketUtils.sendFakeDisplayItem(event.getPlayer(), outline, new ItemBuilder(CustomMaterial.IMAGES_OUTLINE_1x2).dyeColor("#FD6A02").build());
+			case "mob_arena" -> PacketUtils.sendFakeDisplayItem(event.getPlayer(), outline, new ItemBuilder(ItemModelType.IMAGES_OUTLINE_3x2_COMING_SOON).dyeColor("#FD6A02").build());
+			case "tictactoe" -> PacketUtils.sendFakeDisplayItem(event.getPlayer(), outline, new ItemBuilder(ItemModelType.IMAGES_OUTLINE_1x2).dyeColor("#FD6A02").build());
 			default -> {
 				MechanicType mechanic = null;
 				MechanicSubGroup subGroup = null;
@@ -276,20 +276,20 @@ public class SignListener implements Listener {
 				if (mechanic == null)
 					mechanic = subGroup.getMechanics().get(0);
 
-				CustomMaterial outlineMaterial = CustomMaterial.IMAGES_OUTLINE_3x2;
+				ItemModelType outlineItemModelType = ItemModelType.IMAGES_OUTLINE_3x2;
 				if (mechanic != null) {
 					if (mechanic.getGroup() == MechanicGroup.ARCADE)
-						outlineMaterial = CustomMaterial.IMAGES_OUTLINE_1x2;
+						outlineItemModelType = ItemModelType.IMAGES_OUTLINE_1x2;
 
 					if (mechanic.get().isTestMode()) {
-						outlineMaterial = CustomMaterial.IMAGES_OUTLINE_3x2_COMING_SOON;
+						outlineItemModelType = ItemModelType.IMAGES_OUTLINE_3x2_COMING_SOON;
 						if (mechanic.getGroup() == MechanicGroup.ARCADE)
-							outlineMaterial = CustomMaterial.IMAGES_OUTLINE_1x2_COMING_SOON;
+							outlineItemModelType = ItemModelType.IMAGES_OUTLINE_1x2_COMING_SOON;
 					}
 				}
 
 
-				PacketUtils.sendFakeDisplayItem(event.getPlayer(), outline, new ItemBuilder(outlineMaterial).dyeColor("#FD6A02").build());
+				PacketUtils.sendFakeDisplayItem(event.getPlayer(), outline, new ItemBuilder(outlineItemModelType).dyeColor("#FD6A02").build());
 			}
 		}
 	}

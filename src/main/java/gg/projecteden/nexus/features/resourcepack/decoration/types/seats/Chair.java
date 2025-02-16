@@ -5,22 +5,22 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxSingle;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Seat;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 
 public class Chair extends DecorationConfig implements Seat {
 	private final Double sitHeight;
 	private final boolean backless;
 
-	public Chair(boolean multiblock, boolean backless, String name, CustomMaterial material) {
-		this(multiblock, backless, name, material, null);
+	public Chair(boolean multiblock, boolean backless, String name, ItemModelType itemModelType) {
+		this(multiblock, backless, name, itemModelType, null);
 	}
 
-	public Chair(boolean multiblock, boolean backless, String name, CustomMaterial material, Double sitHeight) {
-		this(multiblock, backless, name, material, HitboxSingle._1x1_BARRIER, sitHeight);
+	public Chair(boolean multiblock, boolean backless, String name, ItemModelType itemModelType, Double sitHeight) {
+		this(multiblock, backless, name, itemModelType, HitboxSingle._1x1_BARRIER, sitHeight);
 	}
 
-	public Chair(boolean multiblock, boolean backless, String name, CustomMaterial material, CustomHitbox hitbox, Double sitHeight) {
-		super(multiblock, name, material, hitbox);
+	public Chair(boolean multiblock, boolean backless, String name, ItemModelType itemModelType, CustomHitbox hitbox, Double sitHeight) {
+		super(multiblock, name, itemModelType, hitbox);
 		this.disabledPlacements = PlacementType.FLOOR.getDisabledPlacements();
 		this.sitHeight = sitHeight;
 		this.backless = backless;

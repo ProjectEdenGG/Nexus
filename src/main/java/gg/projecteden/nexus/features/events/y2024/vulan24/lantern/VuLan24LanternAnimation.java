@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.events.y2024.vulan24.lantern;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.features.events.y2024.vulan24.VuLan24;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.vulan24.VuLan24ConfigService;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -32,11 +32,11 @@ public class VuLan24LanternAnimation {
 	// Lower values will make it move faster
 	private static final int MOVE_SPEED = 2;
 
-	private static final List<CustomMaterial> LANTERN_MATERIALS = List.of(
-		CustomMaterial.VULAN_WATER_LANTERN_SMALL,
-		CustomMaterial.VULAN_WATER_LANTERN_SMALL_NO_BASE,
-		CustomMaterial.VULAN_WATER_LANTERN_LARGE,
-		CustomMaterial.VULAN_WATER_LANTERN_LARGE_NO_BASE
+	private static final List<ItemModelType> LANTERN_MATERIALS = List.of(
+		ItemModelType.VULAN_WATER_LANTERN_SMALL,
+		ItemModelType.VULAN_WATER_LANTERN_SMALL_NO_BASE,
+		ItemModelType.VULAN_WATER_LANTERN_LARGE,
+		ItemModelType.VULAN_WATER_LANTERN_LARGE_NO_BASE
 	);
 
 	// How far to move the armor stand down from the surface

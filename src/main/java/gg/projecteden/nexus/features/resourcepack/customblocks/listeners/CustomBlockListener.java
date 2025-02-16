@@ -27,12 +27,12 @@ import gg.projecteden.nexus.models.customblock.CustomTripwireData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.GameModeWrapper;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.parchment.event.block.CustomBlockUpdateEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -490,8 +490,8 @@ public class CustomBlockListener implements Listener {
 		if (!(clickedCustomBlock.get() instanceof IIncremental incremental))
 			return false;
 
-		List<Integer> modelIdList = incremental.getModelIdList();
-		if (!modelIdList.contains(customBlockItem.get().getModelId()))
+		List<String> modelIdList = incremental.getModelIdList();
+		if (!modelIdList.contains(customBlockItem.get().getModel()))
 			return false;
 
 		// increment block
@@ -500,7 +500,7 @@ public class CustomBlockListener implements Listener {
 		if (ndx >= modelIdList.size())
 			return false;
 
-		int newModelId = modelIdList.get(ndx);
+		String newModelId = modelIdList.get(ndx);
 		CustomBlock update = CustomBlock.from(newModelId);
 		if (update == null)
 			return false;
@@ -552,7 +552,7 @@ public class CustomBlockListener implements Listener {
 
 			// Check paper
 		else if (material.equals(ICustomBlock.itemMaterial)) {
-			int modelId = ModelId.of(itemInHand);
+			String modelId = Model.of(itemInHand);
 			if (!CustomBlock.modelIdMap.containsKey(modelId)) {
 				CustomBlocksLang.debug(" isPlacingBlock: unknown modelId: " + modelId);
 				return false;

@@ -4,7 +4,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.
 import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationSnap;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.HandleType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableWallThing;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -15,8 +15,8 @@ public class Cabinet extends DyeableWallThing {
 	private final CabinetMaterial counterMaterial;
 	private final HandleType handleType;
 
-	public Cabinet(CustomMaterial customMaterial, CabinetMaterial material, HandleType handle, CabinetType type) {
-		super(false, getName(type, handle, material), customMaterial, ColorableType.STAIN, HitboxSingle._1x1_BARRIER);
+	public Cabinet(ItemModelType itemModelType, CabinetMaterial material, HandleType handle, CabinetType type) {
+		super(false, getName(type, handle, material), itemModelType, ColorableType.STAIN, HitboxSingle._1x1_BARRIER);
 
 		this.type = type;
 		this.counterMaterial = material;

@@ -4,7 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDisplayTimerEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.KingOfTheHillMatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.KingOfTheHillMatchData.Point;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;

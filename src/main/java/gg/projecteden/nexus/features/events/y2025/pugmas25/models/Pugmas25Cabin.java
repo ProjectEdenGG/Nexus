@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.events.y2025.pugmas25.models;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.entity.ItemFrame;
@@ -30,7 +30,7 @@ public class Pugmas25Cabin implements Listener {
 		if (Nullables.isNullOrAir(itemStack))
 			return;
 
-		if (!CustomMaterial.PUGMAS25_CALENDAR.is(itemStack))
+		if (!ItemModelType.PUGMAS25_CALENDAR.is(itemStack))
 			return;
 
 		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))

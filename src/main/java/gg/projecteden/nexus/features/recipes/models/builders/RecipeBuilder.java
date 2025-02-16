@@ -8,8 +8,8 @@ import gg.projecteden.nexus.features.recipes.models.RecipeGroup;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlockTag;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
@@ -63,13 +63,13 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 		return (T) this;
 	}
 
-	public T toMake(CustomMaterial result) {
+	public T toMake(ItemModelType result) {
 		this.resultId += CustomRecipes.keyOf(result);
 		this.result = new ItemBuilder(result).build();
 		return (T) this;
 	}
 
-	public T toMake(CustomMaterial result, int amount) {
+	public T toMake(ItemModelType result, int amount) {
 		this.resultId += amount + "_" + CustomRecipes.keyOf(result);
 		this.result = new ItemBuilder(result).build();
 		return (T) this;
@@ -81,7 +81,7 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 		return (T) this;
 	}
 
-	public T toMake(CustomModel result) {
+	public T toMake(ItemModelInstance result) {
 		this.resultId += CustomRecipes.keyOf(result);
 		this.result = result.getItem();
 		return (T) this;
@@ -199,7 +199,7 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 		return shapeless().add(item, count);
 	}
 
-	public static ShapelessBuilder shapeless(CustomModel... items) {
+	public static ShapelessBuilder shapeless(ItemModelInstance... items) {
 		return shapeless().add(items);
 	}
 
@@ -247,10 +247,10 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 		for (Object choice : choices) {
 			if (choice instanceof ItemStack item)
 				builder.ingredientIds.add(CustomRecipes.keyOf(item));
-			else if (choice instanceof Material material)
-				builder.ingredientIds.add(CustomRecipes.keyOf(material));
-			else if (choice instanceof CustomMaterial material)
-				builder.ingredientIds.add(CustomRecipes.keyOf(material));
+			else if (choice instanceof Material itemModel)
+				builder.ingredientIds.add(CustomRecipes.keyOf(itemModel));
+			else if (choice instanceof ItemModelType itemModelType)
+				builder.ingredientIds.add(CustomRecipes.keyOf(itemModelType));
 			else if (choice instanceof Keyed keyed)
 				builder.ingredientIds.add(CustomRecipes.keyOf(keyed));
 			else {

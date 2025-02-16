@@ -1,7 +1,11 @@
 package gg.projecteden.nexus.features.resourcepack.playerplushies;
 
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.PlayerPlushie;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
+import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfigService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -11,6 +15,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -52,13 +57,30 @@ public enum Pose {
 		return Arrays.stream(values()).filter(pose -> pose.getTier() == tier).collect(Collectors.toList());
 	}
 
-	public PlayerPlushie asDecoration() {
-		return new PlayerPlushie(this);
+	public PlayerPlushie asDecoration(UUID uuid) {
+		return new PlayerPlushie(this, uuid);
+	}
+
+	public PlayerPlushie asDecoration(HasUniqueId uuid) {
+		return new PlayerPlushie(this, uuid.getUniqueId());
 	}
 
 	public static void initDecorations() {
-		for (Pose pose : values()) {
-			pose.asDecoration();
+		for (Pose pose : values())
+			for (UUID uuid : new PlayerPlushieConfigService().get0().getOwners())
+				if (pose.canBeGeneratedFor(uuid))
+					pose.asDecoration(uuid);
+	}
+
+	public List<UUID> getGenerated() {
+		return PlayerPlushieConfig.GENERATED.getOrDefault(this, new ArrayList<>());
+	}
+
+	public ItemModelType getItemModel() {
+		try {
+			return ItemModelType.valueOf("PLAYER_PLUSHIE_" + name());
+		} catch (Exception ex) {
+			return null;
 		}
 	}
 

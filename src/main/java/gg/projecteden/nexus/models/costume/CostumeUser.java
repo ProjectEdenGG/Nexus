@@ -7,7 +7,7 @@ import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PreLoad;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.afk.AFK;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
 import gg.projecteden.nexus.features.store.gallery.GalleryPackage;
 import gg.projecteden.nexus.features.store.gallery.StoreGallery;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -144,7 +144,7 @@ public class CostumeUser implements PlayerOwnedObject {
 		return activeCostumes.containsKey(type);
 	}
 
-	public boolean owns(CustomModel model) {
+	public boolean owns(ItemModelInstance model) {
 		return owns(Costume.of(model));
 	}
 

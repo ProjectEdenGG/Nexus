@@ -6,7 +6,7 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -111,22 +111,22 @@ public class Trust implements PlayerOwnedObject {
 		LOCKS(1, Material.CHEST),
 		HOMES(3, Material.CYAN_BED),
 		TELEPORTS(5, Material.COMPASS),
-		DECORATIONS(7, CustomMaterial.CHAIR_CLOTH);
+		DECORATIONS(7, ItemModelType.CHAIR_CLOTH);
 
 		private final int column;
 		private final Material material;
-		private final int modelId;
+		private final String modelId;
 
-		Type(int column, CustomMaterial customMaterial) {
+		Type(int column, ItemModelType itemModelType) {
 			this.column = column;
-			this.material = customMaterial.getMaterial();
-			this.modelId = customMaterial.getModelId();
+			this.material = itemModelType.getMaterial();
+			this.modelId = itemModelType.getModel();
 		}
 
 		Type(int column, Material material) {
 			this.column = column;
 			this.material = material;
-			this.modelId = 0;
+			this.modelId = null;
 		}
 
 		public String camelCase() {
@@ -134,7 +134,7 @@ public class Trust implements PlayerOwnedObject {
 		}
 
 		public ItemStack getDisplayItem() {
-			ItemBuilder itemBuilder = new ItemBuilder(this.material).modelId(this.modelId);
+			ItemBuilder itemBuilder = new ItemBuilder(this.material).model(this.modelId);
 
 			if (itemBuilder.isDyeable())
 				itemBuilder.dyeColor(ColorType.RED);

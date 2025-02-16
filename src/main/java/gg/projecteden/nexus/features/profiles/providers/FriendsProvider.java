@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.profiles.ProfileCommand;
 import gg.projecteden.nexus.features.profiles.providers.FriendRequestsProvider.FriendRequestType;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.friends.FriendsUser;
 import gg.projecteden.nexus.models.friends.FriendsUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -65,7 +65,7 @@ public class FriendsProvider extends InventoryProvider {
 			// Requests Sent
 			int sentCount = user.getRequests_sent().size();
 			if (sentCount > 0) {
-				ItemBuilder sent = new ItemBuilder(CustomMaterial.GUI_PROFILE_ICON_FRIEND_REQUESTS_SENT).name("&3Requests sent: &a" + sentCount)
+				ItemBuilder sent = new ItemBuilder(ItemModelType.GUI_PROFILE_ICON_FRIEND_REQUESTS_SENT).name("&3Requests sent: &a" + sentCount)
 					.dyeColor(ColorType.CYAN).itemFlags(ItemFlags.HIDE_ALL);
 
 				contents.set(0, 3, ClickableItem.of(sent,
@@ -77,7 +77,7 @@ public class FriendsProvider extends InventoryProvider {
 
 			if (receivedCount > 0) {
 				int unreadCount = user.getUnreadReceived().size();
-				ItemBuilder received = new ItemBuilder(CustomMaterial.GUI_PROFILE_ICON_FRIEND_REQUESTS_RECEIVED).name("&3Requests received: &a" + receivedCount)
+				ItemBuilder received = new ItemBuilder(ItemModelType.GUI_PROFILE_ICON_FRIEND_REQUESTS_RECEIVED).name("&3Requests received: &a" + receivedCount)
 					.dyeColor(ColorType.LIGHT_GREEN).itemFlags(ItemFlags.HIDE_ALL);
 
 				if (unreadCount > 0)

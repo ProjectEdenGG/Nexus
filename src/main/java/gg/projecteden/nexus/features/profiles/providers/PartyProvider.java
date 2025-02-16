@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.party.PartyCommand;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.party.Party;
 import gg.projecteden.nexus.models.party.PartyUser;
@@ -71,7 +71,7 @@ public class PartyProvider extends InventoryProvider {
 		}
 
 		if (members < PartyCommand.getPARTY_SIZE_LIMIT()) {
-			ItemBuilder invitePlayer = new ItemBuilder(CustomMaterial.GUI_PLUS)
+			ItemBuilder invitePlayer = new ItemBuilder(ItemModelType.GUI_PLUS)
 				.dyeColor(Color.LIME)
 				.itemFlags(ItemFlags.HIDE_ALL)
 				.name("&eInvite a player")

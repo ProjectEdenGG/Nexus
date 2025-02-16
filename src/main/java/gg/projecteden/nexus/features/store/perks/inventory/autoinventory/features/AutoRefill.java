@@ -4,7 +4,7 @@ import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInv
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.utils.Enchant;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
@@ -31,6 +31,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.List;
+import java.util.Objects;
 
 @NoArgsConstructor
 public class AutoRefill implements Listener {
@@ -181,7 +182,7 @@ public class AutoRefill implements Listener {
 		if (a.getType() != b.getType())
 			return false;
 
-		if (ModelId.of(a) != ModelId.of(b))
+		if (!Objects.equals(Model.of(a), Model.of(b)))
 			return false;
 
 		for (Enchantment enchant : enchants)

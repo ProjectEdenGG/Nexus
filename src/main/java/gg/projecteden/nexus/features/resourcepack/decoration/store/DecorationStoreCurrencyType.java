@@ -10,7 +10,7 @@ import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -75,7 +75,7 @@ public enum DecorationStoreCurrencyType {
 				return config.getName();
 			}
 
-			throw new InvalidInputException("Unknown decoration type of: " + itemStack.getType() + ", modelId = " + ModelId.of(itemStack));
+			throw new InvalidInputException("Unknown decoration type of: " + itemStack.getType() + ", model = " + Model.of(itemStack));
 		}
 	}
 

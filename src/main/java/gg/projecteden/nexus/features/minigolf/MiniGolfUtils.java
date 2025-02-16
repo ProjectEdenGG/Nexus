@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.minigolf;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigolf.models.GolfBallColor;
 import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -34,7 +34,7 @@ public class MiniGolfUtils {
 	}
 
 	@Getter
-	private static final ItemStack putter = new ItemBuilder(CustomMaterial.MINIGOLF_PUTTER)
+	private static final ItemStack putter = new ItemBuilder(ItemModelType.MINIGOLF_PUTTER)
 		.name("Putter")
 		.lore("&7A specialized club", "&7for finishing holes.", "")
 		.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
@@ -42,7 +42,7 @@ public class MiniGolfUtils {
 		.build();
 
 	@Getter
-	private static final ItemStack wedge = new ItemBuilder(CustomMaterial.MINIGOLF_WEDGE)
+	private static final ItemStack wedge = new ItemBuilder(ItemModelType.MINIGOLF_WEDGE)
 		.name("Wedge")
 		.lore("&7A specialized club", "&7for tall obstacles", "")
 		.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
@@ -50,14 +50,14 @@ public class MiniGolfUtils {
 		.build();
 
 	@Getter
-	private static final ItemStack whistle = new ItemBuilder(CustomMaterial.MINIGOLF_WHISTLE)
+	private static final ItemStack whistle = new ItemBuilder(ItemModelType.MINIGOLF_WHISTLE)
 		.name("Golf Whistle")
 		.lore("&7Returns your last", "&7hit golf ball to its", "&7previous location", "")
 		.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
 		.undroppable()
 		.build();
 
-	private static final ItemBuilder golfBall = new ItemBuilder(CustomMaterial.MINIGOLF_BALL)
+	private static final ItemBuilder golfBall = new ItemBuilder(ItemModelType.MINIGOLF_BALL)
 		.name("Golf Ball")
 		.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
 		.undroppable();
@@ -78,7 +78,7 @@ public class MiniGolfUtils {
 	}
 
 	public static ItemStack getGolfBall(GolfBallColor color) {
-		return getGolfBall().modelId(color.getModelId()).build();
+		return getGolfBall().model(color.getModel()).build();
 	}
 
 	public static boolean isBottomSlab(Block block) {

@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.models;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.BearFair21IslandType;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -35,7 +36,7 @@ public class BearFairTalker extends Talker {
 			if (region.getId().equals(BearFair20.getRegion()))
 				return gg.projecteden.nexus.features.events.y2020.bearfair20.islands.IslandType.getFromLocation(location);
 			if (region.getId().equals(BearFair21.getRegion()))
-				return gg.projecteden.nexus.features.events.y2021.bearfair21.islands.IslandType.get(location);
+				return BearFair21IslandType.get(location);
 		}
 		return null;
 	}

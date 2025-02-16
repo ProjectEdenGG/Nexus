@@ -6,9 +6,9 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.events.models.QuestStage;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.Quests;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21Quests;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.JunkWeight;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.BearFair21FishingLoot.JunkWeight;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
@@ -112,7 +112,7 @@ public class BearFair21User implements PlayerOwnedObject {
 		if (this.recycledItems >= JunkWeight.MIN.getAmount() && questStage_Recycle != QuestStage.COMPLETE) {
 			questStage_Recycle = QuestStage.COMPLETE;
 			getNextStepNPCs().remove(BearFair21NPC.FISHERMAN2.getId());
-			Tasks.wait(TickTime.SECOND.x(2), () -> Quests.giveKey(this));
+			Tasks.wait(TickTime.SECOND.x(2), () -> BearFair21Quests.giveKey(this));
 		}
 
 		this.junkWeight = junkWeight.update(this.recycledItems);

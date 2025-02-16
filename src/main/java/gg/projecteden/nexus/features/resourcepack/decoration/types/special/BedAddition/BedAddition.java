@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Addition;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
@@ -29,12 +29,12 @@ public class BedAddition extends DyeableFloorThing implements Addition {
 	@Getter
 	private AdditionType additionType;
 
-	public BedAddition(String name, CustomMaterial material, AdditionType additionType, ColorableType colorableType) {
-		this(name, material, additionType, false, colorableType);
+	public BedAddition(String name, ItemModelType itemModelType, AdditionType additionType, ColorableType colorableType) {
+		this(name, itemModelType, additionType, false, colorableType);
 	}
 
-	public BedAddition(String name, CustomMaterial material, AdditionType additionType, boolean wide, ColorableType colorableType) {
-		super(true, name, material, colorableType);
+	public BedAddition(String name, ItemModelType itemModelType, AdditionType additionType, boolean wide, ColorableType colorableType) {
+		super(true, name, itemModelType, colorableType);
 
 		this.wide = wide;
 		this.additionType = additionType;

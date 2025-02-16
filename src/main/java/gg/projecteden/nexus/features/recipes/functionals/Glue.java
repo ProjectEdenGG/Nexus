@@ -4,8 +4,8 @@ import com.destroystokyo.paper.ParticleBuilder;
 import de.tr7zw.nbtapi.NBT;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -33,12 +33,12 @@ public class Glue extends FunctionalRecipe {
 
 	private static final String NBT_KEY = "Glued";
 
-	public static CustomMaterial getCustomMaterial() {
-		return CustomMaterial.GLUE;
+	public static ItemModelType getItemModel() {
+		return ItemModelType.GLUE;
 	}
 
-	public static CustomModel getCustomModel() {
-		return getCustomMaterial().getCustomModel();
+	public static ItemModelInstance getCustomModel() {
+		return getItemModel().getCustomModel();
 	}
 
 	@Override
@@ -72,7 +72,7 @@ public class Glue extends FunctionalRecipe {
 
 		boolean glued = NBT.getPersistentData(itemFrame, nbt -> nbt.getBoolean(NBT_KEY));
 		ItemStack item = itemFrame.getItem();
-		ItemStack tool = ItemUtils.getTool(player, getCustomMaterial());
+		ItemStack tool = ItemUtils.getTool(player, getItemModel());
 		if (!Nullables.isNullOrAir(item)) {
 			if (shouldRotate(event)) {
 				if (glued) {

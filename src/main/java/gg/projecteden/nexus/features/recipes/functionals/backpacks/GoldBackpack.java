@@ -1,13 +1,13 @@
 package gg.projecteden.nexus.features.recipes.functionals.backpacks;
 
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public class GoldBackpack extends IronBackpack {
 
-	public static ItemStack result = new ItemBuilder(CustomMaterial.BACKPACK_3D_GOLD).name("Gold Backpack").build();
+	public static ItemStack result = new ItemBuilder(ItemModelType.BACKPACK_3D_GOLD).name("Gold Backpack").build();
 
 	@Override
 	public ItemStack getResult() {

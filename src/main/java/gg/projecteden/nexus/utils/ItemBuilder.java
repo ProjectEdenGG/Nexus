@@ -3,7 +3,10 @@ package gg.projecteden.nexus.utils;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import com.google.common.collect.ImmutableSortedMap;
+import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.NBTItem;
+import de.tr7zw.nbtapi.iface.ReadWriteItemNBT;
+import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
@@ -11,8 +14,8 @@ import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.features.itemtags.Rarity;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.IsColored;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -28,7 +31,14 @@ import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.minecraft.nbt.CompoundTag;
 import org.apache.commons.lang3.function.TriConsumer;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.DyeColor;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.ShulkerBox;
@@ -44,8 +54,20 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.*;
+import org.bukkit.inventory.meta.AxolotlBucketMeta;
+import org.bukkit.inventory.meta.BannerMeta;
+import org.bukkit.inventory.meta.BlockStateMeta;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.BookMeta.Generation;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.Repairable;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 import org.bukkit.potion.PotionEffect;
@@ -56,7 +78,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -79,21 +109,21 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		this(new ItemStack(material));
 	}
 
-	public ItemBuilder(CustomMaterial material) {
-		this(material, 1);
+	public ItemBuilder(ItemModelType itemModelType) {
+		this(itemModelType, 1);
 	}
 
-	public ItemBuilder(CustomModel customModel) {
+	public ItemBuilder(ItemModelInstance customModel) {
 		this(customModel.getMaterial());
-		modelId(customModel.getData());
+		model(customModel.getItemModel());
 	}
 
 	public ItemBuilder(Material material, int amount) {
 		this(new ItemStack(material, amount));
 	}
 
-	public ItemBuilder(CustomMaterial material, int amount) {
-		this(new ItemBuilder(material.getMaterial()).modelId(material.getModelId()).amount(amount));
+	public ItemBuilder(ItemModelType itemModelType, int amount) {
+		this(new ItemBuilder(itemModelType.getMaterial()).model(itemModelType).amount(amount));
 	}
 
 	public ItemBuilder(ItemBuilder itemBuilder) {
@@ -113,14 +143,18 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		this.update = update;
 	}
 
-	public ItemBuilder material(CustomMaterial customMaterial) {
+	public ItemBuilder(int number) {
+		this(Material.LEATHER_HORSE_ARMOR);
+		number(number);
+	}
+
+	public ItemBuilder material(ItemModelType itemModelType) {
 		String displayName = itemMeta.getDisplayName();
 
-		itemStack.setType(customMaterial.getMaterial());
+		itemStack.setType(itemModelType.getMaterial());
 		itemMeta = itemStack.getItemMeta();
 
-		itemMeta.setCustomModelData(customMaterial.getModelId());
-
+		model(itemModelType);
 		name(displayName);
 
 		return this;
@@ -362,6 +396,11 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	public ItemBuilder itemFlags(ItemFlags flags) {
 		return itemFlags(flags.get());
+	}
+
+	public ItemBuilder maxStackSize(int i) {
+		itemMeta.setMaxStackSize(i);
+		return this;
 	}
 
 	@AllArgsConstructor
@@ -688,7 +727,12 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	public ItemBuilder axolotl(Axolotl.Variant variant) {
 		final AxolotlBucketMeta bucketMeta = (AxolotlBucketMeta) itemMeta;
 		bucketMeta.setVariant(variant);
-		modelId(variant.ordinal());
+		switch (variant) {
+			case WILD -> model(ItemModelType.AXOLOTL_BUCKET_BROWN);
+			case GOLD -> model(ItemModelType.AXOLOTL_BUCKET_YELLOW);
+			case CYAN -> model(ItemModelType.AXOLOTL_BUCKET_CYAN);
+			case BLUE -> model(ItemModelType.AXOLOTL_BUCKET_BLUE);
+		}
 		return this;
 	}
 
@@ -728,11 +772,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	// NBT
 
-	public ItemBuilder nbt(Consumer<NBTItem> consumer) {
-		final NBTItem nbtItem = nbtItem(false);
-		consumer.accept(nbtItem);
-		itemStack = nbtItem.getItem();
-		itemMeta = itemStack.getItemMeta();
+	public ItemBuilder nbt(Consumer<ReadWriteItemNBT> consumer) {
+		ItemStack item = build();
+		NBT.modify(item, consumer);
+		itemMeta = item.getItemMeta();
 		return this;
 	}
 
@@ -755,7 +798,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder rarity(Rarity rarity) {
-		return nbt(nbtItem -> Rarity.setNBT(nbtItem, rarity));
+		return nbt(nbtItem -> Rarity.setNBT(build(), rarity));
 	}
 
 	public Condition condition() {
@@ -777,7 +820,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder condition(Condition condition) {
-		return nbt(nbtItem -> Condition.setNBT(nbtItem, condition));
+		return nbt(nbtItem -> Condition.setNBT(build(), condition));
 	}
 
 	@AllArgsConstructor
@@ -875,37 +918,64 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return setting(ItemSetting.TRADEABLE, false);
 	}
 
-	public ItemBuilder modelId(int id) {
+	public ItemBuilder customModelData(int id) {
 		if (id > 0)
 			itemMeta.setCustomModelData(id);
 		return this;
 	}
 
-	public int modelId() {
+	public ItemBuilder removeCustomModelData() {
+		ItemStack item = build();
+		NBT.modifyComponents(item, (Consumer<ReadWriteNBT>) nbt -> nbt.removeKey("minecraft:custom_model_data"));
+		itemMeta = item.getItemMeta();
+		return this;
+	}
+
+	public int customModelData() {
 		if (!itemMeta.hasCustomModelData())
 			return 0;
 		return itemMeta.getCustomModelData();
 	}
 
-	public static class ModelId {
+	public ItemBuilder model(String name) {
+		if (name != null)
+			itemMeta.setItemModel(NamespacedKey.minecraft(name));
+		return this;
+	}
 
-		public static int of(ItemStack item) {
+	public ItemBuilder model(ItemModelType itemModelType) {
+		return model(itemModelType.getModel());
+	}
+
+	public String model() {
+		if (!itemMeta.hasItemModel())
+			return null;
+		return itemMeta.getItemModel().getKey();
+	}
+
+	public ItemBuilder number(int number) {
+		return model(ItemModelType.GUI_NUMBER).customModelData(number);
+	}
+
+	public static class Model {
+
+		public static String of(ItemStack item) {
 			if (Nullables.isNullOrAir(item))
-				return 0;
+				return null;
 
 			return of(new ItemBuilder(item));
 		}
 
-		public static int of(ItemBuilder item) {
-			return item.modelId();
+		public static String of(ItemBuilder item) {
+			return item.model();
 		}
 
-		public static boolean hasModelId(ItemStack item) {
-			return of(item) != 0;
+		public static boolean hasModel(ItemStack item) {
+			return of(item) != null;
 		}
 
-		public static boolean hasModelId(ItemBuilder item) {
-			return of(item) != 0;
+		public static boolean hasModel(ItemBuilder item) {
+			return of(item) != null;
 		}
 
 	}

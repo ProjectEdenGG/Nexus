@@ -5,13 +5,17 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.ArmorSlot;
 import gg.projecteden.nexus.utils.StringUtils;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -80,8 +84,14 @@ public class RainbowArmor implements PlayerOwnedObject {
 	}
 
 	public ItemStack getHiddenIcon(ArmorSlot slot) {
-		return new ItemBuilder(CustomMaterial.ARMOR_OUTLINE_HELMET)
-			.modelId(CustomMaterial.ARMOR_OUTLINE_HELMET.getModelId() + slot.ordinal())
+		ItemModelType itemModelType = switch (slot) {
+			case HELMET -> ItemModelType.ARMOR_OUTLINE_HELMET;
+			case CHESTPLATE -> ItemModelType.ARMOR_OUTLINE_CHESTPLATE;
+			case LEGGINGS -> ItemModelType.ARMOR_OUTLINE_LEGGINGS;
+			case BOOTS -> ItemModelType.ARMOR_OUTLINE_BOOTS;
+		};
+
+		return new ItemBuilder(itemModelType)
 			.name(StringUtils.camelCase(slot))
 			.build();
 	}

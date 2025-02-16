@@ -274,7 +274,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 				throw new InvalidInputException("The wither is currently being fought");
 		}),
 		PUGMAS21_TRAIN_BACKGROUND(() -> {
-			if (Nexus.isProdOrStaging()) {
+			if (Nexus.isProdOrUpdate()) {
 				if (Pugmas21TrainBackground.isActive())
 					throw new InvalidInputException("Someone is traveling to Pugmas");
 			}
@@ -290,11 +290,10 @@ public class NexusCommand extends CustomCommand implements Listener {
 				throw new InvalidInputException("Resource pack is reloading");
 		}),
 		ANIMATIONS(() -> {
-
-			if (DecorationStoreLayouts.isAnimating())
+			if (DecorationStoreLayouts.isPreventReload())
 				throw new InvalidInputException("Decoration store is animating");
 
-			if (Nexus.isProdOrStaging()) {
+			if (Nexus.isProdOrUpdate()) {
 				if (Pugmas25Geyser.isAnimating())
 					throw new InvalidInputException("Pugmas25 geyser is animating");
 
@@ -306,25 +305,25 @@ public class NexusCommand extends CustomCommand implements Listener {
 			}
 		}),
 		PUGMAS25_BALLOON_EDITOR(() -> {
-			if (Nexus.isProdOrStaging()) {
+			if (Nexus.isProdOrUpdate()) {
 				if (Pugmas25BalloonEditor.reload())
 					throw new InvalidInputException("A balloon is being editing at pugmas, saving session...");
 			}
 		}),
 		PUGMAS25_SLOT_MACHINE(() -> {
-			if (Nexus.isProdOrStaging()) {
+			if (Nexus.isProdOrUpdate()) {
 				if (Pugmas25SlotMachine.get().isPlaying())
 					throw new InvalidInputException("The slot machine is being rolled at pugmas");
 			}
 		}),
 		PUGMAS25_WAC_A_MOLE(() -> {
-			if (Nexus.isProdOrStaging()) {
+			if (Nexus.isProdOrUpdate()) {
 				if (Pugmas25WhacAMole.get().isPlaying())
 					throw new InvalidInputException("Whac A Mole is being played at pugmas");
 			}
 		}),
 		PUGMAS25_TRAIN_BACKGROUND(() -> {
-			if (Nexus.isProdOrStaging()) {
+			if (Nexus.isProdOrUpdate()) {
 				if (Pugmas25TrainBackground.isAnimating())
 					throw new InvalidInputException("Pugmas25 Train Background is animating!");
 			}
@@ -335,7 +334,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 					throw new InvalidInputException("There is an active chat game");
 		}),
 		VU_LAN_LANTERN_ANIMATION(() -> {
-			if (Nexus.isProdOrStaging()) {
+			if (Nexus.isProdOrUpdate()) {
 				if (VuLan24LanternAnimation.getInstance() != null)
 					throw new InvalidInputException("There is an active Vu Lan lantern animation");
 			}

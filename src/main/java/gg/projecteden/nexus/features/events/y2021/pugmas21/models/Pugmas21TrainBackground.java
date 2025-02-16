@@ -3,8 +3,15 @@ package gg.projecteden.nexus.features.events.y2021.pugmas21.models;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
-import gg.projecteden.nexus.utils.*;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import gg.projecteden.nexus.utils.EntityUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
+import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -42,7 +49,7 @@ public class Pugmas21TrainBackground {
 	private static final Location loopLocation = LocationUtils.getCenteredLocation(Pugmas21.location(31, 11, -60, -180, 0));
 	private static final double speed = 0.2;
 	private static final BlockFace forwards = BlockFace.WEST;
-	private static final List<Integer> randomModels = Arrays.asList(203, 204, 205);
+	private static final List<String> randomModels = Arrays.asList(ItemModelType.PUGMAS21_TERRAIN_4.getModel(), ItemModelType.PUGMAS21_TERRAIN_5.getModel(), ItemModelType.PUGMAS21_TERRAIN_6.getModel());
 	private static final WorldGuardUtils WGUtils = Pugmas21.worldguard();
 
 	@Getter
@@ -54,7 +61,7 @@ public class Pugmas21TrainBackground {
 
 	public Pugmas21TrainBackground() {
 		Tasks.repeat(1, TickTime.TICK.x(2), () -> {
-			if (WGUtils.getPlayersInRegion(REGION).size() == 0)
+			if (WGUtils.getPlayersInRegion(REGION).isEmpty())
 				stop();
 		});
 	}
@@ -118,8 +125,8 @@ public class Pugmas21TrainBackground {
 		} else {
 			to = loopLocation.clone().add(_forwards);
 
-			if (randomModels.contains(ModelId.of(headItem)))
-				headItem = new ItemBuilder(headItem).modelId(RandomUtils.randomElement(randomModels)).build();
+			if (randomModels.contains(Model.of(headItem)))
+				headItem = new ItemBuilder(headItem).model(RandomUtils.randomElement(randomModels)).build();
 
 			armorStand.setItem(EquipmentSlot.HEAD, new ItemStack(Material.AIR));
 			armorStand.teleport(to);

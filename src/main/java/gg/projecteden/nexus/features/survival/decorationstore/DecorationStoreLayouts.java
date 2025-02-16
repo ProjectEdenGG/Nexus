@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationSto
 import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
+import gg.projecteden.nexus.models.scheduledjobs.jobs.DecorationStoreLayoutPasteJob;
 import gg.projecteden.nexus.utils.ChunkLoader;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -36,6 +37,8 @@ public class DecorationStoreLayouts {
 	private static final String empty_schematic = directory + "empty";
 	@Getter
 	private static boolean animating = false;
+	@Getter
+	private static boolean preventReload = false;
 
 	@AllArgsConstructor
 	public enum StoreLocation {
@@ -79,6 +82,8 @@ public class DecorationStoreLayouts {
 		}
 
 		animating = true;
+		preventReload = true;
+
 		DecorationStoreConfig config = DecorationStore.getConfig();
 		config.setActive(false);
 		DecorationStore.saveConfig();
@@ -100,20 +105,25 @@ public class DecorationStoreLayouts {
 
 			pasteLayout(reset_schematic, StoreLocation.SURVIVAL);
 
-			Tasks.wait(TickTime.MINUTE, () -> {
-				int schematicId = getNextSchematicId();
+			new DecorationStoreLayoutPasteJob().schedule(60);
 
-				config.setSchematicId(schematicId);
-				pasteLayout(getLayoutSchematic(schematicId), StoreLocation.SURVIVAL);
-
-				config.setActive(true);
-				DecorationStore.saveConfig();
-				animating = false;
-
-				Nexus.log("[Decoration Store] Finished, pasted schematic id: " + schematicId);
-				;
-			});
+			preventReload = false;
 		});
+	}
+
+	public static void doPasteNextLayout() {
+		DecorationStoreConfig config = DecorationStore.getConfig();
+		int schematicId = getNextSchematicId();
+
+		config.setSchematicId(schematicId);
+		pasteLayout(getLayoutSchematic(schematicId), StoreLocation.SURVIVAL);
+
+		config.setActive(true);
+		DecorationStore.saveConfig();
+		animating = false;
+		preventReload = false;
+
+		Nexus.log("[Decoration Store] Finished, pasted schematic id: " + schematicId);
 	}
 
 	public static int getNextSchematicId() {

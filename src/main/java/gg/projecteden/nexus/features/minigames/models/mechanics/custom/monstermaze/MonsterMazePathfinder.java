@@ -23,7 +23,7 @@ public class MonsterMazePathfinder implements com.destroystokyo.paper.entity.Pat
     }
 
     @Override
-    public Mob getEntity() {
+    public @NotNull Mob getEntity() {
         return (Mob) entity.getBukkitEntity();
     }
 
@@ -117,7 +117,7 @@ public class MonsterMazePathfinder implements com.destroystokyo.paper.entity.Pat
 		}
 
 		@Override
-        public List<Location> getPoints() {
+        public @NotNull List<Location> getPoints() {
             return new ArrayList<>() {{
 				for (Node point : path.nodes)
 					add(toLoc(point));
@@ -132,7 +132,7 @@ public class MonsterMazePathfinder implements com.destroystokyo.paper.entity.Pat
         @Nullable
         @Override
         public Location getNextPoint() {
-            if (!path.hasNext())
+            if (path.isDone())
                 return null;
 
             return toLoc(path.nodes.get(path.getNextNodeIndex()));

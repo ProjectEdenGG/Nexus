@@ -7,8 +7,14 @@ import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.features.commands.SpeedCommand.SpeedType;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
@@ -29,7 +35,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class WitherArmorListener implements Listener {
 
@@ -41,6 +49,28 @@ public class WitherArmorListener implements Listener {
 		}
 		startDoubleJumpTask();
 	}
+
+	@Getter
+	private static final List<String> lore = new ArrayList<>() {{
+		add("&f");
+		add("&eSet Bonuses:");
+		add("&f");
+		add("&3Wither's Lifeline");
+		add("&f &7When below 25% health,");
+		add("&f &7you take 75% less");
+		add("&f &7damage to projectile");
+		add("&f &7attacks from enemies.");
+		add("&f");
+		add("&3Special Attack");
+		add("&f &7Fire a wither skull");
+		add("&f &7projectile towards the");
+		add("&f &7direction you're looking.");
+		add("&f &7(Cooldown: 3s)");
+		add("&f");
+		add("&3Double Jump");
+		add("&f &7Cooldoown: 10s");
+		add("&f");
+	}};
 
 	public boolean hasFullSet(Player player) {
 		PlayerInventory inv = player.getInventory();

@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.models.costume;
 
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
-import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
+import gg.projecteden.nexus.features.resourcepack.models.files.ItemModelFolder;
 import gg.projecteden.nexus.features.store.StoreCommand;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -26,7 +26,7 @@ public class Costume {
 	private final CostumeType type;
 	private final ItemStack item;
 
-	public Costume(CustomModel model, CostumeType type) {
+	public Costume(ItemModelInstance model, CostumeType type) {
 		this.id = getId(model);
 		this.type = model.getItem().getType() == Material.PLAYER_HEAD ? CostumeType.HAND : type;
 		this.item = new ItemBuilder(model.getItem())
@@ -38,12 +38,12 @@ public class Costume {
 			.build();
 	}
 
-	public static String getId(CustomModel model) {
+	public static String getId(ItemModelInstance model) {
 		return model.getId().replaceFirst("costumes/", "");
 	}
 
-	public CustomModel getModel() {
-		return CustomModel.of("costumes/" + id);
+	public ItemModelInstance getModel() {
+		return ItemModelInstance.of("costumes/" + id);
 	}
 
 	public boolean isDyeable() {
@@ -61,7 +61,7 @@ public class Costume {
 		private final EquipmentSlot slot;
 		private final int menuHeaderSlot;
 
-		public CustomModelFolder getFolder() {
+		public ItemModelFolder getFolder() {
 			return getRootFolder().getFolder(ROOT_FOLDER + "/" + name().toLowerCase());
 		}
 
@@ -70,7 +70,7 @@ public class Costume {
 		}
 	}
 
-	public static Costume of(CustomModel model) {
+	public static Costume of(ItemModelInstance model) {
 		return of(getId(model));
 	}
 
@@ -94,7 +94,7 @@ public class Costume {
 	public static final String STORE_URL_VISUALS = StoreCommand.URL + "/category/visuals";
 	public static final String STORE_URL_BOOSTS = StoreCommand.URL + "/category/boosts";
 
-	public static CustomModelFolder getRootFolder() {
+	public static ItemModelFolder getRootFolder() {
 		return ResourcePack.getRootFolder().getFolder(ROOT_FOLDER);
 	}
 
@@ -104,14 +104,14 @@ public class Costume {
 			load(type, type.getFolder());
 	}
 
-	private static void load(CostumeType type, CustomModelFolder folder) {
+	private static void load(CostumeType type, ItemModelFolder folder) {
 		if (folder == null)
 			return;
 
-		for (CustomModelFolder subfolder : folder.getFolders())
+		for (ItemModelFolder subfolder : folder.getFolders())
 			load(type, subfolder);
 
-		for (CustomModel model : folder.getModels())
+		for (ItemModelInstance model : folder.getModels())
 			if (model.getMaterial() != Material.CYAN_STAINED_GLASS_PANE) // legacy gg hat
 				costumes.add(new Costume(model, type));
 	}

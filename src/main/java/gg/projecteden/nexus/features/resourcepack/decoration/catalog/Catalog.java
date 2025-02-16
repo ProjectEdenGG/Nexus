@@ -12,7 +12,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSp
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreCurrencyType;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.DyeChoice;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -20,7 +20,8 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -45,11 +46,12 @@ import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 public class Catalog implements Listener {
 
 	@Getter
-	private static final ItemStack MASTER_CATALOG = new ItemBuilder(CustomMaterial.DECORATION_CATALOG_MASTER)
+	private static final ItemStack MASTER_CATALOG = new ItemBuilder(ItemModelType.DECORATION_CATALOG_MASTER)
 			.name("&eMaster Catalog")
 			.lore("&3Master Decoration Catalog")
 			.build();
@@ -61,7 +63,7 @@ public class Catalog implements Listener {
 		if (MASTER_CATALOG.getType() != itemStack.getType())
 			return false;
 
-		return ItemBuilder.ModelId.of(MASTER_CATALOG) == ItemBuilder.ModelId.of(itemStack);
+		return Objects.equals(ItemBuilder.Model.of(MASTER_CATALOG), ItemBuilder.Model.of(itemStack));
 	}
 
 	public Catalog() {
@@ -74,49 +76,49 @@ public class Catalog implements Listener {
 		INTERNAL,
 		INTERNAL_ROOT,
 
-		FLAGS(CustomMaterial.FLAG_SERVER.getItem()),
-		PRIDE_FLAGS(CustomMaterial.FLAG_PRIDE_PRIDE.getItem()),
+		FLAGS(ItemModelType.FLAG_SERVER.getItem()),
+		PRIDE_FLAGS(ItemModelType.FLAG_PRIDE_PRIDE.getItem()),
 
-		BUNTING(CustomMaterial.BUNTING_SERVER_LOGO.getItem()),
-		PRIDE_BUNTING(CustomMaterial.BUNTING_PRIDE_GAY.getItem()),
+		BUNTING(ItemModelType.BUNTING_SERVER_LOGO.getItem()),
+		PRIDE_BUNTING(ItemModelType.BUNTING_PRIDE_GAY.getItem()),
 
-		BANNERS(CustomMaterial.BANNER_STANDING_SERVER_LOGO.getItem()),
-		BANNERS_STANDING(CustomMaterial.BANNER_STANDING_SERVER_LOGO.getItem()),
-		BANNERS_HANGING(CustomMaterial.BANNER_HANGING_SERVER_LOGO.getItem()),
+		BANNERS(ItemModelType.BANNER_STANDING_SERVER_LOGO.getItem()),
+		BANNERS_STANDING(ItemModelType.BANNER_STANDING_SERVER_LOGO.getItem()),
+		BANNERS_HANGING(ItemModelType.BANNER_HANGING_SERVER_LOGO.getItem()),
 
-		COUNTERS_MENU(CustomMaterial.COUNTER_BLACK_SOAPSTONE_CABINET.getItem(), ColorChoice.StainChoice.OAK.getColor()),
-		MARBLE_COUNTER(CustomMaterial.COUNTER_MARBLE.getItem()),
-		STONE_COUNTER(CustomMaterial.COUNTER_STONE.getItem()),
-		SOAPSTONE_COUNTER(CustomMaterial.COUNTER_SOAPSTONE.getItem()),
-		WOODEN_COUNTER(CustomMaterial.COUNTER_WOODEN.getItem(), ColorChoice.StainChoice.OAK.getColor()),
+		COUNTERS_MENU(ItemModelType.COUNTER_BLACK_SOAPSTONE_CABINET.getItem(), ColorChoice.StainChoice.OAK.getColor()),
+		MARBLE_COUNTER(ItemModelType.COUNTER_MARBLE.getItem()),
+		STONE_COUNTER(ItemModelType.COUNTER_STONE.getItem()),
+		SOAPSTONE_COUNTER(ItemModelType.COUNTER_SOAPSTONE.getItem()),
+		WOODEN_COUNTER(ItemModelType.COUNTER_WOODEN.getItem(), ColorChoice.StainChoice.OAK.getColor()),
 
-		CABINETS(CustomMaterial.CABINET_BLACK_WOODEN.getItem(), ColorChoice.StainChoice.OAK.getColor()),
-		BLACK_HANDLES(CustomMaterial.HANDLE_BLACK.getItem()),
-		STEEL_HANDLES(CustomMaterial.HANDLE_STEEL.getItem()),
-		BRASS_HANDLES(CustomMaterial.HANDLE_BRASS.getItem()),
+		CABINETS(ItemModelType.CABINET_BLACK_WOODEN.getItem(), ColorChoice.StainChoice.OAK.getColor()),
+		BLACK_HANDLES(ItemModelType.HANDLE_BLACK.getItem()),
+		STEEL_HANDLES(ItemModelType.HANDLE_STEEL.getItem()),
+		BRASS_HANDLES(ItemModelType.HANDLE_BRASS.getItem()),
 
-		ART(CustomMaterial.ART_PAINTING_CUSTOM_SKYBLOCK.getItem()),
+		ART(ItemModelType.ART_PAINTING_CUSTOM_SKYBLOCK.getItem()),
 		ART_CUSTOM(Art.tabIcon_custom),
 		ART_VANILLA(Art.tabIcon_vanilla),
 
-		MUSIC(CustomMaterial.BONGOS.getItem(), ColorChoice.DyeChoice.RED.getColor()),
-		MUSIC_NOISEMAKERS(CustomMaterial.DRUM_KIT.getItem(), ColorChoice.DyeChoice.RED.getColor()),
+		MUSIC(ItemModelType.BONGOS.getItem(), ColorChoice.DyeChoice.RED.getColor()),
+		MUSIC_NOISEMAKERS(ItemModelType.DRUM_KIT.getItem(), ColorChoice.DyeChoice.RED.getColor()),
 
-		FURNITURE(CustomMaterial.COUNTER_BLACK_SOAPSTONE_CABINET.getItem(), ColorChoice.StainChoice.OAK.getColor()),
-		APPLIANCES(CustomMaterial.APPLIANCE_FRIDGE_MAGNETS.getItem(), ColorChoice.DyeChoice.WHITE.getColor()),
-		CHAIRS(CustomMaterial.CHAIR_WOODEN_BASIC.getItem(), ColorChoice.StainChoice.OAK.getColor()),
-		STOOLS(CustomMaterial.STOOL_WOODEN_BASIC.getItem(), ColorChoice.StainChoice.OAK.getColor()),
-		STUMPS(CustomMaterial.STUMP_OAK.getItem()),
-		TABLES(CustomMaterial.TABLE_WOODEN_1X1.getItem(), ColorChoice.StainChoice.OAK.getColor()),
-		BEDS(CustomMaterial.BED_GENERIC_1_SINGLE.getItem(), ColorChoice.StainChoice.OAK.getColor()),
-		FIREPLACES(CustomMaterial.FIREPLACE_WOODEN.getItem(), ColorChoice.StainChoice.OAK.getColor()),
+		FURNITURE(ItemModelType.COUNTER_BLACK_SOAPSTONE_CABINET.getItem(), ColorChoice.StainChoice.OAK.getColor()),
+		APPLIANCES(ItemModelType.APPLIANCE_FRIDGE_MAGNETS.getItem(), ColorChoice.DyeChoice.WHITE.getColor()),
+		CHAIRS(ItemModelType.CHAIR_WOODEN_BASIC.getItem(), ColorChoice.StainChoice.OAK.getColor()),
+		STOOLS(ItemModelType.STOOL_WOODEN_BASIC.getItem(), ColorChoice.StainChoice.OAK.getColor()),
+		STUMPS(ItemModelType.STUMP_OAK.getItem()),
+		TABLES(ItemModelType.TABLE_WOODEN_1X1.getItem(), ColorChoice.StainChoice.OAK.getColor()),
+		BEDS(ItemModelType.BED_GENERIC_1_SINGLE.getItem(), ColorChoice.StainChoice.OAK.getColor()),
+		FIREPLACES(ItemModelType.FIREPLACE_WOODEN.getItem(), ColorChoice.StainChoice.OAK.getColor()),
 
-		FOOD(CustomMaterial.FOOD_BREAD_LOAF.getItem()),
-		POTIONS(CustomMaterial.POTION_FILLED_GROUP_RANDOM_2.getItem(), ColorChoice.DyeChoice.WHITE.getColor()),
-		BOOKS(CustomMaterial.BOOK_OPENED_1.getItem(), DyeChoice.RED.getColor()),
-		FLORA(CustomMaterial.FLORA_CHINESE_EVERGREEN.getItem(), ColorChoice.DyeChoice.RED.getColor()),
-		KITCHENWARE(CustomMaterial.KITCHENWARE_MIXING_BOWL.getItem()),
-		WINDCHIMES(CustomMaterial.WINDCHIMES_COPPER.getItem()),
+		FOOD(ItemModelType.FOOD_BREAD_LOAF.getItem()),
+		POTIONS(ItemModelType.POTION_FILLED_GROUP_RANDOM_2.getItem(), ColorChoice.DyeChoice.WHITE.getColor()),
+		BOOKS(ItemModelType.BOOK_OPENED_1.getItem(), DyeChoice.RED.getColor()),
+		FLORA(ItemModelType.FLORA_CHINESE_EVERGREEN.getItem(), ColorChoice.DyeChoice.RED.getColor()),
+		KITCHENWARE(ItemModelType.KITCHENWARE_MIXING_BOWL.getItem()),
+		WINDCHIMES(ItemModelType.WINDCHIMES_COPPER.getItem()),
 		;
 
 		ItemStack icon = new ItemStack(Material.AIR);
@@ -138,26 +140,26 @@ public class Catalog implements Listener {
 
 	@AllArgsConstructor
 	public enum Theme {
-		ALL(CustomMaterial.DECORATION_CATALOG_ALL, Integer.MAX_VALUE),
+		ALL(ItemModelType.DECORATION_CATALOG_ALL, Integer.MAX_VALUE),
 
-		GENERAL(CustomMaterial.DECORATION_CATALOG_GENERAL, 100000.0),
+		GENERAL(ItemModelType.DECORATION_CATALOG_GENERAL, 100000.0),
 		//
-		ART(CustomMaterial.DECORATION_CATALOG_ART, 65000.0),
-		MUSIC(CustomMaterial.DECORATION_CATALOG_MUSIC, 45000.0),
-		OUTDOORS(CustomMaterial.DECORATION_CATALOG_OUTDOORS, 30000.0),
+		ART(ItemModelType.DECORATION_CATALOG_ART, 65000.0),
+		MUSIC(ItemModelType.DECORATION_CATALOG_MUSIC, 45000.0),
+		OUTDOORS(ItemModelType.DECORATION_CATALOG_OUTDOORS, 30000.0),
 		//
-		HOLIDAY(CustomMaterial.DECORATION_CATALOG_HOLIDAY, 20000.0),
-		SPOOKY(CustomMaterial.DECORATION_CATALOG_SPOOKY, 20000.0),
-		PRIDE(CustomMaterial.DECORATION_CATALOG_PRIDE, 20000.0),
+		HOLIDAY(ItemModelType.DECORATION_CATALOG_HOLIDAY, 20000.0),
+		SPOOKY(ItemModelType.DECORATION_CATALOG_SPOOKY, 20000.0),
+		PRIDE(ItemModelType.DECORATION_CATALOG_PRIDE, 20000.0),
 
 		;
 
-		final CustomMaterial customMaterial;
+		final ItemModelType itemModelType;
 		@Getter
 		final double price;
 
 		public ItemBuilder getItemBuilder() {
-			return new ItemBuilder(customMaterial).name("Decoration Catalog: " + StringUtils.camelCase(this));
+			return new ItemBuilder(itemModelType).name("Decoration Catalog: " + StringUtils.camelCase(this));
 		}
 
 		public ItemStack getNamedItem() {
@@ -165,7 +167,7 @@ public class Catalog implements Listener {
 		}
 
 		public ItemStack getShopItem() {
-			return new ItemBuilder(customMaterial).name("&3Catalog Theme: &e" + StringUtils.camelCase(this)).build();
+			return new ItemBuilder(itemModelType).name("&3Catalog Theme: &e" + StringUtils.camelCase(this)).build();
 		}
 
 		public boolean matchesItem(ItemStack itemStack) {
@@ -175,7 +177,7 @@ public class Catalog implements Listener {
 			if (getItemBuilder().material() != itemStack.getType())
 				return false;
 
-			return ItemBuilder.ModelId.of(getItemBuilder()) == ItemBuilder.ModelId.of(itemStack);
+			return ItemUtils.isModelMatch(getItemBuilder().clone().build(), itemStack);
 		}
 
 		public void openCatalog(Player player, DecorationStoreCurrencyType currency) {
@@ -244,7 +246,7 @@ public class Catalog implements Listener {
 		} else if (_config != null) {
 			price = _config.getCatalogPrice(storeType);
 		} else {
-			throw new InvalidInputException("Unknown decoration type of: " + itemStack.getType() + ", modelId = " + ModelId.of(itemStack));
+			throw new InvalidInputException("Unknown decoration type of: " + itemStack.getType() + ", model = " + Model.of(itemStack));
 		}
 
 		if (price == null)
@@ -266,13 +268,13 @@ public class Catalog implements Listener {
 
 		boolean isSkull = false;
 		Integer price;
-		if (itemStack.getType() == Material.PLAYER_HEAD && ModelId.of(itemStack) == 0) {
+		if (itemStack.getType() == Material.PLAYER_HEAD && Model.of(itemStack) == null) {
 			price = currency.getPriceSkull(storeType);
 			isSkull = true;
 		} else if (config != null) {
 			price = config.getCatalogPrice(storeType);
 		} else {
-			throw new InvalidInputException("Unknown decoration type of: " + itemStack.getType() + ", modelId = " + ModelId.of(itemStack));
+			throw new InvalidInputException("Unknown decoration type of: " + itemStack.getType() + ", model = " + Model.of(itemStack));
 		}
 
 		if (price == null)

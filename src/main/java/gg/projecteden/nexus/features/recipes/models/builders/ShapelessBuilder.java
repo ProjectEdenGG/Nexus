@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.recipes.models.builders;
 
 import gg.projecteden.nexus.features.recipes.CustomRecipes;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.inventory.ItemStack;
@@ -49,8 +49,8 @@ public class ShapelessBuilder extends RecipeBuilder<ShapelessBuilder> {
 	}
 
 	@NotNull
-	public ShapelessBuilder add(@NotNull CustomModel... items) {
-		for (CustomModel item : items) {
+	public ShapelessBuilder add(@NotNull ItemModelInstance... items) {
+		for (ItemModelInstance item : items) {
 			ingredientIds.add(CustomRecipes.keyOf(item));
 			add(new ExactChoice(item.getItem()));
 		}

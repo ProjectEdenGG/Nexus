@@ -5,7 +5,6 @@ import gg.projecteden.nexus.models.emoji.EmojiUser.Emoji;
 import gg.projecteden.nexus.utils.ItemUtils.PotionWrapper;
 import gg.projecteden.parchment.HasLocation;
 import gg.projecteden.parchment.HasPlayer;
-import joptsimple.internal.Strings;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -230,7 +229,7 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	 * @return <amount> <description of item>
 	 */
 	public static String pretty(ItemStack item, int amount) {
-		if (ItemBuilder.ModelId.hasModelId(item)) {
+		if (ItemBuilder.Model.hasModel(item)) {
 			String displayName = item.getItemMeta().getDisplayName();
 
 			DecorationConfig config = DecorationConfig.of(item);
@@ -277,7 +276,7 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	}
 
 	public static String camelCaseClass(Class<?> clazz) {
-		return Strings.join(clazz.getSimpleName().split("(?<=.)(?=\\p{Lu})"), " ");
+		return String.join(" ", clazz.getSimpleName().split("(?<=.)(?=\\p{Lu})"));
 	}
 
 	public static String bool(boolean b) {

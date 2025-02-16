@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 
 import gg.projecteden.nexus.features.minigames.models.annotations.Railgun;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDisplayTimerEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import net.kyori.adventure.text.Component;

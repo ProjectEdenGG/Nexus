@@ -2,11 +2,12 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblock
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import org.bukkit.Instrument;
 
 @CustomBlockConfig(
 	name = "Brown Terracotta Shingles",
-	modelId = 20212
+	itemModel = ItemModelType.TERRACOTTA_SHINGLES_BROWN
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.BIT,

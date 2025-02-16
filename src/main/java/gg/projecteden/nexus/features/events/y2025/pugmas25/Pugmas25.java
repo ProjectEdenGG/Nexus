@@ -10,8 +10,21 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.advent.Pugmas25Advent
 import gg.projecteden.nexus.features.events.y2025.pugmas25.balloons.Pugmas25BalloonEditor;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.balloons.Pugmas25BalloonManager;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.Pugmas25Fairgrounds;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.models.*;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.*;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Cabin;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Fishing;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Intro;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Train;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25TrainBackground;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waystones;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25Entity;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25NPC;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25Quest;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItemsListener;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestReward;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestTask;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25ShopMenu;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.framework.annotations.Date;
@@ -60,7 +73,7 @@ import java.time.LocalDate;
 	region = "pugmas25",
 	warpType = WarpType.PUGMAS25
 )
-@Environments({Env.PROD, Env.STAGING})
+@Environments({Env.PROD, Env.UPDATE})
 public class Pugmas25 extends EdenEvent {
 	private static Pugmas25 instance;
 	public static final String PREFIX = StringUtils.getPrefix("Pugmas 2025");

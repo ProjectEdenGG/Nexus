@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.commands;
 
 import gg.projecteden.api.common.annotations.Disabled;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.Fishing;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootCategory;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.BearFair21Fishing;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.BearFair21FishingLoot;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.BearFair21FishingLoot.FishingLootCategory;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -35,7 +35,7 @@ public class BearFair21FishingCommand extends CustomCommand {
 
 	@Path("stats loot")
 	void statsLoot() {
-		for (FishingLoot loot : FishingLoot.values()) {
+		for (BearFair21FishingLoot loot : BearFair21FishingLoot.values()) {
 			send(loot.name() + " " + loot.getWeight() + " | " + loot.getChance() + "%");
 		}
 	}
@@ -43,10 +43,10 @@ public class BearFair21FishingCommand extends CustomCommand {
 	@Path("simulate <lure> <minutes>")
 	void simulateLoot(LureLevel lure, int minutes) {
 		int maxSeconds = minutes * 60;
-		List<FishingLoot> fullCatch = new ArrayList<>();
+		List<BearFair21FishingLoot> fullCatch = new ArrayList<>();
 		for (int seconds = 0; seconds < maxSeconds; seconds++) {
 			seconds += lure.getWaitTime();
-			fullCatch.add(Fishing.getFishingLoot(player()));
+			fullCatch.add(BearFair21Fishing.getFishingLoot(player()));
 		}
 
 		send("FISH: " + getCategorySize(fullCatch, FishingLootCategory.FISH));
@@ -59,7 +59,7 @@ public class BearFair21FishingCommand extends CustomCommand {
 
 	@Path("getLoot")
 	void getLoot() {
-		for (FishingLoot loot : FishingLoot.values())
+		for (BearFair21FishingLoot loot : BearFair21FishingLoot.values())
 			giveItem(loot.getItem());
 	}
 
@@ -79,9 +79,9 @@ public class BearFair21FishingCommand extends CustomCommand {
 		}
 	}
 
-	private int getCategorySize(List<FishingLoot> loot, FishingLootCategory category) {
+	private int getCategorySize(List<BearFair21FishingLoot> loot, FishingLootCategory category) {
 		int count = 0;
-		for (FishingLoot fishingLoot : loot) {
+		for (BearFair21FishingLoot fishingLoot : loot) {
 			if (fishingLoot.getCategory().equals(category))
 				count++;
 		}

@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInst
 import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask.GatherQuestTaskStep;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.quests.QuestTaskStepProgress;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -109,8 +109,8 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 			return gather(new ItemStack(material, amount));
 		}
 
-		public GatherTaskBuilder gather(CustomMaterial material, int amount) {
-			return gather(material.getNamedItem(), amount);
+		public GatherTaskBuilder gather(ItemModelType itemModelType, int amount) {
+			return gather(itemModelType.getNamedItem(), amount);
 		}
 
 		public GatherTaskBuilder gather(ItemStack... items) {

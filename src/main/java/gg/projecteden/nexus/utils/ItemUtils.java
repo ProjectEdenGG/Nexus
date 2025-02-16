@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.utils;
 
-import de.tr7zw.nbtapi.NBTItem;
+import de.tr7zw.nbtapi.iface.ReadWriteItemNBT;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.AllArgsConstructor;
@@ -101,10 +101,10 @@ public class ItemUtils {
 		if (itemStack1.getType() != itemStack2.getType())
 			return false;
 
-		int modelId1 = new ItemBuilder(itemStack1).modelId();
-		int modelId2 = new ItemBuilder(itemStack2).modelId();
+		String modelId1 = new ItemBuilder(itemStack1).model();
+		String modelId2 = new ItemBuilder(itemStack2).model();
 
-		return modelId1 == modelId2;
+		return Objects.equals(modelId1, modelId2);
 	}
 
 	public static String getFixedPotionName(PotionEffectType effect) {
@@ -150,8 +150,12 @@ public class ItemUtils {
 			if (!Objects.equals(lore1, lore2))
 				return false;
 
+			if (!ItemUtils.isModelMatch(itemStack1, itemStack2))
+				return false;
+
 			if (itemMeta1.hasCustomModelData() && itemMeta2.hasCustomModelData())
-				return itemMeta1.getCustomModelData() == itemMeta2.getCustomModelData();
+				if (itemMeta1.getCustomModelData() != itemMeta2.getCustomModelData())
+					return false;
 		}
 
 		return true;
@@ -252,13 +256,13 @@ public class ItemUtils {
 		return getTool(player, (Material) null);
 	}
 
-	public static ItemStack getTool(HasPlayer player, CustomMaterial material) {
+	public static ItemStack getTool(HasPlayer player, ItemModelType itemModelType) {
 		Player _player = player.getPlayer();
 		ItemStack mainHand = _player.getInventory().getItemInMainHand();
 		ItemStack offHand = _player.getInventory().getItemInOffHand();
-		if (!Nullables.isNullOrAir(mainHand) && (material == null || material.is(mainHand)))
+		if (!Nullables.isNullOrAir(mainHand) && (itemModelType == null || itemModelType.is(mainHand)))
 			return mainHand;
-		else if (!Nullables.isNullOrAir(offHand) && (material == null || material.is(offHand)))
+		else if (!Nullables.isNullOrAir(offHand) && (itemModelType == null || itemModelType.is(offHand)))
 			return offHand;
 		return null;
 	}
@@ -455,7 +459,7 @@ public class ItemUtils {
 			result = b.getType().compareTo(a.getType());
 			if (result != 0) return result;
 
-			result = Integer.compare(ModelId.of(a), ModelId.of(b));
+			result = CharSequence.compare(Model.of(a), Model.of(b));
 			if (result != 0) return result;
 
 			result = Integer.compare(b.getAmount(), a.getAmount());
@@ -666,8 +670,13 @@ public class ItemUtils {
 		}
 
 		net.minecraft.world.item.ItemStack handle = CraftItemStack.asNMSCopy(mainItem);
-		CompoundTag tag = handle.get(DataComponents.CUSTOM_DATA).copyTag();
+		CustomData customData = handle.get(DataComponents.CUSTOM_DATA);
+		if (customData == null) {
+			Nexus.warn("Custom data component on " + mainItem.getType() + " is null");
+			return mainItem;
+		}
 
+		CompoundTag tag = customData.copyTag();
 		CompoundTag pe = new CompoundTag();
 		if (tag.contains("ProjectEden"))
 			pe = tag.getCompound("ProjectEden");
@@ -693,7 +702,7 @@ public class ItemUtils {
 
 		CompoundTag pe = handle.get(DataComponents.CUSTOM_DATA).copyTag().getCompound("ProjectEden");
 		ListTag listTag = pe.getList("Items", 10);
-		pe.put("Items", ItemStackSerializer.update(listTag));
+		pe.put("Items", SerializationUtils.NBT.updateItemStacks(listTag));
 
 		NonNullList<net.minecraft.world.item.ItemStack> minecraft = NonNullList.withSize(expectedSize, net.minecraft.world.item.ItemStack.EMPTY);
 		ContainerHelper.loadAllItems(pe, minecraft, ((CraftServer) Bukkit.getServer()).getServer().registryAccess());
@@ -794,8 +803,8 @@ public class ItemUtils {
 	@NoArgsConstructor
 	public static abstract class NBTDataType<T> {
 
-		private BiFunction<NBTItem, String, T> getter;
-		private TriConsumer<NBTItem, String, T> setter;
+		private BiFunction<ReadWriteItemNBT, String, T> getter;
+		private TriConsumer<ReadWriteItemNBT, String, T> setter;
 		private Function<String, T> converter;
 
 		@Getter
@@ -819,55 +828,55 @@ public class ItemUtils {
 
 		public static class StringType extends NBTDataType<String> {
 			public StringType() {
-				super(NBTItem::getString, NBTItem::setString, String::valueOf);
+				super(ReadWriteItemNBT::getString, ReadWriteItemNBT::setString, String::valueOf);
 			}
 		}
 
 		public static class UuidType extends NBTDataType<UUID> {
 			public UuidType() {
-				super(NBTItem::getUUID, NBTItem::setUUID, java.util.UUID::fromString);
+				super(ReadWriteItemNBT::getUUID, ReadWriteItemNBT::setUUID, java.util.UUID::fromString);
 			}
 		}
 
 		public static class BooleanType extends NBTDataType<Boolean> {
 			public BooleanType() {
-				super(NBTItem::getBoolean, NBTItem::setBoolean, Boolean::valueOf);
+				super(ReadWriteItemNBT::getBoolean, ReadWriteItemNBT::setBoolean, Boolean::valueOf);
 			}
 		}
 
 		public static class ByteType extends NBTDataType<Byte> {
 			public ByteType() {
-				super(NBTItem::getByte, NBTItem::setByte, Byte::valueOf);
+				super(ReadWriteItemNBT::getByte, ReadWriteItemNBT::setByte, Byte::valueOf);
 			}
 		}
 
 		public static class ShortType extends NBTDataType<Short> {
 			public ShortType() {
-				super(NBTItem::getShort, NBTItem::setShort, Short::valueOf);
+				super(ReadWriteItemNBT::getShort, ReadWriteItemNBT::setShort, Short::valueOf);
 			}
 		}
 
 		public static class IntegerType extends NBTDataType<Integer> {
 			public IntegerType() {
-				super(NBTItem::getInteger, NBTItem::setInteger, Integer::valueOf);
+				super(ReadWriteItemNBT::getInteger, ReadWriteItemNBT::setInteger, Integer::valueOf);
 			}
 		}
 
 		public static class LongType extends NBTDataType<Long> {
 			public LongType() {
-				super(NBTItem::getLong, NBTItem::setLong, Long::valueOf);
+				super(ReadWriteItemNBT::getLong, ReadWriteItemNBT::setLong, Long::valueOf);
 			}
 		}
 
 		public static class FloatType extends NBTDataType<Float> {
 			public FloatType() {
-				super(NBTItem::getFloat, NBTItem::setFloat, Float::valueOf);
+				super(ReadWriteItemNBT::getFloat, ReadWriteItemNBT::setFloat, Float::valueOf);
 			}
 		}
 
 		public static class DoubleType extends NBTDataType<Double> {
 			public DoubleType() {
-				super(NBTItem::getDouble, NBTItem::setDouble, Double::valueOf);
+				super(ReadWriteItemNBT::getDouble, ReadWriteItemNBT::setDouble, Double::valueOf);
 			}
 		}
 
@@ -881,7 +890,7 @@ public class ItemUtils {
 
 		public static class IntArrayType extends NBTDataType<int[]> {
 			public IntArrayType() {
-				super(NBTItem::getIntArray, NBTItem::setIntArray, string -> Arrays.stream(string.split(",")).mapToInt(Integer::valueOf).toArray());
+				super(ReadWriteItemNBT::getIntArray, ReadWriteItemNBT::setIntArray, string -> Arrays.stream(string.split(",")).mapToInt(Integer::valueOf).toArray());
 			}
 		}
 	}

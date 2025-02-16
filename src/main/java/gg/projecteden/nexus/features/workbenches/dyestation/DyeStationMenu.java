@@ -7,13 +7,21 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.ChoiceType;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.CostumeUser;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -237,10 +245,10 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 		Optional<ClickableItem> dyeOptional = contents.get(SLOT_DYE);
 		ItemStack dye = dyeOptional.map(ClickableItem::getItem).orElse(null);
 		if (Nullables.isNotNullOrAir(dye)) {
-			CustomMaterial customMaterial = CustomMaterial.of(dye);
+			ItemModelType itemModelType = ItemModelType.of(dye);
 
 			for (ChoiceType choiceType : ChoiceType.values()) {
-				if (customMaterial == choiceType.getBottleMaterial()) {
+				if (itemModelType == choiceType.getBottleItemModelType()) {
 					data.setDyeType(choiceType);
 					break;
 				}
@@ -316,7 +324,7 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 		if (!Material.PAPER.equals(dye.getType()))
 			return false;
 
-		if (!CustomModel.exists(dye))
+		if (!Model.hasModel(dye))
 			return false;
 
 		return ItemUtils.hasLore(dye, DyeStation.USAGE_LORE);

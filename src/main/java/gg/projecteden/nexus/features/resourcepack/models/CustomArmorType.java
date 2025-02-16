@@ -1,26 +1,37 @@
 package gg.projecteden.nexus.features.resourcepack.models;
 
+import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import org.bukkit.Color;
 
-@Getter
+// ordinal == shader color - file must be in same order as texture
+
 @AllArgsConstructor
 public enum CustomArmorType {
-	WITHER(1),
-	WARDEN(2),
-	BERSERKER(3),
-	BROWN_BERSERK(4),
-	COPPER(5),
-	DAMASCUS(6),
-	DRUID(7),
-	HELLFIRE(8),
-	JARL(9),
-	MYTHRIL(10),
-	TANK(11),
-	THOR(12),
-	WIZARD(13),
-	WOLF(14),
+	WITHER("armor/wither"),
+	WARDEN("armor/warden"),
+	BERSERKER("armor/berserker"),
+	BROWN_BERSERK("armor/brown_berserk"),
+	COPPER("armor/copper"),
+	DAMASCUS("armor/damascus"),
+	DRUID("armor/druid"),
+	HELLFIRE("armor/hellfire"),
+	JARL("armor/jarl"),
+	MYTHRIL("armor/mythril"),
+	TANK("armor/tank"),
+	THOR("armor/thor"),
+	WIZARD("armor/wizard"),
+	WOLF("armor/wolf"),
 	;
 
-	private final int id;
+	private final String id;
+
+	public String getId(PlayerUtils.ArmorSlot slot) {
+		return id + "/" + slot.name().toLowerCase();
+	}
+
+	public Color getShaderDyeColor() {
+		return Color.fromRGB(ordinal() + 1);
+	}
+
 }

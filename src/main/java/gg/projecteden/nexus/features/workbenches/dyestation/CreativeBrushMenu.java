@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationTagType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.ChoiceType;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.DyeChoice;
@@ -14,7 +14,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -24,6 +24,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.Objects;
 
 public class CreativeBrushMenu extends InventoryProvider implements IDyeMenu {
 	private ColorChoice.ChoiceType choiceType = ChoiceType.DYE;
@@ -31,7 +32,7 @@ public class CreativeBrushMenu extends InventoryProvider implements IDyeMenu {
 	private int dyePage = 0;
 	private ItemStack paintbrush;
 
-	private static final ItemBuilder CREATIVE_BRUSH = new ItemBuilder(CustomMaterial.CREATIVE_PAINTBRUSH)
+	private static final ItemBuilder CREATIVE_BRUSH = new ItemBuilder(ItemModelType.CREATIVE_PAINTBRUSH)
 		.name("&eMaster Brush")
 		.lore("")
 		.lore("&3How to use:")
@@ -181,6 +182,6 @@ public class CreativeBrushMenu extends InventoryProvider implements IDyeMenu {
 		if (Nullables.isNullOrAir(item))
 			return false;
 
-		return getCreativeBrush().modelId() == ModelId.of(item);
+		return Objects.equals(getCreativeBrush().model(), Model.of(item));
 	}
 }

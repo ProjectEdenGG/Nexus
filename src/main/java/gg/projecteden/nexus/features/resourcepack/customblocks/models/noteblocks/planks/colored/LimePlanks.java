@@ -2,15 +2,16 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblock
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import org.bukkit.Instrument;
 
 @CustomBlockConfig(
-		name = "Lime Planks",
-		modelId = 20154
+	name = "Lime Planks",
+	itemModel = ItemModelType.WOOD_COLORED_LIME
 )
 @CustomNoteBlockConfig(
-		instrument = Instrument.BELL,
-		step = 4
+	instrument = Instrument.BELL,
+	step = 4
 )
 public class LimePlanks implements IColoredPlanks {
 }

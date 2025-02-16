@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.recipes.functionals.backpacks;
 
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -14,7 +14,7 @@ import java.util.Arrays;
 
 public class NetheriteBackpack extends DiamondBackpack {
 
-	public static ItemStack result = new ItemBuilder(CustomMaterial.BACKPACK_3D_NETHERITE).name("Netherite Backpack").build();
+	public static ItemStack result = new ItemBuilder(ItemModelType.BACKPACK_3D_NETHERITE).name("Netherite Backpack").build();
 
 	@Override
 	public ItemStack getResult() {

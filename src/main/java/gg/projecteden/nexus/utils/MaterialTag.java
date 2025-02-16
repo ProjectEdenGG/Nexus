@@ -57,8 +57,8 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag LANTERNS = new MaterialTag("LANTERN", MatchMode.CONTAINS); // torch, soul torch, jack-o, & sea
 	public static final MaterialTag CAMPFIRES = new MaterialTag("CAMPFIRE", MatchMode.CONTAINS);
 
-	public static final MaterialTag LIGHT_SOURCES = new MaterialTag(Material.GLOWSTONE, Material.SHROOMLIGHT, Material.END_ROD, Material.SEA_PICKLE, Material.REDSTONE_LAMP, Material.LIGHT,
-		Material.MAGMA_BLOCK, Material.CRYING_OBSIDIAN, Material.ENDER_CHEST, Material.BEACON, Material.CONDUIT, Material.LAVA_BUCKET)
+	public static final MaterialTag DECORATIVE_LIGHT_SOURCES = new MaterialTag(Material.GLOWSTONE, Material.SHROOMLIGHT, Material.END_ROD, Material.SEA_PICKLE, Material.REDSTONE_LAMP, Material.LIGHT,
+		Material.MAGMA_BLOCK, Material.CRYING_OBSIDIAN, Material.BEACON, Material.LAVA_BUCKET, Material.GLOW_LICHEN)
 		.append(TORCHES, LANTERNS, CANDLES, FROGLIGHT, CAMPFIRES);
 
 	public static final MaterialTag COLORABLE = new MaterialTag(WOOL, DYES, WOOL_CARPETS, BEDS, ALL_BANNERS,
@@ -149,7 +149,7 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag TULIPS = new MaterialTag("_TULIP", MatchMode.SUFFIX).exclude("POTTED", MatchMode.CONTAINS);
 
-	public static final MaterialTag ALL_FLOWERS = new MaterialTag(SMALL_FLOWERS, TALL_FLOWERS);
+	public static final MaterialTag ALL_FLOWERS = new MaterialTag(SMALL_FLOWERS, FLOWERS);
 
 	public static final MaterialTag ALL_BEEHIVES = new MaterialTag(Material.BEEHIVE, Material.BEE_NEST);
 

@@ -1,18 +1,18 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.seats;
 
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import lombok.Getter;
 
 public class Couch extends DyeableChair {
 	@Getter
 	private final CouchPart couchPart;
 
-	public Couch(boolean multiblock, String name, CustomMaterial material, ColorableType colorableType, CouchPart couchPart) {
-		this(multiblock, name, material, colorableType, couchPart, null);
+	public Couch(boolean multiblock, String name, ItemModelType itemModelType, ColorableType colorableType, CouchPart couchPart) {
+		this(multiblock, name, itemModelType, colorableType, couchPart, null);
 	}
 
-	public Couch(boolean multiblock, String name, CustomMaterial material, ColorableType colorableType, CouchPart couchPart, Double sitHeight) {
-		super(multiblock, false, name, material, colorableType, sitHeight);
+	public Couch(boolean multiblock, String name, ItemModelType itemModelType, ColorableType colorableType, CouchPart couchPart, Double sitHeight) {
+		super(multiblock, false, name, itemModelType, colorableType, sitHeight);
 		this.couchPart = couchPart;
 	}
 

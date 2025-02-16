@@ -4,11 +4,10 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PostLoad;
-import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.PlayerPlushie;
 import gg.projecteden.nexus.features.resourcepack.models.Saturn;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose.Animated;
@@ -23,20 +22,28 @@ import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import kotlin.Pair;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 
 @Data
 @Entity(value = "player_plushie_config", noClassnameStored = true)
@@ -49,9 +56,9 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 
-	// LinkedHashSet does not preserve order in database (deterministically out of order??)
 	private List<UUID> owners = new ArrayList<>();
-	public static final Map<Integer, Pair<Pose, UUID>> ALL_MODELS = new ConcurrentHashMap<>();
+
+	public static final Map<Pose, List<UUID>> GENERATED = new ConcurrentHashMap<>();
 
 	@PostLoad
 	void addDefaultOwners() {
@@ -69,7 +76,8 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 		Dev.ARBY,
 		Dev.FILID,
 		Dev.KODA,
-		Dev.POWER
+		Dev.POWER,
+		Dev.BRI
 	);
 
 	public void addOwner(UUID uuid) {
@@ -85,7 +93,7 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 			if (rpUser.hasTitan())
 				instructions = "in your &eOptions menu ";
 			else if (rpUser.isEnabled())
-				instructions = ""; // no help for u
+				instructions = ""; // no help for u (local = true)
 			else
 				instructions = "by &erelogging &3or running &c/rp &etwice ";
 
@@ -110,28 +118,23 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 		return new LinkedHashSet<>(owners);
 	}
 
-	public static int random() {
-		if (ALL_MODELS.isEmpty())
-			generate();
+	public static PlayerPlushie random() {
+		return random(RandomUtils.randomElement(GENERATED.keySet()));
+	}
 
-		AtomicInteger modelId = new AtomicInteger(1);
-		Utils.attempt(100, () -> {
-			modelId.set(RandomUtils.randomElement(ALL_MODELS.keySet()));
-			return ALL_MODELS.get(modelId.get()).getFirst() != null;
-		});
-
-		return modelId.get();
+	public static PlayerPlushie random(Pose pose) {
+		var uuid = RandomUtils.randomElement(GENERATED.get(pose));
+		return pose.asDecoration(uuid);
 	}
 
 	public static final Material MATERIAL = Material.LAPIS_LAZULI;
-	private static final String SUBDIRECTORY = "projecteden/decoration/plushies/player";
-	private static final String TEXTURES_SUBDIRECTORY = SUBDIRECTORY + "/players";
-	private static final String MODELS_DIRECTORY = "assets/minecraft/models/" + SUBDIRECTORY;
-	private static final String TEXTURES_DIRECTORY = "assets/minecraft/textures/" + TEXTURES_SUBDIRECTORY;
+	private static final String ITEMS_DIRECTORY = "assets/minecraft/items/decoration/plushies/player";
+	private static final String MODELS_DIRECTORY = "assets/minecraft/models/projecteden/decoration/plushies/player";
+	private static final String TEXTURES_DIRECTORY = "assets/minecraft/textures/projecteden/decoration/plushies/player/players";
 
 	private static final Map<String, Object> GLOBAL_VARIABLES = Map.of(
-		"SUBDIRECTORY", SUBDIRECTORY,
-		"TEXTURES_SUBDIRECTORY", TEXTURES_SUBDIRECTORY
+		"SUBDIRECTORY", "projecteden/decoration/plushies/player",
+		"TEXTURES_SUBDIRECTORY", "projecteden/decoration/plushies/player/players"
 	);
 
 	private static String process(String templateString, Map<String, Object> variables) {
@@ -146,107 +149,87 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 		return template.get();
 	}
 
-	public static final String ITEM_TEMPLATE = """
-		{
-			"parent": "<SUBDIRECTORY>/<POSE>/template_<SKIN_TYPE>",
-			"textures": {
-				"0": "<TEXTURES_SUBDIRECTORY>/<UUID>"
-			}
+	public static final String MODEL_TEMPLATE = """
+	{
+		"parent": "<SUBDIRECTORY>/<POSE>/template_<SKIN_TYPE>",
+		"textures": {
+			"0": "<TEXTURES_SUBDIRECTORY>/<UUID>"
 		}
+	}
 	""";
 
 	public static final String ANIMATED_ITEM_TEMPLATE = """
-		{
-			"parent": "<SUBDIRECTORY>/<POSE>/template_<SKIN_TYPE>",
-			"textures": {
-				"0": "<TEXTURES_SUBDIRECTORY>/<UUID>",
-				"1": "<TEXTURES_SUBDIRECTORY>/<POSE>/<UUID>"
-			}
+	{
+		"parent": "<SUBDIRECTORY>/<POSE>/template_<SKIN_TYPE>",
+		"textures": {
+			"0": "<TEXTURES_SUBDIRECTORY>/<UUID>",
+			"1": "<TEXTURES_SUBDIRECTORY>/<POSE>/<UUID>"
 		}
+	}
 	""";
 
-	public static final String ANIMATION_TEMPLATE = """
-		{
-			"animation": {
-				"frametime": <FRAME_TIME>,
-				"frames": <FRAMES>
-			}
+	public static final String ANIMATION_META_TEMPLATE = """
+	{
+		"animation": {
+			"frametime": <FRAME_TIME>,
+			"frames": <FRAMES>
 		}
-		""";
-
-	public static final String MATERIAL_TEMPLATE = """
-		{
-			"parent": "minecraft:item/generated",
-			"textures": {
-				"layer0": "minecraft:item/%s"
-			},
-			"overrides": [
-				<OVERRIDES>
-			]
-		}
-	""".formatted(MATERIAL.name().toLowerCase());
-
-	public static final String PREDICATE_TEMPLATE = """
-		{"predicate": {"custom_model_data": <ID>}, "model": "<SUBDIRECTORY>/<POSE>/<UUID>"}
+	}
 	""";
 
-	public static final String MISSING_TEXTURE_PREDICATE_TEMPLATE = """
-		{"predicate": {"custom_model_data": <ID>}, "model": "minecraft:item/barrier"}
+	public static final String ITEM_TEMPLATE = """
+	{
+		"model": {
+			"type": "minecraft:model",
+			"model": "<SUBDIRECTORY>/<POSE>/<UUID>",
+			"tints": []
+		}
+	}
 	""";
 
 	@SneakyThrows
 	public static Map<String, Object> generate() {
-		ALL_MODELS.clear();
 		return new HashMap<>() {{
 			final var users = PlayerPlushieConfig.get().getOwners();
 
-			for (Pose pose : Pose.values()) {
-				int index = pose.getStartingIndex();
-				for (UUID uuid : users) {
+			for (UUID uuid : users) {
+				put(TEXTURES_DIRECTORY + "/%s.png".formatted(uuid), SkinCache.of(uuid).retrieveImage());
+
+				for (Pose pose : Pose.values()) {
 					try {
-						++index;
+						if (!pose.canBeGeneratedFor(uuid))
+							continue;
 
-						final String poseName = pose.name().toLowerCase();
+						GENERATED.computeIfAbsent(pose, $ -> new ArrayList<>()).add(uuid);
 
-						put(TEXTURES_DIRECTORY + "/%s.png".formatted(uuid), SkinCache.of(uuid).retrieveImage());
-						put(MODELS_DIRECTORY + "/%s/%s.json".formatted(poseName, uuid), process(pose.isAnimated() ? ANIMATED_ITEM_TEMPLATE : ITEM_TEMPLATE, Map.of(
+						var poseName = pose.name().toLowerCase();
+						var itemTemplate = pose.isAnimated() ? ANIMATED_ITEM_TEMPLATE : MODEL_TEMPLATE;
+
+						put(MODELS_DIRECTORY + "/%s/%s.json".formatted(poseName, uuid), process(itemTemplate, Map.of(
 							"POSE", poseName,
 							"SKIN_TYPE", SkinCache.of(uuid).getModel().name().toLowerCase(),
 							"UUID", uuid)
 						));
 
+						put(ITEMS_DIRECTORY + "/%s/%s.json".formatted(poseName, uuid), process(ITEM_TEMPLATE, Map.of(
+							"POSE", poseName,
+							"UUID", uuid
+						)));
+
 						if (pose.isAnimated()) {
 							final Animated config = pose.getAnimationConfig();
 							final String animatedTextureFile = "%s/%s/%s.png".formatted(TEXTURES_DIRECTORY, poseName, uuid);
 							put(animatedTextureFile, generateAnimationTexture(uuid, config.frameCount()));
-							put(animatedTextureFile + ".mcmeta", process(ANIMATION_TEMPLATE, Map.of(
+							put(animatedTextureFile + ".mcmeta", process(ANIMATION_META_TEMPLATE, Map.of(
 								"FRAME_TIME", config.frameTime(),
 								"FRAMES", Arrays.stream(config.frames()).mapToObj(String::valueOf).toList())
 							));
 						}
-
-						ALL_MODELS.put(index, new Pair<>(pose.canBeGeneratedFor(uuid) ? pose : null, uuid));
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
-
 				}
 			}
-
-			final String overrides = process(MATERIAL_TEMPLATE, Map.of("OVERRIDES", Utils.sortByKey(ALL_MODELS).entrySet().stream()
-				.map(entry -> {
-					if (entry.getValue().getFirst() == null)
-						return process(MISSING_TEXTURE_PREDICATE_TEMPLATE, Map.of("ID", entry.getKey()));
-
-					return process(PREDICATE_TEMPLATE, Map.of(
-						"ID", entry.getKey(),
-						"POSE", entry.getValue().getFirst().name().toLowerCase(),
-						"UUID", entry.getValue().getSecond().toString()
-					));
-				})
-				.collect(Collectors.joining(","))));
-
-			put("%s/%s.json".formatted(CustomModel.getVanillaSubdirectory(), MATERIAL.name().toLowerCase()), overrides);
 		}};
 	}
 

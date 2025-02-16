@@ -4,10 +4,10 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolf;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfColor;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfHole;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfParticle;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.BearFair21MiniGolf;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.BearFair21MiniGolfColor;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.BearFair21MiniGolfHole;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.BearFair21MiniGolfParticle;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
@@ -44,16 +44,16 @@ public class MiniGolf21User implements PlayerOwnedObject {
 	@NonNull
 	@EqualsAndHashCode.Include
 	private UUID uuid;
-	private MiniGolfColor miniGolfColor = MiniGolfColor.WHITE;
-	private MiniGolfParticle miniGolfParticle = null;
+	private BearFair21MiniGolfColor miniGolfColor = BearFair21MiniGolfColor.WHITE;
+	private BearFair21MiniGolfParticle miniGolfParticle = null;
 	private boolean playing = false;
 	private boolean rainbow = false;
 	private boolean debug = false;
 	//
-	private Set<MiniGolfHole> holeInOne = new HashSet<>();
-	private Set<MiniGolfHole> completed = new HashSet<>();
-	private Map<MiniGolfHole, Integer> score = new ConcurrentHashMap<>();
-	private MiniGolfHole currentHole = null;
+	private Set<BearFair21MiniGolfHole> holeInOne = new HashSet<>();
+	private Set<BearFair21MiniGolfHole> completed = new HashSet<>();
+	private Map<BearFair21MiniGolfHole, Integer> score = new ConcurrentHashMap<>();
+	private BearFair21MiniGolfHole currentHole = null;
 	private int currentStrokes = 0;
 	//
 	private transient Snowball snowball = null;
@@ -77,9 +77,9 @@ public class MiniGolf21User implements PlayerOwnedObject {
 	}
 
 	public List<Color> getFireworkColor() {
-		if (miniGolfColor.equals(MiniGolfColor.RAINBOW)) {
+		if (miniGolfColor.equals(BearFair21MiniGolfColor.RAINBOW)) {
 			List<Color> rainbow = new ArrayList<>();
-			for (MiniGolfColor color : MiniGolfColor.values())
+			for (BearFair21MiniGolfColor color : BearFair21MiniGolfColor.values())
 				rainbow.add(color.getColorType().getBukkitColor());
 			return rainbow;
 		}
@@ -106,7 +106,7 @@ public class MiniGolf21User implements PlayerOwnedObject {
 	}
 
 	public ItemStack getGolfBall() {
-		return MiniGolf.getGolfBall().modelId(miniGolfColor.getModelId()).build();
+		return BearFair21MiniGolf.getGolfBall().model(miniGolfColor.getModel()).build();
 	}
 
 }

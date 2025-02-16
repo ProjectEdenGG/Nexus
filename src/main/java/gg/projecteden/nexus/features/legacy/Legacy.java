@@ -46,7 +46,7 @@ import org.bukkit.World;
 
  */
 
-@Environments({Env.PROD, Env.STAGING})
+@Environments({Env.PROD, Env.UPDATE})
 public class Legacy extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix("Legacy");
 

@@ -4,13 +4,13 @@ import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationTagType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.workbenches.CustomBench;
 import gg.projecteden.nexus.features.workbenches.ICraftableCustomBench;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.ChoiceType;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
 import lombok.NoArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
@@ -21,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @NoArgsConstructor
 public class DyeStation extends CustomBench implements ICraftableCustomBench {
@@ -29,7 +30,7 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 	public static final int MAX_USES_PAINTBRUSH = MAX_USES * 2;
 	public static final String USES_LORE = "&3Uses: &e";
 
-	private static final ItemBuilder WORKBENCH = new ItemBuilder(CustomMaterial.DYE_STATION)
+	private static final ItemBuilder WORKBENCH = new ItemBuilder(ItemModelType.DYE_STATION)
 		.name("Dye Station")
 		.lore(DecorationTagType.INTERACTABLE.getTags());
 
@@ -37,7 +38,7 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 		return WORKBENCH.clone();
 	}
 
-	private static final ItemBuilder MAGIC_DYE = new ItemBuilder(ChoiceType.DYE.getBottleMaterial())
+	private static final ItemBuilder MAGIC_DYE = new ItemBuilder(ChoiceType.DYE.getBottleItemModelType())
 		.name(Gradient.of(List.of(ChatColor.RED, ChatColor.YELLOW, ChatColor.AQUA)).apply("Magic Dye"))
 		.lore(USAGE_LORE, USES_LORE + MAX_USES)
 		.lore(DecorationTagType.TOOL.getTags());
@@ -46,7 +47,7 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 		return MAGIC_DYE.clone();
 	}
 
-	private static final ItemBuilder MAGIC_STAIN = new ItemBuilder(ChoiceType.STAIN.getBottleMaterial())
+	private static final ItemBuilder MAGIC_STAIN = new ItemBuilder(ChoiceType.STAIN.getBottleItemModelType())
 		.name(Gradient.of(List.of(ChatColor.of("#e0a175"), ChatColor.of("#5c371d"))).apply("Magic Stain"))
 		.lore(USAGE_LORE, USES_LORE + MAX_USES)
 		.lore(DecorationTagType.TOOL.getTags());
@@ -55,7 +56,7 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 		return MAGIC_STAIN.clone();
 	}
 
-	private static final ItemBuilder MAGIC_MINERAL = new ItemBuilder(ChoiceType.MINERAL.getBottleMaterial())
+	private static final ItemBuilder MAGIC_MINERAL = new ItemBuilder(ChoiceType.MINERAL.getBottleItemModelType())
 		.name(Gradient.of(List.of(ChatColor.of("#6A6A6A"), ChatColor.of("#D37A5A"), ChatColor.of("#E1C16E"))).apply("Magic Mineral"))
 		.lore(USAGE_LORE, USES_LORE + MAX_USES)
 		.lore(DecorationTagType.TOOL.getTags());
@@ -64,7 +65,7 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 		return MAGIC_MINERAL.clone();
 	}
 
-	private static final ItemBuilder PAINTBRUSH = new ItemBuilder(CustomMaterial.PAINTBRUSH)
+	private static final ItemBuilder PAINTBRUSH = new ItemBuilder(ItemModelType.PAINTBRUSH)
 		.name("&ePaintbrush")
 		.lore(USES_LORE + 0)
 		.lore("")
@@ -141,7 +142,7 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 	}
 
 	public static boolean isMagicPaintbrush(ItemStack item) {
-		return getPaintbrush().modelId() == ModelId.of(item);
+		return Objects.equals(getPaintbrush().model(), Model.of(item));
 	}
 
 	public static boolean isPaintbrush(ItemStack item) {

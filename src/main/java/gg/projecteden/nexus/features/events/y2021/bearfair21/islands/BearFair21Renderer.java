@@ -109,7 +109,7 @@ public class BearFair21Renderer extends MapRenderer {
 //		if (island.getCenter().getX() == 0 && island.getCenter().getZ() == 0)
 //			island = IslandType.MAIN;
 
-		return IslandType.MAIN.getCenter();
+		return BearFair21IslandType.MAIN.getCenter();
 	}
 
 	public void deactivate() {

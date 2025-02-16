@@ -2,15 +2,16 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblock
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import org.bukkit.Instrument;
 
 @CustomBlockConfig(
-		name = "Vertical Jungle Planks",
-		modelId = 20007
+	name = "Vertical Jungle Planks",
+	itemModel = ItemModelType.WOOD_JUNGLE_VERTICAL_JUNGLE_PLANKS
 )
 @CustomNoteBlockConfig(
-		instrument = Instrument.BANJO,
-		step = 7
+	instrument = Instrument.BANJO,
+	step = 7
 )
 public class VerticalJunglePlanks implements IVerticalPlanks {
 }

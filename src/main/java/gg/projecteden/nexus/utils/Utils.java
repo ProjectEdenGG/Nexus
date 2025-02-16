@@ -13,6 +13,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import org.bukkit.Material;
 import org.bukkit.Rotation;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -278,7 +279,7 @@ public class Utils extends gg.projecteden.api.common.utils.Utils {
 	};
 
 	@Getter
-	private static final Gson gson = new GsonBuilder().addSerializationExclusionStrategy(strategy).create();
+	private static final Gson gson = new GsonBuilder().addSerializationExclusionStrategy(strategy).registerTypeAdapter(Material.class, new SerializationUtils.Json.MaterialConverter()).create();
 
 	/**
 	 * Removes the first entity in an iterable whose UUID matches {@code uuid}.

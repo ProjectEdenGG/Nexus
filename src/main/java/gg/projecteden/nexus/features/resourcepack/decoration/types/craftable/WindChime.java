@@ -9,10 +9,10 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.C
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.CeilingThing;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.ambience.AmbienceConfig.Ambience.AmbienceType;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import lombok.AllArgsConstructor;
@@ -25,6 +25,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,46 +34,46 @@ public class WindChime extends CeilingThing implements CraftableDecoration {
 	private final WindChimeType type;
 
 	public WindChime(String name, WindChimeType type) {
-		super(false, name, type.getCustomMaterial());
+		super(false, name, type.getItemModelType());
 		this.type = type;
 	}
 
-	public static Set<Integer> ids() {
+	public static Set<String> ids() {
 		return Arrays.stream(WindChimeType.values())
-			.map(type -> type.getCustomMaterial().getModelId())
+			.map(type -> type.getItemModelType().getModel())
 			.collect(Collectors.toSet());
 	}
 
 	@Getter
 	@AllArgsConstructor
 	public enum WindChimeType {
-		IRON(Material.IRON_INGOT, CustomMaterial.WINDCHIMES_IRON),
-		GOLD(Material.GOLD_INGOT, CustomMaterial.WINDCHIMES_GOLD),
-		COPPER(Material.COPPER_INGOT, CustomMaterial.WINDCHIMES_COPPER),
-		AMETHYST(Material.AMETHYST_SHARD, CustomMaterial.WINDCHIMES_AMETHYST),
-		LAPIS(Material.LAPIS_LAZULI, CustomMaterial.WINDCHIMES_LAPIS),
-		NETHERITE(Material.NETHERITE_INGOT, CustomMaterial.WINDCHIMES_NETHERITE),
-		DIAMOND(Material.DIAMOND, CustomMaterial.WINDCHIMES_DIAMOND),
-		REDSTONE(Material.REDSTONE, CustomMaterial.WINDCHIMES_REDSTONE),
-		EMERALD(Material.EMERALD, CustomMaterial.WINDCHIMES_EMERALD),
-		QUARTZ(Material.QUARTZ, CustomMaterial.WINDCHIMES_QUARTZ),
-		COAL(Material.COAL, CustomMaterial.WINDCHIMES_COAL),
-		ICE(Material.ICE, CustomMaterial.WINDCHIMES_ICE),
+		IRON(Material.IRON_INGOT, ItemModelType.WINDCHIMES_IRON),
+		GOLD(Material.GOLD_INGOT, ItemModelType.WINDCHIMES_GOLD),
+		COPPER(Material.COPPER_INGOT, ItemModelType.WINDCHIMES_COPPER),
+		AMETHYST(Material.AMETHYST_SHARD, ItemModelType.WINDCHIMES_AMETHYST),
+		LAPIS(Material.LAPIS_LAZULI, ItemModelType.WINDCHIMES_LAPIS),
+		NETHERITE(Material.NETHERITE_INGOT, ItemModelType.WINDCHIMES_NETHERITE),
+		DIAMOND(Material.DIAMOND, ItemModelType.WINDCHIMES_DIAMOND),
+		REDSTONE(Material.REDSTONE, ItemModelType.WINDCHIMES_REDSTONE),
+		EMERALD(Material.EMERALD, ItemModelType.WINDCHIMES_EMERALD),
+		QUARTZ(Material.QUARTZ, ItemModelType.WINDCHIMES_QUARTZ),
+		COAL(Material.COAL, ItemModelType.WINDCHIMES_COAL),
+		ICE(Material.ICE, ItemModelType.WINDCHIMES_ICE),
 		;
 
 		private final Material ingot;
-		private final CustomMaterial customMaterial;
+		private final ItemModelType itemModelType;
 
 		public static @Nullable WindChimeType of(ItemStack item) {
 			if (Nullables.isNullOrAir(item))
 				return null;
 
-			int modelId = ModelId.of(item);
+			String modelId = Model.of(item);
 			Material material = item.getType();
 
 			return Arrays.stream(WindChimeType.values())
-				.filter(type -> type.customMaterial.getModelId() == modelId)
-				.filter(type -> type.customMaterial.getMaterial() == material)
+				.filter(type -> Objects.equals(type.itemModelType.getModel(), modelId))
+				.filter(type -> type.itemModelType.getMaterial() == material)
 				.findFirst()
 				.orElse(null);
 		}
@@ -93,12 +94,12 @@ public class WindChime extends CeilingThing implements CraftableDecoration {
 
 	@Override
 	public ItemStack getResult() {
-		return type.getCustomMaterial().getNamedItem();
+		return type.getItemModelType().getNamedItem();
 	}
 
 	@Override
 	public RecipeGroup getGroup() {
-		return new RecipeGroup(2, "Windchimes", new ItemBuilder(CustomMaterial.WINDCHIMES_AMETHYST).build());
+		return new RecipeGroup(2, "Windchimes", new ItemBuilder(ItemModelType.WINDCHIMES_AMETHYST).build());
 	}
 
 	static {

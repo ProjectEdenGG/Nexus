@@ -9,7 +9,7 @@ import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Location;
-import org.bukkit.enchantments.EnchantmentTarget;
+import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -19,8 +19,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class FireworkEnchant extends CustomEnchant implements Listener {
@@ -90,8 +90,7 @@ public class FireworkEnchant extends CustomEnchant implements Listener {
 	}
 
 	@Override
-	public @NotNull EnchantmentTarget getItemTarget() {
-		return EnchantmentTarget.ALL; // TODO Paper's registry key shit is so fucking confusing
+	public List<Material> getSupportedMaterials() {
+		return List.of(Material.BOW, Material.CROSSBOW);
 	}
-
 }

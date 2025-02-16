@@ -6,13 +6,18 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntity;
 import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntityService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.nms.PacketUtils;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import net.minecraft.world.phys.AABB;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -249,16 +254,16 @@ public class ImageStand implements DatabaseObject {
 	public enum ImageSize {
 		// Height x Width
 		_1x1(null),
-		_1x2(CustomMaterial.IMAGES_OUTLINE_1x2),
-		_3x2(CustomMaterial.IMAGES_OUTLINE_3x2),
-		_4x3(CustomMaterial.IMAGES_OUTLINE_4x3),
+		_1x2(ItemModelType.IMAGES_OUTLINE_1x2),
+		_3x2(ItemModelType.IMAGES_OUTLINE_3x2),
+		_4x3(ItemModelType.IMAGES_OUTLINE_4x3),
 		;
 
-		private final CustomMaterial material;
+		private final ItemModelType itemModelType;
 
 		public ItemStack getOutlineItem() {
-			final ItemBuilder itemBuilder = new ItemBuilder(material);
-			if (material.getMaterial() == Material.LEATHER_HORSE_ARMOR)
+			final ItemBuilder itemBuilder = new ItemBuilder(itemModelType);
+			if (itemModelType.getMaterial() == Material.LEATHER_HORSE_ARMOR)
 				itemBuilder.dyeColor("#FD6A02");
 			return itemBuilder.build();
 		}

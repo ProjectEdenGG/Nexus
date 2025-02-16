@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21District;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeavingRegionEvent;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config.AdventPresent;
 import gg.projecteden.nexus.models.pugmas21.Advent21ConfigService;
@@ -121,8 +121,8 @@ public class Pugmas21Advent implements Listener {
 		if (Nullables.isNullOrAir(item))
 			return;
 
-		final CustomMaterial customMaterial = CustomMaterial.of(item);
-		if (customMaterial == null || !customMaterial.name().startsWith(CustomMaterial.PUGMAS_PRESENT_ADVENT.name().replace("ADVENT", "")))
+		final ItemModelType itemModelType = ItemModelType.of(item);
+		if (itemModelType == null || !itemModelType.name().startsWith(ItemModelType.PUGMAS_PRESENT_ADVENT.name().replace("ADVENT", "")))
 			return;
 
 		List<String> lore = item.getItemMeta().getLore();

@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.profiles.providers;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.home.Home;
 import gg.projecteden.nexus.models.home.HomeOwner;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -40,12 +40,12 @@ public class AccessibleHomesProvider extends InventoryProvider {
 		List<ClickableItem> items = new ArrayList<>();
 
 		for (Home home : getAccessibleHomes(viewer, targetOwner)) {
-			ItemBuilder homeItem = new ItemBuilder(CustomMaterial.GUI_PROFILE_ICON_HOMES)
+			ItemBuilder homeItem = new ItemBuilder(ItemModelType.GUI_PROFILE_ICON_HOMES)
 				.name(home.getName())
 				.lore("&eClick &3to teleport");
 
 			if (home.hasItem())
-				homeItem.material(home.getItem().getType()).modelId(0);
+				homeItem.material(home.getItem().getType());
 
 			items.add(ClickableItem.of(homeItem, e ->
 				PlayerUtils.runCommand(viewer, "home " + targetOwner.getName() + " " + home.getName())));

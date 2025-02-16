@@ -15,16 +15,28 @@ import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.quests.CommonQuestItem;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.Currency;
 import gg.projecteden.nexus.utils.Currency.Price;
-import lombok.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Builder.Default;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -38,7 +50,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.*;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public abstract class MenuUtils {
 
@@ -212,14 +229,14 @@ public abstract class MenuUtils {
 		private final String cancelText = "&cNo";
 		private final List<String> cancelLore;
 		@Default
-		private final ItemStack cancelItem = CustomMaterial.GUI_CLOSE.getNoNamedItem().dyeColor(ColorType.RED).build();
+		private final ItemStack cancelItem = ItemModelType.GUI_CLOSE.getNoNamedItem().dyeColor(ColorType.RED).build();
 		@Default
 		private final Consumer<ItemClickData> onCancel = (e) -> e.getPlayer().closeInventory();
 		@Default
 		private final String confirmText = "&aYes";
 		private final List<String> confirmLore;
 		@Default
-		private final ItemStack confirmItem = CustomMaterial.GUI_CHECK.getNoNamedItem().dyeColor(ColorType.LIGHT_GREEN).build();
+		private final ItemStack confirmItem = ItemModelType.GUI_CHECK.getNoNamedItem().dyeColor(ColorType.LIGHT_GREEN).build();
 		@NonNull
 		private final Consumer<ItemClickData> onConfirm;
 		private final Consumer<ItemClickData> onFinally;
@@ -337,7 +354,7 @@ public abstract class MenuUtils {
 				Price price = product.getPrice();
 				BiConsumer<Player, InventoryProvider> onPurchase = product.getOnPurchase();
 
-				if (PlayerUtils.playerHas(viewer, CommonQuestItem.DISCOUNT_CARD.getCustomMaterial())) {
+				if (PlayerUtils.playerHas(viewer, CommonQuestItem.DISCOUNT_CARD.getItemModel())) {
 					Price newPrice = price.clone();
 					newPrice.applyDiscount(CommonQuestItem.DISCOUNT_CARD_PERCENT);
 					price = newPrice;
@@ -422,8 +439,8 @@ public abstract class MenuUtils {
 				this(itemBuilder.build());
 			}
 
-			public Product(CustomMaterial material) {
-				this(material.getItem());
+			public Product(ItemModelType itemModelType) {
+				this(itemModelType.getItem());
 			}
 
 			public Product(Material material) {
@@ -439,8 +456,8 @@ public abstract class MenuUtils {
 				this.displayItemStack = displayItemStack;
 			}
 
-			public static Product free(CustomMaterial material) {
-				return free(material.getItem());
+			public static Product free(ItemModelType itemModelType) {
+				return free(itemModelType.getItem());
 			}
 
 			public static Product free(Material material) {
@@ -455,12 +472,12 @@ public abstract class MenuUtils {
 				return new Product(itemStack, null, false, Currency.FREE, Price.of(0), null);
 			}
 
-			public static Product virtual(CustomMaterial material, Currency currency, Price price, BiConsumer<Player, InventoryProvider> onPurchase) {
-				return virtual(material.getItem(), currency, price, onPurchase);
+			public static Product virtual(ItemModelType itemModelType, Currency currency, Price price, BiConsumer<Player, InventoryProvider> onPurchase) {
+				return virtual(itemModelType.getItem(), currency, price, onPurchase);
 			}
 
-			public static Product virtual(Material material, Currency currency, Price price, BiConsumer<Player, InventoryProvider> onPurchase) {
-				return virtual(new ItemStack(material), currency, price, onPurchase);
+			public static Product virtual(Material itemModel, Currency currency, Price price, BiConsumer<Player, InventoryProvider> onPurchase) {
+				return virtual(new ItemStack(itemModel), currency, price, onPurchase);
 			}
 
 			public static Product virtual(ItemBuilder itemBuilder, Currency currency, Price price, BiConsumer<Player, InventoryProvider> onPurchase) {

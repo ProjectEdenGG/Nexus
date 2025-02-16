@@ -9,7 +9,7 @@ import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUser.ReviewStatus;
 import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.Getter;
@@ -71,7 +71,7 @@ public class ItemTransferMenu implements TemporaryMenuListener {
 
 			if (!NOT_ALLOWED.isTagged(content.getType()))
 				continue;
-			else if (ModelId.of(content) != 0)
+			else if (Model.of(content) != null)
 				continue;
 
 			contents.remove(content);
@@ -81,7 +81,7 @@ public class ItemTransferMenu implements TemporaryMenuListener {
 		new LegacyItemTransferUserService().edit(player, user -> {
 			final int sum = contents.stream().mapToInt(ItemStack::getAmount).sum();
 			if (sum > 0) {
-				user.getItems(ReviewStatus.PENDING).addAll(LegacyItems.convert(player.getWorld(), contents));
+				user.getItems(ReviewStatus.PENDING).addAll(LegacyItems.convert(player.getLocation(), contents));
 				user.sendMessage(Legacy.PREFIX + "Successfully stored " + sum + " legacy items for staff review");
 			}
 

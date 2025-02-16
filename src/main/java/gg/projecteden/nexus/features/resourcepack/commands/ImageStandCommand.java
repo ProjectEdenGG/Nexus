@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.commands;
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.Nullables;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -16,12 +17,14 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntityService;
 import gg.projecteden.nexus.models.imagestand.ImageStand;
 import gg.projecteden.nexus.models.imagestand.ImageStand.ImageSize;
 import gg.projecteden.nexus.models.imagestand.ImageStandService;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
+import io.papermc.paper.event.player.PlayerArmSwingEvent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,6 +37,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
@@ -249,7 +253,7 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 			onLoad(armorStand.getUniqueId());
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
 		final ImageStandService service = new ImageStandService();
@@ -258,16 +262,37 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 		if (imageStand == null)
 			return;
 
+		if (!new CooldownService().check(player, "image-stand-interact", TickTime.SECOND))
+			return;
+
 		new ImageStandInteractEvent(player, imageStand).callEvent();
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void on(PlayerInteractAtEntityEvent event) {
 		final Player player = event.getPlayer();
 		final ImageStandService service = new ImageStandService();
 		final ImageStand imageStand = service.getTargetStand(player);
 
 		if (imageStand == null)
+			return;
+
+		if (!new CooldownService().check(player, "image-stand-interact", TickTime.SECOND))
+			return;
+
+		new ImageStandInteractEvent(player, imageStand).callEvent();
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void on(PlayerArmSwingEvent event) {
+		final Player player = event.getPlayer();
+		final ImageStandService service = new ImageStandService();
+		final ImageStand imageStand = service.getTargetStand(player);
+
+		if (imageStand == null)
+			return;
+
+		if (!new CooldownService().check(player, "image-stand-interact", TickTime.SECOND))
 			return;
 
 		new ImageStandInteractEvent(player, imageStand).callEvent();

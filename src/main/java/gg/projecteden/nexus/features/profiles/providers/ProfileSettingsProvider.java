@@ -9,7 +9,7 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.profiles.colorcreator.ColorCreatorProvider;
 import gg.projecteden.nexus.features.profiles.colorcreator.ColorCreatorProvider.CreatedColor;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.profile.ProfileUser;
 import gg.projecteden.nexus.models.profile.ProfileUser.PrivacySetting;
@@ -57,7 +57,7 @@ public class ProfileSettingsProvider extends InventoryProvider {
 
 	@Getter
 	private enum ProfileSetting {
-		BACKGROUND_COLOR(CustomMaterial.DYE_STATION_BUTTON_DYE) {
+		BACKGROUND_COLOR(ItemModelType.DYE_STATION_BUTTON_DYE) {
 			@Override
 			public ItemBuilder getDisplayItem(Player viewer, ProfileUser user) {
 				Color color = getUserBackgroundColor(user);
@@ -109,7 +109,7 @@ public class ProfileSettingsProvider extends InventoryProvider {
 			}
 		},
 
-		TEXTURE_COLOR(CustomMaterial.DYE_STATION_BUTTON_DYE) {
+		TEXTURE_COLOR(ItemModelType.DYE_STATION_BUTTON_DYE) {
 			@Override
 			public boolean shouldNotShow(Player viewer, ProfileUser user) {
 				return user.getUnlockedTextureTypes().isEmpty() || user.getTextureType().isImage();
@@ -183,7 +183,7 @@ public class ProfileSettingsProvider extends InventoryProvider {
 			}
 		},
 
-		FRIENDS_PRIVACY(CustomMaterial.GUI_PROFILE_ICON_FRIENDS) {
+		FRIENDS_PRIVACY(ItemModelType.GUI_PROFILE_ICON_FRIENDS) {
 			@Override
 			public ItemBuilder getDisplayItem(Player viewer, ProfileUser user) {
 				ItemBuilder displayItem = super.getDisplayItem(viewer, user);
@@ -209,7 +209,7 @@ public class ProfileSettingsProvider extends InventoryProvider {
 			}
 		},
 
-		SOCIAL_MEDIA_PRIVACY(CustomMaterial.GUI_PROFILE_ICON_SOCIAL_MEDIA) {
+		SOCIAL_MEDIA_PRIVACY(ItemModelType.GUI_PROFILE_ICON_SOCIAL_MEDIA) {
 			@Override
 			public ItemBuilder getDisplayItem(Player viewer, ProfileUser user) {
 				ItemBuilder displayItem = super.getDisplayItem(viewer, user);
@@ -234,7 +234,7 @@ public class ProfileSettingsProvider extends InventoryProvider {
 				return user.getSocialMediaPrivacy();
 			}
 		},
-		STATUS(CustomMaterial.GUI_PROFILE_ICON_STATUS) {
+		STATUS(ItemModelType.GUI_PROFILE_ICON_STATUS) {
 			@Override
 			public ItemBuilder getDisplayItem(Player viewer, ProfileUser user) {
 				String status = user.getStatus();
@@ -262,7 +262,7 @@ public class ProfileSettingsProvider extends InventoryProvider {
 				viewer.closeInventory();
 			}
 		},
-		ABOUT(CustomMaterial.GUI_PROFILE_ICON_ABOUT) {
+		ABOUT(ItemModelType.GUI_PROFILE_ICON_ABOUT) {
 			@Override
 			public ItemBuilder getDisplayItem(Player viewer, ProfileUser user) {
 				Nerd nerd = Nerd.of(user);
@@ -293,17 +293,17 @@ public class ProfileSettingsProvider extends InventoryProvider {
 		};
 
 		private final Material material;
-		private final int modelId;
+		private final String modelId;
 
-		ProfileSetting(CustomMaterial customMaterial) {
-			this(customMaterial.getMaterial(), customMaterial.getModelId());
+		ProfileSetting(ItemModelType itemModelType) {
+			this(itemModelType.getMaterial(), itemModelType.getModel());
 		}
 
 		ProfileSetting(Material material) {
-			this(material, 0);
+			this(material, null);
 		}
 
-		ProfileSetting(Material material, int modelId) {
+		ProfileSetting(Material material, String modelId) {
 			this.material = material;
 			this.modelId = modelId;
 		}
@@ -313,7 +313,7 @@ public class ProfileSettingsProvider extends InventoryProvider {
 		}
 
 		public ItemBuilder getDisplayItem(Player viewer, ProfileUser user) {
-			return new ItemBuilder(getMaterial()).modelId(getModelId()).name(getDisplayName());
+			return new ItemBuilder(getMaterial()).model(getModelId()).name(getDisplayName());
 		}
 
 		public boolean shouldNotShow(Player viewer, ProfileUser user) {

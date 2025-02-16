@@ -15,7 +15,7 @@ import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomFont;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
@@ -147,7 +147,7 @@ public class ProfileProvider extends InventoryProvider {
 	@Getter
 	@AllArgsConstructor
 	enum ProfileMenuItem {
-		SETTINGS(0, 8, CustomMaterial.GUI_GEAR) {
+		SETTINGS(0, 8, ItemModelType.GUI_GEAR) {
 			@Override
 			public boolean shouldNotShow(Player viewer, ProfileUser target) {
 				return !isSelf(viewer, target);
@@ -160,7 +160,7 @@ public class ProfileProvider extends InventoryProvider {
 
 
 		},
-		PLAYER(2, 1, CustomMaterial.GUI_PROFILE_PLAYER_HEAD) {
+		PLAYER(2, 1, ItemModelType.GUI_PROFILE_PLAYER_HEAD) {
 			@Override
 			public String getName(Player viewer, ProfileUser target) {
 				Nerd targetNerd = getNerd(target);
@@ -217,7 +217,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		STATUS(2, 3, CustomMaterial.GUI_PROFILE_ICON_STATUS) {
+		STATUS(2, 3, ItemModelType.GUI_PROFILE_ICON_STATUS) {
 			@Override
 			public String getName(Player viewer, ProfileUser target) {
 				return "&3" + StringUtils.camelCase(this);
@@ -238,14 +238,14 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		PRESENCE(1, 2, CustomMaterial.PRESENCE_OFFLINE) {
+		PRESENCE(1, 2, ItemModelType.PRESENCE_OFFLINE) {
 			@Override
 			public String getName(Player viewer, ProfileUser target) {
 				return "&e" + getNerd(target).getPresence().getName();
 			}
 
 			@Override
-			public int getModelId(Player viewer, ProfileUser target) {
+			public String getModelId(Player viewer, ProfileUser target) {
 				return Presence.of(target.getOfflinePlayer(), viewer).getModelId();
 			}
 
@@ -284,14 +284,14 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		WALLET(3, 4, CustomMaterial.GOLD_COINS_9) {
+		WALLET(3, 4, ItemModelType.GOLD_COINS_9) {
 			@Override
 			public List<String> getLore(Player viewer, ProfileUser target) {
 				return BankCommand.getLines(Nerd.of(viewer), getNerd(target));
 			}
 		},
 
-		LEVELS(3, 5, Material.EXPERIENCE_BOTTLE, 0) {
+		LEVELS(3, 5, Material.EXPERIENCE_BOTTLE, null) {
 			@Override
 			public List<String> getLore(Player viewer, ProfileUser target) {
 				List<String> lines = new ArrayList<>();
@@ -308,7 +308,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		VIEW_SOCIAL_MEDIA(3, 6, CustomMaterial.GUI_PROFILE_ICON_SOCIAL_MEDIA) {
+		VIEW_SOCIAL_MEDIA(3, 6, ItemModelType.GUI_PROFILE_ICON_SOCIAL_MEDIA) {
 			@Override
 			public boolean shouldNotShow(Player viewer, ProfileUser target) {
 				SocialMediaUser user = socialMediaUserService.get(target);
@@ -337,7 +337,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		LINK_SOCIAL_MEDIA(3, 6, CustomMaterial.GUI_PROFILE_ICON_SOCIAL_MEDIA_LINK) {
+		LINK_SOCIAL_MEDIA(3, 6, ItemModelType.GUI_PROFILE_ICON_SOCIAL_MEDIA_LINK) {
 			@Override
 			public boolean shouldNotShow(Player viewer, ProfileUser target) {
 				if (!isSelf(viewer, target))
@@ -356,7 +356,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		MODIFY_FRIEND(4, 1, CustomMaterial.GUI_PROFILE_ICON_FRIEND_MODIFY_ADD) {
+		MODIFY_FRIEND(4, 1, ItemModelType.GUI_PROFILE_ICON_FRIEND_MODIFY_ADD) {
 			@Override
 			public boolean shouldNotShow(Player viewer, ProfileUser target) {
 				return isSelf(viewer, target);
@@ -385,11 +385,11 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public int getModelId(Player viewer, ProfileUser target) {
+			public String getModelId(Player viewer, ProfileUser target) {
 				if (isFriendsWith(friendService.get(target), viewer))
-					return CustomMaterial.GUI_PROFILE_ICON_FRIEND_MODIFY_REMOVE.getModelId();
+					return ItemModelType.GUI_PROFILE_ICON_FRIEND_MODIFY_REMOVE.getModel();
 
-				return CustomMaterial.GUI_PROFILE_ICON_FRIEND_MODIFY_ADD.getModelId();
+				return ItemModelType.GUI_PROFILE_ICON_FRIEND_MODIFY_ADD.getModel();
 			}
 
 			@Override
@@ -421,7 +421,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		VIEW_FRIENDS(4, 2, CustomMaterial.GUI_PROFILE_ICON_FRIENDS) {
+		VIEW_FRIENDS(4, 2, ItemModelType.GUI_PROFILE_ICON_FRIENDS) {
 			@Override
 			public List<String> getLore(Player viewer, ProfileUser target) {
 				if (ProfileMenuItem.isSelf(viewer, target))
@@ -437,9 +437,9 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public int getModelId(Player viewer, ProfileUser target) {
+			public String getModelId(Player viewer, ProfileUser target) {
 				if (hasNoFriends(target))
-					return CustomMaterial.GUI_PROFILE_ICON_FRIENDS_ERROR.getModelId();
+					return ItemModelType.GUI_PROFILE_ICON_FRIENDS_ERROR.getModel();
 
 				return super.getModelId(viewer, target);
 			}
@@ -465,7 +465,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		PARTY(4, 3, CustomMaterial.GUI_PROFILE_ICON_PARTY) {
+		PARTY(4, 3, ItemModelType.GUI_PROFILE_ICON_PARTY) {
 			@Override
 			public boolean shouldNotShow(Player viewer, ProfileUser target) {
 				Party partyTarget = getParty(target);
@@ -488,7 +488,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public int getModelId(Player viewer, ProfileUser target) {
+			public String getModelId(Player viewer, ProfileUser target) {
 				boolean isSelf = isSelf(viewer, target);
 				Party partyTarget = getParty(target);
 				Party partyViewer = getParty(viewer);
@@ -498,19 +498,19 @@ public class ProfileProvider extends InventoryProvider {
 				if (!isSelf) {
 					if (partyTarget == null) {
 						if (partyViewer != null && isViewerPartyOwner)
-							return CustomMaterial.GUI_PROFILE_ICON_PARTY_MODIFY_ADD.getModelId();
+							return ItemModelType.GUI_PROFILE_ICON_PARTY_MODIFY_ADD.getModel();
 
 						if (partyViewer == null)
-							return CustomMaterial.GUI_PROFILE_ICON_PARTY_MODIFY_ADD.getModelId();
+							return ItemModelType.GUI_PROFILE_ICON_PARTY_MODIFY_ADD.getModel();
 					}
 
 					if (isSameParty) {
 						if (isViewerPartyOwner)
-							return CustomMaterial.GUI_PROFILE_ICON_PARTY_MODIFY_REMOVE.getModelId();
+							return ItemModelType.GUI_PROFILE_ICON_PARTY_MODIFY_REMOVE.getModel();
 					}
 				}
 
-				return CustomMaterial.GUI_PROFILE_ICON_PARTY.getModelId();
+				return ItemModelType.GUI_PROFILE_ICON_PARTY.getModel();
 			}
 
 			@Override
@@ -627,7 +627,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		TELEPORT(4, 6, Material.ENDER_PEARL, 0) {
+		TELEPORT(4, 6, Material.ENDER_PEARL, null) {
 			@Override
 			public boolean shouldNotShow(Player viewer, ProfileUser target) {
 				if (ProfileMenuItem.isSelf(viewer, target))
@@ -662,7 +662,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		VIEW_SHOP(4, 4, Material.EMERALD, 0) {
+		VIEW_SHOP(4, 4, Material.EMERALD, null) {
 			@Override
 			public List<String> getLore(Player viewer, ProfileUser target) {
 				Shop.ShopGroup shopGroup = Shop.ShopGroup.of(viewer.getWorld());
@@ -691,7 +691,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		VIEW_HOMES(4, 0, CustomMaterial.GUI_PROFILE_ICON_HOMES) {
+		VIEW_HOMES(4, 0, ItemModelType.GUI_PROFILE_ICON_HOMES) {
 			@Override
 			public String getName(Player viewer, ProfileUser target) {
 				if (ProfileMenuItem.isSelf(viewer, target))
@@ -734,7 +734,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		EDIT_TRUSTS(4, 5, CustomMaterial.GUI_PROFILE_ICON_TRUSTS) {
+		EDIT_TRUSTS(4, 5, ItemModelType.GUI_PROFILE_ICON_TRUSTS) {
 			@Override
 			public List<String> getLore(Player viewer, ProfileUser target) {
 				if (isSelf(viewer, target))
@@ -765,10 +765,10 @@ public class ProfileProvider extends InventoryProvider {
 
 		private final int row, col;
 		private final Material material;
-		private final int modelId;
+		private final String modelId;
 
-		ProfileMenuItem(int row, int col, CustomMaterial customMaterial) {
-			this(row, col, customMaterial.getMaterial(), customMaterial.getModelId());
+		ProfileMenuItem(int row, int col, ItemModelType itemModelType) {
+			this(row, col, itemModelType.getMaterial(), itemModelType.getModel());
 		}
 
 		public int getCol(Player viewer, ProfileUser target) {
@@ -794,7 +794,7 @@ public class ProfileProvider extends InventoryProvider {
 			return "&e" + StringUtils.camelCase(this);
 		}
 
-		public int getModelId(Player viewer, ProfileUser target) {
+		public String getModelId(Player viewer, ProfileUser target) {
 			return modelId;
 		}
 
@@ -803,12 +803,8 @@ public class ProfileProvider extends InventoryProvider {
 		}
 
 		public ItemBuilder getItemBuilder(Player viewer, ProfileUser target) {
-			int modelId = getModelId(viewer, target);
-			if (modelId == -1)
-				return null;
-
 			return new ItemBuilder(getMaterial())
-				.modelId(modelId)
+				.model(getModelId(viewer, target))
 				.name(getName(viewer, target))
 				.lore(getLore(viewer, target))
 				.clone();
@@ -823,7 +819,7 @@ public class ProfileProvider extends InventoryProvider {
 		}
 
 		public ItemBuilder getInvisibleCopy(Player viewer, ProfileUser target) {
-			return getItemBuilder(viewer, target).clone().material(CustomMaterial.INVISIBLE);
+			return getItemBuilder(viewer, target).clone().material(ItemModelType.INVISIBLE);
 		}
 
 		public void setClickableItem(Player player, ProfileUser target, InventoryContents contents, InventoryProvider previousMenu) {
@@ -894,11 +890,11 @@ public class ProfileProvider extends InventoryProvider {
 		if (helmet.getType() != this.costumeHat.getType())
 			return helmet;
 
-		int helmetModelId = ItemBuilder.ModelId.of(helmet);
-		if (helmetModelId == 0)
+		String helmetModelId = ItemBuilder.Model.of(helmet);
+		if (helmetModelId == null)
 			return helmet;
 
-		if (helmetModelId != ItemBuilder.ModelId.of(this.costumeHat))
+		if (!helmetModelId.equals(ItemBuilder.Model.of(this.costumeHat)))
 			return helmet;
 
 		return null;

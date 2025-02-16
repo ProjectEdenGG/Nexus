@@ -31,9 +31,9 @@ import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
 import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
 import gg.projecteden.nexus.utils.BlockUtils;
-import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -129,7 +129,7 @@ public class CustomBlocksCommand extends CustomCommand {
 
 		send("Type: " + customBlock.getType());
 		send("Item Name: " + iCustomBlock.getItemName());
-		send("Item Model Id: " + iCustomBlock.getModelId());
+		send("Item Model: " + iCustomBlock.getModel());
 		send("Item Material: " + iCustomBlock.getVanillaItemMaterial());
 		send("Creative Tab: " + customBlock.getCreativeTab());
 		line();

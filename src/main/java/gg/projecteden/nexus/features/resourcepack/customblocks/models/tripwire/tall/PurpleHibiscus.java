@@ -5,12 +5,13 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.Cus
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICraftable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.CustomTripwireConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.IRequireDirt;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
 @CustomBlockConfig(
 	name = "Purple Hibiscus",
-	modelId = 21124
+	itemModel = ItemModelType.FLORA_PURPLE_HIBISCUS_ITEM
 )
 @CustomTripwireConfig(
 	north_NS = true,

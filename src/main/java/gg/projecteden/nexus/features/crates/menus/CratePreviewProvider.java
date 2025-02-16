@@ -8,7 +8,7 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkType;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CrateOpeningException;
 import gg.projecteden.nexus.models.crate.CrateConfig.CrateGroup;
 import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
@@ -63,7 +63,7 @@ public class CratePreviewProvider extends InventoryProvider {
 		if (type == CrateType.VOTE) {
 			final Voter voter = voterService.get(viewer);
 			contents.set(0, 4, ClickableItem.of(
-					new ItemBuilder(CustomMaterial.CRATE_KEY_VOTE).name("&eBuy 1 Key for 2 Vote Points")
+					new ItemBuilder(ItemModelType.CRATE_KEY_VOTE).name("&eBuy 1 Key for 2 Vote Points")
 							.lore("&3Your Points: &e" + voter.getPoints()).build(),
 					e -> {
 						if (voter.getPoints() < 2)
@@ -84,7 +84,7 @@ public class CratePreviewProvider extends InventoryProvider {
 		if (type == CrateType.MINIGAMES) {
 			PerkOwner perkOwner = perkService.get(viewer);
 			contents.set(0, 4, ClickableItem.of(
-				new ItemBuilder(CustomMaterial.GOLD_COINS_1).name("&eOpen 1 for 50 Tokens")
+				new ItemBuilder(ItemModelType.GOLD_COINS_1).name("&eOpen 1 for 50 Tokens")
 					.lore("&3Your Tokens: &e" + perkOwner.getTokens()).build(),
 				e -> {
 					if (perkOwner.getTokens() < 50)

@@ -5,10 +5,17 @@ import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -20,11 +27,16 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.Repairable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class EnchantedBookSplitter extends CustomBench implements ICraftableCustomBench {
 
-	private static final ItemBuilder WORKBENCH = new ItemBuilder(CustomMaterial.ENCHANTED_BOOK_SPLITTER).name("Enchanted Book Splitter");
+	private static final ItemBuilder WORKBENCH = new ItemBuilder(ItemModelType.ENCHANTED_BOOK_SPLITTER).name("Enchanted Book Splitter");
 
 	public static ItemBuilder getWorkbench() {
 		return WORKBENCH.clone();
@@ -84,7 +96,7 @@ public class EnchantedBookSplitter extends CustomBench implements ICraftableCust
 			var results = populateResults();
 
 			if (resultBooks.stream().anyMatch(result -> result.enchants().size() > 1)) {
-				var rotateItem = new ItemBuilder(CustomMaterial.GUI_ROTATE_RIGHT).dyeColor(Color.RED).itemFlags(ItemFlag.HIDE_DYE).name("&eRotate Enchants");
+				var rotateItem = new ItemBuilder(ItemModelType.GUI_ROTATE_RIGHT).dyeColor(Color.RED).itemFlags(ItemFlag.HIDE_DYE).name("&eRotate Enchants");
 				contents.set(5, 4, ClickableItem.of(rotateItem.build(), e -> rotateEnchants()));
 			}
 
@@ -177,8 +189,17 @@ public class EnchantedBookSplitter extends CustomBench implements ICraftableCust
 				PlayerUtils.giveItem(viewer, book.sortEnchants().build());
 
 			inputs.remove(Material.ENCHANTED_BOOK);
-			inputs.put(Material.LAPIS_LAZULI, new ItemStack(Material.LAPIS_LAZULI, lapis));
-			inputs.put(Material.BOOK, new ItemStack(Material.BOOK, books));
+
+			if (lapis <= 0)
+				inputs.remove(Material.LAPIS_LAZULI);
+			else
+				inputs.put(Material.LAPIS_LAZULI, new ItemStack(Material.LAPIS_LAZULI, lapis));
+
+			if (books <= 0)
+				inputs.remove(Material.BOOK);
+			else
+				inputs.put(Material.BOOK, new ItemStack(Material.BOOK, books));
+
 			viewer.setLevel(levels);
 
 			new SoundBuilder(Sound.ENTITY_ITEM_PICKUP).receiver(viewer).play();

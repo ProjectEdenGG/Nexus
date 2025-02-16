@@ -8,7 +8,7 @@ import gg.projecteden.nexus.features.chat.Emotes;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.particles.providers.EffectSettingProvider;
-import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
+import gg.projecteden.nexus.features.resourcepack.models.files.ItemModelFolder;
 import gg.projecteden.nexus.features.store.BuycraftUtils;
 import gg.projecteden.nexus.features.store.Package;
 import gg.projecteden.nexus.features.store.StoreCommand;
@@ -32,16 +32,37 @@ import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorTask;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeacon;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeaconService;
 import gg.projecteden.nexus.models.vaults.VaultUserService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.CitizensUtils.NPCRandomizer;
+import gg.projecteden.nexus.utils.FireworkLauncher;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import lombok.*;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.Tasks;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.SneakyThrows;
 import net.citizensnpcs.api.npc.NPC;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Display;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -53,7 +74,11 @@ import tech.blastmc.holograms.api.models.line.ItemLine;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
@@ -65,12 +90,12 @@ public enum GalleryPackage {
 		@NoArgsConstructor
 		static class CostumeDisplayMenu extends CostumeMenu {
 
-			public CostumeDisplayMenu(CostumeMenu previousMenu, CustomModelFolder folder) {
+			public CostumeDisplayMenu(CostumeMenu previousMenu, ItemModelFolder folder) {
 				super(previousMenu, folder);
 			}
 
 			@Override
-			protected CostumeMenu newMenu(CostumeMenu previousMenu, CustomModelFolder subfolder) {
+			protected CostumeMenu newMenu(CostumeMenu previousMenu, ItemModelFolder subfolder) {
 				return new CostumeDisplayMenu(previousMenu, subfolder);
 			}
 
@@ -150,7 +175,7 @@ public enum GalleryPackage {
 		}
 
 		private ItemStack getRandomPlushie() {
-			return new ItemBuilder(PlayerPlushieConfig.MATERIAL).modelId(PlayerPlushieConfig.random()).build();
+			return PlayerPlushieConfig.random().getItem();
 		}
 	},
 

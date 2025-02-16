@@ -27,8 +27,8 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchRegene
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDisplayTimerEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerRespawnEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifier;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
@@ -36,7 +36,7 @@ import gg.projecteden.nexus.features.minigames.modifiers.NoModifier;
 import gg.projecteden.nexus.features.nameplates.Nameplates;
 import gg.projecteden.nexus.features.nameplates.TeamAssigner;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
 import gg.projecteden.nexus.framework.interfaces.HasDescription;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -611,19 +611,19 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	}
 
 	public void findImages() {
-		final List<CustomModel> matches = new ArrayList<>();
+		final List<ItemModelInstance> matches = new ArrayList<>();
 
-		for (CustomModel value : ResourcePack.getModels().values())
-			if (value.getFolder().getPath().contains("ui/images/gamelobby"))
+		for (ItemModelInstance value : ResourcePack.getModels().values())
+			if (value.getItemModel().contains("ui/images/gamelobby"))
 				if (value.getFileName().equalsIgnoreCase(getId()))
 					matches.add(value);
 
 		if (matches.isEmpty())
 			return;
 
-		final Comparator<CustomModel> comparator = Comparator.comparing(model -> model.getFolder().getPath().length());
-		final CustomModel shallowestMatch = Collections.min(matches, comparator);
-		final CustomModel deepestMatch = Collections.max(matches, comparator);
+		final Comparator<ItemModelInstance> comparator = Comparator.comparing(model -> model.getId().length());
+		final ItemModelInstance shallowestMatch = Collections.min(matches, comparator);
+		final ItemModelInstance deepestMatch = Collections.max(matches, comparator);
 		this.displayImage = new ItemBuilder(shallowestMatch);
 		this.menuImage = new ItemBuilder(deepestMatch);
 	}

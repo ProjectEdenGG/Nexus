@@ -3,21 +3,26 @@ package gg.projecteden.nexus.features.events.y2021.pugmas21;
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.api.common.utils.TimeUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.Pugmas21Advent;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.Pugmas21AdventAnimation;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.Pugmas21AdventMenu;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.models.*;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21MultiModelStructure.Model;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21CandyCaneCannon;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21District;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21Train;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21TrainBackground;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21NPC;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestItem;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestLine;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestTask;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config;
@@ -26,8 +31,6 @@ import gg.projecteden.nexus.models.pugmas21.Advent21ConfigService;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21User;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21UserService;
 import gg.projecteden.nexus.utils.CitizensUtils;
-import gg.projecteden.nexus.utils.EntityUtils;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -37,19 +40,15 @@ import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.util.Vector;
 
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @HideFromWiki
@@ -164,45 +163,45 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 		Pugmas21TrainBackground.stop();
 	}
 
-	private Pugmas21MultiModelStructure getBalloonStructure() {
-		final AtomicInteger i = new AtomicInteger();
-		final int baseModelId = CustomMaterial.PUGMAS21_HOT_AIR_BALLOON_1.getModelId();
+//	private Pugmas21MultiModelStructure getBalloonStructure() {
+//		final AtomicInteger i = new AtomicInteger();
+//		final int baseModelId = CustomMaterial.PUGMAS21_HOT_AIR_BALLOON_1.getModelId();
+//
+//		return Pugmas21MultiModelStructure.builder()
+//			.from(location().subtract(BlockFace.UP.getDirection().multiply(1.5)))
+//			.add(Map.of(BlockFace.UP, 0), baseModelId + i.getAndIncrement())
+//			.add(Map.of(BlockFace.UP, 1), baseModelId + i.getAndIncrement())
+//			.add(Map.of(BlockFace.UP, 2), baseModelId + i.getAndIncrement())
+//			.cardinal(direction -> new Model(Map.of(BlockFace.UP, 1, direction, 1), baseModelId + i.getAndIncrement()).direction(direction))
+//			.cardinal(direction -> new Model(Map.of(BlockFace.UP, 2, direction, 1), baseModelId + i.getAndIncrement()).direction(direction));
+//	}
 
-		return Pugmas21MultiModelStructure.builder()
-			.from(location().subtract(BlockFace.UP.getDirection().multiply(1.5)))
-			.add(Map.of(BlockFace.UP, 0), baseModelId + i.getAndIncrement())
-			.add(Map.of(BlockFace.UP, 1), baseModelId + i.getAndIncrement())
-			.add(Map.of(BlockFace.UP, 2), baseModelId + i.getAndIncrement())
-			.cardinal(direction -> new Model(Map.of(BlockFace.UP, 1, direction, 1), baseModelId + i.getAndIncrement()).direction(direction))
-			.cardinal(direction -> new Model(Map.of(BlockFace.UP, 2, direction, 1), baseModelId + i.getAndIncrement()).direction(direction));
-	}
+//	@Path("balloon spawn")
+//	@Permission(Group.ADMIN)
+//	void balloon_spawn() {
+//		getBalloonStructure().spawn();
+//	}
 
-	@Path("balloon spawn")
-	@Permission(Group.ADMIN)
-	void balloon_spawn() {
-		getBalloonStructure().spawn();
-	}
-
-	@Path("balloon move [--seconds]")
-	@Permission(Group.ADMIN)
-	void balloon_move(@Arg("20") @Switch int seconds) {
-		final Pugmas21MultiModelStructure structure = getBalloonStructure().spawn();
-
-		player().setGravity(false);
-		int taskId = Tasks.repeat(0, 1, () -> {
-			final Vector west = BlockFace.WEST.getDirection().multiply(.1);
-			player().setVelocity(west);
-			for (Model model : structure.getModels()) {
-				EntityUtils.forcePacket(model.getArmorStand());
-				model.getArmorStand().teleport(model.getArmorStand().getLocation().add(west));
-			}
-		});
-
-		Tasks.wait(TickTime.SECOND.x(seconds), () -> {
-			Tasks.cancel(taskId);
-			player().setGravity(true);
-		});
-	}
+//	@Path("balloon move [--seconds]")
+//	@Permission(Group.ADMIN)
+//	void balloon_move(@Arg("20") @Switch int seconds) {
+//		final Pugmas21MultiModelStructure structure = getBalloonStructure().spawn();
+//
+//		player().setGravity(false);
+//		int taskId = Tasks.repeat(0, 1, () -> {
+//			final Vector west = BlockFace.WEST.getDirection().multiply(.1);
+//			player().setVelocity(west);
+//			for (Model model : structure.getModels()) {
+//				EntityUtils.forcePacket(model.getArmorStand());
+//				model.getArmorStand().teleport(model.getArmorStand().getLocation().add(west));
+//			}
+//		});
+//
+//		Tasks.wait(TickTime.SECOND.x(seconds), () -> {
+//			Tasks.cancel(taskId);
+//			player().setGravity(true);
+//		});
+//	}
 
 	@Path("candycane cannon")
 	@Permission(Group.ADMIN)

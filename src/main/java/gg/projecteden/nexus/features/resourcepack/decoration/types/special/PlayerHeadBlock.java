@@ -4,15 +4,15 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSpawnEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.FloorThing;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 public class PlayerHeadBlock extends FloorThing {
 
-	public PlayerHeadBlock(boolean multiblock, String name, CustomMaterial material, CustomHitbox hitbox) {
-		super(multiblock, name, material, hitbox);
+	public PlayerHeadBlock(boolean multiblock, String name, ItemModelType itemModelType, CustomHitbox hitbox) {
+		super(multiblock, name, itemModelType, hitbox);
 	}
 
 	static {

@@ -11,7 +11,12 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public class ItemTagsUtils {
@@ -208,15 +213,15 @@ public class ItemTagsUtils {
 			lore.add(tag.getTag());
 	}
 
-	public static void updateRarity(@NotNull ItemStack item, @NotNull Rarity rarity) {
-		updateTag(item, rarity, ItemTagsUtils::clearRarity);
+	public static @NotNull ItemStack updateRarity(@NotNull ItemStack item, @NotNull Rarity rarity) {
+		return updateTag(item, rarity, ItemTagsUtils::clearRarity);
 	}
 
-	public static void updateCondition(@NotNull ItemStack item, @NotNull Condition condition) {
-		updateTag(item, condition, ItemTagsUtils::clearCondition);
+	public static @NotNull ItemStack updateCondition(@NotNull ItemStack item, @NotNull Condition condition) {
+		return updateTag(item, condition, ItemTagsUtils::clearCondition);
 	}
 
-	public static void updateTag(@NotNull ItemStack item, @NotNull ITag tag, @NotNull Consumer<List<String>> clear) {
+	public static @NotNull ItemStack updateTag(@NotNull ItemStack item, @NotNull ITag tag, @NotNull Consumer<List<String>> clear) {
 		List<String> lore = item.getLore();
 		boolean newLore = lore == null;
 
@@ -231,6 +236,8 @@ public class ItemTagsUtils {
 			finalizeItem(lore);
 
 		item.setLore(lore);
+
+		return item;
 	}
 
 	public static boolean isTagable(@NotNull ItemStack itemStack) {

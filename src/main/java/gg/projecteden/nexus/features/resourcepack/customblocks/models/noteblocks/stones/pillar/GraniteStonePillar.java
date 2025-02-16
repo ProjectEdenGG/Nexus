@@ -2,13 +2,14 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblock
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import lombok.NonNull;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 
 @CustomBlockConfig(
 	name = "Granite Pillar",
-	modelId = 20360
+	itemModel = ItemModelType.STONES_GRANITE_GRANITE_PILLAR
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.DIDGERIDOO,

@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.votes.vps;
 
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot;
 import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot.VPSSlotBuilder;
 import gg.projecteden.nexus.models.crate.CrateType;
@@ -33,43 +33,43 @@ public enum VPSMenu {
 			add(VPSPage.builder().items(new HashMap<>() {{
 				put(10, VPSSlot.builder()
 					.name("$250")
-					.display(CustomMaterial.GOLD_COINS_2)
+					.display(ItemModelType.GOLD_COINS_2)
 					.price(1)
 					.money(250));
 				put(11, VPSSlot.builder()
 					.name("$2,500")
-					.display(CustomMaterial.GOLD_COINS_4)
+					.display(ItemModelType.GOLD_COINS_4)
 					.price(10)
 					.money(2500));
 				put(12, VPSSlot.builder()
 					.name("$5,000")
-					.display(CustomMaterial.GOLD_COINS_7)
+					.display(ItemModelType.GOLD_COINS_7)
 					.price(20)
 					.money(5000));
 				put(13, VPSSlot.builder()
 					.name("$10,000")
-					.display(CustomMaterial.GOLD_COINS_9)
+					.display(ItemModelType.GOLD_COINS_9)
 					.price(40)
 					.money(10000));
 
 				put(28, VPSSlot.builder()
 					.name("1 Vote Crate Key")
-					.display(new ItemBuilder(CustomMaterial.CRATE_KEY_VOTE).amount(1))
+					.display(new ItemBuilder(ItemModelType.CRATE_KEY_VOTE).amount(1))
 					.price(2)
 					.onPurchase((player, item) -> CrateType.VOTE.giveVPS(player, 1)));
 				put(29, VPSSlot.builder()
 					.name("8 Vote Crate Key")
-					.display(new ItemBuilder(CustomMaterial.CRATE_KEY_VOTE).amount(8))
+					.display(new ItemBuilder(ItemModelType.CRATE_KEY_VOTE).amount(8))
 					.price(16)
 					.onPurchase((player, item) -> CrateType.VOTE.giveVPS(player, 8)));
 				put(30, VPSSlot.builder()
 					.name("16 Vote Crate Key")
-					.display(new ItemBuilder(CustomMaterial.CRATE_KEY_VOTE).amount(16))
+					.display(new ItemBuilder(ItemModelType.CRATE_KEY_VOTE).amount(16))
 					.price(32)
 					.onPurchase((player, item) -> CrateType.VOTE.giveVPS(player, 16)));
 				put(31, VPSSlot.builder()
 					.name("32 Vote Crate Key")
-					.display(new ItemBuilder(CustomMaterial.CRATE_KEY_VOTE).amount(32))
+					.display(new ItemBuilder(ItemModelType.CRATE_KEY_VOTE).amount(32))
 					.price(64)
 					.onPurchase((player, item) -> CrateType.VOTE.giveVPS(player, 32)));
 
@@ -528,7 +528,7 @@ public enum VPSMenu {
 					return display(new ItemStack(display));
 				}
 
-				public VPSSlotBuilder display(CustomMaterial display) {
+				public VPSSlotBuilder display(ItemModelType display) {
 					return display(new ItemBuilder(display));
 				}
 

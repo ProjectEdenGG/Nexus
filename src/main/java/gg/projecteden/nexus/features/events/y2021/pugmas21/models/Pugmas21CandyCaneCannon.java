@@ -3,9 +3,13 @@ package gg.projecteden.nexus.features.events.y2021.pugmas21.models;
 import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,16 +34,16 @@ public class Pugmas21CandyCaneCannon implements Listener {
 	}
 
 	public static boolean isCannon(ItemStack item) {
-		return CustomMaterial.of(item) == getCustomMaterial();
+		return ItemModelType.of(item) == getItemModel();
 	}
 
 	@NotNull
-	private static CustomMaterial getCustomMaterial() {
-		return CustomMaterial.PUGMAS21_CANDY_CANE_CANNON;
+	private static ItemModelType getItemModel() {
+		return ItemModelType.PUGMAS21_CANDY_CANE_CANNON;
 	}
 
 	public static ItemBuilder getItem() {
-		return new ItemBuilder(getCustomMaterial()).name("&cCandy Cane Cannon");
+		return new ItemBuilder(getItemModel()).name("&cCandy Cane Cannon");
 	}
 
 	@EventHandler
@@ -76,15 +80,15 @@ public class Pugmas21CandyCaneCannon implements Listener {
 	@Getter
 	@AllArgsConstructor
 	private enum CandyCane {
-		RED(CustomMaterial.PUGMAS21_CANDY_CANE_RED),
-		GREEN(CustomMaterial.PUGMAS21_CANDY_CANE_GREEN),
-		YELLOW(CustomMaterial.PUGMAS21_CANDY_CANE_YELLOW),
+		RED(ItemModelType.PUGMAS21_CANDY_CANE_RED),
+		GREEN(ItemModelType.PUGMAS21_CANDY_CANE_GREEN),
+		YELLOW(ItemModelType.PUGMAS21_CANDY_CANE_YELLOW),
 		;
 
-		private final CustomMaterial material;
+		private final ItemModelType itemModelType;
 
 		private ItemStack item() {
-			return new ItemBuilder(material).build();
+			return new ItemBuilder(itemModelType).build();
 		}
 
 		public static CandyCane of(ItemStack item) {
@@ -92,7 +96,7 @@ public class Pugmas21CandyCaneCannon implements Listener {
 				return null;
 
 			for (CandyCane candyCane : values())
-				if (CustomMaterial.of(item) == candyCane.getMaterial())
+				if (ItemModelType.of(item) == candyCane.getItemModelType())
 					return candyCane;
 
 			return null;

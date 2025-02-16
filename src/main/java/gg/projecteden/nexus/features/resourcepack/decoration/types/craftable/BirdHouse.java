@@ -10,7 +10,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationCo
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.CraftableDecoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.MultiState;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPrePlaceEvent;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.AllArgsConstructor;
@@ -27,21 +27,21 @@ import java.util.stream.Collectors;
 public class BirdHouse extends DecorationConfig implements CraftableDecoration, MultiState {
 	@Getter
 	private final BirdHouseType type;
-	private final CustomMaterial customMaterial;
+	private final ItemModelType itemModelType;
 	private final boolean craftable;
 
-	public BirdHouse(String name, CustomMaterial customMaterial, boolean craftable) {
-		super(false, name, customMaterial);
-		this.customMaterial = customMaterial;
-		this.type = BirdHouseType.valueOf(customMaterial.name().split("_")[1].toUpperCase());
+	public BirdHouse(String name, ItemModelType itemModelType, boolean craftable) {
+		super(false, name, itemModelType);
+		this.itemModelType = itemModelType;
+		this.type = BirdHouseType.valueOf(itemModelType.name().split("_")[1].toUpperCase());
 		this.craftable = craftable;
 
 	}
 
-	public static Set<Integer> ids() {
+	public static Set<String> ids() {
 		return DecorationConfig.getALL_DECOR_CONFIGS().stream()
 				.filter(config -> config instanceof BirdHouse)
-				.map(DecorationConfig::getModelId)
+				.map(DecorationConfig::getModel)
 				.collect(Collectors.toSet());
 	}
 
@@ -50,19 +50,19 @@ public class BirdHouse extends DecorationConfig implements CraftableDecoration, 
 	}
 
 	@Override
-	public CustomMaterial getBaseMaterial() {
-		return this.type.getBaseMaterial();
+	public ItemModelType getBaseItemModel() {
+		return this.type.getBaseItemModelType();
 	}
 
 	@Getter
 	@AllArgsConstructor
 	public enum BirdHouseType {
-		FOREST(CustomMaterial.BIRDHOUSE_FOREST_HORIZONTAL, Material.RED_TERRACOTTA, Material.DARK_OAK_PLANKS, Material.BIRCH_PLANKS),
-		ENCHANTED(CustomMaterial.BIRDHOUSE_ENCHANTED_HORIZONTAL, Material.BLUE_TERRACOTTA, Material.DARK_PRISMARINE, Material.CYAN_CONCRETE_POWDER),
-		DEPTHS(CustomMaterial.BIRDHOUSE_DEPTHS_HORIZONTAL, Material.GREEN_TERRACOTTA, Material.DEEPSLATE_TILES, Material.STONE),
+		FOREST(ItemModelType.BIRDHOUSE_FOREST_HORIZONTAL, Material.RED_TERRACOTTA, Material.DARK_OAK_PLANKS, Material.BIRCH_PLANKS),
+		ENCHANTED(ItemModelType.BIRDHOUSE_ENCHANTED_HORIZONTAL, Material.BLUE_TERRACOTTA, Material.DARK_PRISMARINE, Material.CYAN_CONCRETE_POWDER),
+		DEPTHS(ItemModelType.BIRDHOUSE_DEPTHS_HORIZONTAL, Material.GREEN_TERRACOTTA, Material.DEEPSLATE_TILES, Material.STONE),
 		;
 
-		private final CustomMaterial baseMaterial;
+		private final ItemModelType baseItemModelType;
 		private final Material roof, hole, siding;
 
 		public String getName() {
@@ -86,12 +86,12 @@ public class BirdHouse extends DecorationConfig implements CraftableDecoration, 
 
 	@Override
 	public ItemStack getResult() {
-		return customMaterial.getItemBuilder().name(type.getName()).build();
+		return itemModelType.getItemBuilder().name(type.getName()).build();
 	}
 
 	@Override
 	public RecipeGroup getGroup() {
-		return new RecipeGroup(1, "Birdhouses", new ItemBuilder(CustomMaterial.BIRDHOUSE_FOREST_HORIZONTAL).build());
+		return new RecipeGroup(1, "Birdhouses", new ItemBuilder(ItemModelType.BIRDHOUSE_FOREST_HORIZONTAL).build());
 	}
 
 	static {
@@ -105,15 +105,15 @@ public class BirdHouse extends DecorationConfig implements CraftableDecoration, 
 			if (!(decoration.getConfig() instanceof BirdHouse birdHouse))
 				return;
 
-			int modelId = birdHouse.getType().getBaseMaterial().getModelId();
+			String modelId = birdHouse.getType().getBaseItemModelType().getModel();
 			BlockFace facing = event.getAttachedFace().getOppositeFace();
 
 			if (facing == BlockFace.UP)
-				modelId += 2;
+				modelId = modelId.replace("horizontal", "hanging");
 			else if (facing != BlockFace.DOWN)
-				modelId += 1;
+				modelId = modelId.replace("horizontal", "vertical");
 
-			event.setItem(new ItemBuilder(event.getItem()).modelId(modelId).build());
+			event.setItem(new ItemBuilder(event.getItem()).model(modelId).build());
 
 			switch (facing) {
 				case NORTH, SOUTH, EAST, WEST -> event.setRotation(ItemFrameRotation.DEGREE_0);

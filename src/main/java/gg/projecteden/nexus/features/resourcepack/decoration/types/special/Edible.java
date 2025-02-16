@@ -11,14 +11,24 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.M
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.GameModeWrapper;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.core.component.DataComponents;
-import org.bukkit.*;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -36,8 +46,8 @@ public class Edible extends DecorationConfig implements MultiState, CraftableDec
 	private final EdibleType edibleType;
 	private final int stage;
 
-	public Edible(EdibleType edibleType, CustomMaterial stageMaterial, int stage) {
-		super(false, edibleType.getName(), stageMaterial);
+	public Edible(EdibleType edibleType, ItemModelType stageItemModelType, int stage) {
+		super(false, edibleType.getName(), stageItemModelType);
 		this.breakSound = Sound.BLOCK_WOOD_BREAK.getKey().getKey();
 
 		this.edibleType = edibleType;
@@ -69,7 +79,7 @@ public class Edible extends DecorationConfig implements MultiState, CraftableDec
 	}
 
 	@Override
-	public CustomMaterial getBaseMaterial() {
+	public ItemModelType getBaseItemModel() {
 		return this.edibleType.getStage0();
 	}
 
@@ -78,40 +88,43 @@ public class Edible extends DecorationConfig implements MultiState, CraftableDec
 	public enum EdibleType {
 		//CAKE(null, 7, 14, 2.8, CustomMaterial.CAKE_SLICE, CustomMaterial.ITEM_WOODEN_PLATE), // These values are defined by vanilla
 		//PUMPKIN_PIE(CustomMaterial.CUSTOM_PUMPKIN_PIE, 4, 8, 0.3, CustomMaterial.PUMPKIN_PIE_SLICE, CustomMaterial.ITEM_WOODEN_PLATE), // These values are defined by vanilla
-		ROAST_CHICKEN("Roast Chicken", CustomMaterial.ROAST_CHICKEN_STAGE_0, CustomMaterial.ROAST_CHICKEN_SERVING, Material.BOWL, 4, 8, 18, null),
+		ROAST_CHICKEN("Roast Chicken", ItemModelType.ROAST_CHICKEN_STAGE_0, ItemModelType.ROAST_CHICKEN_SERVING, Material.BOWL, 4, 8, 18, null),
 		;
 
 		private final String name;
-		private final CustomMaterial stage0;
-		private final CustomMaterial servingMaterial;
+		private final ItemModelType stage0;
+		private final ItemModelType servingItemModelType;
 		private final ItemStack plateItem;
 		private final int maxServings; // max stages
 		private final int servingHunger;
 		private final double servingSaturation;
 		private final RecipeBuilder<?> recipeBuilder;
 
-		EdibleType(String name, CustomMaterial model, CustomMaterial servingMaterial, Material plateType, int servings, int servingHunger, double servingSaturation, RecipeBuilder<?> recipeBuilder) {
-			this(name, model, servingMaterial, new ItemStack(plateType), servings, servingHunger, servingSaturation, recipeBuilder);
+		EdibleType(String name, ItemModelType model, ItemModelType servingItemModelType, Material plateType, int servings, int servingHunger, double servingSaturation, RecipeBuilder<?> recipeBuilder) {
+			this(name, model, servingItemModelType, new ItemStack(plateType), servings, servingHunger, servingSaturation, recipeBuilder);
 		}
 
-		EdibleType(String name, CustomMaterial model, CustomMaterial servingMaterial, CustomMaterial plateType, int servings, int servingHunger, double servingSaturation, RecipeBuilder<?> recipeBuilder) {
-			this(name, model, servingMaterial, new ItemBuilder(plateType).build(), servings, servingHunger, servingSaturation, recipeBuilder);
+		EdibleType(String name, ItemModelType model, ItemModelType servingItemModelType, ItemModelType plateType, int servings, int servingHunger, double servingSaturation, RecipeBuilder<?> recipeBuilder) {
+			this(name, model, servingItemModelType, new ItemBuilder(plateType).build(), servings, servingHunger, servingSaturation, recipeBuilder);
 		}
 
 		public static @Nullable EdibleType ofServingItem(ItemStack servingItem) {
 			for (EdibleType type : values()) {
-				if (type.getServingMaterial().is(servingItem))
+				if (type.getServingItemModelType().is(servingItem))
 					return type;
 			}
 			return null;
 		}
 
 		public ItemStack getServingItem() {
-			return new ItemBuilder(servingMaterial).name("Serving of " + this.name).build();
+			return new ItemBuilder(servingItemModelType).name("Serving of " + this.name).build();
 		}
 
-		public CustomMaterial getModel(int stage) {
-			return CustomMaterial.of(new ItemBuilder(getStage0()).modelId(getStage0().getModelId() + stage));
+		public ItemModelType getModel(int stage) {
+			String baseMaterialStr = getStage0().name().replaceAll("_STAGE_0", "");
+			String nextItemModelStr = baseMaterialStr + "_STAGE_" + stage;
+			ItemModelType itemModelType = ItemModelType.valueOf(nextItemModelStr);
+			return ItemModelType.of(new ItemBuilder(getStage0()).model(itemModelType));
 		}
 
 		public void eat(Player player, Location soundOrigin, ItemStack originalItem) {

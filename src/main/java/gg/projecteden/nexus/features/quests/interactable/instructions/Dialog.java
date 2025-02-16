@@ -4,7 +4,7 @@ import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.quests.QuestItem;
 import gg.projecteden.nexus.features.quests.QuestReward;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.utils.AdventureUtils;
@@ -122,8 +122,8 @@ public class Dialog {
 		return instruction(quester -> PlayerUtils.giveItem(quester, item), -1);
 	}
 
-	public Dialog give(CustomModel... items) {
-		for (CustomModel item : items)
+	public Dialog give(ItemModelInstance... items) {
+		for (ItemModelInstance item : items)
 			give(item.getItem());
 		return this;
 	}

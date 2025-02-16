@@ -10,12 +10,17 @@ import lombok.NoArgsConstructor;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.translation.Translatable;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.entity.EntityCategory;
 import org.bukkit.entity.EntityType;
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.EquipmentSlotGroup;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ItemType;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -180,6 +185,10 @@ public abstract class CustomEnchant extends Enchantment implements Translatable 
 	@Override
 	public @NotNull RegistryKeySet<ItemType> getSupportedItems() {
 		return null;
+	}
+
+	public List<Material> getSupportedMaterials() {
+		return List.of();
 	}
 
 	@Override

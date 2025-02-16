@@ -10,11 +10,16 @@ import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -114,16 +119,16 @@ public class MuteMenuUser implements PlayerOwnedObject {
 		;
 
 		private final Material material;
-		private final int modelId;
+		private final String modelId;
 		private final Predicate<Sound> predicate;
 
 		SoundGroup(Material material, Predicate<Sound> predicate) {
-			this(material, 0, predicate);
+			this(material, null, predicate);
 		}
 
-		SoundGroup(CustomMaterial material, Predicate<Sound> predicate) {
-			this.material = material.getMaterial();
-			this.modelId = material.getModelId();
+		SoundGroup(ItemModelType itemModelType, Predicate<Sound> predicate) {
+			this.material = itemModelType.getMaterial();
+			this.modelId = itemModelType.getModel();
 			this.predicate = predicate;
 		}
 
@@ -136,7 +141,7 @@ public class MuteMenuUser implements PlayerOwnedObject {
 		}
 
 		public ItemStack getItem() {
-			return new ItemBuilder(material).modelId(modelId).name(StringUtils.camelCase(this)).build();
+			return new ItemBuilder(material).model(modelId).name(StringUtils.camelCase(this)).build();
 		}
 	}
 

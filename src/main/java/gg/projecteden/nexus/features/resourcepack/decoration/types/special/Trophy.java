@@ -17,8 +17,8 @@ public class Trophy extends DecorationConfig {
 		this.trophy = trophy;
 		this.id = "trophy_" + trophy.name().toLowerCase();
 		this.name = trophy.toString();
-		this.material = trophy.getMaterial().getMaterial();
-		this.modelId = trophy.getMaterial().getModelId();
+		this.material = trophy.getItemModelType().getMaterial();
+		this.model = trophy.getItemModelType().getModel();
 		this.hitboxes = Hitbox.NONE();
 		this.disabledPlacements = PlacementType.FLOOR.getDisabledPlacements();
 

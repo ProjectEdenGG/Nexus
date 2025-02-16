@@ -66,7 +66,7 @@ public enum Currency {
 
 		@Override
 		protected void _deposit(Player player, Price price) {
-			ItemStack pouch = PlayerUtils.searchInventory(player, CommonQuestItem.COIN_POUCH.getCustomMaterial());
+			ItemStack pouch = PlayerUtils.searchInventory(player, CommonQuestItem.COIN_POUCH.getItemModel());
 			if (Nullables.isNullOrAir(pouch))
 				throw new InvalidInputException("Cannot deposit to " + player.getName() + ", couldn't find a pouch");
 
@@ -87,7 +87,7 @@ public enum Currency {
 
 		@Override
 		protected boolean _canAfford(Player player, Price price, ShopGroup shopGroup) {
-			ItemStack pouch = PlayerUtils.searchInventory(player, CommonQuestItem.COIN_POUCH.getCustomMaterial());
+			ItemStack pouch = PlayerUtils.searchInventory(player, CommonQuestItem.COIN_POUCH.getItemModel());
 			if (Nullables.isNullOrAir(pouch))
 				return false;
 
@@ -104,7 +104,7 @@ public enum Currency {
 
 		@Override
 		protected void _withdraw(Player player, Price price, ShopGroup shopGroup, Product product) {
-			ItemStack pouch = PlayerUtils.searchInventory(player, CommonQuestItem.COIN_POUCH.getCustomMaterial());
+			ItemStack pouch = PlayerUtils.searchInventory(player, CommonQuestItem.COIN_POUCH.getItemModel());
 			if (Nullables.isNullOrAir(pouch))
 				throw new InvalidInputException("Cannot withdraw from " + player.getName() + ", couldn't find a pouch");
 

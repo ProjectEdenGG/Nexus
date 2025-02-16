@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.CustomTripwireConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.ICraftableTripwire;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,7 +14,7 @@ import java.util.List;
 
 @CustomBlockConfig(
 	name = "Rocks",
-	modelId = 21103
+	itemModel = ItemModelType.ROCKS_ROCKS_0
 )
 @CustomTripwireConfig(
 	north_NS = true,

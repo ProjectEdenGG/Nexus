@@ -2,11 +2,12 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblock
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import org.bukkit.Instrument;
 
 @CustomBlockConfig(
 	name = "Yellow Quilted Wool",
-	modelId = 20303
+	itemModel = ItemModelType.QUILTED_WOOL_YELLOW
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.COW_BELL,

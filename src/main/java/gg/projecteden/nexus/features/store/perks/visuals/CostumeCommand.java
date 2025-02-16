@@ -6,10 +6,10 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
-import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
+import gg.projecteden.nexus.features.resourcepack.models.files.ItemModelFolder;
 import gg.projecteden.nexus.features.store.gallery.StoreGallery;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStationMenu;
@@ -241,7 +241,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	public abstract static class CostumeMenu extends InventoryProvider {
 		protected final CostumeUserService service = new CostumeUserService();
 		protected final CostumeMenu previousMenu;
-		protected final CustomModelFolder folder;
+		protected final ItemModelFolder folder;
 
 		public CostumeMenu() {
 			this(null, Costume.getRootFolder());
@@ -259,11 +259,11 @@ public class CostumeCommand extends CustomCommand implements Listener {
 
 			List<ClickableItem> items = new ArrayList<>();
 
-			for (CustomModelFolder subfolder : folder.getFolders()) {
+			for (ItemModelFolder subfolder : folder.getFolders()) {
 				if (subfolder.getPath().contains(Costume.EXCLUSIVE))
 					continue;
 
-				CustomModel firstModel = subfolder.getIcon(model -> isAvailableCostume(user, Costume.of(model)));
+				ItemModelInstance firstModel = subfolder.getIcon(model -> isAvailableCostume(user, Costume.of(model)));
 				ItemStack item = new ItemStack(Material.BARRIER);
 				if (firstModel != null)
 					item = firstModel.getDisplayItem();
@@ -287,7 +287,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 			}
 
 			for (Costume costume : Costume.values()) {
-				if (costume.getModel().getFileName().equals(CustomModel.ICON))
+				if (costume.getModel().getFileName().equals(ItemModelInstance.ICON))
 					continue;
 
 				if (!isAvailableCostume(user, costume))
@@ -300,11 +300,11 @@ public class CostumeCommand extends CustomCommand implements Listener {
 			paginate(items);
 		}
 
-		abstract protected CostumeMenu newMenu(CostumeMenu previousMenu, CustomModelFolder subfolder);
+		abstract protected CostumeMenu newMenu(CostumeMenu previousMenu, ItemModelFolder subfolder);
 
 		protected void init(CostumeUser user, InventoryContents contents) {}
 
-		protected int getAvailableCostumes(Player player, CustomModelFolder folder) {
+		protected int getAvailableCostumes(Player player, ItemModelFolder folder) {
 			final CostumeUserService service = new CostumeUserService();
 			final CostumeUser user = service.get(player);
 			int available = 0;
@@ -331,12 +331,12 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	@NoArgsConstructor
 	public static class CostumeStoreMenu extends CostumeMenu {
 
-		public CostumeStoreMenu(CostumeMenu previousMenu, CustomModelFolder folder) {
+		public CostumeStoreMenu(CostumeMenu previousMenu, ItemModelFolder folder) {
 			super(previousMenu, folder);
 		}
 
 		@Override
-		protected CostumeMenu newMenu(CostumeMenu previousMenu, CustomModelFolder subfolder) {
+		protected CostumeMenu newMenu(CostumeMenu previousMenu, ItemModelFolder subfolder) {
 			return new CostumeStoreMenu(previousMenu, subfolder);
 		}
 
@@ -390,12 +390,12 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	@NoArgsConstructor
 	public static class CostumeInventoryMenu extends CostumeMenu {
 
-		public CostumeInventoryMenu(CostumeMenu previousMenu, CustomModelFolder folder) {
+		public CostumeInventoryMenu(CostumeMenu previousMenu, ItemModelFolder folder) {
 			super(previousMenu, folder);
 		}
 
 		@Override
-		protected CostumeMenu newMenu(CostumeMenu previousMenu, CustomModelFolder subfolder) {
+		protected CostumeMenu newMenu(CostumeMenu previousMenu, ItemModelFolder subfolder) {
 			return new CostumeInventoryMenu(previousMenu, subfolder);
 		}
 

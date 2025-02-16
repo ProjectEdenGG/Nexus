@@ -3,12 +3,13 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.Unobtainable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.CustomTripwireConfig;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NonNull;
 
 @CustomBlockConfig(
 	name = "Tripwire Cross",
-	modelId = 21001
+	itemModel = ItemModelType.TRIPWIRE
 )
 @CustomTripwireConfig(
 	north_NS = true,

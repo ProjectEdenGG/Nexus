@@ -5,12 +5,13 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.Cus
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICraftable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.CustomTripwireConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.IRequireSupport;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
 @CustomBlockConfig(
 	name = "Lavender",
-	modelId = 21120
+	itemModel = ItemModelType.FLORA_LAVENDER_ITEM
 )
 @CustomTripwireConfig(
 	north_NS = true,

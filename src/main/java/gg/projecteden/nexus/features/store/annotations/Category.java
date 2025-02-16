@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.store.annotations;
 
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.store.Package;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -36,15 +36,15 @@ public @interface Category {
 
 		@NonNull
 		private final Material material;
-		private int modelId;
+		private String modelId;
 
-		StoreCategory(CustomMaterial material) {
-			this.material = material.getMaterial();
-			this.modelId = material.getModelId();
+		StoreCategory(ItemModelType itemModelType) {
+			this.material = itemModelType.getMaterial();
+			this.modelId = itemModelType.getModel();
 		}
 
 		public ItemBuilder getDisplayItem() {
-			return new ItemBuilder(material).modelId(modelId).name(StringUtils.camelCase(name()));
+			return new ItemBuilder(material).model(modelId).name(StringUtils.camelCase(name()));
 		}
 
 		public List<Package> getPackages() {

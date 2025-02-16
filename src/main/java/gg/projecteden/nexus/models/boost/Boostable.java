@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.boost;
 
 import gg.projecteden.api.common.annotations.Disabled;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.shops.Market;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -42,19 +42,19 @@ public enum Boostable {
 	@Disabled
 	MYSTERY_CRATE_KEY(Material.TRIPWIRE_HOOK),
 	@Disabled
-	HALLOWEEN_CANDY(CustomMaterial.FOOD_CANDY_CORN),
+	HALLOWEEN_CANDY(ItemModelType.FOOD_CANDY_CORN),
 	;
 
 	private final Material material;
-	private final int modelId;
+	private final String model;
 	private final boolean possiblePersonal = true;
 
 	Boostable(Material material) {
-		this(material, 0);
+		this(material, null);
 	}
 
-	Boostable(CustomMaterial customMaterial) {
-		this(customMaterial.getMaterial(), customMaterial.getModelId());
+	Boostable(ItemModelType itemModelType) {
+		this(itemModelType.getMaterial(), itemModelType.getModel());
 	}
 
 	@SneakyThrows
@@ -68,7 +68,7 @@ public enum Boostable {
 
 	@NotNull
 	public ItemBuilder getDisplayItem() {
-		return new ItemBuilder(material).modelId(modelId).name("&6" + StringUtils.camelCase(name()));
+		return new ItemBuilder(material).model(model).name("&6" + StringUtils.camelCase(name()));
 	}
 
 	public void onActivate() {}

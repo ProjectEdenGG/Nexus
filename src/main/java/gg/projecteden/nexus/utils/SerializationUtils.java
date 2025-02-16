@@ -2,8 +2,11 @@ package gg.projecteden.nexus.utils;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
@@ -11,6 +14,7 @@ import com.google.gson.JsonSerializer;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.JsonOps;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.legacy.listeners.LegacyItems;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -71,7 +75,7 @@ public class SerializationUtils {
 				net.minecraft.world.item.ItemStack fixed = net.minecraft.world.item.ItemStack.parse(((CraftServer) Bukkit.getServer()).getServer().registryAccess(), updated).orElse(null);
 				if (fixed == null)
 					throw new RuntimeException("Deserialized item stack from " + string + " is null");
-				return fixed.asBukkitCopy();
+				return LegacyItems.convert(null, fixed.asBukkitCopy());
 			} catch (Exception ex) {
 				Nexus.warn("Failed to parse ItemStack from String:");
 				ex.printStackTrace();
@@ -418,6 +422,20 @@ public class SerializationUtils {
 				return new JsonPrimitive(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(timestamp));
 			}
 
+		}
+
+		public static class MaterialConverter implements JsonSerializer<Material>, JsonDeserializer<Material> {
+
+			@Override
+			public JsonElement serialize(Material src, Type typeOfSrc, JsonSerializationContext context) {
+				return new JsonPrimitive(src.name());
+			}
+
+			// Custom deserialization logic
+			@Override
+			public Material deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+				return Material.valueOf(json.getAsString().toUpperCase());
+			}
 		}
 
 	}

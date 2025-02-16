@@ -1,17 +1,14 @@
 package gg.projecteden.nexus.features.recipes.functionals.backpacks;
 
 import gg.projecteden.api.common.utils.EnumUtils;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.CustomRecipes;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -25,7 +22,7 @@ import java.util.List;
 
 public class IronBackpack extends FunctionalRecipe {
 
-	public static ItemStack result = new ItemBuilder(CustomMaterial.BACKPACK_3D_IRON).name("Iron Backpack").build();
+	public static ItemStack result = new ItemBuilder(ItemModelType.BACKPACK_3D_IRON).name("Iron Backpack").build();
 
 	@Override
 	public ItemStack getResult() {

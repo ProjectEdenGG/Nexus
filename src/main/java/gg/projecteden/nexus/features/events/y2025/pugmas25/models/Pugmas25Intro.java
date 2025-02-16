@@ -4,7 +4,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
@@ -30,7 +30,7 @@ public class Pugmas25Intro implements Listener {
 	private static final String TRANSITION_REGION_REGEX = "hub_pugmas25_train_[0-9]+";
 
 	@Getter
-	private static final ItemStack ticketItem = new ItemBuilder(CustomMaterial.VOUCHER)
+	private static final ItemStack ticketItem = new ItemBuilder(ItemModelType.VOUCHER)
 		.dyeColor(Color.WHITE)
 		.name("&3&oTrain Ticket")
 		.lore("&3Destination: &e" + Pugmas25.EVENT_NAME)

@@ -5,10 +5,11 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.c
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.IRequireDirt;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.IWaterLogged;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.WaterLoggedConfig;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 
 @CustomBlockConfig(
 	name = "Cattail",
-	modelId = 21101
+	itemModel = ItemModelType.FLORA_CATTAIL_ITEM
 )
 @CustomTripwireConfig(
 	north_NS = true,

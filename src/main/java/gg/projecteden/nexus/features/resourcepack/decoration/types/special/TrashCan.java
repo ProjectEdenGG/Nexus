@@ -8,8 +8,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.I
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.utils.ItemUtils;
 import org.bukkit.event.EventHandler;
@@ -17,8 +17,8 @@ import org.bukkit.event.Listener;
 
 public class TrashCan extends DyeableFloorThing implements Interactable {
 
-	public TrashCan(String name, CustomMaterial material, ColorableType colorableType, String hexOverride, CustomHitbox hitbox) {
-		super(false, name, material, colorableType, hexOverride, hitbox);
+	public TrashCan(String name, ItemModelType itemModelType, ColorableType colorableType, String hexOverride, CustomHitbox hitbox) {
+		super(false, name, itemModelType, colorableType, hexOverride, hitbox);
 	}
 
 	static {

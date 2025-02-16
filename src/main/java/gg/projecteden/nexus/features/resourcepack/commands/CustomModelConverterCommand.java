@@ -4,10 +4,9 @@ import gg.projecteden.nexus.features.clientside.models.ClientSideArmorStand;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
 import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
-import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
@@ -17,9 +16,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.models.clientside.ClientSideConfigService;
-import gg.projecteden.nexus.models.custommodels.CustomModelConfigService;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.Nullables;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -38,7 +35,6 @@ import org.bukkit.util.Transformation;
 import org.joml.Vector3f;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @HideFromWiki
 @NoArgsConstructor
@@ -67,22 +63,22 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 //		});
 //	}
 
-	@Path("compute")
-	void compute() {
-		new CustomModelConfigService().edit0(config -> {
-			config.setNewModels(new ConcurrentHashMap<>());
-			for (CustomModel model : ResourcePack.getModels().values())
-				config.getNewModels().computeIfAbsent(model.getMaterial(), $ -> new ConcurrentHashMap<>()).put(model.getData(), model.getId());
-		});
-	}
+//	@Path("compute")
+//	void compute() {
+//		new CustomModelConfigService().edit0(config -> {
+//			config.setNewModels(new ConcurrentHashMap<>());
+//			for (CustomModel model : ResourcePack.getModels().values())
+//				config.getNewModels().computeIfAbsent(model.getMaterial(), $ -> new ConcurrentHashMap<>()).put(model.getData(), model.getId());
+//		});
+//	}
 
 	@Path("convert <material> <data>")
 	void convert(Material material, int data) {
-		final CustomModel newModel = CustomModel.convert(material, data);
+		final ItemModelInstance newModel = ItemModelInstance.convertLegacy(material, data, null);
 		if (newModel == null)
 			error("Unknown custom model");
 
-		send(newModel.getMaterial() + " " + newModel.getData());
+		send(newModel.getMaterial() + " " + newModel.getItemModel());
 	}
 
 	@Path("toDyeable clientside")
@@ -167,7 +163,7 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 		;
 
 
-		private final int oldId;
+		private final String oldId;
 		private final DecorationType type;
 
 		public Color getLeatherColor() {
@@ -179,15 +175,15 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 
 		public ItemStack getNewItem() {
 			return new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
-				.modelId(type.getConfig().getModelId())
+				.model(type.getConfig().getModel())
 				.dyeColor(getLeatherColor())
 				.build();
 		}
 
 		public static ToDyeable ofOld(ItemStack itemStack) {
-			int modelId = ModelId.of(itemStack);
+			String model = ItemBuilder.Model.of(itemStack);
 			for (ToDyeable dyeable : values()) {
-				if (modelId == dyeable.oldId)
+				if (model == dyeable.oldId)
 					return dyeable;
 			}
 			return null;
@@ -235,7 +231,7 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 	@Path("item_displays <radius>")
 	void item_displays(@Arg int radius) {
 		for (ArmorStand armorStand : location().getNearbyEntitiesByType(ArmorStand.class, radius))
-			if (CustomModel.of(armorStand.getItem(EquipmentSlot.HEAD)) != null) {
+			if (ItemModelInstance.of(armorStand.getItem(EquipmentSlot.HEAD)) != null) {
 				armorStandToItemDisplay(armorStand);
 				armorStand.remove();
 			}

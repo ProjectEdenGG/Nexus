@@ -46,7 +46,7 @@ public class Pugmas25BalloonEditorUtils {
 		if (player == null)
 			return;
 
-		PlayerUtils.removeItem(player, Pugmas25BlockReplaceBrushMenu.BRUSH_MATERIAL);
+		PlayerUtils.removeItem(player, Pugmas25BlockReplaceBrushMenu.BRUSH_ITEM_MODEL);
 	}
 
 	static void enableFlight() {
@@ -74,7 +74,7 @@ public class Pugmas25BalloonEditorUtils {
 		if (player == null)
 			return;
 
-		PlayerUtils.removeItem(player, Pugmas25BlockReplaceBrushMenu.BRUSH_MATERIAL);
+		PlayerUtils.removeItem(player, Pugmas25BlockReplaceBrushMenu.BRUSH_ITEM_MODEL);
 	}
 
 	static void disableFlight(Player player) {

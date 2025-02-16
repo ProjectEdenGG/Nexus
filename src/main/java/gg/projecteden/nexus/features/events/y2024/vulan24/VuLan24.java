@@ -15,13 +15,18 @@ import gg.projecteden.nexus.features.events.models.EventBreakable;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot;
 import gg.projecteden.nexus.features.events.models.EventPlaceable;
 import gg.projecteden.nexus.features.events.y2024.vulan24.models.VuLan24BoatTracker;
-import gg.projecteden.nexus.features.events.y2024.vulan24.quests.*;
+import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Entity;
+import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24NPC;
+import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Quest;
+import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestItem;
+import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestReward;
+import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestTask;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
 import gg.projecteden.nexus.features.regionapi.events.entity.EntityLeavingRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.quests.Quester;
@@ -69,7 +74,7 @@ import java.util.List;
 	region = "vu_lan",
 	warpType = WarpType.VULAN24
 )
-@Environments({Env.PROD, Env.STAGING})
+@Environments({Env.PROD, Env.UPDATE})
 public class VuLan24 extends EdenEvent {
 	private static VuLan24 instance;
 
@@ -125,7 +130,7 @@ public class VuLan24 extends EdenEvent {
 
 	@Override
 	public ItemStack getWarpMenuItem() {
-		return new ItemBuilder(CustomMaterial.COSTUMES_BAMBOO_HAT)
+		return new ItemBuilder(ItemModelType.COSTUMES_BAMBOO_HAT)
 			.name("&eCurrent Event: &6&lVu Lan Festival")
 			.lore("&3Quests, rewards, and more!")
 			.build();
@@ -160,7 +165,7 @@ public class VuLan24 extends EdenEvent {
 		if (!VuLan24.get().isInRegion(event.getPlayer(), "vu_lan_lantern_animation_place"))
 			return;
 
-		if (CustomMaterial.of(event.getPlayer().getInventory().getItemInMainHand()) != CustomMaterial.of(VuLan24QuestItem.PAPER_LANTERN_FLOATING.get()))
+		if (ItemModelType.of(event.getPlayer().getInventory().getItemInMainHand()) != ItemModelType.of(VuLan24QuestItem.PAPER_LANTERN_FLOATING.get()))
 			return;
 
 		event.setCancelled(true);

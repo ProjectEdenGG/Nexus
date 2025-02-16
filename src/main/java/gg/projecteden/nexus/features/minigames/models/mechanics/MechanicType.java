@@ -32,7 +32,6 @@ public enum MechanicType {
 	@Group(MechanicGroup.ARCADE)							MONSTER_MAZE(MonsterMaze.class),
 	@Group(MechanicGroup.ARCADE)							PIXEL_DROP(PixelDrop.class),
 	@Group(MechanicGroup.ARCADE)							PIXEL_PAINTERS(PixelPainters.class),
-	@Group(MechanicGroup.ARCADE)							SABOTAGE(Sabotage.class),
 	@Group(MechanicGroup.ARCADE)							THIMBLE(Thimble.class),
 	@Group(MechanicGroup.ARCADE)							TICTACTOE(TicTacToe.class),
 	@Group(MechanicGroup.ARCADE)							TNT_RUN(TNTRun.class),

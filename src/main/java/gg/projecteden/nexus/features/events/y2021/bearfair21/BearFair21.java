@@ -5,11 +5,11 @@ import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.Rides;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.IslandType;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.MainIsland.MainNPCs;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.Merchants;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.BearFair21Rides;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.BearFair21IslandType;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.BearFair21MainIsland.MainNPCs;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.BearFair21MinigameNightIsland;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21Merchants;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -62,9 +62,9 @@ public class BearFair21 implements Listener {
 		Nexus.registerListener(this);
 
 		new Timer("      BF21.Restrictions", BearFair21Restrictions::new);
-		new Timer("      BF21.Fairgrounds", Fairgrounds::new);
-		new Timer("      BF21.Islands", IslandType::values);
-		new Timer("      BF21.Quests", Quests::new);
+		new Timer("      BF21.Fairgrounds", BearFair21Fairgrounds::new);
+		new Timer("      BF21.Islands", BearFair21IslandType::values);
+		new Timer("      BF21.Quests", BearFair21Quests::new);
 
 		addTokenMax(BF21PointSource.ARCHERY, 25);
 		addTokenMax(BF21PointSource.MINIGOLF, 25);
@@ -254,11 +254,11 @@ public class BearFair21 implements Listener {
 	}
 
 	public static void startup() {
-		Rides.startup();
+		BearFair21Rides.startup();
 	}
 
 	public static void shutdown() {
-		Quests.shutdown();
+		BearFair21Quests.shutdown();
 	}
 
 	public enum BF21PointSource {
@@ -293,18 +293,18 @@ public class BearFair21 implements Listener {
 		BearFair21User user = userService.get(player);
 		// Trader
 		{
-			List<ItemStack> items = Quests.getItemsLikeFrom(user, Collections.singletonList(Merchants.traderCoupon.clone()));
+			List<ItemStack> items = BearFair21Quests.getItemsLikeFrom(user, Collections.singletonList(BearFair21Merchants.traderCoupon.clone()));
 			if (Nullables.isNullOrEmpty(items))
 				return;
 
-			Quests.removeItemStacks(user, items);
+			BearFair21Quests.removeItemStacks(user, items);
 			giveDailyTokens(player, BF21PointSource.TRADER, 50);
-			Quests.sound_obtainItem(player);
+			BearFair21Quests.sound_obtainItem(player);
 		}
 
 		// James
 		{
-			List<ItemStack> items = Quests.getItemsLikeFrom(user, Collections.singletonList(MinigameNightIsland.getCarKey()));
+			List<ItemStack> items = BearFair21Quests.getItemsLikeFrom(user, Collections.singletonList(BearFair21MinigameNightIsland.getCarKey()));
 			if (Nullables.isNullOrEmpty(items))
 				return;
 
@@ -353,7 +353,7 @@ public class BearFair21 implements Listener {
 
 					Tasks.wait(TickTime.SECOND.x(3), () -> {
 						send("&8&l[&c&l!!!&8&l] &3You can now warp here using: &e/bearfair21", player);
-						Quests.sound_obtainItem(player);
+						BearFair21Quests.sound_obtainItem(player);
 					});
 				}
 			});

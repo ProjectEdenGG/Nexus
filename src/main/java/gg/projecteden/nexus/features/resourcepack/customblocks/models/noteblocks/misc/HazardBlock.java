@@ -3,12 +3,13 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblock
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ICustomNoteBlock;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 
 @CustomBlockConfig(
 	name = "Hazard Block",
-	modelId = 20121
+	itemModel = ItemModelType.MISC_HAZARD_BLOCK
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.BASS_GUITAR,

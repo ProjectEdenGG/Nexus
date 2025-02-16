@@ -4,7 +4,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
 import gg.projecteden.nexus.features.resourcepack.models.files.FontFile.CustomCharacter;
@@ -105,7 +105,7 @@ public class Tab implements Listener {
 		private final String name;
 		private final String character;
 		private final String discordId;
-		private final int modelId;
+		private final String modelId;
 
 		public boolean applies(Modifier modifier) {
 			return id.toUpperCase().contains(modifier.name());
@@ -127,8 +127,8 @@ public class Tab implements Listener {
 			return id.equals(ACTIVE.getId());
 		}
 
-		public static final Presence OFFLINE = new Presence("presence_offline", "&#747f8dOffline", "汉", "1007078277921394720", CustomMaterial.PRESENCE_OFFLINE.getModelId());
-		public static final Presence ACTIVE = new Presence("presence_active", "&#3ba55dActive", "", "896466289508356106", CustomMaterial.PRESENCE_ACTIVE.getModelId());
+		public static final Presence OFFLINE = new Presence("presence_offline", "&#747f8dOffline", "汉", "1007078277921394720", ItemModelType.PRESENCE_OFFLINE.getModel());
+		public static final Presence ACTIVE = new Presence("presence_active", "&#3ba55dActive", "", "896466289508356106", ItemModelType.PRESENCE_ACTIVE.getModel());
 
 		public static Presence of(OfflinePlayer player) {
 			return of(player, null);
@@ -181,7 +181,7 @@ public class Tab implements Listener {
 				if (id.contains("offline"))
 					continue;
 
-				final Presence presence = new Presence(id, character.getName(), character.getChars().get(0), character.getDiscordId(), character.getModelId());
+				final Presence presence = new Presence(id, character.getName(), character.getChars().getFirst(), character.getDiscordId(), character.getModelId());
 				PRESENCES.add(presence);
 			}
 		}

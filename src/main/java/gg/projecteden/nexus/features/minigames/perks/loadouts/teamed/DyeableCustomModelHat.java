@@ -19,18 +19,18 @@ public class DyeableCustomModelHat implements TeamHatPerk {
 	private final int price;
 	private final @NotNull List<String> description;
 	private final @NotNull Material material;
-	private final int modelId;
+	private final String modelId;
 
-	public DyeableCustomModelHat(@NotNull String name, int price, @NotNull String description, @NotNull Material material, int modelId) {
+	public DyeableCustomModelHat(@NotNull String name, int price, @NotNull String description, @NotNull Material material, String modelId) {
 		this(name, price, Collections.singletonList(description), material, modelId);
 	}
 
 	@Override
 	public @NotNull ItemStack getColorItem(ColorType color) {
-		return new ItemBuilder(material).modelId(modelId).dyeColor(color).name(name).build();
+		return new ItemBuilder(material).model(modelId).dyeColor(color).name(name).build();
 	}
 
-	public static @NotNull DyeableCustomModelHat createPirateHat(@NotNull String name, int modelId) {
+	public static @NotNull DyeableCustomModelHat createPirateHat(@NotNull String name, String modelId) {
 		return new DyeableCustomModelHat(name, 100, "Show off your love for the seven seas with this pirate hat", Material.LEATHER_HORSE_ARMOR, modelId);
 	}
 }

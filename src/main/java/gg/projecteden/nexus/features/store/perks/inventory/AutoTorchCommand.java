@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Permission("nexus.autotorch")
-@Description("Automatically place torches when it gets too dark")
+@Description("Automatically place a light source when it gets too dark")
 @WikiConfig(rank = "Store", feature = "Inventory")
 public class AutoTorchCommand extends CustomCommand {
 	public static final String PERMISSION = "nexus.autotorch";
@@ -140,7 +140,7 @@ public class AutoTorchCommand extends CustomCommand {
 				Block block = player.getLocation().getBlock();
 
 				Tasks.wait(5, () -> {
-					if (!autoTorchUser.applies(player, block)) // tests light level and for valid torch placing location
+					if (!autoTorchUser.applies(block)) // tests light level and for valid torch placing location
 						return;
 
 					if (!BlockUtils.tryPlaceEvent(player, block, block.getRelative(0, -1, 0), autoTorchUser.getTorchMaterial()))

@@ -14,7 +14,12 @@ import gg.projecteden.nexus.features.menus.api.content.Pagination;
 import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
 import gg.projecteden.nexus.models.crate.CrateConfigService;
 import gg.projecteden.nexus.models.crate.CrateType;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
@@ -122,7 +127,7 @@ public class CrateEditMenu {
 						.lore("&cShift-Click to Delete");
 
 					if (loot.getDisplayItem() != null)
-						builder.modelId(new ItemBuilder(loot.getDisplayItem()).modelId());
+						builder.model(new ItemBuilder(loot.getDisplayItem()).model());
 
 					ItemStack item = builder.build();
 					items.add(ClickableItem.of(item, e -> {

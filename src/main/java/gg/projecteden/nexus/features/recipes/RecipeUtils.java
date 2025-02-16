@@ -18,18 +18,7 @@ import java.util.Map;
 public class RecipeUtils {
 
 	public static List<List<ItemStack>> uncraft(ItemStack result) {
-		List<Recipe> recipes = Bukkit.getRecipesFor(result).stream().filter(recipe -> {
-			ItemStack stack = recipe.getResult();
-			if (result.hasItemMeta() && result.getItemMeta().hasCustomModelData()) {
-				if (!stack.hasItemMeta() || !stack.getItemMeta().hasCustomModelData()) {
-					return false;
-				}
-				if (result.getItemMeta().getCustomModelData() != stack.getItemMeta().getCustomModelData()) {
-					return false;
-				}
-			}
-			return true;
-		}).toList();
+		List<Recipe> recipes = Bukkit.getRecipesFor(result).stream().filter(recipe -> ItemUtils.isModelMatch(result, recipe.getResult())).toList();
 		List<List<ItemStack>> ingredients = new ArrayList<>();
 		for (Recipe recipe : recipes) {
 			List<ItemStack> _ingredients = new ArrayList<>();

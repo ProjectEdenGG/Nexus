@@ -12,7 +12,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationSto
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.CounterMaterial;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.HandleType;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -152,23 +152,23 @@ public class CountersProvider extends InventoryProvider {
 
 	@AllArgsConstructor
 	private enum HandleFilter implements FilterType {
-		ALL(CustomMaterial.HANDLE_ALL, HandleType.values()),
-		STEEL(CustomMaterial.HANDLE_STEEL, HandleType.STEEL),
-		BRASS(CustomMaterial.HANDLE_BRASS, HandleType.BRASS),
-		BLACK(CustomMaterial.HANDLE_BLACK, HandleType.BLACK);
+		ALL(ItemModelType.HANDLE_ALL, HandleType.values()),
+		STEEL(ItemModelType.HANDLE_STEEL, HandleType.STEEL),
+		BRASS(ItemModelType.HANDLE_BRASS, HandleType.BRASS),
+		BLACK(ItemModelType.HANDLE_BLACK, HandleType.BLACK);
 
-		final CustomMaterial customMaterial;
+		final ItemModelType itemModelType;
 		@Getter
 		final List<HandleType> handleTypes;
 
-		HandleFilter(CustomMaterial itemMaterial, HandleType... handleTypes) {
-			this.customMaterial = itemMaterial;
+		HandleFilter(ItemModelType itemModelType, HandleType... handleTypes) {
+			this.itemModelType = itemModelType;
 			this.handleTypes = List.of(handleTypes);
 		}
 
 		@Override
 		public ItemBuilder getItem() {
-			return new ItemBuilder(customMaterial);
+			return new ItemBuilder(itemModelType);
 		}
 
 		@Override
@@ -182,24 +182,24 @@ public class CountersProvider extends InventoryProvider {
 
 	@AllArgsConstructor
 	private enum CounterFilter implements FilterType {
-		ALL(CustomMaterial.COUNTER_ALL, CounterMaterial.values()),
-		MARBLE(CustomMaterial.COUNTER_MARBLE, CounterMaterial.MARBLE),
-		STONE(CustomMaterial.COUNTER_STONE, CounterMaterial.STONE),
-		SOAPSTONE(CustomMaterial.COUNTER_SOAPSTONE, CounterMaterial.SOAPSTONE),
-		WOODEN(CustomMaterial.COUNTER_WOODEN, CounterMaterial.WOODEN);
+		ALL(ItemModelType.COUNTER_ALL, CounterMaterial.values()),
+		MARBLE(ItemModelType.COUNTER_MARBLE, CounterMaterial.MARBLE),
+		STONE(ItemModelType.COUNTER_STONE, CounterMaterial.STONE),
+		SOAPSTONE(ItemModelType.COUNTER_SOAPSTONE, CounterMaterial.SOAPSTONE),
+		WOODEN(ItemModelType.COUNTER_WOODEN, CounterMaterial.WOODEN);
 
-		final CustomMaterial customMaterial;
+		final ItemModelType itemModelType;
 		@Getter
 		final List<CounterMaterial> counterMaterials;
 
-		CounterFilter(CustomMaterial itemMaterial, CounterMaterial... counterMaterials) {
-			this.customMaterial = itemMaterial;
+		CounterFilter(ItemModelType itemModelType, CounterMaterial... counterMaterials) {
+			this.itemModelType = itemModelType;
 			this.counterMaterials = List.of(counterMaterials);
 		}
 
 		@Override
 		public ItemBuilder getItem() {
-			ItemBuilder item = new ItemBuilder(customMaterial);
+			ItemBuilder item = new ItemBuilder(itemModelType);
 			if (this == WOODEN)
 				item.dyeColor(ColorChoice.StainChoice.OAK.getColor());
 

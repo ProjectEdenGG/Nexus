@@ -11,11 +11,11 @@ import java.util.UUID;
 @NoArgsConstructor
 public class CustomBlockData {
 	private UUID placerUUID = null;
-	private int modelId;
+	private String modelId;
 	private CustomBlockType type;
 	private ExtraBlockData extraData;
 
-	public CustomBlockData(UUID uuid, int modelId, CustomBlockType type) {
+	public CustomBlockData(UUID uuid, String modelId, CustomBlockType type) {
 		switch (type) {
 			case NOTE_BLOCK -> extraData = new CustomNoteBlockData();
 			case TRIPWIRE -> extraData = new CustomTripwireData();

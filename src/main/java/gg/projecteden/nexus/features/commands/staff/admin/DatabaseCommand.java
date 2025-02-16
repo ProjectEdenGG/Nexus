@@ -209,6 +209,23 @@ public class DatabaseCommand extends CustomCommand {
 	}
 
 	@Async
+	@SneakyThrows
+	@Path("clearAllCaches")
+	@Description("Clear the cache of all services")
+	<T extends DatabaseObject> void clearAllCaches() {
+		List<MongoService<T>> services = new ArrayList<>() {{
+			for (Class<? extends MongoService> clazz : MongoService.getServices())
+				if (Utils.canEnable(clazz))
+					add(clazz.getConstructor().newInstance());
+		}};
+
+		for (MongoService<T> service : services)
+			service.clearCache();
+
+		send(PREFIX + "Cleared cache of " + services.size() + " services");
+	}
+
+	@Async
 	@Path("save <service> <uuid>")
 	@Description("Write an object to the database")
 	<T extends DatabaseObject> void save(MongoService<T> service, UUID uuid) {

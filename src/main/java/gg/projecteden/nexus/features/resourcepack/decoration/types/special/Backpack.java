@@ -18,7 +18,7 @@ public class Backpack extends DecorationConfig {
 		this.id = "backpack_3d_" + tier.name().toLowerCase();
 		this.name = "Backpack";
 		this.material = Backpacks.getDefaultBackpack().getType();
-		this.modelId = tier.getModelID();
+		this.model = tier.getModel();
 		this.hitboxes = Hitbox.NONE();
 		this.disabledPlacements = PlacementType.FLOOR.getDisabledPlacements();
 		this.overrideTabComplete = true;

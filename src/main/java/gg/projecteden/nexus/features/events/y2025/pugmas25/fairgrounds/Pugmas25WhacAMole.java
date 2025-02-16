@@ -7,13 +7,23 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.EdenEventGameConfig;
 import gg.projecteden.nexus.features.events.EdenEventSinglePlayerGame;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.Enchant;
+import gg.projecteden.nexus.utils.EntityUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.data.type.Piston;
-import org.bukkit.entity.*;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -34,7 +44,7 @@ import java.util.concurrent.ConcurrentHashMap;
 	world = "pugmas25",
 	playRegion = "pugmas25_whacamole_play"
 )
-@Environments({Env.PROD, Env.STAGING})
+@Environments({Env.PROD, Env.UPDATE})
 public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 	private static Pugmas25WhacAMole instance;
 

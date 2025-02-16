@@ -27,7 +27,7 @@ public class Pugmas21MultiModelStructure {
 	@RequiredArgsConstructor
 	public static class Model {
 		private final Map<BlockFace, Integer> modifiers;
-		private final int modelId;
+		private final String modelId;
 		private BlockFace direction;
 
 		private ArmorStand armorStand;
@@ -47,7 +47,7 @@ public class Pugmas21MultiModelStructure {
 		public void spawn(Location location) {
 			armorStand = ArmorStandEditorCommand.summon(modify(location.clone()), armorStand -> {
 				armorStand.setVisible(false);
-				armorStand.setItem(EquipmentSlot.HEAD, new ItemBuilder(Material.PAPER).modelId(modelId).build());
+				armorStand.setItem(EquipmentSlot.HEAD, new ItemBuilder(Material.PAPER).model(modelId).build());
 			});
 		}
 
@@ -62,7 +62,7 @@ public class Pugmas21MultiModelStructure {
 		return this;
 	}
 
-	public Pugmas21MultiModelStructure add(Map<BlockFace, Integer> modifier, Integer modelId) {
+	public Pugmas21MultiModelStructure add(Map<BlockFace, Integer> modifier, String modelId) {
 		models.add(new Model(modifier, modelId));
 		return this;
 	}

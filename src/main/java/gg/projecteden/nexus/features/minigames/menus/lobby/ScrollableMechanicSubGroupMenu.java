@@ -11,7 +11,7 @@ import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicSubGroup;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
@@ -67,7 +67,7 @@ public class ScrollableMechanicSubGroupMenu extends ScrollableInventoryProvider 
 
 		if (MinigameInviter.canSendInvite(viewer))
 			selfContents.set(0, 1, ClickableItem.of(inviteItem, e -> Tasks.wait(2, () -> {
-				if (CustomMaterial.of(viewer.getItemOnCursor()) == CustomMaterial.ENVELOPE_1)
+				if (ItemModelType.of(viewer.getItemOnCursor()) == ItemModelType.ENVELOPE_1)
 					viewer.setItemOnCursor(new ItemStack(Material.AIR));
 				else if (Nullables.isNullOrAir(viewer.getItemOnCursor()))
 					viewer.setItemOnCursor(inviteItem.build());
@@ -89,7 +89,7 @@ public class ScrollableMechanicSubGroupMenu extends ScrollableInventoryProvider 
 				}
 
 				final List<Arena> arenas = ArenaManager.getAllEnabled(mechanic);
-				boolean holdingInvite = CustomMaterial.of(viewer.getItemOnCursor()) == CustomMaterial.ENVELOPE_1;
+				boolean holdingInvite = ItemModelType.of(viewer.getItemOnCursor()) == ItemModelType.ENVELOPE_1;
 				if (arenas.isEmpty())
 					PlayerUtils.send(e.getPlayer(), Minigames.PREFIX + "&cNo arenas found for " + gg.projecteden.api.common.utils.StringUtils.camelCase(mechanic));
 				else if (arenas.size() == 1) {
@@ -115,7 +115,7 @@ public class ScrollableMechanicSubGroupMenu extends ScrollableInventoryProvider 
 	}
 
 	public static ItemBuilder getInviteItem(Player player) {
-		final ItemBuilder inviteItem = new ItemBuilder(CustomMaterial.ENVELOPE_1)
+		final ItemBuilder inviteItem = new ItemBuilder(ItemModelType.ENVELOPE_1)
 			.name("&eInvite")
 			.lore("")
 			.lore("&fClick a map to send an invite");
@@ -127,7 +127,7 @@ public class ScrollableMechanicSubGroupMenu extends ScrollableInventoryProvider 
 	}
 
 	private ItemStack getArenaItem(MechanicType mechanicType, boolean main) {
-		ItemBuilder item = main ? mechanicType.get().getMenuImage() : new ItemBuilder(CustomMaterial.INVISIBLE);
+		ItemBuilder item = main ? mechanicType.get().getMenuImage() : new ItemBuilder(ItemModelType.INVISIBLE);
 		return itemBuilder.apply(mechanicType, item).build();
 	}
 

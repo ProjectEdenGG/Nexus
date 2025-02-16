@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.survival.avontyre.weeklywakka;
 
 import gg.projecteden.api.common.utils.TimeUtils;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomFont;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia;
 import gg.projecteden.nexus.features.vanish.Vanish;
@@ -30,8 +30,8 @@ public class WeeklyWakkaUtils {
 	private static final int npcId = 5079;
 	@Getter
 	private static final int stationaryNPCId = 5080;
-	private static final CustomMaterial detectorMaterial = CustomMaterial.DETECTOR;
-	private static final ItemBuilder detector = new ItemBuilder(detectorMaterial).name("Wakka Detector").lore("&eWeekly Wakka Item");
+	private static final ItemModelType DETECTOR_ITEM_MODEL_TYPE = ItemModelType.DETECTOR;
+	private static final ItemBuilder detector = new ItemBuilder(DETECTOR_ITEM_MODEL_TYPE).name("Wakka Detector").lore("&eWeekly Wakka Item");
 
 	public static ItemStack getDetector() {
 		return detector.build();
@@ -56,11 +56,11 @@ public class WeeklyWakkaUtils {
 		if (Nullables.isNullOrAir(itemStack))
 			return false;
 
-		return detectorMaterial.is(itemStack);
+		return DETECTOR_ITEM_MODEL_TYPE.is(itemStack);
 	}
 
 	public static boolean isHoldingTrackingDevice(Player player) {
-		ItemStack detector = ItemUtils.getTool(player, detectorMaterial);
+		ItemStack detector = ItemUtils.getTool(player, DETECTOR_ITEM_MODEL_TYPE);
 		if (Nullables.isNullOrAir(detector))
 			return false;
 
