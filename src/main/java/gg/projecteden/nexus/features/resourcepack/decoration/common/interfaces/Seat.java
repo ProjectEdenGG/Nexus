@@ -98,6 +98,11 @@ public interface Seat extends Interactable {
 	}
 
 	default boolean canSit(Player player, Location location) {
+		if (true) {
+			DecorationError.DISABLED.send(player);
+			return false;
+		}
+
 		if (isSitting(player)) {
 			DecorationLang.debug(player, "player is already sitting");
 			return false;
