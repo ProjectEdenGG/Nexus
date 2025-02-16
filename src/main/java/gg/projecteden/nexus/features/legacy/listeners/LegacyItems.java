@@ -61,14 +61,12 @@ public class LegacyItems implements Listener {
 	@EventHandler
 	public void on(InventoryOpenEvent event) {
 		final InventoryHolder holder = event.getInventory().getHolder();
-		Location location;
+		Location location = null;
 		if (holder == null)
 			if (event.getInventory().getType() != InventoryType.ENDER_CHEST)
 				return;
 			else
 				location = event.getPlayer().getLocation();
-		else
-			location = holder.getInventory().getLocation();
 
 		if (holder instanceof Player player && !PlayerUtils.isSelf(event.getPlayer(), player))
 			return;
@@ -81,6 +79,9 @@ public class LegacyItems implements Listener {
 
 		if (holder instanceof SmartInventoryHolder)
 			return;
+
+		if (location == null)
+			location = holder.getInventory().getLocation();
 
 		convert(location, event.getInventory());
 	}
