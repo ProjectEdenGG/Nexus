@@ -80,10 +80,12 @@ public interface Seat extends Interactable {
 			_armorStand.setDisabledSlots(EquipmentSlot.values());
 		});
 
-		if (armorStand.isValid())
+		if (armorStand.isValid()) {
 			armorStand.addPassenger(player);
-
-		DecorationLang.debug(player, "sat down");
+			DecorationLang.debug(player, "sat down");
+		} else {
+			DecorationLang.debug(player, "&cfailed to sit down, armorstand is invalid");
+		}
 
 		return armorStand;
 	}
