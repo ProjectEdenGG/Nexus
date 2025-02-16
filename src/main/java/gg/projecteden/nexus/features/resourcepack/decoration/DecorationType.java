@@ -858,7 +858,7 @@ public enum DecorationType {
 	COUCH_WOODEN_CUSHIONED_END_LEFT(new Couch(false, "Cushioned Wooden Couch Left End", ItemModelType.COUCH_WOODEN_CUSHIONED_END_LEFT, ColorableType.DYE, CouchPart.END)),
 
 	@TypeConfig(money = 150, tokens = 15, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	COUCH_WOODEN_CUSHIONED_END_RIGHT(new Couch(false, "Cushioned Wooden Couch Left Right", ItemModelType.COUCH_WOODEN_CUSHIONED_END_RIGHT, ColorableType.DYE, CouchPart.END)),
+	COUCH_WOODEN_CUSHIONED_END_RIGHT(new Couch(false, "Cushioned Wooden Couch Right End", ItemModelType.COUCH_WOODEN_CUSHIONED_END_RIGHT, ColorableType.DYE, CouchPart.END)),
 
 	@TypeConfig(money = 150, tokens = 15, tabs = {Tab.FURNITURE, Tab.CHAIRS})
 	COUCH_WOODEN_CUSHIONED_MIDDLE(new Couch(false, "Cushioned Wooden Couch Middle", ItemModelType.COUCH_WOODEN_CUSHIONED_MIDDLE, ColorableType.DYE, CouchPart.STRAIGHT)),
@@ -873,7 +873,7 @@ public enum DecorationType {
 	COUCH_CLOTH_END_LEFT(new Couch(false, "Cloth Couch Left End", ItemModelType.COUCH_CLOTH_END_LEFT, ColorableType.DYE, CouchPart.END)),
 
 	@TypeConfig(money = 195, tokens = 19, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	COUCH_CLOTH_END_RIGHT(new Couch(false, "Cloth Couch Left Right", ItemModelType.COUCH_CLOTH_END_RIGHT, ColorableType.DYE, CouchPart.END)),
+	COUCH_CLOTH_END_RIGHT(new Couch(false, "Cloth Couch Right End", ItemModelType.COUCH_CLOTH_END_RIGHT, ColorableType.DYE, CouchPart.END)),
 
 	@TypeConfig(money = 195, tokens = 19, tabs = {Tab.FURNITURE, Tab.CHAIRS})
 	COUCH_CLOTH_MIDDLE(new Couch(false, "Cloth Couch Middle", ItemModelType.COUCH_CLOTH_MIDDLE, ColorableType.DYE, CouchPart.STRAIGHT)),
