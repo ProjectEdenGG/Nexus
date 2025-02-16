@@ -13,12 +13,13 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.Skull;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 public class HubTreasureHunt implements Listener {
-	private static final String HEAD_ID = "13379";
+	private static final String HEAD_TEXTURE = "c3bdbaedd7d6444e79aa8222f8981240204cc3cc1c9655118687618db8cec";
 	static final int TOTAL_TREASURE_CHESTS = 25;
 
 	public HubTreasureHunt() {
@@ -39,13 +40,19 @@ public class HubTreasureHunt implements Listener {
 		debug(player, "- At hub");
 
 		Block block = event.getBlock();
-		String id = event.getHeadDatabaseId();
-		if (!HEAD_ID.equals(id)) {
-			debug(player, "<- Head ID " + id + " != " + HEAD_ID);
+		Skull skull = (Skull) block.getState();
+		String url = "";
+
+		try {
+			url = skull.getPlayerProfile().getTextures().getSkin().toString();
+		} catch (Exception ex) {}
+
+		if (!url.contains(HEAD_TEXTURE)) {
+			debug(player, "<- Head texture " + url + " !contains " + HEAD_TEXTURE);
 			return;
 		}
 
-		debug(player, "- Matching Head ID");
+		debug(player, "- Matching Head Texture");
 
 		final String PREFIX = Features.get(Hub.class).getPrefix();
 		final HubTreasureHunterService service = new HubTreasureHunterService();
