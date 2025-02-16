@@ -84,7 +84,7 @@ public class Sleep extends Feature implements Listener {
 					active += getCanSleepCount(world);
 				}
 
-				int needed = (int) Math.ceil(active / 2d);
+				int needed = Math.max(1, (int) Math.floor(active / 2d));
 
 				if (worldGroup.getState() == State.SLEEPING)
 					if (sleeping >= needed)

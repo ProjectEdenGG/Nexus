@@ -194,7 +194,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 
 	public static Map<Environment, String> SEEDS = new HashMap<>();
 
-	@Path("setNewSeed <seed>")
+	@Path("setNewSeed <environment> <seed>")
 	void setNewSeed(Environment environment, String seed) {
 		SEEDS.put(environment, seed);
 		send(PREFIX + "Resource " + camelCase(environment) + " will generate with seed " + seed);
@@ -451,11 +451,10 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 				run.accept("mv confirm");
 				run.accept("mv create " + world + " " + args + (seed == null ? "" : " -s " + seed));
 
-				Tasks.wait(wait.getAndAdd(5), () -> {
-					resetting = false;
-					PlayerUtils.send(debugger, StringUtils.getPrefix(ResourceWorldCommand.class) + "When ready, do /nexus reload");
-				});
+				Tasks.wait(wait.getAndAdd(5), () -> resetting = false);
 			}
+
+			Tasks.wait(wait.getAndAdd(5), () -> PlayerUtils.send(debugger, StringUtils.getPrefix(ResourceWorldCommand.class) + "When ready, do /nexus reload"));
 		});
 	}
 
