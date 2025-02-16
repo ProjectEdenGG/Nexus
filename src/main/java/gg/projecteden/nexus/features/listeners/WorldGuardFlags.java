@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.virtualinventories.models.inventories.Virtu
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.InventoryUtils.BlockInventoryType;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
@@ -116,7 +117,7 @@ public class WorldGuardFlags implements Listener {
 			if (Nullables.isNullOrAir(itemStack))
 				return;
 
-			if (Model.hasModel(itemStack)) {
+			if (Model.hasModel(itemStack) || new ItemBuilder(itemStack).customModelData() != 0) {
 				itemFrame.setSilent(true);
 				event.setCancelled(true);
 			}
