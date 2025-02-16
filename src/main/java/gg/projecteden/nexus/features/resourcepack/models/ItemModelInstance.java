@@ -126,13 +126,14 @@ public class ItemModelInstance implements Comparable<ItemModelInstance> {
 	}};
 
 	private static void warn(Material material, int data, Location location) {
-		String message = "Could not find new model for custom model data " + data + " on material " + material + " at " + StringUtils.getShortLocationString(location);
-		Nexus.warn(message);
 		if (ignoredWarns.containsKey(material) && ignoredWarns.get(material).contains(data))
 			return;
 
 		if (material == Material.ARROW && data >= 1000 && data <= 4999)
 			return;
+
+		String message = "Could not find new model for custom model data " + data + " on material " + material + " at " + StringUtils.getShortLocationString(location);
+		Nexus.warn(message);
 
 		if (location != null && location.getWorld().getName().contains("pugmas"))
 			Dev.WAKKA.send("&e[Saturn] &c" + message);
