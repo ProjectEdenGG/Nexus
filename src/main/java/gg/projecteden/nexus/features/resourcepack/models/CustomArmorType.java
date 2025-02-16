@@ -22,6 +22,7 @@ public enum CustomArmorType {
 	THOR("armor/thor"),
 	WIZARD("armor/wizard"),
 	WOLF("armor/wolf"),
+	FISHING("armor/fishing"),
 	;
 
 	private final String id;

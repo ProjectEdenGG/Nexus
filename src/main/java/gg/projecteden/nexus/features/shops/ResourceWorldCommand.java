@@ -3,13 +3,19 @@ package gg.projecteden.nexus.features.shops;
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.annotations.Environments;
+import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.homes.HomesFeature;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -24,8 +30,16 @@ import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.models.warps.Warps.Warp;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -35,6 +49,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -42,7 +57,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.*;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
@@ -50,8 +69,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -170,6 +190,14 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 
 		save(world());
 		send(PREFIX + "Added &e" + amount + " &3locations to logger, new size: &e" + getLogger(world()).size());
+	}
+
+	public static Map<Environment, String> SEEDS = new HashMap<>();
+
+	@Path("setNewSeed <seed>")
+	void setNewSeed(Environment environment, String seed) {
+		SEEDS.put(environment, seed);
+		send(PREFIX + "Resource " + camelCase(environment) + " will generate with seed " + seed);
 	}
 
 	private ResourceMarketLogger getLogger(World world) {
@@ -401,24 +429,27 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 
 		AtomicInteger wait = new AtomicInteger();
 		Tasks.wait(wait.getAndAdd(40), () -> {
-			for (String world : Arrays.asList("resource", "resource_nether", "resource_the_end")) {
+			for (Environment environment : EnumUtils.valuesExcept(Environment.class, Environment.CUSTOM)) {
+				String world = "resource" + (environment == Environment.NORMAL ? "" : "_" + environment.name().toLowerCase());
+
 				final Consumer<String> run = command -> Tasks.wait(wait.getAndAdd(5), () -> {
 					Nexus.log("Running /" + command);
 					PlayerUtils.runCommandAsConsole(command);
 				});
 
+				final String args;
+				switch (environment) {
+					case NORMAL -> args = "normal";
+					case NETHER -> args = "nether";
+					case THE_END -> args = "end";
+					default -> throw new IllegalStateException("Unexpected value: " + environment);
+				}
+
+				String seed = SEEDS.get(environment);
+
 				run.accept("mv delete " + world);
 				run.accept("mv confirm");
-
-				final String args;
-				if (world.contains("nether"))
-					args = "nether";
-				else if (world.contains("the_end"))
-					args = "end";
-				else
-					args = "normal";
-
-				run.accept("mv create " + world + " " + args);
+				run.accept("mv create " + world + " " + args + (seed == null ? "" : " -s " + seed));
 
 				Tasks.wait(wait.getAndAdd(5), () -> {
 					resetting = false;

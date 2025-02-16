@@ -151,13 +151,14 @@ public class ItemModelInstance implements Comparable<ItemModelInstance> {
 		return convertLegacy(item.getType(), new ItemBuilder(item).customModelData(), location);
 	}
 
+	private static final CustomModelConfig LEGACY_CONFIG = new CustomModelConfigService().get0();
+
 	public static ItemModelInstance convertLegacy(Material material, int data, Location location) {
 		if (material == Material.LEATHER_BOOTS)  // keeps converting custom armor to stockings
 			return null;
 
-		final CustomModelConfig config = new CustomModelConfigService().get0();
-		final var oldModels = config.getOldModels();
-		final var newModels = config.getNewModels();
+		final var oldModels = LEGACY_CONFIG.getOldModels();
+		final var newModels = LEGACY_CONFIG.getNewModels();
 		if (!oldModels.containsKey(material))
 			return convertFromCustomModelData(material, data, location);
 
