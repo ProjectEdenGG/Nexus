@@ -381,6 +381,12 @@ public class ItemBuilderCommand extends CustomCommand {
 		item.customModelData(data);
 	}
 
+	@Path("customModelData remove")
+	@Description("Remove the Custom Model Data")
+	void customModelData_remove() {
+		item.removeCustomModelData();
+	}
+
 	@Path("maxStackSize <int>")
 	@Description("Set the max stack size")
 	void maxStackSize(int size) {

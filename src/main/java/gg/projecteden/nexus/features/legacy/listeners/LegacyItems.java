@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpda
 import gg.projecteden.nexus.features.vaults.VaultCommand.VaultMenu.VaultHolder;
 import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
@@ -43,9 +44,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+
+import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
 
 public class LegacyItems implements Listener {
 
@@ -116,8 +118,14 @@ public class LegacyItems implements Listener {
 			return;
 
 		ItemStack converted = convert(location, item);
-		if (ItemUtils.isModelMatch(item, converted))
+		if (ItemUtils.isModelMatch(item, converted)) {
+			if (isNotNullOrEmpty(Model.of(item)) && isNotNullOrEmpty(Model.of(converted))) {
+				ItemModelType itemModelType = ItemModelType.of(item);
+				if (itemModelType != null && !itemModelType.hasCustomModelData())
+					setter.accept(new ItemBuilder(item).removeCustomModelData().build());
+			}
 			return;
+		}
 
 		setter.accept(converted);
 	}
@@ -128,6 +136,7 @@ public class LegacyItems implements Listener {
 
 		if (location != null)
 			item = convertIfShulkerBox(location.getWorld(), item, null);
+
 		item = Beehives.addLore(item);
 		item = convertCrateKeys(item);
 
@@ -137,11 +146,13 @@ public class LegacyItems implements Listener {
 
 		item = manualConversions(item);
 		builder = new ItemBuilder(item);
-		if (Objects.equals(new ItemBuilder(item).model(), ItemModelType.GUI_NUMBER.getModel()))
+
+		ItemModelType itemModelType = ItemModelType.of(item);
+		if (itemModelType != null && itemModelType.hasCustomModelData())
 			return item;
 
 		if (builder.customModelData() == 0)
-			return item;
+			return new ItemBuilder(item).removeCustomModelData().build();
 
 		ItemModelInstance newModel;
 		try {
@@ -156,10 +167,12 @@ public class LegacyItems implements Listener {
 
 		final var converted = new ItemBuilder(item)
 			.material(newModel.getMaterial())
-			.model(newModel.getItemModel());
+			.model(newModel.getItemModel())
+			.removeCustomModelData();
 
 		if (location == null)
 			return converted.build();
+
 		return convertIfShulkerBox(location.getWorld(), item, converted);
 	}
 

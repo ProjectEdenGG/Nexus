@@ -6,11 +6,13 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Field;
 import java.util.Objects;
 
 @Getter
@@ -1725,6 +1727,7 @@ public enum ItemModelType {
 	AXOLOTL_BUCKET_BROWN("misc/axolotl/axolotl_bucket_brown", Material.AXOLOTL_BUCKET),
 	AXOLOTL_BUCKET_CYAN("misc/axolotl/axolotl_bucket_cyan", Material.AXOLOTL_BUCKET),
 	AXOLOTL_BUCKET_YELLOW("misc/axolotl/axolotl_bucket_yellow", Material.AXOLOTL_BUCKET),
+	@HasCustomModelData
 	COOLDOWN("misc/cooldown", true),
 	CRATE_KEY_BEARFAIR("misc/crate_keys/bearfair"),
 	CRATE_KEY_PUGMAS("misc/crate_keys/christmas"),
@@ -2287,6 +2290,7 @@ public enum ItemModelType {
 	GUI_MCMMO_UNARMED("ui/gui/mcmmo/unarmed"),
 	GUI_MCMMO_WOODCUTTING("ui/gui/mcmmo/woodcutting"),
 	GUI_ARROW_RIGHT("ui/gui/next", true),
+	@HasCustomModelData
 	GUI_NUMBER("ui/gui/number", true),
 	GUI_PLAYER_HEAD("ui/gui/player_head", Material.PLAYER_HEAD),
 	PRESENCE_ACTIVE("ui/gui/presence/active"),
@@ -2536,6 +2540,15 @@ public enum ItemModelType {
 			case INFINITE_WATER_BUCKET -> true;
 			default -> false;
 		};
+	}
+
+	@SneakyThrows
+	public Field getField() {
+		return getClass().getField(name());
+	}
+
+	public boolean hasCustomModelData() {
+		return getField().isAnnotationPresent(HasCustomModelData.class);
 	}
 
 	public ItemBuilder getItemBuilder() {
