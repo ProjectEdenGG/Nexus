@@ -31,7 +31,8 @@ public enum BiomeTag {
 	ICE_SPIKES(Material.PACKED_ICE, new Tag(Biome.ICE_SPIKES)),
 	PLAINS(Material.GRASS_BLOCK, new Tag("PLAINS", MatchMode.CONTAINS).append(Biome.MEADOW)),
 	ALL_FORESTS(Material.BIRCH_LEAVES, new Tag(FORESTS)
-		.append("GIANT_SPRUCE_TAIGA", MatchMode.CONTAINS)),
+		.append("GIANT_SPRUCE_TAIGA", MatchMode.CONTAINS)
+		.append(Biome.CHERRY_GROVE, Biome.PALE_GARDEN)),
 	ALL_NETHER(Material.NETHERRACK, new Tag(Biome.NETHER_WASTES, Biome.BASALT_DELTAS, Biome.CRIMSON_FOREST,
 		Biome.WARPED_FOREST, Biome.SOUL_SAND_VALLEY)),
 	ALL_DESERT(Material.SAND, new Tag("DESERT", MatchMode.CONTAINS)),
