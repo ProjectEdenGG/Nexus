@@ -12,6 +12,7 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.api.BlockPartyWebSocketServer;
+import gg.projecteden.nexus.features.api.BlockPartyWebSocketServer.BlockPartyClientMessage;
 import gg.projecteden.nexus.features.events.DebugDotCommand;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
@@ -81,12 +82,14 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.alchemy.Potion;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BrewingStand;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.type.RedstoneRail;
 import org.bukkit.boss.BarColor;
@@ -99,6 +102,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.inventory.BrewerInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -119,6 +123,10 @@ import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @HideFromWiki
 @Permission(Group.ADMIN)
@@ -466,7 +474,7 @@ public class TestCommand extends CustomCommand implements Listener {
 
 	@Path("setTabListName <text...>")
 	void setTabListName(String text) {
-		player().setPlayerListName(StringUtils.colorize(text));
+		player().setPlayerListName(colorize(text));
 		send("Updated");
 	}
 
@@ -780,12 +788,91 @@ public class TestCommand extends CustomCommand implements Listener {
 
 	@Path("blockparty play")
 	void wsPlay() {
-		BlockPartyWebSocketServer.broadcast(BlockPartyWebSocketServer.BlockPartyClientMessage.to(UUIDUtils.UUID0).play());
+		BlockPartyWebSocketServer.broadcast(BlockPartyClientMessage.to(UUIDUtils.UUID0).play());
 	}
 
 	@Path("blockparty pause")
 	void wsPause() {
-		BlockPartyWebSocketServer.broadcast(BlockPartyWebSocketServer.BlockPartyClientMessage.to(UUIDUtils.UUID0).pause());
+		BlockPartyWebSocketServer.broadcast(BlockPartyClientMessage.to(UUIDUtils.UUID0).pause());
+	}
+
+	@Path("brewingStand")
+	void brewingStand() {
+		Block stand = getTargetBlockRequired(Material.BREWING_STAND);
+		BrewingStand brewingStand = (BrewingStand) stand.getState();
+		brewingStand.setFuelLevel(10);
+
+		{
+			BrewerInventory inventory = brewingStand.getInventory();
+
+			inventory.setItem(0, new ItemStack(Material.POTION));        // Bottle slot 1
+			inventory.setItem(1, new ItemStack(Material.POTION));        // Bottle slot 2
+			inventory.setItem(2, new ItemStack(Material.POTION));        // Bottle slot 3
+			inventory.setItem(3, new ItemStack(Material.TURTLE_EGG));    // Ingredient slot
+			inventory.setItem(4, new ItemStack(Material.BLAZE_POWDER));  // Fuel slot
+			send("Inventory: " + Arrays.stream(inventory.getContents()).map(StringUtils::pretty).collect(Collectors.joining(", ")));
+
+			brewingStand.update(true, false);
+			player().updateInventory();
+		}
+
+		AtomicInteger time = new AtomicInteger(400);
+		AtomicInteger taskId = new AtomicInteger();
+		Runnable runnable = () -> {
+			try {
+				BrewerInventory inventory = brewingStand.getInventory();
+				brewingStand.setBrewingTime(time.getAndDecrement());
+				brewingStand.setRecipeBrewTime(time.get());
+				brewingStand.update(true, false);
+				send("Inventory: " + Arrays.stream(inventory.getContents()).filter(Nullables::isNotNullOrAir).map(StringUtils::pretty).collect(Collectors.joining(", ")));
+
+				if (time.get() == 1) {
+					ItemStack ingredient = inventory.getIngredient();
+					send("ingredient 1" + StringUtils.pretty(ingredient));
+					if (isNotNullOrAir(ingredient))
+						ingredient.subtract();
+					send("ingredient 2" + StringUtils.pretty(ingredient));
+
+					inventory.setItem(0, createCustomPotion());        // Bottle slot 1
+					inventory.setItem(1, createCustomPotion());        // Bottle slot 2
+					inventory.setItem(2, createCustomPotion());        // Bottle slot 3
+					inventory.setItem(3, ingredient);
+					send("ingredient 3" + StringUtils.pretty(inventory.getIngredient()));
+
+					brewingStand.setFuelLevel(brewingStand.getFuelLevel() - 1);
+
+					brewingStand.update(true, false);
+					player().updateInventory();
+
+					PlayerUtils.giveItem(player(), inventory.getItem(0));
+
+					time.set(400);
+				}
+
+				if (brewingStand.getFuelLevel() == 0) {
+					send("End 1");
+					Tasks.cancel(taskId.get());
+				} else if (isNullOrAir(inventory.getIngredient())) {
+					send("End 2");
+					Tasks.cancel(taskId.get());
+				} else if (inventory.getIngredient().getAmount() == 0) {
+					send("End 3");
+					Tasks.cancel(taskId.get());
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				Tasks.cancel(taskId.get());
+			}
+		};
+
+		taskId.set(Tasks.repeat(0, TickTime.TICK, runnable));
+	}
+
+	private ItemStack createCustomPotion() {
+		return new ItemBuilder(Material.POTION)
+			.name("Potion of Shrinking")
+			.potionEffectColor(Color.fromRGB(128, 0, 128))
+			.build();
 	}
 
 }

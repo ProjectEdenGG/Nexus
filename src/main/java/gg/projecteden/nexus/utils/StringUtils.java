@@ -229,6 +229,9 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	 * @return <amount> <description of item>
 	 */
 	public static String pretty(ItemStack item, int amount) {
+		if (item == null)
+			return "null";
+
 		if (ItemBuilder.Model.hasModel(item)) {
 			String displayName = item.getItemMeta().getDisplayName();
 
@@ -241,24 +244,26 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 
 		String name = camelCase(item.getType().name());
 
-		final Map<Enchantment, Integer> enchants = new HashMap<>();
-		if (item.getItemMeta() instanceof EnchantmentStorageMeta meta)
-			enchants.putAll(meta.getStoredEnchants());
-		else if (item.getItemMeta().hasEnchants())
-			enchants.putAll(item.getEnchantments());
+		if (item.getItemMeta() != null) {
+			final Map<Enchantment, Integer> enchants = new HashMap<>();
+			if (item.getItemMeta() instanceof EnchantmentStorageMeta meta)
+				enchants.putAll(meta.getStoredEnchants());
+			else if (item.getItemMeta().hasEnchants())
+				enchants.putAll(item.getEnchantments());
 
-		if (!enchants.isEmpty())
-			name = enchants.keySet().stream().map(enchantment -> {
-				int level = enchants.get(enchantment);
-				final String key = camelCase(enchantment.getKey().getKey());
-				if (level > 1)
-					return key + " " + level;
-				else
-					return key;
-			}).collect(Collectors.joining(", ")) + " " + name;
+			if (!enchants.isEmpty())
+				name = enchants.keySet().stream().map(enchantment -> {
+					int level = enchants.get(enchantment);
+					final String key = camelCase(enchantment.getKey().getKey());
+					if (level > 1)
+						return key + " " + level;
+					else
+						return key;
+				}).collect(Collectors.joining(", ")) + " " + name;
 
-		if (item.getItemMeta() instanceof PotionMeta)
-			name = formatPotionData(item) + " " + name;
+			if (item.getItemMeta() instanceof PotionMeta)
+				name = formatPotionData(item) + " " + name;
+		}
 
 		return item.getAmount() * amount + " " + name;
 	}

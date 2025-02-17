@@ -737,12 +737,19 @@ public class ItemUtils {
 			if (!(item.getItemMeta() instanceof PotionMeta potionMeta))
 				return new PotionWrapper();
 
-			return of(toNMS(potionMeta.getBasePotionType()), potionMeta.getCustomEffects());
+			Potion nms = toNMS(potionMeta.getBasePotionType());
+			if (nms == null)
+				return new PotionWrapper();
+
+			return of(nms, potionMeta.getCustomEffects());
 		}
 
 		@NotNull
 		public static PotionWrapper of(AreaEffectCloudApplyEvent event) {
 			final Potion potion = toNMS(event.getEntity().getBasePotionType());
+			if (potion == null)
+				return new PotionWrapper();
+
 			final List<PotionEffect> customEffects = event.getEntity().getCustomEffects();
 			return of(potion, customEffects);
 		}
@@ -795,6 +802,8 @@ public class ItemUtils {
 		}
 
 		public static Potion toNMS(PotionType basePotionData) {
+			if (basePotionData == null)
+				return null;
 			var potion = BuiltInRegistries.POTION.get(ResourceLocation.withDefaultNamespace(basePotionData.getKey().getKey())).orElse(null);
 			if (potion == null)
 				return null;
