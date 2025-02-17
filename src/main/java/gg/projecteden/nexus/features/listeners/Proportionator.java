@@ -35,6 +35,8 @@ public class Proportionator implements Listener {
 
 	private static final Map<EntityType, Double> MIN_OVERRIDES = new HashMap<>() {{
 		put(EntityType.SPIDER, .3d);
+		put(EntityType.CAVE_SPIDER, .3d);
+		put(EntityType.BEE, .3d);
 	}};
 	private static final Map<EntityType, Double> MAX_OVERRIDES = new HashMap<>() {{
 		put(EntityType.RABBIT, 2d);
