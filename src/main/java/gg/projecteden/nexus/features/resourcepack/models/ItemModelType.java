@@ -2,6 +2,8 @@ package gg.projecteden.nexus.features.resourcepack.models;
 
 import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.features.resourcepack.models.annotations.AllowInVanillaRecipes;
+import gg.projecteden.nexus.features.resourcepack.models.annotations.HasCustomModelData;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import lombok.AllArgsConstructor;
@@ -1621,44 +1623,34 @@ public enum ItemModelType {
 	PIES_RHUBARB("food/pies/rhubarb", Material.PUMPKIN_PIE),
 	PIES_SWEET_POTATO("food/pies/sweet_potato", Material.PUMPKIN_PIE),
 	// functional
+	@Deprecated
 	BACKPACK("functional/backpacks/backpack", Material.SHULKER_BOX),
+	@AllowInVanillaRecipes
 	BACKPACK_3D_BASIC("functional/backpacks/backpack_3d_basic", true),
+	@AllowInVanillaRecipes
 	BACKPACK_3D_DIAMOND("functional/backpacks/backpack_3d_diamond", true),
+	@AllowInVanillaRecipes
 	BACKPACK_3D_GOLD("functional/backpacks/backpack_3d_gold", true),
+	@AllowInVanillaRecipes
 	BACKPACK_3D_IRON("functional/backpacks/backpack_3d_iron", true),
+	@AllowInVanillaRecipes
 	BACKPACK_3D_NETHERITE("functional/backpacks/backpack_3d_netherite", true),
-	BACKPACKS_BACKPACK_BLACK("functional/backpacks/backpack_black", Material.SHULKER_BOX),
-	BACKPACKS_BACKPACK_BLUE("functional/backpacks/backpack_blue", Material.SHULKER_BOX),
-	BACKPACKS_BACKPACK_BROWN("functional/backpacks/backpack_brown", Material.SHULKER_BOX),
-	BACKPACKS_BACKPACK_CYAN("functional/backpacks/backpack_cyan", Material.SHULKER_BOX),
-	BACKPACKS_BACKPACK_GRAY("functional/backpacks/backpack_gray", Material.SHULKER_BOX),
-	BACKPACKS_BACKPACK_GREEN("functional/backpacks/backpack_green", Material.SHULKER_BOX),
-	BACKPACKS_BACKPACK_LIGHT_BLUE("functional/backpacks/backpack_light_blue", Material.SHULKER_BOX),
-	BACKPACKS_BACKPACK_LIGHT_GRAY("functional/backpacks/backpack_light_gray", Material.SHULKER_BOX),
-	BACKPACKS_BACKPACK_LIME("functional/backpacks/backpack_lime", Material.SHULKER_BOX),
-	BACKPACKS_BACKPACK_MAGENTA("functional/backpacks/backpack_magenta", Material.SHULKER_BOX),
-	BACKPACKS_BACKPACK_ORANGE("functional/backpacks/backpack_orange", Material.SHULKER_BOX),
-	BACKPACKS_BACKPACK_PINK("functional/backpacks/backpack_pink", Material.SHULKER_BOX),
-	BACKPACKS_BACKPACK_PURPLE("functional/backpacks/backpack_purple", Material.SHULKER_BOX),
-	BACKPACKS_BACKPACK_RED("functional/backpacks/backpack_red", Material.SHULKER_BOX),
-	BACKPACKS_BACKPACK_WHITE("functional/backpacks/backpack_white", Material.SHULKER_BOX),
-	BACKPACKS_BACKPACK_YELLOW("functional/backpacks/backpack_yellow", Material.SHULKER_BOX),
-	BACKPACKS_CUSTOM_BEE("functional/backpacks/custom/bee", Material.SHULKER_BOX),
-	BACKPACKS_CUSTOM_BLUE_AXOLOTL("functional/backpacks/custom/blue_axolotl", Material.SHULKER_BOX),
-	BACKPACKS_CUSTOM_BROWN_BEAR("functional/backpacks/custom/brown_bear", Material.SHULKER_BOX),
-	BACKPACKS_CUSTOM_CAT("functional/backpacks/custom/cat", Material.SHULKER_BOX),
-	BACKPACKS_CUSTOM_CHARACTER1("functional/backpacks/custom/character1", Material.SHULKER_BOX),
-	BACKPACKS_CUSTOM_CHARACTER2("functional/backpacks/custom/character2", Material.SHULKER_BOX),
-	BACKPACKS_CUSTOM_CYAN("functional/backpacks/custom/cyan", Material.SHULKER_BOX),
-	BACKPACKS_CUSTOM_DRAGON("functional/backpacks/custom/dragon", Material.SHULKER_BOX),
-	BACKPACKS_CUSTOM_FOX("functional/backpacks/custom/fox", Material.SHULKER_BOX),
-	BACKPACKS_CUSTOM_GRAY("functional/backpacks/custom/gray", Material.SHULKER_BOX),
-	BACKPACKS_CUSTOM_GREEN_FROG("functional/backpacks/custom/green_frog", Material.SHULKER_BOX),
-	BACKPACKS_CUSTOM_MAGENTA("functional/backpacks/custom/magenta", Material.SHULKER_BOX),
-	BACKPACKS_CUSTOM_PANDA("functional/backpacks/custom/panda", Material.SHULKER_BOX),
-	BACKPACKS_CUSTOM_PENGUIN("functional/backpacks/custom/penguin", Material.SHULKER_BOX),
-	BACKPACKS_CUSTOM_PIG("functional/backpacks/custom/pig", Material.SHULKER_BOX),
-	BACKPACKS_CUSTOM_RAINBOW("functional/backpacks/custom/rainbow", Material.SHULKER_BOX),
+	BACKPACKS_CUSTOM_BEE("functional/backpacks/custom/bee", Material.PAPER),
+	BACKPACKS_CUSTOM_BLUE_AXOLOTL("functional/backpacks/custom/blue_axolotl", Material.PAPER),
+	BACKPACKS_CUSTOM_BROWN_BEAR("functional/backpacks/custom/brown_bear", Material.PAPER),
+	BACKPACKS_CUSTOM_CAT("functional/backpacks/custom/cat", Material.PAPER),
+	BACKPACKS_CUSTOM_CHARACTER1("functional/backpacks/custom/character1", Material.PAPER),
+	BACKPACKS_CUSTOM_CHARACTER2("functional/backpacks/custom/character2", Material.PAPER),
+	BACKPACKS_CUSTOM_CYAN("functional/backpacks/custom/cyan", Material.PAPER),
+	BACKPACKS_CUSTOM_DRAGON("functional/backpacks/custom/dragon", Material.PAPER),
+	BACKPACKS_CUSTOM_FOX("functional/backpacks/custom/fox", Material.PAPER),
+	BACKPACKS_CUSTOM_GRAY("functional/backpacks/custom/gray", Material.PAPER),
+	BACKPACKS_CUSTOM_GREEN_FROG("functional/backpacks/custom/green_frog", Material.PAPER),
+	BACKPACKS_CUSTOM_MAGENTA("functional/backpacks/custom/magenta", Material.PAPER),
+	BACKPACKS_CUSTOM_PANDA("functional/backpacks/custom/panda", Material.PAPER),
+	BACKPACKS_CUSTOM_PENGUIN("functional/backpacks/custom/penguin", Material.PAPER),
+	BACKPACKS_CUSTOM_PIG("functional/backpacks/custom/pig", Material.PAPER),
+	BACKPACKS_CUSTOM_RAINBOW("functional/backpacks/custom/rainbow", Material.PAPER),
 	BIRDHOUSE_DEPTHS_HANGING("functional/birdhouses/depths_hanging"),
 	BIRDHOUSE_DEPTHS_HORIZONTAL("functional/birdhouses/depths_horizontal"),
 	BIRDHOUSE_DEPTHS_VERTICAL("functional/birdhouses/depths_vertical"),
@@ -2476,18 +2468,17 @@ public enum ItemModelType {
 
 	private final Material material;
 	private final String model;
-	private final boolean allowedInVanillaRecipes; // Dying backpacks in crafting table
 
 	ItemModelType(String model) {
-		this(Material.PAPER, model, false);
+		this(Material.PAPER, model);
 	}
 
 	ItemModelType(String model, boolean dyeable) {
-		this(dyeable ? Material.LEATHER_HORSE_ARMOR : Material.PAPER, model, false);
+		this(dyeable ? Material.LEATHER_HORSE_ARMOR : Material.PAPER, model);
 	}
 
 	ItemModelType(String model, Material material) {
-		this(material, model, false);
+		this(material, model);
 	}
 
 	public static ItemModelType of(ItemStack item) {
@@ -2549,6 +2540,10 @@ public enum ItemModelType {
 
 	public boolean hasCustomModelData() {
 		return getField().isAnnotationPresent(HasCustomModelData.class);
+	}
+
+	public boolean isAllowedInVanillaRecipes() {
+		return getField().isAnnotationPresent(AllowInVanillaRecipes.class);
 	}
 
 	public ItemBuilder getItemBuilder() {

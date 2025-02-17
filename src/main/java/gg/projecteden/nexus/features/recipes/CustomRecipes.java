@@ -548,9 +548,11 @@ public class CustomRecipes extends Feature implements Listener {
 		if (!keyed.getKey().getNamespace().equalsIgnoreCase("minecraft"))
 			return;
 
-		for (ItemStack item : event.getInventory().getMatrix())
-			if (Model.of(item) != null && !(ItemModelType.of(item) != null && ItemModelType.of(item).isAllowedInVanillaRecipes()))
+		for (ItemStack item : event.getInventory().getMatrix()) {
+			ItemModelType itemModelType = ItemModelType.of(item);
+			if (Model.of(item) != null && !(itemModelType != null && itemModelType.isAllowedInVanillaRecipes()))
 				event.getInventory().setResult(new ItemStack(Material.AIR));
+		}
 	}
 
 	// Stolen from https://github.com/ezeiger92/QuestWorld2/blob/70f2be317daee06007f89843c79b3b059515d133/src/main/java/com/questworld/extension/builtin/CraftMission.java
