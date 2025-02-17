@@ -92,6 +92,11 @@ public class FriendsUser implements PlayerOwnedObject {
 			return;
 		}
 
+		if (toUser.getRequests_received().containsKey(uuid)) {
+			sendMessage("&cYou've already sent a request to " + toUser.getNickname());
+			return;
+		}
+
 		this.sentAdd(toUser);
 		toUser.receivedAdd(this);
 
