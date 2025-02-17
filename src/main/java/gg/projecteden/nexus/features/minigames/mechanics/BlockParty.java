@@ -1202,47 +1202,9 @@ public class BlockParty extends TeamlessMechanic {
 			List<CompletableFuture<Void>> commands = new ArrayList<>();
 			paths.forEach(filePath -> {
 				try {
-					if (!Files.isRegularFile(filePath)) return;
-
-					String name = filePath.getFileName().toString();
-					if (name.startsWith(".")) return;
-					if (!name.endsWith(".mp3")) return;
-
-					Nexus.log("Processing " + file.getAbsolutePath() + "/" + name);
-
-					String[] command = {
-						"ffmpeg",
-						"-y",
-						"-i",
-						file.getAbsolutePath() + "/" + name,
-						"-af",
-						"silenceremove=start_periods=1:start_threshold=-30dB",
-						file.getAbsolutePath() + "/silenceRemoved/" + name
-					};
-
-					CompletableFuture<Void> future = new CompletableFuture<>();
-					commands.add(future);
-					new ProcessBuilder(command)
-						.inheritIO()
-						.start()
-						.onExit()
-						.thenRun(() -> {
-							try {
-								String[] move = {
-									"mv",
-									file.getAbsolutePath() + "/silenceRemoved/" + name,
-									file.getAbsolutePath() + "/" + name
-								};
-
-								new ProcessBuilder(move)
-									.inheritIO()
-									.start()
-									.onExit()
-									.thenRun(() -> future.complete(null));
-							} catch (IOException e) {
-								throw new RuntimeException(e);
-							}
-						});
+					var future = removeSilence(filePath);
+					if (future != null)
+						commands.add(future);
 				} catch (Exception ex) {
 					Nexus.severe("An error occurred while trying to remove the silence from bp music file: " + filePath.getFileName().toFile(), ex);
 					if (Nexus.isDebug())
@@ -1258,19 +1220,69 @@ public class BlockParty extends TeamlessMechanic {
 		}
 	}
 
+	public static CompletableFuture<Void> removeSilence(Path filePath) throws IOException {
+		Path path = Paths.get(FOLDER);
+		File file = path.toFile();
+
+		if (!Files.isRegularFile(filePath))
+			return null;
+
+		String name = filePath.getFileName().toString();
+		if (name.startsWith("."))
+			return null;
+		if (!name.endsWith(".mp3"))
+			return null;
+
+		Nexus.log("Processing " + file.getAbsolutePath() + "/" + name);
+
+		String[] command = {
+			"ffmpeg",
+			"-y",
+			"-i",
+			file.getAbsolutePath() + "/" + name,
+			"-af",
+			"silenceremove=start_periods=1:start_threshold=-30dB",
+			file.getAbsolutePath() + "/silenceRemoved/" + name
+		};
+
+		CompletableFuture<Void> future = new CompletableFuture<>();
+		new ProcessBuilder(command)
+			.inheritIO()
+			.start()
+			.onExit()
+			.thenRun(() -> {
+				try {
+					String[] move = {
+						"mv",
+						file.getAbsolutePath() + "/silenceRemoved/" + name,
+						file.getAbsolutePath() + "/" + name
+					};
+
+					new ProcessBuilder(move)
+						.inheritIO()
+						.start()
+						.onExit()
+						.thenRun(() -> future.complete(null));
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			});
+
+		return future;
+	}
+
 	@SneakyThrows
-	private static void read(String name, boolean removePadding) {
+	public static void read(String name, boolean removePadding) {
 		String path = FOLDER + name;
 		Minigames.debug("Reading file: " + path);
 
+		File mp3File = new File(path);
 		if (removePadding) {
-			File mp3File = new File(path);
 			TagOptionSingleton.getInstance().setId3v2PaddingWillShorten(true);
 			AudioFile audioFile = AudioFileIO.read(mp3File);
 			audioFile.commit();
 		}
 
-		File mp3File = new File(path);
 		AudioFile audioFile = AudioFileIO.read(mp3File);
 
 		Tag tag = audioFile.getTag();
