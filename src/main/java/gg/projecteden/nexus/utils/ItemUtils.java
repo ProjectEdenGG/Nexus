@@ -459,7 +459,11 @@ public class ItemUtils {
 			result = b.getType().compareTo(a.getType());
 			if (result != 0) return result;
 
-			result = CharSequence.compare(Model.of(a), Model.of(b));
+			String modelA = Model.of(a);
+			String modelB = Model.of(b);
+			if (modelA == null) modelA = "";
+			if (modelB == null) modelB = "";
+			result = CharSequence.compare(modelA, modelB);
 			if (result != 0) return result;
 
 			result = Integer.compare(b.getAmount(), a.getAmount());

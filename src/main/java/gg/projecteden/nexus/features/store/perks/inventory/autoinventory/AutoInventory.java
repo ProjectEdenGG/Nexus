@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.tasks.F
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser.AutoSortInventoryType;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.Nullables;
@@ -170,6 +171,10 @@ public class AutoInventory extends Feature {
 			signature += "." + fireworkMeta.getPower();
 		else if (itemMeta instanceof SkullMeta skullMeta && skullMeta.getOwningPlayer() != null)
 			signature += "." + (Name.of(skullMeta.getOwningPlayer()) == null);
+
+		var model = Model.of(stack);
+		if (model != null)
+			signature += "." + model;
 
 		return signature;
 	}
