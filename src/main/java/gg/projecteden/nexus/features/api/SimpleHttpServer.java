@@ -64,7 +64,7 @@ public class SimpleHttpServer extends Feature {
 
 	static class RequestHandler implements HttpHandler {
 		@Override
-		public void handle(HttpExchange exchange) {
+		public void handle(HttpExchange exchange) throws IOException {
 			try {
 				String path = exchange.getRequestURI().getPath();
 				Nexus.debug("[API] " + exchange.getRequestMethod() + " " + path);
@@ -72,10 +72,12 @@ public class SimpleHttpServer extends Feature {
 				Object response = null;
 
 				var httpMethod = HttpMethod.valueOf(exchange.getRequestMethod());
+				Nexus.debug("[API] httpMethod: " + httpMethod.name() + " " + httpMethod.getAnnotation().getSimpleName());
 
 				endpoints:
 				for (Method method : CONTROLLER.getClass().getDeclaredMethods()) {
 					method.setAccessible(true);
+					Nexus.debug("[API] method: " + method.getName());
 					if (!method.isAnnotationPresent(httpMethod.getAnnotation()))
 						continue;
 
@@ -84,9 +86,8 @@ public class SimpleHttpServer extends Feature {
 
 					var requestSplit = path.split("/");
 					var controllerSplit = controllerPath.split("/");
-					List<String> arguments = new ArrayList<>();
+					List<Object> arguments = new ArrayList<>();
 
-					Nexus.debug("[API] method: " + method.getName());
 					Nexus.debug("[API] path: " + path);
 					Nexus.debug("[API] controllerPath: " + controllerPath);
 					Nexus.debug("[API] requestSplit: " + String.join(", ", requestSplit));
@@ -111,6 +112,13 @@ public class SimpleHttpServer extends Feature {
 						}
 					}
 
+					var params = method.getParameterTypes();
+					if (params.length > 0) {
+						var last = params[params.length - 1];
+						if (HttpExchange.class.equals(last))
+							arguments.add(exchange);
+					}
+
 					Nexus.debug("[API] Method: " + method.getName());
 					Nexus.debug("[API] Arguments: " + arguments);
 					response = method.invoke(CONTROLLER, arguments.toArray());
@@ -131,6 +139,11 @@ public class SimpleHttpServer extends Feature {
 			} catch (Exception e) {
 				Nexus.severe("Error handling request");
 				e.printStackTrace();
+				var message = e.getMessage();
+				exchange.sendResponseHeaders(500, message.getBytes().length);
+				try (OutputStream os = exchange.getResponseBody()) {
+					os.write(message.getBytes());
+				}
 			}
 		}
 	}
