@@ -919,8 +919,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder customModelData(int id) {
-		if (id > 0)
-			itemMeta.setCustomModelData(id);
+		itemMeta.setCustomModelData(id);
 		return this;
 	}
 

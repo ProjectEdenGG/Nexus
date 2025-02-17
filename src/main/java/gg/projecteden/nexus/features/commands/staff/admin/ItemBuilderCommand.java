@@ -375,6 +375,12 @@ public class ItemBuilderCommand extends CustomCommand {
 		item.soulbound();
 	}
 
+	@Path("customModelData")
+	@Description("View the Custom Model Data")
+	void customModelData() {
+		send(PREFIX + "Custom Model Data: &e" + item.customModelData());
+	}
+
 	@Path("customModelData <int>")
 	@Description("Set the Custom Model Data")
 	void customModelData(int data) {

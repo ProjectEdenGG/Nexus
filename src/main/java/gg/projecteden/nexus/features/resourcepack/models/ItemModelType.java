@@ -21,8 +21,8 @@ import java.util.Objects;
 @AllArgsConstructor
 public enum ItemModelType {
 	NULL("misc/null"),
-	GROWTH_RAY(""),
-	SHRINK_RAY(""),
+	@HasCustomModelData
+	PROPORTIONATOR("functional/proportionator"),
 	// armor
 	BERSERKER_BOOTS("armor/berserker/boots", Material.LEATHER_BOOTS),
 	BERSERKER_CHESTPLATE("armor/berserker/chestplate", Material.LEATHER_CHESTPLATE),
