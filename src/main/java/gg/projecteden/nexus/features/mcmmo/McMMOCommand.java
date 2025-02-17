@@ -10,6 +10,8 @@ import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetProvider.ResetSkillType;
 import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetShopMenu;
+import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -30,15 +32,22 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
 @Redirect(from = "/mcmmoreset", to = "/mcmmo reset")
@@ -223,9 +232,30 @@ public class McMMOCommand extends CustomCommand implements Listener {
 			send(PREFIX + "&aProtected item from repair/salvage");
 	}
 
+	@Path("protectItems")
+	@Description("Protect items from mcMMO repair/salvage")
+	void protectItems() {
+		new ProtectItemsProvider(player()).open();
+	}
+
+	@Title("&0Protect from repair/salvage")
+	public record ProtectItemsProvider(@Getter Player player) implements TemporaryMenuListener {
+
+		@Override
+		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
+			var items = contents.stream().filter(Nullables::isNotNullOrAir).toList();
+
+			for (ItemStack item : items)
+				PlayerUtils.giveItem(player, new ItemBuilder(item).setting(ItemSetting.MCMMOABLE, false).build());
+
+			PlayerUtils.send(player, PREFIX + "&aProtected " + items.size() + " items from mcMMO repair/salvage");
+		}
+
+	}
+
 	@EventHandler
 	public void on(McMMOPlayerSalvageCheckEvent event) {
-		if (Nullables.isNullOrAir(event.getSalvageItem()))
+		if (isNullOrAir(event.getSalvageItem()))
 			return;
 
 		if (ItemSetting.MCMMOABLE.of(new ItemBuilder(event.getSalvageItem())))
@@ -237,7 +267,7 @@ public class McMMOCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void on(McMMOPlayerRepairCheckEvent event) {
-		if (Nullables.isNullOrAir(event.getRepairedObject()))
+		if (isNullOrAir(event.getRepairedObject()))
 			return;
 
 		if (ItemSetting.MCMMOABLE.of(new ItemBuilder(event.getRepairedObject())))
