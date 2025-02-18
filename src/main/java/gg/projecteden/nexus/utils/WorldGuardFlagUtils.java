@@ -40,6 +40,10 @@ public class WorldGuardFlagUtils {
 	@AllArgsConstructor
 	public enum CustomFlags {
 		/**
+		 * GSit's "Sit" Flag, don't register it!
+		 */
+		GSIT_SIT(new StateFlag("sit", true)),
+		/**
 		 * Enables showing the Pugmas snow effect to players in the region
 		 */
 		SNOW_EFFECT(registerFlag(new StateFlag("snow-effect", false))),

@@ -10,6 +10,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch.C
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
+import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
+import gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags;
 import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -28,7 +30,7 @@ import java.util.List;
 
 public interface Seat extends Interactable {
 	double SIT_HEIGHT = 1.0;
-	String id = "DecorationSeat";
+	String ID = "DecorationSeat";
 	List<BlockFace> radialFaces = Arrays.asList(BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST, BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST);
 	List<Material> ignoredMaterials = new ArrayList<>() {{
 		addAll(MaterialTag.ALL_AIR.getValues());
@@ -72,7 +74,7 @@ public interface Seat extends Interactable {
 			_armorStand.setMarker(true);
 			_armorStand.setVisible(false);
 			_armorStand.setCustomNameVisible(false);
-			_armorStand.setCustomName(id + "-" + player.getUniqueId());
+			_armorStand.setCustomName(ID + "-" + player.getUniqueId());
 			_armorStand.setInvulnerable(true);
 			_armorStand.setGravity(false);
 			_armorStand.setSmall(true);
@@ -98,11 +100,6 @@ public interface Seat extends Interactable {
 	}
 
 	default boolean canSit(Player player, Location location) {
-		if (true) {
-			DecorationError.DISABLED.send(player);
-			return false;
-		}
-
 		if (isSitting(player)) {
 			DecorationLang.debug(player, "player is already sitting");
 			return false;
@@ -113,6 +110,9 @@ public interface Seat extends Interactable {
 			DecorationError.SEAT_OCCUPIED.send(player);
 			return false;
 		}
+
+		if (!WorldGuardFlagUtils.test(player, CustomFlags.GSIT_SIT))
+			return false;
 
 		Block aboveBlock = location.getBlock().getRelative(BlockFace.UP);
 		Material aboveMaterial = aboveBlock.getType();
@@ -133,7 +133,7 @@ public interface Seat extends Interactable {
 
 	default boolean isOccupied(@NonNull Location location) {
 		return location.toCenterLocation().getNearbyEntitiesByType(ArmorStand.class, 0.5).stream()
-			.anyMatch(armorStand -> armorStand.getPassengers().size() > 0);
+			.anyMatch(armorStand -> !armorStand.getPassengers().isEmpty());
 	}
 
 	default boolean isOccupied(@NonNull DecorationConfig config, @NonNull ItemFrame itemFrame, Player debugger) {
@@ -172,7 +172,7 @@ public interface Seat extends Interactable {
 
 	static boolean isSeat(ArmorStand armorStand) {
 		String customName = armorStand.getCustomName();
-		return customName != null && armorStand.getCustomName().contains(id);
+		return customName != null && armorStand.getCustomName().contains(ID);
 	}
 
 	static void dismount(Player player, ArmorStand armorStand) {

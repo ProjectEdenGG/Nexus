@@ -163,11 +163,11 @@ public final class WorldGuardUtils {
 		}
 	}
 
-	public @NotNull Set<ProtectedRegion> getRegionsAt(@NotNull Location location) {
-		if (!isSameWorld(location))
+	public @NotNull Set<ProtectedRegion> getRegionsAt(@NotNull HasLocation location) {
+		if (!isSameWorld(location.getLocation()))
 			return Collections.emptySet();
 
-		return getRegionsAt(toBlockVector3(location));
+		return getRegionsAt(toBlockVector3(location.getLocation()));
 	}
 
 	public @NotNull Set<ProtectedRegion> getRegionsAt(@NotNull Vector vector) {

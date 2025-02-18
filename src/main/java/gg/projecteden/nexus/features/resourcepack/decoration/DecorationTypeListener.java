@@ -22,10 +22,12 @@ import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDismountEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
@@ -73,6 +75,20 @@ public class DecorationTypeListener implements Listener {
 			return;
 
 		toggleable.tryToggle(event.getPlayer(), event.getClickedBlock(), decoration.getItemFrame());
+	}
+
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onSit(VehicleEnterEvent event) {
+		if (!(event.getVehicle() instanceof ArmorStand armorStand))
+			return;
+
+		if (armorStand.getCustomName() == null)
+			return;
+
+		if (!armorStand.getCustomName().startsWith(Seat.ID))
+			return;
+
+		event.setCancelled(false);
 	}
 
 	@EventHandler
