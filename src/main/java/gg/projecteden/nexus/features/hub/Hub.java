@@ -1,7 +1,9 @@
 package gg.projecteden.nexus.features.hub;
 
 import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.commands.ImageStandCommand.ImageStandInteractEvent;
+import gg.projecteden.nexus.features.socialmedia.SocialMedia;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.warps.WarpType;
@@ -16,6 +18,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.jetbrains.annotations.NotNull;
 
 @NoArgsConstructor
@@ -54,26 +57,37 @@ public class Hub extends Feature implements Listener {
 
 	@EventHandler
 	public void on(ImageStandInteractEvent event) {
-		String PREFIX = StringUtils.getPrefix("SocialMedia");
+		var PREFIX = StringUtils.getPrefix(Hub.class);
 		try {
 			if (PlayerUtils.isWGEdit(event.getPlayer()))
 				return;
 
-			String id = event.getImageStand().getId();
+			var id = event.getImageStand().getId();
 			if (!id.startsWith(baseRegion + "_"))
 				return;
 
-			final String[] split = id.replaceFirst("hub_", "").split("_");
+			var split = id.replaceFirst("hub_", "").split("_");
 			id = split[0];
 
-			final Player player = event.getPlayer();
+			var player = event.getPlayer();
+			var packStatus = player.getResourcePackStatus();
+			if (packStatus == Status.ACCEPTED || packStatus == Status.DOWNLOADED)
+				// Still loading...
+				return;
+
+			if (packStatus != null && packStatus.name().contains("FAILED")) {
+				PlayerUtils.send(player, StringUtils.getPrefix(ResourcePack.class) + "Looks like you don't have the resource pack loaded. Try running &c/rp&3, and please make a bug report or ticket if this issue continues.");
+				return;
+			}
+
 			switch (id) {
 				case "minigames", "creative" -> WarpType.NORMAL.get(id).teleportAsync(player);
 				case "oneblock" -> PlayerUtils.runCommand(player, "ob");
 				case "survival" -> PlayerUtils.runCommand(player, "rtp");
 				case "socialmedia" -> {
-					final EdenSocialMediaSite site = EdenSocialMediaSite.valueOf(split[1].toUpperCase());
-					final String message = "&f" + site.getConfig().getEmoji() + " " + site.getName() + " &7- " + site.getUrl();
+					PREFIX = StringUtils.getPrefix(SocialMedia.class);
+					var site = EdenSocialMediaSite.valueOf(split[1].toUpperCase());
+					var message = "&f" + site.getConfig().getEmoji() + " " + site.getName() + " &7- " + site.getUrl();
 					PlayerUtils.send(player, new JsonBuilder(PREFIX + message).url(site.getUrl()));
 				}
 			}
