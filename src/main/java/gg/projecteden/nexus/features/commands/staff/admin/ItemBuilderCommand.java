@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
+import gg.projecteden.nexus.features.equipment.skins.ArmorSkin;
+import gg.projecteden.nexus.features.equipment.skins.BackpackSkin;
 import gg.projecteden.nexus.features.equipment.skins.ToolSkin;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
@@ -401,15 +403,25 @@ public class ItemBuilderCommand extends CustomCommand {
 		item.maxStackSize(size);
 	}
 
-	@Path("skin <skin>")
+	@Path("skin tool <skin>")
 	@Description("Set the skin line of the held item")
-	void skin(ToolSkin skin) {
+	void toolSkin(ToolSkin skin) {
 		ItemStack applied = skin.apply(this.item.build());
-		String model = ItemBuilder.Model.of(applied);
-		if (model == null)
-			this.item.removeModel();
-		else
-			this.item.model(ItemBuilder.Model.of(applied));
+		item = new ItemBuilder(applied);
+	}
+
+	@Path("skin armor <skin>")
+	@Description("Set the skin line of the held item")
+	void armorSkin(ArmorSkin skin) {
+		ItemStack applied = skin.apply(this.item.build());
+		item = new ItemBuilder(applied);
+	}
+
+	@Path("skin backpack <skin>")
+	@Description("Set the skin line of the held item")
+	void backpackSkin(BackpackSkin skin) {
+		ItemStack applied = skin.apply(this.item.build());
+		item = new ItemBuilder(applied);
 	}
 
 }

@@ -13,8 +13,8 @@ public enum ToolSkin implements EquipmentSkinType {
 	DEFAULT,
 	EIGHT_BIT {
 		@Override
-		public String getBaseModel() {
-			return "skins/8bit";
+		public String getFolderName() {
+			return "8bit";
 		}
 	},
 	ADAMANTITE,
@@ -29,13 +29,17 @@ public enum ToolSkin implements EquipmentSkinType {
 	VINES;
 
 	public String getBaseModel() {
-		return "skins/" + this.name().toLowerCase();
+		return "skins/tools/" + getFolderName();
+	}
+
+	public String getFolderName() {
+		return name().toLowerCase();
 	}
 
 	private final MaterialTag applicableItems = new MaterialTag(
 		MaterialTag.SWORDS, MaterialTag.PICKAXES, MaterialTag.SHOVELS, MaterialTag.AXES,
 		MaterialTag.HOES
-	).append(Material.BOW, Material.CROSSBOW);
+	).append(Material.BOW, Material.CROSSBOW, Material.MACE, Material.FISHING_ROD);
 
 	@Override
 	public ItemStack apply(ItemStack item) {
@@ -66,7 +70,7 @@ public enum ToolSkin implements EquipmentSkinType {
 			return null;
 
 		if (this == DEFAULT)
-			return new ItemBuilder(Material.PAPER).model("skins/default/big/" + item.getType().name().toLowerCase()).hideTooltip().build();
+			return new ItemBuilder(Material.PAPER).model("skins/tools/default/big/" + item.getType().name().toLowerCase()).hideTooltip().build();
 
 		ItemBuilder builder = new ItemBuilder(item);
 		String toolType = builder.material() == Material.FISHING_ROD ? "fishing_rod" : builder.material().name().toLowerCase().substring(builder.material().name().lastIndexOf('_') + 1);
@@ -78,7 +82,7 @@ public enum ToolSkin implements EquipmentSkinType {
 	@Override
 	public ItemStack getTemplate() {
 		return new ItemBuilder(Material.PAPER)
-				.name("&e" + StringUtils.camelCase(this) + " Tool Skin")
+				.name("&e" + StringUtils.camelCase(getFolderName()) + " Tool Skin")
 				.model(getBaseModel() + "/template")
 				.build();
 	}

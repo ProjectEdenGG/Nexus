@@ -835,6 +835,16 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	public ItemBuilder removeAttribute(Attribute attribute) {
+		itemMeta.removeAttributeModifier(attribute);
+		return this;
+	}
+
+	public ItemBuilder removeAttribute(Attribute attribute, AttributeModifier modifier) {
+		itemMeta.removeAttributeModifier(attribute, modifier);
+		return this;
+	}
+
 	public ItemBuilder condition(Condition condition) {
 		return nbt(nbtItem -> Condition.setNBT(build(), condition));
 	}

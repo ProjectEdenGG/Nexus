@@ -1,14 +1,15 @@
 package gg.projecteden.nexus.features.recipes.functionals.armor.wither;
 
+import gg.projecteden.nexus.features.equipment.skins.ArmorSkin;
 import gg.projecteden.nexus.features.itemtags.Rarity;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.models.CustomArmorType;
-import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.Getter;
+import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlot;
@@ -20,7 +21,8 @@ import org.jetbrains.annotations.NotNull;
 public class WitherLeggings extends FunctionalRecipe {
 
 	@Getter
-	private static final ItemStack item = new ItemBuilder(ItemModelType.WITHER_LEGGINGS)
+	private static final ItemStack item = new ItemBuilder(Material.LEATHER_LEGGINGS)
+		.model(ArmorSkin.WITHER.getBaseModel() + "/leggings")
 		.dyeColor(CustomArmorType.WITHER.getShaderDyeColor())
 		.itemFlags(ItemFlag.HIDE_DYE)
 		.attribute(Attribute.ARMOR, "wither-armor-points", 6, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS)

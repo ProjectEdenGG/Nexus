@@ -100,6 +100,10 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 					if (tool != null)
 						return ClickableItem.of(tool, e -> {
 							ItemStack cursor = e.getPlayer().getItemOnCursor();
+
+							if (!Nullables.isNullOrAir(cursor) && !EquipmentSkinType.isApplicable(cursor))
+								return;
+
 							e.getPlayer().setItemOnCursor(tool);
 							inv.tool = Nullables.isNullOrAir(cursor) ? null : cursor;
 							inv.init();
@@ -140,7 +144,16 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 
 					else if (clickedType != null) {
 						e.getPlayer().setItemOnCursor(clickedType.getTemplate());
-						inv.tool = new ItemBuilder(tool).removeModel().build();
+
+						if (ToolSkin.DEFAULT.applies(tool))
+							inv.tool = ToolSkin.DEFAULT.apply(tool);
+
+						if (ArmorSkin.DEFAULT.applies(tool))
+							inv.tool = ArmorSkin.DEFAULT.apply(tool);
+
+						if (BackpackSkin.DEFAULT.applies(tool))
+							inv.tool = BackpackSkin.DEFAULT.apply(tool);
+
 						inv.init();
 					}
 				}

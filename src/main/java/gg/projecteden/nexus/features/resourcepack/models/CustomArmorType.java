@@ -8,21 +8,21 @@ import org.bukkit.Color;
 
 @AllArgsConstructor
 public enum CustomArmorType {
-	WITHER("armor/wither"),
-	WARDEN("armor/warden"),
-	BERSERKER("armor/berserker"),
-	BROWN_BERSERK("armor/brown_berserk"),
-	COPPER("armor/copper"),
-	DAMASCUS("armor/damascus"),
-	DRUID("armor/druid"),
-	HELLFIRE("armor/hellfire"),
-	JARL("armor/jarl"),
-	MYTHRIL("armor/mythril"),
-	TANK("armor/tank"),
-	THOR("armor/thor"),
-	WIZARD("armor/wizard"),
-	WOLF("armor/wolf"),
-	FISHING("armor/fishing"),
+	WITHER("skins/armor/wither"),
+	WARDEN("skins/armor/warden"),
+	BERSERKER("skins/armor/berserker"),
+	BROWN_BERSERK("skins/armor/brown_berserk"),
+	COPPER("skins/armor/copper"),
+	DAMASCUS("skins/armor/damascus"),
+	DRUID("skins/armor/druid"),
+	HELLFIRE("skins/armor/hellfire"),
+	JARL("skins/armor/jarl"),
+	MYTHRIL("skins/armor/mythril"),
+	TANK("skins/armor/tank"),
+	THOR("skins/armor/thor"),
+	WIZARD("skins/armor/wizard"),
+	WOLF("skins/armor/wolf"),
+	FISHING("skins/armor/fishing"),
 	;
 
 	private final String id;
