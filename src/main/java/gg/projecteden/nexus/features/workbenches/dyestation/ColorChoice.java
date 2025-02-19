@@ -96,6 +96,7 @@ public interface ColorChoice {
 		MANGROVE("#7F3535"),
 		CHERRY("#FFBBBB"),
 		BAMBOO("#F3DF5F"),
+		PALE_OAK("#FAEFEE"),
 		;
 
 		private final ColoredButton button;
@@ -137,15 +138,21 @@ public interface ColorChoice {
 		ELECTRUM("#E7C697"),
 		BRASS("#E1C16E"),
 		GOLD("#FFD83E"),
-		COPPER("#D37A5A"),
 		BRONZE("#8E5A49"),
-		//
+		RESIN("#FF5D0C"),
+		// page 2
+		COPPER("#D37A5A"),
+		EXPOSED_COPPER("#A67661"),
+		WEATHERED_COPPER("#61A171"),
+		OXIDIZED_COPPER("#6BC09B"),
 		AMETHYST("#7A5BB5"),
 		EMERALD("#17C544"),
 		REDSTONE("#E21F08"),
 		COAL("#1F1E1E"),
 		LAPIS("#1F4F9A"),
+		// page 3
 		DIAMOND("#4AE9E2"),
+
 		;
 
 		private final ColoredButton button;
