@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
+import gg.projecteden.nexus.features.equipment.skins.ToolSkin;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
 import gg.projecteden.nexus.features.itemtags.Rarity;
@@ -38,6 +39,7 @@ import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta.Generation;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
@@ -397,6 +399,17 @@ public class ItemBuilderCommand extends CustomCommand {
 	@Description("Set the max stack size")
 	void maxStackSize(int size) {
 		item.maxStackSize(size);
+	}
+
+	@Path("skin <skin>")
+	@Description("Set the skin line of the held item")
+	void skin(ToolSkin skin) {
+		ItemStack applied = skin.apply(this.item.build());
+		String model = ItemBuilder.Model.of(applied);
+		if (model == null)
+			this.item.removeModel();
+		else
+			this.item.model(ItemBuilder.Model.of(applied));
 	}
 
 }

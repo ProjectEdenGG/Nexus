@@ -42,7 +42,7 @@ public abstract class CustomBench extends Feature implements Listener {
 	public enum CustomBenchType {
 		DYE_STATION("Dye Station", ItemModelType.DYE_STATION, DyeStation::open),
 		ENCHANTED_BOOK_SPLITTER("Enchanted Book Splitter", ItemModelType.ENCHANTED_BOOK_SPLITTER, EnchantedBookSplitter::open),
-		TOOL_MODIFICATION_TABLE("Tool Modification Table", ItemModelType.TOOL_MODIFICATION_TABLE, null), // TODO: BLAST
+		TOOL_MODIFICATION_TABLE("Tool Modification Table", ItemModelType.TOOL_MODIFICATION_TABLE, ToolModificationTable::open), // TODO: BLAST
 		;
 
 		private final String name;

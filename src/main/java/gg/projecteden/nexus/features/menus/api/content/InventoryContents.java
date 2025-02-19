@@ -811,6 +811,11 @@ public class InventoryContents {
 			editableSlots.remove(slot);
 	}
 
+	public void setEditable(int index, boolean editable) {
+		int columnCount = this.config.getColumns();
+		this.setEditable(SlotPos.of(index / columnCount, index % columnCount), editable);
+	}
+
 	/**
 	 * Returns if a given slot is editable or not.
 	 *

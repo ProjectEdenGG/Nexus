@@ -5,6 +5,7 @@ import com.destroystokyo.paper.profile.ProfileProperty;
 import com.google.common.collect.ImmutableSortedMap;
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.NBTItem;
+import de.tr7zw.nbtapi.handler.NBTHandlers;
 import de.tr7zw.nbtapi.iface.ReadWriteItemNBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
@@ -403,6 +404,14 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	public ItemBuilder hideTooltip() {
+		components(nbt -> {
+			ReadWriteNBT readWriteNBT = NBT.createNBTObject();
+			nbt.set("minecraft:hide_tooltip", readWriteNBT, NBTHandlers.STORE_READWRITE_TAG);
+		});
+		return this;
+	}
+
 	@AllArgsConstructor
 	public enum ItemFlags {
 		HIDE_ALL(itemFlag -> itemFlag.name().startsWith("HIDE_")),
@@ -789,6 +798,13 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return new NBTItem(build(buildLore));
 	}
 
+	public ItemBuilder components(Consumer<ReadWriteNBT> consumer) {
+		ItemStack item = build();
+		NBT.modifyComponents(item, consumer);
+		itemMeta = item.getItemMeta();
+		return this;
+	}
+
 	public Rarity rarity() {
 		final NBTItem nbtItem = nbtItem();
 		if (!nbtItem.hasKey(Rarity.NBT_KEY))
@@ -950,6 +966,11 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		if (!itemMeta.hasItemModel())
 			return null;
 		return itemMeta.getItemModel().getKey();
+	}
+
+	public ItemBuilder removeModel() {
+		components(nbt -> nbt.removeKey("minecraft:item_model"));
+		return this;
 	}
 
 	public ItemBuilder number(int number) {

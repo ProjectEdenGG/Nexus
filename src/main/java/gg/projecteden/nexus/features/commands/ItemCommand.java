@@ -16,6 +16,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.AllArgsConstructor;
@@ -96,6 +97,14 @@ public class ItemCommand extends CustomCommand {
 		for (int i = 0; i < amount; i++)
 			recipes.get(index).forEach(this::giveItem);
 	}
+
+	@Permission(Group.SENIOR_STAFF)
+	@Path("getInvisibleWithoutTooltip")
+	@Description("Spawns an item with no texture and no tooltip")
+	void getInvisibleWithoutTooltip() {
+		player().give(ItemUtils.getEmptySlotItem());
+	}
+
 
 	@Getter
 	@AllArgsConstructor

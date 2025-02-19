@@ -23,6 +23,7 @@ public enum ItemModelType {
 	NULL("misc/null"),
 	@HasCustomModelData
 	PROPORTIONATOR("functional/proportionator"),
+	GUI_TOOL_OUTLINES("ui/gui/tool_modification/tool_outlines"),
 	// armor
 	BERSERKER_BOOTS("armor/berserker/boots", Material.LEATHER_BOOTS),
 	BERSERKER_CHESTPLATE("armor/berserker/chestplate", Material.LEATHER_CHESTPLATE),

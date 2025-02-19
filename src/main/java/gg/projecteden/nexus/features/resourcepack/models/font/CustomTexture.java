@@ -10,6 +10,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public enum CustomTexture {
+	GUI_TOOL_MODIFICATION_TABLE("犁"),
 	GUI_ENCHANTED_BOOK_SPLITTER("千"),
 	GUI_DYE_STATION("섈"),
 	GUI_DYE_STATION_COSTUME("膛"),

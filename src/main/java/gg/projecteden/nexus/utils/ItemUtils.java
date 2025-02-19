@@ -72,6 +72,12 @@ import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 public class ItemUtils {
 
+	@Getter
+	private static final ItemStack emptySlotItem = new ItemBuilder(ItemModelType.INVISIBLE)
+		.hideTooltip()
+		.name("Empty item slot") // Because of what this is, this only renders when you hold it. This is the only way to even tell it exists lol
+		.build();
+
 	public static boolean isPreferredTool(ItemStack tool, Block block) {
 		if (Nullables.isNullOrAir(tool) || Nullables.isNullOrAir(block))
 			return false;
