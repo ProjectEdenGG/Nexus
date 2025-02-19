@@ -16,6 +16,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -156,6 +157,31 @@ public class Controller {
 		});
 
 		return data;
+	}
+
+	@Get("/maps/{world}/live/players.json")
+	Object map_world_live_players(String world) {
+		var players = new ArrayList<>();
+
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			players.add(Map.of(
+				"uuid", player.getUniqueId(),
+				"name", player.getName(),
+				"foreign", !player.getWorld().getName().equals(world),
+				"position", Map.of(
+					"x", player.getLocation().getX(),
+					"y", player.getLocation().getY(),
+					"z", player.getLocation().getZ()
+				),
+				"rotation", Map.of(
+					"x", player.getEyeLocation().getDirection().getX(),
+					"y", player.getEyeLocation().getDirection().getY(),
+					"z", player.getEyeLocation().getDirection().getZ()
+				)
+			));
+		}
+
+		return Map.of("players", players);
 	}
 
 }
