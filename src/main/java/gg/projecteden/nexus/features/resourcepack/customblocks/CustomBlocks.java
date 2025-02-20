@@ -191,6 +191,7 @@ public class CustomBlocks extends Feature {
 		}
 	}
 
+	@Getter
 	@RequiredArgsConstructor
 	public enum SoundAction {
 		BREAK(1.0),
@@ -200,9 +201,7 @@ public class CustomBlocks extends Feature {
 		FALL(1.0),
 		;
 
-		@Getter
 		private final double volume;
-		@Getter
 		private double pitch = 1.0;
 
 		SoundAction(double volume, double pitch) {

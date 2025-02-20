@@ -80,7 +80,7 @@ public class CustomBlockListener implements Listener {
 	}
 
 	@EventHandler
-	public void on(CustomBlockUpdateEvent event) {
+	public void on(CustomBlockUpdateEvent event) { // Parchment Event
 		if (ICustomTripwire.isNotEnabled() && event.getBlock() instanceof Tripwire)
 			return;
 
