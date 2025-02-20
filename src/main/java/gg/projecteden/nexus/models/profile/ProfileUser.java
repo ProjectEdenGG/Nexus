@@ -110,6 +110,7 @@ public class ProfileUser implements PlayerOwnedObject {
 		SPLIT(CustomTexture.GUI_PROFILE_TEXTURE_SPLIT),
 		CIRCUIT(CustomTexture.GUI_PROFILE_TEXTURE_CIRCUIT),
 		GINGHAM(CustomTexture.GUI_PROFILE_TEXTURE_GINGHAM),
+		ZEBRA(CustomTexture.GUI_PROFILE_TEXTURE_ZEBRA),
 		// Overlays
 		TEST(59, 2, CustomTexture.GUI_PROFILE_IMAGE_TEST),
 		BIRTHDAY(59, 2, CustomTexture.GUI_PROFILE_IMAGE_BIRTHDAY),
