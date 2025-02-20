@@ -108,6 +108,7 @@ public class ProfileUser implements PlayerOwnedObject {
 		SHINE(CustomTexture.GUI_PROFILE_TEXTURE_SHINE),
 		VERTICAL_STRIPES(CustomTexture.GUI_PROFILE_TEXTURE_STRIPES_VERTICAL),
 		SPLIT(CustomTexture.GUI_PROFILE_TEXTURE_SPLIT),
+		CIRCUIT(CustomTexture.GUI_PROFILE_TEXTURE_CIRCUIT),
 
 		// Overlays
 		TEST(59, 2, CustomTexture.GUI_PROFILE_IMAGE_TEST),
