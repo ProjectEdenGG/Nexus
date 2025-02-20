@@ -198,7 +198,7 @@ public enum MobHeadType implements MobHead {
 	ILLUSIONER(Sound.ENTITY_ILLUSIONER_AMBIENT),
 
 	@HeadConfig(headId = "33179")
-	IRON_GOLEM(Sound.ENTITY_IRON_GOLEM_STEP),
+	IRON_GOLEM(Sound.ENTITY_IRON_GOLEM_HURT),
 
 	@HeadConfig(headId = "25376", variantClass = LlamaVariant.class)
 	LLAMA(

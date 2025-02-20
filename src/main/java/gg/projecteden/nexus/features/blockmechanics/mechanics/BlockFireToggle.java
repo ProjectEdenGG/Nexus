@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.blockmechanics.mechanics;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.blockmechanics.BlockMechanicUtils;
 import gg.projecteden.nexus.features.listeners.events.SourcedBlockRedstoneEvent;
+import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -12,6 +13,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+
+import java.util.List;
 
 // When powering Netherrack & Soul Sand, fire is placed on top of the block if it can
 public class BlockFireToggle implements Listener {
@@ -102,10 +105,13 @@ public class BlockFireToggle implements Listener {
 		}
 	}
 
+	private static final List<Material> disallowedMaterials = List.of(Material.LAVA, Material.WATER,
+		Material.BUBBLE_COLUMN, Material.LIGHT);
+
 	private static boolean canReplaceWithFire(Material type) {
-		return switch (type) {
-			case SNOW, SHORT_GRASS, VINE, DEAD_BUSH, AIR -> true;
-			default -> false;
-		};
+		if (disallowedMaterials.contains(type))
+			return false;
+
+		return MaterialTag.REPLACEABLE.getValues().contains(type);
 	}
 }
