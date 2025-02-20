@@ -21,7 +21,7 @@ public enum ArmorSkin implements EquipmentSkinType {
 	BERSERKER,
 	BROWN_BERSERK,
 	COPPER,
-	DAMASCUS,
+	COBALT,
 	DRUID,
 	FISHING,
 	HELLFIRE,

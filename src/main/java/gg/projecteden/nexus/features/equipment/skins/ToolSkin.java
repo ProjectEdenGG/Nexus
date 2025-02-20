@@ -21,7 +21,7 @@ public enum ToolSkin implements EquipmentSkinType {
 	AMETHYST,
 	CHERRY,
 	COPPER,
-	DAMASCUS,
+	COBALT,
 	HELLFIRE,
 	MECHANICAL,
 	MYTHRIL,
