@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
-import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
+import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.ChoiceType;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.DyeChoice;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -109,7 +109,7 @@ public class CreativeBrushMenu extends InventoryProvider implements IDyeMenu {
 
 	@Override
 	public String getTitle() {
-		return CustomTexture.GUI_DYE_STATION_CREATIVE.getMenuTexture();
+		return InventoryTexture.GUI_DYE_STATION_CREATIVE.getMenuTexture();
 	}
 
 	@Override

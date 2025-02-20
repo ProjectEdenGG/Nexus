@@ -11,7 +11,7 @@ import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
-import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
+import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -66,7 +66,7 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 
 		@Override
 		public String getTitle() {
-			return CustomTexture.GUI_TOOL_MODIFICATION_TABLE.getMenuTexture() + "&0Tool Modification Table";
+			return InventoryTexture.GUI_TOOL_MODIFICATION_TABLE.getMenuTexture() + "&0Tool Modification Table";
 		}
 
 		private ItemStack tool;

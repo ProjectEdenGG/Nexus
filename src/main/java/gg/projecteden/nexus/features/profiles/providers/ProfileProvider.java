@@ -17,7 +17,7 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomFont;
-import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
+import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.features.socialmedia.commands.SocialMediaCommand;
 import gg.projecteden.nexus.features.trust.providers.TrustPlayerProvider;
@@ -110,9 +110,9 @@ public class ProfileProvider extends InventoryProvider {
 	@Override
 	public JsonBuilder getTitleComponent() {
 		String titleName = "&f" + getProfileTitle(targetUser);
-		StringBuilder texture = new StringBuilder(CustomTexture.GUI_PROFILE.getMenuTexture());
+		StringBuilder texture = new StringBuilder(InventoryTexture.GUI_PROFILE.getMenuTexture());
 
-		texture.append(CustomTexture.GUI_PROFILE_BACKGROUND.getNextMenuTexture(backgroundColor, this.getRows()));
+		texture.append(InventoryTexture.GUI_PROFILE_BACKGROUND.getNextMenuTexture(backgroundColor, this.getRows()));
 		if (targetUser.getTextureType() != null)
 			texture.append(targetUser.getTexture(targetUser.getTextureColor(), this.getRows()));
 
@@ -941,16 +941,16 @@ public class ProfileProvider extends InventoryProvider {
 	@AllArgsConstructor
 	private enum SlotTexture implements ProfileTexture {
 		// @formatter:off
-		ARMOR_HELMET(		CustomTexture.GUI_PROFILE_ARMOR_HELMET, new SlotPos(1, 8)),
-		ARMOR_CHESTPLATE(	CustomTexture.GUI_PROFILE_ARMOR_CHESTPLATE, new SlotPos(2, 8)),
-		ARMOR_LEGGINGS(		CustomTexture.GUI_PROFILE_ARMOR_LEGGINGS, new SlotPos(3, 8)),
-		ARMOR_BOOTS(		CustomTexture.GUI_PROFILE_ARMOR_BOOTS, new SlotPos(4, 8)),
-		COSTUME_HAT(		CustomTexture.GUI_PROFILE_COSTUME_HAT, new SlotPos(1, 7)),
-		COSTUME_HAND(		CustomTexture.GUI_PROFILE_COSTUME_HAND, new SlotPos(2, 7)),
+		ARMOR_HELMET(		InventoryTexture.GUI_PROFILE_ARMOR_HELMET, new SlotPos(1, 8)),
+		ARMOR_CHESTPLATE(	InventoryTexture.GUI_PROFILE_ARMOR_CHESTPLATE, new SlotPos(2, 8)),
+		ARMOR_LEGGINGS(		InventoryTexture.GUI_PROFILE_ARMOR_LEGGINGS, new SlotPos(3, 8)),
+		ARMOR_BOOTS(		InventoryTexture.GUI_PROFILE_ARMOR_BOOTS, new SlotPos(4, 8)),
+		COSTUME_HAT(		InventoryTexture.GUI_PROFILE_COSTUME_HAT, new SlotPos(1, 7)),
+		COSTUME_HAND(		InventoryTexture.GUI_PROFILE_COSTUME_HAND, new SlotPos(2, 7)),
 		;
 		// @formatter:on
 
-		final CustomTexture character;
+		final InventoryTexture character;
 		final SlotPos itemSlot;
 
 		public String getMenuTexture(ProfileProvider provider) {
@@ -985,22 +985,22 @@ public class ProfileProvider extends InventoryProvider {
 
 	@AllArgsConstructor
 	private enum RankTexture implements ProfileTexture {
-		UNKNOWN(CustomTexture.GUI_PROFILE_RANK_UNKNOWN),
-		GUEST(CustomTexture.GUI_PROFILE_RANK_GUEST),
-		MEMBER(CustomTexture.GUI_PROFILE_RANK_MEMBER),
-		TRUSTED(CustomTexture.GUI_PROFILE_RANK_TRUSTED),
-		ELITE(CustomTexture.GUI_PROFILE_RANK_ELITE),
-		VETERAN(CustomTexture.GUI_PROFILE_RANK_VETERAN),
-		NOBLE(CustomTexture.GUI_PROFILE_RANK_NOBLE),
-		BUILDER(CustomTexture.GUI_PROFILE_RANK_BUILDER),
-		ARCHITECT(CustomTexture.GUI_PROFILE_RANK_ARCHITECT),
-		MODERATOR(CustomTexture.GUI_PROFILE_RANK_MODERATOR),
-		OPERATOR(CustomTexture.GUI_PROFILE_RANK_OPERATOR),
-		ADMIN(CustomTexture.GUI_PROFILE_RANK_ADMIN),
-		OWNER(CustomTexture.GUI_PROFILE_RANK_OWNER),
+		UNKNOWN(InventoryTexture.GUI_PROFILE_RANK_UNKNOWN),
+		GUEST(InventoryTexture.GUI_PROFILE_RANK_GUEST),
+		MEMBER(InventoryTexture.GUI_PROFILE_RANK_MEMBER),
+		TRUSTED(InventoryTexture.GUI_PROFILE_RANK_TRUSTED),
+		ELITE(InventoryTexture.GUI_PROFILE_RANK_ELITE),
+		VETERAN(InventoryTexture.GUI_PROFILE_RANK_VETERAN),
+		NOBLE(InventoryTexture.GUI_PROFILE_RANK_NOBLE),
+		BUILDER(InventoryTexture.GUI_PROFILE_RANK_BUILDER),
+		ARCHITECT(InventoryTexture.GUI_PROFILE_RANK_ARCHITECT),
+		MODERATOR(InventoryTexture.GUI_PROFILE_RANK_MODERATOR),
+		OPERATOR(InventoryTexture.GUI_PROFILE_RANK_OPERATOR),
+		ADMIN(InventoryTexture.GUI_PROFILE_RANK_ADMIN),
+		OWNER(InventoryTexture.GUI_PROFILE_RANK_OWNER),
 		;
 
-		final CustomTexture texture;
+		final InventoryTexture texture;
 
 		public String getMenuTexture(ProfileProvider provider) {
 			return texture.getNextMenuTexture(provider.getRows());

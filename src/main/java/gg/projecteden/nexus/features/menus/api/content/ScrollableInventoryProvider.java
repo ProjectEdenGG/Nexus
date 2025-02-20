@@ -2,14 +2,14 @@ package gg.projecteden.nexus.features.menus.api.content;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
-import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
+import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.utils.ItemBuilder;
 
 public abstract class ScrollableInventoryProvider extends InventoryProvider {
 
 	@Override
 	public String getTitle(int page) {
-		return CustomTexture.getScrollTitle(getPages(), page);
+		return InventoryTexture.getScrollTitle(getPages(), page);
 	}
 
 	@Override

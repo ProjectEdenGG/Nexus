@@ -16,7 +16,7 @@ import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.quests.CommonQuestItem;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
-import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
+import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.banker.BankerService;
@@ -224,7 +224,7 @@ public abstract class MenuUtils {
 	public static class ConfirmationMenu extends InventoryProvider {
 		@Getter
 		@Default
-		private final String title = CustomTexture.GUI_CONFIRMATION.getMenuTexture() + "&4Are you sure?";
+		private final String title = InventoryTexture.GUI_CONFIRMATION.getMenuTexture() + "&4Are you sure?";
 		@Default
 		private final String cancelText = "&cNo";
 		private final List<String> cancelLore;
@@ -246,13 +246,13 @@ public abstract class MenuUtils {
 		public static class ConfirmationMenuBuilder {
 
 			public ConfirmationMenuBuilder titleWithSlot(String title) {
-				this.title$value = CustomTexture.GUI_CONFIRMATION_SLOT.getMenuTexture() + "&4" + title;
+				this.title$value = InventoryTexture.GUI_CONFIRMATION_SLOT.getMenuTexture() + "&4" + title;
 				this.title$set = true;
 				return this;
 			}
 
 			public ConfirmationMenuBuilder title(String title) {
-				this.title$value = CustomTexture.GUI_CONFIRMATION.getMenuTexture() + "&4" + title;
+				this.title$value = InventoryTexture.GUI_CONFIRMATION.getMenuTexture() + "&4" + title;
 				this.title$set = true;
 				return this;
 			}

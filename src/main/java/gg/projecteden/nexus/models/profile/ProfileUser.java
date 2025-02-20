@@ -6,7 +6,7 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.profiles.colorcreator.ColorCreatorProvider.CreatedColor;
-import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
+import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.friends.FriendsUser;
 import gg.projecteden.nexus.models.friends.FriendsUserService;
@@ -104,31 +104,31 @@ public class ProfileUser implements PlayerOwnedObject {
 	public enum ProfileTextureType {
 		NONE(null),
 		//
-		DOTS(CustomTexture.GUI_PROFILE_TEXTURE_DOTS),
-		SHINE(CustomTexture.GUI_PROFILE_TEXTURE_SHINE),
-		VERTICAL_STRIPES(CustomTexture.GUI_PROFILE_TEXTURE_STRIPES_VERTICAL),
-		SPLIT(CustomTexture.GUI_PROFILE_TEXTURE_SPLIT),
-		CIRCUIT(CustomTexture.GUI_PROFILE_TEXTURE_CIRCUIT),
-		GINGHAM(CustomTexture.GUI_PROFILE_TEXTURE_GINGHAM),
-		ZEBRA(CustomTexture.GUI_PROFILE_TEXTURE_ZEBRA),
+		DOTS(InventoryTexture.GUI_PROFILE_TEXTURE_DOTS),
+		SHINE(InventoryTexture.GUI_PROFILE_TEXTURE_SHINE),
+		VERTICAL_STRIPES(InventoryTexture.GUI_PROFILE_TEXTURE_STRIPES_VERTICAL),
+		SPLIT(InventoryTexture.GUI_PROFILE_TEXTURE_SPLIT),
+		CIRCUIT(InventoryTexture.GUI_PROFILE_TEXTURE_CIRCUIT),
+		GINGHAM(InventoryTexture.GUI_PROFILE_TEXTURE_GINGHAM),
+		ZEBRA(InventoryTexture.GUI_PROFILE_TEXTURE_ZEBRA),
 		// Overlays
-		TEST(59, 2, CustomTexture.GUI_PROFILE_IMAGE_TEST),
-		BIRTHDAY(59, 2, CustomTexture.GUI_PROFILE_IMAGE_BIRTHDAY),
-		CATS(59, 2, CustomTexture.GUI_PROFILE_IMAGE_CATS),
-		BEES(59, 2, CustomTexture.GUI_PROFILE_IMAGE_BEES),
+		TEST(59, 2, InventoryTexture.GUI_PROFILE_IMAGE_TEST),
+		BIRTHDAY(59, 2, InventoryTexture.GUI_PROFILE_IMAGE_BIRTHDAY),
+		CATS(59, 2, InventoryTexture.GUI_PROFILE_IMAGE_CATS),
+		BEES(59, 2, InventoryTexture.GUI_PROFILE_IMAGE_BEES),
 		;
 
 		@Getter
 		private final boolean image;
 		private final int imageMinus;
 		private final int shiftPlayerName;
-		private final CustomTexture texture;
+		private final InventoryTexture texture;
 
-		ProfileTextureType(CustomTexture texture) {
+		ProfileTextureType(InventoryTexture texture) {
 			this(false, 59, 0, texture);
 		}
 
-		ProfileTextureType(int imageMinus, int shiftPlayerName, CustomTexture texture) {
+		ProfileTextureType(int imageMinus, int shiftPlayerName, InventoryTexture texture) {
 			this(true, imageMinus, shiftPlayerName, texture);
 		}
 
@@ -147,7 +147,7 @@ public class ProfileUser implements PlayerOwnedObject {
 				return "";
 
 			if (this.isImage())
-				return CustomTexture.getMenuTexture(this.imageMinus, this.texture.getFontChar(), ChatColor.WHITE, rows);
+				return InventoryTexture.getMenuTexture(this.imageMinus, this.texture.getFontChar(), ChatColor.WHITE, rows);
 
 			return this.texture.getNextMenuTexture(color, rows);
 		}

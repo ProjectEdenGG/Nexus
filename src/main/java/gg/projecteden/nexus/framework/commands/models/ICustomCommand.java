@@ -8,7 +8,7 @@ import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.api.mongodb.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
-import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
+import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -147,7 +147,7 @@ public abstract class ICustomCommand {
 		if (event.getSender() instanceof Player && confirm != null) {
 			ConfirmationMenu.builder()
 				.onConfirm(e -> run.run())
-					.title(CustomTexture.GUI_CONFIRMATION.getMenuTexture() + confirm.title())
+				.title(InventoryTexture.GUI_CONFIRMATION.getMenuTexture() + confirm.title())
 					.open(event.getPlayer());
 		} else
 			run.run();

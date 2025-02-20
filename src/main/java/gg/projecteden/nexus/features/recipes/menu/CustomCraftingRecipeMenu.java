@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.recipes.menu.common.ICustomRecipeMenu;
 import gg.projecteden.nexus.features.recipes.menu.common.ICustomRecipesMenu;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
-import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
+import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
@@ -23,7 +23,7 @@ public class CustomCraftingRecipeMenu extends ICustomRecipeMenu {
 
 	@Override
 	public String getTitle() {
-		return CustomTexture.GUI_CRAFTING_RECIPE.getMenuTexture();
+		return InventoryTexture.GUI_CRAFTING_RECIPE.getMenuTexture();
 	}
 
 	protected void show(NexusRecipe recipe) {

@@ -8,7 +8,7 @@ import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
-import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
+import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.ChoiceType;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.CostumeUser;
@@ -116,7 +116,7 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 					.showButtons(true)
 					.showDye(true)
 					.inputSlot(SLOT_INPUT)
-					.texture(CustomTexture.GUI_DYE_STATION)
+				.texture(InventoryTexture.GUI_DYE_STATION)
 					.onConfirm(data1 -> PlayerUtils.giveItems(viewer, data1.getReturnItems()))
 					.build();
 		}
@@ -134,7 +134,7 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 					.showDye(false)
 					.input(user.getCostumeDisplayItem(costume))
 					.inputSlot(SLOT_COSTUME)
-					.texture(CustomTexture.GUI_DYE_STATION_COSTUME)
+				.texture(InventoryTexture.GUI_DYE_STATION_COSTUME)
 					.onConfirm(onConfirm)
 					.build();
 		}
@@ -404,7 +404,7 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 		private final boolean showButtons;
 		private final boolean showDye;
 		private final SlotPos inputSlot;
-		private final CustomTexture texture;
+		private final InventoryTexture texture;
 		private final Consumer<DyeStationData> onConfirm;
 		private ItemStack input;
 		private ItemStack dye;
@@ -417,7 +417,7 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 
 		@Builder
 		public DyeStationData(Player player, boolean cheatMode, boolean showButtons, boolean showDye,
-							  SlotPos inputSlot, Consumer<DyeStationData> onConfirm, CustomTexture texture,
+							  SlotPos inputSlot, Consumer<DyeStationData> onConfirm, InventoryTexture texture,
 							  ColorChoice.ChoiceType dyeType, ItemStack input, ItemStack dye,
 							  ItemStack result, ColorChoice.DyeChoice dyeChoice, Color color) {
 			this.player = player;

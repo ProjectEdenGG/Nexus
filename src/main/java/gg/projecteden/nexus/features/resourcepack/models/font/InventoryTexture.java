@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 @RequiredArgsConstructor
-public enum CustomTexture {
+public enum InventoryTexture {
 	GUI_TOOL_MODIFICATION_TABLE("犁"),
 	GUI_ENCHANTED_BOOK_SPLITTER("千"),
 	GUI_DYE_STATION("섈"),
@@ -73,7 +73,7 @@ public enum CustomTexture {
 	final String fontChar;
 	int rows = 6;
 
-	CustomTexture(@NotNull String fontChar, int rows) {
+	InventoryTexture(@NotNull String fontChar, int rows) {
 		this.fontChar = fontChar;
 		this.rows = rows;
 	}
@@ -163,10 +163,10 @@ public enum CustomTexture {
 
 	public static String getScrollTitle(int pages, int page) {
 		return "&f" +
-				CustomTexture.minus(10) +
-				CustomTexture.SCROLL_BACKGROUND +
-				CustomTexture.minus(33) +
-				CustomTexture.SCROLL_INDEXES.get(pages - 1).get(page) +
-				CustomTexture.minus(200);
+			InventoryTexture.minus(10) +
+			InventoryTexture.SCROLL_BACKGROUND +
+			InventoryTexture.minus(33) +
+			InventoryTexture.SCROLL_INDEXES.get(pages - 1).get(page) +
+			InventoryTexture.minus(200);
 	}
 }

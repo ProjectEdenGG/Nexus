@@ -4,7 +4,7 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.recipes.menu.common.ICustomRecipeMenu;
 import gg.projecteden.nexus.features.recipes.menu.common.ICustomRecipesMenu;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
-import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
+import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import org.bukkit.Material;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.RecipeChoice.MaterialChoice;
@@ -21,7 +21,7 @@ public class CustomFurnaceRecipeMenu extends ICustomRecipeMenu {
 
 	@Override
 	public String getTitle() {
-		return CustomTexture.GUI_SMELTING_RECIPE.getMenuTexture();
+		return InventoryTexture.GUI_SMELTING_RECIPE.getMenuTexture();
 	}
 
 	@Override

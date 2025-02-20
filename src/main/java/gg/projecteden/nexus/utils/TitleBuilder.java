@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.utils;
 
-import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
+import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.ComponentLike;
@@ -37,7 +37,7 @@ public class TitleBuilder {
 		return this;
 	}
 
-	public TitleBuilder title(CustomTexture title) {
+	public TitleBuilder title(InventoryTexture title) {
 		this.title = new JsonBuilder(title.getChar());
 		return this;
 	}

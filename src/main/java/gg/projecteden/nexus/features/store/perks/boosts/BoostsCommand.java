@@ -9,7 +9,7 @@ import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
-import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
+import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.features.votes.party.VoteParty;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -270,7 +270,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 			if (!VoteParty.isFeatureEnabled(viewer))
 				return "&8Boosts";
 			if (personal == null)
-				return CustomTexture.GUI_CONFIRMATION.getMenuTexture() + "&8Boosts";
+				return InventoryTexture.GUI_CONFIRMATION.getMenuTexture() + "&8Boosts";
 			return "&8" + (personal ? "Personal" : "Global") + " Boosts";
 		}
 

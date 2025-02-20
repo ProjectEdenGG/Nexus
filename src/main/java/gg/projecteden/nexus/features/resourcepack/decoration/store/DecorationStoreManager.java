@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegion
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.Decorations;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
-import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
+import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
@@ -244,7 +244,7 @@ public class DecorationStoreManager implements Listener {
 		ShopGroup shopGroup;
 		if (WorldGroup.of(player) != WorldGroup.SURVIVAL) {
 			ConfirmationMenu.builder()
-					.title(CustomTexture.GUI_CONFIRMATION_SLOT.getMenuTexture() +
+				.title(InventoryTexture.GUI_CONFIRMATION_SLOT.getMenuTexture() +
 							"&3Buy for &a" + StringUtils.prettyMoney(itemPrice) + " &3in which world?")
 					.displayItem(displayItem)
 
@@ -282,7 +282,7 @@ public class DecorationStoreManager implements Listener {
 		}
 
 		ConfirmationMenu.builder()
-				.title(CustomTexture.GUI_CONFIRMATION_SLOT.getMenuTexture() + "&3Buy for &a" + StringUtils.prettyMoney(itemPrice) + "&3?")
+			.title(InventoryTexture.GUI_CONFIRMATION_SLOT.getMenuTexture() + "&3Buy for &a" + StringUtils.prettyMoney(itemPrice) + "&3?")
 				.displayItem(displayItem)
 				.cancelText("&cCancel")
 				.confirmText("&aBuy")

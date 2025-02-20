@@ -10,7 +10,7 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
-import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
+import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.models.pugmas25.Advent25Config;
 import gg.projecteden.nexus.models.pugmas25.Advent25Present;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
@@ -45,11 +45,11 @@ public class Pugmas25AdventMenu extends InventoryProvider {
 
 	@AllArgsConstructor
 	public enum Title implements IterableEnum {
-		FRAME_1(CustomTexture.GUI_PUGMAS25_ADVENT_1),
-		FRAME_2(CustomTexture.GUI_PUGMAS25_ADVENT_2),
+		FRAME_1(InventoryTexture.GUI_PUGMAS25_ADVENT_1),
+		FRAME_2(InventoryTexture.GUI_PUGMAS25_ADVENT_2),
 		;
 
-		private final CustomTexture character;
+		private final InventoryTexture character;
 
 		public String getTitle() {
 			return character.getMenuTexture(6);

@@ -24,7 +24,7 @@ import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.matchdata.MonsterMazeMatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.PixelPaintersMatchData;
-import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
+import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.features.AutoTool;
 import gg.projecteden.nexus.features.store.perks.visuals.NPCListener;
 import gg.projecteden.nexus.features.wither.fights.CorruptedFight.CorruptedCounterAttacks;
@@ -753,7 +753,7 @@ public class TestCommand extends CustomCommand implements Listener {
 			while (matcher.find()) {
 				String group = matcher.group();
 				String number = group.replaceAll("[^\\d]", "");
-				title = title.replace(group, CustomTexture.minus(Integer.parseInt(number)));
+				title = title.replace(group, InventoryTexture.minus(Integer.parseInt(number)));
 			}
 
 			this.originalTitle = title;
@@ -778,7 +778,7 @@ public class TestCommand extends CustomCommand implements Listener {
 					return;
 				}
 
-				title = originalTitle.replaceFirst("__NOSPLIT__", CustomTexture.minus(index));
+				title = originalTitle.replaceFirst("__NOSPLIT__", InventoryTexture.minus(index));
 				++index;
 				open(viewer);
 			});
