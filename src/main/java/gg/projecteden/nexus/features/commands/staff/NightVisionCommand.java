@@ -7,7 +7,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
@@ -22,13 +21,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.potion.PotionEffectType;
 
+import static gg.projecteden.nexus.features.commands.staff.NightVisionCommand.PERMISSION;
+
 @Aliases("nv")
-@Permission(Group.STAFF)
 @NoArgsConstructor
+@Permission(PERMISSION)
 public class NightVisionCommand extends CustomCommand implements Listener {
 	private static final NerdService nerdService = new NerdService();
 	private static final PotionEffectType EFFECT_TYPE = PotionEffectType.NIGHT_VISION;
 	private static final PotionEffectBuilder NIGHT_VISION = new PotionEffectBuilder(EFFECT_TYPE).infinite();
+	public static final String PERMISSION = "nexus.nightvision";
 
 	public NightVisionCommand(CommandEvent event) {
 		super(event);
@@ -36,7 +38,9 @@ public class NightVisionCommand extends CustomCommand implements Listener {
 
 	static {
 		Tasks.repeat(0, TickTime.SECOND.x(2), () ->
-			OnlinePlayers.where(player -> Nerd.of(player).isNightVision())
+			OnlinePlayers
+				.where(player -> Nerd.of(player).isNightVision())
+				.hasPermission(PERMISSION)
 				.forEach(player -> player.addPotionEffect(NIGHT_VISION.build())));
 	}
 
@@ -63,7 +67,8 @@ public class NightVisionCommand extends CustomCommand implements Listener {
 		Tasks.wait(5, () -> {
 			if (Nerd.of(event.getPlayer()).isNightVision()) {
 				event.getPlayer().removePotionEffect(EFFECT_TYPE);
-				Tasks.wait(1, () -> event.getPlayer().addPotionEffect(NIGHT_VISION.build()));
+				if (event.getPlayer().hasPermission(PERMISSION))
+					Tasks.wait(1, () -> event.getPlayer().addPotionEffect(NIGHT_VISION.build()));
 			}
 		});
 
