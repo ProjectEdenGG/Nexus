@@ -83,7 +83,7 @@ public enum MobHeadType implements MobHead {
 	BAT(Sound.ENTITY_BAT_AMBIENT),
 
 	@HeadConfig(headId = "31260")
-	BEE(Sound.ENTITY_BEE_LOOP),
+	BEE(Sound.ENTITY_BEE_POLLINATE),
 
 	@HeadConfig(headId = "322")
 	BLAZE(Sound.ENTITY_BLAZE_AMBIENT),
@@ -95,7 +95,7 @@ public enum MobHeadType implements MobHead {
 	BREEZE(Sound.ENTITY_BREEZE_IDLE_AIR),
 
 	@HeadConfig(headId = "58939")
-	CAMEL(Sound.ENTITY_CAMEL_AMBIENT),
+	CAMEL(Sound.ENTITY_CAMEL_STAND),
 
 	@HeadConfig(headId = "14189", variantClass = CatVariant.class)
 	CAT(
@@ -132,7 +132,7 @@ public enum MobHeadType implements MobHead {
 	DOLPHIN(Sound.ENTITY_DOLPHIN_AMBIENT_WATER),
 
 	@HeadConfig(headId = "18144")
-	DONKEY(Sound.ENTITY_DONKEY_AMBIENT),
+	DONKEY(Sound.ENTITY_DONKEY_ANGRY),
 
 	@HeadConfig(headId = "15967")
 	DROWNED(Sound.ENTITY_DROWNED_AMBIENT),
@@ -165,7 +165,7 @@ public enum MobHeadType implements MobHead {
 		entity -> FrogVariant.of((Frog) entity),
 		(entity, type) -> ((Frog) entity).setVariant((Frog.Variant) type),
 		() -> RandomUtils.randomElement(Frog.Variant.class),
-		Sound.ENTITY_FROG_AMBIENT
+		Sound.ENTITY_FROG_HURT
 	),
 
 	@HeadConfig(headId = "321")
@@ -178,10 +178,10 @@ public enum MobHeadType implements MobHead {
 	GOAT(Sound.ENTITY_GOAT_AMBIENT),
 
 	@HeadConfig(headId = "3135")
-	GUARDIAN(Sound.ENTITY_GUARDIAN_AMBIENT),
+	GUARDIAN(Sound.ENTITY_GUARDIAN_AMBIENT_LAND),
 
 	@HeadConfig(headId = "34783")
-	HOGLIN(Sound.ENTITY_HOGLIN_AMBIENT),
+	HOGLIN(Sound.ENTITY_HOGLIN_ANGRY),
 
 	@HeadConfig(headId = "1154", variantClass = HorseVariant.class)
 	HORSE(
@@ -220,7 +220,7 @@ public enum MobHeadType implements MobHead {
 	),
 
 	@HeadConfig(headId = "3918")
-	MULE(Sound.ENTITY_MULE_AMBIENT),
+	MULE(Sound.ENTITY_MULE_ANGRY),
 
 	@HeadConfig(headId = "340")
 	OCELOT(Sound.ENTITY_OCELOT_AMBIENT),
@@ -270,7 +270,7 @@ public enum MobHeadType implements MobHead {
 		entity -> RabbitVariant.of((Rabbit) entity),
 		(entity, type) -> ((Rabbit) entity).setRabbitType((Rabbit.Type) type),
 		() -> RandomUtils.randomElement(Rabbit.Type.class),
-		Sound.ENTITY_RABBIT_AMBIENT
+		Sound.ENTITY_RABBIT_HURT
 	),
 
 	@HeadConfig(headId = "28196")
@@ -310,7 +310,7 @@ public enum MobHeadType implements MobHead {
 		entity -> SnowmanVariant.of((Snowman) entity),
 		(entity, type) -> ((Snowman) entity).setDerp((boolean) type),
 		() -> RandomUtils.randomElement(true, false),
-		Sound.ENTITY_SNOW_GOLEM_AMBIENT
+		Sound.ENTITY_SNOW_GOLEM_DEATH
 	),
 
 	@HeadConfig(headId = "317")
@@ -381,7 +381,7 @@ public enum MobHeadType implements MobHead {
 	WOLF(Sound.ENTITY_WOLF_AMBIENT),
 
 	@HeadConfig(headId = "35932")
-	ZOGLIN(Sound.ENTITY_ZOGLIN_AMBIENT),
+	ZOGLIN(Sound.ENTITY_ZOGLIN_ANGRY),
 
 	@HeadConfig(headType = Material.ZOMBIE_HEAD)
 	ZOMBIE(Sound.ENTITY_ZOMBIE_AMBIENT),
@@ -398,7 +398,7 @@ public enum MobHeadType implements MobHead {
 	),
 
 	@HeadConfig(headId = "37253")
-	ZOMBIFIED_PIGLIN,
+	ZOMBIFIED_PIGLIN(Sound.ENTITY_ZOMBIFIED_PIGLIN_AMBIENT),
 	;
 
 	private final String headId;
