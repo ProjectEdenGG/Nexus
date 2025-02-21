@@ -49,7 +49,7 @@ public class MobHeadsCommand extends CustomCommand implements Listener {
 		new MobHeadUserMenu().open(player());
 	}
 
-	@Permission(Group.ADMIN)
+	@Permission("nexus.mobheads.get")
 	@Path("get <type>")
 	@Description("Spawn a mob head")
 	void mobHead(MobHead mobHead) {
