@@ -6,6 +6,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -52,6 +53,7 @@ public class ScavHuntLegacy implements Listener {
 	public void onSignClick(PlayerInteractEvent event) {
 		Block block = event.getClickedBlock();
 		if (block == null) return;
+		if (!WorldGroup.LEGACY.contains(block.getWorld())) return;
 		if (!MaterialTag.SIGNS.isTagged(block.getType())) return;
 
 		Sign sign = (Sign) block.getState();
@@ -72,6 +74,7 @@ public class ScavHuntLegacy implements Listener {
 
 		Block block = event.getClickedBlock();
 		if (block == null) return;
+		if (!WorldGroup.LEGACY.contains(block.getWorld())) return;
 		if (!MaterialTag.SKULLS.isTagged(block.getType())) return;
 
 		Skull skull = (Skull) block.getState();
@@ -90,11 +93,9 @@ public class ScavHuntLegacy implements Listener {
 			return;
 
 		Block block = event.getClickedBlock();
-		if (block == null)
-			return;
-
-		if (block.getType() != Material.DRAGON_EGG)
-			return;
+		if (block == null) return;
+		if (!WorldGroup.LEGACY.contains(block.getWorld())) return;
+		if (block.getType() != Material.DRAGON_EGG) return;
 
 		WorldGuardUtils worldGuardUtils = new WorldGuardUtils(block.getWorld());
 		if (!worldGuardUtils.isInRegion(block.getLocation(), "spawn"))
