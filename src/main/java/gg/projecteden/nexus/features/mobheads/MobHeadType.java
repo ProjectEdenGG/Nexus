@@ -112,7 +112,7 @@ public enum MobHeadType implements MobHead {
 	CHICKEN(Sound.ENTITY_CHICKEN_AMBIENT),
 
 	@HeadConfig(headId = "17898")
-	COD(Sound.ENTITY_COD_AMBIENT),
+	COD(Sound.ENTITY_COD_FLOP),
 
 	@HeadConfig(headId = "22866")
 	COW(Sound.ENTITY_COW_AMBIENT),
@@ -129,7 +129,7 @@ public enum MobHeadType implements MobHead {
 	),
 
 	@HeadConfig(headId = "16799")
-	DOLPHIN(Sound.ENTITY_DOLPHIN_AMBIENT),
+	DOLPHIN(Sound.ENTITY_DOLPHIN_AMBIENT_WATER),
 
 	@HeadConfig(headId = "18144")
 	DONKEY(Sound.ENTITY_DONKEY_AMBIENT),
@@ -263,7 +263,7 @@ public enum MobHeadType implements MobHead {
 	POLAR_BEAR(Sound.ENTITY_POLAR_BEAR_AMBIENT),
 
 	@HeadConfig(headId = "17900")
-	PUFFERFISH(Sound.ENTITY_PUFFER_FISH_AMBIENT),
+	PUFFERFISH(Sound.ENTITY_PUFFER_FISH_BLOW_UP),
 
 	@HeadConfig(headId = "3933", variantClass = RabbitVariant.class)
 	RABBIT(
@@ -277,7 +277,7 @@ public enum MobHeadType implements MobHead {
 	RAVAGER(Sound.ENTITY_RAVAGER_AMBIENT),
 
 	@HeadConfig(headId = "31623")
-	SALMON(Sound.ENTITY_SALMON_AMBIENT),
+	SALMON(Sound.ENTITY_SALMON_FLOP),
 
 	@HeadConfig(headId = "334", variantClass = SheepVariant.class)
 	SHEEP(
@@ -342,11 +342,11 @@ public enum MobHeadType implements MobHead {
 		(entity, type) -> {
 		},
 		() -> null,
-		Sound.ENTITY_TROPICAL_FISH_AMBIENT
+		Sound.ENTITY_TROPICAL_FISH_FLOP
 	),
 
 	@HeadConfig(headId = "17929")
-	TURTLE(Sound.ENTITY_TURTLE_AMBIENT_LAND),
+	TURTLE(Sound.ENTITY_TURTLE_EGG_HATCH),
 
 	@HeadConfig(headId = "3080")
 	VEX(Sound.ENTITY_VEX_AMBIENT),
