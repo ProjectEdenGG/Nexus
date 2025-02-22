@@ -47,6 +47,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -287,6 +289,16 @@ public class FallingBlocks extends TeamlessMechanic {
 		if (match.isStarted()) return;
 
 		new ColorPickMenu(getCOLOR_CHOICES(), "_CONCRETE_POWDER").open(event.getPlayer());
+	}
+
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onFallingBlock(EntityChangeBlockEvent event) {
+		final Location location = event.getBlock().getLocation();
+		Match match = MatchManager.getActiveMatchFromLocation(this, location);
+		if (match == null)
+			return;
+
+		event.setCancelled(false);
 	}
 
 	@EventHandler

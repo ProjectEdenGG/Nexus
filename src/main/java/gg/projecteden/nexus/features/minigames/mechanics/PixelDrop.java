@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.chat.events.MinecraftChatEvent;
 import gg.projecteden.nexus.features.chat.events.PublicChatEvent;
+import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.arenas.PixelDropArena;
@@ -20,6 +21,7 @@ import gg.projecteden.nexus.features.minigames.models.perks.common.PlayerParticl
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -32,6 +34,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -273,6 +277,16 @@ public class PixelDrop extends TeamlessMechanic {
 		fallingBlock.setDropItem(false);
 		fallingBlock.setInvulnerable(true);
 		fallingBlock.setVelocity(new org.bukkit.util.Vector(0, -0.5, 0));
+	}
+
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onFallingBlock(EntityChangeBlockEvent event) {
+		final Location location = event.getBlock().getLocation();
+		Match match = MatchManager.getActiveMatchFromLocation(this, location);
+		if (match == null)
+			return;
+
+		event.setCancelled(false);
 	}
 
 	@EventHandler
