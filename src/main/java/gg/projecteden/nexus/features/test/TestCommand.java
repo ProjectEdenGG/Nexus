@@ -54,6 +54,8 @@ import gg.projecteden.nexus.utils.ItemUtils.PotionWrapper;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayDoorSoundUtil;
+import gg.projecteden.nexus.utils.PlayDoorSoundUtil.Action;
 import gg.projecteden.nexus.utils.PlayerMovementUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
@@ -873,6 +875,11 @@ public class TestCommand extends CustomCommand implements Listener {
 			.name("Potion of Shrinking")
 			.potionEffectColor(Color.fromRGB(128, 0, 128))
 			.build();
+	}
+
+	@Path("playDoorSound <open|close> <material>")
+	void playDoorSound(Action action, Material material) {
+		PlayDoorSoundUtil.playDoorSound(getTargetBlockRequired().getLocation(), action, material);
 	}
 
 }
