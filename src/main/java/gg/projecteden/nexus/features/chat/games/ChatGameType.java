@@ -230,6 +230,8 @@ public enum ChatGameType {
 
 	@Getter
 	public enum TriviaQuestion {
+		NERD("You're a nerd", List.of("no you", "no u")),
+
 		SERVER_OWNER("Who is the Owner of Project Eden?", List.of("Griffin", "GriffinCodes")),
 		SERVER_BIRTH_YEAR("What year was Project Eden first opened?", "2015"),
 		SERVER_PREVIOUS_NAME("What is the former name of Project Eden?", "Bear Nation"),
