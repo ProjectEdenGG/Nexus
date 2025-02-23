@@ -24,6 +24,7 @@ import gg.projecteden.nexus.framework.persistence.mysql.MySQLPersistence;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.home.HomeService;
+import gg.projecteden.nexus.utils.GlowUtils;
 import gg.projecteden.nexus.utils.GoogleUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
@@ -258,6 +259,7 @@ public class Nexus extends JavaPlugin {
 		List<Runnable> tasks = List.of(
 			() -> { broadcastReload(); },
 			() -> { PlayerUtils.runCommandAsConsole("save-all"); },
+			() -> { GlowUtils.shutdown(); },
 			() -> { if (cron.isStarted()) cron.stop(); },
 			() -> { if (protocolManager != null) protocolManager.removePacketListeners(this); },
 			() -> { if (commands != null) commands.unregisterAll(); },

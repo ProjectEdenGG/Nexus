@@ -10,12 +10,14 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.whereis.WhereIs;
 import gg.projecteden.nexus.models.whereis.WhereIsService;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.GlowUtils;
 import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
 import gg.projecteden.nexus.utils.PlayerMovementUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -94,11 +96,13 @@ public class WhereIsCommand extends CustomCommand {
 			unglow(viewer);
 			return;
 		}
+		Dev.GRIFFIN.debug("WhereIs 1 " + Nickname.of(viewer));
 
 		if (!WorldGroup.STAFF.contains(viewer.getWorld()) && !WorldGroup.EVENTS.contains(viewer.getWorld())) {
 			unglow(viewer);
 			return;
 		}
+		Dev.GRIFFIN.debug("WhereIs 2 " + Nickname.of(viewer));
 
 		WhereIsService service = new WhereIsService();
 		WhereIs whereIs = service.get(viewer);
@@ -106,6 +110,7 @@ public class WhereIsCommand extends CustomCommand {
 			unglow(viewer);
 			return;
 		}
+		Dev.GRIFFIN.debug("WhereIs 3 " + Nickname.of(viewer));
 
 		Integer threshold = whereIs.getThreshold();
 		if (threshold == null)
@@ -136,3 +141,4 @@ public class WhereIsCommand extends CustomCommand {
 	}
 
 }
+

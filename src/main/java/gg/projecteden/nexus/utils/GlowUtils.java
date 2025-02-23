@@ -1,9 +1,12 @@
 package gg.projecteden.nexus.utils;
 
-import gg.projecteden.nexus.hooks.Hook;
+import fr.skytasul.glowingentities.GlowingEntities;
+import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.parchment.OptionalPlayer;
 import lombok.Builder;
 import lombok.NonNull;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -18,14 +21,21 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("deprecation")
 public class GlowUtils {
+
+	public static GlowingEntities API = new GlowingEntities(Nexus.getInstance());
+
+	public static void shutdown() {
+		API.disable();
+	}
 
 	public static GlowBuilder glow(@NonNull Entity entity) {
 		return glow(List.of(entity));
 	}
 
 	public static GlowBuilder glow(@NonNull Collection<@NonNull ? extends Entity> entities) {
-		return new GlowBuilder(entities).state(false);
+		return new GlowBuilder(entities).state(true);
 	}
 
 	public static GlowBuilder unglow(@NonNull Entity entity) {
@@ -33,7 +43,7 @@ public class GlowUtils {
 	}
 
 	public static GlowBuilder unglow(@NonNull Collection<@NonNull ? extends Entity> entities) {
-		return new GlowBuilder(entities).state(true);
+		return new GlowBuilder(entities).state(false);
 	}
 
 	public static void glow(Block block, long ticks, OptionalPlayer viewer) {
@@ -116,10 +126,38 @@ public class GlowUtils {
 		}
 
 		public void run() {
+			if (true)
+				return;
+
+			Nexus.debug((state ? "Glowing" : "Unglowing") + " " + entities.size() + " entities for " + receivers.size() + " players");
 			if (!state)
 				color = null;
 
-			Hook.GLOWAPI.setGlowing(entities, color, receivers);
+			ColorType colorType = ColorType.of(color);
+
+			if (color != null && colorType == null)
+				Nexus.warn("Could not find ColorType from GlowColor " + color.name());
+
+			ChatColor chatColor = colorType == null ? ChatColor.WHITE : colorType.toBukkitChatColor();
+
+			if (colorType != null && chatColor == null) {
+				Nexus.warn("Could not find ChatColor from ColorType " + colorType.name());
+				chatColor = ChatColor.WHITE;
+			}
+
+			try {
+				for (Entity entity : entities)
+					for (Player receiver : receivers)
+						if (state) {
+							API.setGlowing(entity, receiver, chatColor);
+							Nexus.debug("glow(" + (entity instanceof Player player ? Nickname.of(player) : entity.getType().name()) + ", " + Nickname.of(receiver) + ", " + chatColor.name() + ")");
+						} else {
+							API.unsetGlowing(entity, receiver);
+							Nexus.debug("unglow(" + (entity instanceof Player player ? Nickname.of(player) : entity.getType().name()) + ", " + Nickname.of(receiver) + ")");
+						}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 
 	}

@@ -74,6 +74,7 @@ dependencies {
     implementation("com.github.mpkorstanje:simmetrics-core:4.1.1")
     implementation("org.jetbrains:annotations:24.0.1")
     implementation("net.jthink:jaudiotagger:3.0.1")
+    implementation("fr.skytasul:glowingentities:1.4.3")
     compileOnly("gg.projecteden.crates:api:1.0.7-SNAPSHOT")
     compileOnly("tech.blastmc.holograms:HologramsAPI:1.1.0-SNAPSHOT")
     compileOnly("fr.moribus:ImageOnMap:4.3.1-EDEN")
@@ -113,7 +114,6 @@ dependencies {
     }
     compileOnly("world.bentobox:aoneblock:1.17.0-SNAPSHOT")
     compileOnly(files("libs/BuycraftX.jar"))
-    compileOnly(files("libs/GlowAPI.jar"))
     compileOnly(files("libs/nuvotifier-universal-2.3.4.jar"))
 
     compileOnly("org.projectlombok:lombok:1.18.36")
