@@ -24,6 +24,7 @@ import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.matchdata.MonsterMazeMatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.PixelPaintersMatchData;
+import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.features.AutoTool;
 import gg.projecteden.nexus.features.store.perks.visuals.NPCListener;
@@ -880,6 +881,14 @@ public class TestCommand extends CustomCommand implements Listener {
 	@Path("playDoorSound <open|close> <material>")
 	void playDoorSound(Action action, Material material) {
 		PlayDoorSoundUtil.playDoorSound(getTargetBlockRequired().getLocation(), action, material);
+	}
+
+	@Path("customSound <sound> [--inWorld]")
+	void customSound(CustomSound sound, @Switch boolean inWorld) {
+		if (inWorld)
+			new SoundBuilder(sound).location(location()).play();
+		else
+			new SoundBuilder(sound).location(location()).receiver(player()).play();
 	}
 
 }
