@@ -141,7 +141,7 @@ public class ScoreboardUser implements PlayerOwnedObject {
 				return;
 
 			for (ScoreboardLine line : ScoreboardLine.values()) {
-				if (lines.getOrDefault(line, false)) {
+				if (lines.getOrDefault(line, false) && line.hasPermission(player)) {
 					if (index % line.getInterval() == 0 || flush)
 						if (getScore(line) < 15)
 							stage.setLine(getScore(line), line.render(player));
