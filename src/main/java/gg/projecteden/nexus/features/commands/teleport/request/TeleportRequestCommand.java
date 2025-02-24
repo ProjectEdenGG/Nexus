@@ -18,20 +18,18 @@ import gg.projecteden.nexus.models.teleport.TeleportRequests;
 import gg.projecteden.nexus.models.teleport.TeleportRequests.TeleportRequest;
 import gg.projecteden.nexus.models.teleport.TeleportRequests.TeleportRequest.RequestType;
 import gg.projecteden.nexus.models.teleport.TeleportRequestsService;
-import gg.projecteden.nexus.models.trust.Trust;
 import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.function.Supplier;
 
 @Aliases({"tpr", "tprequest", "tpa", "tpask"})
 @Redirect(from = "/tpcancel", to = "/tpr cancel")
@@ -67,12 +65,26 @@ public class TeleportRequestCommand extends ITeleportRequestCommand {
 		if (!PlayerUtils.canSee(player(), target))
 			throw new PlayerNotOnlineException(target);
 
-		if (MuteMenuUser.hasMuted(target, MuteMenuItem.TP_REQUESTS))
-			error(target.getName() + " has teleport requests disabled!");
+		var trust = new TrustService().get(target);
+		var targetLocation = Nerd.of(target).getLocation();
+		var targetWorld = targetLocation.getWorld();
+		var targetWorldGroup = WorldGroup.of(targetWorld);
 
-		Location targetLocation = Nerd.of(target).getLocation();
-		World targetWorld = targetLocation.getWorld();
-		WorldGroup targetWorldGroup = WorldGroup.of(targetWorld);
+		Supplier<Boolean> isTrusted = () -> {
+			if (trust.trusts(Type.TELEPORTS, player())) {
+				player().teleportAsync(targetLocation, TeleportCause.COMMAND);
+				send(PREFIX + "Teleporting to &e" + Nickname.of(target) + (target.isOnline() && PlayerUtils.canSee(player(), target) ? "" : " &3(Offline)"));
+				return true;
+			}
+			return false;
+		};
+
+		if (MuteMenuUser.hasMuted(target, MuteMenuItem.TP_REQUESTS)) {
+			if (isTrusted.get())
+				return;
+
+			error(target.getName() + " has teleport requests disabled!");
+		}
 
 		if (!isStaff()) {
 			String cannotTeleport = "Cannot teleport to " + nickname(target);
@@ -83,12 +95,8 @@ public class TeleportRequestCommand extends ITeleportRequestCommand {
 				error(cannotTeleport + ", they are in a staff world");
 		}
 
-		Trust trust = new TrustService().get(target);
-		if (trust.trusts(Type.TELEPORTS, player())) {
-			player().teleportAsync(targetLocation, TeleportCause.COMMAND);
-			send(PREFIX + "Teleporting to &e" + Nickname.of(target) + (target.isOnline() && PlayerUtils.canSee(player(), target) ? "" : " &3(Offline)"));
+		if (isTrusted.get())
 			return;
-		}
 
 		// Validate online & can see
 		Player targetPlayer = convertToPlayer(target);
