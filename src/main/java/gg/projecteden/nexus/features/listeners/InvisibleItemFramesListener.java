@@ -5,6 +5,7 @@ import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.NamespacedKey;
@@ -64,7 +65,7 @@ public class InvisibleItemFramesListener implements Listener {
 		if (player.isSneaking())
 			return;
 
-		if (!Rank.of(player).isStaff())
+		if (!Rank.of(player).isStaff() && WorldGroup.of(player) != WorldGroup.STAFF)
 			return;
 
 		if (entity.getType() != EntityType.ITEM_FRAME)
