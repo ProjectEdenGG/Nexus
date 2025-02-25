@@ -123,10 +123,10 @@ public class DailyRewardsMenu extends InventoryProvider {
 					ItemStack clone = item.clone();
 					if (Reward.RequiredSubmenu.COLOR.contains(clone.getType())) {
 						new ColorSelectMenu(clone.getType(), itemClickData -> {
-											PlayerUtils.giveItem(player, new ItemStack(itemClickData.getItem().getType(), clone.getAmount()));
-											saveAndReturn(day);
-											player.closeInventory();
-										}).open(player);
+							PlayerUtils.giveItem(player, new ItemStack(itemClickData.getItem().getType(), clone.getAmount()));
+							saveAndReturn(day);
+							player.closeInventory();
+						}).open(player);
 					} else if (Reward.RequiredSubmenu.NAME.contains(clone.getType())) {
 						Nexus.getSignMenuFactory()
 							.lines("", SignMenuFactory.ARROWS, "Enter a", "player's name")

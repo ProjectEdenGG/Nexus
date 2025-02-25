@@ -224,7 +224,7 @@ public class DailyRewardsFeature extends Feature {
 				/*  94 */ new Reward("Coupon for 5 McMMO levels")				.item(CouponCommand.getGenericCoupon("mcmmo", 5)),
 				/*  95 */ new Reward("5 Enchanted Golden Apples")				.item(Material.ENCHANTED_GOLDEN_APPLE, 5),
 				/*  96 */ new Reward("Super Fishing Pole")					.item(new ItemBuilder(Material.FISHING_ROD).enchant(Enchant.LURE, 5).enchant(Enchant.LUCK_OF_THE_SEA, 3).enchant(Enchant.UNBREAKING, 4)),
-				/*  97 */ new Reward("Maxed Diamond Sword")					.item(new ItemBuilder(Material.DIAMOND_SWORD).enchantMax(Enchant.SHARPNESS).enchantMax(Enchant.MENDING).enchantMax(Enchant.FIRE_ASPECT).enchantMax(Enchant.KNOCKBACK).enchant(Enchant.UNBREAKING, 4)),
+				/*  97 */ new Reward("Maxed Diamond Sword")					.item(new ItemBuilder(Material.DIAMOND_SWORD).enchantMax(Enchant.SHARPNESS).enchantMax(Enchant.MENDING).enchantMax(Enchant.FIRE_ASPECT).enchantMax(Enchant.KNOCKBACK).enchant(Enchant.UNBREAKING, 4).enchant(Enchant.SWEEPING_EDGE, 3).enchant(Enchant.LOOTING, 3)),
 				/*  98 */ new Reward("Full set of Diamond gear and tools")	.item(MaterialTag.ARMOR_DIAMOND).item(MaterialTag.TOOLS_DIAMOND),
 				/*  99 */ new Reward("Maxed Diamond Pickaxe")					.item(new ItemBuilder(Material.DIAMOND_PICKAXE).enchantMax(Enchant.EFFICIENCY).enchant(Enchant.MENDING).enchant(Enchant.UNBREAKING, 4)),
 				/* 100 */ new Reward("$20,000")								.money(20000)
