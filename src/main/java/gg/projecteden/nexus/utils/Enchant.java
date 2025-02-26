@@ -4,7 +4,20 @@ import com.google.common.base.Preconditions;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.CustomEnchantsRegistration;
-import gg.projecteden.nexus.features.customenchants.enchants.*;
+import gg.projecteden.nexus.features.customenchants.enchants.AutoRepairEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.BeheadingEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.ColumnQuakeEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.DisarmingEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.EnergizingEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.FireworkEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.GearsEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.GlowingEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.MagnetEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.SpringsEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.ThorEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.TunnelingEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.VeinMinerEnchant;
 import net.minecraft.resources.ResourceLocation;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
@@ -256,6 +269,10 @@ public class Enchant {
 	public static final Enchantment BEHEADING = CustomEnchants.get(BeheadingEnchant.class);
 
 	public static final Enchantment COLUMN_QUAKE = CustomEnchants.get(ColumnQuakeEnchant.class);
+
+	public static final Enchantment GEARS = CustomEnchants.get(GearsEnchant.class);
+
+	public static final Enchantment SPRINGS = CustomEnchants.get(SpringsEnchant.class);
 
 	private static final List<Enchantment> values = new ArrayList<>();
 

@@ -44,7 +44,7 @@ public class TunnelingEnchant extends CustomEnchant implements Listener {
 		if (event instanceof FakeBlockBreakEvent)
 			return;
 
-		var original = event.getBlock();
+		var originalBlock = event.getBlock();
 
 		var player = event.getPlayer();
 		var tool = player.getInventory().getItemInMainHand();
@@ -55,12 +55,12 @@ public class TunnelingEnchant extends CustomEnchant implements Listener {
 		if (!tool.getItemMeta().hasEnchant(Enchant.TUNNELING))
 			return;
 
-		var blocks = tunnel(player, original);
+		var blocks = tunnel(player, originalBlock);
 		var durability = (Damageable) tool.getItemMeta();
 		var unbreaking = tool.getEnchantmentLevel(Enchant.UNBREAKING);
 
 		for (Block block : blocks) {
-			if (block.getLocation().equals(original.getLocation()))
+			if (block.getLocation().equals(originalBlock.getLocation()))
 				continue;
 
 			if (!ItemUtils.isPreferredTool(tool, block))

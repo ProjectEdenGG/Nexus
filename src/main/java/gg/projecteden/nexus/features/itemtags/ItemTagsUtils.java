@@ -2,6 +2,8 @@ package gg.projecteden.nexus.features.itemtags;
 
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.api.common.utils.Nullables;
+import gg.projecteden.nexus.features.customenchants.enchants.GearsEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.SpringsEnchant;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -18,6 +20,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class ItemTagsUtils {
 
@@ -58,6 +62,12 @@ public class ItemTagsUtils {
 	}
 
 	public static void update(@NotNull ItemStack itemStack, @Nullable Player debugger) {
+		if (isNullOrAir(itemStack))
+			return;
+
+		GearsEnchant.updateAttributeModifier(itemStack);
+		SpringsEnchant.updateAttributeModifier(itemStack);
+
 		ItemTags.debug(debugger, "");
 		Condition condition = Condition.of(itemStack, debugger);
 		Rarity rarity = Rarity.of(itemStack, condition, debugger);
@@ -165,7 +175,7 @@ public class ItemTagsUtils {
 	}
 
 	public static void clearTags(ItemStack item) {
-		if (gg.projecteden.nexus.utils.Nullables.isNullOrAir(item))
+		if (isNullOrAir(item))
 			return;
 
 		List<String> lore = item.getLore();
@@ -178,7 +188,7 @@ public class ItemTagsUtils {
 	}
 
 	public static void clearRarity(ItemStack item) {
-		if (gg.projecteden.nexus.utils.Nullables.isNullOrAir(item))
+		if (isNullOrAir(item))
 			return;
 
 		List<String> lore = item.getLore();
@@ -190,7 +200,7 @@ public class ItemTagsUtils {
 	}
 
 	public static void clearCondition(ItemStack item) {
-		if (gg.projecteden.nexus.utils.Nullables.isNullOrAir(item))
+		if (isNullOrAir(item))
 			return;
 
 		List<String> lore = item.getLore();
