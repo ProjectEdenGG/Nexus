@@ -23,6 +23,7 @@ public enum CustomArmorType {
 	WIZARD("skins/armor/wizard"),
 	WOLF("skins/armor/wolf"),
 	FISHING("skins/armor/fishing"),
+	EIGHT_BIT("skins/armor/8bit"),
 	;
 
 	private final String id;
