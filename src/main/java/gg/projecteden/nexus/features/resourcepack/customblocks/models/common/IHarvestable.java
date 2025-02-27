@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.models.common;
 
 import gg.projecteden.nexus.features.recipes.RecipeUtils;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
+import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksLang;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.Nullables;
@@ -58,18 +59,33 @@ public interface IHarvestable {
 	}
 
 	default boolean isUsingCorrectTool(ItemStack tool) {
-		if (!requiresCorrectToolForDrops())
+		if (!requiresCorrectToolForDrops()) {
+			CustomBlocksLang.debug("Doesn't require specific tool");
 			return true;
+		}
 
 		final Material requiredTool = getMinimumPreferredTool();
+		CustomBlocksLang.debug("Min Preferred Tool: " + requiredTool);
 
 		ToolType requiredToolType = ToolType.of(requiredTool);
+		CustomBlocksLang.debug("Required ToolType: " + requiredToolType);
 		ToolGrade grade = ToolGrade.of(tool);
+		CustomBlocksLang.debug("Tool Grade: " + grade);
 
-		if (grade == null || requiredToolType == null)
+		if (grade == null || requiredToolType == null) {
+			if (grade == null)
+				CustomBlocksLang.debug("grade == null");
+			if (requiredToolType == null)
+				CustomBlocksLang.debug("requiredToolType == null");
+
+			CustomBlocksLang.debug("tool.getType() == requiredTool? --> " + (tool.getType() == requiredTool));
 			return tool.getType() == requiredTool;
+		}
 
 		List<ToolGrade> higherGrades = grade.getEqualAndHigherToolGrades();
+		CustomBlocksLang.debug("Equal and Higher Grades: " + higherGrades);
+		CustomBlocksLang.debug("isCorrectTool? --> " + requiredToolType.getTools(higherGrades).contains(tool.getType()));
+
 		return requiredToolType.getTools(higherGrades).contains(tool.getType());
 	}
 

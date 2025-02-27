@@ -247,30 +247,34 @@ public class CustomBlocksCommand extends CustomCommand {
 		CustomBlock customBlock = CustomBlock.from(block);
 		boolean isCustomBlock = customBlock != null;
 
-		Material blockType = block.getType();
+		String blockType = StringUtils.camelCase(block.getType());
 		float blockHardness = BlockUtils.getBlockHardness(block);
 
 		boolean canHarvest = BlockUtils.canHarvest(block, tool);
 
 		Material itemType = tool.getType();
 		float destroySpeedItem = NMSUtils.getDestroySpeed(block, tool);
-		if (isCustomBlock)
+		if (isCustomBlock) {
+			blockType = StringUtils.camelCase(customBlock.name());
 			destroySpeedItem = (float) customBlock.get().getSpeedMultiplier(tool, canHarvest);
+		}
 
 		BrokenBlock brokenBlock = new BrokenBlock(block, isCustomBlock, player(), tool, Bukkit.getCurrentTick());
+		float blockDamage = brokenBlock.getBlockDamage(tool);
 		int breakTicks = brokenBlock.getBreakTicks();
 		double breakSeconds = breakTicks / 20.0;
 
-		send("= = = = =");
+		send("");
 		send("Block: " + blockType);
 		send("Block Hardness: " + blockHardness);
 		line();
-		send("Tool: " + itemType);
+		send("Tool: " + StringUtils.camelCase(itemType));
 		send("Item Destroy Speed: " + destroySpeedItem);
 		send("Can Harvest: " + canHarvest);
+		send("Block Damage: " + blockDamage);
 		line();
 		send("Break Time: " + breakTicks + "t | " + breakSeconds + "s");
-		send("= = = = =");
+		send("");
 	}
 
 	//
