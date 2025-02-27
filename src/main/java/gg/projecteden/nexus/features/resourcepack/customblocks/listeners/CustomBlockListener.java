@@ -81,8 +81,10 @@ public class CustomBlockListener implements Listener {
 
 	@EventHandler
 	public void on(CustomBlockUpdateEvent event) { // Parchment Event
+		// TODO: Disable tripwire customblocks
 		if (ICustomTripwire.isNotEnabled() && event.getBlock() instanceof Tripwire)
 			return;
+		//
 
 		if (event.getUpdateType() != CustomBlockUpdateEvent.UpdateType.POWERED) {
 			event.setCancelled(true);
@@ -114,50 +116,54 @@ public class CustomBlockListener implements Listener {
 			customBlock.registerRecipes();
 	}
 
-	@EventHandler
-	public void onCreativePickBlock(InventoryCreativeEvent event) {
-		SlotType slotType = event.getSlotType();
-		if (!slotType.equals(SlotType.QUICKBAR))
-			return;
-
-		ItemStack item = event.getCursor();
-		if (Nullables.isNullOrAir(item))
-			return;
-
-		if (!CustomBlock.CustomBlockType.getItemMaterials().contains(item.getType()))
-			return;
-
-		Player player = (Player) event.getWhoClicked();
-		Block block = player.getTargetBlockExact(5);
-		if (Nullables.isNullOrAir(block))
-			return;
-
-		CustomBlock customBlock = CustomBlock.from(block);
-		if (customBlock == null) {
-			CustomBlocksLang.debug("CreativePickBlock: CustomBlock == null");
-			return;
-		}
-
-		if (customBlock == CustomBlock.TALL_SUPPORT) {
-			CustomBlock _customBlock = CustomBlock.from(block.getRelative(BlockFace.DOWN));
-			if (_customBlock != null)
-				customBlock = _customBlock;
-		}
-
-		ItemStack newItem = customBlock.get().getItemStack();
-		final ItemStack mainHand = player.getInventory().getItemInMainHand();
-		if (newItem.equals(mainHand)) {
-			event.setCancelled(true);
-			return;
-		}
-
-		if (PlayerUtils.selectHotbarItem(player, newItem)) {
-			event.setCancelled(true);
-			return;
-		}
-
-		event.setCursor(newItem);
-	}
+	// Does not work -- Creative Pick Block is Clientside
+//	@EventHandler
+//	public void onCreativePickBlock(InventoryCreativeEvent event) {
+//		SlotType slotType = event.getSlotType();
+//		if (!slotType.equals(SlotType.QUICKBAR))
+//			return;
+//
+//		ItemStack item = event.getCursor();
+//		if (Nullables.isNullOrAir(item))
+//			return;
+//
+//		if (!CustomBlock.CustomBlockType.getItemMaterials().contains(item.getType()))
+//			return;
+//
+//		Player player = (Player) event.getWhoClicked();
+//		Block block = player.getTargetBlockExact(5);
+//		if (Nullables.isNullOrAir(block))
+//			return;
+//
+//		CustomBlock customBlock = CustomBlock.from(block);
+//		if (customBlock == null) {
+//			CustomBlocksLang.debug("CreativePickBlock: CustomBlock == null");
+//			return;
+//		}
+//
+//		if (customBlock == CustomBlock.TALL_SUPPORT) {
+//			CustomBlock _customBlock = CustomBlock.from(block.getRelative(BlockFace.DOWN));
+//			if (_customBlock != null)
+//				customBlock = _customBlock;
+//		}
+//
+//		ItemStack newItem = customBlock.get().getItemStack();
+//		final ItemStack mainHand = player.getInventory().getItemInMainHand();
+//		if (newItem.equals(mainHand)) {
+//			CustomBlocksLang.debug("CreativePickBlock:  CustomBlock is the same as item in mainHand, cancelling");
+//			event.setCancelled(true);
+//			return;
+//		}
+//
+//		if (PlayerUtils.selectHotbarItem(player, newItem)) {
+//			CustomBlocksLang.debug("CreativePickBlock:  Selecting hotbar item & cancelling");
+//			event.setCancelled(true);
+//			return;
+//		}
+//
+//		CustomBlocksLang.debug("CreativePickBlock:  Spawning item on cursor");
+//		event.setCursor(newItem);
+//	}
 
 	@EventHandler
 	public void on(BlockPlaceEvent event) {
@@ -165,8 +171,10 @@ public class CustomBlockListener implements Listener {
 			return;
 
 		Block block = event.getBlockPlaced();
+		// TODO: Disable tripwire customblocks
 		if (ICustomTripwire.isNotEnabled() && block.getType() == Material.TRIPWIRE)
 			return;
+		//
 
 		// fix clientside tripwire changes
 		CustomBlockUtils.fixTripwireNearby(event.getPlayer(), block, new HashSet<>(List.of(block.getLocation())));
@@ -193,8 +201,10 @@ public class CustomBlockListener implements Listener {
 			return;
 
 		Block brokenBlock = event.getBlock();
+		// TODO: Disable tripwire customblocks
 		if (ICustomTripwire.isNotEnabled() && brokenBlock.getType() == Material.TRIPWIRE)
 			return;
+		//
 
 		if (Nullables.isNullOrAir(brokenBlock))
 			return;
@@ -226,8 +236,10 @@ public class CustomBlockListener implements Listener {
 		boolean sneaking = player.isSneaking();
 		Block clickedBlock = event.getClickedBlock();
 
+		// TODO: Disable tripwire customblocks
 		if (ICustomTripwire.isNotEnabled() && clickedBlock.getType() == Material.TRIPWIRE)
 			return;
+		//
 
 		if (Nullables.isNullOrAir(clickedBlock))
 			return;
@@ -288,8 +300,10 @@ public class CustomBlockListener implements Listener {
 	public void on(BlockPhysicsEvent event) {
 		Block eventBlock = event.getBlock();
 		Material material = eventBlock.getType();
+		// TODO: Disable tripwire customblocks
 		if (ICustomTripwire.isNotEnabled() && material == Material.TRIPWIRE)
 			return;
+		//
 
 		if (CustomBlockType.getBlockMaterials().contains(material)) {
 			resetBlockData(event, eventBlock);
@@ -354,8 +368,10 @@ public class CustomBlockListener implements Listener {
 
 			finalData = noteBlock;
 		} else if (blockData instanceof org.bukkit.block.data.type.Tripwire tripwire) {
+			// TODO: Disable tripwire customblocks
 			if (ICustomTripwire.isNotEnabled())
 				return;
+			//
 
 			BlockFace facing = ((CustomTripwireData) data.getExtraData()).getFacing();
 			ICustomTripwire customTripwire = (ICustomTripwire) customBlock;
@@ -404,8 +420,10 @@ public class CustomBlockListener implements Listener {
 
 		// initial checks
 		for (Block block : blocks) {
+			// TODO: Disable tripwire customblocks
 			if (ICustomTripwire.isNotEnabled() && block.getType() == Material.TRIPWIRE)
 				continue;
+			//
 
 			CustomBlockData data = CustomBlockUtils.getDataOrCreate(block.getLocation().toBlockLocation(), block.getBlockData());
 			if (data == null)

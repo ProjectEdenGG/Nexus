@@ -128,8 +128,10 @@ public class CustomBlockUtils {
 			return null;
 		}
 
+		// TODO: Disable tripwire customblocks
 		if (ICustomTripwire.isNotEnabled() && customBlock.get() instanceof ICustomTripwire)
 			return null;
+		//
 
 		BlockFace facing = CustomBlockUtils.getFacing(customBlock, blockData, location.getBlock().getRelative(BlockFace.DOWN));
 		return createData(location, customBlock, facing);
@@ -208,8 +210,10 @@ public class CustomBlockUtils {
 	}
 
 	public static void fixTripwireNearby(Player player, Block current, Set<Location> visited) {
+		// TODO: Disable tripwire customblocks
 		if (ICustomTripwire.isNotEnabled())
 			return;
+		//
 
 		for (BlockFace face : CustomBlockUtils.getNeighborFaces()) {
 			Block neighbor = current.getRelative(face);

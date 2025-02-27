@@ -57,6 +57,11 @@ public class CustomBlocksCommand extends CustomCommand {
 			tracker = trackerService.fromWorld(location());
 	}
 
+	@Path
+	void run() {
+		viewBlocks(CustomBlockTab.ALL);
+	}
+
 	@Path("catalog [tab]")
 	@Description("Open the catalog menu")
 	void viewBlocks(@Arg("all") CustomBlockTab tab) {

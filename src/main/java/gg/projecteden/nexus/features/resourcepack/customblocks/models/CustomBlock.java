@@ -540,8 +540,10 @@ public enum CustomBlock implements Keyed {
 
 		} else if (blockData instanceof org.bukkit.block.data.type.Tripwire tripwire) {
 			for (CustomBlock customBlock : getBy(CustomBlockType.TRIPWIRE)) {
+				// TODO: Disable tripwire customblocks
 				if (ICustomTripwire.isNotEnabled())
 					return null;
+				//
 
 				boolean directional = customBlock.get() instanceof IDirectional;
 
@@ -570,8 +572,10 @@ public enum CustomBlock implements Keyed {
 			case NOTE_BLOCK -> setup = true;
 			case TRIPWIRE -> {
 				CustomBlocksLang.debug("Tripwire handling...");
+				// TODO: Disable tripwire customblocks
 				if (ICustomTripwire.isNotEnabled())
 					return false;
+				//
 
 				// ITall
 				if (customBlock instanceof ITall) {

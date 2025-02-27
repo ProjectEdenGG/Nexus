@@ -28,8 +28,10 @@ public class CustomBlockParser<P> extends InputParser<Pattern> {
 		if (type == BlockTypes.NOTE_BLOCK)
 			return true;
 
+		// TODO: Disable tripwire customblocks
 		if (!ICustomTripwire.isNotEnabled() && type == BlockTypes.TRIPWIRE)
 			return true;
+		//
 
 		return false;
 	}

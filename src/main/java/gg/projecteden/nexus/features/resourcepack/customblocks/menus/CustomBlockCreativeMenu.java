@@ -36,6 +36,13 @@ public class CustomBlockCreativeMenu extends InventoryProvider {
 				if (CustomBlockTab.ALL == tab)
 					continue;
 
+				// TODO: Disable tripwire customblocks
+				if (CustomBlockTab.FLORA == tab || CustomBlockTab.ROCKS == tab) {
+					if (ICustomTripwire.isNotEnabled())
+						continue;
+				}
+				//
+
 				ItemStack item = new ItemBuilder(CustomBlock.getBy(tab).get(0).get().getItemStack()).name(StringUtils.camelCase(tab)).build();
 
 				items.add(ClickableItem.of(item, e -> new CustomBlockCreativeMenu(tab).open(viewer)));
@@ -46,6 +53,12 @@ public class CustomBlockCreativeMenu extends InventoryProvider {
 
 			LinkedHashSet<ItemStack> uniqueItems = new LinkedHashSet<>();
 			for (CustomBlock customBlock : CustomBlock.getBy(currentTab)) {
+				// TODO: Disable tripwire customblocks
+				if (ICustomTripwire.isNotEnabled() && customBlock.get() instanceof ICustomTripwire) {
+					continue;
+				}
+				//
+
 				ItemStack item = customBlock.get().getItemStack();
 				uniqueItems.add(item);
 			}
