@@ -27,9 +27,11 @@ import net.minecraft.world.item.component.CustomData;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.StructureType;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.craftbukkit.CraftServer;
@@ -454,6 +456,20 @@ public class ItemUtils {
 
 	public static int getBurnTime(ItemStack itemStack, World world) {
 		return NMSUtils.toNMS(world).fuelValues().burnDuration(NMSUtils.toNMS(itemStack));
+	}
+
+	private static final NamespacedKey DEFAULT_ATTR_KEY = new NamespacedKey(Nexus.getInstance(), "DEFAULT");
+
+	public static void explicitlySetDefaultAttributes(ItemMeta meta, Material material) {
+		var defaults = material.getDefaultAttributeModifiers();
+
+		defaults.asMap().forEach((attribute, attributeModifiers) -> {
+			attributeModifiers.forEach(attributeModifier -> {
+				var modifier = new AttributeModifier(DEFAULT_ATTR_KEY, attributeModifier.getAmount(), attributeModifier.getOperation(), attributeModifier.getSlotGroup());
+				meta.removeAttributeModifier(attribute, modifier);
+				meta.addAttributeModifier(attribute, modifier);
+			});
+		});
 	}
 
 	public static class ItemStackComparator implements Comparator<ItemStack> {

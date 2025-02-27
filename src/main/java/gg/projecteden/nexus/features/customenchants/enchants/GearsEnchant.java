@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.utils.Enchant;
+import gg.projecteden.nexus.utils.ItemUtils;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -46,6 +47,8 @@ public class GearsEnchant extends CustomEnchant {
 			if (match.isPresent())
 				return;
 		}
+
+		ItemUtils.explicitlySetDefaultAttributes(meta, item.getType());
 
 		meta.removeAttributeModifier(Attribute.MOVEMENT_SPEED);
 		meta.addAttributeModifier(Attribute.MOVEMENT_SPEED, modifier);
