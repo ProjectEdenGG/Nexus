@@ -13,6 +13,7 @@ import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NonNull;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -76,10 +77,18 @@ public class ConversionListener implements Listener {
 			final Block below = block.getRelative(BlockFace.DOWN);
 			switch (material) {
 				case NOTE_BLOCK -> {
-					CustomBlockUtils.createData(location, CustomBlock.NOTE_BLOCK, BlockFace.UP);
-					block.setBlockData(CustomBlock.NOTE_BLOCK.get().getBlockData(BlockFace.UP, below), false);
-
-					String logMessage = "Creating CustomBlock NoteBlockData at " + StringUtils.getShortLocationString(location);
+					String logMessage;
+					// Assume Staff and Minigames worlds are real custom blocks
+					if (WorldGroup.MINIGAMES.contains(location) || WorldGroup.STAFF.contains(location)) {
+						CustomBlocksLang.debug("");
+						CustomBlockUtils.createData(location, data.getCustomBlock(), BlockFace.UP);
+						block.setBlockData(data.getCustomBlock().get().getBlockData(BlockFace.UP, below), false);
+						logMessage = "Creating CustomBlock " + StringUtils.camelCase(data.getCustomBlock()) + " " + StringUtils.getShortLocationString(location);
+					} else {
+						CustomBlockUtils.createData(location, CustomBlock.NOTE_BLOCK, BlockFace.UP);
+						block.setBlockData(CustomBlock.NOTE_BLOCK.get().getBlockData(BlockFace.UP, below), false);
+						logMessage = "Creating CustomBlock NoteBlock at " + StringUtils.getShortLocationString(location);
+					}
 
 					CustomBlocksLang.debug(logMessage);
 					IOUtils.fileAppend("customblocks", logMessage);
