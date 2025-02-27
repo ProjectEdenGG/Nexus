@@ -80,7 +80,6 @@ public class ConversionListener implements Listener {
 					String logMessage;
 					// Assume Staff and Minigames worlds are real custom blocks
 					if (WorldGroup.MINIGAMES.contains(location) || WorldGroup.STAFF.contains(location)) {
-						CustomBlocksLang.debug("");
 						CustomBlockUtils.createData(location, data.getCustomBlock(), BlockFace.UP);
 						block.setBlockData(data.getCustomBlock().get().getBlockData(BlockFace.UP, below), false);
 						logMessage = "Creating CustomBlock " + StringUtils.camelCase(data.getCustomBlock()) + " " + StringUtils.getShortLocationString(location);
