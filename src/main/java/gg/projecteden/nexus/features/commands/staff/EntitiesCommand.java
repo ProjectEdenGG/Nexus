@@ -71,7 +71,8 @@ public class EntitiesCommand extends CustomCommand {
 			json.send(player());
 		});
 
-		send(entityMap.size() + " found in radius of " + radius);
+		send();
+		send(PREFIX + entityMap.size() + " found in radius of " + radius);
 	}
 
 	@Path("report [radius] [type]")
