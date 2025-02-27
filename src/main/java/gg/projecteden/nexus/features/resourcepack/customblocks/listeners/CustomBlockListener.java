@@ -30,7 +30,6 @@ import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.parchment.event.block.CustomBlockUpdateEvent;
@@ -58,8 +57,6 @@ import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.inventory.InventoryCreativeEvent;
-import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -86,12 +83,15 @@ public class CustomBlockListener implements Listener {
 			return;
 		//
 
+		Location location = event.getLocation();
+		if (location != null && updateDatabase(location))
+			event.setCancelled(true);
+
 		if (event.getUpdateType() != CustomBlockUpdateEvent.UpdateType.POWERED) {
 			event.setCancelled(true);
 			return;
 		}
 
-		Location location = event.getLocation();
 		if (location == null)
 			return;
 
@@ -105,6 +105,41 @@ public class CustomBlockListener implements Listener {
 		if (!isPowered && hasNeighborSignal) {
 			NoteBlockUtils.play(noteBlock, location, true);
 		}
+	}
+
+	private boolean updateDatabase(Location location) {
+		CustomBlock worldBlock = CustomBlock.from(location.getBlock());
+		CustomBlockData databaseBlock = CustomBlockUtils.getData(location);
+
+		if (worldBlock == null) {
+			boolean delete = false;
+			if (databaseBlock.exists()) {
+				CustomBlocksLang.debug("data exists at this location but is not in world, deleting");
+				delete = true;
+			}
+
+			if (delete) {
+				CustomBlockUtils.breakBlockDatabase(location);
+				return true;
+			}
+			return false;
+		}
+
+		boolean fix = false;
+		if (!databaseBlock.exists()) {
+			CustomBlocksLang.debug("data doesn't exist at this location, creating");
+			fix = true;
+		} else if (!databaseBlock.getCustomBlock().get().equals(worldBlock.get())) {
+			CustomBlocksLang.debug("incorrect data exists at this location, fixing");
+			fix = true;
+		}
+
+		if (fix) {
+			CustomBlockUtils.createData(location, worldBlock.get().getCustomBlock(), BlockFace.UP);
+			return true;
+		}
+
+		return false;
 	}
 
 	@EventHandler
@@ -230,23 +265,29 @@ public class CustomBlockListener implements Listener {
 		if (!EquipmentSlot.HAND.equals(event.getHand()))
 			return;
 
+		Block clickedBlock = event.getClickedBlock();
+
+		if (Nullables.isNullOrAir(clickedBlock))
+			return;
+
 		Action action = event.getAction();
 		Player player = event.getPlayer();
 		ItemStack itemInHand = event.getItem();
 		boolean sneaking = player.isSneaking();
-		Block clickedBlock = event.getClickedBlock();
 
 		// TODO: Disable tripwire customblocks
 		if (ICustomTripwire.isNotEnabled() && clickedBlock.getType() == Material.TRIPWIRE)
 			return;
 		//
 
-		if (Nullables.isNullOrAir(clickedBlock))
-			return;
-
 		CustomBlocksLang.debug("\nPlayer Interact Event:");
 
+		Location clickedBlockLoc = clickedBlock.getLocation();
 		CustomBlock clickedCustomBlock = CustomBlock.from(clickedBlock);
+
+		if (clickedCustomBlock != null && updateDatabase(clickedBlockLoc))
+			event.setCancelled(true);
+
 		// Place
 		if (isSpawningEntity(event, clickedBlock, clickedCustomBlock)) {
 			CustomBlocksLang.debug("is spawning entity: cancel=" + event.isCancelled());
@@ -279,14 +320,14 @@ public class CustomBlockListener implements Listener {
 					CustomBlocksLang.debug("is changing pitch");
 					event.setCancelled(true);
 
-					changePitch(noteBlock, clickedBlock.getLocation(), sneaking);
+					changePitch(noteBlock, clickedBlockLoc, sneaking);
 					return;
 				}
 
 				boolean isPlayingNote = action.equals(Action.LEFT_CLICK_BLOCK);
 				if (isPlayingNote) {
 					CustomBlocksLang.debug("is playing note");
-					NoteBlockUtils.play(noteBlock, clickedBlock.getLocation(), true);
+					NoteBlockUtils.play(noteBlock, clickedBlockLoc, true);
 				}
 			}
 
