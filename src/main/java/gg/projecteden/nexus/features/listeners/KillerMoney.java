@@ -2,24 +2,26 @@ package gg.projecteden.nexus.features.listeners;
 
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
-import gg.projecteden.nexus.models.boost.BoostConfig;
 import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.models.boost.Booster;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.bukkit.GameMode;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.player.PlayerEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -75,7 +77,30 @@ public class KillerMoney implements Listener {
 		double boost = Booster.getTotalBoost(player, Boostable.KILLER_MONEY);
 		double money = mob.getRandomMoney() * boost;
 
-		new BankerService().deposit(player, money, ShopGroup.of(player), TransactionCause.KILLER_MONEY);
+		var earnedEvent = new KillerMoneyEarnedEvent(player, money);
+		if (!earnedEvent.callEvent())
+			return;
+
+		new BankerService().deposit(player, earnedEvent.getMoney(), ShopGroup.of(player), TransactionCause.KILLER_MONEY);
+	}
+
+	@Getter
+	@Setter
+	public static class KillerMoneyEarnedEvent extends PlayerEvent {
+		private double money;
+
+		public KillerMoneyEarnedEvent(@NotNull Player who, double money) {
+			super(who);
+			this.money = money;
+		}
+
+		@Getter
+		private static final HandlerList handlerList = new HandlerList();
+
+		@Override
+		public @NotNull HandlerList getHandlers() {
+			return handlerList;
+		}
 	}
 
 	@Getter

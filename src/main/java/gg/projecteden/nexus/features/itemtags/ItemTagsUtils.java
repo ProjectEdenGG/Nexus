@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.itemtags;
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.features.customenchants.enchants.GearsEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.GracefulStepEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.SpringsEnchant;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -66,6 +67,7 @@ public class ItemTagsUtils {
 			return;
 
 		GearsEnchant.updateAttributeModifier(itemStack);
+		GracefulStepEnchant.updateAttributeModifier(itemStack);
 		SpringsEnchant.updateAttributeModifier(itemStack);
 
 		ItemTags.debug(debugger, "");

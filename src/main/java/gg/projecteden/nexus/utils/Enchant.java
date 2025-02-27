@@ -6,13 +6,16 @@ import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.CustomEnchantsRegistration;
 import gg.projecteden.nexus.features.customenchants.enchants.AutoRepairEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.BeheadingEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.BountyEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.ColumnQuakeEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.DisarmingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.EnergizingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.FireworkEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.GearsEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.GlowingEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.GracefulStepEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.MagnetEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.OrbseekerEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.SpringsEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.ThorEnchant;
@@ -273,6 +276,12 @@ public class Enchant {
 	public static final Enchantment GEARS = CustomEnchants.get(GearsEnchant.class);
 
 	public static final Enchantment SPRINGS = CustomEnchants.get(SpringsEnchant.class);
+
+	public static final Enchantment GRACEFUL_STEP = CustomEnchants.get(GracefulStepEnchant.class);
+
+	public static final Enchantment ORBSEEKER = CustomEnchants.get(OrbseekerEnchant.class);
+
+	public static final Enchantment BOUNTY = CustomEnchants.get(BountyEnchant.class);
 
 	private static final List<Enchantment> values = new ArrayList<>();
 
