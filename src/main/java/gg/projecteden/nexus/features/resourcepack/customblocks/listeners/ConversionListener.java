@@ -85,8 +85,10 @@ public class ConversionListener implements Listener {
 					IOUtils.fileAppend("customblocks", logMessage);
 				}
 				case TRIPWIRE -> {
+					// TODO: Disable tripwire customblocks
 					if (ICustomTripwire.isNotEnabled())
 						return;
+					//
 
 					MultipleFacing multipleFacing = (MultipleFacing) block.getBlockData();
 					BlockFace facing = BlockFace.NORTH;
