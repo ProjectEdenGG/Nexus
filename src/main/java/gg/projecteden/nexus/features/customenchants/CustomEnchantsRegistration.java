@@ -30,13 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class CustomEnchantsRegistration {
 	static final Field nmsFrozenField;
@@ -59,9 +53,6 @@ public class CustomEnchantsRegistration {
 
 	public static void unfreeze() {
 		try {
-			if (areCustomEnchantsRegistered())
-				return;
-
 			if (!(boolean) nmsFrozenField.get(nmsRegistry()))
 				return;
 
@@ -124,13 +115,6 @@ public class CustomEnchantsRegistration {
 		}
 	}
 
-	public static boolean areCustomEnchantsRegistered() {
-		for (HolderSet.Named<?> tag : nmsRegistry().listTags().toList())
-			if (tag.key().toString().contains("exclusive_set/glowing"))
-				return true;
-		return false;
-	}
-
 	public static MappedRegistry<net.minecraft.world.item.enchantment.Enchantment> nmsRegistry() {
 		return (MappedRegistry<net.minecraft.world.item.enchantment.Enchantment>) ((CraftServer) Bukkit.getServer()).getHandle().getServer().registryAccess().lookup(Registries.ENCHANTMENT).orElse(null);
 	}
@@ -141,8 +125,6 @@ public class CustomEnchantsRegistration {
 
 	@SneakyThrows
 	static Enchantment register(CustomEnchant customEnchant) {
-		unfreeze();
-
 		Optional<Holder.Reference<net.minecraft.world.item.enchantment.Enchantment>> lookup = nmsRegistry().get(getResourceKey(nmsRegistry(), customEnchant.getId()));
 		if (lookup.isPresent()) {
 			if (customEnchant instanceof Listener listener)
@@ -150,6 +132,8 @@ public class CustomEnchantsRegistration {
 
 			return CraftEnchantment.minecraftToBukkit(lookup.get().value());
 		}
+
+		unfreeze();
 
 		Component display = Component.translatable("enchantment.nexus." + customEnchant.getId(), customEnchant.getName());
 		HolderSet.Named<Item> supported = createItemsSet("enchant_supported", customEnchant);
@@ -172,6 +156,8 @@ public class CustomEnchantsRegistration {
 
 		nmsRegistry().createIntrusiveHolder(enchantment);
 		Registry.register(nmsRegistry(), customEnchant.getId(), enchantment);
+
+		freeze();
 
 		return CraftEnchantment.minecraftToBukkit(enchantment);
 	}
