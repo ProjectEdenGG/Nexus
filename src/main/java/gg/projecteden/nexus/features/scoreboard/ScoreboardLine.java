@@ -343,8 +343,9 @@ public enum ScoreboardLine {
 
 		static {
 			Tasks.repeat(TickTime.SECOND, TickTime.TICK.x(15), () -> {
-				for (Player player : OnlinePlayers.getAll()) {
-					if (!new ScoreboardService().get(player).getLines().getOrDefault(BEES, false))
+				var service = new ScoreboardService();
+				for (var player : OnlinePlayers.getAll()) {
+					if (!service.get(player).getLines().getOrDefault(BEES, false))
 						return;
 
 					var block = player.getTargetBlockExact(10);
