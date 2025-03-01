@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.customenchants.enchants.AutoRepairEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.BeheadingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.BountyEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.ColumnQuakeEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.DemeterEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.DisarmingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.EnergizingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.FireworkEnchant;
@@ -288,6 +289,8 @@ public class Enchant {
 	public static final Enchantment PLOUGH = CustomEnchants.get(PloughEnchant.class);
 
 	public static final Enchantment MIDAS_CARROTS = CustomEnchants.get(MidasCarrotsEnchant.class);
+
+	public static final Enchantment DEMETER = CustomEnchants.get(DemeterEnchant.class);
 
 	private static final List<Enchantment> values = new ArrayList<>();
 

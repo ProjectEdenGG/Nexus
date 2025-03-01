@@ -13,6 +13,7 @@ import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.api.BlockPartyWebSocketServer;
 import gg.projecteden.nexus.features.api.BlockPartyWebSocketServer.BlockPartyClientMessage;
+import gg.projecteden.nexus.features.customenchants.enchants.DemeterEnchant;
 import gg.projecteden.nexus.features.events.DebugDotCommand;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
@@ -88,6 +89,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.TreeType;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.block.Block;
@@ -889,6 +891,23 @@ public class TestCommand extends CustomCommand implements Listener {
 			new SoundBuilder(sound).location(location()).play();
 		else
 			new SoundBuilder(sound).location(location()).receiver(player()).play();
+	}
+
+	@Path("tree <type>")
+	void tree(TreeType type) {
+		Location location = getTargetBlockRequired().getRelative(0, 1, 0).getLocation();
+		world().generateTree(location.toBlockLocation(), type);
+	}
+
+	@Path("tree getType [material]")
+	void tree_getType(Material material) {
+		TreeType treeType = DemeterEnchant.getTreeType(getTargetBlockRequired());
+		send(PREFIX + "Normal: " + treeType);
+		if (treeType == null)
+			return;
+		send(PREFIX + "Normal Variant: " + DemeterEnchant.getNormalVariant(treeType));
+		send(PREFIX + "Mega Variant: " + DemeterEnchant.getMegaVariant(treeType));
+
 	}
 
 }
