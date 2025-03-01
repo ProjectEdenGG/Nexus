@@ -33,10 +33,20 @@ public enum ArmorSkin implements EquipmentSkinType {
 	WITHER,
 	WOLF,
 	WIZARD,
+	EIGHT_BIT {
+		@Override
+		public String getTitle() {
+			return "8bit";
+		}
+	},
 	;
 
+	public String getTitle() {
+		return StringUtils.camelCase(name());
+	}
+
 	public String getBaseModel() {
-		return "skins/armor/" + this.name().toLowerCase();
+		return "skins/armor/" + this.getTitle().toLowerCase();
 	}
 
 	public CustomArmorType getCustomArmorType() {

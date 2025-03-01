@@ -65,7 +65,7 @@ public class ResourcePack extends Feature implements Listener {
 	@Getter
 	public static File file = IOUtils.getPluginFile(FILE_NAME);
 	@Getter
-	static final URI fileUri = URI.create("jar:" + file.toURI());
+	public static final URI fileUri = URI.create("jar:" + file.toURI());
 	@Getter
 	private static FileSystem zipFile;
 

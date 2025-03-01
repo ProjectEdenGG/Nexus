@@ -19,9 +19,16 @@ import gg.projecteden.nexus.utils.Utils;
 import lombok.SneakyThrows;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -31,17 +38,23 @@ import java.util.stream.Collectors;
 
 public class Saturn {
 	public static final String DIRECTORY = "/home/minecraft/git/Saturn" + (Nexus.getEnv() == Env.PROD ? "" : "-" + Nexus.getEnv()) + "/";
+	public static final String TITAN_DIRECTORY = "/home/minecraft/git/Saturn-Titan";
 	public static final Path PATH = Path.of(DIRECTORY);
+	public static final Path TITAN_PATH = Path.of(TITAN_DIRECTORY);
 
 	private static final Supplier<String> HASH_SUPPLIER = () -> BashCommand.tryExecute("git rev-parse HEAD", PATH.toFile());
 
-	@SneakyThrows
 	private static void execute(String command) {
+		execute(command, PATH);
+	}
+
+	@SneakyThrows
+	private static void execute(String command, Path path) {
 		command = command.replaceAll("//", "/");
-		Nexus.debug("Executing %s at %s".formatted(command, PATH.toUri().toString().replaceFirst("file://", "")));
+		Nexus.debug("Executing %s at %s".formatted(command, path.toUri().toString().replaceFirst("file://", "")));
 
 		final ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "))
-			.directory(PATH.toFile())
+			.directory(path.toFile())
 			.inheritIO();
 
 		processBuilder.environment().put("PACKSQUASH_LOG", "packsquash=info");
@@ -75,6 +88,9 @@ public class Saturn {
 
 		Nexus.log("[Saturn]   Squashing");
 		squash();
+
+		Nexus.log("[Saturn]   Creating Titan Branch");
+		titan();
 
 		Nexus.log("[Saturn]   Versioning");
 		version();
@@ -146,6 +162,56 @@ public class Saturn {
 
 			writer.accept(DIRECTORY);
 		}
+	}
+
+	private static void titan() {
+		if (Nexus.getEnv() != Env.PROD)
+			return;
+
+		execute("rm -rf " + TITAN_DIRECTORY);
+		execute("mkdir " + TITAN_DIRECTORY);
+
+		final URI uri = ResourcePack.getFileUri();
+
+		FileSystem zipFile;
+		try {
+			zipFile = FileSystems.newFileSystem(uri, Collections.emptyMap());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+		for (Path root : zipFile.getRootDirectories()) {
+			try {
+				Files.walk(root).forEach(path -> {
+					String fileName = TITAN_DIRECTORY + path.toUri().toString().split("!")[1];
+
+					final Path filePath = Paths.get(fileName);
+					final File file = filePath.toFile();
+					try {
+
+						if (fileName.contains(".")) {
+							Nexus.debug("Creating file " + fileName);
+							file.createNewFile();
+							Files.copy(path, filePath, StandardCopyOption.REPLACE_EXISTING);
+						} else {
+							Nexus.debug("Creating folder " + fileName);
+							file.mkdirs();
+						}
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				});
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		execute("git init", TITAN_PATH);
+		execute("git add . -A", TITAN_PATH);
+		execute("git commit -q -m titan", TITAN_PATH);
+		execute("git branch -M titan", TITAN_PATH);
+		execute("git remote add origin git@github.com:ProjectEdenGG/Saturn.git", TITAN_PATH);
+		execute("git push --force -u origin titan", TITAN_PATH);
 	}
 
 	private static void version() {
