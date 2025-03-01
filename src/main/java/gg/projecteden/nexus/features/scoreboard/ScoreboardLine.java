@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.scoreboard;
 
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.util.player.UserManager;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import gg.projecteden.nexus.Nexus;
@@ -11,13 +12,18 @@ import gg.projecteden.nexus.features.votes.party.VoteParty;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.models.afk.AFKUser;
 import gg.projecteden.nexus.models.banker.BankerService;
-import gg.projecteden.nexus.models.chat.*;
+import gg.projecteden.nexus.models.chat.Channel;
+import gg.projecteden.nexus.models.chat.Chatter;
+import gg.projecteden.nexus.models.chat.ChatterService;
+import gg.projecteden.nexus.models.chat.PrivateChannel;
+import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.hours.Hours;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.models.scoreboard.ScoreboardService;
 import gg.projecteden.nexus.models.scoreboard.ScoreboardUser;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.ticket.Tickets;
@@ -26,15 +32,22 @@ import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
+import kotlin.Pair;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import me.lucko.spark.api.statistic.StatisticWindow.MillisPerTick;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Beehive;
 import org.bukkit.entity.Player;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -43,7 +56,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+
+import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
 
 public enum ScoreboardLine {
 	ONLINE {
@@ -317,6 +334,35 @@ public enum ScoreboardLine {
 			final GeoIP geoip = new GeoIPService().get(player);
 			final ZonedDateTime now = geoip.getCurrentTime();
 			return "&7" + now.format(DateTimeFormatter.ofPattern("MMM d ")) + geoip.getTimeFormat().formatShort(now);
+		}
+	},
+
+	@Interval(5)
+	BEES {
+		private static final Map<UUID, Pair<Integer, Integer>> bees = new ConcurrentHashMap<>();
+
+		static {
+			Tasks.repeat(TickTime.SECOND, TickTime.TICK.x(15), () -> {
+				for (Player player : OnlinePlayers.getAll()) {
+					if (!new ScoreboardService().get(player).getLines().getOrDefault(BEES, false))
+						return;
+
+					var block = player.getTargetBlockExact(10);
+					if (isNotNullOrAir(block) && block.getState() instanceof Beehive beehive)
+						bees.put(player.getUniqueId(), new Pair<>(beehive.getEntityCount(), beehive.getMaxEntities()));
+					else
+						bees.remove(player.getUniqueId());
+				}
+			});
+		}
+
+		@Override
+		public String render(Player player) {
+			var result = bees.get(player.getUniqueId());
+			if (result == null)
+				return null;
+
+			return "&3Bees: &e" + result.getFirst() + "&3/" + result.getSecond();
 		}
 	},
 
