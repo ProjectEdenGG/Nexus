@@ -15,7 +15,9 @@ import gg.projecteden.nexus.features.customenchants.enchants.GearsEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.GlowingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.GracefulStepEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.MagnetEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.MidasCarrotsEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.OrbseekerEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.PloughEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.SpringsEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.ThorEnchant;
@@ -282,6 +284,10 @@ public class Enchant {
 	public static final Enchantment ORBSEEKER = CustomEnchants.get(OrbseekerEnchant.class);
 
 	public static final Enchantment BOUNTY = CustomEnchants.get(BountyEnchant.class);
+
+	public static final Enchantment PLOUGH = CustomEnchants.get(PloughEnchant.class);
+
+	public static final Enchantment MIDAS_CARROTS = CustomEnchants.get(MidasCarrotsEnchant.class);
 
 	private static final List<Enchantment> values = new ArrayList<>();
 

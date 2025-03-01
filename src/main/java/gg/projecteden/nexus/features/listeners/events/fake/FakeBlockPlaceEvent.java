@@ -10,6 +10,18 @@ import org.jetbrains.annotations.NotNull;
 
 public class FakeBlockPlaceEvent extends BlockPlaceEvent implements FakeEvent {
 
+	public FakeBlockPlaceEvent(Block placedBlock, Player player) {
+		this(
+			placedBlock,
+			placedBlock.getState(),
+			placedBlock.getRelative(0, -1, 0),
+			player.getInventory().getItemInMainHand(),
+			player,
+			true,
+			EquipmentSlot.HAND
+		);
+	}
+
 	public FakeBlockPlaceEvent(@NotNull Block placedBlock, @NotNull BlockState replacedBlockState,
 							   @NotNull Block placedAgainst, @NotNull ItemStack itemInHand, @NotNull Player player,
 							   boolean canBuild, @NotNull EquipmentSlot slot) {

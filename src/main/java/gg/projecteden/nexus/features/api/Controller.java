@@ -16,7 +16,6 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -163,7 +162,7 @@ public class Controller {
 	Object map_world_live_players(String world) {
 		var players = new ArrayList<>();
 
-		for (Player player : Bukkit.getOnlinePlayers()) {
+		for (var player : Bukkit.getOnlinePlayers()) {
 			players.add(Map.of(
 				"uuid", player.getUniqueId(),
 				"name", player.getName(),
@@ -174,9 +173,9 @@ public class Controller {
 					"z", player.getLocation().getZ()
 				),
 				"rotation", Map.of(
-					"x", player.getEyeLocation().getDirection().getX(),
-					"y", player.getEyeLocation().getDirection().getY(),
-					"z", player.getEyeLocation().getDirection().getZ()
+					"x", player.getPitch(),
+					"y", player.getYaw(),
+					"z", 0
 				)
 			));
 		}
