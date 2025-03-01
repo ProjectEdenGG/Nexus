@@ -7,6 +7,7 @@ import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.voter.TopVoter;
 import gg.projecteden.nexus.models.voter.VotePartyService;
 import gg.projecteden.nexus.models.voter.VoteSite;
@@ -165,7 +166,7 @@ public class Controller {
 		for (var player : Bukkit.getOnlinePlayers()) {
 			players.add(Map.of(
 				"uuid", player.getUniqueId(),
-				"name", player.getName(),
+				"name", Nickname.of(player),
 				"foreign", !player.getWorld().getName().equals(world),
 				"position", Map.of(
 					"x", player.getLocation().getX(),
