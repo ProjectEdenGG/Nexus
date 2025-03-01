@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.crates;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.crates.menus.CratePreviewProvider;
 import gg.projecteden.nexus.features.customboundingboxes.events.CustomBoundingBoxEntityInteractEvent;
-import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.survival.avontyre.AvontyreNPCs;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CrateOpeningException;
@@ -14,6 +13,7 @@ import gg.projecteden.nexus.models.crate.CrateConfigService;
 import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NoArgsConstructor;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -21,16 +21,12 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 /*
 	TODO
-		Group settings
-			Title
-			Display Item
 		Animations:
 			Wither
 			Mystery
@@ -73,37 +69,21 @@ public class Crates extends Feature implements Listener {
 
 			if (!event.getHand().equals(EquipmentSlot.HAND)) return;
 
-			if (!CrateConfigService.get().isEnabled())
+			if (!CrateConfigService.get().isEnabled() && Dev.of(event.getPlayer()) == null)
 				throw new CrateOpeningException("Crates are temporarily disabled");
 			if (!crateType.isEnabled())
 				throw new CrateOpeningException("&3Coming soon!");
 			if (Nexus.isMaintenanceQueued())
 				throw new CrateOpeningException("Server maintenance is queued, cannot open crates");
 
-			ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
-			CrateType keyType = CrateType.fromKey(item);
-			if (crateType != keyType) {
-				if (Crates.getLootByType(crateType).stream().noneMatch(CrateLoot::isActive) && crateType != CrateType.MINIGAMES)
-					throw new CrateOpeningException("&3Coming soon!");
-				else
-					new CratePreviewProvider(crateType, null, armorStand).open(event.getPlayer());
-			}
-			else {
-				try {
-					int amount = item.getAmount();
-					if (amount > 1 && event.getPlayer().isSneaking())
-						ConfirmationMenu.builder()
-							.title("Open " + amount + " keys?")
-							.onConfirm(e -> CrateHandler.openCrate(keyType, armorStand, event.getPlayer(), amount))
-							.open(event.getPlayer());
-					else
-						CrateHandler.openCrate(keyType, armorStand, event.getPlayer(), 1);
-				} catch (CrateOpeningException ex) {
-					if (ex.getMessage() != null)
-						PlayerUtils.send(event.getPlayer(), Crates.PREFIX + ex.getMessage());
-					CrateHandler.reset(armorStand);
-				}
-			}
+			if (Crates.getLootByType(crateType).stream().noneMatch(CrateLoot::isActive) && crateType != CrateType.MINIGAMES)
+				throw new CrateOpeningException("&3Coming soon!");
+			else
+				new CratePreviewProvider(crateType, null, armorStand).open(event.getPlayer());
+
+//			else {
+//
+//			}
 		} catch (NexusException ex) {
 			PlayerUtils.send(event.getPlayer(), ex.withPrefix(Crates.PREFIX));
 		}

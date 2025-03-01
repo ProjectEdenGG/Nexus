@@ -135,7 +135,7 @@ public class Saturn {
 	}
 
 	private static void filter() {
-		execute("rm -rf assets/minecraft/textures/gui/title/background");
+//		execute("rm -rf assets/minecraft/textures/gui/title/background"); // This is needed for the Titan branch now
 		execute("rm -rf archive");
 	}
 
@@ -171,7 +171,8 @@ public class Saturn {
 		execute("rm -rf " + TITAN_DIRECTORY);
 		execute("mkdir " + TITAN_DIRECTORY);
 
-		final URI uri = ResourcePack.getFileUri();
+		final File zip = PATH.resolve("ResourcePack.zip").toFile();
+		final URI uri = URI.create("jar:" + zip.toURI());
 
 		FileSystem zipFile;
 		try {

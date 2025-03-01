@@ -7,6 +7,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -18,24 +19,21 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Map.Entry;
 
 @Getter
+@AllArgsConstructor
 public enum CrateType {
-	VOTE(ItemModelType.CRATE_KEY_VOTE, true),
-	WITHER(ItemModelType.CRATE_KEY_WITHER),
-	MYSTERY(ItemModelType.CRATE_KEY_MYSTERY),
-	WEEKLY_WAKKA(ItemModelType.CRATE_KEY_WAKKA, true),
-	MINIGAMES(ItemModelType.CRATE_KEY_MINIGAMES, true),
+	VOTE(ItemModelType.CRATE_KEY_VOTE, "痪", true),
+	WITHER(ItemModelType.CRATE_KEY_WITHER, ""),
+	MYSTERY(ItemModelType.CRATE_KEY_MYSTERY, ""),
+	WEEKLY_WAKKA(ItemModelType.CRATE_KEY_WAKKA, "",true),
+	MINIGAMES(ItemModelType.CRATE_KEY_MINIGAMES, "", true),
 	;
 
 	final ItemModelType itemModelType;
+	final String titleCharacter;
 	final boolean enabled;
 
-	CrateType(ItemModelType itemModelType) {
-		this(itemModelType, false);
-	}
-
-	CrateType(ItemModelType itemModelType, boolean enabled) {
-		this.itemModelType = itemModelType;
-		this.enabled = enabled;
+	CrateType(ItemModelType itemModelType, String titleCharacter) {
+		this(itemModelType, titleCharacter, false);
 	}
 
 	public ItemStack getOldKey() {
