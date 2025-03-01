@@ -175,9 +175,9 @@ public class Controller {
 					"z", player.getLocation().getZ()
 				),
 				"rotation", Map.of(
-					"x", player.getPitch(),
-					"y", player.getYaw(),
-					"z", 0
+					"pitch", player.getLocation().getPitch(),
+					"yaw", player.getLocation().getYaw(),
+					"roll", 0
 				)
 			));
 		}
