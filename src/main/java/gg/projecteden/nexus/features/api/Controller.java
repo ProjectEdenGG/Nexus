@@ -13,6 +13,7 @@ import gg.projecteden.nexus.models.voter.VotePartyService;
 import gg.projecteden.nexus.models.voter.VoteSite;
 import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.SneakyThrows;
@@ -163,7 +164,7 @@ public class Controller {
 	Object map_world_live_players(String world) {
 		var players = new ArrayList<>();
 
-		for (var player : Bukkit.getOnlinePlayers()) {
+		for (var player : OnlinePlayers.where().vanished(false).notSpectator().get()) {
 			players.add(Map.of(
 				"uuid", player.getUniqueId(),
 				"name", Nickname.of(player),

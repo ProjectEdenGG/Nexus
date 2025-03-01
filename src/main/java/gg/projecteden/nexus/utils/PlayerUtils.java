@@ -283,6 +283,11 @@ public class PlayerUtils {
 			return this;
 		}
 
+		public OnlinePlayers notSpectator() {
+			this.filter(player -> player.getGameMode() != GameMode.SPECTATOR);
+			return this;
+		}
+
 		public OnlinePlayers rank(Rank rank) {
 			return rank(_rank -> _rank == rank);
 		}
