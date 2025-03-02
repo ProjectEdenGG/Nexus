@@ -61,7 +61,7 @@ public enum Condition implements ITag {
 			double damage = damageable.getDamage();
 			ItemTags.debug(debugger, "  &3Damage: &e" + damage);
 
-			double maxDurability = itemStack.getType().getMaxDurability();
+			double maxDurability = damageable.hasMaxDamage() ? damageable.getMaxDamage() : itemStack.getType().getMaxDurability();
 			ItemTags.debug(debugger, "  &3Max durability: &e" + maxDurability);
 
 			double percentage = (damage / maxDurability) * 100.0;

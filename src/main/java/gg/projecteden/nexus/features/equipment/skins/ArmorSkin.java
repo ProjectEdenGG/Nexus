@@ -1,9 +1,11 @@
 package gg.projecteden.nexus.features.equipment.skins;
 
+import com.google.common.collect.Multimap;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.models.CustomArmorType;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -12,9 +14,9 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.DoubleStream;
 
 public enum ArmorSkin implements EquipmentSkinType {
 	DEFAULT,
@@ -59,7 +61,6 @@ public enum ArmorSkin implements EquipmentSkinType {
 	 * This method is very picky... NBTAPI requires a fairly specific order when calling setType in combination with it.
 	 * I wouldn't recommend touching this unless absolutely necessary... it's not clean, but it's functional
 	 */
-	// TODO - retain original dye color?
 	@Override
 	public ItemStack apply(ItemStack item) {
 		ItemBuilder builder = new ItemBuilder(item);
@@ -81,18 +82,27 @@ public enum ArmorSkin implements EquipmentSkinType {
 			if (isDefaultName(builder.material(), AdventureUtils.asLegacyText(item.getItemMeta().customName())))
 				builder.resetName();
 
+			builder.removeAttribute(Attribute.ARMOR, new AttributeModifier(new NamespacedKey(Nexus.getInstance(), "skin_armor"), 0, AttributeModifier.Operation.ADD_NUMBER));
+			builder.removeAttribute(Attribute.ARMOR_TOUGHNESS, new AttributeModifier(new NamespacedKey(Nexus.getInstance(), "skin_armor_toughness"), 0, AttributeModifier.Operation.ADD_NUMBER));
+			builder.removeAttribute(Attribute.KNOCKBACK_RESISTANCE, new AttributeModifier(new NamespacedKey(Nexus.getInstance(), "skin_knockback"), 0, AttributeModifier.Operation.ADD_NUMBER));
+
+			Multimap<Attribute, AttributeModifier> attributes = builder.build().getItemMeta().getAttributeModifiers();
+
 			builder.material(original.get());
 			builder.nbt(nbt -> nbt.removeKey("original_item"));
 
 			builder.removeModel();
-			builder.removeAttribute(Attribute.ARMOR, new AttributeModifier(new NamespacedKey(Nexus.getInstance(), "skin_armor"), 0, AttributeModifier.Operation.ADD_NUMBER));
-			builder.removeAttribute(Attribute.ARMOR_TOUGHNESS, new AttributeModifier(new NamespacedKey(Nexus.getInstance(), "skin_armor_toughness"), 0, AttributeModifier.Operation.ADD_NUMBER));
-			builder.removeAttribute(Attribute.KNOCKBACK_RESISTANCE, new AttributeModifier(new NamespacedKey(Nexus.getInstance(), "skin_knockback"), 0, AttributeModifier.Operation.ADD_NUMBER));
 
 			builder.components(nbt -> {
 				if (nbt.getCompoundList("minecraft:attribute_modifiers").isEmpty())
 					nbt.removeKey("minecraft:attribute_modifiers");
 			});
+
+			if (attributes != null && !attributes.isEmpty())
+				for (Attribute attribute: attributes.keySet())
+					for (AttributeModifier modifier: attributes.get(attribute))
+						try { builder.attribute(attribute, modifier); }
+						catch (Exception ignore) {}
 
 			return builder.build();
 		}
@@ -103,30 +113,22 @@ public enum ArmorSkin implements EquipmentSkinType {
 				originalItem.set(Material.valueOf(nbt.getString("original_item").toUpperCase()));
 		});
 
-		double armor = builder.material().getDefaultAttributeModifiers().get(Attribute.ARMOR).stream()
-			.flatMapToDouble(attributeModifier -> DoubleStream.of(attributeModifier.getAmount())).sum();
-		double toughness = builder.material().getDefaultAttributeModifiers().get(Attribute.ARMOR_TOUGHNESS).stream()
-			.flatMapToDouble(attributeModifier -> DoubleStream.of(attributeModifier.getAmount())).sum();
-		double kb = builder.material().getDefaultAttributeModifiers().get(Attribute.KNOCKBACK_RESISTANCE).stream()
-			.flatMapToDouble(attributeModifier -> DoubleStream.of(attributeModifier.getAmount())).sum();
+		int damage = builder.damage();
+		int maxDamage = builder.maxDamage();
 
 		builder.material(Material.valueOf("LEATHER" + builder.material().name().substring(builder.material().name().lastIndexOf("_"))));
+
+		builder.maxDamage(maxDamage);
+		builder.damage(damage);
 
 		// This needs to be after the material call... apparently that clears the custom_data tag?
 		builder.nbt(nbt -> nbt.setString("original_item", originalItem.get().name().toLowerCase()));
 
-		if (armor > 0) {
-			builder.removeAttribute(Attribute.ARMOR);
-			builder.attribute(Attribute.ARMOR, new AttributeModifier(new NamespacedKey(Nexus.getInstance(), "skin_armor"), armor, AttributeModifier.Operation.ADD_NUMBER));
-		}
-		if (toughness > 0) {
-			builder.removeAttribute(Attribute.ARMOR_TOUGHNESS);
-			builder.attribute(Attribute.ARMOR_TOUGHNESS, new AttributeModifier(new NamespacedKey(Nexus.getInstance(), "skin_armor_toughness"), toughness, AttributeModifier.Operation.ADD_NUMBER));
-		}
-		if (kb > 0) {
-			builder.removeAttribute(Attribute.KNOCKBACK_RESISTANCE);
-			builder.attribute(Attribute.KNOCKBACK_RESISTANCE, new AttributeModifier(new NamespacedKey(Nexus.getInstance(), "skin_knockback"), kb, AttributeModifier.Operation.ADD_NUMBER));
-		}
+		ItemStack built = builder.build();
+		ItemMeta meta = built.getItemMeta();
+		ItemUtils.explicitlySetDefaultAttributes(meta, originalItem.get());
+		built.setItemMeta(meta);
+		builder = new ItemBuilder(built);
 
 		String customName = null;
 		if (item.getItemMeta().hasCustomName())

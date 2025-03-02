@@ -199,6 +199,28 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	public int damage() {
+		if (!(itemMeta instanceof Damageable damageable))
+			return 0;
+		return damageable.getDamage();
+	}
+
+	public ItemBuilder maxDamage(int maxDamage) {
+		if (!(itemMeta instanceof Damageable damageable)) throw new UnsupportedOperationException("Cannot apply durability to non-damageable item");
+		if (maxDamage == material().getMaxDurability())
+			damageable.setMaxDamage(null);
+		damageable.setMaxDamage(maxDamage);
+		return this;
+	}
+
+	public int maxDamage() {
+		if (!(itemMeta instanceof Damageable damageable))
+			return 0;
+		if (!damageable.hasMaxDamage())
+			return material().getMaxDurability();
+		return damageable.getMaxDamage();
+	}
+
 	private static Component removeItalicIfUnset(Component component) {
 		if (component.decoration(TextDecoration.ITALIC) == TextDecoration.State.NOT_SET)
 			component = component.decoration(TextDecoration.ITALIC, false);
