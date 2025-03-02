@@ -14,7 +14,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
-public class IceAspectEnchant extends CustomEnchant implements Listener {
+public class FrostAspectEnchant extends CustomEnchant implements Listener {
 
 	@EventHandler
 	public void on(EntityDamageByEntityEvent event) {
@@ -50,8 +50,14 @@ public class IceAspectEnchant extends CustomEnchant implements Listener {
 			return;
 
 		new PotionEffectBuilder(PotionEffectType.SLOWNESS)
-			.amplifier(5)
-			.duration(5)
+			.amplifier(3)
+			.duration(3)
+			.build()
+			.apply(entity);
+
+		new PotionEffectBuilder(PotionEffectType.WEAKNESS)
+			.amplifier(2)
+			.duration(3)
 			.build()
 			.apply(entity);
 	}

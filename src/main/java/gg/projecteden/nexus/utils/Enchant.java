@@ -12,6 +12,7 @@ import gg.projecteden.nexus.features.customenchants.enchants.DemeterEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.DisarmingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.EnergizingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.FireworkEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.FrostAspectEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.GearsEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.GlowingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.GracefulStepEnchant;
@@ -291,6 +292,8 @@ public class Enchant {
 	public static final Enchantment MIDAS_CARROTS = CustomEnchants.get(MidasCarrotsEnchant.class);
 
 	public static final Enchantment DEMETER = CustomEnchants.get(DemeterEnchant.class);
+
+	public static final Enchantment FROST_ASPECT = CustomEnchants.get(FrostAspectEnchant.class);
 
 	private static final List<Enchantment> values = new ArrayList<>();
 
