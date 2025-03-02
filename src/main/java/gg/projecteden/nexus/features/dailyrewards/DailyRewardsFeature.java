@@ -154,7 +154,7 @@ public class DailyRewardsFeature extends Feature {
 				/*  24 */ new Reward("20 Bread")								.item(Material.BREAD, 20),
 				/*  25 */ new Reward("2 Golden Apple")						.item(Material.GOLDEN_APPLE, 2),
 				/*  26 */ new Reward("Diamond sword and shield")				.item(Material.DIAMOND_SWORD).item(Material.SHIELD),
-				/*  27 */ new Reward("5 of each Sapling")						.item(MaterialTag.SAPLINGS, 5),
+				/*  27 */ new Reward("5 of each Sapling")						.item(MaterialTag.ALL_SAPLINGS, 5),
 				/*  28 */ new Reward("32 Apples")								.item(Material.APPLE, 32),
 				/*  29 */ new Reward("1 Saddle")								.item(Material.SADDLE, 1),
 				/*  30 */ new Reward("$4,000")								.money(4000),

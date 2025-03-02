@@ -262,14 +262,14 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag FLOOR_SKULLS = new MaterialTag(SKULLS).exclude("WALL", MatchMode.CONTAINS);
 
 	public static final MaterialTag BOATS = new MaterialTag(Tag.ITEMS_BOATS);
-	public static final MaterialTag SAPLINGS = new MaterialTag(Tag.SAPLINGS);
+	public static final MaterialTag ALL_SAPLINGS = new MaterialTag(Tag.SAPLINGS).append(Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.CRIMSON_FUNGUS, Material.WARPED_FUNGUS);
 	public static final MaterialTag SPAWN_EGGS = new MaterialTag("_SPAWN_EGG", MatchMode.SUFFIX);
 	public static final MaterialTag PORTALS = new MaterialTag(Material.END_PORTAL, Material.NETHER_PORTAL);
 	public static final MaterialTag LIQUIDS = new MaterialTag(Material.WATER, Material.LAVA);
 	public static final MaterialTag CONTAINERS = new MaterialTag(Material.ENDER_CHEST, Material.ANVIL, Material.BREWING_STAND).append(INVENTORY_BLOCKS);
 	public static final MaterialTag PRESSURE_PLATES = new MaterialTag("_PRESSURE_PLATE", MatchMode.SUFFIX);
 
-	public static final MaterialTag FLORA = new MaterialTag(SAPLINGS, FLOWERS, PLANTS, SEEDS, LEAVES);
+	public static final MaterialTag FLORA = new MaterialTag(ALL_SAPLINGS, FLOWERS, PLANTS, SEEDS, LEAVES);
 	public static final MaterialTag REDSTONE_ACTIVATORS = new MaterialTag(BUTTONS, PRESSURE_PLATES).append(Material.LEVER);
 	public static final MaterialTag SUSPICIOUS_BLOCKS = new MaterialTag(Material.SUSPICIOUS_SAND, Material.SUSPICIOUS_GRAVEL);
 	public static final MaterialTag POTTERY_SHERDS = new MaterialTag("_POTTERY_SHERD", MatchMode.SUFFIX);
@@ -282,7 +282,7 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag NEEDS_SUPPORT = new MaterialTag(Material.GRAVEL, Material.VINE, Material.LILY_PAD, Material.TURTLE_EGG,
 		Material.REPEATER, Material.COMPARATOR, Material.ITEM_FRAME, Material.BELL, Material.SNOW, Material.SCAFFOLDING, Material.TRIPWIRE_HOOK, Material.LADDER, Material.LEVER, Material.LANTERN, Material.SOUL_LANTERN)
-		.append(SAPLINGS, DOORS, SIGNS, RAILS, ALL_BANNERS, CONCRETE_POWDERS, SAND, CORALS, WOOL_CARPETS,
+		.append(ALL_SAPLINGS, DOORS, SIGNS, RAILS, ALL_BANNERS, CONCRETE_POWDERS, SAND, CORALS, WOOL_CARPETS,
 			PRESSURE_PLATES, BUTTONS, FLOWER_POTS, ANVIL, PLANTS, TORCHES, CANDLES);
 
 	public static final MaterialTag SPAWNS_ENTITY = new MaterialTag(SPAWN_EGGS, BOATS, MINECARTS).append(Material.EGG, Material.SNOWBALL, Material.BOW, Material.CROSSBOW,

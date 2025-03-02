@@ -60,7 +60,7 @@ public class DemeterEnchant extends CustomEnchant implements Listener {
 
 						if (growCrop(crop))
 							showParticle(player, crop.getLocation());
-					} else if (MaterialTag.SAPLINGS.isTagged(blockType) || Arrays.asList(Material.BROWN_MUSHROOM, Material.RED_MUSHROOM).contains(blockType)) {
+					} else if (MaterialTag.ALL_SAPLINGS.isTagged(blockType)) {
 						if (growTree(block))
 							showParticle(player, block.getLocation());
 					} else if (blockType.equals(Material.SUGAR_CANE) || blockType.equals(Material.CACTUS)) {

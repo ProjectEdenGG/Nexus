@@ -15,19 +15,25 @@ import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.afk.AFKCommand;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetProvider.ResetSkillType;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.PlayerUtils.searchInventory;
 
 public class McMMOListener implements Listener {
 
@@ -126,6 +132,22 @@ public class McMMOListener implements Listener {
 		else if (tierOne.size() == ResetSkillType.values().length)
 			if (mcMMOPlayer.getSkillLevel(event.getSkill()) == McMMO.TIER_ONE)
 				Koda.say(Nickname.of(event.getPlayer()) + " has mastered all their skills! Congratulations!");
+	}
+
+	@EventHandler
+	public void onPlayerDeath(PlayerDeathEvent event) {
+		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL)
+			return;
+
+		var totem = searchInventory(event.getPlayer(), ItemModelType.KEEP_INVENTORY_TOTEM);
+		if (isNullOrAir(totem))
+			return;
+
+		event.setKeepInventory(true);
+		event.getDrops().clear();
+		event.setKeepLevel(true);
+		event.setDroppedExp(0);
+		totem.subtract();
 	}
 
 }

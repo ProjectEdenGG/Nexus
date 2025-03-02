@@ -1604,6 +1604,7 @@ public enum ItemModelType {
 	GLUE("functional/glue"),
 	FUNCTIONAL_ICON("functional/icon", Material.MAP),
 	INFINITE_WATER_BUCKET("functional/infinite_water_bucket"),
+	KEEP_INVENTORY_TOTEM("functional/keep_inventory_totem"),
 	TOOL_MODIFICATION_TABLE("functional/tool_modification_table"),
 	WAYSTONE("functional/waystone"),
 	WAYSTONE_ACTIVATED("functional/waystone_activated"),
