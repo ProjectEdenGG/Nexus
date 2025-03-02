@@ -100,7 +100,7 @@ public enum CrateType {
 	public void give(OfflinePlayer player, int amount) {
 		ItemStack item = getKey().clone();
 		item.setAmount(amount);
-		PlayerUtils.giveItem(player, item);
+		PlayerUtils.giveItemAndMailExcess(player, item, WorldGroup.SURVIVAL);
 	}
 
 	/*
