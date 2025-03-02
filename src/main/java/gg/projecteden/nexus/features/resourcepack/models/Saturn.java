@@ -174,37 +174,34 @@ public class Saturn {
 		final File zip = PATH.resolve("ResourcePack.zip").toFile();
 		final URI uri = URI.create("jar:" + zip.toURI());
 
-		FileSystem zipFile;
-		try {
-			zipFile = FileSystems.newFileSystem(uri, Collections.emptyMap());
+		try (FileSystem zipFile = FileSystems.newFileSystem(uri, Collections.emptyMap())) {
+			for (Path root : zipFile.getRootDirectories()) {
+				try {
+					Files.walk(root).forEach(path -> {
+						String fileName = TITAN_DIRECTORY + path.toUri().toString().split("!")[1];
+
+						final Path filePath = Paths.get(fileName);
+						final File file = filePath.toFile();
+						try {
+
+							if (fileName.contains(".")) {
+								Nexus.debug("Creating file " + fileName);
+								file.createNewFile();
+								Files.copy(path, filePath, StandardCopyOption.REPLACE_EXISTING);
+							} else {
+								Nexus.debug("Creating folder " + fileName);
+								file.mkdirs();
+							}
+						} catch (Exception ex) {
+							ex.printStackTrace();
+						}
+					});
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
-		}
-
-		for (Path root : zipFile.getRootDirectories()) {
-			try {
-				Files.walk(root).forEach(path -> {
-					String fileName = TITAN_DIRECTORY + path.toUri().toString().split("!")[1];
-
-					final Path filePath = Paths.get(fileName);
-					final File file = filePath.toFile();
-					try {
-
-						if (fileName.contains(".")) {
-							Nexus.debug("Creating file " + fileName);
-							file.createNewFile();
-							Files.copy(path, filePath, StandardCopyOption.REPLACE_EXISTING);
-						} else {
-							Nexus.debug("Creating folder " + fileName);
-							file.mkdirs();
-						}
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-				});
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
 		}
 
 		execute("git init", TITAN_PATH);
