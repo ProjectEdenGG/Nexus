@@ -22,10 +22,11 @@ import java.util.Map.Entry;
 @AllArgsConstructor
 public enum CrateType {
 	VOTE(ItemModelType.CRATE_KEY_VOTE, "痪", true),
-	WITHER(ItemModelType.CRATE_KEY_WITHER, ""),
-	MYSTERY(ItemModelType.CRATE_KEY_MYSTERY, ""),
-	WEEKLY_WAKKA(ItemModelType.CRATE_KEY_WAKKA, "",true),
-	MINIGAMES(ItemModelType.CRATE_KEY_MINIGAMES, "", true),
+	WITHER(ItemModelType.CRATE_KEY_WITHER, "囱"),
+	MYSTERY(ItemModelType.CRATE_KEY_MYSTERY, "笯"),
+	WEEKLY_WAKKA(ItemModelType.CRATE_KEY_WAKKA, "清",true),
+	MINIGAMES(ItemModelType.CRATE_KEY_MINIGAMES, "禘", true),
+	ONE_BLOCK(null, "皂")
 	;
 
 	final ItemModelType itemModelType;

@@ -14,7 +14,12 @@ import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -27,7 +32,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -37,7 +47,7 @@ public class  CrateHandler {
 
 	public static final Map<UUID, CrateAnimation> ANIMATIONS = new HashMap<>();
 
-	public static void openCrate(CrateType type, ArmorStand entity, Player player, int amount) {
+	public static void openCrate(CrateType type, ArmorStand entity, Player player, int amount, boolean useKey) {
 		if (isInUse(entity)) return;
 
 		CrateLoot loot = pickCrateLoot(type, player);
@@ -69,7 +79,7 @@ public class  CrateHandler {
 						CrateLoot _loot = pickCrateLoot(type, player);
 						if (!canHoldItems(player, _loot))
 							break;
-						takeKey(type, player);
+						takeKey(type, player, useKey);
 						recap.add(_loot);
 						giveItems(player, _loot);
 					}
@@ -103,7 +113,7 @@ public class  CrateHandler {
 
 		try {
 			ANIMATIONS.put(entity.getUniqueId(), animation);
-			takeKey(type, player);
+			takeKey(type, player, useKey);
 			animation.play().thenRun(() -> {
 				ANIMATIONS.remove(entity.getUniqueId());
 
@@ -117,7 +127,7 @@ public class  CrateHandler {
 		}
 	}
 
-	private static boolean isInUse(Entity entity) {
+	public static boolean isInUse(Entity entity) {
 		if (!ANIMATIONS.containsKey(entity.getUniqueId()))
 			return false;
 		return ANIMATIONS.get(entity.getUniqueId()).isActive();
@@ -190,8 +200,8 @@ public class  CrateHandler {
 				.send();
 	}
 
-	private static void takeKey(CrateType type, Player player) {
-		if (type == CrateType.MINIGAMES)
+	private static void takeKey(CrateType type, Player player, boolean useKey) {
+		if (!useKey)
 			return;
 		try {
 			boolean took = false;

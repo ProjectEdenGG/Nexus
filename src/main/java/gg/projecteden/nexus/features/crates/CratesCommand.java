@@ -7,8 +7,14 @@ import gg.projecteden.nexus.features.crates.menus.CrateEditMenu.CrateEditProvide
 import gg.projecteden.nexus.features.crates.menus.CrateGroupsProvider;
 import gg.projecteden.nexus.features.crates.menus.CratePreviewProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CrateOpeningException;
 import gg.projecteden.nexus.models.crate.CrateConfig;
@@ -244,7 +250,7 @@ public class CratesCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	@Description("Open a crate")
 	void open(CrateType type, @Arg(context = 1) CrateEntity uuid, @Arg("1") int amount) {
-		CrateHandler.openCrate(type, (ArmorStand) Bukkit.getEntity(uuid.getUuid()), player(), amount);
+		CrateHandler.openCrate(type, (ArmorStand) Bukkit.getEntity(uuid.getUuid()), player(), amount, false);
 	}
 
 	@Path("pinata <player> <type> [amount]")

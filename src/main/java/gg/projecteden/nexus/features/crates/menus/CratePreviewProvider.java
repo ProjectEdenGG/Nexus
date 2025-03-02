@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkType;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CrateOpeningException;
 import gg.projecteden.nexus.models.crate.CrateConfig.CrateGroup;
@@ -21,6 +22,8 @@ import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
 import gg.projecteden.nexus.models.voter.Voter;
 import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.AllArgsConstructor;
@@ -28,6 +31,7 @@ import lombok.NoArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.inventory.ItemStack;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -57,8 +61,11 @@ public class CratePreviewProvider extends InventoryProvider {
 
 	@Override
 	public void init() {
-		if (group != null)
-			addBackItem(e -> new CratePreviewProvider(type, null, clickedCrate).open(viewer));
+		if (group != null) {
+			Consumer<ItemClickData> back = e -> new CratePreviewProvider(type, null, clickedCrate).open(viewer);
+			for (int i = 0; i < 3; i++)
+				contents.set(48 + i, ClickableItem.of(new ItemBuilder(i == 1 ? ItemModelType.GUI_BACK : ItemModelType.INVISIBLE).name("&cBack").build(), back));
+		}
 
 		Pagination page = contents.pagination();
 
@@ -120,6 +127,9 @@ public class CratePreviewProvider extends InventoryProvider {
 				});
 		}
 
+		for (int i = 0; i < 3; i++)
+			contents.set(48 + i, getOpenItem(i == 1));
+
 		paginator().items(items)
 			.perPage(28)
 			.iterator(MenuUtils.innerSlotIterator(contents))
@@ -142,18 +152,23 @@ public class CratePreviewProvider extends InventoryProvider {
 					if (voter.getPoints() < 2)
 						return;
 
-					if (type.giveVPS(viewer, 1)) {
-						voter.takePoints(2);
-						voterService.save(voter);
-					}
+					voter.takePoints(2);
+					voterService.save(voter);
+					close();
 
 					try {
-						CrateHandler.openCrate(type, clickedCrate, viewer, 1);
+						if (CrateHandler.isInUse(clickedCrate)) {
+							PlayerUtils.send(viewer, Crates.PREFIX + "That crate is already being used");
+							voter.givePoints(2);
+							voterService.save(voter);
+							return;
+						}
+						CrateHandler.openCrate(type, clickedCrate, viewer, 1, false);
 					} catch (CrateOpeningException ex) {
 						if (ex.getMessage() != null)
 							PlayerUtils.send(viewer, Crates.PREFIX + ex.getMessage());
 						CrateHandler.reset(clickedCrate);
-						voter.givePoints(50);
+						voter.givePoints(2);
 						voterService.save(voter);
 					}
 				};
@@ -171,7 +186,13 @@ public class CratePreviewProvider extends InventoryProvider {
 					close();
 
 					try {
-						CrateHandler.openCrate(type, clickedCrate, viewer, 1);
+						if (CrateHandler.isInUse(clickedCrate)) {
+							PlayerUtils.send(viewer, Crates.PREFIX + "That crate is already being used");
+							perkOwner.giveTokens(50);
+							perkService.save(perkOwner);
+							return;
+						}
+						CrateHandler.openCrate(type, clickedCrate, viewer, 1, false);
 					} catch (CrateOpeningException ex) {
 						if (ex.getMessage() != null)
 							PlayerUtils.send(viewer, Crates.PREFIX + ex.getMessage());
@@ -192,13 +213,13 @@ public class CratePreviewProvider extends InventoryProvider {
 			}
 
 			try {
-				if (keys > 1 && viewer.isSneaking())
+				if (keys > 1 && e.isShiftClick())
 					ConfirmationMenu.builder()
 						.title("Open " + keys + " keys?")
-						.onConfirm(e2 -> CrateHandler.openCrate(type, clickedCrate, viewer, keys))
+						.onConfirm(e2 -> CrateHandler.openCrate(type, clickedCrate, viewer, keys, true))
 						.open(viewer);
 				else {
-					CrateHandler.openCrate(type, clickedCrate, viewer, 1);
+					CrateHandler.openCrate(type, clickedCrate, viewer, 1, true);
 					close();
 				}
 			} catch (CrateOpeningException ex) {
@@ -209,16 +230,57 @@ public class CratePreviewProvider extends InventoryProvider {
 		};
 	}
 
-//	public ClickableItem getOpenItem(boolean main) {
-//		ItemBuilder builder = new ItemBuilder(main ? ItemModelType.OPEN_BUTTON : ItemModelType.INVISIBLE)
-//			.name("&eOpen");
-//		if (type == CrateType.MINIGAMES) {
-//
-//		}
-//	}
+	public ClickableItem getOpenItem(boolean main) {
+		ItemBuilder builder = new ItemBuilder(main ? ItemModelType.GUI_OPEN : ItemModelType.INVISIBLE)
+			.name("&eOpen");
+
+		int keys = getAvailableKeys();
+		if (keys > 0) {
+			builder.lore("&3Click to open &e1");
+			if (keys > 1)
+				builder.lore("&3Shift-Click to open &e" + keys);
+		}
+
+		boolean canPurchase = false;
+
+		if (keys == 0) {
+			if (type == CrateType.VOTE) {
+				final Voter voter = voterService.get(viewer);
+				if (voter.getPoints() >= 2) {
+					canPurchase = true;
+					builder.lore("&3Purchase for &e2 Vote Points");
+					builder.lore("&3Your Points: &e" + voter.getPoints());
+				}
+			}
+			if (type == CrateType.MINIGAMES) {
+				PerkOwner perkOwner = perkService.get(viewer);
+				if (perkOwner.getTokens() >= 50) {
+					canPurchase = true;
+					builder.lore("&3Purchase for &e50 Tokens");
+					builder.lore("&3Your Tokens: &e" + perkOwner.getTokens());
+				}
+			}
+		}
+
+		if (keys == 0 && !canPurchase) {
+			builder.name("&7No keys available");
+			if (main)
+				builder.model(ItemModelType.GUI_OPEN_DISABLED);
+		}
+
+
+		return ClickableItem.of(builder.build(), getOpenButtonAction());
+	}
 
 	public int getAvailableKeys() {
-		return 0;
+		int count = 0;
+		for (ItemStack item : viewer.getInventory().getContents()) {
+			if (Nullables.isNullOrAir(item))
+				continue;
+			if (ItemUtils.isModelMatch(item, type.getKey()))
+				count += item.getAmount();
+		}
+		return count;
 	}
 
 	@Override
@@ -244,9 +306,15 @@ public class CratePreviewProvider extends InventoryProvider {
 		CrateLoot loot;
 
 		@Override
+		public String getTitle() {
+			return InventoryTexture.getMenuTexture(10, loot.getType().getTitleCharacter(), ChatColor.WHITE, 6);
+		}
+
+		@Override
 		public void init() {
-			contents.outline(ClickableItem.empty(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).name(" ").build()));
-			addBackItem(e -> previous.open(viewer));
+			Consumer<ItemClickData> back = e -> previous.open(viewer);
+			for (int i = 0; i < 3; i++)
+				contents.set(48 + i, ClickableItem.of(new ItemBuilder(i == 1 ? ItemModelType.GUI_BACK : ItemModelType.INVISIBLE).name("&cBack").build(), back));
 
 			List<ClickableItem> items = new ArrayList<>();
 			loot.getItems().forEach(itemStack -> items.add(ClickableItem.empty(itemStack)));
