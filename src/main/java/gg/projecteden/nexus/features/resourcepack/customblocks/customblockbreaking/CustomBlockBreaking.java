@@ -7,6 +7,9 @@ import lombok.Getter;
 
 @Environments(Env.TEST)
 public class CustomBlockBreaking extends Feature {
+
+	// Maybe look into https://github.com/oraxen/oraxen/tree/master/core/src/main/java/io/th0rgal/oraxen/utils/breaker
+
 	@Getter
 	private static final BrokenBlocksManager manager = new BrokenBlocksManager();
 

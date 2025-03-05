@@ -443,11 +443,13 @@ public class ItemUtils {
 	}
 
 	public static void subtract(Player player, ItemStack item) {
-		if (item == null)
+		if (Nullables.isNullOrAir(item))
 			return;
 
-		if (!GameModeWrapper.of(player).isCreative())
-			item.subtract();
+		if (GameModeWrapper.of(player).isCreative())
+			return;
+
+		item.subtract();
 	}
 
 	public static void update(ItemStack item, @Nullable Player player) {

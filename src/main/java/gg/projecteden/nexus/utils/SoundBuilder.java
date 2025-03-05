@@ -99,7 +99,6 @@ public class SoundBuilder implements Cloneable {
 	}
 
 	// use CustomSound when possible
-	@Deprecated
 	public SoundBuilder(String sound) {
 		this.sound = sound;
 	}

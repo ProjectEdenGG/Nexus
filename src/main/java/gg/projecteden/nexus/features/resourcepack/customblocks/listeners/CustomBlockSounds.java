@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksLang;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -78,6 +79,8 @@ public class CustomBlockSounds implements Listener {
 		if (Nullables.isNullOrAir(block))
 			return;
 
+		CustomBlocksLang.debug("\n&d&lEntityDamageEvent:");
+
 		updateAction(player, BlockAction.FALL);
 		tryPlaySound(player, SoundAction.FALL, block);
 	}
@@ -94,6 +97,7 @@ public class CustomBlockSounds implements Listener {
 			return;
 
 		if (playerActionMap.get(player) == BlockAction.HIT) {
+			CustomBlocksLang.debug("\n&d&lPlayerAnimationEvent:");
 			tryPlaySound(player, SoundAction.HIT, block);
 		}
 	}
@@ -109,6 +113,7 @@ public class CustomBlockSounds implements Listener {
 		Block brokenBlock = event.getBlock();
 		CustomBlock brokenCustomBlock = CustomBlock.from(brokenBlock);
 		if (brokenCustomBlock == null) {
+			CustomBlocksLang.debug("\n&d&lBlockBreakEvent:");
 			tryPlaySound(event.getPlayer(), SoundAction.BREAK, brokenBlock);
 		}
 	}
@@ -145,29 +150,31 @@ public class CustomBlockSounds implements Listener {
 			}
 
 			ReplacedSoundType soundType = ReplacedSoundType.fromSound(sound.name().value());
-			if (soundType == null) {
+			if (soundType == null)
 				return;
-			}
 
+			CustomBlocksLang.debug("\n&d&lSoundEvent:");
 			if (tryPlaySound(null, soundAction, soundAction.getCustomSound(soundType), event.getEmitter().getLocation()))
 				event.setCancelled(true);
-
 
 		} catch (Exception ignored) {}
 	}
 
 	public static void tryPlaySound(Player player, SoundAction soundAction, Block block) {
 		Sound defaultSound = NMSUtils.getSound(soundAction, block);
-		if (defaultSound == null)
+		CustomBlocksLang.debug("&b- Try play sound: action = " + StringUtils.camelCase(soundAction) + ", block = " + StringUtils.camelCase(block.getType()));
+		if (defaultSound == null) {
+			CustomBlocksLang.debug("&c<- couldn't find default sound");
 			return;
+		}
 
-//		debug("tryPlaySound, trying: " + defaultSound.getKey().getKey());
+		CustomBlocksLang.debug("&e- default sound = " + defaultSound.getKey().getKey());
 
 		CustomBlock customBlock = CustomBlock.from(block);
 		ReplacedSoundType replacedSoundType = ReplacedSoundType.fromSound(defaultSound);
 		if (replacedSoundType == null && customBlock == null) {
-//			debug("playing default sound");
-			return; // handled by minecraft
+			CustomBlocksLang.debug("&a<- playing default sound");
+			return; // already handled by CustomBlockNMSUtils#placeVanillaBlock
 		}
 
 		// get custom block sound
@@ -182,17 +189,16 @@ public class CustomBlockSounds implements Listener {
 		soundKey = ReplacedSoundType.replaceMatching(soundKey);
 
 		SoundBuilder soundBuilder = new SoundBuilder(soundKey)
-				.location(location)
-				.volume(soundAction.getVolume())
-				.pitch(soundAction.getPitch());
+			.location(location)
+			.volume(soundAction.getVolume())
+			.pitch(soundAction.getPitch());
 
 		String locationStr = location.getWorld().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ();
 		String cooldownType = "CustomSound_" + soundAction + "_" + locationStr;
-		if (!(new CooldownService().check(UUIDUtils.UUID0, cooldownType, TickTime.TICK.x(3)))) {
+		if (!(new CooldownService().check(UUIDUtils.UUID0, cooldownType, TickTime.TICK.x(3))))
 			return false;
-		}
 
-		CustomBlocksLang.debug(player, "tryPlaySound, playing: " + soundKey);
+		CustomBlocksLang.debug(player, "&a- playing: " + soundKey);
 		BlockUtils.playSound(soundBuilder);
 		return true;
 	}
