@@ -21,8 +21,8 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.c
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.IWaterLogged;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.incremental.IIncremental;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.tall.ITall;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.protection.ProtectionUtils;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
@@ -42,10 +42,8 @@ import net.minecraft.server.level.ServerLevel;
 import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.block.data.type.Tripwire;
@@ -56,7 +54,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
@@ -637,14 +634,17 @@ public class CustomBlockListener implements Listener {
 		Material material = itemInHand.getType();
 		boolean isPlacingCustomBlock = false;
 
-		// TODO: CHECK FOR DECORATION
+		// Check decoration
+		if (DecorationConfig.of(itemInHand) != null) {
+			CustomBlocksLang.debug("&c<- item in hand is a decoration");
+			return true;
 
 		// Check replaced vanilla items
-		if (CustomBlockType.getItemMaterials().contains(material))
+		} else if (CustomBlockType.getItemMaterials().contains(material)) {
 			isPlacingCustomBlock = true;
 
 			// Check paper (Custom Blocks backup)
-		else if (material.equals(ICustomBlock.itemMaterial)) {
+		} else if (material.equals(ICustomBlock.itemMaterial)) {
 			String modelId = Model.of(itemInHand);
 			if (!CustomBlock.modelIdMap.containsKey(modelId)) {
 				CustomBlocksLang.debug("&c<- unknown modelId: " + modelId);
