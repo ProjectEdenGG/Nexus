@@ -100,6 +100,9 @@ dependencies {
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.12.4-SNAPSHOT")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.12.4-SNAPSHOT") { isTransitive = false }
     compileOnly("com.griefcraft:lwc:2.3.2-dev")
+    implementation(platform("com.intellectualsites.bom:bom-1.18.x:1.20"))
+    compileOnly("com.plotsquared:PlotSquared-Core")
+    compileOnly("com.plotsquared:PlotSquared-Bukkit")
     compileOnly("net.citizensnpcs:citizensapi:2.0.37-SNAPSHOT")
     compileOnly("net.citizensnpcs:citizens-main:2.0.37-SNAPSHOT") {
         exclude("*", "*")
