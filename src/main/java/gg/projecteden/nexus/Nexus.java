@@ -18,6 +18,7 @@ import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.Events;
 import gg.projecteden.nexus.features.listeners.common.TemporaryListener;
 import gg.projecteden.nexus.features.menus.api.SignMenuFactory;
+import gg.projecteden.nexus.utils.protection.ProtectionUtils;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.framework.persistence.mysql.MySQLPersistence;
@@ -383,6 +384,8 @@ public class Nexus extends JavaPlugin {
 		RegisteredServiceProvider<LuckPerms> lpProvider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
 		if (lpProvider != null)
 			luckPerms = lpProvider.getProvider();
+		//
+		ProtectionUtils.init(this);
 	}
 
 	public static Spark getSpark() {
