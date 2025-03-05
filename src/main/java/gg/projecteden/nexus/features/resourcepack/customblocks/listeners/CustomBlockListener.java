@@ -22,6 +22,7 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.c
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.incremental.IIncremental;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.tall.ITall;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.protection.ProtectionUtils;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
@@ -41,8 +42,10 @@ import net.minecraft.server.level.ServerLevel;
 import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.block.data.type.Tripwire;
@@ -53,14 +56,17 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -502,6 +508,24 @@ public class CustomBlockListener implements Listener {
 		CustomBlockUtils.pistonMove(piston, moveBlocks);
 
 		return true;
+	}
+
+	@EventHandler(priority = EventPriority.HIGH)
+	public void on(EntityExplodeEvent event) {
+		for (Block block : new ArrayList<>(event.blockList())) {
+			if (Nullables.isNullOrAir(block))
+				continue;
+
+			CustomBlock customBlock = CustomBlock.from(block);
+			if (customBlock == null)
+				continue;
+
+			event.blockList().remove(block);
+			CustomBlockUtils.breakBlock(block, customBlock, null, null);
+
+			// required in this specific order, for whatever reason
+			Tasks.wait(1, () -> block.setType(Material.AIR, true));
+		}
 	}
 
 	//
