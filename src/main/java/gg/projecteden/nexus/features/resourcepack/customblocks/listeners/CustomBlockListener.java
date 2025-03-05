@@ -648,15 +648,15 @@ public class CustomBlockListener implements Listener {
 	}
 
 	private boolean placedCustomBlock(Block clickedBlock, Player player, BlockFace clickedFace, Block preBlock, ItemStack itemInHand) {
-		CustomBlocksLang.debug("Placing custom block");
+		CustomBlocksLang.debug("&e- placing custom block");
 		if (!preBlock.getLocation().toCenterLocation().getNearbyLivingEntities(0.5).isEmpty()) {
-			CustomBlocksLang.debug(" isPlacingBlock: entity in way");
+			CustomBlocksLang.debug("&c<- entity in way");
 			return false;
 		}
 
 		CustomBlock _customBlock = CustomBlock.from(itemInHand);
 		if (_customBlock == null) {
-			CustomBlocksLang.debug(" isPlacingBlock: customBlock == null");
+			CustomBlocksLang.debug("&c<- customBlock == null");
 			return false;
 		}
 
@@ -665,6 +665,7 @@ public class CustomBlockListener implements Listener {
 
 		// IWaterlogged
 		if (customBlock instanceof IWaterLogged) {
+			CustomBlocksLang.debug("&e- CustomBlock instance of IWaterLogged");
 
 			// if placing block in 1 depth water
 			if (preBlock.getType() == Material.WATER && Nullables.isNullOrAir(preBlock.getRelative(BlockFace.UP))) {
@@ -676,15 +677,19 @@ public class CustomBlockListener implements Listener {
 				clickedBlock = underneath;
 
 			} else if (!Nullables.isNullOrAir(preBlock)) {
+				CustomBlocksLang.debug("&c<- preBlock (" + StringUtils.camelCase(preBlock.getType()) + ") is not null/air");
 				return false;
 			}
 		} else {
-			if (!MaterialTag.REPLACEABLE.isTagged(preBlock.getType()))
+			if (!MaterialTag.REPLACEABLE.isTagged(preBlock.getType())) {
+				CustomBlocksLang.debug("&c<- preBlock (" + StringUtils.camelCase(preBlock.getType()) + ") is not replaceable");
 				return false;
+			}
 		}
 
 		// ITall
 		if (customBlock instanceof ITall) {
+			CustomBlocksLang.debug("&e- CustomBlock instance of IWaterLogged");
 			Block above = preBlock.getRelative(BlockFace.UP);
 
 			boolean placeTallSupport = false;
@@ -694,25 +699,32 @@ public class CustomBlockListener implements Listener {
 				placeTallSupport = true;
 
 			if (placeTallSupport && !Nullables.isNullOrAir(above)) {
+				CustomBlocksLang.debug("&c<- above (" + StringUtils.camelCase(preBlock.getType()) + ") is not null/air");
 				return false;
 			}
 		}
 
 		// IRequireSupport
 		if (customBlock instanceof IRequireSupport && !(customBlock instanceof IWaterLogged)) {
-			if (!underneath.isSolid())
+			CustomBlocksLang.debug("&e- CustomBlock instance of IRequireSupport and not IWaterLogged");
+			if (!underneath.isSolid()) {
+				CustomBlocksLang.debug("&c<- underneath (" + StringUtils.camelCase(preBlock.getType()) + ") is not solid");
 				return false;
+			}
 		}
 
 		// IRequireDirt
 		if (customBlock instanceof IRequireDirt) {
-			if (!MaterialTag.DIRT.isTagged(underneath.getType()))
+			CustomBlocksLang.debug("&e- CustomBlock instance of IRequireDirt");
+			if (!MaterialTag.DIRT.isTagged(underneath.getType())) {
+				CustomBlocksLang.debug("&c<- underneath (" + StringUtils.camelCase(preBlock.getType()) + ") is not a dirt type");
 				return false;
+			}
 		}
 
 		// place block
 		if (!_customBlock.placeBlock(player, preBlock, clickedBlock, clickedFace, itemInHand)) {
-			CustomBlocksLang.debug(" isPlacingBlock: CustomBlock#PlaceBlock == false");
+			CustomBlocksLang.debug("&c<- CustomBlock#PlaceBlock == false");
 			return false;
 		}
 

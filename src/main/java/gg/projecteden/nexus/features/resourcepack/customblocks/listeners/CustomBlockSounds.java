@@ -80,9 +80,9 @@ public class CustomBlockSounds implements Listener {
 			return;
 
 		CustomBlocksLang.debug("\n&d&lEntityDamageEvent:");
-
 		updateAction(player, BlockAction.FALL);
 		tryPlaySound(player, SoundAction.FALL, block);
+		CustomBlocksLang.debug("&d<- done, end");
 	}
 
 	// Handles Sound: HIT
@@ -99,6 +99,7 @@ public class CustomBlockSounds implements Listener {
 		if (playerActionMap.get(player) == BlockAction.HIT) {
 			CustomBlocksLang.debug("\n&d&lPlayerAnimationEvent:");
 			tryPlaySound(player, SoundAction.HIT, block);
+			CustomBlocksLang.debug("&d<- done, end");
 		}
 	}
 
@@ -111,10 +112,13 @@ public class CustomBlockSounds implements Listener {
 		updateAction(event.getPlayer(), BlockAction.BREAK);
 
 		Block brokenBlock = event.getBlock();
-		CustomBlock brokenCustomBlock = CustomBlock.from(brokenBlock);
-		if (brokenCustomBlock == null) {
+		if (Nullables.isNullOrAir(brokenBlock))
+			return;
+
+		if (CustomBlock.from(brokenBlock) == null) {
 			CustomBlocksLang.debug("\n&d&lBlockBreakEvent:");
 			tryPlaySound(event.getPlayer(), SoundAction.BREAK, brokenBlock);
+			CustomBlocksLang.debug("&d<- done, end");
 		}
 	}
 
@@ -153,7 +157,6 @@ public class CustomBlockSounds implements Listener {
 			if (soundType == null)
 				return;
 
-			CustomBlocksLang.debug("\n&d&lSoundEvent:");
 			if (tryPlaySound(null, soundAction, soundAction.getCustomSound(soundType), event.getEmitter().getLocation()))
 				event.setCancelled(true);
 
@@ -198,7 +201,7 @@ public class CustomBlockSounds implements Listener {
 		if (!(new CooldownService().check(UUIDUtils.UUID0, cooldownType, TickTime.TICK.x(3))))
 			return false;
 
-		CustomBlocksLang.debug(player, "&a- playing: " + soundKey);
+		CustomBlocksLang.debug(player, "&a<- playing: " + soundKey);
 		BlockUtils.playSound(soundBuilder);
 		return true;
 	}

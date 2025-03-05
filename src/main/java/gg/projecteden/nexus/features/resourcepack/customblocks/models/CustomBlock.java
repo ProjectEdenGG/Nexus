@@ -181,6 +181,7 @@ import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.GameMode;
@@ -571,7 +572,7 @@ public enum CustomBlock implements Keyed {
 		switch (this.getType()) {
 			case NOTE_BLOCK -> setup = true;
 			case TRIPWIRE -> {
-				CustomBlocksLang.debug("Tripwire handling...");
+				CustomBlocksLang.debug("&e- tripwire handling...");
 				// TODO: Disable tripwire customblocks
 				if (ICustomTripwire.isNotEnabled())
 					return false;
@@ -602,7 +603,7 @@ public enum CustomBlock implements Keyed {
 
 		if (setup) {
 			BlockData blockData = customBlock.getBlockData(facingFinal, placeAgainst);
-			CustomBlocksLang.debug("Placing Block: " + this.name());
+			CustomBlocksLang.debug("&e- placing: " + StringUtils.camelCase(this));
 
 			if (BlockUtils.tryPlaceEvent(player, block, placeAgainst, blockMaterial, blockData, false, item)) {
 				CustomBlockUtils.updateObservers(block);
@@ -625,7 +626,7 @@ public enum CustomBlock implements Keyed {
 	}
 
 	private void tallSupport(Player player, Block block, BlockFace facingFinal) {
-		CustomBlocksLang.debug("Placing Tall Support");
+		CustomBlocksLang.debug("&e - placing tall support");
 		CustomBlock _tallSupport = CustomBlock.TALL_SUPPORT;
 		ICustomBlock tallSupport = _tallSupport.get();
 		Material _blockMaterial = tallSupport.getVanillaBlockMaterial();
@@ -829,7 +830,7 @@ public enum CustomBlock implements Keyed {
 			soundBuilder.receiver(source);
 		}
 
-		CustomBlocksLang.debug(source, "Playing sound " + sound);
+		CustomBlocksLang.debug(source, "&e- playing sound: " + sound);
 		soundBuilder.category(SoundCategory.BLOCKS).play();
 	}
 
