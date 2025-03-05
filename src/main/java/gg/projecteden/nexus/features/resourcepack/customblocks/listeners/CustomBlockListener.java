@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.listeners;
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockNMSUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks.BlockAction;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks.SoundAction;
@@ -20,14 +21,16 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.c
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.IWaterLogged;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.incremental.IIncremental;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.tall.ITall;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.protection.ProtectionUtils;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomNoteBlockData;
 import gg.projecteden.nexus.models.customblock.CustomTripwireData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
@@ -41,9 +44,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.Directional;
-import org.bukkit.block.data.FaceAttachable;
-import org.bukkit.block.data.FaceAttachable.AttachedFace;
 import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.block.data.type.Tripwire;
 import org.bukkit.entity.Player;
@@ -280,7 +280,7 @@ public class CustomBlockListener implements Listener {
 			return;
 		//
 
-		CustomBlocksLang.debug("\nPlayer Interact Event:");
+		CustomBlocksLang.debug("\n&d&lPlayerInteractEvent:");
 
 		Location clickedBlockLoc = clickedBlock.getLocation();
 		CustomBlock clickedCustomBlock = CustomBlock.from(clickedBlock);
@@ -290,51 +290,54 @@ public class CustomBlockListener implements Listener {
 
 		// Place
 		if (isSpawningEntity(event, clickedBlock, clickedCustomBlock)) {
-			CustomBlocksLang.debug("is spawning entity: cancel=" + event.isCancelled());
 			CustomBlockSounds.updateAction(player, BlockAction.UNKNOWN);
+			CustomBlocksLang.debug("&d<- done, spawned entity: cancel=" + event.isCancelled());
 			return;
 		}
 
 		if (isIncrementingBlock(event, clickedBlock, clickedCustomBlock)) {
-			CustomBlocksLang.debug("is incrementing block");
 			CustomBlockSounds.updateAction(player, BlockAction.PLACE);
+			CustomBlocksLang.debug("&d<- done, incremented block");
 			return;
 		}
 
 		if (isPlacingBlock(event, clickedBlock, clickedCustomBlock)) {
-			CustomBlocksLang.debug("is placing block");
 			CustomBlockSounds.updateAction(player, BlockAction.PLACE);
-
+			CustomBlocksLang.debug("&d<- done, placed block");
 			return;
 		}
 
-		CustomBlocksLang.debug("is interacting block");
+		CustomBlocksLang.debug("&e- interacted with block");
 		CustomBlockSounds.updateAction(player, BlockAction.INTERACT);
 
 		if (clickedCustomBlock != null) {
 			if (CustomBlock.NOTE_BLOCK == clickedCustomBlock) {
-				CustomBlocksLang.debug("is a note block");
+				CustomBlocksLang.debug("&e-- is a note block");
 				NoteBlock noteBlock = (NoteBlock) clickedBlock.getBlockData();
 
 				if (isChangingPitch(action, sneaking, itemInHand)) {
-					CustomBlocksLang.debug("is changing pitch");
+					CustomBlocksLang.debug("&e<- is changing pitch");
 					event.setCancelled(true);
 
 					changePitch(noteBlock, clickedBlockLoc, sneaking);
+					CustomBlocksLang.debug("&d<- done, changed pitch");
 					return;
 				}
 
 				boolean isPlayingNote = action.equals(Action.LEFT_CLICK_BLOCK);
 				if (isPlayingNote) {
-					CustomBlocksLang.debug("is playing note");
+					CustomBlocksLang.debug("&e<- is playing note");
 					NoteBlockUtils.play(noteBlock, clickedBlockLoc, true);
 				}
 			}
 
 			if (action.equals(Action.RIGHT_CLICK_BLOCK)) {
 				event.setCancelled(true);
+				CustomBlocksLang.debug("&e<- action == " + action + ", cancelling");
 			}
 		}
+
+		CustomBlocksLang.debug("&d<- done, end");
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -573,8 +576,11 @@ public class CustomBlockListener implements Listener {
 	}
 
 	private boolean isPlacingBlock(PlayerInteractEvent event, Block clickedBlock, CustomBlock clickedCustomBlock) {
+		CustomBlocksLang.debug("&b- Is placing block?");
+
 		Action action = event.getAction();
 		if (!action.equals(Action.RIGHT_CLICK_BLOCK)) {
+			CustomBlocksLang.debug("&c<- Action != " + Action.RIGHT_CLICK_BLOCK);
 			return false;
 		}
 
@@ -591,29 +597,33 @@ public class CustomBlockListener implements Listener {
 			}
 		}
 
+		CustomBlocksLang.debug("&e- Interactable = " + isInteractable);
+
 		if (!player.isSneaking() && isInteractable) {
-//			debug(" isPlacingBlock: not sneaking & isInteractable");
+			CustomBlocksLang.debug("&c<- not sneaking & isInteractable");
 			return false;
 		}
 
 		ItemStack itemInHand = event.getItem();
 		if (Nullables.isNullOrAir(itemInHand)) {
-//			debug(" isPlacingBlock: item in hand is null or air");
+			CustomBlocksLang.debug("&c<- item in hand is null or air");
 			return false;
 		}
 
 		Material material = itemInHand.getType();
 		boolean isPlacingCustomBlock = false;
 
+		// TODO: CHECK FOR DECORATION
+
 		// Check replaced vanilla items
 		if (CustomBlockType.getItemMaterials().contains(material))
 			isPlacingCustomBlock = true;
 
-			// Check paper
+			// Check paper (Custom Blocks backup)
 		else if (material.equals(ICustomBlock.itemMaterial)) {
 			String modelId = Model.of(itemInHand);
 			if (!CustomBlock.modelIdMap.containsKey(modelId)) {
-				CustomBlocksLang.debug(" isPlacingBlock: unknown modelId: " + modelId);
+				CustomBlocksLang.debug("&c<- unknown modelId: " + modelId);
 				return false;
 			} else
 				isPlacingCustomBlock = true;
@@ -621,7 +631,7 @@ public class CustomBlockListener implements Listener {
 			// Return if non-block, excluding redstone wire
 		} else if (!material.isBlock() && !material.isSolid()) {
 			if (!material.equals(Material.REDSTONE)) {
-				CustomBlocksLang.debug(" isPlacingBlock: not a block: " + material);
+				CustomBlocksLang.debug("&c<- not a block: " + material);
 				return false;
 			}
 		}
@@ -632,15 +642,15 @@ public class CustomBlockListener implements Listener {
 				CustomBlockUtils.logPlacement(player, preBlock, CustomBlock.from(itemInHand));
 			}
 		} else
-			return placedVanillaBlock(event, clickedBlock, player, preBlock, didClickedCustomBlock, material);
+			return placedVanillaBlock(event, clickedBlock, player, preBlock, didClickedCustomBlock, material, itemInHand);
 
 		return true;
 	}
 
 	private boolean placedCustomBlock(Block clickedBlock, Player player, BlockFace clickedFace, Block preBlock, ItemStack itemInHand) {
 		CustomBlocksLang.debug("Placing custom block");
-		if (preBlock.getLocation().toCenterLocation().getNearbyLivingEntities(0.5).size() > 0) {
-//			debug(" isPlacingBlock: entity in way");
+		if (!preBlock.getLocation().toCenterLocation().getNearbyLivingEntities(0.5).isEmpty()) {
+			CustomBlocksLang.debug(" isPlacingBlock: entity in way");
 			return false;
 		}
 
@@ -669,9 +679,8 @@ public class CustomBlockListener implements Listener {
 				return false;
 			}
 		} else {
-			if (!Nullables.isNullOrAir(preBlock)) {
+			if (!MaterialTag.REPLACEABLE.isTagged(preBlock.getType()))
 				return false;
-			}
 		}
 
 		// ITall
@@ -703,62 +712,44 @@ public class CustomBlockListener implements Listener {
 
 		// place block
 		if (!_customBlock.placeBlock(player, preBlock, clickedBlock, clickedFace, itemInHand)) {
-//			debug(" isPlacingBlock: CustomBlock#PlaceBlock == false");
+			CustomBlocksLang.debug(" isPlacingBlock: CustomBlock#PlaceBlock == false");
 			return false;
 		}
 
 		return true;
 	}
 
-	private boolean placedVanillaBlock(PlayerInteractEvent event, Block clickedBlock, Player player, Block preBlock, boolean didClickedCustomBlock, Material material) {
-		CustomBlocksLang.debug("Placing vanilla block");
+	private boolean placedVanillaBlock(PlayerInteractEvent event, Block clickedBlock, Player player, Block preBlock,
+									   boolean didClickedCustomBlock, Material material, ItemStack itemStack) {
+		CustomBlocksLang.debug("&e- placing vanilla block");
 
-		if (!Nullables.isNullOrAir(preBlock)) {
-//			debug(" isPlacingBlock: preBlock is not air");
+		if (!MaterialTag.REPLACEABLE.isTagged(preBlock.getType())) {
+			CustomBlocksLang.debug("&c<- preBlock is not replaceable");
 			return false;
 		}
 
 		if (!didClickedCustomBlock) {
-//			debug(" isPlacingBlock: Didn't click on a custom block");
+			CustomBlocksLang.debug("&c<- didn't click on a custom block");
 			return false;
 		}
 
-		if (!player.isSneaking()) {
-			BlockData blockData = material.createBlockData();
-			BlockFace blockFace = event.getBlockFace();
-			if (blockData instanceof Directional directional) {
-				try {
-					directional.setFacing(blockFace);
-//					debug(" isPlacingBlock: set facing direction to " + blockFace);
-				} catch (Exception ignored) {}
-			}
+		if (player.isSneaking())
+			return true;
 
-			if (blockData instanceof FaceAttachable faceAttachable) {
-				AttachedFace attachedFace = AttachedFace.WALL;
-				switch (blockFace) {
-					case UP -> attachedFace = AttachedFace.FLOOR;
-					case DOWN -> attachedFace = AttachedFace.CEILING;
-				}
-
-				try {
-					faceAttachable.setAttachedFace(attachedFace);
-//					debug(" isPlacingBlock: set attached face to " + attachedFace);
-				} catch (Exception ignored) {}
-			}
-
-			if (!BlockUtils.tryPlaceEvent(player, preBlock, clickedBlock, material, blockData)) {
-//				debug(" isPlacingBlock: PlaceBlock event was cancelled");
-				return false;
-			}
-
-			if (!Nullables.isNullOrAir(event.getItem())) {
-				if (!GameModeWrapper.of(player).isCreative())
-					event.getItem().subtract();
-			}
+		if (!ProtectionUtils.canBuild(player, preBlock)) {
+			CustomBlocksLang.debug("&c<- cannot build here");
+			return false;
 		}
 
-		CustomBlockSounds.tryPlaySound(player, SoundAction.PLACE, preBlock);
+		BlockData fixedBlockData = CustomBlockNMSUtils.tryPlaceVanillaBlock(player, itemStack);
+		if (fixedBlockData == null) {
+			CustomBlocksLang.debug("&c<- cannot place this block here");
+			return false;
+		}
 
+		CustomBlocksLang.debug("&a<- placed block: " + StringUtils.camelCase(material));
+		CustomBlockSounds.tryPlaySound(player, SoundAction.PLACE, preBlock);
+		ItemUtils.subtract(player, event.getItem());
 		return true;
 	}
 
