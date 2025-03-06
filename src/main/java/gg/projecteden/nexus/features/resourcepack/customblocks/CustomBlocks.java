@@ -32,6 +32,7 @@ import java.util.Map;
 /*
 	TODO:
 		- Ensure the conversion of note block is keeping their pitch to the database
+		- If chunk has been converted, don't convert again --> breaks worldedited blocks
 		- Release NoteBlock Custom Blocks
 		-
 		- Bugs:

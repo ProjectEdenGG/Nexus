@@ -7,18 +7,21 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomNoteBlockData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
+import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.NoteBlock;
+import org.bukkit.entity.Player;
 
 public class NoteBlockUtils {
 
-	public static void changePitch(boolean sneaking, Location location, NoteBlockData data) {
+	public static void changePitch(Player player, boolean sneaking, Location location, NoteBlockData data) {
 		if (!sneaking)
 			data.incrementStep();
 		else
@@ -30,8 +33,7 @@ public class NoteBlockUtils {
 		play(block, data);
 
 		CustomBlockUtils.updatePowerable(block);
-
-		// TODO, show instrument + note somewhere to the player?
+		ActionBarUtils.sendActionBar(player, "Instrument: " + StringUtils.camelCase(data.getInstrument()) + " | " + " Note: " + data.getStep());
 	}
 
 

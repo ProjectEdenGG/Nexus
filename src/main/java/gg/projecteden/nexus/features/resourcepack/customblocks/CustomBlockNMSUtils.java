@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks;
 
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,21 +33,28 @@ public class CustomBlockNMSUtils {
 		if (MaterialTag.ITEMS_BOATS.isTagged(itemStack.getType()))
 			return null;
 
-
 		InteractionHand hand = InteractionHand.MAIN_HAND;
 		net.minecraft.world.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(itemStack);
 		ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
 		BlockHitResult hitResult = getPlayerPOVHitResult(serverPlayer.level(), serverPlayer, ClipContext.Fluid.NONE);
 		BlockPlaceContext placeContext = new BlockPlaceContext(new UseOnContext(serverPlayer, hand, hitResult));
 
+		boolean shouldSubtract = ItemUtils.shouldSubtract(player, itemStack);
+		int originalAmount = itemStack.getAmount();
 		if (!(nmsStack.getItem() instanceof BlockItem blockItem)) {
+			CustomBlocksLang.debug("&e- item is not a BlockItem");
 			nmsStack.getItem().useOn(new UseOnContext(serverPlayer, hand, hitResult));
+
+			if (!shouldSubtract && originalAmount != itemStack.getAmount())
+				itemStack.setAmount(originalAmount);
 
 			if (!player.isSneaking())
 				serverPlayer.gameMode.useItem(serverPlayer, serverPlayer.level(), nmsStack, hand);
 
 			return null;
 		}
+
+		CustomBlocksLang.debug("&e- item is a BlockItem");
 
 		// Shulker-Boxes are DirectionalPlace based unlike other directional-blocks
 		if (org.bukkit.Tag.SHULKER_BOXES.isTagged(itemStack.getType())) {

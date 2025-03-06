@@ -128,7 +128,7 @@ public class CustomBlockSounds implements Listener {
 		try {
 			Block block = event.getEmitter().getLocation().getBlock();
 			Block below = block.getRelative(BlockFace.DOWN);
-			Block source = null;
+			Block source;
 
 			CustomBlock _customBlock = CustomBlock.from(block);
 			if (_customBlock != null)
@@ -137,6 +137,8 @@ public class CustomBlockSounds implements Listener {
 				_customBlock = CustomBlock.from(below);
 				if (_customBlock != null)
 					source = below;
+				else
+					return;
 			}
 
 			net.kyori.adventure.sound.Sound sound = event.getSound();

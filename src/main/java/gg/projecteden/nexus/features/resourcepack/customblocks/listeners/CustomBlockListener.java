@@ -39,14 +39,17 @@ import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.parchment.event.block.CustomBlockUpdateEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import org.bukkit.ExplosionResult;
 import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.block.data.type.Tripwire;
+import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
@@ -243,11 +246,11 @@ public class CustomBlockListener implements Listener {
 			event.setCancelled(true);
 
 		// Place
-		if (isSpawningEntity(event, clickedBlock, clickedCustomBlock)) {
-			CustomBlockSounds.updateAction(player, BlockAction.UNKNOWN);
-			CustomBlocksLang.debug("&d<- done, spawned entity: cancel=" + event.isCancelled());
-			return;
-		}
+//		if (isSpawningEntity(event, clickedBlock, clickedCustomBlock)) {
+//			CustomBlockSounds.updateAction(player, BlockAction.UNKNOWN);
+//			CustomBlocksLang.debug("&d<- done, spawned entity: cancel=" + event.isCancelled());
+//			return;
+//		}
 
 		if (isIncrementingBlock(event, clickedBlock, clickedCustomBlock)) {
 			CustomBlockSounds.updateAction(player, BlockAction.PLACE);
@@ -273,7 +276,7 @@ public class CustomBlockListener implements Listener {
 					CustomBlocksLang.debug("&e<- is changing pitch");
 					event.setCancelled(true);
 
-					changePitch(noteBlock, clickedBlockLoc, sneaking);
+					changePitch(player, noteBlock, clickedBlockLoc, sneaking);
 					CustomBlocksLang.debug("&d<- done, changed pitch");
 					return;
 				}
@@ -458,8 +461,11 @@ public class CustomBlockListener implements Listener {
 		return true;
 	}
 
-	@EventHandler(priority = EventPriority.HIGH)
+	@EventHandler
 	public void on(EntityExplodeEvent event) {
+		if (!List.of(ExplosionResult.DESTROY, ExplosionResult.DESTROY_WITH_DECAY).contains(event.getExplosionResult()))
+			return;
+
 		for (Block block : new ArrayList<>(event.blockList())) {
 			if (Nullables.isNullOrAir(block))
 				continue;
@@ -478,31 +484,31 @@ public class CustomBlockListener implements Listener {
 
 	//
 
-	private boolean isSpawningEntity(PlayerInteractEvent event, Block clickedBlock, CustomBlock clickedCustomBlock) {
-		Action action = event.getAction();
-		if (!action.equals(Action.RIGHT_CLICK_BLOCK)) {
-			return false;
-		}
-
-		Player player = event.getPlayer();
-		BlockFace clickedFace = event.getBlockFace();
-		Block inFront = clickedBlock.getRelative(clickedFace);
-		boolean isInteractable = clickedBlock.getType().isInteractable() || MaterialTag.INTERACTABLES.isTagged(inFront);
-		if (CustomBlock.NOTE_BLOCK != clickedCustomBlock) {
-			isInteractable = false;
-		}
-
-		if (!player.isSneaking() && isInteractable) {
-			return false;
-		}
-
-		ItemStack itemInHand = event.getItem();
-		if (Nullables.isNullOrAir(itemInHand)) {
-			return false;
-		}
-
-		return MaterialTag.SPAWNS_ENTITY.isTagged(itemInHand.getType());
-	}
+//	private boolean isSpawningEntity(PlayerInteractEvent event, Block clickedBlock, CustomBlock clickedCustomBlock) {
+//		Action action = event.getAction();
+//		if (!action.equals(Action.RIGHT_CLICK_BLOCK)) {
+//			return false;
+//		}
+//
+//		Player player = event.getPlayer();
+//		BlockFace clickedFace = event.getBlockFace();
+//		Block inFront = clickedBlock.getRelative(clickedFace);
+//		boolean isInteractable = clickedBlock.getType().isInteractable() || MaterialTag.INTERACTABLES.isTagged(inFront);
+//		if (CustomBlock.NOTE_BLOCK != clickedCustomBlock) {
+//			isInteractable = false;
+//		}
+//
+//		if (!player.isSneaking() && isInteractable) {
+//			return false;
+//		}
+//
+//		ItemStack itemInHand = event.getItem();
+//		if (Nullables.isNullOrAir(itemInHand)) {
+//			return false;
+//		}
+//
+//		return MaterialTag.SPAWNS_ENTITY.isTagged(itemInHand.getType());
+//	}
 
 	private boolean isIncrementingBlock(PlayerInteractEvent event, Block clickedBlock, CustomBlock clickedCustomBlock) {
 		Action action = event.getAction();
@@ -602,14 +608,15 @@ public class CustomBlockListener implements Listener {
 				return false;
 			} else
 				isPlacingCustomBlock = true;
+		}
 
 			// Return if non-block, excluding redstone wire
-		} else if (!material.isBlock() && !material.isSolid()) {
-			if (!material.equals(Material.REDSTONE)) {
-				CustomBlocksLang.debug("&c<- not a block: " + material);
-				return false;
-			}
-		}
+//		} else if (!material.isBlock() && !material.isSolid()) {
+//			if (!material.equals(Material.REDSTONE)) {
+//				CustomBlocksLang.debug("&c<- not a block: " + material);
+//				return false;
+//			}
+//		}
 
 		if (isPlacingCustomBlock) {
 			if (placedCustomBlock(clickedBlock, player, clickedFace, preBlock, itemInHand)) {
@@ -710,10 +717,10 @@ public class CustomBlockListener implements Listener {
 									   boolean didClickedCustomBlock, Material material, ItemStack itemStack) {
 		CustomBlocksLang.debug("&e- placing vanilla block");
 
-		if (!MaterialTag.REPLACEABLE.isTagged(preBlock.getType())) {
-			CustomBlocksLang.debug("&c<- preBlock is not replaceable");
-			return false;
-		}
+//		if (!MaterialTag.REPLACEABLE.isTagged(preBlock.getType())) {
+//			CustomBlocksLang.debug("&c<- preBlock is not replaceable");
+//			return false;
+//		}
 
 		if (!didClickedCustomBlock) {
 			CustomBlocksLang.debug("&c<- didn't click on a custom block");
@@ -736,7 +743,12 @@ public class CustomBlockListener implements Listener {
 
 		CustomBlocksLang.debug("&a<- placed block: " + StringUtils.camelCase(material));
 		CustomBlockSounds.tryPlaySound(player, SoundAction.PLACE, preBlock);
+
 		ItemUtils.subtract(player, event.getItem());
+
+		if (preBlock.getState() instanceof Sign sign)
+			player.openSign(sign, Side.FRONT);
+
 		return true;
 	}
 
@@ -747,7 +759,7 @@ public class CustomBlockListener implements Listener {
 		return !sneaking || Nullables.isNullOrAir(itemInHand) || !itemInHand.getType().isBlock();
 	}
 
-	private void changePitch(NoteBlock noteBlock, Location location, boolean sneaking) {
+	private void changePitch(Player player, NoteBlock noteBlock, Location location, boolean sneaking) {
 		CustomBlockData data = CustomBlockUtils.getDataOrCreate(location, noteBlock);
 		if (data == null)
 			return;
@@ -759,9 +771,9 @@ public class CustomBlockListener implements Listener {
 		if (noteBlockData == null)
 			return;
 
-		NoteBlockChangePitchEvent event = new NoteBlockChangePitchEvent(block);
+		NoteBlockChangePitchEvent event = new NoteBlockChangePitchEvent(player, block);
 		if (event.callEvent())
-			NoteBlockUtils.changePitch(sneaking, location, noteBlockData);
+			NoteBlockUtils.changePitch(player, sneaking, location, noteBlockData);
 	}
 
 

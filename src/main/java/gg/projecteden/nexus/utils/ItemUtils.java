@@ -442,14 +442,19 @@ public class ItemUtils {
 		return false;
 	}
 
-	public static void subtract(Player player, ItemStack item) {
-		if (Nullables.isNullOrAir(item))
-			return;
+	public static boolean shouldSubtract(Player player, ItemStack itemStack) {
+		if (Nullables.isNullOrAir(itemStack))
+			return false;
 
 		if (GameModeWrapper.of(player).isCreative())
-			return;
+			return false;
 
-		item.subtract();
+		return true;
+	}
+
+	public static void subtract(Player player, ItemStack itemStack) {
+		if (shouldSubtract(player, itemStack))
+			itemStack.subtract();
 	}
 
 	public static void update(ItemStack item, @Nullable Player player) {
