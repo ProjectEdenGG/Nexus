@@ -37,15 +37,16 @@ public class Handshake extends Serverbound {
 				.build())
 			.send();
 
+		// TODO CUSTOMBLOCKS: FILTER
 		ClientMessage.builder()
 			.players(player)
 			.message(new CustomBlocks(Arrays.stream(CustomBlock.values()).map(CustomCreativeItem::new).toList().toArray(new CustomCreativeItem[0])))
 			.send();
 
-		ClientMessage.builder()
-			.players(player)
-			.message(new Decorations(Arrays.stream(DecorationType.values()).map(CustomCreativeItem::new).toList().toArray(new CustomCreativeItem[0])))
-			.send();
+//		ClientMessage.builder()
+//			.players(player)
+//			.message(new Decorations(Arrays.stream(DecorationType.values()).map(CustomCreativeItem::new).toList().toArray(new CustomCreativeItem[0])))
+//			.send();
 
 		Chatter.of(player).notifyTitanOfChannelChange();
 	}
