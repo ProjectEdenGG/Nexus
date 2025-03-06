@@ -13,7 +13,12 @@ import org.bukkit.Material;
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.BASS_GUITAR,
-	step = 20
+	step = 20,
+	customBreakSound = "custom.block.stone.break",
+	customPlaceSound = "custom.block.stone.place",
+	customStepSound = "custom.block.stone.step",
+	customHitSound = "custom.block.stone.hit",
+	customFallSound = "custom.block.stone.fall"
 )
 public class Wireframe implements ICustomNoteBlock {
 	@Override

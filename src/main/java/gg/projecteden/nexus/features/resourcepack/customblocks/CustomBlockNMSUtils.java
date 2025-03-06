@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks;
 
+import gg.projecteden.nexus.utils.MaterialTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -27,6 +28,11 @@ public class CustomBlockNMSUtils {
 
 	// https://github.com/oraxen/oraxen/blob/master/v1_21_R3/src/main/java/io/th0rgal/oraxen/nms/v1_21_R3/NMSHandler.java#L154
 	public static BlockData tryPlaceVanillaBlock(Player player, ItemStack itemStack) {
+		// TODO: Fix boats, currently Item#use in BoatItem calls PlayerInteractEvent, thus causing a StackOverflow, find a workaround
+		if (MaterialTag.ITEMS_BOATS.isTagged(itemStack.getType()))
+			return null;
+
+
 		InteractionHand hand = InteractionHand.MAIN_HAND;
 		net.minecraft.world.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(itemStack);
 		ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
@@ -58,6 +64,7 @@ public class CustomBlockNMSUtils {
 		Block block = world.getBlockAt(clickPos.getX(), clickPos.getY(), clickPos.getZ());
 		SoundGroup sound = block.getBlockData().getSoundGroup();
 
+		CustomBlocksLang.debug("&e- playing nms sound: " + sound.getPlaceSound().getKey().getKey());
 		world.playSound(block.getLocation().toCenterLocation(), sound.getPlaceSound(),
 			SoundCategory.BLOCKS, (sound.getVolume() + 1.0F) / 2.0F, sound.getPitch() * 0.8F);
 

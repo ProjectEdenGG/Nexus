@@ -154,55 +154,6 @@ public class CustomBlockListener implements Listener {
 			customBlock.registerRecipes();
 	}
 
-	// Does not work -- Creative Pick Block is Clientside
-//	@EventHandler
-//	public void onCreativePickBlock(InventoryCreativeEvent event) {
-//		SlotType slotType = event.getSlotType();
-//		if (!slotType.equals(SlotType.QUICKBAR))
-//			return;
-//
-//		ItemStack item = event.getCursor();
-//		if (Nullables.isNullOrAir(item))
-//			return;
-//
-//		if (!CustomBlock.CustomBlockType.getItemMaterials().contains(item.getType()))
-//			return;
-//
-//		Player player = (Player) event.getWhoClicked();
-//		Block block = player.getTargetBlockExact(5);
-//		if (Nullables.isNullOrAir(block))
-//			return;
-//
-//		CustomBlock customBlock = CustomBlock.from(block);
-//		if (customBlock == null) {
-//			CustomBlocksLang.debug("CreativePickBlock: CustomBlock == null");
-//			return;
-//		}
-//
-//		if (customBlock == CustomBlock.TALL_SUPPORT) {
-//			CustomBlock _customBlock = CustomBlock.from(block.getRelative(BlockFace.DOWN));
-//			if (_customBlock != null)
-//				customBlock = _customBlock;
-//		}
-//
-//		ItemStack newItem = customBlock.get().getItemStack();
-//		final ItemStack mainHand = player.getInventory().getItemInMainHand();
-//		if (newItem.equals(mainHand)) {
-//			CustomBlocksLang.debug("CreativePickBlock:  CustomBlock is the same as item in mainHand, cancelling");
-//			event.setCancelled(true);
-//			return;
-//		}
-//
-//		if (PlayerUtils.selectHotbarItem(player, newItem)) {
-//			CustomBlocksLang.debug("CreativePickBlock:  Selecting hotbar item & cancelling");
-//			event.setCancelled(true);
-//			return;
-//		}
-//
-//		CustomBlocksLang.debug("CreativePickBlock:  Spawning item on cursor");
-//		event.setCursor(newItem);
-//	}
-
 	@EventHandler
 	public void on(BlockPlaceEvent event) {
 		if (event.isCancelled())

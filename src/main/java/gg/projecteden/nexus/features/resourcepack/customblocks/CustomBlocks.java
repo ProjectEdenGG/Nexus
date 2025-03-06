@@ -31,6 +31,7 @@ import java.util.Map;
 
 /*
 	TODO:
+		- Ensure the conversion of note block is keeping their pitch to the database
 		- Release NoteBlock Custom Blocks
 		-
 		- Bugs:

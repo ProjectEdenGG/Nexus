@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlockTab;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.ILantern;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -44,7 +45,7 @@ public class CustomBlockCreativeMenu extends InventoryProvider {
 				}
 				//
 
-				ItemStack item = new ItemBuilder(CustomBlock.getBy(tab).get(0).get().getItemStack()).name(StringUtils.camelCase(tab)).build();
+				ItemStack item = new ItemBuilder(CustomBlock.getBy(tab).getFirst().get().getItemStack()).name(StringUtils.camelCase(tab)).build();
 
 				items.add(ClickableItem.of(item, e -> new CustomBlockCreativeMenu(tab).open(viewer)));
 			}
@@ -52,7 +53,6 @@ public class CustomBlockCreativeMenu extends InventoryProvider {
 		} else {
 			addBackItem(e -> new CustomBlockCreativeMenu(CustomBlockTab.ALL).open(viewer));
 
-			LinkedHashSet<ItemStack> uniqueItems = new LinkedHashSet<>();
 			for (CustomBlock customBlock : CustomBlock.getBy(currentTab)) {
 				// TODO: Disable tripwire customblocks
 				if (ICustomTripwire.isNotEnabled() && customBlock.get() instanceof ICustomTripwire) {
@@ -61,11 +61,13 @@ public class CustomBlockCreativeMenu extends InventoryProvider {
 				//
 
 				ItemStack item = customBlock.get().getItemStack();
-				uniqueItems.add(item);
-			}
+				ItemBuilder displayItem = new ItemBuilder(item);
 
-			for (ItemStack customBlockItem : uniqueItems) {
-				items.add(ClickableItem.of(customBlockItem, e -> PlayerUtils.giveItem(viewer, customBlockItem)));
+				if (customBlock.get() instanceof ILantern) {
+					displayItem.lore("", "&eDoesn't produce light");
+				}
+
+				items.add(ClickableItem.of(displayItem, e -> PlayerUtils.giveItem(viewer, item)));
 			}
 		}
 

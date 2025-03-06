@@ -13,13 +13,18 @@ import org.bukkit.Material;
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.BASS_GUITAR,
-	step = 21
+	step = 21,
+	customBreakSound = "custom.block.stone.break",
+	customPlaceSound = "custom.block.stone.place",
+	customStepSound = "custom.block.stone.step",
+	customHitSound = "custom.block.stone.hit",
+	customFallSound = "custom.block.stone.fall"
 )
 public class HazardBlock implements ICustomNoteBlock {
 
 	@Override
 	public double getBlockHardness() {
-		return 1.5;
+		return 2.0;
 	}
 
 	@Override
