@@ -3,6 +3,9 @@ package gg.projecteden.nexus.features.api;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.api.annotations.Get;
 import gg.projecteden.nexus.features.commands.StaffHallCommand;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.titan.clientbound.CustomBlocks;
+import gg.projecteden.nexus.features.titan.clientbound.CustomBlocks.CustomCreativeItem;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -183,6 +186,13 @@ public class Controller {
 		}
 
 		return Map.of("players", players);
+	}
+
+	@Get("/customblocks")
+	Object customBlocks() {
+		CustomBlocks customBlocks = new CustomBlocks(new CustomCreativeItem(CustomBlock.APPLE_CRATE), Arrays.stream(CustomBlock.values())
+			.map(CustomCreativeItem::new).toList().toArray(new CustomCreativeItem[0]));
+		return customBlocks.getJson();
 	}
 
 }
