@@ -12,7 +12,8 @@ import org.bukkit.Instrument;
 @CustomNoteBlockConfig(
 	instrument = Instrument.BASS_DRUM,
 	step = 4,
-	customStepSound = "block.coral_block.step"
+	customStepSound = "block.coral_block.step",
+	customFallSound = "block.coral_block.fall"
 )
 public class CarrotCrate implements ICrate {
 }
