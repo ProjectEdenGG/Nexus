@@ -1,66 +1,35 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.worldedit;
 
-import com.fastasyncworldedit.core.configuration.Settings;
-import com.sk89q.worldedit.EditSession.Stage;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.event.extent.EditSessionEvent;
-import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
-import com.sk89q.worldedit.util.eventbus.Subscribe;
-import gg.projecteden.nexus.Nexus;
-import lombok.Data;
-import org.bukkit.World;
+import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
-@Data
-public class WorldEditListener {
-	private static boolean initialized = false;
-	private static WorldEditListener event = new WorldEditListener();
-	private static CustomBlockParser parser = new CustomBlockParser(WorldEdit.getInstance());
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
-	public static void register() {
-		if (initialized)
-			return;
+public class WorldEditListener implements Listener {
 
-		try {
-			WorldEdit.getInstance().getEventBus().register(event);
-			WorldEdit.getInstance().getBlockFactory().register(parser);
-			initialized = true;
-		} catch (Exception e) {
-			Nexus.warn("Failed to register CustomBlock's WorldEditListener");
-			e.printStackTrace();
-		}
+	@EventHandler
+	public void onTabComplete(AsyncTabCompleteEvent event) {
+		List<String> args = Arrays.stream(event.getBuffer().split(" ")).toList();
+		if (!event.getBuffer().startsWith("//") || args.isEmpty()) return;
 
-		if (initialized) {
-			Settings.settings().EXTENT.ALLOWED_PLUGINS.add(CustomBlockExtent.class.getCanonicalName());
-		}
+		List<String> ids = getSuggestions(args.getLast());
+
+		ids.addAll(event.getCompletions());
+		event.setCompletions(ids);
 	}
 
-	public static void unregister() {
-		if (!initialized)
-			return;
+	public List<String> getSuggestions(String input) {
+		if (input.isEmpty())
+			return new ArrayList<>();
 
-		try {
-			WorldEdit.getInstance().getEventBus().unregister(event);
-			initialized = false;
-		} catch (Exception e) {
-			Nexus.warn("Failed to unregister CustomBlock's WorldEditListener");
-			e.printStackTrace();
-		}
-	}
-
-	@Subscribe(priority = Priority.VERY_LATE)
-	public void onEditSessionEvent(EditSessionEvent event) {
-		if (event.isCancelled())
-			return;
-
-		if (event.getWorld() == null)
-			return;
-
-		World world = BukkitAdapter.adapt(event.getWorld());
-		if (world == null)
-			return;
-
-		if (event.getStage() == Stage.BEFORE_HISTORY)
-			event.setExtent(new CustomBlockExtent(event, world));
+		return Arrays.stream(CustomBlock.values())
+			.map(customBlock -> customBlock.name().toLowerCase())
+			.filter(blockName -> blockName.contains(input))
+			.collect(Collectors.toList());
 	}
 }

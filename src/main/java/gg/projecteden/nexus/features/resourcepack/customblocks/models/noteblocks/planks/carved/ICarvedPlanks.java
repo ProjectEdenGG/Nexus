@@ -10,7 +10,6 @@ import org.jetbrains.annotations.Nullable;
 
 public interface ICarvedPlanks extends IPlanks {
 
-	// TODO: change recipe, current one replaces STICKS
 	@Override
 	default @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
 		return getCombineSlab(getMaterial());

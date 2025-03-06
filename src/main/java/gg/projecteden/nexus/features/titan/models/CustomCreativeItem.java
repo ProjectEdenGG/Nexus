@@ -22,6 +22,5 @@ public class CustomCreativeItem {
 		material = decorationType.getConfig().getMaterial().name().toLowerCase();
 		displayName = decorationType.getConfig().getName();
 		model = decorationType.getConfig().getModel();
-
 	}
 }
