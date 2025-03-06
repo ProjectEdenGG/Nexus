@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.StonecuttingRecipe;
 
 public class CustomCraftingRecipeMenu extends ICustomRecipeMenu {
 
@@ -50,6 +51,8 @@ public class CustomCraftingRecipeMenu extends ICustomRecipeMenu {
 			int slot = 0;
 			for (RecipeChoice choice : shapeless.getChoiceList())
 				contents.set(MATRIX_SLOTS[slot++], ClickableItem.empty(random(choice)));
+		} else if (recipe.getRecipe() instanceof StonecuttingRecipe stonecuttingRecipe) {
+			contents.set(MATRIX_SLOTS[4], ClickableItem.empty(random(stonecuttingRecipe.getInputChoice())));
 		}
 	}
 
