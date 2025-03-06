@@ -115,7 +115,7 @@ public class RebootCommand extends CustomCommand implements Listener {
 			rebooting = false;
 			conditions.forEach(ReloadCondition::run);
 			OnlinePlayers.getAll().forEach(RebootCommand::kick);
-			Utils.bash("mark2 send -n " + (Nexus.getEnv() == Env.PROD ? "smp" : "update") + " ~restart");
+			Utils.bash("mark2 send -n " + (Nexus.getEnv() == Env.PROD ? "smp" : Nexus.getEnv().name().toLowerCase()) + " ~restart");
 		});
 	}
 
