@@ -83,6 +83,39 @@ public class CustomBlockListener implements Listener {
 	}
 
 	@EventHandler
+	public void on(PlayerPickItemEvent event) {
+		Location location = event.getLocation();
+		if (location == null)
+			return;
+
+		CustomBlock customBlock = CustomBlock.from(location.getBlock());
+		if (customBlock == null)
+			return;
+
+		event.setCancelled(true);
+
+		Player player = event.getPlayer();
+		PlayerInventory inventory = player.getInventory();
+		int targetSlot = event.getTargetSlot();
+
+		ItemStack customBlockItem = customBlock.get().getItemStack();
+
+		// Check if picked block is in hotbar already
+		int contentSlot = 0;
+		ItemStack[] hotbarContents = PlayerUtils.getHotbarContents(player);
+		for (ItemStack content : hotbarContents) {
+			if (!Nullables.isNullOrAir(content) && ItemUtils.isModelMatch(content, customBlockItem)) {
+				inventory.setHeldItemSlot(contentSlot);
+				return;
+			}
+			contentSlot++;
+		}
+
+		inventory.setHeldItemSlot(targetSlot);
+		inventory.setItem(targetSlot, customBlockItem);
+	}
+
+	@EventHandler
 	public void on(CustomBlockUpdateEvent event) { // Parchment Event
 		// TODO: Disable tripwire customblocks
 		if (ICustomTripwire.isNotEnabled() && event.getBlock() instanceof Tripwire)
@@ -90,8 +123,6 @@ public class CustomBlockListener implements Listener {
 		//
 
 		Location location = event.getLocation();
-		if (location != null && updateDatabase(location))
-			event.setCancelled(true);
 
 		if (event.getUpdateType() != CustomBlockUpdateEvent.UpdateType.POWERED) {
 			event.setCancelled(true);
