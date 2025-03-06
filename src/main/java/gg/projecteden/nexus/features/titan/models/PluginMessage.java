@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.titan.models;
 
 import com.google.gson.JsonObject;
 import gg.projecteden.nexus.features.titan.ServerClientMessaging;
+import gg.projecteden.nexus.features.titan.clientbound.CustomBlocks;
 import gg.projecteden.nexus.features.titan.clientbound.ResetMinigame;
 import gg.projecteden.nexus.features.titan.clientbound.SaturnUpdate;
 import gg.projecteden.nexus.features.titan.clientbound.UpdateState;
@@ -24,6 +25,7 @@ public enum PluginMessage {
 	UPDATE_STATE(UpdateState.class),
 	RESET_MINIGAME(ResetMinigame.class),
 	PICK_BLOCK(PickBlock.class),
+	CUSTOM_BLOCKS(CustomBlocks.class),
 	;
 
 	final @NonNull Class<? extends Message> clazz;
