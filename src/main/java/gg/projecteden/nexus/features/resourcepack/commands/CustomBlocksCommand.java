@@ -163,8 +163,6 @@ public class CustomBlocksCommand extends CustomCommand {
 			send("- Step: " + iTripWire.getStepSound());
 			send("- Fall: " + iTripWire.getFallSound());
 		}
-
-
 	}
 
 	@Path("convertChunk")

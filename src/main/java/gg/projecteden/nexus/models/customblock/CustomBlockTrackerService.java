@@ -17,12 +17,12 @@ public class CustomBlockTrackerService extends MongoService<CustomBlockTracker> 
 		return cache;
 	}
 
-	public CustomBlockTracker fromWorld(World world) {
-		return this.get(world.getUID());
+	public CustomBlockTracker fromWorld(Location location) {
+		return fromWorld(location.getWorld());
 	}
 
-	public CustomBlockTracker fromWorld(Location location) {
-		return this.fromWorld(location.getWorld());
+	public CustomBlockTracker fromWorld(World world) {
+		return this.get(world.getUID());
 	}
 
 	@Override

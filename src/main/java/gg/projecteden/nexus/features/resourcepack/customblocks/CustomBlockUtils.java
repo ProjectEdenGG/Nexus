@@ -142,6 +142,7 @@ public class CustomBlockUtils {
 
 	public static @NotNull CustomBlockData createData(@NonNull Location location, @NonNull CustomBlock customBlock, BlockFace facing) {
 		CustomBlocksLang.debug("CreateData: creating new data for " + customBlock.name() + " at " + StringUtils.getShortLocationString(location));
+		CustomBlocksLang.debug("---");
 		return placeBlockDatabaseAsServer(customBlock, location, facing);
 	}
 

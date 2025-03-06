@@ -32,7 +32,7 @@ import java.util.Set;
 
 @Environments(Env.TEST)
 public class ConversionListener implements Listener {
-	private final Set<Long> convertedChunks = new HashSet<>();
+	private static final Set<Long> convertedChunks = new HashSet<>();
 
 	public ConversionListener() {
 		Nexus.registerListener(this);
@@ -40,25 +40,21 @@ public class ConversionListener implements Listener {
 
 	@EventHandler
 	public void onGenerate(ChunkPopulateEvent event) {
-		long key = event.getChunk().getChunkKey();
-		if (convertedChunks.contains(key))
-			return;
-
-		convertedChunks.add(key);
 		convertCustomBlocks(event.getChunk());
 	}
 
 	@EventHandler
 	public void on(ChunkLoadEvent event) {
-		long key = event.getChunk().getChunkKey();
-		if (convertedChunks.contains(key))
-			return;
-
-		convertedChunks.add(key);
 		convertCustomBlocks(event.getChunk());
 	}
 
 	public static void convertCustomBlocks(Chunk chunk) {
+		long key = chunk.getChunkKey();
+		if (convertedChunks.contains(key))
+			return;
+
+		convertedChunks.add(key);
+
 		if (!WorldUtils.isInWorldBorder(chunk.getWorld(), chunk))
 			return;
 
@@ -80,10 +76,12 @@ public class ConversionListener implements Listener {
 					String logMessage;
 					// Assume Staff and Minigames worlds are real custom blocks
 					if (WorldGroup.MINIGAMES.contains(location) || WorldGroup.STAFF.contains(location)) {
+						CustomBlocksLang.debug("Converting block to custom block");
 						CustomBlockUtils.createData(location, data.getCustomBlock(), BlockFace.UP);
 						block.setBlockData(data.getCustomBlock().get().getBlockData(BlockFace.UP, below), false);
 						logMessage = "Creating CustomBlock " + StringUtils.camelCase(data.getCustomBlock()) + " " + StringUtils.getShortLocationString(location);
 					} else {
+						CustomBlocksLang.debug("Converting block to note block");
 						CustomBlockUtils.createData(location, CustomBlock.NOTE_BLOCK, BlockFace.UP);
 						block.setBlockData(CustomBlock.NOTE_BLOCK.get().getBlockData(BlockFace.UP, below), false);
 						logMessage = "Creating CustomBlock NoteBlock at " + StringUtils.getShortLocationString(location);
@@ -103,6 +101,7 @@ public class ConversionListener implements Listener {
 					if (multipleFacing.getFaces().contains(BlockFace.EAST))
 						facing = BlockFace.EAST;
 
+					CustomBlocksLang.debug("Converting block to tripwire");
 					CustomBlockUtils.createData(location, CustomBlock.TRIPWIRE, facing);
 					block.setBlockData(CustomBlock.TRIPWIRE.get().getBlockData(facing, below), false);
 

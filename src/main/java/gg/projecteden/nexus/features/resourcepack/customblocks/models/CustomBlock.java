@@ -876,6 +876,7 @@ public enum CustomBlock implements Keyed {
 		if (!craftable.getOtherRecipes().isEmpty()) {
 			for (NexusRecipe recipe : craftable.getOtherRecipes()) {
 				recipe.register();
+
 				recipes.put(craftable.getClass(), recipe);
 			}
 		}

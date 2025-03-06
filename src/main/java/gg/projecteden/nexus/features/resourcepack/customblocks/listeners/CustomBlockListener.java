@@ -22,6 +22,7 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.c
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.incremental.IIncremental;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.tall.ITall;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.protection.ProtectionUtils;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
@@ -37,6 +38,7 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.parchment.event.block.CustomBlockUpdateEvent;
+import io.papermc.paper.event.player.PlayerPickItemEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import org.bukkit.ExplosionResult;
@@ -65,6 +67,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -145,37 +148,43 @@ public class CustomBlockListener implements Listener {
 	}
 
 	private boolean updateDatabase(Location location) {
+		CustomBlocksLang.debug("updating database at location");
 		CustomBlock worldBlock = CustomBlock.from(location.getBlock());
 		CustomBlockData databaseBlock = CustomBlockUtils.getData(location);
 
 		if (worldBlock == null) {
+			CustomBlocksLang.debug("- data does not exist in world");
 			boolean delete = false;
 			if (databaseBlock.exists()) {
-				CustomBlocksLang.debug("data exists at this location but is not in world, deleting");
+				CustomBlocksLang.debug("-- data exists at this location but is not in world, deleting");
 				delete = true;
 			}
 
 			if (delete) {
+				CustomBlocksLang.debug("--- removing from database");
 				CustomBlockUtils.breakBlockDatabase(location);
 				return true;
 			}
 			return false;
 		}
 
+		CustomBlocksLang.debug("- data exists in world");
 		boolean fix = false;
 		if (!databaseBlock.exists()) {
-			CustomBlocksLang.debug("data doesn't exist at this location, creating");
+			CustomBlocksLang.debug("-- data doesn't exist at this location, creating");
 			fix = true;
 		} else if (!databaseBlock.getCustomBlock().get().equals(worldBlock.get())) {
-			CustomBlocksLang.debug("incorrect data exists at this location, fixing");
+			CustomBlocksLang.debug("-- incorrect data exists at this location, fixing");
 			fix = true;
 		}
 
 		if (fix) {
+			CustomBlocksLang.debug("--- adding to database");
 			CustomBlockUtils.createData(location, worldBlock.get().getCustomBlock(), BlockFace.UP);
 			return true;
 		}
 
+		CustomBlocksLang.debug("- no changes");
 		return false;
 	}
 
@@ -273,8 +282,9 @@ public class CustomBlockListener implements Listener {
 		Location clickedBlockLoc = clickedBlock.getLocation();
 		CustomBlock clickedCustomBlock = CustomBlock.from(clickedBlock);
 
-		if (clickedCustomBlock != null && updateDatabase(clickedBlockLoc))
-			event.setCancelled(true);
+		if (clickedCustomBlock != null) {
+			updateDatabase(clickedBlockLoc);
+		}
 
 		// Place
 //		if (isSpawningEntity(event, clickedBlock, clickedCustomBlock)) {

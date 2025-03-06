@@ -6,6 +6,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.resourcepack.customblocks.listeners.CustomBlockListener;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock.CustomBlockType;
+import gg.projecteden.nexus.features.resourcepack.customblocks.worldedit.WrappedWorldEdit;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
@@ -67,12 +68,13 @@ public class CustomBlocks extends Feature {
 		new CustomBlockListener();
 		startJanitor();
 
-//		WorldEditListener.register();
+		WrappedWorldEdit.init();
+		WrappedWorldEdit.registerParser();
 	}
 
 	@Override
 	public void onStop() {
-//		WorldEditListener.unregister();
+		WrappedWorldEdit.unregister();
 	}
 
 	private static void startJanitor() {
