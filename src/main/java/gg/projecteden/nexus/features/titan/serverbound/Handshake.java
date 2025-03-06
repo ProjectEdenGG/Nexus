@@ -1,8 +1,10 @@
 package gg.projecteden.nexus.features.titan.serverbound;
 
 import gg.projecteden.api.common.utils.StringUtils;
+import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.titan.ClientMessage;
 import gg.projecteden.nexus.features.titan.clientbound.CustomBlocks;
 import gg.projecteden.nexus.features.titan.clientbound.Decorations;
@@ -37,15 +39,14 @@ public class Handshake extends Serverbound {
 				.build())
 			.send();
 
-		// TODO CUSTOMBLOCKS: FILTER
 		ClientMessage.builder()
 			.players(player)
-			.message(new CustomBlocks(Arrays.stream(CustomBlock.values()).map(CustomCreativeItem::new).toList().toArray(new CustomCreativeItem[0])))
+			.message(new CustomBlocks(CustomBlockUtils.getCreativeItems()))
 			.send();
 
 //		ClientMessage.builder()
 //			.players(player)
-//			.message(new Decorations(Arrays.stream(DecorationType.values()).map(CustomCreativeItem::new).toList().toArray(new CustomCreativeItem[0])))
+//			.message(new Decorations(DecorationUtils.getCreativeItems()))
 //			.send();
 
 		Chatter.of(player).notifyTitanOfChannelChange();

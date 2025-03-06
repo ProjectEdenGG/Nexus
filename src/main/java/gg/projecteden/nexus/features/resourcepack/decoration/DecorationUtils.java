@@ -4,12 +4,17 @@ import gg.projecteden.api.common.utils.ReflectionUtils;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
 import gg.projecteden.nexus.features.resourcepack.CustomContentUtils;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlockTab;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.ICustomTripwire;
+import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Tab;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import gg.projecteden.nexus.features.titan.models.CustomCreativeItem;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.MineralChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
@@ -45,6 +50,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -442,5 +448,12 @@ public class DecorationUtils {
 			return null;
 
 		return new Decoration(config, itemFrame);
+	}
+
+	public static CustomCreativeItem[] getCreativeItems() {
+		return Arrays.stream(DecorationType.values())
+			.filter(decorationType -> Arrays.stream(decorationType.getTypeConfig().tabs()).toList().getLast() == Tab.INTERNAL)
+			.map(CustomCreativeItem::new)
+			.toList().toArray(new CustomCreativeItem[0]);
 	}
 }

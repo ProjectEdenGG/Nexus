@@ -302,6 +302,16 @@ public class CustomBlockUtils {
 			+ " &fPowered=" + StringUtils.bool(tripwire.isPowered());
 	}
 
+	public static CustomCreativeItem[] getCreativeItems() {
+		return Arrays.stream(CustomBlock.values())
+			.filter(customBlock -> customBlock.getCreativeTab() != CustomBlockTab.NONE)
+			// TODO: Disable tripwire customblocks
+			.filter(customBlock -> !(customBlock.get() instanceof ICustomTripwire))
+			//
+			.map(CustomCreativeItem::new)
+			.toList().toArray(new CustomCreativeItem[0]);
+	}
+
 	// CoreProtect
 	public static void logPlacement(Player player, Block block, CustomBlock customBlock) {
 		Nexus.getCoreProtectAPI().logPlacement(player.getName(), block.getLocation(), block.getType(), block.getBlockData());
