@@ -11,7 +11,8 @@ import org.bukkit.Instrument;
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.BASS_DRUM,
-	step = 5
+	step = 5,
+	customStepSound = "block.muddy_mangrove_roots.step"
 )
 public class PotatoCrate implements ICrate {
 }

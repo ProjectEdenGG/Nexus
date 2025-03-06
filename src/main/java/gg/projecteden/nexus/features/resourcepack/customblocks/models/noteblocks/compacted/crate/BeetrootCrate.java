@@ -11,7 +11,8 @@ import org.bukkit.Instrument;
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.BASS_DRUM,
-	step = 2
+	step = 2,
+	customStepSound = "block.mud.step"
 )
 public class BeetrootCrate implements ICrate {
 }

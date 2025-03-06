@@ -826,9 +826,8 @@ public enum CustomBlock implements Keyed {
 				.volume(type.getVolume())
 				.pitch(type.getPitch());
 
-		if (silent) {
+		if (silent)
 			soundBuilder.receiver(source);
-		}
 
 		CustomBlocksLang.debug(source, "&e- playing sound: " + sound);
 		soundBuilder.category(SoundCategory.BLOCKS).play();

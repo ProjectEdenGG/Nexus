@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblock
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import net.minecraft.world.level.block.Blocks;
 import org.bukkit.Instrument;
 
 @CustomBlockConfig(
@@ -11,7 +12,8 @@ import org.bukkit.Instrument;
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.BASS_DRUM,
-	step = 1
+	step = 1,
+	customStepSound = "block.mud.step"
 )
 public class AppleCrate implements ICrate {
 }

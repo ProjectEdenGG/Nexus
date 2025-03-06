@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlockTab;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IDirectional;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ICustomNoteBlock;
@@ -11,6 +12,7 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.c
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.IRequireSupport;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.incremental.IIncremental;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.tall.ITall;
+import gg.projecteden.nexus.features.titan.models.CustomCreativeItem;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
 import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
@@ -35,6 +37,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;

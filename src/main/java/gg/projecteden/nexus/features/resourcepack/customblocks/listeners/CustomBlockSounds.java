@@ -144,10 +144,10 @@ public class CustomBlockSounds implements Listener {
 			if (soundAction == null)
 				return;
 
-			if (!Nullables.isNullOrAir(source)) {
-				if (soundAction != SoundAction.STEP)
-					return;
+			if (soundAction != SoundAction.STEP)
+				return;
 
+			if (!Nullables.isNullOrAir(source)) {
 				event.setCancelled(true);
 				_customBlock.playSound(null, soundAction, source.getLocation());
 				return;
@@ -201,7 +201,7 @@ public class CustomBlockSounds implements Listener {
 		if (!(new CooldownService().check(UUIDUtils.UUID0, cooldownType, TickTime.TICK.x(3))))
 			return false;
 
-		CustomBlocksLang.debug(player, "&a<- playing: " + soundKey);
+		CustomBlocksLang.debug("&a<- action = " + StringUtils.camelCase(soundAction) + " | key = " + soundKey);
 		BlockUtils.playSound(soundBuilder);
 		return true;
 	}
