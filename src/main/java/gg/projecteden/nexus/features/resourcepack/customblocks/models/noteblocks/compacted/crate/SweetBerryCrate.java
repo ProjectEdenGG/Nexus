@@ -13,7 +13,8 @@ import org.jetbrains.annotations.NotNull;
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.BASS_DRUM,
-	step = 3
+	step = 3,
+	customStepSound = "block.honey_block.step"
 )
 public class SweetBerryCrate implements ICrate {
 
