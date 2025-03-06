@@ -25,6 +25,7 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
+import io.papermc.paper.event.player.PlayerPickItemEvent;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -45,6 +46,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -106,30 +108,48 @@ public class DecorationListener implements Listener {
 	//
 
 	@EventHandler
-	public void on(CreativePickBlockEvent event) {
-		Player player = event.getPlayer();
-
-		Block clicked = player.getTargetBlockExact(5);
-		if (Nullables.isNullOrAir(clicked))
-			return;
-
-		DecorationLang.debug(player, "CreativePickBlock");
-		DecorationInteractData data = new DecorationInteractData(clicked, BlockFace.UP);
-		if (data.getDecoration() == null) {
-			DecorationLang.debug(player, " decoration == null");
-			return;
+	public void on(PlayerPickItemEvent event) {
+		DecorationConfig config = null;
+		Entity entity = event.getEntity();
+		if (entity instanceof ItemFrame itemFrame) {
+			DecorationConfig _config = DecorationConfig.of(itemFrame);
+			if (_config != null)
+				config = _config;
 		}
 
-		ItemStack newItem = data.getDecoration().getItemDrop(player);
+		Location location = event.getLocation();
+		if (location != null) {
+			DecorationInteractData data = new DecorationInteractData(location.getBlock(), BlockFace.UP);
+			if (data.getDecoration() != null)
+				config = data.getDecoration().getConfig();
+		}
 
-		PlayerUtils.giveItem(player, newItem);
-		PlayerUtils.selectHotbarItem(player, newItem);
+		//
 
-		/* TODO DECORATIONS:
-			if empty slot in hotbar, set item to slot, select slot
-			if item exists in hotbar, select slot
-			if item doesnt exist in hotbar, and hotbar is full, move selected item into inv (delete if full), set item to slot
-		 */
+		if (config == null)
+			return;
+
+		event.setCancelled(true);
+
+		Player player = event.getPlayer();
+		PlayerInventory inventory = player.getInventory();
+		int targetSlot = event.getTargetSlot();
+
+		ItemStack decorItem = config.getItem();
+
+		// Check if picked block is in hotbar already
+		int contentSlot = 0;
+		ItemStack[] hotbarContents = PlayerUtils.getHotbarContents(player);
+		for (ItemStack content : hotbarContents) {
+			if (!Nullables.isNullOrAir(content) && ItemUtils.isModelMatch(content, decorItem)) {
+				inventory.setHeldItemSlot(contentSlot);
+				return;
+			}
+			contentSlot++;
+		}
+
+		inventory.setHeldItemSlot(targetSlot);
+		inventory.setItem(targetSlot, decorItem);
 	}
 
 	@EventHandler
