@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.resourcepack.decoration;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.listeners.events.CreativePickBlockEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationCooldown;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
@@ -108,25 +107,26 @@ public class DecorationListener implements Listener {
 	//
 
 	@EventHandler
-	public void on(PlayerPickItemEvent event) {
-		DecorationConfig config = null;
+	public void onPickBlock(PlayerPickItemEvent event) {
+		ItemStack itemStack = null;
 		Entity entity = event.getEntity();
 		if (entity instanceof ItemFrame itemFrame) {
 			DecorationConfig _config = DecorationConfig.of(itemFrame);
-			if (_config != null)
-				config = _config;
+			if (_config != null) {
+				itemStack = new Decoration(_config, itemFrame).getItemDrop(event.getPlayer());
+			}
 		}
 
 		Location location = event.getLocation();
 		if (location != null) {
 			DecorationInteractData data = new DecorationInteractData(location.getBlock(), BlockFace.UP);
 			if (data.getDecoration() != null)
-				config = data.getDecoration().getConfig();
+				itemStack = data.getDecoration().getItemDrop(event.getPlayer());
 		}
 
 		//
 
-		if (config == null)
+		if (itemStack == null)
 			return;
 
 		event.setCancelled(true);
@@ -135,13 +135,11 @@ public class DecorationListener implements Listener {
 		PlayerInventory inventory = player.getInventory();
 		int targetSlot = event.getTargetSlot();
 
-		ItemStack decorItem = config.getItem();
-
 		// Check if picked block is in hotbar already
 		int contentSlot = 0;
 		ItemStack[] hotbarContents = PlayerUtils.getHotbarContents(player);
 		for (ItemStack content : hotbarContents) {
-			if (!Nullables.isNullOrAir(content) && ItemUtils.isModelMatch(content, decorItem)) {
+			if (!Nullables.isNullOrAir(content) && ItemUtils.isModelMatch(content, itemStack)) {
 				inventory.setHeldItemSlot(contentSlot);
 				return;
 			}
@@ -149,7 +147,7 @@ public class DecorationListener implements Listener {
 		}
 
 		inventory.setHeldItemSlot(targetSlot);
-		inventory.setItem(targetSlot, decorItem);
+		inventory.setItem(targetSlot, itemStack);
 	}
 
 	@EventHandler
