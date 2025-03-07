@@ -18,8 +18,10 @@ import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -33,6 +35,7 @@ public class CustomBlockTracker implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private Map<Integer, Map<Integer, Map<Integer, CustomBlockData>>> customBlockMap = new LinkedHashMap<>();
+	private Set<Long> convertedChunkKeys = new HashSet<>();
 
 	private void validate(@NonNull Location location) {
 		if (!location.getWorld().getUID().equals(uuid))

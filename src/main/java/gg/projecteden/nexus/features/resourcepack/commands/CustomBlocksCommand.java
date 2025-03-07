@@ -168,7 +168,7 @@ public class CustomBlocksCommand extends CustomCommand {
 	@Path("convertChunk")
 	@Permission(Group.ADMIN)
 	void convertChunk() {
-		ConversionListener.convertCustomBlocks(player().getChunk());
+		ConversionListener.convertCustomBlocks(player().getChunk(), true);
 	}
 
 	@Path("deleteChunk")

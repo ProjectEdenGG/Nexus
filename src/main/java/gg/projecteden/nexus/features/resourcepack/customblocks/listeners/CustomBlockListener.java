@@ -125,13 +125,12 @@ public class CustomBlockListener implements Listener {
 			return;
 		//
 
-		Location location = event.getLocation();
-
 		if (event.getUpdateType() != CustomBlockUpdateEvent.UpdateType.POWERED) {
 			event.setCancelled(true);
 			return;
 		}
 
+		Location location = event.getLocation();
 		if (location == null)
 			return;
 

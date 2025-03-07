@@ -9,6 +9,8 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBloc
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock.CustomBlockType;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
+import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
+import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -32,7 +34,7 @@ import java.util.Set;
 
 @Environments(Env.TEST)
 public class ConversionListener implements Listener {
-	private static final Set<Long> convertedChunks = new HashSet<>();
+	private static final CustomBlockTrackerService trackerService = new CustomBlockTrackerService();
 
 	public ConversionListener() {
 		Nexus.registerListener(this);
@@ -49,11 +51,17 @@ public class ConversionListener implements Listener {
 	}
 
 	public static void convertCustomBlocks(Chunk chunk) {
+		convertCustomBlocks(chunk, false);
+	}
+
+	public static void convertCustomBlocks(Chunk chunk, boolean override) {
 		long key = chunk.getChunkKey();
-		if (convertedChunks.contains(key))
+		CustomBlockTracker tracker = trackerService.fromWorld(chunk.getWorld());
+		if (!override && tracker.getConvertedChunkKeys().contains(key))
 			return;
 
-		convertedChunks.add(key);
+		tracker.getConvertedChunkKeys().add(key);
+		trackerService.save(tracker);
 
 		if (!WorldUtils.isInWorldBorder(chunk.getWorld(), chunk))
 			return;
