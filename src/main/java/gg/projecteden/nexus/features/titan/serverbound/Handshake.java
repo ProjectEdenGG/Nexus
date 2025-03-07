@@ -1,15 +1,8 @@
 package gg.projecteden.nexus.features.titan.serverbound;
 
 import gg.projecteden.api.common.utils.StringUtils;
-import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.titan.ClientMessage;
-import gg.projecteden.nexus.features.titan.clientbound.CustomBlocks;
-import gg.projecteden.nexus.features.titan.clientbound.Decorations;
 import gg.projecteden.nexus.features.titan.clientbound.UpdateState;
-import gg.projecteden.nexus.features.titan.models.CustomCreativeItem;
 import gg.projecteden.nexus.features.titan.models.Serverbound;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.models.chat.Chatter;
@@ -18,8 +11,6 @@ import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import org.bukkit.entity.Player;
-
-import java.util.Arrays;
 
 @Getter
 public class Handshake extends Serverbound {
@@ -38,16 +29,6 @@ public class Handshake extends Serverbound {
 				.vanished(Vanish.isVanished(player))
 				.build())
 			.send();
-
-		ClientMessage.builder()
-			.players(player)
-			.message(new CustomBlocks(CustomBlockUtils.getCreativeItems()))
-			.send();
-
-//		ClientMessage.builder()
-//			.players(player)
-//			.message(new Decorations(DecorationUtils.getCreativeItems()))
-//			.send();
 
 		Chatter.of(player).notifyTitanOfChannelChange();
 	}

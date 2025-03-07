@@ -8,7 +8,6 @@ import gg.projecteden.nexus.features.titan.clientbound.ResetMinigame;
 import gg.projecteden.nexus.features.titan.clientbound.SaturnUpdate;
 import gg.projecteden.nexus.features.titan.clientbound.UpdateState;
 import gg.projecteden.nexus.features.titan.serverbound.Handshake;
-import gg.projecteden.nexus.features.titan.serverbound.PickBlock;
 import gg.projecteden.nexus.features.titan.serverbound.TitanConfig;
 import gg.projecteden.nexus.features.titan.serverbound.Versions;
 import lombok.AllArgsConstructor;
@@ -25,7 +24,6 @@ public enum PluginMessage {
 	VERSIONS(Versions.class),
 	UPDATE_STATE(UpdateState.class),
 	RESET_MINIGAME(ResetMinigame.class),
-	PICK_BLOCK(PickBlock.class),
 	CUSTOM_BLOCKS(CustomBlocks.class),
 	DECORATIONS(Decorations.class),
 	;

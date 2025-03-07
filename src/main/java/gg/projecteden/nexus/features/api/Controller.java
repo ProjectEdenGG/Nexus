@@ -3,6 +3,9 @@ package gg.projecteden.nexus.features.api;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.api.annotations.Get;
 import gg.projecteden.nexus.features.commands.StaffHallCommand;
+import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
+import gg.projecteden.nexus.features.titan.models.CustomCreativeItem;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -183,6 +186,22 @@ public class Controller {
 		}
 
 		return Map.of("players", players);
+	}
+
+	@Get("/titan/creative/categories")
+	Object customBlocks() {
+		List<CustomCreativeItem> categories = new ArrayList<>();
+		categories.addAll(Arrays.asList(CustomBlockUtils.getCreativeCategories()));
+		categories.addAll(Arrays.asList(DecorationUtils.getCreativeCategories()));
+		return categories.toArray();
+	}
+
+	@Get("/titan/creative/items")
+	Object decoration() {
+		List<CustomCreativeItem> items = new ArrayList<>();
+		items.addAll(Arrays.asList(CustomBlockUtils.getCreativeItems()));
+		items.addAll(Arrays.asList(DecorationUtils.getCreativeItems()));
+		return items.toArray();
 	}
 
 }

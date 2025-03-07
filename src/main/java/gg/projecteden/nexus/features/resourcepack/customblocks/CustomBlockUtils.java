@@ -306,6 +306,10 @@ public class CustomBlockUtils {
 			+ " &fPowered=" + StringUtils.bool(tripwire.isPowered());
 	}
 
+	public static CustomCreativeItem[] getCreativeCategories() {
+		return new CustomCreativeItem[] { new CustomCreativeItem(CustomBlock.APPLE_CRATE) };
+	}
+
 	public static CustomCreativeItem[] getCreativeItems() {
 		return Arrays.stream(CustomBlock.values())
 			.filter(customBlock -> customBlock.getCreativeTab() != CustomBlockTab.NONE)

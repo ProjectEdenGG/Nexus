@@ -4,10 +4,8 @@ import gg.projecteden.api.common.utils.ReflectionUtils;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
 import gg.projecteden.nexus.features.resourcepack.CustomContentUtils;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlockTab;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Tab;
+import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Theme;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
@@ -450,10 +448,20 @@ public class DecorationUtils {
 		return new Decoration(config, itemFrame);
 	}
 
+	public static CustomCreativeItem[] getCreativeCategories() {
+		return Arrays.stream(Theme.values())
+			.filter(theme -> theme != Theme.ALL)
+			.map(theme -> {
+				ItemBuilder builder = theme.getItemBuilder();
+				return new CustomCreativeItem(builder.material().name().toLowerCase(), builder.name(), builder.model(), null, "Decorations: " + StringUtils.camelCase(theme));
+			})
+			.toArray(CustomCreativeItem[]::new);
+	}
+
 	public static CustomCreativeItem[] getCreativeItems() {
 		return Arrays.stream(DecorationType.values())
-			.filter(decorationType -> Arrays.stream(decorationType.getTypeConfig().tabs()).toList().getLast() == Tab.INTERNAL)
+			.filter(decorationType -> Arrays.stream(decorationType.getTypeConfig().tabs()).noneMatch(tab -> tab == Tab.INTERNAL))
 			.map(CustomCreativeItem::new)
-			.toList().toArray(new CustomCreativeItem[0]);
+			.toArray(CustomCreativeItem[]::new);
 	}
 }
