@@ -34,8 +34,11 @@ public class WorldEditHandlers {
 
 		event.setExtent(new AbstractDelegateExtent(event.getExtent()) {
 			@Override
-			public <T extends BlockStateHolder<T>> boolean setBlock(BlockVector3 pos, T block) throws WorldEditException {
-				BlockData blockData = BukkitAdapter.adapt(block);
+			public <T extends BlockStateHolder<T>> boolean setBlock(BlockVector3 pos, T newBlock) throws WorldEditException {
+				if (true)
+					return super.setBlock(pos, newBlock);
+
+				BlockData blockData = BukkitAdapter.adapt(newBlock);
 				World world = Bukkit.getWorld(event.getWorld().getName());
 				Location loc = new Location(world, pos.x(), pos.y(), pos.z());
 
@@ -46,16 +49,16 @@ public class WorldEditHandlers {
 						Tasks.wait(1, () -> CustomBlockUtils.placeBlockDatabaseAsServer(customBlock, loc, BlockFace.UP));
 				} else {
 					if (world == null)
-						return super.setBlock(pos, block);
+						return super.setBlock(pos, newBlock);
 
 					CustomBlock replacingCustomBlock = CustomBlock.from(loc.getBlock());
 					if (replacingCustomBlock == null)
-						return super.setBlock(pos, block);
+						return super.setBlock(pos, newBlock);
 
 					Tasks.wait(1, () -> CustomBlockUtils.breakBlockDatabase(loc));
 				}
 
-				return super.setBlock(pos, block);
+				return super.setBlock(pos, newBlock);
 			}
 		});
 	}
