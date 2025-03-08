@@ -4,9 +4,12 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBloc
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 
+@Data
 @AllArgsConstructor
 public class CustomCreativeItem {
 
@@ -30,6 +33,13 @@ public class CustomCreativeItem {
 		category = "Decorations: " + StringUtils.camelCase(decorationType.getTypeConfig().theme());
 		if (decorationType.getConfig() instanceof Dyeable dyeable)
 			hex = dyeable.getColor().asHexString();
+	}
+
+	public CustomCreativeItem(ItemBuilder item, String category) {
+		material = item.material().name().toLowerCase();
+		displayName = item.name();
+		model = item.model();
+		this.category = category;
 	}
 
 }

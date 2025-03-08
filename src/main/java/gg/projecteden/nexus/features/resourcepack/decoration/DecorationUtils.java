@@ -459,9 +459,15 @@ public class DecorationUtils {
 	}
 
 	public static CustomCreativeItem[] getCreativeItems() {
-		return Arrays.stream(DecorationType.values())
+		List<CustomCreativeItem> items = new ArrayList<>();
+		items.addAll(Arrays.stream(DecorationType.values())
 			.filter(decorationType -> Arrays.stream(decorationType.getTypeConfig().tabs()).noneMatch(tab -> tab == Tab.INTERNAL))
 			.map(CustomCreativeItem::new)
-			.toArray(CustomCreativeItem[]::new);
+			.toList());
+
+		CustomCreativeItem paintbrush = new CustomCreativeItem(DyeStation.getPaintbrush(), "Decorations: General");
+		paintbrush.setDisplayName("Paintbrush");
+		items.add(paintbrush);
+		return items.toArray(CustomCreativeItem[]::new);
 	}
 }
