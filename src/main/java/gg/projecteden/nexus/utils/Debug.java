@@ -77,6 +77,7 @@ public class Debug {
 		ROLE_MANAGER,
 		JDA,
 		DATABASE,
+		WORLDEDIT,
 	}
 
 }
