@@ -6,7 +6,6 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -14,8 +13,14 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -63,7 +68,7 @@ public class VanishUser implements PlayerOwnedObject {
 		final int priority = getPriority();
 		final int viewerPriority = viewer.getPriority();
 		final boolean canHideFrom = priority > viewerPriority;
-		Nexus.debug("[Vanish] %s can%s hide from %s (%s > %s)".formatted(
+		Debug.log("[Vanish] %s can%s hide from %s (%s > %s)".formatted(
 			getNickname(),
 			canHideFrom ? "" : " not",
 			viewer.getNickname(),

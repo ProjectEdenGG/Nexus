@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.store.perks.inventory.stattrack.models;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -18,7 +19,7 @@ public class StatIncreaseEvent {
 		if (!Dev.GRIFFIN.is(player))
 			return;
 
-		Nexus.debug("StatIncreaseEvent{player=" + player.getName() + ", item=" + (item == null ? "null" : item.getType()) + ", stat=" + stat.name() + ", value=" + value + "}");
+		Debug.log("StatIncreaseEvent{player=" + player.getName() + ", item=" + (item == null ? "null" : item.getType()) + ", stat=" + stat.name() + ", value=" + value + "}");
 
 		if (!ENABLED_WORLDS.contains(WorldGroup.of(player)))
 			return;

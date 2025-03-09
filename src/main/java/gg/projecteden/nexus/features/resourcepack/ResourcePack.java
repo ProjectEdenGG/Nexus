@@ -15,6 +15,7 @@ import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.HttpUtils;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -149,7 +150,7 @@ public class ResourcePack extends Feature implements Listener {
 				ex.printStackTrace();
 			}
 
-			Nexus.debug("Walking RP files...");
+			Debug.log("Walking RP files...");
 			for (Path root : zipFile.getRootDirectories()) {
 				try (var walker = Files.walk(root)) {
 					walker.forEach(path -> {
@@ -158,7 +159,7 @@ public class ResourcePack extends Feature implements Listener {
 
 							try {
 								if (uri.endsWith(ItemModelInstance.getItemsSubdirectory())) {
-									Nexus.debug("Found model folder: " + uri);
+									Debug.log("Found model folder: " + uri);
 									rootFolder = new ItemModelFolder("/");
 								}
 							} catch (Exception ex) {

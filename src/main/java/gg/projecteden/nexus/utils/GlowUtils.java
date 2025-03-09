@@ -129,7 +129,7 @@ public class GlowUtils {
 			if (true)
 				return;
 
-			Nexus.debug((state ? "Glowing" : "Unglowing") + " " + entities.size() + " entities for " + receivers.size() + " players");
+			Debug.log((state ? "Glowing" : "Unglowing") + " " + entities.size() + " entities for " + receivers.size() + " players");
 			if (!state)
 				color = null;
 
@@ -150,10 +150,10 @@ public class GlowUtils {
 					for (Player receiver : receivers)
 						if (state) {
 							API.setGlowing(entity, receiver, chatColor);
-							Nexus.debug("glow(" + (entity instanceof Player player ? Nickname.of(player) : entity.getType().name()) + ", " + Nickname.of(receiver) + ", " + chatColor.name() + ")");
+							Debug.log("glow(" + (entity instanceof Player player ? Nickname.of(player) : entity.getType().name()) + ", " + Nickname.of(receiver) + ", " + chatColor.name() + ")");
 						} else {
 							API.unsetGlowing(entity, receiver);
-							Nexus.debug("unglow(" + (entity instanceof Player player ? Nickname.of(player) : entity.getType().name()) + ", " + Nickname.of(receiver) + ")");
+							Debug.log("unglow(" + (entity instanceof Player player ? Nickname.of(player) : entity.getType().name()) + ", " + Nickname.of(receiver) + ")");
 						}
 			} catch (Exception ex) {
 				ex.printStackTrace();

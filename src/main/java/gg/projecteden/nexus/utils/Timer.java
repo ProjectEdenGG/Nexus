@@ -20,7 +20,7 @@ public class Timer {
 
 		duration = System.currentTimeMillis() - startTime;
 
-		if (debug == null ? Nexus.isDebug() : debug || duration > IGNORE)
+		if (debug == null ? Debug.isEnabled() : debug || duration > IGNORE)
 			Nexus.log("[Timer] " + id + " took " + duration + "ms");
 	}
 

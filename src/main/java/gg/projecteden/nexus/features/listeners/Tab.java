@@ -18,6 +18,7 @@ import gg.projecteden.nexus.models.dnd.DNDUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -148,8 +149,7 @@ public class Tab implements Listener {
 			}
 
 			Nexus.warn("Could not determine " + Nickname.of(player) + "'s presence");
-			if (Nexus.isDebug())
-				Thread.dumpStack();
+			Debug.dumpStack();
 			return ACTIVE;
 		}
 

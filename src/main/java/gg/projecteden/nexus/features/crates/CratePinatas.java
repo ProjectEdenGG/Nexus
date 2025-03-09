@@ -16,6 +16,7 @@ import gg.projecteden.nexus.models.crate.CrateConfig;
 import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.models.jukebox.JukeboxSong;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
@@ -122,7 +123,7 @@ public class CratePinatas implements Listener {
 		try {
 			type = CrateType.valueOf(nbtType.toUpperCase());
 		} catch (Exception ignore) {
-			Nexus.debug("Invalid Crate Type on Pinata: " + nbtType);
+			Debug.log("Invalid Crate Type on Pinata: " + nbtType);
 			return;
 		}
 

@@ -9,6 +9,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.api.annotations.Get;
 import gg.projecteden.nexus.features.api.annotations.Post;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
@@ -21,6 +22,8 @@ import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
+
+import static gg.projecteden.nexus.utils.Debug.DebugType.API;
 
 @Environments(Env.PROD)
 public class SimpleHttpServer extends Feature {
@@ -67,17 +70,17 @@ public class SimpleHttpServer extends Feature {
 		public void handle(HttpExchange exchange) throws IOException {
 			try {
 				String path = exchange.getRequestURI().getPath();
-				Nexus.debug("[API] " + exchange.getRequestMethod() + " " + path);
+				Debug.log(API, exchange.getRequestMethod() + " " + path);
 
 				Object response = null;
 
 				var httpMethod = HttpMethod.valueOf(exchange.getRequestMethod());
-				Nexus.debug("[API] httpMethod: " + httpMethod.name() + " " + httpMethod.getAnnotation().getSimpleName());
+				Debug.log(API, "httpMethod: " + httpMethod.name() + " " + httpMethod.getAnnotation().getSimpleName());
 
 				endpoints:
 				for (Method method : CONTROLLER.getClass().getDeclaredMethods()) {
 					method.setAccessible(true);
-					Nexus.debug("[API] method: " + method.getName());
+					Debug.log(API, "method: " + method.getName());
 					if (!method.isAnnotationPresent(httpMethod.getAnnotation()))
 						continue;
 
@@ -88,26 +91,26 @@ public class SimpleHttpServer extends Feature {
 					var controllerSplit = controllerPath.split("/");
 					List<Object> arguments = new ArrayList<>();
 
-					Nexus.debug("[API] path: " + path);
-					Nexus.debug("[API] controllerPath: " + controllerPath);
-					Nexus.debug("[API] requestSplit: " + String.join(", ", requestSplit));
-					Nexus.debug("[API] controllerSplit: " + String.join(", ", controllerSplit));
+					Debug.log(API, "path: " + path);
+					Debug.log(API, "controllerPath: " + controllerPath);
+					Debug.log(API, "requestSplit: " + String.join(", ", requestSplit));
+					Debug.log(API, "controllerSplit: " + String.join(", ", controllerSplit));
 
 					if (requestSplit.length != controllerSplit.length) {
-						Nexus.debug("[API] Argument length mismatch, continuing");
+						Debug.log(API, "Argument length mismatch, continuing");
 						continue;
 					}
 
 					for (int i = 0; i < controllerSplit.length; i++) {
 						var requestStep = requestSplit[i];
 						var controllerStep = controllerSplit[i];
-						Nexus.debug("[API] requestStep: " + requestStep);
-						Nexus.debug("[API] controllerStep: " + controllerStep);
+						Debug.log(API, "requestStep: " + requestStep);
+						Debug.log(API, "controllerStep: " + controllerStep);
 
 						if (controllerStep.startsWith("{") && controllerStep.endsWith("}")) {
 							arguments.add(requestStep);
 						} else if (!requestStep.equals(controllerStep)) {
-							Nexus.debug("[API] Step mismatch, continuing");
+							Debug.log(API, "Step mismatch, continuing");
 							continue endpoints;
 						}
 					}
@@ -119,8 +122,8 @@ public class SimpleHttpServer extends Feature {
 							arguments.add(exchange);
 					}
 
-					Nexus.debug("[API] Method: " + method.getName());
-					Nexus.debug("[API] Arguments: " + arguments);
+					Debug.log(API, "Method: " + method.getName());
+					Debug.log(API, "Arguments: " + arguments);
 					response = method.invoke(CONTROLLER, arguments.toArray());
 				}
 
@@ -131,7 +134,7 @@ public class SimpleHttpServer extends Feature {
 				}
 
 				var responseString = Utils.getGson().toJson(response);
-				Nexus.debug("[API] Response: " + responseString);
+				Debug.log(API, "Response: " + responseString);
 				exchange.sendResponseHeaders(200, responseString.getBytes().length);
 				try (OutputStream os = exchange.getResponseBody()) {
 					os.write(responseString.getBytes());

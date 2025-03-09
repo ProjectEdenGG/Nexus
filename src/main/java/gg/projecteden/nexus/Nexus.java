@@ -18,13 +18,13 @@ import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.Events;
 import gg.projecteden.nexus.features.listeners.common.TemporaryListener;
 import gg.projecteden.nexus.features.menus.api.SignMenuFactory;
-import gg.projecteden.nexus.utils.protection.ProtectionUtils;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.framework.persistence.mysql.MySQLPersistence;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.home.HomeService;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.GlowUtils;
 import gg.projecteden.nexus.utils.GoogleUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -36,9 +36,9 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags;
 import gg.projecteden.nexus.utils.nms.PacketUtils;
+import gg.projecteden.nexus.utils.protection.ProtectionUtils;
 import it.sauronsoftware.cron4j.Scheduler;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.SneakyThrows;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import me.lucko.spark.api.Spark;
@@ -138,15 +138,6 @@ public class Nexus extends JavaPlugin {
 		return getEnv() == Env.PROD || getEnv() == Env.UPDATE;
 	}
 
-	@Getter
-	@Setter
-	private static boolean debug = false;
-
-	public static void debug(String message) {
-		if (debug)
-			getInstance().getLogger().info("[DEBUG] " + ChatColor.stripColor(message));
-	}
-
 	public static void log(String message) {
 		log(Level.INFO, message);
 	}
@@ -203,11 +194,11 @@ public class Nexus extends JavaPlugin {
 
 		final boolean isTemporary = listener instanceof TemporaryListener;
 		if (listeners.contains(listener) && !isTemporary) {
-			Nexus.debug("Ignoring duplicate listener registration for class " + listener.getClass().getSimpleName());
+			Debug.log("Ignoring duplicate listener registration for class " + listener.getClass().getSimpleName());
 			return;
 		}
 
-		Nexus.debug("Registering listener: " + listener.getClass().getName());
+		Debug.log("Registering listener: " + listener.getClass().getName());
 		if (getInstance().isEnabled()) {
 			getInstance().getServer().getPluginManager().registerEvents(listener, getInstance());
 			listeners.add(listener);

@@ -13,13 +13,21 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static gg.projecteden.nexus.utils.Debug.DebugType.TITAN;
 
 public class ServerClientMessaging extends Feature {
 
@@ -42,7 +50,7 @@ public class ServerClientMessaging extends Feature {
 
 	private void flush() {
 		if (toSend.isEmpty()) return;
-		Nexus.debug("Flushing ServerClientMessaging Queue");
+		Debug.log(TITAN, "Flushing ServerClientMessaging Queue");
 
 		Map<Player, JsonObject> playerMap = new HashMap<>();
 
@@ -76,9 +84,9 @@ public class ServerClientMessaging extends Feature {
 			ByteArrayDataOutput out = ByteStreams.newDataOutput();
 			out.writeUTF(json);
 
-			Nexus.debug("Sending Titan Message to %s:".formatted(player.getName()));
-			Nexus.debug(GSON.toJson(jsonObject));
-			Nexus.debug(Arrays.toString(out.toByteArray()));
+			Debug.log(TITAN, "Sending message to %s:".formatted(player.getName()));
+			Debug.log(TITAN, GSON.toJson(jsonObject));
+			Debug.log(TITAN, Arrays.toString(out.toByteArray()));
 
 			player.sendPluginMessage(Nexus.getInstance(), CHANNEL, out.toByteArray());
 
@@ -92,7 +100,7 @@ public class ServerClientMessaging extends Feature {
 	}
 
 	private void processOld(Player player, ClientMessage message) {
-		Nexus.debug("Sending old Saturn Update style");
+		Debug.log(TITAN, "Sending old Saturn Update style");
 		if (message.getMessage() instanceof SaturnUpdate) {
 			ByteArrayDataOutput out = ByteStreams.newDataOutput();
 			out.writeUTF("saturn-update");

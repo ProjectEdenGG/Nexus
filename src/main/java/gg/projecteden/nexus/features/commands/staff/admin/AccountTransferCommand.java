@@ -8,7 +8,6 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.sql.PhysDB;
 import gg.projecteden.api.common.annotations.Sync;
 import gg.projecteden.api.mongodb.annotations.Service;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -86,6 +85,7 @@ import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
 import gg.projecteden.nexus.models.vaults.VaultUser;
 import gg.projecteden.nexus.models.vaults.VaultUserService;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -245,11 +245,11 @@ public class AccountTransferCommand extends CustomCommand {
 				oldStats.get(group).forEach((statistic, oldValue) -> {
 					long newValue = newStats.get(group).getOrDefault(statistic, 0L).longValue();
 					long combinedValue = oldValue.longValue() + newValue;
-					Nexus.debug("Stat: " + group + "." + statistic + ", Old: " + oldValue + ", New: " + newValue + ", Combined: " + combinedValue);
+					Debug.log("Stat: " + group + "." + statistic + ", Old: " + oldValue + ", New: " + newValue + ", Combined: " + combinedValue);
 					if (combinedValue != 0)
 						newStats.get(group).put(statistic, combinedValue);
 					else
-						Nexus.debug("Ignored because == 0");
+						Debug.log("Ignored because == 0");
 				});
 			}
 

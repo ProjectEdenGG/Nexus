@@ -6,6 +6,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.mail.Mailer;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
 import lombok.SneakyThrows;
@@ -14,6 +15,8 @@ import org.bukkit.Bukkit;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.UUID;
+
+import static gg.projecteden.nexus.utils.Debug.DebugType.DATABASE;
 
 public abstract class MongoBukkitService<T extends DatabaseObject> extends gg.projecteden.api.mongodb.MongoService<T> {
 
@@ -45,7 +48,7 @@ public abstract class MongoBukkitService<T extends DatabaseObject> extends gg.pr
 
 	@Override
 	public void saveSync(T object) {
-//		Nexus.debug("[" + getClassName() + "] saveSync " + object.getUuid());
+		Debug.log(DATABASE, "[" + getClassName() + "] saveSync " + object.getUuid());
 		try {
 			super.saveSync(object);
 		} catch (Exception ex) {
@@ -55,10 +58,9 @@ public abstract class MongoBukkitService<T extends DatabaseObject> extends gg.pr
 			final String CME = "[Mongo] Caught CME saving " + pretty(object) + "'s " + object.getClass().getSimpleName() + ", retrying";
 			if (object instanceof Mailer) {
 				Nexus.log(CME);
-				if (Nexus.isDebug())
-					ex.printStackTrace();
+				Debug.log(DATABASE, ex);
 			} else
-				Nexus.debug(CME);
+				Debug.log(DATABASE, CME);
 			queueSaveSync(TickTime.SECOND.x(3), object);
 		}
 	}
@@ -94,37 +96,37 @@ public abstract class MongoBukkitService<T extends DatabaseObject> extends gg.pr
 
 	@Override
 	protected T getNoCache(UUID uuid) {
-//		Nexus.debug("[" + getClassName() + "] getNoCache " + uuid);
+		Debug.log(DATABASE, "[" + getClassName() + "] getNoCache " + uuid);
 		return super.getNoCache(uuid);
 	}
 
 	@Override
 	public List<T> getPage(int page, int amount) {
-//		Nexus.debug("[" + getClassName() + "] getPage");
+		Debug.log(DATABASE, "[" + getClassName() + "] getPage");
 		return super.getPage(page, amount);
 	}
 
 	@Override
 	public List<T> getAll() {
-//		Nexus.debug("[" + getClassName() + "] getAll");
+		Debug.log(DATABASE, "[" + getClassName() + "] getAll");
 		return super.getAll();
 	}
 
 	@Override
 	public List<T> getAllSortedBy(Sort... sorts) {
-//		Nexus.debug("[" + getClassName() + "] getAllSortedBy");
+		Debug.log(DATABASE, "[" + getClassName() + "] getAllSortedBy");
 		return super.getAllSortedBy(sorts);
 	}
 
 	@Override
 	public List<T> getAllSortedByLimit(int limit, Sort... sorts) {
-//		Nexus.debug("[" + getClassName() + "] getAllSortedByLimit");
+		Debug.log(DATABASE, "[" + getClassName() + "] getAllSortedByLimit");
 		return super.getAllSortedByLimit(limit, sorts);
 	}
 
 	@Override
 	public void deleteSync(T object) {
-//		Nexus.debug("[" + getClassName() + "] deleteSync " + object.getUuid());
+		Debug.log(DATABASE, "[" + getClassName() + "] deleteSync " + object.getUuid());
 		super.deleteSync(object);
 	}
 

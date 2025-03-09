@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.customenchants;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.utils.Debug;
 import lombok.SneakyThrows;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -30,7 +31,13 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class CustomEnchantsRegistration {
 	static final Field nmsFrozenField;
@@ -38,7 +45,7 @@ public class CustomEnchantsRegistration {
 
 	static {
 		try {
-			Nexus.debug("Setting up custom enchant registry 1");
+			Debug.log("Setting up custom enchant registry 1");
 
 			nmsFrozenField = MappedRegistry.class.getDeclaredField("frozen");
 			unregisteredIntrusiveHolders = MappedRegistry.class.getDeclaredField("unregisteredIntrusiveHolders");

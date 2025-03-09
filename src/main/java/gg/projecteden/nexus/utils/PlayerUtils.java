@@ -175,8 +175,7 @@ public class PlayerUtils {
 		}
 
 		public void debug(Object message) {
-			if (Nexus.isDebug())
-				PlayerUtils.send(this, message);
+			PlayerUtils.debug(this, message);
 		}
 
 		public boolean is(HasUniqueId player) {
@@ -193,6 +192,10 @@ public class PlayerUtils {
 
 		public boolean isNot(UUID player) {
 			return !is(player);
+		}
+
+		public static boolean exists(HasUniqueId hasUniqueId) {
+			return of(hasUniqueId) != null;
 		}
 	}
 
@@ -681,6 +684,13 @@ public class PlayerUtils {
 
 	public static void runCommandAsConsole(String commandNoSlash) {
 		runCommand(Bukkit.getConsoleSender(), commandNoSlash);
+	}
+
+	public static void debug(@Nullable Object recipient, @Nullable Object message, @NotNull Object... objects) {
+		if (!Debug.isEnabled())
+			return;
+
+		send(recipient, message, objects);
 	}
 
 	/**

@@ -2,6 +2,7 @@ package gg.projecteden.nexus.utils.protection;
 
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.protection.compatibilities.BentoBoxCompat;
 import gg.projecteden.nexus.utils.protection.compatibilities.PlotSquaredCompat;
 import gg.projecteden.nexus.utils.protection.compatibilities.WorldGuardCompat;
@@ -25,20 +26,20 @@ public class ProtectionUtils {
 	public static void init(JavaPlugin plugin) {
 		try {
 			handleCompatibility("WorldGuard", plugin, (m, p) -> new WorldGuardCompat(m, p));
-		} catch (Exception | NoClassDefFoundError e) {
-			if (Nexus.isDebug()) e.printStackTrace();
+		} catch (Exception | NoClassDefFoundError ex) {
+			Debug.log(ex);
 		}
 
 		try {
 			handleCompatibility("PlotSquared", plugin, (m, p) -> new PlotSquaredCompat(m, p));
-		} catch (Exception | NoClassDefFoundError e) {
-			if (Nexus.isDebug()) e.printStackTrace();
+		} catch (Exception | NoClassDefFoundError ex) {
+			Debug.log(ex);
 		}
 
 		try {
 			handleCompatibility("BentoBox", plugin, (m, p) -> new BentoBoxCompat(m, p));
-		} catch (Exception | NoClassDefFoundError e) {
-			if (Nexus.isDebug()) e.printStackTrace();
+		} catch (Exception | NoClassDefFoundError ex) {
+			Debug.log(ex);
 		}
 	}
 
@@ -57,8 +58,8 @@ public class ProtectionUtils {
 					return Pair.of(false, compat.getPlugin().getName());
 				}
 			}
-		} catch (Exception e) {
-			if (Nexus.isDebug()) e.printStackTrace();
+		} catch (Exception ex) {
+			Debug.log(ex);
 		}
 
 		return new Pair<>(true, null);
@@ -79,8 +80,8 @@ public class ProtectionUtils {
 					return Pair.of(false, compat.getPlugin().getName());
 				}
 			}
-		} catch (Exception e) {
-			if (Nexus.isDebug()) e.printStackTrace();
+		} catch (Exception ex) {
+			Debug.log(ex);
 		}
 
 		return new Pair<>(true, null);
@@ -101,8 +102,8 @@ public class ProtectionUtils {
 					return Pair.of(false, compat.getPlugin().getName());
 				}
 			}
-		} catch (Exception e) {
-			if (Nexus.isDebug()) e.printStackTrace();
+		} catch (Exception ex) {
+			Debug.log(ex);
 		}
 
 		return new Pair<>(true, null);
@@ -123,8 +124,8 @@ public class ProtectionUtils {
 					return Pair.of(false, compat.getPlugin().getName());
 				}
 			}
-		} catch (Exception e) {
-			if (Nexus.isDebug()) e.printStackTrace();
+		} catch (Exception ex) {
+			Debug.log(ex);
 		}
 
 		return new Pair<>(true, null);

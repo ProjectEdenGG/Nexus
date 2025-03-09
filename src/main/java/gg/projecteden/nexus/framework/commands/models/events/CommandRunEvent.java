@@ -1,13 +1,13 @@
 package gg.projecteden.nexus.framework.commands.models.events;
 
 import gg.projecteden.api.common.exceptions.EdenException;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MissingArgumentException;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import lombok.Data;
@@ -44,10 +44,7 @@ public class CommandRunEvent extends CommandEvent {
 	}
 
 	public void handleException(Throwable ex) {
-		if (Nexus.isDebug()) {
-			Nexus.debug("Handling command framework exception for " + getSender().getName());
-			ex.printStackTrace();
-		}
+		Debug.log("Handling command framework exception for " + getSender().getName(), ex);
 
 		String PREFIX = command.getPrefix();
 		if (Nullables.isNullOrEmpty(PREFIX))

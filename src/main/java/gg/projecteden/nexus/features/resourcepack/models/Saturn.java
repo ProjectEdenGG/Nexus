@@ -12,6 +12,7 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ImageUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -51,7 +52,7 @@ public class Saturn {
 	@SneakyThrows
 	private static void execute(String command, Path path) {
 		command = command.replaceAll("//", "/");
-		Nexus.debug("Executing %s at %s".formatted(command, path.toUri().toString().replaceFirst("file://", "")));
+		Debug.log("Executing %s at %s".formatted(command, path.toUri().toString().replaceFirst("file://", "")));
 
 		final ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "))
 			.directory(path.toFile())
@@ -62,7 +63,7 @@ public class Saturn {
 		final Process process = processBuilder.start();
 
 		process.waitFor();
-		Nexus.debug("  Finished execution");
+		Debug.log("  Finished execution");
 
 		final int exitCode = process.exitValue();
 		if (exitCode != 0) {
@@ -185,11 +186,11 @@ public class Saturn {
 						try {
 
 							if (fileName.contains(".")) {
-								Nexus.debug("Creating file " + fileName);
+								Debug.log("Creating file " + fileName);
 								file.createNewFile();
 								Files.copy(path, filePath, StandardCopyOption.REPLACE_EXISTING);
 							} else {
-								Nexus.debug("Creating folder " + fileName);
+								Debug.log("Creating folder " + fileName);
 								file.mkdirs();
 							}
 						} catch (Exception ex) {

@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.utils;
 
 import com.google.common.base.Preconditions;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.CustomEnchantsRegistration;
 import gg.projecteden.nexus.features.customenchants.enchants.AutoRepairEnchant;
@@ -325,14 +324,14 @@ public class Enchant {
 	@NotNull
 	private static Enchantment getEnchantment(@NotNull String key) {
 		try {
-			Nexus.debug("Attempting to register " + key);
+			Debug.log("Attempting to register " + key);
 			final String registered = Registry.ENCHANTMENT.stream().filter(Objects::nonNull).map(enchantment -> enchantment.getKey().getKey()).collect(Collectors.joining(","));
-			Nexus.debug("Registered so far in CraftRegistry: " + registered);
+			Debug.log("Registered so far in CraftRegistry: " + registered);
 
 			NamespacedKey namespacedKey = NamespacedKey.minecraft(key);
 			final ResourceLocation resourceLocation = CraftNamespacedKey.toMinecraft(namespacedKey);
-			Nexus.debug("NMS enchant 1 %s/%s: %s".formatted(namespacedKey.toString(), resourceLocation.toString(), Registry.ENCHANTMENT.getOrThrow(namespacedKey)));
-			Nexus.debug("NMS enchant 2 %s/%s: %s".formatted(namespacedKey.toString(), resourceLocation.toString(), CustomEnchantsRegistration.nmsRegistry().getOptional(resourceLocation).orElse(null)));
+			Debug.log("NMS enchant 1 %s/%s: %s".formatted(namespacedKey.toString(), resourceLocation.toString(), Registry.ENCHANTMENT.getOrThrow(namespacedKey)));
+			Debug.log("NMS enchant 2 %s/%s: %s".formatted(namespacedKey.toString(), resourceLocation.toString(), CustomEnchantsRegistration.nmsRegistry().getOptional(resourceLocation).orElse(null)));
 			Enchantment enchantment = Registry.ENCHANTMENT.get(namespacedKey);
 
 			Preconditions.checkNotNull(enchantment, "No Enchantment found for %s. This is a bug.", namespacedKey);

@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.ambience;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.ambience.effects.birds.BirdSound;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
@@ -259,8 +258,7 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 
 		config.delete(ambience);
 		service.save(config);
-		if (Nexus.isDebug())
-			PlayerUtils.send(player, PREFIX + "Removed " + camelCase(ambience.getType()));
+		PlayerUtils.debug(player, PREFIX + "Removed " + camelCase(ambience.getType()));
 	}
 
 	@EventHandler
@@ -292,8 +290,7 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 
 			config.add(new AmbienceConfig.Ambience(location.toBlockLocation(), ambienceType));
 			service.save(config);
-			if (Nexus.isDebug())
-				PlayerUtils.send(player, PREFIX + "Added " + camelCase(ambienceType));
+			PlayerUtils.debug(player, PREFIX + "Added " + camelCase(ambienceType));
 			break;
 		}
 	}

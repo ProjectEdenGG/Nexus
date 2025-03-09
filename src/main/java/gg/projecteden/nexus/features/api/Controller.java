@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.api;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.api.annotations.Get;
 import gg.projecteden.nexus.features.commands.StaffHallCommand;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
@@ -15,6 +14,7 @@ import gg.projecteden.nexus.models.voter.TopVoter;
 import gg.projecteden.nexus.models.voter.VotePartyService;
 import gg.projecteden.nexus.models.voter.VoteSite;
 import gg.projecteden.nexus.models.voter.VoterService;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -131,8 +131,7 @@ public class Controller {
 				"rank", nerd.getRank().name().toLowerCase()
 			);
 		} catch (Exception ex) {
-			if (Nexus.isDebug())
-				ex.printStackTrace();
+			Debug.log(ex);
 			return null;
 		}
 	}

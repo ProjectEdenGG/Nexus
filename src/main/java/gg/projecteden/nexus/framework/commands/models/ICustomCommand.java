@@ -29,7 +29,12 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineE
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MissingArgumentException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.Debug;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.SneakyThrows;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.command.CommandSender;
@@ -330,8 +335,7 @@ public abstract class ICustomCommand {
 				return convertToPlayerOwnedObject(value, (Class<? extends PlayerOwnedObject>) type);
 			}
 		} catch (InvocationTargetException ex) {
-			if (Nexus.isDebug())
-				ex.printStackTrace();
+			Debug.log(ex);
 			if (required)
 				if (!Nullables.isNullOrEmpty(value) && conversionExceptions.contains(ex.getCause().getClass()))
 					throw ex;

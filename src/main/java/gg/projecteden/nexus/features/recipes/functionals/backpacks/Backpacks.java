@@ -18,6 +18,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationIn
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Backpack;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -353,11 +354,11 @@ public class Backpacks extends FunctionalRecipe {
 			try {
 				verifyInventory(player);
 				if (inventoryHolder.getInventory() != null) {
-					Nexus.debug("Backpacks: Inventory holder already exists: " + inventoryHolder.id);
+					Debug.log("Backpacks: Inventory holder already exists: " + inventoryHolder.id);
 					open(inventoryHolder.getInventory());
 				}
 				else {
-					Nexus.debug("Backpacks: Creating new inventory holder: " + inventoryHolder.id);
+					Debug.log("Backpacks: Creating new inventory holder: " + inventoryHolder.id);
 					open(getTier(backpack).getRows(), originalItems);
 				}
 			} catch (Exception ex) {

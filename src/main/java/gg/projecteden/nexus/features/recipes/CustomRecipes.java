@@ -25,6 +25,7 @@ import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.CopperState;
 import gg.projecteden.nexus.utils.CopperState.CopperBlockType;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
@@ -70,6 +71,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static gg.projecteden.nexus.utils.Debug.DebugType.RECIPES;
 
 @Depends({ResourcePack.class, CustomEnchants.class})
 public class CustomRecipes extends Feature implements Listener {
@@ -141,7 +144,7 @@ public class CustomRecipes extends Feature implements Listener {
 		try {
 			for (Recipe recipe1 : Bukkit.getServer().getRecipesFor(recipe.getResult()))
 				if (RecipeUtils.areEqual(recipe.getRecipe(), recipe1)) {
-					Nexus.debug(recipe.getKey().getKey() + " == " + ((Keyed) recipe1).getKey().getKey());
+					Debug.log(RECIPES, recipe.getKey().getKey() + " == " + ((Keyed) recipe1).getKey().getKey());
 					return;
 				}
 

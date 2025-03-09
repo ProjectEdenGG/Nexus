@@ -1,15 +1,17 @@
 package gg.projecteden.nexus.features.chat.bridge;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.Name;
 import net.dv8tion.jda.api.entities.Role;
 
 import java.awt.*;
 import java.util.List;
+
+import static gg.projecteden.nexus.utils.Debug.DebugType.ROLE_MANAGER;
 
 public class RoleManager {
 
@@ -35,22 +37,22 @@ public class RoleManager {
 			return;
 		}
 
-		debug("Updating role for " + user.getNickname());
+		Debug.log(ROLE_MANAGER, "Updating role for " + user.getNickname());
 		if (user.getRoleId() == null) {
-			debug("  No role found, searching");
+			Debug.log(ROLE_MANAGER, "  No role found, searching");
 			List<Role> rolesByName = Discord.getGuild().getRolesByName(name, true);
 			if (rolesByName.size() > 0) {
-				debug("    Found matching username role");
+				Debug.log(ROLE_MANAGER, "    Found matching username role");
 				user.setRoleId(rolesByName.get(0).getId());
 				service.save(user);
 			} else {
 				List<Role> rolesByNickname = Discord.getGuild().getRolesByName(nickname, true);
 				if (rolesByNickname.size() > 0) {
-					debug("    Found matching nickname role");
+					Debug.log(ROLE_MANAGER, "    Found matching nickname role");
 					user.setRoleId(rolesByNickname.get(0).getId());
 					service.save(user);
 				} else {
-					debug("    No matching role found, creating a new one");
+					Debug.log(ROLE_MANAGER, "    No matching role found, creating a new one");
 					Discord.getGuild().createRole()
 							.setName(nickname)
 							.setColor(roleColor)
@@ -62,33 +64,28 @@ public class RoleManager {
 
 		Role role = Discord.getGuild().getRoleById(user.getRoleId());
 		if (role == null) {
-			debug("  Unable to retrieve role, deleted?");
+			Debug.log(ROLE_MANAGER, "  Unable to retrieve role, deleted?");
 			return;
 		}
 
-		debug("  Role found, checking for updates");
+		Debug.log(ROLE_MANAGER, "  Role found, checking for updates");
 		boolean update = false;
 		net.dv8tion.jda.api.managers.RoleManager manager = role.getManager();
 		if (!roleColor.equals(role.getColor())) {
-			debug("    Updating color to " + roleColor);
+			Debug.log(ROLE_MANAGER, "    Updating color to " + roleColor);
 			update = true;
 			manager.setColor(roleColor);
 		}
 		if (!role.getName().equals(nickname)) {
-			debug("    Updating nickname to " + nickname);
+			Debug.log(ROLE_MANAGER, "    Updating nickname to " + nickname);
 			update = true;
 			manager.setName(nickname);
 		}
 
 		if (update)
-			manager.queue(success -> Nexus.debug("      Updated role"), error -> { throw new RuntimeException(error); });
+			manager.queue(success -> Debug.log("      Updated role"), error -> { throw new RuntimeException(error); });
 		else
-			debug("    No updates needed");
-	}
-
-	private static void debug(String message) {
-		if (false)
-			Nexus.debug(message);
+			Debug.log(ROLE_MANAGER, "    No updates needed");
 	}
 
 }

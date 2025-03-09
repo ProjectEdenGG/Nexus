@@ -26,6 +26,7 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.BattleshipMatchD
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard.Type;
 import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.LocationUtils.CardinalDirection;
@@ -516,7 +517,7 @@ public class Battleship extends TeamMechanic {
 
 	public void pasteShip(ShipType shipType, Location location, CardinalDirection direction) {
 		String schematic = shipType.getFileName();
-		Nexus.debug("Pasting schematic " + schematic + " at " + StringUtils.getShortLocationString(location) + " with rotation " + direction.getRotation());
+		Debug.log("Pasting schematic " + schematic + " at " + StringUtils.getShortLocationString(location) + " with rotation " + direction.getRotation());
 		new WorldEditUtils(location).paster()
 				.file(schematic)
 				.at(location)
@@ -532,7 +533,7 @@ public class Battleship extends TeamMechanic {
 				if (LocationUtils.CardinalDirection.isCardinal(block.getFace(location.getBlock())))
 					direction = block.getFace(location.getBlock()).getOppositeFace();
 
-		Nexus.debug("Kit direction: " + (direction == null ? "null" : direction.name().toLowerCase()));
+		Debug.log("Kit direction: " + (direction == null ? "null" : direction.name().toLowerCase()));
 		return direction;
 	}
 

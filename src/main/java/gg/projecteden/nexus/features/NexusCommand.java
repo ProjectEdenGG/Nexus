@@ -372,17 +372,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 		private final Runnable runnable;
 	}
 
-	@Path("debug [state]")
-	@Description("Toggle debug mode")
-	@Permission(Group.ADMIN)
-	void debug(Boolean state) {
-		if (state == null)
-			state = !Nexus.isDebug();
-
-		Nexus.setDebug(state);
-		send(PREFIX + "Debugging " + (Nexus.isDebug() ? "&aenabled" : "&cdisabled"));
-	}
-
 	@Path("gc")
 	@Description("Force garbage collection")
 	@Permission(Group.ADMIN)

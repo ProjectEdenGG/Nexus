@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.ICustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.DoubleSlash;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.Utils;
@@ -14,7 +15,12 @@ import lombok.Getter;
 import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @SuppressWarnings({"unused", "unchecked"})
 public class Commands {
@@ -70,7 +76,7 @@ public class Commands {
 	}
 
 	public void registerAll() {
-		Nexus.debug(" Registering " + commandSet.size() + " commands");
+		Debug.log(" Registering " + commandSet.size() + " commands");
 		commandSet.forEach(this::register);
 	}
 

@@ -2,7 +2,6 @@ package gg.projecteden.nexus.framework.commands.models;
 
 import gg.projecteden.api.common.exceptions.EdenException;
 import gg.projecteden.api.mongodb.interfaces.PlayerOwnedObject;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -11,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgn
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.commands.models.events.CommandTabEvent;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
@@ -96,9 +96,8 @@ class PathParser {
 							try {
 								arg.setContextArg(command.getMethodParameters(method, event, false)[annotation.context() - 1]);
 							} catch (Exception ex) {
-								if (Nexus.isDebug())
-									if (!(ex instanceof InvocationTargetException && ex.getCause() instanceof EdenException))
-										ex.printStackTrace();
+								if (!(ex instanceof InvocationTargetException && ex.getCause() instanceof EdenException))
+									Debug.log(ex);
 							}
 					}
 

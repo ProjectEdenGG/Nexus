@@ -15,8 +15,8 @@ import com.sk89q.worldedit.internal.registry.InputParser;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.world.block.BaseBlock;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.MaterialTag;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
@@ -99,9 +99,8 @@ public class WorldEditUtils {
 				if (replaceBlocks || getBlocksInSchematic(clipboard, loc).isEmpty())
 					Operations.complete(operation);
 				editSession.close();
-			} catch (WorldEditException e) {
-				if (Nexus.isDebug())
-					e.printStackTrace();
+			} catch (WorldEditException ex) {
+				Debug.log(ex);
 			}
 
 		} catch (Exception e) {

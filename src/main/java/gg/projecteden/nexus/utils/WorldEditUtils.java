@@ -475,7 +475,7 @@ public class WorldEditUtils {
 		public void debug(String message) {
 			if (message != null) {
 				final String id = StringUtils.left(uuid.toString(), 8) + " " + i.getAndIncrement() + " " + (Bukkit.isPrimaryThread() ? " sync" : "async") + " ";
-				Nexus.debug(id + message);
+				Debug.log(id + message);
 			}
 		}
 

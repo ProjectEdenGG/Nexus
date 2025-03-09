@@ -11,7 +11,13 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.nickname.NicknameService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.AdventureUtils;
+import gg.projecteden.nexus.utils.Debug;
+import gg.projecteden.nexus.utils.Distance;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Name;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.HasLocation;
 import gg.projecteden.parchment.OptionalLocation;
@@ -150,12 +156,12 @@ public interface PlayerOwnedObject extends gg.projecteden.api.mongodb.interfaces
 	}
 
 	default void debug(String message) {
-		if (Nexus.isDebug())
+		if (Debug.isEnabled())
 			sendMessage(message);
 	}
 
 	default void debug(ComponentLike message) {
-		if (Nexus.isDebug())
+		if (Debug.isEnabled())
 			sendMessage(message);
 	}
 

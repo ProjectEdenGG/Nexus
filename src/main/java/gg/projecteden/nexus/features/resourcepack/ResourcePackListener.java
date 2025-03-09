@@ -4,6 +4,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -96,7 +97,7 @@ public class ResourcePackListener implements Listener {
 
 	@EventHandler
 	public void onResourcePackEvent(PlayerResourcePackStatusEvent event) {
-		Nexus.debug("Resource Pack Status Update: " + event.getPlayer().getName() + " = " + event.getStatus());
+		Debug.log("Resource Pack Status Update: " + event.getPlayer().getName() + " = " + event.getStatus());
 
 		final var statuses = statusUpdateTimes.computeIfAbsent(event.getPlayer().getUniqueId(), $ -> new HashMap<>());
 		statuses.put(event.getStatus(), LocalDateTime.now());

@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.minigames.listeners;
 
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
@@ -26,6 +25,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
 import gg.projecteden.nexus.utils.BorderUtils;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
@@ -114,7 +114,7 @@ public class MatchListener implements Listener {
 				return;
 
 		event.setCancelled(true);
-		Nexus.debug("Cancelled minigamer " + minigamer.getNickname() + " teleporting from " + StringUtils.getShortLocationString(event.getFrom()) + " to " + StringUtils.getShortLocationString(event.getTo()));
+		Debug.log("Cancelled minigamer " + minigamer.getNickname() + " teleporting from " + StringUtils.getShortLocationString(event.getFrom()) + " to " + StringUtils.getShortLocationString(event.getTo()));
 		minigamer.tell("&cYou cannot teleport while in a game! &3If you are trying to leave, use &c/mgm quit");
 	}
 

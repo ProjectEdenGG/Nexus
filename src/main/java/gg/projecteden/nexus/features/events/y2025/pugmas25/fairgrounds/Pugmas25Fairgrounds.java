@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.frogger.Pugmas25Frogger;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.reflection.Pugmas25Reflection;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.slotmachine.Pugmas25SlotMachine;
 import gg.projecteden.nexus.features.vanish.Vanish;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -55,10 +55,10 @@ public class Pugmas25Fairgrounds {
 					if (!Pugmas25.isRidesEnabled())
 						continue;
 
-					Nexus.debug("[BF25Rides] Enabling Ride " + ride.getId() + "...");
+					Debug.log("[BF25Rides] Enabling Ride " + ride.getId() + "...");
 					PlayerUtils.runCommandAsConsole("rideadm " + ride.getId() + " enable");
 				} else {
-					Nexus.debug("[BF25Rides] Disabling Ride " + ride.getId() + "...");
+					Debug.log("[BF25Rides] Disabling Ride " + ride.getId() + "...");
 					PlayerUtils.runCommandAsConsole("rideadm " + ride.getId() + " disable");
 				}
 				rideMap.put(ride, curStatus);

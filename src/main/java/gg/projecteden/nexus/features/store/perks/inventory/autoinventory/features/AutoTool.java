@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.store.perks.inventory.autoinventory.featur
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.skills.woodcutting.WoodcuttingManager;
 import com.gmail.nossr50.util.player.UserManager;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.events.PlayerBlockDigEvent;
 import gg.projecteden.nexus.features.resourcepack.customblocks.customblockbreaking.BrokenBlock;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventory;
@@ -86,8 +85,8 @@ public class AutoTool implements Listener {
 		hotbar.add(null);
 
 		Consumer<String> debug = message -> {
-			if (Nexus.isDebug() && Dev.of(player) != null)
-				PlayerUtils.send(player, message);
+			if (Dev.exists(player))
+				PlayerUtils.debug(player, message);
 		};
 
 		final Function<ItemStack, Double> getBreakTime = tool -> {

@@ -40,6 +40,7 @@ import gg.projecteden.nexus.models.blockparty.BlockPartyStatsService;
 import gg.projecteden.nexus.models.blockparty.BlockPartyStatsUser.BlockPartyStats;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -1180,14 +1181,12 @@ public class BlockParty extends TeamlessMechanic {
 					read(name, removePadding);
 				} catch (Exception ex) {
 					Nexus.severe("An error occurred while trying to read block party music file: " + filePath.getFileName().toFile(), ex);
-					if (Nexus.isDebug())
-						ex.printStackTrace();
+					Debug.log(ex);
 				}
 			});
 		} catch (Exception ex) {
 			Nexus.severe("An error occurred while trying to read block party music files: " + ex.getMessage());
-			if (Nexus.isDebug())
-				ex.printStackTrace();
+			Debug.log(ex);
 		}
 	}
 
@@ -1207,15 +1206,13 @@ public class BlockParty extends TeamlessMechanic {
 						commands.add(future);
 				} catch (Exception ex) {
 					Nexus.severe("An error occurred while trying to remove the silence from bp music file: " + filePath.getFileName().toFile(), ex);
-					if (Nexus.isDebug())
-						ex.printStackTrace();
+					Debug.log(ex);
 				}
 			});
 			return CompletableFutures.joinAll(commands);
 		} catch (Exception ex) {
 			Nexus.severe("An error occurred while trying to read block party music files: " + ex.getMessage());
-			if (Nexus.isDebug())
-				ex.printStackTrace();
+			Debug.log(ex);
 			return CompletableFuture.failedFuture(ex);
 		}
 	}

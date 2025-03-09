@@ -5,8 +5,9 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.bridge.DiscordBridgeListener;
 import gg.projecteden.nexus.features.discord.commands.TwitterAppCommand.TweetApprovalListener;
 import gg.projecteden.nexus.features.store.perks.chat.NicknameCommand.NicknameApprovalListener;
+import gg.projecteden.nexus.utils.Debug;
+import gg.projecteden.nexus.utils.Debug.DebugType;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Data;
 import lombok.Getter;
@@ -23,6 +24,8 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
+
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 public enum Bot {
 
@@ -137,15 +140,15 @@ public enum Bot {
 	public abstract String getId();
 
 	private void log(String message) {
-		Nexus.log(prefix() + message);
-	}
-	private void debug(String message) {
-		Nexus.debug(prefix() + message);
+		Nexus.log("[JDA] " + prefix() + " " + message);
 	}
 
-	@NotNull
-	private String prefix() {
-		return "[Discord] [" + StringUtils.camelCase(this) + "] ";
+	private void debug(String message) {
+		Debug.log(DebugType.JDA, prefix() + message);
+	}
+
+	private @NotNull String prefix() {
+		return "[" + camelCase(this) + "]";
 	}
 
 }

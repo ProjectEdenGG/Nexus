@@ -3,6 +3,7 @@ package gg.projecteden.nexus.framework.features;
 import gg.projecteden.api.common.utils.ReflectionUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
@@ -56,7 +57,7 @@ public class Features {
 	}
 
 	public void registerAll() {
-		Nexus.debug(" Registering " + featureSet.size() + " features");
+		Debug.log(" Registering " + featureSet.size() + " features");
 		featureSet.forEach(this::register);
 	}
 
