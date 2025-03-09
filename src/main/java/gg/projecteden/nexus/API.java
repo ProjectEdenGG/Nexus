@@ -38,10 +38,10 @@ public class API extends EdenDatabaseAPI {
 	@Override
 	public DatabaseConfig getDatabaseConfig() {
 		return DatabaseConfig.builder()
-				.password(Nexus.getInstance().getConfig().getString("databases.mongodb.password"))
-				.modelPath("gg.projecteden.nexus.models")
-				.env(getEnv())
-				.build();
+			.password(Nexus.getInstance().getConfig().getString("databases.mongodb.password"))
+			.modelPath("gg.projecteden.nexus.models")
+			.env(getEnv())
+			.build();
 	}
 
 	@Override

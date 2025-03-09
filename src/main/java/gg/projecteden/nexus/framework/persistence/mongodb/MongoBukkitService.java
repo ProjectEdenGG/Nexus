@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.framework.persistence.mongodb;
 
 import dev.morphia.mapping.MappingException;
+import dev.morphia.query.Sort;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.nexus.Nexus;
@@ -11,10 +12,14 @@ import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 
 import java.util.ConcurrentModificationException;
+import java.util.List;
+import java.util.UUID;
 
 public abstract class MongoBukkitService<T extends DatabaseObject> extends gg.projecteden.api.mongodb.MongoService<T> {
 
-	protected abstract String pretty(T object);
+	protected String pretty(T object) {
+		return object.getUniqueId().toString();
+	}
 
 	@Override
 	public void save(T object) {
@@ -40,6 +45,7 @@ public abstract class MongoBukkitService<T extends DatabaseObject> extends gg.pr
 
 	@Override
 	public void saveSync(T object) {
+		Nexus.debug("[" + getClassName() + "] saveSync " + object.getUuid());
 		try {
 			super.saveSync(object);
 		} catch (Exception ex) {
@@ -82,6 +88,48 @@ public abstract class MongoBukkitService<T extends DatabaseObject> extends gg.pr
 			Tasks.async(super::deleteAll);
 		else
 			super.deleteAll();
+	}
+
+
+
+	@Override
+	protected T getNoCache(UUID uuid) {
+		Nexus.debug("[" + getClassName() + "] getNoCache " + uuid);
+		return super.getNoCache(uuid);
+	}
+
+	@Override
+	public List<T> getPage(int page, int amount) {
+		Nexus.debug("[" + getClassName() + "] getPage");
+		return super.getPage(page, amount);
+	}
+
+	@Override
+	public List<T> getAll() {
+		Nexus.debug("[" + getClassName() + "] getAll");
+		return super.getAll();
+	}
+
+	@Override
+	public List<T> getAllSortedBy(Sort... sorts) {
+		Nexus.debug("[" + getClassName() + "] getAllSortedBy");
+		return super.getAllSortedBy(sorts);
+	}
+
+	@Override
+	public List<T> getAllSortedByLimit(int limit, Sort... sorts) {
+		Nexus.debug("[" + getClassName() + "] getAllSortedByLimit");
+		return super.getAllSortedByLimit(limit, sorts);
+	}
+
+	@Override
+	public void deleteSync(T object) {
+		Nexus.debug("[" + getClassName() + "] deleteSync " + object.getUuid());
+		super.deleteSync(object);
+	}
+
+	private String getClassName() {
+		return getClass().getSimpleName();
 	}
 
 }

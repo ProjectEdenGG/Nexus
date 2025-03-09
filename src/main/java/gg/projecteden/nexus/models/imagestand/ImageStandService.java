@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.models.imagestand;
 
-import gg.projecteden.api.mongodb.MongoService;
 import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.framework.persistence.mongodb.MongoBukkitService;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 
@@ -11,7 +11,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @ObjectClass(ImageStand.class)
-public class ImageStandService extends MongoService<ImageStand> {
+public class ImageStandService extends MongoBukkitService<ImageStand> {
 	private final static Map<UUID, ImageStand> cache = new ConcurrentHashMap<>();
 	private final static Map<UUID, UUID> outlineCache = new ConcurrentHashMap<>();
 

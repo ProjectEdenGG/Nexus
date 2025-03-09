@@ -99,16 +99,16 @@ public class ItemModelFolder implements Comparable<ItemModelFolder> {
 	private void findModels() {
 		try (Stream<Path> files = Files.walk(ResourcePack.getZipFile().getPath(getFullPath()), 1)) {
 			files.forEach(path -> {
-				Nexus.debug("Full path: " + getFullPath());
+//				Nexus.debug("Full path: " + getFullPath());
 				if (path.toString().equals(getFullPath()))
 					return;
-				Nexus.debug("Find models path: " + path);
+//				Nexus.debug("Find models path: " + path);
 
 				if (path.toString().endsWith(".meta"))
 					return;
 
 				if (!path.toString().endsWith(".json")) {
-					Nexus.debug("Adding folder");
+//					Nexus.debug("Adding folder");
 					addFolder(path.toString().substring(path.toString().lastIndexOf("/") + 1));
 					return;
 				}
@@ -117,7 +117,7 @@ public class ItemModelFolder implements Comparable<ItemModelFolder> {
 					return;
 
 				try {
-					Nexus.debug("Processing model file");
+//					Nexus.debug("Processing model file");
 					ItemModelInstance model = Utils.getGson().fromJson(String.join("", Files.readAllLines(path)), ItemModelInstance.class);
 					model.setFolder(this);
 
@@ -133,7 +133,7 @@ public class ItemModelFolder implements Comparable<ItemModelFolder> {
 					model.setFileName(path.toString().substring(path.toString().lastIndexOf("/") + 1).replace(".json", ""));
 
 					model.setMeta(getMeta(data));
-					Nexus.debug("Adding model: " + data);
+//					Nexus.debug("Adding model: " + data);
 
 					models.add(model);
 				} catch (IOException e) {

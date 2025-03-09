@@ -172,6 +172,8 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder amount(int amount) {
+		if (maxStackSize() < amount)
+			maxStackSize(amount);
 		itemStack.setAmount(amount);
 		return this;
 	}
@@ -419,6 +421,12 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	public ItemBuilder itemFlags(ItemFlags flags) {
 		return itemFlags(flags.get());
+	}
+
+	public int maxStackSize() {
+		if (itemMeta.hasMaxStackSize())
+			return itemMeta.getMaxStackSize();
+		return material().getMaxStackSize();
 	}
 
 	public ItemBuilder maxStackSize(int i) {

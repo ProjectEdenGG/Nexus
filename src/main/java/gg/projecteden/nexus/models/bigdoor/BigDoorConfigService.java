@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.bigdoor;
 
-import gg.projecteden.api.mongodb.MongoService;
 import gg.projecteden.api.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.MongoBukkitService;
 import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,7 +10,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @ObjectClass(BigDoorConfig.class)
-public class BigDoorConfigService extends MongoService<BigDoorConfig> {
+public class BigDoorConfigService extends MongoBukkitService<BigDoorConfig> {
 	private final static Map<UUID, BigDoorConfig> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, BigDoorConfig> getCache() {

@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.models.structure;
 
 import gg.projecteden.api.common.utils.UUIDUtils;
-import gg.projecteden.api.mongodb.MongoService;
 import gg.projecteden.api.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.MongoBukkitService;
 import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.block.CreatureSpawner;
@@ -13,7 +13,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @ObjectClass(Structure.class)
-public class StructureService extends MongoService<Structure> {
+public class StructureService extends MongoBukkitService<Structure> {
 	private final static Map<UUID, Structure> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, Structure> getCache() {
