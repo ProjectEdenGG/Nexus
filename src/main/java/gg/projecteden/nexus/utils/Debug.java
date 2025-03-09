@@ -1,8 +1,6 @@
 package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.Nexus;
-import lombok.Getter;
-import lombok.Setter;
 import net.md_5.bungee.api.ChatColor;
 
 import java.util.ArrayList;
@@ -12,10 +10,7 @@ import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 public class Debug {
 
-	@Getter
-	@Setter
 	private static boolean debug = false;
-	@Getter
 	private static List<DebugType> ENABLED_DEBUG_TYPES = new ArrayList<>();
 
 	public static boolean isEnabled() {
@@ -26,12 +21,15 @@ public class Debug {
 		return ENABLED_DEBUG_TYPES.contains(type);
 	}
 
-	public static void enable(DebugType type) {
-		ENABLED_DEBUG_TYPES.add(type);
+	public static void setEnabled(boolean debug) {
+		Debug.debug = debug;
 	}
 
-	public static void disable(DebugType type) {
-		ENABLED_DEBUG_TYPES.remove(type);
+	public static void setEnabled(DebugType type, boolean state) {
+		if (state)
+			ENABLED_DEBUG_TYPES.add(type);
+		else
+			ENABLED_DEBUG_TYPES.remove(type);
 	}
 
 	public static void log(String message) {

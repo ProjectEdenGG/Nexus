@@ -18,7 +18,7 @@ public class DebugCommand extends CustomCommand {
 		if (state == null)
 			state = !Debug.isEnabled();
 
-		Debug.setDebug(state);
+		Debug.setEnabled(state);
 		send(PREFIX + "Debug " + (Debug.isEnabled() ? "&aenabled" : "&cdisabled"));
 	}
 
@@ -27,11 +27,7 @@ public class DebugCommand extends CustomCommand {
 		if (state == null)
 			state = !Debug.isEnabled(type);
 
-		if (state)
-			Debug.enable(type);
-		else
-			Debug.disable(type);
-
+		Debug.setEnabled(type, state);
 		send(PREFIX + "Debug " + camelCase(type.name()) + " " + (state ? "&aenabled" : "&cdisabled"));
 	}
 }
