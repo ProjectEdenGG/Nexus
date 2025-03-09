@@ -45,7 +45,7 @@ public abstract class MongoBukkitService<T extends DatabaseObject> extends gg.pr
 
 	@Override
 	public void saveSync(T object) {
-		Nexus.debug("[" + getClassName() + "] saveSync " + object.getUuid());
+//		Nexus.debug("[" + getClassName() + "] saveSync " + object.getUuid());
 		try {
 			super.saveSync(object);
 		} catch (Exception ex) {
@@ -94,37 +94,37 @@ public abstract class MongoBukkitService<T extends DatabaseObject> extends gg.pr
 
 	@Override
 	protected T getNoCache(UUID uuid) {
-		Nexus.debug("[" + getClassName() + "] getNoCache " + uuid);
+//		Nexus.debug("[" + getClassName() + "] getNoCache " + uuid);
 		return super.getNoCache(uuid);
 	}
 
 	@Override
 	public List<T> getPage(int page, int amount) {
-		Nexus.debug("[" + getClassName() + "] getPage");
+//		Nexus.debug("[" + getClassName() + "] getPage");
 		return super.getPage(page, amount);
 	}
 
 	@Override
 	public List<T> getAll() {
-		Nexus.debug("[" + getClassName() + "] getAll");
+//		Nexus.debug("[" + getClassName() + "] getAll");
 		return super.getAll();
 	}
 
 	@Override
 	public List<T> getAllSortedBy(Sort... sorts) {
-		Nexus.debug("[" + getClassName() + "] getAllSortedBy");
+//		Nexus.debug("[" + getClassName() + "] getAllSortedBy");
 		return super.getAllSortedBy(sorts);
 	}
 
 	@Override
 	public List<T> getAllSortedByLimit(int limit, Sort... sorts) {
-		Nexus.debug("[" + getClassName() + "] getAllSortedByLimit");
+//		Nexus.debug("[" + getClassName() + "] getAllSortedByLimit");
 		return super.getAllSortedByLimit(limit, sorts);
 	}
 
 	@Override
 	public void deleteSync(T object) {
-		Nexus.debug("[" + getClassName() + "] deleteSync " + object.getUuid());
+//		Nexus.debug("[" + getClassName() + "] deleteSync " + object.getUuid());
 		super.deleteSync(object);
 	}
 

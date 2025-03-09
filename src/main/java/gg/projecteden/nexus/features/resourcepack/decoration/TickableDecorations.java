@@ -26,8 +26,10 @@ public class TickableDecorations implements Listener {
 	public TickableDecorations() {
 		Nexus.registerListener(this);
 
+		new DecorationUserService().cacheAll();
+
 		Tasks.repeat(0, TimeUtils.TickTime.TICK.x(4), () -> {
-			for (DecorationUser user : userService.getAll()) {
+			for (DecorationUser user : userService.getCache().values()) {
 				for (DecorationUser.Tickable tickable : user.getTickableDecorations()) {
 					if (!tickable.getLocation().isWorldLoaded())
 						continue;
@@ -47,7 +49,7 @@ public class TickableDecorations implements Listener {
 
 		// Janitor
 		Tasks.repeat(0, TimeUtils.TickTime.SECOND.x(30), () -> {
-			for (DecorationUser user : userService.getAll()) {
+			for (DecorationUser user : userService.getCache().values()) {
 				Iterator<DecorationUser.Tickable> tickables = user.getTickableDecorations().iterator();
 				while (tickables.hasNext()) {
 					DecorationUser.Tickable tickable = tickables.next();

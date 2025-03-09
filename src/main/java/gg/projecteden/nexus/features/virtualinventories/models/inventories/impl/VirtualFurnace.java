@@ -2,7 +2,11 @@ package gg.projecteden.nexus.features.virtualinventories.models.inventories.impl
 
 import dev.morphia.annotations.Converters;
 import gg.projecteden.nexus.features.virtualinventories.VirtualInventoryUtils;
-import gg.projecteden.nexus.features.virtualinventories.events.furnace.*;
+import gg.projecteden.nexus.features.virtualinventories.events.furnace.VirtualFurnaceCookEvent;
+import gg.projecteden.nexus.features.virtualinventories.events.furnace.VirtualFurnaceEndEvent;
+import gg.projecteden.nexus.features.virtualinventories.events.furnace.VirtualFurnaceFuelBurnEvent;
+import gg.projecteden.nexus.features.virtualinventories.events.furnace.VirtualFurnaceStartEvent;
+import gg.projecteden.nexus.features.virtualinventories.events.furnace.VirtualFurnaceTickEvent;
 import gg.projecteden.nexus.features.virtualinventories.models.inventories.VirtualInventory;
 import gg.projecteden.nexus.features.virtualinventories.models.inventories.VirtualInventoryType;
 import gg.projecteden.nexus.features.virtualinventories.models.properties.impl.FurnaceProperties;
@@ -74,10 +78,13 @@ public class VirtualFurnace extends VirtualInventory<FurnaceProperties> {
 	}
 
 	@Override
-	public void tick() {
+	public boolean tick() {
 		super.tick();
 
+		boolean processed;
+
 		if (this.fuelTime > 0) {
+			processed = true;
 			this.fuelTime--;
 
 			if (canCook()) {
@@ -94,23 +101,33 @@ public class VirtualFurnace extends VirtualInventory<FurnaceProperties> {
 				this.cookTime = 0;
 
 		} else if (canBurn() && canCook()) {
+			processed = true;
 			processBurn();
 
 		} else if (this.cookTime > 0) {
+			processed = true;
 			if (canCook())
 				this.cookTime -= 5;
 			else
 				this.cookTime = 0;
 		} else {
-			if (this.isLit)
+			if (this.isLit) {
+				processed = true;
 				new VirtualFurnaceEndEvent(this).callEvent();
-			this.isLit = false;
+				this.isLit = false;
+			} else {
+				processed = false;
+			}
 		}
 
-		new VirtualFurnaceTickEvent(this).callEvent();
+		if (processed) {
+			new VirtualFurnaceTickEvent(this).callEvent();
 
-		if (this.isOpened())
-			updateInventoryView();
+			if (this.isOpened())
+				updateInventoryView();
+		}
+
+		return processed;
 	}
 
 	private boolean canBurn() {

@@ -62,9 +62,11 @@ public class BigDoorManager extends Feature implements Listener {
 	public void onStart() {
 		new Listeners();
 
+		new BigDoorConfigService().cacheAll();
+
 		Tasks.repeat(0, TickTime.SECOND, () -> {
 			// Queued Actions
-			for (BigDoorConfig bigDoorConfig : bigDoorConfigService.getAll()) {
+			for (BigDoorConfig bigDoorConfig : bigDoorConfigService.getCache().values()) {
 
 				DoorAction queuedDoorAction = bigDoorConfig.getQueuedDoorAction();
 				if (queuedDoorAction == null)

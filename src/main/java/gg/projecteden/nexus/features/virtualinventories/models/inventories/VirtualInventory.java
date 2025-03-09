@@ -45,10 +45,12 @@ public abstract class VirtualInventory<T extends VirtualInventoryProperties> {
 
 	public abstract void updateInventory();
 
-	public void tick() {
+	public boolean tick() {
 		tick++;
 		if (tick > 6000)
 			tick = 0;
+
+		return false;
 	}
 
 }

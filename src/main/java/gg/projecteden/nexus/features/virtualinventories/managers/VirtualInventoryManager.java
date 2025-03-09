@@ -26,14 +26,22 @@ public class VirtualInventoryManager extends Feature {
 	public void onStart() {
 		new VirtualInventoryListener();
 
+		final var service = new VirtualInventoriesConfigService();
 		taskId = Tasks.repeat(TickTime.TICK.x(5), TickTime.TICK, () -> {
 			if (!ticking)
 				return;
 
-			new VirtualInventoriesConfigService().edit0(config -> {
-				for (VirtualInventory<?> inventory : config.getVirtualInventories().values())
-					inventory.tick();
-			});
+			var config = service.get0();
+			if (config.getVirtualInventories().isEmpty())
+				return;
+
+			var processed = false;
+			for (var inventory : config.getVirtualInventories().values())
+				if (inventory.tick())
+					processed = true;
+
+			if (processed)
+				service.save(config);
 		});
 	}
 

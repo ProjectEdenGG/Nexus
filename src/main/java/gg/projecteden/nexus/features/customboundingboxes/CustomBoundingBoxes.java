@@ -21,16 +21,37 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 @NoArgsConstructor
 public class CustomBoundingBoxes extends Feature implements Listener {
 	private static final CustomBoundingBoxEntityService service = new CustomBoundingBoxEntityService();
+	private static boolean CACHE_LOADED = false;
+	private static final Map<UUID, List<UUID>> ENTITIES_TO_PROCESS = new HashMap<>();
 
 	@Override
 	public void onStart() {
+		service.cacheAll();
+		CACHE_LOADED = true;
+		ENTITIES_TO_PROCESS.forEach((worldUuid, entities) -> {
+			var world = Bukkit.getWorld(worldUuid);
+			if (world == null)
+				return;
+
+			entities.forEach(entityUuid -> {
+				var entity = world.getEntity(entityUuid);
+				if (entity == null || !entity.isValid())
+					return;
+
+				onLoad(entityUuid);
+			});
+		});
+
+
 		for (World world : Bukkit.getWorlds())
 			for (Entity entity : world.getEntities())
 				onLoad(entity.getUniqueId());
@@ -71,15 +92,27 @@ public class CustomBoundingBoxes extends Feature implements Listener {
 
 	@EventHandler
 	public void onEntityAddToWorld(EntityAddToWorldEvent event) {
-		onLoad(event.getEntity().getUniqueId());
+		onLoad(event.getWorld(), event.getEntity().getUniqueId());
+	}
+
+	private static void onLoad(World world, UUID uuid) {
+		Tasks.async(() -> {
+			if (!CACHE_LOADED) {
+				ENTITIES_TO_PROCESS.computeIfAbsent(world.getUID(), $ -> new ArrayList<>()).add(uuid);
+				return;
+			}
+
+			onLoad(uuid);
+		});
 	}
 
 	private static void onLoad(UUID uuid) {
-		Tasks.async(() -> {
-			final CustomBoundingBoxEntity entity = service.get(uuid);
-			if (entity.hasCustomBoundingBox())
-				Tasks.sync(entity::updateBoundingBox);
-		});
+		final CustomBoundingBoxEntity entity = service.getCache().get(uuid);
+		if (entity == null)
+			return;
+
+		if (entity.hasCustomBoundingBox())
+			Tasks.sync(entity::updateBoundingBox);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)

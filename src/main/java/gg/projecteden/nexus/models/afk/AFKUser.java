@@ -82,6 +82,9 @@ public class AFKUser implements PlayerOwnedObject {
 		if (!isOnline() || isLimbo())
 			return;
 
+		if (!Nexus.isProdOrUpdate())
+			return;
+
 		Nexus.log("[AFK] Sending " + getNickname() + " to limbo");
 
 		final Player player = getOnlinePlayer();
