@@ -184,11 +184,14 @@ public class StatisticsUserService extends MongoPlayerService<StatisticsUser> {
 		list = list.stream().filter(value -> value.getUuid() != null).toList();
 
 		for (StatisticGroup group : EnumUtils.valuesExcept(StatisticGroup.class, StatisticGroup.CUSTOM)) {
-			var leader = getLeaderboard(group, null).keySet().iterator().next();
-			list.stream()
-				.filter(result -> leader.equals(result.getUuid()))
-				.findFirst()
-				.ifPresent(result -> result.getLeaderboards().addFirst(new LeaderboardStatistic(group.name().toLowerCase(), null)));
+			var leaderIterator = getLeaderboard(group, null).keySet().iterator();
+			if (leaderIterator.hasNext()) {
+				var leader = leaderIterator.next();
+				list.stream()
+					.filter(result -> leader.equals(result.getUuid()))
+					.findFirst()
+					.ifPresent(result -> result.getLeaderboards().addFirst(new LeaderboardStatistic(group.name().toLowerCase(), null)));
+			}
 		}
 
 		mostLeaderboards = list;
