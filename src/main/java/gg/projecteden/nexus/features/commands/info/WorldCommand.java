@@ -25,6 +25,12 @@ public class WorldCommand extends CustomCommand {
 		super(event);
 	}
 
+	@Path("uuid [world]")
+	void uuid(@Arg("current") World world) {
+		String uuid = world.getUID().toString();
+		send(json(PREFIX + "&e" + uuid).copy(uuid).hover("Click to copy"));
+	}
+
 	@Path("[player]")
 	@Description("View what world you or another player are currently in")
 	void run(@Arg("self") Player target) {

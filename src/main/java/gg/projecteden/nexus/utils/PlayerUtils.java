@@ -814,7 +814,7 @@ public class PlayerUtils {
 	}
 
 	public static ItemStack searchInventory(OptionalPlayer player, ItemModelInstance customModel) {
-		if (player.getPlayer() == null)
+		if (player.getPlayer() == null || customModel == null)
 			return null;
 
 		for (ItemStack content : player.getPlayer().getInventory().getContents())
