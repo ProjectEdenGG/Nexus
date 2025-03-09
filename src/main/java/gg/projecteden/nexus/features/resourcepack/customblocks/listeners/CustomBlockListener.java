@@ -35,14 +35,15 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
-import gg.projecteden.nexus.utils.protection.ProtectionUtils;
 import gg.projecteden.parchment.event.block.CustomBlockUpdateEvent;
 import io.papermc.paper.event.player.PlayerPickItemEvent;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.item.ItemEntity;
 import org.bukkit.ExplosionResult;
 import org.bukkit.Instrument;
 import org.bukkit.Location;
@@ -54,6 +55,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.block.data.type.Tripwire;
 import org.bukkit.block.sign.Side;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
@@ -503,11 +505,13 @@ public class CustomBlockListener implements Listener {
 		return true;
 	}
 
+	@SuppressWarnings("UnstableApiUsage")
 	@EventHandler
 	public void on(EntityExplodeEvent event) {
 		if (!List.of(ExplosionResult.DESTROY, ExplosionResult.DESTROY_WITH_DECAY).contains(event.getExplosionResult()))
 			return;
 
+		List<ExplodedCustomBlock> explodedBlocks = new ArrayList<>();
 		for (Block block : new ArrayList<>(event.blockList())) {
 			if (Nullables.isNullOrAir(block))
 				continue;
@@ -517,40 +521,70 @@ public class CustomBlockListener implements Listener {
 				continue;
 
 			event.blockList().remove(block);
-			CustomBlockUtils.breakBlock(block, customBlock, null, null);
-
-			// required in this specific order, for whatever reason
-			Tasks.wait(1, () -> block.setType(Material.AIR, true));
+			explodedBlocks.add(new ExplodedCustomBlock(block, customBlock, event.getEntityType()));
 		}
+
+		if (explodedBlocks.isEmpty())
+			return;
+
+		Map<Block, net.minecraft.world.item.ItemStack> droppedItems = explodeBlocks(explodedBlocks);
+		Tasks.wait(1, () -> {
+			droppedItems.forEach((block, item) ->
+				block.getWorld().dropItemNaturally(block.getLocation().toCenterLocation(), item.getBukkitStack()));
+		});
+	}
+
+	@Getter
+	@AllArgsConstructor
+	private static class ExplodedCustomBlock {
+		Block block;
+		CustomBlock customBlock;
+		EntityType sourceType;
+	}
+
+	private Map<Block, net.minecraft.world.item.ItemStack> explodeBlocks(List<ExplodedCustomBlock> explodedBlocks) {
+		// Log
+		for (ExplodedCustomBlock explodedBlock : explodedBlocks) {
+			Block block = explodedBlock.getBlock();
+			CustomBlockUtils.logRemoval("#" + explodedBlock.getSourceType().getName(), block.getLocation(), block, explodedBlock.getCustomBlock());
+		}
+
+		// Set to temp material
+		for (ExplodedCustomBlock explodedBlock : explodedBlocks) {
+			explodedBlock.getBlock().setType(Material.BARRIER, false); // Don't update the physics, & needs to be non-air
+		}
+
+		// Update database
+		List<Location> explodedLocations = explodedBlocks.stream().map(explodedCustomBlock -> explodedCustomBlock.getBlock().getLocation()).toList();
+		CustomBlockUtils.breakBlocksDatabase(explodedLocations);
+
+		// Get drops
+		Map<Block, net.minecraft.world.item.ItemStack> droppedItems = new HashMap<>();
+		for (ExplodedCustomBlock explodedBlock : explodedBlocks) {
+			Block block = explodedBlock.getBlock();
+			CustomBlock customBlock = explodedBlock.getCustomBlock();
+
+			net.minecraft.world.item.ItemStack droppedItem = NMSUtils.toNMS(customBlock.get().getItemStack());
+			new HashMap<>(droppedItems).forEach((_block, _item) -> {
+				if (ItemEntity.areMergable(droppedItem, _item)) {
+					_item = ItemEntity.merge(_item, droppedItem, 16);
+					droppedItems.put(_block, _item);
+				}
+			});
+
+			if (!droppedItem.isEmpty())
+				droppedItems.put(block, droppedItem);
+		}
+
+		// Set material to air, update physics
+		for (ExplodedCustomBlock explodedBlock : explodedBlocks) {
+			explodedBlock.getBlock().setType(Material.AIR, true);
+		}
+
+		return droppedItems;
 	}
 
 	//
-
-//	private boolean isSpawningEntity(PlayerInteractEvent event, Block clickedBlock, CustomBlock clickedCustomBlock) {
-//		Action action = event.getAction();
-//		if (!action.equals(Action.RIGHT_CLICK_BLOCK)) {
-//			return false;
-//		}
-//
-//		Player player = event.getPlayer();
-//		BlockFace clickedFace = event.getBlockFace();
-//		Block inFront = clickedBlock.getRelative(clickedFace);
-//		boolean isInteractable = clickedBlock.getType().isInteractable() || MaterialTag.INTERACTABLES.isTagged(inFront);
-//		if (CustomBlock.NOTE_BLOCK != clickedCustomBlock) {
-//			isInteractable = false;
-//		}
-//
-//		if (!player.isSneaking() && isInteractable) {
-//			return false;
-//		}
-//
-//		ItemStack itemInHand = event.getItem();
-//		if (Nullables.isNullOrAir(itemInHand)) {
-//			return false;
-//		}
-//
-//		return MaterialTag.SPAWNS_ENTITY.isTagged(itemInHand.getType());
-//	}
 
 	private boolean isIncrementingBlock(PlayerInteractEvent event, Block clickedBlock, CustomBlock clickedCustomBlock) {
 		Action action = event.getAction();

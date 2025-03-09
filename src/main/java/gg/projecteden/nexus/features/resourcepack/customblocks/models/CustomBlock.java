@@ -724,15 +724,15 @@ public enum CustomBlock implements Keyed {
 		CustomBlockUtils.logPlacement(player, block, newCustomBlock);
 	}
 
-	public void breakBlock(Player source, @Nullable ItemStack tool, Block block, boolean dropItem, int amount, boolean playSound, boolean spawnParticle) {
-		breakBlock(source, tool, block.getLocation(), true, dropItem, amount, playSound, spawnParticle);
+	public void breakBlock(Player source, @Nullable ItemStack tool, Block block, boolean dropItem, int amount, boolean playSound, boolean spawnParticle, boolean applyPhysics) {
+		breakBlock(source, tool, block.getLocation(), true, dropItem, amount, playSound, spawnParticle, applyPhysics);
 	}
 
-	public void breakBlock(Player source, @Nullable ItemStack tool, Location location, boolean dropItem, int amount, boolean playSound, boolean spawnParticle) {
-		breakBlock(source, tool, location, true, dropItem, amount, playSound, spawnParticle);
+	public void breakBlock(Player source, @Nullable ItemStack tool, Location location, boolean dropItem, int amount, boolean playSound, boolean spawnParticle, boolean applyPhysics) {
+		breakBlock(source, tool, location, true, dropItem, amount, playSound, spawnParticle, applyPhysics);
 	}
 
-	public void breakBlock(@Nullable Player source, @Nullable ItemStack tool, Location location, boolean updateDatabase, boolean dropItem, int amount, boolean playSound, boolean spawnParticle) {
+	public void breakBlock(@Nullable Player source, @Nullable ItemStack tool, Location location, boolean updateDatabase, boolean dropItem, int amount, boolean playSound, boolean spawnParticle, boolean applyPhysics) {
 		boolean dropIngredients = false;
 		CustomBlocksLang.debug("break block");
 
@@ -768,14 +768,14 @@ public enum CustomBlock implements Keyed {
 		if (updateDatabase)
 			CustomBlockUtils.breakBlockDatabase(location);
 
-		block.setType(Material.AIR, true);
+		block.setType(Material.AIR, applyPhysics);
 
 		if (this == TALL_SUPPORT) {
 			CustomBlock belowCustomBlock = CustomBlock.from(block.getRelative(BlockFace.DOWN));
 			if (belowCustomBlock == null) return;
 
 			CustomBlocksLang.debug(" breaking tall support w/ particle: " + belowCustomBlock.get().getItemName());
-			belowCustomBlock.breakBlock(source, tool, location, false, false, amount, playSound, spawnParticle);
+			belowCustomBlock.breakBlock(source, tool, location, false, false, amount, playSound, spawnParticle, applyPhysics);
 			return;
 		}
 
@@ -833,7 +833,7 @@ public enum CustomBlock implements Keyed {
 		soundBuilder.category(SoundCategory.BLOCKS).play();
 	}
 
-	private void spawnParticle(Player source, Location loc) {
+	public void spawnParticle(Player source, Location loc) {
 		boolean silent = source != null && Vanish.isVanished(source);
 
 		World world = loc.getWorld();

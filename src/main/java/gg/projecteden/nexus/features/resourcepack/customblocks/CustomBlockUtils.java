@@ -84,6 +84,19 @@ public class CustomBlockUtils {
 		trackerService.save(tracker);
 	}
 
+	public static void breakBlocksDatabase(List<Location> locations) {
+		tracker = trackerService.fromWorld(locations.getFirst());
+		for (Location location : locations) {
+			CustomBlockData data = tracker.get(location);
+			if (!data.exists())
+				continue;
+
+			tracker.remove(location);
+		}
+
+		trackerService.save(tracker);
+	}
+
 	public static void pistonMove(Block piston, Map<CustomBlockData, Pair<Location, Location>> blocksToMove) {
 		if (blocksToMove.isEmpty())
 			return;
@@ -246,10 +259,14 @@ public class CustomBlockUtils {
 	}
 
 	public static void breakBlock(Block brokenBlock, CustomBlock brokenCustomBlock, Player player, ItemStack tool) {
+		breakBlock(brokenBlock, brokenCustomBlock, player, tool, true);
+	}
+
+	public static void breakBlock(Block brokenBlock, CustomBlock brokenCustomBlock, Player player, ItemStack tool, boolean applyPhysics) {
 		Block aboveBlock = brokenBlock.getRelative(BlockFace.UP);
 		CustomBlock aboveCustomBlock = CustomBlock.from(aboveBlock);
 		if (aboveCustomBlock != null && aboveCustomBlock.get() instanceof IRequireSupport)
-			breakBlock(aboveBlock, aboveCustomBlock, player, tool);
+			breakBlock(aboveBlock, aboveCustomBlock, player, tool, applyPhysics);
 
 		int amount = 1;
 
@@ -258,7 +275,7 @@ public class CustomBlockUtils {
 		if (brokenCustomBlock != null) {
 			if (CustomBlock.TALL_SUPPORT == brokenCustomBlock) {
 				CustomBlocksLang.debug("Broke tall support");
-				brokenCustomBlock.breakBlock(player, tool, brokenBlock, false, amount, true, true);
+				brokenCustomBlock.breakBlock(player, tool, brokenBlock, false, amount, true, true, applyPhysics);
 
 				Block blockUnder = brokenBlock.getRelative(BlockFace.DOWN);
 				CustomBlock under = CustomBlock.from(blockUnder);
@@ -266,7 +283,7 @@ public class CustomBlockUtils {
 				if (under != null) {
 					fixedTripwire.add(blockUnder.getLocation());
 					CustomBlocksLang.debug("Underneath: " + under.name());
-					under.breakBlock(player, tool, blockUnder, true, amount, false, true);
+					under.breakBlock(player, tool, blockUnder, true, amount, false, true, applyPhysics);
 					blockUnder.setType(Material.AIR);
 				}
 
@@ -284,12 +301,12 @@ public class CustomBlockUtils {
 				if (CustomBlock.TALL_SUPPORT == aboveCustomBlock) {
 					CustomBlocksLang.debug("Breaking tall support above");
 
-					aboveCustomBlock.breakBlock(player, tool, aboveBlock, false, amount, false, true);
+					aboveCustomBlock.breakBlock(player, tool, aboveBlock, false, amount, false, true, applyPhysics);
 					aboveBlock.setType(Material.AIR);
 				}
 			}
 
-			brokenCustomBlock.breakBlock(player, tool, brokenBlock, true, amount, true, true);
+			brokenCustomBlock.breakBlock(player, tool, brokenBlock, true, amount, true, true, applyPhysics);
 		}
 
 		CustomBlockUtils.fixTripwireNearby(player, brokenBlock, new HashSet<>(fixedTripwire));
@@ -327,5 +344,9 @@ public class CustomBlockUtils {
 
 	public static void logRemoval(Player player, Location location, Block block, CustomBlock customBlock) {
 		Nexus.getCoreProtectAPI().logRemoval(player.getName(), location, block.getType(), block.getBlockData());
+	}
+
+	public static void logRemoval(String source, Location location, Block block, CustomBlock customBlock) {
+		Nexus.getCoreProtectAPI().logRemoval(source, location, block.getType(), block.getBlockData());
 	}
 }
