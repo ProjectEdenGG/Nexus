@@ -79,7 +79,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static gg.projecteden.nexus.utils.Debug.DebugType.WORLDEDIT;
+import static gg.projecteden.nexus.utils.Debug.DebugType.WORLD_EDIT;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
 public class WorldEditUtils {
@@ -477,7 +477,7 @@ public class WorldEditUtils {
 		public void debug(String message) {
 			if (message != null) {
 				final String id = StringUtils.left(uuid.toString(), 8) + " " + i.getAndIncrement() + " " + (Bukkit.isPrimaryThread() ? " sync" : "async") + " ";
-				Debug.log(WORLDEDIT, id + message);
+				Debug.log(WORLD_EDIT, id + message);
 			}
 		}
 

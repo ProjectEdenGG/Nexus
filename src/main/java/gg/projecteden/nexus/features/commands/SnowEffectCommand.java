@@ -19,8 +19,6 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
-import java.util.List;
-
 @Aliases("togglesnow")
 @NoArgsConstructor
 public class SnowEffectCommand extends CustomCommand implements Listener {
@@ -33,13 +31,12 @@ public class SnowEffectCommand extends CustomCommand implements Listener {
 	}
 
 	static {
+		var service = new SnowEffectService();
+		service.cacheAll();
 		Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
-			Tasks.async(() -> {
-				List<SnowEffect> all = new SnowEffectService().getAll();
-				all.stream()
-						.filter(snowEffect -> snowEffect.isOnline() && snowEffect.isEnabled())
-						.forEach(snowEffect -> playSnowEffect(snowEffect.getOnlinePlayer()));
-			});
+			Tasks.async(() -> service.getCache().values().stream()
+					.filter(snowEffect -> snowEffect.isOnline() && snowEffect.isEnabled())
+					.forEach(snowEffect -> playSnowEffect(snowEffect.getOnlinePlayer())));
 
 			OnlinePlayers.getAll().stream()
 					.filter(player -> WorldGuardFlagUtils.test(player, CustomFlags.SNOW_EFFECT))

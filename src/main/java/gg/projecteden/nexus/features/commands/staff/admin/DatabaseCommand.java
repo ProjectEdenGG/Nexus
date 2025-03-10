@@ -223,6 +223,7 @@ public class DatabaseCommand extends CustomCommand {
 			service.clearCache();
 
 		send(PREFIX + "Cleared cache of " + services.size() + " services");
+		send(PREFIX + "&cWarning: &eSeveral services rely on cached values to operate, reloading Nexus is recommended");
 	}
 
 	@Async

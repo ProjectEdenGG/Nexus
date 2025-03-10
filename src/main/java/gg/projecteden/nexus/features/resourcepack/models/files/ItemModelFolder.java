@@ -5,6 +5,8 @@ import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance.CustomItemModelMeta;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import gg.projecteden.nexus.utils.Debug;
+import gg.projecteden.nexus.utils.Debug.DebugType;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.Data;
 import lombok.NonNull;
@@ -99,16 +101,16 @@ public class ItemModelFolder implements Comparable<ItemModelFolder> {
 	private void findModels() {
 		try (Stream<Path> files = Files.walk(ResourcePack.getZipFile().getPath(getFullPath()), 1)) {
 			files.forEach(path -> {
-//				Nexus.debug("Full path: " + getFullPath());
+				Debug.log(DebugType.RESOURCE_PACK, "Full path: " + getFullPath());
 				if (path.toString().equals(getFullPath()))
 					return;
-//				Nexus.debug("Find models path: " + path);
+				Debug.log(DebugType.RESOURCE_PACK, "Find models path: " + path);
 
 				if (path.toString().endsWith(".meta"))
 					return;
 
 				if (!path.toString().endsWith(".json")) {
-//					Nexus.debug("Adding folder");
+					Debug.log(DebugType.RESOURCE_PACK, "Adding folder");
 					addFolder(path.toString().substring(path.toString().lastIndexOf("/") + 1));
 					return;
 				}
@@ -117,7 +119,7 @@ public class ItemModelFolder implements Comparable<ItemModelFolder> {
 					return;
 
 				try {
-//					Nexus.debug("Processing model file");
+					Debug.log(DebugType.RESOURCE_PACK, "Processing model file");
 					ItemModelInstance model = Utils.getGson().fromJson(String.join("", Files.readAllLines(path)), ItemModelInstance.class);
 					model.setFolder(this);
 
@@ -133,7 +135,7 @@ public class ItemModelFolder implements Comparable<ItemModelFolder> {
 					model.setFileName(path.toString().substring(path.toString().lastIndexOf("/") + 1).replace(".json", ""));
 
 					model.setMeta(getMeta(data));
-//					Nexus.debug("Adding model: " + data);
+					Debug.log(DebugType.RESOURCE_PACK, "Adding model: " + data);
 
 					models.add(model);
 				} catch (IOException e) {

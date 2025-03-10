@@ -22,21 +22,22 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.c
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.incremental.IIncremental;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.tall.ITall;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.protection.ProtectionUtils;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomNoteBlockData;
 import gg.projecteden.nexus.models.customblock.CustomTripwireData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
+import gg.projecteden.nexus.utils.protection.ProtectionUtils;
 import gg.projecteden.parchment.event.block.CustomBlockUpdateEvent;
 import io.papermc.paper.event.player.PlayerPickItemEvent;
 import lombok.AllArgsConstructor;
@@ -79,6 +80,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static gg.projecteden.nexus.utils.Debug.DebugType.CUSTOM_BLOCKS_PHYSICS;
 
 public class CustomBlockListener implements Listener {
 
@@ -393,21 +396,21 @@ public class CustomBlockListener implements Listener {
 			noteBlock = (NoteBlock) customNoteBlock.getBlockData(facing, underneath);
 			NoteBlockData noteBlockData = ((CustomNoteBlockData) data.getExtraData()).getNoteBlockData();
 
-			//debug("Block Physics Event");
+			Debug.log(CUSTOM_BLOCKS_PHYSICS, "Block Physics Event");
 
 			if (CustomBlock.NOTE_BLOCK == _customBlock) {
 				noteBlock.setPowered(powered);
 				noteBlockData.setPowered(powered);
-				//debug("Powered == " + powered);
+				Debug.log(CUSTOM_BLOCKS_PHYSICS, "Powered == " + powered);
 			} else {
 				noteBlock.setPowered(noteBlockData.isPowered());
 
-				//debug("canceling event: is not noteblock");
+				Debug.log(CUSTOM_BLOCKS_PHYSICS, "canceling event: is not noteblock");
 				event.setCancelled(true);
 			}
 
 			if (noteBlock.getInstrument() != instrument) {
-				//debug("canceling event: instrument changed");
+				Debug.log(CUSTOM_BLOCKS_PHYSICS, "canceling event: instrument changed");
 				event.setCancelled(true);
 			}
 
@@ -429,7 +432,7 @@ public class CustomBlockListener implements Listener {
 			tripwire = (org.bukkit.block.data.type.Tripwire) customBlock.getBlockData(facing, underneath);
 			tripwire.setPowered(powered);
 
-			//debug("canceling event: is tripwire");
+			Debug.log(CUSTOM_BLOCKS_PHYSICS, "canceling event: is tripwire");
 			event.setCancelled(true);
 
 			finalData = tripwire;

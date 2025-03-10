@@ -24,6 +24,8 @@ import gg.projecteden.nexus.features.minigames.utils.MinigameNight;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.minigamessetting.MinigamesConfigService;
 import gg.projecteden.nexus.utils.AdventureUtils;
+import gg.projecteden.nexus.utils.Debug;
+import gg.projecteden.nexus.utils.Debug.DebugType;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -35,7 +37,6 @@ import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.OptionalLocation;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
@@ -62,13 +63,8 @@ public class Minigames extends Feature implements Listener {
 	@Accessors(fluent = true)
 	private static final MinigameInviter inviter = new MinigameInviter();
 
-	@Getter
-	@Setter
-	public static boolean debug;
-
 	public static void debug(String message) {
-		if (debug)
-			Nexus.log("[DEBUG] [Minigames] " + message);
+		Debug.log(DebugType.MINIGAMES, message);
 	}
 
 	@Override
