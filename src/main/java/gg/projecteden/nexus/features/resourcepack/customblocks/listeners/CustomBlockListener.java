@@ -14,7 +14,6 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBloc
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock.CustomBlockType;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock.PistonPushAction;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ICustomNoteBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.IRequireDirt;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.IRequireSupport;
@@ -25,9 +24,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationCo
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomNoteBlockData;
-import gg.projecteden.nexus.models.customblock.CustomTripwireData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
-import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -46,7 +43,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.ItemEntity;
 import org.bukkit.ExplosionResult;
-import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -64,7 +60,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -80,8 +75,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.Debug.DebugType.CUSTOM_BLOCKS_PHYSICS;
 
 public class CustomBlockListener implements Listener {
 
@@ -342,105 +335,6 @@ public class CustomBlockListener implements Listener {
 		}
 
 		CustomBlocksLang.debug("&d<- done, end");
-	}
-
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void on(BlockPhysicsEvent event) {
-		Block eventBlock = event.getBlock();
-		Material material = eventBlock.getType();
-		// TODO: Disable tripwire customblocks
-		if (ICustomTripwire.isNotEnabled() && material == Material.TRIPWIRE)
-			return;
-		//
-
-		if (CustomBlockType.getBlockMaterials().contains(material)) {
-			resetBlockData(event, eventBlock);
-		}
-
-		Block aboveBlock = eventBlock.getRelative(BlockFace.UP);
-		if (CustomBlockType.getBlockMaterials().contains(aboveBlock.getType())) {
-
-			while (CustomBlockType.getBlockMaterials().contains(aboveBlock.getType())) {
-				resetBlockData(event, aboveBlock);
-
-				aboveBlock = aboveBlock.getRelative(BlockFace.UP);
-			}
-		}
-	}
-
-	private void resetBlockData(BlockPhysicsEvent event, Block block) {
-		BlockData blockData = event.getChangedBlockData();
-		if (!block.getBlockData().matches(blockData))
-			return;
-
-		CustomBlockData data = CustomBlockUtils.getDataOrCreate(block.getLocation(), blockData);
-		if (data == null)
-			return;
-
-		CustomBlock _customBlock = data.getCustomBlock();
-		if (_customBlock == null)
-			return;
-
-		ICustomBlock customBlock = _customBlock.get();
-		Block underneath = block.getRelative(BlockFace.DOWN);
-
-		final BlockData finalData;
-		if (blockData instanceof NoteBlock noteBlock) {
-			BlockFace facing = ((CustomNoteBlockData) data.getExtraData()).getFacing();
-
-			ICustomNoteBlock customNoteBlock = (ICustomNoteBlock) customBlock;
-
-			boolean powered = noteBlock.isPowered();
-			Instrument instrument = noteBlock.getInstrument();
-
-			noteBlock = (NoteBlock) customNoteBlock.getBlockData(facing, underneath);
-			NoteBlockData noteBlockData = ((CustomNoteBlockData) data.getExtraData()).getNoteBlockData();
-
-			Debug.log(CUSTOM_BLOCKS_PHYSICS, "Block Physics Event");
-
-			if (CustomBlock.NOTE_BLOCK == _customBlock) {
-				noteBlock.setPowered(powered);
-				noteBlockData.setPowered(powered);
-				Debug.log(CUSTOM_BLOCKS_PHYSICS, "Powered == " + powered);
-			} else {
-				noteBlock.setPowered(noteBlockData.isPowered());
-
-				Debug.log(CUSTOM_BLOCKS_PHYSICS, "canceling event: is not noteblock");
-				event.setCancelled(true);
-			}
-
-			if (noteBlock.getInstrument() != instrument) {
-				Debug.log(CUSTOM_BLOCKS_PHYSICS, "canceling event: instrument changed");
-				event.setCancelled(true);
-			}
-
-			finalData = noteBlock;
-		} else if (blockData instanceof org.bukkit.block.data.type.Tripwire tripwire) {
-			// TODO: Disable tripwire customblocks
-			if (ICustomTripwire.isNotEnabled())
-				return;
-			//
-
-			BlockFace facing = ((CustomTripwireData) data.getExtraData()).getFacing();
-			ICustomTripwire customTripwire = (ICustomTripwire) customBlock;
-
-			boolean powered = customTripwire.isPowered(facing, underneath.getType());
-			if (customTripwire.isIgnorePowered()) {
-				powered = tripwire.isPowered();
-			}
-
-			tripwire = (org.bukkit.block.data.type.Tripwire) customBlock.getBlockData(facing, underneath);
-			tripwire.setPowered(powered);
-
-			Debug.log(CUSTOM_BLOCKS_PHYSICS, "canceling event: is tripwire");
-			event.setCancelled(true);
-
-			finalData = tripwire;
-		} else
-			return;
-
-		block.getState().update(true, false); // needs to be (true, false)
-		Tasks.wait(1, () -> block.setBlockData(finalData, false));
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)

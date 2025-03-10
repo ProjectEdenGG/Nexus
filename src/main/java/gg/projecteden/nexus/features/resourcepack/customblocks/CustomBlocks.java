@@ -32,6 +32,7 @@ import java.util.Map;
 
 /*
 	TODO:
+		- Maintain stats (ex. Player#awardStat(Tune note block)
 		- Ensure the conversion of note block is keeping their pitch to the database
 		- remove "TODO CUSTOM BLOCKS: REMOVE"
 		- Release NoteBlock Custom Blocks
