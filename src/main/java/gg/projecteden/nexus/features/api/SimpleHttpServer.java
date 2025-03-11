@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import static gg.projecteden.nexus.utils.Debug.DebugType.API;
 
@@ -34,9 +35,9 @@ public class SimpleHttpServer extends Feature {
 	@Override
 	public void onStart() {
 		try {
-			server = HttpServer.create(new InetSocketAddress(PORT), 0);
+			server = HttpServer.create(new InetSocketAddress(PORT), 50);
 			server.createContext("/", new RequestHandler());
-			server.setExecutor(null);
+			server.setExecutor(Executors.newFixedThreadPool(10));
 			server.start();
 			Nexus.log("HTTP server listening on port " + PORT);
 
@@ -147,6 +148,8 @@ public class SimpleHttpServer extends Feature {
 				try (OutputStream os = exchange.getResponseBody()) {
 					os.write(message.getBytes());
 				}
+			} finally {
+				exchange.close();
 			}
 		}
 	}
