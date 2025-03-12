@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks.Repl
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks.SoundAction;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksLang;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -51,11 +52,22 @@ public class CustomBlockSounds implements Listener {
 		updateAction(event.getPlayer(), BlockAction.HIT);
 	}
 
+	// Handles Sound: PLACE
 	@EventHandler
 	public void on(BlockPlaceEvent event) {
 		if (event.isCancelled()) return;
 
 		updateAction(event.getPlayer(), BlockAction.PLACE);
+
+		Block placedBlock = event.getBlock();
+		if (Nullables.isNullOrAir(placedBlock))
+			return;
+
+		if (CustomBlock.from(placedBlock) == null) {
+			CustomBlocksLang.debug("\n&d&lBlockPlaceEvent:");
+			tryPlaySound(event.getPlayer(), SoundAction.PLACE, placedBlock);
+			CustomBlocksLang.debug("&d<- done, end");
+		}
 	}
 
 	@EventHandler // Handle this via Custom Blocks
@@ -165,7 +177,7 @@ public class CustomBlockSounds implements Listener {
 		} catch (Exception ignored) {}
 	}
 
-	public static void tryPlaySound(Player player, SoundAction soundAction, Block block) {
+	public static void tryPlaySound(Player source, SoundAction soundAction, Block block) {
 		Sound defaultSound = NMSUtils.getSound(soundAction, block);
 		CustomBlocksLang.debug("&b- Try play sound: action = " + StringUtils.camelCase(soundAction) + ", block = " + StringUtils.camelCase(block.getType()));
 		if (defaultSound == null) {
@@ -187,16 +199,20 @@ public class CustomBlockSounds implements Listener {
 		if (customBlock != null)
 			soundKey = customBlock.getSound(soundAction);
 
-		tryPlaySound(player, soundAction, soundKey, block.getLocation());
+		tryPlaySound(source, soundAction, soundKey, block.getLocation());
 	}
 
-	public static boolean tryPlaySound(Player player, SoundAction soundAction, String soundKey, Location location) {
+	public static boolean tryPlaySound(Player source, SoundAction soundAction, String soundKey, Location location) {
+		boolean silent = source != null && Vanish.isVanished(source);
 		soundKey = ReplacedSoundType.replaceMatching(soundKey);
 
 		SoundBuilder soundBuilder = new SoundBuilder(soundKey)
 			.location(location)
 			.volume(soundAction.getVolume())
 			.pitch(soundAction.getPitch());
+
+		if (silent)
+			soundBuilder.receiver(source);
 
 		String locationStr = location.getWorld().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ();
 		String cooldownType = "CustomSound_" + soundAction + "_" + locationStr;
