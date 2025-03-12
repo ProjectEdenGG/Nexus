@@ -22,14 +22,7 @@ public class WrappedWorldEdit {
 	public static void registerParser() {
 		if (loaded) {
 			new CustomBlockInputParser();
-			new WorldEditHandlers(true);
 			Bukkit.getPluginManager().registerEvents(new WorldEditListener(), Nexus.getInstance());
-		}
-	}
-
-	public static void unregister() {
-		if (loaded) {
-			new WorldEditHandlers(false);
 		}
 	}
 
