@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.models.common;
 
 import gg.projecteden.nexus.features.recipes.RecipeUtils;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
-import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksLang;
+import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.Nullables;
@@ -61,31 +61,31 @@ public interface IHarvestable {
 
 	default boolean isUsingCorrectTool(ItemStack tool, Player debugger) {
 		if (!requiresCorrectToolForDrops()) {
-			CustomBlocksLang.debug(debugger, "Doesn't require specific tool");
+			CustomBlockUtils.debug(debugger, "Doesn't require specific tool");
 			return true;
 		}
 
 		final Material requiredTool = getMinimumPreferredTool();
-		CustomBlocksLang.debug(debugger, "Min Preferred Tool: " + requiredTool);
+		CustomBlockUtils.debug(debugger, "Min Preferred Tool: " + requiredTool);
 
 		ToolType requiredToolType = ToolType.of(requiredTool);
-		CustomBlocksLang.debug(debugger, "Required ToolType: " + requiredToolType);
+		CustomBlockUtils.debug(debugger, "Required ToolType: " + requiredToolType);
 		ToolGrade grade = ToolGrade.of(tool);
-		CustomBlocksLang.debug(debugger, "Tool Grade: " + grade);
+		CustomBlockUtils.debug(debugger, "Tool Grade: " + grade);
 
 		if (grade == null || requiredToolType == null) {
 			if (grade == null)
-				CustomBlocksLang.debug(debugger, "grade == null");
+				CustomBlockUtils.debug(debugger, "grade == null");
 			if (requiredToolType == null)
-				CustomBlocksLang.debug(debugger, "requiredToolType == null");
+				CustomBlockUtils.debug(debugger, "requiredToolType == null");
 
-			CustomBlocksLang.debug(debugger, "tool.getType() == requiredTool? --> " + (tool.getType() == requiredTool));
+			CustomBlockUtils.debug(debugger, "tool.getType() == requiredTool? --> " + (tool.getType() == requiredTool));
 			return tool.getType() == requiredTool;
 		}
 
 		List<ToolGrade> higherGrades = grade.getEqualAndHigherToolGrades();
-		CustomBlocksLang.debug(debugger, "Equal and Higher Grades: " + higherGrades);
-		CustomBlocksLang.debug(debugger, "isCorrectTool? --> " + requiredToolType.getTools(higherGrades).contains(tool.getType()));
+		CustomBlockUtils.debug(debugger, "Equal and Higher Grades: " + higherGrades);
+		CustomBlockUtils.debug(debugger, "isCorrectTool? --> " + requiredToolType.getTools(higherGrades).contains(tool.getType()));
 
 		return requiredToolType.getTools(higherGrades).contains(tool.getType());
 	}

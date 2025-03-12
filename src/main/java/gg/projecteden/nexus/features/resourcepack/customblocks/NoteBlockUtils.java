@@ -8,7 +8,6 @@ import gg.projecteden.nexus.models.customblock.NoteBlockData;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -29,7 +28,7 @@ public class NoteBlockUtils {
 		data.setInteracted(true);
 
 		Block block = location.getBlock();
-		CustomBlocksLang.debug(player, "change pitch from " + oldStep + " to " + +data.getStep());
+		CustomBlockUtils.debug(player, "change pitch from " + oldStep + " to " + +data.getStep());
 		play(block, data, player);
 
 		CustomBlockUtils.updatePowerable(block, player);
@@ -50,7 +49,7 @@ public class NoteBlockUtils {
 
 		data.setPowered(true);
 
-		CustomBlocksLang.debug(debugger, "NoteBlockUtils#play: Instrument=" + data.getInstrument() + ", Note=" + data.getStep() + ", Powered=" + data.isPowered());
+		CustomBlockUtils.debug(debugger, "NoteBlockUtils#play: Instrument=" + data.getInstrument() + ", Note=" + data.getStep() + ", Powered=" + data.isPowered());
 		play(location.getBlock(), data, debugger);
 	}
 
@@ -79,7 +78,7 @@ public class NoteBlockUtils {
 
 			NoteBlockPlayEvent event = new NoteBlockPlayEvent(block);
 			if (event.callEvent()) {
-				CustomBlocksLang.debug(debugger, "play event: Instrument=" + data.getInstrument() + ", Note=" + data.getStep() + ", Powered=" + data.isPowered());
+				CustomBlockUtils.debug(debugger, "play event: Instrument=" + data.getInstrument() + ", Note=" + data.getStep() + ", Powered=" + data.isPowered());
 				data.play(location, debugger);
 			}
 		});

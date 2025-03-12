@@ -4,7 +4,6 @@ import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
-import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksLang;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock.CustomBlockType;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.ICustomTripwire;
@@ -91,7 +90,7 @@ public class ConversionListener implements Listener {
 						logMessage = "Creating CustomBlock NoteBlock at " + StringUtils.getShortLocationString(location);
 					}
 
-					CustomBlocksLang.broadcastDebug(logMessage);
+					CustomBlockUtils.broadcastDebug(logMessage);
 					IOUtils.fileAppend("customblocks", logMessage);
 				}
 				case TRIPWIRE -> {
@@ -109,7 +108,7 @@ public class ConversionListener implements Listener {
 
 					String logMessage = "Creating CustomBlock TripwireData at " + StringUtils.getShortLocationString(location);
 
-					CustomBlocksLang.broadcastDebug(logMessage);
+					CustomBlockUtils.broadcastDebug(logMessage);
 					IOUtils.fileAppend("customblocks", logMessage);
 				}
 			}

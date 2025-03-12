@@ -8,7 +8,6 @@ import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks.SoundAction;
-import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksLang;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICraftable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IDirectional;
@@ -208,7 +207,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public enum CustomBlock implements Keyed {
@@ -572,7 +570,7 @@ public enum CustomBlock implements Keyed {
 		switch (this.getType()) {
 			case NOTE_BLOCK -> setup = true;
 			case TRIPWIRE -> {
-				CustomBlocksLang.debug(player, "&e- tripwire handling...");
+				CustomBlockUtils.debug(player, "&e- tripwire handling...");
 				// TODO: Disable tripwire customblocks
 				if (ICustomTripwire.isNotEnabled())
 					return false;
@@ -603,7 +601,7 @@ public enum CustomBlock implements Keyed {
 
 		if (setup) {
 			BlockData blockData = customBlock.getBlockData(facingFinal, placeAgainst);
-			CustomBlocksLang.debug(player, "&e- placing: " + StringUtils.camelCase(this));
+			CustomBlockUtils.debug(player, "&e- placing: " + StringUtils.camelCase(this));
 
 			if (BlockUtils.tryPlaceEvent(player, block, placeAgainst, blockMaterial, blockData, false, item)) {
 				player.swingMainHand();
@@ -628,7 +626,7 @@ public enum CustomBlock implements Keyed {
 	}
 
 	private void tallSupport(Player player, Block block, BlockFace facingFinal) {
-		CustomBlocksLang.debug(player, "&e - placing tall support");
+		CustomBlockUtils.debug(player, "&e - placing tall support");
 		ICustomBlock tallSupport = CustomBlock.TALL_SUPPORT.get();
 		Material _blockMaterial = tallSupport.getVanillaBlockMaterial();
 		ItemStack _item = new ItemStack(tallSupport.getVanillaItemMaterial());
@@ -718,28 +716,28 @@ public enum CustomBlock implements Keyed {
 
 	public void breakBlock(@Nullable Player source, @Nullable ItemStack tool, Block block, boolean dropItem, int amount, boolean playSound, boolean spawnParticle, boolean applyPhysics) {
 		boolean dropIngredients = false;
-		CustomBlocksLang.debug(source, "break block");
+		CustomBlockUtils.debug(source, "break block");
 
 		Location location = block.getLocation();
 		if (source != null)
 			CustomBlockUtils.logRemoval(source, location, block, this);
 
 		if (tool != null && this != TALL_SUPPORT) {
-			CustomBlocksLang.debug(source, "tool != null");
+			CustomBlockUtils.debug(source, "tool != null");
 			ICustomBlock iCustomBlock = get();
 			if (!iCustomBlock.canHarvestWith(tool, source)) {
 				dropItem = false;
-				CustomBlocksLang.debug(source, "dropItem = " + dropItem);
+				CustomBlockUtils.debug(source, "dropItem = " + dropItem);
 
 				boolean requiresSilkTouch = iCustomBlock.requiresSilkTouchForDrops();
-				CustomBlocksLang.debug(source, "requiresSilkTouch = " + requiresSilkTouch);
+				CustomBlockUtils.debug(source, "requiresSilkTouch = " + requiresSilkTouch);
 				List<ItemStack> nonSilkTouchDrops = iCustomBlock.getNonSilkTouchDrops();
 				if (requiresSilkTouch && !Nullables.isNullOrEmpty(nonSilkTouchDrops)) {
 					dropIngredients = true;
-					CustomBlocksLang.debug(source, "dropIngredients = " + dropIngredients);
+					CustomBlockUtils.debug(source, "dropIngredients = " + dropIngredients);
 				} else {
 					if (requiresSilkTouch)
-						CustomBlocksLang.debug(source, "nonSilkTouchDrops is null/empty");
+						CustomBlockUtils.debug(source, "nonSilkTouchDrops is null/empty");
 				}
 			}
 		}
@@ -759,28 +757,28 @@ public enum CustomBlock implements Keyed {
 			CustomBlock belowCustomBlock = CustomBlock.from(block.getRelative(BlockFace.DOWN));
 			if (belowCustomBlock == null) return;
 
-			CustomBlocksLang.debug(source, " breaking tall support w/ particle: " + belowCustomBlock.get().getItemName());
+			CustomBlockUtils.debug(source, " breaking tall support w/ particle: " + belowCustomBlock.get().getItemName());
 			belowCustomBlock.breakBlock(source, tool, block, false, amount, playSound, spawnParticle, applyPhysics);
 			return;
 		}
 
 		if (spawnParticle && this.get() instanceof ICustomTripwire) {
-			CustomBlocksLang.debug(source, " spawning particle");
+			CustomBlockUtils.debug(source, " spawning particle");
 			spawnParticle(source, location);
 		}
 
 		if (playSound) {
-			CustomBlocksLang.debug(source, " playing sound");
+			CustomBlockUtils.debug(source, " playing sound");
 			playSound(source, SoundAction.BREAK, location);
 		}
 
 		if (dropItem) {
-			CustomBlocksLang.debug(source, " dropping item");
+			CustomBlockUtils.debug(source, " dropping item");
 			dropItem(amount, location);
 		}
 
 		if (dropIngredients) {
-			CustomBlocksLang.debug(source, " dropping silk items");
+			CustomBlockUtils.debug(source, " dropping silk items");
 			dropSilkItems(location, source);
 		}
 
@@ -814,7 +812,7 @@ public enum CustomBlock implements Keyed {
 		if (silent)
 			soundBuilder.receiver(source);
 
-		CustomBlocksLang.debug(source, "&e- playing sound: " + sound);
+		CustomBlockUtils.debug(source, "&e- playing sound: " + sound);
 		soundBuilder.category(SoundCategory.BLOCKS).play();
 	}
 
@@ -888,7 +886,7 @@ public enum CustomBlock implements Keyed {
 	}
 
 	private void dropSilkItems(Location location, Player debugger) {
-		CustomBlocksLang.debug(debugger, "dropping ingredients");
+		CustomBlockUtils.debug(debugger, "dropping ingredients");
 		for (ItemStack item : this.get().getNonSilkTouchDrops()) {
 			dropItem(item, location);
 		}

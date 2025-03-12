@@ -2,7 +2,7 @@ package gg.projecteden.nexus.models.customblock;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.api.common.utils.MathUtils;
-import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksLang;
+import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.NoteBlockInstrument;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -81,7 +81,7 @@ public class NoteBlockData {
 				.spawn();
 		}
 
-		CustomBlocksLang.debug(debugger, "play: Instrument=" + this.instrument + ", Note=" + this.step + ", Powered=" + this.powered);
+		CustomBlockUtils.debug(debugger, "play: Instrument=" + this.instrument + ", Note=" + this.step + ", Powered=" + this.powered);
 		noteBlockSound.play();
 
 		if (this.interacted)

@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockNMSUti
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks.BlockAction;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks.SoundAction;
-import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksLang;
 import gg.projecteden.nexus.features.resourcepack.customblocks.NoteBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.events.NoteBlockChangePitchEvent;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
@@ -145,14 +144,14 @@ public class CustomBlockListener implements Listener {
 		if (noteBlock.getInstrument() != Instrument.PIANO)
 			return;
 
-		CustomBlocksLang.broadcastDebug("CustomBlockUpdateEvent: Instrument=" + noteBlock.getInstrument() + ", Note=" + noteBlock.getNote().getId() + ", Powered=" + noteBlock.isPowered());
+		CustomBlockUtils.broadcastDebug("CustomBlockUpdateEvent: Instrument=" + noteBlock.getInstrument() + ", Note=" + noteBlock.getNote().getId() + ", Powered=" + noteBlock.isPowered());
 
 		boolean isPowered = noteBlock.isPowered();
 		ServerLevel serverLevel = NMSUtils.toNMS(location.getWorld());
 		BlockPos blockPos = NMSUtils.toNMS(location);
 		boolean hasNeighborSignal = serverLevel.hasNeighborSignal(blockPos);
 		if (!isPowered && hasNeighborSignal) {
-			CustomBlocksLang.broadcastDebug("Playing NoteBlock: Instrument=" + noteBlock.getInstrument() + ", Note=" + noteBlock.getNote().getId() + ", Powered=" + noteBlock.isPowered());
+			CustomBlockUtils.broadcastDebug("Playing NoteBlock: Instrument=" + noteBlock.getInstrument() + ", Note=" + noteBlock.getNote().getId() + ", Powered=" + noteBlock.isPowered());
 			NoteBlockUtils.play(noteBlock, location, true, null);
 		}
 	}
@@ -207,33 +206,29 @@ public class CustomBlockListener implements Listener {
 
 	private void updateDatabase(Location location, Player debugger) {
 		if (!_updateDatabase(location, debugger))
-			CustomBlocksLang.debug(debugger, "- no changes");
+			CustomBlockUtils.debug(debugger, "- no changes");
 	}
 
 	private boolean _updateDatabase(Location location, Player debugger) {
-		CustomBlocksLang.debug(debugger, "updating database at location");
+		CustomBlockUtils.debug(debugger, "updating database at location");
 		CustomBlock noteBlockWorld = CustomBlock.from(location.getBlock());
 
 		if (noteBlockWorld == null) {
-			CustomBlocksLang.debug(debugger, "- data does not exist in world, delete from database");
+			CustomBlockUtils.debug(debugger, "- data does not exist in world, delete from database");
 			CustomBlockUtils.breakNoteBlockInDatabase(location);
 			return true;
 		}
 
 		BlockData blockData = noteBlockWorld.get().getBlockData(BlockFace.UP, location.getBlock().getRelative(BlockFace.DOWN));
 		if (noteBlockWorld == CustomBlock.NOTE_BLOCK) {
-			CustomBlocksLang.debug(debugger, "- data exists in world");
+			CustomBlockUtils.debug(debugger, "- data exists in world");
 
 			NoteBlockData data = CustomBlockUtils.getNoteBlockData(location);
 			if (data == null) {
-				CustomBlocksLang.debug(debugger, "-- no data exists at this location, fixing");
+				CustomBlockUtils.debug(debugger, "-- no data exists at this location, fixing");
 				CustomBlockUtils.placeNoteBlockInDatabase(location, blockData);
 				return true;
 			}
-		} else {
-			CustomBlocksLang.debug(debugger, "-- incorrect data exists at this location, fixing");
-			CustomBlockUtils.placeNoteBlockInDatabase(location, blockData);
-			return true;
 		}
 
 		return false;
@@ -265,8 +260,8 @@ public class CustomBlockListener implements Listener {
 			return;
 		//
 
-		CustomBlocksLang.debugLine(player);
-		CustomBlocksLang.debug(player, "&d&lPlayerInteractEvent:");
+		CustomBlockUtils.debugLine(player);
+		CustomBlockUtils.debug(player, "&d&lPlayerInteractEvent:");
 
 		Location clickedBlockLoc = clickedBlock.getLocation();
 		CustomBlock clickedCustomBlock = CustomBlock.from(clickedBlock);
@@ -278,47 +273,47 @@ public class CustomBlockListener implements Listener {
 		// Place
 		if (isIncrementingBlock(event, clickedBlock, clickedCustomBlock)) {
 			CustomBlockSounds.updateAction(player, BlockAction.PLACE);
-			CustomBlocksLang.debug(player, "&d<- done, incremented block");
+			CustomBlockUtils.debug(player, "&d<- done, incremented block");
 			return;
 		}
 
 		if (isPlacingBlock(event, clickedBlock, clickedCustomBlock)) {
 			CustomBlockSounds.updateAction(player, BlockAction.PLACE);
-			CustomBlocksLang.debug(player, "&d<- done, placed block");
+			CustomBlockUtils.debug(player, "&d<- done, placed block");
 			return;
 		}
 
-		CustomBlocksLang.debug(player, "&e- interacted with block");
+		CustomBlockUtils.debug(player, "&e- interacted with block");
 		CustomBlockSounds.updateAction(player, BlockAction.INTERACT);
 
 		if (clickedCustomBlock != null) {
 			if (CustomBlock.NOTE_BLOCK == clickedCustomBlock) {
-				CustomBlocksLang.debug(player, "&e-- is a note block");
+				CustomBlockUtils.debug(player, "&e-- is a note block");
 				NoteBlock noteBlock = (NoteBlock) clickedBlock.getBlockData();
 
 				if (isChangingPitch(action, sneaking, itemInHand)) {
-					CustomBlocksLang.debug(player, "&e<- is changing pitch");
+					CustomBlockUtils.debug(player, "&e<- is changing pitch");
 					event.setCancelled(true);
 
 					changePitch(player, noteBlock, clickedBlockLoc, sneaking);
-					CustomBlocksLang.debug(player, "&d<- done, changed pitch");
+					CustomBlockUtils.debug(player, "&d<- done, changed pitch");
 					return;
 				}
 
 				boolean isPlayingNote = action.equals(Action.LEFT_CLICK_BLOCK);
 				if (isPlayingNote) {
-					CustomBlocksLang.debug(player, "&e<- is playing note");
+					CustomBlockUtils.debug(player, "&e<- is playing note");
 					NoteBlockUtils.play(noteBlock, clickedBlockLoc, true, player);
 				}
 			}
 
 			if (action.equals(Action.RIGHT_CLICK_BLOCK)) {
 				event.setCancelled(true);
-				CustomBlocksLang.debug(player, "&e<- action == " + action + ", cancelling");
+				CustomBlockUtils.debug(player, "&e<- action == " + action + ", cancelling");
 			}
 		}
 
-		CustomBlocksLang.debug(player, "&d<- done, end");
+		CustomBlockUtils.debug(player, "&d<- done, end");
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -396,11 +391,11 @@ public class CustomBlockListener implements Listener {
 			PistonPushAction pistonAction = iCustomBlock.getPistonPushedAction();
 			switch (pistonAction) {
 				case PREVENT -> {
-					CustomBlocksLang.broadcastDebug("PistonEvent: " + customBlock.name() + " cannot be moved by pistons");
+					CustomBlockUtils.broadcastDebug("PistonEvent: " + customBlock.name() + " cannot be moved by pistons");
 					return false;
 				}
 				case BREAK -> {
-					CustomBlocksLang.broadcastDebug("PistonEvent: " + customBlock.name() + " broke because of a piston");
+					CustomBlockUtils.broadcastDebug("PistonEvent: " + customBlock.name() + " broke because of a piston");
 					CustomBlockUtils.breakBlock(block, customBlock, null, null, true);
 					continue;
 				}
@@ -536,11 +531,11 @@ public class CustomBlockListener implements Listener {
 
 	private boolean isPlacingBlock(PlayerInteractEvent event, Block clickedBlock, CustomBlock clickedCustomBlock) {
 		Player player = event.getPlayer();
-		CustomBlocksLang.debug(player, "&b- is placing block?");
+		CustomBlockUtils.debug(player, "&b- is placing block?");
 
 		Action action = event.getAction();
 		if (!action.equals(Action.RIGHT_CLICK_BLOCK)) {
-			CustomBlocksLang.debug(player, "&c<- action != " + StringUtils.camelCase(Action.RIGHT_CLICK_BLOCK));
+			CustomBlockUtils.debug(player, "&c<- action != " + StringUtils.camelCase(Action.RIGHT_CLICK_BLOCK));
 			return false;
 		}
 
@@ -557,16 +552,16 @@ public class CustomBlockListener implements Listener {
 			}
 		}
 
-		CustomBlocksLang.debug(player, "&e- interactable = " + isInteractable);
+		CustomBlockUtils.debug(player, "&e- interactable = " + isInteractable);
 
 		if (!player.isSneaking() && isInteractable) {
-			CustomBlocksLang.debug(player, "&c<- not sneaking & isInteractable");
+			CustomBlockUtils.debug(player, "&c<- not sneaking & isInteractable");
 			return false;
 		}
 
 		ItemStack itemInHand = event.getItem();
 		if (Nullables.isNullOrAir(itemInHand)) {
-			CustomBlocksLang.debug(player, "&c<- item in hand is null or air");
+			CustomBlockUtils.debug(player, "&c<- item in hand is null or air");
 			return false;
 		}
 
@@ -575,7 +570,7 @@ public class CustomBlockListener implements Listener {
 
 		// Check decoration
 		if (DecorationConfig.of(itemInHand) != null) {
-			CustomBlocksLang.debug(player, "&c<- item in hand is a decoration");
+			CustomBlockUtils.debug(player, "&c<- item in hand is a decoration");
 			return true;
 
 		// Check replaced vanilla items
@@ -586,7 +581,7 @@ public class CustomBlockListener implements Listener {
 		} else if (material.equals(ICustomBlock.itemMaterial)) {
 			String modelId = Model.of(itemInHand);
 			if (!CustomBlock.modelIdMap.containsKey(modelId)) {
-				CustomBlocksLang.debug(player, "&c<- unknown modelId: " + modelId);
+				CustomBlockUtils.debug(player, "&c<- unknown modelId: " + modelId);
 				return false;
 			} else
 				isPlacingCustomBlock = true;
@@ -604,15 +599,15 @@ public class CustomBlockListener implements Listener {
 	}
 
 	private boolean placedCustomBlock(Block clickedBlock, Player player, BlockFace clickedFace, Block preBlock, ItemStack itemInHand) {
-		CustomBlocksLang.debug(player, "&e- placing custom block");
+		CustomBlockUtils.debug(player, "&e- placing custom block");
 		if (!preBlock.getLocation().toCenterLocation().getNearbyLivingEntities(0.5).isEmpty()) {
-			CustomBlocksLang.debug(player, "&c<- entity in way");
+			CustomBlockUtils.debug(player, "&c<- entity in way");
 			return false;
 		}
 
 		CustomBlock _customBlock = CustomBlock.from(itemInHand);
 		if (_customBlock == null) {
-			CustomBlocksLang.debug(player, "&c<- customBlock == null");
+			CustomBlockUtils.debug(player, "&c<- customBlock == null");
 			return false;
 		}
 
@@ -622,7 +617,7 @@ public class CustomBlockListener implements Listener {
 		// TODO: REFACTOR TO MOVE THE LOGIC INTO THEIR RESPECTIVE CLASSES INSTEAD
 		// IWaterlogged
 		if (customBlock instanceof IWaterLogged) {
-			CustomBlocksLang.debug(player, "&e- CustomBlock instance of IWaterLogged");
+			CustomBlockUtils.debug(player, "&e- CustomBlock instance of IWaterLogged");
 
 			// if placing block in 1 depth water
 			if (preBlock.getType() == Material.WATER && Nullables.isNullOrAir(preBlock.getRelative(BlockFace.UP))) {
@@ -634,19 +629,19 @@ public class CustomBlockListener implements Listener {
 				clickedBlock = underneath;
 
 			} else if (!Nullables.isNullOrAir(preBlock)) {
-				CustomBlocksLang.debug(player, "&c<- preBlock (" + StringUtils.camelCase(preBlock.getType()) + ") is not null/air");
+				CustomBlockUtils.debug(player, "&c<- preBlock (" + StringUtils.camelCase(preBlock.getType()) + ") is not null/air");
 				return false;
 			}
 		} else {
 			if (!MaterialTag.REPLACEABLE.isTagged(preBlock.getType())) {
-				CustomBlocksLang.debug(player, "&c<- preBlock (" + StringUtils.camelCase(preBlock.getType()) + ") is not replaceable");
+				CustomBlockUtils.debug(player, "&c<- preBlock (" + StringUtils.camelCase(preBlock.getType()) + ") is not replaceable");
 				return false;
 			}
 		}
 
 		// ITall
 		if (customBlock instanceof ITall) {
-			CustomBlocksLang.debug(player, "&e- CustomBlock instance of IWaterLogged");
+			CustomBlockUtils.debug(player, "&e- CustomBlock instance of IWaterLogged");
 			Block above = preBlock.getRelative(BlockFace.UP);
 
 			boolean placeTallSupport = false;
@@ -656,32 +651,32 @@ public class CustomBlockListener implements Listener {
 				placeTallSupport = true;
 
 			if (placeTallSupport && !Nullables.isNullOrAir(above)) {
-				CustomBlocksLang.debug(player, "&c<- above (" + StringUtils.camelCase(preBlock.getType()) + ") is not null/air");
+				CustomBlockUtils.debug(player, "&c<- above (" + StringUtils.camelCase(preBlock.getType()) + ") is not null/air");
 				return false;
 			}
 		}
 
 		// IRequireSupport
 		if (customBlock instanceof IRequireSupport && !(customBlock instanceof IWaterLogged)) {
-			CustomBlocksLang.debug(player, "&e- CustomBlock instance of IRequireSupport and not IWaterLogged");
+			CustomBlockUtils.debug(player, "&e- CustomBlock instance of IRequireSupport and not IWaterLogged");
 			if (!underneath.isSolid()) {
-				CustomBlocksLang.debug(player, "&c<- underneath (" + StringUtils.camelCase(preBlock.getType()) + ") is not solid");
+				CustomBlockUtils.debug(player, "&c<- underneath (" + StringUtils.camelCase(preBlock.getType()) + ") is not solid");
 				return false;
 			}
 		}
 
 		// IRequireDirt
 		if (customBlock instanceof IRequireDirt) {
-			CustomBlocksLang.debug(player, "&e- CustomBlock instance of IRequireDirt");
+			CustomBlockUtils.debug(player, "&e- CustomBlock instance of IRequireDirt");
 			if (!MaterialTag.DIRT.isTagged(underneath.getType())) {
-				CustomBlocksLang.debug(player, "&c<- underneath (" + StringUtils.camelCase(preBlock.getType()) + ") is not a dirt type");
+				CustomBlockUtils.debug(player, "&c<- underneath (" + StringUtils.camelCase(preBlock.getType()) + ") is not a dirt type");
 				return false;
 			}
 		}
 
 		// place block
 		if (!_customBlock.placeBlock(player, preBlock, clickedBlock, clickedFace, itemInHand)) {
-			CustomBlocksLang.debug(player, "&c<- CustomBlock#PlaceBlock == false");
+			CustomBlockUtils.debug(player, "&c<- CustomBlock#PlaceBlock == false");
 			return false;
 		}
 
@@ -690,7 +685,7 @@ public class CustomBlockListener implements Listener {
 
 	private boolean placedVanillaBlock(PlayerInteractEvent event, Block clickedBlock, Player player, Block preBlock,
 									   boolean didClickedCustomBlock, Material material, ItemStack itemStack) {
-		CustomBlocksLang.debug(player, "&e- placing vanilla block");
+		CustomBlockUtils.debug(player, "&e- placing vanilla block");
 
 //		if (!MaterialTag.REPLACEABLE.isTagged(preBlock.getType())) {
 //			CustomBlocksLang.debug("&c<- preBlock is not replaceable");
@@ -698,7 +693,7 @@ public class CustomBlockListener implements Listener {
 //		}
 
 		if (!didClickedCustomBlock) {
-			CustomBlocksLang.debug(player, "&c<- didn't click on a custom block");
+			CustomBlockUtils.debug(player, "&c<- didn't click on a custom block");
 			return false;
 		}
 
@@ -706,17 +701,17 @@ public class CustomBlockListener implements Listener {
 			return true;
 
 		if (!ProtectionUtils.canBuild(player, preBlock)) {
-			CustomBlocksLang.debug(player, "&c<- cannot build here");
+			CustomBlockUtils.debug(player, "&c<- cannot build here");
 			return false;
 		}
 
 		BlockData fixedBlockData = CustomBlockNMSUtils.tryPlaceVanillaBlock(player, itemStack);
 		if (fixedBlockData == null) {
-			CustomBlocksLang.debug(player, "&c<- cannot place this block here");
+			CustomBlockUtils.debug(player, "&c<- cannot place this block here");
 			return false;
 		}
 
-		CustomBlocksLang.debug(player, "&a<- placed block: " + StringUtils.camelCase(material));
+		CustomBlockUtils.debug(player, "&a<- placed block: " + StringUtils.camelCase(material));
 		CustomBlockSounds.tryPlaySound(player, SoundAction.PLACE, preBlock);
 
 		ItemUtils.subtract(player, event.getItem());

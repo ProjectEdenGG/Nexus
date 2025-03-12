@@ -42,7 +42,7 @@ public class CustomBlockNMSUtils {
 		boolean shouldSubtract = ItemUtils.shouldSubtract(player, itemStack);
 		int originalAmount = itemStack.getAmount();
 		if (!(nmsStack.getItem() instanceof BlockItem blockItem)) {
-			CustomBlocksLang.debug(player, "&e- item is not a BlockItem");
+			CustomBlockUtils.debug(player, "&e- item is not a BlockItem");
 			nmsStack.getItem().useOn(new UseOnContext(serverPlayer, hand, hitResult));
 
 			if (!shouldSubtract && originalAmount != itemStack.getAmount())
@@ -54,7 +54,7 @@ public class CustomBlockNMSUtils {
 			return null;
 		}
 
-		CustomBlocksLang.debug(player, "&e- item is a BlockItem");
+		CustomBlockUtils.debug(player, "&e- item is a BlockItem");
 
 		// Shulker-Boxes are DirectionalPlace based unlike other directional-blocks
 		if (org.bukkit.Tag.SHULKER_BOXES.isTagged(itemStack.getType())) {
@@ -72,7 +72,7 @@ public class CustomBlockNMSUtils {
 		Block block = world.getBlockAt(clickPos.getX(), clickPos.getY(), clickPos.getZ());
 		SoundGroup sound = block.getBlockData().getSoundGroup();
 
-		CustomBlocksLang.debug(player, "&e- playing nms sound: " + sound.getPlaceSound().getKey().getKey());
+		CustomBlockUtils.debug(player, "&e- playing nms sound: " + sound.getPlaceSound().getKey().getKey());
 		world.playSound(block.getLocation().toCenterLocation(), sound.getPlaceSound(),
 			SoundCategory.BLOCKS, (sound.getVolume() + 1.0F) / 2.0F, sound.getPitch() * 0.8F);
 

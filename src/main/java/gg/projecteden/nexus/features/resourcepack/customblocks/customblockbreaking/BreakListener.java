@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.customblockbreaking;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksLang;
+import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.MaterialTag;
 import lombok.Getter;
@@ -43,15 +43,15 @@ public class BreakListener implements Listener {
 
 	@EventHandler
 	public void on(BlockBreakEvent event) {
-		CustomBlocksLang.debug(event.getPlayer(), "CustomBlockBreaking: BlockBreakEvent");
+		CustomBlockUtils.debug(event.getPlayer(), "CustomBlockBreaking: BlockBreakEvent");
 
 		if (event.isCancelled()) {
-			CustomBlocksLang.debug(event.getPlayer(), "<-- event is cancelled");
+			CustomBlockUtils.debug(event.getPlayer(), "<-- event is cancelled");
 			return;
 		}
 
 		if (!CustomBlockBreaking.getManager().isTracking(event.getBlock())) {
-			CustomBlocksLang.debug(event.getPlayer(), "<-- already tracking");
+			CustomBlockUtils.debug(event.getPlayer(), "<-- already tracking");
 			return;
 		}
 
@@ -61,15 +61,15 @@ public class BreakListener implements Listener {
 	@EventHandler
 	public void on(BlockDamageEvent event) {
 		Player player = event.getPlayer();
-		CustomBlocksLang.debug(player, "CustomBlockBreaking: BlockDamageEvent");
+		CustomBlockUtils.debug(player, "CustomBlockBreaking: BlockDamageEvent");
 		if (event.isCancelled()) {
-			CustomBlocksLang.debug(player, "<-- event is cancelled");
+			CustomBlockUtils.debug(player, "<-- event is cancelled");
 			return;
 		}
 
 
 		if (isInvalid(player)) {
-			CustomBlocksLang.debug(player, "<-- player is invalid");
+			CustomBlockUtils.debug(player, "<-- player is invalid");
 			return;
 		}
 
@@ -77,14 +77,14 @@ public class BreakListener implements Listener {
 		int currentTick = Bukkit.getCurrentTick();
 		if (breakWait.containsKey(player.getUniqueId())) {
 			if (currentTick < (6 + breakWait.get(player.getUniqueId()))) {
-				CustomBlocksLang.debug(player, "<-- on cooldown");
+				CustomBlockUtils.debug(player, "<-- on cooldown");
 				return;
 			}
 		}
 
 		Block block = event.getBlock();
 		if (CustomBlockBreaking.getManager().isTracking(block)) {
-			CustomBlocksLang.debug(player, "<-- already tracking");
+			CustomBlockUtils.debug(player, "<-- already tracking");
 			return;
 		}
 
@@ -95,32 +95,32 @@ public class BreakListener implements Listener {
 	@EventHandler
 	public void on(PlayerAnimationEvent event) {
 		Player player = event.getPlayer();
-		CustomBlocksLang.debug(player, "CustomBlockBreaking: PlayerAnimationEvent");
+		CustomBlockUtils.debug(player, "CustomBlockBreaking: PlayerAnimationEvent");
 		if (isInvalid(player)) {
-			CustomBlocksLang.debug(player, "<-- player is invalid");
+			CustomBlockUtils.debug(player, "<-- player is invalid");
 			return;
 		}
 
 		Block block = player.getTargetBlockExact(5);
 		if (block == null || blackListed.contains(block.getType())) {
-			CustomBlocksLang.debug(player, "<-- block == null || block is blacklisted");
+			CustomBlockUtils.debug(player, "<-- block == null || block is blacklisted");
 			return;
 		}
 
 		Location blockLoc = block.getLocation();
 		if (player.getLocation().distanceSquared(blockLoc) >= 1024.0D) {
-			CustomBlocksLang.debug(player, "<-- player is too far away");
+			CustomBlockUtils.debug(player, "<-- player is too far away");
 			return;
 		}
 
 		if (!CustomBlockBreaking.getManager().isTracking(blockLoc)) {
-			CustomBlocksLang.debug(player, "<-- already tracking");
+			CustomBlockUtils.debug(player, "<-- already tracking");
 			return;
 		}
 
 		BrokenBlock brokenBlock = CustomBlockBreaking.getManager().getBrokenBlock(blockLoc);
 		if (brokenBlock == null) {
-			CustomBlocksLang.debug(player, "<-- broken block is null");
+			CustomBlockUtils.debug(player, "<-- broken block is null");
 			return;
 		}
 

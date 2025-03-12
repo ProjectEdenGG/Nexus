@@ -1,10 +1,9 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.customblockbreaking;
 
-import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksLang;
+import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
@@ -108,7 +107,7 @@ public class BrokenBlock {
 	}
 
 	public void breakBlock(@NonNull Player breaker) {
-		CustomBlocksLang.debug(breaker, "Breaking block...");
+		CustomBlockUtils.debug(breaker, "Breaking block...");
 		BreakListener.getBreakWait().put(breaker.getUniqueId(), Bukkit.getCurrentTick());
 		BlockBreakingUtils.sendBreakBlock(breaker, getBlock(), getCustomBlock());
 		resetDamagePacket();
@@ -123,10 +122,10 @@ public class BrokenBlock {
 	}
 
 	public void incrementDamage(Player player, ItemStack itemStack) {
-		CustomBlocksLang.debug(player, "Incrementing damage...");
+		CustomBlockUtils.debug(player, "Incrementing damage...");
 		int currentTick = Bukkit.getCurrentTick();
 		if (!ItemUtils.isFuzzyMatch(itemStack, this.initialItemStack)) {
-			CustomBlocksLang.debug(player, "<-- using different tool, resetting progress");
+			CustomBlockUtils.debug(player, "<-- using different tool, resetting progress");
 			reset(itemStack, currentTick);
 			return;
 		}

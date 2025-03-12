@@ -11,7 +11,6 @@ import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.customblock.CustomNoteBlockTracker;
 import gg.projecteden.nexus.models.customblock.CustomNoteBlockTrackerService;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
-import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -74,7 +73,7 @@ public class CustomBlocks extends Feature {
 	}
 
 	public static void janitor() {
-		CustomBlocksLang.janitorDebug("&3CustomBlock Janitor:");
+		CustomBlockUtils.janitorDebug("&3CustomBlock Janitor:");
 		CustomNoteBlockTrackerService trackerService = new CustomNoteBlockTrackerService();
 		for (CustomNoteBlockTracker tracker : new ArrayList<>(trackerService.getAll())) {
 			World world = tracker.getWorld();
@@ -117,21 +116,21 @@ public class CustomBlocks extends Feature {
 			}
 
 			if (forRemoval.isEmpty()) {
-				CustomBlocksLang.janitorDebug(" &3No entries to clean up in world: &e" + world.getName());
+				CustomBlockUtils.janitorDebug(" &3No entries to clean up in world: &e" + world.getName());
 				continue;
 			}
 
-			CustomBlocksLang.janitorDebug("");
-			CustomBlocksLang.janitorDebug(" &3Clearing up &e" + forRemoval.size() + " &3entries in world &e" + world.getName() + "&3...");
+			CustomBlockUtils.janitorDebug("");
+			CustomBlockUtils.janitorDebug(" &3Clearing up &e" + forRemoval.size() + " &3entries in world &e" + world.getName() + "&3...");
 			for (Location location : forRemoval.keySet()) {
 				tracker.remove(location);
 
 				String message = "&3- " + StringUtils.getShortLocationString(location) + " &3because &e" + forRemoval.get(location);
-				CustomBlocksLang.janitorDebug(message);
+				CustomBlockUtils.janitorDebug(message);
 			}
 
 			trackerService.save(tracker);
-			CustomBlocksLang.janitorDebug("");
+			CustomBlockUtils.janitorDebug("");
 		}
 	}
 

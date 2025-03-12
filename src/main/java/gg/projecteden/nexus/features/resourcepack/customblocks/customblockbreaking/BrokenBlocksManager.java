@@ -1,10 +1,9 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.customblockbreaking;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksLang;
+import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.utils.BlockUtils;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -29,7 +28,7 @@ public class BrokenBlocksManager {
 	public void createBrokenBlock(Block block, Player player, ItemStack itemStack) {
 		Location location = block.getLocation();
 		if (isTracking(location)) {
-			CustomBlocksLang.debug(player, "<-- already tracking");
+			CustomBlockUtils.debug(player, "<-- already tracking");
 			return;
 		}
 
@@ -43,11 +42,11 @@ public class BrokenBlocksManager {
 		}
 
 		if (blockHardness == -1 || blockHardness > 50) { // unbreakable
-			CustomBlocksLang.debug(player, "<-- block is unbreakable");
+			CustomBlockUtils.debug(player, "<-- block is unbreakable");
 			return;
 		}
 
-		CustomBlocksLang.debug(player, "now tracking...");
+		CustomBlockUtils.debug(player, "now tracking...");
 		BrokenBlock brokenBlock = new BrokenBlock(block, isCustomBlock, player, itemStack, Bukkit.getCurrentTick());
 		brokenBlocks.put(location, brokenBlock);
 	}

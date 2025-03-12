@@ -14,6 +14,8 @@ import gg.projecteden.nexus.features.titan.models.CustomCreativeItem;
 import gg.projecteden.nexus.models.customblock.CustomNoteBlockTracker;
 import gg.projecteden.nexus.models.customblock.CustomNoteBlockTrackerService;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
+import gg.projecteden.nexus.utils.Debug;
+import gg.projecteden.nexus.utils.Debug.DebugType;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -132,7 +134,7 @@ public class CustomBlockUtils {
 	}
 
 	public static void updatePowerable(Block block, Player debugger) {
-		CustomBlocksLang.debug(debugger, "Updating Powerable: " + block.getType());
+		debug(debugger, "Updating Powerable: " + block.getType());
 		Powerable powerable = (Powerable) block.getBlockData();
 		boolean isPowered = powerable.isPowered();
 		powerable.setPowered(!isPowered);
@@ -191,7 +193,7 @@ public class CustomBlockUtils {
 
 		if (brokenCustomBlock != null) {
 			if (CustomBlock.TALL_SUPPORT == brokenCustomBlock) {
-				CustomBlocksLang.debug(player, "Broke tall support");
+				debug(player, "Broke tall support");
 				brokenCustomBlock.breakBlock(player, tool, brokenBlock, false, amount, true, true, applyPhysics);
 
 				Block blockUnder = brokenBlock.getRelative(BlockFace.DOWN);
@@ -199,7 +201,7 @@ public class CustomBlockUtils {
 
 				if (under != null) {
 					fixedTripwire.add(blockUnder.getLocation());
-					CustomBlocksLang.debug(player, "Underneath: " + under.name());
+					debug(player, "Underneath: " + under.name());
 					under.breakBlock(player, tool, blockUnder, true, amount, false, true, applyPhysics);
 					blockUnder.setType(Material.AIR);
 				}
@@ -209,14 +211,14 @@ public class CustomBlockUtils {
 			}
 
 			if (brokenCustomBlock.get() instanceof IIncremental incremental) {
-				CustomBlocksLang.debug(player, "Broke incremental, setting proper amount");
+				debug(player, "Broke incremental, setting proper amount");
 				amount = incremental.getIndex() + 1;
 
 			} else if (brokenCustomBlock.get() instanceof ITall) {
-				CustomBlocksLang.debug(player, "Broke isTall");
+				debug(player, "Broke isTall");
 
 				if (CustomBlock.TALL_SUPPORT == aboveCustomBlock) {
-					CustomBlocksLang.debug(player, "Breaking tall support above");
+					debug(player, "Breaking tall support above");
 
 					aboveCustomBlock.breakBlock(player, tool, aboveBlock, false, amount, false, true, applyPhysics);
 					aboveBlock.setType(Material.AIR);
@@ -265,5 +267,23 @@ public class CustomBlockUtils {
 
 	public static void logRemoval(String source, Location location, Block block, CustomBlock customBlock) {
 		Nexus.getCoreProtectAPI().logRemoval(source, location, block.getType(), block.getBlockData());
+	}
+
+	// Debug
+
+	public static void debug(Player player, String message) {
+		Debug.log(player, DebugType.CUSTOM_BLOCKS, message);
+	}
+
+	public static void debugLine(Player player) {
+		debug(player, "");
+	}
+
+	public static void broadcastDebug(String message) {
+		Debug.log(DebugType.CUSTOM_BLOCKS, message);
+	}
+
+	public static void janitorDebug(String message) {
+		Debug.log(DebugType.CUSTOM_BLOCKS_JANITOR, message);
 	}
 }

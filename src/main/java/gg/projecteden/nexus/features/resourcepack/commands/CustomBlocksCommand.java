@@ -4,7 +4,6 @@ import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.features.resourcepack.CustomContentUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks;
-import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksLang;
 import gg.projecteden.nexus.features.resourcepack.customblocks.customblockbreaking.BrokenBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.listeners.ConversionListener;
 import gg.projecteden.nexus.features.resourcepack.customblocks.menus.CustomBlockCreativeMenu;
@@ -107,8 +106,6 @@ public class CustomBlocksCommand extends CustomCommand {
 
 		Debug.setEnabled(player(), DebugType.CUSTOM_BLOCKS, enabled);
 		send(PREFIX + "Debug " + (enabled ? "&aEnabled" : "&cDisabled"));
-
-		CustomBlocksLang.debug(player(), "New Debug!");
 	}
 
 	// ADMIN COMMANDS

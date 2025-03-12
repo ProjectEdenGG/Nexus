@@ -34,7 +34,7 @@ public class DebugCommand extends CustomCommand {
 				state = !Debug.isEnabled(type);
 
 			Debug.setEnabled(type, state);
-			send(PREFIX + "Debug " + camelCase(type.name()) + " " + (state ? "&aenabled" : "&cdisabled"));
+			send(PREFIX + "&e" + camelCase(type.name()) + " &3debug " + (state ? "&aenabled" : "&cdisabled"));
 			return;
 		}
 
@@ -42,6 +42,6 @@ public class DebugCommand extends CustomCommand {
 			state = !Debug.isEnabled(player, type);
 
 		Debug.setEnabled(player, type, state);
-		send(PREFIX + "Debug " + camelCase(type.name()) + " " + (state ? "&aenabled" : "&cdisabled") + " &3for &e" + Nickname.of(player));
+		send(PREFIX + "&e" + camelCase(type.name()) + " &3debug " + (state ? "&aenabled" : "&cdisabled") + " &3for &e" + Nickname.of(player));
 	}
 }
