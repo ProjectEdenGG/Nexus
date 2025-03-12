@@ -61,31 +61,31 @@ public interface IHarvestable {
 
 	default boolean isUsingCorrectTool(ItemStack tool, Player debugger) {
 		if (!requiresCorrectToolForDrops()) {
-			CustomBlockUtils.debug(debugger, "Doesn't require specific tool");
+			CustomBlockUtils.debug(debugger, "&e- doesn't require specific tool");
 			return true;
 		}
 
 		final Material requiredTool = getMinimumPreferredTool();
-		CustomBlockUtils.debug(debugger, "Min Preferred Tool: " + requiredTool);
+		CustomBlockUtils.debug(debugger, "&e- min preferred tool: " + requiredTool);
 
 		ToolType requiredToolType = ToolType.of(requiredTool);
-		CustomBlockUtils.debug(debugger, "Required ToolType: " + requiredToolType);
+		CustomBlockUtils.debug(debugger, "&e- required toolType: " + requiredToolType);
 		ToolGrade grade = ToolGrade.of(tool);
-		CustomBlockUtils.debug(debugger, "Tool Grade: " + grade);
+		CustomBlockUtils.debug(debugger, "&e- tool grade: " + grade);
 
 		if (grade == null || requiredToolType == null) {
 			if (grade == null)
-				CustomBlockUtils.debug(debugger, "grade == null");
+				CustomBlockUtils.debug(debugger, "&e- grade == null");
 			if (requiredToolType == null)
-				CustomBlockUtils.debug(debugger, "requiredToolType == null");
+				CustomBlockUtils.debug(debugger, "&e- requiredToolType == null");
 
-			CustomBlockUtils.debug(debugger, "tool.getType() == requiredTool? --> " + (tool.getType() == requiredTool));
+			CustomBlockUtils.debug(debugger, "&e- tool.getType() == requiredTool? --> " + (tool.getType() == requiredTool));
 			return tool.getType() == requiredTool;
 		}
 
 		List<ToolGrade> higherGrades = grade.getEqualAndHigherToolGrades();
-		CustomBlockUtils.debug(debugger, "Equal and Higher Grades: " + higherGrades);
-		CustomBlockUtils.debug(debugger, "isCorrectTool? --> " + requiredToolType.getTools(higherGrades).contains(tool.getType()));
+		CustomBlockUtils.debug(debugger, "&e- equal and higher grades: " + higherGrades);
+		CustomBlockUtils.debug(debugger, "&e- isCorrectTool? --> " + requiredToolType.getTools(higherGrades).contains(tool.getType()));
 
 		return requiredToolType.getTools(higherGrades).contains(tool.getType());
 	}

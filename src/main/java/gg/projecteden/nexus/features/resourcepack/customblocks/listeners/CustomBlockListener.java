@@ -197,35 +197,40 @@ public class CustomBlockListener implements Listener {
 		Player player = event.getPlayer();
 		ItemStack tool = player.getInventory().getItemInMainHand();
 
+		CustomBlockUtils.debugLine(player);
+		CustomBlockUtils.debug(player, "&d&lBlockBreakEvent:");
+
 		CustomBlock brokenCustomBlock = CustomBlock.from(brokenBlock);
-		if (brokenCustomBlock != null)
+		if (brokenCustomBlock != null) {
 			event.setDropItems(false);
+			CustomBlockUtils.debug(player, "&e- disabling drops");
+		}
 
 		CustomBlockUtils.breakBlock(brokenBlock, brokenCustomBlock, player, tool, true);
 	}
 
 	private void updateDatabase(Location location, Player debugger) {
 		if (!_updateDatabase(location, debugger))
-			CustomBlockUtils.debug(debugger, "- no changes");
+			CustomBlockUtils.debug(debugger, "&c<- no changes");
 	}
 
 	private boolean _updateDatabase(Location location, Player debugger) {
-		CustomBlockUtils.debug(debugger, "updating database at location");
+		CustomBlockUtils.debug(debugger, "&b- updating database at location?");
 		CustomBlock noteBlockWorld = CustomBlock.from(location.getBlock());
 
 		if (noteBlockWorld == null) {
-			CustomBlockUtils.debug(debugger, "- data does not exist in world, delete from database");
+			CustomBlockUtils.debug(debugger, "&a<- data does not exist in world, &adeleting from database");
 			CustomBlockUtils.breakNoteBlockInDatabase(location);
 			return true;
 		}
 
 		BlockData blockData = noteBlockWorld.get().getBlockData(BlockFace.UP, location.getBlock().getRelative(BlockFace.DOWN));
 		if (noteBlockWorld == CustomBlock.NOTE_BLOCK) {
-			CustomBlockUtils.debug(debugger, "- data exists in world");
+			CustomBlockUtils.debug(debugger, "&e- data exists in world");
 
 			NoteBlockData data = CustomBlockUtils.getNoteBlockData(location);
 			if (data == null) {
-				CustomBlockUtils.debug(debugger, "-- no data exists at this location, fixing");
+				CustomBlockUtils.debug(debugger, "&a<- no data exists at this location, fixing");
 				CustomBlockUtils.placeNoteBlockInDatabase(location, blockData);
 				return true;
 			}

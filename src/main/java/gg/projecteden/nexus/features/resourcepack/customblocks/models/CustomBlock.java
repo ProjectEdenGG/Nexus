@@ -716,28 +716,28 @@ public enum CustomBlock implements Keyed {
 
 	public void breakBlock(@Nullable Player source, @Nullable ItemStack tool, Block block, boolean dropItem, int amount, boolean playSound, boolean spawnParticle, boolean applyPhysics) {
 		boolean dropIngredients = false;
-		CustomBlockUtils.debug(source, "break block");
+		CustomBlockUtils.debug(source, "&b- CustomBlock#breakBlock: " + this.get().getItemName());
 
 		Location location = block.getLocation();
 		if (source != null)
 			CustomBlockUtils.logRemoval(source, location, block, this);
 
-		if (tool != null && this != TALL_SUPPORT) {
-			CustomBlockUtils.debug(source, "tool != null");
+		if (Nullables.isNotNullOrAir(tool) && this != TALL_SUPPORT) {
+			CustomBlockUtils.debug(source, "&e- tool != null/air");
 			ICustomBlock iCustomBlock = get();
 			if (!iCustomBlock.canHarvestWith(tool, source)) {
 				dropItem = false;
-				CustomBlockUtils.debug(source, "dropItem = " + dropItem);
+				CustomBlockUtils.debug(source, "&e- dropItem = " + dropItem);
 
 				boolean requiresSilkTouch = iCustomBlock.requiresSilkTouchForDrops();
-				CustomBlockUtils.debug(source, "requiresSilkTouch = " + requiresSilkTouch);
+				CustomBlockUtils.debug(source, "&e- requiresSilkTouch = " + requiresSilkTouch);
 				List<ItemStack> nonSilkTouchDrops = iCustomBlock.getNonSilkTouchDrops();
 				if (requiresSilkTouch && !Nullables.isNullOrEmpty(nonSilkTouchDrops)) {
 					dropIngredients = true;
-					CustomBlockUtils.debug(source, "dropIngredients = " + dropIngredients);
+					CustomBlockUtils.debug(source, "&e- dropIngredients = " + dropIngredients);
 				} else {
 					if (requiresSilkTouch)
-						CustomBlockUtils.debug(source, "nonSilkTouchDrops is null/empty");
+						CustomBlockUtils.debug(source, "&e- nonSilkTouchDrops is null/empty");
 				}
 			}
 		}
@@ -757,28 +757,27 @@ public enum CustomBlock implements Keyed {
 			CustomBlock belowCustomBlock = CustomBlock.from(block.getRelative(BlockFace.DOWN));
 			if (belowCustomBlock == null) return;
 
-			CustomBlockUtils.debug(source, " breaking tall support w/ particle: " + belowCustomBlock.get().getItemName());
+			CustomBlockUtils.debug(source, "&e- breaking tall support w/ particle: " + belowCustomBlock.get().getItemName());
 			belowCustomBlock.breakBlock(source, tool, block, false, amount, playSound, spawnParticle, applyPhysics);
 			return;
 		}
 
 		if (spawnParticle && this.get() instanceof ICustomTripwire) {
-			CustomBlockUtils.debug(source, " spawning particle");
+			CustomBlockUtils.debug(source, "&e- spawning particle");
 			spawnParticle(source, location);
 		}
 
 		if (playSound) {
-			CustomBlockUtils.debug(source, " playing sound");
 			playSound(source, SoundAction.BREAK, location);
 		}
 
 		if (dropItem) {
-			CustomBlockUtils.debug(source, " dropping item");
+			CustomBlockUtils.debug(source, "&e- dropping item");
 			dropItem(amount, location);
 		}
 
 		if (dropIngredients) {
-			CustomBlockUtils.debug(source, " dropping silk items");
+			CustomBlockUtils.debug(source, "&e- dropping silk items");
 			dropSilkItems(location, source);
 		}
 
@@ -812,7 +811,7 @@ public enum CustomBlock implements Keyed {
 		if (silent)
 			soundBuilder.receiver(source);
 
-		CustomBlockUtils.debug(source, "&e- playing sound: " + sound);
+		CustomBlockUtils.debug(source, "&a<- playing sound: " + sound);
 		soundBuilder.category(SoundCategory.BLOCKS).play();
 	}
 
