@@ -28,6 +28,7 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
@@ -58,6 +59,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -320,6 +322,45 @@ public class CustomBlockListener implements Listener {
 		CustomBlocksLang.debug("&d<- done, end");
 	}
 
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void on(BlockPhysicsEvent event) {
+		Block block = event.getBlock();
+		Material material = block.getType();
+		// TODO: Disable tripwire customblocks
+		if (ICustomTripwire.isNotEnabled() && material == Material.TRIPWIRE)
+			return;
+		//
+
+		CustomBlock customBlock = CustomBlock.from(block);
+		if (customBlock == null)
+			return;
+
+		if (CustomBlockType.getBlockMaterials().contains(material)) {
+			sendBlockDataUpdate(block, customBlock);
+		}
+
+		sendBlockDataUpdates(block, BlockFace.UP);
+		sendBlockDataUpdates(block, BlockFace.DOWN);
+	}
+
+	private void sendBlockDataUpdates(Block block, BlockFace face) {
+		block = block.getRelative(face);
+		while (CustomBlockType.getBlockMaterials().contains(block.getType())) {
+			CustomBlock _customBlock = CustomBlock.from(block);
+			if (_customBlock == null)
+				return;
+
+			sendBlockDataUpdate(block, _customBlock);
+			block = block.getRelative(face);
+		}
+	}
+
+	private void sendBlockDataUpdate(Block block, CustomBlock customBlock) {
+		BlockData blockData = customBlock.get().getBlockData(BlockFace.UP, block.getRelative(BlockFace.DOWN));
+		Location location = block.getLocation();
+		Tasks.wait(1, () -> OnlinePlayers.where().world(location.getWorld()).forEach(player -> player.sendBlockChange(location, blockData)));
+	}
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on(BlockPistonExtendEvent event) {
 		if (event.isCancelled())
@@ -339,7 +380,6 @@ public class CustomBlockListener implements Listener {
 	}
 
 	private boolean onPistonEvent(List<Block> blocks) {
-		CustomBlocksLang.debug("PistonEvent");
 		blocks = blocks.stream().filter(block -> CustomBlock.from(block) != null).collect(Collectors.toList());
 
 		// initial checks
@@ -354,9 +394,7 @@ public class CustomBlockListener implements Listener {
 				continue;
 
 			ICustomBlock iCustomBlock = customBlock.get();
-			CustomBlocksLang.debug("CustomBlock: " + iCustomBlock.getItemName());
 			PistonPushAction pistonAction = iCustomBlock.getPistonPushedAction();
-			CustomBlocksLang.debug("PistonPushAction: " + pistonAction);
 			switch (pistonAction) {
 				case PREVENT -> {
 					CustomBlocksLang.debug("PistonEvent: " + customBlock.name() + " cannot be moved by pistons");
@@ -589,6 +627,7 @@ public class CustomBlockListener implements Listener {
 		ICustomBlock customBlock = _customBlock.get();
 		Block underneath = preBlock.getRelative(BlockFace.DOWN);
 
+		// TODO: REFACTOR TO MOVE THE LOGIC INTO THEIR RESPECTIVE CLASSES INSTEAD
 		// IWaterlogged
 		if (customBlock instanceof IWaterLogged) {
 			CustomBlocksLang.debug("&e- CustomBlock instance of IWaterLogged");
