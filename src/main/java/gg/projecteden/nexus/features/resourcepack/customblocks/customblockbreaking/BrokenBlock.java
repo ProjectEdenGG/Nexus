@@ -108,7 +108,7 @@ public class BrokenBlock {
 	}
 
 	public void breakBlock(@NonNull Player breaker) {
-		CustomBlocksLang.debug("Breaking block...");
+		CustomBlocksLang.debug(breaker, "Breaking block...");
 		BreakListener.getBreakWait().put(breaker.getUniqueId(), Bukkit.getCurrentTick());
 		BlockBreakingUtils.sendBreakBlock(breaker, getBlock(), getCustomBlock());
 		resetDamagePacket();
@@ -123,10 +123,10 @@ public class BrokenBlock {
 	}
 
 	public void incrementDamage(Player player, ItemStack itemStack) {
-		CustomBlocksLang.debug("Incrementing damage...");
+		CustomBlocksLang.debug(player, "Incrementing damage...");
 		int currentTick = Bukkit.getCurrentTick();
 		if (!ItemUtils.isFuzzyMatch(itemStack, this.initialItemStack)) {
-			CustomBlocksLang.debug("<-- using different tool, resetting progress");
+			CustomBlocksLang.debug(player, "<-- using different tool, resetting progress");
 			reset(itemStack, currentTick);
 			return;
 		}

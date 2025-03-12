@@ -29,15 +29,15 @@ public class NoteBlockUtils {
 		data.setInteracted(true);
 
 		Block block = location.getBlock();
-		CustomBlocksLang.debug("change pitch from " + oldStep + " to " + +data.getStep());
-		play(block, data);
+		CustomBlocksLang.debug(player, "change pitch from " + oldStep + " to " + +data.getStep());
+		play(block, data, player);
 
-		CustomBlockUtils.updatePowerable(block);
+		CustomBlockUtils.updatePowerable(block, player);
 		ActionBarUtils.sendActionBar(player, "Instrument: " + data.getInstrumentName() + " | " + " Note: " + data.getStep());
 	}
 
 
-	public static void play(NoteBlock noteBlock, Location location, boolean interacted) {
+	public static void play(NoteBlock noteBlock, Location location, boolean interacted, Player debugger) {
 		NoteBlockData data = CustomBlockUtils.getNoteBlockData(location);
 		if (data == null)
 			return;
@@ -50,11 +50,11 @@ public class NoteBlockUtils {
 
 		data.setPowered(true);
 
-		CustomBlocksLang.debug("NoteBlockUtils#play: Instrument=" + data.getInstrument() + ", Note=" + data.getStep() + ", Powered=" + data.isPowered());
-		play(location.getBlock(), data);
+		CustomBlocksLang.debug(debugger, "NoteBlockUtils#play: Instrument=" + data.getInstrument() + ", Note=" + data.getStep() + ", Powered=" + data.isPowered());
+		play(location.getBlock(), data, debugger);
 	}
 
-	private static void play(Block block, NoteBlockData data) {
+	private static void play(Block block, NoteBlockData data, Player debugger) {
 		Location location = block.getLocation();
 		Block above = block.getRelative(BlockFace.UP);
 
@@ -79,8 +79,8 @@ public class NoteBlockUtils {
 
 			NoteBlockPlayEvent event = new NoteBlockPlayEvent(block);
 			if (event.callEvent()) {
-				CustomBlocksLang.debug("play event: Instrument=" + data.getInstrument() + ", Note=" + data.getStep() + ", Powered=" + data.isPowered());
-				data.play(location);
+				CustomBlocksLang.debug(debugger, "play event: Instrument=" + data.getInstrument() + ", Note=" + data.getStep() + ", Powered=" + data.isPowered());
+				data.play(location, debugger);
 			}
 		});
 	}

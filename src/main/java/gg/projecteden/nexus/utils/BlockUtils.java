@@ -358,27 +358,26 @@ public class BlockUtils {
 	public static boolean hasDrops(Player player, Block block, ItemStack tool) {
 		CustomToolBlock changedBlock = CustomToolBlock.of(block);
 		if (changedBlock != null) {
-			return changedBlock.canHarvestWith(tool);
+			return changedBlock.canHarvestWith(tool, player);
 		}
 
-		return block.getDrops(tool, player).stream()
+		return !block.getDrops(tool, player).stream()
 			.filter(Nullables::isNotNullOrAir)
-			.toList()
-			.size() > 0;
+			.toList().isEmpty();
 	}
 
-	public static boolean canHarvest(Block block, ItemStack tool) {
+	public static boolean canHarvest(Block block, ItemStack tool, Player debugger) {
 		// check custom blocks
 		CustomBlock customBlock = CustomBlock.from(block);
 		if (customBlock != null) {
 			IHarvestable iHarvestable = customBlock.get();
-			return iHarvestable.canHarvestWith(tool);
+			return iHarvestable.canHarvestWith(tool, debugger);
 		}
 
 		// check changed vanilla blocks
 		CustomToolBlock changedBlock = CustomToolBlock.of(block);
 		if (changedBlock != null) {
-			return changedBlock.canHarvestWith(tool);
+			return changedBlock.canHarvestWith(tool, debugger);
 		}
 
 		boolean preferred = ItemUtils.isPreferredTool(tool, block);
@@ -394,7 +393,7 @@ public class BlockUtils {
 		float blockHardness = getBlockHardness(block);
 		float speedMultiplier = NMSUtils.getDestroySpeed(block, tool);
 		Debug.log(BLOCK_DAMAGE, "speedMultiplier: " + speedMultiplier);
-		boolean canHarvest = canHarvest(block, tool);
+		boolean canHarvest = canHarvest(block, tool, player);
 		boolean hasDrops = hasDrops(player, block, tool);
 
 		Debug.log(BLOCK_DAMAGE, "getBlockDamage for " + block.getType());

@@ -74,7 +74,7 @@ public class CustomBlocks extends Feature {
 	}
 
 	public static void janitor() {
-		CustomBlocksLang.debug("&3CustomBlock Janitor:");
+		CustomBlocksLang.janitorDebug("&3CustomBlock Janitor:");
 		CustomNoteBlockTrackerService trackerService = new CustomNoteBlockTrackerService();
 		for (CustomNoteBlockTracker tracker : new ArrayList<>(trackerService.getAll())) {
 			World world = tracker.getWorld();
@@ -117,27 +117,25 @@ public class CustomBlocks extends Feature {
 			}
 
 			if (forRemoval.isEmpty()) {
-				CustomBlocksLang.debug(" &3No entries to clean up in world: &e" + world.getName());
+				CustomBlocksLang.janitorDebug(" &3No entries to clean up in world: &e" + world.getName());
 				continue;
 			}
 
-			CustomBlocksLang.debug("");
-			CustomBlocksLang.debug(" &3Clearing up &e" + forRemoval.size() + " &3entries in world &e" + world.getName() + "&3...");
+			CustomBlocksLang.janitorDebug("");
+			CustomBlocksLang.janitorDebug(" &3Clearing up &e" + forRemoval.size() + " &3entries in world &e" + world.getName() + "&3...");
 			for (Location location : forRemoval.keySet()) {
 				tracker.remove(location);
 
-				String locationStr = StringUtils.getShortLocationString(location);
-				CustomBlocksLang.debug(new JsonBuilder("&3- ").group()
-					.next(StringUtils.getJsonLocation("&3&l[&e" + locationStr + "&3&l]", location.toCenterLocation())).hover("Click to teleport").group()
-					.next(" &3because &e" + forRemoval.get(location)).group()
-				);
+				String message = "&3- " + StringUtils.getShortLocationString(location) + " &3because &e" + forRemoval.get(location);
+				CustomBlocksLang.janitorDebug(message);
 			}
 
 			trackerService.save(tracker);
-			CustomBlocksLang.debug("");
+			CustomBlocksLang.janitorDebug("");
 		}
 	}
 
+	@SuppressWarnings("removal")
 	@AllArgsConstructor
 	public enum ReplacedSoundType {
 		WOOD("block.wood.", "custom.block.wood."),
@@ -192,6 +190,7 @@ public class CustomBlocks extends Feature {
 		}
 	}
 
+	@SuppressWarnings("removal")
 	@Getter
 	@RequiredArgsConstructor
 	public enum SoundAction {

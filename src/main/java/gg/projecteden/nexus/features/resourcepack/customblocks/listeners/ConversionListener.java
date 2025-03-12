@@ -82,18 +82,16 @@ public class ConversionListener implements Listener {
 					String logMessage;
 					// Assume Staff and Minigames worlds are real custom blocks
 					if (WorldGroup.MINIGAMES.contains(location) || WorldGroup.STAFF.contains(location)) {
-						CustomBlocksLang.debug("Converting block to custom block");
 						block.setBlockData(customBlock.get().getBlockData(BlockFace.UP, below), false);
 						logMessage = "Creating CustomBlock " + StringUtils.camelCase(customBlock) + " " + StringUtils.getShortLocationString(location);
 					} else {
-						CustomBlocksLang.debug("Converting block to note block");
 						BlockData blockData = CustomBlock.NOTE_BLOCK.get().getBlockData(BlockFace.UP, below);
 						CustomBlockUtils.placeNoteBlockInDatabase(location, blockData);
 						block.setBlockData(blockData, false);
 						logMessage = "Creating CustomBlock NoteBlock at " + StringUtils.getShortLocationString(location);
 					}
 
-					CustomBlocksLang.debug(logMessage);
+					CustomBlocksLang.broadcastDebug(logMessage);
 					IOUtils.fileAppend("customblocks", logMessage);
 				}
 				case TRIPWIRE -> {
@@ -107,12 +105,11 @@ public class ConversionListener implements Listener {
 					if (multipleFacing.getFaces().contains(BlockFace.EAST))
 						facing = BlockFace.EAST;
 
-					CustomBlocksLang.debug("Converting block to tripwire");
 					block.setBlockData(CustomBlock.TRIPWIRE.get().getBlockData(facing, below), false);
 
 					String logMessage = "Creating CustomBlock TripwireData at " + StringUtils.getShortLocationString(location);
 
-					CustomBlocksLang.debug(logMessage);
+					CustomBlocksLang.broadcastDebug(logMessage);
 					IOUtils.fileAppend("customblocks", logMessage);
 				}
 			}

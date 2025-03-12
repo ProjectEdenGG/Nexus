@@ -47,7 +47,7 @@ public interface ICustomBlock extends IHarvestable {
 	}
 
 	default float getBlockDamage(Player player, ItemStack tool) {
-		final boolean isUsingCorrectTool = isUsingCorrectTool(tool);
+		final boolean isUsingCorrectTool = isUsingCorrectTool(tool, player);
 		float speedMultiplier = (float) getSpeedMultiplier(tool, isUsingCorrectTool);
 
 		return BlockUtils.getBlockDamage(player, tool, (float) getBlockHardness(), speedMultiplier, isUsingCorrectTool, isUsingCorrectTool);

@@ -34,6 +34,7 @@ import org.bukkit.event.player.PlayerAnimationEvent;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@SuppressWarnings("removal")
 public class CustomBlockSounds implements Listener {
 	private static final Map<Player, BlockAction> playerActionMap = new ConcurrentHashMap<>();
 
@@ -57,16 +58,18 @@ public class CustomBlockSounds implements Listener {
 	public void on(BlockPlaceEvent event) {
 		if (event.isCancelled()) return;
 
-		updateAction(event.getPlayer(), BlockAction.PLACE);
+		Player player = event.getPlayer();
+		updateAction(player, BlockAction.PLACE);
 
 		Block placedBlock = event.getBlock();
 		if (Nullables.isNullOrAir(placedBlock))
 			return;
 
 		if (CustomBlock.from(placedBlock) == null) {
-			CustomBlocksLang.debug("\n&d&lBlockPlaceEvent:");
-			tryPlaySound(event.getPlayer(), SoundAction.PLACE, placedBlock);
-			CustomBlocksLang.debug("&d<- done, end");
+			CustomBlocksLang.debugLine(player);
+			CustomBlocksLang.debug(player, "&d&lBlockPlaceEvent:");
+			tryPlaySound(player, SoundAction.PLACE, placedBlock);
+			CustomBlocksLang.debug(player, "&d<- done, end");
 		}
 	}
 
@@ -91,10 +94,11 @@ public class CustomBlockSounds implements Listener {
 		if (Nullables.isNullOrAir(block))
 			return;
 
-		CustomBlocksLang.debug("\n&d&lEntityDamageEvent:");
+		CustomBlocksLang.debugLine(player);
+		CustomBlocksLang.debug(player, "&d&lEntityDamageEvent:");
 		updateAction(player, BlockAction.FALL);
 		tryPlaySound(player, SoundAction.FALL, block);
-		CustomBlocksLang.debug("&d<- done, end");
+		CustomBlocksLang.debug(player, "&d<- done, end");
 	}
 
 	// Handles Sound: HIT
@@ -109,9 +113,10 @@ public class CustomBlockSounds implements Listener {
 			return;
 
 		if (playerActionMap.get(player) == BlockAction.HIT) {
-			CustomBlocksLang.debug("\n&d&lPlayerAnimationEvent:");
+			CustomBlocksLang.debugLine(player);
+			CustomBlocksLang.debug(player, "&d&lPlayerAnimationEvent:");
 			tryPlaySound(player, SoundAction.HIT, block);
-			CustomBlocksLang.debug("&d<- done, end");
+			CustomBlocksLang.debug(player, "&d<- done, end");
 		}
 	}
 
@@ -121,16 +126,18 @@ public class CustomBlockSounds implements Listener {
 		if (event.isCancelled())
 			return;
 
-		updateAction(event.getPlayer(), BlockAction.BREAK);
+		Player player = event.getPlayer();
+		updateAction(player, BlockAction.BREAK);
 
 		Block brokenBlock = event.getBlock();
 		if (Nullables.isNullOrAir(brokenBlock))
 			return;
 
 		if (CustomBlock.from(brokenBlock) == null) {
-			CustomBlocksLang.debug("\n&d&lBlockBreakEvent:");
-			tryPlaySound(event.getPlayer(), SoundAction.BREAK, brokenBlock);
-			CustomBlocksLang.debug("&d<- done, end");
+			CustomBlocksLang.debugLine(player);
+			CustomBlocksLang.debug(player, "&d&lBlockBreakEvent:");
+			tryPlaySound(player, SoundAction.BREAK, brokenBlock);
+			CustomBlocksLang.debug(player, "&d<- done, end");
 		}
 	}
 
@@ -179,18 +186,18 @@ public class CustomBlockSounds implements Listener {
 
 	public static void tryPlaySound(Player source, SoundAction soundAction, Block block) {
 		Sound defaultSound = NMSUtils.getSound(soundAction, block);
-		CustomBlocksLang.debug("&b- Try play sound: action = " + StringUtils.camelCase(soundAction) + ", block = " + StringUtils.camelCase(block.getType()));
+		CustomBlocksLang.debug(source, "&b- try play sound: action = " + StringUtils.camelCase(soundAction) + ", block = " + StringUtils.camelCase(block.getType()));
 		if (defaultSound == null) {
-			CustomBlocksLang.debug("&c<- couldn't find default sound");
+			CustomBlocksLang.debug(source, "&c<- couldn't find default sound");
 			return;
 		}
 
-		CustomBlocksLang.debug("&e- default sound = " + defaultSound.getKey().getKey());
+		CustomBlocksLang.debug(source, "&e- default sound = " + defaultSound.getKey().getKey());
 
 		CustomBlock customBlock = CustomBlock.from(block);
 		ReplacedSoundType replacedSoundType = ReplacedSoundType.fromSound(defaultSound);
 		if (replacedSoundType == null && customBlock == null) {
-			CustomBlocksLang.debug("&a<- playing default sound");
+			CustomBlocksLang.debug(source, "&a<- playing default sound");
 			return; // already handled by CustomBlockNMSUtils#placeVanillaBlock
 		}
 
@@ -219,7 +226,7 @@ public class CustomBlockSounds implements Listener {
 		if (!(new CooldownService().check(UUIDUtils.UUID0, cooldownType, TickTime.TICK.x(3))))
 			return false;
 
-		CustomBlocksLang.debug("&a<- action = " + StringUtils.camelCase(soundAction) + " | key = " + soundKey);
+		CustomBlocksLang.debug(source, "&a<- action = " + StringUtils.camelCase(soundAction) + " | key = " + soundKey);
 		BlockUtils.playSound(soundBuilder);
 		return true;
 	}

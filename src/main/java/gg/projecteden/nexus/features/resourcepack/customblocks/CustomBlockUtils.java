@@ -118,7 +118,7 @@ public class CustomBlockUtils {
 
 	//
 
-	public static void updateObservers(Block origin) {
+	public static void updateObservers(Block origin, Player debugger) {
 		for (BlockFace face : neighborFaces) {
 			Block neighbor = origin.getRelative(face);
 			if (neighbor.getType().equals(Material.OBSERVER)) {
@@ -126,13 +126,13 @@ public class CustomBlockUtils {
 				if (powerable.isPowered())
 					continue;
 
-				updatePowerable(neighbor);
+				updatePowerable(neighbor, debugger);
 			}
 		}
 	}
 
-	public static void updatePowerable(Block block) {
-		CustomBlocksLang.debug("Updating Powerable: " + block.getType());
+	public static void updatePowerable(Block block, Player debugger) {
+		CustomBlocksLang.debug(debugger, "Updating Powerable: " + block.getType());
 		Powerable powerable = (Powerable) block.getBlockData();
 		boolean isPowered = powerable.isPowered();
 		powerable.setPowered(!isPowered);
@@ -191,7 +191,7 @@ public class CustomBlockUtils {
 
 		if (brokenCustomBlock != null) {
 			if (CustomBlock.TALL_SUPPORT == brokenCustomBlock) {
-				CustomBlocksLang.debug("Broke tall support");
+				CustomBlocksLang.debug(player, "Broke tall support");
 				brokenCustomBlock.breakBlock(player, tool, brokenBlock, false, amount, true, true, applyPhysics);
 
 				Block blockUnder = brokenBlock.getRelative(BlockFace.DOWN);
@@ -199,7 +199,7 @@ public class CustomBlockUtils {
 
 				if (under != null) {
 					fixedTripwire.add(blockUnder.getLocation());
-					CustomBlocksLang.debug("Underneath: " + under.name());
+					CustomBlocksLang.debug(player, "Underneath: " + under.name());
 					under.breakBlock(player, tool, blockUnder, true, amount, false, true, applyPhysics);
 					blockUnder.setType(Material.AIR);
 				}
@@ -209,14 +209,14 @@ public class CustomBlockUtils {
 			}
 
 			if (brokenCustomBlock.get() instanceof IIncremental incremental) {
-				CustomBlocksLang.debug("Broke incremental, setting proper amount");
+				CustomBlocksLang.debug(player, "Broke incremental, setting proper amount");
 				amount = incremental.getIndex() + 1;
 
 			} else if (brokenCustomBlock.get() instanceof ITall) {
-				CustomBlocksLang.debug("Broke isTall");
+				CustomBlocksLang.debug(player, "Broke isTall");
 
 				if (CustomBlock.TALL_SUPPORT == aboveCustomBlock) {
-					CustomBlocksLang.debug("Breaking tall support above");
+					CustomBlocksLang.debug(player, "Breaking tall support above");
 
 					aboveCustomBlock.breakBlock(player, tool, aboveBlock, false, amount, false, true, applyPhysics);
 					aboveBlock.setType(Material.AIR);

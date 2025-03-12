@@ -17,6 +17,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.NoteBlock;
+import org.bukkit.entity.Player;
 
 @Data
 @NoArgsConstructor
@@ -62,7 +63,7 @@ public class NoteBlockData {
 		this.volume = MathUtils.clamp(volume, 0.0, 2.0);
 	}
 
-	public void play(Location location) {
+	public void play(Location location, Player debugger) {
 		this.instrument = NoteBlockInstrument.getInstrument(location.getBlock());
 
 		SoundBuilder noteBlockSound = new SoundBuilder(this.instrument.getSound(location.getBlock()))
@@ -80,7 +81,7 @@ public class NoteBlockData {
 				.spawn();
 		}
 
-		CustomBlocksLang.debug("play: Instrument=" + this.instrument + ", Note=" + this.step + ", Powered=" + this.powered);
+		CustomBlocksLang.debug(debugger, "play: Instrument=" + this.instrument + ", Note=" + this.step + ", Powered=" + this.powered);
 		noteBlockSound.play();
 
 		if (this.interacted)

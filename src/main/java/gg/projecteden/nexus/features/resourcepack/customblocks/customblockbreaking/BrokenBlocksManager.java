@@ -29,7 +29,7 @@ public class BrokenBlocksManager {
 	public void createBrokenBlock(Block block, Player player, ItemStack itemStack) {
 		Location location = block.getLocation();
 		if (isTracking(location)) {
-			CustomBlocksLang.debug("<-- already tracking");
+			CustomBlocksLang.debug(player, "<-- already tracking");
 			return;
 		}
 
@@ -43,11 +43,11 @@ public class BrokenBlocksManager {
 		}
 
 		if (blockHardness == -1 || blockHardness > 50) { // unbreakable
-			CustomBlocksLang.debug("<-- block is unbreakable");
+			CustomBlocksLang.debug(player, "<-- block is unbreakable");
 			return;
 		}
 
-		CustomBlocksLang.debug("now tracking...");
+		CustomBlocksLang.debug(player, "now tracking...");
 		BrokenBlock brokenBlock = new BrokenBlock(block, isCustomBlock, player, itemStack, Bukkit.getCurrentTick());
 		brokenBlocks.put(location, brokenBlock);
 	}
@@ -62,7 +62,7 @@ public class BrokenBlocksManager {
 	}
 
 	public void removeBrokenBlock(Location location) {
-		CustomBlocksLang.debug("Removing block...");
+		//CustomBlocksLang.debug("Removing block...");
 		brokenBlocks.remove(location);
 	}
 

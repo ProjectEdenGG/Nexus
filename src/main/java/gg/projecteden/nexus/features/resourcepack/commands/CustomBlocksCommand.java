@@ -30,6 +30,8 @@ import gg.projecteden.nexus.models.customblock.CustomNoteBlockTracker;
 import gg.projecteden.nexus.models.customblock.CustomNoteBlockTrackerService;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
 import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.Debug;
+import gg.projecteden.nexus.utils.Debug.DebugType;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import org.bukkit.Bukkit;
@@ -99,16 +101,14 @@ public class CustomBlocksCommand extends CustomCommand {
 	@Path("debug [enabled]")
 	@Permission(Group.STAFF)
 	@Description("Toggle debugging custom blocks")
-	void debug(Boolean enabled) {
+	void debug1(Boolean enabled) {
 		if (enabled == null)
-			enabled = !CustomBlocksLang.isDebugging(uuid());
+			enabled = !Debug.isEnabled(player(), DebugType.CUSTOM_BLOCKS);
 
-		if (enabled) {
-			CustomBlocksLang.startDebugging(uuid());
-		} else
-			CustomBlocksLang.stopDebugging(uuid());
-
+		Debug.setEnabled(player(), DebugType.CUSTOM_BLOCKS, enabled);
 		send(PREFIX + "Debug " + (enabled ? "&aEnabled" : "&cDisabled"));
+
+		CustomBlocksLang.debug(player(), "New Debug!");
 	}
 
 	// ADMIN COMMANDS
@@ -240,7 +240,7 @@ public class CustomBlocksCommand extends CustomCommand {
 		String blockType = StringUtils.camelCase(block.getType());
 		float blockHardness = BlockUtils.getBlockHardness(block);
 
-		boolean canHarvest = BlockUtils.canHarvest(block, tool);
+		boolean canHarvest = BlockUtils.canHarvest(block, tool, player());
 
 		Material itemType = tool.getType();
 		float destroySpeedItem = NMSUtils.getDestroySpeed(block, tool);

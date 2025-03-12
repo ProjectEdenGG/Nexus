@@ -522,7 +522,7 @@ public enum CustomBlock implements Keyed {
 				ICustomBlock iCustomBlock = customBlock.get();
 
 				if (CustomBlockUtils.equals(customBlock, noteBlock, false, underneath)) {
-//					debug("CustomBlock: BlockData equals " + customBlock.name());
+//					CustomBlocksLang.debug("CustomBlock: BlockData equals " + customBlock.name());
 					return customBlock;
 				} else if (iCustomBlock instanceof IDirectionalNoteBlock) {
 					directional.add(customBlock);
@@ -532,12 +532,12 @@ public enum CustomBlock implements Keyed {
 			// Directional checks
 			for (CustomBlock _customBlock : directional) {
 				if (CustomBlockUtils.equals(_customBlock, noteBlock, true, underneath)) {
-//					debug("CustomBlock: BlockData equals directional " + _customBlock.name());
+//					CustomBlocksLang.debug("CustomBlock: BlockData equals directional " + _customBlock.name());
 					return _customBlock;
 				}
 			}
 
-			CustomBlocksLang.debug("CustomBlock: Couldn't find NoteBlock: " + noteBlock);
+//			CustomBlocksLang.debug("CustomBlock: Couldn't find NoteBlock: " + noteBlock);
 
 		} else if (blockData instanceof org.bukkit.block.data.type.Tripwire tripwire) {
 			for (CustomBlock customBlock : getBy(CustomBlockType.TRIPWIRE)) {
@@ -553,7 +553,7 @@ public enum CustomBlock implements Keyed {
 				}
 			}
 
-			CustomBlocksLang.debug("CustomBlock: Couldn't find Tripwire: " + CustomBlockUtils.getBlockDataString(tripwire));
+//			CustomBlocksLang.debug("CustomBlock: Couldn't find Tripwire: " + CustomBlockUtils.getBlockDataString(tripwire));
 		}
 
 		return null;
@@ -572,7 +572,7 @@ public enum CustomBlock implements Keyed {
 		switch (this.getType()) {
 			case NOTE_BLOCK -> setup = true;
 			case TRIPWIRE -> {
-				CustomBlocksLang.debug("&e- tripwire handling...");
+				CustomBlocksLang.debug(player, "&e- tripwire handling...");
 				// TODO: Disable tripwire customblocks
 				if (ICustomTripwire.isNotEnabled())
 					return false;
@@ -603,14 +603,14 @@ public enum CustomBlock implements Keyed {
 
 		if (setup) {
 			BlockData blockData = customBlock.getBlockData(facingFinal, placeAgainst);
-			CustomBlocksLang.debug("&e- placing: " + StringUtils.camelCase(this));
+			CustomBlocksLang.debug(player, "&e- placing: " + StringUtils.camelCase(this));
 
 			if (BlockUtils.tryPlaceEvent(player, block, placeAgainst, blockMaterial, blockData, false, item)) {
 				player.swingMainHand();
 				playSound(player, SoundAction.PLACE, block.getLocation());
 				ItemUtils.subtract(player, itemInHand);
 
-				CustomBlockUtils.updateObservers(block);
+				CustomBlockUtils.updateObservers(block, player);
 				if (this == NOTE_BLOCK)
 					CustomBlockUtils.placeNoteBlockInDatabase(block.getLocation(), blockData);
 
@@ -628,9 +628,8 @@ public enum CustomBlock implements Keyed {
 	}
 
 	private void tallSupport(Player player, Block block, BlockFace facingFinal) {
-		CustomBlocksLang.debug("&e - placing tall support");
-		CustomBlock _tallSupport = CustomBlock.TALL_SUPPORT;
-		ICustomBlock tallSupport = _tallSupport.get();
+		CustomBlocksLang.debug(player, "&e - placing tall support");
+		ICustomBlock tallSupport = CustomBlock.TALL_SUPPORT.get();
 		Material _blockMaterial = tallSupport.getVanillaBlockMaterial();
 		ItemStack _item = new ItemStack(tallSupport.getVanillaItemMaterial());
 
@@ -638,15 +637,13 @@ public enum CustomBlock implements Keyed {
 		BlockData _blockData = tallSupport.getBlockData(facingFinal, block);
 
 		if (BlockUtils.tryPlaceEvent(player, _block, block, _blockMaterial, _blockData, false, _item)) {
-			CustomBlockUtils.updateObservers(_block);
-//			CustomBlockUtils.placeBlockDatabase(player.getUniqueId(), _tallSupport, _block.getLocation(), facingFinal);
+			CustomBlockUtils.updateObservers(_block, player);
 		}
 	}
 
 	private final List<BlockFace> directions = List.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
 	private void checkNeighbors(Player player, Block block, BlockData blockData) {
-		CustomBlock _tripwireCross = CustomBlock.TRIPWIRE_CROSS;
-		ICustomBlock tripwireCross = _tripwireCross.get();
+		ICustomBlock tripwireCross = CustomBlock.TRIPWIRE_CROSS.get();
 		Material _blockMaterial = tripwireCross.getVanillaBlockMaterial();
 		ItemStack _item = new ItemStack(tripwireCross.getVanillaItemMaterial());
 
@@ -660,8 +657,7 @@ public enum CustomBlock implements Keyed {
 			BlockData _blockData = tripwireCross.getBlockData(BlockFace.UP, _under);
 
 			if (BlockUtils.tryPlaceEvent(player, _block, _under, _blockMaterial, _blockData, false, _item)) {
-				CustomBlockUtils.updateObservers(_block);
-//				CustomBlockUtils.placeBlockDatabase(player.getUniqueId(), _tripwireCross, _block.getLocation(), BlockFace.UP);
+				CustomBlockUtils.updateObservers(_block, player);
 			}
 		}
 
@@ -711,45 +707,39 @@ public enum CustomBlock implements Keyed {
 		BlockFace facing = CustomBlockUtils.getFacing(this, block.getBlockData(), underneath);
 		BlockData newBlockData = newCustomBlock.customBlock.getBlockData(facing, underneath);
 
-		Location location = block.getLocation();
-		UUID uuid = player.getUniqueId();
-
-//		CustomBlockUtils.breakBlockDatabase(location);
-
 		block.setType(newCustomBlock.get().getVanillaBlockMaterial(), false);
 		block.setBlockData(newBlockData, false);
 		playSound(player, SoundAction.PLACE, block.getLocation());
 
-//		CustomBlockUtils.placeBlockDatabase(uuid, newCustomBlock, location, facing);
-		CustomBlockUtils.updateObservers(block);
+		CustomBlockUtils.updateObservers(block, player);
 
 		CustomBlockUtils.logPlacement(player, block, newCustomBlock);
 	}
 
 	public void breakBlock(@Nullable Player source, @Nullable ItemStack tool, Block block, boolean dropItem, int amount, boolean playSound, boolean spawnParticle, boolean applyPhysics) {
 		boolean dropIngredients = false;
-		CustomBlocksLang.debug("break block");
+		CustomBlocksLang.debug(source, "break block");
 
 		Location location = block.getLocation();
 		if (source != null)
 			CustomBlockUtils.logRemoval(source, location, block, this);
 
 		if (tool != null && this != TALL_SUPPORT) {
-			CustomBlocksLang.debug("tool != null");
+			CustomBlocksLang.debug(source, "tool != null");
 			ICustomBlock iCustomBlock = get();
-			if (!iCustomBlock.canHarvestWith(tool)) {
+			if (!iCustomBlock.canHarvestWith(tool, source)) {
 				dropItem = false;
-				CustomBlocksLang.debug("dropItem = " + dropItem);
+				CustomBlocksLang.debug(source, "dropItem = " + dropItem);
 
 				boolean requiresSilkTouch = iCustomBlock.requiresSilkTouchForDrops();
-				CustomBlocksLang.debug("requiresSilkTouch = " + requiresSilkTouch);
+				CustomBlocksLang.debug(source, "requiresSilkTouch = " + requiresSilkTouch);
 				List<ItemStack> nonSilkTouchDrops = iCustomBlock.getNonSilkTouchDrops();
 				if (requiresSilkTouch && !Nullables.isNullOrEmpty(nonSilkTouchDrops)) {
 					dropIngredients = true;
-					CustomBlocksLang.debug("dropIngredients = " + dropIngredients);
+					CustomBlocksLang.debug(source, "dropIngredients = " + dropIngredients);
 				} else {
 					if (requiresSilkTouch)
-						CustomBlocksLang.debug("nonSilkTouchDrops is null/empty");
+						CustomBlocksLang.debug(source, "nonSilkTouchDrops is null/empty");
 				}
 			}
 		}
@@ -769,29 +759,29 @@ public enum CustomBlock implements Keyed {
 			CustomBlock belowCustomBlock = CustomBlock.from(block.getRelative(BlockFace.DOWN));
 			if (belowCustomBlock == null) return;
 
-			CustomBlocksLang.debug(" breaking tall support w/ particle: " + belowCustomBlock.get().getItemName());
+			CustomBlocksLang.debug(source, " breaking tall support w/ particle: " + belowCustomBlock.get().getItemName());
 			belowCustomBlock.breakBlock(source, tool, block, false, amount, playSound, spawnParticle, applyPhysics);
 			return;
 		}
 
 		if (spawnParticle && this.get() instanceof ICustomTripwire) {
-			CustomBlocksLang.debug(" spawning particle");
+			CustomBlocksLang.debug(source, " spawning particle");
 			spawnParticle(source, location);
 		}
 
 		if (playSound) {
-			CustomBlocksLang.debug(" playing sound");
+			CustomBlocksLang.debug(source, " playing sound");
 			playSound(source, SoundAction.BREAK, location);
 		}
 
 		if (dropItem) {
-			CustomBlocksLang.debug(" dropping item");
+			CustomBlocksLang.debug(source, " dropping item");
 			dropItem(amount, location);
 		}
 
 		if (dropIngredients) {
-			CustomBlocksLang.debug(" dropping silk items");
-			dropSilkItems(location);
+			CustomBlocksLang.debug(source, " dropping silk items");
+			dropSilkItems(location, source);
 		}
 
 	}
@@ -897,8 +887,8 @@ public enum CustomBlock implements Keyed {
 		dropItem(item, location);
 	}
 
-	private void dropSilkItems(Location location) {
-		CustomBlocksLang.debug("dropping ingredients");
+	private void dropSilkItems(Location location, Player debugger) {
+		CustomBlocksLang.debug(debugger, "dropping ingredients");
 		for (ItemStack item : this.get().getNonSilkTouchDrops()) {
 			dropItem(item, location);
 		}
