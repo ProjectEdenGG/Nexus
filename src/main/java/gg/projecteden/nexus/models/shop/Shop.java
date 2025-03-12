@@ -579,7 +579,9 @@ public class Shop implements PlayerOwnedObject {
 
 		public SellExchange(@NonNull Product product) {
 			this.product = product;
-			this.price = (double) product.getPrice();
+			if (!(product.getPrice() instanceof Number number))
+				throw new InvalidInputException("Product price should be number but is " + product.getPrice().getClass().getSimpleName());
+			this.price = number.doubleValue();
 		}
 
 		@Override
@@ -753,7 +755,9 @@ public class Shop implements PlayerOwnedObject {
 
 		public BuyExchange(@NonNull Product product) {
 			this.product = product;
-			this.price = (Double) product.getPrice();
+			if (!(product.getPrice() instanceof Number number))
+				throw new InvalidInputException("Product price should be number but is " + product.getPrice().getClass().getSimpleName());
+			this.price = number.doubleValue();
 		}
 
 		@Override
