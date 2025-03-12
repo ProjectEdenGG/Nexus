@@ -434,8 +434,8 @@ public class Shop implements PlayerOwnedObject {
 		}
 
 		public @Nullable Double getPricePerItem() {
-			if (!(price instanceof Number)) return null;
-			return (Double) price / item.getAmount();
+			if (!(price instanceof Number number)) return null;
+			return number.doubleValue() / item.getAmount();
 		}
 
 		@Override
