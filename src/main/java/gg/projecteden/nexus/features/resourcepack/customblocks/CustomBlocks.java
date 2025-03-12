@@ -37,18 +37,13 @@ import java.util.Map;
 		- remove "TODO CUSTOM BLOCKS: REMOVE"
 		- Release NoteBlock Custom Blocks
 		-
-		- Bugs:
-			- Moving custom blocks with piston is duplicating them sometimes --> disabled piston movement until fixed
-		-
 		- Cannot Fix:
 			- Custom blocks may flash (canceled update of instrument changing) when placing blocks near them (clientside only) --> Titan
-			- Players arm will swing on interact w/ custom blocks (clientside only?) --> Titan
+			- Players arm will swing on interact w/ custom blocks (clientside only) --> Cannot be fixed with Titan
  */
 
 /*
 	TODO POST RELEASE:
-		- Fix piston movements
-		- Maybe add more advanced worldedit handling, such as setting directionals, and other "block states"
 		- Tripwire implementation:
 			- Tripwire blocks are being replaced to cross, if you're standing inside of them when you break them
 			- tripwire cross is spawnable, and also spawns paper ?
@@ -59,6 +54,7 @@ import java.util.Map;
 				- Add lotus lilly flower & how to obtain
 				- flower + fungus cover -> how to obtain --> maybe make bonemeal spawn it?
 				- Make fungus cover 3d?
+		- Maybe add more advanced worldedit handling, such as setting directionals, and other "block states"
  */
 
 @Environments(Env.TEST)
