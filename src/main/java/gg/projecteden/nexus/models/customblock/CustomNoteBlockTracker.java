@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -25,16 +26,17 @@ import java.util.Set;
 import java.util.UUID;
 
 @Data
-@Entity(value = "custom_block_entry", noClassnameStored = true)
+@Entity(value = "custom_note_block_entry", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class, LocationConverter.class})
-public class CustomBlockTracker implements PlayerOwnedObject {
+@Getter
+public class CustomNoteBlockTracker implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Map<Integer, Map<Integer, Map<Integer, CustomBlockData>>> customBlockMap = new LinkedHashMap<>();
+	private Map<Integer, Map<Integer, Map<Integer, NoteBlockData>>> noteBlockMap = new LinkedHashMap<>();
 	private Set<Long> convertedChunkKeys = new HashSet<>();
 
 	private void validate(@NonNull Location location) {
@@ -42,39 +44,39 @@ public class CustomBlockTracker implements PlayerOwnedObject {
 			throw new InvalidInputException("Using wrong world");
 	}
 
-	public void put(@NonNull Location location, @NonNull CustomBlockData data) {
+	public void put(@NonNull Location location, @NonNull NoteBlockData data) {
 		validate(location);
 
-		customBlockMap
+		noteBlockMap
 			.computeIfAbsent(location.getBlockX(), $ -> new LinkedHashMap<>())
 			.computeIfAbsent(location.getBlockZ(), $ -> new LinkedHashMap<>())
 			.put(location.getBlockY(), data);
 	}
 
-	public @NonNull CustomBlockData get(@NonNull Location location) {
+	public @Nullable NoteBlockData get(@NonNull Location location) {
 		validate(location);
 
-		return customBlockMap
+		return noteBlockMap
 			.computeIfAbsent(location.getBlockX(), $ -> new LinkedHashMap<>())
 			.computeIfAbsent(location.getBlockZ(), $ -> new LinkedHashMap<>())
-			.getOrDefault(location.getBlockY(), new CustomBlockData());
+			.getOrDefault(location.getBlockY(), null);
 	}
 
 	public void remove(@NonNull Location location) {
-		customBlockMap
+		noteBlockMap
 			.computeIfAbsent(location.getBlockX(), $ -> new LinkedHashMap<>())
 			.computeIfAbsent(location.getBlockZ(), $ -> new LinkedHashMap<>())
 			.remove(location.getBlockY());
 	}
 
-	public Map<Location, CustomBlockData> getLocationMap() {
-		Map<Location, CustomBlockData> resultMap = new HashMap<>();
+	public Map<Location, NoteBlockData> getLocationMap() {
+		Map<Location, NoteBlockData> resultMap = new HashMap<>();
 		World world = getWorld();
-		Map<Integer, Map<Integer, Map<Integer, CustomBlockData>>> locationMap = this.getCustomBlockMap();
+		Map<Integer, Map<Integer, Map<Integer, NoteBlockData>>> locationMap = this.getNoteBlockMap();
 		for (Integer x : locationMap.keySet()) {
 			for (Integer z : locationMap.get(x).keySet()) {
 				for (Integer y : locationMap.get(x).get(z).keySet()) {
-					CustomBlockData data = locationMap.get(x).get(z).getOrDefault(y, null);
+					NoteBlockData data = locationMap.get(x).get(z).getOrDefault(y, null);
 					if (data != null) {
 						Location location = new Location(world, x, y, z).toBlockLocation();
 						resultMap.put(location, data);

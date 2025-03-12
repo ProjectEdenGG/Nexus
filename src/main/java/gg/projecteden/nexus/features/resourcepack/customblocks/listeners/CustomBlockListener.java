@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.listeners;
 
-import com.mojang.datafixers.util.Pair;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockNMSUtils;
@@ -22,8 +21,6 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.i
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.tall.ITall;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
-import gg.projecteden.nexus.models.customblock.CustomBlockData;
-import gg.projecteden.nexus.models.customblock.CustomNoteBlockData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
@@ -43,6 +40,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.ItemEntity;
 import org.bukkit.ExplosionResult;
+import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -130,6 +128,11 @@ public class CustomBlockListener implements Listener {
 			return;
 		}
 
+		if (CustomBlock.from(event.getLocation().getBlock()) != CustomBlock.NOTE_BLOCK) {
+			event.setCancelled(true);
+			return;
+		}
+
 		Location location = event.getLocation();
 		if (location == null)
 			return;
@@ -137,54 +140,19 @@ public class CustomBlockListener implements Listener {
 		if (!(event.getBlock() instanceof NoteBlock noteBlock))
 			return;
 
+		if (noteBlock.getInstrument() != Instrument.PIANO)
+			return;
+
+		CustomBlocksLang.debug("CustomBlockUpdateEvent: Instrument=" + noteBlock.getInstrument() + ", Note=" + noteBlock.getNote().getId() + ", Powered=" + noteBlock.isPowered());
+
 		boolean isPowered = noteBlock.isPowered();
 		ServerLevel serverLevel = NMSUtils.toNMS(location.getWorld());
 		BlockPos blockPos = NMSUtils.toNMS(location);
 		boolean hasNeighborSignal = serverLevel.hasNeighborSignal(blockPos);
 		if (!isPowered && hasNeighborSignal) {
+			CustomBlocksLang.debug("Playing NoteBlock: Instrument=" + noteBlock.getInstrument() + ", Note=" + noteBlock.getNote().getId() + ", Powered=" + noteBlock.isPowered());
 			NoteBlockUtils.play(noteBlock, location, true);
 		}
-	}
-
-	private boolean updateDatabase(Location location) {
-		CustomBlocksLang.debug("updating database at location");
-		CustomBlock worldBlock = CustomBlock.from(location.getBlock());
-		CustomBlockData databaseBlock = CustomBlockUtils.getData(location);
-
-		if (worldBlock == null) {
-			CustomBlocksLang.debug("- data does not exist in world");
-			boolean delete = false;
-			if (databaseBlock.exists()) {
-				CustomBlocksLang.debug("-- data exists at this location but is not in world, deleting");
-				delete = true;
-			}
-
-			if (delete) {
-				CustomBlocksLang.debug("--- removing from database");
-				CustomBlockUtils.breakBlockDatabase(location);
-				return true;
-			}
-			return false;
-		}
-
-		CustomBlocksLang.debug("- data exists in world");
-		boolean fix = false;
-		if (!databaseBlock.exists()) {
-			CustomBlocksLang.debug("-- data doesn't exist at this location, creating");
-			fix = true;
-		} else if (!databaseBlock.getCustomBlock().get().equals(worldBlock.get())) {
-			CustomBlocksLang.debug("-- incorrect data exists at this location, fixing");
-			fix = true;
-		}
-
-		if (fix) {
-			CustomBlocksLang.debug("--- adding to database");
-			CustomBlockUtils.createData(location, worldBlock.get().getCustomBlock(), BlockFace.UP);
-			return true;
-		}
-
-		CustomBlocksLang.debug("- no changes");
-		return false;
 	}
 
 	@EventHandler
@@ -209,21 +177,6 @@ public class CustomBlockListener implements Listener {
 
 		// fix clientside tripwire changes
 		CustomBlockUtils.fixTripwireNearby(event.getPlayer(), block, new HashSet<>(List.of(block.getLocation())));
-
-		// fix instrument changing
-
-		Block above = block.getRelative(BlockFace.UP);
-
-		CustomBlock customBlock = CustomBlock.from(above);
-		if (CustomBlock.NOTE_BLOCK == customBlock) {
-			NoteBlock noteBlock = (NoteBlock) above.getBlockData();
-			CustomBlockData data = CustomBlockUtils.getDataOrCreate(above.getLocation(), noteBlock);
-			if (data == null)
-				return;
-
-			CustomNoteBlockData customNoteBlockData = (CustomNoteBlockData) data.getExtraData();
-			customNoteBlockData.getNoteBlockData(above, true);
-		}
 	}
 
 	@EventHandler
@@ -247,7 +200,43 @@ public class CustomBlockListener implements Listener {
 		if (brokenCustomBlock != null)
 			event.setDropItems(false);
 
-		CustomBlockUtils.breakBlock(brokenBlock, brokenCustomBlock, player, tool);
+		CustomBlockUtils.breakBlock(brokenBlock, brokenCustomBlock, player, tool, true);
+	}
+
+	private void updateDatabase(Location location) {
+		if (!_updateDatabase(location))
+			CustomBlocksLang.debug("- no changes");
+	}
+
+	private boolean _updateDatabase(Location location) {
+		CustomBlocksLang.debug("updating database at location");
+		CustomBlock noteBlockWorld = CustomBlock.from(location.getBlock());
+
+		if (noteBlockWorld == null) {
+			CustomBlocksLang.debug("- data does not exist in world, delete from database");
+			CustomBlockUtils.breakNoteBlockInDatabase(location);
+			return true;
+		}
+
+		if (noteBlockWorld == CustomBlock.NOTE_BLOCK) {
+			BlockData blockData = noteBlockWorld.get().getBlockData(BlockFace.UP, location.getBlock().getRelative(BlockFace.DOWN));
+			CustomBlocksLang.debug("- data exists in world");
+
+			NoteBlockData data = CustomBlockUtils.getNoteBlockData(location);
+			if (data == null) {
+				CustomBlocksLang.debug("-- no data exists at this location, fixing");
+				CustomBlockUtils.placeNoteBlockInDatabase(location, blockData);
+				return true;
+			}
+
+			if (!CustomBlock.NOTE_BLOCK.equals(noteBlockWorld)) {
+				CustomBlocksLang.debug("-- incorrect data exists at this location, fixing");
+				CustomBlockUtils.placeNoteBlockInDatabase(location, blockData);
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -286,12 +275,6 @@ public class CustomBlockListener implements Listener {
 		}
 
 		// Place
-//		if (isSpawningEntity(event, clickedBlock, clickedCustomBlock)) {
-//			CustomBlockSounds.updateAction(player, BlockAction.UNKNOWN);
-//			CustomBlocksLang.debug("&d<- done, spawned entity: cancel=" + event.isCancelled());
-//			return;
-//		}
-
 		if (isIncrementingBlock(event, clickedBlock, clickedCustomBlock)) {
 			CustomBlockSounds.updateAction(player, BlockAction.PLACE);
 			CustomBlocksLang.debug("&d<- done, incremented block");
@@ -342,7 +325,7 @@ public class CustomBlockListener implements Listener {
 		if (event.isCancelled())
 			return;
 
-		if (!onPistonEvent(event.getBlock(), event.getBlocks(), event.getDirection()))
+		if (!onPistonEvent(event.getBlocks()))
 			event.setCancelled(true);
 	}
 
@@ -351,14 +334,13 @@ public class CustomBlockListener implements Listener {
 		if (event.isCancelled())
 			return;
 
-		if (!onPistonEvent(event.getBlock(), event.getBlocks(), event.getDirection()))
+		if (!onPistonEvent(event.getBlocks()))
 			event.setCancelled(true);
 	}
 
-	private boolean onPistonEvent(Block piston, List<Block> blocks, BlockFace direction) {
+	private boolean onPistonEvent(List<Block> blocks) {
 		CustomBlocksLang.debug("PistonEvent");
 		blocks = blocks.stream().filter(block -> CustomBlock.from(block) != null).collect(Collectors.toList());
-		Map<CustomBlockData, Pair<Location, Location>> moveBlocks = new HashMap<>();
 
 		// initial checks
 		for (Block block : blocks) {
@@ -367,37 +349,26 @@ public class CustomBlockListener implements Listener {
 				continue;
 			//
 
-			CustomBlockData data = CustomBlockUtils.getDataOrCreate(block.getLocation().toBlockLocation(), block.getBlockData());
-			if (data == null)
+			CustomBlock customBlock = CustomBlock.from(block);
+			if (customBlock == null)
 				continue;
 
-			CustomBlock _customBlock = data.getCustomBlock();
-			if (_customBlock == null)
-				continue;
-
-			ICustomBlock customBlock = _customBlock.get();
-			PistonPushAction pistonAction = customBlock.getPistonPushedAction();
-			if (!pistonAction.equals(PistonPushAction.MOVE)) {
-				switch (pistonAction) {
-					case PREVENT -> {
-						CustomBlocksLang.debug("PistonEvent: " + _customBlock.name() + " cannot be moved by pistons");
-						return false;
-					}
-					case BREAK -> {
-						CustomBlocksLang.debug("PistonEvent: " + _customBlock.name() + " broke because of a piston");
-						CustomBlockUtils.breakBlock(block, _customBlock, null, null);
-						continue;
-					}
+			ICustomBlock iCustomBlock = customBlock.get();
+			CustomBlocksLang.debug("CustomBlock: " + iCustomBlock.getItemName());
+			PistonPushAction pistonAction = iCustomBlock.getPistonPushedAction();
+			CustomBlocksLang.debug("PistonPushAction: " + pistonAction);
+			switch (pistonAction) {
+				case PREVENT -> {
+					CustomBlocksLang.debug("PistonEvent: " + customBlock.name() + " cannot be moved by pistons");
+					return false;
+				}
+				case BREAK -> {
+					CustomBlocksLang.debug("PistonEvent: " + customBlock.name() + " broke because of a piston");
+					CustomBlockUtils.breakBlock(block, customBlock, null, null, true);
+					continue;
 				}
 			}
-
-			Location curLoc = block.getLocation().toBlockLocation();
-			Location newLoc = block.getRelative(direction).getLocation().toBlockLocation();
-			moveBlocks.put(data, new Pair<>(curLoc, newLoc));
 		}
-
-		// Move blocks
-		CustomBlockUtils.pistonMove(piston, moveBlocks);
 
 		return true;
 	}
@@ -453,7 +424,7 @@ public class CustomBlockListener implements Listener {
 
 		// Update database
 		List<Location> explodedLocations = explodedBlocks.stream().map(explodedCustomBlock -> explodedCustomBlock.getBlock().getLocation()).toList();
-		CustomBlockUtils.breakBlocksDatabase(explodedLocations);
+//		CustomBlockUtils.breakBlocksDatabase(explodedLocations);
 
 		// Get drops
 		Map<Block, net.minecraft.world.item.ItemStack> droppedItems = new HashMap<>();
@@ -733,120 +704,10 @@ public class CustomBlockListener implements Listener {
 	}
 
 	private void changePitch(Player player, NoteBlock noteBlock, Location location, boolean sneaking) {
-		CustomBlockData data = CustomBlockUtils.getDataOrCreate(location, noteBlock);
-		if (data == null)
-			return;
+		NoteBlockData data = CustomBlockUtils.getNoteBlockData(location);
 
-		Block block = location.getBlock();
-
-		CustomNoteBlockData customNoteBlockData = (CustomNoteBlockData) data.getExtraData();
-		NoteBlockData noteBlockData = customNoteBlockData.getNoteBlockData(block, true);
-		if (noteBlockData == null)
-			return;
-
-		NoteBlockChangePitchEvent event = new NoteBlockChangePitchEvent(player, block);
+		NoteBlockChangePitchEvent event = new NoteBlockChangePitchEvent(player, location.getBlock());
 		if (event.callEvent())
-			NoteBlockUtils.changePitch(player, sneaking, location, noteBlockData);
+			NoteBlockUtils.changePitch(player, sneaking, location, data);
 	}
-
-
-
-	// TODO
-//	public void updateConnectedTripwire(Player player, CustomBlock customBlock, Location origin){
-//		if (customBlock != CustomBlock.TRIPWIRE && customBlock != CustomBlock.TRIPWIRE_CROSS)
-//			return;
-//
-//		Block originBlock = origin.getBlock();
-//		BlockFace facing = CustomBlockUtils.getFacing(customBlock, originBlock.getBlockData(), originBlock.getRelative(BlockFace.DOWN));
-//
-//		Set<BlockFace> faces = Set.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
-//		Set<Location> updated = new HashSet<>();
-//		Set<Location> hooks = new HashSet<>();
-//
-//		// update tripwire
-//		for (BlockFace face : faces) {
-//			Block neighbor = originBlock.getRelative(face);
-//			Location neighborLoc = neighbor.getLocation();
-//
-//			if(updated.contains(neighborLoc))
-//				continue;
-//
-//			CustomBlock _customBlock = CustomBlock.fromBlock(neighbor);
-//			if(_customBlock == null) {
-//				if (neighbor.getType() == Material.TRIPWIRE_HOOK) {
-//					hooks.add(neighborLoc);
-//				}
-//				continue;
-//			}
-//
-//			BlockFace _facing = CustomBlockUtils.getFacing(_customBlock, neighbor.getBlockData(), neighbor.getRelative(BlockFace.DOWN));
-//
-//			if(_customBlock == CustomBlock.TRIPWIRE) {
-//				if (_facing != facing) {
-//					updated.add(neighborLoc);
-//					customBlock.updateBlock(player, CustomBlock.TRIPWIRE_CROSS, originBlock);
-//				}
-//			} else if(_customBlock == CustomBlock.TRIPWIRE_CROSS) {
-//				Map<Location, BlockFace> neighbors = new HashMap<>();
-//				for (BlockFace _face : faces) {
-//					Block crossNeighbor = neighbor.getRelative(_face);
-//					CustomBlock neighborCustomBlock = CustomBlock.fromBlock(crossNeighbor);
-//					if(neighborCustomBlock == null)
-//						continue;
-//
-//					if(neighborCustomBlock == CustomBlock.TRIPWIRE || neighborCustomBlock == CustomBlock.TRIPWIRE_CROSS){
-//						BlockFace __facing = CustomBlockUtils.getFacing(_customBlock, neighbor.getBlockData(), neighbor.getRelative(BlockFace.DOWN));
-//						neighbors.put(crossNeighbor.getLocation(), __facing);
-//					}
-//				}
-//
-//				if(neighbors.isEmpty()){
-//					updated.add(neighborLoc);
-//					customBlock.updateBlock(player, CustomBlock.TRIPWIRE, originBlock);
-//				} else {
-//					Set<BlockFace> directions = new HashSet<>(neighbors.values());
-//					if(directions.size() == 1){
-//						BlockFace neighborFace = directions.stream().toList().get(0);
-//						if(neighborFace == facing)
-//							//
-//					}
-//				}
-//			}
-//		}
-//
-//		// update hooks
-//	}
-//
-//	public void updateConnectedTripwire1(Location origin){
-//
-//		Set<Location> tripwire = updateConnectedTripwire(new HashSet<>(), origin, new HashSet<>());
-//		// TODO: using tripwire, properly setup the hooks
-//	}
-//
-//	public Set<Location> updateConnectedTripwire(Set<Location> visited, Location current, Set<Location> tripwire){
-//		for (BlockFace face : CustomBlockUtils.getNeighborFaces()) {
-//			if(face == BlockFace.UP || face == BlockFace.DOWN)
-//				continue;
-//
-//			Block neighbor = current.getBlock().getRelative(face);
-//			Location location = neighbor.getLocation();
-//
-//			if (visited.contains(location))
-//				continue;
-//
-//			visited.add(location);
-//
-//			if (Nullables.isNullOrAir(neighbor))
-//				continue;
-//
-//			CustomBlock customBlock = CustomBlock.fromBlock(neighbor);
-//			if (customBlock != CustomBlock.TRIPWIRE && customBlock != CustomBlock.TRIPWIRE_CROSS)
-//				continue;
-//
-//			tripwire.add(location);
-//
-//		}
-//
-//		return visited;
-//	}
 }

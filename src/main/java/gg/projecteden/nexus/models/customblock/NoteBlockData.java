@@ -2,14 +2,20 @@ package gg.projecteden.nexus.models.customblock;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.api.common.utils.MathUtils;
+import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksLang;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.NoteBlockInstrument;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.NoteBlock;
 
 @Data
@@ -75,11 +81,24 @@ public class NoteBlockData {
 				.spawn();
 		}
 
+		CustomBlocksLang.debug("play: Instrument=" + this.instrument + ", Note=" + this.step + ", Powered=" + this.powered);
 		noteBlockSound.play();
 
-		if (this.isInteracted())
-			this.setPowered(false);
+		if (this.interacted)
+			this.powered = false;
 
-		this.setInteracted(false);
+		this.interacted = false;
+	}
+
+	public @NonNull BlockData getBlockData(Location location) {
+		return CustomBlock.NOTE_BLOCK.get().getBlockData(BlockFace.UP, location.getBlock().getRelative(BlockFace.DOWN));
+	}
+
+	public String getInstrumentName() {
+		if (this.instrument == NoteBlockInstrument.CUSTOM_MOB_HEAD) {
+			return "Mob Head"; // TODO: Display actual mob head name?
+		}
+
+		return StringUtils.camelCase(this.instrument);
 	}
 }

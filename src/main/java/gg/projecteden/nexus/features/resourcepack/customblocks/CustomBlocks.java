@@ -8,9 +8,9 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBloc
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock.CustomBlockType;
 import gg.projecteden.nexus.features.resourcepack.customblocks.worldedit.WrappedWorldEdit;
 import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.models.customblock.CustomBlockData;
-import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
-import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
+import gg.projecteden.nexus.models.customblock.CustomNoteBlockTracker;
+import gg.projecteden.nexus.models.customblock.CustomNoteBlockTrackerService;
+import gg.projecteden.nexus.models.customblock.NoteBlockData;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -73,24 +73,19 @@ public class CustomBlocks extends Feature {
 		WrappedWorldEdit.registerParser();
 	}
 
-	@Override
-	public void onStop() {
-		WrappedWorldEdit.unregister();
-	}
-
 	private static void startJanitor() {
 		Tasks.repeat(0, TickTime.MINUTE.x(3), CustomBlocks::janitor);
 	}
 
 	public static void janitor() {
 		CustomBlocksLang.debug("&3CustomBlock Janitor:");
-		CustomBlockTrackerService trackerService = new CustomBlockTrackerService();
-		for (CustomBlockTracker tracker : new ArrayList<>(trackerService.getAll())) {
+		CustomNoteBlockTrackerService trackerService = new CustomNoteBlockTrackerService();
+		for (CustomNoteBlockTracker tracker : new ArrayList<>(trackerService.getAll())) {
 			World world = tracker.getWorld();
 			if (world == null || world.getLoadedChunks().length == 0)
 				continue;
 
-			Map<Location, CustomBlockData> locationMap = tracker.getLocationMap();
+			Map<Location, NoteBlockData> locationMap = tracker.getLocationMap();
 			Map<Location, String> forRemoval = new HashMap<>();
 
 			for (Location location : locationMap.keySet()) {
@@ -108,16 +103,21 @@ public class CustomBlocks extends Feature {
 					continue;
 				}
 
-				CustomBlockData data = locationMap.get(location);
-
 				CustomBlock customBlock = CustomBlock.from(location.getBlock());
 				if (customBlock == null) {
 					forRemoval.put(location, "current block is not CustomBlock");
 					continue;
 				}
 
-				if (data.getCustomBlock() != customBlock)
+				if (customBlock != CustomBlock.NOTE_BLOCK) {
+					forRemoval.put(location, "current block is not NoteBlock");
+					continue;
+				}
+
+				if (CustomBlock.from(location.getBlock()) != customBlock) {
 					forRemoval.put(location, "dbCustomBlock != blockCustomBlock");
+					continue;
+				}
 			}
 
 			if (forRemoval.isEmpty()) {

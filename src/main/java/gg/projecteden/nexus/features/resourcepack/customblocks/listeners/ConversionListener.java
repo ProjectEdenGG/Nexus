@@ -8,9 +8,8 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksLang;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock.CustomBlockType;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.ICustomTripwire;
-import gg.projecteden.nexus.models.customblock.CustomBlockData;
-import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
-import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
+import gg.projecteden.nexus.models.customblock.CustomNoteBlockTracker;
+import gg.projecteden.nexus.models.customblock.CustomNoteBlockTrackerService;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -22,19 +21,18 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.MultipleFacing;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkPopulateEvent;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Environments(Env.TEST)
 public class ConversionListener implements Listener {
-	private static final CustomBlockTrackerService trackerService = new CustomBlockTrackerService();
+	private static final CustomNoteBlockTrackerService trackerService = new CustomNoteBlockTrackerService();
 
 	public ConversionListener() {
 		Nexus.registerListener(this);
@@ -56,7 +54,7 @@ public class ConversionListener implements Listener {
 
 	public static void convertCustomBlocks(Chunk chunk, boolean override) {
 		long key = chunk.getChunkKey();
-		CustomBlockTracker tracker = trackerService.fromWorld(chunk.getWorld());
+		CustomNoteBlockTracker tracker = trackerService.fromWorld(chunk.getWorld());
 		if (!override && tracker.getConvertedChunkKeys().contains(key))
 			return;
 
@@ -73,9 +71,9 @@ public class ConversionListener implements Listener {
 		for (Location location : customBlockList) {
 			Block block = location.getBlock();
 
-			CustomBlockData data = CustomBlockUtils.getData(location);
-			if (data.exists())
-				return;
+			CustomBlock customBlock = CustomBlock.from(block);
+			if (customBlock == null)
+				continue;
 
 			Material material = block.getType();
 			final Block below = block.getRelative(BlockFace.DOWN);
@@ -85,13 +83,13 @@ public class ConversionListener implements Listener {
 					// Assume Staff and Minigames worlds are real custom blocks
 					if (WorldGroup.MINIGAMES.contains(location) || WorldGroup.STAFF.contains(location)) {
 						CustomBlocksLang.debug("Converting block to custom block");
-						CustomBlockUtils.createData(location, data.getCustomBlock(), BlockFace.UP);
-						block.setBlockData(data.getCustomBlock().get().getBlockData(BlockFace.UP, below), false);
-						logMessage = "Creating CustomBlock " + StringUtils.camelCase(data.getCustomBlock()) + " " + StringUtils.getShortLocationString(location);
+						block.setBlockData(customBlock.get().getBlockData(BlockFace.UP, below), false);
+						logMessage = "Creating CustomBlock " + StringUtils.camelCase(customBlock) + " " + StringUtils.getShortLocationString(location);
 					} else {
 						CustomBlocksLang.debug("Converting block to note block");
-						CustomBlockUtils.createData(location, CustomBlock.NOTE_BLOCK, BlockFace.UP);
-						block.setBlockData(CustomBlock.NOTE_BLOCK.get().getBlockData(BlockFace.UP, below), false);
+						BlockData blockData = CustomBlock.NOTE_BLOCK.get().getBlockData(BlockFace.UP, below);
+						CustomBlockUtils.placeNoteBlockInDatabase(location, blockData);
+						block.setBlockData(blockData, false);
 						logMessage = "Creating CustomBlock NoteBlock at " + StringUtils.getShortLocationString(location);
 					}
 
@@ -110,7 +108,6 @@ public class ConversionListener implements Listener {
 						facing = BlockFace.EAST;
 
 					CustomBlocksLang.debug("Converting block to tripwire");
-					CustomBlockUtils.createData(location, CustomBlock.TRIPWIRE, facing);
 					block.setBlockData(CustomBlock.TRIPWIRE.get().getBlockData(facing, below), false);
 
 					String logMessage = "Creating CustomBlock TripwireData at " + StringUtils.getShortLocationString(location);

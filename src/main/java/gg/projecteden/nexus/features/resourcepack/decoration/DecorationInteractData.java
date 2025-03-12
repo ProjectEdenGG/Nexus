@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.resourcepack.decoration;
 
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.misc.NoteBlock;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Interactable;
@@ -133,7 +132,7 @@ public class DecorationInteractData {
 
 		CustomBlock customBlock = CustomBlock.from(_block);
 		if (customBlock != null)
-			return customBlock.get() instanceof NoteBlock; // TODO: Check if Custom Block is Interactable (new feature)
+			return customBlock == CustomBlock.NOTE_BLOCK; // TODO: Check if Custom Block is Interactable (new feature)
 
 
 		if (GSitMaterials.contains(material)) {

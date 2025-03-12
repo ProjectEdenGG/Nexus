@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.resourcepack.commands;
 
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
-import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.features.resourcepack.CustomContentUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksLang;
@@ -27,11 +26,10 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.customblock.CustomBlockData;
-import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
-import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
+import gg.projecteden.nexus.models.customblock.CustomNoteBlockTracker;
+import gg.projecteden.nexus.models.customblock.CustomNoteBlockTrackerService;
+import gg.projecteden.nexus.models.customblock.NoteBlockData;
 import gg.projecteden.nexus.utils.BlockUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import org.bukkit.Bukkit;
@@ -44,12 +42,11 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Environments(Env.TEST)
 public class CustomBlocksCommand extends CustomCommand {
-	private static final CustomBlockTrackerService trackerService = new CustomBlockTrackerService();
-	private static CustomBlockTracker tracker;
+	private static final CustomNoteBlockTrackerService trackerService = new CustomNoteBlockTrackerService();
+	private static CustomNoteBlockTracker tracker;
 
 	public CustomBlocksCommand(CommandEvent event) {
 		super(event);
@@ -189,24 +186,19 @@ public class CustomBlocksCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	void list(@Arg("current") World world) {
 		tracker = trackerService.fromWorld(world);
-		Map<Location, CustomBlockData> locationMap = tracker.getLocationMap();
+		Map<Location, NoteBlockData> locationMap = tracker.getLocationMap();
 		if (locationMap.isEmpty())
 			throw new InvalidInputException("This world has no saved custom blocks");
 
 		send("World: " + world.getName());
 
 		for (Location location : locationMap.keySet()) {
-			CustomBlockData data = locationMap.get(location);
-			CustomBlock customBlock = data.getCustomBlock();
+			NoteBlockData data = locationMap.get(location);
+			CustomBlock customBlock = CustomBlock.from(location.getBlock());
 			if (customBlock == null)
 				continue;
 
-			UUID uuid = data.getPlacerUUID();
-			String playerName = "Unknown";
-			if (!UUIDUtils.UUID0.equals(uuid))
-				playerName = PlayerUtils.getPlayer(uuid).getName();
-
-			send(" " + StringUtils.getCoordinateString(location) + ": " + StringUtils.camelCase(customBlock.name()) + " - " + playerName);
+			send(" " + StringUtils.getCoordinateString(location) + ": " + StringUtils.camelCase(customBlock.name()));
 		}
 	}
 

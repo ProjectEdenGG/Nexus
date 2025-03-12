@@ -606,18 +606,20 @@ public enum CustomBlock implements Keyed {
 			CustomBlocksLang.debug("&e- placing: " + StringUtils.camelCase(this));
 
 			if (BlockUtils.tryPlaceEvent(player, block, placeAgainst, blockMaterial, blockData, false, item)) {
+				player.swingMainHand();
+				playSound(player, SoundAction.PLACE, block.getLocation());
+				ItemUtils.subtract(player, itemInHand);
+
 				CustomBlockUtils.updateObservers(block);
-				CustomBlockUtils.placeBlockDatabase(player.getUniqueId(), this, block.getLocation(), facingFinal);
+				if (this == NOTE_BLOCK)
+					CustomBlockUtils.placeNoteBlockInDatabase(block.getLocation(), blockData);
+
 				if (placeTallSupport)
 					tallSupport(player, block, facingFinal);
 
 				if (checkNeighbors)
 					checkNeighbors(player, block, blockData);
 
-				playSound(player, SoundAction.PLACE, block.getLocation());
-
-				player.swingMainHand();
-				ItemUtils.subtract(player, itemInHand);
 				return true;
 			}
 		}
@@ -637,7 +639,7 @@ public enum CustomBlock implements Keyed {
 
 		if (BlockUtils.tryPlaceEvent(player, _block, block, _blockMaterial, _blockData, false, _item)) {
 			CustomBlockUtils.updateObservers(_block);
-			CustomBlockUtils.placeBlockDatabase(player.getUniqueId(), _tallSupport, _block.getLocation(), facingFinal);
+//			CustomBlockUtils.placeBlockDatabase(player.getUniqueId(), _tallSupport, _block.getLocation(), facingFinal);
 		}
 	}
 
@@ -659,7 +661,7 @@ public enum CustomBlock implements Keyed {
 
 			if (BlockUtils.tryPlaceEvent(player, _block, _under, _blockMaterial, _blockData, false, _item)) {
 				CustomBlockUtils.updateObservers(_block);
-				CustomBlockUtils.placeBlockDatabase(player.getUniqueId(), _tripwireCross, _block.getLocation(), BlockFace.UP);
+//				CustomBlockUtils.placeBlockDatabase(player.getUniqueId(), _tripwireCross, _block.getLocation(), BlockFace.UP);
 			}
 		}
 
@@ -712,31 +714,23 @@ public enum CustomBlock implements Keyed {
 		Location location = block.getLocation();
 		UUID uuid = player.getUniqueId();
 
-		CustomBlockUtils.breakBlockDatabase(location);
+//		CustomBlockUtils.breakBlockDatabase(location);
 
 		block.setType(newCustomBlock.get().getVanillaBlockMaterial(), false);
 		block.setBlockData(newBlockData, false);
 		playSound(player, SoundAction.PLACE, block.getLocation());
 
-		CustomBlockUtils.placeBlockDatabase(uuid, newCustomBlock, location, facing);
+//		CustomBlockUtils.placeBlockDatabase(uuid, newCustomBlock, location, facing);
 		CustomBlockUtils.updateObservers(block);
 
 		CustomBlockUtils.logPlacement(player, block, newCustomBlock);
 	}
 
-	public void breakBlock(Player source, @Nullable ItemStack tool, Block block, boolean dropItem, int amount, boolean playSound, boolean spawnParticle, boolean applyPhysics) {
-		breakBlock(source, tool, block.getLocation(), true, dropItem, amount, playSound, spawnParticle, applyPhysics);
-	}
-
-	public void breakBlock(Player source, @Nullable ItemStack tool, Location location, boolean dropItem, int amount, boolean playSound, boolean spawnParticle, boolean applyPhysics) {
-		breakBlock(source, tool, location, true, dropItem, amount, playSound, spawnParticle, applyPhysics);
-	}
-
-	public void breakBlock(@Nullable Player source, @Nullable ItemStack tool, Location location, boolean updateDatabase, boolean dropItem, int amount, boolean playSound, boolean spawnParticle, boolean applyPhysics) {
+	public void breakBlock(@Nullable Player source, @Nullable ItemStack tool, Block block, boolean dropItem, int amount, boolean playSound, boolean spawnParticle, boolean applyPhysics) {
 		boolean dropIngredients = false;
 		CustomBlocksLang.debug("break block");
 
-		Block block = location.getBlock();
+		Location location = block.getLocation();
 		if (source != null)
 			CustomBlockUtils.logRemoval(source, location, block, this);
 
@@ -765,8 +759,9 @@ public enum CustomBlock implements Keyed {
 			dropIngredients = false;
 		}
 
-		if (updateDatabase)
-			CustomBlockUtils.breakBlockDatabase(location);
+		if (this == NOTE_BLOCK) {
+			CustomBlockUtils.breakNoteBlockInDatabase(location);
+		}
 
 		block.setType(Material.AIR, applyPhysics);
 
@@ -775,7 +770,7 @@ public enum CustomBlock implements Keyed {
 			if (belowCustomBlock == null) return;
 
 			CustomBlocksLang.debug(" breaking tall support w/ particle: " + belowCustomBlock.get().getItemName());
-			belowCustomBlock.breakBlock(source, tool, location, false, false, amount, playSound, spawnParticle, applyPhysics);
+			belowCustomBlock.breakBlock(source, tool, block, false, amount, playSound, spawnParticle, applyPhysics);
 			return;
 		}
 
@@ -914,15 +909,14 @@ public enum CustomBlock implements Keyed {
 	}
 
 
+	@Getter
 	public enum CustomBlockType {
 		UNKNOWN(null, null),
 		NOTE_BLOCK(Material.NOTE_BLOCK, Material.NOTE_BLOCK),
 		TRIPWIRE(Material.TRIPWIRE, Material.STRING),
 		;
 
-		@Getter
 		private final Material blockMaterial;
-		@Getter
 		private final Material itemMaterial;
 
 		CustomBlockType(Material blockMaterial, Material itemMaterial) {
