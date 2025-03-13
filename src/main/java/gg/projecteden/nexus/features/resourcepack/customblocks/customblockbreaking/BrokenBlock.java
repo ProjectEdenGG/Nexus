@@ -122,7 +122,7 @@ public class BrokenBlock {
 	}
 
 	public void incrementDamage(Player player, ItemStack itemStack) {
-		CustomBlockUtils.debug(player, "Incrementing damage...");
+//		CustomBlockUtils.debug(player, "Incrementing damage...");
 		int currentTick = Bukkit.getCurrentTick();
 		if (!ItemUtils.isFuzzyMatch(itemStack, this.initialItemStack)) {
 			CustomBlockUtils.debug(player, "<-- using different tool, resetting progress");

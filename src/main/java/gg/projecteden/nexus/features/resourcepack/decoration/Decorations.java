@@ -4,6 +4,10 @@ import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreManager;
 import lombok.Getter;
 
+/*
+	TODO:
+		- Change creative paint brush to open menu on more than just be on RIGHT_CLICK_BLOCK
+ */
 public class Decorations {
 
 	@Getter

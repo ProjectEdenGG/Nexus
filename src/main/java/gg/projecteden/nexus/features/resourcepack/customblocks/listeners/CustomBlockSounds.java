@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBloc
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.Debug.DebugType;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.nexus.utils.Nullables;
@@ -66,10 +67,9 @@ public class CustomBlockSounds implements Listener {
 			return;
 
 		if (CustomBlock.from(placedBlock) == null) {
-			CustomBlockUtils.debugLine(player);
-			CustomBlockUtils.debug(player, "&d&lBlockPlaceEvent:");
+			CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCKS_SOUNDS, "&d&lBlockPlaceEvent:", true);
 			tryPlaySound(player, SoundAction.PLACE, placedBlock);
-			CustomBlockUtils.debug(player, "&d<- done, end");
+			CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCKS_SOUNDS, "&d<- done, end");
 		}
 	}
 
@@ -94,8 +94,7 @@ public class CustomBlockSounds implements Listener {
 		if (Nullables.isNullOrAir(block))
 			return;
 
-		CustomBlockUtils.debugLine(player);
-		CustomBlockUtils.debug(player, "&d&lEntityDamageEvent:");
+		CustomBlockUtils.debug(player, "&d&lEntityDamageEvent:", true);
 		updateAction(player, BlockAction.FALL);
 		tryPlaySound(player, SoundAction.FALL, block);
 		CustomBlockUtils.debug(player, "&d<- done, end");
@@ -113,10 +112,9 @@ public class CustomBlockSounds implements Listener {
 			return;
 
 		if (playerActionMap.get(player) == BlockAction.HIT) {
-			CustomBlockUtils.debugLine(player);
-			CustomBlockUtils.debug(player, "&d&lPlayerAnimationEvent:");
+//			CustomBlockUtils.debug(player, "&d&lPlayerAnimationEvent:", true);
 			tryPlaySound(player, SoundAction.HIT, block);
-			CustomBlockUtils.debug(player, "&d<- done, end");
+//			CustomBlockUtils.debug(player, "&d<- done, end");
 		}
 	}
 
@@ -134,10 +132,9 @@ public class CustomBlockSounds implements Listener {
 			return;
 
 		if (CustomBlock.from(brokenBlock) == null) {
-			CustomBlockUtils.debugLine(player);
-			CustomBlockUtils.debug(player, "&d&lBlockBreakEvent:");
+			CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCKS_SOUNDS, "&d&lBlockBreakEvent: Sounds", true);
 			tryPlaySound(player, SoundAction.BREAK, brokenBlock);
-			CustomBlockUtils.debug(player, "&d<- done, end");
+			CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCKS_SOUNDS, "&d<- done, end");
 		}
 	}
 
@@ -186,18 +183,18 @@ public class CustomBlockSounds implements Listener {
 
 	public static void tryPlaySound(Player source, SoundAction soundAction, Block block) {
 		Sound defaultSound = NMSUtils.getSound(soundAction, block);
-		CustomBlockUtils.debug(source, "&b- try play sound: action = " + StringUtils.camelCase(soundAction) + ", block = " + StringUtils.camelCase(block.getType()));
+		CustomBlockUtils.debug(source, DebugType.CUSTOM_BLOCKS_SOUNDS, "&b- try play sound: action = " + StringUtils.camelCase(soundAction) + ", block = " + StringUtils.camelCase(block.getType()));
 		if (defaultSound == null) {
-			CustomBlockUtils.debug(source, "&c<- couldn't find default sound");
+			CustomBlockUtils.debug(source, DebugType.CUSTOM_BLOCKS_SOUNDS, "&c<- couldn't find default sound");
 			return;
 		}
 
-		CustomBlockUtils.debug(source, "&e- default sound = " + defaultSound.getKey().getKey());
+		CustomBlockUtils.debug(source, DebugType.CUSTOM_BLOCKS_SOUNDS, "&e- default sound = " + defaultSound.getKey().getKey());
 
 		CustomBlock customBlock = CustomBlock.from(block);
 		ReplacedSoundType replacedSoundType = ReplacedSoundType.fromSound(defaultSound);
 		if (replacedSoundType == null && customBlock == null) {
-			CustomBlockUtils.debug(source, "&a<- playing default sound");
+			CustomBlockUtils.debug(source, DebugType.CUSTOM_BLOCKS_SOUNDS, "&a<- playing default sound");
 			return; // already handled by CustomBlockNMSUtils#placeVanillaBlock
 		}
 
@@ -226,7 +223,7 @@ public class CustomBlockSounds implements Listener {
 		if (!(new CooldownService().check(UUIDUtils.UUID0, cooldownType, TickTime.TICK.x(3))))
 			return false;
 
-		CustomBlockUtils.debug(source, "&a<- action = " + StringUtils.camelCase(soundAction) + " | key = " + soundKey);
+		CustomBlockUtils.debug(source, DebugType.CUSTOM_BLOCKS_SOUNDS, "&a<- action = " + StringUtils.camelCase(soundAction) + " | key = " + soundKey);
 		BlockUtils.playSound(soundBuilder);
 		return true;
 	}

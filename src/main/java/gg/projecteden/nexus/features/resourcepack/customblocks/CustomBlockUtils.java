@@ -272,11 +272,22 @@ public class CustomBlockUtils {
 	// Debug
 
 	public static void debug(Player player, String message) {
-		Debug.log(player, DebugType.CUSTOM_BLOCKS, message);
+		debug(player, message, false);
 	}
 
-	public static void debugLine(Player player) {
-		debug(player, "");
+	public static void debug(Player player, String message, boolean newLine) {
+		debug(player, DebugType.CUSTOM_BLOCKS, message, newLine);
+	}
+
+	public static void debug(Player player, DebugType type, String message) {
+		debug(player, type, message, false);
+	}
+
+	public static void debug(Player player, DebugType type, String message, boolean newLine) {
+		if (newLine)
+			Debug.log(player, type, "");
+
+		Debug.log(player, type, message);
 	}
 
 	public static void broadcastDebug(String message) {

@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.customblocks;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.resourcepack.customblocks.customblockbreaking.CustomBlockBreaking;
 import gg.projecteden.nexus.features.resourcepack.customblocks.listeners.CustomBlockListener;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock.CustomBlockType;
@@ -34,6 +35,7 @@ import java.util.Map;
 		- Maintain stats (ex. Player#awardStat(Tune note block)
 		- Ensure the conversion of note block is keeping their pitch to the database
 		- remove "TODO CUSTOM BLOCKS: REMOVE"
+		- CustomBlock Breaking
 		- Release NoteBlock Custom Blocks
 		-
 		- Cannot Fix:
@@ -63,6 +65,8 @@ public class CustomBlocks extends Feature {
 		CustomBlock.init();
 		new CustomBlockListener();
 		startJanitor();
+
+		CustomBlockBreaking.init();
 
 		WrappedWorldEdit.init();
 		WrappedWorldEdit.registerParser();

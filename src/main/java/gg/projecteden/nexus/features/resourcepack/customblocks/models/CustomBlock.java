@@ -725,6 +725,7 @@ public enum CustomBlock implements Keyed {
 		if (Nullables.isNotNullOrAir(tool) && this != TALL_SUPPORT) {
 			CustomBlockUtils.debug(source, "&e- tool != null/air");
 			ICustomBlock iCustomBlock = get();
+
 			if (!iCustomBlock.canHarvestWith(tool, source)) {
 				dropItem = false;
 				CustomBlockUtils.debug(source, "&e- dropItem = " + dropItem);

@@ -197,8 +197,7 @@ public class CustomBlockListener implements Listener {
 		Player player = event.getPlayer();
 		ItemStack tool = player.getInventory().getItemInMainHand();
 
-		CustomBlockUtils.debugLine(player);
-		CustomBlockUtils.debug(player, "&d&lBlockBreakEvent:");
+		CustomBlockUtils.debug(player, "&d&lBlockBreakEvent: BreakBlock", true);
 
 		CustomBlock brokenCustomBlock = CustomBlock.from(brokenBlock);
 		if (brokenCustomBlock != null) {
@@ -207,6 +206,7 @@ public class CustomBlockListener implements Listener {
 		}
 
 		CustomBlockUtils.breakBlock(brokenBlock, brokenCustomBlock, player, tool, true);
+		CustomBlockUtils.debug(player, "&d<- done, end", true);
 	}
 
 	private void updateDatabase(Location location, Player debugger) {
@@ -265,8 +265,7 @@ public class CustomBlockListener implements Listener {
 			return;
 		//
 
-		CustomBlockUtils.debugLine(player);
-		CustomBlockUtils.debug(player, "&d&lPlayerInteractEvent:");
+		CustomBlockUtils.debug(player, "&d&lPlayerInteractEvent:", true);
 
 		Location clickedBlockLoc = clickedBlock.getLocation();
 		CustomBlock clickedCustomBlock = CustomBlock.from(clickedBlock);

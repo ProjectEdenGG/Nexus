@@ -67,7 +67,6 @@ public class BreakListener implements Listener {
 			return;
 		}
 
-
 		if (isInvalid(player)) {
 			CustomBlockUtils.debug(player, "<-- player is invalid");
 			return;
@@ -95,32 +94,32 @@ public class BreakListener implements Listener {
 	@EventHandler
 	public void on(PlayerAnimationEvent event) {
 		Player player = event.getPlayer();
-		CustomBlockUtils.debug(player, "CustomBlockBreaking: PlayerAnimationEvent");
+//		CustomBlockUtils.debug(player, "CustomBlockBreaking: PlayerAnimationEvent");
 		if (isInvalid(player)) {
-			CustomBlockUtils.debug(player, "<-- player is invalid");
+//			CustomBlockUtils.debug(player, "<-- player is invalid");
 			return;
 		}
 
 		Block block = player.getTargetBlockExact(5);
 		if (block == null || blackListed.contains(block.getType())) {
-			CustomBlockUtils.debug(player, "<-- block == null || block is blacklisted");
+//			CustomBlockUtils.debug(player, "<-- block == null || block is blacklisted");
 			return;
 		}
 
 		Location blockLoc = block.getLocation();
 		if (player.getLocation().distanceSquared(blockLoc) >= 1024.0D) {
-			CustomBlockUtils.debug(player, "<-- player is too far away");
+//			CustomBlockUtils.debug(player, "<-- player is too far away");
 			return;
 		}
 
 		if (!CustomBlockBreaking.getManager().isTracking(blockLoc)) {
-			CustomBlockUtils.debug(player, "<-- already tracking");
+//			CustomBlockUtils.debug(player, "<-- already tracking");
 			return;
 		}
 
 		BrokenBlock brokenBlock = CustomBlockBreaking.getManager().getBrokenBlock(blockLoc);
 		if (brokenBlock == null) {
-			CustomBlockUtils.debug(player, "<-- broken block is null");
+//			CustomBlockUtils.debug(player, "<-- broken block is null");
 			return;
 		}
 

@@ -106,6 +106,7 @@ public class DecorationListener implements Listener {
 
 	//
 
+	// TODO: PICK BLOCK LIGHT BLOCK HITBOXES
 	@EventHandler
 	public void onPickBlock(PlayerPickItemEvent event) {
 		ItemStack itemStack = null;

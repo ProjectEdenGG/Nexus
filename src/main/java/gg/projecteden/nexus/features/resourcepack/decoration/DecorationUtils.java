@@ -466,7 +466,6 @@ public class DecorationUtils {
 			.toList());
 
 		CustomCreativeItem paintbrush = new CustomCreativeItem(DyeStation.getPaintbrush(), "Decorations: General");
-		paintbrush.setDisplayName("Paintbrush");
 		items.add(paintbrush);
 		return items.toArray(CustomCreativeItem[]::new);
 	}

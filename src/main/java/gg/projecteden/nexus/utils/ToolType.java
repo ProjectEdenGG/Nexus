@@ -146,17 +146,17 @@ public enum ToolType {
 		}
 	}
 
+	@Getter
 	@AllArgsConstructor
 	public enum ToolGrade implements ComparableEnum {
 		WOODEN(2),
 		STONE(4),
-		GOLDEN(12),
 		IRON(6),
+		GOLDEN(12),
 		DIAMOND(8),
 		NETHERITE(9),
 		;
 
-		@Getter
 		private final double baseDiggingSpeed;
 
 		public static @Nullable ToolGrade of(ItemStack tool) {
