@@ -2,9 +2,11 @@ package gg.projecteden.nexus.features.api;
 
 import gg.projecteden.nexus.features.api.annotations.Get;
 import gg.projecteden.nexus.features.commands.StaffHallCommand;
+import gg.projecteden.nexus.features.recipes.functionals.InvisibleItemFrame;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.titan.models.CustomCreativeItem;
+import gg.projecteden.nexus.features.workbenches.dyestation.CreativeBrushMenu;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -15,12 +17,14 @@ import gg.projecteden.nexus.models.voter.VotePartyService;
 import gg.projecteden.nexus.models.voter.VoteSite;
 import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.Debug;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -190,6 +194,7 @@ public class Controller {
 	@Get("/titan/creative/categories")
 	Object customBlocks() {
 		List<CustomCreativeItem> categories = new ArrayList<>();
+		categories.add(new CustomCreativeItem(CreativeBrushMenu.getCreativeBrush(), "Project Eden"));
 		categories.addAll(Arrays.asList(CustomBlockUtils.getCreativeCategories()));
 		categories.addAll(Arrays.asList(DecorationUtils.getCreativeCategories()));
 		return categories.toArray();
@@ -200,6 +205,11 @@ public class Controller {
 		List<CustomCreativeItem> items = new ArrayList<>();
 		items.addAll(Arrays.asList(CustomBlockUtils.getCreativeItems()));
 		items.addAll(Arrays.asList(DecorationUtils.getCreativeItems()));
+
+		items.add(new CustomCreativeItem(CreativeBrushMenu.getCreativeBrush(), "Project Eden"));
+		items.add(new CustomCreativeItem(InvisibleItemFrame.getItem(), "Project Eden"));
+		items.add(new CustomCreativeItem(new ItemBuilder(Material.LIGHT), "Project Eden"));
+
 		return items.toArray();
 	}
 

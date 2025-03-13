@@ -17,7 +17,6 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICu
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
-import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.workbenches.CustomBench;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Depends;
@@ -26,7 +25,6 @@ import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.CopperState;
 import gg.projecteden.nexus.utils.CopperState.CopperBlockType;
 import gg.projecteden.nexus.utils.Debug;
-import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -43,7 +41,6 @@ import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -61,6 +58,7 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.RecipeChoice.ExactChoice;
 import org.bukkit.inventory.RecipeChoice.MaterialChoice;
+import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,6 +69,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 import static gg.projecteden.nexus.utils.Debug.DebugType.RECIPES;
 
@@ -82,8 +81,8 @@ public class CustomRecipes extends Feature implements Listener {
 
 	private static boolean loaded;
 
-	@EventHandler
-	public void on(ResourcePackUpdateCompleteEvent ignored) {
+	@Override
+	public void onStart() {
 		if (loaded)
 			return;
 
@@ -108,33 +107,38 @@ public class CustomRecipes extends Feature implements Listener {
 					ex.printStackTrace();
 				}
 			}
+		});
 
-			ReflectionUtils.subTypesOf(FunctionalRecipe.class, getClass().getPackageName()).stream()
-				.map(clazz -> {
-					try {
-						if (!Utils.canEnable(clazz))
-							return null;
-
-						return clazz.getConstructor().newInstance();
-					} catch (Exception ex) {
-						Nexus.log("Error while enabling functional recipe " + clazz.getSimpleName());
-						ex.printStackTrace();
+		Stream<? extends FunctionalRecipe> functionalRecipeStream = ReflectionUtils.subTypesOf(FunctionalRecipe.class, getClass().getPackageName() + ".functionals").stream()
+			.map(clazz -> {
+				try {
+					if (!Utils.canEnable(clazz))
 						return null;
-					}
-				})
-				.filter(obj -> Objects.nonNull(obj) && obj.getResult() != null)
-				.sorted((recipe1, recipe2) -> new ItemStackComparator().compare(recipe1.getResult(), recipe2.getResult()))
+
+					return clazz.getConstructor().newInstance();
+				} catch (Exception ex) {
+					Nexus.log("Error while enabling functional recipe " + clazz.getSimpleName());
+					ex.printStackTrace();
+					return null;
+				}
+			})
+			.filter(obj -> Objects.nonNull(obj) && obj.getResult() != null);
+
+		Tasks.async(() -> {
+			functionalRecipeStream.sorted((recipe1, recipe2) -> new ItemStackComparator().compare(recipe1.getResult(), recipe2.getResult()))
 				.forEach(recipe -> {
 					try {
 						recipe.setType(recipe.getRecipeType());
 						recipe.register();
 						recipes.put(recipe.getKey(), recipe);
+						recipe.onStart();
 					} catch (Exception ex) {
 						Nexus.severe("Error registering FunctionalRecipe " + recipe.getClass().getSimpleName());
 						ex.printStackTrace();
 					}
 				});
 		});
+
 	}
 
 	public static void register(NexusRecipe recipe) {
@@ -506,37 +510,26 @@ public class CustomRecipes extends Feature implements Listener {
 		DecorationType.registerRecipes();
 
 		light();
-		invisibleItemFrame();
 	}
 
 	private void light() {
-		List<ItemStack> centerItems = getInvisPotions();
+		List<ItemStack> centerItems = getLingeringInvisibilityPotionItems();
 		if (centerItems == null)
 			return;
 
 		RecipeBuilder.surround(centerItems).with(Material.GLOWSTONE).toMake(Material.LIGHT, 4).register(RecipeType.FUNCTIONAL);
 	}
 
-	private void invisibleItemFrame() {
-		List<ItemStack> centerItems = getInvisPotions();
-		if (centerItems == null)
-			return;
-
-		RecipeBuilder.surround(centerItems)
-			.with(Material.ITEM_FRAME)
-			.toMake(new ItemBuilder(Material.ITEM_FRAME).name("Invisible Item Frame").amount(8).glow().build())
-			.build()
-			.type(RecipeType.FUNCTIONAL);
-		// No .register() to prevent overriding the recipe of the plugin
-	}
-
 	@Nullable
-	private List<ItemStack> getInvisPotions() {
-		final YamlConfiguration config = IOUtils.getConfig("plugins/SurvivalInvisiframes/config.yml");
-		List<ItemStack> centerItems = (List<ItemStack>) config.getList("recipe-center-items");
-		if (gg.projecteden.api.common.utils.Nullables.isNullOrEmpty(centerItems))
-			return null;
-		return centerItems;
+	public static List<ItemStack> getLingeringInvisibilityPotionItems() {
+		return Arrays.asList(
+			new ItemBuilder(Material.LINGERING_POTION)
+				.potionType(PotionType.INVISIBILITY)
+				.build(),
+			new ItemBuilder(Material.LINGERING_POTION)
+				.potionType(PotionType.LONG_INVISIBILITY)
+				.build()
+		);
 	}
 
 	public static String getItemName(ItemStack result) {

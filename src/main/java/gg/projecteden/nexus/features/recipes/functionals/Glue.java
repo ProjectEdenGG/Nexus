@@ -4,8 +4,8 @@ import com.destroystokyo.paper.ParticleBuilder;
 import de.tr7zw.nbtapi.NBT;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -37,13 +37,9 @@ public class Glue extends FunctionalRecipe {
 		return ItemModelType.GLUE;
 	}
 
-	public static ItemModelInstance getCustomModel() {
-		return getItemModel().getCustomModel();
-	}
-
 	@Override
 	public ItemStack getResult() {
-		return getCustomModel().getItem();
+		return new ItemBuilder(getItemModel()).name("&aGlue").build();
 	}
 
 	@Override

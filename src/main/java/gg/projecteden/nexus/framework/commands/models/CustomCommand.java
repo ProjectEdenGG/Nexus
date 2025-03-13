@@ -40,7 +40,6 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.EntityUtils;
-import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -963,7 +962,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		List<Supplier<ItemStack>> converters = List.of(
 			() -> CustomBlock.valueofObtainable(value.toUpperCase()).get().getItemStack(),
 			() -> DecorationConfig.of(value).getItem(),
-			() -> new ItemBuilder(ItemModelType.valueOf(value.toUpperCase())).build(),
+			() -> ItemModelType.valueOf(value.toUpperCase()).getItem(),
 			() -> new ItemStack(convertToMaterial(value))
 		);
 

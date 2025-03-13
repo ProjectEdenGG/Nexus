@@ -2,11 +2,11 @@ package gg.projecteden.nexus.features.recipes.functionals;
 
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
+import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -30,13 +30,14 @@ import java.util.Objects;
 
 public class InfiniteWaterBucket extends FunctionalRecipe {
 
-	public static ItemModelInstance getCustomModel() {
-		return ItemModelType.INFINITE_WATER_BUCKET.getCustomModel();
-	}
+	@Getter
+	private static final ItemStack item = new ItemBuilder(ItemModelType.INFINITE_WATER_BUCKET)
+			.name("&6Infinite Water Bucket")
+			.build();
 
 	@Override
 	public ItemStack getResult() {
-		return getCustomModel().getItem();
+		return getItem();
 	}
 
 	@Override

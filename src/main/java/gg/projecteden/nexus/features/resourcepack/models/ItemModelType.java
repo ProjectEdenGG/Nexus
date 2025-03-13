@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.models;
 
 import gg.projecteden.api.common.utils.StringUtils;
+import gg.projecteden.nexus.features.recipes.functionals.InvisibleItemFrame;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.models.annotations.AllowInVanillaRecipes;
 import gg.projecteden.nexus.features.resourcepack.models.annotations.HasCustomModelData;
@@ -24,6 +25,13 @@ public enum ItemModelType {
 	@HasCustomModelData
 	PROPORTIONATOR("functional/proportionator"),
 	GUI_TOOL_OUTLINES("ui/gui/tool_modification/tool_outlines"),
+	INVISIBLE_ITEM_FRAME("functional/invis_item_frame") {
+		@Override
+		public ItemStack getItem() {
+			return InvisibleItemFrame.getItem().build();
+		}
+	},
+	WARD_CHARM("functional/ward_charm"),
 	// armor
 	ARMOR_FILLED_BOOTS("armor/filled/boots"),
 	ARMOR_FILLED_CHESTPLATE("armor/filled/chestplate"),

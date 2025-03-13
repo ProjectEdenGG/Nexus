@@ -2,8 +2,8 @@ package gg.projecteden.nexus.features.recipes.functionals;
 
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -20,11 +20,10 @@ import org.jetbrains.annotations.NotNull;
 public class DiamondTotemOfUndying extends FunctionalRecipe {
 
 	@Getter
-	private static final ItemStack item = getCustomModel().getItem();
-
-	public static ItemModelInstance getCustomModel() {
-		return ItemModelInstance.of(Material.TOTEM_OF_UNDYING, ItemModelType.DIAMOND_TOTEM_OF_UNDYING.getModel());
-	}
+	private static final ItemStack item = new ItemBuilder(ItemModelType.DIAMOND_TOTEM_OF_UNDYING)
+		.name("&bDiamond Totem of Undying")
+		.lore("&7Activates from anywhere", "&7in your inventory")
+		.build();
 
 	@Override
 	public ItemStack getResult() {
@@ -49,7 +48,7 @@ public class DiamondTotemOfUndying extends FunctionalRecipe {
 
 		PlayerInventory inv = player.getInventory();
 
-		final ItemStack item = PlayerUtils.searchInventory(player, getCustomModel());
+		final ItemStack item = PlayerUtils.searchInventory(player, ItemModelType.DIAMOND_TOTEM_OF_UNDYING);
 		if (Nullables.isNullOrAir(item))
 			return;
 

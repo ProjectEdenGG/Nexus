@@ -225,7 +225,7 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 
 	public static SurroundBuilder surround(Material center) {
 		if (center == Material.WATER_BUCKET)
-			return surround(List.of(new ItemStack(center), InfiniteWaterBucket.getCustomModel().getItem()));
+			return surround(List.of(new ItemStack(center), InfiniteWaterBucket.getItem()));
 
 		final SurroundBuilder builder = surround(CustomRecipes.choiceOf(center));
 		builder.ingredientIds.add(CustomRecipes.keyOf(center));
@@ -234,7 +234,7 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 
 	public static SurroundBuilder surround(ItemStack center) {
 		if (center.getType() == Material.WATER_BUCKET)
-			return surround(List.of(center, InfiniteWaterBucket.getCustomModel().getItem()));
+			return surround(List.of(center, InfiniteWaterBucket.getItem()));
 
 		final SurroundBuilder builder = surround(CustomRecipes.choiceOf(center));
 		builder.ingredientIds.add(CustomRecipes.keyOf(center));

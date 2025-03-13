@@ -23,4 +23,6 @@ public abstract class FunctionalRecipe extends NexusRecipe implements Listener {
 		return RecipeType.FUNCTIONAL;
 	}
 
+	public void onStart() {}
+
 }

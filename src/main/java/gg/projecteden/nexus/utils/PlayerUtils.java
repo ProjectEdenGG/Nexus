@@ -27,6 +27,7 @@ import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.nickname.NicknameService;
+import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.HasOfflinePlayer;
@@ -819,16 +820,20 @@ public class PlayerUtils {
 		return player.getPlayer().getInventory().containsAtLeast(itemStack, itemStack.getAmount());
 	}
 
-	public static ItemStack searchInventory(OptionalPlayer player, ItemModelType itemModelType) {
-		return searchInventory(player, itemModelType.getCustomModel());
+	public static ItemStack searchInventory(OptionalPlayer player, ItemModelInstance itemModelType) {
+		return searchInventory(player, itemModelType.getItemModel());
 	}
 
-	public static ItemStack searchInventory(OptionalPlayer player, ItemModelInstance customModel) {
+	public static ItemStack searchInventory(OptionalPlayer player, ItemModelType customModel) {
+		return searchInventory(player, customModel.getModel());
+	}
+
+	public static ItemStack searchInventory(OptionalPlayer player, String customModel) {
 		if (player.getPlayer() == null || customModel == null)
 			return null;
 
 		for (ItemStack content : player.getPlayer().getInventory().getContents())
-			if (customModel.equals(content))
+			if (customModel.equalsIgnoreCase(Model.of(content)))
 				return content;
 
 		return null;

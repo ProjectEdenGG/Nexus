@@ -12,6 +12,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -32,6 +33,7 @@ import java.util.List;
 @Aliases("i")
 @Permission("essentials.item")
 @WikiConfig(rank = "Guest", feature = "Creative")
+@Redirect(from = "/iframe", to = "/i invisible_item_frame")
 public class ItemCommand extends CustomCommand {
 
 	public ItemCommand(@NonNull CommandEvent event) {

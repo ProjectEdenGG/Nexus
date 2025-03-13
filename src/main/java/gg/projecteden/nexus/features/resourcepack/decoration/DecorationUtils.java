@@ -453,7 +453,7 @@ public class DecorationUtils {
 			.filter(theme -> theme != Theme.ALL)
 			.map(theme -> {
 				ItemBuilder builder = theme.getItemBuilder();
-				return new CustomCreativeItem(builder.material().name().toLowerCase(), builder.name(), builder.model(), null, "Decorations: " + StringUtils.camelCase(theme));
+				return new CustomCreativeItem(builder, "Decorations: " + StringUtils.camelCase(theme));
 			})
 			.toArray(CustomCreativeItem[]::new);
 	}

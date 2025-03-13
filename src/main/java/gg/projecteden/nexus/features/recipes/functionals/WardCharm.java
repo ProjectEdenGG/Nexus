@@ -5,7 +5,6 @@ import gg.projecteden.nexus.features.listeners.Restrictions;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -66,11 +65,7 @@ public class WardCharm extends FunctionalRecipe {
 	);
 
 	@Getter
-	private static final ItemStack item = new ItemBuilder(getCustomModel()).name("Ward Charm").build();
-
-	public static ItemModelInstance getCustomModel() {
-		return ItemModelInstance.of(Material.PAPER, ItemModelType.GEM_SPINEL.getModel());
-	}
+	private static final ItemStack item = new ItemBuilder(ItemModelType.GEM_SPINEL).name("Ward Charm").build();
 
 	@Override
 	public ItemStack getResult() {
