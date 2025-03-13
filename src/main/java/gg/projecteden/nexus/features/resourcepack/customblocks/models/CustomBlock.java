@@ -57,6 +57,22 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.misc.NoteBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.misc.ShojiBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.misc.Wireframe;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.neon.BlackNeonBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.neon.BlueNeonBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.neon.BrownNeonBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.neon.CyanNeonBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.neon.GrayNeonBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.neon.GreenNeonBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.neon.LightBlueNeonBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.neon.LightGrayNeonBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.neon.LimeNeonBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.neon.MagentaNeonBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.neon.OrangeNeonBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.neon.PinkNeonBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.neon.PurpleNeonBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.neon.RedNeonBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.neon.WhiteNeonBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.neon.YellowNeonBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.carved.CarvedAcaciaPlanks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.carved.CarvedBirchPlanks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.carved.CarvedCherryPlanks;
@@ -110,6 +126,22 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.quiltedwool.RedQuiltedWool;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.quiltedwool.WhiteQuiltedWool;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.quiltedwool.YellowQuiltedWool;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.shulker.BlackShulkerBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.shulker.BlueShulkerBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.shulker.BrownShulkerBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.shulker.CyanShulkerBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.shulker.GrayShulkerBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.shulker.GreenShulkerBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.shulker.LightBlueShulkerBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.shulker.LightGrayShulkerBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.shulker.LimeShulkerBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.shulker.MagentaShulkerBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.shulker.OrangeShulkerBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.shulker.PinkShulkerBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.shulker.PurpleShulkerBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.shulker.RedShulkerBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.shulker.WhiteShulkerBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.shulker.YellowShulkerBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.stones.bricks.AndesiteBricks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.stones.bricks.DioriteBricks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.stones.bricks.GraniteBricks;
@@ -285,6 +317,42 @@ public enum CustomBlock implements Keyed {
 	GRAY_QUILTED_WOOL(GrayQuiltedWool.class, CustomBlockTab.QUILTED_WOOL),
 	LIGHT_GRAY_QUILTED_WOOL(LightGrayQuiltedWool.class, CustomBlockTab.QUILTED_WOOL),
 	WHITE_QUILTED_WOOL(WhiteQuiltedWool.class, CustomBlockTab.QUILTED_WOOL),
+
+	// shulker block
+	RED_SHULKER_BLOCK(RedShulkerBlock.class, CustomBlockTab.SHULKER_BLOCKS),
+	ORANGE_SHULKER_BLOCK(OrangeShulkerBlock.class, CustomBlockTab.SHULKER_BLOCKS),
+	YELLOW_SHULKER_BLOCK(YellowShulkerBlock.class, CustomBlockTab.SHULKER_BLOCKS),
+	LIME_SHULKER_BLOCK(LimeShulkerBlock.class, CustomBlockTab.SHULKER_BLOCKS),
+	GREEN_SHULKER_BLOCK(GreenShulkerBlock.class, CustomBlockTab.SHULKER_BLOCKS),
+	CYAN_SHULKER_BLOCK(CyanShulkerBlock.class, CustomBlockTab.SHULKER_BLOCKS),
+	LIGHT_BLUE_SHULKER_BLOCK(LightBlueShulkerBlock.class, CustomBlockTab.SHULKER_BLOCKS),
+	BLUE_SHULKER_BLOCK(BlueShulkerBlock.class, CustomBlockTab.SHULKER_BLOCKS),
+	PURPLE_SHULKER_BLOCK(PurpleShulkerBlock.class, CustomBlockTab.SHULKER_BLOCKS),
+	MAGENTA_SHULKER_BLOCK(MagentaShulkerBlock.class, CustomBlockTab.SHULKER_BLOCKS),
+	PINK_SHULKER_BLOCK(PinkShulkerBlock.class, CustomBlockTab.SHULKER_BLOCKS),
+	BROWN_SHULKER_BLOCK(BrownShulkerBlock.class, CustomBlockTab.SHULKER_BLOCKS),
+	BLACK_SHULKER_BLOCK(BlackShulkerBlock.class, CustomBlockTab.SHULKER_BLOCKS),
+	GRAY_SHULKER_BLOCK(GrayShulkerBlock.class, CustomBlockTab.SHULKER_BLOCKS),
+	LIGHT_GRAY_SHULKER_BLOCK(LightGrayShulkerBlock.class, CustomBlockTab.SHULKER_BLOCKS),
+	WHITE_SHULKER_BLOCK(WhiteShulkerBlock.class, CustomBlockTab.SHULKER_BLOCKS),
+
+	// neon block
+	RED_NEON_BLOCK(RedNeonBlock.class, CustomBlockTab.NEON_BLOCKS),
+	ORANGE_NEON_BLOCK(OrangeNeonBlock.class, CustomBlockTab.NEON_BLOCKS),
+	YELLOW_NEON_BLOCK(YellowNeonBlock.class, CustomBlockTab.NEON_BLOCKS),
+	LIME_NEON_BLOCK(LimeNeonBlock.class, CustomBlockTab.NEON_BLOCKS),
+	GREEN_NEON_BLOCK(GreenNeonBlock.class, CustomBlockTab.NEON_BLOCKS),
+	CYAN_NEON_BLOCK(CyanNeonBlock.class, CustomBlockTab.NEON_BLOCKS),
+	LIGHT_BLUE_NEON_BLOCK(LightBlueNeonBlock.class, CustomBlockTab.NEON_BLOCKS),
+	BLUE_NEON_BLOCK(BlueNeonBlock.class, CustomBlockTab.NEON_BLOCKS),
+	PURPLE_NEON_BLOCK(PurpleNeonBlock.class, CustomBlockTab.NEON_BLOCKS),
+	MAGENTA_NEON_BLOCK(MagentaNeonBlock.class, CustomBlockTab.NEON_BLOCKS),
+	PINK_NEON_BLOCK(PinkNeonBlock.class, CustomBlockTab.NEON_BLOCKS),
+	BROWN_NEON_BLOCK(BrownNeonBlock.class, CustomBlockTab.NEON_BLOCKS),
+	BLACK_NEON_BLOCK(BlackNeonBlock.class, CustomBlockTab.NEON_BLOCKS),
+	GRAY_NEON_BLOCK(GrayNeonBlock.class, CustomBlockTab.NEON_BLOCKS),
+	LIGHT_GRAY_NEON_BLOCK(LightGrayNeonBlock.class, CustomBlockTab.NEON_BLOCKS),
+	WHITE_NEON_BLOCK(WhiteNeonBlock.class, CustomBlockTab.NEON_BLOCKS),
 
 	// crates
 	APPLE_CRATE(AppleCrate.class, CustomBlockTab.COMPACTED),

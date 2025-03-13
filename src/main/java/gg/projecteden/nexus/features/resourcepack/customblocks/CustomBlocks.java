@@ -40,11 +40,12 @@ import java.util.Map;
 		-
 		- Cannot Fix:
 			- Custom blocks may flash (canceled update of instrument changing) when placing blocks near them (clientside only) --> Titan
-			- Players arm will swing on interact w/ custom blocks (clientside only) --> Cannot be fixed with Titan
+			- Players arm will swing on interact w/ custom blocks (clientside only) --> Titan
  */
 
 /*
 	TODO POST RELEASE:
+		- Lanterns produce light --> set light blocks around block
 		- Tripwire implementation:
 			- Tripwire blocks are being replaced to cross, if you're standing inside of them when you break them
 			- tripwire cross is spawnable, and also spawns paper ?

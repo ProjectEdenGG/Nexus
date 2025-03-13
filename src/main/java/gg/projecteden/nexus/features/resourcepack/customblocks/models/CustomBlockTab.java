@@ -22,6 +22,8 @@ public enum CustomBlockTab {
 	CHISELED_STONE("Chiseled Stone"),
 	STONE_PILLARS("Stone Pillars"),
 	TERRACOTTA_SHINGLES("Terracotta Shingles"),
+	SHULKER_BLOCKS("Shulker Blocks"),
+	NEON_BLOCKS("Neon Blocks"),
 	FLORA("Flora"),
 	ROCKS("Rocks"),
 	;

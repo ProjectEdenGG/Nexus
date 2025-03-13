@@ -14,10 +14,12 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.concretebricks.IConcreteBricks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.genericcrate.IGenericCrate;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.ILantern;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.neon.INeonBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.carved.ICarvedPlanks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.colored.IColoredPlanks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.vertical.IVerticalPlanks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.quiltedwool.IQuiltedWool;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.shulker.IShulkerBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.stones.bricks.IStoneBricks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.stones.chiseled.IChiseledStone;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.stones.pillar.IStonePillar;
@@ -67,6 +69,8 @@ public class CustomBlockTag implements Tag<CustomBlock> {
 	public static final CustomBlockTag STONE_PILLARS = new CustomBlockTag(IStonePillar.class);
 	public static final CustomBlockTag TERRACOTTA_SHINGLES = new CustomBlockTag(ITerracottaShingles.class);
 	public static final CustomBlockTag COLORED_TERRACOTTA_SHINGLES = new CustomBlockTag(IColoredTerracottaShingles.class);
+	public static final CustomBlockTag SHULKER_BLOCK = new CustomBlockTag(IShulkerBlock.class);
+	public static final CustomBlockTag NEON_BLOCK = new CustomBlockTag(INeonBlock.class);
 	//
 	public static final CustomBlockTag CRAFTABLE_NOTE_BLOCKS = new CustomBlockTag(ICraftableNoteBlock.class);
 	public static final CustomBlockTag DIRECTIONAL_NOTE_BLOCKS = new CustomBlockTag(IDirectionalNoteBlock.class);

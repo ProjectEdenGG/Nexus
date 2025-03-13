@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import org.bukkit.Instrument;
 
 @CustomBlockConfig(
-	name = "Generic Crate",
+	name = "Generic Crate D",
 	itemModel = ItemModelType.CRATES_GENERIC_4
 )
 @CustomNoteBlockConfig(
