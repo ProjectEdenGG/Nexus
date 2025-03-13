@@ -2,7 +2,9 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.models.common;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.ToolType;
 import lombok.NonNull;
 import org.bukkit.Material;
@@ -12,6 +14,8 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+
+import static gg.projecteden.nexus.utils.Debug.DebugType.CUSTOM_BLOCK_DAMAGE;
 
 public interface ICustomBlock extends IHarvestable {
 	Material itemMaterial = Material.PAPER;
@@ -46,15 +50,22 @@ public interface ICustomBlock extends IHarvestable {
 		return 0.0;
 	}
 
+	// DO NOT CHANGE THIS, IT IS IN PARITY WITH VANILLA
 	default float getBlockDamage(Player player, ItemStack tool) {
-		final boolean isUsingCorrectTool = isUsingCorrectTool(tool, player);
-		float speedMultiplier = (float) getSpeedMultiplier(tool, isUsingCorrectTool);
+		float blockHardness = (float) getBlockHardness();
+		float speedMultiplier = (float) getSpeedMultiplier(tool);
+		Debug.log(player, CUSTOM_BLOCK_DAMAGE, "speedMultiplier: " + speedMultiplier);
+		boolean canHarvest = canHarvestWith(tool, player);
+		Debug.log(player, CUSTOM_BLOCK_DAMAGE, "custom block canHarvestWith: " + canHarvest);
+		boolean hasDrops = hasDrops(tool, player);
 
-		return BlockUtils.getBlockDamage(player, tool, (float) getBlockHardness(), speedMultiplier, isUsingCorrectTool, isUsingCorrectTool);
+		Debug.log(player, CUSTOM_BLOCK_DAMAGE, "getBlockDamage for " + this.getItemName());
+		return BlockUtils.getBlockDamage(player, tool, blockHardness, speedMultiplier, canHarvest, hasDrops);
 	}
 
-	default double getSpeedMultiplier(ItemStack tool, boolean isUsingCorrectTool) {
-		if (!isUsingCorrectTool)
+	// DO NOT CHANGE THIS, IT IS IN PARITY WITH VANILLA
+	default double getSpeedMultiplier(ItemStack tool) {
+		if (Nullables.isNullOrAir(tool))
 			return 1;
 
 		if (getMinimumPreferredTool() != null)

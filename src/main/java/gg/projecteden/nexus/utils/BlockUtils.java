@@ -46,8 +46,9 @@ import java.util.Queue;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.utils.Debug.DebugType.BLOCK_DAMAGE;
+import static gg.projecteden.nexus.utils.Debug.DebugType.CUSTOM_BLOCK_DAMAGE;
 
+@SuppressWarnings("removal")
 public class BlockUtils {
 
 	public static Queue<Location> createDistanceSortedQueue(Location origin) {
@@ -283,6 +284,7 @@ public class BlockUtils {
 		return true;
 	}
 
+	@SuppressWarnings({"UnusedReturnValue", "RedundantIfStatement"})
 	public static boolean tryBreakEvent(@NotNull Player player, @NotNull Block block, boolean dropItems) {
 		BlockBreakEvent event = new BlockBreakEvent(block, player);
 		event.setDropItems(dropItems);
@@ -292,6 +294,7 @@ public class BlockUtils {
 		return true;
 	}
 
+	@SuppressWarnings("RedundantIfStatement")
 	public static boolean tryInteractEvent(Player player, Action action, Block block, BlockFace blockFace) {
 		PlayerInteractEvent event = new PlayerInteractEvent(player, action, null, block, blockFace);
 		if (!event.callEvent() || event.useInteractedBlock() == Result.DENY || event.useInteractedBlock() == Result.DENY)
@@ -366,22 +369,26 @@ public class BlockUtils {
 			.toList().isEmpty();
 	}
 
-	public static boolean canHarvest(Block block, ItemStack tool, Player debugger) {
+	public static boolean canHarvestWith(Block block, ItemStack tool, Player debugger) {
 		// check custom blocks
 		CustomBlock customBlock = CustomBlock.from(block);
 		if (customBlock != null) {
 			IHarvestable iHarvestable = customBlock.get();
-			return iHarvestable.canHarvestWith(tool, debugger);
+			boolean result = iHarvestable.canHarvestWith(tool, debugger);
+			Debug.log(debugger, CUSTOM_BLOCK_DAMAGE, "custom block canHarvestWith: " + result);
+			return result;
 		}
 
 		// check changed vanilla blocks
 		CustomToolBlock changedBlock = CustomToolBlock.of(block);
 		if (changedBlock != null) {
+			boolean result = changedBlock.canHarvestWith(tool, debugger);
+			Debug.log(debugger, CUSTOM_BLOCK_DAMAGE, "changed vanilla block canHarvestWith: " + result);
 			return changedBlock.canHarvestWith(tool, debugger);
 		}
 
-		boolean preferred = ItemUtils.isPreferredTool(tool, block);
-		Debug.log(BLOCK_DAMAGE, "NMS PreferredTool = " + preferred);
+		boolean preferred = ItemUtils.isPreferredTool(tool, block, debugger);
+		Debug.log(debugger, CUSTOM_BLOCK_DAMAGE, "vanilla block canHarvestWith: " + preferred);
 		return preferred;
 	}
 
@@ -392,35 +399,36 @@ public class BlockUtils {
 	public static float getBlockDamage(Player player, org.bukkit.inventory.ItemStack tool, org.bukkit.block.Block block) {
 		float blockHardness = getBlockHardness(block);
 		float speedMultiplier = NMSUtils.getDestroySpeed(block, tool);
-		Debug.log(BLOCK_DAMAGE, "speedMultiplier: " + speedMultiplier);
-		boolean canHarvest = canHarvest(block, tool, player);
+		Debug.log(player, CUSTOM_BLOCK_DAMAGE, "speedMultiplier: " + speedMultiplier);
+		boolean canHarvest = canHarvestWith(block, tool, player);
 		boolean hasDrops = hasDrops(player, block, tool);
 
-		Debug.log(BLOCK_DAMAGE, "getBlockDamage for " + block.getType());
+		Debug.log(player, CUSTOM_BLOCK_DAMAGE, "getBlockDamage for " + StringUtils.camelCase(block.getType()));
 		return getBlockDamage(player, tool, blockHardness, speedMultiplier, canHarvest, hasDrops);
 	}
 
 	// https://minecraft.fandom.com/wiki/Breaking#Calculation
+	@SuppressWarnings("deprecation")
 	public static float getBlockDamage(Player player, org.bukkit.inventory.ItemStack tool, float blockHardness, float speedMultiplier, boolean isUsingCorrectTool, boolean hasDrops) {
-		Debug.log(BLOCK_DAMAGE, "getBlockDamage: hardness=" + blockHardness + " | speed=" + speedMultiplier + " | isUsingCorrectTool=" + isUsingCorrectTool + " | hasDrops=" + hasDrops);
+		Debug.log(player, CUSTOM_BLOCK_DAMAGE, "getBlockDamage: hardness=" + blockHardness + " | speed=" + speedMultiplier + " | isUsingCorrectTool=" + isUsingCorrectTool + " | hasDrops=" + hasDrops);
 
 		if (blockHardness == -1) {
-			Debug.log(BLOCK_DAMAGE, "cannot break, damage = " + -1);
+			Debug.log(player, CUSTOM_BLOCK_DAMAGE, "cannot break, damage = " + -1);
 			return -1;
 		}
 
 		if (isUsingCorrectTool) {
 			if (!hasDrops) {
 				speedMultiplier = 1;
-				Debug.log(BLOCK_DAMAGE, "can't harvest, speed multiplier = 1");
+				Debug.log(player, CUSTOM_BLOCK_DAMAGE, "can't harvest, speed multiplier = 1");
 			}
 
 			if (!Nullables.isNullOrAir(tool)) {
 				if (tool.getItemMeta().hasEnchants()) {
 					Map<Enchantment, Integer> enchants = tool.getItemMeta().getEnchants();
 					if (enchants.containsKey(Enchant.EFFICIENCY)) {
-						speedMultiplier += Math.pow(enchants.get(Enchant.EFFICIENCY), 2) + 1;
-						Debug.log(BLOCK_DAMAGE, "tool has efficiency, speed = " + speedMultiplier);
+						speedMultiplier += (float) (Math.pow(enchants.get(Enchant.EFFICIENCY), 2) + 1);
+						Debug.log(player, CUSTOM_BLOCK_DAMAGE, "tool has efficiency, speed = " + speedMultiplier);
 					}
 				}
 			}
@@ -441,13 +449,13 @@ public class BlockUtils {
 			}
 
 			if (hasteLevel > 0) {
-				speedMultiplier *= (0.2 * hasteLevel) + 1;
-				Debug.log(BLOCK_DAMAGE, "player has haste, speed = " + speedMultiplier);
+				speedMultiplier *= (float) ((0.2 * hasteLevel) + 1);
+				Debug.log(player, CUSTOM_BLOCK_DAMAGE, "player has haste, speed = " + speedMultiplier);
 			}
 
 			if (fatigueLevel > 0) {
-				speedMultiplier *= Math.pow(0.3, Math.min(fatigueLevel, 4));
-				Debug.log(BLOCK_DAMAGE, "player has mining fatigue, speed = " + speedMultiplier);
+				speedMultiplier *= (float) Math.pow(0.3, Math.min(fatigueLevel, 4));
+				Debug.log(player, CUSTOM_BLOCK_DAMAGE, "player has mining fatigue, speed = " + speedMultiplier);
 			}
 		}
 
@@ -461,33 +469,33 @@ public class BlockUtils {
 
 			if (player.isInWater() && !hasAquaAffinity) {
 				speedMultiplier /= 5;
-				Debug.log(BLOCK_DAMAGE, "player is in water without aqua affinity, speed = " + speedMultiplier);
+				Debug.log(player, CUSTOM_BLOCK_DAMAGE, "player is in water without aqua affinity, speed = " + speedMultiplier);
 			}
 		}
 
 		if (!player.isOnGround()) {
 			speedMultiplier /= 5;
-			Debug.log(BLOCK_DAMAGE, "player is not on ground, speed = " + speedMultiplier);
+			Debug.log(player, CUSTOM_BLOCK_DAMAGE, "player is not on ground, speed = " + speedMultiplier);
 		}
 
 		float damage = speedMultiplier / blockHardness;
 
 		if (isUsingCorrectTool) {
 			damage /= 30;
-			Debug.log(BLOCK_DAMAGE, "correct tool, damage = " + damage);
+			Debug.log(player, CUSTOM_BLOCK_DAMAGE, "correct tool, damage = " + damage);
 		} else {
 			damage /= 100;
-			Debug.log(BLOCK_DAMAGE, "wrong tool, damage = " + damage);
+			Debug.log(player, CUSTOM_BLOCK_DAMAGE, "wrong tool, damage = " + damage);
 		}
 
 		// Instant Breaking:
 		if (damage > 1) {
 			damage = 1;
-			Debug.log(BLOCK_DAMAGE, "instant break, damage = " + damage);
+			Debug.log(player, CUSTOM_BLOCK_DAMAGE, "instant break, damage = " + damage);
 		}
 
-		Debug.log(BLOCK_DAMAGE, "getBlockDamage: hardness=" + blockHardness + " | speed=" + speedMultiplier + " | " + "Damage: " + damage);
-		Debug.log(BLOCK_DAMAGE, "---");
+		Debug.log(player, CUSTOM_BLOCK_DAMAGE, "getBlockDamage: hardness=" + blockHardness + " | speed=" + speedMultiplier + " | " + "Damage: " + damage);
+		Debug.log(player, CUSTOM_BLOCK_DAMAGE, "---");
 		return damage;
 	}
 

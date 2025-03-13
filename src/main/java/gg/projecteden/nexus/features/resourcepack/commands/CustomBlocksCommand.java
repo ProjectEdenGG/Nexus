@@ -237,13 +237,13 @@ public class CustomBlocksCommand extends CustomCommand {
 		String blockType = StringUtils.camelCase(block.getType());
 		float blockHardness = BlockUtils.getBlockHardness(block);
 
-		boolean canHarvest = BlockUtils.canHarvest(block, tool, player());
+		boolean canHarvest = BlockUtils.canHarvestWith(block, tool, player());
 
 		Material itemType = tool.getType();
 		float destroySpeedItem = NMSUtils.getDestroySpeed(block, tool);
 		if (isCustomBlock) {
 			blockType = StringUtils.camelCase(customBlock.name());
-			destroySpeedItem = (float) customBlock.get().getSpeedMultiplier(tool, canHarvest);
+			destroySpeedItem = (float) customBlock.get().getSpeedMultiplier(tool);
 		}
 
 		BrokenBlock brokenBlock = new BrokenBlock(block, isCustomBlock, player(), tool, Bukkit.getCurrentTick());
@@ -266,6 +266,7 @@ public class CustomBlocksCommand extends CustomCommand {
 
 	//
 
+	@SuppressWarnings("UnusedReturnValue")
 	private boolean checkPermissions() {
 		if (isAdmin())
 			return true;

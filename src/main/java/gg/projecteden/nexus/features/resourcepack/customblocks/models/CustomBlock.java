@@ -726,7 +726,7 @@ public enum CustomBlock implements Keyed {
 			CustomBlockUtils.debug(source, "&e- tool != null/air");
 			ICustomBlock iCustomBlock = get();
 
-			if (!iCustomBlock.canHarvestWith(tool, source)) {
+			if (iCustomBlock.requiresCorrectToolForDrops() && !iCustomBlock.canHarvestWith(tool, source)) {
 				dropItem = false;
 				CustomBlockUtils.debug(source, "&e- dropItem = " + dropItem);
 
@@ -893,7 +893,7 @@ public enum CustomBlock implements Keyed {
 	}
 
 	private void dropItem(ItemStack item, Location location) {
-		location.getWorld().dropItemNaturally(location, item);
+		location.getWorld().dropItemNaturally(location.toCenterLocation(), item);
 	}
 
 

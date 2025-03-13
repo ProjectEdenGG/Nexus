@@ -63,7 +63,7 @@ public class TunnelingEnchant extends CustomEnchant implements Listener {
 			if (block.getLocation().equals(originalBlock.getLocation()))
 				continue;
 
-			if (!ItemUtils.isPreferredTool(tool, block))
+			if (!ItemUtils.isPreferredTool(tool, block, player))
 				continue;
 
 			if (BlockUtils.getBlockHardness(block) >= BLOCK_HARDNESS_THRESHOLD)

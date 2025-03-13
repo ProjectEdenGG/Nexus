@@ -71,6 +71,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.Debug.DebugType.CUSTOM_BLOCK_DAMAGE;
 
 public class ItemUtils {
 
@@ -80,16 +81,22 @@ public class ItemUtils {
 		.name("Empty item slot") // Because of what this is, this only renders when you hold it. This is the only way to even tell it exists lol
 		.build();
 
-	public static boolean isPreferredTool(ItemStack tool, Block block) {
-		if (Nullables.isNullOrAir(tool) || Nullables.isNullOrAir(block))
+	public static boolean isPreferredTool(ItemStack tool, Block block, Player debugger) {
+		if (Nullables.isNullOrAir(tool) || Nullables.isNullOrAir(block)) {
+			Debug.log(debugger, CUSTOM_BLOCK_DAMAGE, "tool/block == null/air");
 			return false;
+		}
 
 		final ToolType toolType = ToolType.of(tool);
-		if (toolType == null)
+		if (toolType == null) {
+			Debug.log(debugger, CUSTOM_BLOCK_DAMAGE, "toolType of tool == null");
 			return false;
+		}
 
-		if (toolType.getPreferredToolTag() == null)
+		if (toolType.getPreferredToolTag() == null) {
+			Debug.log(debugger, CUSTOM_BLOCK_DAMAGE, "toolType of tool preferredToolTag == null");
 			return false;
+		}
 
 		return NMSUtils.toNMS(block.getBlockData()).is(toolType.getPreferredToolTag());
 	}

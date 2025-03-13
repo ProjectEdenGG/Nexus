@@ -18,7 +18,7 @@ public interface ILantern extends IDirectionalNoteBlock {
 
 	@Override
 	default double getBlockHardness() {
-		return 0.8;
+		return 1.0;
 	}
 
 	@Override
