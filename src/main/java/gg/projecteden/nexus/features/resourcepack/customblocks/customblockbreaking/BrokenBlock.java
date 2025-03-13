@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Debug;
+import gg.projecteden.nexus.utils.Debug.DebugType;
 import gg.projecteden.nexus.utils.ItemUtils;
 import lombok.Data;
 import lombok.Getter;
@@ -15,8 +16,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.text.DecimalFormat;
-
-import static gg.projecteden.nexus.utils.Debug.DebugType.CUSTOM_BLOCK_DAMAGE;
 
 @Data
 public class BrokenBlock {
@@ -72,11 +71,11 @@ public class BrokenBlock {
 	public static float getBlockDamage(Player player, ItemStack tool, Block block) {
 		CustomBlock customBlock = CustomBlock.from(block);
 		if (customBlock != null) {
-			Debug.log(player, CUSTOM_BLOCK_DAMAGE, "CustomBlock getBlockDamage:");
+			Debug.log(player, DebugType.CUSTOM_BLOCK_DAMAGE, "CustomBlock getBlockDamage:");
 			return customBlock.get().getBlockDamage(player, tool);
 		}
 
-		Debug.log(player, CUSTOM_BLOCK_DAMAGE, "Vanilla getBlockDamage:");
+		Debug.log(player, DebugType.CUSTOM_BLOCK_DAMAGE, "Vanilla getBlockDamage:");
 		return BlockUtils.getBlockDamage(player, tool, block);
 	}
 

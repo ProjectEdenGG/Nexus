@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.utils.Debug.DebugType;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.parchment.HasPlayer;
@@ -70,9 +71,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.Debug.DebugType.CUSTOM_BLOCK_DAMAGE;
-
 public class ItemUtils {
 
 	@Getter
@@ -83,18 +81,18 @@ public class ItemUtils {
 
 	public static boolean isPreferredTool(ItemStack tool, Block block, Player debugger) {
 		if (Nullables.isNullOrAir(tool) || Nullables.isNullOrAir(block)) {
-			Debug.log(debugger, CUSTOM_BLOCK_DAMAGE, "tool/block == null/air");
+			Debug.log(debugger, DebugType.CUSTOM_BLOCK_DAMAGE, "tool/block == null/air");
 			return false;
 		}
 
 		final ToolType toolType = ToolType.of(tool);
 		if (toolType == null) {
-			Debug.log(debugger, CUSTOM_BLOCK_DAMAGE, "toolType of tool == null");
+			Debug.log(debugger, DebugType.CUSTOM_BLOCK_DAMAGE, "toolType of tool == null");
 			return false;
 		}
 
 		if (toolType.getPreferredToolTag() == null) {
-			Debug.log(debugger, CUSTOM_BLOCK_DAMAGE, "toolType of tool preferredToolTag == null");
+			Debug.log(debugger, DebugType.CUSTOM_BLOCK_DAMAGE, "toolType of tool preferredToolTag == null");
 			return false;
 		}
 
@@ -127,7 +125,7 @@ public class ItemUtils {
 	}
 
 	public static String getFixedPotionName(PotionType effect) {
-		return camelCase(effect);
+		return StringUtils.camelCase(effect);
 	}
 
 	public static boolean isFuzzyMatch(ItemStack itemStack1, ItemStack itemStack2) {

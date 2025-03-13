@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.utils.Debug;
+import gg.projecteden.nexus.utils.Debug.DebugType;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -19,8 +20,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.Debug.DebugType.CUSTOM_BLOCK_DAMAGE;
 
 public interface IHarvestable {
 
@@ -72,18 +71,18 @@ public interface IHarvestable {
 	// DO NOT CHANGE THIS, IT IS IN PARITY WITH VANILLA
 	default boolean isPreferredTool(ItemStack tool, Player debugger) {
 		if (Nullables.isNullOrAir(tool)) {
-			Debug.log(debugger, CUSTOM_BLOCK_DAMAGE, "tool == null/air");
+			Debug.log(debugger, DebugType.CUSTOM_BLOCK_DAMAGE, "tool == null/air");
 			return false;
 		}
 
 		final ToolType toolType = ToolType.of(tool);
 		if (toolType == null) {
-			Debug.log(debugger, CUSTOM_BLOCK_DAMAGE, "toolType of tool == null");
+			Debug.log(debugger, DebugType.CUSTOM_BLOCK_DAMAGE, "toolType of tool == null");
 			return false;
 		}
 
 		if (toolType.getPreferredToolTag() == null) {
-			Debug.log(debugger, CUSTOM_BLOCK_DAMAGE, "toolType of tool preferredToolTag == null");
+			Debug.log(debugger, DebugType.CUSTOM_BLOCK_DAMAGE, "toolType of tool preferredToolTag == null");
 			return false;
 		}
 
