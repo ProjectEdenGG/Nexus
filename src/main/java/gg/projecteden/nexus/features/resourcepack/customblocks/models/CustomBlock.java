@@ -181,6 +181,7 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.protection.ProtectionUtils;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.GameMode;
@@ -603,8 +604,13 @@ public enum CustomBlock implements Keyed {
 			BlockData blockData = customBlock.getBlockData(facingFinal, placeAgainst);
 			CustomBlockUtils.debug(player, "&e- placing: " + StringUtils.camelCase(this));
 
-			if (BlockUtils.tryPlaceEvent(player, block, placeAgainst, blockMaterial, blockData, false, item)) {
+			if (ProtectionUtils.canBuild(player, block)) {
 				player.swingMainHand();
+
+				block.setType(blockMaterial, false);
+				if (blockData != null)
+					block.setBlockData(blockData, false);
+
 				playSound(player, SoundAction.PLACE, block.getLocation());
 				ItemUtils.subtract(player, itemInHand);
 

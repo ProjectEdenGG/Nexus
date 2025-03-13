@@ -124,13 +124,16 @@ public class BrokenBlock {
 	}
 
 	public void incrementDamage(Player player, ItemStack itemStack) {
-//		CustomBlockUtils.debug(player, "Incrementing damage...");
+		CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCK_DAMAGE, "Incrementing damage...");
 		int currentTick = Bukkit.getCurrentTick();
 		if (!ItemUtils.isFuzzyMatch(itemStack, this.initialItemStack)) {
-			CustomBlockUtils.debug(player, "<-- using different tool, resetting progress");
+			CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCK_DAMAGE, "<-- using different tool, resetting progress");
 			reset(itemStack, currentTick);
 			return;
 		}
+
+		if (this.lastDamageTick == currentTick)
+			return;
 
 		this.lastDamageTick = currentTick;
 
@@ -138,6 +141,7 @@ public class BrokenBlock {
 		if (this.breakTicks == 1)
 			this.damageFrame = 10;
 
+		CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCK_DAMAGE, "Damage frame: " + this.damageFrame + " | Damage tick: " + this.lastDamageTick);
 		sendDamagePacket(this.damageFrame);
 
 		this.totalDamageTicks++;
@@ -148,9 +152,13 @@ public class BrokenBlock {
 	}
 
 	public void decrementDamage(int currentTick) {
+		if (this.lastDamageTick == currentTick)
+			return;
+
 		this.lastDamageTick = currentTick;
 
-		this.damageFrame--;
+		--this.damageFrame;
+		CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCK_DAMAGE, "Damage frame: " + this.damageFrame + " | Damage tick: " + this.lastDamageTick);
 		sendDamagePacket(this.damageFrame);
 
 		this.totalDamageTicks -= (int) Math.round(this.breakTicks / 10.0);

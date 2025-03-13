@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.customblockbreak
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
+import gg.projecteden.nexus.utils.Debug.DebugType;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.MaterialTag;
 import lombok.Getter;
@@ -43,15 +44,15 @@ public class BreakListener implements Listener {
 
 	@EventHandler
 	public void on(BlockBreakEvent event) {
-		CustomBlockUtils.debug(event.getPlayer(), "CustomBlockBreaking: BlockBreakEvent");
+		CustomBlockUtils.debug(event.getPlayer(), DebugType.CUSTOM_BLOCK_DAMAGE, "CustomBlockBreaking: BlockBreakEvent");
 
 		if (event.isCancelled()) {
-			CustomBlockUtils.debug(event.getPlayer(), "<-- event is cancelled");
+			CustomBlockUtils.debug(event.getPlayer(), DebugType.CUSTOM_BLOCK_DAMAGE, "<-- event is cancelled");
 			return;
 		}
 
 		if (!CustomBlockBreaking.getManager().isTracking(event.getBlock())) {
-			CustomBlockUtils.debug(event.getPlayer(), "<-- already tracking");
+			CustomBlockUtils.debug(event.getPlayer(), DebugType.CUSTOM_BLOCK_DAMAGE, "<-- already tracking");
 			return;
 		}
 
@@ -61,14 +62,14 @@ public class BreakListener implements Listener {
 	@EventHandler
 	public void on(BlockDamageEvent event) {
 		Player player = event.getPlayer();
-		CustomBlockUtils.debug(player, "CustomBlockBreaking: BlockDamageEvent");
+		CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCK_DAMAGE, "CustomBlockBreaking: BlockDamageEvent");
 		if (event.isCancelled()) {
-			CustomBlockUtils.debug(player, "<-- event is cancelled");
+			CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCK_DAMAGE, "<-- event is cancelled");
 			return;
 		}
 
 		if (isInvalid(player)) {
-			CustomBlockUtils.debug(player, "<-- player is invalid");
+			CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCK_DAMAGE, "<-- player is invalid");
 			return;
 		}
 
@@ -76,14 +77,14 @@ public class BreakListener implements Listener {
 		int currentTick = Bukkit.getCurrentTick();
 		if (breakWait.containsKey(player.getUniqueId())) {
 			if (currentTick < (6 + breakWait.get(player.getUniqueId()))) {
-				CustomBlockUtils.debug(player, "<-- on cooldown");
+				CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCK_DAMAGE, "<-- on cooldown");
 				return;
 			}
 		}
 
 		Block block = event.getBlock();
 		if (CustomBlockBreaking.getManager().isTracking(block)) {
-			CustomBlockUtils.debug(player, "<-- already tracking");
+			CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCK_DAMAGE, "<-- already tracking");
 			return;
 		}
 

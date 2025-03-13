@@ -141,44 +141,38 @@ public class CustomBlockSounds implements Listener {
 	// Handles Sound: STEP
 	@EventHandler
 	public void on(SoundEvent event) {
-		try {
-			Block block = event.getEmitter().getLocation().getBlock();
-			Block below = block.getRelative(BlockFace.DOWN);
-			Block source;
+		net.kyori.adventure.sound.Sound sound = event.getSound();
+		SoundAction soundAction = SoundAction.fromSound(sound);
+		if (soundAction != SoundAction.STEP)
+			return;
 
-			CustomBlock _customBlock = CustomBlock.from(block);
-			if (_customBlock != null)
-				source = block;
-			else {
-				_customBlock = CustomBlock.from(below);
-				if (_customBlock != null)
-					source = below;
-				else
-					return;
-			}
+		Block block = event.getEmitter().getLocation().getBlock();
+		Block below = block.getRelative(BlockFace.DOWN);
+		Block source = null;
 
-			net.kyori.adventure.sound.Sound sound = event.getSound();
-			SoundAction soundAction = SoundAction.fromSound(sound);
-			if (soundAction == null)
-				return;
+		// Custom Block
+		CustomBlock customBlock = CustomBlock.from(block);
+		if (customBlock != null)
+			source = block;
+		else {
+			customBlock = CustomBlock.from(below);
+			if (customBlock != null)
+				source = below;
+		}
 
-			if (soundAction != SoundAction.STEP)
-				return;
+		if (customBlock != null) {
+			event.setCancelled(true);
+			customBlock.playSound(null, soundAction, source.getLocation());
+			return;
+		}
 
-			if (!Nullables.isNullOrAir(source)) {
-				event.setCancelled(true);
-				_customBlock.playSound(null, soundAction, source.getLocation());
-				return;
-			}
+		// Vanilla Block
+		ReplacedSoundType soundType = ReplacedSoundType.fromSound(sound.name().value());
+		if (soundType == null)
+			return;
 
-			ReplacedSoundType soundType = ReplacedSoundType.fromSound(sound.name().value());
-			if (soundType == null)
-				return;
-
-			if (tryPlaySound(null, soundAction, soundAction.getCustomSound(soundType), event.getEmitter().getLocation()))
-				event.setCancelled(true);
-
-		} catch (Exception ignored) {}
+		if (tryPlaySound(null, soundAction, soundAction.getCustomSound(soundType), event.getEmitter().getLocation()))
+			event.setCancelled(true);
 	}
 
 	public static void tryPlaySound(Player source, SoundAction soundAction, Block block) {

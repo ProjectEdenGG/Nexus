@@ -35,7 +35,7 @@ import java.util.Map;
 		- Maintain stats (ex. Player#awardStat(Tune note block)
 		- Ensure the conversion of note block is keeping their pitch to the database
 		- remove "TODO CUSTOM BLOCKS: REMOVE"
-		- CustomBlock Breaking
+		- Add Shulker & Neon blocks
 		- Release NoteBlock Custom Blocks
 		-
 		- Cannot Fix:
