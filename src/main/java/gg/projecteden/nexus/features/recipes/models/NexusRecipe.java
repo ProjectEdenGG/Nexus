@@ -12,6 +12,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.recipe.CraftingBookCategory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -67,6 +70,14 @@ public class NexusRecipe {
 
 	public NexusRecipe group(RecipeGroup group) {
 		this.group = group;
+		return this;
+	}
+
+	public NexusRecipe category(CraftingBookCategory category) {
+		if (this.recipe instanceof ShapelessRecipe shapeless)
+			shapeless.setCategory(category);
+		if (this.recipe instanceof ShapedRecipe shaped)
+			shaped.setCategory(category);
 		return this;
 	}
 
