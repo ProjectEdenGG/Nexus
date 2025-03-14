@@ -51,6 +51,7 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.DarkOakPaperLantern;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.JunglePaperLantern;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.OakPaperLantern;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.PaleOakPaperLantern;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.SprucePaperLantern;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.WarpedShroomLantern;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.misc.HazardBlock;
@@ -378,6 +379,7 @@ public enum CustomBlock implements Keyed {
 	WARPED_SHROOM_LANTERN(WarpedShroomLantern.class, CustomBlockTab.LANTERNS),
 	CHERRY_PAPER_LANTERN(CherryPaperLantern.class, CustomBlockTab.LANTERNS),
 	BAMBOO_PAPER_LANTERN(BambooPaperLantern.class, CustomBlockTab.LANTERNS),
+	PALE_OAK_PAPER_LANTERN(PaleOakPaperLantern.class, CustomBlockTab.LANTERNS),
 
 	// vertical planks
 	VERTICAL_OAK_PLANKS(VerticalOakPlanks.class, CustomBlockTab.VERTICAL_PLANKS),
