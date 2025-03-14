@@ -25,9 +25,9 @@ public enum RecipeType {
 	FURNACE(Material.FURNACE),
 	DECORATION(ItemModelType.WINDCHIMES_AMETHYST),
 	ARMOR(Material.DIAMOND_CHESTPLATE),
-	@Disabled // TODO Custom Blocks
+	@Disabled // TODO CUSTOM BLOCKS: REMOVE
 	STONECUTTER(Material.STONECUTTER),
-	@Disabled // TODO Custom Blocks
+	@Disabled // TODO CUSTOM BLOCKS: REMOVE
 	CUSTOM_BLOCKS(ItemModelType.BLOCKS_CRATE_APPLE),
 	QUARTZ(Material.QUARTZ),
 	SLABS(Material.OAK_SLAB, false),
