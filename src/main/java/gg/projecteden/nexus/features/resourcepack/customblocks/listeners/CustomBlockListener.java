@@ -40,6 +40,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.ItemEntity;
 import org.bukkit.ExplosionResult;
+import org.bukkit.GameMode;
 import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -86,6 +87,9 @@ public class CustomBlockListener implements Listener {
 
 	@EventHandler
 	public void on(PlayerPickItemEvent event) {
+		if (event.getPlayer().getGameMode() != GameMode.CREATIVE)
+			return;
+
 		Location location = event.getLocation();
 		if (location == null)
 			return;

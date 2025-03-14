@@ -109,6 +109,9 @@ public class DecorationListener implements Listener {
 	// TODO: PICK BLOCK LIGHT BLOCK HITBOXES
 	@EventHandler
 	public void onPickBlock(PlayerPickItemEvent event) {
+		if (event.getPlayer().getGameMode() != GameMode.CREATIVE)
+			return;
+
 		ItemStack itemStack = null;
 		Entity entity = event.getEntity();
 		if (entity instanceof ItemFrame itemFrame) {
