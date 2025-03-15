@@ -454,43 +454,13 @@ public enum ColorType implements IsColored {
 	}
 
 	@NotNull
-	public CustomBlock getColoredPlanks() {
-		return getColoredPlanks(this);
+	public CustomBlock getCustomBlock(CustomBlock whiteType) {
+		return getCustomBlock(this, whiteType);
 	}
 
 	@NotNull
-	public static CustomBlock getColoredPlanks(@NotNull ColorType colorType) {
-		return CustomBlock.valueOf(colorType.getSimilarDyeColor() + generic(CustomBlock.WHITE_PLANKS));
-	}
-
-	@NotNull
-	public CustomBlock getConcreteBricks() {
-		return getConcreteBricks(this);
-	}
-
-	@NotNull
-	public static CustomBlock getConcreteBricks(@NotNull ColorType colorType) {
-		return CustomBlock.valueOf(colorType.getSimilarDyeColor() + generic(CustomBlock.WHITE_CONCRETE_BRICKS));
-	}
-
-	@NotNull
-	public CustomBlock getQuiltedWool() {
-		return getQuiltedWool(this);
-	}
-
-	@NotNull
-	public static CustomBlock getQuiltedWool(@NotNull ColorType colorType) {
-		return CustomBlock.valueOf(colorType.getSimilarDyeColor() + generic(CustomBlock.WHITE_QUILTED_WOOL));
-	}
-
-	@NotNull
-	public CustomBlock getTerracottaShingles() {
-		return getTerracottaShingles(this);
-	}
-
-	@NotNull
-	public static CustomBlock getTerracottaShingles(@NotNull ColorType colorType) {
-		return CustomBlock.valueOf(colorType.getSimilarDyeColor() + generic(CustomBlock.WHITE_TERRACOTTA_SHINGLES));
+	public static CustomBlock getCustomBlock(@NotNull ColorType colorType, CustomBlock whiteType) {
+		return CustomBlock.valueOf(colorType.getSimilarDyeColor() + generic(whiteType));
 	}
 
 	@NotNull

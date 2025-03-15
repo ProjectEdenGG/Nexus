@@ -50,6 +50,7 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.CrimsonShroomLantern;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.DarkOakPaperLantern;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.JunglePaperLantern;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.MangrovePaperLantern;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.OakPaperLantern;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.PaleOakPaperLantern;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.SprucePaperLantern;
@@ -82,6 +83,7 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.carved.CarvedJunglePlanks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.carved.CarvedMangrovePlanks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.carved.CarvedOakPlanks;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.carved.CarvedPaleOakPlanks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.carved.CarvedSprucePlanks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.carved.CarvedWarpedPlanks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.colored.BlackPlanks;
@@ -109,6 +111,7 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.vertical.VerticalJunglePlanks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.vertical.VerticalMangrovePlanks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.vertical.VerticalOakPlanks;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.vertical.VerticalPaleOakPlanks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.vertical.VerticalSprucePlanks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.vertical.VerticalWarpedPlanks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.quiltedwool.BlackQuiltedWool;
@@ -377,6 +380,7 @@ public enum CustomBlock implements Keyed {
 	DARK_OAK_PAPER_LANTERN(DarkOakPaperLantern.class, CustomBlockTab.LANTERNS),
 	CRIMSON_SHROOM_LANTERN(CrimsonShroomLantern.class, CustomBlockTab.LANTERNS),
 	WARPED_SHROOM_LANTERN(WarpedShroomLantern.class, CustomBlockTab.LANTERNS),
+	MANGROVE_PAPER_LANTERN(MangrovePaperLantern.class, CustomBlockTab.LANTERNS),
 	CHERRY_PAPER_LANTERN(CherryPaperLantern.class, CustomBlockTab.LANTERNS),
 	BAMBOO_PAPER_LANTERN(BambooPaperLantern.class, CustomBlockTab.LANTERNS),
 	PALE_OAK_PAPER_LANTERN(PaleOakPaperLantern.class, CustomBlockTab.LANTERNS),
@@ -393,6 +397,7 @@ public enum CustomBlock implements Keyed {
 	VERTICAL_MANGROVE_PLANKS(VerticalMangrovePlanks.class, CustomBlockTab.VERTICAL_PLANKS),
 	VERTICAL_CHERRY_PLANKS(VerticalCherryPlanks.class, CustomBlockTab.VERTICAL_PLANKS),
 	VERTICAL_BAMBOO_PLANKS(VerticalBambooPlanks.class, CustomBlockTab.VERTICAL_PLANKS),
+	VERTICAL_PALE_PLANKS(VerticalPaleOakPlanks.class, CustomBlockTab.VERTICAL_PLANKS),
 
 	// carved planks
 	CARVED_OAK_PLANKS(CarvedOakPlanks.class, CustomBlockTab.CARVED_PLANKS),
@@ -405,6 +410,7 @@ public enum CustomBlock implements Keyed {
 	CARVED_WARPED_PLANKS(CarvedWarpedPlanks.class, CustomBlockTab.CARVED_PLANKS),
 	CARVED_MANGROVE_PLANKS(CarvedMangrovePlanks.class, CustomBlockTab.CARVED_PLANKS),
 	CARVED_CHERRY_PLANKS(CarvedCherryPlanks.class, CustomBlockTab.CARVED_PLANKS),
+	CARVED_PALE_OAK_PLANKS(CarvedPaleOakPlanks.class, CustomBlockTab.CARVED_PLANKS),
 
 	// bricks
 	ANDESITE_BRICKS(AndesiteBricks.class, CustomBlockTab.STONE_BRICKS),
