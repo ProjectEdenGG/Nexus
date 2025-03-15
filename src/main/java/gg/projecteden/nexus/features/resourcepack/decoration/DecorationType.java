@@ -81,13 +81,13 @@ import java.util.Map;
 
 /*
 	Known Bugs:
-		- (Can't Fix) CreativePickBlock isn't perfect
-		- (Can't Fix) Can't open Master Brush GUI when Right Clicking AIR
 		- (Won't Fix) Decor doesn't check for required support on placement
 		- (Won't Fix) Decor will float after removing it's support
 		- Decorations can be placed at world height, where their hitboxes will not able able to fully be placed
 
-	TODO AFTER RELEASE:
+	TODO:
+		- Split Furniture & Food + Kitchenware into their own catalogs
+		-
 		- Cleanup DecorationInteractionData & Decoration duplicate checks (such as "canEdit")
 		- Bed Additions (Canopy)
 		- Rework shelves to being light-hitbox-based, barrier-hitboxes don't work properly, and I can't figure them out
