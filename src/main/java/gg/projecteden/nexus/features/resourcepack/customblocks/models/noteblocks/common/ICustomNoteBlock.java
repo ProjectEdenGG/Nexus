@@ -117,6 +117,10 @@ public interface ICustomNoteBlock extends ICustomBlock {
 		return customSound;
 	}
 
+	default BlockFace getFacing(Block block) {
+		return BlockFace.UP;
+	}
+
 	@Override
 	default BlockData getBlockData(@Nullable BlockFace facing, @Nullable Block underneath) {
 		NoteBlock noteBlock = (NoteBlock) this.getVanillaBlockMaterial().createBlockData();

@@ -12,6 +12,7 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBloc
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock.CustomBlockType;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock.PistonPushAction;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ICustomNoteBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.IRequireDirt;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.IRequireSupport;
@@ -76,6 +77,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("deprecation")
 public class CustomBlockListener implements Listener {
 
 	public CustomBlockListener() {
@@ -358,7 +360,13 @@ public class CustomBlockListener implements Listener {
 	}
 
 	private void sendBlockDataUpdate(Block block, CustomBlock customBlock) {
-		BlockData blockData = customBlock.get().getBlockData(BlockFace.UP, block.getRelative(BlockFace.DOWN));
+		ICustomBlock iCustomBlock = customBlock.get();
+		BlockFace facing = BlockFace.UP;
+		if (iCustomBlock instanceof ICustomNoteBlock iCustomNoteBlock) {
+			facing = iCustomNoteBlock.getFacing(block);
+		}
+
+		BlockData blockData = iCustomBlock.getBlockData(facing, block.getRelative(BlockFace.DOWN));
 		Location location = block.getLocation();
 		Tasks.wait(1, () -> OnlinePlayers.where().world(location.getWorld()).forEach(player -> player.sendBlockChange(location, blockData)));
 	}
