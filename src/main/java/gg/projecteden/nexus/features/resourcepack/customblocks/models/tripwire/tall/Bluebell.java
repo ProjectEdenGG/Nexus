@@ -7,6 +7,10 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.c
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.IRequireDirt;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 @CustomBlockConfig(
@@ -27,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 	customHitSound = "block.azalea_leaves.hit",
 	customFallSound = "block.azalea_leaves.fall"
 )
-public class Bluebell implements ITall, ICraftable, IRequireDirt {
+public class Bluebell implements ITallFlower, ICraftable {
 
 	@Override
 	public @Nullable RecipeBuilder<?> getUncraftRecipe() {

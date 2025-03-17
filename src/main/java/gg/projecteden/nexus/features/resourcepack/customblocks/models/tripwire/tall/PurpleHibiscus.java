@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 	customHitSound = "block.azalea_leaves.hit",
 	customFallSound = "block.azalea_leaves.fall"
 )
-public class PurpleHibiscus implements ITall, ICraftable, IRequireDirt {
+public class PurpleHibiscus implements ITallFlower, ICraftable {
 
 	@Override
 	public @Nullable RecipeBuilder<?> getUncraftRecipe() {

@@ -1,11 +1,14 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.common;
 
+import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.Debug.DebugType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.ToolType;
 import lombok.NonNull;
 import org.bukkit.Material;
@@ -104,6 +107,15 @@ public interface ICustomBlock extends IHarvestable {
 
 	default String getStringBlockData(BlockData blockData) {
 		return blockData.toString();
+	}
+
+	default boolean canNotPlace(Block clickedBlock, Player player, BlockFace clickedFace, Block preBlock, Block underneath, ItemStack itemInHand) {
+		if (!MaterialTag.REPLACEABLE.isTagged(preBlock.getType())) {
+			CustomBlockUtils.debug(player, "&c<- preBlock (" + StringUtils.camelCase(preBlock.getType()) + ") is not replaceable");
+			return true;
+		}
+
+		return false;
 	}
 
 	boolean equals(@NonNull BlockData blockData, @Nullable BlockFace facing, @NonNull Block underneath);

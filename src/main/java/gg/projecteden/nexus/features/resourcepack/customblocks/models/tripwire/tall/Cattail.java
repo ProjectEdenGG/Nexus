@@ -40,5 +40,5 @@ import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 	customHitSound = "block.azalea_leaves.hit",
 	customFallSound = "block.azalea_leaves.fall"
 )
-public class Cattail implements ITall, IWaterLogged, IRequireDirt {
+public class Cattail implements IWaterLogged, ITallFlower {
 }

@@ -604,7 +604,7 @@ public class CustomBlockListener implements Listener {
 		}
 
 		if (isPlacingCustomBlock) {
-			if (placedCustomBlock(clickedBlock, player, clickedFace, preBlock, itemInHand)) {
+			if (placeCustomBlock(clickedBlock, player, clickedFace, preBlock, itemInHand)) {
 				event.setCancelled(true);
 				CustomBlockUtils.logPlacement(player, preBlock, CustomBlock.from(itemInHand));
 			}
@@ -614,25 +614,24 @@ public class CustomBlockListener implements Listener {
 		return true;
 	}
 
-	private boolean placedCustomBlock(Block clickedBlock, Player player, BlockFace clickedFace, Block preBlock, ItemStack itemInHand) {
+	private boolean placeCustomBlock(Block clickedBlock, Player player, BlockFace clickedFace, Block preBlock, ItemStack itemInHand) {
 		CustomBlockUtils.debug(player, "&e- placing custom block");
 		if (!preBlock.getLocation().toCenterLocation().getNearbyLivingEntities(0.5).isEmpty()) {
 			CustomBlockUtils.debug(player, "&c<- entity in way");
 			return false;
 		}
 
-		CustomBlock _customBlock = CustomBlock.from(itemInHand);
-		if (_customBlock == null) {
+		CustomBlock customBlock = CustomBlock.from(itemInHand);
+		if (customBlock == null) {
 			CustomBlockUtils.debug(player, "&c<- customBlock == null");
 			return false;
 		}
 
-		ICustomBlock customBlock = _customBlock.get();
+		ICustomBlock iCustomBlock = customBlock.get();
 		Block underneath = preBlock.getRelative(BlockFace.DOWN);
 
-		// TODO: REFACTOR TO MOVE THE LOGIC INTO THEIR RESPECTIVE CLASSES INSTEAD
-		// IWaterlogged
-		if (customBlock instanceof IWaterLogged) {
+		// Modify variables
+		if (iCustomBlock instanceof IWaterLogged) {
 			CustomBlockUtils.debug(player, "&e- CustomBlock instance of IWaterLogged");
 
 			// if placing block in 1 depth water
@@ -649,49 +648,18 @@ public class CustomBlockListener implements Listener {
 				return false;
 			}
 		} else {
-			if (!MaterialTag.REPLACEABLE.isTagged(preBlock.getType())) {
-				CustomBlockUtils.debug(player, "&c<- preBlock (" + StringUtils.camelCase(preBlock.getType()) + ") is not replaceable");
-				return false;
+			if (MaterialTag.REPLACEABLE.isTagged(clickedBlock.getType())) {
+				CustomBlockUtils.debug(player, "&e- clickedBlock is replaceable, adjusted placement");
+				preBlock = clickedBlock;
 			}
 		}
 
-		// ITall
-		if (customBlock instanceof ITall) {
-			CustomBlockUtils.debug(player, "&e- CustomBlock instance of IWaterLogged");
-			Block above = preBlock.getRelative(BlockFace.UP);
-
-			boolean placeTallSupport = false;
-			if (!(customBlock instanceof IWaterLogged))
-				placeTallSupport = true;
-			else if (clickedBlock.getType() != Material.WATER)
-				placeTallSupport = true;
-
-			if (placeTallSupport && !Nullables.isNullOrAir(above)) {
-				CustomBlockUtils.debug(player, "&c<- above (" + StringUtils.camelCase(preBlock.getType()) + ") is not null/air");
-				return false;
-			}
-		}
-
-		// IRequireSupport
-		if (customBlock instanceof IRequireSupport && !(customBlock instanceof IWaterLogged)) {
-			CustomBlockUtils.debug(player, "&e- CustomBlock instance of IRequireSupport and not IWaterLogged");
-			if (!underneath.isSolid()) {
-				CustomBlockUtils.debug(player, "&c<- underneath (" + StringUtils.camelCase(preBlock.getType()) + ") is not solid");
-				return false;
-			}
-		}
-
-		// IRequireDirt
-		if (customBlock instanceof IRequireDirt) {
-			CustomBlockUtils.debug(player, "&e- CustomBlock instance of IRequireDirt");
-			if (!MaterialTag.DIRT.isTagged(underneath.getType())) {
-				CustomBlockUtils.debug(player, "&c<- underneath (" + StringUtils.camelCase(preBlock.getType()) + ") is not a dirt type");
-				return false;
-			}
-		}
+		// Additional checks
+		if (iCustomBlock.canNotPlace(clickedBlock, player, clickedFace, preBlock, underneath, itemInHand))
+			return false;
 
 		// place block
-		if (!_customBlock.placeBlock(player, preBlock, clickedBlock, clickedFace, itemInHand)) {
+		if (!customBlock.placeBlock(player, preBlock, clickedBlock, clickedFace, itemInHand)) {
 			CustomBlockUtils.debug(player, "&c<- CustomBlock#PlaceBlock == false");
 			return false;
 		}

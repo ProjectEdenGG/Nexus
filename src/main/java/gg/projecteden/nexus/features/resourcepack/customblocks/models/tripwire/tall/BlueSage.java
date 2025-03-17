@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 	customHitSound = "block.azalea_leaves.hit",
 	customFallSound = "block.azalea_leaves.fall"
 )
-public class BlueSage implements ITall, ICraftable, IRequireDirt {
+public class BlueSage implements ITallFlower, ICraftable {
 
 	@Override
 	public @Nullable RecipeBuilder<?> getUncraftRecipe() {
