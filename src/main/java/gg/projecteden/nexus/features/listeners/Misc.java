@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.listeners.events.PlayerDamageByPlayerEvent;
 import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.features.listeners.events.fake.FakePlayerInteractEvent;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.vanish.events.VanishToggleEvent;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -112,10 +113,17 @@ public class Misc implements Listener {
 
 	@EventHandler
 	public void onPlaceOnLight(BlockPlaceEvent event) {
+		if (event.isCancelled())
+			return;
+
 		if (event.getBlockReplacedState().getType() != Material.LIGHT)
 			return;
 
 		if (event.getBlock().getType() == Material.LIGHT)
+			return;
+
+		// replace lantern light
+		if (CustomBlockUtils.removeLanternLight(event))
 			return;
 
 		event.setCancelled(true);

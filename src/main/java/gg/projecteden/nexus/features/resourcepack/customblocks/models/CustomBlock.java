@@ -637,79 +637,79 @@ public enum CustomBlock implements Keyed {
 	}
 
 	public boolean placeBlock(Player player, EquipmentSlot hand, Block block, Block placeAgainst, BlockFace facing, ItemStack itemInHand) {
-		ICustomBlock customBlock = this.get();
+		if (!ProtectionUtils.canBuild(player, block))
+			return false;
 
-		Material blockMaterial = customBlock.getVanillaBlockMaterial();
-		ItemStack item = new ItemStack(customBlock.getVanillaItemMaterial());
+		ICustomBlock iCustomBlock = this.get();
+
+		Material blockMaterial = iCustomBlock.getVanillaBlockMaterial();
+		ItemStack item = new ItemStack(iCustomBlock.getVanillaItemMaterial());
 		BlockFace facingFinal = facing;
 		boolean placeTallSupport = false;
 		boolean checkNeighbors = false;
 
 		boolean setup = false;
-		switch (this.getType()) {
-			case NOTE_BLOCK -> setup = true;
-			case TRIPWIRE -> {
-				CustomBlockUtils.debug(player, "&e- tripwire handling...");
-				// TODO: Disable tripwire customblocks
-				if (ICustomTripwire.isNotEnabled())
-					return false;
-				//
+		if (iCustomBlock instanceof ICustomNoteBlock iCustomNoteBlock) {
+			iCustomNoteBlock.placeBlock(player, hand, block, placeAgainst, facing, itemInHand);
+			setup = true;
+		} else if (iCustomBlock instanceof ICustomTripwire iCustomTripwire) {
+			CustomBlockUtils.debug(player, "&e- tripwire handling...");
+			// TODO: Disable tripwire customblocks
+			if (ICustomTripwire.isNotEnabled())
+				return false;
+			//
 
-				// ITall
-				if (customBlock instanceof ITall) {
-					if (!(customBlock instanceof IWaterLogged))
-						placeTallSupport = true;
-					else if (placeAgainst.getType() != Material.WATER)
-						placeTallSupport = true;
-				}
-
-				// Cross
-				if (customBlock instanceof IActualTripwire) {
-					checkNeighbors = true;
-
-					// check self
-					if (shouldConvert(block))
-						customBlock = CustomBlock.TRIPWIRE_CROSS.get();
-				}
-
-				// Setup done
-				facingFinal = BlockUtils.getNextCardinalBlockFace(BlockUtils.getCardinalBlockFace(player));
-				setup = true;
+			// ITall
+			if (iCustomBlock instanceof ITall) {
+				if (!(iCustomBlock instanceof IWaterLogged))
+					placeTallSupport = true;
+				else if (placeAgainst.getType() != Material.WATER)
+					placeTallSupport = true;
 			}
+
+			// Cross
+			if (iCustomBlock instanceof IActualTripwire) {
+				checkNeighbors = true;
+
+				// check self
+				if (shouldConvert(block))
+					iCustomBlock = CustomBlock.TRIPWIRE_CROSS.get();
+			}
+
+			// Setup done
+			facingFinal = BlockUtils.getNextCardinalBlockFace(BlockUtils.getCardinalBlockFace(player));
+			setup = true;
 		}
 
-		if (setup) {
-			BlockData blockData = customBlock.getBlockData(facingFinal, placeAgainst);
-			CustomBlockUtils.debug(player, "&e- placing: " + StringUtils.camelCase(this));
+		if (!setup)
+			return false;
 
-			if (ProtectionUtils.canBuild(player, block)) {
-				if (hand == EquipmentSlot.HAND)
-					player.swingMainHand();
-				else if (hand == EquipmentSlot.OFF_HAND)
-					player.swingOffHand();
+		BlockData blockData = iCustomBlock.getBlockData(facingFinal, placeAgainst);
+		CustomBlockUtils.debug(player, "&e- placing: " + StringUtils.camelCase(this));
 
-				block.setType(blockMaterial, false);
-				if (blockData != null)
-					block.setBlockData(blockData, false);
+		if (hand == EquipmentSlot.HAND)
+			player.swingMainHand();
+		else if (hand == EquipmentSlot.OFF_HAND)
+			player.swingOffHand();
 
-				playSound(player, SoundAction.PLACE, block.getLocation());
-				ItemUtils.subtract(player, itemInHand);
+		block.setType(blockMaterial, false);
+		if (blockData != null)
+			block.setBlockData(blockData, false);
 
-				CustomBlockUtils.updateObservers(block, player);
-				if (this == NOTE_BLOCK)
-					CustomBlockUtils.placeNoteBlockInDatabase(block.getLocation(), blockData);
+		playSound(player, SoundAction.PLACE, block.getLocation());
+		ItemUtils.subtract(player, itemInHand);
 
-				if (placeTallSupport)
-					tallSupport(player, block, facingFinal);
+		CustomBlockUtils.updateObservers(block, player);
+		if (this == NOTE_BLOCK)
+			CustomBlockUtils.placeNoteBlockInDatabase(block.getLocation(), blockData);
 
-				if (checkNeighbors)
-					checkNeighbors(player, block, blockData);
+		if (placeTallSupport)
+			tallSupport(player, block, facingFinal);
 
-				return true;
-			}
-		}
+		if (checkNeighbors)
+			checkNeighbors(player, block, blockData);
 
-		return false;
+		return true;
 	}
 
 	private void tallSupport(Player player, Block block, BlockFace facingFinal) {
@@ -802,8 +802,9 @@ public enum CustomBlock implements Keyed {
 	}
 
 	public void breakBlock(@Nullable Player source, @Nullable ItemStack tool, Block block, boolean dropItem, int amount, boolean playSound, boolean spawnParticle, boolean applyPhysics) {
+		ICustomBlock iCustomBlock = get();
 		boolean dropIngredients = false;
-		CustomBlockUtils.debug(source, "&b- CustomBlock#breakBlock: " + this.get().getItemName());
+		CustomBlockUtils.debug(source, "&b- CustomBlock#breakBlock: " + iCustomBlock.getItemName());
 
 		Location location = block.getLocation();
 		if (source != null)
@@ -811,7 +812,6 @@ public enum CustomBlock implements Keyed {
 
 		if (Nullables.isNotNullOrAir(tool) && this != TALL_SUPPORT) {
 			CustomBlockUtils.debug(source, "&e- tool != null/air");
-			ICustomBlock iCustomBlock = get();
 
 			if (iCustomBlock.requiresCorrectToolForDrops() && !iCustomBlock.canHarvestWith(tool, source)) {
 				dropItem = false;
@@ -835,9 +835,11 @@ public enum CustomBlock implements Keyed {
 			dropIngredients = false;
 		}
 
-		if (this == NOTE_BLOCK) {
+		if (this == NOTE_BLOCK)
 			CustomBlockUtils.breakNoteBlockInDatabase(location);
-		}
+
+		if (iCustomBlock instanceof ICustomNoteBlock iCustomNoteBlock)
+			iCustomNoteBlock.breakBlock(source, tool, block);
 
 		block.setType(Material.AIR, applyPhysics);
 

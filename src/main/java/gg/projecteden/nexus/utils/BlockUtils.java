@@ -120,6 +120,10 @@ public class BlockUtils {
 		return getAdjacentBlocks(block, List.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN));
 	}
 
+	public static List<Block> getAdjacentBlocks(Block block, boolean includeAir) {
+		return getAdjacentBlocks(block, List.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN), includeAir);
+	}
+
 	public static List<Block> getAdjacentBlocks(Block block, List<BlockFace> faces) {
 		return getAdjacentBlocks(block, faces, false);
 	}

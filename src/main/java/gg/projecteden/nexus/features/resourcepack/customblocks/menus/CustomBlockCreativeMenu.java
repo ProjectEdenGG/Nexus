@@ -63,10 +63,6 @@ public class CustomBlockCreativeMenu extends InventoryProvider {
 				ItemStack item = customBlock.get().getItemStack();
 				ItemBuilder displayItem = new ItemBuilder(item);
 
-				if (customBlock.get() instanceof ILantern) {
-					displayItem.lore("", "&eDoesn't produce light");
-				}
-
 				items.add(ClickableItem.of(displayItem, e -> PlayerUtils.giveItem(viewer, item)));
 			}
 		}

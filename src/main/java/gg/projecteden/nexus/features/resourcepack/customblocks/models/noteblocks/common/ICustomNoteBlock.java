@@ -10,6 +10,9 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.NoteBlock;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -148,5 +151,11 @@ public interface ICustomNoteBlock extends ICustomBlock {
 		noteBlock.setPowered(false);
 
 		return noteBlock.matches(_noteBlock);
+	}
+
+	default void placeBlock(Player player, EquipmentSlot hand, Block block, Block placeAgainst, BlockFace facing, ItemStack itemInHand) {
+	}
+
+	default void breakBlock(@Nullable Player source, @Nullable ItemStack tool, Block block) {
 	}
 }

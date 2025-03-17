@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBloc
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IDirectional;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ICustomNoteBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.ILantern;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.IRequireSupport;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.incremental.IIncremental;
@@ -14,9 +15,12 @@ import gg.projecteden.nexus.features.titan.models.CustomCreativeItem;
 import gg.projecteden.nexus.models.customblock.CustomNoteBlockTracker;
 import gg.projecteden.nexus.models.customblock.CustomNoteBlockTrackerService;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
+import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.Debug.DebugType;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
@@ -26,10 +30,14 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Levelled;
 import org.bukkit.block.data.Powerable;
 import org.bukkit.block.data.type.Tripwire;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -149,6 +157,47 @@ public class CustomBlockUtils {
 		});
 	}
 
+	public static boolean removeLanternLight(BlockPlaceEvent event) {
+		BlockState oldBlockState = event.getBlockReplacedState();
+		if (oldBlockState.getType() != Material.LIGHT)
+			return false;
+
+		if (event.getBlock().getType() == Material.LIGHT)
+			return false;
+
+		Levelled levelled = (Levelled) oldBlockState.getBlockData();
+		int lightLevel = levelled.getLevel();
+
+		for (Block _block : BlockUtils.getAdjacentBlocks(event.getBlock())) {
+			CustomBlock customBlock = CustomBlock.from(_block);
+			if (customBlock == null || !(customBlock.get() instanceof ILantern))
+				continue;
+
+			if (lightLevel != ILantern.LIGHT_LEVEL)
+				continue;
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public static void fixLanternLight(BlockBreakEvent event, Player player, Block origin) {
+		for (Block _block : BlockUtils.getAdjacentBlocks(origin)) {
+			CustomBlock customBlock = CustomBlock.from(_block);
+			if (customBlock == null || !(customBlock.get() instanceof ILantern))
+				continue;
+
+			if (origin.getType() == Material.LIGHT) {
+				PlayerUtils.send(player, "&c&lHey! &7You can't break this light.");
+				event.setCancelled(true);
+				return;
+			}
+
+			Tasks.wait(1, () -> ILantern.setLight(origin));
+		}
+	}
+
 	public static void fixTripwireNearby(Player player, Block current, Set<Location> visited) {
 		// TODO: Disable tripwire customblocks
 		if (ICustomTripwire.isNotEnabled())
@@ -187,48 +236,47 @@ public class CustomBlockUtils {
 		if (aboveCustomBlock != null && aboveCustomBlock.get() instanceof IRequireSupport)
 			breakBlock(aboveBlock, aboveCustomBlock, player, tool, applyPhysics);
 
-		int amount = 1;
-
 		Set<Location> fixedTripwire = new HashSet<>(List.of(brokenBlock.getLocation()));
-
-		if (brokenCustomBlock != null) {
-			if (CustomBlock.TALL_SUPPORT == brokenCustomBlock) {
-				debug(player, "Broke tall support");
-				brokenCustomBlock.breakBlock(player, tool, brokenBlock, false, amount, true, true, applyPhysics);
-
-				Block blockUnder = brokenBlock.getRelative(BlockFace.DOWN);
-				CustomBlock under = CustomBlock.from(blockUnder);
-
-				if (under != null) {
-					fixedTripwire.add(blockUnder.getLocation());
-					debug(player, "Underneath: " + under.name());
-					under.breakBlock(player, tool, blockUnder, true, amount, false, true, applyPhysics);
-					blockUnder.setType(Material.AIR);
-				}
-
-				CustomBlockUtils.fixTripwireNearby(player, brokenBlock, new HashSet<>(fixedTripwire));
-				return;
-			}
-
-			if (brokenCustomBlock.get() instanceof IIncremental incremental) {
-				debug(player, "Broke incremental, setting proper amount");
-				amount = incremental.getIndex() + 1;
-
-			} else if (brokenCustomBlock.get() instanceof ITall) {
-				debug(player, "Broke isTall");
-
-				if (CustomBlock.TALL_SUPPORT == aboveCustomBlock) {
-					debug(player, "Breaking tall support above");
-
-					aboveCustomBlock.breakBlock(player, tool, aboveBlock, false, amount, false, true, applyPhysics);
-					aboveBlock.setType(Material.AIR);
-				}
-			}
-
-			brokenCustomBlock.breakBlock(player, tool, brokenBlock, true, amount, true, true, applyPhysics);
+		if (brokenCustomBlock == null) {
+			CustomBlockUtils.fixTripwireNearby(player, brokenBlock, new HashSet<>(fixedTripwire));
+			return;
 		}
 
-		CustomBlockUtils.fixTripwireNearby(player, brokenBlock, new HashSet<>(fixedTripwire));
+		int amount = 1;
+		if (CustomBlock.TALL_SUPPORT == brokenCustomBlock) {
+			debug(player, "Broke tall support");
+			brokenCustomBlock.breakBlock(player, tool, brokenBlock, false, amount, true, true, applyPhysics);
+
+			Block blockUnder = brokenBlock.getRelative(BlockFace.DOWN);
+			CustomBlock under = CustomBlock.from(blockUnder);
+
+			if (under != null) {
+				fixedTripwire.add(blockUnder.getLocation());
+				debug(player, "Underneath: " + under.name());
+				under.breakBlock(player, tool, blockUnder, true, amount, false, true, applyPhysics);
+				blockUnder.setType(Material.AIR);
+			}
+
+			CustomBlockUtils.fixTripwireNearby(player, brokenBlock, new HashSet<>(fixedTripwire));
+			return;
+		}
+
+		if (brokenCustomBlock.get() instanceof IIncremental incremental) {
+			debug(player, "Broke incremental, setting proper amount");
+			amount = incremental.getIndex() + 1;
+
+		} else if (brokenCustomBlock.get() instanceof ITall) {
+			debug(player, "Broke isTall");
+
+			if (CustomBlock.TALL_SUPPORT == aboveCustomBlock) {
+				debug(player, "Breaking tall support above");
+
+				aboveCustomBlock.breakBlock(player, tool, aboveBlock, false, amount, false, true, applyPhysics);
+				aboveBlock.setType(Material.AIR);
+			}
+		}
+
+		brokenCustomBlock.breakBlock(player, tool, brokenBlock, true, amount, true, true, applyPhysics);
 	}
 
 	public static String getBlockDataString(Tripwire tripwire) {

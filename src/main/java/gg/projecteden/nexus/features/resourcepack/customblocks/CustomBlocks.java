@@ -44,7 +44,6 @@ import java.util.Map;
 
 /*
 	TODO POST RELEASE:
-		- Lanterns produce light --> set light blocks around block
 		- Tripwire implementation:
 			- Tripwire blocks are being replaced to cross, if you're standing inside of them when you break them
 			- tripwire cross is spawnable, and also spawns paper ?

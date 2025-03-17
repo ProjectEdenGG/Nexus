@@ -170,17 +170,15 @@ public class CustomBlockListener implements Listener {
 
 	@EventHandler
 	public void on(BlockPlaceEvent event) {
-		if (event.isCancelled())
-			return;
-
-		Block block = event.getBlockPlaced();
+		Player player = event.getPlayer();
+		Block placedBlock = event.getBlockPlaced();
 		// TODO: Disable tripwire customblocks
-		if (ICustomTripwire.isNotEnabled() && block.getType() == Material.TRIPWIRE)
+		if (ICustomTripwire.isNotEnabled() && placedBlock.getType() == Material.TRIPWIRE)
 			return;
 		//
 
 		// fix clientside tripwire changes
-		CustomBlockUtils.fixTripwireNearby(event.getPlayer(), block, new HashSet<>(List.of(block.getLocation())));
+		CustomBlockUtils.fixTripwireNearby(player, placedBlock, new HashSet<>(List.of(placedBlock.getLocation())));
 	}
 
 	@EventHandler
@@ -206,6 +204,8 @@ public class CustomBlockListener implements Listener {
 		if (brokenCustomBlock != null) {
 			event.setDropItems(false);
 			CustomBlockUtils.debug(player, "&e- disabling drops");
+		} else {
+			CustomBlockUtils.fixLanternLight(event, player, brokenBlock);
 		}
 
 		CustomBlockUtils.breakBlock(brokenBlock, brokenCustomBlock, player, tool, true);
@@ -356,6 +356,7 @@ public class CustomBlockListener implements Listener {
 		}
 	}
 
+	// TODO: COPY POWERED DATA
 	private void sendBlockDataUpdate(Block block, CustomBlock customBlock) {
 		ICustomBlock iCustomBlock = customBlock.get();
 		BlockFace facing = BlockFace.UP;
