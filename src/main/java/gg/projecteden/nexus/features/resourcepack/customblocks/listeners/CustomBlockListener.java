@@ -671,11 +671,6 @@ public class CustomBlockListener implements Listener {
 									   boolean didClickedCustomBlock, Material material, ItemStack itemStack) {
 		CustomBlockUtils.debug(player, "&e- placing vanilla block");
 
-//		if (!MaterialTag.REPLACEABLE.isTagged(preBlock.getType())) {
-//			CustomBlocksLang.debug("&c<- preBlock is not replaceable");
-//			return false;
-//		}
-
 		if (!didClickedCustomBlock) {
 			CustomBlockUtils.debug(player, "&c<- didn't click on a custom block");
 			return false;
@@ -689,18 +684,19 @@ public class CustomBlockListener implements Listener {
 			return false;
 		}
 
-		BlockData fixedBlockData = CustomBlockNMSUtils.tryPlaceVanillaBlock(player, itemStack);
-		if (fixedBlockData == null) {
+		Block placedBlock = CustomBlockNMSUtils.tryPlaceVanillaBlock(player, itemStack);
+		if (placedBlock == null) {
 			CustomBlockUtils.debug(player, "&c<- cannot place this block here");
 			return false;
 		}
 
+		CustomBlockUtils.logPlacementVanilla(player, placedBlock);
 		CustomBlockUtils.debug(player, "&a<- placed block: " + StringUtils.camelCase(material));
 		CustomBlockSounds.tryPlaySound(player, SoundAction.PLACE, preBlock);
 
 		ItemUtils.subtract(player, event.getItem());
 
-		if (preBlock.getState() instanceof Sign sign)
+		if (placedBlock.getState() instanceof Sign sign)
 			player.openSign(sign, Side.FRONT);
 
 		return true;
