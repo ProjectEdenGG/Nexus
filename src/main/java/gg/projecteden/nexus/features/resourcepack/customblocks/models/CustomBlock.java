@@ -233,6 +233,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.TripwireHook;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.recipe.CraftingBookCategory;
 import org.jetbrains.annotations.NotNull;
@@ -635,7 +636,7 @@ public enum CustomBlock implements Keyed {
 		return null;
 	}
 
-	public boolean placeBlock(Player player, Block block, Block placeAgainst, BlockFace facing, ItemStack itemInHand) {
+	public boolean placeBlock(Player player, EquipmentSlot hand, Block block, Block placeAgainst, BlockFace facing, ItemStack itemInHand) {
 		ICustomBlock customBlock = this.get();
 
 		Material blockMaterial = customBlock.getVanillaBlockMaterial();
@@ -682,7 +683,10 @@ public enum CustomBlock implements Keyed {
 			CustomBlockUtils.debug(player, "&e- placing: " + StringUtils.camelCase(this));
 
 			if (ProtectionUtils.canBuild(player, block)) {
-				player.swingMainHand();
+				if (hand == EquipmentSlot.HAND)
+					player.swingMainHand();
+				else if (hand == EquipmentSlot.OFF_HAND)
+					player.swingOffHand();
 
 				block.setType(blockMaterial, false);
 				if (blockData != null)

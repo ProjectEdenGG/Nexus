@@ -573,9 +573,14 @@ public class CustomBlockListener implements Listener {
 		}
 
 		ItemStack itemInHand = event.getItem();
+		EquipmentSlot hand = EquipmentSlot.HAND;
 		if (Nullables.isNullOrAir(itemInHand)) {
-			CustomBlockUtils.debug(player, "&c<- item in hand is null or air");
-			return false;
+			itemInHand = event.getPlayer().getInventory().getItemInOffHand();
+			hand = EquipmentSlot.OFF_HAND;
+			if (Nullables.isNullOrAir(itemInHand)) {
+				CustomBlockUtils.debug(player, "&c<- item in hand is null or air");
+				return false;
+			}
 		}
 
 		Material material = itemInHand.getType();
@@ -601,17 +606,17 @@ public class CustomBlockListener implements Listener {
 		}
 
 		if (isPlacingCustomBlock) {
-			if (placeCustomBlock(clickedBlock, player, clickedFace, preBlock, itemInHand)) {
+			if (placeCustomBlock(clickedBlock, player, hand, clickedFace, preBlock, itemInHand)) {
 				event.setCancelled(true);
 				CustomBlockUtils.logPlacement(player, preBlock, CustomBlock.from(itemInHand));
 			}
 		} else
-			return placedVanillaBlock(event, clickedBlock, player, preBlock, didClickedCustomBlock, material, itemInHand);
+			return placeVanillaBlock(event, player, hand, preBlock, didClickedCustomBlock, material, itemInHand);
 
 		return true;
 	}
 
-	private boolean placeCustomBlock(Block clickedBlock, Player player, BlockFace clickedFace, Block preBlock, ItemStack itemInHand) {
+	private boolean placeCustomBlock(Block clickedBlock, Player player, EquipmentSlot hand, BlockFace clickedFace, Block preBlock, ItemStack itemInHand) {
 		CustomBlockUtils.debug(player, "&e- placing custom block");
 		if (!preBlock.getLocation().toCenterLocation().getNearbyLivingEntities(0.5).isEmpty()) {
 			CustomBlockUtils.debug(player, "&c<- entity in way");
@@ -656,7 +661,7 @@ public class CustomBlockListener implements Listener {
 			return false;
 
 		// place block
-		if (!customBlock.placeBlock(player, preBlock, clickedBlock, clickedFace, itemInHand)) {
+		if (!customBlock.placeBlock(player, hand, preBlock, clickedBlock, clickedFace, itemInHand)) {
 			CustomBlockUtils.debug(player, "&c<- CustomBlock#PlaceBlock == false");
 			return false;
 		}
@@ -664,8 +669,8 @@ public class CustomBlockListener implements Listener {
 		return true;
 	}
 
-	private boolean placedVanillaBlock(PlayerInteractEvent event, Block clickedBlock, Player player, Block preBlock,
-									   boolean didClickedCustomBlock, Material material, ItemStack itemStack) {
+	private boolean placeVanillaBlock(PlayerInteractEvent event, Player player, EquipmentSlot hand, Block preBlock,
+									  boolean didClickedCustomBlock, Material material, ItemStack itemStack) {
 		CustomBlockUtils.debug(player, "&e- placing vanilla block");
 
 		if (!didClickedCustomBlock) {
@@ -686,6 +691,11 @@ public class CustomBlockListener implements Listener {
 			CustomBlockUtils.debug(player, "&c<- cannot place this block here");
 			return false;
 		}
+
+		if (hand == EquipmentSlot.HAND)
+			player.swingMainHand();
+		else if (hand == EquipmentSlot.OFF_HAND)
+			player.swingOffHand();
 
 		CustomBlockUtils.logPlacementVanilla(player, placedBlock);
 		CustomBlockUtils.debug(player, "&a<- placed block: " + StringUtils.camelCase(material));
