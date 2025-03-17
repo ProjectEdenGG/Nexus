@@ -2,6 +2,8 @@ package gg.projecteden.nexus.features.resourcepack.customblocks;
 
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -15,11 +17,11 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.bukkit.Location;
 import org.bukkit.SoundCategory;
 import org.bukkit.SoundGroup;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
@@ -27,8 +29,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class CustomBlockNMSUtils {
 
-	// https://github.com/oraxen/oraxen/blob/master/v1_21_R3/src/main/java/io/th0rgal/oraxen/nms/v1_21_R3/NMSHandler.java#L154
-	public static BlockData tryPlaceVanillaBlock(Player player, ItemStack itemStack) {
+	public static Block tryPlaceVanillaBlock(Player player, ItemStack itemStack) {
 		// TODO: Fix boats, currently Item#use in BoatItem calls PlayerInteractEvent, thus causing a StackOverflow, find a workaround
 		if (MaterialTag.ITEMS_BOATS.isTagged(itemStack.getType()))
 			return null;
@@ -37,6 +38,13 @@ public class CustomBlockNMSUtils {
 		net.minecraft.world.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(itemStack);
 		ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
 		BlockHitResult hitResult = getPlayerPOVHitResult(serverPlayer.level(), serverPlayer, ClipContext.Fluid.NONE);
+
+		Location clickedBlockNMS = NMSUtils.fromNMS(player.getWorld(), hitResult.getBlockPos());
+		if (Nullables.isNullOrAir(clickedBlockNMS.getBlock().getType())) {
+			CustomBlockUtils.debug(player, "&c- nms clicked block was null/air");
+			return null;
+		}
+
 		BlockPlaceContext placeContext = new BlockPlaceContext(new UseOnContext(serverPlayer, hand, hitResult));
 
 		boolean shouldSubtract = ItemUtils.shouldSubtract(player, itemStack);
@@ -76,7 +84,7 @@ public class CustomBlockNMSUtils {
 		world.playSound(block.getLocation().toCenterLocation(), sound.getPlaceSound(),
 			SoundCategory.BLOCKS, (sound.getVolume() + 1.0F) / 2.0F, sound.getPitch() * 0.8F);
 
-		return player.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()).getBlockData();
+		return player.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
 	}
 
 	public static BlockHitResult getPlayerPOVHitResult(Level world, net.minecraft.world.entity.player.Player player, ClipContext.Fluid fluidHandling) {
