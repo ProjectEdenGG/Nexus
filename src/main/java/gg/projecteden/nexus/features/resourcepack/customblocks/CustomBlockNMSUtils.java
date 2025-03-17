@@ -16,6 +16,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
 import org.bukkit.SoundCategory;
@@ -39,9 +40,8 @@ public class CustomBlockNMSUtils {
 		ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
 		BlockHitResult hitResult = getPlayerPOVHitResult(serverPlayer.level(), serverPlayer, ClipContext.Fluid.NONE);
 
-		Location clickedBlockNMS = NMSUtils.fromNMS(player.getWorld(), hitResult.getBlockPos());
-		if (Nullables.isNullOrAir(clickedBlockNMS.getBlock().getType())) {
-			CustomBlockUtils.debug(player, "&c- nms clicked block was null/air");
+		if (hitResult.getType() == Type.MISS) {
+			CustomBlockUtils.debug(player, "&c- hit result is MISS");
 			return null;
 		}
 
