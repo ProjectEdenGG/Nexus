@@ -132,7 +132,8 @@ public class CustomBlockListener implements Listener {
 			return;
 		}
 
-		if (CustomBlock.from(event.getLocation().getBlock()) != CustomBlock.NOTE_BLOCK) {
+		CustomBlock customBlock = CustomBlock.from(event.getLocation().getBlock());
+		if (customBlock != CustomBlock.NOTE_BLOCK) {
 			event.setCancelled(true);
 			return;
 		}
@@ -356,7 +357,6 @@ public class CustomBlockListener implements Listener {
 		}
 	}
 
-	// TODO: COPY POWERED DATA
 	private void sendBlockDataUpdate(Block block, CustomBlock customBlock) {
 		ICustomBlock iCustomBlock = customBlock.get();
 		BlockFace facing = BlockFace.UP;

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common;
 
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
@@ -148,7 +149,8 @@ public interface ICustomNoteBlock extends ICustomBlock {
 			return false;
 
 		NoteBlock _noteBlock = (NoteBlock) this.getBlockData(facing, underneath);
-		noteBlock.setPowered(false);
+		if (this instanceof gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.misc.NoteBlock)
+			noteBlock.setPowered(false);
 
 		return noteBlock.matches(_noteBlock);
 	}
