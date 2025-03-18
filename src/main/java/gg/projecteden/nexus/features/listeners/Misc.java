@@ -123,7 +123,7 @@ public class Misc implements Listener {
 			return;
 
 		// replace lantern light
-		if (CustomBlockUtils.removeLanternLight(event))
+		if (CustomBlockUtils.removeLight(event))
 			return;
 
 		event.setCancelled(true);

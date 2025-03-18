@@ -205,7 +205,7 @@ public class CustomBlockListener implements Listener {
 			event.setDropItems(false);
 			CustomBlockUtils.debug(player, "&e- disabling drops");
 		} else {
-			CustomBlockUtils.fixLanternLight(event, player, brokenBlock);
+			CustomBlockUtils.fixLight(event, player, brokenBlock);
 		}
 
 		CustomBlockUtils.breakBlock(brokenBlock, brokenCustomBlock, player, tool, true);

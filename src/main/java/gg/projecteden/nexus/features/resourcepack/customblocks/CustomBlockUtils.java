@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBloc
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IDirectional;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ICustomNoteBlock;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.ILantern;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ILightableNoteBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.IRequireSupport;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.incremental.IIncremental;
@@ -20,7 +20,6 @@ import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.Debug.DebugType;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
@@ -157,7 +156,7 @@ public class CustomBlockUtils {
 		});
 	}
 
-	public static boolean removeLanternLight(BlockPlaceEvent event) {
+	public static boolean removeLight(BlockPlaceEvent event) {
 		BlockState oldBlockState = event.getBlockReplacedState();
 		if (oldBlockState.getType() != Material.LIGHT)
 			return false;
@@ -170,10 +169,10 @@ public class CustomBlockUtils {
 
 		for (Block _block : BlockUtils.getAdjacentBlocks(event.getBlock())) {
 			CustomBlock customBlock = CustomBlock.from(_block);
-			if (customBlock == null || !(customBlock.get() instanceof ILantern))
+			if (customBlock == null || !(customBlock.get() instanceof ILightableNoteBlock))
 				continue;
 
-			if (lightLevel != ILantern.LIGHT_LEVEL)
+			if (lightLevel != ILightableNoteBlock.LIGHT_LEVEL)
 				continue;
 
 			return true;
@@ -182,10 +181,10 @@ public class CustomBlockUtils {
 		return false;
 	}
 
-	public static void fixLanternLight(BlockBreakEvent event, Player player, Block origin) {
+	public static void fixLight(BlockBreakEvent event, Player player, Block origin) {
 		for (Block _block : BlockUtils.getAdjacentBlocks(origin)) {
 			CustomBlock customBlock = CustomBlock.from(_block);
-			if (customBlock == null || !(customBlock.get() instanceof ILantern))
+			if (customBlock == null || !(customBlock.get() instanceof ILightableNoteBlock))
 				continue;
 
 			if (origin.getType() == Material.LIGHT) {
@@ -194,7 +193,7 @@ public class CustomBlockUtils {
 				return;
 			}
 
-			Tasks.wait(1, () -> ILantern.setLight(origin));
+			Tasks.wait(1, () -> ILightableNoteBlock.setLight(origin));
 		}
 	}
 
