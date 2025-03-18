@@ -38,4 +38,9 @@ public class NoteBlock implements ICustomNoteBlock {
 	public Material getMinimumPreferredTool() {
 		return Material.WOODEN_AXE;
 	}
+
+	@Override
+	public PistonPushAction getPistonPushedAction() {
+		return PistonPushAction.PREVENT;
+	}
 }

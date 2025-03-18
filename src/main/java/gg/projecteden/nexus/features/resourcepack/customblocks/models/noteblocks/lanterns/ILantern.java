@@ -54,6 +54,11 @@ public interface ILantern extends IDirectionalNoteBlock {
 	}
 
 	@Override
+	default PistonPushAction getPistonPushedAction() {
+		return PistonPushAction.PREVENT;
+	}
+
+	@Override
 	default void placeBlock(Player player, EquipmentSlot hand, Block block, Block placeAgainst, BlockFace facing, ItemStack itemInHand) {
 		_placeLight(block);
 	}
