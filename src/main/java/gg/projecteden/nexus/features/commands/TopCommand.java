@@ -20,11 +20,14 @@ public class TopCommand extends CustomCommand {
 	@Path("[y]")
 	@Description("Teleport to the highest block at your location or a specific y value")
 	void run(Integer y) {
-		if (!isStaff() && worldGroup() != WorldGroup.CREATIVE)
-			permissionError();
+		if (!isStaff()) {
+			if (worldGroup() != WorldGroup.CREATIVE && worldGroup() != WorldGroup.STAFF)
+				permissionError();
+		}
 
 		if (y == null)
 			y = world().getHighestBlockYAt(location()) + 1;
+
 		Location top = location().clone();
 		top.setY(y);
 		top.setYaw(location().getYaw());
