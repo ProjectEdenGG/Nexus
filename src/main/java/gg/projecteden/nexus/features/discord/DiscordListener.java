@@ -59,10 +59,10 @@ public class DiscordListener extends ListenerAdapter {
 		Tasks.async(() -> {
 			log(event);
 
-			String name = Discord.getName(event.getMember());
 			String message = event.getMessage().getContentRaw();
 
 			if (TextChannel.INTRODUCTIONS.getId().equals(event.getChannel().getId())) {
+				String name = Discord.getName(event.getMember());
 				event.getMessage().createThreadChannel("Hi " + name + "!").queue();
 			}
 
@@ -77,7 +77,7 @@ public class DiscordListener extends ListenerAdapter {
 					} else if ((contains.test("step") && contains.test("down")) || contains.test("thank")) {
 						title = "Thank you " + names + "!";
 					} else if (contains.test("welcome") || contains.test("congratulate")) {
-						title = "Congrats " + name + "!";
+						title = "Congrats " + names + "!";
 					}
 
 					if (title == null)
