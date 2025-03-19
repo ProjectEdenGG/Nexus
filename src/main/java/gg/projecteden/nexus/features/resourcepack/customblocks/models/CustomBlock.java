@@ -215,6 +215,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.protection.ProtectionUtils;
@@ -852,7 +853,7 @@ public enum CustomBlock implements Keyed {
 			return;
 		}
 
-		if (spawnParticle && this.get() instanceof ICustomTripwire) {
+		if (spawnParticle) { //  && this.get() instanceof ICustomTripwire
 			CustomBlockUtils.debug(source, "&e- spawning particle");
 			spawnParticle(source, location);
 		}
@@ -910,13 +911,20 @@ public enum CustomBlock implements Keyed {
 
 		World world = loc.getWorld();
 		loc = loc.toCenterLocation();
-		Particle particle = Particle.ITEM;
-		ItemStack itemStack = get().getItemStack();
+		Particle particle = Particle.BLOCK;
+		BlockData blockData = get().getBlockData(BlockFace.UP, loc.getBlock().getRelative(BlockFace.DOWN));
 
 		if (silent)
-			source.spawnParticle(particle, loc, 25, 0.25, 0.25, 0.25, 0.1, itemStack);
-		else
-			world.spawnParticle(particle, loc, 25, 0.25, 0.25, 0.25, 0.1, itemStack);
+			source.spawnParticle(particle, loc, 25, 0.25, 0.25, 0.25, 0.1, blockData);
+		else {
+			Location finalLoc = loc;
+			if (source != null && this.get() instanceof ICustomNoteBlock) {
+				OnlinePlayers.where().world(finalLoc.getWorld()).exclude(source).forEach(player ->
+					player.spawnParticle(particle, finalLoc, 25, 0.25, 0.25, 0.25, 0.1, blockData));
+			} else {
+				world.spawnParticle(particle, loc, 25, 0.25, 0.25, 0.25, 0.1, blockData);
+			}
+		}
 	}
 
 	@Getter
