@@ -16,9 +16,12 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -49,6 +52,18 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 
 	public static void open(Player player) {
 		new ToolModificationTableMenu().open(player);
+	}
+
+	@EventHandler(ignoreCancelled = true)
+	public void onItemBreak(PlayerItemBreakEvent event) {
+		if (!EquipmentSkinType.isApplicable(event.getBrokenItem()))
+			return;
+
+		EquipmentSkinType type = EquipmentSkinType.of(event.getBrokenItem());
+		if (type == null)
+			return;
+
+		PlayerUtils.giveItem(event.getPlayer(), type.getTemplate());
 	}
 
 	@Rows(3)
