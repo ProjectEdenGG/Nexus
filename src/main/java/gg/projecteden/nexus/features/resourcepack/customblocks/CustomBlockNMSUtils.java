@@ -2,10 +2,10 @@ package gg.projecteden.nexus.features.resourcepack.customblocks;
 
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -18,7 +18,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.world.phys.Vec3;
-import org.bukkit.Location;
 import org.bukkit.SoundCategory;
 import org.bukkit.SoundGroup;
 import org.bukkit.World;
@@ -74,6 +73,8 @@ public class CustomBlockNMSUtils {
 		InteractionResult result = blockItem.place(placeContext);
 		if (result == InteractionResult.FAIL)
 			return null;
+
+		NMSUtils.toNMS(player).awardStat(Stats.ITEM_USED.get(NMSUtils.toNMS(itemStack).getItem()));
 
 		World world = player.getWorld();
 		BlockPos clickPos = placeContext.getClickedPos();
