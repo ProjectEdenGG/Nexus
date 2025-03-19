@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
-import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks.SoundAction;
+import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksFeature.SoundAction;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICraftable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IDirectional;

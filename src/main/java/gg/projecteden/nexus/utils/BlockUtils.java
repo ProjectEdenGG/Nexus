@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.utils;
 
-import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks.SoundAction;
+import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksFeature.SoundAction;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomToolBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IHarvestable;

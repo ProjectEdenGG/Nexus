@@ -42,7 +42,7 @@ import org.jetbrains.annotations.Nullable;
  */
 
 @Environments(Env.TEST)
-public class CustomBlocks extends Feature {
+public class CustomBlocksFeature extends Feature {
 	@Override
 	public void onStart() {
 		CustomBlock.init();
@@ -132,7 +132,7 @@ public class CustomBlocks extends Feature {
 			return "custom.block." + soundType.name().toLowerCase() + "." + this.name().toLowerCase();
 		}
 
-		public static @Nullable CustomBlocks.SoundAction fromSound(String soundKey) {
+		public static @Nullable CustomBlocksFeature.SoundAction fromSound(String soundKey) {
 			if (soundKey.endsWith(".step"))
 				return SoundAction.STEP;
 			else if (soundKey.endsWith(".hit"))
@@ -147,15 +147,15 @@ public class CustomBlocks extends Feature {
 			return null;
 		}
 
-		public static @Nullable CustomBlocks.SoundAction fromSound(Key sound) {
+		public static @Nullable CustomBlocksFeature.SoundAction fromSound(Key sound) {
 			return fromSound(sound.value());
 		}
 
-		public static @Nullable CustomBlocks.SoundAction fromSound(Sound sound) {
+		public static @Nullable CustomBlocksFeature.SoundAction fromSound(Sound sound) {
 			return fromSound(sound.getKey());
 		}
 
-		public static @Nullable CustomBlocks.SoundAction fromSound(net.kyori.adventure.sound.Sound sound) {
+		public static @Nullable CustomBlocksFeature.SoundAction fromSound(net.kyori.adventure.sound.Sound sound) {
 			return fromSound(sound.name());
 		}
 	}

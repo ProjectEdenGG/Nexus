@@ -13,7 +13,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.entity.Player;
 
 public class NoteBlockUtils {
@@ -36,7 +35,7 @@ public class NoteBlockUtils {
 	}
 
 
-	public static void play(NoteBlock noteBlock, Location location, boolean interacted, Player debugger) {
+	public static void play(Location location, boolean interacted, Player debugger) {
 		NoteBlockData data = new NoteBlockData(location.getBlock());
 		if (data.isPowered())
 			return;

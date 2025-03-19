@@ -4,21 +4,18 @@ import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockNMSUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
-import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks.BlockAction;
-import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks.SoundAction;
+import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksFeature.BlockAction;
+import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksFeature.SoundAction;
 import gg.projecteden.nexus.features.resourcepack.customblocks.NoteBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock.CustomBlockType;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IPistonActions.PistonAction;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICompostable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ICustomNoteBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.misc.FloweringMossBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.IWaterLogged;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
-import gg.projecteden.nexus.models.customblock.NoteBlockData;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -60,13 +57,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFertilizeEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.block.BlockPistonExtendEvent;
-import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.BlockInventoryHolder;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -250,7 +243,7 @@ public class CustomBlockListener implements Listener {
 		boolean hasNeighborSignal = serverLevel.hasNeighborSignal(blockPos);
 		if (!isPowered && hasNeighborSignal) {
 			CustomBlockUtils.broadcastDebug("Playing NoteBlock: Instrument=" + noteBlock.getInstrument() + ", Note=" + noteBlock.getNote().getId() + ", Powered=" + noteBlock.isPowered());
-			NoteBlockUtils.play(noteBlock, location, true, null);
+			NoteBlockUtils.play(location, true, null);
 		}
 	}
 
