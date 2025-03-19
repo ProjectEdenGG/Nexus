@@ -31,6 +31,7 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.nexus.utils.protection.ProtectionUtils;
 import gg.projecteden.parchment.event.block.CustomBlockUpdateEvent;
+import gg.projecteden.parchment.event.block.CustomBlockUpdateEvent.UpdateType;
 import io.papermc.paper.event.player.PlayerPickItemEvent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -103,14 +104,8 @@ public class CustomBlockListener implements Listener {
 		Player player = event.getPlayer();
 		CustomBlockUtils.debug(player, "&d&lPlayerInteractEvent:", true);
 
-		Location clickedBlockLoc = clickedBlock.getLocation();
 		CustomBlock clickedCustomBlock = CustomBlock.from(clickedBlock);
 
-		if (clickedCustomBlock != null) {
-			updateDatabase(clickedBlockLoc, player);
-		}
-
-		// Place
 		if (isPlacingBlock(event, clickedBlock, clickedCustomBlock)) {
 			CustomBlockSounds.updateAction(player, BlockAction.PLACE);
 			CustomBlockUtils.debug(player, "&d<- done, placed block");
@@ -224,7 +219,7 @@ public class CustomBlockListener implements Listener {
 			return;
 		//
 
-		if (event.getUpdateType() != CustomBlockUpdateEvent.UpdateType.POWERED) {
+		if (event.getUpdateType() != UpdateType.POWERED && event.getUpdateType() != UpdateType.PITCH) {
 			event.setCancelled(true);
 			return;
 		}
@@ -242,8 +237,10 @@ public class CustomBlockListener implements Listener {
 		if (!(event.getBlock() instanceof NoteBlock noteBlock))
 			return;
 
-		if (noteBlock.getInstrument() != Instrument.PIANO)
+		if (noteBlock.getInstrument() != Instrument.PIANO) {
+			event.setCancelled(true);
 			return;
+		}
 
 		CustomBlockUtils.broadcastDebug("CustomBlockUpdateEvent: Instrument=" + noteBlock.getInstrument() + ", Note=" + noteBlock.getNote().getId() + ", Powered=" + noteBlock.isPowered());
 
@@ -310,36 +307,6 @@ public class CustomBlockListener implements Listener {
 		CustomBlockUtils.debug(player, "&d<- done, end", true);
 	}
 
-	private void updateDatabase(Location location, Player debugger) {
-		if (!_updateDatabase(location, debugger))
-			CustomBlockUtils.debug(debugger, "&c<- no changes");
-	}
-
-	private boolean _updateDatabase(Location location, Player debugger) {
-		CustomBlockUtils.debug(debugger, "&b- updating database at location?");
-		CustomBlock noteBlockWorld = CustomBlock.from(location.getBlock());
-
-		if (noteBlockWorld == null) {
-			CustomBlockUtils.debug(debugger, "&a<- data does not exist in world, &adeleting from database");
-			CustomBlockUtils.breakNoteBlockInDatabase(location);
-			return true;
-		}
-
-		BlockData blockData = noteBlockWorld.get().getBlockData(BlockFace.UP, location.getBlock().getRelative(BlockFace.DOWN));
-		if (noteBlockWorld == CustomBlock.NOTE_BLOCK) {
-			CustomBlockUtils.debug(debugger, "&e- data exists in world");
-
-			NoteBlockData data = CustomBlockUtils.getNoteBlockData(location);
-			if (data == null) {
-				CustomBlockUtils.debug(debugger, "&a<- no data exists at this location, fixing");
-				CustomBlockUtils.placeNoteBlockInDatabase(location, blockData);
-				return true;
-			}
-		}
-
-		return false;
-	}
-
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void on(BlockPhysicsEvent event) {
 		Block block = event.getBlock();
@@ -381,8 +348,16 @@ public class CustomBlockListener implements Listener {
 		}
 
 		BlockData blockData = iCustomBlock.getBlockData(facing, block.getRelative(BlockFace.DOWN));
-		Location location = block.getLocation();
-		Tasks.wait(1, () -> OnlinePlayers.where().world(location.getWorld()).forEach(player -> player.sendBlockChange(location, blockData)));
+		if (iCustomBlock instanceof gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.misc.NoteBlock) {
+			NoteBlock noteBlock = (NoteBlock) block.getBlockData();
+			NoteBlock _noteBlock = (NoteBlock) blockData;
+			_noteBlock.setNote(noteBlock.getNote());
+			blockData = _noteBlock;
+		}
+
+		Location locationFinal = block.getLocation();
+		BlockData blockDataFinal = blockData;
+		Tasks.wait(1, () -> OnlinePlayers.where().world(locationFinal.getWorld()).forEach(player -> player.sendBlockChange(locationFinal, blockDataFinal)));
 	}
 
 	@EventHandler

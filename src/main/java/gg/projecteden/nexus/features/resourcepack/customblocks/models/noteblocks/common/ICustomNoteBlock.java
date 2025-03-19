@@ -65,10 +65,6 @@ public interface ICustomNoteBlock extends ICustomBlock {
 		return this.getNoteBlockStep();
 	}
 
-	default Note getNoteBlockNote(BlockFace facing) {
-		return new Note(this.getNoteBlockStep(facing));
-	}
-
 	// Sounds
 
 	@Override
@@ -129,7 +125,7 @@ public interface ICustomNoteBlock extends ICustomBlock {
 	default BlockData getBlockData(@Nullable BlockFace facing, @Nullable Block underneath) {
 		NoteBlock noteBlock = (NoteBlock) this.getVanillaBlockMaterial().createBlockData();
 		noteBlock.setInstrument(this.getNoteBlockInstrument());
-		noteBlock.setNote(this.getNoteBlockNote(facing));
+		noteBlock.setNote(new Note(this.getNoteBlockStep(facing)));
 		noteBlock.setPowered(this.getPowered());
 		return noteBlock;
 	}
@@ -149,8 +145,10 @@ public interface ICustomNoteBlock extends ICustomBlock {
 			return false;
 
 		NoteBlock _noteBlock = (NoteBlock) this.getBlockData(facing, underneath);
-		if (this instanceof gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.misc.NoteBlock)
+		if (this instanceof gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.misc.NoteBlock) {
 			noteBlock.setPowered(false);
+			noteBlock.setNote(new Note(0));
+		}
 
 		return noteBlock.matches(_noteBlock);
 	}

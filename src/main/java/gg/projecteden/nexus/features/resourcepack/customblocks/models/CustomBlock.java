@@ -706,8 +706,6 @@ public enum CustomBlock implements Keyed {
 		ItemUtils.subtract(player, itemInHand);
 
 		CustomBlockUtils.updateObservers(block, player);
-		if (this == NOTE_BLOCK)
-			CustomBlockUtils.placeNoteBlockInDatabase(block.getLocation(), blockData);
 
 		if (placeTallSupport)
 			tallSupport(player, block, facingFinal);
@@ -840,9 +838,6 @@ public enum CustomBlock implements Keyed {
 			dropItem = false;
 			dropIngredients = false;
 		}
-
-		if (this == NOTE_BLOCK)
-			CustomBlockUtils.breakNoteBlockInDatabase(location);
 
 		if (iCustomBlock instanceof ICustomNoteBlock iCustomNoteBlock)
 			iCustomNoteBlock.breakBlock(source, tool, block);

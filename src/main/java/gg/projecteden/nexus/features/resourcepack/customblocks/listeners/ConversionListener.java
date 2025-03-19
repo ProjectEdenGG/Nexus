@@ -85,7 +85,6 @@ public class ConversionListener implements Listener {
 						logMessage = "Creating CustomBlock " + StringUtils.camelCase(customBlock) + " " + StringUtils.getShortLocationString(location);
 					} else {
 						BlockData blockData = CustomBlock.NOTE_BLOCK.get().getBlockData(BlockFace.UP, below);
-						CustomBlockUtils.placeNoteBlockInDatabase(location, blockData);
 						block.setBlockData(blockData, false);
 						logMessage = "Creating CustomBlock NoteBlock at " + StringUtils.getShortLocationString(location);
 					}

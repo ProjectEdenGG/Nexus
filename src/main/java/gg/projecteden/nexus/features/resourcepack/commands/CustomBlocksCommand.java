@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.resourcepack.commands;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.features.resourcepack.CustomContentUtils;
-import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.customblockbreaking.BrokenBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.listeners.ConversionListener;
 import gg.projecteden.nexus.features.resourcepack.customblocks.menus.CustomBlockCreativeMenu;
@@ -25,34 +24,24 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.customblock.CustomNoteBlockTracker;
-import gg.projecteden.nexus.models.customblock.CustomNoteBlockTrackerService;
-import gg.projecteden.nexus.models.customblock.NoteBlockData;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.Debug.DebugType;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.MultipleFacing;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-import java.util.Map;
 
 @Environments(Env.TEST)
 public class CustomBlocksCommand extends CustomCommand {
-	private static final CustomNoteBlockTrackerService trackerService = new CustomNoteBlockTrackerService();
-	private static CustomNoteBlockTracker tracker;
 
 	public CustomBlocksCommand(CommandEvent event) {
 		super(event);
-		if (isPlayerCommandEvent())
-			tracker = trackerService.fromWorld(location());
 	}
 
 	@Path
@@ -110,12 +99,6 @@ public class CustomBlocksCommand extends CustomCommand {
 
 	// ADMIN COMMANDS
 
-	@Path("janitor")
-	@Permission(Group.ADMIN)
-	void janitor() {
-		CustomBlocks.janitor();
-	}
-
 	@Path("getTargetInfo")
 	@Permission(Group.ADMIN)
 	void targetInfo() {
@@ -164,40 +147,6 @@ public class CustomBlocksCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	void convertChunk() {
 		ConversionListener.convertCustomBlocks(player().getChunk(), true);
-	}
-
-	@Path("deleteChunk")
-	@Permission(Group.ADMIN)
-	void deleteChunk() {
-		tracker = trackerService.fromWorld(world());
-		List<Location> locations = ConversionListener.getCustomBlockLocations(player().getChunk());
-		int count = 0;
-		for (Location location : locations) {
-			tracker.remove(location);
-			count++;
-		}
-		send("Deleted " + count + " custom blocks");
-	}
-
-	@Path("list [world]")
-	@Description("List all of the custom blocks in the world from the database")
-	@Permission(Group.ADMIN)
-	void list(@Arg("current") World world) {
-		tracker = trackerService.fromWorld(world);
-		Map<Location, NoteBlockData> locationMap = tracker.getLocationMap();
-		if (locationMap.isEmpty())
-			throw new InvalidInputException("This world has no saved custom blocks");
-
-		send("World: " + world.getName());
-
-		for (Location location : locationMap.keySet()) {
-			NoteBlockData data = locationMap.get(location);
-			CustomBlock customBlock = CustomBlock.from(location.getBlock());
-			if (customBlock == null)
-				continue;
-
-			send(" " + StringUtils.getCoordinateString(location) + ": " + StringUtils.camelCase(customBlock.name()));
-		}
 	}
 
 	@Path("getAll")

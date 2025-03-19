@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Location;
+import org.bukkit.Note;
 import org.bukkit.Particle;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
@@ -23,13 +24,17 @@ import org.bukkit.entity.Player;
 @NoArgsConstructor
 public class NoteBlockData {
 	private NoteBlockInstrument instrument = NoteBlockInstrument.PIANO;
+	private Block block;
+	private NoteBlock noteBlock;
 	private int step = 0;
-	private double volume = 1.0;
 	private boolean powered;
 	private boolean interacted;
 
 	public NoteBlockData(Block block) {
-		NoteBlock noteBlock = ((NoteBlock) block.getBlockData());
+		if (!(block.getBlockData() instanceof NoteBlock noteBlock))
+			throw new IllegalArgumentException("NoteBlockData must be instance of NoteBlock");
+		this.block = block;
+		this.noteBlock = noteBlock;
 		this.instrument = NoteBlockInstrument.getInstrument(block);
 		this.step = noteBlock.getNote().getId();
 		this.powered = noteBlock.isPowered();
@@ -38,29 +43,23 @@ public class NoteBlockData {
 	public void incrementStep() {
 		int _step = (this.step + 1);
 		this.step = _step > 24 ? 0 : _step;
+		update();
 	}
 
 	public void decrementStep() {
 		int _step = (this.step - 1);
 		this.step = _step < 0 ? 24 : _step;
+		update();
 	}
 
 	public void setStep(int step) {
 		this.step = MathUtils.clamp(step, 0, 24);
+		update();
 	}
 
-	public void incrementVolume() {
-		double _volume = (this.volume + 0.1);
-		this.volume = _volume > 2.0 ? 0.1 : _volume;
-	}
-
-	public void decrementVolume() {
-		double _volume = (this.volume - 0.1);
-		this.volume = _volume < 0.1 ? 2.0 : _volume;
-	}
-
-	public void setVolume(double volume) {
-		this.volume = MathUtils.clamp(volume, 0.0, 2.0);
+	private void update() {
+		noteBlock.setNote(new Note(this.step));
+		block.setBlockData(noteBlock, true);
 	}
 
 	public void play(Location location, Player debugger) {
@@ -69,7 +68,6 @@ public class NoteBlockData {
 		SoundBuilder noteBlockSound = new SoundBuilder(this.instrument.getSound(location.getBlock()))
 			.location(location)
 			.pitchStep(this.step)
-			.volume(this.volume)
 			.category(SoundCategory.RECORDS);
 
 		// Ignore particle if instrument == MOB_SOUND

@@ -12,9 +12,6 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.c
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.incremental.IIncremental;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.tall.ITall;
 import gg.projecteden.nexus.features.titan.models.CustomCreativeItem;
-import gg.projecteden.nexus.models.customblock.CustomNoteBlockTracker;
-import gg.projecteden.nexus.models.customblock.CustomNoteBlockTrackerService;
-import gg.projecteden.nexus.models.customblock.NoteBlockData;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.Debug.DebugType;
@@ -24,7 +21,6 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import lombok.Getter;
-import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -38,7 +34,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -49,45 +44,6 @@ public class CustomBlockUtils {
 	@Getter
 	private static final Set<BlockFace> neighborFaces = Set.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST,
 			BlockFace.WEST, BlockFace.UP, BlockFace.DOWN);
-
-	private static final CustomNoteBlockTrackerService trackerService = new CustomNoteBlockTrackerService();
-
-	public static @Nullable NoteBlockData getNoteBlockData(Location location) {
-		if (CustomBlock.from(location.getBlock()) != CustomBlock.NOTE_BLOCK)
-			return null;
-
-		CustomNoteBlockTracker tracker = trackerService.fromWorld(location);
-		NoteBlockData data = tracker.get(location);
-		if (data == null) {
-			data = new NoteBlockData(location.getBlock());
-			return placeNoteBlockInDatabase(location, data.getBlockData(location));
-		}
-
-		return data;
-	}
-
-	public static @Nullable NoteBlockData placeNoteBlockInDatabase(@NonNull Location location, @NonNull BlockData blockData) {
-		CustomBlock customBlock = CustomBlock.from(blockData, location.getBlock().getRelative(BlockFace.DOWN));
-		if (customBlock != CustomBlock.NOTE_BLOCK)
-			return null;
-
-		return placeNoteBlockInDatabase(location, new NoteBlockData(location.getBlock()));
-	}
-
-	private static @NonNull NoteBlockData placeNoteBlockInDatabase(@NonNull Location location, NoteBlockData data) {
-		CustomNoteBlockTracker tracker = trackerService.fromWorld(location);
-		tracker.put(location, data);
-		trackerService.save(tracker);
-		return data;
-	}
-
-	public static void breakNoteBlockInDatabase(@NonNull Location location) {
-		CustomNoteBlockTracker tracker = trackerService.fromWorld(location);
-		tracker.remove(location);
-		trackerService.save(tracker);
-	}
-
-	//
 
 	public static boolean equals(CustomBlock customBlock, BlockData blockData, boolean directional, Block underneath) {
 		BlockFace facing = null;
@@ -343,9 +299,5 @@ public class CustomBlockUtils {
 
 	public static void broadcastDebug(String message) {
 		Debug.log(DebugType.CUSTOM_BLOCKS, message);
-	}
-
-	public static void janitorDebug(String message) {
-		Debug.log(DebugType.CUSTOM_BLOCKS_JANITOR, message);
 	}
 }

@@ -51,6 +51,7 @@ public class Instrument extends DecorationConfig implements NoiseMaker {
 		return sound.getPitch(lastPitch);
 	}
 
+	@SuppressWarnings("removal")
 	public enum InstrumentSound {
 		DRUM_KIT(CustomSound.DECOR_INSTRUMENT_DRUMS),
 		GRAND_PIANO(CustomSound.DECOR_INSTRUMENT_GRAND_PIANO) {

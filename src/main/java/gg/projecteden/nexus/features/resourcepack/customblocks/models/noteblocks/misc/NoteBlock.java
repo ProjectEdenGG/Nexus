@@ -49,16 +49,6 @@ public class NoteBlock implements ICustomNoteBlock {
 	}
 
 	@Override
-	public PistonAction getPistonPushAction() {
-		return PistonAction.PREVENT;
-	}
-
-	@Override
-	public PistonAction getPistonPullAction() {
-		return gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IPistonActions.PistonAction.PREVENT;
-	}
-
-	@Override
 	public boolean onRightClickedWithItem(Player player, CustomBlock customBlock, Block block, ItemStack itemInHand) {
 		if (player.isSneaking())
 			return false;
@@ -70,7 +60,7 @@ public class NoteBlock implements ICustomNoteBlock {
 	public boolean onRightClickedWithoutItem(Player player, CustomBlock customBlock, Block block) {
 		CustomBlockUtils.debug(player, "&e- is changing pitch");
 		Location location = block.getLocation();
-		NoteBlockData data = CustomBlockUtils.getNoteBlockData(location);
+		NoteBlockData data = new NoteBlockData(block);
 		NoteBlockChangePitchEvent event = new NoteBlockChangePitchEvent(player, location.getBlock());
 		if (event.callEvent()) {
 			NoteBlockUtils.changePitch(player, player.isSneaking(), location, data);

@@ -24,10 +24,4 @@ public class CustomNoteBlockTrackerService extends MongoBukkitService<CustomNote
 	public CustomNoteBlockTracker fromWorld(World world) {
 		return this.get(world.getUID());
 	}
-
-	@Override
-	protected void beforeSave(CustomNoteBlockTracker object) {
-		object.getNoteBlockMap().values().removeIf(Map::isEmpty);
-		object.getNoteBlockMap().values().forEach(value -> value.values().removeIf(Map::isEmpty));
-	}
 }
