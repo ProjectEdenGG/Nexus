@@ -14,14 +14,14 @@ import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import lombok.NonNull;
 import org.bukkit.Chunk;
+import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.MultipleFacing;
+import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkLoadEvent;
@@ -63,29 +63,27 @@ public class ConversionListener implements Listener {
 		if (!WorldUtils.isInWorldBorder(chunk.getWorld(), chunk))
 			return;
 
-		List<Location> customBlockList = getCustomBlockLocations(chunk);
+		List<Location> customBlockList = BlockUtils.getBlocksInChunk(chunk, blockData -> CustomBlockType.getBlockMaterials().contains(blockData.getMaterial()));
 		if (customBlockList.isEmpty())
 			return;
 
 		for (Location location : customBlockList) {
 			Block block = location.getBlock();
-
-			CustomBlock customBlock = CustomBlock.from(block);
-			if (customBlock == null)
-				continue;
-
 			Material material = block.getType();
+			CustomBlock customBlock = CustomBlock.from(block);
 			final Block below = block.getRelative(BlockFace.DOWN);
 			switch (material) {
 				case NOTE_BLOCK -> {
 					String logMessage;
 					// Assume Staff and Minigames worlds are real custom blocks
-					if (WorldGroup.MINIGAMES.contains(location) || WorldGroup.STAFF.contains(location)) {
+					boolean assumeCustomBlock = WorldGroup.MINIGAMES.contains(location) || WorldGroup.STAFF.contains(location);
+					if (assumeCustomBlock && customBlock != null) {
 						block.setBlockData(customBlock.get().getBlockData(BlockFace.UP, below), false);
 						logMessage = "Creating CustomBlock " + StringUtils.camelCase(customBlock) + " " + StringUtils.getShortLocationString(location);
 					} else {
-						BlockData blockData = CustomBlock.NOTE_BLOCK.get().getBlockData(BlockFace.UP, below);
-						block.setBlockData(blockData, false);
+						NoteBlock noteBlockData = (NoteBlock) block.getBlockData();
+						noteBlockData.setInstrument(Instrument.PIANO);
+						block.setBlockData(noteBlockData, false);
 						logMessage = "Creating CustomBlock NoteBlock at " + StringUtils.getShortLocationString(location);
 					}
 
@@ -112,9 +110,5 @@ public class ConversionListener implements Listener {
 				}
 			}
 		}
-	}
-
-	public static @NonNull List<Location> getCustomBlockLocations(Chunk chunk) {
-		return BlockUtils.getBlocksInChunk(chunk, blockData -> CustomBlockType.getBlockMaterials().contains(blockData.getMaterial()));
 	}
 }
