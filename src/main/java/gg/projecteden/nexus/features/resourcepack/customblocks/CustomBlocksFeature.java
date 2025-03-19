@@ -17,13 +17,8 @@ import org.jetbrains.annotations.Nullable;
 
 /*
 	TODO:
-		- Maintain stats (ex. Player#awardStat(Tune note block)
+		- Test server bug signs
 		- remove "TODO CUSTOM BLOCKS: REMOVE"
-		- Release NoteBlock Custom Blocks
-		-
-		- Cannot Fix:
-			- Custom blocks may flash (canceled update of instrument changing) when placing blocks near them (clientside only) --> Titan
-			- Players arm will swing on interact w/ custom blocks (clientside only) --> Titan
  */
 
 /*

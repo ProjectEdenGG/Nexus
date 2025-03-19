@@ -10,7 +10,9 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
 import lombok.NonNull;
+import net.minecraft.stats.Stats;
 import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -63,6 +65,7 @@ public class NoteBlock implements ICustomNoteBlock {
 		NoteBlockData data = new NoteBlockData(block);
 		NoteBlockChangePitchEvent event = new NoteBlockChangePitchEvent(player, location.getBlock());
 		if (event.callEvent()) {
+			NMSUtils.toNMS(player).awardStat(Stats.TUNE_NOTEBLOCK);
 			NoteBlockUtils.changePitch(player, player.isSneaking(), location, data);
 			CustomBlockUtils.debug(player, "&a<- changed pitch");
 			return true;
@@ -78,9 +81,9 @@ public class NoteBlock implements ICustomNoteBlock {
 
 	@Override
 	public boolean onLeftClickedWithoutItem(Player player, CustomBlock customBlock, Block block) {
-		org.bukkit.block.data.type.NoteBlock noteBlock = (org.bukkit.block.data.type.NoteBlock) block.getBlockData();
 		CustomBlockUtils.debug(player, "&e<- is playing note");
-		NoteBlockUtils.play(noteBlock, block.getLocation(), true, player);
+		NoteBlockUtils.play(block.getLocation(), true, player);
+		NMSUtils.toNMS(player).awardStat(Stats.PLAY_NOTEBLOCK);
 		return true;
 	}
 }
