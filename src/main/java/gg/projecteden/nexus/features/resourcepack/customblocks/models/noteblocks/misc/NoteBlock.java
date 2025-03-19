@@ -92,7 +92,6 @@ public class NoteBlock implements ICustomNoteBlock {
 	public boolean onLeftClickedWithoutItem(Player player, CustomBlock customBlock, Block block) {
 		CustomBlockUtils.debug(player, "&e<- is playing note");
 		play(block.getLocation(), true, player);
-		NMSUtils.toNMS(player).awardStat(Stats.PLAY_NOTEBLOCK);
 		return true;
 	}
 
