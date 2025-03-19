@@ -55,6 +55,7 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.PaleOakPaperLantern;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.SprucePaperLantern;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.WarpedShroomLantern;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.misc.FloweringMossBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.misc.HazardBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.misc.NoteBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.misc.ShojiBlock;
@@ -446,6 +447,7 @@ public enum CustomBlock implements Keyed {
 	HAZARD_BLOCK(HazardBlock.class, CustomBlockTab.MISC),
 	SHOJI_BLOCK(ShojiBlock.class, CustomBlockTab.MISC),
 	WIREFRAME(Wireframe.class, CustomBlockTab.MISC),
+	FLOWERING_MOSS_BLOCK(FloweringMossBlock.class, CustomBlockTab.MISC),
 
 	// TRIPWIRE
 

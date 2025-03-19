@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBloc
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock.PistonPushAction;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ICustomNoteBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.misc.FloweringMossBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.IWaterLogged;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.incremental.IIncremental;
@@ -26,6 +27,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
@@ -57,6 +59,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockFertilizeEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
@@ -417,6 +420,25 @@ public class CustomBlockListener implements Listener {
 		}
 
 		return true;
+	}
+
+	@EventHandler
+	public void on(BlockFertilizeEvent event) {
+		if (event.getBlock().getType() != Material.MOSS_BLOCK)
+			return;
+
+		Material material = CustomBlock.FLOWERING_MOSS_BLOCK.getType().getBlockMaterial();
+		BlockData blockData = CustomBlock.FLOWERING_MOSS_BLOCK.get().getBlockData(BlockFace.UP, null);
+
+		event.getBlocks().forEach(state -> {
+			if (state.getType() != Material.MOSS_BLOCK)
+				return;
+
+			if (RandomUtils.chanceOf(FloweringMossBlock.FERTILIZE_CHANCE)) {
+				state.setType(material);
+				state.setBlockData(blockData);
+			}
+		});
 	}
 
 	@SuppressWarnings("UnstableApiUsage")

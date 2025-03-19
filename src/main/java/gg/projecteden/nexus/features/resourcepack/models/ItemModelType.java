@@ -241,6 +241,7 @@ public enum ItemModelType {
 	MISC_HAZARD_BLOCK("customblocks/misc/hazard_block"),
 	MISC_NOTE_BLOCK("customblocks/misc/note_block"),
 	MISC_SHOJI_BLOCK("customblocks/misc/shoji_block"),
+	MISC_FLOWERING_MOSS_BLOCK("customblocks/misc/flowering_moss_block"),
 	MISC_TRIPWIRE("customblocks/misc/tripwire"),
 	MISC_WIREFRAME("customblocks/misc/wireframe"),
 	NEON_BLACK("customblocks/neon/black", Material.NOTE_BLOCK),
