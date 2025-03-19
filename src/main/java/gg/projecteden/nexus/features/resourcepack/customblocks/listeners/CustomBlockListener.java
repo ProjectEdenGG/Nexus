@@ -86,6 +86,101 @@ public class CustomBlockListener implements Listener {
 		new ConversionListener();
 	}
 
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void on(PlayerInteractEvent event) {
+		if (event.isCancelled()) return;
+		if (event.useInteractedBlock() == Result.DENY || event.useItemInHand() == Result.DENY) return;
+		if (!EquipmentSlot.HAND.equals(event.getHand())) return;
+
+		Block clickedBlock = event.getClickedBlock();
+		if (Nullables.isNullOrAir(clickedBlock)) return;
+
+		// TODO: Disable tripwire customblocks
+		if (ICustomTripwire.isNotEnabled() && clickedBlock.getType() == Material.TRIPWIRE)
+			return;
+		//
+
+		Player player = event.getPlayer();
+		CustomBlockUtils.debug(player, "&d&lPlayerInteractEvent:", true);
+
+		Location clickedBlockLoc = clickedBlock.getLocation();
+		CustomBlock clickedCustomBlock = CustomBlock.from(clickedBlock);
+
+		if (clickedCustomBlock != null) {
+			updateDatabase(clickedBlockLoc, player);
+		}
+
+		// Place
+		if (isPlacingBlock(event, clickedBlock, clickedCustomBlock)) {
+			CustomBlockSounds.updateAction(player, BlockAction.PLACE);
+			CustomBlockUtils.debug(player, "&d<- done, placed block");
+			return;
+		}
+
+		ItemStack itemInHand = event.getItem();
+		Action action = event.getAction();
+
+		// Item In Hand
+		if (Nullables.isNotNullOrAir(itemInHand)) {
+			CustomBlock itemCustomBlock = CustomBlock.from(itemInHand);
+			if (itemCustomBlock != null) {
+				CustomBlockUtils.debug(player, "&e- On Use While Holding");
+				if (itemCustomBlock.get().onUseWhileHolding(event, player, action, clickedBlock, itemInHand)) {
+					CustomBlockUtils.debug(player, "&d<- cancelled = " + event.isCancelled() + " | done, end");
+					return;
+				} else {
+					CustomBlockUtils.debug(player, "&c<- no changes");
+				}
+			}
+		}
+
+		CustomBlockUtils.debug(player, "&e- interacted with block");
+		CustomBlockSounds.updateAction(player, BlockAction.INTERACT);
+
+		if (clickedCustomBlock != null) {
+			boolean isItemNull = Nullables.isNullOrAir(itemInHand);
+			ICustomBlock iCustomBlock = clickedCustomBlock.get();
+
+			if (action == Action.RIGHT_CLICK_BLOCK) {
+				if (isItemNull) {
+					CustomBlockUtils.debug(player, "&b- right click without item");
+					if (iCustomBlock.onRightClickedWithoutItem(player, clickedCustomBlock, clickedBlock)) {
+						event.setCancelled(true);
+						CustomBlockUtils.debug(player, "&d- cancelling event");
+					} else {
+						CustomBlockUtils.debug(player, "&c<- no changes");
+					}
+				} else {
+					CustomBlockUtils.debug(player, "&b- right click with item");
+					if (iCustomBlock.onRightClickedWithItem(player, clickedCustomBlock, clickedBlock, itemInHand)) {
+						event.setCancelled(true);
+						CustomBlockUtils.debug(player, "&d- cancelling event");
+					} else {
+						CustomBlockUtils.debug(player, "&c<- no changes");
+					}
+				}
+			} else if (action == Action.LEFT_CLICK_BLOCK) {
+				if (isItemNull) {
+					CustomBlockUtils.debug(player, "&b- left click without item");
+					if (iCustomBlock.onLeftClickedWithoutItem(player, clickedCustomBlock, clickedBlock)) {
+						CustomBlockUtils.debug(player, "&d- don't cancel event");
+					} else {
+						CustomBlockUtils.debug(player, "&c<- no changes");
+					}
+				} else {
+					CustomBlockUtils.debug(player, "&b- left click with item");
+					if (!iCustomBlock.onLeftClickedWithItem(player, clickedCustomBlock, clickedBlock, itemInHand)) {
+						CustomBlockUtils.debug(player, "&d- don't cancel event");
+					} else {
+						CustomBlockUtils.debug(player, "&c<- no changes");
+					}
+				}
+			}
+		}
+
+		CustomBlockUtils.debug(player, "&d<- done, end");
+	}
+
 	@EventHandler
 	public void on(PlayerPickItemEvent event) {
 		if (event.getPlayer().getGameMode() != GameMode.CREATIVE)
@@ -245,101 +340,6 @@ public class CustomBlockListener implements Listener {
 		return false;
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void on(PlayerInteractEvent event) {
-		if (event.isCancelled()) return;
-		if (event.useInteractedBlock() == Result.DENY || event.useItemInHand() == Result.DENY) return;
-		if (!EquipmentSlot.HAND.equals(event.getHand())) return;
-
-		Block clickedBlock = event.getClickedBlock();
-		if (Nullables.isNullOrAir(clickedBlock)) return;
-
-		// TODO: Disable tripwire customblocks
-		if (ICustomTripwire.isNotEnabled() && clickedBlock.getType() == Material.TRIPWIRE)
-			return;
-		//
-
-		Player player = event.getPlayer();
-		CustomBlockUtils.debug(player, "&d&lPlayerInteractEvent:", true);
-
-		Location clickedBlockLoc = clickedBlock.getLocation();
-		CustomBlock clickedCustomBlock = CustomBlock.from(clickedBlock);
-
-		if (clickedCustomBlock != null) {
-			updateDatabase(clickedBlockLoc, player);
-		}
-
-		// Place
-		if (isPlacingBlock(event, clickedBlock, clickedCustomBlock)) {
-			CustomBlockSounds.updateAction(player, BlockAction.PLACE);
-			CustomBlockUtils.debug(player, "&d<- done, placed block");
-			return;
-		}
-
-		ItemStack itemInHand = event.getItem();
-		Action action = event.getAction();
-
-		// Item In Hand
-		if (Nullables.isNotNullOrAir(itemInHand)) {
-			CustomBlock itemCustomBlock = CustomBlock.from(itemInHand);
-			if (itemCustomBlock != null) {
-				CustomBlockUtils.debug(player, "&e- On Use While Holding");
-				if (itemCustomBlock.get().onUseWhileHolding(event, player, action, clickedBlock, itemInHand)) {
-					CustomBlockUtils.debug(player, "&d<- cancelled = " + event.isCancelled() + " | done, end");
-					return;
-				} else {
-					CustomBlockUtils.debug(player, "&c<- no changes");
-				}
-			}
-		}
-
-		CustomBlockUtils.debug(player, "&e- interacted with block");
-		CustomBlockSounds.updateAction(player, BlockAction.INTERACT);
-
-		if (clickedCustomBlock != null) {
-			boolean isItemNull = Nullables.isNullOrAir(itemInHand);
-			ICustomBlock iCustomBlock = clickedCustomBlock.get();
-
-			if (action == Action.RIGHT_CLICK_BLOCK) {
-				if (isItemNull) {
-					CustomBlockUtils.debug(player, "&b- right click without item");
-					if (iCustomBlock.onRightClickedWithoutItem(player, clickedCustomBlock, clickedBlock)) {
-						event.setCancelled(true);
-						CustomBlockUtils.debug(player, "&d- cancelling event");
-					} else {
-						CustomBlockUtils.debug(player, "&c<- no changes");
-					}
-				} else {
-					CustomBlockUtils.debug(player, "&b- right click with item");
-					if (iCustomBlock.onRightClickedWithItem(player, clickedCustomBlock, clickedBlock, itemInHand)) {
-						event.setCancelled(true);
-						CustomBlockUtils.debug(player, "&d- cancelling event");
-					} else {
-						CustomBlockUtils.debug(player, "&c<- no changes");
-					}
-				}
-			} else if (action == Action.LEFT_CLICK_BLOCK) {
-				if (isItemNull) {
-					CustomBlockUtils.debug(player, "&b- left click without item");
-					if (iCustomBlock.onLeftClickedWithoutItem(player, clickedCustomBlock, clickedBlock)) {
-						CustomBlockUtils.debug(player, "&d- don't cancel event");
-					} else {
-						CustomBlockUtils.debug(player, "&c<- no changes");
-					}
-				} else {
-					CustomBlockUtils.debug(player, "&b- left click with item");
-					if (!iCustomBlock.onLeftClickedWithItem(player, clickedCustomBlock, clickedBlock, itemInHand)) {
-						CustomBlockUtils.debug(player, "&d- don't cancel event");
-					} else {
-						CustomBlockUtils.debug(player, "&c<- no changes");
-					}
-				}
-			}
-		}
-
-		CustomBlockUtils.debug(player, "&d<- done, end");
-	}
-
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void on(BlockPhysicsEvent event) {
 		Block block = event.getBlock();
@@ -402,29 +402,6 @@ public class CustomBlockListener implements Listener {
 				state.setBlockData(blockData);
 			}
 		});
-	}
-
-	@EventHandler
-	public void on(InventoryMoveItemEvent event) {
-		if (!(event.getDestination().getHolder() instanceof BlockInventoryHolder holder))
-			return;
-
-		Block block = holder.getBlock();
-		if (Nullables.isNullOrAir(block))
-			return;
-
-		ItemStack item = event.getItem();
-		if (Nullables.isNullOrAir(item))
-			return;
-
-		CustomBlock customBlock = CustomBlock.from(item);
-		if (customBlock == null)
-			return;
-
-		if (!(customBlock.get() instanceof ICompostable compostable))
-			return;
-
-		compostable.compost(item, block);
 	}
 
 	@SuppressWarnings("UnstableApiUsage")
