@@ -52,6 +52,7 @@ public interface IPistonActions extends Listener {
 					CustomBlockUtils.broadcastDebug("PistonEvent: " + customBlock.name() + " broke because of a piston");
 					CustomBlockUtils.breakBlock(block, customBlock, null, null, true);
 					// TODO: REMOVE THIS BLOCK FROM THE BLOCKS THAT ARE MOVING, AND ANY BLOCKS "PAST" THIS BLOCK SHOULD BE REMOVED AS WELL --> PARCHMENT?
+					//  	event.getBlocks is unmodifiable
 				}
 			}
 		}
@@ -84,6 +85,7 @@ public interface IPistonActions extends Listener {
 					CustomBlockUtils.broadcastDebug("PistonEvent: " + customBlock.name() + " broke because of a piston");
 					CustomBlockUtils.breakBlock(block, customBlock, null, null, true);
 					// TODO: REMOVE THIS BLOCK FROM THE BLOCKS THAT ARE MOVING, AND ANY BLOCKS "PAST" THIS BLOCK SHOULD BE REMOVED AS WELL --> PARCHMENT?
+					//  	event.getBlocks is unmodifiable
 				}
 			}
 		}
