@@ -16,10 +16,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-public interface ICustomBlock extends IHarvestable {
+public interface ICustomBlock extends IHarvestable, IPistonActions {
 	Material itemMaterial = Material.PAPER;
 
 	Material getVanillaBlockMaterial();
@@ -81,16 +83,6 @@ public interface ICustomBlock extends IHarvestable {
 		return CustomBlock.of(this);
 	}
 
-	default PistonPushAction getPistonPushedAction() {
-		return getCustomBlockConfig().getPistonPushedAction();
-	}
-
-	enum PistonPushAction {
-		MOVE,
-		PREVENT,
-		BREAK
-	}
-
 	// Sounds
 	@NonNull String getBreakSound();
 
@@ -115,6 +107,36 @@ public interface ICustomBlock extends IHarvestable {
 			return true;
 		}
 
+		return false;
+	}
+
+	@Override
+	default PistonAction getPistonPushAction() {
+		return PistonAction.MOVE;
+	}
+
+	@Override
+	default PistonAction getPistonPullAction() {
+		return PistonAction.MOVE;
+	}
+
+	default boolean onUseWhileHolding(PlayerInteractEvent event, Player player, Action action, Block clickedBlock, ItemStack itemInHand) {
+		return false;
+	}
+
+	default boolean onRightClickedWithItem(Player player, CustomBlock customBlock, Block block, ItemStack itemInHand) {
+		return false;
+	}
+
+	default boolean onRightClickedWithoutItem(Player player, CustomBlock customBlock, Block block) {
+		return false;
+	}
+
+	default boolean onLeftClickedWithItem(Player player, CustomBlock customBlock, Block block, ItemStack itemInHand) {
+		return false;
+	}
+
+	default boolean onLeftClickedWithoutItem(Player player, CustomBlock customBlock, Block block) {
 		return false;
 	}
 

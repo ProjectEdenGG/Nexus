@@ -34,8 +34,13 @@ public interface ICustomTripwire extends ICustomBlock {
 	}
 
 	@Override
-	default PistonPushAction getPistonPushedAction() {
-		return PistonPushAction.BREAK;
+	default PistonAction getPistonPushAction() {
+		return PistonAction.BREAK;
+	}
+
+	@Override
+	default PistonAction getPistonPullAction() {
+		return PistonAction.PREVENT;
 	}
 
 	private CustomTripwireConfig getConfig() {

@@ -43,7 +43,12 @@ public interface ILantern extends IDirectionalNoteBlock, ILightableNoteBlock {
 	}
 
 	@Override
-	default PistonPushAction getPistonPushedAction() {
-		return PistonPushAction.PREVENT;
+	default PistonAction getPistonPushAction() {
+		return PistonAction.PREVENT;
+	}
+
+	@Override
+	default PistonAction getPistonPullAction() {
+		return gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IPistonActions.PistonAction.PREVENT;
 	}
 }

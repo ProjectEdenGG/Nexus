@@ -7,20 +7,18 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks.BlockAction;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks.SoundAction;
 import gg.projecteden.nexus.features.resourcepack.customblocks.NoteBlockUtils;
-import gg.projecteden.nexus.features.resourcepack.customblocks.events.NoteBlockChangePitchEvent;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock.CustomBlockType;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock.PistonPushAction;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IPistonActions.PistonAction;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICompostable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ICustomNoteBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.misc.FloweringMossBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.IWaterLogged;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.incremental.IIncremental;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
-import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -65,7 +63,9 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.BlockInventoryHolder;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -75,7 +75,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("deprecation")
 public class CustomBlockListener implements Listener {
@@ -124,7 +123,7 @@ public class CustomBlockListener implements Listener {
 	}
 
 	@EventHandler
-	public void on(CustomBlockUpdateEvent event) { // Parchment Event
+	public void on(CustomBlockUpdateEvent event) {
 		// TODO: Disable tripwire customblocks
 		if (ICustomTripwire.isNotEnabled() && event.getBlock() instanceof Tripwire)
 			return;
@@ -248,30 +247,19 @@ public class CustomBlockListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on(PlayerInteractEvent event) {
-		if (event.isCancelled())
-			return;
-
-		if (event.useInteractedBlock() == Result.DENY || event.useItemInHand() == Result.DENY)
-			return;
-
-		if (!EquipmentSlot.HAND.equals(event.getHand()))
-			return;
+		if (event.isCancelled()) return;
+		if (event.useInteractedBlock() == Result.DENY || event.useItemInHand() == Result.DENY) return;
+		if (!EquipmentSlot.HAND.equals(event.getHand())) return;
 
 		Block clickedBlock = event.getClickedBlock();
-
-		if (Nullables.isNullOrAir(clickedBlock))
-			return;
-
-		Action action = event.getAction();
-		Player player = event.getPlayer();
-		ItemStack itemInHand = event.getItem();
-		boolean sneaking = player.isSneaking();
+		if (Nullables.isNullOrAir(clickedBlock)) return;
 
 		// TODO: Disable tripwire customblocks
 		if (ICustomTripwire.isNotEnabled() && clickedBlock.getType() == Material.TRIPWIRE)
 			return;
 		//
 
+		Player player = event.getPlayer();
 		CustomBlockUtils.debug(player, "&d&lPlayerInteractEvent:", true);
 
 		Location clickedBlockLoc = clickedBlock.getLocation();
@@ -282,45 +270,70 @@ public class CustomBlockListener implements Listener {
 		}
 
 		// Place
-		if (isIncrementingBlock(event, clickedBlock, clickedCustomBlock)) {
-			CustomBlockSounds.updateAction(player, BlockAction.PLACE);
-			CustomBlockUtils.debug(player, "&d<- done, incremented block");
-			return;
-		}
-
 		if (isPlacingBlock(event, clickedBlock, clickedCustomBlock)) {
 			CustomBlockSounds.updateAction(player, BlockAction.PLACE);
 			CustomBlockUtils.debug(player, "&d<- done, placed block");
 			return;
 		}
 
+		ItemStack itemInHand = event.getItem();
+		Action action = event.getAction();
+
+		// Item In Hand
+		if (Nullables.isNotNullOrAir(itemInHand)) {
+			CustomBlock itemCustomBlock = CustomBlock.from(itemInHand);
+			if (itemCustomBlock != null) {
+				CustomBlockUtils.debug(player, "&e- On Use While Holding");
+				if (itemCustomBlock.get().onUseWhileHolding(event, player, action, clickedBlock, itemInHand)) {
+					CustomBlockUtils.debug(player, "&d<- cancelled = " + event.isCancelled() + " | done, end");
+					return;
+				} else {
+					CustomBlockUtils.debug(player, "&c<- no changes");
+				}
+			}
+		}
+
 		CustomBlockUtils.debug(player, "&e- interacted with block");
 		CustomBlockSounds.updateAction(player, BlockAction.INTERACT);
 
 		if (clickedCustomBlock != null) {
-			if (CustomBlock.NOTE_BLOCK == clickedCustomBlock) {
-				CustomBlockUtils.debug(player, "&e-- is a note block");
-				NoteBlock noteBlock = (NoteBlock) clickedBlock.getBlockData();
+			boolean isItemNull = Nullables.isNullOrAir(itemInHand);
+			ICustomBlock iCustomBlock = clickedCustomBlock.get();
 
-				if (isChangingPitch(action, sneaking, itemInHand)) {
-					CustomBlockUtils.debug(player, "&e<- is changing pitch");
-					event.setCancelled(true);
-
-					changePitch(player, noteBlock, clickedBlockLoc, sneaking);
-					CustomBlockUtils.debug(player, "&d<- done, changed pitch");
-					return;
+			if (action == Action.RIGHT_CLICK_BLOCK) {
+				if (isItemNull) {
+					CustomBlockUtils.debug(player, "&b- right click without item");
+					if (iCustomBlock.onRightClickedWithoutItem(player, clickedCustomBlock, clickedBlock)) {
+						event.setCancelled(true);
+						CustomBlockUtils.debug(player, "&d- cancelling event");
+					} else {
+						CustomBlockUtils.debug(player, "&c<- no changes");
+					}
+				} else {
+					CustomBlockUtils.debug(player, "&b- right click with item");
+					if (iCustomBlock.onRightClickedWithItem(player, clickedCustomBlock, clickedBlock, itemInHand)) {
+						event.setCancelled(true);
+						CustomBlockUtils.debug(player, "&d- cancelling event");
+					} else {
+						CustomBlockUtils.debug(player, "&c<- no changes");
+					}
 				}
-
-				boolean isPlayingNote = action.equals(Action.LEFT_CLICK_BLOCK);
-				if (isPlayingNote) {
-					CustomBlockUtils.debug(player, "&e<- is playing note");
-					NoteBlockUtils.play(noteBlock, clickedBlockLoc, true, player);
+			} else if (action == Action.LEFT_CLICK_BLOCK) {
+				if (isItemNull) {
+					CustomBlockUtils.debug(player, "&b- left click without item");
+					if (iCustomBlock.onLeftClickedWithoutItem(player, clickedCustomBlock, clickedBlock)) {
+						CustomBlockUtils.debug(player, "&d- don't cancel event");
+					} else {
+						CustomBlockUtils.debug(player, "&c<- no changes");
+					}
+				} else {
+					CustomBlockUtils.debug(player, "&b- left click with item");
+					if (!iCustomBlock.onLeftClickedWithItem(player, clickedCustomBlock, clickedBlock, itemInHand)) {
+						CustomBlockUtils.debug(player, "&d- don't cancel event");
+					} else {
+						CustomBlockUtils.debug(player, "&c<- no changes");
+					}
 				}
-			}
-
-			if (action.equals(Action.RIGHT_CLICK_BLOCK)) {
-				event.setCancelled(true);
-				CustomBlockUtils.debug(player, "&e<- action == " + action + ", cancelling");
 			}
 		}
 
@@ -372,56 +385,6 @@ public class CustomBlockListener implements Listener {
 		Tasks.wait(1, () -> OnlinePlayers.where().world(location.getWorld()).forEach(player -> player.sendBlockChange(location, blockData)));
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void on(BlockPistonExtendEvent event) {
-		if (event.isCancelled())
-			return;
-
-		if (!onPistonEvent(event.getBlocks()))
-			event.setCancelled(true);
-	}
-
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void on(BlockPistonRetractEvent event) {
-		if (event.isCancelled())
-			return;
-
-		if (!onPistonEvent(event.getBlocks()))
-			event.setCancelled(true);
-	}
-
-	private boolean onPistonEvent(List<Block> blocks) {
-		blocks = blocks.stream().filter(block -> CustomBlock.from(block) != null).collect(Collectors.toList());
-
-		// initial checks
-		for (Block block : blocks) {
-			// TODO: Disable tripwire customblocks
-			if (ICustomTripwire.isNotEnabled() && block.getType() == Material.TRIPWIRE)
-				continue;
-			//
-
-			CustomBlock customBlock = CustomBlock.from(block);
-			if (customBlock == null)
-				continue;
-
-			ICustomBlock iCustomBlock = customBlock.get();
-			PistonPushAction pistonAction = iCustomBlock.getPistonPushedAction();
-			switch (pistonAction) {
-				case PREVENT -> {
-					CustomBlockUtils.broadcastDebug("PistonEvent: " + customBlock.name() + " cannot be moved by pistons");
-					return false;
-				}
-				case BREAK -> {
-					CustomBlockUtils.broadcastDebug("PistonEvent: " + customBlock.name() + " broke because of a piston");
-					CustomBlockUtils.breakBlock(block, customBlock, null, null, true);
-					continue;
-				}
-			}
-		}
-
-		return true;
-	}
-
 	@EventHandler
 	public void on(BlockFertilizeEvent event) {
 		if (event.getBlock().getType() != Material.MOSS_BLOCK)
@@ -439,6 +402,29 @@ public class CustomBlockListener implements Listener {
 				state.setBlockData(blockData);
 			}
 		});
+	}
+
+	@EventHandler
+	public void on(InventoryMoveItemEvent event) {
+		if (!(event.getDestination().getHolder() instanceof BlockInventoryHolder holder))
+			return;
+
+		Block block = holder.getBlock();
+		if (Nullables.isNullOrAir(block))
+			return;
+
+		ItemStack item = event.getItem();
+		if (Nullables.isNullOrAir(item))
+			return;
+
+		CustomBlock customBlock = CustomBlock.from(item);
+		if (customBlock == null)
+			return;
+
+		if (!(customBlock.get() instanceof ICompostable compostable))
+			return;
+
+		compostable.compost(item, block);
 	}
 
 	@SuppressWarnings("UnstableApiUsage")
@@ -490,10 +476,6 @@ public class CustomBlockListener implements Listener {
 			explodedBlock.getBlock().setType(Material.BARRIER, false); // Don't update the physics, & needs to be non-air
 		}
 
-		// Update database
-		List<Location> explodedLocations = explodedBlocks.stream().map(explodedCustomBlock -> explodedCustomBlock.getBlock().getLocation()).toList();
-//		CustomBlockUtils.breakBlocksDatabase(explodedLocations);
-
 		// Get drops
 		Map<Block, net.minecraft.world.item.ItemStack> droppedItems = new HashMap<>();
 		for (ExplodedCustomBlock explodedBlock : explodedBlocks) {
@@ -521,49 +503,6 @@ public class CustomBlockListener implements Listener {
 	}
 
 	//
-
-	private boolean isIncrementingBlock(PlayerInteractEvent event, Block clickedBlock, CustomBlock clickedCustomBlock) {
-		Action action = event.getAction();
-		if (!action.equals(Action.RIGHT_CLICK_BLOCK))
-			return false;
-
-		Player player = event.getPlayer();
-		if (player.isSneaking())
-			return false;
-
-		ItemStack itemInHand = event.getItem();
-		if (Nullables.isNullOrAir(itemInHand))
-			return false;
-
-		CustomBlock customBlockItem = CustomBlock.from(itemInHand);
-		if (clickedCustomBlock == null || customBlockItem == null)
-			return false;
-
-		if (!(clickedCustomBlock.get() instanceof IIncremental incremental))
-			return false;
-
-		List<String> modelIdList = incremental.getModelIdList();
-		if (!modelIdList.contains(customBlockItem.get().getModel()))
-			return false;
-
-		// increment block
-
-		int ndx = incremental.getIndex() + 1;
-		if (ndx >= modelIdList.size())
-			return false;
-
-		String newModelId = modelIdList.get(ndx);
-		CustomBlock update = CustomBlock.from(newModelId);
-		if (update == null)
-			return false;
-
-		player.swingMainHand();
-		clickedCustomBlock.updateBlock(player, update, clickedBlock);
-		if (!GameModeWrapper.of(player).isCreative())
-			itemInHand.subtract();
-
-		return true;
-	}
 
 	private boolean isPlacingBlock(PlayerInteractEvent event, Block clickedBlock, CustomBlock clickedCustomBlock) {
 		Player player = event.getPlayer();
@@ -730,20 +669,5 @@ public class CustomBlockListener implements Listener {
 			player.openSign(sign, Side.FRONT);
 
 		return true;
-	}
-
-	private boolean isChangingPitch(Action action, boolean sneaking, ItemStack itemInHand) {
-		if (!action.equals(Action.RIGHT_CLICK_BLOCK))
-			return false;
-
-		return !sneaking || Nullables.isNullOrAir(itemInHand) || !itemInHand.getType().isBlock();
-	}
-
-	private void changePitch(Player player, NoteBlock noteBlock, Location location, boolean sneaking) {
-		NoteBlockData data = CustomBlockUtils.getNoteBlockData(location);
-
-		NoteBlockChangePitchEvent event = new NoteBlockChangePitchEvent(player, location.getBlock());
-		if (event.callEvent())
-			NoteBlockUtils.changePitch(player, sneaking, location, data);
 	}
 }

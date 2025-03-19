@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.common;
 
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock.PistonPushAction;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 
 import java.lang.annotation.ElementType;
@@ -14,6 +13,4 @@ public @interface CustomBlockConfig {
 	String name();
 
 	ItemModelType itemModel();
-
-	PistonPushAction getPistonPushedAction() default PistonPushAction.MOVE;
 }

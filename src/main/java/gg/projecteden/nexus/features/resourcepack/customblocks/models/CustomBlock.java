@@ -510,8 +510,11 @@ public enum CustomBlock implements Keyed {
 	public static final HashMap<String, CustomBlock> modelIdMap = new HashMap<>();
 
 	public static void init() {
-		for (CustomBlock customBlock : values())
-			modelIdMap.put(customBlock.get().getModel(), customBlock);
+		for (CustomBlock customBlock : values()) {
+			ICustomBlock iCustomBlock = customBlock.get();
+			modelIdMap.put(iCustomBlock.getModel(), customBlock);
+			Nexus.registerListener(iCustomBlock);
+		}
 
 		CustomBlockTag.init();
 		CustomBlockTab.init();
@@ -994,7 +997,6 @@ public enum CustomBlock implements Keyed {
 	private void dropItem(ItemStack item, Location location) {
 		location.getWorld().dropItemNaturally(location.toCenterLocation(), item);
 	}
-
 
 	@Getter
 	public enum CustomBlockType {

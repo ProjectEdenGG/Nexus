@@ -135,7 +135,8 @@ public class CustomBlocksCommand extends CustomCommand {
 		send("Block Info:");
 		send("- Material: " + iCustomBlock.getVanillaBlockMaterial());
 		send("- Hardness: " + iCustomBlock.getBlockHardness());
-		send("- Piston Action: " + iCustomBlock.getPistonPushedAction());
+		send("- Piston Push Action: " + iCustomBlock.getPistonPushAction());
+		send("- Piston Pull Action: " + iCustomBlock.getPistonPullAction());
 		line();
 		if (iCustomBlock instanceof ICustomNoteBlock iNoteBlock) {
 			send(iNoteBlock.getStringBlockData(block.getBlockData()));
