@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockNMSUti
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksFeature.BlockAction;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksFeature.SoundAction;
-import gg.projecteden.nexus.features.resourcepack.customblocks.NoteBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock.CustomBlockType;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock;
@@ -243,7 +242,7 @@ public class CustomBlockListener implements Listener {
 		boolean hasNeighborSignal = serverLevel.hasNeighborSignal(blockPos);
 		if (!isPowered && hasNeighborSignal) {
 			CustomBlockUtils.broadcastDebug("Playing NoteBlock: Instrument=" + noteBlock.getInstrument() + ", Note=" + noteBlock.getNote().getId() + ", Powered=" + noteBlock.isPowered());
-			NoteBlockUtils.play(location, true, null);
+			gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.misc.NoteBlock.play(location, true, null);
 		}
 	}
 
