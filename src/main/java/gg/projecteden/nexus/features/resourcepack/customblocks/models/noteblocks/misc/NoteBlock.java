@@ -75,7 +75,6 @@ public class NoteBlock implements ICustomNoteBlock {
 		if (event.callEvent()) {
 			NMSUtils.toNMS(player).awardStat(Stats.TUNE_NOTEBLOCK);
 			changePitch(player, player.isSneaking(), location, data);
-			changePitch(player, player.isSneaking(), location, data);
 			CustomBlockUtils.debug(player, "&a<- changed pitch");
 			return true;
 		}
