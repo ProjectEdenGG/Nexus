@@ -60,23 +60,25 @@ public class MailCommand extends CustomCommand implements Listener {
 		if (from.getUuid().equals(to.getUuid()))
 			error("You cannot send mail yourself");
 
-		if (from.hasPending())
-			send(PREFIX + "&cYou already have pending mail to " + from.getPending().getNickname());
+		boolean hasPending = from.hasPending();
+		if (hasPending)
+			send(PREFIX + "&4You already have pending mail to &e" + from.getPending().getNickname());
 		else
 			from.addPending(new Mail(to.getUuid(), uuid(), worldGroup(), message));
 
 		save(from);
-		menu();
+		menu(!hasPending);
 	}
 
 	@Path("menu")
 	@HideFromHelp
 	@HideFromWiki
 	@TabCompleteIgnore
-	private void menu() {
+	private void menu(boolean emptyLines) {
 		Mail mail = from.getPending();
-		line(3);
-		send(PREFIX + "Sending mail to " + mail.getNickname() + " with " + mail.getContents());
+		if (emptyLines)
+			line(3);
+		send(PREFIX + "Sending mail to &e" + mail.getNickname() + " &3with " + mail.getContents());
 		send(json("&3   ")
 				.next("&c&lCancel")
 				.command("/mail cancel")
@@ -119,7 +121,7 @@ public class MailCommand extends CustomCommand implements Listener {
 	void message(String message) {
 		from.getPending().setMessage(message);
 		save(from);
-		menu();
+		menu(true);
 	}
 
 	@Path("items")
