@@ -10,6 +10,8 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class SurroundBuilder extends RecipeBuilder<SurroundBuilder> {
 	private final RecipeChoice center;
 	private RecipeChoice surround;
@@ -40,6 +42,10 @@ public class SurroundBuilder extends RecipeBuilder<SurroundBuilder> {
 
 	public SurroundBuilder with(ItemStack surround) {
 		ingredientIds.add(CustomRecipes.keyOf(surround));
+		return with(CustomRecipes.choiceOf(surround));
+	}
+
+	public SurroundBuilder with(List<ItemStack> surround) {
 		return with(CustomRecipes.choiceOf(surround));
 	}
 

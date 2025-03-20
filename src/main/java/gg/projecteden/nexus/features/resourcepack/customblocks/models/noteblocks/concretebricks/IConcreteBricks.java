@@ -3,15 +3,15 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblock
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlockTag;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IDyeable;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IReDyeable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ICraftableNoteBlock;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
-public interface IConcreteBricks extends IDyeable, ICraftableNoteBlock {
+public interface IConcreteBricks extends IReDyeable, ICraftableNoteBlock {
 	@Override
-	default CustomBlockTag getRedyeTag() {
+	default CustomBlockTag getReDyeTag() {
 		return CustomBlockTag.CONCRETE_BRICKS;
 	}
 

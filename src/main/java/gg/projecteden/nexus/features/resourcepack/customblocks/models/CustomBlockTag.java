@@ -5,7 +5,6 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICraftable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IDirectional;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IDyeable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ICraftableNoteBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.IDirectionalNoteBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.compacted.ICompacted;
@@ -84,7 +83,6 @@ public class CustomBlockTag implements Tag<CustomBlock> {
 	// COMMON
 	public static final CustomBlockTag CRAFTABLE = new CustomBlockTag(ICraftable.class);
 	public static final CustomBlockTag DIRECTIONAL = new CustomBlockTag(IDirectional.class);
-	public static final CustomBlockTag DYEABLE = new CustomBlockTag(IDyeable.class);
 
 	public static final CustomBlockTag ALL = new CustomBlockTag(ICustomBlock.class);
 

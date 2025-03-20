@@ -1,15 +1,10 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.common;
 
 import gg.projecteden.nexus.features.listeners.Composter;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
-import gg.projecteden.nexus.utils.Nullables;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.BlockInventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,28 +26,5 @@ public interface ICompostable extends ICustomBlock {
 		}
 
 		return false;
-	}
-
-	@EventHandler
-	default void on(InventoryMoveItemEvent event) {
-		if (!(event.getDestination().getHolder() instanceof BlockInventoryHolder holder))
-			return;
-
-		Block block = holder.getBlock();
-		if (Nullables.isNullOrAir(block))
-			return;
-
-		ItemStack item = event.getItem();
-		if (Nullables.isNullOrAir(item))
-			return;
-
-		CustomBlock customBlock = CustomBlock.from(item);
-		if (customBlock == null)
-			return;
-
-		if (!(customBlock.get() instanceof ICompostable compostable))
-			return;
-
-		compostable.compost(item, block);
 	}
 }

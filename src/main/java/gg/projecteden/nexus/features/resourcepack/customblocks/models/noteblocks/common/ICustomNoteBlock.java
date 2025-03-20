@@ -145,9 +145,8 @@ public interface ICustomNoteBlock extends ICustomBlock {
 			return false;
 
 		NoteBlock _noteBlock = (NoteBlock) this.getBlockData(facing, underneath);
-		if (this instanceof gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.misc.NoteBlock) {
-			noteBlock.setPowered(false);
-			noteBlock.setNote(new Note(0));
+		if (this.getCustomBlock() == CustomBlock.NOTE_BLOCK && noteBlock.getInstrument() == Instrument.PIANO) {
+			return true;
 		}
 
 		return noteBlock.matches(_noteBlock);

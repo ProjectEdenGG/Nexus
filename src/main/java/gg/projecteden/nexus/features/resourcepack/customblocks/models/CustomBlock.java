@@ -11,7 +11,7 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksFeatu
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICraftable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IDirectional;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IDyeable;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IReDyeable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.Unobtainable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ICustomNoteBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.IDirectionalNoteBlock;
@@ -443,18 +443,12 @@ public enum CustomBlock implements Keyed {
 	GENERIC_CRATE_D(GenericCrateD.class, CustomBlockTab.GENERIC_CRATES),
 
 	// misc
-	NOTE_BLOCK(NoteBlock.class, CustomBlockTab.NONE),
 	HAZARD_BLOCK(HazardBlock.class, CustomBlockTab.MISC),
 	SHOJI_BLOCK(ShojiBlock.class, CustomBlockTab.MISC),
 	WIREFRAME(Wireframe.class, CustomBlockTab.MISC),
 	FLOWERING_MOSS_BLOCK(FloweringMossBlock.class, CustomBlockTab.MISC),
 
 	// TRIPWIRE
-
-	// misc
-	TRIPWIRE(Tripwire.class, CustomBlockTab.NONE),
-	TRIPWIRE_CROSS(TripwireCross.class, CustomBlockTab.NONE),
-	TALL_SUPPORT(TallSupport.class, CustomBlockTab.NONE),
 
 	// flora tall
 	CATTAIL(Cattail.class, CustomBlockTab.FLORA),
@@ -486,6 +480,12 @@ public enum CustomBlock implements Keyed {
 	AUBRIETA_WHITE(WhiteAubrieta.class, CustomBlockTab.FLORA),
 	AUBRIETA_RAINBOW(RainbowAubrieta.class, CustomBlockTab.FLORA),
 	FUNGUS_COVER(FungusCover.class, CustomBlockTab.FLORA),
+
+	// last
+	TRIPWIRE_CROSS(TripwireCross.class, CustomBlockTab.NONE),
+	TALL_SUPPORT(TallSupport.class, CustomBlockTab.NONE),
+	TRIPWIRE(Tripwire.class, CustomBlockTab.NONE),
+	NOTE_BLOCK(NoteBlock.class, CustomBlockTab.NONE),
 	;
 
 	private final ICustomBlock customBlock;
@@ -513,7 +513,6 @@ public enum CustomBlock implements Keyed {
 		for (CustomBlock customBlock : values()) {
 			ICustomBlock iCustomBlock = customBlock.get();
 			modelIdMap.put(iCustomBlock.getModel(), customBlock);
-			Nexus.registerListener(iCustomBlock);
 		}
 
 		CustomBlockTag.init();
@@ -605,7 +604,7 @@ public enum CustomBlock implements Keyed {
 				ICustomBlock iCustomBlock = customBlock.get();
 
 				if (CustomBlockUtils.equals(customBlock, noteBlock, false, underneath)) {
-//					CustomBlocksLang.debug("CustomBlock: BlockData equals " + customBlock.name());
+//					CustomBlockUtils.debug(Dev.WAKKA.getPlayer(), "CustomBlock: BlockData equals " + customBlock.name());
 					return customBlock;
 				} else if (iCustomBlock instanceof IDirectionalNoteBlock) {
 					directional.add(customBlock);
@@ -615,12 +614,12 @@ public enum CustomBlock implements Keyed {
 			// Directional checks
 			for (CustomBlock _customBlock : directional) {
 				if (CustomBlockUtils.equals(_customBlock, noteBlock, true, underneath)) {
-//					CustomBlocksLang.debug("CustomBlock: BlockData equals directional " + _customBlock.name());
+//					CustomBlockUtils.debug(Dev.WAKKA.getPlayer(), "CustomBlock: BlockData equals directional " + _customBlock.name());
 					return _customBlock;
 				}
 			}
 
-//			CustomBlocksLang.debug("CustomBlock: Couldn't find NoteBlock: " + noteBlock);
+//			CustomBlockUtils.debug(Dev.WAKKA.getPlayer(), "CustomBlock: Couldn't find NoteBlock: " + noteBlock);
 
 		} else if (blockData instanceof org.bukkit.block.data.type.Tripwire tripwire) {
 			for (CustomBlock customBlock : getBy(CustomBlockType.TRIPWIRE)) {
@@ -636,7 +635,7 @@ public enum CustomBlock implements Keyed {
 				}
 			}
 
-//			CustomBlocksLang.debug("CustomBlock: Couldn't find Tripwire: " + CustomBlockUtils.getBlockDataString(tripwire));
+//			CustomBlockUtils.debug(Dev.WAKKA.getPlayer(), "CustomBlock: Couldn't find Tripwire: " + CustomBlockUtils.getBlockDataString(tripwire));
 		}
 
 		return null;
@@ -962,8 +961,8 @@ public enum CustomBlock implements Keyed {
 		}
 
 		// re-dye recipes
-		if (craftable instanceof IDyeable dyeable) {
-			CustomBlockTag tag = dyeable.getRedyeTag();
+		if (craftable instanceof IReDyeable dyeable) {
+			CustomBlockTag tag = dyeable.getReDyeTag();
 
 			final ColorType color = ColorType.of(this);
 			if (color != null) {

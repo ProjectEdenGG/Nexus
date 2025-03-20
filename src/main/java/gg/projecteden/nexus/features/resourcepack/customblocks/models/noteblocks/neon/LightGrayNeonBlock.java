@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblock
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import gg.projecteden.nexus.utils.ColorType;
 import org.bukkit.Instrument;
 
 @CustomBlockConfig(
@@ -19,4 +20,9 @@ import org.bukkit.Instrument;
 	customFallSound = "custom.block.stone.fall"
 )
 public class LightGrayNeonBlock implements INeonBlock {
+
+	@Override
+	public ColorType getColor() {
+		return ColorType.LIGHT_GRAY;
+	}
 }

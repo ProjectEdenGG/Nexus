@@ -29,6 +29,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class CustomBlockNMSUtils {
 
+	@SuppressWarnings("removal")
 	public static Block tryPlaceVanillaBlock(Player player, ItemStack itemStack) {
 		// TODO: Fix boats, currently Item#use in BoatItem calls PlayerInteractEvent, thus causing a StackOverflow, find a workaround
 		if (MaterialTag.ITEMS_BOATS.isTagged(itemStack.getType()))

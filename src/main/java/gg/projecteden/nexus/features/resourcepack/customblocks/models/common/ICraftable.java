@@ -69,11 +69,19 @@ public interface ICraftable extends ICustomBlock {
 		return new Pair<>(RecipeBuilder.shaped("1", "1").add('1', material).unlockedBy(getItemStack()).unlockedBy(material), resultAmount);
 	}
 
+	default Pair<RecipeBuilder<?>, Integer> getSurroundRecipe(@NonNull Material center, @NotNull Material surround) {
+		return new Pair<>(RecipeBuilder.surround(center).with(surround).unlockedBy(getItemStack()).unlockedByMaterials(List.of(surround, center)), 8);
+	}
+
 	default Pair<RecipeBuilder<?>, Integer> getSurroundRecipe(@NonNull Material center, @NotNull Tag<Material> surround) {
 		List<Material> unlockMaterials = new ArrayList<>(surround.getValues());
 		unlockMaterials.add(center);
 
 		return new Pair<>(RecipeBuilder.surround(center).with(surround).unlockedBy(getItemStack()).unlockedByMaterials(unlockMaterials), 8);
+	}
+
+	default Pair<RecipeBuilder<?>, Integer> getSurroundRecipe(@NonNull Material center, @NotNull List<ItemStack> surround) {
+		return new Pair<>(RecipeBuilder.surround(center).with(surround).unlockedBy(getItemStack()), 8);
 	}
 
 }

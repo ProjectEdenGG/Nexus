@@ -1,14 +1,14 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.terracottashingles;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlockTag;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IDyeable;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IReDyeable;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
 
-public interface IColoredTerracottaShingles extends ITerracottaShingles, IDyeable {
+public interface IColoredTerracottaShingles extends ITerracottaShingles, IReDyeable {
 
 	@Override
-	default CustomBlockTag getRedyeTag() {
+	default CustomBlockTag getReDyeTag() {
 		return CustomBlockTag.COLORED_TERRACOTTA_SHINGLES;
 	}
 

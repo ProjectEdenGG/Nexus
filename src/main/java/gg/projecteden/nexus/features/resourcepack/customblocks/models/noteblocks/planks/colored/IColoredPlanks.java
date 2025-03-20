@@ -3,20 +3,17 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblock
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlockTag;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IDyeable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.IPlanks;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface IColoredPlanks extends IDyeable, IPlanks {
+import java.util.stream.Collectors;
 
-	@Override
-	default CustomBlockTag getRedyeTag() {
-		return CustomBlockTag.COLORED_PLANKS;
-	}
+public interface IColoredPlanks extends IPlanks {
 
 	default @NotNull Material getMaterial() {
 		return Material.valueOf(StringUtils.camelToSnake(getClass().getSimpleName().replace("Planks", "")).toUpperCase() + "_DYE");
@@ -24,7 +21,10 @@ public interface IColoredPlanks extends IDyeable, IPlanks {
 
 	@Override
 	default @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
-		return getSurroundRecipe(getMaterial(), MaterialTag.PLANKS);
+		var items = MaterialTag.PLANKS.getValues().stream().map(ItemStack::new).collect(Collectors.toList());
+		items.addAll(CustomBlockTag.COLORED_PLANKS.getValues().stream().map(customBlock -> customBlock.get().getItemStack()).toList());
+
+		return getSurroundRecipe(getMaterial(), items);
 	}
 
 }

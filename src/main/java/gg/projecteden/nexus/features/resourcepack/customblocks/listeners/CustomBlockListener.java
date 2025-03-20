@@ -8,7 +8,9 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksFeatu
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksFeature.SoundAction;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock.CustomBlockType;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICompostable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IPistonActions.PistonAction;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ICustomNoteBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.misc.FloweringMossBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.ICustomTripwire;
@@ -56,9 +58,13 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFertilizeEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.BlockInventoryHolder;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -169,7 +175,7 @@ public class CustomBlockListener implements Listener {
 	}
 
 	@EventHandler
-	public void on(PlayerPickItemEvent event) {
+	public void onPickBlock(PlayerPickItemEvent event) {
 		if (event.getPlayer().getGameMode() != GameMode.CREATIVE)
 			return;
 
@@ -350,6 +356,95 @@ public class CustomBlockListener implements Listener {
 		Location locationFinal = block.getLocation();
 		BlockData blockDataFinal = blockData;
 		Tasks.wait(1, () -> OnlinePlayers.where().world(locationFinal.getWorld()).forEach(player -> player.sendBlockChange(locationFinal, blockDataFinal)));
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPush(BlockPistonExtendEvent event) {
+		if (event.isCancelled())
+			return;
+
+		for (Block block : new ArrayList<>(event.getBlocks())) {
+			// TODO: Disable tripwire customblocks
+			if (ICustomTripwire.isNotEnabled() && block.getType() == Material.TRIPWIRE)
+				continue;
+			//
+
+			CustomBlock customBlock = CustomBlock.from(block);
+			if (customBlock == null)
+				continue;
+
+			ICustomBlock iCustomBlock = customBlock.get();
+			PistonAction pistonAction = iCustomBlock.getPistonPushAction();
+			switch (pistonAction) {
+				case PREVENT -> {
+					CustomBlockUtils.broadcastDebug("PistonEvent: " + customBlock.name() + " cannot be moved by pistons");
+					event.setCancelled(true);
+					return;
+				}
+				case BREAK -> {
+					CustomBlockUtils.broadcastDebug("PistonEvent: " + customBlock.name() + " broke because of a piston");
+					CustomBlockUtils.breakBlock(block, customBlock, null, null, true);
+					// TODO: REMOVE THIS BLOCK FROM THE BLOCKS THAT ARE MOVING, AND ANY BLOCKS "PAST" THIS BLOCK SHOULD BE REMOVED AS WELL --> PARCHMENT?
+					//  	event.getBlocks is unmodifiable
+				}
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onRetract(BlockPistonRetractEvent event) {
+		if (event.isCancelled())
+			return;
+
+		for (Block block : new ArrayList<>(event.getBlocks())) {
+			// TODO: Disable tripwire customblocks
+			if (ICustomTripwire.isNotEnabled() && block.getType() == Material.TRIPWIRE)
+				continue;
+			//
+
+			CustomBlock customBlock = CustomBlock.from(block);
+			if (customBlock == null)
+				continue;
+
+			ICustomBlock iCustomBlock = customBlock.get();
+			PistonAction pistonAction = iCustomBlock.getPistonPullAction();
+			switch (pistonAction) {
+				case PREVENT -> {
+					CustomBlockUtils.broadcastDebug("PistonEvent: " + customBlock.name() + " cannot be moved by pistons");
+					event.setCancelled(true);
+					return;
+				}
+				case BREAK -> {
+					CustomBlockUtils.broadcastDebug("PistonEvent: " + customBlock.name() + " broke because of a piston");
+					CustomBlockUtils.breakBlock(block, customBlock, null, null, true);
+					// TODO: REMOVE THIS BLOCK FROM THE BLOCKS THAT ARE MOVING, AND ANY BLOCKS "PAST" THIS BLOCK SHOULD BE REMOVED AS WELL --> PARCHMENT?
+					//  	event.getBlocks is unmodifiable
+				}
+			}
+		}
+	}
+
+	@EventHandler
+	public void on(InventoryMoveItemEvent event) {
+		if (!(event.getDestination().getHolder() instanceof BlockInventoryHolder holder))
+			return;
+
+		Block block = holder.getBlock();
+		if (Nullables.isNullOrAir(block))
+			return;
+
+		ItemStack item = event.getItem();
+		if (Nullables.isNullOrAir(item))
+			return;
+
+		CustomBlock customBlock = CustomBlock.from(item);
+		if (customBlock == null)
+			return;
+
+		if (!(customBlock.get() instanceof ICompostable compostable))
+			return;
+
+		compostable.compost(item, block);
 	}
 
 	@EventHandler
