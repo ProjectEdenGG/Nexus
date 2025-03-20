@@ -70,7 +70,6 @@ public class CustomBlockNMSUtils {
 				hitResult.getDirection(), nmsStack, hitResult.getDirection().getOpposite());
 		}
 
-		BlockPos pos = hitResult.getBlockPos();
 		InteractionResult result = blockItem.place(placeContext);
 		if (result == InteractionResult.FAIL)
 			return null;
@@ -86,7 +85,7 @@ public class CustomBlockNMSUtils {
 		world.playSound(block.getLocation().toCenterLocation(), sound.getPlaceSound(),
 			SoundCategory.BLOCKS, (sound.getVolume() + 1.0F) / 2.0F, sound.getPitch() * 0.8F);
 
-		return player.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
+		return block;
 	}
 
 	public static BlockHitResult getPlayerPOVHitResult(Level world, net.minecraft.world.entity.player.Player player, ClipContext.Fluid fluidHandling) {

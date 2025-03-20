@@ -635,7 +635,7 @@ public class CustomBlockListener implements Listener {
 				CustomBlockUtils.logPlacement(player, preBlock, CustomBlock.from(itemInHand));
 			}
 		} else
-			return placeVanillaBlock(event, player, hand, preBlock, didClickedCustomBlock, material, itemInHand);
+			return placeVanillaBlock(event, player, hand, preBlock, didClickedCustomBlock, itemInHand);
 
 		return true;
 	}
@@ -693,11 +693,11 @@ public class CustomBlockListener implements Listener {
 		return true;
 	}
 
-	private boolean placeVanillaBlock(PlayerInteractEvent event, Player player, EquipmentSlot hand, Block preBlock,
-									  boolean didClickedCustomBlock, Material material, ItemStack itemStack) {
+	private boolean placeVanillaBlock(PlayerInteractEvent event, Player player, EquipmentSlot hand,
+									  Block preBlock, boolean clickedCustomBlock, ItemStack itemStack) {
 		CustomBlockUtils.debug(player, "&e- placing vanilla block");
 
-		if (!didClickedCustomBlock) {
+		if (!clickedCustomBlock) {
 			CustomBlockUtils.debug(player, "&c<- didn't click on a custom block");
 			return false;
 		}
@@ -715,6 +715,7 @@ public class CustomBlockListener implements Listener {
 			CustomBlockUtils.debug(player, "&c<- cannot place this block here");
 			return false;
 		}
+		Material material = placedBlock.getType();
 
 		if (hand == EquipmentSlot.HAND)
 			player.swingMainHand();
