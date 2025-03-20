@@ -25,15 +25,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.block.data.Powerable;
 import org.bukkit.block.data.type.Tripwire;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -112,18 +110,11 @@ public class CustomBlockUtils {
 		});
 	}
 
-	public static boolean removeLight(BlockPlaceEvent event) {
-		BlockState oldBlockState = event.getBlockReplacedState();
-		if (oldBlockState.getType() != Material.LIGHT)
-			return false;
-
-		if (event.getBlock().getType() == Material.LIGHT)
-			return false;
-
-		Levelled levelled = (Levelled) oldBlockState.getBlockData();
+	public static boolean removeLight(Block origin, BlockData oldBlockData) {
+		Levelled levelled = (Levelled) oldBlockData;
 		int lightLevel = levelled.getLevel();
 
-		for (Block _block : BlockUtils.getAdjacentBlocks(event.getBlock())) {
+		for (Block _block : BlockUtils.getAdjacentBlocks(origin)) {
 			CustomBlock customBlock = CustomBlock.from(_block);
 			if (customBlock == null || !(customBlock.get() instanceof ILightableNoteBlock))
 				continue;
@@ -137,20 +128,22 @@ public class CustomBlockUtils {
 		return false;
 	}
 
-	public static void fixLight(BlockBreakEvent event, Player player, Block origin) {
+	public static boolean fixLight(@Nullable Player player, Block origin) {
 		for (Block _block : BlockUtils.getAdjacentBlocks(origin)) {
 			CustomBlock customBlock = CustomBlock.from(_block);
 			if (customBlock == null || !(customBlock.get() instanceof ILightableNoteBlock))
 				continue;
 
 			if (origin.getType() == Material.LIGHT) {
-				PlayerUtils.send(player, "&c&lHey! &7You can't break this light.");
-				event.setCancelled(true);
-				return;
+				if (player != null)
+					PlayerUtils.send(player, "&c&lHey! &7You can't break this light.");
+				return true;
 			}
 
 			Tasks.wait(1, () -> ILightableNoteBlock.setLight(origin));
 		}
+
+		return false;
 	}
 
 	public static void fixTripwireNearby(Player player, Block current, Set<Location> visited) {

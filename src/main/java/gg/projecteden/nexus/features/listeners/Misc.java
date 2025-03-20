@@ -25,6 +25,7 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import org.bukkit.*;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.boss.BarColor;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.*;
@@ -116,14 +117,16 @@ public class Misc implements Listener {
 		if (event.isCancelled())
 			return;
 
-		if (event.getBlockReplacedState().getType() != Material.LIGHT)
+		Block block = event.getBlock();
+		BlockState oldBlockState = event.getBlockReplacedState();
+		if (oldBlockState.getType() != Material.LIGHT)
 			return;
 
-		if (event.getBlock().getType() == Material.LIGHT)
+		if (block.getType() == Material.LIGHT)
 			return;
 
 		// replace lantern light
-		if (CustomBlockUtils.removeLight(event))
+		if (CustomBlockUtils.removeLight(event.getBlock(), oldBlockState.getBlockData()))
 			return;
 
 		event.setCancelled(true);

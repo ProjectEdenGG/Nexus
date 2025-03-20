@@ -63,6 +63,7 @@ import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.BlockInventoryHolder;
 import org.bukkit.inventory.EquipmentSlot;
@@ -83,6 +84,7 @@ public class CustomBlockListener implements Listener {
 
 		new CustomBlockSounds();
 		new ConversionListener();
+		new BlockBreakingTestListener();
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -298,11 +300,17 @@ public class CustomBlockListener implements Listener {
 			event.setDropItems(false);
 			CustomBlockUtils.debug(player, "&e- disabling drops");
 		} else {
-			CustomBlockUtils.fixLight(event, player, brokenBlock);
+			if (CustomBlockUtils.fixLight(player, brokenBlock))
+				event.setCancelled(true);
 		}
 
 		CustomBlockUtils.breakBlock(brokenBlock, brokenCustomBlock, player, tool, true);
 		CustomBlockUtils.debug(player, "&d<- done, end", true);
+	}
+
+	@EventHandler
+	public void on(PlayerBucketFillEvent event) {
+		CustomBlockUtils.fixLight(event.getPlayer(), event.getBlock());
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
