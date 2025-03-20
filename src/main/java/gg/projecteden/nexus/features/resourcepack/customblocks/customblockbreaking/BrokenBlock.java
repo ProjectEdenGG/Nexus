@@ -91,7 +91,7 @@ public class BrokenBlock {
 	}
 
 	public void remove() {
-		CustomBlockBreaking.getManager().removeBrokenBlock(this);
+		CustomBlockBreaking.removeBrokenBlock(this.getLocation());
 	}
 
 	public void reset(ItemStack itemStack, int currentTick) {
@@ -111,7 +111,7 @@ public class BrokenBlock {
 	public void breakBlock(@NonNull Player breaker) {
 		CustomBlockUtils.debug(breaker, "Breaking block...");
 		BreakListener.getBreakWait().put(breaker.getUniqueId(), Bukkit.getCurrentTick());
-		BlockBreakingUtils.sendBreakBlock(breaker, getBlock(), getCustomBlock());
+		CustomBlockBreaking.sendBreakBlock(breaker, getBlock(), getCustomBlock());
 		resetDamagePacket();
 	}
 
@@ -120,7 +120,7 @@ public class BrokenBlock {
 	}
 
 	public void sendDamagePacket(int frame) {
-		BlockBreakingUtils.sendBreakPacket(frame, getBlock());
+		CustomBlockBreaking.sendBreakPacket(frame, getBlock());
 	}
 
 	public void incrementDamage(Player player, ItemStack itemStack) {
@@ -151,23 +151,23 @@ public class BrokenBlock {
 		}
 	}
 
-	public void decrementDamage(int currentTick) {
-		if (this.lastDamageTick == currentTick)
-			return;
-
-		this.lastDamageTick = currentTick;
-
-		--this.damageFrame;
-		CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCK_DAMAGE, "Damage frame: " + this.damageFrame + " | Damage tick: " + this.lastDamageTick);
-		sendDamagePacket(this.damageFrame);
-
-		this.totalDamageTicks -= (int) Math.round(this.breakTicks / 10.0);
-
-		if (this.totalDamageTicks < 0) {
-			resetDamagePacket();
-			remove();
-		}
-	}
+//	public void decrementDamage(int currentTick) {
+//		if (this.lastDamageTick == currentTick)
+//			return;
+//
+//		this.lastDamageTick = currentTick;
+//
+//		--this.damageFrame;
+//		CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCK_DAMAGE, "Damage frame: " + this.damageFrame + " | Damage tick: " + this.lastDamageTick);
+//		sendDamagePacket(this.damageFrame);
+//
+//		this.totalDamageTicks -= (int) Math.round(this.breakTicks / 10.0);
+//
+//		if (this.totalDamageTicks < 0) {
+//			resetDamagePacket();
+//			remove();
+//		}
+//	}
 
 	public boolean isBroken() {
 		return getDamageFrame() == 10;

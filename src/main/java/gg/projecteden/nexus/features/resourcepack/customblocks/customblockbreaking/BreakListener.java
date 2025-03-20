@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDamageAbortEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.inventory.ItemStack;
@@ -51,12 +52,12 @@ public class BreakListener implements Listener {
 			return;
 		}
 
-		if (!CustomBlockBreaking.getManager().isTracking(event.getBlock())) {
+		if (!CustomBlockBreaking.isTracking(event.getBlock())) {
 			CustomBlockUtils.debug(event.getPlayer(), DebugType.CUSTOM_BLOCK_DAMAGE, "<-- already tracking");
 			return;
 		}
 
-		CustomBlockBreaking.getManager().removeBrokenBlock(event.getBlock());
+		CustomBlockBreaking.removeBrokenBlock(event.getBlock().getLocation());
 	}
 
 	@EventHandler
@@ -83,48 +84,55 @@ public class BreakListener implements Listener {
 		}
 
 		Block block = event.getBlock();
-		if (CustomBlockBreaking.getManager().isTracking(block)) {
+		if (CustomBlockBreaking.isTracking(block)) {
 			CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCK_DAMAGE, "<-- already tracking");
 			return;
 		}
 
 		ItemStack itemInHand = event.getItemInHand();
-		CustomBlockBreaking.getManager().createBrokenBlock(block, player, itemInHand);
+		CustomBlockBreaking.createBrokenBlock(block, player, itemInHand);
 	}
 
 	@EventHandler
 	public void on(PlayerAnimationEvent event) {
 		Player player = event.getPlayer();
-//		CustomBlockUtils.debug(player, "CustomBlockBreaking: PlayerAnimationEvent");
-		if (isInvalid(player)) {
-//			CustomBlockUtils.debug(player, "<-- player is invalid");
+		if (isInvalid(player))
 			return;
-		}
 
 		Block block = player.getTargetBlockExact(5);
-		if (block == null || blackListed.contains(block.getType())) {
-//			CustomBlockUtils.debug(player, "<-- block == null || block is blacklisted");
+		if (block == null || blackListed.contains(block.getType()))
 			return;
-		}
 
 		Location blockLoc = block.getLocation();
-		if (player.getLocation().distanceSquared(blockLoc) >= 1024.0D) {
-//			CustomBlockUtils.debug(player, "<-- player is too far away");
+		if (player.getLocation().distanceSquared(blockLoc) >= 1024.0D)
 			return;
-		}
 
-		if (!CustomBlockBreaking.getManager().isTracking(blockLoc)) {
-//			CustomBlockUtils.debug(player, "<-- already tracking");
+		if (!CustomBlockBreaking.isTracking(blockLoc))
 			return;
-		}
 
-		BrokenBlock brokenBlock = CustomBlockBreaking.getManager().getBrokenBlock(blockLoc);
-		if (brokenBlock == null) {
-//			CustomBlockUtils.debug(player, "<-- broken block is null");
+		BrokenBlock brokenBlock = CustomBlockBreaking.getBrokenBlock(blockLoc);
+		if (brokenBlock == null)
 			return;
-		}
 
-		BlockBreakingUtils.addSlowDig(player, 10);
+		CustomBlockBreaking.addSlowDig(player, 10);
 		brokenBlock.incrementDamage(player, player.getInventory().getItemInMainHand());
+	}
+
+	@EventHandler
+	public void on(BlockDamageAbortEvent event) {
+		Block block = event.getBlock();
+		if (blackListed.contains(block.getType()))
+			return;
+
+		Location blockLoc = block.getLocation();
+		if (!CustomBlockBreaking.isTracking(blockLoc))
+			return;
+
+		BrokenBlock brokenBlock = CustomBlockBreaking.getBrokenBlock(blockLoc);
+		if (brokenBlock == null)
+			return;
+
+		brokenBlock.resetDamagePacket();
+		brokenBlock.remove();
 	}
 }
