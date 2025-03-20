@@ -107,12 +107,12 @@ public class AntiCampingTask {
 			mechanic.onDeath(deathEvent);
 		} else {
 			Location location = minigamer.getOnlinePlayer().getLocation();
-			location.setY(floorAt.getMinimumPoint().getY() - 1);
+			location.setY(floorAt.getMinimumPoint().y() - 1);
 
 			Region floorTo = arena.getRegion("floor_" + --floorId);
 			Location to = null;
 
-			while (location.getY() >= floorTo.getMinimumPoint().getY()) {
+			while (location.getY() >= floorTo.getMinimumPoint().y()) {
 				location.add(0, -1, 0);
 				if (!location.getBlock().getType().isSolid())
 					continue;
@@ -127,8 +127,8 @@ public class AntiCampingTask {
 			}
 
 			// Set up correct origin and search radius for nearest block check
-			int yDiff = floorTo.getMaximumPoint().getBlockY() - floorTo.getMinimumPoint().getBlockY();
-			location.setY(floorTo.getMaximumPoint().getBlockY());
+			int yDiff = floorTo.getMaximumPoint().y() - floorTo.getMinimumPoint().y();
+			location.setY(floorTo.getMaximumPoint().y());
 			if (yDiff > 0) {
 				yDiff = (yDiff / 2) + 1;
 				location.add(0, -yDiff, 0);

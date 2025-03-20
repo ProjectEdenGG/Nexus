@@ -219,7 +219,7 @@ public class Structures extends Feature implements Listener {
 		Material material;
 
 		public Location getLocation() {
-			return new Location(world, vector.getX(), vector.getY(), vector.getZ());
+			return new Location(world, vector.x(), vector.y(), vector.z());
 		}
 	}
 

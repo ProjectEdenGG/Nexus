@@ -25,6 +25,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("removal")
 @Data
 @NoArgsConstructor
 public class SoundBuilder implements Cloneable {

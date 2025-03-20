@@ -162,9 +162,7 @@ public class VuLan24LanternAnimation {
 
 		@NonNull
 		private List<Location> path;
-		@NonNull
 		private int moveSpeed;
-		@NonNull
 		private int lightLevel;
 
 		private int currentPathIndex = 0;

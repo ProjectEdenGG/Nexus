@@ -173,8 +173,8 @@ public class Archery extends TeamlessMechanic {
 
 					for (int i = 0; i < 10; i++) {
 						Location randomXZ = RandomUtils.randomElement(locations);
-						int min = colorRegion.getMinimumPoint().getBlockY() + 2;
-						int max = colorRegion.getMaximumPoint().getBlockY() - 2;
+						int min = colorRegion.getMinimumPoint().y() + 2;
+						int max = colorRegion.getMaximumPoint().y() - 2;
 						int y = RandomUtils.randomInt(min, max);
 
 						Location targetLoc = randomXZ.getBlock().getLocation();

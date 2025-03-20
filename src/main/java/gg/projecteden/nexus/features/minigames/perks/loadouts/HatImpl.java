@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("removal")
 @Getter
 @RequiredArgsConstructor
 public class HatImpl implements HatPerk {

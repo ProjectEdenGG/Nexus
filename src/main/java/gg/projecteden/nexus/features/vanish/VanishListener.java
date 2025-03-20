@@ -97,6 +97,7 @@ public class VanishListener implements Listener {
 		Vanish.refreshAll();
 	}
 
+	@SuppressWarnings("removal")
 	@EventHandler(priority = EventPriority.HIGHEST)
 	private void on(PaperServerListPingEvent event) {
 		event.getPlayerSample().removeIf(profile -> profile.getId() != null && new VanishUserService().get(profile.getId()).isVanished());

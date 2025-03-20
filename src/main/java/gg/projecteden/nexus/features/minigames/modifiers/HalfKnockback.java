@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
+@SuppressWarnings("removal")
 public class HalfKnockback implements MinigameModifier {
 	private static final UUID KNOCKBACK = UUID.fromString("aa13deba-c837-46fc-94de-c122178a11c3");
 

@@ -58,6 +58,7 @@ public class VirtualFurnace extends VirtualInventory<FurnaceProperties> {
 		inv.setItem(2, this.output);
 	}
 
+	@SuppressWarnings("removal")
 	private void updateInventoryView() {
 		if (!this.isOpened())
 			return;

@@ -115,7 +115,7 @@ public class ForestGeneratorConfig implements DatabaseObject {
 			private Paster paster() {
 				final Region region = getRegion();
 				final BlockVector3 min = region.getMinimumPoint();
-				final BlockVector3 max = BlockVector3.at(region.getMaximumPoint().getX(), 150, region.getMaximumPoint().getZ());
+				final BlockVector3 max = BlockVector3.at(region.getMaximumPoint().x(), 150, region.getMaximumPoint().z());
 				final CuboidRegion cuboidRegion = new CuboidRegion(worldedit().worldguard().getWorldEditWorld(), min, max);
 				return worldedit().paster().clipboard(cuboidRegion).air(false);
 			}
@@ -157,9 +157,9 @@ public class ForestGeneratorConfig implements DatabaseObject {
 					while (iterator.hasNext()) {
 						Location location = iterator.next();
 
-						int x = location.getBlockX() - origin.getBlockX();
-						int y = location.getBlockY() - origin.getBlockY();
-						int z = location.getBlockZ() - origin.getBlockZ();
+						int x = location.getBlockX() - origin.x();
+						int y = location.getBlockY() - origin.y();
+						int z = location.getBlockZ() - origin.z();
 
 						Block block = location.getBlock();
 						if (block.getType().isEmpty())

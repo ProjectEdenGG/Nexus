@@ -41,6 +41,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("removal")
 @Getter
 public class Edible extends DecorationConfig implements MultiState, CraftableDecoration {
 	private final EdibleType edibleType;

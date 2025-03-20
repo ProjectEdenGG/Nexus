@@ -161,7 +161,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 		final Region selection = worldedit.getPlayerSelection(player());
 
 		final List<Chunk> allChunks = selection.getChunks().stream()
-			.map(chunk -> world().getChunkAt(chunk.getX(), chunk.getZ()))
+			.map(chunk -> world().getChunkAt(chunk.x(), chunk.z()))
 			.toList();
 
 		final List<Chunk> loadedChunks = allChunks.stream()

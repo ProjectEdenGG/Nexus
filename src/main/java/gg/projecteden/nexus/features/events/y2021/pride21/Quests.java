@@ -126,7 +126,7 @@ public class Quests implements Listener {
 			BlockData gray = Material.GRAY_TERRACOTTA.createBlockData();
 			if (world == null) return;
 			for (BlockVector3 blockVector3 : new WorldGuardUtils(world).getRegion("pride21_val")) {
-				Location location = new Location(world, blockVector3.getBlockX(), blockVector3.getBlockY(), blockVector3.getBlockZ());
+				Location location = new Location(world, blockVector3.x(), blockVector3.y(), blockVector3.z());
 				Material material = location.getBlock().getType();
 				if (MaterialTag.ALL_TERRACOTTAS.isTagged(material))
 					player.sendBlockChange(location, view ? location.getBlock().getBlockData() : gray);

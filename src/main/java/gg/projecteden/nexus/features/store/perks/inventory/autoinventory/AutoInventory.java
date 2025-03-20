@@ -158,6 +158,7 @@ public class AutoInventory extends Feature {
 	 * @param stack an item
 	 * @return string identifying its data
 	 */
+	@SuppressWarnings({"removal", "deprecation"})
 	private static String getSignature(ItemStack stack) {
 		String signature = stack.getType().name();
 

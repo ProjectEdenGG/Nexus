@@ -22,6 +22,7 @@ public class BiomeChallengeProgress implements IChallengeProgress {
 	private Minigamer minigamer;
 	private final Set<Biome> biomes = new HashSet<>();
 
+	@SuppressWarnings({"removal", "UnstableApiUsage"})
 	@Override
 	public Set<String> getRemainingTasks(Challenge challenge) {
 		final Set<Biome> required = ((BiomeChallenge) challenge.getChallenge()).getBiomeTag().getValues();

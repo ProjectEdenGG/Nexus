@@ -103,18 +103,18 @@ public class Pugmas25SlotMachine extends EdenEventSinglePlayerGame {
 		BlockVector3 potsMin = potsRg.getMinimumPoint();
 		BlockVector3 potsMax = potsRg.getMaximumPoint();
 
-		HEIGHT = (potsMax.getBlockY() - potsMin.getBlockY()) + 1;
-		WIDTH = (potsMax.getBlockX() - potsMin.getBlockX()) + 1;
+		HEIGHT = (potsMax.y() - potsMin.y()) + 1;
+		WIDTH = (potsMax.x() - potsMin.x()) + 1;
 		AXIS = SlotMachineAxis.X;
 
-		if (potsMin.getBlockX() == potsMax.getBlockX()) {
-			WIDTH = (potsMax.getBlockZ() - potsMin.getBlockZ()) + 1;
+		if (potsMin.x() == potsMax.x()) {
+			WIDTH = (potsMax.z() - potsMin.z()) + 1;
 			AXIS = SlotMachineAxis.Z;
 		}
 
 		for (int horizontal = 0; horizontal < WIDTH; horizontal++) {
-			int x = potsMin.getBlockX();
-			int z = potsMin.getBlockZ();
+			int x = potsMin.x();
+			int z = potsMin.z();
 
 			if (AXIS == SlotMachineAxis.X)
 				x += horizontal;
@@ -123,7 +123,7 @@ public class Pugmas25SlotMachine extends EdenEventSinglePlayerGame {
 
 			List<DecoratedPot> pots = new ArrayList<>();
 			for (int vertical = 0; vertical < HEIGHT; vertical++) {
-				int y = potsMin.getBlockY();
+				int y = potsMin.y();
 				y += vertical;
 
 				Location loc = location(x, y, z);

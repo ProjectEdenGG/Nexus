@@ -346,6 +346,7 @@ public class ItemBuilderCommand extends CustomCommand {
 		item = new ItemBuilder(Condition.setDurability(item.build(), condition));
 	}
 
+	@SuppressWarnings("removal")
 	@Path("attribute <attribute> <name> <amount> <operation> [slot]")
 	@Description("Set an item attribute")
 	void attribute(Attribute attribute, String name, double amount, Operation operation, EquipmentSlot slot) {

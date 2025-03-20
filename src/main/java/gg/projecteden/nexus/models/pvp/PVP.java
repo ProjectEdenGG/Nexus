@@ -23,10 +23,4 @@ public class PVP implements PlayerOwnedObject {
 	private boolean enabled = false;
 	private boolean showActionBar = true;
 	private boolean keepInventory = true;
-
-	@Override
-	public boolean equals(Object obj) {
-		return super.equals(obj);
-	}
-
 }

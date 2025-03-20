@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@SuppressWarnings({"removal", "UnstableApiUsage"})
 @Permission(Group.STAFF)
 public class SoundMenuCommand extends CustomCommand {
 

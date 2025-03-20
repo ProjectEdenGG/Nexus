@@ -112,6 +112,7 @@ public class LaunchPads implements Listener {
 		player.getWorld().createExplosion(player.getLocation(), -1);
 	}
 
+	@SuppressWarnings({"removal", "deprecation"})
 	@NotNull
 	private FallingBlock spawnFallingBlock(double power, Location launchLocation) {
 		MaterialData PISTON = new MaterialData(Material.LEGACY_PISTON_MOVING_PIECE);

@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+@SuppressWarnings("removal")
 @NoArgsConstructor
 public abstract class CustomEnchant extends Enchantment implements Translatable {
 

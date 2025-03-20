@@ -69,7 +69,7 @@ public class ChunksCommand extends CustomCommand {
 		try {
 			final Region selection = worldedit().getPlayerSelection(player());
 			List<CompletableFuture<Chunk>> tasks = selection.getChunks().stream()
-				.map(vector -> world().getChunkAtAsync(vector.getX(), vector.getZ()))
+				.map(vector -> world().getChunkAtAsync(vector.x(), vector.z()))
 				.toList();
 
 			send(PREFIX + "Loading &e" + tasks.size() + " &3chunks...");

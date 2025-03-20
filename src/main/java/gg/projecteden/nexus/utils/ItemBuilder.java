@@ -860,6 +860,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	@SuppressWarnings("removal")
 	public ItemBuilder attribute(Attribute attribute, @NotNull String name, double amount, @NotNull AttributeModifier.Operation operation, @Nullable EquipmentSlot slot) {
 		itemMeta.addAttributeModifier(attribute, new AttributeModifier(UUID.nameUUIDFromBytes(name.getBytes()), name, amount, operation, slot));
 		return this;

@@ -249,7 +249,7 @@ public class TurfWars extends TeamMechanic {
 
 		vector.normalize().multiply(.7);
 		vector.add(addedVelocity.normalize().multiply(.7));
-		vector.setY(player.getLocation().getY() < arena.getProtectedRegion("turf").getMaximumPoint().getY() ? 1 : -1); // If above region, knock them back down
+		vector.setY(player.getLocation().getY() < arena.getProtectedRegion("turf").getMaximumPoint().y() ? 1 : -1); // If above region, knock them back down
 		debug("vector final: " + vector);
 
 		debug(vector.toString());
@@ -563,6 +563,7 @@ public class TurfWars extends TeamMechanic {
 		this.playerArrowMap.put(arrow, player);
 	}
 
+	@SuppressWarnings("removal")
 	@EventHandler
 	public void onPlayerShootPlayer(EntityDamageByEntityEvent event) {
 		if (!(event.getDamager() instanceof Arrow arrow))

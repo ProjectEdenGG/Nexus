@@ -42,6 +42,7 @@ import java.util.*;
 
 // TODO: Named variants (jeb_, toast, johnny, dinnerbone/grumm)
 
+@SuppressWarnings("removal")
 @NoArgsConstructor
 public class MobHeads extends Feature implements Listener {
 	private static final int REQUIRED_SKIN_DAYS = 3;

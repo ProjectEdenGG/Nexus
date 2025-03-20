@@ -18,6 +18,7 @@ import org.bukkit.util.Vector;
 
 import java.util.Set;
 
+@SuppressWarnings("removal")
 public abstract class ModifierBlock {
 
 	public void handleRoll(GolfBall golfBall, Block below) {

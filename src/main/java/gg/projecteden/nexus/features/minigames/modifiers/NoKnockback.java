@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
+@SuppressWarnings("removal")
 public class NoKnockback implements MinigameModifier {
 	private static final UUID DEFENSE = UUID.fromString("38628a37-5c1c-4fa7-a003-66ff7883b494");
 	private static final UUID TOUGHNESS = UUID.fromString("20f0437a-8fb1-4cfe-8885-7833f1371999");

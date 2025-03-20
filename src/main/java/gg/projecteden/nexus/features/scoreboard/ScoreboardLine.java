@@ -194,6 +194,7 @@ public enum ScoreboardLine {
 	},
 
 	BIOME {
+		@SuppressWarnings({"UnstableApiUsage", "removal"})
 		@Override
 		public String render(Player player) {
 			Location location = player.getLocation();

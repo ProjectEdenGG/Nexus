@@ -75,6 +75,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class HideAndSeek extends Infection {
@@ -445,6 +446,7 @@ public class HideAndSeek extends Infection {
 		cleanup(event.getMinigamer());
 	}
 
+	@SuppressWarnings("removal")
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		// this method is basically checking to see if a hunter has swung at a hider's fake block
@@ -734,7 +736,6 @@ public class HideAndSeek extends Infection {
 				if (!(o instanceof DecoyInstance decoyInstance)) return false;
 				return decoyInstance.taskId == taskId;
 			}
-
 		}
 
 	}

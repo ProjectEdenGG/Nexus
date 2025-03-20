@@ -9,6 +9,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("removal")
 public class LanguageUtils {
 	/**
 	 * Gets the default English translation for a specified translatable component
