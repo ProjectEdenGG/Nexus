@@ -13,43 +13,33 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
 @CustomBlockConfig(
-	name = "Packed Ice Bricks",
-	itemModel = ItemModelType.ICE_PACKED_ICE_BRICKS
+	name = "Packed Snow Bricks",
+	itemModel = ItemModelType.ICE_PACKED_SNOW_BRICKS
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.BANJO,
-	step = 4,
+	step = 1,
 	powered = true,
-	customBreakSound = "block.glass.break",
-	customPlaceSound = "block.glass.place",
-	customStepSound = "block.glass.step",
-	customHitSound = "block.glass.hit",
-	customFallSound = "block.glass.fall"
+	customBreakSound = "block.snow.break",
+	customPlaceSound = "block.snow.place",
+	customStepSound = "block.snow.step",
+	customHitSound = "block.snow.hit",
+	customFallSound = "block.snow.fall"
 )
-public class PackedIceBricks implements ICustomNoteBlock, ICraftableNoteBlock {
+public class PackedSnowBricks implements ICustomNoteBlock, ICraftableNoteBlock {
 
 	@Override
 	public double getBlockHardness() {
-		return 2.0;
+		return 0.8;
 	}
 
 	@Override
 	public Material getMinimumPreferredTool() {
-		return Material.WOODEN_PICKAXE;
-	}
-
-	@Override
-	public boolean requiresSilkTouchForDrops() {
-		return true;
-	}
-
-	@Override
-	public boolean requiresCorrectToolForDrops() {
-		return true;
+		return Material.WOODEN_SHOVEL;
 	}
 
 	@Override
 	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
-		return get2x2Recipe(CustomBlock.POLISHED_PACKED_ICE.get().getItemStack(), 4);
+		return get2x2Recipe(CustomBlock.PACKED_SNOW.get().getItemStack(), 4);
 	}
 }

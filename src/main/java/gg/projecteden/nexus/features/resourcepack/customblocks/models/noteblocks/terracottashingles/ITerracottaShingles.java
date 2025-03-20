@@ -12,7 +12,7 @@ public interface ITerracottaShingles extends ICraftableNoteBlock {
 
 	@Override
 	default @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
-		return get2x2Recipe(getMaterial());
+		return get2x2Recipe(getMaterial(), 4);
 	}
 
 	@Override

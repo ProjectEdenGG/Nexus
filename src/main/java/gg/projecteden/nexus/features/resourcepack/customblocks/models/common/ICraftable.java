@@ -49,8 +49,12 @@ public interface ICraftable extends ICustomBlock {
 		return RecipeBuilder.shapeless().add(getItemStack()).toMake(toMakeItem).unlockedBy(getItemStack());
 	}
 
-	default Pair<RecipeBuilder<?>, Integer> get2x2Recipe(@NotNull Material material) {
-		return get2x2Recipe(material, 4);
+	default Pair<RecipeBuilder<?>, Integer> get1x2Recipe(@NotNull Material material, int amount) {
+		return get1x2Recipe(new ItemStack(material), amount);
+	}
+
+	default Pair<RecipeBuilder<?>, Integer> get1x2Recipe(@NotNull ItemStack itemStack, int amount) {
+		return new Pair<>(RecipeBuilder.shaped("11").add('1', itemStack).unlockedByItems(getItemStack(), itemStack), amount);
 	}
 
 	default Pair<RecipeBuilder<?>, Integer> get2x2Recipe(@NotNull Material material, int amount) {

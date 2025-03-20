@@ -44,11 +44,11 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.genericcrate.GenericCrateC;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.genericcrate.GenericCrateD;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.ice.ChiseledPackedIceBricks;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.ice.ChiseledSnowBricks;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.ice.ChiseledPackedSnow;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.ice.PackedIceBricks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.ice.PackedSnow;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.ice.PolishedPackedIce;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.ice.SnowBricks;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.ice.PackedSnowBricks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.AcaciaPaperLantern;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.BambooPaperLantern;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.BirchPaperLantern;
@@ -423,9 +423,9 @@ public enum CustomBlock implements Keyed {
 	CARVED_PALE_OAK_PLANKS(CarvedPaleOakPlanks.class, CustomBlockTab.CARVED_PLANKS),
 
 	// ice & snow
-	SNOW_BRICKS(SnowBricks.class, CustomBlockTab.ICE),
+	SNOW_BRICKS(PackedSnowBricks.class, CustomBlockTab.ICE),
 	PACKED_SNOW(PackedSnow.class, CustomBlockTab.ICE),
-	CHISELED_SNOW_BRICKS(ChiseledSnowBricks.class, CustomBlockTab.ICE),
+	CHISELED_SNOW_BRICKS(ChiseledPackedSnow.class, CustomBlockTab.ICE),
 	PACKED_ICE_BRICKS(PackedIceBricks.class, CustomBlockTab.ICE),
 	POLISHED_PACKED_ICE(PolishedPackedIce.class, CustomBlockTab.ICE),
 	CHISELED_PACKED_ICE_BRICKS(ChiseledPackedIceBricks.class, CustomBlockTab.ICE),
@@ -828,29 +828,43 @@ public enum CustomBlock implements Keyed {
 		if (source != null)
 			CustomBlockUtils.logRemoval(source, location, block, this);
 
-		if (Nullables.isNotNullOrAir(tool) && this != TALL_SUPPORT) {
-			CustomBlockUtils.debug(source, "&e- tool != null/air");
-
-			if (iCustomBlock.requiresCorrectToolForDrops() && !iCustomBlock.canHarvestWith(tool, source)) {
-				dropItem = false;
-				CustomBlockUtils.debug(source, "&e- dropItem = " + dropItem);
-
-				boolean requiresSilkTouch = iCustomBlock.requiresSilkTouchForDrops();
-				CustomBlockUtils.debug(source, "&e- requiresSilkTouch = " + requiresSilkTouch);
-				List<ItemStack> nonSilkTouchDrops = iCustomBlock.getNonSilkTouchDrops();
-				if (requiresSilkTouch && !Nullables.isNullOrEmpty(nonSilkTouchDrops)) {
-					dropIngredients = true;
-					CustomBlockUtils.debug(source, "&e- dropIngredients = " + dropIngredients);
-				} else {
-					if (requiresSilkTouch)
-						CustomBlockUtils.debug(source, "&e- nonSilkTouchDrops is null/empty");
-				}
-			}
-		}
-
 		if (source != null && source.getGameMode() == GameMode.CREATIVE) {
 			dropItem = false;
-			dropIngredients = false;
+		} else {
+			if (Nullables.isNotNullOrAir(tool) && this != TALL_SUPPORT) {
+				CustomBlockUtils.debug(source, "&e- tool != null/air");
+
+				if (!iCustomBlock.canHarvestWith(tool, source)) {
+					CustomBlockUtils.debug(source, "&e- cannot harvest with " + tool.getType());
+					if (iCustomBlock.requiresCorrectToolForDrops()) {
+						CustomBlockUtils.debug(source, "&e- requires correct tool for drops");
+						dropItem = false;
+						CustomBlockUtils.debug(source, "&e- dropItem = " + dropItem);
+					} else {
+						CustomBlockUtils.debug(source, "&e- does not require correct tool for drops");
+						boolean requiresSilkTouch = iCustomBlock.requiresSilkTouchForDrops();
+						CustomBlockUtils.debug(source, "&e- requiresSilkTouch = " + requiresSilkTouch);
+						List<ItemStack> nonSilkTouchDrops = iCustomBlock.getNonSilkTouchDrops();
+						if (requiresSilkTouch && !Nullables.isNullOrEmpty(nonSilkTouchDrops)) {
+							dropIngredients = true;
+							CustomBlockUtils.debug(source, "&e- dropIngredients = " + dropIngredients);
+						} else {
+							if (requiresSilkTouch)
+								CustomBlockUtils.debug(source, "&e- nonSilkTouchDrops is null/empty");
+						}
+					}
+				} else {
+					CustomBlockUtils.debug(source, "&e- can harvest with " + tool.getType());
+					CustomBlockUtils.debug(source, "&e- dropItem = " + dropItem);
+				}
+			} else {
+				CustomBlockUtils.debug(source, "&e- tool == null/air");
+				if (customBlock.requiresCorrectToolForDrops()) {
+					CustomBlockUtils.debug(source, "&e- requires correct tool for drops");
+					dropItem = false;
+					CustomBlockUtils.debug(source, "&e- dropItem = " + dropItem);
+				}
+			}
 		}
 
 		if (iCustomBlock instanceof ICustomNoteBlock iCustomNoteBlock)
@@ -878,7 +892,7 @@ public enum CustomBlock implements Keyed {
 
 		if (dropItem) {
 			CustomBlockUtils.debug(source, "&e- dropping item");
-			dropItem(amount, location);
+			dropItem(amount, location, source);
 		}
 
 		if (dropIngredients) {
@@ -931,13 +945,7 @@ public enum CustomBlock implements Keyed {
 		if (silent)
 			source.spawnParticle(particle, loc, 25, 0.25, 0.25, 0.25, 0.1, blockData);
 		else {
-			Location finalLoc = loc;
-			if (source != null && this.get() instanceof ICustomNoteBlock) {
-				OnlinePlayers.where().world(finalLoc.getWorld()).exclude(source).forEach(player ->
-					player.spawnParticle(particle, finalLoc, 25, 0.25, 0.25, 0.25, 0.1, blockData));
-			} else {
-				world.spawnParticle(particle, loc, 25, 0.25, 0.25, 0.25, 0.1, blockData);
-			}
+			world.spawnParticle(particle, loc, 25, 0.25, 0.25, 0.25, 0.1, blockData);
 		}
 	}
 
@@ -999,14 +1007,15 @@ public enum CustomBlock implements Keyed {
 		}
 	}
 
-	public void dropItem(int amount, Location location) {
+	public void dropItem(int amount, Location location, Player debugger) {
+		CustomBlockUtils.debug(debugger, "&a<- dropping item");
 		ItemStack item = this.get().getItemStack();
 		item.setAmount(amount);
 		dropItem(item, location);
 	}
 
 	private void dropSilkItems(Location location, Player debugger) {
-		CustomBlockUtils.debug(debugger, "dropping ingredients");
+		CustomBlockUtils.debug(debugger, "&a<- dropping ingredients");
 		for (ItemStack item : this.get().getNonSilkTouchDrops()) {
 			dropItem(item, location);
 		}

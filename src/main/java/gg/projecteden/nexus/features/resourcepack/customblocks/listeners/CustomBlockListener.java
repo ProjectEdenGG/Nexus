@@ -299,7 +299,7 @@ public class CustomBlockListener implements Listener {
 		CustomBlock brokenCustomBlock = CustomBlock.from(brokenBlock);
 		if (brokenCustomBlock != null) {
 			event.setDropItems(false);
-			CustomBlockUtils.debug(player, "&e- disabling drops");
+			CustomBlockUtils.debug(player, "&e- removing original drops");
 		} else {
 			if (CustomBlockUtils.fixLight(player, brokenBlock))
 				event.setCancelled(true);
