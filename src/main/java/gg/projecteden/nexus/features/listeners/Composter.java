@@ -60,10 +60,10 @@ public class Composter implements Listener {
 		if (item.getType() != Material.BAMBOO)
 			return false;
 
-		return compostItem(player, item, block);
+		return compostItem(player, item, block, 30);
 	}
 
-	public static boolean compostItem(@Nullable Player player, ItemStack item, Block block) {
+	public static boolean compostItem(@Nullable Player player, ItemStack item, Block block, int chance) {
 		if (player != null && player.isSneaking())
 			return false;
 
@@ -81,7 +81,7 @@ public class Composter implements Listener {
 		else
 			item.subtract();
 
-		final boolean increase = RandomUtils.chanceOf(30);
+		final boolean increase = RandomUtils.chanceOf(chance);
 		if (increase) {
 			composter.setLevel(composter.getLevel() + 1);
 			block.setBlockData(composter);

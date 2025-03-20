@@ -235,6 +235,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.TripwireHook;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.CraftingRecipe;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.recipe.CraftingBookCategory;
@@ -938,6 +939,10 @@ public enum CustomBlock implements Keyed {
 		if (craftRecipePair != null && craftRecipePair.getFirst() != null) {
 			ItemStack toMakeItem = new ItemBuilder(craftable.getItemStack()).amount(craftRecipePair.getSecond()).build();
 			NexusRecipe recipe = craftRecipePair.getFirst().toMake(toMakeItem).build().type(RecipeType.CUSTOM_BLOCKS).category(CraftingBookCategory.BUILDING);
+
+			if (recipe.getRecipe() instanceof CraftingRecipe craftingRecipe) {
+				craftingRecipe.setGroup(this.name());
+			}
 			recipe.register();
 
 			recipes.put(craftable.getClass(), recipe);
@@ -969,6 +974,11 @@ public enum CustomBlock implements Keyed {
 				final Material dye = color.switchColor(Material.WHITE_DYE);
 				final CustomBlockTag tagExcludingSelf = new CustomBlockTag(tag).exclude(this).key(tag);
 				final NexusRecipe recipe = RecipeBuilder.surround(dye).with(tagExcludingSelf).toMake(color.switchColor(tag), 8).build();
+
+				if (recipe.getRecipe() instanceof CraftingRecipe craftingRecipe) {
+					craftingRecipe.setGroup(this.name());
+				}
+
 				recipe.type(RecipeType.DYES).category(CraftingBookCategory.BUILDING).register();
 				recipes.put(craftable.getClass(), recipe);
 			}

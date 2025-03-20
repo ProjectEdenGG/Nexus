@@ -2,13 +2,15 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblock
 
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlockTag;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IReDyeable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ICraftableNoteBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ILightableNoteBlock;
 import gg.projecteden.nexus.utils.ColorType;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
-public interface INeonBlock extends ILightableNoteBlock, ICraftableNoteBlock {
+public interface INeonBlock extends ILightableNoteBlock, ICraftableNoteBlock, IReDyeable {
 
 	@Override
 	default double getBlockHardness() {
@@ -21,6 +23,11 @@ public interface INeonBlock extends ILightableNoteBlock, ICraftableNoteBlock {
 	}
 
 	ColorType getColor();
+
+	@Override
+	default CustomBlockTag getReDyeTag() {
+		return CustomBlockTag.NEON_BLOCK;
+	}
 
 	@Override
 	default @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {

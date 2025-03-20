@@ -46,6 +46,7 @@ public class SurroundBuilder extends RecipeBuilder<SurroundBuilder> {
 	}
 
 	public SurroundBuilder with(List<ItemStack> surround) {
+		ingredientIds.add(CustomRecipes.keyOf(surround.getFirst()));
 		return with(CustomRecipes.choiceOf(surround));
 	}
 

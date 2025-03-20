@@ -23,7 +23,8 @@ public interface IVerticalPlanks extends IPlanks {
 	@NotNull
 	private Material getMaterial() {
 		final String woodType = getClass().getSimpleName().replace("Vertical", "").replace("Planks", "");
-		return Material.valueOf(StringUtils.camelToSnake(woodType).toUpperCase() + "_PLANKS");
+		String material = StringUtils.camelToSnake(woodType).toUpperCase() + "_PLANKS";
+		return Material.valueOf(material);
 	}
 
 }

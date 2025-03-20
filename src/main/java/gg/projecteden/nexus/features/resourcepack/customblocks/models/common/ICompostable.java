@@ -10,12 +10,14 @@ import org.jetbrains.annotations.Nullable;
 
 public interface ICompostable extends ICustomBlock {
 
+	int getCompostChance();
+
 	default boolean compost(ItemStack itemStack, Block block) {
 		return compost(null, itemStack, block);
 	}
 
 	default boolean compost(@Nullable Player player, ItemStack itemStack, Block block) {
-		return Composter.compostItem(player, itemStack, block);
+		return Composter.compostItem(player, itemStack, block, getCompostChance());
 	}
 
 	@Override

@@ -44,4 +44,9 @@ public class FloweringMossBlock implements ICustomNoteBlock, ICompostable {
 	public PistonAction getPistonPullAction() {
 		return PistonAction.PREVENT;
 	}
+
+	@Override
+	public int getCompostChance() {
+		return 65;
+	}
 }
