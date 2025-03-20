@@ -16,6 +16,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Light;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -174,6 +175,12 @@ public class VuLan24LanternAnimation {
 		private ArmorStand stand;
 
 		private CompletableFuture<Void> animationCompletable;
+
+		public VuLan24Lantern(@NotNull List<Location> path, int moveSpeed, int lightLevel) {
+			this.path = path;
+			this.moveSpeed = moveSpeed;
+			this.lightLevel = lightLevel;
+		}
 
 		private CompletableFuture<Void> start() {
 			Tasks.wait(RandomUtils.randomInt(0, SPAWN_OVER_TICKS), () -> {
