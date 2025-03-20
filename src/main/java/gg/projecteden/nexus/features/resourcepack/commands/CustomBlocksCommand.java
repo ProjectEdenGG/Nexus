@@ -5,7 +5,7 @@ import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.features.resourcepack.CustomContentUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.customblockbreaking.BrokenBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.listeners.ConversionListener;
-import gg.projecteden.nexus.features.resourcepack.customblocks.menus.CustomBlockCreativeMenu;
+import gg.projecteden.nexus.features.resourcepack.customblocks.menus.CustomBlockCatalogMenu;
 import gg.projecteden.nexus.features.resourcepack.customblocks.menus.CustomBlockSearchMenu;
 import gg.projecteden.nexus.features.resourcepack.customblocks.menus.CustomBlockTagMenu;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
@@ -54,7 +54,7 @@ public class CustomBlocksCommand extends CustomCommand {
 	void viewBlocks(@Arg("all") CustomBlockTab tab) {
 		checkPermissions();
 
-		new CustomBlockCreativeMenu(tab).open(player());
+		new CustomBlockCatalogMenu(tab).open(player());
 	}
 
 	@Path("search <filter>")

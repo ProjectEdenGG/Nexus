@@ -14,10 +14,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashSet;
 
-public class CustomBlockCreativeMenu extends InventoryProvider {
+public class CustomBlockCatalogMenu extends InventoryProvider {
 	@NonNull CustomBlockTab currentTab;
 
-	public CustomBlockCreativeMenu(@NotNull CustomBlockTab tab) {
+	public CustomBlockCatalogMenu(@NotNull CustomBlockTab tab) {
 		this.currentTab = tab;
 	}
 
@@ -44,13 +44,13 @@ public class CustomBlockCreativeMenu extends InventoryProvider {
 				}
 				//
 
-				ItemStack item = new ItemBuilder(CustomBlock.getBy(tab).getFirst().get().getItemStack()).name(StringUtils.camelCase(tab)).build();
+				ItemStack item = new ItemBuilder(CustomBlock.getBy(tab).getFirst().get().getItemStack()).name(tab.getMenuTitle()).build();
 
-				items.add(ClickableItem.of(item, e -> new CustomBlockCreativeMenu(tab).open(viewer)));
+				items.add(ClickableItem.of(item, e -> new CustomBlockCatalogMenu(tab).open(viewer)));
 			}
 
 		} else {
-			addBackItem(e -> new CustomBlockCreativeMenu(CustomBlockTab.ALL).open(viewer));
+			addBackItem(e -> new CustomBlockCatalogMenu(CustomBlockTab.ALL).open(viewer));
 
 			for (CustomBlock customBlock : CustomBlock.getBy(currentTab)) {
 				// TODO: Disable tripwire customblocks

@@ -56,6 +56,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFertilizeEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
@@ -310,7 +311,21 @@ public class CustomBlockListener implements Listener {
 
 	@EventHandler
 	public void on(PlayerBucketFillEvent event) {
+		if (event.isCancelled())
+			return;
+
 		CustomBlockUtils.fixLight(event.getPlayer(), event.getBlock());
+	}
+
+	@EventHandler
+	public void on(BlockFadeEvent event) {
+		if (event.isCancelled())
+			return;
+
+		if (!Nullables.isNullOrAir(event.getNewState().getType()))
+			return;
+
+		CustomBlockUtils.fixLight(null, event.getBlock());
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -707,14 +722,17 @@ public class CustomBlockListener implements Listener {
 			player.swingOffHand();
 
 		CustomBlockUtils.logPlacementVanilla(player, placedBlock);
-		CustomBlockUtils.debug(player, "&a<- placed block: " + StringUtils.camelCase(material));
+		CustomBlockUtils.debug(player, "&a- placed block: " + StringUtils.camelCase(material));
 		CustomBlockSounds.tryPlaySound(player, SoundAction.PLACE, preBlock);
 
 		ItemUtils.subtract(player, event.getItem());
 
-		if (placedBlock.getState() instanceof Sign sign)
+		if (placedBlock.getState() instanceof Sign sign) {
+			CustomBlockUtils.debug(player, "&a- opening sign menu: " + StringUtils.camelCase(material));
 			player.openSign(sign, Side.FRONT);
+		}
 
+		CustomBlockUtils.debug(player, "&a<- done");
 		return true;
 	}
 }
