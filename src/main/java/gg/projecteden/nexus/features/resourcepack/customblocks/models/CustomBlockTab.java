@@ -10,6 +10,7 @@ public enum CustomBlockTab {
 	NONE(null),
 	ALL("Custom Blocks"),
 	MISC("Misc Blocks"),
+	ICE("Ice & Snow Blocks"),
 	COMPACTED("Compacted Blocks"),
 	CONCRETE_BRICKS("Concrete Bricks"),
 	GENERIC_CRATES("Generic Crates"),

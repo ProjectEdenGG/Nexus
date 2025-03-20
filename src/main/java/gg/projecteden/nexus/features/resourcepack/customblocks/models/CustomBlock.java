@@ -43,6 +43,12 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.genericcrate.GenericCrateB;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.genericcrate.GenericCrateC;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.genericcrate.GenericCrateD;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.ice.ChiseledPackedIceBricks;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.ice.ChiseledSnowBricks;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.ice.PackedIceBricks;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.ice.PackedSnow;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.ice.PolishedPackedIce;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.ice.SnowBricks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.AcaciaPaperLantern;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.BambooPaperLantern;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.BirchPaperLantern;
@@ -416,19 +422,27 @@ public enum CustomBlock implements Keyed {
 	CARVED_CHERRY_PLANKS(CarvedCherryPlanks.class, CustomBlockTab.CARVED_PLANKS),
 	CARVED_PALE_OAK_PLANKS(CarvedPaleOakPlanks.class, CustomBlockTab.CARVED_PLANKS),
 
-	// bricks
+	// ice & snow
+	SNOW_BRICKS(SnowBricks.class, CustomBlockTab.ICE),
+	PACKED_SNOW(PackedSnow.class, CustomBlockTab.ICE),
+	CHISELED_SNOW_BRICKS(ChiseledSnowBricks.class, CustomBlockTab.ICE),
+	PACKED_ICE_BRICKS(PackedIceBricks.class, CustomBlockTab.ICE),
+	POLISHED_PACKED_ICE(PolishedPackedIce.class, CustomBlockTab.ICE),
+	CHISELED_PACKED_ICE_BRICKS(ChiseledPackedIceBricks.class, CustomBlockTab.ICE),
+
+	// stone bricks
 	ANDESITE_BRICKS(AndesiteBricks.class, CustomBlockTab.STONE_BRICKS),
 	DIORITE_BRICKS(DioriteBricks.class, CustomBlockTab.STONE_BRICKS),
 	GRANITE_BRICKS(GraniteBricks.class, CustomBlockTab.STONE_BRICKS),
 
-	// chiseled
+	// stone chiseled
 	CHISELED_STONE(ChiseledStone.class, CustomBlockTab.CHISELED_STONE),
 	CHISELED_ANDESITE(ChiseledAndesite.class, CustomBlockTab.CHISELED_STONE),
 	CHISELED_DIORITE(ChiseledDiorite.class, CustomBlockTab.CHISELED_STONE),
 	CHISELED_GRANITE(ChiseledGranite.class, CustomBlockTab.CHISELED_STONE),
 	CHISELED_PURPUR(ChiseledPurpur.class, CustomBlockTab.CHISELED_STONE),
 
-	// pillar
+	// stone pillar
 	STONE_PILLAR(StoneStonePillar.class, CustomBlockTab.STONE_PILLARS),
 	ANDESITE_PILLAR(AndesiteStonePillar.class, CustomBlockTab.STONE_PILLARS),
 	DIORITE_PILLAR(DioriteStonePillar.class, CustomBlockTab.STONE_PILLARS),
