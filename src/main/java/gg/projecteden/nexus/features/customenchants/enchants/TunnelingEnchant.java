@@ -5,7 +5,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.features.listeners.events.fake.FakeBlockBreakEvent;
-import gg.projecteden.nexus.features.resourcepack.customblocks.customblockbreaking.BrokenBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.breaking.DamagedBlock;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Enchant;
@@ -69,7 +69,7 @@ public class TunnelingEnchant extends CustomEnchant implements Listener {
 			if (BlockUtils.getBlockHardness(block) >= BLOCK_HARDNESS_THRESHOLD)
 				continue;
 
-			final int breakTicks = new BrokenBlock(block, player, tool).getBreakTicks();
+			final int breakTicks = new DamagedBlock(block, player, tool).getBreakTicks();
 //			Dev.GRIFFIN.send("Break ticks for %s: %d".formatted(StringUtils.camelCase(block.getType()), breakTicks));
 			if (breakTicks > BREAK_TICKS_THRESHOLD)
 				continue;

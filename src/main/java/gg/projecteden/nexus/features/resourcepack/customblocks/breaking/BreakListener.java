@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.resourcepack.customblocks.customblockbreaking;
+package gg.projecteden.nexus.features.resourcepack.customblocks.breaking;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
@@ -60,13 +60,13 @@ public class BreakListener implements Listener {
 		}
 
 		Block block = event.getBlock();
-		if (CustomBlockBreaking.isTracking(block.getLocation())) {
+		if (Breaker.isTracking(block.getLocation())) {
 			CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCK_DAMAGE, "<-- already tracking");
 			return;
 		}
 
 		ItemStack itemInHand = event.getItemInHand();
-		CustomBlockBreaking.startTracking(block, player, itemInHand);
+		Breaker.startTracking(block, player, itemInHand);
 	}
 
 	@EventHandler
@@ -83,12 +83,12 @@ public class BreakListener implements Listener {
 		if (player.getLocation().distanceSquared(blockLoc) >= 1024.0D)
 			return;
 
-		BrokenBlock brokenBlock = CustomBlockBreaking.get(blockLoc);
-		if (brokenBlock == null)
+		DamagedBlock damagedBlock = Breaker.get(blockLoc);
+		if (damagedBlock == null)
 			return;
 
-		CustomBlockBreaking.addSlowDig(player, 10);
-		brokenBlock.incrementDamage(player, player.getInventory().getItemInMainHand());
+		Breaker.addSlowDig(player, 10);
+		damagedBlock.incrementDamage(player, player.getInventory().getItemInMainHand());
 	}
 
 	@EventHandler
@@ -98,11 +98,11 @@ public class BreakListener implements Listener {
 
 		CustomBlockUtils.debug(event.getPlayer(), DebugType.CUSTOM_BLOCK_DAMAGE, "CustomBlockBreaking: BlockBreakEvent");
 
-		BrokenBlock brokenBlock = CustomBlockBreaking.get(event.getBlock().getLocation());
-		if (brokenBlock == null)
+		DamagedBlock damagedBlock = Breaker.get(event.getBlock().getLocation());
+		if (damagedBlock == null)
 			return;
 
-		brokenBlock.remove();
+		damagedBlock.remove();
 	}
 
 	@EventHandler
@@ -111,10 +111,10 @@ public class BreakListener implements Listener {
 		if (blackListed.contains(block.getType()))
 			return;
 
-		BrokenBlock brokenBlock = CustomBlockBreaking.get(block.getLocation());
-		if (brokenBlock == null)
+		DamagedBlock damagedBlock = Breaker.get(block.getLocation());
+		if (damagedBlock == null)
 			return;
 
-		brokenBlock.remove();
+		damagedBlock.remove();
 	}
 }

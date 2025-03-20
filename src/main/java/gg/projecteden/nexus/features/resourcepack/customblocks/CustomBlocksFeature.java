@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.resourcepack.customblocks;
 
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
-import gg.projecteden.nexus.features.resourcepack.customblocks.customblockbreaking.CustomBlockBreaking;
+import gg.projecteden.nexus.features.resourcepack.customblocks.breaking.Breaker;
 import gg.projecteden.nexus.features.resourcepack.customblocks.listeners.CustomBlockListener;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.worldedit.WrappedWorldEdit;
@@ -43,7 +43,7 @@ public class CustomBlocksFeature extends Feature {
 		CustomBlock.init();
 		new CustomBlockListener();
 
-		CustomBlockBreaking.init();
+		Breaker.init();
 
 		WrappedWorldEdit.init();
 		WrappedWorldEdit.registerParser();

@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.resourcepack.customblocks.customblockbreaking;
+package gg.projecteden.nexus.features.resourcepack.customblocks.breaking;
 
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
@@ -26,9 +26,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Environments(Env.TEST) // TODO CUSTOM BLOCKS: REMOVE
-public class CustomBlockBreaking {
+public class Breaker {
 
-	private static final Map<Location, BrokenBlock> brokenBlocks = new ConcurrentHashMap<>();
+	private static final Map<Location, DamagedBlock> brokenBlocks = new ConcurrentHashMap<>();
 
 	public static void init() {
 		new BreakListener();
@@ -56,8 +56,8 @@ public class CustomBlockBreaking {
 		}
 
 		CustomBlockUtils.debug(player, "&e- now tracking...");
-		BrokenBlock brokenBlock = new BrokenBlock(block, isCustomBlock, player, itemStack, Bukkit.getCurrentTick());
-		brokenBlocks.put(location, brokenBlock);
+		DamagedBlock damagedBlock = new DamagedBlock(block, isCustomBlock, player, itemStack, Bukkit.getCurrentTick());
+		brokenBlocks.put(location, damagedBlock);
 	}
 
 	public static void stopTracking(Location location) {
@@ -68,7 +68,7 @@ public class CustomBlockBreaking {
 		return brokenBlocks.containsKey(location);
 	}
 
-	public static @Nullable BrokenBlock get(Location location) {
+	public static @Nullable DamagedBlock get(Location location) {
 		if (!isTracking(location))
 			return null;
 
@@ -102,7 +102,6 @@ public class CustomBlockBreaking {
 		if (customBlock != null) {
 			BlockUtils.tryBreakEvent(player, block, false);
 		} else {
-
 			BlockData blockData = block.getBlockData();
 			player.breakBlock(block);
 

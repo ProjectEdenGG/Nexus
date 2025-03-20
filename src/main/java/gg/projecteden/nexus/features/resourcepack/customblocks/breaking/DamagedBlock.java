@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.resourcepack.customblocks.customblockbreaking;
+package gg.projecteden.nexus.features.resourcepack.customblocks.breaking;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
@@ -18,7 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import java.text.DecimalFormat;
 
 @Data
-public class BrokenBlock {
+public class DamagedBlock {
 	@Getter
 	private static final DecimalFormat df = new DecimalFormat("#.###");
 
@@ -33,11 +33,11 @@ public class BrokenBlock {
 	private int lastDamageTick;
 	private int totalDamageTicks = 0;
 
-	public BrokenBlock(Block block, Player player, ItemStack itemStack) {
+	public DamagedBlock(Block block, Player player, ItemStack itemStack) {
 		this(block, CustomBlock.from(block) != null, player, itemStack, Bukkit.getCurrentTick());
 	}
 
-	public BrokenBlock(Block block, boolean isCustomBlock, Player player, ItemStack itemStack, int currentTick) {
+	public DamagedBlock(Block block, boolean isCustomBlock, Player player, ItemStack itemStack, int currentTick) {
 		this.player = player;
 		this.location = block.getLocation();
 		this.block = block;
@@ -92,7 +92,7 @@ public class BrokenBlock {
 
 	public void remove() {
 		resetDamagePacket();
-		CustomBlockBreaking.stopTracking(this.getLocation());
+		Breaker.stopTracking(this.getLocation());
 	}
 
 	public void reset(ItemStack itemStack, int currentTick) {
@@ -112,7 +112,7 @@ public class BrokenBlock {
 	public void breakBlock(@NonNull Player breaker) {
 		CustomBlockUtils.debug(breaker, "Breaking block...");
 		BreakListener.getBreakWait().put(breaker.getUniqueId(), Bukkit.getCurrentTick());
-		CustomBlockBreaking.sendBreakBlock(breaker, getBlock(), getCustomBlock());
+		Breaker.sendBreakBlock(breaker, getBlock(), getCustomBlock());
 		remove();
 	}
 
@@ -121,7 +121,7 @@ public class BrokenBlock {
 	}
 
 	public void sendDamagePacket(int frame) {
-		CustomBlockBreaking.sendBreakPacket(frame, getBlock());
+		Breaker.sendBreakPacket(frame, getBlock());
 	}
 
 	public void incrementDamage(Player player, ItemStack itemStack) {

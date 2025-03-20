@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.commands;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.features.resourcepack.CustomContentUtils;
-import gg.projecteden.nexus.features.resourcepack.customblocks.customblockbreaking.BrokenBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.breaking.DamagedBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.listeners.ConversionListener;
 import gg.projecteden.nexus.features.resourcepack.customblocks.menus.CustomBlockCatalogMenu;
 import gg.projecteden.nexus.features.resourcepack.customblocks.menus.CustomBlockSearchMenu;
@@ -196,9 +196,9 @@ public class CustomBlocksCommand extends CustomCommand {
 			destroySpeedItem = (float) customBlock.get().getSpeedMultiplier(tool);
 		}
 
-		BrokenBlock brokenBlock = new BrokenBlock(block, isCustomBlock, player(), tool, Bukkit.getCurrentTick());
-		float blockDamage = brokenBlock.getBlockDamage(tool);
-		int breakTicks = brokenBlock.getBreakTicks();
+		DamagedBlock damagedBlock = new DamagedBlock(block, isCustomBlock, player(), tool, Bukkit.getCurrentTick());
+		float blockDamage = damagedBlock.getBlockDamage(tool);
+		int breakTicks = damagedBlock.getBreakTicks();
 		double breakSeconds = breakTicks / 20.0;
 
 		send("");

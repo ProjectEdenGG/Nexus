@@ -4,7 +4,7 @@ import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.skills.woodcutting.WoodcuttingManager;
 import com.gmail.nossr50.util.player.UserManager;
 import gg.projecteden.nexus.features.listeners.events.PlayerBlockDigEvent;
-import gg.projecteden.nexus.features.resourcepack.customblocks.customblockbreaking.BrokenBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.breaking.DamagedBlock;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventory;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventoryFeature;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
@@ -96,7 +96,7 @@ public class AutoTool implements Listener {
 					if (MaterialTag.LEAVES.isTagged(block.getType()))
 						return 2d; // Same as shears
 
-			return Double.valueOf(new BrokenBlock(block, player, tool).getBreakTicks());
+			return Double.valueOf(new DamagedBlock(block, player, tool).getBreakTicks());
 		};
 
 		final ItemStack currentItem = player.getInventory().getItemInMainHand();
