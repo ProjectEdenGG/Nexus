@@ -37,7 +37,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-@Environments(Env.TEST)
+@Environments(Env.TEST) // TODO CUSTOM BLOCKS: REMOVE
 public class CustomBlocksCommand extends CustomCommand {
 
 	public CustomBlocksCommand(CommandEvent event) {

@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Environments(Env.TEST)
+@Environments(Env.TEST) // TODO CUSTOM BLOCKS: REMOVE
 public class CustomBlockBreaking {
 
 	private static final Map<Location, BrokenBlock> brokenBlocks = new ConcurrentHashMap<>();

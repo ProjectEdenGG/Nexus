@@ -29,7 +29,7 @@ import org.bukkit.event.world.ChunkPopulateEvent;
 
 import java.util.List;
 
-@Environments(Env.TEST)
+@Environments(Env.TEST) // TODO CUSTOM BLOCKS: REMOVE
 public class ConversionListener implements Listener {
 	private static final CustomNoteBlockTrackerService trackerService = new CustomNoteBlockTrackerService();
 

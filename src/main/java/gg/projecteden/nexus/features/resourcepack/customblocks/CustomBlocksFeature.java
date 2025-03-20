@@ -36,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 		- Maybe add more advanced worldedit handling, such as setting directionals, and other "block states"
  */
 
-@Environments(Env.TEST)
+@Environments(Env.TEST) // TODO CUSTOM BLOCKS: REMOVE
 public class CustomBlocksFeature extends Feature {
 	@Override
 	public void onStart() {
