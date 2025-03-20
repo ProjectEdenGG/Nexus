@@ -3,10 +3,10 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.customblockbreak
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.utils.Debug.DebugType;
-import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.MaterialTag;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -39,40 +39,16 @@ public class BreakListener implements Listener {
 		blackListed.addAll(MaterialTag.ALL_AIR.getValues());
 	}
 
-	private boolean isInvalid(Player player) {
-		return GameModeWrapper.of(player).isCreative();
-	}
-
-	@EventHandler
-	public void on(BlockBreakEvent event) {
-		CustomBlockUtils.debug(event.getPlayer(), DebugType.CUSTOM_BLOCK_DAMAGE, "CustomBlockBreaking: BlockBreakEvent");
-
-		if (event.isCancelled()) {
-			CustomBlockUtils.debug(event.getPlayer(), DebugType.CUSTOM_BLOCK_DAMAGE, "<-- event is cancelled");
-			return;
-		}
-
-		if (!CustomBlockBreaking.isTracking(event.getBlock())) {
-			CustomBlockUtils.debug(event.getPlayer(), DebugType.CUSTOM_BLOCK_DAMAGE, "<-- already tracking");
-			return;
-		}
-
-		CustomBlockBreaking.removeBrokenBlock(event.getBlock().getLocation());
-	}
-
 	@EventHandler
 	public void on(BlockDamageEvent event) {
+		if (event.isCancelled())
+			return;
+
 		Player player = event.getPlayer();
 		CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCK_DAMAGE, "CustomBlockBreaking: BlockDamageEvent");
-		if (event.isCancelled()) {
-			CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCK_DAMAGE, "<-- event is cancelled");
-			return;
-		}
 
-		if (isInvalid(player)) {
-			CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCK_DAMAGE, "<-- player is invalid");
+		if (player.getGameMode() == GameMode.CREATIVE)
 			return;
-		}
 
 		// 6 tick delay after breaking a block, before able to damage another
 		int currentTick = Bukkit.getCurrentTick();
@@ -84,19 +60,19 @@ public class BreakListener implements Listener {
 		}
 
 		Block block = event.getBlock();
-		if (CustomBlockBreaking.isTracking(block)) {
+		if (CustomBlockBreaking.isTracking(block.getLocation())) {
 			CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCK_DAMAGE, "<-- already tracking");
 			return;
 		}
 
 		ItemStack itemInHand = event.getItemInHand();
-		CustomBlockBreaking.createBrokenBlock(block, player, itemInHand);
+		CustomBlockBreaking.startTracking(block, player, itemInHand);
 	}
 
 	@EventHandler
 	public void on(PlayerAnimationEvent event) {
 		Player player = event.getPlayer();
-		if (isInvalid(player))
+		if (player.getGameMode() == GameMode.CREATIVE)
 			return;
 
 		Block block = player.getTargetBlockExact(5);
@@ -107,10 +83,7 @@ public class BreakListener implements Listener {
 		if (player.getLocation().distanceSquared(blockLoc) >= 1024.0D)
 			return;
 
-		if (!CustomBlockBreaking.isTracking(blockLoc))
-			return;
-
-		BrokenBlock brokenBlock = CustomBlockBreaking.getBrokenBlock(blockLoc);
+		BrokenBlock brokenBlock = CustomBlockBreaking.get(blockLoc);
 		if (brokenBlock == null)
 			return;
 
@@ -119,20 +92,29 @@ public class BreakListener implements Listener {
 	}
 
 	@EventHandler
+	public void on(BlockBreakEvent event) {
+		if (event.isCancelled())
+			return;
+
+		CustomBlockUtils.debug(event.getPlayer(), DebugType.CUSTOM_BLOCK_DAMAGE, "CustomBlockBreaking: BlockBreakEvent");
+
+		BrokenBlock brokenBlock = CustomBlockBreaking.get(event.getBlock().getLocation());
+		if (brokenBlock == null)
+			return;
+
+		brokenBlock.remove();
+	}
+
+	@EventHandler
 	public void on(BlockDamageAbortEvent event) {
 		Block block = event.getBlock();
 		if (blackListed.contains(block.getType()))
 			return;
 
-		Location blockLoc = block.getLocation();
-		if (!CustomBlockBreaking.isTracking(blockLoc))
-			return;
-
-		BrokenBlock brokenBlock = CustomBlockBreaking.getBrokenBlock(blockLoc);
+		BrokenBlock brokenBlock = CustomBlockBreaking.get(block.getLocation());
 		if (brokenBlock == null)
 			return;
 
-		brokenBlock.resetDamagePacket();
 		brokenBlock.remove();
 	}
 }

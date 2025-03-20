@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
-import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundBlockDestructionPacket;
 import net.minecraft.server.dedicated.DedicatedPlayerList;
@@ -21,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,9 +34,7 @@ public class CustomBlockBreaking {
 		new BreakListener();
 	}
 
-	//
-
-	public static void createBrokenBlock(Block block, Player player, ItemStack itemStack) {
+	public static void startTracking(Block block, Player player, ItemStack itemStack) {
 		Location location = block.getLocation();
 		if (isTracking(location)) {
 			CustomBlockUtils.debug(player, "&c<- already tracking");
@@ -62,20 +60,19 @@ public class CustomBlockBreaking {
 		brokenBlocks.put(location, brokenBlock);
 	}
 
-	public static void removeBrokenBlock(Location location) {
+	public static void stopTracking(Location location) {
 		brokenBlocks.remove(location);
-	}
-
-	public static BrokenBlock getBrokenBlock(Location location) {
-		return brokenBlocks.get(location);
-	}
-
-	public static boolean isTracking(Block block) {
-		return isTracking(block.getLocation());
 	}
 
 	public static boolean isTracking(Location location) {
 		return brokenBlocks.containsKey(location);
+	}
+
+	public static @Nullable BrokenBlock get(Location location) {
+		if (!isTracking(location))
+			return null;
+
+		return brokenBlocks.get(location);
 	}
 
 	//

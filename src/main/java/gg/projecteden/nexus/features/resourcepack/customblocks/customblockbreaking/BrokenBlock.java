@@ -91,7 +91,8 @@ public class BrokenBlock {
 	}
 
 	public void remove() {
-		CustomBlockBreaking.removeBrokenBlock(this.getLocation());
+		resetDamagePacket();
+		CustomBlockBreaking.stopTracking(this.getLocation());
 	}
 
 	public void reset(ItemStack itemStack, int currentTick) {
@@ -112,7 +113,7 @@ public class BrokenBlock {
 		CustomBlockUtils.debug(breaker, "Breaking block...");
 		BreakListener.getBreakWait().put(breaker.getUniqueId(), Bukkit.getCurrentTick());
 		CustomBlockBreaking.sendBreakBlock(breaker, getBlock(), getCustomBlock());
-		resetDamagePacket();
+		remove();
 	}
 
 	public void resetDamagePacket() {
@@ -149,31 +150,5 @@ public class BrokenBlock {
 		if (this.totalDamageTicks >= this.breakTicks) {
 			breakBlock(player);
 		}
-	}
-
-//	public void decrementDamage(int currentTick) {
-//		if (this.lastDamageTick == currentTick)
-//			return;
-//
-//		this.lastDamageTick = currentTick;
-//
-//		--this.damageFrame;
-//		CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCK_DAMAGE, "Damage frame: " + this.damageFrame + " | Damage tick: " + this.lastDamageTick);
-//		sendDamagePacket(this.damageFrame);
-//
-//		this.totalDamageTicks -= (int) Math.round(this.breakTicks / 10.0);
-//
-//		if (this.totalDamageTicks < 0) {
-//			resetDamagePacket();
-//			remove();
-//		}
-//	}
-
-	public boolean isBroken() {
-		return getDamageFrame() == 10;
-	}
-
-	public boolean isDamaged() {
-		return this.damageFrame >= 0;
 	}
 }
