@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -71,6 +72,7 @@ public class Connect4MatchData extends MatchData {
 			return solver.getWinningPieces(board);
 		}
 
+		@SuppressWarnings("deprecation")
 		public boolean tryPlace(Team team, int column) {
 			if (!match.isStarted()) {
 				return false;
@@ -117,9 +119,13 @@ public class Connect4MatchData extends MatchData {
 				.forEach(block -> {
 					final Location location = block.getLocation().toCenterLocation();
 					Minigames.debug("[Connect4] Spawning falling block at: " + location + " in column " + column);
-					FallingBlock fallingBlock = world.spawnFallingBlock(location, blockData);
-					fallingBlock.setDropItem(false);
-					fallingBlock.setInvulnerable(true);
+
+					int wait = (block.getY() % 10) * 5;
+					Tasks.wait(wait, () -> {
+						FallingBlock fallingBlock = world.spawnFallingBlock(location, blockData);
+						fallingBlock.setDropItem(false);
+						fallingBlock.setInvulnerable(true);
+					});
 
 					int y = floorY + ((HEIGHT - (emptyRow + 1)) * pieceHeight) + ((int) location.getY() - columnPlaceRegion.getMinimumY());
 					final Location finalLocation = new Location(world, location.getX(), y, location.getZ());
@@ -129,7 +135,7 @@ public class Connect4MatchData extends MatchData {
 			Minigames.debug("[Connect4] Placed, checking win");
 			if (solver.checkWin(board)) {
 				winnerTeam = team;
-				match.broadcast(team.getAliveMinigamers(match).get(0).getColoredName() + "&3 has connected 4!");
+				match.broadcast(team.getAliveMinigamers(match).getFirst().getColoredName() + "&3 has connected 4!");
 				match.scored(team);
 			}
 
