@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 /*
 	TODO:
-		- Test server bug signs
+		- Resolve Test server bug signs
 		- Remove "TODO CUSTOM BLOCKS: REMOVE"
  */
 

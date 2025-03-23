@@ -47,6 +47,7 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.ice.ChiseledPackedSnow;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.ice.PackedIceBricks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.ice.PackedSnow;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.ice.Permafrost;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.ice.PolishedPackedIce;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.ice.PackedSnowBricks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.AcaciaPaperLantern;
@@ -429,6 +430,7 @@ public enum CustomBlock implements Keyed {
 	PACKED_ICE_BRICKS(PackedIceBricks.class, CustomBlockTab.ICE),
 	POLISHED_PACKED_ICE(PolishedPackedIce.class, CustomBlockTab.ICE),
 	CHISELED_PACKED_ICE_BRICKS(ChiseledPackedIceBricks.class, CustomBlockTab.ICE),
+	PERMAFROST(Permafrost.class, CustomBlockTab.ICE),
 
 	// stone bricks
 	ANDESITE_BRICKS(AndesiteBricks.class, CustomBlockTab.STONE_BRICKS),

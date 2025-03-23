@@ -306,6 +306,7 @@ public enum ItemModelType {
 	ICE_PACKED_ICE_BRICKS("customblocks/ice/packed_ice_bricks"),
 	ICE_POLISHED_PACKED_ICE("customblocks/ice/polished_packed_ice"),
 	ICE_CHISELED_PACKED_ICE_BRICKS("customblocks/ice/chiseled_packed_ice_bricks"),
+	ICE_PERMAFROST("customblocks/ice/permafrost"),
 	STONES_ANDESITE_ANDESITE_BRICKS("customblocks/stones/andesite/andesite_bricks"),
 	STONES_ANDESITE_ANDESITE_PILLAR("customblocks/stones/andesite/andesite_pillar"),
 	STONES_ANDESITE_CHISELED_ANDESITE("customblocks/stones/andesite/chiseled_andesite"),
