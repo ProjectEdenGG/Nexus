@@ -302,6 +302,9 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag BACKPACK_DENY = new MaterialTag(SHULKER_BOXES, BUNDLES);
 
+	public static final MaterialTag REPLACEABLE_FIXED = new MaterialTag(REPLACEABLE)
+		.append(Material.SCULK_VEIN, Material.PALE_HANGING_MOSS);
+
 	@SneakyThrows
 	public static Map<String, Tag<Material>> getApplicable(Material material) {
 		return Utils.collect(tags.entrySet().stream().filter(entry -> entry.getValue().isTagged(material)));

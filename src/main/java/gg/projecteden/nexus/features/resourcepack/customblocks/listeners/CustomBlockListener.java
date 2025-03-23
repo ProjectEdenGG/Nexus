@@ -97,11 +97,6 @@ public class CustomBlockListener implements Listener {
 		Block clickedBlock = event.getClickedBlock();
 		if (Nullables.isNullOrAir(clickedBlock)) return;
 
-		// TODO: Disable tripwire customblocks
-		if (ICustomTripwire.isNotEnabled() && clickedBlock.getType() == Material.TRIPWIRE)
-			return;
-		//
-
 		Player player = event.getPlayer();
 		CustomBlockUtils.debug(player, "&d&lPlayerInteractEvent:", true);
 
@@ -121,7 +116,7 @@ public class CustomBlockListener implements Listener {
 			CustomBlock itemCustomBlock = CustomBlock.from(itemInHand);
 			if (itemCustomBlock != null) {
 				CustomBlockUtils.debug(player, "&e- On Use While Holding");
-				if (itemCustomBlock.get().onUseWhileHolding(event, player, action, clickedBlock, itemInHand)) {
+				if (itemCustomBlock.get().onUseWhileHolding(event, player, action, clickedBlock, itemInHand, event.getHand())) {
 					CustomBlockUtils.debug(player, "&d<- cancelled = " + event.isCancelled() + " | done, end");
 					return;
 				} else {
@@ -467,7 +462,7 @@ public class CustomBlockListener implements Listener {
 		if (!(customBlock.get() instanceof ICompostable compostable))
 			return;
 
-		compostable.compost(item, block);
+		compostable.compost(item, block, null);
 	}
 
 	@EventHandler
@@ -576,15 +571,17 @@ public class CustomBlockListener implements Listener {
 			return false;
 		}
 
-
 		BlockFace clickedFace = event.getBlockFace();
 		Block preBlock = clickedBlock.getRelative(clickedFace);
 		boolean didClickedCustomBlock = false;
-		boolean isInteractable = clickedBlock.getType().isInteractable() || MaterialTag.INTERACTABLES.isTagged(preBlock);
+		boolean isInteractable = clickedBlock.getType().isInteractable() || MaterialTag.INTERACTABLES.isTagged(clickedBlock);
+
+		CustomBlockUtils.debug(player, "&e- clicked block material is " + clickedBlock.getType());
 
 		if (clickedCustomBlock != null) {
 			didClickedCustomBlock = true;
 			if (CustomBlock.NOTE_BLOCK != clickedCustomBlock) {
+				CustomBlockUtils.debug(player, "&e- Custom Block is not CustomBlock.NOTE_BLOCK");
 				isInteractable = false;
 			}
 		}
@@ -642,11 +639,6 @@ public class CustomBlockListener implements Listener {
 
 	private boolean placeCustomBlock(Block clickedBlock, Player player, EquipmentSlot hand, BlockFace clickedFace, Block preBlock, ItemStack itemInHand) {
 		CustomBlockUtils.debug(player, "&e- placing custom block");
-		if (!preBlock.getLocation().toCenterLocation().getNearbyLivingEntities(0.5).isEmpty()) {
-			CustomBlockUtils.debug(player, "&c<- entity in way");
-			return false;
-		}
-
 		CustomBlock customBlock = CustomBlock.from(itemInHand);
 		if (customBlock == null) {
 			CustomBlockUtils.debug(player, "&c<- customBlock == null");
@@ -674,10 +666,15 @@ public class CustomBlockListener implements Listener {
 				return false;
 			}
 		} else {
-			if (MaterialTag.REPLACEABLE.isTagged(clickedBlock.getType())) {
+			if (MaterialTag.REPLACEABLE_FIXED.isTagged(clickedBlock.getType())) {
 				CustomBlockUtils.debug(player, "&e- clickedBlock is replaceable, adjusted placement");
 				preBlock = clickedBlock;
 			}
+		}
+
+		if (!preBlock.getLocation().toCenterLocation().getNearbyLivingEntities(0.5).isEmpty()) {
+			CustomBlockUtils.debug(player, "&c<- entity in way");
+			return false;
 		}
 
 		// Additional checks

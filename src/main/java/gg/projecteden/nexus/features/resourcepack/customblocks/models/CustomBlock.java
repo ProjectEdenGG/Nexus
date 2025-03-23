@@ -712,9 +712,9 @@ public enum CustomBlock implements Keyed {
 		else if (hand == EquipmentSlot.OFF_HAND)
 			player.swingOffHand();
 
-		block.setType(blockMaterial, false);
+		block.setType(blockMaterial, true);
 		if (blockData != null)
-			block.setBlockData(blockData, false);
+			block.setBlockData(blockData, true);
 
 		playSound(player, SoundAction.PLACE, block.getLocation());
 		ItemUtils.subtract(player, itemInHand);

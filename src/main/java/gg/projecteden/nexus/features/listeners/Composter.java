@@ -20,6 +20,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.BlockInventoryHolder;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,16 +31,8 @@ public class Composter implements Listener {
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
 			return;
 
-		if (!handleBamboo(event.getPlayer(), event.getItem(), event.getClickedBlock()))
+		if (!handleBamboo(event.getPlayer(), event.getItem(), event.getClickedBlock(), event.getHand()))
 			return;
-
-		if (event.getHand() == null)
-			return;
-
-		switch (event.getHand()) {
-			case HAND -> event.getPlayer().swingMainHand();
-			case OFF_HAND -> event.getPlayer().swingOffHand();
-		}
 	}
 
 	@EventHandler
@@ -47,10 +40,10 @@ public class Composter implements Listener {
 		if (!(event.getDestination().getHolder() instanceof BlockInventoryHolder holder))
 			return;
 
-		handleBamboo(null, event.getItem(), holder.getBlock());
+		handleBamboo(null, event.getItem(), holder.getBlock(), null);
 	}
 
-	private boolean handleBamboo(@Nullable Player player, ItemStack item, Block block) {
+	private boolean handleBamboo(@Nullable Player player, ItemStack item, Block block, EquipmentSlot hand) {
 		if (Nullables.isNullOrAir(item))
 			return false;
 
@@ -60,10 +53,10 @@ public class Composter implements Listener {
 		if (item.getType() != Material.BAMBOO)
 			return false;
 
-		return compostItem(player, item, block, 30);
+		return compostItem(player, item, block, 30, hand);
 	}
 
-	public static boolean compostItem(@Nullable Player player, ItemStack item, Block block, int chance) {
+	public static boolean compostItem(@Nullable Player player, ItemStack item, Block block, int chance, EquipmentSlot hand) {
 		if (player != null && player.isSneaking())
 			return false;
 
@@ -75,6 +68,13 @@ public class Composter implements Listener {
 
 		if (composter.getLevel() >= composter.getMaximumLevel())
 			return false;
+
+		if (player != null && hand != null) {
+			switch (hand) {
+				case HAND -> player.swingMainHand();
+				case OFF_HAND -> player.swingOffHand();
+			}
+		}
 
 		if (player != null)
 			ItemUtils.subtract(player, item);

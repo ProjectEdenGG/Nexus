@@ -18,6 +18,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -102,7 +103,7 @@ public interface ICustomBlock extends IHarvestable, IPistonActions {
 	}
 
 	default boolean canNotPlace(Block clickedBlock, Player player, BlockFace clickedFace, Block preBlock, Block underneath, ItemStack itemInHand) {
-		if (!MaterialTag.REPLACEABLE.isTagged(preBlock.getType())) {
+		if (!MaterialTag.REPLACEABLE_FIXED.isTagged(preBlock.getType())) {
 			CustomBlockUtils.debug(player, "&c<- preBlock (" + StringUtils.camelCase(preBlock.getType()) + ") is not replaceable");
 			return true;
 		}
@@ -120,7 +121,7 @@ public interface ICustomBlock extends IHarvestable, IPistonActions {
 		return PistonAction.MOVE;
 	}
 
-	default boolean onUseWhileHolding(PlayerInteractEvent event, Player player, Action action, Block clickedBlock, ItemStack itemInHand) {
+	default boolean onUseWhileHolding(PlayerInteractEvent event, Player player, Action action, Block clickedBlock, ItemStack itemInHand, EquipmentSlot hand) {
 		return false;
 	}
 
