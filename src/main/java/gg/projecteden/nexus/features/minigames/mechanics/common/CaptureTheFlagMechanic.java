@@ -5,12 +5,14 @@ import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.RegenType;
 import gg.projecteden.nexus.features.minigames.models.Team;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.CaptureTheFlagMatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.OneFlagCaptureTheFlagMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
 import gg.projecteden.nexus.features.minigames.models.perks.common.PlayerParticlePerk;
+import gg.projecteden.nexus.features.minigames.models.statistics.FlagRushStatistics;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -29,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@MatchStatisticsClass(FlagRushStatistics.class)
 public abstract class CaptureTheFlagMechanic extends TeamMechanic {
 
 	@Override

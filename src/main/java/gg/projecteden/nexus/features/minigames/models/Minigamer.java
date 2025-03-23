@@ -745,6 +745,8 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 			return;
 		this.secondsPlayed = (int) Duration.between(this.startTime, LocalDateTime.now()).getSeconds();
 		this.startTime = null;
+
+		this.match.getMatchStatistics().award(MatchStatistics.TIME_PLAYED, this, this.secondsPlayed);
 	}
 
 	@Override

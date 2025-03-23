@@ -22,7 +22,9 @@ import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
+import gg.projecteden.nexus.features.minigames.models.MatchStatistics;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
@@ -34,10 +36,9 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.
 import gg.projecteden.nexus.features.minigames.models.matchdata.BlockPartyMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import gg.projecteden.nexus.features.minigames.models.statistics.BlockPartyStatistics;
 import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
-import gg.projecteden.nexus.models.blockparty.BlockPartyStatsService;
-import gg.projecteden.nexus.models.blockparty.BlockPartyStatsUser.BlockPartyStats;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Debug;
@@ -110,6 +111,7 @@ import java.util.stream.Stream;
 import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
+@MatchStatisticsClass(BlockPartyStatistics.class)
 public class BlockParty extends TeamlessMechanic {
 
 	public static List<BlockPartySong> songList = new ArrayList<>();
@@ -207,12 +209,6 @@ public class BlockParty extends TeamlessMechanic {
 		setSong(event.getMatch());
 		startActionBarTask(event.getMatch());
 		startEqAnimation(event.getMatch());
-
-		BlockPartyMatchData matchData = event.getMatch().getMatchData();
-		for (Minigamer minigamer : event.getMatch().getAliveMinigamers()) {
-			matchData.getRoundsSurvived().put(minigamer.getUniqueId(), 0);
-			minigamer.startTimeTracking();
-		}
 	}
 
 	@Override
@@ -245,8 +241,6 @@ public class BlockParty extends TeamlessMechanic {
 
 	@Override
 	public void onEnd(@NotNull MatchEndEvent event) {
-		super.onEnd(event);
-
 		List<UUID> uuids = event.getMatch().getMinigamersAndSpectators().stream().map(Minigamer::getUuid).toList();
 		BlockPartyClientMessage.to(uuids).stop().send();
 
@@ -255,7 +249,8 @@ public class BlockParty extends TeamlessMechanic {
 
 		stopDiscoBallAnimation(event.getMatch());
 
-		reportStats(event.getMatch());
+		giveWinnerStats(event.getMatch());
+		super.onEnd(event);
 	}
 
 	@Override
@@ -325,7 +320,7 @@ public class BlockParty extends TeamlessMechanic {
 		matchData.incRound();
 
 		for (Minigamer minigamer : match.getAliveMinigamers())
-			matchData.getRoundsSurvived().put(minigamer.getUniqueId(), matchData.getRound());
+			match.getMatchStatistics().set(BlockPartyStatistics.ROUNDS_SURVIVED, minigamer, matchData.getRound());
 
 		if (matchData.getRound() % 2 == 1 && (matchData.getRound() + 1) < MAX_ROUNDS)
 			match.broadcast("&3Round speed is now &e" + getRoundSpeed(matchData.getRound()) + "s");
@@ -582,7 +577,7 @@ public class BlockParty extends TeamlessMechanic {
 			minigamer.getPlayer().playSound(minigamer.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0F, 1.5F);
 			minigamer.tell("&3You picked up a &e" + StringUtils.camelCase(powerUp.name()) + " &3power up!");
 
-			matchData.getPowerUpsCollected().put(minigamer.getUniqueId(), matchData.getPowerUpsCollected().getOrDefault(minigamer.getUniqueId(), 0) + 1);
+			match.getMatchStatistics().award(BlockPartyStatistics.POWER_UPS_COLLECTED, minigamer);
 		};
 
 		PowerUpUtils.PowerUp powerUp = new PowerUpUtils.PowerUp(null, true, item, consumer);
@@ -634,8 +629,7 @@ public class BlockParty extends TeamlessMechanic {
 			item.subtract();
 			powerUp.execute(minigamer, minigamer.getMatch(), event);
 
-			BlockPartyMatchData matchData = minigamer.getMatch().getMatchData();
-			matchData.getPowerUpsUsed().put(minigamer.getUniqueId(), matchData.getPowerUpsUsed().getOrDefault(minigamer.getUniqueId(), 0) + 1);
+			minigamer.getMatch().getMatchStatistics().award(BlockPartyStatistics.POWER_UPS_USED, minigamer);
 			return;
 		}
 	}
@@ -1334,41 +1328,20 @@ public class BlockParty extends TeamlessMechanic {
 		super.onDeath(victim);
 
 		BlockPartyMatchData matchData = victim.getMatch().getMatchData();
-		matchData.getRoundsSurvived().put(victim.getUniqueId(), matchData.getRound());
-		victim.stopTimeTracking();
+		victim.getMatch().getMatchStatistics().set(BlockPartyStatistics.ROUNDS_SURVIVED, victim, matchData.getRound());
 	}
 
 	@Override
 	public void onQuit(@NotNull MatchQuitEvent event) {
 		super.onQuit(event);
 		BlockPartyClientMessage.to(event.getMinigamer().getUuid()).stop().send();
-		event.getMinigamer().stopTimeTracking();
 	}
 
-	private void reportStats(Match match) {
+	private void giveWinnerStats(@NonNull Match match) {
 		BlockPartyMatchData matchData = match.getMatchData();
-		BlockPartyStatsService service = new BlockPartyStatsService();
 
-		for (Minigamer minigamer : match.getAllMinigamers()) {
-			BlockPartyStats stats = new BlockPartyStats();
-			if (matchData.getWinners() != null && matchData.getWinners().contains(minigamer))
-				stats.setWin(true);
-
-			int rounds = matchData.getRoundsSurvived().getOrDefault(minigamer.getUniqueId(), MAX_ROUNDS);
-			stats.setRoundsSurvived(rounds);
-
-			int powerUpsCollected = matchData.getPowerUpsCollected().getOrDefault(minigamer.getUniqueId(), 0);
-			stats.setPowerUpsCollected(powerUpsCollected);
-
-			int powerUpsUsed = matchData.getPowerUpsUsed().getOrDefault(minigamer.getUniqueId(), 0);
-			stats.setPowerUpsUsed(powerUpsUsed);
-
-			minigamer.stopTimeTracking();
-			int seconds = minigamer.getSecondsPlayed();
-			stats.setPlayTimeInSeconds(seconds);
-
-			service.edit(minigamer, user -> user.add(stats));
-		}
+		if (matchData.getWinners() != null)
+			matchData.getWinners().forEach(winner -> match.getMatchStatistics().award(MatchStatistics.WINS, winner));
 	}
 	// endregion
 }

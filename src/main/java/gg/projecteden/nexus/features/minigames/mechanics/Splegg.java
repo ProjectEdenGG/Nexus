@@ -4,6 +4,8 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigames.mechanics.common.SpleefMechanic;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
+import gg.projecteden.nexus.features.minigames.models.statistics.SpleggStatistics;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -24,6 +26,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 
+@MatchStatisticsClass(SpleggStatistics.class)
 public final class Splegg extends SpleefMechanic {
 
 	@Override
@@ -78,6 +81,8 @@ public final class Splegg extends SpleefMechanic {
 		egg.setVelocity(eggLocation.getDirection().multiply(1.75));
 		egg.setShooter(player);
 
+		minigamer.getMatch().getMatchStatistics().award(SpleggStatistics.WINS, minigamer);
+
 		player.playSound(player, Sound.ENTITY_BLAZE_SHOOT, 0.5F, 2F);
 	}
 
@@ -96,7 +101,7 @@ public final class Splegg extends SpleefMechanic {
 		Block blockHit = LocationUtils.getBlockHit(event);
 		if (blockHit == null) return;
 
-		breakBlock(minigamer.getMatch(), blockHit.getLocation());
+		breakBlock(minigamer.getMatch(), blockHit.getLocation(), minigamer);
 	}
 
 	@EventHandler

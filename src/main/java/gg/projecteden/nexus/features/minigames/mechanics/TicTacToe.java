@@ -4,8 +4,10 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
+import gg.projecteden.nexus.features.minigames.models.MatchStatistics;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.TicTacToeMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
@@ -14,6 +16,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+@MatchStatisticsClass(MatchStatistics.class)
 public final class TicTacToe extends TeamMechanic {
 
 	@Override

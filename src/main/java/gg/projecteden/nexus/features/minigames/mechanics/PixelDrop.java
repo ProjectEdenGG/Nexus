@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.chat.events.PublicChatEvent;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.arenas.PixelDropArena;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
@@ -18,10 +19,10 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.PixelDropMatchDa
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
 import gg.projecteden.nexus.features.minigames.models.perks.common.PlayerParticlePerk;
+import gg.projecteden.nexus.features.minigames.models.statistics.PixelDropStatistics;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -51,6 +52,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("deprecation")
+@MatchStatisticsClass(PixelDropStatistics.class)
 public class PixelDrop extends TeamlessMechanic {
 	private static final String PREFIX = StringUtils.getPrefix("PixelDrop");
 	private static final int MAX_ROUNDS = 10;
@@ -366,6 +368,8 @@ public class PixelDrop extends TeamlessMechanic {
 			guessed.add(minigamer);
 			minigamer.scored(Math.max(1, 1 + (4 - guessed.size())));
 			match.getScoreboard().update();
+
+			match.getMatchStatistics().award(PixelDropStatistics.CORRECT_GUESSES, minigamer);
 
 			if (minigamers.size() == guessed.size()) {
 				endTheRound(match);

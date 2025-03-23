@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
 import gg.projecteden.nexus.features.minigames.models.exceptions.MinigameException;
+import gg.projecteden.nexus.features.minigames.models.statistics.HoleInTheWallStatistics;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ColorType;
@@ -273,6 +274,9 @@ public class HoleInTheWallMatchData extends MatchData {
 				player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1F, 2F);
 			else
 				player.playSound(player.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
+
+			if (allCorrect)
+				match.getMatchStatistics().award(HoleInTheWallStatistics.WALLS_PASSED, minigamer);
 
 			if (!isEnding)
 				getMatch().getTasks().wait(10, () -> {

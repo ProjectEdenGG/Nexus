@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
@@ -20,6 +21,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartE
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.FallingBlocksMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import gg.projecteden.nexus.features.minigames.models.statistics.FallingBlocksStatistics;
 import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils;
 import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils.PowerUp;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
@@ -48,7 +50,6 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -72,6 +73,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @SuppressWarnings("unused")
+@MatchStatisticsClass(FallingBlocksStatistics.class)
 public class FallingBlocks extends TeamlessMechanic {
 
 	@Getter
@@ -331,6 +333,7 @@ public class FallingBlocks extends TeamlessMechanic {
 		FallingBlocksMatchData matchData = minigamer.getMatch().getMatchData();
 
 		if (event.getRegion().getId().contains(matchData.ceilingWinRg.getId())) {
+			minigamer.getMatch().getMatchStatistics().award(FallingBlocksStatistics.TIMES_REACHED_TOP, minigamer);
 			minigamer.scored();
 			minigamer.getMatch().end();
 		}
@@ -787,6 +790,7 @@ public class FallingBlocks extends TeamlessMechanic {
 		matchData.spawnedPowerups -= 1;
 
 		new SoundBuilder(Sound.ENTITY_ITEM_PICKUP).location(minigamer.getLocation()).play();
+		match.getMatchStatistics().award(FallingBlocksStatistics.POWER_UPS_COLLECTED, minigamer);
 	}
 
 	private void effectSound(Minigamer minigamer) {

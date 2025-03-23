@@ -32,6 +32,8 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifier;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
+import gg.projecteden.nexus.features.minigames.models.statistics.models.generics.DeathsStat;
+import gg.projecteden.nexus.features.minigames.models.statistics.models.generics.KillsStat;
 import gg.projecteden.nexus.features.minigames.modifiers.NoModifier;
 import gg.projecteden.nexus.features.nameplates.Nameplates;
 import gg.projecteden.nexus.features.nameplates.TeamAssigner;
@@ -240,6 +242,9 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 
 		int taskId = match.getTasks().repeat(0, 1, () -> match.getOnlineMinigamers().forEach(Minigamer::tick));
 		match.getTasks().register(MatchTaskType.TICK, taskId);
+
+		for (Minigamer minigamer : event.getMatch().getMinigamers())
+			minigamer.startTimeTracking();
 	}
 
 	public void begin(@NotNull Match match) {
@@ -259,6 +264,11 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	public void onEnd(@NotNull MatchEndEvent event) {
 		if (event.getMatch().isStarted())
 			announceWinners(event.getMatch());
+
+		for (Minigamer minigamer : event.getMatch().getAllMinigamers())
+			minigamer.stopTimeTracking();
+
+		event.getMatch().getMatchStatistics().report(event.getMatch().getMechanic().getMechanicType());
 	}
 
 	public abstract void processJoin(@NotNull Minigamer minigamer);
@@ -267,12 +277,18 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		Minigamer minigamer = event.getMinigamer();
 		minigamer.getMatch().broadcast("&e" + minigamer.getNickname() + " &3has joined", MinigameMessageType.JOIN);
 		tellMapAndMechanic(minigamer);
+
+		if (event.getMatch().isStarted())
+			minigamer.startTimeTracking();
 	}
 
 	public void onQuit(@NotNull MatchQuitEvent event) {
 		Minigames.debug("Mechanic#onQuit " + event.getMinigamer().getNickname());
 		Minigamer minigamer = event.getMinigamer();
 		minigamer.getMatch().broadcast("&e" + minigamer.getNickname() + " &3has quit", MinigameMessageType.QUIT);
+
+		minigamer.stopTimeTracking();
+
 		if (minigamer.getMatch().isStarted() && shouldBeOver(minigamer.getMatch()))
 			minigamer.getMatch().end();
 	}
@@ -297,6 +313,10 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		Minigamer attacker = event.getAttacker();
 		if (attacker != null)
 			giveKillHeal(attacker);
+
+		event.getMinigamer().getMatch().getMatchStatistics().award(DeathsStat.DEATHS, event.getMinigamer());
+		if (attacker != null)
+			attacker.getMatch().getMatchStatistics().award(KillsStat.KILLS, attacker);
 
 		event.broadcastDeathMessage();
 		if (event.getMatch().getScoreboard() != null)

@@ -1,11 +1,14 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.annotations.Railgun;
+import gg.projecteden.nexus.features.minigames.models.statistics.models.generics.PVPStats;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 @Railgun(cooldownTicks = 0, mustBeGliding = true)
+@MatchStatisticsClass(PVPStats.class)
 public class Dogfighting extends Quake {
 
 	@Override

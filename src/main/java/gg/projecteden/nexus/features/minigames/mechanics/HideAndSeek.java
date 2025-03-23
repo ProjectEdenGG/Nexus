@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
@@ -17,6 +18,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartE
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.HideAndSeekMatchData;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
+import gg.projecteden.nexus.features.minigames.models.statistics.HideAndSeekStatistics;
 import gg.projecteden.nexus.features.resourcepack.models.CustomItemCooldown;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.models.cooldown.Cooldown;
@@ -75,9 +77,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@MatchStatisticsClass(HideAndSeekStatistics.class)
 public class HideAndSeek extends Infection {
 
 	public static final ItemStack SELECTOR_ITEM = new ItemBuilder(Material.NETHER_STAR).name("&3&lSelect your Block").build();

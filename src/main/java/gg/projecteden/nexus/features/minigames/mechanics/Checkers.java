@@ -4,8 +4,10 @@ import com.destroystokyo.paper.ParticleBuilder;
 import com.sk89q.worldedit.math.BlockVector3;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Match;
+import gg.projecteden.nexus.features.minigames.models.MatchStatistics;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.annotations.Scoreboard;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
@@ -55,6 +57,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Scoreboard(sidebarType = MinigameScoreboard.Type.MINIGAMER)
+@MatchStatisticsClass(MatchStatistics.class)
 public class Checkers extends TeamMechanic {
 
 	@Override
@@ -82,6 +85,7 @@ public class Checkers extends TeamMechanic {
 		}
 
 		final Minigamer winner = matchData.getWinnerTeam().getMinigamers(match).get(0);
+		match.getMatchStatistics().award(MatchStatistics.WINS, winner);
 		Minigames.broadcast(winner.getColoredName() + " &3has won &eCheckers");
 	}
 

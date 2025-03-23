@@ -11,8 +11,10 @@ import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
+import gg.projecteden.nexus.features.minigames.models.MatchStatistics;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.annotations.Regenerating;
 import gg.projecteden.nexus.features.minigames.models.annotations.Scoreboard;
 import gg.projecteden.nexus.features.minigames.models.arenas.BattleshipArena;
@@ -25,6 +27,7 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.BattleshipMatchD
 import gg.projecteden.nexus.features.minigames.models.matchdata.BattleshipMatchData.ShipType;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard.Type;
+import gg.projecteden.nexus.features.minigames.models.statistics.BattleshipStatistics;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -82,6 +85,7 @@ TODO
 
 @Regenerating("board")
 @Scoreboard(sidebarType = Type.TEAM)
+@MatchStatisticsClass(BattleshipStatistics.class)
 public class Battleship extends TeamMechanic {
 	private static final String PREFIX = StringUtils.getPrefix("Battleship");
 	public static final String LETTERS = "ABCDEFGHIJ";
@@ -575,6 +579,10 @@ public class Battleship extends TeamMechanic {
 
 		if (matchData.getWinnerTeam() != null)
 			match.broadcast(matchData.getWinnerTeam().getColoredName() + " &3won!");
+
+		matchData.getWinnerTeam().getMinigamers(match).forEach(winner -> {
+			match.getMatchStatistics().award(MatchStatistics.WINS, winner);
+		});
 
 		Tasks.wait(TickTime.SECOND.x(10), () -> super.end(match));
 	}

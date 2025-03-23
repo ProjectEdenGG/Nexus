@@ -50,11 +50,6 @@ public class BlockPartyMatchData extends MatchData {
 	private int eqCurrentFrame = 0;
 	private int discoBallTaskId = -1;
 
-	// Temporary Stats tracking
-	private Map<UUID, Integer> roundsSurvived = new HashMap<>();
-	private Map<UUID, Integer> powerUpsCollected = new HashMap<>();
-	private Map<UUID, Integer> powerUpsUsed = new HashMap<>();
-
 	public BlockPartyMatchData(Match match) {
 		super(match);
 	}

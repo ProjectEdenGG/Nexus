@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.minigames.models.arenas.BattleshipArena;
 import gg.projecteden.nexus.features.minigames.models.exceptions.MinigameException;
 import gg.projecteden.nexus.features.minigames.models.exceptions.NotYourTurnException;
 import gg.projecteden.nexus.features.minigames.models.matchdata.BattleshipMatchData.Grid.Coordinate;
+import gg.projecteden.nexus.features.minigames.models.statistics.BattleshipStatistics;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ColorType;
@@ -161,8 +162,10 @@ public class BattleshipMatchData extends MatchData {
 
 		public void fire() {
 			--health;
-			if (health == 0)
+			if (health == 0) {
 				alive = false;
+				match.getMatchStatistics().award(BattleshipStatistics.SHIPS_SANK, getTurnTeam().getMinigamers(match).get(0));
+			}
 		}
 
 		public String getName() {
@@ -364,6 +367,8 @@ public class BattleshipMatchData extends MatchData {
 
 				fired = true;
 
+				match.getMatchStatistics().award(BattleshipStatistics.SHOTS_FIRED, getTurnTeam().getMinigamers(match).get(0));
+
 				if (!this.equals(aiming))
 					belay();
 				else
@@ -376,6 +381,7 @@ public class BattleshipMatchData extends MatchData {
 				if (state == State.OCCUPIED) {
 					ship.fire();
 					state = State.HIT;
+					match.getMatchStatistics().award(BattleshipStatistics.HITS, getOtherTeam().getMinigamers(match).get(0));
 					match.scored(getOtherTeam());
 				} else
 					state = State.MISS;

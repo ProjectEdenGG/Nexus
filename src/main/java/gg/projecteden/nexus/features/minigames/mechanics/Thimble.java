@@ -12,6 +12,7 @@ import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.arenas.ThimbleArena;
 import gg.projecteden.nexus.features.minigames.models.arenas.ThimbleMap;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
@@ -23,8 +24,13 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.ThimbleMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import gg.projecteden.nexus.features.minigames.models.statistics.ThimbleStatistics;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.FireworkLauncher;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.Getter;
 import org.bukkit.FireworkEffect;
@@ -41,11 +47,15 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 //TODO: Show turn timer to turn player
 //TODO: Gamemode description messages onm lobby join
 
+@MatchStatisticsClass(ThimbleStatistics.class)
 public final class Thimble extends TeamlessMechanic {
 
 	@Getter
@@ -402,6 +412,8 @@ public final class Thimble extends TeamlessMechanic {
 				.launch();
 
 		minigamer.teleportAsync(((ThimbleArena) minigamer.getMatch().getArena()).getCurrentMap().getSpectateLocation());
+
+		minigamer.getMatch().getMatchStatistics().award(ThimbleStatistics.JUMPS_SURVIVED, minigamer);
 
 		mechanic.score(minigamer, blockLocation);
 	}

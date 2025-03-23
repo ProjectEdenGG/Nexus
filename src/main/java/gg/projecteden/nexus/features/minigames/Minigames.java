@@ -15,8 +15,10 @@ import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
+import gg.projecteden.nexus.features.minigames.models.MatchStatistics;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifier;
@@ -71,6 +73,7 @@ public class Minigames extends Feature implements Listener {
 	public void onStart() {
 		Utils.registerSerializables(getPath());
 		registerMatchDatas();
+		registerMatchStatistics();
 		Tasks.async(() -> {
 			ArenaManager.read();
 			Utils.registerListeners(getPath());
@@ -217,6 +220,41 @@ public class Minigames extends Feature implements Listener {
 									Nexus.warn("MatchData " + matchDataType.getSimpleName() + " has no Match constructor");
 								}
 			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	@Getter
+	private static final Map<Mechanic, Constructor<?>> matchStatisticsMap = new HashMap<>();
+
+	public static void registerMatchStatistics() {
+		try {
+			for (MechanicType mechanicType : MechanicType.values())
+				for (Class<? extends Mechanic> superclass : mechanicType.get().getSuperclasses()) {
+					Minigames.debug("Checking class: " + superclass.getSimpleName() + " for MatchStatisticsClass");
+					if (superclass.isAnnotationPresent(MatchStatisticsClass.class)) {
+						Class<? extends MatchStatistics> matchStatisticsType = superclass.getAnnotation(MatchStatisticsClass.class).value();
+						Minigames.debug("Found MatchStatistics: " + matchStatisticsType.getSimpleName());
+						try {
+							Constructor<?> constructor = matchStatisticsType.getConstructor(Match.class);
+							constructor.setAccessible(true);
+							matchStatisticsMap.put(mechanicType.get(), constructor);
+							break;
+						} catch (NoSuchMethodException ex) {
+							Nexus.warn("MatchStatistics " + matchStatisticsType.getSimpleName() + " has no Match constructor");
+						}
+					} else {
+						try {
+							Constructor<?> constructor = MatchStatistics.class.getConstructor(Match.class);
+							constructor.setAccessible(true);
+							matchStatisticsMap.put(mechanicType.get(), constructor);
+						} catch (NoSuchMethodException ex) {
+							Nexus.warn("MatchStatistics class has no Match constructor");
+						}
+					}
+				}
+
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

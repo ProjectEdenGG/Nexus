@@ -8,13 +8,20 @@ import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.menus.spectate.SpectateMenu;
 import gg.projecteden.nexus.features.minigames.menus.spectate.TeamSpectateMenu;
-import gg.projecteden.nexus.features.minigames.models.*;
+import gg.projecteden.nexus.features.minigames.models.Arena;
+import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks;
 import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
+import gg.projecteden.nexus.features.minigames.models.MatchData;
+import gg.projecteden.nexus.features.minigames.models.MatchStatistics;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.Team;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.MultiplayerMechanic;
+import gg.projecteden.nexus.features.minigames.models.statistics.models.generics.PVPStats;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -32,9 +39,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+@MatchStatisticsClass(PVPStats.class)
 public abstract class TeamMechanic extends MultiplayerMechanic {
 	public static final @NotNull Set<String> TEAM_VOICE_CHANNELS = Set.of(
 		DiscordId.VoiceChannel.RED.getId(),
@@ -181,7 +197,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		Map<Team, Integer> scores = match.getScores();
 
 		int winningScore = getWinningScore(scores.values());
-		List<Team> winners = getWinningTeams(winningScore, scores);
+		List<Team> winners = getWinningTeams(winningScore, scores, match);
 
 		String announcement = null;
 		if (winningScore == 0)
@@ -200,12 +216,14 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		Minigames.broadcast(builder);
 	}
 
-	protected @NotNull List<Team> getWinningTeams(int winningScore, @NotNull Map<Team, Integer> scores) {
+	protected @NotNull List<Team> getWinningTeams(int winningScore, @NotNull Map<Team, Integer> scores, Match match) {
 		List<Team> winners = new ArrayList<>();
 
 		for (Team team : scores.keySet())
 			if (scores.getOrDefault(team, 0).equals(winningScore))
 				winners.add(team);
+
+		winners.forEach(team -> team.getMinigamers(match).forEach(minigamer -> match.getMatchStatistics().award(MatchStatistics.WINS, minigamer)));
 
 		return winners;
 	}

@@ -7,6 +7,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.annotations.Scoreboard;
 import gg.projecteden.nexus.features.minigames.models.arenas.ArcheryArena;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
@@ -17,6 +18,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartE
 import gg.projecteden.nexus.features.minigames.models.matchdata.ArcheryMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
+import gg.projecteden.nexus.features.minigames.models.statistics.ArcheryStatistics;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -35,6 +37,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +51,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Scoreboard(sidebarType = MinigameScoreboard.Type.MINIGAMER)
+@MatchStatisticsClass(ArcheryStatistics.class)
 public class Archery extends TeamlessMechanic {
 
 	private static final Material buttonMaterial = Material.POLISHED_BLACKSTONE_BUTTON;
@@ -267,6 +271,21 @@ public class Archery extends TeamlessMechanic {
 	}
 
 	@EventHandler
+	public void onShootArrow(ProjectileLaunchEvent event) {
+		if (!(event.getEntity() instanceof Arrow arrow))
+			return;
+
+		if (!(arrow.getShooter() instanceof Player player))
+			return;
+
+		Minigamer minigamer = Minigamer.of(player);
+		if (!minigamer.isPlaying(this))
+			return;
+
+		minigamer.getMatch().getMatchStatistics().award(ArcheryStatistics.ARROWS_FIRED, minigamer);
+	}
+
+	@EventHandler
 	public void onProjectileHit(ProjectileHitEvent event) {
 		Projectile projectile = event.getEntity();
 		if (!(projectile instanceof Arrow))
@@ -291,6 +310,8 @@ public class Archery extends TeamlessMechanic {
 
 		String color = ColorType.of(hitBlock.getRelative(0, 1, 0).getType()).getName();
 		minigamer.scored(getPoints(color));
+
+		minigamer.getMatch().getMatchStatistics().award(ArcheryStatistics.TARGETS_HIT, minigamer);
 
 		ArcheryMatchData matchData = minigamer.getMatch().getMatchData();
 		projectile.remove();

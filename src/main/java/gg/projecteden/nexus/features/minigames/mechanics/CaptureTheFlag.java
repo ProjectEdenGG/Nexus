@@ -5,10 +5,13 @@ import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.CaptureTheFlagMatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.Flag;
+import gg.projecteden.nexus.features.minigames.models.statistics.CaptureTheFlagStatistics;
+import gg.projecteden.nexus.features.minigames.models.statistics.FlagRushStatistics;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Material;
@@ -20,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.Optional;
 
+@MatchStatisticsClass(CaptureTheFlagStatistics.class)
 public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 	@Override
 	public @NotNull String getName() {
@@ -127,6 +131,8 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 		match.getTasks().cancel(flag.getTaskId());
 
 		minigamer.contributionScored(3);
+
+		minigamer.getMatch().getMatchStatistics().award(CaptureTheFlagStatistics.FLAG_RETURNS, minigamer);
 	}
 
 	private void captureFlag(Minigamer minigamer, Team team) {
@@ -144,6 +150,9 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 
 		Flag flag = matchData.getFlag(team);
 		flag.respawn();
+
+		minigamer.getMatch().getMatchStatistics().award(FlagRushStatistics.FLAG_CAPTURES, minigamer);
+
 		if (shouldBeOver(match))
 			match.end();
 	}
@@ -160,6 +169,8 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 		flag.despawn();
 
 		match.getTasks().cancel(flag.getTaskId());
+
+		minigamer.getMatch().getMatchStatistics().award(FlagRushStatistics.FLAG_PICK_UPS, minigamer);
 	}
 
 	@Override

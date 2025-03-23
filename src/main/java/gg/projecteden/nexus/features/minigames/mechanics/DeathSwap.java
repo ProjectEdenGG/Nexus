@@ -4,13 +4,21 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.DeathSwapMatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.DeathSwapMatchData.Swap;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessVanillaMechanic;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.features.minigames.models.statistics.models.generics.KillsStat;
+import gg.projecteden.nexus.features.minigames.models.statistics.models.generics.PVPStats;
+import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.EntityUtils;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.TitleBuilder;
 import lombok.Getter;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -23,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
+@MatchStatisticsClass(PVPStats.class)
 public final class DeathSwap extends TeamlessVanillaMechanic {
 	@Override
 	public @NotNull String getName() {
@@ -69,6 +78,7 @@ public final class DeathSwap extends TeamlessVanillaMechanic {
 			if (killer != null) {
 				event.setDeathMessage(event.getMinigamer().getColoredName() + " &3was killed by " + killer.getColoredName());
 				killer.scored();
+				killer.getMatch().getMatchStatistics().award(KillsStat.KILLS, killer);
 			}
 		}
 

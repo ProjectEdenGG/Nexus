@@ -2,7 +2,61 @@ package gg.projecteden.nexus.features.minigames.models.mechanics;
 
 import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.minigames.mechanics.*;
+import gg.projecteden.nexus.features.minigames.Minigames;
+import gg.projecteden.nexus.features.minigames.mechanics.Archery;
+import gg.projecteden.nexus.features.minigames.mechanics.Battleship;
+import gg.projecteden.nexus.features.minigames.mechanics.Bingo;
+import gg.projecteden.nexus.features.minigames.mechanics.BlockParty;
+import gg.projecteden.nexus.features.minigames.mechanics.CaptureTheFlag;
+import gg.projecteden.nexus.features.minigames.mechanics.Checkers;
+import gg.projecteden.nexus.features.minigames.mechanics.Connect4;
+import gg.projecteden.nexus.features.minigames.mechanics.DeathSwap;
+import gg.projecteden.nexus.features.minigames.mechanics.Dogfighting;
+import gg.projecteden.nexus.features.minigames.mechanics.Domination;
+import gg.projecteden.nexus.features.minigames.mechanics.Dropper;
+import gg.projecteden.nexus.features.minigames.mechanics.ElytraRacing;
+import gg.projecteden.nexus.features.minigames.mechanics.FallingBlocks;
+import gg.projecteden.nexus.features.minigames.mechanics.FlagRush;
+import gg.projecteden.nexus.features.minigames.mechanics.FourTeamDeathmatch;
+import gg.projecteden.nexus.features.minigames.mechanics.FreeForAll;
+import gg.projecteden.nexus.features.minigames.mechanics.GoldRush;
+import gg.projecteden.nexus.features.minigames.mechanics.GrabAJumbuck;
+import gg.projecteden.nexus.features.minigames.mechanics.HideAndSeek;
+import gg.projecteden.nexus.features.minigames.mechanics.HoleInTheWall;
+import gg.projecteden.nexus.features.minigames.mechanics.HungerGames;
+import gg.projecteden.nexus.features.minigames.mechanics.IceRally;
+import gg.projecteden.nexus.features.minigames.mechanics.Infection;
+import gg.projecteden.nexus.features.minigames.mechanics.Juggernaut;
+import gg.projecteden.nexus.features.minigames.mechanics.KangarooJumping;
+import gg.projecteden.nexus.features.minigames.mechanics.KingOfTheHill;
+import gg.projecteden.nexus.features.minigames.mechanics.Mastermind;
+import gg.projecteden.nexus.features.minigames.mechanics.Maze;
+import gg.projecteden.nexus.features.minigames.mechanics.Megamind;
+import gg.projecteden.nexus.features.minigames.mechanics.MonsterMaze;
+import gg.projecteden.nexus.features.minigames.mechanics.Multimind;
+import gg.projecteden.nexus.features.minigames.mechanics.Murder;
+import gg.projecteden.nexus.features.minigames.mechanics.OneInTheQuiver;
+import gg.projecteden.nexus.features.minigames.mechanics.OneVsOne;
+import gg.projecteden.nexus.features.minigames.mechanics.Paintball;
+import gg.projecteden.nexus.features.minigames.mechanics.Parkour;
+import gg.projecteden.nexus.features.minigames.mechanics.PixelDrop;
+import gg.projecteden.nexus.features.minigames.mechanics.PixelPainters;
+import gg.projecteden.nexus.features.minigames.mechanics.Quake;
+import gg.projecteden.nexus.features.minigames.mechanics.Siege;
+import gg.projecteden.nexus.features.minigames.mechanics.Spleef;
+import gg.projecteden.nexus.features.minigames.mechanics.Splegg;
+import gg.projecteden.nexus.features.minigames.mechanics.TNTRun;
+import gg.projecteden.nexus.features.minigames.mechanics.TNTTag;
+import gg.projecteden.nexus.features.minigames.mechanics.TeamDeathmatch;
+import gg.projecteden.nexus.features.minigames.mechanics.Thimble;
+import gg.projecteden.nexus.features.minigames.mechanics.TicTacToe;
+import gg.projecteden.nexus.features.minigames.mechanics.TurfWars;
+import gg.projecteden.nexus.features.minigames.mechanics.UHC;
+import gg.projecteden.nexus.features.minigames.mechanics.UncivilEngineers;
+import gg.projecteden.nexus.features.minigames.mechanics.XRun;
+import gg.projecteden.nexus.features.minigames.models.Match;
+import gg.projecteden.nexus.features.minigames.models.MatchStatistics;
+import gg.projecteden.nexus.features.minigames.models.statistics.models.MinigameStatistic;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntity;
 import lombok.Getter;
@@ -12,6 +66,7 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
+import java.util.List;
 
 @Getter
 public enum MechanicType {
@@ -120,6 +175,11 @@ public enum MechanicType {
 
 	public MechanicType getParent() {
 		return of(getField().getAnnotation(Parent.class).value());
+	}
+
+	@SneakyThrows
+	public List<MinigameStatistic> getStatistics() {
+		return ((MatchStatistics) Minigames.getMatchStatisticsMap().get(mechanic).newInstance((Match) null)).getStatistics();
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)

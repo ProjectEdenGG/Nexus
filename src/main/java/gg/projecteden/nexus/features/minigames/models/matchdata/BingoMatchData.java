@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.Challenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.common.IChallenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.common.IChallengeProgress;
+import gg.projecteden.nexus.features.minigames.models.statistics.BingoStatistics;
 import gg.projecteden.nexus.utils.LocationUtils;
 import lombok.Data;
 import org.bukkit.Location;
@@ -121,8 +122,11 @@ public class BingoMatchData extends MatchData {
 					continue;
 
 				final IChallengeProgress progress = matchData.getProgress(minigamer, challenge);
-				if (progress.isCompleted(challenge))
+				if (progress.isCompleted(challenge)) {
+					minigamer.getMatch().getMatchStatistics().award(BingoStatistics.CHALLENGES_COMPLETED, minigamer);
 					completed[row][col] = true;
+				}
+
 
 				var lines = Arrays.asList(BingoLine.ofRow(row), BingoLine.ofCol(col),
 					BingoLine.DIAGONAL_1, BingoLine.DIAGONAL_2); // Always check these because im lazy
@@ -130,6 +134,7 @@ public class BingoMatchData extends MatchData {
 				lines.forEach(line -> {
 					if (line.check(minigamer)) {
 						match.broadcast("&e" + minigamer.getNickname() + " &3got a &6Bingo&3!");
+						minigamer.getMatch().getMatchStatistics().award(BingoStatistics.BINGOS, minigamer);
 						minigamer.scored(1);
 					}
 				});

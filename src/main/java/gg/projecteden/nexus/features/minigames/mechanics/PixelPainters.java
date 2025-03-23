@@ -9,6 +9,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.arenas.PixelPaintersArena;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
@@ -17,6 +18,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEv
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.PixelPaintersMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import gg.projecteden.nexus.features.minigames.models.statistics.PixelPaintersStatistics;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -49,6 +51,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@MatchStatisticsClass(PixelPaintersStatistics.class)
 public class PixelPainters extends TeamlessMechanic {
 	private static final int MAX_ROUNDS = 5;
 	private static final int TIME_BETWEEN_ROUNDS = 8 * 20;
@@ -368,6 +371,7 @@ public class PixelPainters extends TeamlessMechanic {
 			match.broadcast("&e" + minigamer.getNickname() + " &3finished in &e" + guessTime + "&3!");
 
 			matchData.getChecked().add(minigamer);
+			match.getMatchStatistics().award(PixelPaintersStatistics.BUILDS_COMPLETED, minigamer);
 
 			int size = matchData.getChecked().size();
 			minigamer.scored(Math.max(1, 1 + (4 - size)));

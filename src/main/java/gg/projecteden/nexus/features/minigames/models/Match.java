@@ -99,6 +99,7 @@ public class Match implements ForwardingAudience {
 	private final ArrayList<UUID> entityUuids = new ArrayList<>();
 	private final ArrayList<Hologram> holograms = new ArrayList<>();
 	private MatchData matchData;
+	private MatchStatistics matchStatistics;
 	private MatchTasks tasks;
 	private final Set<Location> usedSpawnpoints = new HashSet<>();
 	@Nullable
@@ -185,6 +186,10 @@ public class Match implements ForwardingAudience {
 
 	public <T extends MatchData> T getMatchData() {
 		return (T) matchData;
+	}
+
+	public <T extends MatchStatistics> T getMatchStatistics() {
+		return (T) matchStatistics;
 	}
 
 	public <T extends Mechanic> T getMechanic() {
@@ -393,6 +398,7 @@ public class Match implements ForwardingAudience {
 					return false;
 
 				initializeMatchData();
+				initializeMatchStatistics();
 				tasks = new MatchTasks();
 				scoreboard = MinigameScoreboard.Factory.create(this);
 				//scoreboardTeams = MinigameScoreboard.ITeams.Factory.create(this); // TODO: fix scoreboards
@@ -425,6 +431,20 @@ public class Match implements ForwardingAudience {
 			matchData = (MatchData) matchDataMap.get(arena.getMechanic()).newInstance(this);
 		else
 			matchData = new MatchData(this);
+	}
+
+	@SneakyThrows
+	private void initializeMatchStatistics() {
+		Map<Mechanic, Constructor<?>> matchStatisticsMap = Minigames.getMatchStatisticsMap();
+		if (matchStatisticsMap.isEmpty())
+			Minigames.registerMatchStatistics();
+
+		if (matchStatisticsMap.containsKey(arena.getMechanic())) {
+			Minigames.debug("Setting MatchStatistics class to " + matchStatisticsMap.get(arena.getMechanic()).newInstance(this).getClass().getSimpleName());
+			matchStatistics = (MatchStatistics) matchStatisticsMap.get(arena.getMechanic()).newInstance(this);
+		}
+		else
+			matchStatistics = new MatchStatistics(this);
 	}
 
 	private void startModifierBar() {

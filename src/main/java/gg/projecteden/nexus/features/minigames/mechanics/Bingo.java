@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.listeners.events.LivingEntityDamageByPlayer
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
@@ -30,6 +31,7 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.pro
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.StructureChallengeProgress;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.TameChallengeProgress;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessVanillaMechanic;
+import gg.projecteden.nexus.features.minigames.models.statistics.BingoStatistics;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -74,6 +76,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
+@MatchStatisticsClass(BingoStatistics.class)
 public final class Bingo extends TeamlessVanillaMechanic {
 
 	private static final String NBT_KEY = "nexus.bingo.obtained";

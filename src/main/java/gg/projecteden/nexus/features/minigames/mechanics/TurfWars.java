@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.annotations.Regenerating;
 import gg.projecteden.nexus.features.minigames.models.arenas.TurfWarsArena;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchRegeneratedEvent;
@@ -19,11 +20,22 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.TurfWarsMatchDat
 import gg.projecteden.nexus.features.minigames.models.matchdata.TurfWarsMatchData.FloorRow;
 import gg.projecteden.nexus.features.minigames.models.matchdata.TurfWarsMatchData.State;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
+import gg.projecteden.nexus.features.minigames.models.statistics.TurfWarsStatistics;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.MathUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.TitleBuilder;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.parchment.event.entity.PreEntityShootBowEvent;
-import org.bukkit.*;
+import org.bukkit.EntityEffect;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
@@ -39,11 +51,18 @@ import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 @Regenerating("floor")
+@MatchStatisticsClass(TurfWarsStatistics.class)
 public class TurfWars extends TeamMechanic {
 
 	@Override
@@ -668,6 +687,8 @@ public class TurfWars extends TeamMechanic {
 
 		location.getWorld().spawnParticle(Particle.BLOCK, location.toCenterLocation(), 50, block.getType().createBlockData());
 		block.setType(Material.AIR);
+
+		shooter.getMatch().getMatchStatistics().award(TurfWarsStatistics.BLOCKS_BROKEN, shooter);
 	}
 
 	@EventHandler

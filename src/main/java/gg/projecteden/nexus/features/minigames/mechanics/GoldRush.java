@@ -8,11 +8,13 @@ import com.sk89q.worldedit.world.block.BlockTypes;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.arenas.GoldRushArena;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import gg.projecteden.nexus.features.minigames.models.statistics.GoldRushStatistics;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -34,6 +36,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+@MatchStatisticsClass(GoldRushStatistics.class)
 public final class GoldRush extends TeamlessMechanic {
 
 	@Override
@@ -127,6 +130,8 @@ public final class GoldRush extends TeamlessMechanic {
 		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 		event.setDropItems(false);
+
+		minigamer.getMatch().getMatchStatistics().award(GoldRushStatistics.BLOCKS_BROKEN, minigamer);
 		if (event.getBlock().getType().equals(Material.IRON_ORE)) {
 			trap(event.getBlock());
 			PlayerUtils.send(event.getPlayer(), Minigames.PREFIX + "You mined some fools gold! Next time, click it with the TNT to remove it!");

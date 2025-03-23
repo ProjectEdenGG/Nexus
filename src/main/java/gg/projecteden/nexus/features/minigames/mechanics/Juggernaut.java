@@ -1,11 +1,17 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.minigames.models.*;
+import gg.projecteden.nexus.features.minigames.models.Loadout;
+import gg.projecteden.nexus.features.minigames.models.Match;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.RegenType;
+import gg.projecteden.nexus.features.minigames.models.Team;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.JuggernautMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
+import gg.projecteden.nexus.features.minigames.models.statistics.models.generics.PVPStats;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -15,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+@MatchStatisticsClass(PVPStats.class)
 public class Juggernaut extends TeamMechanic {
 	private static final String TEAM_NAME = "Juggernaut";
 

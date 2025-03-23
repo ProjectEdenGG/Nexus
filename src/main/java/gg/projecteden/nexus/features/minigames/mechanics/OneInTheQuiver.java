@@ -2,8 +2,10 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.RegenType;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import gg.projecteden.nexus.features.minigames.models.statistics.OneInTheQuiverStatistics;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
@@ -12,6 +14,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+@MatchStatisticsClass(OneInTheQuiverStatistics.class)
 public final class OneInTheQuiver extends TeamlessMechanic {
 
 	@Override
@@ -54,6 +57,8 @@ public final class OneInTheQuiver extends TeamlessMechanic {
 		if (victim.isPlaying(this) && attacker.isPlaying(this)) {
 			victim.getPlayer().damage(20, attacker.getPlayer());
 			event.getEntity().remove();
+
+			attacker.getMatch().getMatchStatistics().award(OneInTheQuiverStatistics.ARROW_KILLS, attacker);
 		}
 	}
 

@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEve
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.Flag;
 import gg.projecteden.nexus.features.minigames.models.matchdata.OneFlagCaptureTheFlagMatchData;
+import gg.projecteden.nexus.features.minigames.models.statistics.FlagRushStatistics;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import net.md_5.bungee.api.ChatColor;
@@ -110,6 +111,9 @@ public class FlagRush extends CaptureTheFlagMechanic {
 		matchData.setFlagCarrier(null);
 
 		matchData.getFlag().respawn();
+
+		match.getMatchStatistics().award(FlagRushStatistics.FLAG_CAPTURES, minigamer);
+
 		if (shouldBeOver(match))
 			match.end();
 	}
@@ -126,6 +130,8 @@ public class FlagRush extends CaptureTheFlagMechanic {
 		flag.despawn();
 
 		match.getTasks().cancel(flag.getTaskId());
+
+		match.getMatchStatistics().award(FlagRushStatistics.FLAG_PICK_UPS, minigamer);
 	}
 
 	@Override

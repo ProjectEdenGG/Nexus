@@ -5,6 +5,7 @@ import gg.projecteden.api.interfaces.Nicknamed;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
+import gg.projecteden.nexus.features.minigames.models.MatchStatistics;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginEvent;
@@ -45,6 +46,7 @@ public abstract class MultiplayerMechanic extends Mechanic {
 			victim.died();
 			if (victim.getLives() == 0) {
 				victim.setAlive(false);
+				victim.stopTimeTracking();
 				if (victim.getMatch().getArena().getSpectateLocation() == null)
 					victim.quit();
 				else if (!victim.getMatch().isEnded()) {
@@ -164,6 +166,8 @@ public abstract class MultiplayerMechanic extends Mechanic {
 				winners.add(minigamer);
 			}
 		}
+
+		winners.forEach(winner -> winner.getMatch().getMatchStatistics().award(MatchStatistics.WINS, winner));
 
 		return winners;
 	}

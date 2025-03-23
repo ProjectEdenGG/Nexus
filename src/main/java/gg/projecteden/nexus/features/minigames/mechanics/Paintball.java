@@ -2,9 +2,11 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.annotations.Regenerating;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
+import gg.projecteden.nexus.features.minigames.models.statistics.PaintballStatistics;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
@@ -15,10 +17,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 @Regenerating("regen")
+@MatchStatisticsClass(PaintballStatistics.class)
 public final class Paintball extends TeamMechanic {
 
 	@Override
@@ -100,6 +104,21 @@ public final class Paintball extends TeamMechanic {
 
 		if (replacement != null)
 			block.setType(replacement);
+	}
+
+	@EventHandler
+	public void onShootArrow(ProjectileLaunchEvent event) {
+		if (!(event.getEntity() instanceof Snowball snowball))
+			return;
+
+		if (!(snowball.getShooter() instanceof Player player))
+			return;
+
+		Minigamer minigamer = Minigamer.of(player);
+		if (!minigamer.isPlaying(this))
+			return;
+
+		minigamer.getMatch().getMatchStatistics().award(PaintballStatistics.PAINTBALLS_THROWN, minigamer);
 	}
 
 	// TODO:

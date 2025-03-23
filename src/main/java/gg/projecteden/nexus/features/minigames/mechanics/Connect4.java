@@ -3,8 +3,10 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Match;
+import gg.projecteden.nexus.features.minigames.models.MatchStatistics;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.arenas.Connect4Arena;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.Connect4MatchData;
@@ -14,6 +16,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+@MatchStatisticsClass(MatchStatistics.class)
 public final class Connect4 extends TeamMechanic {
 
 	@Override
@@ -64,6 +67,7 @@ public final class Connect4 extends TeamMechanic {
 		}
 
 		final Minigamer winner = matchData.getWinnerTeam().getAliveMinigamers(match).get(0);
+		match.getMatchStatistics().award(MatchStatistics.WINS, winner);
 		Minigames.broadcast(winner.getColoredName() + " &3has won &e" + match.getArena().getDisplayName());
 	}
 

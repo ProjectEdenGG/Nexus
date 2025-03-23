@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 import gg.projecteden.nexus.features.minigames.mechanics.common.SpleefMechanic;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
+import gg.projecteden.nexus.features.minigames.models.statistics.SpleefStatistics;
 import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,6 +13,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+@MatchStatisticsClass(SpleefStatistics.class)
 public final class Spleef extends SpleefMechanic {
 
 	@Override
@@ -41,7 +44,7 @@ public final class Spleef extends SpleefMechanic {
 
 		Location location = event.getClickedBlock().getLocation();
 
-		if (breakBlock(minigamer.getMatch(), location))
+		if (breakBlock(minigamer.getMatch(), location, minigamer))
 			event.setCancelled(true);
 	}
 

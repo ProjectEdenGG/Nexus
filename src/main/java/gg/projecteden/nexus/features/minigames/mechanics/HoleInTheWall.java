@@ -5,6 +5,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.arenas.HoleInTheWallArena;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
@@ -13,6 +14,7 @@ import gg.projecteden.nexus.features.minigames.models.exceptions.MinigameExcepti
 import gg.projecteden.nexus.features.minigames.models.matchdata.HoleInTheWallMatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.HoleInTheWallMatchData.Track;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import gg.projecteden.nexus.features.minigames.models.statistics.HoleInTheWallStatistics;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeavingRegionEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -38,6 +40,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+@MatchStatisticsClass(HoleInTheWallStatistics.class)
 public class HoleInTheWall extends TeamlessMechanic {
 	@Override
 	public @NotNull String getName() {

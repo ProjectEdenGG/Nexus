@@ -4,11 +4,13 @@ import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.features.minigames.models.Match;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDisplayTimerEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.UHCMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessVanillaMechanic;
+import gg.projecteden.nexus.features.minigames.models.statistics.models.generics.PVPStats;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.BorderUtils.WorldBorderWrapper;
@@ -44,6 +46,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
+@MatchStatisticsClass(PVPStats.class)
 public class UHC extends TeamlessVanillaMechanic {
 
 	@Override

@@ -2,6 +2,10 @@ package gg.projecteden.nexus.features.api;
 
 import gg.projecteden.nexus.features.api.annotations.Get;
 import gg.projecteden.nexus.features.commands.StaffHallCommand;
+import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
+import gg.projecteden.nexus.features.minigames.models.Arena;
+import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
+import gg.projecteden.nexus.features.minigames.models.statistics.models.MinigameStatistic;
 import gg.projecteden.nexus.features.recipes.functionals.InvisibleItemFrame;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
@@ -191,19 +195,31 @@ public class Controller {
 		return Map.of("players", players);
 	}
 
-	@Get("/titan/creative/categories")
-	Object customBlocks() {
+	@Get("/titan/creative/categories/{uuid}")
+	Object categories(String uuid) {
+		Nerd nerd = null;
+		if (uuid != null)
+			nerd = Nerd.of(UUID.fromString(uuid));
+
 		List<CustomCreativeItem> categories = new ArrayList<>();
 		categories.add(new CustomCreativeItem(CreativeBrushMenu.getCreativeBrush(), "Project Eden"));
-		categories.addAll(Arrays.asList(CustomBlockUtils.getCreativeCategories()));
+
+		if (nerd != null && nerd.getRank().gte(Rank.BUILDER)) // TODO CUSTOM BLOCKS: REMOVE
+			categories.addAll(Arrays.asList(CustomBlockUtils.getCreativeCategories()));
+
 		categories.addAll(Arrays.asList(DecorationUtils.getCreativeCategories()));
 		return categories.toArray();
 	}
 
-	@Get("/titan/creative/items")
-	Object decoration() {
+	@Get("/titan/creative/items/{uuid}")
+	Object items(String uuid) {
+		Nerd nerd = null;
+		if (uuid != null)
+			nerd = Nerd.of(UUID.fromString(uuid));
+
 		List<CustomCreativeItem> items = new ArrayList<>();
-		items.addAll(Arrays.asList(CustomBlockUtils.getCreativeItems()));
+		if (nerd != null && nerd.getRank().gte(Rank.BUILDER)) // TODO CUSTOM BLOCKS: REMOVE
+			items.addAll(Arrays.asList(CustomBlockUtils.getCreativeItems()));
 		items.addAll(Arrays.asList(DecorationUtils.getCreativeItems()));
 
 		items.add(new CustomCreativeItem(CreativeBrushMenu.getCreativeBrush(), "Project Eden"));
@@ -211,6 +227,24 @@ public class Controller {
 		items.add(new CustomCreativeItem(new ItemBuilder(Material.LIGHT), "Project Eden"));
 
 		return items.toArray();
+	}
+
+	@Get("/minigames/stats")
+	Object minigameStatistics() {
+		return new ArrayList<>() {{
+			for (MechanicType mechanic : ArenaManager.getAllEnabled().stream().map(Arena::getMechanicType).distinct().sorted().toList()) {
+				Map<String, Object> map = new HashMap<>();
+				map.put("mechanic", mechanic.name().toLowerCase());
+				map.put("title", mechanic.get().getName());
+
+				Map<String, String> stats = new HashMap<>();
+				for (MinigameStatistic stat : mechanic.getStatistics())
+					stats.put(stat.getId(), stat.getTitle());
+				map.put("stats", stats);
+
+				add(map);
+			}
+		}};
 	}
 
 }

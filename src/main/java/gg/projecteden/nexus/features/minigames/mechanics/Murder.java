@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MinigameMessageType;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.annotations.Railgun;
 import gg.projecteden.nexus.features.minigames.models.annotations.Scoreboard;
 import gg.projecteden.nexus.features.minigames.models.arenas.MurderArena;
@@ -18,6 +19,7 @@ import gg.projecteden.nexus.features.minigames.models.exceptions.MinigameExcepti
 import gg.projecteden.nexus.features.minigames.models.matchdata.MurderMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard.Type;
+import gg.projecteden.nexus.features.minigames.models.statistics.MurderStatistics;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -73,6 +75,7 @@ import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Railgun
 @Scoreboard(teams = false, sidebarType = Type.MINIGAMER)
+@MatchStatisticsClass(MurderStatistics.class)
 public class Murder extends TeamMechanic {
 
 	private static final TextColor DRUNKARD_COLOR = TextColor.color(0xAD7A13);
@@ -178,17 +181,38 @@ public class Murder extends TeamMechanic {
 		Minigamer hero = matchData.getHero();
 
 		JsonBuilder builder = new JsonBuilder();
-		if (!murderer.isAlive())
+		if (!murderer.isAlive()) {
 			builder.next(murderer.getNickname(), NamedTextColor.RED)
-					.next(" has been stopped by ")
-					.next(hero.getNickname(), NamedTextColor.BLUE)
-					.next(" on ");
-		else if (match.getTimer().getTime() != 0)
+				.next(" has been stopped by ")
+				.next(hero.getNickname(), NamedTextColor.BLUE)
+				.next(" on ");
+
+			matchData.getMatch().getMatchStatistics().award(MurderStatistics.GUNNER_SHUTDOWNS, hero);
+			match.getAliveMinigamers().stream()
+				.filter(minigamer -> isInnocent(minigamer) || isGunner(minigamer))
+				.forEach(minigamer -> {
+					match.getMatchStatistics().award(MurderStatistics.INNOCENT_WINS, minigamer);
+					match.getMatchStatistics().award(MurderStatistics.WINS, minigamer);
+				});
+		}
+		else if (match.getTimer().getTime() != 0) {
 			builder.next(murderer.getNickname(), NamedTextColor.RED).next(" has won on ");
-		else
+			matchData.getMatch().getMatchStatistics().award(MurderStatistics.MURDERER_WINS, murderer);
+
+			matchData.getMatch().getMatchStatistics().award(MurderStatistics.WINS, murderer);
+		}
+		else {
 			builder.content("The ")
-					.next("innocents", NamedTextColor.BLUE)
-					.next(" have won ");
+				.next("innocents", NamedTextColor.BLUE)
+				.next(" have won ");
+
+			match.getAliveMinigamers().stream()
+				.filter(minigamer -> isInnocent(minigamer) || isGunner(minigamer))
+				.forEach(minigamer -> {
+					match.getMatchStatistics().award(MurderStatistics.INNOCENT_WINS, minigamer);
+					match.getMatchStatistics().award(MurderStatistics.WINS, minigamer);
+				});
+		}
 
 		Minigames.broadcast(builder.next(match.getArena()).build());
 	}
@@ -205,6 +229,7 @@ public class Murder extends TeamMechanic {
 					originalEvent.getEntityType() == EntityType.PLAYER &&
 					event.getAttacker().getPlayer().getInventory().getItemInMainHand().getType() == Material.IRON_SWORD
 			) {
+				event.getAttacker().getMatch().getMatchStatistics().award(MurderStatistics.MURDERER_KILLS, event.getAttacker());
 				// Staby-stab
 				kill(event.getMinigamer());
 			}

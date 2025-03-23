@@ -5,8 +5,10 @@ import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.matchdata.Flag;
 import gg.projecteden.nexus.features.minigames.models.matchdata.OneFlagCaptureTheFlagMatchData;
+import gg.projecteden.nexus.features.minigames.models.statistics.CaptureTheFlagStatistics;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
@@ -20,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
+@MatchStatisticsClass(CaptureTheFlagStatistics.class)
 public final class Siege extends FlagRush {
 
 	@Override
@@ -105,6 +108,7 @@ public final class Siege extends FlagRush {
 			flag.respawn();
 			match.getTasks().cancel(flag.getTaskId());
 		}
+		match.getMatchStatistics().award(CaptureTheFlagStatistics.FLAG_RETURNS, minigamer);
 	}
 
 }

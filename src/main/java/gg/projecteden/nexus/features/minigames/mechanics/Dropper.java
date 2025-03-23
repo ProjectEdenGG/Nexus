@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.arenas.DropperArena;
 import gg.projecteden.nexus.features.minigames.models.arenas.DropperMap;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
@@ -10,6 +11,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.DropperMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import gg.projecteden.nexus.features.minigames.models.statistics.DropperStatistics;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
 import gg.projecteden.nexus.utils.RandomUtils;
 import org.bukkit.Material;
@@ -21,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+@MatchStatisticsClass(DropperStatistics.class)
 public class Dropper extends TeamlessMechanic {
 	private static final int ROUNDS = 5;
 
@@ -104,6 +107,7 @@ public class Dropper extends TeamlessMechanic {
 	public void onDeath(@NotNull MinigamerDeathEvent event) {
 		event.showDeathMessage(false);
 		toSpawnpoint(event.getMinigamer());
+		event.getMatch().getMatchStatistics().award(DropperStatistics.DEATHS, event.getMinigamer());
 	}
 
 	@Override
@@ -135,6 +139,7 @@ public class Dropper extends TeamlessMechanic {
 		minigamer.scored(Math.max(1, 1 + (4 - size)));
 
 		match.broadcast(minigamer.getNickname() + " reached the bottom");
+		match.getMatchStatistics().award(DropperStatistics.LEVELS_PASSED, minigamer);
 
 		if (matchData.getFinished().size() == match.getAliveMinigamers().size())
 			match.getTimer().setTime(6);
