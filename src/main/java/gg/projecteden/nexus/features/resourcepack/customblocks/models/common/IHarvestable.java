@@ -41,10 +41,6 @@ public interface IHarvestable {
 		return false;
 	}
 
-	default boolean prefersSilkTouchForDrops() {
-		return false;
-	}
-
 	default double getBaseDiggingSpeedWithPreferredTool(ItemStack tool) {
 		final ToolGrade toolGrade = ToolGrade.of(tool);
 		if (toolGrade != null)
@@ -172,5 +168,4 @@ public interface IHarvestable {
 
 		return drops;
 	}
-
 }

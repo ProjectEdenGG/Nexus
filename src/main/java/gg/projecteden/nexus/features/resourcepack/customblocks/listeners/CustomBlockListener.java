@@ -539,16 +539,19 @@ public class CustomBlockListener implements Listener {
 			Block block = explodedBlock.getBlock();
 			CustomBlock customBlock = explodedBlock.getCustomBlock();
 
-			net.minecraft.world.item.ItemStack droppedItem = NMSUtils.toNMS(customBlock.get().getItemStack());
-			new HashMap<>(droppedItems).forEach((_block, _item) -> {
-				if (ItemEntity.areMergable(droppedItem, _item)) {
-					_item = ItemEntity.merge(_item, droppedItem, 16);
-					droppedItems.put(_block, _item);
-				}
-			});
+			List<ItemStack> drops = customBlock.get().getExplosionDrops();
+			for (ItemStack item : drops) {
+				net.minecraft.world.item.ItemStack droppedItem = NMSUtils.toNMS(item);
+				new HashMap<>(droppedItems).forEach((_block, _item) -> {
+					if (ItemEntity.areMergable(droppedItem, _item)) {
+						_item = ItemEntity.merge(_item, droppedItem, 16);
+						droppedItems.put(_block, _item);
+					}
+				});
 
-			if (!droppedItem.isEmpty())
-				droppedItems.put(block, droppedItem);
+				if (!droppedItem.isEmpty())
+					droppedItems.put(block, droppedItem);
+			}
 		}
 
 		// Set material to air, update physics
@@ -574,7 +577,7 @@ public class CustomBlockListener implements Listener {
 		BlockFace clickedFace = event.getBlockFace();
 		Block preBlock = clickedBlock.getRelative(clickedFace);
 		boolean didClickedCustomBlock = false;
-		boolean isInteractable = clickedBlock.getType().isInteractable() || MaterialTag.INTERACTABLES.isTagged(clickedBlock);
+		boolean isInteractable = MaterialTag.INTERACTABLES.isTagged(clickedBlock);
 
 		CustomBlockUtils.debug(player, "&e- clicked block material is " + clickedBlock.getType());
 
@@ -632,7 +635,7 @@ public class CustomBlockListener implements Listener {
 				CustomBlockUtils.logPlacement(player, preBlock, CustomBlock.from(itemInHand));
 			}
 		} else
-			return placeVanillaBlock(event, player, hand, preBlock, didClickedCustomBlock, itemInHand);
+			return placeVanillaBlock(event, player, hand, preBlock, clickedBlock, didClickedCustomBlock, itemInHand);
 
 		return true;
 	}
@@ -691,7 +694,7 @@ public class CustomBlockListener implements Listener {
 	}
 
 	private boolean placeVanillaBlock(PlayerInteractEvent event, Player player, EquipmentSlot hand,
-									  Block preBlock, boolean clickedCustomBlock, ItemStack itemStack) {
+									  Block preBlock, Block clickedBlock, boolean clickedCustomBlock, ItemStack itemStack) {
 		CustomBlockUtils.debug(player, "&e- placing vanilla block");
 
 		if (!clickedCustomBlock) {
@@ -712,6 +715,7 @@ public class CustomBlockListener implements Listener {
 			CustomBlockUtils.debug(player, "&c<- cannot place this block here");
 			return false;
 		}
+		new BlockPlaceEvent(placedBlock, preBlock.getState(), clickedBlock, itemStack, player, true).callEvent();
 		Material material = placedBlock.getType();
 
 		if (hand == EquipmentSlot.HAND)

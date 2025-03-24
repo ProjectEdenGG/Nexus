@@ -38,11 +38,6 @@ public interface ILantern extends IDirectionalNoteBlock, ILightableNoteBlock {
 	}
 
 	@Override
-	default boolean prefersSilkTouchForDrops() {
-		return true;
-	}
-
-	@Override
 	default PistonAction getPistonPushAction() {
 		return PistonAction.PREVENT;
 	}

@@ -108,15 +108,15 @@ public class CustomBlocksFeature extends Feature {
 	@Getter
 	@RequiredArgsConstructor
 	public enum SoundAction {
-		BREAK(1.0),
-		STEP(0.15),
-		PLACE(1.0),
+		BREAK(1.0, 0.8),
+		STEP(0.15, 1.0),
+		PLACE(1.0, 0.8),
 		HIT(0.4, 0.5),
-		FALL(1.0),
+		FALL(1.0, 0.75),
 		;
 
 		private final double volume;
-		private double pitch = 1.0;
+		private double pitch;
 
 		SoundAction(double volume, double pitch) {
 			this.volume = volume;

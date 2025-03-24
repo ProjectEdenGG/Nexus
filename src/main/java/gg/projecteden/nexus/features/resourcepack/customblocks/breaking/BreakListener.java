@@ -96,6 +96,9 @@ public class BreakListener implements Listener {
 		if (event.isCancelled())
 			return;
 
+		if (event.getPlayer().getGameMode() == GameMode.CREATIVE)
+			return;
+
 		CustomBlockUtils.debug(event.getPlayer(), DebugType.CUSTOM_BLOCK_DAMAGE, "CustomBlockBreaking: BlockBreakEvent");
 
 		DamagedBlock damagedBlock = Breaker.get(event.getBlock().getLocation());

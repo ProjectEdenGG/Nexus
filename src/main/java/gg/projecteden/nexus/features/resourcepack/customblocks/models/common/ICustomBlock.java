@@ -22,6 +22,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public interface ICustomBlock extends IHarvestable, IPistonActions {
 	Material itemMaterial = Material.PAPER;
 
@@ -142,4 +144,11 @@ public interface ICustomBlock extends IHarvestable, IPistonActions {
 	}
 
 	boolean equals(@NonNull BlockData blockData, @Nullable BlockFace facing, @NonNull Block underneath);
+
+	default List<ItemStack> getExplosionDrops() {
+		if (this.requiresSilkTouchForDrops())
+			return getNonSilkTouchDrops();
+
+		return List.of(getItemStack());
+	}
 }
