@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 public interface ILightableNoteBlock extends ICustomNoteBlock {
-	int LIGHT_LEVEL = 14; // There's too many edge cases if this is dynamic
+	int LIGHT_LEVEL = 10; // There's too many edge cases if this is dynamic
 
 	@Override
 	default void placeBlock(Player player, EquipmentSlot hand, Block block, Block placeAgainst, BlockFace facing, ItemStack itemInHand) {
