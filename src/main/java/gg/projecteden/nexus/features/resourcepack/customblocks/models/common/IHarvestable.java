@@ -41,6 +41,10 @@ public interface IHarvestable {
 		return false;
 	}
 
+	default boolean dropIngredientsWithoutSilk() {
+		return false;
+	}
+
 	default double getBaseDiggingSpeedWithPreferredTool(ItemStack tool) {
 		final ToolGrade toolGrade = ToolGrade.of(tool);
 		if (toolGrade != null)
@@ -139,7 +143,10 @@ public interface IHarvestable {
 		return requiredToolType.getTools(higherGrades).contains(tool.getType());
 	}
 
-	default List<ItemStack> getNonSilkTouchDrops() {
+	default List<ItemStack> _getNonSilkTouchDrops() {
+		if (!dropIngredientsWithoutSilk())
+			return Collections.emptyList();
+
 		NexusRecipe nexusRecipe = CustomBlock.getRecipes().get(this.getClass());
 		if (nexusRecipe == null) {
 			return null;

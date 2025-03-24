@@ -29,11 +29,16 @@ public interface ILantern extends IDirectionalNoteBlock, ILightableNoteBlock {
 
 	@Override
 	default boolean requiresCorrectToolForDrops() {
-		return true;
+		return false;
 	}
 
 	@Override
 	default boolean requiresSilkTouchForDrops() {
+		return true;
+	}
+
+	@Override
+	default boolean dropIngredientsWithoutSilk() {
 		return true;
 	}
 

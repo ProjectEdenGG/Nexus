@@ -146,8 +146,9 @@ public interface ICustomBlock extends IHarvestable, IPistonActions {
 	boolean equals(@NonNull BlockData blockData, @Nullable BlockFace facing, @NonNull Block underneath);
 
 	default List<ItemStack> getExplosionDrops() {
-		if (this.requiresSilkTouchForDrops())
-			return getNonSilkTouchDrops();
+		if (this.requiresSilkTouchForDrops()) {
+			return _getNonSilkTouchDrops();
+		}
 
 		return List.of(getItemStack());
 	}
