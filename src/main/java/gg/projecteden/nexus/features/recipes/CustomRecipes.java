@@ -630,6 +630,10 @@ public class CustomRecipes extends Feature implements Listener {
 	public void onCraftWithBoatOrMinecart(CraftItemEvent event) {
 		ItemStack[] matrix = event.getInventory().getMatrix();
 
+		if (event.getRecipe() instanceof Keyed keyed)
+			if (!keyed.getKey().getNamespace().equals(Nexus.class.getSimpleName().toLowerCase()))
+				return;
+
 		for (int i = 0; i < matrix.length; i++) {
 			ItemStack itemStack = matrix[i];
 			if (!Nullables.isNullOrAir(itemStack))
