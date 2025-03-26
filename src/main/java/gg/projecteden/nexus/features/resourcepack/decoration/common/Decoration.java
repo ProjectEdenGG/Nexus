@@ -208,7 +208,7 @@ public class Decoration {
 		}
 
 		DecorationEntityData.of(itemFrame).setProcessDestroy(true);
-		new HangingBreakByEntityEvent(itemFrame, player, RemoveCause.ENTITY).callEvent();
+		new HangingBreakByEntityEvent(itemFrame, player, RemoveCause.ENTITY).callEvent(); // For CoreProtect
 
 		ItemFrameRotation rotation = getRotation();
 		BlockFace finalFace = BlockFace.UP;
@@ -341,7 +341,7 @@ public class Decoration {
 
 		DecorationLang.debug(player, "placed");
 		new DecorationPlacedEvent(player, decoration, finalItem, finalFace, finalRotation, itemFrame.getLocation()).callEvent();
-		new HangingPlaceEvent(itemFrame, player, block, finalFace, hand, finalItem).callEvent();
+		new HangingPlaceEvent(itemFrame, player, block, finalFace, hand, finalItem).callEvent(); // For CoreProtect
 		return true;
 	}
 

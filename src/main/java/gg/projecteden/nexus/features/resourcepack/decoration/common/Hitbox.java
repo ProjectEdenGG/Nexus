@@ -226,6 +226,11 @@ public class Hitbox {
 	}
 
 	public static void place(Player player, List<Hitbox> hitboxes, Location origin, BlockFace face) {
+		/*
+			Until CoreProtect is able to maintain item frame rotation & visibility on roll back, do not log hitbox blocks
+			Hitbox blocks are dependent on item frame rotation for placement & removal
+		 */
+
 		hitboxes = rotateHitboxes(hitboxes, face);
 
 		for (Hitbox hitbox : hitboxes) {
@@ -246,6 +251,11 @@ public class Hitbox {
 	}
 
 	public static void destroy(Player player, Decoration decoration, BlockFace face) {
+		/*
+			Until CoreProtect is able to maintain item frame rotation & visibility on roll back, do not log hitbox blocks
+			Hitbox blocks are dependent on item frame rotation for placement & removal
+		 */
+
 		final List<Hitbox> hitboxes = rotateHitboxes(decoration.getConfig().getHitboxes(), face);
 
 		for (Hitbox hitbox : hitboxes) {
