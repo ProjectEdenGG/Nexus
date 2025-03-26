@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
+import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
@@ -9,11 +10,14 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.Deco
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Addition;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Seat;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPaintEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlacedEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPrePlaceEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationRotateEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
@@ -31,6 +35,8 @@ import io.papermc.paper.entity.TeleportFlag.EntityState;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -41,6 +47,11 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.hanging.HangingBreakEvent;
+import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
+import org.bukkit.event.hanging.HangingPlaceEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,16 +63,17 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Decoration {
 	private final DecorationConfig config;
+	@Setter
 	private ItemFrame itemFrame;
 	private final Rotation bukkitRotation;
 	private Boolean canEdit;
 
-	public Decoration(DecorationConfig config, ItemFrame itemFrame) {
-		this(config, itemFrame, itemFrame == null ? null : itemFrame.getRotation(), null);
+	public Decoration(DecorationConfig config) {
+		this(config, null);
 	}
 
-	public void setItemFrame(ItemFrame itemFrame) {
-		this.itemFrame = itemFrame;
+	public Decoration(DecorationConfig config, @Nullable ItemFrame itemFrame) {
+		this(config, itemFrame, itemFrame == null ? null : itemFrame.getRotation(), null);
 	}
 
 	public Location getOrigin() {
@@ -147,7 +159,6 @@ public class Decoration {
 
 		return frameItem;
 	}
-
 	public @Nullable ItemFrameRotation getRotation() {
 		if (!isValidFrame())
 			return null;
@@ -155,21 +166,24 @@ public class Decoration {
 		return ItemFrameRotation.of(itemFrame);
 	}
 
-	public boolean destroy(@Nullable Player player, BlockFace blockFace, Player debugger) {
+	public boolean destroy(@NonNull Player player, BlockFace blockFace) {
+		NBT.modifyPersistentData(itemFrame, nbt -> {
+			nbt.setBoolean(DecorationConfig.NBT_DECORATION_KEY, true);
+		});
 		final Decoration decoration = new Decoration(config, itemFrame);
 
 		ItemStack tool = ItemUtils.getTool(player);
 		if (CreativeBrushMenu.isCreativePaintbrush(tool)) {
-			DecorationLang.debug(debugger, "is creative paintbrush (destroy)");
+			DecorationLang.debug(player, "is creative paintbrush (destroy)");
 			if (CreativeBrushMenu.copyDye(player, tool, decoration))
-				DecorationLang.debug(debugger, "  copying dye");
+				DecorationLang.debug(player, "  copying dye");
 			return false;
 		}
 
 		if (config instanceof Seat seat) {
-			DecorationLang.debug(debugger, "is seat");
+			DecorationLang.debug(player, "is seat");
 			if (isValidFrame()) {
-				if (seat.isOccupied(config, itemFrame, debugger)) {
+				if (seat.isOccupied(config, itemFrame, player)) {
 					DecorationError.SEAT_OCCUPIED.send(player);
 					return false;
 				}
@@ -194,6 +208,7 @@ public class Decoration {
 		}
 
 		DecorationEntityData.of(itemFrame).setProcessDestroy(true);
+		new HangingBreakByEntityEvent(itemFrame, player, RemoveCause.ENTITY).callEvent();
 
 		ItemFrameRotation rotation = getRotation();
 		BlockFace finalFace = BlockFace.UP;
@@ -206,11 +221,11 @@ public class Decoration {
 		}
 
 		DecorationLang.debug(player, "Final BlockFace: " + finalFace);
-		Hitbox.destroy(decoration, finalFace, player);
+		Hitbox.destroy(player, decoration, finalFace);
 
 		Location origin = decoration.getOrigin();
 		if (!destroyEvent.getDrops().isEmpty()) {
-			if (!player.getGameMode().equals(GameMode.CREATIVE)) {
+			if (player.getGameMode() != GameMode.CREATIVE) {
 				for (ItemStack item : destroyEvent.getDrops()) {
 					player.getWorld().dropItemNaturally(origin, item);
 				}
@@ -220,7 +235,113 @@ public class Decoration {
 
 		DecorationUtils.getSoundBuilder(config.getBreakSound()).location(origin).play();
 		itemFrame.remove();
+		return true;
+	}
 
+	public boolean place(Player player, EquipmentSlot hand, Block block, BlockFace clickedFace, ItemStack item, ItemFrameRotation rotationOverride, boolean override) {
+		if (!override) { // Extra checks for placing decorations with unique restrictions
+			if (config instanceof Addition addition) {
+				addition.placementError(player);
+				return false;
+			}
+		}
+
+		final Decoration decoration = new Decoration(config);
+		DecorationLang.debug(player, "validating placement...");
+		if (!config.isValidPlacement(block, clickedFace, player)) {
+			DecorationLang.debug(player, "- invalid placement");
+			return false;
+		}
+
+		Location origin = block.getRelative(clickedFace).getLocation().clone();
+
+		ItemFrameRotation frameRotation;
+		boolean placedOnWall = DecorationUtils.getCardinalFaces().contains(clickedFace);
+		boolean canPlaceOnWall = !decoration.getConfig().disabledPlacements.contains(PlacementType.WALL);
+		BlockFace blockFaceOverride = null;
+
+
+		if (placedOnWall && canPlaceOnWall) {
+			frameRotation = ItemFrameRotation.DEGREE_0;
+			blockFaceOverride = frameRotation.getBlockFace();
+			DecorationLang.debug(player, "is placing on wall");
+
+			if (config.isMultiBlock()) {
+				DecorationLang.debug(player, "is multiblock");
+				blockFaceOverride = clickedFace.getOppositeFace();
+				DecorationLang.debug(player, "BlockFace Override 4: " + blockFaceOverride);
+			}
+
+			if (!config.isValidLocation(origin, frameRotation, blockFaceOverride, false, player)) {
+				DecorationLang.debug(player, "- invalid frame location");
+				return false;
+			}
+		} else {
+			frameRotation = config.findValidFrameRotation(origin, ItemFrameRotation.of(player), player);
+		}
+
+		if (rotationOverride != null)
+			frameRotation = rotationOverride;
+
+		if (frameRotation == null) {
+			DecorationLang.debug(player, "- couldn't find a valid frame rotation");
+			return false;
+		}
+		//
+
+
+		if (clickedFace == BlockFace.DOWN) { // Ceiling changes
+			switch (PlayerUtils.getBlockFace(player)) {
+				case EAST, WEST -> frameRotation = frameRotation.getOppositeRotation();
+				case SOUTH_WEST, NORTH_EAST ->
+					frameRotation = frameRotation.rotateCounterClockwise().rotateCounterClockwise();
+				case NORTH_WEST, SOUTH_EAST -> frameRotation = frameRotation.rotateClockwise().rotateClockwise();
+			}
+		}
+
+		DecorationLang.debug(player, "frameRotation = " + frameRotation.name());
+
+		DecorationPrePlaceEvent prePlaceEvent = new DecorationPrePlaceEvent(player, decoration, item, clickedFace, frameRotation);
+		if (!prePlaceEvent.callEvent()) {
+			DecorationLang.debug(player, "&6DecorationPrePlaceEvent was cancelled");
+			return false;
+		}
+
+		ItemStack finalItem = config.getFrameItem(player, prePlaceEvent.getItem());
+		ItemUtils.subtract(player, item);
+
+		final BlockFace finalFace = prePlaceEvent.getAttachedFace();
+		final ItemFrameRotation finalRotation = prePlaceEvent.getRotation();
+
+		ItemFrame itemFrame = block.getWorld().spawn(origin, ItemFrame.class, _itemFrame -> {
+			_itemFrame.customName(null);
+			_itemFrame.setCustomNameVisible(false);
+			_itemFrame.setFacingDirection(finalFace, true);
+			_itemFrame.setRotation(finalRotation.getRotation());
+			_itemFrame.setVisible(false);
+			_itemFrame.setGlowing(false);
+			_itemFrame.setSilent(true);
+			_itemFrame.setItem(finalItem, false);
+		});
+		NBT.modifyPersistentData(itemFrame, nbt -> {
+			nbt.setBoolean(DecorationConfig.NBT_DECORATION_KEY, true);
+		});
+
+		decoration.setItemFrame(itemFrame);
+
+		BlockFace placeFace = frameRotation.getBlockFace();
+		if (blockFaceOverride != null) {
+			placeFace = blockFaceOverride;
+			DecorationLang.debug(player, "BlockFace Override 3: " + blockFaceOverride);
+		}
+
+		Hitbox.place(player, config.getHitboxes(), origin, placeFace);
+
+		DecorationUtils.getSoundBuilder(config.hitSound).location(origin).play();
+
+		DecorationLang.debug(player, "placed");
+		new DecorationPlacedEvent(player, decoration, finalItem, finalFace, finalRotation, itemFrame.getLocation()).callEvent();
+		new HangingPlaceEvent(itemFrame, player, block, finalFace, hand, finalItem).callEvent();
 		return true;
 	}
 

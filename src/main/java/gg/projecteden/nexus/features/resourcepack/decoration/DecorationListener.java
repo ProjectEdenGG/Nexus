@@ -237,7 +237,7 @@ public class DecorationListener implements Listener {
 				.blockFaceOverride(itemFrame.getAttachedFace())
 				.build();
 
-		boolean cancel = destroy(data, player);
+		boolean cancel = destroy(data);
 		if (cancel)
 			event.setCancelled(true);
 	}
@@ -283,7 +283,7 @@ public class DecorationListener implements Listener {
 		boolean cancel = false;
 
 		switch (event.getAction()) {
-			case LEFT_CLICK_BLOCK -> cancel = destroy(data, player);
+			case LEFT_CLICK_BLOCK -> cancel = destroy(data);
 			case RIGHT_CLICK_BLOCK -> {
 				boolean shouldInteract = false;
 				if (data.isSpecialTool())
@@ -379,7 +379,7 @@ public class DecorationListener implements Listener {
 	//
 
 	// Returning whether to cancel interact event
-	boolean destroy(DecorationInteractData data, Player debugger) {
+	boolean destroy(DecorationInteractData data) {
 		Player player = data.getPlayer();
 		DecorationLang.debug(player, "try destroy");
 		if (!data.isDecorationValid()) {
@@ -430,9 +430,9 @@ public class DecorationListener implements Listener {
 			data.setBlockFaceOverride(null);
 
 		if (data.getBlockFaceOverride() != null)
-			DecorationLang.debug(debugger, "BlockFace Override 2: " + data.getBlockFaceOverride());
+			DecorationLang.debug(player, "BlockFace Override 2: " + data.getBlockFaceOverride());
 
-		data.destroy(debugger);
+		data.destroy();
 		return true;
 	}
 
@@ -468,7 +468,7 @@ public class DecorationListener implements Listener {
 			return false;
 		}
 
-		data.setDecoration(new Decoration(config, null));
+		data.setDecoration(new Decoration(config));
 
 		if (DecorationCooldown.PLACE.isOnCooldown(data.getPlayer())) {
 			DecorationLang.debug(data.getPlayer(), "&cslow down (place)");

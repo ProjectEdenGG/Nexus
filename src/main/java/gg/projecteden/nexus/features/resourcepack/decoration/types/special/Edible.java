@@ -202,7 +202,7 @@ public class Edible extends DecorationConfig implements MultiState, CraftableDec
 	}
 
 	private static void breakEdible(Player player, Decoration decoration) {
-		decoration.destroy(player, BlockFace.UP, player);
+		decoration.destroy(player, BlockFace.UP);
 	}
 
 	static {

@@ -827,7 +827,7 @@ public enum CustomBlock implements Keyed {
 
 		Location location = block.getLocation();
 		if (source != null)
-			CustomBlockUtils.logRemoval(source, location, block, this);
+			CustomBlockUtils.logRemoval(source, block, this);
 
 		if (source != null && source.getGameMode() == GameMode.CREATIVE) {
 			dropItem = false;

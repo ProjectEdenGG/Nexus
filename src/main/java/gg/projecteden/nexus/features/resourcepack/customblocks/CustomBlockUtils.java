@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.i
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.tall.ITall;
 import gg.projecteden.nexus.features.titan.models.CustomCreativeItem;
 import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.CoreProtectUtils;
 import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.Debug.DebugType;
 import gg.projecteden.nexus.utils.Nullables;
@@ -253,20 +254,16 @@ public class CustomBlockUtils {
 	}
 
 	// CoreProtect
-	public static void logPlacementVanilla(Player player, Block block) {
-		Nexus.getCoreProtectAPI().logPlacement(player.getName(), block.getLocation(), block.getType(), block.getBlockData());
-	}
-
 	public static void logPlacement(Player player, Block block, CustomBlock customBlock) {
-		Nexus.getCoreProtectAPI().logPlacement(player.getName(), block.getLocation(), block.getType(), block.getBlockData());
+		CoreProtectUtils.logPlacement(player, block);
 	}
 
-	public static void logRemoval(Player player, Location location, Block block, CustomBlock customBlock) {
-		Nexus.getCoreProtectAPI().logRemoval(player.getName(), location, block.getType(), block.getBlockData());
+	public static void logRemoval(Player player, Block block, CustomBlock customBlock) {
+		CoreProtectUtils.logRemoval(player, block);
 	}
 
-	public static void logRemoval(String source, Location location, Block block, CustomBlock customBlock) {
-		Nexus.getCoreProtectAPI().logRemoval(source, location, block.getType(), block.getBlockData());
+	public static void logRemoval(String source, Block block, CustomBlock customBlock) {
+		CoreProtectUtils.logRemoval(source, block);
 	}
 
 	// Debug

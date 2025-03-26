@@ -17,6 +17,7 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.c
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.IWaterLogged;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
+import gg.projecteden.nexus.utils.CoreProtectUtils;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -525,7 +526,7 @@ public class CustomBlockListener implements Listener {
 		// Log
 		for (ExplodedCustomBlock explodedBlock : explodedBlocks) {
 			Block block = explodedBlock.getBlock();
-			CustomBlockUtils.logRemoval("#" + explodedBlock.getSourceType().getName(), block.getLocation(), block, explodedBlock.getCustomBlock());
+			CustomBlockUtils.logRemoval("#" + explodedBlock.getSourceType().getName(), block, explodedBlock.getCustomBlock());
 		}
 
 		// Set to temp material
@@ -723,7 +724,7 @@ public class CustomBlockListener implements Listener {
 		else if (hand == EquipmentSlot.OFF_HAND)
 			player.swingOffHand();
 
-		CustomBlockUtils.logPlacementVanilla(player, placedBlock);
+		CoreProtectUtils.logPlacement(player, placedBlock);
 		CustomBlockUtils.debug(player, "&a- placed block: " + StringUtils.camelCase(material));
 		CustomBlockSounds.tryPlaySound(player, SoundAction.PLACE, preBlock);
 

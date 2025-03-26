@@ -280,7 +280,7 @@ public class Catalog implements Listener {
 		if (price == null)
 			return;
 
-		DecorationSpawnEvent spawnEvent = new DecorationSpawnEvent(viewer, new Decoration(config, null), itemStack, isSkull);
+		DecorationSpawnEvent spawnEvent = new DecorationSpawnEvent(viewer, new Decoration(config), itemStack, isSkull);
 		if (!spawnEvent.callEvent())
 			return;
 

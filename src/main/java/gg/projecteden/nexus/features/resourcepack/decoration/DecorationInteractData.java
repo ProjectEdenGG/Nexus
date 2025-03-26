@@ -26,6 +26,7 @@ import org.bukkit.block.data.type.Slab.Type;
 import org.bukkit.block.data.type.Snow;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Set;
@@ -34,6 +35,7 @@ import java.util.Set;
 public class DecorationInteractData {
 	public static final int MAX_RADIUS = 4; // Since model max size = 3x3x3 blocks, 4 should be enough
 	private Player player;
+	private EquipmentSlot hand;
 	private Decoration decoration;
 	private Block block;
 	private BlockFace blockFace;
@@ -41,12 +43,13 @@ public class DecorationInteractData {
 	private BlockFace blockFaceOverride;
 
 	public DecorationInteractData(Block block, BlockFace blockFace) {
-		this(null, null, block, blockFace, null, null);
+		this(null, EquipmentSlot.HAND, null, block, blockFace, null, null);
 	}
 
 	@Builder
-	public DecorationInteractData(Player player, Decoration decoration, Block block, BlockFace blockFace, BlockFace blockFaceOverride, ItemStack tool) {
+	public DecorationInteractData(Player player, EquipmentSlot hand, Decoration decoration, Block block, BlockFace blockFace, BlockFace blockFaceOverride, ItemStack tool) {
 		this.player = player;
+		this.hand = hand;
 		this.decoration = decoration;
 		this.block = block;
 		this.blockFace = blockFace;
@@ -84,14 +87,14 @@ public class DecorationInteractData {
 		return decoration.interact(player, block, type, getTool());
 	}
 
-	public boolean destroy(Player debugger) {
+	public boolean destroy() {
 		DecorationLang.debug(player, "destroying...");
-		return decoration.destroy(player, getBlockFaceOverride(), debugger);
+		return decoration.destroy(player, getBlockFaceOverride());
 	}
 
 	public boolean place() {
 		DecorationLang.debug(player, "placing...");
-		boolean placed = decoration.getConfig().place(player, block, blockFace, tool);
+		boolean placed = decoration.place(player, hand, block, blockFace, tool, null, false);
 		if (!placed) {
 			DecorationLang.debug(player, "failed to place decoration");
 			player.swingMainHand();

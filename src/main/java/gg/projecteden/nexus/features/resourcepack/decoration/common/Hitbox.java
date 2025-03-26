@@ -225,7 +225,7 @@ public class Hitbox {
 		return result;
 	}
 
-	public static void place(List<Hitbox> hitboxes, Location origin, BlockFace face) {
+	public static void place(Player player, List<Hitbox> hitboxes, Location origin, BlockFace face) {
 		hitboxes = rotateHitboxes(hitboxes, face);
 
 		for (Hitbox hitbox : hitboxes) {
@@ -245,11 +245,7 @@ public class Hitbox {
 		}
 	}
 
-	public static void destroy(Decoration decoration, Player debugger) {
-		destroy(decoration, decoration.getRotation().getBlockFace(), debugger);
-	}
-
-	public static void destroy(Decoration decoration, BlockFace face, Player debugger) {
+	public static void destroy(Player player, Decoration decoration, BlockFace face) {
 		final List<Hitbox> hitboxes = rotateHitboxes(decoration.getConfig().getHitboxes(), face);
 
 		for (Hitbox hitbox : hitboxes) {

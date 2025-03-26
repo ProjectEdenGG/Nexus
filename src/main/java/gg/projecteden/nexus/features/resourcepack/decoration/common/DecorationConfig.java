@@ -36,6 +36,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,6 +53,7 @@ public class DecorationConfig {
 	public static final String NBT_DECORATION_KEY = "DecorationFrame";
 	public static final String NBT_OWNER_KEY = "DecorationOwner";
 	public static final String NBT_DECOR_NAME = "DecorationName";
+	public static final String NBT_IGNORE_EVENT = "DecorationIgnoreEvent";
 
 	protected String id;
 	protected String name;
@@ -287,7 +289,7 @@ public class DecorationConfig {
 		return isValidLocation(origin, frameRotation, frameRotation.getBlockFace(), validateRotation, debugger);
 	}
 
-	private boolean isValidLocation(Location origin, ItemFrameRotation frameRotation, BlockFace blockFace, boolean validateRotation, Player debugger) {
+	boolean isValidLocation(Location origin, ItemFrameRotation frameRotation, BlockFace blockFace, boolean validateRotation, Player debugger) {
 		if (validateRotation) {
 			if (!isValidRotation(frameRotation)) {
 				DecorationLang.debug(debugger, "- invalid rotation: " + frameRotation);
@@ -332,115 +334,7 @@ public class DecorationConfig {
 
 	//
 
-	public boolean place(Player player, Block block, BlockFace clickedFace, ItemStack item) {
-		return place(player, block, clickedFace, item, null, false);
-	}
 
-	public boolean place(Player player, Block block, BlockFace clickedFace, ItemStack item, ItemFrameRotation rotationOverride, boolean override) {
-		if (!override) { // Extra checks for placing decorations with unique restrictions
-			if (this instanceof Addition addition) {
-				addition.placementError(player);
-				return false;
-			}
-		}
-
-		final Decoration decoration = new Decoration(this, null);
-		DecorationLang.debug(player, "validating placement...");
-		if (!isValidPlacement(block, clickedFace, player)) {
-			DecorationLang.debug(player, "- invalid placement");
-			return false;
-		}
-
-		Location origin = block.getRelative(clickedFace).getLocation().clone();
-
-		ItemFrameRotation frameRotation;
-		boolean placedOnWall = DecorationUtils.getCardinalFaces().contains(clickedFace);
-		boolean canPlaceOnWall = !decoration.getConfig().disabledPlacements.contains(PlacementType.WALL);
-		BlockFace blockFaceOverride = null;
-
-
-		if (placedOnWall && canPlaceOnWall) {
-			frameRotation = ItemFrameRotation.DEGREE_0;
-			blockFaceOverride = frameRotation.getBlockFace();
-			DecorationLang.debug(player, "is placing on wall");
-
-			if (isMultiBlock()) {
-				DecorationLang.debug(player, "is multiblock");
-				blockFaceOverride = clickedFace.getOppositeFace();
-				DecorationLang.debug(player, "BlockFace Override 4: " + blockFaceOverride);
-			}
-
-			if (!isValidLocation(origin, frameRotation, blockFaceOverride, false, player)) {
-				DecorationLang.debug(player, "- invalid frame location");
-				return false;
-			}
-		} else {
-			frameRotation = findValidFrameRotation(origin, ItemFrameRotation.of(player), player);
-		}
-
-		if (rotationOverride != null)
-			frameRotation = rotationOverride;
-
-		if (frameRotation == null) {
-			DecorationLang.debug(player, "- couldn't find a valid frame rotation");
-			return false;
-		}
-		//
-
-
-		if (clickedFace == BlockFace.DOWN) { // Ceiling changes
-			switch (PlayerUtils.getBlockFace(player)) {
-				case EAST, WEST -> frameRotation = frameRotation.getOppositeRotation();
-				case SOUTH_WEST, NORTH_EAST ->
-						frameRotation = frameRotation.rotateCounterClockwise().rotateCounterClockwise();
-				case NORTH_WEST, SOUTH_EAST -> frameRotation = frameRotation.rotateClockwise().rotateClockwise();
-			}
-		}
-
-		DecorationLang.debug(player, "frameRotation = " + frameRotation.name());
-
-		DecorationPrePlaceEvent prePlaceEvent = new DecorationPrePlaceEvent(player, decoration, item, clickedFace, frameRotation);
-		if (!prePlaceEvent.callEvent()) {
-			DecorationLang.debug(player, "&6DecorationPrePlaceEvent was cancelled");
-			return false;
-		}
-
-		ItemStack finalItem = getFrameItem(player, prePlaceEvent.getItem());
-		ItemUtils.subtract(player, item);
-
-		final BlockFace finalFace = prePlaceEvent.getAttachedFace();
-		final ItemFrameRotation finalRotation = prePlaceEvent.getRotation();
-
-		ItemFrame itemFrame = block.getWorld().spawn(origin, ItemFrame.class, _itemFrame -> {
-			_itemFrame.customName(null);
-			_itemFrame.setCustomNameVisible(false);
-			_itemFrame.setFacingDirection(finalFace, true);
-			_itemFrame.setRotation(finalRotation.getRotation());
-			_itemFrame.setVisible(false);
-			_itemFrame.setGlowing(false);
-			_itemFrame.setSilent(true);
-			_itemFrame.setItem(finalItem, false);
-		});
-		NBT.modifyPersistentData(itemFrame, nbt -> {
-			nbt.setBoolean(NBT_DECORATION_KEY, true);
-		});
-
-		decoration.setItemFrame(itemFrame);
-
-		BlockFace placeFace = frameRotation.getBlockFace();
-		if (blockFaceOverride != null) {
-			placeFace = blockFaceOverride;
-			DecorationLang.debug(player, "BlockFace Override 3: " + blockFaceOverride);
-		}
-
-		Hitbox.place(getHitboxes(), origin, placeFace);
-
-		DecorationUtils.getSoundBuilder(hitSound).location(origin).play();
-
-		DecorationLang.debug(player, "placed");
-		new DecorationPlacedEvent(player, decoration, finalItem, finalFace, finalRotation, itemFrame.getLocation()).callEvent();
-		return true;
-	}
 
 	public ItemStack getFrameItem(Player player, ItemStack itemStack) {
 		ItemBuilder itemCopy = ItemBuilder.oneOf(itemStack);

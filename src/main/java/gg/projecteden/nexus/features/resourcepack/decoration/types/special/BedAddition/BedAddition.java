@@ -92,7 +92,7 @@ public class BedAddition extends DyeableFloorThing implements Addition {
 					continue;
 
 				Decoration decoration = new Decoration(config, itemFrame);
-				boolean destroyed = decoration.destroy(player, BlockFace.UP, player);
+				boolean destroyed = decoration.destroy(player, BlockFace.UP);
 				if (!destroyed) {
 					DecorationLang.debug(player, "not destroyed");
 					event.setCancelled(true);

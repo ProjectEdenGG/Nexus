@@ -30,6 +30,7 @@ import org.bukkit.block.data.type.Bed.Part;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerBedEnterEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -189,7 +190,7 @@ public class BedInteractionData {
 		}
 
 		boolean painted;
-		if (additions.size() == 0) { // painting a single bed
+		if (additions.isEmpty()) { // painting a single bed
 			if (closestBedColor == null)
 				return false;
 
@@ -198,7 +199,7 @@ public class BedInteractionData {
 			painted = true;
 
 		} else { // painting a decoration
-			ItemFrame itemFrame = additions.keySet().stream().toList().get(0);
+			ItemFrame itemFrame = additions.keySet().stream().toList().getFirst();
 			DecorationConfig config = additions.get(itemFrame);
 			if (config == null) {
 				DecorationLang.debug(player, "- config is null ??");
@@ -274,7 +275,7 @@ public class BedInteractionData {
 			return false;
 		}
 
-		ItemFrame itemFrame = additions.keySet().stream().toList().get(0);
+		ItemFrame itemFrame = additions.keySet().stream().toList().getFirst();
 
 		if (itemFrame == null) {
 			DecorationLang.debug(this.player, "- couldn't find a decoration to swap");
@@ -349,7 +350,8 @@ public class BedInteractionData {
 
 		Block below = block.getRelative(BlockFace.DOWN);
 		ItemFrameRotation rotation = ItemFrameRotation.of(blockData.getFacing());
-		boolean placed = toolConfig.place(event.getPlayer(), below, BlockFace.UP, tool, rotation, true);
+		Decoration decoration = new Decoration(toolConfig);
+		boolean placed = decoration.place(event.getPlayer(), EquipmentSlot.HAND, below, BlockFace.UP, tool, rotation, true);
 
 		if (placed) {
 			event.setCancelled(true);

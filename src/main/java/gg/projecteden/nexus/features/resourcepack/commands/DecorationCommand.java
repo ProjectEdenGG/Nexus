@@ -141,7 +141,7 @@ public class DecorationCommand extends CustomCommand {
 	void get(DecorationConfig config) {
 		checkPermissions();
 
-		DecorationSpawnEvent spawnEvent = new DecorationSpawnEvent(player(), new Decoration(config, null), config.getItem());
+		DecorationSpawnEvent spawnEvent = new DecorationSpawnEvent(player(), new Decoration(config), config.getItem());
 		if (!spawnEvent.callEvent())
 			error("DecorationSpawnEvent was cancelled");
 
