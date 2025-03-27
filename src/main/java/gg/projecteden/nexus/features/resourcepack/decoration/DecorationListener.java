@@ -107,6 +107,7 @@ public class DecorationListener implements Listener {
 	//
 
 	// TODO: PICK BLOCK LIGHT BLOCK HITBOXES
+	// TODO: IF PLAYER IS HOLDING A BARRIER ON PICK BLOCK, THE DECORATION OVERWRITES THE BARRIER
 	@EventHandler
 	public void onPickBlock(PlayerPickItemEvent event) {
 		if (event.getPlayer().getGameMode() != GameMode.CREATIVE)
