@@ -283,7 +283,7 @@ public class Backpacks extends FunctionalRecipe {
 				return;
 		}
 
-		if (event.getPlayer().isSneaking())
+		if (event.getPlayer().isSneaking())  // Allow to be rotated by Decorations
 			return;
 
 		event.setCancelled(true);
@@ -292,6 +292,12 @@ public class Backpacks extends FunctionalRecipe {
 
 	@EventHandler
 	public void on(DecorationInteractEvent event) {
+		if (isBackpack(event.getPlayer().getInventory().getItemInMainHand()))
+			return;
+
+		if (isBackpack(event.getPlayer().getInventory().getItemInOffHand()))
+			return;
+
 		Decoration decoration = event.getDecoration();
 		if (!(decoration.getConfig() instanceof Backpack))
 			return;
