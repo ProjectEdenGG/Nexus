@@ -5,13 +5,14 @@ import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksFeature.BlockAction;
-import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksFeature.ReplacedSoundType;
-import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksFeature.SoundAction;
+import gg.projecteden.nexus.utils.SoundUtils.ReplacedSoundType;
+import gg.projecteden.nexus.utils.SoundUtils.SoundAction;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Debug.DebugType;
+import gg.projecteden.nexus.utils.SoundUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.nexus.utils.Nullables;
@@ -68,7 +69,7 @@ public class CustomBlockSounds implements Listener {
 
 		if (CustomBlock.from(placedBlock) == null) {
 			CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCKS_SOUNDS, "&d&lBlockPlaceEvent:", true);
-			tryPlaySound(player, SoundAction.PLACE, placedBlock);
+			tryPlaySound(player, SoundUtils.SoundAction.PLACE, placedBlock);
 			CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCKS_SOUNDS, "&d<- done, end");
 		}
 	}
@@ -96,7 +97,7 @@ public class CustomBlockSounds implements Listener {
 
 		CustomBlockUtils.debug(player, "&d&lEntityDamageEvent:", true);
 		updateAction(player, BlockAction.FALL);
-		tryPlaySound(player, SoundAction.FALL, block);
+		tryPlaySound(player, SoundUtils.SoundAction.FALL, block);
 		CustomBlockUtils.debug(player, "&d<- done, end");
 	}
 
@@ -113,7 +114,7 @@ public class CustomBlockSounds implements Listener {
 
 		if (playerActionMap.get(player) == BlockAction.HIT) {
 //			CustomBlockUtils.debug(player, "&d&lPlayerAnimationEvent:", true);
-			tryPlaySound(player, SoundAction.HIT, block);
+			tryPlaySound(player, SoundUtils.SoundAction.HIT, block);
 //			CustomBlockUtils.debug(player, "&d<- done, end");
 		}
 	}
@@ -133,7 +134,7 @@ public class CustomBlockSounds implements Listener {
 
 		if (CustomBlock.from(brokenBlock) == null) {
 			CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCKS_SOUNDS, "&d&lBlockBreakEvent: Sounds", true);
-			tryPlaySound(player, SoundAction.BREAK, brokenBlock);
+			tryPlaySound(player, SoundUtils.SoundAction.BREAK, brokenBlock);
 			CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCKS_SOUNDS, "&d<- done, end");
 		}
 	}
@@ -142,8 +143,8 @@ public class CustomBlockSounds implements Listener {
 	@EventHandler
 	public void on(SoundEvent event) {
 		net.kyori.adventure.sound.Sound sound = event.getSound();
-		SoundAction soundAction = SoundAction.fromSound(sound);
-		if (soundAction != SoundAction.STEP)
+		SoundAction soundAction = SoundUtils.SoundAction.fromSound(sound);
+		if (soundAction != SoundUtils.SoundAction.STEP)
 			return;
 
 		Block block = event.getEmitter().getLocation().getBlock();
@@ -167,7 +168,7 @@ public class CustomBlockSounds implements Listener {
 		}
 
 		// Vanilla Block
-		ReplacedSoundType soundType = ReplacedSoundType.fromSound(sound.name().value());
+		ReplacedSoundType soundType = SoundUtils.ReplacedSoundType.fromSound(sound.name().value());
 		if (soundType == null)
 			return;
 
@@ -186,7 +187,7 @@ public class CustomBlockSounds implements Listener {
 		CustomBlockUtils.debug(source, DebugType.CUSTOM_BLOCKS_SOUNDS, "&e- default sound = " + defaultSound.getKey().getKey());
 
 		CustomBlock customBlock = CustomBlock.from(block);
-		ReplacedSoundType replacedSoundType = ReplacedSoundType.fromSound(defaultSound);
+		ReplacedSoundType replacedSoundType = SoundUtils.ReplacedSoundType.fromSound(defaultSound);
 		if (replacedSoundType == null && customBlock == null) {
 			CustomBlockUtils.debug(source, DebugType.CUSTOM_BLOCKS_SOUNDS, "&a<- playing default sound");
 			return; // already handled by CustomBlockNMSUtils#placeVanillaBlock
@@ -202,7 +203,7 @@ public class CustomBlockSounds implements Listener {
 
 	public static boolean tryPlaySound(Player source, SoundAction soundAction, String soundKey, Location location) {
 		boolean silent = source != null && Vanish.isVanished(source);
-		soundKey = ReplacedSoundType.replaceMatching(soundKey);
+		soundKey = SoundUtils.ReplacedSoundType.replaceMatching(soundKey);
 
 		SoundBuilder soundBuilder = new SoundBuilder(soundKey)
 			.location(location)

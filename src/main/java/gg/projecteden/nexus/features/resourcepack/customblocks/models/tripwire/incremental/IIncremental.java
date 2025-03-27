@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBloc
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -19,7 +20,7 @@ public interface IIncremental extends ICustomTripwire {
 	}
 
 	@Override
-	default boolean onRightClickedWithItem(Player player, CustomBlock customBlock, Block block, ItemStack itemInHand) {
+	default boolean onRightClickedWithItem(Player player, CustomBlock customBlock, Block block, BlockFace face, ItemStack itemInHand) {
 		if (player.isSneaking())
 			return false;
 

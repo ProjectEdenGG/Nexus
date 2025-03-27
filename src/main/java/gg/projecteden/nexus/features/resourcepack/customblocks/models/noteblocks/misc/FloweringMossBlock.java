@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.misc;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ISupportPlants;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICompostable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ICustomNoteBlock;
@@ -21,8 +22,8 @@ import org.bukkit.Material;
 	customHitSound = "block.moss.hit",
 	customFallSound = "block.moss.fall"
 )
-// TODO: Find a solution for when grass/flowers generate on top of this block, they instantly break
-public class FloweringMossBlock implements ICustomNoteBlock, ICompostable {
+
+public class FloweringMossBlock implements ICustomNoteBlock, ICompostable, ISupportPlants {
 	public static final int FERTILIZE_CHANCE = 10;
 
 	@Override

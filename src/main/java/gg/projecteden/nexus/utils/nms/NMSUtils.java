@@ -2,7 +2,7 @@ package gg.projecteden.nexus.utils.nms;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
-import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksFeature.SoundAction;
+import gg.projecteden.nexus.utils.SoundUtils.SoundAction;
 import gg.projecteden.parchment.HasLocation;
 import lombok.AllArgsConstructor;
 import lombok.Data;

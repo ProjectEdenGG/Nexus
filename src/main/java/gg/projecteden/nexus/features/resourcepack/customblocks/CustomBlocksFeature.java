@@ -7,18 +7,12 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.listeners.CustomB
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.worldedit.WrappedWorldEdit;
 import gg.projecteden.nexus.framework.features.Feature;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import net.kyori.adventure.key.Key;
-import org.bukkit.Sound;
-import org.jetbrains.annotations.Nullable;
 
 /*
 	TODO:
 		- Resolve Test server bug signs
 		- Remove "TODO CUSTOM BLOCKS: REMOVE"
+		- Finish FloweringMossBlock
  */
 
 /*
@@ -47,112 +41,6 @@ public class CustomBlocksFeature extends Feature {
 
 		WrappedWorldEdit.init();
 		WrappedWorldEdit.registerParser();
-	}
-
-	@SuppressWarnings("removal")
-	@AllArgsConstructor
-	public enum ReplacedSoundType {
-		WOOD("block.wood.", "custom.block.wood."),
-		STONE("block.stone.", "custom.block.stone."),
-		;
-
-		final String defaultSound;
-		final String replacedSound;
-
-		public boolean matches(String value) {
-			return value.startsWith(defaultSound) || value.startsWith(replacedSound);
-		}
-
-		public String replace(String value) {
-			if (value.startsWith(defaultSound)) {
-				String ending = value.replaceFirst(defaultSound, "");
-				return replacedSound + ending;
-			}
-
-			return value;
-		}
-
-		public static @NonNull String replaceMatching(String soundKey) {
-			for (ReplacedSoundType replacedSoundType : values()) {
-				if (replacedSoundType.matches(soundKey)) {
-					return replacedSoundType.replace(soundKey);
-				}
-			}
-
-			return soundKey;
-		}
-
-		public static @Nullable ReplacedSoundType fromSound(String soundKey) {
-			for (ReplacedSoundType replacedSoundType : values()) {
-				if (replacedSoundType.matches(soundKey))
-					return replacedSoundType;
-			}
-
-			return null;
-		}
-
-		public static @Nullable ReplacedSoundType fromSound(Sound sound) {
-			return fromSound(sound.key().value());
-		}
-
-		public static @Nullable ReplacedSoundType fromSound(Key sound) {
-			return fromSound(sound.value());
-		}
-
-		public static @Nullable ReplacedSoundType fromSound(net.kyori.adventure.sound.Sound sound) {
-			return fromSound(sound.name());
-		}
-	}
-
-	@SuppressWarnings("removal")
-	@Getter
-	@RequiredArgsConstructor
-	public enum SoundAction {
-		BREAK(1.0, 0.8),
-		STEP(0.15, 1.0),
-		PLACE(1.0, 0.8),
-		HIT(0.4, 0.5),
-		FALL(1.0, 0.75),
-		;
-
-		private final double volume;
-		private double pitch;
-
-		SoundAction(double volume, double pitch) {
-			this.volume = volume;
-			this.pitch = pitch;
-		}
-
-		public String getCustomSound(ReplacedSoundType soundType) {
-			return "custom.block." + soundType.name().toLowerCase() + "." + this.name().toLowerCase();
-		}
-
-		public static @Nullable CustomBlocksFeature.SoundAction fromSound(String soundKey) {
-			if (soundKey.endsWith(".step"))
-				return SoundAction.STEP;
-			else if (soundKey.endsWith(".hit"))
-				return SoundAction.HIT;
-			else if (soundKey.endsWith(".place"))
-				return SoundAction.PLACE;
-			else if (soundKey.endsWith(".break"))
-				return SoundAction.BREAK;
-			else if (soundKey.endsWith(".fall"))
-				return SoundAction.FALL;
-
-			return null;
-		}
-
-		public static @Nullable CustomBlocksFeature.SoundAction fromSound(Key sound) {
-			return fromSound(sound.value());
-		}
-
-		public static @Nullable CustomBlocksFeature.SoundAction fromSound(Sound sound) {
-			return fromSound(sound.getKey());
-		}
-
-		public static @Nullable CustomBlocksFeature.SoundAction fromSound(net.kyori.adventure.sound.Sound sound) {
-			return fromSound(sound.name());
-		}
 	}
 
 	public enum BlockAction {

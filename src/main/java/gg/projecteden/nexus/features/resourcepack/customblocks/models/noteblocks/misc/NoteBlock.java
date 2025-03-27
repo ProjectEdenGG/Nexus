@@ -59,15 +59,15 @@ public class NoteBlock implements ICustomNoteBlock {
 	}
 
 	@Override
-	public boolean onRightClickedWithItem(Player player, CustomBlock customBlock, Block block, ItemStack itemInHand) {
+	public boolean onRightClickedWithItem(Player player, CustomBlock customBlock, Block block, BlockFace face, ItemStack itemInHand) {
 		if (player.isSneaking())
 			return false;
 
-		return onRightClickedWithoutItem(player, customBlock, block);
+		return onRightClickedWithoutItem(player, customBlock, block, face);
 	}
 
 	@Override
-	public boolean onRightClickedWithoutItem(Player player, CustomBlock customBlock, Block block) {
+	public boolean onRightClickedWithoutItem(Player player, CustomBlock customBlock, Block block, BlockFace face) {
 		CustomBlockUtils.debug(player, "&e- is changing pitch");
 		Location location = block.getLocation();
 		NoteBlockData data = new NoteBlockData(block);
@@ -83,12 +83,12 @@ public class NoteBlock implements ICustomNoteBlock {
 	}
 
 	@Override
-	public boolean onLeftClickedWithItem(Player player, CustomBlock customBlock, Block block, ItemStack itemInHand) {
-		return onLeftClickedWithoutItem(player, customBlock, block);
+	public boolean onLeftClickedWithItem(Player player, CustomBlock customBlock, Block block, BlockFace face, ItemStack itemInHand) {
+		return onLeftClickedWithoutItem(player, customBlock, block, face);
 	}
 
 	@Override
-	public boolean onLeftClickedWithoutItem(Player player, CustomBlock customBlock, Block block) {
+	public boolean onLeftClickedWithoutItem(Player player, CustomBlock customBlock, Block block, BlockFace face) {
 		CustomBlockUtils.debug(player, "&e<- is playing note");
 		play(block.getLocation(), true, player);
 		return true;

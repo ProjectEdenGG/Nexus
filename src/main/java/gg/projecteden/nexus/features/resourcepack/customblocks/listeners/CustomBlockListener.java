@@ -5,12 +5,13 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockNMSUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksFeature.BlockAction;
-import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksFeature.SoundAction;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock.CustomBlockType;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICompostable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IInteractable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IPistonActions.PistonAction;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ISupportPlants;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ICustomNoteBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.misc.FloweringMossBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.tripwire.common.ICustomTripwire;
@@ -23,8 +24,10 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SoundUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
@@ -57,6 +60,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockCanBuildEvent;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFertilizeEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
@@ -133,38 +137,41 @@ public class CustomBlockListener implements Listener {
 			boolean isItemNull = Nullables.isNullOrAir(itemInHand);
 			ICustomBlock iCustomBlock = clickedCustomBlock.get();
 
-			if (action == Action.RIGHT_CLICK_BLOCK) {
-				if (isItemNull) {
-					CustomBlockUtils.debug(player, "&b- right click without item");
-					if (iCustomBlock.onRightClickedWithoutItem(player, clickedCustomBlock, clickedBlock)) {
-						event.setCancelled(true);
-						CustomBlockUtils.debug(player, "&d- cancelling event");
+			if (iCustomBlock instanceof IInteractable interactable) {
+
+				if (action == Action.RIGHT_CLICK_BLOCK) {
+					if (isItemNull) {
+						CustomBlockUtils.debug(player, "&b- right click without item");
+						if (interactable.onRightClickedWithoutItem(player, clickedCustomBlock, clickedBlock, event.getBlockFace())) {
+							event.setCancelled(true);
+							CustomBlockUtils.debug(player, "&d- cancelling event");
+						} else {
+							CustomBlockUtils.debug(player, "&c<- no changes");
+						}
 					} else {
-						CustomBlockUtils.debug(player, "&c<- no changes");
+						CustomBlockUtils.debug(player, "&b- right click with item");
+						if (interactable.onRightClickedWithItem(player, clickedCustomBlock, clickedBlock, event.getBlockFace(), itemInHand)) {
+							event.setCancelled(true);
+							CustomBlockUtils.debug(player, "&d- cancelling event");
+						} else {
+							CustomBlockUtils.debug(player, "&c<- no changes");
+						}
 					}
-				} else {
-					CustomBlockUtils.debug(player, "&b- right click with item");
-					if (iCustomBlock.onRightClickedWithItem(player, clickedCustomBlock, clickedBlock, itemInHand)) {
-						event.setCancelled(true);
-						CustomBlockUtils.debug(player, "&d- cancelling event");
+				} else if (action == Action.LEFT_CLICK_BLOCK) {
+					if (isItemNull) {
+						CustomBlockUtils.debug(player, "&b- left click without item");
+						if (interactable.onLeftClickedWithoutItem(player, clickedCustomBlock, clickedBlock, event.getBlockFace())) {
+							CustomBlockUtils.debug(player, "&d- don't cancel event");
+						} else {
+							CustomBlockUtils.debug(player, "&c<- no changes");
+						}
 					} else {
-						CustomBlockUtils.debug(player, "&c<- no changes");
-					}
-				}
-			} else if (action == Action.LEFT_CLICK_BLOCK) {
-				if (isItemNull) {
-					CustomBlockUtils.debug(player, "&b- left click without item");
-					if (iCustomBlock.onLeftClickedWithoutItem(player, clickedCustomBlock, clickedBlock)) {
-						CustomBlockUtils.debug(player, "&d- don't cancel event");
-					} else {
-						CustomBlockUtils.debug(player, "&c<- no changes");
-					}
-				} else {
-					CustomBlockUtils.debug(player, "&b- left click with item");
-					if (!iCustomBlock.onLeftClickedWithItem(player, clickedCustomBlock, clickedBlock, itemInHand)) {
-						CustomBlockUtils.debug(player, "&d- don't cancel event");
-					} else {
-						CustomBlockUtils.debug(player, "&c<- no changes");
+						CustomBlockUtils.debug(player, "&b- left click with item");
+						if (!interactable.onLeftClickedWithItem(player, clickedCustomBlock, clickedBlock, event.getBlockFace(), itemInHand)) {
+							CustomBlockUtils.debug(player, "&d- don't cancel event");
+						} else {
+							CustomBlockUtils.debug(player, "&c<- no changes");
+						}
 					}
 				}
 			}
@@ -325,7 +332,7 @@ public class CustomBlockListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void on(BlockPhysicsEvent event) {
+	public void onUpdateBlock(BlockPhysicsEvent event) {
 		Block block = event.getBlock();
 		Material material = block.getType();
 		// TODO: Disable tripwire customblocks
@@ -485,6 +492,40 @@ public class CustomBlockListener implements Listener {
 		});
 	}
 
+	@EventHandler
+	public void on(BlockCanBuildEvent event) {
+		Block below = event.getBlock().getRelative(BlockFace.DOWN);
+		CustomBlock customBlock = CustomBlock.from(below);
+		if (customBlock == null)
+			return;
+
+		if (!(customBlock.get() instanceof ISupportPlants iSupportPlants))
+			return;
+
+		CustomBlockUtils.debug(event.getPlayer(), "&eBlockCanBuildEvent = " + event.getMaterial());
+
+		if (iSupportPlants.canSupport(event.getMaterial()))
+			event.setBuildable(true);
+	}
+
+	// TODO: DOESN'T WORK WITH BAMBOO ??
+	@EventHandler
+	public void onUpdateOnBlock(BlockPhysicsEvent event) {
+		Block block = event.getBlock();
+		Block below = block.getRelative(BlockFace.DOWN);
+		CustomBlock customBlock = CustomBlock.from(below);
+		if (customBlock == null)
+			return;
+
+		if (!(customBlock.get() instanceof ISupportPlants iSupportPlants))
+			return;
+
+		if (!iSupportPlants.canSupport(block.getType()))
+			return;
+
+		event.setCancelled(true);
+	}
+
 	@SuppressWarnings("UnstableApiUsage")
 	@EventHandler
 	public void on(EntityExplodeEvent event) {
@@ -636,7 +677,7 @@ public class CustomBlockListener implements Listener {
 				CustomBlockUtils.logPlacement(player, preBlock, CustomBlock.from(itemInHand));
 			}
 		} else
-			return placeVanillaBlock(event, player, hand, preBlock, clickedBlock, didClickedCustomBlock, itemInHand);
+			return placeVanillaBlock(event, player, hand, preBlock, clickedBlock, clickedFace, clickedCustomBlock, didClickedCustomBlock, itemInHand);
 
 		return true;
 	}
@@ -695,10 +736,11 @@ public class CustomBlockListener implements Listener {
 	}
 
 	private boolean placeVanillaBlock(PlayerInteractEvent event, Player player, EquipmentSlot hand,
-									  Block preBlock, Block clickedBlock, boolean clickedCustomBlock, ItemStack itemStack) {
+									  Block preBlock, Block clickedBlock, BlockFace clickedFace, CustomBlock clickedCustomBlock,
+									  boolean didClickCustomBlock, ItemStack itemStack) {
 		CustomBlockUtils.debug(player, "&e- placing vanilla block");
 
-		if (!clickedCustomBlock) {
+		if (!didClickCustomBlock) {
 			CustomBlockUtils.debug(player, "&c<- didn't click on a custom block");
 			return false;
 		}
@@ -711,7 +753,7 @@ public class CustomBlockListener implements Listener {
 			return false;
 		}
 
-		Block placedBlock = CustomBlockNMSUtils.tryPlaceVanillaBlock(player, itemStack);
+		Block placedBlock = CustomBlockNMSUtils.tryPlaceVanillaBlock(player, itemStack, clickedBlock, clickedFace, clickedCustomBlock);
 		if (placedBlock == null) {
 			CustomBlockUtils.debug(player, "&c<- cannot place this block here");
 			return false;
@@ -726,7 +768,7 @@ public class CustomBlockListener implements Listener {
 
 		CoreProtectUtils.logPlacement(player, placedBlock);
 		CustomBlockUtils.debug(player, "&a- placed block: " + StringUtils.camelCase(material));
-		CustomBlockSounds.tryPlaySound(player, SoundAction.PLACE, preBlock);
+		CustomBlockSounds.tryPlaySound(player, SoundUtils.SoundAction.PLACE, preBlock);
 
 		ItemUtils.subtract(player, event.getItem());
 

@@ -3,10 +3,18 @@ package gg.projecteden.nexus.utils;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.parchment.HasPlayer;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
+import org.bukkit.block.Block;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -19,6 +27,18 @@ public class SoundUtils {
 
 	public static void stopSound(HasPlayer player, Sound sound, SoundCategory category) {
 		player.getPlayer().stopSound(sound, category);
+	}
+
+	public static void playSound(Block block, SoundAction soundAction) {
+		Sound placeSound = NMSUtils.getSound(soundAction, block);
+		if (placeSound == null)
+			return;
+
+		new SoundBuilder(placeSound)
+			.location(block)
+			.volume(soundAction.getVolume())
+			.pitch(soundAction.getPitch())
+			.play();
 	}
 
 	public enum Jingle {
@@ -337,4 +357,109 @@ public class SoundUtils {
 		return (float) Math.pow(2, ((-12 + step) / 12f));
 	}
 
+	@SuppressWarnings("removal")
+	@Getter
+	@RequiredArgsConstructor
+	public enum SoundAction {
+		BREAK(1.0, 0.8),
+		STEP(0.15, 1.0),
+		PLACE(1.0, 0.8),
+		HIT(0.4, 0.5),
+		FALL(1.0, 0.75),
+		;
+
+		private final double volume;
+		private double pitch;
+
+		SoundAction(double volume, double pitch) {
+			this.volume = volume;
+			this.pitch = pitch;
+		}
+
+		public String getCustomSound(ReplacedSoundType soundType) {
+			return "custom.block." + soundType.name().toLowerCase() + "." + this.name().toLowerCase();
+		}
+
+		public static @Nullable SoundAction fromSound(String soundKey) {
+			if (soundKey.endsWith(".step"))
+				return SoundAction.STEP;
+			else if (soundKey.endsWith(".hit"))
+				return SoundAction.HIT;
+			else if (soundKey.endsWith(".place"))
+				return SoundAction.PLACE;
+			else if (soundKey.endsWith(".break"))
+				return SoundAction.BREAK;
+			else if (soundKey.endsWith(".fall"))
+				return SoundAction.FALL;
+
+			return null;
+		}
+
+		public static @Nullable SoundAction fromSound(Key sound) {
+			return fromSound(sound.value());
+		}
+
+		public static @Nullable SoundAction fromSound(Sound sound) {
+			return fromSound(sound.getKey());
+		}
+
+		public static @Nullable SoundAction fromSound(net.kyori.adventure.sound.Sound sound) {
+			return fromSound(sound.name());
+		}
+	}
+
+	@SuppressWarnings("removal")
+	@AllArgsConstructor
+	public enum ReplacedSoundType {
+		WOOD("block.wood.", "custom.block.wood."),
+		STONE("block.stone.", "custom.block.stone."),
+		;
+
+		final String defaultSound;
+		final String replacedSound;
+
+		public boolean matches(String value) {
+			return value.startsWith(defaultSound) || value.startsWith(replacedSound);
+		}
+
+		public String replace(String value) {
+			if (value.startsWith(defaultSound)) {
+				String ending = value.replaceFirst(defaultSound, "");
+				return replacedSound + ending;
+			}
+
+			return value;
+		}
+
+		public static @NonNull String replaceMatching(String soundKey) {
+			for (ReplacedSoundType replacedSoundType : values()) {
+				if (replacedSoundType.matches(soundKey)) {
+					return replacedSoundType.replace(soundKey);
+				}
+			}
+
+			return soundKey;
+		}
+
+		public static @Nullable ReplacedSoundType fromSound(String soundKey) {
+			for (ReplacedSoundType replacedSoundType : values()) {
+				if (replacedSoundType.matches(soundKey))
+					return replacedSoundType;
+			}
+
+			return null;
+		}
+
+		public static @Nullable ReplacedSoundType fromSound(Sound sound) {
+			return fromSound(sound.key().value());
+		}
+
+		public static @Nullable ReplacedSoundType fromSound(Key sound) {
+			return fromSound(sound.value());
+		}
+
+		public static @Nullable ReplacedSoundType fromSound(net.kyori.adventure.sound.Sound sound) {
+			return fromSound(sound.name());
+		}
+	}
 }

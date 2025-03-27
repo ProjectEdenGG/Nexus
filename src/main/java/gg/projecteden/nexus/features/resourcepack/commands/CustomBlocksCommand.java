@@ -28,14 +28,20 @@ import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.Debug.DebugType;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.MultipleFacing;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 @Environments(Env.TEST) // TODO CUSTOM BLOCKS: REMOVE
 public class CustomBlocksCommand extends CustomCommand {
@@ -212,6 +218,103 @@ public class CustomBlocksCommand extends CustomCommand {
 		line();
 		send("Break Time: " + breakTicks + "t | " + breakSeconds + "s");
 		send("");
+	}
+
+	// Place Test
+	static Block placeTest_control = null;
+	static Block placeTest_variable = null;
+	static Block placeTest_update = null;
+	static Queue<Material> materialQueue = new LinkedList<>();
+	static List<Material> failedMaterials = new ArrayList<>();
+	static int TEST_DELAY = 4;
+	static boolean cancelTesting = false;
+
+	@Path("placeTest set controlBlock")
+	void placeTest_control() {
+		placeTest_control = getTargetBlockRequired();
+		send("[PlaceTest] Set control block to " + placeTest_control.getType());
+	}
+
+	@Path("placeTest set variableBlock")
+	void placeTest_variable() {
+		placeTest_variable = getTargetBlockRequired();
+		send("[PlaceTest] Set variable block to " + placeTest_variable.getType());
+	}
+
+	@Path("placeTest set updateBlock")
+	void placeTest_update() {
+		placeTest_update = getTargetBlockRequired();
+		send("[PlaceTest] Set update block to " + placeTest_update.getType());
+	}
+
+	@Path("placeTest cancel")
+	void placeTest_cancel() {
+		cancelTesting = true;
+	}
+
+	@Path("placeTest runTests")
+	void placeTest_run() {
+		if (placeTest_control == null)
+			error("Control block is null");
+		if (placeTest_variable == null)
+			error("Variable block is null");
+		if (placeTest_update == null)
+			error("Update block is null");
+
+		cancelTesting = false;
+		materialQueue.addAll(Arrays.stream(Material.values())
+			.filter(material -> !material.isLegacy())
+			.filter(material -> material.isBlock() && !material.isSolid())
+			.toList());
+
+		send("Testing materials: " + materialQueue.size());
+		processNext();
+	}
+
+	private void processNext() {
+		if (materialQueue.isEmpty()) {
+			send("[PlaceTest] Testing complete");
+			sendResults();
+			return;
+		}
+
+		if (cancelTesting) {
+			send("[PlaceTest] Cancelled");
+			sendResults();
+			return;
+		}
+
+		Material material = materialQueue.poll();
+		Block control = placeTest_control.getRelative(BlockFace.UP);
+		Block variable = placeTest_variable.getRelative(BlockFace.UP);
+		Block update = placeTest_update.getRelative(BlockFace.UP);
+
+		control.setType(material, true);
+		variable.setType(material, true);
+		update.setType(Material.WHITE_WOOL, true);
+
+		Tasks.wait(TEST_DELAY, () -> {
+			if (control.getType() == material && control.getType() != variable.getType())
+				failedMaterials.add(material);
+
+			update.setType(Material.AIR, true);
+
+			processNext();
+		});
+	}
+
+	private void sendResults() {
+		send("Failed materials: " + failedMaterials.size());
+		for (Material material : failedMaterials) {
+			send(" - " + StringUtils.camelCase(material));
+		}
+
+		placeTest_control = null;
+		placeTest_variable = null;
+		placeTest_update = null;
+		materialQueue.clear();
+		failedMaterials.clear();
+		cancelTesting = false;
 	}
 
 	//

@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblock
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ISupportPlants;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ICraftableNoteBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ICustomNoteBlock;
@@ -26,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 	customHitSound = "block.grass.hit",
 	customFallSound = "block.grass.fall"
 )
-public class Permafrost implements ICustomNoteBlock, ICraftableNoteBlock {
+public class Permafrost implements ICustomNoteBlock, ICraftableNoteBlock, ISupportPlants {
 
 	@Override
 	public double getBlockHardness() {

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.customblocks;
 
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
@@ -22,6 +23,7 @@ import org.bukkit.SoundCategory;
 import org.bukkit.SoundGroup;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
@@ -30,7 +32,7 @@ import org.bukkit.inventory.ItemStack;
 public class CustomBlockNMSUtils {
 
 	@SuppressWarnings("removal")
-	public static Block tryPlaceVanillaBlock(Player player, ItemStack itemStack) {
+	public static Block tryPlaceVanillaBlock(Player player, ItemStack itemStack, Block clickedBlock, BlockFace clickedFace, CustomBlock clickedCustomBlock) {
 		// TODO: Fix boats, currently Item#use in BoatItem calls PlayerInteractEvent, thus causing a StackOverflow, find a workaround
 		if (MaterialTag.ITEMS_BOATS.isTagged(itemStack.getType()))
 			return null;
@@ -51,13 +53,17 @@ public class CustomBlockNMSUtils {
 		int originalAmount = itemStack.getAmount();
 		if (!(nmsStack.getItem() instanceof BlockItem blockItem)) {
 			CustomBlockUtils.debug(player, "&e- item is not a BlockItem");
-			nmsStack.getItem().useOn(new UseOnContext(serverPlayer, hand, hitResult));
+
+			InteractionResult resultItem = nmsStack.getItem().useOn(new UseOnContext(serverPlayer, hand, hitResult));
+			CustomBlockUtils.debug(player, "&e- item.useOn result = " + resultItem);
 
 			if (!shouldSubtract && originalAmount != itemStack.getAmount())
 				itemStack.setAmount(originalAmount);
 
-			if (!player.isSneaking())
-				serverPlayer.gameMode.useItem(serverPlayer, serverPlayer.level(), nmsStack, hand);
+			if (!player.isSneaking()) {
+				InteractionResult resultGameMode = serverPlayer.gameMode.useItem(serverPlayer, serverPlayer.level(), nmsStack, hand);
+				CustomBlockUtils.debug(player, "&e- gameMode.useItem result = " + resultGameMode);
+			}
 
 			return null;
 		}
@@ -71,8 +77,11 @@ public class CustomBlockNMSUtils {
 		}
 
 		InteractionResult result = blockItem.place(placeContext);
-		if (result == InteractionResult.FAIL)
+
+		if (result == InteractionResult.FAIL) {
+			CustomBlockUtils.debug(player, "&c- failed to place block vanilla-ly");
 			return null;
+		}
 
 		NMSUtils.toNMS(player).awardStat(Stats.ITEM_USED.get(NMSUtils.toNMS(itemStack).getItem()));
 

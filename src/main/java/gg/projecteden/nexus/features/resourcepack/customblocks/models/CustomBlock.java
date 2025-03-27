@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
-import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksFeature.SoundAction;
+import gg.projecteden.nexus.utils.SoundUtils.SoundAction;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICraftable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IDirectional;
@@ -224,6 +224,7 @@ import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.SoundUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.protection.ProtectionUtils;
 import lombok.Getter;
@@ -717,7 +718,7 @@ public enum CustomBlock implements Keyed {
 		if (blockData != null)
 			block.setBlockData(blockData, true);
 
-		playSound(player, SoundAction.PLACE, block.getLocation());
+		playSound(player, SoundUtils.SoundAction.PLACE, block.getLocation());
 		ItemUtils.subtract(player, itemInHand);
 
 		CustomBlockUtils.updateObservers(block, player);
@@ -813,7 +814,7 @@ public enum CustomBlock implements Keyed {
 
 		block.setType(newCustomBlock.get().getVanillaBlockMaterial(), false);
 		block.setBlockData(newBlockData, false);
-		playSound(player, SoundAction.PLACE, block.getLocation());
+		playSound(player, SoundUtils.SoundAction.PLACE, block.getLocation());
 
 		CustomBlockUtils.updateObservers(block, player);
 
@@ -889,7 +890,7 @@ public enum CustomBlock implements Keyed {
 		}
 
 		if (playSound) {
-			playSound(source, SoundAction.BREAK, location);
+			playSound(source, SoundUtils.SoundAction.BREAK, location);
 		}
 
 		List<ItemStack> drops = new ArrayList<>();
