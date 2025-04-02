@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.commands;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
@@ -35,6 +36,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFo
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
+import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig.DecorationStorePasteHistory;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -398,6 +400,21 @@ public class DecorationCommand extends CustomCommand {
 		send(PREFIX + "Total layouts: " + files.size());
 		for (File file : files) {
 			send(" - " + DecorationStoreLayouts.getSchematicPath(file));
+		}
+	}
+
+	@Path("store layout history")
+	@Permission(Group.STAFF)
+	@Description("Displays a list of when the last 10 layouts were pasted")
+	void pasteHistory() {
+		DecorationStoreConfig config = DecorationStore.getConfig();
+
+		if (config.getLayoutHistory().isEmpty())
+			error("Layout history is empty");
+
+		send(PREFIX + "Paste History: ");
+		for (DecorationStorePasteHistory history : config.getLayoutHistory()) {
+			send("&e - &3Pasted schematic id &e" + history.getSchematicId() + " &3at &e" + TimeUtils.shortDateTimeFormat(history.getDateTime()));
 		}
 	}
 

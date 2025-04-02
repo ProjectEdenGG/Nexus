@@ -6,12 +6,15 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
+import gg.projecteden.nexus.utils.BoundedCollections.BoundedList;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -27,6 +30,15 @@ public class DecorationStoreConfig implements DatabaseObject {
 
 	private boolean active;
 	private int schematicId;
+	private BoundedList<DecorationStorePasteHistory> layoutHistory = new BoundedList<>(10);
 
 	private int schematicIdTest;
+
+	@Getter
+	@AllArgsConstructor
+	public static class DecorationStorePasteHistory {
+		LocalDateTime dateTime;
+		int schematicId;
+	}
+
 }
