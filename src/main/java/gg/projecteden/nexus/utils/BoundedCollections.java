@@ -7,16 +7,16 @@ import java.util.ArrayList;
 public class BoundedCollections {
 
 	@AllArgsConstructor
-	public static class BoundedList<Type> extends ArrayList<Type> {
+	public static class BoundedList<Element> extends ArrayList<Element> {
 		private final int maxEntries;
 
 		@Override
-		public boolean add(Type type) {
+		public boolean add(Element element) {
 			if (size() > maxEntries) {
 				removeFirst();
 			}
 
-			return super.add(type);
+			return super.add(element);
 		}
 	}
 }
