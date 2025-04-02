@@ -13,7 +13,6 @@ import java.util.concurrent.CompletableFuture;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Schedule("0 */2 * * *")
 public class DecorationStoreLayoutPasteJob extends AbstractJob {
 
 	@Override
