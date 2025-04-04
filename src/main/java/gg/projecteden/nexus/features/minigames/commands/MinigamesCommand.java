@@ -37,6 +37,7 @@ import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifier
 import gg.projecteden.nexus.features.minigames.models.perks.HideParticle;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkType;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
+import gg.projecteden.nexus.features.minigames.models.statistics.models.MinigameStatistic;
 import gg.projecteden.nexus.features.minigames.utils.MinigameNight;
 import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.features.warps.commands._WarpSubCommand;
@@ -65,6 +66,8 @@ import gg.projecteden.nexus.models.minigamersetting.MinigamerSetting;
 import gg.projecteden.nexus.models.minigamersetting.MinigamerSettingService;
 import gg.projecteden.nexus.models.minigamessetting.MinigamesConfig;
 import gg.projecteden.nexus.models.minigamessetting.MinigamesConfigService;
+import gg.projecteden.nexus.models.minigamestats.MinigameStatsService;
+import gg.projecteden.nexus.models.minigamestats.MinigameStatsUser.MatchStatRecord;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
@@ -1161,6 +1164,19 @@ public class MinigamesCommand extends _WarpSubCommand {
 			});
 
 			Tasks.wait(delay, loop.get());
+		});
+	}
+
+	@Path("stats <mechanic> [player]")
+	void stats(MechanicType mechanic, @Arg("self") Player player) {
+		MinigameStatsService service = new MinigameStatsService();
+		List<MatchStatRecord> statRecords = service.get(player).getStatistics().stream().filter(stat -> stat.getMechanic() == mechanic).toList();
+		List<MinigameStatistic> stats = statRecords.stream().flatMap(record -> record.getStats().keySet().stream()).distinct().toList();
+
+		send(PREFIX + camelCase(mechanic) + " statistics for " + Nerd.of(player).getColoredName());
+		stats.forEach(stat -> {
+			int score = statRecords.stream().mapToInt(record -> record.getStats().getOrDefault(stat, 0)).sum();
+			send(" &3- " + stat.getTitle() + ": &e" + stat.format(score));
 		});
 	}
 

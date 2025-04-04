@@ -11,6 +11,10 @@ public class MinigameStatistic {
 	private String id;
 	private String title;
 
+	public Object format(int score) {
+		return score;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (o == null || getClass() != o.getClass()) return false;

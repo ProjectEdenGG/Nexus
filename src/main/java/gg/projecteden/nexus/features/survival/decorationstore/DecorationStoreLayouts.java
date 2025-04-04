@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationSto
 import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
-import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig.DecorationStorePasteHistory;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.DecorationStoreLayoutPasteJob;
 import gg.projecteden.nexus.utils.ChunkLoader;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -24,7 +23,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.io.File;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,7 +117,7 @@ public class DecorationStoreLayouts {
 
 		config.setSchematicId(schematicId);
 		pasteLayout(getLayoutSchematic(schematicId), StoreLocation.SURVIVAL);
-		config.getLayoutHistory().add(new DecorationStorePasteHistory(LocalDateTime.now(), schematicId));
+//		config.getLayoutHistory().add(new DecorationStorePasteHistory(LocalDateTime.now(), schematicId));
 
 		config.setActive(true);
 		DecorationStore.saveConfig();

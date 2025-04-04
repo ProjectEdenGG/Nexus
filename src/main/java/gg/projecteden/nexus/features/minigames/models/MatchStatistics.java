@@ -68,7 +68,7 @@ public class MatchStatistics {
 		MinigameStatsService service = new MinigameStatsService();
 		for (Minigamer minigamer : getMatch().getAllMinigamers()) {
 			MatchStatRecord record = new MatchStatRecord(type, this.statistics.get(minigamer.getUniqueId()));
-//			service.edit(minigamer, user -> user.addRecord(record));
+			service.edit(minigamer, user -> user.addRecord(record));
 
 			List<String> lines = new ArrayList<>();
 			this.statistics.get(minigamer.getUniqueId()).forEach((stat, value) -> {
@@ -108,5 +108,10 @@ public class MatchStatistics {
 	}
 
 	public static final MinigameStatistic WINS = new MinigameStatistic("wins", "Wins");
-	public static final MinigameStatistic TIME_PLAYED = new MinigameStatistic("time_played", "Time Played");
+	public static final MinigameStatistic TIME_PLAYED = new MinigameStatistic("time_played", "Time Played") {
+		@Override
+		public Object format(int score) {
+			return Timespan.ofSeconds(score).format();
+		}
+	};
 }

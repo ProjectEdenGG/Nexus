@@ -3,12 +3,12 @@ package gg.projecteden.nexus.models.minigamestats;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.api.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.models.statistics.models.MinigameStatistic;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.persistence.serializer.mongodb.MatchStatRecordConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,7 +26,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Converters({UUIDConverter.class, LocalDateTimeConverter.class})
+@Converters({UUIDConverter.class, MatchStatRecordConverter.class})
 public class MinigameStatsUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
@@ -37,6 +37,7 @@ public class MinigameStatsUser implements PlayerOwnedObject {
 		statistics.add(record);
 	}
 
+	@Data
 	public static class MatchStatRecord {
 		MechanicType mechanic;
 		LocalDateTime date;
