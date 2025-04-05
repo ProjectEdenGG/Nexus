@@ -26,6 +26,7 @@ import gg.projecteden.nexus.features.minigames.menus.PerkMenu;
 import gg.projecteden.nexus.features.minigames.menus.lobby.ArenasMenu;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
+import gg.projecteden.nexus.features.minigames.models.MatchStatistics;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.arenas.CheckpointArena;
@@ -37,6 +38,7 @@ import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifier
 import gg.projecteden.nexus.features.minigames.models.perks.HideParticle;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkType;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
+import gg.projecteden.nexus.features.minigames.models.statistics.BlockPartyStatistics;
 import gg.projecteden.nexus.features.minigames.models.statistics.models.MinigameStatistic;
 import gg.projecteden.nexus.features.minigames.utils.MinigameNight;
 import gg.projecteden.nexus.features.particles.effects.DotEffect;
@@ -59,6 +61,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeIngameException;
+import gg.projecteden.nexus.models.blockparty.BlockPartyStatsService;
 import gg.projecteden.nexus.models.checkpoint.CheckpointService;
 import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntity;
 import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntityService;
@@ -67,6 +70,7 @@ import gg.projecteden.nexus.models.minigamersetting.MinigamerSettingService;
 import gg.projecteden.nexus.models.minigamessetting.MinigamesConfig;
 import gg.projecteden.nexus.models.minigamessetting.MinigamesConfigService;
 import gg.projecteden.nexus.models.minigamestats.MinigameStatsService;
+import gg.projecteden.nexus.models.minigamestats.MinigameStatsService.LeaderboardRanking;
 import gg.projecteden.nexus.models.minigamestats.MinigameStatsUser.MatchStatRecord;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
@@ -100,9 +104,11 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -969,13 +975,14 @@ public class MinigamesCommand extends _WarpSubCommand {
 		send(PREFIX + "Refreshed scoreboard of " + match.getArena().getDisplayName());
 	}
 
-	@Path("leaderboard [arena]")
+	@Path("leaderboard timed [arena]")
 	@Description("View the leaderboard for timed minigames")
 	void leaderboard(@Arg("current") CheckpointArena arena) {
 		new LeaderboardMenu(arena).open(player());
 	}
 
 	@Path("leaderboard delete <arena> <player>")
+	@Permission(Group.ADMIN)
 	void leaderboard_remove(CheckpointArena arena, Player player) {
 		CheckpointService service = new CheckpointService();
 		CheckpointService.removeBestTime(arena.getName(), service.get(player));
@@ -1178,6 +1185,85 @@ public class MinigamesCommand extends _WarpSubCommand {
 			int score = statRecords.stream().mapToInt(record -> record.getStats().getOrDefault(stat, 0)).sum();
 			send(" &3- " + stat.getTitle() + ": &e" + stat.format(score));
 		});
+	}
+
+	@Path("stats transferBlockParty")
+	@Permission(Group.ADMIN)
+	void transferBlockParty() {
+		BlockPartyStatsService blockPartyStatsService = new BlockPartyStatsService();
+		MinigameStatsService service = new MinigameStatsService();
+		blockPartyStatsService.getAll().forEach(bp -> {
+			bp.getStats().forEach(stats -> {
+				Map<MinigameStatistic, Integer> map = new HashMap<>();
+				if (stats.isWin())
+					map.put(MatchStatistics.WINS, 1);
+				if (stats.getPlayTimeInSeconds() > 0)
+					map.put(MatchStatistics.TIME_PLAYED, stats.getPlayTimeInSeconds());
+				if (stats.getRoundsSurvived() > 0)
+					map.put(BlockPartyStatistics.ROUNDS_SURVIVED, stats.getRoundsSurvived());
+				if (stats.getPowerUpsCollected() > 0)
+					map.put(BlockPartyStatistics.POWER_UPS_COLLECTED, stats.getPowerUpsCollected());
+				if (stats.getPowerUpsUsed() > 0)
+					map.put(BlockPartyStatistics.POWER_UPS_USED, stats.getPowerUpsUsed());
+
+				MatchStatRecord record = new MatchStatRecord(MechanicType.BLOCK_PARTY, map);
+				record.setDate(stats.getTime().atStartOfDay());
+				service.edit(bp, mgm -> mgm.addRecord(record));
+			});
+		});
+	}
+
+	@Path("leaderboard <mechanic> <statistic>")
+	void leaderboard(MechanicType mechanic, MinigameStatistic statistic) {
+		send(PREFIX + "Leaderboard for &e" + statistic.getTitle() + " (" + mechanic.get().getName() + ")&3:");
+		List<LeaderboardRanking> rankings = new MinigameStatsService().getLeaderboard(mechanic, statistic, null, uuid());
+
+		BiFunction<LeaderboardRanking, String, JsonBuilder> formatter = (rank, index) -> {
+			long value = rank.getScore();
+			String string = StringUtils.getCnf().format(value);
+
+			return json(index + " " + Nerd.of(rank.getUuid()).getColoredName() + " &7- " + string);
+		};
+
+		new Paginator<LeaderboardRanking>()
+			.values(rankings)
+			.formatter(formatter)
+			.page(1)
+			.afterValues(() -> {
+				if (rankings.size() > 10) {
+					LeaderboardRanking ranking = rankings.get(10);
+					int position = ranking.getRank();
+					if (position > 10) {
+						send("&7•••");
+						send(formatter.apply(ranking, "&3" + position));
+					}
+				}
+			})
+			.send();
+	}
+
+	@TabCompleterFor(MinigameStatistic.class)
+	List<String> tabCompleteStatistic(String value) {
+		try {
+			MechanicType type = MechanicType.valueOf(arg(2).toUpperCase());
+			return type.getStatistics().stream()
+				.map(MinigameStatistic::getId)
+				.filter(stat -> stat.startsWith(value))
+				.toList();
+		} catch (Exception ignore) {}
+		return new ArrayList<>();
+	}
+
+	@ConverterFor(MinigameStatistic.class)
+	MinigameStatistic convertToMinigameStatistic(String value) {
+		try {
+			MechanicType type = MechanicType.valueOf(arg(2).toUpperCase());
+			return type.getStatistics().stream()
+				.filter(stat -> stat.getId().startsWith(value))
+				.findFirst()
+				.orElse(null);
+		} catch (Exception ignore) {}
+		return null;
 	}
 
 	@ConverterFor(Arena.class)

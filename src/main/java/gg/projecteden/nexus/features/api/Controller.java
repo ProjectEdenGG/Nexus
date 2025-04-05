@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.titan.models.CustomCreativeItem;
 import gg.projecteden.nexus.features.workbenches.dyestation.CreativeBrushMenu;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.hours.HoursService;
+import gg.projecteden.nexus.models.minigamestats.MinigameStatsService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -30,7 +31,10 @@ import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -245,6 +249,27 @@ public class Controller {
 				add(map);
 			}
 		}};
+	}
+
+	@Get("/minigames/stats/{mechanic}/{stat}/{date}/{uuid}")
+	Object minigameLeaderboard(String mechanic, String stat, String dateTime, String uuid) {
+		MechanicType type = MechanicType.valueOf(mechanic.toUpperCase());
+		MinigameStatistic statistic = type.getStatistics().stream()
+			.filter(_stat -> _stat.getId().equals(stat)).findFirst().orElse(null);
+
+		if (statistic == null)
+			return new ArrayList<>();
+
+		LocalDateTime localDateTime = null;
+		if (dateTime != null && !dateTime.equals("null")) {
+			Instant instant = Instant.parse(dateTime);
+			localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+		}
+		UUID self = null;
+		if (uuid != null && !uuid.equals("null"))
+			self = UUID.fromString(uuid);
+
+		return new MinigameStatsService().getLeaderboard(type, statistic, localDateTime, self);
 	}
 
 }

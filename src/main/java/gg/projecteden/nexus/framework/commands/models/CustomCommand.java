@@ -1193,29 +1193,31 @@ public abstract class CustomCommand extends ICustomCommand {
 			if (first && last)
 				return;
 
-			command = command.trim();
+			if (command != null) {
+				command = command.trim();
 
-			String space = " ";
-			if (command.endsWith("--page="))
-				space = "";
+				String space = " ";
+				if (command.endsWith("--page="))
+					space = "";
 
-			final String commandNext = command + space + (page + 1);
-			final String commandPrevious = command + space + (page - 1);
+				final String commandNext = command + space + (page + 1);
+				final String commandPrevious = command + space + (page - 1);
 
-			JsonBuilder buttons = json();
-			if (first)
-				buttons.next("&7 « Previous  &3");
-			else
-				buttons.next("&e « Previous  &3").command(commandPrevious).hover("&c" + commandPrevious);
+				JsonBuilder buttons = json();
+				if (first)
+					buttons.next("&7 « Previous  &3");
+				else
+					buttons.next("&e « Previous  &3").command(commandPrevious).hover("&c" + commandPrevious);
 
-			buttons.group().next("&3|&3|").group();
+				buttons.group().next("&3|&3|").group();
 
-			if (last)
-				buttons.next("  &7Next »");
-			else
-				buttons.next("  &eNext »").command(commandNext).hover("&c" + commandNext);
+				if (last)
+					buttons.next("  &7Next »");
+				else
+					buttons.next("  &eNext »").command(commandNext).hover("&c" + commandNext);
 
-			CustomCommand.this.send(buttons.group());
+				CustomCommand.this.send(buttons.group());
+			}
 		}
 
 	}

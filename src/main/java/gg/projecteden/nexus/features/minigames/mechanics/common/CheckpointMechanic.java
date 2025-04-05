@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigames.mechanics.common;
 
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Arena;
+import gg.projecteden.nexus.features.minigames.models.MatchStatistics;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.arenas.CheckpointArena;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
@@ -73,6 +74,7 @@ public abstract class CheckpointMechanic extends SingleplayerMechanic {
 					)
 			);
 			// TODO: broadcast WRs to whole server
+			matchData.getMatch().getMatchStatistics().award(MatchStatistics.WINS, minigamer);
 			matchData.onWin(minigamer, now);
 			minigamer.quit();
 		}
