@@ -65,7 +65,7 @@ public class MinigameStatsService extends MongoPlayerService<MinigameStatsUser> 
 		for (Document doc : top10) {
 			UUID uuid = UUID.fromString(doc.getString("_id"));
 			int total = doc.getInteger("total");
-			rankings.add(new LeaderboardRanking(uuid, Nerd.of(uuid).getNickname(), rank++, total));
+			rankings.add(new LeaderboardRanking(uuid, Nerd.of(uuid).getNickname(), rank++, statistic.format(total)));
 		}
 
 		if (self != null) {
@@ -100,7 +100,7 @@ public class MinigameStatsService extends MongoPlayerService<MinigameStatsUser> 
 			Document rankDoc = collection().aggregate(selfRankPipeline).first();
 			int selfRank = (rankDoc != null ? rankDoc.getInteger("rank") : 0) + 1;
 
-			rankings.add(new LeaderboardRanking(self, Nerd.of(self).getNickname(), selfRank, selfScore));
+			rankings.add(new LeaderboardRanking(self, Nerd.of(self).getNickname(), selfRank, statistic.format(selfScore)));
 		}
 
 		return rankings;
@@ -112,7 +112,7 @@ public class MinigameStatsService extends MongoPlayerService<MinigameStatsUser> 
 		UUID uuid;
 		String name;
 		int rank;
-		int score;
+		Object score;
 	}
 
 }

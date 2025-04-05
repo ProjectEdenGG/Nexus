@@ -1219,10 +1219,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 		List<LeaderboardRanking> rankings = new MinigameStatsService().getLeaderboard(mechanic, statistic, null, uuid());
 
 		BiFunction<LeaderboardRanking, String, JsonBuilder> formatter = (rank, index) -> {
-			long value = rank.getScore();
-			String string = StringUtils.getCnf().format(value);
-
-			return json(index + " " + Nerd.of(rank.getUuid()).getColoredName() + " &7- " + string);
+			return json(index + " " + Nerd.of(rank.getUuid()).getColoredName() + " &7- " + rank.getScore());
 		};
 
 		new Paginator<LeaderboardRanking>()

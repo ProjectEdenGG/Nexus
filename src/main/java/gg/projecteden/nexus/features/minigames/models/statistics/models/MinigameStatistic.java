@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models.statistics.models;
 
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -12,7 +13,7 @@ public class MinigameStatistic {
 	private String title;
 
 	public Object format(int score) {
-		return score;
+		return StringUtils.getCnf().format(score);
 	}
 
 	@Override

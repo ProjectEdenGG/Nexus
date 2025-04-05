@@ -233,6 +233,15 @@ public class Controller {
 		return items.toArray();
 	}
 
+	@Get("/minigames")
+	Object minigames() {
+		return new HashMap<>() {{
+			ArenaManager.getAllEnabled().stream().map(Arena::getMechanicType).forEach(mechanic -> {
+				put(mechanic.name().toLowerCase(), mechanic.get().getName());
+			});
+		}};
+	}
+
 	@Get("/minigames/stats")
 	Object minigameStatistics() {
 		return new ArrayList<>() {{
