@@ -8,11 +8,12 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.breaking.DamagedB
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventory;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventoryFeature;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
+import gg.projecteden.nexus.utils.Debug;
+import gg.projecteden.nexus.utils.Debug.DebugType;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.ToolType.ToolGrade;
@@ -85,7 +86,7 @@ public class AutoTool implements Listener {
 		hotbar.add(null);
 
 		Consumer<String> debug = message -> {
-			if (Dev.exists(player))
+			if (Debug.isEnabled(player, DebugType.AUTO_TOOL))
 				PlayerUtils.debug(player, message);
 		};
 

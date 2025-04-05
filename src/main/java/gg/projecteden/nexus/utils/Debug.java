@@ -126,6 +126,7 @@ public class Debug {
 	}
 
 	public enum DebugType {
+		AUTO_TOOL,
 		RESOURCE_PACK,
 		RECIPES,
 		API,
