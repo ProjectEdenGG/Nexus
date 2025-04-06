@@ -14,8 +14,13 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -24,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
+import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
 import static gg.projecteden.nexus.utils.Debug.DebugType.API;
 
 @Environments(Env.PROD)
@@ -67,65 +73,99 @@ public class SimpleHttpServer extends Feature {
 	}
 
 	static class RequestHandler implements HttpHandler {
+
+		private static void debug(HttpExchange exchange, String message) {
+			if (exchange.getRequestURI().getPath().contains("/live/players.json"))
+				return;
+
+			Debug.log(API, message);
+		}
+
 		@Override
 		public void handle(HttpExchange exchange) throws IOException {
 			try {
 				String path = exchange.getRequestURI().getPath();
-				Debug.log(API, exchange.getRequestMethod() + " " + path);
+				debug(exchange, "======");
+				debug(exchange, exchange.getRequestMethod() + " " + path);
 
 				Object response = null;
 
 				var httpMethod = HttpMethod.valueOf(exchange.getRequestMethod());
-				Debug.log(API, "httpMethod: " + httpMethod.name() + " " + httpMethod.getAnnotation().getSimpleName());
+				debug(exchange, "httpMethod: " + httpMethod.name() + " " + httpMethod.getAnnotation().getSimpleName());
+
+				JSONObject body = null;
+				try (InputStream inputStream = exchange.getRequestBody()) {
+					BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+					StringBuilder builder = new StringBuilder();
+
+					String line;
+					while ((line = reader.readLine()) != null) {
+						builder.append(line);
+					}
+
+					var bodyString = builder.toString();
+					debug(exchange, "Request body: " + bodyString);
+					if (isNotNullOrEmpty(bodyString)) {
+						try {
+							body = new JSONObject(bodyString);
+							debug(exchange, "Request body JSON: " + body);
+						} catch (JSONException ignore) {
+							ignore.printStackTrace();
+						}
+					}
+				}
 
 				endpoints:
 				for (Method method : CONTROLLER.getClass().getDeclaredMethods()) {
 					method.setAccessible(true);
-					Debug.log(API, "method: " + method.getName());
+					debug(exchange, "method: " + method.getName());
 					if (!method.isAnnotationPresent(httpMethod.getAnnotation()))
 						continue;
 
 					Annotation annotation = method.getAnnotation(httpMethod.getAnnotation());
 					String controllerPath = (String) annotation.getClass().getMethod("value").invoke(annotation);
 
-					var requestSplit = path.split("/");
-					var controllerSplit = controllerPath.split("/");
+					String[] requestSplit = path.split("/");
+					String[] controllerSplit = controllerPath.split("/");
 					List<Object> arguments = new ArrayList<>();
 
-					Debug.log(API, "path: " + path);
-					Debug.log(API, "controllerPath: " + controllerPath);
-					Debug.log(API, "requestSplit: " + String.join(", ", requestSplit));
-					Debug.log(API, "controllerSplit: " + String.join(", ", controllerSplit));
+					debug(exchange, "path: " + path);
+					debug(exchange, "controllerPath: " + controllerPath);
+					debug(exchange, "requestSplit: " + String.join(", ", requestSplit));
+					debug(exchange, "controllerSplit: " + String.join(", ", controllerSplit));
 
 					if (requestSplit.length != controllerSplit.length) {
-						Debug.log(API, "Argument length mismatch, continuing");
+						debug(exchange, "Argument length mismatch, continuing");
 						continue;
 					}
 
 					for (int i = 0; i < controllerSplit.length; i++) {
-						var requestStep = requestSplit[i];
-						var controllerStep = controllerSplit[i];
-						Debug.log(API, "requestStep: " + requestStep);
-						Debug.log(API, "controllerStep: " + controllerStep);
+						String requestStep = requestSplit[i];
+						String controllerStep = controllerSplit[i];
+						debug(exchange, "requestStep: " + requestStep);
+						debug(exchange, "controllerStep: " + controllerStep);
 
 						if (controllerStep.startsWith("{") && controllerStep.endsWith("}")) {
 							arguments.add(requestStep);
 						} else if (!requestStep.equals(controllerStep)) {
-							Debug.log(API, "Step mismatch, continuing");
+							debug(exchange, "Step mismatch, continuing");
 							continue endpoints;
 						}
 					}
 
-					var params = method.getParameterTypes();
-					if (params.length > 0) {
-						var last = params[params.length - 1];
-						if (HttpExchange.class.equals(last))
-							arguments.add(exchange);
+					for (int i = 0; i < method.getParameterTypes().length; i++) {
+						debug(exchange, "method.getParameterTypes()[i]: " + method.getParameterTypes()[i].getSimpleName());
+						if (method.getParameterTypes()[i].equals(HttpExchange.class))
+							arguments.add(i, exchange);
+
+						if (method.getParameterTypes()[i].equals(JSONObject.class))
+							arguments.add(i, body);
 					}
 
-					Debug.log(API, "Method: " + method.getName());
-					Debug.log(API, "Arguments: " + arguments);
+					debug(exchange, "Method: " + method.getName());
+					debug(exchange, "Arguments: " + arguments);
 					response = method.invoke(CONTROLLER, arguments.toArray());
+					break;
 				}
 
 				if (response == null) {
@@ -135,7 +175,7 @@ public class SimpleHttpServer extends Feature {
 				}
 
 				var responseString = Utils.getGson().toJson(response);
-				Debug.log(API, "Response: " + responseString);
+				debug(exchange, "Response: " + responseString);
 				exchange.sendResponseHeaders(200, responseString.getBytes().length);
 				try (OutputStream os = exchange.getResponseBody()) {
 					os.write(responseString.getBytes());
@@ -152,6 +192,7 @@ public class SimpleHttpServer extends Feature {
 				exchange.close();
 			}
 		}
+
 	}
 
 }
