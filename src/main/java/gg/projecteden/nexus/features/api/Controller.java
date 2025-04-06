@@ -27,6 +27,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -233,15 +234,6 @@ public class Controller {
 		return items.toArray();
 	}
 
-	@Get("/minigames")
-	Object minigames() {
-		return new HashMap<>() {{
-			ArenaManager.getAllEnabled().stream().map(Arena::getMechanicType).forEach(mechanic -> {
-				put(mechanic.name().toLowerCase(), mechanic.get().getName());
-			});
-		}};
-	}
-
 	@Get("/minigames/stats")
 	Object minigameStatistics() {
 		return new ArrayList<>() {{
@@ -249,6 +241,7 @@ public class Controller {
 				Map<String, Object> map = new HashMap<>();
 				map.put("mechanic", mechanic.name().toLowerCase());
 				map.put("title", mechanic.get().getName());
+				map.put("description", mechanic.get().getDescription());
 
 				Map<String, String> stats = new HashMap<>();
 				for (MinigameStatistic stat : mechanic.getStatistics())
@@ -260,7 +253,28 @@ public class Controller {
 		}};
 	}
 
-	@Get("/minigames/stats/{mechanic}/{stat}/{date}/{uuid}")
+	@Get("/minigames/stats/aggregate/{mechanic}/{date}/{uuid}")
+	Object minigameAggregates(String mechanic, String dateTime, String uuid) {
+		MechanicType type = MechanicType.valueOf(mechanic.toUpperCase());
+
+		LocalDateTime localDateTime = null;
+		if (dateTime != null && !dateTime.equals("null")) {
+			Instant instant = Instant.parse(dateTime);
+			localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+		}
+		UUID self = null;
+		if (uuid != null && !uuid.equals("null"))
+			self = UUID.fromString(uuid);
+
+		List<StatValuePair> list = new ArrayList<>();
+		for (MinigameStatistic _stat : type.getStatistics()) {
+			list.add(new StatValuePair(_stat.getTitle(), (String) _stat.format(new MinigameStatsService().getAggregates(type, _stat, localDateTime, self))));
+		}
+
+		return list;
+	}
+
+	@Get("/minigames/stats/leaderboard/{mechanic}/{stat}/{date}/{uuid}")
 	Object minigameLeaderboard(String mechanic, String stat, String dateTime, String uuid) {
 		MechanicType type = MechanicType.valueOf(mechanic.toUpperCase());
 		MinigameStatistic statistic = type.getStatistics().stream()
@@ -279,6 +293,12 @@ public class Controller {
 			self = UUID.fromString(uuid);
 
 		return new MinigameStatsService().getLeaderboard(type, statistic, localDateTime, self);
+	}
+
+	@AllArgsConstructor
+	public static class StatValuePair {
+		private String stat;
+		private String value;
 	}
 
 }
