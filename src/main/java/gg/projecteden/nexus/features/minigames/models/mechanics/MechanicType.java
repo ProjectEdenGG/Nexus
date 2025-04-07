@@ -101,7 +101,7 @@ public enum MechanicType {
 	@Group(MechanicGroup.PVP)								FREE_FOR_ALL(FreeForAll.class),
 	@Group(MechanicGroup.PVP)								INFECTION(Infection.class),
 	@Group(MechanicGroup.PVP)								JUGGERNAUT(Juggernaut.class),
-	@Group(MechanicGroup.PVP)								KING_OF_THE_HILL(KingOfTheHill.class),
+	@Group(MechanicGroup.PVP)		@Disabled				KING_OF_THE_HILL(KingOfTheHill.class),
 	@Group(MechanicGroup.PVP)								ONE_IN_THE_QUIVER(OneInTheQuiver.class),
 	@Group(MechanicGroup.PVP)								SIEGE(Siege.class),
 	@Group(MechanicGroup.PVP)								TEAM_DEATHMATCH(TeamDeathmatch.class),
