@@ -27,6 +27,7 @@ import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 
 import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
@@ -174,6 +175,31 @@ public class SimpleHttpServer extends Feature {
 					return;
 				}
 
+				if (response instanceof CompletableFuture<?> future)
+					future.thenAccept(_response -> {
+						try {
+							respond(_response, exchange);
+						} catch (IOException e) {
+							throw new RuntimeException(e);
+						}
+					});
+				else
+					respond(response, exchange);
+
+			} catch (Exception e) {
+				Nexus.severe("Error handling request");
+				e.printStackTrace();
+				var message = e.getMessage();
+				exchange.sendResponseHeaders(500, message.getBytes().length);
+				try (OutputStream os = exchange.getResponseBody()) {
+					os.write(message.getBytes());
+				}
+				exchange.close();
+			}
+		}
+
+		private void respond(Object response, HttpExchange exchange) throws IOException {
+			try {
 				var responseString = Utils.getGson().toJson(response);
 				debug(exchange, "Response: " + responseString);
 				exchange.sendResponseHeaders(200, responseString.getBytes().length);

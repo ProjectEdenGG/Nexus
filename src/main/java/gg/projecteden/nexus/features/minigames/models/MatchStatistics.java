@@ -110,7 +110,7 @@ public class MatchStatistics {
 	public static final MinigameStatistic WINS = new MinigameStatistic("wins", "Wins");
 	public static final MinigameStatistic TIME_PLAYED = new MinigameStatistic("time_played", "Time Played") {
 		@Override
-		public Object format(int score) {
+		public Object format(long score) {
 			return Timespan.ofSeconds(score).format();
 		}
 	};

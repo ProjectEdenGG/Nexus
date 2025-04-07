@@ -1213,30 +1213,33 @@ public class MinigamesCommand extends _WarpSubCommand {
 		});
 	}
 
-	@Path("leaderboard <mechanic> <statistic>")
-	void leaderboard(MechanicType mechanic, MinigameStatistic statistic) {
+	@Path("leaderboard <mechanic> <statistic> [page]")
+	void leaderboard(MechanicType mechanic, MinigameStatistic statistic, @Arg("1") int page) {
 		send(PREFIX + "Leaderboard for &e" + statistic.getTitle() + " (" + mechanic.get().getName() + ")&3:");
-		List<LeaderboardRanking> rankings = new MinigameStatsService().getLeaderboard(mechanic, statistic, null);
+		new MinigameStatsService().getLeaderboard(mechanic, statistic, null).thenAccept(rankings -> {
+			BiFunction<LeaderboardRanking, String, JsonBuilder> formatter = (rank, index) -> {
+				return json(index + " " + Nerd.of(rank.getUuid()).getColoredName() + " &7- " + rank.getScore());
+			};
 
-		BiFunction<LeaderboardRanking, String, JsonBuilder> formatter = (rank, index) -> {
-			return json(index + " " + Nerd.of(rank.getUuid()).getColoredName() + " &7- " + rank.getScore());
-		};
-
-		new Paginator<LeaderboardRanking>()
-			.values(rankings)
-			.formatter(formatter)
-			.page(1)
-			.afterValues(() -> {
-				if (rankings.size() > 10) {
-					LeaderboardRanking ranking = rankings.get(10);
-					int position = ranking.getRank();
-					if (position > 10) {
-						send("&7•••");
-						send(formatter.apply(ranking, "&3" + position));
+			new Paginator<LeaderboardRanking>()
+				.values(rankings)
+				.formatter(formatter)
+				.page(1)
+				.command("/mgm leaderboard " + mechanic.name() + " " + statistic.getId() + " ")
+				.afterValues(() -> {
+					if (page == 1) {
+						LeaderboardRanking self = rankings.stream().filter(rank -> rank.getUuid() == uuid()).findFirst().orElse(null);
+						if (self != null) {
+							int position = self.getRank();
+							if (position > 10) {
+								send("&7•••");
+								send(formatter.apply(self, "&3" + position));
+							}
+						}
 					}
-				}
-			})
-			.send();
+				})
+				.send();
+		});
 	}
 
 	@TabCompleterFor(MinigameStatistic.class)

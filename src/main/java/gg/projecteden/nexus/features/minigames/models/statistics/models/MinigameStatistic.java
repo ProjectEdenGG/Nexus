@@ -12,7 +12,7 @@ public class MinigameStatistic {
 	private String id;
 	private String title;
 
-	public Object format(int score) {
+	public Object format(long score) {
 		return StringUtils.getCnf().format(score);
 	}
 

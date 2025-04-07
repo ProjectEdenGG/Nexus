@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.api.annotations.Get;
 import gg.projecteden.nexus.features.api.annotations.Post;
 import gg.projecteden.nexus.features.commands.StaffHallCommand;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
+import gg.projecteden.nexus.features.minigames.mechanics.common.CheckpointMechanic;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.models.statistics.models.MinigameStatistic;
@@ -12,6 +13,9 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.titan.models.CustomCreativeItem;
 import gg.projecteden.nexus.features.workbenches.dyestation.CreativeBrushMenu;
+import gg.projecteden.nexus.models.checkpoint.CheckpointService;
+import gg.projecteden.nexus.models.checkpoint.CheckpointUser;
+import gg.projecteden.nexus.models.checkpoint.RecordTotalTime;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.minigamestats.MinigameStatsService;
@@ -35,6 +39,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.json.JSONObject;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -46,6 +51,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
@@ -251,8 +257,16 @@ public class Controller {
 				map.put("description", mechanic.get().getDescription());
 
 				Map<String, String> stats = new HashMap<>();
-				for (MinigameStatistic stat : mechanic.getStatistics())
-					stats.put(stat.getId(), stat.getTitle());
+
+				if (mechanic.get() instanceof CheckpointMechanic) {
+					map.put("timed", true);
+					for (Arena arena : ArenaManager.getAllEnabled(mechanic))
+						stats.put(arena.getName(), arena.getDisplayName());
+				}
+				else
+					for (MinigameStatistic stat : mechanic.getStatistics())
+						stats.put(stat.getId(), stat.getTitle());
+
 				map.put("stats", stats);
 
 				add(map);
@@ -272,13 +286,29 @@ public class Controller {
 		MinigameStatistic statistic = type.getStatistics().stream()
 			.filter(_stat -> _stat.getId().equals(stat)).findFirst().orElse(null);
 
-		if (statistic == null)
-			return new ArrayList<>();
+		if (statistic == null) {
+			if (!(type.get() instanceof CheckpointMechanic))
+				return new ArrayList<>();
 
-		LocalDateTime localDateTime = null;
+			try {
+				Arena arena = ArenaManager.get(stat);
+				statistic = new MinigameStatistic(arena.getName(), arena.getDisplayName()) {
+					@Override
+					public Object format(long score) {
+						return StringUtils.getTimeFormat(Duration.ofMillis(score));
+					}
+				};
+			} catch (Exception ignored) {
+				return new ArrayList<>();
+			}
+		}
+
+		LocalDateTime localDateTime;
 		if (dateTime != null) {
 			Instant instant = Instant.parse(dateTime);
 			localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+		} else {
+			localDateTime = null;
 		}
 		UUID self;
 		if (uuid != null)
@@ -286,17 +316,21 @@ public class Controller {
 		else
 			self = null;
 
-		Map<String, Object> map = new HashMap<>();
+		MinigameStatistic finalStatistic = statistic;
 
-		List<LeaderboardRanking> list = new MinigameStatsService().getLeaderboard(type, statistic, localDateTime);
-		List<LeaderboardRanking> pageList = list.subList(Math.min(list.size(), (page - 1) * 10), Math.min(list.size(), page * 10));
+		CompletableFuture<Map<String, Object>> future = new CompletableFuture<>();
+		new MinigameStatsService().getLeaderboard(type, finalStatistic, localDateTime).thenAccept(list -> {
+			List<LeaderboardRanking> pageList = list.subList(Math.min(list.size(), (page - 1) * 10), Math.min(list.size(), page * 10));
 
-		map.put("leaderboard", pageList);
-		map.put("totalRows", list.size());
-		if (self != null)
-			map.put("self", list.stream().filter(record -> record.getUuid().equals(self)).findFirst().orElse(null));
+			Map<String, Object> map = new HashMap<>();
+			map.put("leaderboard", pageList);
+			map.put("totalRows", list.size());
+			if (self != null)
+				map.put("self", list.stream().filter(record -> record.getUuid().equals(self)).findFirst().orElse(null));
 
-		return map;
+			future.complete(map);
+		});
+		return future;
 	}
 
 	@Post("/minigames/stats/aggregate")
@@ -317,8 +351,22 @@ public class Controller {
 			self = UUID.fromString(uuid);
 
 		List<StatValuePair> list = new ArrayList<>();
-		for (MinigameStatistic _stat : type.getStatistics()) {
-			list.add(new StatValuePair(_stat.getTitle(), (String) _stat.format(new MinigameStatsService().getAggregates(type, _stat, localDateTime, self))));
+		if (type.get() instanceof CheckpointMechanic && uuid != null) {
+			CheckpointService service = new CheckpointService();
+			CheckpointUser user = service.get(self);
+
+			for (Arena arena : ArenaManager.getAllEnabled(type)) {
+				RecordTotalTime time = user.getBestTotalTime(arena);
+				if (time != null && time.getTime() != null)
+					list.add(new StatValuePair(arena.getDisplayName(), StringUtils.getTimeFormat(time.getTime())));
+				else
+					list.add(new StatValuePair(arena.getDisplayName(), "N/A"));
+			}
+		}
+		else {
+			for (MinigameStatistic _stat : type.getStatistics()) {
+				list.add(new StatValuePair(_stat.getTitle(), (String) _stat.format(new MinigameStatsService().getAggregates(type, _stat, localDateTime, self))));
+			}
 		}
 
 		return list;
