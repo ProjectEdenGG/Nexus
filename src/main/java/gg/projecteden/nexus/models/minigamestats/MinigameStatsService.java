@@ -43,7 +43,7 @@ public class MinigameStatsService extends MongoPlayerService<MinigameStatsUser> 
 
 	private static final LocalDateTime EPOCH = LocalDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC);
 
-	public List<LeaderboardRanking> getLeaderboard(MechanicType mechanic, MinigameStatistic statistic, LocalDateTime after, UUID self) {
+	public List<LeaderboardRanking> getLeaderboard(MechanicType mechanic, MinigameStatistic statistic, LocalDateTime after) {
 		DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 		String afterInstanceString = formatter.format(after == null ? EPOCH : after);
 
@@ -54,8 +54,7 @@ public class MinigameStatsService extends MongoPlayerService<MinigameStatsUser> 
 				Filters.eq("statistics.mechanic", mechanic.name())
 			)),
 			Aggregates.group("$_id", Accumulators.sum("total", "$statistics.stats." + statistic.getId())),
-			Aggregates.sort(Sorts.descending("total")),
-			Aggregates.limit(10)
+			Aggregates.sort(Sorts.descending("total"))
 		);
 
 		AggregateIterable<Document> top10 = collection().aggregate(pipeline);
@@ -78,41 +77,6 @@ public class MinigameStatsService extends MongoPlayerService<MinigameStatsUser> 
 			}
 
 			rankings.add(new LeaderboardRanking(uuid, Nerd.of(uuid).getNickname(), rank, statistic.format(total)));
-		}
-
-		if (self != null) {
-			List<Bson> selfScorePipeline = Arrays.asList(
-				Aggregates.unwind("$statistics"),
-				Aggregates.match(Filters.and(
-					Filters.eq("_id", self.toString()),
-					Filters.gt("statistics.date", afterInstanceString),
-					Filters.eq("statistics.mechanic", mechanic.name())
-				)),
-				Aggregates.group("$_id", Accumulators.sum("total", "$statistics.stats." + statistic.getId()))
-			);
-
-			Document selfScoreDoc = collection().aggregate(selfScorePipeline).first();
-			if (selfScoreDoc == null) {
-				return rankings;
-			}
-
-			int selfScore = selfScoreDoc.getInteger("total");
-
-			List<Bson> selfRankPipeline = Arrays.asList(
-				Aggregates.unwind("$statistics"),
-				Aggregates.match(Filters.and(
-					Filters.gt("statistics.date", afterInstanceString),
-					Filters.eq("statistics.mechanic", mechanic.name())
-				)),
-				Aggregates.group("$_id", Accumulators.sum("total", "$statistics.stats." + statistic.getId())),
-				Aggregates.match(Filters.gt("total", selfScore)),
-				Aggregates.count("rank")
-			);
-
-			Document rankDoc = collection().aggregate(selfRankPipeline).first();
-			int selfRank = (rankDoc != null ? rankDoc.getInteger("rank") : 0) + 1;
-
-			rankings.add(new LeaderboardRanking(self, Nerd.of(self).getNickname(), selfRank, statistic.format(selfScore)));
 		}
 
 		return rankings;

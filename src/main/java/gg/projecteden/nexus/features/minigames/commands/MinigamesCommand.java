@@ -1216,7 +1216,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Path("leaderboard <mechanic> <statistic>")
 	void leaderboard(MechanicType mechanic, MinigameStatistic statistic) {
 		send(PREFIX + "Leaderboard for &e" + statistic.getTitle() + " (" + mechanic.get().getName() + ")&3:");
-		List<LeaderboardRanking> rankings = new MinigameStatsService().getLeaderboard(mechanic, statistic, null, uuid());
+		List<LeaderboardRanking> rankings = new MinigameStatsService().getLeaderboard(mechanic, statistic, null);
 
 		BiFunction<LeaderboardRanking, String, JsonBuilder> formatter = (rank, index) -> {
 			return json(index + " " + Nerd.of(rank.getUuid()).getColoredName() + " &7- " + rank.getScore());

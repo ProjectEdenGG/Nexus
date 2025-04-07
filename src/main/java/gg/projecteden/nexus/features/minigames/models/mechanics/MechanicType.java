@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics;
 
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
@@ -78,12 +79,12 @@ public enum MechanicType {
 	@Group(MechanicGroup.ARCADE)							DROPPER(Dropper.class),
 	@Group(MechanicGroup.ARCADE)							FALLING_BLOCKS(FallingBlocks.class),
 	@Group(MechanicGroup.ARCADE)							GOLD_RUSH(GoldRush.class),
-	@Group(MechanicGroup.ARCADE)							GRAB_A_JUMBUCK(GrabAJumbuck.class),
+	@Group(MechanicGroup.ARCADE)	@Disabled				GRAB_A_JUMBUCK(GrabAJumbuck.class),
 	@Group(MechanicGroup.ARCADE)							HOLE_IN_THE_WALL(HoleInTheWall.class),
-	@Group(MechanicGroup.ARCADE)							KANGAROO_JUMPING(KangarooJumping.class),
+	@Group(MechanicGroup.ARCADE)	@Disabled				KANGAROO_JUMPING(KangarooJumping.class),
 	@Group(MechanicGroup.ARCADE)							MASTERMIND(Mastermind.class),
-	@Group(MechanicGroup.ARCADE) /*@Parent(Mastermind.class)*/ MEGAMIND(Megamind.class),
-	@Group(MechanicGroup.ARCADE) /*@Parent(Mastermind.class)*/ MULTIMIND(Multimind.class),
+	@Group(MechanicGroup.ARCADE) @Disabled /*@Parent(Mastermind.class)*/ MEGAMIND(Megamind.class),
+	@Group(MechanicGroup.ARCADE) @Disabled /*@Parent(Mastermind.class)*/ MULTIMIND(Multimind.class),
 	@Group(MechanicGroup.ARCADE)							MONSTER_MAZE(MonsterMaze.class),
 	@Group(MechanicGroup.ARCADE)							PIXEL_DROP(PixelDrop.class),
 	@Group(MechanicGroup.ARCADE)							PIXEL_PAINTERS(PixelPainters.class),
@@ -175,6 +176,10 @@ public enum MechanicType {
 
 	public MechanicType getParent() {
 		return of(getField().getAnnotation(Parent.class).value());
+	}
+
+	public boolean isEnabled() {
+		return !getField().isAnnotationPresent(Disabled.class);
 	}
 
 	@SneakyThrows

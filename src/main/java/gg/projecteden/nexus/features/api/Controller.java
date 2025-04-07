@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.api;
 
 import gg.projecteden.nexus.features.api.annotations.Get;
+import gg.projecteden.nexus.features.api.annotations.Post;
 import gg.projecteden.nexus.features.commands.StaffHallCommand;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
@@ -14,6 +15,7 @@ import gg.projecteden.nexus.features.workbenches.dyestation.CreativeBrushMenu;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.minigamestats.MinigameStatsService;
+import gg.projecteden.nexus.models.minigamestats.MinigameStatsService.LeaderboardRanking;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -31,6 +33,7 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.json.JSONObject;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -38,6 +41,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -237,7 +241,10 @@ public class Controller {
 	@Get("/minigames/stats")
 	Object minigameStatistics() {
 		return new ArrayList<>() {{
-			for (MechanicType mechanic : ArenaManager.getAllEnabled().stream().map(Arena::getMechanicType).distinct().sorted().toList()) {
+			for (MechanicType mechanic : ArenaManager.getAllEnabled().stream().map(Arena::getMechanicType)
+						.distinct().filter(MechanicType::isEnabled)
+						.sorted(Comparator.comparing(Enum::name)).toList()) {
+
 				Map<String, Object> map = new HashMap<>();
 				map.put("mechanic", mechanic.name().toLowerCase());
 				map.put("title", mechanic.get().getName());
@@ -253,29 +260,14 @@ public class Controller {
 		}};
 	}
 
-	@Get("/minigames/stats/aggregate/{mechanic}/{date}/{uuid}")
-	Object minigameAggregates(String mechanic, String dateTime, String uuid) {
-		MechanicType type = MechanicType.valueOf(mechanic.toUpperCase());
+	@Post("/minigames/stats")
+	Object minigameLeaderboard(JSONObject body) {
+		String mechanic = body.getString("mechanic");
+		String stat = body.getString("stat");
+		String dateTime = body.optString("date", null);
+		String uuid = body.optString("uuid", null);
+		int page = body.getInt("page");
 
-		LocalDateTime localDateTime = null;
-		if (dateTime != null && !dateTime.equals("null")) {
-			Instant instant = Instant.parse(dateTime);
-			localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-		}
-		UUID self = null;
-		if (uuid != null && !uuid.equals("null"))
-			self = UUID.fromString(uuid);
-
-		List<StatValuePair> list = new ArrayList<>();
-		for (MinigameStatistic _stat : type.getStatistics()) {
-			list.add(new StatValuePair(_stat.getTitle(), (String) _stat.format(new MinigameStatsService().getAggregates(type, _stat, localDateTime, self))));
-		}
-
-		return list;
-	}
-
-	@Get("/minigames/stats/leaderboard/{mechanic}/{stat}/{date}/{uuid}")
-	Object minigameLeaderboard(String mechanic, String stat, String dateTime, String uuid) {
 		MechanicType type = MechanicType.valueOf(mechanic.toUpperCase());
 		MinigameStatistic statistic = type.getStatistics().stream()
 			.filter(_stat -> _stat.getId().equals(stat)).findFirst().orElse(null);
@@ -284,15 +276,52 @@ public class Controller {
 			return new ArrayList<>();
 
 		LocalDateTime localDateTime = null;
-		if (dateTime != null && !dateTime.equals("null")) {
+		if (dateTime != null) {
+			Instant instant = Instant.parse(dateTime);
+			localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+		}
+		UUID self;
+		if (uuid != null)
+			self = UUID.fromString(uuid);
+		else
+			self = null;
+
+		Map<String, Object> map = new HashMap<>();
+
+		List<LeaderboardRanking> list = new MinigameStatsService().getLeaderboard(type, statistic, localDateTime);
+		List<LeaderboardRanking> pageList = list.subList(Math.min(list.size(), (page - 1) * 10), Math.min(list.size(), page * 10));
+
+		map.put("leaderboard", pageList);
+		map.put("totalRows", list.size());
+		if (self != null)
+			map.put("self", list.stream().filter(record -> record.getUuid().equals(self)).findFirst().orElse(null));
+
+		return map;
+	}
+
+	@Post("/minigames/stats/aggregate")
+	Object minigameAggregates(JSONObject body) {
+		String mechanic = body.getString("mechanic");
+		String dateTime = body.optString("date", null);
+		String uuid = body.optString("uuid", null);
+
+		MechanicType type = MechanicType.valueOf(mechanic.toUpperCase());
+
+		LocalDateTime localDateTime = null;
+		if (dateTime != null) {
 			Instant instant = Instant.parse(dateTime);
 			localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
 		}
 		UUID self = null;
-		if (uuid != null && !uuid.equals("null"))
+		if (uuid != null)
 			self = UUID.fromString(uuid);
 
-		return new MinigameStatsService().getLeaderboard(type, statistic, localDateTime, self);
+		List<StatValuePair> list = new ArrayList<>();
+		for (MinigameStatistic _stat : type.getStatistics()) {
+			list.add(new StatValuePair(_stat.getTitle(), (String) _stat.format(new MinigameStatsService().getAggregates(type, _stat, localDateTime, self))));
+		}
+
+		return list;
 	}
 
 	@AllArgsConstructor
