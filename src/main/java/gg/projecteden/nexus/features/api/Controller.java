@@ -351,7 +351,10 @@ public class Controller {
 			self = UUID.fromString(uuid);
 
 		List<StatValuePair> list = new ArrayList<>();
-		if (type.get() instanceof CheckpointMechanic && uuid != null) {
+		if (type.get() instanceof CheckpointMechanic) {
+			if (self == null)
+				return new ArrayList<>();
+
 			CheckpointService service = new CheckpointService();
 			CheckpointUser user = service.get(self);
 
