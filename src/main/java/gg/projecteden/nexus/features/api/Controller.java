@@ -51,7 +51,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
@@ -318,7 +317,6 @@ public class Controller {
 
 		MinigameStatistic finalStatistic = statistic;
 
-		CompletableFuture<Map<String, Object>> future = new CompletableFuture<>();
 		List<LeaderboardRanking> list = new MinigameStatsService().getLeaderboard(type, finalStatistic, localDateTime);
 		List<LeaderboardRanking> pageList = list.subList(Math.min(list.size(), (page - 1) * 10), Math.min(list.size(), page * 10));
 
