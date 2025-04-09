@@ -375,7 +375,7 @@ public class Leaderboards {
 			user.getLeaderboardStatistics().put(this.hologram.getId(), stat.getId());
 			SERVICE.save(user);
 
-
+			this.update(event.getPlayer());
 		}
 
 		private final Map<UUID, Integer> taskIds = new HashMap<>();
