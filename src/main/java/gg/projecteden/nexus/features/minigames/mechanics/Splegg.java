@@ -81,7 +81,7 @@ public final class Splegg extends SpleefMechanic {
 		egg.setVelocity(eggLocation.getDirection().multiply(1.75));
 		egg.setShooter(player);
 
-		minigamer.getMatch().getMatchStatistics().award(SpleggStatistics.WINS, minigamer);
+		minigamer.getMatch().getMatchStatistics().award(SpleggStatistics.EGGS_FIRED, minigamer);
 
 		player.playSound(player, Sound.ENTITY_BLAZE_SHOOT, 0.5F, 2F);
 	}

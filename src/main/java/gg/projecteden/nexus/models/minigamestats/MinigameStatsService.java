@@ -9,6 +9,7 @@ import com.mongodb.client.model.Sorts;
 import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.mechanics.common.CheckpointMechanic;
+import gg.projecteden.nexus.features.minigames.models.MatchStatistics;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.models.statistics.models.MinigameStatistic;
 import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
@@ -30,7 +31,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 @ObjectClass(MinigameStatsUser.class)
@@ -48,48 +48,56 @@ public class MinigameStatsService extends MongoPlayerService<MinigameStatsUser> 
 
 	private static final LocalDateTime EPOCH = LocalDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC);
 
-	public CompletableFuture<List<LeaderboardRanking>> getLeaderboard(MechanicType mechanic, MinigameStatistic statistic, LocalDateTime after) {
-		if (mechanic.get() instanceof CheckpointMechanic) {
-			CompletableFuture<List<LeaderboardRanking>> future = new CompletableFuture<>();
-			new CheckpointService().getBestTotalTimes(ArenaManager.get(statistic.getId())).thenAccept(list -> {
-				List<LeaderboardRanking> rankings = new ArrayList<>();
-				int skipped = 1;
-				int rank = 0;
-				long previousTotal = -1;
-				for (RecordTotalTime doc : list) {
-					long total = doc.getTime().toMillis();
+	public List<LeaderboardRanking> getLeaderboard(MechanicType mechanic, MinigameStatistic statistic, LocalDateTime after) {
+		if (mechanic != null && mechanic.get() instanceof CheckpointMechanic) {
+			List<RecordTotalTime> list = new CheckpointService().getBestTotalTimes(ArenaManager.get(statistic.getId()));
+			List<LeaderboardRanking> rankings = new ArrayList<>();
+			int skipped = 1;
+			int rank = 0;
+			long previousTotal = -1;
+			for (RecordTotalTime doc : list) {
+				long total = doc.getTime().toMillis();
 
-					if (total == 0)
-						continue;
+				if (total == 0)
+					continue;
 
-					if (total != previousTotal) {
-						rank += skipped;
-						skipped = 1;
-						previousTotal = total;
-					}
-					else {
-						skipped++;
-					}
-
-					rankings.add(new LeaderboardRanking(doc.getUuid(), doc.getNickname(), rank, statistic.format(total)));
+				if (total != previousTotal) {
+					rank += skipped;
+					skipped = 1;
+					previousTotal = total;
 				}
-				future.complete(rankings);
-			});
-			return future;
+				else {
+					skipped++;
+				}
+
+				rankings.add(new LeaderboardRanking(doc.getUuid(), doc.getNickname(), rank, statistic.format(total)));
+			}
+			return rankings;
 		}
 
 		DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 		String afterInstanceString = formatter.format(after == null ? EPOCH : after);
 
+		List<Bson> filters = new ArrayList<>() {{
+			add(Filters.gt("statistics.date", afterInstanceString));
+			if (mechanic != null)
+				add(Filters.eq("statistics.mechanic", mechanic.name()));
+		}};
+
 		List<Bson> pipeline = Arrays.asList(
 			Aggregates.unwind("$statistics"),
-			Aggregates.match(Filters.and(
-				Filters.gt("statistics.date", afterInstanceString),
-				Filters.eq("statistics.mechanic", mechanic.name())
-			)),
+			Aggregates.match(Filters.and(filters)),
 			Aggregates.group("$_id", Accumulators.sum("total", "$statistics.stats." + statistic.getId())),
 			Aggregates.sort(Sorts.descending("total"))
 		);
+		if (statistic.equals(MatchStatistics.GAMES_PLAYED)) {
+			pipeline = Arrays.asList(
+				Aggregates.unwind("$statistics"),
+				Aggregates.match(Filters.and(filters)),
+				Aggregates.group("$_id", Accumulators.sum("total", 1)),
+				Aggregates.sort(Sorts.descending("total"))
+			);
+		}
 
 		AggregateIterable<Document> top10 = collection().aggregate(pipeline);
 
@@ -116,7 +124,7 @@ public class MinigameStatsService extends MongoPlayerService<MinigameStatsUser> 
 			rankings.add(new LeaderboardRanking(uuid, Nerd.of(uuid).getNickname(), rank, statistic.format(total)));
 		}
 
-		return CompletableFuture.completedFuture(rankings);
+		return rankings;
 	}
 
 	public int getAggregates(MechanicType mechanic, MinigameStatistic statistic, LocalDateTime after, UUID self) {
@@ -125,7 +133,8 @@ public class MinigameStatsService extends MongoPlayerService<MinigameStatsUser> 
 
 		List<Bson> filters = new ArrayList<>();
 		filters.add(Filters.gt("statistics.date", afterInstanceString));
-		filters.add(Filters.eq("statistics.mechanic", mechanic.name()));
+		if (mechanic != null)
+			filters.add(Filters.eq("statistics.mechanic", mechanic.name()));
 
 		if (self != null)
 			filters.add(Filters.eq("_id", self.toString()));
@@ -135,6 +144,13 @@ public class MinigameStatsService extends MongoPlayerService<MinigameStatsUser> 
 			Aggregates.match(Filters.and(filters)),
 			Aggregates.group("$_id", Accumulators.sum("total", "$statistics.stats." + statistic.getId()))
 		);
+		if (statistic.equals(MatchStatistics.GAMES_PLAYED)) {
+			pipeline = Arrays.asList(
+				Aggregates.unwind("$statistics"),
+				Aggregates.match(Filters.and(filters)),
+				Aggregates.group("$_id", Accumulators.sum("total", 1))
+			);
+		}
 
 		AggregateIterable<Document> results = collection().aggregate(pipeline);
 		int i = 0;

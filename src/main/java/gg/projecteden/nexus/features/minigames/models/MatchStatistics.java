@@ -114,4 +114,5 @@ public class MatchStatistics {
 			return Timespan.ofSeconds(score).format();
 		}
 	};
+	public static final MinigameStatistic GAMES_PLAYED = new MinigameStatistic("games_played", "Games Played");
 }

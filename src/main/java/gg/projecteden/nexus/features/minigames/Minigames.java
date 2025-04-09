@@ -7,6 +7,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.minigames.lobby.ActionBar;
+import gg.projecteden.nexus.features.minigames.lobby.Leaderboards;
 import gg.projecteden.nexus.features.minigames.lobby.MinigameInviter;
 import gg.projecteden.nexus.features.minigames.lobby.Parkour;
 import gg.projecteden.nexus.features.minigames.lobby.TickPerks;
@@ -82,6 +83,7 @@ public class Minigames extends Feature implements Listener {
 			new Parkour();
 			new TickPerks();
 			new MGMExchange();
+			new Leaderboards();
 		});
 
 		Nexus.getCron().schedule("0 */2 * * *", Minigames::updateTopic);

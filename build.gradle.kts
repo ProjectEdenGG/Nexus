@@ -76,7 +76,7 @@ dependencies {
     implementation("net.jthink:jaudiotagger:3.0.1")
     implementation("fr.skytasul:glowingentities:1.4.3")
     compileOnly("gg.projecteden.crates:api:1.0.7-SNAPSHOT")
-    compileOnly("tech.blastmc.holograms:HologramsAPI:1.1.0-SNAPSHOT")
+    compileOnly("tech.blastmc.holograms:HologramsAPI:1.2.0-SNAPSHOT")
     compileOnly("fr.moribus:ImageOnMap:4.3.1-EDEN")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("net.luckperms:api:5.4")

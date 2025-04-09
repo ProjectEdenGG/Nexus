@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 @ObjectClass(CheckpointUser.class)
@@ -70,15 +69,12 @@ public class CheckpointService extends MongoPlayerService<CheckpointUser> {
 		return globalBestTimes.get(arena);
 	}
 
-	public CompletableFuture<List<RecordTotalTime>> getBestTotalTimes(String arena) {
-		return CompletableFuture.supplyAsync(
-			() -> getAll().stream()
-				.map(user -> user.getBestTotalTime(arena))
-				.filter(Objects::nonNull)
-				.sorted()
-				.toList(),
-			Tasks::async
-		);
+	public List<RecordTotalTime> getBestTotalTimes(String arena) {
+		return getAll().stream()
+			.map(user -> user.getBestTotalTime(arena))
+			.filter(Objects::nonNull)
+			.sorted()
+			.toList();
 	}
 
 	public static Map<Integer, CheckpointValue> getBestCheckpointTimes(@NotNull String arena) {
@@ -91,7 +87,7 @@ public class CheckpointService extends MongoPlayerService<CheckpointUser> {
 		return getBestTotalTime(arena.getName());
 	}
 
-	public CompletableFuture<List<RecordTotalTime>> getBestTotalTimes(Arena arena) {
+	public List<RecordTotalTime> getBestTotalTimes(Arena arena) {
 		return getBestTotalTimes(arena.getName());
 	}
 
@@ -103,7 +99,7 @@ public class CheckpointService extends MongoPlayerService<CheckpointUser> {
 		return getBestTotalTime(match.getArena());
 	}
 
-	public CompletableFuture<List<RecordTotalTime>> getBestTotalTimes(Match match) {
+	public List<RecordTotalTime> getBestTotalTimes(Match match) {
 		return getBestTotalTimes(match.getArena());
 	}
 
@@ -115,7 +111,7 @@ public class CheckpointService extends MongoPlayerService<CheckpointUser> {
 		return getBestTotalTime(matchData.getMatch());
 	}
 
-	public CompletableFuture<List<RecordTotalTime>> getBestTotalTimes(MatchData matchData) {
+	public List<RecordTotalTime> getBestTotalTimes(MatchData matchData) {
 		return getBestTotalTimes(matchData.getMatch());
 	}
 

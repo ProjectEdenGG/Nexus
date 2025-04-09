@@ -319,18 +319,16 @@ public class Controller {
 		MinigameStatistic finalStatistic = statistic;
 
 		CompletableFuture<Map<String, Object>> future = new CompletableFuture<>();
-		new MinigameStatsService().getLeaderboard(type, finalStatistic, localDateTime).thenAccept(list -> {
-			List<LeaderboardRanking> pageList = list.subList(Math.min(list.size(), (page - 1) * 10), Math.min(list.size(), page * 10));
+		List<LeaderboardRanking> list = new MinigameStatsService().getLeaderboard(type, finalStatistic, localDateTime);
+		List<LeaderboardRanking> pageList = list.subList(Math.min(list.size(), (page - 1) * 10), Math.min(list.size(), page * 10));
 
-			Map<String, Object> map = new HashMap<>();
-			map.put("leaderboard", pageList);
-			map.put("totalRows", list.size());
-			if (self != null)
-				map.put("self", list.stream().filter(record -> record.getUuid().equals(self)).findFirst().orElse(null));
+		Map<String, Object> map = new HashMap<>();
+		map.put("leaderboard", pageList);
+		map.put("totalRows", list.size());
+		if (self != null)
+			map.put("self", list.stream().filter(record -> record.getUuid().equals(self)).findFirst().orElse(null));
 
-			future.complete(map);
-		});
-		return future;
+		return map;
 	}
 
 	@Post("/minigames/stats/aggregate")

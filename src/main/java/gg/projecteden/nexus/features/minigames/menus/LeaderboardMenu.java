@@ -33,28 +33,27 @@ public class LeaderboardMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		service.getBestTotalTimes(arena).thenAccept(records -> {
-			List<ClickableItem> items = new ArrayList<>();
+		List<RecordTotalTime> records = service.getBestTotalTimes(arena);
+		List<ClickableItem> items = new ArrayList<>();
 
-			for (RecordTotalTime record : records) {
-				List<ComponentLike> lore = new ArrayList<>();
-				lore.add(new JsonBuilder("Total Time: ", NamedTextColor.GOLD)
-					.next(CheckpointData.formatChatTime(record.getTime(), null, null), NamedTextColor.YELLOW));
-				// TODO add split times
+		for (RecordTotalTime record : records) {
+			List<ComponentLike> lore = new ArrayList<>();
+			lore.add(new JsonBuilder("Total Time: ", NamedTextColor.GOLD)
+				.next(CheckpointData.formatChatTime(record.getTime(), null, null), NamedTextColor.YELLOW));
+			// TODO add split times
 
-				ItemBuilder item = new ItemBuilder(Material.PLAYER_HEAD)
-					.skullOwner(record)
-					.name(new JsonBuilder((items.size() + 1) + ". ", NamedTextColor.GRAY)
-						.next(record.getNickname(), NamedTextColor.DARK_AQUA))
-					.componentLore(lore);
+			ItemBuilder item = new ItemBuilder(Material.PLAYER_HEAD)
+				.skullOwner(record)
+				.name(new JsonBuilder((items.size() + 1) + ". ", NamedTextColor.GRAY)
+					.next(record.getNickname(), NamedTextColor.DARK_AQUA))
+				.componentLore(lore);
 
-				items.add(ClickableItem.empty(item));
-			}
+			items.add(ClickableItem.empty(item));
+		}
 
-			addCloseItem();
-			contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&eInformation")
-				.loreize(true).lore("&3This is the leaderboard for the fastest completions of the minigame &6&o" + arena.getDisplayName() + "&3.")));
-			paginate(items);
-		});
+		addCloseItem();
+		contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&eInformation")
+			.loreize(true).lore("&3This is the leaderboard for the fastest completions of the minigame &6&o" + arena.getDisplayName() + "&3.")));
+		paginate(items);
 	}
 }
