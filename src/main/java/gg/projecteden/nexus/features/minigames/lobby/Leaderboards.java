@@ -323,8 +323,7 @@ public class Leaderboards {
 			user.getLeaderboardDateRanges().put(this.hologram.getId(), newRange);
 			SERVICE.save(user);
 
-			this.lines.remove(event.getPlayer().getUniqueId());
-			this.hologram.showToPlayer(event.getPlayer());
+			this.update(event.getPlayer());
 		}
 
 		@EventHandler
@@ -352,10 +351,7 @@ public class Leaderboards {
 			user.getLeaderboardMechanicTypes().put(this.hologram.getId(), mechanicType);
 			SERVICE.save(user);
 
-			this.lines.remove(event.getPlayer().getUniqueId());
-			this.hologram.showToPlayer(event.getPlayer());
-			this.mechanicHologram.showToPlayer(event.getPlayer());
-			this.statisticHologram.showToPlayer(event.getPlayer());
+			this.update(event.getPlayer());
 		}
 
 		@EventHandler
@@ -379,10 +375,27 @@ public class Leaderboards {
 			user.getLeaderboardStatistics().put(this.hologram.getId(), stat.getId());
 			SERVICE.save(user);
 
-			this.lines.remove(event.getPlayer().getUniqueId());
-			this.hologram.showToPlayer(event.getPlayer());
-			this.mechanicHologram.showToPlayer(event.getPlayer());
-			this.statisticHologram.showToPlayer(event.getPlayer());
+
+		}
+
+		private final Map<UUID, Integer> taskIds = new HashMap<>();
+
+		private void update(Player player) {
+			if (taskIds.containsKey(player.getUniqueId()))
+				Tasks.cancel(taskIds.get(player.getUniqueId()));
+
+			// Update the DateRange immediately, but the other lines are cached
+			this.hologram.showToPlayer(player);
+			taskIds.put(player.getUniqueId(), Tasks.wait(10, () -> {
+				// 10t later clear the cache and reload
+				// it only 'updates' once they stop clicking for 10t
+				this.lines.remove(player.getUniqueId());
+				this.hologram.showToPlayer(player);
+			}));
+			if (this.hasControls) {
+				this.mechanicHologram.showToPlayer(player);
+				this.statisticHologram.showToPlayer(player);
+			}
 		}
 
 		public static <T> T getNextWithLoop(List<T> list, int index) {
