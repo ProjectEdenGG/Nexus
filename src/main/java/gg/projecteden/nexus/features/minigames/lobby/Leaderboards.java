@@ -222,7 +222,7 @@ public class Leaderboards {
 					if (this.hasControls)
 						if (SERVICE.get(event.getPlayer()).getLeaderboardMechanicTypes().getOrDefault(this.hologram.getId(), MechanicType.ARCHERY).get() instanceof CheckpointMechanic)
 							yield "&7Time Controls not available";
-					yield "&7<-- Shift Click | Click -->";
+					yield "&7← Shift Click | Click →";
 				}
 				case 15: {
 					MinigameStatsUser user = SERVICE.get(event.getPlayer());
@@ -288,9 +288,12 @@ public class Leaderboards {
 			List<MinigameStatistic> stats = getStatistics(event.getPlayer());
 			MinigameStatistic stat = getStatistic(event.getPlayer());
 
+			MinigameStatsUser user = SERVICE.get(event.getPlayer());
+			boolean timed = user.getLeaderboardMechanicTypes().getOrDefault(this.hologram.getId(), MechanicType.ARCHERY).get() instanceof CheckpointMechanic;
+
 			int index = event.getLine().getIndex();
 			Object data = switch (index) {
-				case 0: yield "&6&lStatistic";
+				case 0: yield timed ? "&6&lArena" : "&6&lStatistic";
 				case 2: yield "&7" + getPreviousWithLoop(stats, stats.indexOf(getPreviousWithLoop(stats, stats.indexOf(stat)))).getTitle();
 				case 3: yield "&7" + getPreviousWithLoop(stats, stats.indexOf(stat)).getTitle();
 				case 4: yield "&3" + stat.getTitle();
