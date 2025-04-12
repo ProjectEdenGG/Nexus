@@ -11,6 +11,12 @@ import java.util.Objects;
 public class MinigameStatistic {
 	private String id;
 	private String title;
+	private boolean hidden;
+
+	public MinigameStatistic(String id, String title) {
+		this.id = id;
+		this.title = title;
+	}
 
 	public Object format(long score) {
 		return StringUtils.getCnf().format(score);

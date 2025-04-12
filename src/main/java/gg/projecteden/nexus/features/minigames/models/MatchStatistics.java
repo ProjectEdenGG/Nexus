@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.models.statistics.models.MinigameStatistic;
 import gg.projecteden.nexus.models.minigamestats.MinigameStatsService;
+import gg.projecteden.nexus.models.minigamestats.MinigameStatsService.LeaderboardRanking;
 import gg.projecteden.nexus.models.minigamestats.MinigameStatsUser.MatchStatRecord;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import lombok.Data;
@@ -14,6 +15,7 @@ import lombok.SneakyThrows;
 import lombok.ToString;
 
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,13 +24,15 @@ import java.util.UUID;
 
 @Data
 public class MatchStatistics {
+	protected MechanicType mechanic;
 	@ToString.Exclude
 	protected Match match;
 	protected Arena arena;
 
 	private Map<UUID, Map<MinigameStatistic, Integer>> statistics = new HashMap<>();
 
-	public MatchStatistics(Match match) {
+	public MatchStatistics(MechanicType mechanic, Match match) {
+		this.mechanic = mechanic;
 		this.match = match;
 		if (this.match != null)
 			this.arena = match.getArena();
@@ -105,6 +109,14 @@ public class MatchStatistics {
 	public boolean applies(MinigameStatistic statistic) {
 		return getStatistics().stream()
 			.anyMatch(stat -> stat.equals(statistic));
+	}
+
+	public String aggregate(MinigameStatistic statistic, LocalDateTime after, UUID self) {
+		return null;
+	}
+
+	public List<LeaderboardRanking> getLeaderboard(MinigameStatistic statistic, LocalDateTime after) {
+		return null;
 	}
 
 	public static final MinigameStatistic WINS = new MinigameStatistic("wins", "Wins");

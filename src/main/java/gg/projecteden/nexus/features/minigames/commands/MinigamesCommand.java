@@ -1246,6 +1246,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 		try {
 			MechanicType type = MechanicType.valueOf(arg(2).toUpperCase());
 			return type.getStatistics().stream()
+				.filter(_stat -> !_stat.isHidden())
 				.map(MinigameStatistic::getId)
 				.filter(stat -> stat.startsWith(value))
 				.toList();

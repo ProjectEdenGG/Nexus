@@ -2,9 +2,10 @@ package gg.projecteden.nexus.features.minigames.models.statistics.models.generic
 
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchStatistics;
+import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 
 public class PVPStats extends MatchStatistics implements DeathsStat, KillsStat {
-	public PVPStats(Match match) {
-		super(match);
+	public PVPStats(MechanicType mechanic, Match match) {
+		super(mechanic, match);
 	}
 }

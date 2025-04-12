@@ -13,9 +13,6 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.titan.models.CustomCreativeItem;
 import gg.projecteden.nexus.features.workbenches.dyestation.CreativeBrushMenu;
-import gg.projecteden.nexus.models.checkpoint.CheckpointService;
-import gg.projecteden.nexus.models.checkpoint.CheckpointUser;
-import gg.projecteden.nexus.models.checkpoint.RecordTotalTime;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.minigamestats.MinigameStatsService;
@@ -39,7 +36,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.json.JSONObject;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -257,13 +253,11 @@ public class Controller {
 
 				Map<String, String> stats = new HashMap<>();
 
-				if (mechanic.get() instanceof CheckpointMechanic) {
+				if (mechanic.get() instanceof CheckpointMechanic)
 					map.put("timed", true);
-					for (Arena arena : ArenaManager.getAllEnabled(mechanic))
-						stats.put(arena.getName(), arena.getDisplayName());
-				}
-				else
-					for (MinigameStatistic stat : mechanic.getStatistics())
+
+				for (MinigameStatistic stat : mechanic.getStatistics())
+					if (!stat.isHidden())
 						stats.put(stat.getId(), stat.getTitle());
 
 				map.put("stats", stats);
@@ -285,22 +279,8 @@ public class Controller {
 		MinigameStatistic statistic = type.getStatistics().stream()
 			.filter(_stat -> _stat.getId().equals(stat)).findFirst().orElse(null);
 
-		if (statistic == null) {
-			if (!(type.get() instanceof CheckpointMechanic))
-				return new ArrayList<>();
-
-			try {
-				Arena arena = ArenaManager.get(stat);
-				statistic = new MinigameStatistic(arena.getName(), arena.getDisplayName()) {
-					@Override
-					public Object format(long score) {
-						return StringUtils.getTimeFormat(Duration.ofMillis(score));
-					}
-				};
-			} catch (Exception ignored) {
-				return new ArrayList<>();
-			}
-		}
+		if (statistic == null)
+			return new ArrayList<>();
 
 		LocalDateTime localDateTime;
 		if (dateTime != null) {
@@ -315,9 +295,7 @@ public class Controller {
 		else
 			self = null;
 
-		MinigameStatistic finalStatistic = statistic;
-
-		List<LeaderboardRanking> list = new MinigameStatsService().getLeaderboard(type, finalStatistic, localDateTime);
+		List<LeaderboardRanking> list = new MinigameStatsService().getLeaderboard(type, statistic, localDateTime);
 		List<LeaderboardRanking> pageList = list.subList(Math.min(list.size(), (page - 1) * 10), Math.min(list.size(), page * 10));
 
 		Map<String, Object> map = new HashMap<>();
@@ -347,26 +325,12 @@ public class Controller {
 			self = UUID.fromString(uuid);
 
 		List<StatValuePair> list = new ArrayList<>();
-		if (type.get() instanceof CheckpointMechanic) {
-			if (self == null)
-				return new ArrayList<>();
 
-			CheckpointService service = new CheckpointService();
-			CheckpointUser user = service.get(self);
+		MinigameStatsService service = new MinigameStatsService();
 
-			for (Arena arena : ArenaManager.getAllEnabled(type)) {
-				RecordTotalTime time = user.getBestTotalTime(arena);
-				if (time != null && time.getTime() != null)
-					list.add(new StatValuePair(arena.getDisplayName(), StringUtils.getTimeFormat(time.getTime())));
-				else
-					list.add(new StatValuePair(arena.getDisplayName(), "N/A"));
-			}
-		}
-		else {
-			for (MinigameStatistic _stat : type.getStatistics()) {
-				list.add(new StatValuePair(_stat.getTitle(), (String) _stat.format(new MinigameStatsService().getAggregates(type, _stat, localDateTime, self))));
-			}
-		}
+		for (MinigameStatistic _stat : type.getStatistics())
+			if (!_stat.isHidden())
+				list.add(new StatValuePair(_stat.getTitle(), service.getAggregates(type, _stat, localDateTime, self)));
 
 		return list;
 	}

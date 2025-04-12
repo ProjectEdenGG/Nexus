@@ -7,14 +7,10 @@ import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
 import gg.projecteden.api.mongodb.annotations.ObjectClass;
-import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
-import gg.projecteden.nexus.features.minigames.mechanics.common.CheckpointMechanic;
 import gg.projecteden.nexus.features.minigames.models.MatchStatistics;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.models.statistics.models.MinigameStatistic;
 import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
-import gg.projecteden.nexus.models.checkpoint.CheckpointService;
-import gg.projecteden.nexus.models.checkpoint.RecordTotalTime;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -49,30 +45,10 @@ public class MinigameStatsService extends MongoPlayerService<MinigameStatsUser> 
 	private static final LocalDateTime EPOCH = LocalDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC);
 
 	public List<LeaderboardRanking> getLeaderboard(MechanicType mechanic, MinigameStatistic statistic, LocalDateTime after) {
-		if (mechanic != null && mechanic.get() instanceof CheckpointMechanic) {
-			List<RecordTotalTime> list = new CheckpointService().getBestTotalTimes(ArenaManager.get(statistic.getId()));
-			List<LeaderboardRanking> rankings = new ArrayList<>();
-			int skipped = 1;
-			int rank = 0;
-			long previousTotal = -1;
-			for (RecordTotalTime doc : list) {
-				long total = doc.getTime().toMillis();
-
-				if (total == 0)
-					continue;
-
-				if (total != previousTotal) {
-					rank += skipped;
-					skipped = 1;
-					previousTotal = total;
-				}
-				else {
-					skipped++;
-				}
-
-				rankings.add(new LeaderboardRanking(doc.getUuid(), doc.getNickname(), rank, statistic.format(total)));
-			}
-			return rankings;
+		if (mechanic != null) {
+			List<LeaderboardRanking> leaderboardRankings = mechanic.getStatisticsClass().getLeaderboard(statistic, after);
+			if (leaderboardRankings != null)
+				return leaderboardRankings;
 		}
 
 		DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
@@ -127,7 +103,14 @@ public class MinigameStatsService extends MongoPlayerService<MinigameStatsUser> 
 		return rankings;
 	}
 
-	public int getAggregates(MechanicType mechanic, MinigameStatistic statistic, LocalDateTime after, UUID self) {
+	public String getAggregates(MechanicType mechanic, MinigameStatistic statistic, LocalDateTime after, UUID self) {
+		// Allow overriding by MatchStatistics class
+		if (mechanic != null) {
+			String aggregate = mechanic.getStatisticsClass().aggregate(statistic, after, self);
+			if (aggregate != null)
+				return aggregate;
+		}
+
 		DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 		String afterInstanceString = formatter.format(after == null ? EPOCH : after);
 
@@ -157,7 +140,7 @@ public class MinigameStatsService extends MongoPlayerService<MinigameStatsUser> 
 		for (Document doc : results) {
 			i += doc.getInteger("total");
 		}
-		return i;
+		return (String) statistic.format(i);
 	}
 
 	@Data

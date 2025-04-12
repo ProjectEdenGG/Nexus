@@ -184,7 +184,12 @@ public enum MechanicType {
 
 	@SneakyThrows
 	public List<MinigameStatistic> getStatistics() {
-		return ((MatchStatistics) Minigames.getMatchStatisticsMap().get(mechanic).newInstance((Match) null)).getStatistics();
+		return getStatisticsClass().getStatistics();
+	}
+
+	@SneakyThrows
+	public MatchStatistics getStatisticsClass() {
+		return (MatchStatistics) Minigames.getMatchStatisticsMap().get(mechanic).newInstance(this, (Match) null);
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)

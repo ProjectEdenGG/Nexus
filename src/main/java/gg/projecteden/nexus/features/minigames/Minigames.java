@@ -239,7 +239,7 @@ public class Minigames extends Feature implements Listener {
 						Class<? extends MatchStatistics> matchStatisticsType = superclass.getAnnotation(MatchStatisticsClass.class).value();
 						Minigames.debug("Found MatchStatistics: " + matchStatisticsType.getSimpleName());
 						try {
-							Constructor<?> constructor = matchStatisticsType.getConstructor(Match.class);
+							Constructor<?> constructor = matchStatisticsType.getConstructor(MechanicType.class, Match.class);
 							constructor.setAccessible(true);
 							matchStatisticsMap.put(mechanicType.get(), constructor);
 							break;
@@ -248,7 +248,7 @@ public class Minigames extends Feature implements Listener {
 						}
 					} else {
 						try {
-							Constructor<?> constructor = MatchStatistics.class.getConstructor(Match.class);
+							Constructor<?> constructor = MatchStatistics.class.getConstructor(MechanicType.class, Match.class);
 							constructor.setAccessible(true);
 							matchStatisticsMap.put(mechanicType.get(), constructor);
 						} catch (NoSuchMethodException ex) {

@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigames.models.statistics;
 
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchStatistics;
+import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.models.statistics.models.MinigameStatistic;
 
 public class BlockPartyStatistics extends MatchStatistics {
@@ -10,7 +11,7 @@ public class BlockPartyStatistics extends MatchStatistics {
 	public static final MinigameStatistic POWER_UPS_COLLECTED = new MinigameStatistic("power_ups_collected", "Power Ups Collected");
 	public static final MinigameStatistic POWER_UPS_USED = new MinigameStatistic("power_ups_used", "Power Ups Used");
 
-	public BlockPartyStatistics(Match match) {
-		super(match);
+	public BlockPartyStatistics(MechanicType mechanic, Match match) {
+		super(mechanic, match);
 	}
 }

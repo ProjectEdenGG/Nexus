@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.MatchStatistics;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.arenas.CheckpointArena;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
@@ -11,6 +12,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchTimerT
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.CheckpointMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.singleplayer.SingleplayerMechanic;
+import gg.projecteden.nexus.features.minigames.models.statistics.CheckpointStatistics;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
@@ -23,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
 
+@MatchStatisticsClass(CheckpointStatistics.class)
 public abstract class CheckpointMechanic extends SingleplayerMechanic {
 
 	public CheckpointMatchData getMatchData(Minigamer minigamer) {

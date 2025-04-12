@@ -29,7 +29,6 @@ import tech.blastmc.holograms.api.events.HologramLineSpawnEvent;
 import tech.blastmc.holograms.api.events.HologramSpawnEvent;
 import tech.blastmc.holograms.api.models.Hologram;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -176,20 +175,7 @@ public class Leaderboards {
 			MinigameStatsUser user = SERVICE.get(player);
 			MechanicType mechanicType = user.getLeaderboardMechanicTypes().getOrDefault(this.hologram.getId(), MechanicType.ARCHERY);
 
-			List<MinigameStatistic> stats = new ArrayList<>();
-			if (mechanicType.get() instanceof CheckpointMechanic) {
-				for (Arena arena : ArenaManager.getAllEnabled(mechanicType))
-					stats.add(new MinigameStatistic(arena.getName(), arena.getDisplayName()) {
-						@Override
-						public Object format(long score) {
-							return StringUtils.getTimeFormat(Duration.ofMillis(score));
-						}
-					});
-			}
-			else
-				stats.addAll(mechanicType.getStatistics());
-
-			return stats;
+			return new ArrayList<>(mechanicType.getStatistics().stream().filter(stat -> !stat.isHidden()).toList());
 		}
 
 		private String getMechanicName(Player player) {
