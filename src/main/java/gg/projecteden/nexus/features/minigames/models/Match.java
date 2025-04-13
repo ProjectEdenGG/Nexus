@@ -440,7 +440,7 @@ public class Match implements ForwardingAudience {
 			Minigames.registerMatchStatistics();
 
 		if (matchStatisticsMap.containsKey(arena.getMechanic())) {
-			Minigames.debug("Setting MatchStatistics class to " + matchStatisticsMap.get(arena.getMechanic()).newInstance(this).getClass().getSimpleName());
+			Minigames.debug("Setting MatchStatistics class to " + matchStatisticsMap.get(arena.getMechanic()).newInstance(this.getMechanic().getMechanicType(), this).getClass().getSimpleName());
 			matchStatistics = (MatchStatistics) matchStatisticsMap.get(arena.getMechanic()).newInstance(this.getMechanic().getMechanicType(), this);
 		}
 		else

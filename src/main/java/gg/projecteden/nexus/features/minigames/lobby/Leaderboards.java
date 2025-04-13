@@ -190,6 +190,8 @@ public class Leaderboards {
 
 		@EventHandler
 		public void onLineSpawn(HologramLineSpawnEvent event) {
+			if (event.getHologram().getId() == null)
+				return;
 			if (!event.getHologram().getLocation().getWorld().getName().equals(Minigames.getWorld().getName()))
 				return;
 			if (!event.getHologram().getId().equals(this.hologram.getId()))
@@ -234,6 +236,8 @@ public class Leaderboards {
 			if (!this.hasControls)
 				return;
 
+			if (event.getHologram().getId() == null)
+				return;
 			if (!event.getHologram().getLocation().getWorld().getName().equals(Minigames.getWorld().getName()))
 				return;
 			if (!event.getHologram().getId().equals(this.mechanicHologram.getId()))
@@ -266,6 +270,8 @@ public class Leaderboards {
 			if (!this.hasControls)
 				return;
 
+			if (event.getHologram().getId() == null)
+				return;
 			if (!event.getHologram().getLocation().getWorld().getName().equals(Minigames.getWorld().getName()))
 				return;
 			if (!event.getHologram().getId().equals(this.statisticHologram.getId()))
@@ -293,6 +299,8 @@ public class Leaderboards {
 
 		@EventHandler
 		public void onInteract(HologramInteractEvent event) {
+			if (event.getHologram().getId() == null)
+				return;
 			if (!event.getHologram().getLocation().getWorld().getName().equals(Minigames.getWorld().getName()))
 				return;
 			if (!event.getHologram().getId().equals(this.hologram.getId()))
@@ -320,6 +328,8 @@ public class Leaderboards {
 			if (!this.hasControls)
 				return;
 
+			if (event.getHologram().getId() == null)
+				return;
 			if (!event.getHologram().getLocation().getWorld().getName().equals(Minigames.getWorld().getName()))
 				return;
 			if (!event.getHologram().getId().equals(this.mechanicHologram.getId()))
@@ -348,6 +358,8 @@ public class Leaderboards {
 			if (!this.hasControls)
 				return;
 
+			if (event.getHologram().getId() == null)
+				return;
 			if (!event.getHologram().getLocation().getWorld().getName().equals(Minigames.getWorld().getName()))
 				return;
 			if (!event.getHologram().getId().equals(this.statisticHologram.getId()))

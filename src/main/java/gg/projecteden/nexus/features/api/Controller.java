@@ -250,6 +250,7 @@ public class Controller {
 				map.put("mechanic", mechanic.name().toLowerCase());
 				map.put("title", mechanic.get().getName());
 				map.put("description", mechanic.get().getDescription());
+				map.put("group", StringUtils.camelCase(mechanic.getGroup()));
 
 				Map<String, String> stats = new HashMap<>();
 
