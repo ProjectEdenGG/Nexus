@@ -196,7 +196,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 			final List<Integer> npcIds = config.getNpcIds(group);
 			for (int index = 0; index < npcIds.size(); index++) {
 				final int i = index;
-				Tasks.wait(wait.getAndAdd(20), () -> {
+				Tasks.wait(wait.getAndAdd(5), () -> {
 					Integer npcId = npcIds.get(i);
 					if (nerds.size() >= (i + 1))
 						updateNpc(npcId, nerds.get(i));
