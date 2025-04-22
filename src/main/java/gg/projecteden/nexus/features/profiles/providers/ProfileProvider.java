@@ -82,7 +82,7 @@ public class ProfileProvider extends InventoryProvider {
 	private static final HomeService homeService = new HomeService();
 	private static final TrustService trustService = new TrustService();
 
-	InventoryProvider previousMenu = null;
+	private InventoryProvider previousMenu = null;
 
 	private final ProfileUser targetUser;
 	private final ChatColor backgroundColor;
@@ -155,7 +155,7 @@ public class ProfileProvider extends InventoryProvider {
 
 			@Override
 			public void onClick(ItemClickData e, Player viewer, ProfileUser target, InventoryContents contents, InventoryProvider previousMenu) {
-				new ProfileSettingsProvider(viewer, previousMenu, target).open(viewer);
+				new ProfileSettingsProvider(viewer, target).open(viewer);
 			}
 
 

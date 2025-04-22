@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.profile.ProfileUser;
 import gg.projecteden.nexus.models.profile.ProfileUser.PrivacySetting;
+import gg.projecteden.nexus.models.profile.ProfileUser.ProfileTextureType;
 import gg.projecteden.nexus.models.profile.ProfileUserService;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -26,7 +27,6 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -35,22 +35,20 @@ import java.util.function.Consumer;
 @Title("Profile Settings")
 public class ProfileSettingsProvider extends InventoryProvider {
 	private static final ProfileUserService service = new ProfileUserService();
-	InventoryProvider previousMenu = null;
-	ProfileUser user;
+	private final ProfileUser user;
 
-	public ProfileSettingsProvider(Player viewer, @Nullable InventoryProvider previousMenu, ProfileUser user) {
+	public ProfileSettingsProvider(Player viewer, ProfileUser user) {
 		this.viewer = viewer;
-		this.previousMenu = previousMenu;
 		this.user = user;
 	}
 
 	@Override
 	public void init() {
-		addBackItem(e -> new ProfileProvider(viewer, this).open(viewer));
+		addBackItem(e -> new ProfileProvider(viewer).open(viewer)); // ensures refreshing of data
 
 		int col = 0;
 		for (ProfileSetting setting : ProfileSetting.values()) {
-			if (setting.setClickableItem(SlotPos.of(1, col), viewer, user, previousMenu, this, contents))
+			if (setting.setClickableItem(SlotPos.of(1, col), viewer, user, this, this, contents))
 				col++;
 		}
 	}
@@ -80,7 +78,7 @@ public class ProfileSettingsProvider extends InventoryProvider {
 				Consumer<Color> applyColor = _color -> {
 					user.setBackgroundColor(ChatColor.of(ColorType.toJava(_color)));
 					service.save(user);
-					new ProfileSettingsProvider(viewer, previousMenu, user).open(viewer);
+					new ProfileSettingsProvider(viewer, user).open(viewer);
 				};
 
 				Consumer<Color> saveColor = _color -> {
@@ -112,7 +110,7 @@ public class ProfileSettingsProvider extends InventoryProvider {
 		TEXTURE_COLOR(ItemModelType.DYE_STATION_BUTTON_DYE) {
 			@Override
 			public boolean shouldNotShow(Player viewer, ProfileUser user) {
-				return user.getUnlockedTextureTypes().isEmpty() || user.getTextureType().isImage();
+				return user.getUnlockedTextureTypes().isEmpty() || !user.getTextureType().isDyeable();
 			}
 
 			@Override
@@ -137,7 +135,7 @@ public class ProfileSettingsProvider extends InventoryProvider {
 				Consumer<Color> applyColor = _color -> {
 					user.setTextureColor(ChatColor.of(ColorType.toJava(_color)));
 					service.save(user);
-					new ProfileSettingsProvider(viewer, previousMenu, user).open(viewer);
+					new ProfileSettingsProvider(viewer, user).open(viewer);
 				};
 
 				Consumer<Color> saveColor = _color -> {
@@ -166,7 +164,7 @@ public class ProfileSettingsProvider extends InventoryProvider {
 			}
 		},
 
-		TEXTURE_TYPE(Material.FIELD_MASONED_BANNER_PATTERN) {
+		TEXTURE_TYPE(ItemModelType.GUI_PROFILE_TEXTURE_ITEM_NONE) {
 			@Override
 			public boolean shouldNotShow(Player viewer, ProfileUser user) {
 				return user.getUnlockedTextureTypes().isEmpty();
@@ -174,12 +172,24 @@ public class ProfileSettingsProvider extends InventoryProvider {
 
 			@Override
 			public ItemBuilder getDisplayItem(Player viewer, ProfileUser user) {
-				return super.getDisplayItem(viewer, user).lore("&eTODO");
+				List<String> unlockedTypes = user.getUnlockedTextureTypes().stream()
+					.map(type -> "&3 - &e" + StringUtils.camelCase(type))
+					.toList();
+
+				ProfileTextureType textureType = user.getTextureType();
+				ItemModelType model = textureType.getCouponModel();
+				if (model == null)
+					model = ItemModelType.GUI_PROFILE_TEXTURE_ITEM_NONE;
+
+				return super.getDisplayItem(viewer, user)
+					.model(model)
+					.lore("&3Selected: &e" + StringUtils.camelCase(textureType), "", "&3Unlocked:")
+					.lore(unlockedTypes);
 			}
 
 			@Override
 			public void onClick(Player viewer, ProfileUser user, InventoryProvider previousMenu, InventoryProvider provider, InventoryContents contents, ItemClickData e) {
-				PlayerUtils.send(viewer, "TODO");
+				new ProfileTextureProvider(user, previousMenu).open(viewer);
 			}
 		},
 

@@ -34,8 +34,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
-
 @NoArgsConstructor
 public class ProfileCommand extends CustomCommand implements Listener {
 	private final ProfileUserService service = new ProfileUserService();
@@ -59,15 +57,6 @@ public class ProfileCommand extends CustomCommand implements Listener {
 		send("Set texture to " + StringUtils.camelCase(type));
 	}
 
-	@Path("unlockAllTextures")
-	@Permission(Group.ADMIN)
-	public void unlockTextures() {
-		ProfileUser user = service.get(player());
-		user.setUnlockedTextureTypes(Set.of(ProfileTextureType.values()));
-		service.save(user);
-		send("Unlocked all texture types");
-	}
-
 	@HideFromWiki
 	@HideFromHelp
 	@Description("Set your profile's about me")
@@ -85,7 +74,7 @@ public class ProfileCommand extends CustomCommand implements Listener {
 			user.getNerd().setAbout(input.trim());
 		}
 
-		new ProfileSettingsProvider(player(), null, user).open(player());
+		new ProfileSettingsProvider(player(), user).open(player());
 	}
 
 	@HideFromWiki
@@ -107,7 +96,7 @@ public class ProfileCommand extends CustomCommand implements Listener {
 			service.save(user);
 		}
 
-		new ProfileSettingsProvider(player(), null, user).open(player());
+		new ProfileSettingsProvider(player(), user).open(player());
 	}
 
 	@EventHandler
@@ -169,7 +158,7 @@ public class ProfileCommand extends CustomCommand implements Listener {
 		user.getUnlockedTextureTypes().add(textureType);
 		userService.save(user);
 
-		user.sendMessage(PREFIX + "&3You now own the &e" + StringUtils.camelCase(textureType) + " &3profile texture");
+		user.sendMessage(PREFIX + "&3You now own the &e" + StringUtils.camelCase(textureType) + " &3profile texture!");
 		player.getInventory().removeItem(item);
 	}
 }

@@ -107,8 +107,11 @@ public class ProfileUser implements PlayerOwnedObject {
 		};
 	}
 
+	@AllArgsConstructor
 	@SuppressWarnings("deprecation")
 	public enum ProfileTextureType {
+		NONE(null, ItemModelType.GUI_PROFILE_TEXTURE_ITEM_NONE),
+
 		// Background
 		DOTS(InventoryTexture.GUI_PROFILE_TEXTURE_DOTS, ItemModelType.GUI_PROFILE_TEXTURE_ITEM_DOTS),
 		SHINE(InventoryTexture.GUI_PROFILE_TEXTURE_SHINE, ItemModelType.GUI_PROFILE_TEXTURE_ITEM_SHINE),
@@ -122,40 +125,43 @@ public class ProfileUser implements PlayerOwnedObject {
 		CATS(59, 2, InventoryTexture.GUI_PROFILE_IMAGE_CATS, ItemModelType.GUI_PROFILE_TEXTURE_ITEM_CATS),
 		BEES(59, 2, InventoryTexture.GUI_PROFILE_IMAGE_BEES, ItemModelType.GUI_PROFILE_TEXTURE_ITEM_BEES),
 
+		// Special
+		BIRTHDAY(59, 2, InventoryTexture.GUI_PROFILE_IMAGE_BIRTHDAY, ItemModelType.GUI_PROFILE_TEXTURE_ITEM_BIRTHDAY),
+
 		// Internal
-		NONE(null, null),
-		TEST(59, 2, InventoryTexture.GUI_PROFILE_IMAGE_TEST, null),
-		BIRTHDAY(59, 2, InventoryTexture.GUI_PROFILE_IMAGE_BIRTHDAY, null),
+		TEST(true, true, 59, 2, InventoryTexture.GUI_PROFILE_IMAGE_TEST, null),
 		;
 
+		private final boolean internal;
 		@Getter
 		private final boolean image;
 		private final int imageMinus;
 		private final int shiftPlayerName;
 		private final InventoryTexture texture;
+		@Getter
 		private final ItemModelType couponModel;
 		public static final String NBT_TEXTURE_TYPE = "ProfileTextureType";
 
 		ProfileTextureType(InventoryTexture texture, ItemModelType couponModel) {
-			this(false, 59, 0, texture, couponModel);
+			this(false, false, 59, 0, texture, couponModel);
 		}
 
 		ProfileTextureType(int imageMinus, int shiftPlayerName, InventoryTexture texture, ItemModelType couponModel) {
-			this(true, imageMinus, shiftPlayerName, texture, couponModel);
+			this(false, true, imageMinus, shiftPlayerName, texture, couponModel);
 		}
 
-		ProfileTextureType(boolean image, int imageMinus, int shiftPlayerName, InventoryTexture texture, ItemModelType couponModel) {
-			this.image = image;
-			this.imageMinus = imageMinus;
-			this.shiftPlayerName = shiftPlayerName;
-			this.texture = texture;
-			this.couponModel = couponModel;
+		public boolean isInternal() {
+			return this.internal || this.couponModel == null;
+		}
+
+		public boolean isDyeable() {
+			return !this.image && this != NONE;
 		}
 
 		public String getShiftedTitleName(ProfileUser user) {
 			String shiftedTitle = "";
 			if (this.isImage())
-				shiftedTitle = " ꈃ".repeat(shiftPlayerName);
+				shiftedTitle = " ꈃ".repeat(this.shiftPlayerName);
 
 			return shiftedTitle + user.getNickname().toLowerCase().chars()
 				.mapToObj(c -> (char) c + "ꈃ")
@@ -191,10 +197,9 @@ public class ProfileUser implements PlayerOwnedObject {
 			String type = StringUtils.camelCase(this);
 
 			if (this.couponModel == null)
-				throw new InvalidInputException("ProfileTextureType " + type + " does not have an coupon item model");
+				throw new InvalidInputException("ProfileTextureType &e" + type + " &cdoes not have a coupon item model");
 
 			return new ItemBuilder(this.couponModel)
-				.setting(ItemSetting.RENAMEABLE, false)
 				.name("&3Profile Texture Coupon")
 				.lore(
 					"&3Type: &e" + type,
@@ -202,6 +207,7 @@ public class ProfileUser implements PlayerOwnedObject {
 					"&eRight Click &3to claim"
 				)
 				.nbt(nbt -> nbt.setString(NBT_TEXTURE_TYPE, type))
+				.setting(ItemSetting.RENAMEABLE, false)
 				.build();
 		}
 	}

@@ -2094,6 +2094,8 @@ public enum ItemModelType {
 	GUI_PROFILE_ICON_TRUSTS("ui/gui/profile/icon_trusts"),
 	GUI_PROFILE_PLAYER_HEAD("ui/gui/profile/player_head", Material.PLAYER_HEAD),
 
+	GUI_PROFILE_TEXTURE_ITEM_NONE("ui/gui/profile/coupon/none"),
+	GUI_PROFILE_TEXTURE_ITEM_BIRTHDAY("ui/gui/profile/coupon/birthday"),
 	GUI_PROFILE_TEXTURE_ITEM_DOTS("ui/gui/profile/coupon/dots"),
 	GUI_PROFILE_TEXTURE_ITEM_SHINE("ui/gui/profile/coupon/shine"),
 	GUI_PROFILE_TEXTURE_ITEM_VERTICAL_STRIPES("ui/gui/profile/coupon/vertical_stripes"),
