@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
@@ -24,6 +25,7 @@ import java.util.List;
 @WikiConfig(rank = "Store", feature = "Inventory")
 public class ItemNameCommand extends CustomCommand {
 	public static final String PERMISSION = "itemname.use";
+	public static final String RENAME_SETTING_ERROR = "&cCannot rename this item";
 
 	public ItemNameCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -44,6 +46,9 @@ public class ItemNameCommand extends CustomCommand {
 				continue;
 
 			if (content.getType() != material)
+				continue;
+
+			if (!new ItemBuilder(content).is(ItemSetting.RENAMEABLE))
 				continue;
 
 			final ItemMeta meta = content.getItemMeta();
@@ -74,6 +79,9 @@ public class ItemNameCommand extends CustomCommand {
 		verify(input);
 
 		final ItemStack tool = getToolRequired();
+
+		if (!new ItemBuilder(tool).is(ItemSetting.RENAMEABLE))
+			error(RENAME_SETTING_ERROR);
 
 		DecorationConfig decorationConfig = DecorationConfig.of(tool);
 		if (decorationConfig != null && input == null)

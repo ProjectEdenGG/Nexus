@@ -16,6 +16,7 @@ import gg.projecteden.nexus.models.friends.FriendsUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -123,8 +124,8 @@ public class ProfileUser implements PlayerOwnedObject {
 
 		// Internal
 		NONE(null, null),
-		INTERNAL_TEST(59, 2, InventoryTexture.GUI_PROFILE_IMAGE_TEST, null),
-		INTERNAL_BIRTHDAY(59, 2, InventoryTexture.GUI_PROFILE_IMAGE_BIRTHDAY, null),
+		TEST(59, 2, InventoryTexture.GUI_PROFILE_IMAGE_TEST, null),
+		BIRTHDAY(59, 2, InventoryTexture.GUI_PROFILE_IMAGE_BIRTHDAY, null),
 		;
 
 		@Getter
@@ -171,6 +172,7 @@ public class ProfileUser implements PlayerOwnedObject {
 			return this.texture.getNextMenuTexture(color, rows);
 		}
 
+
 		public static ProfileTextureType fromItem(ItemStack itemStack) {
 			NBTItem nbtItem = new NBTItem(itemStack);
 			if (!nbtItem.hasKey(NBT_TEXTURE_TYPE))
@@ -192,11 +194,12 @@ public class ProfileUser implements PlayerOwnedObject {
 				throw new InvalidInputException("ProfileTextureType " + type + " does not have an coupon item model");
 
 			return new ItemBuilder(this.couponModel)
+				.setting(ItemSetting.RENAMEABLE, false)
 				.name("&3Profile Texture Coupon")
 				.lore(
 					"&3Type: &e" + type,
 					"",
-					"&eRClick &3to claim"
+					"&eRight Click &3to claim"
 				)
 				.nbt(nbt -> nbt.setString(NBT_TEXTURE_TYPE, type))
 				.build();

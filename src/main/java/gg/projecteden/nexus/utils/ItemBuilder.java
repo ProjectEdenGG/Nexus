@@ -883,6 +883,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	@AllArgsConstructor
 	public enum ItemSetting {
 		/**
+		 * Whether an item can be renamed with an anvil or {@code /itemname}
+		 */
+		RENAMEABLE(true),
+		/**
 		 * Whether an item can be dropped
 		 */
 		DROPPABLE(true),
