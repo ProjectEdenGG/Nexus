@@ -2076,6 +2076,7 @@ public enum ItemModelType {
 	GUI_PRESENCE_VANISHED_LIVE("ui/gui/presence/vanished_live"),
 	GUI_PRESENCE_VANISHED_LIVE_AFK("ui/gui/presence/vanished_live_afk"),
 	GUI_ARROW_LEFT("ui/gui/previous", true),
+
 	GUI_PROFILE_ICON_ABOUT("ui/gui/profile/icon_about"),
 	GUI_PROFILE_ICON_FRIENDS("ui/gui/profile/icon_friends_list"),
 	GUI_PROFILE_ICON_FRIENDS_ERROR("ui/gui/profile/icon_friends_list_error"),
@@ -2092,6 +2093,17 @@ public enum ItemModelType {
 	GUI_PROFILE_ICON_STATUS("ui/gui/profile/icon_status"),
 	GUI_PROFILE_ICON_TRUSTS("ui/gui/profile/icon_trusts"),
 	GUI_PROFILE_PLAYER_HEAD("ui/gui/profile/player_head", Material.PLAYER_HEAD),
+
+	GUI_PROFILE_TEXTURE_ITEM_DOTS("ui/gui/profile/coupon/dots"),
+	GUI_PROFILE_TEXTURE_ITEM_SHINE("ui/gui/profile/coupon/shine"),
+	GUI_PROFILE_TEXTURE_ITEM_VERTICAL_STRIPES("ui/gui/profile/coupon/vertical_stripes"),
+	GUI_PROFILE_TEXTURE_ITEM_SPLIT("ui/gui/profile/coupon/split"),
+	GUI_PROFILE_TEXTURE_ITEM_CIRCUIT("ui/gui/profile/coupon/circuit"),
+	GUI_PROFILE_TEXTURE_ITEM_GINGHAM("ui/gui/profile/coupon/gingham"),
+	GUI_PROFILE_TEXTURE_ITEM_ZEBRA("ui/gui/profile/coupon/zebra"),
+	GUI_PROFILE_TEXTURE_ITEM_CATS("ui/gui/profile/coupon/cats"),
+	GUI_PROFILE_TEXTURE_ITEM_BEES("ui/gui/profile/coupon/bees"),
+
 	GUI_ROTATE_LEFT("ui/gui/rotate_left", true),
 	GUI_ROTATE_RIGHT("ui/gui/rotate_right", true),
 	GUI_SOCIAL_MEDIA_DISCORD("ui/gui/social_media/discord"),

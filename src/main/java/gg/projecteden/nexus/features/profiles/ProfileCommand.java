@@ -22,12 +22,16 @@ import gg.projecteden.nexus.models.profile.ProfileUserService;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Utils.ActionGroup;
+import gg.projecteden.nexus.utils.Utils.EquipmentSlotGroup;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
@@ -130,5 +134,42 @@ public class ProfileCommand extends CustomCommand implements Listener {
 
 	public static void openProfile(Nerd target, Player viewer, @Nullable InventoryProvider previousMenu) {
 		new ProfileProvider(target.getOfflinePlayer(), previousMenu).open(viewer);
+	}
+
+	@Path("getTextureCoupon <type>")
+	@Description("Gets the coupon item of the texture")
+	@Permission(Group.ADMIN)
+	public void getTextureCoupon(ProfileTextureType type) {
+		giveItem(type.getCouponItem());
+	}
+
+	@EventHandler
+	public void onClick(PlayerInteractEvent event) {
+		if (!EquipmentSlotGroup.HANDS.applies(event)) return;
+		if (!ActionGroup.RIGHT_CLICK.applies(event)) return;
+
+		ItemStack item = event.getItem();
+		if (Nullables.isNullOrAir(item)) return;
+
+		Player player = event.getPlayer();
+		ProfileUserService userService = new ProfileUserService();
+
+		ProfileUser user = userService.get(player);
+		ProfileTextureType textureType = ProfileUser.ProfileTextureType.fromItem(item);
+		if (textureType == null)
+			return;
+
+		event.setCancelled(true);
+
+		if (user.getUnlockedTextureTypes().contains(textureType)) {
+			user.sendMessage(PREFIX + "&cYou already own the &e" + StringUtils.camelCase(textureType) + " &cprofile texture");
+			return;
+		}
+
+		user.getUnlockedTextureTypes().add(textureType);
+		userService.save(user);
+
+		user.sendMessage(PREFIX + "&3You now own the &e" + StringUtils.camelCase(textureType) + " &3profile texture");
+		player.getInventory().removeItem(item);
 	}
 }

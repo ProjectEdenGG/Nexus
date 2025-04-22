@@ -25,6 +25,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryView;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -178,6 +179,22 @@ public class Utils extends gg.projecteden.api.common.utils.Utils {
 				case CLOCKWISE_135, COUNTER_CLOCKWISE_45 -> DEGREE_270;
 				default -> DEGREE_0;
 			};
+		}
+	}
+
+	public enum EquipmentSlotGroup {
+		HANDS(EquipmentSlot.HAND, EquipmentSlot.OFF_HAND),
+		ARMOR(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.BODY, EquipmentSlot.LEGS, EquipmentSlot.FEET),
+		;
+
+		final List<EquipmentSlot> slots;
+
+		EquipmentSlotGroup(EquipmentSlot... slots) {
+			this.slots = Arrays.asList(slots);
+		}
+
+		public boolean applies(PlayerInteractEvent event) {
+			return slots.contains(event.getHand());
 		}
 	}
 

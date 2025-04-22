@@ -1,17 +1,22 @@
 package gg.projecteden.nexus.models.profile;
 
+import de.tr7zw.nbtapi.NBTItem;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.profiles.colorcreator.ColorCreatorProvider.CreatedColor;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.friends.FriendsUser;
 import gg.projecteden.nexus.models.friends.FriendsUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -21,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -100,22 +106,25 @@ public class ProfileUser implements PlayerOwnedObject {
 		};
 	}
 
-	@AllArgsConstructor
+	@SuppressWarnings("deprecation")
 	public enum ProfileTextureType {
-		NONE(null),
-		//
-		DOTS(InventoryTexture.GUI_PROFILE_TEXTURE_DOTS),
-		SHINE(InventoryTexture.GUI_PROFILE_TEXTURE_SHINE),
-		VERTICAL_STRIPES(InventoryTexture.GUI_PROFILE_TEXTURE_STRIPES_VERTICAL),
-		SPLIT(InventoryTexture.GUI_PROFILE_TEXTURE_SPLIT),
-		CIRCUIT(InventoryTexture.GUI_PROFILE_TEXTURE_CIRCUIT),
-		GINGHAM(InventoryTexture.GUI_PROFILE_TEXTURE_GINGHAM),
-		ZEBRA(InventoryTexture.GUI_PROFILE_TEXTURE_ZEBRA),
-		// Overlays
-		TEST(59, 2, InventoryTexture.GUI_PROFILE_IMAGE_TEST),
-		BIRTHDAY(59, 2, InventoryTexture.GUI_PROFILE_IMAGE_BIRTHDAY),
-		CATS(59, 2, InventoryTexture.GUI_PROFILE_IMAGE_CATS),
-		BEES(59, 2, InventoryTexture.GUI_PROFILE_IMAGE_BEES),
+		// Background
+		DOTS(InventoryTexture.GUI_PROFILE_TEXTURE_DOTS, ItemModelType.GUI_PROFILE_TEXTURE_ITEM_DOTS),
+		SHINE(InventoryTexture.GUI_PROFILE_TEXTURE_SHINE, ItemModelType.GUI_PROFILE_TEXTURE_ITEM_SHINE),
+		VERTICAL_STRIPES(InventoryTexture.GUI_PROFILE_TEXTURE_STRIPES_VERTICAL, ItemModelType.GUI_PROFILE_TEXTURE_ITEM_VERTICAL_STRIPES),
+		SPLIT(InventoryTexture.GUI_PROFILE_TEXTURE_SPLIT, ItemModelType.GUI_PROFILE_TEXTURE_ITEM_SPLIT),
+		CIRCUIT(InventoryTexture.GUI_PROFILE_TEXTURE_CIRCUIT, ItemModelType.GUI_PROFILE_TEXTURE_ITEM_CIRCUIT),
+		GINGHAM(InventoryTexture.GUI_PROFILE_TEXTURE_GINGHAM, ItemModelType.GUI_PROFILE_TEXTURE_ITEM_GINGHAM),
+		ZEBRA(InventoryTexture.GUI_PROFILE_TEXTURE_ZEBRA, ItemModelType.GUI_PROFILE_TEXTURE_ITEM_ZEBRA),
+
+		// Overlay
+		CATS(59, 2, InventoryTexture.GUI_PROFILE_IMAGE_CATS, ItemModelType.GUI_PROFILE_TEXTURE_ITEM_CATS),
+		BEES(59, 2, InventoryTexture.GUI_PROFILE_IMAGE_BEES, ItemModelType.GUI_PROFILE_TEXTURE_ITEM_BEES),
+
+		// Internal
+		NONE(null, null),
+		INTERNAL_TEST(59, 2, InventoryTexture.GUI_PROFILE_IMAGE_TEST, null),
+		INTERNAL_BIRTHDAY(59, 2, InventoryTexture.GUI_PROFILE_IMAGE_BIRTHDAY, null),
 		;
 
 		@Getter
@@ -123,13 +132,23 @@ public class ProfileUser implements PlayerOwnedObject {
 		private final int imageMinus;
 		private final int shiftPlayerName;
 		private final InventoryTexture texture;
+		private final ItemModelType couponModel;
+		public static final String NBT_TEXTURE_TYPE = "ProfileTextureType";
 
-		ProfileTextureType(InventoryTexture texture) {
-			this(false, 59, 0, texture);
+		ProfileTextureType(InventoryTexture texture, ItemModelType couponModel) {
+			this(false, 59, 0, texture, couponModel);
 		}
 
-		ProfileTextureType(int imageMinus, int shiftPlayerName, InventoryTexture texture) {
-			this(true, imageMinus, shiftPlayerName, texture);
+		ProfileTextureType(int imageMinus, int shiftPlayerName, InventoryTexture texture, ItemModelType couponModel) {
+			this(true, imageMinus, shiftPlayerName, texture, couponModel);
+		}
+
+		ProfileTextureType(boolean image, int imageMinus, int shiftPlayerName, InventoryTexture texture, ItemModelType couponModel) {
+			this.image = image;
+			this.imageMinus = imageMinus;
+			this.shiftPlayerName = shiftPlayerName;
+			this.texture = texture;
+			this.couponModel = couponModel;
 		}
 
 		public String getShiftedTitleName(ProfileUser user) {
@@ -150,6 +169,37 @@ public class ProfileUser implements PlayerOwnedObject {
 				return InventoryTexture.getMenuTexture(this.imageMinus, this.texture.getFontChar(), ChatColor.WHITE, rows);
 
 			return this.texture.getNextMenuTexture(color, rows);
+		}
+
+		public static ProfileTextureType fromItem(ItemStack itemStack) {
+			NBTItem nbtItem = new NBTItem(itemStack);
+			if (!nbtItem.hasKey(NBT_TEXTURE_TYPE))
+				return null;
+
+			String type = nbtItem.getString(NBT_TEXTURE_TYPE);
+
+			try {
+				return ProfileTextureType.valueOf(type.trim().toUpperCase().replaceAll(" ", "_"));
+			} catch (Exception e) {
+				return null;
+			}
+		}
+
+		public ItemStack getCouponItem() {
+			String type = StringUtils.camelCase(this);
+
+			if (this.couponModel == null)
+				throw new InvalidInputException("ProfileTextureType " + type + " does not have an coupon item model");
+
+			return new ItemBuilder(this.couponModel)
+				.name("&3Profile Texture Coupon")
+				.lore(
+					"&3Type: &e" + type,
+					"",
+					"&eRClick &3to claim"
+				)
+				.nbt(nbt -> nbt.setString(NBT_TEXTURE_TYPE, type))
+				.build();
 		}
 	}
 
