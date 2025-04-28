@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.minigames.models.annotations.Railgun;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDisplayTimerEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
-import gg.projecteden.nexus.features.minigames.models.statistics.models.generics.PVPStats;
+import gg.projecteden.nexus.features.minigames.models.statistics.QuakeStatistics;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
@@ -13,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 @Railgun
-@MatchStatisticsClass(PVPStats.class)
+@MatchStatisticsClass(QuakeStatistics.class)
 public class Quake extends TeamlessMechanic {
 
 	@Override

@@ -6,19 +6,19 @@ import gg.projecteden.nexus.features.minigames.models.statistics.models.FormulaS
 import gg.projecteden.nexus.features.minigames.models.statistics.models.FormulaStatistic.Formula;
 import gg.projecteden.nexus.features.minigames.models.statistics.models.MinigameStatistic;
 import gg.projecteden.nexus.features.minigames.models.statistics.models.generics.PVPStats;
+import gg.projecteden.nexus.features.minigames.models.statistics.models.generics.RailgunStatistics;
 
-public class PaintballStatistics extends PVPStats {
+public class QuakeStatistics extends PVPStats implements RailgunStatistics {
 
-	public static final MinigameStatistic PAINTBALLS_THROWN = new MinigameStatistic("paintballs_thrown", "Paintballs Thrown");
 	public static final MinigameStatistic ACCURACY = new FormulaStatistic("accuracy", "Accuracy",
-		Formula.of(KILLS).divide(PAINTBALLS_THROWN, Formula.constant(0)).multiply(Formula.constant(100))) {
+		Formula.of(KILLS).divide(SHOTS_FIRED, Formula.constant(0)).multiply(Formula.constant(100))) {
 		@Override
 		public Object format(double score) {
 			return super.format(score) + "%";
 		}
 	};
 
-	public PaintballStatistics(MechanicType mechanic, Match match) {
+	public QuakeStatistics(MechanicType mechanic, Match match) {
 		super(mechanic, match);
 	}
 }

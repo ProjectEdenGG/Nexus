@@ -91,7 +91,7 @@ public class Leaderboards {
 			Nexus.registerListener(this);
 
 			/*
-			 * The holograms api isn't really setup for this and would require major refactoring to get it to work
+			 * The holograms api isn't really set up for this and would require major refactoring to get it to work.
 			 * As such, we have the 'fake' the per-player lines, as it expects the same number for each player
 			 * Luckily this will be fine for these, but we will need something else for the ones requiring different counts
 			 */
@@ -114,6 +114,8 @@ public class Leaderboards {
 
 		@EventHandler
 		public void onSpawnGenerateLines(HologramSpawnEvent event) {
+			if (event.getHologram().getId() == null)
+				return;
 			if (!event.getHologram().getLocation().getWorld().getName().equals(Minigames.getWorld().getName()))
 				return;
 			if (!event.getHologram().getId().equals(this.hologram.getId()))

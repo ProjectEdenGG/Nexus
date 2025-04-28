@@ -4,9 +4,11 @@ import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
+import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.annotations.Regenerating;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import gg.projecteden.nexus.features.minigames.models.statistics.TNTRunStatistics;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Material;
@@ -17,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 @Regenerating("floor")
+@MatchStatisticsClass(TNTRunStatistics.class)
 public class TNTRun extends TeamlessMechanic {
 
 	@Override
@@ -81,6 +84,8 @@ public class TNTRun extends TeamlessMechanic {
 							return;
 						standingOn.setType(Material.AIR);
 						tnt.setType(Material.AIR);
+
+						match.getMatchStatistics().award(TNTRunStatistics.BLOCKS_BROKEN, minigamer);
 					});
 				});
 

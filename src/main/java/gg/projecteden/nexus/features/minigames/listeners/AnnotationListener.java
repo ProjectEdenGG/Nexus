@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEve
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchRegeneratedEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import gg.projecteden.nexus.features.minigames.models.statistics.models.generics.RailgunStatistics;
 import gg.projecteden.nexus.features.minigames.utils.Gun;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
@@ -59,6 +60,8 @@ public class AnnotationListener implements Listener {
 		gun.setShouldDamageWithConsole(railgun.damageWithConsole());
 		gun.setCooldown(railgun.cooldownTicks());
 		gun.shoot();
+
+		minigamer.getMatch().getMatchStatistics().award(RailgunStatistics.SHOTS_FIRED, minigamer);
 	}
 
 }

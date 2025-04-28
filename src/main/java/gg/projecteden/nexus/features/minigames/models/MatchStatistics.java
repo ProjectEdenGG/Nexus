@@ -1,5 +1,9 @@
 package gg.projecteden.nexus.features.minigames.models;
 
+import com.mongodb.client.model.Accumulators;
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Sorts;
 import gg.projecteden.api.common.utils.ReflectionUtils;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.interfaces.HasUniqueId;
@@ -13,6 +17,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.ToString;
+import org.bson.conversions.Bson;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
@@ -122,9 +127,30 @@ public class MatchStatistics {
 	public static final MinigameStatistic WINS = new MinigameStatistic("wins", "Wins");
 	public static final MinigameStatistic TIME_PLAYED = new MinigameStatistic("time_played", "Time Played") {
 		@Override
-		public Object format(long score) {
-			return Timespan.ofSeconds(score).format();
+		public Object format(double score) {
+			return Timespan.ofSeconds((long) score).format();
 		}
 	};
-	public static final MinigameStatistic GAMES_PLAYED = new MinigameStatistic("games_played", "Games Played");
+	public static final MinigameStatistic GAMES_PLAYED = new MinigameStatistic("games_played", "Games Played") {
+		@Override
+		public List<Bson> getPipeline(String afterDate, MechanicType mechanic, UUID self, boolean aggregate) {
+			List<Bson> filters = new ArrayList<>() {{
+				add(Filters.gt("statistics.date", afterDate));
+				if (mechanic != null)
+					add(Filters.eq("statistics.mechanic", mechanic.name()));
+				if (self != null)
+					add(Filters.eq("_id", self.toString()));
+			}};
+
+			List<Bson> pipeline = new ArrayList<>() {{
+				add(Aggregates.unwind("$statistics"));
+				add(Aggregates.match(Filters.and(filters)));
+				add(Aggregates.group("$_id", Accumulators.sum("total", 1)));
+			}};
+			if (!aggregate)
+				pipeline.add(Aggregates.sort(Sorts.descending("total")));
+
+			return pipeline;
+		}
+	};
 }

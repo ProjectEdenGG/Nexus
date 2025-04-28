@@ -31,8 +31,8 @@ public class CheckpointStatistics extends MatchStatistics {
 		for (Arena arena : ArenaManager.getAllEnabled(mechanic))
 			stats.add(new MinigameStatistic(arena.getName(), arena.getDisplayName()) {
 				@Override
-				public Object format(long score) {
-					return StringUtils.getTimeFormat(Duration.ofMillis(score));
+				public Object format(double score) {
+					return StringUtils.getTimeFormat(Duration.ofMillis((long) score));
 				}
 			});
 		stats.addAll(List.of(GAMES_PLAYED, WINS, TIME_PLAYED));
@@ -85,8 +85,8 @@ public class CheckpointStatistics extends MatchStatistics {
 	public static final MinigameStatistic WINS = new MinigameStatistic("wins", "Wins", true);
 	public static final MinigameStatistic TIME_PLAYED = new MinigameStatistic("time_played", "Time Played", true) {
 		@Override
-		public Object format(long score) {
-			return Timespan.ofSeconds(score).format();
+		public Object format(double score) {
+			return Timespan.ofSeconds((long) score).format();
 		}
 	};
 	public static final MinigameStatistic GAMES_PLAYED = new MinigameStatistic("games_played", "Games Played", true);

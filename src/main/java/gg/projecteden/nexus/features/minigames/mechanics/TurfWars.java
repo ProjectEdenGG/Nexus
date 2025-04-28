@@ -21,6 +21,8 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.TurfWarsMatchDat
 import gg.projecteden.nexus.features.minigames.models.matchdata.TurfWarsMatchData.State;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.statistics.TurfWarsStatistics;
+import gg.projecteden.nexus.features.minigames.models.statistics.models.generics.DeathsStat;
+import gg.projecteden.nexus.features.minigames.models.statistics.models.generics.KillsStat;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
@@ -578,8 +580,8 @@ public class TurfWars extends TeamMechanic {
 		if (!Minigamer.of(player).isPlaying(this))
 			return;
 
-
 		this.playerArrowMap.put(arrow, player);
+		Minigamer.of(player).getMatch().getMatchStatistics().award(TurfWarsStatistics.ARROWS_FIRED, player);
 	}
 
 	@SuppressWarnings("removal")
@@ -638,6 +640,9 @@ public class TurfWars extends TeamMechanic {
 			arrow1.remove();
 			this.playerArrowMap.remove(arrow1);
 		}
+
+		match.getMatchStatistics().award(KillsStat.KILLS, shooter);
+		match.getMatchStatistics().award(DeathsStat.DEATHS, victim);
 
 		moveFloor(match, shooter.getTeam(), matchData.getFloorWorth());
 	}

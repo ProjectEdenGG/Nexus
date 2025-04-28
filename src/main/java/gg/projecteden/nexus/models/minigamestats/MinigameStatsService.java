@@ -2,13 +2,9 @@ package gg.projecteden.nexus.models.minigamestats;
 
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Accumulators;
-import com.mongodb.client.model.Aggregates;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Sorts;
 import gg.projecteden.api.mongodb.annotations.ObjectClass;
-import gg.projecteden.nexus.features.minigames.models.MatchStatistics;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
+import gg.projecteden.nexus.features.minigames.models.statistics.models.FormulaStatistic;
 import gg.projecteden.nexus.features.minigames.models.statistics.models.MinigameStatistic;
 import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -23,7 +19,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -54,38 +49,23 @@ public class MinigameStatsService extends MongoPlayerService<MinigameStatsUser> 
 		DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 		String afterInstanceString = formatter.format(after == null ? EPOCH : after);
 
-		List<Bson> filters = new ArrayList<>() {{
-			add(Filters.gt("statistics.date", afterInstanceString));
-			if (mechanic != null)
-				add(Filters.eq("statistics.mechanic", mechanic.name()));
-		}};
-
-		List<Bson> pipeline = Arrays.asList(
-			Aggregates.unwind("$statistics"),
-			Aggregates.match(Filters.and(filters)),
-			Aggregates.group("$_id", Accumulators.sum("total", "$statistics.stats." + statistic.getId())),
-			Aggregates.sort(Sorts.descending("total"))
-		);
-		if (statistic.equals(MatchStatistics.GAMES_PLAYED)) {
-			pipeline = Arrays.asList(
-				Aggregates.unwind("$statistics"),
-				Aggregates.match(Filters.and(filters)),
-				Aggregates.group("$_id", Accumulators.sum("total", 1)),
-				Aggregates.sort(Sorts.descending("total"))
-			);
-		}
-
+		List<Bson> pipeline = statistic.getPipeline(afterInstanceString, mechanic, null, false);
 		AggregateIterable<Document> top10 = collection().aggregate(pipeline);
 
 		List<LeaderboardRanking> rankings = new ArrayList<>();
 		int skipped = 1;
 		int rank = 0;
-		int previousTotal = -1;
+		double previousTotal = -1;
 		for (Document doc : top10) {
 			UUID uuid = UUID.fromString(doc.getString("_id"));
-			int total = doc.getInteger("total");
+			double total;
+			try { total = doc.getInteger("total"); }
+			catch (Exception ex) {
+				try { total = doc.getDouble("total"); }
+				catch (Exception ex2) { return new ArrayList<>(); }
+			}
 
-			if (total == 0)
+			if (total == 0 && !(statistic instanceof FormulaStatistic))
 				continue;
 
 			if (total != previousTotal) {
@@ -114,31 +94,16 @@ public class MinigameStatsService extends MongoPlayerService<MinigameStatsUser> 
 		DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 		String afterInstanceString = formatter.format(after == null ? EPOCH : after);
 
-		List<Bson> filters = new ArrayList<>();
-		filters.add(Filters.gt("statistics.date", afterInstanceString));
-		if (mechanic != null)
-			filters.add(Filters.eq("statistics.mechanic", mechanic.name()));
-
-		if (self != null)
-			filters.add(Filters.eq("_id", self.toString()));
-
-		List<Bson> pipeline = Arrays.asList(
-			Aggregates.unwind("$statistics"),
-			Aggregates.match(Filters.and(filters)),
-			Aggregates.group("$_id", Accumulators.sum("total", "$statistics.stats." + statistic.getId()))
-		);
-		if (statistic.equals(MatchStatistics.GAMES_PLAYED)) {
-			pipeline = Arrays.asList(
-				Aggregates.unwind("$statistics"),
-				Aggregates.match(Filters.and(filters)),
-				Aggregates.group("$_id", Accumulators.sum("total", 1))
-			);
-		}
+		List<Bson> pipeline = statistic.getPipeline(afterInstanceString, mechanic, self, true);
 
 		AggregateIterable<Document> results = collection().aggregate(pipeline);
-		int i = 0;
+		double i = 0;
 		for (Document doc : results) {
-			i += doc.getInteger("total");
+			try { i += doc.getInteger("total"); }
+			catch (Exception ex) {
+				try { i += doc.getDouble("total"); }
+				catch (Exception ex2) { return null; }
+			}
 		}
 		return (String) statistic.format(i);
 	}
