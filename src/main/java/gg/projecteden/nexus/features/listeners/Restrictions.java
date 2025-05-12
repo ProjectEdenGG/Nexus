@@ -6,9 +6,10 @@ import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.Koda;
-import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.vanish.Vanish;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.CitizensUtils;
@@ -135,6 +136,23 @@ public class Restrictions implements Listener {
 
 		event.setCancelled(true);
 		player.setGameMode(GameMode.SPECTATOR);
+	}
+
+	private static final CooldownService COOLDOWN_SERVICE = new CooldownService();
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onWorldChange(PlayerTeleportEvent event) {
+		if (event.getFrom().getWorld().equals(event.getTo().getWorld()))
+			return;
+
+		if (Nerd.of(event.getPlayer()).getRank().isStaff())
+			return;
+
+		if (COOLDOWN_SERVICE.check(event.getPlayer(), "world-change", TickTime.SECOND))
+			return;
+
+		event.setCancelled(true);
+		PlayerUtils.send(event.getPlayer(), StringUtils.getPrefix("Restrictions") + "&cYou cannot change worlds that fast");
 	}
 
 	@EventHandler
