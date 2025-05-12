@@ -6,6 +6,7 @@ import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.Koda;
+import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -17,6 +18,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
@@ -27,6 +29,8 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.craftbukkit.entity.CraftFishHook;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.minecart.CommandMinecart;
@@ -83,6 +87,41 @@ public class Restrictions implements Listener {
 			return false;
 
 		return true;
+	}
+
+	@EventHandler
+	public void onSpawn(EntitySpawnEvent event) {
+		Entity entity = event.getEntity();
+		if (!preventSpawn(entity))
+			return;
+
+		event.setCancelled(true);
+		String entityType = StringUtils.camelCase(entity.getType());
+		String location = StringUtils.getLocationString(entity.getLocation());
+		String spawnReason = StringUtils.camelCase(event.getEntity().getEntitySpawnReason());
+		String message = "&cPrevented " + entityType + " spawning at " + location + "&c (Reason: &e" + spawnReason + "&c)";
+
+		Broadcast.staffIngame().prefix("Restrictions").message(message).send();
+		Broadcast.staffDiscord().prefix("Restrictions").message(message).send();
+	}
+
+	private boolean preventSpawn(Entity entity) {
+		World world = entity.getWorld();
+
+		// Prevent dragons in all worlds except end
+		if (entity.getType() == EntityType.ENDER_DRAGON && world.getEnvironment() != Environment.THE_END)
+			return true;
+
+		// Prevent wither
+		if (entity.getType() == EntityType.WITHER) {
+			// Withers are allowed in resource and wither arena
+			if (SubWorldGroup.RESOURCE.contains(world) || WorldGroup.SERVER.contains(world))
+				return false;
+
+			return true;
+		}
+
+		return false;
 	}
 
 	@EventHandler
