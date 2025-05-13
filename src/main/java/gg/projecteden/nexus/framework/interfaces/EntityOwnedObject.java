@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * A mongo database object owned by a player
+ * A mongo database object owned by an entity
  */
 public interface EntityOwnedObject extends DatabaseObject {
 
