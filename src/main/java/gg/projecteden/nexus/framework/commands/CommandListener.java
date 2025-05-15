@@ -3,8 +3,11 @@ package gg.projecteden.nexus.framework.commands;
 import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
 import com.google.common.base.Strings;
 import gg.projecteden.api.common.utils.Nullables;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.events.CommandTabEvent;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NoArgsConstructor;
@@ -34,6 +37,20 @@ public class CommandListener implements Listener {
 			PlayerUtils.runCommand(event.getPlayer(), StringUtils.trimFirst(command));
 			return;
 		}
+	}
+
+	private static final CooldownService COOLDOWN_SERVICE = new CooldownService();
+
+	@EventHandler
+	public void onCommandCooldown(PlayerCommandPreprocessEvent event) {
+		if (Rank.of(event.getPlayer()).gt(Rank.MEMBER))
+			return;
+
+		if (COOLDOWN_SERVICE.check(event.getPlayer(), "command-cooldown", TickTime.TICK.x(5)))
+			return;
+
+		event.setCancelled(true);
+		PlayerUtils.send(event.getPlayer(), StringUtils.getPrefix("Restrictions") + "&cYou are sending commands too quickly!");
 	}
 
 	@EventHandler
