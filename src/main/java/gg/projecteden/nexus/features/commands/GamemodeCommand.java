@@ -48,8 +48,12 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 
 	public GamemodeCommand(@NonNull CommandEvent event) {
 		super(event);
-		if (isPlayerCommandEvent())
+		if (isPlayerCommandEvent()) {
 			user = service.get(player());
+
+			if (rank() == Rank.GUEST && worldGroup() != WorldGroup.CREATIVE)
+				permissionError();
+		}
 	}
 
 	@Path("<gamemode> [player]")
