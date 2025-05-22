@@ -546,7 +546,7 @@ public class Match implements ForwardingAudience {
 	}
 
 	private void teleportIn() {
-		if (isMechanic(Thimble.class) || isMechanic(Dropper.class)) return; // TODO Fix
+		if (isMechanic(Thimble.class) || isMechanic(Dropper.class) || isMechanic(Bingo.class)) return; // TODO Fix
 		arena.getTeams().forEach(team -> team.spawn(this));
 		spectators.forEach(Minigamer::toSpectate);
 	}
