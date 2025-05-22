@@ -13,8 +13,14 @@ import gg.projecteden.nexus.models.bigdoor.BigDoorConfig;
 import gg.projecteden.nexus.models.bigdoor.BigDoorConfigService;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import nl.pim16aap2.bigDoors.Door;
+import nl.pim16aap2.bigDoors.storage.sqlite.SQLiteJDBCDriverConnection;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +31,44 @@ public class BigDoorManagerCommand extends CustomCommand {
 
 	public BigDoorManagerCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	// If the world on "/bigdoormanager info" is "null", run this command in the same world as the door to fix the database
+	@Path("fixDatabaseWorld <id>")
+	@SneakyThrows
+	void engine_apply(int doorId) {
+		Door door = BigDoorManager.getDoor(doorId);
+		if (door == null)
+			error("Unknown BigDoor Id " + doorId);
+
+		final Field driverField = BigDoorManager.getCommander().getClass().getDeclaredField("db");
+		driverField.setAccessible(true);
+		SQLiteJDBCDriverConnection driver = (SQLiteJDBCDriverConnection) driverField.get(BigDoorManager.getCommander());
+
+		Connection conn = null;
+
+		try {
+			final Method method = driver.getClass().getDeclaredMethod("getConnection");
+			method.setAccessible(true);
+
+			conn = (Connection) method.invoke(driver);
+			conn.setAutoCommit(false);
+			String update = "UPDATE doors SET world='" + world().getUID().toString() + "' WHERE id = '" + doorId + "';";
+			conn.prepareStatement(update).executeUpdate();
+			conn.commit();
+		} catch (NullPointerException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+			} catch (NullPointerException | SQLException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		Door _door = BigDoorManager.getDoor(doorId);
+		send("Updated door world to " + _door.getWorld().getName());
 	}
 
 	@Path("info <id>")
@@ -38,6 +82,8 @@ public class BigDoorManagerCommand extends CustomCommand {
 		send("UID: " + door.getDoorUID());
 		send("Name: " + door.getName());
 		send("Type: " + door.getType());
+		send("Min: " + StringUtils.getLocationString(door.getMinimum()));
+		send("Max: " + StringUtils.getLocationString(door.getMaximum()));
 		send("Engine: " + StringUtils.getLocationString(door.getEngine()));
 	}
 

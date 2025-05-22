@@ -477,7 +477,15 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	}
 
 	public static String getLocationString(Location loc) {
-		return "&3World: &e" + loc.getWorld().getName() + " &3x: &e" + df.format(loc.getX()) + " &3y: &e" +
+		if (loc == null)
+			return "&cnull";
+
+		String worldName = "&cnull";
+		World world = loc.getWorld();
+		if (world != null)
+			worldName = loc.getWorld().getName();
+
+		return "&3World: &e" + worldName + " &3x: &e" + df.format(loc.getX()) + " &3y: &e" +
 			df.format(loc.getY()) + " &3z: &e" + df.format(loc.getZ());
 	}
 
