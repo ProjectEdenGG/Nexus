@@ -37,6 +37,7 @@ import gg.projecteden.nexus.utils.Utils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
+import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
 import org.bukkit.event.EventHandler;
@@ -283,6 +284,8 @@ public class StatisticsCommand extends CustomCommand implements Listener {
 		var player = event.getPlayer();
 		if (Rank.of(player) != Rank.GUEST)
 			return;
+		if (player.getGameMode() != GameMode.CREATIVE)
+			return;
 
 		event.setCancelled(true);
 		UUID uuid = player.getUniqueId();
@@ -291,7 +294,7 @@ public class StatisticsCommand extends CustomCommand implements Listener {
 			return;
 
 		CooldownService cooldownService = new CooldownService();
-		if (cooldownService.check(uuid, "creative-item-stat-increase-event", TickTime.MINUTE.x(5)))
+		if (!cooldownService.check(uuid, "creative-item-stat-increase-event", TickTime.MINUTE.x(5)))
 			return;
 
 		Broadcast.staff().prefix("Radar").message("Possible creative hacker: " + Nickname.of(player) + " (Too many item stat increase events in creative)").send();
