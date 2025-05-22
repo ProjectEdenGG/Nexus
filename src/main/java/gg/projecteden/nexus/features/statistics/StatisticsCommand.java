@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.statistics;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.statistics.StatisticsMenu.StatsMenus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -15,7 +16,10 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.statistics.StatisticsUser;
 import gg.projecteden.nexus.models.statistics.StatisticsUserService;
 import gg.projecteden.nexus.models.statistics.StatisticsUserService.MostLeaderboardsResult;
@@ -34,14 +38,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Statistic;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 
 import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
@@ -263,6 +271,34 @@ public class StatisticsCommand extends CustomCommand implements Listener {
 			new StatisticsUserService().edit(event.getPlayer(), StatisticsUser::loadFromFile);
 			StatisticGroup.updateAvailableStats();
 		});
+	}
+
+	private static final Map<UUID, Integer> ITEM_STAT_INCREASE_EVENTS = new HashMap<>();
+
+	@EventHandler
+	public void on(PlayerStatisticIncrementEvent event) {
+		if (event.getStatistic() != Statistic.DROP && event.getStatistic() != Statistic.PICKUP)
+			return;
+
+		var player = event.getPlayer();
+		if (Rank.of(player) != Rank.GUEST)
+			return;
+
+		event.setCancelled(true);
+		UUID uuid = player.getUniqueId();
+		ITEM_STAT_INCREASE_EVENTS.compute(uuid, ($, count) -> count == null ? 1 : count + 1);
+		if (ITEM_STAT_INCREASE_EVENTS.get(uuid) > 10000)
+			return;
+
+		CooldownService cooldownService = new CooldownService();
+		if (cooldownService.check(uuid, "creative-item-stat-increase-event", TickTime.MINUTE.x(5)))
+			return;
+
+		Broadcast.staff().prefix("Radar").message("Possible creative hacker: " + Nickname.of(player) + " (Too many item stat increase events in creative)").send();
+	}
+
+	static {
+		Tasks.repeat(TickTime.MINUTE.x(5), TickTime.MINUTE.x(5), ITEM_STAT_INCREASE_EVENTS::clear);
 	}
 
 }
