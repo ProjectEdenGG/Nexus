@@ -66,6 +66,8 @@ public enum InventoryTexture {
 
 	MINIGAMES_MENU_SEPARATOR("敷"),
 
+	GUI_BLANK_ONE("启"),
+
 	;
 
 	@NonNull
