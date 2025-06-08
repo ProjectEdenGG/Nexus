@@ -107,8 +107,8 @@ public class HttpUtils {
 		return Utils.getGson().fromJson(response.body().string(), clazz);
 	}
 
-	public static void post(String url, Map<String, String> headers, Map<String, Object> body) {
-		post(url, Headers.of(headers), Json.of(body));
+	public static String post(String url, Map<String, String> headers, Map<String, Object> body) {
+		return post(url, Headers.of(headers), Json.of(body));
 	}
 
 	@SneakyThrows
@@ -116,6 +116,26 @@ public class HttpUtils {
 		final Request request = createRequest(url)
 			.headers(headers)
 			.post(json(body))
+			.build();
+
+		try (Response response = client.newCall(request).execute()) {
+			final ResponseBody responseBody = response.body();
+			if (!response.isSuccessful()) {
+				String message = response.code() + " " + response.message();
+				if (responseBody != null)
+					message += ": " + responseBody.string();
+
+				throw new EdenException(message);
+			}
+
+			return responseBody == null ? null : responseBody.string();
+		}
+	}
+
+	@SneakyThrows
+	public static String get(String url) {
+		final Request request = createRequest(url)
+			.get()
 			.build();
 
 		try (Response response = client.newCall(request).execute()) {

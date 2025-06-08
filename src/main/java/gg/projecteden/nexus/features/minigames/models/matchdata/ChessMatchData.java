@@ -4,10 +4,16 @@ import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.mechanics.Chess;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
+import gg.projecteden.nexus.features.minigames.models.matchdata.ChessMatchData.ChessPiece.ChessPieceType;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.Debug;
+import gg.projecteden.nexus.utils.Debug.DebugType;
+import gg.projecteden.nexus.utils.HttpUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
@@ -17,13 +23,17 @@ import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.ArmorStand.LockType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
+import org.json.JSONObject;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +50,8 @@ public class ChessMatchData extends MatchData {
 	private int move = 1;
 	private ChessPiece selectedPiece;
 	private List<ArmorStand> exclamationPoints = new ArrayList<>();
+	private ChessLogger logger;
+	private double winChance = 50;
 
 	public ChessMatchData(Match match) {
 		super(match);
@@ -87,8 +99,8 @@ public class ChessMatchData extends MatchData {
 			armorStand.getEquipment().setHelmet(item);
 
 			for (EquipmentSlot slot : EquipmentSlot.values()) {
-				armorStand.addEquipmentLock(slot, ArmorStand.LockType.ADDING_OR_CHANGING);
-				armorStand.addEquipmentLock(slot, ArmorStand.LockType.REMOVING_OR_CHANGING);
+				armorStand.addEquipmentLock(slot, LockType.ADDING_OR_CHANGING);
+				armorStand.addEquipmentLock(slot, LockType.REMOVING_OR_CHANGING);
 			}
 		});
 		exclamationPoints.add(stand);
@@ -99,16 +111,132 @@ public class ChessMatchData extends MatchData {
 		this.exclamationPoints.clear();
 	}
 
+	public void updateWinChance() {
+		String fen = toFEN();
+		Debug.log(DebugType.MINIGAMES, "FEN: " + fen);
+		Tasks.async(() -> {
+			String data = HttpUtils.get("https://stockfish.online/api/s/v2.php?fen=" + fen + "&depth=12");
+
+			Debug.log(DebugType.MINIGAMES, data);
+			JSONObject json = new JSONObject(data);
+			if (json.getBoolean("success")) {
+				if (json.has("evaluation") && json.get("evaluation") != null && json.get("evaluation") instanceof Number) {
+					double eval = json.getDouble("evaluation");
+					this.winChance = 50 + 50 * (2 / (1 + Math.exp(-0.00368208 * eval)) - 1);
+					Debug.log(DebugType.MINIGAMES, "wc: " + winChance);
+				}
+				else if (json.has("mate") && json.get("mate") != null && json.get("mate") instanceof Number) {
+					int mate = json.getInt("mate");
+					if (mate > 0)
+						this.winChance = 100;
+					else
+						this.winChance = 0;
+				}
+			}
+			else {
+				Debug.log(DebugType.MINIGAMES, json.getString("data"));
+			}
+		});
+	}
+
+	public String toFEN() {
+		StringBuilder fen = new StringBuilder();
+
+		// 1. Piece placement
+		for (int row = 0; row < 8; row++) {
+			int empty = 0;
+			for (int col = 0; col < 8; col++) {
+				ChessPiece piece = board[row][col];
+				if (piece == null) {
+					empty++;
+				} else {
+					if (empty > 0) {
+						fen.append(empty);
+						empty = 0;
+					}
+					fen.append(getFENChar(piece));
+				}
+			}
+			if (empty > 0) fen.append(empty);
+			if (row < 7) fen.append('/');
+		}
+
+		// 2. Active color
+		fen.append(" ").append(move % 2 == 1 ? "w" : "b");
+
+		// 3. Castling rights
+		King whiteKing = Chess.getKing(Minigamer.of(getWhiteTeam()).getTeam(), board);
+		King blackKing = Chess.getKing(Minigamer.of(getBlackTeam()).getTeam(), board);
+
+		boolean whiteCanCastleKingside = !whiteKing.hasMoved && whiteKing.canCastle(board, match, whiteKing.col + 1, whiteKing.col + 2);
+		boolean whiteCanCastleQueenside = !whiteKing.hasMoved && whiteKing.canCastle(board, match, whiteKing.col - 1, whiteKing.col - 2, whiteKing.col - 3);
+		boolean blackCanCastleKingside = !blackKing.hasMoved && blackKing.canCastle(board, match, blackKing.col + 1, blackKing.col + 2);
+		boolean blackCanCastleQueenside = !blackKing.hasMoved && blackKing.canCastle(board, match, blackKing.col - 1, blackKing.col - 2, blackKing.col - 3);
+
+		StringBuilder castling = new StringBuilder();
+		if (whiteCanCastleKingside) castling.append("K");
+		if (whiteCanCastleQueenside) castling.append("Q");
+		if (blackCanCastleKingside) castling.append("k");
+		if (blackCanCastleQueenside) castling.append("q");
+		fen.append(" ").append(castling.length() > 0 ? castling : "-");
+
+		// 4. En passant target square
+		String enPassant = getEnPassantTargetSquare(board);
+		fen.append(" ").append(enPassant);
+
+		// 5. Halfmove clock, always 0 since we don't have 50 move limit
+		fen.append(" ").append(0);
+
+		// 6. Fullmove number
+		fen.append(" ").append((int) Math.ceil(move / 2d));
+
+		return fen.toString();
+	}
+
+	private char getFENChar(ChessPiece piece) {
+		char c = switch (piece.getType()) {
+			case KING -> 'k';
+			case QUEEN -> 'q';
+			case ROOK -> 'r';
+			case BISHOP -> 'b';
+			case KNIGHT -> 'n';
+			case PAWN -> 'p';
+		};
+		return piece.getTeam().equals(match.getArena().getTeams().get(0)) ? Character.toUpperCase(c) : c;
+	}
+
+	private String getEnPassantTargetSquare(ChessPiece[][] board) {
+		for (int r = 0; r < 8; r++) {
+			for (int c = 0; c < 8; c++) {
+				ChessPiece piece = board[r][c];
+				if (piece instanceof Pawn pawn && pawn.enPassantVulnerable) {
+					int direction = pawn.getTeam().equals(match.getArena().getTeams().get(0)) ? 1 : -1;
+					int epRow = pawn.row + direction;
+					int epCol = pawn.col;
+
+					return String.valueOf((char) ('a' + epCol)) + (8 - epRow);
+				}
+			}
+		}
+		return "-";
+	}
+
 	@Data
 	public static class ChessMove {
 		int row, col;
+		int fromRow, fromCol;
 		ChessPiece piece;
 		List<ChessMove> additionalMoves;
+		ChessPiece capturedPiece;
 
 		public ChessMove(int row, int col, ChessPiece piece) {
 			this.row = row;
 			this.col = col;
 			this.piece = piece;
+			if (piece != null) {
+				this.fromRow = piece.row;
+				this.fromCol = piece.col;
+			}
 		}
 
 		public ChessPiece execute(ChessPiece[][] board, Match match, boolean copy) {
@@ -180,6 +308,7 @@ public class ChessMatchData extends MatchData {
 			if (piece.getArmorStand() != null && !copy)
 				piece.getArmorStand().teleport(getPiece().getPieceLocation(match));
 
+			this.capturedPiece = capturedPiece;
 			return capturedPiece;
 		}
 
@@ -397,8 +526,8 @@ public class ChessMatchData extends MatchData {
 				armorStand.getEquipment().setHelmet(getItemModel());
 
 				for (EquipmentSlot slot : EquipmentSlot.values()) {
-					armorStand.addEquipmentLock(slot, ArmorStand.LockType.ADDING_OR_CHANGING);
-					armorStand.addEquipmentLock(slot, ArmorStand.LockType.REMOVING_OR_CHANGING);
+					armorStand.addEquipmentLock(slot, LockType.ADDING_OR_CHANGING);
+					armorStand.addEquipmentLock(slot, LockType.REMOVING_OR_CHANGING);
 				}
 			}));
 		}
@@ -423,6 +552,9 @@ public class ChessMatchData extends MatchData {
 		public boolean enPassantVulnerable = false;
 		@Getter
 		public boolean promoted;
+		@Getter
+		@Setter
+		public ChessPieceType promotedType;
 
 		public Pawn(Team team, byte row, byte col) {
 			super(team, row, col);
@@ -685,6 +817,202 @@ public class ChessMatchData extends MatchData {
 		private boolean inBounds(int r, int c) {
 			return r >= 0 && r < 8 && c >= 0 && c < 8;
 		}
+	}
+
+	public static class ChessLogger {
+
+		private List<String> algebraicLog = new ArrayList<>();
+		@Setter
+		private ChessMatchResult result;
+		private Match match;
+		private String whitePlayer;
+		private String blackPlayer;
+		private LocalDate date;
+
+		public ChessLogger(Match match) {
+			this.match = match;
+
+			ChessMatchData matchData = match.getMatchData();
+			this.whitePlayer = Nickname.of(matchData.getWhiteTeam());
+			this.blackPlayer = Nickname.of(matchData.getBlackTeam());
+			this.date = LocalDate.now();
+		}
+
+		public void log(ChessMove move, ChessPiece[][] board, Match match) {
+			String logLine = toAlgebraic(move, board, match);
+			algebraicLog.add(logLine);
+		}
+
+		public List<String> toPGN() {
+			List<String> pgnLines = new ArrayList<>();
+			StringBuilder currentLine = new StringBuilder();
+
+			for (int i = 0; i < algebraicLog.size(); i++) {
+				// Add turn number at start of each White move
+				if (i % 2 == 0) {
+					int turn = (i / 2) + 1;
+					currentLine.append(turn).append(". ");
+				}
+
+				currentLine.append(algebraicLog.get(i)).append(" ");
+
+				// After every Black move or final move, push line and reset
+				if (i % 2 == 1 || i == algebraicLog.size() - 1) {
+					pgnLines.add(currentLine.toString().trim());
+					currentLine = new StringBuilder();
+				}
+			}
+
+			// Append result
+			if (result != null) {
+				String resultText = switch (result) {
+					case WHITE -> "1-0";
+					case BLACK -> "0-1";
+					case DRAW -> "1/2-1/2";
+				};
+				pgnLines.add(resultText);
+			}
+
+			return pgnLines;
+		}
+
+		public List<String> getFullPGNFile() {
+			List<String> pgnLines = new ArrayList<>();
+			pgnLines.add("[Event Project Eden]");
+			pgnLines.add("[Site https://projecteden.gg");
+			pgnLines.add("[Date " + DateTimeFormatter.ofPattern("yyyy.MM.dd").format(date) + "]");
+			pgnLines.add("[Round 1]");
+			pgnLines.add("[White " + whitePlayer + "]");
+			pgnLines.add("[Black " + blackPlayer + "]");
+
+			String resultText = "*";
+			if (result != null) {
+				resultText = switch (result) {
+					case WHITE -> "1-0";
+					case BLACK -> "0-1";
+					case DRAW -> "1/2-1/2";
+				};
+			}
+			pgnLines.add("[Result " + resultText + "]");
+
+			pgnLines.addAll(toPGN());
+
+			return pgnLines;
+		}
+
+		private String toAlgebraic(ChessMove move, ChessPiece[][] board, Match match) {
+			ChessPiece piece = move.getPiece();
+			ChessPieceType type = piece.getType();
+			Team team = piece.getTeam();
+			int fromRow = move.getFromRow();
+			int fromCol = move.getFromCol();
+			int toRow = move.getRow();
+			int toCol = move.getCol();
+
+			StringBuilder notation = new StringBuilder();
+
+			// 1. Castling
+			if (type == ChessPieceType.KING && Math.abs(toCol - fromCol) == 2) {
+				return toCol > fromCol ? "O-O" : "O-O-O";
+			}
+
+			// 2. Piece letter (not for pawns)
+			if (type != ChessPieceType.PAWN) {
+				notation.append(getPieceLetter(type));
+			}
+
+			// 3. Disambiguation if necessary
+			DisambiguationType disambiguation = getDisambiguation(piece, toRow, toCol, board);
+			switch (disambiguation) {
+				case FILE -> notation.append((char) ('a' + fromCol));
+				case RANK -> notation.append(8 - fromRow);
+				case BOTH -> {
+					notation.append((char) ('a' + fromCol));
+					notation.append(8 - fromRow);
+				}
+			}
+
+			// 4. Capture
+			boolean isCapture = move.capturedPiece != null;
+			if (isCapture) {
+				if (type == ChessPieceType.PAWN && notation.isEmpty()) {
+					notation.append((char) ('a' + fromCol)); // show file for pawn captures
+				}
+				notation.append("x");
+			}
+
+			// 5. Destination square
+			notation.append((char) ('a' + toCol));
+			notation.append(8 - toRow);
+
+			// 6. Promotion
+			if (piece instanceof Pawn pawn && pawn.promoted) {
+				notation.append("=").append(getPieceLetter(pawn.promotedType));
+			}
+
+			int opponentIdx = match.getArena().getTeams().indexOf(team) == 0 ? 1 : 0;
+			Team opponent = match.getArena().getTeams().get(opponentIdx);
+
+			// 7. Check/checkmate
+			if (Chess.isCheckmate(opponent, board, match)) {
+				notation.append("#");
+			} else if (Chess.isInCheck(opponent, board, match)) {
+				notation.append("+");
+			}
+
+			return notation.toString();
+		}
+
+		private String getPieceLetter(ChessPieceType type) {
+			return switch (type) {
+				case KING -> "K";
+				case QUEEN -> "Q";
+				case ROOK -> "R";
+				case BISHOP -> "B";
+				case KNIGHT -> "N";
+				default -> "";
+			};
+		}
+
+		enum DisambiguationType {
+			NONE, FILE, RANK, BOTH
+		}
+
+		public enum ChessMatchResult {
+			WHITE,
+			BLACK,
+			DRAW
+		}
+
+		private DisambiguationType getDisambiguation(ChessPiece piece, int toRow, int toCol, ChessPiece[][] board) {
+			boolean sameFile = false;
+			boolean sameRank = false;
+
+			for (int r = 0; r < 8; r++) {
+				for (int c = 0; c < 8; c++) {
+					ChessPiece other = board[r][c];
+					if (other != null && other != piece &&
+						other.getTeam() == piece.getTeam() &&
+						other.getType() == piece.getType()) {
+
+						List<ChessMove> moves = other.getAvailableMoves(board, match, true);
+						for (ChessMove m : moves) {
+							if (m.getRow() == toRow && m.getCol() == toCol) {
+								if (other.getCol() == piece.getCol()) sameFile = true;
+								if (other.getRow() == piece.getRow()) sameRank = true;
+								else sameFile = true; // default to file if different
+							}
+						}
+					}
+				}
+			}
+
+			if (sameFile && sameRank) return DisambiguationType.BOTH;
+			if (sameFile) return DisambiguationType.RANK;
+			if (sameRank) return DisambiguationType.FILE;
+			return DisambiguationType.NONE;
+		}
+
 	}
 
 }

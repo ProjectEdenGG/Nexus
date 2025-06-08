@@ -14,6 +14,8 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEve
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.ChessMatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.ChessMatchData.Bishop;
+import gg.projecteden.nexus.features.minigames.models.matchdata.ChessMatchData.ChessLogger;
+import gg.projecteden.nexus.features.minigames.models.matchdata.ChessMatchData.ChessLogger.ChessMatchResult;
 import gg.projecteden.nexus.features.minigames.models.matchdata.ChessMatchData.ChessMove;
 import gg.projecteden.nexus.features.minigames.models.matchdata.ChessMatchData.ChessPiece;
 import gg.projecteden.nexus.features.minigames.models.matchdata.ChessMatchData.ChessPiece.ChessPieceType;
@@ -26,6 +28,7 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.team
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard.Type;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -48,6 +51,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -87,12 +91,18 @@ public class Chess extends TeamMechanic {
 		event.getMatch().getMinigamers().forEach(mg -> {
 			mg.getPlayer().showTitle(Title.title(new JsonBuilder("&e&lChess").asComponent(), new JsonBuilder("&3You are on team ").next(mg.getTeam().asComponent()).asComponent()));
 		});
+		((ChessMatchData) event.getMatch().getMatchData()).setLogger(new ChessLogger(event.getMatch()));
 	}
 
 	@Override
 	public void onEnd(@NotNull MatchEndEvent event) {
-		super.onEnd(event);
 		ChessMatchData matchData = event.getMatch().getMatchData();
+		String paste = StringUtils.paste(String.join("\n", matchData.getLogger().getFullPGNFile()));
+		event.getMatch().getMinigamers().forEach(minigamer -> {
+			minigamer.sendMessage(new JsonBuilder("&e&lClick here to view a replay of the game").hover("&3View the PGN log of the game").url(paste));
+		});
+
+		super.onEnd(event);
 		if (matchData.getSelectedPiece() != null)
 			matchData.getSelectedPiece().deselect(matchData);
 
@@ -111,6 +121,60 @@ public class Chess extends TeamMechanic {
 		final Minigamer winner = matchData.getWinnerTeam().getMinigamers(match).get(0);
 		match.getMatchStatistics().award(MatchStatistics.WINS, winner);
 		Minigames.broadcast(winner.getColoredName() + " &3has won &eChess");
+	}
+
+	@Override
+	public @NotNull LinkedHashMap<String, Integer> getScoreboardLines(@NotNull Minigamer minigamer) {
+		LinkedHashMap<String, Integer> lines = new LinkedHashMap<>();
+		Match match = minigamer.getMatch();
+		ChessMatchData matchData = match.getMatchData();
+
+		if (match.isStarted()) {
+			lines.put("&e&lPlayers", Integer.MIN_VALUE);
+			lines.put("&f&l" + Nickname.of(matchData.getWhiteTeam()), Integer.MIN_VALUE);
+			lines.put("&8&l" + Nickname.of(matchData.getBlackTeam()), Integer.MIN_VALUE);
+			lines.put("&f", Integer.MIN_VALUE);
+
+			renderWinChance(lines, matchData.getWinChance());
+
+			if (matchData.getLogger() != null) {
+				lines.put("&f&f", Integer.MIN_VALUE);
+				lines.put("&e&lMove History", Integer.MIN_VALUE);
+
+				List<String> pgn = matchData.getLogger().toPGN();
+				int size = pgn.size();
+				int pad = Math.max(0, 5 - size);
+
+				List<String> result = new ArrayList<>();
+
+				for (int i = 0; i < pad; i++)
+					result.add("-");
+
+				for (int i = Math.max(0, size - 5); i < size; i++)
+					result.add(pgn.get(i));
+
+				for (int i = 0; i < result.size(); i++)
+					lines.put(result.get(i), Integer.MIN_VALUE);
+			}
+		}
+		else
+			match.getMinigamers().forEach(mg -> lines.put(mg.getNickname(), Integer.MIN_VALUE));
+
+		return lines;
+	}
+
+	private void renderWinChance(LinkedHashMap<String, Integer> lines, double percentage) {
+		int totalBars = 16;
+		int whiteBars = (int) Math.round((percentage / 100.0) * totalBars);
+		int blackBars = totalBars - whiteBars;
+
+		StringBuilder bar = new StringBuilder("&f");
+		for (int i = 0; i < whiteBars; i++) bar.append("|");
+		bar.append("&8");
+		for (int i = 0; i < blackBars; i++) bar.append("|");
+
+		lines.put("&e&lEvaluation", Integer.MIN_VALUE);
+		lines.put(bar.toString(), Integer.MIN_VALUE);
 	}
 
 	private void placePieces(Match match) {
@@ -167,11 +231,11 @@ public class Chess extends TeamMechanic {
 		matchData.getBlackTeam().sendActionBar(matchData.getMove() % 2 != 0 ? "§cOpponent's Turn" : "§aYour turn");
 	}
 
-	public boolean isCheckmate(Team team, ChessPiece[][] board, Match match) {
+	public static boolean isCheckmate(Team team, ChessPiece[][] board, Match match) {
 		return isInCheck(team, board, match) && !hasAnyLegalMoves(team, board, match);
 	}
 
-	public boolean isStalemate(Team team, ChessPiece[][] board, Match match) {
+	public static boolean isStalemate(Team team, ChessPiece[][] board, Match match) {
 		return (!isInCheck(team, board, match) && !hasAnyLegalMoves(team, board, match)) || !doesOtherThanKingExist(board);
 	}
 
@@ -287,17 +351,25 @@ public class Chess extends TeamMechanic {
 			captured.destroy();
 
 		Runnable continueLoop = () -> {
+			matchData.getLogger().log(move, matchData.getBoard(), match);
+
 			Team current = match.getArena().getTeams().get(1 - (matchData.getMove() % 2));
 			Team other = match.getArena().getTeams().get(matchData.getMove() % 2);
 			if (isCheckmate(other, matchData.getBoard(), match)) {
 				matchData.setWinnerTeam(current);
+				matchData.getLogger().setResult(current.getColorType() == ColorType.WHITE ? ChessMatchResult.WHITE : ChessMatchResult.BLACK);
 				end(match);
-			} else if (isStalemate(other, matchData.getBoard(), match))
+				return;
+			} else if (isStalemate(other, matchData.getBoard(), match)) {
+				matchData.getLogger().setResult(ChessMatchResult.DRAW);
 				end(match);
+				return;
+			}
 			else
 				matchData.setMove(matchData.getMove() + 1);
 
 			matchData.clearExclamationPoints();
+			matchData.updateWinChance();
 
 			if (isInCheck(other, matchData.getBoard(), match)) {
 				King king = getKing(other, matchData.getBoard());
@@ -317,6 +389,7 @@ public class Chess extends TeamMechanic {
 						case BISHOP -> new Bishop(pawn.getTeam(), pawn.getRow(), pawn.getCol());
 						case KING -> new King(pawn.getTeam(), pawn.getRow(), pawn.getCol());
 					};
+					pawn.setPromotedType(type);
 					pawn.destroy();
 					piece.spawn(match);
 					matchData.getBoard()[pawn.getRow()][pawn.getCol()] = piece;
@@ -497,7 +570,7 @@ public class Chess extends TeamMechanic {
 
 		@Override
 		public String getTitle() {
-			return InventoryTexture.GUI_BLANK_ONE.getMenuTexture(1) + "&7Promote into...";
+			return InventoryTexture.GUI_BLANK_ONE.getMenuTexture(1) + "&8Promote into...";
 		}
 
 		@Override
@@ -516,6 +589,5 @@ public class Chess extends TeamMechanic {
 			}
 		}
 	}
-
 
 }
