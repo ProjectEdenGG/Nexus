@@ -131,8 +131,8 @@ public class Chess extends TeamMechanic {
 
 		if (match.isStarted()) {
 			lines.put("&e&lPlayers", Integer.MIN_VALUE);
-			lines.put("&f&l" + Nickname.of(matchData.getWhiteTeam()), Integer.MIN_VALUE);
-			lines.put("&8&l" + Nickname.of(matchData.getBlackTeam()), Integer.MIN_VALUE);
+			lines.put("&f" + Nickname.of(matchData.getWhiteTeam()), Integer.MIN_VALUE);
+			lines.put("&8" + Nickname.of(matchData.getBlackTeam()), Integer.MIN_VALUE);
 			lines.put("&f", Integer.MIN_VALUE);
 
 			renderWinChance(lines, matchData.getWinChance());
@@ -195,29 +195,29 @@ public class Chess extends TeamMechanic {
 		ChessPiece[][] board = new ChessPiece[8][8];
 
 		// Black pieces (top side)
-		board[0][0] = new Rook(black, (byte) 0, (byte) 0);
-		board[0][1] = new Knight(black, (byte) 0, (byte) 1);
-		board[0][2] = new Bishop(black, (byte) 0, (byte) 2);
-		board[0][3] = new Queen(black, (byte) 0, (byte) 3);
-		board[0][4] = new King(black, (byte) 0, (byte) 4);
-		board[0][5] = new Bishop(black, (byte) 0, (byte) 5);
-		board[0][6] = new Knight(black, (byte) 0, (byte) 6);
-		board[0][7] = new Rook(black, (byte) 0, (byte) 7);
+		board[0][0] = new Rook(white, (byte) 0, (byte) 0);
+		board[0][1] = new Knight(white, (byte) 0, (byte) 1);
+		board[0][2] = new Bishop(white, (byte) 0, (byte) 2);
+		board[0][3] = new Queen(white, (byte) 0, (byte) 3);
+		board[0][4] = new King(white, (byte) 0, (byte) 4);
+		board[0][5] = new Bishop(white, (byte) 0, (byte) 5);
+		board[0][6] = new Knight(white, (byte) 0, (byte) 6);
+		board[0][7] = new Rook(white, (byte) 0, (byte) 7);
 		for (int c = 0; c < 8; c++) {
-			board[1][c] = new Pawn(black, (byte) 1, (byte) c);
+			board[1][c] = new Pawn(white, (byte) 1, (byte) c);
 		}
 
 		// White pieces (bottom side)
-		board[7][0] = new Rook(white, (byte) 7, (byte) 0);
-		board[7][1] = new Knight(white, (byte) 7, (byte) 1);
-		board[7][2] = new Bishop(white, (byte) 7, (byte) 2);
-		board[7][3] = new Queen(white, (byte) 7, (byte) 3);
-		board[7][4] = new King(white, (byte) 7, (byte) 4);
-		board[7][5] = new Bishop(white, (byte) 7, (byte) 5);
-		board[7][6] = new Knight(white, (byte) 7, (byte) 6);
-		board[7][7] = new Rook(white, (byte) 7, (byte) 7);
+		board[7][0] = new Rook(black, (byte) 7, (byte) 0);
+		board[7][1] = new Knight(black, (byte) 7, (byte) 1);
+		board[7][2] = new Bishop(black, (byte) 7, (byte) 2);
+		board[7][3] = new Queen(black, (byte) 7, (byte) 3);
+		board[7][4] = new King(black, (byte) 7, (byte) 4);
+		board[7][5] = new Bishop(black, (byte) 7, (byte) 5);
+		board[7][6] = new Knight(black, (byte) 7, (byte) 6);
+		board[7][7] = new Rook(black, (byte) 7, (byte) 7);
 		for (int c = 0; c < 8; c++) {
-			board[6][c] = new Pawn(white, (byte) 6, (byte) c);
+			board[6][c] = new Pawn(black, (byte) 6, (byte) c);
 		}
 
 		matchData.setBoard(board);

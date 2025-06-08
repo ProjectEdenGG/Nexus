@@ -568,8 +568,8 @@ public class ChessMatchData extends MatchData {
 		@Override
 		public List<ChessMove> getAvailableMoves(ChessPiece[][] board, Match match, boolean ignoreCheck) {
 			List<ChessMove> moves = new ArrayList<>();
-			int direction = isWhiteTeam(team, match) ? -1 : 1;
-			int startRow = isWhiteTeam(team, match) ? 6 : 1;
+			int direction = isWhiteTeam(team, match) ? 1 : -1;
+			int startRow = isWhiteTeam(team, match) ? 1 : 6;
 
 			int nextRow = row + direction;
 
@@ -922,13 +922,13 @@ public class ChessMatchData extends MatchData {
 			}
 
 			// 3. Disambiguation if necessary
-			DisambiguationType disambiguation = getDisambiguation(piece, toRow, toCol, board);
+			DisambiguationType disambiguation = getDisambiguation(move, board);
 			switch (disambiguation) {
 				case FILE -> notation.append((char) ('a' + fromCol));
-				case RANK -> notation.append(8 - fromRow);
+				case RANK -> notation.append(fromRow + 1);
 				case BOTH -> {
 					notation.append((char) ('a' + fromCol));
-					notation.append(8 - fromRow);
+					notation.append(fromRow + 1);
 				}
 			}
 
@@ -943,7 +943,7 @@ public class ChessMatchData extends MatchData {
 
 			// 5. Destination square
 			notation.append((char) ('a' + toCol));
-			notation.append(8 - toRow);
+			notation.append(toRow + 1);
 
 			// 6. Promotion
 			if (piece instanceof Pawn pawn && pawn.promoted) {
@@ -984,22 +984,25 @@ public class ChessMatchData extends MatchData {
 			DRAW
 		}
 
-		private DisambiguationType getDisambiguation(ChessPiece piece, int toRow, int toCol, ChessPiece[][] board) {
+		private DisambiguationType getDisambiguation(ChessMove move, ChessPiece[][] board) {
 			boolean sameFile = false;
 			boolean sameRank = false;
 
 			for (int r = 0; r < 8; r++) {
 				for (int c = 0; c < 8; c++) {
 					ChessPiece other = board[r][c];
-					if (other != null && other != piece &&
-						other.getTeam() == piece.getTeam() &&
-						other.getType() == piece.getType()) {
+					if (other != null && other != move.piece &&
+						other.getTeam() == move.piece.getTeam() &&
+						other.getType() == move.piece.getType()) {
 
+						// Temporarily clear the piece and set it back after generating move
+						board[move.row][move.col] = null;
 						List<ChessMove> moves = other.getAvailableMoves(board, match, true);
+						board[move.row][move.col] = move.piece;
 						for (ChessMove m : moves) {
-							if (m.getRow() == toRow && m.getCol() == toCol) {
-								if (other.getCol() == piece.getCol()) sameFile = true;
-								if (other.getRow() == piece.getRow()) sameRank = true;
+							if (m.getRow() == move.row && m.getCol() == move.col) {
+								if (other.getCol() == move.fromCol) sameFile = true;
+								if (other.getRow() == move.fromRow) sameRank = true;
 								else sameFile = true; // default to file if different
 							}
 						}
