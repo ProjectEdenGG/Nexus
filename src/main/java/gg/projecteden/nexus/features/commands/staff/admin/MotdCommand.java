@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 
 import com.destroystokyo.paper.event.server.PaperServerListPingEvent;
 import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.minigames.utils.MinigameNight;
@@ -11,6 +12,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.hours.HoursService;
@@ -37,6 +39,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Permission(Group.ADMIN)
@@ -97,6 +100,9 @@ public class MotdCommand extends CustomCommand implements Listener {
 		if (nerd.isOnline()) // Event sometimes fires when player is online
 			return;
 
+		if (!new CooldownService().check(nerd.getUuid(), "server-ping_" + nerd.getUuid(), TickTime.SECOND.x(5)))
+			return;
+
 		Nexus.log("ServerPingEvent: " + ipAddress + " -> " + nerd.getNickname());
 
 		// Message
@@ -139,24 +145,22 @@ public class MotdCommand extends CustomCommand implements Listener {
 	@SneakyThrows
 	private @NotNull CachedServerIcon getIcon() {
 		Month month = LocalDate.now().getMonth();
-		month = RandomUtils.randomElement(Month.values());
 		LocalDateTime dateTime = DateUtils.getDateTime(month);
 
 		return IconType.getIconType(dateTime).getServerIcon();
 	}
 
-	@AllArgsConstructor
 	private enum IconType {
-		DEFAULT(null, null),
-		PRIDE(DateUtils.getStart(Month.JUNE), DateUtils.getEnd(Month.JUNE)),
-		//BEAR_FAIR(getStart(Month.JUNE, 29), getEnd(Month.JULY, 15)),
+		DEFAULT(),
+		PRIDE(Month.JANUARY, Month.DECEMBER),
 
-		DECEMBER(DateUtils.getStart(Month.DECEMBER), DateUtils.getEnd(Month.DECEMBER)),
-		OCTOBER(DateUtils.getStart(Month.OCTOBER), DateUtils.getEnd(Month.OCTOBER)),
-		TESTING1(DateUtils.getStart(Month.APRIL), DateUtils.getEnd(Month.APRIL)),
-		TESTING2(DateUtils.getStart(Month.AUGUST), DateUtils.getEnd(Month.AUGUST)),
-		TESTING3(DateUtils.getStart(Month.JANUARY), DateUtils.getEnd(Month.JANUARY)),
-		TESTING4(DateUtils.getStart(Month.SEPTEMBER), DateUtils.getEnd(Month.SEPTEMBER)),
+		ORIENTATION_ASEXUAL(Month.JUNE),
+		ORIENTATION_BISEXUAL(Month.JUNE),
+		ORIENTATION_DEMISEXUAL(Month.JUNE),
+		ORIENTATION_GAY(Month.JUNE),
+		ORIENTATION_LESBIAN(Month.JUNE),
+		ORIENTATION_PANSEXUAL(Month.JUNE),
+		ORIENTATION_POLYSEXUAL(Month.JUNE),
 		;
 
 		@Getter
@@ -164,8 +168,21 @@ public class MotdCommand extends CustomCommand implements Listener {
 		@Getter
 		private final LocalDateTime endTime;
 
-
 		private static final String FOLDER = "plugins/Nexus/servericons/";
+
+		IconType() {
+			this.startTime = null;
+			this.endTime = null;
+		}
+
+		IconType(Month month) {
+			this(month, month);
+		}
+
+		IconType(Month start, Month end) {
+			this.startTime = DateUtils.getStart(start);
+			this.endTime = DateUtils.getEnd(end);
+		}
 
 		public File getFile() {
 			return new File(FOLDER + name().toLowerCase() + ".png");
@@ -184,12 +201,13 @@ public class MotdCommand extends CustomCommand implements Listener {
 		}
 
 		public static IconType getIconType(LocalDateTime dateTime) {
-			for (IconType iconType : values()) {
-				if (iconType.equals(DEFAULT)) continue;
+			Set<IconType> options = Arrays.stream(values())
+				.filter(type -> type.getStartTime() != null && type.getEndTime() != null)
+				.filter(type -> DateUtils.isWithin(dateTime, type.getStartTime(), type.getEndTime()))
+				.collect(Collectors.toSet());
 
-				if (DateUtils.isWithin(dateTime, iconType.startTime, iconType.getEndTime()))
-					return iconType;
-			}
+			if (!options.isEmpty())
+				return RandomUtils.randomElement(options);
 
 			return DEFAULT;
 		}
