@@ -94,6 +94,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
 @NoArgsConstructor
@@ -256,7 +257,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		}),
 		SIGN_MENUS(() -> {
 			if (!Nexus.getSignMenuFactory().getInputReceivers().isEmpty())
-				throw new InvalidInputException("There are " + Nexus.getSignMenuFactory().getInputReceivers().size() + " sign menus open");
+				throw new InvalidInputException("There are " + Nexus.getSignMenuFactory().getInputReceivers().size() + " sign menus open (" + Nexus.getSignMenuFactory().getInputReceivers().keySet().stream().map(Nickname::of).collect(Collectors.joining(", ")) + ")");
 		}),
 		VIRTUAL_INVENTORIES(() -> {
 			var count = OnlinePlayers.getAll().stream().filter(player -> player.getOpenInventory().getTopInventory().getHolder() instanceof VirtualInventoryHolder).count();

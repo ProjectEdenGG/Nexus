@@ -13,8 +13,12 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.Shop.ExchangeType;
 import gg.projecteden.nexus.models.shop.Shop.Product;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -53,10 +57,12 @@ public class ExchangeConfigProvider extends ShopProvider {
 			exchangeType = product.getExchangeType();
 			item.set(product.getItem());
 			stock = product.getStock();
-			if (product.getPrice() instanceof ItemStack)
-				priceItem.set((ItemStack) product.getPrice());
-			else
-				price = (double) product.getPrice();
+			switch (product.getPrice()) {
+				case ItemStack itemStack -> priceItem.set(itemStack);
+				case Double money -> price = money;
+				case Integer money -> price = money.doubleValue();
+				case null, default -> throw new IllegalArgumentException("Price must be either a ItemStack, Double, or Integer, but found: " + (product.getPrice() == null ? "null" : product.getPrice().getClass().getSimpleName()));
+			}
 		}
 	}
 
