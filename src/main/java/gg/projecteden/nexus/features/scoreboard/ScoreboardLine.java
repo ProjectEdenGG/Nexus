@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.nameplates.Nameplates;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.features.votes.party.VoteParty;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.models.afk.AFKUser;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.chat.Channel;
@@ -34,6 +35,7 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import kotlin.Pair;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -369,14 +371,26 @@ public enum ScoreboardLine {
 	},
 
 	@Interval(20)
+	ONEBLOCK_COUNT {
+		@Override
+		public String render(Player player) {
+			if (SubWorldGroup.of(player) != SubWorldGroup.ONEBLOCK)
+				return null;
+
+			return "&3OneBlock Count: &e" + Hook.BENTOBOX.getOneBlockCount(Hook.BENTOBOX.getOneBlockWorld(), player);
+		}
+	},
+
+	@Interval(20)
 	@Required
 	AFK {
 		@Override
 		public String render(Player player) {
 			AFKUser afkUser = gg.projecteden.nexus.features.afk.AFK.get(player);
-			if (afkUser.isAfk())
-				return "&3AFK for: &e" + Timespan.of(afkUser.getTime()).format();
-			return null;
+			if (!afkUser.isAfk())
+				return null;
+
+			return "&3AFK for: &e" + Timespan.of(afkUser.getTime()).format();
 		}
 	},
 	;

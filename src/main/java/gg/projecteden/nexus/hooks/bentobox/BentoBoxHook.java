@@ -20,4 +20,8 @@ public class BentoBoxHook extends IHook<BentoBoxHook> {
 		throw new InvalidInputException("BentoBox not loaded");
 	}
 
+	public int getOneBlockCount(World world, Player player) {
+		throw new InvalidInputException("BentoBox not loaded");
+	}
+
 }

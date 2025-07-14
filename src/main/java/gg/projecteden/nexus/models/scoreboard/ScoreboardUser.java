@@ -15,7 +15,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.apache.commons.collections4.map.ListOrderedMap;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -39,7 +38,6 @@ public class ScoreboardUser implements PlayerOwnedObject {
 	private List<ScoreboardLine> order = new ArrayList<>();
 	private boolean active = true;
 
-	private transient ListOrderedMap<ScoreboardLine, String> rendered = new ListOrderedMap<>();
 	private transient int headerTaskId = -1;
 	private transient Map<ScoreboardLine, Integer> taskIds = new ConcurrentHashMap<>();
 
@@ -86,7 +84,6 @@ public class ScoreboardUser implements PlayerOwnedObject {
 	}
 
 	public void pause() {
-		rendered = new ListOrderedMap<>();
 		if (this.layout != null)
 			this.layout.stop();
 		Sidebar.get(getOnlinePlayer()).applyLayout(null);
