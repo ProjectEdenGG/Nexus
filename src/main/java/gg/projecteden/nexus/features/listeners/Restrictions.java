@@ -6,7 +6,6 @@ import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
-import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
@@ -37,6 +36,7 @@ import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.craftbukkit.entity.CraftFishHook;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Parrot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.minecart.CommandMinecart;
@@ -69,20 +69,22 @@ import java.util.List;
 import java.util.Set;
 
 public class Restrictions implements Listener {
-	private static final String PREFIX = Koda.getLocalFormat();
-
-	private static final List<WorldGroup> allowedWorldGroups = Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.CREATIVE, WorldGroup.SKYBLOCK);
-	private static final List<String> blockedWorlds = Arrays.asList("safepvp", "events");
+	private static final List<WorldGroup> ALLOWED_WORLD_GROUPS = Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.CREATIVE, WorldGroup.SKYBLOCK);
+	private static final List<WorldGroup> BLOCKED_WORLD_GROUPS = Arrays.asList(WorldGroup.LEGACY, WorldGroup.SERVER);
+	private static final List<String> BLOCKED_WORLDS = Arrays.asList("safepvp", "events");
 
 	public static boolean isPerkAllowedAt(HasUniqueId player, Location location) {
 		if (Rank.of(player).isAdmin())
 			return true;
 
 		WorldGroup worldGroup = WorldGroup.of(location);
-		if (!allowedWorldGroups.contains(worldGroup))
+		if (!ALLOWED_WORLD_GROUPS.contains(worldGroup))
 			return false;
 
-		if (blockedWorlds.contains(location.getWorld().getName()))
+		if (BLOCKED_WORLD_GROUPS.contains(worldGroup))
+			return false;
+
+		if (BLOCKED_WORLDS.contains(location.getWorld().getName()))
 			return false;
 
 		if (worldGroup == WorldGroup.LEGACY)
@@ -154,6 +156,25 @@ public class Restrictions implements Listener {
 		event.setCancelled(true);
 		player.setGameMode(GameMode.SPECTATOR);
 	}
+
+	@EventHandler
+	@SuppressWarnings("deprecation")
+	public void onParrotTeleport(PlayerTeleportEvent event) {
+		Player player = event.getPlayer();
+
+		if (Restrictions.isPerkAllowedAt(player, event.getTo()))
+			return;
+
+		if (WorldGroup.of(player) == WorldGroup.of(event.getTo()))
+			return;
+
+		if (player.getShoulderEntityLeft() instanceof Parrot leftParrot)
+			leftParrot.teleport(player.getLocation());
+
+		if (player.getShoulderEntityRight() instanceof Parrot rightParrot)
+			rightParrot.teleport(player.getLocation());
+	}
+
 
 	private static final CooldownService COOLDOWN_SERVICE = new CooldownService();
 
