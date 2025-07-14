@@ -1,11 +1,8 @@
 package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.api.common.utils.UUIDUtils;
-import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
-import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -13,15 +10,18 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -29,7 +29,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
-import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,6 +38,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
+import static gg.projecteden.api.common.utils.RandomUtils.randomElement;
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
+import static gg.projecteden.nexus.features.resourcepack.ResourcePack.isPastResourcePackScreen;
 
 @Aliases("welc")
 @NoArgsConstructor
@@ -74,10 +77,15 @@ public class WelcomeCommand extends CustomCommand implements Listener {
 
 	static {
 		Tasks.repeat(TickTime.MINUTE, TickTime.MINUTE, () -> {
-			if (OnlinePlayers.where(player -> Rank.of(player).isMod() && Dev.KODA.isNot(player) && AFK.get(player).isNotAfk()).count() < 4)
+			var activeStaff = OnlinePlayers.where()
+				.rank(Rank::isMod)
+				.afk(false)
+				.filter(Dev.KODA::isNot);
+
+			if (activeStaff.count() < 4)
 				return;
 
-			if (!new CooldownService().check(UUIDUtils.UUID0, "bumpReminder", TickTime.DAY))
+			if (!new CooldownService().check(UUID0, "bumpReminder", TickTime.DAY))
 				return;
 
 			String url = "https://docs.google.com/document/d/1MVFG2ipdpCY42cUzZyVsIbjVlPRCiN0gmYL89sJNRTw/edit?usp=sharing";
@@ -90,21 +98,27 @@ public class WelcomeCommand extends CustomCommand implements Listener {
 
 	@Path("[player]")
 	@Description("Welcome a player")
-	void welcome(Player player) {
-		if (player != null) {
-			if (Rank.of(player) != Rank.GUEST)
-				error("Prevented accidental welcome: this player is not a guest");
+	void run(Player player) {
+		welcome(nerd(), player);
+	}
 
-			if (new HoursService().get(player).has(TickTime.HOUR))
-				error("Prevented accidental welcome: this player has more than an hour of playtime");
+	public static void welcome(Nerd welcomer, Player welcomee) {
+		if (welcomee != null) {
+			String nickname = Nickname.of(welcomee);
+			if (Rank.of(welcomee) != Rank.GUEST)
+				throw new InvalidInputException("Prevented accidental welcome: " + nickname + " is not a guest");
 
-			if (!isPastResourcePackScreen(player)) {
-				QUEUE.computeIfAbsent(player.getUniqueId(), $ -> new LinkedHashSet<>()).add(uuid());
-				error("Queued welcome, their resource pack is not loaded yet (Status: " + camelCase(player.getResourcePackStatus()) + ")");
+			if (new HoursService().get(welcomee).has(TickTime.HOUR))
+				throw new InvalidInputException("Prevented accidental welcome: " + nickname + " has more than an hour of playtime");
+
+			if (!isPastResourcePackScreen(welcomee)) {
+				QUEUE.computeIfAbsent(welcomee.getUniqueId(), $ -> new LinkedHashSet<>()).add(welcomer.getUniqueId());
+				String status = StringUtils.camelCase(welcomee.getResourcePackStatus());
+				throw new InvalidInputException("Queued welcome, " + nickname + "'s resource pack is not loaded yet (Status: " + status + ")");
 			}
 		}
 
-		sayWelcome(player(), player);
+		sayWelcome(welcomer, welcomee);
 	}
 
 	@EventHandler
@@ -116,44 +130,49 @@ public class WelcomeCommand extends CustomCommand implements Listener {
 		if (!QUEUE.containsKey(welcomee.getUniqueId()))
 			return;
 
-		final List<Player> welcomers = QUEUE.remove(welcomee.getUniqueId())
+		final List<Nerd> welcomers = QUEUE.remove(welcomee.getUniqueId())
 			.stream()
 			.map(Nerd::of)
 			.filter(Nerd::isOnline)
-			.map(Nerd::getOnlinePlayer)
 			.toList();
 
 		int wait = 10;
-		for (Player welcomer : welcomers)
+		for (Nerd welcomer : welcomers)
 			Tasks.wait(wait += RandomUtils.randomInt(30, 50), () -> sayWelcome(welcomer, welcomee));
 	}
 
-	private void sayWelcome(@NotNull Player welcomer, @Nullable Player welcomee) {
-		if (new CooldownService().check(UUIDUtils.UUID0, "welc", TickTime.SECOND.x(20)))
-			Chatter.of(welcomer).say(StaticChannel.GLOBAL.getChannel(), getLongMessage(welcomee));
+	private static void sayWelcome(@NotNull Nerd welcomer, @Nullable Player welcomee) {
+		String message;
+
+		if (new CooldownService().check(UUID0, "welc", TickTime.SECOND.x(20)))
+			message = getLongMessage(welcomee);
 		else
-			Chatter.of(welcomer).say(StaticChannel.GLOBAL.getChannel(), welcomee == null ? genericMessage : getShortMessage(welcomee));
+			message = welcomee == null ? genericMessage : getShortMessage(welcomee);
+
+		Chatter.of(welcomer).say(StaticChannel.GLOBAL.getChannel(), message);
 	}
 
-	private static boolean isPastResourcePackScreen(Player player) {
-		return player.getResourcePackStatus() == Status.FAILED_DOWNLOAD || ResourcePack.isEnabledFor(player);
+	private static String getShortMessage(@Nullable Player welcomee) {
+		lastShortMessage = randomElement(SHORT_MESSAGES.stream()
+			.filter(message -> !message.equals(lastShortMessage))
+			.toList());
+
+		return interpolate(welcomee, lastShortMessage);
 	}
 
-	private String getShortMessage(@Nullable Player player) {
-		lastShortMessage = RandomUtils.randomElement(SHORT_MESSAGES.stream().filter(message -> !message.equals(lastShortMessage)).toList());
-		return interpolate(player, lastShortMessage);
+	private static String getLongMessage(@Nullable Player welcomee) {
+		lastLongMessage = randomElement(LONG_MESSAGES.stream()
+			.filter(message -> !message.equals(lastLongMessage))
+			.toList());
+
+		return interpolate(welcomee, lastLongMessage);
 	}
 
-	private String getLongMessage(@Nullable Player player) {
-		lastLongMessage = RandomUtils.randomElement(LONG_MESSAGES.stream().filter(message -> !message.equals(lastLongMessage)).toList());
-		return interpolate(player, lastLongMessage);
-	}
-
-	private String interpolate(@Nullable Player player, String message) {
-		if (player == null)
+	private static String interpolate(@Nullable Player welcomee, String message) {
+		if (welcomee == null)
 			message = message.replaceAll(" \\[player]", "").trim();
 		else
-			message = message.replaceAll("\\[player]", player.getName()).trim();
+			message = message.replaceAll("\\[player]", Nickname.of(welcomee)).trim();
 
 		return message;
 	}

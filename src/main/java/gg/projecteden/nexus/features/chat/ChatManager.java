@@ -61,7 +61,7 @@ public class ChatManager {
 
 			message = message.trim();
 
-			if (!Rank.of(chatter.getOnlinePlayer()).isAdmin())
+			if (!Rank.of(chatter).isAdmin())
 				message = StringUtils.decolorize(message).replaceAll("&", "&" + channel.getMessageColor());
 
 			if (message.isEmpty())

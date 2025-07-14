@@ -218,6 +218,10 @@ public class ResourcePack extends Feature implements Listener {
 		return isEnabledFor(player.getPlayer());
 	}
 
+	public static boolean isPastResourcePackScreen(Player player) {
+		return player.getResourcePackStatus() == Status.FAILED_DOWNLOAD || ResourcePack.isEnabledFor(player);
+	}
+
 	private static final String LINE = "&8&m                                                      ";
 
 	private static final TextComponent TEXT = new JsonBuilder()
