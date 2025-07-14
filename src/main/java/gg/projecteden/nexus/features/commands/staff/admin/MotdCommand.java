@@ -23,7 +23,10 @@ import gg.projecteden.nexus.utils.DateUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,7 +41,14 @@ import java.net.InetAddress;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
@@ -154,7 +164,7 @@ public class MotdCommand extends CustomCommand implements Listener {
 
 		ORIENTATION_ASEXUAL(Month.JUNE),
 		ORIENTATION_BISEXUAL(Month.JUNE),
-		ORIENTATION_DEMISEXUAL(Month.JUNE),
+		ORIENTATION_DEMI(Month.JUNE),
 		ORIENTATION_GAY(Month.JUNE),
 		ORIENTATION_LESBIAN(Month.JUNE),
 		ORIENTATION_PANSEXUAL(Month.JUNE),

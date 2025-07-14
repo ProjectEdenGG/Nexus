@@ -353,13 +353,13 @@ public enum DecorationType {
 	FLAG_PRIDE_BI(new Flag("Bisexual Pride Flag", PrideFlagType.BI)),
 
 	@TypeConfig(money = 75, tokens = 7, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_DEMI(new Flag("Demisexual Pride Flag", PrideFlagType.DEMI)),
+	FLAG_PRIDE_DEMI(new Flag("Demi Pride Flag", PrideFlagType.DEMI)),
 
 	@TypeConfig(money = 75, tokens = 7, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_DEMIBOY(new Flag("Demisexual Boy Pride Flag", PrideFlagType.DEMIBOY)),
+	FLAG_PRIDE_DEMIBOY(new Flag("Demi Boy Pride Flag", PrideFlagType.DEMIBOY)),
 
 	@TypeConfig(money = 75, tokens = 7, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_DEMIGIRL(new Flag("Demisexual Girl Pride Flag", PrideFlagType.DEMIGIRL)),
+	FLAG_PRIDE_DEMIGIRL(new Flag("Demi Girl Pride Flag", PrideFlagType.DEMIGIRL)),
 
 	@TypeConfig(money = 75, tokens = 7, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
 	FLAG_PRIDE_DEMIROMANTIC(new Flag("Demiromantic Pride Flag", PrideFlagType.DEMIROMANTIC)),
@@ -429,13 +429,13 @@ public enum DecorationType {
 	BUNTING_PRIDE_BI(new Bunting("Bisexual Pride Bunting", PrideFlagType.BI)),
 
 	@TypeConfig(money = 45, tokens = 4, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_DEMI(new Bunting("Demisexual Pride Bunting", PrideFlagType.DEMI)),
+	BUNTING_PRIDE_DEMI(new Bunting("Demi Pride Bunting", PrideFlagType.DEMI)),
 
 	@TypeConfig(money = 45, tokens = 4, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_DEMIBOY(new Bunting("Demisexual Boy Pride Bunting", PrideFlagType.DEMIBOY)),
+	BUNTING_PRIDE_DEMIBOY(new Bunting("Demi Boy Pride Bunting", PrideFlagType.DEMIBOY)),
 
 	@TypeConfig(money = 45, tokens = 4, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_DEMIGIRL(new Bunting("Demisexual Girl Pride Bunting", PrideFlagType.DEMIGIRL)),
+	BUNTING_PRIDE_DEMIGIRL(new Bunting("Demi Girl Pride Bunting", PrideFlagType.DEMIGIRL)),
 
 	@TypeConfig(money = 45, tokens = 4, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
 	BUNTING_PRIDE_DEMIROMANTIC(new Bunting("Demiromantic Pride Bunting", PrideFlagType.DEMIROMANTIC)),
