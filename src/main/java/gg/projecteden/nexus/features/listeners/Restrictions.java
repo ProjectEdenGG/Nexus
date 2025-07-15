@@ -87,9 +87,6 @@ public class Restrictions implements Listener {
 		if (BLOCKED_WORLDS.contains(location.getWorld().getName()))
 			return false;
 
-		if (worldGroup == WorldGroup.LEGACY)
-			return false;
-
 		WorldGuardUtils worldGuardUtils = new WorldGuardUtils(location);
 		if (!worldGuardUtils.getRegionsAt(location).isEmpty())
 			return false;
@@ -157,22 +154,45 @@ public class Restrictions implements Listener {
 		player.setGameMode(GameMode.SPECTATOR);
 	}
 
+	private void spawnShoulderParrot(Location location, Parrot original) {
+		location.getWorld().spawn(location, Parrot.class, parrot -> {
+			parrot.setAI(original.hasAI());
+			parrot.setAge(original.getAge());
+			parrot.setBreed(original.canBreed());
+			parrot.setOwner(original.getOwner());
+			parrot.setTamed(original.isTamed());
+			parrot.setVariant(original.getVariant());
+			parrot.customName(original.customName());
+			parrot.setCustomNameVisible(original.isCustomNameVisible());
+			if (original.isAdult())
+				parrot.setAdult();
+			else
+				parrot.setBaby();
+		});
+	}
+
 	@EventHandler
 	@SuppressWarnings("deprecation")
 	public void onParrotTeleport(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
 
-		if (Restrictions.isPerkAllowedAt(player, event.getTo()))
+		if (CitizensUtils.isNPC(player))
 			return;
 
-		if (WorldGroup.of(player) == WorldGroup.of(event.getTo()))
+		boolean perkAllowed = Restrictions.isPerkAllowedAt(player, event.getTo());
+		boolean sameWorldGroup = WorldGroup.of(player) == WorldGroup.of(event.getTo());
+		if (perkAllowed && sameWorldGroup)
 			return;
 
-		if (player.getShoulderEntityLeft() instanceof Parrot leftParrot)
-			leftParrot.teleport(player.getLocation());
+		if (player.getShoulderEntityLeft() instanceof Parrot leftParrot) {
+			spawnShoulderParrot(event.getFrom(), leftParrot);
+			player.setShoulderEntityLeft(null);
+		}
 
-		if (player.getShoulderEntityRight() instanceof Parrot rightParrot)
-			rightParrot.teleport(player.getLocation());
+		if (player.getShoulderEntityRight() instanceof Parrot rightParrot) {
+			spawnShoulderParrot(event.getFrom(), rightParrot);
+			player.setShoulderEntityRight(null);
+		}
 	}
 
 
