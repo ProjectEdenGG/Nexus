@@ -56,6 +56,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -134,6 +135,19 @@ public class Shop implements PlayerOwnedObject {
 	@NotNull
 	public List<ItemStack> getHolding(ShopGroup shopGroup) {
 		return holding.computeIfAbsent(shopGroup, $ -> new ArrayList<>());
+	}
+
+	public List<ItemStack> removeHolding(ShopGroup shopGroup, int maxStacks) {
+		maxStacks = Math.min(maxStacks, getHolding(shopGroup).size());
+
+		final Iterator<ItemStack> iterator = getHolding(shopGroup).iterator();
+		final List<ItemStack> items = new ArrayList<>();
+		while (items.size() < maxStacks && iterator.hasNext()) {
+			items.add(iterator.next());
+			iterator.remove();
+		}
+
+		return items;
 	}
 
 	public void removeProduct(Product product) {

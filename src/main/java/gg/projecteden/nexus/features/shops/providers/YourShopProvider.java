@@ -23,7 +23,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 @Title("&0Your shop")
@@ -115,13 +114,7 @@ public class YourShopProvider extends ShopProvider {
 			if (shop.getHolding().isEmpty())
 				throw new InvalidInputException("No items available for collection");
 
-			List<ItemStack> items = new ArrayList<>();
-			final int max = Math.min(54, shop.getHolding(ShopGroup.of(player)).size());
-			final Iterator<ItemStack> iterator = shop.getHolding(ShopGroup.of(player)).iterator();
-			while (items.size() < max && iterator.hasNext()) {
-				items.add(iterator.next());
-				iterator.remove();
-			}
+			List<ItemStack> items = shop.removeHolding(ShopGroup.of(player), 54);
 			service.save(shop);
 
 			open(items);

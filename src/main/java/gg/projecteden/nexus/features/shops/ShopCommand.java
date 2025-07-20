@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.Fi
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
@@ -110,6 +111,17 @@ public class ShopCommand extends CustomCommand implements Listener {
 	@Description("Collect items sold to you or items that didnt fit in your inventory")
 	void collect() {
 		new CollectItemsProvider(player(), null);
+	}
+
+	@Confirm
+	@Path("collect dump [stacks]")
+	@Description("Dump up to 500 stacks of items from your shop holding onto the ground")
+	void collect_dump(@Arg(value = "500", min = 1, max = 500) int stacks) {
+		service.edit(player(), shop -> {
+			List<ItemStack> items = shop.removeHolding(shopGroup, stacks);
+			for (var item : items)
+				world().dropItem(player().getLocation(), item);
+		});
 	}
 
 	@Path("massRestock")
