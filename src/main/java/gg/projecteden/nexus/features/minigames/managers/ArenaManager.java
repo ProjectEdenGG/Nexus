@@ -22,11 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -34,6 +30,7 @@ public class ArenaManager {
 	@Getter
 	private static final List<Arena> arenas = new ArrayList<>();
 	private static final String FOLDER = "plugins/Nexus/minigames/arenas/";
+	public static boolean LOADED = false;
 
 	public static List<Arena> getAll() {
 		return arenas;
@@ -196,6 +193,7 @@ public class ArenaManager {
 					Debug.log(ex);
 				}
 			});
+			ArenaManager.LOADED = true;
 			Tasks.sync(() -> new AllArenasLoadedEvent().callEvent());
 		} catch (Exception ex) {
 			Nexus.severe("An error occurred while trying to read arena configuration files: " + ex.getMessage());

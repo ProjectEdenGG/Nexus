@@ -1,7 +1,9 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
+import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigames.Minigames;
+import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchStatistics;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -13,6 +15,8 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.Connect4MatchDat
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Material;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.event.EventHandler;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -75,6 +79,30 @@ public final class Connect4 extends TeamMechanic {
 	public void end(@NotNull Match match) {
 		Connect4MatchData matchData = match.getMatchData();
 		Tasks.wait(matchData.end() + TickTime.SECOND.get(), () -> super.end(match));
+	}
+
+	@EventHandler
+	public void on(EntityRemoveFromWorldEvent event) {
+		if (!ArenaManager.LOADED)
+			return;
+
+		var entity = event.getEntity();
+		var location = entity.getLocation();
+		var arena = ArenaManager.getFromLocation(entity.getLocation());
+
+		if (arena == null)
+			return;
+
+		if (!(arena.getMechanic() instanceof Connect4))
+			return;
+
+		if (!(entity instanceof FallingBlock fallingBlock))
+			return;
+
+		if (!arena.isInRegion(location, "board"))
+			return;
+
+		entity.getWorld().setBlockData(location, fallingBlock.getBlockData());
 	}
 
 }
