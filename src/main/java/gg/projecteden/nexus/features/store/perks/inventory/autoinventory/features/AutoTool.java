@@ -16,7 +16,10 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.ToolType;
 import gg.projecteden.nexus.utils.ToolType.ToolGrade;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -57,13 +60,12 @@ public class AutoTool implements Listener {
 
 		final ItemStack mainHand = player.getInventory().getItemInMainHand();
 
-		if (!MaterialTag.TOOLS.isTagged(mainHand)) {
-			if (!MaterialTag.SWORDS.isTagged(mainHand))
-				return;
+		if (!MaterialTag.TOOLS.isTagged(mainHand) && !MaterialTag.SWORDS.isTagged(mainHand))
+			return;
 
-			if (!user.getActiveProfile().isAutoToolIncludeSword())
+		for (AutoToolToolType excluded : user.getActiveProfile().getAutoToolExclude())
+			if (excluded.isTagged(mainHand))
 				return;
-		}
 
 		wait(player, block, 0);
 	}
@@ -164,6 +166,28 @@ public class AutoTool implements Listener {
 		debug.accept("");
 		debug.accept("Best tool: " + (bestTool == null ? "null" : StringUtils.pretty(bestTool)));
 		return bestTool;
+	}
+
+	@Getter
+	@AllArgsConstructor
+	public enum AutoToolToolType {
+		SWORDS(ToolType.SWORD),
+		PICKAXES(ToolType.PICKAXE),
+		AXES(ToolType.AXE),
+		SHOVELS(ToolType.SHOVEL),
+		HOES(ToolType.HOE),
+		SHEARS(ToolType.SHEARS),
+		;
+
+		private final ToolType toolType;
+
+		public boolean isTagged(ItemStack item) {
+			return isTagged(item.getType());
+		}
+
+		public boolean isTagged(Material material) {
+			return toolType.getTools().contains(material);
+		}
 	}
 
 }

@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.features.AutoCraft;
+import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.features.AutoTool.AutoToolToolType;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.tasks.FindChestsThread;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -285,17 +286,21 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	@Path("settings tools includeSword [enable]")
-	@Description("Toggle whether AutoTool will activate while holding a sword")
-	void settings_tools_includeSword(Boolean enable) {
+	@Path("settings tools exclude <toolType> [enable]")
+	@Description("Toggle whether AutoTool will activate while holding certain tools")
+	void settings_tools_exclude(AutoToolToolType toolType, Boolean enable) {
 		AutoInventoryFeature.AUTOTOOL.checkPermission(player());
 
 		if (enable == null)
-			enable = !user.getActiveProfile().isAutoToolIncludeSword();
+			enable = user.getActiveProfile().getAutoToolExclude().contains(toolType);
 
-		user.getActiveProfile().setAutoToolIncludeSword(enable);
+		if (enable)
+			user.getActiveProfile().getAutoToolExclude().remove(toolType);
+		else
+			user.getActiveProfile().getAutoToolExclude().add(toolType);
+
 		service.save(user);
-		send(PREFIX + "AutoTool now " + (enable ? "&aincludes" : "&cexcludes") + " &3swords");
+		send(PREFIX + "AutoTool now " + (enable ? "&aincludes" : "&cexcludes") + " &3" + toolType.name().toLowerCase());
 	}
 
 	@Path("settings trash materials")

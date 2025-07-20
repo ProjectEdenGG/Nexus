@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks.Bac
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventory;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventoryFeature;
+import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.features.AutoTool.AutoToolToolType;
 import gg.projecteden.nexus.features.vaults.VaultCommand.VaultMenu.VaultHolder;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
@@ -82,7 +83,9 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 			add(Material.GLOWSTONE);
 		}};
 
-		private boolean autoToolIncludeSword;
+		private Set<AutoToolToolType> autoToolExclude = new HashSet<>() {{
+			add(AutoToolToolType.SWORDS);
+		}};
 
 		private Set<Material> autoTrashInclude = new HashSet<>();
 		private AutoTrashBehavior autoTrashBehavior = AutoTrashBehavior.TRASH;
@@ -107,7 +110,7 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 		return new AutoInventoryUserService().get(uuid);
 	}
 
-	public AutoInventoryProfile getActiveProfile() {
+	public AutoInventoryUser.AutoInventoryProfile getActiveProfile() {
 		return profiles.get(getActiveProfileId());
 	}
 
