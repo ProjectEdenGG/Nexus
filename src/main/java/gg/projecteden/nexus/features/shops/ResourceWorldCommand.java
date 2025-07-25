@@ -19,6 +19,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.scheduledjobs.jobs.ResourceWorldSetupJob;
 import gg.projecteden.nexus.models.shop.ResourceMarketLogger;
 import gg.projecteden.nexus.models.shop.ResourceMarketLoggerService;
 import gg.projecteden.nexus.models.shop.Shop;
@@ -36,6 +37,7 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.Reloader.NexusReloadEvent;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
@@ -53,6 +55,7 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
@@ -75,6 +78,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+
+import static gg.projecteden.nexus.utils.Reloader.reloader;
 
 @Aliases("resource")
 @NoArgsConstructor
@@ -418,7 +423,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	public static final int RADIUS = 7500;
 	private static boolean resetting = false;
 
-	public static void resetWorlds(Player debugger) {
+	public static void resetWorlds(CommandSender executor) {
 		resetting = true;
 
 		getFilidNPC().despawn();
@@ -450,12 +455,16 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 				run.accept("mv delete " + world);
 				run.accept("mv confirm");
 				run.accept("mv create " + world + " " + args + (seed == null ? "" : " -s " + seed));
-
-				Tasks.wait(wait.getAndAdd(5), () -> resetting = false);
 			}
 
-			Tasks.wait(wait.getAndAdd(5), () -> PlayerUtils.send(debugger, StringUtils.getPrefix(ResourceWorldCommand.class) + "When ready, do /nexus reload"));
+			Tasks.wait(wait.getAndAdd(5), () -> reloader.executor(executor).reload());
 		});
+	}
+
+	@EventHandler
+	public void on(NexusReloadEvent event) {
+		if (resetting)
+			new ResourceWorldSetupJob().scheduleSync(5);
 	}
 
 	public static void setupWorlds() {
