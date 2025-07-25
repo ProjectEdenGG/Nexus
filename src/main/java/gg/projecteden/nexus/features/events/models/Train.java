@@ -12,6 +12,7 @@ import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
@@ -34,6 +35,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
@@ -110,6 +112,13 @@ public class Train {
 
 	private List<Player> getPlayers() {
 		return worldguard.getPlayersInRegion(regionAnnounce).stream().toList();
+	}
+
+	public void debug(Player debugger) {
+		for (int i = 1; i <= TOTAL_MODELS; i++) {
+			ItemBuilder trainItem = getTrainItem(i);
+			PlayerUtils.send(debugger, "Armorstand " + i + ":  Model=" + trainItem.model());
+		}
 	}
 
 	public void stop() {
@@ -357,17 +366,20 @@ public class Train {
 	}
 
 	private void setTrainItem(ArmorStand armorStand, int modelNdx) {
+		ItemBuilder trainItem = getTrainItem(modelNdx);
+		armorStand.setItem(EquipmentSlot.HEAD, trainItem.build());
+	}
+
+	private ItemBuilder getTrainItem(int modelNdx) {
 		ItemModelType baseItemModelType = ItemModelType.TRAIN_1;
 		String baseEnum = baseItemModelType.name().replace("1", "");
 		ItemModelType ndxItemModelType = ItemModelType.valueOf(baseEnum + modelNdx);
 
-		int modelIdOverride = modelNdx + 1;
-		if (modelOverrides.containsKey(modelIdOverride)) {
-			ndxItemModelType = modelOverrides.get(modelIdOverride);
+		if (modelOverrides.containsKey(modelNdx)) {
+			ndxItemModelType = modelOverrides.get(modelNdx);
 		}
 
-		ItemBuilder itemBuilder = new ItemBuilder(ItemModelType.TRAIN_1).model(ndxItemModelType);
-		armorStand.setItem(EquipmentSlot.HEAD, itemBuilder.build());
+		return new ItemBuilder(ItemModelType.TRAIN_1).model(ndxItemModelType);
 	}
 
 

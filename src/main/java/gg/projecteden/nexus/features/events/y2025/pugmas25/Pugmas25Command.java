@@ -287,6 +287,12 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		Pugmas25Intro.play(player());
 	}
 
+	@Path("train debug")
+	@Permission(Group.ADMIN)
+	void train_debug() {
+		Pugmas25Train.getDefault().build().debug(player());
+	}
+
 	@Path("train start")
 	@Permission(Group.ADMIN)
 	void train_start() {
