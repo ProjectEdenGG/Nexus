@@ -114,7 +114,7 @@ public interface IHarvestable {
 	// DO NOT CHANGE THIS, IT IS IN PARITY WITH VANILLA
 	default boolean isUsingCorrectTool(ItemStack tool, Player debugger) {
 		if (!requiresCorrectToolForDrops()) {
-			CustomBlockUtils.debug(debugger, DebugType.CUSTOM_BLOCK_DAMAGE, "&e- doesn't require correct tool for drops");
+			CustomBlockUtils.debug(debugger, DebugType.CUSTOM_BLOCK_DAMAGE, "&e- does not require correct tool for drops");
 			return true;
 		}
 

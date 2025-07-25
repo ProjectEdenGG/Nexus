@@ -838,14 +838,15 @@ public enum CustomBlock implements Keyed {
 
 				if (!iCustomBlock.canHarvestWith(tool, source)) {
 					CustomBlockUtils.debug(source, "&e- cannot harvest with " + tool.getType());
-					dropItem = false;
-					CustomBlockUtils.debug(source, "&e- dropItem = " + StringUtils.bool(dropItem));
 
 					if (iCustomBlock.requiresCorrectToolForDrops()) {
 						CustomBlockUtils.debug(source, "&e- requires correct tool for drops");
+						dropItem = false;
 						CustomBlockUtils.debug(source, "&e- dropItem = " + StringUtils.bool(dropItem));
 					} else {
 						CustomBlockUtils.debug(source, "&e- does not require correct tool for drops");
+						dropItem = true;
+						CustomBlockUtils.debug(source, "&e- dropItem = " + StringUtils.bool(dropItem));
 						boolean requiresSilkTouch = iCustomBlock.requiresSilkTouchForDrops();
 						CustomBlockUtils.debug(source, "&e- requiresSilkTouch = " + StringUtils.bool(requiresSilkTouch));
 						boolean hasNonSilkDrops = !Nullables.isNullOrEmpty(iCustomBlock._getNonSilkTouchDrops());

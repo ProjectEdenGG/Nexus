@@ -13,6 +13,7 @@ import gg.projecteden.nexus.framework.features.Feature;
 		- Resolve Test server bug signs
 		- Remove "TODO CUSTOM BLOCKS: REMOVE"
 		- Finish FloweringMossBlock
+		- On place block in region, if denied, there should be an error
  */
 
 /*

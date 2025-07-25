@@ -31,14 +31,15 @@ public class Breaker {
 	private static final Map<Location, DamagedBlock> brokenBlocks = new ConcurrentHashMap<>();
 
 	public static void init() {
-		new BreakListener();
+//		new BreakListener();
+		new BreakerPacketListener();
 	}
 
-	public static void startTracking(Block block, Player player, ItemStack itemStack) {
+	public static DamagedBlock startTracking(Block block, Player player, ItemStack itemStack) {
 		Location location = block.getLocation();
 		if (isTracking(location)) {
 			CustomBlockUtils.debug(player, "&c<- already tracking");
-			return;
+			return null;
 		}
 
 		float blockHardness = BlockUtils.getBlockHardness(block);
@@ -52,12 +53,13 @@ public class Breaker {
 
 		if (blockHardness == -1 || blockHardness > 50) { // unbreakable
 			CustomBlockUtils.debug(player, "&c<- block is unbreakable");
-			return;
+			return null;
 		}
 
 		CustomBlockUtils.debug(player, "&e- now tracking...");
 		DamagedBlock damagedBlock = new DamagedBlock(block, isCustomBlock, player, itemStack, Bukkit.getCurrentTick());
 		brokenBlocks.put(location, damagedBlock);
+		return damagedBlock;
 	}
 
 	public static void stopTracking(Location location) {
@@ -81,7 +83,8 @@ public class Breaker {
 		if (player.hasPotionEffect(PotionEffectType.MINING_FATIGUE))
 			removeSlowDig(player);
 
-		player.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, duration, -1, false, false, false));
+		player.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, duration, -1,
+			false, false, false));
 	}
 
 	public static void removeSlowDig(Player player) {

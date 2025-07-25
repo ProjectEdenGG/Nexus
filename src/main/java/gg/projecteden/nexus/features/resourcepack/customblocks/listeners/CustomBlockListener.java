@@ -508,11 +508,12 @@ public class CustomBlockListener implements Listener {
 			event.setBuildable(true);
 	}
 
-	// TODO: DOESN'T WORK WITH BAMBOO ??
+	// TODO: Doesn't handle bamboo, couldn't figure it out
 	@EventHandler
-	public void onUpdateOnBlock(BlockPhysicsEvent event) {
+	public void onUpdateBelow(BlockPhysicsEvent event) {
 		Block block = event.getBlock();
 		Block below = block.getRelative(BlockFace.DOWN);
+
 		CustomBlock customBlock = CustomBlock.from(below);
 		if (customBlock == null)
 			return;
@@ -523,6 +524,7 @@ public class CustomBlockListener implements Listener {
 		if (!iSupportPlants.canSupport(block.getType()))
 			return;
 
+		CustomBlockUtils.debug(Dev.WAKKA.getPlayer(), "&4onUpdateBelow: cancelling event");
 		event.setCancelled(true);
 	}
 

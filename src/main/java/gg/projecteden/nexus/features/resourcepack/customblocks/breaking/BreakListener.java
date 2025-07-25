@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.resourcepack.customblocks.breaking;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.utils.Debug.DebugType;
 import gg.projecteden.nexus.utils.MaterialTag;
 import lombok.Getter;
@@ -29,14 +30,8 @@ public class BreakListener implements Listener {
 	@Getter
 	private static final HashMap<UUID, Integer> breakWait = new HashMap<>();
 
-	private static final Set<Material> blackListed = new HashSet<>();
-
 	public BreakListener() {
 		Nexus.registerListener(this);
-
-		blackListed.addAll(Set.of(Material.BARRIER, Material.LIGHT));
-		blackListed.addAll(MaterialTag.LIQUIDS.getValues());
-		blackListed.addAll(MaterialTag.ALL_AIR.getValues());
 	}
 
 	@EventHandler
@@ -50,6 +45,11 @@ public class BreakListener implements Listener {
 		if (player.getGameMode() == GameMode.CREATIVE)
 			return;
 
+		Block block = event.getBlock();
+		CustomBlock customBlock = CustomBlock.from(block);
+		if (customBlock == null)
+			return;
+
 		// 6 tick delay after breaking a block, before able to damage another
 		int currentTick = Bukkit.getCurrentTick();
 		if (breakWait.containsKey(player.getUniqueId())) {
@@ -59,7 +59,6 @@ public class BreakListener implements Listener {
 			}
 		}
 
-		Block block = event.getBlock();
 		if (Breaker.isTracking(block.getLocation())) {
 			CustomBlockUtils.debug(player, DebugType.CUSTOM_BLOCK_DAMAGE, "<-- already tracking");
 			return;
@@ -76,7 +75,11 @@ public class BreakListener implements Listener {
 			return;
 
 		Block block = player.getTargetBlockExact(5);
-		if (block == null || blackListed.contains(block.getType()))
+		if (block == null)
+			return;
+
+		CustomBlock customBlock = CustomBlock.from(block);
+		if (customBlock == null)
 			return;
 
 		Location blockLoc = block.getLocation();
@@ -99,9 +102,14 @@ public class BreakListener implements Listener {
 		if (event.getPlayer().getGameMode() == GameMode.CREATIVE)
 			return;
 
+		Block block = event.getBlock();
+		CustomBlock customBlock = CustomBlock.from(block);
+		if (customBlock == null)
+			return;
+
 		CustomBlockUtils.debug(event.getPlayer(), DebugType.CUSTOM_BLOCK_DAMAGE, "CustomBlockBreaking: BlockBreakEvent");
 
-		DamagedBlock damagedBlock = Breaker.get(event.getBlock().getLocation());
+		DamagedBlock damagedBlock = Breaker.get(block.getLocation());
 		if (damagedBlock == null)
 			return;
 
@@ -111,7 +119,8 @@ public class BreakListener implements Listener {
 	@EventHandler
 	public void on(BlockDamageAbortEvent event) {
 		Block block = event.getBlock();
-		if (blackListed.contains(block.getType()))
+		CustomBlock customBlock = CustomBlock.from(block);
+		if (customBlock == null)
 			return;
 
 		DamagedBlock damagedBlock = Breaker.get(block.getLocation());
