@@ -16,6 +16,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -115,6 +116,11 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 	@Override
 	public void end() {
 		armorStands.forEach(Entity::remove);
+
+		Location location = getGamer().getLocation();
+		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_CHIME).pitch(0.7).location(location).play();
+		Tasks.wait(TickTime.TICK.x(6), () ->
+			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_CHIME).pitch(0.7).location(location).play());
 
 		super.end();
 	}
