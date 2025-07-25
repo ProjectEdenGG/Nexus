@@ -17,18 +17,42 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.tip.Tip;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.Enchant;
+import gg.projecteden.nexus.utils.FireworkLauncher;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup.SpawnType;
 import me.libraryaddict.disguise.DisguiseAPI;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Difficulty;
+import org.bukkit.GameMode;
+import org.bukkit.GameRule;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.boss.BarColor;
 import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.entity.*;
+import org.bukkit.entity.AbstractHorse;
+import org.bukkit.entity.Creeper;
+import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
+import org.bukkit.entity.Fox;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -198,6 +222,12 @@ public class Misc implements Listener {
 		EquipmentSlot.FEET, MaterialTag.ALL_BOOTS
 	);
 
+	private static final List<Material> ARMOR_SWAP_IGNORE = List.of(
+		Material.IRON_BLOCK,
+		Material.GOLD_BLOCK,
+		Material.CAULDRON
+	);
+
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (event instanceof FakePlayerInteractEvent)
@@ -206,9 +236,8 @@ public class Misc implements Listener {
 		if (!ActionGroup.RIGHT_CLICK.applies(event))
 			return;
 
-		// Ignore McMMO blocks
 		if (event.getClickedBlock() != null)
-			if (List.of(Material.IRON_BLOCK, Material.GOLD_BLOCK).contains(event.getClickedBlock().getType()))
+			if (ARMOR_SWAP_IGNORE.contains(event.getClickedBlock().getType()))
 				return;
 
 		if (event.getHand() != EquipmentSlot.HAND)
