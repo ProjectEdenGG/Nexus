@@ -117,7 +117,7 @@ public class DecorationStoreLayouts {
 
 		config.setSchematicId(schematicId);
 		pasteLayout(getLayoutSchematic(schematicId), StoreLocation.SURVIVAL);
-//		config.getLayoutHistory().add(new DecorationStorePasteHistory(LocalDateTime.now(), schematicId));
+		config.addHistory(schematicId);
 
 		config.setActive(true);
 		DecorationStore.saveConfig();

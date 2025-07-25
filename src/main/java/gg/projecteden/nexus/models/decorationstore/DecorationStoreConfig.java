@@ -14,6 +14,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -29,7 +31,8 @@ public class DecorationStoreConfig implements DatabaseObject {
 
 	private boolean active;
 	private int schematicId;
-//	private BoundedList<DecorationStorePasteHistory> layoutHistory = new BoundedList<>(10);
+	private List<DecorationStorePasteHistory> layoutHistory = new ArrayList<>();
+	private final static int MAX_ENTRIES = 10;
 
 	private int schematicIdTest;
 
@@ -39,6 +42,13 @@ public class DecorationStoreConfig implements DatabaseObject {
 	public static class DecorationStorePasteHistory {
 		LocalDateTime dateTime;
 		int schematicId;
+	}
+
+	public void addHistory(int schematicId) {
+		DecorationStorePasteHistory history = new DecorationStorePasteHistory(LocalDateTime.now(), schematicId);
+
+		layoutHistory.addFirst(history);
+		layoutHistory = new ArrayList<>(layoutHistory.subList(0, Math.min(layoutHistory.size(), MAX_ENTRIES)));
 	}
 
 }
