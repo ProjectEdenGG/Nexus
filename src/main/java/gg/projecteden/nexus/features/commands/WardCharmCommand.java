@@ -34,6 +34,14 @@ public class WardCharmCommand extends CustomCommand {
 		new CustomCraftingRecipeMenu(recipe).open(player());
 	}
 
+	@Path("check")
+	void check() {
+		var entity = getTargetEntityRequired();
+		var pdc = entity.getPersistentDataContainer();
+		boolean has = pdc.has(NBT_KEY, PersistentDataType.STRING);
+		send(PREFIX + "Ward status of " + camelCase(entity.getType()) + ": " + (has ? "&aWarded" : "&cNot warded"));
+	}
+
 	@Path("unward")
 	void unward() {
 		var entity = getTargetEntityRequired();
