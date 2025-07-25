@@ -106,17 +106,33 @@ public class RadioConfig implements PlayerOwnedObject {
 		}
 
 		public Location getRadiusLocation() {
+			Location location = _getRadiusLocationReference();
+			if (location == null)
+				return null;
+
+			return location.clone();
+		}
+
+		public Location _getRadiusLocationReference() {
 			if (this.locations == null || this.locations.isEmpty())
 				return null;
 
-			return this.locations.get(0).clone();
+			return this.locations.getFirst();
 		}
 
 		public List<Location> getStationLocations() {
+			List<Location> locations = _getStationLocationsReference();
+			if (locations == null)
+				return null;
+
+			return new ArrayList<>(locations);
+		}
+
+		public List<Location> _getStationLocationsReference() {
 			if (this.locations == null || this.locations.isEmpty())
 				return null;
 
-			return new ArrayList<>(this.locations);
+			return this.locations;
 		}
 
 		public void setRadiusLocation(Location location) {

@@ -20,6 +20,7 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.Collections;
@@ -173,6 +174,25 @@ public class RadioCommand extends CustomCommand {
 			case RADIUS -> player().teleportAsync(radio.getRadiusLocation(), TeleportCause.COMMAND);
 			case STATION -> player().teleportAsync(radio.getStationLocations().get(index), TeleportCause.COMMAND);
 		}
+	}
+
+	@Path("moveWorld <radio>")
+	@Permission(Group.STAFF)
+	@Description("Set the world of the radio to your location")
+	void setWorld(Radio radio) {
+		World world = world();
+
+		switch (radio.getType()) {
+			case SERVER -> error("This radio type doesn't have a location");
+			case RADIUS -> radio._getRadiusLocationReference().setWorld(world);
+			case STATION -> {
+				for (Location stationLocation : radio._getStationLocationsReference()) {
+					stationLocation.setWorld(world);
+				}
+			}
+		}
+
+		send("Set " + radio.getId() + "'s world to " + world.getName());
 	}
 
 	@Path("debugUser <player>")
