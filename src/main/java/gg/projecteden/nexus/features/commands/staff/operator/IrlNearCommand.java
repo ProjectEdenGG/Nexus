@@ -8,13 +8,15 @@ import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIP.Distance;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.hours.HoursService;
-import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
@@ -37,14 +39,19 @@ public class IrlNearCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("[player] [page]")
-	void run(@Arg("self") GeoIP player, @Arg("1") int page) {
+	@Path("[player] [page] [--minRank]")
+	void run(
+		@Arg("self") GeoIP player,
+		@Arg("1") int page,
+		@Switch Rank minRank
+	) {
 		Map<UUID, Distance> near = new HashMap<>() {{
 			for (GeoIP geoip : service.getAll()) {
-				if (hoursService.get(geoip).has(TickTime.MINUTE.x(30)))
-					try {
-						put(geoip.getUuid(), new Distance(player, geoip));
-					} catch (InvalidInputException ignore) {}
+				if (minRank == null || geoip.getRank().gte(minRank))
+					if (hoursService.get(geoip).has(TickTime.MINUTE.x(30)))
+						try {
+							put(geoip.getUuid(), new Distance(player, geoip));
+						} catch (InvalidInputException ignore) {}
 			}
 		}};
 
@@ -52,13 +59,13 @@ public class IrlNearCommand extends CustomCommand {
 			Distance distance = near.get(uuid);
 			String mi = distance.getMilesFormatted();
 			String km = distance.getKilometersFormatted();
-			return json(index + " &e" + Nickname.of(uuid) + " &7- " + mi + "mi / " + km + "km");
+			return json(index + " &e" + Nerd.of(uuid).getColoredName() + " &7- " + mi + "mi / " + km + "km");
 		};
 
 		new Paginator<UUID>()
 			.values(Utils.sortByValue(near).keySet())
 			.formatter(formatter)
-			.command("/irlnear " + player.getNickname())
+			.command("/irlnear " + player.getNickname() + (minRank == null ? "" : " --minRank=" + minRank.name()))
 			.page(page)
 			.send();
 	}
