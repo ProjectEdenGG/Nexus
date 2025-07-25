@@ -120,7 +120,6 @@ public abstract class EdenEventSinglePlayerGame extends Feature implements Liste
 		if (!startChecks(player))
 			return;
 
-		Dev.WAKKA.send("Started EdenEventSPGame = " + player.getName());
 		gamer = player;
 		gameTicks = 0;
 		preStart();

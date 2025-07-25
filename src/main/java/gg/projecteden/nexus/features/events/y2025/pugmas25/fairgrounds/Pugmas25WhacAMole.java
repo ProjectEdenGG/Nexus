@@ -7,6 +7,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.EdenEventGameConfig;
 import gg.projecteden.nexus.features.events.EdenEventSinglePlayerGame;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -64,6 +65,7 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 	private List<ItemStack> kit = new ArrayList<>();
 	private Hologram holoTimeLeft;
 	private Hologram holoScore;
+	private Hologram holoPlayer;
 
 	public Pugmas25WhacAMole() {
 		instance = this;
@@ -84,6 +86,7 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 
 		holoTimeLeft = HologramsAPI.byId(getWorld(), "pugmas25_whacamole_time_left");
 		holoScore = HologramsAPI.byId(getWorld(), "pugmas25_whacamole_score");
+		holoPlayer = HologramsAPI.byId(getWorld(), "pugmas25_whacamole_player");
 
 		kit = List.of(
 			new ItemBuilder(Material.BOW).enchant(Enchant.INFINITY).unbreakable().build(),
@@ -107,6 +110,13 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 				}
 			}
 		});
+	}
+
+	@Override
+	public void end() {
+		armorStands.forEach(Entity::remove);
+
+		super.end();
 	}
 
 	@Override
@@ -136,8 +146,9 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 	@Override
 	protected void preStart() {
 		score = 0;
-		updateScore();
-		updateTime();
+		updateHologramPlayer();
+		updateHologramScore();
+		updateHologramTime();
 		give(kit);
 
 		for (Location location : spawnLocations) {
@@ -159,7 +170,7 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 
 	@Override
 	protected void update() {
-		updateTime();
+		updateHologramTime();
 		super.update();
 
 		Map<ArmorStand, Long> _activeStands = new HashMap<>(activeStands);
@@ -185,7 +196,9 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 					stand.getEquipment().setHelmet(new ItemStack(RandomUtils.randomElement(targetItems)), true);
 
 					EntityUtils.forcePacket(stand);
-					stand.teleport(getStandBaseLocation(stand).add(0, 1, 0));
+					Location location = getStandBaseLocation(stand).add(0, 1, 0);
+					stand.teleport(location);
+					new SoundBuilder(Sound.BLOCK_PISTON_EXTEND).volume(0.75).location(location).play();
 
 					activeStands.put(stand, getGameTicks());
 				}
@@ -193,21 +206,21 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 		}
 	}
 
-	@Override
-	public void end() {
-		armorStands.forEach(Entity::remove);
+	private void updateHologramPlayer() {
+		if (holoPlayer == null)
+			return;
 
-		super.end();
+		holoPlayer.setLine(0, "&e" + Nickname.of(getGamer()));
 	}
 
-	private void updateScore() {
+	private void updateHologramScore() {
 		if (holoScore == null)
 			return;
 
 		holoScore.setLine(0, "&3Score: &e" + score);
 	}
 
-	private void updateTime() {
+	private void updateHologramTime() {
 		if (holoTimeLeft == null)
 			return;
 
@@ -217,7 +230,6 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 		}
 	}
 
-	// TODO: SEEMS TO HAVE STOPPED WORKING, DEBUG NEEDED
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on(ProjectileHitEvent event) {
 		if (!(event.getEntity() instanceof Arrow arrow))
@@ -229,28 +241,15 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 		if (!Pugmas25.get().shouldHandle(player))
 			return;
 
-		send(player, "pugmas");
-
-		if (!isPlaying()) {
-			send(player, "playing = false");
+		if (!instance.isPlaying())
 			return;
-		}
 
-		if (getGamer() == null) {
-			send(player, "player = null");
-		}
-
-		if (!getGamer().getUniqueId().equals(player.getUniqueId())) {
-			send(player, "gamer = " + getGamer().getName());
+		Player gamer = instance.getGamer();
+		if (gamer == null || !gamer.getUniqueId().equals(player.getUniqueId()))
 			return;
-		}
-
-		send(player, "playing");
 
 		if (!(event.getHitEntity() instanceof ArmorStand armorStand))
 			return;
-
-		send(player, "hit armorstand");
 
 		boolean exists = false;
 		for (ArmorStand stand : activeStands.keySet()) {
@@ -260,8 +259,6 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 
 		if (!exists)
 			return;
-
-		send(player, "handling...");
 
 		event.setCancelled(true);
 		arrow.remove();
@@ -277,7 +274,7 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 				score -= 2;
 			}
 
-			updateScore();
+			updateHologramScore();
 		}
 
 		resetStand(armorStand);

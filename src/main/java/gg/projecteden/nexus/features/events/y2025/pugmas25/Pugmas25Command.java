@@ -33,6 +33,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.pugmas25.Advent25Config;
 import gg.projecteden.nexus.models.pugmas25.Advent25ConfigService;
 import gg.projecteden.nexus.models.pugmas25.Advent25Present;
@@ -247,6 +248,14 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 	@Permission(Group.ADMIN)
 	void slotMachine_reset() {
 		Pugmas25SlotMachine.get().reset();
+	}
+
+	@Path("whacamole debug")
+	@Permission(Group.ADMIN)
+	void whacAMole_debug() {
+		Pugmas25WhacAMole game = Pugmas25WhacAMole.get();
+		send("Playing = " + game.isPlaying());
+		send("Player = " + (game.getGamer() == null ? "null" : Nickname.of(game.getGamer())));
 	}
 
 	@Path("whacamole setup")
