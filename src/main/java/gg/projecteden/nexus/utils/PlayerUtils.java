@@ -224,7 +224,7 @@ public class PlayerUtils {
 			return new OnlinePlayers().filter(filter);
 		}
 
-		public static OnlinePlayers onlyStaff() {
+		public static OnlinePlayers staff() {
 			return where().filter(player -> Rank.of(player).isStaff() && Rank.of(player).isActive());
 		}
 

@@ -6,7 +6,6 @@ import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.NexusCommand.ReloadCondition;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
@@ -21,6 +20,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.Reloader.ReloadCondition;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;

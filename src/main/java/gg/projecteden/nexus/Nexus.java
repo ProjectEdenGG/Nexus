@@ -10,7 +10,6 @@ import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.ReflectionUtils;
 import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.api.mongodb.MongoService;
-import gg.projecteden.nexus.features.NexusCommand;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
 import gg.projecteden.nexus.features.discord.Discord;
@@ -32,6 +31,7 @@ import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.Reloader;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags;
@@ -277,7 +277,7 @@ public class Nexus extends JavaPlugin {
 		if (luckPerms == null)
 			return;
 
-		for (Player player : OnlinePlayers.onlyStaff().get()) {
+		for (Player player : OnlinePlayers.staff().get()) {
 			GeoIP geoip = new GeoIPService().get(player);
 			String message = " &c&l ! &c&l! &eReloading Nexus &c&l! &c&l!";
 			if (GeoIP.exists(geoip))
@@ -287,8 +287,8 @@ public class Nexus extends JavaPlugin {
 		}
 	}
 
-	public static boolean isMaintenanceQueued(){
-		return RebootCommand.isForcedRebootQueued() || NexusCommand.isReloadQueued();
+	public static boolean isMaintenanceQueued() {
+		return RebootCommand.isForcedRebootQueued() || Reloader.isReloadQueued();
 	}
 
 	private void setupConfig() {

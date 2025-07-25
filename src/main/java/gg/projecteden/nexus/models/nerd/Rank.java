@@ -155,7 +155,7 @@ public enum Rank implements IsColoredAndNamed {
 	}
 
 	public static List<Nerd> getOnlineStaff() {
-		return OnlinePlayers.onlyStaff().get().stream()
+		return OnlinePlayers.staff().get().stream()
 				.map(Nerd::of)
 				.sorted(Comparator.comparing(Nerd::getNickname))
 				.collect(Collectors.toList());
