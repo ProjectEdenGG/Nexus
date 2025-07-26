@@ -273,10 +273,10 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 		if (Nullables.isNotNullOrAir(headItem)) {
 			Material type = headItem.getType();
 			if (type == targetGood) {
-				new SoundBuilder(Sound.ENTITY_ARROW_HIT_PLAYER).location(getGamer()).volume(0.5).play();
+				new SoundBuilder(Sound.ENTITY_ARROW_HIT_PLAYER).location(gamer).volume(0.5).play();
 				score++;
 			} else if (type == targetBad) {
-				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO).location(getGamer()).volume(0.5).pitch(0.5).play();
+				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO).location(gamer).volume(0.5).pitch(0.5).play();
 				score -= 2;
 			}
 
