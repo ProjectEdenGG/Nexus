@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts.Pugmas25District;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.parchment.HasLocation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -43,12 +44,14 @@ public class Advent25Present implements HasLocation {
 	}
 
 	void sendPacket(Advent25User user) {
-		final ItemModelType itemModelType = user.hasCollected(day) ? ItemModelType.PUGMAS_PRESENT_ADVENT_OPENED : ItemModelType.PUGMAS_PRESENT_ADVENT;
-		ClientSideItemFrame.builder()
-			.location(getLocation())
-			.blockFace(BlockFace.UP)
-			.content(new ItemBuilder(itemModelType).build())
-			.invisible(true)
-			.send(user.getOnlinePlayer());
+		Tasks.wait(1, () -> {
+			final ItemModelType itemModelType = user.hasCollected(day) ? ItemModelType.PUGMAS_PRESENT_ADVENT_OPENED : ItemModelType.PUGMAS_PRESENT_ADVENT;
+			ClientSideItemFrame.builder()
+				.location(getLocation())
+				.blockFace(BlockFace.UP)
+				.content(new ItemBuilder(itemModelType).build())
+				.invisible(true)
+				.send(user.getOnlinePlayer());
+		});
 	}
 }
