@@ -191,6 +191,7 @@ public class RadioCommand extends CustomCommand {
 				}
 			}
 		}
+		configService.save(config);
 
 		send("Set " + radio.getId() + "'s world to " + world.getName());
 	}
