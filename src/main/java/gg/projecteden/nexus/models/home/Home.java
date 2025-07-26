@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationCon
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.OptionalLocation;
 import lombok.*;
 import org.bukkit.Location;
@@ -45,6 +46,9 @@ public class Home implements PlayerOwnedObject, OptionalLocation {
 		this.location = location;
 		this.locked = getOwner().isAutoLock() || Rank.of(this).isStaff();
 		this.item = item;
+
+		if (WorldGroup.EVENTS.contains(location.getWorld()) && !getOwner().getRank().isStaff())
+			throw new InvalidInputException("&cYou cannot set a home in this world");
 
 		validateName(name);
 
