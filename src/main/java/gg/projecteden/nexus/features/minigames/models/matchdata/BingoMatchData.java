@@ -119,7 +119,7 @@ public class BingoMatchData extends MatchData {
 			if (other == minigamer)
 				continue;
 
-			var otherData = matchData.getData(minigamer);
+			var otherData = matchData.getData(other);
 			for (int row = 0; row < otherData.getCompleted().length; row++)
 				for (int column = 0; column < otherData.getCompleted()[row].length; column++)
 					if (challenges[row][column] == challenge)
