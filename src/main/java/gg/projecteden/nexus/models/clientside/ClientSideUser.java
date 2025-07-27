@@ -5,11 +5,13 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ConcurrentLinkedQueueConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.nms.PacketUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -121,6 +123,11 @@ public class ClientSideUser implements PlayerOwnedObject {
 	}
 
 	private void spawn(IClientSideEntity<?,?,?> entity) {
+		if (entity.getUuid() == null) {
+			Nexus.warn("Cannot send entity with null uuid: " + entity.getType() + " " + StringUtils.xyzw(entity));
+			return;
+		}
+
 		final Player player = getOnlinePlayer();
 		PacketUtils.sendPacket(player, entity.getSpawnPackets(player));
 		update(entity);

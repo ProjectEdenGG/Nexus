@@ -67,6 +67,7 @@ public class ClientSidePainting implements IClientSideEntity<ClientSidePainting,
 		if (entity == null) {
 			entity = new Painting(EntityType.PAINTING, NMSUtils.toNMS(location.getWorld()));
 			id = entity.getId();
+			uuid = entity.getUUID();
 		}
 		entity.moveTo(location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch());
 		entity.setDirection(NMSUtils.toNMS(blockFace));

@@ -6,8 +6,8 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.clientside.models.ClientSideArmorStand;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21Collector;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content;
@@ -32,9 +32,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 public class BearFair21ClientsideContentManager implements Listener {
 	private static final ClientsideContentService contentService = new ClientsideContentService();
@@ -172,7 +176,7 @@ public class BearFair21ClientsideContentManager implements Listener {
 	}
 
 	@EventHandler
-	public void onLogin(PlayerLoginEvent event) {
+	public void onLogin(PlayerJoinEvent event) {
 		check(event.getPlayer());
 	}
 

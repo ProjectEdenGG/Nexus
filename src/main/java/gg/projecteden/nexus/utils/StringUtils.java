@@ -489,13 +489,15 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 			df.format(loc.getY()) + " &3z: &e" + df.format(loc.getZ());
 	}
 
-	public static String xyzw(Location loc) {
-		if (loc == null) return null;
+	public static String xyzw(HasLocation location) {
+		if (location == null) return null;
+		var loc = location.getLocation();
 		return (int) loc.getX() + " " + (int) loc.getY() + " " + (int) loc.getZ() + " " + loc.getWorld().getName();
 	}
 
-	public static String xyzpyw(Location loc) {
-		if (loc == null) return null;
+	public static String xyzpyw(HasLocation location) {
+		if (location == null) return null;
+		var loc = location.getLocation();
 		String coords = (int) loc.getX() + " " + (int) loc.getY() + " " + (int) loc.getZ();
 		if (loc.getYaw() != 0 || loc.getPitch() != 0)
 			coords += " " + df.format(loc.getYaw()) + " " + df.format(loc.getPitch());

@@ -48,7 +48,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -147,7 +147,7 @@ public class Pugmas25 extends EdenEvent {
 	}
 
 	@EventHandler
-	public void on(PlayerLoginEvent event) {
+	public void on(PlayerJoinEvent event) {
 		if (!shouldHandle(event.getPlayer()))
 			return;
 

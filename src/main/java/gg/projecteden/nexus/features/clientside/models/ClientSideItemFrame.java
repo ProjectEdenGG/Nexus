@@ -32,7 +32,12 @@ import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapCursor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -96,6 +101,7 @@ public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFram
 		if (entity == null) {
 			entity = new ItemFrame(EntityType.ITEM_FRAME, NMSUtils.toNMS(location.getWorld()));
 			id = entity.getId();
+			uuid = entity.getUUID();
 		}
 		entity.moveTo(location.getBlockX(), location.getBlockY(), location.getBlockZ(), 0, 0);
 		entity.setItem(NMSUtils.toNMS(content), true, makeSound);

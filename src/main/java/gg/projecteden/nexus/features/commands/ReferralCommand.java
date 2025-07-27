@@ -40,8 +40,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
@@ -405,7 +405,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onLogin(PlayerLoginEvent event) {
+	public void onLogin(AsyncPlayerPreLoginEvent event) {
 		String hostname = event.getHostname();
 		if (hostname.contains(":"))
 			hostname = hostname.split(":")[0];
@@ -415,7 +415,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 			hostname = Nexus.DOMAIN;
 
 		final String ip = hostname;
-		new ReferralService().edit(event.getPlayer(), referral -> {
+		new ReferralService().edit(event.getUniqueId(), referral -> {
 			referral.setIp(ip);
 
 			if (Nullables.isNullOrEmpty(referral.getOriginalIp()))

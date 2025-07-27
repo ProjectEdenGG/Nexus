@@ -30,7 +30,7 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.HashSet;
@@ -129,7 +129,7 @@ public class FlyCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	void on(PlayerLoginEvent event) {
+	void on(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		if (!Rank.of(player).isStaff())
 			return;

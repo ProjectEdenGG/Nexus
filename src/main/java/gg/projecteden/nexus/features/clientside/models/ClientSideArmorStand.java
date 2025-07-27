@@ -25,7 +25,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -94,6 +99,7 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 		if (entity == null) {
 			entity = new ArmorStand(EntityType.ARMOR_STAND, NMSUtils.toNMS(location.getWorld()));
 			id = entity.getId();
+			uuid = entity.getUUID();
 		}
 		entity.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 		entity.setSmall(small);
