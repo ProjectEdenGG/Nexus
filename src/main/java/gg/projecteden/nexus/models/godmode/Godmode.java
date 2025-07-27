@@ -19,6 +19,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
@@ -51,9 +53,18 @@ public class Godmode implements PlayerOwnedObject {
 
 		final Player player = getOnlinePlayer();
 
-		if (!Nerd.of(this).hasMoved())
+		Nerd nerd = Nerd.of(this);
+		if (!nerd.hasMoved())
 			if (player.getLocation().getY() >= -100) // If they logged out & back in while falling into the void, don't save them
 				return true;
+
+		LocalDateTime lastSurvivalDeath = nerd.getLastDeath(WorldGroup.SURVIVAL);
+		if (lastSurvivalDeath != null) {
+			var secondsSinceLastDeath = lastSurvivalDeath.until(LocalDateTime.now(), ChronoUnit.SECONDS);
+			if (secondsSinceLastDeath < 15)
+				if (WorldGroup.SURVIVAL == WorldGroup.of(player))
+					return true;
+		}
 
 		if (Vanish.isVanished(player))
 			return true;
