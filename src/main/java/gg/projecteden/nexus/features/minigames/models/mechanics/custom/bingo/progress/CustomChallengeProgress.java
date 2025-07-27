@@ -16,23 +16,23 @@ import java.util.Set;
 
 @Data
 @RequiredArgsConstructor
-public class CustomChallengeProgress implements IChallengeProgress {
+public class CustomChallengeProgress implements IChallengeProgress<CustomChallenge> {
 	@NonNull
 	private Minigamer minigamer;
-	private final Map<Challenge, Set<String>> progressMap = new HashMap<>();
+	private final Map<CustomChallenge, Set<String>> progressMap = new HashMap<>();
 
-	public Set<String> getProgress(Challenge challenge) {
+	public Set<String> getProgress(CustomChallenge challenge) {
 		return progressMap.computeIfAbsent(challenge, $ -> new LinkedHashSet<>());
 	}
 
 	public void complete(Challenge challenge, String task) {
-		getProgress(challenge).add(task);
+		getProgress(challenge.getChallenge()).add(task);
 		minigamer.getMatch().<BingoMatchData>getMatchData().check(minigamer);
 	}
 
 	@Override
-	public Set<String> getRemainingTasks(Challenge challenge) {
-		final Set<String> tasks = ((CustomChallenge) challenge.getChallenge()).getTasks();
+	public Set<String> getRemainingTasks(CustomChallenge challenge) {
+		final Set<String> tasks = challenge.getTasks();
 		final Set<String> progress = getProgress(challenge);
 
 		final LinkedHashSet<String> remaining = new LinkedHashSet<>(tasks);

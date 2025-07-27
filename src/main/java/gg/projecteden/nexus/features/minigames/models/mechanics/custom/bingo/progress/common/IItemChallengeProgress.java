@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.common;
 
-import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.Challenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.common.IItemChallenge;
 import gg.projecteden.nexus.utils.FuzzyItemStack;
 import gg.projecteden.nexus.utils.Nullables;
@@ -12,14 +11,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public interface IItemChallengeProgress extends IChallengeProgress {
+public interface IItemChallengeProgress extends IChallengeProgress<IItemChallenge> {
 
 	List<ItemStack> getItems();
 
 	String getTask();
 
 	@Override
-	default Set<String> getRemainingTasks(Challenge challenge) {
+	default Set<String> getRemainingTasks(IItemChallenge challenge) {
 		final int LIMIT = 5;
 		return getRemainingItems(challenge).stream().map(fuzzyItemStack -> {
 			String materials = fuzzyItemStack.getMaterials().stream()
@@ -34,8 +33,8 @@ public interface IItemChallengeProgress extends IChallengeProgress {
 		}).collect(Collectors.toSet());
 	}
 
-	default Set<FuzzyItemStack> getRemainingItems(Challenge challenge) {
-		final Set<FuzzyItemStack> required = ((IItemChallenge) challenge.getChallenge()).getItems();
+	default Set<FuzzyItemStack> getRemainingItems(IItemChallenge challenge) {
+		final Set<FuzzyItemStack> required = challenge.getItems();
 		final List<ItemStack> provided = getItems();
 		final Set<FuzzyItemStack> todo = new HashSet<>();
 

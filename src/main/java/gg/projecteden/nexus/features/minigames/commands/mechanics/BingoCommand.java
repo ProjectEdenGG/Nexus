@@ -26,6 +26,8 @@ import org.bukkit.Material;
 
 import java.util.stream.Collectors;
 
+import static gg.projecteden.api.common.utils.EnumUtils.prettyName;
+
 @SuppressWarnings("FieldCanBeLocal")
 public class BingoCommand extends CustomCommand {
 
@@ -106,13 +108,13 @@ public class BingoCommand extends CustomCommand {
 			for (Challenge[] array : matchData.getChallenges()) {
 				for (Challenge challenge : array) {
 					final ItemBuilder builder = challenge.getDisplayItem();
-					final IChallengeProgress progress = matchData.getProgress(minigamer, challenge);
-					if (progress.isCompleted(challenge))
+					final IChallengeProgress<?> progress = matchData.getProgress(minigamer, challenge);
+					if (progress.isCompleted(challenge.getChallenge()))
 						builder.glow().lore("&aCompleted");
 					else if (Minigames.getModifier() instanceof BingoLockout && matchData.anyOthersCompleted(minigamer, challenge))
-						builder.material(Material.BARRIER).lore("&cLocked").lore("", "&7This challenge is locked because", "&7another player has already completed it", "&7and Bingo Lockout mode is enabled");
+						builder.material(Material.BARRIER).name(prettyName(challenge.name())).lore("&cLocked", "", "&7This challenge is locked because", "&7another player has already completed it", "&7and Bingo Lockout mode is enabled");
 					else
-						builder.lore("&cRemaining Tasks").lore(progress.getRemainingTasks(challenge).stream().map(task -> "&7☐ " + task).collect(Collectors.toSet()));
+						builder.lore("&cRemaining Tasks").lore(progress.getRemainingTasks(challenge.getChallenge()).stream().map(task -> "&7☐ " + task).collect(Collectors.toSet()));
 
 					contents.set(row, column, ClickableItem.empty(builder.build()));
 					++column;

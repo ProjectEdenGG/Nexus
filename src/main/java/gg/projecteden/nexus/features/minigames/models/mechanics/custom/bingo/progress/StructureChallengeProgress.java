@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress;
 
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.Challenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.StructureChallenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.common.IChallengeProgress;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -16,14 +15,14 @@ import java.util.Set;
 
 @Data
 @RequiredArgsConstructor
-public class StructureChallengeProgress implements IChallengeProgress {
+public class StructureChallengeProgress implements IChallengeProgress<StructureChallenge> {
 	@NonNull
 	private Minigamer minigamer;
 	private final Set<StructureType> structures = new HashSet<>();
 
 	@Override
-	public Set<String> getRemainingTasks(Challenge challenge) {
-		final StructureType required = ((StructureChallenge) challenge.getChallenge()).getStructureType();
+	public Set<String> getRemainingTasks(StructureChallenge challenge) {
+		final StructureType required = challenge.getStructureType();
 		if (structures.contains(required))
 			return Collections.emptySet();
 

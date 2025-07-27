@@ -37,7 +37,7 @@ public class BingoMatchData extends MatchData {
 		private Location spawnpoint;
 		private Boolean[][] completed = new Boolean[SIZE][SIZE];
 		private Set<BingoLine> bingos = new HashSet<>();
-		private final Map<Class<? extends IChallengeProgress>, IChallengeProgress> progress = new HashMap<>();
+		private final Map<Class<? extends IChallengeProgress<?>>, IChallengeProgress<?>> progress = new HashMap<>();
 
 		public BingoMinigamerData(Minigamer minigamer) {
 			this.minigamer = minigamer;
@@ -96,11 +96,11 @@ public class BingoMatchData extends MatchData {
 		getData(minigamer).setSpawnpoint(location);
 	}
 
-	public <T extends IChallengeProgress> T getProgress(Minigamer minigamer, Challenge challenge) {
+	public <T extends IChallengeProgress<?>> T getProgress(Minigamer minigamer, Challenge challenge) {
 		return (T) getProgress(minigamer, challenge.getChallenge().getProgressClass());
 	}
 
-	public <T extends IChallengeProgress> T getProgress(Minigamer minigamer, Class<? extends T> clazz) {
+	public <T extends IChallengeProgress<?>> T getProgress(Minigamer minigamer, Class<? extends T> clazz) {
 		return (T) getData(minigamer).getProgress().computeIfAbsent(clazz, $ -> {
 			try {
 				return clazz.getDeclaredConstructor(Minigamer.class).newInstance(minigamer);
@@ -146,8 +146,8 @@ public class BingoMatchData extends MatchData {
 					if (anyOthersCompleted(minigamer, challenge))
 						continue;
 
-				final IChallengeProgress progress = matchData.getProgress(minigamer, challenge);
-				if (progress.isCompleted(challenge)) {
+				final IChallengeProgress<?> progress = matchData.getProgress(minigamer, challenge);
+				if (progress.isCompleted(challenge.getChallenge())) {
 					minigamer.getMatch().getMatchStatistics().award(BingoStatistics.CHALLENGES_COMPLETED, minigamer);
 					completed[row][col] = true;
 				}
@@ -213,7 +213,7 @@ public class BingoMatchData extends MatchData {
 		abstract boolean check(Boolean[][] completed, BingoLine line);
 	}
 
-	private enum BingoLine {
+	public enum BingoLine {
 		ROW_0,
 		ROW_1,
 		ROW_2,

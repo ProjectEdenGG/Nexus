@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress;
 
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.Challenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.BiomeChallenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.common.IChallengeProgress;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -17,15 +16,15 @@ import java.util.stream.Collectors;
 
 @Data
 @RequiredArgsConstructor
-public class BiomeChallengeProgress implements IChallengeProgress {
+public class BiomeChallengeProgress implements IChallengeProgress<BiomeChallenge> {
 	@NonNull
 	private Minigamer minigamer;
 	private final Set<Biome> biomes = new HashSet<>();
 
 	@SuppressWarnings({"removal", "UnstableApiUsage"})
 	@Override
-	public Set<String> getRemainingTasks(Challenge challenge) {
-		final Set<Biome> required = ((BiomeChallenge) challenge.getChallenge()).getBiomeTag().getValues();
+	public Set<String> getRemainingTasks(BiomeChallenge challenge) {
+		final Set<Biome> required = challenge.getBiomeTag().getValues();
 		for (Biome biome : biomes)
 			if (required.contains(biome))
 				return Collections.emptySet();

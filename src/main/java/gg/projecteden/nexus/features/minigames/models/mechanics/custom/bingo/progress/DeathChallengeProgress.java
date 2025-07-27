@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.pr
 
 import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.Challenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.DeathChallenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.common.IChallengeProgress;
 import lombok.Data;
@@ -16,14 +15,14 @@ import java.util.Set;
 
 @Data
 @RequiredArgsConstructor
-public class DeathChallengeProgress implements IChallengeProgress {
+public class DeathChallengeProgress implements IChallengeProgress<DeathChallenge> {
 	@NonNull
 	private Minigamer minigamer;
 	private final Set<DamageCause> damageCauses = new HashSet<>();
 
 	@Override
-	public Set<String> getRemainingTasks(Challenge challenge) {
-		final DamageCause required = ((DeathChallenge) challenge.getChallenge()).getDamageCause();
+	public Set<String> getRemainingTasks(DeathChallenge challenge) {
+		final DamageCause required = challenge.getDamageCause();
 		if (damageCauses.contains(required))
 			return Collections.emptySet();
 

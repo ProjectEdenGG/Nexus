@@ -6,7 +6,7 @@ import org.bukkit.Material;
 
 public interface IChallenge {
 
-	default Class<? extends IChallengeProgress> getProgressClass() {
+	default Class<? extends IChallengeProgress<?>> getProgressClass() {
 		final ProgressClass annotation = this.getClass().getAnnotation(ProgressClass.class);
 		if (annotation == null)
 			throw new InvalidInputException(this.getClass().getSimpleName() + " does not have an @ProgressClass annotation");
