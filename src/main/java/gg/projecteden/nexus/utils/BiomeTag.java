@@ -86,7 +86,7 @@ public enum BiomeTag {
 				if (Range.between(type.getMinTemperature(), type.getMaxTemperature()).contains(temperature))
 					return type;
 
-			throw new InvalidInputException("Biome " + StringUtils.camelCase(BiomeUtils.name(biome)) + " with temperature "
+			throw new InvalidInputException("Biome " + StringUtils.camelCase(biome.name()) + " with temperature "
 				+ StringUtils.getDf().format(temperature) + " does not match any biome climate type");
 		}
 	}
@@ -165,21 +165,21 @@ public enum BiomeTag {
 
 			switch (mode) {
 				case PREFIX:
-					for (Biome m : biomes)
-						if (BiomeUtils.name(m).startsWith(segment))
-							this.biomes.add(m);
+					for (Biome biome : biomes)
+						if (biome.name().startsWith(segment))
+							this.biomes.add(biome);
 					break;
 
 				case SUFFIX:
-					for (Biome m : biomes)
-						if (BiomeUtils.name(m).endsWith(segment))
-							this.biomes.add(m);
+					for (Biome biome : biomes)
+						if (biome.name().endsWith(segment))
+							this.biomes.add(biome);
 					break;
 
 				case CONTAINS:
-					for (Biome m : biomes)
-						if (BiomeUtils.name(m).contains(segment))
-							this.biomes.add(m);
+					for (Biome biome : biomes)
+						if (biome.name().contains(segment))
+							this.biomes.add(biome);
 					break;
 			}
 
@@ -215,21 +215,21 @@ public enum BiomeTag {
 
 			switch (mode) {
 				case PREFIX:
-					for (Biome m : biomes)
-						if (BiomeUtils.name(m).startsWith(segment))
-							this.biomes.remove(m);
+					for (Biome biome : biomes)
+						if (biome.name().startsWith(segment))
+							this.biomes.remove(biome);
 					break;
 
 				case SUFFIX:
-					for (Biome m : biomes)
-						if (BiomeUtils.name(m).endsWith(segment))
-							this.biomes.remove(m);
+					for (Biome biome : biomes)
+						if (biome.name().endsWith(segment))
+							this.biomes.remove(biome);
 					break;
 
 				case CONTAINS:
-					for (Biome m : biomes)
-						if (BiomeUtils.name(m).contains(segment))
-							this.biomes.remove(m);
+					for (Biome biome : biomes)
+						if (biome.name().contains(segment))
+							this.biomes.remove(biome);
 					break;
 			}
 

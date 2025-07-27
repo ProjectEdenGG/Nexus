@@ -200,7 +200,7 @@ public enum ScoreboardLine {
 		@Override
 		public String render(Player player) {
 			Location location = player.getLocation();
-			return "&3Biome: &e" + StringUtils.camelCase(location.getWorld().getBiome(location.getBlockX(), location.getBlockY(), location.getBlockZ()).name());
+			return "&3Biome: &e" + StringUtils.camelCase(location.getBlock().getBiome().name());
 		}
 	},
 
