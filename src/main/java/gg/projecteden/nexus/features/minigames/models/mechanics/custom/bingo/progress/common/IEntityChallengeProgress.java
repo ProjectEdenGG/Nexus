@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public interface IEntityChallengeProgress extends IChallengeProgress<IEntityChallenge> {
+	int LIMIT = 5;
 
 	String getAction();
 
@@ -23,9 +24,13 @@ public interface IEntityChallengeProgress extends IChallengeProgress<IEntityChal
 		if (remaining <= 0)
 			return Collections.emptySet();
 
-		final String entityTypes = required.stream()
+		String entityTypes = required.stream()
+			.limit(LIMIT)
 			.map(StringUtils::camelCase)
 			.collect(Collectors.joining(" or "));
+
+		if (required.size() > LIMIT)
+			entityTypes += " or etc.";
 
 		return Set.of(getAction() + " " + remaining + " " + entityTypes);
 	}

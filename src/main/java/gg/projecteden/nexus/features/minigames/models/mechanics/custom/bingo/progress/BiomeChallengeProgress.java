@@ -33,15 +33,15 @@ public class BiomeChallengeProgress implements IChallengeProgress<BiomeChallenge
 			if (required.contains(biome))
 				return Collections.emptySet();
 
-		String materials = required.stream()
+		String biomes = required.stream()
 			.limit(LIMIT)
 			.map(biome -> an(camelCase(biome.name())) + " biome")
 			.collect(Collectors.joining(" or "));
 
 		if (required.size() > LIMIT)
-			materials += " or etc.";
+			biomes += " or etc.";
 
-		return Set.of("Visit " + materials);
+		return Set.of("Visit " + biomes);
 	}
 
 }

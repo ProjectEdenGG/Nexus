@@ -15,8 +15,6 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.TicTacToeMatchDa
 import gg.projecteden.nexus.features.minigames.models.matchdata.shared.InARowBoard;
 import gg.projecteden.nexus.features.minigames.models.matchdata.shared.InARowBoard.InARowPiece;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -98,11 +96,7 @@ public final class TicTacToe extends TeamMechanic {
 		}
 
 		public Region getBackdropRegion(Arena arena) {
-			return arena.getRegion(getBackdropRegionName());
-		}
-
-		private @NotNull String getBackdropRegionName() {
-			return "cell_backdrop_" + name().toLowerCase();
+			return arena.getRegion("cell_backdrop_" + name().toLowerCase());
 		}
 
 		public void paste(Arena arena, TicTacToeSign sign) {
@@ -113,16 +107,8 @@ public final class TicTacToe extends TeamMechanic {
 		}
 
 		public void setBackdrop(Arena arena, Material material) {
-			var backdropRegion = getBackdropRegion(arena);
-			var allBlocks = arena.worldguard().getAllBlocks(backdropRegion);
-			var id = arena.getProtectedRegion(getBackdropRegionName()).getId();
-			Dev.GRIFFIN.debug(name() + " backdropRegion " + id + " " + backdropRegion + " has " + allBlocks.size() + " blocks");
-			Dev.GRIFFIN.debugCommand("rg sel " + id);
-			for (var block : allBlocks) {
-				var location = arena.worldguard().toLocation(block);
-				Dev.GRIFFIN.debug("Setting block at " + StringUtils.xyzw(location) + " to " + material);
-				location.getBlock().setType(material);
-			}
+			for (var block : arena.worldguard().getAllBlocks(getBackdropRegion(arena)))
+				arena.worldguard().toLocation(block).getBlock().setType(material);
 		}
 
 		public static TicTacToeCell from(InARowPiece piece) {
