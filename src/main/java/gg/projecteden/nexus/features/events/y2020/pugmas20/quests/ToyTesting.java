@@ -42,8 +42,8 @@ public class ToyTesting implements Listener {
 	private enum Toy {
 		BATTLESHIP(Pugmas20.location(930, 94, 321), "mgm join alphavsomega", Pugmas20User::setBattleship),
 		MASTERMIND(Pugmas20.location(930, 94, 320), "mgm join mastermind", Pugmas20User::setMasterMind),
-		CONNECT_4(Pugmas20.location(930, 94, 319), "warp connect4", Pugmas20User::setConnectFour),
-		TIC_TAC_TOE(Pugmas20.location(930, 94, 318), "warp tictactoe", Pugmas20User::setTicTacToe);
+		CONNECT_4(Pugmas20.location(930, 94, 319), "mgm join connect4", Pugmas20User::setConnectFour),
+		TIC_TAC_TOE(Pugmas20.location(930, 94, 318), "mgm join tictactoe", Pugmas20User::setTicTacToe);
 
 		@Getter
 		private final Location location;

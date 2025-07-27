@@ -27,6 +27,7 @@ import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.nickname.NicknameService;
+import gg.projecteden.nexus.utils.Debug.DebugType;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -173,6 +174,16 @@ public class PlayerUtils {
 
 		public void send(String message, Object... args) {
 			send(message.formatted(args));
+		}
+
+		public void runCommand(String commandNoSlash) {
+			if (isOnline())
+				PlayerUtils.runCommand(getOnlinePlayer(), commandNoSlash);
+		}
+
+		public void debugCommand(String commandNoSlash) {
+			if (Debug.isEnabled(getPlayer(), DebugType.MINIGAMES))
+				runCommand(commandNoSlash);
 		}
 
 		public void debug(Object message) {

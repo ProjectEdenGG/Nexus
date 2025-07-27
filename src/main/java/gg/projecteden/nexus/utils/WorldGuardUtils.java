@@ -48,7 +48,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Data
 public final class WorldGuardUtils {
@@ -294,7 +293,19 @@ public final class WorldGuardUtils {
 	}
 
 	public @NotNull List<BlockVector3> getAllBlocks(Region region) {
-		return StreamSupport.stream(region.spliterator(), false).collect(Collectors.toList());
+		List<BlockVector3> blocks = new ArrayList<>();
+		if (region instanceof CuboidRegion cuboidRegion) {
+			BlockVector3 min = cuboidRegion.getMinimumPoint();
+			BlockVector3 max = cuboidRegion.getMaximumPoint();
+			for (int x = min.x(); x <= max.x(); x++)
+				for (int y = min.y(); y <= max.y(); y++)
+					for (int z = min.z(); z <= max.z(); z++)
+						blocks.add(BlockVector3.at(x, y, z));
+
+			return blocks;
+		}
+
+		throw new UnsupportedOperationException("Unsupported region type " + region.getClass().getSimpleName());
 	}
 
 	public @NotNull Block getRandomBlock(@NotNull String region) {

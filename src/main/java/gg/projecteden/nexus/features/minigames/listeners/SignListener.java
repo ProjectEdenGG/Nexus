@@ -161,7 +161,6 @@ public class SignListener implements Listener {
 
 			switch (mechanicName) {
 				case "mob_arena" -> PlayerUtils.send(player, Minigames.PREFIX + "&cComing soon!");
-				case "tictactoe" -> PlayerUtils.runCommand(player, "warp " + mechanicName);
 				default -> {
 					MechanicType mechanic = null;
 					MechanicSubGroup subGroup = null;
@@ -260,7 +259,6 @@ public class SignListener implements Listener {
 
 		switch (mechanicName) {
 			case "mob_arena" -> PacketUtils.sendFakeDisplayItem(event.getPlayer(), outline, new ItemBuilder(ItemModelType.IMAGES_OUTLINE_3x2_COMING_SOON).dyeColor("#FD6A02").build());
-			case "tictactoe" -> PacketUtils.sendFakeDisplayItem(event.getPlayer(), outline, new ItemBuilder(ItemModelType.IMAGES_OUTLINE_1x2).dyeColor("#FD6A02").build());
 			default -> {
 				MechanicType mechanic = null;
 				MechanicSubGroup subGroup = null;

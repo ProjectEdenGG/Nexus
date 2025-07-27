@@ -1,40 +1,36 @@
 package gg.projecteden.nexus.features.minigames.commands.mechanics;
 
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.mechanics.Connect4;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.arenas.Connect4Arena;
 import gg.projecteden.nexus.features.minigames.models.matchdata.Connect4MatchData;
-import gg.projecteden.nexus.features.minigames.models.matchdata.Connect4MatchData.Board;
-import gg.projecteden.nexus.features.minigames.models.matchdata.Connect4MatchData.InARowPiece;
-import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
+import gg.projecteden.nexus.features.minigames.models.matchdata.Connect4MatchData.Connect4Board;
+import gg.projecteden.nexus.features.minigames.models.matchdata.shared.InARowBoard.InARowPiece;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import net.md_5.bungee.api.ChatColor;
 
 @HideFromWiki
-@Aliases("c4")
 @Permission(Group.ADMIN)
+@SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class Connect4Command extends CustomCommand {
-
-	private Minigamer minigamer;
+	private final Minigamer minigamer;
 	private Connect4 mechanic;
 
 	private Match match;
 	private Connect4Arena arena;
 	private Connect4MatchData matchData;
 
-	private static Board board;
+	private Connect4Board board;
 	private Team team;
 
 	Connect4Command(CommandEvent event) {
@@ -42,9 +38,9 @@ public class Connect4Command extends CustomCommand {
 		minigamer = Minigamer.of(player());
 
 		if (minigamer.isIn(Connect4.class)) {
-			mechanic = (Connect4) MechanicType.CONNECT4.get();
 			match = minigamer.getMatch();
 			arena = match.getArena();
+			mechanic = match.getMechanic();
 			matchData = match.getMatchData();
 			board = matchData.getBoard();
 			team = minigamer.getTeam();
@@ -52,25 +48,18 @@ public class Connect4Command extends CustomCommand {
 			error("You must be playing Connect 4 to use this command");
 	}
 
+	@TabCompleteIgnore
 	@Path("place <column>")
-	@Description("Place a piece")
 	void place(@Arg(min = 0, max = 6) int column) {
-		Minigames.debug("[Connect4] Placing...");
-		if (board.tryPlace(team, column)) {
-			match.getTasks().wait(TickTime.SECOND.x(2), () -> {
-				Minigames.debug("[Connect4] Next Turn");
-				mechanic.nextTurn(match);
-			});
-		}
-
+		board.tryPlace(team, column);
 	}
 
 	@Path("debug board")
 	@Description("Print the in-memory copy of the board to chat")
 	void debug_board() {
-		for (int row = 0; row < Board.HEIGHT; row++) {
+		for (int row = 0; row < board.getHeight(); row++) {
 			String columns = "&3Row &e" + row + "&3: ";
-			for (int column = 0; column < Board.WIDTH; column++) {
+			for (int column = 0; column < board.getWidth(); column++) {
 				InARowPiece piece = board.getPiece(row, column);
 				ChatColor color = ChatColor.WHITE;
 				if (!piece.isEmpty())

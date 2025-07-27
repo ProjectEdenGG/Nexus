@@ -83,11 +83,6 @@ public class ScrollableMechanicSubGroupMenu extends ScrollableInventoryProvider 
 
 			final MechanicType mechanic = iterator.next();
 			final Consumer<ItemClickData> consumer = e -> {
-				if (mechanic == MechanicType.TICTACTOE) {
-					PlayerUtils.runCommand(e.getPlayer(), "warp " + mechanic.name());
-					return;
-				}
-
 				final List<Arena> arenas = ArenaManager.getAllEnabled(mechanic);
 				boolean holdingInvite = ItemModelType.of(viewer.getItemOnCursor()) == ItemModelType.ENVELOPE_1;
 				if (arenas.isEmpty())

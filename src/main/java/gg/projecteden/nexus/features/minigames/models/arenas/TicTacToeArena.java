@@ -17,6 +17,10 @@ public class TicTacToeArena extends Arena {
 		super(map);
 	}
 
+	public @NotNull String getSchematicBaseName() {
+		return "minigames/tictactoe/";
+	}
+
 	@Override
 	public @NotNull String getRegionBaseName() {
 		return "tictactoe";
