@@ -115,19 +115,14 @@ public class ScrollableMechanicSubGroupMenu extends ScrollableInventoryProvider 
 	}
 
 	public static ItemBuilder getInviteItem(Player player) {
-		final ItemBuilder inviteItem = new ItemBuilder(ItemModelType.ENVELOPE_1)
-			.name("&eInvite")
-			.lore("")
-			.lore("&fClick a map to send an invite");
-
-		if (Rank.of(player).isStaff())
-			inviteItem.lore("&eShift+Click &fto invite all online players");
-
-		return inviteItem;
+		return ArenasMenu.getInviteItem(player);
 	}
 
 	private ItemStack getArenaItem(MechanicType mechanicType, boolean main) {
 		ItemBuilder item = main ? mechanicType.get().getMenuImage() : new ItemBuilder(ItemModelType.INVISIBLE);
+		if (Nullables.isNullOrAir(item))
+			return new ItemBuilder(ItemModelType.NULL).build();
+
 		return itemBuilder.apply(mechanicType, item).build();
 	}
 
