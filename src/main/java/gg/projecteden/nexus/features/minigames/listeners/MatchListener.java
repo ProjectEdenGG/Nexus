@@ -18,6 +18,8 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.Vani
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.perks.ParticleProjectile;
 import gg.projecteden.nexus.features.minigames.models.perks.common.ParticleProjectilePerk;
+import gg.projecteden.nexus.features.minigames.modifiers.BulletArrows;
+import gg.projecteden.nexus.features.minigames.modifiers.NoJumping;
 import gg.projecteden.nexus.features.regionapi.MovementType;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeavingRegionEvent;
 import gg.projecteden.nexus.features.vanish.Vanish;
@@ -230,7 +232,10 @@ public class MatchListener implements Listener {
 		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying())
 			return;
-		Minigames.getModifier().onProjectileSpawn(projectile);
+
+		if (Minigames.getModifier() instanceof BulletArrows)
+			projectile.setGravity(false);
+
 		PerkOwner owner = new PerkOwnerService().get(player);
 		owner.getEnabledPerksByClass(ParticleProjectilePerk.class).forEach(perk -> new ParticleProjectile(perk, projectile, minigamer.getMatch()));
 	}
@@ -330,7 +335,7 @@ public class MatchListener implements Listener {
 		if (!minigamer.isPlaying())
 			return;
 
-		boolean cancel = !Minigames.getModifier().canJump(minigamer);
+		boolean cancel = Minigames.getModifier() instanceof NoJumping;
 		event.setCancelled(cancel);
 	}
 

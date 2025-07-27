@@ -43,18 +43,18 @@ public enum Challenge {
 	// Breaking
 	BREAK_32_COAL_ORE(new BreakChallenge(new FuzzyItemStack(MaterialTag.COAL_ORES, 32))),
 	BREAK_16_IRON_ORE(new BreakChallenge(new FuzzyItemStack(MaterialTag.IRON_ORES, 16))),
-//	BREAK_5_DIAMOND_ORE(new BreakChallenge(new FuzzyItemStack(DIAMOND_ORE, 5))),
-BREAK_192_STONE(new BreakChallenge(new FuzzyItemStack(Material.STONE, 192))),
+	// BREAK_5_DIAMOND_ORE(new BreakChallenge(new FuzzyItemStack(DIAMOND_ORE, 5))),
+	BREAK_192_STONE(new BreakChallenge(new FuzzyItemStack(Material.STONE, 192))),
 	BREAK_16_SUGAR_CANE(new BreakChallenge(new FuzzyItemStack(Material.SUGAR_CANE, 16))),
 	BREAK_192_NETHERRACK(new BreakChallenge(new FuzzyItemStack(Material.NETHERRACK, 192))),
-//	BREAK_128_MAGMA_BLOCKS(new BreakChallenge(new FuzzyItemStack(MAGMA_BLOCK, 128))),
-BREAK_64_GLOWSTONE(new BreakChallenge(new FuzzyItemStack(Material.GLOWSTONE, 64))),
+	// BREAK_128_MAGMA_BLOCKS(new BreakChallenge(new FuzzyItemStack(MAGMA_BLOCK, 128))),
+	BREAK_64_GLOWSTONE(new BreakChallenge(new FuzzyItemStack(Material.GLOWSTONE, 64))),
 	BREAK_64_NETHER_BRICKS(new BreakChallenge(new FuzzyItemStack(Material.NETHER_BRICKS, 64))),
 	BREAK_64_BASALT(new BreakChallenge(new FuzzyItemStack(Material.BASALT, 64))),
 	BREAK_64_BLACKSTONE(new BreakChallenge(new FuzzyItemStack(Material.BLACKSTONE, 64))),
 	BREAK_32_SHROOMLIGHT(new BreakChallenge(new FuzzyItemStack(Material.SHROOMLIGHT, 32))),
-//	BREAK_1_ANCIENT_DEBRIS(new BreakChallenge(new FuzzyItemStack(ANCIENT_DEBRIS, 1))),
-BREAK_32_NETHER_GOLD_ORE(new BreakChallenge(new FuzzyItemStack(Material.NETHER_GOLD_ORE, 32))),
+	// BREAK_1_ANCIENT_DEBRIS(new BreakChallenge(new FuzzyItemStack(ANCIENT_DEBRIS, 1))),
+	BREAK_32_NETHER_GOLD_ORE(new BreakChallenge(new FuzzyItemStack(Material.NETHER_GOLD_ORE, 32))),
 	BREAK_16_SOUL_SAND(new BreakChallenge(new FuzzyItemStack(Material.SOUL_SAND, 16))),
 	BREAK_32_PODZOL(new BreakChallenge(new FuzzyItemStack(Material.PODZOL, 32))),
 	BREAK_32_GRAVEL(new BreakChallenge(new FuzzyItemStack(Material.GRAVEL, 32))),
@@ -63,12 +63,12 @@ BREAK_32_NETHER_GOLD_ORE(new BreakChallenge(new FuzzyItemStack(Material.NETHER_G
 	BREAK_32_BAMBOO(new BreakChallenge(new FuzzyItemStack(Material.BAMBOO, 32))),
 	BREAK_1_OF_EVERY_ORE(new BreakChallenge(FuzzyItemStack.ofEach(new MaterialTag(MaterialTag.MINERAL_ORES).exclude(Material.EMERALD_ORE).exclude(new MaterialTag("ORE", MatchMode.CONTAINS, MaterialTag.ALL_DEEPSLATE)), 1))),
 	BREAK_64_OF_COMMON_BLOCKS(new BreakChallenge(FuzzyItemStack.ofEach(new MaterialTag(Material.SAND, Material.GRAVEL, Material.STONE, Material.SHORT_GRASS, Material.DIRT, Material.NETHERRACK), 64))),
-//	BREAK_4_OBSIDIAN(new BreakChallenge(new FuzzyItemStack(OBSIDIAN, 4))),
+	// BREAK_4_OBSIDIAN(new BreakChallenge(new FuzzyItemStack(OBSIDIAN, 4))),
 	BREAK_64_LEAVES(new BreakChallenge(new FuzzyItemStack(MaterialTag.LEAVES, 64))),
 	BREAK_2_OF_DIFFERENT_TALL_FLOWERS(new BreakChallenge(new FuzzyItemStack(Set.of(Material.PEONY, Material.ROSE_BUSH, Material.LILAC), 2))),
 
 	// Placing
-//	PLACE_6_OF_EACH_RAIL(new PlaceChallenge(FuzzyItemStack.ofEach(new MaterialTag(RAIL, POWERED_RAIL, DETECTOR_RAIL, ACTIVATOR_RAIL), 6))),
+	// PLACE_6_OF_EACH_RAIL(new PlaceChallenge(FuzzyItemStack.ofEach(new MaterialTag(RAIL, POWERED_RAIL, DETECTOR_RAIL, ACTIVATOR_RAIL), 6))),
 	PLACE_9_STACKS_OF_BLOCKS(new PlaceChallenge(new FuzzyItemStack(MaterialTag.BLOCKS, 9 * 64))),
 	PLANT_16_OAK_SAPLINGS(new PlaceChallenge(new FuzzyItemStack(Material.OAK_SAPLING, 16))),
 
@@ -94,8 +94,8 @@ BREAK_32_NETHER_GOLD_ORE(new BreakChallenge(new FuzzyItemStack(Material.NETHER_G
 	CRAFT_2_COMPARATORS(new CraftChallenge(new FuzzyItemStack(Material.COMPARATOR, 2))),
 	CRAFT_A_JUKEBOX(new CraftChallenge(new FuzzyItemStack(Material.JUKEBOX, 1))),
 	CRAFT_8_TARGET_BLOCKS(new CraftChallenge(new FuzzyItemStack(Material.TARGET, 8))),
-//	CRAFT_DIFFERENT_TYPES_OF_BOOTS(new CraftChallenge(FuzzyItemStack.ofEach(new MaterialTag(MaterialTag.ALL_BOOTS).exclude(CHAINMAIL_BOOTS, NETHERITE_BOOTS), 1))),
-CRAFT_A_GOLDEN_APPLE(new CraftChallenge(new FuzzyItemStack(Material.GOLDEN_APPLE, 1))),
+	// CRAFT_DIFFERENT_TYPES_OF_BOOTS(new CraftChallenge(FuzzyItemStack.ofEach(new MaterialTag(MaterialTag.ALL_BOOTS).exclude(CHAINMAIL_BOOTS, NETHERITE_BOOTS), 1))),
+	CRAFT_A_GOLDEN_APPLE(new CraftChallenge(new FuzzyItemStack(Material.GOLDEN_APPLE, 1))),
 	CRAFT_8_ARMOR_STANDS(new CraftChallenge(new FuzzyItemStack(Material.ARMOR_STAND, 8))),
 	CRAFT_A_COMPASS(new CraftChallenge(new FuzzyItemStack(Material.COMPASS, 1))),
 	CRAFT_A_CLOCK(new CraftChallenge(new FuzzyItemStack(Material.CLOCK, 1))),
@@ -134,8 +134,8 @@ CRAFT_A_GOLDEN_APPLE(new CraftChallenge(new FuzzyItemStack(Material.GOLDEN_APPLE
 	CATCH_6_FISH_WITH_A_BUCKET(new ObtainChallenge(new FuzzyItemStack(MaterialTag.FISH_BUCKETS, 6))),
 	OBTAIN_8_FISH(new ObtainChallenge(new FuzzyItemStack(MaterialTag.RAW_FISH, 8))),
 	OBTAIN_CROPS(new ObtainChallenge(FuzzyItemStack.ofEach(new MaterialTag(Material.BEETROOT, Material.CARROT, Material.WHEAT, Material.POTATO, Material.APPLE), 1))),
-//	OBTAIN_1_OF_EVERY_DYE(new ObtainChallenge(FuzzyItemStack.ofEach(MaterialTag.DYES, 1))),
-OBTAIN_5_EMERALDS(new ObtainChallenge(new FuzzyItemStack(Material.EMERALD, 5))),
+	// OBTAIN_1_OF_EVERY_DYE(new ObtainChallenge(FuzzyItemStack.ofEach(MaterialTag.DYES, 1))),
+	OBTAIN_5_EMERALDS(new ObtainChallenge(new FuzzyItemStack(Material.EMERALD, 5))),
 	OBTAIN_16_SWEET_BERRIES(new ObtainChallenge(new FuzzyItemStack(Material.SWEET_BERRIES, 16))),
 	OBTAIN_8_ENDER_PEARLS(new ObtainChallenge(new FuzzyItemStack(Material.ENDER_PEARL, 8))),
 
@@ -163,7 +163,6 @@ OBTAIN_5_EMERALDS(new ObtainChallenge(new FuzzyItemStack(Material.EMERALD, 5))),
 	KILL_3_STRIDER(new KillChallenge(EntityType.STRIDER, 3)),
 	KILL_1_GHAST(new KillChallenge(EntityType.GHAST, 1)),
 
-
 	// Dying
 	DIE_BY_SUFFOCATION(new DeathChallenge(Material.GRAVEL, DamageCause.SUFFOCATION)),
 	//DIE_BY_STARVATION(new DeathChallenge(BOWL, DamageCause.STARVATION)), // Requires Hard Difficulty
@@ -180,11 +179,11 @@ OBTAIN_5_EMERALDS(new ObtainChallenge(new FuzzyItemStack(Material.EMERALD, 5))),
 	// Consuming
 	EAT_16_DRIED_KELP(new ConsumeChallenge(new FuzzyItemStack(Material.DRIED_KELP, 16))),
 	// TODO I dont think i can currently support this one
-//	EAT_4_DIFFERENT_COOKED_FOODS(new ConsumeChallenge(FuzzyItemStack.ofEach(new MaterialTag("COOKED_", MatchMode.PREFIX), 1))),
+	// EAT_4_DIFFERENT_COOKED_FOODS(new ConsumeChallenge(FuzzyItemStack.ofEach(new MaterialTag("COOKED_", MatchMode.PREFIX), 1))),
 	EAT_2_SUSPICIOUS_STEW(new ConsumeChallenge(new FuzzyItemStack(Material.SUSPICIOUS_STEW, 2))),
 	EAT_1_MUSHROOM_STEW(new ConsumeChallenge(new FuzzyItemStack(Material.MUSHROOM_STEW, 1))),
-//	DRINK_A_POTION(new ConsumeChallenge(new FuzzyItemStack(POTION, 1))),
-EAT_1_PUFFERFISH(new ConsumeChallenge(new FuzzyItemStack(Material.PUFFERFISH, 1))),
+	// DRINK_A_POTION(new ConsumeChallenge(new FuzzyItemStack(POTION, 1))),
+	EAT_1_PUFFERFISH(new ConsumeChallenge(new FuzzyItemStack(Material.PUFFERFISH, 1))),
 
 	// Biomes
 	FIND_A_SWAMP(new BiomeChallenge(BiomeTag.SWAMP)),
@@ -213,8 +212,8 @@ EAT_1_PUFFERFISH(new ConsumeChallenge(new FuzzyItemStack(Material.PUFFERFISH, 1)
 	TRADE_WITH_A_VILLAGER(new CustomChallenge(Material.VILLAGER_SPAWN_EGG, CustomTask.TRADE_WITH_A_VILLAGER)),
 	TRADE_WITH_A_PIGLIN(new CustomChallenge(Material.GOLD_INGOT, CustomTask.TRADE_WITH_A_PIGLIN)),
 	OBTAIN_DOLPHINS_GRACE(new CustomChallenge(Material.DOLPHIN_SPAWN_EGG, CustomTask.OBTAIN_DOLPHINS_GRACE)),
-//	DIE_BY_PUFFERFISH_POISON(new CustomChallenge(PUFFERFISH, CustomTask.CONSUME_A_PUFFERFISH, CustomTask.DIE_BY_PUFFERFISH_POISON)), a pufferfish can kill you, but not by the poison itself
-RIDE_A_HORSE(new CustomChallenge(Material.SADDLE, CustomTask.RIDE_A_HORSE)),
+	// DIE_BY_PUFFERFISH_POISON(new CustomChallenge(PUFFERFISH, CustomTask.CONSUME_A_PUFFERFISH, CustomTask.DIE_BY_PUFFERFISH_POISON)), a pufferfish can kill you, but not by the poison itself
+	RIDE_A_HORSE(new CustomChallenge(Material.SADDLE, CustomTask.RIDE_A_HORSE)),
 	;
 
 	private final IChallenge challenge;

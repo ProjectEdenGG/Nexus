@@ -39,6 +39,11 @@ public abstract class SingleplayerMechanic extends Mechanic {
 	}
 
 	@Override
+	public int getWinningScore(@NotNull Match match) {
+		return 0;
+	}
+
+	@Override
 	public void announceWinners(@NotNull Match match) {
 		// TODO
 	}

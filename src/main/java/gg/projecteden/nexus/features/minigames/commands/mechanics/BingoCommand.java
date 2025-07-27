@@ -3,12 +3,14 @@ package gg.projecteden.nexus.features.minigames.commands.mechanics;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.mechanics.Bingo;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.matchdata.BingoMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.Challenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.common.IChallengeProgress;
+import gg.projecteden.nexus.features.minigames.modifiers.BingoLockout;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
@@ -20,6 +22,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NonNull;
+import org.bukkit.Material;
 
 import java.util.stream.Collectors;
 
@@ -106,6 +109,8 @@ public class BingoCommand extends CustomCommand {
 					final IChallengeProgress progress = matchData.getProgress(minigamer, challenge);
 					if (progress.isCompleted(challenge))
 						builder.glow().lore("&aCompleted");
+					else if (Minigames.getModifier() instanceof BingoLockout && matchData.anyOthersCompleted(minigamer, challenge))
+						builder.material(Material.BARRIER).lore("&cLocked").lore("", "&7This challenge is locked because", "&7another player has already completed it", "&7and Bingo Lockout mode is enabled");
 					else
 						builder.lore("&cRemaining Tasks").lore(progress.getRemainingTasks(challenge).stream().map(task -> "&7☐ " + task).collect(Collectors.toSet()));
 

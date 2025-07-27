@@ -7,10 +7,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 public class JumpBoost implements MinigameModifier {
-	@Override
-	public void afterLoadout(@NotNull Minigamer minigamer) {
-		minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.JUMP_BOOST).infinite().amplifier(2).ambient(true).icon(true));
-	}
 
 	@Override
 	public @NotNull String getName() {
@@ -21,4 +17,10 @@ public class JumpBoost implements MinigameModifier {
 	public @NotNull String getDescription() {
 		return "Gives everyone jump boost";
 	}
+
+	@Override
+	public void afterLoadout(@NotNull Minigamer minigamer) {
+		minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.JUMP_BOOST).infinite().amplifier(2).ambient(true).icon(true));
+	}
+
 }

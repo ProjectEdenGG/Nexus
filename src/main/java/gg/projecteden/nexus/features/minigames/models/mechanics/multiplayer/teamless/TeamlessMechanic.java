@@ -32,7 +32,7 @@ public abstract class TeamlessMechanic extends MultiplayerMechanic {
 			return true;
 		}
 
-		int winningScore = match.getArena().getCalculatedWinningScore(match);
+		int winningScore = getWinningScore(match);
 		if (winningScore > 0)
 			for (Minigamer minigamer : match.getAliveMinigamers())
 				if (minigamer.getScore() >= winningScore) {
@@ -41,6 +41,11 @@ public abstract class TeamlessMechanic extends MultiplayerMechanic {
 				}
 
 		return false;
+	}
+
+	@Override
+	public int getWinningScore(@NotNull Match match) {
+		return match.getArena().getCalculatedWinningScore(match);
 	}
 
 	@Override

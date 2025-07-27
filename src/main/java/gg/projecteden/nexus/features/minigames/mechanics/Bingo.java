@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.Utils.MinMaxResult;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.events.FixedCraftItemEvent;
 import gg.projecteden.nexus.features.listeners.events.GolemBuildEvent.IronGolemBuildEvent;
 import gg.projecteden.nexus.features.listeners.events.GolemBuildEvent.SnowGolemBuildEvent;
@@ -32,6 +33,8 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.pro
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.TameChallengeProgress;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessVanillaMechanic;
 import gg.projecteden.nexus.features.minigames.models.statistics.BingoStatistics;
+import gg.projecteden.nexus.features.minigames.modifiers.BingoBlackout;
+import gg.projecteden.nexus.features.minigames.modifiers.BingoLockout;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -103,6 +106,32 @@ public final class Bingo extends TeamlessVanillaMechanic {
 	public final int worldDiameter = 10000;
 	@Getter
 	public final String worldName = "bingo";
+
+	@Override
+	public int getSeconds(Match match) {
+		if (Minigames.getModifier() instanceof BingoBlackout)
+			return 0;
+
+		return super.getSeconds(match);
+	}
+
+	@Override
+	public boolean shouldBeOver(@NotNull Match match) {
+		if (Minigames.getModifier() instanceof BingoBlackout)
+			for (Minigamer minigamer : match.getAliveMinigamers())
+				if (minigamer.getScore() == 12)
+					return true;
+
+		return super.shouldBeOver(match);
+	}
+
+	@Override
+	public int getWinningScore(@NotNull Match match) {
+		if (Minigames.getModifier() instanceof BingoLockout)
+			return 1;
+
+		return super.getWinningScore(match);
+	}
 
 	@Override
 	public void onStart(@NotNull MatchStartEvent event) {
@@ -222,7 +251,17 @@ public final class Bingo extends TeamlessVanillaMechanic {
 		final BingoMatchData matchData = minigamer.getMatch().getMatchData();
 		final BreakChallengeProgress progress = matchData.getProgress(minigamer, BreakChallengeProgress.class);
 
-		progress.getItems().add(new ItemStack(event.getBlock().getType(), 1));
+		var type = event.getBlock().getType();
+		if (type == Material.POTATOES) type = Material.POTATO;
+		if (type == Material.CARROTS) type = Material.CARROT;
+		if (type.name().contains("WALL_TORCH")) type = Material.valueOf(type.name().replace("WALL_TORCH", "TORCH"));
+
+		if (!type.isItem()) {
+			Nexus.warn("[Minigames] [Bingo] Cannot log break progress for " + type.name() + " as it is not an item");
+			return;
+		}
+
+		progress.getItems().add(new ItemStack(type, 1));
 		matchData.check(minigamer);
 	}
 

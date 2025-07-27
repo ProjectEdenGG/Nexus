@@ -7,6 +7,17 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 public class ModernCombat implements MinigameModifier {
+
+	@Override
+	public @NotNull String getName() {
+		return "Modern Combat";
+	}
+
+	@Override
+	public @NotNull String getDescription() {
+		return "Disables spam-clicking weapons";
+	}
+
 	@Override
 	public void afterLoadout(@NotNull Minigamer minigamer) {
 		minigamer.getOnlinePlayer().getInventory().forEach(itemStack -> {
@@ -19,13 +30,4 @@ public class ModernCombat implements MinigameModifier {
 		});
 	}
 
-	@Override
-	public @NotNull String getName() {
-		return "Modern Combat";
-	}
-
-	@Override
-	public @NotNull String getDescription() {
-		return "Disables spam-clicking weapons";
-	}
 }

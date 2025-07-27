@@ -490,7 +490,7 @@ public class Match implements ForwardingAudience {
 	}
 
 	private void startTimer() {
-		timer = new MatchTimer(this, arena.getSeconds());
+		timer = new MatchTimer(this, getMechanic().getSeconds(this));
 	}
 
 	private void stopTimer() {

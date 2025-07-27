@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models.matchdata;
 
+import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.mechanics.Bingo;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
@@ -9,6 +10,7 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.Cha
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.common.IChallenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.common.IChallengeProgress;
 import gg.projecteden.nexus.features.minigames.models.statistics.BingoStatistics;
+import gg.projecteden.nexus.features.minigames.modifiers.BingoLockout;
 import gg.projecteden.nexus.utils.LocationUtils;
 import lombok.Data;
 import org.bukkit.Location;
@@ -109,6 +111,25 @@ public class BingoMatchData extends MatchData {
 		});
 	}
 
+	public boolean anyOthersCompleted(Minigamer minigamer, Challenge challenge) {
+		Match match = minigamer.getMatch();
+		BingoMatchData matchData = match.getMatchData();
+
+		for (Minigamer other : match.getAliveMinigamers()) {
+			if (other == minigamer)
+				continue;
+
+			var otherData = matchData.getData(minigamer);
+			for (int row = 0; row < otherData.getCompleted().length; row++)
+				for (int column = 0; column < otherData.getCompleted()[row].length; column++)
+					if (challenges[row][column] == challenge)
+						if (otherData.getCompleted()[row][column])
+							return true;
+		}
+
+		return false;
+	}
+
 	public void check(Minigamer minigamer) {
 		final Boolean[][] completed = getData(minigamer).getCompleted();
 
@@ -121,12 +142,15 @@ public class BingoMatchData extends MatchData {
 				if (completed[row][col])
 					continue;
 
+				if (Minigames.getModifier() instanceof BingoLockout)
+					if (anyOthersCompleted(minigamer, challenge))
+						continue;
+
 				final IChallengeProgress progress = matchData.getProgress(minigamer, challenge);
 				if (progress.isCompleted(challenge)) {
 					minigamer.getMatch().getMatchStatistics().award(BingoStatistics.CHALLENGES_COMPLETED, minigamer);
 					completed[row][col] = true;
 				}
-
 
 				var lines = Arrays.asList(BingoLine.ofRow(row), BingoLine.ofCol(col),
 					BingoLine.DIAGONAL_1, BingoLine.DIAGONAL_2); // Always check these because im lazy

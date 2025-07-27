@@ -7,6 +7,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 public class Blindness implements MinigameModifier {
+
 	@Override
 	public @NotNull String getName() {
 		return "Blindness";
@@ -21,4 +22,5 @@ public class Blindness implements MinigameModifier {
 	public void afterLoadout(@NotNull Minigamer minigamer) {
 		minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).infinite().ambient(true).icon(true));
 	}
+
 }

@@ -19,6 +19,16 @@ public class NoKnockback implements MinigameModifier {
 	private static final UUID KNOCKBACK_B = UUID.fromString("aa13deba-c837-46fc-94de-c122178a11c2");
 
 	@Override
+	public @NotNull String getName() {
+		return "No Knockback";
+	}
+
+	@Override
+	public @NotNull String getDescription() {
+		return "Removes knockback";
+	}
+
+	@Override
 	public void afterLoadout(@NotNull Minigamer minigamer) {
 		minigamer.getOnlinePlayer().getInventory().forEach(itemStack -> {
 			if (itemStack == null) return;
@@ -42,13 +52,4 @@ public class NoKnockback implements MinigameModifier {
 		});
 	}
 
-	@Override
-	public @NotNull String getName() {
-		return "No Knockback";
-	}
-
-	@Override
-	public @NotNull String getDescription() {
-		return "Removes knockback";
-	}
 }

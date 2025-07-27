@@ -16,6 +16,16 @@ public class HalfKnockback implements MinigameModifier {
 	private static final UUID KNOCKBACK = UUID.fromString("aa13deba-c837-46fc-94de-c122178a11c3");
 
 	@Override
+	public @NotNull String getName() {
+		return "Half Knockback";
+	}
+
+	@Override
+	public @NotNull String getDescription() {
+		return "Reduces knockback by one half";
+	}
+
+	@Override
 	public void afterLoadout(@NotNull Minigamer minigamer) {
 		minigamer.getOnlinePlayer().getInventory().forEach(itemStack -> {
 			if (itemStack == null) return;
@@ -28,13 +38,4 @@ public class HalfKnockback implements MinigameModifier {
 		});
 	}
 
-	@Override
-	public @NotNull String getName() {
-		return "Half Knockback";
-	}
-
-	@Override
-	public @NotNull String getDescription() {
-		return "Reduces knockback by one half";
-	}
 }

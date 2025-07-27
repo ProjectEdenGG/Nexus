@@ -3,16 +3,16 @@ package gg.projecteden.nexus.features.minigames.modifiers;
 import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifier;
 import org.jetbrains.annotations.NotNull;
 
-public class NoModifier implements MinigameModifier {
+public class BingoBlackout implements MinigameModifier {
 
 	@Override
 	public @NotNull String getName() {
-		return "No Modifier";
+		return "Bingo Blackout";
 	}
 
 	@Override
 	public @NotNull String getDescription() {
-		return "Does nothing";
+		return "Time limit removed, first to complete entire board wins";
 	}
 
 }

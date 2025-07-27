@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer;
 
+import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.chat.events.PublicChatEvent;
 import gg.projecteden.nexus.features.minigames.models.Match;
@@ -70,7 +71,10 @@ public interface VanillaMechanic<T> extends Listener {
 	default void onStart(@NotNull MatchStartEvent event) {
 		getWorld().setTime(0);
 		getWorld().getEntities().forEach(entity -> {
-			if (!(entity instanceof HumanEntity))
+			Location location = entity.getLocation();
+			Region region = event.getMatch().getArena().getRegion();
+			boolean isInSpawn = region.contains(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+			if (!(entity instanceof HumanEntity) && !isInSpawn)
 				entity.remove();
 		});
 

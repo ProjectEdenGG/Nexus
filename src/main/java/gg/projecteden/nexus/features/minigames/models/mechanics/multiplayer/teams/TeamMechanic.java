@@ -281,7 +281,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 			return true;
 		}
 
-		int winningScore = match.getArena().getCalculatedWinningScore(match);
+		int winningScore = getWinningScore(match);
 		if (winningScore > 0)
 			for (Team team : teams)
 				if (team.getScore(match) >= winningScore) {
@@ -291,6 +291,11 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 				}
 
 		return false;
+	}
+
+	@Override
+	public int getWinningScore(@NotNull Match match) {
+		return match.getArena().getCalculatedWinningScore(match);
 	}
 
 	public void onTurnStart(@NotNull Match match, @NotNull Team team) {
