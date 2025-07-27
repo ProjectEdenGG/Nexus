@@ -18,7 +18,7 @@ public class DownloadPlotCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		Discord.adminLog(nickname() + " has downloaded their plot as a schematic at " + StringUtils.getShortLocationString(location()));
+		Discord.adminLog(nickname() + " has downloaded their plot as a schematic at " + StringUtils.xyzw(location()));
 		runCommandAsOp("plot download");
 	}
 }

@@ -199,7 +199,7 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		adventConfig.setLootOrigin(block.getLocation());
 		adventService.save(adventConfig);
 
-		send(PREFIX + "lootOrigin configured at " + StringUtils.getCoordinateString(adventConfig.getLootOrigin()));
+		send(PREFIX + "lootOrigin configured at " + StringUtils.xyz(adventConfig.getLootOrigin()));
 	}
 
 	@Path("advent config setDay <day>")

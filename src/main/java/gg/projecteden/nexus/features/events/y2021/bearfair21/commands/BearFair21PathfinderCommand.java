@@ -21,9 +21,17 @@ import gg.projecteden.nexus.models.bearfair21.BearFair21WebConfig.Route;
 import gg.projecteden.nexus.models.bearfair21.BearFair21WebConfig.Web;
 import gg.projecteden.nexus.models.bearfair21.BearFair21WebConfigService;
 import gg.projecteden.nexus.models.particle.ParticleService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.Distance;
+import gg.projecteden.nexus.utils.GlowUtils;
 import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
+import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldEditUtils;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -36,7 +44,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @Disabled
 @HideFromWiki
@@ -59,7 +72,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 			send(" | Nodes: " + web.getNodes().size());
 
 			web.getNodes().forEach(node -> {
-				send(" | - Loc: " + StringUtils.getShortLocationString(node.getLocation()));
+				send(" | - Loc: " + StringUtils.xyzw(node.getLocation()));
 				send(" | - Rad: " + node.getRadius());
 				send(" | - Neighbors: " + node.getNeighbors().keySet().size());
 				send(" | ");
@@ -110,7 +123,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 		Mob mob = (Mob) BearFair21PathfinderHelper.getSelectedEntity();
 		Pathfinder pathfinder = mob.getPathfinder();
 		pathfinder.moveTo(random.getPathLocation());
-		send("pathfinding to: " + StringUtils.getShortLocationString(random.getPathLocation()));
+		send("pathfinding to: " + StringUtils.xyzw(random.getPathLocation()));
 
 		GlowUtils.glow(location.getBlock(), TickTime.SECOND.x(10), player());
 	}
@@ -254,7 +267,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 
 		if (type.equals(Material.LIME_CONCRETE_POWDER) && selectedNode == null) {
 			BearFair21PathfinderHelper.setSelectedLoc(currentNode.getLocation());
-			send(player, "&aSelected node at " + StringUtils.getShortLocationString(currentLoc));
+			send(player, "&aSelected node at " + StringUtils.xyzw(currentLoc));
 
 		} else if (type.equals(Material.PURPLE_CONCRETE_POWDER) && selectedNode != null) {
 			double distance = Distance.distance(selectedNode, currentNode).get();
@@ -342,7 +355,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 		}
 
 		if (Material.LIME_CONCRETE_POWDER.equals(type)) {
-			send(player, "&2Unselected node at " + StringUtils.getShortLocationString(selectedNode.getLocation()));
+			send(player, "&2Unselected node at " + StringUtils.xyzw(selectedNode.getLocation()));
 			BearFair21PathfinderHelper.setSelectedLoc(null);
 
 		} else if (Material.PURPLE_CONCRETE_POWDER.equals(type)) {

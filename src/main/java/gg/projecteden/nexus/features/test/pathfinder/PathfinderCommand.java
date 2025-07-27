@@ -15,8 +15,13 @@ import gg.projecteden.nexus.models.webs.WebConfig.Node;
 import gg.projecteden.nexus.models.webs.WebConfig.Route;
 import gg.projecteden.nexus.models.webs.WebConfig.Web;
 import gg.projecteden.nexus.models.webs.WebConfigService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldEditUtils;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -52,7 +57,7 @@ public class PathfinderCommand extends CustomCommand implements Listener {
 			send(" | Nodes: " + web.getNodes().size());
 
 			web.getNodes().forEach(node -> {
-				send(" | - Loc: " + StringUtils.getShortLocationString(node.getLocation()));
+				send(" | - Loc: " + StringUtils.xyzw(node.getLocation()));
 				send(" | - Rad: " + node.getRadius());
 				send(" | - Neighbors: " + node.getNeighbors().keySet().size());
 				send(" | ");
@@ -125,7 +130,7 @@ public class PathfinderCommand extends CustomCommand implements Listener {
 
 		if (type.equals(Material.LIME_CONCRETE_POWDER) && selectedNode == null) {
 			Pathfinder.setSelectedLoc(currentNode.getLocation());
-			send(player, "&aSelected node at " + StringUtils.getShortLocationString(currentLoc));
+			send(player, "&aSelected node at " + StringUtils.xyzw(currentLoc));
 
 		} else if (type.equals(Material.PURPLE_CONCRETE_POWDER) && selectedNode != null) {
 			Location selectedLoc = selectedNode.getLocation();
@@ -207,7 +212,7 @@ public class PathfinderCommand extends CustomCommand implements Listener {
 		}
 
 		if (Material.LIME_CONCRETE_POWDER.equals(type)) {
-			send(player, "&2Unselected node at " + StringUtils.getShortLocationString(selectedNode.getLocation()));
+			send(player, "&2Unselected node at " + StringUtils.xyzw(selectedNode.getLocation()));
 			Pathfinder.setSelectedLoc(null);
 
 		} else if (Material.PURPLE_CONCRETE_POWDER.equals(type)) {

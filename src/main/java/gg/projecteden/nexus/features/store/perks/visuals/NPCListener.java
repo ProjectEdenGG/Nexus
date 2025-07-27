@@ -79,7 +79,7 @@ public class NPCListener implements Listener {
 			event.setCancelled(true);
 			PlayerUtils.send(owner, "&cNPCs cannot be teleported across worlds");
 			Nexus.warn("Preventing NPC cross-world teleport: " + event.getNPC().getId() + " from "
-					+ StringUtils.getShortLocationString(event.getFrom()) + " to " + StringUtils.getShortLocationString(event.getTo()));
+					+ StringUtils.xyzw(event.getFrom()) + " to " + StringUtils.xyzw(event.getTo()));
 			return;
 		}
 
@@ -95,7 +95,7 @@ public class NPCListener implements Listener {
 		event.setCancelled(true);
 		PlayerUtils.send(owner, "&cYou cannot teleport NPCs here");
 		Nexus.warn("Preventing NPC teleport: " + event.getNPC().getId() + " from "
-				+ StringUtils.getShortLocationString(event.getFrom()) + " to " + StringUtils.getShortLocationString(event.getTo()));
+				+ StringUtils.xyzw(event.getFrom()) + " to " + StringUtils.xyzw(event.getTo()));
 	}
 
 	@EventHandler
@@ -120,7 +120,7 @@ public class NPCListener implements Listener {
 		event.setCancelled(true);
 		PlayerUtils.send(owner, "&cYou cannot teleport NPCs here");
 		Nexus.warn("Preventing NPC spawn: " + event.getNPC().getId() + " from "
-				+ StringUtils.getShortLocationString(event.getNPC().getStoredLocation()) + " to " + StringUtils.getShortLocationString(event.getLocation()));
+				+ StringUtils.xyzw(event.getNPC().getStoredLocation()) + " to " + StringUtils.xyzw(event.getLocation()));
 	}
 
 }

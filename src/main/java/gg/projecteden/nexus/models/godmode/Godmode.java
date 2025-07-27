@@ -11,7 +11,12 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -36,7 +41,7 @@ public class Godmode implements PlayerOwnedObject {
 	}
 
 	public void setEnabled(boolean enabled) {
-		IOUtils.fileAppend("cheats", getNickname() + " " + (enabled ? "enabled" : "disabled") + " god at " + StringUtils.getShortLocationString(getLocation()));
+		IOUtils.fileAppend("cheats", getNickname() + " " + (enabled ? "enabled" : "disabled") + " god at " + StringUtils.xyzw(getLocation()));
 		this.enabled = enabled;
 	}
 

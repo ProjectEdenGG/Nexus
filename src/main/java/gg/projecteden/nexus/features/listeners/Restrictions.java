@@ -265,7 +265,7 @@ public class Restrictions implements Listener {
 			return;
 
 		PlayerUtils.send(player, "&cInappropriate sign content");
-		String location = "(" + StringUtils.getShortLocationString(event.getBlock().getLocation()) + ")";
+		String location = "(" + StringUtils.xyzw(event.getBlock().getLocation()) + ")";
 		String message = "&cSign content by " + Nickname.of(player) + " was censored: &e" + String.join(", ", lines) + " " + location;
 		Broadcast.staff().prefix("Censor").message(message).send();
 	}

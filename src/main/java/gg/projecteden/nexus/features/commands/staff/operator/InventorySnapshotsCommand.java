@@ -81,7 +81,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 			String reasonString = snapshot.getReason().getColor() + camelCase(snapshot.getReason());
 			return json(index + " &e" + timestamp + " &7- &3Reason: &e" + reasonString + "&3, World: &e" + worldName)
 					.hover("&3Time since: &e" + Timespan.of(snapshot.getTimestamp()).format())
-					.hover("&3Location: &e" + StringUtils.getShortLocationString(snapshot.getLocation()))
+					.hover("&3Location: &e" + StringUtils.xyzw(snapshot.getLocation()))
 					.command("/inventorysnapshots view " + history.getName() + " " + timestampIso);
 		};
 		new Paginator<InventorySnapshot>()
@@ -131,7 +131,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 			String timeSince = Timespan.of(snapshot.getTimestamp()).format();
 			return json(index + " &e" + name + " &7- " + distance + "m / " + timeSince + " ago")
 					.hover("&eClick to teleport")
-					.command("/tppos " + StringUtils.getShortLocationString(snapshot.getLocation()));
+					.command("/tppos " + StringUtils.xyzw(snapshot.getLocation()));
 		};
 
 		new Paginator<InventorySnapshot>()
@@ -182,7 +182,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 			ItemStack info = new ItemBuilder(Material.BOOK).name("&eInfo")
 				.lore("&3Reason: &e" + snapshot.getReason().getColor() + StringUtils.camelCase(snapshot.getReason()))
 				.lore("&3Time: &e" + TimeUtils.shortDateTimeFormat(snapshot.getTimestamp()))
-				.lore("&3Location: &e" + StringUtils.getShortLocationString(snapshot.getLocation()))
+				.lore("&3Location: &e" + StringUtils.xyzw(snapshot.getLocation()))
 				.lore("&3Levels: &e" + snapshot.getLevel())
 				.loreize(false)
 				.build();

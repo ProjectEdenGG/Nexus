@@ -70,7 +70,7 @@ public class Easter22Command extends IEventCommand {
 		send(PREFIX + "Most found eggs");
 		new Paginator<Location>()
 			.values(Utils.sortByValueReverse(counts).keySet())
-			.formatter((location, index) -> json(index + " &e" + StringUtils.getCoordinateString(location) + " &7- " + counts.get(location))
+			.formatter((location, index) -> json(index + " &e" + StringUtils.xyz(location) + " &7- " + counts.get(location))
 				.command(StringUtils.getTeleportCommand(location))
 				.hover("&eClick to teleport")
 			)

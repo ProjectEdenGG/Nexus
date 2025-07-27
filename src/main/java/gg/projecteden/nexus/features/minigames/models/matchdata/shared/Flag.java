@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.minigames.models.matchdata;
+package gg.projecteden.nexus.features.minigames.models.matchdata.shared;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;

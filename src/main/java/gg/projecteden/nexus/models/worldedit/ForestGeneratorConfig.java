@@ -12,10 +12,19 @@ import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.events.DebugDotCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
-import lombok.*;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -26,7 +35,11 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Data
@@ -75,7 +88,7 @@ public class ForestGeneratorConfig implements DatabaseObject {
 				location.setY(4);
 				final var regions = new WorldGuardUtils(location).getRegionsLikeAt("tree_\\d+", location);
 				if (regions.isEmpty())
-					throw new InvalidInputException("Unable to determine id for tree at " + StringUtils.getShortLocationString(location));
+					throw new InvalidInputException("Unable to determine id for tree at " + StringUtils.xyzw(location));
 
 				return new Tree(Integer.parseInt(regions.iterator().next().getId().replace("tree_", "")));
 
@@ -144,7 +157,7 @@ public class ForestGeneratorConfig implements DatabaseObject {
 						} catch (StackOverflowError ignore) {}
 
 					if (tree == null)
-						throw new InvalidInputException("Unable to determine id for tree at " + StringUtils.getShortLocationString(start));
+						throw new InvalidInputException("Unable to determine id for tree at " + StringUtils.xyzw(start));
 
 					return compute();
 				}

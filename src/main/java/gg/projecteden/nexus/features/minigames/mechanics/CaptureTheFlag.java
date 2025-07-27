@@ -9,7 +9,7 @@ import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatistic
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.CaptureTheFlagMatchData;
-import gg.projecteden.nexus.features.minigames.models.matchdata.Flag;
+import gg.projecteden.nexus.features.minigames.models.matchdata.shared.Flag;
 import gg.projecteden.nexus.features.minigames.models.statistics.CaptureTheFlagStatistics;
 import gg.projecteden.nexus.features.minigames.models.statistics.FlagRushStatistics;
 import gg.projecteden.nexus.utils.StringUtils;

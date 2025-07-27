@@ -103,7 +103,7 @@ public class AmbienceConfig implements PlayerOwnedObject {
 
 		public boolean validate() {
 			if (!type.getType().validate(this)) {
-				Nexus.warn("[Ambience] " + StringUtils.camelCase(type) + " at " + StringUtils.getShortLocationString(location) + " invalid, removing");
+				Nexus.warn("[Ambience] " + StringUtils.camelCase(type) + " at " + StringUtils.xyzw(location) + " invalid, removing");
 				config().delete(this);
 				return false;
 			}

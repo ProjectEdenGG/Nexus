@@ -119,7 +119,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 		command += " --onlyHidden=" + onlyHidden;
 		command += " --onlyShown=" + onlyShown;
 
-		final BiFunction<IClientSideEntity<?, ?, ?>, String, JsonBuilder> formatter = (entity, index) -> json("&3" + index + " &e" + camelCase(entity.getType()) + " &7- " + StringUtils.getShortLocationString(entity.location()))
+		final BiFunction<IClientSideEntity<?, ?, ?>, String, JsonBuilder> formatter = (entity, index) -> json("&3" + index + " &e" + camelCase(entity.getType()) + " &7- " + StringUtils.xyzw(entity.location()))
 			.command(StringUtils.getTeleportCommand(entity.location()));
 
 		new Paginator<IClientSideEntity<?, ?, ?>>()

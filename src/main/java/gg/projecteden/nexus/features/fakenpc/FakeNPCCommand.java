@@ -2,14 +2,23 @@ package gg.projecteden.nexus.features.fakenpc;
 
 import gg.projecteden.nexus.features.fakenpc.events.FakeNPCRightClickEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.fakenpcs.config.FakeNPCConfig;
 import gg.projecteden.nexus.models.fakenpcs.config.FakeNPCConfigService;
-import gg.projecteden.nexus.models.fakenpcs.npcs.*;
+import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC;
 import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC.Hologram;
 import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC.Hologram.VisibilityType;
+import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPCService;
+import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPCTraitType;
+import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPCType;
+import gg.projecteden.nexus.models.fakenpcs.npcs.Trait;
 import gg.projecteden.nexus.models.fakenpcs.npcs.traits.HologramTrait;
 import gg.projecteden.nexus.models.fakenpcs.npcs.traits.LookCloseTrait;
 import gg.projecteden.nexus.models.fakenpcs.npcs.types.PlayerNPC;
@@ -99,7 +108,7 @@ public class FakeNPCCommand extends CustomCommand implements Listener {
 		send("&3- Type: &e" + npc.getType());
 		send("&3- UUID: &e" + npc.getUuid());
 		send("&3- Spawned: &e" + npc.isSpawned());
-		send("&3- Location: &e" + StringUtils.getShortLocationString(npc.getLocation()));
+		send("&3- Location: &e" + StringUtils.xyzw(npc.getLocation()));
 
 		// TODO: remove in replace of traits
 		Hologram hologram = npc.getHologram();
@@ -153,7 +162,7 @@ public class FakeNPCCommand extends CustomCommand implements Listener {
 		FakeNPC npc = getSelectedNPC();
 		npc.teleport(location());
 
-		send(PREFIX + "Teleported &e" + npc.getName() + " &3to &e" + StringUtils.getShortLocationString(npc.getLocation()));
+		send(PREFIX + "Teleported &e" + npc.getName() + " &3to &e" + StringUtils.xyzw(npc.getLocation()));
 	}
 
 	@Path("spawn")

@@ -114,7 +114,7 @@ public class MatchListener implements Listener {
 				return;
 
 		event.setCancelled(true);
-		Debug.log("Cancelled minigamer " + minigamer.getNickname() + " teleporting from " + StringUtils.getShortLocationString(event.getFrom()) + " to " + StringUtils.getShortLocationString(event.getTo()));
+		Debug.log("Cancelled minigamer " + minigamer.getNickname() + " teleporting from " + StringUtils.xyzw(event.getFrom()) + " to " + StringUtils.xyzw(event.getTo()));
 		minigamer.tell("&cYou cannot teleport while in a game! &3If you are trying to leave, use &c/mgm quit");
 	}
 

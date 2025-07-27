@@ -73,7 +73,7 @@ public class GolfBall {
 
 	public void setLastLocation(Location location) {
 		this.lastLocation = location;
-		debug("lastLoc: " + StringUtils.getPerciseCoordinateString(this.lastLocation, 2));
+		debug("lastLoc: " + StringUtils.xyzDecimal(this.lastLocation, 2));
 	}
 
 	public void setTicksLived(int ticks) {

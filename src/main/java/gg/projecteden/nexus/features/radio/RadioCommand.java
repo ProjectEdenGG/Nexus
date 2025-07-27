@@ -3,8 +3,14 @@ package gg.projecteden.nexus.features.radio;
 import com.xxmicloxx.NoteBlockAPI.model.Song;
 import com.xxmicloxx.NoteBlockAPI.songplayer.SongPlayer;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Features;
@@ -222,7 +228,7 @@ public class RadioCommand extends CustomCommand {
 		send("&3Updates Playing: &e" + radio.isUpdatePlaying());
 
 		if (radio.getType().equals(RadioType.RADIUS)) {
-			send("&3Location: &e" + StringUtils.getShortLocationString(radio.getRadiusLocation()));
+			send("&3Location: &e" + StringUtils.xyzw(radio.getRadiusLocation()));
 			send("&3Radius: &e" + radio.getRadius());
 			send("&3Particles: &e" + radio.isParticles());
 		}
@@ -230,7 +236,7 @@ public class RadioCommand extends CustomCommand {
 		if (radio.getType() == RadioType.STATION) {
 			send("&3Locations:");
 			for (Location location : radio.getStationLocations()) {
-				send("&3- &e" + StringUtils.getShortLocationString(location));
+				send("&3- &e" + StringUtils.xyzw(location));
 			}
 			send("&3Radius: &e" + radio.getRadius());
 			send("&3Particles: &e" + radio.isParticles());
@@ -354,7 +360,7 @@ public class RadioCommand extends CustomCommand {
 			radio.reload();
 
 		configService.save(config);
-		send(PREFIX + "Location set to " + StringUtils.getShortLocationString(radio.getRadiusLocation()) + " for " + radio.getId());
+		send(PREFIX + "Location set to " + StringUtils.xyzw(radio.getRadiusLocation()) + " for " + radio.getId());
 	}
 
 	@Path("config addStationLocation <radio>")
@@ -369,7 +375,7 @@ public class RadioCommand extends CustomCommand {
 			radio.reload();
 
 		configService.save(config);
-		send(PREFIX + "Added location at " + StringUtils.getShortLocationString(radio.getRadiusLocation()) + " to " + radio.getId());
+		send(PREFIX + "Added location at " + StringUtils.xyzw(radio.getRadiusLocation()) + " to " + radio.getId());
 	}
 
 	@Path("config removeStationLocation <radio> <index>")
@@ -384,7 +390,7 @@ public class RadioCommand extends CustomCommand {
 			radio.reload();
 
 		configService.save(config);
-		send(PREFIX + "Removed location at " + StringUtils.getShortLocationString(radio.getRadiusLocation()) + " from " + radio.getId());
+		send(PREFIX + "Removed location at " + StringUtils.xyzw(radio.getRadiusLocation()) + " from " + radio.getId());
 	}
 
 	@Path("config removeStationLocation <radio>")
@@ -397,7 +403,7 @@ public class RadioCommand extends CustomCommand {
 		send("&3Locations: ");
 		int index = 0;
 		for (Location location : radio.getLocations()) {
-			send(" &3" + index + " - " + StringUtils.getShortLocationString(location));
+			send(" &3" + index + " - " + StringUtils.xyzw(location));
 		}
 	}
 

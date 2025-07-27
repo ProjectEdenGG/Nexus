@@ -132,7 +132,7 @@ public class ItemModelInstance implements Comparable<ItemModelInstance> {
 		if (material == Material.ARROW && data >= 1000 && data <= 4999)
 			return;
 
-		String message = "Could not find new model for custom model data " + data + " on material " + material + " at " + StringUtils.getShortLocationString(location);
+		String message = "Could not find new model for custom model data " + data + " on material " + material + " at " + StringUtils.xyzw(location);
 		Nexus.warn(message);
 
 		if (location != null && location.getWorld().getName().contains("pugmas"))

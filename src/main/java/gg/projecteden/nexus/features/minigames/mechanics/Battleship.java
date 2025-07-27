@@ -521,7 +521,7 @@ public class Battleship extends TeamMechanic {
 
 	public void pasteShip(ShipType shipType, Location location, CardinalDirection direction) {
 		String schematic = shipType.getFileName();
-		Debug.log("Pasting schematic " + schematic + " at " + StringUtils.getShortLocationString(location) + " with rotation " + direction.getRotation());
+		Debug.log("Pasting schematic " + schematic + " at " + StringUtils.xyzw(location) + " with rotation " + direction.getRotation());
 		new WorldEditUtils(location).paster()
 				.file(schematic)
 				.at(location)

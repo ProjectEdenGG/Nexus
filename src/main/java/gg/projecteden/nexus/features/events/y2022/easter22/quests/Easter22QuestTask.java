@@ -114,7 +114,7 @@ public enum Easter22QuestTask implements IQuestTask {
 		.onBlockInteract(List.of(Material.OAK_LEAVES, Material.JUNGLE_LEAVES), Action.RIGHT_CLICK_BLOCK, (event, block) -> {
 			final Player player = event.getPlayer();
 			if (!PlayerUtils.playerHas(player, Material.STICK)) {
-				final String coords = StringUtils.getFlooredCoordinateString(block.getLocation()).replace(" ", "-");
+				final String coords = StringUtils.xyzFloored(block.getLocation()).replace(" ", "-");
 				if (!new CooldownService().check(player, "easter22-stick-" + coords, TickTime.MINUTE))
 					return;
 

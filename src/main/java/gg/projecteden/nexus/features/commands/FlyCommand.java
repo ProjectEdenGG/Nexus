@@ -105,13 +105,13 @@ public class FlyCommand extends CustomCommand implements Listener {
 		player.setFallDistance(0);
 		PlayerUtils.setAllowFlight(player, false, FlyCommand.class);
 		PlayerUtils.setFlying(player, false, FlyCommand.class);
-		IOUtils.fileAppend("cheats", Nickname.of(player) + " disabled fly at " + StringUtils.getShortLocationString(player.getLocation()));
+		IOUtils.fileAppend("cheats", Nickname.of(player) + " disabled fly at " + StringUtils.xyzw(player.getLocation()));
 	}
 
 	public static void on(Player player) {
 		player.setFallDistance(0);
 		PlayerUtils.setAllowFlight(player, true, FlyCommand.class);
-		IOUtils.fileAppend("cheats", Nickname.of(player) + " enabled fly at " + StringUtils.getShortLocationString(player.getLocation()));
+		IOUtils.fileAppend("cheats", Nickname.of(player) + " enabled fly at " + StringUtils.xyzw(player.getLocation()));
 	}
 
 	@EventHandler

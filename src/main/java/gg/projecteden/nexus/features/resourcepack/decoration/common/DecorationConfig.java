@@ -242,7 +242,7 @@ public class DecorationConfig {
 		List<ItemFrame> itemFrames = new ArrayList<>(placed.getLocation().toCenterLocation().getNearbyEntitiesByType(ItemFrame.class, 0.5));
 
 		for (ItemFrame itemFrame : itemFrames) {
-			DecorationLang.debug(debugger, "loc = " + StringUtils.getShortLocationString(itemFrame.getLocation()));
+			DecorationLang.debug(debugger, "loc = " + StringUtils.xyzw(itemFrame.getLocation()));
 			DecorationLang.debug(debugger, "attached face = " + itemFrame.getAttachedFace() + " -> " + itemFrame.getAttachedFace().getOppositeFace());
 			if (itemFrame.getAttachedFace().getOppositeFace() == clickedFace) {
 				DecorationLang.debug(debugger, "itemframe exists in location, face = " + clickedFace);

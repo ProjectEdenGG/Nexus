@@ -177,7 +177,7 @@ public class CheatsCommand extends CustomCommand implements Listener {
 			return;
 
 		Dev.GRIFFIN.send("6");
-		IOUtils.fileAppend("cheats", Nickname.of(player) + " killed a " + camelCase(event.getEntity().getType()) + " at " + StringUtils.getShortLocationString(player.getLocation()));
+		IOUtils.fileAppend("cheats", Nickname.of(player) + " killed a " + camelCase(event.getEntity().getType()) + " at " + StringUtils.xyzw(player.getLocation()));
 	}
 
 }

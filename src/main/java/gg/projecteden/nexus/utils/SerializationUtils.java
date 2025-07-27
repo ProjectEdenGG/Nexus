@@ -401,7 +401,7 @@ public class SerializationUtils {
 
 			@Override
 			public JsonElement serialize(Location location, Type type, JsonSerializationContext context) {
-				return new JsonPrimitive(StringUtils.getShortishLocationString(location));
+				return new JsonPrimitive(StringUtils.xyzpyw(location));
 			}
 
 		}

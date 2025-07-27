@@ -489,34 +489,36 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 			df.format(loc.getY()) + " &3z: &e" + df.format(loc.getZ());
 	}
 
-	public static String getShortLocationString(Location loc) {
+	public static String xyzw(Location loc) {
 		if (loc == null) return null;
 		return (int) loc.getX() + " " + (int) loc.getY() + " " + (int) loc.getZ() + " " + loc.getWorld().getName();
 	}
 
-	public static String getShortishLocationString(Location loc) {
+	public static String xyzpyw(Location loc) {
+		if (loc == null) return null;
 		String coords = (int) loc.getX() + " " + (int) loc.getY() + " " + (int) loc.getZ();
 		if (loc.getYaw() != 0 || loc.getPitch() != 0)
 			coords += " " + df.format(loc.getYaw()) + " " + df.format(loc.getPitch());
 		return coords + " " + loc.getWorld().getName();
 	}
 
-	public static String getPerciseCoordinateString(HasLocation location, int decimalPlaces) {
+	public static String xyzDecimal(HasLocation location, int decimalPlaces) {
+		if (location == null) return null;
 		var loc = location.getLocation();
 		return MathUtils.round(loc.getX(), decimalPlaces) + " " + MathUtils.round(loc.getY(), decimalPlaces) + " " + MathUtils.round(loc.getZ(), decimalPlaces);
 	}
 
-	public static String getCoordinateString(HasLocation location) {
+	public static String xyz(HasLocation location) {
 		var loc = location.getLocation();
 		return (int) loc.getX() + " " + (int) loc.getY() + " " + (int) loc.getZ();
 	}
 
-	public static String getFlooredCoordinateString(HasLocation location) {
+	public static String xyzFloored(HasLocation location) {
 		var loc = location.getLocation();
 		return (int) Math.floor(loc.getX()) + " " + (int) Math.floor(loc.getY()) + " " + (int) Math.floor(loc.getZ());
 	}
 
-	public static String getFlooredCoordinateString(BlockPos loc) {
+	public static String xyzFloored(BlockPos loc) {
 		return (int) Math.floor(loc.getX()) + " " + (int) Math.floor(loc.getY()) + " " + (int) Math.floor(loc.getZ());
 	}
 

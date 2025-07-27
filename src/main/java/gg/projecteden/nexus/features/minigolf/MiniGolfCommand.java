@@ -126,8 +126,8 @@ public class MiniGolfCommand extends CustomCommand {
 		send("Alive: " + golfBall.isAlive());
 		send("Active: " + golfBall.isActive());
 		send("Hole Region: " + golfBall.getHoleRegion());
-		send("Loc: " + StringUtils.getPerciseCoordinateString(golfBall.getLocation(), 2));
-		send("Last Loc: " + (golfBall.getLastLocation() == null ? "null" : StringUtils.getPerciseCoordinateString(golfBall.getLastLocation(), 2)));
+		send("Loc: " + StringUtils.xyzDecimal(golfBall.getLocation(), 2));
+		send("Last Loc: " + (golfBall.getLastLocation() == null ? "null" : StringUtils.xyzDecimal(golfBall.getLastLocation(), 2)));
 		send("Vel: " + golfBall.getVelocity());
 		send("Below: " + golfBall.getBlockBelow().getType());
 		send("Inside: " + golfBall.getBlock().getType());

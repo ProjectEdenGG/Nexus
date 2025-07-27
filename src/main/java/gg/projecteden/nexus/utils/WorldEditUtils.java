@@ -643,7 +643,7 @@ public class WorldEditUtils {
 				Tasks.sync(() -> {
 					debug("Building " + blocks.size() + " blocks");
 					blocks.forEach((location, blockData) -> {
-						debug("  Setting " + blockData.getMaterial() + " at " + StringUtils.getFlooredCoordinateString(location));
+						debug("  Setting " + blockData.getMaterial() + " at " + StringUtils.xyzFloored(location));
 						location.getBlock().setBlockData(blockData);
 					});
 					debug("Finished building " + blocks.size() + " blocks");
@@ -786,7 +786,7 @@ public class WorldEditUtils {
 						Location location = toLocation(blockVector3).add(relX, relY, relZ);
 						BlockData block = BukkitAdapter.adapt(baseBlock);
 
-						debug("  Found " + block.getMaterial() + "  at " + StringUtils.getFlooredCoordinateString(toLocation(blockVector3)) + " (" + baseBlock.getAsString() + ")");
+						debug("  Found " + block.getMaterial() + "  at " + StringUtils.xyzFloored(toLocation(blockVector3)) + " (" + baseBlock.getAsString() + ")");
 						if (replaceMap != null)
 							block = replaceMap.getOrDefault(block.getMaterial(), block.getMaterial()).createBlockData();
 						data.put(location, block);

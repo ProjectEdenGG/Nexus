@@ -151,7 +151,7 @@ public class SpeedCommand extends CustomCommand {
 				return;
 
 			setter.accept(player, getRealMoveSpeed(speed));
-			IOUtils.fileAppend("cheats", Nickname.of(player) + " set their speed to " + StringUtils.getDf().format(speed) + " at " + StringUtils.getShortLocationString(player.getLocation()));
+			IOUtils.fileAppend("cheats", Nickname.of(player) + " set their speed to " + StringUtils.getDf().format(speed) + " at " + StringUtils.xyzw(player.getLocation()));
 		}
 
 		public void reset(Player player) {

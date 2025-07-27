@@ -79,12 +79,12 @@ public class ConversionListener implements Listener {
 					boolean assumeCustomBlock = WorldGroup.MINIGAMES.contains(location) || WorldGroup.STAFF.contains(location);
 					if (assumeCustomBlock && customBlock != null) {
 						block.setBlockData(customBlock.get().getBlockData(BlockFace.UP, below), false);
-						logMessage = "Creating CustomBlock " + StringUtils.camelCase(customBlock) + " " + StringUtils.getShortLocationString(location);
+						logMessage = "Creating CustomBlock " + StringUtils.camelCase(customBlock) + " " + StringUtils.xyzw(location);
 					} else {
 						NoteBlock noteBlockData = (NoteBlock) block.getBlockData();
 						noteBlockData.setInstrument(Instrument.PIANO);
 						block.setBlockData(noteBlockData, false);
-						logMessage = "Creating CustomBlock NoteBlock at " + StringUtils.getShortLocationString(location);
+						logMessage = "Creating CustomBlock NoteBlock at " + StringUtils.xyzw(location);
 					}
 
 					CustomBlockUtils.broadcastDebug(logMessage);
@@ -103,7 +103,7 @@ public class ConversionListener implements Listener {
 
 					block.setBlockData(CustomBlock.TRIPWIRE.get().getBlockData(facing, below), false);
 
-					String logMessage = "Creating CustomBlock TripwireData at " + StringUtils.getShortLocationString(location);
+					String logMessage = "Creating CustomBlock TripwireData at " + StringUtils.xyzw(location);
 
 					CustomBlockUtils.broadcastDebug(logMessage);
 					IOUtils.fileAppend("customblocks", logMessage);

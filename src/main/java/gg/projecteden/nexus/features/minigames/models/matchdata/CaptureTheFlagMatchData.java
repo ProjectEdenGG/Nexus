@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
+import gg.projecteden.nexus.features.minigames.models.matchdata.shared.Flag;
 import lombok.Data;
 
 import java.util.HashMap;
