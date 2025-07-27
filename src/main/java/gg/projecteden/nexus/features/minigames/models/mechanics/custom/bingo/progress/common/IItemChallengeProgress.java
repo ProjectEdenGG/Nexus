@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.common;
 
+import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.CraftChallenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.common.IItemChallenge;
 import gg.projecteden.nexus.utils.FuzzyItemStack;
 import gg.projecteden.nexus.utils.Nullables;
@@ -12,6 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public interface IItemChallengeProgress extends IChallengeProgress<IItemChallenge> {
+	int LIMIT = 5;
 
 	List<ItemStack> getItems();
 
@@ -19,7 +21,6 @@ public interface IItemChallengeProgress extends IChallengeProgress<IItemChalleng
 
 	@Override
 	default Set<String> getRemainingTasks(IItemChallenge challenge) {
-		final int LIMIT = 5;
 		return getRemainingItems(challenge).stream().map(fuzzyItemStack -> {
 			String materials = fuzzyItemStack.getMaterials().stream()
 				.limit(LIMIT)
@@ -29,7 +30,10 @@ public interface IItemChallengeProgress extends IChallengeProgress<IItemChalleng
 			if (fuzzyItemStack.getMaterials().size() > LIMIT)
 				materials += " or etc.";
 
-			return getTask() + " " + fuzzyItemStack.getAmount() + " " + materials;
+			String task = getTask() + " " + fuzzyItemStack.getAmount() + " " + materials;
+			if (challenge instanceof CraftChallenge)
+				task += " in a crafting table";
+			return task;
 		}).collect(Collectors.toSet());
 	}
 
