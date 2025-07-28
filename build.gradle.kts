@@ -61,9 +61,7 @@ dependencies {
     implementation("org.objenesis:objenesis:3.2")
     implementation("org.checkerframework:checker-qual:3.32.0")
     implementation("com.github.ProjectEdenGG:norm:0843afb4e5")
-    implementation("mysql:mysql-connector-java:8.0.33")
     implementation("dev.morphia.morphia:core:1.6.2-SNAPSHOT")
-    implementation("org.slf4j:slf4j-api:2.0.5")
     implementation("it.sauronsoftware.cron4j:cron4j:2.2.5")
     implementation("com.github.instagram4j:instagram4j:2.0.7")
     implementation("org.twitter4j:twitter4j-core:4.1.2")
@@ -74,6 +72,8 @@ dependencies {
     implementation("org.jetbrains:annotations:24.0.1")
     implementation("net.jthink:jaudiotagger:3.0.1")
     implementation("fr.skytasul:glowingentities:1.4.3")
+    compileOnly("mysql:mysql-connector-java:8.0.33")
+    compileOnly("org.slf4j:slf4j-api:2.0.5")
     compileOnly("gg.projecteden.crates:api:1.0.7-SNAPSHOT")
     compileOnly("tech.blastmc.holograms:HologramsAPI:1.2.0-SNAPSHOT")
     compileOnly("fr.moribus:ImageOnMap:4.3.1-EDEN")
@@ -162,19 +162,18 @@ tasks {
         }
     }
 
-//    shadowJar {
-//        exclude("**/*.png")
-//        exclude("**/*.txt")
-//        exclude("lombok/**")
-//        exclude("**/*.lombok")
-//        exclude("META-INF/**")
-//        exclude("kotlin/**")
-//
-//        minimize {
-//            // Force include dependencies
-//            exclude("com.github.benmanes:caffeine:.*")
-//        }
-//    }
+    shadowJar {
+        exclude("**/*.png")
+        exclude("**/*.txt")
+        exclude("lombok/**")
+        exclude("**/*.lombok")
+        exclude("META-INF/**")
+        exclude("kotlin/**")
+        exclude("com/fasterxml/jackson/**")
+        exclude("org/apache/commons/**")
+
+        minimize {}
+    }
 
     shadowJar {
         archiveClassifier.set("")
