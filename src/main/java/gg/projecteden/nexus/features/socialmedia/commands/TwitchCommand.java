@@ -9,7 +9,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.discord.DiscordUser;
-import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -24,10 +23,6 @@ public class TwitchCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	static {
-		Twitch.connect();
-	}
-
 	@Path
 	@Description("Receive a link to apply for Creator")
 	void run() {
@@ -38,13 +33,13 @@ public class TwitchCommand extends CustomCommand implements Listener {
 	@Permission(Group.ADMIN)
 	@Description("View whether a player is streaming")
 	void status(DiscordUser user) {
-		final boolean streaming = new SocialMediaUserService().get(user.getUuid()).isStreaming();
+		var streaming = Twitch.isStreaming(user.getUuid());
 		send(PREFIX + "User " + (streaming ? "&ais" : "is &cnot") + " &3streaming");
 	}
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		Tasks.async(() -> SocialMedia.checkStreaming(event.getPlayer().getUniqueId()));
+		Tasks.async(() -> Twitch.checkStreaming(event.getPlayer().getUniqueId()));
 	}
 
 }

@@ -3,6 +3,7 @@ package gg.projecteden.nexus.utils;
 import gg.projecteden.api.common.exceptions.EdenException;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import okhttp3.Headers;
 import okhttp3.MediaType;
@@ -25,6 +26,7 @@ import java.util.Map;
 
 public class HttpUtils {
 
+	@Getter
 	private static final OkHttpClient client = new OkHttpClient();
 
 	public static String formatParameters(Map<String, String> parameters) {

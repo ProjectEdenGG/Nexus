@@ -10,6 +10,7 @@ import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.utils.SerializationUtils.Json.LocalDateTimeGsonSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -37,6 +38,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -296,7 +298,11 @@ public class Utils extends gg.projecteden.api.common.utils.Utils {
 	};
 
 	@Getter
-	private static final Gson gson = new GsonBuilder().addSerializationExclusionStrategy(strategy).registerTypeAdapter(Material.class, new SerializationUtils.Json.MaterialConverter()).create();
+	private static final Gson gson = new GsonBuilder()
+		.addSerializationExclusionStrategy(strategy)
+		.registerTypeAdapter(Material.class, new SerializationUtils.Json.MaterialConverter())
+		.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeGsonSerializer())
+		.create();
 
 	/**
 	 * Removes the first entity in an iterable whose UUID matches {@code uuid}.

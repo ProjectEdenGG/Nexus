@@ -4,13 +4,8 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomEmoji;
-import gg.projecteden.nexus.features.socialmedia.integrations.Twitch;
-import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
-import gg.projecteden.nexus.models.socialmedia.SocialMediaUser.Connection;
-import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
@@ -19,45 +14,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-
 @NoArgsConstructor
 public class SocialMedia implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("SocialMedia");
-
-	public static CompletableFuture<Boolean> checkStreaming(UUID uuid) {
-		CompletableFuture<Boolean> future = new CompletableFuture<>();
-		Tasks.async(() -> {
-			boolean streaming;
-
-			final SocialMediaUserService service = new SocialMediaUserService();
-			final SocialMediaUser user = service.get(uuid);
-			final Connection connection = user.getConnection(SocialMediaSite.TWITCH);
-			if (Twitch.get() == null || connection == null)
-				streaming = false;
-			else {
-				try {
-					streaming = !Twitch.get().getStreams(null, null, null, 1, null, null, null, List.of(connection.getUsername()))
-						.execute()
-						.getStreams()
-						.isEmpty();
-				} catch (Exception ex) {
-					// TODO: FAILING FOR "HELIX API ERROR, BAD REQUEST - 400 - MALFORMED QUERY PARAMS --> Username not a valid twitch account"
-					streaming = false;
-					Nexus.warn("Twitch#getStreams() failed for user " + user.getNickname());
-				}
-			}
-
-			user.setStreaming(streaming);
-			service.save(user);
-
-			future.complete(streaming);
-		});
-
-		return future;
-	}
 
 	public enum SocialMediaSite {
 		TWITTER("Twitter", ItemModelType.GUI_SOCIAL_MEDIA_TWITTER, ChatColor.of("#1da1f2"), CustomEmoji.SOCIAL_MEDIA_TWITTER, "https://twitter.com", "https://twitter.com/%s"),

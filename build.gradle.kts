@@ -67,7 +67,6 @@ dependencies {
     implementation("it.sauronsoftware.cron4j:cron4j:2.2.5")
     implementation("com.github.instagram4j:instagram4j:2.0.7")
     implementation("org.twitter4j:twitter4j-core:4.1.2")
-    implementation("com.github.twitch4j:twitch4j:1.18.0")
     implementation("com.google.api-client:google-api-client:2.2.0")
     implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
     implementation("com.google.apis:google-api-services-sheets:v4-rev20221216-2.0.0")

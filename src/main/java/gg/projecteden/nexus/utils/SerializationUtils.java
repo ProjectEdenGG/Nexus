@@ -415,11 +415,20 @@ public class SerializationUtils {
 
 		}
 
-		public static class LocalDateTimeGsonSerializer implements JsonSerializer<LocalDateTime> {
+		public static class LocalDateTimeGsonSerializer implements JsonSerializer<LocalDateTime>, JsonDeserializer<LocalDateTime> {
 
 			@Override
 			public JsonElement serialize(LocalDateTime timestamp, Type type, JsonSerializationContext context) {
 				return new JsonPrimitive(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(timestamp));
+			}
+
+			@Override
+			public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+				var formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+				if (json.getAsString().contains("Z"))
+					formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+
+				return formatter.parse(json.getAsString(), LocalDateTime::from);
 			}
 
 		}

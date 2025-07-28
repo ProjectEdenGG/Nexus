@@ -1161,6 +1161,7 @@ public class BlockParty extends TeamlessMechanic {
 		Minigames.debug("Loading Block Party Music");
 		Path path = Paths.get(FOLDER);
 		File file = path.toFile();
+		file.mkdirs();
 		if (!file.exists()) file.createNewFile();
 		songList.clear();
 		try (Stream<Path> paths = Files.walk(path)) {
