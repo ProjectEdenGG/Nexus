@@ -13,6 +13,8 @@ import java.util.Set;
 
 public class TNTBlock extends ModifierBlock {
 
+	private static final double speed = 0.75;
+
 	@Override
 	public void handleRoll(GolfBall golfBall, Block below) {
 		Vector velocity = golfBall.getVelocity();
@@ -39,6 +41,6 @@ public class TNTBlock extends ModifierBlock {
 	@NotNull
 	private Vector explode(GolfBall golfBall) {
 		playBounceSound(golfBall, Sound.ENTITY_GENERIC_EXPLODE);
-		return new Vector(RandomUtils.randomDouble(-1, 1), RandomUtils.randomDouble(0.5, 1), RandomUtils.randomDouble(-1, 1));
+		return new Vector(RandomUtils.randomDouble(-speed, speed), 0.5, RandomUtils.randomDouble(-speed, speed));
 	}
 }

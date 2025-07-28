@@ -7,13 +7,13 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.util.Vector;
 
-public class BumperSkull extends ModifierSkull {
+public class ZBumperSkull extends ModifierSkull {
 
 	private static final double speed = 0.5;
 
 	@Override
 	public int getSkullId() {
-		return 39237;
+		return 708;
 	}
 
 	@Override
@@ -32,8 +32,6 @@ public class BumperSkull extends ModifierSkull {
 		playBounceSound(golfBall, Sound.BLOCK_COPPER_HIT);
 
 		Vector velocity = golfBall.getVelocity();
-		double randomX = 0;
-		double randomZ = 0;
 
 		if (!bounce) {
 			super.handleRoll(golfBall, block);
@@ -41,24 +39,11 @@ public class BumperSkull extends ModifierSkull {
 		}
 
 		switch (blockFace) {
-			case NORTH, SOUTH -> {
-				velocity.setZ(Math.copySign(0.5, -velocity.getZ()));
-				randomX = RandomUtils.randomDouble(-speed, speed);
-			}
-
-			case EAST, WEST -> {
-				velocity.setX(Math.copySign(0.5, -velocity.getX()));
-				randomZ = RandomUtils.randomDouble(-speed, speed);
-			}
-
-			case UP, DOWN -> {
-				velocity.setY(Math.copySign(0.5, -velocity.getY()));
-				randomX = RandomUtils.randomDouble(-speed, speed);
-				randomZ = RandomUtils.randomDouble(-speed, speed);
-			}
+			case NORTH, SOUTH, EAST, WEST -> velocity.setZ(Math.copySign(0.5, -velocity.getZ()));
+			case UP, DOWN -> velocity.setY(Math.copySign(0.35, -velocity.getY()));
 		}
 
-		velocity.add(new Vector(randomX, 0, randomZ));
+		velocity.add(new Vector(0, 0, RandomUtils.randomDouble(-speed, speed)));
 		golfBall.setVelocity(velocity);
 	}
 }

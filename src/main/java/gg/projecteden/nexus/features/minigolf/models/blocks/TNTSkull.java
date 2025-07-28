@@ -9,6 +9,8 @@ import org.bukkit.util.Vector;
 
 public class TNTSkull extends ModifierSkull {
 
+	private static final double speed = 0.5;
+
 	@Override
 	public int getSkullId() {
 		return 229;
@@ -28,7 +30,7 @@ public class TNTSkull extends ModifierSkull {
 
 	private void explode(GolfBall golfBall, boolean bounce) {
 		Vector velocity = golfBall.getVelocity();
-		Vector randomDir = new Vector(RandomUtils.randomDouble(-0.5, 0.5), RandomUtils.randomDouble(0.2, 0.6), RandomUtils.randomDouble(-0.5, 0.5));
+		Vector randomDir = new Vector(RandomUtils.randomDouble(-speed, speed), RandomUtils.randomDouble(0.2, 0.5), RandomUtils.randomDouble(-speed, speed));
 
 		if (bounce)
 			velocity.multiply(-1).add(randomDir);

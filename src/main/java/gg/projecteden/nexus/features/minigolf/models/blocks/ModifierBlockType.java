@@ -27,6 +27,7 @@ public enum ModifierBlockType {
 	BOUNCE_SKULL(new BounceSkull()),
 	TNT_SKULL(new TNTSkull()),
 	BUMPER_SKULL(new BumperSkull()),
+	Z_BUMPER_SKULL(new ZBumperSkull()),
 
 	// Default - Must be last
 	DEFAULT(new DefaultBlock()),
