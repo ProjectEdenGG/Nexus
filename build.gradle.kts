@@ -170,7 +170,6 @@ tasks {
         exclude("META-INF/**")
         exclude("kotlin/**")
         exclude("com/fasterxml/jackson/**")
-        exclude("org/apache/commons/**")
 
         minimize {}
     }
