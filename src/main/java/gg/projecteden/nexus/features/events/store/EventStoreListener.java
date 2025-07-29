@@ -107,6 +107,8 @@ public class EventStoreListener implements Listener {
 			if (!Utils.isInt(priceString))
 				return;
 
+			if (true) throw new InvalidInputException("Custom Paintings are temporarily disabled");
+
 			final int price = Integer.parseInt(priceString);
 
 			final EventUserService service = new EventUserService();
