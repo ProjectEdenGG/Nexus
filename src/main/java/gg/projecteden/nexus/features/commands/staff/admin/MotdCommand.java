@@ -110,7 +110,7 @@ public class MotdCommand extends CustomCommand implements Listener {
 		if (nerd.isOnline()) // Event sometimes fires when player is online
 			return;
 
-		if (new CooldownService().check(nerd.getUuid(), "server-ping_" + nerd.getUuid(), TickTime.SECOND.x(5)))
+		if (new CooldownService().check(nerd.getUuid(), "server-ping_" + nerd.getUuid(), TickTime.MINUTE.x(5)))
 			Nexus.log("ServerPingEvent: " + ipAddress + " -> " + nerd.getNickname());
 
 		// Message

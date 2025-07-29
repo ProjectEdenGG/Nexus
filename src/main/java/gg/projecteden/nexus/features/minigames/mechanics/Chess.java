@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.sk89q.worldedit.math.BlockVector3;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
@@ -33,6 +34,7 @@ import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
@@ -95,6 +97,12 @@ public class Chess extends TeamMechanic {
 	}
 
 	@Override
+	public void end(@NotNull Match match) {
+		announceChessWinners(match);
+		Tasks.wait(TickTime.SECOND.x(5), () -> super.end(match));
+	}
+
+	@Override
 	public void onEnd(@NotNull MatchEndEvent event) {
 		ChessMatchData matchData = event.getMatch().getMatchData();
 		String paste = StringUtils.paste(String.join("\n", matchData.getLogger().getFullPGNFile()));
@@ -110,7 +118,9 @@ public class Chess extends TeamMechanic {
 	}
 
 	@Override
-	public void announceWinners(@NotNull Match match) {
+	public void announceWinners(@NotNull Match match) {}
+
+	public void announceChessWinners(@NotNull Match match) {
 		ChessMatchData matchData = match.getMatchData();
 
 		if (matchData.getWinnerTeam() == null) {
