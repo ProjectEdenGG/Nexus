@@ -5,22 +5,32 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.models.voter.VoteSite;
-import gg.projecteden.nexus.models.voter.Voter;
 import gg.projecteden.nexus.models.voter.VoterService;
-import gg.projecteden.nexus.models.wallsofgrace.WallsOfGrace;
 import gg.projecteden.nexus.models.wallsofgrace.WallsOfGraceService;
-import gg.projecteden.nexus.utils.*;
-import lombok.*;
+import gg.projecteden.nexus.utils.GoogleUtils;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -256,18 +266,11 @@ public class ReminderConfig {
 		// Return true if you want to show the announcement
 		@AllArgsConstructor
 		public enum ReminderCondition {
-			VOTE(player -> {
-				Voter voter = new VoterService().get(player);
-				return voter.getActiveVotes().size() < VoteSite.getActiveSites().size() - 2;
-			}),
-			DISCORD_LINK(player -> {
-				DiscordUser user = new DiscordUserService().get(player);
-				return user.getUserId() == null;
-			}),
-			WALLS_OF_GRACE(player -> {
-				WallsOfGrace wallsOfGrace = new WallsOfGraceService().get(player);
-				return wallsOfGrace.get(1) == null && wallsOfGrace.get(2) == null;
-			});
+			VOTE(player -> new VoterService().get(player).getActiveVotes().size() < VoteSite.getActiveSites().size() - 2),
+			DISCORD_LINK(player -> new DiscordUserService().get(player).getUserId() == null),
+			WALLS_OF_GRACE(player -> new WallsOfGraceService().get(player).hasAvailableSign()),
+			NOT_VOTED_60_DAYS(player -> new VoterService().get(player).hasNotVotedFor60Days()),
+			;
 
 			@Getter
 			private final Predicate<Player> condition;

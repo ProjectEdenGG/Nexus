@@ -111,6 +111,10 @@ public class Booster implements PlayerOwnedObject {
 		}
 
 		public void activate() {
+			activate(true);
+		}
+
+		public void activate(boolean sendMessage) {
 			if (!canActivate())
 				throw new InvalidInputException("This boost cannot be activated");
 
@@ -125,12 +129,14 @@ public class Booster implements PlayerOwnedObject {
 			if (!isPersonal()) {
 				type.onActivate();
 				DiscordHandler.deleteHistoryAndSendMessage();
-				broadcast("&e" + getNickname() + " &3has &aactivated &3a &e" + getMultiplierFormatted() + " " + StringUtils.camelCase(type) + " boost &3for &e" + getTimeLeft() + "&3!");
 			}
-			else {
-				sendMessage(new JsonBuilder(StringUtils.getPrefix("Boosts")).group()
-					.next("&3You have &aactivated &3a &epersonal " + getMultiplierFormatted() + " " + StringUtils.camelCase(type) + " boost &3for &e" + getTimeLeft() + "&3!"));
-			}
+
+			if (sendMessage)
+				if (isPersonal())
+					sendMessage(new JsonBuilder(StringUtils.getPrefix("Boosts")).group()
+							.next("&3You have &aactivated &3a &epersonal " + getMultiplierFormatted() + " " + StringUtils.camelCase(type) + " boost &3for &e" + getTimeLeft() + "&3!"));
+				else
+					broadcast("&e" + getNickname() + " &3has &aactivated &3a &e" + getMultiplierFormatted() + " " + StringUtils.camelCase(type) + " boost &3for &e" + getTimeLeft() + "&3!");
 
 			save();
 		}
@@ -246,6 +252,13 @@ public class Booster implements PlayerOwnedObject {
 
 	public Boost add(Boostable type, double multiplier, TickTime duration) {
 		Boost boost = new Boost(uuid, type, multiplier, duration);
+		add(boost);
+		return boost;
+	}
+
+	public Boost add(Boostable type, double multiplier, TickTime duration, boolean personal) {
+		Boost boost = new Boost(uuid, type, multiplier, duration);
+		boost.setPersonal(personal);
 		add(boost);
 		return boost;
 	}

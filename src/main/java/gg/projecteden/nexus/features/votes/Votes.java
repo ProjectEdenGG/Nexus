@@ -15,6 +15,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundEx
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.models.boost.Booster;
+import gg.projecteden.nexus.models.boost.BoosterService;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.dailyvotereward.DailyVoteReward;
 import gg.projecteden.nexus.models.dailyvotereward.DailyVoteRewardService;
@@ -23,10 +24,8 @@ import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.voter.TopVoter;
-import gg.projecteden.nexus.models.voter.VotePartyData;
 import gg.projecteden.nexus.models.voter.VotePartyService;
 import gg.projecteden.nexus.models.voter.VoteSite;
-import gg.projecteden.nexus.models.voter.Voter;
 import gg.projecteden.nexus.models.voter.Voter.Vote;
 import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.IOUtils;
@@ -136,13 +135,25 @@ public class Votes extends Feature implements Listener {
 		if (!accepted)
 			return;
 
-		final VoterService voterService = new VoterService();
-		final Voter voter = voterService.get(uuid);
+		var voterService = new VoterService();
+		var voter = voterService.get(uuid);
+
+		if (voter.hasNotVotedFor60Days()) {
+			var boosterService = new BoosterService();
+			var booster = boosterService.get(voter);
+			var boost = booster.add(Boostable.VOTE_POINTS, 2, TickTime.DAY, true);
+			boost.activate(false);
+			boosterService.save(booster);
+			voter.sendMessage("");
+			voter.sendMessage(StringUtils.getPrefix("Boosts") + "You have been awarded &e2x Vote Points for 1 day &3for voting for the first time in 60 days!");
+			voter.sendMessage("");
+		}
+
 		Vote vote = new Vote(uuid, site, extraVotePoints(voter), timestamp);
 		voter.vote(vote);
 
-		final VotePartyService votePartyService = new VotePartyService();
-		final VotePartyData voteParty = votePartyService.get0();
+		var votePartyService = new VotePartyService();
+		var voteParty = votePartyService.get0();
 
 		int sum = voteParty.getCurrentAmount();
 		int goal = voteParty.getCurrentTarget();
@@ -203,7 +214,7 @@ public class Votes extends Feature implements Listener {
 
 	@NotNull
 	protected static Map<Integer, Integer> getExtraChances(HasUniqueId player) {
-		double multiplier = Booster.getTotalBoost(player, Boostable.VOTE_POINTS);
+		double multiplier = Booster.getTotalBoost(player, Boostable.EXTRA_VOTE_POINTS_CHANCE);
 
 		return new HashMap<>() {{
 			EXTRA_CHANCES.forEach((chance, amount) -> put((int) (chance / multiplier), amount));
@@ -211,10 +222,14 @@ public class Votes extends Feature implements Listener {
 	}
 
 	private int extraVotePoints(HasUniqueId player) {
+		int extra = 0;
 		for (var chances : getExtraChances(player).entrySet())
 			if (RandomUtils.randomInt(chances.getKey()) == 1)
-				return chances.getValue();
-		return 0;
+				extra = chances.getValue();
+
+		double multiplier = Booster.getTotalBoost(player, Boostable.VOTE_POINTS);
+		extra = (int) Math.round(extra * multiplier);
+		return extra;
 	}
 
 	protected static void write() {

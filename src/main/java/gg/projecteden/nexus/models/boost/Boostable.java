@@ -35,6 +35,7 @@ public enum Boostable {
 			return false;
 		}
 	},
+	EXTRA_VOTE_POINTS_CHANCE(Material.DIAMOND),
 	VOTE_POINTS(Material.DIAMOND),
 	MINIGAME_DAILY_TOKENS(Material.DIAMOND_SWORD),
 	KILLER_MONEY(Material.GOLD_INGOT),

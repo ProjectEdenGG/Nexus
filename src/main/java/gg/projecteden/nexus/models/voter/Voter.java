@@ -74,6 +74,10 @@ public class Voter implements PlayerOwnedObject {
 		this.points = points;
 	}
 
+	public boolean hasNotVotedFor60Days() {
+		return votes.stream().noneMatch(vote -> vote.getTimestamp().plusDays(60).isAfter(LocalDateTime.now()));
+	}
+
 	@Data
 	@NoArgsConstructor
 	public static class Vote implements PlayerOwnedObject {

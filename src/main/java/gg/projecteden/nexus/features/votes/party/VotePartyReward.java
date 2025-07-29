@@ -37,7 +37,7 @@ public enum VotePartyReward {
 		public double getMaxBoostMultiplier(Boostable type) {
 			return switch (type) {
 				case EXPERIENCE, MINIGAME_DAILY_TOKENS, KILLER_MONEY -> 1.35;
-				case MCMMO_EXPERIENCE, VOTE_POINTS, MOB_HEADS -> 1.2;
+				case MCMMO_EXPERIENCE, EXTRA_VOTE_POINTS_CHANCE, MOB_HEADS -> 1.2;
 				case MYSTERY_CRATE_KEY -> 1.5;
 				default -> 1;
 			};
@@ -61,7 +61,7 @@ public enum VotePartyReward {
 		public double getMaxBoostMultiplier(Boostable type) {
 			return switch (type) {
 				case EXPERIENCE, MINIGAME_DAILY_TOKENS, KILLER_MONEY -> 1.5;
-				case MCMMO_EXPERIENCE, VOTE_POINTS, MOB_HEADS -> 1.25;
+				case MCMMO_EXPERIENCE, EXTRA_VOTE_POINTS_CHANCE, MOB_HEADS -> 1.25;
 				case MYSTERY_CRATE_KEY -> 1.75;
 				default -> 1;
 			};
@@ -85,7 +85,7 @@ public enum VotePartyReward {
 		public double getMaxBoostMultiplier(Boostable type) {
 			return switch (type) {
 				case EXPERIENCE, MINIGAME_DAILY_TOKENS, KILLER_MONEY -> 1.75;
-				case MCMMO_EXPERIENCE, VOTE_POINTS, MOB_HEADS -> 1.35;
+				case MCMMO_EXPERIENCE, EXTRA_VOTE_POINTS_CHANCE, MOB_HEADS -> 1.35;
 				case MYSTERY_CRATE_KEY -> 2;
 				default -> 1;
 			};

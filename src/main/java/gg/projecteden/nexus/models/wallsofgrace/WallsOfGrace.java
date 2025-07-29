@@ -51,4 +51,8 @@ public class WallsOfGrace implements PlayerOwnedObject {
 			throw new InvalidInputException("Sign ID must be 1 or 2");
 	}
 
+	public boolean hasAvailableSign() {
+		return sign1 == null && sign2 == null;
+	}
+
 }
