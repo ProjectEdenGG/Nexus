@@ -44,7 +44,7 @@ public class Advent25Present implements HasLocation {
 	}
 
 	void sendPacket(Advent25User user) {
-		Tasks.wait(1, () -> {
+		Tasks.wait(2, () -> {
 			final ItemModelType itemModelType = user.hasCollected(day) ? ItemModelType.PUGMAS_PRESENT_ADVENT_OPENED : ItemModelType.PUGMAS_PRESENT_ADVENT;
 			ClientSideItemFrame.builder()
 				.location(getLocation())
