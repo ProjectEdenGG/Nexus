@@ -20,6 +20,10 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
 
+/*
+	TODO:
+		ADD COMMAND TO SEE ALL MODIFIER BLOCKS & SKULLS AND ABILITY TO GRAB THEM
+ */
 @HideFromWiki // TODO?
 @Permission(Group.STAFF)
 public class MiniGolfCommand extends CustomCommand {

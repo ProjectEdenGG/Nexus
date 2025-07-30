@@ -37,6 +37,8 @@ public abstract class EdenEventSinglePlayerGame extends Feature implements Liste
 	protected int updateIntervalTicks = 4;
 	@Getter
 	public long gameTicks = 0;
+	@Getter
+	public int currentRound = 0;
 
 	@Override
 	public void onStart() {
@@ -80,6 +82,10 @@ public abstract class EdenEventSinglePlayerGame extends Feature implements Liste
 
 	public long getMaxGameTicks() {
 		return TickTime.MINUTE.x(5);
+	}
+
+	public void incrementRound() {
+		currentRound++;
 	}
 
 	public void init() {
