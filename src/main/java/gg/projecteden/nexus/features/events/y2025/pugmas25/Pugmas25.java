@@ -31,8 +31,6 @@ import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.models.pugmas25.Advent25Config;
-import gg.projecteden.nexus.models.pugmas25.Advent25Present;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.models.warps.WarpType;
@@ -135,16 +133,10 @@ public class Pugmas25 extends EdenEvent {
 		Tasks.wait(1, () -> {
 			Pugmas25User user = userService.get(player);
 			user.updateHealth();
-
-			Pugmas25Advent.sendPackets(player);
 		});
 	}
 
-	public void onDepart(Player player) {
-		final Pugmas25User user = userService.get(player);
-		for (Advent25Present present : Advent25Config.get().getPresents())
-			user.advent().hide(present);
-	}
+	public void onDepart(Player player) {}
 
 	@EventHandler
 	public void on(PlayerJoinEvent event) {

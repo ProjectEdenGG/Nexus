@@ -3,10 +3,10 @@ package gg.projecteden.nexus.models.pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.models.clientside.ClientSideUser;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.nms.PacketUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -72,7 +72,7 @@ public class Advent25User implements PlayerOwnedObject {
 		collected.add(present.getDay());
 		found.add(present.getDay());
 		sendMessage(Pugmas25.PREFIX + "You found present &e#" + present.getDay() + "&3!");
-		show(present);
+		ClientSideUser.of(this).refresh();
 
 		PlayerUtils.mailItem(getOnlinePlayer(), present.getItem().build(), null, WorldGroup.SURVIVAL);
 		PlayerUtils.send(getOnlinePlayer(), Pugmas25.PREFIX + "This present has been sent to your &esurvival &c/mail box");
@@ -102,16 +102,4 @@ public class Advent25User implements PlayerOwnedObject {
 		getOnlinePlayer().teleportAsync(present.getLocation().toCenterLocation());
 	}
 
-	public void show(Advent25Present present) {
-		hide(present);
-		present.sendPacket(this);
-	}
-
-	public void hide(Advent25Present present) {
-		ItemFrame itemFrame = getItemFrame(present);
-		if (itemFrame == null)
-			return;
-
-		PacketUtils.entityDestroy(getOnlinePlayer(), itemFrame.getId());
-	}
 }

@@ -84,12 +84,6 @@ public class Pugmas25Advent implements Listener {
 			.open();
 	}
 
-	public static void sendPackets(Player player) {
-		final Pugmas25User user = userService.get(player);
-		for (Advent25Present present : Advent25Config.get().getPresents())
-			user.advent().show(present);
-	}
-
 	@EventHandler
 	public void onOpenPresent(PlayerInteractEvent event) {
 		final Player player = event.getPlayer();

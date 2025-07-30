@@ -211,4 +211,8 @@ public class ClientSideUser implements PlayerOwnedObject {
 		this.visibilityBox = BoundingBox.of(getOnlinePlayer().getLocation(), radius, radius, radius);
 	}
 
+	public void refresh() {
+		hideAll();
+		showAll();
+	}
 }
