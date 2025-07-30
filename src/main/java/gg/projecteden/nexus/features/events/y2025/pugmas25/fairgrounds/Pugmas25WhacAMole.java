@@ -16,6 +16,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -42,7 +43,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @EdenEventGameConfig(
-	prefix = "Wakk'a Mole",
+	prefix = "Whac-a-Wakka",
 	world = "pugmas25",
 	playRegion = "pugmas25_whacamole_play"
 )
@@ -54,19 +55,25 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 	private static final String STANDS_REGION = BASE_REGION + "stands";
 	private static final String CLEAN_ARROWS_REGION = BASE_REGION + "arrows";
 
-	private final Material targetGood = Material.ZOMBIE_HEAD;
-	private final Material targetBad = Material.PLAYER_HEAD;
-	private List<ItemStack> targetItems;
-	private final long MAX_LIFE_TICKS = TickTime.SECOND.x(3);
+	private static final List<ItemStack> KIT = List.of(
+		new ItemBuilder(Material.BOW).enchant(Enchant.INFINITY).unbreakable().build(),
+		new ItemBuilder(Material.ARROW).unbreakable().build());
+
+	private static final String TARGET_GOOD_KEY = "wakka";
+	private static final ItemStack TARGET_GOOD_ITEM = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(Dev.WAKKA.getUniqueId()).name(TARGET_GOOD_KEY).build();
+	private static final ItemStack TARGET_BAD_ITEM = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(Dev.GRIFFIN.getUniqueId()).name("griffin").build();
+	private static final List<ItemStack> TARGET_ITEM_POOL = List.of(TARGET_GOOD_ITEM.clone(), TARGET_BAD_ITEM.clone(), TARGET_BAD_ITEM.clone());
+
+	private static final long MAX_LIFE_TICKS = TickTime.SECOND.x(3);
 	private static final Map<ArmorStand, Long> activeStands = new ConcurrentHashMap<>();
-	private int score = 0;
 
 	private final List<Location> spawnLocations = new ArrayList<>();
 	private final List<ArmorStand> armorStands = new ArrayList<>();
-	private List<ItemStack> kit = new ArrayList<>();
+
 	private Hologram holoTimeLeft;
 	private Hologram holoScore;
 	private Hologram holoPlayer;
+	private int score = 0;
 
 	public Pugmas25WhacAMole() {
 		instance = this;
@@ -85,29 +92,18 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 	public void init() {
 		super.init();
 
-		holoTimeLeft = HologramsAPI.byId(getWorld(), "pugmas25_whacamole_time_left");
-		holoScore = HologramsAPI.byId(getWorld(), "pugmas25_whacamole_score");
-		holoPlayer = HologramsAPI.byId(getWorld(), "pugmas25_whacamole_player");
+		instance.holoTimeLeft = HologramsAPI.byId(getWorld(), "pugmas25_whacamole_time_left");
+		instance.holoScore = HologramsAPI.byId(getWorld(), "pugmas25_whacamole_score");
+		instance.holoPlayer = HologramsAPI.byId(getWorld(), "pugmas25_whacamole_player");
 
-		kit = List.of(
-			new ItemBuilder(Material.BOW).enchant(Enchant.INFINITY).unbreakable().build(),
-			new ItemBuilder(Material.ARROW).unbreakable().build());
-
-		ItemBuilder head = new ItemBuilder(targetBad).skullOwner(Dev.WAKKA.getUniqueId());
-		targetItems = List.of(
-			new ItemBuilder(targetGood).build(),
-			head.clone().build(),
-			head.clone().build()
-		);
-
-		spawnLocations.clear();
+		instance.spawnLocations.clear();
 		worldedit().getBlocks(worldguard().getProtectedRegion(STANDS_REGION)).forEach(block -> {
 			if ((block.getBlockData() instanceof Piston piston)) {
 				if (piston.isExtended()) {
 					Location location = block.getLocation().clone();
 					location.add(0.2, -1.5, 0.5);
 					location.setYaw(-90);
-					spawnLocations.add(location);
+					instance.spawnLocations.add(location);
 				}
 			}
 		});
@@ -115,7 +111,7 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 
 	@Override
 	public void end() {
-		armorStands.forEach(Entity::remove);
+		instance.armorStands.forEach(Entity::remove);
 
 		Location location = getGamer().getLocation();
 		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_CHIME).pitch(0.7).location(location).play();
@@ -127,21 +123,21 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 
 	@Override
 	public void reset() {
-		armorStands.forEach(Entity::remove);
-		armorStands.clear();
+		instance.armorStands.forEach(Entity::remove);
+		instance.armorStands.clear();
 		if (getGamer() != null)
-			PlayerUtils.removeItems(getGamer(), kit);
+			PlayerUtils.removeItems(getGamer(), KIT);
 		worldguard().getEntitiesInRegion(CLEAN_ARROWS_REGION).stream()
 			.filter(entity -> entity.getType() == EntityType.ARROW)
 			.forEach(Entity::remove);
-		score = 0;
+		instance.score = 0;
 
 		super.reset();
 	}
 
 	@Override
 	protected boolean startChecks(Player player) {
-		if (!PlayerUtils.hasRoomFor(player, kit)) {
+		if (!PlayerUtils.hasRoomFor(player, KIT)) {
 			send(player, "&cYou don't have enough room for the kit");
 			return false;
 		}
@@ -151,13 +147,13 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 
 	@Override
 	protected void preStart() {
-		score = 0;
-		updateHologramPlayer();
-		updateHologramScore();
-		updateHologramTime();
-		give(kit);
+		instance.score = 0;
+		instance.updateHologramPlayer();
+		instance.updateHologramScore();
+		instance.updateHologramTime();
+		instance.give(KIT);
 
-		for (Location location : spawnLocations) {
+		for (Location location : instance.spawnLocations) {
 
 			ArmorStand armorStand = getGamer().getWorld().spawn(location, ArmorStand.class, stand -> {
 				stand.setRightArmPose(EulerAngle.ZERO);
@@ -170,7 +166,7 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 				stand.setDisabledSlots(EquipmentSlot.values());
 			});
 
-			armorStands.add(armorStand);
+			instance.armorStands.add(armorStand);
 		}
 	}
 
@@ -192,47 +188,75 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 			}
 		}
 
+		// TODO: STAND COUNTS START LOW AND INCREASE TO MAX TOWARDS END OF GAME?
 		if (getGameTicks() % TimeUtils.TickTime.SECOND.x(3) == 0) {
-			List<ArmorStand> standChoices = new ArrayList<>(armorStands);
+			incrementRound();
+
+			List<ArmorStand> standChoices = new ArrayList<>(instance.armorStands);
 			standChoices.removeAll(_activeStands.keySet());
-			if (!standChoices.isEmpty()) {
-				int standCount = RandomUtils.randomInt(3, 5);
-				for (int i = 0; i < standCount; i++) {
-					ArmorStand stand = RandomUtils.randomElement(standChoices);
-					stand.getEquipment().setHelmet(new ItemStack(RandomUtils.randomElement(targetItems)), true);
+			if (standChoices.isEmpty())
+				return;
 
-					EntityUtils.forcePacket(stand);
-					Location location = getStandBaseLocation(stand).add(0, 1, 0);
-					stand.teleport(location);
-					new SoundBuilder(Sound.BLOCK_PISTON_EXTEND).volume(0.75).location(location).play();
+			int standCount = getStandCountFromRound(standChoices);
 
-					activeStands.put(stand, getGameTicks());
-				}
+			boolean hasTarget = false;
+			for (int i = 0; i < standCount; i++) {
+				ArmorStand stand = RandomUtils.randomElement(standChoices);
+				ItemStack targetHead;
+				if (!hasTarget) { // Min 1+ target per round
+					targetHead = TARGET_GOOD_ITEM.clone();
+					hasTarget = true;
+				} else
+					targetHead = RandomUtils.randomElement(TARGET_ITEM_POOL).clone();
+
+				stand.getEquipment().setHelmet(targetHead, true);
+
+				EntityUtils.forcePacket(stand);
+				Location location = getStandBaseLocation(stand).add(0, 1, 0);
+				stand.teleport(location);
+				new SoundBuilder(Sound.BLOCK_PISTON_EXTEND).volume(0.75).location(location).play();
+
+				activeStands.put(stand, getGameTicks());
 			}
 		}
 	}
 
+	private int getStandCountFromRound(List<ArmorStand> standChoices) {
+		int currentRound = getCurrentRound();
+
+		if (currentRound > 18)
+			return RandomUtils.randomInt(10, standChoices.size());
+
+		if (currentRound > 12)
+			return RandomUtils.randomInt(7, 12);
+
+		if (currentRound > 6)
+			return RandomUtils.randomInt(5, 8);
+
+		return RandomUtils.randomInt(3, 5);
+	}
+
 	private void updateHologramPlayer() {
-		if (holoPlayer == null)
+		if (instance.holoPlayer == null)
 			return;
 
-		holoPlayer.setLine(0, "&e" + Nickname.of(getGamer()));
+		instance.holoPlayer.setLine(0, "&3[&e" + Nickname.of(getGamer()) + "&3]");
 	}
 
 	private void updateHologramScore() {
-		if (holoScore == null)
+		if (instance.holoScore == null)
 			return;
 
-		holoScore.setLine(0, "&3Score: &e" + score);
+		instance.holoScore.setLine(0, "&3Score: &e" + instance.score);
 	}
 
 	private void updateHologramTime() {
-		if (holoTimeLeft == null)
+		if (instance.holoTimeLeft == null)
 			return;
 
 		if (getGameTicks() % TickTime.SECOND.get() == 0) {
 			int secondsLeft = (int) ((TickTime.MINUTE.get() - getGameTicks()) / TickTime.SECOND.get());
-			holoTimeLeft.setLine(0, "&3Time Left: &e" + secondsLeft + "s");
+			instance.holoTimeLeft.setLine(0, "&3Time Left: &e" + secondsLeft + "s");
 		}
 	}
 
@@ -270,29 +294,29 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 		arrow.remove();
 
 		ItemStack headItem = armorStand.getEquipment().getItem(EquipmentSlot.HEAD);
-		if (Nullables.isNotNullOrAir(headItem)) {
-			Material type = headItem.getType();
-			if (type == targetGood) {
+		if (Nullables.isNotNullOrAir(headItem) && headItem.getType() == Material.PLAYER_HEAD) {
+			String key = StringUtils.stripColor(new ItemBuilder(headItem).name());
+			if (key.equalsIgnoreCase(TARGET_GOOD_KEY)) {
 				new SoundBuilder(Sound.ENTITY_ARROW_HIT_PLAYER).location(gamer).volume(0.5).play();
-				score++;
-			} else if (type == targetBad) {
+				instance.score++;
+			} else {
 				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO).location(gamer).volume(0.5).pitch(0.5).play();
-				score -= 2;
+				instance.score -= 2;
 			}
 
-			updateHologramScore();
+			instance.updateHologramScore();
 		}
 
-		resetStand(armorStand);
+		instance.resetStand(armorStand);
 	}
 
 	private void resetStand(ArmorStand stand) {
 		activeStands.remove(stand);
 		stand.teleport(getStandBaseLocation(stand).subtract(0, 1, 0));
-		stand.getEquipment().setHelmet(null);
+		stand.getEquipment().setHelmet(new ItemStack(Material.AIR));
 	}
 
 	private Location getStandBaseLocation(ArmorStand stand) {
-		return spawnLocations.get(armorStands.indexOf(stand)).clone();
+		return instance.spawnLocations.get(armorStands.indexOf(stand)).clone();
 	}
 }
