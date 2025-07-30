@@ -35,7 +35,6 @@ public class Pugmas25User implements PlayerOwnedObject {
 	private boolean visited = false;
 
 	private Set<Pugmas25Waystone> foundWaystones = new HashSet<>();
-	private double maxHealth = 10;
 
 	@Getter(AccessLevel.PRIVATE)
 	private Advent25User advent;
@@ -47,14 +46,13 @@ public class Pugmas25User implements PlayerOwnedObject {
 		return advent;
 	}
 
+	@Deprecated
 	public void updateHealth() {
 		Player player = getPlayer();
 		if (player == null || !player.isOnline())
 			return;
 
 		AttributeInstance maxHealth = HealCommand.getMaxHealthAttribute(player);
-		maxHealth.setBaseValue(this.maxHealth);
-		if (player.getHealth() > this.maxHealth)
-			player.setHealth(this.maxHealth);
+		maxHealth.setBaseValue(20);
 	}
 }

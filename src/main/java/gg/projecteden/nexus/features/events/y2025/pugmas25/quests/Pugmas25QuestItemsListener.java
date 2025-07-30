@@ -32,23 +32,5 @@ public class Pugmas25QuestItemsListener implements Listener {
 		event.setCancelled(true);
 	}
 
-	@EventHandler
-	public void on(PlayerItemConsumeEvent event) {
-		if (!Pugmas25.get().shouldHandle(event.getPlayer()))
-			return;
-
-		if (!Pugmas25QuestItem.HEART_CRYSTAL.fuzzyMatch(event.getItem()))
-			return;
-
-		Pugmas25.get().addMaxHealth(event.getPlayer(), 2.0); // TODO: CHECK IF THEY WILL HIT MAX HEALTH --> 40.0
-		// TODO: HEART EFFECTS
-
-		/*
-			TODO: FIX ISSUES:
-				 PLAYER HAS TO BE HUNGRY TO EAT THE HEART --> PLAYER INTERACT EVENT INSTEAD?
-
-		 */
-	}
-
 
 }

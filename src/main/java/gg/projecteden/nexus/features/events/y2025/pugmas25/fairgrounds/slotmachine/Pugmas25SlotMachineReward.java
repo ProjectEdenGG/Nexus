@@ -38,11 +38,12 @@ public enum Pugmas25SlotMachineReward {
 		}
 	),
 
-	HEARTS(SlotPos.of(2, 2), new ItemBuilder(Material.HEART_POTTERY_SHERD).name("&bHeart Crystals")
-		.lore("&3Half: &a2 &eHeart Crystals", "&3Full: &a5 &eHeart Crystals"),
-		(player) -> Pugmas25SlotMachine.get().give(Pugmas25QuestItem.HEART_CRYSTAL.getItemBuilder().amount(2)),
-		(player) -> Pugmas25SlotMachine.get().give(Pugmas25QuestItem.HEART_CRYSTAL.getItemBuilder().amount(5))
-	),
+	// TODO: REPLACE WITH EXP
+//	HEARTS(SlotPos.of(2, 2), new ItemBuilder(Material.HEART_POTTERY_SHERD).name("&bHeart Crystals")
+//		.lore("&3Half: &a2 &eHeart Crystals", "&3Full: &a5 &eHeart Crystals"),
+//		(player) -> Pugmas25SlotMachine.get().give(Pugmas25QuestItem.HEART_CRYSTAL.getItemBuilder().amount(2)),
+//		(player) -> Pugmas25SlotMachine.get().give(Pugmas25QuestItem.HEART_CRYSTAL.getItemBuilder().amount(5))
+//	),
 
 	COINS(SlotPos.of(3, 2), new ItemBuilder(Material.ARMS_UP_POTTERY_SHERD).name("&bCoins")
 		.lore("&3Half: &eTODO", "&3Full: &eTODO"),
@@ -90,11 +91,12 @@ public enum Pugmas25SlotMachineReward {
 		(player) -> Pugmas25.get().onDeath(player, Pugmas25DeathCause.INSTANT_DEATH)
 	),
 
-	HALF_MAX_HEALTH(SlotPos.of(2, 6), new ItemBuilder(Material.HEARTBREAK_POTTERY_SHERD).name("&cHalve Max Health")
-		.lore("&3Half: &aMax Health &3set to &c75%", "&3Full: &aMax Health &3set to &c50%"),
-		(player) -> Pugmas25.get().setMaxHealth(player, HealCommand.getMaxHealth(player) * 0.75),
-		(player) -> Pugmas25.get().setMaxHealth(player, HealCommand.getMaxHealth(player) * 0.50)
-	),
+	// TODO: REPLACE WITH EXP
+//	HALF_MAX_HEALTH(SlotPos.of(2, 6), new ItemBuilder(Material.HEARTBREAK_POTTERY_SHERD).name("&cHalve Max Health")
+//		.lore("&3Half: &aMax Health &3set to &c75%", "&3Full: &aMax Health &3set to &c50%"),
+//		(player) -> Pugmas25.get().setMaxHealth(player, HealCommand.getMaxHealth(player) * 0.75),
+//		(player) -> Pugmas25.get().setMaxHealth(player, HealCommand.getMaxHealth(player) * 0.50)
+//	),
 
 	HALF_CURRENCY(SlotPos.of(3, 6), new ItemBuilder(Material.MOURNER_POTTERY_SHERD).name("&cHalve Currency")
 		.lore("&3Half: &aCoin Pouch &3set to &c75% Coins", "&3Full: &aCoin Pouch &3set to &c50% Coins"),

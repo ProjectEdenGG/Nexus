@@ -14,6 +14,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25BoatRa
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Cabin;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Fishing;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Interactions;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Intro;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Train;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25TrainBackground;
@@ -113,6 +114,7 @@ public class Pugmas25 extends EdenEvent {
 		new Pugmas25Waystones();
 		new Pugmas25Cabin();
 		new Pugmas25BoatRace();
+		new Pugmas25Interactions();
 
 		Pugmas25Train.startup();
 		Pugmas25TrainBackground.startup();
@@ -139,8 +141,6 @@ public class Pugmas25 extends EdenEvent {
 	}
 
 	public void onDepart(Player player) {
-		resetHealth(player);
-
 		final Pugmas25User user = userService.get(player);
 		for (Advent25Present present : Advent25Config.get().getPresents())
 			user.advent().hide(present);
@@ -231,32 +231,15 @@ public class Pugmas25 extends EdenEvent {
 
 	// Health
 
-	public void addMaxHealth(Player player, double amount) {
-		setMaxHealthAttribute(player, HealCommand.getMaxHealth(player) + amount, true);
-	}
-
-	public void subtractMaxHealth(Player player, double amount) {
-		setMaxHealthAttribute(player, Math.max(HealCommand.getMaxHealth(player) - amount, 1.0), true);
-	}
-
-	public void setMaxHealth(Player player, double amount) {
-		setMaxHealthAttribute(player, amount, true);
-	}
-
+	@Deprecated
 	public void resetHealth(Player player) {
-		setMaxHealthAttribute(player, 20.0, false);
+		setMaxHealthAttribute(player, 20.0);
 	}
 
-	private void setMaxHealthAttribute(Player player, double amount, boolean save) {
+	@Deprecated
+	private void setMaxHealthAttribute(Player player, double amount) {
 		HealCommand.getMaxHealthAttribute(player).setBaseValue(amount);
-		if (player.getHealth() > amount)
-			player.setHealth(amount);
-
-		if (save) {
-			Pugmas25User user = userService.get(player);
-			user.setMaxHealth(amount);
-			userService.save(user);
-		}
+		player.setHealth(amount);
 	}
 
 	// Death

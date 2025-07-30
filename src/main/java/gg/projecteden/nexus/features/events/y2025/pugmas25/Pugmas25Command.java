@@ -49,6 +49,8 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import tech.blastmc.holograms.api.HologramsAPI;
+import tech.blastmc.holograms.api.models.Hologram;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -90,30 +92,6 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 			error("You need to take the Pugmas train at Hub to unlock this warp.");
 
 		player().teleportAsync(Pugmas25.get().warp, TeleportCause.COMMAND);
-	}
-
-	@Path("health reset")
-	@Permission(Group.ADMIN)
-	void health_reset() {
-		Pugmas25.get().resetHealth(player());
-	}
-
-	@Path("health add")
-	@Permission(Group.ADMIN)
-	void health_add() {
-		Pugmas25.get().addMaxHealth(player(), 2.0);
-	}
-
-	@Path("health subtract")
-	@Permission(Group.ADMIN)
-	void health_subtract() {
-		Pugmas25.get().subtractMaxHealth(player(), 2.0);
-	}
-
-	@Path("health set <amount>")
-	@Permission(Group.ADMIN)
-	void health_set(@Arg(value = "20", min = 1, max = 40) int amount) {
-		Pugmas25.get().setMaxHealth(player(), amount);
 	}
 
 	@Path("coins deposit <amount>")
