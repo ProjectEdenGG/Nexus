@@ -1,9 +1,14 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.advent;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
+import gg.projecteden.nexus.features.clientside.models.IClientSideEntity;
 import gg.projecteden.nexus.features.events.advent.AdventAnimation;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import gg.projecteden.nexus.models.clientside.ClientSideConfig;
+import gg.projecteden.nexus.models.clientside.ClientSideConfig.ClientSideVisibilityCondition;
+import gg.projecteden.nexus.models.clientside.ClientSideUser;
 import gg.projecteden.nexus.models.pugmas25.Advent25Config;
 import gg.projecteden.nexus.models.pugmas25.Advent25ConfigService;
 import gg.projecteden.nexus.models.pugmas25.Advent25Present;
@@ -25,6 +30,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.features.resourcepack.models.ItemModelType.PUGMAS_PRESENT_ADVENT;
+import static gg.projecteden.nexus.features.resourcepack.models.ItemModelType.PUGMAS_PRESENT_ADVENT_OPENED;
+
 /*
  	TODO:
  		- GLOWING / WAYPOINT
@@ -36,6 +44,27 @@ public class Pugmas25Advent implements Listener {
 
 	public Pugmas25Advent() {
 		Nexus.registerListener(this);
+
+		ClientSideConfig.registerVisibilityCondition(new ClientSideVisibilityCondition() {
+			@Override
+			public boolean shouldHide(ClientSideUser user, IClientSideEntity<?, ?, ?> entity) {
+				if (!(entity instanceof ClientSideItemFrame itemFrame))
+					return false;
+
+				var present = Advent25Config.getPresent(itemFrame);
+				if (present == null)
+					return false;
+
+				var adventUser = new Pugmas25UserService().get(user).advent();
+
+				if (PUGMAS_PRESENT_ADVENT.is(itemFrame.content()))
+					return adventUser.hasFound(present.getDay());
+				else if (PUGMAS_PRESENT_ADVENT_OPENED.is(itemFrame.content()))
+					return !adventUser.hasFound(present.getDay());
+				else
+					return false;
+			}
+		});
 	}
 
 	public static void glow(Pugmas25User user, int day) {
@@ -73,7 +102,7 @@ public class Pugmas25Advent implements Listener {
 			return;
 
 		final ItemModelType itemModelType = ItemModelType.of(item);
-		if (itemModelType != ItemModelType.PUGMAS_PRESENT_ADVENT)
+		if (itemModelType != PUGMAS_PRESENT_ADVENT)
 			return;
 
 		List<String> lore = item.getItemMeta().getLore();

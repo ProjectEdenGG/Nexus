@@ -32,6 +32,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redi
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.pugmas25.Advent25Config;
@@ -49,12 +50,11 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import tech.blastmc.holograms.api.HologramsAPI;
-import tech.blastmc.holograms.api.models.Hologram;
 
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.UUID;
 
 @HideFromWiki
 @NoArgsConstructor
@@ -182,7 +182,7 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 
 	@Path("advent config setDay <day>")
 	@Permission(Group.ADMIN)
-	void advent_config(@Arg(min = 1, max = 25) int day) {
+	void advent_config_setDay(@Arg(min = 1, max = 25) int day) {
 		final Block block = getTargetBlockRequired();
 		if (block.getType() != Material.BARRIER)
 			error("You must be looking at a barrier");
@@ -191,6 +191,20 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		adventService.save(adventConfig);
 
 		send(PREFIX + "Advent day #" + day + " configured");
+	}
+
+	@Path("advent config delete <day>")
+	@Permission(Group.ADMIN)
+	void advent_config_delete(@Arg(min = 1, max = 25) int day) {
+		var present = adventConfig.get(day);
+		adventConfig.getPresents().remove(present);
+		for (UUID uuid : present.getEntityUuids()) {
+			var entity = ClientSideConfig.getEntity(uuid);
+			if (entity != null)
+				ClientSideConfig.delete(entity);
+		}
+		ClientSideConfig.save();
+		send(PREFIX + "Advent day #" + day + " deleted");
 	}
 
 	@Path("death <cause>")

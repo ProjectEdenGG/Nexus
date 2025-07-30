@@ -46,6 +46,8 @@ public class ClientSideConfig implements PlayerOwnedObject {
 	private UUID uuid;
 	private Map<String, List<IClientSideEntity<?, ?, ?>>> entities = new ConcurrentHashMap<>();
 
+	public static final List<ClientSideVisibilityCondition> VISIBILITY_CONDITIONS = new ArrayList<>();
+
 	public static ClientSideConfig get() {
 		return new ClientSideConfigService().get0();
 	}
@@ -138,4 +140,11 @@ public class ClientSideConfig implements PlayerOwnedObject {
 		return nbt != null && nbt == 1;
 	}
 
+	public static void registerVisibilityCondition(ClientSideVisibilityCondition condition) {
+		VISIBILITY_CONDITIONS.add(condition);
+	}
+
+	public abstract static class ClientSideVisibilityCondition {
+		public abstract boolean shouldHide(ClientSideUser user, IClientSideEntity<?, ?, ?> entity);
+	}
 }

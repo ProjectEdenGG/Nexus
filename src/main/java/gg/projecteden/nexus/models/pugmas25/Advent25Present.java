@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -25,6 +26,7 @@ public class Advent25Present implements HasLocation {
 	private int day;
 	private Location location;
 	private List<ItemStack> contents = new ArrayList<>();
+	private List<UUID> entityUuids = new ArrayList<>();
 
 	public Advent25Present(int day, Location location) {
 		this.day = day;

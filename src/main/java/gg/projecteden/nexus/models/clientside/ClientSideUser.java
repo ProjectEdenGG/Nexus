@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.clientside.models.IClientSideEntity;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ConcurrentLinkedQueueConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
+import gg.projecteden.nexus.models.clientside.ClientSideConfig.ClientSideVisibilityCondition;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.nms.PacketUtils;
 import lombok.AllArgsConstructor;
@@ -71,7 +72,10 @@ public class ClientSideUser implements PlayerOwnedObject {
 		if (!isOnline())
 			return false;
 
-		// TODO Conditions
+		for (ClientSideVisibilityCondition condition : ClientSideConfig.VISIBILITY_CONDITIONS)
+			if (condition.shouldHide(this, entity))
+				return false;
+
 		if (entity.isHidden() && !editing)
 			return false;
 
