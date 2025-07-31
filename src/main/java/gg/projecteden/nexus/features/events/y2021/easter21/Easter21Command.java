@@ -85,7 +85,7 @@ public class Easter21Command extends _WarpSubCommand implements Listener {
 		send(PREFIX + "Most found eggs");
 		BiFunction<Location, String, JsonBuilder> formatter = (location, index) ->
 				json(index + " &e" + StringUtils.xyz(location) + " &7- " + counts.get(location))
-						.command(StringUtils.getTeleportCommand(location))
+						.command(StringUtils.tppos(location))
 						.hover("&eClick to teleport");
 		new Paginator<Location>()
 			.values(Utils.sortByValueReverse(counts).keySet())

@@ -536,10 +536,10 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	}
 
 	public static JsonBuilder getJsonLocation(String message, Location location) {
-		return new JsonBuilder().next(message).command(getTeleportCommand(location));
+		return new JsonBuilder().next(message).command(tppos(location));
 	}
 
-	public static String getTeleportCommand(Location location) {
+	public static String tppos(Location location) {
 		return "/tppos " + df.format(location.getX()) + " " + df.format(location.getY()) + " " + df.format(location.getZ()) +
 			" " + df.format(location.getYaw()) + " " + df.format(location.getPitch()) + " " + location.getWorld().getName();
 	}

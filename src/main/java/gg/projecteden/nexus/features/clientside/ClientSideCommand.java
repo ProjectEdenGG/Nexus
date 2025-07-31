@@ -25,7 +25,6 @@ import gg.projecteden.nexus.models.clientside.ClientSideUser;
 import gg.projecteden.nexus.models.clientside.ClientSideUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,12 +38,17 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.potion.PotionType;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+
+import static gg.projecteden.nexus.utils.Distance.distance;
+import static gg.projecteden.nexus.utils.StringUtils.tppos;
+import static gg.projecteden.nexus.utils.StringUtils.xyzw;
 
 @NoArgsConstructor
 public class ClientSideCommand extends CustomCommand implements Listener {
@@ -88,7 +92,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
-	@Path("entities list [page] [--world] [--excludeWorld] [--type] [--onlyHidden] [--onlyShown]")
+	@Path("entities list [page] [--world] [--excludeWorld] [--type] [--onlyHidden] [--onlyShown] [--radius]")
 	@Permission(Group.ADMIN)
 	@Description("List client side entities")
 	void entities_list(
@@ -97,7 +101,8 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 		@Switch World excludeWorld,
 		@Switch ClientSideEntityType type,
 		@Switch boolean onlyHidden,
-		@Switch boolean onlyShown
+		@Switch boolean onlyShown,
+		@Switch Integer radius
 	) {
 		var entities = ClientSideConfig.getAllEntities().stream()
 			.filter(entity -> world  == null || world.equals(entity.location().getWorld()))
@@ -105,6 +110,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 			.filter(entity -> type == null || entity.getType() == type)
 			.filter(entity -> !onlyHidden || entity.isHidden())
 			.filter(entity -> !onlyShown || !entity.isHidden())
+			.filter(entity -> radius == null || world().equals(entity.location().getWorld()) && distance(location(), entity.location()).lte(radius))
 			.toList();
 
 		if (Nullables.isNullOrEmpty(entities))
@@ -118,9 +124,13 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 		if (type != null) command += " --type=" + type;
 		command += " --onlyHidden=" + onlyHidden;
 		command += " --onlyShown=" + onlyShown;
+		if (radius != null) command += " --radius=" + radius;
 
-		final BiFunction<IClientSideEntity<?, ?, ?>, String, JsonBuilder> formatter = (entity, index) -> json("&3" + index + " &e" + camelCase(entity.getType()) + " &7- " + StringUtils.xyzw(entity.location()))
-			.command(StringUtils.getTeleportCommand(entity.location()));
+		final BiFunction<IClientSideEntity<?, ?, ?>, String, JsonBuilder> formatter = (entity, index) ->
+			json()
+				.next("&3" + index + " &e" + camelCase(entity.getType())).insert(entity.getUuid().toString())
+				.group()
+				.next(" &7- " + xyzw(entity.location())).command(tppos(entity.location()));
 
 		new Paginator<IClientSideEntity<?, ?, ?>>()
 			.values(entities)
@@ -219,7 +229,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 		final WorldEditUtils worldedit = new WorldEditUtils(player());
 		final Region selection = worldedit.getPlayerSelection(player());
 
-		for (var entity : ClientSideConfig.getEntities(world())) {
+		for (var entity : new ArrayList<>(ClientSideConfig.getEntities(world()))) {
 			if (!selection.contains(worldedit.toBlockVector3(entity.location())))
 				continue;
 

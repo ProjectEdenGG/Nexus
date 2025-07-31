@@ -69,7 +69,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 	@Permission(Group.STAFF)
 	@Description("Print a copyable command that teleports you to your current location")
 	void getCoords() {
-		String message = StringUtils.getTeleportCommand(location());
+		String message = StringUtils.tppos(location());
 		send(json(PREFIX + "Click to copy").copy(message).hover(message));
 	}
 

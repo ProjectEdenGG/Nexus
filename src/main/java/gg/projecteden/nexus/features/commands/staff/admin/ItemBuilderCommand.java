@@ -103,7 +103,7 @@ public class ItemBuilderCommand extends CustomCommand {
 		item.damage(damage);
 	}
 
-	@Path("name <name>")
+	@Path("name <name...>")
 	@Description("Set an item's name")
 	void name(String name) {
 		item.name(name);

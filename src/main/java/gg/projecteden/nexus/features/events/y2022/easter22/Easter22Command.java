@@ -71,7 +71,7 @@ public class Easter22Command extends IEventCommand {
 		new Paginator<Location>()
 			.values(Utils.sortByValueReverse(counts).keySet())
 			.formatter((location, index) -> json(index + " &e" + StringUtils.xyz(location) + " &7- " + counts.get(location))
-				.command(StringUtils.getTeleportCommand(location))
+				.command(StringUtils.tppos(location))
 				.hover("&eClick to teleport")
 			)
 			.command("/easter topLocations")

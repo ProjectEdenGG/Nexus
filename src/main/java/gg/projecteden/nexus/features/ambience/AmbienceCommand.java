@@ -131,7 +131,7 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 		send(PREFIX + camelCase(type) + " ambience:");
 		final BiFunction<Ambience, String, JsonBuilder> formatter = (ambience, index) ->
 			json(index + " &e" + StringUtils.getLocationString(ambience.getLocation()))
-				.command(StringUtils.getTeleportCommand(ambience.getLocation()))
+				.command(StringUtils.tppos(ambience.getLocation()))
 				.hover("&eClick to teleport");
 
 		new Paginator<Ambience>()
@@ -161,7 +161,7 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Nearby " + (type == null ? "" : camelCase(type) + " ") + "ambience:");
 		final BiFunction<Ambience, String, JsonBuilder> formatter = (ambience, index) ->
 			json(index + " &e" + StringUtils.getLocationString(ambience.getLocation()))
-				.command(StringUtils.getTeleportCommand(ambience.getLocation()))
+				.command(StringUtils.tppos(ambience.getLocation()))
 				.hover("&eClick to teleport");
 
 		new Paginator<Ambience>()

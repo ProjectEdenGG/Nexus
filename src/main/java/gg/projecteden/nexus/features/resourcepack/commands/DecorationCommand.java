@@ -277,7 +277,7 @@ public class DecorationCommand extends CustomCommand {
 			String name = decoration.getConfig().getName();
 
 			JsonBuilder json = new JsonBuilder("&7 - &e" + name).hover("Click to TP")
-				.command(StringUtils.getTeleportCommand(location)).group();
+				.command(StringUtils.tppos(location)).group();
 
 			if (showOwner) {
 				UUID ownerUUID = decoration.getOwner(player());
