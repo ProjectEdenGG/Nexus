@@ -23,7 +23,11 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
@@ -129,7 +133,12 @@ public class Chatter implements PlayerOwnedObject {
 	}
 
 	public boolean isInValidWorld(PublicChannel publicChannel) {
-		return !publicChannel.getDisabledWorldGroups().contains(WorldGroup.of(getOnlinePlayer()));
+		var disabledWorldGroups = publicChannel.getDisabledWorldGroups();
+		if (disabledWorldGroups.isEmpty())
+			return true;
+
+		var worldGroup = WorldGroup.of(getOnlinePlayer());
+		return !disabledWorldGroups.contains(worldGroup);
 	}
 
 	public boolean hasJoined(PublicChannel channel) {
