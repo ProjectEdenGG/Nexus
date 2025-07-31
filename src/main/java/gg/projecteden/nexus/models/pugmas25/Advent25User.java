@@ -72,7 +72,7 @@ public class Advent25User implements PlayerOwnedObject {
 		collected.add(present.getDay());
 		found.add(present.getDay());
 		sendMessage(Pugmas25.PREFIX + "You found present &e#" + present.getDay() + "&3!");
-		ClientSideUser.of(this).refresh();
+		ClientSideUser.of(this).refresh(present.getEntityUuid());
 
 		PlayerUtils.mailItem(getOnlinePlayer(), present.getItem().build(), null, WorldGroup.SURVIVAL);
 		PlayerUtils.send(getOnlinePlayer(), Pugmas25.PREFIX + "This present has been sent to your &esurvival &c/mail box");
