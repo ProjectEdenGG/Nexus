@@ -180,9 +180,9 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		send(PREFIX + "lootOrigin configured at " + StringUtils.xyz(adventConfig.getLootOrigin()));
 	}
 
-	@Path("advent config setDay <day>")
+	@Path("advent config create <day>")
 	@Permission(Group.ADMIN)
-	void advent_config_setDay(@Arg(min = 1, max = 25) int day) {
+	void advent_config_create(@Arg(min = 1, max = 25) int day) {
 		final Block block = getTargetBlockRequired();
 		if (block.getType() != Material.BARRIER)
 			error("You must be looking at a barrier");
@@ -197,12 +197,17 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 	@Permission(Group.ADMIN)
 	void advent_config_delete(@Arg(min = 1, max = 25) int day) {
 		var present = adventConfig.get(day);
-		adventConfig.getPresents().remove(present);
-		for (UUID uuid : present.getEntityUuids()) {
+		if (present == null)
+			error("No advent day #" + day + " configured");
+		adventConfig.remove(present);
+
+		UUID uuid = present.getEntityUuid();
+		if (uuid != null) {
 			var entity = ClientSideConfig.getEntity(uuid);
 			if (entity != null)
 				ClientSideConfig.delete(entity);
 		}
+
 		ClientSideConfig.save();
 		send(PREFIX + "Advent day #" + day + " deleted");
 	}

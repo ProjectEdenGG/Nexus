@@ -12,7 +12,11 @@ import net.minecraft.world.entity.Entity;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.entity.*;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Painting;
+import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,6 +39,8 @@ public interface IClientSideEntity<
 	int id();
 
 	UUID uuid();
+
+	UUID entityUuid();
 
 	Location location();
 

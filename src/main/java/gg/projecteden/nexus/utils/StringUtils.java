@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.emoji.EmojiUser.Emoji;
 import gg.projecteden.nexus.utils.ItemUtils.PotionWrapper;
 import gg.projecteden.parchment.HasLocation;
@@ -238,6 +239,12 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 			DecorationConfig config = DecorationConfig.of(item);
 			if (config != null)
 				displayName = config.getName();
+
+			if (displayName == null || displayName.isEmpty()) {
+				var model = ItemModelType.of(item);
+				if (model != null)
+					displayName = camelCase(model);
+			}
 
 			return item.getAmount() * amount + " " + displayName;
 		}

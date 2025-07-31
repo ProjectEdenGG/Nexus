@@ -2,6 +2,8 @@ package gg.projecteden.nexus.features.clientside.models;
 
 import dev.morphia.annotations.Entity;
 import fr.moribus.imageonmap.image.MapInitEvent;
+import gg.projecteden.nexus.models.clientside.ClientSideConfig.ClientSideItemFrameModifier;
+import gg.projecteden.nexus.models.clientside.ClientSideUser;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import lombok.Data;
@@ -39,12 +41,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static gg.projecteden.nexus.models.clientside.ClientSideConfig.ITEM_FRAME_MODIFIERS;
+
 @Data
 @Entity
 @NoArgsConstructor
 @Accessors(fluent = true, chain = true)
 public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFrame, ItemFrame, org.bukkit.entity.ItemFrame> {
 	private UUID uuid;
+	private UUID entityUuid;
 	private transient int id;
 	private Location location;
 	private ItemStack content;
@@ -80,7 +85,8 @@ public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFram
 
 	public static ClientSideItemFrame of(org.bukkit.entity.ItemFrame itemFrame) {
 		return builder()
-			.uuid(itemFrame.getUniqueId())
+			.uuid(UUID.randomUUID())
+			.entityUuid(itemFrame.getUniqueId())
 			.location(itemFrame.getLocation())
 			.content(itemFrame.getItem())
 			.blockFace(itemFrame.getFacing())
@@ -98,10 +104,13 @@ public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFram
 		if (content == null)
 			content = new ItemStack(Material.AIR);
 
+		if (uuid == null)
+			uuid = UUID.randomUUID();
+
 		if (entity == null) {
 			entity = new ItemFrame(EntityType.ITEM_FRAME, NMSUtils.toNMS(location.getWorld()));
 			id = entity.getId();
-			uuid = entity.getUUID();
+			entityUuid = entity.getUUID();
 		}
 		entity.moveTo(location.getBlockX(), location.getBlockY(), location.getBlockZ(), 0, 0);
 		entity.setItem(NMSUtils.toNMS(content), true, makeSound);
@@ -144,11 +153,17 @@ public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFram
 
 	@Override
 	public @NotNull List<Packet<ClientGamePacketListener>> getUpdatePackets(Player player) {
-		final List<DataValue<?>> values = entity().getEntityData().packAll();
-		if (values == null)
-			return Collections.emptyList();
+		var original = entity().getItem();
+		for (ClientSideItemFrameModifier modifier : ITEM_FRAME_MODIFIERS) {
+			var item = modifier.modify(ClientSideUser.of(player), this);
+			entity.setItem(NMSUtils.toNMS(item), true, makeSound);
+		}
 
-		return Collections.singletonList(new ClientboundSetEntityDataPacket(entity.getId(), values));
+		final List<DataValue<?>> values = entity().getEntityData().packAll();
+		List<Packet<ClientGamePacketListener>> packets = Collections.singletonList(new ClientboundSetEntityDataPacket(entity.getId(), values));
+
+		entity.setItem(original, true, makeSound);
+		return packets;
 	}
 
 }

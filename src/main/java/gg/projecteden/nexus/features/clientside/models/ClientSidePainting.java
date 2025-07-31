@@ -31,6 +31,7 @@ import java.util.UUID;
 @Accessors(fluent = true, chain = true)
 public class ClientSidePainting implements IClientSideEntity<ClientSidePainting, Painting, org.bukkit.entity.Painting> {
 	private UUID uuid;
+	private UUID entityUuid;
 	private transient int id;
 	private Location location;
 	private BlockFace blockFace;
@@ -54,7 +55,8 @@ public class ClientSidePainting implements IClientSideEntity<ClientSidePainting,
 
 	public static ClientSidePainting of(org.bukkit.entity.Painting painting) {
 		return builder()
-			.uuid(painting.getUniqueId())
+			.uuid(UUID.randomUUID())
+			.entityUuid(painting.getUniqueId())
 			.location(NMSUtils.fromNMS(painting.getWorld(), (((CraftPainting) painting).getHandle()).getPos()))
 			.blockFace(painting.getFacing())
 			.width(painting.getArt().getBlockWidth())
@@ -64,10 +66,13 @@ public class ClientSidePainting implements IClientSideEntity<ClientSidePainting,
 
 	@Override
 	public ClientSidePainting build() {
+		if (uuid == null)
+			uuid = UUID.randomUUID();
+
 		if (entity == null) {
 			entity = new Painting(EntityType.PAINTING, NMSUtils.toNMS(location.getWorld()));
 			id = entity.getId();
-			uuid = entity.getUUID();
+			entityUuid = entity.getUUID();
 		}
 		entity.moveTo(location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch());
 		entity.setDirection(NMSUtils.toNMS(blockFace));

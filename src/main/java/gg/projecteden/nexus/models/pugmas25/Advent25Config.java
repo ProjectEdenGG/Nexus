@@ -3,10 +3,10 @@ package gg.projecteden.nexus.models.pugmas25;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
-import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
@@ -21,10 +21,9 @@ import org.bukkit.block.BlockFace;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
-import java.util.function.Function;
 
 @Data
 @Entity(value = "advent24_config", noClassnameStored = true)
@@ -32,7 +31,7 @@ import java.util.function.Function;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class, LocationConverter.class, ItemStackConverter.class})
-public class Advent25Config implements PlayerOwnedObject {
+public class Advent25Config implements DatabaseObject {
 	@Id
 	@NonNull
 	private UUID uuid;
@@ -48,28 +47,26 @@ public class Advent25Config implements PlayerOwnedObject {
 		return days.get(day);
 	}
 
+	public void remove(Advent25Present present) {
+		days.remove(present.getDay());
+	}
+
 	public Collection<Advent25Present> getPresents() {
 		return days.values();
 	}
 
 	public void set(int day, Location location) {
-		var present = days.computeIfAbsent(day, $ -> new Advent25Present(day, location));
-
-		Function<ItemModelType, ClientSideItemFrame> create = type -> ClientSideItemFrame.builder()
+		var entity = ClientSideItemFrame.builder()
 			.location(location)
 			.blockFace(BlockFace.UP)
-			.content(new ItemBuilder(type).build())
+			.content(new ItemBuilder(ItemModelType.PUGMAS_PRESENT_ADVENT).build())
 			.invisible(true)
 			.build();
 
-		var notFound = create.apply(ItemModelType.PUGMAS_PRESENT_ADVENT);
-		var found = create.apply(ItemModelType.PUGMAS_PRESENT_ADVENT_OPENED);
-
-		ClientSideConfig.createEntity(notFound);
-		ClientSideConfig.createEntity(found);
+		ClientSideConfig.createEntity(entity);
 		ClientSideConfig.save();
 
-		present.getEntityUuids().addAll(List.of(notFound.getUuid(), found.getUuid()));
+		days.put(day, new Advent25Present(day, location, entity.getUuid()));
 	}
 
 	public Advent25Present get(Location location) {
@@ -81,7 +78,7 @@ public class Advent25Config implements PlayerOwnedObject {
 
 	public static Advent25Present getPresent(ClientSideItemFrame itemFrame) {
 		for (Advent25Present present : get().getPresents())
-			if (present.getEntityUuids().contains(itemFrame.getUuid()))
+			if (Objects.equals(present.getEntityUuid(), itemFrame.getUuid()))
 				return present;
 
 		return null;

@@ -5,6 +5,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
 import gg.projecteden.nexus.features.events.ArmorStandStalker;
@@ -23,6 +24,7 @@ import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
@@ -47,6 +49,7 @@ public class ClientSideConfig implements PlayerOwnedObject {
 	private Map<String, List<IClientSideEntity<?, ?, ?>>> entities = new ConcurrentHashMap<>();
 
 	public static final List<ClientSideVisibilityCondition> VISIBILITY_CONDITIONS = new ArrayList<>();
+	public static final List<ClientSideItemFrameModifier> ITEM_FRAME_MODIFIERS = new ArrayList<>();
 
 	public static ClientSideConfig get() {
 		return new ClientSideConfigService().get0();
@@ -144,7 +147,16 @@ public class ClientSideConfig implements PlayerOwnedObject {
 		VISIBILITY_CONDITIONS.add(condition);
 	}
 
+	public static void registerItemFrameModifier(ClientSideItemFrameModifier modifier) {
+		ITEM_FRAME_MODIFIERS.add(modifier);
+	}
+
 	public abstract static class ClientSideVisibilityCondition {
 		public abstract boolean shouldHide(ClientSideUser user, IClientSideEntity<?, ?, ?> entity);
 	}
+
+	public abstract static class ClientSideItemFrameModifier {
+		public abstract ItemStack modify(ClientSideUser user, ClientSideItemFrame itemFrame);
+	}
+
 }

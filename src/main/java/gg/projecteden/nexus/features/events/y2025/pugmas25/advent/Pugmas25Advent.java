@@ -2,12 +2,11 @@ package gg.projecteden.nexus.features.events.y2025.pugmas25.advent;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
-import gg.projecteden.nexus.features.clientside.models.IClientSideEntity;
 import gg.projecteden.nexus.features.events.advent.AdventAnimation;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
-import gg.projecteden.nexus.models.clientside.ClientSideConfig.ClientSideVisibilityCondition;
+import gg.projecteden.nexus.models.clientside.ClientSideConfig.ClientSideItemFrameModifier;
 import gg.projecteden.nexus.models.clientside.ClientSideUser;
 import gg.projecteden.nexus.models.pugmas25.Advent25Config;
 import gg.projecteden.nexus.models.pugmas25.Advent25ConfigService;
@@ -36,33 +35,24 @@ import static gg.projecteden.nexus.features.resourcepack.models.ItemModelType.PU
 /*
  	TODO:
  		- GLOWING / WAYPOINT
- 		- CLIENTSIDE PRESENTS --> /clientside convert
  */
 public class Pugmas25Advent implements Listener {
-
-	private static final Pugmas25UserService userService = new Pugmas25UserService();
 
 	public Pugmas25Advent() {
 		Nexus.registerListener(this);
 
-		ClientSideConfig.registerVisibilityCondition(new ClientSideVisibilityCondition() {
+		ClientSideConfig.registerItemFrameModifier(new ClientSideItemFrameModifier() {
 			@Override
-			public boolean shouldHide(ClientSideUser user, IClientSideEntity<?, ?, ?> entity) {
-				if (!(entity instanceof ClientSideItemFrame itemFrame))
-					return false;
-
+			public ItemStack modify(ClientSideUser user, ClientSideItemFrame itemFrame) {
 				var present = Advent25Config.getPresent(itemFrame);
 				if (present == null)
-					return false;
+					return itemFrame.content();
 
 				var adventUser = new Pugmas25UserService().get(user).advent();
-
-				if (PUGMAS_PRESENT_ADVENT.is(itemFrame.content()))
-					return adventUser.hasFound(present.getDay());
-				else if (PUGMAS_PRESENT_ADVENT_OPENED.is(itemFrame.content()))
-					return !adventUser.hasFound(present.getDay());
+				if (adventUser.hasCollected(present.getDay()))
+					return PUGMAS_PRESENT_ADVENT_OPENED.getItem();
 				else
-					return false;
+					return PUGMAS_PRESENT_ADVENT.getItem();
 			}
 		});
 	}

@@ -38,6 +38,7 @@ import java.util.UUID;
 @Accessors(fluent = true, chain = true)
 public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorStand, ArmorStand, org.bukkit.entity.ArmorStand> {
 	private UUID uuid;
+	private UUID entityUuid;
 	private transient int id;
 	private Location location;
 	private Map<EquipmentSlot, ItemStack> equipment;
@@ -72,7 +73,8 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 
 	public static ClientSideArmorStand of(org.bukkit.entity.ArmorStand armorStand) {
 		return builder()
-			.uuid(armorStand.getUniqueId())
+			.uuid(UUID.randomUUID())
+			.entityUuid(armorStand.getUniqueId())
 			.location(armorStand.getLocation())
 			.equipment(new HashMap<>() {{
 				for (EquipmentSlot slot : EquipmentSlot.values())
@@ -96,10 +98,13 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 
 	@Override
 	public ClientSideArmorStand build() {
+		if (uuid == null)
+			uuid = UUID.randomUUID();
+
 		if (entity == null) {
 			entity = new ArmorStand(EntityType.ARMOR_STAND, NMSUtils.toNMS(location.getWorld()));
 			id = entity.getId();
-			uuid = entity.getUUID();
+			entityUuid = entity.getUUID();
 		}
 		entity.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 		entity.setSmall(small);
