@@ -244,6 +244,11 @@ public class Chatter implements PlayerOwnedObject {
 		return Objects.equals(getUniqueId(), chatter.getUniqueId());
 	}
 
+	@Override
+	public int hashCode() {
+		return uuid.hashCode();
+	}
+
 	private void save() {
 		new ChatterService().queueSave(5, this);
 	}

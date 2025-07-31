@@ -738,6 +738,11 @@ public class HideAndSeek extends Infection {
 				if (!(o instanceof DecoyInstance decoyInstance)) return false;
 				return decoyInstance.taskId == taskId;
 			}
+
+			@Override
+			public int hashCode() {
+				return taskId;
+			}
 		}
 
 	}

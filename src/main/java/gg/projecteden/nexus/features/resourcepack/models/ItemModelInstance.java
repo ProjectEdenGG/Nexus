@@ -238,6 +238,11 @@ public class ItemModelInstance implements Comparable<ItemModelInstance> {
 	}
 
 	@Override
+	public int hashCode() {
+		return Objects.hash(itemModel, material);
+	}
+
+	@Override
 	public int compareTo(@NotNull ItemModelInstance other) {
 		if (!material.equals(other.getMaterial()))
 			return material.compareTo(other.getMaterial());

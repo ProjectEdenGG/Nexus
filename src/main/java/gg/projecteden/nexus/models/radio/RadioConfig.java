@@ -90,12 +90,14 @@ public class RadioConfig implements PlayerOwnedObject {
 		private boolean particles = false;
 		@Default
 		private boolean updatePlaying = true;
+		@Default
 		private List<Location> locations = new ArrayList<>();
+		@Default
 		private int radius = 5;
 		@Embedded
 		@Default
 		private Set<String> songs = new HashSet<>();
-
+		@Default
 		private transient List<SongPlayer> songPlayers = new ArrayList<>();
 
 		public void addSongPlayer(SongPlayer songPlayer) {

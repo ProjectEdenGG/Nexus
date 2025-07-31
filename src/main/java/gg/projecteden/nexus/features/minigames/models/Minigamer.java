@@ -36,7 +36,6 @@ import gg.projecteden.parchment.HasLocation;
 import gg.projecteden.parchment.HasOfflinePlayer;
 import gg.projecteden.parchment.OptionalPlayer;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.audience.Audience;
@@ -69,10 +68,8 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, HasOfflinePlayer, HasLocation, HasUniqueId, Colored, ForwardingAudience.Single, Identified {
 	@NotNull
-	@EqualsAndHashCode.Include
 	private UUID uuid;
 	@ToString.Exclude
 	private Match match;
@@ -752,7 +749,11 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof Minigamer minigamer)) return false;
-		return minigamer.getUuid().equals(this.getUuid());
+		return Objects.equals(minigamer.getUniqueId(), uuid);
 	}
 
+	@Override
+	public int hashCode() {
+		return uuid.hashCode();
+	}
 }

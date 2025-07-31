@@ -2,6 +2,8 @@ package gg.projecteden.nexus.features.clientside.models;
 
 import dev.morphia.annotations.Entity;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -24,6 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+
+import static java.util.Objects.requireNonNull;
 
 @Data
 @Entity
@@ -61,7 +65,7 @@ public class ClientSidePainting implements IClientSideEntity<ClientSidePainting,
 			.blockFace(painting.getFacing())
 			.width(painting.getArt().getBlockWidth())
 			.height(painting.getArt().getBlockHeight())
-			.variant(painting.getArt().getKey().getKey());
+			.variant(requireNonNull(RegistryAccess.registryAccess().getRegistry(RegistryKey.PAINTING_VARIANT).getKey(painting.getArt())).getKey());
 	}
 
 	@Override
@@ -77,7 +81,7 @@ public class ClientSidePainting implements IClientSideEntity<ClientSidePainting,
 		entity.moveTo(location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch());
 		entity.setDirection(NMSUtils.toNMS(blockFace));
 		var optional = entity.registryAccess().lookupOrThrow(Registries.PAINTING_VARIANT).get(ResourceLocation.tryParse(variant));
-		if (!optional.isPresent())
+		if (optional.isEmpty())
 			return this;
 
 		entity.setVariant(optional.get());

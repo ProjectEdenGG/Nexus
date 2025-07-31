@@ -152,4 +152,9 @@ public class PublicChannel implements Channel {
 		return Objects.equals(name, that.name);
 	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(name);
+	}
+
 }

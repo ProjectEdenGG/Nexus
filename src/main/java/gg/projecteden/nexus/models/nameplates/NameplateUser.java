@@ -8,6 +8,7 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -27,6 +28,7 @@ public class NameplateUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private boolean viewOwnNameplate;
+	@Default
 	private boolean viewNameplates = true;
 
 }
