@@ -1,10 +1,6 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.slotmachine;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.features.commands.staff.HealCommand;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25.Pugmas25DeathCause;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.utils.Enchant;
@@ -28,91 +24,69 @@ import java.util.function.Consumer;
 
 @AllArgsConstructor
 public enum Pugmas25SlotMachineReward {
-	JACKPOT(SlotPos.of(1, 2), new ItemBuilder(Material.PRIZE_POTTERY_SHERD).name("&bTODO")
-		.lore("&3Half: &eTODO", "&3Full: &eTODO"),
-		(player) -> {
-			Pugmas25SlotMachine.get().send("TODO HALF REWARD - JACKPOT");
-		},
-		(player) -> {
-			Pugmas25SlotMachine.get().send("TODO FULL REWARD - JACKPOT");
-		}
+
+	VOTE_POINTS(SlotPos.of(1, 2), new ItemBuilder(Material.MOURNER_POTTERY_SHERD).name("&aVote Points")
+		.lore("&3Half: &a25 &3Vote Points", "&3Full: &a50 &3Vote Points"),
+		(player) -> Pugmas25SlotMachine.get().send(player, "TODO HALF REWARD - COSTUME"),
+		(player) -> Pugmas25SlotMachine.get().send(player, "TODO FULL REWARD - COSTUME")
 	),
 
-	// TODO: REPLACE WITH EXP
-//	HEARTS(SlotPos.of(2, 2), new ItemBuilder(Material.HEART_POTTERY_SHERD).name("&bHeart Crystals")
-//		.lore("&3Half: &a2 &eHeart Crystals", "&3Full: &a5 &eHeart Crystals"),
-//		(player) -> Pugmas25SlotMachine.get().give(Pugmas25QuestItem.HEART_CRYSTAL.getItemBuilder().amount(2)),
-//		(player) -> Pugmas25SlotMachine.get().give(Pugmas25QuestItem.HEART_CRYSTAL.getItemBuilder().amount(5))
-//	),
-
-	COINS(SlotPos.of(3, 2), new ItemBuilder(Material.ARMS_UP_POTTERY_SHERD).name("&bCoins")
-		.lore("&3Half: &eTODO", "&3Full: &eTODO"),
-		(player) -> {
-			Pugmas25SlotMachine.get().send(player, "TODO HALF REWARD - CURRENCY");
-		},
-		(player) -> {
-			Pugmas25SlotMachine.get().send(player, "TODO FULL REWARD - CURRENCY");
-		}
+	TOKENS(SlotPos.of(2, 2), new ItemBuilder(Material.PRIZE_POTTERY_SHERD).name("&aEvent Tokens")
+		.lore("&3Half: &ax &3event tokens", "&3Full: &ax+n &3event tokens"),
+		(player) -> Pugmas25SlotMachine.get().send("TODO HALF REWARD - TOKENS"),
+		(player) -> Pugmas25SlotMachine.get().send("TODO FULL REWARD - TOKENS")
 	),
+
+	EXTRA_ROLLS(SlotPos.of(3, 2), new ItemBuilder(Material.HEART_POTTERY_SHERD).name("&aExtra Rolls")
+		.lore("&3Half: &a1 &3re-roll", "&3Full: &a3 &3re-rolls"),
+		(player) -> Pugmas25SlotMachine.get().send(player, "TODO HALF REWARD - EXTRA_ROLLS"),
+		(player) -> Pugmas25SlotMachine.get().send(player, "TODO FULL REWARD - EXTRA_ROLLS")
+	),
+
+	//
 
 	PICKAXE(SlotPos.of(1, 4), new ItemBuilder(Material.MINER_POTTERY_SHERD).name("&dRandom Pickaxe Enchant")
 		.lore("&3Half: &eUncommon", "&3Full: &eRare", "", "&eEnchants&3: "),
-		(player) -> {
-			Pugmas25SlotMachine.get().send(player, "TODO HALF REWARD - PICKAXE");
-		},
-		(player) -> {
-			Pugmas25SlotMachine.get().send(player, "TODO FULL REWARD - PICKAXE");
-		}
+		(player) -> Pugmas25SlotMachine.get().send(player, "TODO HALF REWARD - PICKAXE"),
+		(player) -> Pugmas25SlotMachine.get().send(player, "TODO FULL REWARD - PICKAXE")
 	),
 
 	FISHING_ROD(SlotPos.of(2, 4), new ItemBuilder(Material.ANGLER_POTTERY_SHERD).name("&dRandom Fishing Rod Enchant")
 		.lore("&3Half: &eUncommon", "&3Full: &eRare", "", "&eEnchants&3: "),
-		(player) -> {
-			Pugmas25SlotMachine.get().send(player, "TODO HALF REWARD - FISHING_ROD");
-		},
-		(player) -> {
-			Pugmas25SlotMachine.get().send(player, "TODO FULL REWARD - FISHING_ROD");
-		}
+		(player) -> Pugmas25SlotMachine.get().send(player, "TODO HALF REWARD - FISHING_ROD"),
+		(player) -> Pugmas25SlotMachine.get().send(player, "TODO FULL REWARD - FISHING_ROD")
 	),
 
-	SWORD(SlotPos.of(3, 4), new ItemBuilder(Material.BLADE_POTTERY_SHERD).name("&dRandom Sword Enchant")
-		.lore("&3Half: &eUncommon", "&3Full: &eRare", "", "&eEnchants&3: "),
-		(player) -> {
-			Pugmas25SlotMachine.get().send(player, "TODO HALF REWARD - SWORD");
-		},
-		(player) -> {
-			Pugmas25SlotMachine.get().send(player, "TODO FULL REWARD - SWORD");
-		}
+	EXPERIENCE(SlotPos.of(3, 4), new ItemBuilder(Material.BREWER_POTTERY_SHERD).name("&dExperience")
+		.lore("&3Half: &a10 Levels", "&3Full: &a20 Levels"),
+		(player) -> player.giveExp(10, true),
+		(player) -> player.giveExp(20, true)
 	),
 
-	INSTANT_DEATH(SlotPos.of(1, 6), new ItemBuilder(Material.DANGER_POTTERY_SHERD).name("&cInstant Death")
-		.lore("&3Half: &aHealth &3set to &c50%", "&3Full: &aHealth &3set to &c0%"),
-		(player) -> player.setHealth(player.getHealth() / 2),
-		(player) -> Pugmas25.get().onDeath(player, Pugmas25DeathCause.INSTANT_DEATH)
+	//
+
+	COINS(SlotPos.of(1, 6), new ItemBuilder(Material.ARMS_UP_POTTERY_SHERD).name("&bCoins")
+		.lore("&3Half: &ax &3coins", "&3Full: &ax+n &3coins"),
+		(player) -> Pugmas25SlotMachine.get().send(player, "TODO HALF REWARD - COINS"),
+		(player) -> Pugmas25SlotMachine.get().send(player, "TODO FULL REWARD - COINS")
 	),
 
-	// TODO: REPLACE WITH EXP
-//	HALF_MAX_HEALTH(SlotPos.of(2, 6), new ItemBuilder(Material.HEARTBREAK_POTTERY_SHERD).name("&cHalve Max Health")
-//		.lore("&3Half: &aMax Health &3set to &c75%", "&3Full: &aMax Health &3set to &c50%"),
-//		(player) -> Pugmas25.get().setMaxHealth(player, HealCommand.getMaxHealth(player) * 0.75),
-//		(player) -> Pugmas25.get().setMaxHealth(player, HealCommand.getMaxHealth(player) * 0.50)
-//	),
+	DIAMOND_CRATE(SlotPos.of(2, 6), new ItemBuilder(Material.PLENTY_POTTERY_SHERD).name("&bDiamond Crate")
+		.lore("&3Half: &a2 &3Diamond Crates", "&3Full: &a5 &3Diamond Crates"),
+		(player) -> Pugmas25SlotMachine.get().send(player, "TODO HALF REWARD - DIAMOND_CRATE"),
+		(player) -> Pugmas25SlotMachine.get().send(player, "TODO FULL REWARD - DIAMOND_CRATE")
+	),
 
-	HALF_CURRENCY(SlotPos.of(3, 6), new ItemBuilder(Material.MOURNER_POTTERY_SHERD).name("&cHalve Currency")
-		.lore("&3Half: &aCoin Pouch &3set to &c75% Coins", "&3Full: &aCoin Pouch &3set to &c50% Coins"),
-		(player) -> {
-			Pugmas25SlotMachine.get().send(player, "TODO HALF REWARD - HALF_CURRENCY");
-		},
-		(player) -> {
-			Pugmas25SlotMachine.get().send(player, "TODO FULL REWARD - HALF_CURRENCY");
-		}
+	GIFTS(SlotPos.of(3, 6), new ItemBuilder(Material.FRIEND_POTTERY_SHERD).name("&bGift")
+		.lore("&3Half: &a1 &3Gift", "&3Full: &a3 &3Gifts"),
+		(player) -> Pugmas25SlotMachine.get().send(player, "TODO HALF REWARD - GIFTS"),
+		(player) -> Pugmas25SlotMachine.get().send(player, "TODO FULL REWARD - GIFTS")
 	),
 	;
 
 	@AllArgsConstructor
 	enum Pugmas25SlotMachineRewardEnchant {
 		PICKAXE(List.of(Enchant.FORTUNE, Enchant.EFFICIENCY)),
-		SWORD(List.of(Enchant.LOOTING, Enchant.SHARPNESS)),
 		FISHING_ROD(List.of(Enchant.LUCK_OF_THE_SEA, Enchant.LURE));
 
 		final List<Enchantment> enchants;
@@ -121,7 +95,6 @@ public enum Pugmas25SlotMachineReward {
 		public static Pugmas25SlotMachineRewardEnchant of(Pugmas25SlotMachineReward reward) {
 			return switch (reward) {
 				case PICKAXE -> PICKAXE;
-				case SWORD -> SWORD;
 				case FISHING_ROD -> FISHING_ROD;
 				default -> null;
 			};
