@@ -65,6 +65,18 @@ public class ScheduledJobsCommand extends CustomCommand {
 		Tasks.wait(TickTime.SECOND.x(2), ScheduledJobsRunner::start);
 	}
 
+	@Path("cancel <job>")
+	void cancel(JobType jobType) {
+		var config = new ScheduledJobsService().getApp();
+		for (AbstractJob job : config.getScheduledJobs()) {
+			if (job.getStatus() != JobStatus.PENDING && job.getStatus() != JobStatus.RUNNING && job.getStatus() != JobStatus.INTERRUPTED)
+				continue;
+
+			if (jobType.getClazz().isAssignableFrom(job.getClass()))
+				send(PREFIX + "Cancelling job " + job.getClass().getSimpleName() + " at " + job.getTimestamp());
+		}
+	}
+
 	@Path("schedule <job> <time> [data...]")
 	@Description("Schedule a job")
 	void schedule(JobType jobType, LocalDateTime timestamp, String data) {

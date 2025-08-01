@@ -1,17 +1,21 @@
 package gg.projecteden.nexus.features.votes.party;
 
 import gg.projecteden.api.common.utils.TimeUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.voter.VotePartyData;
 import gg.projecteden.nexus.models.voter.VotePartyService;
-import gg.projecteden.nexus.models.voter.Voter;
+import gg.projecteden.nexus.models.voter.Voter.Vote;
 import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import lombok.Getter;
 import org.bukkit.OfflinePlayer;
@@ -20,6 +24,8 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
+
 public class VoteParty {
 
 	@Getter
@@ -27,6 +33,16 @@ public class VoteParty {
 
 	private static final VotePartyService VOTE_PARTY_SERVICE = new VotePartyService();
 	private static final VoterService VOTER_SERVICE = new VoterService();
+
+	public static int setAmount() {
+		int amount = VOTER_SERVICE.getVotesAfter(VOTE_PARTY_SERVICE.get0().getStartDate()).size();
+
+		VotePartyData config = VOTE_PARTY_SERVICE.get0();
+		config.setCurrentAmount(amount);
+		VOTE_PARTY_SERVICE.save(config);
+
+		return amount;
+	}
 
 	public static int getAmount() {
 		return VOTE_PARTY_SERVICE.get0().getCurrentAmount();
@@ -37,28 +53,36 @@ public class VoteParty {
 	}
 
 	public static void process() {
-		VOTE_PARTY_SERVICE.edit0(user -> user.setCurrentAmount(VOTER_SERVICE.getVotesAfter(VOTE_PARTY_SERVICE.get0().getStartDate()).size()));
-
-		if (getAmount() >= getCurrentTarget())
-			complete();
+		if (setAmount() >= getCurrentTarget())
+			Tasks.sync(VoteParty::complete);
 	}
 
 	public static void complete() {
+		if (!new CooldownService().check(UUID0, "vote-party-complete", TickTime.DAY)) {
+			Nexus.severe("!!! Preventing vote party completion due to cooldown");
+			return;
+		}
+
 		setCompleted(true);
 		doAnimation();
-		giveRewards();
+		try {
+			giveRewards();
+		} catch (Exception ex) {
+			Nexus.severe("[VoteParty] Error giving rewards");
+			ex.printStackTrace();
+		}
 
-		VOTE_PARTY_SERVICE.get0().setCurrentTarget(calculateNewTarget());
-		VOTE_PARTY_SERVICE.get0().setStartDate(LocalDateTime.now());
-		VOTE_PARTY_SERVICE.save(VOTE_PARTY_SERVICE.get0());
+		VotePartyData config = VOTE_PARTY_SERVICE.get0();
+		config.setCurrentTarget(calculateNewTarget());
+		config.setStartDate(LocalDateTime.now());
+		VOTE_PARTY_SERVICE.save(config);
 		process();
 	}
 
 	public static void setCompleted(boolean completed) {
 		VOTE_PARTY_SERVICE.edit0(vp -> vp.setCompleted(completed));
-		if (completed) {
+		if (completed)
 			new VotePartyResetJob().schedule(60);
-		}
 	}
 	
 	public static boolean isCompleted() {
@@ -93,7 +117,7 @@ public class VoteParty {
 	}
 
 	private static void giveRewards() {
-		List<Voter.Vote> votes = VOTER_SERVICE.getVotesAfter(VOTE_PARTY_SERVICE.get0().getStartDate());
+		List<Vote> votes = VOTER_SERVICE.getVotesAfter(VOTE_PARTY_SERVICE.get0().getStartDate());
 
 		List<Nerd> nerds = votes.stream()
 			.map(PlayerOwnedObject::getNerd)
@@ -101,15 +125,20 @@ public class VoteParty {
 			.filter(VoteParty::isFeatureEnabled)
 			.toList();
 
-		nerds.forEach(nerd -> {
-			int amount = (int) votes.stream().filter(vote -> vote.getNerd().getUniqueId().equals(nerd.getUniqueId())).count();
-			RewardTier tier = RewardTier.of(amount);
-			if (tier == null)
-				return;
+		for (Nerd nerd : nerds) {
+			try {
+				int amount = (int) votes.stream().filter(vote -> vote.getNerd().getUniqueId().equals(nerd.getUniqueId())).count();
+				RewardTier tier = RewardTier.of(amount);
+				if (tier == null)
+					continue;
 
-			tier.giveReward(nerd);
-			Nexus.log("Giving " + StringUtils.camelCase(tier) + " reward to " + nerd.getNickname());
-		});
+				tier.giveReward(nerd);
+				Nexus.log("[VoteParty] Giving " + StringUtils.camelCase(tier) + " reward to " + nerd.getNickname());
+			} catch (Exception ex) {
+				Nexus.severe("[VoteParty] Error giving reward to " + nerd.getNickname());
+				ex.printStackTrace();
+			}
+		}
 	}
 
 	public static boolean isFeatureEnabled(HasUniqueId player) {

@@ -23,7 +23,6 @@ public enum RewardTier {
 				VotePartyReward.EVENT_TOKENS,
 				VotePartyReward.ECO
 			).give(player);
-
 		}
 	},
 	RARE {
