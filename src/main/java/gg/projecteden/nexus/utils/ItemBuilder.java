@@ -914,6 +914,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		 * Whether an item can be repaired/salvaged with McMMO
 		 */
 		MCMMOABLE(true),
+		/**
+		 * Whether an item is interactable
+		 */
+		INTERACTABLE(false)
 		;
 
 		private final boolean orDefault;
@@ -977,6 +981,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	public ItemBuilder untradeable() {
 		return setting(ItemSetting.TRADEABLE, false);
+	}
+
+	public ItemBuilder interactable() {
+		return setting(ItemSetting.INTERACTABLE, true);
 	}
 
 	public ItemBuilder customModelData(int id) {

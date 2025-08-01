@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.events;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import lombok.Getter;
 import org.bukkit.block.Block;
@@ -20,6 +21,10 @@ public class DecorationInteractEvent extends DecorationEvent {
 		RIGHT_CLICK,
 		LEFT_CLICK,
 		;
+	}
+
+	public DecorationType getDecorationType() {
+		return DecorationType.of(this.decoration.getConfig());
 	}
 
 }

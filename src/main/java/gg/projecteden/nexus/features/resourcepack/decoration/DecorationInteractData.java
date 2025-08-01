@@ -7,6 +7,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationCo
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Interactable;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -137,7 +139,6 @@ public class DecorationInteractData {
 		if (customBlock != null)
 			return customBlock == CustomBlock.NOTE_BLOCK; // TODO: Check if Custom Block is Interactable (new feature)
 
-
 		if (GSitMaterials.contains(material)) {
 			boolean interactingOnTop = this.blockFace == BlockFace.UP;
 			boolean interactingOnBottom = this.blockFace == BlockFace.DOWN;
@@ -192,6 +193,9 @@ public class DecorationInteractData {
 
 	public boolean isToolInteractable() {
 		if (Nullables.isNullOrAir(tool))
+			return true;
+
+		if (new ItemBuilder(tool).is(ItemSetting.INTERACTABLE))
 			return true;
 
 		if (tool.getType() == Material.BUCKET)
