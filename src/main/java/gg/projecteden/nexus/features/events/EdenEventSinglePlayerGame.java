@@ -95,6 +95,7 @@ public abstract class EdenEventSinglePlayerGame extends Feature implements Liste
 	public void reset() {
 		cancelUpdateTask();
 		gameTicks = 0;
+		currentRound = 0;
 		gamer = null;
 		playing = false;
 	}
@@ -127,6 +128,7 @@ public abstract class EdenEventSinglePlayerGame extends Feature implements Liste
 
 		gamer = player;
 		gameTicks = 0;
+		currentRound = 0;
 		preStart();
 
 		_start(player);

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils;
@@ -20,6 +21,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.data.type.Piston;
 import org.bukkit.entity.ArmorStand;
@@ -37,6 +39,7 @@ import tech.blastmc.holograms.api.HologramsAPI;
 import tech.blastmc.holograms.api.models.Hologram;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -59,8 +62,11 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 		new ItemBuilder(Material.ARROW).unbreakable().build());
 
 	private static final String TARGET_GOOD_KEY = "wakka";
+	private static final String TARGET_BAD_KEY = "griffin";
+	private static final String TARGET_RARE_KEY = "blast";
 	private static final ItemStack TARGET_GOOD_ITEM = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(Dev.WAKKA.getUniqueId()).name(TARGET_GOOD_KEY).build();
-	private static final ItemStack TARGET_BAD_ITEM = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(Dev.GRIFFIN.getUniqueId()).name("griffin").build();
+	private static final ItemStack TARGET_BAD_ITEM = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(Dev.GRIFFIN.getUniqueId()).name(TARGET_BAD_KEY).build();
+	private static final ItemStack TARGET_RARE_ITEM = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(Dev.BLAST.getUniqueId()).name(TARGET_RARE_KEY).build();
 	private static final List<ItemStack> TARGET_ITEM_POOL = List.of(TARGET_GOOD_ITEM.clone(), TARGET_BAD_ITEM.clone(), TARGET_BAD_ITEM.clone());
 
 	private static final long ROUND_TICKS = TickTime.SECOND.x(3);
@@ -194,11 +200,13 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 			return;
 
 		int standCount = getStandCountFromRound(standChoices);
+		Collections.shuffle(standChoices);
+		List<ArmorStand> roundStands = standChoices.subList(0, standCount);
 
 		boolean hasMinGoodTarget = false;
 		boolean hasMinBadTarget = false;
-		for (int i = 0; i < standCount; i++) {
-			ArmorStand stand = RandomUtils.randomElement(standChoices);
+		boolean hasRareTarget = false;
+		for (ArmorStand stand : roundStands) {
 			ItemStack targetHead;
 			if (!hasMinGoodTarget) {
 				targetHead = TARGET_GOOD_ITEM.clone();
@@ -206,8 +214,13 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 			} else if (!hasMinBadTarget) {
 				targetHead = TARGET_BAD_ITEM.clone();
 				hasMinBadTarget = true;
-			} else
+			} else if (!hasRareTarget && getCurrentRound() == 15) {
+				Dev.WAKKA.send("Round 15");
+				targetHead = TARGET_RARE_ITEM.clone();
+				hasRareTarget = true;
+			} else {
 				targetHead = RandomUtils.randomElement(TARGET_ITEM_POOL).clone();
+			}
 
 			stand.getEquipment().setHelmet(targetHead, true);
 
@@ -229,9 +242,9 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 			return RandomUtils.randomInt(7, 12);
 
 		if (currentRound > 6)
-			return RandomUtils.randomInt(5, 8); // max 7 inactive stands
+			return RandomUtils.randomInt(5, 8);
 
-		return RandomUtils.randomInt(3, 5); // max 10 inactive stands
+		return RandomUtils.randomInt(3, 5);
 	}
 
 	private void updateHologramPlayer() {
@@ -291,21 +304,41 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 		event.setCancelled(true);
 		arrow.remove();
 
+		List<ArmorStand> removeStands = new ArrayList<>();
 		ItemStack headItem = armorStand.getEquipment().getItem(EquipmentSlot.HEAD);
 		if (Nullables.isNotNullOrAir(headItem) && headItem.getType() == Material.PLAYER_HEAD) {
 			String key = StringUtils.stripColor(new ItemBuilder(headItem).name());
+
 			if (key.equalsIgnoreCase(TARGET_GOOD_KEY)) {
 				new SoundBuilder(Sound.ENTITY_ARROW_HIT_PLAYER).location(gamer).volume(0.5).play();
 				instance.score++;
-			} else {
+
+			} else if (key.equalsIgnoreCase(TARGET_BAD_KEY)) {
 				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO).location(gamer).volume(0.5).pitch(0.5).play();
 				instance.score -= 2;
+
+			} else if (key.equalsIgnoreCase(TARGET_RARE_KEY)) {
+				new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(gamer).volume(0.25).pitch(1).play();
+				for (ArmorStand _armorStand : new ArrayList<>(instance.activeStands)) {
+					ItemStack _headItem = _armorStand.getEquipment().getItem(EquipmentSlot.HEAD);
+					if (Nullables.isNotNullOrAir(_headItem) && _headItem.getType() == Material.PLAYER_HEAD) {
+						String _key = StringUtils.stripColor(new ItemBuilder(_headItem).name());
+						if (_key.equalsIgnoreCase(TARGET_GOOD_KEY)) {
+							instance.score++;
+							removeStands.add(_armorStand);
+						}
+					}
+				}
 			}
 
 			instance.updateHologramScore();
+			removeStands.add(armorStand);
 		}
 
-		instance.resetStand(armorStand);
+		for (ArmorStand stand : removeStands) {
+			new ParticleBuilder(Particle.CRIT).location(stand.getEyeLocation()).count(5).extra(0.25).spawn();
+			instance.resetStand(stand);
+		}
 	}
 
 	private void resetStand(ArmorStand stand) {
