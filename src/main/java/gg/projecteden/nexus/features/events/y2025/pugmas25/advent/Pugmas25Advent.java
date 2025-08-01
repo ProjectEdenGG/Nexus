@@ -30,8 +30,6 @@ import java.util.stream.Collectors;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.features.resourcepack.models.ItemModelType.PUGMAS_PRESENT_ADVENT;
-import static gg.projecteden.nexus.features.resourcepack.models.ItemModelType.PUGMAS_PRESENT_ADVENT_OPENED;
-import static gg.projecteden.nexus.utils.Enchant.INFINITY;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 /*
@@ -51,12 +49,8 @@ public class Pugmas25Advent implements Listener {
 					return itemFrame.content();
 
 				var adventUser = new Pugmas25UserService().get(user).advent();
-				if (adventUser.hasCollected(present))
-					return PUGMAS_PRESENT_ADVENT_OPENED.getItem();
-				else if (adventUser.canCollect(present))
-					return PUGMAS_PRESENT_ADVENT.getItemBuilder().enchant(INFINITY).build();
-				else
-					return PUGMAS_PRESENT_ADVENT.getItem();
+				var status = adventUser.getStatus(present);
+				return status.getFrameItem().build();
 			}
 		});
 	}

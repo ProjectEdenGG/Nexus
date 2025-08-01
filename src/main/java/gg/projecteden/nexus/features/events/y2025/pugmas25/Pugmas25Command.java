@@ -126,7 +126,7 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 	void advent(
 		@Arg(value = "30", permission = Group.ADMIN) @Switch int frameTicks
 	) {
-		new Pugmas25AdventMenu(user, frameTicks).open(player());
+		new Pugmas25AdventMenu(user.advent(), frameTicks).open(player());
 	}
 
 	@Path("now [timestamp]")
@@ -158,7 +158,7 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		if (!user.advent().hasFound(present))
 			error("You have not found day &e#" + present.getDay());
 
-		present.glow(user);
+		present.glow(user.advent());
 	}
 
 	@Path("advent tp <day>")

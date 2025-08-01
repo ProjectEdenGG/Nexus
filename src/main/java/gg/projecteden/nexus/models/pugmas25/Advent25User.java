@@ -3,6 +3,7 @@ package gg.projecteden.nexus.models.pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.models.pugmas25.Advent25Present.Advent25PresentStatus;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -20,6 +21,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
+import static gg.projecteden.nexus.models.pugmas25.Advent25Present.Advent25PresentStatus.AVAILABLE;
+import static gg.projecteden.nexus.models.pugmas25.Advent25Present.Advent25PresentStatus.LOCKED;
+import static gg.projecteden.nexus.models.pugmas25.Advent25Present.Advent25PresentStatus.MISSED;
+import static gg.projecteden.nexus.models.pugmas25.Advent25Present.Advent25PresentStatus.OPENED;
 
 @Data
 @NoArgsConstructor
@@ -96,16 +102,12 @@ public class Advent25User implements PlayerOwnedObject {
 	}
 
 	public boolean canCollect(Advent25Present present) {
-		if (hasCollected(present))
+		try {
+			validateCanCollect(present);
+			return true;
+		} catch (InvalidInputException ignore) {
 			return false;
-
-		if (Pugmas25.get().is25thOrAfter(Pugmas25.get().now())) {
-			if (present.getDay() == 25 && collected.size() != 24)
-				return false;
-		} else if (present.getDay() != Pugmas25.get().now().getDayOfMonth())
-			return false;
-
-		return true;
+		}
 	}
 
 	public boolean hasFound(Advent25Present present) {
@@ -129,6 +131,20 @@ public class Advent25User implements PlayerOwnedObject {
 
 	public void teleportAsync(Advent25Present present) {
 		getOnlinePlayer().teleportAsync(present.getLocation().toCenterLocation());
+	}
+
+	public Advent25PresentStatus getStatus(Advent25Present present) {
+		final Advent25PresentStatus status;
+		if (hasCollected(present))
+			status = OPENED;
+		else if (canCollect(present))
+			status = AVAILABLE;
+		else if (Pugmas25.get().now().isBefore(present.getDate().atStartOfDay()))
+			status = LOCKED;
+		else
+			status = MISSED;
+
+		return status;
 	}
 
 }

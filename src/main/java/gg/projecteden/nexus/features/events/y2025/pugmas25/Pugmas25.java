@@ -215,7 +215,7 @@ public class Pugmas25 extends EdenEvent {
 	}
 
 	public boolean is25thOrAfter() {
-		return is25thOrAfter(now);
+		return is25thOrAfter(now());
 	}
 
 	public boolean is25thOrAfter(LocalDateTime date) {
