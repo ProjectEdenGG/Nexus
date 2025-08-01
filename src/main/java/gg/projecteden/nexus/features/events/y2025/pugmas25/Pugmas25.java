@@ -31,6 +31,7 @@ import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.pugmas25.Advent25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.models.warps.WarpType;
@@ -52,6 +53,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /*
 	TODO:
@@ -82,7 +84,8 @@ public class Pugmas25 extends EdenEvent {
 	@Getter
 	final Pugmas25UserService userService = new Pugmas25UserService();
 
-	public static final LocalDate _25TH = LocalDate.of(2024, 12, 25);
+	public static final LocalDate _25TH = LocalDate.of(2025, 12, 25);
+	private LocalDateTime now;
 
 	public static final String LORE = "&ePugmas 2025 Item";
 	public final Location warp = location(-688.5, 82, -2964.5, 180, 0);
@@ -202,12 +205,21 @@ public class Pugmas25 extends EdenEvent {
 		);
 	}
 
-	public boolean is25thOrAfter() {
-		return is25thOrAfter(LocalDate.now());
+	public LocalDateTime now() {
+		return now == null ? LocalDateTime.now() : now;
 	}
 
-	public boolean is25thOrAfter(LocalDate date) {
-		return date.isAfter(_25TH.plusDays(-1));
+	public void now(LocalDateTime now) {
+		this.now = now;
+		Advent25User.refreshAllPlayers();
+	}
+
+	public boolean is25thOrAfter() {
+		return is25thOrAfter(now);
+	}
+
+	public boolean is25thOrAfter(LocalDateTime date) {
+		return date.isAfter(_25TH.atStartOfDay().plusSeconds(-1));
 	}
 
 	@Override
@@ -262,7 +274,6 @@ public class Pugmas25 extends EdenEvent {
 				default -> Pugmas25DeathCause.UNKNOWN;
 			};
 		}
-
 
 		onDeath(event.getPlayer(), deathCause);
 	}

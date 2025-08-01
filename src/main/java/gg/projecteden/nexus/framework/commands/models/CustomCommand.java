@@ -40,6 +40,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.EntityUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -321,6 +322,10 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	public void giveItem(ItemStack item) {
 		PlayerUtils.giveItems(player(), Collections.singletonList(item));
+	}
+
+	public void giveItem(ItemBuilder item) {
+		giveItem(item.build());
 	}
 
 	public void giveItems(ItemStack item, int amount) {

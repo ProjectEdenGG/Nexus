@@ -7,7 +7,6 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Distri
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
@@ -20,21 +19,16 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 
 public class Pugmas25AdventMenu extends InventoryProvider {
 
 	@NonNull
 	private final Pugmas25User user;
-
-	@NonNull
-	private final LocalDate today;
 	private final int frameTicks;
 	private Title title = Title.FRAME_1;
 
-	public Pugmas25AdventMenu(@NonNull Pugmas25User user, @NonNull LocalDate today, int frameTicks) {
+	public Pugmas25AdventMenu(@NonNull Pugmas25User user, int frameTicks) {
 		this.user = user;
-		this.today = today;
 		this.frameTicks = frameTicks;
 	}
 
@@ -54,29 +48,25 @@ public class Pugmas25AdventMenu extends InventoryProvider {
 		public String getTitle() {
 			return character.getMenuTexture(6);
 		}
-
 	}
 
 	@Override
 	public void init() {
-		int row = 1;
-		int column = EnumUtils.nextWithLoop(DayOfWeek.class, Pugmas25.get().getStart().getDayOfWeek().getValue()).getValue();
+		var row = 1;
+		var column = EnumUtils.nextWithLoop(DayOfWeek.class, Pugmas25.get().getStart().getDayOfWeek().getValue()).ordinal();
+		var slotIterator = MenuUtils.innerSlotIterator(contents, SlotPos.of(row, column));
 
-		final SlotIterator slotIterator = MenuUtils.innerSlotIterator(contents, SlotPos.of(row, column));
-		for (int dayNdx = 1; dayNdx <= 25; dayNdx++) {
-			final int _day = dayNdx;
-
-			final LocalDate date = Pugmas25.get().getStart().plusDays(_day - 1);
-			final Icon icon = Icon.fromDate(user, today, date);
-			final ItemBuilder item = new ItemBuilder(icon.getItem(_day));
+		for (int day = 1; day <= 25; day++) {
+			var present = Advent25Config.get().get(day);
+			var item = new ItemBuilder(Icon.of(user, present).getItem(present));
 
 			ClickableItem clickableItem = ClickableItem.empty(item.build());
-			if (user.advent().hasFound(_day)) {
+			if (user.advent().hasFound(present)) {
 				item.lore("", "&aShow Waypoint");
 
 				clickableItem = ClickableItem.of(item.build(), e -> {
 					viewer.closeInventory();
-					Pugmas25Advent.glow(user, _day);
+					present.glow(user);
 				});
 			}
 
@@ -96,15 +86,14 @@ public class Pugmas25AdventMenu extends InventoryProvider {
 	public enum Icon {
 		MISSED(ItemModelType.PUGMAS_PRESENT_OUTLINED, "&cMissed"),
 		OPENED(ItemModelType.PUGMAS_PRESENT_OPENED, "&aOpened"),
-		AVAILABLE(ItemModelType.PUGMAS_PRESENT_COLORED, "&a&oAvailable"),
+		AVAILABLE(ItemModelType.PUGMAS_PRESENT_COLORED, "&6Available"),
 		LOCKED(ItemModelType.PUGMAS_PRESENT_LOCKED, "&7Locked"),
 		;
 
 		private final ItemModelType itemModelType;
 		private final String status;
 
-		public ItemBuilder getItem(int day) {
-			Advent25Present present = Advent25Config.get().get(day);
+		public ItemBuilder getItem(Advent25Present present) {
 			Pugmas25District district = present.getDistrict();
 			String districtName = "null";
 			if (district != null) {
@@ -114,19 +103,19 @@ public class Pugmas25AdventMenu extends InventoryProvider {
 			}
 
 			return new ItemBuilder(itemModelType)
-					.name("&3Day: &e" + present.getDay())
-					.lore("&3Status: &e" + status)
+				.name("&3Day: &e" + present.getDay())
+				.lore("&3Status: &e" + status)
 				.lore("&3District: &e" + districtName);
 		}
 
-		public static Icon fromDate(Pugmas25User user, LocalDate today, LocalDate date) {
+		public static Icon of(Pugmas25User user, Advent25Present present) {
 			final Icon icon;
-			if (user.advent().hasCollected(date))
+			if (user.advent().hasCollected(present))
 				icon = Icon.OPENED;
-			else if (date.isAfter(today))
-				icon = Icon.LOCKED;
-			else if (date.equals(today) || Pugmas25.get().is25thOrAfter(today))
+			else if (user.advent().canCollect(present))
 				icon = Icon.AVAILABLE;
+			else if (Pugmas25.get().now().isBefore(present.getDate().atStartOfDay()))
+				icon = Icon.LOCKED;
 			else
 				icon = Icon.MISSED;
 

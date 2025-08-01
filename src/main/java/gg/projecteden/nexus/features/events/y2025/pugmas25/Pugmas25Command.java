@@ -23,6 +23,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Intro;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Train;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -30,6 +31,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
@@ -44,6 +46,7 @@ import gg.projecteden.nexus.utils.Currency;
 import gg.projecteden.nexus.utils.Currency.Price;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Material;
@@ -52,9 +55,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 @HideFromWiki
 @NoArgsConstructor
@@ -117,31 +124,48 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 	@Path("advent")
 	@Description("Open the advent calender")
 	void advent(
-			@Arg(value = "0", permission = Group.ADMIN) @Switch int day,
-			@Arg(value = "30", permission = Group.ADMIN) @Switch int frameTicks
+		@Arg(value = "30", permission = Group.ADMIN) @Switch int frameTicks
 	) {
+		new Pugmas25AdventMenu(user, frameTicks).open(player());
+	}
 
-		LocalDate date = LocalDate.now();
-		if (date.isBefore(Pugmas25.get().getStart()) || day > 0)
-			date = Pugmas25.get().getStart().plusDays(day - 1);
+	@Path("now [timestamp]")
+	@Permission(Group.ADMIN)
+	void now(String timestamp) {
+		if (timestamp.equalsIgnoreCase("null")) {
+			Pugmas25.get().now(null);
+			send(PREFIX + "Reset timestamp override");
+			return;
+		}
 
-		new Pugmas25AdventMenu(user, date, frameTicks).open(player());
+		LocalDateTime time = null;
+		if (Utils.isInt(timestamp))
+			time = LocalDate.of(2025, 12, Integer.parseInt(timestamp)).atStartOfDay();
+		if (time == null)
+			try { time = LocalDate.parse(timestamp).atStartOfDay(); } catch (Exception ignore) {}
+		if (time == null)
+			try { time = LocalDateTime.parse(timestamp); } catch (Exception ignore) {}
+		if (time == null)
+			error("Could not parse timestamp: " + timestamp + " - Try using DD or YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS");
+
+		Pugmas25.get().now(time);
+		send(PREFIX + "Set now to " + DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(time));
 	}
 
 	@Path("advent waypoint <day>")
 	@Description("Get directions to a present you've already found")
-	void advent_waypoint(int day) {
-		if (!user.advent().hasFound(day))
-			error("You have not found day &e#" + day);
+	void advent_waypoint(Advent25Present present) {
+		if (!user.advent().hasFound(present))
+			error("You have not found day &e#" + present.getDay());
 
-		Pugmas25Advent.glow(user, day);
+		present.glow(user);
 	}
 
 	@Path("advent tp <day>")
 	@Permission(Group.ADMIN)
-	void advent_tp(int day) {
-		user.advent().teleportAsync(adventConfig.get(day));
-		send(PREFIX + "Teleported to day #" + day);
+	void advent_tp(Advent25Present present) {
+		user.advent().teleportAsync(present);
+		send(PREFIX + "Teleported to day #" + present.getDay());
 	}
 
 	@Path("advent nearest")
@@ -157,8 +181,8 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 
 	@Path("advent get <day>")
 	@Permission(Group.ADMIN)
-	void advent_get(@Arg(min = 1, max = 25) int day) {
-		giveItem(Advent25Config.get().get(day).getItem().build());
+	void advent_get(Advent25Present present) {
+		giveItem(present.getItem());
 	}
 
 	@Path("advent config updateItems")
@@ -195,10 +219,7 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 
 	@Path("advent config delete <day>")
 	@Permission(Group.ADMIN)
-	void advent_config_delete(@Arg(min = 1, max = 25) int day) {
-		var present = adventConfig.get(day);
-		if (present == null)
-			error("No advent day #" + day + " configured");
+	void advent_config_delete(Advent25Present present) {
 		adventConfig.remove(present);
 
 		UUID uuid = present.getEntityUuid();
@@ -209,7 +230,7 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		}
 
 		ClientSideConfig.save();
-		send(PREFIX + "Advent day #" + day + " deleted");
+		send(PREFIX + "Advent day #" + present.getDay() + " deleted");
 	}
 
 	@Path("death <cause>")
@@ -363,4 +384,29 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 			send(json(" - " + regionId + " = ").group().next(nickname).hover(uuid).insert(uuid));
 		}
 	}
+
+	@ConverterFor(Advent25Present.class)
+	Advent25Present convertToAdvent25Present(String value) {
+		if (!Utils.isInt(value))
+			error("Day must be between 1 and 25");
+
+		var day = Integer.parseInt(value);
+		if (day < 1 || day > 25)
+			error("Day must be between 1 and 25");
+
+		var present = Advent25Config.get().get(day);
+		if (present == null)
+			error("No advent day #" + day + " configured");
+
+		return present;
+	}
+
+	@TabCompleterFor(Advent25Present.class)
+	List<String> tabCompleteAdvent25Present(String filter) {
+		return IntStream.rangeClosed(1, 25).boxed()
+			.map(String::valueOf)
+			.filter(day -> day.startsWith(filter))
+			.toList();
+	}
+
 }

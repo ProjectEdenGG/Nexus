@@ -3,7 +3,6 @@ package gg.projecteden.nexus.models.pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
-import gg.projecteden.nexus.models.clientside.ClientSideUser;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -34,13 +33,26 @@ public class Advent25User implements PlayerOwnedObject {
 
 	public transient final Map<Integer, ItemFrame> frames = new HashMap<>();
 
+	public static void refreshAllPlayers() {
+		Pugmas25UserService userService = new Pugmas25UserService();
+		Pugmas25.get().getOnlinePlayers().forEach(player -> {
+			Pugmas25User user = userService.get(player);
+			user.advent().refreshAll();
+		});
+	}
+
+	public void refreshAll() {
+		for (Advent25Present present : Advent25Config.get().getPresents())
+			present.refresh(this);
+	}
+
 	private ItemFrame getItemFrame(Advent25Present present) {
 		return frames.get(present.getDay());
 	}
 
 	public void tryCollect(Advent25Present present) {
 		try {
-			collected(present);
+			collect(present);
 		} catch (InvalidInputException ex) {
 			sendMessage(new JsonBuilder(Pugmas25.PREFIX + "&c").next(ex.getJson()));
 			found(present.getDay());
@@ -59,24 +71,41 @@ public class Advent25User implements PlayerOwnedObject {
 		return collected.contains(day);
 	}
 
-	public void collected(Advent25Present present) {
+	public void collect(Advent25Present present) {
+		validateCanCollect(present);
+
+		collected.add(present.getDay());
+		found.add(present.getDay());
+		sendMessage(Pugmas25.PREFIX + "You found present &e#" + present.getDay() + "&3!");
+		present.refresh(this);
+
+		PlayerUtils.mailItem(getOnlinePlayer(), present.getItem().build(), null, WorldGroup.SURVIVAL);
+		PlayerUtils.send(getOnlinePlayer(), Pugmas25.PREFIX + "This present has been sent to your &esurvival &c/mail box");
+		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).receiver(getOnlinePlayer()).play();
+	}
+
+	private void validateCanCollect(Advent25Present present) {
 		if (hasCollected(present))
 			throw new InvalidInputException("You already collected this present");
 
 		if (Pugmas25.get().is25thOrAfter()) {
 			if (present.getDay() == 25 && collected.size() != 24)
 				throw new InvalidInputException("You need to find the rest of the presents to open this one");
-		} else if (present.getDay() != LocalDate.now().getDayOfMonth())
+		} else if (present.getDay() != Pugmas25.get().now().getDayOfMonth())
 			throw new InvalidInputException("This present is for day &e#" + present.getDay());
+	}
 
-		collected.add(present.getDay());
-		found.add(present.getDay());
-		sendMessage(Pugmas25.PREFIX + "You found present &e#" + present.getDay() + "&3!");
-		ClientSideUser.of(this).refresh(present.getEntityUuid());
+	public boolean canCollect(Advent25Present present) {
+		if (hasCollected(present))
+			return false;
 
-		PlayerUtils.mailItem(getOnlinePlayer(), present.getItem().build(), null, WorldGroup.SURVIVAL);
-		PlayerUtils.send(getOnlinePlayer(), Pugmas25.PREFIX + "This present has been sent to your &esurvival &c/mail box");
-		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).receiver(getOnlinePlayer()).play();
+		if (Pugmas25.get().is25thOrAfter(Pugmas25.get().now())) {
+			if (present.getDay() == 25 && collected.size() != 24)
+				return false;
+		} else if (present.getDay() != Pugmas25.get().now().getDayOfMonth())
+			return false;
+
+		return true;
 	}
 
 	public boolean hasFound(Advent25Present present) {

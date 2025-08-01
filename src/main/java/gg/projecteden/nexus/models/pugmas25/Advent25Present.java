@@ -3,6 +3,7 @@ package gg.projecteden.nexus.models.pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts.Pugmas25District;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import gg.projecteden.nexus.models.clientside.ClientSideUser;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.parchment.HasLocation;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -43,4 +45,16 @@ public class Advent25Present implements HasLocation {
 		return Pugmas25District.of(getLocation());
 	}
 
+	public void glow(Pugmas25User user) {
+		// TODO
+		user.sendMessage("TODO glow, day = " + day);
+	}
+
+	public void refresh(Advent25User user) {
+		ClientSideUser.of(user).refresh(entityUuid);
+	}
+
+	public LocalDate getDate() {
+		return LocalDate.of(2025, 12, day);
+	}
 }

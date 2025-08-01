@@ -11,7 +11,6 @@ import gg.projecteden.nexus.models.clientside.ClientSideUser;
 import gg.projecteden.nexus.models.pugmas25.Advent25Config;
 import gg.projecteden.nexus.models.pugmas25.Advent25ConfigService;
 import gg.projecteden.nexus.models.pugmas25.Advent25Present;
-import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -32,6 +31,7 @@ import java.util.stream.Collectors;
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.features.resourcepack.models.ItemModelType.PUGMAS_PRESENT_ADVENT;
 import static gg.projecteden.nexus.features.resourcepack.models.ItemModelType.PUGMAS_PRESENT_ADVENT_OPENED;
+import static gg.projecteden.nexus.utils.Enchant.INFINITY;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 /*
@@ -51,17 +51,14 @@ public class Pugmas25Advent implements Listener {
 					return itemFrame.content();
 
 				var adventUser = new Pugmas25UserService().get(user).advent();
-				if (adventUser.hasCollected(present.getDay()))
+				if (adventUser.hasCollected(present))
 					return PUGMAS_PRESENT_ADVENT_OPENED.getItem();
+				else if (adventUser.canCollect(present))
+					return PUGMAS_PRESENT_ADVENT.getItemBuilder().enchant(INFINITY).build();
 				else
 					return PUGMAS_PRESENT_ADVENT.getItem();
 			}
 		});
-	}
-
-	public static void glow(Pugmas25User user, int day) {
-		// TODO
-		user.sendMessage("TODO glow, day = " + day);
 	}
 
 	public static void openPresent(Player player, int day) {
@@ -103,8 +100,7 @@ public class Pugmas25Advent implements Listener {
 					openPresent(player, day);
 					item.subtract();
 					return;
-				} catch (Exception ignored) {
-				}
+				} catch (Exception ignored) {}
 			}
 		}
 	}
@@ -137,7 +133,6 @@ public class Pugmas25Advent implements Listener {
 		new Pugmas25UserService().edit(player, user -> user.advent().tryCollect(present));
 	}
 
-
 	public static void updateItems() {
 		Advent25ConfigService configService = new Advent25ConfigService();
 		Advent25Config adventConfig = Advent25Config.get();
@@ -154,8 +149,8 @@ public class Pugmas25Advent implements Listener {
 
 				Chest chest = (Chest) block.getState();
 				List<ItemStack> contents = Arrays.stream(chest.getBlockInventory().getContents())
-						.filter(Nullables::isNotNullOrAir)
-						.collect(Collectors.toList());
+					.filter(Nullables::isNotNullOrAir)
+					.collect(Collectors.toList());
 
 				if (isNullOrEmpty(contents))
 					Nexus.warn("Contents of advent present " + day + " is empty!");
@@ -166,4 +161,5 @@ public class Pugmas25Advent implements Listener {
 
 		configService.save(adventConfig);
 	}
+
 }
