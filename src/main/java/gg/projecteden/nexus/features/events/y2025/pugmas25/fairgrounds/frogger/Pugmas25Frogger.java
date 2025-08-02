@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.frogger;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.events.EventSounds;
@@ -74,6 +75,12 @@ public class Pugmas25Frogger implements Listener {
 		worldguard.getRegion(CHECKPOINT_REGION);
 		worldguard.getProtectedRegion(GAME_REGION);
 		Nexus.registerListener(this);
+
+		Location frogSound = Pugmas25.get().location(-833, 80, -2859);
+		Tasks.repeat(1, TickTime.SECOND, () -> {
+			if (RandomUtils.chanceOf(5))
+				new SoundBuilder(Sound.ENTITY_FROG_AMBIENT).location(frogSound).pitch(0.75).play();
+		});
 	}
 
 	private void loadLogSpawns() {

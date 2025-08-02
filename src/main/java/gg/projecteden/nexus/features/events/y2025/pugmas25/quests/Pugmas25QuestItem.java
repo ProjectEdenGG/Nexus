@@ -4,12 +4,14 @@ import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.quests.QuestItem;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.quests.Quester;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -23,13 +25,13 @@ public enum Pugmas25QuestItem implements QuestItem {
 
 	ADVENTURE_POCKET_GUIDE(new ItemBuilder(ItemModelType.EVENT_ADVENTURE_POCKET_GUIDE).name("&oAdventurer's Pocket Guide").lore("&7Displays your area designation")),
 	GOLD_WATCH(new ItemBuilder(ItemModelType.EVENT_GOLD_WATCH).name("&oGold Watch").lore("&7Displays the current time")),
-	COMPASS(new ItemBuilder(ItemModelType.EVENT_COMPASS).name("&oCompass").lore("&7Ability to see compass", "&7Displays Coordinates")), // to start it, call same method as compass#onjoin
-	GPS(new ItemBuilder(ItemModelType.EVENT_GPS).name("&oGPS").lore("&7Ability to see compass", "&7- Displays your coordinates, area designation, and the current time")),
+	COMPASS(new ItemBuilder(ItemModelType.EVENT_COMPASS).name("&oCompass").lore("&7Ability to see compass", "&7Displays Direction")), // to start it, call same method as compass#onjoin
+	GPS(new ItemBuilder(ItemModelType.EVENT_GPS).name("&oGPS").lore("&7Ability to see compass", "&7Displays your coordinates, area designation, and the current time")),
 
-	FISHING_POCKET_GUIDE(new ItemBuilder(ItemModelType.EVENT_FISHING_POCKET_GUIDE).name("&oFisherman's Pocket Guide").lore("&7Displays your fishing power")),
+	FISHING_POCKET_GUIDE(new ItemBuilder(ItemModelType.EVENT_FISHING_POCKET_GUIDE).name("&oFisherman's Pocket Guide").lore("&7Displays your fishing luck")),
 	WEATHER_RADIO(new ItemBuilder(ItemModelType.EVENT_WEATHER_RADIO).name("&oWeather Radio").lore("&7Displays the current weather")),
-	SEXTANT(new ItemBuilder(ItemModelType.EVENT_SEXTANT).name("&oSextant").lore("&7Displays the moon phase")),
-	FISH_FINDER(new ItemBuilder(ItemModelType.EVENT_FISH_FINDER).name("&oFish Finder").lore("&7Displays your fishing power, the moon phase, and the current weather")),
+	SEXTANT(new ItemBuilder(ItemModelType.EVENT_SEXTANT).name("&oSextant").lore("&7Displays coordinates")),
+	FISH_FINDER(new ItemBuilder(ItemModelType.EVENT_FISH_FINDER).name("&oFish Finder").lore("&7Displays your fishing luck, your coordinates, and the current weather")),
 
 	FISHING_ROD_WOOD(new ItemBuilder(ItemModelType.FISHING_ROD_WOOD).name("Wood Fishing Rod")),
 	FISHING_ROD_REINFORCED(new ItemBuilder(ItemModelType.FISHING_ROD_REINFORCED).name("Reinforced Fishing Rod").enchant(Enchant.UNBREAKING, 2)),
@@ -40,6 +42,8 @@ public enum Pugmas25QuestItem implements QuestItem {
 	CRATE_GOLD(new ItemBuilder(ItemModelType.EVENT_CRATE_GOLDEN).name("Golden Crate")), // Head ID = 46945
 	CRATE_DIAMOND(new ItemBuilder(ItemModelType.EVENT_CRATE_DIAMOND).name("Diamond Crate")), // Head ID = 46946
 
+	SHRINK_POTION(new ItemBuilder(Material.POTION).potionEffectColor(ColorType.LIGHT_GREEN.getBukkitColor()).name("&fPotion of Shrinking").lore("&9Shrinking (08:00)", "", "&5When Applied:", "&9-50% Scale")),
+	SNOWMAN_DECORATIONS(new ItemBuilder(Material.CARROT).name("Snowman Decorations").interactable()),
 	;
 
 	private final ItemBuilder itemBuilder;

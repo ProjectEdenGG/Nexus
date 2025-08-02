@@ -113,6 +113,12 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		Currency.COIN_POUCH.withdraw(player(), Price.of(amount), null, null);
 	}
 
+	@Path("sidebar")
+	@Permission(Group.ADMIN)
+	void sidebar() {
+		Pugmas25.get().getSidebar().handleJoin(player());
+	}
+
 	@Path("district")
 	@Description("View which district you are currently in")
 	@Permission(Group.ADMIN)

@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.y2025.pugmas25;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.staff.HealCommand;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot;
@@ -16,6 +17,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Distri
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Fishing;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Interactions;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Intro;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Sidebar;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Train;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25TrainBackground;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waystones;
@@ -93,6 +95,8 @@ public class Pugmas25 extends EdenEvent {
 
 	@Getter
 	private static boolean ridesEnabled = true;
+	@Getter
+	private Pugmas25Sidebar sidebar;
 
 	public Pugmas25() {
 		instance = this;
@@ -105,6 +109,8 @@ public class Pugmas25 extends EdenEvent {
 	@Override
 	public void onStart() {
 		super.onStart();
+
+		sidebar = new Pugmas25Sidebar();
 
 		new Pugmas25Districts();
 		new Pugmas25Advent();
@@ -120,11 +126,14 @@ public class Pugmas25 extends EdenEvent {
 		Pugmas25Train.startup();
 		Pugmas25TrainBackground.startup();
 
-		getPlayers().forEach(this::onArrive);
+		Tasks.wait(TickTime.SECOND, () -> getPlayers().forEach(this::onArrive));
 	}
 
 	@Override
 	public void onStop() {
+		if (sidebar != null)
+			sidebar.handleEnd();
+
 		Pugmas25Train.shutdown();
 		Pugmas25TrainBackground.shutdown();
 		Pugmas25BalloonEditor.shutdown();
@@ -136,10 +145,14 @@ public class Pugmas25 extends EdenEvent {
 		Tasks.wait(1, () -> {
 			Pugmas25User user = userService.get(player);
 			user.updateHealth();
+
+			Tasks.wait(5, () -> sidebar.handleJoin(player));
 		});
 	}
 
-	public void onDepart(Player player) {}
+	public void onDepart(Player player) {
+		sidebar.handleQuit(player);
+	}
 
 	@EventHandler
 	public void on(PlayerJoinEvent event) {

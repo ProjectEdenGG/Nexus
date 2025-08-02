@@ -29,8 +29,8 @@ public class Pugmas25Interactions implements Listener {
 			return;
 
 		Player player = event.getPlayer();
-		ItemStack tool = player.getInventory().getItemInMainHand();
-		if (Nullables.isNotNullOrAir(tool) && tool.getType() != Material.SNOWBALL)
+		ItemStack tool = event.getItem();
+		if (Nullables.isNotNullOrAir(tool) && tool.getType() != snowball.getType())
 			return;
 
 		Block block = event.getClickedBlock();
@@ -46,7 +46,7 @@ public class Pugmas25Interactions implements Listener {
 		if (!PlayerUtils.hasRoomFor(player, snowball))
 			return;
 
-		PlayerUtils.giveItem(player, new ItemStack(Material.SNOWBALL));
+		PlayerUtils.giveItem(player, snowball);
 		new SoundBuilder(Sound.BLOCK_SNOW_HIT).volume(0.25).location(event.getInteractionPoint()).play();
 	}
 
