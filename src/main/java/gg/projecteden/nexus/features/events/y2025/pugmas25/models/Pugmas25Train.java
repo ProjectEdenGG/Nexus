@@ -67,6 +67,8 @@ public class Pugmas25Train {
 			.test(false)
 			.regionTrack(trainTrackRegion)
 			.regionAnnounce(Pugmas25.get().getRegionName())
+			.whistleLocation(Pugmas25.get().location(-426, 82, -2972))
+			.whistleRadius(300)
 			.regionReveal(trainRevealRegion)
 			.trainCrossings(trainCrossings)
 			.bonkPlayers(true)

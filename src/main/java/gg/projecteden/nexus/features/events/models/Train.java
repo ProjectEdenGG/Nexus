@@ -35,7 +35,6 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,6 +63,8 @@ public class Train {
 	private final Vector smokeUp;
 	private final String regionTrack;
 	private final String regionAnnounce;
+	private final Location whistleLocation;
+	private final double whistleRadius;
 	private final String regionReveal;
 	private final TrainCrossings trainCrossings;
 	private final boolean bonkPlayers;
@@ -88,7 +89,8 @@ public class Train {
 
 	@Builder
 	public Train(Location location, BlockFace direction, double speed, int seconds, boolean test, String regionAnnounce,
-				 String regionTrack, String regionReveal, TrainCrossings trainCrossings, boolean bonkPlayers, Map<Integer, ItemModelType> modelOverrides) {
+				 Location whistleLocation, double whistleRadius, String regionTrack, String regionReveal, TrainCrossings trainCrossings,
+				 boolean bonkPlayers, Map<Integer, ItemModelType> modelOverrides) {
 		this.location = location.toCenterLocation();
 		this.worldguard = new WorldGuardUtils(location);
 		this.forwards = direction;
@@ -100,6 +102,8 @@ public class Train {
 		this.smokeBack = backwards.getDirection().multiply(4);
 		this.smokeUp = BlockFace.UP.getDirection().multiply(5.3);
 		this.regionAnnounce = regionAnnounce;
+		this.whistleLocation = whistleLocation;
+		this.whistleRadius = whistleRadius;
 		this.regionTrack = regionTrack;
 		this.regionReveal = regionReveal;
 		this.trainCrossings = trainCrossings;
@@ -133,12 +137,23 @@ public class Train {
 		active = true;
 		instances.add(this);
 
-		taskIds.add(Tasks.wait(TickTime.SECOND.x(3), () ->
-				new SoundBuilder(CustomSound.TRAIN_WHISTLE)
-						.receivers(getPlayers())
-						.category(SoundCategory.AMBIENT)
-					.volume(0.25)
-						.play()));
+		taskIds.add(Tasks.wait(TickTime.SECOND.x(3), () -> {
+			SoundBuilder whistle = new SoundBuilder(CustomSound.TRAIN_WHISTLE).category(SoundCategory.AMBIENT);
+
+			if (whistleLocation != null) {
+				for (Player player : getPlayers()) {
+					double minVolume = 0.01;
+					double maxVolume = 0.8;
+					double distance = Distance.distance(player.getLocation(), whistleLocation).getRealDistance();
+					double fallOff = (1.0 - (distance / whistleRadius));
+					double volumeSquared = maxVolume * Math.pow(fallOff, 2.0);
+					double volumeClamped = Math.max(minVolume, Math.min(maxVolume, volumeSquared));
+
+					whistle.clone().receiver(player).volume(volumeClamped).play();
+				}
+			} else
+				whistle.receivers(getPlayers()).volume(0.25).play();
+		}));
 
 		spawnArmorStands();
 
