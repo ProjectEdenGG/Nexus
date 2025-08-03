@@ -28,8 +28,13 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.MentionType;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.utils.TimeUtil;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.entity.Player;
@@ -37,7 +42,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -328,24 +337,30 @@ public class Discord extends Feature {
 
 	@NotNull
 	public static String getInvite() {
-		Guild guild = getGuild();
-		if (guild == null)
-			throw new InvalidInputException("Discord bot is not connected");
+		try {
+			Guild guild = getGuild();
+			if (guild == null)
+				throw new InvalidInputException("Discord bot is not connected");
 
-		String url = getGuild().getVanityUrl();
+			String url = getGuild().getVanityUrl();
 
-		if (Nullables.isNullOrEmpty(url)) {
-			var textChannel = TextChannel.GENERAL.get(Bot.KODA.jda());
-			if (textChannel == null)
-				throw new InvalidInputException("General channel not found");
+			if (Nullables.isNullOrEmpty(url)) {
+				var textChannel = TextChannel.GENERAL.get(Bot.KODA.jda());
+				if (textChannel == null)
+					throw new InvalidInputException("General channel not found");
 
-			url = textChannel.createInvite().complete().getUrl();
+				url = textChannel.createInvite().complete().getUrl();
+			}
+
+			if (Nullables.isNullOrEmpty(url))
+				throw new InvalidInputException("Could not generate invite link");
+
+			return url;
+		} catch (Exception ex) {
+			Nexus.warn("Could not generate invite link");
+			ex.printStackTrace();
+			return "https://discord.projecteden.gg";
 		}
-
-		if (Nullables.isNullOrEmpty(url))
-			throw new InvalidInputException("Could not generate invite link");
-
-		return url;
 	}
 
 	private static final OffsetDateTime BOT_GRANDFATHER_TIME = TimeUtil.getTimeCreated(Long.parseLong("352232748955729930"));
