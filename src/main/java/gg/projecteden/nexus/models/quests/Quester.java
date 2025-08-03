@@ -14,8 +14,13 @@ import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInstance;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuest;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -31,8 +36,16 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Predicate;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Data
 @Entity(value = "quester", noClassnameStored = true)
@@ -82,7 +95,7 @@ public class Quester implements PlayerOwnedObject {
 
 	public void interact(PlayerInteractEvent event) {
 		final Block block = event.getClickedBlock();
-		if (Nullables.isNullOrAir(block))
+		if (isNullOrAir(block))
 			return;
 
 		for (Quest quest : quests) {
@@ -214,17 +227,38 @@ public class Quester implements PlayerOwnedObject {
 	}
 
 	public boolean has(ItemStack item) {
-		return has(Collections.singletonList(item));
+		ItemModelType itemModelType = ItemModelType.of(item);
+		if (itemModelType != null)
+			return has(Collections.singletonList(itemModelType));
+		else
+			return has(Collections.singletonList(item));
 	}
 
-	public boolean has(List<ItemStack> items) {
+	public boolean has(List<?> objects) {
+		if (objects == null || objects.isEmpty())
+			return true;
+
+		if (objects.getFirst() instanceof ItemStack) {
+			return hasItemStacks((List<ItemStack>) objects);
+		}
+
+		if (objects.getFirst() instanceof ItemModelType) {
+			return hasItemModels((List<ItemModelType>) objects);
+		}
+
+		// TODO Material, ItemBuilder
+
+		throw new IllegalArgumentException("Unsupported item class " + objects.getFirst().getClass().getSimpleName());
+	}
+
+	private boolean hasItemStacks(List<ItemStack> items) {
 		Map<ItemStack, Integer> amounts = new HashMap<>();
 
 		for (ItemStack item : items)
 			amounts.put(ItemBuilder.oneOf(item).build(), item.getAmount());
 
 		for (ItemStack content : getOnlinePlayer().getInventory().getContents()) {
-			if (Nullables.isNullOrAir(content))
+			if (isNullOrAir(content))
 				continue;
 
 			for (ItemStack item : items)
@@ -244,6 +278,22 @@ public class Quester implements PlayerOwnedObject {
 		return amounts.isEmpty();
 	}
 
+	private boolean hasItemModels(List<ItemModelType> itemModels) {
+		List<ItemModelType> toFind = new ArrayList<>(itemModels);
+
+		for (ItemStack content : getOnlinePlayer().getInventory().getContents()) {
+			if (isNullOrAir(content))
+				continue;
+
+			toFind.removeIf(itemModelType -> {
+				var contentModelType = ItemModelType.of(content);
+				return itemModelType == contentModelType;
+			});
+		}
+
+		return toFind.isEmpty();
+	}
+
 	public boolean has(MaterialTag materials, int amount) {
 		return has(item -> materials.isTagged(item.getType()), amount);
 	}
@@ -252,7 +302,7 @@ public class Quester implements PlayerOwnedObject {
 		int found = 0;
 
 		for (ItemStack content : getOnlinePlayer().getInventory().getContents()) {
-			if (Nullables.isNullOrAir(content))
+			if (isNullOrAir(content))
 				continue;
 
 			if (predicate.test(content)) {
@@ -261,6 +311,10 @@ public class Quester implements PlayerOwnedObject {
 		}
 
 		return found >= amount;
+	}
+
+	public boolean has(ItemModelType itemModelType) {
+		return has(Collections.singletonList(itemModelType));
 	}
 
 	public void take(ItemStack item) {
@@ -276,7 +330,7 @@ public class Quester implements PlayerOwnedObject {
 	public void take(Predicate<ItemStack> predicate, int amount) {
 		int count = 0;
 		for (ItemStack content : getOnlinePlayer().getInventory().getContents()) {
-			if (Nullables.isNullOrAir(content))
+			if (isNullOrAir(content))
 				continue;
 
 			if (predicate.test(content)) {

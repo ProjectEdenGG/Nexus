@@ -64,7 +64,7 @@ public class Pugmas25Sidebar {
 		scoreboards.clear();
 	}
 
-	public class Pugmas25SidebarLayout extends SidebarLayout {
+	public static class Pugmas25SidebarLayout extends SidebarLayout {
 		private final Player player;
 		private int taskId;
 		private Iterator<String> headerFrames = titleFrames.iterator();
@@ -248,10 +248,9 @@ public class Pugmas25Sidebar {
 			if (requiredItems == null || requiredItems.isEmpty())
 				return true;
 
-			for (Pugmas25QuestItem item : requiredItems) {
-				if (item.isInInventory(player))
+			for (Pugmas25QuestItem item : requiredItems)
+				if (item.isInInventoryOf(player))
 					return true;
-			}
 
 			return false;
 		}

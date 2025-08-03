@@ -40,7 +40,7 @@ public enum CommonQuestItem implements QuestItem {
 		return ItemModelType.of(get());
 	}
 
-	public boolean isInInventory(HasUniqueId uuid) {
+	public boolean isInInventoryOf(HasUniqueId uuid) {
 		return Quester.of(uuid).has(get());
 	}
 }

@@ -1,10 +1,8 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.quests;
 
-import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Sidebar.Pugmas25SidebarLine;
 import gg.projecteden.nexus.features.quests.QuestItem;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
-import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -61,11 +59,6 @@ public enum Pugmas25QuestItem implements QuestItem {
 	public ItemModelType getItemModel() {
 		return ItemModelType.of(get());
 	}
-
-	public boolean isInInventory(HasUniqueId uuid) {
-		return Quester.of(uuid).has(get());
-	}
-
 
 	public static Location getCompassLocation(Location location) {
 		int x = location.getBlockX();

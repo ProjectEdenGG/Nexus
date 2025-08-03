@@ -31,7 +31,7 @@ public class Pugmas25QuestItemsListener implements Listener {
 		if (event.getCause() != DamageCause.FALL)
 			return;
 
-		if (!Pugmas25QuestItem.RED_BALLOON.isInInventory(player))
+		if (!Pugmas25QuestItem.RED_BALLOON.isInInventoryOf(player))
 			return;
 
 		event.setCancelled(true);
