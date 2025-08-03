@@ -12,9 +12,11 @@ import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.parchment.sidebar.Sidebar;
 import gg.projecteden.parchment.sidebar.SidebarLayout;
 import gg.projecteden.parchment.sidebar.SidebarStage;
+import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -105,7 +107,7 @@ public class Pugmas25Sidebar {
 				.toList();
 
 			if (!toolLines.isEmpty()) {
-				lines.put("", ndx++);
+				lines.put("&f", ndx++);
 				for (Pugmas25SidebarLine line : toolLines) {
 					lines.put(line.render(player), ndx++);
 				}
@@ -162,25 +164,16 @@ public class Pugmas25Sidebar {
 		"&f⛄ &bP&3ugmas 2025 &f⛄"
 	);
 
-	private enum Pugmas25SidebarLine {
-		ADVENT_DAY {
-			@Override
-			public boolean canRender(Player player) {
-				return true;
-			}
-
+	@NoArgsConstructor
+	public enum Pugmas25SidebarLine {
+		ADVENT_DAY() {
 			@Override
 			public String render(Player player) {
 				return "&3Advent Day: &e" + Pugmas25.get().now().getDayOfMonth();
 			}
 		},
 
-		TIME {
-			@Override
-			public boolean canRender(Player player) {
-				return Pugmas25QuestItem.GOLD_WATCH.isInInventory(player) || Pugmas25QuestItem.GPS.isInInventory(player);
-			}
-
+		TIME(Pugmas25QuestItem.GOLD_WATCH, Pugmas25QuestItem.GPS) {
 			@Override
 			public String render(Player player) {
 				GeoIP geoIP = new GeoIPService().get(player);
@@ -190,24 +183,14 @@ public class Pugmas25Sidebar {
 			}
 		},
 
-		WEATHER {
-			@Override
-			public boolean canRender(Player player) {
-				return Pugmas25QuestItem.WEATHER_RADIO.isInInventory(player) || Pugmas25QuestItem.FISH_FINDER.isInInventory(player);
-			}
-
+		WEATHER(Pugmas25QuestItem.WEATHER_RADIO, Pugmas25QuestItem.FISH_FINDER) {
 			@Override
 			public String render(Player player) {
 				return "&3Weather: &e" + StringUtils.camelCase(FixedWeatherType.of(player.getWorld()));
 			}
 		},
 
-		DIRECTION {
-			@Override
-			public boolean canRender(Player player) {
-				return Pugmas25QuestItem.COMPASS.isInInventory(player) || Pugmas25QuestItem.GPS.isInInventory(player);
-			}
-
+		DIRECTION(Pugmas25QuestItem.COMPASS, Pugmas25QuestItem.GPS) {
 			@Override
 			public String render(Player player) {
 				return "&3Facing: &e" + getCardinalDirection(player);
@@ -218,37 +201,27 @@ public class Pugmas25Sidebar {
 				yaw = (yaw % 360 + 360) % 360; // Normalize yaw to 0–360
 
 				String direction;
-				if (yaw >= 337.5 || yaw < 22.5) direction = "N";
-				else if (yaw < 67.5) direction = "NE";
-				else if (yaw < 112.5) direction = "E";
-				else if (yaw < 157.5) direction = "SE";
-				else if (yaw < 202.5) direction = "S";
-				else if (yaw < 247.5) direction = "SW";
-				else if (yaw < 292.5) direction = "W";
-				else direction = "NW";
+				if (yaw >= 337.5 || yaw < 22.5) direction = "S";
+				else if (yaw < 67.5) direction = "SW";
+				else if (yaw < 112.5) direction = "W";
+				else if (yaw < 157.5) direction = "NW";
+				else if (yaw < 202.5) direction = "N";
+				else if (yaw < 247.5) direction = "NE";
+				else if (yaw < 292.5) direction = "E";
+				else direction = "SE";
 
 				return String.format("%s (%.1f°)", direction, yaw);
 			}
 		},
 
-		FISHING_LUCK {
-			@Override
-			public boolean canRender(Player player) {
-				return Pugmas25QuestItem.FISHING_POCKET_GUIDE.isInInventory(player) || Pugmas25QuestItem.FISH_FINDER.isInInventory(player);
-			}
-
+		FISHING_LUCK(Pugmas25QuestItem.FISHING_POCKET_GUIDE, Pugmas25QuestItem.FISH_FINDER) {
 			@Override
 			public String render(Player player) {
 				return "&3Fishing Luck: &enull";
 			}
 		},
 
-		AREA_DESIGNATION {
-			@Override
-			public boolean canRender(Player player) {
-				return Pugmas25QuestItem.ADVENTURE_POCKET_GUIDE.isInInventory(player) || Pugmas25QuestItem.GPS.isInInventory(player);
-			}
-
+		AREA_DESIGNATION(Pugmas25QuestItem.ADVENTURE_POCKET_GUIDE, Pugmas25QuestItem.GPS) {
 			@Override
 			public String render(Player player) {
 				Pugmas25District district = Pugmas25Districts.of(player);
@@ -256,21 +229,32 @@ public class Pugmas25Sidebar {
 			}
 		},
 
-		COORDS {
-			@Override
-			public boolean canRender(Player player) {
-				return Pugmas25QuestItem.SEXTANT.isInInventory(player) || Pugmas25QuestItem.FISH_FINDER.isInInventory(player);
-			}
-
+		HEIGHT(Pugmas25QuestItem.SEXTANT, Pugmas25QuestItem.FISH_FINDER) {
 			@Override
 			public String render(Player player) {
 				Location location = player.getLocation();
-				return "&3XYZ: &e" + (int) location.getX() + " " + (int) location.getY() + " " + (int) location.getZ();
+				return "&3Height: &e" + location.getBlockY();
 			}
 		},
 		;
 
-		public abstract boolean canRender(Player player);
+		List<Pugmas25QuestItem> requiredItems = new ArrayList<>();
+
+		Pugmas25SidebarLine(Pugmas25QuestItem specificItem, Pugmas25QuestItem combinedItem) {
+			this.requiredItems = List.of(specificItem, combinedItem);
+		}
+
+		public boolean canRender(Player player) {
+			if (requiredItems == null || requiredItems.isEmpty())
+				return true;
+
+			for (Pugmas25QuestItem item : requiredItems) {
+				if (item.isInInventory(player))
+					return true;
+			}
+
+			return false;
+		}
 
 		public abstract String render(Player player);
 
@@ -283,7 +267,7 @@ public class Pugmas25Sidebar {
 		}
 
 		public static List<Pugmas25SidebarLine> getToolLines() {
-			return Arrays.asList(TIME, WEATHER, DIRECTION, FISHING_LUCK, AREA_DESIGNATION, COORDS);
+			return Arrays.asList(TIME, WEATHER, DIRECTION, FISHING_LUCK, AREA_DESIGNATION, HEIGHT);
 		}
 	}
 }
