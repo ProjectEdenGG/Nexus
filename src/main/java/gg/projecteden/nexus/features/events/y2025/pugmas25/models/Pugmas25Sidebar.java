@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Distri
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
@@ -28,19 +29,20 @@ import java.util.stream.Collectors;
 
 public class Pugmas25Sidebar {
 	private static final int UPDATE_TICK_INTERVAL = 4;
-	private final Map<Player, Pugmas25SidebarLayout> scoreboards = new HashMap<>();
+	private final Map<Player, Pugmas25SidebarLayout> sidebars = new HashMap<>();
 
 
 	public void update() {
 		Pugmas25.get().getOnlinePlayers().forEach(player -> {
-			scoreboards.computeIfAbsent(player, Pugmas25SidebarLayout::new);
+			sidebars.computeIfAbsent(player, Pugmas25SidebarLayout::new);
 		});
 
-		scoreboards.forEach(((player, layout) -> layout.refresh()));
+		sidebars.forEach(((player, layout) -> layout.refresh()));
 	}
 
 	public void handleJoin(Player player) {
-		Pugmas25SidebarLayout layout = scoreboards.put(player, new Pugmas25SidebarLayout(player));
+		PlayerUtils.send(player, "subscribe to sidebar");
+		Pugmas25SidebarLayout layout = sidebars.put(player, new Pugmas25SidebarLayout(player));
 		if (layout != null) {
 			Sidebar.get(player).applyLayout(layout);
 			layout.start();
@@ -50,7 +52,8 @@ public class Pugmas25Sidebar {
 	}
 
 	public void handleQuit(Player player) {
-		Pugmas25SidebarLayout layout = scoreboards.remove(player);
+		PlayerUtils.send(player, "unsubscribe from sidebar");
+		Pugmas25SidebarLayout layout = sidebars.remove(player);
 		if (layout != null) {
 			layout.stop();
 		}
@@ -60,8 +63,11 @@ public class Pugmas25Sidebar {
 	}
 
 	public void handleEnd() {
-		scoreboards.forEach((player, scoreboard) -> Sidebar.get(player).applyLayout(null));
-		scoreboards.clear();
+		sidebars.forEach((player, scoreboard) -> {
+			PlayerUtils.send(player, "ending sidebar");
+			Sidebar.get(player).applyLayout(null);
+		});
+		sidebars.clear();
 	}
 
 	public static class Pugmas25SidebarLayout extends SidebarLayout {
@@ -241,7 +247,7 @@ public class Pugmas25Sidebar {
 		List<Pugmas25QuestItem> requiredItems = new ArrayList<>();
 
 		Pugmas25SidebarLine(Pugmas25QuestItem specificItem, Pugmas25QuestItem combinedItem) {
-			this.requiredItems = List.of(specificItem, combinedItem);
+			this.requiredItems = List.of(specificItem, combinedItem, Pugmas25QuestItem.CELL_PHONE);
 		}
 
 		public boolean canRender(Player player) {
