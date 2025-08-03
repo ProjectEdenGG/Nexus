@@ -31,8 +31,9 @@ public class MatchStatRecordConverter extends TypeConverter implements SimpleVal
 			db.put("mechanic", matchStatRecord.getMechanic().name());
 			db.put("date", LocalDateTimeConverter.toEncoded(matchStatRecord.getDate()));
 			db.put("stats", new HashMap<>() {{
-				for (Map.Entry<MinigameStatistic, Integer> entry : matchStatRecord.getStats().entrySet())
-					put(entry.getKey().getId(), entry.getValue());
+				if (matchStatRecord.getStats() != null)
+					for (Map.Entry<MinigameStatistic, Integer> entry : matchStatRecord.getStats().entrySet())
+						put(entry.getKey().getId(), entry.getValue());
 			}});
 			return db;
 		}
