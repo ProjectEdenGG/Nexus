@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Distri
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
+import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -143,38 +144,14 @@ public class Pugmas25Sidebar {
 		}
 	}
 
-	private static final List<String> titleFrames = Arrays.asList(
-		"&f⛄ &3Pugmas 2025 &f⛄",
-		"&f⛄ &3Pugmas 2025 &f⛄",
-		"&f⛄ &3Pugmas 2025 &f⛄",
-		"&f⛄ &3Pugmas 2025 &f⛄",
-		//
-		"&f⛄ &bP&3ugmas 2025 &f⛄",
-		"&f⛄ &3P&bu&3gmas 2025 &f⛄",
-		"&f⛄ &3Pu&bg&3mas 2025 &f⛄",
-		"&f⛄ &3Pug&bm&3as 2025 &f⛄",
-		"&f⛄ &3Pugm&ba&3s 2025 &f⛄",
-		"&f⛄ &3Pugma&bs &32025 &f⛄",
-		"&f⛄ &3Pugmas &b2&3025 &f⛄",
-		"&f⛄ &3Pugmas 2&b0&325 &f⛄",
-		"&f⛄ &3Pugmas 20&b2&35 &f⛄",
-		"&f⛄ &3Pugmas 202&b5 &f⛄",
-		"&f⛄ &3Pugmas 20&b2&35 &f⛄",
-		"&f⛄ &3Pugmas 2&b0&325 &f⛄",
-		"&f⛄ &3Pugmas &b2&3025 &f⛄",
-		"&f⛄ &3Pugma&bs &32025 &f⛄",
-		"&f⛄ &3Pugm&ba&3s 2025 &f⛄",
-		"&f⛄ &3Pug&bm&3as 2025 &f⛄",
-		"&f⛄ &3Pu&bg&3mas 2025 &f⛄",
-		"&f⛄ &3P&bu&3gmas 2025 &f⛄",
-		"&f⛄ &bP&3ugmas 2025 &f⛄"
-	);
-
 	@NoArgsConstructor
 	public enum Pugmas25SidebarLine {
 		ADVENT_DAY() {
 			@Override
 			public String render(Player player) {
+				if (Pugmas25.get().is25thOrAfter())
+					return "&3Days unopened: &e" + new Pugmas25UserService().get(player).advent().getUncollected();
+
 				return "&3Advent Day: &e" + Pugmas25.get().now().getDayOfMonth();
 			}
 		},
@@ -275,4 +252,31 @@ public class Pugmas25Sidebar {
 			return Arrays.asList(TIME, WEATHER, DIRECTION, FISHING_LUCK, AREA_DESIGNATION, HEIGHT);
 		}
 	}
+
+	private static final List<String> titleFrames = Arrays.asList(
+		"&f⛄ &3Pugmas 2025 &f⛄",
+		"&f⛄ &3Pugmas 2025 &f⛄",
+		"&f⛄ &3Pugmas 2025 &f⛄",
+		"&f⛄ &3Pugmas 2025 &f⛄",
+		//
+		"&f⛄ &bP&3ugmas 2025 &f⛄",
+		"&f⛄ &3P&bu&3gmas 2025 &f⛄",
+		"&f⛄ &3Pu&bg&3mas 2025 &f⛄",
+		"&f⛄ &3Pug&bm&3as 2025 &f⛄",
+		"&f⛄ &3Pugm&ba&3s 2025 &f⛄",
+		"&f⛄ &3Pugma&bs &32025 &f⛄",
+		"&f⛄ &3Pugmas &b2&3025 &f⛄",
+		"&f⛄ &3Pugmas 2&b0&325 &f⛄",
+		"&f⛄ &3Pugmas 20&b2&35 &f⛄",
+		"&f⛄ &3Pugmas 202&b5 &f⛄",
+		"&f⛄ &3Pugmas 20&b2&35 &f⛄",
+		"&f⛄ &3Pugmas 2&b0&325 &f⛄",
+		"&f⛄ &3Pugmas &b2&3025 &f⛄",
+		"&f⛄ &3Pugma&bs &32025 &f⛄",
+		"&f⛄ &3Pugm&ba&3s 2025 &f⛄",
+		"&f⛄ &3Pug&bm&3as 2025 &f⛄",
+		"&f⛄ &3Pu&bg&3mas 2025 &f⛄",
+		"&f⛄ &3P&bu&3gmas 2025 &f⛄",
+		"&f⛄ &bP&3ugmas 2025 &f⛄"
+	);
 }

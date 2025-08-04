@@ -129,6 +129,10 @@ public class Advent25User implements PlayerOwnedObject {
 		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).receiver(getOnlinePlayer()).play();
 	}
 
+	public int getUncollected() {
+		return 25 - collected.size();
+	}
+
 	public void teleportAsync(Advent25Present present) {
 		getOnlinePlayer().teleportAsync(present.getLocation().toCenterLocation());
 	}
