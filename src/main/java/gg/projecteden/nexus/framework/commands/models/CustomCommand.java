@@ -198,7 +198,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected Block getTargetBlockRequired(Material material) {
 		Block targetBlock = getTargetBlock();
-		if (isNullOrAir(targetBlock) || targetBlock.getType() != Material.BREWING_STAND)
+		if (isNullOrAir(targetBlock) || targetBlock.getType() != material)
 			error("You must be looking at a " + camelCase(material));
 		return targetBlock;
 	}
