@@ -7,7 +7,6 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestI
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
@@ -32,42 +31,41 @@ public class Pugmas25Sidebar {
 	private static final int UPDATE_TICK_INTERVAL = 4;
 	private final Map<Player, Pugmas25SidebarLayout> sidebars = new HashMap<>();
 
+	public Pugmas25SidebarLayout createSidebar(Player player) {
+		return new Pugmas25SidebarLayout(player);
+	}
+
 
 	public void update() {
-		Pugmas25.get().getOnlinePlayers().forEach(player -> {
-			sidebars.computeIfAbsent(player, Pugmas25SidebarLayout::new);
-		});
+		Pugmas25.get().getOnlinePlayers().forEach(player ->
+			sidebars.computeIfAbsent(player, $ -> createSidebar(player)));
 
-		sidebars.forEach(((player, layout) -> layout.refresh()));
+		sidebars.forEach(((player, layout) ->
+			layout.refresh()));
 	}
 
 	public void handleJoin(Player player) {
-		PlayerUtils.send(player, "subscribe to sidebar");
-		Pugmas25SidebarLayout layout = sidebars.put(player, new Pugmas25SidebarLayout(player));
-		if (layout != null) {
-			Sidebar.get(player).applyLayout(layout);
-			layout.start();
-		}
+		sidebars.put(player, createSidebar(player));
+
+		Pugmas25SidebarLayout layout = sidebars.get(player);
+		Sidebar.get(player).applyLayout(layout);
+		layout.start();
 
 		update();
 	}
 
 	public void handleQuit(Player player) {
-		PlayerUtils.send(player, "unsubscribe from sidebar");
 		Pugmas25SidebarLayout layout = sidebars.remove(player);
-		if (layout != null) {
+		if (layout != null)
 			layout.stop();
-		}
 
 		Sidebar.get(player).applyLayout(null);
 		update();
 	}
 
 	public void handleEnd() {
-		sidebars.forEach((player, scoreboard) -> {
-			PlayerUtils.send(player, "ending sidebar");
-			Sidebar.get(player).applyLayout(null);
-		});
+		sidebars.forEach((player, scoreboard) ->
+			Sidebar.get(player).applyLayout(null));
 		sidebars.clear();
 	}
 
