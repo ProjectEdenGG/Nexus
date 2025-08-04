@@ -48,6 +48,9 @@ public class MatchStatistics {
 	}
 
 	public void award(MinigameStatistic statistic, HasUniqueId uuid, int amount) {
+		if (uuid == null)
+			return;
+
 		if (!this.applies(statistic)) {
 			Minigames.debug(match.getMechanic().getId() + " is not setup to track stat: " + statistic.getId());
 			return;
