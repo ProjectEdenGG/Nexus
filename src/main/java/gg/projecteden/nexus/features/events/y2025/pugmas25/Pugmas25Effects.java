@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
@@ -12,6 +13,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.slotmachi
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Geyser;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
@@ -24,16 +26,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @NoArgsConstructor
 @Environments({Env.PROD, Env.UPDATE})
 public class Pugmas25Effects extends Effects {
-
-	private final List<Location> SMOKE_STACKS = List.of(
-		location(-459, 92, -2858),
-		location(-459, 93, -2860)
-	);
 
 	private static int angle = 0;
 	private final List<String> windmill1 = new ArrayList<>() {{
@@ -127,11 +125,20 @@ public class Pugmas25Effects extends Effects {
 	}
 
 	private void smokeStacks() {
+		Set<ProtectedRegion> smokeRegions = worldguard().getRegionsLike("^pugmas25_chimney_[0-9]+");
+		List<Location> chimneyLocations = new ArrayList<>();
+		for (ProtectedRegion region : smokeRegions) {
+			chimneyLocations.add(worldguard().toLocation(region.getMinimumPoint()));
+		}
+
+		if (Nullables.isNullOrEmpty(chimneyLocations))
+			return;
+
 		Tasks.repeat(0, 2, () -> {
-			if (this.SMOKE_STACKS == null)
+			if (Nullables.isNullOrEmpty(chimneyLocations))
 				return;
 
-			for (Location location : SMOKE_STACKS) {
+			for (Location location : chimneyLocations) {
 				if (location == null || !location.isChunkLoaded())
 					continue;
 
