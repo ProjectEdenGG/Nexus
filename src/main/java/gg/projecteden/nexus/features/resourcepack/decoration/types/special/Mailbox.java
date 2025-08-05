@@ -48,6 +48,9 @@ public class Mailbox extends DyeableFloorThing implements Interactable {
 				return;
 			}
 
+			if (WorldGroup.of(player) == WorldGroup.EVENTS)
+				return;
+
 			if (owner == null) {
 				PlayerUtils.send(player, MailCommand.PREFIX + "Could not determine owner of mailbox");
 				return;
