@@ -13,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 @Getter
 @AllArgsConstructor
@@ -32,7 +33,7 @@ public enum Pugmas25QuestItem implements QuestItem {
 	SEXTANT(new ItemBuilder(ItemModelType.EVENT_SEXTANT).name("&oSextant").lore("&7Displays coordinates")),
 	FISH_FINDER(new ItemBuilder(ItemModelType.EVENT_FISH_FINDER).name("&oFish Finder").lore("&7Displays your fishing luck, height, and the current weather")),
 
-	CELL_PHONE(new ItemBuilder(Material.STICK).name("&oCell Phone").lore("&7Displays direction, height, area designation, time, weather and fishing luck")),
+	PDA(new ItemBuilder(ItemModelType.EVENT_PDA).name("&oPDA").lore("&7Displays direction, height, area designation, time, weather and fishing luck")),
 
 	FISHING_ROD_WOOD(new ItemBuilder(ItemModelType.FISHING_ROD_WOOD).name("Wood Fishing Rod")),
 	FISHING_ROD_REINFORCED(new ItemBuilder(ItemModelType.FISHING_ROD_REINFORCED).name("Reinforced Fishing Rod").enchant(Enchant.UNBREAKING, 2)),
@@ -50,7 +51,7 @@ public enum Pugmas25QuestItem implements QuestItem {
 	private final ItemBuilder itemBuilder;
 
 	public ItemBuilder getItemBuilder() {
-		return itemBuilder.clone().itemFlags(ItemFlags.HIDE_ALL);
+		return new ItemBuilder(itemBuilder).itemFlags(ItemFlags.HIDE_ALL);
 	}
 
 	@Override
@@ -58,8 +59,8 @@ public enum Pugmas25QuestItem implements QuestItem {
 		return getItemBuilder().build();
 	}
 
-	public ItemModelType getItemModel() {
-		return ItemModelType.of(get());
+	public @Nullable ItemModelType getItemModel() {
+		return ItemModelType.of(itemBuilder);
 	}
 
 	public static Location getCompassLocation(Location location) {

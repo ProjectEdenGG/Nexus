@@ -11,12 +11,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.Objects;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Getter
 @AllArgsConstructor
@@ -1380,6 +1383,7 @@ public enum ItemModelType {
 	EVENT_MAGIC_MIRROR("events/items/magic_mirror"),
 	EVENT_RED_BALLOON("events/items/red_balloon"),
 	EVENT_SEXTANT("events/items/sextant"),
+	EVENT_PDA("events/items/pda"),
 	EVENT_ITEM("events/items/template_item"),
 	EVENT_WEATHER_RADIO("events/items/weather_radio"),
 	PUGMAS21_CANDY_CANE_CANNON("events/pugmas21/candycane/cannon"),
@@ -2364,5 +2368,17 @@ public enum ItemModelType {
 
 	public ItemStack getNamedItem() {
 		return getNamedItemBuilder().build();
+	}
+
+	public boolean isInInventoryOf(Player player) {
+		for (ItemStack content : player.getInventory().getContents()) {
+			if (isNullOrAir(content))
+				continue;
+
+			if (this == ItemModelType.of(content))
+				return true;
+		}
+
+		return false;
 	}
 }

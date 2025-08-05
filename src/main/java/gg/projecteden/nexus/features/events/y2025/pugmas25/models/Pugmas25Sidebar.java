@@ -1,9 +1,11 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.models;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.operator.WeatherCommand.FixedWeatherType;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts.Pugmas25District;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
@@ -108,7 +110,15 @@ public class Pugmas25Sidebar {
 			}
 
 			List<Pugmas25SidebarLine> toolLines = Pugmas25SidebarLine.getToolLines().stream()
-				.filter(line -> line.canRender(player))
+				.filter(line -> {
+					try {
+						if (line.canRender(player))
+							return true;
+					} catch (Exception e) {
+						Nexus.log("[Pugmas25] Error when testing sidebar line " + line.name() + " for " + player.getName(), e);
+					}
+					return false;
+				})
 				.toList();
 
 			if (!toolLines.isEmpty()) {
@@ -222,16 +232,21 @@ public class Pugmas25Sidebar {
 		List<Pugmas25QuestItem> requiredItems = new ArrayList<>();
 
 		Pugmas25SidebarLine(Pugmas25QuestItem specificItem, Pugmas25QuestItem combinedItem) {
-			this.requiredItems = List.of(specificItem, combinedItem, Pugmas25QuestItem.CELL_PHONE);
+			this.requiredItems = List.of(specificItem, combinedItem, Pugmas25QuestItem.PDA);
 		}
 
 		public boolean canRender(Player player) {
 			if (requiredItems == null || requiredItems.isEmpty())
 				return true;
 
-			for (Pugmas25QuestItem item : requiredItems)
-				if (item.isInInventoryOf(player))
+			for (Pugmas25QuestItem item : requiredItems) {
+				ItemModelType itemModelType = item.getItemModel();
+				if (itemModelType == null)
+					continue;
+
+				if (itemModelType.isInInventoryOf(player))
 					return true;
+			}
 
 			return false;
 		}
