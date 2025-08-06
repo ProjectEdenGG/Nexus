@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.store.perks.inventory;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -36,6 +37,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Aliases("at")
 @NoArgsConstructor
 @Permission("nexus.autotorch")
 @Description("Automatically place a light source when it gets too dark")
