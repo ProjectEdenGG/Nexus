@@ -13,7 +13,10 @@ import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -129,6 +132,14 @@ public class WardCharm extends FunctionalRecipe {
 		var pdc = entity.getPersistentDataContainer();
 		if (!pdc.has(NBT_KEY, PersistentDataType.STRING))
 			return;
+
+		if (entity instanceof LivingEntity livingEntity) {
+			AttributeInstance attribute = livingEntity.getAttribute(Attribute.MAX_HEALTH);
+			if (attribute == null)
+				Nexus.warn("[WardCharm] Could not find max health attribute for " + entity.getType());
+			else
+				livingEntity.setHealth(attribute.getValue());
+		}
 
 		event.setCancelled(true);
 	}
