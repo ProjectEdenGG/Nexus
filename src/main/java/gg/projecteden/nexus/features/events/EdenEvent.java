@@ -229,7 +229,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 
 	public boolean isEventActive(HasUniqueId player) {
 		Rank rank = Rank.of(player);
-		if (isBeforeEvent() && (rank.isStaff() || rank.isNoble()))
+		if (isBeforeEvent() && rank.isStaff())
 			return true;
 
 		return isEventActive();

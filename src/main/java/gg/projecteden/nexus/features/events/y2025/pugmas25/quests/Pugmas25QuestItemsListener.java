@@ -11,6 +11,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
+import org.bukkit.event.entity.EntityPotionEffectEvent.Cause;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -66,6 +68,12 @@ public class Pugmas25QuestItemsListener implements Listener {
 			return;
 
 		PlayerUtils.send(player, "TODO: SHRINK PLAYER FOR X MINUTES");
+	}
+
+	@EventHandler
+	public void on(EntityPotionEffectEvent event) {
+		if (event.getCause() != Cause.EXPIRATION)
+			return;
 	}
 
 

@@ -7,7 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.warps.WarpType;
 
 @Aliases({"staffwarp", "sw"})
-@Permission(Ladder.NOBLE)
+@Permission(Ladder.BUILDER)
 public class StaffWarpsCommand extends _WarpCommand {
 
 	public StaffWarpsCommand(CommandEvent event) {

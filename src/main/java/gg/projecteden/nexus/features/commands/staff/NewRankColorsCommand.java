@@ -17,7 +17,7 @@ import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.EntityType;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.Arrays;
 
 @Permission(Group.STAFF)
@@ -75,7 +75,6 @@ public class NewRankColorsCommand extends CustomCommand {
 	void view() {
 		line(5);
 		Arrays.asList(Rank.values()).forEach(rank -> {
-			if (!rank.isActive() && rank != Rank.NOBLE) return;
 			String color = StringUtils.decolorize(newRankColors.getColors().getOrDefault(rank, rank.getChatColor().toString()));
 			String hex;
 			if (StringUtils.getHexPattern().matcher(color).matches()) {

@@ -991,7 +991,6 @@ public class ProfileProvider extends InventoryProvider {
 		TRUSTED(InventoryTexture.GUI_PROFILE_RANK_TRUSTED),
 		ELITE(InventoryTexture.GUI_PROFILE_RANK_ELITE),
 		VETERAN(InventoryTexture.GUI_PROFILE_RANK_VETERAN),
-		NOBLE(InventoryTexture.GUI_PROFILE_RANK_NOBLE),
 		BUILDER(InventoryTexture.GUI_PROFILE_RANK_BUILDER),
 		ARCHITECT(InventoryTexture.GUI_PROFILE_RANK_ARCHITECT),
 		MODERATOR(InventoryTexture.GUI_PROFILE_RANK_MODERATOR),

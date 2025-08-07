@@ -38,10 +38,8 @@ public enum Rank implements IsColoredAndNamed {
 	TRUSTED(ChatColor.of("#ff7069"), ChatColor.RED),
 	ELITE(ChatColor.of("#f5a138"), ChatColor.GOLD),
 	VETERAN(ChatColor.of("#ffff44"), ChatColor.YELLOW),
-	NOBLE(ChatColor.of("#9de23d"), ChatColor.YELLOW),
 	BUILDER(ChatColor.of("#02883e"), ChatColor.DARK_GREEN),
 	ARCHITECT(ChatColor.of("#02c93e"), ChatColor.GREEN),
-	MINIGAME_MODERATOR(ChatColor.of("#4cc9f0"), ChatColor.AQUA),
 	MODERATOR(ChatColor.of("#4cc9f0"), ChatColor.AQUA),
 	OPERATOR(ChatColor.of("#07a8a8"), ChatColor.DARK_AQUA),
 	ADMIN(ChatColor.of("#3080ff"), ChatColor.BLUE),
@@ -76,16 +74,8 @@ public enum Rank implements IsColoredAndNamed {
 		return getChatColor().getColor();
 	}
 
-	public boolean isActive() {
-		return this != MINIGAME_MODERATOR;
-	}
-
 	public boolean hasPrefix() {
 		return isStaff();
-	}
-
-	public boolean isNoble() {
-		return gte(Rank.NOBLE);
 	}
 
 	public boolean isStaff() {
@@ -143,7 +133,6 @@ public enum Rank implements IsColoredAndNamed {
 
 	public static final List<Rank> STAFF_RANKS = Arrays.stream(Rank.values())
 		.filter(Rank::isStaff)
-		.filter(Rank::isActive)
 		.sorted(Comparator.reverseOrder())
 		.collect(Collectors.toList());
 
@@ -163,7 +152,7 @@ public enum Rank implements IsColoredAndNamed {
 
 	public static List<Nerd> getOnlineMods() {
 		return OnlinePlayers.getAll().stream()
-				.filter(player -> Rank.of(player).isMod() && Rank.of(player).isActive())
+				.filter(player -> Rank.of(player).isMod())
 				.map(Nerd::of)
 				.sorted(Comparator.comparing(Nerd::getNickname))
 				.collect(Collectors.toList());
@@ -175,7 +164,7 @@ public enum Rank implements IsColoredAndNamed {
 		.expireAfterWrite(10, TimeUnit.SECONDS)
 		.build(CacheLoader.from(uuid -> {
 			for (Rank rank : REVERSED)
-				if (rank.isActive() && LuckPermsUtils.hasGroup(uuid, rank.name().toLowerCase()))
+				if (LuckPermsUtils.hasGroup(uuid, rank.name().toLowerCase()))
 					return rank;
 
 			return GUEST;
@@ -254,8 +243,6 @@ public enum Rank implements IsColoredAndNamed {
 		Rank next = EnumUtils.next(Rank.class, this.ordinal());
 		if (next == this)
 			return next;
-		if (!next.isActive())
-			next = next.next();
 		return next;
 	}
 
@@ -263,8 +250,6 @@ public enum Rank implements IsColoredAndNamed {
 		Rank previous = EnumUtils.previous(Rank.class, this.ordinal());
 		if (previous == this)
 			return previous;
-		if (!previous.isActive())
-			previous = previous.previous();
 		return previous;
 	}
 
@@ -278,6 +263,6 @@ public enum Rank implements IsColoredAndNamed {
 	}
 
 	public int enabledOrdinal() {
-		return Arrays.stream(Rank.values()).filter(Rank::isActive).toList().indexOf(this);
+		return Arrays.stream(Rank.values()).toList().indexOf(this);
 	}
 }

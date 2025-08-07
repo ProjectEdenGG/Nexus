@@ -58,7 +58,6 @@ public @interface Permission {
 	 * ladder.moderator   ladder.architect
 	 *          \         ladder.builder
 	 *           \         |
-	 *          ladder.noble
 	 *          ladder.veteran
 	 *          ladder.elite
 	 *          ladder.trusted
@@ -76,7 +75,6 @@ public @interface Permission {
 		public static final String MODERATOR = "ladder.moderator";
 		public static final String ARCHITECT = "ladder.architect";
 		public static final String BUILDER = "ladder.builder";
-		public static final String NOBLE = "ladder.noble";
 		public static final String VETERAN = "ladder.veteran";
 		public static final String ELITE = "ladder.elite";
 		public static final String TRUSTED = "ladder.trusted";

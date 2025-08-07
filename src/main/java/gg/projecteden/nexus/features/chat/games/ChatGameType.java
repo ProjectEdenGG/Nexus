@@ -222,7 +222,7 @@ public enum ChatGameType {
 
 	static {
 		try {
-			WORDS.addAll(Arrays.stream(Rank.values()).filter(Rank::isActive).map(Rank::getName).toList());
+			WORDS.addAll(Arrays.stream(Rank.values()).map(Rank::getName).toList());
 			Rank.getStaffNerds().thenAccept((map) -> map.values().forEach(list -> WORDS.addAll(list.stream().map(Nerd::getNickname).toList())));
 		} catch (Exception ex) {
 			ex.printStackTrace();
