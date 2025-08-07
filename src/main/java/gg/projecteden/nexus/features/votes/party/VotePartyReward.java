@@ -22,7 +22,7 @@ public enum VotePartyReward {
 	SIMPLE_BOOST {
 		@Override
 		public void give(HasOfflinePlayer player) {
-			Boostable type = RandomUtils.randomElement(Arrays.stream(Boostable.values()).filter(boostable -> !boostable.isDisabled()).toList());
+			Boostable type = RandomUtils.randomElement(Arrays.stream(Boostable.values()).filter(Boostable::isPossiblePersonal).toList());
 			Booster booster = BOOSTER_SERVICE.get(player.getOfflinePlayer());
 			Booster.Boost boost = booster.add(
 				type,
@@ -46,7 +46,7 @@ public enum VotePartyReward {
 	GOOD_BOOST {
 		@Override
 		public void give(HasOfflinePlayer player) {
-			Boostable type = RandomUtils.randomElement(Arrays.stream(Boostable.values()).filter(boostable -> !boostable.isDisabled()).toList());
+			Boostable type = RandomUtils.randomElement(Arrays.stream(Boostable.values()).filter(Boostable::isPossiblePersonal).toList());
 			Booster booster = BOOSTER_SERVICE.get(player.getOfflinePlayer());
 			Booster.Boost boost = booster.add(
 				type,
@@ -70,7 +70,7 @@ public enum VotePartyReward {
 	GREAT_BOOST {
 		@Override
 		public void give(HasOfflinePlayer player) {
-			Boostable type = RandomUtils.randomElement(Arrays.stream(Boostable.values()).filter(boostable -> !boostable.isDisabled()).toList());
+			Boostable type = RandomUtils.randomElement(Arrays.stream(Boostable.values()).filter(Boostable::isPossiblePersonal).toList());
 			Booster booster = BOOSTER_SERVICE.get(player.getOfflinePlayer());
 			Booster.Boost boost = booster.add(
 				type,

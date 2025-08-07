@@ -11,12 +11,18 @@ import lombok.SneakyThrows;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 
 @Getter
 @AllArgsConstructor
 public enum Boostable {
+	@PossiblePersonal
 	EXPERIENCE(Material.EXPERIENCE_BOTTLE),
+	@PossiblePersonal
 	MCMMO_EXPERIENCE(Material.NETHERITE_PICKAXE),
 	@Disabled
 	MARKET_SELL_PRICES(Material.OAK_SIGN) {
@@ -29,16 +35,15 @@ public enum Boostable {
 		public void onExpire() {
 			Market.load();
 		}
-
-		@Override
-		public boolean isPossiblePersonal() {
-			return false;
-		}
 	},
+	@PossiblePersonal
 	EXTRA_VOTE_POINTS_CHANCE(Material.DIAMOND),
 	VOTE_POINTS(Material.DIAMOND),
+	@PossiblePersonal
 	MINIGAME_DAILY_TOKENS(Material.DIAMOND_SWORD),
+	@PossiblePersonal
 	KILLER_MONEY(Material.GOLD_INGOT),
+	@PossiblePersonal
 	MOB_HEADS(Material.ZOMBIE_HEAD),
 	@Disabled
 	MYSTERY_CRATE_KEY(Material.TRIPWIRE_HOOK),
@@ -48,7 +53,6 @@ public enum Boostable {
 
 	private final Material material;
 	private final String model;
-	private final boolean possiblePersonal = true;
 
 	Boostable(Material material) {
 		this(material, null);
@@ -72,8 +76,16 @@ public enum Boostable {
 		return new ItemBuilder(material).model(model).name("&6" + StringUtils.camelCase(name()));
 	}
 
+	public boolean isPossiblePersonal() {
+		return getField().isAnnotationPresent(PossiblePersonal.class);
+	}
+
 	public void onActivate() {}
 
 	public void onExpire() {}
+
+	@Target(ElementType.FIELD)
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface PossiblePersonal {}
 
 }
