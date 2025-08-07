@@ -142,14 +142,8 @@ public class Train {
 
 			if (whistleLocation != null) {
 				for (Player player : getPlayers()) {
-					double minVolume = 0.01;
-					double maxVolume = 0.8;
-					double distance = Distance.distance(player.getLocation(), whistleLocation).getRealDistance();
-					double fallOff = (1.0 - (distance / whistleRadius));
-					double volumeSquared = maxVolume * Math.pow(fallOff, 2.0);
-					double volumeClamped = Math.max(minVolume, Math.min(maxVolume, volumeSquared));
-
-					whistle.clone().receiver(player).volume(volumeClamped).play();
+					double radiusVolume = getRadiusVolume(player, whistleLocation, whistleRadius, false, 0.01, 0.8);
+					whistle.clone().receiver(player).volume(radiusVolume).play();
 				}
 			} else
 				whistle.receivers(getPlayers()).volume(0.25).play();
@@ -254,16 +248,28 @@ public class Train {
 		taskIds.add(Tasks.repeat(0, TickTime.SECOND, () ->
 				getPlayers().forEach(player -> {
 					final ArmorStand nearest = getNearestArmorStand(player);
-					if (nearest != null)
+					if (nearest != null) {
+						double radiusVolume = getRadiusVolume(player, nearest.getLocation(), 60, true, 0, 1);
 						new SoundBuilder(CustomSound.TRAIN_CHUG)
-								.receiver(player)
-								.location(nearest.getLocation())
-								.category(SoundCategory.AMBIENT)
-								.volume(MathUtils.clamp((63 - Distance.distance(player, nearest).getRealDistance()) * .03448275862, 0, 2))
-								.play();
+							.receiver(player)
+							.location(nearest.getLocation())
+							.category(SoundCategory.AMBIENT)
+							.volume(radiusVolume)
+							.play();
+					}
 				})));
 
 		taskIds.add(Tasks.wait(TickTime.SECOND.x(seconds), this::stop));
+	}
+
+	private double getRadiusVolume(Player player, Location location, double radius, boolean checkRadius, double minVolume, double maxVolume) {
+		double distance = Distance.distance(player.getLocation(), location).getRealDistance();
+		if (checkRadius && distance > radius)
+			return minVolume;
+
+		double fallOff = (1.0 - (distance / radius));
+		double volumeSquared = maxVolume * Math.pow(fallOff, 2.0);
+		return MathUtils.clamp(volumeSquared, minVolume, maxVolume);
 	}
 
 	@Nullable
