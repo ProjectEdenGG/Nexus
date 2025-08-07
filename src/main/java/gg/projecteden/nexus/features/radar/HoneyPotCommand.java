@@ -62,7 +62,7 @@ import java.util.List;
 import java.util.Set;
 
 @NoArgsConstructor
-@Permission(Group.MODERATOR)
+@Permission(Group.ADMIN)
 @Aliases({"hp", "honeypots"})
 @Description("Automatic grief traps")
 public class HoneyPotCommand extends CustomCommand implements Listener {
