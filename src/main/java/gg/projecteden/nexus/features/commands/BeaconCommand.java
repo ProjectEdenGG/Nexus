@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -19,6 +20,7 @@ public class BeaconCommand extends CustomCommand {
 	}
 
 	@Path("set effectRange <range>")
+	@Description("Set the effect range of a beacon")
 	void set_effectRange(double range) {
 		Beacon beacon = getTargetBeacon();
 		if (beacon == null)
@@ -30,6 +32,7 @@ public class BeaconCommand extends CustomCommand {
 	}
 
 	@Path("get effectRange")
+	@Description("View the effect range of a beacon")
 	void get_effectRange() {
 		Beacon beacon = getTargetBeacon();
 		if (beacon == null)

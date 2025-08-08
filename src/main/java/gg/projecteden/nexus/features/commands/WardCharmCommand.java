@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.recipes.functionals.WardCharm;
 import gg.projecteden.nexus.features.recipes.menu.CustomCraftingRecipeMenu;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -24,6 +25,7 @@ public class WardCharmCommand extends CustomCommand {
 	}
 
 	@Path("recipe")
+	@Description("View the crafting recipe for the Ward Charm")
 	void recipe() {
 		var recipe = CustomRecipes.getRecipes().values()
 			.stream()
@@ -35,6 +37,7 @@ public class WardCharmCommand extends CustomCommand {
 	}
 
 	@Path("check")
+	@Description("Check if an entity is warded")
 	void check() {
 		var entity = getTargetEntityRequired();
 		var pdc = entity.getPersistentDataContainer();
@@ -43,6 +46,7 @@ public class WardCharmCommand extends CustomCommand {
 	}
 
 	@Path("unward")
+	@Description("Unward an entity")
 	void unward() {
 		var entity = getTargetEntityRequired();
 		var pdc = entity.getPersistentDataContainer();
@@ -60,6 +64,7 @@ public class WardCharmCommand extends CustomCommand {
 	}
 
 	@Path("wardable [page]")
+	@Description("View the list of entity types that can be warded")
 	void wardable(@Arg("1") int page) {
 		send(PREFIX + "Wardable entity types");
 		new Paginator<EntityType>()

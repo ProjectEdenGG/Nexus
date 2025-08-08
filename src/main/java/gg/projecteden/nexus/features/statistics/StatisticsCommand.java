@@ -79,45 +79,8 @@ public class StatisticsCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
-	@SneakyThrows
-	@Path("saveToDatabase")
-	@Permission(Group.ADMIN)
-	void saveToDatabase() {
-		AtomicInteger count = new AtomicInteger();
-
-		try (var filesStream = Files.list(IOUtils.getFile("server/stats").toPath())) {
-			var files = filesStream.toList();
-			files.stream()
-				.filter(Files::isRegularFile)
-				.filter(path -> path.getFileName().toString().endsWith(".json"))
-				.map(path -> path.getFileName().toString().replace(".json", ""))
-				.map(UUID::fromString)
-				.map(service::get)
-				.forEach(user -> {
-					try {
-						user.loadFromFile();
-						service.save(user);
-
-						String progressBar = ProgressBar.builder()
-							.progress(count.incrementAndGet())
-							.goal(files.size())
-							.summaryStyle(SummaryStyle.NONE)
-							.length(300)
-							.seamless(true)
-							.build();
-
-						ActionBarUtils.sendActionBar(player(), progressBar);
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-				});
-		}
-
-		send(PREFIX + "Cached %d users".formatted(count.get()));
-	}
-
-	@Async
 	@Path("leaderboard <group> [stat] [--page]")
+	@Description("View the leaderboard for statistic group or specific statistic")
 	void leaderboard(
 		StatisticGroup group,
 		@Arg(tabCompleter = AvailableStatistic.class, context = 1) String stat,
@@ -166,6 +129,7 @@ public class StatisticsCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("leaderboardsLed [player] [--page]")
+	@Description("View the players leading the most leaderboards, or the leaderboards a player is leading")
 	void leaderboardsLed(
 		StatisticsUser user,
 		@Switch @Arg("1") int page
@@ -229,6 +193,45 @@ public class StatisticsCommand extends CustomCommand implements Listener {
 	void update(Nerd nerd) {
 		service.edit(nerd, StatisticsUser::loadFromFile);
 		send(PREFIX + "Updated stats for " + nerd.getNickname() + " in database");
+	}
+
+	@Async
+	@SneakyThrows
+	@Path("saveToDatabase")
+	@Description("Save all statistics to the database. WARNING: Will override previous modifications (i.e. deleting hackers)")
+	@Permission(Group.ADMIN)
+	void saveToDatabase() {
+		AtomicInteger count = new AtomicInteger();
+
+		try (var filesStream = Files.list(IOUtils.getFile("server/stats").toPath())) {
+			var files = filesStream.toList();
+			files.stream()
+				.filter(Files::isRegularFile)
+				.filter(path -> path.getFileName().toString().endsWith(".json"))
+				.map(path -> path.getFileName().toString().replace(".json", ""))
+				.map(UUID::fromString)
+				.map(service::get)
+				.forEach(user -> {
+					try {
+						user.loadFromFile();
+						service.save(user);
+
+						String progressBar = ProgressBar.builder()
+							.progress(count.incrementAndGet())
+							.goal(files.size())
+							.summaryStyle(SummaryStyle.NONE)
+							.length(300)
+							.seamless(true)
+							.build();
+
+						ActionBarUtils.sendActionBar(player(), progressBar);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				});
+		}
+
+		send(PREFIX + "Cached %d users".formatted(count.get()));
 	}
 
 	@Data

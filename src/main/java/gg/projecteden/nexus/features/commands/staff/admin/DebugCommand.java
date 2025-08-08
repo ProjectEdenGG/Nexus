@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -19,6 +20,7 @@ public class DebugCommand extends CustomCommand {
 	}
 
 	@Path("[state]")
+	@Description("Toggle debug")
 	void toggle(Boolean state) {
 		if (state == null)
 			state = !Debug.isEnabled();
@@ -28,6 +30,7 @@ public class DebugCommand extends CustomCommand {
 	}
 
 	@Path("type <type> [state] [player]")
+	@Description("Toggle debug for a specific type and player")
 	void type(DebugType type, Boolean state, Player player) {
 		if (player == null) {
 			if (state == null)

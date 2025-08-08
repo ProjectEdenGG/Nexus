@@ -21,6 +21,7 @@ public class MarketCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Open the resource world market")
 	void run() {
 		if (!SubWorldGroup.RESOURCE.contains(world()))
 			error("This command is only available in the resource world");
@@ -39,6 +40,7 @@ public class MarketCommand extends CustomCommand {
 
 	@Path("reload")
 	@Permission(Group.STAFF)
+	@Description("Reload the Market items")
 	void reload() {
 		Market.load();
 		send(PREFIX + "Market reloaded");

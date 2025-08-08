@@ -4,7 +4,9 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.warps.commands._WarpCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -45,6 +47,7 @@ public class WeeklyWakkaCommand extends _WarpCommand {
 	}
 
 	@Path("info")
+	@Description("Get information about the Weekly Wakka challenge")
 	void info() {
 		WeeklyWakkaUtils.tell(player(), "&fHey there! I have hidden a clone of myself somewhere in Avontyre. ");
 
@@ -65,6 +68,7 @@ public class WeeklyWakkaCommand extends _WarpCommand {
 	}
 
 	@Path("check")
+	@Description("Check if you have found this week's Weekly Wakka")
 	void check() {
 		WeeklyWakkaService service = new WeeklyWakkaService();
 		WeeklyWakka weeklyWakka = service.get0();
@@ -78,6 +82,7 @@ public class WeeklyWakkaCommand extends _WarpCommand {
 	}
 
 	@HideFromHelp
+	@HideFromWiki
 	@Path("getDetector")
 	void getDetector() {
 		if (WeeklyWakkaUtils.hasTrackingDevice(player()))
@@ -90,12 +95,14 @@ public class WeeklyWakkaCommand extends _WarpCommand {
 
 	@Path("moveNPC")
 	@Permission(Group.ADMIN)
+	@Description("Move the Weekly Wakka NPC to a new location")
 	void moveNPC() {
 		WeeklyWakkaFeature.moveNPC(player());
 	}
 
 	@Path("tp")
 	@Permission(Group.ADMIN)
+	@Description("Teleport to the Weekly Wakka NPC's location")
 	void tp() {
 		send(PREFIX + "Teleporting to location #" + new WeeklyWakkaService().get().getCurrentLocation());
 		player().teleportAsync(WeeklyWakkaUtils.getNPC().getStoredLocation(), TeleportCause.COMMAND);
@@ -103,6 +110,7 @@ public class WeeklyWakkaCommand extends _WarpCommand {
 
 	@Path("found")
 	@Permission(Group.ADMIN)
+	@Description("Get a list of players who have found the Weekly Wakka this week")
 	void whoFound() {
 		List<UUID> foundPlayers = new WeeklyWakkaService().get().getFoundPlayers();
 		if (foundPlayers.isEmpty())
@@ -115,6 +123,7 @@ public class WeeklyWakkaCommand extends _WarpCommand {
 
 	@Path("unfind [player]")
 	@Permission(Group.ADMIN)
+	@Description("Remove a player from the list of players who have found the Weekly Wakka this week")
 	void unfind(@Arg("self") Player player) {
 		WeeklyWakkaService service = new WeeklyWakkaService();
 		WeeklyWakka ww = service.get();
@@ -126,6 +135,7 @@ public class WeeklyWakkaCommand extends _WarpCommand {
 
 	@Path("getTip <index>")
 	@Permission(Group.ADMIN)
+	@Description("Get a tip from the Weekly Wakka tips")
 	void getTip(int index) {
 		WeeklyWakkaUtils.tell(player(), WeeklyWakkaUtils.getTips().get(index).get());
 	}
@@ -133,6 +143,7 @@ public class WeeklyWakkaCommand extends _WarpCommand {
 	@Override
 	@Path("(teleport|tp|warp) <name>")
 	@Permission(Group.ADMIN)
+	@Description("Teleport to a Weekly Wakka warp")
 	public void teleport(Warp warp) {
 		super.teleport(warp);
 	}
@@ -140,6 +151,7 @@ public class WeeklyWakkaCommand extends _WarpCommand {
 	@Override
 	@Path("<name>")
 	@Permission(Group.ADMIN)
+	@Description("Teleport to a Weekly Wakka warp")
 	public void tp(Warp warp) {
 		super.tp(warp);
 	}
@@ -147,6 +159,7 @@ public class WeeklyWakkaCommand extends _WarpCommand {
 	@Path("tp nearest")
 	@Override
 	@Permission(Group.ADMIN)
+	@Description("Teleport to the nearest Weekly Wakka warp")
 	public void teleportNearest() {
 		super.teleportNearest();
 	}
@@ -154,6 +167,7 @@ public class WeeklyWakkaCommand extends _WarpCommand {
 	@Path("nearest")
 	@Override
 	@Permission(Group.ADMIN)
+	@Description("View the nearest Weekly Wakka warp")
 	public void nearest() {
 		super.nearest();
 	}

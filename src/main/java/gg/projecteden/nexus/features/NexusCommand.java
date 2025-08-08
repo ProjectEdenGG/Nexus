@@ -321,12 +321,14 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@Path("offlineMessage <player>")
 	@Permission(Group.ADMIN)
+	@Description("Test sending an offline message")
 	void offlineMessage(OfflinePlayer player) {
 		OfflineMessage.send(player, new JsonBuilder("&3Testing").hover("&eTesting"));
 	}
 
 	@Permission(Group.ADMIN)
 	@Path("feature reload <feature>")
+	@Description("Reload a specific feature")
 	void feature_reload(Feature feature) {
 		feature.reload();
 		send(PREFIX + "Reloaded " + feature.getName());

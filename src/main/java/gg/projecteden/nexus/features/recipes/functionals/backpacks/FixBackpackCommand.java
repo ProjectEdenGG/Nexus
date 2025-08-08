@@ -32,6 +32,7 @@ public class FixBackpackCommand extends CustomCommand {
 	}
 
 	@Path("setTier <size>")
+	@Description("Set a backpack's tier")
 	void setSize(Backpacks.BackpackTier tier) {
 		ItemStack item = player().getInventory().getItemInMainHand();
 		if (!Backpacks.isBackpack(item)) return;
@@ -41,6 +42,7 @@ public class FixBackpackCommand extends CustomCommand {
 	}
 
 	@Path("convert [--nbt]")
+	@Description("Convert and old backpack into a new one")
 	void convert(@Switch boolean nbt) {
 		ItemStack item = player().getInventory().getItemInMainHand();
 		if (!Backpacks.isBackpack(item)) return;
@@ -71,6 +73,7 @@ public class FixBackpackCommand extends CustomCommand {
 	}
 
 	@Path("getOld")
+	@Description("Give yourself and old backpack for testing")
 	void getOld() {
 		player().getInventory().setItemInMainHand(
 			fix(new ItemBuilder(Material.SHULKER_BOX)

@@ -122,6 +122,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("notice")
+	@Description("Show the notice explaining the caveats and dangers of the resource world")
 	void notice() {
 		line();
 		send(getNotice());
@@ -200,6 +201,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	public static Map<Environment, String> SEEDS = new HashMap<>();
 
 	@Path("setNewSeed <environment> <seed>")
+	@Description("Set the next seed for the specified environment")
 	void setNewSeed(Environment environment, String seed) {
 		SEEDS.put(environment, seed);
 		send(PREFIX + "Resource " + camelCase(environment) + " will generate with seed " + seed);

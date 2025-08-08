@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.GlowUtils.GlowTask;
@@ -22,6 +23,7 @@ public class VillagersCommand extends CustomCommand {
 	}
 
 	@Path("find fromJobSite")
+	@Description("Find the villager using the job block you are looking at")
 	void find_fromJobSite() {
 		var block = getTargetBlock();
 

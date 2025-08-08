@@ -4,6 +4,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -23,6 +24,7 @@ public class DebugDotCommand extends CustomCommand {
 	}
 
 	@Path("<x> <y> <z> [--color] [--ticks]")
+	@Description("Spawn a debug dot at the specified location")
 	void dot(double x, double y, double z, @Switch @Arg("red") ColorType color, @Switch @Arg("20") int ticks) {
 		Location location = new Location(player().getWorld(), x, y, z);
 
@@ -30,6 +32,7 @@ public class DebugDotCommand extends CustomCommand {
 	}
 
 	@Path("relative <x> <y> <z> [--color] [--ticks]")
+	@Description("Spawn a debug dot relative to the player's location")
 	void relative(double x, double y, double z, @Switch @Arg("red") ColorType color, @Switch @Arg("20") int ticks) {
 		Location location = location().clone().add(x, y, z);
 

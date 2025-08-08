@@ -1,6 +1,9 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -24,6 +27,7 @@ public class DataFixerUpperCommand extends CustomCommand {
 	}
 
 	@Path("item serialize")
+	@Description("Serialize your held item to NBT")
 	void serialize() {
 		ItemStack item = getToolRequired();
 		String url = StringUtils.paste(NBT.serializeItemStack(item));
@@ -31,12 +35,15 @@ public class DataFixerUpperCommand extends CustomCommand {
 	}
 
 	@Path("item deserialize <paste>")
+	@Description("Deserialize an item from NBT and give it to yourself")
 	void deserialize(String paste) {
 		giveItem(NBT.deserializeItemStack(StringUtils.getPaste(paste)));
 	}
 
 	@SneakyThrows
 	@Path("item fix <paste>")
+	@HideFromWiki
+	@HideFromHelp
 	void fix(String paste) {
 		CompoundTag tag = TagParser.parseTag(StringUtils.getPaste(paste));
 		ListTag list = tag.getCompound("tag").getCompound("ProjectEden").getList("Items", 10);
@@ -50,6 +57,8 @@ public class DataFixerUpperCommand extends CustomCommand {
 
 	@SneakyThrows
 	@Path("stats fix <player>")
+	@HideFromWiki
+	@HideFromHelp
 	void fix(StatisticsUser user) {
 		String url = StringUtils.paste(user.getFileFixed());
 		send(json(url).url(url).hover(url));

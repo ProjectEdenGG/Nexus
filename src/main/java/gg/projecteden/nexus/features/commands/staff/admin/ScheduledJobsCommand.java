@@ -66,6 +66,7 @@ public class ScheduledJobsCommand extends CustomCommand {
 	}
 
 	@Path("cancel <job>")
+	@Description("Cancel all jobs of a specific type")
 	void cancel(JobType jobType) {
 		var config = new ScheduledJobsService().getApp();
 		for (AbstractJob job : config.getScheduledJobs()) {
