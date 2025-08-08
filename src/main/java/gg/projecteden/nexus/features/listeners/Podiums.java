@@ -4,7 +4,6 @@ import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
 import com.gmail.nossr50.mcMMO;
 import com.vexsoftware.votifier.model.VotifierEvent;
 import gg.projecteden.api.common.annotations.Environments;
-import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
@@ -22,20 +21,16 @@ import gg.projecteden.nexus.models.hours.HoursService.HoursTopArguments;
 import gg.projecteden.nexus.models.hours.HoursService.PageResult;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
+import gg.projecteden.nexus.models.statistics.StatisticsUserService;
+import gg.projecteden.nexus.models.statistics.StatisticsUserService.StatisticGroup;
 import gg.projecteden.nexus.models.store.Contributor;
 import gg.projecteden.nexus.models.store.ContributorService;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang.NotImplementedException;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Statistic;
-import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
@@ -46,10 +41,8 @@ import tech.blastmc.holograms.api.models.line.Offset;
 import java.text.NumberFormat;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -160,45 +153,13 @@ public class Podiums implements Listener {
 		BLOCKS_BROKEN(4628, 4629, 4630) {
 			@Override
 			public Map<UUID, String> getTop() {
-				final Map<UUID, Integer> blocksBroken = new HashMap<>();
-				for (UUID uuid : new ArrayList<>(new HoursService().getActivePlayers().subList(0, 30))) {
-					final OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
-					int total = 0;
-					for (Material material : Material.values())
-						if (material.isBlock())
-							total += player.getStatistic(Statistic.MINE_BLOCK, material);
-
-					blocksBroken.put(uuid, total);
-				}
-
-				return new ArrayList<>(Utils.sortByValueReverse(blocksBroken).keySet()).subList(0, 3).stream()
-					.collect(Collectors.toMap(
-						uuid -> uuid,
-						uuid -> NumberFormat.getInstance().format(blocksBroken.get(uuid)),
-						(h1, h2) -> h1, LinkedHashMap::new
-					));
+				return new StatisticsUserService().getPodium(StatisticGroup.MINED, null);
 			}
 		},
 		MOBS_KILLED(4625, 4626, 4627) {
 			@Override
 			public Map<UUID, String> getTop() {
-				final Map<UUID, Integer> entitiesKilled = new HashMap<>();
-				for (UUID uuid : new ArrayList<>(new HoursService().getActivePlayers().subList(0, 50))) {
-					final OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
-					int total = 0;
-					for (EntityType entityType : EnumUtils.valuesExcept(EntityType.class, EntityType.PLAYER, EntityType.ARMOR_STAND, EntityType.NPC))
-						if (entityType.isAlive())
-							total += player.getStatistic(Statistic.KILL_ENTITY, entityType);
-
-					entitiesKilled.put(uuid, total);
-				}
-
-				return new ArrayList<>(Utils.sortByValueReverse(entitiesKilled).keySet()).subList(0, 3).stream()
-					.collect(Collectors.toMap(
-						uuid -> uuid,
-						uuid -> NumberFormat.getInstance().format(entitiesKilled.get(uuid)),
-						(h1, h2) -> h1, LinkedHashMap::new
-					));
+				return new StatisticsUserService().getPodium(StatisticGroup.KILLED, null);
 			}
 		},
 		DAILY_LOGIN_STREAK(4632, 4633, 4634) {

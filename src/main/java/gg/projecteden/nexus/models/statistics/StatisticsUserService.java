@@ -19,6 +19,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.jetbrains.annotations.NotNull;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
@@ -95,6 +97,18 @@ public class StatisticsUserService extends MongoPlayerService<StatisticsUser> {
 		var results = new LinkedHashMap<UUID, Long>();
 		collection().aggregate(arguments).forEach(doc -> results.put(UUID.fromString(doc.getString("_id")), doc.getDouble("count").longValue()));
 		return results;
+	}
+
+	public LinkedHashMap<UUID, String> getPodium(StatisticsUserService.StatisticGroup group, String stat) {
+		var leaderboard = getLeaderboard(group, stat);
+		return new ArrayList<>(leaderboard.sequencedKeySet())
+			.subList(0, 3)
+			.stream()
+			.collect(Collectors.toMap(
+				uuid -> uuid,
+				uuid -> NumberFormat.getInstance().format(leaderboard.get(uuid)),
+				(h1, h2) -> h1, LinkedHashMap::new
+			));
 	}
 
 	public Map<StatisticGroup, List<String>> getAvailableStats() {
