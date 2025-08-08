@@ -35,6 +35,7 @@ public class HubCommand extends _WarpSubCommand {
 	public static Set<Player> debuggers = new HashSet<>();
 
 	@Path("treasurehunt debug [enable]")
+	@Description("Toggle debug mode for treasure hunt")
 	void treasurehunt_debug(Boolean enable) {
 		if (enable == null)
 			enable = !debuggers.contains(player());

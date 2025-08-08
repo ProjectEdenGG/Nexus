@@ -291,6 +291,7 @@ public class DocumentationCommand extends CustomCommand {
 	}
 
 	@Path("commands meta dump")
+	@Description("Dump all command metadata to the commands-meta.json file")
 	void commands_meta_dump() {
 		final AllCommands allCommands = new AllCommands();
 		for (CustomCommand command : Commands.getUniqueCommands()) {

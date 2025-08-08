@@ -105,6 +105,7 @@ public class ScoreboardTeamUtilsCommand extends CustomCommand {
 	}
 
 	@Path("teamsOfTargetEntity")
+	@Description("View the scoreboard teams your target entity belongs to")
 	void of() {
 		LivingEntity entity = getTargetLivingEntityRequired();
 

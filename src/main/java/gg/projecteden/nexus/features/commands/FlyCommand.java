@@ -56,6 +56,7 @@ public class FlyCommand extends CustomCommand implements Listener {
 
 	@Permission(Group.STAFF)
 	@Path("debug [enable]")
+	@Description("Toggle debug mode for flight")
 	void debug(Boolean enable) {
 		if (enable == null)
 			enable = !debuggers.contains(player());

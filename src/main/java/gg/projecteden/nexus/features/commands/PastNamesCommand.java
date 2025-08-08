@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
@@ -28,8 +29,9 @@ public class PastNamesCommand extends CustomCommand {
 		send("&e" + String.join(", ", pastNames));
 	}
 
-	@Permission(Permission.Group.ADMIN)
+	@Permission(Group.ADMIN)
 	@Path("remove <target> <name>")
+	@Description("Remove a past name from a player")
 	void remove(Nerd nerd, String name) {
 		Set<String> pastNames = nerd.getPastNames();
 		if (pastNames.isEmpty())

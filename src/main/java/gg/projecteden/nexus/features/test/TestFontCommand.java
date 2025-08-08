@@ -5,7 +5,10 @@ import gg.projecteden.nexus.features.commands.NearCommand;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ActionBarUtils;
@@ -20,6 +23,7 @@ import org.bukkit.entity.Player;
 
 import java.util.function.BiConsumer;
 
+@Permission(Group.ADMIN)
 public class TestFontCommand extends CustomCommand {
 
 	public TestFontCommand(@NonNull CommandEvent event) {
@@ -27,6 +31,7 @@ public class TestFontCommand extends CustomCommand {
 	}
 
 	@Path("<displayType> <text...> [--font] [--rows]")
+	@HideFromWiki
 	void run(DisplayType type, String text, @Arg("minecraft:default") @Switch String font, @Arg("1") @Switch int rows) {
 		type.getConsumer().accept(player(), new TestFontArgs(new JsonBuilder(text).font(font), rows));
 	}

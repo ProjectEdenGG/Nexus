@@ -59,6 +59,7 @@ public class ScheduledJobsCommand extends CustomCommand {
 	}
 
 	@Path("restart")
+	@Description("Restart the scheduled jobs runner")
 	void restart() {
 		send(PREFIX + "Restarting tasks...");
 		ScheduledJobsRunner.stop();

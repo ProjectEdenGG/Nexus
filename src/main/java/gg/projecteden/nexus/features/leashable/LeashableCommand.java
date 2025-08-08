@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.leashable;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -14,6 +15,7 @@ public class LeashableCommand extends CustomCommand {
 	}
 
 	@Path("debug [enabled]")
+	@Description("Toggle debug mode")
 	void debug(Boolean enabled) {
 		if (enabled == null)
 			enabled = !Leashable.getDebuggers().contains(uuid());

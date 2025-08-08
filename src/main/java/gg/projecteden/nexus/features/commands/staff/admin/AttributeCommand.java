@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -29,6 +30,7 @@ public class AttributeCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("<attribute> <value> [player]")
+	@Description("Set a player's attribute")
 	void attribute(Attribute attribute, double value, @Arg("self") Player player) {
 		player.getAttribute(attribute).setBaseValue(value);
 		send(PREFIX + "Set attribute " + camelCase(attribute.getKey().getKey()) + " to " + StringUtils.getDf().format(value));

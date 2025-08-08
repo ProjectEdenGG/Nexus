@@ -152,6 +152,7 @@ public class DecorationCommand extends CustomCommand {
 	}
 
 	@Path("getMasterCatalog")
+	@Description("Get the master catalog")
 	void getMasterCatalog() {
 		checkPermissions();
 

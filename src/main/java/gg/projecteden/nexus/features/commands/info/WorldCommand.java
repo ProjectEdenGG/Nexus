@@ -26,6 +26,7 @@ public class WorldCommand extends CustomCommand {
 	}
 
 	@Path("uuid [world]")
+	@Description("Get the UUID of a world")
 	void uuid(@Arg("current") World world) {
 		String uuid = world.getUID().toString();
 		send(json(PREFIX + "&e" + uuid).copy(uuid).hover("Click to copy"));

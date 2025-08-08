@@ -8,13 +8,23 @@ import gg.projecteden.api.discord.DiscordId.VoiceChannel;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import gg.projecteden.nexus.framework.features.Features;
-import gg.projecteden.nexus.models.discord.*;
+import gg.projecteden.nexus.models.discord.DiscordCaptcha;
+import gg.projecteden.nexus.models.discord.DiscordCaptchaService;
+import gg.projecteden.nexus.models.discord.DiscordConfigService;
+import gg.projecteden.nexus.models.discord.DiscordUser;
+import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
@@ -283,6 +293,7 @@ public class DiscordCommand extends CustomCommand {
 	}
 
 	@Path("applyRoles <user>")
+	@Description("Apply all the automated roles a user should have")
 	void applyRoles(DiscordUser discordUser) {
 		final User user = discordUser.getUser();
 		if (user == null)

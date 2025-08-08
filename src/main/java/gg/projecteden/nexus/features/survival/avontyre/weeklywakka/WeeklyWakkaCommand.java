@@ -140,6 +140,27 @@ public class WeeklyWakkaCommand extends _WarpCommand {
 		WeeklyWakkaUtils.tell(player(), WeeklyWakkaUtils.getTips().get(index).get());
 	}
 
+	@Path("(list|warps) [filter]")
+	@Description("List available warps")
+	@Permission(Group.ADMIN)
+	public void list(@Arg(tabCompleter = Warp.class) String filter) {
+		super.list(filter);
+	}
+
+	@Path("(set|create) <name>")
+	@Permission(Group.ADMIN)
+	@Description("Create a new warp")
+	public void set(@Arg(tabCompleter = Warp.class) String name) {
+		super.set(name);
+	}
+
+	@Path("reset <name>")
+	@Description("Update a warp's location")
+	@Permission(Group.ADMIN)
+	public void reset(@Arg(tabCompleter = Warp.class) String name) {
+		super.reset(name);
+	}
+
 	@Override
 	@Path("(teleport|tp|warp) <name>")
 	@Permission(Group.ADMIN)

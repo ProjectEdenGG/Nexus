@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.worldedit;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.DoubleSlash;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -33,6 +34,7 @@ public class WandCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Get a WorldEdit wand with extended reach")
 	void wand() {
 		var existing = getTool();
 		player().getInventory().setItemInMainHand(getExtendedWand());

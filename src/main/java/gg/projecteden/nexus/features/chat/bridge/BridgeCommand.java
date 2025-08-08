@@ -120,6 +120,7 @@ public class BridgeCommand extends CustomCommand {
 
 	@Async
 	@Path("roleUpdates <user> [state]")
+	@Description("Toggle role updates for a user")
 	void roleUpdates(DiscordUser user, Boolean state) {
 		if (state == null)
 			state = user.isPreventRoleUpdates();

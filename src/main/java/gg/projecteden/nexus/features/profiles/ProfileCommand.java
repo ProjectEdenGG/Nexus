@@ -50,6 +50,7 @@ public class ProfileCommand extends CustomCommand implements Listener {
 
 	@Path("setTexture <type>")
 	@Permission(Group.ADMIN)
+	@Description("Set your profile's background texture")
 	public void setTexture(ProfileTextureType type) {
 		ProfileUser user = service.get(player());
 		user.setTextureType(type);

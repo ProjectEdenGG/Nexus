@@ -33,9 +33,9 @@ public class BigDoorManagerCommand extends CustomCommand {
 		super(event);
 	}
 
-	// If the world on "/bigdoormanager info" is "null", run this command in the same world as the door to fix the database
 	@Path("fixDatabaseWorld <id>")
 	@SneakyThrows
+	@Description("Fix the database of the current world if '/bigdoormanager info' is 'null'")
 	void engine_apply(int doorId) {
 		Door door = BigDoorManager.getDoor(doorId);
 		if (door == null)
