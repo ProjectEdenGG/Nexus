@@ -203,7 +203,6 @@ public class Pugmas25BalloonEditor implements Listener {
 
 	public static void selectTemplate(int id) {
 		schemId = id;
-		pasteBalloon(Pugmas25BalloonManager.SCHEM_TEMPLATE + schemId);
 	}
 
 	//
