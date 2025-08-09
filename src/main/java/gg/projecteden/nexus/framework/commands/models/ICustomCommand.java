@@ -295,7 +295,7 @@ public abstract class ICustomCommand {
 						double minDefault = (Double) Arg.class.getDeclaredMethod("min").getDefaultValue();
 						double maxDefault = (Double) Arg.class.getDeclaredMethod("max").getDefaultValue();
 
-						String error = StringUtils.camelCase(name) + " length must be ";
+						String error = StringUtils.camelCase(name).replace("...", "") + " length must be ";
 						if (annotation.min() == minDefault && annotation.max() != maxDefault)
 							throw new InvalidInputException(error + "&e" + max + " &ccharacters or shorter");
 						else if (annotation.min() != minDefault && annotation.max() == maxDefault)

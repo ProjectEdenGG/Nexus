@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.chat;
 
 import gg.projecteden.api.common.utils.UUIDUtils;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
@@ -22,7 +23,6 @@ import lombok.Data;
 import lombok.Getter;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -92,8 +92,8 @@ public class Censor {
 		Emotes.process(event);
 	}
 
-	public static boolean isCensored(Player player, String input) {
-		ChatEvent chatEvent = new PublicChatEvent(new ChatterService().get(player), StaticChannel.GLOBAL.getChannel(), input, input, new HashSet<>());
+	public static boolean isCensored(HasUniqueId player, String input) {
+		ChatEvent chatEvent = new PublicChatEvent(new ChatterService().get(player.getUniqueId()), StaticChannel.GLOBAL.getChannel(), input, input, new HashSet<>());
 		Censor.censor(chatEvent);
 		return chatEvent.isBad() || chatEvent.isCancelled();
 	}

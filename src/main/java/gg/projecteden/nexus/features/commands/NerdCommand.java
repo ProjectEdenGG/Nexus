@@ -44,13 +44,12 @@ public class NerdCommand extends CustomCommand {
 		send("no u");
 	}
 
-	@Path("about <about...>")
-	@Description("Set your About Me")
-	void about(String about) {
-		Nerd nerd = nerd();
-		nerd.setAbout(about);
-
-		send(PREFIX + "Set your about to: &e" + nerd.getAbout());
+	@Path("about <nerd> [about...]")
+	@Description("Set a player's About Me")
+	@Permission(Group.ADMIN)
+	void about(Nerd nerd, String about) {
+		service.edit(nerd, _nerd -> _nerd.setAbout("null".equalsIgnoreCase(about) ? null : about));
+		send(PREFIX + "Set " + nerd.getNickname() + "'s about to: &e" + nerd.getAbout());
 	}
 
 	@Path("setFirstJoin <player> <date>")

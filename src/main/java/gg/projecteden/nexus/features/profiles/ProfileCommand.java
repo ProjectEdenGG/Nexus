@@ -61,8 +61,8 @@ public class ProfileCommand extends CustomCommand implements Listener {
 	@HideFromWiki
 	@HideFromHelp
 	@Description("Set your profile's about me")
-	@Path("setAbout <text...>")
-	public void setAbout(String input) {
+	@Path("setAbout <input...>")
+	public void setAbout(@Arg(min = 75) String input) {
 		if (Nullables.isNullOrEmpty(input))
 			error("Missing input");
 
@@ -71,9 +71,8 @@ public class ProfileCommand extends CustomCommand implements Listener {
 			error("Inappropriate input in about");
 
 		ProfileUser user = service.get(player());
-		if (!input.equals(user.getNerd().getAbout())) {
+		if (!input.equals(user.getNerd().getAbout()))
 			user.getNerd().setAbout(input.trim());
-		}
 
 		new ProfileSettingsProvider(player(), user).open(player());
 	}
