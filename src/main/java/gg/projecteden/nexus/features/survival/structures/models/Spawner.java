@@ -148,7 +148,7 @@ public class Spawner {
 
 		// NMSSpawner#Update
 		CompoundTag localCompound = snapshot.copy();
-		spawner.save(localCompound);
+		//spawner.save(localCompound); TODO - this broke in 1.21.8
 
 		Dev.WAKKA.send(localCompound.toString());
 		//

@@ -150,7 +150,7 @@ public class NMSSpawnData {
 
 		ListTag localArmorList = new ListTag();
 		for (ItemStack armorItem : armorItems) {
-			CompoundTag itemTag = armorItem == null ? new CompoundTag() : (CompoundTag) NMSUtils.toNMS(armorItem).save(registries, new CompoundTag());
+			CompoundTag itemTag = armorItem == null ? new CompoundTag() : NMSUtils.saveToNbtTag(NMSUtils.toNMS(armorItem));
 
 			localArmorList.add(itemTag);
 		}
@@ -166,8 +166,8 @@ public class NMSSpawnData {
 		String tag = SpawnDataEnum.ENTITY.getTag();
 
 		ListTag localHandList = new ListTag();
-		localHandList.add(mainHand == null ? new CompoundTag() : NMSUtils.toNMS(mainHand).save(registryAccess, new CompoundTag()));
-		localHandList.add(offHand == null ? new CompoundTag() : NMSUtils.toNMS(offHand).save(registryAccess, new CompoundTag()));
+		localHandList.add(mainHand == null ? new CompoundTag() : NMSUtils.saveToNbtTag(NMSUtils.toNMS(mainHand)));
+		localHandList.add(offHand == null ? new CompoundTag() : NMSUtils.saveToNbtTag(NMSUtils.toNMS(offHand)));
 
 		CompoundTag localCompound = compound.getCompound(tag).get();
 		localCompound.put("HandItems", localHandList);

@@ -23,20 +23,21 @@ public class NMSSpawner {
 
 	public NMSSpawner() {
 		snapshot = new CompoundTag();
-		snapshot.putString("id", "minecraft:spawner");
+
 	}
 
 	public NMSSpawner(final CreatureSpawner cs) {
-		this();
-
 		BlockPos pos = NMSUtils.toNMS(cs.getLocation());
 		ServerLevel world = NMSUtils.toNMS(cs.getWorld());
 		SpawnerBlockEntity tileSpawner = (SpawnerBlockEntity) world.getBlockEntity(pos);
 
 		if (tileSpawner != null)
-			tileSpawner.getSpawner().save(snapshot);
+			snapshot = NMSUtils.saveToNbtTag(tileSpawner.getSpawner());
+		else
+			snapshot = new CompoundTag();
 
 		snapshot.remove("Delay"); //Remove the delay of the spawning. Allows spawners to stack properly
+		snapshot.putString("id", "minecraft:spawner");
 	}
 
 	public NMSSpawner(final org.bukkit.inventory.ItemStack item) throws SpawnerItemException {
@@ -191,8 +192,8 @@ public class NMSSpawner {
 		if (blockEntity == null)
 			return;
 
-		CompoundTag localCompound = snapshot.copy();
-		blockEntity.getSpawner().save(localCompound);
+		// TODO - saving no longer updates with a different tag?
+		NMSUtils.saveToNbtTag(blockEntity.getSpawner());
 	}
 
 	/**

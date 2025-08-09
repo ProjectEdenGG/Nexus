@@ -30,7 +30,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +59,7 @@ public class SerializationUtils {
 
 		public static String serializeItemStack(ItemStack itemStack) {
 			net.minecraft.world.item.ItemStack nms = NMSUtils.toNMS(itemStack);
-			CompoundTag tag = (CompoundTag) nms.save(((CraftServer) Bukkit.getServer()).getServer().registryAccess());
+			CompoundTag tag = NMSUtils.saveToNbtTag(nms);
 			if (!validate(tag))
 				return null;
 			tag.putInt("DataVersion", SharedConstants.getCurrentVersion().dataVersion().version());
