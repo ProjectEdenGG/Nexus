@@ -13,6 +13,7 @@ import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryCloseEvent.Reason;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +33,7 @@ public class NMSHandler {
 	}
 
 	public void handleInventoryCloseEvent(Player player) {
-		CraftEventFactory.handleInventoryCloseEvent(this.toNMS(player));
+		CraftEventFactory.handleInventoryCloseEvent(this.toNMS(player), Reason.PLAYER);
 	}
 
 	public void sendPacketOpenWindow(Player player, AnvilContainer container, int containerId, String inventoryTitle) {

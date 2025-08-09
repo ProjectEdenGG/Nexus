@@ -103,7 +103,7 @@ public class Spawner {
 
 		CreatureSpawner creatureSpawner = (CreatureSpawner) block.getState();
 		CraftCreatureSpawner craftCreatureSpawner = (CraftCreatureSpawner) creatureSpawner;
-		return craftCreatureSpawner.getTileEntity();
+		return craftCreatureSpawner.getBlockEntity();
 	}
 
 	public static void createSpawnData(Block block, EntityType entityType) {

@@ -34,7 +34,7 @@ import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.nexus.utils.protection.ProtectionUtils;
 import gg.projecteden.parchment.event.block.CustomBlockUpdateEvent;
 import gg.projecteden.parchment.event.block.CustomBlockUpdateEvent.UpdateType;
-import io.papermc.paper.event.player.PlayerPickItemEvent;
+import io.papermc.paper.event.player.PlayerPickBlockEvent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
@@ -181,15 +181,15 @@ public class CustomBlockListener implements Listener {
 	}
 
 	@EventHandler
-	public void onPickBlock(PlayerPickItemEvent event) {
+	public void onPickBlock(PlayerPickBlockEvent event) {
 		if (event.getPlayer().getGameMode() != GameMode.CREATIVE)
 			return;
 
-		Location location = event.getLocation();
-		if (location == null)
+		Block block = event.getBlock();
+		if (block == null)
 			return;
 
-		CustomBlock customBlock = CustomBlock.from(location.getBlock());
+		CustomBlock customBlock = CustomBlock.from(block);
 		if (customBlock == null)
 			return;
 

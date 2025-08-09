@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.utils.nms;
 
-import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
-import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
@@ -24,7 +24,8 @@ import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
+import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket.Pos;
+import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket.Rot;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
@@ -33,7 +34,7 @@ import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.network.syncher.SynchedEntityData.DataValue;
-import net.minecraft.server.level.ChunkMap;
+import net.minecraft.server.level.ChunkMap.TrackedEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -162,7 +163,7 @@ public class PacketUtils {
 	public static void entityLook(@NonNull HasPlayer player, @NonNull org.bukkit.entity.Entity bukkitEntity, float yaw, float pitch) {
 		Entity entity = ((CraftEntity) bukkitEntity).getHandle();
 		ClientboundRotateHeadPacket headRotationPacket = new ClientboundRotateHeadPacket(entity, (byte) (yaw * 256 / 360));
-		ClientboundMoveEntityPacket.Rot lookPacket = new ClientboundMoveEntityPacket.Rot(entity.getId(), (byte) (yaw * 256 / 360), (byte) (pitch * 256 / 360), true);
+		Rot lookPacket = new Rot(entity.getId(), (byte) (yaw * 256 / 360), (byte) (pitch * 256 / 360), true);
 		sendPacket(player, headRotationPacket, lookPacket);
 	}
 
@@ -183,16 +184,17 @@ public class PacketUtils {
 			case CHEST -> 6;
 			case HEAD -> 5;
 			case BODY -> -1;
+			case SADDLE -> -1;
 		};
 	}
 
 	/**
-	 * Gets the slot int corresponding to an {@link EnumWrappers.ItemSlot}. Returns -1 for {@link EnumWrappers.ItemSlot#MAINHAND MAINHAND}.
+	 * Gets the slot int corresponding to an {@link ItemSlot}. Returns -1 for {@link ItemSlot#MAINHAND MAINHAND}.
 	 *
 	 * @param slot an item slot
 	 * @return integer slot
 	 */
-	public int getSlotInt(EnumWrappers.ItemSlot slot) {
+	public int getSlotInt(ItemSlot slot) {
 		return switch (slot) {
 			case MAINHAND -> -1;
 			case OFFHAND -> 45;
@@ -204,12 +206,12 @@ public class PacketUtils {
 	}
 
 	/**
-	 * Gets the {@link net.minecraft.world.entity.EquipmentSlot } corresponding to an {@link EnumWrappers.ItemSlot}.
+	 * Gets the {@link net.minecraft.world.entity.EquipmentSlot } corresponding to an {@link ItemSlot}.
 	 *
 	 * @param slot an item slot
 	 * @return enum item slot
 	 */
-	public net.minecraft.world.entity.EquipmentSlot getEnumItemSlot(EnumWrappers.ItemSlot slot) {
+	public net.minecraft.world.entity.EquipmentSlot getEnumItemSlot(ItemSlot slot) {
 		return switch (slot) {
 			case MAINHAND -> net.minecraft.world.entity.EquipmentSlot.MAINHAND;
 			case OFFHAND -> net.minecraft.world.entity.EquipmentSlot.OFFHAND;
@@ -221,20 +223,21 @@ public class PacketUtils {
 	}
 
 	/**
-	 * Gets the {@link EnumWrappers.ItemSlot} corresponding to an {@link EquipmentSlot}.
+	 * Gets the {@link ItemSlot} corresponding to an {@link EquipmentSlot}.
 	 *
 	 * @param slot an item slot
 	 * @return protocol item slot
 	 */
-	public EnumWrappers.ItemSlot getItemSlot(EquipmentSlot slot) {
+	public ItemSlot getItemSlot(EquipmentSlot slot) {
 		return switch (slot) {
-			case HAND -> EnumWrappers.ItemSlot.MAINHAND;
-			case OFF_HAND -> EnumWrappers.ItemSlot.OFFHAND;
-			case FEET -> EnumWrappers.ItemSlot.FEET;
-			case LEGS -> EnumWrappers.ItemSlot.LEGS;
-			case CHEST -> EnumWrappers.ItemSlot.CHEST;
-			case HEAD -> EnumWrappers.ItemSlot.HEAD;
-			case BODY -> EnumWrappers.ItemSlot.MAINHAND;
+			case HAND -> ItemSlot.MAINHAND;
+			case OFF_HAND -> ItemSlot.OFFHAND;
+			case FEET -> ItemSlot.FEET;
+			case LEGS -> ItemSlot.LEGS;
+			case CHEST -> ItemSlot.CHEST;
+			case HEAD -> ItemSlot.HEAD;
+			case BODY -> ItemSlot.MAINHAND;
+			case SADDLE -> ItemSlot.MAINHAND;
 		};
 	}
 
@@ -250,7 +253,7 @@ public class PacketUtils {
 	 */
 	public void sendFakeItem(org.bukkit.entity.Entity owner, Collection<? extends HasPlayer> recipients, ItemStack item, net.minecraft.world.entity.EquipmentSlot slot) {
 		// self packet avoids playing the armor equip sound effect
-		PacketContainer selfPacket = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.SET_SLOT);
+		PacketContainer selfPacket = ProtocolLibrary.getProtocolManager().createPacket(Server.SET_SLOT);
 		selfPacket.getIntegers().write(0, 0); // inventory ID (0 = player)
 		int slotInt = getSlotInt(slot);
 		if (slotInt == -1 && owner instanceof HumanEntity player)
@@ -295,7 +298,7 @@ public class PacketUtils {
 	 * @param item item to "give"
 	 * @param slot slot to "set"
 	 */
-	public void sendFakeItem(org.bukkit.entity.Entity owner, Collection<? extends HasPlayer> recipients, ItemStack item, EnumWrappers.ItemSlot slot) {
+	public void sendFakeItem(org.bukkit.entity.Entity owner, Collection<? extends HasPlayer> recipients, ItemStack item, ItemSlot slot) {
 		sendFakeItem(owner, recipients, item, getEnumItemSlot(slot));
 	}
 
@@ -309,7 +312,7 @@ public class PacketUtils {
 	 * @param item item to "give"
 	 * @param slot slot to "set"
 	 */
-	public void sendFakeItem(org.bukkit.entity.Entity owner, HasPlayer recipient, ItemStack item, EnumWrappers.ItemSlot slot) {
+	public void sendFakeItem(org.bukkit.entity.Entity owner, HasPlayer recipient, ItemStack item, ItemSlot slot) {
 		sendFakeItem(owner, Collections.singletonList(recipient), item, slot);
 	}
 
@@ -350,7 +353,7 @@ public class PacketUtils {
 	// untested
 	public static void entityRelativeMove(@NonNull HasPlayer player, @NonNull org.bukkit.entity.Entity bukkitEntity, Vector delta, boolean onGround) {
 		Entity entity = ((CraftEntity) bukkitEntity).getHandle();
-		ClientboundMoveEntityPacket.Pos movePacket = new ClientboundMoveEntityPacket.Pos(entity.getId(),
+		Pos movePacket = new Pos(entity.getId(),
 				encodePosition(delta.getX()), encodePosition(delta.getY()), encodePosition(delta.getZ()), onGround);
 
 		sendPacket(player, movePacket);
@@ -358,7 +361,7 @@ public class PacketUtils {
 
 	public static void entityTeleport(@NonNull HasPlayer player, @NonNull org.bukkit.entity.Entity bukkitEntity, Location location, boolean onGround) {
 		Entity entity = ((CraftEntity) bukkitEntity).getHandle();
-		entity.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+		entity.snapTo(new Vec3(location.getX(), location.getY(), location.getZ()), location.getYaw(), location.getPitch());
 		entity.setOnGround(onGround);
 
 		sendPacket(player, new ClientboundTeleportEntityPacket(entity.getId(), PositionMoveRotation.of(entity), Set.of(), entity.onGround));
@@ -408,13 +411,13 @@ public class PacketUtils {
 
 	public static ArmorStand entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, double distance, String customName, int index) {
 		ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
-		ArmorStand armorStand = new ArmorStand(EntityType.ARMOR_STAND, nmsPlayer.getCommandSenderWorld());
+		ArmorStand armorStand = new ArmorStand(EntityType.ARMOR_STAND, nmsPlayer.level());
 		Location loc = bukkitEntity.getLocation();
 		double y = loc.getY() + (distance * index);
 		if (bukkitEntity instanceof Player)
 			y += 1.8;
 
-		armorStand.moveTo(loc.getX(), y, loc.getZ(), 0, 0);
+		armorStand.snapTo(new Vec3(loc.getX(), y, loc.getZ()), 0, 0);
 		armorStand.setMarker(true);
 		armorStand.setInvisible(true);
 		armorStand.setNoBasePlate(true);
@@ -425,7 +428,7 @@ public class PacketUtils {
 		}
 
 		ServerLevel world = (ServerLevel) armorStand.level();
-		ChunkMap.TrackedEntity entityTracker = world.getChunkSource().chunkMap.entityMap.get(armorStand.getId());
+		TrackedEntity entityTracker = world.getChunkSource().chunkMap.entityMap.get(armorStand.getId());
 
 		ClientboundAddEntityPacket spawnArmorStand = new ClientboundAddEntityPacket(armorStand, 0, armorStand.blockPosition());
 		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData().packDirty());
@@ -448,8 +451,8 @@ public class PacketUtils {
 	public static Slime spawnSlime(Player player, Location location, int size, boolean invisible, boolean glowing) {
 		ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
 
-		Slime slime = new Slime(EntityType.SLIME, nmsPlayer.getCommandSenderWorld());
-		slime.moveTo(location.getBlockX(), location.getBlockY(), location.getBlockZ(), 0, 0);
+		Slime slime = new Slime(EntityType.SLIME, nmsPlayer.level());
+		slime.snapTo(new Vec3(location.x(), location.y(), location.z()), 0, 0);
 		slime.setSize(size, true);
 		slime.setInvisible(invisible);
 		slime.getBukkitEntity().setGlowing(glowing);
@@ -469,7 +472,7 @@ public class PacketUtils {
 		ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
 		BlockState blockData = ((CraftBlockData) block.getBlockData()).getState();
 
-		FallingBlockEntity fallingBlock = new FallingBlockEntity(nmsPlayer.getCommandSenderWorld(), location.getX(), location.getY(), location.getZ(), blockData);
+		FallingBlockEntity fallingBlock = new FallingBlockEntity(nmsPlayer.level(), location.getX(), location.getY(), location.getZ(), blockData);
 		fallingBlock.setInvulnerable(true);
 		fallingBlock.setNoGravity(true);
 		fallingBlock.setInvisible(true);
@@ -515,9 +518,9 @@ public class PacketUtils {
 		@NonNull HasPlayer player, Location location,
 		boolean marker, boolean invulnerable, boolean invisible, boolean customNameVisible, boolean noGravity, boolean pose0) {
 		ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
-		ArmorStand armorStand = new ArmorStand(EntityType.ARMOR_STAND, nmsPlayer.getCommandSenderWorld());
+		ArmorStand armorStand = new ArmorStand(EntityType.ARMOR_STAND, nmsPlayer.level());
 
-		armorStand.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+		armorStand.snapTo(new Vec3(location.getX(), location.getY(), location.getZ()), location.getYaw(), location.getPitch());
 		armorStand.setMarker(marker);
 		armorStand.setInvulnerable(invulnerable);
 		armorStand.setInvisible(invisible);

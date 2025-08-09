@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationInteractData.DecorationInteractDataBuilder;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationCooldown;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
@@ -23,9 +24,10 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.Tasks;
 import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
+import io.papermc.paper.event.player.PlayerPickBlockEvent;
+import io.papermc.paper.event.player.PlayerPickEntityEvent;
 import io.papermc.paper.event.player.PlayerPickItemEvent;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -34,7 +36,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.Skull;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -42,14 +43,7 @@ import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockFadeEvent;
-import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.EntityBlockFormEvent;
-import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -120,10 +114,22 @@ public class DecorationListener implements Listener {
 	// TODO: PICK BLOCK LIGHT BLOCK HITBOXES
 	// TODO: IF PLAYER IS HOLDING A BARRIER ON PICK BLOCK, THE DECORATION OVERWRITES THE BARRIER
 	@EventHandler
-	public void onPickBlock(PlayerPickItemEvent event) {
+	public void onPickBlock(PlayerPickBlockEvent event) {
 		if (event.getPlayer().getGameMode() != GameMode.CREATIVE)
 			return;
 
+		ItemStack itemStack = null;
+		Location location = event.getBlock().getLocation();
+		if (location != null) {
+			DecorationInteractData data = new DecorationInteractData(location.getBlock(), BlockFace.UP);
+			if (data.getDecoration() != null)
+				itemStack = data.getDecoration().getItemDrop(event.getPlayer());
+		}
+		onPickBlock(event, itemStack);
+	}
+
+	@EventHandler
+	public void onPickBlock(PlayerPickEntityEvent event) {
 		ItemStack itemStack = null;
 		Entity entity = event.getEntity();
 		if (entity instanceof ItemFrame itemFrame) {
@@ -132,16 +138,10 @@ public class DecorationListener implements Listener {
 				itemStack = new Decoration(_config, itemFrame).getItemDrop(event.getPlayer());
 			}
 		}
+		onPickBlock(event, itemStack);
+	}
 
-		Location location = event.getLocation();
-		if (location != null) {
-			DecorationInteractData data = new DecorationInteractData(location.getBlock(), BlockFace.UP);
-			if (data.getDecoration() != null)
-				itemStack = data.getDecoration().getItemDrop(event.getPlayer());
-		}
-
-		//
-
+	public void onPickBlock(PlayerPickItemEvent event, ItemStack itemStack) {
 		if (itemStack == null)
 			return;
 
@@ -242,7 +242,7 @@ public class DecorationListener implements Listener {
 		});
 
 		Decoration decoration = new Decoration(config, itemFrame);
-		DecorationInteractData data = new DecorationInteractData.DecorationInteractDataBuilder()
+		DecorationInteractData data = new DecorationInteractDataBuilder()
 				.player(player)
 				.decoration(decoration)
 				.tool(ItemUtils.getTool(player))
@@ -260,7 +260,7 @@ public class DecorationListener implements Listener {
 		if (!DecorationConfig.getHitboxTypes().contains(block.getType()) || !MaterialTag.PLAYER_SKULLS.isTagged(block))
 			return;
 
-		DecorationInteractData data = new DecorationInteractData.DecorationInteractDataBuilder()
+		DecorationInteractData data = new DecorationInteractDataBuilder()
 			.block(block)
 			.build();
 
@@ -276,7 +276,7 @@ public class DecorationListener implements Listener {
 		if (!DecorationConfig.getHitboxTypes().contains(flowerPot.getType()))
 			return;
 
-		DecorationInteractData data = new DecorationInteractData.DecorationInteractDataBuilder()
+		DecorationInteractData data = new DecorationInteractDataBuilder()
 				.player(event.getPlayer())
 				.block(flowerPot)
 				.blockFace(null)
@@ -352,7 +352,7 @@ public class DecorationListener implements Listener {
 			data = interactData.getData();
 		} else {
 			DecorationLang.debug(player, "\ncreated new DecorationInteractData");
-			data = new DecorationInteractData.DecorationInteractDataBuilder()
+			data = new DecorationInteractDataBuilder()
 					.player(player)
 					.block(clicked)
 					.blockFace(event.getBlockFace())
@@ -366,7 +366,7 @@ public class DecorationListener implements Listener {
 				Block inFront = clicked.getRelative(event.getBlockFace());
 				if (inFront.getType() == Material.LIGHT) {
 					DecorationLang.debug(player, " - found light in front");
-					data = new DecorationInteractData.DecorationInteractDataBuilder()
+					data = new DecorationInteractDataBuilder()
 							.player(player)
 							.block(inFront)
 							.blockFace(event.getBlockFace())

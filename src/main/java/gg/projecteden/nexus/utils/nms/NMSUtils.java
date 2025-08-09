@@ -16,7 +16,11 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.*;
+import net.minecraft.server.level.ChunkMap;
+import net.minecraft.server.level.ClientInformation;
+import net.minecraft.server.level.ServerEntity;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageSources;
@@ -45,7 +49,6 @@ import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.entity.ExperienceOrb.SpawnReason;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.EulerAngle;
@@ -129,9 +132,9 @@ public class NMSUtils {
 		final Function<Float, Double> toRadians = value -> (double) Math.toRadians(value);
 
 		return new EulerAngle(
-			toRadians.apply(rotations.getX()),
-			toRadians.apply(rotations.getY()),
-			toRadians.apply(rotations.getZ())
+			toRadians.apply(rotations.x()),
+			toRadians.apply(rotations.y()),
+			toRadians.apply(rotations.z())
 		);
 	}
 
@@ -265,13 +268,13 @@ public class NMSUtils {
 	}
 
 	public static void teleport(Entity entity, Location location) {
-		entity.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+		entity.snapTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 	}
 
-	public static void awardExperience(@NonNull Player player, Location location, int experience, @NonNull SpawnReason spawnReason) {
+	public static void awardExperience(Location location, int experience) {
 		Vec3 pos = Vec3.atCenterOf(toNMS(location));
-		ServerLevel level = toNMS(player.getWorld());
-		net.minecraft.world.entity.ExperienceOrb.award(level, pos, experience, spawnReason, ((CraftPlayer) player).getHandle());
+		ServerLevel level = toNMS(location.getWorld());
+		net.minecraft.world.entity.ExperienceOrb.award(level, pos, experience);
 	}
 
 	public static List<Pair<EquipmentSlot, ItemStack>> getArmorEquipmentList() {

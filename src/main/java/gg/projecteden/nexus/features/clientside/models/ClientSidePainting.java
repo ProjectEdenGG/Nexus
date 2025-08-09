@@ -78,7 +78,7 @@ public class ClientSidePainting implements IClientSideEntity<ClientSidePainting,
 			id = entity.getId();
 			entityUuid = entity.getUUID();
 		}
-		entity.moveTo(location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch());
+		entity.snapTo(location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch());
 		entity.setDirection(NMSUtils.toNMS(blockFace));
 		var optional = entity.registryAccess().lookupOrThrow(Registries.PAINTING_VARIANT).get(ResourceLocation.tryParse(variant));
 		if (optional.isEmpty())

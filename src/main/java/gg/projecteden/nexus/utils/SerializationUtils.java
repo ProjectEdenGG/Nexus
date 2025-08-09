@@ -63,7 +63,7 @@ public class SerializationUtils {
 			CompoundTag tag = (CompoundTag) nms.save(((CraftServer) Bukkit.getServer()).getServer().registryAccess());
 			if (!validate(tag))
 				return null;
-			tag.putInt("DataVersion", SharedConstants.getCurrentVersion().getDataVersion().getVersion());
+			tag.putInt("DataVersion", SharedConstants.getCurrentVersion().dataVersion().version());
 			return tag.toString();
 		}
 
@@ -72,7 +72,8 @@ public class SerializationUtils {
 				CompoundTag updated = deserializeItemStackToTagAndUpdate(string);
 				if (updated == null)
 					return null;
-				net.minecraft.world.item.ItemStack fixed = net.minecraft.world.item.ItemStack.parse(((CraftServer) Bukkit.getServer()).getServer().registryAccess(), updated).orElse(null);
+
+				net.minecraft.world.item.ItemStack fixed = net.minecraft.world.item.ItemStack.CODEC.parse(NbtOps.INSTANCE, updated).getOrThrow();
 				if (fixed == null)
 					throw new RuntimeException("Deserialized item stack from " + string + " is null");
 				return LegacyItems.convert(null, fixed.asBukkitCopy());
@@ -85,7 +86,7 @@ public class SerializationUtils {
 
 		private static CompoundTag deserializeItemStackToTagAndUpdate(String string) {
 			try {
-				CompoundTag tag = TagParser.parseTag(string);
+				CompoundTag tag = TagParser.parseCompoundFully(string);
 				if (!validate(tag))
 					return null;
 				return updateItemStack(tag);
@@ -100,7 +101,7 @@ public class SerializationUtils {
 				return false;
 			if (tag.contains("id") && tag.getString("id").equals("minecraft:air"))
 				return false;
-			if (tag.contains("count") && tag.getInt("count") <= 0) // Empty stack, should convert to null but is actually ItemStack.empty (air) which fails on deserialize
+			if (tag.contains("count") && tag.getInt("count").get() <= 0) // Empty stack, should convert to null but is actually ItemStack.empty (air) which fails on deserialize
 				return false;
 			return true;
 		}
@@ -110,15 +111,15 @@ public class SerializationUtils {
 			return (CompoundTag) DataFixers.getDataFixer().update(
 				References.ITEM_STACK,
 				new Dynamic<>(NbtOps.INSTANCE, data),
-				data.contains("DataVersion") ? data.getInt("DataVersion") : 3700,
-				SharedConstants.getCurrentVersion().getDataVersion().getVersion()
+				data.getInt("DataVersion").orElse(3700),
+				SharedConstants.getCurrentVersion().dataVersion().version()
 			).getValue();
 		}
 
 		public static ListTag updateItemStacks(ListTag data) {
 			ListTag updated = new ListTag();
 			for (int i = 0; i < data.size(); i++) {
-				CompoundTag item = data.getCompound(i);
+				CompoundTag item = data.getCompound(i).get();
 				updated.add(updateItemStack(item));
 			}
 			return updated;
@@ -131,7 +132,7 @@ public class SerializationUtils {
 				References.STATS,
 				new Dynamic<>(JsonOps.INSTANCE, json),
 				json.has("DataVersion") ? json.get("DataVersion").getAsInt() : 0,
-				SharedConstants.getCurrentVersion().getDataVersion().getVersion()
+				SharedConstants.getCurrentVersion().dataVersion().version()
 			).getValue();
 		}
 

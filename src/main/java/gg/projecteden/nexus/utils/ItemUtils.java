@@ -26,7 +26,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.component.CustomData;
 import org.apache.logging.log4j.util.TriConsumer;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.StructureType;
@@ -35,7 +34,6 @@ import org.bukkit.World.Environment;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
-import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.potion.CraftPotionEffectType;
 import org.bukkit.craftbukkit.potion.CraftPotionUtil;
@@ -717,9 +715,9 @@ public class ItemUtils {
 		CompoundTag tag = customData.copyTag();
 		CompoundTag pe = new CompoundTag();
 		if (tag.contains("ProjectEden"))
-			pe = tag.getCompound("ProjectEden");
+			pe = tag.getCompound("ProjectEden").get();
 
-		ContainerHelper.saveAllItems(pe, minecraft, ((CraftServer) Bukkit.getServer()).getServer().registryAccess());
+		ContainerHelper.saveAllItems(pe, minecraft, true);
 		tag.put("ProjectEden", pe);
 
 		handle.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
@@ -736,14 +734,14 @@ public class ItemUtils {
 
 		if (!handle.has(DataComponents.CUSTOM_DATA)) return bukkit;
 		if (!handle.get(DataComponents.CUSTOM_DATA).copyTag().contains("ProjectEden")) return bukkit;
-		if (!handle.get(DataComponents.CUSTOM_DATA).copyTag().getCompound("ProjectEden").contains("Items")) return bukkit;
+		if (!handle.get(DataComponents.CUSTOM_DATA).copyTag().getCompound("ProjectEden").get().contains("Items")) return bukkit;
 
-		CompoundTag pe = handle.get(DataComponents.CUSTOM_DATA).copyTag().getCompound("ProjectEden");
-		ListTag listTag = pe.getList("Items", 10);
+		CompoundTag pe = handle.get(DataComponents.CUSTOM_DATA).copyTag().getCompound("ProjectEden").get();
+		ListTag listTag = pe.getList("Items").get();
 		pe.put("Items", SerializationUtils.NBT.updateItemStacks(listTag));
 
 		NonNullList<net.minecraft.world.item.ItemStack> minecraft = NonNullList.withSize(expectedSize, net.minecraft.world.item.ItemStack.EMPTY);
-		ContainerHelper.loadAllItems(pe, minecraft, ((CraftServer) Bukkit.getServer()).getServer().registryAccess());
+		ContainerHelper.loadAllItems(pe, minecraft);
 
 		for (int i = 0; i < Math.max(expectedSize, minecraft.size()); i++) {
 			if (i >= minecraft.size())

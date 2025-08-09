@@ -140,7 +140,7 @@ public class MonsterMazePathfinder implements com.destroystokyo.paper.entity.Pat
     }
 
     private Location toLoc(Node point) {
-        return new Location(entity.getCommandSenderWorld().getWorld(), point.x, point.y, point.z).toCenterLocation();
+        return new Location(entity.level().getWorld(), point.x, point.y, point.z).toCenterLocation();
     }
 
 }

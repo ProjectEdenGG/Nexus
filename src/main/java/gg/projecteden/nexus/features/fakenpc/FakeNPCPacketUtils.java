@@ -17,9 +17,15 @@ import gg.projecteden.nexus.utils.nms.PacketUtils;
 import gg.projecteden.parchment.HasPlayer;
 import io.papermc.paper.adventure.AdventureComponent;
 import lombok.NonNull;
-import net.minecraft.network.protocol.game.*;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket.Rot;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action;
+import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
+import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ChunkMap;
@@ -161,7 +167,7 @@ public class FakeNPCPacketUtils {
 		Location npcLocation = fakeNPC.getBukkitEntity().getLocation();
 		double y = npcLocation.getY() + 1.8 + (0.3 * index);
 
-		armorStand.moveTo(npcLocation.getX(), y, npcLocation.getZ(), 0, 0);
+		armorStand.snapTo(npcLocation.getX(), y, npcLocation.getZ(), 0, 0);
 		armorStand.setMarker(true);
 		armorStand.setInvisible(true);
 		armorStand.setNoBasePlate(true);

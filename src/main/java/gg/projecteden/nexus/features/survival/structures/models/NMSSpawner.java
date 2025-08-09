@@ -55,10 +55,10 @@ public class NMSSpawner {
 			snapshot = new CompoundTag();
 			tag.put("BlockEntityTag", snapshot);
 		} else {
-			snapshot = tag.getCompound("BlockEntityTag");
+			snapshot = tag.getCompound("BlockEntityTag").get();
 		}
 
-		if (!snapshot.contains("id") || !snapshot.getString("id").contains("spawner")) {
+		if (!snapshot.contains("id") || !snapshot.getString("id").get().contains("spawner")) {
 			snapshot.putString("id", "minecraft:spawner");
 		}
 	}
@@ -90,7 +90,7 @@ public class NMSSpawner {
 	 * @return The spawner data short value
 	 */
 	public short getData(final SpawnerDataEnum data) {
-		return snapshot.getShort(data.getTag());
+		return snapshot.getShort(data.getTag()).get();
 	}
 
 	/**
@@ -109,7 +109,7 @@ public class NMSSpawner {
 	 * @return The wrapped SpawnData
 	 */
 	public NMSSpawnData getSpawnData() {
-		return new NMSSpawnData(snapshot.getCompound("SpawnData"));
+		return new NMSSpawnData(snapshot.getCompound("SpawnData").get());
 	}
 
 	/**
@@ -153,7 +153,7 @@ public class NMSSpawner {
 			return;
 		}
 
-		ListTag localSpawnDataList = snapshot.getList("SpawnPotentials", 10); // Compound id = 10
+		ListTag localSpawnDataList = snapshot.getList("SpawnPotentials").get(); // Compound id = 10
 		localSpawnDataList.add(newData.getMobSpawnerData().getEntityToSpawn()); //Method "a" get the compound with both Weight and Entity compound // TODO
 		snapshot.put("SpawnPotentials", localSpawnDataList);
 	}
@@ -166,7 +166,7 @@ public class NMSSpawner {
 	public List<NMSSpawnData> getSpawnPotentials() {
 		List<NMSSpawnData> spawnDataList = new ArrayList<>();
 
-		ListTag list = snapshot.getList("SpawnPotentials", 10); //Compound id = 10
+		ListTag list = snapshot.getList("SpawnPotentials").get(); //Compound id = 10
 		IntStream.range(0, list.size()).forEach(x -> spawnDataList.add(new NMSSpawnData((CompoundTag) list.get(x))));
 
 		return spawnDataList;
