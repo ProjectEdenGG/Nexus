@@ -414,14 +414,16 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 	}
 
 	public void setAbout(String about) {
-		about = StringUtils.stripColor(about);
-		if (Censor.isCensored(getPlayer(), about))
-			throw new InvalidInputException("Inappropriate input in about me");
+		if (about != null) {
+			about = StringUtils.stripColor(about);
+			if (Censor.isCensored(this, about))
+				throw new InvalidInputException("Inappropriate input in about me");
+		}
 
-		if (!about.equals(this.about)) {
-			super.setAbout(about);
-			Discord.staffLog(StringUtils.getDiscordPrefix("About") + getNickname() + " set their about me to `" + about + "`");
-
+		if (!Objects.equals(this.about, about)) {
+			this.about = about;
+			if (about != null)
+				Discord.staffLog(StringUtils.getDiscordPrefix("About") + getNickname() + " set their about me to `" + about + "`");
 			new NerdService().save(this);
 		}
 	}
