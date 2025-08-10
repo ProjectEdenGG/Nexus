@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -32,14 +33,9 @@ public class NearestBlockCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<material> <radius>")
+	@Path("<material> [radius]")
 	@Description("Find the nearest block of a certain type")
-	void nearestBlock(Material material, Integer radius) {
-		if (radius > 100) {
-			send(PREFIX + "Max radius is 100, limiting radius");
-			radius = 100;
-		}
-
+	void nearestBlock(Material material, @Arg(value = "20", max = 100) int radius) {
 		int finalRadius = radius;
 		Tasks.async(() -> {
 			Location location = location();

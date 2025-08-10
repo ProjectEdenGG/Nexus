@@ -8,10 +8,19 @@ import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
+import org.bukkit.entity.FallingBlock;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 
@@ -26,6 +35,7 @@ public class ResourceMarketLogger implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private Map<Integer, Map<Integer, List<Integer>>> coordinateMap = new LinkedHashMap<>();
+	private transient List<UUID> fallingBlocks = new ArrayList<>();
 
 	private void validate(Location location) {
 		if (!location.getWorld().getUID().equals(uuid))
@@ -68,4 +78,15 @@ public class ResourceMarketLogger implements PlayerOwnedObject {
 		return function.apply(z, location.getBlockY());
 	}
 
+	public void track(FallingBlock fallingBlock) {
+		fallingBlocks.add(fallingBlock.getUniqueId());
+	}
+
+	public void untrack(FallingBlock fallingBlock) {
+		fallingBlocks.remove(fallingBlock.getUniqueId());
+	}
+
+	public boolean isTracked(FallingBlock fallingBlock) {
+		return fallingBlocks.contains(fallingBlock.getUniqueId());
+	}
 }

@@ -43,11 +43,9 @@ public class RandomTeleportCommand extends CustomCommand {
 	@Getter
 	@AllArgsConstructor
 	private enum RTPWorld {
-		SURVIVAL(5000),
-		RESOURCE(5000),
+		SURVIVAL,
+		RESOURCE,
 		;
-
-		private final int radius;
 
 		public World getWorld() {
 			return Objects.requireNonNull(Bukkit.getWorld(name().toLowerCase()));
