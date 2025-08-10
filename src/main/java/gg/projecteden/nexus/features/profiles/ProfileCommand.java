@@ -62,11 +62,10 @@ public class ProfileCommand extends CustomCommand implements Listener {
 	@HideFromHelp
 	@Description("Set your profile's about me")
 	@Path("setAbout <input...>")
-	public void setAbout(@Arg(min = 75) String input) {
+	public void setAbout(@Arg(min = 75, stripColor = true) String input) {
 		if (Nullables.isNullOrEmpty(input))
 			error("Missing input");
 
-		input = StringUtils.stripColor(input.trim());
 		if (Censor.isCensored(player(), input))
 			error("Inappropriate input in about");
 
