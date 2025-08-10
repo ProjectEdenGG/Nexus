@@ -20,13 +20,10 @@ import gg.projecteden.nexus.features.menus.api.SignMenuFactory;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.framework.persistence.mysql.MySQLPersistence;
-import gg.projecteden.nexus.models.geoip.GeoIP;
-import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.GlowUtils;
 import gg.projecteden.nexus.utils.GoogleUtils;
-import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -35,7 +32,6 @@ import gg.projecteden.nexus.utils.Reloader;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags;
-import gg.projecteden.nexus.utils.nms.PacketUtils;
 import gg.projecteden.nexus.utils.protection.ProtectionUtils;
 import it.sauronsoftware.cron4j.Scheduler;
 import lombok.Getter;
@@ -48,11 +44,9 @@ import net.coreprotect.CoreProtect;
 import net.coreprotect.CoreProtectAPI;
 import net.luckperms.api.LuckPerms;
 import net.md_5.bungee.api.ChatColor;
-import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 import nl.pim16aap2.bigDoors.BigDoors;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -249,7 +243,6 @@ public class Nexus extends JavaPlugin {
 	@SuppressWarnings({"Convert2MethodRef", "CodeBlock2Expr"})
 	public void onDisable() {
 		List<Runnable> tasks = List.of(
-			() -> { broadcastReload(); },
 			() -> { PlayerUtils.runCommandAsConsole("save-all"); },
 			() -> { GlowUtils.shutdown(); },
 			() -> { if (cron.isStarted()) cron.stop(); },
@@ -271,20 +264,6 @@ public class Nexus extends JavaPlugin {
 			} catch (Throwable ex) {
 				ex.printStackTrace();
 			}
-	}
-
-	public void broadcastReload() {
-		if (luckPerms == null)
-			return;
-
-		for (Player player : OnlinePlayers.staff().get()) {
-			GeoIP geoip = new GeoIPService().get(player);
-			String message = " &c&l ! &c&l! &eReloading Nexus &c&l! &c&l!";
-			if (GeoIP.exists(geoip))
-				PacketUtils.sendPacket(player, new ClientboundSystemChatPacket(new JsonBuilder("&7 " + geoip.getCurrentTimeShort() + message).asComponent(), false));
-			else
-				PacketUtils.sendPacket(player, new ClientboundSystemChatPacket(new JsonBuilder(message).asComponent(), false));
-		}
 	}
 
 	public static boolean isMaintenanceQueued() {
