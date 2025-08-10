@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.parchment.HasPlayer;
 import lombok.SneakyThrows;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.ElementType;
@@ -91,18 +91,18 @@ public class Debug {
 
 	private static final Map<UUID, Set<DebugType>> ENABLED_DEBUGGERS = new HashMap<>();
 
-	public static boolean isEnabled(Player player, DebugType type) {
+	public static boolean isEnabled(HasPlayer player, DebugType type) {
 		if (player == null)
 			return false;
 
-		return ENABLED_DEBUGGERS.computeIfAbsent(player.getUniqueId(), $ -> new HashSet<>()).contains(type);
+		return ENABLED_DEBUGGERS.computeIfAbsent(player.getPlayer().getUniqueId(), $ -> new HashSet<>()).contains(type);
 	}
 
-	public static void setEnabled(Player player, DebugType type, boolean state) {
+	public static void setEnabled(HasPlayer player, DebugType type, boolean state) {
 		if (player == null)
 			return;
 
-		var enabledTypes = ENABLED_DEBUGGERS.computeIfAbsent(player.getUniqueId(), $ -> new HashSet<>());
+		var enabledTypes = ENABLED_DEBUGGERS.computeIfAbsent(player.getPlayer().getUniqueId(), $ -> new HashSet<>());
 
 		if (state)
 			enabledTypes.add(type);
@@ -110,29 +110,29 @@ public class Debug {
 			enabledTypes.remove(type);
 	}
 
-	public static void log(@NotNull Player player, @NotNull DebugType type, String message) {
+	public static void log(@NotNull HasPlayer player, @NotNull DebugType type, String message) {
 		if (isEnabled(player, type))
 			PlayerUtils.send(player, type.prefix() + message);
 	}
 
-	public static void log(@NotNull Player player, @NotNull DebugType type, JsonBuilder json) {
+	public static void log(@NotNull HasPlayer player, @NotNull DebugType type, JsonBuilder json) {
 		if (isEnabled(player, type))
 			new JsonBuilder(type.prefix()).group().next(json).send(player);
 	}
 
-	public static void log(@NotNull Player player, @NotNull DebugType type, Throwable ex) {
+	public static void log(@NotNull HasPlayer player, @NotNull DebugType type, Throwable ex) {
 		if (isEnabled(player, type))
 			PlayerUtils.send(player, ex.getMessage());
 	}
 
-	public static void log(@NotNull Player player, @NotNull DebugType type, String message, Throwable ex) {
+	public static void log(@NotNull HasPlayer player, @NotNull DebugType type, String message, Throwable ex) {
 		if (isEnabled(player, type)) {
 			log(player, type, message);
 			log(player, type, ex);
 		}
 	}
 
-	public static void dumpStack(@NotNull Player player, @NotNull DebugType type) {
+	public static void dumpStack(@NotNull HasPlayer player, @NotNull DebugType type) {
 		if (isEnabled(player, type))
 			Thread.dumpStack();
 	}
@@ -156,6 +156,7 @@ public class Debug {
 		CUSTOM_BLOCK_DAMAGE,
 		CUSTOM_BLOCKS_SOUNDS,
 		CUSTOM_BLOCKS_JANITOR,
+		MISC,
 		;
 
 		@SneakyThrows
@@ -163,7 +164,7 @@ public class Debug {
 			var prefix = name();
 
 			if (!getClass().getField(name()).isAnnotationPresent(Uppercase.class))
-				return StringUtils.camelCase(this);
+				prefix = StringUtils.camelCase(this);
 
 			return "[" + prefix + "] ";
 		}

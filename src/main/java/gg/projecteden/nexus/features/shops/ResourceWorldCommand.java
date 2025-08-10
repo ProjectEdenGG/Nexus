@@ -56,6 +56,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
@@ -65,6 +66,7 @@ import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
@@ -287,6 +289,37 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 			getLogger(world).remove(block.getLocation());
 			save(world);
 		});
+	}
+
+	@EventHandler(ignoreCancelled = true)
+	public void on(EntityChangeBlockEvent event) {
+		var block = event.getBlock();
+		var world = block.getWorld();
+
+		if (SubWorldGroup.of(world) != SubWorldGroup.RESOURCE)
+			return;
+
+		if (!(event.getEntity() instanceof FallingBlock fallingBlock))
+			return;
+
+		var logger = getLogger(world);
+
+		switch (event.getTo()) {
+			case AIR -> {
+				if (logger.contains(block.getLocation())) {
+					logger.remove(block.getLocation());
+					logger.track(fallingBlock);
+				}
+			}
+			case SAND -> {
+				if (logger.isTracked(fallingBlock)) {
+					logger.add(block.getLocation());
+					logger.untrack(fallingBlock);
+				}
+			}
+		}
+
+		save(world);
 	}
 
 	@EventHandler(ignoreCancelled = true)
