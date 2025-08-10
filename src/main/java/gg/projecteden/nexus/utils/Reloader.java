@@ -24,16 +24,20 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownE
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.models.geoip.GeoIP;
+import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.nms.PacketUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.command.CommandSender;
@@ -103,17 +107,31 @@ public class Reloader {
 
 		reloading = true;
 
-		for (Player player : OnlinePlayers.staff().get()) {
-			Nerd nerd = Nerd.of(player);
-			if (!nerd.isReloadNotify())
-				continue;
-
-			player.playSound(player.getLocation(), Sound.ENTITY_EVOKER_PREPARE_WOLOLO, SoundCategory.RECORDS, 1, 1);
-		}
+		broadcastReload();
 
 		new NexusReloadEvent().callEvent();
 
 		PlayerUtils.runCommand(executor, "plugman reload Nexus");
+	}
+
+	public void broadcastReload() {
+		if (Nexus.getLuckPerms() == null)
+			return;
+
+		for (Player player : OnlinePlayers.staff().get()) {
+			Nerd nerd = Nerd.of(player);
+			if (nerd.isReloadNotify())
+				continue;
+
+			player.playSound(player.getLocation(), Sound.ENTITY_EVOKER_PREPARE_WOLOLO, SoundCategory.RECORDS, 1, 1);
+
+			GeoIP geoip = new GeoIPService().get(player);
+			String message = " &c&l ! &c&l! &eReloading Nexus &c&l! &c&l!";
+			if (GeoIP.exists(geoip))
+				PacketUtils.sendPacket(player, new ClientboundSystemChatPacket(new JsonBuilder("&7 " + geoip.getCurrentTimeShort() + message).asComponent(), false));
+			else
+				PacketUtils.sendPacket(player, new ClientboundSystemChatPacket(new JsonBuilder(message).asComponent(), false));
+		}
 	}
 
 	public void tryReload() {
