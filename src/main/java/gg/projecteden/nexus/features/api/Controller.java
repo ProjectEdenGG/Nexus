@@ -39,6 +39,7 @@ import org.json.JSONObject;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
@@ -114,6 +116,15 @@ public class Controller {
 			.stream()
 			.sorted(new StaffHallCommand.SeniorityComparator())
 			.map(nerd -> {
+				Supplier<String> getTimeSincePromotion = () -> {
+					Period period = nerd.getPromotionDate().until(LocalDate.now());
+					if (period.getYears() >= 1)
+						return "%d years".formatted(period.getYears());
+					else if (period.getMonths() >= 1)
+						return "%d months".formatted(period.getMonths());
+					return "%d days".formatted(period.getDays());
+				};
+
 				var map = new HashMap<>();
 				map.put("uuid", nerd.getUuid());
 				map.put("username", nerd.getName());
@@ -123,7 +134,7 @@ public class Controller {
 				map.put("birthday", nerd.getBirthday() == null ? "" : "%s (%d years)".formatted(shortDateFormat(nerd.getBirthday()), nerd.getBirthday().until(LocalDate.now()).getYears()));
 				map.put("pronouns", nerd.getPronouns() == null ? "" : String.join(", ", nerd.getPronouns().stream().map(Nerd.Pronoun::toString).toList()));
 				map.put("preferredName", nerd.getPreferredName() == null ? "" : nerd.getPreferredName());
-				map.put("promotionDate", nerd.getPromotionDate() == null ? "" : "%s (%d years)".formatted(shortDateFormat(nerd.getPromotionDate()), nerd.getPromotionDate().until(LocalDate.now()).getYears()));
+				map.put("promotionDate", nerd.getPromotionDate() == null ? "" : "%s (%s)".formatted(shortDateFormat(nerd.getPromotionDate()), getTimeSincePromotion.get()));
 				map.put("countryCode", new GeoIPService().get(nerd).getCountryCode());
 				return map;
 			})

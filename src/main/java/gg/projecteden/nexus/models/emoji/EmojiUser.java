@@ -70,6 +70,12 @@ public class EmojiUser implements PlayerOwnedObject {
 			return null;
 		}
 
+		public static int fixLength(String input) {
+			for (Emoji emoji : Emoji.EMOJIS)
+				input = input.replaceAll(emoji.getEmoji(), "E");
+			return input.length();
+		}
+
 	}
 
 }

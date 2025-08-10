@@ -29,6 +29,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineE
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MissingArgumentException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.models.emoji.EmojiUser.Emoji;
 import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -287,22 +288,26 @@ public abstract class ICustomCommand {
 					throw new InvalidInputException(StringUtils.camelCase(name) + " must match regex " + annotation.regex());
 
 			if (!isNumber(type))
-				if (Nullables.isNullOrEmpty(annotation.minMaxBypass()) || !event.getSender().hasPermission(annotation.minMaxBypass()))
-					if (value.length() < annotation.min() || value.length() > annotation.max()) {
+				if (Nullables.isNullOrEmpty(annotation.minMaxBypass()) || !event.getSender().hasPermission(annotation.minMaxBypass())) {
+					var length = Emoji.fixLength(StringUtils.stripColor(value));
+					if (length < annotation.min() || length > annotation.max()) {
 						DecimalFormat formatter = StringUtils.getFormatter(Integer.class);
 						String min = formatter.format(annotation.min());
 						String max = formatter.format(annotation.max());
 						double minDefault = (Double) Arg.class.getDeclaredMethod("min").getDefaultValue();
 						double maxDefault = (Double) Arg.class.getDeclaredMethod("max").getDefaultValue();
 
+						String found = "found &e" + length;
+
 						String error = StringUtils.camelCase(name).replace("...", "") + " length must be ";
 						if (annotation.min() == minDefault && annotation.max() != maxDefault)
-							throw new InvalidInputException(error + "&e" + max + " &ccharacters or shorter");
+							throw new InvalidInputException(error + "&e" + max + " &ccharacters or shorter, " + found);
 						else if (annotation.min() != minDefault && annotation.max() == maxDefault)
-							throw new InvalidInputException(error + "&e" + min + " &ccharacters or longer");
+							throw new InvalidInputException(error + "&e" + min + " &ccharacters or longer, " + found);
 						else
-							throw new InvalidInputException(error + "between &e" + min + " &cand &e" + max + " &ccharacters");
+							throw new InvalidInputException(error + "between &e" + min + " &cand &e" + max + " &ccharacters, " + found);
 					}
+				}
 		}
 
 		if (Collection.class.isAssignableFrom(type)) {
