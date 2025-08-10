@@ -580,7 +580,7 @@ public class Chess extends TeamMechanic {
 
 		@Override
 		public String getTitle() {
-			return InventoryTexture.GUI_BLANK_ONE.getMenuTexture(1) + "&8Promote into...";
+			return InventoryTexture.getBlankMenuTexture(1) + "&8Promote into...";
 		}
 
 		@Override

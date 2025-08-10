@@ -66,6 +66,11 @@ public enum InventoryTexture {
 	MINIGAMES_MENU_SEPARATOR("敷"),
 
 	GUI_BLANK_ONE("启"),
+	GUI_BLANK_TWO("婆"),
+	GUI_BLANK_THREE("扌"),
+	GUI_BLANK_FOUR("汀"),
+	GUI_BLANK_FIVE("洌"),
+	GUI_BLANK_SIX("渌"),
 
 	;
 
@@ -108,6 +113,17 @@ public enum InventoryTexture {
 	}
 
 	//
+
+	public static String getBlankMenuTexture(int rows) {
+		return switch (rows) {
+			case 1 -> GUI_BLANK_ONE.getMenuTexture();
+			case 2 -> GUI_BLANK_TWO.getMenuTexture();
+			case 3 -> GUI_BLANK_THREE.getMenuTexture();
+			case 4 -> GUI_BLANK_FOUR.getMenuTexture();
+			case 5 -> GUI_BLANK_FIVE.getMenuTexture();
+			default -> GUI_BLANK_SIX.getMenuTexture();
+		};
+	}
 
 	public final static List<String> MINUS_CHARS = List.of("ꈁ", "麖", "ꈂ", "ꈃ", "ꈄ", "ꈅ", "ꈆ", "ꈇ", "ꈈ", "ꈉ");
 
