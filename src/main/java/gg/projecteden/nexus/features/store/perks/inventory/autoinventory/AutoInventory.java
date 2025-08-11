@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.tasks.F
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser.AutoSortInventoryType;
+import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Name;
@@ -120,6 +121,9 @@ public class AutoInventory extends Feature {
 		for (int i = sourceInventoryStartIndex; i < sourceInventorySize; i++) {
 			ItemStack sourceStack = source.getItem(i);
 			if (Nullables.isNullOrAir(sourceStack))
+				continue;
+
+			if (!ItemSetting.AUTODEPOSITABLE.of(sourceStack))
 				continue;
 
 			if (autoInventoryUser.getActiveProfile().getAutoDepositExclude().contains(sourceStack.getType()))

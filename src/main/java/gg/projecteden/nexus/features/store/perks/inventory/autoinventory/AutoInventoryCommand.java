@@ -22,6 +22,7 @@ import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser.AutoSortInven
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser.AutoTrashBehavior;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.ItemUtils.ItemStackComparator;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
@@ -38,6 +39,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -193,6 +195,15 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		Thread thread = new FindChestsThread(world, snapshots, minY, maxY, startX, startY, startZ, player());
 		thread.setPriority(Thread.MIN_PRIORITY);
 		thread.start();
+	}
+
+	@Path("protectItem")
+	void protectItem() {
+		final EquipmentSlot hand = getHandWithToolRequired();
+		final ItemBuilder tool = new ItemBuilder(inventory().getItem(hand));
+		final boolean newState = !ItemSetting.AUTODEPOSITABLE.of(tool);
+		inventory().setItem(hand, tool.setting(ItemSetting.AUTODEPOSITABLE, newState).build());
+		send(PREFIX + "This item can " + (newState ? "now": "no longer") + " be auto-deposited");
 	}
 
 	@Path("features")
