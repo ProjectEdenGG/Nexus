@@ -210,7 +210,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 				.pitchStep(1)
 				.play();
 
-			taskId = Tasks.wait(TickTime.SECOND.x(gameType.getTimeInSeconds()), this::stop);
+			taskId = Tasks.wait(TickTime.SECOND.x(30), this::stop);
 		}
 
 		private void stop() {

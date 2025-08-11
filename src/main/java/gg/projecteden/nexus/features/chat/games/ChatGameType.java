@@ -34,13 +34,13 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public enum ChatGameType {
 	// RANDOM type to allow random games in command
-	RANDOM(0) {
+	RANDOM {
 		@Override
 		public ChatGame create() {
 			return null;
 		}
 	},
-	HOVER(15) {
+	HOVER {
 		@Override
 		public ChatGame create() {
 			String answer = RandomUtils.randomElement(ChatGameType.WORDS);
@@ -49,7 +49,7 @@ public enum ChatGameType {
 				"Type the phrase in chat: ||" + answer + "||");
 		}
 	},
-	UNMUTE(30) {
+	UNMUTE {
 		@Override
 		public ChatGame create() {
 			String answer = RandomUtils.randomElement(ChatGameType.WORDS);
@@ -65,7 +65,7 @@ public enum ChatGameType {
 				"Complete the phrase: `" + muted.toString().trim() + "`. Type the full phrase in chat!");
 		}
 	},
-	UNSCRAMBLE(30) {
+	UNSCRAMBLE {
 		@Override
 		public ChatGame create() {
 			String answer = RandomUtils.randomElement(ChatGameType.WORDS);
@@ -96,7 +96,7 @@ public enum ChatGameType {
 			return shuffled;
 		}
 	},
-	MATH(15) {
+	MATH {
 		@Override
 		public ChatGame create() {
 			int num1 = 0, num2 = 0, answer;
@@ -120,7 +120,7 @@ public enum ChatGameType {
 				String.format("What's `%d %s %s`?", num1, operator.getSymbol(), num2) + " Answer in chat!");
 		}
 	},
-	TRIVIA(30) {
+	TRIVIA {
 		@Override
 		public ChatGame create() {
 			final ChatGamesConfigService service = new ChatGamesConfigService();
@@ -169,8 +169,6 @@ public enum ChatGameType {
 			return answers;
 		}
 	};
-
-	private final int timeInSeconds;
 
 	public abstract ChatGame create();
 
