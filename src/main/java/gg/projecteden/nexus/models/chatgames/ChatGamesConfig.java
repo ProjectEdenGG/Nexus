@@ -46,10 +46,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Data
 @Entity(value = "chat_games_config", noClassnameStored = true)
@@ -109,7 +109,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 		private final List<String> answers;
 		private final JsonBuilder broadcast;
 		private final String discordBroadcast;
-		private LinkedList<ChatGameUser> completed = new LinkedList<>();
+		private CopyOnWriteArrayList<ChatGameUser> completed = new CopyOnWriteArrayList<>();
 		private LocalDateTime startTime;
 		private boolean started;
 		private int taskId;
