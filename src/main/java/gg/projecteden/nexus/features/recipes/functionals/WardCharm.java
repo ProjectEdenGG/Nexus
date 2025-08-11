@@ -137,8 +137,10 @@ public class WardCharm extends FunctionalRecipe {
 			AttributeInstance attribute = livingEntity.getAttribute(Attribute.MAX_HEALTH);
 			if (attribute == null)
 				Nexus.warn("[WardCharm] Could not find max health attribute for " + entity.getType());
-			else
+			else {
+				attribute.setBaseValue(500);
 				livingEntity.setHealth(attribute.getValue());
+			}
 		}
 
 		event.setCancelled(true);
