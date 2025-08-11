@@ -114,7 +114,8 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 
 	@Path("start [type]")
 	@Description("Start a chat game")
-	void start(@Arg(value = "random", permission = Group.SENIOR_STAFF) ChatGameType type, @Switch @Arg(value = "false", permission = Group.SENIOR_STAFF) boolean now) {
+	void start(@Arg(value = "random", permission = Group.SENIOR_STAFF) ChatGameType type,
+			   @Switch @Arg(value = "false", permission = Group.SENIOR_STAFF) boolean now) {
 		if (ChatGamesConfig.getCurrentGame() != null && ChatGamesConfig.getCurrentGame().isStarted())
 			error("There is already an active game");
 
