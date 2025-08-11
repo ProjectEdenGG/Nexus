@@ -31,6 +31,7 @@ import gg.projecteden.nexus.features.menus.api.annotations.Uncloseable;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack.ResourcePackNumber;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.features.shops.Shops;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ColorType;
@@ -175,6 +176,10 @@ public abstract class InventoryProvider {
 
 	public String getTitle(int page) {
 		return getTitle();
+	}
+
+	protected String blankTexture() {
+		return InventoryTexture.getBlankMenuTexture(getRows());
 	}
 
 	protected int getRows() {
