@@ -4,6 +4,7 @@ import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.mobheads.MobHeadType;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -97,7 +98,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 						pageType = PageType.MESSAGES;
 						open(viewer);
 					});
-					contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK)
+					contents.set(0, 8, ClickableItem.empty(new ItemBuilder(ItemModelType.GUI_INFO)
 						.name("&3Info")
 						.lore("&eRight Click - Increase volume", "&eLeft Click - Decrease volume")
 						.build()));
