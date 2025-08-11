@@ -9,12 +9,22 @@ import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
 import gg.projecteden.nexus.features.shops.Shops;
-import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.*;
+import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.Filter;
+import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterEmptyStock;
+import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterExchangeType;
+import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterMarketItems;
+import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterRequiredType;
+import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterSearchType;
+import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterType;
 import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.Shop.Product;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -173,8 +183,12 @@ public class BrowseProductsProvider extends ShopProvider {
 								return;
 
 							if (e.isLeftClick()) {
-								product.process(player);
-								refresh();
+								if (product.getUuid().equals(player.getUniqueId()))
+									new EditProductProvider(this, product).open(player);
+								else {
+									product.process(player);
+									refresh();
+								}
 							} else if (e.isShiftLeftClick())
 								Nexus.getSignMenuFactory()
 									.lines("", SignMenuFactory.ARROWS, "Enter amount to", product.getExchange().getCustomerAction().toLowerCase() + " or 'all'")
