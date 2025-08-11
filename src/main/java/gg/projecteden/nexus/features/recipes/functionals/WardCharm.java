@@ -99,7 +99,9 @@ public class WardCharm extends FunctionalRecipe {
 			if (ItemModelType.of(item) != ItemModelType.GEM_SPINEL)
 				return;
 
-			var entity = event.getRightClicked();
+			if (!(event.getRightClicked() instanceof LivingEntity entity))
+				return;
+
 			var entityTypeName = camelCase(entity.getType());
 			if (!SUPPORTED_TYPES.contains(entity.getType()))
 				throw new InvalidInputException("Cannot apply Ward Charm to " + entityTypeName);
@@ -114,8 +116,20 @@ public class WardCharm extends FunctionalRecipe {
 			pdc.set(NBT_KEY, PersistentDataType.STRING, player.getUniqueId().toString());
 			PlayerUtils.send(player, PREFIX + "Your " + entityTypeName + " is now warded");
 			item.subtract();
+
+			setMaxHealth(entity);
 		} catch (Exception ex) {
 			MenuUtils.handleException(event.getPlayer(), PREFIX, ex);
+		}
+	}
+
+	private static void setMaxHealth(LivingEntity entity) {
+		AttributeInstance attribute = entity.getAttribute(Attribute.MAX_HEALTH);
+		if (attribute == null)
+			Nexus.warn("[WardCharm] Could not find max health attribute for " + entity.getType());
+		else {
+			attribute.setBaseValue(500);
+			entity.setHealth(attribute.getValue());
 		}
 	}
 
@@ -133,15 +147,8 @@ public class WardCharm extends FunctionalRecipe {
 		if (!pdc.has(NBT_KEY, PersistentDataType.STRING))
 			return;
 
-		if (entity instanceof LivingEntity livingEntity) {
-			AttributeInstance attribute = livingEntity.getAttribute(Attribute.MAX_HEALTH);
-			if (attribute == null)
-				Nexus.warn("[WardCharm] Could not find max health attribute for " + entity.getType());
-			else {
-				attribute.setBaseValue(500);
-				livingEntity.setHealth(attribute.getValue());
-			}
-		}
+		if (entity instanceof LivingEntity livingEntity)
+			setMaxHealth(livingEntity);
 
 		event.setCancelled(true);
 	}
