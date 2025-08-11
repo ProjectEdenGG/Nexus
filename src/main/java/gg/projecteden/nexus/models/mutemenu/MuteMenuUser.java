@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.M
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.chat.ChatterService;
+import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -53,7 +54,9 @@ public class MuteMenuUser implements PlayerOwnedObject {
 		else if (item.getDefaultVolume() != null && item.getDefaultVolume() == 0)
 			return true;
 
-		if (item.name().startsWith("CHANNEL_"))
+		if (item == MuteMenuItem.NEXUS_RELOAD)
+			return !new NerdService().get(this).isReloadNotify();
+		else if (item.name().startsWith("CHANNEL_"))
 			return !new ChatterService().get(uuid).hasJoined(StaticChannel.valueOf(item.name().replace("CHANNEL_", "")).getChannel());
 		else
 			return muted.contains(item);

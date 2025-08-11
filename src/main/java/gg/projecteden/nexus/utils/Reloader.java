@@ -120,7 +120,7 @@ public class Reloader {
 
 		for (Player player : OnlinePlayers.staff().get()) {
 			Nerd nerd = Nerd.of(player);
-			if (nerd.isReloadNotify())
+			if (!nerd.isReloadNotify())
 				continue;
 
 			player.playSound(player.getLocation(), Sound.ENTITY_EVOKER_PREPARE_WOLOLO, SoundCategory.RECORDS, 1, 1);

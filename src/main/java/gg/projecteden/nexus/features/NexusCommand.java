@@ -31,7 +31,6 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
-import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.offline.OfflineMessage;
 import gg.projecteden.nexus.utils.AdventureUtils;
@@ -90,18 +89,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Description("Reload Nexus, or queue a reload if applicable")
 	void reload(@Switch @Arg(type = ReloadCondition.class) List<ReloadCondition> excludedConditions) {
 		reloader.executor(sender()).excludedConditions(excludedConditions).reload();
-	}
-
-	@Path("reload notifySound [enable]")
-	@Description("Toggle reload notifications")
-	void reload_notifySound(Boolean enable) {
-		if (enable == null)
-			enable = !nerd().isReloadNotify();
-
-		final Boolean finalEnable = enable;
-		new NerdService().edit(player(), nerd -> nerd.setReloadNotify(finalEnable));
-
-		send(PREFIX + "Reload sound notifications " + (enable ? "&aEnabled" : "&cDisabled"));
 	}
 
 	@EventHandler

@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * <p>
  * View the bottom of the source code to this annotation for a common permission node cheatsheet
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target({ElementType.FIELD, ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Permission {
 	/**
