@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.matchdata.CheckpointData;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.checkpoint.CheckpointService;
 import gg.projecteden.nexus.models.checkpoint.RecordTotalTime;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -52,7 +53,7 @@ public class LeaderboardMenu extends InventoryProvider {
 		}
 
 		addCloseItem();
-		contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&eInformation")
+		contents.set(0, 8, ClickableItem.empty(new ItemBuilder(ItemModelType.GUI_INFO).name("&eInformation")
 			.loreize(true).lore("&3This is the leaderboard for the fastest completions of the minigame &6&o" + arena.getDisplayName() + "&3.")));
 		paginate(items);
 	}

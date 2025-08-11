@@ -1882,6 +1882,7 @@ public enum ItemModelType {
 	GUI_CHECK("ui/gui/check", true),
 	GUI_CLOSE("ui/gui/close", true),
 	GUI_SAVE("ui/gui/save"),
+	GUI_INFO("ui/gui/info"),
 	BRONZE_COINS_1("ui/gui/coins/bronze_coins_1"),
 	BRONZE_COINS_2("ui/gui/coins/bronze_coins_2"),
 	BRONZE_COINS_3("ui/gui/coins/bronze_coins_3"),

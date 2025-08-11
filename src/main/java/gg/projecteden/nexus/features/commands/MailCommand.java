@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -199,7 +200,7 @@ public class MailCommand extends CustomCommand implements Listener {
 		public void init() {
 			addCloseItem();
 
-			ItemStack info = new ItemBuilder(Material.BOOK).name("&3Info")
+			ItemStack info = new ItemBuilder(ItemModelType.GUI_INFO).name("&3Info")
 					.lore("&eOpened mail cannot be closed", "&eAny items left over, will be", "&egiven to you, or dropped")
 					.loreize(false)
 					.build();

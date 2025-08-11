@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
 import gg.projecteden.nexus.models.crate.CrateConfigService;
 import gg.projecteden.nexus.models.crate.CrateType;
@@ -289,7 +290,7 @@ public class CrateEditMenu {
 
 
 			// Commands on Complete
-			contents.set(1, 0, ClickableItem.of(new ItemBuilder(Material.BOOK).name("&eCommands on Open")
+			contents.set(1, 0, ClickableItem.of(new ItemBuilder(ItemModelType.GUI_INFO).name("&eCommands on Open")
 					.lore("&3Commands which should be ran",
 						"&3when this loot is opened",
 						" ",

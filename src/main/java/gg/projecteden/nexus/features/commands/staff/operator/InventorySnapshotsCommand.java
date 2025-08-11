@@ -6,6 +6,7 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -179,7 +180,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 			ItemStack applyToOwner = new ItemBuilder(Material.PLAYER_HEAD).name("&eApply to " + owner.getName()).skullOwner(owner).build();
 			ItemStack applyToChest = new ItemBuilder(Material.CHEST).name("&eApply to chest").build();
 			ItemStack teleport = new ItemBuilder(Material.COMPASS).name("&eTeleport").build();
-			ItemStack info = new ItemBuilder(Material.BOOK).name("&eInfo")
+			ItemStack info = new ItemBuilder(ItemModelType.GUI_INFO).name("&eInfo")
 				.lore("&3Reason: &e" + snapshot.getReason().getColor() + StringUtils.camelCase(snapshot.getReason()))
 				.lore("&3Time: &e" + TimeUtils.shortDateTimeFormat(snapshot.getTimestamp()))
 				.lore("&3Location: &e" + StringUtils.xyzw(snapshot.getLocation()))
