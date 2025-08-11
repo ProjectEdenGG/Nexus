@@ -14,6 +14,7 @@ import gg.projecteden.nexus.features.chat.games.ChatGameType.TriviaQuestion;
 import gg.projecteden.nexus.features.chat.games.ChatGamesCommand;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.discord.Discord;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.banker.BankerService;
@@ -21,9 +22,20 @@ import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import lombok.*;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import org.bukkit.Sound;
@@ -31,7 +43,13 @@ import org.simmetrics.metrics.StringMetrics;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @Data
 @Entity(value = "chat_games_config", noClassnameStored = true)
@@ -127,6 +145,17 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 			this.answers = answers;
 			this.broadcast = broadcast;
 			this.discordBroadcast = discordBroadcast;
+		}
+
+		public int getPosition(UUID uuid) {
+			var index = 1;
+			for (ChatGameUser user : completed) {
+				if (user.getUuid().equals(uuid))
+					return index;
+				++index;
+			}
+
+			throw new InvalidInputException("Could not find user in completed list");
 		}
 
 		public void queue(double waitInMinutes) {
@@ -280,7 +309,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 
 			Nexus.log(ChatGamesCommand.PREFIX + nerd.getNickname() + " answered correctly");
 
-			String place = StringUtils.getNumberWithSuffix(this.getCompleted().size()) + " place";
+			String place = StringUtils.getNumberWithSuffix(this.getPosition(nerd.getUuid())) + " place";
 			String prize = Prize.random().apply(this, nerd);
 			PlayerUtils.send(nerd, ChatGamesCommand.PREFIX + StringUtils.colorize("&3That's correct! You've been given &e" + prize + " &3(&e" + place + "&3)"));
 
@@ -295,7 +324,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 			ECONOMY {
 				@Override
 				String apply(ChatGame game, Nerd player) {
-					int amount = Math.max(25, 150 - (50 * (game.getCompleted().size() - 1)));
+					int amount = Math.max(25, 150 - (50 * (game.getPosition(player.getUuid()) - 1)));
 					Tasks.sync(() -> new BankerService().deposit(player, amount, ShopGroup.SURVIVAL, TransactionCause.CHAT_GAME));
 					return StringUtils.prettyMoney(amount);
 				}
