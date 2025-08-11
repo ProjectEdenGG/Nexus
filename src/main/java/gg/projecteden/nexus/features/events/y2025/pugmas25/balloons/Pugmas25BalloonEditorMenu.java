@@ -25,7 +25,7 @@ public class Pugmas25BalloonEditorMenu extends InventoryProvider {
 
 	@Override
 	public String getTitle() {
-		return InventoryTexture.getBlankMenuTexture(5) + "&8Chosen Template: #" + Pugmas25BalloonEditor.schemId;
+		return blankTexture() + "&8Chosen Template: #" + Pugmas25BalloonEditor.schemId;
 	}
 
 	@Override
