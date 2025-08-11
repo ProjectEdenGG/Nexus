@@ -917,7 +917,11 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		/**
 		 * Whether an item is interactable
 		 */
-		INTERACTABLE(false)
+		INTERACTABLE(false),
+		/**
+		 * Whether an item can be auto deposited with AutoInventory
+		 */
+		AUTODEPOSITABLE(true)
 		;
 
 		private final boolean orDefault;
@@ -936,6 +940,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 		public final boolean of(ItemBuilder builder) {
 			return of(builder, orDefault);
+		}
+
+		public final boolean of(ItemStack item) {
+			return of(new ItemBuilder(item));
 		}
 	}
 
