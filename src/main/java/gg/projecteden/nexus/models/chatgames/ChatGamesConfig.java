@@ -46,6 +46,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -149,8 +150,11 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 
 		public int getPosition(UUID uuid) {
 			var index = 1;
-			for (ChatGameUser user : completed) {
-				if (user.getUuid().equals(uuid))
+
+			Iterator<ChatGameUser> iterator = completed.iterator();
+			while (iterator.hasNext()) {
+				ChatGameUser user = iterator.next();
+				if (user != null && user.getUuid().equals(uuid))
 					return index;
 				++index;
 			}
