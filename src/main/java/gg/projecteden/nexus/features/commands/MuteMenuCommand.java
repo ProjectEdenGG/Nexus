@@ -8,18 +8,27 @@ import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuService;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser.SoundGroup;
+import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
+import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.parchment.event.sound.SoundEvent;
 import gg.projecteden.parchment.event.sound.SoundEvent.EntityEmitter;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -29,7 +38,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -78,6 +92,8 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 							continue;
 						if (!Nullables.isNullOrEmpty(item.getPermission()) && !viewer.hasPermission(item.getPermission()))
 							continue;
+						if (!item.isPermissibleFor(viewer))
+							continue;
 
 						boolean muted = user.hasMuted(item);
 						ItemStack stack = new ItemBuilder(item.getMaterial()).name("&e" + item.getTitle())
@@ -119,6 +135,8 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 						if (item.getDefaultVolume() == null)
 							continue;
 						if (!Nullables.isNullOrEmpty(item.getPermission()) && !viewer.hasPermission(item.getPermission()))
+							continue;
+						if (!item.isPermissibleFor(viewer))
 							continue;
 
 						boolean muted = user.hasMuted(item);
@@ -236,7 +254,9 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 
 		public void toggleMute(MuteMenuUser user, MuteMenuItem item) {
 			Player player = user.getOnlinePlayer();
-			if (item.name().startsWith("CHANNEL_"))
+			if (item == MuteMenuItem.NEXUS_RELOAD)
+				new NerdService().edit(user, nerd -> nerd.setReloadNotify(!nerd.isReloadNotify()));
+			else if (item.name().startsWith("CHANNEL_"))
 				if (user.hasMuted(item))
 					PlayerUtils.runCommand(player, "ch join " + item.name().replace("CHANNEL_", "").toLowerCase());
 				else
@@ -275,6 +295,8 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 			TP_REQUESTS("Teleport Requests", Material.ENDER_PEARL),
 			MESSAGES("Messages", Material.BOOK),
 			BOOPS("Boops", Material.BELL),
+			@Permission(Group.STAFF)
+			NEXUS_RELOAD("Nexus Reloads", Material.COMMAND_BLOCK),
 			// Sounds
 			FIRST_JOIN_SOUND("First Join", Material.GOLD_BLOCK, 50),
 			JOIN_QUIT_SOUNDS("Join/Quit", Material.OAK_DOOR, 50),
@@ -310,7 +332,20 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 				this.material = material;
 				this.lore = lore.stream().map(line -> "&f" + line).collect(Collectors.toList());
 				if (!this.lore.isEmpty())
-					this.lore.add(0, "");
+					this.lore.addFirst("");
+			}
+
+			@SneakyThrows
+			public Field getField() {
+				return getClass().getField(name());
+			}
+
+			public boolean isPermissibleFor(Player player) {
+				if (!getField().isAnnotationPresent(Permission.class))
+					return true;
+
+				var permission = getField().getAnnotation(Permission.class).value();
+				return LuckPermsUtils.hasPermission(player, permission);
 			}
 		}
 
