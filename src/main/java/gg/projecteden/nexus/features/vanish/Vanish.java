@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.vanish;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.commands.FlyCommand;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.vanish.events.PreVanishToggleEvent;
 import gg.projecteden.nexus.features.vanish.events.VanishToggleEvent;
@@ -67,6 +68,8 @@ public class Vanish extends Feature {
 			if (user.getSetting(Setting.NIGHT_VISION))
 				player.addPotionEffect(NIGHT_VISION.build());
 		});
+
+		FlyCommand.on(player);
 
 		refresh(player);
 

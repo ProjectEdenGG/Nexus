@@ -12,8 +12,10 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.GameMode;
+import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -36,16 +38,17 @@ public class ModeUser implements PlayerOwnedObject {
 		modeMap.put(worldGroup, mode);
 	}
 
-	public void setFlightMode(@NonNull WorldGroup worldGroup, boolean allowFlight, boolean flying) {
+	public void setFlightMode(@NonNull WorldGroup worldGroup) {
 		PlayerMode mode = getPlayerMode(worldGroup);
 
-		mode.setFlightMode(new FlightMode(allowFlight, flying));
+		Player player = getOnlinePlayer();
+		mode.setFlightMode(new FlightMode(player.getAllowFlight(), player.isFlying()));
 		modeMap.put(worldGroup, mode);
 	}
 
 	public @NonNull PlayerMode getPlayerMode(@NonNull WorldGroup worldGroup) {
 		if (!modeMap.containsKey(worldGroup))
-			return new PlayerMode();
+			return new PlayerMode(worldGroup);
 
 		return modeMap.get(worldGroup);
 	}
@@ -59,9 +62,22 @@ public class ModeUser implements PlayerOwnedObject {
 	}
 
 	@Data
+	@NoArgsConstructor
 	public static class PlayerMode {
-		GameMode gameMode = GameMode.SURVIVAL;
-		FlightMode flightMode = new FlightMode();
+		private static final List<WorldGroup> CREATIVE_DEFAULT = List.of(WorldGroup.CREATIVE, WorldGroup.STAFF);
+
+		public PlayerMode(WorldGroup worldGroup) {
+			if (CREATIVE_DEFAULT.contains(worldGroup)) {
+				this.gameMode = GameMode.CREATIVE;
+				this.flightMode = new FlightMode(true, true);
+			} else {
+				this.gameMode = GameMode.SURVIVAL;
+				this.flightMode = new FlightMode();
+			}
+		}
+
+		private GameMode gameMode;
+		private FlightMode flightMode;
 	}
 
 	@Data

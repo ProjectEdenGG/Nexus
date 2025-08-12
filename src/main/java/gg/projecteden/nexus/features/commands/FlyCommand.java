@@ -47,7 +47,6 @@ public class FlyCommand extends CustomCommand implements Listener {
 	@Getter
 	public static Set<Player> debuggers = new HashSet<>();
 
-
 	public FlyCommand(@NonNull CommandEvent event) {
 		super(event);
 		if (isPlayerCommandEvent())
@@ -95,11 +94,6 @@ public class FlyCommand extends CustomCommand implements Listener {
 		send(player, PREFIX + (enable ? "&aEnabled" : "&cDisabled"));
 		if (!isSelf(player))
 			send(PREFIX + "Fly " + (enable ? "&aenabled" : "&cdisabled") + " &3for &e" + player.getName());
-
-		if (!(worldGroup() == WorldGroup.MINIGAMES) && user.getRank().isStaff()) {
-			user.setFlightMode(worldGroup(), player.getAllowFlight(), player.isFlying());
-			service.save(user);
-		}
 	}
 
 	public static void off(Player player) {
@@ -112,6 +106,15 @@ public class FlyCommand extends CustomCommand implements Listener {
 	public static void on(Player player) {
 		player.setFallDistance(0);
 		PlayerUtils.setAllowFlight(player, true, FlyCommand.class);
+
+		var service = new ModeUserService();
+		var user = service.get(player);
+		var worldGroup = WorldGroup.of(player);
+		if (worldGroup != WorldGroup.MINIGAMES && user.getRank().isStaff()) {
+			user.setFlightMode(worldGroup);
+			service.save(user);
+		}
+
 		IOUtils.fileAppend("cheats", Nickname.of(player) + " enabled fly at " + StringUtils.xyzw(player.getLocation()));
 	}
 
@@ -125,7 +128,7 @@ public class FlyCommand extends CustomCommand implements Listener {
 		ModeUser user = userService.get(player);
 		WorldGroup worldGroup = WorldGroup.of(player);
 
-		user.setFlightMode(worldGroup, player.getAllowFlight(), player.isFlying());
+		user.setFlightMode(worldGroup);
 		userService.save(user);
 	}
 
