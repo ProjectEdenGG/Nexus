@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.balloons;
 
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -29,7 +30,7 @@ public class Pugmas25BalloonEditorUtils {
 	}
 
 	public static ItemStack getReplaceBrush() {
-		return Pugmas25BlockReplaceBrushMenu.getBrushItem().dyeColor(Pugmas25BalloonEditor.getBrushColor()).build();
+		return Pugmas25QuestItem.BALLOON_PAINTBRUSH.getItemBuilder().dyeColor(Pugmas25BalloonEditor.getBrushColor()).build();
 	}
 
 	static void giveBrush() {
@@ -46,7 +47,7 @@ public class Pugmas25BalloonEditorUtils {
 		if (player == null)
 			return;
 
-		PlayerUtils.removeItem(player, Pugmas25BlockReplaceBrushMenu.BRUSH_ITEM_MODEL);
+		PlayerUtils.removeItem(player, Pugmas25QuestItem.BALLOON_PAINTBRUSH.getItemModel());
 	}
 
 	static void enableFlight() {
@@ -74,7 +75,7 @@ public class Pugmas25BalloonEditorUtils {
 		if (player == null)
 			return;
 
-		PlayerUtils.removeItem(player, Pugmas25BlockReplaceBrushMenu.BRUSH_ITEM_MODEL);
+		PlayerUtils.removeItem(player, Pugmas25QuestItem.BALLOON_PAINTBRUSH.getItemModel());
 	}
 
 	static void disableFlight(Player player) {

@@ -14,18 +14,18 @@ import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
 
 @Rows(5)
 public class Pugmas25BalloonEditorMenu extends InventoryProvider {
-	private static final ItemBuilder PASTE_SCHEM = new ItemBuilder(ItemModelType.GUI_ROTATE_LEFT).name("Reset schematic").dyeColor(ColorType.YELLOW).itemFlags(ItemFlags.HIDE_ALL);
-	private static final ItemBuilder TEMPLATE_NEXT = new ItemBuilder(ItemModelType.GUI_ARROW_RIGHT).name("Next Template").dyeColor(ColorType.CYAN).itemFlags(ItemFlags.HIDE_ALL);
-	private static final ItemBuilder TEMPLATE_PREVIOUS = new ItemBuilder(ItemModelType.GUI_ARROW_LEFT).name("Previous Template").dyeColor(ColorType.CYAN).itemFlags(ItemFlags.HIDE_ALL);
-	private static final ItemBuilder TEMPLATE_PLACE = new ItemBuilder(ItemModelType.GUI_CHECK).name("Place Template").dyeColor(ColorType.LIGHT_GREEN).itemFlags(ItemFlags.HIDE_ALL);
-	private static final ItemBuilder EDITOR_EXIT = new ItemBuilder(ItemModelType.GUI_TRASHCAN).name("Exit").lore("&c(Will not save your progress)").dyeColor(ColorType.GRAY).itemFlags(ItemFlags.HIDE_ALL);
-	private static final ItemBuilder EDITOR_SAVE = new ItemBuilder(ItemModelType.GUI_SAVE).name("Save schematic").itemFlags(ItemFlags.HIDE_ALL);
+	private static final ItemBuilder PASTE_SCHEM = new ItemBuilder(ItemModelType.GUI_ROTATE_LEFT).name("&6Reset balloon").dyeColor(ColorType.ORANGE).itemFlags(ItemFlags.HIDE_ALL);
+	private static final ItemBuilder TEMPLATE_NEXT = new ItemBuilder(ItemModelType.GUI_ARROW_RIGHT).name("&3Next Template").dyeColor(ColorType.CYAN).itemFlags(ItemFlags.HIDE_ALL);
+	private static final ItemBuilder TEMPLATE_PREVIOUS = new ItemBuilder(ItemModelType.GUI_ARROW_LEFT).name("&3Previous Template").dyeColor(ColorType.CYAN).itemFlags(ItemFlags.HIDE_ALL);
+	private static final ItemBuilder TEMPLATE_PLACE = new ItemBuilder(ItemModelType.GUI_CHECK).name("&aPlace Template").dyeColor(ColorType.LIGHT_GREEN).itemFlags(ItemFlags.HIDE_ALL);
+	private static final ItemBuilder EDITOR_EXIT = new ItemBuilder(ItemModelType.GUI_TRASHCAN).name("&cExit").lore("&c&oWill not save").dyeColor(ColorType.GRAY).itemFlags(ItemFlags.HIDE_ALL);
+	private static final ItemBuilder EDITOR_SAVE = new ItemBuilder(ItemModelType.GUI_SAVE).name("&aSave balloon").itemFlags(ItemFlags.HIDE_ALL);
 	private static final String COOLDOWN_KEY = "pugmas25_balloon_editor-template_paste";
 	private static final ItemModelType BASE_MODEL = ItemModelType.ITEM_DISPLAY_AIR_BALLOON_1;
 
 	@Override
 	public String getTitle() {
-		return blankTexture() + "&8Chosen Template: #" + Pugmas25BalloonEditor.schemId;
+		return blankTexture() + "&8Template: #" + Pugmas25BalloonEditor.schemId;
 	}
 
 	@Override

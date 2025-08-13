@@ -60,17 +60,18 @@ public class Pugmas25Districts implements Listener {
 
 	@AllArgsConstructor
 	public enum Pugmas25District {
-		RIDGE("ridge"),
-		WEST_SIDE("west"),
-		EAST_SIDE("east"),
-		FARM("farm"),
 		MINES("mines"),
+		RIDGE("ridge"),
+		WEST_VILLAGE("west"),
+		EAST_VILLAGE("east"),
+		FARM("farm"),
 		PORT("port"),
-		FROZEN_LAKE("lake"),
+		LAKE("lake"),
+		FROZEN_LAKE("frozen_lake"),
 		TRAIN_STATION("train_station"),
 		TRAIN_TRACKS("train_tracks"),
 		FAIRGROUNDS("fair"),
-		HOT_SPRING("spring"),
+		HOT_SPRINGS("hot_springs"),
 		SAWMILL("sawmill"),
 		RIVER("river"),
 		//
