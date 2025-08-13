@@ -177,7 +177,7 @@ public class CostumeUser implements PlayerOwnedObject {
 		if (costume.getItem().getType() == Material.PLAYER_HEAD)
 			item.skullOwner(this);
 
-		else if (costume.isDyeable()) {
+		else if (costume.isDyeable() || costume.getType() != CostumeType.HAND) {
 			if (isDyed(costume))
 				item.dyeColor(getColor(costume));
 
