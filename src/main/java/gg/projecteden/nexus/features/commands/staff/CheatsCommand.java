@@ -20,7 +20,6 @@ import gg.projecteden.nexus.models.godmode.GodmodeService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.IOUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -28,7 +27,6 @@ import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
 import org.bukkit.GameMode;
-import org.bukkit.World.Environment;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -96,10 +94,8 @@ public class CheatsCommand extends CustomCommand implements Listener {
 		if (player.hasPermission("essentials.gamemode.creative"))
 			GamemodeCommand.setGameMode(player, GameMode.CREATIVE);
 
-		if (!player.getWorld().getEnvironment().equals(Environment.THE_END)) {
-			PlayerUtils.setAllowFlight(player, true, CheatsCommand.class);
-			PlayerUtils.setFlying(player, true, CheatsCommand.class);
-		}
+		if (player.hasPermission("essentials.fly"))
+			FlyCommand.on(player);
 
 		if (player.hasPermission("pv.use"))
 			Vanish.vanish(player);

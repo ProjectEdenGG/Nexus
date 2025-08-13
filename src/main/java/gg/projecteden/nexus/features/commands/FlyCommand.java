@@ -30,6 +30,7 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -100,13 +101,12 @@ public class FlyCommand extends CustomCommand implements Listener {
 		player.setFallDistance(0);
 		PlayerUtils.setAllowFlight(player, false, FlyCommand.class);
 		PlayerUtils.setFlying(player, false, FlyCommand.class);
+		updateModeUser(player);
+
 		IOUtils.fileAppend("cheats", Nickname.of(player) + " disabled fly at " + StringUtils.xyzw(player.getLocation()));
 	}
 
-	public static void on(Player player) {
-		player.setFallDistance(0);
-		PlayerUtils.setAllowFlight(player, true, FlyCommand.class);
-
+	public static void updateModeUser(Player player) {
 		var service = new ModeUserService();
 		var user = service.get(player);
 		var worldGroup = WorldGroup.of(player);
@@ -114,8 +114,22 @@ public class FlyCommand extends CustomCommand implements Listener {
 			user.setFlightMode(worldGroup);
 			service.save(user);
 		}
+	}
+
+	public static void on(Player player) {
+		player.setFallDistance(0);
+		PlayerUtils.setAllowFlight(player, true, FlyCommand.class);
+		updateModeUser(player);
 
 		IOUtils.fileAppend("cheats", Nickname.of(player) + " enabled fly at " + StringUtils.xyzw(player.getLocation()));
+	}
+
+	@EventHandler
+	public void on(PlayerChangedWorldEvent event) {
+		Player player = event.getPlayer();
+
+		if (!player.hasPermission("essentials.fly"))
+			FlyCommand.off(player);
 	}
 
 	@EventHandler
