@@ -34,12 +34,13 @@ public class Pugmas25BalloonManager {
 
 	@Getter
 	private static final Map<String, String> userPlacementRegions = new HashMap<>();
+	private static final long REFRESH_INTERVAL = TickTime.MINUTE.x(1);
 
 	public Pugmas25BalloonManager() {
 		new Pugmas25BalloonEditor();
 
 		// TODO: SOME SORT OF ANIMATION/PARTICLES?
-		Tasks.repeat(TickTime.SECOND.x(2), TickTime.MINUTE, () -> {
+		Tasks.repeat(TickTime.SECOND.x(2), REFRESH_INTERVAL, () -> {
 			List<ProtectedRegion> regions = new ArrayList<>(getPlacementRegions());
 			Collections.shuffle(regions);
 			for (ProtectedRegion region : regions) {

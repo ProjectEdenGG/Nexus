@@ -21,6 +21,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Distri
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Geyser;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Intro;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Train;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -130,7 +131,7 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 	@Permission(Group.ADMIN)
 	void district() {
 		Pugmas25District district = Pugmas25Districts.of(player());
-		send(PREFIX + "Area Designation: &e" + district.getName());
+		send(PREFIX + "Area: &e" + district.getName());
 	}
 
 	@Path("advent")
@@ -360,7 +361,7 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 			if (Nexus.isMaintenanceQueued())
 				error("Server maintenance is queued, try again later");
 
-			if (!PlayerUtils.hasRoomFor(player(), Pugmas25BlockReplaceBrushMenu.getBrushItem().build()))
+			if (!PlayerUtils.hasRoomFor(player(), Pugmas25QuestItem.BALLOON_PAINTBRUSH.get()))
 				error("Not enough room in your inventory to do this");
 
 			Pugmas25BalloonEditor.editBalloon(nerd());

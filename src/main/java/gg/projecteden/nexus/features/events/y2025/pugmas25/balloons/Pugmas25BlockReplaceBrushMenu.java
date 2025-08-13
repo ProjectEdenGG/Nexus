@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.balloons;
 
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
@@ -22,24 +23,6 @@ import java.util.List;
 @Rows(4)
 @Title("Select a color")
 public class Pugmas25BlockReplaceBrushMenu extends InventoryProvider {
-
-	public static final ItemModelType BRUSH_ITEM_MODEL = ItemModelType.EVENT_PAINTBRUSH;
-	private static final ItemBuilder BRUSH = new ItemBuilder(BRUSH_ITEM_MODEL)
-		.name("&eBlock Replacer Brush")
-		.lore("&3Block: " + getColorLabel(Pugmas25BalloonEditor.defaultBrushColor))
-		.lore("")
-		.lore("&3How to use:")
-		.lore("&eLClick &3a block to change the brush color")
-		.lore("&eRClick &3wool to replace it")
-		.dyeColor(Pugmas25BalloonEditor.defaultBrushColor)
-		.undroppable().unframeable().unplaceable().unstorable().untrashable().untradeable()
-		.itemFlags(ItemBuilder.ItemFlags.HIDE_ALL)
-		.updateDecorationLore(false)
-		.glow();
-
-	public static ItemBuilder getBrushItem() {
-		return BRUSH.clone();
-	}
 
 	private SlotPos slotPos = SlotPos.of(1, 0);
 	private final ItemStack tool;
@@ -71,7 +54,7 @@ public class Pugmas25BlockReplaceBrushMenu extends InventoryProvider {
 		if (tool == null)
 			return;
 
-		ItemBuilder resultBuilder = getBrushItem().dyeColor(brushColor);
+		ItemBuilder resultBuilder = Pugmas25QuestItem.BALLOON_PAINTBRUSH.getItemBuilder().dyeColor(brushColor);
 
 		// fix color line
 		List<String> newLore = new ArrayList<>();
@@ -116,7 +99,7 @@ public class Pugmas25BlockReplaceBrushMenu extends InventoryProvider {
 		if (Nullables.isNullOrAir(item))
 			return false;
 
-		return ItemModelType.of(item) == BRUSH_ITEM_MODEL;
+		return ItemModelType.of(item) == Pugmas25QuestItem.BALLOON_PAINTBRUSH.getItemModel();
 	}
 
 	private static final List<Material> colorOrder = List.of(Material.RED_WOOL, Material.ORANGE_WOOL, Material.YELLOW_WOOL,
