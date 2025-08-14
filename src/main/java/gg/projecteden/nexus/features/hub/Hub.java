@@ -50,7 +50,7 @@ public class Hub extends Feature implements Listener {
 
 	public static boolean isNotAtHub(Player player) {
 		if (!player.getWorld().equals(getWorld()))
-			return false;
+			return true;
 
 		return !worldguard().isInRegion(player.getLocation(), baseRegion);
 	}
