@@ -262,7 +262,4 @@ public enum Rank implements IsColoredAndNamed {
 		return next;
 	}
 
-	public int enabledOrdinal() {
-		return Arrays.stream(Rank.values()).toList().indexOf(this);
-	}
 }
