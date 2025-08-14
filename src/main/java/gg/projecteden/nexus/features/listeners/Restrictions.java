@@ -123,6 +123,9 @@ public class Restrictions implements Listener {
 	}
 
 	private boolean preventSpawn(Entity entity) {
+		if (CitizensUtils.isNPC(entity))
+			return false;
+
 		World world = entity.getWorld();
 
 		// Prevent dragons in all worlds except end
