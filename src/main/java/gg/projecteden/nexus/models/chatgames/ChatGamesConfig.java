@@ -29,6 +29,7 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -359,65 +360,67 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 			if (message.equalsIgnoreCase(getAnswer()))
 				return true;
 
-			for (String triviaAnswer : answers) {
+			for (String triviaAnswer : answers)
 				if (triviaAnswer.equalsIgnoreCase(message))
 					return true;
-			}
 
 			return false;
 		}
+
+		private static final float NUMERIC_THRESHOLD = .2f;
+		private static final float LEVENSHTEIN_THRESHOLD = .6f;
 
 		public boolean isAnswerSimilar(String message) {
 			if (message == null)
 				return false;
 
-			String _answer = getAnswer();
-
-			switch (gameType) {
-				case MATH -> {
-					Float userAnswer = null;
-					try {
-						userAnswer = Float.parseFloat(message);
-					} catch (Exception ignored) {
-					}
-
-					if (userAnswer == null)
-						return false;
-
-					final float gameAnswer = Float.parseFloat(_answer);
-
-					float min = gameAnswer - (gameAnswer * .20f);
-					float max = gameAnswer + (gameAnswer * .20f);
-
-					if (max < min) {
-						float temp = min;
-						min = max;
-						max = temp;
-					}
-
-					final float similarMin = min;
-					final float similarMax = max;
-
-					if (userAnswer >= similarMin && userAnswer <= similarMax)
+			if (gameType == ChatGameType.MATH || (Utils.isDouble(message) && currentGame.hasNumericAnswer())) {
+				return isNumberWithinPercentageThreshold(message, NUMERIC_THRESHOLD);
+			} else {
+				for (String answer : answers) {
+					float similarity = StringMetrics.levenshtein().compare(answer, message);
+					if (similarity >= LEVENSHTEIN_THRESHOLD)
 						return true;
 				}
+			}
 
-				default -> {
-					double similarityThreshold = .6f;
+			return false;
+		}
 
-					if (answers.size() == 1) {
-						float similarity = StringMetrics.levenshtein().compare(_answer, message);
-						return similarity >= similarityThreshold;
-					}
+		private boolean hasNumericAnswer() {
+			for (var answer : answers)
+				if (Utils.isDouble(answer))
+					return true;
 
-					for (String __answer : answers) {
-						float similarity = StringMetrics.levenshtein().compare(__answer, message);
+			return false;
+		}
 
-						if (similarity >= similarityThreshold)
-							return true;
-					}
+		public boolean isNumberWithinPercentageThreshold(String message, float threshold) {
+			Float userAnswer = null;
+			try {
+				userAnswer = Float.parseFloat(message);
+			} catch (Exception ignored) {}
 
+			if (userAnswer == null)
+				return false;
+
+			for (var answer : answers) {
+				if (!Utils.isDouble(answer))
+					continue;
+
+				final float gameAnswer = Float.parseFloat(answer);
+
+				float min = gameAnswer - (gameAnswer * threshold);
+				float max = gameAnswer + (gameAnswer * threshold);
+
+				if (max < min) {
+					float temp = min;
+					min = max;
+					max = temp;
 				}
+
+				if (userAnswer >= min && userAnswer <= max)
+					return true;
 			}
 
 			return false;
