@@ -68,7 +68,7 @@ public class HomeOwner implements PlayerOwnedObject {
 		Rank rank = getRank();
 		if (rank.isAdmin())
 			return 999;
-		return rank.enabledOrdinal() + 3 + extraHomes;
+		return rank.ordinal() + 3 + extraHomes;
 	}
 
 	public void addExtraHomes(int extraHomes) {
