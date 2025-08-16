@@ -420,5 +420,11 @@ public class WorldGuardFlags implements Listener {
 		}
 	}
 
+	@EventHandler
+	public void on(BlockFadeEvent event) {
+		if (WorldGuardFlagUtils.query(event.getBlock().getLocation(), CustomFlags.BLOCK_FADE) == State.DENY)
+			event.setCancelled(true);
+	}
+
 }
 
