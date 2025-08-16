@@ -642,6 +642,12 @@ public enum DecorationType {
 	@TypeConfig(money = 75, tokens = 7, theme = Theme.OUTDOORS, tabs = Tab.STUMPS)
 	STUMP_CHERRY_ROOTS(new Stump(false, "Rooted Cherry Stump", ItemModelType.STUMP_CHERRY_ROOTS)),
 
+	@TypeConfig(money = 60, tokens = 6, theme = Theme.OUTDOORS, tabs = Tab.STUMPS)
+	STUMP_PALE_OAK(new Stump(false, "Pale Oak Stump", ItemModelType.STUMP_PALE_OAK)),
+
+	@TypeConfig(money = 75, tokens = 7, theme = Theme.OUTDOORS, tabs = Tab.STUMPS)
+	STUMP_PALE_OAK_ROOTS(new Stump(false, "Rooted Pale Oak Stump", ItemModelType.STUMP_PALE_OAK_ROOTS)),
+
 	// Misc
 	@TypeConfig(money = 115, tokens = 11, theme = Theme.OUTDOORS)
 	BED_SLEEPING_BAG(new DyeableFloorThing(false, "Sleeping Bag", ItemModelType.BED_SLEEPING_BAG, ColorableType.DYE)),
