@@ -143,7 +143,10 @@ public class EasterEggs implements Listener {
 		}
 
 		public void consume(ItemStack itemStack, Player clicker) {
-			if (!food.contains(itemStack.getType()))
+			ItemStack foodItem = itemStack.clone();
+			Material foodItemType = foodItem.getType();
+
+			if (!food.contains(foodItemType))
 				return;
 
 			Player clicked = PlayerUtils.getPlayer(uuid).getPlayer();
@@ -153,8 +156,7 @@ public class EasterEggs implements Listener {
 			if (!new CooldownService().check(uuid, "Staff_EasterEgg_" + clicked.getName(), TickTime.SECOND.x(2)))
 				return;
 
-			ItemStack foodItem = itemStack.clone();
-			boolean isReject = rejectFood.contains(foodItem.getType());
+			boolean isReject = rejectFood.contains(foodItemType);
 			if (consumeFood) {
 				itemStack.subtract();
 				if (!isReject)
@@ -186,7 +188,6 @@ public class EasterEggs implements Listener {
 					return;
 				}
 
-
 				if (burpSound != null) {
 					burpSound.clone().location(clicked.getLocation()).play();
 					if (burpEffect != null)
@@ -206,8 +207,8 @@ public class EasterEggs implements Listener {
 		),
 
 		WAKKA(new StaffEasterEggBuilder("e9e07315-d32c-4df7-bd05-acfe51108234")
-				.food(Material.REDSTONE)
-				.burpSound(new SoundBuilder(CustomSound.BURP).volume(0.5))
+			.food(Material.REDSTONE)
+			.burpSound(new SoundBuilder(CustomSound.BURP).volume(0.5))
 		),
 
 		BLAST(new StaffEasterEggBuilder("a4274d94-10f2-4663-af3b-a842c7ec729c")
@@ -226,6 +227,20 @@ public class EasterEggs implements Listener {
 			})
 		),
 
+		BRI(new StaffEasterEggBuilder("77966ca3-ac85-44b2-bcb0-b7c5f9342e86")
+			.food(Material.SWEET_BERRIES)
+			.eatSound(Sound.ENTITY_AXOLOTL_IDLE_AIR)
+			.eatMaxCount(2)
+			.burpSound(Sound.ENTITY_AXOLOTL_IDLE_WATER)
+			.burpEffect(((player, itemStack) -> {
+				new ParticleBuilder(Particle.GLOW)
+					.count(25)
+					.offset(.35, .5, .35)
+					.location(player.getLocation().add(0, 1, 0))
+					.spawn();
+			}))
+		),
+
 		// Operators
 
 		CYN(new StaffEasterEggBuilder("1d70383f-21ba-4b8b-a0b4-6c327fbdade1")
@@ -234,6 +249,17 @@ public class EasterEggs implements Listener {
 		),
 
 		// Moderators
+
+		VALK(new StaffEasterEggBuilder("d1729990-0ad4-4db8-8a95-779128e9fa1a")
+			.food(Material.PINK_PETALS)
+			.eatSound(Sound.ENTITY_ARMADILLO_ROLL)
+			.eatMaxCount(2)
+			.burpSound(Sound.ENTITY_SHULKER_AMBIENT)
+		),
+
+		GHAST(new StaffEasterEggBuilder("e938d0d1-3b7e-4b76-bf11-75d67ae0e5d6")
+			.food(MaterialTag.MUSHROOMS.getValues())
+		),
 
 		// Architects
 
@@ -244,29 +270,17 @@ public class EasterEggs implements Listener {
 				double health = player.getHealth();
 				switch (itemStack.getType()) {
 					case WITHER_ROSE -> {
+						PlayerUtils.send(player, "Wither Rose");
 						player.damage(1);
 						Tasks.wait(TickTime.TICK.x(5), () -> player.setHealth(health));
 					}
 					case TORCHFLOWER -> {
+						PlayerUtils.send(player, "Torchflower");
 						player.setFireTicks((int) TickTime.SECOND.x(2));
 						Tasks.wait(TickTime.SECOND.x(2.5), () -> player.setHealth(health));
 					}
 				}
 			})
-		),
-
-		BRI(new StaffEasterEggBuilder("77966ca3-ac85-44b2-bcb0-b7c5f9342e86")
-			.food(Material.SWEET_BERRIES)
-			.eatSound(Sound.ENTITY_AXOLOTL_IDLE_AIR)
-			.eatSoundCount(2)
-			.burpSound(Sound.ENTITY_AXOLOTL_IDLE_WATER)
-			.burpEffect(((player, itemStack) -> {
-				new ParticleBuilder(Particle.GLOW)
-					.count(25)
-					.offset(.35, .5, .35)
-					.location(player.getLocation().add(0, 1, 0))
-					.spawn();
-			}))
 		),
 
 		// Builders

@@ -21,6 +21,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -146,6 +147,8 @@ public class MaterialTag implements Tag<Material> {
 		Material.CACTUS, Material.SEA_PICKLE, Material.CHORUS_PLANT, Material.CHORUS_FLOWER, Material.WEEPING_VINES, Material.TWISTING_VINES, Material.NETHER_SPROUTS, Material.WARPED_ROOTS, Material.CRIMSON_ROOTS,
 		Material.WARPED_FUNGUS, Material.CRIMSON_FUNGUS, Material.VINE)
 		.append(ALL_CORALS, FLOWERS);
+
+	public static final MaterialTag MUSHROOMS = new MaterialTag(Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.CRIMSON_FUNGUS, Material.WARPED_FUNGUS);
 
 	public static final MaterialTag TULIPS = new MaterialTag("_TULIP", MatchMode.SUFFIX).exclude("POTTED", MatchMode.CONTAINS);
 
