@@ -12,7 +12,6 @@ public enum CustomArmorType {
 	WARDEN("skins/armor/warden"),
 	BERSERKER("skins/armor/berserker"),
 	BROWN_BERSERK("skins/armor/brown_berserk"),
-	COPPER("skins/armor/copper"),
 	COBALT("skins/armor/cobalt"),
 	DRUID("skins/armor/druid"),
 	HELLFIRE("skins/armor/hellfire"),
