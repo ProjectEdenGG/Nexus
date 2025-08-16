@@ -4,7 +4,9 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.chat.events.ChatEvent;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,6 +31,7 @@ public class Alerts implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private List<Highlight> highlights = new ArrayList<>();
+	private List<PublicChannel> channels = new ArrayList<>();
 
 	public boolean add(String highlight) {
 		return add(highlight, true, false);
@@ -78,19 +81,23 @@ public class Alerts implements PlayerOwnedObject {
 			Jingle.PING.play(getOnlinePlayer());
 	}
 
-	public void tryAlerts(String message) {
-		for (Highlight highlight : getHighlights()) {
-			if (highlight.isNegated()) {
-				message = highlight.removeNegate(message);
+	public void tryAlerts(ChatEvent event) {
+		if (event.getChannel() instanceof PublicChannel publicChannel)
+			if (channels.contains(publicChannel)) {
+				playSound();
+				return;
 			}
-		}
 
-		for (Highlight highlight : getHighlights()) {
+		var message = event.getMessage();
+		for (Highlight highlight : getHighlights())
+			if (highlight.isNegated())
+				message = highlight.removeNegate(message);
+
+		for (Highlight highlight : getHighlights())
 			if (highlight.test(message)) {
 				playSound();
 				break;
 			}
-		}
 	}
 
 	@Data

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.chat.alerts;
 
+import gg.projecteden.nexus.features.chat.events.ChatEvent;
 import gg.projecteden.nexus.features.chat.events.DiscordChatEvent;
 import gg.projecteden.nexus.features.chat.events.MinecraftChatEvent;
 import gg.projecteden.nexus.models.alerts.AlertsService;
@@ -32,7 +33,7 @@ public class AlertsListener implements Listener {
 		if (event.getChannel() instanceof PrivateChannel) {
 			everyoneElse.forEach(Chatter::playSound);
 		} else
-			tryAlerts(everyoneElse, event.getMessage());
+			tryAlerts(everyoneElse, event);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -40,12 +41,12 @@ public class AlertsListener implements Listener {
 		Set<Chatter> everyoneElse = event.getRecipients();
 		if (event.getChatter() != null)
 			everyoneElse = getEveryoneElse(event.getChatter(), event.getRecipients());
-		tryAlerts(everyoneElse, event.getMessage());
+		tryAlerts(everyoneElse, event);
 	}
 
-	public void tryAlerts(Set<Chatter> recipients, String message) {
+	public void tryAlerts(Set<Chatter> recipients, ChatEvent event) {
 		AlertsService service = new AlertsService();
-		recipients.forEach(chatter -> service.get(chatter.getUuid()).tryAlerts(message));
+		recipients.forEach(chatter -> service.get(chatter.getUuid()).tryAlerts(event));
 	}
 
 	@EventHandler
