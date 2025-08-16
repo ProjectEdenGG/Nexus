@@ -135,6 +135,8 @@ public class WorldGuardFlagUtils {
 		 * Sets how long (sub)title messages should fade in and out in ticks
 		 */
 		TITLE_FADE(registerFlag(new IntegerFlag("nexus-title-fade"))),
+		DOUBLE_JUMP(registerFlag(new StateFlag("double-jump", false))),
+		DOUBLE_JUMP_COOLDOWN(registerFlag(new IntegerFlag("double-jump-cooldown"))),
 		;
 
 		public final Flag<?> flag;
@@ -582,7 +584,7 @@ public class WorldGuardFlagUtils {
 	 */
 	public static <T> T queryValue(@NotNull org.bukkit.Location location, @NotNull WorldGuardFlagUtils.CustomFlags flag) {
 		Validate.notNull(flag, "Flag cannot be null");
-		return queryValue(location, (Flag<T>) flag.get());
+		return queryValue(location, flag.get());
 	}
 
 	/**
