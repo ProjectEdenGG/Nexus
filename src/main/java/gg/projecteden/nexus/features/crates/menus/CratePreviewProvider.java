@@ -164,12 +164,13 @@ public class CratePreviewProvider extends InventoryProvider {
 							return;
 						}
 						CrateHandler.openCrate(type, clickedCrate, viewer, 1, false);
-					} catch (CrateOpeningException ex) {
-						if (ex.getMessage() != null)
-							PlayerUtils.send(viewer, Crates.PREFIX + ex.getMessage());
+					} catch (Exception ex) {
+						MenuUtils.handleException(viewer, Crates.PREFIX, ex);
 						CrateHandler.reset(clickedCrate);
-						voter.givePoints(2);
-						voterService.save(voter);
+						if (ex instanceof CrateOpeningException) {
+							voter.givePoints(2);
+							voterService.save(voter);
+						}
 					}
 				};
 		}
@@ -193,12 +194,13 @@ public class CratePreviewProvider extends InventoryProvider {
 							return;
 						}
 						CrateHandler.openCrate(type, clickedCrate, viewer, 1, false);
-					} catch (CrateOpeningException ex) {
-						if (ex.getMessage() != null)
-							PlayerUtils.send(viewer, Crates.PREFIX + ex.getMessage());
+					} catch (Exception ex) {
+						MenuUtils.handleException(viewer, Crates.PREFIX, ex);
 						CrateHandler.reset(clickedCrate);
-						perkOwner.giveTokens(50);
-						perkService.save(perkOwner);
+						if (ex instanceof CrateOpeningException) {
+							perkOwner.giveTokens(50);
+							perkService.save(perkOwner);
+						}
 					}
 				};
 		}
@@ -216,15 +218,21 @@ public class CratePreviewProvider extends InventoryProvider {
 				if (keys > 1 && e.isShiftClick())
 					ConfirmationMenu.builder()
 						.title("Open " + keys + " keys?")
-						.onConfirm(e2 -> CrateHandler.openCrate(type, clickedCrate, viewer, keys, true))
+						.onConfirm(e2 -> {
+							try {
+								CrateHandler.openCrate(type, clickedCrate, viewer, keys, true);
+							} catch (Exception ex) {
+								MenuUtils.handleException(viewer, Crates.PREFIX, ex);
+								CrateHandler.reset(clickedCrate);
+							}
+						})
 						.open(viewer);
 				else {
 					CrateHandler.openCrate(type, clickedCrate, viewer, 1, true);
 					close();
 				}
-			} catch (CrateOpeningException ex) {
-				if (ex.getMessage() != null)
-					PlayerUtils.send(viewer, Crates.PREFIX + ex.getMessage());
+			} catch (Exception ex) {
+				MenuUtils.handleException(viewer, Crates.PREFIX, ex);
 				CrateHandler.reset(clickedCrate);
 			}
 		};

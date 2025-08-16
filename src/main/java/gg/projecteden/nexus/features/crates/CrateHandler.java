@@ -6,6 +6,7 @@ import gg.projecteden.crates.api.models.CrateAnimation;
 import gg.projecteden.crates.api.models.CrateAnimationsAPI;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkCategory;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CrateOpeningException;
@@ -90,10 +91,9 @@ public class  CrateHandler {
 						item2.customName(new JsonBuilder(displayName).build());
 					};
 					return location.getWorld().dropItem(location, itemstack, itemConsumer::accept);
-				} catch (CrateOpeningException ex) {
+				} catch (Exception ex) {
+					MenuUtils.handleException(player, Crates.PREFIX, ex);
 					CrateHandler.reset(entity);
-					if (ex.getMessage() != null)
-						PlayerUtils.send(player, Crates.PREFIX + ex.getMessage());
 					return null;
 				}
 			};
@@ -120,10 +120,9 @@ public class  CrateHandler {
 				if (amount > 1)
 					recap.open(player);
 			});
-		} catch (Throwable ex) {
-			ex.printStackTrace();
-			animation.stop();
-			animation.reset();
+		} catch (Exception ex) {
+			MenuUtils.handleException(player, Crates.PREFIX, ex);
+			CrateHandler.reset(entity);
 		}
 	}
 
