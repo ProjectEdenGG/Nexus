@@ -197,9 +197,7 @@ public class EasterEggs implements Listener {
 
 	}
 
-	/*
-	 	TODO: Filid, MaxAlex, Steve, Vir
-	 */
+	// TODO: MaxAlex
 	@AllArgsConstructor
 	public enum StaffEasterEgg {
 		// Admins
@@ -230,17 +228,6 @@ public class EasterEggs implements Listener {
 
 		// Operators
 
-		RAVEN(new StaffEasterEggBuilder("fce1fe67-9514-4117-bcf6-d0c49ca0ba41")
-			.food(MaterialTag.SEEDS.getValues())
-			.eatSound(Sound.ENTITY_PARROT_EAT)
-			.burpSound(Sound.ENTITY_PARROT_AMBIENT)
-		),
-
-		JOSH(new StaffEasterEggBuilder("5c3ddda9-51e1-4f9a-8233-e08cf0b26f11")
-			.food(Material.MYCELIUM)
-			.burpSound(Sound.ENTITY_COW_AMBIENT)
-		),
-
 		CYN(new StaffEasterEggBuilder("1d70383f-21ba-4b8b-a0b4-6c327fbdade1")
 			.food(Material.GOLD_NUGGET)
 			.burpSound(Sound.ENTITY_PIGLIN_ADMIRING_ITEM)
@@ -248,42 +235,7 @@ public class EasterEggs implements Listener {
 
 		// Moderators
 
-		VIR(new StaffEasterEggBuilder("545a4c9c-2499-43d6-8310-46586f543322")
-			.food(Material.GLOWSTONE_DUST)
-			.eatSound(Sound.BLOCK_SAND_BREAK)
-			.burpSound(Sound.ENTITY_ALLAY_ITEM_THROWN)
-		),
-
-		KNACK(new StaffEasterEggBuilder("32fc75e3-a278-43c4-99a7-90af03846dad")
-			.food(Material.EGG)
-			.burpSound(Sound.ENTITY_CHICKEN_AMBIENT)
-		),
-
-		MARSHY(new StaffEasterEggBuilder("a7fa3c9c-d3cb-494e-bff6-8b6d416b18e3")
-			.food(Material.STONE_BRICKS)
-			.burpSound(Sound.ENTITY_FIREWORK_ROCKET_LAUNCH)
-			.burpEffect((player, itemStack) -> {
-				player.getWorld().spawn(player.getLocation(), Firework.class, firework -> {
-					FireworkMeta meta = firework.getFireworkMeta();
-					meta.addEffect(FireworkEffect.builder()
-						.with(FireworkEffect.Type.BALL_LARGE)
-						.withColor(Color.fromRGB(136, 0, 255))
-						.withFade(Color.BLUE)
-						.flicker(true)
-						.build());
-
-					firework.setFireworkMeta(meta);
-				});
-			})
-		),
-
 		// Architects
-
-		THUNDER(new StaffEasterEggBuilder("6dbb7b77-a68e-448d-a5bc-fb531a7fe22d")
-			.food(Material.LIGHTNING_ROD)
-			.eatSound(new SoundBuilder(Sound.BLOCK_COPPER_STEP).volume(1))
-			.burpSound(new SoundBuilder(Sound.ENTITY_LIGHTNING_BOLT_THUNDER).volume(0.5))
-		),
 
 		POWER(new StaffEasterEggBuilder("79f66fc9-a975-4043-8b6d-b4823182de62")
 			.food(MaterialTag.FLOWERS.getValues())
