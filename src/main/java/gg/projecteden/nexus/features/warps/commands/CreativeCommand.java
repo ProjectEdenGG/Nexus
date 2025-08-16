@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.warps.WarpType;
@@ -11,6 +12,7 @@ import lombok.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
+@Redirect(from = "/plot home", to = "/creative home")
 public class CreativeCommand extends CustomCommand {
 
 	public CreativeCommand(@NonNull CommandEvent event) {
