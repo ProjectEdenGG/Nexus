@@ -15,6 +15,8 @@ public enum Pugmas25NPC implements InteractableNPC {
 	TICKET_MASTER("Ticket Master", 5587),
 	TICKET_MASTER_HUB("Ticket Master", 5588),
 	POWER("Power", 5589),
+	TINKERER("Tinkerer", 5597),
+	GNOME("Gnome", 5598)
 	// TODO
 	;
 

@@ -23,7 +23,7 @@ public enum CommonQuestItem implements QuestItem {
 
 	@Override
 	public ItemBuilder getItemBuilder() {
-		ItemBuilder result = itemBuilder.clone().itemFlags(ItemFlags.HIDE_ALL);
+		ItemBuilder result = itemBuilder.itemFlags(ItemFlags.HIDE_ALL);
 
 		if (this == COIN_POUCH)
 			result.nbt(nbtItem -> nbtItem.setInteger(COIN_POUCH_NBT_KEY, 0));
