@@ -33,6 +33,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 
+// TODO RELEASE: ADD AN AFK TIMER TO SOMEONE CAN'T HOG EDITOR
 public class Pugmas25BalloonEditor implements Listener {
 	private static final Pugmas25 PUGMAS = Pugmas25.get();
 	private static final Location WARP = PUGMAS.location(-614.5, 156.0, -3216.5, 0, 0);

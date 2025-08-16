@@ -41,7 +41,7 @@ public class Pugmas25Waystones implements Listener {
 		if (Nullables.isNullOrAir(item))
 			return;
 
-		if (!Pugmas25QuestItem.MAGIC_MIRROR.fuzzyMatch(item))
+		if (!Pugmas25QuestItem.MAGIC_MIRROR.fuzzyMatch(item) || !Pugmas25QuestItem.PDA.fuzzyMatch(item))
 			return;
 
 		new Pugmas25WaystoneMenu().open(event.getPlayer());
