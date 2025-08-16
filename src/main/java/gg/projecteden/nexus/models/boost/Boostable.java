@@ -45,7 +45,7 @@ public enum Boostable {
 	KILLER_MONEY(Material.GOLD_INGOT),
 	@PossiblePersonal
 	MOB_HEADS(Material.ZOMBIE_HEAD),
-	@Disabled
+	@PossiblePersonal
 	MYSTERY_CRATE_KEY(Material.TRIPWIRE_HOOK),
 	@Disabled
 	HALLOWEEN_CANDY(ItemModelType.FOOD_CANDY_CORN),
