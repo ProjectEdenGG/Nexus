@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff.operator;
 
-import com.onarandombox.multiverseinventories.share.Sharables;
-import com.onarandombox.multiverseinventories.utils.configuration.json.JsonConfiguration;
+import org.mvplugins.multiverse.inventories.share.Sharables;
+import org.mvplugins.multiverse.inventories.utils.configuration.json.JsonConfiguration;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;

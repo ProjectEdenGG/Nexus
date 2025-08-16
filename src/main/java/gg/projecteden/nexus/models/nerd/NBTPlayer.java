@@ -159,17 +159,6 @@ public class NBTPlayer implements PlayerOwnedObject {
 		return new ItemStack(Material.AIR);
 	}
 
-	@Deprecated
-	// Do not use unless absolutely necessary. Will not handle inventories correctly.
-	public void setLocation(Location location) {
-		setPosition(location);
-		setRotation(location);
-		setWorld(location);
-
-		new Timer("    Update MVINV last world", () ->
-			Nexus.getMultiverseInventories().getData().updateLastWorld(getName(), location.getWorld().getName()));
-	}
-
 	private void setPosition(Location location) {
 		final NBTList<Double> pos = getNbtFile().getDoubleList("Pos");
 		pos.set(0, location.getX());

@@ -521,7 +521,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 		world.getChunkAt(0, 0).setForceLoaded(true);
 
 		Warp warp = WarpType.NORMAL.get(worldName);
-		Nexus.getMultiverseCore().getMVWorldManager().getMVWorld(worldName).setSpawnLocation(warp.getLocation());
+		Nexus.getMultiverseCore().getWorldManager().getWorld(worldName).peek(mvWorld -> mvWorld.setSpawnLocation(warp.getLocation()));
 		new ResourceMarketLoggerService().deleteAll();
 
 		PlayerUtils.runCommandAsConsole("plugman reload holograms");
