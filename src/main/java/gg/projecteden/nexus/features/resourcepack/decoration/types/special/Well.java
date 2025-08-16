@@ -7,8 +7,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationIn
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
@@ -18,6 +18,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionType;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class Well extends DyeableFloorThing {
 
@@ -27,6 +30,11 @@ public class Well extends DyeableFloorThing {
 
 	static {
 		Nexus.registerListener(new WellListener());
+	}
+
+	@Override
+	public boolean shouldInteract(ItemStack tool) {
+		return tool.getType() == Material.BUCKET || tool.getType() == Material.GLASS_BOTTLE;
 	}
 
 	public static class WellListener implements Listener {
@@ -44,17 +52,31 @@ public class Well extends DyeableFloorThing {
 
 			Player player = event.getPlayer();
 			ItemStack tool = ItemUtils.getTool(player);
-			if (Nullables.isNullOrAir(tool) || tool.getType() != Material.BUCKET)
+			if (isNullOrAir(tool))
 				return;
 
-			event.setCancelled(true);
+			switch (tool.getType()) {
+				case BUCKET -> {
+					event.setCancelled(true);
 
-			DecorationLang.debug(player, "filling empty container");
+					DecorationLang.debug(player, "filling empty bucket");
 
-			ItemUtils.subtract(player, tool);
-			new SoundBuilder(Sound.ITEM_BUCKET_FILL).location(event.getClickedBlock()).play();
+					ItemUtils.subtract(player, tool);
+					new SoundBuilder(Sound.ITEM_BUCKET_FILL).location(event.getClickedBlock()).play();
 
-			Tasks.wait(2, () -> PlayerUtils.giveItem(player, new ItemStack(Material.WATER_BUCKET)));
+					Tasks.wait(2, () -> PlayerUtils.giveItem(player, new ItemStack(Material.WATER_BUCKET)));
+				}
+				case GLASS_BOTTLE -> {
+					event.setCancelled(true);
+
+					DecorationLang.debug(player, "filling empty bottle");
+
+					ItemUtils.subtract(player, tool);
+					new SoundBuilder(Sound.ITEM_BOTTLE_FILL).location(event.getClickedBlock()).play();
+
+					Tasks.wait(2, () -> PlayerUtils.giveItem(player, new ItemBuilder(Material.POTION).potionType(PotionType.WATER).build()));
+				}
+			}
 		}
 	}
 }

@@ -198,8 +198,9 @@ public class DecorationInteractData {
 		if (new ItemBuilder(tool).is(ItemSetting.INTERACTABLE))
 			return true;
 
-		if (tool.getType() == Material.BUCKET)
-			return true;
+		if (decoration != null && decoration.getConfig() != null)
+			if (decoration.getConfig().shouldInteract(tool))
+				return true;
 
 		return false;
 	}
