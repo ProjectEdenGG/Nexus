@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
+import com.sk89q.worldguard.protection.flags.StateFlag.State;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -10,6 +11,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.doublejump.DoubleJumpUser;
 import gg.projecteden.nexus.models.doublejump.DoubleJumpUserService;
 import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
@@ -18,7 +20,8 @@ import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
+import gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.HasLocation;
 import lombok.Data;
@@ -59,14 +62,16 @@ public class DoubleJumpCommand extends CustomCommand implements Listener {
 			send(PREFIX + stateText + " &3for &e" + user.getNickname());
 	}
 
-	private static final String DOUBLEJUMP_REGEX = ".*doublejump.*";
-
 	public static boolean isInDoubleJumpRegion(HasLocation location) {
-		return !new WorldGuardUtils(location.getLocation()).getRegionsLikeAt(DOUBLEJUMP_REGEX, location.getLocation()).isEmpty();
+		return WorldGuardFlagUtils.query(location.getLocation(), CustomFlags.DOUBLE_JUMP) == State.ALLOW;
 	}
 
-	private static boolean isDoubleJumpRegion(ProtectedRegion event) {
-		return event.getId().matches(DOUBLEJUMP_REGEX);
+	private static boolean isDoubleJumpRegion(ProtectedRegion region) {
+		return region.getFlag(CustomFlags.DOUBLE_JUMP.get()) == State.ALLOW;
+	}
+
+	private static Integer getDoubleJumpCooldown(HasLocation location) {
+		return WorldGuardFlagUtils.queryValue(location.getLocation(), CustomFlags.DOUBLE_JUMP_COOLDOWN);
 	}
 
 	@EventHandler
@@ -86,6 +91,16 @@ public class DoubleJumpCommand extends CustomCommand implements Listener {
 				event.setCancelled(true);
 
 			return;
+		}
+
+		Integer cooldown = getDoubleJumpCooldown(location);
+		if (cooldown != null && cooldown > 0) {
+			if (!new CooldownService().check(player, "doublejump", cooldown)) {
+				if (player.getGameMode() != GameMode.CREATIVE)
+					event.setCancelled(true);
+
+				return;
+			}
 		}
 
 		PlayerUtils.setAllowFlight(player, false, DoubleJumpCommand.class);
