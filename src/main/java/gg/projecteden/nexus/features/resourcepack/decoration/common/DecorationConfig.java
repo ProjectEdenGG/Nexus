@@ -228,6 +228,10 @@ public class DecorationConfig {
 		return this.getClass().getAnnotation(HasVirtualInventory.class) != null;
 	}
 
+	public boolean shouldInteract(ItemStack tool) {
+		return false;
+	}
+
 	// validation
 
 	boolean isValidPlacement(Block block, BlockFace clickedFace, Player debugger) {
