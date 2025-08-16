@@ -868,6 +868,8 @@ public enum ItemModelType {
 	STUMP_SPRUCE_ROOTS("decoration/furniture/chairs/stumps/stump_spruce_roots"),
 	STUMP_WARPED("decoration/furniture/chairs/stumps/stump_warped"),
 	STUMP_WARPED_ROOTS("decoration/furniture/chairs/stumps/stump_warped_roots"),
+	STUMP_PALE_OAK("decoration/furniture/chairs/stumps/stump_pale_oak"),
+	STUMP_PALE_OAK_ROOTS("decoration/furniture/chairs/stumps/stump_pale_oak_roots"),
 	CUPBOARD_SHORT_BOOKSHELF_DOUBLE("decoration/furniture/cupboard_short_bookshelf_double", true),
 	CUPBOARD_SHORT_BOOKSHELF_SINGLE("decoration/furniture/cupboard_short_bookshelf_single", true),
 	CUPBOARD_SHORT_DOUBLE("decoration/furniture/cupboard_short_double", true),
