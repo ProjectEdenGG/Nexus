@@ -1,12 +1,14 @@
 package gg.projecteden.nexus.features.commands.worldedit;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.equipment.skins.ToolSkin;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.DoubleSlash;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
@@ -37,9 +39,16 @@ public class WandCommand extends CustomCommand {
 	@Description("Get a WorldEdit wand with extended reach")
 	void wand() {
 		var existing = getTool();
-		player().getInventory().setItemInMainHand(getExtendedWand());
+		player().getInventory().setItemInMainHand(nerd().getWorldEditWandSkin().apply(getExtendedWand().clone()));
 		PlayerUtils.giveItem(player(), existing);
 		send("&8(&4&lFAWE&8) &7Left click: select pos #1; Right click: select pos #2");
+	}
+
+	@Path("skin <skin>")
+	@Description("Set your WorldEdit wand's default skin")
+	void skin(ToolSkin skin) {
+		new NerdService().edit(player(), nerd -> nerd.setWorldEditWandSkin(skin));
+		send(PREFIX + "Set your WorldEdit wand's default skin to &e" + camelCase(skin));
 	}
 
 	private static ItemStack getExtendedWand() {
