@@ -14,6 +14,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.alerts.Alerts;
 import gg.projecteden.nexus.models.alerts.Alerts.Highlight;
 import gg.projecteden.nexus.models.alerts.AlertsService;
+import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import org.bukkit.entity.Player;
 
@@ -143,9 +144,25 @@ public class AlertsCommand extends CustomCommand {
 		send(PREFIX + "Cleared your alerts");
 	}
 
-	@Path("sound")
+	@Path("channel <channel> [state]")
+	void channel(PublicChannel channel, Boolean state) {
+		if (state == null)
+			state = !alerts.getChannels().contains(channel);
+
+		if (state) {
+			alerts.getChannels().add(channel);
+			send(PREFIX + "Now always alerting for messages in &e" + channel.getName());
+		} else {
+			alerts.getChannels().remove(channel);
+			send(PREFIX + "No longer always alerting for messages in &e" + channel.getName());
+		}
+
+		service.save(alerts);
+	}
+
+	@Path("test")
 	@Description("Play a test alerts sound")
-	void sound() {
+	void test() {
 		alerts.playSound();
 		send(PREFIX + "Test sound sent");
 	}
