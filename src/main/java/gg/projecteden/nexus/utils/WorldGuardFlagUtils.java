@@ -137,6 +137,7 @@ public class WorldGuardFlagUtils {
 		TITLE_FADE(registerFlag(new IntegerFlag("nexus-title-fade"))),
 		DOUBLE_JUMP(registerFlag(new StateFlag("double-jump", false))),
 		DOUBLE_JUMP_COOLDOWN(registerFlag(new IntegerFlag("double-jump-cooldown"))),
+		BLOCK_FADE(registerFlag(new StateFlag("block-fade", false))),
 		;
 
 		public final Flag<?> flag;
