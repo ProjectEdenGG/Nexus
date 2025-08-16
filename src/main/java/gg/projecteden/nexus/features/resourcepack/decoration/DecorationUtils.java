@@ -1,22 +1,30 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
+import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.ReflectionUtils;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
+import gg.projecteden.nexus.features.equipment.skins.ToolSkin;
+import gg.projecteden.nexus.features.recipes.functionals.DiamondTotemOfUndying;
+import gg.projecteden.nexus.features.recipes.functionals.Glue;
+import gg.projecteden.nexus.features.recipes.functionals.InvisibleItemFrame;
+import gg.projecteden.nexus.features.recipes.functionals.RepairCostDiminisher;
+import gg.projecteden.nexus.features.recipes.functionals.WardCharm;
 import gg.projecteden.nexus.features.resourcepack.CustomContentUtils;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Tab;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Theme;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Backpack;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.titan.models.CustomCreativeItem;
+import gg.projecteden.nexus.features.workbenches.ToolModificationTable;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.MineralChoice;
+import gg.projecteden.nexus.features.workbenches.dyestation.CreativeBrushMenu;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStationMenu;
 import gg.projecteden.nexus.framework.interfaces.Colored;
@@ -32,7 +40,6 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.Getter;
 import lombok.NonNull;
-import net.coreprotect.consumer.Queue;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
@@ -468,8 +475,27 @@ public class DecorationUtils {
 			.map(CustomCreativeItem::new)
 			.toList());
 
-		CustomCreativeItem paintbrush = new CustomCreativeItem(DyeStation.getPaintbrush(), "Decorations: General");
-		items.add(paintbrush);
+		items.add(new CustomCreativeItem(ToolModificationTable.getWorkbench(), "Project Eden"));
+		items.add(new CustomCreativeItem(DyeStation.getWorkbench(), "Project Eden"));
+		items.add(new CustomCreativeItem(DyeStation.getPaintbrush(), "Project Eden"));
+		items.add(new CustomCreativeItem(DyeStation.getMagicDye(), "Project Eden"));
+		items.add(new CustomCreativeItem(DyeStation.getMagicMineral(), "Project Eden"));
+		items.add(new CustomCreativeItem(DyeStation.getMagicStain(), "Project Eden"));
+		items.add(new CustomCreativeItem(DiamondTotemOfUndying.getItem(), "Project Eden"));
+		items.add(new CustomCreativeItem(RepairCostDiminisher.getItem(), "Project Eden"));
+		items.add(new CustomCreativeItem(WardCharm.getItem(), "Project Eden"));
+		items.add(new CustomCreativeItem(Glue.getItemModel().getItem(), "Project Eden"));
+		items.add(new CustomCreativeItem(InvisibleItemFrame.getItem(), "Project Eden"));
+		items.add(new CustomCreativeItem(CreativeBrushMenu.getCreativeBrush(), "Project Eden"));
+		items.add(new CustomCreativeItem(new ItemBuilder(Material.LIGHT), "Project Eden"));
+
+		for (ToolSkin toolSkin : EnumUtils.valuesExcept(ToolSkin.class, ToolSkin.DEFAULT))
+			items.add(new CustomCreativeItem(toolSkin.getTemplate(), "Project Eden"));
+
+		for (DecorationConfig config : DecorationConfig.getALL_DECOR_CONFIGS())
+			if (config instanceof Backpack)
+				items.add(new CustomCreativeItem(config.getItem(), "Project Eden"));
+
 		return items.toArray(CustomCreativeItem[]::new);
 	}
 }

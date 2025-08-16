@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
@@ -62,42 +63,44 @@ public class ShopMenuFunctions {
 		SEARCH;
 
 		public Filter of(String message) {
-			return SEARCH.of(message, product -> SearchProductsProvider.filter(product.getItem(), item -> {
-				String input = message.trim();
-				Material type = item.getType();
+			return SEARCH.of(message, product -> SearchProductsProvider.filter(product.getItem(), item -> matches(item, message)));
+		}
 
-				if (contains(type.name(), input))
+		public boolean matches(ItemStack item, String filter) {
+			String input = filter.trim();
+			Material type = item.getType();
+
+			if (contains(type.name(), input))
+				return true;
+
+			if (contains(LanguageUtils.translate(type), input))
+				return true;
+
+			if (item.getItemMeta().hasDisplayName())
+				if (contains(StringUtils.stripColor(item.getItemMeta().getDisplayName()), input))
 					return true;
 
-				if (contains(LanguageUtils.translate(type), input))
+			for (Enchantment enchantment : item.getEnchantments().keySet())
+				if (contains(enchantment.getKey().getKey(), input))
 					return true;
 
-				if (item.getItemMeta().hasDisplayName())
-					if (contains(StringUtils.stripColor(item.getItemMeta().getDisplayName()), input))
-						return true;
-
-				for (Enchantment enchantment : item.getEnchantments().keySet())
+			if (item.getItemMeta() instanceof EnchantmentStorageMeta meta)
+				for (Enchantment enchantment : meta.getStoredEnchants().keySet())
 					if (contains(enchantment.getKey().getKey(), input))
 						return true;
 
-				if (item.getItemMeta() instanceof EnchantmentStorageMeta meta)
-					for (Enchantment enchantment : meta.getStoredEnchants().keySet())
-						if (contains(enchantment.getKey().getKey(), input))
-							return true;
+			if (item.getItemMeta() instanceof PotionMeta meta) {
+				final PotionType effectType = meta.getBasePotionType();
+				if (effectType != null)
+					if (contains(ItemUtils.getFixedPotionName(effectType), input))
+						return true;
 
-				if (item.getItemMeta() instanceof PotionMeta meta) {
-					final PotionType effectType = meta.getBasePotionType();
-					if (effectType != null)
-						if (contains(ItemUtils.getFixedPotionName(effectType), input))
-							return true;
+				for (PotionEffect effect : meta.getCustomEffects())
+					if (contains(ItemUtils.getFixedPotionName(effect.getType()), input))
+						return true;
+			}
 
-					for (PotionEffect effect : meta.getCustomEffects())
-						if (contains(ItemUtils.getFixedPotionName(effect.getType()), input))
-							return true;
-				}
-
-				return false;
-			}));
+			return false;
 		}
 
 		private boolean contains(String key, String message) {
