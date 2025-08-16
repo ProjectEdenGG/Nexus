@@ -14,6 +14,7 @@ import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.commands.BirthdaysCommand;
 import gg.projecteden.nexus.features.discord.Discord;
+import gg.projecteden.nexus.features.equipment.skins.ToolSkin;
 import gg.projecteden.nexus.features.listeners.Tab;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -90,6 +91,8 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 	private Location teleportOnLogin;
 
 	private Map<WorldGroup, LocalDateTime> lastDeathMap = new HashMap<>();
+
+	private ToolSkin worldEditWandSkin = ToolSkin.DEFAULT;
 
 	@PreLoad
 	void preLoad(DBObject dbObject) {
