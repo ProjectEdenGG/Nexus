@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.Distance;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Location;
 
 import java.util.HashMap;
@@ -32,8 +33,8 @@ public class MeasureCommand extends CustomCommand {
 		if (!map.containsKey(uuid()))
 			error("You have not set your first position yet");
 
-		int distance = (int) Distance.distance(map.get(uuid()), location().toCenterLocation()).getRealDistance();
-		send("&3Distance: &e" + distance + " (" + (distance + 1) + " blocks)");
+		double distance = Distance.distance(map.get(uuid()), location().toCenterLocation()).getRealDistance();
+		send("&3Distance: &e" + StringUtils.getDf().format(distance) + " blocks");
 
 		map.remove(uuid());
 	}
