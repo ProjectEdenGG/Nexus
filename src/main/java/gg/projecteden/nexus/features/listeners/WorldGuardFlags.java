@@ -39,6 +39,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockFadeEvent;
+import org.bukkit.event.block.BlockGrowEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.MoistureChangeEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -423,6 +424,12 @@ public class WorldGuardFlags implements Listener {
 	@EventHandler
 	public void on(BlockFadeEvent event) {
 		if (WorldGuardFlagUtils.query(event.getBlock().getLocation(), CustomFlags.BLOCK_FADE) == State.DENY)
+			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void on(BlockGrowEvent event) {
+		if (WorldGuardFlagUtils.query(event.getBlock().getLocation(), CustomFlags.BLOCK_GROW) == State.DENY)
 			event.setCancelled(true);
 	}
 
