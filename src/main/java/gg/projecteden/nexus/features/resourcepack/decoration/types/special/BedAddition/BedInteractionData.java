@@ -35,9 +35,9 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Data
 public class BedInteractionData {
@@ -124,9 +124,9 @@ public class BedInteractionData {
 	}
 
 	public void refreshAdditions() {
-		this.additionsLeft = new HashMap<>();
-		this.additionsRight = new HashMap<>();
-		this.additionsBoth = new HashMap<>();
+		this.additionsLeft = new ConcurrentHashMap<>();
+		this.additionsRight = new ConcurrentHashMap<>();
+		this.additionsBoth = new ConcurrentHashMap<>();
 
 		if (this.bedLeft != null)
 			this.additionsLeft = getBedAdditions(this.bedLeft);
@@ -149,7 +149,7 @@ public class BedInteractionData {
 			return false;
 		}
 
-		Map<ItemFrame, DecorationConfig> additions = new HashMap<>(this.additionsBoth);
+		Map<ItemFrame, DecorationConfig> additions = new ConcurrentHashMap<>(this.additionsBoth);
 		for (ItemFrame _itemFrame : additions.keySet()) {
 			if (paintbrushDye.equals(new ItemBuilder(_itemFrame.getItem()).dyeColor()))
 				additions.remove(_itemFrame);
@@ -230,7 +230,7 @@ public class BedInteractionData {
 		}
 
 		boolean isToolWide = this.toolAddition.isWide();
-		Map<ItemFrame, DecorationConfig> additions = new HashMap<>(this.additionsBoth);
+		Map<ItemFrame, DecorationConfig> additions = new ConcurrentHashMap<>(this.additionsBoth);
 
 		for (ItemFrame _itemFrame : additions.keySet()) {
 			DecorationConfig _config = additions.get(_itemFrame);
@@ -308,7 +308,7 @@ public class BedInteractionData {
 		}
 
 		boolean isToolWide = this.toolAddition.isWide();
-		Map<ItemFrame, DecorationConfig> additions = new HashMap<>(this.additionsBoth);
+		Map<ItemFrame, DecorationConfig> additions = new ConcurrentHashMap<>(this.additionsBoth);
 
 		if (!additions.isEmpty()) { // check if we can place here
 			for (ItemFrame _itemFrame : additions.keySet()) {
@@ -362,10 +362,10 @@ public class BedInteractionData {
 	}
 
 	private Map<ItemFrame, DecorationConfig> getBedAdditions(Block head) {
-		Map<ItemFrame, DecorationConfig> result = new HashMap<>();
+		Map<ItemFrame, DecorationConfig> result = new ConcurrentHashMap<>();
 		List<ItemFrame> frames = getItemFramesAt(head, this.player);
 		if (Nullables.isNullOrEmpty(frames))
-			return new HashMap<>();
+			return new ConcurrentHashMap<>();
 
 		for (ItemFrame frame : frames) {
 			if (frame == null)
