@@ -145,7 +145,7 @@ public class AutoTorchCommand extends CustomCommand {
 					if (!autoTorchUser.applies(block)) // tests light level and for valid torch placing location
 						return;
 
-					if (!BlockUtils.tryPlaceEvent(player, block, block.getRelative(0, -1, 0), autoTorchUser.getTorchMaterial()))
+					if (!BlockUtils.tryPlaceEvent(player, block, block.getRelative(0, -1, 0), autoTorchUser.getTorchMaterial(), new ItemStack(autoTorchUser.getTorchMaterial())))
 						return;
 
 					new SoundBuilder(Sound.BLOCK_WOOD_PLACE).location(block).category(SoundCategory.BLOCKS).play();

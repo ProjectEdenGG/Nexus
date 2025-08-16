@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.utils;
 
-import gg.projecteden.nexus.utils.SoundUtils.SoundAction;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomToolBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IHarvestable;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.Debug.DebugType;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
+import gg.projecteden.nexus.utils.SoundUtils.SoundAction;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.Getter;
@@ -259,6 +259,10 @@ public class BlockUtils {
 
 	public static boolean tryPlaceEvent(@NotNull Player player, @NotNull Block block, @NotNull Block placedAgainst, Material material) {
 		return tryPlaceEvent(player, block, placedAgainst, material, null, true, player.getInventory().getItemInMainHand());
+	}
+
+	public static boolean tryPlaceEvent(@NotNull Player player, @NotNull Block block, @NotNull Block placedAgainst, Material material, ItemStack itemInHand) {
+		return tryPlaceEvent(player, block, placedAgainst, material, null, true, itemInHand);
 	}
 
 	public static boolean tryPlaceEvent(@NotNull Player player, @NotNull Block block, @NotNull Block placedAgainst, Material material, BlockData blockData) {
