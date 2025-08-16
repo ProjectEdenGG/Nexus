@@ -492,6 +492,7 @@ public class Checkers extends TeamMechanic {
 	}
 
 	public void cancelEvent(PlayerInteractEntityEvent event) {
+		if (!event.getPlayer().getWorld().equals(Minigames.getWorld())) return;
 		if (!(event.getRightClicked() instanceof ArmorStand armorStand)) return;
 		if (CheckersFragment.get(armorStand).getPiece() != null)
 			event.setCancelled(true);
