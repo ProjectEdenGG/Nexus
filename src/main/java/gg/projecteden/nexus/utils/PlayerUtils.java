@@ -84,6 +84,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 @UtilityClass
 public class PlayerUtils {
 
@@ -643,7 +645,7 @@ public class PlayerUtils {
 				continue;
 
 			for (ItemFrame itemFrame : itemFrames) {
-				if (Nullables.isNullOrAir(itemFrame.getItem()))
+				if (isNullOrAir(itemFrame.getItem()))
 					continue;
 
 				return itemFrame;
@@ -862,7 +864,7 @@ public class PlayerUtils {
 	public static void giveItemPreferNonHotbar(Player player, ItemStack item) {
 		Set<Integer> openSlots = new HashSet<>();
 		for (int i = 9; i < 36; i++) {
-			if (Nullables.isNullOrAir(player.getInventory().getContents()[i]))
+			if (isNullOrAir(player.getInventory().getContents()[i]))
 				openSlots.add(i);
 		}
 		if (openSlots.size() > 0)
@@ -1004,14 +1006,14 @@ public class PlayerUtils {
 
 	public static boolean selectHotbarItem(Player player, ItemStack toSelect) {
 		final ItemStack mainHand = player.getInventory().getItemInMainHand();
-		if (Nullables.isNullOrAir(toSelect) || toSelect.equals(mainHand)) {
+		if (isNullOrAir(toSelect) || toSelect.equals(mainHand)) {
 			return false;
 		}
 
 		List<ItemStack> contents = Arrays.stream(getHotbarContents(player)).toList();
 		for (int i = 0; i < contents.size(); i++) {
 			ItemStack item = contents.get(i);
-			if (Nullables.isNullOrAir(item))
+			if (isNullOrAir(item))
 				continue;
 
 			if (ItemUtils.isFuzzyMatch(toSelect, item)) {
@@ -1043,12 +1045,21 @@ public class PlayerUtils {
 		final PlayerInventory inv = _player.getInventory();
 		ItemStack item = searchInventory(player, itemModelType);
 
-		if (Nullables.isNullOrAir(item))
+		if (isNullOrAir(item))
 			return;
 
 		inv.removeItemAnySlot(item);
 		if (_player.getItemOnCursor().equals(item))
 			_player.setItemOnCursor(null);
+	}
+
+	public static boolean subtractItem(HasPlayer player, ItemModelType itemModelType) {
+		ItemStack item = searchInventory(player, itemModelType);
+		if (isNullOrAir(item))
+			return false;
+
+		item.subtract();
+		return true;
 	}
 
 	public static void giveItem(HasPlayer player, Material material) {
@@ -1128,7 +1139,7 @@ public class PlayerUtils {
 	public static List<ItemStack> giveItemsAndGetExcess(Inventory inventory, List<ItemStack> items) {
 		return new ArrayList<>() {{
 			for (ItemStack item : ItemUtils.fixMaxStackSize(items))
-				if (!Nullables.isNullOrAir(item))
+				if (!isNullOrAir(item))
 					addAll(inventory.addItem(item.clone()).values());
 		}};
 	}
@@ -1187,7 +1198,7 @@ public class PlayerUtils {
 	public static void dropItems(Location location, List<ItemStack> items) {
 		if (!Nullables.isNullOrEmpty(items))
 			for (ItemStack item : items)
-				if (!Nullables.isNullOrAir(item) && item.getAmount() > 0)
+				if (!isNullOrAir(item) && item.getAmount() > 0)
 					location.getWorld().dropItemNaturally(location, item);
 	}
 

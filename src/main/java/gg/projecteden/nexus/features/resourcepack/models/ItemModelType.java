@@ -26,7 +26,10 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 public enum ItemModelType {
 	NULL("misc/null"),
 	@HasCustomModelData
-	PROPORTIONATOR("functional/proportionator"),
+	PROPORTIONATOR("functional/proportionator/proportionator"),
+	PROPORTIONATOR_CPU("functional/proportionator/cpu"),
+	PROPORTIONATOR_MOTHERBOARD("functional/proportionator/motherboard"),
+	PROPORTIONATOR_FUEL("functional/proportionator/fuel"),
 	GUI_TOOL_OUTLINES("ui/gui/tool_modification/tool_outlines"),
 	INVISIBLE_ITEM_FRAME("functional/invis_item_frame") {
 		@Override
