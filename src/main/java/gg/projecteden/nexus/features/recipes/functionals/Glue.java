@@ -32,6 +32,7 @@ import java.util.Set;
 public class Glue extends FunctionalRecipe {
 
 	private static final String NBT_KEY = "Glued";
+	public static final ItemBuilder ITEM = new ItemBuilder(getItemModel()).name("&aGlue");
 
 	public static ItemModelType getItemModel() {
 		return ItemModelType.GLUE;
@@ -39,7 +40,7 @@ public class Glue extends FunctionalRecipe {
 
 	@Override
 	public ItemStack getResult() {
-		return new ItemBuilder(getItemModel()).name("&aGlue").build();
+		return ITEM.build();
 	}
 
 	@Override
