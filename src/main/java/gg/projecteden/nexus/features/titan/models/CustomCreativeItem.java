@@ -7,6 +7,7 @@ import gg.projecteden.nexus.utils.SerializationUtils.NBT;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.bukkit.inventory.ItemStack;
 
 @Data
 @AllArgsConstructor
@@ -14,20 +15,30 @@ public class CustomCreativeItem {
 
 	String category;
 	String item;
+	transient ItemStack itemStack;
 
 	public CustomCreativeItem(CustomBlock customBlock) {
-		item = NBT.serializeItemStack(customBlock.get().getItemStack());
-		category = "Custom Blocks";
+		this.itemStack = customBlock.get().getItemStack();
+		this.item = NBT.serializeItemStack(itemStack);
+		this.category = "Custom Blocks";
 	}
 
 	public CustomCreativeItem(DecorationType decorationType) {
-		category = "Decorations: " + StringUtils.camelCase(decorationType.getTypeConfig().theme());
-		item = NBT.serializeItemStack(decorationType.getConfig().getItem());
+		this.itemStack = decorationType.getConfig().getItem();
+		this.item = NBT.serializeItemStack(itemStack);
+		this.category = "Decorations: " + StringUtils.camelCase(decorationType.getTypeConfig().theme());
 	}
 
 	public CustomCreativeItem(ItemBuilder item, String category) {
+		this.itemStack = item.build();
+		this.item = NBT.serializeItemStack(itemStack);
 		this.category = category;
-		this.item = NBT.serializeItemStack(item.build());
+	}
+
+	public CustomCreativeItem(ItemStack item, String category) {
+		this.itemStack = item;
+		this.item = NBT.serializeItemStack(itemStack);
+		this.category = category;
 	}
 
 }

@@ -8,7 +8,6 @@ import gg.projecteden.nexus.features.minigames.mechanics.common.CheckpointMechan
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.models.statistics.models.MinigameStatistic;
-import gg.projecteden.nexus.features.recipes.functionals.InvisibleItemFrame;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.titan.models.CustomCreativeItem;
@@ -25,7 +24,6 @@ import gg.projecteden.nexus.models.voter.VotePartyService;
 import gg.projecteden.nexus.models.voter.VoteSite;
 import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.Debug;
-import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -33,7 +31,6 @@ import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.json.JSONObject;
 
 import java.time.Instant;
@@ -242,10 +239,6 @@ public class Controller {
 		if (nerd != null && nerd.getRank().gte(Rank.BUILDER)) // TODO CUSTOM BLOCKS: REMOVE
 			items.addAll(Arrays.asList(CustomBlockUtils.getCreativeItems()));
 		items.addAll(Arrays.asList(DecorationUtils.getCreativeItems()));
-
-		items.add(new CustomCreativeItem(CreativeBrushMenu.getCreativeBrush(), "Project Eden"));
-		items.add(new CustomCreativeItem(InvisibleItemFrame.getItem(), "Project Eden"));
-		items.add(new CustomCreativeItem(new ItemBuilder(Material.LIGHT), "Project Eden"));
 
 		return items.toArray();
 	}

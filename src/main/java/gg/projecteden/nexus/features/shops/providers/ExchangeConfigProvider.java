@@ -28,7 +28,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 @Title("&0Add Item")
 public class ExchangeConfigProvider extends ShopProvider {
@@ -198,9 +197,8 @@ public class ExchangeConfigProvider extends ShopProvider {
 							.onError(() -> open(player))
 							.response(lines -> {
 								if (lines[0].length() > 0) {
-									Function<Material, Boolean> filter = material -> material.name().toLowerCase().contains(lines[0].toLowerCase());
-									new ItemSearchProvider(this, filter, onChoose -> {
-										itemStack.set(new ItemStack(onChoose.getItem().getType()));
+									new ItemSearchProvider(this, lines[0], onChoose -> {
+										itemStack.set(onChoose.getItem());
 										open(player);
 									}).open(player);
 								} else
