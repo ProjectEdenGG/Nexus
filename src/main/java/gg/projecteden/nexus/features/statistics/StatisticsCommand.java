@@ -47,6 +47,8 @@ import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 
 import java.nio.file.Files;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -277,7 +279,7 @@ public class StatisticsCommand extends CustomCommand implements Listener {
 		});
 	}
 
-	private static final Map<UUID, Integer> ITEM_STAT_INCREASE_EVENTS = new HashMap<>();
+	private static final Map<UUID, List<LocalDateTime>> ITEM_STAT_INCREASE_EVENTS = new HashMap<>();
 
 	@EventHandler
 	public void on(PlayerStatisticIncrementEvent event) {
@@ -291,9 +293,16 @@ public class StatisticsCommand extends CustomCommand implements Listener {
 			return;
 
 		event.setCancelled(true);
+
 		UUID uuid = player.getUniqueId();
-		ITEM_STAT_INCREASE_EVENTS.compute(uuid, ($, count) -> count == null ? 1 : count + 1);
-		if (ITEM_STAT_INCREASE_EVENTS.get(uuid) > 10000)
+		List<LocalDateTime> times = ITEM_STAT_INCREASE_EVENTS.computeIfAbsent(uuid, $ -> new ArrayList<>());
+
+		int diff = event.getNewValue() - event.getPreviousValue();
+		for (int i = 0; i < diff; i++)
+			times.add(LocalDateTime.now());
+
+		times.removeIf(other -> other.isBefore(LocalDateTime.now().minusMinutes(5)));
+		if (times.size() < 10000)
 			return;
 
 		CooldownService cooldownService = new CooldownService();
@@ -301,10 +310,6 @@ public class StatisticsCommand extends CustomCommand implements Listener {
 			return;
 
 		Broadcast.staff().prefix("Radar").message("Possible creative hacker: " + Nickname.of(player) + " (Too many item stat increase events in creative)").send();
-	}
-
-	static {
-		Tasks.repeat(TickTime.MINUTE.x(5), TickTime.MINUTE.x(5), ITEM_STAT_INCREASE_EVENTS::clear);
 	}
 
 }
