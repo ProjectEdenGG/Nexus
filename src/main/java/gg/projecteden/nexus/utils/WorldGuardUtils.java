@@ -294,6 +294,7 @@ public final class WorldGuardUtils {
 
 	public @NotNull List<BlockVector3> getAllBlocks(Region region) {
 		List<BlockVector3> blocks = new ArrayList<>();
+
 		if (region instanceof CuboidRegion cuboidRegion) {
 			BlockVector3 min = cuboidRegion.getMinimumPoint();
 			BlockVector3 max = cuboidRegion.getMaximumPoint();
@@ -303,9 +304,17 @@ public final class WorldGuardUtils {
 						blocks.add(BlockVector3.at(x, y, z));
 
 			return blocks;
-		}
+		} else {
+			BlockVector3 min = region.getMinimumPoint();
+			BlockVector3 max = region.getMaximumPoint();
+			for (int x = min.x(); x <= max.x(); x++)
+				for (int y = min.y(); y <= max.y(); y++)
+					for (int z = min.z(); z <= max.z(); z++)
+						if (region.contains(BlockVector3.at(x, y, z)))
+							blocks.add(BlockVector3.at(x, y, z));
 
-		throw new UnsupportedOperationException("Unsupported region type " + region.getClass().getSimpleName());
+			return blocks;
+		}
 	}
 
 	public @NotNull Block getRandomBlock(@NotNull String region) {

@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.listeners;
 
 import com.destroystokyo.paper.event.player.PlayerAdvancementCriterionGrantEvent;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
@@ -12,18 +11,13 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.models.punishments.Punishment;
-import gg.projecteden.nexus.models.punishments.PunishmentType;
-import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
@@ -34,8 +28,6 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.craftbukkit.entity.CraftFishHook;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Parrot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -92,56 +84,6 @@ public class Restrictions implements Listener {
 			return false;
 
 		return true;
-	}
-
-	@EventHandler
-	public void onSpawn(EntitySpawnEvent event) {
-		Entity entity = event.getEntity();
-		if (!preventSpawn(entity))
-			return;
-
-		event.setCancelled(true);
-		String playerReason = "";
-
-		// get nearest player within 5 blocks who is in creative, does not include staff
-		List<Player> players = OnlinePlayers.where().world(entity.getWorld()).radius(entity.getLocation(), 5)
-			.filter(player -> !Rank.of(player).isStaff())
-			.filter(player -> player.getGameMode() == GameMode.CREATIVE)
-			.get();
-		if (players.size() == 1) {
-			Player player = players.getFirst();
-			Punishments.of(player).add(Punishment.ofType(PunishmentType.KICK).punisher(UUIDUtils.UUID0).input("Attempting to spawn mobs while in creative mode illegally"));
-			playerReason = "&c (Player: &e" + player.getName() + "&c)";
-		}
-
-		String entityType = StringUtils.camelCase(entity.getType());
-		String location = StringUtils.getLocationString(entity.getLocation());
-		String message = "&cPrevented " + entityType + " spawning at " + location + playerReason;
-
-		Broadcast.staffIngame().prefix("Restrictions").message(message).send();
-		Broadcast.staffDiscord().prefix("Restrictions").message(message).send();
-	}
-
-	private boolean preventSpawn(Entity entity) {
-		if (CitizensUtils.isNPC(entity))
-			return false;
-
-		World world = entity.getWorld();
-
-		// Prevent dragons in all worlds except end
-		if (entity.getType() == EntityType.ENDER_DRAGON && world.getEnvironment() != Environment.THE_END)
-			return true;
-
-		// Prevent wither
-		if (entity.getType() == EntityType.WITHER) {
-			// Withers are allowed in resource and wither arena
-			if (SubWorldGroup.RESOURCE.contains(world) || WorldGroup.SERVER.contains(world))
-				return false;
-
-			return true;
-		}
-
-		return false;
 	}
 
 	@EventHandler
