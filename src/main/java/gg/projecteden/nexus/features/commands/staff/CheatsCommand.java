@@ -128,10 +128,14 @@ public class CheatsCommand extends CustomCommand implements Listener {
 		if (!Rank.of(player).between(Rank.BUILDER, Rank.MODERATOR))
 			return;
 
-		if (WorldGroup.of(player) != WorldGroup.SURVIVAL)
+		if (!WorldGroup.of(player).isSurvivalMode())
 			return;
 
-		if (!player.getAllowFlight() && !new GodmodeService().get(player).isEnabled() && SpeedType.WALK.get(player) == SpeedType.WALK.getDefaultSpeed())
+		boolean fly = player.getAllowFlight();
+		boolean god = new GodmodeService().get(player).isEnabled();
+		boolean speed = SpeedType.WALK.get(player) != SpeedType.WALK.getDefaultSpeed();
+
+		if (!fly && !god && !speed)
 			return;
 
 		event.setCancelled(true);

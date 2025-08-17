@@ -23,7 +23,11 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public enum WorldGroup implements IWorldGroup {
 	@Icon("globe")
@@ -37,6 +41,7 @@ public enum WorldGroup implements IWorldGroup {
 
 	@Icon("diamond_pickaxe")
 	@Spawn(SpawnType.SURVIVAL)
+	@SurvivalMode
 	SURVIVAL(List.of("safepvp", "events"), List.of(SubWorldGroup.SURVIVAL, SubWorldGroup.RESOURCE, SubWorldGroup.STAFF_SURVIVAL)),
 
 	@Icon("wooden_axe")
@@ -49,6 +54,7 @@ public enum WorldGroup implements IWorldGroup {
 	MINIGAMES(List.of("gameworld"), List.of(SubWorldGroup.DEATH_SWAP, SubWorldGroup.UHC, SubWorldGroup.BINGO)),
 
 	@Icon("grass_block")
+	@SurvivalMode
 	SKYBLOCK(SubWorldGroup.SKYBLOCK, SubWorldGroup.ONEBLOCK),
 
 	@Icon("compass")
@@ -146,7 +152,11 @@ public enum WorldGroup implements IWorldGroup {
 	}
 
 	public boolean isSurvivalMode() {
-		return this == SURVIVAL || this == SKYBLOCK;
+		return getField().isAnnotationPresent(SurvivalMode.class);
+	}
+
+	public static List<WorldGroup> getSurvivalModeGroups() {
+		return Arrays.stream(values()).filter(WorldGroup::isSurvivalMode).toList();
 	}
 
 	static {
@@ -189,6 +199,10 @@ public enum WorldGroup implements IWorldGroup {
 
 	@Retention(RetentionPolicy.RUNTIME)
 	private @interface PushOff {
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	private @interface SurvivalMode {
 	}
 
 	public boolean isPushDisabled() {
