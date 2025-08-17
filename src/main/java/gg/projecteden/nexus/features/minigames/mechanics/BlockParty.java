@@ -621,7 +621,7 @@ public class BlockParty extends TeamlessMechanic {
 			if (!ItemUtils.isModelMatch(powerUp.getItem(), item))
 				continue;
 
-			if (!COOLDOWN_SERVICE.check(minigamer.getUuid(), "blockparty-powerup-" + powerUp.name().toLowerCase(), 10))
+			if (CooldownService.isOnCooldown(minigamer.getUuid(), "blockparty-powerup-" + powerUp.name().toLowerCase(), 10))
 				return;
 
 			event.setCancelled(true);

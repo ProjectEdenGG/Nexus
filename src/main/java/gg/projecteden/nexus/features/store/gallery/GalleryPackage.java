@@ -626,7 +626,7 @@ public enum GalleryPackage {
 	}
 
 	protected boolean cooldown(long ticks) {
-		return new CooldownService().check(UUIDUtils.UUID0, getRegionId(), ticks);
+		return CooldownService.isNotOnCooldown(UUIDUtils.UUID0, getRegionId(), ticks);
 	}
 
 	public NPC npc() {

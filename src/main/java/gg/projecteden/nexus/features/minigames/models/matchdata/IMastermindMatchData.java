@@ -11,8 +11,15 @@ import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.exceptions.MinigameException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.LocationUtils.CardinalDirection;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bukkit.FireworkEffect.Type;
@@ -114,7 +121,7 @@ public abstract class IMastermindMatchData extends MatchData {
 	}
 
 	protected void validate(Minigamer minigamer, Region wallRegion, Region guessRegion, Region resultsSignRegion) {
-		if (!new CooldownService().check(minigamer.getOnlinePlayer(), "minigames-mastermind-guess", TickTime.SECOND.x(3)))
+		if (CooldownService.isOnCooldown(minigamer.getOnlinePlayer(), "minigames-mastermind-guess", TickTime.SECOND.x(3)))
 			return;
 
 		WorldEditUtils worldedit = minigamer.getMatch().worldedit();

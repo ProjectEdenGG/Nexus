@@ -230,7 +230,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 						if (track != null) {
 							UUID uuid = minigamer.getOnlinePlayer().getUniqueId();
 							String type = "HoleInTheWall-Skip";
-							if (new CooldownService().check(uuid, type, TickTime.SECOND.x(3)))
+							if (CooldownService.isNotOnCooldown(uuid, type, TickTime.SECOND.x(3)))
 								track.skip();
 							else
 								minigamer.tell("You must wait &e" + new CooldownService().getDiff(uuid, type));

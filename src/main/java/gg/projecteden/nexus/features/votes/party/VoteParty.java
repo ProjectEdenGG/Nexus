@@ -58,7 +58,7 @@ public class VoteParty {
 	}
 
 	public static void complete() {
-		if (!new CooldownService().check(UUID0, "vote-party-complete", TickTime.DAY)) {
+		if (CooldownService.isOnCooldown(UUID0, "vote-party-complete", TickTime.DAY)) {
 			Nexus.severe("!!! Preventing vote party completion due to cooldown");
 			return;
 		}

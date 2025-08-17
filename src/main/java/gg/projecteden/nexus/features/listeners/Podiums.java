@@ -240,7 +240,7 @@ public class Podiums implements Listener {
 
 		public void update() {
 			Tasks.async(() -> {
-				if (!new CooldownService().check(UUIDUtils.UUID0, "podiums_" + name(), TickTime.MINUTE.x(5)))
+				if (CooldownService.isOnCooldown(UUIDUtils.UUID0, "podiums_" + name(), TickTime.MINUTE.x(5)))
 					return;
 
 				updateActual();

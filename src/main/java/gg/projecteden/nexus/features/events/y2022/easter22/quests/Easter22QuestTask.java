@@ -115,7 +115,7 @@ public enum Easter22QuestTask implements IQuestTask {
 			final Player player = event.getPlayer();
 			if (!PlayerUtils.playerHas(player, Material.STICK)) {
 				final String coords = StringUtils.xyzFloored(block.getLocation()).replace(" ", "-");
-				if (!new CooldownService().check(player, "easter22-stick-" + coords, TickTime.MINUTE))
+				if (CooldownService.isOnCooldown(player, "easter22-stick-" + coords, TickTime.MINUTE))
 					return;
 
 				if (RandomUtils.chanceOf(20)) {

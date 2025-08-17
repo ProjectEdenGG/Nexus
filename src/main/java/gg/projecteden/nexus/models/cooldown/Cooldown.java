@@ -57,7 +57,7 @@ public class Cooldown implements PlayerOwnedObject {
 	 * <p>
 	 * This method does not check if the saved time has expired or not.
 	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
-	 * @see #check(String) check(type)
+	 * @see #isNotOnCooldown(String) check(type)
 	 * @return true if a cooldown time is present
 	 */
 	public boolean exists(String type) {
@@ -68,7 +68,7 @@ public class Cooldown implements PlayerOwnedObject {
 	/**
 	 * Gets the expiry time for a provided cooldown.
 	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
-	 * @see #check(String) check(type)
+	 * @see #isNotOnCooldown(String) check(type)
 	 * @return expiration time of a cooldown or null if none is set
 	 */
 	public @Nullable LocalDateTime get(String type) {
@@ -76,18 +76,13 @@ public class Cooldown implements PlayerOwnedObject {
 		return cooldowns.getOrDefault(type, null);
 	}
 
-	/**
-	 * Checks if a player is currently off cooldown.
-	 * <p>
-	 * Returns true if the player is not on cooldown.
-	 * </p>
-	 * Unlike {@link CooldownService}, this does not create a new cooldown.
-	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
-	 * @return true if player is not on cooldown
-	 */
-	public boolean check(String type) {
+	public boolean isNotOnCooldown(String type) {
+		return !isOnCooldown(type);
+	}
+
+	public boolean isOnCooldown(String type) {
 		type = checkType(type);
-		return !exists(type) || cooldowns.get(type).isBefore(LocalDateTime.now());
+		return exists(type) && !cooldowns.get(type).isBefore(LocalDateTime.now());
 	}
 
 	/**

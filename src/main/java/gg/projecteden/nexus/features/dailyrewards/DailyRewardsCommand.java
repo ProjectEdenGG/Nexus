@@ -88,7 +88,7 @@ public class DailyRewardsCommand extends CustomCommand {
 	@Description("Set a player's streak")
 	void reset(@Arg(value = "self", permission = Group.ADMIN) DailyRewardUser user) {
 		try {
-			if (!new CooldownService().check(player(), resetCooldownType, TickTime.DAY))
+			if (CooldownService.isOnCooldown(player(), resetCooldownType, TickTime.DAY))
 				throw new CommandCooldownException(player(), resetCooldownType);
 
 			user.endStreak();

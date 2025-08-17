@@ -314,7 +314,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 	}
 
 	public void sendCooldown(HasPlayer player, String message, String key, long time) {
-		if (!new CooldownService().check(player.getPlayer().getUniqueId(), key, time))
+		if (CooldownService.isOnCooldown(player.getPlayer().getUniqueId(), key, time))
 			return;
 
 		send(player, message);
@@ -503,12 +503,12 @@ public abstract class EdenEvent extends Feature implements Listener {
 		if (event.getOriginalEvent() instanceof Cancellable cancellable)
 			cancellable.setCancelled(true);
 
-		if (!new CooldownService().check(event.getPlayer().getUniqueId(), "quest_board", 20, false))
+		if (CooldownService.isOnCooldown(event.getPlayer().getUniqueId(), "quest_board", 20, false))
 			return;
 
 		PlayerUtils.runCommand(event.getPlayer(), this.getName().toLowerCase() + " quest progress");
 
-		new CooldownService().check(event.getPlayer(), "quest_board", 20);
+		CooldownService.isNotOnCooldown(event.getPlayer(), "quest_board", 20);
 	}
 
 	public <T extends InteractableEntity> T interactableOf(Entity entity) {
@@ -620,7 +620,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 		if (handleBlockBreak(event))
 			return;
 
-		if (new CooldownService().check(player, "event_cantbreak", TickTime.MINUTE)) {
+		if (CooldownService.isNotOnCooldown(player, "event_cantbreak", TickTime.MINUTE)) {
 			errorMessage(player, EventErrors.CANT_BREAK);
 			EventSounds.VILLAGER_NO.play(player);
 		}
@@ -643,7 +643,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 
 		event.setCancelled(true);
 
-		if (new CooldownService().check(player, "event_cantplace", TickTime.MINUTE)) {
+		if (CooldownService.isNotOnCooldown(player, "event_cantplace", TickTime.MINUTE)) {
 			errorMessage(player, EventErrors.CANT_PLACE);
 			EventSounds.VILLAGER_NO.play(player);
 		}
@@ -798,7 +798,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 			breakable.giveDrops(player);
 			breakable.regen(regenBlocks);
 		} catch (BreakException ex) {
-			if (new CooldownService().check(player, ex.getCooldownId(), TickTime.MINUTE)) {
+			if (CooldownService.isNotOnCooldown(player, ex.getCooldownId(), TickTime.MINUTE)) {
 				errorMessage(player, ex.getErrorMessage());
 				EventSounds.VILLAGER_NO.play(player);
 			}

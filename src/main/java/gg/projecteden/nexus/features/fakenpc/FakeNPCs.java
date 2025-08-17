@@ -116,12 +116,12 @@ public class FakeNPCs extends Feature implements Listener {
 
 		Player player = event.getPlayer();
 		if (event.isAttack()) {
-			if (!new CooldownService().check(player, "FakeNPC-LeftClickEvent", TickTime.TICK.x(2)))
+			if (CooldownService.isOnCooldown(player, "FakeNPC-LeftClickEvent", TickTime.TICK.x(2)))
 				return;
 
 			new FakeNPCLeftClickEvent(fakeNPC, player).callEvent();
 		} else {
-			if (!new CooldownService().check(player, "FakeNPC-RightClickEvent", TickTime.TICK.x(2)))
+			if (CooldownService.isOnCooldown(player, "FakeNPC-RightClickEvent", TickTime.TICK.x(2)))
 				return;
 
 			new FakeNPCRightClickEvent(fakeNPC, player).callEvent();

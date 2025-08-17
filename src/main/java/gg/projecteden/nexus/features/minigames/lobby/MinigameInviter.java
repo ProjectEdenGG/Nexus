@@ -69,7 +69,7 @@ public class MinigameInviter {
 				throw new InvalidInputException("You must be in the Minigame Lobby to use this command");
 		}
 
-		if (!new CooldownService().check(UUIDUtils.UUID0, "minigame_invite", TickTime.SECOND.x(3)))
+		if (CooldownService.isOnCooldown(UUIDUtils.UUID0, "minigame_invite", TickTime.SECOND.x(3)))
 			throw new InvalidInputException("Another minigame invite was recently created, please wait before sending another");
 	}
 

@@ -13,11 +13,21 @@ import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.npcs.Merchan
 import gg.projecteden.nexus.models.bearfair20.BearFair20User;
 import gg.projecteden.nexus.models.bearfair20.BearFair20UserService;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -287,7 +297,7 @@ public class BFQuests implements Listener {
 		Player player = event.getClicker();
 		if (BearFair20.isAtBearFair(player)) {
 			CooldownService cooldownService = new CooldownService();
-			if (!cooldownService.check(player, "BF_NPCInteract", TickTime.SECOND.x(2)))
+			if (CooldownService.isOnCooldown(player, "BF_NPCInteract", TickTime.SECOND.x(2)))
 				return;
 
 			int id = event.getNPC().getId();

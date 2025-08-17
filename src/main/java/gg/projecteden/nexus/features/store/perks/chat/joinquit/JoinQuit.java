@@ -186,7 +186,7 @@ public class JoinQuit extends Feature implements Listener {
 	}
 
 	public static boolean isDuplicate(Player player, String type) {
-		return !new CooldownService().check(player, type, 2);
+		return CooldownService.isOnCooldown(player, type, 2);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)

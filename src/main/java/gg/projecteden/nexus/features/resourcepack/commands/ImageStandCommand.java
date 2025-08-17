@@ -262,7 +262,7 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 		if (imageStand == null)
 			return;
 
-		if (!new CooldownService().check(player, "image-stand-interact", TickTime.SECOND))
+		if (CooldownService.isOnCooldown(player, "image-stand-interact", TickTime.SECOND))
 			return;
 
 		new ImageStandInteractEvent(player, imageStand).callEvent();
@@ -277,7 +277,7 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 		if (imageStand == null)
 			return;
 
-		if (!new CooldownService().check(player, "image-stand-interact", TickTime.SECOND))
+		if (CooldownService.isOnCooldown(player, "image-stand-interact", TickTime.SECOND))
 			return;
 
 		new ImageStandInteractEvent(player, imageStand).callEvent();
@@ -292,7 +292,7 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 		if (imageStand == null)
 			return;
 
-		if (!new CooldownService().check(player, "image-stand-interact", TickTime.SECOND))
+		if (CooldownService.isOnCooldown(player, "image-stand-interact", TickTime.SECOND))
 			return;
 
 		new ImageStandInteractEvent(player, imageStand).callEvent();

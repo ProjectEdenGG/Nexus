@@ -78,7 +78,7 @@ public class Halloween20 implements Listener {
 	public void onNPCClick(NPCRightClickEvent event) {
 		QuestNPC npc = QuestNPC.getByID(event.getNPC().getId());
 		if (npc == null) return;
-		if (!new CooldownService().check(event.getClicker(), "Halloween20_NPC", TickTime.SECOND.x(2)))
+		if (CooldownService.isOnCooldown(event.getClicker(), "Halloween20_NPC", TickTime.SECOND.x(2)))
 			return;
 		npc.sendScript(event.getClicker());
 	}
@@ -129,7 +129,7 @@ public class Halloween20 implements Listener {
 		Halloween20Service service = new Halloween20Service();
 		Halloween20User user = service.get(event.getPlayer());
 		if (user.getFoundButtons().contains(button)) {
-			if (new CooldownService().check(event.getPlayer(), "halloween20-button-alreadyfound", TickTime.SECOND.x(10)))
+			if (CooldownService.isNotOnCooldown(event.getPlayer(), "halloween20-button-alreadyfound", TickTime.SECOND.x(10)))
 				user.sendMessage(PREFIX + "You've already found this button!");
 			return;
 		}

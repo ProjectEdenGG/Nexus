@@ -10,11 +10,22 @@ import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.pride21.Pride21User;
 import gg.projecteden.nexus.models.pride21.Pride21UserService;
 import gg.projecteden.nexus.models.trophy.TrophyType;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.DescParseTickFormat;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -96,7 +107,7 @@ public class Quests implements Listener {
 		if (event.getNPC().getId() != PARADE_MANAGER.getNpcId()) return;
 
 		CooldownService cooldownService = new CooldownService();
-		if (!cooldownService.check(player, "Pride21_NPCInteract", TimeUtils.TickTime.SECOND.x(5)))
+		if (CooldownService.isOnCooldown(player, "Pride21_NPCInteract", TimeUtils.TickTime.SECOND.x(5)))
 			return;
 
 		int waitTicks = Talker.sendScript(player, PARADE_MANAGER);

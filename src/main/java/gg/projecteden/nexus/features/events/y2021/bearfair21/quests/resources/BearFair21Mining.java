@@ -54,7 +54,7 @@ public class BearFair21Mining implements Listener {
 
 		ItemStack tool = player.getInventory().getItemInMainHand();
 		if (!oreType.canBeMinedBy(tool.getType())) {
-			if (new CooldownService().check(player, "BF21_cantbreak_tool", TickTime.SECOND.x(15))) {
+			if (CooldownService.isNotOnCooldown(player, "BF21_cantbreak_tool", TickTime.SECOND.x(15))) {
 				BearFair21.send(BearFair21Errors.CANT_BREAK + " with this tool. Needs either: " + oreType.getCanBreak(), player);
 				BearFair21Quests.sound_villagerNo(player);
 			}

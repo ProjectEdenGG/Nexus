@@ -126,7 +126,7 @@ public class InteractionCommandsCommand extends CustomCommand implements Listene
 		if (interactionCommand == null || interactionCommand.getCommands().isEmpty())
 			return;
 
-		if (!new CooldownService().check(event.getPlayer(), "interactioncommand", TickTime.TICK.x(5)))
+		if (CooldownService.isOnCooldown(event.getPlayer(), "interactioncommand", TickTime.TICK.x(5)))
 			return;
 
 		interactionCommand.run(event);

@@ -115,7 +115,7 @@ public class WitherArmorListener implements Listener {
 		if (!hasFullSet(player)) return;
 		if (!Nullables.isNullOrAir(player.getInventory().getItemInMainHand())) return;
 		if (new WorldGuardUtils(player).getRegionsAt(player.getLocation()).stream().anyMatch(region -> !region.getId().contains("wither"))) return;
-		if (!new CooldownService().check(player.getUniqueId(), "wither-armor-attack", TimeUtils.TickTime.SECOND.x(3))) return;
+		if (CooldownService.isOnCooldown(player.getUniqueId(), "wither-armor-attack", TimeUtils.TickTime.SECOND.x(3))) return;
 		shootSkull(player, true);
 		Tasks.wait(5, () -> shootSkull(player, false));
 		Tasks.wait(10, () -> shootSkull(player, false));

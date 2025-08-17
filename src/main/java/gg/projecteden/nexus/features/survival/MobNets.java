@@ -69,7 +69,7 @@ public class MobNets extends Feature implements Listener {
 			if (TameablesCommand.isTamed(entity))
 				TameablesCommand.checkOwner(player, entity);
 
-			if (new CooldownService().check(player, "mobnet-capture-" + entity.getUniqueId(), TickTime.SECOND.x(3))) {
+			if (CooldownService.isNotOnCooldown(player, "mobnet-capture-" + entity.getUniqueId(), TickTime.SECOND.x(3))) {
 				final String entityName = gg.projecteden.api.common.utils.StringUtils.camelCase(entity.getType()).toLowerCase();
 				final JsonBuilder error = new JsonBuilder("&3Click again to capture this &e" + entityName);
 

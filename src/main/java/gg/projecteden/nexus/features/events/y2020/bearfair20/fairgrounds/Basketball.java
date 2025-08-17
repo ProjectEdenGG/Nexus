@@ -30,7 +30,11 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Disabled
 public class Basketball implements Listener {
@@ -264,7 +268,7 @@ public class Basketball implements Listener {
 	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(courtRg)) return;
 		Player player = event.getPlayer();
-		if (new CooldownService().check(player, "basketball-doublejump-tip", TickTime.SECOND.x(30)))
+		if (CooldownService.isNotOnCooldown(player, "basketball-doublejump-tip", TickTime.SECOND.x(30)))
 			BearFair20.send("&aDouble Jump enabled!", player);
 		if (!regionContainsBasketball(player))
 			giveBasketball(player);

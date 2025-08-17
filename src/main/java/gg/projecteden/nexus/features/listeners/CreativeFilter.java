@@ -27,7 +27,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -158,7 +162,7 @@ public class CreativeFilter implements Listener {
 
 		Material type = event.getBlock().getType();
 		if (disallowedPlacement.contains(type)) {
-			if (new CooldownService().check(player, player.getUniqueId() + "-" + type.name(), TickTime.MINUTE))
+			if (CooldownService.isNotOnCooldown(player, player.getUniqueId() + "-" + type.name(), TickTime.MINUTE))
 				player.sendMessage("You must be Member rank to place " + StringUtils.camelCase(type));
 			event.setCancelled(true);
 		}

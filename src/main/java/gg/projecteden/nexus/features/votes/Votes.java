@@ -101,7 +101,7 @@ public class Votes extends Feature implements Listener {
 		if (!vote.getVoter().isReminders())
 			return;
 
-		if (!new CooldownService().check(vote.getUuid(), "vote-reminder", TickTime.MINUTE.x(10)))
+		if (CooldownService.isOnCooldown(vote.getUuid(), "vote-reminder", TickTime.MINUTE.x(10)))
 			return;
 
 		User user = Bot.KODA.jda().retrieveUserById(discordUser.getUserId()).complete();
@@ -166,7 +166,7 @@ public class Votes extends Feature implements Listener {
 		voter.givePoints(points);
 		voterService.save(voter);
 
-		if (new CooldownService().check(uuid, "vote-announcement", TickTime.HOUR)) {
+		if (CooldownService.isNotOnCooldown(uuid, "vote-announcement", TickTime.HOUR)) {
 			String message = " &3for the server and received &b" + BASE_POINTS + StringUtils.plural(" &3vote point", BASE_POINTS) + " per site!";
 			if (left > 0)
 				message += " &e" + left + " &3more votes needed to trigger a &eVote Party&3!";

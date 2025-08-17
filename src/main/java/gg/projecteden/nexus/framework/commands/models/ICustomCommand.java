@@ -546,7 +546,7 @@ public abstract class ICustomCommand {
 				UUID uuid = cooldown.global() ? UUIDUtils.UUID0 : ((Player) command.getEvent().getSender()).getUniqueId();
 				String type = "command:" + commandId;
 
-				if (!service.check(uuid, type, ticks))
+				if (CooldownService.isOnCooldown(uuid, type, ticks))
 					throw new CommandCooldownException(uuid, type);
 			}
 		}

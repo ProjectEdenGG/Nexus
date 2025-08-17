@@ -133,7 +133,7 @@ public class Proportionator extends FunctionalRecipe {
 		if (!player.isSneaking())
 			return;
 
-		if (!new CooldownService().check(player, "proportionator-mode", TickTime.SECOND))
+		if (CooldownService.isOnCooldown(player, "proportionator-mode", TickTime.SECOND))
 			return;
 
 		if (isShrinkMode(tool))

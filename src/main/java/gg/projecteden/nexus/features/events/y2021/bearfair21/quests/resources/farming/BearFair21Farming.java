@@ -60,7 +60,7 @@ public class BearFair21Farming implements Listener {
 				// Single Block
 			} else if (cropSingleBlock.contains(material)) {
 				if (!(block.getRelative(0, -1, 0).getType().equals(Material.COARSE_DIRT))) {
-					if (new CooldownService().check(player, "BF21_decorOnly", TickTime.MINUTE)) {
+					if (CooldownService.isNotOnCooldown(player, "BF21_decorOnly", TickTime.MINUTE)) {
 						BearFair21.send(BearFair21Errors.DECOR_ONLY, player);
 						BearFair21Quests.sound_villagerNo(player);
 					}
@@ -72,7 +72,7 @@ public class BearFair21Farming implements Listener {
 				// Multi Block
 			} else if (cropMultiBlock.contains(material)) {
 				if (!(block.getRelative(0, -1, 0).getType().equals(material))) {
-					if (new CooldownService().check(player, "BF21_bottomBlock", TickTime.MINUTE)) {
+					if (CooldownService.isNotOnCooldown(player, "BF21_bottomBlock", TickTime.MINUTE)) {
 						BearFair21.send(BearFair21Errors.BOTTOM_BLOCK, player);
 						BearFair21Quests.sound_villagerNo(player);
 					}
@@ -102,7 +102,7 @@ public class BearFair21Farming implements Listener {
 		}
 
 		if (ageable.getAge() != ageable.getMaximumAge()) {
-			if (new CooldownService().check(player, "BF21_notFullyGrown", TickTime.MINUTE)) {
+			if (CooldownService.isNotOnCooldown(player, "BF21_notFullyGrown", TickTime.MINUTE)) {
 				BearFair21.send(BearFair21Errors.NOT_FULLY_GROWN, player);
 				BearFair21Quests.sound_villagerNo(player);
 			}

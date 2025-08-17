@@ -50,7 +50,7 @@ public class AACNotifyCommand extends CustomCommand {
 
 			UUID uuid = player.getUniqueId();
 			totalCounts.put(uuid, totalCounts.getOrDefault(uuid, 0) + 1);
-			if (new CooldownService().check(player, "aac-notify-ingame", TickTime.SECOND.x(15))) {
+			if (CooldownService.isNotOnCooldown(player, "aac-notify-ingame", TickTime.SECOND.x(15))) {
 				String ingame = message;
 				if (ingameCounts.getOrDefault(uuid, 0) > 0)
 					ingame += (" &c(" + ingameCounts.get(uuid) + " more...)");
@@ -59,7 +59,7 @@ public class AACNotifyCommand extends CustomCommand {
 			} else
 				ingameCounts.put(uuid, ingameCounts.getOrDefault(uuid, 0) + 1);
 
-			if (new CooldownService().check(player, "aac-notify-discord", TickTime.MINUTE)) {
+			if (CooldownService.isNotOnCooldown(player, "aac-notify-discord", TickTime.MINUTE)) {
 				String discord = message;
 				if (discordCounts.getOrDefault(uuid, 0) > 0)
 					discord += " (" + discordCounts.get(uuid) + " more...)";

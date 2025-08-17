@@ -59,7 +59,7 @@ public class Effects implements Listener {
 		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 		if (clicked == null) return;
 		if (!APUtils.isInWorld(clicked)) return;
-		if (!(new CooldownService().check(player, "AeveonProject_Sit", TickTime.SECOND.x(2)))) return;
+		if (CooldownService.isOnCooldown(player, "AeveonProject_Sit", TickTime.SECOND.x(2))) return;
 
 		if (clicked.getType().equals(Material.NETHER_BRICK_STAIRS)) {
 			PlayerUtils.runCommandAsOp(player, "sit");
