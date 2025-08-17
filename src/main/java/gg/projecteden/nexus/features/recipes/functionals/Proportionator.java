@@ -204,9 +204,9 @@ public class Proportionator extends FunctionalRecipe {
 			}
 
 			attribute.setBaseValue(newValue);
-			ActionBarUtils.sendActionBar(player, camelCase(entityType) + " scaled to " + StringUtils.getDf().format(newValue));
+			ActionBarUtils.sendActionBar(player, "&e" + camelCase(entityType) + " scaled to " + StringUtils.getDf().format(newValue));
 		} catch (InvalidInputException ex) {
-			ActionBarUtils.sendActionBar(player, ex.getMessage());
+			ActionBarUtils.sendActionBar(player, "&c" + ex.getMessage());
 		}
 	}
 
