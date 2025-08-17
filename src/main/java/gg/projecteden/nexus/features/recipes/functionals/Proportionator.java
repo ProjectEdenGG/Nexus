@@ -7,6 +7,8 @@ import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.models.proportionator.ProportionatorConfig;
+import gg.projecteden.nexus.models.proportionator.ProportionatorConfigService;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -19,7 +21,6 @@ import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,10 +30,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.features.resourcepack.models.ItemModelType.PROPORTIONATOR;
 import static gg.projecteden.nexus.features.resourcepack.models.ItemModelType.PROPORTIONATOR_CPU;
@@ -40,28 +37,22 @@ import static gg.projecteden.nexus.features.resourcepack.models.ItemModelType.PR
 import static gg.projecteden.nexus.features.resourcepack.models.ItemModelType.PROPORTIONATOR_MOTHERBOARD;
 
 public class Proportionator extends FunctionalRecipe {
-	private static final ItemBuilder ITEM = new ItemBuilder(PROPORTIONATOR).name("&eProportionator");
-	private static final ItemBuilder CPU = new ItemBuilder(PROPORTIONATOR_CPU).name("&eProportionator CPU");
-	private static final ItemBuilder MOTHERBOARD = new ItemBuilder(PROPORTIONATOR_MOTHERBOARD).name("&eProportionator Motherboard");
-	private static final ItemBuilder FUEL = new ItemBuilder(PROPORTIONATOR_FUEL).name("&eProportionator Fuel");
+	private static final ProportionatorConfigService service = new ProportionatorConfigService();
 
-	private static final double MIN = .4;
-	private static final double MAX = 1.6;
+	public static final ItemBuilder ITEM = new ItemBuilder(PROPORTIONATOR)
+		.name("&eProportionator")
+		.lore("&3Crouch+Right Click the ground to swap modes")
+		.lore("&3Right click entities to scale them")
+		.loreize(false);
 
-	private static final List<EntityType> DISABLED = List.of(
-		EntityType.ENDER_DRAGON
-	);
+	private static final ItemBuilder CPU = new ItemBuilder(PROPORTIONATOR_CPU)
+		.name("&eProportionator CPU");
 
-	private static final Map<EntityType, Double> MIN_OVERRIDES = new HashMap<>() {{
-		put(EntityType.SPIDER, .3d);
-		put(EntityType.CAVE_SPIDER, .3d);
-		put(EntityType.BEE, .3d);
-	}};
+	private static final ItemBuilder MOTHERBOARD = new ItemBuilder(PROPORTIONATOR_MOTHERBOARD)
+		.name("&eProportionator Motherboard");
 
-	private static final Map<EntityType, Double> MAX_OVERRIDES = new HashMap<>() {{
-		put(EntityType.RABBIT, 2d);
-		put(EntityType.ARMADILLO, 2d);
-	}};
+	private static final ItemBuilder FUEL = new ItemBuilder(PROPORTIONATOR_FUEL)
+		.name("&eProportionator Fuel");
 
 	public Proportionator() {
 		// CPU
@@ -72,6 +63,7 @@ public class Proportionator extends FunctionalRecipe {
 			.add('G', Glue.ITEM.get())
 			.toMake(CPU.get())
 			.register(RecipeType.FUNCTIONAL);
+
 		// Fuel
 		RecipeBuilder.shaped("ARA", "MDM", "ARA")
 			.add('A', Material.AMETHYST_SHARD)
@@ -100,12 +92,16 @@ public class Proportionator extends FunctionalRecipe {
 		return ITEM.get();
 	}
 
+	private static ProportionatorConfig config() {
+		return service.get0();
+	}
+
 	public static double min(Entity entity) {
-		return MIN_OVERRIDES.getOrDefault(entity.getType(), MIN);
+		return config().getMinOverrides().getOrDefault(entity.getType(), config().getMin());
 	}
 
 	public static double max(Entity entity) {
-		return MAX_OVERRIDES.getOrDefault(entity.getType(), MAX);
+		return config().getMaxOverrides().getOrDefault(entity.getType(), config().getMax());
 	}
 
 	@EventHandler
@@ -174,7 +170,7 @@ public class Proportionator extends FunctionalRecipe {
 			var attribute = livingEntity.getAttribute(Attribute.SCALE);
 			var entityType = camelCase(livingEntity.getType());
 
-			if (DISABLED.contains(livingEntity.getType()))
+			if (config().getDisabled().contains(livingEntity.getType()))
 				throw new InvalidInputException("Scaling " + StringUtils.an(entityType) + " is not allowed");
 
 			if (attribute == null)
