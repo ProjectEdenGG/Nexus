@@ -33,6 +33,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static gg.projecteden.nexus.features.vanish.Vanish.isUnvanished;
+
 @Aliases("gm")
 @NoArgsConstructor
 @Permission("essentials.gamemode")
@@ -81,21 +83,19 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	/*
-		TODO:
-			If enabled fly in survival, switched to creative mode, then switched back to survival, fly is now off, because of the gamemode change
-	 */
 	public static void setGameMode(Player player, GameMode gamemode) {
 		boolean flight = player.getAllowFlight();
+		boolean flying = player.isFlying();
 		player.setGameMode(gamemode);
-		PlayerUtils.setAllowFlight(player, flight, GamemodeCommand.class);
+		PlayerUtils.setAllowFlight(player, flight, "GamemodeCommand#setGameMode");
+		PlayerUtils.setFlying(player, flying, "GamemodeCommand#setGameMode");
 
-		if (gamemode.equals(GameMode.CREATIVE) || gamemode.equals(GameMode.SPECTATOR)) {
+		if (gamemode == GameMode.CREATIVE || gamemode == GameMode.SPECTATOR) {
 			PlayerUtils.setAllowFlight(player, true, "GamemodeCommand#setGameMode(" + gamemode + ")");
 			PlayerUtils.setFlying(player, true, "GamemodeCommand#setGameMode(" + gamemode + ")");
 		}
 
-		if (gamemode.equals(GameMode.SURVIVAL)) {
+		if (gamemode == GameMode.SURVIVAL && isUnvanished(player)) {
 			PlayerUtils.setAllowFlight(player, false, "GamemodeCommand#setGameMode(" + gamemode + ")");
 			PlayerUtils.setFlying(player, false, "GamemodeCommand#setGameMode(" + gamemode + ")");
 		}
