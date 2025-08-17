@@ -15,7 +15,6 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -64,10 +63,8 @@ public class ModeUser implements PlayerOwnedObject {
 	@Data
 	@NoArgsConstructor
 	public static class PlayerMode {
-		private static final List<WorldGroup> CREATIVE_DEFAULT = List.of(WorldGroup.CREATIVE, WorldGroup.STAFF);
-
 		public PlayerMode(WorldGroup worldGroup) {
-			if (CREATIVE_DEFAULT.contains(worldGroup)) {
+			if (worldGroup.isCreativeMode()) {
 				this.gameMode = GameMode.CREATIVE;
 				this.flightMode = new FlightMode(true, true);
 			} else {

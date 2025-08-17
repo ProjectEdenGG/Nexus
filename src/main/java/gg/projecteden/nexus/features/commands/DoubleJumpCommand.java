@@ -103,8 +103,8 @@ public class DoubleJumpCommand extends CustomCommand implements Listener {
 			}
 		}
 
-		PlayerUtils.setAllowFlight(player, false, DoubleJumpCommand.class);
-		PlayerUtils.setFlying(player, false, DoubleJumpCommand.class);
+		PlayerUtils.setAllowFlight(player, false, "DoubleJumpCommand#onToggleFlight 1");
+		PlayerUtils.setFlying(player, false, "DoubleJumpCommand#onToggleFlight 1");
 
 		final var velocity = DoubleJumpVelocity.of(player);
 		player.setVelocity(location.getDirection().multiply(velocity.getForward()).setY(velocity.getUp()));
@@ -119,10 +119,10 @@ public class DoubleJumpCommand extends CustomCommand implements Listener {
 			if (player.isOnGround()) {
 				Tasks.cancel(repeat.get());
 				if (isInDoubleJumpRegion(player))
-					PlayerUtils.setAllowFlight(player, true, DoubleJumpCommand.class);
+					PlayerUtils.setAllowFlight(player, true, "DoubleJumpCommand#onToggleFlight 2");
 			} else {
-				PlayerUtils.setAllowFlight(player, false, DoubleJumpCommand.class);
-				PlayerUtils.setFlying(player, false, DoubleJumpCommand.class);
+				PlayerUtils.setAllowFlight(player, false, "DoubleJumpCommand#onToggleFlight 3");
+				PlayerUtils.setFlying(player, false, "DoubleJumpCommand#onToggleFlight 3");
 			}
 		}));
 	}
@@ -151,9 +151,9 @@ public class DoubleJumpCommand extends CustomCommand implements Listener {
 			return;
 
 		final FlightMode user = new ModeUserService().get(player).getFlightMode(WorldGroup.of(player));
-		PlayerUtils.setAllowFlight(player, user.isAllowFlight(), DoubleJumpCommand.class);
+		PlayerUtils.setAllowFlight(player, user.isAllowFlight(), "DoubleJumpCommand#onPlayerLeftRegion");
 		if (!player.isFlying() && user.isFlying()) {
-			PlayerUtils.setFlying(player, true, DoubleJumpCommand.class);
+			PlayerUtils.setFlying(player, true, "DoubleJumpCommand#onPlayerLeftRegion");
 		}
 	}
 
@@ -169,7 +169,7 @@ public class DoubleJumpCommand extends CustomCommand implements Listener {
 
 		Tasks.wait(1, () -> {
 			if (GameModeWrapper.of(player.getGameMode()).isSurvival()) {
-				PlayerUtils.setAllowFlight(player, true, DoubleJumpCommand.class);
+				PlayerUtils.setAllowFlight(player, true, "DoubleJumpCommand#onGameModeChange");
 			}
 		});
 	}

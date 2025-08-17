@@ -88,22 +88,38 @@ public class FlyCommand extends CustomCommand implements Listener {
 			throw new InvalidInputException("You cannot enable cheats in this world");
 
 		if (enable)
-			on(player);
+			on(player, FlyCommand.class);
 		else
-			off(player);
+			off(player, FlyCommand.class);
 
 		send(player, PREFIX + (enable ? "&aEnabled" : "&cDisabled"));
 		if (!isSelf(player))
 			send(PREFIX + "Fly " + (enable ? "&aenabled" : "&cdisabled") + " &3for &e" + player.getName());
 	}
 
-	public static void off(Player player) {
+	public static void off(Player player, Class<?> clazz) {
+		off(player, clazz.getSimpleName());
+	}
+
+	public static void off(Player player, String reason) {
 		player.setFallDistance(0);
-		PlayerUtils.setAllowFlight(player, false, FlyCommand.class);
-		PlayerUtils.setFlying(player, false, FlyCommand.class);
+		PlayerUtils.setAllowFlight(player, false, reason);
+		PlayerUtils.setFlying(player, false, reason);
 		updateModeUser(player);
 
 		IOUtils.fileAppend("cheats", Nickname.of(player) + " disabled fly at " + StringUtils.xyzw(player.getLocation()));
+	}
+
+	public static void on(Player player, Class<?> clazz) {
+		on(player, clazz.getSimpleName());
+	}
+
+	public static void on(Player player, String reason) {
+		player.setFallDistance(0);
+		PlayerUtils.setAllowFlight(player, true, reason);
+		updateModeUser(player);
+
+		IOUtils.fileAppend("cheats", Nickname.of(player) + " enabled fly at " + StringUtils.xyzw(player.getLocation()));
 	}
 
 	public static void updateModeUser(Player player) {
@@ -116,20 +132,12 @@ public class FlyCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	public static void on(Player player) {
-		player.setFallDistance(0);
-		PlayerUtils.setAllowFlight(player, true, FlyCommand.class);
-		updateModeUser(player);
-
-		IOUtils.fileAppend("cheats", Nickname.of(player) + " enabled fly at " + StringUtils.xyzw(player.getLocation()));
-	}
-
 	@EventHandler
 	public void on(PlayerChangedWorldEvent event) {
 		Player player = event.getPlayer();
 
 		if (!player.hasPermission("essentials.fly"))
-			FlyCommand.off(player);
+			FlyCommand.off(player, "FlyCommand#onPlayerChangedWorld");
 	}
 
 	@EventHandler
@@ -160,10 +168,10 @@ public class FlyCommand extends CustomCommand implements Listener {
 
 		Tasks.wait(1, () -> { // Necessary
 			if (flightMode.isAllowFlight())
-				PlayerUtils.setAllowFlight(player, true, FlyCommand.class);
+				PlayerUtils.setAllowFlight(player, true, "FlyCommand#onPlayerJoin");
 
 			if (flightMode.isFlying())
-				PlayerUtils.setFlying(player, true, FlyCommand.class);
+				PlayerUtils.setFlying(player, true, "FlyCommand#onPlayerJoin");
 		});
 	}
 
