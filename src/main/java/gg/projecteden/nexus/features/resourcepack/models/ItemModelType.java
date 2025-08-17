@@ -2132,6 +2132,7 @@ public enum ItemModelType {
 	GUI_PROFILE_TEXTURE_ITEM_CIRCUIT("ui/gui/profile/coupon/circuit"),
 	GUI_PROFILE_TEXTURE_ITEM_GINGHAM("ui/gui/profile/coupon/gingham"),
 	GUI_PROFILE_TEXTURE_ITEM_ZEBRA("ui/gui/profile/coupon/zebra"),
+	GUI_PROFILE_TEXTURE_ITEM_HEARTS("ui/gui/profile/coupon/hearts"),
 	GUI_PROFILE_TEXTURE_ITEM_CATS("ui/gui/profile/coupon/cats"),
 	GUI_PROFILE_TEXTURE_ITEM_BEES("ui/gui/profile/coupon/bees"),
 

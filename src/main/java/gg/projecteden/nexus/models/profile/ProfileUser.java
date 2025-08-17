@@ -120,6 +120,7 @@ public class ProfileUser implements PlayerOwnedObject {
 		CIRCUIT(InventoryTexture.GUI_PROFILE_TEXTURE_CIRCUIT, ItemModelType.GUI_PROFILE_TEXTURE_ITEM_CIRCUIT),
 		GINGHAM(InventoryTexture.GUI_PROFILE_TEXTURE_GINGHAM, ItemModelType.GUI_PROFILE_TEXTURE_ITEM_GINGHAM),
 		ZEBRA(InventoryTexture.GUI_PROFILE_TEXTURE_ZEBRA, ItemModelType.GUI_PROFILE_TEXTURE_ITEM_ZEBRA),
+		HEARTS(InventoryTexture.GUI_PROFILE_TEXTURE_HEARTS, ItemModelType.GUI_PROFILE_TEXTURE_ITEM_HEARTS),
 
 		// Overlay
 		CATS(59, 2, InventoryTexture.GUI_PROFILE_IMAGE_CATS, ItemModelType.GUI_PROFILE_TEXTURE_ITEM_CATS),
@@ -129,7 +130,7 @@ public class ProfileUser implements PlayerOwnedObject {
 		BIRTHDAY(59, 2, InventoryTexture.GUI_PROFILE_IMAGE_BIRTHDAY, ItemModelType.GUI_PROFILE_TEXTURE_ITEM_BIRTHDAY),
 
 		// Internal
-		TEST(true, true, 59, 2, InventoryTexture.GUI_PROFILE_IMAGE_TEST, null),
+		TEST(InventoryTexture.GUI_PROFILE_TESTING, null),
 		;
 
 		private final boolean internal;
