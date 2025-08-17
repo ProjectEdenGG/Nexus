@@ -91,13 +91,13 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 		PlayerUtils.setAllowFlight(player, flight, GamemodeCommand.class);
 
 		if (gamemode.equals(GameMode.CREATIVE) || gamemode.equals(GameMode.SPECTATOR)) {
-			PlayerUtils.setAllowFlight(player, true, "Gamemode = Creative/Spectator");
-			PlayerUtils.setFlying(player, true, "Gamemode = Creative/Spectator");
+			PlayerUtils.setAllowFlight(player, true, "GamemodeCommand#setGameMode(" + gamemode + ")");
+			PlayerUtils.setFlying(player, true, "GamemodeCommand#setGameMode(" + gamemode + ")");
 		}
 
 		if (gamemode.equals(GameMode.SURVIVAL)) {
-			PlayerUtils.setAllowFlight(player, false, "Gamemode = Survival");
-			PlayerUtils.setFlying(player, false, "Gamemode = Survival");
+			PlayerUtils.setAllowFlight(player, false, "GamemodeCommand#setGameMode(" + gamemode + ")");
+			PlayerUtils.setFlying(player, false, "GamemodeCommand#setGameMode(" + gamemode + ")");
 		}
 	}
 
@@ -129,8 +129,8 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 			return;
 
 		final Consumer<Boolean> flying = state -> {
-			PlayerUtils.setAllowFlight(player, state, GamemodeCommand.class);
-			PlayerUtils.setFlying(player, state, GamemodeCommand.class);
+			PlayerUtils.setAllowFlight(player, state, "GamemodeCommand#onWorldChanged 1");
+			PlayerUtils.setFlying(player, state, "GamemodeCommand#onWorldChanged 1");
 		};
 
 		if (!Rank.of(player).isStaff()) {
@@ -143,9 +143,6 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 
 			return;
 		}
-
-		if (Vanish.isVanished(player))
-			return;
 
 		if (player.getGameMode().equals(GameMode.SPECTATOR)) {
 			player.setFallDistance(0);
@@ -165,11 +162,11 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 				flightMode.setFlying(true);
 			}
 
-			PlayerUtils.setAllowFlight(player, flightMode.isAllowFlight(), GamemodeCommand.class);
-			PlayerUtils.setFlying(player, flightMode.isFlying(), GamemodeCommand.class);
+			PlayerUtils.setAllowFlight(player, flightMode.isAllowFlight(), "GamemodeCommand#onWorldChanged 2");
+			PlayerUtils.setFlying(player, flightMode.isFlying(), "GamemodeCommand#onWorldChanged 2");
 
 			if (DoubleJumpCommand.isInDoubleJumpRegion(player))
-				PlayerUtils.setAllowFlight(player, true, GamemodeCommand.class);
+				PlayerUtils.setAllowFlight(player, true, "GamemodeCommand#onWorldChanged 3");
 		});
 	}
 

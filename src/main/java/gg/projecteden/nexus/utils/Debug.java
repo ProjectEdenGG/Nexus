@@ -156,6 +156,7 @@ public class Debug {
 		CUSTOM_BLOCK_DAMAGE,
 		CUSTOM_BLOCKS_SOUNDS,
 		CUSTOM_BLOCKS_JANITOR,
+		FLY,
 		MISC,
 		;
 

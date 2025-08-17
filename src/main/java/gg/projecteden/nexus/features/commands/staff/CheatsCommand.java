@@ -62,15 +62,15 @@ public class CheatsCommand extends CustomCommand implements Listener {
 	@Description("Toggles vanish, god, flight, WorldGuard edit, and gamemode")
 	void toggle(boolean enabled) {
 		if (enabled) {
-			on(player());
+			on(player(), "CheatsCommand#toggle");
 			send(PREFIX + "&aEnabled");
 		} else {
-			off(player(), true);
+			off(player(), true, "CheatsCommand#toggle");
 			send(PREFIX + "&cDisabled");
 		}
 	}
 
-	public static void off(Player player, boolean unvanish) {
+	public static void off(Player player, boolean unvanish, String reason) {
 		if (unvanish)
 			Vanish.unvanish(player);
 
@@ -80,11 +80,11 @@ public class CheatsCommand extends CustomCommand implements Listener {
 
 		if (WorldGroup.of(player) != WorldGroup.CREATIVE) {
 			GamemodeCommand.setGameMode(player, GameMode.SURVIVAL);
-			FlyCommand.off(player);
+			FlyCommand.off(player, reason);
 		}
 	}
 
-	public static void on(Player player) {
+	public static void on(Player player, String reason) {
 		if (!canEnableCheats(player))
 			throw new InvalidInputException("You cannot enable cheats in this world");
 
@@ -95,7 +95,7 @@ public class CheatsCommand extends CustomCommand implements Listener {
 			GamemodeCommand.setGameMode(player, GameMode.CREATIVE);
 
 		if (player.hasPermission("essentials.fly"))
-			FlyCommand.on(player);
+			FlyCommand.on(player, reason);
 
 		if (player.hasPermission("pv.use"))
 			Vanish.vanish(player);
@@ -121,7 +121,7 @@ public class CheatsCommand extends CustomCommand implements Listener {
 		if (canEnableCheats(player))
 			return;
 
-		Tasks.wait(20, () -> CheatsCommand.off(player, false));
+		Tasks.wait(20, () -> CheatsCommand.off(player, false, "CheatsCommand#onSubWorldGroupChangedEvent"));
 	}
 
 	private static void handleBuildEvent(Player player, Cancellable event) {

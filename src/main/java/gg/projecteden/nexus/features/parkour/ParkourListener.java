@@ -18,8 +18,14 @@ import gg.projecteden.nexus.models.parkour.LobbyParkourCourseService;
 import gg.projecteden.nexus.models.parkour.LobbyParkourUser;
 import gg.projecteden.nexus.models.parkour.LobbyParkourUser.CourseData;
 import gg.projecteden.nexus.models.parkour.LobbyParkourUserService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -112,7 +118,7 @@ public class ParkourListener implements Listener {
 					if (!PlayerUtils.playerHas(user, RESET_ITEM))
 						PlayerUtils.giveItem(user, RESET_ITEM);
 				}
-				FlyCommand.off(player);
+				FlyCommand.off(player, ParkourListener.class);
 				SpeedCommand.resetSpeed(player);
 				run.setLastCheckpointTime(LocalDateTime.now());
 				run.setPlaying(true);

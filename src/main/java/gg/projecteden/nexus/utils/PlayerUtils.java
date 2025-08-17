@@ -8,7 +8,6 @@ import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.commands.FlyCommand;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
@@ -94,9 +93,7 @@ public class PlayerUtils {
 	}
 
 	public static void setFlying(Player player, boolean flying, String debugReason) {
-		if (FlyCommand.getDebuggers().contains(player))
-			send(player, debugReason + " | Flying = " + flying);
-
+		Debug.log(DebugType.FLY, debugReason + " | Flying = " + flying);
 		player.setFlying(flying);
 	}
 
@@ -105,9 +102,7 @@ public class PlayerUtils {
 	}
 
 	public static void setAllowFlight(Player player, boolean allowFlight, String debugReason) {
-		if (FlyCommand.getDebuggers().contains(player))
-			send(player, debugReason + " | Flying = " + allowFlight);
-
+		Debug.log(DebugType.FLY, debugReason + " | Flying = " + allowFlight);
 		player.setAllowFlight(allowFlight);
 	}
 

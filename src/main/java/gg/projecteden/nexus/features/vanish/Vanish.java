@@ -69,7 +69,7 @@ public class Vanish extends Feature {
 				player.addPotionEffect(NIGHT_VISION.build());
 		});
 
-		FlyCommand.on(player);
+		FlyCommand.on(player, Vanish.class);
 
 		refresh(player);
 

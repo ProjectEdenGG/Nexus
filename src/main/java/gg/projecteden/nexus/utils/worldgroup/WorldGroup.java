@@ -46,6 +46,7 @@ public enum WorldGroup implements IWorldGroup {
 
 	@Icon("wooden_axe")
 	@Spawn(SpawnType.CREATIVE)
+	@CreativeMode
 	CREATIVE("creative", "buildcontest"),
 
 	@Icon("crossed_swords")
@@ -64,6 +65,7 @@ public enum WorldGroup implements IWorldGroup {
 	EVENTS("bearfair21", "pugmas21", "pugmas24", "pugmas25", "vu_lan"),
 
 	@Icon("lock")
+	@CreativeMode
 	STAFF("buildadmin", "jail", "pirate", "tiger"),
 
 	@Icon("question")
@@ -155,8 +157,16 @@ public enum WorldGroup implements IWorldGroup {
 		return getField().isAnnotationPresent(SurvivalMode.class);
 	}
 
+	public boolean isCreativeMode() {
+		return getField().isAnnotationPresent(SurvivalMode.class);
+	}
+
 	public static List<WorldGroup> getSurvivalModeGroups() {
 		return Arrays.stream(values()).filter(WorldGroup::isSurvivalMode).toList();
+	}
+
+	public static List<WorldGroup> getCreativeModeGroups() {
+		return Arrays.stream(values()).filter(WorldGroup::isCreativeMode).toList();
 	}
 
 	static {
@@ -203,6 +213,10 @@ public enum WorldGroup implements IWorldGroup {
 
 	@Retention(RetentionPolicy.RUNTIME)
 	private @interface SurvivalMode {
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	private @interface CreativeMode {
 	}
 
 	public boolean isPushDisabled() {
