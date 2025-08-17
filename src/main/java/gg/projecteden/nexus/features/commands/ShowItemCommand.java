@@ -22,7 +22,7 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.kyori.adventure.audience.MessageType;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
@@ -133,7 +133,7 @@ public class ShowItemCommand extends CustomCommand {
 
 			message = IngameBridgeListener.parseMentions(message);
 
-			MessageBuilder content = new MessageBuilder()
+			MessageCreateBuilder content = new MessageCreateBuilder()
 				.setContent(StringUtils.stripColor(user.getBridgeName() + " **>** " + Discord.discordize(message)))
 				.setEmbeds(embed.build());
 

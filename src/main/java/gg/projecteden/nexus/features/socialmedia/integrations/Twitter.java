@@ -7,7 +7,7 @@ import gg.projecteden.nexus.models.socialmedia.TwitterData;
 import gg.projecteden.nexus.models.socialmedia.TwitterService;
 import gg.projecteden.nexus.utils.Tasks;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.bukkit.configuration.file.FileConfiguration;
 import twitter4j.v1.Query;
 import twitter4j.v1.Status;
@@ -50,7 +50,7 @@ public class Twitter {
 				EmbedBuilder embed = new EmbedBuilder().setTitle("New tweet! <:twitter:829474002586173460>")
 					.appendDescription(tweet.getText() + System.lineSeparator() + System.lineSeparator() + "[View on Twitter](" + Twitter.getUrl(tweet) + ")");
 
-				MessageBuilder content = new MessageBuilder().setEmbeds(embed.build());
+				MessageCreateBuilder content = new MessageCreateBuilder().setEmbeds(embed.build());
 
 				Discord.send(content, TextChannel.GENERAL);
 				data.getKnownTweets().add(tweet.getId());

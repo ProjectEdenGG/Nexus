@@ -38,9 +38,9 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -108,7 +108,7 @@ public class Votes extends Feature implements Listener {
 		if (user != null && user.getMutualGuilds().size() > 0) {
 			String username = Nerd.of(vote.getUuid()).getName();
 			Nexus.log("[Votes] Sending vote reminder to " + username);
-			MessageBuilder messageBuilder = new MessageBuilder().append("Boop! It's votin' time!").setEmbeds(createEmbed(username));
+			var messageBuilder = new MessageCreateBuilder().setContent("Boop! It's votin' time!").setEmbeds(createEmbed(username));
 			user.openPrivateChannel().complete().sendMessage(messageBuilder.build()).queue();
 		}
 	}

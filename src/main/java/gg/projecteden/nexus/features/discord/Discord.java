@@ -27,7 +27,6 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -36,6 +35,7 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.utils.TimeUtil;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -185,30 +185,30 @@ public class Discord extends Feature {
 	}
 
 	public static CompletableFuture<Message> send(String message, TextChannel... targets) {
-		return send(new MessageBuilder(StringUtils.stripColor(message).replace("<@role", "<@&")), targets);
+		return send(new MessageCreateBuilder().setContent(StringUtils.stripColor(message).replace("<@role", "<@&")), targets);
 	}
 
-	public static CompletableFuture<Message> send(MessageBuilder message, TextChannel... targets) {
+	public static CompletableFuture<Message> send(MessageCreateBuilder message, TextChannel... targets) {
 		return send(message, success -> {}, Throwable::printStackTrace, targets);
 	}
 
-	public static CompletableFuture<Message> send(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, TextChannel... targets) {
+	public static CompletableFuture<Message> send(MessageCreateBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, TextChannel... targets) {
 		return send(message, onSuccess, onError, Bot.RELAY, targets);
 	}
 
 	public static CompletableFuture<Message> koda(String message, TextChannel... targets) {
-		return koda(new MessageBuilder(StringUtils.stripColor(message)), targets);
+		return koda(new MessageCreateBuilder().setContent(StringUtils.stripColor(message)), targets);
 	}
 
-	public static CompletableFuture<Message> koda(MessageBuilder message, TextChannel... targets) {
+	public static CompletableFuture<Message> koda(MessageCreateBuilder message, TextChannel... targets) {
 		return koda(message, success -> {}, Throwable::printStackTrace, targets);
 	}
 
-	public static CompletableFuture<Message> koda(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, TextChannel... targets) {
+	public static CompletableFuture<Message> koda(MessageCreateBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, TextChannel... targets) {
 		return send(message, onSuccess, onError, Bot.KODA, targets);
 	}
 
-	private static CompletableFuture<Message> send(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, Bot bot, TextChannel... targets) {
+	private static CompletableFuture<Message> send(MessageCreateBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, Bot bot, TextChannel... targets) {
 		if (targets == null || targets.length == 0)
 			targets = new TextChannel[]{ TextChannel.BRIDGE };
 
@@ -216,11 +216,9 @@ public class Discord extends Feature {
 			if (target == null || bot.jda() == null)
 				continue;
 
-			final MentionType[] mentionTypes = { MentionType.EVERYONE, MentionType.HERE };
-			if (bot == Bot.RELAY && target == TextChannel.BRIDGE)
-				message.denyMentions(mentionTypes);
-			else
-				message.allowMentions(mentionTypes);
+			final List<MentionType> mentionTypes = List.of(MentionType.EVERYONE, MentionType.HERE);
+			if (bot != Bot.RELAY || target != TextChannel.BRIDGE)
+				message = message.setAllowedMentions(mentionTypes);
 
 			var textChannel = target.get(bot.jda());
 			if (textChannel == null)

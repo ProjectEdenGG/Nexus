@@ -160,6 +160,11 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 
 			setGameMode(player, gameMode);
 
+			if (Vanish.isVanished(player)) {
+				flightMode.setAllowFlight(true);
+				flightMode.setFlying(true);
+			}
+
 			PlayerUtils.setAllowFlight(player, flightMode.isAllowFlight(), GamemodeCommand.class);
 			PlayerUtils.setFlying(player, flightMode.isFlying(), GamemodeCommand.class);
 

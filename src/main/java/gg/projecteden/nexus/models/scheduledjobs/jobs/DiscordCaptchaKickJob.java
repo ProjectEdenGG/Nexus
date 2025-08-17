@@ -34,7 +34,7 @@ public class DiscordCaptchaKickJob extends AbstractJob {
 
 			if (member != null) {
 				Discord.staffLog("**[Captcha]** " + name + " - Kicking");
-				member.kick("Please complete the verification process in your DMs with KodaBear").queue();
+				member.kick().queue();
 			} else
 				Nexus.log("[Captcha] Kick scheduled for " + name + " cancelled, member not found");
 		}

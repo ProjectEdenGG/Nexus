@@ -17,7 +17,7 @@ import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -64,7 +64,7 @@ public class SuggestAppCommand extends NexusAppCommand {
 		if (nerd.hasNickname())
 			name = "%s (%s)".formatted(nerd.getNickname(), name);
 
-		reply(new MessageBuilder()
+		reply(new MessageCreateBuilder()
 			.setContent("@here " + member().getAsMention() + " is suggesting **" + name + "** for **" + StringUtils.camelCase(rank.getName()) + "**")
 			.setEmbeds(embed.build()));
 	}
