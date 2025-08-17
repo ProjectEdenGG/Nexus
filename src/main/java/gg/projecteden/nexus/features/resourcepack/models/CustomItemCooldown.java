@@ -41,7 +41,7 @@ public class CustomItemCooldown {
 	}
 
 	public int start(Player player) {
-		COOLDOWN_SERVICE.check(player, cooldownType, tickTime);
+		CooldownService.isNotOnCooldown(player, cooldownType, tickTime);
 
 		this.taskId = Tasks.repeat(0, 5, () -> {
 			LocalDateTime cooldownTime = COOLDOWN_SERVICE.get(player).get(cooldownType);

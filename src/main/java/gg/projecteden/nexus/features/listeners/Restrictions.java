@@ -209,7 +209,7 @@ public class Restrictions implements Listener {
 		if (Nerd.of(event.getPlayer()).getRank().isStaff())
 			return;
 
-		if (COOLDOWN_SERVICE.check(event.getPlayer(), "world-change", TickTime.SECOND))
+		if (CooldownService.isNotOnCooldown(event.getPlayer(), "world-change", TickTime.SECOND))
 			return;
 
 		event.setCancelled(true);

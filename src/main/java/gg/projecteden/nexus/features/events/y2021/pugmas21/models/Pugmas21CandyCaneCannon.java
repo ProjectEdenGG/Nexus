@@ -62,7 +62,7 @@ public class Pugmas21CandyCaneCannon implements Listener {
 
 		final ItemStack candyCaneItem = findCandyCane(player);
 		if (candyCaneItem == null) {
-			if (new CooldownService().check(player, "candycanecannonammo", TickTime.SECOND.x(3)))
+			if (CooldownService.isNotOnCooldown(player, "candycanecannonammo", TickTime.SECOND.x(3)))
 				PlayerUtils.send(player, "&cYou are out of candy cane ammo!");
 
 			event.setCancelled(true);

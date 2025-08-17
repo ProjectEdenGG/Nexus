@@ -149,7 +149,7 @@ public class HideAndSeek extends Infection {
 		Match match = minigamer.getMatch();
 		if (event.getItem().getType().equals(SELECTOR_ITEM.getType())) {
 			if (match.isStarted()) {
-				if (!COOLDOWN_SERVICE.check(player.getUniqueId(), "hide-and-seek-selector", SELECTOR_COOLDOWN, false)) {
+				if (CooldownService.isOnCooldown(player.getUniqueId(), "hide-and-seek-selector", SELECTOR_COOLDOWN, false)) {
 					return;
 				}
 			}
@@ -537,7 +537,7 @@ public class HideAndSeek extends Infection {
 
 		public static void run(Minigamer minigamer) {
 			Minigames.debug("Stun#run #1");
-			if (!COOLDOWN_SERVICE.check(minigamer.getUuid(), "hide-and-seek-stun", COOLDOWN_TIME, false))
+			if (CooldownService.isOnCooldown(minigamer.getUuid(), "hide-and-seek-stun", COOLDOWN_TIME, false))
 				return;
 			Minigames.debug("Stun#run #2");
 
@@ -596,7 +596,7 @@ public class HideAndSeek extends Infection {
 
 		public static void run(Minigamer minigamer) {
 			Minigames.debug("Radar#run #1");
-			if (!COOLDOWN_SERVICE.check(minigamer.getUuid(), "hide-and-seek-radar", COOLDOWN_TIME, false))
+			if (CooldownService.isOnCooldown(minigamer.getUuid(), "hide-and-seek-radar", COOLDOWN_TIME, false))
 				return;
 			Minigames.debug("Radar#run #2");
 			
@@ -624,7 +624,7 @@ public class HideAndSeek extends Infection {
 		private static final int SEEKER_RANGE = 15;
 
 		public static void run(Minigamer minigamer) {
-			if (!COOLDOWN_SERVICE.check(minigamer.getUuid(), "hide-and-seek-taunt", COOLDOWN_TIME, false))
+			if (CooldownService.isOnCooldown(minigamer.getUuid(), "hide-and-seek-taunt", COOLDOWN_TIME, false))
 				return;
 
 			Match match = minigamer.getMatch();
@@ -676,7 +676,7 @@ public class HideAndSeek extends Infection {
 		private static final long COOLDOWN_TIME = TickTime.SECOND.x(120);
 
 		public static void run(Minigamer minigamer) {
-			if (!COOLDOWN_SERVICE.check(minigamer.getUuid(), "hide-and-seek-decoy", COOLDOWN_TIME, false))
+			if (CooldownService.isOnCooldown(minigamer.getUuid(), "hide-and-seek-decoy", COOLDOWN_TIME, false))
 				return;
 
 			final Location blockLoc = minigamer.getLocation().toBlockLocation();

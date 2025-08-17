@@ -13,7 +13,12 @@ import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests;
 import gg.projecteden.nexus.models.bearfair20.BearFair20User;
 import gg.projecteden.nexus.models.bearfair20.BearFair20UserService;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
@@ -531,7 +536,7 @@ public class SummerDownUnderIsland implements Listener, BearFairIsland {
 		// Player is sifting
 		Player player = event.getPlayer();
 		CooldownService cooldownService = new CooldownService();
-		if (!cooldownService.check(player, "BF20_SDU_Sifting", TickTime.SECOND.x(2)))
+		if (CooldownService.isOnCooldown(player, "BF20_SDU_Sifting", TickTime.SECOND.x(2)))
 			return;
 
 		Location loc = player.getLocation();

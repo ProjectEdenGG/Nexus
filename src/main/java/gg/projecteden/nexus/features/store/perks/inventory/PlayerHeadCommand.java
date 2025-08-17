@@ -3,9 +3,14 @@ package gg.projecteden.nexus.features.store.perks.inventory;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
@@ -45,7 +50,7 @@ public class PlayerHeadCommand extends CustomCommand {
 				error("You cannot use this command in this world");
 
 			final String cooldownId = "playerhead-" + worldGroup().name();
-			if (!new CooldownService().check(player(), cooldownId, TickTime.DAY))
+			if (CooldownService.isOnCooldown(player(), cooldownId, TickTime.DAY))
 				throw new CommandCooldownException(player(), cooldownId);
 		}
 

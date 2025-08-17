@@ -756,7 +756,7 @@ public class PlayerUtils {
 		if (recipient == null || message == null)
 			return;
 
-		if (!new CooldownService().check(recipient, key, time))
+		if (CooldownService.isOnCooldown(recipient, key, time))
 			return;
 
 		send(recipient, message, objects);

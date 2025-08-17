@@ -135,7 +135,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 				checkTeleportDisabled(player1.getPlayer(), player2);
 
 				if (rank().lt(Rank.of(player2))) {
-					if (!new CooldownService().check(player(), "command:" + cooldownType, TickTime.SECOND.x(5)))
+					if (CooldownService.isOnCooldown(player(), "command:" + cooldownType, TickTime.SECOND.x(5)))
 						throw new CommandCooldownException(uuid(), cooldownType);
 				}
 
@@ -147,7 +147,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 			checkTeleportDisabled(player(), player1);
 
 			if (rank().lt(Rank.of(player1))) {
-				if (!new CooldownService().check(player(), "command:" + cooldownType, TickTime.SECOND.x(5)))
+				if (CooldownService.isOnCooldown(player(), "command:" + cooldownType, TickTime.SECOND.x(5)))
 					throw new CommandCooldownException(uuid(), cooldownType);
 			}
 

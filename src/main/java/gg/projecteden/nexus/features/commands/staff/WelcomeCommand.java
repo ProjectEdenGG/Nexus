@@ -85,7 +85,7 @@ public class WelcomeCommand extends CustomCommand implements Listener {
 			if (activeStaff.count() < 4)
 				return;
 
-			if (!new CooldownService().check(UUID0, "bumpReminder", TickTime.DAY))
+			if (CooldownService.isOnCooldown(UUID0, "bumpReminder", TickTime.DAY))
 				return;
 
 			String url = "https://docs.google.com/document/d/1MVFG2ipdpCY42cUzZyVsIbjVlPRCiN0gmYL89sJNRTw/edit?usp=sharing";
@@ -144,7 +144,7 @@ public class WelcomeCommand extends CustomCommand implements Listener {
 	private static void sayWelcome(@NotNull Nerd welcomer, @Nullable Player welcomee) {
 		String message;
 
-		if (new CooldownService().check(UUID0, "welc", TickTime.SECOND.x(20)))
+		if (CooldownService.isNotOnCooldown(UUID0, "welc", TickTime.SECOND.x(20)))
 			message = getLongMessage(welcomee);
 		else
 			message = welcomee == null ? genericMessage : getShortMessage(welcomee);

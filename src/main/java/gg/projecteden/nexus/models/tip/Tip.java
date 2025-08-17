@@ -48,7 +48,7 @@ public class Tip implements PlayerOwnedObject {
 			return true;
 		}
 
-		if (!new CooldownService().check(uuid, "Tip-" + tipType.name(), tipType.getCooldown()))
+		if (CooldownService.isOnCooldown(uuid, "Tip-" + tipType.name(), tipType.getCooldown()))
 			return false;
 
 		if (tipType.getPredicate() != null)

@@ -145,9 +145,8 @@ public class NoteBlock implements ICustomNoteBlock {
 				return;
 
 			String cooldownType = "noteblock_" + location.getWorld().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ();
-			if (!(new CooldownService().check(UUIDUtils.UUID0, cooldownType, TickTime.TICK))) {
+			if (CooldownService.isOnCooldown(UUIDUtils.UUID0, cooldownType, TickTime.TICK))
 				return;
-			}
 
 			NoteBlockPlayEvent event = new NoteBlockPlayEvent(block);
 			if (event.callEvent()) {

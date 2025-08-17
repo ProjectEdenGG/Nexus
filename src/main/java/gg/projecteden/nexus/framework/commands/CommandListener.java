@@ -46,7 +46,7 @@ public class CommandListener implements Listener {
 		if (Rank.of(event.getPlayer()).gt(Rank.MEMBER))
 			return;
 
-		if (COOLDOWN_SERVICE.check(event.getPlayer(), "command-cooldown", TickTime.TICK.x(5)))
+		if (CooldownService.isNotOnCooldown(event.getPlayer(), "command-cooldown", TickTime.TICK.x(5)))
 			return;
 
 		event.setCancelled(true);

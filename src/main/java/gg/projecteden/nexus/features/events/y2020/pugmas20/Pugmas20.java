@@ -13,15 +13,30 @@ import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20User;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20UserService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.GlowUtils;
 import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerMovementUtils;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldEditUtils;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
@@ -34,7 +49,12 @@ import tech.blastmc.holograms.api.HologramsAPI;
 import tech.blastmc.holograms.api.models.Hologram;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Pugmas20 implements Listener {
 	@Getter
@@ -222,7 +242,7 @@ public class Pugmas20 implements Listener {
 	public void onNPCClick(NPCRightClickEvent event) {
 		Player player = event.getClicker();
 		if (!isAtPugmas(player)) return;
-		if (!new CooldownService().check(event.getClicker(), "Pugmas20_NPC", TickTime.SECOND.x(10))) return;
+		if (CooldownService.isOnCooldown(event.getClicker(), "Pugmas20_NPC", TickTime.SECOND.x(10))) return;
 
 		int id = event.getNPC().getId();
 		QuestNPC.startScript(player, id);
@@ -297,7 +317,7 @@ public class Pugmas20 implements Listener {
 		if (!isAtPugmas(player))
 			return;
 
-		if (!new CooldownService().check(player, "pugmas20-elf-punch", TickTime.SECOND.x(3)))
+		if (CooldownService.isOnCooldown(player, "pugmas20-elf-punch", TickTime.SECOND.x(3)))
 			return;
 
 		String message = RandomUtils.randomElement("Ow!", "Stop that!", "Rude!");

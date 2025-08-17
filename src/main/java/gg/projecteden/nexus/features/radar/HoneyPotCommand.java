@@ -315,7 +315,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 			HoneyPotGriefer griefer = grieferService.get(player);
 			double triggered = Math.max(griefer.getTriggered() + amount, 0);
 
-			if (amount > 0 && new CooldownService().check(player, "hp_" + name, TickTime.MINUTE.x(10))) {
+			if (amount > 0 && CooldownService.isNotOnCooldown(player, "hp_" + name, TickTime.MINUTE.x(10))) {
 				final JsonBuilder message = json("&7&l[&cRadar&7&l] &a" + player.getName() + " &fhas triggered a Honey Pot &e(HP: " + name + ")")
 						.next(" &e[Click to Teleport]")
 						.command("mcmd vanish on ;; tp " + player.getName())

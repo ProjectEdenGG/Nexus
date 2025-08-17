@@ -30,7 +30,7 @@ public class Listeners implements Listener {
 		if (PlayerUtils.isHidden(player))
 			return;
 
-		if (!new CooldownService().check(event.getPlayer(), "bigdoor_knockback", TickTime.SECOND))
+		if (CooldownService.isOnCooldown(event.getPlayer(), "bigdoor_knockback", TickTime.SECOND))
 			return;
 
 		Location playerLoc = player.getLocation().clone();

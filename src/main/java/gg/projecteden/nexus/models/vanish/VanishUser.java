@@ -100,7 +100,7 @@ public class VanishUser implements PlayerOwnedObject {
 			return;
 		}
 
-		if (!new CooldownService().check(uuid, "vanish-notify-" + setting.name().toLowerCase(), TickTime.SECOND.x(3)))
+		if (CooldownService.isOnCooldown(uuid, "vanish-notify-" + setting.name().toLowerCase(), TickTime.SECOND.x(3)))
 			return;
 
 		sendMessage(Vanish.PREFIX + "&c" + action + " disabled&3, toggle with &c/vanish settings");

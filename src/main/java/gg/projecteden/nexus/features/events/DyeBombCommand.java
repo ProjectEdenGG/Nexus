@@ -9,10 +9,21 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.FireworkLauncher;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.NoArgsConstructor;
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
@@ -88,7 +99,7 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 
 		Player player = event.getPlayer();
 		CooldownService cooldownService = new CooldownService();
-		if (!cooldownService.check(player, "throwDyeBomb", 2 * 20))
+		if (CooldownService.isOnCooldown(player, "throwDyeBomb", 2 * 20))
 			return;
 
 		if (player.getGameMode() != GameMode.CREATIVE) {

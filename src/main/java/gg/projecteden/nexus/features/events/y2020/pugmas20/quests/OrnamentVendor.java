@@ -14,8 +14,16 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20User;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20UserService;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.Pugmas20TreeRegenJob;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.Distance;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,7 +43,14 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -302,7 +317,7 @@ public class OrnamentVendor implements Listener {
 		}
 
 		public void feller(Player player, int id) {
-			if (!new CooldownService().check(UUIDUtils.UUID0, getRegion(id).getId(), TickTime.SECOND.x(3)))
+			if (CooldownService.isOnCooldown(UUIDUtils.UUID0, getRegion(id).getId(), TickTime.SECOND.x(3)))
 				return;
 
 			Pugmas20.setTreeAnimating(true);

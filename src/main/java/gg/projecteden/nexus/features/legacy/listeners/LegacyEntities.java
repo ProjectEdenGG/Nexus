@@ -9,7 +9,11 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Material;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -116,7 +120,7 @@ public class LegacyEntities implements Listener {
 
 		event.setCancelled(true);
 
-		if (!new CooldownService().check(player, "legacy_no_interact", TickTime.SECOND.x(3)))
+		if (CooldownService.isOnCooldown(player, "legacy_no_interact", TickTime.SECOND.x(3)))
 			return;
 
 		PlayerUtils.send(player, "&c&lHey! &7You cannot interact with that in the legacy world");

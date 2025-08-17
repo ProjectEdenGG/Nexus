@@ -243,7 +243,7 @@ public class RegenCrops implements Listener {
 		}
 
 		if (ageable.getAge() != ageable.getMaximumAge()) {
-			if (new CooldownService().check(player, "BF_notFullyGrown", TickTime.MINUTE)) {
+			if (CooldownService.isNotOnCooldown(player, "BF_notFullyGrown", TickTime.MINUTE)) {
 				BearFair20.send(BFQuests.notFullyGrownError, player);
 				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
 			}

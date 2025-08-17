@@ -95,7 +95,7 @@ public class DoubleJumpCommand extends CustomCommand implements Listener {
 
 		Integer cooldown = getDoubleJumpCooldown(location);
 		if (cooldown != null && cooldown > 0) {
-			if (!new CooldownService().check(player, "doublejump", cooldown)) {
+			if (CooldownService.isOnCooldown(player, "doublejump", cooldown)) {
 				if (player.getGameMode() != GameMode.CREATIVE)
 					event.setCancelled(true);
 

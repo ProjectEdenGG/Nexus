@@ -413,7 +413,7 @@ public class TestCommand extends CustomCommand implements Listener {
 	void cooldownForceCME(int iterations) {
 		CooldownService service = new CooldownService();
 		for (int i = 0; i < iterations; i++)
-			service.check(uuid(), UUID.randomUUID().toString(), TickTime.SECOND);
+			CooldownService.isNotOnCooldown(uuid(), UUID.randomUUID().toString(), TickTime.SECOND);
 	}
 
 	@Path("argPerm [one] [two] [three] [four] [five]")

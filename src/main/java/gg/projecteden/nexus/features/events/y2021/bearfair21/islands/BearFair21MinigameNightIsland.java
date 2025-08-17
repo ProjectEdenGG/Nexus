@@ -835,7 +835,7 @@ public class BearFair21MinigameNightIsland implements BearFair21Island {
 	}
 
 	public static void startPhoneRinging(Player player) {
-		if (new CooldownService().check(player, "bf21-phone", TickTime.SECOND.x(15)))
+		if (CooldownService.isNotOnCooldown(player, "bf21-phone", TickTime.SECOND.x(15)))
 			for (int i = 0; i < 5; i++)
 				addTaskId(player, Tasks.wait(TickTime.SECOND.x(i * 2), () -> ringingSound.accept(player)));
 	}

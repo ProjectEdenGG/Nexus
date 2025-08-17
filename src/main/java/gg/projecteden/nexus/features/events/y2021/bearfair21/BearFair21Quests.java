@@ -9,11 +9,17 @@ import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.events.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.BearFair21MainIsland;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.BearFair21PugmasIsland;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.*;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.BearFair21Beehive;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.BearFair21Errors;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.BearFair21RadioHeads;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.BearFair21Recycler;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.BearFair21SellCrates;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.BearFair21Talker;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.BearFair21TreasureChests;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.clientside.BearFair21ClientsideContentManager;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21Collector;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21Merchants;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.BearFair21Mining;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.BearFair21WoodCutting;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.farming.BearFair21Farming;
@@ -26,9 +32,19 @@ import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21User;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.trophy.TrophyType;
-import gg.projecteden.nexus.utils.*;
-import gg.projecteden.nexus.utils.Timer;
+import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Timer;
+import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.parchment.HasPlayer;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -49,7 +65,12 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class BearFair21Quests implements Listener {
 	BearFair21UserService userService = new BearFair21UserService();
@@ -359,7 +380,7 @@ public class BearFair21Quests implements Listener {
 //			wait = 0;
 
 		CooldownService cooldownService = new CooldownService();
-		if (!cooldownService.check(player, "BF21_NPCInteract", TickTime.SECOND.x(5)))
+		if (CooldownService.isOnCooldown(player, "BF21_NPCInteract", TickTime.SECOND.x(5)))
 			return;
 
 		BearFair21Talker.runScript(user, id).thenAccept(openMerchant -> {
@@ -382,7 +403,7 @@ public class BearFair21Quests implements Listener {
 
 		if (!BearFair21.getConfig().isEnabled(BearFair21Config.BearFair21ConfigOption.EDIT)) {
 			event.setCancelled(true);
-			if (new CooldownService().check(player, "BF21_cantbreak", TickTime.MINUTE)) {
+			if (CooldownService.isNotOnCooldown(player, "BF21_cantbreak", TickTime.MINUTE)) {
 				BearFair21.send(BearFair21Errors.CANT_BREAK, player);
 				sound_villagerNo(player);
 			}
@@ -395,7 +416,7 @@ public class BearFair21Quests implements Listener {
 		if (BearFair21WoodCutting.breakBlock(event)) return;
 		if (BearFair21Farming.breakBlock(event)) return;
 
-		if (new CooldownService().check(player, "BF21_cantbreak", TickTime.MINUTE)) {
+		if (CooldownService.isNotOnCooldown(player, "BF21_cantbreak", TickTime.MINUTE)) {
 			BearFair21.send(BearFair21Errors.CANT_BREAK, player);
 			sound_villagerNo(player);
 		}

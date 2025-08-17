@@ -23,108 +23,76 @@ public class CooldownService extends MongoPlayerService<Cooldown> {
 		return cache;
 	}
 
-	/**
-	 * Checks if a player is currently off cooldown.
-	 * <p>
-	 * Returns true if the player is not on cooldown. This will also create a new cooldown instance.
-	 * @param player player to check
-	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
-	 * @param time how long the cooldown should last
-	 * @return true if player is not on cooldown
-	 */
-	public boolean check(OfflinePlayer player, String type, TickTime time) {
-		return check(player.getUniqueId(), type, time);
+	public static boolean isOnCooldown(OfflinePlayer player, String type, TickTime time) {
+		return isOnCooldown(player.getUniqueId(), type, time);
 	}
 
-	/**
-	 * Checks if a player is currently off cooldown.
-	 * <p>
-	 * Returns true if the player is not on cooldown. This will also create a new cooldown instance.
-	 * @param uuid player UUID to check (or Nexus.UUID0)
-	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
-	 * @param time how long the cooldown should last
-	 * @return true if player is not on cooldown
-	 */
-	public boolean check(UUID uuid, String type, TickTime time) {
-		return check(uuid, type, time.get());
+	public static boolean isOnCooldown(UUID uuid, String type, TickTime time) {
+		return isOnCooldown(uuid, type, time.get());
 	}
 
-	/**
-	 * Checks if a player is currently off cooldown.
-	 * <p>
-	 * Returns true if the player is not on cooldown. This will also create a new cooldown instance.
-	 *
-	 * @param player player to check
-	 * @param type   an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
-	 * @param ticks  how long the cooldown should last in ticks
-	 * @return true if player is not on cooldown
-	 */
-	public boolean check(OfflinePlayer player, String type, long ticks) {
-		return check(player.getUniqueId(), type, ticks);
+	public static boolean isOnCooldown(OfflinePlayer player, String type, long ticks) {
+		return isOnCooldown(player.getUniqueId(), type, ticks);
 	}
 
-	/**
-	 * Checks if a player is currently off cooldown.
-	 * <p>
-	 * Returns true if the player is not on cooldown or if the player bypasses this cooldown. This will also create a new cooldown instance.
-	 *
-	 * @param uuid             player UUID to check (or Nexus.UUID0)
-	 * @param type             an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
-	 * @param ticks            how long the cooldown should last in ticks
-	 * @param bypassPermission permission the player must have to bypass this cooldown
-	 * @return true if player is not on cooldown
-	 */
-	public boolean check(UUID uuid, String type, long ticks, String bypassPermission) {
+	public static boolean isOnCooldown(UUID uuid, String type, long ticks, String bypassPermission) {
 		OfflinePlayer player = PlayerUtils.getPlayer(uuid);
 		if (player.getPlayer() != null && player.getPlayer().hasPermission(bypassPermission))
 			return true;
 
-		return check(uuid, type, ticks);
+		return isOnCooldown(uuid, type, ticks);
 	}
 
-	/**
-	 * Checks if a player is currently off cooldown.
-	 * <p>
-	 * Returns true if the player is not on cooldown. This will also create a new cooldown instance.
-	 *
-	 * @param uuid  player UUID to check (or Nexus.UUID0)
-	 * @param type  an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
-	 * @param ticks how long the cooldown should last in ticks
-	 * @return true if player is not on cooldown
-	 */
-	public boolean check(UUID uuid, String type, long ticks) {
-		return check(uuid, type, ticks, true);
+	public static boolean isOnCooldown(UUID uuid, String type, long ticks) {
+		return isOnCooldown(uuid, type, ticks, true);
 	}
 
-	/**
-	 * Checks if a player is currently off cooldown.
-	 * <p>
-	 * Returns true if the player is not on cooldown. If createIfTrue, this will also create a new cooldown instance.
-	 *
-	 * @param uuid         player UUID to check (or Nexus.UUID0)
-	 * @param type         an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
-	 * @param ticks        how long the cooldown should last in ticks
-	 * @param createIfTrue should the cooldown be created if passed
-	 * @return true if player is not on cooldown
-	 */
-	public boolean check(UUID uuid, String type, long ticks, boolean createIfTrue) {
+	public static boolean isOnCooldown(UUID uuid, String type, long ticks, boolean createIfTrue) {
+		return new CooldownService().isOnCooldown0(uuid, type, ticks, createIfTrue);
+	}
+
+	public static boolean isNotOnCooldown(OfflinePlayer player, String type, TickTime time) {
+		return !isOnCooldown(player, type, time);
+	}
+
+	public static boolean isNotOnCooldown(UUID uuid, String type, TickTime time) {
+		return !isOnCooldown(uuid, type, time);
+	}
+
+	public static boolean isNotOnCooldown(OfflinePlayer player, String type, long ticks) {
+		return !isOnCooldown(player, type, ticks);
+	}
+
+	public static boolean isNotOnCooldown(UUID uuid, String type, long ticks, String bypassPermission) {
+		return !isOnCooldown(uuid, type, ticks, bypassPermission);
+	}
+
+	public static boolean isNotOnCooldown(UUID uuid, String type, long ticks) {
+		return !isOnCooldown(uuid, type, ticks);
+	}
+
+	public static boolean isNotOnCooldown(UUID uuid, String type, long ticks, boolean createIfTrue) {
+		return !isOnCooldown(uuid, type, ticks, createIfTrue);
+	}
+
+	private boolean isOnCooldown0(UUID uuid, String type, long ticks, boolean createIfTrue) {
 		if (ticks == 0)
-			return true;
+			return false;
 
 		Cooldown cooldown = get(uuid);
 		if (cooldown == null) {
 			Nexus.warn("Cooldown object is null? " + uuid.toString() + " / " + type + " / " + ticks);
-			return false;
+			return true;
 		}
 
-		if (!cooldown.check(type))
-			return false;
+		if (cooldown.isOnCooldown(type))
+			return true;
 
 		if (createIfTrue) {
 			cooldown = cooldown.create(type, ticks);
 			save(cooldown);
 		}
-		return true;
+		return false;
 	}
 
 	/**
@@ -159,7 +127,7 @@ public class CooldownService extends MongoPlayerService<Cooldown> {
 		int count = 0;
 		for (Cooldown cooldown : getAll()) {
 			for (String key : new HashSet<>(cooldown.getCooldowns().keySet()))
-				if (cooldown.check(key)) {
+				if (cooldown.isNotOnCooldown(key)) {
 					cooldown.getCooldowns().remove(key);
 					++count;
 				}
@@ -178,7 +146,7 @@ public class CooldownService extends MongoPlayerService<Cooldown> {
 	protected void beforeSave(Cooldown cooldown) {
 		for (String key : new HashSet<>(cooldown.getCooldowns().keySet()))
 			try {
-				if (cooldown.check(key))
+				if (cooldown.isNotOnCooldown(key))
 					cooldown.getCooldowns().remove(key);
 			} catch (NullPointerException ignore) {}
 	}

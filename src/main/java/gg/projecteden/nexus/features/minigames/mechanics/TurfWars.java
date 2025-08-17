@@ -170,7 +170,7 @@ public class TurfWars extends TeamMechanic {
 		if (match == null)
 			return;
 
-		if (!new CooldownService().check(player.getUniqueId(), "turf-border", 5))
+		if (CooldownService.isOnCooldown(player.getUniqueId(), "turf-border", 5))
 			return;
 
 		applyBorderVelocity(player);

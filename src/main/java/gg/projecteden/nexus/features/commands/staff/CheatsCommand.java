@@ -135,7 +135,7 @@ public class CheatsCommand extends CustomCommand implements Listener {
 			return;
 
 		event.setCancelled(true);
-		if (new CooldownService().check(player, "cheats_no_interact", TickTime.SECOND.x(2)))
+		if (CooldownService.isNotOnCooldown(player, "cheats_no_interact", TickTime.SECOND.x(2)))
 			player.sendMessage(CheatsCommand.PREFIX + "You cannot build while Fly, God, or Speed is enabled");
 	}
 

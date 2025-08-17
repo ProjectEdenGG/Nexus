@@ -44,7 +44,7 @@ public class FireworkEnchant extends CustomEnchant implements Listener {
 		if (!event.getBow().equals(player.getInventory().getItem(event.getHand())))
 			return;
 
-		if (!new CooldownService().check(player, "fireworkbow", TickTime.SECOND))
+		if (CooldownService.isOnCooldown(player, "fireworkbow", TickTime.SECOND))
 			return;
 
 		int chance = Math.max(100 - (5 + (5 * level)), 0);

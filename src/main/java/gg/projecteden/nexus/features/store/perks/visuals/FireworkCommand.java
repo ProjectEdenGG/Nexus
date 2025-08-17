@@ -2,8 +2,14 @@ package gg.projecteden.nexus.features.store.perks.visuals;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
@@ -26,7 +32,7 @@ public class FireworkCommand extends CustomCommand {
 	void firework(@Arg(value = "1", min = 1, max = 10) int count) {
 		final long duration = TickTime.SECOND.x(count * 2);
 
-		if (!new CooldownService().check(uuid(), "firework", duration))
+		if (CooldownService.isOnCooldown(uuid(), "firework", duration))
 			throw new CommandCooldownException(uuid(), "firework");
 
 		Tasks.Countdown.builder()

@@ -134,7 +134,7 @@ public class SignListener implements Listener {
 				return;
 
 			if (PlayerUtils.isWGEdit(player)) {
-				if (new CooldownService().check(player, "minigames-sign-interact-wgedit", TickTime.SECOND.x(3))) {
+				if (CooldownService.isNotOnCooldown(player, "minigames-sign-interact-wgedit", TickTime.SECOND.x(3))) {
 					PlayerUtils.send(player, Minigames.PREFIX + "Please turn off WorldGuard Edit to join a game");
 					new SoundBuilder(CustomSound.BONK)
 						.location(player.getLocation())
@@ -149,12 +149,12 @@ public class SignListener implements Listener {
 			final boolean holdingInvite = ItemModelType.ENVELOPE_1.is(itemInMainHand);
 
 			if (!Nullables.isNullOrAir(itemInMainHand) && !holdingInvite) {
-				if (new CooldownService().check(player, "minigames-sign-interact-holding-item", TickTime.SECOND.x(3)))
+				if (CooldownService.isNotOnCooldown(player, "minigames-sign-interact-holding-item", TickTime.SECOND.x(3)))
 					PlayerUtils.send(player, Minigames.PREFIX + "Your hand must be empty to join a game");
 				return;
 			}
 
-			if (!new CooldownService().check(player, "minigames-sign-interact", TickTime.SECOND))
+			if (CooldownService.isOnCooldown(player, "minigames-sign-interact", TickTime.SECOND))
 				return;
 
 			final String mechanicName = id.replace(MechanicType.BOUNDING_BOX_ID_PREFIX, "").replace(MechanicSubGroup.BOUNDING_BOX_ID_PREFIX, "");

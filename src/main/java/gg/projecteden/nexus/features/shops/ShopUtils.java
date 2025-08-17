@@ -26,7 +26,7 @@ public class ShopUtils {
 			List<ItemStack> excess = PlayerUtils.giveItemsAndGetExcess(shop.getOnlinePlayer(), items);
 			shop.addHolding(shopGroup, excess);
 			if (!excess.isEmpty())
-				if (new CooldownService().check(uuid, "shop-excess-items", TickTime.SECOND.x(2)))
+				if (CooldownService.isNotOnCooldown(uuid, "shop-excess-items", TickTime.SECOND.x(2)))
 					PlayerUtils.send(uuid, new JsonBuilder(Shops.PREFIX + "Excess items added to item collection menu, click to view").command("/shops collect"));
 		} else
 			shop.addHolding(shopGroup, items);

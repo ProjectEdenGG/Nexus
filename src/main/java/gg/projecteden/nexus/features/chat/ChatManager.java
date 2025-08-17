@@ -84,7 +84,7 @@ public class ChatManager {
 						if ("Tuniab".equals(chatter.getName())) {
 							String id = "chat-" + publicChannel.getName().toLowerCase();
 							CooldownService service = new CooldownService();
-							if (!service.check(chatter.getUuid(), id, TickTime.SECOND.x(5)))
+							if (CooldownService.isOnCooldown(chatter.getUuid(), id, TickTime.SECOND.x(5)))
 								throw new InvalidInputException("You are talking too fast! (&e" + service.getDiff(chatter.getUuid(), id) + " left&c)");
 						}
 					}

@@ -305,8 +305,7 @@ public class StatisticsCommand extends CustomCommand implements Listener {
 		if (times.size() < 10000)
 			return;
 
-		CooldownService cooldownService = new CooldownService();
-		if (!cooldownService.check(uuid, "creative-item-stat-increase-event", TickTime.MINUTE.x(5)))
+		if (CooldownService.isOnCooldown(uuid, "creative-item-stat-increase-event", TickTime.MINUTE.x(5)))
 			return;
 
 		Broadcast.staff().prefix("Radar").message("Possible creative hacker: " + Nickname.of(player) + " (Too many item stat increase events in creative)").send();

@@ -9,8 +9,17 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.BearFair21TreeRegenJob;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.Distance;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,7 +31,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -191,7 +206,7 @@ public class BearFair21WoodCutting implements Listener {
 		}
 
 		public void feller(Player player, int id) {
-			if (!new CooldownService().check(UUIDUtils.UUID0, getRegion(id).getId(), TickTime.SECOND.x(3)))
+			if (CooldownService.isOnCooldown(UUIDUtils.UUID0, getRegion(id).getId(), TickTime.SECOND.x(3)))
 				return;
 
 			treeAnimating = true;

@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
-import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -39,7 +38,7 @@ public class Pugmas25BalloonEditorMenu extends InventoryProvider {
 		}));
 
 		contents.set(SlotPos.of(2, 7), ClickableItem.of(PASTE_SCHEM, e -> {
-			if (!new CooldownService().check(Pugmas25BalloonEditor.getEditor().getUuid(), COOLDOWN_KEY, TickTime.SECOND)) {
+			if (CooldownService.isOnCooldown(Pugmas25BalloonEditor.getEditor().getUuid(), COOLDOWN_KEY, TickTime.SECOND)) {
 				Pugmas25BalloonEditorUtils.send("&cSlow down");
 				return;
 			}
@@ -60,7 +59,7 @@ public class Pugmas25BalloonEditorMenu extends InventoryProvider {
 		}));
 
 		contents.set(SlotPos.of(3, 3), ClickableItem.of(TEMPLATE_PLACE, e -> {
-			if (!new CooldownService().check(Pugmas25BalloonEditor.getEditor().getUuid(), COOLDOWN_KEY, TickTime.SECOND)) {
+			if (CooldownService.isOnCooldown(Pugmas25BalloonEditor.getEditor().getUuid(), COOLDOWN_KEY, TickTime.SECOND)) {
 				Pugmas25BalloonEditorUtils.send("&cSlow down");
 				return;
 			}

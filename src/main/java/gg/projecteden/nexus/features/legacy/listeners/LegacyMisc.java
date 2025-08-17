@@ -59,7 +59,7 @@ public class LegacyMisc implements Listener {
 
 		event.setCancelled(true);
 
-		if (!new CooldownService().check(player, "legacy_no_interact", TickTime.SECOND.x(3)))
+		if (CooldownService.isOnCooldown(player, "legacy_no_interact", TickTime.SECOND.x(3)))
 			return;
 
 		PlayerUtils.send(player, "&c&lHey! &7You cannot interact with that in the legacy world");

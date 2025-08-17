@@ -85,7 +85,7 @@ public class DecorationLang {
 		}
 
 		public boolean isOnCooldown(Player player, long ticks) {
-			return !new CooldownService().check(player, this.key, ticks);
+			return CooldownService.isOnCooldown(player, this.key, ticks);
 		}
 
 		public boolean isOnCooldown(Player player, UUID uuid) {
@@ -93,7 +93,7 @@ public class DecorationLang {
 		}
 
 		public boolean isOnCooldown(Player player, UUID uuid, long ticks) {
-			return !new CooldownService().check(player, this.key + "-" + uuid, ticks);
+			return CooldownService.isOnCooldown(player, this.key + "-" + uuid, ticks);
 		}
 	}
 

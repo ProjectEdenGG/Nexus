@@ -63,7 +63,7 @@ public final class Splegg extends SpleefMechanic {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 		if (!ActionGroup.RIGHT_CLICK.applies(event)) return;
 
-		if (!new CooldownService().check(minigamer.getUuid(), "splegg_throw_" + minigamer.getNickname(), TickTime.TICK.x(2)))
+		if (CooldownService.isOnCooldown(minigamer.getUuid(), "splegg_throw_" + minigamer.getNickname(), TickTime.TICK.x(2)))
 			return;
 
 		Material hand = minigamer.getOnlinePlayer().getInventory().getItemInMainHand().getType();

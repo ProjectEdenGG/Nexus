@@ -5,18 +5,18 @@ import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksFeature.BlockAction;
-import gg.projecteden.nexus.utils.SoundUtils.ReplacedSoundType;
-import gg.projecteden.nexus.utils.SoundUtils.SoundAction;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Debug.DebugType;
-import gg.projecteden.nexus.utils.SoundUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.SoundUtils;
+import gg.projecteden.nexus.utils.SoundUtils.ReplacedSoundType;
+import gg.projecteden.nexus.utils.SoundUtils.SoundAction;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.parchment.event.sound.SoundEvent;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -215,7 +215,7 @@ public class CustomBlockSounds implements Listener {
 
 		String locationStr = location.getWorld().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ();
 		String cooldownType = "CustomSound_" + soundAction + "_" + locationStr;
-		if (!(new CooldownService().check(UUIDUtils.UUID0, cooldownType, TickTime.TICK.x(3))))
+		if (CooldownService.isOnCooldown(UUIDUtils.UUID0, cooldownType, TickTime.TICK.x(3)))
 			return false;
 
 		CustomBlockUtils.debug(source, DebugType.CUSTOM_BLOCKS_SOUNDS, "&a<- action = " + StringUtils.camelCase(soundAction) + " | key = " + soundKey);

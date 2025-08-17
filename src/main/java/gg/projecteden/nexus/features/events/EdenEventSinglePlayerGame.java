@@ -195,7 +195,7 @@ public abstract class EdenEventSinglePlayerGame extends Feature implements Liste
 	}
 
 	public void sendCooldown(String message, String key) {
-		if (!new CooldownService().check(gamer.getPlayer().getUniqueId(), key, TickTime.SECOND.get()))
+		if (CooldownService.isOnCooldown(gamer.getPlayer().getUniqueId(), key, TickTime.SECOND.get()))
 			return;
 
 		send(message);

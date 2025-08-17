@@ -102,7 +102,7 @@ public class Reloader {
 		}
 
 		CooldownService cooldownService = new CooldownService();
-		if (!cooldownService.check(UUID0, "reload", TickTime.SECOND.x(15)))
+		if (CooldownService.isOnCooldown(UUID0, "reload", TickTime.SECOND.x(15)))
 			throw new CommandCooldownException(UUID0, "reload");
 
 		reloading = true;

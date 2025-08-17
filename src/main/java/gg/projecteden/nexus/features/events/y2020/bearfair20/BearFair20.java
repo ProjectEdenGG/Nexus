@@ -11,12 +11,21 @@ import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.EasterEggs;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.godmode.GodmodeService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
+import gg.projecteden.nexus.utils.WorldEditUtils;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Data;
 import lombok.Getter;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
@@ -78,8 +87,7 @@ public class BearFair20 implements Listener {
 		Player player = event.getClicker();
 		if (isAtBearFair(player)) {
 			if (!enableQuests) {
-				CooldownService cooldownService = new CooldownService();
-				if (!cooldownService.check(player, "BF_NPCInteract", TickTime.SECOND.x(2)))
+				if (CooldownService.isOnCooldown(player, "BF_NPCInteract", TickTime.SECOND.x(2)))
 					return;
 
 				int id = event.getNPC().getId();

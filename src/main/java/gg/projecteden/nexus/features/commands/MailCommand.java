@@ -269,7 +269,7 @@ public class MailCommand extends CustomCommand implements Listener {
 		if (Nullables.isNullOrEmpty(mails))
 			return;
 
-		if (!new CooldownService().check(player, "youhavemail", TickTime.MINUTE.x(5)))
+		if (CooldownService.isOnCooldown(player, "youhavemail", TickTime.MINUTE.x(5)))
 			return;
 
 		mailer.sendNotification();

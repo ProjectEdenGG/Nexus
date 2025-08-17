@@ -107,7 +107,7 @@ public class Quests implements Listener {
 		if (event.getNPC().getId() != PARADE_MANAGER.getNpcId()) return;
 
 		CooldownService cooldownService = new CooldownService();
-		if (!cooldownService.check(player, "Pride21_NPCInteract", TimeUtils.TickTime.SECOND.x(5)))
+		if (CooldownService.isOnCooldown(player, "Pride21_NPCInteract", TimeUtils.TickTime.SECOND.x(5)))
 			return;
 
 		int waitTicks = Talker.sendScript(player, PARADE_MANAGER);
