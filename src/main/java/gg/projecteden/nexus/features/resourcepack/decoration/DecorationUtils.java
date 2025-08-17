@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.equipment.skins.ToolSkin;
 import gg.projecteden.nexus.features.recipes.functionals.DiamondTotemOfUndying;
 import gg.projecteden.nexus.features.recipes.functionals.Glue;
 import gg.projecteden.nexus.features.recipes.functionals.InvisibleItemFrame;
+import gg.projecteden.nexus.features.recipes.functionals.Proportionator;
 import gg.projecteden.nexus.features.recipes.functionals.RepairCostDiminisher;
 import gg.projecteden.nexus.features.recipes.functionals.WardCharm;
 import gg.projecteden.nexus.features.resourcepack.CustomContentUtils;
@@ -484,10 +485,11 @@ public class DecorationUtils {
 		items.add(new CustomCreativeItem(DiamondTotemOfUndying.getItem(), "Project Eden"));
 		items.add(new CustomCreativeItem(RepairCostDiminisher.getItem(), "Project Eden"));
 		items.add(new CustomCreativeItem(WardCharm.getItem(), "Project Eden"));
-		items.add(new CustomCreativeItem(Glue.getItemModel().getItem(), "Project Eden"));
+		items.add(new CustomCreativeItem(Glue.ITEM, "Project Eden"));
 		items.add(new CustomCreativeItem(InvisibleItemFrame.getItem(), "Project Eden"));
 		items.add(new CustomCreativeItem(CreativeBrushMenu.getCreativeBrush(), "Project Eden"));
 		items.add(new CustomCreativeItem(new ItemBuilder(Material.LIGHT), "Project Eden"));
+		items.add(new CustomCreativeItem(Proportionator.ITEM, "Project Eden"));
 
 		for (ToolSkin toolSkin : EnumUtils.valuesExcept(ToolSkin.class, ToolSkin.DEFAULT))
 			items.add(new CustomCreativeItem(toolSkin.getTemplate(), "Project Eden"));
