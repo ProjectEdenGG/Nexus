@@ -151,7 +151,8 @@ public class MobNets extends Feature implements Listener {
 			"type": "minecraft:model",
 			"model": "projecteden/items/mob_net/mobs/<TYPE>",
 			"tints": []
-		}
+		},
+		"oversized_in_gui": true
 	} 
 	""";
 
