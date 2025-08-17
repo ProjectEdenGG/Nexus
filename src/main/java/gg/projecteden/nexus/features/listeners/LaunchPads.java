@@ -77,7 +77,7 @@ public class LaunchPads implements Listener {
 			if (!lines[0].equalsIgnoreCase("[LaunchPad]") || !Utils.isDouble(lines[1]) || !Utils.isDouble(lines[2]))
 				return;
 
-			power = Double.parseDouble(lines[1]);
+			power = Math.min(Double.parseDouble(lines[1]), 500.0);
 			angle = Double.parseDouble(lines[2]);
 
 			if (Utils.isDouble(lines[3]))
