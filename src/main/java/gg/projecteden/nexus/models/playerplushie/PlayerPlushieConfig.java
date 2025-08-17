@@ -183,7 +183,8 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 			"type": "minecraft:model",
 			"model": "<SUBDIRECTORY>/<POSE>/<UUID>",
 			"tints": []
-		}
+		},
+		"oversized_in_gui": true
 	}
 	""";
 
