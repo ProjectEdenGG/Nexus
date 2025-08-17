@@ -11,15 +11,25 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.boost.Booster.Boost;
 import gg.projecteden.nexus.utils.StringUtils;
-import lombok.*;
-import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.GuildMessageChannel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static java.lang.System.lineSeparator;
 
 @Data
 @Entity(value = "boost_config", noClassnameStored = true)
@@ -121,26 +131,22 @@ public class BoostConfig implements PlayerOwnedObject {
 			});
 		}
 
-		@NotNull
-		private static Message getMessage() {
+		private static String getMessage() {
 			BoostConfig config = get();
 
-			MessageBuilder builder = new MessageBuilder()
-					.append("**Active Boosts**")
-					.append(System.lineSeparator())
-					.append(System.lineSeparator());
+			String content = "**Active Boosts**" + lineSeparator() + lineSeparator();
 
 			Set<Boostable> boosts = config.getBoosts().keySet();
 			if (boosts.isEmpty())
-				builder.append("None");
+				content += "None";
 			else
 				for (Boostable type : boosts) {
 					Boost boost = config.getBoost(type);
-					builder.append(String.format("**%s** %s - %s (%s)", boost.getMultiplierFormatted(), StringUtils.camelCase(type), boost.getNickname(), boost.getTimeLeft()))
-							.append(System.lineSeparator());
+					content += String.format("**%s** %s - %s (%s)", boost.getMultiplierFormatted(), StringUtils.camelCase(type), boost.getNickname(), boost.getTimeLeft());
+					content += lineSeparator();
 				}
 
-			return builder.build();
+			return content;
 		}
 
 		private static void sendMessage() {

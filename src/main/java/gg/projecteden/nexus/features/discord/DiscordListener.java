@@ -5,13 +5,14 @@ import gg.projecteden.api.discord.DiscordId.User;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.discord.DiscordConfigService;
 import gg.projecteden.nexus.utils.IOUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.channel.ChannelCreateEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -24,22 +25,17 @@ import java.util.function.Predicate;
 public class DiscordListener extends ListenerAdapter {
 
 	@Override
-	public void onGuildVoiceJoin(@Nonnull GuildVoiceJoinEvent event) {
+	public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
 		Tasks.async(() -> {
 			String name = Discord.getName(event.getMember());
-			String channel = event.getChannelJoined().getName();
-
-			IOUtils.fileAppend("discord", name + " joined " + channel);
-		});
-	}
-
-	@Override
-	public void onGuildVoiceLeave(@Nonnull GuildVoiceLeaveEvent event) {
-		Tasks.async(() -> {
-			String name = Discord.getName(event.getMember());
-			String channel = event.getChannelLeft().getName();
-
-			IOUtils.fileAppend("discord", name + " left " + channel);
+			if (event.getChannelJoined() != null) {
+				String channel = event.getChannelJoined().getName();
+				IOUtils.fileAppend("discord", name + " joined " + channel);
+			}
+			if (event.getChannelLeft() != null) {
+				String channel = event.getChannelLeft().getName();
+				IOUtils.fileAppend("discord", name + " left " + channel);
+			}
 		});
 	}
 
@@ -47,7 +43,7 @@ public class DiscordListener extends ListenerAdapter {
 	public void onGuildMemberJoin(@Nonnull GuildMemberJoinEvent event) {
 		Tasks.async(() -> {
 			if (new DiscordConfigService().get0().isLockdown())
-				event.getMember().kick("This discord is currently on lockdown mode").queue();
+				event.getMember().kick().queue();
 			else {
 				Tasks.waitAsync(5, () -> Discord.applyRoles(event.getUser()));
 			}

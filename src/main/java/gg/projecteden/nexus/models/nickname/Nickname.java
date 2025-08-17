@@ -27,8 +27,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
@@ -221,7 +221,7 @@ public class Nickname extends gg.projecteden.api.mongodb.models.nickname.Nicknam
 			cancelled = true;
 		}
 
-		public MessageBuilder buildQueueMessage() {
+		public MessageCreateBuilder buildQueueMessage() {
 			Nickname data = getData();
 			EmbedBuilder embed = new EmbedBuilder()
 					.setThumbnail("https://minotar.net/helm/" + getName() + "/100.png")
@@ -241,7 +241,7 @@ public class Nickname extends gg.projecteden.api.mongodb.models.nickname.Nicknam
 				embed.appendDescription("No past nicknames found");
 			}
 
-			return new MessageBuilder()
+			return new MessageCreateBuilder()
 					.setContent("@everyone **" + getName() + "** has requested a new nickname: **" + nickname + "**")
 					.setEmbeds(embed.build());
 		}

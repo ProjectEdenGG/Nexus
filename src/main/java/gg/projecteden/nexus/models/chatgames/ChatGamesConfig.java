@@ -38,7 +38,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.bukkit.Sound;
 import org.simmetrics.metrics.StringMetrics;
 
@@ -279,13 +279,13 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 
 		private void broadcastEndDiscord() {
 			String answer = getAnswer();
-			final MessageBuilder message = new MessageBuilder(StringUtils.getDiscordPrefix("ChatGames") +
+			final MessageCreateBuilder message = new MessageCreateBuilder().setContent(StringUtils.getDiscordPrefix("ChatGames") +
 				"Game over! The correct answer was **" + answer + "**. ");
 
 			if (completed.isEmpty())
-				message.append("No one answered correctly");
+				message.addContent("No one answered correctly");
 			else {
-				message.append(String.format("%s was the %s to answer correctly!", Nickname.discordOf(getCompleted().getFirst().getUuid()), completed.size() == 1 ? "only person" : "first"));
+				message.addContent(String.format("%s was the %s to answer correctly!", Nickname.discordOf(getCompleted().getFirst().getUuid()), completed.size() == 1 ? "only person" : "first"));
 
 				if (completed.size() > 1) {
 					message.setEmbeds(new EmbedBuilder() {{

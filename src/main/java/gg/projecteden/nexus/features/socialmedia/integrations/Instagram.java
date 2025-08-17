@@ -12,7 +12,7 @@ import gg.projecteden.nexus.models.socialmedia.InstagramData;
 import gg.projecteden.nexus.models.socialmedia.InstagramService;
 import gg.projecteden.nexus.utils.Tasks;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 
 public class Instagram {
 	public static IGClient instagram;
@@ -64,7 +64,7 @@ public class Instagram {
 					.setImage(getThumbnailUrl(media))
 					.appendDescription(text + System.lineSeparator() + System.lineSeparator() + "[View on Instagram](" + getUrl(media) + ")");
 
-				MessageBuilder content = new MessageBuilder().setEmbeds(embed.build());
+				var content = new MessageCreateBuilder().setEmbeds(embed.build());
 
 				Discord.send(content, TextChannel.TEST);
 				data.getKnownPosts().add(media.getPk());
@@ -94,7 +94,7 @@ public class Instagram {
 					.setTitle("New instagram story post! <:instagram:736255140335714385>")
 					.appendDescription(media.getCaption().getText() + System.lineSeparator() + System.lineSeparator() + "[View on Instagram](" + getUrl(media) + ")");
 
-				MessageBuilder content = new MessageBuilder().setEmbeds(embed.build());
+				var content = new MessageCreateBuilder().setEmbeds(embed.build());
 
 				Discord.send(content, TextChannel.SOCIAL_MEDIA);
 				data.getKnownPosts().add(media.getPk());

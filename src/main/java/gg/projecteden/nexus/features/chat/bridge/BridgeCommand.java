@@ -26,10 +26,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.channel.middleman.StandardGuildMessageChannel;
+import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.OfflinePlayer;
 
@@ -145,7 +145,7 @@ public class BridgeCommand extends CustomCommand {
 
 		private final TextChannel textChannel;
 
-		private GuildMessageChannel getTextChannel(Bot bot) {
+		private StandardGuildMessageChannel getTextChannel(Bot bot) {
 			return getTextChannel().get(bot.jda());
 		}
 	}
@@ -295,9 +295,9 @@ public class BridgeCommand extends CustomCommand {
 			if (oldContent.equals(newContent))
 				return;
 
-			message.editMessage(new MessageBuilder(message)
-					.setContent(newContent)
-					.build()
+			message.editMessage(MessageEditBuilder.fromMessage(message)
+				.setContent(newContent)
+				.build()
 			).queue();
 		});
 	}
