@@ -134,7 +134,7 @@ public class ShowItemCommand extends CustomCommand {
 			message = IngameBridgeListener.parseMentions(message);
 
 			MessageCreateBuilder content = new MessageCreateBuilder()
-				.setContent(StringUtils.stripColor(user.getBridgeName() + " **>** " + Discord.discordize(message)))
+				.addContent(StringUtils.stripColor(user.getBridgeName() + " **>** " + Discord.discordize(message)))
 				.setEmbeds(embed.build());
 
 			Discord.send(content, channel.getDiscordTextChannel());

@@ -65,7 +65,7 @@ public class SuggestAppCommand extends NexusAppCommand {
 			name = "%s (%s)".formatted(nerd.getNickname(), name);
 
 		reply(new MessageCreateBuilder()
-			.setContent("@here " + member().getAsMention() + " is suggesting **" + name + "** for **" + StringUtils.camelCase(rank.getName()) + "**")
+			.addContent("@here " + member().getAsMention() + " is suggesting **" + name + "** for **" + StringUtils.camelCase(rank.getName()) + "**")
 			.setEmbeds(embed.build()));
 	}
 

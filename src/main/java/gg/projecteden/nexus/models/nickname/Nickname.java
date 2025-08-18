@@ -242,7 +242,7 @@ public class Nickname extends gg.projecteden.api.mongodb.models.nickname.Nicknam
 			}
 
 			return new MessageCreateBuilder()
-					.setContent("@everyone **" + getName() + "** has requested a new nickname: **" + nickname + "**")
+					.addContent("@everyone **" + getName() + "** has requested a new nickname: **" + nickname + "**")
 					.setEmbeds(embed.build());
 		}
 	}

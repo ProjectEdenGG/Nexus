@@ -185,7 +185,7 @@ public class Discord extends Feature {
 	}
 
 	public static CompletableFuture<Message> send(String message, TextChannel... targets) {
-		return send(new MessageCreateBuilder().setContent(StringUtils.stripColor(message).replace("<@role", "<@&")), targets);
+		return send(new MessageCreateBuilder().addContent(StringUtils.stripColor(message).replace("<@role", "<@&")), targets);
 	}
 
 	public static CompletableFuture<Message> send(MessageCreateBuilder message, TextChannel... targets) {
@@ -197,7 +197,7 @@ public class Discord extends Feature {
 	}
 
 	public static CompletableFuture<Message> koda(String message, TextChannel... targets) {
-		return koda(new MessageCreateBuilder().setContent(StringUtils.stripColor(message)), targets);
+		return koda(new MessageCreateBuilder().addContent(StringUtils.stripColor(message)), targets);
 	}
 
 	public static CompletableFuture<Message> koda(MessageCreateBuilder message, TextChannel... targets) {
