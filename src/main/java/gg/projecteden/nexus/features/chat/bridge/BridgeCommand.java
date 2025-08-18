@@ -283,7 +283,6 @@ public class BridgeCommand extends CustomCommand {
 			.send();
 	}
 
-
 	private void executeOnMessage(String messageId, Consumer<Message> consumer) {
 		Discord.executeOnMessage(loadedChannel.getTextChannel().getId(), messageId, consumer);
 	}

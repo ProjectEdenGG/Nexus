@@ -10,7 +10,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.framework.exceptions.preconfigured.MissingArgumentException;
 import gg.projecteden.nexus.models.home.Home;
 import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -90,7 +89,7 @@ public class TrustCommand extends CustomCommand {
 			send(PREFIX + "Modifying trusts of &e" + player.getName());
 			process(player, action, players, type.getTrustTypes());
 		} else
-			throw new MissingArgumentException();
+			showUsage();
 	}
 
 	@Permission(Group.MODERATOR)
