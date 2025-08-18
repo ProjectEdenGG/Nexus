@@ -198,6 +198,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("protectItem")
+	@Description("Toggle whether your held item can be auto-deposited")
 	void protectItem() {
 		final EquipmentSlot hand = getHandWithToolRequired();
 		final ItemBuilder tool = new ItemBuilder(inventory().getItem(hand));

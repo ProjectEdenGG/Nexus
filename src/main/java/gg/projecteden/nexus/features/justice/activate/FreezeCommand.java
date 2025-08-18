@@ -108,6 +108,7 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 	}
 
 	@Path("summon <player>")
+	@Description("Summon a frozen player")
 	void summon(Player player) {
 		if (!isFrozen(player))
 			error(PREFIX + "That player is not frozen");

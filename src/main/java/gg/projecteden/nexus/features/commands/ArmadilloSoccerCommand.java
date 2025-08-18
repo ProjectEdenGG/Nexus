@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -26,6 +27,7 @@ import org.bukkit.potion.PotionEffectType;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static java.util.Objects.requireNonNull;
 
+@HideFromWiki
 @NoArgsConstructor
 @Permission(Group.STAFF)
 public class ArmadilloSoccerCommand extends CustomCommand implements Listener {

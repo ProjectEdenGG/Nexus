@@ -240,6 +240,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 		send(json);
 	}
 
+	@HideFromWiki
 	@Permission(Group.ADMIN)
 	@Path("menu <mechanic>")
 	void mechanicMenu(MechanicType mechanic) {
@@ -279,32 +280,33 @@ public class MinigamesCommand extends _WarpSubCommand {
 	}
 
 	@Path("spectate [arena]")
+	@Description("Spectate a minigame")
 	void spectate(@Arg("current") Arena arena) {
 		minigamer.spectate(arena, true);
 	}
 
 	@Path("spectate player <player>")
-	void spectate(Player player) {
+	@Description("Teleport to a player in the game you are spectating")
+	void spectate(Minigamer player) {
 		if (!minigamer.isSpectating())
 			error("You must be spectating a game to spectate players");
 
-		Minigamer mg2 = Minigamer.of(player);
-
-		if (!minigamer.getMatch().getArena().getName().equals(mg2.getMatch().getArena().getName()))
+		if (!minigamer.getMatch().getArena().getName().equals(player.getMatch().getArena().getName()))
 			error("That player is not in this game");
 
-		if (!mg2.isAlive())
+		if (!player.isAlive())
 			error("That player is dead");
 
 		if (!minigamer.getMatch().isStarted())
 			error("The match has not started yet");
 
-		minigamer.teleportAsync(mg2.getLocation(), false, true);
+		minigamer.teleportAsync(player.getLocation(), false, true);
 		minigamer.getPlayer().setFlying(true);
 
-		minigamer.setSpectatingMinigamer(mg2);
+		minigamer.setSpectatingMinigamer(player);
 	}
 
+	@HideFromWiki
 	@Path("allJoin <arena>")
 	@Permission(Group.ADMIN)
 	@Environments({Env.DEV, Env.TEST})
@@ -980,8 +982,9 @@ public class MinigamesCommand extends _WarpSubCommand {
 		new LeaderboardMenu(arena).open(player());
 	}
 
-	@Path("leaderboard delete <arena> <player>")
 	@Permission(Group.ADMIN)
+	@Path("leaderboard delete <arena> <player>")
+	@Description("Delete a player's best time from a timed minigame")
 	void leaderboard_remove(CheckpointArena arena, Player player) {
 		CheckpointService service = new CheckpointService();
 		CheckpointService.removeBestTime(arena.getName(), service.get(player));
@@ -1019,6 +1022,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Async
 	@Permission(Group.ADMIN)
 	@Path("blockParty loadSongs")
+	@Description("Load BlockParty songs from disk")
 	void loadBlockPartySongs() {
 		BlockParty.read(false);
 		send(PREFIX + "Loaded &e" + BlockParty.songList.size() + " &3block party songs");
@@ -1027,6 +1031,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Async
 	@Permission(Group.ADMIN)
 	@Path("blockParty listSongs [page]")
+	@Description("List BlockParty songs")
 	void listBlockPartySongs(@Arg("1") int page) {
 		new Paginator<BlockPartySong>()
 			.values(BlockParty.songList.stream().sorted(Comparator.comparing(BlockPartySong::getTitle)).toList())
@@ -1039,6 +1044,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Async
 	@Permission(Group.ADMIN)
 	@Path("blockParty removePaddingInSongFiles")
+	@Description("Remove padding from song metadata")
 	void removePaddingInSongFiles() {
 		BlockParty.read(true);
 		send(PREFIX + "Done");
@@ -1047,6 +1053,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Async
 	@Permission(Group.ADMIN)
 	@Path("blockParty removeSilence")
+	@Description("Trim silent parts of songs")
 	void removeSilence() {
 		send(PREFIX + "Starting silence removal from all Block Party songs");
 		BlockParty.removeSilence()
@@ -1060,6 +1067,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Async
 	@Permission(Group.ADMIN)
 	@Path("blockParty getMinimumSongLength")
+	@Description("Calculate the minimum song length needed to finish a full BlockParty game")
 	void getMinimumSongLength() {
 		double seconds = 5;
 		for (int i = 0; i < BlockParty.MAX_ROUNDS; i++)
@@ -1070,6 +1078,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Async
 	@Permission(Group.ADMIN)
 	@Path("blockParty webUsers")
+	@Description("View players connected to the BlockParty web client")
 	void blockParty_webUsers() {
 		String collect = BlockPartyWebSocketServer.getClients().keySet().stream().map(Nerd::of).map(Nerd::getNickname).collect(Collectors.joining(", "));
 		if (isNullOrEmpty(collect))
@@ -1082,6 +1091,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 
 	@Permission(Group.ADMIN)
 	@Path("blockParty createStack [--delay] [--stop]")
+	@Description("Create the BlockParty floor stack from /sw blockparty-floors")
 	void blockParty_createStack(
 		@Switch @Arg("5") int delay,
 		@Switch @Arg("true") boolean clearStack,
@@ -1174,6 +1184,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	}
 
 	@Path("stats <mechanic> [player]")
+	@Description("View a player's stats for a gamemode")
 	void stats(MechanicType mechanic, @Arg("self") Player player) {
 		MinigameStatsService service = new MinigameStatsService();
 		List<MatchStatRecord> statRecords = service.get(player).getStatistics().stream().filter(stat -> stat.getMechanic() == mechanic).toList();
@@ -1186,6 +1197,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 		});
 	}
 
+	@HideFromWiki
 	@Path("stats transferBlockParty")
 	@Permission(Group.ADMIN)
 	void transferBlockParty() {
@@ -1213,6 +1225,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	}
 
 	@Path("leaderboard <mechanic> <statistic> [page]")
+	@Description("View the leaderboard for a specific mechanic and statistic")
 	void leaderboard(MechanicType mechanic, MinigameStatistic statistic, @Arg("1") int page) {
 		send(PREFIX + "Leaderboard for &e" + statistic.getTitle() + " (" + mechanic.get().getName() + ")&3:");
 		List<LeaderboardRanking> rankings = new MinigameStatsService().getLeaderboard(mechanic, statistic, null);

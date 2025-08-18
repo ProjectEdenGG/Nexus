@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 
 import gg.projecteden.nexus.features.recipes.functionals.Proportionator;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -22,11 +23,13 @@ public class ProportionatorCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Get a Proportionator")
 	void get() {
 		giveItem(Proportionator.ITEM);
 	}
 
 	@Path("config entities <entityType> [state]")
+	@Description("Toggle whether entities can be scaled")
 	void config_disabled(EntityType entityType, Boolean state) {
 		if (state == null)
 			state = config.getDisabled().contains(entityType);
@@ -41,6 +44,7 @@ public class ProportionatorCommand extends CustomCommand {
 	}
 
 	@Path("config min <min>")
+	@Description("Set the default minimum scale")
 	void config_min(double min) {
 		config.setMin(min);
 		service.save(config);
@@ -48,6 +52,7 @@ public class ProportionatorCommand extends CustomCommand {
 	}
 
 	@Path("config max <max>")
+	@Description("Set the default maximum scale")
 	void config_max(double max) {
 		config.setMax(max);
 		service.save(config);
@@ -55,6 +60,7 @@ public class ProportionatorCommand extends CustomCommand {
 	}
 
 	@Path("config min override <entityType> [min]")
+	@Description("Set the minimum scale for a specific entity type")
 	void config_min_override(EntityType entityType, Double min) {
 		if (min == null)
 			config.getMinOverrides().remove(entityType);
@@ -69,6 +75,7 @@ public class ProportionatorCommand extends CustomCommand {
 	}
 
 	@Path("config max override <entityType> [max]")
+	@Description("Set the maximum scale for a specific entity type")
 	void config_max_override(EntityType entityType, Double max) {
 		if (max == null)
 			config.getMaxOverrides().remove(entityType);
