@@ -134,7 +134,7 @@ public abstract class NexusAppCommand extends AppCommand {
 		if (input == null) return null;
 		if ("null".equalsIgnoreCase(input)) return null;
 		if ("self".equalsIgnoreCase(input)) input = ((NexusAppCommand) command).verify().getUuid().toString();
-		return PlayerUtils.getPlayer(input.replaceFirst("[pP]:", ""));
+		return PlayerUtils.getPlayer(input.replaceFirst("[pP]:", "")).getOfflinePlayer();
 	}
 
 }

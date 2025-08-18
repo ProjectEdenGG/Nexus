@@ -116,7 +116,7 @@ public class Votes extends Feature implements Listener {
 	@EventHandler
 	public void onVote(VotifierEvent event) {
 		String username = event.getVote().getUsername().replaceAll(" ", "");
-		OfflinePlayer player = null;
+		Nerd player = null;
 		try { player = PlayerUtils.getPlayer(username); } catch (PlayerNotFoundException ignore) {}
 		String name = player != null ? Nickname.of(player) : "Unknown";
 		UUID uuid = player != null ? player.getUniqueId() : UUIDUtils.UUID0;

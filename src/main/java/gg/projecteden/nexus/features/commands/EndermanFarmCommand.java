@@ -16,6 +16,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -178,7 +179,7 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 		return region.matches("endermanfarm-" + UUIDUtils.UUID_REGEX);
 	}
 
-	private OfflinePlayer getOwner(Location location) {
+	private Nerd getOwner(Location location) {
 		final Set<String> regions = new WorldGuardUtils(location).getRegionNamesAt(location);
 
 		for (String region : regions)
@@ -221,7 +222,7 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 		if (!isEndermanFarmRegion(region.getId()))
 			return;
 
-		final OfflinePlayer owner = getOwner(event.getNewLocation());
+		final var owner = getOwner(event.getNewLocation());
 		if (owner == null)
 			return;
 

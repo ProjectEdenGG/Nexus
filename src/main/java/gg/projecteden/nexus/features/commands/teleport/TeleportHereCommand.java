@@ -34,10 +34,8 @@ public class TeleportHereCommand extends CustomCommand implements Listener {
 		if (nerd.isOnline())
 			if (!player().hasPermission("essentials.tphere"))
 				runCommand("tpahere " + argsString());
-			else {
-
+			else
 				nerd.getOnlinePlayer().teleportAsync(location(), TeleportCause.COMMAND);
-			}
 		else {
 			if (!player().hasPermission("essentials.tphere"))
 				throw new PlayerNotOnlineException(nerd);

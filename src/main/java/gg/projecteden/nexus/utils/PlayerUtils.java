@@ -24,7 +24,6 @@ import gg.projecteden.nexus.models.mail.MailerService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.nickname.NicknameService;
 import gg.projecteden.nexus.utils.Debug.DebugType;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
@@ -488,8 +487,8 @@ public class PlayerUtils {
 
 	public static List<String> getOnlineUuids() {
 		return OnlinePlayers.getAll().stream()
-				.map(player -> player.getUniqueId().toString())
-				.collect(Collectors.toList());
+			.map(player -> player.getUniqueId().toString())
+			.collect(Collectors.toList());
 	}
 
 	public static List<UUID> uuidsOf(Collection<Player> players) {
@@ -511,60 +510,59 @@ public class PlayerUtils {
 	/**
 	 * Searches for a player whose username or nickname fully or partially matches the given partial name.
 	 * @param partialName UUID or partial text of a username/nickname
-	 * @return an offline player
+	 * @return a nerd
 	 * @throws InvalidInputException input was null or empty
 	 * @throws PlayerNotFoundException a player matching that (nick)name could not be found
 	 */
-	public static @NotNull OfflinePlayer getPlayer(String partialName) throws InvalidInputException, PlayerNotFoundException {
+	public static @NotNull Nerd getPlayer(String partialName) throws InvalidInputException, PlayerNotFoundException {
 		if (partialName == null || partialName.length() == 0)
 			throw new InvalidInputException("No player name given");
 
-		partialName = StringUtils.stripColor(partialName);
-		String original = partialName;
-		partialName = partialName.toLowerCase().trim();
+		String original = StringUtils.stripColor(partialName).trim();
+		partialName = original.toLowerCase();
 
 		if (UUIDUtils.isUuid(partialName))
-			return getPlayer(UUID.fromString(partialName));
+			return Nerd.of(UUID.fromString(partialName));
 
-		final List<Player> players = OnlinePlayers.getAll();
+		var nerds = OnlinePlayers.getAll().stream().map(Nerd::of).toList();
 
-		for (Player player : players)
-			if (player.getName().equalsIgnoreCase(partialName))
-				return player;
-		for (Player player : players)
-			if (Nickname.of(player).equalsIgnoreCase((partialName)))
-				return player;
+		for (Nerd nerd : nerds)
+			if (nerd.getName().equalsIgnoreCase(partialName))
+				return nerd;
+		for (Nerd nerd : nerds)
+			if (nerd.getNickname().equalsIgnoreCase((partialName)))
+				return nerd;
 
-		NicknameService nicknameService = new NicknameService();
-		Nickname fromNickname = nicknameService.getFromNickname(partialName);
+		var nicknameService = new NicknameService();
+		var fromNickname = nicknameService.getFromNickname(partialName);
 		if (fromNickname != null)
-			return fromNickname.getOfflinePlayer();
+			return fromNickname.getNerd();
 
-		for (Player player : players)
-			if (player.getName().toLowerCase().startsWith(partialName))
-				return player;
-		for (Player player : players)
-			if (Nickname.of(player).toLowerCase().startsWith((partialName)))
-				return player;
+		for (Nerd nerd : nerds)
+			if (nerd.getName().toLowerCase().startsWith(partialName))
+				return nerd;
+		for (Nerd nerd : nerds)
+			if (nerd.getNickname().toLowerCase().startsWith((partialName)))
+				return nerd;
 
-		for (Player player : players)
-			if (player.getName().toLowerCase().contains((partialName)))
-				return player;
-		for (Player player : players)
-			if (Nickname.of(player).toLowerCase().contains((partialName)))
-				return player;
+		for (Nerd nerd : nerds)
+			if (nerd.getName().toLowerCase().contains((partialName)))
+				return nerd;
+		for (Nerd nerd : nerds)
+			if (nerd.getNickname().toLowerCase().contains((partialName)))
+				return nerd;
 
-		NerdService nerdService = new NerdService();
+		var service = new NerdService();
 
-		Nerd fromAlias = nerdService.getFromAlias(partialName);
+		var fromAlias = service.getFromAlias(partialName);
 		if (fromAlias != null)
-			return fromAlias.getOfflinePlayer();
+			return fromAlias;
 
-		List<Nerd> matches = nerdService.find(partialName);
-		if (matches.size() > 0) {
-			Nerd nerd = matches.get(0);
+		var matches = service.find(partialName);
+		if (!matches.isEmpty()) {
+			var nerd = matches.getFirst();
 			if (nerd != null)
-				return nerd.getOfflinePlayer();
+				return nerd;
 		}
 
 		throw new PlayerNotFoundException(original);

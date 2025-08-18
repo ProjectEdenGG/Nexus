@@ -349,7 +349,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected void send(UUID uuid, String message) {
-		OfflinePlayer player = PlayerUtils.getPlayer(uuid.toString());
+		var player = PlayerUtils.getPlayer(uuid.toString());
 		if (player != null && player.isOnline())
 			send(PlayerUtils.getPlayer(uuid), message);
 	}
@@ -827,7 +827,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected OfflinePlayer offlinePlayerArg(int i) {
 		if (event.getArgs().size() < i) return null;
-		return PlayerUtils.getPlayer(arg(i));
+		return PlayerUtils.getPlayer(arg(i)).getOfflinePlayer();
 	}
 
 	protected boolean isPlayerArg(int i) {
@@ -841,7 +841,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected Player playerArg(int i) {
 		if (event.getArgs().size() < i) return null;
-		OfflinePlayer player = PlayerUtils.getPlayer(arg(i));
+		var player = PlayerUtils.getPlayer(arg(i));
 		if (!player.isOnline())
 			throw new PlayerNotOnlineException(player);
 		return player.getPlayer();
@@ -871,7 +871,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		if (value == null) return null;
 		if ("null".equalsIgnoreCase(value)) return null;
 		if ("self".equalsIgnoreCase(value)) value = uuid().toString();
-		return PlayerUtils.getPlayer(value.replaceFirst("[pP]:", ""));
+		return PlayerUtils.getPlayer(value.replaceFirst("[pP]:", "")).getOfflinePlayer();
 	}
 
 	@ConverterFor(Player.class)

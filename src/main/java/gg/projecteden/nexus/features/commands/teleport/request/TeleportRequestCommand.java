@@ -18,8 +18,8 @@ import gg.projecteden.nexus.models.teleport.TeleportRequests;
 import gg.projecteden.nexus.models.teleport.TeleportRequests.TeleportRequest;
 import gg.projecteden.nexus.models.teleport.TeleportRequests.TeleportRequest.RequestType;
 import gg.projecteden.nexus.models.teleport.TeleportRequestsService;
-import gg.projecteden.nexus.models.trust.Trust.Type;
-import gg.projecteden.nexus.models.trust.TrustService;
+import gg.projecteden.nexus.models.trust.TrustsUser.TrustType;
+import gg.projecteden.nexus.models.trust.TrustsUserService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -65,13 +65,13 @@ public class TeleportRequestCommand extends ITeleportRequestCommand {
 		if (!PlayerUtils.canSee(player(), target))
 			throw new PlayerNotOnlineException(target);
 
-		var trust = new TrustService().get(target);
+		var trust = new TrustsUserService().get(target);
 		var targetLocation = Nerd.of(target).getLocation();
 		var targetWorld = targetLocation.getWorld();
 		var targetWorldGroup = WorldGroup.of(targetWorld);
 
 		Supplier<Boolean> teleportIfTrusted = () -> {
-			if (trust.trusts(Type.TELEPORTS, player())) {
+			if (trust.trusts(TrustType.TELEPORTS, player())) {
 				player().teleportAsync(targetLocation, TeleportCause.COMMAND);
 				send(PREFIX + "Teleporting to &e" + Nickname.of(target) + (target.isOnline() && PlayerUtils.canSee(player(), target) ? "" : " &3(Offline)"));
 				return true;

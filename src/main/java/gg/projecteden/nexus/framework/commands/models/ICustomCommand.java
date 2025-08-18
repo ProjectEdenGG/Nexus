@@ -66,6 +66,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
+
 @SuppressWarnings("unused")
 public abstract class ICustomCommand {
 
@@ -315,9 +317,11 @@ public abstract class ICustomCommand {
 				throw new InvalidInputException("Collection parameter must define concrete type with @Arg");
 
 			List<Object> values = new ArrayList<>();
-			for (String index : value.split(StringUtils.COMMA_SPLIT_REGEX))
-				values.add(convert(index, context, annotation.type(), parameter, name, event, required));
-			values.removeIf(Objects::isNull);
+			if (isNotNullOrEmpty(value)) {
+				for (String index : value.split(StringUtils.COMMA_SPLIT_REGEX))
+					values.add(convert(index, context, annotation.type(), parameter, name, event, required));
+				values.removeIf(Objects::isNull);
+			}
 			return values;
 		}
 

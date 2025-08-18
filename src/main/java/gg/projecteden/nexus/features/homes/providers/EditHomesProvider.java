@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.trust.providers.TrustProvider;
+import gg.projecteden.nexus.features.trust.providers.TrustsMenu;
 import gg.projecteden.nexus.models.home.HomeOwner;
 import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -100,10 +100,10 @@ public class EditHomesProvider extends InventoryProvider {
 
 	public void format_Trust(InventoryContents contents) {
 		contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.LEVER)
-						.name("&eEdit Trusts")
-						.loreize(false)
-						.lore("&fManage access to", "&fall your homes").build(),
-				e -> new TrustProvider(this).open(homeOwner.getOnlinePlayer())
+			.name("&eEdit Trusts")
+			.loreize(false)
+			.lore("&fManage access to", "&fall your homes").build(),
+			e -> new TrustsMenu(viewer, this).open(homeOwner.getOnlinePlayer())
 		));
 	}
 

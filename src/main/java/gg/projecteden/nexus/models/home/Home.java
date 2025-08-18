@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.models.home;
 
 import dev.morphia.annotations.Converters;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.homes.HomesFeature;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -12,9 +13,12 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.OptionalLocation;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
@@ -102,11 +106,11 @@ public class Home implements PlayerOwnedObject, OptionalLocation {
 		return getOwner().hasGivenAccessTo(player) || accessList.contains(player.getUniqueId());
 	}
 
-	public void allow(OfflinePlayer player) {
+	public void allow(HasUniqueId player) {
 		accessList.add(player.getUniqueId());
 	}
 
-	public void remove(OfflinePlayer player) {
+	public void remove(HasUniqueId player) {
 		accessList.remove(player.getUniqueId());
 	}
 

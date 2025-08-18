@@ -32,82 +32,82 @@ import java.util.UUID;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters(UUIDConverter.class)
-public class Trust implements PlayerOwnedObject {
+public class TrustsUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Map<Type, Set<UUID>> trusts = new HashMap<>();
+	private Map<TrustType, Set<UUID>> trusts = new HashMap<>();
 
-	public Set<UUID> get(Type type) {
+	public Set<UUID> get(TrustType type) {
 		return trusts.computeIfAbsent(type, $ -> new HashSet<>());
 	}
 
 	public Set<UUID> getAll() {
 		return new HashSet<>() {{
-			for (Type type : Type.values())
+			for (TrustType type : TrustType.values())
 				addAll(get(type));
 		}};
 	}
 
-	public boolean trusts(Type type, HasUniqueId player) {
+	public boolean trusts(TrustType type, HasUniqueId player) {
 		return trusts(type, player.getUniqueId());
 	}
 
-	public boolean trusts(Type type, UUID uuid) {
+	public boolean trusts(TrustType type, UUID uuid) {
 		return get(type).contains(uuid);
 	}
 
-	public void add(Type type, Trust trust) {
+	public void add(TrustType type, TrustsUser trust) {
 		add(type, trust.getUuid());
 	}
 
-	public void add(Type type, UUID uuid) {
+	public void add(TrustType type, UUID uuid) {
 		if (trusts(type, uuid))
 			return;
 
 		get(type).add(uuid);
 	}
 
-	public void addAllTypes(Trust trust) {
+	public void addAllTypes(TrustsUser trust) {
 		addAllTypes(trust.getUuid());
 	}
 
 	public void addAllTypes(UUID uuid) {
-		for (Type type : Type.values())
+		for (TrustType type : TrustType.values())
 			add(type, uuid);
 	}
 
-	public void remove(Type type, Trust trust) {
+	public void remove(TrustType type, TrustsUser trust) {
 		remove(type, trust.getUuid());
 	}
 
-	public void remove(Type type, UUID uuid) {
+	public void remove(TrustType type, UUID uuid) {
 		if (!trusts(type, uuid))
 			return;
 
 		get(type).remove(uuid);
 	}
 
-	public void removeAllTypes(Trust trust) {
+	public void removeAllTypes(TrustsUser trust) {
 		removeAllTypes(trust.getUuid());
 	}
 
 	public void removeAllTypes(UUID uuid) {
-		for (Type type : Type.values())
+		for (TrustType type : TrustType.values())
 			remove(type, uuid);
 	}
 
-	public void clear(Type type) {
+	public void clear(TrustType type) {
 		get(type).clear();
 	}
 
 	public void clearAll() {
-		for (Type type : Type.values())
+		for (TrustType type : TrustType.values())
 			clear(type);
 	}
 
 	@Getter
-	public enum Type implements IterableEnum {
+	public enum TrustType implements IterableEnum {
 		LOCKS(1, Material.CHEST),
 		HOMES(3, Material.CYAN_BED),
 		TELEPORTS(5, Material.COMPASS),
@@ -117,13 +117,13 @@ public class Trust implements PlayerOwnedObject {
 		private final Material material;
 		private final String modelId;
 
-		Type(int column, ItemModelType itemModelType) {
+		TrustType(int column, ItemModelType itemModelType) {
 			this.column = column;
 			this.material = itemModelType.getMaterial();
 			this.modelId = itemModelType.getModel();
 		}
 
-		Type(int column, Material material) {
+		TrustType(int column, Material material) {
 			this.column = column;
 			this.material = material;
 			this.modelId = null;

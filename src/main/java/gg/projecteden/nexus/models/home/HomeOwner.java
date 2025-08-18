@@ -8,9 +8,9 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.models.trust.Trust;
-import gg.projecteden.nexus.models.trust.Trust.Type;
-import gg.projecteden.nexus.models.trust.TrustService;
+import gg.projecteden.nexus.models.trust.TrustsUser;
+import gg.projecteden.nexus.models.trust.TrustsUser.TrustType;
+import gg.projecteden.nexus.models.trust.TrustsUserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -91,8 +91,8 @@ public class HomeOwner implements PlayerOwnedObject {
 	}
 
 	public boolean hasGivenAccessTo(OfflinePlayer player) {
-		Trust trust = new TrustService().get(this);
-		return trust.trusts(Type.HOMES, player);
+		TrustsUser trust = new TrustsUserService().get(this);
+		return trust.trusts(TrustType.HOMES, player);
 	}
 
 	public void add(Home home) {
