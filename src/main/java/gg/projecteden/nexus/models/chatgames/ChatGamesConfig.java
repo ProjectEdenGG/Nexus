@@ -280,7 +280,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 		private void broadcastEndDiscord() {
 			String answer = getAnswer();
 			final MessageCreateBuilder message = new MessageCreateBuilder().addContent(StringUtils.getDiscordPrefix("ChatGames") +
-				"Game over! The correct answer was **" + answer + "**.");
+				"Game over! The correct answer was **" + answer + "**. ");
 
 			if (completed.isEmpty())
 				message.addContent("No one answered correctly");
