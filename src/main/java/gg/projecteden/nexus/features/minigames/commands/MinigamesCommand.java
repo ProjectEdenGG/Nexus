@@ -95,7 +95,6 @@ import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -1317,7 +1316,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	Minigamer convertToMinigamer(String value) {
 		if ("self".equalsIgnoreCase(value))
 			return minigamer;
-		OfflinePlayer player = PlayerUtils.getPlayer(value);
+		var player = PlayerUtils.getPlayer(value);
 		if (!player.isOnline())
 			throw new PlayerNotOnlineException(player);
 		return Minigamer.of(player.getPlayer());

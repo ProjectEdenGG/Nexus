@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.trust.providers;
 
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
@@ -9,14 +10,13 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.trust.TrustFeature;
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.models.trust.Trust;
-import gg.projecteden.nexus.models.trust.Trust.Type;
-import gg.projecteden.nexus.models.trust.TrustService;
+import gg.projecteden.nexus.models.trust.TrustsUser;
+import gg.projecteden.nexus.models.trust.TrustsUser.TrustType;
+import gg.projecteden.nexus.models.trust.TrustsUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -25,22 +25,36 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Title("Trusts")
 @RequiredArgsConstructor
-public class TrustProvider extends InventoryProvider {
+public class TrustsMenu extends InventoryProvider {
+	private final TrustsUser user;
 	private final InventoryProvider back;
-	private final AtomicReference<Trust.Type> filterType = new AtomicReference<>();
+	private final AtomicReference<TrustType> filterType = new AtomicReference<>();
 
-	public TrustProvider() {
-		back = null;
+	public TrustsMenu(HasUniqueId user) {
+		this(user, null);
+	}
+
+	public TrustsMenu(HasUniqueId user, InventoryProvider back) {
+		super();
+		this.user = new TrustsUserService().get(user);
+		this.back = back;
+	}
+
+	@Override
+	public String getTitle() {
+		if (viewer.getUniqueId().equals(user.getUuid()))
+			return "Your Trusts";
+		else
+			return Nickname.of(user) + "'s Trusts";
 	}
 
 	@Override
 	protected int getRows(Integer page) {
-		return MenuUtils.calculateRows(new TrustService().get(viewer).getAll().size(), 3);
+		return MenuUtils.calculateRows(user.getAll().size(), 3);
 	}
 
 	@Override
 	public void init() {
-		Trust trust = new TrustService().get(viewer);
 		if (back == null)
 			addCloseItem();
 		else
@@ -48,20 +62,20 @@ public class TrustProvider extends InventoryProvider {
 
 		List<ClickableItem> items = new ArrayList<>();
 
-		trust.getAll().stream()
+		user.getAll().stream()
 			.map(PlayerUtils::getPlayer)
 			.sorted(Comparator.comparing(Nickname::of))
 			.toList()
-			.forEach(trusted -> {
+			.forEach(target -> {
 				if (filterType.get() != null)
-					if (!trust.trusts(filterType.get(), trusted))
+					if (!user.trusts(filterType.get(), target))
 						return;
 
 				ItemBuilder builder = new ItemBuilder(Material.PLAYER_HEAD)
-					.skullOwner(trusted)
-					.name("&e" + Nickname.of(trusted));
-				for (Trust.Type type : Trust.Type.values()) {
-					if (trust.trusts(type, trusted))
+					.skullOwner(target)
+					.name("&e" + Nickname.of(target));
+				for (TrustType type : TrustType.values()) {
+					if (user.trusts(type, target))
 						builder.lore("&f✅ &a" + type.camelCase());
 					else
 						builder.lore("&f❌ &c" + type.camelCase());
@@ -70,7 +84,7 @@ public class TrustProvider extends InventoryProvider {
 				builder.lore("").lore("&fClick to edit");
 
 				items.add(ClickableItem.of(builder.build(), e ->
-					new TrustPlayerProvider(trusted, back).open(viewer)));
+					new TrustsPlayerMenu(user, target, this).open(viewer)));
 			});
 
 		paginate(items);
@@ -81,16 +95,16 @@ public class TrustProvider extends InventoryProvider {
 				.prefix(Features.get(TrustFeature.class).getPrefix())
 				.response(lines -> {
 					if (!lines[0].isEmpty()) {
-						OfflinePlayer trusted = PlayerUtils.getPlayer(lines[0]);
-						new TrustPlayerProvider(trusted, back).open(viewer);
+						var target = PlayerUtils.getPlayer(lines[0]);
+						new TrustsPlayerMenu(user, target, this).open(viewer);
 					} else
 						open(viewer, contents.pagination());
 				})
 				.open(viewer)));
 
-		Trust.Type previous = filterType.get() == null ? Type.values()[0].previousWithLoop() : filterType.get().previous();
-		Trust.Type current = filterType.get();
-		Trust.Type next = filterType.get() == null ? Type.values()[0] : filterType.get().next();
+		TrustType previous = filterType.get() == null ? TrustType.values()[0].previousWithLoop() : filterType.get().previous();
+		TrustType current = filterType.get();
+		TrustType next = filterType.get() == null ? TrustType.values()[0] : filterType.get().next();
 		if (current == previous) previous = null;
 		if (current == next) next = null;
 
@@ -99,7 +113,7 @@ public class TrustProvider extends InventoryProvider {
 			.lore("&e⬇ " + (current == null ? "All" : current.camelCase()))
 			.lore("&7⬇ " + (next == null ? "All" : next.camelCase()));
 
-		Trust.Type finalNext = next;
+		TrustType finalNext = next;
 		contents.set(contents.config().getRows() - 1, 4, ClickableItem.of(item.build(), e -> {
 			filterType.set(finalNext);
 			open(viewer, contents.pagination());

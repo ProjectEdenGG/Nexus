@@ -22,8 +22,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationRo
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.workbenches.dyestation.CreativeBrushMenu;
-import gg.projecteden.nexus.models.trust.Trust.Type;
-import gg.projecteden.nexus.models.trust.TrustService;
+import gg.projecteden.nexus.models.trust.TrustsUser.TrustType;
+import gg.projecteden.nexus.models.trust.TrustsUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
@@ -48,7 +48,6 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
-import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -388,7 +387,7 @@ public class Decoration {
 			return setCanEdit(true);
 		}
 
-		boolean isTrusted = new TrustService().get(owner).trusts(Type.DECORATIONS, player);
+		boolean isTrusted = new TrustsUserService().get(owner).trusts(TrustType.DECORATIONS, player);
 		DecorationLang.debug(player, " Is trusted --> " + isTrusted);
 
 		return setCanEdit(isTrusted);

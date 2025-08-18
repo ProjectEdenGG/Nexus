@@ -20,8 +20,8 @@ import gg.projecteden.nexus.features.resourcepack.models.font.CustomFont;
 import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.features.socialmedia.commands.SocialMediaCommand;
-import gg.projecteden.nexus.features.trust.providers.TrustPlayerProvider;
-import gg.projecteden.nexus.features.trust.providers.TrustProvider;
+import gg.projecteden.nexus.features.trust.providers.TrustsMenu;
+import gg.projecteden.nexus.features.trust.providers.TrustsPlayerMenu;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.CostumeUser;
@@ -47,7 +47,7 @@ import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
-import gg.projecteden.nexus.models.trust.TrustService;
+import gg.projecteden.nexus.models.trust.TrustsUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
@@ -80,7 +80,7 @@ public class ProfileProvider extends InventoryProvider {
 	private static final CostumeUserService costumeService = new CostumeUserService();
 	private static final RainbowArmorService rbaService = new RainbowArmorService();
 	private static final HomeService homeService = new HomeService();
-	private static final TrustService trustService = new TrustService();
+	private static final TrustsUserService trustService = new TrustsUserService();
 
 	private InventoryProvider previousMenu = null;
 
@@ -746,11 +746,11 @@ public class ProfileProvider extends InventoryProvider {
 			@Override
 			public void onClick(ItemClickData e, Player viewer, ProfileUser target, InventoryContents contents, InventoryProvider previousMenu) {
 				if (isSelf(viewer, target)) {
-					new TrustProvider(previousMenu).open(viewer);
+					new TrustsMenu(viewer, previousMenu).open(viewer);
 					return;
 				}
 
-				new TrustPlayerProvider(target.getOfflinePlayer(), previousMenu).open(viewer);
+				new TrustsPlayerMenu(viewer, target, previousMenu).open(viewer);
 			}
 		},
 		;

@@ -80,9 +80,9 @@ import gg.projecteden.nexus.models.statistics.StatisticsUserService;
 import gg.projecteden.nexus.models.store.Contributor;
 import gg.projecteden.nexus.models.store.Contributor.Purchase;
 import gg.projecteden.nexus.models.store.ContributorService;
-import gg.projecteden.nexus.models.trust.Trust;
-import gg.projecteden.nexus.models.trust.Trust.Type;
-import gg.projecteden.nexus.models.trust.TrustService;
+import gg.projecteden.nexus.models.trust.TrustsUser;
+import gg.projecteden.nexus.models.trust.TrustsUser.TrustType;
+import gg.projecteden.nexus.models.trust.TrustsUserService;
 import gg.projecteden.nexus.models.vaults.VaultUser;
 import gg.projecteden.nexus.models.vaults.VaultUserService;
 import gg.projecteden.nexus.utils.Debug;
@@ -612,21 +612,21 @@ public class AccountTransferCommand extends CustomCommand {
 		}
 	}
 
-	@Service(TrustService.class)
-	static class TrustsTransferer extends MongoTransferer<Trust> {
+	@Service(TrustsUserService.class)
+	static class TrustsTransferer extends MongoTransferer<TrustsUser> {
 		@Override
-		public void transfer(Player executor, Trust previous, Trust current) {
+		public void transfer(Player executor, TrustsUser previous, TrustsUser current) {
 			current.addAllTypes(previous);
 
 			previous.clearAll();
 
 			// replace previous in others
-			for (Trust uuid : service.getAll()) {
-				Trust trust = service.get(uuid);
+			for (TrustsUser uuid : service.getAll()) {
+				TrustsUser trust = service.get(uuid);
 				if (trust.equals(current) || trust.equals(previous))
 					continue;
 
-				for (Type type : Type.values()) {
+				for (TrustType type : TrustType.values()) {
 					for (UUID trusted : trust.get(type)) {
 						if (trusted != previous.getUuid())
 							continue;

@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.trust;
 
-import gg.projecteden.nexus.features.trust.providers.TrustPlayerProvider;
-import gg.projecteden.nexus.features.trust.providers.TrustProvider;
+import gg.projecteden.nexus.features.trust.providers.TrustsMenu;
+import gg.projecteden.nexus.features.trust.providers.TrustsPlayerMenu;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -10,159 +10,147 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.preconfigured.MissingArgumentException;
 import gg.projecteden.nexus.models.home.Home;
 import gg.projecteden.nexus.models.home.HomeService;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.models.trust.Trust;
-import gg.projecteden.nexus.models.trust.Trust.Type;
-import gg.projecteden.nexus.models.trust.TrustService;
+import gg.projecteden.nexus.models.trust.TrustsUser;
+import gg.projecteden.nexus.models.trust.TrustsUser.TrustType;
+import gg.projecteden.nexus.models.trust.TrustsUserService;
+import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.StringUtils;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NonNull;
-import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Aliases({"trusts", "allow"})
+import static gg.projecteden.api.common.utils.StringUtils.asOxfordList;
+import static java.util.stream.Collectors.joining;
+
+@Aliases("trusts")
 public class TrustCommand extends CustomCommand {
-	private final TrustService service = new TrustService();
-	private Trust trust;
+	private final TrustsUserService service = new TrustsUserService();
+	private TrustsUser user;
 
 	public TrustCommand(@NonNull CommandEvent event) {
 		super(event);
 		if (isPlayerCommandEvent())
-			trust = service.get(player());
+			user = service.get(player());
 	}
 
 	@Path
 	@Description("Open the trust menu")
 	void run() {
-		new TrustProvider().open(player());
+		new TrustsMenu(user).open(player());
 	}
 
 	@Path("<player>")
 	@Description("Open the trust menu for the specified player")
-	void menu(OfflinePlayer player) {
-		new TrustPlayerProvider(player).open(player());
+	void menu(Nerd player) {
+		new TrustsPlayerMenu(player(), player).open(player());
 	}
 
-	@Path("lock <players>")
-	@Description("Allow specified player(s) to a specific lock")
-	void lock(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
-		runCommand("cmodify " + names(players, " "));
-	}
-
-	@Path("home <home> <players>")
+	@Path("add home <home> <players>")
 	@Description("Allow specified player(s) to a specific home")
-	void home(Home home, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
+	void add_home(Home home, @Arg(type = TrustsUser.class) List<TrustsUser> players) {
 		players.forEach(home::allow);
 		new HomeService().save(home.getOwner());
 		send(PREFIX + "Trusted &e" + nicknames(players, "&3, &e") + " &3to home &e" + home.getName());
 	}
 
-	@Path("locks <players>")
-	@Description("Allow specified player(s) to all locks")
-	void locks(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
-		process(trust, players, Type.LOCKS);
+	@Path("remove home <home> <players>")
+	@Description("Allow specified player(s) to a specific home")
+	void remove_home(Home home, @Arg(type = TrustsUser.class) List<TrustsUser> players) {
+		players.forEach(home::remove);
+		new HomeService().save(home.getOwner());
+		send(PREFIX + "Removed &e" + nicknames(players, "&3, &e") + " &3from home &e" + home.getName());
 	}
 
-	@Path("homes <players>")
-	@Description("Allow specified player(s) to all homes")
-	void homes(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
-		process(trust, players, Type.HOMES);
-	}
-
-	@Path("teleports <players>")
-	@Description("Allow specified player(s) to teleport to you at any time")
-	void teleports(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
-		process(trust, players, Type.TELEPORTS);
-	}
-
-	@Path("decorations <players>")
-	@Description("Allow specified player(s) to modify decorations")
-	void decorations(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
-		process(trust, players, Type.DECORATIONS);
-	}
-
-	@Path("all <players>")
-	@Description("Allow specified player(s) to everything")
-	void all(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
-		process(trust, players, Type.values());
-	}
-
-	@Permission(Group.MODERATOR)
-	@Path("admin debug <player> [type]")
-	@Description("Display the player's trusts")
-	void admin_debug(@Arg(type = OfflinePlayer.class) OfflinePlayer player, Trust.Type type) {
-		trust = service.get(player);
-
-		for (Type _type : trust.getTrusts().keySet()) {
-			if (type == null || type == _type) {
-				send("&3" + StringUtils.camelCase(_type) + ":");
-				trust.getTrusts().get(_type)
-					.forEach(uuid -> send(" &3- &e" + Nickname.of(uuid)));
-			}
+	@Path("<action> <type> <players>")
+	@Description("Allow or deny specified player(s) to a specified trust")
+	void trust(Action action, TrustTypeArgument type, @Arg(type = TrustsUser.class) List<TrustsUser> players) {
+		if (type == TrustTypeArgument.LOCK) {
+			var names = players.stream().map(Name::of).collect(joining(" "));
+			runCommand("cmodify " + (action == Action.REMOVE ? "-" : "") + names);
+		} else {
+			process(user, action, players, type.getTrustTypes());
 		}
 	}
 
 	@Permission(Group.MODERATOR)
-	@Path("admin locks <owner> <players>")
-	@Description("Give a player access to another player's locks")
-	void admin_locks(Trust trust, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
-		send(PREFIX + "Modifying trusts of &e" + trust.getName());
-		process(trust, players, Type.LOCKS);
+	@Path("admin <player> [action] [type] [players]")
+	@Description("Modify another player's trusts")
+	void admin(TrustsUser player, Action action, TrustTypeArgument type, @Arg(type = TrustsUser.class) List<TrustsUser> players) {
+		if (action == null)
+			new TrustsMenu(player).open(player());
+		else if (type != null && !players.isEmpty()) {
+			send(PREFIX + "Modifying trusts of &e" + player.getName());
+			process(player, action, players, type.getTrustTypes());
+		} else
+			throw new MissingArgumentException();
 	}
 
 	@Permission(Group.MODERATOR)
-	@Path("admin homes <owner> <players>")
-	@Description("Give a player access to another player's homes")
-	void admin_homes(Trust trust, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
-		send(PREFIX + "Modifying trusts of &e" + trust.getName());
-		process(trust, players, Type.HOMES);
+	@Path("admin debug <player> [type]")
+	@Description("Display a player's trusts")
+	void admin_debug(TrustsUser player, TrustType type) {
+		user = service.get(player);
+
+		for (TrustType _type : user.getTrusts().keySet()) {
+			if (type == null || type == _type) {
+				send("&3" + StringUtils.camelCase(_type) + ":");
+				user.getTrusts().get(_type).forEach(uuid -> send(" &3- &e" + Nickname.of(uuid)));
+			}
+		}
 	}
 
-	@Permission(Group.MODERATOR)
-	@Path("admin teleports <owner> <players>")
-	@Description("Give a player access to teleport to another player without asking")
-	void admin_teleports(Trust trust, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
-		send(PREFIX + "Modifying trusts of &e" + trust.getName());
-		process(trust, players, Type.TELEPORTS);
-	}
+	private void process(TrustsUser user, Action action, List<TrustsUser> players, List<TrustType> types) {
+		var separator = "&3, &e";
+		var typeNames = asOxfordList(types.stream().map(TrustType::camelCase).toList(), separator);
+		var nicknames = nicknames(players, separator);
 
-	@Permission(Group.MODERATOR)
-	@Path("admin decorations <owner> <players>")
-	@Description("Give a player access to another player's decorations")
-	void admin_decorations(Trust trust, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
-		send(PREFIX + "Modifying trusts of &e" + trust.getName());
-		process(trust, players, Type.DECORATIONS);
-	}
-
-	@Permission(Group.MODERATOR)
-	@Path("admin all <owner> <players>")
-	@Description("Give a player access to all of another player's trusts")
-	void admin_all(Trust trust, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
-		send(PREFIX + "Modifying trusts of &e" + trust.getName());
-		process(trust, players, Type.values());
-	}
-
-	private void process(Trust trust, List<OfflinePlayer> players, Trust.Type... types) {
-		for (Type type : types)
-			players.forEach(player -> trust.add(type, player.getUniqueId()));
-		service.save(trust);
-		String typeNames = Arrays.stream(types).map(Type::camelCase).collect(Collectors.joining("&3, &e"));
-		send(PREFIX + "Trusted &e" + nicknames(players, "&3, &e") + " &3to &e" + typeNames);
+		switch (action) {
+			case ADD -> {
+				players.forEach(player -> types.forEach(type -> user.add(type, player.getUniqueId())));
+				service.save(user);
+				send(PREFIX + "Trusted &e" + nicknames + " &3to &e" + typeNames);
+			}
+			case REMOVE -> {
+				players.forEach(player -> types.forEach(type -> user.remove(type, player.getUniqueId())));
+				service.save(user);
+				send(PREFIX + "Removed &e" + nicknames + " &3from &e" + typeNames);
+			}
+		}
 	}
 
 	@NotNull
-	private String nicknames(List<OfflinePlayer> players, String separator) {
-		return players.stream().map(Nickname::of).collect(Collectors.joining(separator));
+	private String nicknames(List<TrustsUser> players, String separator) {
+		return asOxfordList(players.stream().map(Nickname::of).toList(), separator);
 	}
 
-	@NotNull
-	private String names(List<OfflinePlayer> players, String separator) {
-		return players.stream().map(Nickname::of).collect(Collectors.joining(separator));
+	@Getter
+	@AllArgsConstructor
+	public enum TrustTypeArgument {
+		LOCK,
+		LOCKS(TrustType.LOCKS),
+		HOMES(TrustType.HOMES),
+		TELEPORTS(TrustType.TELEPORTS),
+		DECORATIONS(TrustType.DECORATIONS),
+		ALL(TrustType.values());
+
+		private final List<TrustType> trustTypes;
+
+		TrustTypeArgument(TrustType... trustTypes) {
+			this.trustTypes = List.of(trustTypes);
+		}
+	}
+
+	private enum Action {
+		ADD,
+		REMOVE
 	}
 
 }
