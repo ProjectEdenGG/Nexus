@@ -752,9 +752,9 @@ public class ItemUtils {
 		NonNullList<net.minecraft.world.item.ItemStack> minecraft = NonNullList.withSize(expectedSize, net.minecraft.world.item.ItemStack.EMPTY);
 
 		try (final ProblemReporter.ScopedCollector problemReporter = new ProblemReporter.ScopedCollector(
-			() -> "ContainerHelper#saveAllItems", LogUtils.getLogger()
+			() -> "ContainerHelper#loadAllItems", LogUtils.getLogger()
 		)) {
-			ValueInput input = TagValueInput.create(problemReporter, ((CraftServer) Bukkit.getServer()).getServer().registryAccess(), new CompoundTag());
+			ValueInput input = TagValueInput.create(problemReporter, ((CraftServer) Bukkit.getServer()).getServer().registryAccess(), pe);
 			ContainerHelper.loadAllItems(input, minecraft);
 		}
 

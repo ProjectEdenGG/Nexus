@@ -23,6 +23,9 @@ public class GlowingEnchant extends CustomEnchant {
 				if (helmet == null)
 					continue;
 
+				if (!helmet.hasItemMeta())
+					continue;
+
 				if (!helmet.getItemMeta().hasEnchant(Enchant.GLOWING))
 					continue;
 

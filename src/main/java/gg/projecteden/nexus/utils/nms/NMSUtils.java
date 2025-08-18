@@ -49,6 +49,7 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.craftbukkit.CraftRegistry;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.CraftBlock;
@@ -357,7 +358,7 @@ public class NMSUtils {
 
 	public static CompoundTag saveToNbtTag(ItemStack itemStack) {
 		try {
-			return (CompoundTag) ItemStack.CODEC.encode(itemStack, NbtOps.INSTANCE, new CompoundTag()).getOrThrow();
+			return (CompoundTag) ItemStack.CODEC.encode(itemStack, CraftRegistry.getMinecraftRegistry().createSerializationContext(NbtOps.INSTANCE), new CompoundTag()).getOrThrow();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

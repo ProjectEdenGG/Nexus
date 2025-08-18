@@ -438,7 +438,8 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	public ItemBuilder hideTooltip() {
 		components(nbt -> {
 			ReadWriteNBT readWriteNBT = NBT.createNBTObject();
-			nbt.set("minecraft:hide_tooltip", readWriteNBT, NBTHandlers.STORE_READWRITE_TAG);
+			readWriteNBT.setBoolean("minecraft:hide_tooltip", true);
+			nbt.set("minecraft:tooltip_display", readWriteNBT, NBTHandlers.STORE_READWRITE_TAG);
 		});
 		return this;
 	}

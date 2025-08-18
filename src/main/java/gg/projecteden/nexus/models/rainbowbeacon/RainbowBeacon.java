@@ -37,7 +37,7 @@ public class RainbowBeacon implements PlayerOwnedObject {
 	public void start() {
 		AtomicInteger i = new AtomicInteger(0);
 		taskId = Tasks.repeat(0, TickTime.SECOND, () -> {
-			if (location == null)
+			if (location == null || location.getWorld() == null)
 				return;
 			if (!location.isChunkLoaded())
 				return;
@@ -58,7 +58,7 @@ public class RainbowBeacon implements PlayerOwnedObject {
 		if (taskId != null)
 			Tasks.cancel(taskId);
 
-		if (location != null)
+		if (location != null && location.getWorld() != null)
 			location.getWorld().getChunkAtAsync(location).thenRun(() -> location.getBlock().setType(Material.AIR));
 	}
 

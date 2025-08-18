@@ -30,6 +30,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.craftbukkit.CraftRegistry;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -72,7 +73,7 @@ public class SerializationUtils {
 				if (updated == null)
 					return null;
 
-				net.minecraft.world.item.ItemStack fixed = net.minecraft.world.item.ItemStack.CODEC.parse(NbtOps.INSTANCE, updated).getOrThrow();
+				net.minecraft.world.item.ItemStack fixed = net.minecraft.world.item.ItemStack.CODEC.parse(CraftRegistry.getMinecraftRegistry().createSerializationContext(NbtOps.INSTANCE), updated).getOrThrow();
 				if (fixed == null)
 					throw new RuntimeException("Deserialized item stack from " + string + " is null");
 				return LegacyItems.convert(null, fixed.asBukkitCopy());
@@ -110,7 +111,7 @@ public class SerializationUtils {
 			return (CompoundTag) DataFixers.getDataFixer().update(
 				References.ITEM_STACK,
 				new Dynamic<>(NbtOps.INSTANCE, data),
-				data.getInt("DataVersion").orElse(3700),
+				data.getInt("DataVersion").orElse(0),
 				SharedConstants.getCurrentVersion().dataVersion().version()
 			).getValue();
 		}

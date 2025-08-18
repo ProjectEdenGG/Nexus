@@ -5,6 +5,8 @@ import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.features.legacy.LegacyCommand.LegacyVaultMenu.LegacyVaultHolder;
 import gg.projecteden.nexus.features.listeners.Beehives;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider.SmartInventoryHolder;
+import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
+import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks.BackpackTier;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
@@ -139,6 +141,7 @@ public class LegacyItems implements Listener {
 
 		item = Beehives.addLore(item);
 		item = convertCrateKeys(item);
+		item = upgradeBackpackItems(item);
 
 		ItemBuilder builder = new ItemBuilder(item);
 		if (builder.customModelData() == 0)
@@ -174,6 +177,16 @@ public class LegacyItems implements Listener {
 			return converted.build();
 
 		return convertIfShulkerBox(location.getWorld(), item, converted);
+	}
+
+	private static ItemStack upgradeBackpackItems(ItemStack item) {
+		if (!Backpacks.isBackpack(item)) return item;
+		BackpackTier tier = Backpacks.getTier(item);
+
+		List<ItemStack> contents = ItemUtils.getNBTContentsOfNonInventoryItem(item, tier.getRows() * 9);
+		if (contents.isEmpty()) return item;
+
+		return ItemUtils.setNBTContentsOfNonInventoryItem(item, contents);
 	}
 
 	private static ItemStack manualConversions(ItemStack item) {
