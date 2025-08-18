@@ -42,6 +42,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.potion.PotionEffect;
@@ -104,6 +105,18 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 			.command("/freeze list")
 			.page(page)
 			.send();
+	}
+
+	@Path("summon <player>")
+	void summon(Player player) {
+		if (!isFrozen(player))
+			error(PREFIX + "That player is not frozen");
+
+		var user = new FreezeService().get(player);
+		user.setFrozen(false);
+		player.teleportAsync(location(), TeleportCause.PLUGIN);
+		user.setFrozen(true);
+		send(PREFIX + "Summoned " + Nickname.of(player));
 	}
 
 	public static int cleanup(World world) {
