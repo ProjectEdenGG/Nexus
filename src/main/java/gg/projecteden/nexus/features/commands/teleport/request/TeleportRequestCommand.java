@@ -70,7 +70,7 @@ public class TeleportRequestCommand extends ITeleportRequestCommand {
 		var targetWorld = targetLocation.getWorld();
 		var targetWorldGroup = WorldGroup.of(targetWorld);
 
-		Supplier<Boolean> isTrusted = () -> {
+		Supplier<Boolean> teleportIfTrusted = () -> {
 			if (trust.trusts(Type.TELEPORTS, player())) {
 				player().teleportAsync(targetLocation, TeleportCause.COMMAND);
 				send(PREFIX + "Teleporting to &e" + Nickname.of(target) + (target.isOnline() && PlayerUtils.canSee(player(), target) ? "" : " &3(Offline)"));
@@ -78,13 +78,6 @@ public class TeleportRequestCommand extends ITeleportRequestCommand {
 			}
 			return false;
 		};
-
-		if (MuteMenuUser.hasMuted(target, MuteMenuItem.TP_REQUESTS)) {
-			if (isTrusted.get())
-				return;
-
-			error(target.getName() + " has teleport requests disabled!");
-		}
 
 		if (!isStaff()) {
 			String cannotTeleport = "Cannot teleport to " + nickname(target);
@@ -95,7 +88,14 @@ public class TeleportRequestCommand extends ITeleportRequestCommand {
 				error(cannotTeleport + ", they are in a staff world");
 		}
 
-		if (isTrusted.get())
+		if (MuteMenuUser.hasMuted(target, MuteMenuItem.TP_REQUESTS)) {
+			if (teleportIfTrusted.get())
+				return;
+
+			error(target.getName() + " has teleport requests disabled!");
+		}
+
+		if (teleportIfTrusted.get())
 			return;
 
 		// Validate online & can see
