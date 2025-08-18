@@ -108,7 +108,7 @@ public class Votes extends Feature implements Listener {
 		if (user != null && user.getMutualGuilds().size() > 0) {
 			String username = Nerd.of(vote.getUuid()).getName();
 			Nexus.log("[Votes] Sending vote reminder to " + username);
-			var messageBuilder = new MessageCreateBuilder().setContent("Boop! It's votin' time!").setEmbeds(createEmbed(username));
+			var messageBuilder = new MessageCreateBuilder().addContent("Boop! It's votin' time!").setEmbeds(createEmbed(username));
 			user.openPrivateChannel().complete().sendMessage(messageBuilder.build()).queue();
 		}
 	}

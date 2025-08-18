@@ -80,7 +80,7 @@ public class DiscordListener extends ListenerAdapter {
 			.collect(Collectors.joining(" "));
 
 		var message = new MessageCreateBuilder()
-			.setContent(mentions)
+			.addContent(mentions)
 			.setSuppressedNotifications(true);
 
 		thread.sendMessage(message.build()).queue(success -> success.delete().queue());
