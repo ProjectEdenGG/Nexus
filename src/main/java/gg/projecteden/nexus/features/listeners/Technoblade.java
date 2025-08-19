@@ -1,7 +1,11 @@
 package gg.projecteden.nexus.features.listeners;
 
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
+import de.tr7zw.nbtapi.NBT;
+import de.tr7zw.nbtapi.handler.NBTHandlers;
+import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -16,11 +20,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityMountEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class Technoblade implements Listener {
 
@@ -37,26 +44,46 @@ public class Technoblade implements Listener {
 		if (pig.getVariant() != Variant.TEMPERATE)
 			return;
 
-		if (getNbtKey(pig) != null)
-			// Already handled
-			return;
+		boolean saddled = pig.hasSaddle();
+		if (pig.getPersistentDataContainer().has(NBT_KEY, PersistentDataType.BYTE))
+			saddled = oldWasSaddled(pig);
 
-		setWasSaddled(pig, pig.hasSaddle());
-		pig.setSaddle(true);
+		pig.getPersistentDataContainer().remove(NBT_KEY);
+		setSaddle(pig, saddled ? SaddleState.SADDLED : SaddleState.UNSADDLED);
 	}
 
-	private static void setWasSaddled(Pig pig, boolean hasSaddle) {
-		pig.getPersistentDataContainer().set(NBT_KEY, PersistentDataType.BYTE, hasSaddle ? (byte) 1 : (byte) 0);
-	}
-
-	private static boolean wasSaddled(Pig pig) {
-		final Byte value = getNbtKey(pig);
+	private static boolean oldWasSaddled(Pig pig) {
+		final Byte value = pig.getPersistentDataContainer().get(NBT_KEY, PersistentDataType.BYTE);
 		return value != null && value == 1;
 	}
 
-	@Nullable
-	private static Byte getNbtKey(Pig pig) {
-		return pig.getPersistentDataContainer().get(NBT_KEY, PersistentDataType.BYTE);
+	private static void setSaddle(Pig pig, SaddleState state) {
+		var saddle = new ItemBuilder(Material.SADDLE).components(nbt -> {
+			ReadWriteNBT readWriteNBT = NBT.createNBTObject();
+			readWriteNBT.setString("slot", "saddle");
+			readWriteNBT.setString("asset_id", "minecraft:technoblade_" + state.name().toLowerCase());
+			nbt.set("minecraft:equippable", readWriteNBT, NBTHandlers.STORE_READWRITE_TAG);
+		}).build();
+
+		pig.getEquipment().setItem(EquipmentSlot.SADDLE, saddle);
+	}
+
+	@SuppressWarnings("UnstableApiUsage")
+	private static boolean wasSaddled(Pig pig) {
+		var saddle = pig.getEquipment().getItem(EquipmentSlot.SADDLE);
+		if (isNullOrAir(saddle))
+			return false;
+
+		ItemMeta meta = saddle.getItemMeta();
+		if (meta == null)
+			return false;
+
+		var model = meta.getEquippable().getModel();
+		if (model == null)
+			return false;
+
+		var assetId = model.getKey();
+		return assetId.contains("technoblade_saddled");
 	}
 
 	@EventHandler
@@ -78,10 +105,12 @@ public class Technoblade implements Listener {
 		if (pig.getVariant() != Variant.TEMPERATE)
 			return;
 
-		if (wasSaddled(pig))
+		event.getDrops().removeIf(itemStack -> Nullables.isNotNullOrAir(itemStack) && itemStack.getType() == Material.SADDLE);
+
+		if (!wasSaddled(pig))
 			return;
 
-		event.getDrops().removeIf(itemStack -> Nullables.isNotNullOrAir(itemStack) && itemStack.getType() == Material.SADDLE);
+		event.getDrops().add(new ItemStack(Material.SADDLE));
 	}
 
 	@EventHandler
@@ -110,18 +139,26 @@ public class Technoblade implements Listener {
 			return;
 
 		final ItemStack item = event.getPlayer().getInventory().getItem(event.getHand());
-		if (Nullables.isNullOrAir(item))
+		if (isNullOrAir(item))
 			return;
 
 		if (item.getType() != Material.SADDLE)
 			return;
 
+		event.setCancelled(true);
+
 		if (wasSaddled(pig))
 			return;
 
-		setWasSaddled(pig, true);
-		event.getPlayer().getInventory().setItem(event.getHand(), new ItemStack(Material.AIR));
-		event.setCancelled(true);
+		item.subtract();
+		setSaddle(pig, SaddleState.SADDLED);
+	}
+
+	public enum SaddleState {
+		SADDLED,
+		UNSADDLED,
 	}
 
 }
+
+
