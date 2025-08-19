@@ -61,8 +61,13 @@ public class Technoblade implements Listener {
 
 	@EventHandler
 	public void on(EntityAddToWorldEvent event) {
-		if (event.getEntity() instanceof Pig pig)
-			technoblade(pig);
+		if (!(event.getEntity() instanceof Pig pig))
+			return;
+
+		if (pig.getVariant() != Variant.TEMPERATE)
+			return;
+
+		technoblade(pig);
 	}
 
 	@EventHandler
@@ -70,8 +75,13 @@ public class Technoblade implements Listener {
 		if (!(event.getEntity() instanceof Pig pig))
 			return;
 
-		if (!wasSaddled(pig))
-			event.getDrops().removeIf(itemStack -> Nullables.isNotNullOrAir(itemStack) && itemStack.getType() == Material.SADDLE);
+		if (pig.getVariant() != Variant.TEMPERATE)
+			return;
+
+		if (wasSaddled(pig))
+			return;
+
+		event.getDrops().removeIf(itemStack -> Nullables.isNotNullOrAir(itemStack) && itemStack.getType() == Material.SADDLE);
 	}
 
 	@EventHandler
@@ -80,6 +90,9 @@ public class Technoblade implements Listener {
 			return;
 
 		if (!(event.getMount() instanceof Pig pig))
+			return;
+
+		if (pig.getVariant() != Variant.TEMPERATE)
 			return;
 
 		if (wasSaddled(pig))
