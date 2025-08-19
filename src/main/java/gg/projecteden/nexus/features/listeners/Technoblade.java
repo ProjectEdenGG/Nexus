@@ -93,6 +93,9 @@ public class Technoblade implements Listener {
 		if (!(event.getRightClicked() instanceof Pig pig))
 			return;
 
+		if (pig.getVariant() != Variant.TEMPERATE)
+			return;
+
 		final ItemStack item = event.getPlayer().getInventory().getItem(event.getHand());
 		if (Nullables.isNullOrAir(item))
 			return;
