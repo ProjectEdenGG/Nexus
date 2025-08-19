@@ -9,6 +9,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Pig;
+import org.bukkit.entity.Pig.Variant;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -33,6 +34,9 @@ public class Technoblade implements Listener {
 	}
 
 	private static void technoblade(Pig pig) {
+		if (pig.getVariant() != Variant.TEMPERATE)
+			return;
+
 		if (getNbtKey(pig) != null)
 			// Already handled
 			return;
