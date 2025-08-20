@@ -1236,6 +1236,13 @@ public class PlayerUtils {
 			return null;
 		}
 
+		public static ArmorSlot of(EquipmentSlot slot) {
+			for (ArmorSlot a : ArmorSlot.values())
+				if (a.slot == slot)
+					return a;
+			return null;
+		}
+
 		public Material getLeather() {
 			return Material.getMaterial("LEATHER_" + name());
 		}

@@ -15,7 +15,6 @@ import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Material;
@@ -26,6 +25,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class ToolModificationTable extends CustomBench implements ICraftableCustomBench{
 
@@ -102,7 +103,7 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 		@Override
 		public void onClose(InventoryManager manager) {
 			super.onClose(manager);
-			if (!Nullables.isNullOrAir(tool)) {
+			if (!isNullOrAir(tool)) {
 				this.getViewer().give(this.tool);
 				Tasks.wait(1, () -> this.getViewer().updateInventory());
 			}
@@ -116,11 +117,11 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 						return ClickableItem.of(tool, e -> {
 							ItemStack cursor = e.getPlayer().getItemOnCursor();
 
-							if (!Nullables.isNullOrAir(cursor) && !EquipmentSkinType.isApplicable(cursor))
+							if (!isNullOrAir(cursor) && !EquipmentSkinType.isApplicable(cursor))
 								return;
 
 							e.getPlayer().setItemOnCursor(tool);
-							inv.tool = Nullables.isNullOrAir(cursor) ? null : cursor;
+							inv.tool = isNullOrAir(cursor) ? null : cursor;
 							inv.init();
 						});
 
@@ -128,7 +129,7 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 						new ItemBuilder(ItemModelType.GUI_TOOL_OUTLINES).hideTooltip().build(),
 						e -> {
 							ItemStack item = e.getPlayer().getItemOnCursor();
-							if (Nullables.isNullOrAir(item))
+							if (isNullOrAir(item))
 								return;
 
 							if (EquipmentSkinType.isApplicable(item)) {
@@ -148,6 +149,9 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 					ItemStack clicked = e.getItem();
 					EquipmentSkinType clickedType = EquipmentSkinType.of(clicked);
 
+					if (!EquipmentSkinType.isTemplate(item) && !isNullOrAir(item))
+						return;
+
 					if (skinType != null) {
 						if (!skinType.applies(tool))
 							return;
@@ -156,7 +160,6 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 						inv.tool = skinType.apply(tool);
 						inv.init();
 					}
-
 					else if (clickedType != null) {
 						e.getPlayer().setItemOnCursor(clickedType.getTemplate());
 
