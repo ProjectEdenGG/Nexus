@@ -144,10 +144,10 @@ public class WelcomeCommand extends CustomCommand implements Listener {
 	private static void sayWelcome(@NotNull Nerd welcomer, @Nullable Player welcomee) {
 		String message;
 
-		if (CooldownService.isNotOnCooldown(UUID0, "welc", TickTime.SECOND.x(20)))
-			message = getLongMessage(welcomee);
-		else
+		if (CooldownService.isOnCooldown(UUID0, "welc", TickTime.MINUTE))
 			message = welcomee == null ? genericMessage : getShortMessage(welcomee);
+		else
+			message = getLongMessage(welcomee);
 
 		Chatter.of(welcomer).say(StaticChannel.GLOBAL.getChannel(), message);
 	}
