@@ -22,7 +22,7 @@ public class ModeratorCommand extends CustomCommand {
 	void moderator() {
 		line(5);
 		send(Rank.MODERATOR.getChatColor() + "Moderators &3are the first level of staff. They &eanswer any questions &3a player has, &efix grief&3, moderate chat, " +
-				"and see too any other basic problems players have.");
+				"and see to any other basic problems players have.");
 		line();
 		send(json()
 				.next("&3[+] &eHow to achieve&3: ")
