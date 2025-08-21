@@ -803,6 +803,9 @@ public abstract class WitherFight implements Listener {
 			}
 
 			public Wither spawnMinion(Location location) {
+				if (location.getBlock().getType() != Material.AIR)
+					location = WitherChallenge.currentFight.wither.getLocation();
+
 				Wither wither = location.getWorld().spawn(location, Wither.class, SpawnReason.CUSTOM);
 				EntityUtils.setHealth(wither, 1);
 				wither.setCustomName("Minion");
