@@ -15,8 +15,8 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.TagParser;
-import net.minecraft.server.MinecraftServer;
 import org.bukkit.inventory.ItemStack;
 
 @Permission(Group.ADMIN)
@@ -45,12 +45,11 @@ public class DataFixerUpperCommand extends CustomCommand {
 	@HideFromWiki
 	@HideFromHelp
 	void fix(String paste) {
-		CompoundTag tag = TagParser.parseTag(StringUtils.getPaste(paste));
-		ListTag list = tag.getCompound("tag").getCompound("ProjectEden").getList("Items", 10);
+		CompoundTag tag = TagParser.parseCompoundFully(StringUtils.getPaste(paste));
+		ListTag list = tag.getCompound("tag").get().getCompound("ProjectEden").get().getList("Items").get();
 		for (int i = 0; i < list.size(); i++) {
-			CompoundTag item = list.getCompound(i);
-			CompoundTag updated = NBT.updateItemStack(item);
-			ItemStack fixed = net.minecraft.world.item.ItemStack.parse(MinecraftServer.getServer().registryAccess(), updated).get().asBukkitCopy();
+			CompoundTag item = list.getCompound(i).get();
+			ItemStack fixed = net.minecraft.world.item.ItemStack.CODEC.parse(NbtOps.INSTANCE, item).getOrThrow().asBukkitCopy();
 			giveItem(fixed);
 		}
 	}

@@ -310,24 +310,24 @@ public class TestCommand extends CustomCommand implements Listener {
 		});
 	}
 
-	private static Map<Player, BossBar> bossBars = new HashMap<>();
+	private static Map<UUID, BossBar> bossBars = new HashMap<>();
 
 	@Path("bossBar add <color> <style> <title...>")
 	void bossBarAdd(BarColor color, BarStyle barStyle, String title) {
-		if (bossBars.containsKey(player()))
+		if (bossBars.containsKey(uuid()))
 			error("You already have a boss bar");
 
 		BossBar bossBar = Bukkit.createBossBar(title, color, barStyle);
 		bossBar.addPlayer(player());
-		bossBars.put(player(), bossBar);
+		bossBars.put(uuid(), bossBar);
 	}
 
 	@Path("bossBar remove")
 	void bossBarRemove() {
-		if (!bossBars.containsKey(player()))
+		if (!bossBars.containsKey(uuid()))
 			error("You do not have a boss bar");
 
-		BossBar bossBar = bossBars.remove(player());
+		BossBar bossBar = bossBars.remove(uuid());
 		bossBar.setVisible(false);
 		bossBar.removeAll();
 	}

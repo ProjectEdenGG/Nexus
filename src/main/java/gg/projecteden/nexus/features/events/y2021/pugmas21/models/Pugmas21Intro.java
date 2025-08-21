@@ -53,10 +53,10 @@ public class Pugmas21Intro implements Listener {
 			Tasks.wait(TickTime.SECOND.x(2), () -> {
 				player.teleport(introLoc);
 				Pugmas21TrainBackground.start();
-				Pugmas21TrainBackground.getChugs().add(player);
+				Pugmas21TrainBackground.getChugs().add(player.getUniqueId());
 
 				Tasks.wait(TickTime.SECOND.x(15), () -> {
-					Pugmas21TrainBackground.getChugs().remove(player);
+					Pugmas21TrainBackground.getChugs().remove(player.getUniqueId());
 					player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(80).amplifier(250).build());
 
 					Tasks.wait(TickTime.SECOND, () -> {

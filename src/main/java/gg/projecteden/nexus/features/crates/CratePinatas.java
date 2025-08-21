@@ -118,7 +118,7 @@ public class CratePinatas implements Listener {
 	}
 
 	public void activate(Player player) {
-		String nbtType = NMSUtils.toNMS(player.getInventory().getItemInMainHand()).get(DataComponents.CUSTOM_DATA).copyTag().getString(NBT_KEY);
+		String nbtType = NMSUtils.toNMS(player.getInventory().getItemInMainHand()).get(DataComponents.CUSTOM_DATA).copyTag().getString(NBT_KEY).get();
 		CrateType type;
 		try {
 			type = CrateType.valueOf(nbtType.toUpperCase());

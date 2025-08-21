@@ -22,12 +22,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @NoArgsConstructor
 @Permission(Group.MODERATOR)
 public class CommandWatchCommand extends CustomCommand implements Listener {
-	private static final Map<Player, List<Player>> watchMap = new HashMap<>();
-	private static final List<String> messageAliases = Arrays.asList(MessageCommand.class.getAnnotation(Aliases.class).value());
+	private static final Map<UUID, List<UUID>> WATCH_MAP = new HashMap<>();
+	private static final List<String> MESSAGE_ALIASES = Arrays.asList(MessageCommand.class.getAnnotation(Aliases.class).value());
 	private static final String PREFIX = "&7&l[&cRadar&7&l]&f ";
 
 	public CommandWatchCommand(@NonNull CommandEvent event) {
@@ -40,14 +41,13 @@ public class CommandWatchCommand extends CustomCommand implements Listener {
 		if (!isAdmin() && !Rank.GUEST.equals(Rank.of(target)))
 			error("You can only command watch guests");
 
-		watchMap.putIfAbsent(target, new ArrayList<>());
-		List<Player> watchList = watchMap.get(target);
+		List<UUID> watchList = WATCH_MAP.computeIfAbsent(target.getUniqueId(), $ -> new ArrayList<>());
 
-		if (watchList.contains(player())) {
-			watchList.remove(player());
+		if (watchList.contains(uuid())) {
+			watchList.remove(uuid());
 			send(PREFIX + "Command Watcher &cdisabled &ffor " + target.getName());
 		} else {
-			watchList.add(player());
+			watchList.add(uuid());
 			send(PREFIX + "Command Watcher &aenabled &ffor " + target.getName());
 		}
 	}
@@ -55,15 +55,15 @@ public class CommandWatchCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onCommand(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
-		if (watchMap.get(player) == null || watchMap.get(player).size() == 0)
+		if (WATCH_MAP.get(player.getUniqueId()) == null || WATCH_MAP.get(player.getUniqueId()).isEmpty())
 			return;
 
 		String message = event.getMessage();
 		String command = message.split(" ")[0].replace("/", "");
 
-		watchMap.get(player).forEach(staff -> {
-			if (messageAliases.contains(command)) {
-				if (isAdmin(staff))
+		WATCH_MAP.get(player.getUniqueId()).forEach(staff -> {
+			if (MESSAGE_ALIASES.contains(command)) {
+				if (Rank.of(staff).isAdmin())
 					send(staff, PREFIX + player.getName() + ":&7 " + message);
 			} else
 				send(staff, PREFIX + player.getName() + ":&7 " + message);
@@ -73,10 +73,11 @@ public class CommandWatchCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
-		if (!watchMap.containsKey(player))
+		UUID uuid = player.getUniqueId();
+		if (!WATCH_MAP.containsKey(uuid))
 			return;
 
-		watchMap.get(player).forEach(staff -> send(staff, PREFIX + "&c" + player.getName() + " went offline"));
-		watchMap.remove(player);
+		WATCH_MAP.remove(uuid).forEach(staff ->
+			send(staff, PREFIX + "&c" + player.getName() + " went offline"));
 	}
 }

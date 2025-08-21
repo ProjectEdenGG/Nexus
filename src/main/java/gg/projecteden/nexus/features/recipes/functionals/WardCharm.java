@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.recipes.functionals;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.Restrictions;
 import gg.projecteden.nexus.features.menus.MenuUtils;
@@ -7,6 +8,7 @@ import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -112,6 +114,9 @@ public class WardCharm extends FunctionalRecipe {
 			var pdc = entity.getPersistentDataContainer();
 			if (pdc.has(NBT_KEY))
 				throw new InvalidInputException("This " + entityTypeName + " is already warded");
+
+			if (CooldownService.isNotOnCooldown(player, "wardcharm-" + entity.getUniqueId(), TickTime.SECOND.x(3)))
+				throw new InvalidInputException("&3Click again to ward this &e" + entityTypeName);
 
 			pdc.set(NBT_KEY, PersistentDataType.STRING, player.getUniqueId().toString());
 			PlayerUtils.send(player, PREFIX + "Your " + entityTypeName + " is now warded");

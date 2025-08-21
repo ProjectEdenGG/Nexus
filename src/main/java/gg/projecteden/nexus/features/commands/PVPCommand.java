@@ -254,7 +254,7 @@ public class PVPCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onBedFailure(PlayerBedFailEnterEvent event) {
 		if (event.getFailReason() == PlayerBedFailEnterEvent.FailReason.NOT_POSSIBLE_HERE)
-			saveBed(event, event.getBed());
+			saveBed(event.getPlayer(), event.getBed());
 	}
 
 	@EventHandler

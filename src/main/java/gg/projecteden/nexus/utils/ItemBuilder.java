@@ -22,6 +22,7 @@ import gg.projecteden.nexus.framework.interfaces.IsColored;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.skincache.SkinCache;
 import gg.projecteden.nexus.utils.SymbolBanner.Symbol;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.parchment.HasOfflinePlayer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -437,7 +438,8 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	public ItemBuilder hideTooltip() {
 		components(nbt -> {
 			ReadWriteNBT readWriteNBT = NBT.createNBTObject();
-			nbt.set("minecraft:hide_tooltip", readWriteNBT, NBTHandlers.STORE_READWRITE_TAG);
+			readWriteNBT.setBoolean("minecraft:hide_tooltip", true);
+			nbt.set("minecraft:tooltip_display", readWriteNBT, NBTHandlers.STORE_READWRITE_TAG);
 		});
 		return this;
 	}
@@ -781,9 +783,8 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	@SneakyThrows
 	public ItemBuilder spawnEgg(Entity entity) {
-		final CompoundTag nbt = new CompoundTag();
-		boolean saved = ((CraftEntity) entity).getHandle().save(nbt);
-		if (!saved)
+		final CompoundTag nbt = NMSUtils.saveToNbtTag(((CraftEntity) entity).getHandle());
+		if (nbt == null)
 			throw new InvalidInputException("Entity cannot be saved (Are they a passenger?)");
 
 		nbt.remove("Motion");

@@ -9,13 +9,12 @@ import gg.projecteden.nexus.features.virtualinventories.models.inventories.impl.
 import gg.projecteden.nexus.features.virtualinventories.models.inventories.impl.VirtualPersonalFurnace;
 import gg.projecteden.nexus.features.virtualinventories.models.tiles.Tile;
 import gg.projecteden.nexus.features.virtualinventories.models.tiles.VirtualChunk;
-import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Lightable;
-import org.bukkit.entity.ExperienceOrb.SpawnReason;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -67,7 +66,7 @@ public class VirtualInventoryListener implements Listener {
 			return;
 		}
 
-		NMSUtils.awardExperience(player, player.getLocation(), extractEvent.getExperience(), SpawnReason.FURNACE);
+		NMSUtils.awardExperience(player.getLocation(), extractEvent.getExperience());
 		event.setCurrentItem(extractEvent.getItemStack());
 	}
 

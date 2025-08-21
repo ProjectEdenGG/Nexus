@@ -190,7 +190,7 @@ public class UHC extends TeamlessVanillaMechanic {
 		// TODO: replace this with damaging the player if they go too high (after 5-10 seconds)
 		if (event.getPlayer().getWorld().getName().equals(worldName) && event.getBlock().getY() > 150) {
 			event.setCancelled(true);
-			ActionBarUtils.sendActionBar(event, "&cYou have reached the height limit!");
+			ActionBarUtils.sendActionBar(event.getPlayer(), "&cYou have reached the height limit!");
 		}
 	}
 

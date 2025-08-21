@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
 import java.util.HashMap;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 public abstract class BookBuilder<T extends BookBuilder<?>> {
@@ -67,7 +68,7 @@ public abstract class BookBuilder<T extends BookBuilder<?>> {
 	}
 
 	@Getter
-	private static final HashMap<Player, EditableBookMenu> menus = new HashMap<>();
+	private static final HashMap<UUID, EditableBookMenu> menus = new HashMap<>();
 
 	@Deprecated // Not currently possible...
 	private static class EditableBookMenu extends BookBuilder<EditableBookMenu> {
@@ -83,7 +84,7 @@ public abstract class BookBuilder<T extends BookBuilder<?>> {
 		}
 
 		public void open(Player player) {
-			BookBuilder.getMenus().put(player, this);
+			BookBuilder.getMenus().put(player.getUniqueId(), this);
 			super.open(player);
 		}
 
@@ -102,7 +103,7 @@ public abstract class BookBuilder<T extends BookBuilder<?>> {
 
 		@EventHandler
 		public void onBookSign(PlayerEditBookEvent event) {
-			EditableBookMenu menu = BookBuilder.getMenus().remove(event.getPlayer());
+			EditableBookMenu menu = BookBuilder.getMenus().remove(event.getPlayer().getUniqueId());
 			if (menu == null)
 				return;
 

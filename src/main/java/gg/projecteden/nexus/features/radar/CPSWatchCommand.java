@@ -20,12 +20,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @NoArgsConstructor
 @Permission(Group.MODERATOR)
 public class CPSWatchCommand extends CustomCommand implements Listener {
-	private static final Map<Player, Integer> cpsMap = new HashMap<>();
-	private static final Map<Player, List<Player>> watchMap = new HashMap<>();
+	private static final Map<UUID, Integer> CPS_MAP = new HashMap<>();
+	private static final Map<UUID, List<UUID>> WATCH_MAP = new HashMap<>();
 	private static final String PREFIX = "&7&l[&cRadar&7&l]&f ";
 
 	public CPSWatchCommand(@NonNull CommandEvent event) {
@@ -36,14 +37,13 @@ public class CPSWatchCommand extends CustomCommand implements Listener {
 	@Path("<player>")
 	@Description("Monitor a player's click speed")
 	void cpsWatch(Player player) {
-		watchMap.putIfAbsent(player, new ArrayList<>());
-		List<Player> watchList = watchMap.get(player);
+		List<UUID> watchList = WATCH_MAP.computeIfAbsent(player.getUniqueId(), $ -> new ArrayList<>());
 
-		if (watchList.contains(player())) {
-			watchList.remove(player());
+		if (watchList.contains(uuid())) {
+			watchList.remove(uuid());
 			send(PREFIX + "CPS Watcher &cdisabled &ffor " + player.getName());
 		} else {
-			watchList.add(player());
+			watchList.add(uuid());
 			send(PREFIX + "CPS Watcher &aenabled &ffor " + player.getName());
 		}
 	}
@@ -52,40 +52,41 @@ public class CPSWatchCommand extends CustomCommand implements Listener {
 	public void onClick(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 
-		if (event.getAction() == Action.PHYSICAL) return;
-
-		if (watchMap.get(player) == null || watchMap.get(player).size() == 0)
+		if (event.getAction() == Action.PHYSICAL)
 			return;
 
-		cpsMap.putIfAbsent(player, 0);
-		cpsMap.replace(player, cpsMap.get(player) + 1);
+		UUID uuid = player.getUniqueId();
+		if (WATCH_MAP.get(uuid) == null || WATCH_MAP.get(uuid).isEmpty())
+			return;
 
-		if (cpsMap.get(player) != 1)
+		CPS_MAP.putIfAbsent(uuid, 0);
+		CPS_MAP.replace(uuid, CPS_MAP.get(uuid) + 1);
+
+		if (CPS_MAP.get(uuid) != 1)
 			return;
 
 		Tasks.wait(20, () -> {
-			Integer cps = cpsMap.get(player);
+			Integer cps = CPS_MAP.get(uuid);
 			if (cps == null)
 				return;
 
 			if (cps > 2) {
 				final String color = (cps > 20) ? "&c" : (cps > 15) ? "&6" : "&e";
-				watchMap.get(player).forEach(staff -> send(staff, PREFIX + player.getName() + "'s CPS is " + color + cps));
+				WATCH_MAP.get(uuid).forEach(staff -> send(staff, PREFIX + player.getName() + "'s CPS is " + color + cps));
 			}
 
-			cpsMap.remove(player);
+			CPS_MAP.remove(uuid);
 		});
 	}
 
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
-		if (!watchMap.containsKey(player))
+		if (!WATCH_MAP.containsKey(player.getUniqueId()))
 			return;
 
-		watchMap.get(player).forEach(staff ->
+		WATCH_MAP.remove(player.getUniqueId()).forEach(staff ->
 				send(staff, PREFIX + "&c" + player.getName() + " went offline"));
-		watchMap.remove(player);
 	}
 
 }

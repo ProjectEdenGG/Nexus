@@ -71,7 +71,7 @@ public class StatisticsUser implements PlayerOwnedObject {
 		IOUtils.fileWrite(getFilePath() + (bak ? ".bak" : ""), (writer, outputs) -> {
 			outputs.add(Utils.getGson().toJson(Map.of(
 				"stats", stats,
-				"DataVersion", SharedConstants.getCurrentVersion().getDataVersion().getVersion()
+				"DataVersion", SharedConstants.getCurrentVersion().dataVersion().version()
 			)).replaceAll("\\.0", ""));
 		});
 	}

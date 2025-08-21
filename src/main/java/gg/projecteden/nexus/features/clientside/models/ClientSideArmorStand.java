@@ -106,7 +106,7 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 			id = entity.getId();
 			entityUuid = entity.getUUID();
 		}
-		entity.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+		entity.snapTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 		entity.setSmall(small);
 		entity.setInvisible(invisible);
 		entity.setGlowingTag(glowing);

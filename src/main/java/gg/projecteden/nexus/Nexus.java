@@ -3,8 +3,9 @@ package gg.projecteden.nexus;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.lishid.openinv.IOpenInv;
-import com.onarandombox.MultiverseCore.MultiverseCore;
-import com.onarandombox.multiverseinventories.MultiverseInventories;
+import org.mvplugins.multiverse.core.MultiverseCore;
+import org.mvplugins.multiverse.core.MultiverseCoreApi;
+import org.mvplugins.multiverse.inventories.MultiverseInventories;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.ReflectionUtils;
@@ -53,6 +54,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.mvplugins.multiverse.inventories.MultiverseInventoriesApi;
 import org.objenesis.ObjenesisStd;
 
 import java.lang.reflect.InvocationTargetException;
@@ -295,9 +297,9 @@ public class Nexus extends JavaPlugin {
 	@Getter
 	private static ProtocolManager protocolManager;
 	@Getter
-	private static MultiverseCore multiverseCore;
+	private static MultiverseCoreApi multiverseCore;
 	@Getter
-	private static MultiverseInventories multiverseInventories;
+	private static MultiverseInventoriesApi multiverseInventories;
 	@Getter
 	private static BuycraftPluginBase buycraft;
 	@Getter
@@ -342,8 +344,14 @@ public class Nexus extends JavaPlugin {
 	private void hooks() {
 		signMenuFactory = new SignMenuFactory(this);
 		protocolManager = ProtocolLibrary.getProtocolManager();
-		multiverseCore = (MultiverseCore) Bukkit.getPluginManager().getPlugin("Multiverse-Core");
-		multiverseInventories = (MultiverseInventories) Bukkit.getPluginManager().getPlugin("Multiverse-Inventories");
+
+		RegisteredServiceProvider<MultiverseCoreApi> coreProvider = Bukkit.getServicesManager().getRegistration(MultiverseCoreApi.class);
+		if (coreProvider != null)
+			multiverseCore = coreProvider.getProvider();
+		RegisteredServiceProvider<MultiverseInventoriesApi> invProvider = Bukkit.getServicesManager().getRegistration(MultiverseInventoriesApi.class);
+		if (invProvider != null)
+			multiverseInventories = invProvider.getProvider();
+
 		buycraft = (BuycraftPluginBase) Bukkit.getServer().getPluginManager().getPlugin("BuycraftX");
 		openInv = (IOpenInv) Bukkit.getPluginManager().getPlugin("OpenInv");
 		bigDoors = BigDoors.get().getPlugin();

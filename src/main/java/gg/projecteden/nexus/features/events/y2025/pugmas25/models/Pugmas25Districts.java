@@ -16,17 +16,18 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class Pugmas25Districts implements Listener {
 	private static final String regionPrefix = Pugmas25.get().getRegionName() + "_district_";
-	private static final Map<Player, Pugmas25District> playerDistrictMap = new HashMap<>();
+	private static final Map<UUID, Pugmas25District> PLAYER_DISTRICT_MAP = new HashMap<>();
 
 	public Pugmas25Districts() {
 		Nexus.registerListener(this);
 	}
 
 	public static Pugmas25District of(Player player) {
-		return playerDistrictMap.computeIfAbsent(player, k -> Pugmas25District.WILDERNESS);
+		return PLAYER_DISTRICT_MAP.computeIfAbsent(player.getUniqueId(), k -> Pugmas25District.WILDERNESS);
 	}
 
 	@EventHandler
@@ -47,13 +48,13 @@ public class Pugmas25Districts implements Listener {
 		if (newDistrict == null)
 			return;
 
-		Pugmas25District currentDistrict = playerDistrictMap.get(player);
+		Pugmas25District currentDistrict = PLAYER_DISTRICT_MAP.get(player.getUniqueId());
 		if (currentDistrict != null) {
 			if (newDistrict == currentDistrict)
 				return;
 		}
 
-		playerDistrictMap.put(player, newDistrict);
+		PLAYER_DISTRICT_MAP.put(player.getUniqueId(), newDistrict);
 		Pugmas25.get().actionBar(player, "&3Area Designation: &e" + newDistrict.getName(), TickTime.SECOND.x(2));
 	}
 

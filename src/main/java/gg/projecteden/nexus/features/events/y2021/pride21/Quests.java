@@ -77,7 +77,7 @@ public class Quests implements Listener {
 			else
 				addLeftToFind(json.next("You've already found this decoration!"), user);
 		} else {
-			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(event).pitch(2F).play();
+			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(event.getPlayer()).pitch(2F).play();
 			user.getDecorationsCollected().add(decoration);
 			service.save(user);
 //			int tokens = 5;

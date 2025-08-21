@@ -62,7 +62,7 @@ public class NMSSpawnData {
 
 	public NMSSpawnData setSilent(final boolean silent) {
 		String tag = SpawnDataEnum.ENTITY.getTag();
-		CompoundTag localCompound = compound.getCompound(tag);
+		CompoundTag localCompound = compound.getCompound(tag).get();
 		localCompound.putBoolean("Silent", silent);
 		compound.put(tag, localCompound);
 
@@ -71,7 +71,7 @@ public class NMSSpawnData {
 
 	public NMSSpawnData setGlowing(final boolean glow) {
 		String tag = SpawnDataEnum.ENTITY.getTag();
-		CompoundTag localCompound = compound.getCompound(tag);
+		CompoundTag localCompound = compound.getCompound(tag).get();
 		localCompound.putBoolean("Glowing", glow);
 		compound.put(tag, localCompound);
 
@@ -80,7 +80,7 @@ public class NMSSpawnData {
 
 	public NMSSpawnData setFireTicks(final int ticks) {
 		String tag = SpawnDataEnum.ENTITY.getTag();
-		CompoundTag localCompound = compound.getCompound(tag);
+		CompoundTag localCompound = compound.getCompound(tag).get();
 		localCompound.putShort("Fire", (short) ticks);
 		compound.put(tag, localCompound);
 
@@ -89,7 +89,7 @@ public class NMSSpawnData {
 
 	public NMSSpawnData setAi(final boolean ai) {
 		String tag = SpawnDataEnum.ENTITY.getTag();
-		CompoundTag localCompound = compound.getCompound(tag);
+		CompoundTag localCompound = compound.getCompound(tag).get();
 		localCompound.putBoolean("NoAI", !ai);
 		compound.put(tag, localCompound);
 
@@ -98,7 +98,7 @@ public class NMSSpawnData {
 
 	public String getEntityName() {
 		String tag = SpawnDataEnum.ENTITY.getTag();
-		return compound.getCompound(tag).getString("id").replace("minecraft:", "");
+		return compound.getCompound(tag).get().getString("id").get().replace("minecraft:", "");
 	}
 
 	public EntityType getEntityType() {
@@ -107,7 +107,7 @@ public class NMSSpawnData {
 
 	public NMSSpawnData setEntityName(final String name) {
 		String tag = SpawnDataEnum.ENTITY.getTag();
-		CompoundTag localCompound = compound.getCompound(tag);
+		CompoundTag localCompound = compound.getCompound(tag).get();
 		localCompound.putString("id", "minecraft:" + name);
 		compound.put(tag, localCompound);
 
@@ -116,7 +116,7 @@ public class NMSSpawnData {
 
 	public NMSSpawnData setEntityType(final EntityType type) {
 		String tag = SpawnDataEnum.ENTITY.getTag();
-		CompoundTag localCompound = compound.getCompound(tag);
+		CompoundTag localCompound = compound.getCompound(tag).get();
 		localCompound.putString("id", "minecraft:" + type.getName());
 		compound.put(tag, localCompound);
 
@@ -125,7 +125,7 @@ public class NMSSpawnData {
 
 	public NMSSpawnData setLeftHanded(final boolean left) {
 		String tag = SpawnDataEnum.ENTITY.getTag();
-		CompoundTag localCompound = compound.getCompound(tag);
+		CompoundTag localCompound = compound.getCompound(tag).get();
 		localCompound.putBoolean("LeftHanded", left);
 		compound.put(tag, localCompound);
 
@@ -141,7 +141,7 @@ public class NMSSpawnData {
 
 	public int getWeight() {
 		String tag = SpawnDataEnum.WEIGHT.getTag();
-		return compound.getInt(tag);
+		return compound.getInt(tag).get();
 	}
 
 	public NMSSpawnData setArmorItems(List<org.bukkit.inventory.ItemStack> armorItems, HolderLookup.Provider registries) {
@@ -150,12 +150,12 @@ public class NMSSpawnData {
 
 		ListTag localArmorList = new ListTag();
 		for (ItemStack armorItem : armorItems) {
-			CompoundTag itemTag = armorItem == null ? new CompoundTag() : (CompoundTag) NMSUtils.toNMS(armorItem).save(registries, new CompoundTag());
+			CompoundTag itemTag = armorItem == null ? new CompoundTag() : NMSUtils.saveToNbtTag(NMSUtils.toNMS(armorItem));
 
 			localArmorList.add(itemTag);
 		}
 
-		CompoundTag localCompound = compound.getCompound(tag);
+		CompoundTag localCompound = compound.getCompound(tag).get();
 		localCompound.put("ArmorItems", localArmorList);
 		compound.put(tag, localCompound);
 
@@ -166,10 +166,10 @@ public class NMSSpawnData {
 		String tag = SpawnDataEnum.ENTITY.getTag();
 
 		ListTag localHandList = new ListTag();
-		localHandList.add(mainHand == null ? new CompoundTag() : NMSUtils.toNMS(mainHand).save(registryAccess, new CompoundTag()));
-		localHandList.add(offHand == null ? new CompoundTag() : NMSUtils.toNMS(offHand).save(registryAccess, new CompoundTag()));
+		localHandList.add(mainHand == null ? new CompoundTag() : NMSUtils.saveToNbtTag(NMSUtils.toNMS(mainHand)));
+		localHandList.add(offHand == null ? new CompoundTag() : NMSUtils.saveToNbtTag(NMSUtils.toNMS(offHand)));
 
-		CompoundTag localCompound = compound.getCompound(tag);
+		CompoundTag localCompound = compound.getCompound(tag).get();
 		localCompound.put("HandItems", localHandList);
 		compound.put(tag, localCompound);
 

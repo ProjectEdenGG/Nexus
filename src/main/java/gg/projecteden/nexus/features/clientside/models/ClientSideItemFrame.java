@@ -112,7 +112,7 @@ public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFram
 			id = entity.getId();
 			entityUuid = entity.getUUID();
 		}
-		entity.moveTo(location.getBlockX(), location.getBlockY(), location.getBlockZ(), 0, 0);
+		entity.snapTo(location.getBlockX(), location.getBlockY(), location.getBlockZ(), 0, 0);
 		entity.setItem(NMSUtils.toNMS(content), true, makeSound);
 		entity.setDirection(NMSUtils.toNMS(blockFace));
 		entity.setInvisible(invisible);

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.utils;
 
+import com.mojang.logging.LogUtils;
 import de.tr7zw.nbtapi.iface.ReadWriteItemNBT;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.itemtags.Condition;
@@ -20,11 +21,15 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -715,12 +720,14 @@ public class ItemUtils {
 		}
 
 		CompoundTag tag = customData.copyTag();
-		CompoundTag pe = new CompoundTag();
-		if (tag.contains("ProjectEden"))
-			pe = tag.getCompound("ProjectEden");
 
-		ContainerHelper.saveAllItems(pe, minecraft, ((CraftServer) Bukkit.getServer()).getServer().registryAccess());
-		tag.put("ProjectEden", pe);
+		try (final ProblemReporter.ScopedCollector problemReporter = new ProblemReporter.ScopedCollector(
+			() -> "ContainerHelper#saveAllItems", LogUtils.getLogger()
+		)) {
+			TagValueOutput tagValueOutput = TagValueOutput.createWithContext(problemReporter, ((CraftServer) Bukkit.getServer()).getServer().registryAccess());
+			ContainerHelper.saveAllItems(tagValueOutput, minecraft, true);
+			tag.put("ProjectEden", tagValueOutput.buildResult());
+		}
 
 		handle.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
@@ -736,14 +743,20 @@ public class ItemUtils {
 
 		if (!handle.has(DataComponents.CUSTOM_DATA)) return bukkit;
 		if (!handle.get(DataComponents.CUSTOM_DATA).copyTag().contains("ProjectEden")) return bukkit;
-		if (!handle.get(DataComponents.CUSTOM_DATA).copyTag().getCompound("ProjectEden").contains("Items")) return bukkit;
+		if (!handle.get(DataComponents.CUSTOM_DATA).copyTag().getCompound("ProjectEden").get().contains("Items")) return bukkit;
 
-		CompoundTag pe = handle.get(DataComponents.CUSTOM_DATA).copyTag().getCompound("ProjectEden");
-		ListTag listTag = pe.getList("Items", 10);
+		CompoundTag pe = handle.get(DataComponents.CUSTOM_DATA).copyTag().getCompound("ProjectEden").get();
+		ListTag listTag = pe.getList("Items").get();
 		pe.put("Items", SerializationUtils.NBT.updateItemStacks(listTag));
 
 		NonNullList<net.minecraft.world.item.ItemStack> minecraft = NonNullList.withSize(expectedSize, net.minecraft.world.item.ItemStack.EMPTY);
-		ContainerHelper.loadAllItems(pe, minecraft, ((CraftServer) Bukkit.getServer()).getServer().registryAccess());
+
+		try (final ProblemReporter.ScopedCollector problemReporter = new ProblemReporter.ScopedCollector(
+			() -> "ContainerHelper#loadAllItems", LogUtils.getLogger()
+		)) {
+			ValueInput input = TagValueInput.create(problemReporter, ((CraftServer) Bukkit.getServer()).getServer().registryAccess(), pe);
+			ContainerHelper.loadAllItems(input, minecraft);
+		}
 
 		for (int i = 0; i < Math.max(expectedSize, minecraft.size()); i++) {
 			if (i >= minecraft.size())

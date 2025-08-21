@@ -2,6 +2,7 @@ package gg.projecteden.nexus.utils.nms;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.logging.LogUtils;
 import gg.projecteden.nexus.utils.SoundUtils.SoundAction;
 import gg.projecteden.parchment.HasLocation;
 import lombok.AllArgsConstructor;
@@ -11,13 +12,20 @@ import lombok.SneakyThrows;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Rotations;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.*;
+import net.minecraft.server.level.ChunkMap;
+import net.minecraft.server.level.ClientInformation;
+import net.minecraft.server.level.ServerEntity;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.entity.Entity;
@@ -27,10 +35,12 @@ import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Bukkit;
@@ -39,13 +49,13 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.craftbukkit.CraftRegistry;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.entity.ExperienceOrb.SpawnReason;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.EulerAngle;
@@ -107,7 +117,7 @@ public class NMSUtils {
 		return CraftItemStack.asNMSCopy(itemStack);
 	}
 
-	public static net.minecraft.world.entity.player.Player toNMS(Player player) {
+	public static ServerPlayer toNMS(Player player) {
 		return ((CraftPlayer) player).getHandle();
 	}
 
@@ -129,9 +139,9 @@ public class NMSUtils {
 		final Function<Float, Double> toRadians = value -> (double) Math.toRadians(value);
 
 		return new EulerAngle(
-			toRadians.apply(rotations.getX()),
-			toRadians.apply(rotations.getY()),
-			toRadians.apply(rotations.getZ())
+			toRadians.apply(rotations.x()),
+			toRadians.apply(rotations.y()),
+			toRadians.apply(rotations.z())
 		);
 	}
 
@@ -265,13 +275,13 @@ public class NMSUtils {
 	}
 
 	public static void teleport(Entity entity, Location location) {
-		entity.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+		entity.snapTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 	}
 
-	public static void awardExperience(@NonNull Player player, Location location, int experience, @NonNull SpawnReason spawnReason) {
+	public static void awardExperience(Location location, int experience) {
 		Vec3 pos = Vec3.atCenterOf(toNMS(location));
-		ServerLevel level = toNMS(player.getWorld());
-		net.minecraft.world.entity.ExperienceOrb.award(level, pos, experience, spawnReason, ((CraftPlayer) player).getHandle());
+		ServerLevel level = toNMS(location.getWorld());
+		net.minecraft.world.entity.ExperienceOrb.award(level, pos, experience);
 	}
 
 	public static List<Pair<EquipmentSlot, ItemStack>> getArmorEquipmentList() {
@@ -344,6 +354,37 @@ public class NMSUtils {
 		ServerLevel world = (ServerLevel) entity.level();
 		ChunkMap.TrackedEntity entityTracker = world.getChunkSource().chunkMap.entityMap.get(entity.getId());
 		return entityTracker.serverEntity;
+	}
+
+	public static CompoundTag saveToNbtTag(ItemStack itemStack) {
+		try {
+			return (CompoundTag) ItemStack.CODEC.encode(itemStack, CraftRegistry.getMinecraftRegistry().createSerializationContext(NbtOps.INSTANCE), new CompoundTag()).getOrThrow();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static CompoundTag saveToNbtTag(Entity entity) {
+		try (final ProblemReporter.ScopedCollector problemReporter = new ProblemReporter.ScopedCollector(
+			() -> "Entity#save", LogUtils.getLogger()
+		)) {
+			TagValueOutput tagValueOutput = TagValueOutput.createWithContext(problemReporter, entity.registryAccess());
+			if (entity.save(tagValueOutput)) {
+				return tagValueOutput.buildResult();
+			}
+		}
+		return null;
+	}
+
+	public static CompoundTag saveToNbtTag(BaseSpawner entity) {
+		try (final ProblemReporter.ScopedCollector problemReporter = new ProblemReporter.ScopedCollector(
+			() -> "BaseSpawner#save", LogUtils.getLogger()
+		)) {
+			TagValueOutput tagValueOutput = TagValueOutput.createWithContext(problemReporter, ((CraftServer) Bukkit.getServer()).getServer().registryAccess());
+			entity.save(tagValueOutput);
+			return tagValueOutput.buildResult();
+		}
 	}
 
 }

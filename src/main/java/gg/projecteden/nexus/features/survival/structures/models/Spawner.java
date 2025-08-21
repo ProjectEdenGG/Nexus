@@ -103,7 +103,7 @@ public class Spawner {
 
 		CreatureSpawner creatureSpawner = (CreatureSpawner) block.getState();
 		CraftCreatureSpawner craftCreatureSpawner = (CraftCreatureSpawner) creatureSpawner;
-		return craftCreatureSpawner.getTileEntity();
+		return craftCreatureSpawner.getBlockEntity();
 	}
 
 	public static void createSpawnData(Block block, EntityType entityType) {
@@ -148,7 +148,7 @@ public class Spawner {
 
 		// NMSSpawner#Update
 		CompoundTag localCompound = snapshot.copy();
-		spawner.save(localCompound);
+		//spawner.save(localCompound); TODO - this broke in 1.21.8
 
 		Dev.WAKKA.send(localCompound.toString());
 		//

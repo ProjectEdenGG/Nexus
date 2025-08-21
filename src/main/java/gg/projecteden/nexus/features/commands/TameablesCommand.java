@@ -461,7 +461,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 			if (Rank.of(owner.getUniqueId()).gte(Rank.BUILDER))
 				return;
 
-			if (Restrictions.isPerkAllowedAt(Nerd.of(owner), event.getTo()))
+			if (Restrictions.isPerkAllowedAt(Nerd.of(owner.getUniqueId()), event.getTo()))
 				return;
 		}
 

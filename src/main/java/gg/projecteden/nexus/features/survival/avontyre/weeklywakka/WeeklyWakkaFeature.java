@@ -38,12 +38,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 
 public class WeeklyWakkaFeature extends Feature implements Listener {
-	private static final Map<Player, WeeklyWakkaData> playerMap = new HashMap<>();
+	private static final Map<UUID, WeeklyWakkaData> TRACKERS = new HashMap<>();
 
 	static class WeeklyWakkaData {
 		int ticks = 0;
@@ -59,8 +60,8 @@ public class WeeklyWakkaFeature extends Feature implements Listener {
 					continue;
 
 				WeeklyWakkaData data = new WeeklyWakkaData();
-				if (playerMap.containsKey(player))
-					data = playerMap.remove(player);
+				if (TRACKERS.containsKey(player.getUniqueId()))
+					data = TRACKERS.remove(player.getUniqueId());
 
 				for (RadiusTier tier : RadiusTier.values()) {
 					if (tier == RadiusTier.CLOSE) {
@@ -82,7 +83,7 @@ public class WeeklyWakkaFeature extends Feature implements Listener {
 				}
 
 				data.ticks += tickIncrement;
-				playerMap.put(player, data);
+				TRACKERS.put(player.getUniqueId(), data);
 			}
 		});
 	}

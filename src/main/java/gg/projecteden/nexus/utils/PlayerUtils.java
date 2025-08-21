@@ -53,7 +53,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -793,20 +792,21 @@ public class PlayerUtils {
 	}
 
 	public static boolean hasRoomFor(Inventory inventory, List<ItemStack> items) {
-		int size = inventory.getType() == InventoryType.PLAYER ? 36 : inventory.getSize(); // Player Invs are actually 41 slots and we can't make those
+		ItemStack[] base = (inventory instanceof PlayerInventory pi)
+			? pi.getStorageContents()
+			: inventory.getContents();
 
-		final Inventory inv;
-		if (inventory.getType() == InventoryType.CHEST && size % 9 != 0)
-			inv = Bukkit.createInventory(null, size);
-		else
-			inv = Bukkit.createInventory(null, inventory.getType());
+		Inventory sim = Bukkit.createInventory(null, base.length);
 
-		size = inv.getSize();
-		for (int i = 0; i < size; i++) {
-			ItemStack item = inventory.getItem(i);
-			inv.setItem(i, item == null ? null : item.clone());
-		}
-		return inv.addItem(items.toArray(new ItemStack[0])).isEmpty();
+		for (int i = 0; i < base.length; i++)
+			sim.setItem(i, base[i] == null ? null : base[i].clone());
+
+		ItemStack[] toAdd = items.stream()
+			.filter(Objects::nonNull)
+			.map(ItemStack::clone)
+			.toArray(ItemStack[]::new);
+
+		return sim.addItem(toAdd).isEmpty();
 	}
 
 	/**
@@ -1235,6 +1235,13 @@ public class PlayerUtils {
 				return LEGGINGS;
 			if (material.name().endsWith("BOOTS"))
 				return BOOTS;
+			return null;
+		}
+
+		public static ArmorSlot of(EquipmentSlot slot) {
+			for (ArmorSlot a : ArmorSlot.values())
+				if (a.slot == slot)
+					return a;
 			return null;
 		}
 

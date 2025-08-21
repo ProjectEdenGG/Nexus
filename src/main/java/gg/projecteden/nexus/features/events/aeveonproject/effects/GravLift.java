@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegion
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.Tasks;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,17 +18,22 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public class GravLift implements Listener {
 
-	static List<Player> inGravlift = new ArrayList<>();
+	private static final List<UUID> IN_GRAVLIFT = new ArrayList<>();
 
 	public GravLift() {
 		Nexus.registerListener(this);
 
 		Tasks.repeat(0, TickTime.TICK.x(5), () -> {
-			List<Player> inGravLiftCopy = new ArrayList<>(inGravlift);
-			for (Player player : inGravLiftCopy) {
+			List<UUID> inGravLiftCopy = new ArrayList<>(IN_GRAVLIFT);
+			for (UUID uuid : inGravLiftCopy) {
+				var player = Bukkit.getPlayer(uuid);
+				if (player == null || !player.isOnline())
+					continue;
+
 				Set<ProtectedRegion> regions = AeveonProject.worldguard().getRegionsAt(player.getLocation());
 				// Make sure they are in the region still
 				boolean verify = false;
@@ -38,7 +44,7 @@ public class GravLift implements Listener {
 					}
 				}
 				if (!verify) {
-					inGravlift.remove(player);
+					IN_GRAVLIFT.remove(player.getUniqueId());
 					continue;
 				}
 				//
@@ -60,8 +66,8 @@ public class GravLift implements Listener {
 		String id = event.getRegion().getId();
 		if (!id.contains("gravlift")) return;
 
-		if (inGravlift.contains(player)) return;
-		inGravlift.add(player);
+		if (IN_GRAVLIFT.contains(player.getUniqueId())) return;
+		IN_GRAVLIFT.add(player.getUniqueId());
 	}
 
 	@EventHandler
@@ -72,7 +78,7 @@ public class GravLift implements Listener {
 		String id = event.getRegion().getId();
 		if (!id.contains("gravlift")) return;
 
-		if (!inGravlift.contains(player)) return;
-		inGravlift.remove(player);
+		if (!IN_GRAVLIFT.contains(player.getUniqueId())) return;
+		IN_GRAVLIFT.remove(player.getUniqueId());
 	}
 }

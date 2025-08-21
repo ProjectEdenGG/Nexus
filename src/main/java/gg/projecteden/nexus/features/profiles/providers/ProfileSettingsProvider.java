@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
+import gg.projecteden.nexus.features.profiles.ProfileSettingsUpdatedEvent;
 import gg.projecteden.nexus.features.profiles.colorcreator.ColorCreatorProvider;
 import gg.projecteden.nexus.features.profiles.colorcreator.ColorCreatorProvider.CreatedColor;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
@@ -78,6 +79,7 @@ public class ProfileSettingsProvider extends InventoryProvider {
 				Consumer<Color> applyColor = _color -> {
 					user.setBackgroundColor(ChatColor.of(ColorType.toJava(_color)));
 					service.save(user);
+					new ProfileSettingsUpdatedEvent(user).callEvent();
 					new ProfileSettingsProvider(viewer, user).open(viewer);
 				};
 

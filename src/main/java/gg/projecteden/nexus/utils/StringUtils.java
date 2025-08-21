@@ -105,6 +105,28 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 		return input.replaceAll(colorChar, altColorChar);
 	}
 
+	public static int hexToInt(ChatColor color) {
+		return hexToInt(toHex(color));
+	}
+
+	public static int hexToInt(String hexColor) {
+		if (hexColor.startsWith("#")) {
+			hexColor = hexColor.substring(1);
+		}
+
+		try {
+			if (hexColor.length() == 6) {
+				return 0xFF000000 | Integer.parseInt(hexColor, 16);
+			} else if (hexColor.length() == 8) {
+				return (int) Long.parseLong(hexColor, 16);
+			} else {
+				throw new IllegalArgumentException("Invalid hex color format: " + hexColor);
+			}
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException("Invalid hex color format: " + hexColor, e);
+		}
+	}
+
 	public static String toHex(ChatColor color) {
 		return "#" + Integer.toHexString(color.getColor().getRGB()).substring(2);
 	}

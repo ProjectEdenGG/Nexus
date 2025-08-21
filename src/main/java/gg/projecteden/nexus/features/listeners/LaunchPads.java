@@ -109,7 +109,7 @@ public class LaunchPads implements Listener {
 		launchPadPlayers.put(player.getUniqueId(), task(player, fallingBlock));
 		launchPadBlockUUIDs.add(fallingBlock.getUniqueId());
 
-		player.getWorld().createExplosion(player.getLocation(), -1);
+		player.getWorld().createExplosion(player.getLocation(), 0);
 	}
 
 	@SuppressWarnings({"removal", "deprecation"})

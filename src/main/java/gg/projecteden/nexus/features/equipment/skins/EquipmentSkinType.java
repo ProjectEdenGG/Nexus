@@ -1,8 +1,19 @@
 package gg.projecteden.nexus.features.equipment.skins;
 
+import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.inventory.ItemStack;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 public interface EquipmentSkinType {
+
+	static boolean isTemplate(ItemStack item) {
+		if (isNullOrAir(item)) return false;
+		String model = new ItemBuilder(item).model();
+		if (isNullOrEmpty(model)) return false;
+		return model.contains("skin") && model.contains("template");
+	}
 
 	ItemStack apply(ItemStack item);
 

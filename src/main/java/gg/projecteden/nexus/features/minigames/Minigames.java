@@ -44,6 +44,7 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
+import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -85,6 +86,8 @@ public class Minigames extends Feature implements Listener {
 			new MGMExchange();
 			new Leaderboards();
 		});
+
+		getWorld().setGameRule(GameRule.LOCATOR_BAR, false);
 
 		Nexus.getCron().schedule("0 */2 * * *", Minigames::updateTopic);
 	}

@@ -13,8 +13,8 @@ import lombok.NonNull;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.InclusiveRange;
-import net.minecraft.util.random.SimpleWeightedRandomList;
-import net.minecraft.util.random.WeightedEntry.Wrapper;
+import net.minecraft.util.random.Weighted;
+import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.SpawnData;
 import net.minecraft.world.level.SpawnData.CustomSpawnRules;
@@ -43,11 +43,11 @@ public class SpawnerCommand extends CustomCommand {
 
 		BaseSpawner baseSpawner = spawnerBlock.getSpawner();
 
-		SimpleWeightedRandomList<SpawnData> potentialsWeighted = baseSpawner.spawnPotentials;
-		List<Wrapper<SpawnData>> potentials = potentialsWeighted.unwrap();
+		WeightedList<SpawnData> potentialsWeighted = baseSpawner.spawnPotentials;
+		List<Weighted<SpawnData>> potentials = potentialsWeighted.unwrap();
 		send(potentials.size() + "");
-		for (Wrapper<SpawnData> spawnDataWrapper : potentials) {
-			send("- " + spawnDataWrapper.data());
+		for (Weighted<SpawnData> spawnDataWrapper : potentials) {
+			send("- " + spawnDataWrapper.value());
 		}
 
 		SpawnData spawnData = baseSpawner.nextSpawnData;

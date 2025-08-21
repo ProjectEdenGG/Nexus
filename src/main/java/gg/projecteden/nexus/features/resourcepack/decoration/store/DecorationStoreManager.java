@@ -43,7 +43,7 @@ public class DecorationStoreManager implements Listener {
 	@Getter
 	private static final Map<DecorationStoreType, Map<UUID, TargetData>> targetDataMap = new HashMap<>();
 	@Getter
-	private static final List<Player> debuggers = new ArrayList<>();
+	private static final List<UUID> debuggers = new ArrayList<>();
 
 	public DecorationStoreManager() {
 		Nexus.registerListener(this);
@@ -61,7 +61,7 @@ public class DecorationStoreManager implements Listener {
 	}
 
 	public static void debug(Player player, String message) {
-		if (debuggers.contains(player))
+		if (debuggers.contains(player.getUniqueId()))
 			PlayerUtils.send(player, message);
 	}
 

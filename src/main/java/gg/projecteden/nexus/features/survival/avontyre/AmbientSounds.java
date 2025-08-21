@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.survival.avontyre;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.survival.Survival;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -19,34 +20,43 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 public class AmbientSounds {
 	private final static long startDelay = TickTime.SECOND.x(5);
 	//
-	private final static Map<Player, Integer> undergroundTaskMap = new HashMap<>();
-	private final static Sound undergroundLoop = Sound.AMBIENT_CRIMSON_FOREST_LOOP;
-	private final static List<Sound> undergroundSounds = Arrays.asList(Sound.AMBIENT_CAVE,
+	private final static Map<UUID, Integer> UNDERGROUND_TASK_MAP = new HashMap<>();
+	private final static Sound UNDERGROUND_LOOP = Sound.AMBIENT_CRIMSON_FOREST_LOOP;
+	private final static List<Sound> UNDERGROUND_SOUNDS = Arrays.asList(Sound.AMBIENT_CAVE,
 		Sound.AMBIENT_CRIMSON_FOREST_ADDITIONS, Sound.AMBIENT_CRIMSON_FOREST_MOOD);
 
 	public void onStop() {
-		undergroundTaskMap.forEach((player, integer) -> SoundUtils.stopSound(player, undergroundLoop));
+		UNDERGROUND_TASK_MAP.forEach((uuid, integer) -> {
+			var nerd = Nerd.of(uuid);
+			if (nerd.isOnline())
+				SoundUtils.stopSound(nerd.getOnlinePlayer(), UNDERGROUND_LOOP);
+		});
 	}
 
 	public void onStart() {
 		// Random sounds
 		Tasks.repeat(startDelay, TickTime.SECOND.x(15), () -> {
 			if (RandomUtils.chanceOf(50)) {
-				Sound sound = RandomUtils.randomElement(undergroundSounds);
-				Map<Player, Integer> tempMap = new HashMap<>(undergroundTaskMap);
+				Sound sound = RandomUtils.randomElement(UNDERGROUND_SOUNDS);
+				Map<UUID, Integer> tempMap = new HashMap<>(UNDERGROUND_TASK_MAP);
 
 
-				tempMap.forEach((player, integer) -> {
-					if (!isApplicable(player, AmbientSoundType.UNDERGROUND)) {
-						stopLoop(player, AmbientSoundType.UNDERGROUND);
-						return;
+				tempMap.forEach((uuid, integer) -> {
+					var nerd = Nerd.of(uuid);
+					if (nerd.isOnline()) {
+						Player player = nerd.getOnlinePlayer();
+						if (!isApplicable(player, AmbientSoundType.UNDERGROUND)) {
+							stopLoop(player, AmbientSoundType.UNDERGROUND);
+							return;
+						}
+
+						new SoundBuilder(sound).receiver(player).category(SoundCategory.AMBIENT).volume(1).pitch(.1).play();
 					}
-
-					new SoundBuilder(sound).receiver(player).category(SoundCategory.AMBIENT).volume(1).pitch(.1).play();
 				});
 			}
 		});
@@ -60,7 +70,7 @@ public class AmbientSounds {
 
 				// Underground
 				inArea = isApplicable(player, AmbientSoundType.UNDERGROUND);
-				onList = undergroundTaskMap.containsKey(player);
+				onList = UNDERGROUND_TASK_MAP.containsKey(player.getUniqueId());
 
 				if (inArea && !onList) {
 					startLoop(player, AmbientSoundType.UNDERGROUND);
@@ -78,9 +88,9 @@ public class AmbientSounds {
 	private void startLoop(Player player, AmbientSoundType type) {
 		if (type == AmbientSoundType.UNDERGROUND) {
 			int taskId = Tasks.repeat(0, TickTime.SECOND.x(37), () ->
-				new SoundBuilder(undergroundLoop).receiver(player).category(SoundCategory.AMBIENT).volume(5).play());
+				new SoundBuilder(UNDERGROUND_LOOP).receiver(player).category(SoundCategory.AMBIENT).volume(5).play());
 
-			undergroundTaskMap.put(player, taskId);
+			UNDERGROUND_TASK_MAP.put(player.getUniqueId(), taskId);
 		}
 	}
 
@@ -88,10 +98,10 @@ public class AmbientSounds {
 		Integer taskId = null;
 		Sound sound = null;
 		if (AmbientSoundType.UNDERGROUND == type) {
-			taskId = undergroundTaskMap.get(player);
-			undergroundTaskMap.remove(player);
+			taskId = UNDERGROUND_TASK_MAP.get(player.getUniqueId());
+			UNDERGROUND_TASK_MAP.remove(player.getUniqueId());
 
-			sound = undergroundLoop;
+			sound = UNDERGROUND_LOOP;
 		}
 
 		if (taskId != null)

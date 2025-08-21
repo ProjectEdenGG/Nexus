@@ -1,26 +1,31 @@
 package gg.projecteden.nexus.features.store.perks.inventory;
 
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.equipment.skins.ArmorSkin;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.InventoryManager;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.invisiblearmour.InvisibleArmor;
 import gg.projecteden.nexus.models.invisiblearmour.InvisibleArmorService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.ArmorSlot;
-import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.Tasks;
+import io.papermc.paper.event.entity.EntityEquipmentChangedEvent;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 @NoArgsConstructor
@@ -47,7 +52,7 @@ public class InvisibleArmorCommand extends CustomCommand implements Listener {
 			invisibleArmor.setEnabled(enable);
 
 		service.save(invisibleArmor);
-		sendPackets();
+		invisibleArmor.updateTextures();
 
 		if (invisibleArmor.isEnabled())
 			send(PREFIX + "&cArmor hidden");
@@ -62,22 +67,38 @@ public class InvisibleArmorCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onTeleport(PlayerTeleportEvent event) {
-		new InvisibleArmorService().get(event.getPlayer()).sendPackets();
-	}
+	public void onEquipArmor(EntityEquipmentChangedEvent event) {
+		if (!(event.getEntity() instanceof Player player))
+			return;
 
-	static {
-		Tasks.repeat(TickTime.TICK, TickTime.TICK, InvisibleArmorCommand::sendPackets);
-	}
+		InvisibleArmor invisibleArmor = service.get(player);
+		if (!invisibleArmor.isEnabled())
+			return;
 
-	private static void sendPackets() {
-		final InvisibleArmorService service = new InvisibleArmorService();
-		OnlinePlayers.getAll().forEach(player -> service.get(player).sendPackets());
+		event.getEquipmentChanges().keySet().forEach(slot -> {
+			if (ArmorSlot.of(slot) != null)
+				invisibleArmor.updateTextures();
+		});
 	}
 
 	@EventHandler
-	public void onInventoryClose(InventoryCloseEvent event) {
-		Tasks.wait(1, new InvisibleArmorService().get(event.getPlayer())::sendResetPackets);
+	public void onDropItem(PlayerDropItemEvent event) {
+		InvisibleArmor invisibleArmor = service.get(event.getPlayer());
+		if (!invisibleArmor.isEnabled())
+			return;
+
+		ItemBuilder item = new ItemBuilder(event.getItemDrop().getItemStack());
+		ArmorSkin.applyEquippableComponent(item, ArmorSkin.of(event.getItemDrop().getItemStack()));
+		event.getItemDrop().setItemStack(item.build());
+	}
+
+	@EventHandler
+	public void onClose(InventoryCloseEvent event) {
+		InvisibleArmor invisibleArmor = service.get(event.getPlayer());
+		if (!invisibleArmor.isEnabled())
+			return;
+
+		invisibleArmor.updateTextures();
 	}
 
 	@RequiredArgsConstructor
@@ -87,13 +108,19 @@ public class InvisibleArmorCommand extends CustomCommand implements Listener {
 		private final InvisibleArmor user;
 
 		@Override
+		public void onClose(InventoryManager manager) {
+			super.onClose(manager);
+			user.updateTextures();
+		}
+
+		@Override
 		public void init() {
 			addCloseItem();
 
 			for (ArmorSlot slot : ArmorSlot.values()) {
 				final int row = slot.ordinal() + 1;
 				ItemStack displayItem = user.getDisplayItem(slot);
-				contents.set(row, 2, ClickableItem.empty(displayItem));
+				contents.set(row, 3, ClickableItem.empty(displayItem));
 
 				final ItemBuilder other;
 				if (user.isHidden(slot))
@@ -101,21 +128,8 @@ public class InvisibleArmorCommand extends CustomCommand implements Listener {
 				else
 					other = new ItemBuilder(user.getShownIcon(slot)).name("&aShown").lore("&cClick to hide");
 
-				String lore = "&eThis will allow you to use things like elytras and depth strider while still hiding your armor from other players";
-				final ItemBuilder self;
-				if (user.isHiddenFromSelf(slot))
-					self = new ItemBuilder(user.getHiddenIcon(slot)).name("&cSelf: Hidden").lore("&aClick to show", "", lore);
-				else
-					self = new ItemBuilder(user.getShownIcon(slot)).name("&aSelf: Shown").lore("&cClick to hide", "", lore);
-
-				contents.set(row, 4, ClickableItem.of(other.build(), e -> {
+				contents.set(row, 5, ClickableItem.of(other.build(), e -> {
 					user.toggleHide(slot);
-					service.save(user);
-					menu();
-				}));
-
-				contents.set(row, 6, ClickableItem.of(self.build(), e -> {
-					user.toggleHideSelf(slot);
 					service.save(user);
 					menu();
 				}));
