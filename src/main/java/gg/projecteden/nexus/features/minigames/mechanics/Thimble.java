@@ -52,6 +52,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import static gg.projecteden.api.common.utils.StringUtils.plural;
+
 //TODO: Show turn timer to turn player
 //TODO: Gamemode description messages onm lobby join
 
@@ -553,7 +555,7 @@ public final class Thimble extends TeamlessMechanic {
 
 			minigamer.scored(points);
 			if (points > 1) {
-				minigamer.tell("You recieved " + (points - 1) + StringUtils.plural(" bonus point", points - 1) + "!");
+				minigamer.tell("You scored &e" + points + plural(" point", points) + "&3!");
 			}
 		}
 
