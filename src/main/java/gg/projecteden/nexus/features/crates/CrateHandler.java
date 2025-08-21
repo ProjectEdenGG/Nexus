@@ -192,7 +192,7 @@ public class  CrateHandler {
 				.prefix("Crates")
 				.muteMenuItem(MuteMenuItem.CRATES)
 				.message(Strings.isNullOrEmpty(loot.getAnnouncement()) ?
-					         "&e" + Nickname.of(player) + " &3has received a &e" + loot.getTitle() + " &3from the &e" + gg.projecteden.api.common.utils.StringUtils.camelCase(loot.getType()) + " Crate" :
+					         "&e" + Nickname.of(player) + " &3has received a &e" + loot.getDisplayName() + " &3from the &e" + gg.projecteden.api.common.utils.StringUtils.camelCase(loot.getType()) + " Crate" :
 					         loot.getAnnouncement()
 						         .replaceAll("%player%", Nickname.of(player.getName()))
 						         .replaceAll("%title%", loot.getTitle()))

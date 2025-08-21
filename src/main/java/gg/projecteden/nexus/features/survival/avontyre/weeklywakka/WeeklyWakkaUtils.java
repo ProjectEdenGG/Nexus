@@ -83,11 +83,10 @@ public class WeeklyWakkaUtils {
 			.next("&c/store gallery").command("/store gallery").hover("&eClick to run the command!").group()
 			.next("&f!").group());
 
-		String voteURL = SocialMedia.EdenSocialMediaSite.WEBSITE.getUrl() + "/vote";
 		add(() -> new JsonBuilder()
-			.next("&fEach month the community has a goal for voting. You can see progress on our website (").group()
-			.next("&e" + voteURL).url(voteURL).hover("&eClick to visit the site!").group()
-			.next("&f). Reaching the goal means a prize for the whole community the following month!").group());
+			.next("&fVote Parties are our version of vote goals on the server! You can view the current target by enabling the scoreboard line (").group()
+			.next("&c/scoreboard edit").command("/scoreboard edit").hover("&eClick to edit your scoreboard!").group()
+			.next("&f). Reaching the goal means a prize for everyone who votes, with better rewards going to those who voted more!").group());
 
 		String youtubeURL = SocialMedia.EdenSocialMediaSite.YOUTUBE.getUrl();
 		add(() -> new JsonBuilder()
