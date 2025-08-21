@@ -7,9 +7,11 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.profile.ProfileUserService;
+import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -29,6 +31,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import static gg.projecteden.nexus.utils.StringUtils.hexToInt;
+import static gg.projecteden.nexus.utils.StringUtils.toHex;
 
 @NoArgsConstructor
 public class LocatorBarCommand extends CustomCommand implements Listener {
@@ -71,6 +74,13 @@ public class LocatorBarCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
+	public void on(PlayerRankChangeEvent event) {
+		var nerd = Nerd.of(event.getUuid());
+		if (nerd.isOnline())
+			updateColor(nerd.getOnlinePlayer());
+	}
+
+	@EventHandler
 	public void on(PlayerJoinEvent event) {
 		var player = event.getPlayer();
 
@@ -85,11 +95,15 @@ public class LocatorBarCommand extends CustomCommand implements Listener {
 
 	@SuppressWarnings("deprecation")
 	private static void updateColor(Player player) {
+		ChatColor color = Rank.of(player).getChatColor();
+
 		ChatColor backgroundColor = new ProfileUserService().get(player).getBackgroundColor();
-		ChatColor rankColor = Rank.of(player).getChatColor();
-		ChatColor color = backgroundColor != null ? backgroundColor : rankColor;
+		// If player wants white, they will have to set it to slightly off-white
+		if (backgroundColor != null && !"#ffffff".equals(toHex(backgroundColor)))
+			color = backgroundColor;
 
 		Optional<Integer> optional = Optional.of(hexToInt(color));
+
 		mutateWaypoint(player, transmitter -> transmitter.waypointIcon().color = optional);
 	}
 
