@@ -13,8 +13,13 @@ import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.godmode.Godmode;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.push.PushService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.GameModeWrapper;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import net.citizensnpcs.api.npc.NPC;
@@ -32,7 +37,7 @@ import java.util.UUID;
 public class Nameplates extends Feature {
 	private final PushService pushService = new PushService();
 	private final NameplateManager nameplateManager;
-	private final TeamAssigner defaultTeamAssigner = new PushTeamAssigner();
+	private final PushTeamAssigner defaultTeamAssigner = new PushTeamAssigner();
 	@Getter(value = AccessLevel.NONE)
 	private final Map<UUID, TeamAssigner> teamAssigners = new HashMap<>();
 	private final static int RADIUS = 75;
@@ -43,6 +48,7 @@ public class Nameplates extends Feature {
 	public Nameplates() {
 		this.nameplateManager = new NameplateManager();
 		new NameplatesListener();
+		new TameablesNameplateFix();
 	}
 
 	@Override

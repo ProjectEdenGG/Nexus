@@ -1,7 +1,5 @@
 package gg.projecteden.nexus.features.nameplates;
 
-import com.comphenix.protocol.ProtocolManager;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.nameplates.packets.NameplateMetadataPacket;
 import gg.projecteden.nexus.features.nameplates.packets.NameplateSpawnPacket;
@@ -33,7 +31,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class NameplateManager {
 	private final NameplateUserService service = new NameplateUserService();
 	private final static Map<UUID, NameplatePlayer> players = new ConcurrentHashMap<>();
-	private final ProtocolManager protocolManager = Nexus.getProtocolManager();
 
 	public void onStart() {
 		spawnAll();

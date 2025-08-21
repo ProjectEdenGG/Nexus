@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.nameplates;
 import gg.projecteden.nexus.models.push.PushService;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.scoreboard.Team.Option;
@@ -23,11 +23,11 @@ public class PushTeamAssigner implements TeamAssigner {
 		this.noPushTeam = initializeTeam(noPushTeamName, false);
 	}
 
-	public @NotNull Team teamFor(Player player) {
-		if (WorldGroup.of(player).isPushDisabled())
+	public @NotNull Team teamFor(Entity entity) {
+		if (WorldGroup.of(entity).isPushDisabled())
 			return noPushTeam;
 
-		if (service.get(player).isDisabled())
+		if (service.get(entity).isDisabled())
 			return noPushTeam;
 
 		return pushTeam;
@@ -37,9 +37,8 @@ public class PushTeamAssigner implements TeamAssigner {
 		Scoreboard scoreboard = TeamAssigner.scoreboard();
 		Team team = scoreboard.getTeam(name);
 
-		if (team != null) {
+		if (team != null)
 			team.unregister();
-		}
 
 		team = scoreboard.registerNewTeam(name);
 		team.setOption(Option.NAME_TAG_VISIBILITY, OptionStatus.NEVER);
@@ -49,4 +48,5 @@ public class PushTeamAssigner implements TeamAssigner {
 
 		return team;
 	}
+
 }
