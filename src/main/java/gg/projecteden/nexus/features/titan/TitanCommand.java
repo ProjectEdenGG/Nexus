@@ -33,16 +33,25 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
-@Permission(Group.ADMIN)
 public class TitanCommand extends CustomCommand {
 
 	public TitanCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
+	@Path
+	void info() {
+		send();
+		send(json(PREFIX + "Titan is a Fabric mod built for the Project Eden server designed to enhance a player's " +
+			"experience and streamline the loading of our resource pack Saturn. Learn more and download on our " +
+			"website: ").group().next("&ehttps://projecteden.gg/titan").url("https://projecteden.gg/titan"));
+		send();
+	}
+
 	@Async
 	@Path("installed [page]")
 	@Description("View the most popular Titan versions")
+	@Permission(Group.ADMIN)
 	void installed(@Arg("1") int page) {
 		final var usersByVersion = getUsersByVersion();
 
@@ -68,6 +77,7 @@ public class TitanCommand extends CustomCommand {
 	@Async
 	@Path("installed with <version> [page]")
 	@Description("View which players are using a specific version of Titan")
+	@Permission(Group.ADMIN)
 	void installed_with(TitanVersion version, @Arg("1") int page) {
 		final List<UUID> users = getUsersByVersion().get(version);
 
@@ -90,14 +100,16 @@ public class TitanCommand extends CustomCommand {
 	@Async
 	@Path("settings <user>")
 	@Description("View a player's Titan configuration")
+	@Permission(Group.ADMIN)
 	void settings(LocalResourcePackUser user) {
 		send(PREFIX + "Titan settings of " + user.getNickname());
 		send(toPrettyString(user.getTitanSettings()));
 	}
 
-	@Path("sendTestMessage [player]")
 	@HideFromHelp
 	@HideFromWiki
+	@Path("sendTestMessage [player]")
+	@Permission(Group.ADMIN)
 	void sendClientMessage(@Arg("self") Player player) {
 		ClientMessage.builder()
 			.players(player)

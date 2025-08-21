@@ -249,6 +249,7 @@ public enum ChatGameType {
 		HOH("Which place on the server would you visit if you wanted to see the full list of former and current staff?", List.of("hall of history", "hoh", "hallofhistory")),
 		ONEBLOCK("What is the name of server's version of skyblock?", "Oneblock"),
 		BARREL("What storage block has had it's storage space increased on Project Eden?", "barrel"),
+		TITAN("What is the name of the server's client-side mod made to streamline loading the resource pack?", "Titan"),
 
 		VOTE_CRATE_RAREST("What is the least likely reward you can obtain from the Vote Crate?", List.of("dragon egg", "ender dragon egg", "enderdragon egg")),
 		VOTE_CRATE_MOST_EXPENSIVE("How many vote points does a beacon cost in the Vote Point Store (/vps)?", getNumberAnswers(250)),
@@ -295,8 +296,6 @@ public enum ChatGameType {
 		PILLAGER_STRUCTURE("Which structure is home to the Pillagers?", List.of("pillager outpost", "woodland mansion")),
 		PARROT_SPAWN_BIOME("Which biome is home to the parrot?", "jungle"),
 		VILLAGE_RAID("What in-game event brings waves of hostile mobs attacking a village?", List.of("a raid", "raid")),
-
-
 
 		// WEBSITE_ --> "https://..." added to answers
 		WEBSITE_SERVER("What's the link to the server website?", "projecteden.gg"),

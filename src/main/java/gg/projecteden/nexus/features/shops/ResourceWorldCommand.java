@@ -45,8 +45,6 @@ import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -454,14 +452,12 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	- #delete from bearnation_smp_lwc.lwc_protections where world in ('resource', 'resource_nether', 'resource_the_end');
 	*/
 
-	private static final int filidId = 2766;
 	public static final int RADIUS = 7500;
 	private static boolean resetting = false;
 
 	public static void resetWorlds(CommandSender executor) {
 		resetting = true;
 
-		getFilidNPC().despawn();
 		OnlinePlayers.where().subWorldGroup(SubWorldGroup.RESOURCE).forEach(player -> {
 			PlayerUtils.send(player, "&cThe resource world is resetting! Teleporting to Hub");
 			WarpType.NORMAL.get("hub").teleportAsync(player);
@@ -512,8 +508,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 			.at(new Location(world, 0, 150, 0))
 			.air(false)
 			.entities(true)
-			.pasteAsync()
-			.thenRun(() -> Tasks.sync(() -> getFilidNPC().spawn(new Location(world, 3.5, 152, 5.5))));
+			.pasteAsync();
 
 		HomesFeature.deleteFromWorld(worldName, null);
 		HomesFeature.deleteFromWorld(worldName + "_nether", null);
@@ -533,10 +528,6 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 		Tasks.wait(TickTime.SECOND.x(61), () -> PlayerUtils.runCommandAsConsole("chunky worldborder"));
 		Tasks.wait(TickTime.SECOND.x(62), () -> PlayerUtils.runCommandAsConsole("chunky start"));
 		Tasks.wait(TickTime.SECOND.x(63), () -> PlayerUtils.runCommandAsConsole("chunky confirm"));
-	}
-
-	private static NPC getFilidNPC() {
-		return CitizensAPI.getNPCRegistry().getById(filidId);
 	}
 
 }
