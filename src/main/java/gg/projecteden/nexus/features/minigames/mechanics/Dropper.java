@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
+import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
@@ -13,10 +14,16 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.DropperMatchData
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.features.minigames.models.statistics.DropperStatistics;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.Utils;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,6 +33,7 @@ import java.util.List;
 @MatchStatisticsClass(DropperStatistics.class)
 public class Dropper extends TeamlessMechanic {
 	private static final int ROUNDS = 5;
+	private static final ItemBuilder RESET_ITEM = new ItemBuilder(ItemModelType.GUI_ROTATE_LEFT).dyeColor(Color.RED).name("&cReset");
 
 	@Override
 	public @NotNull String getName() {
@@ -48,6 +56,7 @@ public class Dropper extends TeamlessMechanic {
 		minigamer.getOnlinePlayer().setAllowFlight(false);
 		minigamer.getOnlinePlayer().setFlying(false);
 		minigamer.teleportAsync(RandomUtils.randomElement(arena.getCurrentMap().getSpawnpoints()));
+		minigamer.getOnlinePlayer().getInventory().setItem(8, RESET_ITEM.build());
 	}
 
 	@Override
@@ -151,6 +160,28 @@ public class Dropper extends TeamlessMechanic {
 
 		if (arena.getCurrentMap().getSpectateLocation() != null)
 			minigamer.teleportAsync(arena.getCurrentMap().getSpectateLocation());
+
+		minigamer.getPlayer().getInventory().setItem(8, null);
+	}
+
+	@EventHandler
+	public void setPlayerBlock(PlayerInteractEvent event) {
+		if (event.getItem() == null) return;
+		if (!Utils.ActionGroup.RIGHT_CLICK.applies(event)) return;
+
+		Player player = event.getPlayer();
+		if (!player.getWorld().equals(Minigames.getWorld())) return;
+
+		Minigamer minigamer = Minigamer.of(player);
+		if (!minigamer.isIn(this)) return;
+
+		if (!new ItemBuilder(event.getItem()).model().equals(RESET_ITEM.model()))
+			return;
+
+		if (CooldownService.isOnCooldown(minigamer.getUuid(), "dropper-reset", 5))
+			return;
+
+		kill(minigamer);
 	}
 
 }
