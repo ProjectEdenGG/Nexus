@@ -513,7 +513,8 @@ public final class Thimble extends TeamlessMechanic {
 			matchData.setTurnMinigamer(null);
 			minigamer.getMatch().getScoreboard().update();
 			matchData.getTurnMinigamerList().remove(minigamer);
-			minigamer.teleportAsync(arena.getCurrentMap().getSpectateLocation());
+			if (minigamer.getMatch() != null && !minigamer.getMatch().isEnded())
+				minigamer.teleportAsync(arena.getCurrentMap().getSpectateLocation());
 		}
 	}
 
