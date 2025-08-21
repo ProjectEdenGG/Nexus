@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.models.afk.events.NotAFKEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.Tasks;
-import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,23 +17,23 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 // Unused
 
 public class StaffAlerts implements Listener {
-	@Getter
-	static Map<Player, LocalDateTime> tracking = new HashMap<>();
+	private static final Map<UUID, LocalDateTime> TRACKING = new HashMap<>();
 
 	public StaffAlerts() {
 		Nexus.registerListener(this);
 
 		Tasks.repeat(0, TickTime.SECOND.x(30), () -> {
-			Set<Player> trackedPlayers = tracking.keySet();
-			for (Player tracked : trackedPlayers) {
-				LocalDateTime then = tracking.get(tracked);
+			Set<UUID> trackedPlayers = TRACKING.keySet();
+			for (UUID uuid : trackedPlayers) {
+				LocalDateTime then = TRACKING.get(uuid);
 				LocalDateTime now = LocalDateTime.now();
 				if (then.isBefore(now.minusMinutes(10)))
-					tracking.remove(tracked);
+					TRACKING.remove(uuid);
 			}
 		});
 	}
@@ -50,17 +50,18 @@ public class StaffAlerts implements Listener {
 
 		String playerName = event.getPlayer().getName();
 		Discord.staffAlerts("Boop! New player (" + playerName + "). Anyone @here free?");
-		tracking.putIfAbsent(event.getPlayer(), LocalDateTime.now());
+		TRACKING.putIfAbsent(event.getPlayer().getUniqueId(), LocalDateTime.now());
 	}
 
 	private void readyToStalk(Player player, String type) {
 		if (Rank.of(player).isMod()) {
 			boolean alert = false;
-			Set<Player> trackedPlayers = tracking.keySet();
-			for (Player tracked : trackedPlayers) {
-				if (tracked.isOnline())
+			Set<UUID> trackedPlayers = TRACKING.keySet();
+			for (UUID uuid : trackedPlayers) {
+				var tracked = Bukkit.getPlayer(uuid);
+				if (tracked != null && tracked.isOnline())
 					alert = true;
-				tracking.remove(tracked);
+				TRACKING.remove(uuid);
 			}
 
 			if (alert) {
@@ -75,7 +76,7 @@ public class StaffAlerts implements Listener {
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		if (tracking.containsKey(event.getPlayer())) {
+		if (TRACKING.containsKey(event.getPlayer().getUniqueId())) {
 			String playerName = event.getPlayer().getName();
 			Discord.staffAlerts(playerName + " logged back in.");
 		}
@@ -85,7 +86,7 @@ public class StaffAlerts implements Listener {
 
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
-		if (tracking.containsKey(event.getPlayer())) {
+		if (TRACKING.containsKey(event.getPlayer().getUniqueId())) {
 			String playerName = event.getPlayer().getName();
 			Discord.staffAlerts(playerName + " logged out.");
 		}

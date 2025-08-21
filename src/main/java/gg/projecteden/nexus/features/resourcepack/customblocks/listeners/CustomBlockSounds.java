@@ -34,18 +34,19 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerAnimationEvent;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("removal")
 public class CustomBlockSounds implements Listener {
-	private static final Map<Player, BlockAction> playerActionMap = new ConcurrentHashMap<>();
+	private static final Map<UUID, BlockAction> ACTION_MAP = new ConcurrentHashMap<>();
 
 	public CustomBlockSounds() {
 		Nexus.registerListener(this);
 	}
 
 	public static void updateAction(Player player, BlockAction action) {
-		playerActionMap.put(player, action);
+		ACTION_MAP.put(player.getUniqueId(), action);
 	}
 
 	@EventHandler
@@ -109,10 +110,10 @@ public class CustomBlockSounds implements Listener {
 		if (block == null)
 			return;
 
-		if (!playerActionMap.containsKey(player))
+		if (!ACTION_MAP.containsKey(player.getUniqueId()))
 			return;
 
-		if (playerActionMap.get(player) == BlockAction.HIT) {
+		if (ACTION_MAP.get(player.getUniqueId()) == BlockAction.HIT) {
 //			CustomBlockUtils.debug(player, "&d&lPlayerAnimationEvent:", true);
 			tryPlaySound(player, SoundUtils.SoundAction.HIT, block);
 //			CustomBlockUtils.debug(player, "&d<- done, end");

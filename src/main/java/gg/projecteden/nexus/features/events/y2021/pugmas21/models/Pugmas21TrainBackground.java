@@ -57,7 +57,7 @@ public class Pugmas21TrainBackground {
 	private static final List<ArmorStand> armorStands = new ArrayList<>();
 	private static final List<Integer> taskIds = new ArrayList<>();
 	@Getter
-	private static final List<Player> chugs = new ArrayList<>();
+	private static final List<UUID> chugs = new ArrayList<>();
 
 	public Pugmas21TrainBackground() {
 		Tasks.repeat(1, TickTime.TICK.x(2), () -> {
@@ -75,13 +75,15 @@ public class Pugmas21TrainBackground {
 		Tasks.wait(2, () -> taskIds.add(Tasks.repeat(0, 1, Pugmas21TrainBackground::move)));
 
 		taskIds.add(Tasks.repeat(0, TickTime.SECOND, () -> {
-			for (Player player : chugs) {
-				new SoundBuilder(CustomSound.TRAIN_CHUG)
-					.receiver(player)
-					.location(player)
-					.category(SoundCategory.AMBIENT)
-					.volume(0.8)
-					.play();
+			for (UUID uuid : chugs) {
+				Player player = Bukkit.getPlayer(uuid);
+				if (player != null && player.isOnline())
+					new SoundBuilder(CustomSound.TRAIN_CHUG)
+						.receiver(player)
+						.location(player.getLocation())
+						.category(SoundCategory.AMBIENT)
+						.volume(0.8)
+						.play();
 			}
 		}));
 

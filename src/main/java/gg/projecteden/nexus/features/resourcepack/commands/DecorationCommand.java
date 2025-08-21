@@ -383,12 +383,12 @@ public class DecorationCommand extends CustomCommand {
 	@Description("Toggle debugging the store")
 	void setDebug(Boolean enabled) {
 		if (enabled == null)
-			enabled = !DecorationStoreManager.getDebuggers().contains(player());
+			enabled = !DecorationStoreManager.getDebuggers().contains(uuid());
 
 		if (enabled)
-			DecorationStoreManager.getDebuggers().add(player());
+			DecorationStoreManager.getDebuggers().add(uuid());
 		else
-			DecorationStoreManager.getDebuggers().remove(player());
+			DecorationStoreManager.getDebuggers().remove(uuid());
 
 		send(PREFIX + "Store Debug " + (enabled ? "&aEnabled" : "&cDisabled"));
 	}

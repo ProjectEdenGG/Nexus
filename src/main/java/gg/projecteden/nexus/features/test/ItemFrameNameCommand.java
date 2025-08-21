@@ -12,10 +12,10 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.nms.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.nms.PacketUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -29,14 +29,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @HideFromWiki
 @Environments(Env.TEST)
 @Permission(Group.ADMIN)
 @NoArgsConstructor
 public class ItemFrameNameCommand extends CustomCommand {
-	private static final List<Player> enabledList = new ArrayList<>();
-	private static final Map<Player, ItemFrameName> playerMap = new HashMap<>();
+	private static final List<UUID> enabledList = new ArrayList<>();
+	private static final Map<UUID, ItemFrameName> playerMap = new HashMap<>();
 	private static final Map<BlockFace, Integer> offsets = new HashMap<>() {{
 		put(BlockFace.UP, 1);
 		put(BlockFace.DOWN, 1);
@@ -49,13 +50,13 @@ public class ItemFrameNameCommand extends CustomCommand {
 	@Path("[enabled]")
 	void toggle(Boolean enabled) {
 		if (enabled == null)
-			enabled = !enabledList.contains(player());
+			enabled = !enabledList.contains(uuid());
 
 		if (enabled) {
-			enabledList.add(player());
+			enabledList.add(uuid());
 			send("&3Itemframe names &aenabled");
 		} else {
-			enabledList.remove(player());
+			enabledList.remove(uuid());
 			removeName(player());
 			send("&3Itemframe names &cdisabled");
 		}
@@ -64,7 +65,7 @@ public class ItemFrameNameCommand extends CustomCommand {
 	static {
 		Tasks.repeat(TickTime.SECOND, TickTime.TICK.x(2), () -> {
 			for (Player player : OnlinePlayers.getAll()) {
-				if (enabledList.contains(player))
+				if (enabledList.contains(player.getUniqueId()))
 					itemFrameName(player);
 			}
 		});
@@ -72,7 +73,7 @@ public class ItemFrameNameCommand extends CustomCommand {
 
 	private static void itemFrameName(Player player) {
 		ItemFrame itemFrame = PlayerUtils.getTargetItemFrame(player, 10, offsets);
-		ItemFrameName itemFrameName = playerMap.getOrDefault(player, new ItemFrameName());
+		ItemFrameName itemFrameName = playerMap.getOrDefault(player.getUniqueId(), new ItemFrameName());
 
 		if (itemFrame == null) {
 			if (itemFrameName.getId() != null)
@@ -93,7 +94,7 @@ public class ItemFrameNameCommand extends CustomCommand {
 		itemFrameName.setId(armorStand.getId());
 		itemFrameName.setLocation(itemFrame.getLocation());
 
-		playerMap.put(player, itemFrameName);
+		playerMap.put(player.getUniqueId(), itemFrameName);
 	}
 
 	@Data
@@ -104,11 +105,11 @@ public class ItemFrameNameCommand extends CustomCommand {
 	}
 
 	private static void removeName(Player player) {
-		ItemFrameName itemFrameName = playerMap.getOrDefault(player, new ItemFrameName());
+		ItemFrameName itemFrameName = playerMap.getOrDefault(player.getUniqueId(), new ItemFrameName());
 		if (itemFrameName.getId() != null)
 			PacketUtils.entityDestroy(player, itemFrameName.getId());
 
 		itemFrameName = new ItemFrameName();
-		playerMap.put(player, itemFrameName);
+		playerMap.put(player.getUniqueId(), itemFrameName);
 	}
 }

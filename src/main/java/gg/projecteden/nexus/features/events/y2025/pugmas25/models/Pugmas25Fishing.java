@@ -31,7 +31,7 @@ public class Pugmas25Fishing implements Listener {
 		}
 	}
 
-//	private static final Map<Player, HookData> hookMap = new ConcurrentHashMap<>();
+//	private static final Map<UUID, HookData> HOOK_MAP = new ConcurrentHashMap<>();
 //
 //	@EventHandler
 //	public void onFish(PlayerFishEvent event) {
@@ -42,7 +42,7 @@ public class Pugmas25Fishing implements Listener {
 //		if (!Pugmas25.get().shouldHandle(player))
 //			return;
 //
-//		hookMap.put(player, new HookData(event.getHook()));
+//		HOOK_MAP.put(player.getUniqueId(), new HookData(event.getHook()));
 //	}
 
 	/*
@@ -50,15 +50,19 @@ public class Pugmas25Fishing implements Listener {
 	 */
 //	public void lavaFishing() {
 //		Tasks.repeat(0, TickTime.TICK, () -> {
-//			for (Player player : hookMap.keySet()) {
-//				HookData data = hookMap.getOrDefault(player, null);
+//			for (UUID uuid : HOOK_MAP.keySet()) {
+//				Player player = Bukkit.getPlayer(player);
+//				if (player == null || !player.isOnline())
+//					continue;
+//
+//				HookData data = HOOK_MAP.getOrDefault(uuid, null);
 //
 //				if (data == null || !data.canStart())
 //					continue;
 //
 //				if (data.shouldStop()) {
 //					data.destroy();
-//					hookMap.remove(player);
+//					HOOK_MAP.remove(uuid);
 //					continue;
 //				}
 //

@@ -1,7 +1,5 @@
 package gg.projecteden.nexus.features.commands.staff.operator;
 
-import org.mvplugins.multiverse.inventories.share.Sharables;
-import org.mvplugins.multiverse.inventories.utils.configuration.json.JsonConfiguration;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
@@ -26,22 +24,25 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.mvplugins.multiverse.inventories.share.Sharables;
+import org.mvplugins.multiverse.inventories.utils.configuration.json.JsonConfiguration;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Aliases("restoreinv")
 @Permission(Group.SENIOR_STAFF)
 public class RestoreInventoryCommand extends CustomCommand {
-	public static HashMap<Player, RestoreInventoryPlayer> restorers = new HashMap<>();
+	public static HashMap<UUID, RestoreInventoryPlayer> restorers = new HashMap<>();
 
 	public RestoreInventoryCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
 	public void add(Player restorer, RestoreInventoryPlayer restoreInventoryPlayer) {
-		restorers.put(restorer, restoreInventoryPlayer);
+		restorers.put(restorer.getUniqueId(), restoreInventoryPlayer);
 	}
 
 	public RestoreInventoryPlayer get(Player restorer) {

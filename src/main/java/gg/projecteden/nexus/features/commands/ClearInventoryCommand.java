@@ -19,49 +19,50 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @NoArgsConstructor
 @Aliases({"ci", "clear"})
 public class ClearInventoryCommand extends CustomCommand implements Listener {
-	private ClearInventoryPlayer ciPlayer;
-	private static Map<Player, ClearInventoryPlayer> players = new HashMap<>();
+	private ClearInventoryPlayerCache cache;
+	private static final Map<UUID, ClearInventoryPlayerCache> CACHES = new HashMap<>();
 
 	ClearInventoryCommand(CommandEvent event) {
 		super(event);
-		ciPlayer = getPlayer(player());
+		cache = getPlayer(player());
 	}
 
-	public static ClearInventoryPlayer getPlayer(Player player) {
-		if (!players.containsKey(player))
-			players.put(player, new ClearInventoryPlayer(player));
+	public static ClearInventoryPlayerCache getPlayer(Player player) {
+		if (!CACHES.containsKey(player.getUniqueId()))
+			CACHES.put(player.getUniqueId(), new ClearInventoryPlayerCache(player));
 
-		return players.get(player);
+		return CACHES.get(player.getUniqueId());
 	}
 
 	@Path
 	@Description("Discard all items your inventory")
 	void clear() {
-		inventory().setContents(ciPlayer.addCache());
+		inventory().setContents(cache.store());
 		send(PREFIX + "Inventory cleared. Undo with &c/ci undo");
 	}
 
 	@Path("undo")
 	@Description("Restore your recently cleared inventory")
 	void undo() {
-		ciPlayer.restoreCache();
+		cache.restoreCache();
 	}
 
 	@EventHandler
 	public void onDeath(PlayerDeathEvent event) {
-		ClearInventoryPlayer ciPlayer = getPlayer(event.getEntity());
-		ciPlayer.removeCache();
+		ClearInventoryPlayerCache cache = getPlayer(event.getEntity());
+		cache.clear();
 	}
 
-	public static class ClearInventoryPlayer {
+	public static class ClearInventoryPlayerCache {
 		private final Player player;
 		private final Map<String, ItemStack[]> cache = new HashMap<>();
 
-		public ClearInventoryPlayer(Player player) {
+		public ClearInventoryPlayerCache(Player player) {
 			this.player = player;
 		}
 
@@ -69,7 +70,7 @@ public class ClearInventoryCommand extends CustomCommand implements Listener {
 			return player.getWorld().getName().toLowerCase() + "-" + player.getGameMode().name().toLowerCase();
 		}
 
-		public ItemStack[] addCache() {
+		public ItemStack[] store() {
 			ItemStack[] contents = player.getInventory().getContents();
 			ItemStack[] untrashable = new ItemStack[contents.length];
 
@@ -89,7 +90,7 @@ public class ClearInventoryCommand extends CustomCommand implements Listener {
 			return untrashable;
 		}
 
-		public void removeCache() {
+		public void clear() {
 			cache.remove(getKey());
 		}
 
@@ -103,7 +104,7 @@ public class ClearInventoryCommand extends CustomCommand implements Listener {
 					}
 				}
 				player.getInventory().setContents(cache.get(getKey()));
-				removeCache();
+				clear();
 				PlayerUtils.send(player, PREFIX + "Inventory restored");
 			} else {
 				PlayerUtils.send(player, PREFIX + "There's nothing to undo!");
