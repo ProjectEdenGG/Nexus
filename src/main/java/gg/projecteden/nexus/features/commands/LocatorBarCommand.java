@@ -1,24 +1,34 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.features.chat.Chat;
+import gg.projecteden.nexus.features.profiles.ProfileSettingsUpdatedEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.profile.ProfileUserService;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import net.md_5.bungee.api.ChatColor;
+import net.minecraft.world.waypoints.WaypointTransmitter;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
+import java.util.function.Consumer;
+
+import static gg.projecteden.nexus.utils.StringUtils.hexToInt;
 
 @NoArgsConstructor
 public class LocatorBarCommand extends CustomCommand implements Listener {
@@ -44,10 +54,20 @@ public class LocatorBarCommand extends CustomCommand implements Listener {
 			receiveRange.setBaseValue(Chat.getLocalRadius());
 		else {
 			receiveRange.setBaseValue(0);
-			dumbInvisibilityFix(player());
+			Tasks.wait(2, () -> updateColor(player())); // why the fuck wait 2?????
 		}
 
 		send(PREFIX + (state ? "&aEnabled" : "&cDisabled"));
+	}
+
+	@Path("color")
+	void color() {
+		send(PREFIX + "Change your &c/profile &3background color to set your locator bar color.");
+	}
+
+	@EventHandler
+	public void on(ProfileSettingsUpdatedEvent event) {
+		updateColor(event.getPlayer());
 	}
 
 	@EventHandler
@@ -57,10 +77,29 @@ public class LocatorBarCommand extends CustomCommand implements Listener {
 		get(player, Attribute.WAYPOINT_TRANSMIT_RANGE).setBaseValue(Chat.getLocalRadius());
 
 		var receive = get(player, Attribute.WAYPOINT_RECEIVE_RANGE);
-		if (receive.getBaseValue() == 0)
-			dumbInvisibilityFix(player);
-		else
+		if (receive.getBaseValue() != 0)
 			receive.setBaseValue(Chat.getLocalRadius());
+
+		updateColor(player);
+	}
+
+	@SuppressWarnings("deprecation")
+	private static void updateColor(Player player) {
+		ChatColor backgroundColor = new ProfileUserService().get(player).getBackgroundColor();
+		ChatColor rankColor = Rank.of(player).getChatColor();
+		ChatColor color = backgroundColor != null ? backgroundColor : rankColor;
+
+		Optional<Integer> optional = Optional.of(hexToInt(color));
+		mutateWaypoint(player, transmitter -> transmitter.waypointIcon().color = optional);
+	}
+
+	public static void mutateWaypoint(Player player, Consumer<WaypointTransmitter> consumer) {
+		var manager = NMSUtils.toNMS(player.getWorld()).getWaypointManager();
+		var nmsPlayer = NMSUtils.toNMS(player);
+		manager.untrackWaypoint(nmsPlayer);
+		if (nmsPlayer instanceof WaypointTransmitter transmitter)
+			consumer.accept(transmitter);
+		manager.trackWaypoint(nmsPlayer);
 	}
 
 	private static @NotNull AttributeInstance get(Player player, Attribute attribute) {
@@ -70,8 +109,4 @@ public class LocatorBarCommand extends CustomCommand implements Listener {
 		return range;
 	}
 
-	private static void dumbInvisibilityFix(Player player) {
-		// Required otherwise hidden from other players. Client bug? Fix with packets?
-		player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 2, 0));
-	}
 }

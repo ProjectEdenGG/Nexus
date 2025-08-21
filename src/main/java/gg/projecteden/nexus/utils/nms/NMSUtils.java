@@ -117,7 +117,7 @@ public class NMSUtils {
 		return CraftItemStack.asNMSCopy(itemStack);
 	}
 
-	public static net.minecraft.world.entity.player.Player toNMS(Player player) {
+	public static ServerPlayer toNMS(Player player) {
 		return ((CraftPlayer) player).getHandle();
 	}
 
