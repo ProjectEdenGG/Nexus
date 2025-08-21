@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+
 @Data
 @Entity(value = "scoreboard_user", noClassnameStored = true)
 @NoArgsConstructor
@@ -100,7 +102,7 @@ public class ScoreboardUser implements PlayerOwnedObject {
 	private int getScore(ScoreboardLine line) {
 		List<ScoreboardLine> renderedOrder = new ArrayList<>();
 		for (ScoreboardLine toRender : ScoreboardLine.values())
-			if (lines.containsKey(toRender) && lines.get(toRender))
+			if (lines.containsKey(toRender) && lines.get(toRender) && !isNullOrEmpty(toRender.render(getPlayer())))
 				renderedOrder.add(toRender);
 		renderedOrder.sort(Comparator.comparingInt(orderedLine -> order.indexOf(orderedLine)));
 		return renderedOrder.indexOf(line);
@@ -140,8 +142,11 @@ public class ScoreboardUser implements PlayerOwnedObject {
 			for (ScoreboardLine line : ScoreboardLine.values()) {
 				if (lines.getOrDefault(line, false) && line.hasPermission(player)) {
 					if (index % line.getInterval() == 0 || flush)
-						if (getScore(line) < 15)
-							stage.setLine(getScore(line), line.render(player));
+						if (getScore(line) < 15) {
+							String rendered = line.render(player);
+							if (!isNullOrEmpty(rendered))
+								stage.setLine(getScore(line), rendered);
+						}
 				}
 			}
 			flush = false;
