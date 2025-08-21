@@ -17,10 +17,7 @@ import gg.projecteden.nexus.models.mode.ModeUser;
 import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
 import gg.projecteden.nexus.models.mode.ModeUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
@@ -106,8 +103,6 @@ public class FlyCommand extends CustomCommand implements Listener {
 		PlayerUtils.setAllowFlight(player, false, reason);
 		PlayerUtils.setFlying(player, false, reason);
 		updateModeUser(player);
-
-		IOUtils.fileAppend("cheats", Nickname.of(player) + " disabled fly at " + StringUtils.xyzw(player.getLocation()));
 	}
 
 	public static void on(Player player, Class<?> clazz) {
@@ -118,8 +113,6 @@ public class FlyCommand extends CustomCommand implements Listener {
 		player.setFallDistance(0);
 		PlayerUtils.setAllowFlight(player, true, reason);
 		updateModeUser(player);
-
-		IOUtils.fileAppend("cheats", Nickname.of(player) + " enabled fly at " + StringUtils.xyzw(player.getLocation()));
 	}
 
 	public static void updateModeUser(Player player) {
