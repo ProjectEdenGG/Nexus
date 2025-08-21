@@ -48,6 +48,7 @@ repositories {
 //    maven { url = uri("https://ci.ender.zone/plugin/repository/project/") }
     maven { url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/") }
     maven { url = uri("https://repo.repsy.io/mvn/quantiom/minecraft") }
+    maven { url = uri("https://nexus.neetgames.com/repository/maven-public") }
 
 //    maven("https://repo.mineinabyss.com/releases") // PlayerAnimator
 }
@@ -110,7 +111,7 @@ dependencies {
         exclude("org.spigotmc", "spigot-api")
         exclude("org.spigotmc", "spigot")
     }
-    compileOnly("com.gmail.nossr50.mcMMO:mcMMO:2.2.004@jar") {
+    compileOnly("com.gmail.nossr50.mcMMO:mcMMO:2.2.040@jar") {
         exclude("com.sk89q.worldedit", "worldedit-core")
         exclude("com.sk89q.worldedit.worldedit-libs", "core")
     }

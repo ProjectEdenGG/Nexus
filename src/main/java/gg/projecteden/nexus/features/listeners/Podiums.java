@@ -144,8 +144,8 @@ public class Podiums implements Listener {
 			public Map<UUID, String> getTop() {
 				return mcMMO.getDatabaseManager().readLeaderboard(null, 1, 3).subList(0, 3).stream()
 					.collect(Collectors.toMap(
-						playerStat -> PlayerUtils.getPlayer(playerStat.name).getUniqueId(),
-						playerStat -> NumberFormat.getInstance().format(playerStat.statVal),
+						playerStat -> PlayerUtils.getPlayer(playerStat.playerName()).getUniqueId(),
+						playerStat -> NumberFormat.getInstance().format(playerStat.value()),
 						(h1, h2) -> h1, LinkedHashMap::new
 					));
 			}
