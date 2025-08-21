@@ -49,7 +49,7 @@ public class AttributeCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("reset all [player]")
-	@Description("Reset a player's attribute to default")
+	@Description("Reset all of a player's attributes to default")
 	void resetAll(@Arg("self") Player player) {
 		for (Attribute attribute : Attribute.values())
 			if (player.getAttribute(attribute) != null)
