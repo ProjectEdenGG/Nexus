@@ -8,9 +8,9 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
 @Permission(Group.MODERATOR)
-public class WhosShitIsThisCommand extends CustomCommand {
+public class WhoseShitIsThisCommand extends CustomCommand {
 
-	public WhosShitIsThisCommand(CommandEvent event) {
+	public WhoseShitIsThisCommand(CommandEvent event) {
 		super(event);
 	}
 
