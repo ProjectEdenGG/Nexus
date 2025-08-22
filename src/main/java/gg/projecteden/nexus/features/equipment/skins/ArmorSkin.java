@@ -14,16 +14,22 @@ import org.bukkit.inventory.ItemStack;
 public enum ArmorSkin implements EquipmentSkinType {
 	DEFAULT,
 	INVISIBLE,
+	ADAMANTITE,
+	AMETHYST,
 	BERSERKER,
 	BROWN_BERSERK,
+	CHERRY,
 	COBALT,
 	DRUID,
 	FISHING,
 	HELLFIRE,
 	JARL,
+	MECHANICAL,
 	MYTHRIL,
+	SCULK,
 	TANK,
 	THOR,
+	VINES,
 	WARDEN,
 	WITHER,
 	WOLF,
@@ -41,7 +47,7 @@ public enum ArmorSkin implements EquipmentSkinType {
 	}
 
 	public String getBaseModel() {
-		return "skins/armor/" + this.getTitle().toLowerCase();
+		return "skins/armor/" + this.getTitle().toLowerCase().replace(' ', '_');
 	}
 
 	public CustomArmorType getCustomArmorType() {
@@ -90,7 +96,7 @@ public enum ArmorSkin implements EquipmentSkinType {
 			else {
 				ReadWriteNBT readWriteNBT = NBT.createNBTObject();
 				readWriteNBT.setString("slot", getSlot(builder).name().toLowerCase());
-				readWriteNBT.setString("asset_id", "minecraft:" + armorSkin.getTitle().toLowerCase());
+				readWriteNBT.setString("asset_id", "minecraft:" + armorSkin.getTitle().toLowerCase().replace(' ', '_'));
 				nbt.set("minecraft:equippable", readWriteNBT, NBTHandlers.STORE_READWRITE_TAG);
 
 				if (nbt.hasTag("minecraft:trim")) {
