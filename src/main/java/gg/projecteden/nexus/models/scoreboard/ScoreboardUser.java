@@ -16,6 +16,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -25,6 +26,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @Data
@@ -43,6 +45,7 @@ public class ScoreboardUser implements PlayerOwnedObject {
 	private transient int headerTaskId = -1;
 	private transient Map<ScoreboardLine, Integer> taskIds = new ConcurrentHashMap<>();
 
+	public static final	int MAX_SCOREBOARD_LINES = 15;
 	public static final int HEADER_UPDATE_INTERVAL = 2;
 	public static final int UPDATE_INTERVAL = 40;
 
@@ -100,12 +103,16 @@ public class ScoreboardUser implements PlayerOwnedObject {
 	}
 
 	private int getScore(ScoreboardLine line) {
+		return getRenderOrder().indexOf(line);
+	}
+
+	private @NotNull List<ScoreboardLine> getRenderOrder() {
 		List<ScoreboardLine> renderedOrder = new ArrayList<>();
 		for (ScoreboardLine toRender : ScoreboardLine.values())
 			if (lines.containsKey(toRender) && lines.get(toRender) && !isNullOrEmpty(toRender.render(getPlayer())))
 				renderedOrder.add(toRender);
 		renderedOrder.sort(Comparator.comparingInt(orderedLine -> order.indexOf(orderedLine)));
-		return renderedOrder.indexOf(line);
+		return renderedOrder;
 	}
 
 	public class ScoreboardLayout extends SidebarLayout {
@@ -139,16 +146,22 @@ public class ScoreboardUser implements PlayerOwnedObject {
 			if (player == null || !player.isOnline())
 				return;
 
-			for (ScoreboardLine line : ScoreboardLine.values()) {
+			var renderOrder = getRenderOrder();
+			for (int i = 0; i < Math.min(renderOrder.size(), MAX_SCOREBOARD_LINES); i++) {
+				ScoreboardLine line = renderOrder.get(i);
 				if (lines.getOrDefault(line, false) && line.hasPermission(player)) {
-					if (index % line.getInterval() == 0 || flush)
-						if (getScore(line) < 15) {
-							String rendered = line.render(player);
-							if (!isNullOrEmpty(rendered))
-								stage.setLine(getScore(line), rendered);
-						}
+					if (index % line.getInterval() == 0 || flush) {
+						String rendered = line.render(player);
+						if (isNotNullOrEmpty(rendered))
+							stage.setLine(i, rendered);
+					}
 				}
 			}
+
+			if (renderOrder.size() < MAX_SCOREBOARD_LINES)
+				for (int i = renderOrder.size(); i < MAX_SCOREBOARD_LINES; i++)
+					stage.setLine(i, null);
+
 			flush = false;
 		}
 
