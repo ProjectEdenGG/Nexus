@@ -320,6 +320,7 @@ public class Booster implements PlayerOwnedObject {
 	}
 
 	public static double getTotalBoost(HasUniqueId uuid, Boostable type) {
+		if (uuid == null) return getTotalBoost((UUID) null, type);
 		return getTotalBoost(uuid.getUniqueId(), type);
 	}
 

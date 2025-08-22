@@ -162,7 +162,7 @@ public class Votes extends Feature implements Listener {
 		if (goal > sum)
 			left = goal - sum;
 
-		int points = vote.getExtra() + BASE_POINTS;
+		int points = vote.getExtra() + (int) (BASE_POINTS * Booster.getTotalBoost(player, Boostable.VOTE_POINTS));
 		voter.givePoints(points);
 		voterService.save(voter);
 
