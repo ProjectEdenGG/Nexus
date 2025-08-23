@@ -26,7 +26,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 @Aliases("away")
 @NoArgsConstructor
@@ -86,13 +90,16 @@ public class AFKCommand extends CustomCommand implements Listener {
 		send(PREFIX + setting.getMessage().apply(value));
 	}
 
-	@EventHandler(ignoreCancelled = true)
+	@EventHandler
 	public void onChat(MinecraftChatEvent event) {
-		final AFKUser user = AFK.get(event.getChatter().getOnlinePlayer());
+		final AFKUser user = AFK.get(event.getChatter());
 		if (user.isAfk())
 			user.notAfk();
 		else
 			user.update();
+
+		if (event.isCancelled())
+			return;
 
 		if (event.getChannel() instanceof PrivateChannel) {
 			for (Chatter recipient : event.getRecipients()) {
