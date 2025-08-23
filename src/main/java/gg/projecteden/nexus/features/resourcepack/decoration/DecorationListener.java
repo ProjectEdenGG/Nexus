@@ -366,14 +366,13 @@ public class DecorationListener implements Listener {
 				DecorationLang.debug(player, " invalid decoration 1, checking for light");
 				Block inFront = clicked.getRelative(event.getBlockFace());
 				if (inFront.getType() == Material.LIGHT) {
-					DecorationLang.debug(player, " - found light in front");
 					data = new DecorationInteractDataBuilder()
-							.player(player)
-							.block(inFront)
-							.blockFace(event.getBlockFace())
-							.blockFaceOverride(event.getBlockFace().getOppositeFace())
-							.tool(tool)
-							.build();
+						.player(player)
+						.block(inFront)
+						.blockFace(event.getBlockFace())
+						.blockFaceOverride(event.getBlockFace().getOppositeFace())
+						.tool(tool)
+						.build();
 				}
 
 				if (data.isDecorationValid())
@@ -442,7 +441,10 @@ public class DecorationListener implements Listener {
 		if (gamemode == GameMode.SURVIVAL) {
 			if (!DecorationCooldown.DESTROY.isOnCooldown(player, data.getDecoration().getItemFrame().getUniqueId())) {
 				DecorationLang.debug(player, "first punch, returning");
-				DecorationUtils.getSoundBuilder(data.getDecoration().getConfig().getHitSound()).location(data.getLocation()).play();
+
+				if (data.doPlayHitSound())
+					DecorationUtils.getSoundBuilder(data.getDecoration().getConfig().getHitSound()).location(data.getLocation()).play();
+
 				data.interact(InteractType.LEFT_CLICK);
 				return true;
 			}
@@ -455,11 +457,10 @@ public class DecorationListener implements Listener {
 			return true;
 		}
 
-		if (!data.getDecoration().getConfig().isMultiBlockWallThing())
+		if (!data.getDecoration().getConfig().isMultiBlockWallThing()) {
 			data.setBlockFaceOverride(null);
+		}
 
-		if (data.getBlockFaceOverride() != null)
-			DecorationLang.debug(player, "BlockFace Override 2: " + data.getBlockFaceOverride());
 
 		data.destroy();
 		return true;

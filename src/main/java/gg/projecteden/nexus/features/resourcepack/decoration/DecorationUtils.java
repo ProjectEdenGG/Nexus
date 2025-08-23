@@ -93,7 +93,7 @@ public class DecorationUtils {
 		String colorName = colorHex;
 		boolean isStain = false;
 		boolean isMineral = false;
-		for (ColorChoice.StainChoice stainChoice : ColorChoice.StainChoice.values()) {
+		for (StainChoice stainChoice : StainChoice.values()) {
 			if (stainChoice.getColor().equals(color)) {
 				isStain = true;
 				colorName = StringUtils.camelCase(stainChoice.name());
@@ -236,7 +236,7 @@ public class DecorationUtils {
 	// TODO: optimize by checking nearest neighbors first
 	private static @Nullable Object getConnectedHitboxes(HitboxMaze maze, BlockFace blockFaceOverride, Player debugger, boolean isClientside) {
 		if (maze.getTries() > 10) {
-			DecorationLang.debug(debugger, true, "&cMaze Tries > 10");
+			DecorationLang.deepDebug(debugger, "&cMaze Tries > 10");
 			return null;
 		}
 
@@ -245,7 +245,7 @@ public class DecorationUtils {
 
 			if (newLoc.equals(maze.getOrigin().getLocation())) {
 				maze.debugDot(newLoc, ColorType.ORANGE);
-				DecorationLang.debug(debugger, true, "&6Maze returned to origin");
+				DecorationLang.deepDebug(debugger, "&6Maze returned to origin");
 				return null;
 			}
 
@@ -296,7 +296,7 @@ public class DecorationUtils {
 
 		Object itemFrame = findNearbyItemFrame(currentLoc, isClientside, debugger);
 		if (itemFrame == null) {
-			DecorationLang.debug(debugger, true, "&6- no item frames found nearby");
+			DecorationLang.deepDebug(debugger, "&6- no item frames found nearby");
 			return null;
 		}
 
@@ -313,20 +313,20 @@ public class DecorationUtils {
 		}
 
 		if (Nullables.isNullOrAir(itemStack)) {
-			DecorationLang.debug(debugger, true, "&6- item frame is empty");
+			DecorationLang.deepDebug(debugger, "&6- item frame is empty");
 			return null;
 		}
 
 		DecorationConfig config = DecorationConfig.of(itemStack);
 		if (config == null) {
-			DecorationLang.debug(debugger, true, "&6- item frame does not have decoration");
+			DecorationLang.deepDebug(debugger, "&6- item frame does not have decoration");
 			return null;
 		}
 
-		DecorationLang.debug(debugger, true, "&eHitbox BlockFace: " + blockFace);
+		DecorationLang.deepDebug(debugger, "&eHitbox BlockFace: " + blockFace);
 		if (config.isMultiBlockWallThing() && blockFaceOverride != null) {
 			blockFace = blockFaceOverride;
-			DecorationLang.debug(debugger, true, "&eBlockFace Override 1: " + blockFace);
+			DecorationLang.debug(debugger, "&eBlockFace Override 1: " + blockFace);
 		}
 
 		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(config, blockFace);
@@ -340,12 +340,12 @@ public class DecorationUtils {
 			maze.debugDot(_blockLoc, ColorType.CYAN);
 
 			if (LocationUtils.isFuzzyEqual(_blockLoc, originLoc)) {
-				DecorationLang.debug(debugger, true, "&aorigin is in hitbox, returning item frame");
+				DecorationLang.deepDebug(debugger, "&aorigin is in hitbox, returning item frame");
 				return itemFrame;
 			}
 		}
 
-		DecorationLang.debug(debugger, true, "&6- origin isn't in hitbox");
+		DecorationLang.deepDebug(debugger, "&6- origin isn't in hitbox");
 		return null;
 	}
 
@@ -371,20 +371,18 @@ public class DecorationUtils {
 	}
 
 	public static boolean canUsePaintbrush(Player player, ItemStack tool) {
-		DecorationLang.debug(player, "Can use paintbrush?");
-
-		if (!DyeStation.isPaintbrush(tool)) {
-			DecorationLang.debug(player, " - not a paintbrush");
+		if (!DyeStation.isPaintbrush(tool))
 			return false;
-		}
+
+		DecorationLang.debug(player, "Can use paintbrush?");
 
 		int usesLeft = DyeStationMenu.getUses(tool);
 		if (usesLeft <= 0) {
-			DecorationLang.debug(player, " - no more uses");
+			DecorationLang.debug(player, "&c<- no more uses");
 			return false;
 		}
 
-		DecorationLang.debug(player, " yes");
+		DecorationLang.debug(player, "&ayes");
 		return true;
 	}
 

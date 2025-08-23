@@ -3,9 +3,9 @@ package gg.projecteden.nexus.features.resourcepack.decoration;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Cyclable;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.MultiState;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Seat;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Toggleable;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.utils.ColorType;
@@ -65,16 +65,16 @@ public class DecorationTypeListener implements Listener {
 	}
 
 	@EventHandler
-	public void onToggle(DecorationInteractEvent event) {
+	public void onInteract(DecorationInteractEvent event) {
 		if (event.isCancelled())
 			return;
 
 		Decoration decoration = event.getDecoration();
 		DecorationConfig config = decoration.getConfig();
-		if (!(config instanceof Toggleable toggleable))
+		if (!(config instanceof Cyclable iterable))
 			return;
 
-		toggleable.tryToggle(event.getPlayer(), event.getClickedBlock(), decoration.getItemFrame());
+		iterable.tryCycle(event.getPlayer(), event.getClickedBlock(), decoration.getItemFrame());
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)

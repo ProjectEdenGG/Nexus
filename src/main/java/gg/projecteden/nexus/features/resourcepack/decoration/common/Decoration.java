@@ -347,7 +347,7 @@ public class Decoration {
 	public boolean canEdit(Player player) {
 		DecorationLang.debug(player, "Can Edit?");
 		if (canEdit != null) {
-			DecorationLang.debug(player, " --> " + canEdit);
+			DecorationLang.debug(player, " Cached --> " + StringUtils.bool(canEdit));
 			return canEdit;
 		}
 
@@ -358,39 +358,45 @@ public class Decoration {
 
 		boolean isWGEdit = WorldGuardEditCommand.canWorldGuardEdit(player);
 		boolean isInRegion = !new WorldGuardUtils(player).getRegionsAt(this.getOrigin()).isEmpty();
-
+		boolean result;
 
 		if (isWGEdit) {
-			DecorationLang.debug(player, " WGEdit is on --> yes");
-			return setCanEdit(true);
+			result = true;
+			DecorationLang.debug(player, " WGEdit is on --> " + StringUtils.bool(result));
+			return setCanEdit(result);
 		}
 
 		if (isInRegion) { // TODO || flag == allow
-			DecorationLang.debug(player, " Is in region --> no");
-			return setCanEdit(false);
+			result = false;
+			DecorationLang.debug(player, " Is in region --> " + StringUtils.bool(result));
+			return setCanEdit(result);
 		}
 
 		if (Nullables.isNullOrAir(getItem(player))) {
-			DecorationLang.debug(player, " Item is null --> yes");
-			return setCanEdit(true);
+			result = true;
+			DecorationLang.debug(player, " Item is null --> " + StringUtils.bool(result));
+			return setCanEdit(result);
 		}
 
 		UUID owner = getOwner(player);
 
 		if (owner == null) {
-			DecorationLang.debug(player, " Owner is null --> yes");
-			return setCanEdit(true);
+			result = true;
+			DecorationLang.debug(player, " Owner is null --> " + StringUtils.bool(result));
+			return setCanEdit(result);
 		}
 
 		if (player.getUniqueId().equals(owner)) {
-			DecorationLang.debug(player, " Is owner --> yes");
-			return setCanEdit(true);
+			result = true;
+			DecorationLang.debug(player, " Is owner --> " + StringUtils.bool(result));
+			return setCanEdit(result);
 		}
 
-		boolean isTrusted = new TrustsUserService().get(owner).trusts(TrustType.DECORATIONS, player);
-		DecorationLang.debug(player, " Is trusted --> " + isTrusted);
+		TrustsUser trustsUser = new TrustsUserService().get(owner);
+		result = trustsUser.trusts(TrustType.DECORATIONS, player);
+		DecorationLang.debug(player, " Is trusted --> " + StringUtils.bool(result));
 
-		return setCanEdit(isTrusted);
+		return setCanEdit(result);
 	}
 
 	private boolean setCanEdit(boolean bool) {

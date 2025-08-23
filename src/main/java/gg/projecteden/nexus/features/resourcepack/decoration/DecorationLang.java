@@ -136,18 +136,18 @@ public class DecorationLang {
 	}
 
 	public static void debug(Player player, String message) {
-		debug(player, new JsonBuilder(message));
+		_debug(player, false, new JsonBuilder(message));
 	}
 
 	public static void debug(Player player, JsonBuilder json) {
-		debug(player, false, json);
+		_debug(player, false, json);
 	}
 
-	public static void debug(Player player, boolean deep, String message) {
-		debug(player, deep, new JsonBuilder(message));
+	public static void deepDebug(Player player, String message) {
+		_debug(player, true, new JsonBuilder(message));
 	}
 
-	public static void debug(Player player, boolean deep, JsonBuilder json) {
+	private static void _debug(Player player, boolean deep, JsonBuilder json) {
 		if (player == null)
 			return;
 
@@ -194,16 +194,13 @@ public class DecorationLang {
 		@Getter
 		private boolean deep;
 
-		public void send(boolean deep, String message) {
-			send(deep, new JsonBuilder(message));
-		}
-
-		public void send(boolean deep, JsonBuilder json) {
-			if (deep) {
-				if (this.deep)
-					PlayerUtils.send(uuid, json);
-				else
+		public void send(boolean isDeep, JsonBuilder json) {
+			if (isDeep) {
+				if (!this.deep)
 					return;
+
+				PlayerUtils.send(uuid, json);
+				return;
 			}
 
 			PlayerUtils.send(uuid, json);

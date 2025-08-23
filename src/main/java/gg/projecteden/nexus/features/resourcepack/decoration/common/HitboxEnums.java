@@ -323,6 +323,15 @@ public class HitboxEnums {
 			Hitbox.offset(BlockFace.SOUTH, 1, BlockFace.EAST, 1),
 			Hitbox.offset(BlockFace.SOUTH, 1, BlockFace.WEST, 1)
 		)),
+
+		TV(List.of(
+			Hitbox.origin(),
+			Hitbox.offset(BlockFace.UP, 1),
+			Hitbox.offset(BlockFace.WEST, 1),
+			Hitbox.offset(BlockFace.WEST, 1, BlockFace.UP, 1),
+			Hitbox.offset(BlockFace.EAST, 1),
+			Hitbox.offset(BlockFace.EAST, 1, BlockFace.UP, 1)
+		)),
 		;
 
 		@Getter

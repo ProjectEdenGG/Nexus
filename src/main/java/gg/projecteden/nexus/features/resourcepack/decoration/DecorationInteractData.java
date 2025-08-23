@@ -61,8 +61,16 @@ public class DecorationInteractData {
 		if (this.decoration == null) {
 			ItemFrame itemFrame = (ItemFrame) DecorationUtils.getItemFrame(block, MAX_RADIUS, blockFaceOverride, player, false);
 			ItemStack item;
-			if (itemFrame == null) {
-				// Clientside Entities
+			if (itemFrame != null) {
+				item = itemFrame.getItem();
+				if (Nullables.isNullOrAir(item))
+					return;
+
+				final DecorationConfig config = DecorationConfig.of(item);
+				if (config != null)
+					this.decoration = new Decoration(config, itemFrame);
+
+			} else { // Clientside Entities
 				ClientSideItemFrame clientSideItemFrame = (ClientSideItemFrame) DecorationUtils.getItemFrame(block, MAX_RADIUS, blockFaceOverride, player, true);
 				if (clientSideItemFrame == null)
 					return;
@@ -72,14 +80,6 @@ public class DecorationInteractData {
 					Rotation rotation = clientSideItemFrame.getBukkitRotation();
 					this.decoration = new Decoration(config, null, rotation, null);
 				}
-			} else {
-				item = itemFrame.getItem();
-				if (Nullables.isNullOrAir(item))
-					return;
-
-				final DecorationConfig config = DecorationConfig.of(item);
-				if (config != null)
-					this.decoration = new Decoration(config, itemFrame);
 			}
 		}
 	}
@@ -214,5 +214,13 @@ public class DecorationInteractData {
 			return true;
 
 		return false;
+	}
+
+	public boolean doPlayHitSound() {
+		// Disables sound on multiblock wallthings when attempting to break from any other face than hanged face
+		if (decoration.getConfig().isMultiBlockWallThing() && decoration.getItemFrame().getFacing().getOppositeFace() != blockFaceOverride)
+			return false;
+
+		return true;
 	}
 }

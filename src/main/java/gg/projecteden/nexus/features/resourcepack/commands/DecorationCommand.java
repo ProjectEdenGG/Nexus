@@ -373,7 +373,11 @@ public class DecorationCommand extends CustomCommand {
 		} else
 			DecorationLang.stopDebugging(uuid());
 
-		send(PREFIX + "Debug " + (enable ? "&aEnabled" : "&cDisabled"));
+		String debugType = "Debug ";
+		if (deep)
+			debugType = "Deep Debug ";
+
+		send(PREFIX + debugType + (enable ? "&aEnabled" : "&cDisabled"));
 	}
 
 	// STORE COMMANDS

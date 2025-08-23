@@ -1,13 +1,13 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.toggle;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxSingle;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Toggleable;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Cyclable;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-public class RecordPlayer extends DyeableFloorThing implements Toggleable {
+public class RecordPlayer extends DyeableFloorThing implements Cyclable {
 	@Getter
 	private final RecordPlayerType recordPlayerType;
 
@@ -35,7 +35,12 @@ public class RecordPlayer extends DyeableFloorThing implements Toggleable {
 	}
 
 	@Override
-	public ItemModelType getToggledItemModel() {
+	public ItemModelType getNextItemModel() {
 		return recordPlayerType.getOppositeItemModelType();
+	}
+
+	@Override
+	public ItemModelType getPreviousItemModel() {
+		return getNextItemModel();
 	}
 }

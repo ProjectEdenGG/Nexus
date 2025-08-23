@@ -64,6 +64,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.Curtai
 import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.Curtain.CurtainType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.RecordPlayer;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.RecordPlayer.RecordPlayerType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.TV;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.TV.ChannelType;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.models.trophy.TrophyType;
@@ -1803,11 +1805,11 @@ public enum DecorationType {
 	@TypeConfig(money = 100, tokens = 10)
 	CARDBOARD_BOX_LARGE(new FloorThing(true, "Large Cardboard Box", ItemModelType.CARDBOARD_BOX_LARGE, HitboxUnique.CARDBOARD_BOX)),
 
-	@TypeConfig(money = 200, tokens = 20)
-	FLAT_SCREEN_TV(new WallThing(true, "Flat Screen TV", ItemModelType.FLAT_SCREEN_TV, HitboxWall._2x3H_LIGHT)),
-
 	@TypeConfig(money = 500, tokens = 50)
 	PLAYER_HEAD_BLOCK(new PlayerHeadBlock(false, "Player Head Block", ItemModelType.PLAYER_HEAD_BLOCK, HitboxSingle._1x1_BARRIER)),
+
+	@TypeConfig(money = 200, tokens = 20)
+	FLAT_SCREEN_TV(new TV("Flat Screen TV", ChannelType.OFF)),
 
 // 	------------------------------------------------------------------------------------------------------
 //										UNBUYABLE THINGS
@@ -1847,6 +1849,72 @@ public enum DecorationType {
 // 	------------------------------------------------------------------------------------------------------
 //										INTERNAL USE ONLY
 // 	------------------------------------------------------------------------------------------------------
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FLAT_SCREEN_TV_TEST_PATTERN(new TV("Flat Screen TV", ChannelType.TEST_PATTERN)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FLAT_SCREEN_TV_STATIC(new TV("Flat Screen TV", ChannelType.STATIC)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FLAT_SCREEN_TV_BACK_TO_THE_FUTURE(new TV("Flat Screen TV", ChannelType.BACK_TO_THE_FUTURE)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FLAT_SCREEN_TV_BEE_MOVIE(new TV("Flat Screen TV", ChannelType.BEE_MOVIE)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FLAT_SCREEN_TV_BREAKING_BAD(new TV("Flat Screen TV", ChannelType.BREAKING_BAD)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FLAT_SCREEN_TV_DEXTER(new TV("Flat Screen TV", ChannelType.DEXTER)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FLAT_SCREEN_TV_ET(new TV("Flat Screen TV", ChannelType.ET)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FLAT_SCREEN_TV_FOREST_GUMP(new TV("Flat Screen TV", ChannelType.FOREST_GUMP)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FLAT_SCREEN_TV_HOUSE_MD(new TV("Flat Screen TV", ChannelType.HOUSE_MD)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FLAT_SCREEN_TV_HUB(new TV("Flat Screen TV", ChannelType.HUB)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FLAT_SCREEN_TV_INTERSTELLAR(new TV("Flat Screen TV", ChannelType.INTERSTELLAR)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FLAT_SCREEN_TV_JOKER(new TV("Flat Screen TV", ChannelType.JOKER)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FLAT_SCREEN_TV_LION_KING(new TV("Flat Screen TV", ChannelType.LION_KING)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FLAT_SCREEN_TV_LORD_OF_THE_RINGS(new TV("Flat Screen TV", ChannelType.LORD_OF_THE_RINGS)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FLAT_SCREEN_TV_MATRIX(new TV("Flat Screen TV", ChannelType.MATRIX)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FLAT_SCREEN_TV_ROKU(new TV("Flat Screen TV", ChannelType.ROKU)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FLAT_SCREEN_TV_SHINING(new TV("Flat Screen TV", ChannelType.SHINING)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FLAT_SCREEN_TV_SMILING_FRIENDS(new TV("Flat Screen TV", ChannelType.SMILING_FRIENDS)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FLAT_SCREEN_TV_TITANIC(new TV("Flat Screen TV", ChannelType.TITANIC)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FLAT_SCREEN_TV_TRUMAN_SHOW(new TV("Flat Screen TV", ChannelType.TRUMAN_SHOW)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FLAT_SCREEN_TV_WALL_E(new TV("Flat Screen TV", ChannelType.WALL_E)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FLAT_SCREEN_TV_WIZARD_OF_OZ(new TV("Flat Screen TV", ChannelType.WIZARD_OF_OZ)),
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	SHELF_STORAGE(new Furniture(true, "Storage Shelf", ItemModelType.SHELF_STORAGE, PlacementType.FLOOR, HitboxFloor._2x3V)),

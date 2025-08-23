@@ -16,11 +16,13 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public interface Toggleable extends Interactable, MultiState {
+public interface Cyclable extends Interactable, MultiState {
 
-	ItemModelType getToggledItemModel();
+	ItemModelType getNextItemModel();
 
-	default boolean tryToggle(Player player, Block soundOrigin, ItemFrame itemFrame) {
+	ItemModelType getPreviousItemModel();
+
+	default boolean tryCycle(Player player, Block soundOrigin, ItemFrame itemFrame) {
 		if (!Nullables.isNullOrAir(ItemUtils.getTool(player)))
 			return false;
 
@@ -31,7 +33,10 @@ public interface Toggleable extends Interactable, MultiState {
 		if (Nullables.isNullOrAir(item))
 			return false;
 
-		ItemModelType itemModelType = getToggledItemModel();
+		ItemModelType itemModelType = getNextItemModel();
+		if (player.isSneaking())
+			itemModelType = getPreviousItemModel();
+
 		if (itemModelType == null)
 			return false;
 
@@ -51,11 +56,11 @@ public interface Toggleable extends Interactable, MultiState {
 		itemFrame.setItem(itemBuilder.build(), false);
 
 		if (soundOrigin != null)
-			playToggledSound(soundOrigin);
+			playSound(soundOrigin);
 
 		return true;
 	}
 
-	default void playToggledSound(@NonNull Block origin) {
+	default void playSound(@NonNull Block origin) {
 	}
 }

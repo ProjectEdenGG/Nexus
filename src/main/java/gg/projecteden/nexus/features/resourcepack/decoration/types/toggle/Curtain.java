@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.types.toggle;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxWall;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Toggleable;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Cyclable;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableWallThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
@@ -12,7 +12,7 @@ import lombok.Getter;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 
-public class Curtain extends DyeableWallThing implements Toggleable {
+public class Curtain extends DyeableWallThing implements Cyclable {
 	@Getter
 	private final CurtainType curtainType;
 
@@ -58,12 +58,17 @@ public class Curtain extends DyeableWallThing implements Toggleable {
 	}
 
 	@Override
-	public ItemModelType getToggledItemModel() {
+	public ItemModelType getNextItemModel() {
 		return curtainType.getOppositeItemModelType();
 	}
 
 	@Override
-	public void playToggledSound(@NotNull Block origin) {
+	public ItemModelType getPreviousItemModel() {
+		return getNextItemModel();
+	}
+
+	@Override
+	public void playSound(@NotNull Block origin) {
 		DecorationUtils.getSoundBuilder(CustomSound.DECOR_CURTAINS_USE).volume(0.5).location(origin).play();
 	}
 }

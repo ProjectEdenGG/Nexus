@@ -4,8 +4,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationCo
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Addition;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.CraftableDecoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Interactable;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Cyclable;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Seat;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Toggleable;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.NoiseMaker;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Edible;
 import lombok.AllArgsConstructor;
@@ -21,7 +21,7 @@ public enum DecorationTagType {
 	PLAYABLE(NoiseMaker.class, "麒"),
 	CRAFTABLE(CraftableDecoration.class, "殷"),
 	EDIBLE(Edible.class, "诐"),
-	TOGGLEABLE(Toggleable.class, "腈"),
+	CYCLABLE(Cyclable.class, "腈"),
 	INTERACTABLE(Interactable.class, "晖"),
 	ADDITION(Addition.class, "香"),
 	//
@@ -56,7 +56,7 @@ public enum DecorationTagType {
 		config.setLore(lore);
 	}
 
-	private static final List<DecorationTagType> INTERACTABLE_SUB_TAGS = List.of(PLAYABLE, TOGGLEABLE, SEAT);
+	private static final List<DecorationTagType> INTERACTABLE_SUB_TAGS = List.of(PLAYABLE, CYCLABLE, SEAT);
 	private static final List<DecorationTagType> IGNORED_TAGS = List.of(DecorationTagType.DECORATION, DecorationTagType.TOOL);
 
 	private static List<String> getApplicableTags(DecorationConfig config) {
@@ -75,7 +75,7 @@ public enum DecorationTagType {
 			if (tag == INTERACTABLE && config instanceof Interactable interactable) {
 				switch (interactable) {
 					case NoiseMaker noiseMaker -> applicableTags.addFirst(PLAYABLE.getTag());
-					case Toggleable toggleable -> applicableTags.addFirst(TOGGLEABLE.getTag());
+					case Cyclable toggleable -> applicableTags.addFirst(CYCLABLE.getTag());
 					case Seat seat -> applicableTags.addFirst(SEAT.getTag());
 					default -> applicableTags.addFirst(INTERACTABLE.getTag());
 				}
