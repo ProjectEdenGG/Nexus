@@ -28,7 +28,7 @@ public class ColorsCommand extends CustomCommand implements Listener {
 		send(" &0 &&00  &1 &&11  &2 &&22  &3 &&33  &4 &&44  &5 &&55  &6 &&66  &7 &&77  ");
 		send(" &8 &&88  &9 &&99  &a &&aa  &b &&bb  &c &&cc  &d &&dd  &e &&ee  &f &&ff  ");
 		line();
-		send(" &#&f123456 &fHex");
+		send(" &f &#&f123456 &fHex");
 		line();
 		send("&eFormats:");
 		line();
