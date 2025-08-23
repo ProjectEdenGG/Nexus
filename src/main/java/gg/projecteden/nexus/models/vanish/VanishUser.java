@@ -41,6 +41,7 @@ public class VanishUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private boolean vanished;
+	private boolean vanishOnLogin;
 	private LocalDateTime lastVanish;
 	private LocalDateTime lastUnvanish;
 	private Map<Setting, Boolean> settings = new HashMap<>();

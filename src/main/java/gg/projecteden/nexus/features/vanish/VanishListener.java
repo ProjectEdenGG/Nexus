@@ -18,10 +18,8 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.parchment.event.sound.SoundEvent;
 import lombok.AllArgsConstructor;
-import org.bukkit.GameEvent;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -31,11 +29,14 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockReceiveGameEvent;
-import org.bukkit.event.block.SculkBloomEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerPickupArrowEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.raid.RaidTriggerEvent;
-import org.bukkit.event.world.GenericGameEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -81,7 +82,10 @@ public class VanishListener implements Listener {
 
 		if (Rank.of(player).isSeniorStaff())
 			Vanish.vanish(player);
-		else
+		else if (service.get(player).isVanishOnLogin()) {
+			Vanish.vanish(player);
+			service.edit(player, user -> user.setVanishOnLogin(false));
+		} else
 			service.edit(player, VanishUser::unvanish);
 
 		Vanish.refreshAll();
