@@ -1810,6 +1810,9 @@ public enum DecorationType {
 // 	------------------------------------------------------------------------------------------------------
 
 	@TypeConfig(unbuyable = true)
+	ARCADE_MACHINE(new FloorThing(true, "Arcade Machine", ItemModelType.ARCADE_MACHINE, HitboxFloor._1x2V)),
+
+	@TypeConfig(unbuyable = true)
 	PAPER_LANTERN_SINGLE(new CeilingThing(false, "Paper Lanterns - Single", ItemModelType.PAPER_LANTERN_SINGLE, HitboxUnique.PAPER_LANTERN_2V)),
 
 	@TypeConfig(unbuyable = true)

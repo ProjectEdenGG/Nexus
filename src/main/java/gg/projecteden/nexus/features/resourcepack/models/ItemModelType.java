@@ -533,6 +533,7 @@ public enum ItemModelType {
 	ELECTRONICS_CABLE("decoration/electronics/cable"),
 	ELECTRONICS_CABLE_BROKEN("decoration/electronics/cable_broken"),
 	FLAT_SCREEN_TV("decoration/electronics/flat_screen_tv"),
+	ARCADE_MACHINE("decoration/electronics/arcade_machine", true),
 	ELECTRONICS_GRIFFIN_SETUP("decoration/electronics/griffin_setup"),
 	LAPTOP("decoration/electronics/laptop", true),
 	REGISTER_MODERN("decoration/electronics/register_black"),
