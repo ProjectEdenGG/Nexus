@@ -1312,6 +1312,7 @@ public enum ItemModelType {
 	TRASH_BAG("decoration/trash_bag"),
 	TRASH_CAN("decoration/trash_can", true),
 	JERRYCAN("decoration/jerrycan"),
+	LEATHER_BRIEFCASE("decoration/leather_briefcase"),
 	CEILING_FAN("decoration/ceiling_fan", true),
 	BEARFAIR21_CAKE("decoration/trophies/bearfair21_cake", Material.GOLD_INGOT),
 	BEARFAIR21_MINIGOLF("decoration/trophies/bearfair21_minigolf", Material.GOLD_INGOT),

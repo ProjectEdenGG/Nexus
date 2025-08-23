@@ -667,6 +667,9 @@ public enum DecorationType {
 	@TypeConfig(money = 225, tokens = 22, theme = Theme.OUTDOORS)
 	BENCH_WOODEN(new Bench(true, false, "Wooden Bench", ItemModelType.BENCH_WOODEN, ColorableType.STAIN, HitboxFloor._1x2H)),
 
+	@TypeConfig(money = 700, tokens = 50, theme = Theme.OUTDOORS)
+	WOODEN_PICNIC_TABLE(new Bench(true, true, "Wooden Picnic Table", ItemModelType.WOODEN_PICNIC_TABLE, ColorableType.STAIN, HitboxUnique.WOODEN_PICNIC_TABLE)),
+
 // 	------------------------------------------------------------------------------------------------------
 //										CATALOG: Art
 // 	------------------------------------------------------------------------------------------------------
@@ -835,9 +838,6 @@ public enum DecorationType {
 
 	@TypeConfig(money = 300, tokens = 30, tabs = {Tab.FURNITURE, Tab.TABLES})
 	TABLE_WOODEN_3x3(new Table(true, "Wooden Table - 3x3", ItemModelType.TABLE_WOODEN_3X3, HitboxFloor._3x3)),
-
-	@TypeConfig(money = 700, tokens = 50, tabs = {Tab.FURNITURE, Tab.TABLES})
-	WOODEN_PICNIC_TABLE(new Bench(true, true, "Wooden Picnic Table", ItemModelType.WOODEN_PICNIC_TABLE, ColorableType.STAIN, HitboxUnique.WOODEN_PICNIC_TABLE)),
 
 	// 	Chairs
 	@TypeConfig(money = 120, tokens = 12, tabs = {Tab.FURNITURE, Tab.CHAIRS})
@@ -1735,6 +1735,9 @@ public enum DecorationType {
 
 	@TypeConfig(money = 300, tokens = 30)
 	CEILING_FAN(new DyeableCeilingThing(false, "Ceiling Fan", ItemModelType.CEILING_FAN, ColorableType.STAIN, HitboxSingle._1x1_LIGHT)),
+
+	@TypeConfig(money = 75, tokens = 7)
+	LEATHER_BRIEFCASE(new FloorThing(false, "Leather Briefcase", ItemModelType.LEATHER_BRIEFCASE)),
 
 	@TypeConfig(money = 15, tokens = 1)
 	INKWELL(new FloorThing(false, "Inkwell", ItemModelType.INKWELL)),
