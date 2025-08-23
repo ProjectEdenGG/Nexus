@@ -1,11 +1,16 @@
 package gg.projecteden.nexus.features.store.perks.inventory.autoinventory;
 
+import com.griefcraft.lwc.LWC;
+import com.griefcraft.model.Permission.Access;
+import com.griefcraft.model.Permission.Type;
 import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks.BackpackMenu.BackpackHolder;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.tasks.FindChestsThread.DepositRecord;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser.AutoSortInventoryType;
+import gg.projecteden.nexus.models.trust.TrustsUser.TrustType;
+import gg.projecteden.nexus.models.trust.TrustsUserService;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -20,6 +25,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.BlockInventoryHolder;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -33,6 +39,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 public class AutoInventory extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix("AutoSort");
@@ -97,6 +104,10 @@ public class AutoInventory extends Feature {
 		if (user.getActiveProfile().getDisabledInventoryTypes().contains(inventoryType))
 			return false;
 
+		if (inventory.getHolder() instanceof BlockInventoryHolder holder)
+			if (!hasRealLWCAccess(player, holder.getBlock()))
+				return false;
+
 		if (inventory.getHolder() instanceof BackpackHolder backpackHolder)
 			if (!backpackHolder.isAutosort())
 				return false;
@@ -105,6 +116,31 @@ public class AutoInventory extends Feature {
 			return false;
 
 		return true;
+	}
+
+	public static boolean hasRealLWCAccess(Player player, Block block) {
+		LWC lwc = LWC.getInstance();
+		if (!lwc.isMod(player)) {
+			// They implicitly have real access because they opened it
+			return true;
+		}
+
+		var protection = lwc.findProtection(block);
+		if (protection == null)
+			return true;
+
+		if (protection.isRealOwner(player))
+			return true;
+
+		Access access = protection.getAccess(player.getUniqueId().toString(), Type.PLAYER);
+		if (access == Access.PLAYER)
+			return true;
+
+		var trusted = new TrustsUserService().get(UUID.fromString(protection.getOwner())).trusts(TrustType.LOCKS, player);
+		if (trusted)
+			return true;
+
+		return false;
 	}
 
 	public static DepositRecord depositMatching(AutoInventoryUser autoInventoryUser, Inventory destination, boolean depositHotbar) {
