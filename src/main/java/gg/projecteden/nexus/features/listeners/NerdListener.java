@@ -47,7 +47,7 @@ public class NerdListener implements Listener {
 		new NerdService().edit(event.getUniqueId(), nerd -> {
 			nerd.setLastJoin(LocalDateTime.now());
 			if (nerd.getName().length() <= 16 && !nerd.getName().equals(event.getName())) {
-				Punishments.broadcast("&e" + nerd.getNickname() + " &chas changed their username to &e" + event.getName());
+				Punishments.broadcast("&e" + nerd.getNickname() + " &chas changed their username from &e" + nerd.getName() + " &cto &e" + event.getName());
 				nerd.setName(event.getName());
 			}
 			nerd.getPastNames().add(event.getName());
