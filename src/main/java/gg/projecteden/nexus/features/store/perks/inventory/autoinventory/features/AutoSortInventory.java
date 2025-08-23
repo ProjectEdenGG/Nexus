@@ -44,7 +44,9 @@ public class AutoSortInventory implements Listener {
 		if (!user.hasFeatureEnabled(AutoInventoryFeature.SORT_OWN_INVENTORY))
 			return;
 
-		if (user.isSortingInventory()) return;
+		if (user.isSortingInventory())
+			return;
+
 		user.setSortingInventory(true);
 
 		final int firstEmpty = user.getInventory().firstEmpty();
@@ -59,11 +61,14 @@ public class AutoSortInventory implements Listener {
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onInventoryOpen(InventoryOpenEvent event) {
 		Inventory bottomInventory = event.getView().getBottomInventory();
-		if (bottomInventory.getType() != InventoryType.PLAYER) return;
+		if (bottomInventory.getType() != InventoryType.PLAYER)
+			return;
 
 		HumanEntity holder = ((PlayerInventory) bottomInventory).getHolder();
-		if (!(holder instanceof Player player)) return;
-		if (event.getView().getTopInventory().getHolder() instanceof BackpackHolder) return;
+		if (!(holder instanceof Player player))
+			return;
+		if (event.getView().getTopInventory().getHolder() instanceof BackpackHolder)
+			return;
 
 		AutoInventoryUser user = AutoInventoryUser.of(player);
 		sort(user, bottomInventory);

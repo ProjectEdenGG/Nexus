@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.store.perks.inventory.autoinventory;
 
 import gg.projecteden.api.common.utils.Utils;
+import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks.BackpackMenu.BackpackHolder;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.tasks.FindChestsThread.DepositRecord;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
@@ -95,6 +96,10 @@ public class AutoInventory extends Feature {
 
 		if (user.getActiveProfile().getDisabledInventoryTypes().contains(inventoryType))
 			return false;
+
+		if (inventory.getHolder() instanceof BackpackHolder backpackHolder)
+			if (!backpackHolder.isAutosort())
+				return false;
 
 		if (title != null && title.contains("*"))
 			return false;

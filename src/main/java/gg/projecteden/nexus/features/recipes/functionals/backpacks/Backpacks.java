@@ -30,6 +30,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
@@ -49,6 +50,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -124,16 +126,16 @@ public class Backpacks extends FunctionalRecipe {
 	}
 
 	public static void openBackpack(Player player, Decoration decoration) {
-		openBackpack(player, decoration.getItem(player), decoration.getItemFrame());
+		openBackpack(player, decoration.getItem(player), true, decoration.getItemFrame());
 	}
 
 	public static void openBackpack(Player player, ItemStack backpack) {
-		openBackpack(player, backpack, null);
+		openBackpack(player, backpack, true, null);
 	}
 
-	public static void openBackpack(Player player, ItemStack backpack, ItemFrame frame) {
+	public static void openBackpack(Player player, ItemStack backpack, boolean autosort, ItemFrame frame) {
 		new SoundBuilder(Sound.BLOCK_CHEST_OPEN).receiver(player).volume(.3f).play();
-		new BackpackMenu(player, backpack, frame);
+		new BackpackMenu(player, backpack, autosort, frame);
 	}
 
 	public static BackpackTier getTier(ItemStack backpack) {
@@ -177,6 +179,11 @@ public class Backpacks extends FunctionalRecipe {
 
 		if (!(event.getWhoClicked() instanceof Player player))
 			return;
+
+		InventoryHolder holder = event.getClickedInventory().getHolder();
+		if (holder != null)
+			if ("OpenPlayer".equals(holder.getClass().getSimpleName()))
+				return;
 
 		Optional<SmartInventory> smartInv = SmartInvsPlugin.manager().getInventory(player);
 		if (smartInv.isPresent() && !smartInv.get().isCloseable())
@@ -350,12 +357,13 @@ public class Backpacks extends FunctionalRecipe {
 		@Getter
 		private final BackpackHolder inventoryHolder;
 
-		public BackpackMenu(Player player, ItemStack backpack, ItemFrame frame) {
+		public BackpackMenu(Player player, ItemStack backpack, boolean autosort, ItemFrame frame) {
 			this.player = player;
 			this.backpack = backpack;
 			this.frame = frame;
 			this.originalItems = ItemUtils.getNBTContentsOfNonInventoryItem(backpack, getTier(backpack).getRows() * 9);
-			this.inventoryHolder = HOLDERS.computeIfAbsent(getBackpackId(backpack), BackpackHolder::new);
+			this.inventoryHolder = HOLDERS.computeIfAbsent(getBackpackId(backpack), id -> new BackpackHolder(id, autosort));
+			this.inventoryHolder.setAutosort(autosort);
 
 			try {
 				verifyInventory(player);
@@ -373,9 +381,11 @@ public class Backpacks extends FunctionalRecipe {
 			}
 		}
 
+		@Data
 		@AllArgsConstructor
 		public static class BackpackHolder extends CustomInventoryHolder {
 			private String id;
+			private boolean autosort;
 		}
 
 		@Override
