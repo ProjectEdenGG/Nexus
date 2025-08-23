@@ -197,7 +197,7 @@ public class DecorationListener implements Listener {
 		if (frameHoldingItem && !frameHoldingDecor)
 			return;
 
-		DecorationLang.debug(player, "onInteractItemFrame:");
+		DecorationLang.debug(player, "\nonInteractItemFrame:");
 
 		if (!frameHoldingItem) {
 			if (!playerHoldingDecor)

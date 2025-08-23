@@ -325,12 +325,12 @@ public class HitboxEnums {
 		)),
 
 		TV(List.of(
-			Hitbox.origin(),
-			Hitbox.offset(BlockFace.UP, 1),
-			Hitbox.offset(BlockFace.WEST, 1),
-			Hitbox.offset(BlockFace.WEST, 1, BlockFace.UP, 1),
-			Hitbox.offset(BlockFace.EAST, 1),
-			Hitbox.offset(BlockFace.EAST, 1, BlockFace.UP, 1)
+			Hitbox.originLight(),
+			Hitbox.offsetLight(BlockFace.UP, 1),
+			Hitbox.offsetLight(BlockFace.WEST, 1),
+			Hitbox.offsetLight(BlockFace.WEST, 1, BlockFace.UP, 1),
+			Hitbox.offsetLight(BlockFace.EAST, 1),
+			Hitbox.offsetLight(BlockFace.EAST, 1, BlockFace.UP, 1)
 		)),
 		;
 

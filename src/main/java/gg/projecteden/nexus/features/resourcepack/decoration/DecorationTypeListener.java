@@ -71,10 +71,10 @@ public class DecorationTypeListener implements Listener {
 
 		Decoration decoration = event.getDecoration();
 		DecorationConfig config = decoration.getConfig();
-		if (!(config instanceof Cyclable iterable))
+		if (!(config instanceof Cyclable cyclable))
 			return;
 
-		iterable.tryCycle(event.getPlayer(), event.getClickedBlock(), decoration.getItemFrame());
+		cyclable.tryCycle(event.getPlayer(), event.getClickedBlock(), decoration.getItemFrame());
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
