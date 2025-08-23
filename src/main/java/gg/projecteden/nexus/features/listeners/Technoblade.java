@@ -49,7 +49,8 @@ public class Technoblade implements Listener {
 			saddled = oldWasSaddled(pig);
 
 		pig.getPersistentDataContainer().remove(NBT_KEY);
-		setSaddle(pig, saddled ? SaddleState.SADDLED : SaddleState.UNSADDLED);
+//		setSaddle(pig, saddled ? SaddleState.SADDLED : SaddleState.UNSADDLED);
+		setSaddle(pig, SaddleState.UNSADDLED);
 	}
 
 	private static boolean oldWasSaddled(Pig pig) {
