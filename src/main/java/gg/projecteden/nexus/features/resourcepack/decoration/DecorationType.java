@@ -1730,6 +1730,9 @@ public enum DecorationType {
 	@TypeConfig(money = 50, tokens = 5)
 	TRASH_BAG(new FloorThing(false, "Trash Bag", ItemModelType.TRASH_BAG, HitboxSingle._1x1_BARRIER)),
 
+	@TypeConfig(money = 50, tokens = 5)
+	JERRYCAN(new FloorThing(false, "Jerrycan", ItemModelType.JERRYCAN)),
+
 	@TypeConfig(money = 300, tokens = 30)
 	CEILING_FAN(new DyeableCeilingThing(false, "Ceiling Fan", ItemModelType.CEILING_FAN, ColorableType.STAIN, HitboxSingle._1x1_LIGHT)),
 
