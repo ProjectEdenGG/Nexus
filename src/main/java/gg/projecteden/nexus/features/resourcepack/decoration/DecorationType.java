@@ -55,6 +55,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Well;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.WorkBench;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Block;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.CeilingThing;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableCeilingThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableWallThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.FloorThing;
@@ -1726,6 +1727,9 @@ public enum DecorationType {
 
 	@TypeConfig(money = 50, tokens = 5)
 	TRASH_BAG(new FloorThing(false, "Trash Bag", ItemModelType.TRASH_BAG, HitboxSingle._1x1_BARRIER)),
+
+	@TypeConfig(money = 300, tokens = 30)
+	CEILING_FAN(new DyeableCeilingThing(false, "Ceiling Fan", ItemModelType.CEILING_FAN, ColorableType.STAIN, HitboxSingle._1x1_LIGHT)),
 
 	@TypeConfig(money = 15, tokens = 1)
 	INKWELL(new FloorThing(false, "Inkwell", ItemModelType.INKWELL)),
