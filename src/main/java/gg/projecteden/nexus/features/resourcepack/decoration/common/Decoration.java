@@ -22,12 +22,14 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationRo
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.workbenches.dyestation.CreativeBrushMenu;
+import gg.projecteden.nexus.models.trust.TrustsUser;
 import gg.projecteden.nexus.models.trust.TrustsUser.TrustType;
 import gg.projecteden.nexus.models.trust.TrustsUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
