@@ -44,7 +44,7 @@ public class Technoblade implements Listener {
 		if (pig.getVariant() != Variant.TEMPERATE)
 			return;
 
-		boolean saddled = pig.hasSaddle();
+		boolean saddled = wasSaddled(pig);
 		if (pig.getPersistentDataContainer().has(NBT_KEY, PersistentDataType.BYTE))
 			saddled = oldWasSaddled(pig);
 
