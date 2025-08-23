@@ -35,6 +35,7 @@ public interface Seat extends Interactable {
 	List<Material> ignoredMaterials = new ArrayList<>() {{
 		addAll(MaterialTag.ALL_AIR.getValues());
 		add(Material.LIGHT);
+		add(Material.BARRIER);
 		addAll(MaterialTag.ALL_SIGNS.getValues());
 	}};
 
@@ -46,24 +47,24 @@ public interface Seat extends Interactable {
 		return false;
 	}
 
-	default ArmorStand trySit(Player player, ItemFrame itemFrame, DecorationConfig config) {
-		return trySit(player, itemFrame.getLocation().getBlock(), itemFrame.getRotation(), config);
+	default ArmorStand trySit(Player player, ItemFrame itemFrame, Decoration decoration) {
+		return trySit(player, itemFrame.getLocation().getBlock(), itemFrame.getRotation(), decoration);
 	}
 
-	default ArmorStand trySit(Player player, Block block, Rotation rotation, DecorationConfig config) {
+	default ArmorStand trySit(Player player, Block block, Rotation rotation, Decoration decoration) {
 		Location location = block.getLocation().toCenterLocation().clone().add(0, -1 + getSitHeight(), 0);
 
-		if (!canSit(player, location))
+		if (!canSit(player, location, decoration))
 			return null;
 
-		return makeSit(player, location, rotation, config);
+		return makeSit(player, location, rotation, decoration);
 	}
 
-	default ArmorStand makeSit(Player player, Location location, Rotation rotation, DecorationConfig config) {
+	default ArmorStand makeSit(Player player, Location location, Rotation rotation, Decoration decoration) {
 		World world = location.getWorld();
 		float yaw = getYaw(rotation);
 
-		if (config instanceof Couch couch) {
+		if (decoration.getConfig() instanceof Couch couch) {
 			if (couch.getCouchPart().equals(CouchPart.CORNER))
 				yaw += 45;
 		}
@@ -99,7 +100,7 @@ public interface Seat extends Interactable {
 		return ndx * 45F;
 	}
 
-	default boolean canSit(Player player, Location location) {
+	default boolean canSit(Player player, Location location, Decoration decoration) {
 		if (isSitting(player)) {
 			DecorationLang.debug(player, "player is already sitting");
 			return false;
@@ -110,6 +111,13 @@ public interface Seat extends Interactable {
 			DecorationError.SEAT_OCCUPIED.send(player);
 			return false;
 		}
+
+		var hitbox = decoration.getHitbox(location);
+		if (hitbox == null)
+			return false;
+
+		if (!hitbox.isSittable())
+			return false;
 
 		if (!WorldGuardFlagUtils.test(player, CustomFlags.GSIT_SIT))
 			return false;

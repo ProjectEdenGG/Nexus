@@ -833,6 +833,9 @@ public enum DecorationType {
 	@TypeConfig(money = 300, tokens = 30, tabs = {Tab.FURNITURE, Tab.TABLES})
 	TABLE_WOODEN_3x3(new Table(true, "Wooden Table - 3x3", ItemModelType.TABLE_WOODEN_3X3, HitboxFloor._3x3)),
 
+	@TypeConfig(money = 700, tokens = 50, tabs = {Tab.FURNITURE, Tab.TABLES})
+	WOODEN_PICNIC_TABLE(new Bench(true, true, "Wooden Picnic Table", ItemModelType.WOODEN_PICNIC_TABLE, ColorableType.STAIN, HitboxUnique.WOODEN_PICNIC_TABLE)),
+
 	// 	Chairs
 	@TypeConfig(money = 120, tokens = 12, tabs = {Tab.FURNITURE, Tab.CHAIRS})
 	CHAIR_WOODEN_BASIC(new DyeableChair(false, false, "Wooden Chair", ItemModelType.CHAIR_WOODEN_BASIC, ColorableType.STAIN)),

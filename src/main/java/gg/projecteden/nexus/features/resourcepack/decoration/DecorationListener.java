@@ -55,6 +55,8 @@ import org.bukkit.inventory.PlayerInventory;
 import java.util.HashMap;
 import java.util.Map;
 
+import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
+
 @SuppressWarnings("deprecation")
 public class DecorationListener implements Listener {
 
@@ -325,10 +327,9 @@ public class DecorationListener implements Listener {
 						shouldInteract = true;
 				}
 
-				final boolean shouldInteractFinal = shouldInteract;
-				DecorationLang.debug(player, "should interact = " + shouldInteractFinal);
+				DecorationLang.debug(player, "should interact = " + shouldInteract);
 
-				if (shouldInteractFinal)
+				if (shouldInteract)
 					cancel = interact(data, InteractType.RIGHT_CLICK);
 				else
 					cancel = place(data);
@@ -545,7 +546,7 @@ public class DecorationListener implements Listener {
 			if (!interact1.equals(interact2))
 				return false;
 
-			if (Nullables.isNotNullOrAir(_event.getItem())) {
+			if (isNotNullOrAir(_event.getItem())) {
 				if (!ItemUtils.isFuzzyMatch(_event.getItem(), event.getItem()))
 					return false;
 			}

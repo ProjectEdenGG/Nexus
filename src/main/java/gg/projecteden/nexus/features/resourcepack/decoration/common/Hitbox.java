@@ -29,6 +29,7 @@ public class Hitbox {
 	@NonNull Material material;
 	Map<BlockFace, Integer> offsets = new HashMap<>();
 	int lightLevel = 0;
+	boolean sittable = true;
 
 	public Hitbox(@NotNull Material material, Map<BlockFace, Integer> offset) {
 		this.material = material;
@@ -45,10 +46,11 @@ public class Hitbox {
 		this.lightLevel = lightHitbox.getLevel();
 	}
 
-	public Hitbox(@NotNull Material material, Map<BlockFace, Integer> offsets, int lightLevel) {
+	public Hitbox(@NotNull Material material, Map<BlockFace, Integer> offsets, int lightLevel, boolean sittable) {
 		this.material = material;
 		this.offsets = offsets;
 		this.lightLevel = lightLevel;
+		this.sittable = sittable;
 	}
 
 	public static Hitbox origin(Material material) {
@@ -163,6 +165,11 @@ public class Hitbox {
 		return new Hitbox(Hitbox.light(lightLevel), Map.of(face1, o1, face2, o2, face3, o3, face4, o4));
 	}
 
+	public Hitbox sittable(boolean sittable) {
+		this.sittable = sittable;
+		return this;
+	}
+
 	//
 
 	public static List<Hitbox> single() {
@@ -219,7 +226,7 @@ public class Hitbox {
 				offsetsRotated.put(faceRotated, offsets.get(_face));
 			}
 
-			result.add(new Hitbox(material, offsetsRotated, hitbox.getLightLevel()));
+			result.add(new Hitbox(material, offsetsRotated, hitbox.getLightLevel(), hitbox.isSittable()));
 		}
 
 		return result;

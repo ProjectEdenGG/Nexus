@@ -55,6 +55,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -229,7 +230,6 @@ public class Decoration {
 					player.getWorld().dropItemNaturally(origin, item);
 				}
 			}
-
 		}
 
 		DecorationUtils.getSoundBuilder(config.getBreakSound()).location(origin).play();
@@ -451,7 +451,7 @@ public class Decoration {
 		if (!sitEvent.callEvent())
 			return false;
 
-		ArmorStand armorStand = sitEvent.getSeat().trySit(player, block, sitEvent.getRotation(), config);
+		ArmorStand armorStand = sitEvent.getSeat().trySit(player, block, sitEvent.getRotation(), sitEvent.getDecoration());
 		if (armorStand == null)
 			return false;
 
@@ -506,5 +506,17 @@ public class Decoration {
 
 		DecorationLang.debug(player, "painted");
 		return true;
+	}
+
+	public Hitbox getHitbox(Location location) {
+		if (!isValidFrame())
+			return null;
+
+		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(config, itemFrame);
+		for (Hitbox hitbox : hitboxes)
+			if (hitbox.getOffsetBlock(getOrigin()).equals(location.getBlock()))
+				return hitbox;
+
+		return null;
 	}
 }

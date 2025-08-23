@@ -884,6 +884,7 @@ public enum ItemModelType {
 	TABLE_WOODEN_2X2("decoration/furniture/tables/wooden_2x2", true),
 	TABLE_WOODEN_2X3("decoration/furniture/tables/wooden_2x3", true),
 	TABLE_WOODEN_3X3("decoration/furniture/tables/wooden_3x3", true),
+	WOODEN_PICNIC_TABLE("decoration/furniture/wooden_picnic_table", true),
 	TOILET_MODERN("decoration/furniture/toilet_modern", true),
 	WARDROBE("decoration/furniture/wardrobe", true),
 	GIANT_CANDY_CANE("decoration/giant_candy_cane", true),

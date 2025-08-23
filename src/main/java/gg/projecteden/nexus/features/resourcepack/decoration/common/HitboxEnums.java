@@ -311,6 +311,18 @@ public class HitboxEnums {
 				Hitbox.offset(BlockFace.DOWN, 2),
 				Hitbox.offsetLight(15, BlockFace.DOWN, 3)
 		)),
+
+		WOODEN_PICNIC_TABLE(List.of(
+			Hitbox.origin().sittable(false),
+			Hitbox.offset(BlockFace.EAST, 1).sittable(false),
+			Hitbox.offset(BlockFace.NORTH, 1),
+			Hitbox.offset(BlockFace.WEST, 1).sittable(false),
+			Hitbox.offset(BlockFace.SOUTH, 1),
+			Hitbox.offset(BlockFace.NORTH, 1, BlockFace.EAST, 1),
+			Hitbox.offset(BlockFace.NORTH, 1, BlockFace.WEST, 1),
+			Hitbox.offset(BlockFace.SOUTH, 1, BlockFace.EAST, 1),
+			Hitbox.offset(BlockFace.SOUTH, 1, BlockFace.WEST, 1)
+		)),
 		;
 
 		@Getter
