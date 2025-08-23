@@ -250,6 +250,7 @@ public enum ChatGameType {
 		ONEBLOCK("What is the name of server's version of skyblock?", "Oneblock"),
 		BARREL("What storage block has had it's storage space increased on Project Eden?", "barrel"),
 		TITAN("What is the name of the server's client-side mod made to streamline loading the resource pack?", "Titan"),
+		PROPORTIONATOR("What item allows you to change the scale of entities?", "Proportionator"),
 
 		VOTE_CRATE_RAREST("What is the least likely reward you can obtain from the Vote Crate?", List.of("dragon egg", "ender dragon egg", "enderdragon egg")),
 		VOTE_CRATE_MOST_EXPENSIVE("How many vote points does a beacon cost in the Vote Point Store (/vps)?", getNumberAnswers(250)),
