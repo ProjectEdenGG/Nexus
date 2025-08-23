@@ -1,9 +1,11 @@
 package gg.projecteden.nexus.features.listeners;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import kotlin.Pair;
@@ -11,6 +13,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.FallingBlock;
@@ -109,7 +113,8 @@ public class LaunchPads implements Listener {
 		launchPadPlayers.put(player.getUniqueId(), task(player, fallingBlock));
 		launchPadBlockUUIDs.add(fallingBlock.getUniqueId());
 
-		player.getWorld().createExplosion(player.getLocation(), 0);
+		new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(player.getLocation()).volume(0.5).play();
+		new ParticleBuilder(Particle.EXPLOSION).location(player.getLocation()).spawn();
 	}
 
 	@SuppressWarnings({"removal", "deprecation"})
