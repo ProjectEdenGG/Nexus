@@ -180,6 +180,9 @@ public enum MobHeadType implements MobHead {
 	@HeadConfig(headId = "3135")
 	GUARDIAN(Sound.ENTITY_GUARDIAN_AMBIENT_LAND),
 
+	@HeadConfig(headId = "117203")
+	HAPPY_GHAST(Sound.ENTITY_HAPPY_GHAST_AMBIENT),
+
 	@HeadConfig(headId = "34783")
 	HOGLIN(Sound.ENTITY_HOGLIN_ANGRY),
 
