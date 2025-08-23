@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.nameplates;
 
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -19,29 +21,27 @@ public class TameablesNameplateFix implements Listener {
 	private static final Team TEAM = initializeTeam(TEAM_NAME);
 
 	static {
-		for (World world : Bukkit.getWorlds())
-			for (Entity entity : world.getEntities())
-				if (entity instanceof Tameable tameable)
-					assign(tameable);
+		Tasks.repeat(TickTime.SECOND, TickTime.SECOND, () -> {
+			for (World world : Bukkit.getWorlds())
+				for (Entity entity : world.getEntities())
+					assign(entity);
+		});
 	}
 
 	@EventHandler
 	public void on(EntityAddToWorldEvent event) {
-		if (!(event.getEntity() instanceof Tameable tameable))
-			return;
-
-		assign(tameable);
+		assign(event.getEntity());
 	}
 
 	@EventHandler
 	public void on(EntityTameEvent event) {
-		if (!(event.getEntity() instanceof Tameable tameable))
-			return;
-
-		assign(tameable);
+		assign(event.getEntity());
 	}
 
-	private static void assign(Tameable tameable) {
+	private static void assign(Entity entity) {
+		if (!(entity instanceof Tameable tameable))
+			return;
+
 		Team oldTeam = TeamAssigner.scoreboard().getEntityTeam(tameable);
 		Team newTeam = TEAM;
 
