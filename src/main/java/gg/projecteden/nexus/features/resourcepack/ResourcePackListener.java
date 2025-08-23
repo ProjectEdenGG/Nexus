@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.resourcepack;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
@@ -14,7 +13,6 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -50,15 +48,20 @@ public class ResourcePackListener implements Listener {
 		});
 	}
 
-	@EventHandler
-	public void on(BlockPlaceEvent event) {
-		final ItemModelType itemModelType = ItemModelType.of(event.getItemInHand());
-		if (itemModelType != null && itemModelType.canBePlaced())
-			return;
-
-		if (ResourcePack.isCustomItem(event.getItemInHand()))
-			event.setCancelled(true);
-	}
+	// Is this even needed?
+//	@EventHandler
+//	public void on(BlockPlaceEvent event) {
+//		final ItemModelType itemModelType = ItemModelType.of(event.getItemInHand());
+//		if (itemModelType != null && itemModelType.canBePlaced())
+//			return;
+//
+//		ItemStack item = event.getItemInHand();
+//		if (EquipmentSkinType.isApplicable(item))
+//			return;
+//
+//		if (ResourcePack.isCustomItem(item))
+//			event.setCancelled(true);
+//	}
 
 	@EventHandler
 	public void on(PlayerInteractEntityEvent event) {
