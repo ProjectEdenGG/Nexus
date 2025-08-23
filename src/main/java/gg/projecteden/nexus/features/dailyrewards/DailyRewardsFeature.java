@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.dailyrewards;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.staff.admin.CouponCommand;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.models.dailyreward.DailyRewardUser;
 import gg.projecteden.nexus.models.dailyreward.DailyRewardUser.DailyStreak;
 import gg.projecteden.nexus.models.dailyreward.DailyRewardUserService;
@@ -433,7 +434,7 @@ public class DailyRewardsFeature extends Feature {
 				/*  97 */ new Reward("150 Enchanting Levels")					.levels(150),
 				/*  98 */ new Reward("64 Podzol")								.item(Material.PODZOL, 64),
 				/*  99 */ new Reward("1 Shulker Box")							.item(Material.CYAN_SHULKER_BOX, 1),
-				/* 100 */ new Reward("64 Sea Lanterns")						.item(Material.SEA_LANTERN, 64)
+				/* 100 */ new Reward("1 Mystery Crate Key")					.item(CrateType.MYSTERY.getKey())
 			);
 
 			default -> Collections.emptyList();
