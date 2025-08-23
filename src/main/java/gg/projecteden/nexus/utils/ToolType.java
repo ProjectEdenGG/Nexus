@@ -59,6 +59,7 @@ public enum ToolType {
 		Material.DIAMOND_HOE,
 		Material.NETHERITE_HOE
 	),
+	MACE(Material.MACE),
 	SHEARS(Material.SHEARS),
 	BOW(Material.BOW),
 	CROSSBOW(Material.CROSSBOW),
