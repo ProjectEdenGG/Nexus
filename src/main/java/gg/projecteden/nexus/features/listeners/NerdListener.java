@@ -72,6 +72,7 @@ public class NerdListener implements Listener {
 		final Runnable setLoginLocation = () -> new NerdService().edit(player, nerd -> nerd.setLoginLocation(player.getLocation()));
 
 		setLoginLocation.run();
+		player.setCustomName(Nickname.of(player));
 
 		if (toSpawn.contains(player.getUniqueId())) {
 			Warps.survival(player).thenRun(setLoginLocation);
