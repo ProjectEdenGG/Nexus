@@ -81,9 +81,13 @@ class PathParser {
 					arg.setParamIndex(paramIndex++);
 					Parameter parameter = method.getParameters()[arg.getParamIndex()];
 					Arg annotation = parameter.getAnnotation(Arg.class);
-					if (annotation != null && !Nullables.isNullOrEmpty(annotation.permission()))
-						if (!event.getSender().hasPermission(annotation.permission()))
+					if (annotation != null) {
+						if (!annotation.tabComplete())
 							break;
+						if (!Nullables.isNullOrEmpty(annotation.permission()))
+							if (!event.getSender().hasPermission(annotation.permission()))
+								break;
+					}
 
 					arg.setTabCompleter(parameter.getType());
 					arg.setList(Collection.class.isAssignableFrom(parameter.getType()));
@@ -159,10 +163,14 @@ class PathParser {
 				if (switchAnnotation == null)
 					continue;
 
-				if (argAnnotation != null)
+				if (argAnnotation != null) {
+					if (!argAnnotation.tabComplete())
+						continue;
+
 					if (!Nullables.isNullOrEmpty(argAnnotation.permission()))
 						if (!event.getSender().hasPermission(argAnnotation.permission()))
 							continue;
+				}
 
 				Pattern pattern = CustomCommand.getSwitchPattern(parameter);
 				boolean found = false;

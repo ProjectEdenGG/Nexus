@@ -42,6 +42,8 @@ public @interface Arg {
 	 */
 	int context() default -1;
 
+	boolean tabComplete() default true;
+
 	/**
 	 * Uses the tab completer for the provided class instead of the default
 	 * <p>
