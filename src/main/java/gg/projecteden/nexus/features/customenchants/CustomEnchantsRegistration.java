@@ -166,6 +166,9 @@ public class CustomEnchantsRegistration {
 
 		freeze();
 
+		if (customEnchant instanceof Listener listener)
+			Nexus.registerListener(listener);
+
 		return CraftEnchantment.minecraftToBukkit(enchantment);
 	}
 
