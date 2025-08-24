@@ -302,6 +302,11 @@ public class Misc implements Listener {
 		if (event.getEntity() instanceof Fox)
 			if (event.getCause().equals(DamageCause.DROWNING))
 				event.setCancelled(true);
+
+		if (event.getEntity() instanceof Player player)
+			if (event.getCause() == DamageCause.VOID)
+				if (player.getGameMode() == GameMode.SPECTATOR)
+					event.setCancelled(true);
 	}
 
 	@EventHandler
