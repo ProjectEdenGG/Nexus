@@ -18,6 +18,7 @@ import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
 import gg.projecteden.nexus.models.mode.ModeUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
@@ -125,12 +126,23 @@ public class FlyCommand extends CustomCommand implements Listener {
 		}
 	}
 
+	static {
+		Tasks.repeat(0, 10, () -> {
+			for (WorldGroup survivalGroup : WorldGroup.getSurvivalModeGroups())
+				for (Player player : OnlinePlayers.where().worldGroup(survivalGroup).get())
+					if (!player.hasPermission("essentials.fly"))
+						FlyCommand.off(player, "FlyCommand#static Tasks.repeat");
+		});
+	}
+
 	@EventHandler
 	public void on(PlayerChangedWorldEvent event) {
 		Player player = event.getPlayer();
 
-		if (!player.hasPermission("essentials.fly"))
-			FlyCommand.off(player, "FlyCommand#onPlayerChangedWorld");
+		Tasks.wait(1, () -> {
+			if (!player.hasPermission("essentials.fly"))
+				FlyCommand.off(player, "FlyCommand#onPlayerChangedWorld");
+		});
 	}
 
 	@EventHandler

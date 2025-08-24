@@ -94,7 +94,8 @@ public class PlayerUtils {
 	public static void setFlying(Player player, boolean flying, String debugReason) {
 		Debug.log(DebugType.FLY, debugReason + " | Flying = " + flying);
 		player.setFlying(flying);
-		IOUtils.fileAppend("cheats", Nickname.of(player) + " " + (flying ? "enabled" : "disabled") + " flying at " + StringUtils.xyzw(player.getLocation()));}
+		IOUtils.fileAppend("cheats", Nickname.of(player) + " " + (flying ? "enabled" : "disabled") + " flying at " + StringUtils.xyzw(player.getLocation()) + " | reason: " + debugReason);
+	}
 
 	public static void setAllowFlight(Player player, boolean allowFlight, Class<?> clazz) {
 		setAllowFlight(player, allowFlight, clazz.getSimpleName());
@@ -103,7 +104,7 @@ public class PlayerUtils {
 	public static void setAllowFlight(Player player, boolean allowFlight, String debugReason) {
 		Debug.log(DebugType.FLY, debugReason + " | Flying = " + allowFlight);
 		player.setAllowFlight(allowFlight);
-		IOUtils.fileAppend("cheats", Nickname.of(player) + " " + (allowFlight ? "enabled" : "disabled") + " flight at " + StringUtils.xyzw(player.getLocation()));
+		IOUtils.fileAppend("cheats", Nickname.of(player) + " " + (allowFlight ? "enabled" : "disabled") + " flight at " + StringUtils.xyzw(player.getLocation()) + " | reason: " + debugReason);
 	}
 
 	public enum Dev implements HasPlayer, PlayerOwnedObject {
