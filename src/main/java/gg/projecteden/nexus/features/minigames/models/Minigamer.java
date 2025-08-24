@@ -303,9 +303,6 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 	}
 
 	public void checkCanSpectate(Match match, boolean direct) {
-		if (Nexus.isMaintenanceQueued())
-			throw new InvalidInputException("&cServer maintenance is queued, cannot join match");
-
 		if ((!direct && match.getArena().canJoinLate()) || !match.getMechanic().doesAllowSpectating(match))
 			throw new InvalidInputException("&cThat match does not support spectating");
 
@@ -453,7 +450,8 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 	 * @param prefix whether or not to display the minigames prefix
 	 */
 	public void tell(@NotNull ComponentLike message, boolean prefix) {
-		getOnlinePlayer().sendMessage(prefix ? JsonBuilder.fromPrefix("Minigames", message) : message);
+		if (isOnline())
+			getOnlinePlayer().sendMessage(prefix ? JsonBuilder.fromPrefix("Minigames", message) : message);
 	}
 
 	public void toGamelobby() {

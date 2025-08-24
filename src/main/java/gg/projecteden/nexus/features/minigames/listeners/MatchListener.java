@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigames.listeners;
 
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
+import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
@@ -58,6 +59,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -183,7 +185,6 @@ public class MatchListener implements Listener {
 			event.setCancelled(true);
 	}
 
-
 	@EventHandler
 	public void onItemPickup(EntityPickupItemEvent event) {
 		if (!Minigames.isMinigameWorld(event.getEntity().getWorld()))
@@ -202,8 +203,42 @@ public class MatchListener implements Listener {
 			return;
 
 		Minigamer minigamer = Minigamer.of(player);
-		if (!minigamer.isIn(match))
+		if (!minigamer.isIn(match) || minigamer.isSpectating())
 			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void on(PlayerPickupArrowEvent event) {
+		Arena arena = ArenaManager.getFromLocation(event.getItem().getLocation());
+		if (arena == null)
+			return;
+
+		Match match = MatchManager.find(arena);
+		if (match == null)
+			return;
+
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
+		if (!minigamer.isSpectating())
+			return;
+
+		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void on(PlayerPickupExperienceEvent event) {
+		Arena arena = ArenaManager.getFromLocation(event.getExperienceOrb().getLocation());
+		if (arena == null)
+			return;
+
+		Match match = MatchManager.find(arena);
+		if (match == null)
+			return;
+
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
+		if (!minigamer.isSpectating())
+			return;
+
+		event.setCancelled(true);
 	}
 
 	@EventHandler(ignoreCancelled = true)

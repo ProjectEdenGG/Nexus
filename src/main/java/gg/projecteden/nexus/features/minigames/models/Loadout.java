@@ -48,6 +48,9 @@ public class Loadout implements ConfigurationSerializable {
 	}
 
 	public void apply(Minigamer minigamer) {
+		if (!minigamer.isOnline())
+			return;
+
 		minigamer.clearState();
 		Player player = minigamer.getOnlinePlayer();
 
