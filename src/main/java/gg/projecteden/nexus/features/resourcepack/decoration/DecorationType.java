@@ -1890,6 +1890,9 @@ public enum DecorationType {
 	FLAT_SCREEN_TV_INTERSTELLAR(new TV("Flat Screen TV", ChannelType.INTERSTELLAR)),
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FLAT_SCREEN_TV_INVINCIBLE(new TV("Flat Screen TV", ChannelType.INVINCIBLE)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	FLAT_SCREEN_TV_JOKER(new TV("Flat Screen TV", ChannelType.JOKER)),
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
@@ -1909,6 +1912,9 @@ public enum DecorationType {
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	FLAT_SCREEN_TV_SMILING_FRIENDS(new TV("Flat Screen TV", ChannelType.SMILING_FRIENDS)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FLAT_SCREEN_TV_STAR_WARS(new TV("Flat Screen TV", ChannelType.STAR_WARS)),
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	FLAT_SCREEN_TV_TITANIC(new TV("Flat Screen TV", ChannelType.TITANIC)),

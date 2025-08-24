@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.resourcepack.decoration.types.toggle;
 
 import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxUnique;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxWall;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Cyclable;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
@@ -36,6 +35,7 @@ public class TV extends WallThing implements Cyclable {
 		HOUSE_MD(ItemModelType.FLAT_SCREEN_TV_HOUSE_MD),
 		HUB(ItemModelType.FLAT_SCREEN_TV_HUB),
 		INTERSTELLAR(ItemModelType.FLAT_SCREEN_TV_INTERSTELLAR),
+		INVINCIBLE(ItemModelType.FLAT_SCREEN_TV_INVINCIBLE),
 		JOKER(ItemModelType.FLAT_SCREEN_TV_JOKER),
 		LION_KING(ItemModelType.FLAT_SCREEN_TV_LION_KING),
 		LORD_OF_THE_RINGS(ItemModelType.FLAT_SCREEN_TV_LORD_OF_THE_RINGS),
@@ -43,6 +43,7 @@ public class TV extends WallThing implements Cyclable {
 		ROKU(ItemModelType.FLAT_SCREEN_TV_ROKU),
 		SHINING(ItemModelType.FLAT_SCREEN_TV_SHINING),
 		SMILING_FRIENDS(ItemModelType.FLAT_SCREEN_TV_SMILING_FRIENDS),
+		STAR_WARS(ItemModelType.FLAT_SCREEN_TV_STAR_WARS),
 		TITANIC(ItemModelType.FLAT_SCREEN_TV_TITANIC),
 		TRUMAN_SHOW(ItemModelType.FLAT_SCREEN_TV_TRUMAN_SHOW),
 		WALL_E(ItemModelType.FLAT_SCREEN_TV_WALL_E),
