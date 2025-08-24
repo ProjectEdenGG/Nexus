@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.catalog;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.listeners.events.fake.FakePlayerInteractEvent;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
@@ -204,6 +205,9 @@ public class Catalog implements Listener {
 
 	@EventHandler
 	public void on(PlayerInteractEvent event) {
+		if (event instanceof FakePlayerInteractEvent)
+			return;
+
 		if (event.getHand() != EquipmentSlot.HAND)
 			return;
 
