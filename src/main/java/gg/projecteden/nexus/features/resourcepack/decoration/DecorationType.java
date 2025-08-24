@@ -828,6 +828,9 @@ public enum DecorationType {
 	TABLE_WOODEN_1x2(new Table(true, "Wooden Table - 1x2", ItemModelType.TABLE_WOODEN_1X2, HitboxFloor._1x2H)),
 
 	@TypeConfig(money = 135, tokens = 13, tabs = {Tab.FURNITURE, Tab.TABLES})
+	TABLE_WOODEN_1x2_CORNER(new Table(true, "Wooden Table - 1x2 Corner", ItemModelType.TABLE_WOODEN_1X2_CORNER, HitboxFloor._1x2NE_CORNER)),
+
+	@TypeConfig(money = 135, tokens = 13, tabs = {Tab.FURNITURE, Tab.TABLES})
 	TABLE_WOODEN_1x3(new Table(true, "Wooden Table - 1x3", ItemModelType.TABLE_WOODEN_1X3, HitboxFloor._1x3H)),
 
 	@TypeConfig(money = 150, tokens = 15, tabs = {Tab.FURNITURE, Tab.TABLES})

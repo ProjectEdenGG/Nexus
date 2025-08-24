@@ -52,16 +52,13 @@ public interface Seat extends Interactable {
 	}
 
 	default ArmorStand trySit(Player player, Block block, Rotation rotation, Decoration decoration) {
-		Location location = block.getLocation().toCenterLocation().clone().add(0, -1 + getSitHeight(), 0);
-
-		if (!canSit(player, location, decoration))
+		if (!canSit(player, block.getLocation(), decoration))
 			return null;
 
-		return makeSit(player, location, rotation, decoration);
+		return makeSit(player, block.getLocation(), rotation, decoration);
 	}
 
 	default ArmorStand makeSit(Player player, Location location, Rotation rotation, Decoration decoration) {
-		World world = location.getWorld();
 		float yaw = getYaw(rotation);
 
 		if (decoration.getConfig() instanceof Couch couch) {
@@ -70,6 +67,13 @@ public interface Seat extends Interactable {
 		}
 
 		location.setYaw(yaw);
+
+		return spawnArmorStandAndSit(player, location, getSitHeight());
+	}
+
+	static ArmorStand spawnArmorStandAndSit(Player player, Location location, double sitHeight) {
+		World world = location.getWorld();
+		location = location.toCenterLocation().add(0, -1 + sitHeight, 0);
 
 		ArmorStand armorStand = world.spawn(location, ArmorStand.class, _armorStand -> {
 			_armorStand.setMarker(true);
