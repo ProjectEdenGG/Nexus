@@ -80,6 +80,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @SuppressWarnings("SwitchStatementWithTooFewBranches")
 public class Misc implements Listener {
@@ -442,9 +443,20 @@ public class Misc implements Listener {
 
 	@EventHandler
 	public void on(EntityAddToWorldEvent event) {
-		if (event.getEntity() instanceof EnderDragon dragon)
-			if (dragon.getBossBar() != null)
-				dragon.getBossBar().setColor(BarColor.PURPLE);
+		if (!(event.getEntity() instanceof EnderDragon dragon))
+			return;
+
+		var start = Bukkit.getCurrentTick();
+		AtomicInteger taskId = new AtomicInteger();
+		taskId.set(Tasks.repeat(0, 1, () -> {
+			if (dragon.getBossBar() == null)
+				return;
+
+			var ticks = Bukkit.getCurrentTick() - start;
+			Nexus.log("[Dragon] Found boss bar after " + ticks + " ticks, setting color to purple");
+			dragon.getBossBar().setColor(BarColor.PURPLE);
+			Tasks.cancel(taskId.get());
+		}));
 	}
 
 	@EventHandler
