@@ -12,6 +12,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Tab;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Seat;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSpawnEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreCurrencyType;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreManager;
@@ -47,6 +48,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
@@ -337,24 +339,11 @@ public class DecorationCommand extends CustomCommand {
 	@HideFromWiki
 	@Path("debug sitHeight <double>")
 	@Permission(Group.ADMIN)
-	@Description("Test sitting height")
+	@Description("Test sitting height, use whilst standing on-top of the chair")
 	void debug_sitHeight(double height) {
-		Location location = location().toCenterLocation().clone().add(0, -1 + height, 0);
+		Location below = block().getRelative(BlockFace.DOWN).getLocation();
 
-		ArmorStand armorStand = world().spawn(location, ArmorStand.class, _armorStand -> {
-			_armorStand.setMarker(true);
-			_armorStand.setVisible(false);
-			_armorStand.setCustomNameVisible(false);
-			_armorStand.setCustomName("DecorationSeat" + "-" + uuid());
-			_armorStand.setInvulnerable(true);
-			_armorStand.setGravity(false);
-			_armorStand.setSmall(true);
-			_armorStand.setBasePlate(true);
-			_armorStand.setDisabledSlots(EquipmentSlot.values());
-		});
-
-		if (armorStand.isValid())
-			armorStand.addPassenger(player());
+		Seat.spawnArmorStandAndSit(player(), below, height);
 	}
 
 

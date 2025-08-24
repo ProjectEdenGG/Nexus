@@ -6,9 +6,11 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Seat;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import lombok.Getter;
 
 public class Chair extends DecorationConfig implements Seat {
 	private final Double sitHeight;
+	@Getter
 	private final boolean backless;
 
 	public Chair(boolean multiblock, boolean backless, String name, ItemModelType itemModelType) {
@@ -32,10 +34,6 @@ public class Chair extends DecorationConfig implements Seat {
 			return Seat.super.getSitHeight();
 
 		return sitHeight;
-	}
-
-	public boolean isBackless() {
-		return backless;
 	}
 
 }
