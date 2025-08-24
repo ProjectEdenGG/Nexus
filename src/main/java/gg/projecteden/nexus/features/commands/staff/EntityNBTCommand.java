@@ -32,8 +32,7 @@ public class EntityNBTCommand extends CustomCommand {
 	@Path
 	@Description("View the NBT data of your target entity")
 	void nbt() {
-		NBTEntity nbtEntity = new NBTEntity(getTargetEntityRequired());
-		send(nbtEntity.asNBTString());
+		send(new NBTEntity(getTargetEntityRequired()).asNBTString());
 	}
 
 	@Path("nearest")

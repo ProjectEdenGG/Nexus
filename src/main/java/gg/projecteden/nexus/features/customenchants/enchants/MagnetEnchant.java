@@ -39,8 +39,8 @@ import java.util.UUID;
 import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
 
 public class MagnetEnchant extends CustomEnchant implements Listener {
-	public static final NamespacedKey NBT_KEY_OWNER = new NamespacedKey(Nexus.getInstance(), "nexus.magnet.owner");
-	public static final NamespacedKey NBT_KEY_ENABLED = new NamespacedKey(Nexus.getInstance(), "nexus.magnet.enabled");
+	public static final NamespacedKey NBT_KEY_OWNER = new NamespacedKey(Nexus.getInstance(), "nexus-magnet-owner");
+	public static final NamespacedKey NBT_KEY_ENABLED = new NamespacedKey(Nexus.getInstance(), "nexus-magnet-enabled");
 
 	private static final int RADIUS_MULTIPLIER = 5;
 
