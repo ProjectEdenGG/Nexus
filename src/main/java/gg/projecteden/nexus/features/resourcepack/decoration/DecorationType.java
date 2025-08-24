@@ -828,19 +828,28 @@ public enum DecorationType {
 	TABLE_WOODEN_1x2(new Table(true, "Wooden Table - 1x2", ItemModelType.TABLE_WOODEN_1X2, HitboxFloor._1x2H)),
 
 	@TypeConfig(money = 135, tokens = 13, tabs = {Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_1x2_CORNER(new Table(true, "Wooden Table - 1x2 Corner", ItemModelType.TABLE_WOODEN_1X2_CORNER, HitboxFloor._1x2NE_CORNER)),
-
-	@TypeConfig(money = 135, tokens = 13, tabs = {Tab.FURNITURE, Tab.TABLES})
 	TABLE_WOODEN_1x3(new Table(true, "Wooden Table - 1x3", ItemModelType.TABLE_WOODEN_1X3, HitboxFloor._1x3H)),
 
 	@TypeConfig(money = 150, tokens = 15, tabs = {Tab.FURNITURE, Tab.TABLES})
 	TABLE_WOODEN_2x2(new Table(true, "Wooden Table - 2x2", ItemModelType.TABLE_WOODEN_2X2, HitboxFloor._2x2)),
 
+	@TypeConfig(money = 140, tokens = 14, tabs = {Tab.FURNITURE, Tab.TABLES})
+	TABLE_WOODEN_2x2_CORNER(new Table(true, "Wooden Table - 2x2 Corner", ItemModelType.TABLE_WOODEN_2X2_CORNER, HitboxFloor._2x2SE_CORNER)),
+
 	@TypeConfig(money = 225, tokens = 22, tabs = {Tab.FURNITURE, Tab.TABLES})
 	TABLE_WOODEN_2x3(new Table(true, "Wooden Table - 2x3", ItemModelType.TABLE_WOODEN_2X3, HitboxFloor._2x3H)),
 
+	@TypeConfig(money = 185, tokens = 18, tabs = {Tab.FURNITURE, Tab.TABLES})
+	TABLE_WOODEN_2x3_CORNER(new Table(true, "Wooden Table - 2x3 Corner", ItemModelType.TABLE_WOODEN_2X3_CORNER, HitboxFloor._2x3SE_CORNER)),
+
+	@TypeConfig(money = 185, tokens = 18, tabs = {Tab.FURNITURE, Tab.TABLES})
+	TABLE_WOODEN_2x3_CORNER_FLIPPED(new Table(true, "Wooden Table - 2x3 Corner Flipped", ItemModelType.TABLE_WOODEN_2X3_CORNER_FLIPPED, HitboxFloor._2x3SW_CORNER)),
+
 	@TypeConfig(money = 300, tokens = 30, tabs = {Tab.FURNITURE, Tab.TABLES})
 	TABLE_WOODEN_3x3(new Table(true, "Wooden Table - 3x3", ItemModelType.TABLE_WOODEN_3X3, HitboxFloor._3x3)),
+
+	@TypeConfig(money = 275, tokens = 27, tabs = {Tab.FURNITURE, Tab.TABLES})
+	TABLE_WOODEN_3x3_CORNER(new Table(true, "Wooden Table - 3x3 Corner", ItemModelType.TABLE_WOODEN_3X3_CORNER, HitboxFloor._3x3SE_CORNER)),
 
 	// 	Chairs
 	@TypeConfig(money = 120, tokens = 12, tabs = {Tab.FURNITURE, Tab.CHAIRS})
