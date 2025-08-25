@@ -220,9 +220,9 @@ public class DecorationCommand extends CustomCommand {
 
 		decoration.setPublicUse(enable, player());
 		if (enable)
-			send(PREFIX + "&eAdded &3the public use flag to the " + decoration.getConfig().getName());
+			send(PREFIX + "&aAdded &3the &epublic use flag &3to the " + decoration.getConfig().getName());
 		else
-			send(PREFIX + "&eRemoved &3the public use flag from the " + decoration.getConfig().getName());
+			send(PREFIX + "&cRemoved &3the &epublic use flag &3from the " + decoration.getConfig().getName());
 	}
 
 	// STAFF COMMANDS
