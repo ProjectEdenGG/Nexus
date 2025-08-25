@@ -21,7 +21,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -145,7 +144,7 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag PLANTS = new MaterialTag(Material.SHORT_GRASS, Material.FERN, Material.TALL_GRASS, Material.LARGE_FERN, Material.DEAD_BUSH, Material.SWEET_BERRY_BUSH,
 		Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.LILY_PAD, Material.BAMBOO_SAPLING, Material.BAMBOO, Material.SEAGRASS, Material.TALL_SEAGRASS, Material.KELP, Material.KELP_PLANT, Material.SUGAR_CANE,
 		Material.CACTUS, Material.SEA_PICKLE, Material.CHORUS_PLANT, Material.CHORUS_FLOWER, Material.WEEPING_VINES, Material.TWISTING_VINES, Material.NETHER_SPROUTS, Material.WARPED_ROOTS, Material.CRIMSON_ROOTS,
-		Material.WARPED_FUNGUS, Material.CRIMSON_FUNGUS, Material.VINE)
+		Material.WARPED_FUNGUS, Material.CRIMSON_FUNGUS, Material.VINE, Material.LEAF_LITTER)
 		.append(ALL_CORALS, FLOWERS);
 
 	public static final MaterialTag MUSHROOMS = new MaterialTag(Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.CRIMSON_FUNGUS, Material.WARPED_FUNGUS);
