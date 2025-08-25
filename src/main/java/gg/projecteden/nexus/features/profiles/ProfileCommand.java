@@ -158,6 +158,6 @@ public class ProfileCommand extends CustomCommand implements Listener {
 		userService.save(user);
 
 		user.sendMessage(PREFIX + "&3You now own the &e" + StringUtils.camelCase(textureType) + " &3profile texture!");
-		player.getInventory().removeItem(item);
+		item.subtract();
 	}
 }
