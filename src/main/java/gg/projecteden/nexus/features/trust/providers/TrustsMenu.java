@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.trust.providers;
 
 import gg.projecteden.api.interfaces.HasUniqueId;
-import gg.projecteden.nexus.features.dialog.DialogFeature.SingleInputDialogBuilder;
+import gg.projecteden.nexus.features.dialog.DialogCommand.SingleInputDialogBuilder;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;

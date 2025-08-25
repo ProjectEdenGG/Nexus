@@ -86,6 +86,11 @@ public enum ScoreboardLine {
 
 	TPS {
 		@Override
+		public String camelCase() {
+			return "TPS";
+		}
+
+		@Override
 		public String render(Player player) {
 			double tps1m = Bukkit.getTPS()[0];
 			return "&3TPS: &" + (tps1m >= 19 ? "a" : tps1m >= 16 ? "6" : "c") + new DecimalFormat("0.00").format(tps1m);
@@ -93,6 +98,11 @@ public enum ScoreboardLine {
 	},
 
 	MSPT {
+		@Override
+		public String camelCase() {
+			return "MSPT";
+		}
+
 		@Override
 		public String render(Player player) {
 			if (Nexus.getSpark() == null)
@@ -121,6 +131,11 @@ public enum ScoreboardLine {
 
 	@Permission(Group.MODERATOR)
 	RAM {
+		@Override
+		public String camelCase() {
+			return "RAM";
+		}
+
 		@Override
 		public String render(Player player) {
 			long total = Runtime.getRuntime().totalMemory();
@@ -212,6 +227,11 @@ public enum ScoreboardLine {
 	},
 
 	MCMMO {
+		@Override
+		public String camelCase() {
+			return "McMMO";
+		}
+
 		@Override
 		public String render(Player player) {
 			McMMOPlayer mcmmo = UserManager.getPlayer(player);
@@ -373,6 +393,11 @@ public enum ScoreboardLine {
 	@Interval(20)
 	ONEBLOCK_COUNT {
 		@Override
+		public String camelCase() {
+			return "OneBlock Count";
+		}
+
+		@Override
 		public String render(Player player) {
 			if (SubWorldGroup.of(player) != SubWorldGroup.ONEBLOCK)
 				return null;
@@ -384,6 +409,11 @@ public enum ScoreboardLine {
 	@Interval(20)
 	@Required
 	AFK {
+		@Override
+		public String camelCase() {
+			return "AFK";
+		}
+
 		@Override
 		public String render(Player player) {
 			AFKUser afkUser = gg.projecteden.nexus.features.afk.AFK.get(player);
@@ -418,6 +448,10 @@ public enum ScoreboardLine {
 	public boolean hasPermission(Player player) {
 		Permission annotation = getPermission();
 		return annotation == null || player.hasPermission(annotation.value());
+	}
+
+	public String camelCase() {
+		return StringUtils.camelCase(name());
 	}
 
 	public static Map<ScoreboardLine, Boolean> getDefaultLines(Player player) {
