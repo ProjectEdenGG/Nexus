@@ -1,20 +1,18 @@
 package gg.projecteden.nexus.features.trust.providers;
 
 import gg.projecteden.api.interfaces.HasUniqueId;
-import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.dialog.DialogFeature.SingleInputDialogBuilder;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SignMenuFactory;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.trust.TrustFeature;
-import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.trust.TrustsUser;
 import gg.projecteden.nexus.models.trust.TrustsUser.TrustType;
 import gg.projecteden.nexus.models.trust.TrustsUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 
@@ -91,16 +89,19 @@ public class TrustsMenu extends InventoryProvider {
 
 		ItemBuilder add = new ItemBuilder(Material.LIME_CONCRETE_POWDER).name("&aAdd Trust");
 		contents.set(0, 8, ClickableItem.of(add.build(), e ->
-			Nexus.getSignMenuFactory().lines("", SignMenuFactory.ARROWS, "Enter a", "player's name")
-				.prefix(Features.get(TrustFeature.class).getPrefix())
-				.response(lines -> {
-					if (!lines[0].isEmpty()) {
-						var target = PlayerUtils.getPlayer(lines[0]);
-						new TrustsPlayerMenu(user, target, this).open(viewer);
-					} else
-						open(viewer, contents.pagination());
+			SingleInputDialogBuilder.builder()
+				.title("Edit Trusts")
+				.body("Enter a player's name to edit their trusts")
+				.label("Username")
+				.onConfirm(lookup -> {
+					try {
+						new TrustsPlayerMenu(user, PlayerUtils.getPlayer(lookup), this).open(viewer);
+					} catch (Exception ex) {
+						MenuUtils.handleException(viewer, StringUtils.getPrefix("Trusts"), ex);
+					}
 				})
-				.open(viewer)));
+				.onCancel(() -> open(viewer, contents.pagination()))
+				.show(viewer)));
 
 		TrustType previous = filterType.get() == null ? TrustType.values()[0].previousWithLoop() : filterType.get().previous();
 		TrustType current = filterType.get();

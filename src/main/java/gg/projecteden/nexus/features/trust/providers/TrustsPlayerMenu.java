@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.trust.TrustsUser;
 import gg.projecteden.nexus.models.trust.TrustsUser.TrustType;
@@ -30,6 +31,9 @@ public class TrustsPlayerMenu extends InventoryProvider {
 		this.user = new TrustsUserService().get(user);;
 		this.editing = new TrustsUserService().get(editing);
 		this.back = back;
+
+		if (user.getUniqueId().equals(editing.getUniqueId()))
+			throw new InvalidInputException("You cannot edit the trusts of yourself!");
 	}
 
 	@Override
