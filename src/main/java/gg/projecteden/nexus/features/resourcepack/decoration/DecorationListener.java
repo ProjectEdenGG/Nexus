@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationInteractD
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationCooldown;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration.DecorationEditType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;

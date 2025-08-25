@@ -5,6 +5,7 @@ import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.TypeConfig;
@@ -49,11 +50,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
@@ -234,8 +233,10 @@ public class DecorationCommand extends CustomCommand {
 	void changeOwner(OfflinePlayer newOwner) {
 		Decoration decoration = DecorationUtils.getTargetDecoration(player());
 
-		if (decoration == null || decoration.getConfig() == null)
-			error("You are not looking at a decoration!");
+		if (decoration == null || decoration.getConfig() == null) {
+			DecorationError.UNKNOWN_TARGET_DECORATION.send(player());
+			return;
+		}
 
 		decoration.setOwner(newOwner.getUniqueId(), player());
 		send(PREFIX + "Set the owner of the decoration to " + Nickname.of(decoration.getOwner(player())));
@@ -372,7 +373,7 @@ public class DecorationCommand extends CustomCommand {
 
 
 	@Path("debug [enabled] [--deep]")
-	@Permission(Group.ADMIN)
+	@Permission(Group.STAFF)
 	@Description("Toggle debugging decorations")
 	void debug(Boolean enable, @Switch @Arg("false") boolean deep) {
 		if (enable == null)

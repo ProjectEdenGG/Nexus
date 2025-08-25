@@ -28,6 +28,7 @@ public class DecorationLang {
 		LACKING_FUNDS(PREFIX + "&cYou don't have enough money to buy this"),
 
 		// Special
+		UNKNOWN_TARGET_DECORATION("&CYou are not looking at a decoration!"),
 		DISABLED(PREFIX + "&cThis feature has temporarily been disabled"),
 		WORLDGUARD_USAGE("&c&lHey! &7Sorry, but you can't use that here."),
 		UNRELEASED_FEATURE(PREFIX + "&cYou cannot use this feature yet"),
