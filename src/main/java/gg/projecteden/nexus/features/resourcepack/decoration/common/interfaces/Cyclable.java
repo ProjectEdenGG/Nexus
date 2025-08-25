@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationCooldown;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration.DecorationEditType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -41,7 +42,7 @@ public interface Cyclable extends Interactable, MultiState {
 			return false;
 
 		Decoration decoration = new Decoration((DecorationConfig) this, itemFrame);
-		if (!decoration.canEdit(player)) {
+		if (!decoration.canEdit(player, DecorationEditType.INTERACT)) {
 			if (!DecorationCooldown.LOCKED.isOnCooldown(player, TickTime.SECOND.x(2)))
 				DecorationError.LOCKED.send(player);
 			DecorationLang.debug(player, "locked decoration (interact)");

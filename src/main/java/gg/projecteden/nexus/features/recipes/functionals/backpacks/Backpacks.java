@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration.DecorationEditType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
@@ -316,7 +317,7 @@ public class Backpacks extends FunctionalRecipe {
 			return;
 
 		Player player = event.getPlayer();
-		if (decoration.canEdit(player)) {
+		if (decoration.canEdit(player, DecorationEditType.OPEN)) {
 			event.setCancelled(true);
 			openBackpack(player, decoration);
 		}

@@ -202,6 +202,30 @@ public class DecorationCommand extends CustomCommand {
 		giveItem(CreativeBrushMenu.getCreativeBrush().build());
 	}
 
+	@Path("publicUse [enable]")
+	@Description("Toggle the public use of a decoration")
+	void togglePublicUse(Boolean enable) {
+		Decoration decoration = DecorationUtils.getTargetDecoration(player());
+		if (decoration == null || decoration.getConfig() == null) {
+			DecorationError.UNKNOWN_TARGET_DECORATION.send(player());
+			return;
+		}
+
+		if (!decoration.canEdit(player(), null)) {
+			DecorationError.LOCKED.send(player());
+			return;
+		}
+
+		if (enable == null)
+			enable = !decoration.isPublicUse(player());
+
+		decoration.setPublicUse(enable, player());
+		if (enable)
+			send(PREFIX + "&eAdded &3the public use flag to the " + decoration.getConfig().getName());
+		else
+			send(PREFIX + "&eRemoved &3the public use flag from the " + decoration.getConfig().getName());
+	}
+
 	// STAFF COMMANDS
 
 	@Permission(Group.STAFF)

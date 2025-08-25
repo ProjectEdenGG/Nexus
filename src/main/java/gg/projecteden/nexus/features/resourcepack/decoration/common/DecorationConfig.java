@@ -46,6 +46,7 @@ import java.util.function.Predicate;
 public class DecorationConfig {
 	public static final String NBT_DECORATION_KEY = "DecorationFrame";
 	public static final String NBT_OWNER_KEY = "DecorationOwner";
+	public static final String NBT_PUBLIC_USE_FLAG = "DecorationPublicUse";
 	public static final String NBT_DECOR_NAME = "DecorationName";
 	public static final String NBT_IGNORE_EVENT = "DecorationIgnoreEvent";
 

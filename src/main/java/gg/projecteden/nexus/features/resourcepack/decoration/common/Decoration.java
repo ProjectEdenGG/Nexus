@@ -127,6 +127,34 @@ public class Decoration {
 		itemFrame.setItem(newItem);
 	}
 
+	public boolean isPublicUse(Player debugger) {
+		AtomicReference<Boolean> publicUse = new AtomicReference<>(false);
+
+		NBT.modifyPersistentData(itemFrame, nbt -> {
+			publicUse.set(nbt.getBoolean(DecorationConfig.NBT_PUBLIC_USE_FLAG));
+		});
+
+		boolean result = publicUse.get();
+		DecorationLang.debug(debugger, "&eIsPublicUse: " + StringUtils.bool(result));
+
+		return result;
+	}
+
+	public void setPublicUse(boolean enable, Player debugger) {
+		if (enable) {
+			NBT.modifyPersistentData(itemFrame, nbt -> {
+				nbt.setBoolean(DecorationConfig.NBT_PUBLIC_USE_FLAG, true);
+			});
+			DecorationLang.debug(debugger, "&eAdded public use flag");
+			return;
+		}
+
+		NBT.modifyPersistentData(itemFrame, nbt -> {
+			nbt.removeKey(DecorationConfig.NBT_PUBLIC_USE_FLAG);
+		});
+		DecorationLang.debug(debugger, "&cRemoved public use flag");
+	}
+
 	public ItemStack getItem(OfflinePlayer debugger) {
 		if (!isValidFrame())
 			return null;
@@ -200,7 +228,7 @@ public class Decoration {
 			return false;
 
 		if (!destroyEvent.isIgnoreLocked()) {
-			if (!canEdit(player)) {
+			if (!canEdit(player, DecorationEditType.BREAK)) {
 				if (!DecorationCooldown.LOCKED.isOnCooldown(player, TickTime.SECOND.x(2)))
 					DecorationError.LOCKED.send(player);
 				DecorationLang.debug(player, "locked decoration (destroy)");
@@ -346,7 +374,7 @@ public class Decoration {
 		return true;
 	}
 
-	public boolean canEdit(Player player) {
+	public boolean canEdit(Player player, @Nullable DecorationEditType editType) {
 		DecorationLang.debug(player, "Can Edit?");
 		if (canEdit != null) {
 			DecorationLang.debug(player, " Cached --> " + StringUtils.bool(canEdit));
@@ -358,9 +386,18 @@ public class Decoration {
 			return setCanEdit(false);
 		}
 
+		//
+
 		boolean isWGEdit = WorldGuardEditCommand.canWorldGuardEdit(player);
 		boolean isInRegion = !new WorldGuardUtils(player).getRegionsAt(this.getOrigin()).isEmpty();
 		boolean result;
+
+		// Takes first priority, to allow public use decorations to be used within regions
+		if (editType == DecorationEditType.INTERACT && isPublicUse(player)) {
+			result = true;
+			DecorationLang.debug(player, " Is public use --> " + StringUtils.bool(result));
+			return setCanEdit(result);
+		}
 
 		if (isWGEdit) {
 			result = true;
@@ -368,7 +405,7 @@ public class Decoration {
 			return setCanEdit(result);
 		}
 
-		if (isInRegion) { // TODO || flag == allow
+		if (isInRegion) { // TODO || flag == allow --> return true
 			result = false;
 			DecorationLang.debug(player, " Is in region --> " + StringUtils.bool(result));
 			return setCanEdit(result);
@@ -381,7 +418,6 @@ public class Decoration {
 		}
 
 		UUID owner = getOwner(player);
-
 		if (owner == null) {
 			result = true;
 			DecorationLang.debug(player, " Owner is null --> " + StringUtils.bool(result));
@@ -404,6 +440,15 @@ public class Decoration {
 	private boolean setCanEdit(boolean bool) {
 		this.canEdit = bool;
 		return this.canEdit;
+	}
+
+	public enum DecorationEditType {
+		OPEN,
+		BREAK,
+		INTERACT,
+		PAINT,
+		SWAP,
+		;
 	}
 
 	public boolean interact(Player player, Block block, InteractType type, ItemStack tool) {
@@ -440,7 +485,7 @@ public class Decoration {
 					DecorationLang.debug(player, "&6DecorationSitEvent was cancelled 1");
 			}
 
-			if (config.isRotatable() && canEdit(player)) {
+			if (config.isRotatable() && canEdit(player, DecorationEditType.INTERACT)) {
 				DecorationRotateEvent rotateEvent = new DecorationRotateEvent(player, block, this, InteractType.RIGHT_CLICK);
 				if (!rotateEvent.callEvent())
 					return false;
@@ -481,7 +526,7 @@ public class Decoration {
 			return false;
 		}
 
-		if (!canEdit(player)) {
+		if (!canEdit(player, DecorationEditType.PAINT)) {
 			if (!DecorationCooldown.LOCKED.isOnCooldown(player, TickTime.SECOND.x(1)))
 				DecorationError.LOCKED.send(player);
 			DecorationLang.debug(player, "locked decoration (paint)");

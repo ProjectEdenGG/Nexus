@@ -422,7 +422,7 @@ public class DecorationListener implements Listener {
 			return true;
 		}
 
-		if (!data.getDecoration().canEdit(player)) {
+		if (!data.getDecoration().canEdit(player, DecorationEditType.BREAK)) {
 			DecorationStoreType storeType = DecorationStoreType.of(player);
 			if (storeType == null) {
 				if (!DecorationCooldown.LOCKED.isOnCooldown(player))
