@@ -9,8 +9,10 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.OptionalLocation;
 import lombok.AllArgsConstructor;
@@ -19,6 +21,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
@@ -76,6 +79,25 @@ public class Home implements PlayerOwnedObject, OptionalLocation {
 
 	public boolean hasItem() {
 		return this.item != null && this.item.getItemMeta() != null;
+	}
+
+	public ItemBuilder getDisplayItemBuilder() {
+		ItemBuilder item;
+		if (hasItem())
+			item = new ItemBuilder(this.item);
+		else if (locked)
+			item = new ItemBuilder(Material.RED_CONCRETE);
+		else
+			item = new ItemBuilder(Material.LIME_CONCRETE);
+
+		if (locked)
+			item.glow().loreize(false).lore("", "&f&cLocked");
+		else
+			item.lore("", "&f&aUnlocked");
+
+		item.name("&f" + StringUtils.camelCase(name));
+
+		return item;
 	}
 
 	public void setRespawn(boolean respawn) {

@@ -11,7 +11,6 @@ import gg.projecteden.nexus.models.home.HomeOwner;
 import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
@@ -108,27 +107,18 @@ public class EditHomesProvider extends InventoryProvider {
 	}
 
 	public void format_Homes(InventoryContents contents) {
-		if (homeOwner.getHomes() == null || homeOwner.getHomes().size() == 0) return;
+		if (homeOwner.getHomes() == null || homeOwner.getHomes().isEmpty()) return;
 
 		List<ClickableItem> items = new ArrayList<>();
 
 		// TODO: Look into async paginator in SmartInvs
 		homeOwner.getHomes().forEach(home -> {
-			ItemBuilder item;
+			ItemBuilder item = home.getDisplayItemBuilder();
 
-			if (home.hasItem())
-				item = new ItemBuilder(home.getItem());
-			else if (home.isLocked())
-				item = new ItemBuilder(Material.RED_CONCRETE);
-			else
-				item = new ItemBuilder(Material.LIME_CONCRETE);
+			item.lore("&f", "&eClick to edit");
 
 			if (home.isLocked())
-				item.glow().loreize(false).lore("", "&f&cLocked", "&f", "&eClick to edit").lore(HomesMenu.getAccessListNames(home.getAccessList()));
-			else
-				item.lore("", "&f&aUnlocked", "&f", "&eClick to edit");
-
-			item.name("&f" + StringUtils.camelCase(home.getName()));
+				item.lore(HomesMenu.getAccessListNames(home.getAccessList()));
 
 			items.add(ClickableItem.of(item.build(), e -> HomesMenu.edit(home)));
 		});

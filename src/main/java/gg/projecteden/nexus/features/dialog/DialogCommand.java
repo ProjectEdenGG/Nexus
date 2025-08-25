@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
-import static gg.projecteden.nexus.features.dialog.DialogCommand.DialogBuilder.close;
 import static io.papermc.paper.registry.data.dialog.action.DialogAction.customClick;
 import static io.papermc.paper.registry.data.dialog.body.DialogBody.plainMessage;
 import static net.kyori.adventure.text.Component.text;
@@ -56,15 +55,10 @@ public class DialogCommand extends CustomCommand {
 		new DialogBuilder()
 			.title(new JsonBuilder("This is a test title").bold())
 			.bodyText(new JsonBuilder("This is a test 1").hover("Test hover"))
-			.bodyBlankLine()
 			.bodyItem(new ItemBuilder(ItemModelType.EXCLAMATION).hideTooltip().dyeColor(ColorType.LIGHT_RED).build(), " Warning")
-			.bodyBlankLine()
 			.bodyText("This is a test 2")
-			.bodyBlankLine()
 			.bodyItem(new ItemBuilder(Material.PAPER).model("ui/gui/mcmmo/acrobatics").build())
-			.bodyBlankLine()
 			.bodyItem(new ItemBuilder(ItemModelType.SOCIALMEDIA_INSTAGRAM).build(), "Instagram")
-			.bodyBlankLine()
 			.inputText("test1", "Test input 1")
 			.inputText("test2", new JsonBuilder("Test input 2").color(Color.RED))
 			.checkbox("test3", "false by default")
@@ -81,9 +75,7 @@ public class DialogCommand extends CustomCommand {
 		new DialogBuilder()
 			.title(new JsonBuilder("This is a test title").hover("Test hover").bold())
 			.after(DialogAfterAction.NONE)
-			.bodyBlankLine()
 			.bodyText(new JsonBuilder("Button testing screen"))
-			.bodyBlankLine()
 			.inputText("test1", "Test input 1")
 			.inputText("test2", new JsonBuilder("Test input 2").color(Color.RED))
 			.checkbox("test3", "false by default")
@@ -94,9 +86,7 @@ public class DialogCommand extends CustomCommand {
 			.button("Button 4", (response) -> {
 				new DialogBuilder()
 					.title(new JsonBuilder("This is a test title").hover("Test hover").bold())
-					.bodyBlankLine()
 					.bodyText(new JsonBuilder("Button testing screen"))
-					.bodyBlankLine()
 					.inputText("test1", "Test input 1")
 					.inputText("test2", new JsonBuilder("Test input 2").color(Color.RED))
 					.checkbox("test3", "false by default")
@@ -125,25 +115,15 @@ public class DialogCommand extends CustomCommand {
 		}
 
 		public DialogBuilder title(String title) {
-			return this.title(new JsonBuilder(title).build());
+			return this.title(new JsonBuilder(title).bold().build());
 		}
 
 		public DialogBuilder title(JsonBuilder title) {
-			return this.title(title.build());
+			return this.title(title.bold().build());
 		}
 
 		public DialogBuilder title(Component title) {
 			this.title = title;
-			return this;
-		}
-
-		public DialogBuilder bodyBlankLine() {
-			return this.bodyBlankLines(1);
-		}
-
-		public DialogBuilder bodyBlankLines(int lines) {
-			for (int i = 0; i < lines; i++)
-				body.add(line());
 			return this;
 		}
 
@@ -321,7 +301,7 @@ public class DialogCommand extends CustomCommand {
 		private final DialogBase base;
 		private final List<ActionButton> actions = new ArrayList<>();
 		private ActionButton exitAction;
-		private int columns;
+		private int columns = 2;
 
 		public void show(Audience audience) {
 			audience.showDialog(Dialog.create(builder -> {
@@ -379,9 +359,9 @@ public class DialogCommand extends CustomCommand {
 				.tooltip(tooltip)
 				.width(width)
 				.action(customClick(((response, audience) -> {
-					DialogResponse dialogResponse = new DialogResponse(response, audience);
+					var dialogResponse = new DialogResponse(response, audience);
 					action.accept(dialogResponse);
-					close(dialogResponse.getPlayer());
+					dialogResponse.closeDialog();
 				}), Options.builder().uses(UNLIMITED_USES).build()))
 				.build();
 			return this;
@@ -417,6 +397,10 @@ public class DialogCommand extends CustomCommand {
 
 		public Float getFloat(String key) {
 			return this.response.getFloat(key);
+		}
+
+		public void closeDialog() {
+			DialogBuilder.close(this.player);
 		}
 	}
 

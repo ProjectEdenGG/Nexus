@@ -1,9 +1,11 @@
 package gg.projecteden.nexus.features.homes;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.dialog.DialogCommand.DialogBuilder;
 import gg.projecteden.nexus.features.homes.providers.EditHomeProvider;
 import gg.projecteden.nexus.features.homes.providers.EditHomesProvider;
 import gg.projecteden.nexus.features.homes.providers.SetHomeProvider;
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.SignMenuFactory;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import gg.projecteden.nexus.models.home.Home;
@@ -13,6 +15,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import io.papermc.paper.registry.data.dialog.DialogBase.DialogAfterAction;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -50,7 +53,7 @@ public class HomesMenu {
 		signMenuFactory.lines(playerNameLines)
 				.prefix(HomesFeature.PREFIX)
 				.response(lines -> {
-					if (lines[0].length() > 0) {
+					if (!lines[0].isEmpty()) {
 						home.allow(PlayerUtils.getPlayer(lines[0]));
 						new HomeService().save(home.getOwner());
 					}
@@ -63,7 +66,7 @@ public class HomesMenu {
 		signMenuFactory.lines(playerNameLines)
 				.prefix(HomesFeature.PREFIX)
 				.response(lines -> {
-					if (lines[0].length() > 0) {
+					if (!lines[0].isEmpty()) {
 						home.remove(PlayerUtils.getPlayer(lines[0]));
 						new HomeService().save(home.getOwner());
 					}
@@ -72,48 +75,73 @@ public class HomesMenu {
 				.open(home.getOwner().getOnlinePlayer());
 	}
 
-	public static void displayItem(Home home, Consumer<String[]> onResponse) {
-		signMenuFactory.lines("", "Enter a player's", "name, 'hand'", "or an item name")
-				.prefix(HomesFeature.PREFIX)
-				.response(lines -> {
-					String input = lines[0];
-					if (input.length() > 0) {
+	public static void displayItem(Home home, Runnable onResponse) {
+		displayItem(home, onResponse, null);
+	}
+
+	public static void displayItem(Home home, Runnable onResponse, String errorMessage) {
+		new DialogBuilder()
+			.title("Set Home Display Item")
+			.after(DialogAfterAction.NONE)
+			.bodyText("You can set your home's display item to any item or player's head")
+			.bodyText("Or to the item in your main hand")
+			.bodyText("Current Item")
+			.bodyItem(home.getDisplayItemBuilder().build())
+			.inputText("input", errorMessage)
+			.multiAction()
+			.button("Submit", response -> {
+				try {
+					var input = response.getText("input");
+					if (!input.isEmpty()) {
 						ItemStack itemStack = null;
 
-						if ("hand".equalsIgnoreCase(input)) {
-							itemStack = home.getOnlinePlayer().getInventory().getItemInMainHand();
+						Material material = Material.matchMaterial(input);
+						if (material != null) {
+							itemStack = new ItemStack(material);
 						} else {
-							Material material = Material.matchMaterial(input);
-							if (material != null) {
-								itemStack = new ItemStack(material);
-							} else {
-								try {
-									itemStack = new ItemBuilder(Material.PLAYER_HEAD)
-										.skullOwner(PlayerUtils.getPlayer(input))
-										.build();
-								} catch (PlayerNotFoundException ignore) {}
-							}
+							try {
+								itemStack = new ItemBuilder(Material.PLAYER_HEAD)
+									.skullOwner(PlayerUtils.getPlayer(input))
+									.build();
+							} catch (PlayerNotFoundException ignore) {}
 						}
 
 						if (itemStack == null) {
-							PlayerUtils.send(home.getOnlinePlayer(), HomesFeature.PREFIX + "&cCould not parse item");
-							displayItem(home, onResponse);
+							displayItem(home, onResponse, "&cCould not parse item");
+							return;
 						} else {
 							home.setItem(itemStack);
 							new HomeService().save(home.getOwner());
 						}
 					}
 
-					onResponse.accept(lines);
-				})
-				.open(home.getOwner().getOnlinePlayer());
+					onResponse.run();
+				} catch (Exception ex) {
+					MenuUtils.handleException(home.getOnlinePlayer(), HomesFeature.PREFIX, ex);
+				}
+			})
+			.button("Use item in main hand", response -> {
+				home.setItem(home.getOnlinePlayer().getInventory().getItemInMainHand());
+				new HomeService().save(home.getOwner());
+				response.closeDialog();
+				onResponse.run();
+			})
+			.button("Unset item", response -> {
+				home.setItem(null);
+				new HomeService().save(home.getOwner());
+				response.closeDialog();
+				onResponse.run();
+			})
+			.exitButton("Cancel", response -> onResponse.run())
+			.columns(3)
+			.show(home.getOwner());
 	}
 
 	public static void rename(Home home, Consumer<String[]> onResponse) {
 		signMenuFactory.lines("", SignMenuFactory.ARROWS, "Enter the home's", "new name")
 				.prefix(HomesFeature.PREFIX)
 				.response(lines -> {
-					if (lines[0].length() > 0) {
+					if (!lines[0].isEmpty()) {
 						if (home.getOwner().getHome(lines[0]).isPresent())
 							PlayerUtils.send(home.getOnlinePlayer(), HomesFeature.PREFIX + "&cThat home already exists! Please pick a different name");
 						else {
@@ -130,7 +158,7 @@ public class HomesMenu {
 		signMenuFactory.lines("", SignMenuFactory.ARROWS, "Enter your new", "home's name")
 				.prefix(HomesFeature.PREFIX)
 				.response(lines -> {
-					if (lines[0].length() > 0) {
+					if (!lines[0].isEmpty()) {
 						if (homeOwner.getHome(lines[0]).isPresent())
 							PlayerUtils.send(homeOwner.getOnlinePlayer(), HomesFeature.PREFIX + "&cThat home already exists! Please pick a different name");
 						else {

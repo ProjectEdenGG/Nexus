@@ -42,23 +42,23 @@ public class EditHomeProvider extends InventoryProvider {
 
 		if (home.isLocked()) {
 			contents.set(0, 7, ClickableItem.of(new ItemBuilder(Material.LIME_CONCRETE_POWDER)
-					.name("&eGive a player access")
-					.lore("&eto this home", "", "&fThey will be able to teleport to this home even if it is locked")
-					.lore(HomesMenu.getAccessListNames(home.getAccessList())),
+				.name("&eGive a player access")
+				.lore("&eto this home", "", "&fThey will be able to teleport to this home even if it is locked")
+				.lore(HomesMenu.getAccessListNames(home.getAccessList())),
 				e -> HomesMenu.allow(home, response -> refresh())
 			));
 
 			contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.RED_CONCRETE_POWDER)
-					.name("&eRemove a player's")
-					.lore("&eaccess to this home", "", "&fThey will only be able to teleport to this home if it is unlocked"),
+				.name("&eRemove a player's")
+				.lore("&eaccess to this home", "", "&fThey will only be able to teleport to this home if it is unlocked"),
 				e -> HomesMenu.remove(home, response -> refresh())
 			));
 		}
 
 		contents.set(2, 1, ClickableItem.of(new ItemBuilder(Material.PAINTING)
-				.name("&eSet display item")
-				.lore("&fWish it was easier to find this home in the menu? Change what item it displays as to distinguish it from the rest!"),
-			e -> HomesMenu.displayItem(home, response -> refresh())
+			.name("&eSet display item")
+			.lore("&fWish it was easier to find this home in the menu? Change what item it displays as to distinguish it from the rest!"),
+			e -> HomesMenu.displayItem(home, this::refresh)
 		));
 
 		contents.set(2, 2, ClickableItem.of(Material.NAME_TAG, "&eRename", e -> HomesMenu.rename(home, response -> refresh())));
