@@ -24,6 +24,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -113,15 +114,17 @@ public class DailyRewardsMenu {
 			Integer votePoints = reward.getVotePoints();
 			String command = reward.getCommand();
 
-			if (user.getCurrentStreak().hasClaimed(day)) return;
+			if (user.getCurrentStreak().hasClaimed(day))
+				return;
 
 			if (!Nullables.isNullOrEmpty(items)) {
 				for (ItemStack item : items) {
 					ItemStack clone = item.clone();
 					if (Reward.RequiredSubmenu.COLOR.contains(clone.getType())) {
 						new ColorSelectMenu(clone.getType(), itemClickData -> {
+							player.closeInventory();
 							PlayerUtils.giveItem(player, new ItemStack(itemClickData.getItem().getType(), clone.getAmount()));
-							saveAndReturn(day);
+							Tasks.wait(1, () -> saveAndReturn(day));
 						}).open(player);
 					} else if (Reward.RequiredSubmenu.NAME.contains(clone.getType())) {
 						showPlayerHeadMenu(this);
