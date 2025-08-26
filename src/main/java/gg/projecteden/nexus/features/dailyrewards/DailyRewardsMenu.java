@@ -50,7 +50,7 @@ public class DailyRewardsMenu {
 
 		for (int i = 1; i <= Math.max(MAX_DAY, user.getCurrentStreak().getStreak()); i++) {
 			final int day = i;
-			final int width = 25;
+			final int width = 26;
 			if (user.getCurrentStreak().canClaim(day))
 				if (user.getCurrentStreak().hasClaimed(day))
 					builder.button("&7" + day, "&7Claimed", width, response -> {});
