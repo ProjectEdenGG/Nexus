@@ -118,7 +118,7 @@ public enum ItemModelType {
 	HAT_MISC_BEE("costumes/hat/misc/bee"),
 	HAT_MISC_BEE_GLASSES("costumes/hat/misc/bee_glasses", true),
 	HAT_MISC_BIKE_HELMET("costumes/hat/misc/bike_helmet", true),
-	HAT_MISC_CAT_EARS_CALICO("costumes/hat/misc/cat_ears_calico"),
+	HAT_MISC_CAT_EARS_CALICO("costumes/hat/misc/cat_ears_calico", true),
 	HAT_MISC_CHEF_HAT("costumes/hat/misc/chef_hat", true),
 	HAT_MISC_CHEF_HAT_TALL("costumes/hat/misc/chef_hat_tall", true),
 	HAT_MISC_CRAB("costumes/hat/misc/crab", true),
