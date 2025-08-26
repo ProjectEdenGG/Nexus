@@ -36,11 +36,11 @@ public class DailyRewardsCommand extends CustomCommand {
 
 	@Path
 	@Description("Open the daily rewards menu")
-	void run() {
+	void menu() {
 		if (WorldGroup.SURVIVAL != worldGroup())
 			error("&cYou must be in the survival worlds to claim this reward.");
 
-		DailyRewardsFeature.menu(player(), user);
+		new DailyRewardsMenu().open(player());
 	}
 
 	@Path("getLastTaskTime")

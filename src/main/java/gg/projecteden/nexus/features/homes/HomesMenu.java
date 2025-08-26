@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.homes;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.dialog.DialogCommand.DialogBuilder;
 import gg.projecteden.nexus.features.homes.providers.EditHomeProvider;
 import gg.projecteden.nexus.features.homes.providers.EditHomesProvider;
 import gg.projecteden.nexus.features.homes.providers.SetHomeProvider;
@@ -12,10 +11,10 @@ import gg.projecteden.nexus.models.home.Home;
 import gg.projecteden.nexus.models.home.HomeOwner;
 import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.DialogUtils.DialogBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import io.papermc.paper.registry.data.dialog.DialogBase.DialogAfterAction;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -82,7 +81,6 @@ public class HomesMenu {
 	public static void displayItem(Home home, Runnable onResponse, String errorMessage) {
 		new DialogBuilder()
 			.title("Set Home Display Item")
-			.after(DialogAfterAction.NONE)
 			.bodyText("You can set your home's display item to any item or player's head")
 			.bodyText("Or to the item in your main hand")
 			.bodyText("Current Item")
@@ -134,7 +132,7 @@ public class HomesMenu {
 			})
 			.exitButton("Cancel", response -> onResponse.run())
 			.columns(3)
-			.show(home.getOwner());
+			.open(home);
 	}
 
 	public static void rename(Home home, Consumer<String[]> onResponse) {

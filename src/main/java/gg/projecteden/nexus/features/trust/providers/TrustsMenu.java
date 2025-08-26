@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.trust.providers;
 
+import gg.projecteden.api.common.exceptions.EdenException;
 import gg.projecteden.api.interfaces.HasUniqueId;
-import gg.projecteden.nexus.features.dialog.DialogCommand.SingleInputDialogBuilder;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
@@ -10,6 +10,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.trust.TrustsUser;
 import gg.projecteden.nexus.models.trust.TrustsUser.TrustType;
 import gg.projecteden.nexus.models.trust.TrustsUserService;
+import gg.projecteden.nexus.utils.DialogUtils.DialogBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -88,20 +89,7 @@ public class TrustsMenu extends InventoryProvider {
 		paginate(items);
 
 		ItemBuilder add = new ItemBuilder(Material.LIME_CONCRETE_POWDER).name("&aAdd Trust");
-		contents.set(0, 8, ClickableItem.of(add.build(), e ->
-			SingleInputDialogBuilder.builder()
-				.title("Edit Trusts")
-				.body("Enter a player's name to edit their trusts")
-				.label("Username")
-				.onConfirm(lookup -> {
-					try {
-						new TrustsPlayerMenu(user, PlayerUtils.getPlayer(lookup), this).open(viewer);
-					} catch (Exception ex) {
-						MenuUtils.handleException(viewer, StringUtils.getPrefix("Trusts"), ex);
-					}
-				})
-				.onCancel(() -> open(viewer, contents.pagination()))
-				.show(viewer)));
+		contents.set(0, 8, ClickableItem.of(add.build(), e -> playerLookupDialog()));
 
 		TrustType previous = filterType.get() == null ? TrustType.values()[0].previousWithLoop() : filterType.get().previous();
 		TrustType current = filterType.get();
@@ -119,6 +107,29 @@ public class TrustsMenu extends InventoryProvider {
 			filterType.set(finalNext);
 			open(viewer, contents.pagination());
 		}));
+	}
+
+	void playerLookupDialog() {
+		playerLookupDialog(null);
+	}
+
+	void playerLookupDialog(String errorMessage) {
+		new DialogBuilder()
+			.title("Edit Trusts")
+			.bodyText("Enter a player's name to edit their trusts")
+			.inputText("input", errorMessage)
+			.confirmation()
+			.onSubmit(response -> {
+				try {
+					new TrustsPlayerMenu(user, PlayerUtils.getPlayer(response.getText("input")), this).open(viewer);
+				} catch (EdenException ex) {
+					playerLookupDialog("&c" + ex.getMessage());
+				} catch (Exception ex) {
+					MenuUtils.handleException(viewer, StringUtils.getPrefix("Trusts"), ex);
+				}
+			})
+			.onCancel(player -> open(player, contents.pagination()))
+			.open(viewer);
 	}
 
 }

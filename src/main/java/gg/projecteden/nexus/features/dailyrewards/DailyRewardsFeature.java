@@ -97,10 +97,6 @@ public class DailyRewardsFeature extends Feature {
 		return rewards1.size();
 	}
 
-	public static void menu(Player player, DailyRewardUser user) {
-		new DailyRewardsMenu(user).open(player);
-	}
-
 	public static int getRewardDay(int day) {
 		if (day % getMaxDays() == 0)
 			return getMaxDays();

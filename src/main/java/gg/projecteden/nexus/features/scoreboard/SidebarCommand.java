@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.scoreboard;
 
 import com.gmail.nossr50.events.scoreboard.McMMOScoreboardObjectiveEvent;
 import com.gmail.nossr50.events.scoreboard.McMMOScoreboardRevertEvent;
-import gg.projecteden.nexus.features.dialog.DialogCommand.DialogBuilder;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
@@ -16,9 +15,9 @@ import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgn
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.scoreboard.ScoreboardService;
 import gg.projecteden.nexus.models.scoreboard.ScoreboardUser;
+import gg.projecteden.nexus.utils.DialogUtils.DialogBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import io.papermc.paper.registry.data.dialog.DialogBase.DialogAfterAction;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.event.EventHandler;
@@ -78,8 +77,6 @@ public class SidebarCommand extends CustomCommand implements Listener {
 	void edit() {
 		var builder = new DialogBuilder()
 			.title(new JsonBuilder("Sidebar Configuration").bold())
-			.closeWithEscape(true)
-			.after(DialogAfterAction.NONE)
 			.bodyText("Edit the order and visibility of lines on the sidebar")
 			.multiAction();
 
@@ -124,7 +121,7 @@ public class SidebarCommand extends CustomCommand implements Listener {
 		});
 		*/
 
-		builder.exitButton("Close").columns(3).show(player());
+		builder.exitButton("Close").columns(3).open(player());
 	}
 
 	@HideFromWiki
