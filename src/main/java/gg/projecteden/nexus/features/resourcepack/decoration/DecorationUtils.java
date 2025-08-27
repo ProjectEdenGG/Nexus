@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
+import de.tr7zw.nbtapi.NBT;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.ReflectionUtils;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
@@ -29,6 +30,7 @@ import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.StainCho
 import gg.projecteden.nexus.features.workbenches.dyestation.CreativeBrushMenu;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStationMenu;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.utils.ColorType;
@@ -65,6 +67,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @SuppressWarnings({"deprecation", "removal"})
 public class DecorationUtils {
@@ -358,13 +362,17 @@ public class DecorationUtils {
 	}
 
 	public static @Nullable Object findNearbyItemFrame(Location location, boolean isClientside, Player debugger) {
+		return findNearbyItemFrame(location, isClientside, 0.5, debugger);
+	}
+
+	public static @Nullable Object findNearbyItemFrame(Location location, boolean isClientside, double radius, Player debugger) {
 		Location _location = location.toCenterLocation();
-		double _radius = 0.5;
 
 		if (isClientside)
-			return ClientSideConfig.getEntities(_location, ClientSideEntityType.ITEM_FRAME, _radius).stream().findFirst().orElse(null);
+			return ClientSideConfig.getEntities(_location, ClientSideEntityType.ITEM_FRAME, radius).stream().findFirst().orElse(null);
 
-		return _location.getNearbyEntitiesByType(ItemFrame.class, _radius).stream().findFirst().orElse(null);
+		return _location.getNearbyEntitiesByType(ItemFrame.class, radius).stream().findFirst().orElse(null);
+
 	}
 
 	public static boolean hasBypass(Player player) {
@@ -443,7 +451,7 @@ public class DecorationUtils {
 		return DecorationConfig.of(targetItemStack);
 	}
 
-	public static Decoration getTargetDecoration(Player player) {
+	public static @Nullable Decoration getTargetDecoration(Player player) {
 		Entity targetEntity = DecorationStoreUtils.getTargetEntity(player);
 		if (targetEntity == null)
 			return null;
@@ -498,5 +506,72 @@ public class DecorationUtils {
 				items.add(new CustomCreativeItem(config.getItem(), "Project Eden"));
 
 		return items.toArray(CustomCreativeItem[]::new);
+	}
+
+//	public static void addNBTLocations(ItemFrame itemFrame, ArrayList<Location> locations) {
+//		if (locations.isEmpty())
+//			return;
+//
+//		String result = locations.stream()
+//			.map(loc -> loc.getBlockX() + "," + loc.getBlockY() + "," + loc.getBlockZ())
+//			.collect(Collectors.joining("_"));
+//
+//		setKey(itemFrame, DecorationConfig.NBT_DECORATION_HITBOX_KEY, result);
+//	}
+//
+//	// TODO: IMPLEMENT?
+//	public static List<Location> getNBTLocations(ItemFrame itemFrame) {
+//		String input = getKey(itemFrame, DecorationConfig.NBT_DECORATION_HITBOX_KEY);
+//
+//		return Arrays.stream(input.split("_"))
+//			.map(part -> {
+//				String[] coords = part.split(",");
+//				double x = Double.parseDouble(coords[0]);
+//				double y = Double.parseDouble(coords[1]);
+//				double z = Double.parseDouble(coords[2]);
+//				return new Location(itemFrame.getWorld(), x, y, z);
+//			})
+//			.collect(Collectors.toList());
+//	}
+
+	public static void removeKey(ItemFrame frame, String key) {
+		NBT.modifyPersistentData(frame, nbt -> {
+			nbt.removeKey(key);
+		});
+	}
+
+	public static void setKey(ItemFrame frame, String key, Object value) {
+		if (frame == null || !frame.isValid() || value == null)
+			return;
+
+		if (value instanceof Boolean val) {
+			NBT.modifyPersistentData(frame, nbt -> {
+				nbt.setBoolean(key, val);
+			});
+		} else if (value instanceof String val) {
+			NBT.modifyPersistentData(frame, nbt -> {
+				nbt.setString(key, val);
+			});
+		} else {
+			throw new InvalidInputException("[DecorationUtils#setKey] Unknown value '" + value + "' for key '" + key + "'");
+		}
+	}
+
+	public static String getKey(ItemFrame frame, String key) {
+		AtomicReference<String> result = new AtomicReference<>("");
+		NBT.modifyPersistentData(frame, nbt -> {
+			result.set(nbt.getString(key));
+		});
+		return result.get();
+	}
+
+	public static boolean hasKey(ItemFrame frame, String key) {
+		AtomicReference<Boolean> result = new AtomicReference<>(false);
+
+		NBT.modifyPersistentData(frame, nbt -> {
+			result.set(nbt.getBoolean(key));
+		});
+
+		return result.get();
 	}
 }

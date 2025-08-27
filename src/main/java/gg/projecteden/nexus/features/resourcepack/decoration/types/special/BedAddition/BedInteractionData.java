@@ -291,12 +291,16 @@ public class BedInteractionData {
 			return false;
 		}
 
-		ItemStack item = decoration.getItemDrop(player);
-		ItemStack frameItem = config.getFrameItem(player, tool);
+		ItemStack oldItem = decoration.getItemDrop(player);
+
+		ItemBuilder itemBuilder = ItemBuilder.oneOf(tool);
+		String itemName = itemBuilder.name();
+		ItemStack frameItem = config.getFrameItem(itemBuilder);
+		DecorationUtils.setKey(itemFrame, DecorationConfig.NBT_DECOR_NAME, itemName);
 		itemFrame.setItem(frameItem, false);
 
 		tool.subtract();
-		PlayerUtils.giveItem(player, item);
+		PlayerUtils.giveItem(player, oldItem);
 
 		event.setCancelled(true);
 		return true;

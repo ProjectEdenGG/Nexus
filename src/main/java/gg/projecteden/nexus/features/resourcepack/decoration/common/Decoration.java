@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
-import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
@@ -60,7 +59,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Data
 @AllArgsConstructor
@@ -99,13 +97,12 @@ public class Decoration {
 		if (Nullables.isNullOrAir(item))
 			return null;
 
-		NBTItem nbtItem = new NBTItem(item);
-		if (!nbtItem.hasKey(DecorationConfig.NBT_OWNER_KEY)) {
+		if (!DecorationUtils.hasKey(itemFrame, DecorationConfig.NBT_OWNER_KEY)) {
 			DecorationLang.debug(debugger, "&cMissing NBT Key: Owner");
 			return null;
 		}
 
-		String owner = nbtItem.getString(DecorationConfig.NBT_OWNER_KEY);
+		String owner = DecorationUtils.getKey(itemFrame, DecorationConfig.NBT_OWNER_KEY);
 		DecorationLang.debug(debugger, "&eOwner: " + PlayerUtils.getPlayer(owner).getName());
 
 		return UUID.fromString(owner);
@@ -116,43 +113,28 @@ public class Decoration {
 		if (Nullables.isNullOrAir(item))
 			return;
 
-		if (!new NBTItem(item).hasKey(DecorationConfig.NBT_OWNER_KEY)) {
+		if (!DecorationUtils.hasKey(itemFrame, DecorationConfig.NBT_OWNER_KEY)) {
 			DecorationLang.debug(debugger, "&cMissing NBT Key: Owner");
 			return;
 		}
 
-		ItemStack newItem = new ItemBuilder(item)
-			.nbt(nbt -> nbt.setString(DecorationConfig.NBT_OWNER_KEY, uuid.toString()))
-			.build();
-
-		itemFrame.setItem(newItem);
+		DecorationUtils.setKey(itemFrame, DecorationConfig.NBT_OWNER_KEY, uuid.toString());
 	}
 
 	public boolean isPublicUse(Player debugger) {
-		AtomicReference<Boolean> publicUse = new AtomicReference<>(false);
-
-		NBT.modifyPersistentData(itemFrame, nbt -> {
-			publicUse.set(nbt.getBoolean(DecorationConfig.NBT_PUBLIC_USE_FLAG));
-		});
-
-		boolean result = publicUse.get();
+		boolean result = DecorationUtils.hasKey(itemFrame, DecorationConfig.NBT_FLAG_PUBLIC_USE);
 		DecorationLang.debug(debugger, "&eIsPublicUse: " + StringUtils.bool(result));
-
 		return result;
 	}
 
 	public void setPublicUse(boolean enable, Player debugger) {
 		if (enable) {
-			NBT.modifyPersistentData(itemFrame, nbt -> {
-				nbt.setBoolean(DecorationConfig.NBT_PUBLIC_USE_FLAG, true);
-			});
+			DecorationUtils.setKey(itemFrame, DecorationConfig.NBT_FLAG_PUBLIC_USE, true);
 			DecorationLang.debug(debugger, "&eAdded public use flag");
 			return;
 		}
 
-		NBT.modifyPersistentData(itemFrame, nbt -> {
-			nbt.removeKey(DecorationConfig.NBT_PUBLIC_USE_FLAG);
-		});
+		DecorationUtils.removeKey(itemFrame, DecorationConfig.NBT_FLAG_PUBLIC_USE);
 		DecorationLang.debug(debugger, "&cRemoved public use flag");
 	}
 
@@ -172,6 +154,7 @@ public class Decoration {
 		if (Nullables.isNullOrAir(frameItem))
 			return null;
 
+		// Legacy
 		final NBTItem nbtItem = new NBTItem(frameItem);
 		if (nbtItem.hasKey(DecorationConfig.NBT_DECOR_NAME)) {
 			ItemBuilder item = new ItemBuilder(frameItem)
@@ -184,7 +167,12 @@ public class Decoration {
 		if (nbtItem.hasKey(DecorationConfig.NBT_OWNER_KEY)) {
 			ItemBuilder item = new ItemBuilder(frameItem)
 				.nbt(_nbtItem -> _nbtItem.removeKey(DecorationConfig.NBT_OWNER_KEY));
+		}
+		//
 
+		if (DecorationUtils.hasKey(itemFrame, DecorationConfig.NBT_DECOR_NAME)) {
+			String itemName = DecorationUtils.getKey(itemFrame, DecorationConfig.NBT_DECOR_NAME);
+			ItemBuilder item = new ItemBuilder(frameItem).name(itemName);
 			frameItem = item.build();
 		}
 
@@ -197,10 +185,8 @@ public class Decoration {
 		return ItemFrameRotation.of(itemFrame);
 	}
 
-	public boolean destroy(@NonNull Player player, BlockFace blockFace) {
-		NBT.modifyPersistentData(itemFrame, nbt -> {
-			nbt.setBoolean(DecorationConfig.NBT_DECORATION_KEY, true);
-		});
+	public boolean destroy(@NonNull Player player, BlockFace blockFaceOverride) {
+		DecorationUtils.setKey(itemFrame, DecorationConfig.NBT_DECORATION_KEY, true);
 		final Decoration decoration = new Decoration(config, itemFrame);
 
 		ItemStack tool = ItemUtils.getTool(player);
@@ -218,6 +204,16 @@ public class Decoration {
 					DecorationError.SEAT_OCCUPIED.send(player);
 					return false;
 				}
+			}
+		}
+
+		// TODO: TESTING NEEDED
+		if (config.isMultiBlockWallThing()) {
+			DecorationLang.debug(player, "is multiblock wallthing");
+			// Disable breaking from any face other than hanged face
+			if (itemFrame.getFacing().getOppositeFace() != blockFaceOverride) {
+				DecorationLang.debug(player, "ItemFrame = " + itemFrame.getFacing().getOppositeFace() + " | Override = " + blockFaceOverride);
+				return false;
 			}
 		}
 
@@ -248,7 +244,7 @@ public class Decoration {
 
 		if (getConfig().isMultiBlockWallThing()) {
 			DecorationLang.debug(player, "is WallThing & Multiblock");
-			finalFace = blockFace;
+			finalFace = blockFaceOverride; // blockFace
 		}
 
 		DecorationLang.debug(player, "Final BlockFace: " + finalFace);
@@ -337,7 +333,11 @@ public class Decoration {
 			return false;
 		}
 
-		ItemStack finalItem = config.getFrameItem(player, prePlaceEvent.getItem());
+		ItemBuilder itemBuilder = ItemBuilder.oneOf(prePlaceEvent.getItem());
+		String itemName = itemBuilder.name();
+		DecorationLang.debug(player, "ItemName: " + itemName);
+
+		ItemStack finalItem = config.getFrameItem(itemBuilder);
 		ItemUtils.subtract(player, item);
 
 		final BlockFace finalFace = prePlaceEvent.getAttachedFace();
@@ -353,9 +353,10 @@ public class Decoration {
 			_itemFrame.setSilent(true);
 			_itemFrame.setItem(finalItem, false);
 		});
-		NBT.modifyPersistentData(itemFrame, nbt -> {
-			nbt.setBoolean(DecorationConfig.NBT_DECORATION_KEY, true);
-		});
+
+		DecorationUtils.setKey(itemFrame, DecorationConfig.NBT_DECORATION_KEY, true);
+		DecorationUtils.setKey(itemFrame, DecorationConfig.NBT_OWNER_KEY, player.getUniqueId().toString());
+		DecorationUtils.setKey(itemFrame, DecorationConfig.NBT_DECOR_NAME, itemName);
 
 		decoration.setItemFrame(itemFrame);
 
@@ -491,7 +492,10 @@ public class Decoration {
 				if (!rotateEvent.callEvent())
 					return false;
 
-				itemFrame.setRotation(itemFrame.getRotation().rotateClockwise());
+				if (player.isSneaking())
+					itemFrame.setRotation(itemFrame.getRotation().rotateCounterClockwise());
+				else
+					itemFrame.setRotation(itemFrame.getRotation().rotateClockwise());
 			}
 		}
 

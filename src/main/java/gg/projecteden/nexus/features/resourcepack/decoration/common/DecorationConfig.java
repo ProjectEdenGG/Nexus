@@ -46,9 +46,8 @@ import java.util.function.Predicate;
 public class DecorationConfig {
 	public static final String NBT_DECORATION_KEY = "DecorationFrame";
 	public static final String NBT_OWNER_KEY = "DecorationOwner";
-	public static final String NBT_PUBLIC_USE_FLAG = "DecorationPublicUse";
 	public static final String NBT_DECOR_NAME = "DecorationName";
-	public static final String NBT_IGNORE_EVENT = "DecorationIgnoreEvent";
+	public static final String NBT_FLAG_PUBLIC_USE = "DecorationPublicUse";
 
 	protected String id;
 	protected String name;
@@ -333,18 +332,8 @@ public class DecorationConfig {
 
 	//
 
-
-
-	public ItemStack getFrameItem(Player player, ItemStack itemStack) {
-		ItemBuilder itemCopy = ItemBuilder.oneOf(itemStack);
-
-		String itemName = itemCopy.name();
-		DecorationLang.debug(player, "ItemName: " + itemName);
-		return itemCopy
-				.nbt(nbt -> nbt.setString(NBT_OWNER_KEY, player.getUniqueId().toString()))
-				.nbt(nbt -> nbt.setString(NBT_DECOR_NAME, itemName))
-				.resetName()
-				.build();
+	public ItemStack getFrameItem(ItemBuilder itemBuilder) {
+		return itemBuilder.resetName().build();
 	}
 
 	public void sendInfo(Player player) {

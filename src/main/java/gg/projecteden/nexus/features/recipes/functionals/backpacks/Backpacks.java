@@ -393,9 +393,8 @@ public class Backpacks extends FunctionalRecipe {
 		public String getTitle() {
 			String displayName = backpack.getItemMeta().getDisplayName();
 			if (frame != null) {
-				final NBTItem nbtItem = new NBTItem(frame.getItem());
-				if (nbtItem.hasKey(DecorationConfig.NBT_DECOR_NAME))
-					displayName = nbtItem.getString(DecorationConfig.NBT_DECOR_NAME);
+				if (DecorationUtils.hasKey(frame, DecorationConfig.NBT_DECOR_NAME))
+					displayName = DecorationUtils.getKey(frame, DecorationConfig.NBT_DECOR_NAME);
 			}
 
 			if (!Nullables.isNullOrEmpty(displayName) && !StringUtils.decolorize(displayName).equalsIgnoreCase("&fBackpack"))
