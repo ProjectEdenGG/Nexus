@@ -167,6 +167,8 @@ public class Decoration {
 		if (nbtItem.hasKey(DecorationConfig.NBT_OWNER_KEY)) {
 			ItemBuilder item = new ItemBuilder(frameItem)
 				.nbt(_nbtItem -> _nbtItem.removeKey(DecorationConfig.NBT_OWNER_KEY));
+
+			frameItem = item.build();
 		}
 		//
 
