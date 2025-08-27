@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.Connect4MatchDat
 import gg.projecteden.nexus.features.minigames.models.matchdata.Connect4MatchData.Connect4Board;
 import gg.projecteden.nexus.features.minigames.models.matchdata.shared.InARowBoard.InARowPiece;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
@@ -21,6 +22,7 @@ import net.md_5.bungee.api.ChatColor;
 
 @HideFromWiki
 @Permission(Group.ADMIN)
+@Aliases("c4")
 @SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class Connect4Command extends CustomCommand {
 	private final Minigamer minigamer;
