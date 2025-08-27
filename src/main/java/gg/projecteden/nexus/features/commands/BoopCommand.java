@@ -61,7 +61,7 @@ public class BoopCommand extends CustomCommand {
 		}
 	}
 
-	@Path("<player> [message...] [--anonymous] [--revenge]")
+	@Path("<player> [message...] [--anonymous]")
 	@Description("Boop a player")
 	@Cooldown(value = TickTime.SECOND, x = 5, bypass = Group.ADMIN)
 	void boop(
