@@ -242,6 +242,10 @@ public class PlayerUtils {
 			return where().get();
 		}
 
+		public static Stream<Player> stream() {
+			return getAll().stream();
+		}
+
 		public OnlinePlayers viewer(HasUniqueId player) {
 			this.viewer = player.getUniqueId();
 			return this;
