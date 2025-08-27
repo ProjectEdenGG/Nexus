@@ -10,9 +10,9 @@ import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.DecorationNBTKey;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration.DecorationEditType;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
@@ -393,8 +393,9 @@ public class Backpacks extends FunctionalRecipe {
 		public String getTitle() {
 			String displayName = backpack.getItemMeta().getDisplayName();
 			if (frame != null) {
-				if (DecorationUtils.hasKey(frame, DecorationConfig.NBT_DECOR_NAME))
-					displayName = DecorationUtils.getKey(frame, DecorationConfig.NBT_DECOR_NAME);
+
+				if (DecorationNBTKey.NAME.hasKey(frame))
+					displayName = DecorationNBTKey.NAME.getKey(frame);
 			}
 
 			if (!Nullables.isNullOrEmpty(displayName) && !StringUtils.decolorize(displayName).equalsIgnoreCase("&fBackpack"))

@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.Deco
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.DecorationNBTKey;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Addition;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Seat;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
@@ -97,12 +98,12 @@ public class Decoration {
 		if (Nullables.isNullOrAir(item))
 			return null;
 
-		if (!DecorationUtils.hasKey(itemFrame, DecorationConfig.NBT_OWNER_KEY)) {
+		if (!DecorationNBTKey.OWNER.hasKey(itemFrame)) {
 			DecorationLang.debug(debugger, "&cMissing NBT Key: Owner");
 			return null;
 		}
 
-		String owner = DecorationUtils.getKey(itemFrame, DecorationConfig.NBT_OWNER_KEY);
+		String owner = DecorationNBTKey.OWNER.getKey(itemFrame);
 		DecorationLang.debug(debugger, "&eOwner: " + PlayerUtils.getPlayer(owner).getName());
 
 		return UUID.fromString(owner);
@@ -113,28 +114,23 @@ public class Decoration {
 		if (Nullables.isNullOrAir(item))
 			return;
 
-		if (!DecorationUtils.hasKey(itemFrame, DecorationConfig.NBT_OWNER_KEY)) {
-			DecorationLang.debug(debugger, "&cMissing NBT Key: Owner");
-			return;
-		}
-
-		DecorationUtils.setKey(itemFrame, DecorationConfig.NBT_OWNER_KEY, uuid.toString());
+		DecorationNBTKey.OWNER.setKey(itemFrame, uuid.toString());
 	}
 
 	public boolean isPublicUse(Player debugger) {
-		boolean result = DecorationUtils.hasKey(itemFrame, DecorationConfig.NBT_FLAG_PUBLIC_USE);
+		boolean result = DecorationNBTKey.PUBLIC_USE.hasKey(itemFrame);
 		DecorationLang.debug(debugger, "&eIsPublicUse: " + StringUtils.bool(result));
 		return result;
 	}
 
 	public void setPublicUse(boolean enable, Player debugger) {
 		if (enable) {
-			DecorationUtils.setKey(itemFrame, DecorationConfig.NBT_FLAG_PUBLIC_USE, true);
+			DecorationNBTKey.PUBLIC_USE.setKey(itemFrame, true);
 			DecorationLang.debug(debugger, "&eAdded public use flag");
 			return;
 		}
 
-		DecorationUtils.removeKey(itemFrame, DecorationConfig.NBT_FLAG_PUBLIC_USE);
+		DecorationNBTKey.PUBLIC_USE.removeKey(itemFrame);
 		DecorationLang.debug(debugger, "&cRemoved public use flag");
 	}
 
@@ -150,30 +146,35 @@ public class Decoration {
 	}
 
 	public ItemStack getItemDrop(Player debugger) {
+		DecorationLang.debug(debugger, "Getting item drop");
 		ItemStack frameItem = getItem(debugger);
 		if (Nullables.isNullOrAir(frameItem))
 			return null;
 
 		// Legacy
 		final NBTItem nbtItem = new NBTItem(frameItem);
-		if (nbtItem.hasKey(DecorationConfig.NBT_DECOR_NAME)) {
+		if (nbtItem.hasKey(DecorationNBTKey.NAME.getKey())) {
+			String itemName = nbtItem.getString(DecorationNBTKey.NAME.getKey());
+			DecorationLang.debug(debugger, "Getting Decor name from item = " + itemName);
 			ItemBuilder item = new ItemBuilder(frameItem)
-				.name(nbtItem.getString(DecorationConfig.NBT_DECOR_NAME))
-				.nbt(_nbtItem -> _nbtItem.removeKey(DecorationConfig.NBT_DECOR_NAME));
+				.name(itemName)
+				.nbt(_nbtItem -> _nbtItem.removeKey(DecorationNBTKey.NAME.getKey()));
 
 			frameItem = item.build();
 		}
 
-		if (nbtItem.hasKey(DecorationConfig.NBT_OWNER_KEY)) {
+		if (nbtItem.hasKey(DecorationNBTKey.OWNER.getKey())) {
+			DecorationLang.debug(debugger, "Removing Decor owner from item");
 			ItemBuilder item = new ItemBuilder(frameItem)
-				.nbt(_nbtItem -> _nbtItem.removeKey(DecorationConfig.NBT_OWNER_KEY));
+				.nbt(_nbtItem -> _nbtItem.removeKey(DecorationNBTKey.OWNER.getKey()));
 
 			frameItem = item.build();
 		}
 		//
 
-		if (DecorationUtils.hasKey(itemFrame, DecorationConfig.NBT_DECOR_NAME)) {
-			String itemName = DecorationUtils.getKey(itemFrame, DecorationConfig.NBT_DECOR_NAME);
+		if (DecorationNBTKey.NAME.hasKey(itemFrame)) {
+			String itemName = DecorationNBTKey.NAME.getKey(itemFrame);
+			DecorationLang.debug(debugger, "Getting Decor name from item frame = " + itemName);
 			ItemBuilder item = new ItemBuilder(frameItem).name(itemName);
 			frameItem = item.build();
 		}
@@ -188,7 +189,7 @@ public class Decoration {
 	}
 
 	public boolean destroy(@NonNull Player player, BlockFace blockFaceOverride) {
-		DecorationUtils.setKey(itemFrame, DecorationConfig.NBT_DECORATION_KEY, true);
+		DecorationNBTKey.DECORATION.setKey(itemFrame, true);
 		final Decoration decoration = new Decoration(config, itemFrame);
 
 		ItemStack tool = ItemUtils.getTool(player);
@@ -356,9 +357,9 @@ public class Decoration {
 			_itemFrame.setItem(finalItem, false);
 		});
 
-		DecorationUtils.setKey(itemFrame, DecorationConfig.NBT_DECORATION_KEY, true);
-		DecorationUtils.setKey(itemFrame, DecorationConfig.NBT_OWNER_KEY, player.getUniqueId().toString());
-		DecorationUtils.setKey(itemFrame, DecorationConfig.NBT_DECOR_NAME, itemName);
+		DecorationNBTKey.DECORATION.setKey(itemFrame, true);
+		DecorationNBTKey.OWNER.setKey(itemFrame, player.getUniqueId().toString());
+		DecorationNBTKey.NAME.setKey(itemFrame, itemName);
 
 		decoration.setItemFrame(itemFrame);
 

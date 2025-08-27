@@ -44,11 +44,6 @@ import java.util.function.Predicate;
 
 @Data
 public class DecorationConfig {
-	public static final String NBT_DECORATION_KEY = "DecorationFrame";
-	public static final String NBT_OWNER_KEY = "DecorationOwner";
-	public static final String NBT_DECOR_NAME = "DecorationName";
-	public static final String NBT_FLAG_PUBLIC_USE = "DecorationPublicUse";
-
 	protected String id;
 	protected String name;
 	protected @NonNull Material material = Material.PAPER;

@@ -30,7 +30,6 @@ import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.StainCho
 import gg.projecteden.nexus.features.workbenches.dyestation.CreativeBrushMenu;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStationMenu;
-import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.utils.ColorType;
@@ -42,6 +41,7 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
@@ -68,7 +68,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 @SuppressWarnings({"deprecation", "removal"})
 public class DecorationUtils {
@@ -534,44 +533,110 @@ public class DecorationUtils {
 //			.collect(Collectors.toList());
 //	}
 
-	public static void removeKey(ItemFrame frame, String key) {
-		NBT.modifyPersistentData(frame, nbt -> {
-			nbt.removeKey(key);
-		});
-	}
+	@Getter
+	@AllArgsConstructor
+	public enum DecorationNBTKey {
+		DECORATION("DecorationFrame") {
+			@Override
+			public boolean hasKey(ItemFrame frame) {
+				return _hasBoolean(frame);
+			}
 
-	public static void setKey(ItemFrame frame, String key, Object value) {
-		if (frame == null || !frame.isValid() || value == null)
-			return;
+			@Override
+			public void setKey(ItemFrame frame, Object value) {
+				_setBoolean(frame, (Boolean) value);
+			}
+		},
+		OWNER("DecorationOwner") {
+			@Override
+			public boolean hasKey(ItemFrame frame) {
+				return _hasString(frame);
+			}
 
-		if (value instanceof Boolean val) {
+			@Override
+			public void setKey(ItemFrame frame, Object value) {
+				_setString(frame, (String) value);
+			}
+		},
+		NAME("DecorationName") {
+			@Override
+			public boolean hasKey(ItemFrame frame) {
+				return _hasString(frame);
+			}
+
+			@Override
+			public void setKey(ItemFrame frame, Object value) {
+				_setString(frame, (String) value);
+			}
+		},
+		PUBLIC_USE("DecorationPublicUse") {
+			@Override
+			public boolean hasKey(ItemFrame frame) {
+				return _hasBoolean(frame);
+			}
+
+			@Override
+			public void setKey(ItemFrame frame, Object value) {
+				_setBoolean(frame, (Boolean) value);
+			}
+		};
+
+		private final String key;
+
+		public abstract boolean hasKey(ItemFrame frame);
+
+		public abstract void setKey(ItemFrame frame, Object value);
+
+		public void removeKey(ItemFrame frame) {
 			NBT.modifyPersistentData(frame, nbt -> {
-				nbt.setBoolean(key, val);
+				nbt.removeKey(key);
 			});
-		} else if (value instanceof String val) {
-			NBT.modifyPersistentData(frame, nbt -> {
-				nbt.setString(key, val);
-			});
-		} else {
-			throw new InvalidInputException("[DecorationUtils#setKey] Unknown value '" + value + "' for key '" + key + "'");
 		}
-	}
 
-	public static String getKey(ItemFrame frame, String key) {
-		AtomicReference<String> result = new AtomicReference<>("");
-		NBT.modifyPersistentData(frame, nbt -> {
-			result.set(nbt.getString(key));
-		});
-		return result.get();
-	}
+		public @Nullable String getKey(ItemFrame frame) {
+			AtomicReference<String> resultAtomic = new AtomicReference<>(null);
+			NBT.modifyPersistentData(frame, nbt -> {
+				resultAtomic.set(nbt.getString(key));
+			});
 
-	public static boolean hasKey(ItemFrame frame, String key) {
-		AtomicReference<Boolean> result = new AtomicReference<>(false);
+			String result = resultAtomic.get();
+			if (Nullables.isNullOrEmpty(result))
+				return null;
 
-		NBT.modifyPersistentData(frame, nbt -> {
-			result.set(nbt.getBoolean(key));
-		});
+			return result;
+		}
 
-		return result.get();
+		//
+
+		protected void _setBoolean(ItemFrame frame, boolean value) {
+			NBT.modifyPersistentData(frame, nbt -> {
+				nbt.setBoolean(key, value);
+			});
+		}
+
+		protected void _setString(ItemFrame frame, String value) {
+			NBT.modifyPersistentData(frame, nbt -> {
+				nbt.setString(key, value);
+			});
+		}
+
+		protected boolean _hasBoolean(ItemFrame frame) {
+			AtomicReference<Boolean> result = new AtomicReference<>(false);
+			NBT.modifyPersistentData(frame, nbt -> {
+				result.set(nbt.getBoolean(key));
+			});
+
+			return result.get();
+		}
+
+		protected boolean _hasString(ItemFrame frame) {
+			AtomicReference<String> resultAtomic = new AtomicReference<>(null);
+			NBT.modifyPersistentData(frame, nbt -> {
+				resultAtomic.set(nbt.getString(key));
+			});
+
+			String result = resultAtomic.get();
+			return !Nullables.isNullOrEmpty(result);
+		}
 	}
 }

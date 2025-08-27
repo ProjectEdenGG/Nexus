@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationCooldown;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.DecorationNBTKey;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration.DecorationEditType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
@@ -296,7 +297,7 @@ public class BedInteractionData {
 		ItemBuilder itemBuilder = ItemBuilder.oneOf(tool);
 		String itemName = itemBuilder.name();
 		ItemStack frameItem = config.getFrameItem(itemBuilder);
-		DecorationUtils.setKey(itemFrame, DecorationConfig.NBT_DECOR_NAME, itemName);
+		DecorationNBTKey.NAME.setKey(itemFrame, itemName);
 		itemFrame.setItem(frameItem, false);
 
 		tool.subtract();
