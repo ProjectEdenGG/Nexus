@@ -68,7 +68,7 @@ public class DailyRewardsMenu {
 
 		builder
 			.exitButton("Close")
-			.columns(15)
+			.columns(14)
 			.open(player);
 	}
 
@@ -129,8 +129,9 @@ public class DailyRewardsMenu {
 					} else if (Reward.RequiredSubmenu.NAME.contains(clone.getType())) {
 						showPlayerHeadMenu(this);
 					} else {
+						player.closeInventory();
 						PlayerUtils.giveItem(player, clone);
-						saveAndReturn(day);
+						Tasks.wait(1, () -> saveAndReturn(day));
 					}
 				}
 
