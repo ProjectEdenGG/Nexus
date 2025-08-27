@@ -34,12 +34,115 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
+import java.util.UUID;
+
 @NoArgsConstructor
 public class ProfileCommand extends CustomCommand implements Listener {
 	private final ProfileUserService service = new ProfileUserService();
 
 	public ProfileCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	@Path("degreeOfSeparation <player>")
+	public void degreeOfSeparation(Player player) {
+		FriendsUserService friendsUserService = new FriendsUserService();
+
+		Map<UUID, Set<UUID>> friends = buildGraph(friendsUserService, uuid());
+
+		List<UUID> path = findDegreeOfSeparation(friends, uuid(), player.getUniqueId());
+
+		if (path.isEmpty())
+			error("No path found");
+
+		StringBuilder formatted = new StringBuilder();
+		int index = 1;
+		for (UUID uuid : path) {
+			formatted.append(index).append(". ").append(Nickname.of(uuid)).append("\n");
+			index++;
+		}
+
+		send(formatted.toString());
+	}
+
+	private Map<UUID, Set<UUID>> buildGraph(FriendsUserService service, UUID start) {
+		Map<UUID, Set<UUID>> graph = new HashMap<>();
+		Queue<UUID> queue = new LinkedList<>();
+		Set<UUID> visited = new HashSet<>();
+
+		queue.add(start);
+		visited.add(start);
+
+		while (!queue.isEmpty()) {
+			UUID current = queue.poll();
+			FriendsUser user = service.get(current);
+			graph.put(current, user.getFriends());
+
+			for (UUID friend : user.getFriends()) {
+				if (visited.add(friend)) {
+					queue.add(friend);
+				}
+			}
+		}
+
+		return graph;
+	}
+
+	private List<UUID> findDegreeOfSeparation(Map<UUID, Set<UUID>> friends, UUID viewer, UUID target) {
+		if (!friends.containsKey(viewer) || !friends.containsKey(target))
+			return List.of(); // person not in graph
+
+		if (viewer.equals(target))
+			return List.of(viewer);
+
+		Queue<UUID> queue = new LinkedList<>();
+		Map<UUID, UUID> previous = new HashMap<>();
+		Set<UUID> visited = new HashSet<>();
+
+		queue.add(viewer);
+		visited.add(viewer);
+
+		while (!queue.isEmpty()) {
+			UUID current = queue.poll();
+
+			for (UUID neighbor : friends.getOrDefault(current, Set.of())) {
+				if (visited.add(neighbor)) {            // mark neighbor visited
+					previous.put(neighbor, current);    // record how we got there
+					queue.add(neighbor);                // enqueue for exploration
+
+					if (neighbor.equals(target)) {
+						return buildPath(previous, viewer, target);    // stop early
+					}
+				}
+			}
+		}
+
+		return List.of(); // no path found
+	}
+
+	private static List<UUID> buildPath(Map<UUID, UUID> previous, UUID start, UUID end) {
+		LinkedHashSet<UUID> path = new LinkedHashSet<>();
+		UUID current = end;
+
+		while (current != null) {
+			path.addFirst(current);
+			current = previous.get(current);
+		}
+
+		if (!path.getFirst().equals(start)) {
+			return List.of();
+		}
+
+		return new ArrayList<>(path); // return as List for convenience
 	}
 
 	@Path("[player]")
