@@ -88,6 +88,11 @@ public class EasterEggs implements Listener {
 			return this;
 		}
 
+		public StaffEasterEggBuilder burpSound(CustomSound burpSound) {
+			this.burpSound = new SoundBuilder(burpSound);
+			return this;
+		}
+
 		public StaffEasterEggBuilder noBurpSound() {
 			this.burpSound = null;
 			return this;
@@ -204,7 +209,6 @@ public class EasterEggs implements Listener {
 
 	}
 
-	// TODO: MaxAlex
 	@AllArgsConstructor
 	public enum StaffEasterEgg {
 		// Admins
@@ -265,6 +269,18 @@ public class EasterEggs implements Listener {
 
 		GHAST(new StaffEasterEggBuilder("e938d0d1-3b7e-4b76-bf11-75d67ae0e5d6")
 			.food(MaterialTag.MUSHROOMS.getValues())
+			.eatSound(Sound.ENTITY_GHAST_AMBIENT)
+			.burpSound(Sound.ENTITY_HAPPY_GHAST_HARNESS_GOGGLES_DOWN)
+		),
+
+		ESIAN(new StaffEasterEggBuilder("d46a0268-a11d-46cd-8151-2e1d9f0d6ee6")
+			.food(MaterialTag.RAILS.getValues())
+			.burpSound(new SoundBuilder(CustomSound.TRAIN_WHISTLE).volume(0.2))
+		),
+
+		AX(new StaffEasterEggBuilder("a62d505d-65ae-4c99-839b-217a13f1b05b")
+			.food(Material.BOOK)
+			.burpSound(Sound.ENTITY_ENDER_DRAGON_AMBIENT)
 		),
 
 		// Architects
