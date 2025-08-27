@@ -41,7 +41,9 @@ import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig.DecorationStorePasteHistory;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.EntityUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.NonNull;
@@ -69,6 +71,29 @@ public class DecorationCommand extends CustomCommand {
 
 	public DecorationCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	@Permission(Group.ADMIN)
+	@Description("Replaces the selectedPath in the modelId with the replacePath to all frame items in radius")
+	@Path("transplant <radius> <selectPath> <replacePath>")
+	void transplant(@Arg(min = 0.5, max = 25) double radius, String fromPath, String toPath) {
+		if (fromPath == null || toPath == null)
+			error("Both paths must be provided");
+
+		world().getNearbyEntitiesByType(ItemFrame.class, location(), radius).forEach(itemFrame -> {
+			ItemStack item = itemFrame.getItem();
+			if (Nullables.isNullOrAir(item))
+				return;
+
+			ItemBuilder itemBuilder = new ItemBuilder(itemFrame.getItem());
+			String oldModel = itemBuilder.model();
+			if (!oldModel.contains(fromPath))
+				return;
+
+			String newModel = oldModel.replace(fromPath, toPath);
+			itemBuilder.model(newModel);
+			itemFrame.setItem(itemBuilder.build());
+		});
 	}
 
 	@Path("wiki")
