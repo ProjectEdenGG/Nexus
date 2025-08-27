@@ -217,7 +217,7 @@ public class EasterEggs implements Listener {
 		),
 
 		WAKKA(new StaffEasterEggBuilder("e9e07315-d32c-4df7-bd05-acfe51108234")
-			.food(Material.REDSTONE)
+			.food(Material.COOKIE)
 			.burpSound(new SoundBuilder(CustomSound.BURP).volume(0.5))
 		),
 
@@ -262,9 +262,9 @@ public class EasterEggs implements Listener {
 
 		VALK(new StaffEasterEggBuilder("d1729990-0ad4-4db8-8a95-779128e9fa1a")
 			.food(Material.PINK_PETALS)
-			.eatSound(Sound.ENTITY_ARMADILLO_ROLL)
-			.eatMaxCount(2)
-			.burpSound(Sound.ENTITY_SHULKER_AMBIENT)
+			.eatSound(Sound.ENTITY_SHULKER_AMBIENT)
+			.eatMaxCount(1)
+			.burpSound(Sound.ENTITY_LIGHTNING_BOLT_THUNDER)
 		),
 
 		GHAST(new StaffEasterEggBuilder("e938d0d1-3b7e-4b76-bf11-75d67ae0e5d6")
@@ -308,9 +308,9 @@ public class EasterEggs implements Listener {
 		// Builders
 
 		HOOTS(new StaffEasterEggBuilder("4f06f692-0b42-4706-9193-bcc716ce5936")
-			.food(Material.AMETHYST_SHARD)
-			.eatSound(Sound.BLOCK_AMETHYST_CLUSTER_PLACE)
-			.burpSound(Sound.BLOCK_AMETHYST_CLUSTER_BREAK)
+			.food(Material.GLOWSTONE_DUST)
+			.eatSound(Sound.BLOCK_RESPAWN_ANCHOR_CHARGE)
+			.burpSound(new SoundBuilder(CustomSound.WEATHER_THUNDER).pitch(2))
 		),
 		;
 
