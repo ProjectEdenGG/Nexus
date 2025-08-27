@@ -40,6 +40,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig.DecorationStorePasteHistory;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -71,6 +72,14 @@ public class DecorationCommand extends CustomCommand {
 
 	public DecorationCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	@Permission(Group.ADMIN)
+	@Path("testDebug")
+	void testDebug() {
+		DecorationLang.debug(player(), "normal debug");
+		DecorationLang.deepDebug(player(), "deep debug");
+		DecorationLang.debugDot(player(), location(), ColorType.RED);
 	}
 
 	@Permission(Group.ADMIN)
@@ -394,29 +403,6 @@ public class DecorationCommand extends CustomCommand {
 		Location below = block().getRelative(BlockFace.DOWN).getLocation();
 
 		Seat.spawnArmorStandAndSit(player(), below, height);
-	}
-
-
-	@Path("debug [enabled] [--deep]")
-	@Permission(Group.STAFF)
-	@Description("Toggle debugging decorations")
-	void debug(Boolean enable, @Switch @Arg("false") boolean deep) {
-		if (enable == null)
-			enable = !DecorationLang.isDebugging(uuid());
-
-		if (!enable && deep)
-			enable = true;
-
-		if (enable) {
-			DecorationLang.startDebugging(uuid(), deep);
-		} else
-			DecorationLang.stopDebugging(uuid());
-
-		String debugType = "Debug ";
-		if (deep)
-			debugType = "Deep Debug ";
-
-		send(PREFIX + debugType + (enable ? "&aEnabled" : "&cDisabled"));
 	}
 
 	// STORE COMMANDS

@@ -72,16 +72,7 @@ class HitboxMaze {
 
 	public void debugDot(Location location, ColorType color) {
 		this.wait += 2;
-
-		Tasks.wait(this.wait, () ->
-				DecorationLang.debug(player, () ->
-						DecorationLang.getDebuggerUUIDs().forEach(uuid -> {
-							OfflinePlayer player = PlayerUtils.getPlayer(uuid);
-							if (player.isOnline())
-								DebugDotCommand.play(player.getPlayer(), location.clone().toCenterLocation(), color, TickTime.SECOND.x(1));
-						})
-				)
-		);
+		Tasks.wait(this.wait, () -> DecorationLang.debugDot(player, location.clone().toCenterLocation(), color));
 	}
 
 	public void resetDirections() {

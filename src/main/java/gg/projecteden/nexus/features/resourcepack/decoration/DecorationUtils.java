@@ -283,7 +283,7 @@ public class DecorationUtils {
 		// Is correct item frame?
 		Object itemFrame = findItemFrame(maze, currentLoc, blockFaceOverride, debugger, isClientside);
 		if (itemFrame != null) {
-			DecorationLang.debug(debugger, "  &aMaze found item frame\n");
+			DecorationLang.deepDebug(debugger, "  &aMaze found item frame\n");
 			return itemFrame;
 		}
 
@@ -303,13 +303,16 @@ public class DecorationUtils {
 			DecorationLang.deepDebug(debugger, "&6- no item frames found nearby");
 			return null;
 		}
+		DecorationLang.deepDebug(debugger, "&6- found item frame");
 
 		if (isClientside) {
+			DecorationLang.deepDebug(debugger, "&6-- Is clientside");
 			ClientSideItemFrame _itemFrame = (ClientSideItemFrame) itemFrame;
 
 			blockFace = ItemFrameRotation.of(_itemFrame).getBlockFace();
 			itemStack = _itemFrame.content();
 		} else {
+			DecorationLang.deepDebug(debugger, "&6-- Is serverside");
 			ItemFrame _itemFrame = (ItemFrame) itemFrame;
 
 			blockFace = ItemFrameRotation.of(_itemFrame).getBlockFace();
@@ -317,21 +320,22 @@ public class DecorationUtils {
 		}
 
 		if (Nullables.isNullOrAir(itemStack)) {
-			DecorationLang.deepDebug(debugger, "&6- item frame is empty");
+			DecorationLang.deepDebug(debugger, "&6-- Item frame is empty");
 			return null;
 		}
 
 		DecorationConfig config = DecorationConfig.of(itemStack);
 		if (config == null) {
-			DecorationLang.deepDebug(debugger, "&6- item frame does not have decoration");
+			DecorationLang.deepDebug(debugger, "&6-- Item frame does not have decoration");
 			return null;
 		}
 
-		DecorationLang.deepDebug(debugger, "&eHitbox BlockFace: " + blockFace);
-		if (config.isMultiBlockWallThing() && blockFaceOverride != null) {
-			blockFace = blockFaceOverride;
-			DecorationLang.debug(debugger, "&eBlockFace Override 1: " + blockFace);
-		}
+		DecorationLang.deepDebug(debugger, "&6-- Is a decoration");
+		DecorationLang.deepDebug(debugger, "&e- Hitbox BlockFace: " + blockFace);
+//		if (config.isMultiBlockWallThing() && blockFaceOverride != null) {
+//			blockFace = blockFaceOverride;
+//			DecorationLang.debug(debugger, "&eBlockFace Override 1: " + blockFace);
+//		}
 
 		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(config, blockFace);
 

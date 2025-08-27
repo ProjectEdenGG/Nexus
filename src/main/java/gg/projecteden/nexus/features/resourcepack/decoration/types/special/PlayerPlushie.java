@@ -2,13 +2,14 @@ package gg.projecteden.nexus.features.resourcepack.decoration.types.special;
 
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationTagType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
+import gg.projecteden.nexus.utils.Debug;
+import gg.projecteden.nexus.utils.Debug.DebugType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -83,7 +84,7 @@ public class PlayerPlushie extends DecorationConfig {
 			if (isNotPlayerPlushie(itemStack))
 				return;
 
-			DecorationLang.debug("player plushie - dropped");
+			Debug.log(DebugType.DECORATION, "player plushie - dropped");
 
 			item.setCanMobPickup(false);
 			item.setUnlimitedLifetime(true);
@@ -102,7 +103,7 @@ public class PlayerPlushie extends DecorationConfig {
 			if (isNotPlayerPlushie(itemStack))
 				return;
 
-			DecorationLang.debug("player plushie - prevented combust");
+			Debug.log(DebugType.DECORATION, "player plushie - prevented combust");
 
 			event.setCancelled(true);
 		}
