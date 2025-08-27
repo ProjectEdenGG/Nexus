@@ -399,7 +399,7 @@ public class BearFair21Quests implements Listener {
 
 		if (event.isCancelled()) return;
 		if (BearFair21.isNotAtBearFair(block)) return;
-		if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
+		if (WorldGuardEditCommand.isEnabled(player)) return;
 
 		if (!BearFair21.getConfig().isEnabled(BearFair21Config.BearFair21ConfigOption.EDIT)) {
 			event.setCancelled(true);

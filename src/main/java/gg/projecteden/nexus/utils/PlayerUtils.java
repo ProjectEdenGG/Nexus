@@ -664,7 +664,7 @@ public class PlayerUtils {
 
 	public static boolean canEdit(Player player, Location location) {
 		if (!new WorldGuardUtils(player).getRegionsAt(location).isEmpty())
-			return WorldGuardEditCommand.canWorldGuardEdit(player);
+			return WorldGuardEditCommand.isEnabled(player);
 
 		return true;
 	}

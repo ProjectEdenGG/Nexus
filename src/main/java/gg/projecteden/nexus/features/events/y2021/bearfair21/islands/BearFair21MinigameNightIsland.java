@@ -727,7 +727,7 @@ public class BearFair21MinigameNightIsland implements BearFair21Island {
 	public void onClickSpeakerPart(PlayerInteractEvent event) {
 		if (!BearFair21.canDoBearFairQuest(event)) return;
 		final Player player = event.getPlayer();
-		if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
+		if (WorldGuardEditCommand.isEnabled(player)) return;
 		if (Nullables.isNullOrAir(event.getClickedBlock())) return;
 		Block block = event.getClickedBlock().getRelative(event.getBlockFace());
 
@@ -752,7 +752,7 @@ public class BearFair21MinigameNightIsland implements BearFair21Island {
 	public void onClickTrunk(PlayerInteractEvent event) {
 		if (!BearFair21.canDoBearFairQuest(event)) return;
 		final Player player = event.getPlayer();
-		if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
+		if (WorldGuardEditCommand.isEnabled(player)) return;
 		final Block block = event.getClickedBlock();
 		if (Nullables.isNullOrAir(block)) return;
 		if (!BearFair21.worldguard().isInRegion(block.getLocation(), trunkRegion)) return;
@@ -856,7 +856,7 @@ public class BearFair21MinigameNightIsland implements BearFair21Island {
 		if (!BearFair21.canDoBearFairQuest(event)) return;
 		Entity entity = event.getRightClicked();
 		final Player player = event.getPlayer();
-		if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
+		if (WorldGuardEditCommand.isEnabled(player)) return;
 		if (entity.getType() != EntityType.ITEM_FRAME) return;
 		if (!BearFair21.worldguard().isInRegion(entity.getLocation(), phoneRegion)) return;
 		event.setCancelled(true);
@@ -1081,7 +1081,7 @@ public class BearFair21MinigameNightIsland implements BearFair21Island {
 		if (!BearFair21.canDoBearFairQuest(event)) return;
 
 		final Player player = event.getPlayer();
-		if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
+		if (WorldGuardEditCommand.isEnabled(player)) return;
 
 		Entity entity = event.getRightClicked();
 		if (entity.getType() != EntityType.ITEM_FRAME) return;

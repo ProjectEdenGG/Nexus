@@ -42,7 +42,7 @@ public class StoreGalleryListener implements Listener {
 			return;
 
 		final Player player = event.getPlayer();
-		if (WorldGuardEditCommand.canWorldGuardEdit(player))
+		if (WorldGuardEditCommand.isEnabled(player))
 			return;
 
 		final Entity entity = event.getRightClicked();
@@ -85,7 +85,7 @@ public class StoreGalleryListener implements Listener {
 		if (block.getType() != Material.BLACK_CONCRETE)
 			return;
 
-		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
+		if (WorldGuardEditCommand.isEnabled(event.getPlayer()))
 			return;
 
 		GalleryPackage galleryPackage = getGalleryPackage(block.getLocation());

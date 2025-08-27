@@ -21,7 +21,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -319,7 +324,7 @@ public class BearFair21Frogger implements Listener {
 			}
 
 		} else if (regionId.equalsIgnoreCase(killRg)) {
-			if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
+			if (WorldGuardEditCommand.isEnabled(player)) return;
 			if (checkpointList.contains(player))
 				player.teleportAsync(checkpointLoc);
 			else
@@ -327,7 +332,7 @@ public class BearFair21Frogger implements Listener {
 			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(player).volume(10).play();
 
 		} else if (regionId.equalsIgnoreCase(winRg)) {
-			if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
+			if (WorldGuardEditCommand.isEnabled(player)) return;
 
 			checkpointList.remove(player);
 			player.teleportAsync(respawnLoc);

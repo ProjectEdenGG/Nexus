@@ -160,7 +160,7 @@ public class OrnamentVendor implements Listener {
 		if (!Pugmas20.isAtPugmas(event.getBlock().getLocation(), "trees"))
 			return;
 
-		if (!WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
+		if (!WorldGuardEditCommand.isEnabled(event.getPlayer()))
 			return;
 
 		event.setCancelled(true);

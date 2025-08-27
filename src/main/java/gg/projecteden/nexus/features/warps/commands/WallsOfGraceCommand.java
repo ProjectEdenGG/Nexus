@@ -4,7 +4,11 @@ import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -101,7 +105,7 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 			return;
 
 		if (!MaterialTag.SIGNS.isTagged(event.getBlock().getType())) {
-			if (!WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
+			if (!WorldGuardEditCommand.isEnabled(event.getPlayer()))
 				event.setCancelled(true);
 			return;
 		}
@@ -130,7 +134,7 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 		if (!isInRegion(event.getBlock()))
 			return;
 
-		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
+		if (WorldGuardEditCommand.isEnabled(event.getPlayer()))
 			return;
 
 		event.setCancelled(true);
@@ -142,7 +146,7 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 			return;
 
 		if (!MaterialTag.SIGNS.isTagged(event.getBlock().getType())) {
-			if (!WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
+			if (!WorldGuardEditCommand.isEnabled(event.getPlayer()))
 				event.setCancelled(true);
 			return;
 		}

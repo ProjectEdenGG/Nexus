@@ -207,7 +207,7 @@ public class BearFair21JigsawJamCommand extends CustomCommand implements Listene
 		if (!event.getEntity().getWorld().getName().equals(WORLD)) return;
 		if (!(event.getRemover() instanceof Player player)) return;
 		if (!isInJigsawJam(event.getEntity())) return;
-		if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
+		if (WorldGuardEditCommand.isEnabled(player)) return;
 
 		event.setCancelled(true);
 	}
@@ -216,7 +216,7 @@ public class BearFair21JigsawJamCommand extends CustomCommand implements Listene
 	public void onBlockBreak(BlockBreakEvent event) {
 		if (!event.getBlock().getWorld().getName().equals(WORLD)) return;
 		if (!isInJigsawJam(event.getPlayer())) return;
-		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer())) return;
+		if (WorldGuardEditCommand.isEnabled(event.getPlayer())) return;
 
 		event.setCancelled(true);
 	}
@@ -225,7 +225,7 @@ public class BearFair21JigsawJamCommand extends CustomCommand implements Listene
 	public void on(BlockPlaceEvent event) {
 		if (!event.getBlock().getWorld().getName().equals(WORLD)) return;
 		if (!isInJigsawJam(event.getPlayer())) return;
-		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer())) return;
+		if (WorldGuardEditCommand.isEnabled(event.getPlayer())) return;
 
 		event.setCancelled(true);
 	}
@@ -278,7 +278,7 @@ public class BearFair21JigsawJamCommand extends CustomCommand implements Listene
 		if (!isInJigsawJam(event.getPlayer())) return;
 		if (event.getInventory().getLocation() == null) return;
 		if (!(event.getInventory().getHolder() instanceof Chest)) return;
-		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer())) return;
+		if (WorldGuardEditCommand.isEnabled(event.getPlayer())) return;
 
 		JigsawJammer jammer = new JigsawJamService().get(event.getPlayer());
 		if (!jammer.isPlaying()) {

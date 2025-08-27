@@ -25,7 +25,7 @@ public class BearFair21RadioHeads implements Listener {
 	@EventHandler
 	public void onClickRadio(PlayerInteractEvent event) {
 		if (BearFair21.isNotAtBearFair(event)) return;
-		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer())) return;
+		if (WorldGuardEditCommand.isEnabled(event.getPlayer())) return;
 
 		Block block = event.getClickedBlock();
 		if (Nullables.isNullOrAir(block) || !block.getType().equals(Material.PLAYER_HEAD)) return;

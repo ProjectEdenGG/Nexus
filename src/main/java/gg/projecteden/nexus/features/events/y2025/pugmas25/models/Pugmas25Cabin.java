@@ -33,7 +33,7 @@ public class Pugmas25Cabin implements Listener {
 		if (!ItemModelType.PUGMAS25_CALENDAR.is(itemStack))
 			return;
 
-		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
+		if (WorldGuardEditCommand.isEnabled(event.getPlayer()))
 			return;
 
 		event.setCancelled(true);

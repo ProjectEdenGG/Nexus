@@ -8,18 +8,30 @@ import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.bearfair20.BearFair20User;
 import gg.projecteden.nexus.models.bearfair20.BearFair20UserService;
 import gg.projecteden.nexus.models.jigsawjam.JigsawJamService;
 import gg.projecteden.nexus.models.jigsawjam.JigsawJammer;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.EntityUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.Utils.MapRotation;
+import gg.projecteden.nexus.utils.WorldEditUtils;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -130,7 +142,7 @@ public class JigsawJam20Command extends CustomCommand implements Listener {
 		if (!event.getEntity().getWorld().getName().equals(WORLD)) return;
 		if (!(event.getRemover() instanceof Player player)) return;
 		if (!new WorldGuardUtils(event.getEntity()).getRegionNamesAt(event.getEntity().getLocation()).contains("jigsawjam")) return;
-		if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
+		if (WorldGuardEditCommand.isEnabled(player)) return;
 
 		event.setCancelled(true);
 	}
@@ -139,7 +151,7 @@ public class JigsawJam20Command extends CustomCommand implements Listener {
 	public void onBlockBreak(BlockBreakEvent event) {
 		if (!event.getBlock().getWorld().getName().equals(WORLD)) return;
 		if (!new WorldGuardUtils(event.getPlayer()).getRegionNamesAt(event.getPlayer().getLocation()).contains("jigsawjam")) return;
-		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer())) return;
+		if (WorldGuardEditCommand.isEnabled(event.getPlayer())) return;
 
 		event.setCancelled(true);
 	}
@@ -148,7 +160,7 @@ public class JigsawJam20Command extends CustomCommand implements Listener {
 	public void onBlockPlace(BlockPlaceEvent event) {
 		if (!event.getBlock().getWorld().getName().equals(WORLD)) return;
 		if (!new WorldGuardUtils(event.getPlayer()).getRegionNamesAt(event.getPlayer().getLocation()).contains("jigsawjam")) return;
-		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer())) return;
+		if (WorldGuardEditCommand.isEnabled(event.getPlayer())) return;
 
 		event.setCancelled(true);
 	}

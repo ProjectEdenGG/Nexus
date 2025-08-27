@@ -68,8 +68,9 @@ public class CheatsCommand extends CustomCommand implements Listener {
 			boolean allowFlight = player().getAllowFlight();
 			boolean vanish = Vanish.isVanished(player());
 			boolean god = new GodmodeService().get(player()).isEnabled();
+			boolean worldguardEdit = WorldGuardEditCommand.isEnabled(player());
 
-			enabled = !(creative || spectator || flying || allowFlight || vanish || god);
+			enabled = !(creative || spectator || flying || allowFlight || vanish || god || worldguardEdit);
 		}
 
 		if (enabled) {

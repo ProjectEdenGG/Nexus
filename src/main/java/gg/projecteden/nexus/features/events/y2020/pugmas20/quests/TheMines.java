@@ -196,7 +196,7 @@ public class TheMines implements Listener {
 		if (!Pugmas20.isAtPugmas(player, "cave"))
 			return;
 
-		if (WorldGuardEditCommand.canWorldGuardEdit(player))
+		if (WorldGuardEditCommand.isEnabled(player))
 			return;
 
 		event.setCancelled(true);

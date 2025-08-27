@@ -68,7 +68,7 @@ public class WorldGuardFlags implements Listener {
 		if (Nullables.isNullOrAir(block))
 			return;
 
-		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
+		if (WorldGuardEditCommand.isEnabled(event.getPlayer()))
 			return;
 
 		if (new WorldGuardUtils(block).getRegionsAt(block.getLocation()).isEmpty())
@@ -148,7 +148,7 @@ public class WorldGuardFlags implements Listener {
 		int age = ageable.getAge();
 		if (age == ageable.getMaximumAge()) return;
 
-		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer())) return;
+		if (WorldGuardEditCommand.isEnabled(event.getPlayer())) return;
 		if (WorldGuardFlagUtils.query(clicked.getLocation(), Flags.CROP_GROWTH) != State.DENY) return;
 
 		ageable.setAge(++age);
@@ -227,7 +227,7 @@ public class WorldGuardFlags implements Listener {
 			return;
 
 		if (WorldGuardFlagUtils.query(block, CustomFlags.USE_TRAP_DOORS) == State.DENY) {
-			if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
+			if (WorldGuardEditCommand.isEnabled(event.getPlayer()))
 				return;
 			event.setCancelled(true);
 		}
@@ -238,7 +238,7 @@ public class WorldGuardFlags implements Listener {
 		if (event.getInventory().getLocation() == null)
 			return;
 
-		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
+		if (WorldGuardEditCommand.isEnabled(event.getPlayer()))
 			return;
 
 		if (Arrays.stream(BlockInventoryType.values()).noneMatch(blockInventoryType -> blockInventoryType.getInventoryType() == event.getInventory().getType()))
@@ -259,7 +259,7 @@ public class WorldGuardFlags implements Listener {
 	public void onBlockInteract(PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
 
-		if (WorldGuardEditCommand.canWorldGuardEdit(player))
+		if (WorldGuardEditCommand.isEnabled(player))
 			return;
 
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
@@ -292,7 +292,7 @@ public class WorldGuardFlags implements Listener {
 			return;
 
 		if (WorldGuardFlagUtils.query(block, CustomFlags.USE_FENCE_GATES) == State.DENY) {
-			if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
+			if (WorldGuardEditCommand.isEnabled(event.getPlayer()))
 				return;
 			event.setCancelled(true);
 		}
@@ -305,7 +305,7 @@ public class WorldGuardFlags implements Listener {
 			return;
 
 		if (WorldGuardFlagUtils.query(block, CustomFlags.USE_NOTE_BLOCKS) == State.DENY) {
-			if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
+			if (WorldGuardEditCommand.isEnabled(event.getPlayer()))
 				return;
 			event.setCancelled(true);
 		}
@@ -415,7 +415,7 @@ public class WorldGuardFlags implements Listener {
 	@EventHandler
 	public void on(StructureGrowEvent event) {
 		if (WorldGuardFlagUtils.query(event.getLocation(), CustomFlags.SAPLING_GROWTH) == State.DENY) {
-			if (event.isFromBonemeal() && WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
+			if (event.isFromBonemeal() && WorldGuardEditCommand.isEnabled(event.getPlayer()))
 				return;
 			event.setCancelled(true);
 		}

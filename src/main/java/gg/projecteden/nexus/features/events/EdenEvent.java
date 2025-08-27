@@ -610,7 +610,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 			return;
 		if (event.isCancelled())
 			return;
-		if (WorldGuardEditCommand.canWorldGuardEdit(player))
+		if (WorldGuardEditCommand.isEnabled(player))
 			return;
 
 		event.setCancelled(true);
@@ -634,7 +634,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 			return;
 		if (event.isCancelled())
 			return;
-		if (WorldGuardEditCommand.canWorldGuardEdit(player))
+		if (WorldGuardEditCommand.isEnabled(player))
 			return;
 		if (placeBlock(event))
 			return;
@@ -865,7 +865,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 		if (block.getType() != Material.DECORATED_POT)
 			return;
 
-		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
+		if (WorldGuardEditCommand.isEnabled(event.getPlayer()))
 			return;
 
 		event.setCancelled(true);
