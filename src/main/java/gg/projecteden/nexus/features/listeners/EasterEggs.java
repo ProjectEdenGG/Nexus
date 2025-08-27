@@ -218,6 +218,9 @@ public class EasterEggs implements Listener {
 
 		WAKKA(new StaffEasterEggBuilder("e9e07315-d32c-4df7-bd05-acfe51108234")
 			.food(Material.COOKIE)
+			.eatMaxCount(15)
+			.eatEffectCount(15)
+			.eatSoundCount(15)
 			.burpSound(new SoundBuilder(CustomSound.BURP).volume(0.5))
 		),
 
@@ -305,13 +308,15 @@ public class EasterEggs implements Listener {
 			})
 		),
 
-		// Builders
-
 		HOOTS(new StaffEasterEggBuilder("4f06f692-0b42-4706-9193-bcc716ce5936")
 			.food(Material.GLOWSTONE_DUST)
 			.eatSound(Sound.BLOCK_RESPAWN_ANCHOR_CHARGE)
 			.burpSound(new SoundBuilder(CustomSound.WEATHER_THUNDER).pitch(2))
 		),
+
+		// Builders
+
+
 		;
 
 		private final StaffEasterEggBuilder builder;
