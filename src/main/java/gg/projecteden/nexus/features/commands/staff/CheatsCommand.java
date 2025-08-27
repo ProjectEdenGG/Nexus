@@ -58,9 +58,20 @@ public class CheatsCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path("<on|off>")
+	@Path("[enabled]")
 	@Description("Toggles vanish, god, flight, WorldGuard edit, and gamemode")
-	void toggle(boolean enabled) {
+	void toggle(Boolean enabled) {
+		if (enabled == null) {
+			boolean creative = player().getGameMode() == GameMode.CREATIVE;
+			boolean spectator = player().getGameMode() == GameMode.SPECTATOR;
+			boolean flying = player().isFlying();
+			boolean allowFlight = player().getAllowFlight();
+			boolean vanish = Vanish.isVanished(player());
+			boolean god = new GodmodeService().get(player()).isEnabled();
+
+			enabled = !(creative || spectator || flying || allowFlight || vanish || god);
+		}
+
 		if (enabled) {
 			on(player(), "CheatsCommand#toggle");
 			send(PREFIX + "&aEnabled");
