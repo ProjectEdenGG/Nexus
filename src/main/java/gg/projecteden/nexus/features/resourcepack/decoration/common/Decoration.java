@@ -98,14 +98,18 @@ public class Decoration {
 		if (Nullables.isNullOrAir(item))
 			return null;
 
-		if (!DecorationNBTKey.OWNER.hasKey(itemFrame)) {
+		String owner;
+		NBTItem nbtItem = new NBTItem(item);
+		if (nbtItem.hasKey(DecorationNBTKey.OWNER.getKey())) { // Legacy
+			owner = nbtItem.getString(DecorationNBTKey.OWNER.getKey());
+		} else if (DecorationNBTKey.OWNER.hasKey(itemFrame)) {
+			owner = DecorationNBTKey.OWNER.getKey(itemFrame);
+		} else {
 			DecorationLang.debug(debugger, "&cMissing NBT Key: Owner");
 			return null;
 		}
 
-		String owner = DecorationNBTKey.OWNER.getKey(itemFrame);
 		DecorationLang.debug(debugger, "&eOwner: " + PlayerUtils.getPlayer(owner).getName());
-
 		return UUID.fromString(owner);
 	}
 
