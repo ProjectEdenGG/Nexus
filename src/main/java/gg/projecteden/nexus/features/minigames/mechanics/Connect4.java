@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 @MatchStatisticsClass(MatchStatistics.class)
 public final class Connect4 extends TeamMechanic {
+	int turns;
 
 	@Override
 	public @NotNull String getName() {
@@ -36,6 +37,11 @@ public final class Connect4 extends TeamMechanic {
 	@Override
 	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.BLUE_CONCRETE);
+	}
+
+	@Override
+	public boolean shuffleTurnList() {
+		return turns++ == 0;
 	}
 
 	@Override
