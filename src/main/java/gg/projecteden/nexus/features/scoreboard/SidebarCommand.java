@@ -80,10 +80,8 @@ public class SidebarCommand extends CustomCommand implements Listener {
 			.bodyText("Edit the order and visibility of lines on the sidebar")
 			.multiAction();
 
-		List<ScoreboardLine> lines = user.getOrder().stream()
-			.filter(line -> line.hasPermission(player()))
-			.filter(line -> user.getLines().containsKey(line))
-			.toList();
+		user.fixOrder();
+		List<ScoreboardLine> lines = user.getOrder();
 
 		for (ScoreboardLine line : lines) {
 			boolean enabled = user.getLines().containsKey(line) && user.getLines().get(line);

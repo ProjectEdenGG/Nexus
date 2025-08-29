@@ -65,13 +65,15 @@ public class ScoreboardUser implements PlayerOwnedObject {
 
 	@PostLoad
 	public void fixOrder() {
-		if (isOnline())
-			for (ScoreboardLine value : ScoreboardLine.values()) {
-				if (!order.contains(value) && value.hasPermission(getPlayer()))
-					setOrder(value, value.ordinal());
-				if (order.contains(value) && !value.hasPermission(getPlayer()))
-					order.remove(value);
-			}
+		if (!isOnline())
+			return;
+
+		for (ScoreboardLine value : ScoreboardLine.values()) {
+			if (!order.contains(value) && value.hasPermission(getPlayer()))
+				setOrder(value, value.ordinal());
+			if (order.contains(value) && !value.hasPermission(getPlayer()))
+				order.remove(value);
+		}
 	}
 
 	public void flushScoreboard() {
