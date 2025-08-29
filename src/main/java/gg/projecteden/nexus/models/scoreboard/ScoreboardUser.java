@@ -57,6 +57,12 @@ public class ScoreboardUser implements PlayerOwnedObject {
 			lines = ScoreboardLine.getDefaultLines(getOnlinePlayer());
 	}
 
+	public List<ScoreboardLine> getOrder() {
+		if (order.isEmpty())
+			fixOrder();
+		return order;
+	}
+
 	@PostLoad
 	public void fixOrder() {
 		if (isOnline())
