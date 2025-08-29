@@ -56,6 +56,7 @@ public class DiscordListener extends ListenerAdapter {
 	}
 
 	private static final List<Role> THREAD_AUTO_JOIN_ROLES = List.of(
+		Role.BOTS,
 		Role.STAFF,
 		Role.BUILDERS,
 		Role.COMMUNITY_COUNCIL
