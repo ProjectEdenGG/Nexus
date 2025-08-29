@@ -288,15 +288,20 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 		new VanishUserService().edit(this, user -> user.setLastUnvanish(when));
 	}
 
+	@SuppressWarnings("deprecation")
 	public LocalDateTime getLastQuit(@Nullable Player viewer) {
+		LocalDateTime lastQuit = super.getLastQuit();
+		if (lastQuit == null)
+			lastQuit = Utils.epochMilli(getOfflinePlayer().getLastSeen());
+
 		if (isOnline()) {
 			if (viewer == null || PlayerUtils.canSee(viewer, this))
-				return super.getLastQuit();
+				return lastQuit;
 
 			return Vanish.get(this).getLastVanish();
 		}
 
-		return super.getLastQuit();
+		return lastQuit;
 	}
 
 	@Override
