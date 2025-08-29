@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlockTag;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlockTag;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -26,7 +26,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-@Permission(Group.ADMIN)
+@Permission(Group.STAFF)
 public class MaterialTagCommand extends CustomCommand {
 
 	public MaterialTagCommand(@NonNull CommandEvent event) {
