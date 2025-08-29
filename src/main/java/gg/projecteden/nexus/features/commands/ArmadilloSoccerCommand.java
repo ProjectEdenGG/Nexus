@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -43,6 +44,9 @@ public class ArmadilloSoccerCommand extends CustomCommand implements Listener {
 
 	@Path("stick")
 	void stick() {
+		if (Minigames.getWorld() != world())
+			error("You must be in minigames to use this command");
+
 		giveItem(ITEM);
 	}
 
