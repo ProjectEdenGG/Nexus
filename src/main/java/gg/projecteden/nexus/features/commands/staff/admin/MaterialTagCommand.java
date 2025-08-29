@@ -34,7 +34,7 @@ public class MaterialTagCommand extends CustomCommand {
 	}
 
 	@Path("materials <tag>")
-	@Description("View meterials in a tag")
+	@Description("View materials in a tag")
 	void materials(Tag<Material> tag) {
 		new MaterialTagMaterialsMenu(tag).open(player());
 	}
@@ -47,6 +47,7 @@ public class MaterialTagCommand extends CustomCommand {
 
 	@Path("random <tag> [player]")
 	@Description("Receive a random material from a tag")
+	@Permission(Group.ADMIN)
 	void materialTag(Tag<Material> tag, Player player) {
 		Material material = RandomUtils.randomMaterial(tag);
 		giveItem(new ItemStack(material));
@@ -86,11 +87,11 @@ public class MaterialTagCommand extends CustomCommand {
 		return new ArrayList<>() {{
 			addAll(MaterialTag.getTags().keySet().stream()
 				.map(material -> "material." + material.toLowerCase())
-				.filter(material -> material.toLowerCase().startsWith(filter.toLowerCase()))
+				.filter(material -> material.toLowerCase().contains(filter.toLowerCase()))
 				.toList());
 			addAll(CustomBlockTag.getTags().keySet().stream()
 				.map(customBlock -> "customblock." + customBlock.toLowerCase())
-				.filter(customBlock -> customBlock.toLowerCase().startsWith(filter.toLowerCase()))
+				.filter(customBlock -> customBlock.toLowerCase().contains(filter.toLowerCase()))
 				.toList());
 		}};
 	}
