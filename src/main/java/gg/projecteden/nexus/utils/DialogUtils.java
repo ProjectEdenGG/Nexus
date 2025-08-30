@@ -10,6 +10,7 @@ import io.papermc.paper.registry.data.dialog.DialogBase.DialogAfterAction;
 import io.papermc.paper.registry.data.dialog.body.DialogBody;
 import io.papermc.paper.registry.data.dialog.body.PlainMessageDialogBody;
 import io.papermc.paper.registry.data.dialog.input.DialogInput;
+import io.papermc.paper.registry.data.dialog.input.SingleOptionDialogInput.OptionEntry;
 import io.papermc.paper.registry.data.dialog.type.DialogType;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -138,6 +139,10 @@ public class DialogUtils {
 
 		public DialogBuilder checkbox(String key, String label, boolean initial) {
 			return this.input(DialogInput.bool(key, text(label), initial, "true", "false"));
+		}
+
+		public DialogBuilder singleOption(String key, String label, List<OptionEntry> entries) {
+			return this.input(DialogInput.singleOption(key, new JsonBuilder(label).build(), entries).build());
 		}
 
 		public DialogBuilder input(DialogInput input) {

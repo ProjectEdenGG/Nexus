@@ -9,10 +9,14 @@ import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.DialogUtils.DialogBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import io.papermc.paper.registry.data.dialog.input.SingleOptionDialogInput.OptionEntry;
 import lombok.NonNull;
 import org.bukkit.Material;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DialogCommand extends CustomCommand {
 
@@ -43,6 +47,10 @@ public class DialogCommand extends CustomCommand {
 
 	@Path("test multiAction [columns]")
 	void test_multiAction(@Arg("2") int columns) {
+		List<OptionEntry> entryList = new ArrayList<>();
+		for (Dev dev : Dev.values())
+			entryList.add(OptionEntry.create(dev.name().toLowerCase(), new JsonBuilder(dev.getNickname()).build(), Dev.GRIFFIN.is(dev)));
+
 		new DialogBuilder()
 			.title(new JsonBuilder("This is a test title").hover("Test hover").bold())
 			.bodyText(new JsonBuilder("Button testing screen"))
@@ -50,10 +58,11 @@ public class DialogCommand extends CustomCommand {
 			.inputText("test2", new JsonBuilder("Test input 2").color(Color.RED))
 			.checkbox("test3", "false by default")
 			.checkbox("test4", "true by default", true)
+			.singleOption("test5", "dev enum \"dropdown\"", entryList)
 			.multiAction()
 			.button("Button 1", 50, (response) -> response.getPlayer().sendMessage("Test button 1"))
 			.button("Button 2", 50, (response) -> response.getPlayer().sendMessage("Test button 2"))
-			.button("Button 4", (response) -> {
+			.button("Button 4 (Next Menu)", (response) -> {
 				new DialogBuilder()
 					.title(new JsonBuilder("This is a test title").hover("Test hover").bold())
 					.bodyText(new JsonBuilder("Button testing screen"))
