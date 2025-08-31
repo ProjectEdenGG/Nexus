@@ -191,6 +191,9 @@ public class DialogUtils {
 		}
 
 		private @NotNull DialogBase build() {
+			if (title == null)
+				title = new JsonBuilder("&c&lMISSING TITLE").build();
+
 			return DialogBase.builder(title)
 				.canCloseWithEscape(closeWithEscape)
 				.afterAction(after)
@@ -282,6 +285,7 @@ public class DialogUtils {
 		private final List<ActionButton> actions = new ArrayList<>();
 		private ActionButton exitButton;
 		private int columns = 2;
+		private int defaultButtonWidth = 150;
 
 		public void open(Player player) {
 			player.showDialog(Dialog.create(builder -> {
@@ -289,16 +293,33 @@ public class DialogUtils {
 			}));
 		}
 
+		public MultiActionDialogBuilder defaultButtonWidth(int defaultButtonWidth) {
+			this.defaultButtonWidth = defaultButtonWidth;
+			return this;
+		}
+
+		public MultiActionDialogBuilder button(String label, int width) {
+			return this.button(label, width, response -> {});
+		}
+
 		public MultiActionDialogBuilder button(String label, DialogResponseCallback action) {
-			return this.button(new JsonBuilder(label), new JsonBuilder(), 150, action);
+			return this.button(new JsonBuilder(label), new JsonBuilder(), defaultButtonWidth, action);
 		}
 
 		public MultiActionDialogBuilder button(String label, int width, DialogResponseCallback action) {
 			return this.button(new JsonBuilder(label), new JsonBuilder(), width, action);
 		}
 
+		public MultiActionDialogBuilder button(String label, String tooltip) {
+			return this.button(new JsonBuilder(label), new JsonBuilder(tooltip), defaultButtonWidth, response -> {});
+		}
+
 		public MultiActionDialogBuilder button(String label, String tooltip, int width) {
 			return this.button(new JsonBuilder(label), new JsonBuilder(tooltip), width, response -> {});
+		}
+
+		public MultiActionDialogBuilder button(String label, String tooltip, DialogResponseCallback action) {
+			return this.button(new JsonBuilder(label), new JsonBuilder(tooltip), defaultButtonWidth, action);
 		}
 
 		public MultiActionDialogBuilder button(String label, String tooltip, int width, DialogResponseCallback action) {
@@ -306,7 +327,7 @@ public class DialogUtils {
 		}
 
 		public MultiActionDialogBuilder button(String label, JsonBuilder tooltip, DialogResponseCallback action) {
-			return this.button(new JsonBuilder(label), tooltip, 150, action);
+			return this.button(new JsonBuilder(label), tooltip, defaultButtonWidth, action);
 		}
 
 		public MultiActionDialogBuilder button(String label, JsonBuilder tooltip, int width, DialogResponseCallback action) {

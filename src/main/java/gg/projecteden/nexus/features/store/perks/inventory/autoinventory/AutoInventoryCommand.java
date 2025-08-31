@@ -1,10 +1,9 @@
 package gg.projecteden.nexus.features.store.perks.inventory.autoinventory;
 
-import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
-import gg.projecteden.nexus.features.menus.api.annotations.Title;
-import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.features.AutoCraft;
+import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventoryMenus.AutoCraftEditor;
+import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventoryMenus.AutoInventoryMenu;
+import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventoryMenus.AutoSortInventoryTypeEditor;
+import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventoryMenus.AutoTrashMaterialEditor;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.features.AutoTool.AutoToolToolType;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.tasks.FindChestsThread;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -16,22 +15,13 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redi
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser.AutoInventoryProfile;
-import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser.AutoSortInventoryType;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser.AutoTrashBehavior;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUserService;
-import gg.projecteden.nexus.models.emoji.EmojiUser.Emoji;
-import gg.projecteden.nexus.utils.DialogUtils.DialogBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
-import gg.projecteden.nexus.utils.ItemUtils.ItemStackComparator;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Chunk;
@@ -39,18 +29,12 @@ import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
@@ -72,80 +56,9 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	}
 
 	@Path
+	@Description("Open the AutoInventory menu")
 	void menu() {
 		new AutoInventoryMenu().open(player());
-	}
-
-	public static class AutoInventoryMenu {
-
-		public void refresh(Player player) {
-			var service = new AutoInventoryUserService();
-			service.save(service.get(player));
-			open(player);
-		}
-
-		public void open(Player player) {
-			var service = new AutoInventoryUserService();
-			var user = service.get(player);
-			var gear = Emoji.of("gear_white");
-
-			if (gear == null)
-				throw new InvalidInputException("Could not find gear emoji");
-
-			var dialog = new DialogBuilder()
-				.title("AutoInventory")
-				.multiAction()
-				.columns(2);
-
-			dialog.button("Profile: &e" + user.getActiveProfileId(), click -> {
-				var profiles = new ArrayList<>(user.getProfiles().keySet());
-				var iterator = profiles.iterator();
-
-				String next = profiles.getFirst();
-				while (iterator.hasNext()) {
-					if (!iterator.next().equals(user.getActiveProfileId()))
-						continue;
-
-					if (iterator.hasNext())
-						next = iterator.next();
-					else
-						next = profiles.getFirst();
-				}
-
-				user.setActiveProfile(next);
-				refresh(player);
-			});
-
-//			dialog.button(gear.getEmoji(), 20, click -> {
-//
-//			});
-
-			for (AutoInventoryFeature feature : AutoInventoryFeature.values()) {
-				var enabled = user.getActiveProfile().getDisabledFeatures().contains(feature);
-				var color = enabled ? "&c" : "&a";
-				var label = color + feature.toString();
-				var tooltip = new JsonBuilder("&7" + feature.getDescription());
-
-				dialog.button(label, tooltip, response -> {
-					if (enabled)
-						user.getActiveProfile().getDisabledFeatures().remove(feature);
-					else
-						user.getActiveProfile().getDisabledFeatures().add(feature);
-					refresh(player);
-				});
-//				if (feature.hasSettings()) {
-//					dialog.button(gear.getEmoji(), "Click to view settings", 20, click -> {
-//
-//					});
-//				} else {
-//					dialog.button("-", "No settings available", 20, click -> {
-//
-//					});
-//				}
-			}
-
-			dialog.open(player);
-		}
 	}
 
 	@Path("profile [profile]")
@@ -337,49 +250,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	@Description("Toggle whether certain inventory types are affected")
 	void settings_inventoryTypes() {
 		AutoInventoryFeature.SORT_OTHER_INVENTORIES.checkPermission(player());
-
-		new AutoSortInventoryTypeEditor().open(player());
-	}
-
-	@Title("AutoSort Inventory Editor")
-	private static class AutoSortInventoryTypeEditor extends InventoryProvider {
-
-		@Override
-		public void init() {
-			final AutoInventoryUserService service = new AutoInventoryUserService();
-			final AutoInventoryUser user = service.get(viewer);
-			final AutoInventoryProfile profile = user.getActiveProfile();
-
-			addCloseItem();
-
-			List<ClickableItem> items = new ArrayList<>();
-			for (AutoSortInventoryType inventoryType : AutoSortInventoryType.values()) {
-				Material material = inventoryType.getMaterial();
-				String model = inventoryType.getModel();
-
-				ItemBuilder item = new ItemBuilder(material).name(StringUtils.camelCase(inventoryType));
-				if (model != null)
-					item.model(model);
-
-				if (!profile.getDisabledInventoryTypes().contains(inventoryType))
-					item.lore("&aEnabled");
-				else
-					item.lore("&cDisabled");
-
-				items.add(ClickableItem.of(item.build(), e -> {
-					if (profile.getDisabledInventoryTypes().contains(inventoryType))
-						profile.getDisabledInventoryTypes().remove(inventoryType);
-					else
-						profile.getDisabledInventoryTypes().add(inventoryType);
-
-					service.save(user);
-
-					open(viewer, contents.pagination().getPage());
-				}));
-			}
-
-			paginate(items);
-		}
+		new AutoSortInventoryTypeEditor(HumanEntity::closeInventory).open(player());
 	}
 
 	@Path("settings tools exclude <toolType> [enable]")
@@ -403,11 +274,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	@Description("Open the AutoTrash configuration menu")
 	void settings_trash_materials() {
 		AutoInventoryFeature.AUTOTRASH.checkPermission(player());
-
-		if (worldGroup() != WorldGroup.SURVIVAL)
-			error("You can only use this command in survival");
-
-		new AutoTrashMaterialEditor(player());
+		new AutoTrashMaterialEditor(player(), worldGroup(), HumanEntity::closeInventory);
 	}
 
 	@Path("settings trash behavior [behavior]")
@@ -425,82 +292,11 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		send(PREFIX + "AutoTrash behavior set to " + camelCase(behavior));
 	}
 
-	@Getter
-	@Title("&eAutoTrash")
-	public static class AutoTrashMaterialEditor implements TemporaryMenuListener {
-		private final AutoInventoryUserService service = new AutoInventoryUserService();
-		private final Player player;
-
-		public AutoTrashMaterialEditor(Player player) {
-			this.player = player;
-
-			open(service.get(player).getActiveProfile().getAutoTrashInclude().stream()
-				.map(ItemStack::new)
-				.sorted(new ItemStackComparator())
-				.toList());
-		}
-
-		@Override
-		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
-			Set<Material> materials = Arrays.stream(event.getInventory().getContents())
-				.filter(Nullables::isNotNullOrAir)
-				.map(ItemStack::getType)
-				.collect(Collectors.toSet());
-
-			service.edit(player, user -> {
-				user.getActiveProfile().setAutoTrashInclude(materials);
-				user.sendMessage(StringUtils.getPrefix("AutoTrash") + "Automatically trashing " + materials.size() + " materials");
-			});
-		}
-	}
-
 	@Path("settings crafting")
 	@Description("Open the AutoCraft configuration menu")
 	void settings_crafting() {
 		AutoInventoryFeature.AUTOCRAFT.checkPermission(player());
-
-		new AutoCraftEditor().open(player());
-	}
-
-	@Title("AutoCraft Editor")
-	private static class AutoCraftEditor extends InventoryProvider {
-
-		@Override
-		public void init() {
-			final AutoInventoryUserService service = new AutoInventoryUserService();
-			final AutoInventoryUser user = service.get(viewer);
-			final AutoInventoryProfile profile = user.getActiveProfile();
-
-			addCloseItem();
-
-			List<ClickableItem> items = new ArrayList<>();
-			for (Material material : AutoCraft.getAutoCraftable().keySet()) {
-				ItemBuilder item = new ItemBuilder(material);
-
-				if (!profile.getAutoCraftExclude().contains(material))
-					item.lore("&aEnabled").glow();
-				else
-					item.lore("&cDisabled");
-
-				item.lore("", "&f" + AutoCraft.getIngredients(material).stream()
-					.map(StringUtils::pretty)
-					.collect(Collectors.joining(", ")));
-
-				items.add(ClickableItem.of(item.build(), e -> {
-					if (profile.getAutoCraftExclude().contains(material))
-						profile.getAutoCraftExclude().remove(material);
-					else
-						profile.getAutoCraftExclude().add(material);
-
-					service.save(user);
-
-					open(viewer, contents.pagination().getPage());
-				}));
-			}
-
-			paginate(items);
-		}
-
+		new AutoCraftEditor(HumanEntity::closeInventory).open(player());
 	}
 
 }

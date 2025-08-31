@@ -33,7 +33,7 @@ public enum AutoInventoryFeature {
 	SORT_OTHER_INVENTORIES,
 	@Description("Deposit all items in your inventory into chests by shift clicking them")
 	QUICK_DEPOSIT,
-	@HasSettings
+	@Internal
 	@Description("Deposit all items in your inventory into nearby chests with matching items")
 	@DescriptionExtra("&c/autoinv depositall")
 	DEPOSIT_ALL,
@@ -98,8 +98,16 @@ public enum AutoInventoryFeature {
 		return getField().isAnnotationPresent(HasSettings.class);
 	}
 
+	public boolean isInternal() {
+		return getField().isAnnotationPresent(Internal.class);
+	}
+
 	@Target({ElementType.METHOD, ElementType.FIELD})
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface HasSettings {}
+
+	@Target({ElementType.METHOD, ElementType.FIELD})
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface Internal {}
 
 }

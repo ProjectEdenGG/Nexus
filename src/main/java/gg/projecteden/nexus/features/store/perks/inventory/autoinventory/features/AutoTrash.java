@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 @NoArgsConstructor
@@ -47,7 +48,7 @@ public class AutoTrash implements Listener {
 		if (meta.hasDisplayName() || meta.hasEnchants() || Model.hasModel(item))
 			return;
 
-		if (!user.getActiveProfile().getAutoTrashInclude().contains(item.getType()))
+		if (!user.getActiveProfile().getAutoTrashInclude().computeIfAbsent(WorldGroup.of(player), $ -> new HashSet<>()).contains(item.getType()))
 			return;
 
 		event.setCancelled(true);

@@ -101,7 +101,7 @@ public class SidebarCommand extends CustomCommand implements Listener {
 			});
 
 			String tooltip = line.render(player());
-			builder.button((enabled ? "&a" : "&c") + line.camelCase(), tooltip, 150, action -> {
+			builder.button((enabled ? "&a" : "&c") + line.camelCase(), tooltip, action -> {
 				toggle(line, null);
 				edit();
 			});

@@ -47,6 +47,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
@@ -227,8 +228,16 @@ public abstract class InventoryProvider {
 		addCloseItem(0, 0);
 	}
 
+	protected void addCloseItem(Consumer<Player> onClose) {
+		addCloseItem(0, 0, onClose);
+	}
+
 	protected void addCloseItem(int row, int col) {
-		contents.set(row, col, ClickableItem.of(closeItem(), e -> e.getPlayer().closeInventory()));
+		addCloseItem(row, col, HumanEntity::closeInventory);
+	}
+
+	protected void addCloseItem(int row, int col, Consumer<Player> onClose) {
+		contents.set(row, col, ClickableItem.of(closeItem(), e -> onClose.accept(e.getPlayer())));
 	}
 
 	protected void addCloseItemBottomInventory() {

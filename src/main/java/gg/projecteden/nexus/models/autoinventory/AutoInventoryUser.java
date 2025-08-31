@@ -18,10 +18,10 @@ import gg.projecteden.nexus.models.tip.Tip;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -50,6 +50,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity(value = "auto_sort", noClassnameStored = true)
@@ -87,7 +89,7 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 			add(AutoToolToolType.SWORDS);
 		}};
 
-		private Set<Material> autoTrashInclude = new HashSet<>();
+		private Map<WorldGroup, Set<Material>> autoTrashInclude = new LinkedHashMap<>();
 		private AutoTrashBehavior autoTrashBehavior = AutoTrashBehavior.TRASH;
 
 		@Override
@@ -143,7 +145,7 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 				default -> null;
 			};
 
-			if (!Nullables.isNullOrEmpty(message))
+			if (!isNullOrEmpty(message))
 				sendMessage(AutoInventory.PREFIX + message);
 		}
 
