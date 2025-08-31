@@ -110,6 +110,7 @@ public class PlotCleanupCommand extends CustomCommand {
 		var plotInfo = user.getPlotInfo(plot);
 
 		plotInfo.setForceKeep(state == null ? !plotInfo.isForceKeep() : state);
+		service.save(user);
 		send(PREFIX + (plotInfo.isForceKeep() ? "&aEnabled" : "&cDisabling") + " &3force keep for for &e" + plot.getId() + " " + Nerd.of(uuid).getColoredName());
 	}
 
