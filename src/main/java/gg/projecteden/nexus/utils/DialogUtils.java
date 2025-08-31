@@ -305,6 +305,10 @@ public class DialogUtils {
 			return this.button(new JsonBuilder(label), new JsonBuilder(tooltip), width, action);
 		}
 
+		public MultiActionDialogBuilder button(String label, JsonBuilder tooltip, DialogResponseCallback action) {
+			return this.button(new JsonBuilder(label), tooltip, 150, action);
+		}
+
 		public MultiActionDialogBuilder button(String label, JsonBuilder tooltip, int width, DialogResponseCallback action) {
 			return this.button(new JsonBuilder(label), tooltip, width, action);
 		}

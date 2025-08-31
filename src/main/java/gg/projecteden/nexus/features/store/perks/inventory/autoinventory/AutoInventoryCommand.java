@@ -16,11 +16,14 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redi
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser.AutoInventoryProfile;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser.AutoSortInventoryType;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser.AutoTrashBehavior;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUserService;
+import gg.projecteden.nexus.models.emoji.EmojiUser.Emoji;
+import gg.projecteden.nexus.utils.DialogUtils.DialogBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.ItemUtils.ItemStackComparator;
@@ -66,6 +69,83 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		super(event);
 		if (isPlayerCommandEvent())
 			user = service.get(player());
+	}
+
+	@Path
+	void menu() {
+		new AutoInventoryMenu().open(player());
+	}
+
+	public static class AutoInventoryMenu {
+
+		public void refresh(Player player) {
+			var service = new AutoInventoryUserService();
+			service.save(service.get(player));
+			open(player);
+		}
+
+		public void open(Player player) {
+			var service = new AutoInventoryUserService();
+			var user = service.get(player);
+			var gear = Emoji.of("gear_white");
+
+			if (gear == null)
+				throw new InvalidInputException("Could not find gear emoji");
+
+			var dialog = new DialogBuilder()
+				.title("AutoInventory")
+				.multiAction()
+				.columns(2);
+
+			dialog.button("Profile: &e" + user.getActiveProfileId(), click -> {
+				var profiles = new ArrayList<>(user.getProfiles().keySet());
+				var iterator = profiles.iterator();
+
+				String next = profiles.getFirst();
+				while (iterator.hasNext()) {
+					if (!iterator.next().equals(user.getActiveProfileId()))
+						continue;
+
+					if (iterator.hasNext())
+						next = iterator.next();
+					else
+						next = profiles.getFirst();
+				}
+
+				user.setActiveProfile(next);
+				refresh(player);
+			});
+
+//			dialog.button(gear.getEmoji(), 20, click -> {
+//
+//			});
+
+			for (AutoInventoryFeature feature : AutoInventoryFeature.values()) {
+				var enabled = user.getActiveProfile().getDisabledFeatures().contains(feature);
+				var color = enabled ? "&c" : "&a";
+				var label = color + feature.toString();
+				var tooltip = new JsonBuilder("&7" + feature.getDescription());
+
+				dialog.button(label, tooltip, response -> {
+					if (enabled)
+						user.getActiveProfile().getDisabledFeatures().remove(feature);
+					else
+						user.getActiveProfile().getDisabledFeatures().add(feature);
+					refresh(player);
+				});
+//				if (feature.hasSettings()) {
+//					dialog.button(gear.getEmoji(), "Click to view settings", 20, click -> {
+//
+//					});
+//				} else {
+//					dialog.button("-", "No settings available", 20, click -> {
+//
+//					});
+//				}
+			}
+
+			dialog.open(player);
+		}
 	}
 
 	@Path("profile [profile]")
@@ -174,11 +254,11 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	@Path("depositall")
 	@Description("Deposit matching items into nearby chests")
 	void depositall() {
+		AutoInventoryFeature.DEPOSIT_ALL.checkPermission(player());
+
 		if (getTool() != null && getTool().getType() == Material.ARROW)
 			if (player().hasPermission("voxelsniper.brush"))
 				error("You cannot be holding an arrow while running this command (may activate VoxelSniper)");
-
-		AutoInventoryFeature.DEPOSIT_ALL.checkPermission(player());
 
 		Location location = player().getLocation();
 		Chunk centerChunk = location.getChunk();

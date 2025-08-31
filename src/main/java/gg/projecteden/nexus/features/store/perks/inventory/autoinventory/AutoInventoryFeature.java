@@ -11,6 +11,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,22 +27,27 @@ public enum AutoInventoryFeature {
 	REFILL,
 	@Description("Sort items in your own inventory")
 	SORT_OWN_INVENTORY,
+	@HasSettings
 	@Description("Sort items in chests, shulker boxes, backpacks, etc")
 	@DescriptionExtra("&c/autoinv settings inventoryTypes")
 	SORT_OTHER_INVENTORIES,
 	@Description("Deposit all items in your inventory into chests by shift clicking them")
 	QUICK_DEPOSIT,
+	@HasSettings
 	@Description("Deposit all items in your inventory into nearby chests with matching items")
 	@DescriptionExtra("&c/autoinv depositall")
 	DEPOSIT_ALL,
+	@HasSettings
 	@Description("Automatically craft items into their block form to save space")
 	@DescriptionExtra("&c/autoinv settings crafting")
 	AUTOCRAFT,
+	@HasSettings
 	@Description("Disable picking up unwanted items")
 	@DescriptionExtra("&c/autoinv settings trash < materials | behavior >")
 	AUTOTRASH,
+	@HasSettings
 	@Description("Automatically switch to the correct tool for the block you are breaking")
-	@DescriptionExtra("&c/autoinv settings tools includeSword &7- Allow AutoTool to activate while holding a sword")
+	@DescriptionExtra("&c/autoinv settings tools exclude <toolType> &7- Exclude certain tool types from activating AutoTool")
 	AUTOTOOL(AutoTool.PERMISSION),
 	;
 
@@ -76,10 +85,21 @@ public enum AutoInventoryFeature {
 	}
 
 	public boolean hasExtraDescription() {
-		return getField().getAnnotation(DescriptionExtra.class) != null;
+		return getField().isAnnotationPresent(DescriptionExtra.class);
 	}
 
 	public String getExtraDescription() {
+		if (!hasExtraDescription())
+			return null;
 		return getField().getAnnotation(DescriptionExtra.class).value();
 	}
+
+	public boolean hasSettings() {
+		return getField().isAnnotationPresent(HasSettings.class);
+	}
+
+	@Target({ElementType.METHOD, ElementType.FIELD})
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface HasSettings {}
+
 }

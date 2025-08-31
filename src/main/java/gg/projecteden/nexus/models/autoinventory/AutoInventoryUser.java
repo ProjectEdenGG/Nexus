@@ -45,8 +45,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -63,7 +63,7 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 	private UUID uuid;
 
 	private String activeProfile;
-	private Map<String, AutoInventoryProfile> profiles = new HashMap<>();
+	private Map<String, AutoInventoryProfile> profiles = new LinkedHashMap<>();
 
 	@Data
 	public static class AutoInventoryProfile implements Cloneable {
