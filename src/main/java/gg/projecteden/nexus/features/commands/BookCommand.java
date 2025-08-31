@@ -71,7 +71,10 @@ public class BookCommand extends CustomCommand {
 	}
 
 	private boolean canEdit() {
-		return isSelf(PlayerUtils.getPlayer(meta.getAuthor())) || hasPermission(Group.STAFF);
+		if (hasPermission(Group.STAFF))
+			return true;
+
+		return isSelf(PlayerUtils.getPlayer(meta.getAuthor()));
 	}
 
 }
