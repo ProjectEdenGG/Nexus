@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.store.perks.inventory.autoinventory.featur
 import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventoryFeature;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser.AutoTrashBehavior;
 import gg.projecteden.nexus.models.dumpster.Dumpster;
@@ -33,6 +34,9 @@ public class AutoTrash implements Listener {
 		if (!user.hasFeatureEnabled(AutoInventoryFeature.AUTOTRASH))
 			return;
 
+		if (Vanish.isVanished(player))
+			return;
+
 		if (!Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK).contains(WorldGroup.of(player)))
 			return;
 
@@ -41,7 +45,7 @@ public class AutoTrash implements Listener {
 		List<String> lore = item.clone().getLore();
 		if (meta.hasLore() && !Nullables.isNullOrEmpty(lore)) {
 			ItemTagsUtils.clearTags(lore);
-			if (lore.size() > 0)
+			if (!lore.isEmpty())
 				return;
 		}
 
