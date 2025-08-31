@@ -174,6 +174,10 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	@Path("depositall")
 	@Description("Deposit matching items into nearby chests")
 	void depositall() {
+		if (getTool() != null && getTool().getType() == Material.ARROW)
+			if (player().hasPermission("voxelsniper.brush"))
+				error("You cannot be holding an arrow while running this command (may activate VoxelSniper)");
+
 		AutoInventoryFeature.DEPOSIT_ALL.checkPermission(player());
 
 		Location location = player().getLocation();
