@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.listeners;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.models.creative.CreativeUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -38,14 +39,17 @@ import java.util.function.Supplier;
 
 public class CreativeFilter implements Listener {
 
-	private static boolean shouldFilterItems(Player player) {
-		return WorldGroup.of(player.getWorld()) == WorldGroup.CREATIVE && Rank.of(player) == Rank.GUEST;
+	public static boolean shouldFilter(Player player) {
+		boolean creative = WorldGroup.of(player.getWorld()) == WorldGroup.CREATIVE;
+		boolean guest = Rank.of(player) == Rank.GUEST;
+		boolean trusted = new CreativeUserService().get(player).isTrusted();
+		return creative && guest && !trusted;
 	}
 
 	private static void filter(Supplier<HumanEntity> playerSupplier, Supplier<ItemStack> getter, Consumer<ItemStack> setter) {
 		if (!(playerSupplier.get() instanceof Player player))
 			return;
-		if (!shouldFilterItems(player))
+		if (!shouldFilter(player))
 			return;
 
 		ItemStack item = getter.get();
@@ -157,7 +161,7 @@ public class CreativeFilter implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlaceBlock(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
-		if (!shouldFilterItems(player))
+		if (!shouldFilter(player))
 			return;
 
 		Material type = event.getBlock().getType();

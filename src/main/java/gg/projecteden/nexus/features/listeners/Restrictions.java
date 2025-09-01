@@ -327,7 +327,7 @@ public class Restrictions implements Listener {
 		if (event.getPlayer().hasPermission("worldedit.bypass.material"))
 			return;
 
-		if (!Arrays.asList(Rank.GUEST, Rank.MEMBER).contains(Rank.of(event.getPlayer())))
+		if (!CreativeFilter.shouldFilter(event.getPlayer()))
 			return;
 
 		String command = event.getMessage().toLowerCase();
