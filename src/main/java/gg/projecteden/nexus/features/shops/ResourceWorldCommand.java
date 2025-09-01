@@ -463,6 +463,8 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 			WarpType.NORMAL.get("hub").teleportAsync(player);
 		});
 
+		PlayerUtils.runCommandAsConsole("plugman unload holograms");
+
 		AtomicInteger wait = new AtomicInteger();
 		Tasks.wait(wait.getAndAdd(40), () -> {
 			for (Environment environment : EnumUtils.valuesExcept(Environment.class, Environment.CUSTOM)) {
@@ -473,14 +475,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 					PlayerUtils.runCommandAsConsole(command);
 				});
 
-				final String args;
-				switch (environment) {
-					case NORMAL -> args = "normal";
-					case NETHER -> args = "nether";
-					case THE_END -> args = "end";
-					default -> throw new IllegalStateException("Unexpected value: " + environment);
-				}
-
+				String args = environment.name().toLowerCase();
 				String seed = SEEDS.get(environment);
 
 				run.accept("mv delete " + world);
@@ -519,7 +514,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 		Nexus.getMultiverseCore().getWorldManager().getWorld(worldName).peek(mvWorld -> mvWorld.setSpawnLocation(warp.getLocation()));
 		new ResourceMarketLoggerService().deleteAll();
 
-		PlayerUtils.runCommandAsConsole("plugman reload holograms");
+		PlayerUtils.runCommandAsConsole("plugman load holograms");
 
 		world.getWorldBorder().setCenter(0, 0);
 		world.getWorldBorder().setSize(RADIUS * 2);
