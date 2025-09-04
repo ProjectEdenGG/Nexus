@@ -8,6 +8,7 @@ import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.profiles.colorcreator.ColorCreatorProvider.CreatedColor;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomFont;
 import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -53,6 +54,7 @@ public class ProfileUser implements PlayerOwnedObject {
 	private PrivacySetting socialMediaPrivacy = PrivacySetting.FRIENDS_ONLY;
 	private Set<CreatedColor> createdColors = new HashSet<>();
 	private Set<ProfileTextureType> unlockedTextureTypes = new HashSet<>();
+	private ProfileTitleFont titleFont = ProfileTitleFont.BLOCKY;
 
 	public Color getBukkitBackgroundColor() {
 		return ColorType.toBukkitColor(this.backgroundColor);
@@ -77,6 +79,16 @@ public class ProfileUser implements PlayerOwnedObject {
 		FRIENDS,
 		SOCIAL_MEDIA,
 		;
+	}
+
+	@Getter
+	@AllArgsConstructor
+	public enum ProfileTitleFont implements IterableEnum {
+		BLOCKY(CustomFont.BLOCKY),
+		DAYDREAM(CustomFont.DAYDREAM),
+		;
+
+		private final CustomFont font;
 	}
 
 	public boolean canNotView(PrivacySettingType settingType, Player viewer) {

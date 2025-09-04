@@ -15,6 +15,7 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.profile.ProfileUser;
 import gg.projecteden.nexus.models.profile.ProfileUser.PrivacySetting;
 import gg.projecteden.nexus.models.profile.ProfileUser.ProfileTextureType;
+import gg.projecteden.nexus.models.profile.ProfileUser.ProfileTitleFont;
 import gg.projecteden.nexus.models.profile.ProfileUserService;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -192,6 +193,28 @@ public class ProfileSettingsProvider extends InventoryProvider {
 			@Override
 			public void onClick(Player viewer, ProfileUser user, InventoryProvider previousMenu, InventoryProvider provider, InventoryContents contents, ItemClickData e) {
 				new ProfileTextureProvider(user, previousMenu).open(viewer);
+			}
+		},
+
+		TITLE_FONT(Material.NAME_TAG) {
+			@Override
+			public ItemBuilder getDisplayItem(Player viewer, ProfileUser user) {
+				ItemBuilder displayItem = super.getDisplayItem(viewer, user);
+				ProfileTitleFont font = user.getTitleFont();
+
+				return displayItem
+					.lore("")
+					.lore("&7⬇ " + StringUtils.camelCase(font.previousWithLoop()))
+					.lore("&e⬇ " + StringUtils.camelCase(font))
+					.lore("&7⬇ " + StringUtils.camelCase(font.nextWithLoop()));
+			}
+
+			@Override
+			public void onClick(Player viewer, ProfileUser user, InventoryProvider previousMenu, InventoryProvider provider, InventoryContents contents, ItemClickData e) {
+				user.setTitleFont(user.getTitleFont().nextWithLoop());
+				service.save(user);
+
+				refresh(viewer, user, previousMenu, provider, contents);
 			}
 		},
 

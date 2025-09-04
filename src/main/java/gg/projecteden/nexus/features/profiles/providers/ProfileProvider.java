@@ -121,7 +121,7 @@ public class ProfileProvider extends InventoryProvider {
 
 		texture.append(RankTexture.getTexture(this));
 
-		return new JsonBuilder(texture.toString()).group().next(titleName).font(CustomFont.BLOCKY).group();
+		return new JsonBuilder(texture.toString()).group().next(titleName).font(targetUser.getTitleFont().getFont()).group();
 	}
 
 	public static String getProfileTitle(ProfileUser user) {
@@ -147,7 +147,7 @@ public class ProfileProvider extends InventoryProvider {
 	@Getter
 	@AllArgsConstructor
 	enum ProfileMenuItem {
-		SETTINGS(0, 8, ItemModelType.GUI_GEAR) {
+		SETTINGS(1, 6, ItemModelType.GUI_GEAR) {
 			@Override
 			public boolean shouldNotShow(Player viewer, ProfileUser target) {
 				return !isSelf(viewer, target);
@@ -157,8 +157,6 @@ public class ProfileProvider extends InventoryProvider {
 			public void onClick(ItemClickData e, Player viewer, ProfileUser target, InventoryContents contents, InventoryProvider previousMenu) {
 				new ProfileSettingsProvider(viewer, target).open(viewer);
 			}
-
-
 		},
 		PLAYER(2, 1, ItemModelType.GUI_PROFILE_PLAYER_HEAD) {
 			@Override
