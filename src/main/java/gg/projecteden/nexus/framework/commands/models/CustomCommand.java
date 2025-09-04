@@ -483,6 +483,10 @@ public abstract class CustomCommand extends ICustomCommand {
 		error(((CommandRunEvent) event).getUsageMessage());
 	}
 
+	public Distance distance(HasLocation hasLocation) {
+		return Distance.distance(player(), hasLocation);
+	}
+
 	protected CommandSender sender() {
 		return event.getSender();
 	}

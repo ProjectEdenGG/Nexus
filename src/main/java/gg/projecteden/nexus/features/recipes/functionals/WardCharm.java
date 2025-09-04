@@ -19,6 +19,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -118,14 +119,18 @@ public class WardCharm extends FunctionalRecipe {
 			if (CooldownService.isNotOnCooldown(player, "wardcharm-" + entity.getUniqueId(), TickTime.SECOND.x(3)))
 				throw new InvalidInputException("&3Click again to ward this &e" + entityTypeName);
 
-			pdc.set(NBT_KEY, PersistentDataType.STRING, player.getUniqueId().toString());
+			ward(entity, player);
 			PlayerUtils.send(player, PREFIX + "Your " + entityTypeName + " is now warded");
 			item.subtract();
 
-			setMaxHealth(entity);
 		} catch (Exception ex) {
 			MenuUtils.handleException(event.getPlayer(), PREFIX, ex);
 		}
+	}
+
+	public static void ward(LivingEntity entity, Player owner) {
+		entity.getPersistentDataContainer().set(NBT_KEY, PersistentDataType.STRING, owner.getUniqueId().toString());
+		setMaxHealth(entity);
 	}
 
 	private static void setMaxHealth(LivingEntity entity) {

@@ -23,6 +23,7 @@ import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.models.clientside.ClientSideConfigService;
 import gg.projecteden.nexus.models.clientside.ClientSideUser;
 import gg.projecteden.nexus.models.clientside.ClientSideUserService;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.WorldEditUtils;
@@ -46,7 +47,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.StringUtils.tppos;
 import static gg.projecteden.nexus.utils.StringUtils.xyzw;
 
@@ -110,7 +110,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 			.filter(entity -> type == null || entity.getType() == type)
 			.filter(entity -> !onlyHidden || entity.isHidden())
 			.filter(entity -> !onlyShown || !entity.isHidden())
-			.filter(entity -> radius == null || world().equals(entity.location().getWorld()) && distance(location(), entity.location()).lte(radius))
+			.filter(entity -> radius == null || world().equals(entity.location().getWorld()) && Distance.distance(location(), entity.location()).lte(radius))
 			.toList();
 
 		if (Nullables.isNullOrEmpty(entities))

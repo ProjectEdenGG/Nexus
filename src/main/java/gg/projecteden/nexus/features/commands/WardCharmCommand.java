@@ -8,10 +8,16 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.utils.Distance;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import lombok.NonNull;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.persistence.PersistentDataType;
 
 import static gg.projecteden.nexus.features.recipes.functionals.WardCharm.NBT_KEY;
@@ -22,6 +28,32 @@ public class WardCharmCommand extends CustomCommand {
 
 	public WardCharmCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	@Path("ward [--nearest]")
+	@Permission(Group.ADMIN)
+	@Description("Ward the nearest or target entity")
+	void ward(@Switch boolean nearest) {
+		LivingEntity entity;
+		if (nearest) {
+			entity = world().getEntitiesByClass(LivingEntity.class).stream()
+				.filter(entity1 -> entity1.getType() != EntityType.PLAYER)
+				.min((e1, e2) -> Double.compare(Distance.distance(e1, player()).get(), Distance.distance(e2, player()).get()))
+				.orElseThrow(() -> new InvalidInputException("No living entities found"));
+
+			double distance = distance(entity).getRealDistance();
+			if (distance > 20)
+				error("Nearest entity is too far away (" + distance + " blocks)");
+		} else {
+			entity = getTargetLivingEntityRequired();
+		}
+
+		WardCharm.ward(entity, player());
+		var named = new JsonBuilder();
+		if (entity.customName() != null)
+			named = json(" &3named ").next(entity.customName());
+
+		send(json(PREFIX + "Warded &e" + camelCase(entity.getType())).next(named));
 	}
 
 	@Path("recipe")
