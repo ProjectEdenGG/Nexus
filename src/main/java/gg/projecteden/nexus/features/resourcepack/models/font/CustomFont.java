@@ -8,7 +8,8 @@ import net.kyori.adventure.text.format.Style;
 public enum CustomFont {
 	DEFAULT("minecraft:default"),
 	ACTION_BAR_LINE_1("minecraft:actionbar_line1"),
-	PROFILE_TITLE("minecraft:profile_title"),
+	BLOCKY("minecraft:blocky"),
+	DAYDREAM("minecraft:daydream"),
 	;
 
 	private final String key;

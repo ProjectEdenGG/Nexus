@@ -121,7 +121,7 @@ public class ProfileProvider extends InventoryProvider {
 
 		texture.append(RankTexture.getTexture(this));
 
-		return new JsonBuilder(texture.toString()).group().next(titleName).font(CustomFont.PROFILE_TITLE).group();
+		return new JsonBuilder(texture.toString()).group().next(titleName).font(CustomFont.BLOCKY).group();
 	}
 
 	public static String getProfileTitle(ProfileUser user) {
