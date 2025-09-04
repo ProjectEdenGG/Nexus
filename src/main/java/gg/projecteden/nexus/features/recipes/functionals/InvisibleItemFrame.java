@@ -199,7 +199,7 @@ public class InvisibleItemFrame extends FunctionalRecipe {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	private void onHangingBreak(HangingBreakEvent event) {
 		if (!isFrameEntity(event.getEntity()) || !event.getEntity().getPersistentDataContainer().has(KEY, PersistentDataType.BYTE))
 			return;
