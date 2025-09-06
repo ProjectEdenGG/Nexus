@@ -83,6 +83,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static java.util.Comparator.comparing;
 
 @UtilityClass
 public class PlayerUtils {
@@ -225,6 +226,10 @@ public class PlayerUtils {
 		private List<UUID> include;
 		private List<UUID> exclude;
 		private List<Predicate<Player>> filters = new ArrayList<>();
+
+		public static Player newest() {
+			return OnlinePlayers.stream().max(comparing(Player::getFirstPlayed)).orElse(null);
+		}
 
 		public static OnlinePlayers where() {
 			return new OnlinePlayers();

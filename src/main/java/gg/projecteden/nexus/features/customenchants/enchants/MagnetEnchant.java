@@ -51,7 +51,7 @@ public class MagnetEnchant extends CustomEnchant implements Listener {
 				if (!WorldGroup.of(player).isSurvivalMode())
 					continue;
 
-				if (Vanish.isVanished(player) || GameModeWrapper.of(player).isCreative())
+				if (Vanish.isVanished(player) || player.getGameMode() == GameMode.SPECTATOR)
 					continue;
 
 				int maxLevel = getMaxLevel(player);
@@ -93,7 +93,7 @@ public class MagnetEnchant extends CustomEnchant implements Listener {
 					continue;
 
 				var players = item.getWorld().getNearbyPlayers(item.getLocation(), radius).stream()
-					.filter(player -> !(Vanish.isVanished(player) || player.getGameMode() == GameMode.SPECTATOR))
+					.filter(player -> !(Vanish.isVanished(player) || GameModeWrapper.of(player).isCreative()))
 					.toList();
 				if (enabled == null && players.size() > 1)
 					continue;

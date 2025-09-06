@@ -1329,6 +1329,8 @@ public class MinigamesCommand extends _WarpSubCommand {
 	Minigamer convertToMinigamer(String value) {
 		if ("self".equalsIgnoreCase(value))
 			return minigamer;
+		if ("newest".equalsIgnoreCase(value))
+			return Minigamer.of(OnlinePlayers.newest());
 		var player = PlayerUtils.getPlayer(value);
 		if (!player.isOnline())
 			throw new PlayerNotOnlineException(player);

@@ -17,6 +17,7 @@ import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -134,6 +135,7 @@ public abstract class NexusAppCommand extends AppCommand {
 		if (input == null) return null;
 		if ("null".equalsIgnoreCase(input)) return null;
 		if ("self".equalsIgnoreCase(input)) input = ((NexusAppCommand) command).verify().getUuid().toString();
+		if ("newest".equalsIgnoreCase(input)) return OnlinePlayers.newest();
 		return PlayerUtils.getPlayer(input.replaceFirst("[pP]:", "")).getOfflinePlayer();
 	}
 

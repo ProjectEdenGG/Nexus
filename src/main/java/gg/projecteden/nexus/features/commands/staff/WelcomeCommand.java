@@ -9,7 +9,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.chat.Chatter;
@@ -43,7 +42,6 @@ import java.util.UUID;
 import static gg.projecteden.api.common.utils.RandomUtils.randomElement;
 import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.isPastResourcePackScreen;
-import static java.util.Comparator.comparing;
 
 @Aliases("welc")
 @NoArgsConstructor
@@ -98,14 +96,9 @@ public class WelcomeCommand extends CustomCommand implements Listener {
 		});
 	}
 
-	@Path("[player] [--newest]")
+	@Path("[player]")
 	@Description("Welcome a player")
-	void run(Player player, @Switch boolean newest) {
-		if (newest) {
-			var newestPlayer = OnlinePlayers.stream().max(comparing(Player::getFirstPlayed));
-			if (newestPlayer.isPresent())
-				player = newestPlayer.get();
-		}
+	void run(Player player) {
 		welcome(nerd(), player);
 	}
 
