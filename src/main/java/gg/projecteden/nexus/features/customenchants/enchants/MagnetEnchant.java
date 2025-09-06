@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.Enchant;
+import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
@@ -47,10 +48,10 @@ public class MagnetEnchant extends CustomEnchant implements Listener {
 	static {
 		Tasks.repeat(TickTime.TICK.x(10), TickTime.TICK, () -> {
 			for (Player player : OnlinePlayers.getAll()) {
-				if (!List.of(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK).contains(WorldGroup.of(player)))
+				if (!WorldGroup.of(player).isSurvivalMode())
 					continue;
 
-				if (Vanish.isVanished(player) || player.getGameMode() == GameMode.SPECTATOR)
+				if (Vanish.isVanished(player) || GameModeWrapper.of(player).isCreative())
 					continue;
 
 				int maxLevel = getMaxLevel(player);
