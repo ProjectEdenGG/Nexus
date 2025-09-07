@@ -341,7 +341,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 
 		tasks.cancel(MatchTaskType.TURN);
 
-		Team team = matchData.getTurnTeamList().get(0);
+		Team team = matchData.getTurnTeamList().getFirst();
 		matchData.getTurnTeamList().remove(team);
 		matchData.setTurnTeam(team);
 		match.getScoreboard().update();
@@ -355,7 +355,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		Match match = event.getMatch();
 		Team team = event.getMinigamer().getTeam();
 		if (team != null && team.equals(match.getMatchData().getTurnTeam()))
-			if (team.getAliveMinigamers(match).size() == 0)
+			if (team.getAliveMinigamers(match).isEmpty())
 				nextTurn(match);
 
 		leaveTeamChannel(event.getMinigamer());
@@ -381,7 +381,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		if (minigamers.isEmpty())
 			return false;
 
-		Match match = minigamers.get(0).getMatch();
+		Match match = minigamers.getFirst().getMatch();
 		Arena arena = match.getArena();
 		List<Team> teams = new ArrayList<>(arena.getTeams());
 
@@ -480,12 +480,12 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 
 		minigamers.forEach(minigamer -> minigamer.setTeam(null)); // clear teams
 		Collections.shuffle(minigamers); // lets us assign teams to players in random order
-		Match match = minigamers.get(0).getMatch();
+		Match match = minigamers.getFirst().getMatch();
 		List<Team> teams = match.getArena().getTeams(); // old code made a new list so im doing it too
 
 		// only one team, no need to bother with math
 		if (teams.size() == 1) {
-			minigamers.forEach(minigamer -> minigamer.setTeam(teams.get(0)));
+			minigamers.forEach(minigamer -> minigamer.setTeam(teams.getFirst()));
 			return;
 		}
 
@@ -495,10 +495,10 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		// add players to teams that need them (i.e. have a minimum player count that is not satisfied)
 		while (!minigamers.isEmpty()) {
 			Optional<BalanceWrapper> needsPlayers = wrappers.stream().filter(wrapper -> wrapper.getNeededPlayers() > 0).findFirst();
-			if (!needsPlayers.isPresent())
+			if (needsPlayers.isEmpty())
 				break;
 			Team team = needsPlayers.get().getTeam();
-			minigamers.remove(0).setTeam(team);
+			minigamers.removeFirst().setTeam(team);
 		}
 
 		// add rest of players according to percentages
@@ -510,15 +510,15 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 			// get teams with matching percentage discrepancies (ie the teams are perfectly balanced) and randomly
 			//  select one of them
 			List<BalanceWrapper> equalWrappers = new ArrayList<>();
-			equalWrappers.add(wrappers.get(0));
+			equalWrappers.add(wrappers.getFirst());
 			int index = 1;
-			double val = wrappers.get(0).percentageDiscrepancy();
+			double val = wrappers.getFirst().percentageDiscrepancy();
 			while (index < wrappers.size() && Math.abs(wrappers.get(index).percentageDiscrepancy() - val) < 0.0001d) {
 				equalWrappers.add(wrappers.get(index));
 				index++;
 			}
 			Team team = RandomUtils.randomElement(equalWrappers).getTeam();
-			minigamers.remove(0).setTeam(team);
+			minigamers.removeFirst().setTeam(team);
 		}
 
 		// leftover players means the teams all (somehow) reached their max player count
