@@ -37,8 +37,10 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.creative.CreativeUserService;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig.DecorationStorePasteHistory;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.EntityUtils;
@@ -47,6 +49,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -579,6 +582,13 @@ public class DecorationCommand extends CustomCommand {
 				error("You cannot use this outside of creative");
 
 			return false;
+		}
+
+		if (rank() == Rank.GUEST && worldGroup() == WorldGroup.CREATIVE) {
+			if (new CreativeUserService().get(player()).isTrusted())
+				return true;
+
+			error("You cannot access Decorations until you are Member rank");
 		}
 
 		return true;
