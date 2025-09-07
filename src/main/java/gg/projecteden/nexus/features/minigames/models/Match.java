@@ -65,6 +65,7 @@ import java.lang.reflect.Constructor;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -158,6 +159,10 @@ public class Match implements ForwardingAudience {
 		return allMinigamers.stream()
 			.map(Minigamer::getOfflinePlayer)
 			.collect(Collectors.toList());
+	}
+
+	public void shuffleMinigamers() {
+		Collections.shuffle(minigamers);
 	}
 
 	/**

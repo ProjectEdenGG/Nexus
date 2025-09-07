@@ -333,11 +333,8 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 			return;
 		}
 
-		if (matchData.getTurnTeamList().isEmpty()) {
+		if (matchData.getTurnTeamList().isEmpty())
 			matchData.setTurnTeamList(new ArrayList<>(match.getAliveTeams()));
-			if (shuffleTurnList())
-				Collections.shuffle(matchData.getTurnTeamList());
-		}
 
 		tasks.cancel(MatchTaskType.TURN);
 

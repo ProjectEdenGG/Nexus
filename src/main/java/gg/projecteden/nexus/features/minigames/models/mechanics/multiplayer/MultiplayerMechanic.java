@@ -87,10 +87,6 @@ public abstract class MultiplayerMechanic extends Mechanic {
 		return true;
 	}
 
-	public boolean shuffleTurnList() {
-		return false;
-	}
-
 	abstract public void nextTurn(@NotNull Match match);
 
 	public int getMultiplier(@NotNull Match match, @NotNull Minigamer minigamer) {

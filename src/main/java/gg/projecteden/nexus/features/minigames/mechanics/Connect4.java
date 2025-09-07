@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
 import gg.projecteden.nexus.features.minigames.models.arenas.Connect4Arena;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.Connect4MatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.utils.Tasks;
@@ -40,11 +41,6 @@ public final class Connect4 extends TeamMechanic {
 	}
 
 	@Override
-	public boolean shuffleTurnList() {
-		return turns++ == 0;
-	}
-
-	@Override
 	public void onInitialize(@NotNull MatchInitializeEvent event) {
 		super.onInitialize(event);
 
@@ -57,6 +53,12 @@ public final class Connect4 extends TeamMechanic {
 		});
 
 		match.worldedit().getBlocks(arena.getRegion("reset_floor")).forEach(block -> block.setType(Material.YELLOW_WOOL));
+	}
+
+	@Override
+	public void onStart(@NotNull MatchStartEvent event) {
+		event.getMatch().shuffleMinigamers();
+		super.onStart(event);
 	}
 
 	@Override
