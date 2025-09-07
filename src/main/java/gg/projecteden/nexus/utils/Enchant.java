@@ -37,270 +37,206 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-/**
- * Glorified enum of enchantments but with sane names
- */
+// Glorified enum of enchantments but with sane names
 @SuppressWarnings("unused")
 public class Enchant {
 
-	/**
-	 * Provides protection against environmental damage
-	 */
+	// Provides protection against environmental damage
 	public static final Enchantment PROTECTION = getEnchantment("protection");
 
-	/**
-	 * Provides protection against fire damage
-	 */
+	// Provides protection against fire damage
 	public static final Enchantment FIRE_PROTECTION = getEnchantment("fire_protection");
 
-	/**
-	 * Provides protection against fall damage
-	 */
+	// Provides protection against fall damage
 	public static final Enchantment FEATHER_FALLING = getEnchantment("feather_falling");
 
-	/**
-	 * Provides protection against explosive damage
-	 */
+	// Provides protection against explosive damage
 	public static final Enchantment BLAST_PROTECTION = getEnchantment("blast_protection");
 
-	/**
-	 * Provides protection against projectile damage
-	 */
+	// Provides protection against projectile damage
 	public static final Enchantment PROJECTILE_PROTECTION = getEnchantment("projectile_protection");
 
-	/**
-	 * Decreases the rate of air loss whilst underwater
-	 */
+	// Decreases the rate of air loss whilst underwater
 	public static final Enchantment RESPIRATION = getEnchantment("respiration");
 
-	/**
-	 * Increases the speed at which a player may mine underwater
-	 */
+	// Increases the speed at which a player may mine underwater
 	public static final Enchantment AQUA_AFFINITY = getEnchantment("aqua_affinity");
 
-	/**
-	 * Damages the attacker
-	 */
+	// Damages the attacker
 	public static final Enchantment THORNS = getEnchantment("thorns");
 
-	/**
-	 * Increases walking speed while in water
-	 */
+	// Increases walking speed while in water
 	public static final Enchantment DEPTH_STRIDER = getEnchantment("depth_strider");
 
-	/**
-	 * Freezes any still water adjacent to ice / frost which player is walking on
-	 */
+	// Freezes any still water adjacent to ice / frost which player is walking on
 	public static final Enchantment FROST_WALKER = getEnchantment("frost_walker");
 
-	/**
-	 * Item cannot be removed
-	 */
+	// Item cannot be removed
 	public static final Enchantment BINDING_CURSE = getEnchantment("binding_curse");
 
-	/**
-	 * Increases damage against all targets
-	 */
+	// Increases damage against all targets
 	public static final Enchantment SHARPNESS = getEnchantment("sharpness");
 
-	/**
-	 * Increases damage against undead targets
-	 */
+	// Increases damage against undead targets
 	public static final Enchantment SMITE = getEnchantment("smite");
 
-	/**
-	 * Increases damage against arthropod targets
-	 */
+	// Increases damage against arthropod targets
 	public static final Enchantment BANE_OF_ARTHROPODS = getEnchantment("bane_of_arthropods");
 
-	/**
-	 * All damage to other targets will knock them back when hit
-	 */
+	// All damage to other targets will knock them back when hit
 	public static final Enchantment KNOCKBACK = getEnchantment("knockback");
 
-	/**
-	 * When attacking a target, has a chance to set them on fire
-	 */
+	// When attacking a target, has a chance to set them on fire
 	public static final Enchantment FIRE_ASPECT = getEnchantment("fire_aspect");
 
-	/**
-	 * Provides a chance of gaining extra loot when killing monsters
-	 */
+	// Provides a chance of gaining extra loot when killing monsters
 	public static final Enchantment LOOTING = getEnchantment("looting");
 
-	/**
-	 * Increases damage against targets when using a sweep attack
-	 */
+	// Increases damage against targets when using a sweep attack
 	public static final Enchantment SWEEPING_EDGE = getEnchantment("sweeping_edge");
 
-	/**
-	 * Increases the rate at which you mine/dig
-	 */
+	// Increases the rate at which you mine/dig
 	public static final Enchantment EFFICIENCY = getEnchantment("efficiency");
 
-	/**
-	 * Allows blocks to drop themselves instead of fragments (for example,
-	 * stone instead of cobblestone)
-	 */
+	// Allows blocks to drop themselves instead of fragments (for example,stone instead of cobblestone)
 	public static final Enchantment SILK_TOUCH = getEnchantment("silk_touch");
 
-	/**
-	 * Decreases the rate at which a tool looses durability
-	 */
+	// Decreases the rate at which a tool looses durability
 	public static final Enchantment UNBREAKING = getEnchantment("unbreaking");
 
-	/**
-	 * Provides a chance of gaining extra loot when destroying blocks
-	 */
+	// Provides a chance of gaining extra loot when destroying blocks
 	public static final Enchantment FORTUNE = getEnchantment("fortune");
 
-	/**
-	 * Provides extra damage when shooting arrows from bows
-	 */
+	// Provides extra damage when shooting arrows from bows
 	public static final Enchantment POWER = getEnchantment("power");
 
-	/**
-	 * Provides a knockback when an entity is hit by an arrow from a bow
-	 */
+	// Provides a knockback when an entity is hit by an arrow from a bow
 	public static final Enchantment PUNCH = getEnchantment("punch");
 
-	/**
-	 * Sets entities on fire when hit by arrows shot from a bow
-	 */
+	// Sets entities on fire when hit by arrows shot from a bow
 	public static final Enchantment FLAME = getEnchantment("flame");
 
-	/**
-	 * Provides infinite arrows when shooting a bow
-	 */
+	// Provides infinite arrows when shooting a bow
 	public static final Enchantment INFINITY = getEnchantment("infinity");
 
-	/**
-	 * Decreases odds of catching worthless junk
-	 */
+	// Decreases odds of catching worthless junk
 	public static final Enchantment LUCK_OF_THE_SEA = getEnchantment("luck_of_the_sea");
 
-	/**
-	 * Increases rate of fish biting your hook
-	 */
+	// Increases rate of fish biting your hook
 	public static final Enchantment LURE = getEnchantment("lure");
 
-	/**
-	 * Causes a thrown trident to return to the player who threw it
-	 */
+	// Causes a thrown trident to return to the player who threw it
 	public static final Enchantment LOYALTY = getEnchantment("loyalty");
 
-	/**
-	 * Deals more damage to mobs that live in the ocean
-	 */
+	// Deals more damage to mobs that live in the ocean
 	public static final Enchantment IMPALING = getEnchantment("impaling");
 
-	/**
-	 * When it is rainy, launches the player in the direction their trident is thrown
-	 */
+	// When it is rainy, launches the player in the direction their trident is thrown
 	public static final Enchantment RIPTIDE = getEnchantment("riptide");
 
-	/**
-	 * Strikes lightning when a mob is hit with a trident if conditions are
-	 * stormy
-	 */
+	// Strikes lightning when a mob is hit with a trident if conditions arestormy
 	public static final Enchantment CHANNELING = getEnchantment("channeling");
 
-	/**
-	 * Shoot multiple arrows from crossbows
-	 */
+	// Shoot multiple arrows from crossbows
 	public static final Enchantment MULTISHOT = getEnchantment("multishot");
 
-	/**
-	 * Charges crossbows quickly
-	 */
+	// Charges crossbows quickly
 	public static final Enchantment QUICK_CHARGE = getEnchantment("quick_charge");
 
-	/**
-	 * Crossbow projectiles pierce entities
-	 */
+	// Crossbow projectiles pierce entities
 	public static final Enchantment PIERCING = getEnchantment("piercing");
 
-	/**
-	 * Allows mending the item using experience orbs
-	 */
+	// Allows mending the item using experience orbs
 	public static final Enchantment MENDING = getEnchantment("mending");
 
-	/**
-	 * Item disappears instead of dropping
-	 */
+	// Item disappears instead of dropping
 	public static final Enchantment VANISHING_CURSE = getEnchantment("vanishing_curse");
 
-	/**
-	 * Walk quicker on soul blocks
-	 */
+	// Walk quicker on soul blocks
 	public static final Enchantment SOUL_SPEED = getEnchantment("soul_speed");
 
-	/**
-	 * Walk quicker while sneaking
-	 */
+	// Walk quicker while sneaking
 	public static final Enchantment SWIFT_SNEAK = getEnchantment("swift_sneak");
 
 	/**
 	 * Keep item on death
 	 */
+	// Keep item on death
+	@Unreleased
 	public static final Enchantment SOULBOUND = CustomEnchants.get(SoulboundEnchant.class);
 
-	/**
-	 * Attract dropped items
-	 */
+	// Attract dropped items
+	@Unreleased
 	public static final Enchantment MAGNET = CustomEnchants.get(MagnetEnchant.class);
 
-	/**
-	 * Gives night vision when applied to helmets
-	 */
+	// Gives night vision when applied to helmets
+	@Unreleased
 	public static final Enchantment GLOWING = CustomEnchants.get(GlowingEnchant.class);
 
-	/**
-	 * Passively repairs items
-	 */
+	// Passively repairs items
+	@Unreleased
 	public static final Enchantment AUTOREPAIR = CustomEnchants.get(AutoRepairEnchant.class);
 
+	@Unreleased
 	public static final Enchantment THOR = CustomEnchants.get(ThorEnchant.class);
 
 	public static final Enchantment FIREWORK = CustomEnchants.get(FireworkEnchant.class);
 
+	@Unreleased
 	public static final Enchantment DISARMING = CustomEnchants.get(DisarmingEnchant.class);
 
+	@Unreleased
 	public static final Enchantment ENERGIZING = CustomEnchants.get(EnergizingEnchant.class);
 
+	@Unreleased
 	public static final Enchantment VEIN_MINER = CustomEnchants.get(VeinMinerEnchant.class);
 
+	@Unreleased
 	public static final Enchantment TUNNELING = CustomEnchants.get(TunnelingEnchant.class);
 
+	@Unreleased
 	public static final Enchantment BEHEADING = CustomEnchants.get(BeheadingEnchant.class);
 
+	@Unreleased
 	public static final Enchantment COLUMN_QUAKE = CustomEnchants.get(ColumnQuakeEnchant.class);
 
+	@Unreleased
 	public static final Enchantment GEARS = CustomEnchants.get(GearsEnchant.class);
 
+	@Unreleased
 	public static final Enchantment SPRINGS = CustomEnchants.get(SpringsEnchant.class);
 
+	@Unreleased
 	public static final Enchantment GRACEFUL_STEP = CustomEnchants.get(GracefulStepEnchant.class);
 
+	@Unreleased
 	public static final Enchantment ORBSEEKER = CustomEnchants.get(OrbseekerEnchant.class);
 
+	@Unreleased
 	public static final Enchantment BOUNTY = CustomEnchants.get(BountyEnchant.class);
 
+	@Unreleased
 	public static final Enchantment PLOUGH = CustomEnchants.get(PloughEnchant.class);
 
+	@Unreleased
 	public static final Enchantment MIDAS_CARROTS = CustomEnchants.get(MidasCarrotsEnchant.class);
 
+	@Unreleased
 	public static final Enchantment DEMETER = CustomEnchants.get(DemeterEnchant.class);
 
+	@Unreleased
 	public static final Enchantment FROST_ASPECT = CustomEnchants.get(FrostAspectEnchant.class);
 
 	private static final List<Enchantment> values = new ArrayList<>();
 
+	private static final List<Field> fields = new ArrayList<>();
+
 	static {
 		try {
 			for (Field field : Enchant.class.getDeclaredFields())
-				if (field.get(null) instanceof Enchantment enchantment)
+				if (field.get(null) instanceof Enchantment enchantment) {
 					values.add(enchantment);
+				}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
