@@ -24,6 +24,8 @@ import gg.projecteden.nexus.features.customenchants.enchants.SpringsEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.ThorEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.TunnelingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.VeinMinerEnchant;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.framework.features.Unreleased;
 import net.minecraft.resources.ResourceLocation;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
@@ -158,9 +160,6 @@ public class Enchant {
 	// Walk quicker while sneaking
 	public static final Enchantment SWIFT_SNEAK = getEnchantment("swift_sneak");
 
-	/**
-	 * Keep item on death
-	 */
 	// Keep item on death
 	@Unreleased
 	public static final Enchantment SOULBOUND = CustomEnchants.get(SoulboundEnchant.class);
@@ -236,6 +235,7 @@ public class Enchant {
 			for (Field field : Enchant.class.getDeclaredFields())
 				if (field.get(null) instanceof Enchantment enchantment) {
 					values.add(enchantment);
+					fields.add(field);
 				}
 		} catch (Exception ex) {
 			ex.printStackTrace();
