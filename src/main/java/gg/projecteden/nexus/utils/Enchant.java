@@ -246,6 +246,19 @@ public class Enchant {
 		return values;
 	}
 
+	@SuppressWarnings("unchecked")
+	public static List<Enchantment> getReleasedValues() {
+		return (List<Enchantment>) fields.stream().filter(field -> !field.isAnnotationPresent(Unreleased.class)).map(field -> {
+			try {
+				if (field.get(null) instanceof Enchantment enchantment)
+					return enchantment;
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+			throw new InvalidInputException("Field is not an enchantment");
+		});
+	}
+
 	public static Enchantment of(String name) {
 		if (name == null)
 			return null;

@@ -189,6 +189,10 @@ public enum ChatGameType {
 		addAll(enumWordFormatter.apply(Arrays.stream(EntityType.values()).filter(type -> type.isAlive() && type != EntityType.PLAYER)));
 		addAll(Arrays.stream(BiomeUtils.values()).map(BiomeUtils::name).map(String::toLowerCase).toList());
 		add("Lingering Potion of the Turtle Master");
+
+		// doesnt work --> exploded the server
+//		addAll(Enchant.getReleasedValues().stream().map(enchant -> AdventureUtils.asPlainText(enchant.displayName(1)).replace(" I", "")).toList());
+
 		// https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population - removed countries without number
 		addAll(List.of(
 			"China", "India", "United States", "Indonesia", "Pakistan", "Nigeria", "Brazil", "Bangladesh", "Russia",
