@@ -15,6 +15,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
@@ -44,6 +45,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -147,7 +149,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	@Path("stats")
 	@Permission(Group.MODERATOR)
 	@Description("View stats showing which sites give us the most traffic")
-	void stats() {
+	void stats(@Switch LocalDate since) {
 		List<Referral> referrals = service.getAll();
 		if (referrals.isEmpty())
 			error("No referral stats available");
@@ -155,6 +157,12 @@ public class ReferralCommand extends CustomCommand implements Listener {
 		Map<Origin, Integer> manuals = new HashMap<>();
 		Map<String, Integer> ips = new HashMap<>();
 		for (Referral referral : referrals) {
+			if (since != null) {
+				LocalDateTime firstJoin = Nerd.of(referral).getFirstJoin();
+				if (firstJoin == null || firstJoin.toLocalDate().isBefore(since))
+					continue;
+			}
+
 			if (referral.getOrigin() != null)
 				manuals.put(referral.getOrigin(), manuals.getOrDefault(referral.getOrigin(), 0) + 1);
 			if (referral.getIp() != null) {
