@@ -16,7 +16,6 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
-import gg.projecteden.nexus.features.resourcepack.models.font.CustomFont;
 import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.features.socialmedia.commands.SocialMediaCommand;

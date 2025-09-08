@@ -196,17 +196,26 @@ public class ProfileSettingsProvider extends InventoryProvider {
 			}
 		},
 
-		TITLE_FONT(Material.NAME_TAG) {
+		TITLE_FONT(ItemModelType.GUI_PROFILE_ICON_FONT) {
 			@Override
 			public ItemBuilder getDisplayItem(Player viewer, ProfileUser user) {
-				ItemBuilder displayItem = super.getDisplayItem(viewer, user);
-				ProfileTitleFont font = user.getTitleFont();
+				ProfileTitleFont current = user.getTitleFont();
+				ProfileTitleFont previous = current.previousWithLoop();
+				ProfileTitleFont next = current.nextWithLoop();
 
-				return displayItem
+				return super.getDisplayItem(viewer, user)
 					.lore("")
-					.lore("&7⬇ " + StringUtils.camelCase(font.previousWithLoop()))
-					.lore("&e⬇ " + StringUtils.camelCase(font))
-					.lore("&7⬇ " + StringUtils.camelCase(font.nextWithLoop()));
+					.lore("&7⬇ " + previous.getName())
+					.lore("&e⬇ " + current.getName())
+					.lore("&7⬇ " + next.getName());
+
+				/*
+				return super.getDisplayItem(viewer, user)
+					.lore("")
+					.componentLore(new JsonBuilder("&7⬇ " + previous.getName()).font(previous.getFont()))
+					.componentLore(new JsonBuilder("&e⬇ " + current.getName()).font(current.getFont()))
+					.componentLore(new JsonBuilder("&7⬇ " + next.getName()).font(next.getFont()));
+				*/
 			}
 
 			@Override

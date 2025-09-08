@@ -2141,6 +2141,7 @@ public enum ItemModelType {
 	GUI_PRESENCE_VANISHED_LIVE_AFK("ui/gui/presence/vanished_live_afk"),
 	GUI_ARROW_LEFT("ui/gui/previous", true),
 
+	GUI_PROFILE_ICON_FONT("ui/gui/profile/icon_font"),
 	GUI_PROFILE_ICON_ABOUT("ui/gui/profile/icon_about"),
 	GUI_PROFILE_ICON_FRIENDS("ui/gui/profile/icon_friends_list"),
 	GUI_PROFILE_ICON_FRIENDS_ERROR("ui/gui/profile/icon_friends_list_error"),

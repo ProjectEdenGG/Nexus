@@ -86,9 +86,14 @@ public class ProfileUser implements PlayerOwnedObject {
 	public enum ProfileTitleFont implements IterableEnum {
 		BLOCKY(CustomFont.BLOCKY),
 		DAYDREAM(CustomFont.DAYDREAM),
+		DIGITAL(CustomFont.DIGITAL),
 		;
 
 		private final CustomFont font;
+
+		public String getName() {
+			return StringUtils.camelCase(this);
+		}
 	}
 
 	public boolean canNotView(PrivacySettingType settingType, Player viewer) {

@@ -10,6 +10,7 @@ public enum CustomFont {
 	ACTION_BAR_LINE_1("minecraft:actionbar_line1"),
 	BLOCKY("minecraft:blocky"),
 	DAYDREAM("minecraft:daydream"),
+	DIGITAL("minecraft:digital"),
 	;
 
 	private final String key;
