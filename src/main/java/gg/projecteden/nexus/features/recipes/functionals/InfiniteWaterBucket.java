@@ -75,7 +75,7 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 			for (int i = 0; i < original.length; i++) {
 				if (Nullables.isNullOrAir(original[i])) continue;
 				if (Objects.equals(new ItemBuilder(original[i]).model(), new ItemBuilder(getResult()).model())) {
-					original[i] = getResult();
+					original[i] = new ItemBuilder(getResult()).amount(original[i].getAmount()).build();
 					found = true;
 				}
 			}
