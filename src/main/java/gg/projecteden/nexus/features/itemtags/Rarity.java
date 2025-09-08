@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+@Getter
+@SuppressWarnings({"SpellCheckingInspection", "deprecation", "ConstantValue"})
 public enum Rarity implements ITag {
 	// @formatter:off
 	ORDINARY("#9e9e9e",	 0, 5),
@@ -45,15 +47,10 @@ public enum Rarity implements ITag {
 	;
 	// @formatter:on
 
-	@Getter
 	private final List<String> colors;
-	@Getter
 	private final boolean craftable;
-	@Getter
 	private final Integer min;
-	@Getter
 	private final Integer max;
-	@Getter
 	private final String tag;
 
 	public static final String NBT_KEY = "ItemTag.RARITY";
@@ -170,7 +167,7 @@ public enum Rarity implements ITag {
 		List<ChatColor> chatColors = getChatColors();
 		if (chatColors != null && !chatColors.isEmpty()) {
 			if (chatColors.size() == 1)
-				return chatColors.get(0) + "[" + StringUtils.camelCase(this.name()) + "]";
+				return chatColors.getFirst() + "[" + StringUtils.camelCase(this.name()) + "]";
 			return Gradient.of(chatColors).apply("[" + StringUtils.camelCase(this.name()) + "]");
 		}
 

@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.survival.avontyre.weeklywakka;
 
 import gg.projecteden.api.common.utils.TimeUtils;
+import gg.projecteden.nexus.features.itemtags.Rarity;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomFont;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia;
@@ -31,7 +32,7 @@ public class WeeklyWakkaUtils {
 	@Getter
 	private static final int stationaryNPCId = 5080;
 	private static final ItemModelType DETECTOR_ITEM_MODEL_TYPE = ItemModelType.DETECTOR;
-	private static final ItemBuilder detector = new ItemBuilder(DETECTOR_ITEM_MODEL_TYPE).name("Wakka Detector").lore("&eWeekly Wakka Item");
+	private static final ItemBuilder detector = new ItemBuilder(DETECTOR_ITEM_MODEL_TYPE).name("Wakka Detector").lore("&eWeekly Wakka Item").rarity(Rarity.UNIQUE);
 
 	public static ItemStack getDetector() {
 		return detector.build();

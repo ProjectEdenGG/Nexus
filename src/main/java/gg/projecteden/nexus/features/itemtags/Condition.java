@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
+@Getter
 @AllArgsConstructor
 public enum Condition implements ITag {
 	BROKEN("#c92222", 76, 100),
@@ -26,13 +27,9 @@ public enum Condition implements ITag {
 	WORN("#00aa91", 26, 50),
 	PRISTINE("#00fff7", 0, 25);
 
-	@Getter
 	private final String color;
-	@Getter
 	private final int min;
-	@Getter
 	private final int max;
-	@Getter
 	private final String tag;
 
 	private static final DecimalFormat pf = new DecimalFormat("0.00");
