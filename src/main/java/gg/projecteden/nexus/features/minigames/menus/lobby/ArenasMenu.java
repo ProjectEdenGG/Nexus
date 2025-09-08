@@ -46,7 +46,9 @@ public class ArenasMenu extends ScrollableInventoryProvider {
 	@Getter
 	private final int pages;
 
-	Pair<SlotPos, SlotPos> randomSlotsMinMax = Pair.of(SlotPos.of(0, 0), SlotPos.of(2, 3));
+	Pair<SlotPos, SlotPos> randomSlotsMinMax = Pair.of(
+		SlotPos.of(0, 0), SlotPos.of(2, 3)
+	);
 
 	private static final Map<SlotPos, SlotPos> mapSlotsMinMax = new LinkedHashMap<>() {{
 		put(SlotPos.of(0, 0), SlotPos.of(2, 3));
@@ -58,7 +60,7 @@ public class ArenasMenu extends ScrollableInventoryProvider {
 	public ArenasMenu(MechanicType mechanic) {
 		this.mechanic = mechanic;
 		this.arenas = getArenas();
-		this.pages = (int) Math.ceil(arenas.size() / 4d);
+		this.pages = (int) Math.ceil((arenas.size() + 1) / 4d);
 	}
 
 	private List<Arena> getArenas() {
@@ -102,7 +104,9 @@ public class ArenasMenu extends ScrollableInventoryProvider {
 			})));
 
 		final int page = contents.pagination().getPage();
-		List<Arena> arenas = this.arenas.subList(page * 4, Math.min((page + 1) * 4, this.arenas.size()));
+		int arenasPerPage = (page == 0) ? 3 : 4;
+		int startIndex = (page == 0) ? 0 : (page - 1) * 4 + 3;
+		List<Arena> arenas = this.arenas.subList(startIndex, Math.min(startIndex + arenasPerPage, this.arenas.size()));
 		arenas = arenas.stream()
 			// TODO Remove or placeholder image
 			.peek(arena -> {
