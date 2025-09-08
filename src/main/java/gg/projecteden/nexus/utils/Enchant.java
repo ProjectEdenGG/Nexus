@@ -176,53 +176,70 @@ public class Enchant {
 	@Unreleased
 	public static final Enchantment AUTOREPAIR = CustomEnchants.get(AutoRepairEnchant.class);
 
+	// TODO: DESCRIBE
 	@Unreleased
 	public static final Enchantment THOR = CustomEnchants.get(ThorEnchant.class);
 
+	// TODO: DESCRIBE
 	public static final Enchantment FIREWORK = CustomEnchants.get(FireworkEnchant.class);
 
+	// TODO: DESCRIBE
 	@Unreleased
 	public static final Enchantment DISARMING = CustomEnchants.get(DisarmingEnchant.class);
 
+	// TODO: DESCRIBE
 	@Unreleased
 	public static final Enchantment ENERGIZING = CustomEnchants.get(EnergizingEnchant.class);
 
+	// TODO: DESCRIBE
 	@Unreleased
 	public static final Enchantment VEIN_MINER = CustomEnchants.get(VeinMinerEnchant.class);
 
+	// TODO: DESCRIBE
 	@Unreleased
 	public static final Enchantment TUNNELING = CustomEnchants.get(TunnelingEnchant.class);
 
+	// TODO: DESCRIBE
 	@Unreleased
 	public static final Enchantment BEHEADING = CustomEnchants.get(BeheadingEnchant.class);
 
+	// TODO: DESCRIBE
 	@Unreleased
 	public static final Enchantment COLUMN_QUAKE = CustomEnchants.get(ColumnQuakeEnchant.class);
 
+	// TODO: DESCRIBE
 	@Unreleased
 	public static final Enchantment GEARS = CustomEnchants.get(GearsEnchant.class);
 
+	// TODO: DESCRIBE
 	@Unreleased
 	public static final Enchantment SPRINGS = CustomEnchants.get(SpringsEnchant.class);
 
+	// TODO: DESCRIBE
 	@Unreleased
 	public static final Enchantment GRACEFUL_STEP = CustomEnchants.get(GracefulStepEnchant.class);
 
+	// TODO: DESCRIBE
 	@Unreleased
 	public static final Enchantment ORBSEEKER = CustomEnchants.get(OrbseekerEnchant.class);
 
+	// TODO: DESCRIBE
 	@Unreleased
 	public static final Enchantment BOUNTY = CustomEnchants.get(BountyEnchant.class);
 
+	// TODO: DESCRIBE
 	@Unreleased
 	public static final Enchantment PLOUGH = CustomEnchants.get(PloughEnchant.class);
 
+	// TODO: DESCRIBE
 	@Unreleased
 	public static final Enchantment MIDAS_CARROTS = CustomEnchants.get(MidasCarrotsEnchant.class);
 
+	// TODO: DESCRIBE
 	@Unreleased
 	public static final Enchantment DEMETER = CustomEnchants.get(DemeterEnchant.class);
 
+	// TODO: DESCRIBE
 	@Unreleased
 	public static final Enchantment FROST_ASPECT = CustomEnchants.get(FrostAspectEnchant.class);
 

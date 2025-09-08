@@ -24,7 +24,6 @@ import java.util.Map;
 @Depends(CustomEnchants.class)
 public class ItemTags extends Feature {
 	private static final Map<Enchantment, List<Level>> enchantsConfigMap = new HashMap<>();
-	private static final Map<String, Integer> customEnchantsConfigMap = new HashMap<>();
 	private static final Map<String, Integer> armorConfigMap = new HashMap<>();
 	private static final Map<String, Integer> toolConfigMap = new HashMap<>();
 
@@ -53,7 +52,7 @@ public class ItemTags extends Feature {
 
 	public static int getEnchantVal(Enchantment enchant, int lvl, RarityArgs args) {
 		List<Level> levels = enchantsConfigMap.get(enchant);
-		if (levels == null || levels.size() == 0)
+		if (levels == null || levels.isEmpty())
 			return 0;
 
 		int enchantLvl = 0;
@@ -76,18 +75,10 @@ public class ItemTags extends Feature {
 			if (!args.isAboveVanillaEnchants())
 				args.setAboveVanillaEnchants(true);
 
-			return levels.get(levels.size() - 1).getValue();
+			return levels.getLast().getValue();
 		}
 
 		return 0;
-	}
-
-	public static Integer getCustomEnchantVal(String enchant) {
-		String enchantStr = enchant.replaceAll(" ", "_").trim();
-		if (!customEnchantsConfigMap.containsKey(enchantStr))
-			return null;
-
-		return customEnchantsConfigMap.get(enchantStr);
 	}
 
 	public static Integer getArmorMaterialVal(Material material) {
@@ -143,14 +134,6 @@ public class ItemTags extends Feature {
 				String material = parseMaterial(key);
 				int value = toolMaterials.getInt(key);
 				toolConfigMap.put(material, value);
-			}
-		}
-
-		ConfigurationSection customEnchants = config.getConfigurationSection("ItemTags.CustomEnchants");
-		if (customEnchants != null) {
-			for (String key : customEnchants.getKeys(false)) {
-				int value = customEnchants.getInt(key);
-				customEnchantsConfigMap.put(key, value);
 			}
 		}
 	}

@@ -27,25 +27,26 @@ import java.util.function.Consumer;
 
 public enum Rarity implements ITag {
 	// @formatter:off
-	ORDINARY(ChatColor.of("#9e9e9e"),	 0, 5),
-	COMMON(ChatColor.of("#7aff7a"),		 6, 11),
-	UNCOMMON(ChatColor.of("#70ffcd"), 	12, 19),
-	RARE(ChatColor.of("#7a9dff"),		20, 29),
-	EPIC(ChatColor.of("#da55ff"),		30, 39),
+	ORDINARY("#9e9e9e",	 0, 5),
+	COMMON("#7aff7a",		 6, 11),
+	UNCOMMON("#70ffcd", 	12, 19),
+	RARE("#7a9dff",		20, 29),
+	EPIC("#da55ff",		30, 39),
+
 	// Uncraftable
-	EXOTIC(List.of(ChatColor.of("#ff55ff"), ChatColor.of("#bf47ff"), ChatColor.of("#9747ff")),	false, 40, 49),
-	LEGENDARY(List.of(ChatColor.of("#bf47ff"), ChatColor.of("#00aaaa")), 						false, 50, 55),
-	MYTHIC(List.of(ChatColor.of("#00aaaa"), ChatColor.of("#00ff91")), 							false, 56, 60),
+	EXOTIC(List.of("#ff55ff", "#bf47ff", "#9747ff"),	false, 40, 49),
+	LEGENDARY(List.of("#bf47ff", "#00aaaa"), 			false, 50, 55),
+	MYTHIC(List.of("#00aaaa", "#00ff91"), 				false, 56, 60),
 
 	// Quest Related
-	ARTIFACT(List.of(ChatColor.of("#ff584d"), ChatColor.of("#e39827"))),
+	ARTIFACT(List.of("#ff584d", "#e39827")),
 	// Code Related
-	UNIQUE(List.of(ChatColor.of("#6effaa"), ChatColor.of("#abff4a"))),
+	UNIQUE(List.of("#6effaa", "#abff4a")),
 	;
 	// @formatter:on
 
 	@Getter
-	private final List<ChatColor> chatColors;
+	private final List<String> colors;
 	@Getter
 	private final boolean craftable;
 	@Getter
@@ -57,20 +58,24 @@ public enum Rarity implements ITag {
 
 	public static final String NBT_KEY = "ItemTag.RARITY";
 
-	Rarity(ChatColor chatColor, Integer min, Integer max) {
+	Rarity(String chatColor, Integer min, Integer max) {
 		this(Collections.singletonList(chatColor), true, min, max);
 	}
 
-	Rarity(List<ChatColor> chatColors, boolean craftable, Integer min, Integer max) {
-		this.chatColors = new ArrayList<>(chatColors);
+	Rarity(List<String> chatColors, boolean craftable, Integer min, Integer max) {
+		this.colors = new ArrayList<>(chatColors);
 		this.craftable = craftable;
 		this.min = min;
 		this.max = max;
 		this.tag = rawGetTag();
 	}
 
-	Rarity(List<ChatColor> chatColors) {
+	Rarity(List<String> chatColors) {
 		this(chatColors, false, null, null);
+	}
+
+	public List<ChatColor> getChatColors() {
+		return colors.stream().map(ChatColor::of).toList();
 	}
 
 	public static Rarity of(ItemStack itemStack) {
@@ -100,13 +105,9 @@ public enum Rarity implements ITag {
 		ItemTags.debug(debugger, "    &3Sum: &e" + number(args.getMaterialSum()));
 
 		if (itemStack.hasItemMeta()) {
-			ItemTags.debug(debugger, "  &3Vanilla Enchants:");
+			ItemTags.debug(debugger, "  &3Enchants:");
 			args.setVanillaEnchantsSum(getEnchantsVal(itemStack, args, debugger));
 			ItemTags.debug(debugger, "    &3Sum: &e" + number(args.getVanillaEnchantsSum()));
-
-			ItemTags.debug(debugger, "  &3Custom Enchants:");
-			args.setCustomEnchantsSum(getCustomEnchantsVal(itemStack, debugger));
-			ItemTags.debug(debugger, "    &3Sum: &e" + number(args.getCustomEnchantsSum()));
 
 			checkCraftableRules(itemStack, args, debugger);
 		}
@@ -166,6 +167,7 @@ public enum Rarity implements ITag {
 	}
 
 	private String rawGetTag() {
+		List<ChatColor> chatColors = getChatColors();
 		if (chatColors != null && !chatColors.isEmpty()) {
 			if (chatColors.size() == 1)
 				return chatColors.get(0) + "[" + StringUtils.camelCase(this.name()) + "]";
@@ -203,28 +205,6 @@ public enum Rarity implements ITag {
 
 				ItemTags.debug(debugger,
 					"    &3- " + StringUtils.camelCase(enchant.getKey().getKey()) + " " + level + ": &e" + number(enchantVal));
-			}
-		}
-
-		return result;
-	}
-
-	private static int getCustomEnchantsVal(ItemStack itemStack, Player debugger) {
-		int result = 0;
-
-		ItemMeta meta = itemStack.getItemMeta();
-		List<String> lore = meta.getLore();
-		if (!Nullables.isNullOrEmpty(lore)) {
-			for (String line : lore) {
-				String enchant = StringUtils.stripColor(line)
-					.replaceAll("[\\d]+", "") // Custom Enchants bug
-					.replaceAll(" [IVXLC]+", "")
-					.trim();
-				Integer val = ItemTags.getCustomEnchantVal(enchant);
-				if (val != null) {
-					ItemTags.debug(debugger, "    &3- " + enchant + ": &e" + number(val));
-					result += val;
-				}
 			}
 		}
 

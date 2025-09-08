@@ -21,13 +21,13 @@ import java.util.function.Consumer;
 
 @AllArgsConstructor
 public enum Condition implements ITag {
-	BROKEN(ChatColor.of("#c92222"), 76, 100),
-	RAGGED(ChatColor.of("#f06100"), 51, 75),
-	WORN(ChatColor.of("#00aa91"), 26, 50),
-	PRISTINE(ChatColor.of("#00fff7"), 0, 25);
+	BROKEN("#c92222", 76, 100),
+	RAGGED("#f06100", 51, 75),
+	WORN("#00aa91", 26, 50),
+	PRISTINE("#00fff7", 0, 25);
 
 	@Getter
-	private final ChatColor chatColor;
+	private final String color;
 	@Getter
 	private final int min;
 	@Getter
@@ -38,11 +38,15 @@ public enum Condition implements ITag {
 	private static final DecimalFormat pf = new DecimalFormat("0.00");
 	public static final String NBT_KEY = "ItemTag.CONDITION";
 
-	Condition(ChatColor chatColor, int min, int max) {
-		this.chatColor = chatColor;
+	Condition(String color, int min, int max) {
+		this.color = color;
 		this.min = min;
 		this.max = max;
-		this.tag = (chatColor == null ? "" : chatColor) + "[" + StringUtils.camelCase(this.name()) + "]";
+		this.tag = (color == null ? "" : getChatColor()) + "[" + StringUtils.camelCase(this.name()) + "]";
+	}
+
+	public ChatColor getChatColor() {
+		return ChatColor.of(color);
 	}
 
 	public static Condition of(ItemStack itemStack) {
