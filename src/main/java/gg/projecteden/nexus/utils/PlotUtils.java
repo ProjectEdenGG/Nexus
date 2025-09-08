@@ -9,6 +9,7 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -22,10 +23,14 @@ public class PlotUtils {
 	}
 
 	public static PlotArea getPlotArea(Location location) {
-		var area = PlotSquared.get().getPlotAreaManager().getPlotArea(adapt(location));
+		var area = getNullablePlotArea(location);
 		if (area == null)
 			throw new InvalidInputException("No plot area found at " + StringUtils.xyzw(location));
 		return area;
+	}
+
+	public static @Nullable PlotArea getNullablePlotArea(Location location) {
+		return PlotSquared.get().getPlotAreaManager().getPlotArea(adapt(location));
 	}
 
 	public static Plot getPlot(Location location) {

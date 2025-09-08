@@ -5,7 +5,10 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.creative.CreativeUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.PlotUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -13,17 +16,22 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.craftbukkit.entity.CraftFishHook;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -32,7 +40,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -165,14 +175,16 @@ public class CreativeFilter implements Listener {
 			return;
 
 		Material type = event.getBlock().getType();
-		if (disallowedPlacement.contains(type)) {
-			if (CooldownService.isNotOnCooldown(player, player.getUniqueId() + "-" + type.name(), TickTime.MINUTE))
-				player.sendMessage("You must be Member rank to place " + StringUtils.camelCase(type));
-			event.setCancelled(true);
-		}
+		if (!CANT_PLACE.contains(type))
+			return;
+
+		if (CooldownService.isNotOnCooldown(player, player.getUniqueId() + "-" + type.name(), TickTime.MINUTE))
+			player.sendMessage("You must be Member rank to place " + StringUtils.camelCase(type));
+
+		event.setCancelled(true);
 	}
 
-	private static final List<Material> disallowedPlacement = Arrays.asList(
+	private static final List<Material> CANT_PLACE = Arrays.asList(
 			Material.FURNACE,
 			Material.SMOKER,
 			Material.BLAST_FURNACE,
@@ -185,5 +197,77 @@ public class CreativeFilter implements Listener {
 			Material.COMPARATOR,
 			Material.REDSTONE_WIRE
 	);
+
+	@EventHandler
+	public void on(ProjectileLaunchEvent event) {
+		var area = PlotUtils.getNullablePlotArea(event.getLocation());
+		if (area == null)
+			return;
+
+		var plot = PlotUtils.getPlot(event.getEntity().getLocation());
+		if (plot == null)
+			return;
+
+		var projectiles = event.getLocation().getWorld().getEntitiesByClass(Projectile.class).stream()
+			.filter(entity -> entity.getType() != EntityType.FISHING_BOBBER)
+			.filter(entity -> PlotUtils.getPlot(entity.getLocation()) == plot)
+			.toList();
+
+		if (projectiles.size() < 100)
+			return;
+
+		event.setCancelled(true);
+	}
+
+	static {
+		var ignored = List.of(CraftFishHook.class);
+
+		Tasks.repeat(0, TickTime.SECOND.x(5), () -> {
+			for (var world : Bukkit.getWorlds())
+				for (var projectile : world.getEntitiesByClass(Projectile.class)) {
+					if (ignored.contains(projectile.getClass()))
+						continue;
+					if (projectile.getTicksLived() <= TickTime.MINUTE.x(3))
+						continue;
+
+					projectile.remove();
+				}
+		});
+	}
+
+	private static final List<String> WORLDEDIT_COMMANDS = List.of(
+		"/br",
+		"/brush",
+		"/mat",
+		"/material",
+		"/pattern"
+	);
+
+	// TODO This should be handled by WE but its broken
+	@EventHandler
+	public void onWorldEditCommand(PlayerCommandPreprocessEvent event) {
+		if (!shouldFilter(event.getPlayer()))
+			return;
+
+		String command = event.getMessage().toLowerCase();
+		String cleaned = command.split(" ")[0].replace("worldedit:", "");
+		if (!(cleaned.startsWith("//") || cleaned.startsWith("/brush")))
+			return;
+
+		Set<Material> used = new HashSet<>();
+		MaterialTag.DISALLOWED_IN_WORLDEDIT.getValues().forEach(material -> {
+			for (String arg : command.split(" "))
+				for (String input : arg.split(","))
+					if (input.equals(material.name().toLowerCase()))
+						used.add(material);
+		});
+
+		if (!used.isEmpty()) {
+			event.setCancelled(true);
+			PlayerUtils.send(event.getPlayer(), "&cYou cannot use the following materials with WorldEdit:");
+			used.forEach(material ->
+				PlayerUtils.send(event.getPlayer(), "&7 - &c" + StringUtils.camelCase(material.name())));
+		}
+	}
 
 }

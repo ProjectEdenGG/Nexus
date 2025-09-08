@@ -121,7 +121,8 @@ public class MaterialTag implements Tag<Material> {
 		Material.STRUCTURE_BLOCK, Material.STRUCTURE_VOID, Material.JIGSAW, Material.BARRIER, Material.BEDROCK,
 		Material.COMMAND_BLOCK, Material.CHAIN_COMMAND_BLOCK, Material.REPEATING_COMMAND_BLOCK, Material.COMMAND_BLOCK_MINECART,
 		Material.END_PORTAL, Material.END_PORTAL_FRAME, Material.NETHER_PORTAL, Material.KNOWLEDGE_BOOK,
-		Material.DEBUG_STICK, Material.SPAWNER, Material.CHORUS_PLANT);
+		Material.DEBUG_STICK, Material.SPAWNER, Material.CHORUS_PLANT, Material.TEST_BLOCK, Material.TEST_INSTANCE_BLOCK,
+		Material.TRIAL_SPAWNER, Material.VAULT);
 
 	public static final MaterialTag UNSTACKABLE = new MaterialTag(material -> material.getMaxStackSize() == 1);
 
@@ -132,7 +133,8 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag POTION_MATERIALS = new MaterialTag(POTIONS)
 		.append(Material.GLASS_BOTTLE, Material.FERMENTED_SPIDER_EYE, Material.BLAZE_POWDER, Material.MAGMA_CREAM, Material.GLISTERING_MELON_SLICE, Material.GOLDEN_CARROT,
 			Material.RABBIT_FOOT, Material.DRAGON_BREATH, Material.PHANTOM_MEMBRANE, Material.GHAST_TEAR, Material.BREWING_STAND, Material.CAULDRON, Material.CARROT, Material.SLIME_BALL,
-			Material.QUARTZ, Material.RED_MUSHROOM, Material.APPLE, Material.ROTTEN_FLESH, Material.BROWN_MUSHROOM, Material.INK_SAC, Material.FERN, Material.POISONOUS_POTATO, Material.GOLDEN_APPLE);
+			Material.QUARTZ, Material.RED_MUSHROOM, Material.APPLE, Material.ROTTEN_FLESH, Material.BROWN_MUSHROOM, Material.INK_SAC, Material.FERN, Material.POISONOUS_POTATO, Material.GOLDEN_APPLE,
+			Material.GUNPOWDER, Material.NETHER_WART, Material.GLOWSTONE_DUST, Material.REDSTONE);
 
 	public static final MaterialTag REQUIRES_META = new MaterialTag(POTIONS).append(Material.TIPPED_ARROW, Material.WRITTEN_BOOK, Material.ENCHANTED_BOOK);
 
@@ -144,7 +146,8 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag PLANTS = new MaterialTag(Material.SHORT_GRASS, Material.FERN, Material.TALL_GRASS, Material.LARGE_FERN, Material.DEAD_BUSH, Material.SWEET_BERRY_BUSH,
 		Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.LILY_PAD, Material.BAMBOO_SAPLING, Material.BAMBOO, Material.SEAGRASS, Material.TALL_SEAGRASS, Material.KELP, Material.KELP_PLANT, Material.SUGAR_CANE,
 		Material.CACTUS, Material.SEA_PICKLE, Material.CHORUS_PLANT, Material.CHORUS_FLOWER, Material.WEEPING_VINES, Material.TWISTING_VINES, Material.NETHER_SPROUTS, Material.WARPED_ROOTS, Material.CRIMSON_ROOTS,
-		Material.WARPED_FUNGUS, Material.CRIMSON_FUNGUS, Material.VINE, Material.LEAF_LITTER)
+		Material.WARPED_FUNGUS, Material.CRIMSON_FUNGUS, Material.VINE, Material.LEAF_LITTER, Material.SHORT_DRY_GRASS, Material.TALL_DRY_GRASS, Material.NETHER_WART, Material.FIREFLY_BUSH, Material.BUSH,
+		Material.BIG_DRIPLEAF, Material.BIG_DRIPLEAF_STEM, Material.SMALL_DRIPLEAF, Material.PALE_HANGING_MOSS)
 		.append(ALL_CORALS, FLOWERS);
 
 	public static final MaterialTag MUSHROOMS = new MaterialTag(Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.CRIMSON_FUNGUS, Material.WARPED_FUNGUS);
@@ -224,7 +227,10 @@ public class MaterialTag implements Tag<Material> {
 		.append("BLACKSTONE", MatchMode.CONTAINS)
 		.append("SOUL", MatchMode.CONTAINS)
 		.append(Material.GOLDEN_SWORD, Material.GOLDEN_HELMET, Material.GOLDEN_CHESTPLATE, Material.GOLDEN_LEGGINGS, Material.GOLDEN_BOOTS)
-		.append(Material.NETHER_QUARTZ_ORE, Material.QUARTZ, Material.NETHER_GOLD_ORE, Material.GOLD_NUGGET, Material.GOLD_INGOT, Material.GOLD_BLOCK).append(ALL_QUARTZ);
+		.append(Material.NETHER_QUARTZ_ORE, Material.QUARTZ, Material.NETHER_GOLD_ORE, Material.GOLD_NUGGET, Material.GOLD_INGOT, Material.GOLD_BLOCK)
+		.append(ALL_QUARTZ)
+		.append(Material.DRIED_GHAST)
+		.append(Material.MUSIC_DISC_TEARS);
 
 	public static final MaterialTag ALL_END = new MaterialTag("END", MatchMode.CONTAINS)
 		.append("PURPUR", MatchMode.CONTAINS)
@@ -279,26 +285,38 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag REDSTONE_BLOCKS = new MaterialTag(REDSTONE_ACTIVATORS, DOORS, COMMAND_BLOCKS)
 		.append(Material.POWERED_RAIL, Material.DETECTOR_RAIL, Material.STICKY_PISTON, Material.PISTON, Material.REDSTONE_TORCH, Material.REDSTONE_WALL_TORCH, Material.REDSTONE_WIRE,
 			Material.TNT, Material.DISPENSER, Material.NOTE_BLOCK, Material.REPEATER, Material.TRIPWIRE_HOOK, Material.TRAPPED_CHEST, Material.COMPARATOR, Material.REDSTONE_BLOCK, Material.HOPPER,
-			Material.ACTIVATOR_RAIL, Material.DROPPER, Material.DAYLIGHT_DETECTOR);
-
+			Material.ACTIVATOR_RAIL, Material.DROPPER, Material.DAYLIGHT_DETECTOR)
+		.append("FENCE_GATE", MatchMode.SUFFIX)
+		.append("TRAPDOOR", MatchMode.SUFFIX);
 
 	public static final MaterialTag NEEDS_SUPPORT = new MaterialTag(Material.GRAVEL, Material.VINE, Material.LILY_PAD, Material.TURTLE_EGG,
 		Material.REPEATER, Material.COMPARATOR, Material.ITEM_FRAME, Material.BELL, Material.SNOW, Material.SCAFFOLDING, Material.TRIPWIRE_HOOK, Material.LADDER, Material.LEVER, Material.LANTERN, Material.SOUL_LANTERN)
-		.append(ALL_SAPLINGS, DOORS, SIGNS, RAILS, ALL_BANNERS, CONCRETE_POWDERS, SAND, CORALS, WOOL_CARPETS,
-			PRESSURE_PLATES, BUTTONS, FLOWER_POTS, ANVIL, PLANTS, TORCHES, CANDLES);
+		.append(
+			ALL_SAPLINGS, DOORS, SIGNS, RAILS, ALL_BANNERS, CONCRETE_POWDERS, SAND, CORALS, WOOL_CARPETS,
+			PRESSURE_PLATES, BUTTONS, FLOWER_POTS, ANVIL, PLANTS, TORCHES, CANDLES, CANDLE_CAKES
+		)
+		.append(
+			Material.SHORT_DRY_GRASS, Material.TALL_DRY_GRASS, Material.NETHER_WART, Material.FIREFLY_BUSH, Material.BUSH,
+			Material.BIG_DRIPLEAF, Material.BIG_DRIPLEAF_STEM, Material.SMALL_DRIPLEAF, Material.PALE_HANGING_MOSS,
+			Material.SMALL_AMETHYST_BUD, Material.MEDIUM_AMETHYST_BUD, Material.LARGE_AMETHYST_BUD, Material.AMETHYST_CLUSTER,
+			Material.POINTED_DRIPSTONE, Material.SUSPICIOUS_GRAVEL, Material.GRAVEL, Material.MOSS_CARPET, Material.PALE_MOSS_CARPET
+		);
 
 	public static final MaterialTag SPAWNS_ENTITY = new MaterialTag(SPAWN_EGGS, BOATS, MINECARTS).append(Material.EGG, Material.SNOWBALL, Material.BOW, Material.CROSSBOW,
 		Material.TRIDENT, Material.FIREWORK_ROCKET, Material.ENDER_PEARL, Material.ENDER_EYE, Material.SPLASH_POTION, Material.LINGERING_POTION, Material.EXPERIENCE_BOTTLE, Material.ARMOR_STAND, Material.ITEM_FRAME,
-		Material.GLOW_ITEM_FRAME, Material.PAINTING);
+		Material.GLOW_ITEM_FRAME, Material.PAINTING, Material.BLUE_EGG, Material.BROWN_EGG);
 
 	public static final MaterialTag VEHICLES = new MaterialTag(BOATS, ITEMS_CHEST_BOATS, MINECARTS);
 
 	public static final MaterialTag WEARABLE = new MaterialTag(ARMOR, SKULLS).append(Material.CARVED_PUMPKIN).exclude("_WALL_", MatchMode.CONTAINS);
 
-	public static final MaterialTag INTERACTABLES = new MaterialTag(BEDS, SHULKER_BOXES, CONTAINERS, WOOD_FENCE_GATES,
-			DOORS, TRAPDOORS, BUTTONS, MENU_BLOCKS, CAULDRONS).append(
-		Material.REPEATER, Material.COMPARATOR, Material.NOTE_BLOCK, Material.JUKEBOX, Material.DAYLIGHT_DETECTOR, Material.LEVER, Material.REDSTONE_WIRE, Material.CHISELED_BOOKSHELF,
-		Material.COMPOSTER, Material.DECORATED_POT);
+	public static final MaterialTag INTERACTABLES = new MaterialTag(
+		BEDS, SHULKER_BOXES, CONTAINERS, WOOD_FENCE_GATES, DOORS, TRAPDOORS, BUTTONS, MENU_BLOCKS, CAULDRONS
+	).append(
+		Material.REPEATER, Material.COMPARATOR, Material.NOTE_BLOCK, Material.JUKEBOX, Material.DAYLIGHT_DETECTOR,
+		Material.LEVER, Material.REDSTONE_WIRE, Material.CHISELED_BOOKSHELF,Material.COMPOSTER, Material.DECORATED_POT,
+		Material.TRAPPED_CHEST, Material.CAMPFIRE
+	);
 
 	public static final MaterialTag BUNDLES = new MaterialTag("BUNDLE", MatchMode.CONTAINS);
 
@@ -306,6 +324,23 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag REPLACEABLE_FIXED = new MaterialTag(REPLACEABLE)
 		.append(Material.SCULK_VEIN, Material.PALE_HANGING_MOSS);
+
+	public static final MaterialTag DISALLOWED_IN_WORLDEDIT = new MaterialTag(
+		MaterialTag.NEEDS_SUPPORT,
+		MaterialTag.PORTALS,
+		MaterialTag.COMMAND_BLOCKS,
+		MaterialTag.ALL_SIGNS,
+		MaterialTag.CROPS,
+		MaterialTag.NATURAL_GRAVITY_SEDIMENT,
+		MaterialTag.REDSTONE_BLOCKS,
+		MaterialTag.INTERACTABLES
+	).append(
+		Material.STRUCTURE_BLOCK,
+		Material.STRUCTURE_VOID,
+		Material.JIGSAW,
+		Material.SCULK_SHRIEKER,
+		Material.SCULK_SENSOR
+	);
 
 	@SneakyThrows
 	public static Map<String, Tag<Material>> getApplicable(Material material) {

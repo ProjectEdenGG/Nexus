@@ -124,6 +124,7 @@ public class PlayerUtils {
 		SPIKE("e089a260-7aeb-488f-a641-ab5867ab5ccd"),
 		EDEN("1c924e4b-dcaa-4abd-9bd8-7b5f61e8790a", true),
 		BRI("77966ca3-ac85-44b2-bcb0-b7c5f9342e86"),
+		DOM("d1729990-0ad4-4db8-8a95-779128e9fa1a"),
 		;
 
 		@Getter
