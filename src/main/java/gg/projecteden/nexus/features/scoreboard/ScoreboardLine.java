@@ -42,7 +42,9 @@ import lombok.SneakyThrows;
 import me.lucko.spark.api.statistic.StatisticWindow.MillisPerTick;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Beehive;
+import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Player;
 
 import java.lang.annotation.Annotation;
@@ -368,8 +370,10 @@ public enum ScoreboardLine {
 			Tasks.repeat(TickTime.SECOND, TickTime.TICK.x(15), () -> {
 				var service = new ScoreboardService();
 				for (var player : OnlinePlayers.getAll()) {
-					if (!service.get(player).getLines().getOrDefault(BEES, false))
-						return;
+					if (!service.get(player).getLines().getOrDefault(BEES, false)) {
+						bees.remove(player.getUniqueId());
+						continue;
+					}
 
 					var block = player.getTargetBlockExact(10);
 					if (isNotNullOrAir(block) && block.getState() instanceof Beehive beehive)
@@ -403,6 +407,72 @@ public enum ScoreboardLine {
 				return null;
 
 			return "&3OneBlock Count: &e" + Hook.BENTOBOX.getOneBlockCount(Hook.BENTOBOX.getOneBlockWorld(), player);
+		}
+	},
+
+	// For Bri
+	@Interval(5)
+	@Permission("nexus.scoreboard.horsevaluecalculator")
+	HORSE_VALUE_CALCULATOR {
+		@Override
+		public String camelCase() {
+			return "Horse Value Calculator";
+		}
+
+		private static final Map<UUID, Double> horseValues = new ConcurrentHashMap<>();
+
+		static public Double convertJumpToBlocks(Double jump) {
+			Double convertedJump = 0.0;
+			while (jump > 0) {
+				convertedJump += jump;
+				jump = (jump - .08) * .98 * .98;
+			}
+			return convertedJump;
+		}
+
+		static public Double convertSpeedToBlocksPerSeconds(Double speed) {
+			return speed * 42.157796;
+		}
+
+		private static double calculateHorsePrice(AbstractHorse horse) {
+			var speed = convertSpeedToBlocksPerSeconds(horse.getAttribute(Attribute.MOVEMENT_SPEED).getValue());
+			var jump = convertJumpToBlocks(horse.getAttribute(Attribute.JUMP_STRENGTH).getValue());
+			var health = horse.getAttribute(Attribute.MAX_HEALTH).getValue();
+
+			var tS = Math.clamp((speed - 13) / 1.23, 0, 1);
+			var tJ = Math.clamp((jump - 5.0) / 0.5, 0, 1);
+			var tH = Math.clamp((health - 28) / 2.0, 0, 1);
+			var s = (tS + tJ + tH) / 3;
+			var price = 50000 * Math.pow(20, s);
+
+			return Math.round(price);
+		}
+
+		static {
+			Tasks.repeat(TickTime.SECOND, TickTime.TICK.x(15), () -> {
+				var service = new ScoreboardService();
+				for (var player : OnlinePlayers.getAll()) {
+					if (!service.get(player).getLines().getOrDefault(HORSE_VALUE_CALCULATOR, false)) {
+						horseValues.remove(player.getUniqueId());
+						continue;
+					}
+
+					var entity = player.getTargetEntity(10);
+					if (entity instanceof AbstractHorse horse)
+						horseValues.put(player.getUniqueId(), calculateHorsePrice(horse));
+					else
+						horseValues.remove(player.getUniqueId());
+				}
+			});
+		}
+
+		@Override
+		public String render(Player player) {
+			var result = horseValues.getOrDefault(player.getUniqueId(), null);
+			if (result == null)
+				return null;
+
+			return "&3Horse Value: &e$" + StringUtils.getCnf().format(result);
 		}
 	},
 
