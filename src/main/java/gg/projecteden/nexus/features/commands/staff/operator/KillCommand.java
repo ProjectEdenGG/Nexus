@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.commands.staff;
+package gg.projecteden.nexus.features.commands.staff.operator;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;

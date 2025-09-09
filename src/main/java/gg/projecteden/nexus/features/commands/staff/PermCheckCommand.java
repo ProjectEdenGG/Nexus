@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.commands.staff.admin;
+package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;

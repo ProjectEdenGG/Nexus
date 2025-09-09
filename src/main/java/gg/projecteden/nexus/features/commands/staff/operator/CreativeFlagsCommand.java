@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.commands.staff.admin;
+package gg.projecteden.nexus.features.commands.staff.operator;
 
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;

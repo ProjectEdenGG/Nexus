@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.commands.staff.moderator;
+package gg.projecteden.nexus.features.commands.staff.operator;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.vanish.Vanish;

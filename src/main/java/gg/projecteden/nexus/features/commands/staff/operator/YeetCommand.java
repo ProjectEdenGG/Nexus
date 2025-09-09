@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.commands.staff;
+package gg.projecteden.nexus.features.commands.staff.operator;
 
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;

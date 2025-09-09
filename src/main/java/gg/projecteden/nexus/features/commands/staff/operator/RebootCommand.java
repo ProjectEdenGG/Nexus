@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.commands.staff.admin;
+package gg.projecteden.nexus.features.commands.staff.operator;
 
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.Env;

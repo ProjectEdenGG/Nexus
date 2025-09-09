@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.justice.activate;
 
-import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
+import gg.projecteden.nexus.features.commands.staff.operator.RebootCommand;
 import gg.projecteden.nexus.features.justice.misc._PunishmentCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;

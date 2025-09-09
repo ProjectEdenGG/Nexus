@@ -1,5 +1,6 @@
-package gg.projecteden.nexus.features.commands.staff;
+package gg.projecteden.nexus.features.commands.staff.operator;
 
+import gg.projecteden.nexus.features.commands.staff.CheatsCommand;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
