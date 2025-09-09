@@ -32,7 +32,7 @@ public class WeeklyWakkaUtils {
 	@Getter
 	private static final int stationaryNPCId = 5080;
 	private static final ItemModelType DETECTOR_ITEM_MODEL_TYPE = ItemModelType.DETECTOR;
-	private static final ItemBuilder detector = new ItemBuilder(DETECTOR_ITEM_MODEL_TYPE).name("Wakka Detector").lore("&eWeekly Wakka Item").rarity(Rarity.UNIQUE);
+	private static final ItemBuilder detector = new ItemBuilder(DETECTOR_ITEM_MODEL_TYPE).name("Wakka Detector").lore("&eWeekly Wakka Item");
 
 	public static ItemStack getDetector() {
 		return detector.build();
