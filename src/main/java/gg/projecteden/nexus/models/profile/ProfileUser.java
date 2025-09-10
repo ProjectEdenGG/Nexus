@@ -87,6 +87,7 @@ public class ProfileUser implements PlayerOwnedObject {
 		BLOCKY(CustomFont.BLOCKY),
 		DAYDREAM(CustomFont.DAYDREAM),
 		DIGITAL(CustomFont.DIGITAL),
+		COTTONTAIL(CustomFont.COTTONTAIL),
 		;
 
 		private final CustomFont font;

@@ -11,6 +11,7 @@ public enum CustomFont {
 	BLOCKY("minecraft:blocky"),
 	DAYDREAM("minecraft:daydream"),
 	DIGITAL("minecraft:digital"),
+	COTTONTAIL("minecraft:cottontail"),
 	;
 
 	private final String key;
