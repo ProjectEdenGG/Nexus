@@ -24,7 +24,6 @@ public class Pugmas25Train {
 	private static final String trainTrackRegion = BASE_REGION + "track";
 
 	public static void startup() {
-		Pugmas25.get().forceLoadRegions(trainTrackRegion);
 		schedule();
 	}
 
@@ -76,6 +75,7 @@ public class Pugmas25Train {
 				put(3, ItemModelType.PUGMAS25_TRAIN_3);
 				put(18, ItemModelType.PUGMAS25_TRAIN_18);
 			}})
+			.forceLoadRegion(trainTrackRegion)
 			;
 	}
 }

@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
 import gg.projecteden.nexus.features.events.models.Train.Crossing.TrackSide;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import gg.projecteden.nexus.utils.ChunkLoader;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -69,6 +70,7 @@ public class Train {
 	private final TrainCrossings trainCrossings;
 	private final boolean bonkPlayers;
 	private final Map<Integer, ItemModelType> modelOverrides;
+	private final String forceLoadRegion;
 
 	private final List<ArmorStand> armorStands = new ArrayList<>();
 	private final List<Integer> taskIds = new ArrayList<>();
@@ -90,7 +92,7 @@ public class Train {
 	@Builder
 	public Train(Location location, BlockFace direction, double speed, int seconds, boolean test, String regionAnnounce,
 				 Location whistleLocation, double whistleRadius, String regionTrack, String regionReveal, TrainCrossings trainCrossings,
-				 boolean bonkPlayers, Map<Integer, ItemModelType> modelOverrides) {
+				 boolean bonkPlayers, Map<Integer, ItemModelType> modelOverrides, String forceLoadRegion) {
 		this.location = location.toCenterLocation();
 		this.worldguard = new WorldGuardUtils(location);
 		this.forwards = direction;
@@ -108,6 +110,7 @@ public class Train {
 		this.regionReveal = regionReveal;
 		this.trainCrossings = trainCrossings;
 		this.bonkPlayers = bonkPlayers;
+		this.forceLoadRegion = forceLoadRegion;
 
 		if (this.trainCrossings != null) {
 			this.trainCrossings.allLightsOff();
@@ -131,9 +134,11 @@ public class Train {
 
 		active = false;
 		instances.remove(this);
+		ChunkLoader.forceLoad(location.getWorld(), forceLoadRegion, false);
 	}
 
 	public void start() {
+		ChunkLoader.forceLoad(location.getWorld(), forceLoadRegion, true);
 		active = true;
 		instances.add(this);
 
