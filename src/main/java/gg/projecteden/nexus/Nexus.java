@@ -3,16 +3,13 @@ package gg.projecteden.nexus;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.lishid.openinv.IOpenInv;
-import org.mvplugins.multiverse.core.MultiverseCore;
-import org.mvplugins.multiverse.core.MultiverseCoreApi;
-import org.mvplugins.multiverse.inventories.MultiverseInventories;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.ReflectionUtils;
 import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.api.mongodb.MongoService;
 import gg.projecteden.nexus.features.chat.Chat;
-import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
+import gg.projecteden.nexus.features.commands.staff.operator.RebootCommand;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.Events;
@@ -54,6 +51,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.mvplugins.multiverse.core.MultiverseCoreApi;
 import org.mvplugins.multiverse.inventories.MultiverseInventoriesApi;
 import org.objenesis.ObjenesisStd;
 
@@ -339,6 +337,8 @@ public class Nexus extends JavaPlugin {
 		MongoService.getServices().clear();
 		MongoService.getObjectToServiceMap().clear();
 		MongoService.getServiceToObjectMap().clear();
+		MongoService.database.getMongo().close();
+		MongoService.database = null;
 	}
 
 	private void hooks() {
