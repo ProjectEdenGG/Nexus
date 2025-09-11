@@ -44,6 +44,8 @@ public class LagCommand extends CustomCommand {
 			if (world.getLoadedChunks().length == 0)
 				continue;
 
+			var forceLoaded = world.getForceLoadedChunks().stream().filter(Chunk::isForceLoaded).count();
+
 			String type = switch (world.getEnvironment()) {
 				case NETHER -> "Nether";
 				case THE_END -> "&3 &3 &3 &3 End";
@@ -60,9 +62,10 @@ public class LagCommand extends CustomCommand {
 			}
 
 			send("&3" + type + " &e" + world.getName() + " &7- "
-					+ "&e" + world.getLoadedChunks().length + " &7chunks, "
-					+ "&e" + world.getEntities().size() + " &7entities, "
-					+ "&e" + tileEntities + " &7tiles");
+				+ "&e" + world.getLoadedChunks().length + " &7chunks, "
+				+ "&e" + forceLoaded + " &7force loaded chunks, "
+				+ "&e" + world.getEntities().size() + " &7entities, "
+				+ "&e" + tileEntities + " &7tiles");
 		}
 	}
 

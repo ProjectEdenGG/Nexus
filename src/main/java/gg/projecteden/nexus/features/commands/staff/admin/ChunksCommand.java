@@ -15,6 +15,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import lombok.NonNull;
 import org.bukkit.Chunk;
 import org.bukkit.World;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @Aliases("chunk")
 @Permission(Group.ADMIN)
@@ -29,6 +31,39 @@ public class ChunksCommand extends CustomCommand {
 
 	public ChunksCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	@Path("unloadAll <world>")
+	void unloadAll(World world) {
+		for (Chunk chunk : world.getLoadedChunks())
+			chunk.unload();
+
+		send(PREFIX + "Unloaded all chunks in &e" + world.getName());
+	}
+
+	@Path("loaded list [world] [page]")
+	@Description("List loaded chunks in a world")
+	void loaded_list(@Arg("current") World world, @Arg("1") int page) {
+		final var chunks = Arrays.stream(world.getLoadedChunks()).toList();
+
+		if (chunks.isEmpty())
+			error("No loaded chunks in world &e" + world.getName());
+
+		send(PREFIX + "Loaded chunks in &e" + world.getName());
+
+		final BiFunction<@NotNull Chunk, String, JsonBuilder> formatter = (chunk, index) -> {
+			var tickets = chunk.getPluginChunkTickets();
+			return json("&3" + index + " &e" + chunk.getX() + ", " + chunk.getZ() + (tickets.isEmpty() ? "" : " &7- " + tickets.size() + " tickets"))
+				.command("/tppos " + ((chunk.getX() << 4) + 8) + " 200 " + ((chunk.getZ() << 4) + 8) + " " + world.getName())
+				.hover("Plugins: " + tickets.stream().map(Plugin::getName).collect(Collectors.joining(", ")));
+		};
+
+		new Paginator<@NotNull Chunk>()
+			.values(chunks)
+			.formatter(formatter)
+			.command("/chunks loaded list " + world.getName())
+			.page(page)
+			.send();
 	}
 
 	@Path("forceLoaded list [world] [page]")

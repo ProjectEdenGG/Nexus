@@ -31,6 +31,7 @@ public class ChunkLoader extends Feature {
 			}
 		}
 	}
+
 	public static void forceLoad(World world, String region) {
 		forceLoad(world, region, true);
 	}
@@ -80,6 +81,7 @@ public class ChunkLoader extends Feature {
 			chunk.setForceLoaded(false);
 			chunks.remove(chunkKey);
 		}
+
 		loadedChunks.put(chunk.getWorld(), chunks);
 	}
 
