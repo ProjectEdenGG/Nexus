@@ -12,6 +12,7 @@ import gg.projecteden.nexus.models.spawnlimits.SpawnLimits;
 import gg.projecteden.nexus.models.spawnlimits.SpawnLimits.SpawnLimitType;
 import gg.projecteden.nexus.models.spawnlimits.SpawnLimitsService;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -28,9 +29,15 @@ public class SpawnLimitsCommand extends CustomCommand {
 
 	static {
 		try {
-			for (World world : Bukkit.getWorlds())
-				for (SpawnLimitType type : SpawnLimitType.values())
-					type.set(world, type.getDefaultValue());
+			for (World world : Bukkit.getWorlds()) {
+				if (!WorldGroup.of(world).isSurvivalMode()) {
+					for (SpawnLimitType type : SpawnLimitType.values())
+						type.set(world, 0);
+				} else {
+					for (SpawnLimitType type : SpawnLimitType.values())
+						type.set(world, type.getDefaultValue());
+				}
+			}
 
 			final SpawnLimitsService service = new SpawnLimitsService();
 			final SpawnLimits limits = service.get0();
