@@ -11,17 +11,18 @@ import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.features.listeners.events.fake.FakePlayerInteractEvent;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.features.vanish.events.VanishToggleEvent;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.tip.Tip;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
@@ -53,6 +54,7 @@ import org.bukkit.entity.Fox;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Shulker;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -81,6 +83,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static gg.projecteden.nexus.features.listeners.Restrictions.isPerkAllowedAt;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @SuppressWarnings("SwitchStatementWithTooFewBranches")
 public class Misc implements Listener {
@@ -122,7 +127,7 @@ public class Misc implements Listener {
 
 		final ItemStack item = event.getItem();
 		final Block block = event.getClickedBlock();
-		if (Nullables.isNullOrAir(item) || Nullables.isNullOrAir(block))
+		if (isNullOrAir(item) || isNullOrAir(block))
 			return;
 
 		if (item.getType() != Material.ENDER_EYE)
@@ -167,11 +172,11 @@ public class Misc implements Listener {
 			return;
 
 		final Block block = event.getClickedBlock();
-		if (Nullables.isNullOrAir(block) || block.getType() != Material.LIGHT)
+		if (isNullOrAir(block) || block.getType() != Material.LIGHT)
 			return;
 
 		final ItemStack item = event.getItem();
-		if (Nullables.isNullOrAir(item) || item.getType() != Material.LIGHT)
+		if (isNullOrAir(item) || item.getType() != Material.LIGHT)
 			return;
 
 		if (!new BlockBreakEvent(block, event.getPlayer()).callEvent())
@@ -253,7 +258,7 @@ public class Misc implements Listener {
 				continue;
 
 			final ItemStack existing = ItemUtils.clone(inventory.getItem(slot));
-			if (!Nullables.isNullOrAir(existing) && existing.getItemMeta().hasEnchant(Enchant.BINDING_CURSE))
+			if (!isNullOrAir(existing) && existing.getItemMeta().hasEnchant(Enchant.BINDING_CURSE))
 				continue;
 
 			final PlayerArmorChangeEvent armorChangeEvent = new PlayerArmorChangeEvent(event.getPlayer(), SlotType.valueOf(slot.name()), existing, item);
@@ -421,7 +426,7 @@ public class Misc implements Listener {
 		if (!Paths.get("plugins/ImageOnMap/images/map" + mapId + ".png").toFile().exists())
 			return;
 
-		if (!Nullables.isNullOrAir(itemFrame.getItem()))
+		if (!isNullOrAir(itemFrame.getItem()))
 			return;
 
 		itemFrame.setRotation(itemFrame.getRotation().rotateCounterClockwise());
@@ -489,5 +494,36 @@ public class Misc implements Listener {
 		SpawnType.HUB.teleport(player);
 	}
 
+	@EventHandler
+	public void onShulkerDye(PlayerInteractEntityEvent event) {
+		if (!(event.getRightClicked() instanceof Shulker shulker))
+			return;
+
+		var player = event.getPlayer();
+		if (!isPerkAllowedAt(player, shulker.getLocation()))
+			return;
+
+		if (Vanish.isVanished(player))
+			return;
+
+		var tool = player.getInventory().getItem(event.getHand());
+		if (isNullOrAir(tool))
+			return;
+
+		if (!MaterialTag.DYES.isTagged(tool.getType()))
+			return;
+
+		var color = ColorType.of(tool.getType());
+		if (color == null)
+			return;
+
+		var dyeColor = color.getDyeColor();
+		if (dyeColor == null)
+			return;
+
+		shulker.setColor(dyeColor);
+		if (player.getGameMode() != GameMode.CREATIVE)
+			tool.subtract();
+	}
 
 }
