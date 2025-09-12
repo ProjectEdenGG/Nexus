@@ -1021,6 +1021,9 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder model(ItemModelType itemModelType) {
+		if (itemModelType == null)
+			return this;
+
 		return model(itemModelType.getModel());
 	}
 

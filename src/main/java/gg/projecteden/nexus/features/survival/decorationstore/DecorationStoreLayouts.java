@@ -2,6 +2,8 @@ package gg.projecteden.nexus.features.survival.decorationstore;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.chat.Koda;
+import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreType;
 import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -123,6 +125,9 @@ public class DecorationStoreLayouts {
 		DecorationStore.saveConfig();
 		animating = false;
 		preventReload = false;
+
+		Koda.sayIngame("The Decoration Store has been remodeled! Visit with &c/decor store", MuteMenuItem.DECORATION_STORE);
+		Koda.sayDiscord("The Decoration Store has been remodeled! Visit with `/decor store`");
 
 		Nexus.log("[Decoration Store] Finished, pasted schematic id: " + schematicId);
 	}

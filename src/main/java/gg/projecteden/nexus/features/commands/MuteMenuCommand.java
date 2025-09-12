@@ -96,11 +96,10 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 							continue;
 
 						boolean muted = user.hasMuted(item);
-						ItemStack stack = new ItemBuilder(item.getMaterial()).name("&e" + item.getTitle())
+						ItemStack stack = item.getItem()
 							.lore(muted ? "&cMuted" : "&aUnmuted")
 							.lore(item.getLore())
 							.glow(muted)
-							.itemFlags(ItemFlags.HIDE_ALL)
 							.build();
 
 						items.add(ClickableItem.of(stack, e -> {
@@ -142,10 +141,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 						boolean muted = user.hasMuted(item);
 						int volume = user.getVolume(item);
 
-						ItemBuilder stack = new ItemBuilder(item.getMaterial())
-							.name("&e" + item.getTitle())
-							.itemFlags(ItemFlags.HIDE_ALL)
-							.lore(muted ? "&c0%" : "&a" + volume + "%");
+						ItemBuilder stack = item.getItem().lore(muted ? "&c0%" : "&a" + volume + "%");
 
 						if (muted)
 							stack.glow();
@@ -289,6 +285,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 			EVENTS("Event Broadcasts", Material.BEACON),
 			BOOSTS("Boost Broadcasts", Material.EXPERIENCE_BOTTLE),
 			MINIGAMES("Minigame Broadcasts", Material.DIAMOND_SWORD),
+			DECORATION_STORE("Decoration Store Updates", ItemModelType.CHAIR_WOODEN_BASIC),
 			QUEUP("QueUp Song Updates", Material.MUSIC_DISC_MALL),
 			JUKEBOX("Custom Jukebox Songs", Material.JUKEBOX, List.of("Custom songs played via &c/jukebox")),
 			CHAT_GAMES("Chat Games", Material.PAPER),
@@ -309,11 +306,22 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 
 			@NonNull
 			private final String title;
-			@NonNull
-			private final Material material;
+			private Material material;
+			private ItemModelType model;
 			private List<String> lore = new ArrayList<>();
 			private String permission = null;
 			private Integer defaultVolume = null;
+
+			MuteMenuItem(@NotNull String title, @NotNull Material material) {
+				this.title = title;
+				this.material = material;
+			}
+
+			MuteMenuItem(@NotNull String title, @NotNull ItemModelType model) {
+				this.title = title;
+				this.material = model.getMaterial();
+				this.model = model;
+			}
 
 			MuteMenuItem(@NotNull String title, @NotNull Material material, int defaultVolume) {
 				this.title = title;
@@ -333,6 +341,13 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 				this.lore = lore.stream().map(line -> "&f" + line).collect(Collectors.toList());
 				if (!this.lore.isEmpty())
 					this.lore.addFirst("");
+			}
+
+			public ItemBuilder getItem() {
+				return new ItemBuilder(material)
+					.name("&e" + title)
+					.model(model)
+					.itemFlags(ItemFlags.HIDE_ALL);
 			}
 
 			@SneakyThrows

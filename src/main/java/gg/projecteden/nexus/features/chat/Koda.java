@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.chat.events.ChatEvent;
 import gg.projecteden.nexus.features.commands.AgeCommand.ServerAge;
+import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.minigames.utils.MinigameNight;
 import gg.projecteden.nexus.models.chat.Chatter;
@@ -82,8 +83,16 @@ public class Koda {
 		sayIngame(message);
 		sayDiscord(message);
 	}
+	public static void say(@NotNull String message, MuteMenuItem muteMenuItem) {
+		sayIngame(message, muteMenuItem);
+		sayDiscord(message);
+	}
 
 	public static void sayIngame(@NotNull String message) {
+		sayIngame(message, null);
+	}
+
+	public static void sayIngame(@NotNull String message, MuteMenuItem muteMenuItem) {
 		PublicChannel channel = StaticChannel.GLOBAL.getChannel();
 		Broadcast.ingame()
 			.channel(channel)
@@ -91,7 +100,9 @@ public class Koda {
 			.messageFunction(viewer -> new JsonBuilder("")
 				.next(channel.getChatterFormat(chatter, viewer == null ? null : new ChatterService().get(viewer), false))
 				.group()
-				.next(message))
+				.next(message)
+			)
+			.muteMenuItem(muteMenuItem)
 			.messageType(MessageType.CHAT)
 			.send();
 	}
