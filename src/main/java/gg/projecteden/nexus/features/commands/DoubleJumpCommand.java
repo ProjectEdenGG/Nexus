@@ -3,9 +3,6 @@ package gg.projecteden.nexus.features.commands;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
-import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
-import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -14,29 +11,29 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.doublejump.DoubleJumpUser;
 import gg.projecteden.nexus.models.doublejump.DoubleJumpUserService;
-import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
-import gg.projecteden.nexus.models.mode.ModeUserService;
-import gg.projecteden.nexus.utils.GameModeWrapper;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags;
-import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.HasLocation;
+import kotlin.Pair;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerGameModeChangeEvent;
-import org.bukkit.event.player.PlayerToggleFlightEvent;
+import org.bukkit.event.player.PlayerInputEvent;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 // https://github.com/TreyRuffy/TreysDoubleJump
 @NoArgsConstructor
@@ -74,37 +71,58 @@ public class DoubleJumpCommand extends CustomCommand implements Listener {
 		return WorldGuardFlagUtils.queryValue(location.getLocation(), CustomFlags.DOUBLE_JUMP_COOLDOWN);
 	}
 
-	@EventHandler
-	public void onPlayerToggleFlight(PlayerToggleFlightEvent event) {
-		Player player = event.getPlayer();
-		final Location location = player.getLocation();
+	private static final Map<UUID, DoubleJumpData> DATA = new HashMap<>();
 
-		if (player.getGameMode() == GameMode.CREATIVE)
+	@Data
+	public static class DoubleJumpData {
+		private final UUID uuid;
+		private final List<Pair<Integer, Boolean>> previousStates = new ArrayList<>();
+		private int taskId = -1;
+
+		public boolean isDoubleJumping() {
+			return taskId != -1;
+		}
+	}
+
+	@EventHandler
+	public void on(PlayerInputEvent event) {
+		var player = event.getPlayer();
+		var data = DATA.computeIfAbsent(player.getUniqueId(), $ -> new DoubleJumpData(player.getUniqueId()));
+
+		if (data.isDoubleJumping())
 			return;
 
+		if (player.getGameMode() == GameMode.CREATIVE || player.getAllowFlight())
+			return;
+
+		final Location location = player.getLocation();
 		if (!isInDoubleJumpRegion(location))
 			return;
 
 		final DoubleJumpUser user = service.get(player);
-		if (!user.isEnabled()) {
-			if (player.getGameMode() != GameMode.CREATIVE)
-				event.setCancelled(true);
+		if (!user.isEnabled())
+			return;
 
+		data.getPreviousStates().removeIf(state -> state.getFirst() < Bukkit.getCurrentTick() - 6);
+		data.getPreviousStates().add(new Pair<>(Bukkit.getCurrentTick(), event.getInput().isJump()));
+
+		if (data.getPreviousStates().size() < 3)
+			return;
+
+		if (!(
+			data.getPreviousStates().get(0).getSecond() &&
+			!data.getPreviousStates().get(1).getSecond() &&
+			data.getPreviousStates().get(2).getSecond()
+		)) {
 			return;
 		}
 
+		data.getPreviousStates().clear();
+
 		Integer cooldown = getDoubleJumpCooldown(location);
-		if (cooldown != null && cooldown > 0) {
-			if (CooldownService.isOnCooldown(player, "doublejump", cooldown)) {
-				if (player.getGameMode() != GameMode.CREATIVE)
-					event.setCancelled(true);
-
+		if (cooldown != null && cooldown > 0)
+			if (CooldownService.isOnCooldown(player, "doublejump", cooldown))
 				return;
-			}
-		}
-
-		PlayerUtils.setAllowFlight(player, false, "DoubleJumpCommand#onToggleFlight 1");
-		PlayerUtils.setFlying(player, false, "DoubleJumpCommand#onToggleFlight 1");
 
 		final var velocity = DoubleJumpVelocity.of(player);
 		player.setVelocity(location.getDirection().multiply(velocity.getForward()).setY(velocity.getUp()));
@@ -114,64 +132,13 @@ public class DoubleJumpCommand extends CustomCommand implements Listener {
 			.volume(MuteMenuItem.DOUBLE_JUMP)
 			.play();
 
-		AtomicInteger repeat = new AtomicInteger(-1);
-		repeat.set(Tasks.repeat(10, 2, () -> {
-			if (player.isOnGround()) {
-				Tasks.cancel(repeat.get());
-				if (isInDoubleJumpRegion(player))
-					PlayerUtils.setAllowFlight(player, true, "DoubleJumpCommand#onToggleFlight 2");
-			} else {
-				PlayerUtils.setAllowFlight(player, false, "DoubleJumpCommand#onToggleFlight 3");
-				PlayerUtils.setFlying(player, false, "DoubleJumpCommand#onToggleFlight 3");
-			}
+		data.setTaskId(Tasks.repeat(10, 2, () -> {
+			if (!player.isOnGround())
+				return;
+
+			Tasks.cancel(data.getTaskId());
+			data.setTaskId(-1);
 		}));
-	}
-
-	@EventHandler
-	public void on(PlayerEnteredRegionEvent event) {
-		if (!isDoubleJumpRegion(event.getRegion()))
-			return;
-
-		final Player player = event.getPlayer();
-		if (!GameModeWrapper.of(player.getGameMode()).isSurvival())
-			return;
-
-		PlayerUtils.setAllowFlight(player, true, DoubleJumpCommand.class);
-		PlayerUtils.setFlying(player, false, DoubleJumpCommand.class);
-	}
-
-	@EventHandler
-	public void on(PlayerLeftRegionEvent event) {
-		if (!isDoubleJumpRegion(event.getRegion()))
-			return;
-
-		final Player player = event.getPlayer();
-
-		if (Minigamer.of(player).isPlaying())
-			return;
-
-		final FlightMode user = new ModeUserService().get(player).getFlightMode(WorldGroup.of(player));
-		PlayerUtils.setAllowFlight(player, user.isAllowFlight(), "DoubleJumpCommand#onPlayerLeftRegion");
-		if (!player.isFlying() && user.isFlying()) {
-			PlayerUtils.setFlying(player, true, "DoubleJumpCommand#onPlayerLeftRegion");
-		}
-	}
-
-	@EventHandler
-	public void on(PlayerGameModeChangeEvent event) {
-		final Player player = event.getPlayer();
-
-		if (!isInDoubleJumpRegion(player.getLocation()))
-			return;
-
-		if (Minigamer.of(player).isPlaying())
-			return;
-
-		Tasks.wait(1, () -> {
-			if (GameModeWrapper.of(player.getGameMode()).isSurvival()) {
-				PlayerUtils.setAllowFlight(player, true, "DoubleJumpCommand#onGameModeChange");
-			}
-		});
 	}
 
 	@Data
