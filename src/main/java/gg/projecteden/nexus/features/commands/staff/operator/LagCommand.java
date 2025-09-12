@@ -18,6 +18,7 @@ import org.bukkit.World;
 
 import java.lang.management.ManagementFactory;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 @Permission(Group.SENIOR_STAFF)
@@ -45,6 +46,9 @@ public class LagCommand extends CustomCommand {
 				continue;
 
 			var forceLoaded = world.getForceLoadedChunks().stream().filter(Chunk::isForceLoaded).count();
+			var chunkTickets = Arrays.stream(world.getLoadedChunks())
+				.mapToInt(chunk -> chunk.getPluginChunkTickets().size())
+				.sum();
 
 			String type = switch (world.getEnvironment()) {
 				case NETHER -> "Nether";
@@ -64,6 +68,7 @@ public class LagCommand extends CustomCommand {
 			send("&3" + type + " &e" + world.getName() + " &7- "
 				+ "&e" + world.getLoadedChunks().length + " &7chunks, "
 				+ "&e" + forceLoaded + " &7force loaded chunks, "
+				+ "&e" + chunkTickets + " &7chunk tickets, "
 				+ "&e" + world.getEntities().size() + " &7entities, "
 				+ "&e" + tileEntities + " &7tiles");
 		}
