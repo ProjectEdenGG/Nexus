@@ -29,8 +29,8 @@ import gg.projecteden.nexus.utils.Tasks;
 import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
 import io.papermc.paper.event.player.PlayerPickBlockEvent;
 import io.papermc.paper.event.player.PlayerPickEntityEvent;
-import io.papermc.paper.event.player.PlayerPickItemEvent;
 import lombok.Getter;
+import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -118,7 +118,8 @@ public class DecorationListener implements Listener {
 	// TODO: IF PLAYER IS HOLDING A BARRIER ON PICK BLOCK, THE DECORATION OVERWRITES THE BARRIER
 	@EventHandler
 	public void onPickBlock(PlayerPickBlockEvent event) {
-		if (event.getPlayer().getGameMode() != GameMode.CREATIVE)
+		GameMode gameMode = event.getPlayer().getGameMode();
+		if (gameMode != GameMode.CREATIVE)
 			return;
 
 		ItemStack itemStack = null;
@@ -128,31 +129,41 @@ public class DecorationListener implements Listener {
 			if (data.getDecoration() != null)
 				itemStack = data.getDecoration().getItemDrop(event.getPlayer());
 		}
-		onPickBlock(event, itemStack);
+
+		if (itemStack == null)
+			return;
+
+		event.setCancelled(true);
+		DecorationLang.debug(event.getPlayer(), "PlayerPickBlockEvent");
+		onPickBlock(event.getPlayer(), itemStack, event.getTargetSlot());
 	}
 
 	@EventHandler
 	public void onPickBlock(PlayerPickEntityEvent event) {
+		GameMode gameMode = event.getPlayer().getGameMode();
+		if (gameMode != GameMode.CREATIVE)
+			return;
+
 		ItemStack itemStack = null;
 		Entity entity = event.getEntity();
 		if (entity instanceof ItemFrame itemFrame) {
 			DecorationConfig _config = DecorationConfig.of(itemFrame);
 			if (_config != null) {
+
 				itemStack = new Decoration(_config, itemFrame).getItemDrop(event.getPlayer());
 			}
 		}
-		onPickBlock(event, itemStack);
-	}
 
-	public void onPickBlock(PlayerPickItemEvent event, ItemStack itemStack) {
 		if (itemStack == null)
 			return;
 
 		event.setCancelled(true);
+		DecorationLang.debug(event.getPlayer(), "PlayerPickEntityEvent");
+		onPickBlock(event.getPlayer(), itemStack, event.getTargetSlot());
+	}
 
-		Player player = event.getPlayer();
+	public void onPickBlock(Player player, @NonNull ItemStack itemStack, int targetSlot) {
 		PlayerInventory inventory = player.getInventory();
-		int targetSlot = event.getTargetSlot();
 
 		// Check if picked block is in hotbar already
 		int contentSlot = 0;
