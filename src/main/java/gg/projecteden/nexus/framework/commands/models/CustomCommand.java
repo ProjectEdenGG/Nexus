@@ -88,6 +88,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -1093,8 +1094,8 @@ public abstract class CustomCommand extends ICustomCommand {
 	@TabCompleterFor(ColorType.class)
 	List<String> tabCompleteColorType(String filter) {
 		return Arrays.stream(ColorType.values())
-				.map(ColorType::getName)
-				.filter(name -> name.replace(' ', '_').startsWith(filter.toLowerCase()))
+			.map(ColorType::getName)
+			.filter(name -> name.replace(' ', '_').startsWith(filter.toLowerCase()))
 			.collect(Collectors.toList());
 	}
 
@@ -1121,6 +1122,22 @@ public abstract class CustomCommand extends ICustomCommand {
 	@ConverterFor(Timespan.class)
 	Timespan convertToTimespan(String input) {
 		return Timespan.of(input);
+	}
+
+	@TabCompleterFor(Plugin.class)
+	List<String> tabCompletePlugin(String filter) {
+		return Arrays.stream(Bukkit.getPluginManager().getPlugins())
+			.map(Plugin::getName)
+			.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
+			.collect(Collectors.toList());
+	}
+
+	@ConverterFor(Plugin.class)
+	Plugin convertToPlugin(String value) {
+		Plugin plugin = Bukkit.getPluginManager().getPlugin(value);
+		if (plugin == null)
+			throw new InvalidInputException("Plugin from &e" + value + "&c not found");
+		return plugin;
 	}
 
 	@ConverterFor(Enchantment.class)

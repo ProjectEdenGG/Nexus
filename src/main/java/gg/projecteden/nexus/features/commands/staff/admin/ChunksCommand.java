@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import lombok.NonNull;
@@ -25,6 +26,8 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static java.util.Comparator.comparingInt;
+
 @Aliases("chunk")
 @Permission(Group.ADMIN)
 public class ChunksCommand extends CustomCommand {
@@ -33,10 +36,13 @@ public class ChunksCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("unloadAll <world>")
-	void unloadAll(World world) {
-		for (Chunk chunk : world.getLoadedChunks())
+	@Path("unloadAll <world> [--removeTickets]")
+	void unloadAll(World world, @Switch Plugin removeTickets) {
+		for (Chunk chunk : world.getLoadedChunks()) {
+			if (removeTickets != null)
+				chunk.removePluginChunkTicket(removeTickets);
 			chunk.unload();
+		}
 
 		send(PREFIX + "Unloaded all chunks in &e" + world.getName());
 	}
@@ -44,7 +50,10 @@ public class ChunksCommand extends CustomCommand {
 	@Path("loaded list [world] [page]")
 	@Description("List loaded chunks in a world")
 	void loaded_list(@Arg("current") World world, @Arg("1") int page) {
-		final var chunks = Arrays.stream(world.getLoadedChunks()).toList();
+		final var chunks = Arrays.stream(world.getLoadedChunks())
+			.sorted(comparingInt(chunk -> chunk.getPluginChunkTickets().size()))
+			.toList()
+			.reversed();
 
 		if (chunks.isEmpty())
 			error("No loaded chunks in world &e" + world.getName());
