@@ -13,6 +13,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.DecoratedPot.Side;
 import org.bukkit.block.data.Directional;
@@ -151,6 +152,9 @@ public class DecoratedPot implements Listener {
 			return;
 
 		decoratedPot.getInventory().setItem(null);
+
+		if (block.getLocation().getWorld().getEnvironment() == Environment.NETHER)
+			return;
 
 		Tasks.wait(1, () -> block.setType(Material.WATER, true));
 	}
