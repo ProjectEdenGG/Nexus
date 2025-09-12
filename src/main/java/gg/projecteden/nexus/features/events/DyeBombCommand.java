@@ -98,10 +98,10 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 			return;
 
 		Player player = event.getPlayer();
-		CooldownService cooldownService = new CooldownService();
 		if (CooldownService.isOnCooldown(player, "throwDyeBomb", 2 * 20))
 			return;
 
+		ItemStack itemCopy = ItemBuilder.oneOf(event.getItem()).build();
 		if (player.getGameMode() != GameMode.CREATIVE) {
 			int amount = event.getItem().getAmount();
 			event.getItem().setAmount(amount - 1);
@@ -111,6 +111,7 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 		location.add(player.getLocation().getDirection());
 
 		Snowball snowball = (Snowball) player.getWorld().spawnEntity(location, EntityType.SNOWBALL);
+		snowball.setItem(itemCopy);
 		snowball.setVelocity(location.getDirection().multiply(1.2));
 		snowball.setShooter(player);
 		snowball.setMetadata(FireworkLauncher.METADATA_KEY_DAMAGE, new FixedMetadataValue(Nexus.getInstance(), false));
