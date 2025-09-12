@@ -10,7 +10,6 @@ import gg.projecteden.nexus.features.titan.models.CustomCreativeItem;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -47,9 +46,7 @@ public class ItemSearchProvider extends ShopProvider {
 			if (!FilterSearchType.SEARCH.matches(new ItemStack(material), filter))
 				continue;
 
-			ItemStack item = new ItemBuilder(material)
-					.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
-					.build();
+			ItemStack item = new ItemBuilder(material).build();
 			items.add(ClickableItem.of(item, onChoose));
 		}
 
