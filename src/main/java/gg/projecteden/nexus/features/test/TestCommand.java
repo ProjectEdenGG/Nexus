@@ -105,9 +105,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.BrewerInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -193,12 +191,6 @@ public class TestCommand extends CustomCommand implements Listener {
 			.collect(Collectors.joining(", "));
 
 		send("&3Result = &e" + potionName + " " + materialName);
-	}
-
-	@EventHandler
-	public void on(PlayerToggleSneakEvent event) {
-		if (!event.getPlayer().hasGravity())
-			event.getPlayer().setGravity(true);
 	}
 
 	@Path("sel designRegion")
