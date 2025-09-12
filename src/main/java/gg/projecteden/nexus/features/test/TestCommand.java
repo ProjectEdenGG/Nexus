@@ -15,6 +15,7 @@ import gg.projecteden.nexus.features.api.BlockPartyWebSocketServer;
 import gg.projecteden.nexus.features.api.BlockPartyWebSocketServer.BlockPartyClientMessage;
 import gg.projecteden.nexus.features.customenchants.enchants.DemeterEnchant;
 import gg.projecteden.nexus.features.events.DebugDotCommand;
+import gg.projecteden.nexus.features.listeners.HappyGhastSprint;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
@@ -134,8 +135,8 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @HideFromWiki
-@Permission(Group.ADMIN)
 @NoArgsConstructor
+@Permission(Group.ADMIN)
 public class TestCommand extends CustomCommand implements Listener {
 
 	public TestCommand(@NonNull CommandEvent event) {
@@ -907,7 +908,12 @@ public class TestCommand extends CustomCommand implements Listener {
 			return;
 		send(PREFIX + "Normal Variant: " + DemeterEnchant.getNormalVariant(treeType));
 		send(PREFIX + "Mega Variant: " + DemeterEnchant.getMegaVariant(treeType));
+	}
 
+	@Path("setHappyGhastSprintSpeed <speed>")
+	void setHappyGhastSprintSpeed(double speed) {
+		HappyGhastSprint.SPEED = speed;
+		send(PREFIX + "Happy ghast sprint speed set to " + speed);
 	}
 
 }
