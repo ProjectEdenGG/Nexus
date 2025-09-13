@@ -32,7 +32,6 @@ public class DelHomeCommand extends CustomCommand {
 		send(PREFIX + "Home \"&e" + home.getName() + "&3\" deleted");
 	}
 
-	// TODO: CAUSES INTERNAL SERVER ERROR, ICustomCommand#convert L339
 	@Permission(Group.MODERATOR)
 	@Path("<player> <name>")
 	@Description("Delete another player's home")
