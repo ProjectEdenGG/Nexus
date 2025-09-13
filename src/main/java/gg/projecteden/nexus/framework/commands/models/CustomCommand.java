@@ -1269,7 +1269,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	protected void help() {
 		List<String> aliases = getAllAliases();
 		if (aliases.size() > 1)
-			send(PREFIX + "Aliases: " + String.join("&e, &c/", aliases).toLowerCase());
+			send(PREFIX + "Aliases: &c/" + String.join("&e, &c/", aliases).toLowerCase());
 
 		List<JsonBuilder> lines = new ArrayList<>();
 		final List<Method> methods = getPathMethodsForDisplay(event)
