@@ -36,6 +36,10 @@ public class LobbyParkourUser implements PlayerOwnedObject {
 	private UUID uuid;
 	private List<CourseData> courses = new ArrayList<>();
 
+	public boolean isPlaying() {
+		return courses.stream().anyMatch(CourseData::isPlaying);
+	}
+
 	public CourseData get(LobbyParkourCourse course) {
 		return get(course.getName());
 	}

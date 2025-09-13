@@ -11,6 +11,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.doublejump.DoubleJumpUser;
 import gg.projecteden.nexus.models.doublejump.DoubleJumpUserService;
+import gg.projecteden.nexus.models.parkour.LobbyParkourUserService;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
@@ -90,6 +91,9 @@ public class DoubleJumpCommand extends CustomCommand implements Listener {
 		var data = DATA.computeIfAbsent(player.getUniqueId(), $ -> new DoubleJumpData(player.getUniqueId()));
 
 		if (data.isDoubleJumping())
+			return;
+
+		if (new LobbyParkourUserService().get(player).isPlaying())
 			return;
 
 		if (player.getGameMode() == GameMode.CREATIVE || player.getAllowFlight())
