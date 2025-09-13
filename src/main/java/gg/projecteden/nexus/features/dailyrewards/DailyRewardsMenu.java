@@ -85,7 +85,10 @@ public class DailyRewardsMenu {
 
 		@Override
 		public void init() {
-			addBackItem(e -> new DailyRewardsMenu().open(user.getOnlinePlayer()));
+			addBackItem(e -> {
+				e.getPlayer().closeInventory();
+				Tasks.wait(1, () -> new DailyRewardsMenu().open(user.getOnlinePlayer()));
+			});
 
 			List<Reward> rewards = DailyRewardsFeature.getRewards(day);
 
