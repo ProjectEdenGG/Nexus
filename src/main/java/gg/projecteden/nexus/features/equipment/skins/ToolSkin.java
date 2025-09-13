@@ -19,6 +19,7 @@ public enum ToolSkin implements EquipmentSkinType {
 	},
 	ADAMANTITE,
 	AMETHYST,
+	BONE,
 	CHERRY,
 	COBALT,
 	HELLFIRE,
