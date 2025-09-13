@@ -143,37 +143,58 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 			},
 			SKIN {
 				private void onClick(ToolModificationTableMenu inv, ItemStack tool, ItemClickData e) {
-					ItemStack item = e.getPlayer().getItemOnCursor();
-					EquipmentSkinType skinType = EquipmentSkinType.of(item);
+					Player player = e.getPlayer();
+					ItemStack cursor = player.getItemOnCursor();
+					EquipmentSkinType cursorType = EquipmentSkinType.of(cursor);
 
 					ItemStack clicked = e.getItem();
 					EquipmentSkinType clickedType = EquipmentSkinType.of(clicked);
 
-					if (!EquipmentSkinType.isTemplate(item) && !isNullOrAir(item))
+					if (!EquipmentSkinType.isTemplate(cursor) && !isNullOrAir(cursor))
 						return;
 
-					if (skinType != null) {
-						if (!skinType.applies(tool))
+					if (cursorType != null) {
+						if (!cursorType.applies(tool))
 							return;
 
-						e.getPlayer().setItemOnCursor(clickedType == null ? null : clickedType.getTemplate());
-						inv.tool = skinType.apply(tool);
+						if (isNullOrAir(cursor)) {
+							player.setItemOnCursor(clickedType == null ? null : clickedType.getTemplate());
+						} else {
+							if (clickedType != null && clickedType != cursorType) {
+								if (cursor.getAmount() == 1 && clicked.getAmount() == 1) {
+									player.setItemOnCursor(clicked);
+								} else {
+									return;
+								}
+							} else {
+								if (clickedType == cursorType) {
+									player.getItemOnCursor().add();
+									reset(inv, tool);
+									inv.init();
+									return;
+								} else {
+									player.getItemOnCursor().subtract();
+								}
+							}
+						}
+						inv.tool = cursorType.apply(tool);
+						inv.init();
+					} else if (clickedType != null) {
+						player.setItemOnCursor(clickedType.getTemplate());
+						reset(inv, tool);
 						inv.init();
 					}
-					else if (clickedType != null) {
-						e.getPlayer().setItemOnCursor(clickedType.getTemplate());
+				}
 
-						if (ToolSkin.DEFAULT.applies(tool))
-							inv.tool = ToolSkin.DEFAULT.apply(tool);
+				private void reset(ToolModificationTableMenu inv, ItemStack tool) {
+					if (ToolSkin.DEFAULT.applies(tool))
+						inv.tool = ToolSkin.DEFAULT.apply(tool);
 
-						if (ArmorSkin.DEFAULT.applies(tool))
-							inv.tool = ArmorSkin.DEFAULT.apply(tool);
+					if (ArmorSkin.DEFAULT.applies(tool))
+						inv.tool = ArmorSkin.DEFAULT.apply(tool);
 
-						if (BackpackSkin.DEFAULT.applies(tool))
-							inv.tool = BackpackSkin.DEFAULT.apply(tool);
-
-						inv.init();
-					}
+					if (BackpackSkin.DEFAULT.applies(tool))
+						inv.tool = BackpackSkin.DEFAULT.apply(tool);
 				}
 
 				@Override
