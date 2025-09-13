@@ -472,7 +472,7 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		this.spectatingMinigamer = null;
 
 		teleportAsync(Minigames.getLobby()).thenRun(() -> {
-			PlayerUtils.setAllowFlight(player, true, Minigamer.class);
+			PlayerUtils.setAllowFlight(player, false, Minigamer.class);
 			PlayerUtils.setFlying(player, false, Minigamer.class);
 		});
 	}
