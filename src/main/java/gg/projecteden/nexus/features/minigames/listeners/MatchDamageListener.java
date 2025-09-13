@@ -61,6 +61,11 @@ public class MatchDamageListener implements Listener {
 
 		Minigamer victim = Minigamer.of(player);
 
+		if (victim.isSpectating()) {
+			event.setCancelled(true);
+			return;
+		}
+
 		if (!victim.isPlaying())
 			return;
 
