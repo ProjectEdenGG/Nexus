@@ -99,6 +99,19 @@ public class CostumeCommand extends CustomCommand implements Listener {
 			user.setActiveCostume(type, null);
 		service.save(user);
 	}
+	
+	@Path("useArmorSkinHelmetCostume [state]")
+	void useArmorSkinHelmetCostume(Boolean state) {
+		var user = service.get(player());
+
+		if (state == null)
+			state = !user.isUseArmorSkinHelmetCostume();
+
+		user.setUseArmorSkinHelmetCostume(state);
+		service.save(user);
+		user.sendResetPacket(CostumeType.HAT);
+		send(PREFIX + "You are " + (state ? "&anow" : "&cno longer") + " using &3armor skin helmet costumes");
+	}
 
 	@Path("store")
 	@Description("Open the costume store")

@@ -7,6 +7,7 @@ import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PreLoad;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.afk.AFK;
+import gg.projecteden.nexus.features.equipment.skins.ArmorSkin;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
 import gg.projecteden.nexus.features.store.gallery.GalleryPackage;
 import gg.projecteden.nexus.features.store.gallery.StoreGallery;
@@ -37,6 +38,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -48,6 +50,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
 
 @Data
 @Entity(value = "costume_user", noClassnameStored = true)
@@ -61,6 +65,7 @@ public class CostumeUser implements PlayerOwnedObject {
 	private UUID uuid;
 	private int vouchers;
 	private int temporaryVouchers;
+	private boolean useArmorSkinHelmetCostume = true;
 
 	private Map<CostumeType, String> activeCostumes = new ConcurrentHashMap<>();
 	private Map<CostumeType, String> activeDisplayCostumes = new ConcurrentHashMap<>();
@@ -137,7 +142,22 @@ public class CostumeUser implements PlayerOwnedObject {
 	}
 
 	public boolean hasActiveCostumes() {
-		return !Nullables.isNullOrEmpty(activeCostumes);
+		return isNotNullOrEmpty(getTransientActiveCostumes());
+	}
+
+	private @NotNull ConcurrentHashMap<CostumeType, String> getTransientActiveCostumes() {
+		var activeCostumes = new ConcurrentHashMap<>(this.activeCostumes);
+
+		if (useArmorSkinHelmetCostume) {
+			ArmorSkin armorSkin = ArmorSkin.of(getOnlinePlayer().getInventory().getHelmet());
+			if (armorSkin != null) {
+				var helmetCostume = armorSkin.getHelmetCostume();
+				if (helmetCostume != null)
+					activeCostumes.put(CostumeType.HAT, helmetCostume);
+			}
+		}
+
+		return activeCostumes;
 	}
 
 	public boolean hasActiveCostume(CostumeType type) {
@@ -210,17 +230,15 @@ public class CostumeUser implements PlayerOwnedObject {
 		if (!shouldSendPacket())
 			return;
 
-		activeCostumes.forEach((type, activeCostume) -> {
+		getTransientActiveCostumes().forEach((type, activeCostume) -> {
 			final Costume costume = Costume.of(activeCostume);
 			if (costume == null)
 				return;
 
-			if (costume.getType() == CostumeType.BACK) {
+			if (costume.getType() == CostumeType.BACK)
 				sendBackPacket(getCostumeItem(costume));
-				return;
-			}
-
-			sendPacket(getCostumeItem(costume), costume.getType().getSlot());
+			else
+				sendPacket(getCostumeItem(costume), costume.getType().getSlot());
 		});
 	}
 

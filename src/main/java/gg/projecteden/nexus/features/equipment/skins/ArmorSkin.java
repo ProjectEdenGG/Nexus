@@ -7,9 +7,16 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomArmorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.StringUtils;
+import lombok.SneakyThrows;
 import org.bukkit.Material;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Field;
 
 public enum ArmorSkin implements EquipmentSkinType {
 	DEFAULT,
@@ -24,6 +31,7 @@ public enum ArmorSkin implements EquipmentSkinType {
 	FISHING,
 	HELLFIRE,
 	JARL,
+	@HelmetCostume("hat/misc/hard_hat")
 	MECHANICAL,
 	MYTHRIL,
 	SCULK,
@@ -159,6 +167,14 @@ public enum ArmorSkin implements EquipmentSkinType {
 			.build();
 	}
 
+	public String getHelmetCostume() {
+		try {
+			return getField().getAnnotation(HelmetCostume.class).value();
+		} catch (Exception ex) {
+			return null;
+		}
+	}
+
 	public static ArmorSkin of(ItemStack stack) {
 		if (stack == null)
 			return null;
@@ -174,6 +190,17 @@ public enum ArmorSkin implements EquipmentSkinType {
 				return skin;
 
 		return null;
+	}
+
+	@SneakyThrows
+	public Field getField() {
+		return getClass().getField(name());
+	}
+
+	@Target(ElementType.FIELD)
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface HelmetCostume {
+		String value();
 	}
 
 }
