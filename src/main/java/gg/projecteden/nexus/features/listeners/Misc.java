@@ -15,20 +15,24 @@ import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.features.vanish.events.VanishToggleEvent;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.tip.Tip;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.FireworkLauncher;
+import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup.SpawnType;
+import io.papermc.paper.event.player.PlayerTradeEvent;
 import me.libraryaddict.disguise.DisguiseAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
@@ -79,10 +83,12 @@ import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.metadata.MetadataValue;
 
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.listeners.Restrictions.isPerkAllowedAt;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
@@ -524,6 +530,11 @@ public class Misc implements Listener {
 		shulker.setColor(dyeColor);
 		if (player.getGameMode() != GameMode.CREATIVE)
 			tool.subtract();
+	}
+
+	@EventHandler
+	public void on(PlayerTradeEvent event) {
+		IOUtils.fileAppend("trades", "[%s] %s traded %s for %s at %s".formatted(LocalDateTime.now(), Nickname.of(event.getPlayer()), event.getTrade().getIngredients().stream().map(StringUtils::pretty).collect(Collectors.joining(", ")), StringUtils.pretty(event.getTrade().getResult()), StringUtils.xyzw(event.getVillager())));
 	}
 
 }
