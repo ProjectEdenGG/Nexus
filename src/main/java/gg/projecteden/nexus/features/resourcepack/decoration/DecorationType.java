@@ -31,6 +31,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Furniture;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.HangingBanner;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.StandingBanner;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Table;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Table.TableShape;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Table.TableTheme;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.BirdHouse;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.WindChime;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.WindChime.WindChimeType;
@@ -662,7 +664,7 @@ public enum DecorationType {
 	CHAIR_METALLIC_BASIC(new DyeableChair(false, false, "Metallic Chair", ItemModelType.CHAIR_METALLIC_BASIC, ColorableType.MINERAL)),
 
 	@TypeConfig(money = 60, tokens = 6, theme = Theme.OUTDOORS)
-	TABLE_METALLIC_1x1(new Table(false, "Metallic Table - 1x1", ItemModelType.TABLE_METALLIC_1X1, HitboxSingle._1x1_BARRIER, ColorableType.MINERAL)),
+	TABLE_METALLIC_1x1(new Table(TableTheme.METALLIC, TableShape._1X1, ItemModelType.TABLE_METALLIC_1X1)),
 
 	@TypeConfig(money = 225, tokens = 22, theme = Theme.OUTDOORS)
 	BENCH_WOODEN(new Bench(true, false, "Wooden Bench", ItemModelType.BENCH_WOODEN, ColorableType.STAIN, HitboxFloor._1x2H)),
@@ -822,34 +824,34 @@ public enum DecorationType {
 	// 	Tables
 
 	@TypeConfig(money = 60, tokens = 6, tabs = {Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_1x1(new Table(false, "Wooden Table - 1x1", ItemModelType.TABLE_WOODEN_1X1, HitboxSingle._1x1_BARRIER)),
+	TABLE_WOODEN_1x1(new Table(TableTheme.WOODEN, TableShape._1X1, ItemModelType.TABLE_WOODEN_1X1)),
 
 	@TypeConfig(money = 105, tokens = 10, tabs = {Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_1x2(new Table(true, "Wooden Table - 1x2", ItemModelType.TABLE_WOODEN_1X2, HitboxFloor._1x2H)),
+	TABLE_WOODEN_1x2(new Table(TableTheme.WOODEN, TableShape._1X2, ItemModelType.TABLE_WOODEN_1X2)),
 
 	@TypeConfig(money = 135, tokens = 13, tabs = {Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_1x3(new Table(true, "Wooden Table - 1x3", ItemModelType.TABLE_WOODEN_1X3, HitboxFloor._1x3H)),
+	TABLE_WOODEN_1x3(new Table(TableTheme.WOODEN, TableShape._1X3, ItemModelType.TABLE_WOODEN_1X3)),
 
 	@TypeConfig(money = 150, tokens = 15, tabs = {Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_2x2(new Table(true, "Wooden Table - 2x2", ItemModelType.TABLE_WOODEN_2X2, HitboxFloor._2x2)),
+	TABLE_WOODEN_2x2(new Table(TableTheme.WOODEN, TableShape._2X2, ItemModelType.TABLE_WOODEN_2X2)),
 
 	@TypeConfig(money = 140, tokens = 14, tabs = {Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_2x2_CORNER(new Table(true, "Wooden Table - 2x2 Corner", ItemModelType.TABLE_WOODEN_2X2_CORNER, HitboxFloor._2x2SE_CORNER)),
+	TABLE_WOODEN_2x2_CORNER(new Table(TableTheme.WOODEN, TableShape._2X2_CORNER, ItemModelType.TABLE_WOODEN_2X2_CORNER)),
 
 	@TypeConfig(money = 225, tokens = 22, tabs = {Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_2x3(new Table(true, "Wooden Table - 2x3", ItemModelType.TABLE_WOODEN_2X3, HitboxFloor._2x3H)),
+	TABLE_WOODEN_2x3(new Table(TableTheme.WOODEN, TableShape._2X3, ItemModelType.TABLE_WOODEN_2X3)),
 
 	@TypeConfig(money = 185, tokens = 18, tabs = {Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_2x3_CORNER(new Table(true, "Wooden Table - 2x3 Corner", ItemModelType.TABLE_WOODEN_2X3_CORNER, HitboxFloor._2x3SE_CORNER)),
+	TABLE_WOODEN_2x3_CORNER(new Table(TableTheme.WOODEN, TableShape._2X3_CORNER, ItemModelType.TABLE_WOODEN_2X3_CORNER)),
 
 	@TypeConfig(money = 185, tokens = 18, tabs = {Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_2x3_CORNER_FLIPPED(new Table(true, "Wooden Table - 2x3 Corner Flipped", ItemModelType.TABLE_WOODEN_2X3_CORNER_FLIPPED, HitboxFloor._2x3SW_CORNER)),
+	TABLE_WOODEN_2x3_CORNER_FLIPPED(new Table(TableTheme.WOODEN, TableShape._2X3_CORNER_FLIPPED, ItemModelType.TABLE_WOODEN_2X3_CORNER_FLIPPED)),
 
 	@TypeConfig(money = 300, tokens = 30, tabs = {Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_3x3(new Table(true, "Wooden Table - 3x3", ItemModelType.TABLE_WOODEN_3X3, HitboxFloor._3x3)),
+	TABLE_WOODEN_3x3(new Table(TableTheme.WOODEN, TableShape._3X3, ItemModelType.TABLE_WOODEN_3X3)),
 
 	@TypeConfig(money = 275, tokens = 27, tabs = {Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_3x3_CORNER(new Table(true, "Wooden Table - 3x3 Corner", ItemModelType.TABLE_WOODEN_3X3_CORNER, HitboxFloor._3x3SE_CORNER)),
+	TABLE_WOODEN_3x3_CORNER(new Table(TableTheme.WOODEN, TableShape._3X3_CORNER, ItemModelType.TABLE_WOODEN_3X3_CORNER)),
 
 	// 	Chairs
 	@TypeConfig(money = 120, tokens = 12, tabs = {Tab.FURNITURE, Tab.CHAIRS})
