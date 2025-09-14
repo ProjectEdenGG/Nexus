@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigames.commands.mechanics;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.api.SignMenuFactory;
 import gg.projecteden.nexus.features.minigames.mechanics.Battleship;
 import gg.projecteden.nexus.features.minigames.models.Match;
@@ -70,11 +69,7 @@ public class BattleshipCommand extends CustomCommand {
 		if (coordinate != null)
 			coordinate.aim();
 		else
-			Nexus.getSignMenuFactory()
-				.lines(aimMenuLines)
-				.prefix(PREFIX)
-				.response(lines -> grid.getCoordinate(lines[0]).aim())
-				.open(player());
+			grid.setAiming(true);
 	}
 
 	@Path("aim random")
@@ -90,7 +85,7 @@ public class BattleshipCommand extends CustomCommand {
 	@Path("fire [coordinate]")
 	void fire(@Arg(permission = Group.MODERATOR) Coordinate coordinate) {
 		if (coordinate == null)
-			coordinate = grid.getAiming();
+			coordinate = grid.getAimedAt();
 		if (coordinate == null)
 			error("You have not aimed your cannon yet");
 

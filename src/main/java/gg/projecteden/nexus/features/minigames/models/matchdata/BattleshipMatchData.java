@@ -5,6 +5,7 @@ import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.nexus.features.minigames.mechanics.Battleship;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
 import gg.projecteden.nexus.features.minigames.models.arenas.BattleshipArena;
@@ -42,6 +43,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import static gg.projecteden.nexus.features.minigames.mechanics.Battleship.TARGET_IGNORE_MATERIALS;
 
 @Data
 @MatchDataFor(Battleship.class)
@@ -204,7 +207,8 @@ public class BattleshipMatchData extends MatchData {
 		private Region a0_pegs;
 		private BlockFace letterDirection;
 		private BlockFace numberDirection;
-		private Coordinate aiming;
+		private Coordinate aimedAt;
+		private boolean aiming;
 
 		public Grid(Team team) {
 			this.arena = match.getArena();
@@ -233,6 +237,18 @@ public class BattleshipMatchData extends MatchData {
 			for (String letter : Battleship.LETTERS.split(""))
 				for (int number = 0; number < 10; number++)
 					coordinates.add(new Coordinate(letter, number));
+		}
+
+		public Coordinate getTargetPeg() {
+			List<Minigamer> members = team.getAliveMinigamers(match);
+			if (members.isEmpty())
+				throw new MinigameException("Could not find any players on team " + team.getName());
+			var player = members.getFirst().getPlayer();
+			if (player == null)
+				throw new MinigameException("Could not find a player on team " + team.getName());
+
+			var target = player.getTargetBlock(TARGET_IGNORE_MATERIALS, 80);
+			return getPegCoordinate(target.getLocation());
 		}
 
 		public int getHealth() {
@@ -275,12 +291,20 @@ public class BattleshipMatchData extends MatchData {
 			return getCoordinate(letter, number);
 		}
 
+		public Coordinate getPegCoordinate(Location location) {
+			for (Coordinate coordinate : coordinates)
+				if (coordinate.getPegLocation().distance(location) < 2)
+					return coordinate;
+
+			return null;
+		}
+
 		public Coordinate getCoordinate(String letter, int number) {
 			return coordinates.stream()
-					.filter(coordinate -> coordinate.getLetter().equalsIgnoreCase(letter))
-					.filter(coordinate -> coordinate.getNumber() == number)
-					.findFirst()
-					.orElseThrow(() -> invalidCoordinate(letter + number));
+				.filter(coordinate -> coordinate.getLetter().equalsIgnoreCase(letter))
+				.filter(coordinate -> coordinate.getNumber() == number)
+				.findFirst()
+				.orElseThrow(() -> invalidCoordinate(letter + number));
 		}
 
 		public void vacate(ShipType shipType) {
@@ -289,11 +313,11 @@ public class BattleshipMatchData extends MatchData {
 		}
 
 		public void belay() {
-			if (aiming == null)
+			if (aimedAt == null)
 				return;
 
-			aiming.pastePeg(Peg.BELAY);
-			aiming = null;
+			aimedAt.pastePeg(Peg.BELAY);
+			aimedAt = null;
 		}
 
 		public Coordinate getRandomCoordinate() {
@@ -369,10 +393,10 @@ public class BattleshipMatchData extends MatchData {
 
 				match.getMatchStatistics().award(BattleshipStatistics.SHOTS_FIRED, getTurnTeam().getMinigamers(match).get(0));
 
-				if (!this.equals(aiming))
+				if (!this.equals(aimedAt))
 					belay();
 				else
-					aiming = null;
+					aimedAt = null;
 
 				getOppositeCoordinate().firedUpon();
 			}
@@ -444,7 +468,7 @@ public class BattleshipMatchData extends MatchData {
 					throw new AlreadyShotAtException();
 
 				belay();
-				aiming = this;
+				aimedAt = this;
 				pastePeg(Peg.CONFIRMATION);
 			}
 

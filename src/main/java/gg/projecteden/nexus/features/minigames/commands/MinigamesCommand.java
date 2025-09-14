@@ -309,7 +309,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@HideFromWiki
 	@Path("allJoin <arena>")
 	@Permission(Group.ADMIN)
-	@Environments({Env.DEV, Env.TEST})
+	@Environments({Env.DEV, Env.TEST, Env.UPDATE})
 	void allJoin(Arena arena) {
 		for (Player player : OnlinePlayers.getAll())
 			Minigamer.of(player).join(arena);

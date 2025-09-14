@@ -8,6 +8,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
+import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
@@ -23,8 +24,10 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitia
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.BattleshipMatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.BattleshipMatchData.Grid;
+import gg.projecteden.nexus.features.minigames.models.matchdata.BattleshipMatchData.Grid.Coordinate;
 import gg.projecteden.nexus.features.minigames.models.matchdata.BattleshipMatchData.Ship;
 import gg.projecteden.nexus.features.minigames.models.matchdata.BattleshipMatchData.ShipType;
+import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard.Type;
 import gg.projecteden.nexus.features.minigames.models.statistics.BattleshipStatistics;
@@ -65,6 +68,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 
 /*
@@ -90,12 +94,26 @@ public class Battleship extends TeamMechanic {
 	private static final String PREFIX = StringUtils.getPrefix("Battleship");
 	public static final String LETTERS = "ABCDEFGHIJ";
 	public static final String SCHEMATIC_FOLDER = "minigames/battleship";
+
 	public static final List<String> COORDINATES = new ArrayList<>() {{
 		for (int number = 0; number < 10; number++)
 			for (String letter : LETTERS.split(""))
 				add(letter + number);
 	}};
-	protected static final List<Material> floorMaterials = Arrays.asList(Material.YELLOW_WOOL, Material.BLUE_CONCRETE, Material.BLACK_CONCRETE);
+
+	protected static final List<Material> FLOOR_MATERIALS = Arrays.asList(
+		Material.YELLOW_WOOL,
+		Material.BLUE_CONCRETE,
+		Material.BLACK_CONCRETE
+	);
+
+	public static final Set<Material> TARGET_IGNORE_MATERIALS = Set.of(
+		Material.AIR,
+		Material.BARRIER,
+		Material.OAK_BUTTON,
+		Material.LEVER,
+		Material.POLISHED_BLACKSTONE_BUTTON
+	);
 
 	@Override
 	public @NotNull String getName() {
@@ -195,6 +213,32 @@ public class Battleship extends TeamMechanic {
 		int progress = matchData.getGrid(team).getHealth();
 		int goal = ShipType.getCombinedHealth();
 		return ProgressBar.builder().progress(progress).goal(goal).summaryStyle(SummaryStyle.COUNT).length(ShipType.getCombinedHealth()).build();
+	}
+
+	static {
+		Tasks.repeat(TickTime.SECOND, TickTime.TICK, () -> {
+			for (var arena : ArenaManager.getAll(MechanicType.BATTLESHIP)) {
+				var match = MatchManager.find(arena);
+				if (match == null || !match.isBegun())
+					continue;
+
+				BattleshipMatchData matchData = match.getMatchData();
+				for (var team : matchData.getGrids().keySet()) {
+					var grid = matchData.getGrid(team);
+					if (!grid.isAiming())
+						continue;
+
+					Coordinate target = grid.getTargetPeg();
+					if (target == null)
+						continue;
+
+					if (target == grid.getAimedAt())
+						continue;
+
+					target.aim();
+				}
+			}
+		});
 	}
 
 	@Override
@@ -343,26 +387,36 @@ public class Battleship extends TeamMechanic {
 	public void onPlayerInteract(Minigamer minigamer, PlayerInteractEvent event) {
 		super.onPlayerInteract(minigamer, event);
 
-		if (event.getHand() != EquipmentSlot.HAND) return;
-
-		Block block = minigamer.getOnlinePlayer().getTargetBlockExact(500);
-		if (block == null) return;
-		if (!canUseBlock(minigamer, block)) return;
+		if (event.getHand() != EquipmentSlot.HAND)
+			return;
 
 		Match match = minigamer.getMatch();
 		BattleshipMatchData matchData = match.getMatchData();
 		Team team = minigamer.getTeam();
+		Grid grid = matchData.getGrid(team);
 
-		if (matchData.isPlacingKits()) {
+		if (!matchData.isPlacingKits()) {
+			if (grid.isAiming())
+				grid.setAiming(false);
+		} else {
+			Block block = minigamer.getOnlinePlayer().getTargetBlockExact(500);
+			if (block == null)
+				return;
+			if (!canUseBlock(minigamer, block))
+				return;
+
 			ShipType shipType = ShipType.of(block);
 			if (shipType == null) {
-				if (event.getClickedBlock() != null) return;
+				if (event.getClickedBlock() != null)
+					return;
 
 				ItemStack tool = ItemUtils.getTool(minigamer.getOnlinePlayer());
-				if (tool == null) return;
+				if (tool == null)
+					return;
 
 				shipType = ShipType.of(tool.getType());
-				if (shipType == null) return;
+				if (shipType == null)
+					return;
 			}
 
 			if (ActionGroup.RIGHT_CLICK.applies(event)) {
@@ -378,7 +432,7 @@ public class Battleship extends TeamMechanic {
 				event.setCancelled(true);
 				minigamer.sendMessage(PREFIX + "Removed " + shipType.getColoredName());
 				deleteKit(block.getLocation());
-				matchData.getGrid(team).vacate(shipType);
+				grid.vacate(shipType);
 				giveKitItem(minigamer, shipType);
 			}
 		}
@@ -498,7 +552,7 @@ public class Battleship extends TeamMechanic {
 					return false;
 
 				Material floorType = index.getLocation().add(0, -3, 0).getBlock().getType();
-				if (!floorMaterials.contains(floorType))
+				if (!FLOOR_MATERIALS.contains(floorType))
 					return false;
 			}
 
@@ -552,9 +606,9 @@ public class Battleship extends TeamMechanic {
 	public void onTurnEnd(@NotNull Match match, @NotNull Team team) {
 		BattleshipMatchData matchData = match.getMatchData();
 		Grid grid = matchData.getGrid(team);
-		if (grid.getAiming() != null) {
+		if (grid.getAimedAt() != null) {
 			match.broadcast(team, "Time is up, captain! Firing at current position");
-			grid.getAiming().fire();
+			grid.getAimedAt().fire();
 		} else if (!matchData.isFired()) {
 			match.broadcast(team, "Time is up, captain! Firing at random position");
 			grid.getRandomCoordinate().fire();
