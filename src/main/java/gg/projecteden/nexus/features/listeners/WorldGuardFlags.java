@@ -30,6 +30,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.type.Farmland;
+import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
@@ -44,6 +45,8 @@ import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.MoistureChangeEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
@@ -431,6 +434,22 @@ public class WorldGuardFlags implements Listener {
 	public void on(BlockGrowEvent event) {
 		if (WorldGuardFlagUtils.query(event.getBlock().getLocation(), CustomFlags.BLOCK_GROW) == State.DENY)
 			event.setCancelled(true);
+	}
+
+	@EventHandler
+	@SuppressWarnings("UnstableApiUsage")
+	public void on(EntityDamageEvent event) {
+		if (event.getCause() != DamageCause.CONTACT)
+			return;
+
+		var bush = event.getDamageSource().getDamageType() == DamageType.SWEET_BERRY_BUSH;
+		if (!bush)
+			return;
+
+		if (WorldGuardFlagUtils.query(event.getEntity().getLocation(), CustomFlags.SWEET_BERRY_BUSH_DAMAGE) != State.DENY)
+			return;
+
+		event.setCancelled(true);
 	}
 
 }

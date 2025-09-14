@@ -139,6 +139,7 @@ public class WorldGuardFlagUtils {
 		DOUBLE_JUMP_COOLDOWN(registerFlag(new IntegerFlag("double-jump-cooldown"))),
 		BLOCK_GROW(registerFlag(new StateFlag("block-grow", false))),
 		BLOCK_FADE(registerFlag(new StateFlag("block-fade", false))),
+		SWEET_BERRY_BUSH_DAMAGE(registerFlag(new StateFlag("sweet-berry-bush-damage", false))),
 		;
 
 		public final Flag<?> flag;
