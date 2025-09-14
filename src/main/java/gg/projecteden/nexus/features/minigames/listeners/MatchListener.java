@@ -148,6 +148,12 @@ public class MatchListener implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		Minigamer minigamer = Minigamer.of(player);
+
+		if (minigamer.isSpectating()) {
+			event.setCancelled(true);
+			return;
+		}
+
 		if (!minigamer.isPlaying())
 			return;
 
