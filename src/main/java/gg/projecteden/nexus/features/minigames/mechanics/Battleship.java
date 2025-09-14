@@ -109,9 +109,10 @@ public class Battleship extends TeamMechanic {
 
 	public static final Set<Material> TARGET_IGNORE_MATERIALS = Set.of(
 		Material.AIR,
-		Material.BARRIER,
-		Material.OAK_BUTTON,
 		Material.LEVER,
+		Material.BARRIER,
+		Material.CRIMSON_BUTTON,
+		Material.PALE_OAK_BUTTON,
 		Material.POLISHED_BLACKSTONE_BUTTON
 	);
 
