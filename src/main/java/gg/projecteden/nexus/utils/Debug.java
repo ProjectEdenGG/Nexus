@@ -95,7 +95,7 @@ public class Debug {
 	);
 
 	public static boolean isEnabled(HasPlayer player, DebugType type) {
-		if (player == null)
+		if (player == null || player.getPlayer() == null)
 			return false;
 
 		return ENABLED_DEBUGGERS.computeIfAbsent(player.getPlayer().getUniqueId(), $ -> new HashSet<>()).contains(type);
