@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.SneakyThrows;
 import net.md_5.bungee.api.ChatColor;
@@ -89,7 +90,9 @@ public class Debug {
 
 	// Player & type based
 
-	private static final Map<UUID, Set<DebugType>> ENABLED_DEBUGGERS = new HashMap<>();
+	private static final Map<UUID, Set<DebugType>> ENABLED_DEBUGGERS = new HashMap<>(
+		Map.of(Dev.WAKKA.getUniqueId(), Set.of(DebugType.EFFECTS))
+	);
 
 	public static boolean isEnabled(HasPlayer player, DebugType type) {
 		if (player == null)
@@ -159,6 +162,7 @@ public class Debug {
 		DECORATION,
 		DECORATION_FINDER,
 		FLY,
+		EFFECTS,
 		MISC,
 		;
 

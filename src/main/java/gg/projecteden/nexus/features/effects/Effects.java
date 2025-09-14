@@ -6,7 +6,11 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.effects.Effects.RotatingStand.StandRotationType;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
+import gg.projecteden.nexus.utils.Debug;
+import gg.projecteden.nexus.utils.Debug.DebugType;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.AllArgsConstructor;
@@ -28,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -135,23 +140,24 @@ public abstract class Effects implements Listener {
 
 	public void rotatingStands() {
 		List<RotatingStand> rotatingStands = getRotatingStands();
+		debug("Rotating stands " + getClass().getSimpleName() + " " + rotatingStands.size());
 
-		List<String> resetPoses = new ArrayList<>() {{
-			for (RotatingStand rotatingStand : rotatingStands) {
-				add(rotatingStand.getUuid());
-			}
-		}};
+		List<UUID> resetPoses = rotatingStands.stream().map(RotatingStand::getUuid).collect(Collectors.toList());
 
 		onLoadRotatingStands(rotatingStands);
 
 		Tasks.repeat(TickTime.SECOND.x(2), TickTime.TICK, () -> {
+			debug("Rotating stands " + getClass().getSimpleName());
 			for (RotatingStand rotatingStand : rotatingStands) {
+				debug("Rotating stand: " + rotatingStand.getUuid());
 				ArmorStand armorStand = rotatingStand.getArmorStand();
-				if (armorStand == null)
+				if (armorStand == null) {
+					debug("  &cArmor stand is null");
 					continue;
+				}
 
-				String UUID = rotatingStand.getUuid();
-				if (resetPoses.contains(UUID)) {
+				UUID uuid = rotatingStand.getUuid();
+				if (resetPoses.contains(uuid)) {
 					if (rotatingStand.isCustomResetPose()) {
 						if (!customResetPose(rotatingStand, armorStand))
 							continue;
@@ -162,10 +168,11 @@ public abstract class Effects implements Listener {
 						}
 					}
 
-					resetPoses.remove(UUID);
+					resetPoses.remove(uuid);
 				}
 
 				StandRotationType rotationType = rotatingStand.getRotationType();
+				debug("  Adding " + rotationType.name() + " rotation of " + StringUtils.getDf().format(rotationType.getRotation()));
 				switch (rotatingStand.getAxis()) {
 					case HORIZONTAL -> rotatingStand.addRightArmPose(0, rotationType.getRotation(), 0);
 					case VERTICAL -> rotatingStand.addHeadPose(0, rotationType.getRotation(), 0);
@@ -174,34 +181,32 @@ public abstract class Effects implements Listener {
 		});
 	}
 
+	private static void debug(String message) {
+		Debug.log(Dev.WAKKA, DebugType.EFFECTS, message);
+	}
+
 	//
 
 	@Getter
 	public static class RotatingStand {
-		String uuid;
+		UUID uuid;
 		StandRotationAxis axis;
 		StandRotationType rotationType;
 		boolean customResetPose;
 		ArmorStand armorStand;
 
 		public RotatingStand(String uuid, StandRotationAxis axis, StandRotationType rotationType, boolean customResetPose) {
-			this.uuid = uuid;
+			this.uuid = UUID.fromString(uuid);
 			this.axis = axis;
 			this.rotationType = rotationType;
 			this.customResetPose = customResetPose;
 		}
 
 		public @Nullable ArmorStand getArmorStand() {
-			if (this.armorStand != null)
-				return this.armorStand;
+			final Entity entity = Bukkit.getEntity(uuid);
+			if (entity != null && entity.isValid() && entity instanceof ArmorStand stand)
+				return stand;
 
-			final Entity entity = Bukkit.getEntity(UUID.fromString(uuid));
-			if (entity != null && entity.isValid() && entity instanceof ArmorStand stand) {
-				this.armorStand = stand;
-				return this.armorStand;
-			}
-
-			this.armorStand = null;
 			return null;
 		}
 
@@ -210,6 +215,7 @@ public abstract class Effects implements Listener {
 			if (armorStand == null)
 				return;
 
+			debug("resetRightArmPose " + uuid);
 			getArmorStand().setRightArmPose(new EulerAngle(Math.toRadians(180), 0, Math.toRadians(270)));
 		}
 
@@ -218,22 +224,29 @@ public abstract class Effects implements Listener {
 			if (armorStand == null)
 				return;
 
+			debug("resetHeadPose " + uuid);
 			armorStand.setHeadPose(EulerAngle.ZERO);
 		}
 
 		public void addRightArmPose(double x, double y, double z) {
 			ArmorStand armorStand = getArmorStand();
-			if (armorStand == null)
+			if (armorStand == null) {
+				debug("  &caddRightArmPose: Armor stand is null " + uuid);
 				return;
+			}
 
+			debug("  Adding right arm pose: " + x + ", " + y + ", " + z + " " + armorStand.getUniqueId());
 			armorStand.setRightArmPose(armorStand.getRightArmPose().add(x, y, z));
 		}
 
 		public void addHeadPose(double x, double y, double z) {
 			ArmorStand armorStand = getArmorStand();
-			if (armorStand == null)
+			if (armorStand == null) {
+				debug("  &caddHeadPose: Armor stand is null " + uuid);
 				return;
+			}
 
+			debug("  Adding head pose: " + x + ", " + y + ", " + z + " " + armorStand.getUniqueId());
 			armorStand.setHeadPose(armorStand.getHeadPose().add(x, y, z));
 		}
 
