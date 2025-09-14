@@ -5,7 +5,6 @@ import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.MatchStatistics;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
-import gg.projecteden.nexus.features.minigames.models.arenas.CheckpointArena;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
@@ -88,7 +87,7 @@ public abstract class CheckpointMechanic extends SingleplayerMechanic {
 		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 
-		CheckpointArena arena = minigamer.getMatch().getArena();
+		Arena arena = minigamer.getMatch().getArena();
 
 		if (arena.ownsRegion(event.getRegion().getId(), "checkpoint")) {
 			int checkpointId = Arena.getRegionNumber(event.getRegion());
