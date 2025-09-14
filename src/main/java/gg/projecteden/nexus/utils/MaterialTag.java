@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+
 @SuppressWarnings("unused")
 public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag ALL_AIR = new MaterialTag("AIR", MatchMode.SUFFIX);
@@ -122,7 +124,7 @@ public class MaterialTag implements Tag<Material> {
 		Material.COMMAND_BLOCK, Material.CHAIN_COMMAND_BLOCK, Material.REPEATING_COMMAND_BLOCK, Material.COMMAND_BLOCK_MINECART,
 		Material.END_PORTAL, Material.END_PORTAL_FRAME, Material.NETHER_PORTAL, Material.KNOWLEDGE_BOOK,
 		Material.DEBUG_STICK, Material.SPAWNER, Material.CHORUS_PLANT, Material.TEST_BLOCK, Material.TEST_INSTANCE_BLOCK,
-		Material.TRIAL_SPAWNER, Material.VAULT);
+		Material.TRIAL_SPAWNER, Material.VAULT, Material.BUDDING_AMETHYST);
 
 	public static final MaterialTag UNSTACKABLE = new MaterialTag(material -> material.getMaxStackSize() == 1);
 
@@ -444,7 +446,14 @@ public class MaterialTag implements Tag<Material> {
 	}
 
 	public MaterialTag append(Material... materials) {
-		return edit(values -> values.addAll(Arrays.asList(materials)));
+		return append(Arrays.asList(materials));
+	}
+
+	public MaterialTag append(List<Material> materials) {
+		if (isNullOrEmpty(materials))
+			return this;
+
+		return edit(values -> values.addAll(materials));
 	}
 
 	@SafeVarargs
@@ -546,6 +555,10 @@ public class MaterialTag implements Tag<Material> {
 					break;
 			}
 		});
+	}
+
+	public int size() {
+		return getValues().size();
 	}
 
 	@Override
