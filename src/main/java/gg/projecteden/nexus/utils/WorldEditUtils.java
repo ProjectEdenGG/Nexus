@@ -600,7 +600,7 @@ public class WorldEditUtils {
 			if (replaceMap != null)
 				throw new UnsupportedOperationException("Replacing blocks is not supported for pasting. Use build instead.");
 
-			return forceLoadChunks(true)
+			return loadChunks(true)
 				.thenCompose($ -> getClipboard().thenAcceptAsync(clipboard -> {
 					debug("Pasting");
 					try (EditSession editSession = getEditSessionBuilder().allowedRegions(regionMask).build()) {
@@ -614,18 +614,16 @@ public class WorldEditUtils {
 						ex.printStackTrace();
 					}
 				}, Tasks::async))
-				.thenCompose($ -> forceLoadChunks(false));
+				.thenCompose($ -> loadChunks(false));
 		}
 
-		private CompletableFuture<Void> forceLoadChunks(boolean state) {
+		private CompletableFuture<Void> loadChunks(boolean state) {
 			return getLocations().thenApply(locations -> locations.stream()
 					.map(location -> world.getChunkAtAsync(location).thenApply(chunk -> {
-						var finalState = state;
 						if (state)
-							forceLoadedStates.put(chunk, chunk.isForceLoaded());
+							chunk.addPluginChunkTicket(Nexus.getInstance());
 						else
-							finalState = forceLoadedStates.get(chunk);
-						chunk.setForceLoaded(finalState);
+							chunk.removePluginChunkTicket(Nexus.getInstance());
 						return CompletableFuture.completedFuture(null);
 					})).toList())
 				.thenAccept(CompletableFutures::joinAll);
