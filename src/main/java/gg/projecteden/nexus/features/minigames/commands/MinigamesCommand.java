@@ -1260,9 +1260,11 @@ public class MinigamesCommand extends _WarpSubCommand {
 			return type.getStatistics().stream()
 				.filter(_stat -> !_stat.isHidden())
 				.map(MinigameStatistic::getId)
-				.filter(stat -> stat.startsWith(value))
+				.filter(stat -> stat.toLowerCase().startsWith(value.toLowerCase()))
 				.toList();
-		} catch (Exception ignore) {}
+		} catch (Exception ignore) {
+			ignore.printStackTrace();
+		}
 		return new ArrayList<>();
 	}
 
