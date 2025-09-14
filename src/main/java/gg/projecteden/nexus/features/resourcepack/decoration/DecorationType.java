@@ -1830,20 +1830,20 @@ public enum DecorationType {
 	FLAT_SCREEN_TV(new TV("Flat Screen TV", ChannelType.OFF)),
 
 // 	------------------------------------------------------------------------------------------------------
-//										UNBUYABLE THINGS
+//									UNBUYABLE & EXCLUSIVE
 // 	------------------------------------------------------------------------------------------------------
 
 	@TypeConfig(unbuyable = true)
 	ARCADE_MACHINE(new FloorThing(true, "Arcade Machine", ItemModelType.ARCADE_MACHINE, HitboxFloor._1x2V)),
 
 	@TypeConfig(unbuyable = true)
-	PAPER_LANTERN_SINGLE(new CeilingThing(false, "Paper Lanterns - Single", ItemModelType.PAPER_LANTERN_SINGLE, HitboxUnique.PAPER_LANTERN_2V)),
+	PAPER_LANTERN_SINGLE(new CeilingThing(true, false, "Paper Lanterns - Single", ItemModelType.PAPER_LANTERN_SINGLE, HitboxUnique.PAPER_LANTERN_2V)),
 
 	@TypeConfig(unbuyable = true)
-	PAPER_LANTERN_DOUBLE(new CeilingThing(false, "Paper Lanterns - Double", ItemModelType.PAPER_LANTERN_DOUBLE, HitboxUnique.PAPER_LANTERN_2V)),
+	PAPER_LANTERN_DOUBLE(new CeilingThing(true, false, "Paper Lanterns - Double", ItemModelType.PAPER_LANTERN_DOUBLE, HitboxUnique.PAPER_LANTERN_2V)),
 
 	@TypeConfig(unbuyable = true)
-	PAPER_LANTERN_TRIPLE(new CeilingThing(false, "Paper Lanterns - Triple", ItemModelType.PAPER_LANTERN_TRIPLE, HitboxUnique.PAPER_LANTERN_3V)),
+	PAPER_LANTERN_TRIPLE(new CeilingThing(true, false, "Paper Lanterns - Triple", ItemModelType.PAPER_LANTERN_TRIPLE, HitboxUnique.PAPER_LANTERN_3V)),
 
 // 	------------------------------------------------------------------------------------------------------
 //											EDIBLE

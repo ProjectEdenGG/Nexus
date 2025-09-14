@@ -58,8 +58,8 @@ public class DecorationConfig {
 	protected RotationSnap rotationSnap = RotationSnap.BOTH;
 	protected List<PlacementType> disabledPlacements = new ArrayList<>();
 	protected boolean rotatable = false;
-	@Getter
 	protected boolean multiBlock = false;
+	protected boolean exclusive = false;
 
 	protected boolean overrideTabComplete = false;
 
@@ -67,8 +67,9 @@ public class DecorationConfig {
 		ALL_DECOR_CONFIGS.add(this);
 	}
 
-	public DecorationConfig(boolean multiBlock, String name, @NotNull Material material, String model, Predicate<String> modelIdPredicate, CustomHitbox hitbox) {
+	public DecorationConfig(boolean exclusive, boolean multiBlock, String name, @NotNull Material material, String model, Predicate<String> modelIdPredicate, CustomHitbox hitbox) {
 		this();
+		this.exclusive = exclusive;
 		this.multiBlock = multiBlock;
 		this.id = name.toLowerCase().replaceAll(" ", "_");
 		this.name = name;
@@ -88,12 +89,20 @@ public class DecorationConfig {
 		DecorationTagType.setLore(this);
 	}
 
+	public DecorationConfig(boolean multiBlock, String name, @NonNull ItemModelType itemModelType, CustomHitbox hitbox) {
+		this(false, multiBlock, name, itemModelType.getMaterial(), itemModelType.getModel(), model -> Objects.equals(model, itemModelType.getModel()), hitbox);
+	}
+
 	public DecorationConfig(boolean multiBlock, String name, ItemModelType itemModelType) {
 		this(multiBlock, name, itemModelType, HitboxSingle.NONE);
 	}
 
-	public DecorationConfig(boolean multiBlock, String name, @NonNull ItemModelType itemModelType, CustomHitbox hitbox) {
-		this(multiBlock, name, itemModelType.getMaterial(), itemModelType.getModel(), model -> Objects.equals(model, itemModelType.getModel()), hitbox);
+	public DecorationConfig(boolean exclusive, boolean multiBlock, String name, @NonNull ItemModelType itemModelType, CustomHitbox hitbox) {
+		this(exclusive, multiBlock, name, itemModelType.getMaterial(), itemModelType.getModel(), model -> Objects.equals(model, itemModelType.getModel()), hitbox);
+	}
+
+	public DecorationConfig(boolean exclusive, boolean multiBlock, String name, ItemModelType itemModelType) {
+		this(exclusive, multiBlock, name, itemModelType, HitboxSingle.NONE);
 	}
 
 	@Getter

@@ -24,6 +24,7 @@ public enum DecorationTagType {
 	CYCLABLE(Cyclable.class, "腈"),
 	INTERACTABLE(Interactable.class, "晖"),
 	ADDITION(Addition.class, "香"),
+	EXCLUSIVE(null, "爟"),
 	//
 	DECORATION(DecorationConfig.class, "策"),
 	//
@@ -71,18 +72,28 @@ public enum DecorationTagType {
 			if (INTERACTABLE_SUB_TAGS.contains(tag))
 				continue;
 
-			// Don't want to show interactable tag and its subtype tag
-			if (tag == INTERACTABLE && config instanceof Interactable interactable) {
-				switch (interactable) {
-					case NoiseMaker noiseMaker -> applicableTags.addFirst(PLAYABLE.getTag());
-					case Cyclable toggleable -> applicableTags.addFirst(CYCLABLE.getTag());
-					case Seat seat -> applicableTags.addFirst(SEAT.getTag());
-					default -> applicableTags.addFirst(INTERACTABLE.getTag());
+			switch (tag) {
+				case INTERACTABLE -> {
+					// Don't want to show interactable tag AND its subtype tag
+					if (config instanceof Interactable interactable) {
+						switch (interactable) {
+							case NoiseMaker noiseMaker -> applicableTags.addFirst(PLAYABLE.getTag());
+							case Cyclable cyclable -> applicableTags.addFirst(CYCLABLE.getTag());
+							case Seat seat -> applicableTags.addFirst(SEAT.getTag());
+							default -> applicableTags.addFirst(INTERACTABLE.getTag());
+						}
+						continue;
+					}
 				}
-				continue;
+				case EXCLUSIVE -> {
+					if (config.isExclusive()) {
+						applicableTags.addFirst(EXCLUSIVE.getTag());
+						continue;
+					}
+				}
 			}
 
-			if (DecorationUtils.getInstancesOf(config).contains(tag.getClazz()))
+			if (tag.getClazz() != null && DecorationUtils.getInstancesOf(config).contains(tag.getClazz()))
 				applicableTags.addFirst(tag.getTag());
 		}
 
