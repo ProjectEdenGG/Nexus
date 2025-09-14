@@ -140,19 +140,19 @@ public abstract class Effects implements Listener {
 
 	public void rotatingStands() {
 		List<RotatingStand> rotatingStands = getRotatingStands();
-		debug("Rotating stands " + getClass().getSimpleName() + " " + rotatingStands.size());
+		Debug.log(DebugType.EFFECTS, "Rotating stands " + getClass().getSimpleName() + " " + rotatingStands.size());
 
 		List<UUID> resetPoses = rotatingStands.stream().map(RotatingStand::getUuid).collect(Collectors.toList());
 
 		onLoadRotatingStands(rotatingStands);
 
 		Tasks.repeat(TickTime.SECOND.x(2), TickTime.TICK, () -> {
-			debug("Rotating stands " + getClass().getSimpleName());
+			Debug.log(DebugType.EFFECTS, "Rotating stands " + getClass().getSimpleName());
 			for (RotatingStand rotatingStand : rotatingStands) {
-				debug("Rotating stand: " + rotatingStand.getUuid());
+				Debug.log(DebugType.EFFECTS, "Rotating stand: " + rotatingStand.getUuid());
 				ArmorStand armorStand = rotatingStand.getArmorStand();
 				if (armorStand == null) {
-					debug("  &cArmor stand is null");
+					Debug.log(DebugType.EFFECTS, "  &cArmor stand is null");
 					continue;
 				}
 
@@ -172,17 +172,13 @@ public abstract class Effects implements Listener {
 				}
 
 				StandRotationType rotationType = rotatingStand.getRotationType();
-				debug("  Adding " + rotationType.name() + " rotation of " + StringUtils.getDf().format(rotationType.getRotation()));
+				Debug.log(DebugType.EFFECTS, "  Adding " + rotationType.name() + " rotation of " + StringUtils.getDf().format(rotationType.getRotation()));
 				switch (rotatingStand.getAxis()) {
 					case HORIZONTAL -> rotatingStand.addRightArmPose(0, rotationType.getRotation(), 0);
 					case VERTICAL -> rotatingStand.addHeadPose(0, rotationType.getRotation(), 0);
 				}
 			}
 		});
-	}
-
-	private static void debug(String message) {
-		Debug.log(Dev.WAKKA, DebugType.EFFECTS, message);
 	}
 
 	//
@@ -215,7 +211,7 @@ public abstract class Effects implements Listener {
 			if (armorStand == null)
 				return;
 
-			debug("resetRightArmPose " + uuid);
+			Debug.log(DebugType.EFFECTS, "resetRightArmPose " + uuid);
 			getArmorStand().setRightArmPose(new EulerAngle(Math.toRadians(180), 0, Math.toRadians(270)));
 		}
 
@@ -224,29 +220,29 @@ public abstract class Effects implements Listener {
 			if (armorStand == null)
 				return;
 
-			debug("resetHeadPose " + uuid);
+			Debug.log(DebugType.EFFECTS, "resetHeadPose " + uuid);
 			armorStand.setHeadPose(EulerAngle.ZERO);
 		}
 
 		public void addRightArmPose(double x, double y, double z) {
 			ArmorStand armorStand = getArmorStand();
 			if (armorStand == null) {
-				debug("  &caddRightArmPose: Armor stand is null " + uuid);
+				Debug.log(DebugType.EFFECTS, "  &caddRightArmPose: Armor stand is null " + uuid);
 				return;
 			}
 
-			debug("  Adding right arm pose: " + x + ", " + y + ", " + z + " " + armorStand.getUniqueId());
+			Debug.log(DebugType.EFFECTS, "  Adding right arm pose: " + x + ", " + y + ", " + z + " " + armorStand.getUniqueId());
 			armorStand.setRightArmPose(armorStand.getRightArmPose().add(x, y, z));
 		}
 
 		public void addHeadPose(double x, double y, double z) {
 			ArmorStand armorStand = getArmorStand();
 			if (armorStand == null) {
-				debug("  &caddHeadPose: Armor stand is null " + uuid);
+				Debug.log(DebugType.EFFECTS, "  &caddHeadPose: Armor stand is null " + uuid);
 				return;
 			}
 
-			debug("  Adding head pose: " + x + ", " + y + ", " + z + " " + armorStand.getUniqueId());
+			Debug.log(DebugType.EFFECTS, "  Adding head pose: " + x + ", " + y + ", " + z + " " + armorStand.getUniqueId());
 			armorStand.setHeadPose(armorStand.getHeadPose().add(x, y, z));
 		}
 

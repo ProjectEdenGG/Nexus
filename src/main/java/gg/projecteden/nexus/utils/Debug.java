@@ -90,9 +90,7 @@ public class Debug {
 
 	// Player & type based
 
-	private static final Map<UUID, Set<DebugType>> ENABLED_DEBUGGERS = new HashMap<>(
-		Map.of(Dev.WAKKA.getUniqueId(), new HashSet<>(Set.of(DebugType.EFFECTS)))
-	);
+	private static final Map<UUID, Set<DebugType>> ENABLED_DEBUGGERS = new HashMap<>();
 
 	public static boolean isEnabled(HasPlayer player, DebugType type) {
 		if (player == null || player.getPlayer() == null)
