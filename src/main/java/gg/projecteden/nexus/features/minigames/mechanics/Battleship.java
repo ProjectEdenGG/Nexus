@@ -236,6 +236,9 @@ public class Battleship extends TeamMechanic {
 					if (target == grid.getAimedAt())
 						continue;
 
+					if (target.getOppositeCoordinate().getState().isShotAt())
+						continue;
+
 					target.aim();
 				}
 			}
