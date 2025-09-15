@@ -56,7 +56,7 @@ public class YourShopProvider extends ShopProvider {
 
 		contents.set(0, 4, ClickableItem.of(Material.LIME_CONCRETE_POWDER, "&6Add item", e -> new ExchangeConfigProvider(this).open(viewer)));
 
-		contents.set(0, 5, ClickableItem.of(Material.HOPPER, "&6Mass Restock", e -> new EditProductProvider.MassAddStockProvider(viewer, this, shop)));
+		contents.set(0, 5, ClickableItem.of(Material.HOPPER, "&6Mass Restock", e -> new EditProductProvider.MassAddStockProvider(viewer, this, shop, shopGroup)));
 
 		contents.set(0, 6, ClickableItem.of(Material.WRITABLE_BOOK, "&6Shop history", e -> {
 			PlayerUtils.runCommand(viewer, "shop history");

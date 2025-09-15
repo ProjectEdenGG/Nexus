@@ -14,8 +14,16 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.Shop.ExchangeType;
 import gg.projecteden.nexus.models.shop.Shop.Product;
+import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.shop.ShopService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -163,11 +171,13 @@ public class EditProductProvider extends ShopProvider {
 	public static class MassAddStockProvider implements TemporaryMenuListener {
 		@Getter
 		private final Player player;
+		private final ShopGroup group;
 		private final ShopProvider previousMenu;
 		private final Shop shop;
 
-		public MassAddStockProvider(Player player, ShopProvider previousMenu, Shop shop) {
+		public MassAddStockProvider(Player player, ShopProvider previousMenu, Shop shop, ShopGroup group) {
 			this.player = player;
+			this.group = group;
 			this.previousMenu = previousMenu;
 			this.shop = shop;
 
@@ -182,7 +192,7 @@ public class EditProductProvider extends ShopProvider {
 					continue;
 
 				for (var product : shop.getProducts()) {
-					if (ItemUtils.isSimilar(product.getItem(), content)) {
+					if (ItemUtils.isSimilar(product.getItem(), content) && product.getShopGroup() == group) {
 						product.addStock(content.getAmount());
 						continue contentsLoop;
 					}

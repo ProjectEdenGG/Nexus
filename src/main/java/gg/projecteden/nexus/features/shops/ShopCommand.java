@@ -127,7 +127,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 	@Path("massRestock")
 	@Description("Restock any item in your shop in one menu")
 	void massRestock() {
-		new EditProductProvider.MassAddStockProvider(player(), null, service.get(player()));
+		new EditProductProvider.MassAddStockProvider(player(), null, service.get(player()), ShopGroup.of(worldGroup()));
 	}
 
 	@Async
