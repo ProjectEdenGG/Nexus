@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.arenas.Connect4Arena;
 import gg.projecteden.nexus.features.minigames.models.matchdata.Connect4MatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.Connect4MatchData.Connect4Board;
+import gg.projecteden.nexus.features.minigames.models.matchdata.Connect4MatchData.Connect4Evaluator;
 import gg.projecteden.nexus.features.minigames.models.matchdata.shared.InARowBoard.InARowPiece;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -71,5 +72,11 @@ public class Connect4Command extends CustomCommand {
 			}
 			send(columns);
 		}
+	}
+
+	@Path("evaluate")
+	void evaluate_board() {
+		Connect4Evaluator.EvaluationResult result = Connect4Evaluator.evaluateBoard(board.getBoard(), arena.getTeams().getFirst(), arena.getTeams().getLast());
+		send(result.toString());
 	}
 }

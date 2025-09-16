@@ -163,4 +163,99 @@ public class Connect4MatchData extends MatchData {
 		return wait.get();
 	}
 
+	public class Connect4Evaluator {
+
+		private static final int ROWS = 6;
+		private static final int COLS = 7;
+
+		public static EvaluationResult evaluateBoard(InARowPiece[][] board, Team team1, Team team2) {
+			int score = 0;
+
+			// Horizontal
+			for (int r = 0; r < ROWS; r++) {
+				for (int c = 0; c < COLS - 3; c++) {
+					score += evaluateWindow(board, r, c, 0, 1, team1, team2);
+				}
+			}
+
+			// Vertical
+			for (int r = 0; r < ROWS - 3; r++) {
+				for (int c = 0; c < COLS; c++) {
+					score += evaluateWindow(board, r, c, 1, 0, team1, team2);
+				}
+			}
+
+			// Diagonal down-right
+			for (int r = 0; r < ROWS - 3; r++) {
+				for (int c = 0; c < COLS - 3; c++) {
+					score += evaluateWindow(board, r, c, 1, 1, team1, team2);
+				}
+			}
+
+			// Diagonal up-right
+			for (int r = 3; r < ROWS; r++) {
+				for (int c = 0; c < COLS - 3; c++) {
+					score += evaluateWindow(board, r, c, -1, 1, team1, team2);
+				}
+			}
+
+			return scoreToPercentage(score);
+		}
+
+		private static int evaluateWindow(InARowPiece[][] board, int row, int col, int dr, int dc, Team team1, Team team2) {
+			int t1 = 0, t2 = 0, empty = 0;
+
+			for (int i = 0; i < 4; i++) {
+				InARowPiece piece = board[row + i * dr][col + i * dc];
+				if (piece.isEmpty()) {
+					empty++;
+				} else if (piece.getTeam() == team1) {
+					t1++;
+				} else if (piece.getTeam() == team2) {
+					t2++;
+				}
+			}
+
+			if (t1 > 0 && t2 > 0) return 0; // blocked
+
+			if (t1 == 4) return +1000;
+			if (t1 == 3 && empty == 1) return +50;
+			if (t1 == 2 && empty == 2) return +10;
+			if (t1 == 1 && empty == 3) return +1;
+
+			if (t2 == 4) return -1000;
+			if (t2 == 3 && empty == 1) return -50;
+			if (t2 == 2 && empty == 2) return -10;
+			if (t2 == 1 && empty == 3) return -1;
+
+			return 0;
+		}
+
+		private static EvaluationResult scoreToPercentage(int score) {
+			double normalized = 1.0 / (1.0 + Math.exp(-score / 200.0));
+			int t1Percent = (int) Math.round(normalized * 100);
+			int t2Percent = 100 - t1Percent;
+
+			return new EvaluationResult(score, t1Percent, t2Percent);
+		}
+
+		public static class EvaluationResult {
+			public final int score;
+			public final int team1Percent;
+			public final int team2Percent;
+
+			public EvaluationResult(int score, int t1, int t2) {
+				this.score = score;
+				this.team1Percent = t1;
+				this.team2Percent = t2;
+			}
+
+			@Override
+			public String toString() {
+				return String.format("Score=%d | Team1=%d%% | Team2=%d%%",
+					score, team1Percent, team2Percent);
+			}
+		}
+	}
+
 }
