@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.recipes.functionals;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import gg.projecteden.nexus.utils.CoreProtectUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
@@ -12,6 +13,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.block.data.Waterlogged;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -86,11 +89,15 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 
 	@EventHandler
 	public void on(PlayerInteractEvent event) {
+		if (event.useInteractedBlock() == Result.DENY || event.useItemInHand() == Result.DENY)
+			return;
+
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
 			return;
 
 		// prevent placing water in the nether
-		if (event.getPlayer().getWorld().isUltraWarm())
+		Player player = event.getPlayer();
+		if (player.getWorld().isUltraWarm())
 			return;
 
 		final ItemStack item = event.getItem();
@@ -108,7 +115,7 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 			cauldron.setLevel(cauldron.getMaximumLevel());
 			clickedState.setBlockData(cauldron);
 
-			final CauldronLevelChangeEvent fillEvent = new CauldronLevelChangeEvent(clickedBlock, event.getPlayer(), ChangeReason.BUCKET_EMPTY, clickedState);
+			final CauldronLevelChangeEvent fillEvent = new CauldronLevelChangeEvent(clickedBlock, player, ChangeReason.BUCKET_EMPTY, clickedState);
 			if (!fillEvent.callEvent())
 				return;
 
@@ -125,15 +132,20 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 
 		final BlockState state = block.getState();
 
-		BlockPlaceEvent placeEvent = new BlockPlaceEvent(block, state, clickedBlock, item, event.getPlayer(), true, EquipmentSlot.HAND);
+		BlockPlaceEvent placeEvent = new BlockPlaceEvent(block, state, clickedBlock, item, player, true, EquipmentSlot.HAND);
 		if (!placeEvent.callEvent() || !placeEvent.canBuild())
 			return;
 
 		if (block.getBlockData() instanceof Waterlogged waterlogged) {
 			waterlogged.setWaterlogged(true);
-			block.setBlockData(waterlogged);
-		} else
+			block.setBlockData(waterlogged, true);
+		} else {
 			block.setType(Material.WATER);
+		}
+
+		// Not caught by CoreProtect via BlockPlaceEvent ??
+		// This method does not log waterlogging
+		CoreProtectUtils.logPlacement(player, block);
 	}
 
 	@Contract("null -> false")
