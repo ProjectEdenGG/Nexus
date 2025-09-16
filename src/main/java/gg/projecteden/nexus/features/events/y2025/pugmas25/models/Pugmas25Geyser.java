@@ -130,7 +130,7 @@ public class Pugmas25Geyser {
 						continue;
 					}
 
-					NMSUtils.hurtPlayer(player, NMSUtils.getDamageSources(player).hotFloor(), damageAmount);
+					NMSUtils.hurtEntity(player, NMSUtils.getDamageSources(player).hotFloor(), damageAmount);
 				}
 			}
 

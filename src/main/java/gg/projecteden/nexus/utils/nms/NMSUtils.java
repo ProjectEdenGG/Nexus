@@ -54,6 +54,7 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
@@ -121,6 +122,10 @@ public class NMSUtils {
 		return ((CraftPlayer) player).getHandle();
 	}
 
+	public static Entity toNMS(org.bukkit.entity.Entity entity) {
+		return ((CraftEntity) entity).getHandle();
+	}
+
 	public static org.bukkit.inventory.ItemStack fromNMS(ItemStack itemStack) {
 		return itemStack.asBukkitCopy();
 	}
@@ -155,17 +160,16 @@ public class NMSUtils {
 		return entityPlayer.getBukkitEntity().getProfile();
 	}
 
-	public static DamageSources getDamageSources(Player player) {
-		return getDamageSources(player.getWorld());
+	public static DamageSources getDamageSources(org.bukkit.entity.Entity entity) {
+		return getDamageSources(entity.getWorld());
 	}
 
 	public static DamageSources getDamageSources(World world) {
 		return toNMS(world).damageSources();
 	}
 
-	public static void hurtPlayer(Player player, DamageSource damageSource, float damage) {
-		ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
-		nmsPlayer.hurt(damageSource, damage);
+	public static void hurtEntity(org.bukkit.entity.Entity entity, DamageSource damageSource, float damage) {
+		toNMS(entity).hurt(damageSource, damage);
 	}
 	
 	@Data

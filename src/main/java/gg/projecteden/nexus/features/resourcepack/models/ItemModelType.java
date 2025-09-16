@@ -1887,6 +1887,7 @@ public enum ItemModelType {
 	WEAPONS_IRON_SWORD("misc/weapons/iron_sword"),
 	WEAPONS_SPEAR_OLD("misc/weapons/spear_old"),
 	WITHER_FRAGMENT("misc/wither_fragment"),
+	THROWN_BRICK("misc/thrown_brick"),
 	// ui
 	CLICK_ME("ui/click_me"),
 	CRATES_GEM_CRAFTER_BASE("ui/crates/gem_crafter/base"),
