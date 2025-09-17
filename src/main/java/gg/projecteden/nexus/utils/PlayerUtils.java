@@ -229,7 +229,11 @@ public class PlayerUtils {
 		private List<Predicate<Player>> filters = new ArrayList<>();
 
 		public static Player newest() {
-			return OnlinePlayers.stream().max(comparing(Player::getFirstPlayed)).orElse(null);
+			return OnlinePlayers.stream()
+				.map(Nerd::of)
+				.max(comparing(Nerd::getFirstJoin))
+				.map(Nerd::getOnlinePlayer)
+				.orElse(null);
 		}
 
 		public static OnlinePlayers where() {
