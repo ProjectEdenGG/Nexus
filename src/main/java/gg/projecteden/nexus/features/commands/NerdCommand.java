@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.TimeUtils;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -24,6 +25,9 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Statistic;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -74,6 +78,18 @@ public class NerdCommand extends CustomCommand {
 	@Description("Generate a paste of a player's NBT data file")
 	void getDataFile(@Arg("self") Nerd nerd) {
 		send(json().next(StringUtils.paste(new NBTPlayer(nerd).getNbtFile().asNBTString())));
+	}
+
+	@Path("timeSinceDeath [player] [value]")
+	@Permission(Group.ADMIN)
+	void timeSinceDeath(@Arg("self") Player player, Integer value) {
+		var initial = player.getStatistic(Statistic.TIME_SINCE_DEATH);
+		if (value != null) {
+			player.setStatistic(Statistic.TIME_SINCE_DEATH, value);
+			new PlayerStatisticIncrementEvent(player, Statistic.TIME_SINCE_DEATH, initial, value).callEvent();
+		}
+
+		send(Timespan.ofSeconds(player.getStatistic(Statistic.TIME_SINCE_DEATH) / 20).format());
 	}
 
 	@ConverterFor(Nerd.class)

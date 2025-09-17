@@ -9,12 +9,15 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
 import gg.projecteden.nexus.utils.GlowUtils.GlowTask;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
+
+import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Redirect(from = "/entityhealth", to = "/health target")
 public class HealthCommand extends CustomCommand {
@@ -28,14 +31,14 @@ public class HealthCommand extends CustomCommand {
 	void health(@Arg("self") Player player, @Arg(permission = Group.STAFF, min = 0.0, max = 20.0) Double health) {
 		String healthFormat = getFormattedHealth(player);
 		if (health == null)
-			send(PREFIX + player.getName() + "'s health is &e" + healthFormat);
+			send(PREFIX + Nickname.of(player) + "'s health is &e" + healthFormat);
 		else {
 			if (isSelf(player))
 				if (!CheatsCommand.canEnableCheats(player))
 					error("You cannot use cheats in this world");
 
 			player.setHealth(health);
-			send(PREFIX + gg.projecteden.nexus.utils.StringUtils.stripColor(player.getName()) + "'s health set to &e" + healthFormat);
+			send(PREFIX + Nickname.of(player) + "'s health set to &e" + healthFormat);
 		}
 	}
 
@@ -53,10 +56,10 @@ public class HealthCommand extends CustomCommand {
 
 		String healthFormat = getFormattedHealth(target);
 		if (health == null)
-			send(PREFIX + gg.projecteden.nexus.utils.StringUtils.stripColor(target.getName()) + "'s health is &e" + healthFormat);
+			send(PREFIX + stripColor(target.getName()) + "'s health is &e" + healthFormat);
 		else {
 			target.setHealth(health);
-			send(PREFIX + gg.projecteden.nexus.utils.StringUtils.stripColor(target.getName()) + "'s health set to &e" + healthFormat);
+			send(PREFIX + stripColor(target.getName()) + "'s health set to &e" + healthFormat);
 		}
 	}
 

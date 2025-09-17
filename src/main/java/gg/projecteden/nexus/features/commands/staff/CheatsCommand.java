@@ -91,7 +91,7 @@ public class CheatsCommand extends CustomCommand implements Listener {
 		SpeedCommand.resetSpeed(player);
 
 		if (WorldGroup.of(player) != WorldGroup.CREATIVE) {
-			GamemodeCommand.setGameMode(player, GameMode.SURVIVAL);
+			GamemodeCommand.setGamemode(player, GameMode.SURVIVAL);
 			FlyCommand.off(player, reason);
 		}
 	}
@@ -104,7 +104,7 @@ public class CheatsCommand extends CustomCommand implements Listener {
 			new GodmodeService().edit(player, godmode -> godmode.setEnabled(true));
 
 		if (player.hasPermission("essentials.gamemode.creative"))
-			GamemodeCommand.setGameMode(player, GameMode.CREATIVE);
+			GamemodeCommand.setGamemode(player, GameMode.CREATIVE);
 
 		if (player.hasPermission("essentials.fly"))
 			FlyCommand.on(player, reason);

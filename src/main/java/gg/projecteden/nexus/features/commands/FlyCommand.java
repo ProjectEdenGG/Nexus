@@ -100,6 +100,9 @@ public class FlyCommand extends CustomCommand implements Listener {
 	}
 
 	public static void off(Player player, String reason) {
+		if (player.getGameMode() == GameMode.SPECTATOR)
+			return;
+
 		player.setFallDistance(0);
 		PlayerUtils.setAllowFlight(player, false, reason);
 		PlayerUtils.setFlying(player, false, reason);

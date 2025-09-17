@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.nexus.features.listeners.events.PlayerChangingWorldEvent;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -7,9 +8,13 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -19,15 +24,14 @@ import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
 import gg.projecteden.nexus.models.mode.ModeUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
 
 import java.util.Arrays;
 import java.util.List;
@@ -71,7 +75,7 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 		if (Minigamer.of(player).isPlaying() && !Rank.of(player).isSeniorStaff())
 			error("Cannot use in minigames");
 
-		setGameMode(player, gamemode);
+		setGamemode(player, gamemode);
 
 		send(player, PREFIX + "Switched to &e" + camelCase(gamemode));
 		if (!isSelf(player))
@@ -83,7 +87,7 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	public static void setGameMode(Player player, GameMode gamemode) {
+	public static void setGamemode(Player player, GameMode gamemode) {
 		boolean flight = player.getAllowFlight();
 		boolean flying = player.isFlying();
 		player.setGameMode(gamemode);
@@ -120,55 +124,69 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 			.toList();
 	}
 
-	@EventHandler
-	public void on(PlayerChangedWorldEvent event) {
-		Player player = event.getPlayer();
-		final WorldGroup newWorldGroup = WorldGroup.of(player);
+	@Path("debug")
+	@HideFromWiki
+	@HideFromHelp
+	@TabCompleteIgnore
+	@Permission(Group.STAFF)
+	void debug() {
+		send(new ModeUserService().get(player()).toPrettyString());
+	}
+
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+	public void on(PlayerChangingWorldEvent event) {
+		var player = event.getPlayer();
+		var newWorldGroup = WorldGroup.of(event.getToWorld());
+
+		Consumer<String> debug = message -> {};
 
 		if (Minigamer.of(player).isPlaying())
 			return;
 
 		final Consumer<Boolean> flying = state -> {
+			debug.accept("GamemodeCommand#onWorldChanged flying " + state);
 			PlayerUtils.setAllowFlight(player, state, "GamemodeCommand#onWorldChanged 1");
 			PlayerUtils.setFlying(player, state, "GamemodeCommand#onWorldChanged 1");
 		};
 
-		if (!Rank.of(player).isStaff()) {
-			SpeedCommand.resetSpeed(player);
-
-			if (newWorldGroup == WorldGroup.CREATIVE)
-				flying.accept(true);
-			else
-				flying.accept(false);
-
-			return;
-		}
-
 		if (player.getGameMode().equals(GameMode.SPECTATOR)) {
+			player.setGameMode(GameMode.SPECTATOR);
+			debug.accept("GamemodeCommand#onWorldChanged spectator");
 			player.setFallDistance(0);
 			flying.accept(true);
 			return;
 		}
 
-		Tasks.wait(5, () -> {
-			ModeUser mode = new ModeUserService().get(player);
-			GameMode gameMode = mode.getGamemode(newWorldGroup);
-			FlightMode flightMode = mode.getFlightMode(newWorldGroup);
-
-			setGameMode(player, gameMode);
-
-			if (Vanish.isVanished(player)) {
-				flightMode.setAllowFlight(true);
-				flightMode.setFlying(true);
+		if (!Rank.of(player).isStaff()) {
+			debug.accept("GamemodeCommand#onWorldChanged is not staff");
+			if (WorldGroup.of(event.getPlayer()).isSurvivalMode()) {
+				debug.accept("GamemodeCommand#onWorldChanged survival world");
+				setGamemode(player, GameMode.SURVIVAL);
 			}
 
-			PlayerUtils.setAllowFlight(player, flightMode.isAllowFlight(), "GamemodeCommand#onWorldChanged 2");
-			PlayerUtils.setFlying(player, flightMode.isFlying(), "GamemodeCommand#onWorldChanged 2");
+			debug.accept("GamemodeCommand#onWorldChanged reset speed");
+			SpeedCommand.resetSpeed(player);
+			return;
+		}
 
-			if (DoubleJumpCommand.isInDoubleJumpRegion(player))
-				PlayerUtils.setAllowFlight(player, true, "GamemodeCommand#onWorldChanged 3");
-		});
+		ModeUser mode = new ModeUserService().get(player);
+		GameMode gameMode = mode.getGamemode(newWorldGroup);
+		FlightMode flightMode = mode.getFlightMode(newWorldGroup);
+		debug.accept("GamemodeCommand#onWorldChanged setting gamemode " + gameMode);
+
+		setGamemode(player, gameMode);
+
+		if (Vanish.isVanished(player)) {
+			debug.accept("GamemodeCommand#onWorldChanged is vanished");
+			flightMode.setAllowFlight(true);
+			flightMode.setFlying(true);
+		}
+
+		debug.accept("GamemodeCommand#onWorldChanged setting flightmode " + flightMode);
+		PlayerUtils.setAllowFlight(player, flightMode.isAllowFlight(), "GamemodeCommand#onWorldChanged 2");
+		PlayerUtils.setFlying(player, flightMode.isFlying(), "GamemodeCommand#onWorldChanged 2");
 	}
 
 }
+
 

@@ -153,20 +153,6 @@ public class Restrictions implements Listener {
 		PlayerUtils.send(event.getPlayer(), StringUtils.getPrefix("Restrictions") + "&cYou cannot change worlds that fast");
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onWorldChangeGamemode(PlayerTeleportEvent event) {
-		if (event.getFrom().getWorld().equals(event.getTo().getWorld()))
-			return;
-
-		if (Nerd.of(event.getPlayer()).getRank().isStaff())
-			return;
-
-		Tasks.wait(2, () -> {
-			if (WorldGroup.of(event.getPlayer()) == WorldGroup.SURVIVAL)
-				event.getPlayer().setGameMode(GameMode.SURVIVAL);
-		});
-	}
-
 	@EventHandler
 	public void onCommandMinecartSpawn(EntitySpawnEvent event) {
 		if (event.getEntity() instanceof CommandMinecart) {

@@ -41,7 +41,7 @@ import java.util.List;
 
 public class CustomEvents implements Listener {
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true, priority = org.bukkit.event.EventPriority.HIGHEST)
 	public void onChangingWorlds(PlayerTeleportEvent event) {
 		final World fromWorld = event.getFrom().getWorld();
 		final World toWorld = event.getTo().getWorld();
