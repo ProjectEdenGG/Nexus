@@ -7,15 +7,25 @@ import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.M
 import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.features.wither.fights.CorruptedFight;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.witherarena.WitherArenaConfig;
 import gg.projecteden.nexus.models.witherarena.WitherArenaConfigService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.FuzzyItemStack;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.SneakyThrows;
 import org.bukkit.GameMode;
@@ -24,7 +34,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 @Redirect(from = "/wchat", to = "/wither chat")
 public class WitherCommand extends CustomCommand {
@@ -281,6 +296,8 @@ public class WitherCommand extends CustomCommand {
 	@Path("spectate")
 	@Description("Spectate the fight")
 	void spectate() {
+		error("Wither spectating is currently disabled due to a bug");
+
 		if (!Rank.of(player()).isStaff() && WitherArenaConfig.isBeta())
 			error("The wither is currently being beta tested by staff. It should be back soon!");
 
