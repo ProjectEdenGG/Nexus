@@ -19,7 +19,11 @@ public class FlockShearEnchant extends CustomEnchant implements Listener {
 		if (!(entity instanceof Shearable))
 			return;
 
-		var radius = 2 + getLevel(event.getItem());
+		int level = getLevel(event.getItem());
+		if (level == 0)
+			return;
+
+		var radius = 2 + level;
 		var nearby = entity.getNearbyEntities(radius, radius, radius).stream()
 			.filter(nearbyEntity -> nearbyEntity != entity && nearbyEntity.getType() == entity.getType())
 			.map(nearbyEntity -> (Shearable) nearbyEntity)
