@@ -24,6 +24,7 @@ import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
 import gg.projecteden.nexus.models.mode.ModeUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -161,7 +162,7 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 			debug.accept("GamemodeCommand#onWorldChanged is not staff");
 			if (WorldGroup.of(event.getPlayer()).isSurvivalMode()) {
 				debug.accept("GamemodeCommand#onWorldChanged survival world");
-				setGamemode(player, GameMode.SURVIVAL);
+				Tasks.wait(5, () -> setGamemode(player, GameMode.SURVIVAL));
 			}
 
 			debug.accept("GamemodeCommand#onWorldChanged reset speed");
