@@ -136,58 +136,100 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
 	public void on(PlayerChangingWorldEvent event) {
-		var player = event.getPlayer();
-		var newWorldGroup = WorldGroup.of(event.getToWorld());
-
-		Consumer<String> debug = message -> {};
+		Player player = event.getPlayer();
+		final WorldGroup newWorldGroup = WorldGroup.of(event.getToWorld());
 
 		if (Minigamer.of(player).isPlaying())
 			return;
 
 		final Consumer<Boolean> flying = state -> {
-			debug.accept("GamemodeCommand#onWorldChanged flying " + state);
 			PlayerUtils.setAllowFlight(player, state, "GamemodeCommand#onWorldChanged 1");
 			PlayerUtils.setFlying(player, state, "GamemodeCommand#onWorldChanged 1");
 		};
 
+		if (!Rank.of(player).isStaff()) {
+			SpeedCommand.resetSpeed(player);
+
+			if (newWorldGroup == WorldGroup.CREATIVE)
+				flying.accept(true);
+			else
+				flying.accept(false);
+
+			return;
+		}
+
 		if (player.getGameMode().equals(GameMode.SPECTATOR)) {
-			player.setGameMode(GameMode.SPECTATOR);
-			debug.accept("GamemodeCommand#onWorldChanged spectator");
 			player.setFallDistance(0);
 			flying.accept(true);
 			return;
 		}
 
-		if (!Rank.of(player).isStaff()) {
-			debug.accept("GamemodeCommand#onWorldChanged is not staff");
-			if (WorldGroup.of(event.getPlayer()).isSurvivalMode()) {
-				debug.accept("GamemodeCommand#onWorldChanged survival world");
-				Tasks.wait(5, () -> setGamemode(player, GameMode.SURVIVAL));
+		Tasks.wait(5, () -> {
+			ModeUser mode = new ModeUserService().get(player);
+			GameMode gameMode = mode.getGamemode(newWorldGroup);
+			FlightMode flightMode = mode.getFlightMode(newWorldGroup);
+
+			setGamemode(player, gameMode);
+
+			if (Vanish.isVanished(player)) {
+				flightMode.setAllowFlight(true);
+				flightMode.setFlying(true);
 			}
 
-			debug.accept("GamemodeCommand#onWorldChanged reset speed");
-			SpeedCommand.resetSpeed(player);
-			return;
-		}
+			PlayerUtils.setAllowFlight(player, flightMode.isAllowFlight(), "GamemodeCommand#onWorldChanged 2");
+			PlayerUtils.setFlying(player, flightMode.isFlying(), "GamemodeCommand#onWorldChanged 2");
+		});
 
-		ModeUser mode = new ModeUserService().get(player);
-		GameMode gameMode = mode.getGamemode(newWorldGroup);
-		FlightMode flightMode = mode.getFlightMode(newWorldGroup);
-		debug.accept("GamemodeCommand#onWorldChanged setting gamemode " + gameMode);
-
-		setGamemode(player, gameMode);
-
-		if (Vanish.isVanished(player)) {
-			debug.accept("GamemodeCommand#onWorldChanged is vanished");
-			flightMode.setAllowFlight(true);
-			flightMode.setFlying(true);
-		}
-
-		debug.accept("GamemodeCommand#onWorldChanged setting flightmode " + flightMode);
-		PlayerUtils.setAllowFlight(player, flightMode.isAllowFlight(), "GamemodeCommand#onWorldChanged 2");
-		PlayerUtils.setFlying(player, flightMode.isFlying(), "GamemodeCommand#onWorldChanged 2");
+//		var player = event.getPlayer();
+//		var newWorldGroup = WorldGroup.of(event.getToWorld());
+//
+//		Consumer<String> debug = message -> {};
+//
+//		if (Minigamer.of(player).isPlaying())
+//			return;
+//
+//		final Consumer<Boolean> flying = state -> {
+//			debug.accept("GamemodeCommand#onWorldChanged flying " + state);
+//			PlayerUtils.setAllowFlight(player, state, "GamemodeCommand#onWorldChanged 1");
+//			PlayerUtils.setFlying(player, state, "GamemodeCommand#onWorldChanged 1");
+//		};
+//
+//		if (player.getGameMode().equals(GameMode.SPECTATOR)) {
+//			player.setGameMode(GameMode.SPECTATOR);
+//			debug.accept("GamemodeCommand#onWorldChanged spectator");
+//			player.setFallDistance(0);
+//			flying.accept(true);
+//			return;
+//		}
+//
+//		if (!Rank.of(player).isStaff()) {
+//			debug.accept("GamemodeCommand#onWorldChanged is not staff");
+//			if (WorldGroup.of(event.getPlayer()).isSurvivalMode()) {
+//				debug.accept("GamemodeCommand#onWorldChanged survival world");
+//				setGamemode(player, GameMode.SURVIVAL);
+//			}
+//
+//			debug.accept("GamemodeCommand#onWorldChanged reset speed");
+//			SpeedCommand.resetSpeed(player);
+//		}
+//
+//		ModeUser mode = new ModeUserService().get(player);
+//		GameMode gameMode = mode.getGamemode(newWorldGroup);
+//		FlightMode flightMode = mode.getFlightMode(newWorldGroup);
+//		debug.accept("GamemodeCommand#onWorldChanged setting gamemode " + gameMode);
+//
+//		setGamemode(player, gameMode);
+//
+//		if (Vanish.isVanished(player)) {
+//			debug.accept("GamemodeCommand#onWorldChanged is vanished");
+//			flightMode.setAllowFlight(true);
+//			flightMode.setFlying(true);
+//		}
+//
+//		debug.accept("GamemodeCommand#onWorldChanged setting flightmode " + flightMode);
+//		PlayerUtils.setAllowFlight(player, flightMode.isAllowFlight(), "GamemodeCommand#onWorldChanged 2");
+//		PlayerUtils.setFlying(player, flightMode.isFlying(), "GamemodeCommand#onWorldChanged 2");
 	}
-
 }
 
 
