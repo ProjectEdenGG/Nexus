@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.customenchants.enchants.DemeterEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.DisarmingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.EnergizingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.FireworkEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.FlockShearEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.FrostAspectEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.GearsEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.GlowingEnchant;
@@ -242,6 +243,10 @@ public class Enchant {
 	// TODO: DESCRIBE
 	@Unreleased
 	public static final Enchantment FROST_ASPECT = CustomEnchants.get(FrostAspectEnchant.class);
+
+	// TODO: DESCRIBE
+	@Unreleased
+	public static final Enchantment FLOCK_SHEAR = CustomEnchants.get(FlockShearEnchant.class);
 
 	private static final List<Enchantment> values = new ArrayList<>();
 
