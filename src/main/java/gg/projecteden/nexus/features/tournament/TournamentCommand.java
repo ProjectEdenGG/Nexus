@@ -26,7 +26,7 @@ public class TournamentCommand extends CustomCommand {
 
 	@Path("create <id>")
 	void create(String id) {
-		tournament = new Tournament(id, location());
+		tournament = new Tournament(id, location().toCenterLocation());
 		send("&3Created new Tournament: &e" + tournament.getId());
 	}
 
@@ -63,27 +63,45 @@ public class TournamentCommand extends CustomCommand {
 		send("&3Started tournament: &e" + tournament.getId());
 	}
 
-	@Path("getNextMatch")
-	void getNextMatch() {
+	@Path("getCurrentMatch")
+	void getCurrentMatch() {
 		checkNotStarted();
 		checkFinished();
 
-		Match match = tournament.getNextMatch();
+		Match match = tournament.getCurrentMatch();
 		send("&3Next match: " + match.getDisplay());
 	}
 
-	@Path("setMatchWinner <player>")
-	void setMatchWinner(OfflinePlayer player) {
+	@Path("setWinningPoint <value>")
+	void setWinningPoint(int winningPoint) {
+		checkStarted();
+		checkFinished();
+
+		tournament.setWinningPoint(winningPoint);
+		send("&3Set winning point to &e" + winningPoint);
+	}
+
+	@Path("addScore <player>")
+	void addScore(OfflinePlayer player) {
 		checkNotStarted();
 		checkFinished();
 
-		tournament.playNextMatch(player);
-		send("&3Set match winner to &e" + Nickname.of(player));
+		tournament.addPoint(player.getUniqueId());
 
-		if (tournament.isFinished()) {
+		if (tournament.isFinished())
 			send("&3Tournament champion: &e" + Nickname.of(tournament.getChampionUUID()));
-			return;
-		}
+	}
+
+	@Path("setXSpace <value>")
+	void setXSpace(int value) {
+		tournament.setX_SPACE(value);
+		send("&3Set X_SPACE to &e" + value);
+	}
+
+	@Path("setYSpace <value>")
+	void setYSpace(int value) {
+		tournament.setY_SPACE(value);
+		send("&3Set Y_SPACE to &e" + value);
 	}
 
 	@Path("delete")
