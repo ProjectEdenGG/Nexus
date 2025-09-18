@@ -33,19 +33,20 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Tournament {
 	String id;
-	Location origin; // top left corner
+	Location origin; // top left corner?
+	private int winningPoint = 1;
+	private double X_SPACE = 3;
+	private double Y_SPACE = 1;
 	List<UUID> playerUUIDs = new ArrayList<>();
 	Map<Integer, List<Match>> rounds = new LinkedHashMap<>();
+	private final Queue<Match> matchQueue = new LinkedList<>();
 	private int currentRound = 1;
+	private Match currentMatch;
 	private int maxRounds;
 	private int round1Byes;
-	private final Queue<Match> matchQueue = new LinkedList<>();
 	private boolean started = false;
 	private boolean finished = false;
 	private UUID championUUID;
-
-	private static final double X_SPACE = 3;  // distance between rounds
-	private static final double Y_SPACE = 1; // base vertical spacing
 
 	public Tournament(@NonNull String id, Location location) {
 		this.id = id;
@@ -72,6 +73,7 @@ public class Tournament {
 		this.started = true;
 		Collections.shuffle(playerUUIDs);
 		spawnBracket();
+		currentMatch = matchQueue.poll();
 	}
 
 	public void addPlayer(OfflinePlayer player) {
@@ -120,35 +122,6 @@ public class Tournament {
 			if (display != null)
 				display.text(Component.text(ChatColor.translateAlternateColorCodes('&', match.getDisplay())));
 		});
-	}
-
-	public void playNextMatch(OfflinePlayer winner) {
-		UUID winnerUUID = winner.getUniqueId();
-		Match match = matchQueue.peek();
-		if (match == null)
-			throw new InvalidInputException("No more matches to play");
-
-		if (!match.isPlaying(winnerUUID)) {
-			throw new InvalidInputException("Winner can either be " + Nickname.of(match.getPlayer1UUID()) + " or " + Nickname.of(match.getPlayer2UUID()));
-		}
-
-		matchQueue.poll();
-		match.setWinnerUUID(winnerUUID);
-
-		// Update current match display
-		TextDisplay display = match.getTextDisplay();
-		if (display != null)
-			display.text(Component.text(ChatColor.translateAlternateColorCodes('&', match.getDisplay())));
-
-		// Progress to next round?
-		if (matchQueue.isEmpty()) {
-			if (currentRound < maxRounds)
-				setupNextRound();
-			else {
-				championUUID = winnerUUID;
-				finished = true;
-			}
-		}
 	}
 
 	private void setupNextRound() {
@@ -296,10 +269,6 @@ public class Tournament {
 
 	//
 
-	public Match getNextMatch() {
-		return matchQueue.peek();
-	}
-
 	public void printBracket(Player player) {
 		PlayerUtils.send(player, "&3&lTournament " + id);
 		if (rounds.isEmpty()) {
@@ -322,11 +291,39 @@ public class Tournament {
 			PlayerUtils.send(player, " &3Champion: &a" + Nickname.of(getChampionUUID()));
 	}
 
+	public void addPoint(UUID uuid) {
+		if (!currentMatch.isPlaying(uuid))
+			throw new InvalidInputException(Nickname.of(uuid) + " is not in the match");
+
+		currentMatch.addPointToPlayer(uuid, winningPoint);
+
+		TextDisplay display = currentMatch.getTextDisplay();
+		if (display != null)
+			display.text(Component.text(ChatColor.translateAlternateColorCodes('&', currentMatch.getDisplay())));
+
+		if (currentMatch.isFinished()) {
+			UUID lastWinner = currentMatch.getWinnerUUID();
+			currentMatch = matchQueue.peek();
+			if (currentMatch == null) {
+				if (currentRound < maxRounds)
+					setupNextRound();
+				else {
+					championUUID = lastWinner;
+					finished = true;
+				}
+			}
+
+			currentMatch = matchQueue.poll();
+		}
+	}
+
 	@Getter
 	@NoArgsConstructor
 	public static class Match {
 		private UUID player1UUID;
+		private int player1Score = 0;
 		private UUID player2UUID;
+		private int player2Score = 0;
 		@Setter
 		private UUID winnerUUID;
 		@Setter
@@ -349,6 +346,16 @@ public class Tournament {
 				throw new InvalidInputException("Cannot add " + Nickname.of(uuid) + " to match, match is full");
 		}
 
+		public void addPointToPlayer(UUID uuid, int winningPoint) {
+			if (uuid.equals(player1UUID)) {
+				if (++player1Score >= winningPoint)
+					winnerUUID = player1UUID;
+			} else {
+				if (++player2Score >= winningPoint)
+					winnerUUID = player2UUID;
+			}
+		}
+
 		public boolean isPlaying(UUID uuid) {
 			return uuid.equals(player1UUID) || uuid.equals(player2UUID);
 		}
@@ -369,15 +376,15 @@ public class Tournament {
 					return "&a" + name1;
 
 				if (winnerUUID.equals(player1UUID))
-					return "&a" + name1 + " &3vs &e" + name2;
+					return "&a" + name1 + " &3(&6" + player1Score + "&3)" + " &3vs &e" + name2 + " &3(&6" + player2Score + "&3)";
 				else
-					return "&e" + name1 + " &3vs &a" + name2;
+					return "&e" + name1 + " &3(&6" + player1Score + "&3)" + " &3vs &a" + name2 + " &3(&6" + player2Score + "&3)";
 			}
 
 			if (bye)
 				return "&e" + name1;
 
-			return "&e" + name1 + " &3vs &e" + name2;
+			return "&e" + name1 + " &3(&6" + player1Score + "&3)" + " &3vs &e" + name2 + " &3(&6" + player2Score + "&3)";
 		}
 	}
 }
