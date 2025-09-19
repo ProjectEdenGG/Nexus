@@ -111,7 +111,7 @@ public class Battleship extends TeamMechanic {
 		Material.AIR,
 		Material.LEVER,
 		Material.BARRIER,
-		Material.CRIMSON_BUTTON,
+		Material.MANGROVE_BUTTON,
 		Material.PALE_OAK_BUTTON,
 		Material.POLISHED_BLACKSTONE_BUTTON
 	);
