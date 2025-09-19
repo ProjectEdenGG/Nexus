@@ -19,7 +19,8 @@ repositories {
         }
     }
     mavenCentral()
-    maven { url = uri("https://sonatype.projecteden.gg/repository/maven-public/") }
+    maven { url = uri("https://maven.projecteden.gg/releases") }
+    maven { url = uri("https://maven.projecteden.gg/snapshots") }
     maven { url = uri("https://jitpack.io") }
     maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
     maven { url = uri("https://repo.papermc.io/repository/maven-public/") }
@@ -49,6 +50,7 @@ repositories {
     maven { url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/") }
     maven { url = uri("https://repo.repsy.io/mvn/quantiom/minecraft") }
     maven { url = uri("https://nexus.neetgames.com/repository/maven-public") }
+    maven { url = uri("https://maven.playpro.com/") }
 
 //    maven("https://repo.mineinabyss.com/releases") // PlayerAnimator
 }
@@ -95,7 +97,7 @@ dependencies {
     compileOnly("com.github.jikoo.OpenInv:openinvapi:5.1.5")
     compileOnly("world.bentobox:bentobox:1.20.1-SNAPSHOT")
     compileOnly("nl.pim16aap2:BigDoors:0.1.8.39")
-    compileOnly("net.coreprotect:CoreProtect:22.3.1")
+    compileOnly("net.coreprotect:coreprotect:23.0")
     compileOnly("com.magmaguy:BetterStructures:1.4.1-SNAPSHOT")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.12.4-SNAPSHOT")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.12.4-SNAPSHOT") { isTransitive = false }
