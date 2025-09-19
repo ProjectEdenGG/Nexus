@@ -26,7 +26,8 @@ public enum CrateType {
 	MYSTERY(ItemModelType.CRATE_KEY_MYSTERY, "笯", true),
 	WEEKLY_WAKKA(ItemModelType.CRATE_KEY_WAKKA, "清",true),
 	MINIGAMES(ItemModelType.CRATE_KEY_MINIGAMES, "禘", true),
-	ONE_BLOCK(null, "皂")
+	ONE_BLOCK(null, "皂"),
+	HALLOWEEN(null, null)
 	;
 
 	final ItemModelType itemModelType;
