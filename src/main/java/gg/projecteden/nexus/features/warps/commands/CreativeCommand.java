@@ -32,7 +32,7 @@ public class CreativeCommand extends CustomCommand {
 	@Path("home [number] [player]")
 	@Description("Visit your or another player's creative plot")
 	void home(@Arg("1") int number, @Arg("self") Nerd nerd) {
-		warp().thenRun(() -> runCommand("plot visit %s creative %s".formatted(nerd.getName(), number)));
+		runCommand("plot visit %s creative %s".formatted(nerd.getName(), number));
 	}
 
 	@Path("trust <player>")
