@@ -76,6 +76,7 @@ public class ThrowableBrick implements Listener {
 		if (ItemModelType.of(snowball.getItem()) != MODEL) return;
 		if (!(snowball.getShooter() instanceof Player player)) return;
 
+		new SoundBuilder(Sound.BLOCK_DEEPSLATE_BREAK).location(snowball.getLocation()).pitch(0.75).play();
 		if (event.getHitEntity() != null) {
 			damageEntity(player, snowball, event.getHitEntity());
 			return;
