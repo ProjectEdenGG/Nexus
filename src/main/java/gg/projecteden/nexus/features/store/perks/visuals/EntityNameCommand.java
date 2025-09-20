@@ -49,12 +49,12 @@ public class EntityNameCommand extends CustomCommand {
 			if (!(targetEntity instanceof LivingEntity) && !(targetEntity instanceof ItemFrame))
 				error("You must be looking at a living entity or an item frame");
 
-			boolean hasAI = targetEntity instanceof LivingEntity livingEntity && !livingEntity.hasAI();
-			boolean isFixed = targetEntity instanceof ItemFrame itemFrame && itemFrame.isFixed();
+			boolean hasNoAI = targetEntity instanceof LivingEntity livingEntity && !livingEntity.hasAI();
+			boolean isItemFrame = targetEntity instanceof ItemFrame;
 			boolean isMarker = targetEntity instanceof ArmorStand armorStand && armorStand.isMarker();
 			boolean isInvulnerable = targetEntity.isInvulnerable();
 
-			if (!hasPermission(Group.STAFF) && (isInvulnerable || hasAI || isFixed || isMarker))
+			if (!hasPermission(Group.STAFF) && (hasNoAI || isItemFrame || isMarker || isInvulnerable))
 				error("You cannot name that entity");
 		}
 	}
