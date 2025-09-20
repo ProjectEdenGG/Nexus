@@ -38,9 +38,9 @@ public class BlockFireToggle implements Listener {
 		Block above = event.getBlock().getRelative(0, 1, 0);
 
 		if (event.isOn() && canReplaceWithFire(above.getType())) {
-			above.setType(Material.FIRE);
+			above.setType(Material.FIRE, false);
 		} else if (!event.isOn() && above != null && above.getType() == Material.FIRE) {
-			above.setType(Material.AIR);
+			above.setType(Material.AIR, false);
 		}
 	}
 
@@ -59,9 +59,9 @@ public class BlockFireToggle implements Listener {
 		Block above = event.getBlock().getRelative(0, 1, 0);
 
 		if (event.isOn() && canReplaceWithFire(above.getType())) {
-			above.setType(Material.SOUL_FIRE);
+			above.setType(Material.SOUL_FIRE, false);
 		} else if (!event.isOn() && above != null && above.getType() == Material.SOUL_FIRE) {
-			above.setType(Material.AIR);
+			above.setType(Material.AIR, false);
 		}
 	}
 
