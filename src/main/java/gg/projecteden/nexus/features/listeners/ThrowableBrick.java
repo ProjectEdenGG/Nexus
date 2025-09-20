@@ -30,10 +30,11 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
 
 public class ThrowableBrick implements Listener {
 
@@ -50,6 +51,10 @@ public class ThrowableBrick implements Listener {
 
 		if (!ActionGroup.RIGHT_CLICK.applies(event))
 			return;
+
+		if (isNotNullOrAir(event.getClickedBlock()))
+			if (MaterialTag.INTERACTABLES.isTagged(event.getClickedBlock()))
+				return;
 
 		ItemStack item = event.getItem();
 		if (Nullables.isNullOrAir(item) || item.getType() != Material.BRICK)
