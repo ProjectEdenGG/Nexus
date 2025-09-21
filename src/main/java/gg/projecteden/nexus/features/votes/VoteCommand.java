@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.votes;
 
+import com.vexsoftware.votifier.model.VotifierEvent;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
@@ -94,6 +95,20 @@ public class VoteCommand extends CustomCommand {
 		line();
 		send(json("&e[+] &3" + "Visit the &eVote Points Store").command("/vps"));
 		send(json("&e[+] &3" + "View top voters, prizes, and more on our &ewebsite").url(EdenSocialMediaSite.WEBSITE.getUrl() + "/vote"));
+	}
+
+	@Permission(Group.ADMIN)
+	@Path("force <nerd> <site>")
+	@Description("Force a vote for a user, to fix a missed vote")
+	void force(Nerd nerd, VoteSite voteSite) {
+		var vote = new com.vexsoftware.votifier.model.Vote(
+			voteSite.getId(),
+			nerd.getName(),
+			"local",
+			String.valueOf(System.currentTimeMillis())
+		);
+
+		new VotifierEvent(vote).callEvent();
 	}
 
 	@Permission(Group.ADMIN)
