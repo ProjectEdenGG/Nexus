@@ -156,21 +156,18 @@ public class DecorationConfig {
 	}
 
 	public boolean isFuzzyMatch(ItemStack item2) {
-		ItemStack item1 = getItem();
-
 		if (item2 == null)
 			return false;
 
-		if (!item1.getType().equals(item2.getType()))
+		if (!material.equals(item2.getType()))
 			return false;
 
-		String decorModelData = Model.of(item1);
 		String itemModelData = Model.of(item2);
 
 		if (modelPredicate != null)
 			return modelPredicate.test(itemModelData);
 		else
-			return Objects.equals(decorModelData, itemModelData);
+			return Objects.equals(model, itemModelData);
 	}
 
 	private static final Set<Material> hitboxTypes = new HashSet<>();
