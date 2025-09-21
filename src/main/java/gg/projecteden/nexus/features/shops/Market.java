@@ -8,6 +8,7 @@ import gg.projecteden.nexus.models.shop.Shop.ExchangeType;
 import gg.projecteden.nexus.models.shop.Shop.Product;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.shop.ShopService;
+import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -227,8 +228,6 @@ public class Market {
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.GILDED_BLACKSTONE, 1, 200);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.SAND, 1, 0.3);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.RED_SAND, 1, 0.45);
-		addBuyItem(ShopGroup.SURVIVAL, true, Material.SUSPICIOUS_GRAVEL, 1, 325);
-		addBuyItem(ShopGroup.SURVIVAL, true, Material.SUSPICIOUS_SAND, 1, 325);
 //		addBuyItem(ShopGroup.SURVIVAL, true, Material.COARSE_DIRT, 1, 0.5);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.BLUE_ICE, 1, 6.5);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.PACKED_ICE, 1, 1);
@@ -245,6 +244,9 @@ public class Market {
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.SNOW_BLOCK, 1, 2.25) ;
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.SHROOMLIGHT, 1, 20);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.BONE_BLOCK,1, 30);
+
+		for (Material terracotta : MaterialTag.COLORED_TERRACOTTAS.getValues())
+			addBuyItem(ShopGroup.SURVIVAL, true, terracotta, 1, 1.25);
 	}
 
 	private static void addSellItem(ShopGroup shopGroup, boolean isResourceWorld, Material material, int quantity, double price) {
