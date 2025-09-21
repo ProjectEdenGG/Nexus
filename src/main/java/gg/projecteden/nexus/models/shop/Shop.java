@@ -64,6 +64,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
+
 @Data
 @Entity(value = "shop", noClassnameStored = true)
 @NoArgsConstructor
@@ -477,7 +479,10 @@ public class Shop implements PlayerOwnedObject {
 				if (cmp != 0) return cmp;
 			}
 
-			return Integer.compare(item.getAmount(), other.getItem().getAmount());
+			int compare = Integer.compare(item.getAmount(), other.getItem().getAmount());
+			if (compare != 0) return compare;
+
+			return randomInt(-1, 1);
 		}
 	}
 
