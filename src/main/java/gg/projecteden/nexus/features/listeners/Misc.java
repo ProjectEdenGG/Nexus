@@ -11,6 +11,8 @@ import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.features.listeners.events.fake.FakePlayerInteractEvent;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.features.vanish.events.VanishToggleEvent;
 import gg.projecteden.nexus.framework.commands.Commands;
@@ -23,6 +25,7 @@ import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.IOUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -58,7 +61,6 @@ import org.bukkit.entity.Fox;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Shulker;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -80,6 +82,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.material.Colorable;
 import org.bukkit.metadata.MetadataValue;
 
 import java.nio.file.Paths;
@@ -502,11 +505,11 @@ public class Misc implements Listener {
 
 	@EventHandler
 	public void onShulkerDye(PlayerInteractEntityEvent event) {
-		if (!(event.getRightClicked() instanceof Shulker shulker))
+		if (!(event.getRightClicked() instanceof Colorable colorable))
 			return;
 
 		var player = event.getPlayer();
-		if (!isPerkAllowedAt(player, shulker.getLocation()))
+		if (!isPerkAllowedAt(player, event.getRightClicked().getLocation()))
 			return;
 
 		if (Vanish.isVanished(player))
@@ -516,20 +519,28 @@ public class Misc implements Listener {
 		if (isNullOrAir(tool))
 			return;
 
-		if (!MaterialTag.DYES.isTagged(tool.getType()))
+		boolean isDye = MaterialTag.DYES.isTagged(tool.getType());
+		boolean isPaintbrush = ItemModelType.PAINTBRUSH.is(tool);
+		if (!(isDye || isPaintbrush))
 			return;
 
-		var color = ColorType.of(tool.getType());
+		ColorType color;
+		if (isDye)
+			color = ColorType.of(tool.getType());
+		else
+			color = ColorType.ofClosest(new ItemBuilder(tool).dyeColor());
+
 		if (color == null)
 			return;
 
-		var dyeColor = color.getDyeColor();
-		if (dyeColor == null)
-			return;
+		var dyeColor = color.getSimilarDyeColor();
 
-		shulker.setColor(dyeColor);
+		colorable.setColor(dyeColor);
 		if (player.getGameMode() != GameMode.CREATIVE)
-			tool.subtract();
+			if (isDye)
+				tool.subtract();
+			else
+				DecorationUtils.usePaintbrush(player, tool);
 	}
 
 	@EventHandler

@@ -10,11 +10,11 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration.DecorationEditType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.BedAddition.AdditionType;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.BedPaintProvider.BedColor;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.StainChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStationMenu;
 import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -25,6 +25,7 @@ import lombok.Builder;
 import lombok.Data;
 import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Bed;
@@ -158,24 +159,28 @@ public class BedInteractionData {
 		}
 
 		int size = additions.size();
-		BedColor closestBedColor = BedColor.ofClosest(paintbrushDye);
-		BedColor bedColorRight = null;
-		BedColor bedColorLeft = null;
-		if (closestBedColor != null && StainChoice.of(paintbrushDye) == null) {
+		Material closestBedColor = ColorType.ofClosest(paintbrushDye).getBed();
+		Material bedColorRight = null;
+		Material bedColorLeft = null;
+		if (StainChoice.of(paintbrushDye) == null) {
 			DecorationLang.debug(player, "+ including beds");
 
-			bedColorRight = BedColor.of(bedRight);
-			if (bedColorRight != null && bedColorRight != closestBedColor) {
-				size += 1;
-			} else {
-				bedColorRight = null;
+			if (bedRight != null) {
+				bedColorRight = bedRight.getType();
+				if (bedColorRight != closestBedColor) {
+					size += 1;
+				} else {
+					bedColorRight = null;
+				}
 			}
 
-			bedColorLeft = BedColor.of(bedLeft);
-			if (bedColorLeft != null && bedColorLeft != closestBedColor) {
-				size += 1;
-			} else {
-				bedColorLeft = null;
+			if (bedLeft != null) {
+				bedColorLeft = bedLeft.getType();
+				if (bedColorLeft != closestBedColor) {
+					size += 1;
+				} else {
+					bedColorLeft = null;
+				}
 			}
 		}
 
