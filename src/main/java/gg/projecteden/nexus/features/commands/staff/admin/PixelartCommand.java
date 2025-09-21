@@ -30,8 +30,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Permission(Group.ADMIN)
 public class PixelartCommand extends CustomCommand {
-	private static final MaterialTag SURVIVAL_IGNORE = new MaterialTag(MaterialTag.UNOBTAINABLE).append(Material.NETHERITE_BLOCK);
+	private static final MaterialTag SURVIVAL_IGNORE = new MaterialTag(MaterialTag.UNOBTAINABLE)
+		.append(Material.NETHERITE_BLOCK, Material.DEEPSLATE_EMERALD_ORE);
 
 	public PixelartCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -39,7 +41,6 @@ public class PixelartCommand extends CustomCommand {
 
 	@Path("draw <url> [--survival] [--exclude] [--excludeTags] [--include] [--includeTags]")
 	@Description("Draw a image to your current selection")
-	@Permission(Group.ADMIN)
 	@SuppressWarnings("SuspiciousNameCombination")
 	void blockParty_drawImage(
 		String url,
