@@ -18,6 +18,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -26,6 +28,7 @@ import gg.projecteden.nexus.models.banker.Transaction;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.banker.Transactions;
 import gg.projecteden.nexus.models.shop.Shop;
+import gg.projecteden.nexus.models.shop.Shop.ExchangeType;
 import gg.projecteden.nexus.models.shop.Shop.Product;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.shop.ShopService;
@@ -111,6 +114,26 @@ public class ShopCommand extends CustomCommand implements Listener {
 	@Description("Collect items sold to you or items that didnt fit in your inventory")
 	void collect() {
 		new CollectItemsProvider(player(), null);
+	}
+
+	@Permission(Group.ADMIN)
+	@Path("products create [--price] [--exchangeType] [--amount] [--disabled]")
+	void products_create(
+		@Switch @Arg("1") double price,
+		@Switch @Arg("SELL") ExchangeType exchangeType,
+		@Switch Integer amount,
+		@Switch boolean disabled
+	) {
+		if (exchangeType == ExchangeType.TRADE)
+			error("Unsupported exchange type: " + exchangeType);
+
+		var tool = getToolRequired().clone();
+		tool.setAmount(amount == null ? tool.getAmount() : amount);
+		var product = new Product(uuid(), shopGroup, tool, 0, exchangeType, price);
+		if (disabled) product.setEnabled(false);
+		var shop = service.get(player());
+		shop.getProducts().add(product);
+		service.save(shop);
 	}
 
 	@Confirm

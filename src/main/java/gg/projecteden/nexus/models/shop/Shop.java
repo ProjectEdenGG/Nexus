@@ -216,6 +216,24 @@ public class Shop implements PlayerOwnedObject {
 		)));
 	}
 
+	public void massAddStock(List<ItemStack> contents) {
+		contentsLoop: for (ItemStack content : contents) {
+			if (Nullables.isNullOrAir(content))
+				continue;
+
+			for (var product : products) {
+				if (ItemUtils.isSimilar(product.getItem(), content) && product.getShopGroup() == ShopGroup.of(getWorldGroup())) {
+					product.addStock(content.getAmount());
+					continue contentsLoop;
+				}
+			}
+
+			PlayerUtils.giveItem(getPlayer(), content);
+		}
+
+		products.forEach(product -> product.setEditing(false));
+	}
+
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor

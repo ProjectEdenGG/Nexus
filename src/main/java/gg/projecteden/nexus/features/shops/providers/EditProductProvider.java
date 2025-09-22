@@ -187,21 +187,7 @@ public class EditProductProvider extends ShopProvider {
 
 		@Override
 		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
-			contentsLoop: for (ItemStack content : contents) {
-				if (Nullables.isNullOrAir(content))
-					continue;
-
-				for (var product : shop.getProducts()) {
-					if (ItemUtils.isSimilar(product.getItem(), content) && product.getShopGroup() == group) {
-						product.addStock(content.getAmount());
-						continue contentsLoop;
-					}
-				}
-
-				PlayerUtils.giveItem(player, content);
-			}
-
-			shop.getProducts().forEach(product -> product.setEditing(false));
+			shop.massAddStock(contents);
 			new ShopService().save(shop);
 
 			if (previousMenu != null)
