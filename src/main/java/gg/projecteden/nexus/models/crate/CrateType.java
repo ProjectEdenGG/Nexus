@@ -38,10 +38,17 @@ public enum CrateType {
 		this(itemModelType, titleCharacter, false);
 	}
 
+	final ItemStack OLD_KEY = new ItemBuilder(Material.TRIPWIRE_HOOK)
+		.name("&eCrate Key")
+		.glow()
+		.lore(" ")
+		.lore("&3Type: &e" + StringUtils.camelCase(name()))
+		.lore("&7Use me on the Crate at")
+		.lore("&7spawn to receive a reward")
+		.build();
+
 	public ItemStack getOldKey() {
-		return new ItemBuilder(Material.TRIPWIRE_HOOK).name("&eCrate Key").glow()
-			.lore(" ").lore("&3Type: &e" + StringUtils.camelCase(name()))
-			.lore("&7Use me on the Crate at").lore("&7spawn to receive a reward").build();
+		return OLD_KEY;
 	}
 
 	public ItemStack getKey() {

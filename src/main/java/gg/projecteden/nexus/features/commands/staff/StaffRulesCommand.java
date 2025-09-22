@@ -19,6 +19,7 @@ public class StaffRulesCommand extends CustomCommand {
 	void run() {
 		send("&b                 Staff Rules");
 		line();
+		send("&4> &3Keep staff chats private.");
 		send("&4> &3No swearing in global chat. You are a role model.");
 		send("&4> &3Never lash out at players because you are not in a good mood. If you feel you are not in the right state of mind at the moment, ask another staff member to handle it.");
 		send("&4> &3Do not abuse your powers.");
