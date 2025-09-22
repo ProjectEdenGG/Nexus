@@ -26,7 +26,7 @@ public class TournamentCommand extends CustomCommand {
 
 	@Path("create <id>")
 	void create(String id) {
-		tournament = new Tournament(id, location().toCenterLocation());
+		tournament = new Tournament(id, location().subtract(0, 1, 0).toCenterLocation());
 		send("&3Created new Tournament: &e" + tournament.getId());
 	}
 
@@ -69,7 +69,8 @@ public class TournamentCommand extends CustomCommand {
 		checkFinished();
 
 		Match match = tournament.getCurrentMatch();
-		send("&3Next match: " + match.getDisplay());
+		send("&3Current match:");
+		send(match.getDisplay());
 	}
 
 	@Path("setWinningPoint <value>")
@@ -111,12 +112,46 @@ public class TournamentCommand extends CustomCommand {
 		tournament = null;
 	}
 
-	@Path("display")
-	void display() {
-		if (tournament == null)
-			error("Tournament not created");
+	//
 
-		tournament.printBracket(player());
+	@Path("test12")
+	void test12() {
+		runCommand("mcmd blockcenter");
+		runCommand("tourny create Test");
+		runCommand("tourny add Wakka");
+		runCommand("tourny add Griffin");
+		runCommand("tourny add Valkyrie");
+		runCommand("tourny add Blast");
+		runCommand("tourny add Bri");
+		runCommand("tourny add Hoots");
+		runCommand("tourny add ghastery");
+		runCommand("tourny add cyn");
+		runCommand("tourny add maxalex");
+		runCommand("tourny add esian");
+		runCommand("tourny add axo");
+		runCommand("tourny add leah");
+		runCommand("tourny start");
+	}
+
+	@Path("test14")
+	void test14() {
+		runCommand("mcmd blockcenter");
+		runCommand("tourny create Test");
+		runCommand("tourny add Wakka");
+		runCommand("tourny add Griffin");
+		runCommand("tourny add Valkyrie");
+		runCommand("tourny add Blast");
+		runCommand("tourny add Bri");
+		runCommand("tourny add Hoots");
+		runCommand("tourny add ghastery");
+		runCommand("tourny add cyn");
+		runCommand("tourny add maxalex");
+		runCommand("tourny add esian");
+		runCommand("tourny add axo");
+		runCommand("tourny add leah");
+		runCommand("tourny add rohan");
+		runCommand("tourny add power");
+		runCommand("tourny start");
 	}
 
 	//

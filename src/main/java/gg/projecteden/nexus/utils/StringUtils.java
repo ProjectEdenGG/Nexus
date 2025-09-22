@@ -792,6 +792,15 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 					return dFI;
 			return DefaultFontInfo.DEFAULT;
 		}
+
+		public static int getLength(String string) {
+			int length = 0;
+			for (char ch : string.toCharArray()) {
+				length += getDefaultFontInfo(ch).getLength();
+			}
+
+			return length;
+		}
 	}
 
 	public static void sendCenteredMessage(@NonNull Player player, @NonNull String message) {
