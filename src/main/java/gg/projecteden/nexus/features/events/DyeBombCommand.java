@@ -110,11 +110,13 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 		Location location = player.getLocation().add(0, 1.5, 0);
 		location.add(player.getLocation().getDirection());
 
-		Snowball snowball = (Snowball) player.getWorld().spawnEntity(location, EntityType.SNOWBALL);
-		snowball.setItem(itemCopy);
-		snowball.setVelocity(location.getDirection().multiply(1.2));
-		snowball.setShooter(player);
-		snowball.setMetadata(FireworkLauncher.METADATA_KEY_DAMAGE, new FixedMetadataValue(Nexus.getInstance(), false));
+		player.getWorld().spawn(location, Snowball.class, snowball -> {
+			snowball.setItem(itemCopy);
+			snowball.setVelocity(location.getDirection().multiply(1.2));
+			snowball.setShooter(player);
+			snowball.setMetadata(FireworkLauncher.METADATA_KEY_DAMAGE, new FixedMetadataValue(Nexus.getInstance(), false));
+		});
+
 
 		player.playSound(player.getLocation(), Sound.ENTITY_EGG_THROW, 0.5F, 1F);
 	}

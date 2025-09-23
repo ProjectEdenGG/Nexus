@@ -67,10 +67,11 @@ public class ThrowableBrick implements Listener {
 		Location location = player.getLocation().add(0, 1.5, 0);
 		location.add(player.getLocation().getDirection());
 
-		Snowball snowball = (Snowball) player.getWorld().spawnEntity(location, EntityType.SNOWBALL);
-		snowball.setItem(new ItemBuilder(MODEL).build());
-		snowball.setVelocity(location.getDirection().multiply(0.8));
-		snowball.setShooter(player);
+		player.getWorld().spawn(location, Snowball.class, snowball -> {
+			snowball.setItem(new ItemBuilder(MODEL).build());
+			snowball.setVelocity(location.getDirection().multiply(0.8));
+			snowball.setShooter(player);
+		});
 
 		new SoundBuilder(Sound.ENTITY_WITCH_THROW).location(player.getLocation()).volume(0.5).pitch(0.2).play();
 	}
