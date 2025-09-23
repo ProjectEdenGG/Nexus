@@ -8,6 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.StringUtils.ProgressBar;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.NonNull;
 import org.bukkit.Material;
@@ -60,6 +61,11 @@ public class ItemChecklistCommand extends CustomCommand {
 					if (isNotNullOrAir(content))
 						gathered.put(content.getType(), gathered.getOrDefault(content.getType(), 0) + content.getAmount());
 
+		Map<Material, Integer> gatheredFiltered = new HashMap<>();
+		for (var material : gathered.keySet())
+			if (list.containsKey(material))
+				gatheredFiltered.put(material, gathered.get(material));
+
 		Map<Material, Integer> diff = new HashMap<>(list);
 		for (var material : list.keySet())
 			diff.put(material, list.get(material) * -1);
@@ -71,6 +77,24 @@ public class ItemChecklistCommand extends CustomCommand {
 			if (diff.get(material) == 0)
 				diff.remove(material);
 
+		int totalGoal = list.values().stream().mapToInt(i -> i).sum();
+		int totalProgress = gatheredFiltered.values().stream().mapToInt(i -> i).sum();
+		var totalProgressBar = ProgressBar.builder()
+			.length(100)
+			.seamless(true)
+			.goal(totalGoal)
+			.progress(totalProgress)
+			.build();
+
+		int materialsGoal = list.size();
+		int materialsProgress = gatheredFiltered.size();
+		var materialsProgressBar  = ProgressBar.builder()
+			.length(100)
+			.seamless(true)
+			.goal(materialsGoal)
+			.progress(materialsProgress)
+			.build();
+
 		var sorted = reverse ? Utils.sortByValueReverse(diff) : Utils.sortByValue(diff);
 
 		CACHE.put(code, file);
@@ -78,6 +102,14 @@ public class ItemChecklistCommand extends CustomCommand {
 		if (sorted.isEmpty()) {
 			send(PREFIX + "&a✔ All items accounted for!");
 			return;
+		}
+
+		if (page == 1) {
+			line();
+			send(PREFIX + "Progress:");
+			send(totalProgressBar + " &7Total: " + totalProgress + "/" + totalGoal);
+			send(materialsProgressBar + " &7Materials: " + materialsProgress + "/" + materialsGoal);
+			line();
 		}
 
 		new Paginator<Material>()
