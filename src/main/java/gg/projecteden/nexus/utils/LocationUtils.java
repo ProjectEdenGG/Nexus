@@ -492,6 +492,7 @@ public class LocationUtils {
 
 	public static boolean blockLocationsEqual(@Nullable Location location1, @Nullable Location location2) {
 		if (location1 == null || location2 == null) return false;
+		if (location1.getWorld() == null || location2.getWorld() == null) return false;
 		return location1.getWorld().equals(location2.getWorld()) &&
 				location1.getBlockX() == location2.getBlockX() &&
 				location1.getBlockY() == location2.getBlockY() &&
