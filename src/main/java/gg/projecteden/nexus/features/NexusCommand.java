@@ -44,9 +44,12 @@ import gg.projecteden.nexus.utils.Tasks.QueuedTask;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
+import net.minecraft.server.MinecraftServer;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -307,6 +310,13 @@ public class NexusCommand extends CustomCommand implements Listener {
 	void feature_reload(Feature feature) {
 		feature.reload();
 		send(PREFIX + "Reloaded " + feature.getName());
+	}
+
+	@Path("saveAll [--flush]")
+	void saveAll(@Switch boolean flush) {
+		MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
+		server.saveEverything(false, flush, true);
+		send("Saved all");
 	}
 
 	@TabCompleterFor(Feature.class)

@@ -27,20 +27,30 @@ public class ItemChecklistCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<paste> [radius] [--reverse] [--page]")
+	@Path("<paste> [radius] [--reverse] [--page] [--clearCache]")
 	@Description("Show an item checklist from contents of nearby containers")
 	void run(
 		String paste,
 		@Arg(value = "10", min = 2, max = 25) int radius,
 		@Arg("1") @Switch int page,
-		@Switch boolean reverse
+		@Switch boolean reverse,
+		@Switch boolean clearCache
 	) {
 		var code = paste.replace("https://paste.projecteden.gg/raw/", "");
-		var file = CACHE.computeIfAbsent(code, $ -> StringUtils.getPaste(code));
+
+		if (clearCache)
+			CACHE.remove(code);
+
+		var file = CACHE.getOrDefault(code, StringUtils.getPaste(code));
 
 		Map<Material, Integer> list = new HashMap<>();
-		for (var line : file.split("\n"))
-			list.put(Material.matchMaterial(line.split(" ", 2)[1]), Integer.parseInt(line.split(" ")[0]));
+		for (var line : file.split("\n")) {
+			String input = line.split(" ", 2)[1];
+			Material material = Material.matchMaterial(input);
+			if (material == null)
+				error("Invalid material: " + input);
+			list.put(material, Integer.parseInt(line.split(" ")[0]));
+		}
 
 		Map<Material, Integer> gathered = new HashMap<>();
 
@@ -62,6 +72,8 @@ public class ItemChecklistCommand extends CustomCommand {
 				diff.remove(material);
 
 		var sorted = reverse ? Utils.sortByValueReverse(diff) : Utils.sortByValue(diff);
+
+		CACHE.put(code, file);
 
 		if (sorted.isEmpty()) {
 			send(PREFIX + "&a✔ All items accounted for!");
