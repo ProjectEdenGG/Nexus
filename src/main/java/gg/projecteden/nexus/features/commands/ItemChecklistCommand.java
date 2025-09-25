@@ -18,6 +18,7 @@ import org.bukkit.block.Container;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 
 import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
 
@@ -44,13 +45,13 @@ public class ItemChecklistCommand extends CustomCommand {
 
 		var file = CACHE.getOrDefault(code, StringUtils.getPaste(code));
 
-		Map<Material, Integer> list = new HashMap<>();
+		Map<Material, Integer> needed = new HashMap<>();
 		for (var line : file.split("\n")) {
 			String input = line.split(" ", 2)[1];
 			Material material = Material.matchMaterial(input);
 			if (material == null)
 				error("Invalid material: " + input);
-			list.put(material, Integer.parseInt(line.split(" ")[0]));
+			needed.put(material, Integer.parseInt(line.split(" ")[0]));
 		}
 
 		Map<Material, Integer> gathered = new HashMap<>();
@@ -63,21 +64,21 @@ public class ItemChecklistCommand extends CustomCommand {
 
 		Map<Material, Integer> gatheredFiltered = new HashMap<>();
 		for (var material : gathered.keySet())
-			if (list.containsKey(material))
-				gatheredFiltered.put(material, gathered.get(material));
+			if (needed.containsKey(material))
+				gatheredFiltered.put(material, Math.min(gathered.get(material), needed.get(material)));
 
-		Map<Material, Integer> diff = new HashMap<>(list);
-		for (var material : list.keySet())
-			diff.put(material, list.get(material) * -1);
+		Map<Material, Integer> diff = new HashMap<>(needed);
+		for (var material : needed.keySet())
+			diff.put(material, needed.get(material) * -1);
 
 		for (var material : gathered.keySet())
-			diff.put(material, gathered.get(material) - list.getOrDefault(material, 0));
+			diff.put(material, gathered.get(material) - needed.getOrDefault(material, 0));
 
 		for (var material : new HashSet<>(diff.keySet()))
 			if (diff.get(material) == 0)
 				diff.remove(material);
 
-		int totalGoal = list.values().stream().mapToInt(i -> i).sum();
+		int totalGoal = needed.values().stream().mapToInt(i -> i).sum();
 		int totalProgress = gatheredFiltered.values().stream().mapToInt(i -> i).sum();
 		var totalProgressBar = ProgressBar.builder()
 			.length(100)
@@ -86,8 +87,10 @@ public class ItemChecklistCommand extends CustomCommand {
 			.progress(totalProgress)
 			.build();
 
-		int materialsGoal = list.size();
-		int materialsProgress = gatheredFiltered.size();
+		int materialsGoal = needed.size();
+		int materialsProgress = (int) gatheredFiltered.keySet().stream()
+			.filter(material -> Objects.equals(gatheredFiltered.get(material), needed.get(material)))
+			.count();
 		var materialsProgressBar  = ProgressBar.builder()
 			.length(100)
 			.seamless(true)
