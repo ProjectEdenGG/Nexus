@@ -8,6 +8,7 @@ import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -127,6 +128,9 @@ public class MagnetEnchant extends CustomEnchant implements Listener {
 	}
 
 	private static int getMaxLevel(Player player) {
+		if (Dev.GRIFFIN.is(player) || Dev.DOM.is(player))
+			return 5;
+
 		if (Enchant.MAGNET == null)
 			return 0;
 
