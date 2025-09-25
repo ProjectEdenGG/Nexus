@@ -23,7 +23,7 @@ public class HappyGhastSprint implements Listener {
 	static {
 		Tasks.repeat(0, 1, () -> {
 			for (var world : Bukkit.getWorlds())
-				for (var entity : world.getEntities())
+				for (var entity : world.getEntitiesByClass(HappyGhast.class))
 					setHappyGhastSpeed(entity);
 		});
 	}
