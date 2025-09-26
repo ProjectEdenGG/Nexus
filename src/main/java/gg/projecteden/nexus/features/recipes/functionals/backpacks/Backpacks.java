@@ -2,6 +2,9 @@ package gg.projecteden.nexus.features.recipes.functionals.backpacks;
 
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.events.y2025.halloween25.Halloween25;
+import gg.projecteden.nexus.features.events.y2025.halloween25.HalloweenCandyBasket;
+import gg.projecteden.nexus.features.events.y2025.halloween25.HalloweenCandyBasket.CandyBasketTier;
 import gg.projecteden.nexus.features.listeners.events.fake.FakePlayerInteractEvent;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
@@ -17,6 +20,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDe
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Backpack;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.CandyBasket;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.Debug;
@@ -428,10 +432,13 @@ public class Backpacks extends FunctionalRecipe {
 			if (event.getClick() == ClickType.NUMBER_KEY)
 				item = player.getInventory().getContents()[event.getHotbarButton()];
 
-			if (!MaterialTag.BACKPACK_DENY.isTagged(item) && !isBackpack(item))
+			if (MaterialTag.BACKPACK_DENY.isTagged(item) || isBackpack(item)) {
+				event.setCancelled(true);
 				return;
+			}
 
-			event.setCancelled(true);
+			if (getTier(backpack) == BackpackTier.HALLOWEEN && !Halloween25.isCandy(item))
+				event.setCancelled(true);
 		}
 
 		@EventHandler
@@ -459,6 +466,9 @@ public class Backpacks extends FunctionalRecipe {
 				handleError(contents);
 				return;
 			}
+
+			if (getTier(backpack) == BackpackTier.HALLOWEEN)
+				HalloweenCandyBasket.handleClose(backpack, contents);
 
 			ItemUtils.setNBTContentsOfNonInventoryItem(backpack, contents);
 			if (frame != null)
@@ -502,7 +512,13 @@ public class Backpacks extends FunctionalRecipe {
 		IRON(4),
 		GOLD(5),
 		DIAMOND(6),
-		NETHERITE(6);
+		NETHERITE(6),
+		HALLOWEEN(3) {
+			@Override
+			public String getModel() {
+				return super.getModel();
+			}
+		};
 
 		final int rows;
 
@@ -516,7 +532,11 @@ public class Backpacks extends FunctionalRecipe {
 
 		public static void initDecoration() {
 			for (BackpackTier tier : values()) {
-				new Backpack(tier);
+				if (tier != HALLOWEEN)
+					new Backpack(tier);
+				else
+					for (CandyBasketTier candyBasketTier : CandyBasketTier.values())
+						new CandyBasket(candyBasketTier);
 			}
 		}
 	}

@@ -1494,6 +1494,10 @@ public enum ItemModelType {
 	VULAN_WATER_LANTERN_LARGE("events/vulan24/water_lantern_big"),
 	VULAN_WATER_LANTERN_LARGE_NO_BASE("events/vulan24/water_lantern_big_without_board"),
 	VULAN_WATER_LANTERN_SMALL_NO_BASE("events/vulan24/water_lantern_without_board"),
+	CANDY_BASKET_EMPTY("events/halloween25/candy_basket/empty"),
+	CANDY_BASKET_QUARTER("events/halloween25/candy_basket/quarter"),
+	CANDY_BASKET_HALF("events/halloween25/candy_basket/half"),
+	CANDY_BASKET_FULL("events/halloween25/candy_basket/full"),
 	// food
 	CAKES_BROWNIE("food/cakes/brownie", Material.PUMPKIN_PIE),
 	CAKES_CHRISTMAS_PUDDING("food/cakes/christmas_pudding", Material.PUMPKIN_PIE),

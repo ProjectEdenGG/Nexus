@@ -6,12 +6,15 @@ import gg.projecteden.nexus.features.recipes.functionals.backpacks.FixBackpackCo
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.bukkit.inventory.ItemStack;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Backpack extends DecorationConfig {
 	@Getter
-	private final BackpackTier tier;
+	BackpackTier tier;
 
 	public Backpack(BackpackTier tier) {
 		this.tier = tier;
