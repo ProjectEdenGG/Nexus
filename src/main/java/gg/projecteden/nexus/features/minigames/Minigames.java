@@ -14,6 +14,7 @@ import gg.projecteden.nexus.features.minigames.lobby.TickPerks;
 import gg.projecteden.nexus.features.minigames.lobby.exchange.MGMExchange;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
+import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.MatchStatistics;
@@ -137,7 +138,7 @@ public class Minigames extends Feature implements Listener {
 	@Override
 	public void onStop() {
 		new ArrayList<>(MatchManager.getAll()).forEach(Match::end);
-		ArenaManager.write();
+		ArenaManager.getAll().forEach(Arena::onShutdown);
 		ArenaManager.getAll().clear();
 		MatchManager.getAll().clear();
 	}

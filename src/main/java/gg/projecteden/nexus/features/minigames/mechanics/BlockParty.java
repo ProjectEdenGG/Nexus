@@ -84,6 +84,7 @@ import org.jaudiotagger.tag.TagOptionSingleton;
 import org.jetbrains.annotations.NotNull;
 import org.joml.AxisAngle4d;
 import org.joml.Matrix4f;
+import tech.blastmc.lights.LxBoard;
 
 import java.io.File;
 import java.io.IOException;
@@ -1321,6 +1322,7 @@ public class BlockParty extends TeamlessMechanic {
 
 	static {
 		read(false);
+		LxBoard.initFileStore();
 	}
 
 	// region Temp stats tracking
@@ -1345,4 +1347,7 @@ public class BlockParty extends TeamlessMechanic {
 			matchData.getWinners().forEach(winner -> match.getMatchStatistics().award(MatchStatistics.WINS, winner));
 	}
 	// endregion
+
+
+
 }

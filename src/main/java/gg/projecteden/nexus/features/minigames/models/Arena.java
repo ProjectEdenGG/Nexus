@@ -339,4 +339,6 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 		return Math.min(winningScore, Math.round((players - minPlayers) / (maxPlayers - minPlayers) * (maxWinningScore - minWinningScore) + minWinningScore));
 	}
 
+	public void onShutdown() { }
+
 }
