@@ -25,6 +25,7 @@ import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchStatistics;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
+import gg.projecteden.nexus.features.minigames.models.arenas.BlockPartyArena;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
@@ -56,6 +57,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -85,6 +87,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.AxisAngle4d;
 import org.joml.Matrix4f;
 import tech.blastmc.lights.LxBoard;
+import tech.blastmc.lights.cue.CueTimesBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -148,6 +151,7 @@ public class BlockParty extends TeamlessMechanic {
 		updateEqWalls(match, 0);
 		resetDiscoBalls(match);
 		startDiscoBallAnimation(match);
+		lightsStartWaitLobby(match);
 
 		setupPowerUps(match);
 	}
@@ -216,6 +220,7 @@ public class BlockParty extends TeamlessMechanic {
 	public void onBegin(@NotNull MatchBeginEvent event) {
 		super.onBegin(event);
 		waitWithMusic(event.getMatch());
+		lightsNoColor(event.getMatch());
 
 		event.getMatch().getAllMinigamers().forEach(this::sendMusicLink);
 	}
@@ -249,6 +254,7 @@ public class BlockParty extends TeamlessMechanic {
 		updateEqWalls(event.getMatch(), 0);
 
 		stopDiscoBallAnimation(event.getMatch());
+		lightsOut(event.getMatch());
 
 		giveWinnerStats(event.getMatch());
 		super.onEnd(event);
@@ -339,6 +345,7 @@ public class BlockParty extends TeamlessMechanic {
 		pasteFloor(match, RandomUtils.randomElement(unused));
 		playSong(match);
 		waitWithMusic(match);
+		lightsNoColor(match);
 
 		startEqAnimation(match);
 		setBlockInHand(match, null);
@@ -409,6 +416,8 @@ public class BlockParty extends TeamlessMechanic {
 		BlockPartyClientMessage.to(getListenerUUIDs(match)).block(matchData.getBlock().name()).send();
 		setArenaColor(match);
 		setBlockInHand(match, matchData.getBlock());
+
+		lightsSelectColor(match, ColorType.of(matchData.getBlock()));
 	}
 
 	private static Material getRandomFloorColor(Match match) {
@@ -519,6 +528,7 @@ public class BlockParty extends TeamlessMechanic {
 		});
 		stopDiscoBallAnimation(match);
 		stopEqAnimation(match);
+		lightsStopEffect(match);
 		removePowerUp(match);
 
 		waitAfterClear(match);
@@ -1348,6 +1358,43 @@ public class BlockParty extends TeamlessMechanic {
 	}
 	// endregion
 
+	// region Lights
+	private LxBoard getBoard(Match match) {
+		BlockPartyArena arena = match.getArena();
+		return arena.getLights();
+	}
 
+	private void lightsStartWaitLobby(Match match) {
+		getBoard(match).goToCue(1);
+	}
+
+	private void lightsOut(Match match) {
+		getBoard(match).goToCue(0);
+	}
+
+	private void lightsSelectColor(Match match, ColorType color) {
+		DyeColor dyeColor = color.getDyeColor();
+		int cue = (dyeColor.ordinal() * 5) + 10;
+		getBoard(match).goToCue(cue, new CueTimesBuilder()
+			.intensity(0)
+			.color(0)
+			.direction(1.25)
+			.autoFollow(0)
+			.build());
+	}
+
+	private void lightsNoColor(Match match) {
+		getBoard(match).goToCue(5, new CueTimesBuilder()
+			.color(.25)
+			.intensity(0)
+			.direction(1)
+			.build());
+	}
+
+	private void lightsStopEffect(Match match) {
+		getBoard(match).go();
+	}
+
+	// endregion
 
 }

@@ -48,8 +48,8 @@ public class BlockPartyArena extends Arena {
 				.offsetType(OffsetType.OFFSET_ORDERED)
 				.sampler(tick -> {
 					final int PERIOD_TICKS = 80;
-					final int YAW_AMP_DEG = 60;
-					final int PITCH_AMP_DEG = 25;
+					final int YAW_AMP_DEG = 80;
+					final int PITCH_AMP_DEG = 35;
 					final double PHASE_SHIFT = Math.PI / 2.0;
 
 					int t = Math.floorMod(tick, PERIOD_TICKS);
@@ -77,6 +77,31 @@ public class BlockPartyArena extends Arena {
 				})
 				.build());
 
+		this.lights.getEffectRegistry().register(
+			new EffectBuilder()
+				.id(3)
+				.effectType(EffectType.INTENSITY)
+				.offsetType(OffsetType.OFFSET_RANDOM)
+				.durationInSeconds(6)
+				.sampler(tick -> {
+					final int MIN = 25;
+					final int MAX = 60;
+					final int PERIOD_TICKS = 120;
+
+					double phase = (tick % PERIOD_TICKS) / (double) PERIOD_TICKS;
+					double A = (MAX - MIN) / 2.0;
+					double C = (MAX + MIN) / 2.0;
+					double v = C + A * Math.sin(2 * Math.PI * phase - Math.PI / 2.0);
+
+					int level = (int)Math.round(v);
+					if (level < MIN) level = MIN;
+					if (level > MAX) level = MAX;
+
+					return java.util.List.of(new Permutation.Intensity(level));
+				})
+				.build()
+		);
+
 		this.lights.setPlugin(Nexus.getInstance());
 		Tasks.wait(1, () -> this.lights.goToCue(0));
 	}
@@ -102,9 +127,15 @@ public class BlockPartyArena extends Arena {
 			.channels(new ChannelList())
 			.group(new Group(1, List.of(201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216)))
 			.group(new Group(2, List.of(101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116)))
+			.cue(new CueBuilder(1)
+				.group(2, new Effect(3))
+				.times(new CueTimesBuilder()
+					.intensity(.25)
+					.build())
+				.build())
 			.cue(new CueBuilder(5)
 				.group(1, new Yaw(90), new Pitch(70))
-				.group(2, new Effect(1), new Effect(2), new Intensity(100))
+				.group(2, new Effect(1), new Effect(2), new StopEffect(3), new Intensity(100))
 				.times(new CueTimesBuilder()
 					.color(.25)
 					.intensity(.25)
@@ -115,8 +146,8 @@ public class BlockPartyArena extends Arena {
 		for (DyeColor color : DyeColor.values()) {
 			int id = (color.ordinal() * 5) + 10;
 			builder.cue(new CueBuilder(id)
-				.group(1, new Yaw(90), new Pitch(-70), new Color(color.getColor().asRGB()), new Intensity(100))
-				.group(2, new Effect(1), new Effect(2))
+				.group(1, new Yaw(90), new Pitch(-70), new Color(getColor(color)), new Intensity(100))
+				.group(2, new Effect(1), new Effect(2), new Intensity(100))
 				.times(new CueTimesBuilder()
 					.intensity(0)
 					.color(0)
@@ -126,7 +157,7 @@ public class BlockPartyArena extends Arena {
 				.build()
 			);
 			builder.cue(new CueBuilder(id + 1)
-				.group(2, new Color(color.getColor().asRGB()))
+				.group(2, new Color(getColor(color)))
 				.times(new CueTimesBuilder()
 					.color(.25)
 					.build())
@@ -142,6 +173,16 @@ public class BlockPartyArena extends Arena {
 		}
 
 		return builder.build();
+	}
+
+	private static int getColor(DyeColor color) {
+		return switch (color) {
+			case WHITE -> DyeColor.BLACK.getColor().asRGB();
+			case LIGHT_GRAY -> DyeColor.GRAY.getColor().asRGB();
+			case GRAY -> DyeColor.LIGHT_GRAY.getColor().asRGB();
+			case BLACK -> DyeColor.WHITE.getColor().asRGB();
+			default -> color.getColor().asRGB();
+		};
 	}
 
 }

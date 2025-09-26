@@ -251,6 +251,11 @@ public class BlockPartyCommand extends CustomCommand {
 		}
 	}
 
+	@Path("lights cue <cue>")
+	void cue(int cueNum) {
+		getBoardRequired().goToCue(cueNum);
+	}
+
 	@Path("lights out")
 	void lightsOut() {
 		getBoardRequired().goToCue(0);
