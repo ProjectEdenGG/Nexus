@@ -26,6 +26,7 @@ public enum ToolSkin implements EquipmentSkinType {
 	MECHANICAL,
 	MYTHRIL,
 	SCULK,
+	SHADOW,
 	VINES;
 
 	public String getBaseModel() {
