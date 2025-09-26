@@ -7,14 +7,11 @@ import gg.projecteden.nexus.features.recipes.functionals.backpacks.FixBackpackCo
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public class CandyBasket extends Backpack {
 
-	@Getter
-	final BackpackTier tier;
 	final CandyBasketTier candyBasketTier;
 
 	public CandyBasket(CandyBasketTier candyBasketTier) {

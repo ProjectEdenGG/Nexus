@@ -516,7 +516,7 @@ public class Backpacks extends FunctionalRecipe {
 		HALLOWEEN(3) {
 			@Override
 			public String getModel() {
-				return super.getModel();
+				return ItemModelType.CANDY_BASKET_EMPTY.getModel();
 			}
 		};
 
