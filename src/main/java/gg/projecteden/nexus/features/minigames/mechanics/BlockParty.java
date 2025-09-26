@@ -450,7 +450,7 @@ public class BlockParty extends TeamlessMechanic {
 				}).start();
 	}
 
-	private static final Map<ColorType, String> CONCRETE_CHAT_COLOR = new HashMap<>() {{
+	public static final Map<ColorType, String> CONCRETE_CHAT_COLOR = new HashMap<>() {{
 		put(ColorType.WHITE, "#f2f8f9");
 		put(ColorType.ORANGE, "#ff9000");
 		put(ColorType.MAGENTA, "#ce3ac1");

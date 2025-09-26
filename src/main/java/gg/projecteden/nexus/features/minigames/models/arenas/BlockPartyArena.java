@@ -44,12 +44,12 @@ public class BlockPartyArena extends Arena {
 			new EffectBuilder()
 				.id(1)
 				.effectType(EffectType.DIRECTION)
-				.durationInSeconds(4)
+				.durationInSeconds(6)
 				.offsetType(OffsetType.OFFSET_ORDERED)
 				.sampler(tick -> {
-					final int PERIOD_TICKS = 80;
+					final int PERIOD_TICKS = 120;
 					final int YAW_AMP_DEG = 80;
-					final int PITCH_AMP_DEG = 35;
+					final int PITCH_AMP_DEG = 70;
 					final double PHASE_SHIFT = Math.PI / 2.0;
 
 					int t = Math.floorMod(tick, PERIOD_TICKS);
