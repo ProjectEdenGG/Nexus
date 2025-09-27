@@ -2,8 +2,16 @@ package gg.projecteden.nexus.features.listeners;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
+import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.bukkit.FluidCollisionMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -12,6 +20,7 @@ import org.bukkit.block.Container;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.craftbukkit.block.CraftChest;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -31,11 +40,6 @@ import org.bukkit.util.RayTraceResult;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Bugs:
- *  - You can spin and rotate item, don't retrace... get the item behind
- *  - Can't dye signs on chests
- */
 public class ContainerPassthrough implements Listener {
 
 	private static final Set<EntityType> PASSTHROUGH_ENTITIES = new HashSet<>();
@@ -68,13 +72,12 @@ public class ContainerPassthrough implements Listener {
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 		if (event.getHand() == EquipmentSlot.OFF_HAND) return;
 		if (event.getClickedBlock() == null) return;
+		if (!PASSTHROUGH_BLOCKS.contains(event.getClickedBlock().getType())) return;
 
 		if (event.getPlayer().isSneaking()) {
 			handleSneak(event);
 			return;
 		}
-
-		if (!PASSTHROUGH_BLOCKS.contains(event.getClickedBlock().getType())) return;
 
 		Block behind = event.getClickedBlock().getRelative(event.getBlockFace().getOppositeFace());
 		if (!(behind.getState() instanceof Container container)) return;
@@ -137,6 +140,17 @@ public class ContainerPassthrough implements Listener {
 	}
 
 	private void handleSneak(PlayerInteractEvent event) {
+		if (Nullables.isNullOrAir(event.getItem()))
+			return;
+
+		this.ignoreInteractEvents = true;
+		event.getPlayer().setSneaking(false);
+		Location loc = event.getClickedBlock().getLocation();
+		BlockHitResult result = new BlockHitResult(new Vec3(loc.x(), loc.y(), loc.z()), Direction.valueOf(event.getBlockFace().name()), NMSUtils.toNMS(loc), false);
+		ServerboundUseItemOnPacket packet = new ServerboundUseItemOnPacket(InteractionHand.MAIN_HAND, result, 0);
+		packet.handle(((CraftPlayer) event.getPlayer()).getHandle().connection);
+		event.getPlayer().setSneaking(true);
+		this.ignoreInteractEvents = false;
 
 	}
 
