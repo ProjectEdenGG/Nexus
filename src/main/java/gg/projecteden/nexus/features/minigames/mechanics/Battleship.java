@@ -12,7 +12,6 @@ import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
-import gg.projecteden.nexus.features.minigames.models.MatchStatistics;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchStatisticsClass;
@@ -637,10 +636,6 @@ public class Battleship extends TeamMechanic {
 
 		if (matchData.getWinnerTeam() != null)
 			match.broadcast(matchData.getWinnerTeam().getColoredName() + " &3won!");
-
-		matchData.getWinnerTeam().getMinigamers(match).forEach(winner -> {
-			match.getMatchStatistics().award(MatchStatistics.WINS, winner);
-		});
 
 		Tasks.wait(TickTime.SECOND.x(10), () -> super.end(match));
 	}
