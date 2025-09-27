@@ -51,7 +51,7 @@ public class SpeedCommand extends CustomCommand {
 	@Description("Set your fly speed")
 	void fly(float speed, @Arg(value = "self", permission = Group.SENIOR_STAFF) Player player) {
 		speed = validateSpeed(player, speed);
-		SpeedType.FLY.set(player, speed);
+		SpeedType.FLY.set(player, speed, event.getOriginalMessage());
 		tell(speed, player, "Fly");
 	}
 
@@ -59,7 +59,7 @@ public class SpeedCommand extends CustomCommand {
 	@Description("Set your walk speed")
 	void walk(float speed, @Arg(value = "self", permission = Group.SENIOR_STAFF) Player player) {
 		speed = validateSpeed(player, speed);
-		SpeedType.WALK.set(player, speed);
+		SpeedType.WALK.set(player, speed, event.getOriginalMessage());
 		tell(speed, player, "Walk");
 	}
 
@@ -67,28 +67,28 @@ public class SpeedCommand extends CustomCommand {
 	@Description("Set both your fly and walk speed")
 	void both(float speed, @Arg(value = "self", permission = Group.SENIOR_STAFF) Player player) {
 		speed = validateSpeed(player, speed);
-		setSpeed(player, speed);
+		setSpeed(player, speed, event.getOriginalMessage());
 		tell(speed, player, "Fly and walk");
 	}
 
 	@Path("fly reset [player]")
 	@Description("Reset your fly speed")
 	void fly(@Arg(value = "self", permission = Group.SENIOR_STAFF) Player player) {
-		SpeedType.FLY.reset(player);
+		SpeedType.FLY.reset(player, event.getOriginalMessage());
 		tellReset(player, "Fly");
 	}
 
 	@Path("walk reset [player]")
 	@Description("Reset your walk speed")
 	void walk(@Arg(value = "self", permission = Group.SENIOR_STAFF) Player player) {
-		SpeedType.WALK.reset(player);
+		SpeedType.WALK.reset(player, event.getOriginalMessage());
 		tellReset(player, "Walk");
 	}
 
 	@Path("(r|reset) [player]")
 	@Description("Reset your fly and walk speed")
 	void reset(@Arg(value = "self", permission = Group.SENIOR_STAFF) Player player) {
-		resetSpeed(player);
+		resetSpeed(player, event.getOriginalMessage());
 		tellReset(player, "Fly and walk");
 	}
 
@@ -121,14 +121,14 @@ public class SpeedCommand extends CustomCommand {
 
 	// Static helpers
 
-	public static void setSpeed(Player player, float speed) {
-		SpeedType.FLY.set(player, speed);
-		SpeedType.WALK.set(player, speed);
+	public static void setSpeed(Player player, float speed, String reason) {
+		SpeedType.FLY.set(player, speed, reason);
+		SpeedType.WALK.set(player, speed, reason);
 	}
 
-	public static void resetSpeed(Player player) {
-		SpeedType.WALK.reset(player);
-		SpeedType.FLY.reset(player);
+	public static void resetSpeed(Player player, String reason) {
+		SpeedType.WALK.reset(player, reason);
+		SpeedType.FLY.reset(player, reason);
 	}
 
 	@AllArgsConstructor
@@ -146,16 +146,16 @@ public class SpeedCommand extends CustomCommand {
 			return getter.apply(player);
 		}
 
-		public void set(Player player, float speed) {
+		public void set(Player player, float speed, String reason) {
 			if (!new SpeedChangeEvent(player, this, getter.apply(player), speed).callEvent())
 				return;
 
 			setter.accept(player, getRealMoveSpeed(speed));
-			IOUtils.fileAppend("cheats", Nickname.of(player) + " set their speed to " + StringUtils.getDf().format(speed) + " at " + StringUtils.xyzw(player.getLocation()));
+			IOUtils.fileAppend("cheats", Nickname.of(player) + " set their " + name().toLowerCase() + " speed to " + StringUtils.getDf().format(speed) + " at " + StringUtils.xyzw(player.getLocation()) + " | reason: " + reason);
 		}
 
-		public void reset(Player player) {
-			set(player, 1);
+		public void reset(Player player, String reason) {
+			set(player, 1, reason);
 		}
 
 		private float getRealMoveSpeed(final float speed) {

@@ -119,7 +119,7 @@ public class ParkourListener implements Listener {
 						PlayerUtils.giveItem(user, RESET_ITEM);
 				}
 				FlyCommand.off(player, ParkourListener.class);
-				SpeedCommand.resetSpeed(player);
+				SpeedCommand.resetSpeed(player, "Parkour#start");
 				run.setLastCheckpointTime(LocalDateTime.now());
 				run.setPlaying(true);
 			}

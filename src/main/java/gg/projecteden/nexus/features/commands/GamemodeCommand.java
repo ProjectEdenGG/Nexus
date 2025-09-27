@@ -148,7 +148,7 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 		};
 
 		if (!Rank.of(player).isStaff()) {
-			SpeedCommand.resetSpeed(player);
+			SpeedCommand.resetSpeed(player, "GamemodeCommand#onWorldChanged");
 
 			if (newWorldGroup == WorldGroup.CREATIVE)
 				flying.accept(true);

@@ -472,8 +472,8 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		this.spectatingMinigamer = null;
 
 		teleportAsync(Minigames.getLobby()).thenRun(() -> {
-			PlayerUtils.setAllowFlight(player, false, Minigamer.class);
-			PlayerUtils.setFlying(player, false, Minigamer.class);
+			PlayerUtils.setAllowFlight(player, false, "Minigamer#toGamelobby");
+			PlayerUtils.setFlying(player, false, "Minigamer#toGamelobby");
 		});
 	}
 
@@ -490,7 +490,7 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 
 		return teleportAsync(dest).thenApply(success -> {
 			clearGameModeState(true);
-			match.getTasks().wait(2, () -> getPlayer().setAllowFlight(true));
+			match.getTasks().wait(2, () -> PlayerUtils.setAllowFlight(getOnlinePlayer(), true, "Minigamer spectate"));
 			if (match.isStarted() && !match.isEnded()) {
 				getPlayer().setGameMode(GameMode.ADVENTURE);
 				getPlayer().getInventory().setItem(0, Minigamer.SPECTATING_COMPASS);
@@ -693,11 +693,11 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		player.getInventory().setHeldItemSlot(0);
 		player.setFoodLevel(20);
 		player.setFallDistance(0);
-		PlayerUtils.setAllowFlight(player, mechanic.allowFly(), this.getClass());
-		PlayerUtils.setFlying(player, mechanic.allowFly(), this.getClass());
+		PlayerUtils.setAllowFlight(player, mechanic.allowFly(), "Minigamer#clearGameModeState");
+		PlayerUtils.setFlying(player, mechanic.allowFly(), "Minigamer#clearGameModeState");
 		if (Vanish.isVanished(player))
 			Vanish.unvanish(player);
-		SpeedCommand.resetSpeed(player);
+		SpeedCommand.resetSpeed(player, "Minigamer#clearGameModeState");
 		player.setOp(false);
 
 		if (mechanic.shouldClearInventory() || forceClearInventory) {

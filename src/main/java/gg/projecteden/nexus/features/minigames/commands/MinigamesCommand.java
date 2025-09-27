@@ -287,7 +287,8 @@ public class MinigamesCommand extends _WarpSubCommand {
 			error("The match has not started yet");
 
 		minigamer.teleportAsync(player.getLocation(), false, true);
-		minigamer.getPlayer().setFlying(true);
+		PlayerUtils.setAllowFlight(minigamer.getOnlinePlayer(), true, "/mgm spectate player " + player.getNickname());
+		PlayerUtils.setFlying(minigamer.getOnlinePlayer(), true, "/mgm spectate player " + player.getNickname());
 
 		minigamer.setSpectatingMinigamer(player);
 	}

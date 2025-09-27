@@ -12,7 +12,11 @@ import gg.projecteden.nexus.models.punishments.Punishment;
 import gg.projecteden.nexus.models.punishments.PunishmentType;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -93,8 +97,8 @@ public class Freeze implements PlayerOwnedObject {
 		Player player = getOnlinePlayer();
 
 		if (armorStandsDisabled) {
-			SpeedType.WALK.set(player, 0);
-			SpeedType.FLY.set(player, 0);
+			SpeedType.WALK.set(player, 0, "Freeze#mount");
+			SpeedType.FLY.set(player, 0, "Freeze#mount");
 			PotionEffect potionEffect = new PotionEffectBuilder(PotionEffectType.JUMP_BOOST)
 				.infinite()
 				.amplifier(200)
@@ -121,7 +125,7 @@ public class Freeze implements PlayerOwnedObject {
 		Player player = getOnlinePlayer();
 
 		if (armorStandsDisabled) {
-			SpeedCommand.resetSpeed(player);
+			SpeedCommand.resetSpeed(player, "Freeze#unmount");
 			player.removePotionEffect(PotionEffectType.JUMP_BOOST);
 		} else
 			if (player.getVehicle() != null && player.getVehicle() instanceof ArmorStand)

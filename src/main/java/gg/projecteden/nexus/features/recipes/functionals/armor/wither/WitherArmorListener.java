@@ -139,7 +139,7 @@ public class WitherArmorListener implements Listener {
 		Player player = event.getPlayer();
 		if (!hasFullSet(player)) return;
 		PlayerUtils.setAllowFlight(player, true, WitherArmorListener.class);
-		SpeedType.FLY.reset(player);
+		SpeedType.FLY.reset(player, "WitherArmorListener#onEquipArmor");
 	}
 
 	@EventHandler
@@ -191,7 +191,7 @@ public class WitherArmorListener implements Listener {
 	public void onJoin(PlayerJoinEvent event) {
 		if (!hasFullSet(event.getPlayer())) return;
 		PlayerUtils.setAllowFlight(event.getPlayer(), true, WitherArmorListener.class);
-		SpeedType.FLY.reset(event.getPlayer());
+		SpeedType.FLY.reset(event.getPlayer(), "WitherArmorListener#onJoin");
 	}
 
 	@EventHandler

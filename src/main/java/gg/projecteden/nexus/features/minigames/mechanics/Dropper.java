@@ -17,6 +17,7 @@ import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegio
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Utils;
 import org.bukkit.Color;
@@ -53,8 +54,8 @@ public class Dropper extends TeamlessMechanic {
 	private static void toSpawnpoint(@NotNull Minigamer minigamer) {
 		DropperArena arena = minigamer.getMatch().getArena();
 		minigamer.getOnlinePlayer().setFallDistance(0);
-		minigamer.getOnlinePlayer().setAllowFlight(false);
-		minigamer.getOnlinePlayer().setFlying(false);
+		PlayerUtils.setAllowFlight(minigamer.getOnlinePlayer(), false, "Dropper#toSpawnpoint");
+		PlayerUtils.setFlying(minigamer.getOnlinePlayer(), false, "Dropper#toSpawnpoint");
 		minigamer.teleportAsync(RandomUtils.randomElement(arena.getCurrentMap().getSpawnpoints()));
 		minigamer.getOnlinePlayer().getInventory().setItem(8, RESET_ITEM.build());
 	}
@@ -155,8 +156,8 @@ public class Dropper extends TeamlessMechanic {
 		else if (match.getTimer().getTime() > 31)
 			match.getTimer().setTime(31);
 
-		minigamer.getOnlinePlayer().setAllowFlight(true);
-		minigamer.getOnlinePlayer().setFlying(true);
+		PlayerUtils.setAllowFlight(minigamer.getOnlinePlayer(), true, "Dropper#toSpawnpoint");
+		PlayerUtils.setFlying(minigamer.getOnlinePlayer(), true, "Dropper#toSpawnpoint");
 
 		if (arena.getCurrentMap().getSpectateLocation() != null)
 			minigamer.teleportAsync(arena.getCurrentMap().getSpectateLocation());

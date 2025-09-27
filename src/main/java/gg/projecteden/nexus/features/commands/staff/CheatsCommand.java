@@ -88,7 +88,7 @@ public class CheatsCommand extends CustomCommand implements Listener {
 
 		new GodmodeService().edit(player, godmode -> godmode.setEnabled(false));
 		WorldGuardEditCommand.off(player);
-		SpeedCommand.resetSpeed(player);
+		SpeedCommand.resetSpeed(player, "CheatsCommand#off");
 
 		if (WorldGroup.of(player) != WorldGroup.CREATIVE) {
 			GamemodeCommand.setGamemode(player, GameMode.SURVIVAL);
