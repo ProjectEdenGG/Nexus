@@ -631,8 +631,9 @@ public class Shop implements PlayerOwnedObject {
 
 		@Override
 		public void validateProcessMany(Player customer) {
-			if (!PlayerUtils.hasRoomFor(customer, getProduct().getItem()))
-				throw new InvalidInputException("You do not have enough inventory space for " + StringUtils.pretty(getProduct().getItem()));
+			// Allow extras to go into shop collect
+//			if (!PlayerUtils.hasRoomFor(customer, getProduct().getItem()))
+//				throw new InvalidInputException("You do not have enough inventory space for " + StringUtils.pretty(getProduct().getItem()));
 		}
 
 		@Override
