@@ -9,6 +9,7 @@ import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
+import gg.projecteden.nexus.features.chat.bridge.IngameBridgeListener;
 import gg.projecteden.nexus.features.chat.events.ChatEvent;
 import gg.projecteden.nexus.features.commands.AgeCommand.ServerAge;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
@@ -108,7 +109,7 @@ public class Koda {
 	}
 
 	public static void sayDiscord(@NotNull String message) {
-		Broadcast.discord().message(discordFormat + message).send();
+		Broadcast.discord().message(discordFormat + IngameBridgeListener.parseMentions(message)).send();
 	}
 
 	public static void announce(@NotNull String message) {
