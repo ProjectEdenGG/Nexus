@@ -75,6 +75,14 @@ public class Commands {
 		return StringUtils.getPrefix(prettyName(clazz));
 	}
 
+	public static String getDiscordPrefix(ICustomCommand customCommand) {
+		return getDiscordPrefix(customCommand.getClass());
+	}
+
+	public static String getDiscordPrefix(Class<? extends ICustomCommand> clazz) {
+		return StringUtils.getDiscordPrefix(prettyName(clazz));
+	}
+
 	public void registerAll() {
 		Debug.log(" Registering " + commandSet.size() + " commands");
 		commandSet.forEach(this::register);

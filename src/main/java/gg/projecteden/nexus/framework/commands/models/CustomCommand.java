@@ -14,6 +14,7 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBloc
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Fallback;
@@ -124,8 +125,8 @@ public abstract class CustomCommand extends ICustomCommand {
 	@NonNull
 	@Getter
 	protected CommandEvent event;
-	public String PREFIX = StringUtils.getPrefix(getName());
-	public String DISCORD_PREFIX = StringUtils.getDiscordPrefix(getName());
+	public String PREFIX = Commands.getPrefix(this);
+	public String DISCORD_PREFIX = Commands.getDiscordPrefix(this);
 
 	public String getPrefix() {
 		return PREFIX;

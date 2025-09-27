@@ -139,7 +139,7 @@ public class AFKUser implements PlayerOwnedObject {
 			false,
 			"Disable mobs targeting you while you are AFK",
 			"Must be AFK for longer than 4 minutes",
-			value -> "&3Mobs " + (value ? "&awill" : "&cwill not") + " &3target you while you are AFK"
+			value -> "&3Mobs " + (value ? "&awill" : "&cwill not") + " &3target you while you are AFK" + (value ? "" : " (only activates after 4 minutes of being AFK)")
 		),
 		MOB_SPAWNING(
 			false,
