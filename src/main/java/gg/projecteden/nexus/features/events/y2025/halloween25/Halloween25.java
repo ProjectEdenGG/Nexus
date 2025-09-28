@@ -199,8 +199,11 @@ public class Halloween25 extends Feature implements Listener {
 		var entity = event.getEntity();
 		var player = entity.getKiller();
 		var pdc = entity.getPersistentDataContainer();
-
 		var pumpkinHead = pdc.get(PUMPKIN_HEAD_KEY, PersistentDataType.BOOLEAN);
+
+		if (player == null)
+			return;
+
 		if (pumpkinHead == null || !pumpkinHead)
 			return;
 
