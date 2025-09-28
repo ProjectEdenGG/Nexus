@@ -20,7 +20,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -191,9 +190,6 @@ public class Halloween25 extends Feature implements Listener {
 		if (isBeforeEvent())
 			return;
 
-		if (!(event.getDamageSource() instanceof Player player))
-			return;
-
 		if (event.getEntity().getLastDamageCause() != null)
 			if (DEATH_CAUSE_BLACKLIST.contains(event.getEntity().getLastDamageCause().getCause()))
 				return;
@@ -201,19 +197,21 @@ public class Halloween25 extends Feature implements Listener {
 		event.getDrops().removeIf(item -> isPumpkinCostume(Model.of(item)));
 
 		var entity = event.getEntity();
+		var player = entity.getKiller();
 		var pdc = entity.getPersistentDataContainer();
 
 		var pumpkinHead = pdc.get(PUMPKIN_HEAD_KEY, PersistentDataType.BOOLEAN);
 		if (pumpkinHead == null || !pumpkinHead)
 			return;
 
-		int candyBoost = (int) Booster.getTotalBoost(player, Boostable.HALLOWEEN_CANDY);
+		var candyBoost = (int) Booster.getTotalBoost(player, Boostable.HALLOWEEN_CANDY);
 		for (int i = 0; i < randomInt(1, 2 + candyBoost); i++)
 			event.getDrops().add(randomCandy().build());
 
-		double crateKeyBoost = Booster.getTotalBoost(player, Boostable.HALLOWEEN_CRATE_KEY);
+		var crateKeyBoost = Booster.getTotalBoost(player, Boostable.HALLOWEEN_CRATE_KEY);
 		if (chanceOf(.4 * crateKeyBoost))
 			event.getDrops().add(CrateType.HALLOWEEN.getKey());
 	}
 
 }
+
