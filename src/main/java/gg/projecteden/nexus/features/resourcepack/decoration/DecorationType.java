@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementTyp
 import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationSnap;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Colorable.ColorableType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.CraftableDecoration;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.IBedAddition;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Bunting;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet;
@@ -27,6 +28,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Fireplace;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Flag;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Flag.PrideFlagType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Flora;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.DyeableFurniture;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Furniture;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.HangingBanner;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.StandingBanner;
@@ -40,13 +42,14 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.D
 import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.Instrument;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.Instrument.InstrumentSound;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Bench;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch.CouchPart;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.DyeableBench;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.DyeableCouch;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.DyeableCouch.CouchPart;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.DyeableChair;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.LongChair;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Stump;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.BedAddition;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.BedAddition.AdditionType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.DyeableBedAddition;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Edible;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Edible.EdibleType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Mailbox;
@@ -64,6 +67,10 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Floo
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.Curtain;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.Curtain.CurtainType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.DyeableGiantCandle;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.DyeableGiantCandle.DyeableCandleType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.GiantCandle;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.GiantCandle.CandleType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.RecordPlayer;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.RecordPlayer.RecordPlayerType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.TV;
@@ -227,6 +234,100 @@ public enum DecorationType {
 	@TypeConfig(money = 225, tokens = 22, theme = Theme.SPOOKY)
 	GRAVESTONE_TALL(new FloorThing(false, "Tall Gravestone", ItemModelType.GRAVESTONE_TALL, HitboxUnique.GRAVESTONE_TALL)),
 
+	// TODO: REMOVE "UNBYABLE" ON RELEASE
+	@TypeConfig(unbuyable = true, money = 215, tokens = 21, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_BEDS})
+	SPOOKY_BED_GENERIC_1_DOUBLE(new BedAddition("Spooky Generic Frame A Double", ItemModelType.BED_GENERIC_1_DOUBLE_SPOOKY, IBedAddition.AdditionType.FRAME, true)),
+
+	@TypeConfig(unbuyable = true, money = 225, tokens = 22, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
+	SPOOKY_BENCH_WOODEN(new Bench(true, false, "Spooky Wooden Bench", ItemModelType.BENCH_SPOOKY, HitboxFloor._1x2H)),
+
+	@TypeConfig(unbuyable = true, money = 120, tokens = 12, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
+	SPOOKY_CHAIR_WOODEN_BASIC(new DyeableChair(false, false, "Spooky Wooden Chair", ItemModelType.CHAIR_WOODEN_BASIC_SPOOKY, ColorableType.DYE)),
+
+	@TypeConfig(unbuyable = true, money = 150, tokens = 15, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
+	SPOOKY_CHAIR_WOODEN_CUSHIONED(new DyeableChair(false, false, "Spooky Cushioned Wooden Chair", ItemModelType.CHAIR_WOODEN_CUSHIONED_SPOOKY, ColorableType.DYE)),
+
+	@TypeConfig(unbuyable = true, money = 150, tokens = 15, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
+	SPOOKY_COUCH_WOODEN_CUSHIONED_END_LEFT(new DyeableCouch(false, "Spooky Cushioned Wooden Couch Left End", ItemModelType.COUCH_WOODEN_CUSHIONED_END_LEFT_SPOOKY, ColorableType.DYE, CouchPart.END)),
+
+	@TypeConfig(unbuyable = true, money = 150, tokens = 15, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
+	SPOOKY_COUCH_WOODEN_CUSHIONED_END_RIGHT(new DyeableCouch(false, "Spooky Cushioned Wooden Couch Right End", ItemModelType.COUCH_WOODEN_CUSHIONED_END_RIGHT_SPOOKY, ColorableType.DYE, CouchPart.END)),
+
+	@TypeConfig(unbuyable = true, money = 150, tokens = 15, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
+	SPOOKY_COUCH_WOODEN_CUSHIONED_MIDDLE(new DyeableCouch(false, "Spooky Cushioned Wooden Couch Middle", ItemModelType.COUCH_WOODEN_CUSHIONED_MIDDLE_SPOOKY, ColorableType.DYE, CouchPart.STRAIGHT)),
+
+	@TypeConfig(unbuyable = true, money = 150, tokens = 15, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
+	SPOOKY_COUCH_WOODEN_CUSHIONED_CORNER(new DyeableCouch(false, "Spooky Cushioned Wooden Couch Corner", ItemModelType.COUCH_WOODEN_CUSHIONED_CORNER_SPOOKY, ColorableType.DYE, CouchPart.CORNER)),
+
+	@TypeConfig(unbuyable = true, money = 120, tokens = 12, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
+	SPOOKY_COUCH_WOODEN_CUSHIONED_OTTOMAN(new DyeableCouch(false, "Spooky Cushioned Wooden Couch Ottoman", ItemModelType.COUCH_WOODEN_CUSHIONED_OTTOMAN_SPOOKY, ColorableType.DYE, CouchPart.STRAIGHT)),
+
+	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY) // TODO: PRICE
+	GIANT_CANDLE_ONE_UNLIT(new GiantCandle("Giant Candle", CandleType.ONE, false)),
+
+	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY) // TODO: PRICE
+	GIANT_CANDLE_TWO_UNLIT(new GiantCandle("Giant Candles", CandleType.TWO, false)),
+
+	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY) // TODO: PRICE
+	GIANT_CANDLE_THREE_UNLIT(new GiantCandle("Giant Candles", CandleType.THREE, false)),
+
+	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY) // TODO: PRICE
+	GIANT_CANDLE_ONE_UNLIT_DYEABLE(new DyeableGiantCandle("Giant Candle", DyeableCandleType.ONE, false)),
+
+	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY) // TODO: PRICE
+	GIANT_CANDLE_TWO_UNLIT_DYEABLE(new DyeableGiantCandle("Giant Candles", DyeableCandleType.TWO, false)),
+
+	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY) // TODO: PRICE
+	GIANT_CANDLE_THREE_UNLIT_DYEABLE(new DyeableGiantCandle("Giant Candles", DyeableCandleType.THREE, false)),
+
+	@TypeConfig(unbuyable = true, money = 60, tokens = 6, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
+	SPOOKY_TABLE_WOODEN_1x1(new Table(TableTheme.SPOOKY_WOODEN, TableShape._1X1, ItemModelType.TABLE_WOODEN_1X1_SPOOKY)),
+
+	@TypeConfig(unbuyable = true, money = 105, tokens = 10, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
+	SPOOKY_TABLE_WOODEN_1x2(new Table(TableTheme.SPOOKY_WOODEN, TableShape._1X2, ItemModelType.TABLE_WOODEN_1X2_SPOOKY)),
+
+	@TypeConfig(unbuyable = true, money = 135, tokens = 13, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
+	SPOOKY_TABLE_WOODEN_1x3(new Table(TableTheme.SPOOKY_WOODEN, TableShape._1X3, ItemModelType.TABLE_WOODEN_1X3_SPOOKY)),
+
+	@TypeConfig(unbuyable = true, money = 150, tokens = 15, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
+	SPOOKY_TABLE_WOODEN_2x2(new Table(TableTheme.SPOOKY_WOODEN, TableShape._2X2, ItemModelType.TABLE_WOODEN_2X2_SPOOKY)),
+
+	@TypeConfig(unbuyable = true, money = 140, tokens = 14, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
+	SPOOKY_TABLE_WOODEN_2x2_CORNER(new Table(TableTheme.SPOOKY_WOODEN, TableShape._2X2_CORNER, ItemModelType.TABLE_WOODEN_2X2_CORNER_SPOOKY)),
+
+	@TypeConfig(unbuyable = true, money = 225, tokens = 22, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
+	SPOOKY_TABLE_WOODEN_2x3(new Table(TableTheme.SPOOKY_WOODEN, TableShape._2X3, ItemModelType.TABLE_WOODEN_2X3_SPOOKY)),
+
+	@TypeConfig(unbuyable = true, money = 185, tokens = 18, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
+	SPOOKY_TABLE_WOODEN_2x3_CORNER(new Table(TableTheme.SPOOKY_WOODEN, TableShape._2X3_CORNER, ItemModelType.TABLE_WOODEN_2X3_CORNER_SPOOKY)),
+
+	@TypeConfig(unbuyable = true, money = 185, tokens = 18, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
+	SPOOKY_TABLE_WOODEN_2x3_CORNER_FLIPPED(new Table(TableTheme.SPOOKY_WOODEN, TableShape._2X3_CORNER_FLIPPED, ItemModelType.TABLE_WOODEN_2X3_CORNER_FLIPPED_SPOOKY)),
+
+	@TypeConfig(unbuyable = true, money = 300, tokens = 30, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
+	SPOOKY_TABLE_WOODEN_3x3(new Table(TableTheme.SPOOKY_WOODEN, TableShape._3X3, ItemModelType.TABLE_WOODEN_3X3_SPOOKY)),
+
+	@TypeConfig(unbuyable = true, money = 275, tokens = 27, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
+	SPOOKY_TABLE_WOODEN_3x3_CORNER(new Table(TableTheme.SPOOKY_WOODEN, TableShape._3X3_CORNER, ItemModelType.TABLE_WOODEN_3X3_CORNER_SPOOKY)),
+
+	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE) // TODO: PRICE
+	SPOOKY_CUPBOARD_TALL_DOUBLE_EMPTY(new Furniture(true, "Spooky Tall Empty Cupboard Double", ItemModelType.CUPBOARD_TALL_DOUBLE_EMPTY_SPOOKY, PlacementType.FLOOR, HitboxFloor._2x2V)),
+
+	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE) // TODO: PRICE
+	SPOOKY_CUPBOARD_TALL_DOUBLE_FILLED(new Furniture(true, "Spooky Tall Cupboard Double", ItemModelType.CUPBOARD_TALL_DOUBLE_FILLED_SPOOKY, PlacementType.FLOOR, HitboxFloor._2x2V)),
+
+	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE) // TODO: PRICE
+	SPOOKY_DESK_1X2(new Furniture(true, "Spooky Desk 1x2", ItemModelType.DESK_1X2_SPOOKY, PlacementType.FLOOR, HitboxFloor._1x2H)),
+
+	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE) // TODO: PRICE
+	SPOOKY_DRESSER_1X2(new Furniture(true, "Spooky Dresser 1x2", ItemModelType.DRESSER_1X2_SPOOKY, PlacementType.FLOOR, HitboxFloor._1x2H)),
+
+	@TypeConfig(unbuyable = true, money = 450, tokens = 45, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE)
+	SPOOKY_WARDROBE(new Furniture(true, "Spooky Wardrobe", ItemModelType.WARDROBE_SPOOKY, PlacementType.FLOOR, HitboxFloor._2x3V)),
+
+	@TypeConfig(unbuyable = true, money = 450, tokens = 45, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE)
+	SPOOKY_WARDROBE_OPENED(new Furniture(true, "Spooky Opened Wardrobe", ItemModelType.WARDROBE_SPOOKY_OPENED, PlacementType.FLOOR, HitboxFloor._2x3V)),
+
 // 	------------------------------------------------------------------------------------------------------
 //										CATALOG: Music
 // 	------------------------------------------------------------------------------------------------------
@@ -286,10 +387,10 @@ public enum DecorationType {
 	DRUM_THRONE(new DyeableChair(false, true, "Drum Throne", ItemModelType.DRUM_THRONE, ColorableType.DYE, 1.35)),
 
 	@TypeConfig(money = 180, tokens = 18, theme = Theme.MUSIC)
-	PIANO_BENCH(new Bench(true, true, "Piano Bench", ItemModelType.PIANO_BENCH, ColorableType.STAIN, 1.15, HitboxFloor._1x2H)),
+	PIANO_BENCH(new DyeableBench(true, true, "Piano Bench", ItemModelType.PIANO_BENCH, ColorableType.STAIN, 1.15, HitboxFloor._1x2H)),
 
 	@TypeConfig(money = 210, tokens = 21, theme = Theme.MUSIC)
-	PIANO_BENCH_GRAND(new Bench(true, true, "Grand Piano Bench", ItemModelType.PIANO_BENCH_GRAND, ColorableType.STAIN, 1.15, HitboxFloor._1x3H)),
+	PIANO_BENCH_GRAND(new DyeableBench(true, true, "Grand Piano Bench", ItemModelType.PIANO_BENCH_GRAND, ColorableType.STAIN, 1.15, HitboxFloor._1x3H)),
 
 	@TypeConfig(money = 225, tokens = 22, theme = Theme.MUSIC)
 	AMPLIFIER(new FloorThing(false, "Amplifier", ItemModelType.AMPLIFIER, HitboxSingle._1x1_BARRIER)),
@@ -667,10 +768,10 @@ public enum DecorationType {
 	TABLE_METALLIC_1x1(new Table(TableTheme.METALLIC, TableShape._1X1, ItemModelType.TABLE_METALLIC_1X1)),
 
 	@TypeConfig(money = 225, tokens = 22, theme = Theme.OUTDOORS)
-	BENCH_WOODEN(new Bench(true, false, "Wooden Bench", ItemModelType.BENCH_WOODEN, ColorableType.STAIN, HitboxFloor._1x2H)),
+	BENCH_WOODEN(new DyeableBench(true, false, "Wooden Bench", ItemModelType.BENCH_WOODEN, ColorableType.STAIN, HitboxFloor._1x2H)),
 
 	@TypeConfig(money = 700, tokens = 50, theme = Theme.OUTDOORS)
-	WOODEN_PICNIC_TABLE(new Bench(true, true, "Wooden Picnic Table", ItemModelType.WOODEN_PICNIC_TABLE, ColorableType.STAIN, HitboxUnique.WOODEN_PICNIC_TABLE)),
+	WOODEN_PICNIC_TABLE(new DyeableBench(true, true, "Wooden Picnic Table", ItemModelType.WOODEN_PICNIC_TABLE, ColorableType.STAIN, HitboxUnique.WOODEN_PICNIC_TABLE)),
 
 // 	------------------------------------------------------------------------------------------------------
 //										CATALOG: Art
@@ -881,34 +982,34 @@ public enum DecorationType {
 
 	// 	Couches
 	@TypeConfig(money = 150, tokens = 15, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	COUCH_WOODEN_CUSHIONED_END_LEFT(new Couch(false, "Cushioned Wooden Couch Left End", ItemModelType.COUCH_WOODEN_CUSHIONED_END_LEFT, ColorableType.DYE, CouchPart.END)),
+	COUCH_WOODEN_CUSHIONED_END_LEFT(new DyeableCouch(false, "Cushioned Wooden Couch Left End", ItemModelType.COUCH_WOODEN_CUSHIONED_END_LEFT, ColorableType.DYE, CouchPart.END)),
 
 	@TypeConfig(money = 150, tokens = 15, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	COUCH_WOODEN_CUSHIONED_END_RIGHT(new Couch(false, "Cushioned Wooden Couch Right End", ItemModelType.COUCH_WOODEN_CUSHIONED_END_RIGHT, ColorableType.DYE, CouchPart.END)),
+	COUCH_WOODEN_CUSHIONED_END_RIGHT(new DyeableCouch(false, "Cushioned Wooden Couch Right End", ItemModelType.COUCH_WOODEN_CUSHIONED_END_RIGHT, ColorableType.DYE, CouchPart.END)),
 
 	@TypeConfig(money = 150, tokens = 15, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	COUCH_WOODEN_CUSHIONED_MIDDLE(new Couch(false, "Cushioned Wooden Couch Middle", ItemModelType.COUCH_WOODEN_CUSHIONED_MIDDLE, ColorableType.DYE, CouchPart.STRAIGHT)),
+	COUCH_WOODEN_CUSHIONED_MIDDLE(new DyeableCouch(false, "Cushioned Wooden Couch Middle", ItemModelType.COUCH_WOODEN_CUSHIONED_MIDDLE, ColorableType.DYE, CouchPart.STRAIGHT)),
 
 	@TypeConfig(money = 150, tokens = 15, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	COUCH_WOODEN_CUSHIONED_CORNER(new Couch(false, "Cushioned Wooden Couch Corner", ItemModelType.COUCH_WOODEN_CUSHIONED_CORNER, ColorableType.DYE, CouchPart.CORNER)),
+	COUCH_WOODEN_CUSHIONED_CORNER(new DyeableCouch(false, "Cushioned Wooden Couch Corner", ItemModelType.COUCH_WOODEN_CUSHIONED_CORNER, ColorableType.DYE, CouchPart.CORNER)),
 
 	@TypeConfig(money = 120, tokens = 12, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	COUCH_WOODEN_CUSHIONED_OTTOMAN(new Couch(false, "Cushioned Wooden Couch Ottoman", ItemModelType.COUCH_WOODEN_CUSHIONED_OTTOMAN, ColorableType.DYE, CouchPart.STRAIGHT)),
+	COUCH_WOODEN_CUSHIONED_OTTOMAN(new DyeableCouch(false, "Cushioned Wooden Couch Ottoman", ItemModelType.COUCH_WOODEN_CUSHIONED_OTTOMAN, ColorableType.DYE, CouchPart.STRAIGHT)),
 
 	@TypeConfig(money = 195, tokens = 19, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	COUCH_CLOTH_END_LEFT(new Couch(false, "Cloth Couch Left End", ItemModelType.COUCH_CLOTH_END_LEFT, ColorableType.DYE, CouchPart.END)),
+	COUCH_CLOTH_END_LEFT(new DyeableCouch(false, "Cloth Couch Left End", ItemModelType.COUCH_CLOTH_END_LEFT, ColorableType.DYE, CouchPart.END)),
 
 	@TypeConfig(money = 195, tokens = 19, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	COUCH_CLOTH_END_RIGHT(new Couch(false, "Cloth Couch Right End", ItemModelType.COUCH_CLOTH_END_RIGHT, ColorableType.DYE, CouchPart.END)),
+	COUCH_CLOTH_END_RIGHT(new DyeableCouch(false, "Cloth Couch Right End", ItemModelType.COUCH_CLOTH_END_RIGHT, ColorableType.DYE, CouchPart.END)),
 
 	@TypeConfig(money = 195, tokens = 19, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	COUCH_CLOTH_MIDDLE(new Couch(false, "Cloth Couch Middle", ItemModelType.COUCH_CLOTH_MIDDLE, ColorableType.DYE, CouchPart.STRAIGHT)),
+	COUCH_CLOTH_MIDDLE(new DyeableCouch(false, "Cloth Couch Middle", ItemModelType.COUCH_CLOTH_MIDDLE, ColorableType.DYE, CouchPart.STRAIGHT)),
 
 	@TypeConfig(money = 195, tokens = 19, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	COUCH_CLOTH_CORNER(new Couch(false, "Cloth Couch Corner", ItemModelType.COUCH_CLOTH_CORNER, ColorableType.DYE, CouchPart.CORNER)),
+	COUCH_CLOTH_CORNER(new DyeableCouch(false, "Cloth Couch Corner", ItemModelType.COUCH_CLOTH_CORNER, ColorableType.DYE, CouchPart.CORNER)),
 
 	@TypeConfig(money = 165, tokens = 16, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	COUCH_CLOTH_OTTOMAN(new Couch(false, "Cloth Couch Ottoman", ItemModelType.COUCH_CLOTH_OTTOMAN, ColorableType.DYE, CouchPart.STRAIGHT)),
+	COUCH_CLOTH_OTTOMAN(new DyeableCouch(false, "Cloth Couch Ottoman", ItemModelType.COUCH_CLOTH_OTTOMAN, ColorableType.DYE, CouchPart.STRAIGHT)),
 
 	// Flags
 	@TypeConfig(money = 75, tokens = 7, tabs = Tab.FLAGS)
@@ -1520,47 +1621,47 @@ public enum DecorationType {
 	TOILET_MODERN(new DyeableChair(false, false, "Toilet Modern", ItemModelType.TOILET_MODERN, ColorableType.DYE, "FFFFFF", HitboxSingle._1x1_BARRIER, 1.3)),
 
 	@TypeConfig(money = 450, tokens = 45, tabs = Tab.FURNITURE)
-	WARDROBE(new Furniture(true, "Wardrobe", ItemModelType.WARDROBE, PlacementType.FLOOR, HitboxFloor._2x3V)),
+	WARDROBE(new DyeableFurniture(true, "Wardrobe", ItemModelType.WARDROBE, PlacementType.FLOOR, HitboxFloor._2x3V)),
 
 	@TypeConfig(money = 240, tokens = 24, tabs = Tab.FURNITURE)
-	CUPBOARD_SHORT_DOUBLE(new Furniture(true, "Short Cupboard Double", ItemModelType.CUPBOARD_SHORT_DOUBLE, PlacementType.FLOOR, HitboxFloor._1x2H)),
+	CUPBOARD_SHORT_DOUBLE(new DyeableFurniture(true, "Short Cupboard Double", ItemModelType.CUPBOARD_SHORT_DOUBLE, PlacementType.FLOOR, HitboxFloor._1x2H)),
 
 	@TypeConfig(money = 120, tokens = 12, tabs = Tab.FURNITURE)
-	CUPBOARD_SHORT_SINGLE(new Furniture(false, "Short Cupboard Single", ItemModelType.CUPBOARD_SHORT_SINGLE, PlacementType.FLOOR, HitboxSingle._1x1_BARRIER)),
+	CUPBOARD_SHORT_SINGLE(new DyeableFurniture(false, "Short Cupboard Single", ItemModelType.CUPBOARD_SHORT_SINGLE, PlacementType.FLOOR, HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(money = 240, tokens = 24, tabs = Tab.FURNITURE)
-	CUPBOARD_SHORT_BOOKSHELF_DOUBLE(new Furniture(true, "Short Bookshelf Cupboard Double", ItemModelType.CUPBOARD_SHORT_BOOKSHELF_DOUBLE, PlacementType.FLOOR, HitboxFloor._1x2H)),
+	CUPBOARD_SHORT_BOOKSHELF_DOUBLE(new DyeableFurniture(true, "Short Bookshelf Cupboard Double", ItemModelType.CUPBOARD_SHORT_BOOKSHELF_DOUBLE, PlacementType.FLOOR, HitboxFloor._1x2H)),
 
 	@TypeConfig(money = 120, tokens = 12, tabs = Tab.FURNITURE)
-	CUPBOARD_SHORT_BOOKSHELF_SINGLE(new Furniture(false, "Short Bookshelf Cupboard Single", ItemModelType.CUPBOARD_SHORT_BOOKSHELF_SINGLE, PlacementType.FLOOR, HitboxSingle._1x1_BARRIER)),
+	CUPBOARD_SHORT_BOOKSHELF_SINGLE(new DyeableFurniture(false, "Short Bookshelf Cupboard Single", ItemModelType.CUPBOARD_SHORT_BOOKSHELF_SINGLE, PlacementType.FLOOR, HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(unbuyable = true, money = 150, tabs = Tab.FURNITURE)
 	SHELF_WALL(new DyeableWallThing(true, "Wall Shelf", ItemModelType.SHELF_WALL, ColorableType.STAIN, HitboxFloor._1x2H)),
 
 	// Beds, multiblock = true
 	@TypeConfig(money = 215, tokens = 21, tabs = {Tab.FURNITURE, Tab.BEDS})
-	BED_GENERIC_1_SINGLE(new BedAddition("Generic Frame A Single", ItemModelType.BED_GENERIC_1_SINGLE, AdditionType.FRAME, ColorableType.STAIN)),
+	BED_GENERIC_1_SINGLE(new DyeableBedAddition("Generic Frame A Single", ItemModelType.BED_GENERIC_1_SINGLE, IBedAddition.AdditionType.FRAME, ColorableType.STAIN)),
 
 	@TypeConfig(money = 430, tokens = 43, tabs = {Tab.FURNITURE, Tab.BEDS})
-	BED_GENERIC_1_DOUBLE(new BedAddition("Generic Frame A Double", ItemModelType.BED_GENERIC_1_DOUBLE, AdditionType.FRAME, true, ColorableType.STAIN)),
+	BED_GENERIC_1_DOUBLE(new DyeableBedAddition("Generic Frame A Double", ItemModelType.BED_GENERIC_1_DOUBLE, IBedAddition.AdditionType.FRAME, true, ColorableType.STAIN)),
 
 	@TypeConfig(money = 235, tokens = 23, tabs = {Tab.FURNITURE, Tab.BEDS})
-	BED_GENERIC_2_SINGLE(new BedAddition("Generic Frame B Single", ItemModelType.BED_GENERIC_2_SINGLE, AdditionType.FRAME, ColorableType.STAIN)),
+	BED_GENERIC_2_SINGLE(new DyeableBedAddition("Generic Frame B Single", ItemModelType.BED_GENERIC_2_SINGLE, IBedAddition.AdditionType.FRAME, ColorableType.STAIN)),
 
 	@TypeConfig(money = 470, tokens = 47, tabs = {Tab.FURNITURE, Tab.BEDS})
-	BED_GENERIC_2_DOUBLE(new BedAddition("Generic Frame B Double", ItemModelType.BED_GENERIC_2_DOUBLE, AdditionType.FRAME, true, ColorableType.STAIN)),
+	BED_GENERIC_2_DOUBLE(new DyeableBedAddition("Generic Frame B Double", ItemModelType.BED_GENERIC_2_DOUBLE, IBedAddition.AdditionType.FRAME, true, ColorableType.STAIN)),
 
 	@TypeConfig(money = 215, tokens = 21, tabs = {Tab.FURNITURE, Tab.BEDS})
-	BED_GENERIC_3_SINGLE(new BedAddition("Generic Frame C Single", ItemModelType.BED_GENERIC_3_SINGLE, AdditionType.FRAME, ColorableType.STAIN)),
+	BED_GENERIC_3_SINGLE(new DyeableBedAddition("Generic Frame C Single", ItemModelType.BED_GENERIC_3_SINGLE, IBedAddition.AdditionType.FRAME, ColorableType.STAIN)),
 
 	@TypeConfig(money = 430, tokens = 43, tabs = {Tab.FURNITURE, Tab.BEDS})
-	BED_GENERIC_3_DOUBLE(new BedAddition("Generic Frame C Double", ItemModelType.BED_GENERIC_3_DOUBLE, AdditionType.FRAME, true, ColorableType.STAIN)),
+	BED_GENERIC_3_DOUBLE(new DyeableBedAddition("Generic Frame C Double", ItemModelType.BED_GENERIC_3_DOUBLE, IBedAddition.AdditionType.FRAME, true, ColorableType.STAIN)),
 
 	@TypeConfig(money = 255, tokens = 25, tabs = {Tab.FURNITURE, Tab.BEDS})
-	BED_GENERIC_4_SINGLE(new BedAddition("Generic Frame D Single", ItemModelType.BED_GENERIC_4_SINGLE, AdditionType.FRAME, ColorableType.STAIN)),
+	BED_GENERIC_4_SINGLE(new DyeableBedAddition("Generic Frame D Single", ItemModelType.BED_GENERIC_4_SINGLE, IBedAddition.AdditionType.FRAME, ColorableType.STAIN)),
 
 	@TypeConfig(money = 510, tokens = 51, tabs = {Tab.FURNITURE, Tab.BEDS})
-	BED_GENERIC_4_DOUBLE(new BedAddition("Generic Frame D Double", ItemModelType.BED_GENERIC_4_DOUBLE, AdditionType.FRAME, true, ColorableType.STAIN)),
+	BED_GENERIC_4_DOUBLE(new DyeableBedAddition("Generic Frame D Double", ItemModelType.BED_GENERIC_4_DOUBLE, IBedAddition.AdditionType.FRAME, true, ColorableType.STAIN)),
 
 	//	Potions
 	@TypeConfig(money = 45, tokens = 4, tabs = Tab.POTIONS)
@@ -1870,6 +1971,30 @@ public enum DecorationType {
 //										INTERNAL USE ONLY
 // 	------------------------------------------------------------------------------------------------------
 
+	@TypeConfig(unbuyable = true, money = 10, tokens = 10, tabs = Tab.SPOOKY_FURNITURE)
+	SPOOKY_SHELF_WALL_1X1(new WallThing(false, "Spooky Wall Shelf 1x1", ItemModelType.SHELF_WALL_1X1_SPOOKY, HitboxSingle._1x1_BARRIER)),
+
+	@TypeConfig(unbuyable = true, money = 10, tokens = 10, tabs = Tab.SPOOKY_FURNITURE)
+	SPOOKY_SHELF_WALL_1X2(new WallThing(true, "Spooky Wall Shelf 1x2", ItemModelType.SHELF_WALL_1X2_SPOOKY, HitboxFloor._1x2H)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	GIANT_CANDLE_ONE_LIT(new GiantCandle("Giant Candle", CandleType.ONE, true)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	GIANT_CANDLE_TWO_LIT(new GiantCandle("Giant Candles", CandleType.TWO, true)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	GIANT_CANDLE_THREE_LIT(new GiantCandle("Giant Candles", CandleType.THREE, true)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	GIANT_CANDLE_ONE_LIT_DYEABLE(new DyeableGiantCandle("Giant Candle", DyeableCandleType.ONE, true)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	GIANT_CANDLE_TWO_LIT_DYEABLE(new DyeableGiantCandle("Giant Candles", DyeableCandleType.TWO, true)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	GIANT_CANDLE_THREE_LIT_DYEABLE(new DyeableGiantCandle("Giant Candles", DyeableCandleType.THREE, true)),
+
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	FLAT_SCREEN_TV_TEST_PATTERN(new TV("Flat Screen TV", ChannelType.TEST_PATTERN)),
 
@@ -1943,7 +2068,7 @@ public enum DecorationType {
 	FLAT_SCREEN_TV_WIZARD_OF_OZ(new TV("Flat Screen TV", ChannelType.WIZARD_OF_OZ)),
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
-	SHELF_STORAGE(new Furniture(true, "Storage Shelf", ItemModelType.SHELF_STORAGE, PlacementType.FLOOR, HitboxFloor._2x3V)),
+	SHELF_STORAGE(new DyeableFurniture(true, "Storage Shelf", ItemModelType.SHELF_STORAGE, PlacementType.FLOOR, HitboxFloor._2x3V)),
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	WAYSTONE(new Waystone("Waystone", ItemModelType.WAYSTONE, false)),
@@ -2131,8 +2256,8 @@ public enum DecorationType {
 	@AllArgsConstructor
 	public static class CategoryTree {
 		@NonNull Tab tabParent;
-		List<DecorationType> decorationTypes = new ArrayList<>();
-		List<CategoryTree> tabChildren = new ArrayList<>();
+		List<DecorationType> decorationTypes;
+		List<CategoryTree> tabChildren;
 
 		public CategoryTree(@NotNull Tab tab) {
 			this.tabParent = tab;

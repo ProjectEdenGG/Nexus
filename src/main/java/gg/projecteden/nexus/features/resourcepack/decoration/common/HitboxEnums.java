@@ -95,6 +95,13 @@ public class HitboxEnums {
 			Hitbox.offset(BlockFace.NORTH, 1, BlockFace.EAST, 1)
 		)),
 
+		_2x2V(List.of(
+			Hitbox.origin(),
+			Hitbox.offset(BlockFace.EAST, 1),
+			Hitbox.offset(BlockFace.UP, 1),
+			Hitbox.offset(BlockFace.UP, 1, BlockFace.EAST, 1)
+		)),
+
 		_2x3V(List.of(
 			Hitbox.origin(),
 			Hitbox.offset(BlockFace.EAST, 1),
