@@ -5,13 +5,12 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationTagType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Addition;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.IBedAddition;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.FloorThing;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -23,18 +22,17 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 
-public class BedAddition extends DyeableFloorThing implements Addition {
-	@Getter
-	private boolean wide;
-	@Getter
-	private AdditionType additionType;
+@Getter
+public class BedAddition extends FloorThing implements IBedAddition {
+	private final boolean wide;
+	private final AdditionType additionType;
 
-	public BedAddition(String name, ItemModelType itemModelType, AdditionType additionType, ColorableType colorableType) {
-		this(name, itemModelType, additionType, false, colorableType);
+	public BedAddition(String name, ItemModelType itemModelType, AdditionType additionType) {
+		this(name, itemModelType, additionType, false);
 	}
 
-	public BedAddition(String name, ItemModelType itemModelType, AdditionType additionType, boolean wide, ColorableType colorableType) {
-		super(true, name, itemModelType, colorableType);
+	public BedAddition(String name, ItemModelType itemModelType, AdditionType additionType, boolean wide) {
+		super(true, name, itemModelType);
 
 		this.wide = wide;
 		this.additionType = additionType;
@@ -44,19 +42,8 @@ public class BedAddition extends DyeableFloorThing implements Addition {
 
 	@Override
 	public String getPlacementError() {
-		return DecorationLang.getPREFIX() + "This decoration can only be placed on a bed";
+		return IBedAddition._getPlacementError();
 	}
-
-	@AllArgsConstructor
-	public enum AdditionType {
-		FRAME(0),
-		CANOPY(1),
-		;
-
-		@Getter
-		private final int modY;
-	}
-
 
 	static {
 		Nexus.registerListener(new BedAdditionListener());

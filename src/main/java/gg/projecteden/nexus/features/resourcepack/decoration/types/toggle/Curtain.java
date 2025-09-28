@@ -10,6 +10,8 @@ import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class Curtain extends DyeableWallThing implements Cyclable {
@@ -58,13 +60,13 @@ public class Curtain extends DyeableWallThing implements Cyclable {
 	}
 
 	@Override
-	public ItemModelType getNextItemModel() {
+	public ItemModelType getNextItemModel(Player player, ItemStack tool) {
 		return curtainType.getOppositeItemModelType();
 	}
 
 	@Override
-	public ItemModelType getPreviousItemModel() {
-		return getNextItemModel();
+	public ItemModelType getPreviousItemModel(Player player, ItemStack tool) {
+		return getNextItemModel(player, tool);
 	}
 
 	@Override

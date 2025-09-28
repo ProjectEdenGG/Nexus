@@ -6,6 +6,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Dyea
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class RecordPlayer extends DyeableFloorThing implements Cyclable {
 	@Getter
@@ -35,12 +37,12 @@ public class RecordPlayer extends DyeableFloorThing implements Cyclable {
 	}
 
 	@Override
-	public ItemModelType getNextItemModel() {
+	public ItemModelType getNextItemModel(Player player, ItemStack tool) {
 		return recordPlayerType.getOppositeItemModelType();
 	}
 
 	@Override
-	public ItemModelType getPreviousItemModel() {
-		return getNextItemModel();
+	public ItemModelType getPreviousItemModel(Player player, ItemStack tool) {
+		return getNextItemModel(player, tool);
 	}
 }

@@ -110,12 +110,11 @@ public class CatalogThemeProvider extends InventoryProvider {
 			}
 
 			ItemBuilder icon = child.getTabParent().getIcon().name("&3" + tabName).glow();
-			if (child.getTabParent() == Tab.COUNTERS_MENU)
-				icon.name("&3Counters");
-
 			Consumer<ItemClickData> consumer = e -> Catalog.openCatalog(viewer, catalogTheme, child, currency, this);
-			if (child.getTabParent() == Tab.COUNTERS_MENU)
+			if (child.getTabParent() == Tab.COUNTERS_MENU) {
+				icon.name("&3Counters");
 				consumer = e -> Catalog.openCountersCatalog(viewer, catalogTheme, child, currency, this);
+			}
 
 			items.add(ClickableItem.of(icon.build(), consumer));
 		}

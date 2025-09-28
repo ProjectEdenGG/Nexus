@@ -9,7 +9,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.Dec
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration.DecorationEditType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.BedAddition.AdditionType;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.IBedAddition;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.IBedAddition.AdditionType;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.StainChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStationMenu;
@@ -61,7 +62,7 @@ public class BedInteractionData {
 	boolean isPaintbrush = false;
 	Color paintbrushDye;
 	DecorationConfig toolConfig;
-	BedAddition toolAddition;
+	IBedAddition toolAddition;
 
 	boolean adjustBeds;
 
@@ -78,7 +79,7 @@ public class BedInteractionData {
 			if (this.isPaintbrush)
 				paintbrushDye = new ItemBuilder(this.tool).dyeColor();
 			this.toolConfig = DecorationConfig.of(this.tool);
-			if (this.toolConfig instanceof BedAddition bedAddition)
+			if (this.toolConfig instanceof IBedAddition bedAddition)
 				this.toolAddition = bedAddition;
 		}
 
@@ -241,7 +242,7 @@ public class BedInteractionData {
 
 		for (ItemFrame _itemFrame : additions.keySet()) {
 			DecorationConfig _config = additions.get(_itemFrame);
-			BedAddition bedAddition = (BedAddition) _config;
+			DyeableBedAddition bedAddition = (DyeableBedAddition) _config;
 			boolean isFrameWide = bedAddition.isWide();
 
 			if (isFrameWide && !isToolWide) { // trying to place a single over a wide
@@ -324,7 +325,7 @@ public class BedInteractionData {
 		if (!additions.isEmpty()) { // check if we can place here
 			for (ItemFrame _itemFrame : additions.keySet()) {
 				DecorationConfig _config = additions.get(_itemFrame);
-				BedAddition bedAddition = (BedAddition) _config;
+				DyeableBedAddition bedAddition = (DyeableBedAddition) _config;
 				boolean isFrameWide = bedAddition.isWide();
 
 				if (isFrameWide && !isToolWide) { // trying to place a single over a wide
@@ -390,7 +391,7 @@ public class BedInteractionData {
 			if (config == null)
 				continue;
 
-			if (!(config instanceof BedAddition))
+			if (!(config instanceof DyeableBedAddition))
 				continue;
 
 			result.put(frame, config);
@@ -403,7 +404,7 @@ public class BedInteractionData {
 	private List<ItemFrame> getItemFramesAt(Block head, Player debugger) {
 		List<ItemFrame> frames = new ArrayList<>();
 
-		for (AdditionType type : AdditionType.values()) {
+		for (AdditionType type : IBedAddition.AdditionType.values()) {
 			Block _block = head.getRelative(BlockFace.UP, type.getModY());
 			ItemFrame itemFrame = (ItemFrame) DecorationUtils.findNearbyItemFrame(_block.getLocation(), false, debugger);
 			if (itemFrame != null)

@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class TV extends WallThing implements Cyclable {
 	@Getter
@@ -59,12 +61,12 @@ public class TV extends WallThing implements Cyclable {
 	}
 
 	@Override
-	public ItemModelType getNextItemModel() {
+	public ItemModelType getNextItemModel(Player player, ItemStack tool) {
 		return ((ChannelType) channelType.nextWithLoop()).getItemModelType();
 	}
 
 	@Override
-	public ItemModelType getPreviousItemModel() {
+	public ItemModelType getPreviousItemModel(Player player, ItemStack tool) {
 		return ((ChannelType) channelType.previousWithLoop()).getItemModelType();
 	}
 

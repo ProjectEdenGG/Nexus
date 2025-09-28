@@ -77,49 +77,55 @@ public class Catalog implements Listener {
 		INTERNAL,
 		INTERNAL_ROOT,
 
-		FLAGS(ItemModelType.FLAG_SERVER.getItem()),
-		PRIDE_FLAGS(ItemModelType.FLAG_PRIDE_PRIDE.getItem()),
+		FLAGS(ItemModelType.FLAG_SERVER),
+		PRIDE_FLAGS(ItemModelType.FLAG_PRIDE_PRIDE),
 
-		BUNTING(ItemModelType.BUNTING_SERVER_LOGO.getItem()),
-		PRIDE_BUNTING(ItemModelType.BUNTING_PRIDE_GAY.getItem()),
+		BUNTING(ItemModelType.BUNTING_SERVER_LOGO),
+		PRIDE_BUNTING(ItemModelType.BUNTING_PRIDE_GAY),
 
-		BANNERS(ItemModelType.BANNER_STANDING_SERVER_LOGO.getItem()),
-		BANNERS_STANDING(ItemModelType.BANNER_STANDING_SERVER_LOGO.getItem()),
-		BANNERS_HANGING(ItemModelType.BANNER_HANGING_SERVER_LOGO.getItem()),
+		BANNERS(ItemModelType.BANNER_STANDING_SERVER_LOGO),
+		BANNERS_STANDING(ItemModelType.BANNER_STANDING_SERVER_LOGO),
+		BANNERS_HANGING(ItemModelType.BANNER_HANGING_SERVER_LOGO),
 
-		COUNTERS_MENU(ItemModelType.COUNTER_BLACK_SOAPSTONE_CABINET.getItem(), ColorChoice.StainChoice.OAK.getColor()),
-		MARBLE_COUNTER(ItemModelType.COUNTER_MARBLE.getItem()),
-		STONE_COUNTER(ItemModelType.COUNTER_STONE.getItem()),
-		SOAPSTONE_COUNTER(ItemModelType.COUNTER_SOAPSTONE.getItem()),
-		WOODEN_COUNTER(ItemModelType.COUNTER_WOODEN.getItem(), ColorChoice.StainChoice.OAK.getColor()),
+		COUNTERS_MENU(ItemModelType.COUNTER_BLACK_SOAPSTONE_CABINET, ColorChoice.StainChoice.OAK),
+		MARBLE_COUNTER(ItemModelType.COUNTER_MARBLE),
+		STONE_COUNTER(ItemModelType.COUNTER_STONE),
+		SOAPSTONE_COUNTER(ItemModelType.COUNTER_SOAPSTONE),
+		WOODEN_COUNTER(ItemModelType.COUNTER_WOODEN, ColorChoice.StainChoice.OAK),
 
-		CABINETS(ItemModelType.CABINET_BLACK_WOODEN.getItem(), ColorChoice.StainChoice.OAK.getColor()),
-		BLACK_HANDLES(ItemModelType.HANDLE_BLACK.getItem()),
-		STEEL_HANDLES(ItemModelType.HANDLE_STEEL.getItem()),
-		BRASS_HANDLES(ItemModelType.HANDLE_BRASS.getItem()),
+		CABINETS(ItemModelType.CABINET_BLACK_WOODEN, ColorChoice.StainChoice.OAK),
+		BLACK_HANDLES(ItemModelType.HANDLE_BLACK),
+		STEEL_HANDLES(ItemModelType.HANDLE_STEEL),
+		BRASS_HANDLES(ItemModelType.HANDLE_BRASS),
 
-		ART(ItemModelType.ART_PAINTING_CUSTOM_SKYBLOCK.getItem()),
+		ART(ItemModelType.ART_PAINTING_CUSTOM_SKYBLOCK),
 		ART_CUSTOM(Art.tabIcon_custom),
 		ART_VANILLA(Art.tabIcon_vanilla),
 
-		MUSIC(ItemModelType.BONGOS.getItem(), ColorChoice.DyeChoice.RED.getColor()),
-		MUSIC_NOISEMAKERS(ItemModelType.DRUM_KIT.getItem(), ColorChoice.DyeChoice.RED.getColor()),
+		MUSIC(ItemModelType.BONGOS, ColorChoice.DyeChoice.RED),
+		MUSIC_NOISEMAKERS(ItemModelType.DRUM_KIT, ColorChoice.DyeChoice.RED),
 
-		FURNITURE(ItemModelType.COUNTER_BLACK_SOAPSTONE_CABINET.getItem(), ColorChoice.StainChoice.OAK.getColor()),
-		APPLIANCES(ItemModelType.APPLIANCE_FRIDGE_MAGNETS.getItem(), ColorChoice.DyeChoice.WHITE.getColor()),
-		CHAIRS(ItemModelType.CHAIR_WOODEN_BASIC.getItem(), ColorChoice.StainChoice.OAK.getColor()),
-		STOOLS(ItemModelType.STOOL_WOODEN_BASIC.getItem(), ColorChoice.StainChoice.OAK.getColor()),
-		STUMPS(ItemModelType.STUMP_OAK.getItem()),
-		TABLES(ItemModelType.TABLE_WOODEN_1X1.getItem(), ColorChoice.StainChoice.OAK.getColor()),
-		BEDS(ItemModelType.BED_GENERIC_1_SINGLE.getItem(), ColorChoice.StainChoice.OAK.getColor()),
-		FIREPLACES(ItemModelType.FIREPLACE_WOODEN.getItem(), ColorChoice.StainChoice.OAK.getColor()),
+		FURNITURE(ItemModelType.COUNTER_BLACK_SOAPSTONE_CABINET, ColorChoice.StainChoice.OAK),
+		APPLIANCES(ItemModelType.APPLIANCE_FRIDGE_MAGNETS, ColorChoice.DyeChoice.WHITE),
+		CHAIRS(ItemModelType.CHAIR_WOODEN_BASIC, ColorChoice.StainChoice.OAK),
 
-		FOOD(ItemModelType.FOOD_BREAD_LOAF.getItem()),
-		POTIONS(ItemModelType.POTION_FILLED_GROUP_RANDOM_2.getItem(), ColorChoice.DyeChoice.WHITE.getColor()),
-		BOOKS(ItemModelType.BOOK_OPENED_1.getItem(), DyeChoice.RED.getColor()),
-		FLORA(ItemModelType.FLORA_CHINESE_EVERGREEN.getItem(), ColorChoice.DyeChoice.RED.getColor()),
-		KITCHENWARE(ItemModelType.KITCHENWARE_MIXING_BOWL.getItem()),
-		WINDCHIMES(ItemModelType.WINDCHIMES_COPPER.getItem()),
+		STOOLS(ItemModelType.STOOL_WOODEN_BASIC, ColorChoice.StainChoice.OAK),
+		STUMPS(ItemModelType.STUMP_OAK),
+		TABLES(ItemModelType.TABLE_WOODEN_1X1, ColorChoice.StainChoice.OAK),
+		BEDS(ItemModelType.BED_GENERIC_1_SINGLE, ColorChoice.StainChoice.OAK),
+		FIREPLACES(ItemModelType.FIREPLACE_WOODEN, ColorChoice.StainChoice.OAK),
+
+		SPOOKY_FURNITURE(ItemModelType.TABLE_WOODEN_1X1_SPOOKY),
+		SPOOKY_CHAIRS(ItemModelType.CHAIR_WOODEN_BASIC_SPOOKY, DyeChoice.RED),
+		SPOOKY_TABLES(ItemModelType.TABLE_WOODEN_1X1_SPOOKY),
+		SPOOKY_BEDS(ItemModelType.BED_GENERIC_1_DOUBLE_SPOOKY),
+
+		FOOD(ItemModelType.FOOD_BREAD_LOAF),
+		POTIONS(ItemModelType.POTION_FILLED_GROUP_RANDOM_2, ColorChoice.DyeChoice.WHITE),
+		BOOKS(ItemModelType.BOOK_OPENED_1, DyeChoice.RED),
+		FLORA(ItemModelType.FLORA_CHINESE_EVERGREEN, ColorChoice.DyeChoice.RED),
+		KITCHENWARE(ItemModelType.KITCHENWARE_MIXING_BOWL),
+		WINDCHIMES(ItemModelType.WINDCHIMES_COPPER),
 		;
 
 		ItemStack icon = new ItemStack(Material.AIR);
@@ -128,6 +134,16 @@ public class Catalog implements Listener {
 		Tab(ItemStack icon) {
 			this.icon = icon;
 			this.color = null;
+		}
+
+		Tab(ItemModelType icon) {
+			this.icon = icon.getItem();
+			this.color = null;
+		}
+
+		Tab(ItemModelType icon, ColorChoice color) {
+			this.icon = icon.getItem();
+			this.color = color.getColor();
 		}
 
 		public ItemBuilder getIcon() {
