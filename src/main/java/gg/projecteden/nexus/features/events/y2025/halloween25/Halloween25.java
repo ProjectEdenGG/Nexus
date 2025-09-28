@@ -63,7 +63,6 @@ public class Halloween25 extends Feature implements Listener {
 		ItemModelType.CANDY_WRAPPED_1,
 		ItemModelType.CANDY_WRAPPED_5,
 		ItemModelType.CANDY_WRAPPED_12,
-		ItemModelType.CANDY_WRAPPED_14,
 		ItemModelType.CANDY_WRAPPED_16,
 		ItemModelType.CANDY_WRAPPED_17
 	);
