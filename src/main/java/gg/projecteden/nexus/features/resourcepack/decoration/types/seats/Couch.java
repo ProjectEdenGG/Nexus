@@ -1,11 +1,10 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.seats;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Colorable.ColorableType;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.DyeableCouch.CouchPart;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.ICouch;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import lombok.Getter;
 
-public class Couch extends Chair {
+public class Couch extends Chair implements ICouch {
 	@Getter
 	private final CouchPart couchPart;
 

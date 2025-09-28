@@ -14,6 +14,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationSnap
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Colorable.ColorableType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.CraftableDecoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.IBedAddition;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.ICouch;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Bunting;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet;
@@ -44,7 +45,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.I
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Bench;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.DyeableBench;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.DyeableCouch;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.DyeableCouch.CouchPart;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.DyeableChair;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.LongChair;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Stump;
@@ -248,19 +248,19 @@ public enum DecorationType {
 	SPOOKY_CHAIR_WOODEN_CUSHIONED(new DyeableChair(false, false, "Spooky Cushioned Wooden Chair", ItemModelType.CHAIR_WOODEN_CUSHIONED_SPOOKY, ColorableType.DYE)),
 
 	@TypeConfig(unbuyable = true, money = 150, tokens = 15, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
-	SPOOKY_COUCH_WOODEN_CUSHIONED_END_LEFT(new DyeableCouch(false, "Spooky Cushioned Wooden Couch Left End", ItemModelType.COUCH_WOODEN_CUSHIONED_END_LEFT_SPOOKY, ColorableType.DYE, CouchPart.END)),
+	SPOOKY_COUCH_WOODEN_CUSHIONED_END_LEFT(new DyeableCouch(false, "Spooky Cushioned Wooden Couch Left End", ItemModelType.COUCH_WOODEN_CUSHIONED_END_LEFT_SPOOKY, ColorableType.DYE, ICouch.CouchPart.END)),
 
 	@TypeConfig(unbuyable = true, money = 150, tokens = 15, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
-	SPOOKY_COUCH_WOODEN_CUSHIONED_END_RIGHT(new DyeableCouch(false, "Spooky Cushioned Wooden Couch Right End", ItemModelType.COUCH_WOODEN_CUSHIONED_END_RIGHT_SPOOKY, ColorableType.DYE, CouchPart.END)),
+	SPOOKY_COUCH_WOODEN_CUSHIONED_END_RIGHT(new DyeableCouch(false, "Spooky Cushioned Wooden Couch Right End", ItemModelType.COUCH_WOODEN_CUSHIONED_END_RIGHT_SPOOKY, ColorableType.DYE, ICouch.CouchPart.END)),
 
 	@TypeConfig(unbuyable = true, money = 150, tokens = 15, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
-	SPOOKY_COUCH_WOODEN_CUSHIONED_MIDDLE(new DyeableCouch(false, "Spooky Cushioned Wooden Couch Middle", ItemModelType.COUCH_WOODEN_CUSHIONED_MIDDLE_SPOOKY, ColorableType.DYE, CouchPart.STRAIGHT)),
+	SPOOKY_COUCH_WOODEN_CUSHIONED_MIDDLE(new DyeableCouch(false, "Spooky Cushioned Wooden Couch Middle", ItemModelType.COUCH_WOODEN_CUSHIONED_MIDDLE_SPOOKY, ColorableType.DYE, ICouch.CouchPart.STRAIGHT)),
 
 	@TypeConfig(unbuyable = true, money = 150, tokens = 15, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
-	SPOOKY_COUCH_WOODEN_CUSHIONED_CORNER(new DyeableCouch(false, "Spooky Cushioned Wooden Couch Corner", ItemModelType.COUCH_WOODEN_CUSHIONED_CORNER_SPOOKY, ColorableType.DYE, CouchPart.CORNER)),
+	SPOOKY_COUCH_WOODEN_CUSHIONED_CORNER(new DyeableCouch(false, "Spooky Cushioned Wooden Couch Corner", ItemModelType.COUCH_WOODEN_CUSHIONED_CORNER_SPOOKY, ColorableType.DYE, ICouch.CouchPart.CORNER)),
 
 	@TypeConfig(unbuyable = true, money = 120, tokens = 12, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
-	SPOOKY_COUCH_WOODEN_CUSHIONED_OTTOMAN(new DyeableCouch(false, "Spooky Cushioned Wooden Couch Ottoman", ItemModelType.COUCH_WOODEN_CUSHIONED_OTTOMAN_SPOOKY, ColorableType.DYE, CouchPart.STRAIGHT)),
+	SPOOKY_COUCH_WOODEN_CUSHIONED_OTTOMAN(new DyeableCouch(false, "Spooky Cushioned Wooden Couch Ottoman", ItemModelType.COUCH_WOODEN_CUSHIONED_OTTOMAN_SPOOKY, ColorableType.DYE, ICouch.CouchPart.STRAIGHT)),
 
 	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY) // TODO: PRICE
 	GIANT_CANDLE_ONE_UNLIT(new GiantCandle("Giant Candle", CandleType.ONE, false)),
@@ -982,34 +982,34 @@ public enum DecorationType {
 
 	// 	Couches
 	@TypeConfig(money = 150, tokens = 15, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	COUCH_WOODEN_CUSHIONED_END_LEFT(new DyeableCouch(false, "Cushioned Wooden Couch Left End", ItemModelType.COUCH_WOODEN_CUSHIONED_END_LEFT, ColorableType.DYE, CouchPart.END)),
+	COUCH_WOODEN_CUSHIONED_END_LEFT(new DyeableCouch(false, "Cushioned Wooden Couch Left End", ItemModelType.COUCH_WOODEN_CUSHIONED_END_LEFT, ColorableType.DYE, ICouch.CouchPart.END)),
 
 	@TypeConfig(money = 150, tokens = 15, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	COUCH_WOODEN_CUSHIONED_END_RIGHT(new DyeableCouch(false, "Cushioned Wooden Couch Right End", ItemModelType.COUCH_WOODEN_CUSHIONED_END_RIGHT, ColorableType.DYE, CouchPart.END)),
+	COUCH_WOODEN_CUSHIONED_END_RIGHT(new DyeableCouch(false, "Cushioned Wooden Couch Right End", ItemModelType.COUCH_WOODEN_CUSHIONED_END_RIGHT, ColorableType.DYE, ICouch.CouchPart.END)),
 
 	@TypeConfig(money = 150, tokens = 15, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	COUCH_WOODEN_CUSHIONED_MIDDLE(new DyeableCouch(false, "Cushioned Wooden Couch Middle", ItemModelType.COUCH_WOODEN_CUSHIONED_MIDDLE, ColorableType.DYE, CouchPart.STRAIGHT)),
+	COUCH_WOODEN_CUSHIONED_MIDDLE(new DyeableCouch(false, "Cushioned Wooden Couch Middle", ItemModelType.COUCH_WOODEN_CUSHIONED_MIDDLE, ColorableType.DYE, ICouch.CouchPart.STRAIGHT)),
 
 	@TypeConfig(money = 150, tokens = 15, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	COUCH_WOODEN_CUSHIONED_CORNER(new DyeableCouch(false, "Cushioned Wooden Couch Corner", ItemModelType.COUCH_WOODEN_CUSHIONED_CORNER, ColorableType.DYE, CouchPart.CORNER)),
+	COUCH_WOODEN_CUSHIONED_CORNER(new DyeableCouch(false, "Cushioned Wooden Couch Corner", ItemModelType.COUCH_WOODEN_CUSHIONED_CORNER, ColorableType.DYE, ICouch.CouchPart.CORNER)),
 
 	@TypeConfig(money = 120, tokens = 12, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	COUCH_WOODEN_CUSHIONED_OTTOMAN(new DyeableCouch(false, "Cushioned Wooden Couch Ottoman", ItemModelType.COUCH_WOODEN_CUSHIONED_OTTOMAN, ColorableType.DYE, CouchPart.STRAIGHT)),
+	COUCH_WOODEN_CUSHIONED_OTTOMAN(new DyeableCouch(false, "Cushioned Wooden Couch Ottoman", ItemModelType.COUCH_WOODEN_CUSHIONED_OTTOMAN, ColorableType.DYE, ICouch.CouchPart.STRAIGHT)),
 
 	@TypeConfig(money = 195, tokens = 19, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	COUCH_CLOTH_END_LEFT(new DyeableCouch(false, "Cloth Couch Left End", ItemModelType.COUCH_CLOTH_END_LEFT, ColorableType.DYE, CouchPart.END)),
+	COUCH_CLOTH_END_LEFT(new DyeableCouch(false, "Cloth Couch Left End", ItemModelType.COUCH_CLOTH_END_LEFT, ColorableType.DYE, ICouch.CouchPart.END)),
 
 	@TypeConfig(money = 195, tokens = 19, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	COUCH_CLOTH_END_RIGHT(new DyeableCouch(false, "Cloth Couch Right End", ItemModelType.COUCH_CLOTH_END_RIGHT, ColorableType.DYE, CouchPart.END)),
+	COUCH_CLOTH_END_RIGHT(new DyeableCouch(false, "Cloth Couch Right End", ItemModelType.COUCH_CLOTH_END_RIGHT, ColorableType.DYE, ICouch.CouchPart.END)),
 
 	@TypeConfig(money = 195, tokens = 19, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	COUCH_CLOTH_MIDDLE(new DyeableCouch(false, "Cloth Couch Middle", ItemModelType.COUCH_CLOTH_MIDDLE, ColorableType.DYE, CouchPart.STRAIGHT)),
+	COUCH_CLOTH_MIDDLE(new DyeableCouch(false, "Cloth Couch Middle", ItemModelType.COUCH_CLOTH_MIDDLE, ColorableType.DYE, ICouch.CouchPart.STRAIGHT)),
 
 	@TypeConfig(money = 195, tokens = 19, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	COUCH_CLOTH_CORNER(new DyeableCouch(false, "Cloth Couch Corner", ItemModelType.COUCH_CLOTH_CORNER, ColorableType.DYE, CouchPart.CORNER)),
+	COUCH_CLOTH_CORNER(new DyeableCouch(false, "Cloth Couch Corner", ItemModelType.COUCH_CLOTH_CORNER, ColorableType.DYE, ICouch.CouchPart.CORNER)),
 
 	@TypeConfig(money = 165, tokens = 16, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	COUCH_CLOTH_OTTOMAN(new DyeableCouch(false, "Cloth Couch Ottoman", ItemModelType.COUCH_CLOTH_OTTOMAN, ColorableType.DYE, CouchPart.STRAIGHT)),
+	COUCH_CLOTH_OTTOMAN(new DyeableCouch(false, "Cloth Couch Ottoman", ItemModelType.COUCH_CLOTH_OTTOMAN, ColorableType.DYE, ICouch.CouchPart.STRAIGHT)),
 
 	// Flags
 	@TypeConfig(money = 75, tokens = 7, tabs = Tab.FLAGS)

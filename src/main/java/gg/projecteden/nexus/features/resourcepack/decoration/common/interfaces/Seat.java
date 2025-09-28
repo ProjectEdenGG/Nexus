@@ -5,8 +5,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.Deco
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.DyeableCouch;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.DyeableCouch.CouchPart;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
@@ -61,8 +59,8 @@ public interface Seat extends Interactable {
 	default ArmorStand makeSit(Player player, Location location, Rotation rotation, Decoration decoration) {
 		float yaw = getYaw(rotation);
 
-		if (decoration.getConfig() instanceof DyeableCouch couch) {
-			if (couch.getCouchPart().equals(CouchPart.CORNER))
+		if (decoration.getConfig() instanceof ICouch couch) {
+			if (couch.getCouchPart().equals(ICouch.CouchPart.CORNER))
 				yaw += 45;
 		}
 

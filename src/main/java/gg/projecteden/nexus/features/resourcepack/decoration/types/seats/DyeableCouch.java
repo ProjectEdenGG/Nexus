@@ -1,9 +1,10 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.seats;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.ICouch;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import lombok.Getter;
 
-public class DyeableCouch extends DyeableChair {
+public class DyeableCouch extends DyeableChair implements ICouch {
 	@Getter
 	private final CouchPart couchPart;
 
@@ -14,13 +15,6 @@ public class DyeableCouch extends DyeableChair {
 	public DyeableCouch(boolean multiblock, String name, ItemModelType itemModelType, ColorableType colorableType, CouchPart couchPart, Double sitHeight) {
 		super(multiblock, false, name, itemModelType, colorableType, sitHeight);
 		this.couchPart = couchPart;
-	}
-
-	public enum CouchPart {
-		STRAIGHT,
-		END,
-		CORNER,
-		;
 	}
 
 	@Override
