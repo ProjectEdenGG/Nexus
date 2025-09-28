@@ -198,6 +198,18 @@ public class DecorationCommand extends CustomCommand {
 		send("Given Master Catalog");
 	}
 
+	@Path("getCatalog <theme>")
+	@Description("Get the themed catalog")
+	void getCatalog(Catalog.Theme theme) {
+		checkPermissions();
+
+		String themeName = StringUtils.camelCase(theme);
+		ItemBuilder catalogTheme = theme.getItemBuilder().name("&3" + themeName + " Catalog");
+
+		giveItem(catalogTheme);
+		send("Given " + themeName + " Catalog");
+	}
+
 	@Path("getItem magicDye")
 	@Description("Spawn a magic dye bottle")
 	void get_magicDye() {
