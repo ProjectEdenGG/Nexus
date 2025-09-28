@@ -99,7 +99,7 @@ public class DecorationStore implements Listener {
 				result.add(masterCatalog.price(Currency.BALANCE, 0));
 
 			for (Catalog.Theme theme : Catalog.Theme.values()) {
-				if (theme == Catalog.Theme.ALL)
+				if (theme == Catalog.Theme.MASTER)
 					continue;
 
 				if (user.getOwnedThemes().contains(theme))

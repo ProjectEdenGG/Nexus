@@ -3,11 +3,13 @@ package gg.projecteden.nexus.features.resourcepack.decoration.catalog;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Theme;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreCurrencyType;
 import gg.projecteden.nexus.models.decoration.DecorationUser;
 import gg.projecteden.nexus.models.decoration.DecorationUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -28,7 +30,13 @@ public class MasterCatalogProvider extends InventoryProvider {
 		addCloseItem();
 
 		List<ClickableItem> items = new ArrayList<>();
-		for (Catalog.Theme theme : user.getOwnedThemes().stream().sorted().toList()) {
+		List<Catalog.Theme> ownedThemes = user.getOwnedThemes();
+		if (WorldGroup.of(user).isCreativeMode())
+			ownedThemes = new ArrayList<>(List.of(Theme.values()));
+
+		ownedThemes.remove(Theme.MASTER);
+
+		for (Catalog.Theme theme : ownedThemes.stream().sorted().toList()) {
 			ItemBuilder catalogTheme = theme.getItemBuilder().name("&3" + StringUtils.camelCase(theme));
 			items.add(ClickableItem.of(catalogTheme, e -> Catalog.openCatalog(e.getPlayer(), theme, currency, this)));
 		}

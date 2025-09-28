@@ -117,7 +117,7 @@ public class DecorationCommand extends CustomCommand {
 
 	@Path("[--theme] [--currency]")
 	@Description("Open the catalog menu")
-	void viewCatalog(@Switch @Arg("all") Catalog.Theme theme, @Switch @Arg("money") DecorationStoreCurrencyType currency) {
+	void viewCatalog(@Switch @Arg("master") Catalog.Theme theme, @Switch @Arg("money") DecorationStoreCurrencyType currency) {
 		checkPermissions();
 
 		Catalog.openCatalog(player(), theme, currency, null);
@@ -186,20 +186,11 @@ public class DecorationCommand extends CustomCommand {
 			error("DecorationSpawnEvent was cancelled");
 
 		giveItem(spawnEvent.getItemStack());
-		send("&3Given: &e" + StringUtils.camelCase(config.getName()));
-	}
-
-	@Path("getMasterCatalog")
-	@Description("Get the master catalog")
-	void getMasterCatalog() {
-		checkPermissions();
-
-		giveItem(Catalog.getMASTER_CATALOG());
-		send("Given Master Catalog");
+		send(PREFIX + "Given: &e" + StringUtils.camelCase(config.getName()));
 	}
 
 	@Path("getCatalog <theme>")
-	@Description("Get the themed catalog")
+	@Description("Get a catalog")
 	void getCatalog(Catalog.Theme theme) {
 		checkPermissions();
 
@@ -207,7 +198,7 @@ public class DecorationCommand extends CustomCommand {
 		ItemBuilder catalogTheme = theme.getItemBuilder().name("&3" + themeName + " Catalog");
 
 		giveItem(catalogTheme);
-		send("Given " + themeName + " Catalog");
+		send(PREFIX + "Given &e" + themeName + " Catalog");
 	}
 
 	@Path("getItem magicDye")
@@ -216,6 +207,7 @@ public class DecorationCommand extends CustomCommand {
 		checkPermissions();
 
 		giveItem(DyeStation.getMagicDye().build());
+		send(PREFIX + "Given &eMagic Dye");
 	}
 
 	@Path("getItem magicStain")
@@ -224,6 +216,7 @@ public class DecorationCommand extends CustomCommand {
 		checkPermissions();
 
 		giveItem(DyeStation.getMagicStain().build());
+		send(PREFIX + "Given &eMagic Stain");
 	}
 
 	@Path("getItem magicMineral")
@@ -232,6 +225,7 @@ public class DecorationCommand extends CustomCommand {
 		checkPermissions();
 
 		giveItem(DyeStation.getMagicMineral().build());
+		send(PREFIX + "Given &eMagic Mineral");
 	}
 
 	@Path("getItem paintbrush")
@@ -240,6 +234,7 @@ public class DecorationCommand extends CustomCommand {
 		checkPermissions();
 
 		giveItem(DyeStation.getPaintbrush().build());
+		send(PREFIX + "Given &ePaintbrush");
 	}
 
 	@Path("getItem creativeBrush")
@@ -248,6 +243,7 @@ public class DecorationCommand extends CustomCommand {
 		checkPermissions();
 
 		giveItem(CreativeBrushMenu.getCreativeBrush().build());
+		send(PREFIX + "Given &eCreative Brush");
 	}
 
 	@Path("publicUse [enable]")

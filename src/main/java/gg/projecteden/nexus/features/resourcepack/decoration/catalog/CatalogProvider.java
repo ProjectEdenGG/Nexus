@@ -38,7 +38,7 @@ public class CatalogProvider extends InventoryProvider {
 		List<ClickableItem> items = new ArrayList<>();
 
 		for (Theme theme : Theme.values()) {
-			if (theme == Theme.ALL)
+			if (theme == Theme.MASTER)
 				continue;
 
 			ItemBuilder catalogTheme = theme.getItemBuilder().name("&3" + StringUtils.camelCase(theme) + " Catalog");

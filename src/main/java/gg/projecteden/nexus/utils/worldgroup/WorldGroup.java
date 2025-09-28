@@ -158,7 +158,7 @@ public enum WorldGroup implements IWorldGroup {
 	}
 
 	public boolean isCreativeMode() {
-		return getField().isAnnotationPresent(SurvivalMode.class);
+		return getField().isAnnotationPresent(CreativeMode.class);
 	}
 
 	public static List<WorldGroup> getSurvivalModeGroups() {

@@ -157,7 +157,7 @@ public class Catalog implements Listener {
 
 	@AllArgsConstructor
 	public enum Theme {
-		ALL(ItemModelType.DECORATION_CATALOG_ALL, Integer.MAX_VALUE),
+		MASTER(ItemModelType.DECORATION_CATALOG_ALL, Integer.MAX_VALUE),
 
 		GENERAL(ItemModelType.DECORATION_CATALOG_GENERAL, 100000.0),
 		//
@@ -207,7 +207,7 @@ public class Catalog implements Listener {
 	}
 
 	public static void openCatalog(Player viewer, Theme theme, @NonNull CategoryTree tree, DecorationStoreCurrencyType currency, @Nullable InventoryProvider previousMenu) {
-		if (theme == Theme.ALL) {
+		if (theme == Theme.MASTER) {
 			new CatalogProvider(currency, previousMenu).open(viewer);
 			return;
 		}
@@ -233,7 +233,7 @@ public class Catalog implements Listener {
 		Player player = event.getPlayer();
 		ItemStack handItem = player.getInventory().getItemInMainHand();
 
-		if (isMasterCatalog(handItem)) {
+		if (isMasterCatalog(handItem) || Theme.MASTER.matchesItem(handItem)) {
 			event.setCancelled(true);
 			new MasterCatalogProvider(player, DecorationStoreCurrencyType.MONEY).open(player);
 			return;

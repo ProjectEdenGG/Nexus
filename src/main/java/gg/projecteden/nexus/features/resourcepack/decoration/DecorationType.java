@@ -234,7 +234,7 @@ public enum DecorationType {
 	@TypeConfig(money = 225, tokens = 22, theme = Theme.SPOOKY)
 	GRAVESTONE_TALL(new FloorThing(false, "Tall Gravestone", ItemModelType.GRAVESTONE_TALL, HitboxUnique.GRAVESTONE_TALL)),
 
-	// TODO: REMOVE "UNBYABLE" ON RELEASE
+	// TODO HALLOWEEN: REMOVE "UNBUYABLE" FROM BELOW ON RELEASE
 	@TypeConfig(unbuyable = true, money = 215, tokens = 21, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_BEDS})
 	SPOOKY_BED_GENERIC_1_DOUBLE(new BedAddition("Spooky Generic Frame A Double", ItemModelType.BED_GENERIC_1_DOUBLE_SPOOKY, IBedAddition.AdditionType.FRAME, true)),
 

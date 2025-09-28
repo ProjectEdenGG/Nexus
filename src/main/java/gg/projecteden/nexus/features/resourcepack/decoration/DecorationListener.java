@@ -532,7 +532,6 @@ public class DecorationListener implements Listener {
 
 	@Getter
 	private static class InteractData {
-		;
 		PlayerInteractEvent event;
 		DecorationInteractData data;
 		int tick;

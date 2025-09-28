@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.C
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.MultiState;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Seat;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -24,6 +25,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDismountEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -37,6 +39,21 @@ public class DecorationTypeListener implements Listener {
 	public DecorationTypeListener() {
 		Nexus.registerListener(this);
 	}
+
+	@EventHandler
+	public void on(BlockPlaceEvent event) {
+		ItemStack item = event.getItemInHand();
+		final ItemModelType itemModelType = ItemModelType.of(item);
+		if (itemModelType != null && itemModelType.canBePlaced())
+			return;
+
+		DecorationConfig config = DecorationConfig.of(item);
+		if (config == null)
+			return;
+
+		event.setCancelled(true);
+	}
+
 
 	@EventHandler
 	public void on(EntityDismountEvent event) {
