@@ -29,14 +29,14 @@ import java.util.List;
 @NoArgsConstructor
 public class KillerMoney implements Listener {
 
-	private static final List<SpawnReason> UNNATURAL_SPAWN_REASONS = List.of(
+	public static final List<SpawnReason> UNNATURAL_SPAWN_REASONS = List.of(
 		SpawnReason.SPAWNER,
 		SpawnReason.SPAWNER_EGG,
 		SpawnReason.NETHER_PORTAL,
 		SpawnReason.RAID
 	);
 
-	private static final List<DamageCause> DEATH_CAUSE_BLACKLIST = List.of(
+	public static final List<DamageCause> DEATH_CAUSE_BLACKLIST = List.of(
 		DamageCause.CRAMMING,
 		DamageCause.SUFFOCATION
 	);

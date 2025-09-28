@@ -1,13 +1,19 @@
 package gg.projecteden.nexus.features.recipes.functionals.backpacks;
 
-import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
-import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks.BackpackTier;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public class DiamondBackpack extends GoldBackpack {
 
-	public static ItemStack result = new ItemBuilder(ItemModelType.BACKPACK_3D_DIAMOND).name("Diamond Backpack").build();
+	public static ItemStack result = BackpackTier.DIAMOND.builder()
+		.name("Diamond Backpack")
+		.build();
+
+	@Override
+	public ItemStack getItem() {
+		return result;
+	}
 
 	@Override
 	public ItemStack getResult() {
@@ -25,8 +31,8 @@ public class DiamondBackpack extends GoldBackpack {
 	}
 
 	@Override
-	public Backpacks.BackpackTier getTier() {
-		return Backpacks.BackpackTier.DIAMOND;
+	public BackpackTier getTier() {
+		return BackpackTier.DIAMOND;
 	}
 
 }

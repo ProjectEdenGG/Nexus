@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
-import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
+import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks.BackpackTier;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Tab;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Theme;
@@ -2010,7 +2010,7 @@ public enum DecorationType {
 		// Init all decoration creators
 		TrophyType.initDecorations();
 		Pose.initDecorations();
-		Backpacks.BackpackTier.initDecoration();
+		BackpackTier.initDecoration();
 	}
 
 	public static void registerRecipes() {

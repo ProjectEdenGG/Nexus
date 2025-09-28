@@ -1,12 +1,24 @@
 package gg.projecteden.nexus.features.events.y2025.halloween25;
 
+import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks.BackpackTier;
+import gg.projecteden.nexus.features.recipes.functionals.backpacks.IBackpack;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class HalloweenCandyBasket {
+public class Halloween25CandyBasket implements IBackpack {
+
+	private static final ItemStack ITEM = BackpackTier.HALLOWEEN.builder()
+		.name("&5Candy Basket")
+		.lore("&6Halloween 2025")
+		.build();
+
+	@Override
+	public ItemStack getItem() {
+		return ITEM;
+	}
 
 	public static void handleClose(ItemStack backpack, List<ItemStack> contents) {
 		int amount = 0;
@@ -21,11 +33,6 @@ public class HalloweenCandyBasket {
 			tier = CandyBasketTier.HALF;
 		if (amount >= 1000)
 			tier = CandyBasketTier.FULL;
-
-		CandyBasketTier itemTier = CandyBasketTier.of(backpack);
-		if (itemTier != null)
-			if (itemTier.ordinal() >= tier.ordinal())
-				return;
 
 		new ItemBuilder(backpack, true).model(tier.getModel()).build();
 	}

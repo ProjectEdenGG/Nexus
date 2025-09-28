@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Quest;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu.NPCShopMenuBuilder;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu.Product;
-import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
 import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks.BackpackTier;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.costume.Costume;
@@ -74,7 +73,7 @@ public class VuLan24Menus {
 	}
 
 	public static NPCShopMenuBuilder getGuideShop() {
-		var backpack = new ItemBuilder(Backpacks.setTier(Backpacks.getBackpack(), BackpackTier.DIAMOND))
+		var backpack = new ItemBuilder(BackpackTier.DIAMOND.create())
 			.undroppable()
 			.unstorable()
 			.untrashable();

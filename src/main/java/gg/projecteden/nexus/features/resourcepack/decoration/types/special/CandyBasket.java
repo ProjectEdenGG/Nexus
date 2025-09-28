@@ -1,9 +1,8 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.special;
 
-import gg.projecteden.nexus.features.events.y2025.halloween25.HalloweenCandyBasket.CandyBasketTier;
-import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
+import gg.projecteden.nexus.features.events.y2025.halloween25.Halloween25CandyBasket.CandyBasketTier;
+import gg.projecteden.nexus.features.recipes.functionals.backpacks.BackpackCommand;
 import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks.BackpackTier;
-import gg.projecteden.nexus.features.recipes.functionals.backpacks.FixBackpackCommand;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -28,8 +27,8 @@ public class CandyBasket extends Backpack {
 
 	@Override
 	public ItemStack getItem() {
-		ItemStack stack = FixBackpackCommand.fix(super.getItem());
-		stack = Backpacks.setTier(stack, tier);
+		ItemStack stack = BackpackCommand.fix(super.getItem());
+		stack = tier.apply(stack);
 		return new ItemBuilder(stack, true).model(candyBasketTier.getModel()).build();
 	}
 }

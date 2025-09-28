@@ -47,8 +47,8 @@ public enum Boostable {
 	MOB_HEADS(Material.ZOMBIE_HEAD),
 	@PossiblePersonal
 	MYSTERY_CRATE_KEY(Material.TRIPWIRE_HOOK),
-	@Disabled
-	HALLOWEEN_CANDY(ItemModelType.FOOD_CANDY_CORN),
+	HALLOWEEN_CANDY(ItemModelType.CANDY_CANDY_CORN),
+	HALLOWEEN_CRATE_KEY(ItemModelType.CRATE_KEY_HALLOWEEN),
 	;
 
 	private final Material material;

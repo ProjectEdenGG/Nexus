@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.recipes.functionals.backpacks;
 
-import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
-import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks.BackpackTier;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
@@ -14,7 +13,14 @@ import java.util.Arrays;
 
 public class NetheriteBackpack extends DiamondBackpack {
 
-	public static ItemStack result = new ItemBuilder(ItemModelType.BACKPACK_3D_NETHERITE).name("Netherite Backpack").build();
+	public static ItemStack result = BackpackTier.NETHERITE.builder()
+		.name("Netherite Backpack")
+		.build();
+
+	@Override
+	public ItemStack getItem() {
+		return result;
+	}
 
 	@Override
 	public ItemStack getResult() {
@@ -32,8 +38,8 @@ public class NetheriteBackpack extends DiamondBackpack {
 	}
 
 	@Override
-	public Backpacks.BackpackTier getTier() {
-		return Backpacks.BackpackTier.NETHERITE;
+	public BackpackTier getTier() {
+		return BackpackTier.NETHERITE;
 	}
 
 	@EventHandler
@@ -42,7 +48,7 @@ public class NetheriteBackpack extends DiamondBackpack {
 
 		ItemStack item = ((Item) event.getEntity()).getItemStack();
 		if (!Backpacks.isBackpack(item)) return;
-		if (Backpacks.getTier(item) != Backpacks.BackpackTier.NETHERITE) return;
+		if (BackpackTier.of(item) != BackpackTier.NETHERITE) return;
 
 		if (Arrays.asList(EntityDamageEvent.DamageCause.LAVA, EntityDamageEvent.DamageCause.FIRE, EntityDamageEvent.DamageCause.FIRE_TICK).contains(event.getCause()))
 			event.setCancelled(true);
@@ -54,7 +60,7 @@ public class NetheriteBackpack extends DiamondBackpack {
 
 		ItemStack item = ((Item) event.getEntity()).getItemStack();
 		if (!Backpacks.isBackpack(item)) return;
-		if (Backpacks.getTier(item) != Backpacks.BackpackTier.NETHERITE) return;
+		if (BackpackTier.of(item) != BackpackTier.NETHERITE) return;
 
 		if (event.getDamager() == null)
 			return;

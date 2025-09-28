@@ -2,11 +2,10 @@ package gg.projecteden.nexus.features.recipes.functionals.backpacks;
 
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.features.recipes.CustomRecipes;
+import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks.BackpackTier;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
-import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import lombok.NonNull;
@@ -20,9 +19,16 @@ import org.bukkit.inventory.Recipe;
 import java.util.Arrays;
 import java.util.List;
 
-public class IronBackpack extends FunctionalRecipe {
+public class IronBackpack extends FunctionalRecipe implements IBackpack {
 
-	public static ItemStack result = new ItemBuilder(ItemModelType.BACKPACK_3D_IRON).name("Iron Backpack").build();
+	public static ItemStack result = BackpackTier.IRON.builder()
+		.name("Iron Backpack")
+		.build();
+
+	@Override
+	public ItemStack getItem() {
+		return result;
+	}
 
 	@Override
 	public ItemStack getResult() {
@@ -52,8 +58,8 @@ public class IronBackpack extends FunctionalRecipe {
 		return Material.IRON_INGOT;
 	}
 
-	public Backpacks.BackpackTier getTier() {
-		return Backpacks.BackpackTier.IRON;
+	public BackpackTier getTier() {
+		return BackpackTier.IRON;
 	}
 
 	@EventHandler
@@ -77,14 +83,12 @@ public class IronBackpack extends FunctionalRecipe {
 			return;
 		}
 
-		if (EnumUtils.previous(Backpacks.BackpackTier.class, getTier().ordinal()) != Backpacks.getTier(backpack)) {
+		if (EnumUtils.previous(BackpackTier.class, getTier().ordinal()) != BackpackTier.of(backpack)) {
 			event.getInventory().setResult(null);
 			return;
 		}
 
-		event.getInventory().setResult(Backpacks.setTier(backpack, getTier()));
+		event.getInventory().setResult(getTier().apply(backpack));
 	}
-
-
 
 }

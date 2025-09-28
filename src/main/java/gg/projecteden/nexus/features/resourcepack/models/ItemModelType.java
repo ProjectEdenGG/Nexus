@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.recipes.functionals.InvisibleItemFrame;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.models.annotations.AllowInVanillaRecipes;
 import gg.projecteden.nexus.features.resourcepack.models.annotations.HasCustomModelData;
+import gg.projecteden.nexus.features.resourcepack.models.annotations.Name;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import lombok.AllArgsConstructor;
@@ -1507,77 +1508,150 @@ public enum ItemModelType {
 	PUGMAS21_CANDY_CANE_GREEN("food/candy/candycanes/green", Material.COOKIE),
 	PUGMAS21_CANDY_CANE_RED("food/candy/candycanes/red", Material.COOKIE),
 	PUGMAS21_CANDY_CANE_YELLOW("food/candy/candycanes/yellow", Material.COOKIE),
+	@Name("Candy Apple")
 	CANDY_CANDY_APPLE("food/candy/candy_apple", Material.COOKIE),
-	FOOD_CANDY_CORN("food/candy/candy_corn", Material.COOKIE),
+	@Name("Candy Corn")
+	CANDY_CANDY_CORN("food/candy/candy_corn", Material.COOKIE),
+	@Name("Caramel Apple")
 	CANDY_CARAMEL_APPLE("food/candy/caramel_apple", Material.COOKIE),
-	FOOD_CANDY_CHOCOLATE_BAR("food/candy/chocolate_bar", Material.COOKIE),
+	@Name("Chocolate Bar")
+	CANDY_CHOCOLATE_BAR("food/candy/chocolate_bar", Material.COOKIE),
+	@Name("Ghost Chocolate Bar")
 	CANDY_GHOST_CHOCOLATE("food/candy/ghost_chocolate", Material.COOKIE),
+	@Name("Ghost Marshmallow")
 	CANDY_GHOST_MARSHMALLOW("food/candy/ghost_marshmallow", Material.COOKIE),
+	@Name("Cherry Gummy Bear")
 	CANDY_GUMMIES_BEARS_CHERRY("food/candy/gummies/bears/cherry", Material.COOKIE),
+	@Name("Lime Gummy Bear")
 	CANDY_GUMMIES_BEARS_LIME("food/candy/gummies/bears/lime", Material.COOKIE),
+	@Name("Orange Gummy Bear")
 	CANDY_GUMMIES_BEARS_ORANGE("food/candy/gummies/bears/orange", Material.COOKIE),
+	@Name("Pineapple Gummy Bear")
 	CANDY_GUMMIES_BEARS_PINEAPPLE("food/candy/gummies/bears/pineapple", Material.COOKIE),
+	@Name("Lime Gummy Brain")
 	CANDY_GUMMIES_BRAINS_LIME("food/candy/gummies/brains/lime", Material.COOKIE),
+	@Name("Strawberry Gummy Brain")
 	CANDY_GUMMIES_BRAINS_STRAWBERRY("food/candy/gummies/brains/strawberry", Material.COOKIE),
+	@Name("Fizzy Gummy Worm")
 	CANDY_GUMMIES_WORMS_FIZZY("food/candy/gummies/worms/fizzy", Material.COOKIE),
+	@Name("Fruity Gummy Worm")
 	CANDY_GUMMIES_WORMS_FRUITY("food/candy/gummies/worms/fruity", Material.COOKIE),
+	@Name("Sour Gummy Worm")
 	CANDY_GUMMIES_WORMS_SOUR("food/candy/gummies/worms/sour", Material.COOKIE),
+	@Name("Apple Jellybean")
 	CANDY_JELLYBEANS_APPLE("food/candy/jellybeans/apple", Material.COOKIE),
+	@Name("Blaze Jellybean")
 	CANDY_JELLYBEANS_BLAZE("food/candy/jellybeans/blaze", Material.COOKIE),
+	@Name("Bloodorange Jellybean")
 	CANDY_JELLYBEANS_BLOODORANGE("food/candy/jellybeans/bloodorange", Material.COOKIE),
+	@Name("Bone Jellybean")
 	CANDY_JELLYBEANS_BONE("food/candy/jellybeans/bone", Material.COOKIE),
+	@Name("Cactus Jellybean")
 	CANDY_JELLYBEANS_CACTUS("food/candy/jellybeans/cactus", Material.COOKIE),
+	@Name("Cake Jellybean")
 	CANDY_JELLYBEANS_CAKE("food/candy/jellybeans/cake", Material.COOKIE),
+	@Name("Charred Jellybean")
 	CANDY_JELLYBEANS_CHARRED("food/candy/jellybeans/charred", Material.COOKIE),
+	@Name("Chorus Jellybean")
 	CANDY_JELLYBEANS_CHORUS("food/candy/jellybeans/chorus", Material.COOKIE),
+	@Name("Cookie Jellybean")
 	CANDY_JELLYBEANS_COOKIE("food/candy/jellybeans/cookie", Material.COOKIE),
+	@Name("Cotton Jellybean")
 	CANDY_JELLYBEANS_COTTON("food/candy/jellybeans/cotton", Material.COOKIE),
+	@Name("Creepy Jellybean")
 	CANDY_JELLYBEANS_CREEPY("food/candy/jellybeans/creepy", Material.COOKIE),
+	@Name("Fishy Jellybean")
 	CANDY_JELLYBEANS_FISHY("food/candy/jellybeans/fishy", Material.COOKIE),
+	@Name("Fizzy Jellybean")
 	CANDY_JELLYBEANS_FIZZY("food/candy/jellybeans/fizzy", Material.COOKIE),
+	@Name("Gold Jellybean")
 	CANDY_JELLYBEANS_GOLD("food/candy/jellybeans/gold", Material.COOKIE),
+	@Name("Ink Jellybean")
 	CANDY_JELLYBEANS_INK("food/candy/jellybeans/ink", Material.COOKIE),
+	@Name("Melon Jellybean")
 	CANDY_JELLYBEANS_MELON("food/candy/jellybeans/melon", Material.COOKIE),
+	@Name("Brown Mushroom Jellybean")
 	CANDY_JELLYBEANS_MUSHROOM_BROWN("food/candy/jellybeans/mushroom_brown", Material.COOKIE),
+	@Name("Red Mushroom Jellybean")
 	CANDY_JELLYBEANS_MUSHROOM_RED("food/candy/jellybeans/mushroom_red", Material.COOKIE),
+	@Name("Poison Jellybean")
 	CANDY_JELLYBEANS_POISON("food/candy/jellybeans/poison", Material.COOKIE),
+	@Name("Pumpkin Jellybean")
 	CANDY_JELLYBEANS_PUMPKIN("food/candy/jellybeans/pumpkin", Material.COOKIE),
+	@Name("Rotten Jellybean")
 	CANDY_JELLYBEANS_ROTTEN("food/candy/jellybeans/rotten", Material.COOKIE),
+	@Name("Silver Jellybean")
 	CANDY_JELLYBEANS_SILVER("food/candy/jellybeans/silver", Material.COOKIE),
+	@Name("Wintergreen Jellybean")
 	CANDY_JELLYBEANS_WINTERGREEN("food/candy/jellybeans/wintergreen", Material.COOKIE),
+	@Name("Lollipop")
 	CANDY_LOLLIPOPS_1("food/candy/lollipops/1", Material.COOKIE),
+	@Name("Lollipop")
 	CANDY_LOLLIPOPS_10("food/candy/lollipops/10", Material.COOKIE),
+	@Name("Lollipop")
 	CANDY_LOLLIPOPS_11("food/candy/lollipops/11", Material.COOKIE),
+	@Name("Lollipop")
 	CANDY_LOLLIPOPS_12("food/candy/lollipops/12", Material.COOKIE),
+	@Name("Lollipop")
 	CANDY_LOLLIPOPS_2("food/candy/lollipops/2", Material.COOKIE),
+	@Name("Lollipop")
 	CANDY_LOLLIPOPS_3("food/candy/lollipops/3", Material.COOKIE),
+	@Name("Lollipop")
 	CANDY_LOLLIPOPS_4("food/candy/lollipops/4", Material.COOKIE),
+	@Name("Lollipop")
 	CANDY_LOLLIPOPS_5("food/candy/lollipops/5", Material.COOKIE),
+	@Name("Lollipop")
 	CANDY_LOLLIPOPS_6("food/candy/lollipops/6", Material.COOKIE),
+	@Name("Lollipop")
 	CANDY_LOLLIPOPS_7("food/candy/lollipops/7", Material.COOKIE),
+	@Name("Lollipop")
 	CANDY_LOLLIPOPS_8("food/candy/lollipops/8", Material.COOKIE),
+	@Name("Lollipop")
 	CANDY_LOLLIPOPS_9("food/candy/lollipops/9", Material.COOKIE),
+	@Name("Cherry Eyeball Lollipop")
 	CANDY_LOLLIPOPS_EYEBALL_CHERRY("food/candy/lollipops/eyeball_cherry", Material.COOKIE),
+	@Name("Lime Eyeball Lollipop")
 	CANDY_LOLLIPOPS_EYEBALL_LIME("food/candy/lollipops/eyeball_lime", Material.COOKIE),
+	@Name("Vanilla Eyeball Lollipop")
 	CANDY_LOLLIPOPS_EYEBALL_VANILLA("food/candy/lollipops/eyeball_vanilla", Material.COOKIE),
+	@Name("Peanut Butter Cup")
 	CANDY_PEANUT_BUTTER_CUP("food/candy/peanut_butter_cup", Material.COOKIE),
+	@Name("Sugar Plums")
 	CANDY_SUGAR_PLUMS("food/candy/sugar_plums", Material.COOKIE),
+	@Name("Wrapped Candy")
 	CANDY_WRAPPED_1("food/candy/wrapped/1", Material.COOKIE),
-	CANDY_WRAPPED_10("food/candy/wrapped/10", Material.COOKIE),
-	CANDY_WRAPPED_11("food/candy/wrapped/11", Material.COOKIE),
-	CANDY_WRAPPED_12("food/candy/wrapped/12", Material.COOKIE),
-	CANDY_WRAPPED_13("food/candy/wrapped/13", Material.COOKIE),
-	CANDY_WRAPPED_14("food/candy/wrapped/14", Material.COOKIE),
-	CANDY_WRAPPED_15("food/candy/wrapped/15", Material.COOKIE),
-	CANDY_WRAPPED_16("food/candy/wrapped/16", Material.COOKIE),
+	@Name("Wrapped Candy")
 	CANDY_WRAPPED_2("food/candy/wrapped/2", Material.COOKIE),
+	@Name("Wrapped Candy")
 	CANDY_WRAPPED_3("food/candy/wrapped/3", Material.COOKIE),
+	@Name("Wrapped Candy")
 	CANDY_WRAPPED_4("food/candy/wrapped/4", Material.COOKIE),
+	@Name("Wrapped Candy")
 	CANDY_WRAPPED_5("food/candy/wrapped/5", Material.COOKIE),
+	@Name("Wrapped Candy")
 	CANDY_WRAPPED_6("food/candy/wrapped/6", Material.COOKIE),
+	@Name("Wrapped Candy")
 	CANDY_WRAPPED_7("food/candy/wrapped/7", Material.COOKIE),
+	@Name("Wrapped Candy")
 	CANDY_WRAPPED_8("food/candy/wrapped/8", Material.COOKIE),
+	@Name("Wrapped Candy")
 	CANDY_WRAPPED_9("food/candy/wrapped/9", Material.COOKIE),
+	@Name("Wrapped Candy")
+	CANDY_WRAPPED_10("food/candy/wrapped/10", Material.COOKIE),
+	@Name("Wrapped Candy")
+	CANDY_WRAPPED_11("food/candy/wrapped/11", Material.COOKIE),
+	@Name("Wrapped Candy")
+	CANDY_WRAPPED_12("food/candy/wrapped/12", Material.COOKIE),
+	@Name("Wrapped Candy")
+	CANDY_WRAPPED_13("food/candy/wrapped/13", Material.COOKIE),
+	@Name("Wrapped Candy")
+	CANDY_WRAPPED_14("food/candy/wrapped/14", Material.COOKIE),
+	@Name("Wrapped Candy")
+	CANDY_WRAPPED_15("food/candy/wrapped/15", Material.COOKIE),
+	@Name("Wrapped Candy")
+	CANDY_WRAPPED_16("food/candy/wrapped/16", Material.COOKIE),
+	@Name("Wrapped Candy")
+	CANDY_WRAPPED_17("food/candy/wrapped/17", Material.COOKIE),
 	COOKIES_CHOCOLATE("food/cookies/chocolate", Material.COOKIE),
 	COOKIES_CREAM_APRICOT("food/cookies/cream_apricot", Material.COOKIE),
 	COOKIES_CREAM_BLUEBERRY("food/cookies/cream_blueberry", Material.COOKIE),
@@ -2417,7 +2491,12 @@ public enum ItemModelType {
 	}
 
 	public ItemBuilder getNamedItemBuilder() {
-		return getItemBuilder().name(StringUtils.camelCase(this));
+		String name = StringUtils.camelCase(this);
+		var nameAnnotation = getField().getAnnotation(Name.class);
+		if (nameAnnotation != null)
+			name = nameAnnotation.value();
+
+		return getItemBuilder().name(name);
 	}
 
 	public ItemStack getNamedItem() {

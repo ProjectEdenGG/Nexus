@@ -181,7 +181,7 @@ public class LegacyItems implements Listener {
 
 	private static ItemStack upgradeBackpackItems(ItemStack item) {
 		if (!Backpacks.isBackpack(item)) return item;
-		BackpackTier tier = Backpacks.getTier(item);
+		BackpackTier tier = BackpackTier.of(item);
 
 		List<ItemStack> contents = ItemUtils.getNBTContentsOfNonInventoryItem(item, tier.getRows() * 9);
 		if (contents.isEmpty()) return item;

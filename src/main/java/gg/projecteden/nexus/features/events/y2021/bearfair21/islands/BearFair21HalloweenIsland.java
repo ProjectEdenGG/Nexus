@@ -38,7 +38,7 @@ public class BearFair21HalloweenIsland implements BearFair21Island {
 
 	private static final ItemBuilder cookies = new ItemBuilder(ItemModelType.FOOD_COOKIE_TRAY_CHOCOLATE_CHIP).name("Grandma's Homemade Cookies").undroppable();
 	//
-	private static final ItemBuilder chocolate = new ItemBuilder(ItemModelType.FOOD_CANDY_CHOCOLATE_BAR).name("Chocolate Bar").undroppable();
+	private static final ItemBuilder chocolate = new ItemBuilder(ItemModelType.CANDY_CHOCOLATE_BAR).name("Chocolate Bar").undroppable();
 	private static final ItemBuilder milk = new ItemBuilder(ItemModelType.FOOD_MILK_CARTON).name("Milk Carton").undroppable();
 	private static final ItemBuilder flour = new ItemBuilder(ItemModelType.FOOD_BAG_OF_FLOUR).name("Bag of Flour").undroppable();
 	//

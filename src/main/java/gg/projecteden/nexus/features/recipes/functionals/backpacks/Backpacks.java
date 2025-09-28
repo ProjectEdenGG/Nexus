@@ -3,8 +3,8 @@ package gg.projecteden.nexus.features.recipes.functionals.backpacks;
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2025.halloween25.Halloween25;
-import gg.projecteden.nexus.features.events.y2025.halloween25.HalloweenCandyBasket;
-import gg.projecteden.nexus.features.events.y2025.halloween25.HalloweenCandyBasket.CandyBasketTier;
+import gg.projecteden.nexus.features.events.y2025.halloween25.Halloween25CandyBasket;
+import gg.projecteden.nexus.features.events.y2025.halloween25.Halloween25CandyBasket.CandyBasketTier;
 import gg.projecteden.nexus.features.listeners.events.fake.FakePlayerInteractEvent;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
@@ -38,6 +38,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.Material;
@@ -69,11 +70,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class Backpacks extends FunctionalRecipe {
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
+public class Backpacks extends FunctionalRecipe implements IBackpack {
 
 	@Getter
-	public static ItemStack defaultBackpack = new ItemBuilder(ItemModelType.BACKPACK_3D_BASIC).itemFlags(ItemFlag.HIDE_DYE).name("Backpack").build();
+	public static ItemStack defaultBackpack = BackpackTier.BASIC.builder().itemFlags(ItemFlag.HIDE_DYE).name("Backpack").build();
 	public static final String NBT_KEY = "BackpackId";
+
+	@Override
+	public ItemStack getItem() {
+		return defaultBackpack;
+	}
 
 	@Override
 	public ItemStack getResult() {
@@ -117,7 +125,7 @@ public class Backpacks extends FunctionalRecipe {
 	}
 
 	public static boolean isBackpack(ItemStack item) {
-		if (Nullables.isNullOrAir(item))
+		if (isNullOrAir(item))
 			return false;
 
 		return !Nullables.isNullOrEmpty(new NBTItem(item).getString(NBT_KEY));
@@ -143,28 +151,8 @@ public class Backpacks extends FunctionalRecipe {
 		new BackpackMenu(player, backpack, autosort, frame);
 	}
 
-	public static BackpackTier getTier(ItemStack backpack) {
-		NBTItem nbtItem = new NBTItem(backpack);
-		for (int i = BackpackTier.values().length - 1; i >= 0; i--)
-			if (nbtItem.hasKey(BackpackTier.values()[i].getNBTKey()))
-				return BackpackTier.values()[i];
-		return BackpackTier.BASIC;
-	}
-
-	public static ItemStack setTier(ItemStack backpack, BackpackTier tier) {
-		return new ItemBuilder(backpack)
-			.nbt(nbt -> {
-				for (BackpackTier _tier : BackpackTier.values())
-					nbt.removeKey(_tier.getNBTKey());
-
-				nbt.setBoolean(tier.getNBTKey(), true);
-			})
-			.model(tier.getModel())
-			.build();
-	}
-
 	private static ItemStack copyContents(ItemStack oldBackpack, ItemStack newBackpack, World world) {
-		List<ItemStack> contents = ItemUtils.getNBTContentsOfNonInventoryItem(oldBackpack, getTier(newBackpack).getRows() * 9);
+		List<ItemStack> contents = ItemUtils.getNBTContentsOfNonInventoryItem(oldBackpack, BackpackTier.of(newBackpack).getRows() * 9);
 		if (MaterialTag.SHULKER_BOXES.isTagged(oldBackpack) && contents.isEmpty())
 			contents = new ItemBuilder(oldBackpack).shulkerBoxContents();
 
@@ -211,7 +199,7 @@ public class Backpacks extends FunctionalRecipe {
 		if (backpack == null)
 			return;
 
-		if (Nullables.isNullOrAir(event.getInventory().getResult()))
+		if (isNullOrAir(event.getInventory().getResult()))
 			return;
 
 		Component displayName = backpack.getItemMeta().hasDisplayName() ? backpack.getItemMeta().displayName() : Component.text("Backpack");
@@ -253,9 +241,7 @@ public class Backpacks extends FunctionalRecipe {
 		if (backpack == null)
 			backpack = defaultBackpack.clone();
 
-		return new ItemBuilder(backpack)
-			.nbt(nbt -> nbt.setString(NBT_KEY, RandomStringUtils.randomAlphabetic(10)))
-			.build();
+		return BackpackTier.BASIC.apply(backpack);
 	}
 
 	@EventHandler
@@ -366,7 +352,7 @@ public class Backpacks extends FunctionalRecipe {
 			this.player = player;
 			this.backpack = backpack;
 			this.frame = frame;
-			this.originalItems = ItemUtils.getNBTContentsOfNonInventoryItem(backpack, getTier(backpack).getRows() * 9);
+			this.originalItems = ItemUtils.getNBTContentsOfNonInventoryItem(backpack, BackpackTier.of(backpack).getRows() * 9);
 			this.inventoryHolder = HOLDERS.computeIfAbsent(getBackpackId(backpack), id -> new BackpackHolder(id, autosort));
 			this.inventoryHolder.setAutosort(autosort);
 
@@ -378,7 +364,7 @@ public class Backpacks extends FunctionalRecipe {
 				}
 				else {
 					Debug.log("Backpacks: Creating new inventory holder: " + inventoryHolder.id);
-					open(getTier(backpack).getRows(), originalItems);
+					open(BackpackTier.of(backpack).getRows(), originalItems);
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -437,7 +423,7 @@ public class Backpacks extends FunctionalRecipe {
 				return;
 			}
 
-			if (getTier(backpack) == BackpackTier.HALLOWEEN && !Halloween25.isCandy(item))
+			if (BackpackTier.of(backpack) == BackpackTier.HALLOWEEN && !(isNullOrAir(item) || Halloween25.isCandy(item)))
 				event.setCancelled(true);
 		}
 
@@ -467,8 +453,8 @@ public class Backpacks extends FunctionalRecipe {
 				return;
 			}
 
-			if (getTier(backpack) == BackpackTier.HALLOWEEN)
-				HalloweenCandyBasket.handleClose(backpack, contents);
+			BackpackTier tier = BackpackTier.of(backpack);
+			tier.handleClose(backpack, contents);
 
 			ItemUtils.setNBTContentsOfNonInventoryItem(backpack, contents);
 			if (frame != null)
@@ -508,26 +494,40 @@ public class Backpacks extends FunctionalRecipe {
 	@Getter
 	@AllArgsConstructor
 	public enum BackpackTier {
-		BASIC(3),
-		IRON(4),
-		GOLD(5),
-		DIAMOND(6),
-		NETHERITE(6),
-		HALLOWEEN(3) {
+		BASIC(3, Backpacks.class),
+		IRON(4, IronBackpack.class),
+		GOLD(5, GoldBackpack.class),
+		DIAMOND(6, DiamondBackpack.class),
+		NETHERITE(6, NetheriteBackpack.class),
+		HALLOWEEN(3, Halloween25CandyBasket.class) {
 			@Override
-			public String getModel() {
-				return ItemModelType.CANDY_BASKET_EMPTY.getModel();
+			public ItemModelType getModel() {
+				return ItemModelType.CANDY_BASKET_EMPTY;
+			}
+
+			@Override
+			public void handleClose(ItemStack backpack, List<ItemStack> contents) {
+				Halloween25CandyBasket.handleClose(backpack, contents);
 			}
 		};
 
 		final int rows;
+		final Class<? extends IBackpack> backpackClass;
 
-		public String getModel() {
-			return ItemModelType.valueOf("BACKPACK_3D_" + name()).getModel();
+		public ItemModelType getModel() {
+			return ItemModelType.valueOf("BACKPACK_3D_" + name());
 		}
 
 		public String getNBTKey() {
 			return "BP_TIER_" + name();
+		}
+
+		public static BackpackTier of(ItemStack item) {
+			NBTItem nbtItem = new NBTItem(item);
+			for (int i = BackpackTier.values().length - 1; i >= 0; i--)
+				if (nbtItem.hasKey(BackpackTier.values()[i].getNBTKey()))
+					return BackpackTier.values()[i];
+			return BackpackTier.BASIC;
 		}
 
 		public static void initDecoration() {
@@ -539,6 +539,29 @@ public class Backpacks extends FunctionalRecipe {
 						new CandyBasket(candyBasketTier);
 			}
 		}
+
+		public ItemBuilder builder() {
+			return new ItemBuilder(getModel());
+		}
+
+		@SneakyThrows
+		public ItemStack create() {
+			return apply(this.backpackClass.getConstructor().newInstance().getItem());
+		}
+
+		public ItemStack apply(ItemStack backpack) {
+			return new ItemBuilder(backpack)
+				.model(getModel())
+				.nbt(nbt -> {
+					nbt.setString(Backpacks.NBT_KEY, RandomStringUtils.randomAlphabetic(10));
+					for (BackpackTier _tier : BackpackTier.values())
+						nbt.removeKey(_tier.getNBTKey());
+					nbt.setBoolean(getNBTKey(), true);
+				})
+				.build();
+		}
+
+		public void handleClose(ItemStack backpack, List<ItemStack> contents) {}
 	}
 
 }
