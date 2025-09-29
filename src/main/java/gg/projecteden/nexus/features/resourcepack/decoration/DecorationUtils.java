@@ -471,7 +471,7 @@ public class DecorationUtils {
 
 	public static CustomCreativeItem[] getCreativeCategories() {
 		return Arrays.stream(Theme.values())
-			.filter(theme -> theme != Theme.ALL)
+			.filter(theme -> theme != Theme.MASTER)
 			.map(theme -> {
 				ItemBuilder builder = theme.getItemBuilder();
 				return new CustomCreativeItem(builder, "Decorations: " + StringUtils.camelCase(theme));
