@@ -11,7 +11,6 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
@@ -116,10 +115,6 @@ public class DecorationInteractData {
 			return block.getLocation();
 
 		return player.getLocation();
-	}
-
-	public boolean playerCanWGEdit() {
-		return PlayerUtils.canEdit(player, getLocation());
 	}
 
 	private static final Set<Material> GSitMaterials = new MaterialTag()

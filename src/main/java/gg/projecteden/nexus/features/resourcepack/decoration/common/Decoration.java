@@ -32,7 +32,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import io.papermc.paper.entity.TeleportFlag.EntityState;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -398,7 +397,7 @@ public class Decoration {
 		//
 
 		boolean isWGEdit = WorldGuardEditCommand.isEnabled(player);
-		boolean isInRegion = !new WorldGuardUtils(player).getRegionsAt(this.getOrigin()).isEmpty();
+		boolean canBreak = PlayerUtils.canBreak(player, this.getOrigin());
 		boolean result;
 
 		// Takes first priority, to allow public use decorations to be used within regions
@@ -414,7 +413,7 @@ public class Decoration {
 			return setCanEdit(result);
 		}
 
-		if (isInRegion) { // TODO || flag == allow --> return true
+		if (!canBreak) {
 			result = false;
 			DecorationLang.debug(player, " Is in region --> " + StringUtils.bool(result));
 			return setCanEdit(result);

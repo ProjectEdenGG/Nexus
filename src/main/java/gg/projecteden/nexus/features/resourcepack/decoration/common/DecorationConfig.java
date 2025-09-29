@@ -344,7 +344,6 @@ public class DecorationConfig {
 		if (decorationType != null)
 			enumName = decorationType.name();
 
-
 		PlayerUtils.sendLine(5);
 		PlayerUtils.send(player, "&3Name: &e" + this.getName());
 		PlayerUtils.send(player, "&3Id: &e" + this.getId());

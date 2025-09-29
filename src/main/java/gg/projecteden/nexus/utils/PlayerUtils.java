@@ -676,8 +676,15 @@ public class PlayerUtils {
 		return radial[ndx];
 	}
 
-	public static boolean canEdit(Player player, Location location) {
-		if (!new WorldGuardUtils(player).getRegionsAt(location).isEmpty())
+	public static boolean canBreak(Player player, Location location) {
+		if (!WorldGuardFlagUtils.canBreak(player, location))
+			return WorldGuardEditCommand.isEnabled(player);
+
+		return true;
+	}
+
+	public static boolean canPlace(Player player, Location location) {
+		if (!WorldGuardFlagUtils.canPlace(player, location))
 			return WorldGuardEditCommand.isEnabled(player);
 
 		return true;

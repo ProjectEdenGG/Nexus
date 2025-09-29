@@ -517,7 +517,7 @@ public class DecorationListener implements Listener {
 			return true;
 		}
 
-		if (!data.playerCanWGEdit()) {
+		if (!PlayerUtils.canPlace(data.getPlayer(), data.getLocation())) {
 			DecorationError.WORLDGUARD_USAGE.send(data.getPlayer());
 			return true;
 		}
