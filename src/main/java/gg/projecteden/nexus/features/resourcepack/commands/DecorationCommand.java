@@ -273,6 +273,21 @@ public class DecorationCommand extends CustomCommand {
 	// STAFF COMMANDS
 
 	@Permission(Group.STAFF)
+	@Path("getOwner")
+	@Description("Get the owner of a decoration")
+	void getOwner() {
+		Decoration decoration = DecorationUtils.getTargetDecoration(player());
+
+		if (decoration == null || decoration.getConfig() == null) {
+			DecorationError.UNKNOWN_TARGET_DECORATION.send(player());
+			return;
+		}
+
+		decoration.getOwner(player());
+		send(PREFIX + Nickname.of(decoration.getOwner(player())) + " owns that decoration");
+	}
+
+	@Permission(Group.STAFF)
 	@Path("changeOwner <player>")
 	@Description("Change the owner of a decoration")
 	void changeOwner(OfflinePlayer newOwner) {
