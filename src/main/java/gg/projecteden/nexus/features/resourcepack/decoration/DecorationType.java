@@ -1971,10 +1971,10 @@ public enum DecorationType {
 //										INTERNAL USE ONLY
 // 	------------------------------------------------------------------------------------------------------
 
-	@TypeConfig(unbuyable = true, money = 10, tokens = 10, tabs = Tab.SPOOKY_FURNITURE)
+	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE)
 	SPOOKY_SHELF_WALL_1X1(new WallThing(false, "Spooky Wall Shelf 1x1", ItemModelType.SHELF_WALL_1X1_SPOOKY, HitboxSingle._1x1_BARRIER)),
 
-	@TypeConfig(unbuyable = true, money = 10, tokens = 10, tabs = Tab.SPOOKY_FURNITURE)
+	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY,  tabs = Tab.SPOOKY_FURNITURE)
 	SPOOKY_SHELF_WALL_1X2(new WallThing(true, "Spooky Wall Shelf 1x2", ItemModelType.SHELF_WALL_1X2_SPOOKY, HitboxFloor._1x2H)),
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
