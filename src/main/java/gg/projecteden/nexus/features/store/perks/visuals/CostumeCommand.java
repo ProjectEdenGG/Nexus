@@ -275,6 +275,8 @@ public class CostumeCommand extends CustomCommand implements Listener {
 			for (ItemModelFolder subfolder : folder.getFolders()) {
 				if (subfolder.getPath().contains(Costume.EXCLUSIVE))
 					continue;
+				if (subfolder.getPath().contains(Costume.ARMOR))
+					continue;
 
 				ItemModelInstance firstModel = subfolder.getIcon(model -> isAvailableCostume(user, Costume.of(model)));
 				ItemStack item = new ItemStack(Material.BARRIER);
