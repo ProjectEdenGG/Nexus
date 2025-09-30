@@ -24,6 +24,8 @@ public enum ArmorSkin implements EquipmentSkinType {
 	ADAMANTITE,
 	AMETHYST,
 	BERSERKER,
+	@HelmetCostume("hat/armor/bone")
+	BONE,
 	BROWN_BERSERK,
 	CHERRY,
 	COBALT,
@@ -35,6 +37,8 @@ public enum ArmorSkin implements EquipmentSkinType {
 	MECHANICAL,
 	MYTHRIL,
 	SCULK,
+	@HelmetCostume("hat/armor/shadow")
+	SHADOW,
 	TANK,
 	THOR,
 	VINES,
