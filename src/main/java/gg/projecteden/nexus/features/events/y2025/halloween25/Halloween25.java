@@ -16,6 +16,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -171,6 +172,9 @@ public class Halloween25 extends Feature implements Listener {
 
 	private boolean shouldIgnore(Entity entity) {
 		Location location = entity.getLocation();
+
+		if (!new WorldGuardUtils(location).getRegionsAt(location).isEmpty())
+			return true;
 
 		if (UNNATURAL_SPAWN_REASONS.contains(entity.getEntitySpawnReason()))
 			return true;

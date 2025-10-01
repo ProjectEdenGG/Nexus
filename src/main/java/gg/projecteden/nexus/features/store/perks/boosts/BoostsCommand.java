@@ -174,7 +174,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 	@Path("give <player> <type> <multiplier> <duration> [amount] [--personal]")
 	@Permission(Group.ADMIN)
 	@Description("Give a player a boost")
-	void give(Booster booster, Boostable type, double multiplier, Timespan duration, @Arg("1") int amount, @Switch boolean personal) {
+	void give(Booster booster, Boostable type, double multiplier, Timespan duration, @Arg("1") int amount, @Switch(shorthand = 'p') boolean personal) {
 		for (int i = 0; i < amount; i++)
 			booster.add(type, multiplier, duration.getOriginal() / 1000, personal);
 		service.save(booster);

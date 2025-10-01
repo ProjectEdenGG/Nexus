@@ -91,7 +91,8 @@ public class Costume {
 	private static final List<Costume> costumes = new ArrayList<>();
 	public static final String ROOT_FOLDER = "/costumes";
 	public static final String EXCLUSIVE = "exclusive";
-	public static final String ARMOR = "armor";
+	public static final String ARMOR = "hat/armor";
+	public static final String BACK = "back";
 	public static final String STORE_URL_VISUALS = StoreCommand.URL + "/category/visuals";
 	public static final String STORE_URL_BOOSTS = StoreCommand.URL + "/category/boosts";
 

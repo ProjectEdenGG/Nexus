@@ -101,7 +101,6 @@ public enum DecorationStoreCurrencyType {
 			return null;
 
 		int price = this.price.apply(typeConfig);
-
 		if (price <= -1)
 			return null;
 

@@ -159,8 +159,8 @@ public class MotdCommand extends CustomCommand implements Listener {
 	}
 
 	private enum IconType {
-		DEFAULT(),
-		PRIDE(Month.JANUARY, Month.DECEMBER),
+		DEFAULT,
+		HALLOWEEN(Month.OCTOBER),
 
 		ORIENTATION_ASEXUAL(Month.JUNE),
 		ORIENTATION_BISEXUAL(Month.JUNE),
