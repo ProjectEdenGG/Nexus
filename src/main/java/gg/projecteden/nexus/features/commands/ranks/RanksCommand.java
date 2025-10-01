@@ -32,15 +32,10 @@ public class RanksCommand extends CustomCommand {
 	@Description("View the available ranks on the server")
 	void ranks() {
 		line(5);
-		send("&3Here is a list of ranks. &eClick &3on one to view more info. You can tell what rank a person is by the &ecolor and format of their name&3.");
-		send(json("&3Please do not ask for ranks. You have to ")
-			.group()
-			.next("&eearn")
-			.hover("&eClick here &3for a basic guide to ranking up")
-			.command("/faq ranks ranks")
-			.group()
-			.next("&3 them")
-		);
+		send("&3Here is a list of our ranks, &eclick &3on each one for more info");
+		send("&3You can tell what rank a person is by the &ecolor of their name&3");
+		send("&3Please do not ask for ranks, you have to earn them");
+		send(json("&eClick here to learn how to rank up").command("/faq ranks"));
 		line();
 		Arrays.asList(Rank.values()).forEach(rank -> {
 			JsonBuilder builder = new JsonBuilder("&3- " + rank.getColoredName());

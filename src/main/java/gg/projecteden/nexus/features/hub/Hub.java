@@ -48,11 +48,15 @@ public class Hub extends Feature implements Listener {
 		return Bukkit.getWorld("server");
 	}
 
-	public static boolean isNotAtHub(Player player) {
+	public static boolean isAtHub(Player player) {
 		if (!player.getWorld().equals(getWorld()))
-			return true;
+			return false;
 
-		return !worldguard().isInRegion(player.getLocation(), baseRegion);
+		return worldguard().isInRegion(player.getLocation(), baseRegion);
+	}
+
+	public static boolean isNotAtHub(Player player) {
+		return !isAtHub(player);
 	}
 
 	@EventHandler

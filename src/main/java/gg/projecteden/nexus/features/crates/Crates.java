@@ -89,7 +89,7 @@ public class Crates extends Feature implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void on(NPCRightClickEvent event) {
 		if (!AvontyreNPCs.CRATES__BLAST.is(event.getNPC()))
 			return;

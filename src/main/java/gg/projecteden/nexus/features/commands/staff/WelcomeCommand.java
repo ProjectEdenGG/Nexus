@@ -85,7 +85,7 @@ public class WelcomeCommand extends CustomCommand implements Listener {
 			if (activeStaff.count() < 4)
 				return;
 
-			if (CooldownService.isOnCooldown(UUID0, "bumpReminder", TickTime.DAY))
+			if (CooldownService.isOnCooldown(UUID0, "bumpReminder", TickTime.HOUR.x(20)))
 				return;
 
 			String url = "https://docs.google.com/document/d/1MVFG2ipdpCY42cUzZyVsIbjVlPRCiN0gmYL89sJNRTw/edit?usp=sharing";

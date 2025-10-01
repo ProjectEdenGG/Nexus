@@ -291,9 +291,9 @@ public class CratesCommand extends CustomCommand {
 	@TabCompleterFor(CrateEntity.class)
 	List<String> tabCompleteCrateEntity(String filter, CrateType context) {
 		return CrateConfigService.get().getCrateEntities().getOrDefault(context, new ArrayList<>()).stream()
-			       .map(UUID::toString)
-			       .filter(str -> argsString().startsWith(filter))
-			       .collect(Collectors.toList());
-	}
+			.map(UUID::toString)
+			.filter(str -> argsString().startsWith(filter))
+			.collect(Collectors.toList());
+		}
 
 }

@@ -59,6 +59,10 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	public void help() {
 		line(2);
 		send("&3These are all the commands available to you in the build contest world.");
+		send(json("&3[+] &c/decor").hover("&eAccess all our custom decor").suggest("/decor"));
+		send(json("&3[+] &c/decor catalog <theme>").hover("&eGet themed catalogs").suggest("/decor catalog "));
+		send(json("&3[+] &c/decor paintbrush").hover("&eGet a decor paintbrush").suggest("/decor paintbrush"));
+		send(json("&3[+] &c/dye").hover("&eOpen the Dye Station menu").suggest("/dye"));
 		send(json("&3[+] &c/hdb").hover("&eFind decorative heads!").suggest("/hdb"));
 		send(json("&3[+] &c/banners").hover("&eCreate alphanumeric banners").suggest("/banners"));
 		send(json("&3[+] &c/plots home buildcontest" + buildContest.getId()).hover("&eTeleport to your plot").suggest("/plots home"));
@@ -128,6 +132,9 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	@Permission(Group.ADMIN)
 	void setupSteps() {
 		String worldName = "buildcontest" + buildContest.getId();
+		if (!world().getName().equals(worldName))
+			error("You must be in " + worldName + " to use this command");
+
 		List<Runnable> tasks = new ArrayList<>();
 
 		send("&ePlease wait while I do some automatic configuration...");
@@ -135,11 +142,11 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		tasks.add(() -> player().teleportAsync(new Location(Bukkit.getWorld(worldName), 0, 255, 0, 0, 0)));
 		tasks.add(() -> runCommand("top"));
 		tasks.add(() -> runCommand("blockcenter"));
-		tasks.add(() -> runCommand("mv set spawn"));
+		tasks.add(() -> runCommand("mv setspawn"));
 		tasks.add(() -> runCommand("mv modify set gamemode creative"));
-		tasks.add(() -> runCommand("mv modify set allowWeather false"));
+		tasks.add(() -> runCommand("mv modify set allow-weather false"));
 		tasks.add(() -> runCommand("tl noon"));
-		tasks.add(() -> runCommand("wb set 1000"));
+		tasks.add(() -> runCommand("worldborder set 1000"));
 		tasks.add(() -> runCommand("warps set buildcontest"));
 		tasks.add(() -> runCommand("warps set " + worldName));
 		tasks.add(() -> runCommand("rg flag -w \"" + worldName + "\" __global__ " + Flags.PVP.getName() + " " + StateFlag.State.DENY.name()));

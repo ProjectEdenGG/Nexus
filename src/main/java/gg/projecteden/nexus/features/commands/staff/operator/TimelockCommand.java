@@ -21,14 +21,14 @@ public class TimelockCommand extends CustomCommand {
 	@Description("Lock a world's daylight cycle")
 	void set(String time) {
 		runCommandAsOp("time set " + time);
-		runCommandAsOp("mv gamerule doDaylightCycle false");
+		runCommandAsOp("mv gamerule set doDaylightCycle false");
 		send(PREFIX + "Daylight cycle locked");
 	}
 
 	@Path("reset")
 	@Description("Enable a world's daylight cycle")
 	void reset() {
-		runCommandAsOp("mv gamerule doDaylightCycle true");
+		runCommandAsOp("mv gamerule set doDaylightCycle true");
 		send(PREFIX + "Normal daylight cycle resumed");
 	}
 

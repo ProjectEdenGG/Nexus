@@ -53,6 +53,7 @@ import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.BlockFace;
@@ -189,9 +190,9 @@ public class DecorationCommand extends CustomCommand {
 		send(PREFIX + "Given: &e" + StringUtils.camelCase(config.getName()));
 	}
 
-	@Path("getCatalog <theme>")
+	@Path("catalog <theme>")
 	@Description("Get a catalog")
-	void getCatalog(Catalog.Theme theme) {
+	void catalog(Catalog.Theme theme) {
 		checkPermissions();
 
 		String themeName = StringUtils.camelCase(theme);
@@ -228,22 +229,18 @@ public class DecorationCommand extends CustomCommand {
 		send(PREFIX + "Given &eMagic Mineral");
 	}
 
-	@Path("getItem paintbrush")
-	@Description("Spawn a paintbrush")
-	void get_paintbrush() {
-		checkPermissions();
-
-		giveItem(DyeStation.getPaintbrush().build());
-		send(PREFIX + "Given &ePaintbrush");
-	}
-
-	@Path("getItem creativeBrush")
+	@Path("paintbrush")
 	@Description("Spawn a creative brush")
-	void get_creativebrush() {
+	void paintbrush() {
 		checkPermissions();
 
-		giveItem(CreativeBrushMenu.getCreativeBrush().build());
-		send(PREFIX + "Given &eCreative Brush");
+		if (worldGroup() == WorldGroup.CREATIVE || player().getGameMode() == GameMode.CREATIVE) {
+			giveItem(CreativeBrushMenu.getCreativeBrush().build());
+			send(PREFIX + "Given &eCreative Brush");
+		} else {
+			giveItem(DyeStation.getPaintbrush().build());
+			send(PREFIX + "Given &ePaintbrush");
+		}
 	}
 
 	@Path("publicUse [enable]")
@@ -594,27 +591,23 @@ public class DecorationCommand extends CustomCommand {
 		}).open(player());
 	}
 
-	private boolean checkPermissions() {
+	private void checkPermissions() {
 		if (isAdmin())
-			return true;
+			return;
 
 		if (!DecorationUtils.hasBypass(player())) {
 			if (isStaff())
 				error("You cannot use this command outside of creative/staff");
 			else
 				error("You cannot use this outside of creative");
-
-			return false;
 		}
 
 		if (rank() == Rank.GUEST && worldGroup() == WorldGroup.CREATIVE) {
 			if (new CreativeUserService().get(player()).isTrusted())
-				return true;
+				return;
 
 			error("You cannot access Decorations until you are Member rank");
 		}
-
-		return true;
 	}
 
 	private void updateSign(int id){

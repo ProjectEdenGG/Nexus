@@ -6,9 +6,12 @@ import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent.SlotType;
 import de.tr7zw.nbtapi.NBTTileEntity;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.teleport.TeleportCommand;
+import gg.projecteden.nexus.features.events.y2025.halloween25.Halloween25;
+import gg.projecteden.nexus.features.hub.Hub;
 import gg.projecteden.nexus.features.listeners.events.PlayerDamageByPlayerEvent;
 import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.features.listeners.events.fake.FakePlayerInteractEvent;
+import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
@@ -411,7 +414,12 @@ public class Misc implements Listener {
 
 	@EventHandler
 	public void resetPlayerTime(WorldGroupChangedEvent event) {
-		Tasks.wait(10, event.getPlayer()::resetPlayerTime);
+		Tasks.wait(10, () -> {
+			if (Halloween25.isEventActive(event.getPlayer())) // TODO If in time-lock region, return
+				if (Minigames.isInMinigameLobby(event.getPlayer()) || Hub.isAtHub(event.getPlayer()))
+					return;
+			event.getPlayer().resetPlayerTime();
+		});
 	}
 
 	// ImageOnMap rotating frames on placement; rotate back one before placement to offset

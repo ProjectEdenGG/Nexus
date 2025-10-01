@@ -4,8 +4,13 @@ import de.tr7zw.nbtapi.NBTEntity;
 import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.features.resourcepack.commands.CustomModelConverterCommand;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntity;
@@ -74,6 +79,23 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 			modify(targetEntity.getId(), 0, 0, 0, 0, 0, 0, 0, 0, 0, .5);
 
 		targetEntity.draw();
+	}
+
+	@Path("list [--radius]")
+	void list(
+		@Switch Integer radius
+	) {
+		send(PREFIX + "Custom bounding boxes:");
+		for (CustomBoundingBoxEntity entity : service.getAll()) {
+			if (!entity.isLoaded())
+				continue;
+
+			if (radius != null)
+				if (distance(entity.getLocation()).gt(radius))
+					continue;
+
+			send("&e" + entity.getId());
+		}
 	}
 
 	@Path("convert armorStand to itemDisplay [--id]")

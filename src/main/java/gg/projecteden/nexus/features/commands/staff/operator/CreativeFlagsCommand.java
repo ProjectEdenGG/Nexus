@@ -50,7 +50,9 @@ public class CreativeFlagsCommand extends CustomCommand {
 		region -> region.setFlag(Flags.CORAL_FADE, State.DENY),
 		region -> region.setFlag(CustomFlags.GRASS_DECAY.get(), State.DENY),
 		region -> region.setFlag(CustomFlags.SAPLING_GROWTH.get(), State.DENY),
-		region -> region.setFlag(CustomFlags.HANGING_BREAK.get(), State.DENY)
+		region -> region.setFlag(CustomFlags.HANGING_BREAK.get(), State.DENY),
+		region -> region.setFlag(CustomFlags.BLOCK_GROW.get(), State.DENY),
+		region -> region.setFlag(CustomFlags.BLOCK_FADE.get(), State.DENY)
 	);
 
 	public static void setFlags(ProtectedRegion protectedRegion) {
