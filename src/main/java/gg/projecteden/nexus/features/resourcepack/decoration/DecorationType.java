@@ -25,11 +25,11 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.Count
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.CounterType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.HandleType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.DyeableFireplace;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.DyeableFurniture;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Fireplace;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Flag;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Flag.PrideFlagType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Flora;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.DyeableFurniture;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Furniture;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.HangingBanner;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.StandingBanner;
@@ -44,8 +44,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.I
 import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.Instrument.InstrumentSound;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Bench;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.DyeableBench;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.DyeableCouch;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.DyeableChair;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.DyeableCouch;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.LongChair;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Stump;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.BedAddition;
@@ -234,110 +234,109 @@ public enum DecorationType {
 	@TypeConfig(money = 225, tokens = 22, theme = Theme.SPOOKY)
 	GRAVESTONE_TALL(new FloorThing(false, "Tall Gravestone", ItemModelType.GRAVESTONE_TALL, HitboxUnique.GRAVESTONE_TALL)),
 
-	// TODO HALLOWEEN: REMOVE "UNBUYABLE" FROM BELOW ON RELEASE
-	@TypeConfig(unbuyable = true, money = 215, tokens = 21, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_BEDS})
+	@TypeConfig(money = 215, tokens = 21, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_BEDS})
 	SPOOKY_BED_GENERIC_1_DOUBLE(new BedAddition("Spooky Generic Frame A Double", ItemModelType.BED_GENERIC_1_DOUBLE_SPOOKY, IBedAddition.AdditionType.FRAME, true)),
 
-	@TypeConfig(unbuyable = true, money = 225, tokens = 22, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
+	@TypeConfig(money = 225, tokens = 22, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
 	SPOOKY_BENCH_WOODEN(new Bench(true, false, "Spooky Wooden Bench", ItemModelType.BENCH_SPOOKY, HitboxFloor._1x2H)),
 
-	@TypeConfig(unbuyable = true, money = 120, tokens = 12, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
+	@TypeConfig(money = 120, tokens = 12, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
 	SPOOKY_CHAIR_WOODEN_BASIC(new DyeableChair(false, false, "Spooky Wooden Chair", ItemModelType.CHAIR_WOODEN_BASIC_SPOOKY, ColorableType.DYE)),
 
-	@TypeConfig(unbuyable = true, money = 150, tokens = 15, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
+	@TypeConfig(money = 150, tokens = 15, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
 	SPOOKY_CHAIR_WOODEN_CUSHIONED(new DyeableChair(false, false, "Spooky Cushioned Wooden Chair", ItemModelType.CHAIR_WOODEN_CUSHIONED_SPOOKY, ColorableType.DYE)),
 
-	@TypeConfig(unbuyable = true, money = 150, tokens = 15, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
+	@TypeConfig(money = 150, tokens = 15, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
 	SPOOKY_COUCH_WOODEN_CUSHIONED_END_LEFT(new DyeableCouch(false, "Spooky Cushioned Wooden Couch Left End", ItemModelType.COUCH_WOODEN_CUSHIONED_END_LEFT_SPOOKY, ColorableType.DYE, ICouch.CouchPart.END)),
 
-	@TypeConfig(unbuyable = true, money = 150, tokens = 15, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
+	@TypeConfig(money = 150, tokens = 15, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
 	SPOOKY_COUCH_WOODEN_CUSHIONED_END_RIGHT(new DyeableCouch(false, "Spooky Cushioned Wooden Couch Right End", ItemModelType.COUCH_WOODEN_CUSHIONED_END_RIGHT_SPOOKY, ColorableType.DYE, ICouch.CouchPart.END)),
 
-	@TypeConfig(unbuyable = true, money = 150, tokens = 15, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
+	@TypeConfig(money = 150, tokens = 15, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
 	SPOOKY_COUCH_WOODEN_CUSHIONED_MIDDLE(new DyeableCouch(false, "Spooky Cushioned Wooden Couch Middle", ItemModelType.COUCH_WOODEN_CUSHIONED_MIDDLE_SPOOKY, ColorableType.DYE, ICouch.CouchPart.STRAIGHT)),
 
-	@TypeConfig(unbuyable = true, money = 150, tokens = 15, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
+	@TypeConfig(money = 150, tokens = 15, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
 	SPOOKY_COUCH_WOODEN_CUSHIONED_CORNER(new DyeableCouch(false, "Spooky Cushioned Wooden Couch Corner", ItemModelType.COUCH_WOODEN_CUSHIONED_CORNER_SPOOKY, ColorableType.DYE, ICouch.CouchPart.CORNER)),
 
-	@TypeConfig(unbuyable = true, money = 120, tokens = 12, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
+	@TypeConfig(money = 120, tokens = 12, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
 	SPOOKY_COUCH_WOODEN_CUSHIONED_OTTOMAN(new DyeableCouch(false, "Spooky Cushioned Wooden Couch Ottoman", ItemModelType.COUCH_WOODEN_CUSHIONED_OTTOMAN_SPOOKY, ColorableType.DYE, ICouch.CouchPart.STRAIGHT)),
 
-	@TypeConfig(unbuyable = true, money = 80, tokens = 8, theme = Theme.SPOOKY)
+	@TypeConfig(money = 80, tokens = 8, theme = Theme.SPOOKY)
 	GIANT_CANDLE_ONE_UNLIT(new GiantCandle("Giant Candle", CandleType.ONE, false)),
 
-	@TypeConfig(unbuyable = true, money = 80, tokens = 8, theme = Theme.SPOOKY)
+	@TypeConfig(money = 80, tokens = 8, theme = Theme.SPOOKY)
 	GIANT_CANDLE_TWO_UNLIT(new GiantCandle("Giant Candles", CandleType.TWO, false)),
 
-	@TypeConfig(unbuyable = true, money = 80, tokens = 8, theme = Theme.SPOOKY)
+	@TypeConfig(money = 80, tokens = 8, theme = Theme.SPOOKY)
 	GIANT_CANDLE_THREE_UNLIT(new GiantCandle("Giant Candles", CandleType.THREE, false)),
 
-	@TypeConfig(unbuyable = true, money = 80, tokens = 8, theme = Theme.SPOOKY)
+	@TypeConfig(money = 80, tokens = 8, theme = Theme.SPOOKY)
 	GIANT_CANDLE_ONE_UNLIT_DYEABLE(new DyeableGiantCandle("Giant Candle", DyeableCandleType.ONE, false)),
 
-	@TypeConfig(unbuyable = true, money = 80, tokens = 8, theme = Theme.SPOOKY)
+	@TypeConfig(money = 80, tokens = 8, theme = Theme.SPOOKY)
 	GIANT_CANDLE_TWO_UNLIT_DYEABLE(new DyeableGiantCandle("Giant Candles", DyeableCandleType.TWO, false)),
 
-	@TypeConfig(unbuyable = true, money = 80, tokens = 8, theme = Theme.SPOOKY)
+	@TypeConfig(money = 80, tokens = 8, theme = Theme.SPOOKY)
 	GIANT_CANDLE_THREE_UNLIT_DYEABLE(new DyeableGiantCandle("Giant Candles", DyeableCandleType.THREE, false)),
 
-	@TypeConfig(unbuyable = true, money = 60, tokens = 6, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
+	@TypeConfig(money = 60, tokens = 6, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
 	SPOOKY_TABLE_WOODEN_1x1(new Table(TableTheme.SPOOKY_WOODEN, TableShape._1X1, ItemModelType.TABLE_WOODEN_1X1_SPOOKY)),
 
-	@TypeConfig(unbuyable = true, money = 105, tokens = 10, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
+	@TypeConfig(money = 105, tokens = 10, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
 	SPOOKY_TABLE_WOODEN_1x2(new Table(TableTheme.SPOOKY_WOODEN, TableShape._1X2, ItemModelType.TABLE_WOODEN_1X2_SPOOKY)),
 
-	@TypeConfig(unbuyable = true, money = 135, tokens = 13, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
+	@TypeConfig(money = 135, tokens = 13, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
 	SPOOKY_TABLE_WOODEN_1x3(new Table(TableTheme.SPOOKY_WOODEN, TableShape._1X3, ItemModelType.TABLE_WOODEN_1X3_SPOOKY)),
 
-	@TypeConfig(unbuyable = true, money = 150, tokens = 15, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
+	@TypeConfig(money = 150, tokens = 15, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
 	SPOOKY_TABLE_WOODEN_2x2(new Table(TableTheme.SPOOKY_WOODEN, TableShape._2X2, ItemModelType.TABLE_WOODEN_2X2_SPOOKY)),
 
-	@TypeConfig(unbuyable = true, money = 140, tokens = 14, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
+	@TypeConfig(money = 140, tokens = 14, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
 	SPOOKY_TABLE_WOODEN_2x2_CORNER(new Table(TableTheme.SPOOKY_WOODEN, TableShape._2X2_CORNER, ItemModelType.TABLE_WOODEN_2X2_CORNER_SPOOKY)),
 
-	@TypeConfig(unbuyable = true, money = 225, tokens = 22, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
+	@TypeConfig(money = 225, tokens = 22, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
 	SPOOKY_TABLE_WOODEN_2x3(new Table(TableTheme.SPOOKY_WOODEN, TableShape._2X3, ItemModelType.TABLE_WOODEN_2X3_SPOOKY)),
 
-	@TypeConfig(unbuyable = true, money = 185, tokens = 18, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
+	@TypeConfig(money = 185, tokens = 18, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
 	SPOOKY_TABLE_WOODEN_2x3_CORNER(new Table(TableTheme.SPOOKY_WOODEN, TableShape._2X3_CORNER, ItemModelType.TABLE_WOODEN_2X3_CORNER_SPOOKY)),
 
-	@TypeConfig(unbuyable = true, money = 185, tokens = 18, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
+	@TypeConfig(money = 185, tokens = 18, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
 	SPOOKY_TABLE_WOODEN_2x3_CORNER_FLIPPED(new Table(TableTheme.SPOOKY_WOODEN, TableShape._2X3_CORNER_FLIPPED, ItemModelType.TABLE_WOODEN_2X3_CORNER_FLIPPED_SPOOKY)),
 
-	@TypeConfig(unbuyable = true, money = 300, tokens = 30, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
+	@TypeConfig(money = 300, tokens = 30, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
 	SPOOKY_TABLE_WOODEN_3x3(new Table(TableTheme.SPOOKY_WOODEN, TableShape._3X3, ItemModelType.TABLE_WOODEN_3X3_SPOOKY)),
 
-	@TypeConfig(unbuyable = true, money = 275, tokens = 27, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
+	@TypeConfig(money = 275, tokens = 27, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
 	SPOOKY_TABLE_WOODEN_3x3_CORNER(new Table(TableTheme.SPOOKY_WOODEN, TableShape._3X3_CORNER, ItemModelType.TABLE_WOODEN_3X3_CORNER_SPOOKY)),
 
-	@TypeConfig(unbuyable = true, money = 250, tokens = 25, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE)
+	@TypeConfig(money = 250, tokens = 25, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE)
 	SPOOKY_CUPBOARD_TALL_DOUBLE_EMPTY(new Furniture(true, "Spooky Tall Empty Cupboard Double", ItemModelType.CUPBOARD_TALL_DOUBLE_EMPTY_SPOOKY, PlacementType.FLOOR, HitboxFloor._2x2V)),
 
-	@TypeConfig(unbuyable = true, money = 250, tokens = 25, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE)
+	@TypeConfig(money = 250, tokens = 25, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE)
 	SPOOKY_CUPBOARD_TALL_DOUBLE_FILLED(new Furniture(true, "Spooky Tall Cupboard Double", ItemModelType.CUPBOARD_TALL_DOUBLE_FILLED_SPOOKY, PlacementType.FLOOR, HitboxFloor._2x2V)),
 
-	@TypeConfig(unbuyable = true, money = 125, tokens = 12, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE)
+	@TypeConfig(money = 125, tokens = 12, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE)
 	SPOOKY_DESK_1X2(new Furniture(true, "Spooky Desk 1x2", ItemModelType.DESK_1X2_SPOOKY, PlacementType.FLOOR, HitboxFloor._1x2H)),
 
-	@TypeConfig(unbuyable = true, money = 125, tokens = 12, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE)
+	@TypeConfig(money = 125, tokens = 12, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE)
 	SPOOKY_DRESSER_1X2(new Furniture(true, "Spooky Dresser 1x2", ItemModelType.DRESSER_1X2_SPOOKY, PlacementType.FLOOR, HitboxFloor._1x2H)),
 
-	@TypeConfig(unbuyable = true, money = 450, tokens = 45, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE)
+	@TypeConfig(money = 450, tokens = 45, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE)
 	SPOOKY_WARDROBE(new Furniture(true, "Spooky Wardrobe", ItemModelType.WARDROBE_SPOOKY, PlacementType.FLOOR, HitboxFloor._2x3V)),
 
-	@TypeConfig(unbuyable = true, money = 450, tokens = 45, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE)
+	@TypeConfig(money = 450, tokens = 45, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE)
 	SPOOKY_WARDROBE_OPENED(new Furniture(true, "Spooky Opened Wardrobe", ItemModelType.WARDROBE_SPOOKY_OPENED, PlacementType.FLOOR, HitboxFloor._2x3V)),
 
-	@TypeConfig(unbuyable = true, money = 900, tokens = 90, theme = Theme.SPOOKY, tabs = Tab.ART)
+	@TypeConfig(money = 900, tokens = 90, theme = Theme.SPOOKY, tabs = Tab.ART)
 	ART_PAINTING_CUSTOM_SAINT_JEROME(new Art("Saint Jerome", ItemModelType.ART_PAINTING_CUSTOM_SAINT_JEROME, HitboxWall._2x3V_LIGHT)),
 
-	@TypeConfig(unbuyable = true, money = 900, tokens = 90, theme = Theme.SPOOKY, tabs = Tab.ART)
+	@TypeConfig(money = 900, tokens = 90, theme = Theme.SPOOKY, tabs = Tab.ART)
 	ART_PAINTING_CUSTOM_LUTE_PLAYER(new Art("Lute Player", ItemModelType.ART_PAINTING_CUSTOM_LUTE_PLAYER, HitboxWall._2x3H_LIGHT)),
 
-	@TypeConfig(unbuyable = true, money = 600, tokens = 60, theme = Theme.SPOOKY, tabs = Tab.ART)
+	@TypeConfig(money = 600, tokens = 60, theme = Theme.SPOOKY, tabs = Tab.ART)
 	ART_PAINTING_CUSTOM_FOREST_KNIGHT(new Art("Dark Knight in Forest", ItemModelType.ART_PAINTING_CUSTOM_FOREST_KNIGHT, HitboxWall._2x2_LIGHT)),
 
-	@TypeConfig(unbuyable = true, money = 600, tokens = 60, theme = Theme.SPOOKY, tabs = Tab.ART)
+	@TypeConfig(money = 600, tokens = 60, theme = Theme.SPOOKY, tabs = Tab.ART)
 	ART_PAINTING_CUSTOM_RUFF_MAN(new Art("Man in a Ruff", ItemModelType.ART_PAINTING_CUSTOM_RUFF_MAN, HitboxWall._2x2_LIGHT)),
 
 
