@@ -452,7 +452,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	- #delete from bearnation_smp_lwc.lwc_protections where world in ('resource', 'resource_nether', 'resource_the_end');
 	*/
 
-	public static final int RADIUS = 7500;
+	public static final int RADIUS = 10000;
 	private static boolean resetting = false;
 
 	public static void resetWorlds(CommandSender executor) {
@@ -483,6 +483,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 				run.accept("mv create " + world + " " + args + (seed == null ? "" : " -s " + seed));
 			}
 
+			Tasks.wait(wait.getAndAdd(5), () -> PlayerUtils.runCommandAsConsole("plugman load holograms"));
 			Tasks.wait(wait.getAndAdd(5), () -> reloader.executor(executor).reload());
 		});
 	}
@@ -513,8 +514,6 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 		Warp warp = WarpType.NORMAL.get(worldName);
 		Nexus.getMultiverseCore().getWorldManager().getWorld(worldName).peek(mvWorld -> mvWorld.setSpawnLocation(warp.getLocation()));
 		new ResourceMarketLoggerService().deleteAll();
-
-		PlayerUtils.runCommandAsConsole("plugman load holograms");
 
 		world.getWorldBorder().setCenter(0, 0);
 		world.getWorldBorder().setSize(RADIUS * 2);
