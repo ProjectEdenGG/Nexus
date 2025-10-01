@@ -119,7 +119,11 @@ public class StoreCommand extends CustomCommand implements Listener {
 		service.save(contributor);
 
 		String code = new CouponCreator(contributor, amount).create();
-		send(json(PREFIX + "Created store coupon &e" + code + "&3. Click to copy").copy(code).hover("&fClick to copy", "&fRedeem at " + StoreCommand.URL));
+		List<String> lore = new ArrayList<>(List.of("&fClick to copy", "&fRedeem at " + StoreCommand.URL));
+		if (contributor.hasNickname())
+			lore.add("&fMake sure to use your real username, not nickname");
+
+		send(json(PREFIX + "Created store coupon &e" + code + "&3. Click to copy").copy(code).hover());
 	}
 
 	@Permission(Group.ADMIN)
