@@ -328,6 +328,20 @@ public enum DecorationType {
 	@TypeConfig(unbuyable = true, money = 450, tokens = 45, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE)
 	SPOOKY_WARDROBE_OPENED(new Furniture(true, "Spooky Opened Wardrobe", ItemModelType.WARDROBE_SPOOKY_OPENED, PlacementType.FLOOR, HitboxFloor._2x3V)),
 
+	@TypeConfig(unbuyable = true, money = 900, tokens = 90, theme = Theme.SPOOKY, tabs = Tab.ART)
+	ART_PAINTING_CUSTOM_SAINT_JEROME(new Art("Saint Jerome", ItemModelType.ART_PAINTING_CUSTOM_SAINT_JEROME, HitboxWall._2x3V_LIGHT)),
+
+	@TypeConfig(unbuyable = true, money = 900, tokens = 90, theme = Theme.SPOOKY, tabs = Tab.ART)
+	ART_PAINTING_CUSTOM_LUTE_PLAYER(new Art("Lute Player", ItemModelType.ART_PAINTING_CUSTOM_LUTE_PLAYER, HitboxWall._2x3H_LIGHT)),
+
+	@TypeConfig(unbuyable = true, money = 600, tokens = 60, theme = Theme.SPOOKY, tabs = Tab.ART)
+	ART_PAINTING_CUSTOM_FOREST_KNIGHT(new Art("Dark Knight in Forest", ItemModelType.ART_PAINTING_CUSTOM_FOREST_KNIGHT, HitboxWall._2x2_LIGHT)),
+
+	@TypeConfig(unbuyable = true, money = 600, tokens = 60, theme = Theme.SPOOKY, tabs = Tab.ART)
+	ART_PAINTING_CUSTOM_RUFF_MAN(new Art("Man in a Ruff", ItemModelType.ART_PAINTING_CUSTOM_RUFF_MAN, HitboxWall._2x2_LIGHT)),
+
+
+
 // 	------------------------------------------------------------------------------------------------------
 //										CATALOG: Music
 // 	------------------------------------------------------------------------------------------------------
