@@ -1990,22 +1990,22 @@ public enum DecorationType {
 	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY,  tabs = Tab.SPOOKY_FURNITURE)
 	SPOOKY_SHELF_WALL_1X2(new WallThing(true, "Spooky Wall Shelf 1x2", ItemModelType.SHELF_WALL_1X2_SPOOKY, HitboxFloor._1x2H)),
 
-	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	@TypeConfig(unbuyable = true, money = 80, tokens = 8, tabs = Tab.INTERNAL)
 	GIANT_CANDLE_ONE_LIT(new GiantCandle("Giant Candle", CandleType.ONE, true)),
 
-	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	@TypeConfig(unbuyable = true, money = 80, tokens = 8, tabs = Tab.INTERNAL)
 	GIANT_CANDLE_TWO_LIT(new GiantCandle("Giant Candles", CandleType.TWO, true)),
 
-	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	@TypeConfig(unbuyable = true, money = 80, tokens = 8, tabs = Tab.INTERNAL)
 	GIANT_CANDLE_THREE_LIT(new GiantCandle("Giant Candles", CandleType.THREE, true)),
 
-	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	@TypeConfig(unbuyable = true, money = 80, tokens = 8, tabs = Tab.INTERNAL)
 	GIANT_CANDLE_ONE_LIT_DYEABLE(new DyeableGiantCandle("Giant Candle", DyeableCandleType.ONE, true)),
 
-	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	@TypeConfig(unbuyable = true, money = 80, tokens = 8, tabs = Tab.INTERNAL)
 	GIANT_CANDLE_TWO_LIT_DYEABLE(new DyeableGiantCandle("Giant Candles", DyeableCandleType.TWO, true)),
 
-	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	@TypeConfig(unbuyable = true, money = 80, tokens = 8, tabs = Tab.INTERNAL)
 	GIANT_CANDLE_THREE_LIT_DYEABLE(new DyeableGiantCandle("Giant Candles", DyeableCandleType.THREE, true)),
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
