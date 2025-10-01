@@ -123,7 +123,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 		if (contributor.hasNickname())
 			lore.add("&fMake sure to use your real username, not nickname");
 
-		send(json(PREFIX + "Created store coupon &e" + code + "&3. Click to copy").copy(code).hover());
+		send(json(PREFIX + "Created store coupon &e" + code + "&3. Click to copy").copy(code).hover(lore));
 	}
 
 	@Permission(Group.ADMIN)
