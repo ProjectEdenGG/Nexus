@@ -262,22 +262,22 @@ public enum DecorationType {
 	@TypeConfig(unbuyable = true, money = 120, tokens = 12, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_CHAIRS})
 	SPOOKY_COUCH_WOODEN_CUSHIONED_OTTOMAN(new DyeableCouch(false, "Spooky Cushioned Wooden Couch Ottoman", ItemModelType.COUCH_WOODEN_CUSHIONED_OTTOMAN_SPOOKY, ColorableType.DYE, ICouch.CouchPart.STRAIGHT)),
 
-	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY) // TODO: PRICE
+	@TypeConfig(unbuyable = true, money = 80, tokens = 8, theme = Theme.SPOOKY)
 	GIANT_CANDLE_ONE_UNLIT(new GiantCandle("Giant Candle", CandleType.ONE, false)),
 
-	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY) // TODO: PRICE
+	@TypeConfig(unbuyable = true, money = 80, tokens = 8, theme = Theme.SPOOKY)
 	GIANT_CANDLE_TWO_UNLIT(new GiantCandle("Giant Candles", CandleType.TWO, false)),
 
-	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY) // TODO: PRICE
+	@TypeConfig(unbuyable = true, money = 80, tokens = 8, theme = Theme.SPOOKY)
 	GIANT_CANDLE_THREE_UNLIT(new GiantCandle("Giant Candles", CandleType.THREE, false)),
 
-	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY) // TODO: PRICE
+	@TypeConfig(unbuyable = true, money = 80, tokens = 8, theme = Theme.SPOOKY)
 	GIANT_CANDLE_ONE_UNLIT_DYEABLE(new DyeableGiantCandle("Giant Candle", DyeableCandleType.ONE, false)),
 
-	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY) // TODO: PRICE
+	@TypeConfig(unbuyable = true, money = 80, tokens = 8, theme = Theme.SPOOKY)
 	GIANT_CANDLE_TWO_UNLIT_DYEABLE(new DyeableGiantCandle("Giant Candles", DyeableCandleType.TWO, false)),
 
-	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY) // TODO: PRICE
+	@TypeConfig(unbuyable = true, money = 80, tokens = 8, theme = Theme.SPOOKY)
 	GIANT_CANDLE_THREE_UNLIT_DYEABLE(new DyeableGiantCandle("Giant Candles", DyeableCandleType.THREE, false)),
 
 	@TypeConfig(unbuyable = true, money = 60, tokens = 6, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
@@ -310,16 +310,16 @@ public enum DecorationType {
 	@TypeConfig(unbuyable = true, money = 275, tokens = 27, theme = Theme.SPOOKY, tabs = {Tab.SPOOKY_FURNITURE, Tab.SPOOKY_TABLES})
 	SPOOKY_TABLE_WOODEN_3x3_CORNER(new Table(TableTheme.SPOOKY_WOODEN, TableShape._3X3_CORNER, ItemModelType.TABLE_WOODEN_3X3_CORNER_SPOOKY)),
 
-	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE) // TODO: PRICE
+	@TypeConfig(unbuyable = true, money = 250, tokens = 25, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE)
 	SPOOKY_CUPBOARD_TALL_DOUBLE_EMPTY(new Furniture(true, "Spooky Tall Empty Cupboard Double", ItemModelType.CUPBOARD_TALL_DOUBLE_EMPTY_SPOOKY, PlacementType.FLOOR, HitboxFloor._2x2V)),
 
-	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE) // TODO: PRICE
+	@TypeConfig(unbuyable = true, money = 250, tokens = 25, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE)
 	SPOOKY_CUPBOARD_TALL_DOUBLE_FILLED(new Furniture(true, "Spooky Tall Cupboard Double", ItemModelType.CUPBOARD_TALL_DOUBLE_FILLED_SPOOKY, PlacementType.FLOOR, HitboxFloor._2x2V)),
 
-	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE) // TODO: PRICE
+	@TypeConfig(unbuyable = true, money = 125, tokens = 12, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE)
 	SPOOKY_DESK_1X2(new Furniture(true, "Spooky Desk 1x2", ItemModelType.DESK_1X2_SPOOKY, PlacementType.FLOOR, HitboxFloor._1x2H)),
 
-	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE) // TODO: PRICE
+	@TypeConfig(unbuyable = true, money = 125, tokens = 12, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE)
 	SPOOKY_DRESSER_1X2(new Furniture(true, "Spooky Dresser 1x2", ItemModelType.DRESSER_1X2_SPOOKY, PlacementType.FLOOR, HitboxFloor._1x2H)),
 
 	@TypeConfig(unbuyable = true, money = 450, tokens = 45, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE)
