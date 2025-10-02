@@ -16,6 +16,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
@@ -51,6 +52,7 @@ import static org.bukkit.HeightMap.OCEAN_FLOOR;
 
 @NoArgsConstructor
 public class Halloween25 extends Feature implements Listener {
+	private static final String PREFIX = StringUtils.getPrefix("Halloween");
 	private static final NamespacedKey PUMPKIN_HEAD_KEY = new NamespacedKey(Nexus.getInstance(), "halloween25_pumpkin_head");
 
 	private static final List<ItemModelType> CANDY = List.of(
@@ -211,11 +213,11 @@ public class Halloween25 extends Feature implements Listener {
 		if (!isEventActive(player))
 			return;
 
+		event.getDrops().removeIf(item -> isPumpkinCostume(Model.of(item)));
+
 		if (event.getEntity().getLastDamageCause() != null)
 			if (DEATH_CAUSE_BLACKLIST.contains(event.getEntity().getLastDamageCause().getCause()))
 				return;
-
-		event.getDrops().removeIf(item -> isPumpkinCostume(Model.of(item)));
 
 		var pdc = entity.getPersistentDataContainer();
 		var pumpkinHead = pdc.get(PUMPKIN_HEAD_KEY, PersistentDataType.BOOLEAN);
@@ -231,8 +233,10 @@ public class Halloween25 extends Feature implements Listener {
 			event.getDrops().add(randomCandy().build());
 
 		var crateKeyBoost = Booster.getTotalBoost(player, Boostable.HALLOWEEN_CRATE_KEY);
-		if (chanceOf(.4 * crateKeyBoost))
+		if (chanceOf(.4 * crateKeyBoost)) {
 			event.getDrops().add(CrateType.HALLOWEEN.getKey());
+			PlayerUtils.send(player, PREFIX + "A Halloween Crate Key was dropped!");
+		}
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
