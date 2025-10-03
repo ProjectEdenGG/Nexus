@@ -165,7 +165,7 @@ public class Halloween25 extends Feature implements Listener {
 			return;
 		}
 
-		boolean value = chanceOf(15);
+		boolean value = chanceOf(30);
 		pdc.set(PUMPKIN_HEAD_KEY, PersistentDataType.BOOLEAN, value);
 		if (!value)
 			return;
