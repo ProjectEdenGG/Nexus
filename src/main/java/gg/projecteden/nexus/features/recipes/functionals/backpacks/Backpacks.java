@@ -504,7 +504,7 @@ public class Backpacks extends FunctionalRecipe implements IBackpack {
 		GOLD(5, GoldBackpack.class),
 		DIAMOND(6, DiamondBackpack.class),
 		NETHERITE(6, NetheriteBackpack.class),
-		HALLOWEEN(3, Halloween25CandyBasket.class) {
+		HALLOWEEN(4, Halloween25CandyBasket.class) {
 			@Override
 			public ItemModelType getModel() {
 				return ItemModelType.CANDY_BASKET_EMPTY;

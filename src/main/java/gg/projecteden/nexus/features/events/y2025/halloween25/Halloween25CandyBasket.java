@@ -27,11 +27,11 @@ public class Halloween25CandyBasket implements IBackpack {
 				amount += item.getAmount();
 
 		CandyBasketTier tier = CandyBasketTier.EMPTY;
-		if (amount >= 333)
+		if (amount >= 600)
 			tier = CandyBasketTier.QUARTER;
-		if (amount >= 666)
+		if (amount >= 1200)
 			tier = CandyBasketTier.HALF;
-		if (amount >= 1000)
+		if (amount >= 1800)
 			tier = CandyBasketTier.FULL;
 
 		new ItemBuilder(backpack, true).model(tier.getModel()).build();

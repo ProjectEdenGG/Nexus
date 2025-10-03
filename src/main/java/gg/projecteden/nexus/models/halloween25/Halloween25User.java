@@ -10,7 +10,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
 
 import java.util.UUID;
 
@@ -24,7 +23,14 @@ public class Halloween25User implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	@Accessors(fluent = true)
-	private boolean acquiredCandyBasket;
+	private int candyBaskets;
+
+	public boolean hasAcquiredCandyBasket() {
+		return candyBaskets > 0;
+	}
+
+	public void incrementCandyBaskets() {
+		this.candyBaskets++;
+	}
 
 }

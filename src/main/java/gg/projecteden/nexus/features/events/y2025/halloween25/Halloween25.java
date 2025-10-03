@@ -14,6 +14,7 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -254,10 +255,12 @@ public class Halloween25 extends Feature implements Listener {
 			user.sendMessage(Dev.BLAST.getNerd().getColoredName() + " &5&l> &6Happy Halloween! &fA bunch of mobs stole all the candy and crate keys we had gathered for you.");
 			user.sendMessage(Dev.BLAST.getNerd().getColoredName() + " &5&l> &fIf you find any mobs with pumpkins on their heads, make sure to take back your treats!");
 
-			if (!user.acquiredCandyBasket()) {
+			if (user.hasAcquiredCandyBasket()) {
+				user.sendMessage(new JsonBuilder(Dev.BLAST.getNerd().getColoredName() + " &5&l> &fIf you want another candy basket, ").group().next("&eclick here to buy one!").command("/halloween25 buy basket"));
+			} else {
 				user.sendMessage(Dev.BLAST.getNerd().getColoredName() + " &5&l> &fHere's a candy basket to take with you!");
 				PlayerUtils.giveItem(event.getClicker(), BackpackTier.HALLOWEEN.create());
-				user.acquiredCandyBasket(true);
+				user.incrementCandyBaskets();
 			}
 		});
 	}
