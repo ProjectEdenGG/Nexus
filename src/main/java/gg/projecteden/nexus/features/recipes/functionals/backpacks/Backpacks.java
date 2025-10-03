@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.recipes.functionals.backpacks;
 
 import de.tr7zw.nbtapi.NBTItem;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2025.halloween25.Halloween25;
 import gg.projecteden.nexus.features.events.y2025.halloween25.Halloween25CandyBasket;
@@ -23,6 +24,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Backp
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.CandyBasket;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -147,6 +149,9 @@ public class Backpacks extends FunctionalRecipe implements IBackpack {
 	}
 
 	public static void openBackpack(Player player, ItemStack backpack, boolean autosort, ItemFrame frame) {
+		if (CooldownService.isOnCooldown(player, "open-backpack", TickTime.TICK.x(10)))
+			return;
+
 		new SoundBuilder(Sound.BLOCK_CHEST_OPEN).receiver(player).volume(.3f).play();
 		new BackpackMenu(player, backpack, autosort, frame);
 	}

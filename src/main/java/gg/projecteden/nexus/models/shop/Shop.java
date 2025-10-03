@@ -222,10 +222,17 @@ public class Shop implements PlayerOwnedObject {
 				continue;
 
 			for (var product : products) {
-				if (ItemUtils.isSimilar(product.getItem(), content) && product.getShopGroup() == ShopGroup.of(getWorldGroup())) {
-					product.addStock(content.getAmount());
-					continue contentsLoop;
-				}
+				if (product.getShopGroup() != ShopGroup.of(getWorldGroup()))
+					continue;
+
+				if (product.getExchangeType() == ExchangeType.BUY)
+					continue;
+
+				if (!ItemUtils.isSimilar(product.getItem(), content))
+					continue;
+
+				product.addStock(content.getAmount());
+				continue contentsLoop;
 			}
 
 			PlayerUtils.giveItem(getPlayer(), content);
