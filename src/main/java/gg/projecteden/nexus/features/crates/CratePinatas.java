@@ -110,7 +110,7 @@ public class CratePinatas implements Listener {
 			return;
 
 		if (CooldownService.isOnCooldown(event.getPlayer().getUniqueId(), "crate-pinata", TimeUtils.TickTime.MINUTE.get(), true)) {
-			new JsonBuilder("&cYou can only activated pinata's once per minute").send(event.getPlayer());
+			new JsonBuilder("&cYou can only activate pinatas once per minute").send(event.getPlayer());
 			return;
 		}
 
