@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.store.perks.inventory.autoinventory.featur
 
 import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
+import gg.projecteden.nexus.features.itemtags.Rarity;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.AutoInventoryFeature;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
@@ -49,8 +50,14 @@ public class AutoTrash implements Listener {
 				return;
 		}
 
-		if (meta.hasDisplayName() || meta.hasEnchants() || Model.hasModel(item))
+		if (meta.hasDisplayName() || Model.hasModel(item))
 			return;
+
+		if (meta.hasEnchants()) {
+			Rarity rarity = Rarity.of(item);
+			if (!(rarity == Rarity.ORDINARY || rarity == Rarity.COMMON))
+				return;
+		}
 
 		if (!user.getActiveProfile().getAutoTrashInclude().computeIfAbsent(WorldGroup.of(player), $ -> new HashSet<>()).contains(item.getType()))
 			return;
