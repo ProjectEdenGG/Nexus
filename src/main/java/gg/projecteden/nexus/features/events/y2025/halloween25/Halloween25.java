@@ -217,13 +217,13 @@ public class Halloween25 extends Feature implements Listener {
 		var entity = event.getEntity();
 		var player = entity.getKiller();
 
+		event.getDrops().removeIf(item -> isPumpkinCostume(Model.of(item)));
+
 		if (player == null)
 			return;
 
 		if (!isEventActive(player))
 			return;
-
-		event.getDrops().removeIf(item -> isPumpkinCostume(Model.of(item)));
 
 		if (event.getEntity().getLastDamageCause() != null)
 			if (DEATH_CAUSE_BLACKLIST.contains(event.getEntity().getLastDamageCause().getCause()))
