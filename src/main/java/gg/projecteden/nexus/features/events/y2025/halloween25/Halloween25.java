@@ -25,6 +25,7 @@ import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World.Environment;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -182,16 +183,21 @@ public class Halloween25 extends Feature implements Listener {
 		if (UNNATURAL_SPAWN_REASONS.contains(entity.getEntitySpawnReason()))
 			return true;
 
-		if (entity.getLocation().getBlock().getType() == Material.CAVE_AIR)
+		if (location.getBlock().getType() == Material.CAVE_AIR)
 			return false;
 
 		if (entity.getType() == EntityType.WITHER_SKELETON)
-			return entity.getLocation().getBlock().getType() != Material.WITHER_ROSE;
+			return location.getBlock().getType() != Material.WITHER_ROSE;
 
 		if (entity.getType() == EntityType.ZOMBIFIED_PIGLIN) {
-			Material on = entity.getLocation().getBlock().getRelative(BlockFace.DOWN).getType();
-			return on != Material.MAGMA_BLOCK && on != Material.OBSIDIAN && on != Material.CRYING_OBSIDIAN;
+			Material on = location.getBlock().getRelative(BlockFace.DOWN).getType();
+			if (on == Material.MAGMA_BLOCK || on == Material.OBSIDIAN || on == Material.CRYING_OBSIDIAN)
+				return true;
 		}
+
+		if (entity.getWorld().getEnvironment() == Environment.NETHER)
+			if (location.getY() >= 127)
+				return true;
 
 		if (WorldGroup.of(entity) == WorldGroup.SURVIVAL)
 			if (location.getY() <= 63)
@@ -211,6 +217,9 @@ public class Halloween25 extends Feature implements Listener {
 		var entity = event.getEntity();
 		var player = entity.getKiller();
 
+		if (player == null)
+			return;
+
 		if (!isEventActive(player))
 			return;
 
@@ -222,9 +231,6 @@ public class Halloween25 extends Feature implements Listener {
 
 		var pdc = entity.getPersistentDataContainer();
 		var pumpkinHead = pdc.get(PUMPKIN_HEAD_KEY, PersistentDataType.BOOLEAN);
-
-		if (player == null)
-			return;
 
 		if (pumpkinHead == null || !pumpkinHead)
 			return;
