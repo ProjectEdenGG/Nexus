@@ -19,6 +19,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -148,12 +149,12 @@ public class MagnetEnchant extends CustomEnchant implements Listener {
 		pdc.set(NBT_KEY_OWNER, PersistentDataType.STRING, uuid.toString());
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void on(PlayerDropItemEvent event) {
 		setNbt(event.getItemDrop().getPersistentDataContainer(), event.getPlayer().getUniqueId(), false);
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void on(BlockDropItemEvent event) {
 		for (Item item : event.getItems())
 			setNbt(item.getPersistentDataContainer(), event.getPlayer().getUniqueId(), true);
@@ -161,7 +162,7 @@ public class MagnetEnchant extends CustomEnchant implements Listener {
 
 	// TODO This is awful but Paper doesnt offer a better way
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void on(EntityDeathEvent event) {
 		if (event.getEntity() instanceof Player)
 			return;
@@ -179,7 +180,7 @@ public class MagnetEnchant extends CustomEnchant implements Listener {
 		});
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void on(EntitySpawnEvent event) {
 		if (!(event.getEntity() instanceof Item item))
 			return;
