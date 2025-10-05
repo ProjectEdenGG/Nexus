@@ -109,28 +109,26 @@ public class PlayerUtils {
 	}
 
 	public enum Dev implements HasPlayer, PlayerOwnedObject {
-		GRIFFIN("86d7e0e2-c95e-4f22-8f99-a6e83b398307", true),
-		WAKKA("e9e07315-d32c-4df7-bd05-acfe51108234", true),
-		BLAST("a4274d94-10f2-4663-af3b-a842c7ec729c", true),
-		BLAST_ALT("01d1ea7e-577b-4ccc-80cf-f6df1276218d", true),
+		GRIFFIN("86d7e0e2-c95e-4f22-8f99-a6e83b398307"),
+		WAKKA("e9e07315-d32c-4df7-bd05-acfe51108234"),
+		BLAST("a4274d94-10f2-4663-af3b-a842c7ec729c"),
+		BLAST_ALT("01d1ea7e-577b-4ccc-80cf-f6df1276218d"),
 		LEXI("d1de9ca8-78f6-4aae-87a1-8c112f675f12"),
 		ARBY("0a2221e4-000c-4818-82ea-cd43df07f0d4"),
 		FILID("88f9f7f6-7703-49bf-ad83-a4dec7e8022c"),
 		CYN("1d70383f-21ba-4b8b-a0b4-6c327fbdade1"),
 		LUI("fd5d72f3-d599-49d4-9e7b-6e6d7f2ac5b9"),
 		POWER("79f66fc9-a975-4043-8b6d-b4823182de62"),
-		KODA("56cb00fd-4738-47bc-be08-cb7c4f9a5a94", true),
-		PROJECTEDENGG("1c924e4b-dcaa-4abd-9bd8-7b5f61e8790a", true),
+		KODA("56cb00fd-4738-47bc-be08-cb7c4f9a5a94"),
+		PROJECTEDENGG("1c924e4b-dcaa-4abd-9bd8-7b5f61e8790a"),
 		SPIKE("e089a260-7aeb-488f-a641-ab5867ab5ccd"),
-		EDEN("1c924e4b-dcaa-4abd-9bd8-7b5f61e8790a", true),
+		EDEN("1c924e4b-dcaa-4abd-9bd8-7b5f61e8790a"),
 		BRI("77966ca3-ac85-44b2-bcb0-b7c5f9342e86"),
 		DOM("d1729990-0ad4-4db8-8a95-779128e9fa1a"),
 		;
 
 		@Getter
 		private final UUID uuid;
-		@Getter
-		private final boolean showDeveloperTools;
 
 		public static Dev of(HasUniqueId uuid) {
 			return of(uuid.getUniqueId());
@@ -152,11 +150,8 @@ public class PlayerUtils {
 			return Bukkit.getPlayer(uuid);
 		}
 
-		Dev(String uuid) { this(uuid, false); }
-
-		Dev(String uuid, boolean showDeveloperTools) {
+		Dev(String uuid) {
 			this.uuid = UUID.fromString(uuid);
-			this.showDeveloperTools = showDeveloperTools;
 		}
 
 		public void sendIfSelf(HasUniqueId player, Object message) {
@@ -209,6 +204,13 @@ public class PlayerUtils {
 
 		public static boolean exists(HasUniqueId hasUniqueId) {
 			return of(hasUniqueId) != null;
+		}
+
+		public static List<Dev> getOnlineStaff() {
+			return Arrays.stream(Dev.values())
+				.filter(dev -> dev.getRank().isStaff())
+				.filter(PlayerUtils.Dev::isOnline)
+				.toList();
 		}
 	}
 
