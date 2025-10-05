@@ -15,6 +15,8 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
+import gg.projecteden.nexus.features.profiles.ProfileCommand;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -34,9 +36,11 @@ import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
 import gg.projecteden.nexus.models.crate.CrateConfigService;
 import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.profile.ProfileUser.ProfileTextureType;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.ToolType;
 import lombok.AllArgsConstructor;
@@ -63,6 +67,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -291,17 +296,22 @@ public class CratesCommand extends CustomCommand implements Listener {
 	@HideFromHelp
 	@HideFromWiki
 	@TabCompleteIgnore
-	@Path("skindisplay")
-	void skindisplay() {
-		new SkinDisplayMenu().open(player());
+	@Path("rewardpreview")
+	void rewardPreview() {
+		new RewardPreviewMenu().open(player());
 	}
 
 	@Rows(5)
-	public static class SkinDisplayMenu extends InventoryProvider {
+	public static class RewardPreviewMenu extends InventoryProvider {
 		static final int NPC_ID = 5618;
 		private Step step = Step.CHOOSE_TYPE;
 		private SkinType type;
 		private EquipmentSkinType skin;
+
+		@Override
+		public String getTitle() {
+			return StringUtils.camelCase(step);
+		}
 
 		@Override
 		public void init() {
@@ -319,28 +329,45 @@ public class CratesCommand extends CustomCommand implements Listener {
 			List<ClickableItem> items = new ArrayList<>();
 
 			if (step == Step.CHOOSE_TYPE) {
-				contents.set(SlotPos.of(2, 3), ClickableItem.of(new ItemBuilder(Material.DIAMOND_CHESTPLATE).name("Armor"), e -> {
+				contents.set(SlotPos.of(2, 2), ClickableItem.of(new ItemBuilder(Material.DIAMOND_CHESTPLATE).name("Armor"), e -> {
 					type = SkinType.ARMOR;
 					step = step.next();
 					refresh();
 				}));
-				contents.set(SlotPos.of(2, 5), ClickableItem.of(new ItemBuilder(Material.NETHERITE_PICKAXE).name("Tools"), e -> {
+				contents.set(SlotPos.of(2, 4), ClickableItem.of(new ItemBuilder(Material.NETHERITE_PICKAXE).name("Tools"), e -> {
 					type = SkinType.TOOL;
 					step = step.next();
 					refresh();
 				}));
+				contents.set(SlotPos.of(2, 6), ClickableItem.of(new ItemBuilder(ItemModelType.GUI_PROFILE_TEXTURE_ITEM_SHINE).name("Profile Textures"), e -> {
+					type = SkinType.PROFILE;
+					step = step.next();
+					refresh();
+				}));
 			} else if (step == Step.CHOOSE_SKIN) {
-				for (EquipmentSkinType skinType : this.type.getValues())
-					items.add(ClickableItem.of(skinType.getTemplate(), e -> {
-						skin = skinType;
-						if (type == SkinType.ARMOR) {
-							setArmor((ArmorSkin) skinType);
+				if (this.type == SkinType.PROFILE) {
+					for (ProfileTextureType textureType : ProfileTextureType.getValues()) {
+						items.add(ClickableItem.of(textureType.getPreviewItem(), e -> {
 							close();
-						} else {
-							step = step.next();
-							refresh();
+							ProfileCommand.openProfile(viewer, viewer, textureType, this);
+						}));
+					}
+				} else {
+					for (Object obj : this.type.getValues()) {
+						if (obj instanceof EquipmentSkinType skinType) {
+							items.add(ClickableItem.of(skinType.getTemplate(), e -> {
+								skin = skinType;
+								if (type == SkinType.ARMOR) {
+									setArmor((ArmorSkin) skinType);
+									close();
+								} else {
+									step = step.next();
+									refresh();
+								}
+							}));
 						}
-					}));
+					}
+				}
 			} else if (step == Step.CHOOSE_TOOL) {
 				if (type == SkinType.TOOL)
 					for (ToolType toolType : ToolSkin.APPLICABLE_TYPES) {
@@ -410,6 +437,12 @@ public class CratesCommand extends CustomCommand implements Listener {
 					return EnumUtils.valuesExcept(ToolSkin.class, ToolSkin.DEFAULT);
 				}
 			},
+			PROFILE {
+				@Override
+				List<EquipmentSkinType> getValues() {
+					return List.of();
+				}
+			}
 			;
 
 			abstract List<EquipmentSkinType> getValues();
@@ -419,11 +452,11 @@ public class CratesCommand extends CustomCommand implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void on(NPCRightClickEvent event) {
-		if (event.getNPC().getId() != SkinDisplayMenu.NPC_ID)
+		if (event.getNPC().getId() != RewardPreviewMenu.NPC_ID)
 			return;
 
 		event.setCancelled(true);
-		new SkinDisplayMenu().open(event.getClicker());
+		new RewardPreviewMenu().open(event.getClicker());
 	}
 
 	public void list(CrateType type) {

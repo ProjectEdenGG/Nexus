@@ -214,6 +214,20 @@ public class ProfileUser implements PlayerOwnedObject {
 			}
 		}
 
+		public ItemStack getPreviewItem() {
+			String type = StringUtils.camelCase(this);
+
+			if (this.couponModel == null)
+				throw new InvalidInputException("ProfileTextureType &e" + type + " &cdoes not have a coupon item model");
+
+			return new ItemBuilder(this.couponModel)
+				.name("&3Profile Texture Coupon")
+				.lore("&3Type: &e" + type)
+				.nbt(nbt -> nbt.setString(NBT_TEXTURE_TYPE, type))
+				.setting(ItemSetting.RENAMEABLE, false)
+				.build();
+		}
+
 		public ItemStack getCouponItem() {
 			String type = StringUtils.camelCase(this);
 
