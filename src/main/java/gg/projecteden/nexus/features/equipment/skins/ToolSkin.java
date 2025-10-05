@@ -2,11 +2,13 @@ package gg.projecteden.nexus.features.equipment.skins;
 
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
-import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.ToolType;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 @Getter
 public enum ToolSkin implements EquipmentSkinType {
@@ -37,10 +39,17 @@ public enum ToolSkin implements EquipmentSkinType {
 		return name().toLowerCase();
 	}
 
-	private final MaterialTag applicableItems = new MaterialTag(
-		MaterialTag.SWORDS, MaterialTag.PICKAXES, MaterialTag.SHOVELS, MaterialTag.AXES,
-		MaterialTag.HOES
-	).append(Material.BOW, Material.CROSSBOW, Material.MACE, Material.FISHING_ROD);
+	public static final List<ToolType> APPLICABLE_TYPES = List.of(
+		ToolType.SWORD,
+		ToolType.PICKAXE,
+		ToolType.SHOVEL,
+		ToolType.AXE,
+		ToolType.HOE,
+		ToolType.BOW,
+		ToolType.CROSSBOW,
+		ToolType.MACE,
+		ToolType.FISHING_ROD
+	);
 
 	@Override
 	public ItemStack apply(ItemStack item) {
@@ -62,7 +71,8 @@ public enum ToolSkin implements EquipmentSkinType {
 	public boolean applies(ItemStack item) {
 		if (item == null)
 			return false;
-		return getApplicableItems().isTagged(item);
+
+		return APPLICABLE_TYPES.contains(ToolType.of(item));
 	}
 
 	@Override

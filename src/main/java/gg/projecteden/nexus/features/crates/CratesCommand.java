@@ -1,19 +1,31 @@
 package gg.projecteden.nexus.features.crates;
 
+import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.crates.api.models.CrateAnimation;
 import gg.projecteden.crates.api.models.CrateAnimationsAPI;
 import gg.projecteden.nexus.features.crates.menus.CrateEditMenu;
 import gg.projecteden.nexus.features.crates.menus.CrateEditMenu.CrateEditProvider;
 import gg.projecteden.nexus.features.crates.menus.CrateGroupsProvider;
 import gg.projecteden.nexus.features.crates.menus.CratePreviewProvider;
+import gg.projecteden.nexus.features.equipment.skins.ArmorSkin;
+import gg.projecteden.nexus.features.equipment.skins.EquipmentSkinType;
+import gg.projecteden.nexus.features.equipment.skins.ToolSkin;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CrateOpeningException;
@@ -22,9 +34,18 @@ import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
 import gg.projecteden.nexus.models.crate.CrateConfigService;
 import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.ToolType;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import net.citizensnpcs.api.event.NPCRightClickEvent;
+import net.citizensnpcs.api.trait.trait.Equipment;
+import net.citizensnpcs.api.trait.trait.Equipment.EquipmentSlot;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -33,6 +54,9 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.Nullable;
@@ -40,13 +64,17 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
+
 @Aliases("crate")
-public class CratesCommand extends CustomCommand {
+@NoArgsConstructor
+public class CratesCommand extends CustomCommand implements Listener {
 
 	public CratesCommand(CommandEvent event) {
 		super(event);
@@ -258,6 +286,144 @@ public class CratesCommand extends CustomCommand {
 	@Description("Gives a player a crate pinata")
 	void pinata(Player player, CrateType type, @Arg("1") int amount) {
 		CratePinatas.give(player, type, amount);
+	}
+
+	@HideFromHelp
+	@HideFromWiki
+	@TabCompleteIgnore
+	@Path("skindisplay")
+	void skindisplay() {
+		new SkinDisplayMenu().open(player());
+	}
+
+	@Rows(5)
+	public static class SkinDisplayMenu extends InventoryProvider {
+		static final int NPC_ID = 5618;
+		private Step step = Step.CHOOSE_TYPE;
+		private SkinType type;
+		private EquipmentSkinType skin;
+
+		@Override
+		public void init() {
+			if (step == null)
+				step = Step.CHOOSE_TYPE;
+
+			if (step == Step.CHOOSE_TYPE)
+				addCloseItem();
+			else
+				addBackItem(e -> {
+					step = step.previous();
+					refresh();
+				});
+
+			List<ClickableItem> items = new ArrayList<>();
+
+			if (step == Step.CHOOSE_TYPE) {
+				contents.set(SlotPos.of(2, 3), ClickableItem.of(new ItemBuilder(Material.DIAMOND_CHESTPLATE).name("Armor"), e -> {
+					type = SkinType.ARMOR;
+					step = step.next();
+					refresh();
+				}));
+				contents.set(SlotPos.of(2, 5), ClickableItem.of(new ItemBuilder(Material.NETHERITE_PICKAXE).name("Tools"), e -> {
+					type = SkinType.TOOL;
+					step = step.next();
+					refresh();
+				}));
+			} else if (step == Step.CHOOSE_SKIN) {
+				for (EquipmentSkinType skinType : this.type.getValues())
+					items.add(ClickableItem.of(skinType.getTemplate(), e -> {
+						skin = skinType;
+						if (type == SkinType.ARMOR) {
+							setArmor((ArmorSkin) skinType);
+							close();
+						} else {
+							step = step.next();
+							refresh();
+						}
+					}));
+			} else if (step == Step.CHOOSE_TOOL) {
+				if (type == SkinType.TOOL)
+					for (ToolType toolType : ToolSkin.APPLICABLE_TYPES) {
+						Material tool = toolType.getTools().getLast();
+						items.add(ClickableItem.of(tool, e -> {
+							type = SkinType.TOOL;
+							setTool(skin, tool);
+							close();
+						}));
+					}
+			}
+
+			if (!items.isEmpty())
+				paginate(items);
+		}
+
+		private static final Map<EquipmentSlot, Material> ARMOR_SLOTS = Map.of(
+			EquipmentSlot.HELMET, Material.NETHERITE_HELMET,
+			EquipmentSlot.CHESTPLATE, Material.NETHERITE_CHESTPLATE,
+			EquipmentSlot.LEGGINGS, Material.NETHERITE_LEGGINGS,
+			EquipmentSlot.BOOTS, Material.NETHERITE_BOOTS
+		);
+
+		private void setArmor(ArmorSkin skin) {
+			var equipment = CitizensUtils.getNPC(NPC_ID).getOrAddTrait(Equipment.class);
+			for (EquipmentSlot slot : EquipmentSlot.values()) {
+				if (!slot.toBukkit().isArmor())
+					continue;
+
+				if (!ARMOR_SLOTS.containsKey(slot))
+					continue;
+
+				var item = ItemStack.of(ARMOR_SLOTS.get(slot));
+				if (slot == EquipmentSlot.HELMET) {
+					var helmetCostume = skin.getHelmetCostume();
+					if (isNotNullOrEmpty(helmetCostume))
+						item = new ItemBuilder(Material.PAPER).model("costumes/" + helmetCostume).build();
+				}
+
+				equipment.set(slot, skin.apply(item));
+			}
+		}
+
+		private void setTool(EquipmentSkinType skin, Material tool) {
+			var equipment = CitizensUtils.getNPC(NPC_ID).getOrAddTrait(Equipment.class);
+			equipment.set(EquipmentSlot.HAND, skin.apply(new ItemStack(tool)));
+		}
+
+		private enum Step implements IterableEnum {
+			CHOOSE_TYPE,
+			CHOOSE_SKIN,
+			CHOOSE_TOOL,
+		}
+
+		@Getter
+		@AllArgsConstructor
+		private enum SkinType {
+			ARMOR {
+				@Override
+				public List<EquipmentSkinType> getValues() {
+					return ArmorSkin.getTemplateable();
+				}
+			},
+			TOOL {
+				@Override
+				public List<EquipmentSkinType> getValues() {
+					return EnumUtils.valuesExcept(ToolSkin.class, ToolSkin.DEFAULT);
+				}
+			},
+			;
+
+			abstract List<EquipmentSkinType> getValues();
+		}
+
+	}
+
+	@EventHandler(priority = EventPriority.LOW)
+	public void on(NPCRightClickEvent event) {
+		if (event.getNPC().getId() != SkinDisplayMenu.NPC_ID)
+			return;
+
+		event.setCancelled(true);
+		new SkinDisplayMenu().open(event.getClicker());
 	}
 
 	public void list(CrateType type) {

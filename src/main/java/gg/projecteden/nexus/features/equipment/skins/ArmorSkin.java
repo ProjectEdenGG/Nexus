@@ -11,32 +11,43 @@ import lombok.SneakyThrows;
 import org.bukkit.Material;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.ApiStatus.Internal;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
 
 public enum ArmorSkin implements EquipmentSkinType {
+	@Internal
 	DEFAULT,
+	@Internal
 	INVISIBLE,
 	ADAMANTITE,
 	AMETHYST,
 	BERSERKER,
+	@Templateable
 	@HelmetCostume("hat/armor/bone")
 	BONE,
 	BROWN_BERSERK,
 	CHERRY,
+	@Templateable
 	COBALT,
 	DRUID,
 	FISHING,
+	@Templateable
 	HELLFIRE,
 	JARL,
+	@Templateable
 	@HelmetCostume("hat/misc/hard_hat")
 	MECHANICAL,
+	@Templateable
 	MYTHRIL,
 	SCULK,
+	@Templateable
 	@HelmetCostume("hat/armor/shadow")
 	SHADOW,
 	TANK,
@@ -46,6 +57,7 @@ public enum ArmorSkin implements EquipmentSkinType {
 	WITHER,
 	WOLF,
 	WIZARD,
+	@Templateable
 	EIGHT_BIT {
 		@Override
 		public String getTitle() {
@@ -136,6 +148,14 @@ public enum ArmorSkin implements EquipmentSkinType {
 		return EquipmentSlot.FEET;
 	}
 
+	public static List<EquipmentSkinType> getTemplateable() {
+		return Arrays.stream(values())
+			.filter(armorSkin -> !armorSkin.getField().isAnnotationPresent(Internal.class))
+			.filter(armorSkin -> armorSkin.getField().isAnnotationPresent(Templateable.class))
+			.map(armorSkin -> (EquipmentSkinType) armorSkin)
+			.toList();
+	}
+
 	@Override
 	public boolean applies(ItemStack item) {
 		return MaterialTag.ARMOR.isTagged(item);
@@ -206,5 +226,9 @@ public enum ArmorSkin implements EquipmentSkinType {
 	public @interface HelmetCostume {
 		String value();
 	}
+
+	@Target(ElementType.FIELD)
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface Templateable {}
 
 }

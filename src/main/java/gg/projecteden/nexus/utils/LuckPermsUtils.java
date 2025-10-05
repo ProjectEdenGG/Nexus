@@ -195,7 +195,7 @@ public class LuckPermsUtils {
 
 		search.thenAccept(map -> future.complete(map.keySet().stream()
 			.filter(Dev.KODA::isNot)
-			.filter(Dev.PROJECTEDENGG::isNot)
+			.filter(Dev.EDEN::isNot)
 			.toList()));
 
 		return future;
