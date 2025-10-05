@@ -225,14 +225,14 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 			return;
 		}
 
-		block.setType(color.getShulkerBox());
+		block.setType(color.getShulkerBox(), false);
 		if (!(block.getBlockData() instanceof Directional directional)) {
 			Nexus.warn("Block below Staff Hall NPC " + npcId + " is not directional");
 			return;
 		}
 
 		directional.setFacing(BlockFace.UP);
-		block.setBlockData(directional);
+		block.setBlockData(directional, false);
 	}
 
 	@AllArgsConstructor
