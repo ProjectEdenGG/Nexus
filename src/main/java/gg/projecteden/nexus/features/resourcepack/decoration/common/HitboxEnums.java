@@ -267,6 +267,16 @@ public class HitboxEnums {
 
 	@AllArgsConstructor
 	public enum HitboxUnique implements CustomHitbox {
+		GIANT_CANDLE_UNLIT(List.of(
+			Hitbox.origin(),
+			Hitbox.offsetLight(0, BlockFace.UP, 1)
+		)),
+
+		GIANT_CANDLE_LIT(List.of(
+			Hitbox.origin(),
+			Hitbox.offsetLight(15, BlockFace.UP, 1)
+		)),
+
 		CARDBOARD_BOX(List.of(
 				Hitbox.origin(),
 				Hitbox.offset(BlockFace.EAST, 1),

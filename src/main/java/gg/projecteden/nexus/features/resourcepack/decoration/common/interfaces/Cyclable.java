@@ -17,6 +17,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 public interface Cyclable extends Interactable, MultiState {
 
@@ -52,8 +53,11 @@ public interface Cyclable extends Interactable, MultiState {
 		if (itemModelType == null)
 			return false;
 
-		if (!setDecoration(player, itemFrame, item, itemModelType))
+		Decoration decoration = setDecoration(player, itemFrame, item, itemModelType);
+		if (decoration == null)
 			return false;
+
+		updateHitboxes(decoration);
 
 		if (soundOrigin != null)
 			playSound(soundOrigin);
@@ -61,14 +65,14 @@ public interface Cyclable extends Interactable, MultiState {
 		return true;
 	}
 
-	default boolean setDecoration(Player player, ItemFrame itemFrame, ItemStack item, ItemModelType itemModelType) {
+	default @Nullable Decoration setDecoration(Player player, ItemFrame itemFrame, ItemStack item, ItemModelType itemModelType) {
 		Decoration decoration = new Decoration((DecorationConfig) this, itemFrame);
 		if (!decoration.canEdit(player, DecorationEditType.INTERACT)) {
 			if (!DecorationCooldown.LOCKED.isOnCooldown(player, TickTime.SECOND.x(2)))
 				DecorationError.LOCKED.send(player);
 			DecorationLang.debug(player, "locked decoration (interact)");
 
-			return false;
+			return null;
 		}
 
 		ItemBuilder itemBuilder = new ItemBuilder(item);
@@ -76,9 +80,13 @@ public interface Cyclable extends Interactable, MultiState {
 		itemBuilder.resetName();
 
 		itemFrame.setItem(itemBuilder.build(), false);
-		return true;
+		return new Decoration(DecorationConfig.of(itemFrame.getItem()), itemFrame);
 	}
 
 	default void playSound(@NonNull Block origin) {
+	}
+
+	default void updateHitboxes(@NonNull Decoration decoration) {
+
 	}
 }

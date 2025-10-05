@@ -1,17 +1,22 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.toggle;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxSingle;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxUnique;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Cyclable;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.FloorThing;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.type.Light;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -22,7 +27,7 @@ public class GiantCandle extends FloorThing implements Cyclable {
 	boolean lit;
 
 	public GiantCandle(String name, CandleType candleType, boolean lit) {
-		super(false, name, candleType.getItemModel(lit), HitboxSingle._1x1_BARRIER);
+		super(false, name, candleType.getItemModel(lit), lit ? HitboxUnique.GIANT_CANDLE_LIT : HitboxUnique.GIANT_CANDLE_UNLIT);
 		this.candleType = candleType;
 		this.lit = lit;
 	}
@@ -53,6 +58,11 @@ public class GiantCandle extends FloorThing implements Cyclable {
 	}
 
 	@Override
+	public void updateHitboxes(@NonNull Decoration decoration) {
+		updateHitbox(decoration);
+	}
+
+	@Override
 	public void playSound(@NonNull Block origin) {
 		playSound(lit, origin);
 	}
@@ -67,6 +77,17 @@ public class GiantCandle extends FloorThing implements Cyclable {
 
 		private final ItemModelType lit;
 		private final ItemModelType unlit;
+	}
+
+	public static void updateHitbox(@NonNull Decoration decoration) {
+		Location aboveLoc = decoration.getOrigin().add(0, 1, 0);
+		Block above = aboveLoc.getBlock();
+		Light light = (Light) above.getBlockData();
+		Hitbox hitbox = decoration.getHitbox(aboveLoc);
+		if (hitbox.getLightLevel() != light.getLevel()) {
+			light.setLevel(hitbox.getLightLevel());
+			above.setBlockData(light);
+		}
 	}
 
 	public static void playSound(boolean lit, Block origin) {
