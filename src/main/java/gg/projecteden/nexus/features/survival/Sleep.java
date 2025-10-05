@@ -37,7 +37,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 public class Sleep extends Feature implements Listener {
-	public static final Map<World, Map<UUID, LocalDateTime>> recentQuits = new HashMap<>();
+	public static final Map<TimeSyncedWorldGroup, Map<UUID, LocalDateTime>> recentQuits = new HashMap<>();
 	private static final long SPEED = 150;
 
 	private enum State { AWAKE, SLEEPING, SKIPPING }
@@ -76,13 +76,8 @@ public class Sleep extends Feature implements Listener {
 	static {
 		Tasks.repeat(0, 1, () -> {
 			for (TimeSyncedWorldGroup worldGroup : TimeSyncedWorldGroup.values()) {
-				long sleeping = 0;
-				long active = 0;
-
-				for (World world : worldGroup.getWorlds()) {
-					sleeping += getSleepingCount(world);
-					active += getCanSleepCount(world);
-				}
+				long sleeping = getSleepingCount(worldGroup);
+				long active = getCanSleepCount(worldGroup);
 
 				int needed = Math.max(1, (int) Math.floor(active / 2d));
 
@@ -101,10 +96,7 @@ public class Sleep extends Feature implements Listener {
 	}
 
 	private static boolean shouldNotSeeActionBar(Player player) {
-		if (DecorationStoreType.of(player) != null)
-			return true;
-
-		return false;
+		return DecorationStoreType.of(player) != null;
 	}
 
 	private static boolean canSleep(Player player) {
@@ -178,12 +170,11 @@ public class Sleep extends Feature implements Listener {
 	@EventHandler
 	public void onBedLeave(PlayerBedLeaveEvent event) {
 		Tasks.wait(1, () -> {
-			World world = event.getPlayer().getWorld();
-			var worldGroup = TimeSyncedWorldGroup.of(world);
+			var worldGroup = TimeSyncedWorldGroup.of(event.getPlayer().getWorld());
 			if (worldGroup == null)
 				return;
 
-			if (getSleepingCount(world) == 0)
+			if (getSleepingCount(worldGroup) == 0)
 				worldGroup.setState(State.AWAKE);
 		});
 	}
@@ -199,25 +190,29 @@ public class Sleep extends Feature implements Listener {
 	}
 
 	@NotNull
-	private static Stream<Player> getCanSleep(World world) {
-		return OnlinePlayers.where().world(world).get().stream().filter(Sleep::canSleep);
+	private static Stream<Player> getCanSleep(TimeSyncedWorldGroup worldGroup) {
+		return OnlinePlayers.where()
+			.filter(player -> worldGroup.getWorlds().contains(player.getWorld()))
+			.filter(Sleep::canSleep)
+			.get()
+			.stream();
 	}
 
-	private static int getCanSleepCount(World world) {
-		final long online = getCanSleep(world).count();
-		final long offline = janitorOffline(world).size();
+	private static int getCanSleepCount(TimeSyncedWorldGroup worldGroup) {
+		final long online = getCanSleep(worldGroup).count();
+		final long offline = janitorOffline(worldGroup).size();
 
 		return (int) (online + offline);
 	}
 
-	private static int getSleepingCount(World world) {
-		return (int) getCanSleep(world).filter(Player::isSleeping).count();
+	private static int getSleepingCount(TimeSyncedWorldGroup worldGroup) {
+		return (int) getCanSleep(worldGroup).filter(Player::isSleeping).count();
 	}
 
-	private static Map<UUID, LocalDateTime> janitorOffline(World world) {
+	private static Map<UUID, LocalDateTime> janitorOffline(TimeSyncedWorldGroup worldGroup) {
 		final var twoMinutesAgo = LocalDateTime.now().minusMinutes(2);
 
-		final var map = recentQuits.getOrDefault(world, new HashMap<>());
+		final var map = recentQuits.getOrDefault(worldGroup, new HashMap<>());
 		new HashMap<>(map).forEach((uuid, timestamp) -> {
 			if (timestamp.isBefore(twoMinutesAgo))
 				map.remove(uuid);
@@ -230,7 +225,7 @@ public class Sleep extends Feature implements Listener {
 	public void on(PlayerQuitEvent event) {
 		final var player = event.getPlayer();
 		if (canSleep(player))
-			recentQuits.computeIfAbsent(player.getWorld(), $ -> new HashMap<>()).put(player.getUniqueId(), LocalDateTime.now());
+			recentQuits.computeIfAbsent(TimeSyncedWorldGroup.of(player.getWorld()), $ -> new HashMap<>()).put(player.getUniqueId(), LocalDateTime.now());
 	}
 
 	@EventHandler
@@ -259,7 +254,7 @@ public class Sleep extends Feature implements Listener {
 			if (worldGroup == null)
 				return;
 
-			syncWorlds(worldGroup, Bukkit.getWorld(worldGroup.getWorldNames().get(0)));
+			syncWorlds(worldGroup, Bukkit.getWorld(worldGroup.getWorldNames().getFirst()));
 		}
 
 		@EventHandler

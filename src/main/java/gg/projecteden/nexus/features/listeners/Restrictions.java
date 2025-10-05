@@ -135,9 +135,6 @@ public class Restrictions implements Listener {
 		}
 	}
 
-
-	private static final CooldownService COOLDOWN_SERVICE = new CooldownService();
-
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onWorldChange(PlayerTeleportEvent event) {
 		if (event.getFrom().getWorld().equals(event.getTo().getWorld()))
