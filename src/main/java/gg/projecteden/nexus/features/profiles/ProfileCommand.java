@@ -164,6 +164,15 @@ public class ProfileCommand extends CustomCommand implements Listener {
 		send("Set texture to " + StringUtils.camelCase(type));
 	}
 
+	@Path("preview <type>")
+	@Description("Preview a profile texture")
+	public void preview(ProfileTextureType type) {
+		if (type.isInternal())
+			error("You cannot preview this profile texture");
+
+		openProfile(player(), player(), type, null);
+	}
+
 	@HideFromWiki
 	@HideFromHelp
 	@Description("Set your profile's about me")
@@ -228,6 +237,14 @@ public class ProfileCommand extends CustomCommand implements Listener {
 
 	public static void openProfile(Nerd target, Player viewer, @Nullable InventoryProvider previousMenu) {
 		new ProfileProvider(target.getOfflinePlayer(), previousMenu).open(viewer);
+	}
+
+	public static void openProfile(Player target, Player viewer, ProfileTextureType type, @Nullable InventoryProvider previousMenu) {
+		openProfile(Nerd.of(target), viewer, type, previousMenu);
+	}
+
+	public static void openProfile(Nerd target, Player viewer, ProfileTextureType type, @Nullable InventoryProvider previousMenu) {
+		new ProfileProvider(target.getOfflinePlayer(), type, previousMenu).open(viewer);
 	}
 
 	@Path("getTextureCoupon <type>")

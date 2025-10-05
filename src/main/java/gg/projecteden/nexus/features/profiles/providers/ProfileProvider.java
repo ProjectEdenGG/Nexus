@@ -39,6 +39,7 @@ import gg.projecteden.nexus.models.party.Party;
 import gg.projecteden.nexus.models.party.PartyManager;
 import gg.projecteden.nexus.models.profile.ProfileUser;
 import gg.projecteden.nexus.models.profile.ProfileUser.PrivacySettingType;
+import gg.projecteden.nexus.models.profile.ProfileUser.ProfileTextureType;
 import gg.projecteden.nexus.models.profile.ProfileUserService;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmor;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorService;
@@ -81,10 +82,11 @@ public class ProfileProvider extends InventoryProvider {
 	private static final HomeService homeService = new HomeService();
 	private static final TrustsUserService trustService = new TrustsUserService();
 
-	private InventoryProvider previousMenu = null;
-
 	private final ProfileUser targetUser;
 	private final ChatColor backgroundColor;
+
+	private InventoryProvider previousMenu = null;
+	private ProfileTextureType textureOverride = null;
 
 	private ItemStack armorHelmet = null;
 	private ItemStack armorChestplate = null;
@@ -92,6 +94,12 @@ public class ProfileProvider extends InventoryProvider {
 	private ItemStack armorBoots = null;
 	private ItemStack costumeHat = null;
 	private ItemStack costumeHand = null;
+
+	public ProfileProvider(OfflinePlayer offlinePlayer, ProfileTextureType texture, @Nullable InventoryProvider previousMenu) {
+		this(offlinePlayer);
+		this.previousMenu = previousMenu;
+		this.textureOverride = texture;
+	}
 
 	public ProfileProvider(OfflinePlayer offlinePlayer, @Nullable InventoryProvider previousMenu) {
 		this(offlinePlayer);
@@ -112,8 +120,11 @@ public class ProfileProvider extends InventoryProvider {
 		StringBuilder texture = new StringBuilder(InventoryTexture.GUI_PROFILE.getMenuTexture());
 
 		texture.append(InventoryTexture.GUI_PROFILE_BACKGROUND.getNextMenuTexture(backgroundColor, this.getRows()));
-		if (targetUser.getTextureType() != null)
+		if (textureOverride != null)
+			texture.append(textureOverride.getTexture(targetUser.getTextureColor(), this.getRows()));
+		else if (targetUser.getTextureType() != null)
 			texture.append(targetUser.getTexture(targetUser.getTextureColor(), this.getRows()));
+
 
 		for (SlotTexture slotTexture : SlotTexture.values())
 			texture.append(slotTexture.getMenuTexture(this));

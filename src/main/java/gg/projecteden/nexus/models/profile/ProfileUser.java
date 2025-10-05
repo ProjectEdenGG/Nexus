@@ -30,7 +30,9 @@ import org.bukkit.Color;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -228,6 +230,12 @@ public class ProfileUser implements PlayerOwnedObject {
 				.nbt(nbt -> nbt.setString(NBT_TEXTURE_TYPE, type))
 				.setting(ItemSetting.RENAMEABLE, false)
 				.build();
+		}
+
+		public static List<ProfileTextureType> getValues() {
+			return Arrays.stream(values())
+				.filter(type -> !type.isInternal())
+				.toList();
 		}
 	}
 
