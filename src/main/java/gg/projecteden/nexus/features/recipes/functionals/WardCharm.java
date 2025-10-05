@@ -60,7 +60,8 @@ public class WardCharm extends FunctionalRecipe {
 		EntityType.SNOW_GOLEM,
 		EntityType.SQUID,
 		EntityType.TROPICAL_FISH,
-		EntityType.TURTLE
+		EntityType.TURTLE,
+		EntityType.ZOMBIE_HORSE
 	);
 
 	private static final List<DamageCause> ALLOWED_CAUSES = List.of(
