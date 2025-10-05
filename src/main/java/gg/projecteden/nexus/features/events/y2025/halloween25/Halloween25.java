@@ -35,6 +35,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
@@ -245,6 +246,16 @@ public class Halloween25 extends Feature implements Listener {
 			event.getDrops().add(CrateType.HALLOWEEN.getKey());
 			PlayerUtils.send(player, PREFIX + "A Halloween Crate Key was dropped!");
 		}
+	}
+
+	@EventHandler
+	public void on(ItemSpawnEvent event) {
+		var entity = event.getEntity();
+		var item = entity.getItemStack();
+		if (!isPumpkinCostume(Model.of(item)))
+			return;
+
+		event.setCancelled(true);
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
