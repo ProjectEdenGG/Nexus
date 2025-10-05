@@ -40,7 +40,6 @@ import gg.projecteden.nexus.models.profile.ProfileUser.ProfileTextureType;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.ToolType;
 import lombok.AllArgsConstructor;
@@ -67,7 +66,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -347,10 +345,8 @@ public class CratesCommand extends CustomCommand implements Listener {
 			} else if (step == Step.CHOOSE_SKIN) {
 				if (this.type == SkinType.PROFILE) {
 					for (ProfileTextureType textureType : ProfileTextureType.getValues()) {
-						items.add(ClickableItem.of(textureType.getPreviewItem(), e -> {
-							close();
-							ProfileCommand.openProfile(viewer, viewer, textureType, this);
-						}));
+						items.add(ClickableItem.of(textureType.getPreviewItem(), e ->
+							ProfileCommand.openProfile(viewer, viewer, textureType, this)));
 					}
 				} else {
 					for (Object obj : this.type.getValues()) {
