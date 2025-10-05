@@ -356,7 +356,6 @@ public enum Package {
 		}
 	},
 
-	@Disabled
 	@Id("4714837")
 	@Category(StoreCategory.BOOSTS)
 	HALLOWEEN_CANDY {

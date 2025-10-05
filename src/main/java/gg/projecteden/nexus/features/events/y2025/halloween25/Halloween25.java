@@ -236,8 +236,9 @@ public class Halloween25 extends Feature implements Listener {
 			return;
 
 		var candyBoost = (int) Booster.getTotalBoost(player, Boostable.HALLOWEEN_CANDY);
-		for (int i = 0; i < randomInt(1, 2 + candyBoost); i++)
-			event.getDrops().add(randomCandy().build());
+		for (int i = 0; i < candyBoost; i++)
+			for (int j = 0; j < randomInt(1, 3); j++)
+				event.getDrops().add(randomCandy().build());
 
 		var crateKeyBoost = Booster.getTotalBoost(player, Boostable.HALLOWEEN_CRATE_KEY);
 		if (chanceOf(.4 * crateKeyBoost)) {
