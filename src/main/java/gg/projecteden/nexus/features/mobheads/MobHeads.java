@@ -99,7 +99,7 @@ public class MobHeads extends Feature implements Listener {
 
 		final MobHead mobHead = MobHead.of(victim);
 
-		if (mobHead == null)
+		if (mobHead == null || mobHead.getNamedSkull() == null)
 			return;
 
 		ItemStack skull = mobHead.getNamedSkull();

@@ -72,7 +72,11 @@ public enum ToolSkin implements EquipmentSkinType {
 		if (item == null)
 			return false;
 
-		return APPLICABLE_TYPES.contains(ToolType.of(item));
+		ToolType toolType = ToolType.of(item);
+		if (toolType == null)
+			return false;
+
+		return APPLICABLE_TYPES.contains(toolType);
 	}
 
 	@Override
