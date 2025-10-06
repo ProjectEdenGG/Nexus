@@ -872,8 +872,8 @@ public class PlayerUtils {
 	}
 
 	@NotNull
-	public static Set<@NotNull ItemStack> getNonNullInventoryContents(Player player) {
-		return Arrays.stream(player.getInventory().getContents()).filter(Objects::nonNull).collect(Collectors.toSet());
+	public static List<@NotNull ItemStack> getNonNullInventoryContents(Player player) {
+		return Arrays.stream(player.getInventory().getContents()).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
 	public static ItemStack[] getHotbarContents(HasPlayer player) {
