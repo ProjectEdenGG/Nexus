@@ -14,9 +14,11 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
@@ -29,6 +31,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,18 +64,46 @@ public class ThrowableBrick implements Listener {
 
 		Player player = event.getPlayer();
 
-		ItemUtils.subtract(player, item);
+		if (!item.getEnchantments().containsKey(Enchantment.INFINITY))
+			ItemUtils.subtract(player, item);
+		
+		Location location = player.getEyeLocation();
+		Vector direction = player.getLocation().getDirection();
 
-		Location location = player.getLocation().add(0, 1.5, 0);
-		location.add(player.getLocation().getDirection());
+		spawnBrick(player, location, direction);
+		if (item.getEnchantments().containsKey(Enchantment.MULTISHOT)) {
+			int level = item.getEnchantments().get(Enchantment.MULTISHOT);
+			int numProjectiles = (level * 2) + 1;
+			float spreadDegrees = 10f;
+			int sideCount = (numProjectiles - 1) / 2;
+			for (int i = 1; i <= sideCount; i++) {
+				float offset = spreadDegrees * i;
+				spawnBrick(player, location, rotateVector(direction, offset));
+				spawnBrick(player, location, rotateVector(direction, -offset));
+			}
+		}
 
-		player.getWorld().spawn(location, Snowball.class, snowball -> {
+		new SoundBuilder(Sound.ENTITY_WITCH_THROW).category(SoundCategory.PLAYERS).location(player.getLocation()).volume(0.5).pitch(0.2).play();
+	}
+
+	private void spawnBrick(Player shooter, Location loc, Vector dir) {
+		Location spawnLoc = loc.clone().add(dir.clone().multiply(0.3));
+		shooter.getWorld().spawn(spawnLoc, Snowball.class, snowball -> {
 			snowball.setItem(new ItemBuilder(MODEL).build());
-			snowball.setVelocity(location.getDirection().multiply(0.8));
-			snowball.setShooter(player);
+			snowball.setVelocity(dir.clone().multiply(0.8));
+			snowball.setShooter(shooter);
 		});
+	}
 
-		new SoundBuilder(Sound.ENTITY_WITCH_THROW).location(player.getLocation()).volume(0.5).pitch(0.2).play();
+	private static Vector rotateVector(Vector vec, float degrees) {
+		double radians = Math.toRadians(degrees);
+		double cos = Math.cos(radians);
+		double sin = Math.sin(radians);
+
+		double x = vec.getX() * cos - vec.getZ() * sin;
+		double z = vec.getX() * sin + vec.getZ() * cos;
+
+		return new Vector(x, vec.getY(), z).normalize();
 	}
 
 	@EventHandler
@@ -81,7 +112,7 @@ public class ThrowableBrick implements Listener {
 		if (ItemModelType.of(snowball.getItem()) != MODEL) return;
 		if (!(snowball.getShooter() instanceof Player player)) return;
 
-		new SoundBuilder(Sound.BLOCK_DEEPSLATE_BREAK).location(snowball.getLocation()).pitch(0.75).play();
+		new SoundBuilder(Sound.BLOCK_DEEPSLATE_BREAK).category(SoundCategory.PLAYERS).location(snowball.getLocation()).pitch(0.75).play();
 		if (event.getHitEntity() != null) {
 			damageEntity(player, snowball, event.getHitEntity());
 			return;
