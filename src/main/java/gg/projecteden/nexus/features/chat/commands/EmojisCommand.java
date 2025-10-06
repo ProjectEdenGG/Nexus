@@ -3,13 +3,17 @@ package gg.projecteden.nexus.features.chat.commands;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.chat.events.ChatEvent;
 import gg.projecteden.nexus.features.events.store.EventStoreItem;
-import gg.projecteden.nexus.features.menus.BookBuilder.WrittenBookMenu;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.files.FontFile.CustomCharacter;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.chat.Chatter;
@@ -18,12 +22,12 @@ import gg.projecteden.nexus.models.emoji.EmojiUser.Emoji;
 import gg.projecteden.nexus.models.emoji.EmojiUserService;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.DialogUtils.DialogBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -73,9 +77,9 @@ public class EmojisCommand extends CustomCommand implements Listener {
 	@Path("store")
 	@Description("View the emoji store")
 	void store() {
-		final WrittenBookMenu book = new WrittenBookMenu();
+		var dialog = new DialogBuilder().title("Emoji Store").multiAction().columns(14);
 
-		final List<Emoji> emojis = Emoji.EMOJIS.stream()
+		var emojis = Emoji.EMOJIS.stream()
 			.filter(Emoji::isPurchasable)
 			.filter(emoji -> !user.owns(emoji))
 			.toList();
@@ -83,29 +87,19 @@ public class EmojisCommand extends CustomCommand implements Listener {
 		if (emojis.isEmpty())
 			error("No emojis available for purchase");
 
-		JsonBuilder picker = json();
-		for (Emoji emoji : emojis) {
-			if (picker.isInitialized())
-				picker.group().next(" ");
-			else
-				picker.initialize();
+		for (var emoji : emojis) {
+			var lore = new JsonBuilder("&e" + emoji.getName())
+				.newline().next("")
+				.newline().next("&eClick to purchase")
+				.newline().next("&3Price: &e" + EventStoreItem.CHAT_EMOJIS.getPrice() + " Event Tokens");
 
-			final JsonBuilder next = new JsonBuilder(emoji.getEmoji())
-				.hover("&e" + emoji.getName(), "", "&eClick to purchase", "&3Price: &e" + EventStoreItem.CHAT_EMOJIS.getPrice() + " Event Tokens")
-				.command("/emoji buy " + emoji.getName())
-				.color(NamedTextColor.WHITE);
-
-			if (new JsonBuilder(picker).next(next).serialize().length() > Short.MAX_VALUE) {
-				book.addPage(picker);
-				picker = json();
-			} else
-				picker.next(next);
+			dialog.button(emoji.getEmoji(), lore, 20, response -> {
+				buy(emoji);
+				store();
+			});
 		}
 
-		if (picker.isInitialized())
-			book.addPage(picker);
-
-		book.open(player());
+		dialog.open(player());
 	}
 
 	@Path("buy <emoji>")
