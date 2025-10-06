@@ -21,7 +21,6 @@ import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser.AutoTrashBeha
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
-import gg.projecteden.nexus.utils.JsonBuilder;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Chunk;
@@ -202,25 +201,6 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		final boolean newState = !ItemSetting.AUTODEPOSITABLE.of(tool);
 		inventory().setItem(hand, tool.setting(ItemSetting.AUTODEPOSITABLE, newState).build());
 		send(PREFIX + "This item can " + (newState ? "now": "no longer") + " be auto-deposited");
-	}
-
-	@Path("features")
-	@Description("View available features")
-	void features() {
-		send(PREFIX + "Features");
-		for (AutoInventoryFeature feature : AutoInventoryFeature.values()) {
-			final boolean enabled = user.hasFeatureEnabledRaw(feature);
-			final JsonBuilder json = json("&e" + feature + " &7- " + (enabled ? "&aEnabled" : "&cDisabled"))
-				.hover("Click to " + (enabled ? "&cdisable" : "&aenable"))
-				.command("/autoinv features toggle " + feature.name().toLowerCase() + " " + !enabled)
-				.group().newline()
-				.next("&7  " + feature.getDescription());
-
-			if (feature.hasExtraDescription())
-				json.newline().next("&c  " + feature.getExtraDescription());
-
-			send(json);
-		}
 	}
 
 	@Path("features toggle <feature> [enable]")

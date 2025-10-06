@@ -151,7 +151,6 @@ public class ContainerPassthrough implements Listener {
 		packet.handle(((CraftPlayer) event.getPlayer()).getHandle().connection);
 		event.getPlayer().setSneaking(true);
 		this.ignoreInteractEvents = false;
-
 	}
 
 }

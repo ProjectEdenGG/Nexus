@@ -137,8 +137,8 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 
 		if (tip.show(tipType)) {
 			String message = switch (tipType) {
-				case AUTOSORT_SORT_INVENTORY -> "Your inventory has been automatically sorted. Use &c/autoinv features &3to disable";
-				case AUTOSORT_SORT_CHESTS -> "Your chests have been automatically sorted. Use &c/autoinv features &3to disable";
+				case AUTOSORT_SORT_INVENTORY -> "Your inventory has been automatically sorted. Use &c/autoinv &3to disable";
+				case AUTOSORT_SORT_CHESTS -> "Your chests have been automatically sorted. Use &c/autoinv &3to disable";
 				case AUTOSORT_REFILL -> "Broken tools and depleted stacks will be automatically refilled from your inventory";
 				case AUTOSORT_DEPOSIT_ALL -> "Instantly deposit all matching items from your inventory into all nearby containers with &c/autoinv depositall";
 				case AUTOSORT_DEPOSIT_QUICK -> "Quickly deposit all matching items from your inventory into a specific container by hitting it while crouching";
