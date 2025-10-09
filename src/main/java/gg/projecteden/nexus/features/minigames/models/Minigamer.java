@@ -472,8 +472,10 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		this.spectatingMinigamer = null;
 
 		teleportAsync(Minigames.getLobby()).thenRun(() -> {
-			PlayerUtils.setAllowFlight(player, false, "Minigamer#toGamelobby");
-			PlayerUtils.setFlying(player, false, "Minigamer#toGamelobby");
+			Tasks.wait(1, () -> {
+				PlayerUtils.setAllowFlight(player, false, "Minigamer#toGamelobby");
+				PlayerUtils.setFlying(player, false, "Minigamer#toGamelobby");
+			});
 		});
 	}
 
@@ -693,10 +695,16 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		player.getInventory().setHeldItemSlot(0);
 		player.setFoodLevel(20);
 		player.setFallDistance(0);
-		PlayerUtils.setAllowFlight(player, mechanic.allowFly(), "Minigamer#clearGameModeState");
-		PlayerUtils.setFlying(player, mechanic.allowFly(), "Minigamer#clearGameModeState");
+
+		boolean fly = mechanic.allowFly() || isSpectating();
+		if (Minigames.isInMinigameLobby(player))
+			fly = false;
+		PlayerUtils.setAllowFlight(player, fly, "Minigamer#clearGameModeState");
+		PlayerUtils.setFlying(player, fly, "Minigamer#clearGameModeState");
+
 		if (Vanish.isVanished(player))
 			Vanish.unvanish(player);
+
 		SpeedCommand.resetSpeed(player, "Minigamer#clearGameModeState");
 		player.setOp(false);
 
