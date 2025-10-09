@@ -15,11 +15,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.minecraft.SharedConstants;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.ContainerHelper;
@@ -726,7 +728,13 @@ public class ItemUtils {
 		)) {
 			TagValueOutput tagValueOutput = TagValueOutput.createWithContext(problemReporter, ((CraftServer) Bukkit.getServer()).getServer().registryAccess());
 			ContainerHelper.saveAllItems(tagValueOutput, minecraft, true);
-			tag.put("ProjectEden", tagValueOutput.buildResult());
+			CompoundTag value = tagValueOutput.buildResult();
+			value.getList("Items").ifPresent(items -> {
+				for (Tag item : items)
+					if (item instanceof CompoundTag compoundTag)
+						compoundTag.putInt("DataVersion", SharedConstants.getCurrentVersion().dataVersion().version());
+			});
+			tag.put("ProjectEden", value);
 		}
 
 		handle.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
