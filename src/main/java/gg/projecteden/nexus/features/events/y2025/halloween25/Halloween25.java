@@ -188,7 +188,8 @@ public class Halloween25 extends Feature implements Listener {
 			return false;
 
 		if (entity.getType() == EntityType.WITHER_SKELETON)
-			return location.getBlock().getType() != Material.WITHER_ROSE;
+			if (location.getBlock().getType() == Material.WITHER_ROSE)
+				return true;
 
 		if (entity.getType() == EntityType.ZOMBIFIED_PIGLIN) {
 			Material on = location.getBlock().getRelative(BlockFace.DOWN).getType();
