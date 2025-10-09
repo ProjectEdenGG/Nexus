@@ -13,7 +13,15 @@ import gg.projecteden.nexus.models.mobheads.MobHeadUser.MobHeadData;
 import gg.projecteden.nexus.models.mobheads.MobHeadUserService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.skincache.SkinCache;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.Enchant;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +32,13 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Ageable;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Slime;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -34,11 +48,18 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 // TODO: Named variants (jeb_, toast, johnny, dinnerbone/grumm)
 
@@ -108,7 +129,7 @@ public class MobHeads extends Feature implements Listener {
 		if (victim instanceof Player player2)
 			skull = new ItemBuilder(skull).name("&e" + Nickname.of(player2) + "'s Head").skullOwner(player2).build();
 
-		if (Nullables.isNullOrAir(skull)) {
+		if (isNullOrAir(skull)) {
 			Nexus.warn("[MobHeads] Skull for " + StringUtils.camelCase(mobHead.getType()) + " is null");
 			return;
 		}
@@ -303,6 +324,25 @@ public class MobHeads extends Feature implements Listener {
 				return true;
 
 		return false;
+	}
+
+	@EventHandler
+	public void on(EntityTargetEvent event) {
+		if (!(event.getTarget() instanceof Player player))
+			return;
+
+		var mobHead = MobHead.of(event.getEntity());
+		if (mobHead == null)
+			return;
+
+		ItemStack helmet = player.getInventory().getHelmet();
+		if (isNullOrAir(helmet))
+			return;
+
+		if (!helmet.isSimilar(mobHead.getNamedSkull()))
+			return;
+
+		event.setCancelled(true);
 	}
 
 }

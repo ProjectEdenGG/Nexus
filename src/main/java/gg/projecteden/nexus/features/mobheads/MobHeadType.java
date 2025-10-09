@@ -506,7 +506,6 @@ public enum MobHeadType implements MobHead {
 		return this;
 	}
 
-
 	public @Nullable ItemStack getNamedSkull() {
 		if (namedSkull == null)
 			return null;
