@@ -22,7 +22,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDropItemEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -164,18 +163,16 @@ public class MagnetEnchant extends CustomEnchant implements Listener {
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void on(EntityDeathEvent event) {
-		if (event.getEntity() instanceof Player)
+		var entity = event.getEntity();
+		if (entity instanceof Player)
 			return;
 
-		if (!(event.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent casted))
-			return;
-
-		if (!(casted.getDamager() instanceof Player player))
+		if (!(entity.getKiller() instanceof Player killer))
 			return;
 
 		event.getDrops().forEach(drop -> {
 			ItemMeta meta = drop.getItemMeta();
-			setNbt(meta.getPersistentDataContainer(), player.getUniqueId(), true);
+			setNbt(meta.getPersistentDataContainer(), killer.getUniqueId(), true);
 			drop.setItemMeta(meta);
 		});
 	}
