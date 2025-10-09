@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.itemtags;
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.iface.ReadWriteItemNBT;
-import gg.projecteden.api.common.utils.Nullables;
+import gg.projecteden.api.common.utils.EnumUtils.ComparableEnum;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
 import lombok.Getter;
@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 
 @Getter
 @SuppressWarnings({"SpellCheckingInspection", "deprecation", "ConstantValue"})
-public enum Rarity implements ITag {
+public enum Rarity implements ITag, ComparableEnum {
 	// @formatter:off
 	ORDINARY("#9e9e9e",	 0, 5),
 	COMMON("#7aff7a",		 6, 11),

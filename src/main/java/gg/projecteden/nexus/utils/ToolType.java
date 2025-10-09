@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.api.common.utils.EnumUtils.ComparableEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.tags.BlockTags;
