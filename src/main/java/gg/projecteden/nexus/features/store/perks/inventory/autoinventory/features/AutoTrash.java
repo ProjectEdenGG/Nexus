@@ -55,7 +55,7 @@ public class AutoTrash implements Listener {
 
 		if (meta.hasEnchants()) {
 			Rarity rarity = Rarity.of(item);
-			if (rarity.lte(Rarity.UNCOMMON))
+			if (rarity.gt(Rarity.UNCOMMON))
 				return;
 		}
 
