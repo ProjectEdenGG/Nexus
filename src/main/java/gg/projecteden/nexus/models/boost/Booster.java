@@ -349,7 +349,8 @@ public class Booster implements PlayerOwnedObject {
 	}
 
 	public static double getTotalBoost(UUID uuid, Boostable type) {
-		if (Nerd.of(uuid).isAfk())
+		Nerd nerd = Nerd.of(uuid);
+		if (nerd.isOnline() && nerd.isAfk())
 			if (!type.isAfkAllowed())
 				return 1d;
 
