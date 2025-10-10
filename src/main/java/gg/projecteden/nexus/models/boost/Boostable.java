@@ -20,12 +20,15 @@ import java.lang.reflect.Field;
 @Getter
 @AllArgsConstructor
 public enum Boostable {
+	@Pauseable
 	@PossiblePersonal
 	EXPERIENCE(Material.EXPERIENCE_BOTTLE),
 
+	@Pauseable
 	@PossiblePersonal
 	MCMMO_EXPERIENCE(Material.NETHERITE_PICKAXE),
 
+	@Pauseable
 	@Disabled
 	MARKET_SELL_PRICES(Material.OAK_SIGN) {
 		@Override
@@ -46,22 +49,28 @@ public enum Boostable {
 	@AfkAllowed
 	VOTE_POINTS(Material.DIAMOND),
 
+	@Pauseable
 	@AfkAllowed
 	@PossiblePersonal
 	MINIGAME_DAILY_TOKENS(Material.DIAMOND_SWORD),
 
+	@Pauseable
 	@PossiblePersonal
 	KILLER_MONEY(Material.GOLD_INGOT),
 
+	@Pauseable
 	@PossiblePersonal
 	MOB_HEADS(Material.ZOMBIE_HEAD),
 
+	@Pauseable
 	@AfkAllowed
 	@PossiblePersonal
 	MYSTERY_CRATE_KEY(Material.TRIPWIRE_HOOK),
 
+	@Pauseable
 	HALLOWEEN_CANDY(ItemModelType.CANDY_CANDY_CORN),
 
+	@Pauseable
 	HALLOWEEN_CRATE_KEY(ItemModelType.CRATE_KEY_HALLOWEEN),
 	;
 
@@ -98,6 +107,10 @@ public enum Boostable {
 		return getField().isAnnotationPresent(AfkAllowed.class);
 	}
 
+	public boolean isPauseable() {
+		return getField().isAnnotationPresent(Pauseable.class);
+	}
+
 	public void onActivate() {}
 
 	public void onExpire() {}
@@ -109,5 +122,9 @@ public enum Boostable {
 	@Target(ElementType.FIELD)
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface AfkAllowed {}
+
+	@Target(ElementType.FIELD)
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface Pauseable {}
 
 }

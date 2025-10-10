@@ -81,8 +81,10 @@ public class BoostsCommand extends CustomCommand implements Listener {
 			}
 
 			for (Boost boost : new ArrayList<>(config.getPersonalBoosts())) {
-				if (boost.isActive() && boost.shouldIncrementTime())
-					boost.incrementTime();
+				if (boost.getType().isPauseable())
+					if (boost.isActive() && boost.shouldIncrementTime())
+						boost.incrementTime();
+
 				if (boost.isExpired())
 					boost.expire();
 			}

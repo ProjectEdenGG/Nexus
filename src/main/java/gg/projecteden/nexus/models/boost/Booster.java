@@ -207,7 +207,7 @@ public class Booster implements PlayerOwnedObject {
 			if (isCancelled())
 				return true;
 
-			if (isPersonal())
+			if (isPersonal() && type.isPauseable())
 				return timeActivated >= duration;
 			else
 				return getExpiration().isBefore(LocalDateTime.now());
@@ -223,7 +223,7 @@ public class Booster implements PlayerOwnedObject {
 
 		@NotNull
 		public LocalDateTime getExpiration() {
-			if (isPersonal())
+			if (isPersonal() && type.isPauseable())
 				return LocalDateTime.now().plusSeconds(getDurationLeft());
 			else
 				return activated.plusSeconds(duration);
@@ -237,7 +237,7 @@ public class Booster implements PlayerOwnedObject {
 			if (!isActive())
 				return duration;
 
-			if (isPersonal())
+			if (isPersonal() && type.isPauseable())
 				return duration - timeActivated;
 			else
 				return ChronoUnit.SECONDS.between(LocalDateTime.now(), getExpiration());
