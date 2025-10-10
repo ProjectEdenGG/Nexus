@@ -17,6 +17,8 @@ import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.features.wither.BeginningCutscene;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.features.wither.WitherChallenge.Difficulty;
+import gg.projecteden.nexus.models.bossfight.BossFightUser.BossFightUserSetting;
+import gg.projecteden.nexus.models.bossfight.BossFightUserService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.witherarena.WitherArenaConfig;
 import gg.projecteden.nexus.utils.BlockUtils;
@@ -129,16 +131,26 @@ public abstract class WitherFight implements Listener {
 		Nexus.log("WitherLog: " + message);
 	}
 
+	public boolean shouldBroadcast() {
+		var host = getHost();
+		if (host == null)
+			return true;
+
+		var user = new BossFightUserService().get(host);
+		return user.getSetting(BossFightUserSetting.BROADCASTS);
+	}
+
 	public void start() {
 		Nexus.registerListener(this);
 		new BeginningCutscene().run().thenAccept(location -> {
 			JsonBuilder message = new JsonBuilder(WitherChallenge.PREFIX + "The fight has started! &e&lClick here to spectate")
 				.command("/wither spectate").hover("&eYou will be teleported to the wither arena");
 
-			if (WitherArenaConfig.isBeta())
-				Broadcast.staffIngame().message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
-			else
-				Broadcast.ingame().message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
+			if (shouldBroadcast())
+				if (WitherArenaConfig.isBeta())
+					Broadcast.staffIngame().message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
+				else
+					Broadcast.ingame().message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
 
 			spawnWither(location);
 			new WorldEditUtils("events").set("witherarena-door", BlockTypes.NETHER_BRICKS);
@@ -470,10 +482,11 @@ public abstract class WitherFight implements Listener {
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
 				" lost to the Wither in " + getDifficulty().getTitle() + " &3mode";
 
-			if (WitherArenaConfig.isBeta())
-				Broadcast.staff().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
-			else
-				Broadcast.all().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
+			if (shouldBroadcast())
+				if (WitherArenaConfig.isBeta())
+					Broadcast.staff().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
+				else
+					Broadcast.all().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
 
 			logFinal();
 			WitherChallenge.reset();
@@ -521,10 +534,11 @@ public abstract class WitherFight implements Listener {
 			(partySize > 1 ? " and " + (partySize - 1) + gg.projecteden.nexus.utils.StringUtils.plural(" other", partySize - 1) + " &3have" : " &3has") +
 			" successfully beaten the Wither in " + getDifficulty().getTitle() + " &3mode " + (gotStar ? "and got" : "but did not get") + " the star";
 
-		if (WitherArenaConfig.isBeta())
-			Broadcast.staff().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
-		else
-			Broadcast.all().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
+		if (shouldBroadcast())
+			if (WitherArenaConfig.isBeta())
+				Broadcast.staff().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
+			else
+				Broadcast.all().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
 
 		new WorldGuardUtils("events").getEntitiesInRegion("witherarena").forEach(e -> {
 			if (e.getType() != EntityType.PLAYER)

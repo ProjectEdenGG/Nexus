@@ -16,11 +16,14 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.bossfight.BossFightUser.BossFightUserSetting;
+import gg.projecteden.nexus.models.bossfight.BossFightUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.witherarena.WitherArenaConfig;
 import gg.projecteden.nexus.models.witherarena.WitherArenaConfigService;
 import gg.projecteden.nexus.utils.FuzzyItemStack;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -119,6 +122,37 @@ public class WitherCommand extends CustomCommand {
 				.next("&e&lClick here to join").command("/wither join").hover("&eYou will be added to the wither queue"));
 	}
 
+	@Path("settings")
+	@Description("View available boss fight settings")
+	void settings() {
+		send(PREFIX + "Available settings:");
+		var user = new BossFightUserService().get(player());
+		for (BossFightUserSetting setting : BossFightUserSetting.values()) {
+			final boolean value = user.getSetting(setting);
+			final JsonBuilder json = json((value ? "&a" : "&c") + " " + camelCase(setting))
+				.hover(value ? "&a&lEnabled" : "&c&lDisabled", setting.getMessage().apply(value))
+				.next(" &7- " + setting.getDescription());
+
+			final String extra = setting.getDescriptionExtra();
+			if (!Nullables.isNullOrEmpty(extra))
+				json.hover("", "&7" + extra);
+			send(json.suggest("/wither settings " + setting.name().toLowerCase() + " "));
+		}
+	}
+
+	@Path("settings <setting> [value]")
+	@Description("Modify a boss fight setting")
+	void settings(BossFightUserSetting setting, Boolean value) {
+		var service = new BossFightUserService();
+		var user = service.get(player());
+		if (value == null)
+			value = !user.getSetting(setting);
+
+		user.setSetting(setting, value);
+		service.save(user);
+		send(PREFIX + setting.getMessage().apply(value));
+	}
+
 	@Path("join")
 	@HideFromHelp
 	@HideFromWiki
@@ -205,10 +239,11 @@ public class WitherCommand extends CustomCommand {
 			(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3are" : " &3is") +
 			" challenging the wither to a fight in " + WitherChallenge.currentFight.getDifficulty().getTitle() + " &3mode";
 
-		if (WitherArenaConfig.isBeta())
-			Broadcast.staffIngame().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
-		else
-			Broadcast.all().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
+		if (WitherChallenge.currentFight.shouldBroadcast())
+			if (WitherArenaConfig.isBeta())
+				Broadcast.staffIngame().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
+			else
+				Broadcast.all().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
 
 		WitherChallenge.currentFight.teleportPartyToArena();
 		Tasks.Countdown.builder()
