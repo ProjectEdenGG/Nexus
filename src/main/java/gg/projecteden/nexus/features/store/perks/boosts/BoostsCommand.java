@@ -71,7 +71,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 	}
 
 	static {
-		Tasks.repeatAsync(0, 5, () -> {
+		Tasks.repeatAsync(0, TickTime.SECOND, () -> {
 			BoostConfig config = BoostConfig.get();
 
 			for (Boostable boostable : new HashSet<>(config.getBoosts().keySet())) {
@@ -81,6 +81,8 @@ public class BoostsCommand extends CustomCommand implements Listener {
 			}
 
 			for (Boost boost : new ArrayList<>(config.getPersonalBoosts())) {
+				if (boost.isActive() && boost.shouldIncrementTime())
+					boost.incrementTime();
 				if (boost.isExpired())
 					boost.expire();
 			}

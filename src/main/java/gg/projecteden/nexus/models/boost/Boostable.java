@@ -22,8 +22,10 @@ import java.lang.reflect.Field;
 public enum Boostable {
 	@PossiblePersonal
 	EXPERIENCE(Material.EXPERIENCE_BOTTLE),
+
 	@PossiblePersonal
 	MCMMO_EXPERIENCE(Material.NETHERITE_PICKAXE),
+
 	@Disabled
 	MARKET_SELL_PRICES(Material.OAK_SIGN) {
 		@Override
@@ -36,18 +38,30 @@ public enum Boostable {
 			Market.load();
 		}
 	},
+
+	@AfkAllowed
 	@PossiblePersonal
 	EXTRA_VOTE_POINTS_CHANCE(Material.DIAMOND),
+
+	@AfkAllowed
 	VOTE_POINTS(Material.DIAMOND),
+
+	@AfkAllowed
 	@PossiblePersonal
 	MINIGAME_DAILY_TOKENS(Material.DIAMOND_SWORD),
+
 	@PossiblePersonal
 	KILLER_MONEY(Material.GOLD_INGOT),
+
 	@PossiblePersonal
 	MOB_HEADS(Material.ZOMBIE_HEAD),
+
+	@AfkAllowed
 	@PossiblePersonal
 	MYSTERY_CRATE_KEY(Material.TRIPWIRE_HOOK),
+
 	HALLOWEEN_CANDY(ItemModelType.CANDY_CANDY_CORN),
+
 	HALLOWEEN_CRATE_KEY(ItemModelType.CRATE_KEY_HALLOWEEN),
 	;
 
@@ -80,6 +94,10 @@ public enum Boostable {
 		return getField().isAnnotationPresent(PossiblePersonal.class);
 	}
 
+	public boolean isAfkAllowed() {
+		return getField().isAnnotationPresent(AfkAllowed.class);
+	}
+
 	public void onActivate() {}
 
 	public void onExpire() {}
@@ -87,5 +105,9 @@ public enum Boostable {
 	@Target(ElementType.FIELD)
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface PossiblePersonal {}
+
+	@Target(ElementType.FIELD)
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface AfkAllowed {}
 
 }

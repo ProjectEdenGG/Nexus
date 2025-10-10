@@ -12,6 +12,7 @@ import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.M
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.boost.BoostConfig.DiscordHandler;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
@@ -58,12 +59,13 @@ public class Booster implements PlayerOwnedObject {
 		@NonNull
 		private UUID uuid;
 		private Boostable type;
+		private boolean personal;
 		private double multiplier;
 		private long duration;
+		private long timeActivated;
 		private LocalDateTime received;
 		private LocalDateTime activated;
 		private boolean cancelled;
-		private boolean personal;
 
 		public Boost(@NonNull UUID uuid, Boostable type, double multiplier, TickTime duration) {
 			this(uuid, type, multiplier, duration.get() / 20);
@@ -205,7 +207,10 @@ public class Booster implements PlayerOwnedObject {
 			if (isCancelled())
 				return true;
 
-			return getExpiration().isBefore(LocalDateTime.now());
+			if (isPersonal())
+				return timeActivated >= duration;
+			else
+				return getExpiration().isBefore(LocalDateTime.now());
 		}
 
 		public boolean canActivateIfEnabled() {
@@ -218,7 +223,10 @@ public class Booster implements PlayerOwnedObject {
 
 		@NotNull
 		public LocalDateTime getExpiration() {
-			return activated.plusSeconds(duration);
+			if (isPersonal())
+				return LocalDateTime.now().plusSeconds(getDurationLeft());
+			else
+				return activated.plusSeconds(duration);
 		}
 
 		public String getTimeLeft() {
@@ -226,16 +234,32 @@ public class Booster implements PlayerOwnedObject {
 		}
 
 		public long getDurationLeft() {
-			if (isActive())
-				return ChronoUnit.SECONDS.between(LocalDateTime.now(), getExpiration());
-			else
+			if (!isActive())
 				return duration;
+
+			if (isPersonal())
+				return duration - timeActivated;
+			else
+				return ChronoUnit.SECONDS.between(LocalDateTime.now(), getExpiration());
 		}
 
 		private void save() {
 			new BoosterService().save(getBooster());
 		}
 
+		public boolean shouldIncrementTime() {
+			if (!isOnline())
+				return false;
+
+			if (isAfk())
+				return false;
+
+			return true;
+		}
+
+		public void incrementTime() {
+			++timeActivated;
+		}
 	}
 
 	@Override
@@ -325,6 +349,10 @@ public class Booster implements PlayerOwnedObject {
 	}
 
 	public static double getTotalBoost(UUID uuid, Boostable type) {
+		if (Nerd.of(uuid).isAfk())
+			if (!type.isAfkAllowed())
+				return 1d;
+
 		double global = BoostConfig.get().getMultiplier(type);
 		double personal = getPersonalBoost(uuid, type);
 
