@@ -20,7 +20,6 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +42,6 @@ public class BoostConfig implements PlayerOwnedObject {
 	private UUID uuid;
 
 	private Map<Boostable, String> boosts = new ConcurrentHashMap<>();
-	private List<Boost> personalBoosts = new ArrayList<>();
 
 	public static BoostConfig get() {
 		return new BoostConfigService().get0();
@@ -71,30 +69,22 @@ public class BoostConfig implements PlayerOwnedObject {
 	}
 
 	public void removeBoost(Boost boost) {
-		if (boost.isPersonal()) {
-			personalBoosts.remove(boost);
-		}
-		else {
-			Boost active = getBoost(boost.getType());
-			if (active == null) return;
-			if (!active.equals(boost))
-				throw new InvalidInputException("Specified boost (" + boost.getNicknameId() + ") is not the active boost (" + active.getNicknameId() + ")");
+		Boost active = getBoost(boost.getType());
+		if (active == null)
+			return;
 
-			boosts.remove(boost.getType());
-		}
+		if (!active.equals(boost))
+			throw new InvalidInputException("Specified boost (" + boost.getNicknameId() + ") is not the active boost (" + active.getNicknameId() + ")");
+
+		boosts.remove(boost.getType());
 		save();
 	}
 
 	public void addBoost(Boost boost) {
-		if (boost.isPersonal()) {
-			personalBoosts.add(boost);
-		}
-		else {
-			if (hasBoost(boost.getType()))
-				throw new InvalidInputException("Cannot activate boost " + boost.getNicknameId() + ", boost " + getBoost(boost.getType()).getNicknameId() + " is already active");
+		if (hasBoost(boost.getType()))
+			throw new InvalidInputException("Cannot activate boost " + boost.getNicknameId() + ", boost " + getBoost(boost.getType()).getNicknameId() + " is already active");
 
-			boosts.put(boost.getType(), boost.getRefId());
-		}
+		boosts.put(boost.getType(), boost.getRefId());
 		save();
 	}
 

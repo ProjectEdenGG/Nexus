@@ -71,8 +71,13 @@ public class BoostsCommand extends CustomCommand implements Listener {
 	}
 
 	static {
+		var configService = new BoostConfigService();
+		var userService = new BoosterService();
+
+		userService.cacheAll();
+
 		Tasks.repeatAsync(0, TickTime.SECOND, () -> {
-			BoostConfig config = BoostConfig.get();
+			var config = configService.get0();
 
 			for (Boostable boostable : new HashSet<>(config.getBoosts().keySet())) {
 				Boost boost = config.getBoost(boostable);
@@ -80,14 +85,20 @@ public class BoostsCommand extends CustomCommand implements Listener {
 					boost.expire();
 			}
 
-			for (Boost boost : new ArrayList<>(config.getPersonalBoosts())) {
-				if (boost.getType().isPauseable())
-					if (boost.isActive() && boost.shouldIncrementTime())
-						boost.incrementTime();
+			for (Booster booster : userService.getCache().values()) {
+				for (Boost boost : booster.getActivePersonalBoosts()) {
+					if (boost.isActive())
+						if (boost.getType().isPauseable() && boost.shouldIncrementTime()) {
+							boost.incrementTime();
+							userService.save(booster);
+						}
 
-				if (boost.isExpired())
-					boost.expire();
+					if (boost.isExpired())
+						boost.expire();
+				}
 			}
+
+			configService.save(config);
 		});
 		Tasks.repeatAsync(TickTime.MINUTE, TickTime.MINUTE.x(5), () -> {
 			BoostConfig config = BoostConfig.get();

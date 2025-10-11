@@ -123,9 +123,10 @@ public class Booster implements PlayerOwnedObject {
 			if (!isPersonal()) {
 				if (config().hasBoost(type))
 					throw new InvalidInputException("There is already an active " + StringUtils.camelCase(type) + " boost");
+
+				config().addBoost(this);
 			}
 
-			config().addBoost(this);
 			activated = LocalDateTime.now();
 
 			if (!isPersonal()) {
@@ -144,14 +145,13 @@ public class Booster implements PlayerOwnedObject {
 		}
 
 		public void expire() {
-			config().removeBoost(this);
 			if (!isPersonal()) {
+				config().removeBoost(this);
 				type.onExpire();
 				broadcast("&e" + getNickname() + "'s &e" + getMultiplierFormatted() + " " + StringUtils.camelCase(type) + " boost &3has &cexpired");
 				DiscordHandler.editMessage();
 				// TODO Auto start next in queue?
-			}
-			else {
+			} else {
 				sendMessage(new JsonBuilder(StringUtils.getPrefix("Boosts")).group()
 					.next("&3Your personal &e" + StringUtils.camelCase(type) + " boost &3has &cexpired"));
 			}
