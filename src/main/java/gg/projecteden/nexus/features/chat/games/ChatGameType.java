@@ -286,7 +286,7 @@ public enum ChatGameType {
 		VILLAGER_ORIGINAL_NAME("What was the original name for Villagers?", "testificates"),
 		WOLF_HEALTH_INDICATOR("What indicates the health level of a Wolf?", List.of("their tail", "tail")),
 		TAMEABLE_MOB_FALL_DMG_IMMUNE("What tameable mob is immune to fall damage?", "cat"),
-		SMITTEN_TURTLE_DROP("What item drops if lightning strikes a turtle?", List.of("a bowl", "bowl")),
+		SMITTEN_TURTLE_DROP("What item drops if lightning strikes a turtle?", "bowl"),
 		SMITTEN_PIG_CONVERT("Which mob is created when lightning strikes a pig?", "zombified piglin"),
 		SMITTEN_RED_MOOSHROOM_CONVERT("Which mob is created when lightning strikes a red mooshroom?", "brown mooshroom"),
 		SMITTEN_BROWN_MOOSHROOM_CONVERT("Which mob is created when lightning strikes a brown mooshroom?", "red mooshroom"),
@@ -300,7 +300,12 @@ public enum ChatGameType {
 		BLOCK_PLAYS_MUSIC("What vanilla block can be used to play music?", "jukebox"),
 		PILLAGER_STRUCTURE("Which structure is home to the Pillagers?", List.of("pillager outpost", "woodland mansion")),
 		PARROT_SPAWN_BIOME("Which biome is home to the parrot?", "jungle"),
-		VILLAGE_RAID("What in-game event brings waves of hostile mobs attacking a village?", List.of("a raid", "raid")),
+		VILLAGE_RAID("What in-game event brings waves of hostile mobs attacking a village?", "raid"),
+		ALLAY_DUPLICATION("What mob can be duplicated using an amethyst shard?", "allay"),
+		BLUE_AXOLOTL("What color is the rarest Axolotl variant?", "blue"),
+		BREED_SNIFFER("What item is used to breed Sniffers?", "torchflower Seeds"),
+		LIGHT_FOR_CROPS("What is the minimum light level needed for crops to grow?", getNumberAnswers(9)),
+		OBSIDIAN_FOR_PORTAL("What is the minimum number of obsidian needed to make a nether portal?", getNumberAnswers(10)),
 
 		// WEBSITE_ --> "https://..." added to answers
 		WEBSITE_SERVER("What's the link to the server website?", "projecteden.gg"),
