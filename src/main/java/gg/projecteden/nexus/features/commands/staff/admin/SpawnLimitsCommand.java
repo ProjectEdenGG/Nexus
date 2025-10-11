@@ -12,11 +12,17 @@ import gg.projecteden.nexus.models.spawnlimits.SpawnLimits;
 import gg.projecteden.nexus.models.spawnlimits.SpawnLimits.SpawnLimitType;
 import gg.projecteden.nexus.models.spawnlimits.SpawnLimitsService;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+
+import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.BINGO;
+import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.UHC;
 
 @Permission(Group.ADMIN)
 public class SpawnLimitsCommand extends CustomCommand {
@@ -30,12 +36,15 @@ public class SpawnLimitsCommand extends CustomCommand {
 	static {
 		try {
 			for (World world : Bukkit.getWorlds()) {
-				if (!WorldGroup.of(world).isSurvivalMode()) {
-					for (SpawnLimitType type : SpawnLimitType.values())
-						type.set(world, 0);
-				} else {
+				var worldGroup = WorldGroup.of(world);
+				var subWorldGroup = SubWorldGroup.of(world);
+
+				if (worldGroup.isSurvivalMode() || List.of(BINGO, UHC).contains(subWorldGroup)) {
 					for (SpawnLimitType type : SpawnLimitType.values())
 						type.set(world, type.getDefaultValue());
+				} else {
+					for (SpawnLimitType type : SpawnLimitType.values())
+						type.set(world, 0);
 				}
 			}
 
