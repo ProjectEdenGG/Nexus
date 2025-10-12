@@ -558,6 +558,9 @@ public class PacketUtils {
 	}
 
 	public static void sendPacket(HasPlayer player, Object... packets) {
+		if (player == null)
+			return;
+
 		for (Object packet : packets) {
 			if (packet instanceof PacketContainer container)
 				sendPacket(player, container);

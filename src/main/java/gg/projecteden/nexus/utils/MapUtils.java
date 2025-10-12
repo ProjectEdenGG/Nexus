@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.utils;
 
-import gg.projecteden.nexus.features.commands.SudokuCommand.SudokuGame.Coordinate;
+import gg.projecteden.nexus.models.sudoku.SudokuUser.Coordinate;
 import org.bukkit.Location;
 import org.bukkit.Rotation;
 import org.bukkit.block.BlockFace;
