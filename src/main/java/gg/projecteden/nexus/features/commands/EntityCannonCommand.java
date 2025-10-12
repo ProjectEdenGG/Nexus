@@ -31,13 +31,16 @@ public class EntityCannonCommand extends CustomCommand {
 		if (!isSeniorStaff() && type == EntityType.EXPERIENCE_BOTTLE)
 			permissionError();
 
-		final Entity entity = world().spawnEntity(player().getEyeLocation(), type);
-		entity.setInvulnerable(true);
+		if (type.getEntityClass() == null)
+			error("Invalid entity type");
 
-		if (type.getEntityClass() != null && type.getEntityClass().isInstance(LivingEntity.class))
-			((LivingEntity) entity).setAI(false);
+		final Entity entity = world().spawn(player().getEyeLocation(), type.getEntityClass(), result -> {
+			result.setInvulnerable(true);
+			if (result instanceof LivingEntity livingEntity)
+				livingEntity.setAI(false);
 
-		entity.setVelocity(player().getEyeLocation().getDirection().multiply(2));
+			result.setVelocity(player().getEyeLocation().getDirection().multiply(2));
+		});
 
 		Tasks.wait(TickTime.SECOND, () -> {
 			final Location loc = entity.getLocation();
