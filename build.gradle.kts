@@ -76,6 +76,7 @@ dependencies {
     implementation("net.jthink:jaudiotagger:3.0.1")
     implementation("fr.skytasul:glowingentities:1.4.3")
     implementation("tech.blastmc.lights:LxGoAPI:1.0.10-SNAPSHOT")
+    implementation("de.sfuhrm:sudoku:5.0.1")
     compileOnly("mysql:mysql-connector-java:8.0.33")
     compileOnly("org.slf4j:slf4j-api:2.0.5")
     compileOnly("gg.projecteden.crates:api:1.0.7-SNAPSHOT")

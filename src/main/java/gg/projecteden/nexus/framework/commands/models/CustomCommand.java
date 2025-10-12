@@ -233,6 +233,13 @@ public abstract class CustomCommand extends ICustomCommand {
 		return targetEntity;
 	}
 
+	protected <E extends Entity> E getTargetEntityRequired(Class<E> entityType) {
+		Entity targetEntity = getTargetEntity();
+		if (!entityType.isInstance(targetEntity))
+			error("You must be looking at " + StringUtils.an(entityType.getSimpleName()));
+		return (E) targetEntity;
+	}
+
 	protected LivingEntity getTargetLivingEntityRequired() {
 		Entity targetEntity = getTargetEntity();
 		if (!(targetEntity instanceof LivingEntity))
