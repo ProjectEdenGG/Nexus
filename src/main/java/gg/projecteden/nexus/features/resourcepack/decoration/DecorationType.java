@@ -2107,22 +2107,22 @@ public enum DecorationType {
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	WINDOW_CURTAINS_3x3_CLOSED(new Curtain("Window Curtains 3x3", CurtainType._3x3_CLOSED)),
 
-	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	@TypeConfig(money = 150, tokens = 15, unbuyable = true, tabs = Tab.INTERNAL)
 	BIRDHOUSE_FOREST_VERTICAL(new BirdHouse("Vertical Forest Birdhouse", ItemModelType.BIRDHOUSE_FOREST_VERTICAL, false)),
 
-	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	@TypeConfig(money = 150, tokens = 15, unbuyable = true, tabs = Tab.INTERNAL)
 	BIRDHOUSE_FOREST_HANGING(new BirdHouse("Hanging Forest Birdhouse", ItemModelType.BIRDHOUSE_FOREST_HANGING, false)),
 
-	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	@TypeConfig(money = 150, tokens = 15, unbuyable = true, tabs = Tab.INTERNAL)
 	BIRDHOUSE_ENCHANTED_VERTICAL(new BirdHouse("Vertical Enchanted Birdhouse", ItemModelType.BIRDHOUSE_ENCHANTED_VERTICAL, false)),
 
-	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	@TypeConfig(money = 150, tokens = 15, unbuyable = true, tabs = Tab.INTERNAL)
 	BIRDHOUSE_ENCHANTED_HANGING(new BirdHouse("Hanging Enchanted Birdhouse", ItemModelType.BIRDHOUSE_ENCHANTED_HANGING, false)),
 
-	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	@TypeConfig(money = 150, tokens = 15, unbuyable = true, tabs = Tab.INTERNAL)
 	BIRDHOUSE_DEPTHS_VERTICAL(new BirdHouse("Vertical Depths Birdhouse", ItemModelType.BIRDHOUSE_DEPTHS_VERTICAL, false)),
 
-	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	@TypeConfig(money = 150, tokens = 15, unbuyable = true, tabs = Tab.INTERNAL)
 	BIRDHOUSE_DEPTHS_HANGING(new BirdHouse("Hanging Depths Birdhouse", ItemModelType.BIRDHOUSE_DEPTHS_HANGING, false)),
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
