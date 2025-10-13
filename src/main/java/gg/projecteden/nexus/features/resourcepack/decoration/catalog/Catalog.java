@@ -272,7 +272,7 @@ public class Catalog implements Listener {
 		if (price == null)
 			return;
 
-		if (!currency.hasFunds(viewer, itemStack, shopGroup, price)) {
+		if (currency.isLackingFunds(viewer, itemStack, shopGroup, price)) {
 			DecorationError.LACKING_FUNDS.send(viewer);
 			return;
 		}
@@ -318,7 +318,7 @@ public class Catalog implements Listener {
 			return;
 
 		ShopGroup shopGroup = ShopGroup.SURVIVAL;
-		if (!currency.hasFunds(viewer, itemStack, shopGroup, price)) {
+		if (currency.isLackingFunds(viewer, itemStack, shopGroup, price)) {
 			DecorationError.LACKING_FUNDS.send(viewer);
 			return;
 		}

@@ -1984,28 +1984,28 @@ public enum DecorationType {
 //										INTERNAL USE ONLY
 // 	------------------------------------------------------------------------------------------------------
 
-	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE)
+	@TypeConfig(unbuyable = true, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE)
 	SPOOKY_SHELF_WALL_1X1(new WallThing(false, "Spooky Wall Shelf 1x1", ItemModelType.SHELF_WALL_1X1_SPOOKY, HitboxSingle._1x1_BARRIER)),
 
-	@TypeConfig(unbuyable = true, money = 10, tokens = 10, theme = Theme.SPOOKY,  tabs = Tab.SPOOKY_FURNITURE)
+	@TypeConfig(unbuyable = true, theme = Theme.SPOOKY,  tabs = Tab.SPOOKY_FURNITURE)
 	SPOOKY_SHELF_WALL_1X2(new WallThing(true, "Spooky Wall Shelf 1x2", ItemModelType.SHELF_WALL_1X2_SPOOKY, HitboxFloor._1x2H)),
 
-	@TypeConfig(unbuyable = true, money = 80, tokens = 8, tabs = Tab.INTERNAL)
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	GIANT_CANDLE_ONE_LIT(new GiantCandle("Giant Candle", CandleType.ONE, true)),
 
-	@TypeConfig(unbuyable = true, money = 80, tokens = 8, tabs = Tab.INTERNAL)
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	GIANT_CANDLE_TWO_LIT(new GiantCandle("Giant Candles", CandleType.TWO, true)),
 
-	@TypeConfig(unbuyable = true, money = 80, tokens = 8, tabs = Tab.INTERNAL)
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	GIANT_CANDLE_THREE_LIT(new GiantCandle("Giant Candles", CandleType.THREE, true)),
 
-	@TypeConfig(unbuyable = true, money = 80, tokens = 8, tabs = Tab.INTERNAL)
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	GIANT_CANDLE_ONE_LIT_DYEABLE(new DyeableGiantCandle("Giant Candle", DyeableCandleType.ONE, true)),
 
-	@TypeConfig(unbuyable = true, money = 80, tokens = 8, tabs = Tab.INTERNAL)
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	GIANT_CANDLE_TWO_LIT_DYEABLE(new DyeableGiantCandle("Giant Candles", DyeableCandleType.TWO, true)),
 
-	@TypeConfig(unbuyable = true, money = 80, tokens = 8, tabs = Tab.INTERNAL)
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	GIANT_CANDLE_THREE_LIT_DYEABLE(new DyeableGiantCandle("Giant Candles", DyeableCandleType.THREE, true)),
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
@@ -2107,22 +2107,22 @@ public enum DecorationType {
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	WINDOW_CURTAINS_3x3_CLOSED(new Curtain("Window Curtains 3x3", CurtainType._3x3_CLOSED)),
 
-	@TypeConfig(money = 150, tokens = 15, unbuyable = true, tabs = Tab.INTERNAL)
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	BIRDHOUSE_FOREST_VERTICAL(new BirdHouse("Vertical Forest Birdhouse", ItemModelType.BIRDHOUSE_FOREST_VERTICAL, false)),
 
-	@TypeConfig(money = 150, tokens = 15, unbuyable = true, tabs = Tab.INTERNAL)
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	BIRDHOUSE_FOREST_HANGING(new BirdHouse("Hanging Forest Birdhouse", ItemModelType.BIRDHOUSE_FOREST_HANGING, false)),
 
-	@TypeConfig(money = 150, tokens = 15, unbuyable = true, tabs = Tab.INTERNAL)
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	BIRDHOUSE_ENCHANTED_VERTICAL(new BirdHouse("Vertical Enchanted Birdhouse", ItemModelType.BIRDHOUSE_ENCHANTED_VERTICAL, false)),
 
-	@TypeConfig(money = 150, tokens = 15, unbuyable = true, tabs = Tab.INTERNAL)
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	BIRDHOUSE_ENCHANTED_HANGING(new BirdHouse("Hanging Enchanted Birdhouse", ItemModelType.BIRDHOUSE_ENCHANTED_HANGING, false)),
 
-	@TypeConfig(money = 150, tokens = 15, unbuyable = true, tabs = Tab.INTERNAL)
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	BIRDHOUSE_DEPTHS_VERTICAL(new BirdHouse("Vertical Depths Birdhouse", ItemModelType.BIRDHOUSE_DEPTHS_VERTICAL, false)),
 
-	@TypeConfig(money = 150, tokens = 15, unbuyable = true, tabs = Tab.INTERNAL)
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	BIRDHOUSE_DEPTHS_HANGING(new BirdHouse("Hanging Depths Birdhouse", ItemModelType.BIRDHOUSE_DEPTHS_HANGING, false)),
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)

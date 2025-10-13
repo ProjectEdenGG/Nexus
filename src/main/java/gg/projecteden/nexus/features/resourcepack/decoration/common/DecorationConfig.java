@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxSingle;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.HasVirtualInventory;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.MultiState;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Structure;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreCurrencyType;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreType;
@@ -350,9 +351,12 @@ public class DecorationConfig {
 		PlayerUtils.send(player, "&3Enum: &e" + enumName);
 
 		Integer priceMoney = DecorationStoreCurrencyType.MONEY.getPriceDecor(this, DecorationStoreType.CATALOG);
-		PlayerUtils.send(player, "&3Price: &e" + (priceMoney == null ? "Unbuyable" : priceMoney));
 		Integer priceTokens = DecorationStoreCurrencyType.TOKENS.getPriceDecor(this, DecorationStoreType.CATALOG);
-		PlayerUtils.send(player, "&3Tokens: &e" + (priceTokens == null ? "Unbuyable" : priceTokens));
+		String extraContext = "";
+		if (this instanceof MultiState)
+			extraContext = " &3(from base model)";
+		PlayerUtils.send(player, "&3Price: &e" + (priceMoney == null ? "Unbuyable" : priceMoney + extraContext));
+		PlayerUtils.send(player, "&3Tokens: &e" + (priceTokens == null ? "Unbuyable" : priceTokens + extraContext));
 
 		PlayerUtils.send(player, "&3Material: &e" + gg.projecteden.api.common.utils.StringUtils.camelCase(this.getMaterial()));
 		PlayerUtils.send(player, "&3Model: &e" + this.getModel());

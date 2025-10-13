@@ -415,7 +415,7 @@ public class Decoration {
 
 		if (!canBreak) {
 			result = false;
-			DecorationLang.debug(player, " Is in region --> " + StringUtils.bool(result));
+			DecorationLang.debug(player, " Can not break --> " + StringUtils.bool(result));
 			return setCanEdit(result);
 		}
 

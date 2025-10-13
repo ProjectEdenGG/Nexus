@@ -79,14 +79,6 @@ public class DecorationCommand extends CustomCommand {
 	}
 
 	@Permission(Group.ADMIN)
-	@Path("testDebug")
-	void testDebug() {
-		DecorationLang.debug(player(), "normal debug");
-		DecorationLang.deepDebug(player(), "deep debug");
-		DecorationLang.debugDot(player(), location(), ColorType.RED);
-	}
-
-	@Permission(Group.ADMIN)
 	@Description("Replaces the selectedPath in the modelId with the replacePath to all frame items in radius")
 	@Path("transplant <radius> <selectPath> <replacePath>")
 	void transplant(@Arg(min = 0.5, max = 25) double radius, String fromPath, String toPath) {

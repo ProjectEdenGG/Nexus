@@ -5,6 +5,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.TypeConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.MultiState;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
@@ -79,8 +81,8 @@ public enum DecorationStoreCurrencyType {
 		}
 	}
 
-	public boolean hasFunds(Player player, ItemStack itemStack, ShopGroup shopGroup, double price) {
-		return this.checkFunds.test(new Variables(player, itemStack, shopGroup, price));
+	public boolean isLackingFunds(Player player, ItemStack itemStack, ShopGroup shopGroup, double price) {
+		return !this.checkFunds.test(new Variables(player, itemStack, shopGroup, price));
 	}
 
 	public void withdraw(Player player, ItemStack itemStack, ShopGroup shopGroup, double price) {
@@ -92,12 +94,24 @@ public enum DecorationStoreCurrencyType {
 	}
 
 	public Integer getPriceDecor(DecorationConfig config, DecorationStoreType storeType) {
+		if (config == null)
+			return null;
+
+		if (config instanceof MultiState multiState) {
+			ItemModelType itemModelType = multiState.getBaseItemModel();
+			if (!itemModelType.is(config))
+				return getPriceDecor(DecorationConfig.of(itemModelType), storeType);
+		}
+
 		DecorationType type = DecorationType.of(config);
 		if (type == null)
 			return null;
 
 		TypeConfig typeConfig = type.getTypeConfig();
 		if (typeConfig == null)
+			return null;
+
+		if (typeConfig.unbuyable())
 			return null;
 
 		int price = this.price.apply(typeConfig);

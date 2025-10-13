@@ -29,6 +29,8 @@ public class BuyableData {
 		this.storeType = storeType;
 
 		decorationConfig = DecorationConfig.of(displayItem);
+		if (decorationConfig instanceof MultiState multiState)
+			decorationConfig = DecorationConfig.of(multiState.getBaseItemModel());
 	}
 
 	public boolean isHDB() {
@@ -106,26 +108,9 @@ public class BuyableData {
 		// Decoration
 		DecorationConfig config = DecorationConfig.of(itemStack);
 		if (config != null)
-			return getPrice(config, storeType);
+			return config.getCatalogPrice(storeType);
 
 		// Unknown
 		return null;
-	}
-
-	public static @Nullable Integer getPrice(DecorationConfig config, DecorationStoreType storeType) {
-		if (config == null)
-			return null;
-
-		if (config instanceof MultiState multiState) {
-			ItemModelType itemModelType = multiState.getBaseItemModel();
-			if (!itemModelType.is(config))
-				return getPrice(DecorationConfig.of(itemModelType), storeType);
-		}
-
-		DecorationType type = DecorationType.of(config);
-		if (type != null && type.getTypeConfig().unbuyable())
-			return null;
-
-		return config.getCatalogPrice(storeType);
 	}
 }
