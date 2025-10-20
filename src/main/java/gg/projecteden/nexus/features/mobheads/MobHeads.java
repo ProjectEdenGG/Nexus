@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.mobheads;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.customenchants.enchants.BeheadingEnchant;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.mobheads.common.MobHead;
@@ -11,6 +12,7 @@ import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.models.boost.Booster;
 import gg.projecteden.nexus.models.mobheads.MobHeadUser.MobHeadData;
 import gg.projecteden.nexus.models.mobheads.MobHeadUserService;
+import gg.projecteden.nexus.models.mutemenu.MuteMenuService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.skincache.SkinCache;
 import gg.projecteden.nexus.utils.Enchant;
@@ -158,7 +160,8 @@ public class MobHeads extends Feature implements Listener {
 
 		if (drop) {
 			player.getWorld().dropItemNaturally(victim.getLocation(), skull);
-			PlayerUtils.send(player, PREFIX + mobHead.getDisplayName() + " head dropped");
+			if (!new MuteMenuService().get(player).hasMuted(MuteMenuItem.MOB_HEAD_DROPS))
+				PlayerUtils.send(player, PREFIX + mobHead.getDisplayName() + " head dropped");
 
 			if (victim instanceof Player)
 				Discord.staffLog("**[MobHeads]** Dropped " + Nickname.of(victim) + "'s head for " + Nickname.of(player) + " with texture " + SkinCache.of(victim).getTextureUrl());

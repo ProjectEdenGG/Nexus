@@ -292,6 +292,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 			TP_REQUESTS("Teleport Requests", Material.ENDER_PEARL),
 			MESSAGES("Messages", Material.BOOK),
 			BOOPS("Boops", Material.BELL),
+			MOB_HEAD_DROPS("Mob Head Drops", Material.CREEPER_HEAD),
 			@Permission(Group.STAFF)
 			NEXUS_RELOAD("Nexus Reloads", Material.COMMAND_BLOCK),
 			// Sounds
