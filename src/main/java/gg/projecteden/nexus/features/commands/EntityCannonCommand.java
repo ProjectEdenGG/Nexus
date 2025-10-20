@@ -13,7 +13,6 @@ import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 
 @Permission(Group.STAFF)
 @Redirect(from = "/pigpistol", to = "/entitycannon pig")
@@ -31,14 +30,14 @@ public class EntityCannonCommand extends CustomCommand {
 		if (!isSeniorStaff() && type == EntityType.EXPERIENCE_BOTTLE)
 			permissionError();
 
+		if (type == EntityType.WITHER)
+			error("Invalid entity type");
+
 		if (type.getEntityClass() == null)
 			error("Invalid entity type");
 
 		final Entity entity = world().spawn(player().getEyeLocation(), type.getEntityClass(), result -> {
 			result.setInvulnerable(true);
-			if (result instanceof LivingEntity livingEntity)
-				livingEntity.setAI(false);
-
 			result.setVelocity(player().getEyeLocation().getDirection().multiply(2));
 		});
 
