@@ -21,5 +21,6 @@ public class SudokuUserService extends MongoPlayerService<SudokuUser> {
 			row.keySet().removeIf(key -> row.get(key).isEmpty()));
 		user.getCandidates().values().removeIf(Map::isEmpty);
 		user.getCandidates().keySet().removeIf(key -> user.getCandidates().get(key).isEmpty());
+		// TODO Clean up render settings?
 	}
 }

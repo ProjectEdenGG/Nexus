@@ -61,14 +61,12 @@ public class SudokuUser implements PlayerOwnedObject {
 	private GameMatrix matrix; // TODO Move to game object?
 	private Difficulty difficulty;
 	private Coordinate selected;
-	private LinkedHashMap<UUID, Integer> itemFrames; // TODO Handled by config
 	private RenderSettings renderSettings = RenderSettings.builder().build();
 	private Map<Integer, Map<Integer, Set<Integer>>> candidates = new HashMap<>();
 	private transient BufferedImage image;
 
 	public SudokuUser newGame(Difficulty difficulty) {
 		this.difficulty = difficulty;
-		this.itemFrames = get3x3ItemFrameGrid(Bukkit.getPlayer(uuid));
 		this.matrix = Creator.createRiddle(Creator.createFull(), difficulty.getDifficulty());
 		return render();
 	}
@@ -478,7 +476,8 @@ public class SudokuUser implements PlayerOwnedObject {
 	}
 
 	public List<CustomMapPacket> getMapImagePackets() {
-		var frames = itemFrames.values().iterator();
+		var config = new SudokuConfigService().get0();
+		var frames = config.getMapIds().iterator();
 		var images = getMapImages().iterator();
 		List<CustomMapPacket> packets = new ArrayList<>();
 
@@ -544,7 +543,7 @@ public class SudokuUser implements PlayerOwnedObject {
 	 * Gets a 3x3 grid of item frames with the target frame at the center
 	 * @return Map of 9 item frames sorted left to right, top to bottom from player's perspective
 	 */
-	public LinkedHashMap<UUID, Integer> get3x3ItemFrameGrid(Player player) {
+	public static LinkedHashMap<UUID, Integer> get3x3ItemFrameGrid(Player player) {
 		if (player == null)
 			throw new InvalidInputException("Player is null");
 
@@ -650,12 +649,13 @@ public class SudokuUser implements PlayerOwnedObject {
 
 		LinkedHashMap<UUID, Integer> frames = new LinkedHashMap<>();
 		for (ItemFrame frame : nearbyFrames) {
-			if (isNullOrAir(frame.getItem()))
-				throw new InvalidInputException("Item frame item is null");
-			if (!(frame.getItem().getItemMeta() instanceof MapMeta mapMeta))
-				throw new InvalidInputException("Item frame item is not a map");
+			if (!isNullOrAir(frame.getItem()))
+				if (frame.getItem().getItemMeta() instanceof MapMeta mapMeta) {
+					frames.put(frame.getUniqueId(), mapMeta.getMapId());
+					continue;
+				}
 
-			frames.put(frame.getUniqueId(), mapMeta.getMapId());
+			frames.put(frame.getUniqueId(), null);
 		}
 
 		return frames;

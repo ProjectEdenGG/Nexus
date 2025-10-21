@@ -5,6 +5,9 @@ import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.sudoku.SudokuConfig;
+import gg.projecteden.nexus.models.sudoku.SudokuConfigService;
 import gg.projecteden.nexus.models.sudoku.SudokuUser;
 import gg.projecteden.nexus.models.sudoku.SudokuUser.Difficulty;
 import gg.projecteden.nexus.models.sudoku.SudokuUserService;
@@ -18,10 +21,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.util.RayTraceResult;
 
 import java.util.ArrayList;
 
+import static gg.projecteden.nexus.models.sudoku.SudokuUser.get3x3ItemFrameGrid;
 import static gg.projecteden.nexus.utils.MapUtils.getMapPixelHit;
 
 @NoArgsConstructor
@@ -29,9 +34,30 @@ import static gg.projecteden.nexus.utils.MapUtils.getMapPixelHit;
 public class SudokuCommand extends CustomCommand implements Listener {
 	private static final SudokuUserService userService = new SudokuUserService();
 	private static final SudokuUser user = userService.get(Dev.GRIFFIN);;
+	private static final SudokuConfigService configService = new SudokuConfigService();
+	private static final SudokuConfig config = configService.get0();
 
 	public SudokuCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	@Path("config create <id>")
+	void config_create(String id) {
+		if (config.getBoards().containsKey(id))
+			error("A board with ID &e" + id + " &calready exists");
+
+		var frames = get3x3ItemFrameGrid(player());
+		config.create(id, new ArrayList<>(frames.keySet()));
+
+		send(PREFIX + "Created board " + id);
+	}
+
+	@Path("config setMapIds")
+	void config_setMapIds() {
+		var frames = get3x3ItemFrameGrid(player());
+		config.setMapIds(new ArrayList<>(frames.values()));
+		configService.save(config);
+		send(PREFIX + "Updated map IDs: " + config.getMapIds());
 	}
 
 	@Path("start <difficulty>")
@@ -48,7 +74,7 @@ public class SudokuCommand extends CustomCommand implements Listener {
 		if (!(event.getEntity() instanceof ItemFrame itemFrame))
 			return;
 
-		if (!user.getItemFrames().containsKey(itemFrame.getUniqueId()))
+		if (!config.isBoardFrame(itemFrame))
 			return;
 
 		event.setCancelled(true);
@@ -85,7 +111,7 @@ public class SudokuCommand extends CustomCommand implements Listener {
 			return;
 
 		var itemFrame = entities.iterator().next();
-		if (!user.getItemFrames().containsKey(itemFrame.getUniqueId()))
+		if (!config.isBoardFrame(itemFrame))
 			return;
 
 		event.setCancelled(true);
@@ -93,7 +119,10 @@ public class SudokuCommand extends CustomCommand implements Listener {
 	}
 
 	public void handleInteract(Player player, ItemFrame itemFrame, RayTraceResult result) {
-		var map = new ArrayList<>(user.getItemFrames().keySet()).indexOf(itemFrame.getUniqueId());
+		if (!(itemFrame.getItem().getItemMeta() instanceof MapMeta mapMeta))
+			throw new InvalidInputException("Item frame item is not a map");
+
+		var map = config.getMapIds().indexOf(mapMeta.getMapId());
 		var pixelCoords = getMapPixelHit(itemFrame, result.getHitPosition());
 		var selected = user.clickedCoordinateToGameCoordinate(map, pixelCoords);
 
@@ -107,16 +136,15 @@ public class SudokuCommand extends CustomCommand implements Listener {
 					user.addCandidate(selected, slot);
 			else
 				user.setCellAnswer(selected, slot);
-
-			user.render().sendMapImagePackets();
 		} else {
 			if (player.isSneaking())
 				user.setCellAnswer(selected, 0);
 			else
 				player.getInventory().setHeldItemSlot(answer - 1);
-			user.setSelected(selected).render().sendMapImagePackets();
+			user.setSelected(selected);
 		}
 
+		user.render().sendMapImagePackets();
 		userService.save(user);
 	}
 
