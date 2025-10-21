@@ -19,6 +19,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.IOUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
@@ -176,8 +177,11 @@ public class JoinQuit extends Feature implements Listener {
 	}
 
 	@NotNull
-	public static String formatJoin(Player player, String finalMessage) {
-		return "&2 &2&m &2&m &2&m &2>&5 " + finalMessage.replaceAll("\\[player]", "&a" + Nickname.of(player) + "&5");
+	public static String formatJoin(Player player, String message) {
+		if (Dev.BRI.is(player) && message.equals("To be or not to be... [player] chose to be!"))
+			message = "To Bri or not to Bri... [player] chose to Bri!";
+
+		return "&2 &2&m &2&m &2&m &2>&5 " + message.replaceAll("\\[player]", "&a" + Nickname.of(player) + "&5");
 	}
 
 	@NotNull
