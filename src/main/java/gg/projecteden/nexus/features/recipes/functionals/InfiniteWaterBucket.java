@@ -105,13 +105,13 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 			return;
 
 		Block clickedBlock = event.getClickedBlock();
-		if (Nullables.isNullOrAir(clickedBlock)) // Can't do anything with a null origin block
+		if (Nullables.isNullOrAir(clickedBlock)) // can't do anything with a null origin block
 			return;
 
-		if (!(clickedBlock.getBlockData() instanceof Waterlogged)) {
+		if (clickedBlock.getType() != Material.WATER && !(clickedBlock.getBlockData() instanceof Waterlogged)) {
 			clickedBlock = clickedBlock.getRelative(event.getBlockFace());
 			if (Nullables.isNotNullOrAir(clickedBlock)) {
-				if (!(clickedBlock.getBlockData() instanceof Waterlogged))
+				if (clickedBlock.getType() != Material.WATER && !(clickedBlock.getBlockData() instanceof Waterlogged))
 					return;
 			}
 		}
