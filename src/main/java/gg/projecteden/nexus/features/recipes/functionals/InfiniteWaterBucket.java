@@ -8,6 +8,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
+import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -95,21 +96,48 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
 			return;
 
-		// prevent placing water in the nether
 		Player player = event.getPlayer();
-		if (player.getWorld().isUltraWarm())
+		if (player.getWorld().isUltraWarm()) // prevent placing water in the nether
 			return;
 
 		final ItemStack item = event.getItem();
 		if (!isInfiniteWaterBucket(item))
 			return;
 
-		final Block clickedBlock = event.getClickedBlock();
-		if (Nullables.isNullOrAir(clickedBlock))
+		Block clickedBlock = event.getClickedBlock();
+		if (Nullables.isNullOrAir(clickedBlock)) // Can't do anything with a null origin block
 			return;
+
+		if (!(clickedBlock.getBlockData() instanceof Waterlogged)) {
+			clickedBlock = clickedBlock.getRelative(event.getBlockFace());
+			if (Nullables.isNotNullOrAir(clickedBlock)) {
+				if (!(clickedBlock.getBlockData() instanceof Waterlogged))
+					return;
+			}
+		}
 
 		final BlockState clickedState = clickedBlock.getState();
 
+		if (specialCases(clickedBlock, clickedState, player))
+			return;
+
+		BlockPlaceEvent placeEvent = new BlockPlaceEvent(clickedBlock, clickedState, clickedBlock, item, player, true, EquipmentSlot.HAND);
+		if (!placeEvent.callEvent() || !placeEvent.canBuild())
+			return;
+
+		if (clickedBlock.getBlockData() instanceof Waterlogged waterlogged) {
+			waterlogged.setWaterlogged(true);
+			clickedBlock.setBlockData(waterlogged, true);
+		} else {
+			clickedBlock.setType(Material.WATER);
+		}
+
+		// Not caught by CoreProtect via BlockPlaceEvent ??
+		// This method does not log waterlogging
+		CoreProtectUtils.logPlacement(player, clickedBlock);
+	}
+
+	private static boolean specialCases(@NonNull Block clickedBlock, @NonNull BlockState clickedState, @NonNull Player player) {
 		if (clickedBlock.getType() == Material.CAULDRON) {
 			final Levelled cauldron = (Levelled) Material.WATER_CAULDRON.createBlockData();
 			cauldron.setLevel(cauldron.getMaximumLevel());
@@ -117,35 +145,13 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 
 			final CauldronLevelChangeEvent fillEvent = new CauldronLevelChangeEvent(clickedBlock, player, ChangeReason.BUCKET_EMPTY, clickedState);
 			if (!fillEvent.callEvent())
-				return;
+				return true;
 
 			clickedBlock.setBlockData(cauldron);
-			return;
+			return true;
 		}
 
-		final Block block;
-
-		if (clickedBlock.getBlockData() instanceof Waterlogged)
-			block = clickedBlock;
-		else
-			block = clickedBlock.getRelative(event.getBlockFace());
-
-		final BlockState state = block.getState();
-
-		BlockPlaceEvent placeEvent = new BlockPlaceEvent(block, state, clickedBlock, item, player, true, EquipmentSlot.HAND);
-		if (!placeEvent.callEvent() || !placeEvent.canBuild())
-			return;
-
-		if (block.getBlockData() instanceof Waterlogged waterlogged) {
-			waterlogged.setWaterlogged(true);
-			block.setBlockData(waterlogged, true);
-		} else {
-			block.setType(Material.WATER);
-		}
-
-		// Not caught by CoreProtect via BlockPlaceEvent ??
-		// This method does not log waterlogging
-		CoreProtectUtils.logPlacement(player, block);
+		return false;
 	}
 
 	@Contract("null -> false")
