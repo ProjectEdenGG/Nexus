@@ -12,6 +12,7 @@ import gg.projecteden.nexus.models.wordle.WordleConfigService;
 import gg.projecteden.nexus.models.wordle.WordleUser.WordleGame;
 import gg.projecteden.nexus.models.wordle.WordleUserService;
 import gg.projecteden.nexus.utils.DialogUtils.DialogBuilder;
+import kotlin.Pair;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
@@ -23,16 +24,11 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static gg.projecteden.nexus.utils.Extensions.isNullOrEmpty;
-import static java.time.DayOfWeek.FRIDAY;
-import static java.time.DayOfWeek.MONDAY;
-import static java.time.DayOfWeek.SATURDAY;
-import static java.time.DayOfWeek.SUNDAY;
-import static java.time.DayOfWeek.THURSDAY;
-import static java.time.DayOfWeek.TUESDAY;
-import static java.time.DayOfWeek.WEDNESDAY;
 
 @SuppressWarnings("deprecation")
 @Environments({Env.TEST, Env.UPDATE})
@@ -76,6 +72,9 @@ public class WordleCommand extends CustomCommand {
 			for (var guess : game.getGuesses())
 				dialog.bodyText(String.join(" ", getColoredGuesses(guess, solution)));
 
+			if (game.isFailed())
+				dialog.bodyText("&c" + String.join(" ", solution.toUpperCase().split("")));
+
 			dialog.bodyText("");
 
 			for (String row : KEYBOARD)
@@ -84,7 +83,7 @@ public class WordleCommand extends CustomCommand {
 			if (!game.isComplete())
 				dialog.inputText("answer", errorMessage != null ? errorMessage : "");
 
-			var builder = dialog.multiAction();
+			var builder = dialog.multiAction().columns(1);
 			if (game.isComplete())
 				builder.button("Go to archive", click -> new WorldArchiveMenu(YearMonth.from(date)).open(player));
 			else
@@ -102,61 +101,79 @@ public class WordleCommand extends CustomCommand {
 					}
 
 					refresh(player);
-				});
+				})
+				.button("Go to archive", click -> new WorldArchiveMenu(YearMonth.from(date)).open(player));
 
 			builder.open(player);
 			configService.save(config);
 		}
 
-		private static @NotNull List<String> getKeyboardColors(String row, WordleGame game, String solution) {
-			List<String> keys = new ArrayList<>();
-			for (String letter : row.toLowerCase().split("")) {
-				ChatColor color = ChatColor.WHITE;
+		private static @NotNull List<String> getKeyboardColors(String keysInRow, WordleGame game, String solution) {
+			Map<String, ChatColor> keys = new HashMap<>();
+			for (String letter : keysInRow.toLowerCase().split(""))
+				keys.put(letter, ChatColor.WHITE);
 
-				for (String guess : game.getGuesses()) {
-					if (!guess.contains(letter))
+			for (String guess : game.getGuesses()) {
+				var solution2 = new ArrayList<>(List.of(solution.toLowerCase().split("")));
+				var guess2 = new ArrayList<>(List.of(guess.toLowerCase().split("")));
+				for (int i = 0; i < 5; i++) {
+					var guessChar = guess2.get(i).toLowerCase();
+					var solutionChar = solution2.get(i).toLowerCase();
+
+					var color = keys.getOrDefault(guessChar, ChatColor.WHITE);
+					if (color == ChatColor.GREEN)
 						continue;
 
-					if (guess.indexOf(letter) == solution.indexOf(letter)) {
+					if (guessChar.equals(solutionChar)) {
 						color = ChatColor.GREEN;
-						break;
-					} else if (solution.contains(letter)) {
+						guess2.set(i, "_");
+						solution2.set(i, "_");
+					} else if (solution2.contains(guessChar))
 						color = ChatColor.YELLOW;
-					} else if (color != ChatColor.YELLOW) {
+					else if (color != ChatColor.YELLOW)
 						color = ChatColor.DARK_GRAY;
-					}
-				}
 
-				keys.add(color + letter.toUpperCase());
+					keys.put(guessChar, color);
+				}
 			}
-			return keys;
+
+			List<String> coloredKeys = new ArrayList<>();
+			for (String letter : keysInRow.toLowerCase().split(""))
+				coloredKeys.add(keys.get(letter).toString() + letter.toUpperCase());
+			return coloredKeys;
 		}
 
 		private static @NotNull List<String> getColoredGuesses(String guess, String solution) {
-			var solution2 = new ArrayList<>(List.of(solution.toUpperCase().split("")));
-			var guess2 = new ArrayList<>(List.of(guess.toUpperCase().split("")));
-			List<String> guessColored = new ArrayList<>();
+			var solution2 = new ArrayList<>(List.of(solution.toLowerCase().split("")));
+			var guess2 = new ArrayList<>(List.of(guess.toLowerCase().split("")));
 
-			for (var letter : guess2) {
-				ChatColor color = ChatColor.GRAY;
-
-				for (int i = 0; i < 5; i++) {
-					int index = guess2.indexOf(letter);
-					if (index == -1)
-						continue;
-
-					if (index == solution2.indexOf(letter)) {
-						color = ChatColor.GREEN;
-						solution2.set(index, "_");
-						guess2.set(index, "_");
-					}
-
-					if (solution2.contains(letter))
-						color = ChatColor.YELLOW;
+			List<Pair<String, ChatColor>> letters = new ArrayList<>();
+			for (int i = 0; i < 5; i++) {
+				var color = ChatColor.DARK_GRAY;
+				var solutionChar = solution2.get(i);
+				var guessChar = guess2.get(i);
+				if (solutionChar.equals(guessChar)) {
+					color = ChatColor.GREEN;
+					solution2.set(i, "_");
 				}
-
-				guessColored.add(color + letter);
+				letters.add(new Pair<>(guessChar, color));
 			}
+
+			for (int i = 0; i < 5; i++) {
+				var guessChar = guess2.get(i);
+				var color = letters.get(i);
+				if (color.getSecond() == ChatColor.GREEN)
+					continue;
+
+				if (solution2.contains(guessChar)) {
+					letters.set(i, new Pair<>(guessChar, ChatColor.YELLOW));
+					solution2.set(solution2.indexOf(guessChar), "_");
+				}
+			}
+
+			List<String> guessColored = new ArrayList<>();
+			for (Pair<String, ChatColor> letter : letters)
+				guessColored.add(letter.getSecond() + letter.getFirst().toUpperCase());
 			return guessColored;
 		}
 
