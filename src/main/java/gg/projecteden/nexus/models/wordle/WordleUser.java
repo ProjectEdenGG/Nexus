@@ -30,9 +30,15 @@ public class WordleUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private Map<LocalDate, WordleGame> games = new ConcurrentHashMap<>();
+	private List<LocalDate> playedDates = new ArrayList<>();
 
 	public WordleGame get(LocalDate date) {
 		return games.computeIfAbsent(date, $ -> new WordleGame(date));
+	}
+
+	public void playedOn(LocalDate today) {
+		if (!playedDates.contains(today))
+			playedDates.add(today);
 	}
 
 	@Data

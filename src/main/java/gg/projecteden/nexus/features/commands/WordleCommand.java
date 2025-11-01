@@ -47,6 +47,7 @@ public class WordleCommand extends CustomCommand {
 	@Async
 	void wordle() {
 		var today = new GeoIPService().get(player()).getCurrentTime().toLocalDate();
+		userService.edit(player(), user -> user.playedOn(today));
 		new WordleMenu(today).open(player());
 	}
 
@@ -106,6 +107,7 @@ public class WordleCommand extends CustomCommand {
 
 			builder.open(player);
 			configService.save(config);
+			userService.save(user);
 		}
 
 		private static @NotNull List<String> getKeyboardColors(String keysInRow, WordleGame game, String solution) {
