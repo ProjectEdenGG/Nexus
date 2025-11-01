@@ -32,6 +32,8 @@ import static io.papermc.paper.registry.data.dialog.body.DialogBody.plainMessage
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.event.ClickCallback.UNLIMITED_USES;
 
+// https://misode.github.io/dialog/
+
 @SuppressWarnings("UnstableApiUsage")
 public class DialogUtils {
 

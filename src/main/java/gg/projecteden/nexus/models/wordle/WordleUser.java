@@ -32,13 +32,46 @@ public class WordleUser implements PlayerOwnedObject {
 	private Map<LocalDate, WordleGame> games = new ConcurrentHashMap<>();
 
 	public WordleGame get(LocalDate date) {
-		return games.computeIfAbsent(date, $ -> new WordleGame());
+		return games.computeIfAbsent(date, $ -> new WordleGame(date));
 	}
 
 	@Data
 	@NoArgsConstructor
 	public static class WordleGame {
+		private LocalDate date;
 		private List<String> guesses = new ArrayList<>();
+
+		public WordleGame(LocalDate date) {
+			this.date = date;
+		}
+
+		public boolean isComplete() {
+			return isMaxGuesses() || isSolved();
+		}
+
+		public boolean isSuccess() {
+			return isStarted() && isSolved();
+		}
+
+		public boolean isFailed() {
+			return isStarted() && isMaxGuesses() && !isSolved();
+		}
+
+		public boolean isStarted() {
+			return !guesses.isEmpty();
+		}
+
+		private boolean isSolved() {
+			if (!isStarted())
+				return false;
+
+			String solution = new WordleConfigService().get0().get(date).getSolution();
+			return guesses.contains(solution);
+		}
+
+		private boolean isMaxGuesses() {
+			return guesses.size() == 6;
+		}
 	}
 
 }
