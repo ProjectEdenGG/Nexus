@@ -20,6 +20,7 @@ import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -94,6 +95,19 @@ public class GeoIP implements PlayerOwnedObject {
 		}
 
 		return security;
+	}
+
+	public List<DayOfWeek> getWeek() {
+		var first = FIRST_DAY_OF_WEEK.keySet()
+			.stream()
+			.filter(day -> FIRST_DAY_OF_WEEK.get(day).contains(countryCode))
+			.findFirst()
+			.orElse(DayOfWeek.SUNDAY);
+
+		List<DayOfWeek> week = new ArrayList<>();
+		for (int i = 0; i < 7; i++)
+			week.add(first.plus(i));
+		return week;
 	}
 
 	@Data
@@ -237,6 +251,14 @@ public class GeoIP implements PlayerOwnedObject {
 	public String getCurrentTimeLong() {
 		return timeFormat.formatLong(getCurrentTime());
 	}
+
+	// https://github.com/unicode-org/cldr-json/releases cldr-core/supplemental/weekData.json$supplemental.weekData.firstDay
+	private static final Map<DayOfWeek, List<String>> FIRST_DAY_OF_WEEK = Map.of(
+		DayOfWeek.SATURDAY, List.of("AF","BH","DJ","DZ","EG","IQ","IR","JO","KW","LY","OM","QA","SD","SY"),
+		DayOfWeek.SUNDAY, List.of("AG","AS","BD","BR","BS","BT","BW","BZ","CA","CO","DM","DO","ET","GT","GU","HK","HN","ID","IL","IN","IS","JM","JP","KE","KH","KR","LA","MH","MM","MO","MT","MX","MZ","NI","NP","PA","PE","PH","PK","PR","PT","PY","SA","SG","SV","TH","TT","TW","UM","US","VE","VI","WS","YE","ZA","ZW"),
+		DayOfWeek.MONDAY, List.of("AD","AE","AI","AL","AM","AN","AR","AT","AU","AX","AZ","BA","BE","BG","BM","BN","BY","CH","CL","CM","CN","CR","CY","CZ","DE","DK","EC","EE","ES","FI","FJ","FO","FR","GB","GE","GF","GP","GR","HR","HU","IE","IT","KG","KZ","LB","LI","LK","LT","LU","LV","MC","MD","ME","MK","MN","MQ","MY","NL","NO","NZ","PL","RE","RO","RS","RU","SE","SI","SK","SM","TJ","TM","TR","UA","UY","UZ","VA","VN","XK"),
+		DayOfWeek.FRIDAY, List.of("MV")
+	);
 
 	@Data
 	public static class Distance implements Comparable<Distance> {

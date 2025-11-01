@@ -165,7 +165,6 @@ public class WordleCommand extends CustomCommand {
 	@RequiredArgsConstructor
 	public static class WorldArchiveMenu {
 		private YearMonth yearMonth = YearMonth.now();
-		private static final List<DayOfWeek> WEEK = List.of(SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY);
 		private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("MMMM yyyy");
 
 		public WorldArchiveMenu(YearMonth yearMonth) {
@@ -174,21 +173,23 @@ public class WordleCommand extends CustomCommand {
 
 		public void open(Player player) {
 			var user = userService.get(player);
+			var geoip = new GeoIPService().get(player);
 			var dialog = new DialogBuilder()
 				.title(yearMonth.format(FORMATTER))
 				.multiAction()
 				.columns(7)
 				.defaultButtonWidth(30);
 
-			for (DayOfWeek dayOfWeek : WEEK)
+			List<DayOfWeek> week = geoip.getWeek();
+			for (DayOfWeek dayOfWeek : week)
 				dialog.button(String.valueOf(dayOfWeek.name().charAt(0)));
 
 			var initial = yearMonth.atDay(1);
-			while (initial.getDayOfWeek() != WEEK.getFirst())
+			while (initial.getDayOfWeek() != week.getFirst())
 				initial = initial.minusDays(1);
 
 			var last = yearMonth.atEndOfMonth();
-			while (last.getDayOfWeek() != WEEK.getLast())
+			while (last.getDayOfWeek() != week.getLast())
 				last = last.plusDays(1);
 
 			last = last.plusDays(1);
