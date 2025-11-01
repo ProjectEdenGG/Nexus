@@ -106,7 +106,12 @@ public class HttpUtils {
 
 	@SneakyThrows
 	private static <T> T mapJson(Class<T> clazz, Response response) {
-		return Utils.getGson().fromJson(response.body().string(), clazz);
+		String string = response.body().string();
+		try {
+			return Utils.getGson().fromJson(string, clazz);
+		} catch (Exception ex) {
+			throw new EdenException("Failed to map json to " + clazz.getSimpleName() + ": " + string, ex);
+		}
 	}
 
 	public static String post(String url, Map<String, String> headers, Map<String, Object> body) {

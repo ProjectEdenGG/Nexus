@@ -407,11 +407,17 @@ public class SerializationUtils {
 
 		}
 
-		public static class LocalDateGsonSerializer implements JsonSerializer<LocalDate> {
+		public static class LocalDateGsonSerializer implements JsonSerializer<LocalDate>, JsonDeserializer<LocalDate> {
 
 			@Override
 			public JsonElement serialize(LocalDate timestamp, Type type, JsonSerializationContext context) {
 				return new JsonPrimitive(DateTimeFormatter.ISO_LOCAL_DATE.format(timestamp));
+			}
+
+			@Override
+			public LocalDate deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+				var formatter = DateTimeFormatter.ISO_LOCAL_DATE;
+				return formatter.parse(json.getAsString(), LocalDate::from);
 			}
 
 		}

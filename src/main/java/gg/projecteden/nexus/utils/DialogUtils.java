@@ -298,6 +298,10 @@ public class DialogUtils {
 			return this;
 		}
 
+		public MultiActionDialogBuilder button(String label) {
+			return this.button(label, defaultButtonWidth, response -> {});
+		}
+
 		public MultiActionDialogBuilder button(String label, int width) {
 			return this.button(label, width, response -> {});
 		}
