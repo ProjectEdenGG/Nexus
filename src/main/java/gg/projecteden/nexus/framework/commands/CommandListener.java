@@ -39,8 +39,6 @@ public class CommandListener implements Listener {
 		}
 	}
 
-	private static final CooldownService COOLDOWN_SERVICE = new CooldownService();
-
 	@EventHandler
 	public void onCommandCooldown(PlayerCommandPreprocessEvent event) {
 		if (Rank.of(event.getPlayer()).gt(Rank.MEMBER))
