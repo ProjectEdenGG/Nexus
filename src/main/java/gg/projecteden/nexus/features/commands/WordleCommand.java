@@ -201,10 +201,11 @@ public class WordleCommand extends CustomCommand {
 						game.getGuesses().add(input);
 					}
 
-					if (input.equalsIgnoreCase(solution)) {
-						var today = new GeoIPService().get(player).getCurrentTime().toLocalDate();
-						if (today.equals(date)) {
-							user.playedOn(today);
+					var today = new GeoIPService().get(player).getCurrentTime().toLocalDate();
+					if (today.equals(date)) {
+						user.playedOn(today);
+						if (input.equalsIgnoreCase(solution)) {
+							user.wonOn(today);
 
 							var message = new JsonBuilder(StringUtils.getPrefix("Wordle") + "&e" + user.getNickname() + " &3solved puzzle #" + gameConfig.getDaysSinceLaunch() + " in &e" + game.getGuesses().size() + " guesses&3!");
 
