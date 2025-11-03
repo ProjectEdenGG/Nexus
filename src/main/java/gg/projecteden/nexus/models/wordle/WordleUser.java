@@ -121,10 +121,19 @@ public class WordleUser implements PlayerOwnedObject {
 	}
 
 	@Data
-	@AllArgsConstructor
+	@SuppressWarnings("deprecation")
 	public static class WordleLetter {
 		private ChatColor color;
 		private String letter;
+		private String emoji = "爅";
+
+		public static final String LARGE_BOX_EMOJI = "爅";
+		public static final String SMALL_BOX_EMOJI = "焯"; // For tooltips
+
+		public WordleLetter(ChatColor color, String letter) {
+			this.color = color;
+			this.letter = letter;
+		}
 
 		public static String BEFORE = InventoryTexture.minus(13);
 		public static String AFTER = InventoryTexture.minus(0);
@@ -134,9 +143,11 @@ public class WordleUser implements PlayerOwnedObject {
 		@Override
 		public String toString() {
 			var letter = isNullOrEmpty(this.letter) ? "" : this.letter.toUpperCase();
-			String minusBefore = isNullOrEmpty(letter) ? "" : letter.equals("I") ? BEFORE_I : BEFORE;
-			String minusAfter = isNullOrEmpty(letter) ? "" : letter.equals("I") ? AFTER_I : AFTER;
-			return color + "爅" + minusBefore + ChatColor.WHITE + letter + minusAfter;
+			String minusBefore = isNullOrEmpty(letter) ? "" : "I".equals(letter) ? BEFORE_I : BEFORE;
+			String minusAfter = isNullOrEmpty(letter) ? "" : "I".equals(letter) ? AFTER_I : AFTER;
+			if (SMALL_BOX_EMOJI.equals(emoji))
+				minusBefore = InventoryTexture.minus(5);
+			return color + emoji + minusBefore + ChatColor.WHITE + letter + minusAfter;
 		}
 	}
 }

@@ -118,6 +118,10 @@ public class DialogUtils {
 			return this.inputText(key, new JsonBuilder(label));
 		}
 
+		public DialogBuilder inputText(String key, String label, String initial) {
+			return this.inputText(key, new JsonBuilder(label).build(), initial);
+		}
+
 		public DialogBuilder inputText(String key, JsonBuilder label) {
 			return this.inputText(key, label.build());
 		}

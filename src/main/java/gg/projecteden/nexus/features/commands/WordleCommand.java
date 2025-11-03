@@ -3,6 +3,9 @@ package gg.projecteden.nexus.features.commands;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.interfaces.HasUniqueId;
+import gg.projecteden.nexus.features.chat.Chat.Broadcast;
+import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -18,8 +21,11 @@ import gg.projecteden.nexus.models.wordle.WordleUser.WordleLetter;
 import gg.projecteden.nexus.models.wordle.WordleUserService;
 import gg.projecteden.nexus.utils.DialogUtils.DialogBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.audience.MessageType;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -52,9 +58,40 @@ public class WordleCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	private static LocalDate getZonedLocalDate(HasUniqueId player) {
+		return new GeoIPService().get(player.getUniqueId()).getCurrentTime().toLocalDate();
+	}
+
+	@Path("[date]")
 	@Async
-	void wordle(
+	void wordle(LocalDate date) {
+		if (date == null)
+			date = getZonedLocalDate(player());
+
+		if (userService.get(player()).get(date).isComplete())
+			new WordleResultsMenu(date).open(player());
+		else
+			new WordleMenu(date).open(player());
+	}
+
+	@Path("results [date]")
+	void results(LocalDate date) {
+		if (date == null)
+			date = getZonedLocalDate(player());
+
+		new WordleResultsMenu(date).open(player());
+	}
+
+	@Path("archive [yearMonth]")
+	void archive(YearMonth yearMonth) {
+		if (yearMonth == null)
+			yearMonth = YearMonth.from(getZonedLocalDate(player()));
+
+		new WordleArchiveMenu(yearMonth).open(player());
+	}
+
+	@Path("config")
+	void config(
 		@Switch int before,
 		@Switch int after,
 		@Switch int beforeI,
@@ -68,12 +105,6 @@ public class WordleCommand extends CustomCommand {
 			WordleLetter.BEFORE_I = InventoryTexture.minus(beforeI);
 		if (afterI != 0)
 			WordleLetter.AFTER_I = " " + InventoryTexture.minus(afterI);
-
-		var today = new GeoIPService().get(player()).getCurrentTime().toLocalDate();
-		if (userService.get(player()).get(today).isComplete())
-			new WordleResultsMenu(today).open(player());
-		else
-			new WordleMenu(today).open(player());
 	}
 
 	@RequiredArgsConstructor
@@ -101,7 +132,7 @@ public class WordleCommand extends CustomCommand {
 
 			dialog.multiAction()
 				.columns(1)
-				.button("Back to puzzle", click -> new WordleMenu(date).open(player))
+				.button("Go to puzzle", click -> new WordleMenu(date).open(player))
 				.button("Go to archive", click -> new WordleArchiveMenu(YearMonth.from(date)).open(player))
 				.open(player);
 		}
@@ -111,11 +142,7 @@ public class WordleCommand extends CustomCommand {
 	public static class WordleMenu {
 		private final LocalDate date;
 		private String errorMessage;
-
-		public void refresh(Player player) {
-			userService.save(userService.get(player));
-			open(player);
-		}
+		private String input = "";
 
 		public void open(Player player) {
 			var user = userService.get(player);
@@ -151,7 +178,7 @@ public class WordleCommand extends CustomCommand {
 			}
 
 			if (!game.isComplete())
-				dialog.inputText("answer", errorMessage != null ? errorMessage : "");
+				dialog.inputText("answer", errorMessage != null ? errorMessage : game.getGuesses().isEmpty() ? "Guess a 5 letter word" : "", input);
 
 			var builder = dialog.multiAction().columns(1);
 			if (game.isComplete())
@@ -160,25 +187,55 @@ public class WordleCommand extends CustomCommand {
 					.button("Go to archive", click -> new WordleArchiveMenu(YearMonth.from(date)).open(player));
 			else
 				builder.button("Submit", click -> {
-					var input = click.getText("answer");
+					input = click.getText("answer").toLowerCase();
 					if (isNullOrEmpty(input))
 						errorMessage = "&cGuess a word";
-					else if (!config.getAllowedWords().contains(input.toLowerCase()))
+					else if (input.length() != 5)
+						errorMessage = "&cWord must be 5 letters long";
+					else if (!config.getAllowedWords().contains(input))
 						errorMessage = "&cWord not in dictionary";
-					else if (game.getGuesses().contains(input.toLowerCase()))
+					else if (game.getGuesses().contains(input))
 						errorMessage = "&cYou already guessed that word";
 					else {
 						errorMessage = null;
-						game.getGuesses().add(input.toLowerCase());
+						game.getGuesses().add(input);
 					}
 
 					if (input.equalsIgnoreCase(solution)) {
 						var today = new GeoIPService().get(player).getCurrentTime().toLocalDate();
-						if (today.equals(date))
+						if (today.equals(date)) {
 							user.playedOn(today);
+
+							var message = new JsonBuilder(StringUtils.getPrefix("Wordle") + "&e" + user.getNickname() + " &3solved puzzle #" + gameConfig.getDaysSinceLaunch() + " in &e" + game.getGuesses().size() + " guesses&3!");
+
+							message.hover(user.getNerd().getColoredName());
+							message.hover("&7Wordle #" + gameConfig.getDaysSinceLaunch());
+							message.hover("&7" + date.format(formatter));
+							message.hover("");
+							for (String guess : game.getGuesses())
+								message.hover(" " + game.getColoredGuess(guess).stream()
+									.peek(letter -> letter.setLetter(null))
+									.peek(letter -> letter.setEmoji(WordleLetter.SMALL_BOX_EMOJI))
+									.map(WordleLetter::toString)
+									.collect(joining(" ")));
+							message.hover("");
+							message.hover("&eClick to see server results");
+							message.command("/wordle results " + date.format(DateTimeFormatter.ISO_DATE));
+
+							//noinspection UnstableApiUsage
+							Broadcast.ingame()
+								.sender(player)
+								.message(message)
+								.messageType(MessageType.CHAT)
+								.muteMenuItem(MuteMenuItem.WORDLE)
+								.send();
+						}
 					}
 
-					refresh(player);
+					if (game.getGuesses().contains(input))
+						input = "";
+
+					open(player);
 				})
 				.button("Go to archive", click -> new WordleArchiveMenu(YearMonth.from(date)).open(player));
 
@@ -256,7 +313,7 @@ public class WordleCommand extends CustomCommand {
 
 			last = last.plusDays(1);
 
-			var today = new GeoIPService().get(player).getCurrentTime().toLocalDate();
+			var today = getZonedLocalDate(player);
 			var current = initial;
 			while (current.isBefore(last)) {
 				var color = ChatColor.WHITE;

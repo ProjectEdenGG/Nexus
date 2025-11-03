@@ -7,18 +7,11 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-
 @ObjectClass(WordleUser.class)
 public class WordleUserService extends MongoPlayerService<WordleUser> {
 	private final static Map<UUID, WordleUser> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, WordleUser> getCache() {
 		return cache;
-	}
-
-	@Override
-	protected void beforeSave(WordleUser user) {
-		user.getGames().entrySet().removeIf(entry -> isNullOrEmpty(entry.getValue().getGuesses()));
 	}
 }

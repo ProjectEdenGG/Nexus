@@ -289,6 +289,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 			QUEUP("QueUp Song Updates", Material.MUSIC_DISC_MALL),
 			JUKEBOX("Custom Jukebox Songs", Material.JUKEBOX, List.of("Custom songs played via &c/jukebox")),
 			CHAT_GAMES("Chat Games", Material.PAPER),
+			WORDLE("Wordle", Material.GREEN_CONCRETE),
 			TP_REQUESTS("Teleport Requests", Material.ENDER_PEARL),
 			MESSAGES("Messages", Material.BOOK),
 			BOOPS("Boops", Material.BELL),
