@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import net.md_5.bungee.api.ChatColor;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static gg.projecteden.nexus.utils.Extensions.isNullOrEmpty;
 
 @Data
 @Entity(value = "wordle_user", noClassnameStored = true)
@@ -71,13 +76,67 @@ public class WordleUser implements PlayerOwnedObject {
 			if (!isStarted())
 				return false;
 
-			String solution = new WordleConfigService().get0().get(date).getSolution();
-			return guesses.contains(solution);
+			return guesses.contains(getSolution());
+		}
+
+		private String getSolution() {
+			return new WordleConfigService().get0().get(date).getSolution();
 		}
 
 		private boolean isMaxGuesses() {
 			return guesses.size() == 6;
 		}
+
+		@SuppressWarnings("deprecation")
+		public @NotNull List<WordleLetter> getColoredGuess(String guess) {
+			var solution = getSolution();
+			var solution2 = new ArrayList<>(List.of(solution.toLowerCase().split("")));
+			var guess2 = new ArrayList<>(List.of(guess.toLowerCase().split("")));
+
+			List<WordleLetter> letters = new ArrayList<>();
+			for (int i = 0; i < 5; i++) {
+				var color = ChatColor.DARK_GRAY;
+				var solutionChar = solution2.get(i);
+				var guessChar = guess2.get(i);
+				if (solutionChar.equals(guessChar)) {
+					color = ChatColor.DARK_GREEN;
+					solution2.set(i, "_");
+				}
+				letters.add(new WordleLetter(color, guessChar));
+			}
+
+			for (int i = 0; i < 5; i++) {
+				var guessChar = guess2.get(i);
+				var letter = letters.get(i);
+				if (letter.getColor() == ChatColor.DARK_GREEN)
+					continue;
+
+				if (solution2.contains(guessChar)) {
+					letters.set(i, new WordleLetter(ChatColor.GOLD, guessChar));
+					solution2.set(solution2.indexOf(guessChar), "_");
+				}
+			}
+			return letters;
+		}
 	}
 
+	@Data
+	@AllArgsConstructor
+	public static class WordleLetter {
+		private ChatColor color;
+		private String letter;
+
+		public static String BEFORE = InventoryTexture.minus(13);
+		public static String AFTER = InventoryTexture.minus(0);
+		public static String BEFORE_I = InventoryTexture.minus(12);
+		public static String AFTER_I = " " + InventoryTexture.minus(5);
+
+		@Override
+		public String toString() {
+			var letter = isNullOrEmpty(this.letter) ? "" : this.letter.toUpperCase();
+			String minusBefore = isNullOrEmpty(letter) ? "" : letter.equals("I") ? BEFORE_I : BEFORE;
+			String minusAfter = isNullOrEmpty(letter) ? "" : letter.equals("I") ? AFTER_I : AFTER;
+			return color + "爅" + minusBefore + ChatColor.WHITE + letter + minusAfter;
+		}
+	}
 }

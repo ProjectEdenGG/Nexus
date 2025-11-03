@@ -3,19 +3,25 @@ package gg.projecteden.nexus.features.commands;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.wordle.WordleConfig;
 import gg.projecteden.nexus.models.wordle.WordleConfigService;
+import gg.projecteden.nexus.models.wordle.WordleUser;
 import gg.projecteden.nexus.models.wordle.WordleUser.WordleGame;
+import gg.projecteden.nexus.models.wordle.WordleUser.WordleLetter;
 import gg.projecteden.nexus.models.wordle.WordleUserService;
 import gg.projecteden.nexus.utils.DialogUtils.DialogBuilder;
-import kotlin.Pair;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,11 +30,14 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static gg.projecteden.nexus.utils.Extensions.isNullOrEmpty;
+import static java.util.stream.Collectors.joining;
 
 @SuppressWarnings("deprecation")
 @Environments({Env.TEST, Env.UPDATE})
@@ -45,10 +54,57 @@ public class WordleCommand extends CustomCommand {
 
 	@Path
 	@Async
-	void wordle() {
+	void wordle(
+		@Switch int before,
+		@Switch int after,
+		@Switch int beforeI,
+		@Switch int afterI
+	) {
+		if (before != 0)
+			WordleLetter.BEFORE = InventoryTexture.minus(before);
+		if (after != 0)
+			WordleLetter.AFTER = InventoryTexture.minus(after);
+		if (beforeI != 0)
+			WordleLetter.BEFORE_I = InventoryTexture.minus(beforeI);
+		if (afterI != 0)
+			WordleLetter.AFTER_I = " " + InventoryTexture.minus(afterI);
+
 		var today = new GeoIPService().get(player()).getCurrentTime().toLocalDate();
-		userService.edit(player(), user -> user.playedOn(today));
-		new WordleMenu(today).open(player());
+		if (userService.get(player()).get(today).isComplete())
+			new WordleResultsMenu(today).open(player());
+		else
+			new WordleMenu(today).open(player());
+	}
+
+	@RequiredArgsConstructor
+	public static class WordleResultsMenu {
+		private final LocalDate date;
+
+		public void open(Player player) {
+			var users = userService.getAll().stream()
+				.filter(user -> user.get(date).isComplete())
+				.sorted(Comparator.comparing(user -> user.get(date).getGuesses().size()))
+				.toList();
+
+			var dialog = new DialogBuilder()
+				.title("Wordle #" + config.get(date).getDaysSinceLaunch() + " | " + date.format(formatter));
+
+			for (WordleUser user : users) {
+				var head = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(user);
+				dialog.bodyItem(head.build(), " " + Nerd.of(user).getColoredName());
+				for (String guess : user.get(date).getGuesses()) {
+					var letters = user.get(date).getColoredGuess(guess).stream().peek(letter -> letter.setLetter(null));
+					dialog.bodyText(letters.map(WordleUser.WordleLetter::toString).collect(joining(" ")));
+				}
+				dialog.bodyText("");
+			}
+
+			dialog.multiAction()
+				.columns(1)
+				.button("Back to puzzle", click -> new WordleMenu(date).open(player))
+				.button("Go to archive", click -> new WordleArchiveMenu(YearMonth.from(date)).open(player))
+				.open(player);
+		}
 	}
 
 	@RequiredArgsConstructor
@@ -70,23 +126,38 @@ public class WordleCommand extends CustomCommand {
 			var dialog = new DialogBuilder()
 				.title("Wordle #" + gameConfig.getDaysSinceLaunch() + " | " + date.format(formatter));
 
-			for (var guess : game.getGuesses())
-				dialog.bodyText(String.join(" ", getColoredGuesses(guess, solution)));
+			dialog.bodyText("");
 
-			if (game.isFailed())
-				dialog.bodyText("&c" + String.join(" ", solution.toUpperCase().split("")));
+			for (var guess : game.getGuesses()) {
+				dialog.bodyText(game.getColoredGuess(guess)
+					.stream()
+					.map(WordleUser.WordleLetter::toString)
+					.collect(joining(" ")));
+			}
+
+			if (game.isFailed()) {
+				dialog.bodyText(Arrays.stream(solution.toUpperCase().split(""))
+					.map(letter -> new WordleLetter(ChatColor.RED, letter).toString())
+					.collect(joining(" ")));
+			}
 
 			dialog.bodyText("");
 
-			for (String row : KEYBOARD)
-				dialog.bodyText(String.join(" ", getKeyboardColors(row, game, solution)));
+			for (String row : KEYBOARD){
+				dialog.bodyText(getKeyboardColors(row, game, solution)
+					.stream()
+					.map(WordleUser.WordleLetter::toString)
+					.collect(joining(" ")));
+			}
 
 			if (!game.isComplete())
 				dialog.inputText("answer", errorMessage != null ? errorMessage : "");
 
 			var builder = dialog.multiAction().columns(1);
 			if (game.isComplete())
-				builder.button("Go to archive", click -> new WorldArchiveMenu(YearMonth.from(date)).open(player));
+				builder
+					.button("See server results", click -> new WordleResultsMenu(date).open(player))
+					.button("Go to archive", click -> new WordleArchiveMenu(YearMonth.from(date)).open(player));
 			else
 				builder.button("Submit", click -> {
 					var input = click.getText("answer");
@@ -101,19 +172,25 @@ public class WordleCommand extends CustomCommand {
 						game.getGuesses().add(input.toLowerCase());
 					}
 
+					if (input.equalsIgnoreCase(solution)) {
+						var today = new GeoIPService().get(player).getCurrentTime().toLocalDate();
+						if (today.equals(date))
+							user.playedOn(today);
+					}
+
 					refresh(player);
 				})
-				.button("Go to archive", click -> new WorldArchiveMenu(YearMonth.from(date)).open(player));
+				.button("Go to archive", click -> new WordleArchiveMenu(YearMonth.from(date)).open(player));
 
 			builder.open(player);
 			configService.save(config);
 			userService.save(user);
 		}
 
-		private static @NotNull List<String> getKeyboardColors(String keysInRow, WordleGame game, String solution) {
+		private static @NotNull List<WordleLetter> getKeyboardColors(String keysInRow, WordleGame game, String solution) {
 			Map<String, ChatColor> keys = new HashMap<>();
 			for (String letter : keysInRow.toLowerCase().split(""))
-				keys.put(letter, ChatColor.WHITE);
+				keys.put(letter, ChatColor.GRAY);
 
 			for (String guess : game.getGuesses()) {
 				var solution2 = new ArrayList<>(List.of(solution.toLowerCase().split("")));
@@ -122,71 +199,37 @@ public class WordleCommand extends CustomCommand {
 					var guessChar = guess2.get(i).toLowerCase();
 					var solutionChar = solution2.get(i).toLowerCase();
 
-					var color = keys.getOrDefault(guessChar, ChatColor.WHITE);
-					if (color == ChatColor.GREEN)
+					var color = keys.getOrDefault(guessChar, ChatColor.GRAY);
+					if (color == ChatColor.DARK_GREEN)
 						continue;
 
 					if (guessChar.equals(solutionChar)) {
-						color = ChatColor.GREEN;
+						color = ChatColor.DARK_GREEN;
 						guess2.set(i, "_");
 						solution2.set(i, "_");
 					} else if (solution2.contains(guessChar))
-						color = ChatColor.YELLOW;
-					else if (color != ChatColor.YELLOW)
+						color = ChatColor.GOLD;
+					else if (color != ChatColor.GOLD)
 						color = ChatColor.DARK_GRAY;
 
 					keys.put(guessChar, color);
 				}
 			}
 
-			List<String> coloredKeys = new ArrayList<>();
+			List<WordleLetter> letters = new ArrayList<>();
 			for (String letter : keysInRow.toLowerCase().split(""))
-				coloredKeys.add(keys.get(letter).toString() + letter.toUpperCase());
-			return coloredKeys;
-		}
-
-		private static @NotNull List<String> getColoredGuesses(String guess, String solution) {
-			var solution2 = new ArrayList<>(List.of(solution.toLowerCase().split("")));
-			var guess2 = new ArrayList<>(List.of(guess.toLowerCase().split("")));
-
-			List<Pair<String, ChatColor>> letters = new ArrayList<>();
-			for (int i = 0; i < 5; i++) {
-				var color = ChatColor.DARK_GRAY;
-				var solutionChar = solution2.get(i);
-				var guessChar = guess2.get(i);
-				if (solutionChar.equals(guessChar)) {
-					color = ChatColor.GREEN;
-					solution2.set(i, "_");
-				}
-				letters.add(new Pair<>(guessChar, color));
-			}
-
-			for (int i = 0; i < 5; i++) {
-				var guessChar = guess2.get(i);
-				var color = letters.get(i);
-				if (color.getSecond() == ChatColor.GREEN)
-					continue;
-
-				if (solution2.contains(guessChar)) {
-					letters.set(i, new Pair<>(guessChar, ChatColor.YELLOW));
-					solution2.set(solution2.indexOf(guessChar), "_");
-				}
-			}
-
-			List<String> guessColored = new ArrayList<>();
-			for (Pair<String, ChatColor> letter : letters)
-				guessColored.add(letter.getSecond() + letter.getFirst().toUpperCase());
-			return guessColored;
+				letters.add(new WordleLetter(keys.getOrDefault(letter, ChatColor.GRAY), letter));
+			return letters;
 		}
 
 	}
 
 	@RequiredArgsConstructor
-	public static class WorldArchiveMenu {
+	public static class WordleArchiveMenu {
 		private YearMonth yearMonth = YearMonth.now();
 		private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("MMMM yyyy");
 
-		public WorldArchiveMenu(YearMonth yearMonth) {
+		public WordleArchiveMenu(YearMonth yearMonth) {
 			this.yearMonth = yearMonth;
 		}
 
@@ -224,11 +267,11 @@ public class WordleCommand extends CustomCommand {
 				else if (current.getMonth() != yearMonth.getMonth())
 					color = ChatColor.DARK_GRAY;
 				else if (user.get(current).isSuccess())
-					color = ChatColor.GREEN;
+					color = ChatColor.DARK_GREEN;
 				else if (user.get(current).isFailed())
 					color = ChatColor.RED;
 				else if (user.get(current).isStarted())
-					color = ChatColor.YELLOW;
+					color = ChatColor.GOLD;
 
 				LocalDate date = current;
 				ChatColor finalColor = color;
@@ -236,8 +279,12 @@ public class WordleCommand extends CustomCommand {
 					color + String.valueOf(current.getDayOfMonth()),
 					"#" + config.getDaysSinceLaunch(current),
 					click -> {
-						if (finalColor != ChatColor.DARK_GRAY)
-							new WordleMenu(date).open(player);
+						if (finalColor != ChatColor.DARK_GRAY) {
+							if (user.get(date).isComplete())
+								new WordleResultsMenu(date).open(player);
+							else
+								new WordleMenu(date).open(player);
+						}
 				});
 				current = current.plusDays(1);
 			}
