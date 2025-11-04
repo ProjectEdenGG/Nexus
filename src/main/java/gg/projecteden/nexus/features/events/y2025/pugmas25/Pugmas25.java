@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.balloons.Pugmas25Ball
 import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.Pugmas25Fairgrounds;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25BoatRace;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Cabin;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Caves;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Fishing;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Interactions;
@@ -113,6 +114,7 @@ public class Pugmas25 extends EdenEvent {
 		sidebar = new Pugmas25Sidebar();
 
 		new Pugmas25Districts();
+		new Pugmas25Caves();
 		new Pugmas25Advent();
 		new Pugmas25Fairgrounds();
 		new Pugmas25BalloonManager();

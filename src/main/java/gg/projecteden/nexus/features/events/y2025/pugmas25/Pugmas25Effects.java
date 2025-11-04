@@ -11,15 +11,19 @@ import gg.projecteden.nexus.features.effects.Effects.RotatingStand.StandRotation
 import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.Pugmas25Minigolf;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.slotmachine.Pugmas25SlotMachine;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Geyser;
+import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.jetbrains.annotations.NotNull;
@@ -34,12 +38,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Pugmas25Effects extends Effects {
 
 	private static int angle = 0;
-	private final List<String> windmill1 = new ArrayList<>() {{
+	private final List<String> windmill_1 = new ArrayList<>() {{
 		add("1d7d22db-f6ad-4f64-b844-7e6e017efeaa");
 		add("47c88b92-4708-4b1c-b654-b09ff8a95cef");
 		add("c00b3308-4989-4e36-91f1-1dfe8304a849");
 		add("99a0f5b9-420e-483f-acc2-c81e48663c3c");
 	}};
+	private final String watermill_1 = "d7eeb0a5-ede7-4574-ae78-fca4c2076003";
 
 	@Override
 	public World getWorld() {
@@ -52,11 +57,22 @@ public class Pugmas25Effects extends Effects {
 	}
 
 	@Override
+	public void sounds() {
+		// Watermill
+		Location watermill = location(-461, 77, -2867);
+		SoundBuilder watermillSound = new SoundBuilder(CustomSound.AMBIENT_WATERMILL).category(SoundCategory.AMBIENT).location(watermill).volume(1.25);
+		Tasks.repeat(0, TickTime.TICK.x(46), watermillSound::play);
+
+		SoundBuilder waterSound = new SoundBuilder(Sound.BLOCK_WATER_AMBIENT).category(SoundCategory.AMBIENT).location(watermill).volume(1.5);
+		Tasks.repeat(0, TickTime.TICK.x(32), waterSound::play);
+	}
+
+	@Override
 	public void particles() {
 		Tasks.repeat(0, 10, Pugmas25Geyser::animateSmoke);
 		smokeStacks();
 		waterfall();
-		Tasks.repeat(0, 10, () -> checkGarageDoor());
+		Tasks.repeat(0, 10, this::checkGarageDoor);
 	}
 
 	@Override
@@ -69,9 +85,11 @@ public class Pugmas25Effects extends Effects {
 	@Override
 	public List<RotatingStand> getRotatingStands() {
 		List<RotatingStand> result = new ArrayList<>();
-		for (String uuid : windmill1) {
+		for (String uuid : windmill_1) {
 			result.add(new RotatingStand(uuid, StandRotationAxis.HORIZONTAL, StandRotationType.NEGATIVE, true));
 		}
+
+		result.add(new RotatingStand(watermill_1, StandRotationAxis.HORIZONTAL, StandRotationType.POSITIVE, true));
 
 		return result;
 	}
@@ -84,7 +102,7 @@ public class Pugmas25Effects extends Effects {
 
 	@Override
 	public boolean customResetPose(RotatingStand rotatingStand, @NotNull ArmorStand armorStand) {
-		if (!windmill1.contains(rotatingStand.getUuid()))
+		if (!windmill_1.contains(rotatingStand.getUuid()))
 			return true;
 
 		rotatingStand.resetRightArmPose();
