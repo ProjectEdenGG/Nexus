@@ -118,6 +118,20 @@ public class ArmorStandEditorCommand extends CustomCommand {
 		armorStand.setLeftArmPose(ea);
 	}
 
+	@HideFromWiki
+	@Path("set arms right <x> <y> <z>")
+	@Permission(Group.ADMIN)
+	void set_arms_right(float x, float y, float z) {
+		position_arms();
+		ArmorStand armorStand = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);
+
+		if (!Restrictions.isPerkAllowedAt(player(), armorStand.getLocation()))
+			error("You cannot edit armor stands here");
+
+		EulerAngle ea = new EulerAngle(Math.toRadians(x), Math.toRadians(y), Math.toRadians(z));
+		armorStand.setRightArmPose(ea);
+	}
+
 	@Path("set yaw <yaw>")
 	@Description("Set the yaw of an armor stand")
 	void set_yaw(float yaw) {

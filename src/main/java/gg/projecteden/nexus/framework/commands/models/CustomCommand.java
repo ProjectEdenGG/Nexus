@@ -38,6 +38,7 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.EntityUtils;
@@ -65,6 +66,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
+import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -212,6 +214,22 @@ public abstract class CustomCommand extends ICustomCommand {
 			error("You must be looking at a sign");
 
 		return (Sign) targetBlock.getState();
+	}
+
+	protected NPC getSelectedNPCRequired() {
+		NPC npc = CitizensUtils.getSelectedNPC(player());
+		if (npc == null)
+			error("You must select an npc");
+
+		return npc;
+	}
+
+	protected NPC getTargetNPCRequired() {
+		Entity entity = getTargetEntityRequired();
+		if (!CitizensUtils.isNPC(entity))
+			error("You must be looking at an NPC");
+
+		return CitizensUtils.getNPC(entity);
 	}
 
 	// Ignores entities in creative or spectator mode

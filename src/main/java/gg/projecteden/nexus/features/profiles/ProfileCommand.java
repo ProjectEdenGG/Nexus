@@ -29,6 +29,7 @@ import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.Utils.EquipmentSlotGroup;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -57,7 +58,7 @@ public class ProfileCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("degreeOfSeparation <player>")
-	public void degreeOfSeparation(Player player) {
+	public void degreeOfSeparation(OfflinePlayer player) {
 		FriendsUserService friendsUserService = new FriendsUserService();
 
 		Map<UUID, Set<UUID>> friends = buildGraph(friendsUserService, uuid());
