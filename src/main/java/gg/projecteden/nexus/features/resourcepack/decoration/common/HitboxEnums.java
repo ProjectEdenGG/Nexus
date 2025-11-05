@@ -17,6 +17,7 @@ public class HitboxEnums {
 		}
 	}
 
+	@Getter
 	@AllArgsConstructor
 	public enum HitboxSingle implements CustomHitbox {
 		_1x1_BARRIER(Hitbox.single()),
@@ -27,10 +28,10 @@ public class HitboxEnums {
 		NONE(Hitbox.NONE()),
 		;
 
-		@Getter
 		final List<Hitbox> hitboxes;
 	}
 
+	@Getter
 	@AllArgsConstructor
 	public enum HitboxFloor implements CustomHitbox {
 		_1x2V(List.of(
@@ -161,10 +162,10 @@ public class HitboxEnums {
 		)),
 		;
 
-		@Getter
 		final List<Hitbox> hitboxes;
 	}
 
+	@Getter
 	@AllArgsConstructor
 	public enum HitboxWall implements CustomHitbox {
 		_1x1_LIGHT(Hitbox.single(Material.LIGHT)),
@@ -261,12 +262,23 @@ public class HitboxEnums {
 
 		;
 
-		@Getter
 		final List<Hitbox> hitboxes;
 	}
 
+	@Getter
 	@AllArgsConstructor
 	public enum HitboxUnique implements CustomHitbox {
+		LAMP(List.of(
+			Hitbox.offset(BlockFace.UP, 1),
+			Hitbox.offsetLight(15, BlockFace.UP, 2)
+		)),
+
+		LAMP_SHORT(List.of(
+			Hitbox.origin(),
+			Hitbox.offsetLight(15, BlockFace.UP, 1)
+		)),
+
+
 		GIANT_CANDLE_UNLIT(List.of(
 			Hitbox.origin(),
 			Hitbox.offsetLight(0, BlockFace.UP, 1)
@@ -379,7 +391,6 @@ public class HitboxEnums {
 		)),
 		;
 
-		@Getter
 		final List<Hitbox> hitboxes;
 	}
 }

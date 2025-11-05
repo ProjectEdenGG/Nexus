@@ -1945,6 +1945,24 @@ public enum DecorationType {
 	@TypeConfig(money = 200, tokens = 20)
 	FLAT_SCREEN_TV(new TV("Flat Screen TV", ChannelType.OFF)),
 
+	@TypeConfig(money = 20, tokens = 2)
+	LUMBER_PILE(new DyeableFloorThing(false, "Lumber Pile", ItemModelType.LUMBER_PILE, ColorableType.STAIN)),
+
+	@TypeConfig(money = 50, tokens = 5)
+	LUMBER_STACK(new DyeableFloorThing(true, "Lumber Stack", ItemModelType.LUMBER_STACK, ColorableType.STAIN, HitboxFloor._2x2)),
+
+	@TypeConfig(money = 20, tokens = 2)
+	WOODEN_PALLET(new DyeableFloorThing(false, "Wooden Pallet", ItemModelType.WOODEN_PALLET, ColorableType.STAIN)),
+
+	@TypeConfig(money = 30, tokens = 3)
+	VAULT(new FloorThing(false, "Vault", ItemModelType.VAULT, HitboxSingle._1x1_BARRIER)),
+
+	@TypeConfig(money = 40, tokens = 4)
+	ANTIQUE_LAMP_SHORT(new DyeableFloorThing(false, "Short Antique Lamp", ItemModelType.ANTIQUE_LAMP_SHORT, ColorableType.DYE, HitboxUnique.LAMP_SHORT)),
+
+	@TypeConfig(money = 60, tokens = 6)
+	ANTIQUE_LAMP(new DyeableFloorThing(false, "Antique Lamp", ItemModelType.ANTIQUE_LAMP, ColorableType.DYE, HitboxUnique.LAMP)),
+
 // 	------------------------------------------------------------------------------------------------------
 //									UNBUYABLE & EXCLUSIVE
 // 	------------------------------------------------------------------------------------------------------
