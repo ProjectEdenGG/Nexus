@@ -269,6 +269,7 @@ public class HitboxEnums {
 	@AllArgsConstructor
 	public enum HitboxUnique implements CustomHitbox {
 		LAMP(List.of(
+			Hitbox.origin(),
 			Hitbox.offset(BlockFace.UP, 1),
 			Hitbox.offsetLight(15, BlockFace.UP, 2)
 		)),

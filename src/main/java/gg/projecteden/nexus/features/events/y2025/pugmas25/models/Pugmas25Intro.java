@@ -63,7 +63,7 @@ public class Pugmas25Intro implements Listener {
 
 		new Cutscene()
 			.fade(0, "Boarding train...", 70)
-			.next(TickTime.SECOND, _player -> _player.teleport(TRANSITION_LOC))
+			.next(TickTime.SECOND.x(2), _player -> _player.teleport(TRANSITION_LOC))
 			.next(TickTime.SECOND.x(2), _player -> _player.teleport(INTRO_LOC))
 			.fade(TickTime.SECOND.x(20), "Deboarding train...", 60)
 			.next(TickTime.SECOND, _player -> {

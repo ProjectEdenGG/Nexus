@@ -18,6 +18,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/*
+	TODO:
+		- IF PLAYER IS IN CAVES DISTRICT, SUBTRACT X FROM HEIGHT VARIABLE ON PDA
+ */
 public class Pugmas25Districts implements Listener {
 	private static final String regionPrefix = Pugmas25.get().getRegionName() + "_district_";
 	private static final Map<UUID, Pugmas25District> PLAYER_DISTRICT_MAP = new HashMap<>();
@@ -75,6 +79,8 @@ public class Pugmas25Districts implements Listener {
 		HOT_SPRINGS("hot_springs"),
 		SAWMILL("sawmill"),
 		RIVER("river"),
+		//
+		CAVES("caves"),
 		//
 		UNDERGROUND("underground"),
 		WILDERNESS(null);
