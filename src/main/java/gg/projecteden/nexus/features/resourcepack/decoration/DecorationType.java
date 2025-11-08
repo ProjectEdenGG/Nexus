@@ -26,12 +26,15 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.Count
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.HandleType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.DyeableFireplace;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.DyeableFurniture;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.DyeableOrnament;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Fireplace;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Flag;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Flag.PrideFlagType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Flora;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Furniture;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.HangingBanner;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Ornament;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Ornament.OrnamentType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.StandingBanner;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Table;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Table.TableShape;
@@ -212,6 +215,54 @@ public enum DecorationType {
 
 	@TypeConfig(money = 300, tokens = 30, theme = Theme.HOLIDAY)
 	GIANT_CANDY_CANE(new DyeableFloorThing(false, "Giant Candy Cane", ItemModelType.GIANT_CANDY_CANE, ColorableType.DYE, HitboxUnique.GIANT_CANDY_CANE)),
+
+	@TypeConfig(money = 70, tokens = 7, theme = Theme.HOLIDAY, tabs = Tab.ORNAMENTS)
+	BAUBLE_ORNAMENT(new DyeableOrnament(OrnamentType.BAUBLE, false)),
+
+	@TypeConfig(money = 70, tokens = 7, theme = Theme.HOLIDAY, tabs = Tab.ORNAMENTS)
+	BAUBLE_ACCENT_ORNAMENT(new DyeableOrnament(OrnamentType.BAUBLE_ACCENT, false)),
+
+	@TypeConfig(money = 70, tokens = 7, theme = Theme.HOLIDAY, tabs = Tab.ORNAMENTS)
+	CANDY_CANE_ORNAMENT(new DyeableOrnament(OrnamentType.CANDY_CANE, false)),
+
+	@TypeConfig(money = 70, tokens = 7, theme = Theme.HOLIDAY, tabs = Tab.ORNAMENTS)
+	CONE_ORNAMENT(new DyeableOrnament(OrnamentType.CONE, false)),
+
+	@TypeConfig(money = 70, tokens = 7, theme = Theme.HOLIDAY, tabs = Tab.ORNAMENTS)
+	GINGERBREAD_ORNAMENT(new Ornament(OrnamentType.GINGERBREAD, false)),
+
+	@TypeConfig(money = 70, tokens = 7, theme = Theme.HOLIDAY, tabs = Tab.ORNAMENTS)
+	SNOWFLAKE_ORNAMENT(new DyeableOrnament(OrnamentType.SNOWFLAKE, false)),
+
+	@TypeConfig(money = 70, tokens = 7, theme = Theme.HOLIDAY, tabs = Tab.ORNAMENTS)
+	SNOWMAN_ORNAMENT(new DyeableOrnament(OrnamentType.SNOWMAN, false)),
+
+	@TypeConfig(money = 70, tokens = 7, theme = Theme.HOLIDAY, tabs = Tab.ORNAMENTS)
+	STAR_ORNAMENT(new DyeableOrnament(OrnamentType.STAR, false)),
+
+	@TypeConfig(money = 140, tokens = 14, theme = Theme.HOLIDAY, tabs = Tab.GIANT_ORNAMENTS)
+	BAUBLE_GIANT_ORNAMENT(new DyeableOrnament(OrnamentType.BAUBLE, true)),
+
+	@TypeConfig(money = 140, tokens = 14, theme = Theme.HOLIDAY, tabs = Tab.GIANT_ORNAMENTS)
+	BAUBLE_ACCENT_GIANT_ORNAMENT(new DyeableOrnament(OrnamentType.BAUBLE_ACCENT, true)),
+
+	@TypeConfig(money = 140, tokens = 14, theme = Theme.HOLIDAY, tabs = Tab.GIANT_ORNAMENTS)
+	CANDY_CANE_GIANT_ORNAMENT(new DyeableOrnament(OrnamentType.CANDY_CANE, true)),
+
+	@TypeConfig(money = 140, tokens = 14, theme = Theme.HOLIDAY, tabs = Tab.GIANT_ORNAMENTS)
+	CONE_GIANT_ORNAMENT(new DyeableOrnament(OrnamentType.CONE, true)),
+
+	@TypeConfig(money = 140, tokens = 14, theme = Theme.HOLIDAY, tabs = Tab.GIANT_ORNAMENTS)
+	GINGERBREAD_GIANT_ORNAMENT(new Ornament(OrnamentType.GINGERBREAD, true)),
+
+	@TypeConfig(money = 140, tokens = 14, theme = Theme.HOLIDAY, tabs = Tab.GIANT_ORNAMENTS)
+	SNOWFLAKE_GIANT_ORNAMENT(new DyeableOrnament(OrnamentType.SNOWFLAKE, true)),
+
+	@TypeConfig(money = 140, tokens = 14, theme = Theme.HOLIDAY, tabs = Tab.GIANT_ORNAMENTS)
+	SNOWMAN_GIANT_ORNAMENT(new DyeableOrnament(OrnamentType.SNOWMAN, true)),
+
+	@TypeConfig(money = 140, tokens = 14, theme = Theme.HOLIDAY, tabs = Tab.GIANT_ORNAMENTS)
+	STAR_GIANT_ORNAMENT(new DyeableOrnament(OrnamentType.STAR, true)),
 
 // 	------------------------------------------------------------------------------------------------------
 //										CATALOG: Spooky
