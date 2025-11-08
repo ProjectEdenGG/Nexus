@@ -66,6 +66,7 @@ public class Pugmas25Train {
 			.test(false)
 			.regionTrack(trainTrackRegion)
 			.regionAnnounce(Pugmas25.get().getRegionName())
+			.regionAnnounceMuteRegex(Pugmas25.get().getRegionName() + "_train_mute_[0-9]+")
 			.whistleLocation(Pugmas25.get().location(-426, 82, -2972))
 			.whistleRadius(300)
 			.regionReveal(trainRevealRegion)

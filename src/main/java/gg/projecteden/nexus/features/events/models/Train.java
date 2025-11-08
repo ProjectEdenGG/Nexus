@@ -71,6 +71,7 @@ public class Train {
 	private final boolean bonkPlayers;
 	private final Map<Integer, ItemModelType> modelOverrides;
 	private final String forceLoadRegion;
+	private final String regionAnnounceMuteRegex;
 
 	private final List<ArmorStand> armorStands = new ArrayList<>();
 	private final List<Integer> taskIds = new ArrayList<>();
@@ -92,7 +93,7 @@ public class Train {
 	@Builder
 	public Train(Location location, BlockFace direction, double speed, int seconds, boolean test, String regionAnnounce,
 				 Location whistleLocation, double whistleRadius, String regionTrack, String regionReveal, TrainCrossings trainCrossings,
-				 boolean bonkPlayers, Map<Integer, ItemModelType> modelOverrides, String forceLoadRegion) {
+				 boolean bonkPlayers, Map<Integer, ItemModelType> modelOverrides, String forceLoadRegion, String regionAnnounceMuteRegex) {
 		this.location = location.toCenterLocation();
 		this.worldguard = new WorldGuardUtils(location);
 		this.forwards = direction;
@@ -111,6 +112,7 @@ public class Train {
 		this.trainCrossings = trainCrossings;
 		this.bonkPlayers = bonkPlayers;
 		this.forceLoadRegion = forceLoadRegion;
+		this.regionAnnounceMuteRegex = regionAnnounceMuteRegex;
 
 		if (this.trainCrossings != null) {
 			this.trainCrossings.allLightsOff();
@@ -118,7 +120,17 @@ public class Train {
 	}
 
 	private List<Player> getPlayers() {
-		return worldguard.getPlayersInRegion(regionAnnounce).stream().toList();
+		List<Player> players = new ArrayList<>(worldguard.getPlayersInRegion(regionAnnounce).stream().toList());
+
+		if (regionAnnounceMuteRegex != null) {
+			Set<Player> mutedPlayers = new HashSet<>();
+			worldguard.getRegionsLike(regionAnnounceMuteRegex)
+				.forEach(region -> mutedPlayers.addAll(worldguard.getPlayersInRegion(region)));
+
+			players.removeAll(mutedPlayers);
+		}
+
+		return players;
 	}
 
 	public void debug(Player debugger) {
