@@ -126,8 +126,8 @@ public class Catalog implements Listener {
 		FLORA(ItemModelType.FLORA_CHINESE_EVERGREEN, ColorChoice.DyeChoice.RED),
 		KITCHENWARE(ItemModelType.KITCHENWARE_MIXING_BOWL),
 		WINDCHIMES(ItemModelType.WINDCHIMES_COPPER),
-		ORNAMENTS(ItemModelType.ORNAMENT_BAUBLE),
-		GIANT_ORNAMENTS(ItemModelType.ORNAMENT_BAUBLE_ACCENT),
+		ORNAMENTS(ItemModelType.ORNAMENT_BAUBLE, DyeChoice.RED),
+		GIANT_ORNAMENTS(ItemModelType.ORNAMENT_BAUBLE_ACCENT, DyeChoice.RED),
 		;
 
 		ItemStack icon = new ItemStack(Material.AIR);

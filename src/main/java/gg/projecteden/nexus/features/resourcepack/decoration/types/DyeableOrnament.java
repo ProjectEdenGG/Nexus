@@ -5,6 +5,10 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Dyea
 
 public class DyeableOrnament extends DyeableCeilingThing {
 
+	public DyeableOrnament(OrnamentType type, boolean giant, String hexOverride) {
+		super(false, type.getName(giant), type.getModel(giant), ColorableType.DYE, hexOverride);
+	}
+
 	public DyeableOrnament(OrnamentType type, boolean giant) {
 		super(false, type.getName(giant), type.getModel(giant), ColorableType.DYE);
 	}
