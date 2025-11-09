@@ -54,6 +54,11 @@ import static gg.projecteden.nexus.models.wordle.WordleUser.WordleLetter.WordleL
 import static gg.projecteden.nexus.utils.Extensions.isNullOrEmpty;
 import static java.util.stream.Collectors.joining;
 
+/* TODO
+	Prevent reload if dialog is open (good luck)
+	Show total guesses available
+ */
+
 @SuppressWarnings("deprecation")
 @Environments({Env.TEST, Env.UPDATE})
 public class WordleCommand extends CustomCommand {
@@ -121,7 +126,10 @@ public class WordleCommand extends CustomCommand {
 		@Switch Integer afterSmall,
 		@Switch Integer beforeTransparent,
 		@Switch Integer afterTransparent,
-		@Switch Integer animationDelay
+		@Switch Integer animationDelay,
+		@Switch WordleSound wordleSound,
+		@Switch String sound,
+		@Switch float pitch
 	) {
 		if (before != null) {
 			send("Updating WordleLetter.BEFORE to " + before);
@@ -159,6 +167,9 @@ public class WordleCommand extends CustomCommand {
 			send("Updating ANIMATION_DELAY to " + animationDelay);
 			ANIMATION_DELAY = animationDelay;
 		}
+
+		if (wordleSound != null && sound != null && pitch != 0)
+			wordleSound.setConsumer(player -> player.playSound(player.getLocation(), sound, 1, pitch));
 	}
 
 	@RequiredArgsConstructor
@@ -251,9 +262,11 @@ public class WordleCommand extends CustomCommand {
 			}
 
 			if (game.isFailed()) {
-				dialog.bodyText(Arrays.stream(solution.toUpperCase().split(""))
-					.map(letter -> new WordleLetter(FAILED, letter).toString())
-					.collect(joining(" ")));
+				if (animationStep == -1 || animationStep == 5) {
+					dialog.bodyText(Arrays.stream(solution.toUpperCase().split(""))
+						.map(letter -> new WordleLetter(FAILED, letter).toString())
+						.collect(joining(" ")));
+				}
 			}
 
 			dialog.bodyText("");
@@ -384,15 +397,9 @@ public class WordleCommand extends CustomCommand {
 			var user = userService.get(player);
 			var geoip = new GeoIPService().get(player);
 			var dialog = new DialogBuilder()
-				.title(yearMonth.format(FORMATTER))
-				.multiAction()
-				.columns(7)
-				.defaultButtonWidth(30);
+				.title(yearMonth.format(FORMATTER));
 
-			List<DayOfWeek> week = geoip.getWeek();
-			for (DayOfWeek dayOfWeek : week)
-				dialog.button(String.valueOf(dayOfWeek.name().charAt(0)));
-
+			var week = geoip.getWeek();
 			var initial = yearMonth.atDay(1);
 			while (initial.getDayOfWeek() != week.getFirst())
 				initial = initial.minusDays(1);
@@ -402,6 +409,17 @@ public class WordleCommand extends CustomCommand {
 				last = last.plusDays(1);
 
 			last = last.plusDays(1);
+
+			var diff = initial.until(last).getDays();
+			if (diff < 8)
+				dialog.bodyText("").bodyText("");
+
+			var buttons = dialog.multiAction()
+				.columns(7)
+				.defaultButtonWidth(30);
+
+			for (DayOfWeek dayOfWeek : week)
+				buttons.button("&l" + dayOfWeek.name().charAt(0));
 
 			var today = getZonedLocalDate(player);
 			var current = initial;
@@ -422,7 +440,7 @@ public class WordleCommand extends CustomCommand {
 
 				LocalDate date = current;
 				ChatColor finalColor = color;
-				dialog.button(
+				buttons.button(
 					color + String.valueOf(current.getDayOfMonth()),
 					"#" + config.getDaysSinceLaunch(current),
 					click -> {
@@ -437,18 +455,18 @@ public class WordleCommand extends CustomCommand {
 			}
 
 			YearMonth previous = yearMonth.minusMonths(1);
-			dialog.button("< " + FORMATTER.format(previous), 107,click -> {
+			buttons.button("< " + FORMATTER.format(previous), 107,click -> {
 				yearMonth = previous;
 				open(player);
 			});
 
 			YearMonth next = yearMonth.plusMonths(1);
-			dialog.button(FORMATTER.format(next) + " >", 107, click -> {
+			buttons.button(FORMATTER.format(next) + " >", 107, click -> {
 				yearMonth = next;
 				open(player);
 			});
 
-			dialog.open(player);
+			buttons.open(player);
 		}
 
 	}

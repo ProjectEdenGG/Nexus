@@ -13,6 +13,7 @@ import io.papermc.paper.registry.data.dialog.input.DialogInput;
 import io.papermc.paper.registry.data.dialog.input.SingleOptionDialogInput.OptionEntry;
 import io.papermc.paper.registry.data.dialog.type.DialogType;
 import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -288,6 +289,7 @@ public class DialogUtils {
 	@RequiredArgsConstructor
 	public static class MultiActionDialogBuilder extends DialogOpener {
 		private final DialogBase base;
+		@Getter
 		private final List<ActionButton> actions = new ArrayList<>();
 		private ActionButton exitButton;
 		private int columns = 2;

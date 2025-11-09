@@ -7,9 +7,7 @@ import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.wordle.WordleUser.WordleLetter.WordleLetterState;
-import gg.projecteden.nexus.utils.SoundBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -17,7 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 import static gg.projecteden.nexus.utils.Extensions.isNullOrEmpty;
 
@@ -196,20 +195,24 @@ public class WordleUser implements PlayerOwnedObject {
 		}
 	}
 
+	@Getter
 	@AllArgsConstructor
 	public enum WordleSound {
-		FAIL(new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BANJO).pitch(0.5)),
-		SUCCESS(new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_CHIME).pitch(1.25)),
-		NO_POSITION(new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BASS).pitch(1.25)),
-		WRONG_POSITION(new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE).pitch(1.25)),
-		CORRECT_POSITION(new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).pitch(0.9)),
-		;
+		FAIL(player -> player.playSound(player.getLocation(), "block.note_block.banjo", SoundCategory.UI, 1, 0.5f)),
+		SUCCESS(player -> player.playSound(player.getLocation(), "block.note_block.chime", SoundCategory.UI, 1, .25f)),
+		NO_POSITION(player -> player.playSound(player.getLocation(), "block.note_block.bass", SoundCategory.UI, 1, .75f)),
+		WRONG_POSITION(player -> player.playSound(player.getLocation(), "block.note_block.bass", SoundCategory.UI, 1, 1f)),
+		CORRECT_POSITION(player -> player.playSound(player.getLocation(), "block.note_block.bass", SoundCategory.UI, 1, 1.25f)),
+		;;
 
-		private final SoundBuilder soundBuilder;
+		private Consumer<Player> consumer;
+
+		public void setConsumer(Consumer<Player> consumer) {
+			this.consumer = consumer;
+		}
 
 		public void playSound(Player player) {
-			if (soundBuilder != null)
-				soundBuilder.receiver(player).play();
+			consumer.accept(player);
 		}
 	}
 }
