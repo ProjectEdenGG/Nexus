@@ -63,7 +63,7 @@ public class WordleCommand extends CustomCommand {
 	private static final WordleConfig config = configService.get0();
 	private static final WordleUserService userService = new WordleUserService();
 
-	private static int ANIMATION_DELAY = 30;
+	private static int ANIMATION_DELAY = 6;
 
 	public WordleCommand(@NonNull CommandEvent event) {
 		super(event);
