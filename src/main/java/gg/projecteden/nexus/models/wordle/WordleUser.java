@@ -7,6 +7,7 @@ import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.wordle.WordleUser.WordleLetter.WordleLetterState;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,6 +16,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
@@ -185,9 +187,9 @@ public class WordleUser implements PlayerOwnedObject {
 			private final ChatColor color;
 			private final WordleSound sound;
 
-			public void playSound() {
+			public void playSound(Player player) {
 				if (sound != null)
-					sound.playSound();
+					sound.playSound(player);
 			}
 		}
 	}
@@ -200,6 +202,8 @@ public class WordleUser implements PlayerOwnedObject {
 		CORRECT_POSITION,
 		;
 
-		public void playSound() {}
+		public void playSound(Player player) {
+			Nerd.of(player).sendMessage("Wordle sound: " + name().toLowerCase());
+		}
 	}
 }

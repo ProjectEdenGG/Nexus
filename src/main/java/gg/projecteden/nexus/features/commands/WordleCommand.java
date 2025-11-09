@@ -234,16 +234,18 @@ public class WordleCommand extends CustomCommand {
 				var guess = game.getColoredGuess(guessesForAnimation.getLast());
 				var letters = guess.stream().filter(letter -> isNotNullOrEmpty(letter.getLetter())).toList();
 				if (!letters.isEmpty()) {
-					var last = letters.getLast();
+					var lastLetter = letters.getLast();
 
 					if (animationStep == 5) {
 						if (game.isSuccess()) {
-							WordleSound.SUCCESS.playSound();
+							WordleSound.SUCCESS.playSound(player);
 						} else if (game.isFailed()) {
-							WordleSound.FAIL.playSound();
+							WordleSound.FAIL.playSound(player);
 						} else {
-							last.getState().playSound();
+							lastLetter.getState().playSound(player);
 						}
+					} else {
+						lastLetter.getState().playSound(player);
 					}
 				}
 			}
