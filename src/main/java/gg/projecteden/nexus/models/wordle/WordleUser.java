@@ -37,21 +37,9 @@ public class WordleUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private Map<LocalDate, WordleGame> games = new ConcurrentHashMap<>();
-	private List<LocalDate> playedDates = new ArrayList<>();
-	private List<LocalDate> wonDates = new ArrayList<>();
 
 	public WordleGame get(LocalDate date) {
 		return games.computeIfAbsent(date, $ -> new WordleGame(date));
-	}
-
-	public void playedOn(LocalDate today) {
-		if (!playedDates.contains(today))
-			playedDates.add(today);
-	}
-
-	public void wonOn(LocalDate today) {
-		if (!wonDates.contains(today))
-			wonDates.add(today);
 	}
 
 	@Data
@@ -59,6 +47,8 @@ public class WordleUser implements PlayerOwnedObject {
 	public static class WordleGame {
 		private LocalDate date;
 		private List<String> guesses = new ArrayList<>();
+		private boolean playedOnReleaseDay;
+		private boolean solvedOnReleaseDay;
 
 		public WordleGame(LocalDate date) {
 			this.date = date;
