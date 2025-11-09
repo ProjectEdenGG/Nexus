@@ -56,7 +56,18 @@ import static java.util.stream.Collectors.joining;
 
 /* TODO
 	Prevent reload if dialog is open (good luck)
-	Show total guesses available
+
+	My stats
+		Total completed
+		Win rate
+		Current streak
+		Best streak
+
+	Leaderboard
+		Most completed
+		Best win rate
+		Best current streak
+		Best all time streak
  */
 
 @SuppressWarnings("deprecation")
@@ -234,6 +245,9 @@ public class WordleCommand extends CustomCommand {
 				guessesForAnimation.add(last);
 				Tasks.wait(ANIMATION_DELAY, () -> open(player, animationStep + 1));
 			}
+
+			while (guessesForAnimation.size() < 6)
+				guessesForAnimation.add("     ");
 
 			for (var guess : guessesForAnimation) {
 				dialog.bodyText(game.getColoredGuess(guess).stream()
@@ -440,9 +454,10 @@ public class WordleCommand extends CustomCommand {
 
 				LocalDate date = current;
 				ChatColor finalColor = color;
+				int day = config.getDaysSinceLaunch(current);
 				buttons.button(
 					color + String.valueOf(current.getDayOfMonth()),
-					"#" + config.getDaysSinceLaunch(current),
+					day >= 0 ? "#" + day : null,
 					click -> {
 						if (finalColor != ChatColor.DARK_GRAY) {
 							if (user.get(date).isComplete())
@@ -454,14 +469,22 @@ public class WordleCommand extends CustomCommand {
 				current = current.plusDays(1);
 			}
 
-			YearMonth previous = yearMonth.minusMonths(1);
-			buttons.button("< " + FORMATTER.format(previous), 107,click -> {
+			var previous = yearMonth.minusMonths(1);
+			var before = previous.atEndOfMonth().isBefore(WordleConfig.EPOCH);
+			buttons.button((before ? "&8" : "") + "< " + FORMATTER.format(previous), 107,click -> {
+				if (before)
+					return;
+
 				yearMonth = previous;
 				open(player);
 			});
 
-			YearMonth next = yearMonth.plusMonths(1);
-			buttons.button(FORMATTER.format(next) + " >", 107, click -> {
+			var next = yearMonth.plusMonths(1);
+			var after = next.atDay(1).isAfter(today);
+			buttons.button((after ? "&8" : "") + FORMATTER.format(next) + " >", 107, click -> {
+				if (after)
+					return;
+
 				yearMonth = next;
 				open(player);
 			});
