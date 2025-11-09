@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.wordle.WordleUser.WordleLetter.WordleLetterState;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -194,16 +196,20 @@ public class WordleUser implements PlayerOwnedObject {
 		}
 	}
 
+	@AllArgsConstructor
 	public enum WordleSound {
-		FAIL,
-		SUCCESS,
-		NO_POSITION,
-		WRONG_POSITION,
-		CORRECT_POSITION,
+		FAIL(new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BANJO).pitch(0.5)),
+		SUCCESS(new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_CHIME).pitch(1.25)),
+		NO_POSITION(new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BASS).pitch(1.25)),
+		WRONG_POSITION(new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_IRON_XYLOPHONE).pitch(1.25)),
+		CORRECT_POSITION(new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).pitch(0.9)),
 		;
 
+		private final SoundBuilder soundBuilder;
+
 		public void playSound(Player player) {
-			Nerd.of(player).sendMessage("Wordle sound: " + name().toLowerCase());
+			if (soundBuilder != null)
+				soundBuilder.receiver(player).play();
 		}
 	}
 }
