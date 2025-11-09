@@ -505,7 +505,6 @@ public enum ItemModelType {
 	TOY_TRAIN("decoration/christmas/toy_train"),
 	CHRISTMAS_TREE_COLORED("decoration/christmas/tree_color"),
 	CHRISTMAS_TREE_WHITE("decoration/christmas/tree_white"),
-
 	ORNAMENT_BAUBLE("decoration/christmas/ornament/bauble", true),
 	ORNAMENT_BAUBLE_ACCENT("decoration/christmas/ornament/bauble_accent", true),
 	ORNAMENT_CANDY_CANE("decoration/christmas/ornament/candy_cane", true),
@@ -522,7 +521,6 @@ public enum ItemModelType {
 	ORNAMENT_GIANT_SNOWFLAKE("decoration/christmas/ornament/giant/snowflake", true),
 	ORNAMENT_GIANT_SNOWMAN("decoration/christmas/ornament/giant/snowman", true),
 	ORNAMENT_GIANT_STAR("decoration/christmas/ornament/giant/star", true),
-
 	TRAFFIC_BLOCKADE("decoration/construction/traffic_blockade", true),
 	TRAFFIC_BLOCKADE_LIGHTS("decoration/construction/traffic_blockade_lights", true),
 	TRAFFIC_CONE_BARREL("decoration/construction/traffic_cone_barrel", true),

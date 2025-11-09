@@ -24,6 +24,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
@@ -338,12 +339,12 @@ public class BlockUtils {
 		soundBuilder.category(SoundCategory.BLOCKS).play();
 	}
 
-	public static BlockFace getCardinalBlockFace(Player player) {
-		BlockFace facing = player.getFacing();
+	public static BlockFace getCardinalBlockFace(Entity entity) {
+		BlockFace facing = entity.getFacing();
 		if (cardinals.contains(facing))
 			return facing;
 
-		int ndx = Math.round(player.getLocation().getYaw() / 90f) & 0x3;
+		int ndx = Math.round(entity.getLocation().getYaw() / 90f) & 0x3;
 		return cardinals.get(ndx);
 	}
 

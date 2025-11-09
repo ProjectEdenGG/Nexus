@@ -9,13 +9,13 @@ import org.bukkit.Rotation;
 import java.util.Arrays;
 import java.util.List;
 
+@Getter
 @AllArgsConstructor
 public enum RotationSnap {
 	BOTH(),
 	DEGREE_45(ItemFrameRotation.DEGREE_45, ItemFrameRotation.DEGREE_135, ItemFrameRotation.DEGREE_225, ItemFrameRotation.DEGREE_315),
 	DEGREE_90(ItemFrameRotation.DEGREE_0, ItemFrameRotation.DEGREE_90, ItemFrameRotation.DEGREE_180, ItemFrameRotation.DEGREE_270);
 
-	@Getter
 	final List<Utils.ItemFrameRotation> frameRotations;
 
 	RotationSnap(ItemFrameRotation... rotations) {

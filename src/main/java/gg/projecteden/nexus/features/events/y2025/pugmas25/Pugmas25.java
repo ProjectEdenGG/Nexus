@@ -44,8 +44,11 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.kyori.adventure.util.TriState;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -94,6 +97,10 @@ public class Pugmas25 extends EdenEvent {
 	public final Location warp = location(-688.5, 82, -2964.5, 180, 0);
 	public final Location deathLoc = location(-637.5, 66.0, -3260.5, 180, 0);
 
+	private final Location treeMinecartSpawnLoc = location(-680.5, 118.25, -3111.5);
+	private static Minecart treeMinecart;
+	private int treeMinecartTask = -1;
+
 	@Getter
 	private static boolean ridesEnabled = true;
 	@Getter
@@ -129,6 +136,18 @@ public class Pugmas25 extends EdenEvent {
 		Pugmas25TrainBackground.startup();
 
 		Tasks.wait(TickTime.SECOND, () -> getPlayers().forEach(this::onArrive));
+
+		treeMinecartTask = Tasks.repeat(5, TickTime.TICK.x(10), () -> {
+			if (treeMinecart == null || treeMinecart.isDead()) {
+				treeMinecart = getWorld().spawn(treeMinecartSpawnLoc, Minecart.class, minecart -> {
+					minecart.setMaxSpeed(1);
+					minecart.setSlowWhenEmpty(false);
+					minecart.setInvulnerable(true);
+					minecart.setFrictionState(TriState.FALSE);
+					minecart.setVelocity(BlockFace.WEST.getDirection().multiply(0.2));
+				});
+			}
+		});
 	}
 
 	@Override
@@ -136,6 +155,8 @@ public class Pugmas25 extends EdenEvent {
 		if (sidebar != null)
 			sidebar.handleEnd();
 
+		Tasks.cancel(treeMinecartTask);
+		treeMinecart.remove();
 		Pugmas25Train.shutdown();
 		Pugmas25TrainBackground.shutdown();
 		Pugmas25BalloonEditor.shutdown();
