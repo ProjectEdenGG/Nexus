@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -58,12 +59,14 @@ import static java.util.stream.Collectors.joining;
 
 	My stats
 		Total completed
+		Average guesses needed
 		Win rate
 		Current streak
 		Best streak
 
 	Leaderboard
 		Most completed
+		Lowest average guesses needed
 		Best win rate
 		Best current streak
 		Best all time streak
@@ -113,6 +116,15 @@ public class WordleCommand extends CustomCommand {
 			yearMonth = YearMonth.from(getZonedLocalDate(player()));
 
 		new WordleArchiveMenu(yearMonth).open(player());
+	}
+
+	@Confirm
+	@Path("delete <player> <date>")
+	@Permission(Group.SENIOR_STAFF)
+	void delete(WordleUser user, LocalDate date) {
+		user.getGames().remove(date);
+		userService.save(user);
+		send(PREFIX + "Deleted " + user.getNickname() + "'s data for puzzle #" + config.get(date).getDaysSinceLaunch() + " (" + date.format(formatter) + ")");
 	}
 
 	@Path("config")
