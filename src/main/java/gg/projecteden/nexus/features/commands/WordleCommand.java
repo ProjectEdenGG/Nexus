@@ -1,14 +1,14 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.api.common.annotations.Async;
-import gg.projecteden.api.common.annotations.Environments;
-import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
@@ -23,7 +23,6 @@ import gg.projecteden.nexus.models.wordle.WordleUserService;
 import gg.projecteden.nexus.utils.DialogUtils.DialogBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NonNull;
@@ -71,7 +70,6 @@ import static java.util.stream.Collectors.joining;
  */
 
 @SuppressWarnings("deprecation")
-@Environments({Env.TEST, Env.UPDATE})
 public class WordleCommand extends CustomCommand {
 	private static final List<String> KEYBOARD = List.of("QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM");
 	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy");
@@ -117,17 +115,8 @@ public class WordleCommand extends CustomCommand {
 		new WordleArchiveMenu(yearMonth).open(player());
 	}
 
-	@Path("debug letters <input>")
-	void debug(String input) {
-		while (input.length() != 5)
-			input += " ";
-
-		send("&3Input: '&e" + input + "&f' (" + input.length() + ")");
-		var letters = Arrays.stream(input.split("")).map(letter -> new WordleLetter(CORRECT_POSITION, letter));
-		Dev.GRIFFIN.send(letters.map(WordleLetter::toString).collect(joining(" ")));
-	}
-
 	@Path("config")
+	@Permission(Group.ADMIN)
 	void config(
 		@Switch Integer before,
 		@Switch Integer after,

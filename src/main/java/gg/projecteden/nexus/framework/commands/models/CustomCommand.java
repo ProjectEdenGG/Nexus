@@ -1127,6 +1127,8 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	@ConverterFor(LocalDate.class)
 	public LocalDate convertToLocalDate(String value) {
+		if ("today".equalsIgnoreCase(value))
+			return LocalDate.now();
 		if (value.startsWith("+"))
 			return Timespan.of(value.replaceFirst("\\+", "")).fromNow().toLocalDate();
 		if (value.startsWith("-"))
