@@ -7,8 +7,10 @@ import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
+import gg.projecteden.nexus.models.wordle.WordleUser.WordleLetter.WordleLetterState;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -101,24 +103,25 @@ public class WordleUser implements PlayerOwnedObject {
 
 			List<WordleLetter> letters = new ArrayList<>();
 			for (int i = 0; i < 5; i++) {
-				var color = ChatColor.DARK_GRAY;
+				var state = WordleLetterState.NO_POSITION;
 				var solutionChar = solution2.get(i);
 				var guessChar = guess2.get(i);
-				if (solutionChar.equals(guessChar)) {
-					color = ChatColor.DARK_GREEN;
-					solution2.set(i, "_");
-				}
-				letters.add(new WordleLetter(color, guessChar));
+				if (!"_".equals(guessChar))
+					if (solutionChar.equals(guessChar)) {
+						state = WordleLetterState.CORRECT_POSITION;
+						solution2.set(i, "_");
+					}
+				letters.add(new WordleLetter(state, guessChar));
 			}
 
 			for (int i = 0; i < 5; i++) {
 				var guessChar = guess2.get(i);
 				var letter = letters.get(i);
-				if (letter.getColor() == ChatColor.DARK_GREEN)
+				if (letter.getState() == WordleLetterState.CORRECT_POSITION)
 					continue;
 
-				if (solution2.contains(guessChar)) {
-					letters.set(i, new WordleLetter(ChatColor.GOLD, guessChar));
+				if (solution2.contains(guessChar) && !"_".equals(guessChar)) {
+					letters.set(i, new WordleLetter(WordleLetterState.WRONG_POSITION, guessChar));
 					solution2.set(solution2.indexOf(guessChar), "_");
 				}
 			}
@@ -129,15 +132,15 @@ public class WordleUser implements PlayerOwnedObject {
 	@Data
 	@SuppressWarnings("deprecation")
 	public static class WordleLetter {
-		private ChatColor color;
+		private WordleLetterState state;
 		private String letter;
 		private String emoji = "爅";
 
 		public static final String LARGE_BOX_EMOJI = "爅";
 		public static final String SMALL_BOX_EMOJI = "焯"; // For tooltips
 
-		public WordleLetter(ChatColor color, String letter) {
-			this.color = color;
+		public WordleLetter(WordleLetterState state, String letter) {
+			this.state = state;
 			this.letter = letter;
 		}
 
@@ -145,15 +148,68 @@ public class WordleUser implements PlayerOwnedObject {
 		public static String AFTER = InventoryTexture.minus(0);
 		public static String BEFORE_I = InventoryTexture.minus(12);
 		public static String AFTER_I = " " + InventoryTexture.minus(5);
+		public static String BEFORE_SMALL = InventoryTexture.minus(5);
+		public static String AFTER_SMALL = AFTER;
+		public static String BEFORE_TRANSPARENT = BEFORE_I;
+		public static String AFTER_TRANSPARENT = AFTER_I;
 
 		@Override
 		public String toString() {
-			var letter = isNullOrEmpty(this.letter) ? "" : this.letter.toUpperCase();
-			String minusBefore = isNullOrEmpty(letter) ? "" : "I".equals(letter) ? BEFORE_I : BEFORE;
-			String minusAfter = isNullOrEmpty(letter) ? "" : "I".equals(letter) ? AFTER_I : AFTER;
-			if (SMALL_BOX_EMOJI.equals(emoji))
-				minusBefore = InventoryTexture.minus(5);
-			return color + emoji + minusBefore + ChatColor.WHITE + letter + minusAfter;
+			var letter = this.letter == null ? "" : this.letter.toUpperCase();
+			var minusBefore = BEFORE;
+			var minusAfter = AFTER;
+
+			if (isNullOrEmpty(letter)) {
+				minusBefore = "";
+				minusAfter = "";
+			}
+
+			if ("I".equals(letter)) {
+				minusBefore = BEFORE_I;
+				minusAfter = AFTER_I;
+			}
+
+			if (" ".equals(letter)) {
+				minusBefore = BEFORE_TRANSPARENT;
+				minusAfter = AFTER_TRANSPARENT;
+			}
+
+			if (SMALL_BOX_EMOJI.equals(emoji)) {
+				minusBefore = BEFORE_SMALL;
+				minusAfter = AFTER;
+			}
+
+			return state.getColor() + emoji + minusBefore + ChatColor.WHITE + letter + minusAfter;
 		}
+
+		@Getter
+		@RequiredArgsConstructor
+		public enum WordleLetterState {
+			FAILED(ChatColor.RED, null),
+			UNUSED(ChatColor.GRAY, null),
+			NO_POSITION(ChatColor.DARK_GRAY, WordleSound.NO_POSITION),
+			WRONG_POSITION(ChatColor.GOLD, WordleSound.WRONG_POSITION),
+			CORRECT_POSITION(ChatColor.DARK_GREEN, WordleSound.CORRECT_POSITION),
+			;
+
+			private final ChatColor color;
+			private final WordleSound sound;
+
+			public void playSound() {
+				if (sound != null)
+					sound.playSound();
+			}
+		}
+	}
+
+	public enum WordleSound {
+		FAIL,
+		SUCCESS,
+		NO_POSITION,
+		WRONG_POSITION,
+		CORRECT_POSITION,
+		;
+
+		public void playSound() {}
 	}
 }

@@ -16,13 +16,16 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.wordle.WordleConfig;
 import gg.projecteden.nexus.models.wordle.WordleConfigService;
 import gg.projecteden.nexus.models.wordle.WordleUser;
-import gg.projecteden.nexus.models.wordle.WordleUser.WordleGame;
 import gg.projecteden.nexus.models.wordle.WordleUser.WordleLetter;
+import gg.projecteden.nexus.models.wordle.WordleUser.WordleLetter.WordleLetterState;
+import gg.projecteden.nexus.models.wordle.WordleUser.WordleSound;
 import gg.projecteden.nexus.models.wordle.WordleUserService;
 import gg.projecteden.nexus.utils.DialogUtils.DialogBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.audience.MessageType;
@@ -42,6 +45,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
+import static gg.projecteden.nexus.models.wordle.WordleUser.WordleLetter.WordleLetterState.CORRECT_POSITION;
+import static gg.projecteden.nexus.models.wordle.WordleUser.WordleLetter.WordleLetterState.FAILED;
+import static gg.projecteden.nexus.models.wordle.WordleUser.WordleLetter.WordleLetterState.NO_POSITION;
+import static gg.projecteden.nexus.models.wordle.WordleUser.WordleLetter.WordleLetterState.UNUSED;
+import static gg.projecteden.nexus.models.wordle.WordleUser.WordleLetter.WordleLetterState.WRONG_POSITION;
 import static gg.projecteden.nexus.utils.Extensions.isNullOrEmpty;
 import static java.util.stream.Collectors.joining;
 
@@ -53,6 +62,8 @@ public class WordleCommand extends CustomCommand {
 	private static final WordleConfigService configService = new WordleConfigService();
 	private static final WordleConfig config = configService.get0();
 	private static final WordleUserService userService = new WordleUserService();
+
+	private static int ANIMATION_DELAY = 30;
 
 	public WordleCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -90,21 +101,64 @@ public class WordleCommand extends CustomCommand {
 		new WordleArchiveMenu(yearMonth).open(player());
 	}
 
+	@Path("debug letters <input>")
+	void debug(String input) {
+		while (input.length() != 5)
+			input += " ";
+
+		send("&3Input: '&e" + input + "&f' (" + input.length() + ")");
+		var letters = Arrays.stream(input.split("")).map(letter -> new WordleLetter(CORRECT_POSITION, letter));
+		Dev.GRIFFIN.send(letters.map(WordleLetter::toString).collect(joining(" ")));
+	}
+
 	@Path("config")
 	void config(
-		@Switch int before,
-		@Switch int after,
-		@Switch int beforeI,
-		@Switch int afterI
+		@Switch Integer before,
+		@Switch Integer after,
+		@Switch Integer beforeI,
+		@Switch Integer afterI,
+		@Switch Integer beforeSmall,
+		@Switch Integer afterSmall,
+		@Switch Integer beforeTransparent,
+		@Switch Integer afterTransparent,
+		@Switch Integer animationDelay
 	) {
-		if (before != 0)
+		if (before != null) {
+			send("Updating WordleLetter.BEFORE to " + before);
 			WordleLetter.BEFORE = InventoryTexture.minus(before);
-		if (after != 0)
+		}
+		if (after != null) {
+			send("Updating WordleLetter.AFTER to " + after);
 			WordleLetter.AFTER = InventoryTexture.minus(after);
-		if (beforeI != 0)
+		}
+		if (beforeI != null) {
+			send("Updating BEFORE_I to " + beforeI);
 			WordleLetter.BEFORE_I = InventoryTexture.minus(beforeI);
-		if (afterI != 0)
+		}
+		if (afterI != null) {
+			send("Updating AFTER_I to " + afterI);
 			WordleLetter.AFTER_I = " " + InventoryTexture.minus(afterI);
+		}
+		if (beforeSmall != null) {
+			send("Updating BEFORE_SMALL to " + beforeSmall);
+			WordleLetter.BEFORE_SMALL = InventoryTexture.minus(beforeSmall);
+		}
+		if (afterSmall != null) {
+			send("Updating AFTER_SMALL to " + afterSmall);
+			WordleLetter.AFTER_SMALL = InventoryTexture.minus(afterSmall);
+		}
+		if (beforeTransparent != null) {
+			send("Updating BEFORE_TRANSPARENT to " + beforeTransparent);
+			WordleLetter.BEFORE_TRANSPARENT = InventoryTexture.minus(beforeTransparent);
+		}
+		if (afterTransparent != null) {
+			send("Updating AFTER_TRANSPARENT to " + afterTransparent);
+			WordleLetter.AFTER_TRANSPARENT = InventoryTexture.minus(afterTransparent);
+		}
+		if (animationDelay != null) {
+			send("Updating ANIMATION_DELAY to " + animationDelay);
+			ANIMATION_DELAY = animationDelay;
+		}
 	}
 
 	@RequiredArgsConstructor
@@ -125,7 +179,7 @@ public class WordleCommand extends CustomCommand {
 				dialog.bodyItem(head.build(), " " + Nerd.of(user).getColoredName());
 				for (String guess : user.get(date).getGuesses()) {
 					var letters = user.get(date).getColoredGuess(guess).stream().peek(letter -> letter.setLetter(null));
-					dialog.bodyText(letters.map(WordleUser.WordleLetter::toString).collect(joining(" ")));
+					dialog.bodyText(letters.map(WordleLetter::toString).collect(joining(" ")));
 				}
 				dialog.bodyText("");
 			}
@@ -141,11 +195,18 @@ public class WordleCommand extends CustomCommand {
 	@RequiredArgsConstructor
 	public static class WordleMenu {
 		private final LocalDate date;
+		private WordleUser user;
 		private String errorMessage;
 		private String input = "";
 
 		public void open(Player player) {
-			var user = userService.get(player);
+			open(player, -1);
+		}
+
+		public void open(Player player, int animationStep) {
+			if (user == null)
+				user = userService.get(player);
+
 			var gameConfig = config.get(date);
 			var game = user.get(date);
 			var solution = gameConfig.getSolution().toUpperCase();
@@ -155,30 +216,56 @@ public class WordleCommand extends CustomCommand {
 
 			dialog.bodyText("");
 
-			for (var guess : game.getGuesses()) {
-				dialog.bodyText(game.getColoredGuess(guess)
-					.stream()
-					.map(WordleUser.WordleLetter::toString)
+			List<String> guessesForAnimation = new ArrayList<>(game.getGuesses());
+			if (animationStep != -1 && animationStep <= 4) {
+				var last = guessesForAnimation.removeLast();
+				last = last.substring(0, animationStep) + " ".repeat(last.length() - animationStep);
+				guessesForAnimation.add(last);
+				Tasks.wait(ANIMATION_DELAY, () -> open(player, animationStep + 1));
+			}
+
+			for (var guess : guessesForAnimation) {
+				dialog.bodyText(game.getColoredGuess(guess).stream()
+					.map(WordleLetter::toString)
 					.collect(joining(" ")));
+			}
+
+			if (animationStep >= 0) {
+				var guess = game.getColoredGuess(guessesForAnimation.getLast());
+				var letters = guess.stream().filter(letter -> isNotNullOrEmpty(letter.getLetter())).toList();
+				if (!letters.isEmpty()) {
+					var last = letters.getLast();
+
+					if (animationStep == 5) {
+						if (game.isSuccess()) {
+							WordleSound.SUCCESS.playSound();
+						} else if (game.isFailed()) {
+							WordleSound.FAIL.playSound();
+						} else {
+							last.getState().playSound();
+						}
+					}
+				}
 			}
 
 			if (game.isFailed()) {
 				dialog.bodyText(Arrays.stream(solution.toUpperCase().split(""))
-					.map(letter -> new WordleLetter(ChatColor.RED, letter).toString())
+					.map(letter -> new WordleLetter(FAILED, letter).toString())
 					.collect(joining(" ")));
 			}
 
 			dialog.bodyText("");
 
 			for (String row : KEYBOARD){
-				dialog.bodyText(getKeyboardColors(row, game, solution)
+				dialog.bodyText(getKeyboardColors(row, guessesForAnimation, solution)
 					.stream()
-					.map(WordleUser.WordleLetter::toString)
+					.map(WordleLetter::toString)
 					.collect(joining(" ")));
 			}
 
+			var guesses = game.getGuesses();
 			if (!game.isComplete())
-				dialog.inputText("answer", errorMessage != null ? errorMessage : game.getGuesses().isEmpty() ? "Guess a 5 letter word" : "", input);
+				dialog.inputText("answer", errorMessage != null ? errorMessage : guesses.isEmpty() ? "Guess a 5 letter word" : "", input);
 
 			var builder = dialog.multiAction().columns(1);
 			if (game.isComplete())
@@ -194,11 +281,11 @@ public class WordleCommand extends CustomCommand {
 						errorMessage = "&cWord must be 5 letters long";
 					else if (!config.getAllowedWords().contains(input))
 						errorMessage = "&cWord not in dictionary";
-					else if (game.getGuesses().contains(input))
+					else if (guesses.contains(input))
 						errorMessage = "&cYou already guessed that word";
 					else {
 						errorMessage = null;
-						game.getGuesses().add(input);
+						guesses.add(input);
 					}
 
 					var today = new GeoIPService().get(player).getCurrentTime().toLocalDate();
@@ -207,13 +294,13 @@ public class WordleCommand extends CustomCommand {
 						if (input.equalsIgnoreCase(solution)) {
 							user.wonOn(today);
 
-							var message = new JsonBuilder(StringUtils.getPrefix("Wordle") + "&e" + user.getNickname() + " &3solved puzzle #" + gameConfig.getDaysSinceLaunch() + " in &e" + game.getGuesses().size() + " guesses&3!");
+							var message = new JsonBuilder(StringUtils.getPrefix("Wordle") + "&e" + user.getNickname() + " &3solved puzzle #" + gameConfig.getDaysSinceLaunch() + " in &e" + guesses.size() + " guesses&3!");
 
 							message.hover(user.getNerd().getColoredName());
 							message.hover("&7Wordle #" + gameConfig.getDaysSinceLaunch());
 							message.hover("&7" + date.format(formatter));
 							message.hover("");
-							for (String guess : game.getGuesses())
+							for (String guess : guesses)
 								message.hover(" " + game.getColoredGuess(guess).stream()
 									.peek(letter -> letter.setLetter(null))
 									.peek(letter -> letter.setEmoji(WordleLetter.SMALL_BOX_EMOJI))
@@ -233,10 +320,10 @@ public class WordleCommand extends CustomCommand {
 						}
 					}
 
-					if (game.getGuesses().contains(input))
+					if (guesses.contains(input))
 						input = "";
 
-					open(player);
+					open(player, errorMessage == null ? 0 : -1);
 				})
 				.button("Go to archive", click -> new WordleArchiveMenu(YearMonth.from(date)).open(player));
 
@@ -245,38 +332,38 @@ public class WordleCommand extends CustomCommand {
 			userService.save(user);
 		}
 
-		private static @NotNull List<WordleLetter> getKeyboardColors(String keysInRow, WordleGame game, String solution) {
-			Map<String, ChatColor> keys = new HashMap<>();
+		private static @NotNull List<WordleLetter> getKeyboardColors(String keysInRow, List<String> guesses, String solution) {
+			Map<String, WordleLetterState> keys = new HashMap<>();
 			for (String letter : keysInRow.toLowerCase().split(""))
-				keys.put(letter, ChatColor.GRAY);
+				keys.put(letter, UNUSED);
 
-			for (String guess : game.getGuesses()) {
+			for (String guess : guesses) {
 				var solution2 = new ArrayList<>(List.of(solution.toLowerCase().split("")));
 				var guess2 = new ArrayList<>(List.of(guess.toLowerCase().split("")));
 				for (int i = 0; i < 5; i++) {
 					var guessChar = guess2.get(i).toLowerCase();
 					var solutionChar = solution2.get(i).toLowerCase();
 
-					var color = keys.getOrDefault(guessChar, ChatColor.GRAY);
-					if (color == ChatColor.DARK_GREEN)
+					var state = keys.getOrDefault(guessChar, UNUSED);
+					if (state == CORRECT_POSITION)
 						continue;
 
 					if (guessChar.equals(solutionChar)) {
-						color = ChatColor.DARK_GREEN;
+						state = CORRECT_POSITION;
 						guess2.set(i, "_");
 						solution2.set(i, "_");
 					} else if (solution2.contains(guessChar))
-						color = ChatColor.GOLD;
-					else if (color != ChatColor.GOLD)
-						color = ChatColor.DARK_GRAY;
+						state = WRONG_POSITION;
+					else if (state != WRONG_POSITION)
+						state = NO_POSITION;
 
-					keys.put(guessChar, color);
+					keys.put(guessChar, state);
 				}
 			}
 
 			List<WordleLetter> letters = new ArrayList<>();
 			for (String letter : keysInRow.toLowerCase().split(""))
-				letters.add(new WordleLetter(keys.getOrDefault(letter, ChatColor.GRAY), letter));
+				letters.add(new WordleLetter(keys.getOrDefault(letter, UNUSED), letter));
 			return letters;
 		}
 
