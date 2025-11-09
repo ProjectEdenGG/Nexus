@@ -140,12 +140,15 @@ public class Pugmas25 extends EdenEvent {
 		treeMinecartTask = Tasks.repeat(5, TickTime.TICK.x(10), () -> {
 			if (treeMinecart == null || treeMinecart.isDead()) {
 				treeMinecart = getWorld().spawn(treeMinecartSpawnLoc, Minecart.class, minecart -> {
-					minecart.setMaxSpeed(1);
+					minecart.setMaxSpeed(0.4);
 					minecart.setSlowWhenEmpty(false);
 					minecart.setInvulnerable(true);
 					minecart.setFrictionState(TriState.FALSE);
 					minecart.setVelocity(BlockFace.WEST.getDirection().multiply(0.2));
 				});
+			} else {
+				if (treeMinecart.getVelocity().length() < 0.05)
+					treeMinecart.remove();
 			}
 		});
 	}
