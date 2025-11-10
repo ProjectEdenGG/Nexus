@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events.y2025.pugmas25.models;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25Command;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -24,7 +25,25 @@ public class Pugmas25Interactions implements Listener {
 	}
 
 	@EventHandler
-	public void on(PlayerInteractEvent event) {
+	public void onClickQuestBoard(PlayerInteractEvent event) {
+		if (!Pugmas25.get().isAtEvent(event))
+			return;
+
+		Block block = event.getClickedBlock();
+		if (Nullables.isNullOrAir(block))
+			return;
+
+		if (block.getType() != Material.BARRIER)
+			return;
+
+		if (Pugmas25.get().worldguard().getRegionsLikeAt("pugmas25_questboard_[0-9]+", block.getLocation()).isEmpty())
+			return;
+
+		PlayerUtils.runCommand(event.getPlayer(), "pugmas25 quest progress");
+	}
+
+	@EventHandler
+	public void onClickSnow(PlayerInteractEvent event) {
 		if (!Pugmas25.get().isAtEvent(event))
 			return;
 
