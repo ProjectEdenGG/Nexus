@@ -50,21 +50,20 @@ import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /*
-	TODO:
-		FIND THE NUT CRACKERS
-
 	"TODO: RELEASE" <-- CHECK FOR ANY COMMENTS
  */
 @QuestConfig(
@@ -213,6 +212,19 @@ public class Pugmas25 extends EdenEvent {
 		if (shouldHandle(player)) {
 			onArrive(player);
 		}
+	}
+
+	@EventHandler
+	public void on(VehicleEntityCollisionEvent event) {
+		Vehicle vehicle = event.getVehicle();
+		if (!shouldHandle(vehicle))
+			return;
+
+		if (!vehicle.getUniqueId().equals(treeMinecart.getUniqueId()))
+			return;
+
+		event.setCancelled(true);
+		event.setCollisionCancelled(true);
 	}
 
 	//

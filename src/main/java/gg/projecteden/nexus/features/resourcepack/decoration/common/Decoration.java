@@ -68,13 +68,14 @@ public class Decoration {
 	private ItemFrame itemFrame;
 	private final Rotation bukkitRotation;
 	private Boolean canEdit;
+	private Location clientsideLocation;
 
 	public Decoration(DecorationConfig config) {
 		this(config, null);
 	}
 
 	public Decoration(DecorationConfig config, @Nullable ItemFrame itemFrame) {
-		this(config, itemFrame, itemFrame == null ? null : itemFrame.getRotation(), null);
+		this(config, itemFrame, itemFrame == null ? null : itemFrame.getRotation(), null, null);
 	}
 
 	public Location getOrigin() {

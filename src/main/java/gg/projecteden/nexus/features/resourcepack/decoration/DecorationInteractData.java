@@ -77,7 +77,7 @@ public class DecorationInteractData {
 				final DecorationConfig config = DecorationConfig.of(clientSideItemFrame.content());
 				if (config != null) {
 					Rotation rotation = clientSideItemFrame.getBukkitRotation();
-					this.decoration = new Decoration(config, null, rotation, null);
+					this.decoration = new Decoration(config, null, rotation, null, clientSideItemFrame.getLocation());
 				}
 			}
 		}

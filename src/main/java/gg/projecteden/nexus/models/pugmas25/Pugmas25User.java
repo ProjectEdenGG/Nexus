@@ -1,19 +1,32 @@
 package gg.projecteden.nexus.models.pugmas25;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.clientside.ClientSideEntitiesManager;
+import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
+import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
 import gg.projecteden.nexus.features.commands.staff.operator.HealCommand;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25Command;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waystones.Pugmas25Waystone;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
+import gg.projecteden.nexus.models.clientside.ClientSideConfig;
+import gg.projecteden.nexus.models.clientside.ClientSideUser;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 
@@ -44,6 +57,23 @@ public class Pugmas25User implements PlayerOwnedObject {
 			advent = new Advent25User(uuid);
 
 		return advent;
+	}
+
+	public void unlockWaystone(Pugmas25Waystone waystone) {
+		sendMessage(Pugmas25.PREFIX + "Unlocked waystone: &b" + StringUtils.camelCase(waystone));
+		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_CHIME).receiver(getPlayer()).play();
+		foundWaystones.add(waystone);
+
+		new ParticleBuilder(Particle.WITCH)
+			.location(waystone.getFrameLoc().toCenterLocation().add(0, 0.5, 0))
+			.count(25)
+			.offset(0.5, 0.5, 0.5)
+			.receivers(getOnlinePlayer())
+			.spawn();
+
+		ClientSideItemFrame itemFrame = (ClientSideItemFrame) ClientSideConfig.getEntities(waystone.getFrameLoc(), ClientSideEntityType.ITEM_FRAME, 1).stream().findFirst().orElse(null);
+		if (itemFrame != null)
+			ClientSideUser.of(uuid).refresh(itemFrame.getUuid());
 	}
 
 	@Deprecated
