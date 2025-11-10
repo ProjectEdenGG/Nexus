@@ -18,6 +18,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Distri
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Fishing;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Interactions;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Intro;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Snowmen;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Sidebar;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Train;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25TrainBackground;
@@ -48,9 +49,9 @@ import net.kyori.adventure.util.TriState;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -98,7 +99,6 @@ public class Pugmas25 extends EdenEvent {
 
 	private final Location treeMinecartSpawnLoc = location(-680.5, 118.25, -3111.5);
 	private static Minecart treeMinecart;
-	private int treeMinecartTask = -1;
 
 	@Getter
 	private static boolean ridesEnabled = true;
@@ -130,26 +130,21 @@ public class Pugmas25 extends EdenEvent {
 		new Pugmas25Cabin();
 		new Pugmas25BoatRace();
 		new Pugmas25Interactions();
+		new Pugmas25Snowmen();
 
 		Pugmas25Train.startup();
 		Pugmas25TrainBackground.startup();
 
 		Tasks.wait(TickTime.SECOND, () -> getPlayers().forEach(this::onArrive));
 
-		treeMinecartTask = Tasks.repeat(5, TickTime.TICK.x(10), () -> {
-			if (treeMinecart == null || treeMinecart.isDead()) {
-				treeMinecart = getWorld().spawn(treeMinecartSpawnLoc, Minecart.class, minecart -> {
-					minecart.setMaxSpeed(0.4);
-					minecart.setSlowWhenEmpty(false);
-					minecart.setInvulnerable(true);
-					minecart.setFrictionState(TriState.FALSE);
-					minecart.setVelocity(BlockFace.WEST.getDirection().multiply(0.2));
-				});
-			} else {
-				if (treeMinecart.getVelocity().length() < 0.05)
-					treeMinecart.remove();
-			}
+		treeMinecart = getWorld().spawn(treeMinecartSpawnLoc, Minecart.class, _minecart -> {
+			_minecart.setMaxSpeed(0.1);
+			_minecart.setSlowWhenEmpty(false);
+			_minecart.setInvulnerable(true);
+			_minecart.setFrictionState(TriState.FALSE);
+			_minecart.setVelocity(BlockFace.WEST.getDirection().multiply(0.1));
 		});
+
 	}
 
 	@Override
@@ -157,7 +152,6 @@ public class Pugmas25 extends EdenEvent {
 		if (sidebar != null)
 			sidebar.handleEnd();
 
-		Tasks.cancel(treeMinecartTask);
 		treeMinecart.remove();
 		Pugmas25Train.shutdown();
 		Pugmas25TrainBackground.shutdown();
@@ -216,15 +210,12 @@ public class Pugmas25 extends EdenEvent {
 
 	@EventHandler
 	public void on(VehicleEntityCollisionEvent event) {
-		Vehicle vehicle = event.getVehicle();
-		if (!shouldHandle(vehicle))
-			return;
+		Entity entity = event.getVehicle();
 
-		if (!vehicle.getUniqueId().equals(treeMinecart.getUniqueId()))
-			return;
+		// Skip unnecessary server event location checks since it uses UUID
 
-		event.setCancelled(true);
-		event.setCollisionCancelled(true);
+		if (entity.getUniqueId().equals(treeMinecart.getUniqueId()))
+			event.setCancelled(true);
 	}
 
 	//
