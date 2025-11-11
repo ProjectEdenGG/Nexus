@@ -4,10 +4,14 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
+import gg.projecteden.nexus.models.geoip.GeoIPService;
+import gg.projecteden.nexus.models.mutemenu.MuteMenuService;
 import gg.projecteden.nexus.models.wordle.WordleUser.WordleLetter.WordleLetterState;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -20,6 +24,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +32,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+import static gg.projecteden.nexus.utils.AdventureUtils.getPrefix;
 import static gg.projecteden.nexus.utils.Extensions.isNullOrEmpty;
 
 @Data
@@ -43,6 +49,24 @@ public class WordleUser implements PlayerOwnedObject {
 
 	public WordleGame get(LocalDate date) {
 		return games.computeIfAbsent(date, $ -> new WordleGame(date));
+	}
+
+	public ZonedDateTime getZonedLocalDateTime() {
+		return new GeoIPService().get(this).getCurrentTime();
+	}
+
+	public LocalDate getZonedLocalDate() {
+		return getZonedLocalDateTime().toLocalDate();
+	}
+
+	public void notifyOfNewGame() {
+		if (new MuteMenuService().get(this).hasMuted(MuteMenuItem.WORDLE))
+			return;
+
+		if (get(getZonedLocalDate()).isStarted())
+			return;
+
+		sendMessage(new JsonBuilder(getPrefix("Wordle") + "A new puzzle is available! &eClick here to play").command("/wordle"));
 	}
 
 	@Data

@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.api.common.annotations.Async;
-import gg.projecteden.api.interfaces.HasUniqueId;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
@@ -25,14 +25,17 @@ import gg.projecteden.nexus.models.wordle.WordleUserService;
 import gg.projecteden.nexus.utils.DialogUtils.DialogBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.audience.MessageType;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.DayOfWeek;
@@ -73,8 +76,9 @@ import static java.util.stream.Collectors.joining;
 		Best all time streak
  */
 
+@NoArgsConstructor
 @SuppressWarnings("deprecation")
-public class WordleCommand extends CustomCommand {
+public class WordleCommand extends CustomCommand implements Listener {
 	private static final List<String> KEYBOARD = List.of("QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM");
 	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy");
 	private static final WordleConfigService configService = new WordleConfigService();
@@ -87,17 +91,15 @@ public class WordleCommand extends CustomCommand {
 		super(event);
 	}
 
-	private static LocalDate getZonedLocalDate(HasUniqueId player) {
-		return new GeoIPService().get(player.getUniqueId()).getCurrentTime().toLocalDate();
-	}
-
 	@Path("[date]")
 	@Async
 	void wordle(LocalDate date) {
-		if (date == null)
-			date = getZonedLocalDate(player());
+		var user = userService.get(player());
 
-		if (userService.get(player()).get(date).isComplete())
+		if (date == null)
+			date = user.getZonedLocalDate();
+
+		if (user.get(date).isComplete())
 			new WordleResultsMenu(date).open(player());
 		else
 			new WordleMenu(date).open(player());
@@ -105,16 +107,20 @@ public class WordleCommand extends CustomCommand {
 
 	@Path("results [date]")
 	void results(LocalDate date) {
+		var user = userService.get(player());
+
 		if (date == null)
-			date = getZonedLocalDate(player());
+			date = user.getZonedLocalDate();
 
 		new WordleResultsMenu(date).open(player());
 	}
 
 	@Path("archive [yearMonth]")
 	void archive(YearMonth yearMonth) {
+		var user = userService.get(player());
+
 		if (yearMonth == null)
-			yearMonth = YearMonth.from(getZonedLocalDate(player()));
+			yearMonth = YearMonth.from(user.getZonedLocalDate());
 
 		new WordleArchiveMenu(yearMonth).open(player());
 	}
@@ -345,7 +351,7 @@ public class WordleCommand extends CustomCommand {
 						if (input.equalsIgnoreCase(solution)) {
 							game.setSolvedOnReleaseDay(true);
 
-							var message = new JsonBuilder(StringUtils.getPrefix("Wordle") + "&e" + user.getNickname() + " &3solved puzzle #" + gameConfig.getDaysSinceLaunch() + " in &e" + guesses.size() + " guesses&3!");
+							var message = new JsonBuilder("&e" + user.getNickname() + " &3solved puzzle #" + gameConfig.getDaysSinceLaunch() + " in &e" + guesses.size() + " guesses&3!");
 
 							message.hover(user.getNerd().getColoredName());
 							message.hover("&7Wordle #" + gameConfig.getDaysSinceLaunch());
@@ -362,9 +368,10 @@ public class WordleCommand extends CustomCommand {
 							message.command("/wordle results " + date.format(DateTimeFormatter.ISO_DATE));
 
 							//noinspection UnstableApiUsage
-							Broadcast.ingame()
+							Broadcast.all()
 								.sender(player)
 								.message(message)
+								.prefix("Wordle")
 								.messageType(MessageType.CHAT)
 								.muteMenuItem(MuteMenuItem.WORDLE)
 								.send();
@@ -457,7 +464,7 @@ public class WordleCommand extends CustomCommand {
 			for (DayOfWeek dayOfWeek : week)
 				buttons.button("&l" + dayOfWeek.name().charAt(0));
 
-			var today = getZonedLocalDate(player);
+			var today = user.getZonedLocalDate();
 			var current = initial;
 			while (current.isBefore(last)) {
 				var color = ChatColor.WHITE;
@@ -513,6 +520,11 @@ public class WordleCommand extends CustomCommand {
 
 			buttons.open(player);
 		}
-
 	}
+
+	@EventHandler
+	public void on(PlayerJoinEvent event) {
+		Tasks.wait(TickTime.SECOND, () -> new WordleUserService().get(event.getPlayer()).notifyOfNewGame());
+	}
+
 }
