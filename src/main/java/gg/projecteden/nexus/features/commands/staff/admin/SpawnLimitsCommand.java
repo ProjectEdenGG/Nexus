@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.BINGO;
+import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.PUGMAS25;
 import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.UHC;
 
 @Permission(Group.ADMIN)
@@ -39,7 +40,7 @@ public class SpawnLimitsCommand extends CustomCommand {
 				var worldGroup = WorldGroup.of(world);
 				var subWorldGroup = SubWorldGroup.of(world);
 
-				if (worldGroup.isSurvivalMode() || List.of(BINGO, UHC).contains(subWorldGroup)) {
+				if (worldGroup.isSurvivalMode() || List.of(BINGO, UHC, PUGMAS25).contains(subWorldGroup)) {
 					for (SpawnLimitType type : SpawnLimitType.values())
 						type.set(world, type.getDefaultValue());
 				} else {

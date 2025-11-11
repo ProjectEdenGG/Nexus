@@ -956,8 +956,8 @@ public abstract class EdenEvent extends Feature implements Listener {
 
 	public CompletableFuture<Void> fadeToBlack(Player player, String title, int stayTicks) {
 		return new TitleBuilder()
-			.title(title)
-			.subtitle(CustomEmoji.SCREEN_BLACK.getChar())
+			.title(CustomEmoji.SCREEN_BLACK.getChar())
+			.subtitle(title)
 			.fade(TickTime.TICK.x(10))
 			.players(player)
 			.stay(TickTime.TICK.x(stayTicks))

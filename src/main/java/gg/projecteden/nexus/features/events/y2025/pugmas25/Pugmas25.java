@@ -4,9 +4,11 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.commands.DeathMessagesCommand;
 import gg.projecteden.nexus.features.commands.staff.operator.HealCommand;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot;
+import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.advent.Pugmas25Advent;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.balloons.Pugmas25BalloonEditor;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.balloons.Pugmas25BalloonManager;
@@ -34,26 +36,40 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25ShopMe
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.framework.annotations.Date;
+import gg.projecteden.nexus.models.deathmessages.DeathMessages;
+import gg.projecteden.nexus.models.deathmessages.DeathMessagesService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.pugmas25.Advent25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.models.warps.WarpType;
+import gg.projecteden.nexus.utils.AdventureUtils;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.util.TriState;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Ageable;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Minecart;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -63,6 +79,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /*
 	"TODO: RELEASE" <-- CHECK FOR ANY COMMENTS
@@ -99,6 +118,8 @@ public class Pugmas25 extends EdenEvent {
 
 	private final Location treeMinecartSpawnLoc = location(-680.5, 118.25, -3111.5);
 	private static Minecart treeMinecart;
+
+	private static int entityAgeTask;
 
 	@Getter
 	private static boolean ridesEnabled = true;
@@ -145,6 +166,19 @@ public class Pugmas25 extends EdenEvent {
 			_minecart.setVelocity(BlockFace.WEST.getDirection().multiply(0.1));
 		});
 
+		// Prevent stupid mob AI, kill them and let server respawn
+		entityAgeTask = Tasks.repeat(TickTime.SECOND.x(5), TickTime.MINUTE, () -> {
+			getWorld().getEntities().stream()
+				.filter(entity -> entity instanceof Mob)
+				.filter(entity -> entity.getEntitySpawnReason() != SpawnReason.CUSTOM)
+				.forEach(entity -> {
+					if (entity.getTicksLived() > TickTime.HOUR.x(4)) {
+						Dev.WAKKA.send("Killing mob of old age: " + entity.getType());
+						entity.remove();
+					}
+				});
+		});
+
 	}
 
 	@Override
@@ -153,6 +187,7 @@ public class Pugmas25 extends EdenEvent {
 			sidebar.handleEnd();
 
 		treeMinecart.remove();
+		Tasks.cancel(entityAgeTask);
 		Pugmas25Train.shutdown();
 		Pugmas25TrainBackground.shutdown();
 		Pugmas25BalloonEditor.shutdown();
@@ -222,7 +257,7 @@ public class Pugmas25 extends EdenEvent {
 
 	@Override
 	protected void registerFishingLoot() {
-		registerFishingLoot(EventFishingLoot.EventFishingLootCategory.FISH, EventFishingLoot.EventFishingLootCategory.JUNK);
+		registerFishingLoot(EventFishingLootCategory.FISH, EventFishingLootCategory.JUNK);
 	}
 
 	@Override
@@ -296,42 +331,74 @@ public class Pugmas25 extends EdenEvent {
 	}
 
 	public void onDeath(Player player, @NotNull Pugmas25.Pugmas25DeathCause deathType) {
-		player.teleportAsync(deathLoc);
-		broadcast(deathType.getMessage(player));
+		onDeath(player, deathType, null);
+	}
 
-		fadeToBlack(player, "&cYou died.", 30).thenRun(() -> player.teleportAsync(getRespawnLocation(player)));
+	public void onDeath(Player player, @NotNull Pugmas25.Pugmas25DeathCause deathType, String defaultMessage) {
+		player.teleportAsync(deathLoc);
+		player.setFoodLevel(20);
+		player.setHealth(20);
+
+		String message =
+			deathType == Pugmas25DeathCause.MONSTER && defaultMessage != null ?
+				defaultMessage : deathType.getMessage(player);
+
+		broadcast(message);
+		fadeToBlack(player, "&c&lYou died.", 30).thenRun(() -> player.teleportAsync(getRespawnLocation(player)));
 	}
 
 	@Override
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		event.setCancelled(true);
-		EntityDamageEvent damageEvent = event.getEntity().getLastDamageCause();
+		Pugmas25DeathCause deathCause = Pugmas25DeathCause.from(event);
 
-		Pugmas25DeathCause deathCause = Pugmas25DeathCause.UNKNOWN;
-		if (damageEvent != null) {
-			deathCause = switch (damageEvent.getCause()) {
-				case FALL -> Pugmas25DeathCause.FALL;
-				case STARVATION -> Pugmas25DeathCause.STARVATION;
-				case FLY_INTO_WALL -> Pugmas25DeathCause.ELYTRA;
-				default -> Pugmas25DeathCause.UNKNOWN;
-			};
+		String defaultMessage = null;
+		Component deathMessageRaw = event.deathMessage();
+		if (deathCause == Pugmas25DeathCause.MONSTER && deathMessageRaw instanceof TranslatableComponent deathMessage) {
+			DeathMessages deathMessages = new DeathMessagesService().get(event.getPlayer());
+			JsonBuilder json = new JsonBuilder(deathMessage.args(deathMessage.args().stream().map(arg -> DeathMessagesCommand.handleArgument(deathMessages, arg)).toList()));
+			defaultMessage = AdventureUtils.asPlainText(json.build());
 		}
 
-		onDeath(event.getPlayer(), deathCause);
+		onDeath(event.getPlayer(), deathCause, defaultMessage);
 	}
 
 	@AllArgsConstructor
 	public enum Pugmas25DeathCause {
-		UNKNOWN("<player> died"),
-		GEYSER("<player> was boiled alive"),
-		INSTANT_DEATH("<player> had really bad luck"),
-		FALL("<player> forgot fall damage existed"),
-		STARVATION("<player> forgot to eat"),
-		ELYTRA("<player> needs more practice with an elytra");
+		UNKNOWN("<player> died", "<player> stopped existing for unknown reasons", "<player> has left this plane of existence"),
+		GEYSER("<player> was boiled alive", "<player> tried taking a lava bath", "<player> was cooked medium rare", "<player> took a steam bath… permanently"),
+		INSTANT_DEATH("<player> had really bad luck", "<player> experienced instant regret", "<player> rolled a natural 1"),
+		FALL("<player> forgot fall damage existed", "<player> misjudged that jump", "<player> tested gravity’s loyalty"),
+		STARVATION("<player> forgot to eat", "<player> starved to death", "<player> thought hunger was optional", "<player> should’ve packed snacks", "<player> learned you can’t live on Christmas spirit alone"),
+		ELYTRA("<player> needs more practice with an elytra", "<player> became one with the wall"),
+		TRAIN("<player> found out what happens when unstoppable meets squishable", "<player> became train-shaped paste", "<player> got flattened by holiday cheer", "<player> mistook the tracks for a crosswalk"),
+		MONSTER("<player> died fighting a monster");
 
-		final String message;
+		final List<String> messages;
+
+		Pugmas25DeathCause(String... messages) {
+			this.messages = new ArrayList<>(List.of(messages));
+		}
+
+		private static @NotNull Pugmas25DeathCause from(PlayerDeathEvent event) {
+			EntityDamageEvent damageEvent = event.getEntity().getLastDamageCause();
+
+			Pugmas25DeathCause deathCause = Pugmas25DeathCause.UNKNOWN;
+			if (damageEvent != null) {
+				deathCause = switch (damageEvent.getCause()) {
+					case FALL -> Pugmas25DeathCause.FALL;
+					case STARVATION -> Pugmas25DeathCause.STARVATION;
+					case FLY_INTO_WALL -> Pugmas25DeathCause.ELYTRA;
+					case ENTITY_ATTACK, ENTITY_SWEEP_ATTACK, ENTITY_EXPLOSION, PROJECTILE, MAGIC ->
+						Pugmas25DeathCause.MONSTER;
+					default -> Pugmas25DeathCause.UNKNOWN;
+				};
+			}
+			return deathCause;
+		}
 
 		public String getMessage(Player player) {
+			String message = RandomUtils.randomElement(messages);
 			return message.replaceAll("<player>", Nickname.of(player));
 		}
 	}

@@ -249,7 +249,7 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 	@Path("death <cause>")
 	@Permission(Group.ADMIN)
 	void death_test(Pugmas25DeathCause deathCause) {
-		Pugmas25.get().onDeath(player(), deathCause);
+		Pugmas25.get().onDeath(player(), deathCause, null);
 	}
 
 	@Path("slotMachine rewards")

@@ -59,8 +59,8 @@ public class Cutscene {
 	public Cutscene fade(long delayTicks, String title, int stayTicks) {
 		return instruction(delayTicks, _player -> {
 			new TitleBuilder()
-				.title(title)
-				.subtitle(CustomEmoji.SCREEN_BLACK.getChar())
+				.title(CustomEmoji.SCREEN_BLACK.getChar())
+				.subtitle(title)
 				.fade(TickTime.TICK.x(10))
 				.players(_player)
 				.stay(TickTime.TICK.x(stayTicks))

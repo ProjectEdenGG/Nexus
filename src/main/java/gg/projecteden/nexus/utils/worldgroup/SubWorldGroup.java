@@ -30,6 +30,7 @@ public enum SubWorldGroup implements IWorldGroup {
 	DEATH_SWAP("deathswap", "deathswap_nether"),
 	UHC("uhc", "uhc_nether"),
 	BINGO("bingo", "bingo_nether"),
+	PUGMAS25("pugmas25"),
 	SKYBLOCK("bskyblock_world", "bskyblock_world_nether", "bskyblock_world_the_end"),
 	ONEBLOCK("oneblock_world", "oneblock_world_nether"),
 	BUILD_CONTESTS {

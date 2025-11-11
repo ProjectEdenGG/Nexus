@@ -48,6 +48,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class Train {
@@ -69,6 +71,7 @@ public class Train {
 	private final String regionReveal;
 	private final TrainCrossings trainCrossings;
 	private final boolean bonkPlayers;
+	private final Consumer<Player> onBonk;
 	private final Map<Integer, ItemModelType> modelOverrides;
 	private final String forceLoadRegion;
 	private final String regionAnnounceMuteRegex;
@@ -93,7 +96,7 @@ public class Train {
 	@Builder
 	public Train(Location location, BlockFace direction, double speed, int seconds, boolean test, String regionAnnounce,
 				 Location whistleLocation, double whistleRadius, String regionTrack, String regionReveal, TrainCrossings trainCrossings,
-				 boolean bonkPlayers, Map<Integer, ItemModelType> modelOverrides, String forceLoadRegion, String regionAnnounceMuteRegex) {
+				 boolean bonkPlayers, Consumer<Player> onBonk, Map<Integer, ItemModelType> modelOverrides, String forceLoadRegion, String regionAnnounceMuteRegex) {
 		this.location = location.toCenterLocation();
 		this.worldguard = new WorldGuardUtils(location);
 		this.forwards = direction;
@@ -111,6 +114,7 @@ public class Train {
 		this.regionReveal = regionReveal;
 		this.trainCrossings = trainCrossings;
 		this.bonkPlayers = bonkPlayers;
+		this.onBonk = onBonk;
 		this.forceLoadRegion = forceLoadRegion;
 		this.regionAnnounceMuteRegex = regionAnnounceMuteRegex;
 
@@ -257,6 +261,8 @@ public class Train {
 								.location(player.getLocation())
 								.receiver(player)
 								.play();
+
+						onBonk.accept(player);
 					}
 				}
 			}));
