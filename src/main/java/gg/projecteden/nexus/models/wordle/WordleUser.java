@@ -203,7 +203,7 @@ public class WordleUser implements PlayerOwnedObject {
 		NO_POSITION(player -> player.playSound(player.getLocation(), "block.note_block.bass", SoundCategory.UI, 1, .75f)),
 		WRONG_POSITION(player -> player.playSound(player.getLocation(), "block.note_block.bass", SoundCategory.UI, 1, 1f)),
 		CORRECT_POSITION(player -> player.playSound(player.getLocation(), "block.note_block.bass", SoundCategory.UI, 1, 1.25f)),
-		;;
+		;
 
 		private Consumer<Player> consumer;
 

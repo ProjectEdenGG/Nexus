@@ -4,10 +4,9 @@ import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
-import gg.projecteden.nexus.features.commands.WordleCommand.WordleImport.WordleDay;
-import gg.projecteden.nexus.features.commands.WordleCommand.WordleImport.WordleDay.WordlePlayer;
 import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -24,12 +23,10 @@ import gg.projecteden.nexus.models.wordle.WordleUser.WordleLetter.WordleLetterSt
 import gg.projecteden.nexus.models.wordle.WordleUser.WordleSound;
 import gg.projecteden.nexus.models.wordle.WordleUserService;
 import gg.projecteden.nexus.utils.DialogUtils.DialogBuilder;
-import gg.projecteden.nexus.utils.HttpUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.audience.MessageType;
@@ -44,7 +41,6 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -123,6 +119,26 @@ public class WordleCommand extends CustomCommand {
 		new WordleArchiveMenu(yearMonth).open(player());
 	}
 
+	@Path("setPlayedOnReleaseDay <date> [player] [state]")
+	@Permission(Group.ADMIN)
+	void setPlayedOnReleaseDay(LocalDate date, @Arg("self") WordleUser user, Boolean state) {
+		if (state == null)
+			state = !user.get(date).isPlayedOnReleaseDay();
+
+		user.get(date).setPlayedOnReleaseDay(state);
+		send(PREFIX + "Set played on release day to " + state + " for " + user.getNickname() + "'s puzzle #" + config.get(date).getDaysSinceLaunch());
+	}
+
+	@Path("setSolvedOnReleaseDay <date> [player] [state]")
+	@Permission(Group.ADMIN)
+	void setSolvedOnReleaseDay(LocalDate date, @Arg("self") WordleUser user, Boolean state) {
+		if (state == null)
+			state = !user.get(date).isSolvedOnReleaseDay();
+
+		user.get(date).setSolvedOnReleaseDay(state);
+		send(PREFIX + "Set solved on release day to " + state + " for " + user.getNickname() + "'s puzzle #" + config.get(date).getDaysSinceLaunch());
+	}
+
 	@Confirm
 	@Path("delete <player> <date>")
 	@Permission(Group.SENIOR_STAFF)
@@ -130,88 +146,6 @@ public class WordleCommand extends CustomCommand {
 		user.getGames().remove(date);
 		userService.save(user);
 		send(PREFIX + "Deleted " + user.getNickname() + "'s data for puzzle #" + config.get(date).getDaysSinceLaunch() + " (" + date.format(formatter) + ")");
-	}
-
-	@Data
-	public static class WordleImport {
-		public List<WordleDay> config;
-
-		@Data
-		public static class WordleDay {
-			public int day;
-			public List<WordlePlayer> players;
-
-			@Data
-			public static class WordlePlayer {
-				public String username;
-				public List<List<WordleLetterState>> guesses;
-			}
-		}
-	}
-
-	@Async
-	@Path("import <code>")
-	@Permission(Group.ADMIN)
-	void _import(String code) {
-		var data = HttpUtils.mapJson(WordleImport.class, "https://paste.projecteden.gg/raw/" + code);
-		if (data == null) {
-			send(PREFIX + "Failed to import data");
-			return;
-		}
-
-		for (WordleDay day : data.getConfig()) {
-			var date = config.getDateFromDaysSinceLaunch(day.day);
-			for (WordlePlayer player : day.getPlayers()) {
-				var user = userService.get(Nerd.of(player.getUsername()));
-				var game = user.get(date);
-				var gameConfig = config.get(date);
-
-				send(PREFIX + "Importing " + user.getNickname() + "'s data for puzzle #" + gameConfig.getDaysSinceLaunch() + " (" + gameConfig.getSolution() + ")");
-
-				if (game.isStarted()) {
-					send(PREFIX + "  Skipping because they already started the puzzle");
-					continue;
-				}
-
-				var guesses = player.getGuesses();
-				for (List<WordleLetterState> obfuscated : guesses) {
-					send(PREFIX + "  Obfuscated guess: " + obfuscated);
-
-					if (obfuscated.stream().allMatch(state -> state == CORRECT_POSITION)) {
-						send(PREFIX + "  Found correct solution!");
-						game.getGuesses().add(gameConfig.getSolution());
-						game.setPlayedOnReleaseDay(true);
-						game.setSolvedOnReleaseDay(true);
-						continue;
-					}
-
-					String guess = null;
-					List<String> allowedWords = new ArrayList<>(config.getAllowedWords());
-					Collections.shuffle(allowedWords);
-					words: for (String word : allowedWords) {
-						var random = game.getColoredGuess(word).stream().map(letter -> letter.getState()).toList();
-						for (int i = 0; i < 5; i++) {
-							if (obfuscated.get(i) != random.get(i))
-								continue words;
-						}
-
-						send(PREFIX + "  Found matching word: " + word);
-						guess = word;
-						break;
-					}
-					if (guess == null) {
-						send(PREFIX + "  Failed to find matching word!");
-						break;
-					}
-
-					game.getGuesses().add(guess);
-				}
-			}
-		}
-
-		userService.saveCache();
-		configService.save(config);
-		send(PREFIX + "Finished importing data");
 	}
 
 	@Path("config")
