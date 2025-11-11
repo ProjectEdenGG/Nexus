@@ -53,6 +53,10 @@ public class WordleConfig implements DatabaseObject {
 		return (int) ChronoUnit.DAYS.between(EPOCH, date);
 	}
 
+	public LocalDate getDateFromDaysSinceLaunch(int daysSinceLaunch) {
+		return EPOCH.plusDays(daysSinceLaunch);
+	}
+
 	@Data
 	public static class WordleGameConfig {
 		int id;
