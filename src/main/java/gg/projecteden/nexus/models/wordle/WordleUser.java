@@ -12,6 +12,7 @@ import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuService;
 import gg.projecteden.nexus.models.wordle.WordleUser.WordleLetter.WordleLetterState;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -32,7 +33,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-import static gg.projecteden.nexus.utils.AdventureUtils.getPrefix;
 import static gg.projecteden.nexus.utils.Extensions.isNullOrEmpty;
 
 @Data
@@ -66,7 +66,7 @@ public class WordleUser implements PlayerOwnedObject {
 		if (get(getZonedLocalDate()).isStarted())
 			return;
 
-		sendMessage(new JsonBuilder(getPrefix("Wordle") + "A new puzzle is available! &eClick here to play").command("/wordle"));
+		sendMessage(new JsonBuilder(StringUtils.getPrefix("Wordle") + "A new puzzle is available! &eClick here to play").command("/wordle"));
 	}
 
 	@Data
