@@ -95,9 +95,13 @@ public class WordleCommand extends CustomCommand implements Listener {
 	@Async
 	void wordle(LocalDate date) {
 		var user = userService.get(player());
+		var userZonedLocalDate = user.getZonedLocalDate();
 
 		if (date == null)
-			date = user.getZonedLocalDate();
+			date = userZonedLocalDate;
+
+		if (date.isAfter(userZonedLocalDate.plusDays(1)))
+			error("Wordle #" + config.getDaysSinceLaunch(date) + " is not yet available");
 
 		if (user.get(date).isComplete())
 			new WordleResultsMenu(date).open(player());
@@ -108,9 +112,13 @@ public class WordleCommand extends CustomCommand implements Listener {
 	@Path("results [date]")
 	void results(LocalDate date) {
 		var user = userService.get(player());
+		var userZonedLocalDate = user.getZonedLocalDate();
 
 		if (date == null)
-			date = user.getZonedLocalDate();
+			date = userZonedLocalDate;
+
+		if (date.isAfter(userZonedLocalDate.plusDays(1)))
+			error("Wordle #" + config.getDaysSinceLaunch(date) + " is not yet available");
 
 		new WordleResultsMenu(date).open(player());
 	}
@@ -346,7 +354,7 @@ public class WordleCommand extends CustomCommand implements Listener {
 					}
 
 					var today = new GeoIPService().get(player).getCurrentTime().toLocalDate();
-					if (today.equals(date)) {
+					if (today.isEqual(date) || today.isBefore(date)) {
 						game.setPlayedOnReleaseDay(true);
 						if (input.equalsIgnoreCase(solution)) {
 							game.setSolvedOnReleaseDay(true);
