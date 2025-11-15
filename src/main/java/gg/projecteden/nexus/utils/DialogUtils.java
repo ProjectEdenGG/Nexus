@@ -347,7 +347,7 @@ public class DialogUtils {
 		}
 
 		public MultiActionDialogBuilder button(JsonBuilder label, JsonBuilder tooltip, int width, DialogResponseCallback action) {
-			return this.button(label.build(), tooltip.build(), width, action);
+			return this.button(label.build(), tooltip == null ? null : tooltip.build(), width, action);
 		}
 
 		public MultiActionDialogBuilder button(Component label, Component tooltip, int width, DialogResponseCallback action) {

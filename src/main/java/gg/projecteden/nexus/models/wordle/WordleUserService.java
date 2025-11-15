@@ -14,4 +14,5 @@ public class WordleUserService extends MongoPlayerService<WordleUser> {
 	public Map<UUID, WordleUser> getCache() {
 		return cache;
 	}
+
 }

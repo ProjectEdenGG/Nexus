@@ -12,6 +12,7 @@ import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuService;
 import gg.projecteden.nexus.models.wordle.WordleUser.WordleLetter.WordleLetterState;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -48,6 +49,10 @@ public class WordleUser implements PlayerOwnedObject {
 	private Map<LocalDate, WordleGame> games = new ConcurrentHashMap<>();
 
 	public WordleGame get(LocalDate date) {
+		return games.getOrDefault(date, new WordleGame(date));
+	}
+
+	public WordleGame getOrCreate(LocalDate date) {
 		return games.computeIfAbsent(date, $ -> new WordleGame(date));
 	}
 
@@ -57,6 +62,28 @@ public class WordleUser implements PlayerOwnedObject {
 
 	public LocalDate getZonedLocalDate() {
 		return getZonedLocalDateTime().toLocalDate();
+	}
+
+	public int getStreak() {
+		int streak = 0;
+		var date = getZonedLocalDate();
+
+		// Allow today's to be incomplete
+		if (get(date).isSolvedOnReleaseDay())
+			++streak;
+		else
+			date = date.minusDays(1);
+
+		while (get(date).isSolvedOnReleaseDay()) {
+			streak++;
+			date = date.minusDays(1);
+		}
+
+		return streak;
+	}
+
+	public void cleanup() {
+		games.entrySet().removeIf(entry -> Nullables.isNullOrEmpty(entry.getValue().getGuesses()));
 	}
 
 	public void notifyOfNewGame() {

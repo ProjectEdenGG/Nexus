@@ -103,10 +103,18 @@ public class WordleCommand extends CustomCommand implements Listener {
 		if (date.isAfter(userZonedLocalDate.plusDays(1)))
 			error("Wordle #" + config.getDaysSinceLaunch(date) + " is not yet available");
 
+		if (date.isBefore(WordleConfig.EPOCH))
+			error("Wordle was created on " + WordleConfig.EPOCH.format(formatter) + " and cannot be played before that date");
+
 		if (user.get(date).isComplete())
 			new WordleResultsMenu(date).open(player());
 		else
 			new WordleMenu(date).open(player());
+	}
+
+	@Path("streak [user]")
+	void streak(@Arg("self") WordleUser user) {
+		send(PREFIX + user.getStreak() + " days");
 	}
 
 	@Path("results [date]")
@@ -266,7 +274,7 @@ public class WordleCommand extends CustomCommand implements Listener {
 				user = userService.get(player);
 
 			var gameConfig = config.get(date);
-			var game = user.get(date);
+			var game = user.getOrCreate(date);
 			var solution = gameConfig.getSolution().toUpperCase();
 
 			var dialog = new DialogBuilder()
@@ -359,8 +367,11 @@ public class WordleCommand extends CustomCommand implements Listener {
 						if (input.equalsIgnoreCase(solution)) {
 							game.setSolvedOnReleaseDay(true);
 
-							var message = new JsonBuilder("&e" + user.getNickname() + " &3solved puzzle #" + gameConfig.getDaysSinceLaunch() + " in &e" + guesses.size() + " guesses&3!");
+							String formattedText = "&e" + user.getNickname() + " &3solved puzzle #" + gameConfig.getDaysSinceLaunch() + " in &e" + guesses.size() + " guesses&3!";
+							if (user.getStreak() > 1)
+								formattedText += " They are on a &e" + user.getStreak() + " day &3streak!";
 
+							var message = new JsonBuilder(formattedText);
 							message.hover(user.getNerd().getColoredName());
 							message.hover("&7Wordle #" + gameConfig.getDaysSinceLaunch());
 							message.hover("&7" + date.format(formatter));
@@ -461,6 +472,8 @@ public class WordleCommand extends CustomCommand implements Listener {
 
 			last = last.plusDays(1);
 
+			dialog.bodyText("Current streak: &e" + user.getStreak() + " days");
+
 			var diff = initial.until(last).getDays();
 			if (diff < 8)
 				dialog.bodyText("").bodyText("");
@@ -492,10 +505,18 @@ public class WordleCommand extends CustomCommand implements Listener {
 				LocalDate date = current;
 				ChatColor finalColor = color;
 				int day = config.getDaysSinceLaunch(current);
-				buttons.button(
-					color + String.valueOf(current.getDayOfMonth()),
-					day >= 0 ? "#" + day : null,
-					click -> {
+
+				String label = color + String.valueOf(current.getDayOfMonth());
+
+				JsonBuilder tooltip = null;
+				if (day >= 0) {
+					tooltip = new JsonBuilder("#" + day);
+					var solved = configService.getSolvedCount(date);
+					if (solved > 0)
+						tooltip.newline().next("&7Solved by &e" + solved + " &7nerds");
+				}
+
+				buttons.button(label, tooltip, click -> {
 						if (finalColor != ChatColor.DARK_GRAY) {
 							if (user.get(date).isComplete())
 								new WordleResultsMenu(date).open(player);

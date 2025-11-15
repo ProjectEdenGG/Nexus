@@ -3,6 +3,7 @@ package gg.projecteden.nexus.models.wordle;
 import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.persistence.mongodb.MongoBukkitService;
 
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,6 +14,12 @@ public class WordleConfigService extends MongoBukkitService<WordleConfig> {
 
 	public Map<UUID, WordleConfig> getCache() {
 		return cache;
+	}
+
+	public int getSolvedCount(LocalDate date) {
+		return (int) new WordleUserService().getAll().stream()
+			.filter(user -> user.get(date).isSuccess())
+			.count();
 	}
 
 }
