@@ -71,8 +71,8 @@ public class WordleUser implements PlayerOwnedObject {
 		// Allow today's to be incomplete
 		if (get(date).isSolvedOnReleaseDay())
 			++streak;
-		else
-			date = date.minusDays(1);
+
+		date = date.minusDays(1);
 
 		while (get(date).isSolvedOnReleaseDay()) {
 			streak++;

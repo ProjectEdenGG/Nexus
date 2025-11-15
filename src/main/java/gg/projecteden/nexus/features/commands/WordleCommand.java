@@ -25,6 +25,7 @@ import gg.projecteden.nexus.models.wordle.WordleUserService;
 import gg.projecteden.nexus.utils.DialogUtils.DialogBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -114,7 +115,8 @@ public class WordleCommand extends CustomCommand implements Listener {
 
 	@Path("streak [user]")
 	void streak(@Arg("self") WordleUser user) {
-		send(PREFIX + user.getStreak() + " days");
+		int streak = user.getStreak();
+		send(PREFIX + streak + StringUtils.plural(" day", streak));
 	}
 
 	@Path("results [date]")
@@ -368,8 +370,9 @@ public class WordleCommand extends CustomCommand implements Listener {
 							game.setSolvedOnReleaseDay(true);
 
 							String formattedText = "&e" + user.getNickname() + " &3solved puzzle #" + gameConfig.getDaysSinceLaunch() + " in &e" + guesses.size() + " guesses&3!";
-							if (user.getStreak() > 1)
-								formattedText += " They are on a &e" + user.getStreak() + " day &3streak!";
+							int streak = user.getStreak();
+							if (streak > 1)
+								formattedText += " They are on a &e" + streak + " day &3streak!";
 
 							var message = new JsonBuilder(formattedText);
 							message.hover(user.getNerd().getColoredName());
@@ -472,7 +475,8 @@ public class WordleCommand extends CustomCommand implements Listener {
 
 			last = last.plusDays(1);
 
-			dialog.bodyText("Current streak: &e" + user.getStreak() + " days");
+			int streak = user.getStreak();
+			dialog.bodyText("Current streak: &e" + streak + StringUtils.plural(" day", streak));
 
 			var diff = initial.until(last).getDays();
 			if (diff < 8)
