@@ -53,11 +53,11 @@ public class WelcomeCommand extends CustomCommand implements Listener {
 	private static final String genericMessage = "Welcome to the server!";
 
 	private static final List<String> LONG_MESSAGES = List.of(
-		"Welcome to the server [player]! Make sure to read the /rules and feel free to ask questions.",
-		"Welcome to Project Eden [player]! Please take a moment to read the /rules and feel free to ask any questions you have.",
-		"Hi [player], welcome to Project Eden :) Please read the /rules and ask if you have any questions.",
+		"Welcome to the server [player]! Make sure to read the /rules and feel free to ask questions",
+		"Welcome to Project Eden [player]! Please take a moment to read the /rules and feel free to ask any questions you have",
+		"Hi [player], welcome to Project Eden :) Please read the /rules and ask if you have any questions",
 		"Hey [player]! Welcome to Project Eden. Be sure to read the /rules and don't be afraid to ask questions ^^",
-		"Hi there [player] :D Welcome to Project Eden. Make sure to read the /rules and feel free to ask questions."
+		"Hi there [player] :D Welcome to Project Eden. Make sure to read the /rules and feel free to ask questions"
 	);
 
 	private static final List<String> SHORT_MESSAGES = List.of(
