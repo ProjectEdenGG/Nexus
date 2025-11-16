@@ -125,8 +125,12 @@ public abstract class EdenEvent extends Feature implements Listener {
 	public static List<EdenEvent> EVENTS = new ArrayList<>();
 
 	public static EdenEvent of(Player player) {
+		return of(player.getLocation());
+	}
+
+	public static EdenEvent of(Location location) {
 		for (EdenEvent event : EVENTS) {
-			if (event.isInEventWorld(player.getLocation())) {
+			if (event.isInEventWorld(location)) {
 				return event;
 			}
 		}
