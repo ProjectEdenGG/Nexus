@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.crates;
 
 import com.google.common.base.Strings;
-import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.crates.api.models.CrateAnimation;
 import gg.projecteden.crates.api.models.CrateAnimationsAPI;
 import gg.projecteden.nexus.features.chat.Chat;
@@ -42,6 +41,9 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+
+import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
+import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsConsole;
 
 @Data
 public class  CrateHandler {
@@ -183,20 +185,27 @@ public class  CrateHandler {
 			perkType.getPerk().getMenuItem(), Arrays.asList("mgm collectibles give %player% " + perkType.name()), false, null);
 	}
 
-	private static void giveItems(Player player, CrateLoot loot) {
+	public static void giveItems(Player player, CrateLoot loot) {
 		PlayerUtils.giveItems(player, loot.getItems());
-		if (!Nullables.isNullOrEmpty(loot.getCommandsNoSlash()))
-			loot.getCommandsNoSlash().forEach(command -> PlayerUtils.runCommandAsConsole(command.replaceAll("%player%", player.getName())));
-		if (loot.isShouldAnnounce())
+
+		if (isNotNullOrEmpty(loot.getCommandsNoSlash()))
+			loot.getCommandsNoSlash().forEach(command -> runCommandAsConsole(command.replaceAll("%player%", player.getName())));
+
+		if (loot.isShouldAnnounce()) {
+			String message;
+			if (Strings.isNullOrEmpty(loot.getAnnouncement()))
+				message = "&e" + Nickname.of(player) + " &3has received a &e" + loot.getDisplayName() + " &3from the &e" + StringUtils.camelCase(loot.getType()) + " Crate";
+			else
+				message = loot.getAnnouncement()
+					.replaceAll("%player%", Nickname.of(player.getName()))
+					.replaceAll("%title%", loot.getTitle());
+
 			Chat.Broadcast.all()
 				.prefix("Crates")
 				.muteMenuItem(MuteMenuItem.CRATES)
-				.message(Strings.isNullOrEmpty(loot.getAnnouncement()) ?
-					         "&e" + Nickname.of(player) + " &3has received a &e" + loot.getDisplayName() + " &3from the &e" + gg.projecteden.api.common.utils.StringUtils.camelCase(loot.getType()) + " Crate" :
-					         loot.getAnnouncement()
-						         .replaceAll("%player%", Nickname.of(player.getName()))
-						         .replaceAll("%title%", loot.getTitle()))
+				.message(message)
 				.send();
+		}
 	}
 
 	private static void takeKey(CrateType type, Player player, boolean useKey) {

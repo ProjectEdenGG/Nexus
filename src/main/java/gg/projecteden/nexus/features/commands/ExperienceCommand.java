@@ -92,7 +92,8 @@ public class ExperienceCommand extends CustomCommand {
 	}
 
 	private String getFormattedExp(Player player) {
-		String totalExp = StringUtils.stripTrailingZeros(StringUtils.pretty(Double.parseDouble(player.getLevel() + StringUtils.trimFirst(String.valueOf(player.getExp())))));
+		String pretty = StringUtils.pretty(Double.parseDouble(player.getLevel() + StringUtils.trimFirst(String.valueOf(player.getExp()))));
+		String totalExp = StringUtils.stripTrailingZeros(pretty.replaceAll(",", ""));
 		return totalExp + plural(" level", Double.parseDouble(totalExp));
 	}
 

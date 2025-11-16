@@ -359,7 +359,7 @@ public class CratePinatas implements Listener {
 		}
 
 		private void stop() {
-			loots.forEach(loot -> PlayerUtils.giveItemsAndMailExcess(player, loot.getItems(), WorldGroup.SURVIVAL));
+			loots.forEach(loot -> CrateHandler.giveItems(player, loot));
 			items.forEach(Entity::remove);
 			Tasks.cancel(rewardsTask);
 			Tasks.cancel(rotateTask);
