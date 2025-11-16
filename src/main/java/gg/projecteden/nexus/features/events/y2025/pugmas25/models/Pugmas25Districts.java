@@ -79,10 +79,8 @@ public class Pugmas25Districts implements Listener {
 		HOT_SPRINGS("hot_springs"),
 		SAWMILL("sawmill"),
 		RIVER("river"),
-		//
 		CAVES("caves"),
 		//
-		UNDERGROUND("underground"),
 		WILDERNESS(null);
 
 		final String regionId;
@@ -101,11 +99,8 @@ public class Pugmas25Districts implements Listener {
 
 			for (ProtectedRegion region : Pugmas25.get().worldguard().getRegionsAt(location)) {
 				for (Pugmas25District district : Pugmas25District.values())
-					if (region.getId().equalsIgnoreCase(district.getRegionId())) {
-						if (district == UNDERGROUND && location.getBlock().getLightFromSky() > 0)
-							continue;
+					if (region.getId().equalsIgnoreCase(district.getRegionId()))
 						return district;
-					}
 			}
 
 			return Pugmas25District.WILDERNESS;
