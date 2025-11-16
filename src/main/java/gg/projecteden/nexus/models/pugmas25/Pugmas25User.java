@@ -90,14 +90,4 @@ public class Pugmas25User implements PlayerOwnedObject {
 		if (itemFrame != null)
 			ClientSideUser.of(uuid).refresh(itemFrame.getUuid());
 	}
-
-	@Deprecated
-	public void updateHealth() {
-		Player player = getPlayer();
-		if (player == null || !player.isOnline())
-			return;
-
-		AttributeInstance maxHealth = HealCommand.getMaxHealthAttribute(player);
-		maxHealth.setBaseValue(20);
-	}
 }

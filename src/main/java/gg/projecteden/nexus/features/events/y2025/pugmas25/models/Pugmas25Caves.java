@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.models;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
@@ -7,27 +8,87 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Distri
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Creature;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.PolarBear;
+import org.bukkit.entity.Spider;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-
-import java.util.List;
+import org.bukkit.event.entity.EntityDeathEvent;
 
 public class Pugmas25Caves implements Listener {
+	private static final double SPIDER_MAX_SCALE = 1.5;
+	private static final double SPIDER_MIN_SCALE = 0.6;
+	private static final double SPIDER_MOTHER_MIN_SCALE = 1.4;
+	private static final double SPIDER_BABY_SCALE = 0.4;
 
 	public Pugmas25Caves() {
 		Nexus.registerListener(this);
+	}
+
+	@EventHandler
+	public void onMotherSpiderDeath(EntityDeathEvent event) {
+		if (!(event.getEntity() instanceof Mob mob))
+			return;
+
+		if (!Pugmas25.get().isAtEvent(mob))
+			return;
+
+		if (!Pugmas25.get().worldguard().isInRegion(mob, Pugmas25District.CAVES.getRegionId()))
+			return;
+
+		if (mob.getType() != EntityType.SPIDER)
+			return;
+
+		var attribute = mob.getAttribute(Attribute.SCALE);
+		if (attribute == null)
+			return;
+
+		if (attribute.getBaseValue() < SPIDER_MOTHER_MIN_SCALE)
+			return;
+
+		if (!(event.getDamageSource().getCausingEntity() instanceof Player player))
+			return;
+
+		Location location = mob.getLocation();
+		int spawnCount = RandomUtils.randomInt(2, 5);
+		World world = location.getWorld();
+		Tasks.wait(10, () -> {
+			new ParticleBuilder(Particle.LARGE_SMOKE)
+				.location(location).offset(0.25, 0.25, 0.25)
+				.count(30)
+				.extra(0)
+				.spawn();
+
+			for (int i = 0; i < spawnCount; i++) {
+				double offsetX = RandomUtils.randomDouble(-0.5, 0.5);
+				double offsetZ = RandomUtils.randomDouble(-0.5, 0.5);
+				Location spawnLocation = location.clone().add(offsetX, 0.5, offsetZ);
+
+				new SoundBuilder(Sound.ENTITY_SPIDER_HURT).pitch(2).location(spawnLocation).play();
+
+				world.spawn(spawnLocation, Spider.class, _spider -> {
+					_spider.setAggressive(true);
+					_spider.setTarget(player);
+					setAttributeBaseValue(_spider, Attribute.SCALE, SPIDER_BABY_SCALE);
+					setAttributeBaseValue(_spider, Attribute.ATTACK_DAMAGE, 1); // 3 base
+					setAttributeBaseValue(_spider, Attribute.MOVEMENT_SPEED, 0.2); // 0.3 base
+					setAttributeBaseValue(_spider, Attribute.JUMP_STRENGTH, 0.63); // 0.42 base
+				});
+
+			}
+		});
 	}
 
 	@EventHandler
@@ -45,12 +106,23 @@ public class Pugmas25Caves implements Listener {
 			case SPIDER -> {
 				mob.setAggressive(true);
 
-				// Randomize spider scale 0.6-1
-				var attribute = mob.getAttribute(Attribute.SCALE);
-				if (attribute != null) {
-					double newValue = attribute.getBaseValue() - RandomUtils.randomDouble(0, 0.4);
-					attribute.setBaseValue(newValue);
+				var attributeScale = mob.getAttribute(Attribute.SCALE);
+				if (attributeScale != null) {
+					if (attributeScale.getBaseValue() != 1)
+						return;
 				}
+
+				double randomScale = RandomUtils.randomDouble(SPIDER_MIN_SCALE, SPIDER_MAX_SCALE);
+				if (setAttributeBaseValue(mob, Attribute.SCALE, randomScale)) {
+					if (randomScale >= SPIDER_MOTHER_MIN_SCALE) {
+						mob.setCustomName("Mother Spider");
+						setAttributeBaseValue(mob, Attribute.FOLLOW_RANGE, 32); // 16 base
+						setAttributeBaseValue(mob, Attribute.ATTACK_DAMAGE, 6); // 3 base
+						setAttributeBaseValue(mob, Attribute.MOVEMENT_SPEED, 0.18); // 0.3 base
+					}
+				}
+
+
 			}
 			case POLAR_BEAR -> mob.setAggressive(true);
 		}
@@ -121,5 +193,15 @@ public class Pugmas25Caves implements Listener {
 		public static Location loc(double x, double y, double z, int yaw) {
 			return Pugmas25.get().location(x, y, z, yaw, 0);
 		}
+	}
+
+	private boolean setAttributeBaseValue(LivingEntity entity, Attribute type, double value) {
+		entity.registerAttribute(type);
+		var attribute = entity.getAttribute(type);
+		if (attribute == null)
+			return false;
+
+		attribute.setBaseValue(value);
+		return true;
 	}
 }

@@ -172,10 +172,8 @@ public class Pugmas25 extends EdenEvent {
 				.filter(entity -> entity instanceof Mob)
 				.filter(entity -> entity.getEntitySpawnReason() != SpawnReason.CUSTOM)
 				.forEach(entity -> {
-					if (entity.getTicksLived() > TickTime.HOUR.x(4)) {
-						Dev.WAKKA.send("Killing mob of old age: " + entity.getType());
+					if (entity.getTicksLived() > TickTime.HOUR.x(4))
 						entity.remove();
-					}
 				});
 		});
 
@@ -196,12 +194,7 @@ public class Pugmas25 extends EdenEvent {
 	}
 
 	public void onArrive(Player player) {
-		Tasks.wait(1, () -> {
-			Pugmas25User user = userService.get(player);
-			user.updateHealth();
-
-			Tasks.wait(5, () -> sidebar.handleJoin(player));
-		});
+		Tasks.wait(5, () -> sidebar.handleJoin(player));
 	}
 
 	public void onDepart(Player player) {
@@ -247,7 +240,7 @@ public class Pugmas25 extends EdenEvent {
 	public void on(VehicleEntityCollisionEvent event) {
 		Entity entity = event.getVehicle();
 
-		// Skip unnecessary server event location checks since it uses UUID
+		// Skip server event location checks since it checks UUID
 
 		if (entity.getUniqueId().equals(treeMinecart.getUniqueId()))
 			event.setCancelled(true);
