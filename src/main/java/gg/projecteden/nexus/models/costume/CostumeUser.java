@@ -15,10 +15,13 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.CostumeConverter;
 import gg.projecteden.nexus.models.costume.Costume.CostumeType;
+import gg.projecteden.nexus.models.invisiblearmour.InvisibleArmor;
+import gg.projecteden.nexus.models.invisiblearmour.InvisibleArmorService;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorService;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorTask;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils.ArmorSlot;
 import gg.projecteden.nexus.utils.nms.PacketUtils;
 import gg.projecteden.nexus.utils.nms.packet.EntityDestroyPacket;
 import gg.projecteden.nexus.utils.nms.packet.EntityPassengersPacket;
@@ -149,11 +152,14 @@ public class CostumeUser implements PlayerOwnedObject {
 		var activeCostumes = new ConcurrentHashMap<>(this.activeCostumes);
 
 		if (useArmorSkinHelmetCostume) {
-			ArmorSkin armorSkin = ArmorSkin.of(getOnlinePlayer().getInventory().getHelmet());
-			if (armorSkin != null) {
-				var helmetCostume = armorSkin.getHelmetCostume();
-				if (helmetCostume != null)
-					activeCostumes.put(CostumeType.HAT, helmetCostume);
+			InvisibleArmor invisibleArmor = new InvisibleArmorService().get(this);
+			if (!invisibleArmor.isEnabled() || invisibleArmor.isShown(ArmorSlot.HELMET)) {
+				ArmorSkin armorSkin = ArmorSkin.of(getOnlinePlayer().getInventory().getHelmet());
+				if (armorSkin != null) {
+					var helmetCostume = armorSkin.getHelmetCostume();
+					if (helmetCostume != null)
+						activeCostumes.put(CostumeType.HAT, helmetCostume);
+				}
 			}
 		}
 
