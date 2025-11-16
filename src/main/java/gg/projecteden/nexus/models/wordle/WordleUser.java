@@ -82,6 +82,24 @@ public class WordleUser implements PlayerOwnedObject {
 		return streak;
 	}
 
+	public double getAverage() {
+		double sum = 0;
+		double count = 0;
+		for (var game : games.values()) {
+			if (!game.isComplete())
+				continue;
+
+			int guesses = game.getGuesses().size();
+			if (game.isFailed())
+				++guesses;
+
+			sum += guesses;
+			count++;
+		}
+
+		return sum / count;
+	}
+
 	public void cleanup() {
 		games.entrySet().removeIf(entry -> Nullables.isNullOrEmpty(entry.getValue().getGuesses()));
 	}

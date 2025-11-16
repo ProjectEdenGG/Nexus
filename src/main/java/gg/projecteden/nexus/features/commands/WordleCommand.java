@@ -119,6 +119,43 @@ public class WordleCommand extends CustomCommand implements Listener {
 		send(PREFIX + streak + StringUtils.plural(" day", streak));
 	}
 
+	@Path("average [user]")
+	void average(@Arg("self") WordleUser user) {
+		send(PREFIX + "Average guesses: " + StringUtils.getDf().format(user.getAverage()));
+	}
+
+	@Path("top streak [page]")
+	void top_streak(@Arg("1") int page) {
+		var users = userService.getAll().stream()
+			.filter(user -> user.getStreak() > 1)
+			.sorted(Comparator.comparing(WordleUser::getStreak).reversed())
+			.toList();
+
+		send(PREFIX + "Highest streaks");
+		new Paginator<WordleUser>()
+			.values(users)
+			.formatter((user, index) -> json(index + " &e" + user.getNickname() + " &7- " + user.getStreak() + " days"))
+			.command("/wordle top streak")
+			.page(page)
+			.send();
+	}
+
+	@Path("top average [page]")
+	void top_average(@Arg("1") int page) {
+		var users = userService.getAll().stream()
+			.filter(user -> user.getAverage() > 0)
+			.sorted(Comparator.comparing(WordleUser::getAverage))
+			.toList();
+
+		send(PREFIX + "Best average number of guesses");
+		new Paginator<WordleUser>()
+			.values(users)
+			.formatter((user, index) -> json(index + " &e" + user.getNickname() + " &7- " + StringUtils.getDf().format(user.getAverage()) + " guesses"))
+			.command("/wordle top average")
+			.page(page)
+			.send();
+	}
+
 	@Path("results [date]")
 	void results(LocalDate date) {
 		var user = userService.get(player());
