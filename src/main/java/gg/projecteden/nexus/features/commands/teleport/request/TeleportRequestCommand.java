@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.teleport.request;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
+import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
@@ -86,6 +87,12 @@ public class TeleportRequestCommand extends ITeleportRequestCommand {
 
 			if (!rank().isStaff() && targetWorldGroup == WorldGroup.STAFF)
 				error(cannotTeleport + ", they are in a staff world");
+
+			if (targetWorldGroup == WorldGroup.EVENTS) {
+				EdenEvent edenEvent = EdenEvent.of(target.getLocation());
+				if (edenEvent != null && !edenEvent.isEventActive())
+					error(cannotTeleport + ", they are at an event that isn't active yet");
+			}
 		}
 
 		if (MuteMenuUser.hasMuted(target, MuteMenuItem.TP_REQUESTS)) {
