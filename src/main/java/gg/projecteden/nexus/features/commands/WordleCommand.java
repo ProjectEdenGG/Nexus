@@ -18,6 +18,7 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.wordle.WordleConfig;
 import gg.projecteden.nexus.models.wordle.WordleConfigService;
 import gg.projecteden.nexus.models.wordle.WordleUser;
+import gg.projecteden.nexus.models.wordle.WordleUser.WordleGame;
 import gg.projecteden.nexus.models.wordle.WordleUser.WordleLetter;
 import gg.projecteden.nexus.models.wordle.WordleUser.WordleLetter.WordleLetterState;
 import gg.projecteden.nexus.models.wordle.WordleUser.WordleSound;
@@ -144,6 +145,7 @@ public class WordleCommand extends CustomCommand implements Listener {
 	void top_average(@Arg("1") int page) {
 		var users = userService.getAll().stream()
 			.filter(user -> user.getAverage() > 0)
+			.filter(user -> user.getGames().values().stream().filter(WordleGame::isComplete).count() > 5)
 			.sorted(Comparator.comparing(WordleUser::getAverage))
 			.toList();
 
