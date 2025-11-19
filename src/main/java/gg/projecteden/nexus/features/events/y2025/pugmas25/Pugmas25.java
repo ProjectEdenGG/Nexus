@@ -7,7 +7,6 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.DeathMessagesCommand;
 import gg.projecteden.nexus.features.commands.staff.operator.HealCommand;
 import gg.projecteden.nexus.features.events.EdenEvent;
-import gg.projecteden.nexus.features.events.models.EventFishingLoot;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.advent.Pugmas25Advent;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.balloons.Pugmas25BalloonEditor;
@@ -35,53 +34,59 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestT
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25ShopMenu;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.models.deathmessages.DeathMessages;
 import gg.projecteden.nexus.models.deathmessages.DeathMessagesService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.pugmas25.Advent25User;
-import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.AdventureUtils;
+import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import kotlin.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.util.TriState;
+import net.minecraft.world.waypoints.WaypointTransmitter;
+import net.minecraft.world.waypoints.WaypointTransmitter.Connection;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Ageable;
-import org.bukkit.entity.Creature;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.EulerAngle;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /*
 	"TODO: RELEASE" <-- CHECK FOR ANY COMMENTS
@@ -116,8 +121,13 @@ public class Pugmas25 extends EdenEvent {
 	public final Location warp = location(-688.5, 82, -2964.5, 180, 0);
 	public final Location deathLoc = location(-637.5, 66.0, -3260.5, 180, 0);
 
-	private final Location treeMinecartSpawnLoc = location(-680.5, 118.25, -3111.5);
-	private static Minecart treeMinecart;
+	private static final List<ItemModelType> TREE_MINECART_MODELS = List.of(ItemModelType.PUGMAS_TRAIN_SET_ENGINE, ItemModelType.PUGMAS_TRAIN_SET_PASSENGER, ItemModelType.PUGMAS_TRAIN_SET_PASSENGER, ItemModelType.PUGMAS_TRAIN_SET_CARGO);
+	private final Location treeMinecartStandSpawnLoc = location(-680.5, 115.25, -3110.5);
+	private static final List<ArmorStand> treeMinecartStands = new ArrayList<>();
+	private final Location treeMinecartSpawnLoc = location(-680.5, 116.25, -3111.5);
+	private static final List<Minecart> treeMinecarts = new ArrayList<>();
+	private static int treeMinecartStandTask = -1;
+	private static final Map<UUID, Float> previousYaw = new HashMap<>();
 
 	private static int entityAgeTask;
 
@@ -158,12 +168,67 @@ public class Pugmas25 extends EdenEvent {
 
 		Tasks.wait(TickTime.SECOND, () -> getPlayers().forEach(this::onArrive));
 
-		treeMinecart = getWorld().spawn(treeMinecartSpawnLoc, Minecart.class, _minecart -> {
-			_minecart.setMaxSpeed(0.1);
-			_minecart.setSlowWhenEmpty(false);
-			_minecart.setInvulnerable(true);
-			_minecart.setFrictionState(TriState.FALSE);
-			_minecart.setVelocity(BlockFace.WEST.getDirection().multiply(0.1));
+		final int TRAIN_SIZE = TREE_MINECART_MODELS.size();
+		for (int i = 0; i < TRAIN_SIZE; i++) {
+			int finalI = i;
+			ArmorStand armorStand = getWorld().spawn(treeMinecartStandSpawnLoc, ArmorStand.class, _stand -> {
+				ItemStack cart = new ItemBuilder(TREE_MINECART_MODELS.get(finalI)).dyeColor(ColorType.PURPLE.getBukkitColor()).build();
+				_stand.setHelmet(cart);
+				_stand.setVisible(false);
+				_stand.setInvulnerable(true);
+			});
+			treeMinecartStands.add(armorStand);
+		}
+
+		for (int i = 0; i < TRAIN_SIZE; i++) {
+			ArmorStand armorStand = treeMinecartStands.get(i);
+
+			Tasks.wait(i * 18L, () -> {
+				Minecart minecart = getWorld().spawn(treeMinecartSpawnLoc, Minecart.class, _minecart -> {
+					_minecart.setMaxSpeed(0.1);
+					_minecart.setSlowWhenEmpty(false);
+					_minecart.setInvulnerable(true);
+					_minecart.setFrictionState(TriState.FALSE);
+					_minecart.setVelocity(BlockFace.WEST.getDirection().multiply(0.1));
+				});
+
+				treeMinecarts.add(minecart);
+				Tasks.wait(5L, () -> minecart.addPassenger(armorStand));
+			});
+
+		}
+
+		treeMinecartStandTask = Tasks.repeat(TickTime.TICK.x(5), TickTime.TICK.x(2), () -> {
+			treeMinecarts.forEach(minecart -> {
+				Vector velocity = minecart.getVelocity();
+
+				if (velocity.lengthSquared() <= 0.0001) // avoids NaN when stopped
+					return;
+
+				float globalYaw = (float) Math.toDegrees(Math.atan2(-velocity.getX(), velocity.getZ()));
+
+				minecart.getPassengers().forEach(passenger -> {
+					if (!(passenger instanceof ArmorStand armorStand))
+						return;
+
+					UUID uuid = armorStand.getUniqueId();
+					float prevYaw = previousYaw.getOrDefault(uuid, globalYaw);
+					float smoothedYaw = rotLerp(0.5f, prevYaw, globalYaw);
+					float deltaYaw = smoothedYaw - prevYaw;
+
+					// Get normalized head pose
+					EulerAngle currentAngle = armorStand.getHeadPose();
+					double normalizedHeadYaw = wrapRadians(currentAngle.getY());
+
+					// Apply delta
+					double newHeadYaw = normalizedHeadYaw + Math.toRadians(deltaYaw);
+
+					EulerAngle newAngle = new EulerAngle(currentAngle.getX(), newHeadYaw, currentAngle.getZ());
+
+					armorStand.setHeadPose(newAngle);
+					previousYaw.put(uuid, smoothedYaw);
+				});
+			});
 		});
 
 		// Prevent stupid mob AI, kill them and let server respawn
@@ -184,7 +249,9 @@ public class Pugmas25 extends EdenEvent {
 		if (sidebar != null)
 			sidebar.handleEnd();
 
-		treeMinecart.remove();
+		treeMinecartStands.forEach(Entity::remove);
+		treeMinecarts.forEach(Entity::remove);
+		Tasks.cancel(treeMinecartStandTask);
 		Tasks.cancel(entityAgeTask);
 		Pugmas25Train.shutdown();
 		Pugmas25TrainBackground.shutdown();
@@ -242,8 +309,11 @@ public class Pugmas25 extends EdenEvent {
 
 		// Skip server event location checks since it checks UUID
 
-		if (entity.getUniqueId().equals(treeMinecart.getUniqueId()))
-			event.setCancelled(true);
+		treeMinecarts.forEach(minecart -> {
+			if (entity.getUniqueId().equals(minecart.getUniqueId())) {
+				event.setCancelled(true);
+			}
+		});
 	}
 
 	//
@@ -394,6 +464,19 @@ public class Pugmas25 extends EdenEvent {
 			String message = RandomUtils.randomElement(messages);
 			return message.replaceAll("<player>", Nickname.of(player));
 		}
+	}
+
+	private float rotLerp(float amount, float from, float to) {
+		float f = to - from;
+		while (f < -180.0F) f += 360.0F;
+		while (f >= 180.0F) f -= 360.0F;
+		return from + amount * f;
+	}
+
+	private double wrapRadians(double r) {
+		while (r <= -Math.PI) r += Math.PI * 2;
+		while (r > Math.PI) r -= Math.PI * 2;
+		return r;
 	}
 
 
