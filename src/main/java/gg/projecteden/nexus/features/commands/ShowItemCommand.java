@@ -202,9 +202,10 @@ public class ShowItemCommand extends CustomCommand {
 		if (Nullables.isNullOrAir(item))
 			error("Item in " + slot + " not found");
 
-		ItemMeta meta = item.getItemMeta();
-		if (!meta.hasEnchants() && !meta.hasLore() && Nullables.isNullOrEmpty(meta.getDisplayName()))
-			error("Item must have enchants, lore, or a custom name");
+		// Just allow the ability to show any item
+//		ItemMeta meta = item.getItemMeta();
+//		if (!meta.hasEnchants() && !meta.hasLore() && Nullables.isNullOrEmpty(meta.getDisplayName()))
+//			error("Item must have enchants, lore, or a custom name");
 
 		return item;
 	}
