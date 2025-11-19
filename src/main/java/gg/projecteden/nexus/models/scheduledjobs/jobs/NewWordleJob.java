@@ -22,13 +22,17 @@ public class NewWordleJob extends AbstractJob {
 	@Override
 	protected CompletableFuture<JobStatus> run() {
 		for (Player player : OnlinePlayers.getAll()) {
-			var user = new WordleUserService().get(player);
-			var currentTime = user.getZonedLocalDateTime();
+			try {
+				var user = new WordleUserService().get(player);
+				var currentTime = user.getZonedLocalDateTime();
 
-			if (currentTime.getHour() != 0 || currentTime.getMinute() >= 30)
-				continue;
+				if (currentTime.getHour() != 0 || currentTime.getMinute() >= 30)
+					continue;
 
-			user.notifyOfNewGame();
+				user.notifyOfNewGame();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 
 		return completed();

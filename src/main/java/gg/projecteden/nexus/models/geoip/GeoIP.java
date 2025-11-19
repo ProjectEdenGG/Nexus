@@ -240,8 +240,13 @@ public class GeoIP implements PlayerOwnedObject {
 	}
 
 	public ZonedDateTime getCurrentTime() {
-		final TimeZone timezone = TimeZone.getTimeZone(getTimezone().getId());
-		return ZonedDateTime.now().toOffsetDateTime().atZoneSameInstant(timezone.toZoneId());
+		try {
+			final TimeZone timezone = TimeZone.getTimeZone(getTimezone().getId());
+			return ZonedDateTime.now().toOffsetDateTime().atZoneSameInstant(timezone.toZoneId());
+		} catch (Exception ex) {
+			Nexus.severe("Could not get local time for " + getNickname() + " (" + getTimezone() + ")");
+			throw ex;
+		}
 	}
 
 	public String getCurrentTimeShort() {
