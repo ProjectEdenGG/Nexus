@@ -136,6 +136,8 @@ public class Pugmas25 extends EdenEvent {
 	@Getter
 	private Pugmas25Sidebar sidebar;
 
+	public static final Map<WaypointTransmitter, List<Pair<Player, Connection>>> waypointConnections = new HashMap<>();
+
 	public Pugmas25() {
 		instance = this;
 	}
@@ -242,6 +244,21 @@ public class Pugmas25 extends EdenEvent {
 				});
 		});
 
+		// TODO: CREATE WAYPOINT CONNECTIONS OR SAVE UUID IN CONFIG?
+
+		Tasks.repeat(5, TickTime.SECOND.x(5), () -> {
+			waypointConnections.keySet().forEach(waypoint -> {
+				Entity entity = (Entity) waypoint;
+				if (!entity.isDead())
+					return;
+
+				var connections = waypointConnections.get(waypoint);
+				connections.forEach(pair -> {
+					pair.getSecond().disconnect();
+				});
+			});
+		});
+
 	}
 
 	@Override
@@ -258,6 +275,14 @@ public class Pugmas25 extends EdenEvent {
 		Pugmas25BalloonEditor.shutdown();
 
 		getPlayers().forEach(this::onDepart);
+
+		waypointConnections.keySet().forEach(waypoint -> {
+			var connections = waypointConnections.get(waypoint);
+			connections.forEach(pair -> {
+				pair.getSecond().disconnect();
+			});
+		});
+		waypointConnections.clear();
 	}
 
 	public void onArrive(Player player) {
