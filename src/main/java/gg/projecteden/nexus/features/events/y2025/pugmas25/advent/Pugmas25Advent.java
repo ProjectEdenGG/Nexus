@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.advent;
 
+import com.destroystokyo.paper.ParticleBuilder;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.events.advent.AdventAnimation;
@@ -14,8 +16,10 @@ import gg.projecteden.nexus.models.pugmas25.Advent25Present;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
@@ -40,6 +44,7 @@ public class Pugmas25Advent implements Listener {
 
 	public Pugmas25Advent() {
 		Nexus.registerListener(this);
+		Pugmas25UserService service = new Pugmas25UserService();
 
 		ClientSideConfig.registerItemFrameModifier(new ClientSideItemFrameModifier() {
 			@Override
@@ -48,10 +53,26 @@ public class Pugmas25Advent implements Listener {
 				if (present == null)
 					return itemFrame.content();
 
-				var adventUser = new Pugmas25UserService().get(user).advent();
+				var adventUser = service.get(user).advent();
 				var status = adventUser.getStatus(present);
 				return status.getFrameItem().build();
 			}
+		});
+
+		// TODO: isn't working?
+		Tasks.repeat(5, TickTime.SECOND.x(3), () -> {
+			Advent25Config.get().getDays().values().forEach(present -> {
+				Pugmas25.get().getOnlinePlayers().forEach(player -> {
+					var adventUser = service.get(player).advent();
+					if (!adventUser.hasCollected(present))
+						new ParticleBuilder(Particle.HAPPY_VILLAGER)
+							.location(present.getLocation()).offset(0.25, 0.25, 0.25)
+							.extra(0)
+							.receivers(player)
+							.spawn();
+				});
+			});
+
 		});
 	}
 

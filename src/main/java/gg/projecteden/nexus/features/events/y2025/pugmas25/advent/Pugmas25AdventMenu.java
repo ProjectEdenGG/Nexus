@@ -55,15 +55,13 @@ public class Pugmas25AdventMenu extends InventoryProvider {
 
 		for (int day = 1; day <= 25; day++) {
 			var present = Advent25Config.get().get(day);
-			var item = new ItemBuilder(user.getStatus(present).getMenuItem(present));
+			var item = new ItemBuilder(user.getStatus(present).getMenuItem(present, user));
 
 			ClickableItem clickableItem = ClickableItem.empty(item.build());
 			if (user.hasFound(present)) {
-				item.lore("", "&aShow Waypoint");
-
 				clickableItem = ClickableItem.of(item.build(), e -> {
 					viewer.closeInventory();
-					present.glow(user);
+					present.showWaypoint(user);
 				});
 			}
 

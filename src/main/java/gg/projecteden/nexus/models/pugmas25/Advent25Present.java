@@ -52,8 +52,8 @@ public class Advent25Present implements HasLocation {
 		return Pugmas25District.of(getLocation());
 	}
 
-	public void glow(Advent25User user) {
-		// TODO
+	public void showWaypoint(Advent25User user) {
+		// TODO --> give compass showing location?
 		user.sendMessage("TODO glow, day = " + day);
 	}
 
@@ -85,19 +85,24 @@ public class Advent25Present implements HasLocation {
 			return builder;
 		}
 
-		public ItemBuilder getMenuItem(Advent25Present present) {
+		public ItemBuilder getMenuItem(Advent25Present present, Advent25User user) {
 			Pugmas25District district = present.getDistrict();
 			String districtName = "null";
 			if (district != null) {
 				districtName = district.getName();
-				if (this == LOCKED)
+				if (this == LOCKED && !user.hasFound(present))
 					districtName = "???";
 			}
 
-			return new ItemBuilder(menuModelType)
+			ItemBuilder itemBuilder = new ItemBuilder(menuModelType)
 				.name("&3Day: &e" + present.getDay())
 				.lore("&3Status: &e" + status)
 				.lore("&3District: &e" + districtName);
+
+			if (user.hasFound(present))
+				itemBuilder.lore("", "&aShow Waypoint");
+
+			return itemBuilder;
 		}
 
 		public boolean isGlowing() {
