@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.api.common.exceptions.EdenException;
 import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.crates.api.models.CrateAnimation;
@@ -280,7 +281,10 @@ public class Reloader {
 		public static boolean canReload(List<ReloadCondition> excludedConditions) {
 			try {
 				tryReload(excludedConditions);
+			} catch (EdenException e) {
+				return false;
 			} catch (Exception ex) {
+				ex.printStackTrace();
 				return false;
 			}
 
