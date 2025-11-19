@@ -19,6 +19,9 @@ import org.jetbrains.annotations.Nullable;
 @AllArgsConstructor
 public enum Pugmas25QuestItem implements QuestItem {
 
+	TEST_FISH_A(new ItemBuilder(Material.COD).name("Test Fish A")),
+	TEST_FISH_B(new ItemBuilder(Material.COD).name("Test Fish B")),
+
 	RED_BALLOON(new ItemBuilder(ItemModelType.EVENT_RED_BALLOON).name("&oRed Balloon").lore("&7Negates fall damage")),
 	MAGIC_MIRROR(new ItemBuilder(ItemModelType.EVENT_MAGIC_MIRROR).name("&oMagic Mirror").lore("&7Opens the waystone warp menu")),
 	LUCKY_HORSESHOE(new ItemBuilder(ItemModelType.EVENT_LUCKY_HORSESHOE).name("&oLucky Horseshoe").lore("&7Higher chance to gain additional coins")),

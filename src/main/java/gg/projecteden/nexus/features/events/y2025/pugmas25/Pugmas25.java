@@ -40,12 +40,17 @@ import gg.projecteden.nexus.models.deathmessages.DeathMessages;
 import gg.projecteden.nexus.models.deathmessages.DeathMessagesService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.pugmas25.Advent25User;
+import gg.projecteden.nexus.models.pugmas25.Pugmas25Config;
+import gg.projecteden.nexus.models.pugmas25.Pugmas25ConfigService;
+import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
+import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.MathUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -62,7 +67,10 @@ import net.minecraft.world.waypoints.WaypointTransmitter.Connection;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.ArmorStand.LockType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Mob;
@@ -75,6 +83,7 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
@@ -178,6 +187,11 @@ public class Pugmas25 extends EdenEvent {
 				_stand.setHelmet(cart);
 				_stand.setVisible(false);
 				_stand.setInvulnerable(true);
+
+				for (EquipmentSlot slot : EquipmentSlot.values()) {
+					_stand.addEquipmentLock(slot, LockType.ADDING_OR_CHANGING);
+					_stand.addEquipmentLock(slot, LockType.REMOVING_OR_CHANGING);
+				}
 			});
 			treeMinecartStands.add(armorStand);
 		}
@@ -215,12 +229,12 @@ public class Pugmas25 extends EdenEvent {
 
 					UUID uuid = armorStand.getUniqueId();
 					float prevYaw = previousYaw.getOrDefault(uuid, globalYaw);
-					float smoothedYaw = rotLerp(0.5f, prevYaw, globalYaw);
+					float smoothedYaw = MathUtils.rotLerp(0.5f, prevYaw, globalYaw);
 					float deltaYaw = smoothedYaw - prevYaw;
 
 					// Get normalized head pose
 					EulerAngle currentAngle = armorStand.getHeadPose();
-					double normalizedHeadYaw = wrapRadians(currentAngle.getY());
+					double normalizedHeadYaw = MathUtils.wrapRadians(currentAngle.getY());
 
 					// Apply delta
 					double newHeadYaw = normalizedHeadYaw + Math.toRadians(deltaYaw);
@@ -248,8 +262,8 @@ public class Pugmas25 extends EdenEvent {
 
 		Tasks.repeat(5, TickTime.SECOND.x(5), () -> {
 			waypointConnections.keySet().forEach(waypoint -> {
-				Entity entity = (Entity) waypoint;
-				if (!entity.isDead())
+				net.minecraft.world.entity.Entity entity = (net.minecraft.world.entity.Entity) waypoint;
+				if (entity.isAlive())
 					return;
 
 				var connections = waypointConnections.get(waypoint);
@@ -368,6 +382,46 @@ public class Pugmas25 extends EdenEvent {
 					.send(player);
 			}
 		);
+
+		handleInteract(Pugmas25NPC.ANGLER, (player, npc) -> {
+			final Pugmas25UserService userService = new Pugmas25UserService();
+			final Pugmas25User user = userService.get(player);
+
+			final Pugmas25ConfigService configService = new Pugmas25ConfigService();
+			final Pugmas25Config config = configService.get0();
+
+			final Dialog dialog = new Dialog(npc);
+			Pugmas25QuestItem questFish = config.getAnglerQuestFish();
+
+			if (!user.isReceivedAnglerQuestInstructions()) {
+				dialog
+					.npc("Catch a new fish for me every 2 hours")
+					.player("Ok!")
+					.npc("Current fish to catch = " + questFish.getItemBuilder().name())
+					.thenRun(quester -> {
+						user.setReceivedAnglerQuestInstructions(true);
+						userService.save(user);
+					});
+			}
+
+			if (user.isFinishedAnglerQuest()) {
+				dialog.npc("Come back in x minutes for my next fish");
+			} else if (Quester.of(player).has(questFish.get())) {
+				dialog
+					.npc("Thank you!")
+					.thenRun(quester -> {
+						user.setFinishedAnglerQuest(true);
+						userService.save(user);
+
+					})
+					.take(questFish.get())
+					.npc("Come back in x minutes for my next fish");
+			} else {
+				dialog.npc("Current fish to catch = " + questFish.getItemBuilder().name());
+			}
+
+			dialog.send(player);
+		});
 	}
 
 	public LocalDateTime now() {
@@ -489,19 +543,6 @@ public class Pugmas25 extends EdenEvent {
 			String message = RandomUtils.randomElement(messages);
 			return message.replaceAll("<player>", Nickname.of(player));
 		}
-	}
-
-	private float rotLerp(float amount, float from, float to) {
-		float f = to - from;
-		while (f < -180.0F) f += 360.0F;
-		while (f >= 180.0F) f -= 360.0F;
-		return from + amount * f;
-	}
-
-	private double wrapRadians(double r) {
-		while (r <= -Math.PI) r += Math.PI * 2;
-		while (r > Math.PI) r -= Math.PI * 2;
-		return r;
 	}
 
 

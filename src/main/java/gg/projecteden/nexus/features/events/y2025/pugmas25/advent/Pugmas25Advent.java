@@ -66,7 +66,7 @@ public class Pugmas25Advent implements Listener {
 					var adventUser = service.get(player).advent();
 					if (!adventUser.hasCollected(present))
 						new ParticleBuilder(Particle.HAPPY_VILLAGER)
-							.location(present.getLocation().toCenterLocation()).offset(0.25, 0.25, 0.25)
+							.location(present.getLocation().toCenterLocation()).offset(0.5, 0.5, 0.5)
 							.extra(0)
 							.receivers(player)
 							.spawn();

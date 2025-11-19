@@ -40,6 +40,8 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.pugmas25.Advent25Config;
 import gg.projecteden.nexus.models.pugmas25.Advent25ConfigService;
 import gg.projecteden.nexus.models.pugmas25.Advent25Present;
+import gg.projecteden.nexus.models.pugmas25.Pugmas25Config;
+import gg.projecteden.nexus.models.pugmas25.Pugmas25ConfigService;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.utils.Currency;
@@ -85,8 +87,11 @@ import java.util.stream.IntStream;
 public class Pugmas25Command extends IEventCommand implements Listener {
 	public String PREFIX = Pugmas25.PREFIX;
 
-	private final Pugmas25UserService service = new Pugmas25UserService();
+	private final Pugmas25UserService userService = new Pugmas25UserService();
 	private Pugmas25User user;
+
+	private final Pugmas25ConfigService configService = new Pugmas25ConfigService();
+	private final Pugmas25Config config = configService.get0();
 
 	private final Advent25ConfigService adventService = new Advent25ConfigService();
 	private final Advent25Config adventConfig = adventService.get0();
@@ -94,7 +99,7 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 	public Pugmas25Command(@NonNull CommandEvent event) {
 		super(event);
 		if (isPlayerCommandEvent())
-			user = service.get(player());
+			user = userService.get(player());
 	}
 
 	@Override
@@ -187,7 +192,15 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		present.showWaypoint(user.advent());
 	}
 
+	@Path("setFishOfTheDay <item>")
+	@Permission(Group.ADMIN)
+	void setFishOfTheDay(Pugmas25QuestItem item) {
+		config.setAnglerQuestFish(item);
+		send("Set angler quest fish to " + config.getAnglerQuestFish().getItemBuilder().name());
+	}
+
 	@Path("addWaypoint")
+	@Permission(Group.ADMIN)
 	void setWaypoint() {
 		// Waypoint Creation
 		ArmorStand armorStand = world().spawn(location(), ArmorStand.class, _armorStand -> {
@@ -230,6 +243,7 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 	}
 
 	@Path("removeWaypoint")
+	@Permission(Group.ADMIN)
 	void deleteWaypoint() {
 		Pugmas25.waypointConnections.values().forEach(connections -> {
 			connections.forEach(pair -> {

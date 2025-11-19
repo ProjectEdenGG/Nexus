@@ -47,8 +47,8 @@ import java.util.function.BiFunction;
 @NoArgsConstructor
 public abstract class IEventCommand extends _WarpSubCommand implements Listener {
 	@SuppressWarnings("FieldCanBeLocal")
-	private final QuesterService questerService = new QuesterService();
-	private Quester quester;
+	protected final QuesterService questerService = new QuesterService();
+	protected Quester quester;
 
 	public IEventCommand(CommandEvent event) {
 		super(event);

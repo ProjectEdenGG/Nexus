@@ -44,6 +44,8 @@ public class Pugmas25User implements PlayerOwnedObject {
 
 	private boolean readyToVisit = false;
 	private boolean visited = false;
+	private boolean receivedAnglerQuestInstructions = false;
+	private boolean finishedAnglerQuest = false;
 
 	private Set<Pugmas25Waystone> foundWaystones = new HashSet<>();
 	private Set<Pugmas25Snowman> decoratedSnowmen = new HashSet<>();

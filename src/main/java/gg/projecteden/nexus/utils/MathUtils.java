@@ -78,4 +78,17 @@ public class MathUtils extends gg.projecteden.api.common.utils.MathUtils {
 		return bd.doubleValue();
 	}
 
+	public static float rotLerp(float amount, float from, float to) {
+		float f = to - from;
+		while (f < -180.0F) f += 360.0F;
+		while (f >= 180.0F) f -= 360.0F;
+		return from + amount * f;
+	}
+
+	public static double wrapRadians(double r) {
+		while (r <= -Math.PI) r += Math.PI * 2;
+		while (r > Math.PI) r -= Math.PI * 2;
+		return r;
+	}
+
 }
