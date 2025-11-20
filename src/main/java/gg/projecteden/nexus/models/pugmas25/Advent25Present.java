@@ -3,6 +3,7 @@ package gg.projecteden.nexus.models.pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts.Pugmas25District;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.clientside.ClientSideUser;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -11,7 +12,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,11 +53,6 @@ public class Advent25Present implements HasLocation {
 
 	public Pugmas25District getDistrict() {
 		return Pugmas25District.of(getLocation());
-	}
-
-	public void showWaypoint(Advent25User user) {
-		// TODO --> give compass showing location?
-		user.sendMessage("TODO glow, day = " + day);
 	}
 
 	public void refresh(Advent25User user) {
@@ -99,8 +97,13 @@ public class Advent25Present implements HasLocation {
 				.lore("&3Status: &e" + status)
 				.lore("&3District: &e" + districtName);
 
-			if (user.hasFound(present))
-				itemBuilder.lore("", "&aShow Waypoint");
+			if (user.hasFound(present)) {
+				Advent25Present waypointPresent = user.getWaypointPresent();
+				if (waypointPresent != null && waypointPresent.equals(present))
+					itemBuilder.lore("", "&cHide Waypoint");
+				else
+					itemBuilder.lore("", "&aShow Waypoint");
+			}
 
 			return itemBuilder;
 		}

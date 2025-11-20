@@ -19,6 +19,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Distri
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Fishing;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Interactions;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Intro;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25ModelTrain;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Snowmen;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Sidebar;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Train;
@@ -34,11 +35,11 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestT
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25ShopMenu;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
-import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.models.deathmessages.DeathMessages;
 import gg.projecteden.nexus.models.deathmessages.DeathMessagesService;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.pugmas25.Advent25Present;
 import gg.projecteden.nexus.models.pugmas25.Advent25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25Config;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25ConfigService;
@@ -47,32 +48,31 @@ import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.AdventureUtils;
-import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.MathUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.nms.NMSUtils;
 import kotlin.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
-import net.kyori.adventure.util.TriState;
+import net.minecraft.ChatFormatting;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.waypoints.Waypoint.Icon;
+import net.minecraft.world.waypoints.WaypointStyleAssets;
 import net.minecraft.world.waypoints.WaypointTransmitter;
 import net.minecraft.world.waypoints.WaypointTransmitter.Connection;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.craftbukkit.entity.CraftLivingEntity;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.ArmorStand.LockType;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -82,20 +82,18 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /*
 	"TODO: RELEASE" <-- CHECK FOR ANY COMMENTS
@@ -133,15 +131,10 @@ public class Pugmas25 extends EdenEvent {
 
 	private static int entityAgeTask;
 
-	final Location treeCenter = location(-679.0, 115.0, -3117.0);
-	private static int modelTrainCheckerTask = -1;
-
 	@Getter
 	private static boolean ridesEnabled = true;
 	@Getter
 	private Pugmas25Sidebar sidebar;
-
-	public static final Map<WaypointTransmitter, List<Pair<Player, Connection>>> waypointConnections = new HashMap<>();
 
 	public Pugmas25() {
 		instance = this;
@@ -169,21 +162,13 @@ public class Pugmas25 extends EdenEvent {
 		new Pugmas25BoatRace();
 		new Pugmas25Interactions();
 		new Pugmas25Snowmen();
+		new Pugmas25ModelTrain();
 
 		Pugmas25Train.startup();
 		Pugmas25TrainBackground.startup();
+		Pugmas25ModelTrain.startup();
 
 		Tasks.wait(TickTime.SECOND, () -> getPlayers().forEach(this::onArrive));
-
-		modelTrainCheckerTask = Tasks.repeat(5, TickTime.SECOND.x(2), () -> {
-			if (getOnlinePlayers().radius(treeCenter, 30).get().isEmpty()) {
-				if (modelTrainStarted)
-					stopModelTrain();
-			} else {
-				if (!modelTrainStarted)
-					startModelTrain();
-			}
-		});
 
 		// Prevent stupid mob AI, kill them and let server respawn
 		entityAgeTask = Tasks.repeat(TickTime.SECOND.x(5), TickTime.MINUTE, () -> {
@@ -196,18 +181,13 @@ public class Pugmas25 extends EdenEvent {
 				});
 		});
 
-		// TODO: CREATE WAYPOINT CONNECTIONS OR SAVE UUID IN CONFIG?
-
 		Tasks.repeat(5, TickTime.SECOND.x(5), () -> {
-			waypointConnections.keySet().forEach(waypoint -> {
-				net.minecraft.world.entity.Entity entity = (net.minecraft.world.entity.Entity) waypoint;
-				if (entity.isAlive())
+			playerWaypointConnections.keySet().forEach(waypointStand -> {
+				if (waypointStand == null || !waypointStand.isDead())
 					return;
 
-				var connections = waypointConnections.get(waypoint);
-				connections.forEach(pair -> {
-					pair.getSecond().disconnect();
-				});
+				var pair = playerWaypointConnections.remove(waypointStand);
+				pair.getSecond().disconnect();
 			});
 		});
 
@@ -218,8 +198,7 @@ public class Pugmas25 extends EdenEvent {
 		if (sidebar != null)
 			sidebar.handleEnd();
 
-		Tasks.cancel(modelTrainCheckerTask);
-		stopModelTrain();
+		Pugmas25ModelTrain.shutdown();
 		Tasks.cancel(entityAgeTask);
 		Pugmas25Train.shutdown();
 		Pugmas25TrainBackground.shutdown();
@@ -227,13 +206,13 @@ public class Pugmas25 extends EdenEvent {
 
 		getPlayers().forEach(this::onDepart);
 
-		waypointConnections.keySet().forEach(waypoint -> {
-			var connections = waypointConnections.get(waypoint);
-			connections.forEach(pair -> {
-				pair.getSecond().disconnect();
-			});
+		playerWaypointConnections.keySet().forEach(waypointStand -> {
+			var pair = playerWaypointConnections.get(waypointStand);
+			pair.getSecond().disconnect();
+			waypointStand.remove();
 		});
-		waypointConnections.clear();
+
+		playerWaypointConnections.clear();
 	}
 
 	public void onArrive(Player player) {
@@ -279,19 +258,6 @@ public class Pugmas25 extends EdenEvent {
 		}
 	}
 
-	@EventHandler
-	public void on(VehicleEntityCollisionEvent event) {
-		Entity entity = event.getVehicle();
-
-		// Skip server event location checks since it checks UUID
-
-		treeMinecarts.forEach(minecart -> {
-			if (entity.getUniqueId().equals(minecart.getUniqueId())) {
-				event.setCancelled(true);
-			}
-		});
-	}
-
 	//
 
 	@Override
@@ -320,6 +286,14 @@ public class Pugmas25 extends EdenEvent {
 			}
 		);
 
+		// TODO
+		handleInteract(Pugmas25NPC.TICKET_MASTER, (player, npc) -> {
+			new Dialog(npc)
+				.npc("Welcome to Pugmas Village, Project Eden's holiday event!")
+				.send(player);
+		});
+
+		// TODO
 		handleInteract(Pugmas25NPC.ANGLER, (player, npc) -> {
 			final Pugmas25UserService userService = new Pugmas25UserService();
 			final Pugmas25User user = userService.get(player);
@@ -482,96 +456,72 @@ public class Pugmas25 extends EdenEvent {
 		}
 	}
 
-	private static final List<ItemModelType> TREE_MINECART_MODELS = List.of(ItemModelType.PUGMAS_TRAIN_SET_ENGINE, ItemModelType.PUGMAS_TRAIN_SET_PASSENGER, ItemModelType.PUGMAS_TRAIN_SET_PASSENGER, ItemModelType.PUGMAS_TRAIN_SET_CARGO);
-	private final Location treeMinecartStandSpawnLoc = location(-680.5, 115.25, -3110.5);
-	private static final List<ArmorStand> treeMinecartStands = new ArrayList<>();
-	private final Location treeMinecartSpawnLoc = location(-680.5, 116.25, -3111.5);
-	private static final List<Minecart> treeMinecarts = new ArrayList<>();
-	private static int treeMinecartStandTask = -1;
-	private static final Map<UUID, Float> previousYaw = new HashMap<>();
-	private static boolean modelTrainStarted = false;
+	public static final Map<ArmorStand, Pair<UUID, Connection>> playerWaypointConnections = new ConcurrentHashMap<>();
 
-	private void stopModelTrain() {
-		modelTrainStarted = false;
-		Tasks.cancel(treeMinecartStandTask);
-		treeMinecartStands.forEach(Entity::remove);
-		treeMinecarts.forEach(Entity::remove);
-		treeMinecartStands.clear();
-		treeMinecarts.clear();
-	}
-
-	private void startModelTrain() {
-		modelTrainStarted = true;
-
-		final int TRAIN_SIZE = TREE_MINECART_MODELS.size();
-		for (int i = 0; i < TRAIN_SIZE; i++) {
-			int finalI = i;
-			ArmorStand armorStand = getWorld().spawn(treeMinecartStandSpawnLoc, ArmorStand.class, _stand -> {
-				ItemStack cart = new ItemBuilder(TREE_MINECART_MODELS.get(finalI)).dyeColor(ColorType.PURPLE.getBukkitColor()).build();
-				_stand.setHelmet(cart);
-				_stand.setVisible(false);
-				_stand.setInvulnerable(true);
-
-				for (EquipmentSlot slot : EquipmentSlot.values()) {
-					_stand.addEquipmentLock(slot, LockType.ADDING_OR_CHANGING);
-					_stand.addEquipmentLock(slot, LockType.REMOVING_OR_CHANGING);
-				}
-			});
-			treeMinecartStands.add(armorStand);
-		}
-
-		for (int i = 0; i < TRAIN_SIZE; i++) {
-			ArmorStand armorStand = treeMinecartStands.get(i);
-
-			Tasks.wait(i * 18L, () -> {
-				Minecart minecart = getWorld().spawn(treeMinecartSpawnLoc, Minecart.class, _minecart -> {
-					_minecart.setMaxSpeed(0.1);
-					_minecart.setSlowWhenEmpty(false);
-					_minecart.setInvulnerable(true);
-					_minecart.setFrictionState(TriState.FALSE);
-					_minecart.setVelocity(BlockFace.WEST.getDirection().multiply(0.1));
-				});
-
-				treeMinecarts.add(minecart);
-				Tasks.wait(5L, () -> minecart.addPassenger(armorStand));
-			});
-		}
-
-		treeMinecartStandTask = Tasks.repeat(TickTime.TICK.x(5), TickTime.TICK.x(2), () -> {
-			if (!modelTrainStarted)
+	public static void hideWaypoint(@NotNull Player player) {
+		playerWaypointConnections.keySet().forEach(waypointStand -> {
+			var pair = playerWaypointConnections.get(waypointStand);
+			if (!pair.getFirst().equals(player.getUniqueId()))
 				return;
 
-			treeMinecarts.forEach(minecart -> {
-				Vector velocity = minecart.getVelocity();
-
-				if (velocity.lengthSquared() <= 0.0001) // avoids NaN when stopped
-					return;
-
-				float globalYaw = (float) Math.toDegrees(Math.atan2(-velocity.getX(), velocity.getZ()));
-
-				minecart.getPassengers().forEach(passenger -> {
-					if (!(passenger instanceof ArmorStand armorStand))
-						return;
-
-					UUID uuid = armorStand.getUniqueId();
-					float prevYaw = previousYaw.getOrDefault(uuid, globalYaw);
-					float smoothedYaw = MathUtils.rotLerp(0.5f, prevYaw, globalYaw);
-					float deltaYaw = smoothedYaw - prevYaw;
-
-					// Get normalized head pose
-					EulerAngle currentAngle = armorStand.getHeadPose();
-					double normalizedHeadYaw = MathUtils.wrapRadians(currentAngle.getY());
-
-					// Apply delta
-					double newHeadYaw = normalizedHeadYaw + Math.toRadians(deltaYaw);
-
-					EulerAngle newAngle = new EulerAngle(currentAngle.getX(), newHeadYaw, currentAngle.getZ());
-
-					armorStand.setHeadPose(newAngle);
-					previousYaw.put(uuid, smoothedYaw);
-				});
-			});
+			playerWaypointConnections.remove(waypointStand);
+			pair.getSecond().disconnect();
+			waypointStand.remove();
 		});
+	}
+
+	public static void showWaypoint(@NotNull Player player, Advent25Present present) {
+		hideWaypoint(player);
+
+		ArmorStand armorStand = spawnWaypointStand(present.getLocation().toCenterLocation());
+
+		net.minecraft.world.entity.decoration.ArmorStand nmsArmorStand = (net.minecraft.world.entity.decoration.ArmorStand) NMSUtils.toNMS(armorStand);
+		Icon waypointIcon = ((WaypointTransmitter) nmsArmorStand).waypointIcon();
+		ServerPlayer nmsPlayer = NMSUtils.toNMS(player);
+
+		WaypointTransmitter.Connection connection;
+
+		if (WaypointTransmitter.isReallyFar(nmsArmorStand, nmsPlayer)) {
+			connection = new WaypointTransmitter.EntityAzimuthConnection(nmsArmorStand, waypointIcon, nmsPlayer);
+		} else {
+			if (!WaypointTransmitter.isChunkVisible(nmsArmorStand.chunkPosition(), nmsPlayer))
+				connection = new WaypointTransmitter.EntityChunkConnection(nmsArmorStand, waypointIcon, nmsPlayer);
+			else
+				connection = new WaypointTransmitter.EntityBlockConnection(nmsArmorStand, waypointIcon, nmsPlayer);
+		}
+
+		playerWaypointConnections.put(armorStand, new Pair<>(player.getUniqueId(), connection));
+		connection.connect();
+	}
+
+	public static ArmorStand spawnWaypointStand(Location location) {
+		var armorStand = location.getWorld().spawn(location, ArmorStand.class, stand -> {
+			stand.setRightArmPose(EulerAngle.ZERO);
+			stand.setLeftArmPose(EulerAngle.ZERO);
+			stand.setHeadPose(EulerAngle.ZERO);
+			stand.setSmall(true);
+			stand.setGravity(false);
+			stand.setInvulnerable(true);
+			stand.setInvisible(true);
+			stand.setMarker(true);
+			stand.setDisabledSlots(EquipmentSlot.values());
+			stand.registerAttribute(Attribute.WAYPOINT_TRANSMIT_RANGE);
+			var attribute = stand.getAttribute(Attribute.WAYPOINT_TRANSMIT_RANGE);
+			if (attribute != null)
+				attribute.setBaseValue(500);
+		});
+
+		ServerLevel nmsWorld = NMSUtils.toNMS(location.getWorld());
+
+		net.minecraft.world.entity.decoration.ArmorStand nmsArmorStand = (net.minecraft.world.entity.decoration.ArmorStand) NMSUtils.toNMS(armorStand);
+		WaypointTransmitter nmsWaypointTransmitter = nmsArmorStand;
+
+		nmsWorld.getWaypointManager().untrackWaypoint(nmsWaypointTransmitter);
+
+		nmsWaypointTransmitter.waypointIcon().style = ResourceKey.create(WaypointStyleAssets.ROOT_ID, ResourceLocation.withDefaultNamespace("x"));
+		nmsWaypointTransmitter.waypointIcon().color = Optional.ofNullable(ChatFormatting.AQUA.getColor());
+
+		return armorStand;
 	}
 
 

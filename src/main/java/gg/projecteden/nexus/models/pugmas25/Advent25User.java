@@ -36,6 +36,7 @@ public class Advent25User implements PlayerOwnedObject {
 
 	private Set<Integer> collected = new HashSet<>();
 	private Set<Integer> found = new HashSet<>();
+	private Advent25Present waypointPresent;
 
 	public transient final Map<Integer, ItemFrame> frames = new HashMap<>();
 

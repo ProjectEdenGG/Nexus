@@ -49,20 +49,10 @@ import gg.projecteden.nexus.utils.Currency.Price;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.nms.NMSUtils;
-import kotlin.Pair;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import net.minecraft.ChatFormatting;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.waypoints.WaypointStyleAssets;
-import net.minecraft.world.waypoints.WaypointTransmitter;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.Listener;
@@ -75,7 +65,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
@@ -183,13 +172,19 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		send(PREFIX + "Set now to " + DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(time));
 	}
 
-	@Path("advent waypoint <day>")
+	@Path("advent showWaypoint <day>")
 	@Description("Get directions to a present you've already found")
-	void advent_waypoint(Advent25Present present) {
+	void advent_showWaypoint(Advent25Present present) {
 		if (!user.advent().hasFound(present))
 			error("You have not found day &e#" + present.getDay());
 
-		present.showWaypoint(user.advent());
+		Pugmas25.showWaypoint(player(), present);
+	}
+
+	@Path("advent hideWaypoint")
+	@Permission(Group.ADMIN)
+	void advent_hideWaypoint() {
+		Pugmas25.hideWaypoint(player());
 	}
 
 	@Path("setFishOfTheDay <item>")
@@ -198,61 +193,6 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		config.setAnglerQuestFish(item);
 		send("Set angler quest fish to " + config.getAnglerQuestFish().getItemBuilder().name());
 	}
-
-	@Path("addWaypoint")
-	@Permission(Group.ADMIN)
-	void setWaypoint() {
-		// Waypoint Creation
-		ArmorStand armorStand = world().spawn(location(), ArmorStand.class, _armorStand -> {
-			_armorStand.registerAttribute(Attribute.WAYPOINT_TRANSMIT_RANGE);
-			var attribute = _armorStand.getAttribute(Attribute.WAYPOINT_TRANSMIT_RANGE);
-			if (attribute != null)
-				attribute.setBaseValue(500);
-		});
-
-		ServerLevel nmsWorld = NMSUtils.toNMS(world());
-
-		net.minecraft.world.entity.decoration.ArmorStand nmsArmorStand = (net.minecraft.world.entity.decoration.ArmorStand) NMSUtils.toNMS(armorStand);
-		WaypointTransmitter nmsWaypointTransmitter = nmsArmorStand;
-
-		nmsWorld.getWaypointManager().untrackWaypoint(nmsWaypointTransmitter);
-
-		nmsWaypointTransmitter.waypointIcon().style = ResourceKey.create(WaypointStyleAssets.ROOT_ID, ResourceLocation.withDefaultNamespace("x"));
-		nmsWaypointTransmitter.waypointIcon().color = Optional.ofNullable(ChatFormatting.AQUA.getColor());
-
-		// Player Waypoint Connection
-		ServerPlayer nmsPlayer = NMSUtils.toNMS(player());
-		LivingEntity nmsLivingEntity = nmsArmorStand;
-
-		WaypointTransmitter.Connection connection;
-		if (WaypointTransmitter.isReallyFar(nmsLivingEntity, nmsPlayer)) {
-			connection = new WaypointTransmitter.EntityAzimuthConnection(nmsLivingEntity, nmsWaypointTransmitter.waypointIcon(), nmsPlayer);
-		} else {
-			if (!WaypointTransmitter.isChunkVisible(nmsLivingEntity.chunkPosition(), nmsPlayer))
-				connection = new WaypointTransmitter.EntityChunkConnection(nmsLivingEntity, nmsWaypointTransmitter.waypointIcon(), nmsPlayer);
-			else
-				connection = new WaypointTransmitter.EntityBlockConnection(nmsLivingEntity, nmsWaypointTransmitter.waypointIcon(), nmsPlayer);
-		}
-
-		// Final Setup
-		var connections = Pugmas25.waypointConnections.getOrDefault(nmsWaypointTransmitter, new ArrayList<>());
-		connections.add(new Pair<>(player(), connection));
-		Pugmas25.waypointConnections.put(nmsWaypointTransmitter, connections);
-
-		connection.connect();
-	}
-
-	@Path("removeWaypoint")
-	@Permission(Group.ADMIN)
-	void deleteWaypoint() {
-		Pugmas25.waypointConnections.values().forEach(connections -> {
-			connections.forEach(pair -> {
-				pair.getSecond().disconnect();
-			});
-		});
-	}
-
-
 
 	@Path("advent tp <day>")
 	@Permission(Group.ADMIN)
