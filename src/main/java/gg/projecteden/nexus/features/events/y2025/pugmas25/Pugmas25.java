@@ -144,6 +144,7 @@ public class Pugmas25 extends EdenEvent {
 		new Pugmas25Interactions();
 		new Pugmas25Snowmen();
 		new Pugmas25ModelTrain();
+		new Pugmas25Waypoints();
 
 		Pugmas25Train.startup();
 		Pugmas25TrainBackground.startup();
@@ -177,8 +178,6 @@ public class Pugmas25 extends EdenEvent {
 		Pugmas25Waypoints.shutdown();
 
 		getPlayers().forEach(this::onDepart);
-
-
 	}
 
 	public void onArrive(Player player) {
