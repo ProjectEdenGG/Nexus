@@ -25,6 +25,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Sideba
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Train;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25TrainBackground;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waypoints;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waypoints.WaypointTarget;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waystones;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25Entity;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25NPC;
@@ -48,6 +49,7 @@ import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.AdventureUtils;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -113,7 +115,7 @@ public class Pugmas25 extends EdenEvent {
 	private static int entityAgeTask;
 
 	@Getter
-	private static boolean ridesEnabled = true;
+	private static final boolean ridesEnabled = true;
 	@Getter
 	private Pugmas25Sidebar sidebar;
 
@@ -254,7 +256,11 @@ public class Pugmas25 extends EdenEvent {
 		// TODO
 		handleInteract(Pugmas25NPC.TICKET_MASTER, (player, npc) -> {
 			new Dialog(npc)
-				.npc("Welcome to Pugmas Village, Project Eden's holiday event!")
+				.npc("Welcome to Pugmas Village, Project Eden's Christmas celebration!")
+				.npc("There's plenty to see and do around here, but before you dive in, you'll want to check in at the inn.")
+				.npc("Just follow the signs along the northern path and you'll find it in no time.")
+				.npc("Enjoy your stay!")
+				.thenRun(quester -> Pugmas25Waypoints.showWaypoint(quester.getOnlinePlayer(), WaypointTarget.INN, ColorType.LIGHT_RED))
 				.send(player);
 		});
 

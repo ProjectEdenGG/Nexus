@@ -21,6 +21,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Geyser
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Intro;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Train;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waypoints;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waypoints.WaypointTarget;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -45,6 +46,7 @@ import gg.projecteden.nexus.models.pugmas25.Pugmas25Config;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25ConfigService;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Currency;
 import gg.projecteden.nexus.utils.Currency.Price;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -177,6 +179,13 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 			error("You have not found day &e#" + present.getDay());
 
 		Pugmas25Waypoints.showWaypoint(player(), present);
+	}
+
+	@Path("advent showWaypointTarget <target>")
+	@Description("Get directions to waypoint target")
+	@Permission(Group.ADMIN)
+	void advent_showWaypoint(WaypointTarget target) {
+		Pugmas25Waypoints.showWaypoint(player(), target, ColorType.PURPLE);
 	}
 
 	@Path("advent hideWaypoint")

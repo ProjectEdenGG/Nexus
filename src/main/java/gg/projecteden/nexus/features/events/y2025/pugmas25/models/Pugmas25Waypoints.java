@@ -1,11 +1,15 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.models;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.models.pugmas25.Advent25Present;
+import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import kotlin.Pair;
-import net.minecraft.ChatFormatting;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -14,6 +18,7 @@ import net.minecraft.world.waypoints.Waypoint.Icon;
 import net.minecraft.world.waypoints.WaypointStyleAssets;
 import net.minecraft.world.waypoints.WaypointTransmitter;
 import net.minecraft.world.waypoints.WaypointTransmitter.Connection;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.ArmorStand;
@@ -33,12 +38,30 @@ public class Pugmas25Waypoints {
 
 	public static void startup() {
 		Tasks.repeat(5, TickTime.SECOND.x(5), () -> {
-			Pugmas25Waypoints.playerWaypointConnections.keySet().forEach(waypointStand -> {
+			playerWaypointConnections.keySet().forEach(waypointStand -> {
 				if (waypointStand == null || !waypointStand.isDead())
 					return;
 
-				var pair = Pugmas25Waypoints.playerWaypointConnections.remove(waypointStand);
+				var pair = playerWaypointConnections.remove(waypointStand);
 				pair.getSecond().disconnect();
+			});
+		});
+
+		Tasks.repeat(5, TickTime.SECOND.x(2), () -> {
+			playerWaypointConnections.keySet().forEach(waypointStand -> {
+				if (waypointStand == null)
+					return;
+
+				var pair = playerWaypointConnections.get(waypointStand);
+				Player player = Bukkit.getPlayer(pair.getFirst());
+				if (player == null || !player.isOnline())
+					return;
+
+				if (Distance.distance(waypointStand.getLocation(), player.getLocation()).lte(5)) {
+					pair.getSecond().disconnect();
+					playerWaypointConnections.remove(waypointStand);
+					waypointStand.remove();
+				}
 			});
 		});
 	}
@@ -65,10 +88,18 @@ public class Pugmas25Waypoints {
 		});
 	}
 
+	public static void showWaypoint(@NotNull Player player, WaypointTarget target, ColorType color) {
+		showWaypoint(player, target.getLocation(), color);
+	}
+
 	public static void showWaypoint(@NotNull Player player, Advent25Present present) {
+		showWaypoint(player, present.getLocation(), ColorType.CYAN);
+	}
+
+	private static void showWaypoint(@NotNull Player player, Location location, ColorType color) {
 		hideWaypoint(player);
 
-		ArmorStand armorStand = spawnWaypointStand(present.getLocation().toCenterLocation());
+		ArmorStand armorStand = spawnWaypointStand(location.toCenterLocation(), color);
 
 		net.minecraft.world.entity.decoration.ArmorStand nmsArmorStand = (net.minecraft.world.entity.decoration.ArmorStand) NMSUtils.toNMS(armorStand);
 		Icon waypointIcon = ((WaypointTransmitter) nmsArmorStand).waypointIcon();
@@ -89,7 +120,10 @@ public class Pugmas25Waypoints {
 		connection.connect();
 	}
 
-	private static ArmorStand spawnWaypointStand(Location location) {
+	private static ArmorStand spawnWaypointStand(Location location, ColorType color) {
+		if (color == null)
+			color = ColorType.WHITE;
+
 		var armorStand = location.getWorld().spawn(location, ArmorStand.class, stand -> {
 			stand.setRightArmPose(EulerAngle.ZERO);
 			stand.setLeftArmPose(EulerAngle.ZERO);
@@ -114,8 +148,21 @@ public class Pugmas25Waypoints {
 		nmsWorld.getWaypointManager().untrackWaypoint(nmsWaypointTransmitter);
 
 		nmsWaypointTransmitter.waypointIcon().style = ResourceKey.create(WaypointStyleAssets.ROOT_ID, ResourceLocation.withDefaultNamespace("x"));
-		nmsWaypointTransmitter.waypointIcon().color = Optional.ofNullable(ChatFormatting.AQUA.getColor());
+		nmsWaypointTransmitter.waypointIcon().color = Optional.of(color.getBukkitColor().asRGB());
 
 		return armorStand;
+	}
+
+	@Getter
+	@AllArgsConstructor
+	public enum WaypointTarget {
+		INN(loc(-740.5, 121, -3147.5)),
+		;
+
+		private final Location location;
+
+		private static Location loc(double x, double y, double z) {
+			return Pugmas25.get().location(x, y, z);
+		}
 	}
 }
