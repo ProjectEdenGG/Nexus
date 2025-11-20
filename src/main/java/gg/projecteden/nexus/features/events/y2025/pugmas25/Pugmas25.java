@@ -24,6 +24,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Snowme
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Sidebar;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Train;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25TrainBackground;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waypoints;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waystones;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25Entity;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25NPC;
@@ -39,7 +40,6 @@ import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.models.deathmessages.DeathMessages;
 import gg.projecteden.nexus.models.deathmessages.DeathMessagesService;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.models.pugmas25.Advent25Present;
 import gg.projecteden.nexus.models.pugmas25.Advent25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25Config;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25ConfigService;
@@ -54,25 +54,12 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.nms.NMSUtils;
-import kotlin.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
-import net.minecraft.ChatFormatting;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.waypoints.Waypoint.Icon;
-import net.minecraft.world.waypoints.WaypointStyleAssets;
-import net.minecraft.world.waypoints.WaypointTransmitter;
-import net.minecraft.world.waypoints.WaypointTransmitter.Connection;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -82,18 +69,12 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.util.EulerAngle;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 /*
 	"TODO: RELEASE" <-- CHECK FOR ANY COMMENTS
@@ -167,6 +148,7 @@ public class Pugmas25 extends EdenEvent {
 		Pugmas25Train.startup();
 		Pugmas25TrainBackground.startup();
 		Pugmas25ModelTrain.startup();
+		Pugmas25Waypoints.startup();
 
 		Tasks.wait(TickTime.SECOND, () -> getPlayers().forEach(this::onArrive));
 
@@ -180,17 +162,6 @@ public class Pugmas25 extends EdenEvent {
 						entity.remove();
 				});
 		});
-
-		Tasks.repeat(5, TickTime.SECOND.x(5), () -> {
-			playerWaypointConnections.keySet().forEach(waypointStand -> {
-				if (waypointStand == null || !waypointStand.isDead())
-					return;
-
-				var pair = playerWaypointConnections.remove(waypointStand);
-				pair.getSecond().disconnect();
-			});
-		});
-
 	}
 
 	@Override
@@ -203,16 +174,11 @@ public class Pugmas25 extends EdenEvent {
 		Pugmas25Train.shutdown();
 		Pugmas25TrainBackground.shutdown();
 		Pugmas25BalloonEditor.shutdown();
+		Pugmas25Waypoints.shutdown();
 
 		getPlayers().forEach(this::onDepart);
 
-		playerWaypointConnections.keySet().forEach(waypointStand -> {
-			var pair = playerWaypointConnections.get(waypointStand);
-			pair.getSecond().disconnect();
-			waypointStand.remove();
-		});
 
-		playerWaypointConnections.clear();
 	}
 
 	public void onArrive(Player player) {
@@ -455,75 +421,6 @@ public class Pugmas25 extends EdenEvent {
 			return message.replaceAll("<player>", Nickname.of(player));
 		}
 	}
-
-	public static final Map<ArmorStand, Pair<UUID, Connection>> playerWaypointConnections = new ConcurrentHashMap<>();
-
-	public static void hideWaypoint(@NotNull Player player) {
-		playerWaypointConnections.keySet().forEach(waypointStand -> {
-			var pair = playerWaypointConnections.get(waypointStand);
-			if (!pair.getFirst().equals(player.getUniqueId()))
-				return;
-
-			playerWaypointConnections.remove(waypointStand);
-			pair.getSecond().disconnect();
-			waypointStand.remove();
-		});
-	}
-
-	public static void showWaypoint(@NotNull Player player, Advent25Present present) {
-		hideWaypoint(player);
-
-		ArmorStand armorStand = spawnWaypointStand(present.getLocation().toCenterLocation());
-
-		net.minecraft.world.entity.decoration.ArmorStand nmsArmorStand = (net.minecraft.world.entity.decoration.ArmorStand) NMSUtils.toNMS(armorStand);
-		Icon waypointIcon = ((WaypointTransmitter) nmsArmorStand).waypointIcon();
-		ServerPlayer nmsPlayer = NMSUtils.toNMS(player);
-
-		WaypointTransmitter.Connection connection;
-
-		if (WaypointTransmitter.isReallyFar(nmsArmorStand, nmsPlayer)) {
-			connection = new WaypointTransmitter.EntityAzimuthConnection(nmsArmorStand, waypointIcon, nmsPlayer);
-		} else {
-			if (!WaypointTransmitter.isChunkVisible(nmsArmorStand.chunkPosition(), nmsPlayer))
-				connection = new WaypointTransmitter.EntityChunkConnection(nmsArmorStand, waypointIcon, nmsPlayer);
-			else
-				connection = new WaypointTransmitter.EntityBlockConnection(nmsArmorStand, waypointIcon, nmsPlayer);
-		}
-
-		playerWaypointConnections.put(armorStand, new Pair<>(player.getUniqueId(), connection));
-		connection.connect();
-	}
-
-	public static ArmorStand spawnWaypointStand(Location location) {
-		var armorStand = location.getWorld().spawn(location, ArmorStand.class, stand -> {
-			stand.setRightArmPose(EulerAngle.ZERO);
-			stand.setLeftArmPose(EulerAngle.ZERO);
-			stand.setHeadPose(EulerAngle.ZERO);
-			stand.setSmall(true);
-			stand.setGravity(false);
-			stand.setInvulnerable(true);
-			stand.setInvisible(true);
-			stand.setMarker(true);
-			stand.setDisabledSlots(EquipmentSlot.values());
-			stand.registerAttribute(Attribute.WAYPOINT_TRANSMIT_RANGE);
-			var attribute = stand.getAttribute(Attribute.WAYPOINT_TRANSMIT_RANGE);
-			if (attribute != null)
-				attribute.setBaseValue(500);
-		});
-
-		ServerLevel nmsWorld = NMSUtils.toNMS(location.getWorld());
-
-		net.minecraft.world.entity.decoration.ArmorStand nmsArmorStand = (net.minecraft.world.entity.decoration.ArmorStand) NMSUtils.toNMS(armorStand);
-		WaypointTransmitter nmsWaypointTransmitter = nmsArmorStand;
-
-		nmsWorld.getWaypointManager().untrackWaypoint(nmsWaypointTransmitter);
-
-		nmsWaypointTransmitter.waypointIcon().style = ResourceKey.create(WaypointStyleAssets.ROOT_ID, ResourceLocation.withDefaultNamespace("x"));
-		nmsWaypointTransmitter.waypointIcon().color = Optional.ofNullable(ChatFormatting.AQUA.getColor());
-
-		return armorStand;
-	}
-
 
 
 }

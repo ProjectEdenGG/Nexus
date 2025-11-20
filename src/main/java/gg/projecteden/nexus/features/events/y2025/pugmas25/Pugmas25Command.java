@@ -20,6 +20,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Distri
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Geyser;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Intro;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Train;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waypoints;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -51,17 +52,14 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -178,13 +176,13 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		if (!user.advent().hasFound(present))
 			error("You have not found day &e#" + present.getDay());
 
-		Pugmas25.showWaypoint(player(), present);
+		Pugmas25Waypoints.showWaypoint(player(), present);
 	}
 
 	@Path("advent hideWaypoint")
 	@Permission(Group.ADMIN)
 	void advent_hideWaypoint() {
-		Pugmas25.hideWaypoint(player());
+		Pugmas25Waypoints.hideWaypoint(player());
 	}
 
 	@Path("setFishOfTheDay <item>")

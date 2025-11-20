@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.y2025.pugmas25.advent;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waypoints;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
@@ -62,9 +63,9 @@ public class Pugmas25AdventMenu extends InventoryProvider {
 				clickableItem = ClickableItem.of(item.build(), e -> {
 					viewer.closeInventory();
 					if (user.getWaypointPresent() != null && user.getWaypointPresent().equals(present)) {
-						Pugmas25.hideWaypoint(user.getOnlinePlayer());
+						Pugmas25Waypoints.hideWaypoint(user.getOnlinePlayer());
 					} else {
-						Pugmas25.showWaypoint(user.getOnlinePlayer(), present);
+						Pugmas25Waypoints.showWaypoint(user.getOnlinePlayer(), present);
 					}
 				});
 			}
