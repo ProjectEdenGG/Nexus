@@ -70,6 +70,14 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 		});
 	}
 
+	@Path("setTimezone <player> <timezone>")
+	@Permission(Group.ADMIN)
+	void setTimezone(GeoIP user, String timezone) {
+		user.getTimezone().setId(timezone);
+		new GeoIPService().save(user);
+		send(PREFIX + "Set &e" + user.getNickname() + "'s &3timezone to &e" + timezone + "&3, local time is &e" + user.getCurrentTime().toString());
+	}
+
 	@Async
 	@Path("write")
 	@Permission(Group.ADMIN)
