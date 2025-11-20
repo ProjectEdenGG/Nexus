@@ -93,7 +93,7 @@ public class Pugmas25Effects extends Effects {
 			result.add(new RotatingStand(uuid, StandRotationAxis.HORIZONTAL, StandRotationType.NEGATIVE, true));
 		}
 
-		result.add(new RotatingStand(watermill_1, StandRotationAxis.HORIZONTAL, StandRotationType.POSITIVE, false));
+		result.add(new RotatingStand(watermill_1, StandRotationAxis.HORIZONTAL, StandRotationType.NEGATIVE, true));
 		result.add(new RotatingStand(extractinatorCog, StandRotationAxis.VERTICAL, StandRotationType.POSITIVE, false));
 
 		return result;
@@ -248,21 +248,24 @@ public class Pugmas25Effects extends Effects {
 
 	private final String extractinatorCog = "e599805e-8f2a-438e-b68d-42416bedc501";
 	private final String extractinatorPump = "bf03c2fc-bf16-4ea5-83f7-51f522ce4b88";
+	private final Location extractinatorPumpLoc = location(-744.7, 104.4, -3136.3);
 	private final Location extractinatorChimneyLoc = location(-745.75, 106.5, -3136.5);
 	private final Location extractinatorFireLoc = location(-744.68, 105.5, -3136.95);
 
 	private void extractinator() {
-		ArmorStand stand = (ArmorStand) Bukkit.getEntity(UUID.fromString(extractinatorPump));
-		if (stand == null)
-			return;
-
-		Location base = location(-744.7, 104.4, -3136.3);
 		double amplitude = 0.35;
 		double speed = 0.05;
 		final boolean[] upwards = {true};
 		final double[] phase = {0};
+		final ArmorStand[] stand = {null};
 		Tasks.repeat(0, 2, () -> {
-			if (stand.isDead() || !stand.isValid())
+			if (stand[0] == null)
+				stand[0] = (ArmorStand) Bukkit.getEntity(UUID.fromString(extractinatorPump));
+
+			if (stand[0] == null)
+				return;
+
+			if (stand[0].isDead() || !stand[0].isValid())
 				return;
 
 			// Update phase
@@ -275,9 +278,9 @@ public class Pugmas25Effects extends Effects {
 			}
 
 			// Calculate EXACT Y from base + (phase * amplitude)
-			Location newLoc = base.clone().add(0, phase[0] * amplitude, 0);
+			Location newLoc = extractinatorPumpLoc.clone().add(0, phase[0] * amplitude, 0);
 
-			stand.teleport(newLoc);
+			stand[0].teleport(newLoc);
 		});
 
 		SoundBuilder crackle = new SoundBuilder(Sound.BLOCK_FURNACE_FIRE_CRACKLE)
