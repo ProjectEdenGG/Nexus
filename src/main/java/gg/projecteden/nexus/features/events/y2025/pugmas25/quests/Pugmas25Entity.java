@@ -12,7 +12,6 @@ import java.util.function.Predicate;
 @Getter
 @AllArgsConstructor
 public enum Pugmas25Entity implements InteractableEntity {
-	// TODO
 	;
 
 	private final String name;

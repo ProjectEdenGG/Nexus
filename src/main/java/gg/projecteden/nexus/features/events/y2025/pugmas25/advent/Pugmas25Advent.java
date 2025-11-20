@@ -59,7 +59,6 @@ public class Pugmas25Advent implements Listener {
 			}
 		});
 
-		// TODO: isn't working?
 		Tasks.repeat(5, TickTime.SECOND.x(3), () -> {
 			Advent25Config.get().getDays().values().forEach(present -> {
 				Pugmas25.get().getOnlinePlayers().forEach(player -> {

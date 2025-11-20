@@ -39,7 +39,6 @@ public class Pugmas25BalloonManager {
 	public Pugmas25BalloonManager() {
 		new Pugmas25BalloonEditor();
 
-		// TODO: SOME SORT OF ANIMATION/PARTICLES?
 		Tasks.repeat(TickTime.SECOND.x(2), REFRESH_INTERVAL, () -> {
 			List<ProtectedRegion> regions = new ArrayList<>(getPlacementRegions());
 			Collections.shuffle(regions);

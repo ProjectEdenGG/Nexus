@@ -17,7 +17,6 @@ public enum Pugmas25NPC implements InteractableNPC {
 	POWER("Power", 5589),
 	TINKERER("Tinkerer", 5597),
 	GNOME("Gnome", 5598)
-	// TODO
 	;
 
 	private final String name;

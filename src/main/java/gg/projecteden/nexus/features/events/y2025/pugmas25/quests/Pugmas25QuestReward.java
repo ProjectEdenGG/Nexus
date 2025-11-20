@@ -10,7 +10,6 @@ import java.util.function.BiConsumer;
 @Getter
 @AllArgsConstructor
 public enum Pugmas25QuestReward implements QuestReward {
-	// TODO
 	;
 
 	private final BiConsumer<UUID, Integer> consumer;

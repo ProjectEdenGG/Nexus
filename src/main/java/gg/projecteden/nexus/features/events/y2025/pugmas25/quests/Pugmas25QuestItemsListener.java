@@ -57,6 +57,7 @@ public class Pugmas25QuestItemsListener implements Listener {
 		Dev.WAKKA.send("Decorated snowman");
 	}
 
+	// TODO: MAYBE SWITCH TO A TOOL ATTRIBUTE THING
 	@EventHandler
 	public void on(PlayerItemConsumeEvent event) {
 		Player player = event.getPlayer();

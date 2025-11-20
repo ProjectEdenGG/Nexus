@@ -78,7 +78,7 @@ public class Pugmas25Waystones implements Listener {
 
 		Pugmas25User pugmasUser = userService.get(event.getPlayer());
 		if (pugmasUser.getFoundWaystones().contains(waystone)) {
-			new Pugmas25WaystoneMenu().open(event.getPlayer());
+			new Pugmas25WaystoneMenu(waystone).open(event.getPlayer());
 			return;
 		}
 
@@ -135,7 +135,10 @@ public class Pugmas25Waystones implements Listener {
 	@Rows(3)
 	@Title("Teleport to a waystone:")
 	@NoArgsConstructor
+	@AllArgsConstructor
 	public static class Pugmas25WaystoneMenu extends InventoryProvider {
+		@Nullable
+		private Pugmas25Waystone clickedWayStone;
 
 		@Override
 		public void init() {
@@ -144,6 +147,9 @@ public class Pugmas25Waystones implements Listener {
 			List<ClickableItem> items = new ArrayList<>();
 			Pugmas25User user = new Pugmas25UserService().get(viewer);
 			for (Pugmas25Waystone waystone : user.getFoundWaystones()) {
+				if (clickedWayStone != null && waystone == clickedWayStone)
+					continue;
+
 				ItemBuilder item = DecorationType.WAYSTONE_ACTIVATED.getConfig().getItemBuilder().name(StringUtils.camelCase(waystone)).resetLore();
 				items.add(ClickableItem.of(item, e -> teleport(waystone)));
 			}

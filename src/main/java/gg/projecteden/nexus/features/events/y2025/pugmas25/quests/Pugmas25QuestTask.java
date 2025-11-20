@@ -8,7 +8,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Pugmas25QuestTask implements IQuestTask {
-	// TODO
 	;
 
 	private final TaskBuilder<?, ?, ?> task;

@@ -99,6 +99,7 @@ import java.util.UUID;
 
 /*
 	"TODO: RELEASE" <-- CHECK FOR ANY COMMENTS
+	"TODO"
  */
 @QuestConfig(
 	quests = Pugmas25Quest.class,
@@ -130,15 +131,10 @@ public class Pugmas25 extends EdenEvent {
 	public final Location warp = location(-688.5, 82, -2964.5, 180, 0);
 	public final Location deathLoc = location(-637.5, 66.0, -3260.5, 180, 0);
 
-	private static final List<ItemModelType> TREE_MINECART_MODELS = List.of(ItemModelType.PUGMAS_TRAIN_SET_ENGINE, ItemModelType.PUGMAS_TRAIN_SET_PASSENGER, ItemModelType.PUGMAS_TRAIN_SET_PASSENGER, ItemModelType.PUGMAS_TRAIN_SET_CARGO);
-	private final Location treeMinecartStandSpawnLoc = location(-680.5, 115.25, -3110.5);
-	private static final List<ArmorStand> treeMinecartStands = new ArrayList<>();
-	private final Location treeMinecartSpawnLoc = location(-680.5, 116.25, -3111.5);
-	private static final List<Minecart> treeMinecarts = new ArrayList<>();
-	private static int treeMinecartStandTask = -1;
-	private static final Map<UUID, Float> previousYaw = new HashMap<>();
-
 	private static int entityAgeTask;
+
+	final Location treeCenter = location(-679.0, 115.0, -3117.0);
+	private static int modelTrainCheckerTask = -1;
 
 	@Getter
 	private static boolean ridesEnabled = true;
@@ -179,72 +175,14 @@ public class Pugmas25 extends EdenEvent {
 
 		Tasks.wait(TickTime.SECOND, () -> getPlayers().forEach(this::onArrive));
 
-		final int TRAIN_SIZE = TREE_MINECART_MODELS.size();
-		for (int i = 0; i < TRAIN_SIZE; i++) {
-			int finalI = i;
-			ArmorStand armorStand = getWorld().spawn(treeMinecartStandSpawnLoc, ArmorStand.class, _stand -> {
-				ItemStack cart = new ItemBuilder(TREE_MINECART_MODELS.get(finalI)).dyeColor(ColorType.PURPLE.getBukkitColor()).build();
-				_stand.setHelmet(cart);
-				_stand.setVisible(false);
-				_stand.setInvulnerable(true);
-
-				for (EquipmentSlot slot : EquipmentSlot.values()) {
-					_stand.addEquipmentLock(slot, LockType.ADDING_OR_CHANGING);
-					_stand.addEquipmentLock(slot, LockType.REMOVING_OR_CHANGING);
-				}
-			});
-			treeMinecartStands.add(armorStand);
-		}
-
-		for (int i = 0; i < TRAIN_SIZE; i++) {
-			ArmorStand armorStand = treeMinecartStands.get(i);
-
-			Tasks.wait(i * 18L, () -> {
-				Minecart minecart = getWorld().spawn(treeMinecartSpawnLoc, Minecart.class, _minecart -> {
-					_minecart.setMaxSpeed(0.1);
-					_minecart.setSlowWhenEmpty(false);
-					_minecart.setInvulnerable(true);
-					_minecart.setFrictionState(TriState.FALSE);
-					_minecart.setVelocity(BlockFace.WEST.getDirection().multiply(0.1));
-				});
-
-				treeMinecarts.add(minecart);
-				Tasks.wait(5L, () -> minecart.addPassenger(armorStand));
-			});
-
-		}
-
-		treeMinecartStandTask = Tasks.repeat(TickTime.TICK.x(5), TickTime.TICK.x(2), () -> {
-			treeMinecarts.forEach(minecart -> {
-				Vector velocity = minecart.getVelocity();
-
-				if (velocity.lengthSquared() <= 0.0001) // avoids NaN when stopped
-					return;
-
-				float globalYaw = (float) Math.toDegrees(Math.atan2(-velocity.getX(), velocity.getZ()));
-
-				minecart.getPassengers().forEach(passenger -> {
-					if (!(passenger instanceof ArmorStand armorStand))
-						return;
-
-					UUID uuid = armorStand.getUniqueId();
-					float prevYaw = previousYaw.getOrDefault(uuid, globalYaw);
-					float smoothedYaw = MathUtils.rotLerp(0.5f, prevYaw, globalYaw);
-					float deltaYaw = smoothedYaw - prevYaw;
-
-					// Get normalized head pose
-					EulerAngle currentAngle = armorStand.getHeadPose();
-					double normalizedHeadYaw = MathUtils.wrapRadians(currentAngle.getY());
-
-					// Apply delta
-					double newHeadYaw = normalizedHeadYaw + Math.toRadians(deltaYaw);
-
-					EulerAngle newAngle = new EulerAngle(currentAngle.getX(), newHeadYaw, currentAngle.getZ());
-
-					armorStand.setHeadPose(newAngle);
-					previousYaw.put(uuid, smoothedYaw);
-				});
-			});
+		modelTrainCheckerTask = Tasks.repeat(5, TickTime.SECOND.x(2), () -> {
+			if (getOnlinePlayers().radius(treeCenter, 30).get().isEmpty()) {
+				if (modelTrainStarted)
+					stopModelTrain();
+			} else {
+				if (!modelTrainStarted)
+					startModelTrain();
+			}
 		});
 
 		// Prevent stupid mob AI, kill them and let server respawn
@@ -280,9 +218,8 @@ public class Pugmas25 extends EdenEvent {
 		if (sidebar != null)
 			sidebar.handleEnd();
 
-		treeMinecartStands.forEach(Entity::remove);
-		treeMinecarts.forEach(Entity::remove);
-		Tasks.cancel(treeMinecartStandTask);
+		Tasks.cancel(modelTrainCheckerTask);
+		stopModelTrain();
 		Tasks.cancel(entityAgeTask);
 		Pugmas25Train.shutdown();
 		Pugmas25TrainBackground.shutdown();
@@ -543,6 +480,98 @@ public class Pugmas25 extends EdenEvent {
 			String message = RandomUtils.randomElement(messages);
 			return message.replaceAll("<player>", Nickname.of(player));
 		}
+	}
+
+	private static final List<ItemModelType> TREE_MINECART_MODELS = List.of(ItemModelType.PUGMAS_TRAIN_SET_ENGINE, ItemModelType.PUGMAS_TRAIN_SET_PASSENGER, ItemModelType.PUGMAS_TRAIN_SET_PASSENGER, ItemModelType.PUGMAS_TRAIN_SET_CARGO);
+	private final Location treeMinecartStandSpawnLoc = location(-680.5, 115.25, -3110.5);
+	private static final List<ArmorStand> treeMinecartStands = new ArrayList<>();
+	private final Location treeMinecartSpawnLoc = location(-680.5, 116.25, -3111.5);
+	private static final List<Minecart> treeMinecarts = new ArrayList<>();
+	private static int treeMinecartStandTask = -1;
+	private static final Map<UUID, Float> previousYaw = new HashMap<>();
+	private static boolean modelTrainStarted = false;
+
+	private void stopModelTrain() {
+		modelTrainStarted = false;
+		Tasks.cancel(treeMinecartStandTask);
+		treeMinecartStands.forEach(Entity::remove);
+		treeMinecarts.forEach(Entity::remove);
+		treeMinecartStands.clear();
+		treeMinecarts.clear();
+	}
+
+	private void startModelTrain() {
+		modelTrainStarted = true;
+
+		final int TRAIN_SIZE = TREE_MINECART_MODELS.size();
+		for (int i = 0; i < TRAIN_SIZE; i++) {
+			int finalI = i;
+			ArmorStand armorStand = getWorld().spawn(treeMinecartStandSpawnLoc, ArmorStand.class, _stand -> {
+				ItemStack cart = new ItemBuilder(TREE_MINECART_MODELS.get(finalI)).dyeColor(ColorType.PURPLE.getBukkitColor()).build();
+				_stand.setHelmet(cart);
+				_stand.setVisible(false);
+				_stand.setInvulnerable(true);
+
+				for (EquipmentSlot slot : EquipmentSlot.values()) {
+					_stand.addEquipmentLock(slot, LockType.ADDING_OR_CHANGING);
+					_stand.addEquipmentLock(slot, LockType.REMOVING_OR_CHANGING);
+				}
+			});
+			treeMinecartStands.add(armorStand);
+		}
+
+		for (int i = 0; i < TRAIN_SIZE; i++) {
+			ArmorStand armorStand = treeMinecartStands.get(i);
+
+			Tasks.wait(i * 18L, () -> {
+				Minecart minecart = getWorld().spawn(treeMinecartSpawnLoc, Minecart.class, _minecart -> {
+					_minecart.setMaxSpeed(0.1);
+					_minecart.setSlowWhenEmpty(false);
+					_minecart.setInvulnerable(true);
+					_minecart.setFrictionState(TriState.FALSE);
+					_minecart.setVelocity(BlockFace.WEST.getDirection().multiply(0.1));
+				});
+
+				treeMinecarts.add(minecart);
+				Tasks.wait(5L, () -> minecart.addPassenger(armorStand));
+			});
+		}
+
+		treeMinecartStandTask = Tasks.repeat(TickTime.TICK.x(5), TickTime.TICK.x(2), () -> {
+			if (!modelTrainStarted)
+				return;
+
+			treeMinecarts.forEach(minecart -> {
+				Vector velocity = minecart.getVelocity();
+
+				if (velocity.lengthSquared() <= 0.0001) // avoids NaN when stopped
+					return;
+
+				float globalYaw = (float) Math.toDegrees(Math.atan2(-velocity.getX(), velocity.getZ()));
+
+				minecart.getPassengers().forEach(passenger -> {
+					if (!(passenger instanceof ArmorStand armorStand))
+						return;
+
+					UUID uuid = armorStand.getUniqueId();
+					float prevYaw = previousYaw.getOrDefault(uuid, globalYaw);
+					float smoothedYaw = MathUtils.rotLerp(0.5f, prevYaw, globalYaw);
+					float deltaYaw = smoothedYaw - prevYaw;
+
+					// Get normalized head pose
+					EulerAngle currentAngle = armorStand.getHeadPose();
+					double normalizedHeadYaw = MathUtils.wrapRadians(currentAngle.getY());
+
+					// Apply delta
+					double newHeadYaw = normalizedHeadYaw + Math.toRadians(deltaYaw);
+
+					EulerAngle newAngle = new EulerAngle(currentAngle.getX(), newHeadYaw, currentAngle.getZ());
+
+					armorStand.setHeadPose(newAngle);
+					previousYaw.put(uuid, smoothedYaw);
+				});
+			});
+		});
 	}
 
 
