@@ -34,59 +34,66 @@ import java.util.UUID;
 
 public class Pugmas25ModelTrain implements Listener {
 
-	private static final List<ItemModelType> TREE_MINECART_MODELS = List.of(ItemModelType.PUGMAS_TRAIN_SET_ENGINE, ItemModelType.PUGMAS_TRAIN_SET_PASSENGER, ItemModelType.PUGMAS_TRAIN_SET_PASSENGER, ItemModelType.PUGMAS_TRAIN_SET_CARGO);
-	private static final Location treeMinecartStandSpawnLoc = Pugmas25.get().location(-680.5, 115.25, -3110.5);
-	private static final List<ArmorStand> treeMinecartStands = new ArrayList<>();
-	private static final List<Entity> treeMinecartSeatEntities = new ArrayList<>();
-	private static final Location treeMinecartSpawnLoc = Pugmas25.get().location(-680.5, 116.25, -3111.5);
-	private static final List<Minecart> treeMinecarts = new ArrayList<>();
-	private static int treeMinecartStandTask = -1;
+	private static final List<ItemModelType> TREE_MINECART_MODELS = List.of(
+		ItemModelType.PUGMAS_TRAIN_SET_ENGINE,
+		ItemModelType.PUGMAS_TRAIN_SET_PASSENGER,
+		ItemModelType.PUGMAS_TRAIN_SET_PASSENGER,
+		ItemModelType.PUGMAS_TRAIN_SET_CARGO
+	);
+
+	private static final Location standSpawnLoc = Pugmas25.get().location(-680.5, 115.25, -3110.5);
+	private static final Location minecartSpawnLoc = Pugmas25.get().location(-680.5, 116.25, -3111.5);
+	private static final Location treeCenter = Pugmas25.get().location(-679.0, 115.0, -3117.0);
+	private static final World world = Pugmas25.get().getWorld();
+
+	private static final List<ArmorStand> trainStands = new ArrayList<>();
+	private static final List<Entity> seatEntities = new ArrayList<>();
+	private static final List<Minecart> minecarts = new ArrayList<>();
 	private static final Map<UUID, Float> previousYaw = new HashMap<>();
-	private static boolean modelTrainStarted = false;
-	private static World world = Pugmas25.get().getWorld();
+	private static int standTask = -1;
+	private static int radiusCheckTask = -1;
+	private static boolean started = false;
+
 
 	public Pugmas25ModelTrain() {
 		Nexus.registerListener(this);
 	}
 
-	private static final Location treeCenter = Pugmas25.get().location(-679.0, 115.0, -3117.0);
-	private static int modelTrainCheckerTask = -1;
-
 	public static void startup() {
-		modelTrainCheckerTask = Tasks.repeat(5, TickTime.SECOND.x(2), () -> {
+		radiusCheckTask = Tasks.repeat(5, TickTime.SECOND.x(2), () -> {
 			if (Pugmas25.get().getOnlinePlayers().radius(treeCenter, 30).get().isEmpty()) {
-				if (modelTrainStarted)
-					start();
-			} else {
-				if (!modelTrainStarted)
+				if (started)
 					stop();
+			} else {
+				if (!started)
+					start();
 			}
 		});
 	}
 
 	public static void shutdown() {
-		Tasks.cancel(modelTrainCheckerTask);
+		Tasks.cancel(radiusCheckTask);
 		stop();
 	}
 
 	public static void stop() {
-		modelTrainStarted = false;
-		Tasks.cancel(treeMinecartStandTask);
-		treeMinecartSeatEntities.forEach(Entity::remove);
-		treeMinecartStands.forEach(Entity::remove);
-		treeMinecarts.forEach(Entity::remove);
-		treeMinecartSeatEntities.clear();
-		treeMinecartStands.clear();
-		treeMinecarts.clear();
+		started = false;
+		Tasks.cancel(standTask);
+		seatEntities.forEach(Entity::remove);
+		trainStands.forEach(Entity::remove);
+		minecarts.forEach(Entity::remove);
+		seatEntities.clear();
+		trainStands.clear();
+		minecarts.clear();
 	}
 
 	public static void start() {
-		modelTrainStarted = true;
+		started = true;
 
 		final int TRAIN_SIZE = TREE_MINECART_MODELS.size();
 		for (int i = 0; i < TRAIN_SIZE; i++) {
 			int finalI = i;
-			ArmorStand trainStand = world.spawn(treeMinecartStandSpawnLoc, ArmorStand.class, _stand -> {
+			ArmorStand trainStand = world.spawn(standSpawnLoc, ArmorStand.class, _stand -> {
 				ItemStack cart = new ItemBuilder(TREE_MINECART_MODELS.get(finalI)).dyeColor(ColorType.PURPLE.getBukkitColor()).build();
 				_stand.setHelmet(cart);
 				_stand.setVisible(false);
@@ -97,24 +104,24 @@ public class Pugmas25ModelTrain implements Listener {
 					_stand.addEquipmentLock(slot, LockType.REMOVING_OR_CHANGING);
 				}
 			});
-			treeMinecartStands.add(trainStand);
+			trainStands.add(trainStand);
 
-			Slime slime = world.spawn(treeMinecartStandSpawnLoc, Slime.class, _slime -> {
+			Slime slime = world.spawn(standSpawnLoc, Slime.class, _slime -> {
 				_slime.setInvisible(true);
 				_slime.setInvulnerable(true);
 				_slime.setSize(1);
 				_slime.setAI(false);
 			});
 
-			treeMinecartSeatEntities.add(slime);
+			seatEntities.add(slime);
 		}
 
 		for (int i = 0; i < TRAIN_SIZE; i++) {
-			ArmorStand trainStand = treeMinecartStands.get(i);
-			Entity seat = treeMinecartSeatEntities.get(i);
+			ArmorStand trainStand = trainStands.get(i);
+			Entity seat = seatEntities.get(i);
 
 			Tasks.wait(i * 18L, () -> {
-				Minecart minecart = world.spawn(treeMinecartSpawnLoc, Minecart.class, _minecart -> {
+				Minecart minecart = world.spawn(minecartSpawnLoc, Minecart.class, _minecart -> {
 					_minecart.setMaxSpeed(0.1);
 					_minecart.setSlowWhenEmpty(false);
 					_minecart.setInvulnerable(true);
@@ -122,17 +129,17 @@ public class Pugmas25ModelTrain implements Listener {
 					_minecart.setVelocity(BlockFace.WEST.getDirection().multiply(0.1));
 				});
 
-				treeMinecarts.add(minecart);
+				minecarts.add(minecart);
 				minecart.addPassenger(trainStand);
 				trainStand.addPassenger(seat);
 			});
 		}
 
-		treeMinecartStandTask = Tasks.repeat(TickTime.TICK.x(5), TickTime.TICK.x(2), () -> {
-			if (!modelTrainStarted)
+		standTask = Tasks.repeat(TickTime.TICK.x(5), TickTime.TICK.x(2), () -> {
+			if (!started)
 				return;
 
-			treeMinecarts.forEach(minecart -> {
+			minecarts.forEach(minecart -> {
 				Vector velocity = minecart.getVelocity();
 
 				if (velocity.lengthSquared() <= 0.0001) // avoids NaN when stopped
@@ -188,7 +195,7 @@ public class Pugmas25ModelTrain implements Listener {
 
 		// Skip server event location checks since it checks UUID
 
-		treeMinecarts.forEach(minecart -> {
+		minecarts.forEach(minecart -> {
 			if (entity.getUniqueId().equals(minecart.getUniqueId())) {
 				event.setCancelled(true);
 			}
