@@ -216,7 +216,9 @@ public class Shop implements PlayerOwnedObject {
 		)));
 	}
 
-	public void massAddStock(List<ItemStack> contents) {
+	public List<ItemStack> massAddStock(List<ItemStack> contents) {
+		List<ItemStack> rejected = new ArrayList<>();
+
 		contentsLoop: for (ItemStack content : contents) {
 			if (Nullables.isNullOrAir(content))
 				continue;
@@ -235,10 +237,10 @@ public class Shop implements PlayerOwnedObject {
 				continue contentsLoop;
 			}
 
-			PlayerUtils.giveItem(getPlayer(), content);
+			rejected.add(content);
 		}
 
-		products.forEach(product -> product.setEditing(false));
+		return rejected;
 	}
 
 	@Data
@@ -548,6 +550,11 @@ public class Shop implements PlayerOwnedObject {
 		default int processAll(Player customer) {
 			int count = 0;
 			while (true) {
+				if (count >= 1000) {
+					PlayerUtils.send(customer, Shops.PREFIX + "Your purchase was capped to prevent lag, please try again");
+					break;
+				}
+
 				try {
 					validateProcessMany(customer);
 					processOne(customer);

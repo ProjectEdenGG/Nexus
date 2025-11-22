@@ -153,6 +153,18 @@ public class ShopCommand extends CustomCommand implements Listener {
 		new EditProductProvider.MassAddStockProvider(player(), null, service.get(player()), ShopGroup.of(worldGroup()));
 	}
 
+	@Path("restockFromCollect")
+	@Description("Move all items in your shop collect into your shop stock")
+	void restockFromCollect() {
+		var shop = service.get(player());
+		shop.getProducts().forEach(product -> product.setEditing(true));
+		var holding = new ArrayList<>(shop.getHolding(shopGroup));
+		var rejected = shop.massAddStock(holding);
+		shop.getProducts().forEach(product -> product.setEditing(false));
+		shop.getHolding(shopGroup).clear();
+		shop.addHolding(shopGroup, rejected);
+	}
+
 	@Async
 	@Path("history [player] [page] [--world]")
 	@Description("View your shop transaction history")

@@ -187,7 +187,9 @@ public class EditProductProvider extends ShopProvider {
 
 		@Override
 		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
-			shop.massAddStock(contents);
+			var rejected = shop.massAddStock(contents);
+			shop.getProducts().forEach(product -> product.setEditing(false));
+			PlayerUtils.giveItems(player, rejected);
 			new ShopService().save(shop);
 
 			if (previousMenu != null)
