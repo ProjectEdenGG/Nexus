@@ -181,7 +181,7 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		Pugmas25Waypoints.showWaypoint(player(), present);
 	}
 
-	@Path("advent showWaypointTarget <target>")
+	@Path("showWaypointTarget <target>")
 	@Description("Get directions to waypoint target")
 	@Permission(Group.ADMIN)
 	void advent_showWaypoint(WaypointTarget target) {

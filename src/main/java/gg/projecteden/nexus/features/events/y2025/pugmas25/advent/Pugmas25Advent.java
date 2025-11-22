@@ -26,6 +26,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
@@ -122,6 +123,9 @@ public class Pugmas25Advent implements Listener {
 	@EventHandler
 	public void onClickPresent(PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
+
+		if (event.getHand() != EquipmentSlot.HAND)
+			return;
 
 		if (!Pugmas25.get().shouldHandle(event.getPlayer()))
 			return;

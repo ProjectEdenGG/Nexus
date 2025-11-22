@@ -57,7 +57,7 @@ public class Pugmas25Waypoints {
 				if (player == null || !player.isOnline())
 					return;
 
-				if (Distance.distance(waypointStand.getLocation(), player.getLocation()).lte(5)) {
+				if (Distance.distance(waypointStand.getLocation(), player.getLocation()).lte(3)) {
 					pair.getSecond().disconnect();
 					playerWaypointConnections.remove(waypointStand);
 					waypointStand.remove();
