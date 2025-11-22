@@ -1,8 +1,7 @@
-package gg.projecteden.nexus.features.events.y2025.pugmas25.models;
+package gg.projecteden.nexus.features.hub;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -37,8 +36,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-public class Pugmas25ModelTrain implements Listener {
-
+public class HubModelTrain implements Listener {
 	private static final ItemModelType TRAIN_FRONT = ItemModelType.PUGMAS_TRAIN_SET_ENGINE;
 	private static final ItemModelType TRAIN_END = ItemModelType.PUGMAS_TRAIN_SET_CABOOSE;
 	private static final Set<ItemModelType> TRAIN_CARS = Set.of(
@@ -47,15 +45,10 @@ public class Pugmas25ModelTrain implements Listener {
 		ItemModelType.PUGMAS_TRAIN_SET_CARGO_TREE,
 		ItemModelType.PUGMAS_TRAIN_SET_CARGO_EMPTY
 	);
-	private static final int TRAIN_SIZE = 5;
+	private static final int TRAIN_SIZE = 7;
 
 	private static final List<ColorType> TRAIN_COLORS = List.of(ColorType.RED, ColorType.LIGHT_RED, ColorType.LIGHT_GREEN, ColorType.GREEN,
 		ColorType.CYAN, ColorType.LIGHT_BLUE, ColorType.BLUE, ColorType.PURPLE, ColorType.MAGENTA, ColorType.PINK);
-
-	private static final Location standSpawnLoc = Pugmas25.get().location(-680.5, 115.25, -3110.5);
-	private static final Location minecartSpawnLoc = Pugmas25.get().location(-680.5, 116.25, -3111.5);
-	private static final Location trackCenter = Pugmas25.get().location(-679.0, 115.0, -3117.0);
-	private static final World world = Pugmas25.get().getWorld();
 
 	private static final List<ArmorStand> trainStands = new ArrayList<>();
 	private static final List<Entity> seatEntities = new ArrayList<>();
@@ -65,14 +58,29 @@ public class Pugmas25ModelTrain implements Listener {
 	private static int radiusCheckTask = -1;
 	private static boolean started = false;
 
+	private final World world;
+	private final Location standSpawnLoc;
+	private final Location minecartSpawnLoc;
+	private final Location trackCenter;
 
-	public Pugmas25ModelTrain() {
+	private final HubEffects effects;
+
+	public HubModelTrain(HubEffects effects, int radius) {
+		this.effects = effects;
+		this.world = effects.getWorld();
+		this.standSpawnLoc = effects.location(0.5, 136.25, 63.5);
+		this.minecartSpawnLoc = effects.location(0.5, 137.25, 62.5);
+		this.trackCenter = effects.location(0.5, 139, 55.5);
+
 		Nexus.registerListener(this);
-	}
 
-	public static void startup() {
+		// TODO: RELEASE PUGMAS
+		if (true)
+			return;
+		//
+
 		radiusCheckTask = Tasks.repeat(5, TickTime.SECOND.x(2), () -> {
-			if (Pugmas25.get().getOnlinePlayers().radius(trackCenter, 30).get().isEmpty()) {
+			if (effects.getNearbyPlayers(trackCenter, radius).isEmpty()) {
 				if (started)
 					stop();
 			} else {
@@ -87,7 +95,7 @@ public class Pugmas25ModelTrain implements Listener {
 		stop();
 	}
 
-	public static void stop() {
+	private static void stop() {
 		started = false;
 		Tasks.cancel(standTask);
 		seatEntities.forEach(Entity::remove);
@@ -98,7 +106,7 @@ public class Pugmas25ModelTrain implements Listener {
 		minecarts.clear();
 	}
 
-	public static void start() {
+	private void start() {
 		started = true;
 
 		List<ItemModelType> trainModels = new ArrayList<>();
@@ -194,7 +202,7 @@ public class Pugmas25ModelTrain implements Listener {
 
 	@EventHandler
 	public void on(PlayerInteractEntityEvent event) {
-		if (!Pugmas25.get().isAtEvent(event.getPlayer()))
+		if (!effects.isInRegion(event.getPlayer()))
 			return;
 
 		if (!(event.getRightClicked() instanceof Slime slime))
@@ -212,7 +220,7 @@ public class Pugmas25ModelTrain implements Listener {
 		if (!(event.getDamager() instanceof Player player))
 			return;
 
-		if (!Pugmas25.get().isAtEvent(player))
+		if (!effects.isInRegion(player))
 			return;
 
 		if (!(event.getEntity() instanceof Slime slime))
@@ -238,7 +246,7 @@ public class Pugmas25ModelTrain implements Listener {
 	@EventHandler
 	public void on(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
-		if (!Pugmas25.get().isAtEvent(player))
+		if (!effects.isInRegion(event.getPlayer()))
 			return;
 
 		if (!player.isInsideVehicle())
@@ -246,5 +254,6 @@ public class Pugmas25ModelTrain implements Listener {
 
 		player.leaveVehicle();
 	}
+
 
 }

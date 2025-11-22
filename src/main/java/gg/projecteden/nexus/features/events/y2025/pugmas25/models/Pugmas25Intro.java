@@ -74,7 +74,7 @@ public class Pugmas25Intro implements Listener {
 				PUGMAS.send(_player, "You've unlocked the warp to " + Pugmas25.EVENT_NAME);
 				new SoundBuilder(Sound.ENTITY_PLAYER_LEVELUP).pitch(2).receiver(_player).play();
 
-				//user.setVisited(true); // TODO: RELEASE
+				//user.setVisited(true); // TODO: RELEASE PUGMAS
 				userService.save(user);
 			})
 			.next(TickTime.SECOND.x(3), _player -> PUGMAS.send(player, "Talk with the Ticket Master to get started."))

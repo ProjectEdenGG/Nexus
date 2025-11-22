@@ -79,7 +79,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /*
-	"TODO: RELEASE" <-- CHECK FOR ANY COMMENTS
+	"TODO: RELEASE PUGMAS" <-- CHECK FOR ANY COMMENTS
 	"TODO"
  */
 @QuestConfig(

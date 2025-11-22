@@ -119,6 +119,14 @@ public abstract class Effects implements Listener {
 		return new Location(getWorld(), x, y, z);
 	}
 
+	public boolean isInRegion(@NotNull Player player) {
+		ProtectedRegion region = getProtectedRegion();
+		if (region == null)
+			return false;
+
+		return worldguard().isInRegion(player, region);
+	}
+
 	public List<Player> getNearbyPlayers(Location origin, double radius) {
 		return OnlinePlayers.where().world(origin.getWorld()).radius(origin, radius).get();
 	}
