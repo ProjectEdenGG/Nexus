@@ -12,6 +12,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.PlotUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.NonNull;
@@ -33,6 +34,21 @@ public class EntitiesCommand extends CustomCommand {
 
 	public EntitiesCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	@Path("plot")
+	@Description("Count all entities within a plot")
+	void plot() {
+		var plot = PlotUtils.getPlot(location());
+		if (plot == null)
+			error("No plot found");
+
+		int count = 0;
+		for (int plotEntities : plot.countEntities()) {
+			count += plotEntities;
+		}
+
+		send("&3Total: &e" + count);
 	}
 
 	@Path("near [radius]")
