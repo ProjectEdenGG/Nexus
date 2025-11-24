@@ -285,7 +285,7 @@ public class Train {
 		taskIds.add(Tasks.wait(TickTime.SECOND.x(seconds), this::stop));
 	}
 
-	private double getRadiusVolume(Player player, Location location, double radius, boolean checkRadius, double minVolume, double maxVolume) {
+	public static double getRadiusVolume(Player player, Location location, double radius, boolean checkRadius, double minVolume, double maxVolume) {
 		double distance = Distance.distance(player.getLocation(), location).getRealDistance();
 		if (checkRadius && distance > radius)
 			return minVolume;

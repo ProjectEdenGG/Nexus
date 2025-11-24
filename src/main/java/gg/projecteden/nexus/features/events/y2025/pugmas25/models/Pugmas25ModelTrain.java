@@ -2,17 +2,22 @@ package gg.projecteden.nexus.features.events.y2025.pugmas25.models;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.events.models.Train;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
+import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MathUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.util.TriState;
 import org.bukkit.Location;
+import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ArmorStand;
@@ -64,6 +69,7 @@ public class Pugmas25ModelTrain implements Listener {
 	private static final Map<UUID, Float> previousYaw = new HashMap<>();
 	private static int standTask = -1;
 	private static int radiusCheckTask = -1;
+	private static int soundTask = -1;
 	private static boolean started = false;
 	//
 	@Getter
@@ -94,6 +100,7 @@ public class Pugmas25ModelTrain implements Listener {
 
 	public static void stop() {
 		started = false;
+		Tasks.cancel(soundTask);
 		Tasks.cancel(standTask);
 		seatEntities.forEach(Entity::remove);
 		trainStands.forEach(Entity::remove);
@@ -105,6 +112,20 @@ public class Pugmas25ModelTrain implements Listener {
 
 	public static void start() {
 		started = true;
+
+		SoundBuilder whistle = new SoundBuilder(CustomSound.TRAIN_WHISTLE).category(SoundCategory.AMBIENT).volume(0.1).pitch(1.5);
+		soundTask = Tasks.repeat(5, TickTime.SECOND.x(10), () -> {
+			if (!started)
+				return;
+
+			if (!RandomUtils.chanceOf(25))
+				return;
+
+			for (Player player : Pugmas25.get().getPlayers()) {
+				double radiusVolume = Train.getRadiusVolume(player, seatEntities.getFirst().getLocation(), 15, true, 0.01, 0.1);
+				whistle.clone().receiver(player).volume(radiusVolume).play();
+			}
+		});
 
 		List<ItemModelType> trainModels = new ArrayList<>();
 		trainModels.add(TRAIN_FRONT);

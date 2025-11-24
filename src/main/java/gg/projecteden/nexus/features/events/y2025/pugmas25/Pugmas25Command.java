@@ -127,11 +127,13 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		Pugmas25QuestTask.completeQuest(quester, pugmasQuest);
 	}
 
-	@Path("setModelTrainLength <size>")
+	@Path("modelTrain length <length>")
 	@Permission(Group.ADMIN)
-	void setModelTrainLength(@Arg(min = 0, max = 33) int size) {
-		Pugmas25ModelTrain.setTrainLength(size);
+	void modelTrain_length(@Arg(min = 2, max = 33) int length) {
+		Pugmas25ModelTrain.setTrainLength(length);
 		send(PREFIX + "Model train length set to " + Pugmas25ModelTrain.getTrainLength());
+		Pugmas25ModelTrain.shutdown();
+		Pugmas25ModelTrain.startup();
 	}
 
 	@Path("reload")
