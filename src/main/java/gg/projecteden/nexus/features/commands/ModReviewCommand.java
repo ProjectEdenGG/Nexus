@@ -59,7 +59,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 	void check(Mod mod) {
 		line();
 		send(PREFIX + "&e" + mod.getName());
-		if (mod.getAliases().size() > 0)
+		if (!mod.getAliases().isEmpty())
 			send(" &3Also known as: &7" + String.join(", ", mod.getAliases()));
 		send(" &3Verdict: " + mod.getVerdict().getColor() + camelCase(mod.getVerdict()));
 		if (!Nullables.isNullOrEmpty(mod.getNotes()))
