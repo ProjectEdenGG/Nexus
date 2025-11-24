@@ -124,13 +124,6 @@ public enum Pugmas25QuestTask implements IQuestTask {
 			.npc("Miss a day? All unopened ones unlock on the 25th, just open them to unlock the final present.")
 		)
 		.objective("Find and open all advent presents")
-		.then().talkTo(Pugmas25NPC.ADVENT_PROGRESS).then().talkTo(Pugmas25NPC.ADVENT_PROGRESS).then().talkTo(Pugmas25NPC.ADVENT_PROGRESS).then().talkTo(Pugmas25NPC.ADVENT_PROGRESS)
-		.then().talkTo(Pugmas25NPC.ADVENT_PROGRESS).then().talkTo(Pugmas25NPC.ADVENT_PROGRESS).then().talkTo(Pugmas25NPC.ADVENT_PROGRESS).then().talkTo(Pugmas25NPC.ADVENT_PROGRESS)
-		.then().talkTo(Pugmas25NPC.ADVENT_PROGRESS).then().talkTo(Pugmas25NPC.ADVENT_PROGRESS).then().talkTo(Pugmas25NPC.ADVENT_PROGRESS).then().talkTo(Pugmas25NPC.ADVENT_PROGRESS)
-		.then().talkTo(Pugmas25NPC.ADVENT_PROGRESS).then().talkTo(Pugmas25NPC.ADVENT_PROGRESS).then().talkTo(Pugmas25NPC.ADVENT_PROGRESS).then().talkTo(Pugmas25NPC.ADVENT_PROGRESS)
-		.then().talkTo(Pugmas25NPC.ADVENT_PROGRESS).then().talkTo(Pugmas25NPC.ADVENT_PROGRESS).then().talkTo(Pugmas25NPC.ADVENT_PROGRESS).then().talkTo(Pugmas25NPC.ADVENT_PROGRESS)
-		.then().talkTo(Pugmas25NPC.ADVENT_PROGRESS).then().talkTo(Pugmas25NPC.ADVENT_PROGRESS).then().talkTo(Pugmas25NPC.ADVENT_PROGRESS).then().talkTo(Pugmas25NPC.ADVENT_PROGRESS)
-		.then().talkTo(Pugmas25NPC.ADVENT_PROGRESS)
 	),
 
 	// TODO: TEST
