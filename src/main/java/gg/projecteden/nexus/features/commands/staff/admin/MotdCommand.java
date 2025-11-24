@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
 import com.destroystokyo.paper.event.server.PaperServerListPingEvent;
+import com.destroystokyo.paper.event.server.PaperServerListPingEvent.ListedPlayerInfo;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
@@ -17,6 +18,7 @@ import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.models.punishments.PunishmentsService;
 import gg.projecteden.nexus.utils.DateUtils;
@@ -97,6 +99,19 @@ public class MotdCommand extends CustomCommand implements Listener {
 		if (address.isLoopbackAddress())
 			return;
 
+		List<ListedPlayerInfo> newListedPlayers = new ArrayList<>();
+		for (ListedPlayerInfo listedPlayer : new ArrayList<>(event.getListedPlayers())) {
+			String name = listedPlayer.name();
+			if (!name.equalsIgnoreCase("anonymous player")) {
+				name = Nickname.of(listedPlayer.id());
+			}
+
+			newListedPlayers.add(new ListedPlayerInfo(name, listedPlayer.id()));
+		}
+		event.getListedPlayers().clear();
+		event.getListedPlayers().addAll(newListedPlayers);
+
+
 		String ipAddress = address.getHostAddress();
 
 		GeoIP geoIP = getBestMatch(ipAddress);
@@ -158,6 +173,7 @@ public class MotdCommand extends CustomCommand implements Listener {
 		return IconType.getIconType(dateTime).getServerIcon();
 	}
 
+	@Getter
 	private enum IconType {
 		DEFAULT,
 		HALLOWEEN(Month.OCTOBER),
@@ -171,9 +187,7 @@ public class MotdCommand extends CustomCommand implements Listener {
 		ORIENTATION_POLYSEXUAL(Month.JUNE),
 		;
 
-		@Getter
 		private final LocalDateTime startTime;
-		@Getter
 		private final LocalDateTime endTime;
 
 		private static final String FOLDER = "plugins/Nexus/servericons/";
