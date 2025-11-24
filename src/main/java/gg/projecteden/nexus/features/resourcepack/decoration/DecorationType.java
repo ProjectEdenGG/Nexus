@@ -264,6 +264,15 @@ public enum DecorationType {
 	@TypeConfig(money = 140, tokens = 14, theme = Theme.HOLIDAY, tabs = Tab.GIANT_ORNAMENTS)
 	STAR_GIANT_ORNAMENT(new DyeableOrnament(OrnamentType.STAR, true, "FFD83E")),
 
+	@TypeConfig(money = 80, tokens = 8, theme = Theme.HOLIDAY)
+	NUTCRACKER_SHORT(new DyeableFloorThing(false, "Short Nutcracker", ItemModelType.NUTCRACKER_SHORT, ColorableType.DYE)),
+
+	@TypeConfig(money = 160, tokens = 16, theme = Theme.HOLIDAY)
+	NUTCRACKER(new DyeableFloorThing(false, "Nutcracker", ItemModelType.NUTCRACKER, ColorableType.DYE)),
+
+	@TypeConfig(money = 240, tokens = 24, theme = Theme.HOLIDAY)
+	NUTCRACKER_TALL(new DyeableFloorThing(false, "Tall Nutcracker", ItemModelType.NUTCRACKER_TALL, ColorableType.DYE, HitboxFloor._1x3V)),
+
 // 	------------------------------------------------------------------------------------------------------
 //										CATALOG: Spooky
 // 	------------------------------------------------------------------------------------------------------
