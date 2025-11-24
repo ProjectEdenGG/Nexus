@@ -184,8 +184,7 @@ public class Quester implements PlayerOwnedObject {
 			final QuestTaskStep<?, ?> taskStep = taskProgress.get().getSteps().get(taskProgress.getStep());
 
 			if (taskStep instanceof EnteringRegionQuestTaskStep enteringRegionQuestTaskStep) {
-				boolean matchingRegion = enteringRegionQuestTaskStep.isMatchingRegion(event.getPlayer().getWorld(), event.getRegion().getId());
-				if (taskStep.shouldAdvance(this, stepProgress) && matchingRegion) {
+				if (enteringRegionQuestTaskStep.isMatchingRegion(event.getPlayer().getWorld(), event.getRegion().getId())) {
 					taskStep.afterComplete(this);
 
 					if (taskProgress.hasNextStep()) {

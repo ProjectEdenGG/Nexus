@@ -42,7 +42,7 @@ public class EnteringRegionQuestTask extends QuestTask<EnteringRegionQuestTask, 
 
 		@Override
 		public boolean shouldAdvance(Quester quester, QuestTaskStepProgress stepProgress) {
-			return !stepProgress.isFirstInteraction();
+			return false;
 		}
 
 		public boolean isMatchingRegion(World world, String region) {
