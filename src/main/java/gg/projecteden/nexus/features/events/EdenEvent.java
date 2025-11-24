@@ -26,9 +26,11 @@ import gg.projecteden.nexus.features.quests.interactable.Interactable;
 import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
 import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuest;
+import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomEmoji;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.quests.Quester;
@@ -43,6 +45,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -322,6 +325,10 @@ public abstract class EdenEvent extends Feature implements Listener {
 			return;
 
 		send(player, message);
+	}
+
+	public void send(PlayerOwnedObject obj, String message) {
+		send(obj.getPlayer(), message);
 	}
 
 	public void send(HasPlayer player, String message) {
@@ -604,6 +611,15 @@ public abstract class EdenEvent extends Feature implements Listener {
 			return;
 
 		new QuesterService().edit(player, quester -> quester.interact(event));
+	}
+
+	@EventHandler
+	public void _onPlayerEnteringRegionEvent(PlayerEnteringRegionEvent event) {
+		final Player player = event.getPlayer();
+		if (!shouldHandle(player))
+			return;
+
+		new QuesterService().edit(player, quester -> quester.enteringRegion(event));
 	}
 
 	@EventHandler

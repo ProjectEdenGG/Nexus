@@ -7,7 +7,6 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
-import gg.projecteden.nexus.features.commands.staff.operator.HealCommand;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Snowmen.Pugmas25Snowman;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waystones.Pugmas25Waystone;
@@ -23,10 +22,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -44,11 +42,19 @@ public class Pugmas25User implements PlayerOwnedObject {
 
 	private boolean readyToVisit = false;
 	private boolean visited = false;
+
+	private boolean unlockedCabin = false;
+	private boolean enteredCabin = false;
+	private boolean unlockedAdvent = false;
+	private Location spawnLocation = Pugmas25.get().warp;
+
+
 	private boolean receivedAnglerQuestInstructions = false;
 	private boolean finishedAnglerQuest = false;
 
 	private Set<Pugmas25Waystone> foundWaystones = new HashSet<>();
 	private Set<Pugmas25Snowman> decoratedSnowmen = new HashSet<>();
+	private Set<Location> foundNutCrackers = new HashSet<>();
 
 	@Getter(AccessLevel.PRIVATE)
 	private Advent25User advent;

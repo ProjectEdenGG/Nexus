@@ -1400,6 +1400,10 @@ public enum ItemModelType {
 	WELL("decoration/well", true),
 	WHEEL_SMALL("decoration/wheel"),
 	// events
+	NUTCRACKER("decoration/christmas/nutcracker"),
+	NUTCRACKER_SHORT("decoration/christmas/nutcracker_short"),
+	NUTCRACKER_TALL("decoration/christmas/nutcracker_tall"),
+	EMPTY_BOX("events/pugmas25/empty_box"),
 	ELECTRONICS_BATTERY("events/bearfair20/battery"),
 	BEARFAIR20_CONTROLLER_UNIT("events/bearfair20/controller_unit"),
 	ELECTRONICS_CPU("events/bearfair20/cpu"),

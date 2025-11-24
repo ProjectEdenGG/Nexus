@@ -34,6 +34,7 @@ public class Advent25User implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 
+	private boolean unlockedQuest = false;
 	private Set<Integer> collected = new HashSet<>();
 	private Set<Integer> found = new HashSet<>();
 	private Advent25Present waypointPresent;
@@ -92,6 +93,9 @@ public class Advent25User implements PlayerOwnedObject {
 	}
 
 	private void validateCanCollect(Advent25Present present) {
+		if (!unlockedQuest)
+			throw new InvalidInputException("You haven't unlocked this quest yet");
+
 		if (hasCollected(present))
 			throw new InvalidInputException("You already collected this present");
 

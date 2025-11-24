@@ -37,6 +37,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestT
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25ShopMenu;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
+import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.models.deathmessages.DeathMessages;
 import gg.projecteden.nexus.models.deathmessages.DeathMessagesService;
@@ -79,7 +80,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /*
-	"TODO: RELEASE PUGMAS" <-- CHECK FOR ANY COMMENTS
+	"TODO: RELEASE PUGMAS" <-- CHECK FOR ANY COMMENTS ON WHOLE PROJECT
 	"TODO"
  */
 @QuestConfig(
@@ -101,9 +102,6 @@ public class Pugmas25 extends EdenEvent {
 	private static Pugmas25 instance;
 	public static final String PREFIX = StringUtils.getPrefix("Pugmas 2025");
 	public static final String EVENT_NAME = "Pugmas Village";
-
-	@Getter
-	final Pugmas25UserService userService = new Pugmas25UserService();
 
 	public static final LocalDate _25TH = LocalDate.of(2025, 12, 25);
 	private LocalDateTime now;
@@ -235,34 +233,6 @@ public class Pugmas25 extends EdenEvent {
 	@Override
 	public void registerInteractHandlers() {
 		handleInteract(Pugmas25NPC.BLACKSMITH, (player, npc) -> Pugmas25ShopMenu.BLACKSMITH.open(player));
-
-		handleInteract(Pugmas25NPC.TICKET_MASTER_HUB, (player, npc) -> {
-			if (PlayerUtils.playerHas(player, Pugmas25Intro.getTicketItem())) {
-					new Dialog(npc)
-						.npc("You already bought a ticket, make sure to board the train!")
-						.send(player);
-					return;
-				}
-
-				new Dialog(npc)
-					.npc("Hello! Where would you like to travel to?")
-					.player("1 Ticket to " + EVENT_NAME + ", please.")
-					.npc("Oh, it's wonderful there this time of year. Here you go.")
-					.give(Pugmas25Intro.getTicketItem())
-					.send(player);
-			}
-		);
-
-		// TODO
-		handleInteract(Pugmas25NPC.TICKET_MASTER, (player, npc) -> {
-			new Dialog(npc)
-				.npc("Welcome to Pugmas Village, Project Eden's Christmas celebration!")
-				.npc("There's plenty to see and do around here, but before you dive in, you'll want to check in at the inn.")
-				.npc("Just follow the signs along the northern path and you'll find it in no time.")
-				.npc("Enjoy your stay!")
-				.thenRun(quester -> Pugmas25Waypoints.showWaypoint(quester.getOnlinePlayer(), WaypointTarget.INN, ColorType.LIGHT_RED))
-				.send(player);
-		});
 
 		// TODO
 		handleInteract(Pugmas25NPC.ANGLER, (player, npc) -> {

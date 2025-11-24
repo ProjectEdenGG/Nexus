@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.y2025.pugmas25.models;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
@@ -10,7 +11,10 @@ import gg.projecteden.nexus.models.clientside.ClientSideConfig.ClientSideItemFra
 import gg.projecteden.nexus.models.clientside.ClientSideUser;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Location;
@@ -82,7 +86,9 @@ public class Pugmas25Snowmen implements Listener {
 		if (snowman == null)
 			return;
 
-		// TODO: REQUIRE CORRECT TOOL
+		ItemStack tool = ItemUtils.getTool(event.getPlayer());
+		if (Nullables.isNullOrAir(tool) || !Pugmas25QuestItem.BOX_OF_DECORATIONS.fuzzyMatch(tool))
+			return;
 
 		Pugmas25User pugmasUser = userService.get(event.getPlayer());
 		if (pugmasUser.getDecoratedSnowmen().contains(snowman))
@@ -90,6 +96,11 @@ public class Pugmas25Snowmen implements Listener {
 
 		pugmasUser.decorateSnowman(snowman);
 		userService.save(pugmasUser);
+
+		if (pugmasUser.getDecoratedSnowmen().size() == Pugmas25Snowman.values().length) {
+			PlayerUtils.removeItem(event.getPlayer(), tool);
+			PlayerUtils.giveItem(event.getPlayer(), Pugmas25QuestItem.BOX_OF_DECORATIONS_EMPTY.get());
+		}
 	}
 
 }

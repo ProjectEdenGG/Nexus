@@ -9,6 +9,8 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MathUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import lombok.Getter;
+import lombok.Setter;
 import net.kyori.adventure.util.TriState;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -47,7 +49,6 @@ public class Pugmas25ModelTrain implements Listener {
 		ItemModelType.PUGMAS_TRAIN_SET_CARGO_TREE,
 		ItemModelType.PUGMAS_TRAIN_SET_CARGO_EMPTY
 	);
-	private static final int TRAIN_SIZE = 5;
 
 	private static final List<ColorType> TRAIN_COLORS = List.of(ColorType.RED, ColorType.LIGHT_RED, ColorType.LIGHT_GREEN, ColorType.GREEN,
 		ColorType.CYAN, ColorType.LIGHT_BLUE, ColorType.BLUE, ColorType.PURPLE, ColorType.MAGENTA, ColorType.PINK);
@@ -64,6 +65,10 @@ public class Pugmas25ModelTrain implements Listener {
 	private static int standTask = -1;
 	private static int radiusCheckTask = -1;
 	private static boolean started = false;
+	//
+	@Getter
+	@Setter
+	private static int trainLength = 5;
 
 
 	public Pugmas25ModelTrain() {
@@ -103,13 +108,13 @@ public class Pugmas25ModelTrain implements Listener {
 
 		List<ItemModelType> trainModels = new ArrayList<>();
 		trainModels.add(TRAIN_FRONT);
-		for (int i = 0; i < (TRAIN_SIZE - 2); i++) {
+		for (int i = 0; i < (trainLength - 2); i++) {
 			trainModels.add(RandomUtils.randomElement(TRAIN_CARS));
 		}
 		trainModels.add(TRAIN_END);
 
 		ColorType trainColor = RandomUtils.randomElement(TRAIN_COLORS);
-		for (int i = 0; i < TRAIN_SIZE; i++) {
+		for (int i = 0; i < trainLength; i++) {
 			int finalI = i;
 			ArmorStand trainStand = world.spawn(standSpawnLoc, ArmorStand.class, _stand -> {
 				ItemStack cart = new ItemBuilder(trainModels.get(finalI)).dyeColor(trainColor.getBukkitColor()).build();
@@ -134,7 +139,7 @@ public class Pugmas25ModelTrain implements Listener {
 			seatEntities.add(slime);
 		}
 
-		for (int i = 0; i < TRAIN_SIZE; i++) {
+		for (int i = 0; i < trainLength; i++) {
 			ArmorStand trainStand = trainStands.get(i);
 			Entity seat = seatEntities.get(i);
 

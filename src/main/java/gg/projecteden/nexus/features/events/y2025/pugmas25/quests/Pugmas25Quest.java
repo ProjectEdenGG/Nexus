@@ -9,6 +9,10 @@ import java.util.List;
 
 @Getter
 public enum Pugmas25Quest implements IQuest {
+	INTRO(Pugmas25QuestTask.INTRO),
+	ADVENT(Pugmas25QuestTask.ADVENT),
+	DECORATE_SNOWMEN(Pugmas25QuestTask.SNOWMEN),
+	NUTCRACKERS(Pugmas25QuestTask.NUTCRACKER),
 	;
 
 	private final List<IQuestTask> tasks;

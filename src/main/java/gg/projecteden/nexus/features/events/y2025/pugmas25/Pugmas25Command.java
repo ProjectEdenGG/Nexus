@@ -19,10 +19,14 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Distri
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts.Pugmas25District;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Geyser;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Intro;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25ModelTrain;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Train;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waypoints;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waypoints.WaypointTarget;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25NPC;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25Quest;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestTask;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -46,6 +50,7 @@ import gg.projecteden.nexus.models.pugmas25.Pugmas25Config;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25ConfigService;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
+import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Currency;
 import gg.projecteden.nexus.utils.Currency.Price;
@@ -54,6 +59,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.Listener;
@@ -107,6 +113,25 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 			error("You need to take the Pugmas train at Hub to unlock this warp.");
 
 		player().teleportAsync(Pugmas25.get().warp, TeleportCause.COMMAND);
+	}
+
+	@Path("nextStepAdvent")
+	@Permission(Group.ADMIN)
+	void nextStep() {
+		quester.interact(Pugmas25NPC.ADVENT_PROGRESS, new NPCRightClickEvent(CitizensUtils.getNPC(Pugmas25NPC.ADVENT_PROGRESS.getNpcId()), player()));
+	}
+
+	@Path("markQuestComplete <quest>")
+	@Permission(Group.ADMIN)
+	void markQuestComplete(Pugmas25Quest pugmasQuest) {
+		Pugmas25QuestTask.completeQuest(quester, pugmasQuest);
+	}
+
+	@Path("setModelTrainLength <size>")
+	@Permission(Group.ADMIN)
+	void setModelTrainLength(@Arg(min = 0, max = 33) int size) {
+		Pugmas25ModelTrain.setTrainLength(size);
+		send(PREFIX + "Model train length set to " + Pugmas25ModelTrain.getTrainLength());
 	}
 
 	@Path("reload")

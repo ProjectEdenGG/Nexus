@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.y2025.pugmas25.models;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -29,14 +30,6 @@ public class Pugmas25Intro implements Listener {
 	private static final Location INTRO_LOC = PUGMAS.location(-641.5, 98, -3236.5, -90, 0);
 	private static final String TRANSITION_REGION_REGEX = "hub_pugmas25_train_[0-9]+";
 
-	@Getter
-	private static final ItemStack ticketItem = new ItemBuilder(ItemModelType.VOUCHER)
-		.dyeColor(Color.WHITE)
-		.name("&3&oTrain Ticket")
-		.lore("&3Destination: &e" + Pugmas25.EVENT_NAME)
-		.itemFlags(ItemFlags.HIDE_ALL)
-		.build();
-
 	public Pugmas25Intro() {
 		Nexus.registerListener(this);
 	}
@@ -48,13 +41,13 @@ public class Pugmas25Intro implements Listener {
 		if (!event.getRegion().getId().matches(TRANSITION_REGION_REGEX))
 			return;
 
-		if (!PlayerUtils.playerHas(player, ticketItem))
+		if (!PlayerUtils.playerHas(player, Pugmas25QuestItem.TRAIN_TICKET.get()))
 			return;
 
 		if (!Rank.of(player).isStaff() && PUGMAS.isBeforeEvent())
 			return;
 
-		PlayerUtils.removeItem(player, ticketItem);
+		PlayerUtils.removeItem(player, Pugmas25QuestItem.TRAIN_TICKET.get());
 		play(player);
 	}
 
@@ -74,7 +67,7 @@ public class Pugmas25Intro implements Listener {
 				PUGMAS.send(_player, "You've unlocked the warp to " + Pugmas25.EVENT_NAME);
 				new SoundBuilder(Sound.ENTITY_PLAYER_LEVELUP).pitch(2).receiver(_player).play();
 
-				//user.setVisited(true); // TODO: RELEASE PUGMAS
+				user.setVisited(true);
 				userService.save(user);
 			})
 			.next(TickTime.SECOND.x(3), _player -> PUGMAS.send(player, "Talk with the Ticket Master to get started."))

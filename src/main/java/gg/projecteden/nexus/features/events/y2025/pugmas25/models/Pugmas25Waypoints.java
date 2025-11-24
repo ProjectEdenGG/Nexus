@@ -15,6 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.waypoints.Waypoint.Icon;
+import net.minecraft.world.waypoints.WaypointStyleAsset;
 import net.minecraft.world.waypoints.WaypointStyleAssets;
 import net.minecraft.world.waypoints.WaypointTransmitter;
 import net.minecraft.world.waypoints.WaypointTransmitter.Connection;
@@ -147,7 +148,7 @@ public class Pugmas25Waypoints {
 
 		nmsWorld.getWaypointManager().untrackWaypoint(nmsWaypointTransmitter);
 
-		nmsWaypointTransmitter.waypointIcon().style = ResourceKey.create(WaypointStyleAssets.ROOT_ID, ResourceLocation.withDefaultNamespace("x"));
+		nmsWaypointTransmitter.waypointIcon().style = WaypointShape.X.getStyle();
 		nmsWaypointTransmitter.waypointIcon().color = Optional.of(color.getBukkitColor().asRGB());
 
 		return armorStand;
@@ -157,12 +158,27 @@ public class Pugmas25Waypoints {
 	@AllArgsConstructor
 	public enum WaypointTarget {
 		INN(loc(-740.5, 121, -3147.5)),
+		CABIN(loc(-699.5, 119, -3120.5))
 		;
 
 		private final Location location;
 
 		private static Location loc(double x, double y, double z) {
 			return Pugmas25.get().location(x, y, z);
+		}
+	}
+
+	@AllArgsConstructor
+	public enum WaypointShape {
+		DOT("default"),
+		BOWTIE("bowtie"),
+		X("x"),
+		;
+
+		private final String location;
+
+		public ResourceKey<WaypointStyleAsset> getStyle() {
+			return ResourceKey.create(WaypointStyleAssets.ROOT_ID, ResourceLocation.withDefaultNamespace(location));
 		}
 	}
 }

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.quests;
 
+import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Sidebar.Pugmas25SidebarLine;
 import gg.projecteden.nexus.features.quests.QuestItem;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
@@ -9,6 +10,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -21,6 +23,12 @@ public enum Pugmas25QuestItem implements QuestItem {
 
 	TEST_FISH_A(new ItemBuilder(Material.COD).name("Test Fish A")),
 	TEST_FISH_B(new ItemBuilder(Material.COD).name("Test Fish B")),
+
+	TRAIN_TICKET(new ItemBuilder(ItemModelType.VOUCHER).name("&3&oTrain Ticket").lore("&3Destination: &e" + Pugmas25.EVENT_NAME).dyeColor(Color.WHITE).itemFlags(ItemFlags.HIDE_ALL)),
+
+	// Quest Progress Items
+	BOX_OF_DECORATIONS(new ItemBuilder(ItemModelType.EMPTY_BOX).name("Box of Decorations").undroppable().untrashable().unframeable()),
+	BOX_OF_DECORATIONS_EMPTY(new ItemBuilder(ItemModelType.EMPTY_BOX).name("Empty Box of Decorations").undroppable().untrashable().unframeable()),
 
 	RED_BALLOON(new ItemBuilder(ItemModelType.EVENT_RED_BALLOON).name("&oRed Balloon").lore("&7Negates fall damage")),
 	MAGIC_MIRROR(new ItemBuilder(ItemModelType.EVENT_MAGIC_MIRROR).name("&oMagic Mirror").lore("&7Opens the waystone warp menu")),

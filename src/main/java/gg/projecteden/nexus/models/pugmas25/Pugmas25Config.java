@@ -6,12 +6,16 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
+import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Location;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -19,11 +23,12 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Converters({UUIDConverter.class})
+@Converters({UUIDConverter.class, LocationConverter.class})
 public class Pugmas25Config implements DatabaseObject {
 
 	@Id
 	@NonNull
 	private UUID uuid;
 	private Pugmas25QuestItem anglerQuestFish;
+	private Set<Location> nutCrackerLocations = new HashSet<>();
 }
