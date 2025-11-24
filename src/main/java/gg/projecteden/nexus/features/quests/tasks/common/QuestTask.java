@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.quests.interactable.Interactable;
 import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
 import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
+import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -108,6 +109,11 @@ public abstract class QuestTask<
 
 		public TaskBuilderType onEntityInteract(InteractableEntity interactable, Consumer<PlayerInteractEntityEvent> consumer) {
 			currentStep.onEntityInteract.computeIfAbsent(interactable, $ -> consumer);
+			return (TaskBuilderType) this;
+		}
+
+		public TaskBuilderType onRegionEntering(String regionId, Consumer<PlayerEnteringRegionEvent> consumer) {
+			currentStep.onRegionEntering.computeIfAbsent(regionId, $ -> consumer);
 			return (TaskBuilderType) this;
 		}
 

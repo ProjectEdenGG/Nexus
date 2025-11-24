@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
 import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInstance;
+import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
 import gg.projecteden.nexus.models.quests.QuestTaskStepProgress;
 import gg.projecteden.nexus.models.quests.Quester;
 import kotlin.Pair;
@@ -41,6 +42,7 @@ public abstract class QuestTaskStep<
 	protected Map<Class<? extends LivingEntity>, BiConsumer<LivingEntityKilledByPlayerEvent, LivingEntity>> onLivingEntityKilledByPlayer = new HashMap<>();
 	protected Map<Pair<List<Material>, List<Action>>, BiConsumer<PlayerInteractEvent, Block>> onBlockInteract = new HashMap<>();
 	protected Map<List<Material>, BiConsumer<BlockDropItemEvent, Block>> onBlockDropItem = new HashMap<>();
+	protected Map<String, Consumer<PlayerEnteringRegionEvent>> onRegionEntering = new HashMap<>();
 
 	abstract public DialogInstance interact(Quester quester, QuestTaskStepProgress stepProgress);
 

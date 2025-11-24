@@ -14,6 +14,7 @@ import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInstance;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuest;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
+import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -117,6 +118,21 @@ public class Quester implements PlayerOwnedObject {
 		}
 	}
 
+	public void enteringRegion(PlayerEnteringRegionEvent event) {
+		for (Quest quest : quests) {
+			if (quest.isComplete())
+				continue;
+
+			final QuestTaskProgress taskProgress = quest.getCurrentTaskProgress();
+			final QuestTaskStep<?, ?> taskStep = taskProgress.get().getSteps().get(taskProgress.getStep());
+
+			if (!taskStep.getOnRegionEntering().containsKey(event.getRegion().getId()))
+				continue;
+
+			taskStep.getOnRegionEntering().get(event.getRegion().getId()).accept(event);
+		}
+	}
+
 	public void handleBlockEvent(BlockEvent event) {
 		for (Quest quest : quests) {
 			if (quest.isComplete())
@@ -212,7 +228,7 @@ public class Quester implements PlayerOwnedObject {
 				if (hasStarted(quest))
 					continue;
 
-				final Interactable firstInteractable = quest.getTasks().get(0).get().getSteps().get(0).getInteractable();
+				final Interactable firstInteractable = quest.getTasks().getFirst().get().getSteps().getFirst().getInteractable();
 				if (!interactable.equals(firstInteractable))
 					continue;
 
