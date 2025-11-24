@@ -63,7 +63,7 @@ public class Pugmas25AdventMenu extends InventoryProvider {
 				clickableItem = ClickableItem.of(item.build(), e -> {
 					viewer.closeInventory();
 					if (user.getWaypointPresent() != null && user.getWaypointPresent().equals(present)) {
-						Pugmas25Waypoints.hideWaypoint(user.getOnlinePlayer());
+						Pugmas25Waypoints.hideAllWaypoints(user.getOnlinePlayer());
 					} else {
 						Pugmas25Waypoints.showWaypoint(user.getOnlinePlayer(), present);
 					}

@@ -215,10 +215,10 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		Pugmas25Waypoints.showWaypoint(player(), target, ColorType.PURPLE);
 	}
 
-	@Path("advent hideWaypoint")
+	@Path("hideWaypoints")
 	@Permission(Group.ADMIN)
-	void advent_hideWaypoint() {
-		Pugmas25Waypoints.hideWaypoint(player());
+	void hideWaypoint() {
+		Pugmas25Waypoints.hideAllWaypoints(player());
 	}
 
 	@Path("setFishOfTheDay <item>")

@@ -77,7 +77,7 @@ public class Pugmas25Waypoints {
 		playerWaypointConnections.clear();
 	}
 
-	public static void hideWaypoint(@NotNull Player player) {
+	public static void hideAllWaypoints(@NotNull Player player) {
 		playerWaypointConnections.keySet().forEach(waypointStand -> {
 			var pair = playerWaypointConnections.get(waypointStand);
 			if (!pair.getFirst().equals(player.getUniqueId()))
@@ -98,7 +98,7 @@ public class Pugmas25Waypoints {
 	}
 
 	private static void showWaypoint(@NotNull Player player, Location location, ColorType color) {
-		hideWaypoint(player);
+		hideAllWaypoints(player);
 
 		ArmorStand armorStand = spawnWaypointStand(location.toCenterLocation(), color);
 
