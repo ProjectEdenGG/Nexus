@@ -3,8 +3,10 @@ package gg.projecteden.nexus.features.resourcepack.decoration.catalog;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Theme;
 import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreCurrencyType;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.decoration.DecorationUser;
 import gg.projecteden.nexus.models.decoration.DecorationUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -28,6 +30,9 @@ public class MasterCatalogProvider extends InventoryProvider {
 	@Override
 	public void init() {
 		addCloseItem();
+
+		contents.set(SlotPos.of(0, 8), ClickableItem.empty(new ItemBuilder(ItemModelType.GUI_INFO)
+			.name("&eInfo").lore("&3Displays all owned catalogs", "", "&3Buy catalogs at the NPC", "&3in the Decoration Store")));
 
 		List<ClickableItem> items = new ArrayList<>();
 		List<Catalog.Theme> ownedThemes = user.getOwnedThemes();
