@@ -26,7 +26,6 @@ import gg.projecteden.nexus.features.quests.interactable.Interactable;
 import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
 import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuest;
-import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomEmoji;
 import gg.projecteden.nexus.framework.annotations.Date;
@@ -616,16 +615,11 @@ public abstract class EdenEvent extends Feature implements Listener {
 	@EventHandler
 	public void _onPlayerEnteringRegionEvent(PlayerEnteringRegionEvent event) {
 		final Player player = event.getPlayer();
-		if (!shouldHandle(player))
-			return;
+		new QuesterService().edit(player, quester -> quester.enteringRegion(event));
 
-		new QuesterService().edit(player, quester -> quester.handleEnteringRegionEvent(event));
-	}
-
-	@EventHandler
-	public void _onPlayerEnteredRegionEvent(PlayerEnteredRegionEvent event) {
-		final Player player = event.getPlayer();
-		new QuesterService().edit(player, quester -> quester.enterRegion(event));
+		// TODO World support instead
+		if (shouldHandle(player))
+			new QuesterService().edit(player, quester -> quester.handleEnteringRegionEvent(event));
 	}
 
 	@EventHandler

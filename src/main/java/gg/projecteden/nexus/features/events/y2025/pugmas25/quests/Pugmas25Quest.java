@@ -9,7 +9,7 @@ import java.util.List;
 
 @Getter
 public enum Pugmas25Quest implements IQuest {
-	INTRO(Pugmas25QuestTask.BOARD_THE_TRAIN, Pugmas25QuestTask.CHECK_IN),
+	INTRO(Pugmas25QuestTask.BOARD_THE_TRAIN, Pugmas25QuestTask.CHECK_IN, Pugmas25QuestTask.ENTER_THE_CABIN),
 	ADVENT(Pugmas25QuestTask.ADVENT),
 	DECORATE_SNOWMEN(Pugmas25QuestTask.SNOWMEN),
 	NUTCRACKERS(Pugmas25QuestTask.NUTCRACKER),

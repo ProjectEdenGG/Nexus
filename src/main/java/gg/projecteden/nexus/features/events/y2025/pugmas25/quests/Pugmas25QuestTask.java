@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Cabin;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Intro;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waypoints;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waypoints.WaypointTarget;
-import gg.projecteden.nexus.features.quests.tasks.EnterRegionQuestTask;
+import gg.projecteden.nexus.features.quests.tasks.EnteringRegionQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.InteractQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
@@ -29,7 +29,7 @@ import org.bukkit.event.block.Action;
 @Getter
 @AllArgsConstructor
 public enum Pugmas25QuestTask implements IQuestTask {
-	BOARD_THE_TRAIN(EnterRegionQuestTask.builder()
+	BOARD_THE_TRAIN(EnteringRegionQuestTask.builder()
 		.talkTo(Pugmas25NPC.TICKET_MASTER_HUB)
 		.objective("Board the train")
 		.dialog(dialog -> dialog
@@ -82,7 +82,11 @@ public enum Pugmas25QuestTask implements IQuestTask {
 			.npc("It's directly west of the Great Tree, you can't miss it.")
 			.thenRun(quester -> Pugmas25Waypoints.showWaypoint(quester.getOnlinePlayer(), WaypointTarget.CABIN, ColorType.LIGHT_RED))
 		)
-		.then()
+	),
+
+	ENTER_THE_CABIN(EnteringRegionQuestTask.builder()
+		.objective("Find and enter the cabin")
+		.enterRegion(Pugmas25.get().getWorld(), Pugmas25Cabin.DOOR_REGION)
 		.onRegionEntering(Pugmas25Cabin.DOOR_REGION, event -> {
 			Pugmas25UserService userService = new Pugmas25UserService();
 			Pugmas25User user = userService.get(event.getPlayer());
@@ -97,12 +101,7 @@ public enum Pugmas25QuestTask implements IQuestTask {
 					userService.save(user);
 				}
 			}
-
-			// TODO: MARK QUEST AS COMPLETE
-			//completeQuest(new QuesterService().get(user), Pugmas25Quest.INTRO); // untested
 		})
-
-		// TODO objective: Find and enter the cabin
 	),
 
 	// TODO: TEST

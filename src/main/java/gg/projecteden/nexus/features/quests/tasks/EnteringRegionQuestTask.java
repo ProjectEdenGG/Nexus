@@ -1,13 +1,13 @@
 package gg.projecteden.nexus.features.quests.tasks;
 
+import gg.projecteden.api.common.utils.RegexUtils;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInstance;
-import gg.projecteden.nexus.features.quests.tasks.EnterRegionQuestTask.EnterRegionQuestTaskStep;
+import gg.projecteden.nexus.features.quests.tasks.EnteringRegionQuestTask.EnteringRegionQuestTaskStep;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
 import gg.projecteden.nexus.models.quests.QuestTaskStepProgress;
 import gg.projecteden.nexus.models.quests.Quester;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
@@ -15,18 +15,17 @@ import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-
-import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
+import java.util.regex.Pattern;
 
 @Data
-public class EnterRegionQuestTask extends QuestTask<EnterRegionQuestTask, EnterRegionQuestTaskStep> {
+public class EnteringRegionQuestTask extends QuestTask<EnteringRegionQuestTask, EnteringRegionQuestTaskStep> {
 
-	public EnterRegionQuestTask(List<EnterRegionQuestTaskStep> steps) {
+	public EnteringRegionQuestTask(List<EnteringRegionQuestTaskStep> steps) {
 		super(steps);
 	}
 
 	@Data
-	public static class EnterRegionQuestTaskStep extends QuestTaskStep<EnterRegionQuestTask, EnterRegionQuestTaskStep> {
+	public static class EnteringRegionQuestTaskStep extends QuestTaskStep<EnteringRegionQuestTask, EnteringRegionQuestTaskStep> {
 		private World world;
 		private String regex;
 		private Dialog complete;
@@ -43,39 +42,38 @@ public class EnterRegionQuestTask extends QuestTask<EnterRegionQuestTask, EnterR
 
 		@Override
 		public boolean shouldAdvance(Quester quester, QuestTaskStepProgress stepProgress) {
-			if (isNotNullOrEmpty(regex)) {
-				WorldGuardUtils worldguard = new WorldGuardUtils(world);
-				if (!stepProgress.isFirstInteraction() && worldguard.isInRegionLikeAt(regex, quester.getOnlinePlayer().getLocation()))
-					return true;
-			}
+			return !stepProgress.isFirstInteraction();
+		}
 
-			return false;
+		public boolean isMatchingRegion(World world, String region) {
+			Pattern pattern = RegexUtils.ignoreCasePattern(regex);
+			return this.world.equals(world) && pattern.matcher(region).matches();
 		}
 
 	}
 
-	public static EnterRegionTaskBuilder builder() {
-		return new EnterRegionTaskBuilder();
+	public static EnteringRegionTaskBuilder builder() {
+		return new EnteringRegionTaskBuilder();
 	}
 
 	@NoArgsConstructor
-	public static class EnterRegionTaskBuilder extends TaskBuilder<EnterRegionQuestTask, EnterRegionTaskBuilder, EnterRegionQuestTaskStep> {
+	public static class EnteringRegionTaskBuilder extends TaskBuilder<EnteringRegionQuestTask, EnteringRegionTaskBuilder, EnteringRegionQuestTaskStep> {
 
 		@Override
-		public EnterRegionQuestTaskStep nextStep() {
-			return new EnterRegionQuestTaskStep();
+		public EnteringRegionQuestTaskStep nextStep() {
+			return new EnteringRegionQuestTaskStep();
 		}
 
 		@NotNull
-		public EnterRegionQuestTask newInstance() {
-			return new EnterRegionQuestTask(steps);
+		public EnteringRegionQuestTask newInstance() {
+			return new EnteringRegionQuestTask(steps);
 		}
 
-		public EnterRegionTaskBuilder enterRegion(String world, String regex) {
+		public EnteringRegionTaskBuilder enterRegion(String world, String regex) {
 			return enterRegion(Bukkit.getWorld(world), regex);
 		}
 
-		public EnterRegionTaskBuilder enterRegion(World world, String regex) {
+		public EnteringRegionTaskBuilder enterRegion(World world, String regex) {
 			currentStep.world = world;
 			currentStep.regex = regex;
 			return this;

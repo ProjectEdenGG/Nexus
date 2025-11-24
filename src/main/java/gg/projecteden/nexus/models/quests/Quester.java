@@ -12,7 +12,7 @@ import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
 import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInstance;
-import gg.projecteden.nexus.features.quests.tasks.EnterRegionQuestTask.EnterRegionQuestTaskStep;
+import gg.projecteden.nexus.features.quests.tasks.EnteringRegionQuestTask.EnteringRegionQuestTaskStep;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuest;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
@@ -174,7 +174,7 @@ public class Quester implements PlayerOwnedObject {
 		}
 	}
 
-	public <E extends Event> void enterRegion(E event) {
+	public void enteringRegion(PlayerEnteringRegionEvent event) {
 		for (Quest quest : quests) {
 			if (quest.isComplete())
 				continue;
@@ -183,8 +183,9 @@ public class Quester implements PlayerOwnedObject {
 			final QuestTaskStepProgress stepProgress = taskProgress.currentStep();
 			final QuestTaskStep<?, ?> taskStep = taskProgress.get().getSteps().get(taskProgress.getStep());
 
-			if (taskStep instanceof EnterRegionQuestTaskStep) {
-				if (taskStep.shouldAdvance(this, stepProgress)) {
+			if (taskStep instanceof EnteringRegionQuestTaskStep enteringRegionQuestTaskStep) {
+				boolean matchingRegion = enteringRegionQuestTaskStep.isMatchingRegion(event.getPlayer().getWorld(), event.getRegion().getId());
+				if (taskStep.shouldAdvance(this, stepProgress) && matchingRegion) {
 					taskStep.afterComplete(this);
 
 					if (taskProgress.hasNextStep()) {
