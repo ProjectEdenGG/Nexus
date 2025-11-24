@@ -6,32 +6,26 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Cabin;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Intro;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waypoints;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waypoints.WaypointTarget;
+import gg.projecteden.nexus.features.hub.Hub;
 import gg.projecteden.nexus.features.quests.tasks.EnteringRegionQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.InteractQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTask.TaskBuilder;
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationInteractData;
-import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.models.pugmas25.Pugmas25Config;
-import gg.projecteden.nexus.models.pugmas25.Pugmas25ConfigService;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
-import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.bukkit.Material;
-import org.bukkit.block.BlockFace;
-import org.bukkit.event.block.Action;
 
 @Getter
 @AllArgsConstructor
 public enum Pugmas25QuestTask implements IQuestTask {
 	BOARD_THE_TRAIN(EnteringRegionQuestTask.builder()
-		.talkTo(Pugmas25NPC.TICKET_MASTER_HUB)
 		.objective("Board the train")
+		.talkTo(Pugmas25NPC.TICKET_MASTER_HUB)
 		.dialog(dialog -> dialog
 			.npc("Hello! Where would you like to travel to?")
 			.player("1 Ticket to " + Pugmas25.EVENT_NAME + ", please.")
@@ -41,12 +35,12 @@ public enum Pugmas25QuestTask implements IQuestTask {
 		.reminder(dialog -> dialog
 			.npc("You already bought a ticket, make sure to board the train!")
 		)
-		.enterRegion("server", Pugmas25Intro.TRANSITION_REGION_REGEX)
+		.enterRegion(Hub.getWorld(), Pugmas25Intro.TRANSITION_REGION_REGEX)
 	),
 
 	CHECK_IN(InteractQuestTask.builder()
-		.talkTo(Pugmas25NPC.TICKET_MASTER)
 		.objective("Talk to the ticket master")
+		.talkTo(Pugmas25NPC.TICKET_MASTER)
 		.dialog(dialog -> dialog
 			.npc("Welcome to Pugmas Village, Project Eden's Christmas celebration!")
 			.npc("There's plenty to see and do around here, but before you dive in, you'll want to check in at the inn.")
@@ -58,6 +52,7 @@ public enum Pugmas25QuestTask implements IQuestTask {
 			.npc("Have you checked into the inn yet?")
 		)
 		.then()
+		.objective("Check in at the inn")
 		.talkTo(Pugmas25NPC.INN_KEEPER)
 		.dialog(dialog -> dialog
 			.player("Hello, I'd like to rent a room.")
@@ -76,7 +71,6 @@ public enum Pugmas25QuestTask implements IQuestTask {
 				Pugmas25Waypoints.showWaypoint(quester.getOnlinePlayer(), WaypointTarget.CABIN, ColorType.LIGHT_RED);
 			})
 		)
-		.objective("Check in at the inn")
 		.reminder(dialog -> dialog
 			.npc("Have you found the cabin yet?")
 			.npc("It's directly west of the Great Tree, you can't miss it.")
@@ -87,47 +81,6 @@ public enum Pugmas25QuestTask implements IQuestTask {
 	ENTER_THE_CABIN(EnteringRegionQuestTask.builder()
 		.objective("Find and enter the cabin")
 		.enterRegion(Pugmas25.get().getWorld(), Pugmas25Cabin.DOOR_REGION)
-		.onRegionEntering(Pugmas25Cabin.DOOR_REGION, event -> {
-			Pugmas25UserService userService = new Pugmas25UserService();
-			Pugmas25User user = userService.get(event.getPlayer());
-
-			if (!user.isUnlockedCabin()) {
-				event.setCancelled(true);
-				if (!CooldownService.isOnCooldown(event.getPlayer().getUniqueId(), "pugmas25_cabin_locked", TickTime.SECOND.x(2), false))
-					user.sendMessage(Pugmas25.PREFIX + "&cYou cannot enter this cabin right now");
-			} else {
-				if (!user.isEnteredCabin()) {
-					user.setEnteredCabin(true);
-					userService.save(user);
-				}
-			}
-		})
-	),
-
-	// TODO: TEST
-	ADVENT(InteractQuestTask.builder()
-		.talkTo(Pugmas25NPC.ELF)
-		.dialog(dialog -> dialog
-			.npc("Ah! A new visitor beneath the Great Tree! Welcome to Pugmas, traveler!")
-			.player("This place is huge... what's going on here?")
-			.npc("Pugmas brings many wonders: the village, fairgrounds, warm springs, hidden caves, and more! But you're here for the Advent, aren't you?")
-			.player("Advent? How does that work?")
-			.npc("Each day until the 25th, a magical present unlocks. Find it, and you may unwrap its holiday magic!")
-			.player("What if I come across a present from another day?")
-			.npc("You may find any day early, but its magic won’t unlock until its rightful day arrives. The enchantments are very particular.")
-			.player("And if I miss a day? Life happens.")
-			.npc("The Great Tree is kind! On the 25th, every unopened present unlocks at once. A perfect chance to catch up.")
-			.player("What about the final present on the 25th?")
-			.npc("That one is special. You must open all the earlier days first—only then will the Great Tree reveal the final gift.")
-			.player("Sounds exciting! Where do I start?")
-			.npc("Your first present is already hiding somewhere out there. Go on, let the hunt begin, and may the Great Tree guide your steps!")
-			.thenRun(quester -> new Pugmas25UserService().edit(quester, user -> user.advent().setUnlockedQuest(true)))
-		).reminder(dialog -> dialog
-			.npc("Back again? Remember, one Advent Present unlocks each day until the 25th.")
-			.npc("You can find future presents early, but you can’t open them until their day.")
-			.npc("Miss a day? All unopened ones unlock on the 25th, just open them to unlock the final present.")
-		)
-		.objective("Find and open all advent presents")
 	),
 
 	// TODO: TEST
@@ -160,17 +113,6 @@ public enum Pugmas25QuestTask implements IQuestTask {
 		.reward(Pugmas25QuestReward.SNOWMEN)
 	),
 
-	NUTCRACKER(InteractQuestTask.builder()
-		.onBlockInteract(Material.BARRIER, Action.RIGHT_CLICK_BLOCK, ((event, block) -> {
-			var data = new DecorationInteractData(block, BlockFace.UP);
-			if (ItemModelType.NUTCRACKER_SHORT.is(data.getDecoration().getItem(event.getPlayer()))) {
-				Pugmas25ConfigService configService = new Pugmas25ConfigService();
-				Pugmas25Config config = configService.get0();
-				if (config.getNutCrackerLocations().contains(block.getLocation()))
-					new Pugmas25UserService().edit(event.getPlayer(), user -> user.getFoundNutCrackers().add(block.getLocation()));
-			}
-		}))),
-
 
 	;
 
@@ -179,15 +121,5 @@ public enum Pugmas25QuestTask implements IQuestTask {
 	@Override
 	public TaskBuilder<?, ?, ?> builder() {
 		return task;
-	}
-
-
-	public static void completeQuest(Quester quester, Pugmas25Quest pugmasQuest) {
-		quester.getQuests().forEach(quest -> {
-			if (quest.getQuest() == pugmasQuest) {
-				quester.sendMessage("Completing quest");
-				quest.complete();
-			}
-		});
 	}
 }

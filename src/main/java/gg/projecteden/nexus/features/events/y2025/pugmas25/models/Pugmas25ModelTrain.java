@@ -114,7 +114,7 @@ public class Pugmas25ModelTrain implements Listener {
 		started = true;
 
 		SoundBuilder whistle = new SoundBuilder(CustomSound.TRAIN_WHISTLE).category(SoundCategory.AMBIENT).volume(0.1).pitch(1.5);
-		soundTask = Tasks.repeat(5, TickTime.SECOND.x(10), () -> {
+		soundTask = Tasks.repeat(5, TickTime.SECOND.x(30), () -> {
 			if (!started)
 				return;
 
@@ -171,6 +171,7 @@ public class Pugmas25ModelTrain implements Listener {
 					_minecart.setInvulnerable(true);
 					_minecart.setFrictionState(TriState.FALSE);
 					_minecart.setVelocity(BlockFace.WEST.getDirection().multiply(0.1));
+					_minecart.setGravity(false);
 				});
 
 				minecarts.add(minecart);

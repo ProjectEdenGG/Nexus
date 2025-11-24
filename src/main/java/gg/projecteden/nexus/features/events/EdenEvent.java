@@ -615,11 +615,10 @@ public abstract class EdenEvent extends Feature implements Listener {
 	@EventHandler
 	public void _onPlayerEnteringRegionEvent(PlayerEnteringRegionEvent event) {
 		final Player player = event.getPlayer();
-		new QuesterService().edit(player, quester -> quester.enteringRegion(event));
-
-		// TODO World support instead
-		if (shouldHandle(player))
-			new QuesterService().edit(player, quester -> quester.handleEnteringRegionEvent(event));
+		new QuesterService().edit(player, quester -> {
+			quester.enteringRegion(event);
+			quester.handleEnteringRegionEvent(event);
+		});
 	}
 
 	@EventHandler

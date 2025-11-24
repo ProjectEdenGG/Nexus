@@ -117,7 +117,7 @@ public class HubModelTrain implements Listener {
 		started = true;
 
 		SoundBuilder whistle = new SoundBuilder(CustomSound.TRAIN_WHISTLE).category(SoundCategory.AMBIENT).volume(0.1).pitch(1.5);
-		soundTask = Tasks.repeat(5, TickTime.SECOND.x(10), () -> {
+		soundTask = Tasks.repeat(5, TickTime.SECOND.x(30), () -> {
 			if (!started)
 				return;
 

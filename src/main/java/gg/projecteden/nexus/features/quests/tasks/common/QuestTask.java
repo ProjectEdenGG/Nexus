@@ -10,11 +10,13 @@ import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegio
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import kotlin.Pair;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.citizensnpcs.api.event.NPCClickEvent;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.block.Action;
@@ -23,6 +25,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -112,8 +115,12 @@ public abstract class QuestTask<
 			return (TaskBuilderType) this;
 		}
 
-		public TaskBuilderType onRegionEntering(String regionId, Consumer<PlayerEnteringRegionEvent> consumer) {
-			currentStep.onRegionEntering.computeIfAbsent(regionId, $ -> consumer);
+		public TaskBuilderType onRegionEntering(World world, String regionId, Consumer<PlayerEnteringRegionEvent> consumer) {
+			return onRegionEntering(world.getName(), regionId, consumer);
+		}
+
+		public TaskBuilderType onRegionEntering(String world, String regionId, Consumer<PlayerEnteringRegionEvent> consumer) {
+			currentStep.onRegionEntering.computeIfAbsent(world, $ -> new HashMap<>()).put(regionId, consumer);
 			return (TaskBuilderType) this;
 		}
 

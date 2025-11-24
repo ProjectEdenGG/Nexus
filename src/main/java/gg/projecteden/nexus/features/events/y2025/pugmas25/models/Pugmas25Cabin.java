@@ -51,4 +51,24 @@ public class Pugmas25Cabin implements Listener {
 		event.setCancelled(true);
 		PlayerUtils.runCommand(event.getPlayer(), "pugmas25 advent");
 	}
+
+	@EventHandler
+	public void on(PlayerEnteringRegionEvent event) {
+		Player player = event.getPlayer();
+		if (!Pugmas25.get().isAtEvent(player))
+			return;
+
+		if (!event.getRegion().getId().equals(DOOR_REGION))
+			return;
+
+		Pugmas25UserService userService = new Pugmas25UserService();
+		Pugmas25User user = userService.get(player);
+
+		if (user.isUnlockedCabin())
+			return;
+
+		event.setCancelled(true);
+		if (!CooldownService.isOnCooldown(player.getUniqueId(), "pugmas25_cabin_locked", TickTime.SECOND.x(2)))
+			user.sendMessage(Pugmas25.PREFIX + "&cYou cannot enter this cabin right now");
+	}
 }

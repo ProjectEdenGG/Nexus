@@ -42,7 +42,7 @@ public abstract class QuestTaskStep<
 	protected Map<Class<? extends LivingEntity>, BiConsumer<LivingEntityKilledByPlayerEvent, LivingEntity>> onLivingEntityKilledByPlayer = new HashMap<>();
 	protected Map<Pair<List<Material>, List<Action>>, BiConsumer<PlayerInteractEvent, Block>> onBlockInteract = new HashMap<>();
 	protected Map<List<Material>, BiConsumer<BlockDropItemEvent, Block>> onBlockDropItem = new HashMap<>();
-	protected Map<String, Consumer<PlayerEnteringRegionEvent>> onRegionEntering = new HashMap<>();
+	protected Map<String, Map<String, Consumer<PlayerEnteringRegionEvent>>> onRegionEntering = new HashMap<>();
 
 	abstract public DialogInstance interact(Quester quester, QuestTaskStepProgress stepProgress);
 

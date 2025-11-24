@@ -38,7 +38,10 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25ShopMe
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationInteractData;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.annotations.Date;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.deathmessages.DeathMessages;
 import gg.projecteden.nexus.models.deathmessages.DeathMessagesService;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -52,24 +55,33 @@ import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.Utils.ActionGroup;
+import gg.projecteden.nexus.utils.Utils.EquipmentSlotGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
@@ -132,6 +144,7 @@ public class Pugmas25 extends EdenEvent {
 		sidebar = new Pugmas25Sidebar();
 
 		new Pugmas25Districts();
+		new Pugmas25Intro();
 		new Pugmas25Caves();
 		new Pugmas25Advent();
 		new Pugmas25Fairgrounds();
@@ -233,6 +246,34 @@ public class Pugmas25 extends EdenEvent {
 	@Override
 	public void registerInteractHandlers() {
 		handleInteract(Pugmas25NPC.BLACKSMITH, (player, npc) -> Pugmas25ShopMenu.BLACKSMITH.open(player));
+
+		handleInteract(Pugmas25NPC.ELF, (player, npc) -> {
+			/*
+			ADVENT(InteractQuestTask.builder()
+		.talkTo(Pugmas25NPC.ELF)
+		.dialog(dialog -> dialog
+			.npc("Ah! A new visitor beneath the Great Tree! Welcome to Pugmas, traveler!")
+			.player("This place is huge... what's going on here?")
+			.npc("Pugmas brings many wonders: the village, fairgrounds, warm springs, hidden caves, and more! But you're here for the Advent, aren't you?")
+			.player("Advent? How does that work?")
+			.npc("Each day until the 25th, a magical present unlocks. Find it, and you may unwrap its holiday magic!")
+			.player("What if I come across a present from another day?")
+			.npc("You may find any day early, but its magic won’t unlock until its rightful day arrives. The enchantments are very particular.")
+			.player("And if I miss a day? Life happens.")
+			.npc("The Great Tree is kind! On the 25th, every unopened present unlocks at once. A perfect chance to catch up.")
+			.player("What about the final present on the 25th?")
+			.npc("That one is special. You must open all the earlier days first—only then will the Great Tree reveal the final gift.")
+			.player("Sounds exciting! Where do I start?")
+			.npc("Your first present is already hiding somewhere out there. Go on, let the hunt begin, and may the Great Tree guide your steps!")
+			.thenRun(quester -> new Pugmas25UserService().edit(quester, user -> user.advent().setUnlockedQuest(true)))
+		).reminder(dialog -> dialog
+			.npc("Back again? Remember, one Advent Present unlocks each day until the 25th.")
+			.npc("You can find future presents early, but you can’t open them until their day.")
+			.npc("Miss a day? All unopened ones unlock on the 25th, just open them to unlock the final present.")
+		)
+		.objective("Find and open all advent presents")
+			 */
+		});
 
 		// TODO
 		handleInteract(Pugmas25NPC.ANGLER, (player, npc) -> {
@@ -397,5 +438,24 @@ public class Pugmas25 extends EdenEvent {
 		}
 	}
 
+	@EventHandler
+	public void on(PlayerInteractEvent event) {
+		if (!EquipmentSlotGroup.HANDS.applies(event)) return;
+		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+
+		Block block = event.getClickedBlock();
+		if (Nullables.isNullOrAir(block) || block.getType() != Material.BARRIER) return;
+
+		var data = new DecorationInteractData(block, BlockFace.UP);
+		if (!ItemModelType.NUTCRACKER_SHORT.is(data.getDecoration().getItem(event.getPlayer())))
+			return;
+
+		Pugmas25ConfigService configService = new Pugmas25ConfigService();
+		Pugmas25Config config = configService.get0();
+		if (!config.getNutCrackerLocations().contains(block.getLocation()))
+			return;
+
+		new Pugmas25UserService().edit(event.getPlayer(), user -> user.getFoundNutCrackers().add(block.getLocation()));
+	}
 
 }

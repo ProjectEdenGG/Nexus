@@ -22,6 +22,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -45,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
@@ -127,10 +129,14 @@ public class Quester implements PlayerOwnedObject {
 			final QuestTaskProgress taskProgress = quest.getCurrentTaskProgress();
 			final QuestTaskStep<?, ?> taskStep = taskProgress.get().getSteps().get(taskProgress.getStep());
 
-			if (!taskStep.getOnRegionEntering().containsKey(event.getRegion().getId()))
+			if (!taskStep.getOnRegionEntering().containsKey(event.getPlayer().getWorld().getName()))
 				continue;
 
-			taskStep.getOnRegionEntering().get(event.getRegion().getId()).accept(event);
+			var config = taskStep.getOnRegionEntering().get(event.getPlayer().getWorld().getName());
+			if (!config.containsKey(event.getRegion().getId()))
+				continue;
+
+			config.get(event.getRegion().getId()).accept(event);
 		}
 	}
 

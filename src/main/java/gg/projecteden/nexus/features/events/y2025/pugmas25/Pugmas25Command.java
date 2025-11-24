@@ -50,6 +50,7 @@ import gg.projecteden.nexus.models.pugmas25.Pugmas25Config;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25ConfigService;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
+import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Currency;
@@ -115,16 +116,19 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		player().teleportAsync(Pugmas25.get().warp, TeleportCause.COMMAND);
 	}
 
-	@Path("nextStepAdvent")
-	@Permission(Group.ADMIN)
-	void nextStep() {
-		quester.interact(Pugmas25NPC.ADVENT_PROGRESS, new NPCRightClickEvent(CitizensUtils.getNPC(Pugmas25NPC.ADVENT_PROGRESS.getNpcId()), player()));
+	@Override
+	@Path("quest progress [player]")
+	protected void quest_progress(@Arg(value = "self", permission = Group.STAFF) Quester quester) {
+		super.quest_progress(quester);
+
+
 	}
 
-	@Path("markQuestComplete <quest>")
+	@Path("deleteQuest <quest>")
 	@Permission(Group.ADMIN)
-	void markQuestComplete(Pugmas25Quest pugmasQuest) {
-		Pugmas25QuestTask.completeQuest(quester, pugmasQuest);
+	void nextStep(Pugmas25Quest pugmasQuest) {
+		quester.getQuests().removeIf(quest -> quest.getQuest() == pugmasQuest);
+		questerService.save(quester);
 	}
 
 	@Path("modelTrain length <length>")

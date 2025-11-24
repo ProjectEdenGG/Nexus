@@ -44,10 +44,8 @@ public class Pugmas25User implements PlayerOwnedObject {
 	private boolean visited = false;
 
 	private boolean unlockedCabin = false;
-	private boolean enteredCabin = false;
 	private boolean unlockedAdvent = false;
 	private Location spawnLocation = Pugmas25.get().warp;
-
 
 	private boolean receivedAnglerQuestInstructions = false;
 	private boolean finishedAnglerQuest = false;
