@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.shops.ShopCommand;
 import gg.projecteden.nexus.features.shops.Shops;
 import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.Filter;
 import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterType;
@@ -16,6 +17,7 @@ import gg.projecteden.nexus.models.shop.Shop.Product;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -64,7 +66,14 @@ public class YourShopProvider extends ShopProvider {
 
 		contents.set(0, 4, ClickableItem.of(Material.LIME_CONCRETE_POWDER, "&6Add item", e -> new ExchangeConfigProvider(this).open(viewer)));
 
-		contents.set(0, 5, ClickableItem.of(Material.HOPPER, "&6Mass Restock", e -> new EditProductProvider.MassAddStockProvider(viewer, this, shop, shopGroup)));
+		contents.set(0, 5, ClickableItem.of(Material.HOPPER, "&6Mass Restock", List.of("&f", "&7Right click to restock from containers"), e -> {
+			if (e.isRightClick()) {
+				viewer.closeInventory();
+				ShopCommand.getInteractStockMap().put(viewer.getUniqueId(), null);
+				PlayerUtils.send(viewer, new JsonBuilder(Shops.PREFIX + "Right click any container (ie chest, shulker box, etc) to restock your shop. &eClick here to end").command("/shop cancelInteractStock"));
+			} else
+				new EditProductProvider.MassAddStockProvider(viewer, this, shop, shopGroup);
+		}));
 
 		contents.set(0, 6, ClickableItem.of(Material.WRITABLE_BOOK, "&6Shop history", e -> {
 			PlayerUtils.runCommand(viewer, "shop history");

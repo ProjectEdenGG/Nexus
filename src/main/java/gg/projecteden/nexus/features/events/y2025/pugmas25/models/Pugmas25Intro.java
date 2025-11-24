@@ -5,22 +5,16 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
-import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
-import lombok.Getter;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
 
 public class Pugmas25Intro implements Listener {
 
@@ -28,7 +22,7 @@ public class Pugmas25Intro implements Listener {
 	private static final Pugmas25 PUGMAS = Pugmas25.get();
 	private static final Location TRANSITION_LOC = PUGMAS.location(-641.5, 98, -3246.5, -90, 0);
 	private static final Location INTRO_LOC = PUGMAS.location(-641.5, 98, -3236.5, -90, 0);
-	private static final String TRANSITION_REGION_REGEX = "hub_pugmas25_train_[0-9]+";
+	public static final String TRANSITION_REGION_REGEX = "hub_pugmas25_train_[0-9]+";
 
 	public Pugmas25Intro() {
 		Nexus.registerListener(this);

@@ -57,6 +57,8 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.ItemUtils.nonNullOrAir;
+
 @Aliases("shops")
 @NoArgsConstructor
 public class ShopCommand extends CustomCommand implements Listener {
@@ -206,7 +208,10 @@ public class ShopCommand extends CustomCommand implements Listener {
 
 		Product product = interactStockMap.get(uuid());
 		interactStockMap.remove(uuid());
-		send(PREFIX + "Stopped stocking " + StringUtils.pretty(product.getItem()));
+		if (product == null)
+			send(PREFIX + "Stopped mass restocking items");
+		else
+			send(PREFIX + "Stopped stocking " + StringUtils.pretty(product.getItem()));
 	}
 
 	@EventHandler
@@ -222,24 +227,35 @@ public class ShopCommand extends CustomCommand implements Listener {
 		if (!(state instanceof Container container))
 			return;
 
+		Shop shop = service.get(event.getPlayer());
 		Product product = interactStockMap.get(event.getPlayer().getUniqueId());
 
 		event.setCancelled(true);
+		if (product == null) {
+			var contents = nonNullOrAir(container.getInventory().getContents());
+			var rejected = shop.massAddStock(contents);
+			container.getInventory().setContents(rejected.toArray(new ItemStack[0]));
 
-		int stockToAdd = 0;
-		for (ItemStack content : container.getInventory().getContents()) {
-			if (ItemUtils.isSimilar(product.getItem(), content)) {
-				stockToAdd += content.getAmount();
-				content.setAmount(0);
+			send(event.getPlayer(), new JsonBuilder(Shops.PREFIX + "Added all matching items to your shop's stock. &eClick here to end")
+				.command("/shop cancelInteractStock"));
+		} else {
+			int stockToAdd = 0;
+
+			for (ItemStack content : container.getInventory().getContents()) {
+				if (ItemUtils.isSimilar(product.getItem(), content)) {
+					stockToAdd += content.getAmount();
+					content.setAmount(0);
+				}
 			}
-		}
 
-		product.addStock(stockToAdd);
-		service.save(product.getShop());
+			product.addStock(stockToAdd);
 
-		send(event.getPlayer(), new JsonBuilder(Shops.PREFIX + "Added &e" + stockToAdd + " &3stock to "
+			send(event.getPlayer(), new JsonBuilder(Shops.PREFIX + "Added &e" + stockToAdd + " &3stock to "
 				+ StringUtils.pretty(product.getItem()) + " (&e" + product.getStock() + " &3total). &eClick here to end")
 				.command("/shop cancelInteractStock"));
+		}
+
+		service.save(shop);
 	}
 
 	@EventHandler

@@ -12,6 +12,7 @@ import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
 import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInstance;
+import gg.projecteden.nexus.features.quests.tasks.EnterRegionQuestTask.EnterRegionQuestTaskStep;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuest;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
@@ -94,7 +95,7 @@ public class Quester implements PlayerOwnedObject {
 		return hasStarted(quest) && getQuest(quest).isComplete();
 	}
 
-	public void interact(PlayerInteractEvent event) {
+	public void handleInteractEvent(PlayerInteractEvent event) {
 		final Block block = event.getClickedBlock();
 		if (isNullOrAir(block))
 			return;
@@ -118,7 +119,7 @@ public class Quester implements PlayerOwnedObject {
 		}
 	}
 
-	public void enteringRegion(PlayerEnteringRegionEvent event) {
+	public void handleEnteringRegionEvent(PlayerEnteringRegionEvent event) {
 		for (Quest quest : quests) {
 			if (quest.isComplete())
 				continue;
@@ -169,6 +170,35 @@ public class Quester implements PlayerOwnedObject {
 
 					taskStep.getOnLivingEntityKilledByPlayer().get(entityClass).accept(killEvent, killEvent.getEntity());
 				}
+			}
+		}
+	}
+
+	public <E extends Event> void enterRegion(E event) {
+		for (Quest quest : quests) {
+			if (quest.isComplete())
+				continue;
+
+			final QuestTaskProgress taskProgress = quest.getCurrentTaskProgress();
+			final QuestTaskStepProgress stepProgress = taskProgress.currentStep();
+			final QuestTaskStep<?, ?> taskStep = taskProgress.get().getSteps().get(taskProgress.getStep());
+
+			if (taskStep instanceof EnterRegionQuestTaskStep) {
+				if (taskStep.shouldAdvance(this, stepProgress)) {
+					taskStep.afterComplete(this);
+
+					if (taskProgress.hasNextStep()) {
+						taskProgress.incrementStep();
+					} else {
+						taskProgress.reward();
+						if (quest.hasNextTask())
+							quest.incrementTask();
+						else
+							quest.complete();
+					}
+				}
+
+				return;
 			}
 		}
 	}

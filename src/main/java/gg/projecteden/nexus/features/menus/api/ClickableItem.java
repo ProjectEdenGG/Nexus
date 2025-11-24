@@ -104,6 +104,10 @@ public class ClickableItem {
 		return of(new ItemBuilder(material).name(name).lore(lore), consumer);
 	}
 
+	public static ClickableItem of(Material item, String name, List<String> lore, Consumer<ItemClickData> consumer) {
+		return of(new ItemStack(item), name, lore, consumer);
+	}
+
 	public static ClickableItem of(ItemStack item, String name, Consumer<ItemClickData> consumer) {
 		return of(item, name, (List<String>) null, consumer);
 	}

@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Cabin;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Intro;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waypoints;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waypoints.WaypointTarget;
+import gg.projecteden.nexus.features.quests.tasks.EnterRegionQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.InteractQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
@@ -28,21 +29,24 @@ import org.bukkit.event.block.Action;
 @Getter
 @AllArgsConstructor
 public enum Pugmas25QuestTask implements IQuestTask {
-	// TODO: TEST
-	INTRO(InteractQuestTask.builder()
+	BOARD_THE_TRAIN(EnterRegionQuestTask.builder()
 		.talkTo(Pugmas25NPC.TICKET_MASTER_HUB)
+		.objective("Board the train")
 		.dialog(dialog -> dialog
 			.npc("Hello! Where would you like to travel to?")
 			.player("1 Ticket to " + Pugmas25.EVENT_NAME + ", please.")
 			.npc("Oh, it's wonderful there this time of year. Here you go.")
 			.give(Pugmas25QuestItem.TRAIN_TICKET)
 		)
-		.objective("Board the train")
 		.reminder(dialog -> dialog
 			.npc("You already bought a ticket, make sure to board the train!")
 		)
-		.then()
+		.enterRegion("server", Pugmas25Intro.TRANSITION_REGION_REGEX)
+	),
+
+	CHECK_IN(InteractQuestTask.builder()
 		.talkTo(Pugmas25NPC.TICKET_MASTER)
+		.objective("Talk to the ticket master")
 		.dialog(dialog -> dialog
 			.npc("Welcome to Pugmas Village, Project Eden's Christmas celebration!")
 			.npc("There's plenty to see and do around here, but before you dive in, you'll want to check in at the inn.")
@@ -50,7 +54,6 @@ public enum Pugmas25QuestTask implements IQuestTask {
 			.npc("Enjoy your stay!")
 			.thenRun(quester -> Pugmas25Waypoints.showWaypoint(quester.getOnlinePlayer(), WaypointTarget.INN, ColorType.LIGHT_RED))
 		)
-		.objective("Check in at the inn")
 		.reminder(dialog -> dialog
 			.npc("Have you checked into the inn yet?")
 		)
@@ -73,7 +76,7 @@ public enum Pugmas25QuestTask implements IQuestTask {
 				Pugmas25Waypoints.showWaypoint(quester.getOnlinePlayer(), WaypointTarget.CABIN, ColorType.LIGHT_RED);
 			})
 		)
-		.objective("Find and enter the cabin")
+		.objective("Check in at the inn")
 		.reminder(dialog -> dialog
 			.npc("Have you found the cabin yet?")
 			.npc("It's directly west of the Great Tree, you can't miss it.")
@@ -98,6 +101,8 @@ public enum Pugmas25QuestTask implements IQuestTask {
 			// TODO: MARK QUEST AS COMPLETE
 			//completeQuest(new QuesterService().get(user), Pugmas25Quest.INTRO); // untested
 		})
+
+		// TODO objective: Find and enter the cabin
 	),
 
 	// TODO: TEST
