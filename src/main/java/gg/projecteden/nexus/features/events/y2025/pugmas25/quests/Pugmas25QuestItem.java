@@ -22,12 +22,10 @@ import org.jetbrains.annotations.Nullable;
 @AllArgsConstructor
 public enum Pugmas25QuestItem implements QuestItem {
 
-	TEST_FISH_A(new ItemBuilder(Material.COD).name("Test Fish A")),
-	TEST_FISH_B(new ItemBuilder(Material.COD).name("Test Fish B")),
-
 	TRAIN_TICKET(new ItemBuilder(ItemModelType.VOUCHER).name("&3&oTrain Ticket").lore("&3Destination: &e" + Pugmas25.EVENT_NAME).dyeColor(Color.WHITE).itemFlags(ItemFlags.HIDE_ALL)),
 
 	// Quest Progress Items
+	// TODO: BOX OF DECORATION MODELS
 	BOX_OF_DECORATIONS(new ItemBuilder(ItemModelType.EMPTY_BOX).name("Box of Decorations").undroppable().untrashable().unframeable()),
 	BOX_OF_DECORATIONS_EMPTY(new ItemBuilder(ItemModelType.EMPTY_BOX).name("Empty Box of Decorations").undroppable().untrashable().unframeable()),
 

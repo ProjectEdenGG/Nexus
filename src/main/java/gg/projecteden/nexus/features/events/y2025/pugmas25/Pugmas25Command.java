@@ -242,14 +242,10 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 	@Permission(Group.ADMIN)
 	void angler_resetData() {
 		user.setHasCaughtAnglerQuestLoot(false);
-		;
 		user.setCompletedAnglerQuest(false);
 		userService.save(user);
 		send("Reset user angler variables");
 	}
-
-
-
 
 	@Path("advent tp <day>")
 	@Permission(Group.ADMIN)

@@ -93,6 +93,9 @@ public class Pugmas25Cabin implements Listener {
 		if (!event.getRegion().getId().equals(DOOR_REGION))
 			return;
 
+		if (PlayerUtils.isWGEdit(player))
+			return;
+
 		Pugmas25User user = userService.get(player);
 		if (user.isUnlockedCabin())
 			return;

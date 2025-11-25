@@ -61,7 +61,6 @@ public class EventFishingLoot {
 		DIAMOND(EventFishingLootCategory.TREASURE, Material.DIAMOND, 6),
 		NAUTILUS_SHELL(EventFishingLootCategory.TREASURE, Material.NAUTILUS_SHELL, 6),
 		TREASURE_CHEST(EventFishingLootCategory.TREASURE, ItemModelType.FISHING_LOOT_TREASURE_CHEST, "Treasure Chest", 5),
-		// Pugmas25
 		;
 
 		private final EventFishingLootCategory category;
