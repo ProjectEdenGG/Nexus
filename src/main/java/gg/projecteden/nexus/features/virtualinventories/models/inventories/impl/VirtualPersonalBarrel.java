@@ -16,7 +16,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Converters(LocationConverter.class)
 public class VirtualPersonalBarrel extends VirtualBarrel implements VirtualPersonalInventory {
-	private Location location;
 	private UUID owner;
 
 	public VirtualPersonalBarrel(VirtualInventoryType type, Location location, Player player) {

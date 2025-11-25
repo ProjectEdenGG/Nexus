@@ -16,7 +16,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Converters(LocationConverter.class)
 public class VirtualPersonalChest extends VirtualChest implements VirtualPersonalInventory {
-	private Location location;
 	private UUID owner;
 
 	public VirtualPersonalChest(VirtualInventoryType type, Location location, Player player) {

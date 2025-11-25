@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.virtualinventories.managers;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.virtualinventories.events.VirtualInventoryConstructEvent;
 import gg.projecteden.nexus.features.virtualinventories.models.inventories.TickableVirtualInventory;
 import gg.projecteden.nexus.features.virtualinventories.models.inventories.VirtualInventory;
 import gg.projecteden.nexus.features.virtualinventories.models.inventories.VirtualInventoryType;
@@ -26,7 +27,11 @@ public class VirtualPersonalInventoryManager extends Feature {
 			.computeIfAbsent(location.getBlockX(), $1 -> new HashMap<>())
 			.computeIfAbsent(location.getBlockZ(), $1 -> new HashMap<>())
 			.computeIfAbsent(location.getBlockY(), $1 -> new HashMap<>())
-			.computeIfAbsent(player.getUniqueId(), $ -> (VirtualInventory<?>) type.getPersonalConstructor().apply(type, location, player));
+			.computeIfAbsent(player.getUniqueId(), $ -> {
+				VirtualInventory<?> inventory = (VirtualInventory<?>) type.getPersonalConstructor().apply(type, location, player);
+				new VirtualInventoryConstructEvent(inventory).callEvent();
+				return inventory;
+			});
 
 		return (T) inv;
 	}

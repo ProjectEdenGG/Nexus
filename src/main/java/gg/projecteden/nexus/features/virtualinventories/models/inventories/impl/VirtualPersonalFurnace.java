@@ -16,7 +16,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Converters(LocationConverter.class)
 public class VirtualPersonalFurnace extends VirtualFurnace implements VirtualPersonalInventory {
-	private Location location;
 	private UUID owner;
 
 	public VirtualPersonalFurnace(VirtualInventoryType type, Location location, Player player) {

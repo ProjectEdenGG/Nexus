@@ -2,8 +2,11 @@ package gg.projecteden.nexus.features.events.y2025.pugmas25.quests;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
+import gg.projecteden.nexus.features.quests.CommonQuestItem;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
+import gg.projecteden.nexus.features.virtualinventories.events.VirtualInventoryConstructEvent;
+import gg.projecteden.nexus.features.virtualinventories.models.inventories.impl.VirtualPersonalBarrel;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import org.bukkit.entity.Player;
@@ -20,6 +23,17 @@ public class Pugmas25QuestItemsListener implements Listener {
 
 	public Pugmas25QuestItemsListener() {
 		Nexus.registerListener(this);
+	}
+
+	@EventHandler
+	public void on(VirtualInventoryConstructEvent event) {
+		if (!(event.getInventory() instanceof VirtualPersonalBarrel virtualPersonalBarrel))
+			return;
+
+		if (!Pugmas25.get().isAtEvent(virtualPersonalBarrel.getLocation()))
+			return;
+
+		virtualPersonalBarrel.getItems().add(CommonQuestItem.COIN_POUCH.get());
 	}
 
 	@EventHandler

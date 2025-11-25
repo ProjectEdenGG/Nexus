@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.virtualinventories.models.properties.Virtua
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -17,6 +18,7 @@ import static gg.projecteden.nexus.utils.StringUtils.colorize;
 public abstract class VirtualInventory<T extends VirtualInventoryProperties> {
 	protected VirtualInventoryType type;
 
+	protected transient Location location;
 	protected transient Inventory inventory;
 	protected transient boolean opened = false;
 
