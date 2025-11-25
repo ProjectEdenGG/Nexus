@@ -99,18 +99,6 @@ public class MotdCommand extends CustomCommand implements Listener {
 		if (address.isLoopbackAddress())
 			return;
 
-		List<ListedPlayerInfo> newListedPlayers = new ArrayList<>();
-		for (ListedPlayerInfo listedPlayer : new ArrayList<>(event.getListedPlayers())) {
-			String name = listedPlayer.name();
-			if (!name.equalsIgnoreCase("anonymous player")) {
-				name = Nickname.of(listedPlayer.id());
-			}
-
-			newListedPlayers.add(new ListedPlayerInfo(name, listedPlayer.id()));
-		}
-		event.getListedPlayers().clear();
-		event.getListedPlayers().addAll(newListedPlayers);
-
 
 		String ipAddress = address.getHostAddress();
 
@@ -127,6 +115,20 @@ public class MotdCommand extends CustomCommand implements Listener {
 
 		if (CooldownService.isNotOnCooldown(nerd.getUuid(), "server-ping_" + nerd.getUuid(), TickTime.MINUTE.x(5)))
 			Nexus.log("ServerPingEvent: " + ipAddress + " -> " + nerd.getNickname());
+
+		// Players - does not support hex
+		List<ListedPlayerInfo> newListedPlayers = new ArrayList<>();
+		for (ListedPlayerInfo listedPlayer : new ArrayList<>(event.getListedPlayers())) {
+			String name = listedPlayer.name();
+			if (!name.equalsIgnoreCase("anonymous player")) {
+				Nerd listedNerd = Nerd.of(listedPlayer.id());
+				name = listedNerd.getNickname();
+			}
+
+			newListedPlayers.add(new ListedPlayerInfo(name, listedPlayer.id()));
+		}
+		event.getListedPlayers().clear();
+		event.getListedPlayers().addAll(newListedPlayers);
 
 		// Message
 		String motd = getMOTD(nerd);

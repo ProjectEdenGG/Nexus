@@ -311,7 +311,7 @@ public class Pugmas25Frogger implements Listener {
 			player.teleportAsync(RESPAWN_LOC);
 			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(player).volume(10).pitch(2.0).play();
 
-			// TODO: GIVE DAILY TOKENS
+			// TODO: GIVE SLOT MACHINE TOKENS
 		}
 	}
 

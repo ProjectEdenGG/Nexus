@@ -121,8 +121,9 @@ public class Pugmas25ModelTrain implements Listener {
 			if (!RandomUtils.chanceOf(25))
 				return;
 
-			for (Player player : Pugmas25.get().getPlayers()) {
-				double radiusVolume = Train.getRadiusVolume(player, seatEntities.getFirst().getLocation(), 15, true, 0.01, 0.1);
+			Location location = seatEntities.getFirst().getLocation();
+			for (Player player : Pugmas25.get().getOnlinePlayers().radius(location, 15).get()) {
+				double radiusVolume = Train.getRadiusVolume(player, location, 15, true, 0.01, 0.15);
 				whistle.clone().receiver(player).volume(radiusVolume).play();
 			}
 		});

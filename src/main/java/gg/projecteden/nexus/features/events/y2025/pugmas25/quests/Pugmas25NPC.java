@@ -20,7 +20,6 @@ public enum Pugmas25NPC implements InteractableNPC {
 	GNOME("Gnome", 5598),
 	ELF("Elf", 5631),
 	KID("Kid", 5632),
-	ADVENT_PROGRESS("Advent Progress", 5633),
 
 	;
 

@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.pugmas25.Advent25Present.Advent25PresentStatus;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Data;
@@ -124,6 +125,9 @@ public class Advent25User implements PlayerOwnedObject {
 	}
 
 	public void found(int day) {
+		if (!unlockedQuest)
+			return;
+
 		if (hasFound(day))
 			return;
 
@@ -155,5 +159,4 @@ public class Advent25User implements PlayerOwnedObject {
 
 		return status;
 	}
-
 }

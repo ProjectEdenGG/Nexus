@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.models;
 
+import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -12,8 +13,11 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Predicate;
 
 public class EventFishingLoot {
@@ -57,6 +61,7 @@ public class EventFishingLoot {
 		DIAMOND(EventFishingLootCategory.TREASURE, Material.DIAMOND, 6),
 		NAUTILUS_SHELL(EventFishingLootCategory.TREASURE, Material.NAUTILUS_SHELL, 6),
 		TREASURE_CHEST(EventFishingLootCategory.TREASURE, ItemModelType.FISHING_LOOT_TREASURE_CHEST, "Treasure Chest", 5),
+		// Pugmas25
 		;
 
 		private final EventFishingLootCategory category;
@@ -88,7 +93,7 @@ public class EventFishingLoot {
 		}
 
 		public FishingLoot build() {
-			return new FishingLoot(name(), category, material, modelId, weight, customName, time, maxY, null);
+			return new FishingLoot(name(), category, material, modelId, weight, customName, null, time, maxY, null);
 		}
 
 	}
@@ -103,29 +108,25 @@ public class EventFishingLoot {
 		private String modelId;
 		private double weight;
 		private String customName;
+		private List<String> customLore;
 		private EventFishingLootTime time;
 		private Integer maxY;
 		private Predicate<Player> predicate;
 
-		FishingLoot(String id, EventFishingLootCategory category, Material material, double weight) {
-			this(id, category, material, null, weight, null, null, null, null);
+		public FishingLoot(String name, EventFishingLootCategory category, Material material, String modelId, int weight,
+						   String customName, String customLore, EventFishingLootTime time, Integer maxY, Predicate<Player> predicate) {
+			this.id = name;
+			this.category = category;
+			this.material = material;
+			this.modelId = modelId;
+			this.weight = weight;
+			this.customName = customName;
+			this.customLore = Collections.singletonList(customLore);
+			this.time = time;
+			this.maxY = maxY;
+			this.predicate = predicate;
 		}
 
-		FishingLoot(String id, EventFishingLootCategory category, Material material, String customName, double weight) {
-			this(id, category, material, null, weight, customName, null, null, null);
-		}
-
-		FishingLoot(String id, EventFishingLootCategory category, ItemModelType itemModelType, String customName, double weight) {
-			this(id, category, itemModelType.getMaterial(), itemModelType.getModel(), weight, customName, EventFishingLootTime.BOTH, null, null);
-		}
-
-		FishingLoot(String id, EventFishingLootCategory category, ItemModelType itemModelType, String customName, double weight, EventFishingLootTime time) {
-			this(id, category, itemModelType.getMaterial(), itemModelType.getModel(), weight, customName, time, null, null);
-		}
-
-		FishingLoot(String id, EventFishingLootCategory category, ItemModelType itemModelType, String customName, double weight, Integer maxY) {
-			this(id, category, itemModelType.getMaterial(), itemModelType.getModel(), weight, customName, EventFishingLootTime.BOTH, maxY, null);
-		}
 
 		public boolean applies(Player player) {
 			return this.timeApplies(player) && this.yValueApplies(player) && (predicate == null || predicate.test(player));
@@ -153,7 +154,7 @@ public class EventFishingLoot {
 		}
 
 		public ItemStack getItem() {
-			return getItemBuilder().amount(1).build();
+			return getItemBuilder().itemFlags(ItemFlag.HIDE_DYE, ItemFlag.HIDE_ATTRIBUTES).amount(1).build();
 		}
 
 		public ItemBuilder getItemBuilder() {
@@ -184,14 +185,19 @@ public class EventFishingLoot {
 					result.enchant(Enchant.LURE, 1);
 			}
 
-			return result.lore(getLore());
+			if (this.getCustomLore() != null)
+				result.lore(this.getCustomLore());
+			else
+				result.lore(getLore());
+
+			return result;
 		}
 
 		public String getLore() {
 			return switch (category) {
 				case FISH -> "&7Fish";
-				case TREASURE -> null;
 				case JUNK -> "&7Trash";
+				default -> null;
 			};
 		}
 	}
@@ -199,16 +205,21 @@ public class EventFishingLoot {
 	@Getter
 	@AllArgsConstructor
 	public enum EventFishingLootCategory {
-		FISH(50),
-		JUNK(25),
-		TREASURE(8);
+		FISH(50.0),
+		JUNK(25.0),
+		TREASURE(8.0),
+		SPECIAL(5.0),
+		;
 
-		private final double weight;
+		private final Double weight;
 
 		public double getChance() {
 			double sum = 0;
-			for (EventFishingLootCategory category : values())
-				sum += category.getWeight();
+			for (EventFishingLootCategory category : values()) {
+				Double weight = category.getWeight();
+				if (weight != null)
+					sum += weight;
+			}
 
 			return (weight / sum) * 100;
 		}

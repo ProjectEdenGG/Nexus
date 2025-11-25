@@ -53,7 +53,7 @@ public class DialogInstance {
 					if (peek.getDelay() == -1)
 						continue;
 
-					taskId.set(Tasks.wait(peek.getDelay(), get()));
+					taskId.set(Tasks.wait(next.getDelay(), get()));
 					break;
 				}
 			});

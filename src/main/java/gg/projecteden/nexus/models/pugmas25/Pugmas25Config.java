@@ -5,7 +5,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Fishing.Pugmas25AnglerLoot;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,6 +29,10 @@ public class Pugmas25Config implements DatabaseObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Pugmas25QuestItem anglerQuestFish;
+	private Pugmas25AnglerLoot anglerQuestFish = Pugmas25AnglerLoot.WIGGLY_STICK; // TODO: PICK NEW FROM DIFFERENT DISTRICT
 	private Set<Location> nutCrackerLocations = new HashSet<>();
+
+	public static Pugmas25Config get() {
+		return new Pugmas25ConfigService().get0();
+	}
 }

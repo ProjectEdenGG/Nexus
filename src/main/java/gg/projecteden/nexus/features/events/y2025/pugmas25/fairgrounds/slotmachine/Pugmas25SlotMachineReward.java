@@ -25,36 +25,38 @@ import java.util.function.Consumer;
 @AllArgsConstructor
 public enum Pugmas25SlotMachineReward {
 
+	// TODO: SLOT MACHINE REWARDS
+
 	VOTE_POINTS(SlotPos.of(1, 2), new ItemBuilder(Material.MOURNER_POTTERY_SHERD).name("&aVote Points")
 		.lore("&3Half: &e25 &3Vote Points", "&3Full: &e50 &3Vote Points"),
-		(player) -> Pugmas25SlotMachine.get().send(player, "TODO HALF REWARD - COSTUME"),
-		(player) -> Pugmas25SlotMachine.get().send(player, "TODO FULL REWARD - COSTUME")
+		(player) -> Pugmas25SlotMachine.get().send(player, "HALF REWARD - COSTUME"),
+		(player) -> Pugmas25SlotMachine.get().send(player, "FULL REWARD - COSTUME")
 	),
 
 	TOKENS(SlotPos.of(2, 2), new ItemBuilder(Material.PRIZE_POTTERY_SHERD).name("&aEvent Tokens")
 		.lore("&3Half: &ex &3event tokens", "&3Full: &ex+n &3event tokens"),
-		(player) -> Pugmas25SlotMachine.get().send("TODO HALF REWARD - TOKENS"),
-		(player) -> Pugmas25SlotMachine.get().send("TODO FULL REWARD - TOKENS")
+		(player) -> Pugmas25SlotMachine.get().send("HALF REWARD - TOKENS"),
+		(player) -> Pugmas25SlotMachine.get().send("FULL REWARD - TOKENS")
 	),
 
 	EXTRA_ROLLS(SlotPos.of(3, 2), new ItemBuilder(Material.HEART_POTTERY_SHERD).name("&aExtra Rolls")
 		.lore("&3Half: &e1 &3re-roll", "&3Full: &e3 &3re-rolls"),
-		(player) -> Pugmas25SlotMachine.get().send(player, "TODO HALF REWARD - EXTRA_ROLLS"),
-		(player) -> Pugmas25SlotMachine.get().send(player, "TODO FULL REWARD - EXTRA_ROLLS")
+		(player) -> Pugmas25SlotMachine.get().send(player, "HALF REWARD - EXTRA_ROLLS"),
+		(player) -> Pugmas25SlotMachine.get().send(player, "FULL REWARD - EXTRA_ROLLS")
 	),
 
 	//
 
 	PICKAXE(SlotPos.of(1, 4), new ItemBuilder(Material.MINER_POTTERY_SHERD).name("&dRandom Pickaxe Enchant")
 		.lore("&3Half: &eUncommon", "&3Full: &eRare", "", "&eEnchants&3: "),
-		(player) -> Pugmas25SlotMachine.get().send(player, "TODO HALF REWARD - PICKAXE"),
-		(player) -> Pugmas25SlotMachine.get().send(player, "TODO FULL REWARD - PICKAXE")
+		(player) -> Pugmas25SlotMachine.get().send(player, "HALF REWARD - PICKAXE"),
+		(player) -> Pugmas25SlotMachine.get().send(player, "FULL REWARD - PICKAXE")
 	),
 
 	FISHING_ROD(SlotPos.of(2, 4), new ItemBuilder(Material.ANGLER_POTTERY_SHERD).name("&dRandom Fishing Rod Enchant")
 		.lore("&3Half: &eUncommon", "&3Full: &eRare", "", "&eEnchants&3: "),
-		(player) -> Pugmas25SlotMachine.get().send(player, "TODO HALF REWARD - FISHING_ROD"),
-		(player) -> Pugmas25SlotMachine.get().send(player, "TODO FULL REWARD - FISHING_ROD")
+		(player) -> Pugmas25SlotMachine.get().send(player, "HALF REWARD - FISHING_ROD"),
+		(player) -> Pugmas25SlotMachine.get().send(player, "FULL REWARD - FISHING_ROD")
 	),
 
 	EXPERIENCE(SlotPos.of(3, 4), new ItemBuilder(Material.BREWER_POTTERY_SHERD).name("&dExperience")
@@ -67,20 +69,20 @@ public enum Pugmas25SlotMachineReward {
 
 	COINS(SlotPos.of(1, 6), new ItemBuilder(Material.ARMS_UP_POTTERY_SHERD).name("&6Coins")
 		.lore("&3Half: &ex &3coins", "&3Full: &ex+n &3coins"),
-		(player) -> Pugmas25SlotMachine.get().send(player, "TODO HALF REWARD - COINS"),
-		(player) -> Pugmas25SlotMachine.get().send(player, "TODO FULL REWARD - COINS")
+		(player) -> Pugmas25SlotMachine.get().send(player, "HALF REWARD - COINS"),
+		(player) -> Pugmas25SlotMachine.get().send(player, "FULL REWARD - COINS")
 	),
 
 	DIAMOND_CRATE(SlotPos.of(2, 6), new ItemBuilder(Material.PLENTY_POTTERY_SHERD).name("&6Diamond Crates")
 		.lore("&3Half: &e2 &3Diamond Crates", "&3Full: &e5 &3Diamond Crates"),
-		(player) -> Pugmas25SlotMachine.get().send(player, "TODO HALF REWARD - DIAMOND_CRATE"),
-		(player) -> Pugmas25SlotMachine.get().send(player, "TODO FULL REWARD - DIAMOND_CRATE")
+		(player) -> Pugmas25SlotMachine.get().send(player, "HALF REWARD - DIAMOND_CRATE"),
+		(player) -> Pugmas25SlotMachine.get().send(player, "FULL REWARD - DIAMOND_CRATE")
 	),
 
 	GIFTS(SlotPos.of(3, 6), new ItemBuilder(Material.FRIEND_POTTERY_SHERD).name("&6Gifts")
 		.lore("&3Half: &e1 &3Gift", "&3Full: &e3 &3Gifts"),
-		(player) -> Pugmas25SlotMachine.get().send(player, "TODO HALF REWARD - GIFTS"),
-		(player) -> Pugmas25SlotMachine.get().send(player, "TODO FULL REWARD - GIFTS")
+		(player) -> Pugmas25SlotMachine.get().send(player, "HALF REWARD - GIFTS"),
+		(player) -> Pugmas25SlotMachine.get().send(player, "FULL REWARD - GIFTS")
 	),
 	;
 

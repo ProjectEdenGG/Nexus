@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.DeathMessagesCommand;
-import gg.projecteden.nexus.features.commands.staff.operator.HealCommand;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.advent.Pugmas25Advent;
@@ -17,6 +17,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Cabin;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Caves;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Fishing;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Fishing.Pugmas25AnglerLoot;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Interactions;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Intro;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25ModelTrain;
@@ -25,7 +26,6 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Sideba
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Train;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25TrainBackground;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waypoints;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waypoints.WaypointTarget;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waystones;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25Entity;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25NPC;
@@ -37,14 +37,13 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestT
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25ShopMenu;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
-import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationInteractData;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.annotations.Date;
-import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.deathmessages.DeathMessages;
 import gg.projecteden.nexus.models.deathmessages.DeathMessagesService;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.pugmas25.Advent25Config;
 import gg.projecteden.nexus.models.pugmas25.Advent25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25Config;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25ConfigService;
@@ -53,16 +52,12 @@ import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.AdventureUtils;
-import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.Utils.EquipmentSlotGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -70,6 +65,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -121,6 +117,7 @@ public class Pugmas25 extends EdenEvent {
 	public static final String LORE = "&ePugmas 2025 Item";
 	public final Location warp = location(-688.5, 82, -2964.5, 180, 0);
 	public final Location deathLoc = location(-637.5, 66.0, -3260.5, 180, 0);
+	private final Location treeRecordPlayer = location(-683.5, 119.5, -3116.5);
 
 	private static int entityAgeTask;
 
@@ -175,6 +172,14 @@ public class Pugmas25 extends EdenEvent {
 					if (entity.getTicksLived() > TickTime.HOUR.x(4))
 						entity.remove();
 				});
+		});
+
+		Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
+			new ParticleBuilder(Particle.NOTE)
+				.location(treeRecordPlayer)
+				.offset(0.2, 0.2, 0.2)
+				.count(RandomUtils.randomInt(2, 5))
+				.spawn();
 		});
 	}
 
@@ -248,31 +253,43 @@ public class Pugmas25 extends EdenEvent {
 		handleInteract(Pugmas25NPC.BLACKSMITH, (player, npc) -> Pugmas25ShopMenu.BLACKSMITH.open(player));
 
 		handleInteract(Pugmas25NPC.ELF, (player, npc) -> {
-			/*
-			ADVENT(InteractQuestTask.builder()
-		.talkTo(Pugmas25NPC.ELF)
-		.dialog(dialog -> dialog
-			.npc("Ah! A new visitor beneath the Great Tree! Welcome to Pugmas, traveler!")
-			.player("This place is huge... what's going on here?")
-			.npc("Pugmas brings many wonders: the village, fairgrounds, warm springs, hidden caves, and more! But you're here for the Advent, aren't you?")
-			.player("Advent? How does that work?")
-			.npc("Each day until the 25th, a magical present unlocks. Find it, and you may unwrap its holiday magic!")
-			.player("What if I come across a present from another day?")
-			.npc("You may find any day early, but its magic won’t unlock until its rightful day arrives. The enchantments are very particular.")
-			.player("And if I miss a day? Life happens.")
-			.npc("The Great Tree is kind! On the 25th, every unopened present unlocks at once. A perfect chance to catch up.")
-			.player("What about the final present on the 25th?")
-			.npc("That one is special. You must open all the earlier days first—only then will the Great Tree reveal the final gift.")
-			.player("Sounds exciting! Where do I start?")
-			.npc("Your first present is already hiding somewhere out there. Go on, let the hunt begin, and may the Great Tree guide your steps!")
-			.thenRun(quester -> new Pugmas25UserService().edit(quester, user -> user.advent().setUnlockedQuest(true)))
-		).reminder(dialog -> dialog
-			.npc("Back again? Remember, one Advent Present unlocks each day until the 25th.")
-			.npc("You can find future presents early, but you can’t open them until their day.")
-			.npc("Miss a day? All unopened ones unlock on the 25th, just open them to unlock the final present.")
-		)
-		.objective("Find and open all advent presents")
-			 */
+			final Pugmas25UserService userService = new Pugmas25UserService();
+			final Pugmas25User user = userService.get(player);
+
+			final Dialog dialog = new Dialog(npc);
+			if (user.advent().isUnlockedQuest()) {
+				dialog
+					.npc("Back again? Remember, one Advent Present unlocks each day until the 25th.")
+					.npc("You can find future presents early, but you can’t open them until their day.")
+					.npc("Miss a day? All unopened ones unlock on the 25th, just open them to unlock the final present.")
+					.send(player);
+				return;
+			}
+
+			dialog
+				.npc("Ah! A new visitor beneath the Great Tree! Welcome to Pugmas, traveler!")
+				.player("This place is huge... what's going on here?")
+				.npc("Pugmas brings many wonders: the village, fairgrounds, warm springs, hidden caves, and more!")
+				.npc("But you're here for the Advent, aren't you?")
+				.player("Advent? How does that work?")
+				.npc("Each day until the 25th, a magical present unlocks. Find it, and you may unwrap its holiday magic!")
+				.player("What if I come across a present from another day?")
+				.npc("You may find any day early, but its magic won’t unlock until its rightful day arrives.")
+				.npc("The enchantments are very particular.")
+				.player("And if I miss a day? Life happens.")
+				.npc("The Great Tree is kind! On the 25th, every unopened present unlocks at once. A perfect chance to catch up.")
+				.player("What about the final present on the 25th?")
+				.npc("That one is special. You must open all the earlier days first—only then will the Great Tree reveal the final gift.")
+				.player("Sounds exciting! Where do I start?")
+				.npc("Your first present is already hiding somewhere out there.")
+				.npc("And take this, it'll help you on your search!")
+				.give(Pugmas25QuestItem.ADVENTURE_POCKET_GUIDE)
+				.thenRun(quester -> {
+					user.advent().setUnlockedQuest(true);
+					userService.save(user);
+					quester.sendMessage("&7&o[You can now find advent presents]");
+				})
+				.send(player);
 		});
 
 		// TODO
@@ -284,33 +301,32 @@ public class Pugmas25 extends EdenEvent {
 			final Pugmas25Config config = configService.get0();
 
 			final Dialog dialog = new Dialog(npc);
-			Pugmas25QuestItem questFish = config.getAnglerQuestFish();
+			Pugmas25AnglerLoot questFish = config.getAnglerQuestFish();
 
 			if (!user.isReceivedAnglerQuestInstructions()) {
 				dialog
 					.npc("Catch a new fish for me every 2 hours")
 					.player("Ok!")
-					.npc("Current fish to catch = " + questFish.getItemBuilder().name())
+					.npc("Current fish to catch = " + questFish.getCustomName())
 					.thenRun(quester -> {
 						user.setReceivedAnglerQuestInstructions(true);
 						userService.save(user);
 					});
-			}
 
-			if (user.isFinishedAnglerQuest()) {
+			} else if (user.isCompletedAnglerQuest()) {
 				dialog.npc("Come back in x minutes for my next fish");
-			} else if (Quester.of(player).has(questFish.get())) {
+			} else if (Quester.of(player).has(questFish.getItem())) {
 				dialog
 					.npc("Thank you!")
 					.thenRun(quester -> {
-						user.setFinishedAnglerQuest(true);
+						user.setCompletedAnglerQuest(true);
 						userService.save(user);
 
 					})
-					.take(questFish.get())
+					.take(questFish.getItem())
 					.npc("Come back in x minutes for my next fish");
 			} else {
-				dialog.npc("Current fish to catch = " + questFish.getItemBuilder().name());
+				dialog.npc("Current fish to catch = " + questFish.getCustomName());
 			}
 
 			dialog.send(player);
@@ -345,24 +361,59 @@ public class Pugmas25 extends EdenEvent {
 		});
 	}
 
-	// Health
+	public enum Pugmas25QuestProgress {
+		NUTCRACKERS {
+			@Override
+			String getProgress(Pugmas25User user) {
+				int numCollected = user.getFoundNutCrackers().size();
+				if (numCollected == 0)
+					return "&3 " + getName() + " &7- &cNot started";
 
-	@Deprecated
-	public void resetHealth(Player player) {
-		setMaxHealthAttribute(player, 20.0);
-	}
+				int numTotal = Pugmas25Config.get().getNutCrackerLocations().size();
+				if (numCollected == numTotal)
+					return "&3 " + getName() + " &7- &aCompleted";
 
-	@Deprecated
-	private void setMaxHealthAttribute(Player player, double amount) {
-		HealCommand.getMaxHealthAttribute(player).setBaseValue(amount);
-		player.setHealth(amount);
+				return "&3 " + getName() + " &7- &eStarted (" + numCollected + "/" + numTotal + " nutcrackers)";
+			}
+		},
+
+		ADVENT {
+			@Override
+			String getProgress(Pugmas25User user) {
+				var adventUser = user.advent();
+				if (!adventUser.isUnlockedQuest())
+					return "&3 " + getName() + " &7- &cNot started";
+
+				int numCollected = adventUser.getCollected().size();
+				int numTotal = Advent25Config.get().getDays().size();
+				if (numCollected == numTotal)
+					return "&3 " + getName() + " &7- &aCompleted";
+
+				return "&3 " + getName() + " &7- &eStarted (" + numCollected + "/" + numTotal + " presents)";
+			}
+		},
+		;
+
+		abstract String getProgress(Pugmas25User user);
+
+		public String getName() {
+			return StringUtils.camelCase(this);
+		}
+
+		public void send(Pugmas25User user) {
+			String progress = getProgress(user);
+			if (progress == null)
+				return;
+
+			user.sendMessage(progress);
+		}
 	}
 
 	// Death
 
 	@Override
 	public Location getRespawnLocation(Player player) {
-		return warp; // TODO: GET PLAYER CABIN, IF SET
+		return new Pugmas25UserService().get(player).getSpawnLocation();
 	}
 
 	public void onDeath(Player player, @NotNull Pugmas25.Pugmas25DeathCause deathType) {
@@ -446,7 +497,13 @@ public class Pugmas25 extends EdenEvent {
 		Block block = event.getClickedBlock();
 		if (Nullables.isNullOrAir(block) || block.getType() != Material.BARRIER) return;
 
+		if (!isAtEvent(block))
+			return;
+
 		var data = new DecorationInteractData(block, BlockFace.UP);
+		if (data.getDecoration() == null)
+			return;
+
 		if (!ItemModelType.NUTCRACKER_SHORT.is(data.getDecoration().getItem(event.getPlayer())))
 			return;
 

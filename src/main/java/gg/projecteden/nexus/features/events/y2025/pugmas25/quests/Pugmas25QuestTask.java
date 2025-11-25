@@ -45,6 +45,8 @@ public enum Pugmas25QuestTask implements IQuestTask {
 			.npc("Welcome to Pugmas Village, Project Eden's Christmas celebration!")
 			.npc("There's plenty to see and do around here, but before you dive in, you'll want to check in at the inn.")
 			.npc("Just follow the signs along the north western path and you'll find it in no time.")
+			.npc("Here, this should help you find your way.")
+			.give(Pugmas25QuestItem.COMPASS)
 			.npc("Enjoy your stay!")
 			.thenRun(quester -> Pugmas25Waypoints.showWaypoint(quester.getOnlinePlayer(), WaypointTarget.INN, ColorType.LIGHT_RED))
 		)

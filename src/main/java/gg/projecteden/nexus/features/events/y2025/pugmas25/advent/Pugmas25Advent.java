@@ -37,10 +37,6 @@ import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.features.resourcepack.models.ItemModelType.PUGMAS_PRESENT_ADVENT;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
-/*
- 	TODO:
- 		- GLOWING / WAYPOINT
- */
 public class Pugmas25Advent implements Listener {
 
 	public Pugmas25Advent() {

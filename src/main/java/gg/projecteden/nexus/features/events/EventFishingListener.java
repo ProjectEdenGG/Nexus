@@ -4,6 +4,8 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.FishingLoot;
+import gg.projecteden.nexus.features.events.models.PlayerEventFishingBiteEvent;
+import gg.projecteden.nexus.features.events.models.PlayerEventFishingCaughtFishEvent;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -44,8 +46,12 @@ public class EventFishingListener implements Listener {
 
 	public FishingLoot getFishingLoot(Player player) {
 		EventFishingLootCategory category = getLootCategory(player);
+		return getFishingLoot(player, category, event.getFishingLoot());
+	}
+
+	public static FishingLoot getFishingLoot(Player player, EventFishingLootCategory category, List<FishingLoot> fishingLoot) {
 		Map<FishingLoot, Double> lootMap = new HashMap<>();
-		for (FishingLoot loot : event.getFishingLoot())
+		for (FishingLoot loot : fishingLoot)
 			if (loot.getCategory() == category)
 				if (loot.applies(player))
 					lootMap.put(loot, loot.getWeight());
@@ -100,7 +106,7 @@ public class EventFishingListener implements Listener {
 
 		PlayerEventFishingBiteEvent biteEvent = new PlayerEventFishingBiteEvent(player, loot);
 		if (biteEvent.callEvent()) {
-			playerCatchMap.put(player, loot);
+			playerCatchMap.put(player, biteEvent.getLoot());
 		}
 
 	}
@@ -132,7 +138,9 @@ public class EventFishingListener implements Listener {
 			if (Nullables.isNullOrEmpty(loot))
 				return;
 
-			ItemStack loot0 = loot.remove(0);
+			new PlayerEventFishingCaughtFishEvent(player, loot).callEvent();
+
+			ItemStack loot0 = loot.removeFirst();
 			ItemStack originalItem = item.getItemStack();
 			originalItem.setType(loot0.getType());
 			originalItem.setItemMeta(loot0.getItemMeta());

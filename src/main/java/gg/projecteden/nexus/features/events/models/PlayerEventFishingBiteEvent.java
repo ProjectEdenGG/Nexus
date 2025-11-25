@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.events;
+package gg.projecteden.nexus.features.events.models;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +17,8 @@ public class PlayerEventFishingBiteEvent extends PlayerEvent implements Cancella
 	private static final HandlerList handlerList = new HandlerList();
 	@Setter
 	private boolean cancelled;
+	@Getter
+	@Setter
 	List<ItemStack> loot;
 
 	public PlayerEventFishingBiteEvent(@NotNull Player who, List<ItemStack> loot) {

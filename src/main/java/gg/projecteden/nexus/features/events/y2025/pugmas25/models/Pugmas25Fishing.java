@@ -1,21 +1,155 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.models;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.events.PlayerEventFishingBiteEvent;
+import gg.projecteden.nexus.features.commands.staff.operator.WeatherCommand.FixedWeatherType;
+import gg.projecteden.nexus.features.events.models.PlayerEventFishingBiteEvent;
+import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory;
+import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootTime;
+import gg.projecteden.nexus.features.events.models.EventFishingLoot.FishingLoot;
+import gg.projecteden.nexus.features.events.models.PlayerEventFishingCaughtFishEvent;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts.Pugmas25BiomeDistrict;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts.Pugmas25District;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import gg.projecteden.nexus.models.pugmas25.Pugmas25Config;
+import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
+import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import lombok.Getter;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 public class Pugmas25Fishing implements Listener {
+
+	private static final Pugmas25UserService userService = new Pugmas25UserService();
+	private static final ItemModelType rodReinforced = Pugmas25QuestItem.FISHING_ROD_REINFORCED.getItemModel();
+	private static final ItemModelType rodGolden = Pugmas25QuestItem.FISHING_ROD_GOLDEN.getItemModel();
+	private static final ItemModelType fishFinder = Pugmas25QuestItem.FISH_FINDER.getItemModel();
+	private static final ItemModelType pda = Pugmas25QuestItem.PDA.getItemModel();
 
 	public Pugmas25Fishing() {
 		Nexus.registerListener(this);
+	}
 
-		//lavaFishing();
+	public enum Pugmas25AnglerLoot {
+		// River
+		WIGGLY_STICK(Pugmas25District.RIVER, EventFishingLootTime.BOTH, ItemModelType.FISHING_LOOT_ELECTRIC_EEL),
+		DRIFTWOOD_CARP(Pugmas25District.RIVER, EventFishingLootTime.DAY, ItemModelType.FISHING_LOOT_FOURHORN_SCULPIN),
+		CURRENTCLAW(Pugmas25District.RIVER, EventFishingLootTime.NIGHT, ItemModelType.FISHING_LOOT_LINGCOD),
+		// Lake
+		PEBBLE_CHEWER_BASS(Pugmas25District.LAKE, EventFishingLootTime.BOTH, ItemModelType.FISHING_LOOT_SMALLMOUTH_BASS),
+		GRASS_PICKEREL(Pugmas25District.LAKE, EventFishingLootTime.DAY, ItemModelType.FISHING_LOOT_GRASS_PICKEREL),
+		MOONFIN(Pugmas25District.LAKE, EventFishingLootTime.NIGHT, ItemModelType.FISHING_LOOT_MOTHER_MOON),
+		// Frozen Lake
+		PENGFISH(Pugmas25District.FROZEN_LAKE, EventFishingLootTime.BOTH, ItemModelType.FISHING_LOOT_PENGFISH),
+		SHIVERBACK_SALMON(Pugmas25District.FROZEN_LAKE, EventFishingLootTime.DAY, ItemModelType.FISHING_LOOT_IRONFISH),
+		FROSTBITE_MINNOW(Pugmas25District.FROZEN_LAKE, EventFishingLootTime.NIGHT, ItemModelType.FISHING_LOOT_FROZEN_BONEMINNOW),
+		// Hot Springs
+		SCALDING_SNAPPER(Pugmas25District.HOT_SPRINGS, EventFishingLootTime.BOTH, ItemModelType.FISHING_LOOT_RED_SNAPPER),
+		THERMO_TROUT(Pugmas25District.HOT_SPRINGS, EventFishingLootTime.DAY, ItemModelType.FISHING_LOOT_RAINBOW_TROUT),
+		OBSTER(Pugmas25District.HOT_SPRINGS, EventFishingLootTime.NIGHT, ItemModelType.FISHING_LOOT_OBSTER),
+		// Fairgrounds
+		CLOWNFISH(Pugmas25District.FAIRGROUNDS, EventFishingLootTime.BOTH, ItemModelType.FISHING_LOOT_TROPICAL_FISH),
+		COTTON_CANDY_GOLDFISH(Pugmas25District.FAIRGROUNDS, EventFishingLootTime.DAY, ItemModelType.FISHING_LOOT_COTTON_CANDY_GOLDFISH),
+		TRICKSTER_KOI(Pugmas25District.FAIRGROUNDS, EventFishingLootTime.NIGHT, ItemModelType.FISHING_LOOT_KOI),
+		// Sawmill
+		SPLINTERTAIL(Pugmas25District.SAWMILL, EventFishingLootTime.BOTH, ItemModelType.FISHING_LOOT_SABLEFISH),
+		SAWTOOTH_CARP(Pugmas25District.SAWMILL, EventFishingLootTime.DAY, ItemModelType.FISHING_LOOT_SAWFISH),
+		WOODWORM_EEL(Pugmas25District.SAWMILL, EventFishingLootTime.NIGHT, ItemModelType.FISHING_LOOT_EEL),
+		// Caves
+		ROCKTOPUS(Pugmas25District.CAVES, EventFishingLootTime.BOTH, ItemModelType.FISHING_LOOT_OCTOPUS),
+		CAVESHROOM(Pugmas25District.CAVES, EventFishingLootTime.DAY, ItemModelType.FISHING_LOOT_SEASHROOM_RAINBOW),
+		SKULLFIN(Pugmas25District.CAVES, EventFishingLootTime.DAY, ItemModelType.FISHING_LOOT_SKULLFIN),
+		VAMPIRE_SQUID(Pugmas25District.CAVES, EventFishingLootTime.NIGHT, ItemModelType.FISHING_LOOT_VAMPIRE_SQUID),
+		ZOMBIEFISH(Pugmas25District.CAVES, EventFishingLootTime.NIGHT, ItemModelType.FISHING_LOOT_ZOMBIEFISH),
+		// Caves - Dripstone
+		ECHO_EEL(Pugmas25District.CAVES, Pugmas25BiomeDistrict.DRIPSTONE, EventFishingLootTime.BOTH, ItemModelType.FISHING_LOOT_LAMPREY),
+		SIPHONFIN(Pugmas25District.CAVES, Pugmas25BiomeDistrict.DRIPSTONE, EventFishingLootTime.NIGHT, ItemModelType.FISHING_LOOT_LEECH),
+		// Caves - Lush
+		SLIMEFISH(Pugmas25District.CAVES, Pugmas25BiomeDistrict.LUSH, EventFishingLootTime.BOTH, ItemModelType.FISHING_LOOT_SLIMEFISH),
+		PIRANHA(Pugmas25District.CAVES, Pugmas25BiomeDistrict.LUSH, EventFishingLootTime.NIGHT, ItemModelType.FISHING_LOOT_PIRANHA),
+		;
+
+		private final String modelId;
+		@Getter
+		private final String customName;
+		private final FishingLoot loot;
+
+		Pugmas25AnglerLoot(Pugmas25District district, EventFishingLootTime time, ItemModelType model) {
+			this((player) -> Pugmas25District.of(player.getLocation()) == district, model, time);
+		}
+
+		Pugmas25AnglerLoot(Pugmas25District district, Pugmas25BiomeDistrict biomeDistrict, EventFishingLootTime time, ItemModelType model) {
+			this((player) -> Pugmas25District.of(player.getLocation()) == district
+				&& Pugmas25BiomeDistrict.of(player.getLocation()) == biomeDistrict, model, time);
+		}
+
+		Pugmas25AnglerLoot(Predicate<Player> predicate, ItemModelType model, EventFishingLootTime time) {
+			this.modelId = model.getModel();
+			this.customName = StringUtils.camelCase(this);
+			//
+			this.loot = new FishingLoot(name(), EventFishingLootCategory.SPECIAL, Material.LEATHER_HORSE_ARMOR, modelId, 5,
+				customName, "&7Quest Fish", time, null, predicate);
+		}
+
+		public ItemStack getItem() {
+			return loot.getItem();
+		}
+
+		public boolean matches(ItemStack itemStack) {
+			return new ItemBuilder(itemStack).model().equalsIgnoreCase(modelId);
+		}
+	}
+
+	public static int getLuck(Player player) {
+		int luck = 0;
+
+		// Weather
+		if (FixedWeatherType.of(player.getWorld()) != FixedWeatherType.CLEAR)
+			luck += 5;
+
+		// Tools - In hand
+		ItemStack tool = ItemUtils.getTool(player);
+		if (Nullables.isNotNullOrAir(tool)) {
+			ItemModelType toolModel = ItemModelType.of(tool);
+			if (toolModel != null) {
+				if (rodReinforced == toolModel)
+					luck += 5;
+				else if (rodGolden == toolModel)
+					luck += 15;
+			}
+		}
+
+		// Tools - In inventory
+		boolean hasFishFinder = false;
+		for (ItemStack content : player.getInventory().getContents()) {
+			if (isNullOrAir(content))
+				continue;
+
+			ItemModelType itemModel = ItemModelType.of(content);
+			if (!hasFishFinder) {
+				if (fishFinder == itemModel || pda == itemModel) {
+					hasFishFinder = true;
+					luck += 5;
+				}
+			}
+		}
+
+		return luck;
 	}
 
 	@EventHandler
@@ -25,275 +159,66 @@ public class Pugmas25Fishing implements Listener {
 		if (!Pugmas25.get().shouldHandle(player))
 			return;
 
-		PlayerUtils.send(player, "Loot:");
+		Pugmas25User user = userService.get(player);
+		int luck = Pugmas25Fishing.getLuck(player);
+
+		int anglerLuck = luck;
+		if (user.isHasCaughtAnglerQuestLoot())
+			anglerLuck = (int) Math.ceil(anglerLuck / 3.0);
+
+		Pugmas25AnglerLoot anglerLoot = Pugmas25Config.get().getAnglerQuestFish();
+		if (anglerLoot != null && !anglerLoot.loot.applies(player))
+			anglerLoot = null;
+
+		user.sendMessage("DEBUG: Luck = " + luck + " | Angler Luck = " + anglerLuck); // TODO: REMOVE
+		List<ItemStack> resultLoot = new ArrayList<>();
 		for (ItemStack itemStack : event.getLoot()) {
-			new JsonBuilder(" - " + itemStack.getType()).hover(itemStack).send(player);
+			// Replace loot with angler quest fish
+			if (anglerLoot != null && RandomUtils.chanceOf(anglerLuck)) {
+				user.sendMessage("DEBUG: Replaced loot with angler quest fish"); // TODO: REMOVE
+				resultLoot.add(anglerLoot.getItem());
+				continue;
+			}
+
+			// Replace loot with treasure
+			if (RandomUtils.chanceOf(luck)) {
+				FishingLoot treasureLoot = null; // TODO: CRATES
+				if (treasureLoot != null) {
+					user.sendMessage("DEBUG: Replaced loot with treasure"); // TODO: REMOVE
+					resultLoot.add(treasureLoot.getItem());
+					continue;
+				}
+			}
+
+			resultLoot.add(itemStack);
 		}
+
+		event.setLoot(resultLoot);
 	}
 
-//	private static final Map<UUID, HookData> HOOK_MAP = new ConcurrentHashMap<>();
-//
-//	@EventHandler
-//	public void onFish(PlayerFishEvent event) {
-//		if (event.getState() != State.FISHING)
-//			return;
-//
-//		Player player = event.getPlayer();
-//		if (!Pugmas25.get().shouldHandle(player))
-//			return;
-//
-//		HOOK_MAP.put(player.getUniqueId(), new HookData(event.getHook()));
-//	}
+	@EventHandler
+	public void on(PlayerEventFishingCaughtFishEvent event) {
+		Player player = event.getPlayer();
 
-	/*
-		TODO: CATCHING LOOT
-	 */
-//	public void lavaFishing() {
-//		Tasks.repeat(0, TickTime.TICK, () -> {
-//			for (UUID uuid : HOOK_MAP.keySet()) {
-//				Player player = Bukkit.getPlayer(player);
-//				if (player == null || !player.isOnline())
-//					continue;
-//
-//				HookData data = HOOK_MAP.getOrDefault(uuid, null);
-//
-//				if (data == null || !data.canStart())
-//					continue;
-//
-//				if (data.shouldStop()) {
-//					data.destroy();
-//					HOOK_MAP.remove(uuid);
-//					continue;
-//				}
-//
-//
-//				float lavaHeight = 0F;
-//				FishHook hook = data.getHook();
-//				Block block = hook.getLocation().getBlock();
-//				if (block.getType() == Material.LAVA) {
-//					if (block.getBlockData() instanceof Levelled levelled) {
-//						lavaHeight = (float) (levelled.getLevel() * 0.125);
-//					}
-//				}
-//
-//				if (data.getNibble() > 0) {
-//					data.nibble();
-//					if (hook.getY() % 1 <= lavaHeight) {
-//						data.incJumpTimer();
-//						if (data.getJumpTimer() >= 4) {
-//							data.setJumpTimer(0);
-//							hook.setVelocity(new Vector(0, 0.24, 0));
-//						}
-//					}
-//
-//					if (data.getNibble() <= 0) {
-//						data.setTimeUntilLured(0);
-//						data.setTimeUntilHooked(0);
-//						data.setHooked(false);
-//						data.setJumpTimer(0);
-//						data.setCurrentState(0);
-//					}
-//				} else {
-//					if (hook.getY() % 1 <= lavaHeight || hook.isInLava()) {
-//						Vector previousVector = hook.getVelocity();
-//						double x = previousVector.getX() * 0.6;
-//						double y = Math.min(0.1, Math.max(-0.1, previousVector.getY() + 0.1));
-//						double z = previousVector.getZ() * 0.6;
-//						hook.setVelocity(new Vector(x, y, z));
-//						data.setCurrentState(1);
-//					} else {
-//						if (data.getCurrentState() == 1) {
-//							data.setCurrentState(0);
-//							// set temp entity
-//							Location spawnLoc = hook.getLocation().clone().subtract(0, 1, 0);
-//							data.setTempEntity(hook.getWorld().spawn(spawnLoc, ArmorStand.class));
-//							data.setCaughtEntityProperties(data.getTempEntity());
-//							hook.setHookedEntity(data.getTempEntity());
-//							if (!data.isFirstTime()) {
-//								// HookStateEvent --> ESCAPE
-//							}
-//							data.setFirstTime(false);
-//						}
-//					}
-//
-//					// float shit
-//					float f, f1, f2;
-//					double d0, d1, d2;
-//					if (data.getTimeUntilHooked() > 0) {
-//						data.decTimeUntilHooked();
-//						if (data.getTimeUntilHooked() > 0) {
-//							data.setFishAngle((float) (data.getFishAngle() + RandomUtils.triangle(0, 9.188)));
-//							f = data.getFishAngle() * 0.017453292F; // we love magic numbers
-//							f1 = (float) Math.sin(f);
-//							f2 = (float) Math.cos(f);
-//							d0 = hook.getX() + (f1 + data.getTimeUntilHooked() * 0.1);
-//							d1 = hook.getY();
-//							d2 = hook.getZ() + (f2 + data.getTimeUntilHooked() * 0.1);
-//							if (RandomUtils.randomDouble(0, 1) < 0.15) {
-//								hook.getWorld().spawnParticle(Particle.FLAME, d0, d1 - 0.10000000149011612D, d2, 1, f1, 0.1, f2, 0.0);
-//							}
-//							float f3 = f1 * 0.04f;
-//							float f4 = f2 * 0.04f;
-//							hook.getWorld().spawnParticle(Particle.FLAME, d0, d1, d2, 0, f4, 0.01, -f3, 1.0);
-//						} else {
-//							double d3 = hook.getY() + 0.5;
-//							hook.getWorld().spawnParticle(Particle.FLAME, hook.getX(), d3, hook.getZ(), (int) (1.0F + 0.3 * 20.0F), 0.3, 0.0D, 0.3, 0.20000000298023224D);
-//							data.setNibble(RandomUtils.randomInt(20, 40));
-//							data.setHooked(true);
-//							hook.getWorld().playSound(hook.getLocation(), Sound.ENTITY_GENERIC_EXTINGUISH_FIRE, 0.25F, (float) (1.0F + (RandomUtils.randomDouble(0, 1) - RandomUtils.randomDouble(0, 1)) * 0.4F));
-//							// HookStateEvent --> BITE
-//							if (data.getTempEntity() != null && data.getTempEntity().isValid()) {
-//								data.getTempEntity().remove();
-//							}
-//						}
-//					} else if (data.getTimeUntilLured() > 0) {
-//						if (!data.isFreeze()) {
-//							data.decTimeUntilLured();
-//						}
-//						if (data.getTimeUntilLured() <= 0) {
-//							data.setFishAngle((float) RandomUtils.randomDouble(0, 360));
-//							data.setTimeUntilHooked(RandomUtils.randomInt(20, 80));
-//							// HookStateEvent --> LURE
-//						}
-//					} else {
-//						data.setWaitTime();
-//					}
-//				}
-//			}
-//		});
-//	}
+		if (!Pugmas25.get().isAtEvent(player))
+			return;
 
-//	@Setter
-//	@Getter
-//	private static class HookData {
-//		FishHook hook;
-//		ArmorStand tempEntity;
-//		int timeUntilLured;
-//		int timeUntilHooked;
-//		int nibble;
-//		boolean hooked;
-//		float fishAngle;
-//		int currentState;
-//		int jumpTimer;
-//		boolean firstTime;
-//		boolean freeze;
-//
-//		public HookData(FishHook hook) {
-//			this.hook = hook;
-//			setWaitTime();
-//		}
-//
-//		public void nibble() {
-//			--this.nibble;
-//		}
-//
-//		public void incJumpTimer() {
-//			this.jumpTimer++;
-//		}
-//
-//		public void decTimeUntilHooked() {
-//			this.timeUntilHooked--;
-//		}
-//
-//		public void decTimeUntilLured() {
-//			this.timeUntilLured--;
-//		}
-//
-//		public void setWaitTime() {
-//			int lavaMinTime = 20;
-//			int lavaMaxTime = 80;
-//			int time = ThreadLocalRandom.current().nextInt(lavaMaxTime - lavaMinTime + 1) + lavaMinTime;
-//			Dev.WAKKA.send("Wait time: " + time + " ticks");
-//			this.timeUntilLured = time;
-//		}
-//
-//		public boolean canStart() {
-//			if (hook.isInLava())
-//				return true;
-//
-//			float lavaHeight = 0F;
-//			Block block = hook.getLocation().getBlock();
-//			if (block.getType() == Material.LAVA) {
-//				if (block.getBlockData() instanceof Levelled levelled) {
-//					lavaHeight = (float) (levelled.getLevel() * 0.125);
-//				}
-//			}
-//
-//			return lavaHeight > 0 && hook.getY() % 1 <= lavaHeight;
-//		}
-//
-//
-//		public boolean shouldStop() {
-//			if (hook == null || !hook.isValid())
-//				return true;
-//
-//			if (hook.isInLava())
-//				return false;
-//
-//			Block block = hook.getLocation().getBlock();
-//			Block below = block.getRelative(BlockFace.DOWN);
-//			return hook.isOnGround() || (block.getType() != Material.LAVA && below.getType() != Material.LAVA);
-//		}
-//
-//		public void destroy() {
-//			if (this.hook.isValid())
-//				hook.remove();
-//
-//			this.hook = null;
-//
-//			if (this.tempEntity != null && this.tempEntity.isValid()) {
-//				this.tempEntity.remove();
-//			}
-//
-//			this.freeze = false;
-//		}
-//
-//		private void setCaughtEntityProperties(ArmorStand entity) {
-//			entity.setInvisible(true);
-//			entity.setCollidable(false);
-//			entity.setInvulnerable(true);
-//			entity.setVisible(false);
-//			entity.setCustomNameVisible(false);
-//			entity.setSmall(true);
-//			entity.setGravity(false);
-//		}
-//
-//		private enum HookState {
-//			BITE,
-//			ESCAPE,
-//			LURE,
-//			LAND,
-//			;
-//		}
-//
-//		public void stateChange(HookState hookState) {
-//			switch (hookState) {
-//				case BITE -> onBite();
-//				case LAND -> onLand();
-//				case ESCAPE -> onEscape();
-//				case LURE -> onLure();
-//			}
-//		}
-//
-//		private void onBite() {
-//
-//		}
-//
-//		private void onLand() {
-//
-//		}
-//
-//		private void onEscape() {
-//
-//		}
-//
-//		private void onLure() {
-//
-//		}
-//
-//
-//	}
+		Pugmas25AnglerLoot anglerLoot = Pugmas25Config.get().getAnglerQuestFish();
+		if (anglerLoot == null)
+			return;
 
+		Pugmas25User user = userService.get(player);
+		if (user.isHasCaughtAnglerQuestLoot())
+			return;
 
+		for (ItemStack item : event.getLoot()) {
+			if (Nullables.isNullOrAir(item))
+				continue;
 
+			if (anglerLoot.matches(item)) {
+				user.setHasCaughtAnglerQuestLoot(true);
+				userService.save(user);
+			}
+		}
+	}
 }

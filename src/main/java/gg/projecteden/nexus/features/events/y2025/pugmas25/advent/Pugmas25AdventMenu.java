@@ -12,6 +12,7 @@ import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.models.pugmas25.Advent25Config;
 import gg.projecteden.nexus.models.pugmas25.Advent25User;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerMovementUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -66,6 +67,8 @@ public class Pugmas25AdventMenu extends InventoryProvider {
 						Pugmas25Waypoints.hideAllWaypoints(user.getOnlinePlayer());
 					} else {
 						Pugmas25Waypoints.showWaypoint(user.getOnlinePlayer(), present);
+						PlayerMovementUtils.lookAt(user.getOnlinePlayer(), present.getLocation());
+						user.sendMessage(Pugmas25.PREFIX + "Added a waypoint to Advent Present #&e" + present.getDay());
 					}
 				});
 			}

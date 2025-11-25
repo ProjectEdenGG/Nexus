@@ -208,7 +208,7 @@ public class Pugmas25Sidebar {
 		FISHING_LUCK(Pugmas25QuestItem.FISHING_POCKET_GUIDE, Pugmas25QuestItem.FISH_FINDER) {
 			@Override
 			public String render(Player player) {
-				return "&3Fishing Luck: &enull";
+				return "&3Fishing Luck: &e" + Pugmas25Fishing.getLuck(player);
 			}
 		},
 

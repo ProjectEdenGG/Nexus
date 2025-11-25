@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.models;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
@@ -23,7 +22,8 @@ import java.util.UUID;
 		- IF PLAYER IS IN CAVES DISTRICT, SUBTRACT X FROM HEIGHT VARIABLE ON PDA
  */
 public class Pugmas25Districts implements Listener {
-	private static final String regionPrefix = Pugmas25.get().getRegionName() + "_district_";
+	private static final String districtRegionPrefix = Pugmas25.get().getRegionName() + "_district_";
+	private static final String biomeRegionPrefix = Pugmas25.get().getRegionName() + "_biome_";
 	private static final Map<UUID, Pugmas25District> PLAYER_DISTRICT_MAP = new HashMap<>();
 
 	public Pugmas25Districts() {
@@ -59,7 +59,32 @@ public class Pugmas25Districts implements Listener {
 		}
 
 		PLAYER_DISTRICT_MAP.put(player.getUniqueId(), newDistrict);
-		Pugmas25.get().actionBar(player, "&3Area Designation: &e" + newDistrict.getName(), TickTime.SECOND.x(2));
+	}
+
+	@AllArgsConstructor
+	public enum Pugmas25BiomeDistrict {
+		DRIPSTONE("dripstone"),
+		LUSH("lush"),
+		;
+
+		final String regionId;
+
+		public String getRegionId() {
+			return biomeRegionPrefix + regionId;
+		}
+
+		public static @Nullable Pugmas25BiomeDistrict of(Location location) {
+			if (!location.getWorld().equals(Pugmas25.get().getWorld()))
+				return null;
+
+			for (ProtectedRegion region : Pugmas25.get().worldguard().getRegionsAt(location)) {
+				for (Pugmas25BiomeDistrict biomeDistrict : Pugmas25BiomeDistrict.values())
+					if (region.getId().equalsIgnoreCase(biomeDistrict.getRegionId()))
+						return biomeDistrict;
+			}
+
+			return null;
+		}
 	}
 
 
@@ -90,10 +115,10 @@ public class Pugmas25Districts implements Listener {
 		}
 
 		public String getRegionId() {
-			return regionPrefix + regionId;
+			return districtRegionPrefix + regionId;
 		}
 
-		public static @Nullable Pugmas25Districts.Pugmas25District of(Location location) {
+		public static @Nullable Pugmas25District of(Location location) {
 			if (!location.getWorld().equals(Pugmas25.get().getWorld()))
 				return null;
 

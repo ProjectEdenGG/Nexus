@@ -4,6 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.IEventCommand;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25.Pugmas25DeathCause;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25.Pugmas25QuestProgress;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.advent.Pugmas25Advent;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.advent.Pugmas25AdventMenu;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.balloons.Pugmas25BalloonEditor;
@@ -17,16 +18,15 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.slotmachi
 import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.slotmachine.Pugmas25SlotMachineRewardMenu;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts.Pugmas25District;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Fishing.Pugmas25AnglerLoot;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Geyser;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Intro;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25ModelTrain;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Train;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waypoints;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waypoints.WaypointTarget;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25NPC;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25Quest;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestTask;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -51,16 +51,15 @@ import gg.projecteden.nexus.models.pugmas25.Pugmas25ConfigService;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.models.quests.Quester;
-import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Currency;
 import gg.projecteden.nexus.utils.Currency.Price;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.Listener;
@@ -120,8 +119,14 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 	@Path("quest progress [player]")
 	protected void quest_progress(@Arg(value = "self", permission = Group.STAFF) Quester quester) {
 		super.quest_progress(quester);
+		Pugmas25QuestProgress.ADVENT.send(user);
+		Pugmas25QuestProgress.NUTCRACKERS.send(user);
+	}
 
-
+	@Path
+	@Permission(Group.ADMIN)
+	void deleteAllDatabaseData() {
+		// TODO: PUGMAS RELEASE
 	}
 
 	@Path("deleteQuest <quest>")
@@ -225,12 +230,26 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		Pugmas25Waypoints.hideAllWaypoints(player());
 	}
 
-	@Path("setFishOfTheDay <item>")
+	@Path("angler randomAnglerLoot")
 	@Permission(Group.ADMIN)
-	void setFishOfTheDay(Pugmas25QuestItem item) {
-		config.setAnglerQuestFish(item);
-		send("Set angler quest fish to " + config.getAnglerQuestFish().getItemBuilder().name());
+	void angler_setQuestFish() {
+		config.setAnglerQuestFish(RandomUtils.randomElement(Pugmas25AnglerLoot.values()));
+		configService.save(config);
+		send("Set angler quest fish to " + config.getAnglerQuestFish().getCustomName());
 	}
+
+	@Path("angler resetData")
+	@Permission(Group.ADMIN)
+	void angler_resetData() {
+		user.setHasCaughtAnglerQuestLoot(false);
+		;
+		user.setCompletedAnglerQuest(false);
+		userService.save(user);
+		send("Reset user angler variables");
+	}
+
+
+
 
 	@Path("advent tp <day>")
 	@Permission(Group.ADMIN)

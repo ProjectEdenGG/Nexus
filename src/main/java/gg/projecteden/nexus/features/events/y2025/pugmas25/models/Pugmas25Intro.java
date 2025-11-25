@@ -32,13 +32,13 @@ public class Pugmas25Intro implements Listener {
 	public void on(PlayerEnteredRegionEvent event) {
 		Player player = event.getPlayer();
 
+		if (!Rank.of(player).isStaff() && !PUGMAS.isEventActive())
+			return;
+
 		if (!event.getRegion().getId().matches(TRANSITION_REGION_REGEX))
 			return;
 
 		if (!PlayerUtils.playerHas(player, Pugmas25QuestItem.TRAIN_TICKET.get()))
-			return;
-
-		if (!Rank.of(player).isStaff() && PUGMAS.isBeforeEvent())
 			return;
 
 		PlayerUtils.removeItem(player, Pugmas25QuestItem.TRAIN_TICKET.get());

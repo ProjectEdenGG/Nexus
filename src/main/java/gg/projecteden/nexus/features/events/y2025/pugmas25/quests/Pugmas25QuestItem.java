@@ -14,6 +14,7 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,10 +51,10 @@ public enum Pugmas25QuestItem implements QuestItem {
 	FISHING_ROD_REINFORCED(new ItemBuilder(ItemModelType.FISHING_ROD_REINFORCED).name("Reinforced Fishing Rod").enchant(Enchant.UNBREAKING, 2)),
 	FISHING_ROD_GOLDEN(new ItemBuilder(ItemModelType.FISHING_ROD_GOLDEN).name("Golden Fishing Rod").lore("&7Unbreakable").unbreakable().glow()),
 
-	// TODO: probably build these into fishing instead --> SWITCH TO HEAD DB HEADS
-	CRATE_IRON(new ItemBuilder(ItemModelType.EVENT_CRATE_IRON).name("Iron Crate")), // Head ID = 46944
-	CRATE_GOLD(new ItemBuilder(ItemModelType.EVENT_CRATE_GOLDEN).name("Golden Crate")), // Head ID = 46945
-	CRATE_DIAMOND(new ItemBuilder(ItemModelType.EVENT_CRATE_DIAMOND).name("Diamond Crate")), // Head ID = 46946
+	// TODO: probably build these into fishing instead --> MAKE THEM 3D INSTEAD
+	CRATE_IRON(new ItemBuilder(ItemModelType.EVENT_CRATE_IRON).name("Iron Crate")),
+	CRATE_GOLD(new ItemBuilder(ItemModelType.EVENT_CRATE_GOLDEN).name("Golden Crate")),
+	CRATE_DIAMOND(new ItemBuilder(ItemModelType.EVENT_CRATE_DIAMOND).name("Diamond Crate")),
 
 	SHRINK_POTION(new ItemBuilder(Material.POTION).potionEffectColor(ColorType.LIGHT_GREEN.getBukkitColor()).name("&fPotion of Shrinking").lore("&9Shrinking (08:00)", "", "&5When Applied:", "&9-50% Scale")),
 	SNOWMAN_DECORATIONS(new ItemBuilder(Material.CARROT).name("Snowman Decorations").interactable()),
@@ -72,7 +73,7 @@ public enum Pugmas25QuestItem implements QuestItem {
 	private final ItemBuilder itemBuilder;
 
 	public ItemBuilder getItemBuilder() {
-		return new ItemBuilder(itemBuilder).itemFlags(ItemFlags.HIDE_ALL);
+		return new ItemBuilder(itemBuilder).itemFlags(ItemFlag.HIDE_DYE, ItemFlag.HIDE_ATTRIBUTES);
 	}
 
 	@Override
