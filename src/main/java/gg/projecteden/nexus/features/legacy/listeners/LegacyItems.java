@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.vaults.VaultCommand.VaultMenu.VaultHolder;
+import gg.projecteden.nexus.features.virtualinventories.VirtualInventoryUtils.VirtualInventoryHolder;
 import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
@@ -84,7 +85,10 @@ public class LegacyItems implements Listener {
 		if (holder instanceof SmartInventoryHolder)
 			return;
 
-		if (location == null)
+		if (holder instanceof VirtualInventoryHolder)
+			return;
+
+		if (location == null && holder.getInventory() != null)
 			location = holder.getInventory().getLocation();
 
 		convert(location, event.getInventory());

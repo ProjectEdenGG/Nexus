@@ -32,4 +32,9 @@ public class VirtualInventoriesConfig implements DatabaseObject {
 	private Map<String, Map<Integer, Map<Integer, Map<Integer, Map<UUID, VirtualInventory<?>>>>>> personalInventories = new ConcurrentHashMap<>();
 	private Map<String, Map<Integer, Map<Integer, Map<Integer, VirtualInventory<?>>>>> sharedInventories = new ConcurrentHashMap<>();
 
+	public static void save() {
+		var service = new VirtualInventoriesConfigService();
+		var config = service.get0();
+		service.save(config);
+	}
 }

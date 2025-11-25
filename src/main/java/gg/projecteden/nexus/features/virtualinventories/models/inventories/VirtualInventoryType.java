@@ -1,8 +1,14 @@
 package gg.projecteden.nexus.features.virtualinventories.models.inventories;
 
+import gg.projecteden.nexus.features.virtualinventories.models.inventories.impl.VirtualBarrel;
+import gg.projecteden.nexus.features.virtualinventories.models.inventories.impl.VirtualChest;
 import gg.projecteden.nexus.features.virtualinventories.models.inventories.impl.VirtualFurnace;
+import gg.projecteden.nexus.features.virtualinventories.models.inventories.impl.VirtualPersonalBarrel;
+import gg.projecteden.nexus.features.virtualinventories.models.inventories.impl.VirtualPersonalChest;
 import gg.projecteden.nexus.features.virtualinventories.models.inventories.impl.VirtualPersonalFurnace;
 import gg.projecteden.nexus.features.virtualinventories.models.properties.VirtualInventoryProperties;
+import gg.projecteden.nexus.features.virtualinventories.models.properties.impl.BarrelProperties;
+import gg.projecteden.nexus.features.virtualinventories.models.properties.impl.ChestProperties;
 import gg.projecteden.nexus.features.virtualinventories.models.properties.impl.FurnaceProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,6 +23,8 @@ import java.util.function.Function;
 @Getter
 @AllArgsConstructor
 public enum VirtualInventoryType {
+	CHEST(Material.CHEST, VirtualChest::new, VirtualPersonalChest::new, new ChestProperties()),
+	BARREL(Material.BARREL, VirtualBarrel::new, VirtualPersonalBarrel::new, new BarrelProperties()),
 	FURNACE(Material.FURNACE, VirtualFurnace::new, VirtualPersonalFurnace::new, FurnaceProperties.FURNACE),
 	BLAST_FURNACE(Material.BLAST_FURNACE, VirtualFurnace::new, VirtualPersonalFurnace::new, FurnaceProperties.BLAST_FURNACE),
 	SMOKER(Material.SMOKER, VirtualFurnace::new, VirtualPersonalFurnace::new, FurnaceProperties.SMOKER),

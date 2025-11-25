@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.virtualinventories.managers;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.virtualinventories.models.inventories.TickableVirtualInventory;
 import gg.projecteden.nexus.features.virtualinventories.models.inventories.VirtualInventory;
 import gg.projecteden.nexus.features.virtualinventories.models.inventories.VirtualInventoryType;
 import gg.projecteden.nexus.features.virtualinventories.models.inventories.VirtualPersonalInventory;
@@ -49,13 +50,15 @@ public class VirtualPersonalInventoryManager extends Feature {
 				.flatMap(map -> map.values().stream())
 				.toList()
 				.stream()
+				.filter(virtualInventory -> virtualInventory instanceof TickableVirtualInventory)
+				.map(virtualInventory -> (TickableVirtualInventory<?>) virtualInventory)
 				.filter(virtualInventory -> {
 					if (!(virtualInventory instanceof VirtualPersonalInventory virtualPersonalInventory))
 						return true;
 
 					return virtualPersonalInventory.getLocation().isChunkLoaded();
 				})
-				.anyMatch(VirtualInventory::tick);
+				.anyMatch(TickableVirtualInventory::tick);
 
 			if (processed)
 				service.save(config);

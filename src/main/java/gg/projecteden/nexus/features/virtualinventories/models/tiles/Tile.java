@@ -57,16 +57,4 @@ public abstract class Tile<V extends VirtualInventory<?>> {
 		VirtualInventoryManager.destroy(getVirtualInv(), null);
 	}
 
-	public int getTick() {
-		return getVirtualInv().getTick();
-	}
-
-	public void tick() {
-		if (blockDataMatches(getBlock())) {
-			virtualInv.tick();
-		} else {
-			breakTile();
-		}
-	}
-
 }

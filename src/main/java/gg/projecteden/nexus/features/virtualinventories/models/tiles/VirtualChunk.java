@@ -65,7 +65,8 @@ public class VirtualChunk {
 
 	public void tick() {
 		for (Tile<?> tile : new ArrayList<>(tiles)) {
-			tile.tick();
+			if (tile instanceof TickableTile<?> tickableTile)
+				tickableTile.tick();
 		}
 	}
 

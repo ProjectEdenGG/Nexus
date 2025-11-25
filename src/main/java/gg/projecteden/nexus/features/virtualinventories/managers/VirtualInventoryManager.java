@@ -1,7 +1,9 @@
 package gg.projecteden.nexus.features.virtualinventories.managers;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.virtualinventories.listeners.VirtualFurnaceListener;
 import gg.projecteden.nexus.features.virtualinventories.listeners.VirtualInventoryListener;
+import gg.projecteden.nexus.features.virtualinventories.models.inventories.TickableVirtualInventory;
 import gg.projecteden.nexus.features.virtualinventories.models.inventories.VirtualInventory;
 import gg.projecteden.nexus.features.virtualinventories.models.inventories.VirtualInventoryType;
 import gg.projecteden.nexus.framework.features.Feature;
@@ -25,6 +27,7 @@ public class VirtualInventoryManager extends Feature {
 	@Override
 	public void onStart() {
 		new VirtualInventoryListener();
+		new VirtualFurnaceListener();
 
 		final var service = new VirtualInventoriesConfigService();
 		taskId = Tasks.repeat(TickTime.TICK.x(5), TickTime.TICK, () -> {
@@ -37,8 +40,9 @@ public class VirtualInventoryManager extends Feature {
 
 			var processed = false;
 			for (var inventory : config.getVirtualInventories().values())
-				if (inventory.tick())
-					processed = true;
+				if (inventory instanceof TickableVirtualInventory<?> tickableInventory)
+					if (tickableInventory.tick())
+						processed = true;
 
 			if (processed)
 				service.save(config);

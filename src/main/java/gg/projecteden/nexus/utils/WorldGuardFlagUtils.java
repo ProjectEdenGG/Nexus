@@ -92,7 +92,7 @@ public class WorldGuardFlagUtils {
 		 */
 		ALLOWED_BLOCK_INVENTORIES(registerFlag(new SetFlag<>("allowed-block-inventories", new StringFlag(null)))),
 		/**
-		 * Sets which inventories a player can access (i.e. chest, furnace, shulker box, hopper, etc.)
+		 * Enables virtual personal inventories for all matching blocks within the region
 		 */
 		VIRTUAL_BLOCK_INVENTORIES(registerFlag(new SetFlag<>("virtual-block-inventories", new StringFlag(null)))),
 		/**

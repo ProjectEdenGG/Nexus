@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.virtualinventories.events.furnace.VirtualFu
 import gg.projecteden.nexus.features.virtualinventories.events.furnace.VirtualFurnaceFuelBurnEvent;
 import gg.projecteden.nexus.features.virtualinventories.events.furnace.VirtualFurnaceStartEvent;
 import gg.projecteden.nexus.features.virtualinventories.events.furnace.VirtualFurnaceTickEvent;
-import gg.projecteden.nexus.features.virtualinventories.models.inventories.VirtualInventory;
+import gg.projecteden.nexus.features.virtualinventories.models.inventories.TickableVirtualInventory;
 import gg.projecteden.nexus.features.virtualinventories.models.inventories.VirtualInventoryType;
 import gg.projecteden.nexus.features.virtualinventories.models.properties.impl.FurnaceProperties;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
@@ -26,7 +26,7 @@ import org.bukkit.inventory.ItemStack;
 @Data
 @NoArgsConstructor
 @Converters(ItemStackConverter.class)
-public class VirtualFurnace extends VirtualInventory<FurnaceProperties> {
+public class VirtualFurnace extends TickableVirtualInventory<FurnaceProperties> {
 	private ItemStack fuel = null;
 	private ItemStack input = null;
 	private ItemStack output = null;
