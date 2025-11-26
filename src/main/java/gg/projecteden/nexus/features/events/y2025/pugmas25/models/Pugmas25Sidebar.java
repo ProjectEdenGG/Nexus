@@ -4,6 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.operator.WeatherCommand.FixedWeatherType;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts.Pugmas25District;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25Quest;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.geoip.GeoIP;
@@ -15,6 +16,7 @@ import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.parchment.sidebar.Sidebar;
 import gg.projecteden.parchment.sidebar.SidebarLayout;
 import gg.projecteden.parchment.sidebar.SidebarStage;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -229,9 +231,12 @@ public class Pugmas25Sidebar {
 		},
 		;
 
+		@Getter
+		Pugmas25QuestItem specificItem;
 		List<Pugmas25QuestItem> requiredItems = new ArrayList<>();
 
 		Pugmas25SidebarLine(Pugmas25QuestItem specificItem, Pugmas25QuestItem combinedItem) {
+			this.specificItem = specificItem;
 			this.requiredItems = List.of(specificItem, combinedItem, Pugmas25QuestItem.PDA);
 		}
 

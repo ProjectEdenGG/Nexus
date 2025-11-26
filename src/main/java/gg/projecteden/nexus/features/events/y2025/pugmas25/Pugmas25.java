@@ -358,14 +358,17 @@ public class Pugmas25 extends EdenEvent {
 					.take(questFish.getItem());
 				Pugmas25Fishing.getAnglerReaction(dialog, questFish);
 				dialog
-					.npc("Thank you so much, here’s your reward!")
-					.player("Happy to help!")
-					.npc("Come back in " + timeUntilReset + " for my next fish")
 					.thenRun(quester -> {
-						// TODO: REWARD + nth REWARD
+						user.incrementCompletedAnglerQuests();
 						user.setCompletedAnglerQuest(true);
 						userService.save(user);
+						Pugmas25Fishing.giveRewards(dialog, user, quester);
 					});
+
+				dialog
+					.player("Happy to help!")
+					.npc("Come back in " + timeUntilReset + " for my next fish")
+				;
 			} else if (questFish == receivedQuestFish) {
 				// REMINDER
 				dialog

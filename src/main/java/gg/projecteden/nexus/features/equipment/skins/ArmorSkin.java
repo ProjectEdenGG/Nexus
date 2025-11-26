@@ -80,17 +80,14 @@ public enum ArmorSkin implements EquipmentSkinType {
 		return CustomArmorType.valueOf(this.name());
 	}
 
-	@Override
-	public ItemStack apply(ItemStack item) {
-		if (!applies(item))
-			return item;
-
-		ItemBuilder builder = new ItemBuilder(item);
+	public ItemBuilder apply(ItemBuilder builder) {
+		if (!applies(builder))
+			return builder;
 
 		if (this == DEFAULT) {
 			builder.removeModel();
 			applyEquippableComponent(builder, this);
-			return builder.build();
+			return builder;
 		}
 
 		String armorPieceType = builder.material().name().toLowerCase().substring(builder.material().name().lastIndexOf('_') + 1);
@@ -98,8 +95,15 @@ public enum ArmorSkin implements EquipmentSkinType {
 
 		builder.model(model);
 		applyEquippableComponent(builder, this);
+		return builder;
+	}
 
-		return builder.build();
+	@Override
+	public ItemStack apply(ItemStack item) {
+		if (!applies(item))
+			return item;
+
+		return apply(new ItemBuilder(item)).build();
 	}
 
 	public static void applyEquippableComponent(ItemBuilder builder, ArmorSkin armorSkin) {
@@ -159,6 +163,10 @@ public enum ArmorSkin implements EquipmentSkinType {
 	@Override
 	public boolean applies(ItemStack item) {
 		return MaterialTag.ARMOR.isTagged(item);
+	}
+
+	public boolean applies(ItemBuilder builder) {
+		return MaterialTag.ARMOR.isTagged(builder.build());
 	}
 
 	@Override

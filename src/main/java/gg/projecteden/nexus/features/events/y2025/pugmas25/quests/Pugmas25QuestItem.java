@@ -53,15 +53,15 @@ public enum Pugmas25QuestItem implements QuestItem {
 	FISHING_ROD_REINFORCED(new ItemBuilder(ItemModelType.FISHING_ROD_REINFORCED).name("Reinforced Fishing Rod").lore("&7Increases fishing luck by 5").enchant(Enchant.UNBREAKING, 2)),
 	FISHING_ROD_GOLDEN(new ItemBuilder(ItemModelType.FISHING_ROD_GOLDEN).name("Golden Fishing Rod").lore("&7Increases fishing luck by 15").unbreakable().glow()),
 
-	ANGLER_HAT(new ItemBuilder(Material.LEATHER_HELMET).model(ArmorSkin.FISHING.getBaseModel() + "/helmet").name("&oAngler Hat").lore("&7Increases fishing luck by 4").unbreakable()),
-	ANGLER_VEST(new ItemBuilder(Material.LEATHER_CHESTPLATE).model(ArmorSkin.FISHING.getBaseModel() + "/chestplate").name("&oAngler Vest").lore("&7Increases fishing luck by 4").unbreakable()),
-	ANGLER_PANTS(new ItemBuilder(Material.LEATHER_LEGGINGS).model(ArmorSkin.FISHING.getBaseModel() + "/leggings").name("&oAngler Pants").lore("&7Increases fishing luck by 4").unbreakable()),
+	ANGLER_HAT(ArmorSkin.FISHING.apply(new ItemBuilder(Material.LEATHER_HELMET).name("&oAngler Hat").lore("&7Increases fishing luck by 4").unbreakable())),
+	ANGLER_VEST(ArmorSkin.FISHING.apply(new ItemBuilder(Material.LEATHER_CHESTPLATE).name("&oAngler Vest").lore("&7Increases fishing luck by 4").unbreakable())),
+	ANGLER_PANTS(ArmorSkin.FISHING.apply(new ItemBuilder(Material.LEATHER_LEGGINGS).name("&oAngler Pants").lore("&7Increases fishing luck by 4").unbreakable())),
 
-	SHOCK_ABSORBENT_BOOTS(new ItemBuilder(Material.LEATHER_BOOTS).model(ArmorSkin.WIZARD.getBaseModel() + "/boots").name("&oShock Absorbent Sandals").lore("&7Negates fall damage, but takes durability")),
+	SHOCK_ABSORBENT_BOOTS(ArmorSkin.WIZARD.apply(new ItemBuilder(Material.LEATHER_BOOTS).name("&oShock Absorbent Sandals").lore("&7Negates fall damage, but takes durability"))),
 
-	CRATE_IRON(new ItemBuilder(ItemModelType.EVENT_CRATE_IRON).name("Iron Crate")),
-	CRATE_GOLD(new ItemBuilder(ItemModelType.EVENT_CRATE_GOLDEN).name("Golden Crate")),
-	CRATE_DIAMOND(new ItemBuilder(ItemModelType.EVENT_CRATE_DIAMOND).name("Diamond Crate")),
+	CRATE_IRON(new ItemBuilder(ItemModelType.EVENT_CRATE_IRON).name("Iron Crate").lore("&7RClick while holding to open")),
+	CRATE_GOLD(new ItemBuilder(ItemModelType.EVENT_CRATE_GOLDEN).name("Golden Crate").lore("&7RClick while holding to open")),
+	CRATE_DIAMOND(new ItemBuilder(ItemModelType.EVENT_CRATE_DIAMOND).name("Diamond Crate").lore("&7RClick while holding to open")),
 
 	GIFT(new ItemBuilder(Material.CHEST).name("Gift")), // TODO
 	SLOT_MACHINE_TOKEN(new ItemBuilder(ItemModelType.EVENT_TOKEN).name("Slot Machine Token").lore("&7Used to roll the slot machine")),
@@ -82,7 +82,7 @@ public enum Pugmas25QuestItem implements QuestItem {
 	private final ItemBuilder itemBuilder;
 
 	public ItemBuilder getItemBuilder() {
-		return new ItemBuilder(itemBuilder).itemFlags(ItemFlag.HIDE_DYE, ItemFlag.HIDE_ATTRIBUTES);
+		return new ItemBuilder(itemBuilder).itemFlags(ItemFlag.HIDE_DYE);
 	}
 
 	@Override

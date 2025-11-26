@@ -110,7 +110,7 @@ public class Pugmas25Districts implements Listener {
 		FROZEN_LAKE("frozen_lake"),
 		FAIRGROUNDS("fair"),
 		HOT_SPRINGS("hot_springs"),
-		SAWMILL("sawmill"),
+		SAWMILL("lumberyard"),
 		RIVER("river"),
 		CAVES("caves"),
 		//

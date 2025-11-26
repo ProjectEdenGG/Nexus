@@ -104,4 +104,8 @@ public class Pugmas25User implements PlayerOwnedObject {
 		this.hasCaughtAnglerQuestLoot = false;
 		this.completedAnglerQuest = false;
 	}
+
+	public void incrementCompletedAnglerQuests() {
+		this.completedAnglerQuests += 1;
+	}
 }

@@ -144,6 +144,7 @@ public class EventFishingListener implements Listener {
 			ItemStack originalItem = item.getItemStack();
 			originalItem.setType(loot0.getType());
 			originalItem.setItemMeta(loot0.getItemMeta());
+			originalItem.setAmount(loot0.getAmount());
 
 			Tasks.wait(1, () -> {
 				for (ItemStack itemStack : loot) {
