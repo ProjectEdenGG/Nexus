@@ -63,14 +63,22 @@ public class Pugmas25Districts implements Listener {
 
 	@AllArgsConstructor
 	public enum Pugmas25BiomeDistrict {
-		DRIPSTONE("dripstone"),
-		LUSH("lush"),
+		DRIPSTONE_CAVES("dripstone"),
+		LUSH_CAVES("lush"),
 		;
 
 		final String regionId;
 
 		public String getRegionId() {
 			return biomeRegionPrefix + regionId;
+		}
+
+		public String getName() {
+			return StringUtils.camelCase(this);
+		}
+
+		public static @Nullable Pugmas25BiomeDistrict of(Player player) {
+			return of(player.getLocation());
 		}
 
 		public static @Nullable Pugmas25BiomeDistrict of(Location location) {

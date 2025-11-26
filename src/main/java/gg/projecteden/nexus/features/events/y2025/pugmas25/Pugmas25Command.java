@@ -17,6 +17,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.slotmachi
 import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.slotmachine.Pugmas25SlotMachineReward.Pugmas25SlotMachineRewardType;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.slotmachine.Pugmas25SlotMachineRewardMenu;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts.Pugmas25BiomeDistrict;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts.Pugmas25District;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Fishing.Pugmas25AnglerLoot;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Geyser;
@@ -175,6 +176,11 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 	void district() {
 		Pugmas25District district = Pugmas25Districts.of(player());
 		send(PREFIX + "Area: &e" + district.getName());
+
+		Pugmas25BiomeDistrict biome = Pugmas25BiomeDistrict.of(player());
+		if (biome != null)
+			send(PREFIX + "Biome: &e" + biome.getName());
+
 	}
 
 	@Path("advent")

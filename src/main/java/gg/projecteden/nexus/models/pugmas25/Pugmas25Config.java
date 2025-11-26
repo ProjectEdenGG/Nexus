@@ -14,6 +14,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -29,10 +30,17 @@ public class Pugmas25Config implements DatabaseObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Pugmas25AnglerLoot anglerQuestFish = Pugmas25AnglerLoot.WIGGLY_STICK; // TODO: PICK NEW FROM DIFFERENT DISTRICT
+	private Pugmas25AnglerLoot anglerQuestFish = null;
+	private String anglerQuestFishHint = null;
+	private LocalDateTime anglerQuestResetDateTime = null;
 	private Set<Location> nutCrackerLocations = new HashSet<>();
 
 	public static Pugmas25Config get() {
 		return new Pugmas25ConfigService().get0();
+	}
+
+	public void setAnglerQuestFish(Pugmas25AnglerLoot anglerQuestFish) {
+		this.anglerQuestFish = anglerQuestFish;
+		this.anglerQuestFishHint = anglerQuestFish.getRandomHint();
 	}
 }

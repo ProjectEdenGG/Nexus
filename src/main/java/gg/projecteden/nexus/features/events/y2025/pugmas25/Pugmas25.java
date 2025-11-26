@@ -4,7 +4,9 @@ import com.destroystokyo.paper.ParticleBuilder;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.nexus.features.commands.DeathMessagesCommand;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory;
@@ -16,6 +18,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25BoatRa
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Cabin;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Caves;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts.Pugmas25District;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Fishing;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Fishing.Pugmas25AnglerLoot;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Interactions;
@@ -292,7 +295,7 @@ public class Pugmas25 extends EdenEvent {
 				.send(player);
 		});
 
-		// TODO
+		// TODO: TEST
 		handleInteract(Pugmas25NPC.ANGLER, (player, npc) -> {
 			final Pugmas25UserService userService = new Pugmas25UserService();
 			final Pugmas25User user = userService.get(player);
@@ -302,31 +305,89 @@ public class Pugmas25 extends EdenEvent {
 
 			final Dialog dialog = new Dialog(npc);
 			Pugmas25AnglerLoot questFish = config.getAnglerQuestFish();
+			Pugmas25AnglerLoot receivedQuestFish = user.getReceivedAnglerQuestFish();
 
 			if (!user.isReceivedAnglerQuestInstructions()) {
+				// INTRO
 				dialog
-					.npc("Catch a new fish for me every 2 hours")
-					.player("Ok!")
-					.npc("Current fish to catch = " + questFish.getCustomName())
+					.npc("I'm collecting rare fish for the holiday celebrations!")
+					.npc("Every 2 hours, a new fish becomes available to catch.")
+					.npc("Each one can only be caught in a specific area, and sometimes only at a certain time of day.")
+					.player("So I just catch the fish you want?")
+					.npc("Exactly! Catch the fish, bring it back to me, and I'll reward you!")
+					.npc("Once time runs out, the fish changes, so make sure to come see me again for the next one!")
 					.thenRun(quester -> {
 						user.setReceivedAnglerQuestInstructions(true);
 						userService.save(user);
-					});
+						if (interactHandlers.containsKey(npc))
+							interactHandlers.get(npc).accept(player, npc); // Force re-talk to npc to get hint & set variables
+					})
+					.send(player);
+				return;
+			}
 
-			} else if (user.isCompletedAnglerQuest()) {
-				dialog.npc("Come back in x minutes for my next fish");
-			} else if (Quester.of(player).has(questFish.getItem())) {
+			// DIFFERENT FISH --> THIS MAY NEVER RUN
+			if (!user.isCompletedAnglerQuest() && receivedQuestFish != null && questFish != receivedQuestFish) {
 				dialog
-					.npc("Thank you!")
+					.npc("Uh-oh! Time’s up!")
+					.npc("The old fish swam off, but a NEW one is ready to be caught!")
 					.thenRun(quester -> {
+						user.setReceivedAnglerQuestFish(null);
+						userService.save(user);
+						if (interactHandlers.containsKey(npc))
+							interactHandlers.get(npc).accept(player, npc); // Force re-talk to npc to get hint & set variables
+					})
+					.send(player);
+				return;
+			}
+
+			LocalDateTime resetDateTime = config.getAnglerQuestResetDateTime();
+			// TEMP
+			if (resetDateTime == null)
+				resetDateTime = now().plusHours(2);
+			//
+			var timeUntilReset = TimeUtils.Timespan.of(now(), resetDateTime).format(FormatType.LONG);
+
+			if (user.isCompletedAnglerQuest()) {
+				// ALREADY COMPLETED
+				dialog.npc("Come back in " + timeUntilReset + " for my next fish request");
+			} else if (Quester.of(player).has(questFish.getItem())) {
+				// REWARD
+				dialog
+					.player("I caught the fish you wanted!")
+					.take(questFish.getItem());
+				Pugmas25Fishing.getAnglerReaction(dialog, questFish);
+				dialog
+					.npc("Thank you so much, here’s your reward!")
+					.player("Happy to help!")
+					.npc("Come back in " + timeUntilReset + " for my next fish")
+					.thenRun(quester -> {
+						// TODO: REWARD + nth REWARD
 						user.setCompletedAnglerQuest(true);
 						userService.save(user);
-
-					})
-					.take(questFish.getItem())
-					.npc("Come back in x minutes for my next fish");
+					});
+			} else if (questFish == receivedQuestFish) {
+				// REMINDER
+				dialog
+					.npc("Hey! Did you catch my special fish yet?")
+					.npc("You still have " + timeUntilReset + " to catch it.")
+					.npc("Remember: " + config.getAnglerQuestFishHint())
+					.player("I'll keep trying!")
+					.thenRun(quester -> {
+						quester.sendMessage(new JsonBuilder(Dialog.getNPCPrefix(npc) + "If you need any extra help ").group()
+							.next("[hover here]")
+							.hover(questFish.getExtraHelp())
+						);
+					});
 			} else {
-				dialog.npc("Current fish to catch = " + questFish.getCustomName());
+				// RECEIVED QUEST
+				dialog
+					.player("What rare fish do you want right now?")
+					.npc(config.getAnglerQuestFishHint())
+					.thenRun(quester -> {
+						user.setReceivedAnglerQuestFish(questFish);
+						userService.save(user);
+					});
 			}
 
 			dialog.send(player);
@@ -359,6 +420,14 @@ public class Pugmas25 extends EdenEvent {
 			}
 			return true;
 		});
+	}
+
+	public static int getPlayerWorldHeight(Player player) {
+		int height = player.getLocation().getBlockY();
+		if (Pugmas25Districts.of(player) == Pugmas25District.CAVES)
+			height -= 100;
+
+		return height;
 	}
 
 	public enum Pugmas25QuestProgress {

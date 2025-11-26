@@ -8,6 +8,7 @@ import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Fishing.Pugmas25AnglerLoot;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Snowmen.Pugmas25Snowman;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waystones.Pugmas25Waystone;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -46,9 +47,10 @@ public class Pugmas25User implements PlayerOwnedObject {
 	private boolean unlockedCabin = false;
 	private Location spawnLocation = Pugmas25.get().warp;
 
-	private boolean receivedAnglerQuestInstructions = false; // TODO: SET TO FALSE ON NEW ANGLER QUEST
-	private boolean hasCaughtAnglerQuestLoot = false; // TODO: SET TO FALSE ON NEW ANGLER QUEST
-	private boolean completedAnglerQuest = false; // TODO: SET TO FALSE ON NEW ANGLER QUEST
+	private boolean receivedAnglerQuestInstructions = false;
+	private Pugmas25AnglerLoot receivedAnglerQuestFish = null;
+	private boolean hasCaughtAnglerQuestLoot = false;
+	private boolean completedAnglerQuest = false;
 	private int completedAnglerQuests = 0;
 
 	private Set<Pugmas25Waystone> foundWaystones = new HashSet<>();
@@ -96,5 +98,10 @@ public class Pugmas25User implements PlayerOwnedObject {
 		ClientSideItemFrame itemFrame = (ClientSideItemFrame) ClientSideConfig.getEntities(snowman.getFrameLoc(), ClientSideEntityType.ITEM_FRAME, 1).stream().findFirst().orElse(null);
 		if (itemFrame != null)
 			ClientSideUser.of(uuid).refresh(itemFrame.getUuid());
+	}
+
+	public void resetAnglerQuest() {
+		this.hasCaughtAnglerQuestLoot = false;
+		this.completedAnglerQuest = false;
 	}
 }

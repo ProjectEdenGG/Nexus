@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.quests;
 
+import gg.projecteden.nexus.features.equipment.skins.ArmorSkin;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Sidebar.Pugmas25SidebarLine;
 import gg.projecteden.nexus.features.quests.QuestItem;
@@ -18,6 +19,9 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @AllArgsConstructor
 public enum Pugmas25QuestItem implements QuestItem {
@@ -29,9 +33,9 @@ public enum Pugmas25QuestItem implements QuestItem {
 	BOX_OF_DECORATIONS(new ItemBuilder(ItemModelType.EMPTY_BOX).name("Box of Decorations").undroppable().untrashable().unframeable()),
 	BOX_OF_DECORATIONS_EMPTY(new ItemBuilder(ItemModelType.EMPTY_BOX).name("Empty Box of Decorations").undroppable().untrashable().unframeable()),
 
-	RED_BALLOON(new ItemBuilder(ItemModelType.EVENT_RED_BALLOON).name("&oRed Balloon").lore("&7Negates fall damage")),
+	//	RED_BALLOON(new ItemBuilder(ItemModelType.EVENT_RED_BALLOON).name("&oRed Balloon").lore("&7Negates fall damage")),
 	MAGIC_MIRROR(new ItemBuilder(ItemModelType.EVENT_MAGIC_MIRROR).name("&oMagic Mirror").lore("&7Opens the waystone warp menu")),
-	LUCKY_HORSESHOE(new ItemBuilder(ItemModelType.EVENT_LUCKY_HORSESHOE).name("&oLucky Horseshoe").lore("&7Higher chance to gain additional coins")),
+	LUCKY_HORSESHOE(new ItemBuilder(ItemModelType.EVENT_LUCKY_HORSESHOE).name("&oLucky Horseshoe").lore("&7Higher chance to gain additional rewards")),
 
 	ADVENTURE_POCKET_GUIDE(new ItemBuilder(ItemModelType.EVENT_ADVENTURE_POCKET_GUIDE).name("&oAdventurer's Pocket Guide").lore("&7Displays your area designation")),
 	GOLD_WATCH(new ItemBuilder(ItemModelType.EVENT_GOLD_WATCH).name("&oGold Watch").lore("&7Displays the current time")),
@@ -41,21 +45,28 @@ public enum Pugmas25QuestItem implements QuestItem {
 	FISHING_POCKET_GUIDE(new ItemBuilder(ItemModelType.EVENT_FISHING_POCKET_GUIDE).name("&oFisherman's Pocket Guide").lore("&7Displays your fishing luck")),
 	WEATHER_RADIO(new ItemBuilder(ItemModelType.EVENT_WEATHER_RADIO).name("&oWeather Radio").lore("&7Displays the current weather")),
 	SEXTANT(new ItemBuilder(ItemModelType.EVENT_SEXTANT).name("&oSextant").lore("&7Displays coordinates")),
-	FISH_FINDER(new ItemBuilder(ItemModelType.EVENT_FISH_FINDER).name("&oFish Finder").lore("&7Displays your fishing luck, height, and the current weather")),
+	FISH_FINDER(new ItemBuilder(ItemModelType.EVENT_FISH_FINDER).name("&oFish Finder").lore("&7Increases fishing luck by 5", "&7Displays your fishing luck, height, and the current weather")),
 
-	PDA(new ItemBuilder(ItemModelType.EVENT_PDA).name("&oPDA").lore("&7Displays direction, height, area designation, time, weather and fishing luck")),
+	PDA(new ItemBuilder(ItemModelType.EVENT_PDA).name("&oPDA").lore("&7Increases fishing luck by 5", "&7Displays direction, height, area designation, time, weather and fishing luck")),
 
 	FISHING_ROD_WOOD(new ItemBuilder(ItemModelType.FISHING_ROD_WOOD).name("Wood Fishing Rod")),
-	FISHING_ROD_REINFORCED(new ItemBuilder(ItemModelType.FISHING_ROD_REINFORCED).name("Reinforced Fishing Rod").enchant(Enchant.UNBREAKING, 2)),
-	FISHING_ROD_GOLDEN(new ItemBuilder(ItemModelType.FISHING_ROD_GOLDEN).name("Golden Fishing Rod").lore("&7Unbreakable").unbreakable().glow()),
+	FISHING_ROD_REINFORCED(new ItemBuilder(ItemModelType.FISHING_ROD_REINFORCED).name("Reinforced Fishing Rod").lore("&7Increases fishing luck by 5").enchant(Enchant.UNBREAKING, 2)),
+	FISHING_ROD_GOLDEN(new ItemBuilder(ItemModelType.FISHING_ROD_GOLDEN).name("Golden Fishing Rod").lore("&7Increases fishing luck by 15").unbreakable().glow()),
 
-	// TODO: probably build these into fishing instead --> MAKE THEM 3D INSTEAD
+	ANGLER_HAT(new ItemBuilder(Material.LEATHER_HELMET).model(ArmorSkin.FISHING.getBaseModel() + "/helmet").name("&oAngler Hat").lore("&7Increases fishing luck by 4").unbreakable()),
+	ANGLER_VEST(new ItemBuilder(Material.LEATHER_CHESTPLATE).model(ArmorSkin.FISHING.getBaseModel() + "/chestplate").name("&oAngler Vest").lore("&7Increases fishing luck by 4").unbreakable()),
+	ANGLER_PANTS(new ItemBuilder(Material.LEATHER_LEGGINGS).model(ArmorSkin.FISHING.getBaseModel() + "/leggings").name("&oAngler Pants").lore("&7Increases fishing luck by 4").unbreakable()),
+
+	SHOCK_ABSORBENT_BOOTS(new ItemBuilder(Material.LEATHER_BOOTS).model(ArmorSkin.WIZARD.getBaseModel() + "/boots").name("&oShock Absorbent Sandals").lore("&7Negates fall damage, but takes durability")),
+
 	CRATE_IRON(new ItemBuilder(ItemModelType.EVENT_CRATE_IRON).name("Iron Crate")),
 	CRATE_GOLD(new ItemBuilder(ItemModelType.EVENT_CRATE_GOLDEN).name("Golden Crate")),
 	CRATE_DIAMOND(new ItemBuilder(ItemModelType.EVENT_CRATE_DIAMOND).name("Diamond Crate")),
 
-	SHRINK_POTION(new ItemBuilder(Material.POTION).potionEffectColor(ColorType.LIGHT_GREEN.getBukkitColor()).name("&fPotion of Shrinking").lore("&9Shrinking (08:00)", "", "&5When Applied:", "&9-50% Scale")),
-	SNOWMAN_DECORATIONS(new ItemBuilder(Material.CARROT).name("Snowman Decorations").interactable()),
+	GIFT(new ItemBuilder(Material.CHEST).name("Gift")), // TODO
+	SLOT_MACHINE_TOKEN(new ItemBuilder(ItemModelType.EVENT_TOKEN).name("Slot Machine Token").lore("&7Used to roll the slot machine")),
+
+	//SHRINK_POTION(new ItemBuilder(Material.POTION).potionEffectColor(ColorType.LIGHT_GREEN.getBukkitColor()).name("&fPotion of Shrinking").lore("&9Shrinking (08:00)", "", "&5When Applied:", "&9-50% Scale")),
 
 	BALLOON_PAINTBRUSH(new ItemBuilder(ItemModelType.EVENT_PAINTBRUSH)
 		.name("&eBlock Replacer Brush")

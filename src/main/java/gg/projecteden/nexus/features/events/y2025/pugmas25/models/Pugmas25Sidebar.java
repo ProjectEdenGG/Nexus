@@ -170,7 +170,8 @@ public class Pugmas25Sidebar {
 				GeoIP geoIP = new GeoIPService().get(player);
 				int time = (int) player.getWorld().getTime();
 				boolean is24HourFormat = geoIP.getTimeFormat() == GeoIP.TimeFormat.TWENTY_FOUR;
-				return "&3Time: &e" + Utils.minecraftTimeToHumanTime(time, is24HourFormat);
+				String timeLabel = "(" + (player.getWorld().isDayTime() ? "Day" : "Night") + ")";
+				return "&3Time: &e" + Utils.minecraftTimeToHumanTime(time, is24HourFormat) + " " + timeLabel;
 			}
 		},
 
@@ -223,8 +224,7 @@ public class Pugmas25Sidebar {
 		HEIGHT(Pugmas25QuestItem.SEXTANT, Pugmas25QuestItem.FISH_FINDER) {
 			@Override
 			public String render(Player player) {
-				Location location = player.getLocation();
-				return "&3Height: &e" + location.getBlockY();
+				return "&3Height: &e" + Pugmas25.getPlayerWorldHeight(player);
 			}
 		},
 		;

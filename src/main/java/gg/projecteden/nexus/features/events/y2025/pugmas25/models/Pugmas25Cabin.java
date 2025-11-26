@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -34,26 +35,22 @@ public class Pugmas25Cabin implements Listener {
 	}
 
 	@EventHandler
-	public void onClickBed(PlayerInteractEvent event) {
-		if (event.getHand() != EquipmentSlot.HAND) return;
-		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-
-		Block block = event.getClickedBlock();
-		if (Nullables.isNullOrAir(block) || !MaterialTag.BEDS.isTagged(block))
-			return;
-
+	public void onEnterBed(PlayerBedEnterEvent event) {
 		var pugmas = Pugmas25.get();
-		if (!pugmas.isAtEvent(event))
-			return;
-
-		if (!pugmas.worldguard().isInRegion(event.getPlayer(), CABIN_REGION))
-			return;
-
-		Pugmas25User user = userService.get(event.getPlayer());
-		if (!user.isUnlockedCabin())
+		if (!pugmas.isAtEvent(event.getPlayer()))
 			return;
 
 		event.setCancelled(true);
+		Pugmas25User user = userService.get(event.getPlayer());
+
+		if (!pugmas.worldguard().isInRegion(event.getPlayer(), CABIN_REGION)) {
+			user.sendMessage(Pugmas25.PREFIX + "That's not your bed!");
+			return;
+		}
+
+		if (!user.isUnlockedCabin())
+			return;
+
 		user.setSpawnLocation(event.getPlayer().getLocation());
 		user.sendMessage(Pugmas25.PREFIX + "Respawn location set to current position");
 	}

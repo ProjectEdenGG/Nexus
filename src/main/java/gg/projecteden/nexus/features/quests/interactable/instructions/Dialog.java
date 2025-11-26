@@ -74,8 +74,12 @@ public class Dialog {
 
 	@NotNull
 	public String getNpcMessage(Quester quester, Interactable npc, String message) {
+		return getNPCPrefix(npc) + interpolate(message, quester);
+	}
+
+	public static String getNPCPrefix(Interactable npc) {
 		final String name = npc == null ? "NPC" : npc.getName();
-		return "&3" + name + " &7> &f" + interpolate(message, quester);
+		return "&3" + name + " &7> &f";
 	}
 
 	public Dialog player(String message) {
