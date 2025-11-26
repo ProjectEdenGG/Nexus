@@ -72,6 +72,10 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 		return colorize("&8&l[&e" + prefix + "&8&l]&3 ");
 	}
 
+	public static List<String> colorize(List<String> input) {
+		return input.stream().map(StringUtils::colorize).collect(Collectors.toList());
+	}
+
 	public static String colorize(String input) {
 		if (input == null)
 			return null;
