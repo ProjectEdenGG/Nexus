@@ -12,6 +12,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 
 import java.util.Map;
 import java.util.UUID;
@@ -36,5 +38,18 @@ public class VirtualInventoriesConfig implements DatabaseObject {
 		var service = new VirtualInventoriesConfigService();
 		var config = service.get0();
 		service.save(config);
+	}
+
+	public void initializeLocations() {
+		for (String world : personalInventories.keySet()) {
+			var map1 = personalInventories.get(world);
+			for (Integer x : map1.keySet())
+				for (Integer z : map1.get(x).keySet())
+					for (Integer y : map1.get(x).get(z).keySet())
+						map1.get(x).get(z).get(y).values().forEach(virtualInventory -> {
+							var location = new Location(Bukkit.getWorld(world), x, y, z);
+							virtualInventory.setLocation(location);
+						});
+		}
 	}
 }

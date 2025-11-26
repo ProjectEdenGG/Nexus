@@ -1,12 +1,14 @@
 package gg.projecteden.nexus.features.virtualinventories.managers;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.virtualinventories.events.VirtualInventoryConstructEvent;
 import gg.projecteden.nexus.features.virtualinventories.models.inventories.TickableVirtualInventory;
 import gg.projecteden.nexus.features.virtualinventories.models.inventories.VirtualInventory;
 import gg.projecteden.nexus.features.virtualinventories.models.inventories.VirtualInventoryType;
 import gg.projecteden.nexus.features.virtualinventories.models.inventories.VirtualPersonalInventory;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.virtualinventories.VirtualInventoriesConfigService;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Location;
@@ -40,6 +42,8 @@ public class VirtualPersonalInventoryManager extends Feature {
 	public void onStart() {
 		var service = new VirtualInventoriesConfigService();
 
+		service.get0().initializeLocations();
+
 		taskId = Tasks.repeat(TickTime.TICK.x(5), TickTime.TICK, () -> {
 			if (!VirtualInventoryManager.isTicking())
 				return;
@@ -59,9 +63,15 @@ public class VirtualPersonalInventoryManager extends Feature {
 				.map(virtualInventory -> (TickableVirtualInventory<?>) virtualInventory)
 				.filter(virtualInventory -> {
 					if (!(virtualInventory instanceof VirtualPersonalInventory virtualPersonalInventory))
-						return true;
+						return false;
 
-					return virtualPersonalInventory.getLocation().isChunkLoaded();
+					Location location = virtualPersonalInventory.getLocation();
+					if (location == null) {
+						Nexus.warn("No location defined for " + Nickname.of(virtualPersonalInventory.getOwner()) + "'s " + virtualInventory.getClass().getSimpleName());
+						return false;
+					}
+
+					return location.isChunkLoaded();
 				})
 				.anyMatch(TickableVirtualInventory::tick);
 
