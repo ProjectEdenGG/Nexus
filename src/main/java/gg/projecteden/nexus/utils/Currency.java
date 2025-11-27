@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.utils;
 
-import de.tr7zw.nbtapi.NBTItem;
+import de.tr7zw.nbtapi.NBT;
 import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu.Product;
 import gg.projecteden.nexus.features.quests.CommonQuestItem;
@@ -19,10 +19,13 @@ import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 public enum Currency {
@@ -70,19 +73,22 @@ public enum Currency {
 			if (Nullables.isNullOrAir(pouch))
 				throw new InvalidInputException("Cannot deposit to " + player.getName() + ", couldn't find a pouch");
 
-			final NBTItem nbtItem = new NBTItem(pouch);
-			if (!nbtItem.hasKey(CommonQuestItem.COIN_POUCH_NBT_KEY))
-				throw new InvalidInputException("Cannot deposit to " + player.getName() + ", pouch is missing NBT KEY: " + CommonQuestItem.COIN_POUCH_NBT_KEY);
+			AtomicInteger finalPouchCoins = new AtomicInteger();
+			NBT.modify(pouch, nbt -> {
+				if (!nbt.hasTag(CommonQuestItem.COIN_POUCH_NBT_KEY))
+					throw new InvalidInputException("Cannot deposit to " + player.getName() + ", pouch is missing NBT KEY: " + CommonQuestItem.COIN_POUCH_NBT_KEY);
 
-			Integer pouchCoins = nbtItem.getInteger(CommonQuestItem.COIN_POUCH_NBT_KEY);
-			if (pouchCoins == null)
-				throw new InvalidInputException("Cannot deposit to " + player.getName() + ", pouch NBT KEY returned null");
+				Integer pouchCoins = nbt.getInteger(CommonQuestItem.COIN_POUCH_NBT_KEY);
+				if (pouchCoins == null)
+					throw new InvalidInputException("Cannot deposit to " + player.getName() + ", pouch NBT KEY returned null");
 
-			pouchCoins += price.asInteger();
-			nbtItem.setInteger(CommonQuestItem.COIN_POUCH_NBT_KEY, pouchCoins);
-			nbtItem.applyNBT(pouch);
+				pouchCoins += price.asInteger();
+				nbt.setInteger(CommonQuestItem.COIN_POUCH_NBT_KEY, pouchCoins);
 
-			updateLore(pouch, pouchCoins);
+				finalPouchCoins.set(pouchCoins);
+			});
+
+			updateLore(pouch, finalPouchCoins.get());
 		}
 
 		@Override
@@ -91,15 +97,16 @@ public enum Currency {
 			if (Nullables.isNullOrAir(pouch))
 				return false;
 
-			final NBTItem nbtItem = new NBTItem(pouch);
-			if (!nbtItem.hasKey(CommonQuestItem.COIN_POUCH_NBT_KEY))
-				return false;
+			AtomicBoolean booleanResult = new AtomicBoolean(false);
+			NBT.modify(pouch, nbt -> {
+				if (nbt.hasTag(CommonQuestItem.COIN_POUCH_NBT_KEY)) {
+					Integer pouchCoins = nbt.getInteger(CommonQuestItem.COIN_POUCH_NBT_KEY);
+					if (pouchCoins != null)
+						booleanResult.set(pouchCoins >= price.asInteger());
+				}
+			});
 
-			Integer coins = nbtItem.getInteger(CommonQuestItem.COIN_POUCH_NBT_KEY);
-			if (coins == null)
-				return false;
-
-			return coins >= price.asInteger();
+			return booleanResult.get();
 		}
 
 		@Override
@@ -108,29 +115,34 @@ public enum Currency {
 			if (Nullables.isNullOrAir(pouch))
 				throw new InvalidInputException("Cannot withdraw from " + player.getName() + ", couldn't find a pouch");
 
-			final NBTItem nbtItem = new NBTItem(pouch);
-			if (!nbtItem.hasKey(CommonQuestItem.COIN_POUCH_NBT_KEY))
-				throw new InvalidInputException("Cannot withdraw from " + player.getName() + ", pouch is missing NBT KEY: " + CommonQuestItem.COIN_POUCH_NBT_KEY);
+			AtomicInteger finalPouchCoins = new AtomicInteger();
+			NBT.modify(pouch, nbt -> {
+				if (!nbt.hasTag(CommonQuestItem.COIN_POUCH_NBT_KEY))
+					throw new InvalidInputException("Cannot withdraw from " + player.getName() + ", pouch is missing NBT KEY: " + CommonQuestItem.COIN_POUCH_NBT_KEY);
 
-			Integer pouchCoins = nbtItem.getInteger(CommonQuestItem.COIN_POUCH_NBT_KEY);
-			if (pouchCoins == null)
-				throw new InvalidInputException("Cannot withdraw from " + player.getName() + ", pouch NBT KEY returned null");
+				Integer pouchCoins = nbt.getInteger(CommonQuestItem.COIN_POUCH_NBT_KEY);
+				if (pouchCoins == null)
+					throw new InvalidInputException("Cannot withdraw from " + player.getName() + ", pouch NBT KEY returned null");
 
-			pouchCoins -= price.asInteger();
-			nbtItem.setInteger(CommonQuestItem.COIN_POUCH_NBT_KEY, pouchCoins);
-			nbtItem.applyNBT(pouch);
+				pouchCoins -= price.asInteger();
+				nbt.setInteger(CommonQuestItem.COIN_POUCH_NBT_KEY, pouchCoins);
 
-			updateLore(pouch, pouchCoins);
+				finalPouchCoins.set(pouchCoins);
+			});
+
+			updateLore(pouch, finalPouchCoins.get());
 		}
 
 		private void updateLore(ItemStack pouch, int amount) {
-			List<String> lore = CommonQuestItem.COIN_POUCH.getItemBuilder().getLore();
+			List<String> lore = new ArrayList<>(CommonQuestItem.COIN_POUCH.getItemBuilder().getLore());
 			lore.addAll(List.of("", "&fCoins: &e" + StringUtils.getCnf().format(amount)));
-			List<String> coloredLore = new ArrayList<>();
+			List<String> colorizedLore = new ArrayList<>();
 			for (String line : lore) {
-				coloredLore.add(StringUtils.colorize(line));
+				colorizedLore.add(StringUtils.colorize(line));
 			}
-			pouch.setLore(coloredLore);
+			ItemMeta itemMeta = pouch.getItemMeta();
+			itemMeta.setLore(colorizedLore);
+			pouch.setItemMeta(itemMeta);
 		}
 	},
 	BALANCE() {
