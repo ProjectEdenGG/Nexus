@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.quests.events.QuestCompletedEvent;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuest;
+import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import lombok.Data;
@@ -73,11 +74,12 @@ public class Quest implements PlayerOwnedObject {
 	}
 
 	public Object getTotalSteps() {
-		return taskProgress.stream().mapToInt(taskProgress -> taskProgress.getSteps().size()).sum();
+		return quest.getTasks().stream().map(IQuestTask::get).mapToInt(task -> task.getSteps().size()).sum();
 	}
 
 	public Object getCompletedSteps() {
-		return taskProgress.subList(0, task).stream().mapToInt(QuestTaskProgress::getStep).sum();
+		int completed = quest.getTasks().subList(0, task).stream().map(IQuestTask::get).mapToInt(task -> task.getSteps().size()).sum();
+		return completed + taskProgress.get(task).getStep();
 	}
 
 }
