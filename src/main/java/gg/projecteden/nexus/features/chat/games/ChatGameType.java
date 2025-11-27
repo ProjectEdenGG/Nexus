@@ -255,6 +255,8 @@ public enum ChatGameType {
 		BARREL("What storage block has had it's storage space increased on Project Eden?", "barrel"),
 		TITAN("What is the name of the server's client-side mod made to streamline loading the resource pack?", "Titan"),
 		PROPORTIONATOR("What item allows you to change the scale of entities?", "Proportionator"),
+		BACKPACKS("Which custom server item virtually expands your inventory?", "Backpack"),
+		NETHERITE_BACKPACK("What is the top tier upgrade for backpacks?", List.of("Netherite", "Netherite Backpack")),
 
 		VOTE_CRATE_RAREST("What is the least likely reward you can obtain from the Vote Crate?", List.of("dragon egg", "ender dragon egg", "enderdragon egg")),
 		VOTE_CRATE_MOST_EXPENSIVE("How many vote points does a beacon cost in the Vote Point Store (/vps)?", getNumberAnswers(250)),
