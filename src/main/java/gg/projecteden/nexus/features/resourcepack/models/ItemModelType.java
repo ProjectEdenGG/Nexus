@@ -1404,6 +1404,7 @@ public enum ItemModelType {
 	NUTCRACKER_SHORT("decoration/christmas/nutcracker_short", true),
 	NUTCRACKER_TALL("decoration/christmas/nutcracker_tall", true),
 	EMPTY_BOX("events/pugmas25/empty_box"),
+	GNOMIFIER("events/pugmas25/gnomifier"),
 	ELECTRONICS_BATTERY("events/bearfair20/battery"),
 	BEARFAIR20_CONTROLLER_UNIT("events/bearfair20/controller_unit"),
 	ELECTRONICS_CPU("events/bearfair20/cpu"),

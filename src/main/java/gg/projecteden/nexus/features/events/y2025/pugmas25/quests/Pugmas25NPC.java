@@ -21,6 +21,9 @@ public enum Pugmas25NPC implements InteractableNPC {
 	ELF("Elf", 5631),
 	KID("Kid", 5632),
 
+
+	// Resident 5637-5657
+
 	;
 
 	private final String name;

@@ -46,27 +46,6 @@ public class Pugmas25QuestItemsListener implements Listener {
 			return;
 
 		event.setCancelled(true);
-		boots.damage((int) event.getDamage(), player);
+		boots.damage(2, player);
 	}
-
-//	@EventHandler
-//	public void on(PlayerItemConsumeEvent event) {
-//		Player player = event.getPlayer();
-//		if (!Pugmas25.get().isAtEvent(player))
-//			return;
-//
-//		ItemStack item = event.getItem();
-//		if (!Pugmas25QuestItem.SHRINK_POTION.fuzzyMatch(item))
-//			return;
-//
-//		PlayerUtils.send(player, "SHRINK PLAYER FOR X MINUTES");
-//	}
-
-//	@EventHandler
-//	public void on(EntityPotionEffectEvent event) {
-//		if (event.getCause() != Cause.EXPIRATION)
-//			return;
-//	}
-
-
 }

@@ -70,6 +70,7 @@ public class HubEffects extends Effects {
 
 	@Override
 	public void onStop() {
+		super.onStop();
 		HubModelTrain.shutdown();
 	}
 

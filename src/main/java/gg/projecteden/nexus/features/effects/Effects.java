@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 public abstract class Effects implements Listener {
 
 	public static List<Effects> EFFECTS = new ArrayList<>();
+	private static int rotatingStandsTask = -1;
 
 	public void onStart() {
 		EFFECTS.add(this);
@@ -50,6 +51,7 @@ public abstract class Effects implements Listener {
 	}
 
 	public void onStop() {
+		Tasks.cancel(rotatingStandsTask);
 	}
 
 	public void sounds() {}
@@ -154,7 +156,7 @@ public abstract class Effects implements Listener {
 
 		onLoadRotatingStands(rotatingStands);
 
-		Tasks.repeat(TickTime.SECOND.x(2), TickTime.TICK, () -> {
+		rotatingStandsTask = Tasks.repeat(TickTime.SECOND.x(2), TickTime.TICK, () -> {
 			Debug.log(DebugType.EFFECTS, "Rotating stands " + getClass().getSimpleName());
 			for (RotatingStand rotatingStand : rotatingStands) {
 				Debug.log(DebugType.EFFECTS, "Rotating stand: " + rotatingStand.getUuid());

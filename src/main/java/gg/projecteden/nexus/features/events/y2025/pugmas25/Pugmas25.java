@@ -188,6 +188,8 @@ public class Pugmas25 extends EdenEvent {
 
 	@Override
 	public void onStop() {
+		super.onStop();
+
 		if (sidebar != null)
 			sidebar.handleEnd();
 
@@ -310,12 +312,14 @@ public class Pugmas25 extends EdenEvent {
 			if (!user.isReceivedAnglerQuestInstructions()) {
 				// INTRO
 				dialog
-					.npc("I'm collecting rare fish for the holiday celebrations!")
+					.npc("Hey there! Would you like to help to collect some rare for the holiday celebrations?")
 					.npc("Every 2 hours, a new fish becomes available to catch.")
 					.npc("Each one can only be caught in a specific area, and sometimes only at a certain time of day.")
 					.player("So I just catch the fish you want?")
 					.npc("Exactly! Catch the fish, bring it back to me, and I'll reward you!")
 					.npc("Once time runs out, the fish changes, so make sure to come see me again for the next one!")
+					.npc("Take this to get started.")
+					.give(Pugmas25QuestItem.FISHING_ROD_WOOD)
 					.thenRun(quester -> {
 						user.setReceivedAnglerQuestInstructions(true);
 						userService.save(user);
@@ -342,10 +346,6 @@ public class Pugmas25 extends EdenEvent {
 			}
 
 			LocalDateTime resetDateTime = config.getAnglerQuestResetDateTime();
-			// TEMP
-			if (resetDateTime == null)
-				resetDateTime = now().plusHours(2);
-			//
 			var timeUntilReset = TimeUtils.Timespan.of(now(), resetDateTime).format(FormatType.LONG);
 
 			if (user.isCompletedAnglerQuest()) {
@@ -464,6 +464,21 @@ public class Pugmas25 extends EdenEvent {
 				return "&3 " + getName() + " &7- &eStarted (" + numCollected + "/" + numTotal + " presents)";
 			}
 		},
+		ANGLER {
+			@Override
+			String getProgress(Pugmas25User user) {
+				if (!user.isReceivedAnglerQuestInstructions())
+					return "&3 " + getName() + " &7- &cNot started";
+
+				Pugmas25Config config = new Pugmas25ConfigService().get0();
+				var timeUntilReset = TimeUtils.Timespan.of(Pugmas25.get().now(), config.getAnglerQuestResetDateTime()).format(FormatType.LONG);
+
+				if (user.isCompletedAnglerQuest())
+					return "&3 " + getName() + " &7- &aCompleted (resets in " + timeUntilReset + ")";
+
+				return "&3 " + getName() + " &7- &eStarted (Talk to the Angler for more info)";
+			}
+		}
 		;
 
 		abstract String getProgress(Pugmas25User user);

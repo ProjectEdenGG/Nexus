@@ -344,7 +344,7 @@ public class Pugmas25Fishing implements Listener {
 		Pugmas25User user = userService.get(player);
 		int luck = Pugmas25Fishing.getLuck(player);
 
-		int anglerLuck = luck;
+		int anglerLuck = Math.max(luck, 5);
 		if (user.isHasCaughtAnglerQuestLoot())
 			anglerLuck = (int) Math.ceil(anglerLuck / 3.0);
 
@@ -409,7 +409,7 @@ public class Pugmas25Fishing implements Listener {
 		if (luck > 20) {
 			possibleTreasure.add(Pugmas25QuestItem.SLOT_MACHINE_TOKEN.get());
 			possibleTreasure.add(Pugmas25QuestItem.GIFT.get());
-			possibleTreasure.add(new ItemBuilder(Material.NETHERITE_INGOT).amount(getLuckyAmount(1, 2, luck)).build());
+			possibleTreasure.add(new ItemBuilder(Material.NETHERITE_SCRAP).amount(getLuckyAmount(1, 2, luck)).build());
 		}
 
 		return RandomUtils.randomElement(possibleTreasure);

@@ -39,6 +39,7 @@ public class AvontyreEffects extends Effects {
 
 	@Override
 	public void onStop() {
+		super.onStop();
 		ambientSounds.onStop();
 	}
 

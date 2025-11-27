@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.quests;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.equipment.skins.ArmorSkin;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Sidebar.Pugmas25SidebarLine;
@@ -14,13 +15,16 @@ import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.attribute.AttributeModifier.Operation;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -47,11 +51,11 @@ public enum Pugmas25QuestItem implements QuestItem {
 	SEXTANT(new ItemBuilder(ItemModelType.EVENT_SEXTANT).name("&oSextant").lore("&7Displays coordinates")),
 	FISH_FINDER(new ItemBuilder(ItemModelType.EVENT_FISH_FINDER).name("&oFish Finder").lore("&7Increases fishing luck by 5", "&7Displays your fishing luck, height, and the current weather")),
 
-	PDA(new ItemBuilder(ItemModelType.EVENT_PDA).name("&oPDA").lore("&7Increases fishing luck by 5", "&7Displays direction, height, area designation, time, weather and fishing luck")),
+	PDA(new ItemBuilder(ItemModelType.EVENT_PDA).name("&oPDA").lore("&7Increases fishing luck by 5", "&7Opens the waystone warp menu", "&7Displays direction, height, area designation, time, weather and fishing luck")),
 
-	FISHING_ROD_WOOD(new ItemBuilder(ItemModelType.FISHING_ROD_WOOD).name("Wood Fishing Rod")),
-	FISHING_ROD_REINFORCED(new ItemBuilder(ItemModelType.FISHING_ROD_REINFORCED).name("Reinforced Fishing Rod").lore("&7Increases fishing luck by 5").enchant(Enchant.UNBREAKING, 2)),
-	FISHING_ROD_GOLDEN(new ItemBuilder(ItemModelType.FISHING_ROD_GOLDEN).name("Golden Fishing Rod").lore("&7Increases fishing luck by 15").unbreakable().glow()),
+	FISHING_ROD_WOOD(new ItemBuilder(ItemModelType.FISHING_ROD_WOOD).name("Wood Fishing Rod").enchant(Enchantment.LURE, 1)),
+	FISHING_ROD_REINFORCED(new ItemBuilder(ItemModelType.FISHING_ROD_REINFORCED).name("Reinforced Fishing Rod").lore("&7Increases fishing luck by 5").enchant(Enchant.UNBREAKING, 2).enchant(Enchantment.LURE, 2)),
+	FISHING_ROD_GOLDEN(new ItemBuilder(ItemModelType.FISHING_ROD_GOLDEN).name("Golden Fishing Rod").lore("&7Increases fishing luck by 15").enchant(Enchantment.LURE, 3).unbreakable().glow()),
 
 	ANGLER_HAT(ArmorSkin.FISHING.apply(new ItemBuilder(Material.LEATHER_HELMET).name("&oAngler Hat").lore("&7Increases fishing luck by 4").unbreakable())),
 	ANGLER_VEST(ArmorSkin.FISHING.apply(new ItemBuilder(Material.LEATHER_CHESTPLATE).name("&oAngler Vest").lore("&7Increases fishing luck by 4").unbreakable())),
@@ -66,7 +70,8 @@ public enum Pugmas25QuestItem implements QuestItem {
 	GIFT(new ItemBuilder(Material.CHEST).name("Gift")), // TODO
 	SLOT_MACHINE_TOKEN(new ItemBuilder(ItemModelType.EVENT_TOKEN).name("Slot Machine Token").lore("&7Used to roll the slot machine")),
 
-	//SHRINK_POTION(new ItemBuilder(Material.POTION).potionEffectColor(ColorType.LIGHT_GREEN.getBukkitColor()).name("&fPotion of Shrinking").lore("&9Shrinking (08:00)", "", "&5When Applied:", "&9-50% Scale")),
+	GNOMIFIER(new ItemBuilder(ItemModelType.GNOMIFIER).name("Gnomifier").lore("&7Shrinks the holder to 50% scale").untrashable().unframeable()
+		.attribute(Attribute.SCALE, new AttributeModifier(new NamespacedKey(Nexus.getInstance(), "gnomifier"), -0.5, Operation.ADD_NUMBER, EquipmentSlotGroup.HAND))),
 
 	BALLOON_PAINTBRUSH(new ItemBuilder(ItemModelType.EVENT_PAINTBRUSH)
 		.name("&eBlock Replacer Brush")

@@ -17,10 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/*
-	TODO:
-		- IF PLAYER IS IN CAVES DISTRICT, SUBTRACT X FROM HEIGHT VARIABLE ON PDA
- */
 public class Pugmas25Districts implements Listener {
 	private static final String districtRegionPrefix = Pugmas25.get().getRegionName() + "_district_";
 	private static final String biomeRegionPrefix = Pugmas25.get().getRegionName() + "_biome_";

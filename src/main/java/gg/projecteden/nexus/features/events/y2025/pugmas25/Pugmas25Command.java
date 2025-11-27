@@ -121,20 +121,51 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 	protected void quest_progress(@Arg(value = "self", permission = Group.STAFF) Quester quester) {
 		super.quest_progress(quester);
 		Pugmas25QuestProgress.ADVENT.send(user);
+		Pugmas25QuestProgress.ANGLER.send(user);
 		Pugmas25QuestProgress.NUTCRACKERS.send(user);
 	}
 
-	@Path
-	@Permission(Group.ADMIN)
-	void deleteAllDatabaseData() {
-		// TODO: PUGMAS RELEASE
-	}
-
-	@Path("deleteQuest <quest>")
+	@Path("database deleteQuest <quest>")
 	@Permission(Group.ADMIN)
 	void nextStep(Pugmas25Quest pugmasQuest) {
 		quester.getQuests().removeIf(quest -> quest.getQuest() == pugmasQuest);
 		questerService.save(quester);
+	}
+
+	@Path("database deleteQuesterData")
+	@Permission(Group.ADMIN)
+	void deleteQuests() {
+		quester.getQuests().removeIf(quest -> quest.getQuest() == Pugmas25Quest.INTRO || quest.getQuest() == Pugmas25Quest.DECORATE_SNOWMEN);
+		questerService.save(quester);
+		send("Deleted pugmas quest data from QuesterService");
+	}
+
+	@Path("database deleteUserData")
+	@Permission(Group.ADMIN)
+	void deleteUser() {
+		userService.delete(user);
+		userService.save(user);
+		quester.getQuests().removeIf(quest -> quest.getQuest() == Pugmas25Quest.INTRO || quest.getQuest() == Pugmas25Quest.DECORATE_SNOWMEN);
+		send("Deleted pugmas quest data from QuesterService");
+	}
+
+	@Path("database deleteAllData")
+	@Permission(Group.ADMIN)
+	void deleteAllDatabaseData() { // TODO: RELEASE PUGMAS
+		if (true) {
+			send("Disabled until release");
+			return;
+		}
+
+		for (Pugmas25User _user : userService.getAll()) {
+			Quester _quester = questerService.get(_user);
+			_quester.getQuests().removeIf(quest -> quest.getQuest() == Pugmas25Quest.INTRO || quest.getQuest() == Pugmas25Quest.DECORATE_SNOWMEN);
+		}
+		questerService.cacheAll();
+		send("Deleted all pugmas quest data from QuesterService");
+
+		userService.deleteAll();
+		send("Deleted all data from Pugmas25UserService");
 	}
 
 	@Path("modelTrain length <length>")
