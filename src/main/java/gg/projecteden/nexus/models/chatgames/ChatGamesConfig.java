@@ -367,8 +367,8 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 			return false;
 		}
 
-		private static final float NUMERIC_THRESHOLD = .2f;
-		private static final float LEVENSHTEIN_THRESHOLD = .6f;
+		public static final float NUMERIC_THRESHOLD = .2f;
+		public static final float LEVENSHTEIN_THRESHOLD = .6f;
 
 		public boolean isAnswerSimilar(String message) {
 			if (message == null)

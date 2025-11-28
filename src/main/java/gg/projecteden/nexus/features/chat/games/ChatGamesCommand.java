@@ -28,8 +28,11 @@ import lombok.NoArgsConstructor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.simmetrics.metrics.StringMetrics;
 
 import java.util.Set;
+
+import static gg.projecteden.nexus.models.chatgames.ChatGamesConfig.ChatGame.LEVENSHTEIN_THRESHOLD;
 
 @NoArgsConstructor
 public class ChatGamesCommand extends CustomCommand implements Listener {
@@ -130,6 +133,15 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 
 		type.create().queue(now ? 0.01 : RandomUtils.randomDouble(1, 3));
 		send(PREFIX + "Chat games have been " + (now ? "started" : "queued. They will start soon!"));
+	}
+
+	@Path("compare <phrases...>")
+	@Description("Compare two phrases separated with a pipe (|) using a Levenshtein comparison")
+	void compare(String phrases) {
+		String[] split = phrases.split("\\|");
+		var similarity = StringMetrics.levenshtein().compare(split[0], split[1]);
+		send(PREFIX + "Similarity: " + StringUtils.getDf().format(similarity));
+		send(PREFIX + "Similarities greater than or equal to " + StringUtils.getDf().format(LEVENSHTEIN_THRESHOLD) + " are marked as 'close'");
 	}
 
 	@EventHandler
