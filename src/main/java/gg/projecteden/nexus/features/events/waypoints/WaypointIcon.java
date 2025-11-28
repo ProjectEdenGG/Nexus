@@ -13,6 +13,17 @@ enum WaypointIcon {
 	BOWTIE("bowtie"),
 	X("x"),
 	PRESENT("present"),
+	FOOD("food"),
+	HEART("heart"),
+	HOME("home"),
+	MOB("mob"),
+	MOUNTAIN("mountain"),
+	PICKAXE("pickaxe"),
+	PIN("pin"),
+	PORTAL("portal"),
+	STRONGHOLD("stronghold"),
+	SWORD("sword"),
+	TREE("tree"),
 	;
 
 	private final String location;
