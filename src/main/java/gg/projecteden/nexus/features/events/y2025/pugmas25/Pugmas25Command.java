@@ -28,6 +28,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Intro;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25ModelTrain;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25SellCrate.Pugmas25SellCrateType;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Train;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25NPC;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25Quest;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestWaypoint;
@@ -54,6 +55,7 @@ import gg.projecteden.nexus.models.pugmas25.Pugmas25ConfigService;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.models.quests.Quester;
+import gg.projecteden.nexus.utils.CitizensUtils.NPCFinder;
 import gg.projecteden.nexus.utils.Currency;
 import gg.projecteden.nexus.utils.Currency.Price;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -62,6 +64,8 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.trait.LookClose;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -116,6 +120,22 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 			error("You need to take the Pugmas train at Hub to unlock this warp.");
 
 		player().teleportAsync(Pugmas25.get().warp, TeleportCause.COMMAND);
+	}
+
+	@Path("npcs setup residents")
+	@Permission(Group.ADMIN)
+	void npcs_setup_residents() {
+		List<NPC> npcs = NPCFinder.builder().predicate(Pugmas25NPC.RESIDENT.getPredicate()).find();
+		send(PREFIX + "Updating " + npcs.size() + " Resident NPCs...");
+		npcs.forEach(npc -> {
+			var lookclose = npc.getOrAddTrait(LookClose.class);
+			if (!lookclose.isEnabled())
+				lookclose.toggle();
+			lookclose.setTargetNPCs(true);
+			lookclose.setRealisticLooking(true);
+			send(PREFIX + "Updated Resident #" + npc.getId());
+		});
+		send(PREFIX + "Done");
 	}
 
 	@Override
