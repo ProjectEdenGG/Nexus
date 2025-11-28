@@ -1,4 +1,5 @@
 BlockParty song suggestions:
+- [ ] Dragula
 - [ ] Scooby-Doo
 - [ ] Surfin' Spooks
 - [ ] No one lives forever
