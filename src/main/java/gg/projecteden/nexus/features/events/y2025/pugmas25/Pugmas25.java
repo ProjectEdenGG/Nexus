@@ -256,6 +256,7 @@ public class Pugmas25 extends EdenEvent {
 	@Override
 	public void registerInteractHandlers() {
 		handleInteract(Pugmas25NPC.BLACKSMITH, (player, npc) -> Pugmas25ShopMenu.BLACKSMITH.open(player));
+		handleInteract(Pugmas25NPC.TINKERER, (player, npc) -> Pugmas25ShopMenu.TINKERER.open(player));
 
 		handleInteract(Pugmas25NPC.ELF, (player, npc) -> {
 			final Pugmas25UserService userService = new Pugmas25UserService();

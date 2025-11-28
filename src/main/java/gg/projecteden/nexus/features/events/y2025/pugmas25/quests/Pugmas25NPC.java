@@ -11,15 +11,16 @@ import java.util.function.Predicate;
 @AllArgsConstructor
 public enum Pugmas25NPC implements InteractableNPC {
 	BLACKSMITH("Blacksmith", 5591),
+	TINKERER("Tinkerer", 5597),
 	ANGLER("Angler", 5590),
 	TICKET_MASTER("Ticket Master", 5587),
 	TICKET_MASTER_HUB("Ticket Master", 5588),
 	INN_KEEPER("Inn Keeper", 5630),
 	POWER("Power", 5589),
-	TINKERER("Tinkerer", 5597),
 	GNOME("Gnome", 5598),
 	ELF("Elf", 5631),
 	KID("Kid", 5632),
+	MAYOR("Mayor", 5636),
 
 
 	// Resident 5637-5657

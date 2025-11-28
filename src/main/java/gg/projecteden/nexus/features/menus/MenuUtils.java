@@ -14,6 +14,7 @@ import gg.projecteden.nexus.features.menus.api.content.SlotIterator.Type;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.quests.CommonQuestItem;
+import gg.projecteden.nexus.features.quests.QuestItem;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
@@ -362,7 +363,7 @@ public abstract class MenuUtils {
 				Price finalPrice = price;
 
 				boolean canAfford = currency.canAfford(viewer, finalPrice, shopGroup);
-				String priceLore = currency.getPriceLore(finalPrice, canAfford);
+				List<String> priceLore = currency.getPriceLore(viewer, finalPrice, canAfford);
 
 				final ItemBuilder displayItem = new ItemBuilder(product.getDisplayItemStack()).lore(priceLore);
 				items.add(ClickableItem.of(displayItem, e -> {
@@ -433,6 +434,10 @@ public abstract class MenuUtils {
 
 			public Product() {
 				this(null, null);
+			}
+
+			public Product(QuestItem questItem) {
+				this(questItem.get());
 			}
 
 			public Product(ItemBuilder itemBuilder) {
