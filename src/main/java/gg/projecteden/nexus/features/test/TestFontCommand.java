@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.test;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.NearCommand;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomFont;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
@@ -32,7 +33,7 @@ public class TestFontCommand extends CustomCommand {
 
 	@Path("<displayType> <text...> [--font] [--rows]")
 	@HideFromWiki
-	void run(DisplayType type, String text, @Arg("minecraft:default") @Switch String font, @Arg("1") @Switch int rows) {
+	void run(DisplayType type, String text, @Arg("default") @Switch CustomFont font, @Arg("1") @Switch int rows) {
 		type.getConsumer().accept(player(), new TestFontArgs(new JsonBuilder(text).font(font), rows));
 	}
 
