@@ -1,7 +1,8 @@
 package gg.projecteden.nexus.features.events.waypoints;
 
+import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.Distance;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraft.world.waypoints.WaypointTransmitter.Connection;
@@ -39,11 +40,9 @@ class WaypointInstance {
 
 	public void shutdown() {
 		connection.disconnect();
-		if (armorStand != null) {
+		if (armorStand != null)
 			armorStand.remove();
-			Dev.GRIFFIN.send("Shut down waypoint " + getWaypoint());
-		} else {
-			Dev.GRIFFIN.send("Failed to shut down waypoint " + getWaypoint() + " (no armor stand)");
-		}
+		else
+			Nexus.warn("Failed to shut down " + Nickname.of(uuid) + "'s " + getWaypoint() + " waypoint (armor stand is null)");
 	}
 }
