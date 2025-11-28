@@ -12,6 +12,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.BlockDisplay;
@@ -21,6 +22,8 @@ import org.bukkit.entity.TextDisplay;
 import org.bukkit.util.Transformation;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
+
+import static java.lang.Float.parseFloat;
 
 @Permission(Group.ADMIN)
 public class DisplayEntityCommand extends CustomCommand {
@@ -71,6 +74,22 @@ public class DisplayEntityCommand extends CustomCommand {
 			new Vector3f(scale, scale, scale),
 			transformation.getRightRotation()
 		));
+	}
+
+	@Path("edit text rotation [--yaw] [--pitch]")
+	@Description("Set the scale of the nearest text display")
+	void edit_text_rotation(@Switch String yaw, @Switch String pitch) {
+		if (yaw == null) yaw = String.valueOf(textDisplay().getYaw());
+		if (pitch == null) pitch = String.valueOf(textDisplay().getPitch());
+		if ("current".equalsIgnoreCase(yaw)) yaw = String.valueOf(player().getLocation().multiply(-1).getYaw());
+		if ("current".equalsIgnoreCase(pitch)) pitch = String.valueOf(player().getLocation().multiply(-1).getPitch());
+
+		if (!Utils.isDouble(yaw))
+			error("Invalid yaw " + yaw);
+		if (!Utils.isDouble(pitch))
+			error("Invalid pitch " + pitch);
+
+		textDisplay().setRotation(parseFloat(yaw), parseFloat(pitch));
 	}
 
 	@NotNull

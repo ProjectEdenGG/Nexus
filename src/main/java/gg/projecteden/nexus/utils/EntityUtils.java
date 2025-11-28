@@ -9,13 +9,23 @@ import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.entity.*;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -47,8 +57,15 @@ public class EntityUtils {
 	public static Optional<Entity> getNearestEntity(Location location, int radius) {
 		return location.getNearbyEntities(radius, radius, radius).stream()
 			.filter(entity -> entity.getType() != EntityType.PLAYER)
-			.sorted(Comparator.comparing(entity -> Distance.distance(location, entity).get()))
-			.findFirst();
+			.min(Comparator.comparing(entity -> Distance.distance(location, entity).get()));
+	}
+
+	@NotNull
+	public static <E extends Entity> Optional<E> getNearestEntity(Location location, int radius, Class<E> entityClass) {
+		return location.getNearbyEntities(radius, radius, radius).stream()
+			.filter(entityClass::isInstance)
+			.map(entityClass::cast)
+			.min(Comparator.comparing(entity -> Distance.distance(location, entity).get()));
 	}
 
 	public static boolean isHostile(Entity entity) {

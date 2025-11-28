@@ -10,11 +10,13 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import lombok.Builder;
+import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.MobType;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.Spawned;
+import net.citizensnpcs.trait.CurrentLocation;
 import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.SkinTrait;
 import org.bukkit.Location;
@@ -146,8 +148,12 @@ public class CitizensUtils {
 	}
 
 	public static void respawnNPC(int npcId) {
-		if (!shouldSpawn(npcId))
-			PlayerUtils.runCommandAsConsole("npc spawn " + npcId);
+		if (!shouldSpawn(npcId)) {
+			NPC npc = CitizensUtils.getNPC(npcId);
+			npc.getOrAddTrait(Spawned.class).setSpawned(true);
+			var location = npc.getOrAddTrait(CurrentLocation.class).getLocation();
+			npc.spawn(location, SpawnReason.COMMAND);
+		}
 	}
 
 	private static boolean shouldSpawn(int npcId) {
@@ -167,7 +173,9 @@ public class CitizensUtils {
 	}
 
 	public static void despawnNPC(int npcId) {
-		PlayerUtils.runCommandAsConsole("npc despawn " + npcId);
+		NPC npc = CitizensUtils.getNPC(npcId);
+		npc.getOrAddTrait(Spawned.class).setSpawned(false);
+		npc.despawn(DespawnReason.REMOVAL);
 	}
 
 	public static Location locationOf(int id) {

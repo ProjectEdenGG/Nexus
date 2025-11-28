@@ -5,6 +5,7 @@ import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomFont;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -25,7 +26,10 @@ import gg.projecteden.nexus.models.staffhall.StaffHallConfig.StaffHallRankGroup;
 import gg.projecteden.nexus.models.staffhall.StaffHallConfigService;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.EntityUtils;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
@@ -45,6 +49,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Directional;
+import org.bukkit.entity.TextDisplay;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -57,6 +62,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -64,6 +70,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
+import static gg.projecteden.nexus.utils.StringUtils.xyz;
+import static java.util.stream.Collectors.joining;
 
 @NoArgsConstructor
 public class StaffHallCommand extends CustomCommand implements Listener {
@@ -250,11 +258,28 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 			user.getActiveDisplayCostumes().forEach((costumeType, costume) ->
 				equipment.set(costumeType.getNpcSlot(), user.getCostumeItem(Costume.of(costume))));
 		}
+
+		var textDisplay = EntityUtils.getNearestEntity(npc.getStoredLocation(), 2, TextDisplay.class);
+		textDisplay.ifPresent(display -> {
+			if ((int) display.getLocation().getY() != 137) {
+				Dev.GRIFFIN.send("Found text display at " + xyz(display.getLocation()));
+				return;
+			}
+
+			String[] split = nerd.getNickname().toLowerCase().split("");
+			String nickname = String.join("", Arrays.stream(split).map(c -> c + "ꈃ").collect(joining()));
+			display.text(new JsonBuilder(nerd.getRank().getChatColor() + nickname).font(CustomFont.BLOCKY).build());
+		});
 	}
 
 	private static void despawnNpc(int npcId) {
+		NPC npc = CitizensUtils.getNPC(npcId);
+
 		CitizensUtils.despawnNPC(npcId);
 		updateBlockBelow(npcId, ColorType.GRAY);
+
+		var textDisplay = EntityUtils.getNearestEntity(npc.getStoredLocation(), 2, TextDisplay.class);
+		textDisplay.ifPresent(display -> display.text(new JsonBuilder("&f").build()));
 	}
 
 	private static void updateBlockBelow(int npcId, ColorType color) {
