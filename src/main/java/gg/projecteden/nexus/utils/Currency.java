@@ -23,6 +23,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -31,13 +32,52 @@ import java.util.concurrent.atomic.AtomicInteger;
 public enum Currency {
 	FREE() {
 		@Override
-		public String getPriceLore(Price price, boolean canAfford) {
-			return "&3Price: &aFree";
+		public List<String> getPriceLore(Player player, Price price, boolean canAfford) {
+			return new ArrayList<>(List.of("", "&3Price: &aFree"));
 		}
 
 		@Override
 		public boolean _canAfford(Player player, Price price, ShopGroup shopGroup) {
 			return true;
+		}
+	},
+	ITEMS() {
+		@Override
+		public List<String> getPriceLore(Player player, Price price, boolean canAfford) {
+			List<ItemStack> priceItems = price.asItems();
+
+			List<String> lore = new ArrayList<>(List.of("", "&3Price:"));
+			for (ItemStack priceItem : priceItems) {
+				lore.add(" &3- " + getCanAffordColor(player, priceItem) + StringUtils.stripColor(StringUtils.pretty(priceItem)));
+			}
+
+			return lore;
+		}
+
+		private String getCanAffordColor(Player player, ItemStack item) {
+			return PlayerUtils.playerHas(player, item) ? "&a" : "&c";
+		}
+
+		@Override
+		public boolean _canAfford(Player player, Price price, ShopGroup shopGroup) {
+			List<ItemStack> priceItems = price.asItems();
+			for (ItemStack priceItem : priceItems) {
+				if (!PlayerUtils.playerHas(player, priceItem)) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		@Override
+		public void _withdraw(Player player, Price price, ShopGroup shopGroup, Product product) {
+			List<ItemStack> priceItems = price.asItems();
+			for (ItemStack priceItem : priceItems) {
+				if (Nullables.isNullOrAir(priceItem))
+					continue;
+
+				player.getInventory().removeItem(priceItem);
+			}
 		}
 	},
 	ITEM() {
@@ -273,8 +313,8 @@ public enum Currency {
 		return price.asInteger() + "";
 	}
 
-	public String getPriceLore(Price price, boolean canAfford) {
-		return "&3Price: " + (canAfford ? "&a" : "&c") + this.pretty(price);
+	public List<String> getPriceLore(Player player, Price price, boolean canAfford) {
+		return new ArrayList<>(List.of("", "&3Price: " + (canAfford ? "&a" : "&c") + this.pretty(price)));
 	}
 
 	public void log(Player viewer, Price price, Product product, ShopGroup shopGroup) {
@@ -290,6 +330,7 @@ public enum Currency {
 	@Getter
 	public static class Price implements Cloneable {
 		ItemStack item;
+		List<ItemStack> items;
 		int numInt;
 		double numDouble;
 		boolean free;
@@ -304,6 +345,7 @@ public enum Currency {
 			return of(value);
 		}
 
+		@SuppressWarnings("unchecked")
 		public static Price of(Object value) {
 			Price result = new Price();
 			if (value == null) {
@@ -311,7 +353,10 @@ public enum Currency {
 				return result;
 			}
 
-			if (value instanceof Material material) {
+			if (value instanceof List<?> list && list.stream().allMatch(ItemStack.class::isInstance)) {
+				result.items = (List<ItemStack>) list;
+				result.empty = false;
+			} else if (value instanceof Material material) {
 				result.item = new ItemStack(material);
 				result.empty = false;
 			} else if (value instanceof ItemStack) {
@@ -344,11 +389,29 @@ public enum Currency {
 			return item;
 		}
 
+		public List<ItemStack> asItems() {
+			return items;
+		}
+
 		public void applyDiscount(double percentage) {
 			if (free || empty)
 				return;
 
-			if (!Nullables.isNullOrAir(item)) {
+			if (Nullables.isNotNullOrEmpty(items)) {
+				for (ItemStack _item : new ArrayList<>(items)) {
+					int amount = (int) (_item.getAmount() - Math.ceil(_item.getAmount() * percentage));
+					if (amount <= 0) {
+						amount = 0;
+						items.remove(_item);
+					}
+					item.setAmount(amount);
+				}
+
+				if (items.isEmpty())
+					free = true;
+			}
+
+			if (Nullables.isNotNullOrAir(item)) {
 				int amount = (int) (item.getAmount() - Math.ceil(item.getAmount() * percentage));
 				if (amount <= 0) {
 					amount = 0;
@@ -380,7 +443,9 @@ public enum Currency {
 		@SuppressWarnings("MethodDoesntCallSuperMethod")
 		public Price clone() {
 			Price price = new Price();
-			if (!Nullables.isNullOrAir(item))
+			if (Nullables.isNotNullOrEmpty(items))
+				price.items = new ArrayList<>(items);
+			if (Nullables.isNotNullOrAir(item))
 				price.item = item.clone();
 			price.numInt = numInt;
 			price.numDouble = numDouble;
