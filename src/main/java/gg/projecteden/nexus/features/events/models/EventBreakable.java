@@ -4,7 +4,11 @@ import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.features.customenchants.EnchantUtils;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.BlockRegenJob;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.Enchant;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.ToolType;
 import gg.projecteden.nexus.utils.ToolType.ToolGrade;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +19,11 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -117,6 +125,10 @@ public class EventBreakable {
 			this.pitch$value = pitch;
 			this.pitch$set = true;
 			return this;
+		}
+
+		public EventBreakableBuilder drops(Material material) {
+			return drops(material, 1, 1);
 		}
 
 		public EventBreakableBuilder drops(Material material, int min, int max) {

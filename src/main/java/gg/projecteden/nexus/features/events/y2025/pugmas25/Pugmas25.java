@@ -9,6 +9,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.nexus.features.commands.DeathMessagesCommand;
 import gg.projecteden.nexus.features.events.EdenEvent;
+import gg.projecteden.nexus.features.events.models.EventBreakable;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.advent.Pugmas25Advent;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.balloons.Pugmas25BalloonEditor;
@@ -60,6 +61,8 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.ToolType;
+import gg.projecteden.nexus.utils.ToolType.ToolGrade;
 import gg.projecteden.nexus.utils.Utils.EquipmentSlotGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -68,6 +71,7 @@ import net.kyori.adventure.text.TranslatableComponent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -392,6 +396,70 @@ public class Pugmas25 extends EdenEvent {
 
 			dialog.send(player);
 		});
+	}
+
+	@Override
+	protected void registerBreakableBlocks() {
+		registerBreakable(EventBreakable.builder()
+			.blockMaterials(Material.COAL_ORE, Material.DEEPSLATE_COAL_ORE)
+			.drops(Material.COAL, 1, 3)
+			.placeholderTypes(Material.COBBLESTONE)
+			.requiredTool(ToolType.PICKAXE, ToolGrade.STONE)
+		);
+
+		registerBreakable(EventBreakable.builder()
+			.blockMaterials(Material.LAPIS_ORE, Material.DEEPSLATE_LAPIS_ORE)
+			.drops(Material.LAPIS_LAZULI, 2, 5)
+			.placeholderTypes(Material.COBBLESTONE)
+			.requiredTool(ToolType.PICKAXE, ToolGrade.STONE)
+		);
+
+		registerBreakable(EventBreakable.builder()
+			.blockMaterials(Material.COPPER_ORE, Material.DEEPSLATE_COPPER_ORE)
+			.drops(Material.RAW_COPPER, 1, 3)
+			.placeholderTypes(Material.COBBLESTONE)
+			.requiredTool(ToolType.PICKAXE, ToolGrade.STONE)
+		);
+
+		registerBreakable(EventBreakable.builder()
+			.blockMaterials(Material.GOLD_ORE, Material.DEEPSLATE_GOLD_ORE)
+			.drops(Material.RAW_GOLD, 1, 2)
+			.placeholderTypes(Material.COBBLESTONE)
+			.requiredTool(ToolType.PICKAXE, ToolGrade.IRON)
+		);
+
+		registerBreakable(EventBreakable.builder()
+			.blockMaterials(Material.IRON_ORE, Material.DEEPSLATE_IRON_ORE)
+			.drops(Material.RAW_IRON, 1, 2)
+			.placeholderTypes(Material.COBBLESTONE)
+			.requiredTool(ToolType.PICKAXE, ToolGrade.STONE)
+		);
+
+		registerBreakable(EventBreakable.builder()
+			.blockMaterials(Material.DIAMOND_ORE, Material.DEEPSLATE_DIAMOND_ORE)
+			.drops(Material.DIAMOND, 1, 2)
+			.placeholderTypes(Material.COBBLESTONE)
+			.requiredTool(ToolType.PICKAXE, ToolGrade.IRON)
+		);
+
+		registerBreakable(EventBreakable.builder()
+			.blockMaterials(Material.EMERALD_ORE, Material.DEEPSLATE_EMERALD_ORE)
+			.drops(Material.EMERALD)
+			.placeholderTypes(Material.COBBLESTONE)
+			.requiredTool(ToolType.PICKAXE, ToolGrade.IRON)
+		);
+
+		registerBreakable(EventBreakable.builder()
+			.blockMaterials(Material.WHEAT)
+			.drops(Material.WHEAT, 1, 3)
+			.sound(Sound.BLOCK_CROP_BREAK)
+		);
+
+		registerBreakable(EventBreakable.builder()
+			.blockMaterials(Material.CARROTS)
+			.drops(Material.CARROT, 1, 3)
+			.sound(Sound.BLOCK_CROP_BREAK)
+		);
 	}
 
 	public LocalDateTime now() {
