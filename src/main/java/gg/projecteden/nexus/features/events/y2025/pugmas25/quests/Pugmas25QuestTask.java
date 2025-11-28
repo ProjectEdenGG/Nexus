@@ -1,30 +1,24 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.quests;
 
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Cabin;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Intro;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waypoints;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waypoints.WaypointTarget;
 import gg.projecteden.nexus.features.hub.Hub;
 import gg.projecteden.nexus.features.quests.tasks.EnteringRegionQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.InteractQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTask.TaskBuilder;
-import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
-import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
 public enum Pugmas25QuestTask implements IQuestTask {
-	BOARD_THE_TRAIN(EnteringRegionQuestTask.builder()
-		.objective("Board the train")
+	TALK_TO_TICKET_MASTER(InteractQuestTask.builder()
+		.objective("Talk to the Ticket Master")
+		.waypoint(Pugmas25QuestWaypoint.TICKET_MASTER_HUB)
 		.talkTo(Pugmas25NPC.TICKET_MASTER_HUB)
 		.dialog(dialog -> dialog
 			.npc("Hello! Where would you like to travel to?")
@@ -32,6 +26,11 @@ public enum Pugmas25QuestTask implements IQuestTask {
 			.npc("Oh, it's wonderful there this time of year. Here you go.")
 			.give(Pugmas25QuestItem.TRAIN_TICKET)
 		)
+	),
+	BOARD_THE_TRAIN(EnteringRegionQuestTask.builder()
+		.objective("Board the train")
+		.waypoint(Pugmas25QuestWaypoint.TRAIN)
+		.talkTo(Pugmas25NPC.TICKET_MASTER_HUB)
 		.reminder(dialog -> dialog
 			.npc("You already bought a ticket, make sure to board the train!")
 		)
@@ -40,6 +39,7 @@ public enum Pugmas25QuestTask implements IQuestTask {
 
 	CHECK_IN(InteractQuestTask.builder()
 		.objective("Talk to the ticket master")
+		.waypoint(Pugmas25QuestWaypoint.TICKET_MASTER)
 		.talkTo(Pugmas25NPC.TICKET_MASTER)
 		.dialog(dialog -> dialog
 			.npc("Welcome to Pugmas Village, Project Eden's Christmas celebration!")
@@ -48,20 +48,19 @@ public enum Pugmas25QuestTask implements IQuestTask {
 			.npc("Here, this should help you find your way.")
 			.give(Pugmas25QuestItem.COMPASS)
 			.npc("Enjoy your stay!")
-			.thenRun(quester -> Pugmas25Waypoints.showWaypoint(quester.getOnlinePlayer(), WaypointTarget.INN, ColorType.LIGHT_RED))
 		)
 		.reminder(dialog -> dialog
 			.npc("Have you checked into the inn yet?")
 		)
 		.then()
 		.objective("Check in at the inn")
+		.waypoint(Pugmas25QuestWaypoint.INN)
 		.talkTo(Pugmas25NPC.INN_KEEPER)
 		.dialog(dialog -> dialog
 			.player("Hello, I'd like to rent a room.")
 			.npc("Greetings! Ah, I'm sorry, but our last room was just reserved.")
 			.player("Oh... I just arrived in town, and I don't really have anywhere else to go. I was hoping to warm up and rest a bit.")
-			.npc("You know what... I can get you a room, just not here.")
-			.npc("My grandpa owns a cabin in town, not too far from here, but he's away for the season.")
+			.npc("You know what... My grandpa owns a cabin in town, not too far from here, but he's away for the season.")
 			.npc("You could stay there if you'd like?")
 			.player("That's incredibly kind of you... are you sure? I wouldn't want to impose.")
 			.npc("Not at all! Really, someone should be keeping an eye on it anyway. It's been locked up for weeks and is starting to look a little abandoned.")
@@ -70,18 +69,17 @@ public enum Pugmas25QuestTask implements IQuestTask {
 			.thenRun(quester -> {
 				new Pugmas25UserService().edit(quester, user -> user.setUnlockedCabin(true));
 				quester.sendMessage("&7&o[You can now enter the cabin]");
-				Pugmas25Waypoints.showWaypoint(quester.getOnlinePlayer(), WaypointTarget.CABIN, ColorType.LIGHT_RED);
 			})
 		)
 		.reminder(dialog -> dialog
 			.npc("Have you found the cabin yet?")
 			.npc("It's directly west of the Great Tree, you can't miss it.")
-			.thenRun(quester -> Pugmas25Waypoints.showWaypoint(quester.getOnlinePlayer(), WaypointTarget.CABIN, ColorType.LIGHT_RED))
 		)
 	),
 
 	ENTER_THE_CABIN(EnteringRegionQuestTask.builder()
 		.objective("Find and enter the cabin")
+		.waypoint(Pugmas25QuestWaypoint.CABIN)
 		.enterRegion(Pugmas25.get().getWorld(), Pugmas25Cabin.DOOR_REGION)
 	),
 

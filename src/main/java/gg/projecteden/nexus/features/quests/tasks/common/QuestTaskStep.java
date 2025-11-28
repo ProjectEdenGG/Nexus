@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.quests.tasks.common;
 
+import gg.projecteden.nexus.features.events.waypoints.IWaypoint;
 import gg.projecteden.nexus.features.listeners.events.LivingEntityKilledByPlayerEvent;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
 import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
@@ -36,6 +37,7 @@ public abstract class QuestTaskStep<
 	protected ComponentLike objective;
 	protected Dialog dialog;
 	public Dialog reminder;
+	public IWaypoint waypoint;
 	protected Map<Interactable, Dialog> onClick = new HashMap<>();
 	protected Map<InteractableNPC, Consumer<NPCClickEvent>> onNPCInteract = new HashMap<>();
 	protected Map<InteractableEntity, Consumer<PlayerInteractEntityEvent>> onEntityInteract = new HashMap<>();

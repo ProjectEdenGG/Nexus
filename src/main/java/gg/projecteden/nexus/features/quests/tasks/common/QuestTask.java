@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.quests.tasks.common;
 
+import gg.projecteden.nexus.features.events.waypoints.IWaypoint;
 import gg.projecteden.nexus.features.listeners.events.LivingEntityKilledByPlayerEvent;
 import gg.projecteden.nexus.features.quests.QuestReward;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
@@ -10,7 +11,6 @@ import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegio
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import kotlin.Pair;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -97,6 +97,11 @@ public abstract class QuestTask<
 
 		public TaskBuilderType reward(QuestReward reward, int amount) {
 			rewards.add(quester -> reward.apply(quester, amount));
+			return (TaskBuilderType) this;
+		}
+
+		public TaskBuilderType waypoint(IWaypoint waypoint) {
+			currentStep.waypoint = waypoint;
 			return (TaskBuilderType) this;
 		}
 

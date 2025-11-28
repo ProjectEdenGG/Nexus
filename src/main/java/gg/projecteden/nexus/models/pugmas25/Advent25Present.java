@@ -1,10 +1,12 @@
 package gg.projecteden.nexus.models.pugmas25;
 
+import gg.projecteden.nexus.features.events.waypoints.IWaypoint;
+import gg.projecteden.nexus.features.events.waypoints.WaypointIcon;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts.Pugmas25District;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
-import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.clientside.ClientSideUser;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.parchment.HasLocation;
@@ -12,9 +14,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
-import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Location;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,16 +32,23 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Advent25Present implements HasLocation {
+public class Advent25Present implements HasLocation, IWaypoint {
 	private int day;
 	private Location location;
 	private List<ItemStack> contents = new ArrayList<>();
 	private UUID entityUuid;
+	private Color color = ColorType.CYAN.getBukkitColor();
+	private WaypointIcon icon = WaypointIcon.X; // TODO Present icon?
 
 	public Advent25Present(int day, Location location, UUID entityUuid) {
 		this.day = day;
 		this.location = location;
 		this.entityUuid = entityUuid;
+	}
+
+	@Override
+	public boolean isQuestWaypoint() {
+		return false;
 	}
 
 	public @NotNull Location getLocation() {

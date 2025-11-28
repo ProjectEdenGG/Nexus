@@ -24,11 +24,10 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Fishin
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Interactions;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Intro;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25ModelTrain;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Snowmen;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Sidebar;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Snowmen;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Train;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25TrainBackground;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waypoints;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waystones;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25Entity;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25NPC;
@@ -157,12 +156,10 @@ public class Pugmas25 extends EdenEvent {
 		new Pugmas25Interactions();
 		new Pugmas25Snowmen();
 		new Pugmas25ModelTrain();
-		new Pugmas25Waypoints();
 
 		Pugmas25Train.startup();
 		Pugmas25TrainBackground.startup();
 		Pugmas25ModelTrain.startup();
-		Pugmas25Waypoints.startup();
 
 		Tasks.wait(TickTime.SECOND, () -> getPlayers().forEach(this::onArrive));
 
@@ -198,7 +195,6 @@ public class Pugmas25 extends EdenEvent {
 		Pugmas25Train.shutdown();
 		Pugmas25TrainBackground.shutdown();
 		Pugmas25BalloonEditor.shutdown();
-		Pugmas25Waypoints.shutdown();
 
 		getPlayers().forEach(this::onDepart);
 	}

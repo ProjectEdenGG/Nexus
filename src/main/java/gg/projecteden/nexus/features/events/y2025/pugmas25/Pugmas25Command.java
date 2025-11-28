@@ -3,6 +3,9 @@ package gg.projecteden.nexus.features.events.y2025.pugmas25;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.IEventCommand;
+import gg.projecteden.nexus.features.events.waypoints.CustomWaypoint;
+import gg.projecteden.nexus.features.events.waypoints.WaypointIcon;
+import gg.projecteden.nexus.features.events.waypoints.WaypointsManager;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25.Pugmas25DeathCause;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25.Pugmas25QuestProgress;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.advent.Pugmas25Advent;
@@ -24,10 +27,9 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Geyser
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Intro;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25ModelTrain;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Train;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waypoints;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waypoints.WaypointTarget;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25Quest;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestWaypoint;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -52,7 +54,6 @@ import gg.projecteden.nexus.models.pugmas25.Pugmas25ConfigService;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.models.quests.Quester;
-import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Currency;
 import gg.projecteden.nexus.utils.Currency.Price;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -61,6 +62,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.Listener;
@@ -251,20 +253,25 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		if (!user.advent().hasFound(present))
 			error("You have not found day &e#" + present.getDay());
 
-		Pugmas25Waypoints.showWaypoint(player(), present);
+		WaypointsManager.showWaypoint(player(), present);
 	}
 
-	@Path("showWaypointTarget <target>")
+	@Path("waypoints show <target> [--icon] [--color]")
 	@Description("Get directions to waypoint target")
 	@Permission(Group.ADMIN)
-	void advent_showWaypoint(WaypointTarget target) {
-		Pugmas25Waypoints.showWaypoint(player(), target, ColorType.PURPLE);
+	void waypoints_show(Pugmas25QuestWaypoint target, @Switch WaypointIcon icon, @Switch Color color) {
+		if (color == null)
+			color = target.getColor();
+		if (icon == null)
+			icon = target.getIcon();
+
+		WaypointsManager.showWaypoint(player(), new CustomWaypoint(icon, color, target.getLocation()));
 	}
 
-	@Path("hideWaypoints")
+	@Path("waypoints hideAll")
 	@Permission(Group.ADMIN)
-	void hideWaypoint() {
-		Pugmas25Waypoints.hideAllWaypoints(player());
+	void waypoints_hideAll() {
+		WaypointsManager.hideAllWaypoints(player());
 	}
 
 	@Path("angler randomAnglerLoot")

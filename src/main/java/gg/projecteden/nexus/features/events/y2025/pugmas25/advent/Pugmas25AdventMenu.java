@@ -2,8 +2,8 @@ package gg.projecteden.nexus.features.events.y2025.pugmas25.advent;
 
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
+import gg.projecteden.nexus.features.events.waypoints.WaypointsManager;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waypoints;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
@@ -64,9 +64,9 @@ public class Pugmas25AdventMenu extends InventoryProvider {
 				clickableItem = ClickableItem.of(item.build(), e -> {
 					viewer.closeInventory();
 					if (user.getWaypointPresent() != null && user.getWaypointPresent().equals(present)) {
-						Pugmas25Waypoints.hideAllWaypoints(user.getOnlinePlayer());
+						WaypointsManager.hideWaypoint(user, present);
 					} else {
-						Pugmas25Waypoints.showWaypoint(user.getOnlinePlayer(), present);
+						WaypointsManager.showWaypoint(user, present);
 						PlayerMovementUtils.lookAt(user.getOnlinePlayer(), present.getLocation());
 						user.sendMessage(Pugmas25.PREFIX + "Added a waypoint to Advent Present #&e" + present.getDay());
 					}
