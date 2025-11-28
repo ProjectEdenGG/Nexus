@@ -17,6 +17,7 @@ import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardWriter;
 import com.sk89q.worldedit.function.operation.ForwardExtentCopy;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.function.pattern.Pattern;
@@ -60,6 +61,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -811,8 +816,25 @@ public class WorldEditUtils {
 	// TODO: Doesn't work? schematic just pastes air
 	@SneakyThrows
 	public void save(String fileName, BlockVector3 min, BlockVector3 max) {
+		Path schemDir = plugin.getDataFolder().toPath().resolve("schematics");
+
+		if (!fileName.endsWith(".schem"))
+			fileName += ".schem";
+
+		Path filePath = schemDir.resolve(fileName);
+		Files.createDirectories(filePath.getParent());
+		File file = filePath.toFile();
+
 		CuboidRegion region = new CuboidRegion(worldEditWorld, min, max);
-		new BlockArrayClipboard(region).save(getSchematicFile(fileName, false), BuiltInClipboardFormat.SPONGE_SCHEMATIC);
+		try (BlockArrayClipboard clipboard = new BlockArrayClipboard(region)) {
+			ForwardExtentCopy copy = new ForwardExtentCopy(getEditSession().getWorld(), region, clipboard.getOrigin(), clipboard, min);
+			Operations.complete(copy);
+			try (ClipboardWriter writer = BuiltInClipboardFormat.SPONGE_V3_SCHEMATIC.getWriter(new FileOutputStream(file))) {
+				writer.write(clipboard);
+			}
+		} catch (IOException e) {
+			Nexus.warn("Could not save schematic " + fileName, e);
+		}
 	}
 
 	public CompletableFuture<Void> set(String region, BlockType blockType) {

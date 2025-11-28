@@ -26,7 +26,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
@@ -56,8 +55,6 @@ public class Pugmas25BalloonEditor implements Listener {
 	protected static boolean allowedFlight = false;
 	protected static boolean lostEditor = false;
 	protected static int lostEditorTask = -1;
-	@Getter
-	protected static boolean savingSchem = false;
 
 	@Getter
 	@Setter
@@ -114,70 +111,12 @@ public class Pugmas25BalloonEditor implements Listener {
 		if (player == null)
 			throw new InvalidInputException(PREFIX + "player cannot be null");
 
-		if (savingSchem)
-			throw new InvalidInputException(PREFIX + "balloon is already saving");
-
 		Pugmas25BalloonEditorUtils.removeBrush();
 
 		String filePath = getSchematicPath();
 		Region region = Pugmas25BalloonManager.worldguard.convert(Pugmas25BalloonManager.worldguard.getProtectedRegion(REGION_SCHEM));
 
-		String selectCommand = "rg select " + REGION_SCHEM;
-		String copyCommand = "/copy";
-		String saveCommand = "/schem save " + filePath + " -f";
-		String deselectCommand = "/deselect";
-
-		GameMode originalGameMode = player.getGameMode();
-		Location location = Pugmas25BalloonManager.worldedit.toLocation(region.getMinimumPoint());
-
-		player.setGameMode(GameMode.SPECTATOR);
-		player.teleport(location);
-
-		Tasks.wait(1, () -> {
-			if (!player.isOnline()) {
-				return;
-			}
-
-			savingSchem = true;
-
-			PlayerUtils.runCommandAsOp(player, selectCommand);
-			Tasks.wait(10, () -> {
-				if (!player.isOnline()) {
-					savingSchem = false;
-					return;
-				}
-
-				PlayerUtils.runCommandAsOp(player, copyCommand);
-
-				Tasks.wait(10, () -> {
-					if (!player.isOnline()) {
-						savingSchem = false;
-						return;
-					}
-
-					PlayerUtils.runCommandAsOp(player, saveCommand);
-
-					Tasks.wait(10, () -> {
-						savingSchem = false;
-
-						if (!player.isOnline()) {
-							reset();
-							return;
-						}
-
-						PlayerUtils.runCommandAsOp(player, deselectCommand);
-
-						player.teleport(WARP);
-						player.setGameMode(originalGameMode);
-
-						Tasks.wait(1, () -> {
-							Pugmas25BalloonEditorUtils.send("Balloon saved");
-							reset();
-						});
-					});
-				});
-			});
-		});
+		Pugmas25BalloonManager.worldedit.save(filePath, region);
 	}
 
 	public static void reset() {
@@ -218,30 +157,6 @@ public class Pugmas25BalloonEditor implements Listener {
 	}
 
 	//
-
-	@EventHandler
-	public void onSavingSchem(PlayerMoveEvent event) {
-		if (!Pugmas25BalloonEditorUtils.isEditing(event.getPlayer()))
-			return;
-
-		if (!savingSchem)
-			return;
-
-		event.setCancelled(true);
-		PUGMAS.sendCooldown(editor.getPlayer(), "&cPlease wait while your balloon is saving", "pugmas25_balloon_editor-schem");
-	}
-
-	@EventHandler
-	public void onSavingSchem(PlayerTeleportEvent event) {
-		if (!Pugmas25BalloonEditorUtils.isEditing(event.getPlayer()))
-			return;
-
-		if (!savingSchem)
-			return;
-
-		event.setCancelled(true);
-		PUGMAS.sendCooldown(editor.getPlayer(), "&cPlease wait while your balloon is saving", "pugmas25_balloon_editor-schem");
-	}
 
 	@EventHandler
 	public void onUseBrush(PlayerInteractEvent event) {
@@ -291,7 +206,7 @@ public class Pugmas25BalloonEditor implements Listener {
 		if (!Pugmas25BalloonEditorUtils.isEditing(event.getPlayer()))
 			return;
 
-		if (!event.getRegion().getId().equalsIgnoreCase(REGION_EDIT) || savingSchem)
+		if (!event.getRegion().getId().equalsIgnoreCase(REGION_EDIT))
 			return;
 
 		event.setCancelled(true);
@@ -303,7 +218,7 @@ public class Pugmas25BalloonEditor implements Listener {
 		if (!Pugmas25BalloonEditorUtils.isEditing(event.getPlayer()))
 			return;
 
-		if (Pugmas25BalloonManager.worldguard.isInRegion(event.getTo(), REGION_EDIT) || savingSchem)
+		if (Pugmas25BalloonManager.worldguard.isInRegion(event.getTo(), REGION_EDIT))
 			return;
 
 		event.setCancelled(true);

@@ -43,7 +43,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redi
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -484,9 +483,6 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 
 			Pugmas25BalloonEditor.editBalloon(nerd());
 		}
-
-		if (Pugmas25BalloonEditor.isSavingSchem())
-			throw new InvalidInputException("Please wait while your balloon is saving");
 
 		new Pugmas25BalloonEditorMenu().open(player());
 	}

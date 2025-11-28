@@ -32,8 +32,8 @@ public class Pugmas25BalloonEditorMenu extends InventoryProvider {
 		addCloseItem();
 
 		contents.set(SlotPos.of(1, 7), ClickableItem.of(EDITOR_SAVE, e -> {
-			Pugmas25BalloonEditorUtils.send("Saving balloon...");
 			Pugmas25BalloonEditor.saveBalloon();
+			Pugmas25BalloonEditorUtils.send("Saved balloon");
 			close();
 		}));
 
