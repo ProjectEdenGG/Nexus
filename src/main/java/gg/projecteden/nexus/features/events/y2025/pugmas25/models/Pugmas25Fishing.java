@@ -349,7 +349,7 @@ public class Pugmas25Fishing implements Listener {
 		int luck = Pugmas25Fishing.getLuck(player);
 
 		int anglerLuck = Math.max(luck, 5);
-		if (user.isHasCaughtAnglerQuestLoot())
+		if (user.isCaughtAnglerQuestLoot())
 			anglerLuck = (int) Math.ceil(anglerLuck / 3.0);
 
 		Pugmas25AnglerLoot anglerLoot = Pugmas25Config.get().getAnglerQuestFish();
@@ -434,7 +434,7 @@ public class Pugmas25Fishing implements Listener {
 			return;
 
 		Pugmas25User user = userService.get(player);
-		if (user.isHasCaughtAnglerQuestLoot())
+		if (user.isCaughtAnglerQuestLoot())
 			return;
 
 		for (ItemStack item : event.getLoot()) {
@@ -442,7 +442,7 @@ public class Pugmas25Fishing implements Listener {
 				continue;
 
 			if (anglerLoot.matches(item)) {
-				user.setHasCaughtAnglerQuestLoot(true);
+				user.setCaughtAnglerQuestLoot(true);
 				userService.save(user);
 			}
 		}

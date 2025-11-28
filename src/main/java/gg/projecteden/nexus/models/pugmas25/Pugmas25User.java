@@ -49,9 +49,12 @@ public class Pugmas25User implements PlayerOwnedObject {
 
 	private boolean receivedAnglerQuestInstructions = false;
 	private Pugmas25AnglerLoot receivedAnglerQuestFish = null;
-	private boolean hasCaughtAnglerQuestLoot = false;
+	private boolean caughtAnglerQuestLoot = false;
 	private boolean completedAnglerQuest = false;
 	private int completedAnglerQuests = 0;
+
+	private boolean receivedAeronautInstructions = false;
+	private boolean balloonSchemExists = false;
 
 	private Set<Pugmas25Waystone> foundWaystones = new HashSet<>();
 	private Set<Pugmas25Snowman> decoratedSnowmen = new HashSet<>();
@@ -101,7 +104,7 @@ public class Pugmas25User implements PlayerOwnedObject {
 	}
 
 	public void resetAnglerQuest() {
-		this.hasCaughtAnglerQuestLoot = false;
+		this.caughtAnglerQuestLoot = false;
 		this.completedAnglerQuest = false;
 	}
 

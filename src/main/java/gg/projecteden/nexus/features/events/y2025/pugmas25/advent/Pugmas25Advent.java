@@ -88,9 +88,6 @@ public class Pugmas25Advent implements Listener {
 	public void onOpenPresent(PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
 
-		if (!Pugmas25.get().isAtEvent(event))
-			return;
-
 		ItemStack item = event.getItem();
 		if (isNullOrAir(item))
 			return;

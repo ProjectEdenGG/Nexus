@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeavingRegion
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.afk.events.NowAFKEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
@@ -35,7 +36,6 @@ import java.io.File;
 
 public class Pugmas25BalloonEditor implements Listener {
 	private static final Pugmas25 PUGMAS = Pugmas25.get();
-	private static final Location WARP = PUGMAS.location(-614.5, 156.0, -3216.5, 0, 0);
 	protected static final String REGION_EDIT = Pugmas25BalloonManager.REGION_BASE + "edit";
 	protected static final String REGION_SCHEM = Pugmas25BalloonManager.REGION_BASE + "schem";
 	protected static final Location SCHEM_PASTE = PUGMAS.location(-620, 162, -3214);
@@ -111,6 +111,7 @@ public class Pugmas25BalloonEditor implements Listener {
 		if (player == null)
 			throw new InvalidInputException(PREFIX + "player cannot be null");
 
+		new Pugmas25UserService().edit(player, user -> user.setBalloonSchemExists(true));
 		Pugmas25BalloonEditorUtils.removeBrush();
 
 		String filePath = getSchematicPath();

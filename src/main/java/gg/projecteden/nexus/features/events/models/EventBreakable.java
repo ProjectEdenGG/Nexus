@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.models;
 import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.features.customenchants.EnchantUtils;
+import gg.projecteden.nexus.features.quests.QuestItem;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.BlockRegenJob;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -131,6 +132,10 @@ public class EventBreakable {
 			return drops(material, 1, 1);
 		}
 
+		public EventBreakableBuilder drops(QuestItem questItem, int min, int max) {
+			return drops(EventResourceDrop.builder().item(questItem.get()).min(min).max(max).build());
+		}
+
 		public EventBreakableBuilder drops(Material material, int min, int max) {
 			return drops(EventResourceDrop.builder().item(material).min(min).max(max).build());
 		}
@@ -139,12 +144,12 @@ public class EventBreakable {
 			return drops(EventResourceDrop.builder().item(material).min(min).max(max).chance(chance).build());
 		}
 
-		public EventBreakableBuilder drops(EventResourceDrop drop) {
-			return drops(Collections.singletonList(drop));
-		}
-
 		public EventBreakableBuilder drops(EventResourceDrop.EventResourceDropBuilder drop) {
 			return drops(drop.build());
+		}
+
+		public EventBreakableBuilder drops(EventResourceDrop drop) {
+			return drops(Collections.singletonList(drop));
 		}
 
 		public EventBreakableBuilder drops(List<EventResourceDrop> drops) {

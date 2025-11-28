@@ -77,7 +77,7 @@ public enum Pugmas25QuestItem implements QuestItem {
 
 	BALLOON_PAINTBRUSH(new ItemBuilder(ItemModelType.EVENT_PAINTBRUSH)
 		.name("&eBlock Replacer Brush")
-		.lore("&3Block: " + ColorType.RED.getBukkitColor() + "Red Wool", "", "&3How to use:", "&eLClick &3a block to change the brush color", "&eRClick &3wool to replace it")
+		.lore("&3Block: " + ColorType.RED.getChatColor() + "Red Wool", "", "&3How to use:", "&eLClick &3a block to change the brush color", "&eRClick &3wool to replace it")
 		.dyeColor(ColorType.RED)
 		.undroppable().unframeable().unplaceable().unstorable().untrashable().untradeable()
 		.itemFlags(ItemBuilder.ItemFlags.HIDE_ALL)

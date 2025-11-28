@@ -10,9 +10,7 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.nexus.features.commands.DeathMessagesCommand;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.models.EventBreakable;
-import gg.projecteden.nexus.features.events.models.EventBreakable.EventBreakableBuilder;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.advent.Pugmas25Advent;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.balloons.Pugmas25BalloonEditor;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.balloons.Pugmas25BalloonManager;
@@ -58,9 +56,7 @@ import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.AdventureUtils;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -80,7 +76,6 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.Sign;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -266,6 +261,14 @@ public class Pugmas25 extends EdenEvent {
 		handleInteract(Pugmas25NPC.BLACKSMITH, (player, npc) -> Pugmas25ShopMenu.BLACKSMITH.open(player));
 		handleInteract(Pugmas25NPC.TINKERER, (player, npc) -> Pugmas25ShopMenu.TINKERER.open(player));
 
+		handleInteract(Pugmas25NPC.AERONAUT, (player, npc) -> {
+			final Pugmas25UserService userService = new Pugmas25UserService();
+			final Pugmas25User user = userService.get(player);
+
+			final Dialog dialog = new Dialog(npc);
+
+		});
+
 		handleInteract(Pugmas25NPC.ELF, (player, npc) -> {
 			final Pugmas25UserService userService = new Pugmas25UserService();
 			final Pugmas25User user = userService.get(player);
@@ -411,6 +414,7 @@ public class Pugmas25 extends EdenEvent {
 		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.COAL_ORE, Material.DEEPSLATE_COAL_ORE)
 			.drops(Material.COAL, 1, 3)
+			.drops(Pugmas25QuestItem.SUSPICIOUS_DEBRIS, 1, 2)
 			.placeholderTypes(Material.COBBLESTONE)
 			.requiredTool(ToolType.PICKAXE, ToolGrade.STONE)
 		);
@@ -418,6 +422,7 @@ public class Pugmas25 extends EdenEvent {
 		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.IRON_ORE, Material.DEEPSLATE_IRON_ORE)
 			.drops(Material.RAW_IRON, 1, 2)
+			.drops(Pugmas25QuestItem.SUSPICIOUS_DEBRIS, 1, 2)
 			.placeholderTypes(Material.COBBLESTONE)
 			.requiredTool(ToolType.PICKAXE, ToolGrade.STONE)
 		);
@@ -425,6 +430,7 @@ public class Pugmas25 extends EdenEvent {
 		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.COPPER_ORE, Material.DEEPSLATE_COPPER_ORE)
 			.drops(Material.RAW_COPPER, 1, 3)
+			.drops(Pugmas25QuestItem.SUSPICIOUS_DEBRIS, 1, 2)
 			.placeholderTypes(Material.COBBLESTONE)
 			.requiredTool(ToolType.PICKAXE, ToolGrade.IRON)
 		);
@@ -432,6 +438,7 @@ public class Pugmas25 extends EdenEvent {
 		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.GOLD_ORE, Material.DEEPSLATE_GOLD_ORE)
 			.drops(Material.RAW_GOLD, 1, 2)
+			.drops(Pugmas25QuestItem.SUSPICIOUS_DEBRIS, 1, 2)
 			.placeholderTypes(Material.COBBLESTONE)
 			.requiredTool(ToolType.PICKAXE, ToolGrade.IRON)
 		);
@@ -439,6 +446,7 @@ public class Pugmas25 extends EdenEvent {
 		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.LAPIS_ORE, Material.DEEPSLATE_LAPIS_ORE)
 			.drops(Material.LAPIS_LAZULI, 2, 5)
+			.drops(Pugmas25QuestItem.SUSPICIOUS_DEBRIS, 1, 2)
 			.placeholderTypes(Material.COBBLESTONE)
 			.requiredTool(ToolType.PICKAXE, ToolGrade.IRON)
 		);
@@ -446,6 +454,7 @@ public class Pugmas25 extends EdenEvent {
 		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.DIAMOND_ORE, Material.DEEPSLATE_DIAMOND_ORE)
 			.drops(Material.DIAMOND, 1, 2)
+			.drops(Pugmas25QuestItem.SUSPICIOUS_DEBRIS, 1, 2)
 			.placeholderTypes(Material.COBBLESTONE)
 			.requiredTool(ToolType.PICKAXE, ToolGrade.IRON)
 		);
@@ -453,6 +462,7 @@ public class Pugmas25 extends EdenEvent {
 		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.EMERALD_ORE, Material.DEEPSLATE_EMERALD_ORE)
 			.drops(Material.EMERALD)
+			.drops(Pugmas25QuestItem.SUSPICIOUS_DEBRIS, 1, 2)
 			.placeholderTypes(Material.COBBLESTONE)
 			.requiredTool(ToolType.PICKAXE, ToolGrade.DIAMOND)
 		);
@@ -560,6 +570,18 @@ public class Pugmas25 extends EdenEvent {
 					return "&3 " + getName() + " &7- &aCompleted (resets in " + timeUntilReset + ")";
 
 				return "&3 " + getName() + " &7- &eStarted (Talk to the Angler for more info)";
+			}
+		},
+		DESIGN_A_BALLOON {
+			@Override
+			String getProgress(Pugmas25User user) {
+				if (!user.isReceivedAeronautInstructions())
+					return "&3 " + getName() + " &7- &cNot started";
+
+				if (user.isBalloonSchemExists())
+					return "&3 " + getName() + " &7- &aCompleted";
+
+				return "&3 " + getName() + " &7- &eStarted (Save your balloon)";
 			}
 		}
 		;

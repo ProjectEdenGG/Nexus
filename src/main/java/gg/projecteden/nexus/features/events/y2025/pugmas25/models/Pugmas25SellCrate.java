@@ -46,14 +46,14 @@ public class Pugmas25SellCrate implements Listener {
 	@AllArgsConstructor
 	public enum Pugmas25SellCrateType {
 		FISHING("&bFishing Items"),
-		FARMING("&eFarming Items"),
+		FARMING("&aFarming Items"),
 		MINING("&7Mining Items"),
 		;
 
 		private final String line;
 
 		public void openMenu(Player player) {
-			Inventory inv = Bukkit.createInventory(null, 27, StringUtils.colorize(INVENTORY_TITLE + line));
+			Inventory inv = Bukkit.createInventory(null, 27, StringUtils.colorize("&0" + StringUtils.stripColor(INVENTORY_TITLE + line)));
 			player.openInventory(inv);
 		}
 
@@ -183,6 +183,7 @@ public class Pugmas25SellCrate implements Listener {
 		// Give items back if no trades found
 		if (Nullables.isNullOrEmpty(tradeBuilders)) {
 			PlayerUtils.giveItems((Player) event.getPlayer(), Arrays.asList(event.getInventory().getContents()));
+			PlayerUtils.send(player, "Found no trades, returning items");
 			return;
 		}
 
@@ -227,15 +228,22 @@ public class Pugmas25SellCrate implements Listener {
 
 			// If trade was not found for itemstack, give item back
 			// If there were leftovers, give the edited item back
-			if (!foundTrade || leftovers)
+			if (!foundTrade || leftovers) {
 				PlayerUtils.giveItem(player, item);
+				if (!foundTrade)
+					PlayerUtils.send(player, "Found no trades, returning items");
+				else
+					PlayerUtils.send(player, "There were leftovers, returning items");
+			}
 		}
 
 		if (!profit.isEmpty()) {
-			for (ItemStack itemStack : profit) {
-				int amount = itemStack.getAmount();
-				Currency.COIN_POUCH.deposit(player, Price.of(amount));
-			}
+			int coins = 0;
+			for (ItemStack itemStack : profit)
+				coins += itemStack.getAmount();
+
+			Currency.COIN_POUCH.deposit(player, Price.of(coins));
+			PlayerUtils.send(player, StringUtils.getPrefix("Sell Crate") + "&3Deposited &e" + coins + " coins &3to Coin Pouch");
 		}
 	}
 }
