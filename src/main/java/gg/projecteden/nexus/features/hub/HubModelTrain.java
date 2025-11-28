@@ -34,6 +34,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -78,7 +79,7 @@ public class HubModelTrain implements Listener {
 		this.minecartSpawnLoc = effects.location(0.5, 137.25, 62.5);
 		this.trackCenter = effects.location(0.5, 139, 55.5);
 
-		if (!Pugmas25.get().isEventActive())
+		if (!YearMonth.now().equals(YearMonth.of(2025, 12)))
 			return;
 
 		Nexus.registerListener(this);
