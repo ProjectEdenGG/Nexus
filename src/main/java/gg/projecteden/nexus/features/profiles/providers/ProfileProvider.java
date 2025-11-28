@@ -433,7 +433,7 @@ public class ProfileProvider extends InventoryProvider {
 			@Override
 			public List<String> getLore(Player viewer, ProfileUser target) {
 				if (ProfileMenuItem.isSelf(viewer, target))
-					return List.of("&3Total: &e" + totalFriends(target), "", "&3Privacy Setting: &e" + StringUtils.camelCase(target.getSocialMediaPrivacy()));
+					return List.of("&3Total: &e" + totalFriends(target), "", "&3Privacy Setting: &e" + StringUtils.camelCase(target.getFriendsPrivacy()));
 
 				if (target.canNotView(PrivacySettingType.FRIENDS, viewer))
 					return List.of("&c" + target.getNickname() + "'s privacy settings prevent", "&cyou from accessing this");
