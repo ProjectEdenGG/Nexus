@@ -435,7 +435,7 @@ public enum VPSMenu {
 			add(VPSPage.builder()
 				.rows(3)
 				.items(new HashMap<>() {{
-					put(12, VPSSlot.builder()
+					put(11, VPSSlot.builder()
 						.name("+25 Island Range")
 						.display(new ItemBuilder(Material.MAGENTA_GLAZED_TERRACOTTA)
 							.lore("&3By default, your island is &e100x100")
@@ -443,6 +443,10 @@ public enum VPSMenu {
 							.lore("")
 							.lore("&6Price: &e50vp"))
 						.command("vote points store buy oneblock-expansion"));
+					put(13, VPSSlot.builder()
+						.name("Mob Net")
+						.price(25)
+						.displayAndGive(ItemModelType.MOB_NET.getNamedItem()));
 					put(15, VPSSlot.builder()
 						.name("Random Armor Trim")
 						.display(Material.FLOW_ARMOR_TRIM_SMITHING_TEMPLATE)
