@@ -275,7 +275,7 @@ public class WordleCommand extends CustomCommand implements Listener {
 		public void open(Player player) {
 			var users = userService.getAll().stream()
 				.filter(user -> user.get(date).isComplete())
-				.sorted(Comparator.comparing(user -> user.get(date).getGuesses().size()))
+				.sorted(Comparator.comparing(user -> user.get(date).isFailed() ? 7 : user.get(date).getGuesses().size()))
 				.toList();
 
 			var dialog = new DialogBuilder()
