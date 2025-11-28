@@ -6,6 +6,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeavingRegionEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.afk.events.NowAFKEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -32,7 +33,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 
-// TODO RELEASE: ADD AN AFK TIMER TO SOMEONE CAN'T HOG EDITOR
 public class Pugmas25BalloonEditor implements Listener {
 	private static final Pugmas25 PUGMAS = Pugmas25.get();
 	private static final Location WARP = PUGMAS.location(-614.5, 156.0, -3216.5, 0, 0);
@@ -117,6 +117,7 @@ public class Pugmas25BalloonEditor implements Listener {
 		Region region = Pugmas25BalloonManager.worldguard.convert(Pugmas25BalloonManager.worldguard.getProtectedRegion(REGION_SCHEM));
 
 		Pugmas25BalloonManager.worldedit.save(filePath, region);
+		Tasks.wait(1, Pugmas25BalloonEditor::reset);
 	}
 
 	public static void reset() {
@@ -257,4 +258,13 @@ public class Pugmas25BalloonEditor implements Listener {
 		Tasks.cancel(lostEditorTask);
 		lostEditorTask = -1;
 	}
+
+	@EventHandler
+	public void onAFK(NowAFKEvent event) {
+		if (!Pugmas25BalloonEditorUtils.isEditing(event.getUser().getPlayer()))
+			return;
+
+		saveBalloon();
+	}
+
 }
