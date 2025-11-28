@@ -378,7 +378,7 @@ public class WordleCommand extends CustomCommand implements Listener {
 			}
 
 			var guesses = game.getGuesses();
-			if (!game.isComplete())
+			if (!game.isComplete() || animationStep < 5)
 				dialog.inputText("answer", errorMessage != null ? errorMessage : guesses.isEmpty() ? "Guess a 5 letter word" : "", input);
 
 			var builder = dialog.multiAction().columns(1);
@@ -428,14 +428,16 @@ public class WordleCommand extends CustomCommand implements Listener {
 							message.hover("&eClick to see server results");
 							message.command("/wordle results " + date.format(DateTimeFormatter.ISO_DATE));
 
-							//noinspection UnstableApiUsage
-							Broadcast.all()
-								.sender(player)
-								.message(message)
-								.prefix("Wordle")
-								.messageType(MessageType.CHAT)
-								.muteMenuItem(MuteMenuItem.WORDLE)
-								.send();
+							Tasks.wait(ANIMATION_DELAY * 5L, () -> {
+								//noinspection UnstableApiUsage
+								Broadcast.all()
+									.sender(player)
+									.message(message)
+									.prefix("Wordle")
+									.messageType(MessageType.CHAT)
+									.muteMenuItem(MuteMenuItem.WORDLE)
+									.send();
+							});
 						}
 					}
 
