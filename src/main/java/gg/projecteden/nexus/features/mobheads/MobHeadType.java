@@ -8,6 +8,8 @@ import gg.projecteden.nexus.features.mobheads.common.MobHead;
 import gg.projecteden.nexus.features.mobheads.common.MobHeadVariant;
 import gg.projecteden.nexus.features.mobheads.variants.AxolotlVariant;
 import gg.projecteden.nexus.features.mobheads.variants.CatVariant;
+import gg.projecteden.nexus.features.mobheads.variants.ChickenVariant;
+import gg.projecteden.nexus.features.mobheads.variants.CowVariant;
 import gg.projecteden.nexus.features.mobheads.variants.CreeperVariant;
 import gg.projecteden.nexus.features.mobheads.variants.FoxVariant;
 import gg.projecteden.nexus.features.mobheads.variants.FrogVariant;
@@ -16,6 +18,7 @@ import gg.projecteden.nexus.features.mobheads.variants.LlamaVariant;
 import gg.projecteden.nexus.features.mobheads.variants.MooshroomVariant;
 import gg.projecteden.nexus.features.mobheads.variants.PandaVariant;
 import gg.projecteden.nexus.features.mobheads.variants.ParrotVariant;
+import gg.projecteden.nexus.features.mobheads.variants.PigVariant;
 import gg.projecteden.nexus.features.mobheads.variants.RabbitVariant;
 import gg.projecteden.nexus.features.mobheads.variants.SheepVariant;
 import gg.projecteden.nexus.features.mobheads.variants.SnowmanVariant;
@@ -33,6 +36,8 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Cat;
+import org.bukkit.entity.Chicken;
+import org.bukkit.entity.Cow;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -44,6 +49,7 @@ import org.bukkit.entity.Llama;
 import org.bukkit.entity.MushroomCow;
 import org.bukkit.entity.Panda;
 import org.bukkit.entity.Parrot;
+import org.bukkit.entity.Pig;
 import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Sheep;
 import org.bukkit.entity.Snowman;
@@ -108,14 +114,24 @@ public enum MobHeadType implements MobHead {
 	@HeadConfig(headId = "315")
 	CAVE_SPIDER(Sound.ENTITY_SPIDER_AMBIENT),
 
-	@HeadConfig(headId = "336")
-	CHICKEN(Sound.ENTITY_CHICKEN_AMBIENT),
+	@HeadConfig(headId = "336", variantClass = ChickenVariant.class)
+	CHICKEN(
+		entity -> ChickenVariant.of((Chicken) entity),
+		(entity, type) -> ((Chicken) entity).setVariant((Chicken.Variant) type),
+		() -> RandomUtils.randomElement(Chicken.Variant.class),
+		Sound.ENTITY_CHICKEN_AMBIENT
+	),
 
 	@HeadConfig(headId = "17898")
 	COD(Sound.ENTITY_COD_FLOP),
 
-	@HeadConfig(headId = "22866")
-	COW(Sound.ENTITY_COW_AMBIENT),
+	@HeadConfig(headId = "22866", variantClass = CowVariant.class)
+	COW(
+		entity -> CowVariant.of((Cow) entity),
+		(entity, type) -> ((Cow) entity).setVariant((Cow.Variant) type),
+		() -> RandomUtils.randomElement(Cow.Variant.class),
+		Sound.ENTITY_COW_AMBIENT
+	),
 
 	@HeadConfig(headId = "106826")
 	CREAKING(Sound.ENTITY_CREAKING_AMBIENT),
@@ -247,8 +263,13 @@ public enum MobHeadType implements MobHead {
 	@HeadConfig(headId = "18091")
 	PHANTOM(Sound.ENTITY_PHANTOM_AMBIENT),
 
-	@HeadConfig(headId = "337")
-	PIG(Sound.ENTITY_PIG_AMBIENT),
+	@HeadConfig(headId = "337", variantClass = PigVariant.class)
+	PIG(
+		entity -> PigVariant.of((Pig) entity),
+		(entity, type) -> ((Pig) entity).setVariant((Pig.Variant) type),
+		() -> RandomUtils.randomElement(Pig.Variant.class),
+		Sound.ENTITY_PIG_AMBIENT
+	),
 
 	@HeadConfig(headType = Material.PIGLIN_HEAD) // LEGACY HEAD = "37258"
 	PIGLIN(Sound.ENTITY_PIGLIN_AMBIENT),
