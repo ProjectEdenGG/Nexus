@@ -12,6 +12,7 @@ enum WaypointIcon {
 	DOT("default"),
 	BOWTIE("bowtie"),
 	X("x"),
+	PRESENT("present"),
 	;
 
 	private final String location;

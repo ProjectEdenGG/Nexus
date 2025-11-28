@@ -214,7 +214,7 @@ public class Halloween25 extends Feature implements Listener {
 		return false;
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void on(EntityDeathEvent event) {
 		var entity = event.getEntity();
 		var player = entity.getKiller();

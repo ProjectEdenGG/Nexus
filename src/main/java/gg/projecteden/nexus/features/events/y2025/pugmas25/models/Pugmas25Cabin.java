@@ -44,7 +44,7 @@ public class Pugmas25Cabin implements Listener {
 		Pugmas25User user = userService.get(event.getPlayer());
 
 		if (!pugmas.worldguard().isInRegion(event.getPlayer(), CABIN_REGION)) {
-			user.sendMessage(Pugmas25.PREFIX + "That's not your bed!");
+			user.sendMessage(Pugmas25.PREFIX + "&cThat's not your bed!");
 			return;
 		}
 

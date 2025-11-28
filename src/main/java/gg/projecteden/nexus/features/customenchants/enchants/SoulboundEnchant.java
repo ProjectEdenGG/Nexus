@@ -23,7 +23,7 @@ public class SoulboundEnchant extends CustomEnchant implements Listener {
 		return super.getDisplayName(level);
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		final Iterator<ItemStack> drops = event.getDrops().iterator();
 		while (drops.hasNext()) {
@@ -48,7 +48,7 @@ public class SoulboundEnchant extends CustomEnchant implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onPlayerDeath_nbt(PlayerDeathEvent event) {
 		final Iterator<ItemStack> drops = event.getDrops().iterator();
 		while (drops.hasNext()) {

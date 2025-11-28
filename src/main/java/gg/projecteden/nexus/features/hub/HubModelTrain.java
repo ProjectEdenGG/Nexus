@@ -78,12 +78,10 @@ public class HubModelTrain implements Listener {
 		this.minecartSpawnLoc = effects.location(0.5, 137.25, 62.5);
 		this.trackCenter = effects.location(0.5, 139, 55.5);
 
-		Nexus.registerListener(this);
-
-		// TODO: RELEASE PUGMAS
-		if (true)
+		if (!Pugmas25.get().isEventActive())
 			return;
-		//
+
+		Nexus.registerListener(this);
 
 		radiusCheckTask = Tasks.repeat(5, TickTime.SECOND.x(2), () -> {
 			if (effects.getNearbyPlayers(trackCenter, radius).isEmpty()) {

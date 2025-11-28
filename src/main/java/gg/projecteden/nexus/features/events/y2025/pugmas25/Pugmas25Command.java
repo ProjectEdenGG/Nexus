@@ -179,12 +179,6 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		Pugmas25ModelTrain.startup();
 	}
 
-	@Path("reload")
-	@Permission(Group.ADMIN)
-	void reload() {
-		Pugmas25.get().reload();
-	}
-
 	@Path("coins deposit <amount>")
 	@Permission(Group.ADMIN)
 	void coins_add(int amount) {

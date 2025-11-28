@@ -172,7 +172,6 @@ public class Pugmas25ModelTrain implements Listener {
 					_minecart.setInvulnerable(true);
 					_minecart.setFrictionState(TriState.FALSE);
 					_minecart.setVelocity(BlockFace.WEST.getDirection().multiply(0.1));
-					_minecart.setGravity(false);
 				});
 
 				minecarts.add(minecart);

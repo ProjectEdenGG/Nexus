@@ -58,13 +58,13 @@ public class Pugmas25Intro implements Listener {
 				new SoundBuilder(Sound.BLOCK_FIRE_EXTINGUISH).receiver(_player).pitch(0.1).play();
 			})
 			.next(TickTime.SECOND.x(2), _player -> {
-				PUGMAS.send(_player, "You've unlocked the warp to " + Pugmas25.EVENT_NAME);
+				PUGMAS.send(_player, "You've unlocked the warp to &e" + Pugmas25.EVENT_NAME);
 				new SoundBuilder(Sound.ENTITY_PLAYER_LEVELUP).pitch(2).receiver(_player).play();
 
 				user.setVisited(true);
 				userService.save(user);
 			})
-			.next(TickTime.SECOND.x(3), _player -> PUGMAS.send(player, "Talk with the Ticket Master to get started."))
+			.next(TickTime.SECOND.x(3), _player -> PUGMAS.send(player, "Talk with the &eTicket Master &3to get started."))
 			.start(player);
 	}
 }
