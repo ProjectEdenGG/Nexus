@@ -67,6 +67,11 @@ public class MerchantBuilder {
 			return this;
 		}
 
+		public TradeBuilder ingredient(Material ingredient, int amount) {
+			this.ingredients.add(new ItemStack(ingredient, amount));
+			return this;
+		}
+
 		public TradeBuilder ingredient(ItemStack ingredient) {
 			this.ingredients.add(ingredient);
 			return this;

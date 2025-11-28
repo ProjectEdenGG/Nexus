@@ -10,7 +10,9 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.nexus.features.commands.DeathMessagesCommand;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.models.EventBreakable;
+import gg.projecteden.nexus.features.events.models.EventBreakable.EventBreakableBuilder;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory;
+import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.advent.Pugmas25Advent;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.balloons.Pugmas25BalloonEditor;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.balloons.Pugmas25BalloonManager;
@@ -25,6 +27,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Fishin
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Interactions;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Intro;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25ModelTrain;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25SellCrate;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Sidebar;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Snowmen;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Train;
@@ -55,7 +58,9 @@ import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.AdventureUtils;
+import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -75,6 +80,7 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -160,6 +166,7 @@ public class Pugmas25 extends EdenEvent {
 		new Pugmas25Interactions();
 		new Pugmas25Snowmen();
 		new Pugmas25ModelTrain();
+		new Pugmas25SellCrate();
 
 		Pugmas25Train.startup();
 		Pugmas25TrainBackground.startup();
@@ -409,8 +416,8 @@ public class Pugmas25 extends EdenEvent {
 		);
 
 		registerBreakable(EventBreakable.builder()
-			.blockMaterials(Material.LAPIS_ORE, Material.DEEPSLATE_LAPIS_ORE)
-			.drops(Material.LAPIS_LAZULI, 2, 5)
+			.blockMaterials(Material.IRON_ORE, Material.DEEPSLATE_IRON_ORE)
+			.drops(Material.RAW_IRON, 1, 2)
 			.placeholderTypes(Material.COBBLESTONE)
 			.requiredTool(ToolType.PICKAXE, ToolGrade.STONE)
 		);
@@ -419,7 +426,7 @@ public class Pugmas25 extends EdenEvent {
 			.blockMaterials(Material.COPPER_ORE, Material.DEEPSLATE_COPPER_ORE)
 			.drops(Material.RAW_COPPER, 1, 3)
 			.placeholderTypes(Material.COBBLESTONE)
-			.requiredTool(ToolType.PICKAXE, ToolGrade.STONE)
+			.requiredTool(ToolType.PICKAXE, ToolGrade.IRON)
 		);
 
 		registerBreakable(EventBreakable.builder()
@@ -430,10 +437,10 @@ public class Pugmas25 extends EdenEvent {
 		);
 
 		registerBreakable(EventBreakable.builder()
-			.blockMaterials(Material.IRON_ORE, Material.DEEPSLATE_IRON_ORE)
-			.drops(Material.RAW_IRON, 1, 2)
+			.blockMaterials(Material.LAPIS_ORE, Material.DEEPSLATE_LAPIS_ORE)
+			.drops(Material.LAPIS_LAZULI, 2, 5)
 			.placeholderTypes(Material.COBBLESTONE)
-			.requiredTool(ToolType.PICKAXE, ToolGrade.STONE)
+			.requiredTool(ToolType.PICKAXE, ToolGrade.IRON)
 		);
 
 		registerBreakable(EventBreakable.builder()
@@ -447,7 +454,7 @@ public class Pugmas25 extends EdenEvent {
 			.blockMaterials(Material.EMERALD_ORE, Material.DEEPSLATE_EMERALD_ORE)
 			.drops(Material.EMERALD)
 			.placeholderTypes(Material.COBBLESTONE)
-			.requiredTool(ToolType.PICKAXE, ToolGrade.IRON)
+			.requiredTool(ToolType.PICKAXE, ToolGrade.DIAMOND)
 		);
 
 		registerBreakable(EventBreakable.builder()
@@ -497,6 +504,16 @@ public class Pugmas25 extends EdenEvent {
 			height -= 100;
 
 		return height;
+	}
+
+	public static int getLuckyAmount(int min, int max, int luck) {
+		// Scale luck: every 10 luck increases the min by 1
+		int shift = luck / 10;
+
+		int effectiveMin = Math.min(max, min + shift);
+
+		// Roll between effectiveMin and max
+		return effectiveMin + (int) (Math.random() * (max - effectiveMin + 1));
 	}
 
 	public enum Pugmas25QuestProgress {

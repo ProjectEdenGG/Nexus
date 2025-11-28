@@ -67,6 +67,8 @@ public enum Pugmas25QuestItem implements QuestItem {
 	CRATE_GOLD(new ItemBuilder(ItemModelType.EVENT_CRATE_GOLDEN).name("Golden Crate").lore("&7RClick while holding to open")),
 	CRATE_DIAMOND(new ItemBuilder(ItemModelType.EVENT_CRATE_DIAMOND).name("Diamond Crate").lore("&7RClick while holding to open")),
 
+	SUSPICIOUS_DEBRIS(new ItemBuilder(Material.SUSPICIOUS_GRAVEL).name("Suspicious Debris").lore("&7Used in the Extractinator")),
+
 	GIFT(new ItemBuilder(Material.CHEST).name("Gift")), // TODO
 	SLOT_MACHINE_TOKEN(new ItemBuilder(ItemModelType.EVENT_TOKEN).name("Slot Machine Token").lore("&7Used to roll the slot machine")),
 

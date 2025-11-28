@@ -38,7 +38,7 @@ public class Advent25Present implements HasLocation, IWaypoint {
 	private List<ItemStack> contents = new ArrayList<>();
 	private UUID entityUuid;
 	private Color color = ColorType.CYAN.getBukkitColor();
-	private WaypointIcon icon = WaypointIcon.X; // TODO Present icon?
+	private WaypointIcon icon = WaypointIcon.PRESENT;
 
 	public Advent25Present(int day, Location location, UUID entityUuid) {
 		this.day = day;

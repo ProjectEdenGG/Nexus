@@ -26,44 +26,45 @@ public class EventFishingLoot {
 	@AllArgsConstructor
 	public enum EventDefaultFishingLoot {
 		// Fish
-		CARP(EventFishingLootCategory.FISH, ItemModelType.FISHING_LOOT_CARP, "Carp", 40),
-		SALMON(EventFishingLootCategory.FISH, ItemModelType.FISHING_LOOT_SALMON, "Salmon", 30),
-		TROPICAL_FISH(EventFishingLootCategory.FISH, ItemModelType.FISHING_LOOT_TROPICAL_FISH, "Tropical Fish", 20),
-		PUFFERFISH(EventFishingLootCategory.FISH, ItemModelType.FISHING_LOOT_PUFFERFISH, "Pufferfish", 10),
-		BULLHEAD(EventFishingLootCategory.FISH, ItemModelType.FISHING_LOOT_BULLHEAD, "Bullhead", 10),
-		STURGEON(EventFishingLootCategory.FISH, ItemModelType.FISHING_LOOT_STURGEON, "Sturgeon", 10),
-		WOODSKIP(EventFishingLootCategory.FISH, ItemModelType.FISHING_LOOT_WOODSKIP, "Woodskip", 10),
-		VOID_SALMON(EventFishingLootCategory.FISH, ItemModelType.FISHING_LOOT_VOID_SALMON, "Void Salmon", 10),
-		RED_SNAPPER(EventFishingLootCategory.FISH, ItemModelType.FISHING_LOOT_RED_SNAPPER, "Red Snapper", 10),
-		RED_MULLET(EventFishingLootCategory.FISH, ItemModelType.FISHING_LOOT_RED_MULLET, "Red Mullet", 10),
-		TIGER_TROUT(EventFishingLootCategory.FISH, ItemModelType.FISHING_LOOT_TIGER_TROUT, "Tiger Trout", 10),
-		SEA_CUCUMBER(EventFishingLootCategory.FISH, ItemModelType.FISHING_LOOT_SEA_CUCUMBER, "Sea Cucumber", 10),
-		GLACIERFISH(EventFishingLootCategory.FISH, ItemModelType.FISHING_LOOT_GLACIERFISH, "Glacierfish", 10),
-		CRIMSONFISH(EventFishingLootCategory.FISH, ItemModelType.FISHING_LOOT_CRIMSONFISH, "Crimsonfish", 10),
-		BLOBFISH(EventFishingLootCategory.FISH, ItemModelType.FISHING_LOOT_BLOBFISH, "Blobfish", 10),
-		MIDNIGHT_CARP(EventFishingLootCategory.FISH, ItemModelType.FISHING_LOOT_MIDNIGHT_CARP, "Midnight Carp", 40, EventFishingLootTime.NIGHT),
-		SUNFISH(EventFishingLootCategory.FISH, ItemModelType.FISHING_LOOT_SUNFISH, "Sunfish", 40, EventFishingLootTime.DAY),
-		STONEFISH(EventFishingLootCategory.FISH, ItemModelType.FISHING_LOOT_STONEFISH, "Stonefish", 40, 120),
+		CARP(EventFishingLootCategory.FISH, 1, ItemModelType.FISHING_LOOT_CARP, "Carp", 40),
+		SALMON(EventFishingLootCategory.FISH, 2, ItemModelType.FISHING_LOOT_SALMON, "Salmon", 30),
+		TROPICAL_FISH(EventFishingLootCategory.FISH, 3, ItemModelType.FISHING_LOOT_TROPICAL_FISH, "Tropical Fish", 20),
+		PUFFERFISH(EventFishingLootCategory.FISH, 4, ItemModelType.FISHING_LOOT_PUFFERFISH, "Pufferfish", 10),
+		BULLHEAD(EventFishingLootCategory.FISH, 4, ItemModelType.FISHING_LOOT_BULLHEAD, "Bullhead", 10),
+		STURGEON(EventFishingLootCategory.FISH, 4, ItemModelType.FISHING_LOOT_STURGEON, "Sturgeon", 10),
+		WOODSKIP(EventFishingLootCategory.FISH, 4, ItemModelType.FISHING_LOOT_WOODSKIP, "Woodskip", 10),
+		VOID_SALMON(EventFishingLootCategory.FISH, 4, ItemModelType.FISHING_LOOT_VOID_SALMON, "Void Salmon", 10),
+		RED_SNAPPER(EventFishingLootCategory.FISH, 4, ItemModelType.FISHING_LOOT_RED_SNAPPER, "Red Snapper", 10),
+		RED_MULLET(EventFishingLootCategory.FISH, 4, ItemModelType.FISHING_LOOT_RED_MULLET, "Red Mullet", 10),
+		TIGER_TROUT(EventFishingLootCategory.FISH, 4, ItemModelType.FISHING_LOOT_TIGER_TROUT, "Tiger Trout", 10),
+		SEA_CUCUMBER(EventFishingLootCategory.FISH, 4, ItemModelType.FISHING_LOOT_SEA_CUCUMBER, "Sea Cucumber", 10),
+		GLACIERFISH(EventFishingLootCategory.FISH, 4, ItemModelType.FISHING_LOOT_GLACIERFISH, "Glacierfish", 10),
+		CRIMSONFISH(EventFishingLootCategory.FISH, 4, ItemModelType.FISHING_LOOT_CRIMSONFISH, "Crimsonfish", 10),
+		BLOBFISH(EventFishingLootCategory.FISH, 4, ItemModelType.FISHING_LOOT_BLOBFISH, "Blobfish", 10),
+		MIDNIGHT_CARP(EventFishingLootCategory.FISH, 6, ItemModelType.FISHING_LOOT_MIDNIGHT_CARP, "Midnight Carp", 40, EventFishingLootTime.NIGHT),
+		SUNFISH(EventFishingLootCategory.FISH, 6, ItemModelType.FISHING_LOOT_SUNFISH, "Sunfish", 40, EventFishingLootTime.DAY),
+		STONEFISH(EventFishingLootCategory.FISH, 6, ItemModelType.FISHING_LOOT_STONEFISH, "Stonefish", 40, 120),
 		// Junk
-		OLD_BOOTS(EventFishingLootCategory.JUNK, ItemModelType.FISHING_LOOT_OLD_BOOTS, "Old Boots", 10),
-		RUSTY_SPOON(EventFishingLootCategory.JUNK, ItemModelType.FISHING_LOOT_RUSTY_SPOON, "Rusty Spoon", 10),
-		BROKEN_CD(EventFishingLootCategory.JUNK, ItemModelType.FISHING_LOOT_BROKEN_CD, "Broken CD", 10),
-		LOST_BOOK(EventFishingLootCategory.JUNK, ItemModelType.FISHING_LOOT_LOST_BOOK, "Lost Book", 10),
-		SOGGY_NEWSPAPER(EventFishingLootCategory.JUNK, ItemModelType.FISHING_LOOT_SOGGY_NEWSPAPER, "Soggy Newspaper", 10),
-		DRIFTWOOD(EventFishingLootCategory.JUNK, ItemModelType.FISHING_LOOT_DRIFTWOOD, "Driftwood", 10),
-		SEAWEED(EventFishingLootCategory.JUNK, ItemModelType.FISHING_LOOT_SEAWEED, "Seaweed", 10),
+		OLD_BOOTS(EventFishingLootCategory.JUNK, 1, ItemModelType.FISHING_LOOT_OLD_BOOTS, "Old Boots", 10),
+		RUSTY_SPOON(EventFishingLootCategory.JUNK, 0, ItemModelType.FISHING_LOOT_RUSTY_SPOON, "Rusty Spoon", 10),
+		BROKEN_CD(EventFishingLootCategory.JUNK, 0, ItemModelType.FISHING_LOOT_BROKEN_CD, "Broken CD", 10),
+		LOST_BOOK(EventFishingLootCategory.JUNK, 1, ItemModelType.FISHING_LOOT_LOST_BOOK, "Lost Book", 10),
+		SOGGY_NEWSPAPER(EventFishingLootCategory.JUNK, 0, ItemModelType.FISHING_LOOT_SOGGY_NEWSPAPER, "Soggy Newspaper", 10),
+		DRIFTWOOD(EventFishingLootCategory.JUNK, 0, ItemModelType.FISHING_LOOT_DRIFTWOOD, "Driftwood", 10),
+		SEAWEED(EventFishingLootCategory.JUNK, 0, ItemModelType.FISHING_LOOT_SEAWEED, "Seaweed", 10),
 		// Treasure
-		GOLD_NUGGET(EventFishingLootCategory.TREASURE, Material.GOLD_NUGGET, 15),
-		UNBREAKING(EventFishingLootCategory.TREASURE, Material.ENCHANTED_BOOK, "Unbreaking", 10),
-		EFFICIENCY(EventFishingLootCategory.TREASURE, Material.ENCHANTED_BOOK, "Efficiency", 10),
-		FORTUNE(EventFishingLootCategory.TREASURE, Material.ENCHANTED_BOOK, "Fortune", 8),
-		LURE(EventFishingLootCategory.TREASURE, Material.ENCHANTED_BOOK, "Lure", 8),
-		DIAMOND(EventFishingLootCategory.TREASURE, Material.DIAMOND, 6),
-		NAUTILUS_SHELL(EventFishingLootCategory.TREASURE, Material.NAUTILUS_SHELL, 6),
-		TREASURE_CHEST(EventFishingLootCategory.TREASURE, ItemModelType.FISHING_LOOT_TREASURE_CHEST, "Treasure Chest", 5),
+		GOLD_NUGGET(EventFishingLootCategory.TREASURE, 1, Material.GOLD_NUGGET, 15),
+		UNBREAKING(EventFishingLootCategory.TREASURE, 8, Material.ENCHANTED_BOOK, "Unbreaking", 10),
+		EFFICIENCY(EventFishingLootCategory.TREASURE, 8, Material.ENCHANTED_BOOK, "Efficiency", 10),
+		FORTUNE(EventFishingLootCategory.TREASURE, 10, Material.ENCHANTED_BOOK, "Fortune", 8),
+		LURE(EventFishingLootCategory.TREASURE, 10, Material.ENCHANTED_BOOK, "Lure", 8),
+		DIAMOND(EventFishingLootCategory.TREASURE, 12, Material.DIAMOND, 6),
+		NAUTILUS_SHELL(EventFishingLootCategory.TREASURE, 13, Material.NAUTILUS_SHELL, 6),
+		TREASURE_CHEST(EventFishingLootCategory.TREASURE, 15, ItemModelType.FISHING_LOOT_TREASURE_CHEST, "Treasure Chest", 5),
 		;
 
 		private final EventFishingLootCategory category;
+		private final Integer gold;
 		private final Material material;
 		private final String modelId;
 		private final double weight;
@@ -71,28 +72,28 @@ public class EventFishingLoot {
 		private final EventFishingLootTime time;
 		private final Integer maxY;
 
-		EventDefaultFishingLoot(EventFishingLootCategory category, Material material, double weight) {
-			this(category, material, null, weight, null, null, null);
+		EventDefaultFishingLoot(EventFishingLootCategory category, int gold, Material material, double weight) {
+			this(category, gold, material, null, weight, null, null, null);
 		}
 
-		EventDefaultFishingLoot(EventFishingLootCategory category, Material material, String customName, double weight) {
-			this(category, material, null, weight, customName, null, null);
+		EventDefaultFishingLoot(EventFishingLootCategory category, int gold, Material material, String customName, double weight) {
+			this(category, gold, material, null, weight, customName, null, null);
 		}
 
-		EventDefaultFishingLoot(EventFishingLootCategory category, ItemModelType itemModelType, String customName, double weight) {
-			this(category, itemModelType.getMaterial(), itemModelType.getModel(), weight, customName, EventFishingLootTime.BOTH, null);
+		EventDefaultFishingLoot(EventFishingLootCategory category, int gold, ItemModelType itemModelType, String customName, double weight) {
+			this(category, gold, itemModelType.getMaterial(), itemModelType.getModel(), weight, customName, EventFishingLootTime.BOTH, null);
 		}
 
-		EventDefaultFishingLoot(EventFishingLootCategory category, ItemModelType itemModelType, String customName, double weight, EventFishingLootTime time) {
-			this(category, itemModelType.getMaterial(), itemModelType.getModel(), weight, customName, time, null);
+		EventDefaultFishingLoot(EventFishingLootCategory category, int gold, ItemModelType itemModelType, String customName, double weight, EventFishingLootTime time) {
+			this(category, gold, itemModelType.getMaterial(), itemModelType.getModel(), weight, customName, time, null);
 		}
 
-		EventDefaultFishingLoot(EventFishingLootCategory category, ItemModelType itemModelType, String customName, double weight, Integer maxY) {
-			this(category, itemModelType.getMaterial(), itemModelType.getModel(), weight, customName, EventFishingLootTime.BOTH, maxY);
+		EventDefaultFishingLoot(EventFishingLootCategory category, int gold, ItemModelType itemModelType, String customName, double weight, Integer maxY) {
+			this(category, gold, itemModelType.getMaterial(), itemModelType.getModel(), weight, customName, EventFishingLootTime.BOTH, maxY);
 		}
 
 		public FishingLoot build() {
-			return new FishingLoot(name(), category, material, modelId, weight, customName, null, time, maxY, null);
+			return new FishingLoot(name(), category, gold, material, modelId, weight, customName, null, time, maxY, null);
 		}
 
 	}
@@ -103,6 +104,7 @@ public class EventFishingLoot {
 	public static class FishingLoot {
 		private String id;
 		private EventFishingLootCategory category;
+		private final Integer gold;
 		private Material material;
 		private String modelId;
 		private double weight;
@@ -112,10 +114,11 @@ public class EventFishingLoot {
 		private Integer maxY;
 		private Predicate<Player> predicate;
 
-		public FishingLoot(String name, EventFishingLootCategory category, Material material, String modelId, int weight,
+		public FishingLoot(String name, EventFishingLootCategory category, Integer gold, Material material, String modelId, int weight,
 						   String customName, String customLore, EventFishingLootTime time, Integer maxY, Predicate<Player> predicate) {
 			this.id = name;
 			this.category = category;
+			this.gold = gold;
 			this.material = material;
 			this.modelId = modelId;
 			this.weight = weight;

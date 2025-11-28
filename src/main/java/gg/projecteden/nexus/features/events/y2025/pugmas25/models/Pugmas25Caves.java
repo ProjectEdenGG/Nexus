@@ -5,23 +5,31 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts.Pugmas25District;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
+import gg.projecteden.nexus.features.quests.CommonQuestItem;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.EntityUtils;
+import gg.projecteden.nexus.utils.Currency;
+import gg.projecteden.nexus.utils.Currency.Price;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.block.Block;
 import org.bukkit.entity.CaveSpider;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -34,6 +42,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -41,6 +51,8 @@ import java.util.List;
 import java.util.Map;
 
 public class Pugmas25Caves implements Listener {
+	private static final String EXTRACTINATOR_REGION = Pugmas25.get().getRegionName() + "_extractinator";
+	private static final String EXTRACTINATOR_PREFIX = StringUtils.getPrefix("Extractinator");
 	private static final double SPIDER_MAX_SCALE = 1.5;
 	private static final double SPIDER_MIN_SCALE = 0.6;
 	private static final double SPIDER_MOTHER_MIN_SCALE = 1.4;
@@ -66,6 +78,86 @@ public class Pugmas25Caves implements Listener {
 
 	public static void shutdown() {
 		Tasks.cancel(polarBearTask);
+	}
+
+	@EventHandler
+	public void on(PlayerInteractEvent event) {
+		if (!Pugmas25.get().isAtEvent(event))
+			return;
+
+		Block block = event.getClickedBlock();
+		if (Nullables.isNullOrAir(block))
+			return;
+
+		if (block.getType() != Material.BARRIER)
+			return;
+
+		if (!Pugmas25.get().worldguard().isInRegion(block.getLocation(), EXTRACTINATOR_REGION))
+			return;
+
+		Player player = event.getPlayer();
+		if (!CommonQuestItem.COIN_POUCH.isInInventoryOf(player)) {
+			event.setCancelled(true);
+			PlayerUtils.send(player, Pugmas25.PREFIX + "&cYou need your Coin Pouch to interact with this");
+			return;
+		}
+
+		ItemStack tool = ItemUtils.getTool(player);
+		if (Nullables.isNullOrAir(tool) || !Pugmas25QuestItem.SUSPICIOUS_DEBRIS.fuzzyMatch(tool))
+			return;
+
+		event.setCancelled(true);
+		boolean lucky = Pugmas25QuestItem.LUCKY_HORSESHOE.isInInventoryOf(player);
+		ItemStack drop = getExtractinatorDrop(player, lucky);
+		if (drop == null)
+			return;
+
+		ItemUtils.subtract(player, tool);
+		PlayerUtils.giveItem(player, drop);
+		new SoundBuilder(Sound.ENTITY_ITEM_PICKUP).volume(0.5).pitch(2).location(player).play();
+	}
+
+	private static final Map<Material, Double> weightedExtractinatorDrops = new HashMap<>() {{
+		put(Material.AIR, 30.0);
+		put(Material.STICK, 25.0);
+		put(Material.STRING, 25.0);
+		put(Material.FEATHER, 25.0);
+		put(Material.COAL, 25.0);
+		put(Material.RAW_COPPER, 22.0);
+		put(Material.RAW_GOLD, 22.0);
+		put(Material.RAW_IRON, 20.0);
+		put(Material.GOLD_NUGGET, 18.0);
+		put(Material.GOLD_INGOT, 16.0);
+		put(Material.COPPER_INGOT, 16.0);
+		put(Material.IRON_NUGGET, 13.0);
+		put(Material.IRON_INGOT, 10.0);
+		put(Material.LAPIS_LAZULI, 10.0);
+		put(Material.DIAMOND, 7.0);
+		put(Material.EMERALD, 5.0);
+		put(Material.NETHERITE_SCRAP, 1.0);
+	}};
+
+	public ItemStack getExtractinatorDrop(Player player, boolean lucky) {
+		int luckMin = lucky ? RandomUtils.randomInt(5, 20) : 0;
+		int luck = RandomUtils.randomInt(luckMin, 30);
+
+		// Coins
+		if (RandomUtils.chanceOf(10)) {
+			int coinAmount = Pugmas25.getLuckyAmount(1, 15, luck);
+			try {
+				Currency.COIN_POUCH.deposit(player, Price.of(coinAmount));
+				PlayerUtils.send(player, EXTRACTINATOR_PREFIX + "&3Deposited &e" + coinAmount + " coins &3to Coin Pouch");
+			} catch (Exception e) {
+				PlayerUtils.send(player, e.getMessage());
+			}
+			return null;
+		}
+
+		Material type = RandomUtils.getWeightedRandom(weightedExtractinatorDrops);
+		if (type == Material.AIR)
+			return null;
+
+		return new ItemBuilder(type).amount(Pugmas25.getLuckyAmount(1, 3, luck)).build();
 	}
 
 	@EventHandler

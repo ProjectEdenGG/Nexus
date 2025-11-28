@@ -12,6 +12,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Distri
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts.Pugmas25District;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Sidebar.Pugmas25SidebarLine;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
+import gg.projecteden.nexus.features.quests.CommonQuestItem;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
@@ -63,27 +64,30 @@ public class Pugmas25Fishing implements Listener {
 		int timesCompleted = user.getCompletedAnglerQuests();
 
 		// Nth reward
-		if (timesCompleted == 5) {
+		if (timesCompleted == 3) {
+			dialog.npc("Have this fancy Gold Watch! Now you won’t have to squint at the sky and guess whether it’s day or night!");
+			PlayerUtils.giveItem(quester, Pugmas25QuestItem.GOLD_WATCH.get());
+		} else if (timesCompleted == 6) {
 			dialog.npc("Take this Angler Hat, it'll help the fish like you more! ...Probably.");
 			PlayerUtils.giveItem(quester, Pugmas25QuestItem.ANGLER_HAT.get());
-		} else if (timesCompleted == 10) {
+		} else if (timesCompleted == 12) {
 			dialog.npc("Here’s an Angler Vest to match your hat! Now you’re really starting to look like a master angler!");
 			PlayerUtils.giveItem(quester, Pugmas25QuestItem.ANGLER_VEST.get());
-		} else if (timesCompleted == 15) {
+		} else if (timesCompleted == 18) {
 			dialog.npc("You're really committed! Here, have these Angler Pants! Now you’ve got the full Angler look!");
 			PlayerUtils.giveItem(quester, Pugmas25QuestItem.ANGLER_PANTS.get());
-		} else if (timesCompleted == 20) {
+		} else if (timesCompleted == 26) {
 			dialog.npc("You’ve earned something special! This Reinforced Rod adds more luck AND lets you reel in Iron Crates!");
 			PlayerUtils.giveItem(quester, Pugmas25QuestItem.FISHING_ROD_REINFORCED.get());
-		} else if (timesCompleted == 40) {
+		} else if (timesCompleted == 38) {
 			dialog.npc("You’re a legendary angler! Take this Golden Fishing Rod, it's super lucky, super shiny, AND it pulls up Diamond Crates!");
 			PlayerUtils.giveItem(quester, Pugmas25QuestItem.FISHING_ROD_GOLDEN.get());
 		}
 
 		// Tool chance reward or nth
 		tryGiveFishingTool(dialog, quester, timesCompleted, 8, Pugmas25SidebarLine.FISHING_LUCK); // FISHING_POCKET_GUIDE
-		tryGiveFishingTool(dialog, quester, timesCompleted, 17, Pugmas25SidebarLine.HEIGHT); // SEXTANT
-		tryGiveFishingTool(dialog, quester, timesCompleted, 25, Pugmas25SidebarLine.WEATHER); // WEATHER_RADIO
+		tryGiveFishingTool(dialog, quester, timesCompleted, 15, Pugmas25SidebarLine.HEIGHT); // SEXTANT
+		tryGiveFishingTool(dialog, quester, timesCompleted, 22, Pugmas25SidebarLine.WEATHER); // WEATHER_RADIO
 	}
 
 	private static void tryGiveFishingTool(Dialog dialog, Quester quester, int timesCompleted, int guaranteed, Pugmas25SidebarLine sidebarLine) {
@@ -238,7 +242,7 @@ public class Pugmas25Fishing implements Listener {
 			this.hint = hint;
 			this.time = time;
 			//
-			this.loot = new FishingLoot(name(), EventFishingLootCategory.SPECIAL, Material.LEATHER_HORSE_ARMOR, modelId, 5,
+			this.loot = new FishingLoot(name(), EventFishingLootCategory.SPECIAL, null, Material.LEATHER_HORSE_ARMOR, modelId, 5,
 				customName, "&7Quest Fish", time, null, predicate);
 		}
 
@@ -394,12 +398,12 @@ public class Pugmas25Fishing implements Listener {
 		}
 
 		// Ingots
-		possibleTreasure.add(new ItemBuilder(Material.GOLD_NUGGET).amount(getLuckyAmount(4, 10, luck)).build());
-		possibleTreasure.add(new ItemBuilder(Material.GOLD_INGOT).amount(getLuckyAmount(2, 8, luck)).build());
-		possibleTreasure.add(new ItemBuilder(Material.IRON_NUGGET).amount(getLuckyAmount(3, 7, luck)).build());
-		possibleTreasure.add(new ItemBuilder(Material.IRON_INGOT).amount(getLuckyAmount(2, 6, luck)).build());
-		possibleTreasure.add(new ItemBuilder(Material.DIAMOND).amount(getLuckyAmount(1, 6, luck)).build());
-		possibleTreasure.add(new ItemBuilder(Material.EMERALD).amount(getLuckyAmount(3, 8, luck)).build());
+		possibleTreasure.add(new ItemBuilder(Material.GOLD_NUGGET).amount(Pugmas25.getLuckyAmount(4, 10, luck)).build());
+		possibleTreasure.add(new ItemBuilder(Material.GOLD_INGOT).amount(Pugmas25.getLuckyAmount(2, 8, luck)).build());
+		possibleTreasure.add(new ItemBuilder(Material.IRON_NUGGET).amount(Pugmas25.getLuckyAmount(3, 7, luck)).build());
+		possibleTreasure.add(new ItemBuilder(Material.IRON_INGOT).amount(Pugmas25.getLuckyAmount(2, 6, luck)).build());
+		possibleTreasure.add(new ItemBuilder(Material.DIAMOND).amount(Pugmas25.getLuckyAmount(1, 6, luck)).build());
+		possibleTreasure.add(new ItemBuilder(Material.EMERALD).amount(Pugmas25.getLuckyAmount(3, 8, luck)).build());
 
 		// Tools
 		possibleTreasure.add(new ItemBuilder(Material.DIAMOND_PICKAXE).build());
@@ -407,22 +411,15 @@ public class Pugmas25Fishing implements Listener {
 
 		// Misc
 		if (luck > 20) {
+			if (!CommonQuestItem.DISCOUNT_CARD.isInInventoryOf(player))
+				possibleTreasure.add(CommonQuestItem.DISCOUNT_CARD.get());
+
 			possibleTreasure.add(Pugmas25QuestItem.SLOT_MACHINE_TOKEN.get());
 			possibleTreasure.add(Pugmas25QuestItem.GIFT.get());
-			possibleTreasure.add(new ItemBuilder(Material.NETHERITE_SCRAP).amount(getLuckyAmount(1, 2, luck)).build());
+			possibleTreasure.add(new ItemBuilder(Material.NETHERITE_SCRAP).amount(Pugmas25.getLuckyAmount(1, 2, luck)).build());
 		}
 
 		return RandomUtils.randomElement(possibleTreasure);
-	}
-
-	private int getLuckyAmount(int min, int max, int luck) {
-		// Scale luck: every 10 luck increases the min by 1
-		int shift = luck / 10;
-
-		int effectiveMin = Math.min(max, min + shift);
-
-		// Roll between effectiveMin and max
-		return effectiveMin + (int) (Math.random() * (max - effectiveMin + 1));
 	}
 
 	@EventHandler

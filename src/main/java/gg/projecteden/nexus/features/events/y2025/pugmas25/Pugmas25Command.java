@@ -26,6 +26,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Fishin
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Geyser;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Intro;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25ModelTrain;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25SellCrate.Pugmas25SellCrateType;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Train;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25Quest;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
@@ -189,6 +190,12 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 	@Permission(Group.ADMIN)
 	void coins_remove(int amount) {
 		Currency.COIN_POUCH.withdraw(player(), Price.of(amount), null, null);
+	}
+
+	@Path("makeSellCrate <type>")
+	@Permission(Group.ADMIN)
+	void makeSellCrate(Pugmas25SellCrateType type) {
+		type.applyToSign(getTargetBlockRequired());
 	}
 
 	@Path("sidebar")
