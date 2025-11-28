@@ -5,10 +5,7 @@ import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.features.chat.Emotes;
-import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.particles.providers.EffectSettingProvider;
-import gg.projecteden.nexus.features.resourcepack.models.files.ItemModelFolder;
 import gg.projecteden.nexus.features.store.BuycraftUtils;
 import gg.projecteden.nexus.features.store.Package;
 import gg.projecteden.nexus.features.store.StoreCommand;
@@ -18,14 +15,9 @@ import gg.projecteden.nexus.features.store.gallery.annotations.Category.GalleryC
 import gg.projecteden.nexus.features.store.gallery.annotations.RealCategory;
 import gg.projecteden.nexus.features.store.perks.chat.joinquit.JoinQuit;
 import gg.projecteden.nexus.features.store.perks.inventory.workbenches.WorkbenchesCommand.WorkbenchesMenu;
-import gg.projecteden.nexus.features.store.perks.visuals.CostumeCommand.CostumeMenu;
+import gg.projecteden.nexus.features.store.perks.visuals.CostumeCommand.CostumeDisplayMenu;
 import gg.projecteden.nexus.features.vaults.VaultCommand.VaultMenu;
-import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
-import gg.projecteden.nexus.features.workbenches.dyestation.DyeStationMenu;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.models.costume.Costume;
-import gg.projecteden.nexus.models.costume.Costume.CostumeType;
-import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorTask;
@@ -87,64 +79,6 @@ import java.util.UUID;
 public enum GalleryPackage {
 	@Category(GalleryCategory.VISUALS)
 	COSTUMES(4307) {
-		@NoArgsConstructor
-		static class CostumeDisplayMenu extends CostumeMenu {
-
-			public CostumeDisplayMenu(CostumeMenu previousMenu, ItemModelFolder folder) {
-				super(previousMenu, folder);
-			}
-
-			@Override
-			protected CostumeMenu newMenu(CostumeMenu previousMenu, ItemModelFolder subfolder) {
-				return new CostumeDisplayMenu(previousMenu, subfolder);
-			}
-
-			@Override
-			protected boolean isAvailableCostume(CostumeUser user, Costume costume) {
-				return true;
-			}
-
-			@Override
-			protected void init(CostumeUser user, InventoryContents contents) {
-				for (CostumeType type : CostumeType.values()) {
-					final Costume costume = user.getActiveDisplayCostume(type);
-					if (costume != null) {
-						final ItemBuilder builder = new ItemBuilder(user.getCostumeDisplayItem(costume))
-							.lore("", "&a&lActive", "&cClick to deactivate")
-							.glow();
-
-						contents.set(0, type.getMenuHeaderSlot(), ClickableItem.of(builder.build(), e -> {
-							user.setActiveDisplayCostume(type, null);
-							service.save(user);
-							open(user.getOnlinePlayer(), contents.pagination().getPage());
-						}));
-
-						if (MaterialTag.DYEABLE.isTagged(costume.getItem().getType())) {
-							contents.set(0, type.getMenuHeaderSlot() + 1, ClickableItem.of(DyeStation.getWorkbench().build(), e ->
-								new DyeStationMenu().openCostume(user, costume, data -> {
-									user.dye(costume, data.getColor());
-									service.save(user);
-									open(user.getOnlinePlayer());
-								})));
-						}
-					}
-				}
-			}
-
-			@Override
-			protected ClickableItem formatCostume(CostumeUser user, Costume costume, InventoryContents contents) {
-				final ItemBuilder builder = new ItemBuilder(user.getCostumeDisplayItem(costume));
-				if (user.hasDisplayCostumeActivated(costume))
-					builder.lore("", "&a&lActive").glow();
-
-				return ClickableItem.of(builder.build(), e -> {
-					user.setActiveDisplayCostume(costume.getType(), user.hasDisplayCostumeActivated(costume) ? null : costume);
-					service.save(user);
-					open(user.getOnlinePlayer(), contents.pagination().getPage());
-				});
-			}
-		}
-
 		@Override
 		public void onNpcInteract(Player player) {
 			new CostumeDisplayMenu().open(player);

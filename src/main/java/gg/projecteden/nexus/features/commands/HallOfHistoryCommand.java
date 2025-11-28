@@ -15,6 +15,9 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.costume.Costume;
+import gg.projecteden.nexus.models.costume.CostumeUser;
+import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.models.hallofhistory.HallOfHistory;
 import gg.projecteden.nexus.models.hallofhistory.HallOfHistory.RankHistory;
 import gg.projecteden.nexus.models.hallofhistory.HallOfHistoryService;
@@ -24,15 +27,20 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ChunkLoader;
 import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.CitizensUtils.NPCFinder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.trait.Equipment;
+import net.citizensnpcs.api.trait.trait.Equipment.EquipmentSlot;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -261,7 +269,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 		ChunkLoader.forceLoad(world, regionName);
 
 		Tasks.wait(40, () -> {
-			List<NPC> npcs = CitizensUtils.NPCFinder.builder()
+			List<NPC> npcs = NPCFinder.builder()
 				.world(world)
 				.region(regionName)
 				.type(EntityType.PLAYER)
@@ -281,6 +289,16 @@ public class HallOfHistoryCommand extends CustomCommand {
 						CitizensUtils.updateNameAndSkin(npc, nerd);
 					else
 						CitizensUtils.updateNameAndSkin(npc, name);
+
+					var equipment = npc.getTraitNullable(Equipment.class);
+					if (equipment != null) {
+						CostumeUser user = new CostumeUserService().get(nerd);
+						for (EquipmentSlot value : EquipmentSlot.values())
+							equipment.set(value, new ItemStack(Material.AIR));
+
+						user.getActiveDisplayCostumes().forEach((costumeType, costume) ->
+							equipment.set(costumeType.getNpcSlot(), user.getCostumeItem(Costume.of(costume))));
+					}
 
 					send(PREFIX + "Updated " + nerd.getColoredName());
 				});

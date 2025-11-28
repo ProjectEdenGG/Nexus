@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.store.perks.visuals;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.commands.StaffHallCommand;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
@@ -215,6 +216,23 @@ public class CostumeCommand extends CustomCommand implements Listener {
 			.command("/costume top")
 			.page(page)
 			.send();
+	}
+
+	@Path("staffhall")
+	@Permission(Group.STAFF)
+	@Description("Edit the costume displayed in the Staff Hall and Hall of History")
+	void staffhall() {
+		new CostumeDisplayMenu().open(player());
+	}
+
+	@Path("setActiveDisplayCostume <user> <costumeType> [costume]")
+	@Permission(Group.ADMIN)
+	@Description("Set the costume displayed in the Staff Hall and Hall of History")
+	void setActiveDisplayCostume(CostumeUser user, CostumeType type, Costume costume) {
+		user.setActiveDisplayCostume(type, costume);
+		service.save(user);
+		StaffHallCommand.updateAllNPCs();
+		send(PREFIX + "Set &e" + user.getNickname() + "&3's active display costume to &e" + (costume == null ? "null" : costume.getId()));
 	}
 
 	@TabCompleterFor(Costume.class)
@@ -463,6 +481,70 @@ public class CostumeCommand extends CustomCommand implements Listener {
 			return ClickableItem.of(builder.build(), e -> {
 				user.setActiveCostume(costume.getType(), user.hasCostumeActivated(costume) ? null : costume);
 				service.save(user);
+				open(user.getOnlinePlayer(), contents.pagination().getPage());
+			});
+		}
+	}
+
+	@NoArgsConstructor
+	public static class CostumeDisplayMenu extends CostumeMenu {
+
+		public CostumeDisplayMenu(CostumeMenu previousMenu, ItemModelFolder folder) {
+			super(previousMenu, folder);
+		}
+
+		@Override
+		protected CostumeMenu newMenu(CostumeMenu previousMenu, ItemModelFolder subfolder) {
+			return new CostumeDisplayMenu(previousMenu, subfolder);
+		}
+
+		@Override
+		protected boolean isAvailableCostume(CostumeUser user, Costume costume) {
+			return true;
+		}
+
+		@Override
+		protected void init(CostumeUser user, InventoryContents contents) {
+			for (CostumeType type : CostumeType.values()) {
+				final Costume costume = user.getActiveDisplayCostume(type);
+				if (costume != null) {
+					final ItemBuilder builder = new ItemBuilder(user.getCostumeDisplayItem(costume))
+						.lore("", "&a&lActive", "&cClick to deactivate")
+						.glow();
+
+					contents.set(0, type.getMenuHeaderSlot(), ClickableItem.of(builder.build(), e -> {
+						user.setActiveDisplayCostume(type, null);
+						save(user);
+						open(user.getOnlinePlayer(), contents.pagination().getPage());
+					}));
+
+					if (MaterialTag.DYEABLE.isTagged(costume.getItem().getType())) {
+						contents.set(0, type.getMenuHeaderSlot() + 1, ClickableItem.of(DyeStation.getWorkbench().build(), e ->
+							new DyeStationMenu().openCostume(user, costume, data -> {
+								user.dye(costume, data.getColor());
+								save(user);
+								open(user.getOnlinePlayer());
+							})));
+					}
+				}
+			}
+		}
+
+		private void save(CostumeUser user) {
+			service.save(user);
+			if (user.getRank().isStaff())
+				StaffHallCommand.updateAllNPCs();
+		}
+
+		@Override
+		protected ClickableItem formatCostume(CostumeUser user, Costume costume, InventoryContents contents) {
+			final ItemBuilder builder = new ItemBuilder(user.getCostumeDisplayItem(costume));
+			if (user.hasDisplayCostumeActivated(costume))
+				builder.lore("", "&a&lActive").glow();
+
+			return ClickableItem.of(builder.build(), e -> {
+				user.setActiveDisplayCostume(costume.getType(), user.hasDisplayCostumeActivated(costume) ? null : costume);
+				save(user);
 				open(user.getOnlinePlayer(), contents.pagination().getPage());
 			});
 		}

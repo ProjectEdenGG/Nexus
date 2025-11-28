@@ -13,6 +13,9 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.costume.Costume;
+import gg.projecteden.nexus.models.costume.CostumeUser;
+import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.models.hallofhistory.HallOfHistory.RankHistory;
 import gg.projecteden.nexus.models.hallofhistory.HallOfHistoryService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -33,13 +36,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.trait.Equipment;
+import net.citizensnpcs.api.trait.trait.Equipment.EquipmentSlot;
+import net.citizensnpcs.trait.AttributeTrait;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Directional;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -53,6 +62,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
 
 @NoArgsConstructor
 public class StaffHallCommand extends CustomCommand implements Listener {
@@ -81,9 +92,9 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 		send("&e&lNickname: &3" + nerd.getNickname());
 		send("&e&lIGN: &3" + nerd.getName());
 		send("&e&lRank: &3" + nerd.getRank().getColoredName());
-		if (Nullables.isNotNullOrEmpty(nerd.getPronouns()))
+		if (isNotNullOrEmpty(nerd.getPronouns()))
 			send("&e&lPronouns: &3" + String.join(",", nerd.getPronouns().stream().map(Enum::toString).toList()));
-		if (Nullables.isNotNullOrEmpty(nerd.getFilteredPreferredNames()))
+		if (isNotNullOrEmpty(nerd.getFilteredPreferredNames()))
 			send(plural("&e&lPreferred name", nerd.getFilteredPreferredNames().size()) + ": &3" + String.join(", ", nerd.getFilteredPreferredNames()));
 		if (nerd.getBirthday() != null)
 			send("&e&lBirthday: &3" + TimeUtils.shortDateFormat(nerd.getBirthday()) + " (" + nerd.getBirthday().until(LocalDate.now()).getYears() + " years)");
@@ -94,12 +105,16 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 
 		line();
 
-		if (!gg.projecteden.nexus.utils.Nullables.isNullOrEmpty(nerd.getAbout())) {
+		if (isNotNullOrEmpty(nerd.getAbout())) {
 			send("&e&lAbout me: &3" + nerd.getAbout());
 			line();
 		}
 		if (nerd.isMeetMeVideo()) {
 			send(json("&eMeet me! &c" + EdenSocialMediaSite.WEBSITE.getUrl() + "/meet/" + nerd.getName().toLowerCase()).url(EdenSocialMediaSite.WEBSITE.getUrl() + "/meet/" + nerd.getName().toLowerCase()));
+			line();
+		}
+		if (isSelf(nerd)) {
+			send(json("&e&l[Click to edit your costumes]").command("/costumes staffhall"));
 			line();
 		}
 	}
@@ -182,18 +197,13 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 	@Permission(Group.ADMIN)
 	@Description("Automatically update all staff hall NPCs")
 	void update() {
-		Map<StaffHallRankGroup, List<Nerd>> groups = new HashMap<>();
+		updateAllNPCs();
+	}
 
-		Rank.getStaffNerds().get().forEach((rank, nerds) -> {
-			if (rank != Rank.OWNER)
-				groups.computeIfAbsent(StaffHallRankGroup.of(rank), $ -> new ArrayList<>()).addAll(nerds);
-		});
-
+	public static void updateAllNPCs() {
 		AtomicInteger wait = new AtomicInteger();
-
-		groups.forEach((group, nerds) -> {
-			nerds.sort(new SeniorityComparator(group));
-			final List<Integer> npcIds = config.getNpcIds(group);
+		getStaffHallMapOrdered().forEach((group, nerds) -> {
+			final List<Integer> npcIds = new StaffHallConfigService().get0().getNpcIds(group);
 			for (int index = 0; index < npcIds.size(); index++) {
 				final int i = index;
 				Tasks.wait(wait.getAndAdd(5), () -> {
@@ -207,18 +217,47 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 		});
 	}
 
-	private void updateNpc(int npcId, Nerd nerd) {
-		CitizensUtils.respawnNPC(npcId);
-		CitizensUtils.updateNameAndSkin(CitizensUtils.getNPC(npcId), nerd);
-		updateBlockBelow(npcId, ColorType.of(nerd.getRank().getSimilarChatColor()));
+	@SneakyThrows
+	private static @NotNull Map<StaffHallRankGroup, List<Nerd>> getStaffHallMapOrdered() {
+		Map<StaffHallRankGroup, List<Nerd>> groups = new HashMap<>();
+
+		Rank.getStaffNerds().get().forEach((rank, nerds) -> {
+			if (rank != Rank.OWNER)
+				groups.computeIfAbsent(StaffHallRankGroup.of(rank), $ -> new ArrayList<>()).addAll(nerds);
+		});
+
+		groups.forEach((group, nerds) -> nerds.sort(new SeniorityComparator(group)));
+
+		return groups;
 	}
 
-	private void despawnNpc(int npcId) {
+	private static void updateNpc(int npcId, Nerd nerd) {
+		NPC npc = CitizensUtils.getNPC(npcId);
+
+		CitizensUtils.respawnNPC(npcId);
+		CitizensUtils.updateNameAndSkin(npc, nerd);
+		updateBlockBelow(npcId, ColorType.of(nerd.getRank().getSimilarChatColor()));
+
+		var attributes = npc.getTraitNullable(AttributeTrait.class);
+		if (attributes != null)
+			attributes.setAttributeValue(Attribute.SCALE, 2);
+
+		var equipment = npc.getTraitNullable(Equipment.class);
+		if (equipment != null) {
+			CostumeUser user = new CostumeUserService().get(nerd);
+			for (EquipmentSlot value : EquipmentSlot.values())
+				equipment.set(value, new ItemStack(Material.AIR));
+			user.getActiveDisplayCostumes().forEach((costumeType, costume) ->
+				equipment.set(costumeType.getNpcSlot(), user.getCostumeItem(Costume.of(costume))));
+		}
+	}
+
+	private static void despawnNpc(int npcId) {
 		CitizensUtils.despawnNPC(npcId);
 		updateBlockBelow(npcId, ColorType.GRAY);
 	}
 
-	private void updateBlockBelow(int npcId, ColorType color) {
+	private static void updateBlockBelow(int npcId, ColorType color) {
 		@NotNull Block block = CitizensUtils.getNPC(npcId).getStoredLocation().getLocation().getBlock().getRelative(BlockFace.DOWN);
 		if (!MaterialTag.SHULKER_BOXES.isTagged(block)) {
 			Nexus.warn("Block below Staff Hall NPC " + npcId + " is not a shulker box but is " + block.getType());
@@ -284,7 +323,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 				for (Nerd staff : ranks.get(rank))
 					try {
 						String html = "";
-						if (Nullables.isNotNullOrEmpty(staff.getFilteredPreferredNames()))
+						if (isNotNullOrEmpty(staff.getFilteredPreferredNames()))
 							html += "<span style=\"font-weight: bold;\">" + StringUtils.plural("Preferred name", staff.getFilteredPreferredNames().size()) + ":</span> " + String.join(", ", staff.getFilteredPreferredNames()) + "<br/>";
 						if (staff.getBirthday() != null)
 							html += "<span style=\"font-weight: bold;\">Birthday:</span> " + TimeUtils.shortDateFormat(staff.getBirthday())

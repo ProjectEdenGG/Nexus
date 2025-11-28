@@ -9,6 +9,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import net.citizensnpcs.api.trait.trait.Equipment;
 import org.bukkit.Material;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -53,12 +54,13 @@ public class Costume {
 	@Getter
 	@AllArgsConstructor
 	public enum CostumeType {
-		HAT(EquipmentSlot.HEAD, 2),
-		HAND(EquipmentSlot.OFF_HAND, 5),
-		BACK(EquipmentSlot.HEAD, 6),
+		HAT(EquipmentSlot.HEAD, Equipment.EquipmentSlot.HELMET, 2),
+		HAND(EquipmentSlot.OFF_HAND, Equipment.EquipmentSlot.OFF_HAND, 5),
+		BACK(EquipmentSlot.HEAD, Equipment.EquipmentSlot.HELMET, 6),
 		;
 
 		private final EquipmentSlot slot;
+		private final Equipment.EquipmentSlot npcSlot;
 		private final int menuHeaderSlot;
 
 		public ItemModelFolder getFolder() {
