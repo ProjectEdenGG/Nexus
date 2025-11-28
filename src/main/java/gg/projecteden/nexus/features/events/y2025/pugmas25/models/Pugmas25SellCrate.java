@@ -45,8 +45,8 @@ public class Pugmas25SellCrate implements Listener {
 	@Getter
 	@AllArgsConstructor
 	public enum Pugmas25SellCrateType {
-		FARMING("&bFishing Items"),
-		FISHING("&eFarming Items"),
+		FISHING("&bFishing Items"),
+		FARMING("&eFarming Items"),
 		MINING("&7Mining Items"),
 		;
 
