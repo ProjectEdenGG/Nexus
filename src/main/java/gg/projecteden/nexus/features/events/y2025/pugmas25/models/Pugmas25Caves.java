@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts.Pugmas25District;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -27,6 +28,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.PolarBear;
 import org.bukkit.entity.Spider;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -47,8 +49,23 @@ public class Pugmas25Caves implements Listener {
 	private static final Map<Long, Integer> recentlyClearedChunks = new HashMap<>();
 	private static final Map<Long, Integer> recentlyOpenedChunks = new HashMap<>();
 
+	private static int polarBearTask = -1;
+
 	public Pugmas25Caves() {
 		Nexus.registerListener(this);
+
+		polarBearTask = Tasks.repeat(5, TickTime.SECOND.x(5), () -> {
+			String region = Pugmas25District.CAVES.getRegionId();
+			Pugmas25.get().worldguard().getEntitiesInRegionByClass(region, PolarBear.class).forEach(polarBear -> {
+				polarBear.setAggressive(true);
+				Player target = PlayerUtils.getNearestVisiblePlayer(polarBear.getLocation(), 15).getObject();
+				polarBear.setTarget(target);
+			});
+		});
+	}
+
+	public static void shutdown() {
+		Tasks.cancel(polarBearTask);
 	}
 
 	@EventHandler
@@ -179,30 +196,26 @@ public class Pugmas25Caves implements Listener {
 
 		mob.setAggressive(true);
 
-		switch (mob.getType()) {
-			case SPIDER -> {
-				if (RandomUtils.chanceOf(10)) {
-					event.setCancelled(true);
-					mob.getWorld().spawn(mob.getLocation(), CaveSpider.class);
+		if (mob.getType() == EntityType.SPIDER) {
+			if (RandomUtils.chanceOf(10)) {
+				event.setCancelled(true);
+				mob.getWorld().spawn(mob.getLocation(), CaveSpider.class);
+			}
+
+			var attributeScale = mob.getAttribute(Attribute.SCALE);
+			if (attributeScale != null) {
+				if (attributeScale.getBaseValue() != 1)
+					return;
+			}
+
+			double randomScale = RandomUtils.randomDouble(SPIDER_MIN_SCALE, SPIDER_MAX_SCALE);
+			if (setAttributeBaseValue(mob, Attribute.SCALE, randomScale)) {
+				if (randomScale >= SPIDER_MOTHER_MIN_SCALE) {
+					mob.setCustomName("Mother Spider");
+					setAttributeBaseValue(mob, Attribute.FOLLOW_RANGE, 32); // 16 base
+					setAttributeBaseValue(mob, Attribute.ATTACK_DAMAGE, 6); // 3 base
+					setAttributeBaseValue(mob, Attribute.MOVEMENT_SPEED, 0.18); // 0.3 base
 				}
-
-				var attributeScale = mob.getAttribute(Attribute.SCALE);
-				if (attributeScale != null) {
-					if (attributeScale.getBaseValue() != 1)
-						return;
-				}
-
-				double randomScale = RandomUtils.randomDouble(SPIDER_MIN_SCALE, SPIDER_MAX_SCALE);
-				if (setAttributeBaseValue(mob, Attribute.SCALE, randomScale)) {
-					if (randomScale >= SPIDER_MOTHER_MIN_SCALE) {
-						mob.setCustomName("Mother Spider");
-						setAttributeBaseValue(mob, Attribute.FOLLOW_RANGE, 32); // 16 base
-						setAttributeBaseValue(mob, Attribute.ATTACK_DAMAGE, 6); // 3 base
-						setAttributeBaseValue(mob, Attribute.MOVEMENT_SPEED, 0.18); // 0.3 base
-					}
-				}
-
-
 			}
 		}
 	}

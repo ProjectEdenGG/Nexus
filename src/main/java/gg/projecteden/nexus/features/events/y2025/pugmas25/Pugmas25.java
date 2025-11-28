@@ -199,6 +199,7 @@ public class Pugmas25 extends EdenEvent {
 		Pugmas25Train.shutdown();
 		Pugmas25TrainBackground.shutdown();
 		Pugmas25BalloonEditor.shutdown();
+		Pugmas25Caves.shutdown();
 
 		getPlayers().forEach(this::onDepart);
 	}
