@@ -349,13 +349,16 @@ public abstract class MenuUtils {
 
 			final List<ClickableItem> items = new ArrayList<>();
 
-			products.forEach(product -> {
+			for (Product product : products) {
 				ItemStack item = product.getItemStack();
 				Currency currency = product.getCurrency();
 				Price price = product.getPrice();
 				BiConsumer<Player, InventoryProvider> onPurchase = product.getOnPurchase();
 
-				if (PlayerUtils.playerHas(viewer, CommonQuestItem.DISCOUNT_CARD.getItemModel())) {
+				if (product.getPredicate() != null && !product.getPredicate().test(viewer))
+					continue;
+
+				if (CommonQuestItem.DISCOUNT_CARD.isInInventoryOf(viewer)) {
 					Price newPrice = price.clone();
 					newPrice.applyDiscount(CommonQuestItem.DISCOUNT_CARD_PERCENT);
 					price = newPrice;
@@ -368,50 +371,48 @@ public abstract class MenuUtils {
 				final ItemBuilder displayItem = new ItemBuilder(product.getDisplayItemStack()).lore(priceLore);
 				items.add(ClickableItem.of(displayItem, e -> {
 					try {
-						if (currency.canAfford(viewer, finalPrice, shopGroup)) {
-							ConfirmationMenu.builder()
-								.titleWithSlot("&4Are you sure?")
-								.displayItem(displayItem.build())
-								.onConfirm(e2 -> {
-									try {
-										if (currency.canAfford(viewer, finalPrice, shopGroup)) {
-											currency.withdraw(viewer, finalPrice, shopGroup, product);
-
-											if (product.isVirtual()) {
-												if (onPurchase != null)
-													onPurchase.accept(viewer, this);
-												return;
-											}
-
-											currency.log(viewer, finalPrice, product, shopGroup);
-
-											if (onPurchase != null)
-												onPurchase.accept(viewer, this);
-
-											PlayerUtils.giveItem(viewer, item);
-											DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();
-										} else {
-											throw new InvalidInputException("You cannot afford that!");
-										}
-									} catch (Exception ex) {
-										MenuUtils.handleException(viewer, StringUtils.getPrefix("NPCShopMenu"), ex);
-									}
-								})
-								.onFinally(e2 -> {
-									if (closeAfterPurchase)
-										close();
-									else
-										refresh();
-								})
-								.open(viewer);
-						} else {
+						if (!currency.canAfford(viewer, finalPrice, shopGroup))
 							throw new InvalidInputException("You cannot afford that!");
-						}
+
+						ConfirmationMenu.builder()
+							.titleWithSlot("&4Are you sure?")
+							.displayItem(displayItem.build())
+							.onConfirm(e2 -> {
+								try {
+									if (!currency.canAfford(viewer, finalPrice, shopGroup))
+										throw new InvalidInputException("You cannot afford that!");
+
+									currency.withdraw(viewer, finalPrice, shopGroup, product);
+
+									if (product.isVirtual()) {
+										if (onPurchase != null)
+											onPurchase.accept(viewer, this);
+										return;
+									}
+
+									currency.log(viewer, finalPrice, product, shopGroup);
+
+									if (onPurchase != null)
+										onPurchase.accept(viewer, this);
+
+									PlayerUtils.giveItem(viewer, item);
+									DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();
+								} catch (Exception ex) {
+									MenuUtils.handleException(viewer, StringUtils.getPrefix("NPCShopMenu"), ex);
+								}
+							})
+							.onFinally(e2 -> {
+								if (closeAfterPurchase)
+									close();
+								else
+									refresh();
+							})
+							.open(viewer);
 					} catch (Exception ex) {
 						MenuUtils.handleException(viewer, StringUtils.getPrefix("NPCShopMenu"), ex);
 					}
 				}));
-			});
+			}
 
 			paginator().items(items).perPage(18).build();
 		}
@@ -420,17 +421,20 @@ public abstract class MenuUtils {
 		@AllArgsConstructor
 		public static class Product {
 			@Nullable
-			ItemStack itemStack;
+			private ItemStack itemStack;
 			@Nullable
-			ItemStack displayItemStack;
-			boolean virtual = false;
+			private ItemStack displayItemStack;
+			private boolean virtual = false;
 
-			Currency currency;
+			private Currency currency;
 			@Nullable
-			Currency.Price price;
+			private Currency.Price price;
 
 			@Nullable
-			BiConsumer<Player, InventoryProvider> onPurchase;
+			private Predicate<Player> predicate;
+
+			@Nullable
+			private BiConsumer<Player, InventoryProvider> onPurchase;
 
 			public Product() {
 				this(null, null);
@@ -474,7 +478,7 @@ public abstract class MenuUtils {
 			}
 
 			public static Product free(ItemStack itemStack) {
-				return new Product(itemStack, null, false, Currency.FREE, Price.of(0), null);
+				return new Product(itemStack, null, false, Currency.FREE, Price.of(0), null, null);
 			}
 
 			public static Product virtual(ItemModelType itemModelType, Currency currency, Price price, BiConsumer<Player, InventoryProvider> onPurchase) {
@@ -490,15 +494,16 @@ public abstract class MenuUtils {
 			}
 
 			public static Product virtual(ItemStack itemStack, Currency currency, Price price, BiConsumer<Player, InventoryProvider> onPurchase) {
-				return new Product(null, itemStack, true, currency, price, onPurchase);
+				return new Product(null, itemStack, true, currency, price, null, onPurchase);
 			}
-
-			//
-
 
 			public Product itemStack(ItemStack itemstack) {
 				this.itemStack = itemstack;
 				return this;
+			}
+
+			public Product displayItemStack(ItemBuilder displayItemStack) {
+				return displayItemStack(displayItemStack.build());
 			}
 
 			public Product displayItemStack(ItemStack displayItemStack) {
@@ -515,6 +520,11 @@ public abstract class MenuUtils {
 			public Product price(Currency currency, double price) {
 				this.currency = currency;
 				this.price = Price.of(price);
+				return this;
+			}
+
+			public Product predicate(Predicate<Player> predicate) {
+				this.predicate = predicate;
 				return this;
 			}
 

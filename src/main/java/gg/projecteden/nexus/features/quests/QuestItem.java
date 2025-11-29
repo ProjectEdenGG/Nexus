@@ -24,4 +24,8 @@ public interface QuestItem {
 		return Quester.of(uuid).has(get());
 	}
 
+	default boolean isNotInInventoryOf(HasUniqueId uuid) {
+		return !isInInventoryOf(uuid);
+	}
+
 }
