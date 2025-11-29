@@ -12,6 +12,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
+import gg.projecteden.nexus.features.equipment.skins.EquipmentSkinType;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.features.itemtags.Rarity;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
@@ -1025,6 +1026,12 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 			return this;
 
 		return model(itemModelType.getModel());
+	}
+
+	public ItemBuilder model(EquipmentSkinType skin) {
+		itemStack = skin.apply(itemStack);
+		itemMeta = itemStack.getItemMeta();
+		return this;
 	}
 
 	public String model() {

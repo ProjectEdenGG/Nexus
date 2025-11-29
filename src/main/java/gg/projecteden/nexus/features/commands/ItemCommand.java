@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.nexus.features.equipment.skins.ArmorSkin;
 import gg.projecteden.nexus.features.recipes.RecipeUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
-import gg.projecteden.nexus.features.resourcepack.models.CustomArmorType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -23,7 +23,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
-import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.inventory.ItemStack;
@@ -65,11 +64,9 @@ public class ItemCommand extends CustomCommand {
 	@Path("rp armor <piece> <type>")
 	@Permission(Group.STAFF)
 	@Description("Spawn a resource pack armor item or set")
-	void rp_armor(ArmorPiece piece, CustomArmorType type) {
-		for (Material material : piece.getMaterials().getValues()) {
-			PlayerUtils.ArmorSlot slot = PlayerUtils.ArmorSlot.of(material);
-			PlayerUtils.giveItem(player(), new ItemBuilder(material).model(type.getId(slot)).dyeColor(Color.fromRGB(type.ordinal() + 1)).build());
-		}
+	void rp_armor(ArmorPiece piece, ArmorSkin type) {
+		for (Material material : piece.getMaterials().getValues())
+			PlayerUtils.giveItem(player(), type.apply(new ItemStack(material)));
 	}
 
 	@Path("tag <tag> [amount]")
