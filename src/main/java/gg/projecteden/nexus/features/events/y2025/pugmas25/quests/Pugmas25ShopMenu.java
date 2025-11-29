@@ -37,6 +37,7 @@ public enum Pugmas25ShopMenu implements QuestShopMenu {
 			add(new Product(CommonQuestItem.BASIC_BACKPACK).price(Currency.COIN_POUCH, Price.of(10)));
 			add(new Product(shulkerShells.clone().build(), shulkerShells.clone().lore("&7Used for upgrading your backpack").build()).price(Currency.COIN_POUCH, Price.of(10)));
 			add(new Product(Pugmas25QuestItem.FISHING_ROD_WOOD).price(Currency.COIN_POUCH, Price.of(10)));
+			add(new Product(Pugmas25QuestItem.FISHING_ROD_REINFORCED).price(Currency.COIN_POUCH, Price.of(10)));
 		}})),
 	;
 

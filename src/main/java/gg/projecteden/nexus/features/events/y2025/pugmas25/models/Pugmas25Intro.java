@@ -55,10 +55,12 @@ public class Pugmas25Intro implements Listener {
 			.fade(TickTime.SECOND.x(20), "Deboarding train...", 60)
 			.next(TickTime.SECOND, _player -> {
 				_player.teleport(PUGMAS.warp);
-				new SoundBuilder(Sound.BLOCK_FIRE_EXTINGUISH).receiver(_player).pitch(0.1).play();
-				_player.setHealth(20);
-				_player.setFoodLevel(20);
-				_player.getInventory().clear();
+				new SoundBuilder(Sound.BLOCK_FIRE_EXTINGUISH).receiver(_player).volume(0.75).pitch(0.1).play();
+				if (!user.isVisited()) {
+					_player.setHealth(20);
+					_player.setFoodLevel(20);
+					_player.getInventory().clear();
+				}
 			})
 			.next(TickTime.SECOND.x(2), _player -> {
 				PUGMAS.send(_player, "You've unlocked the warp to &e" + Pugmas25.EVENT_NAME);

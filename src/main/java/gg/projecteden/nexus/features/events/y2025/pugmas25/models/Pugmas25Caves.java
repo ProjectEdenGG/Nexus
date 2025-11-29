@@ -113,8 +113,16 @@ public class Pugmas25Caves implements Listener {
 			return;
 
 		ItemUtils.subtract(player, tool);
-		PlayerUtils.giveItem(player, drop);
-		new SoundBuilder(Sound.ENTITY_ITEM_PICKUP).volume(0.5).pitch(2).location(player).play();
+		int wait = 0;
+		for (int i = 0; i < 4; i++) {
+			Tasks.wait(wait += 5, () -> new SoundBuilder(Sound.BLOCK_GRAVEL_BREAK).volume(0.5).pitch(0.25).location(block).play());
+		}
+
+		wait += 5;
+		Tasks.wait(wait, () -> {
+			new SoundBuilder(Sound.ENTITY_ITEM_PICKUP).volume(0.5).pitch(2).location(player).play();
+			PlayerUtils.giveItem(player, drop);
+		});
 	}
 
 	private static final Map<Material, Double> weightedExtractinatorDrops = new HashMap<>() {{
