@@ -36,7 +36,6 @@ public enum Pugmas25QuestTask implements IQuestTask {
 		)
 		.enterRegion(Hub.getWorld(), Pugmas25Intro.TRANSITION_REGION_REGEX)
 	),
-
 	CHECK_IN(InteractQuestTask.builder()
 		.objective("Talk to the ticket master")
 		.waypoint(Pugmas25QuestWaypoint.TICKET_MASTER)

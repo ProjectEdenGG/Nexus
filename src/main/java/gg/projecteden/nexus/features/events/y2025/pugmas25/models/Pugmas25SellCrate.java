@@ -11,6 +11,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.MerchantBuilder.TradeBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -119,8 +120,9 @@ public class Pugmas25SellCrate implements Listener {
 			if (!title.contains(StringUtils.stripColor(INVENTORY_TITLE)))
 				return null;
 
+			String type = title.split(" - ")[1].split(" ")[0].toUpperCase();
 			try {
-				return valueOf(StringUtils.decolorize(title).toLowerCase().split(" - ")[1].toUpperCase());
+				return valueOf(type);
 			} catch (Exception ignored) {
 			}
 
@@ -183,7 +185,6 @@ public class Pugmas25SellCrate implements Listener {
 		// Give items back if no trades found
 		if (Nullables.isNullOrEmpty(tradeBuilders)) {
 			PlayerUtils.giveItems((Player) event.getPlayer(), Arrays.asList(event.getInventory().getContents()));
-			PlayerUtils.send(player, "Found no trades, returning items");
 			return;
 		}
 
@@ -228,13 +229,8 @@ public class Pugmas25SellCrate implements Listener {
 
 			// If trade was not found for itemstack, give item back
 			// If there were leftovers, give the edited item back
-			if (!foundTrade || leftovers) {
+			if (!foundTrade || leftovers)
 				PlayerUtils.giveItem(player, item);
-				if (!foundTrade)
-					PlayerUtils.send(player, "Found no trades, returning items");
-				else
-					PlayerUtils.send(player, "There were leftovers, returning items");
-			}
 		}
 
 		if (!profit.isEmpty()) {

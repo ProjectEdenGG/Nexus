@@ -18,6 +18,7 @@ public enum Pugmas25NPC implements InteractableNPC {
 	ANGLER("Angler", 5590),
 	TICKET_MASTER("Ticket Master", 5587),
 	TICKET_MASTER_HUB("Ticket Master", Nexus.getEnv() == Env.UPDATE ? 5634 : 5661),
+	CONDUCTOR("Conductor", 5666),
 	INN_KEEPER("Inn Keeper", 5630),
 	POWER("Power", 5589),
 	GNOME("Gnome", 5598),

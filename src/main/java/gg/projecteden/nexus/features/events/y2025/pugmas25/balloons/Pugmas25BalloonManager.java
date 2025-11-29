@@ -34,7 +34,7 @@ public class Pugmas25BalloonManager {
 
 	@Getter
 	private static final Map<String, String> userPlacementRegions = new HashMap<>();
-	private static final long REFRESH_INTERVAL = TickTime.MINUTE.x(1);
+	private static final long REFRESH_INTERVAL = TickTime.MINUTE.x(5);
 
 	public Pugmas25BalloonManager() {
 		new Pugmas25BalloonEditor();
@@ -42,6 +42,7 @@ public class Pugmas25BalloonManager {
 		Tasks.repeat(TickTime.SECOND.x(2), REFRESH_INTERVAL, () -> {
 			List<ProtectedRegion> regions = new ArrayList<>(getPlacementRegions());
 			Collections.shuffle(regions);
+			long wait = 0;
 			for (ProtectedRegion region : regions) {
 				Location location = worldedit.toLocation(worldguard.convert(region).getMinimumPoint());
 				String schematicPath = getSchematicPath(getRandomUserSchematic());
@@ -50,7 +51,9 @@ public class Pugmas25BalloonManager {
 				Nerd player = Nerd.of(uuid);
 
 				userPlacementRegions.put(region.getId(), player.getUniqueId().toString());
-				pasteBalloonAsync(schematicPath, location);
+				Tasks.wait(wait, () -> pasteBalloonAsync(schematicPath, location));
+
+				wait += TickTime.SECOND.x(5);
 			}
 		});
 	}

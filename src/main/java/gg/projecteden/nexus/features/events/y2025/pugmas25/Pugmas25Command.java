@@ -523,13 +523,13 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 	@Permission(Group.ADMIN)
 	void balloon_listPlacements() {
 		send("Placed balloons:");
-		for (String regionId : Pugmas25BalloonManager.getUserPlacementRegions().keySet()) {
+		Pugmas25BalloonManager.getUserPlacementRegions().keySet().stream().sorted().toList().forEach(regionId -> {
 			Nerd nerd = Nerd.of(Pugmas25BalloonManager.getUserPlacementRegions().get(regionId));
 			String uuid = nerd.getUniqueId().toString();
 			String nickname = nerd.getNickname();
 
 			send(json(" - " + regionId + " = ").group().next(nickname).hover(uuid).insert(uuid));
-		}
+		});
 	}
 
 	@ConverterFor(Advent25Present.class)
