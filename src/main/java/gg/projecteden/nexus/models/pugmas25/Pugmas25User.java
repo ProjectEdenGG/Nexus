@@ -56,6 +56,8 @@ public class Pugmas25User implements PlayerOwnedObject {
 	private boolean receivedAeronautInstructions = false;
 	private boolean balloonSchemExists = false;
 
+	private int slotMachineRolls = 0;
+
 	private Set<Pugmas25Waystone> foundWaystones = new HashSet<>();
 	private Set<Pugmas25Snowman> decoratedSnowmen = new HashSet<>();
 	private Set<Location> foundNutCrackers = new HashSet<>();
@@ -110,5 +112,9 @@ public class Pugmas25User implements PlayerOwnedObject {
 
 	public void incrementCompletedAnglerQuests() {
 		this.completedAnglerQuests += 1;
+	}
+
+	public void incrementSlotMachineRolls() {
+		this.slotMachineRolls += 1;
 	}
 }

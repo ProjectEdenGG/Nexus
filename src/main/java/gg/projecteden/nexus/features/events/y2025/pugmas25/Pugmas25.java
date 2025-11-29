@@ -168,6 +168,7 @@ public class Pugmas25 extends EdenEvent {
 		Pugmas25Train.startup();
 		Pugmas25TrainBackground.startup();
 		Pugmas25ModelTrain.startup();
+		Pugmas25Advent.updateItems();
 
 		Tasks.wait(TickTime.SECOND, () -> getPlayers().forEach(this::onArrive));
 
@@ -263,6 +264,7 @@ public class Pugmas25 extends EdenEvent {
 		handleInteract(Pugmas25NPC.BLACKSMITH, (player, npc) -> Pugmas25ShopMenu.BLACKSMITH.open(player));
 		handleInteract(Pugmas25NPC.TINKERER, (player, npc) -> Pugmas25ShopMenu.TINKERER.open(player));
 
+		// TODO: Balloon Editor
 		handleInteract(Pugmas25NPC.AERONAUT, (player, npc) -> {
 			final Pugmas25UserService userService = new Pugmas25UserService();
 			final Pugmas25User user = userService.get(player);
@@ -478,6 +480,7 @@ public class Pugmas25 extends EdenEvent {
 		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.CARROTS)
 			.drops(Material.CARROT, 1, 3)
+			.requiredTool(ToolType.HOE, ToolGrade.IRON)
 			.sound(Sound.BLOCK_CROP_BREAK)
 		);
 	}
@@ -516,6 +519,13 @@ public class Pugmas25 extends EdenEvent {
 			height -= 100;
 
 		return height;
+	}
+
+	public static int getLuckyHorseshoeAmount(Player player, int min, int max) {
+		if (!Pugmas25QuestItem.LUCKY_HORSESHOE.isInInventoryOf(player))
+			return min;
+
+		return getLuckyAmount(min, max, RandomUtils.randomInt(5, 30));
 	}
 
 	public static int getLuckyAmount(int min, int max, int luck) {

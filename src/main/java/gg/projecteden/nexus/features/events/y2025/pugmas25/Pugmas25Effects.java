@@ -11,7 +11,6 @@ import gg.projecteden.nexus.features.effects.Effects.RotatingStand.StandRotation
 import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.Pugmas25Minigolf;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.slotmachine.Pugmas25SlotMachine;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Geyser;
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -84,6 +83,7 @@ public class Pugmas25Effects extends Effects {
 		geyser();
 		slotMachine();
 		minigolfWindmill();
+		tinkererFloor();
 	}
 
 	@Override
@@ -201,14 +201,21 @@ public class Pugmas25Effects extends Effects {
 
 	private void minigolfWindmill() {
 		Tasks.repeat(TickTime.SECOND.x(2), TickTime.TICK.x(38), () -> {
-			if (!shouldAnimate(Pugmas25Minigolf.minigolfAnimationLoc))
+			if (!shouldAnimate(Pugmas25Minigolf.minigolfAnimationLoc, 25))
 				return;
-
 
 			Pugmas25Minigolf.minigolfAnimationLoc.getBlock().setType(Material.REDSTONE_BLOCK);
 			Tasks.wait(2, () -> Pugmas25Minigolf.minigolfAnimationLoc.getBlock().setType(Material.AIR));
 		});
 
+	}
+
+	private void tinkererFloor() {
+		Location location = location(-608, 99, -3141);
+		Tasks.repeat(TickTime.SECOND.x(2), TickTime.TICK.x(32), () -> {
+			location.getBlock().setType(Material.REDSTONE_BLOCK);
+			Tasks.wait(2, () -> location.getBlock().setType(Material.AIR));
+		});
 	}
 
 	private void slotMachine() {

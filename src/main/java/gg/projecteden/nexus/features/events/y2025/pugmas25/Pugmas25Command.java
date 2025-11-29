@@ -238,11 +238,27 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 
 	}
 
+	@Path("nutcrackers addLocation")
+	@Permission(Group.ADMIN)
+	void nutcrackers_addLocation() {
+		Block block = getTargetBlockRequired(Material.BARRIER);
+		config.getNutCrackerLocations().add(block.getLocation());
+		configService.save(config);
+		send("Added nutcrackers location: " + StringUtils.xyz(block));
+	}
+
+	@Path("nutcrackers removeLocation")
+	@Permission(Group.ADMIN)
+	void nutcrackers_removeLocation() {
+		Block block = getTargetBlockRequired(Material.BARRIER);
+		config.getNutCrackerLocations().remove(block.getLocation());
+		configService.save(config);
+		send("Removed nutcrackers location: " + StringUtils.xyz(block));
+	}
+
 	@Path("advent")
 	@Description("Open the advent calender")
-	void advent(
-		@Arg(value = "30", permission = Group.ADMIN) @Switch int frameTicks
-	) {
+	void advent(@Arg(value = "30", permission = Group.ADMIN) @Switch int frameTicks) {
 		new Pugmas25AdventMenu(user.advent(), frameTicks).open(player());
 	}
 

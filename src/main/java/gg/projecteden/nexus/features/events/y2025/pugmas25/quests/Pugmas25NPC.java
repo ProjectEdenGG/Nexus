@@ -26,6 +26,7 @@ public enum Pugmas25NPC implements InteractableNPC {
 	KID("Kid", 5632),
 	MAYOR("Mayor", 5636),
 	AERONAUT("Aeronaut", 5664),
+	FARMER("Farmer", 5668),
 	RESIDENT("Resident", npc -> MathUtils.isBetween(npc.getId(), 5637, 5657)),
 	;
 

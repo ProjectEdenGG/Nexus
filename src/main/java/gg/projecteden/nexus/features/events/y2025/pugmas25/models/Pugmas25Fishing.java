@@ -77,10 +77,10 @@ public class Pugmas25Fishing implements Listener {
 			dialog.npc("You're really committed! Here, have these Angler Pants! Now you’ve got the full Angler look!");
 			PlayerUtils.giveItem(quester, Pugmas25QuestItem.ANGLER_PANTS.get());
 		} else if (timesCompleted == 26) {
-			dialog.npc("You’ve earned something special! This Reinforced Rod adds more luck AND lets you reel in Iron Crates!");
+			dialog.npc("You’ve earned something special! This Reinforced Rod adds more luck AND lets you reel in Iron Trunks!");
 			PlayerUtils.giveItem(quester, Pugmas25QuestItem.FISHING_ROD_REINFORCED.get());
 		} else if (timesCompleted == 38) {
-			dialog.npc("You’re a legendary angler! Take this Golden Fishing Rod, it's super lucky, super shiny, AND it pulls up Diamond Crates!");
+			dialog.npc("You’re a legendary angler! Take this Golden Fishing Rod, it's super lucky, super shiny, AND it pulls up Diamond Trunks!");
 			PlayerUtils.giveItem(quester, Pugmas25QuestItem.FISHING_ROD_GOLDEN.get());
 		}
 

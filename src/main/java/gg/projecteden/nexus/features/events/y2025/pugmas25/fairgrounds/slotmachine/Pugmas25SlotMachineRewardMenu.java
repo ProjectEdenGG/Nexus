@@ -9,7 +9,6 @@ import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
-import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
 
 import java.util.ArrayList;
@@ -43,7 +42,7 @@ public class Pugmas25SlotMachineRewardMenu extends InventoryProvider {
 			if (rewardEnchant != null) {
 				List<String> lore = new ArrayList<>();
 				for (String enchant : rewardEnchant.getEnchantStrings()) {
-					lore.add("&3- &e" + StringUtils.camelCase(enchant));
+					lore.add("&3- &e" + enchant);
 				}
 				displayItem.lore(lore);
 			}

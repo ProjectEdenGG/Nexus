@@ -114,7 +114,7 @@ public abstract class EdenEventSinglePlayerGame extends Feature implements Liste
 		return true;
 	}
 
-	protected void preStart() {
+	protected void preStart(Player player) {
 
 	}
 
@@ -129,7 +129,7 @@ public abstract class EdenEventSinglePlayerGame extends Feature implements Liste
 		gamer = player;
 		gameTicks = 0;
 		currentRound = 0;
-		preStart();
+		preStart(player);
 
 		_start(player);
 	}

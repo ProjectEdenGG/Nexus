@@ -151,7 +151,7 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 	}
 
 	@Override
-	protected void preStart() {
+	protected void preStart(Player player) {
 		instance.score = 0;
 		instance.updateHologramPlayer();
 		instance.updateHologramScore();

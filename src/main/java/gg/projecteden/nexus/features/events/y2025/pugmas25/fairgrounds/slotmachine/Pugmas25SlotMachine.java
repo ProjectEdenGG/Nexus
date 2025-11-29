@@ -10,8 +10,14 @@ import gg.projecteden.nexus.features.events.EdenEventSinglePlayerGame;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.slotmachine.Pugmas25SlotMachineReward.Pugmas25SlotMachineRewardType;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.slotmachine.SlotMachineColumn.SlotMachineColumnStatus;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
+import gg.projecteden.nexus.features.quests.CommonQuestItem;
+import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
+import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -34,7 +40,6 @@ import java.util.Set;
 
 /*
 	TODO:
-		- BALANCE CHECK + WITHDRAW ON ROLL
 		- REWARDS
  */
 @SuppressWarnings("FieldCanBeLocal")
@@ -52,6 +57,7 @@ public class Pugmas25SlotMachine extends EdenEventSinglePlayerGame {
 	private static final String LEVER_REGION = BASE_REGION + "lever";
 	private static final String SOUNDS_REGION = BASE_REGION + "sound";
 	private static final String ROW_REGION = BASE_REGION + "row";
+	public static final String PREFIX = StringUtils.getPrefix("SlotMachine");
 
 	private int WIDTH;
 	private int HEIGHT;
@@ -164,13 +170,25 @@ public class Pugmas25SlotMachine extends EdenEventSinglePlayerGame {
 
 	@Override
 	protected boolean startChecks(Player player) {
-		// TODO: BALANCE CHECK & WITHDRAW
+		if (!super.startChecks(player))
+			return false;
 
-		return super.startChecks(player);
+		if (!Pugmas25QuestItem.SLOT_MACHINE_TOKEN.isInInventoryOf(player)) {
+			PlayerUtils.send(player, PREFIX + "&cRequires a Slot Machine Token to use");
+			return false;
+		}
+
+		if (!CommonQuestItem.COIN_POUCH.isInInventoryOf(player)) {
+			PlayerUtils.send(player, PREFIX + "&cYou need your Coin Pouch to interact with this");
+			return false;
+		}
+
+		PlayerUtils.removeItem(player, Pugmas25QuestItem.SLOT_MACHINE_TOKEN.get());
+		return true;
 	}
 
 	@Override
-	protected void preStart() {
+	protected void preStart(Player player) {
 		rollSherds = new ArrayList<>(Pugmas25SlotMachineReward.getAllSherds());
 		rollSherdsSize = rollSherds.size();
 		Collections.shuffle(rollSherds);
@@ -180,6 +198,8 @@ public class Pugmas25SlotMachine extends EdenEventSinglePlayerGame {
 		for (SlotMachineColumn slotColumn : columns.values()) {
 			slotColumn.setStatus(SlotMachineColumnStatus.RUNNING);
 		}
+
+		new Pugmas25UserService().edit(player, Pugmas25User::incrementSlotMachineRolls);
 	}
 
 	@Override

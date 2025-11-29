@@ -1,12 +1,19 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.slotmachine;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
+import gg.projecteden.nexus.utils.Currency;
+import gg.projecteden.nexus.utils.Currency.Price;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.FireworkEffect.Type;
@@ -15,6 +22,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -25,94 +33,202 @@ import java.util.function.Consumer;
 @AllArgsConstructor
 public enum Pugmas25SlotMachineReward {
 
-	// TODO: SLOT MACHINE REWARDS
+	// TODO: SLOT MACHINE REWARDS - COINS
 
 	VOTE_POINTS(SlotPos.of(1, 2), new ItemBuilder(Material.MOURNER_POTTERY_SHERD).name("&aVote Points")
 		.lore("&3Half: &e25 &3Vote Points", "&3Full: &e50 &3Vote Points"),
-		(player) -> Pugmas25SlotMachine.get().send(player, "HALF REWARD - COSTUME"),
-		(player) -> Pugmas25SlotMachine.get().send(player, "FULL REWARD - COSTUME")
+		(player) -> {
+			int preAmount = 25;
+			int maxAmount = 50;
+			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
+			int additional = finalAmount - preAmount;
+			Currency.VOTE_POINTS.deposit(player, Price.of(finalAmount));
+			if (additional > 0)
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3vote points given from Lucky Horseshoe");
+		},
+		(player) -> {
+			int preAmount = 50;
+			int maxAmount = 75;
+			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
+			int additional = finalAmount - preAmount;
+			Currency.VOTE_POINTS.deposit(player, Price.of(finalAmount));
+			if (additional > 0)
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3vote points given from Lucky Horseshoe");
+		}
 	),
 
 	TOKENS(SlotPos.of(2, 2), new ItemBuilder(Material.PRIZE_POTTERY_SHERD).name("&aEvent Tokens")
-		.lore("&3Half: &ex &3event tokens", "&3Full: &ex+n &3event tokens"),
-		(player) -> Pugmas25SlotMachine.get().send("HALF REWARD - TOKENS"),
-		(player) -> Pugmas25SlotMachine.get().send("FULL REWARD - TOKENS")
+		.lore("&3Half: &e250 &3event tokens", "&3Full: &e500 &3event tokens"),
+		(player) -> {
+			int preAmount = 250;
+			int maxAmount = 500;
+			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
+			int additional = finalAmount - preAmount;
+			Currency.EVENT_TOKENS.deposit(player, Price.of(finalAmount));
+			if (additional > 0)
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3event tokens given from Lucky Horseshoe");
+		},
+		(player) -> {
+			int preAmount = 500;
+			int maxAmount = 750;
+			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
+			int additional = finalAmount - preAmount;
+			Currency.EVENT_TOKENS.deposit(player, Price.of(finalAmount));
+			if (additional > 0)
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3event tokens given from Lucky Horseshoe");
+		}
 	),
 
 	EXTRA_ROLLS(SlotPos.of(3, 2), new ItemBuilder(Material.HEART_POTTERY_SHERD).name("&aExtra Rolls")
 		.lore("&3Half: &e1 &3re-roll", "&3Full: &e3 &3re-rolls"),
-		(player) -> Pugmas25SlotMachine.get().send(player, "HALF REWARD - EXTRA_ROLLS"),
-		(player) -> Pugmas25SlotMachine.get().send(player, "FULL REWARD - EXTRA_ROLLS")
+		(player) -> {
+			int preAmount = 1;
+			int maxAmount = 3;
+			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
+			int additional = finalAmount - preAmount;
+			PlayerUtils.giveItem(player, Pugmas25QuestItem.SLOT_MACHINE_TOKEN.getItemBuilder().clone().amount(finalAmount).build());
+			if (additional > 0)
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3re-rolls given from Lucky Horseshoe");
+		},
+		(player) -> {
+			int preAmount = 3;
+			int maxAmount = 5;
+			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
+			int additional = finalAmount - preAmount;
+			PlayerUtils.giveItem(player, Pugmas25QuestItem.SLOT_MACHINE_TOKEN.getItemBuilder().clone().amount(finalAmount).build());
+			if (additional > 0)
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3re-rolls given from Lucky Horseshoe");
+		}
 	),
 
 	//
 
 	PICKAXE(SlotPos.of(1, 4), new ItemBuilder(Material.MINER_POTTERY_SHERD).name("&dRandom Pickaxe Enchant")
-		.lore("&3Half: &eUncommon", "&3Full: &eRare", "", "&eEnchants&3: "),
-		(player) -> Pugmas25SlotMachine.get().send(player, "HALF REWARD - PICKAXE"),
-		(player) -> Pugmas25SlotMachine.get().send(player, "FULL REWARD - PICKAXE")
+		.lore("&3Half: &eUncommon", "&3Full: &aRare", "", "&3Enchants: "),
+		(player) -> PlayerUtils.giveItem(player, getEnchantedBook(Pugmas25SlotMachineRewardType.HALF, Enchantment.EFFICIENCY, Enchantment.FORTUNE)),
+		(player) -> PlayerUtils.giveItem(player, getEnchantedBook(Pugmas25SlotMachineRewardType.FULL, Enchantment.EFFICIENCY, Enchantment.FORTUNE))
 	),
 
 	FISHING_ROD(SlotPos.of(2, 4), new ItemBuilder(Material.ANGLER_POTTERY_SHERD).name("&dRandom Fishing Rod Enchant")
-		.lore("&3Half: &eUncommon", "&3Full: &eRare", "", "&eEnchants&3: "),
-		(player) -> Pugmas25SlotMachine.get().send(player, "HALF REWARD - FISHING_ROD"),
-		(player) -> Pugmas25SlotMachine.get().send(player, "FULL REWARD - FISHING_ROD")
+		.lore("&3Half: &eUncommon", "&3Full: &aRare", "", "&3Enchants: "),
+		(player) -> PlayerUtils.giveItem(player, getEnchantedBook(Pugmas25SlotMachineRewardType.HALF, Enchantment.LURE, Enchantment.LUCK_OF_THE_SEA)),
+		(player) -> PlayerUtils.giveItem(player, getEnchantedBook(Pugmas25SlotMachineRewardType.FULL, Enchantment.LURE, Enchantment.LUCK_OF_THE_SEA))
 	),
 
-	EXPERIENCE(SlotPos.of(3, 4), new ItemBuilder(Material.BREWER_POTTERY_SHERD).name("&dExperience")
-		.lore("&3Half: &e10 Levels", "&3Full: &e20 Levels"),
-		(player) -> player.giveExp(10, true),
-		(player) -> player.giveExp(20, true)
+	SWORD(SlotPos.of(3, 4), new ItemBuilder(Material.BLADE_POTTERY_SHERD).name("&dRandom Sword Enchant")
+		.lore("&3Half: &eUncommon", "&3Full: &aRare", "", "&3Enchants: "),
+		(player) -> PlayerUtils.giveItem(player, getEnchantedBook(Pugmas25SlotMachineRewardType.HALF, Enchantment.SHARPNESS, Enchantment.LOOTING)),
+		(player) -> PlayerUtils.giveItem(player, getEnchantedBook(Pugmas25SlotMachineRewardType.FULL, Enchantment.SHARPNESS, Enchantment.LOOTING))
 	),
 
 	//
 
 	COINS(SlotPos.of(1, 6), new ItemBuilder(Material.ARMS_UP_POTTERY_SHERD).name("&6Coins")
-		.lore("&3Half: &ex &3coins", "&3Full: &ex+n &3coins"),
-		(player) -> Pugmas25SlotMachine.get().send(player, "HALF REWARD - COINS"),
-		(player) -> Pugmas25SlotMachine.get().send(player, "FULL REWARD - COINS")
+		.lore("&3Half: &e10 &3coins", "&3Full: &e30 &3coins"), // TODO: Coins
+		(player) -> {
+			int preAmount = 10; // TODO: COINS
+			int maxAmount = 30; // TODO: COINS
+			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
+			int additional = finalAmount - preAmount;
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3Deposited &e" + additional + " &3coins to your Coin Pouch");
+			Currency.COIN_POUCH.deposit(player, Price.of(finalAmount));
+			if (additional > 0)
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3coins given from Lucky Horseshoe");
+		},
+		(player) -> {
+			int preAmount = 30; // TODO: COINS
+			int maxAmount = 50; // TODO: COINS
+			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
+			int additional = finalAmount - preAmount;
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3Deposited &e" + additional + " &3coins to your Coin Pouch");
+			Currency.COIN_POUCH.deposit(player, Price.of(finalAmount));
+			if (additional > 0)
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3coins given from Lucky Horseshoe");
+		}
 	),
 
-	DIAMOND_CRATE(SlotPos.of(2, 6), new ItemBuilder(Material.PLENTY_POTTERY_SHERD).name("&6Diamond Crates")
-		.lore("&3Half: &e2 &3Diamond Crates", "&3Full: &e5 &3Diamond Crates"),
-		(player) -> Pugmas25SlotMachine.get().send(player, "HALF REWARD - DIAMOND_CRATE"),
-		(player) -> Pugmas25SlotMachine.get().send(player, "FULL REWARD - DIAMOND_CRATE")
+	DIAMOND_TRUNK(SlotPos.of(2, 6), new ItemBuilder(Material.PLENTY_POTTERY_SHERD).name("&6Diamond Trunks")
+		.lore("&3Half: &e2 &3Diamond Trunks", "&3Full: &e5 &3Diamond Trunks"),
+		(player) -> {
+			int preAmount = 2;
+			int maxAmount = 3;
+			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
+			int additional = finalAmount - preAmount;
+			PlayerUtils.giveItem(player, Pugmas25QuestItem.TRUNK_DIAMOND.getItemBuilder().clone().amount(finalAmount).build());
+			if (additional > 0)
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3diamond trunks given from Lucky Horseshoe");
+		},
+		(player) -> {
+			int preAmount = 3;
+			int maxAmount = 5;
+			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
+			int additional = finalAmount - preAmount;
+			PlayerUtils.giveItem(player, Pugmas25QuestItem.TRUNK_DIAMOND.getItemBuilder().clone().amount(finalAmount).build());
+			if (additional > 0)
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3diamond trunks given from Lucky Horseshoe");
+		}
 	),
 
 	GIFTS(SlotPos.of(3, 6), new ItemBuilder(Material.FRIEND_POTTERY_SHERD).name("&6Gifts")
 		.lore("&3Half: &e1 &3Gift", "&3Full: &e3 &3Gifts"),
-		(player) -> Pugmas25SlotMachine.get().send(player, "HALF REWARD - GIFTS"),
-		(player) -> Pugmas25SlotMachine.get().send(player, "FULL REWARD - GIFTS")
+		(player) -> {
+			int preAmount = 1;
+			int maxAmount = 3;
+			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
+			int additional = finalAmount - preAmount;
+			PlayerUtils.giveItem(player, Pugmas25QuestItem.GIFT_INITIAL.getItemBuilder().clone().amount(finalAmount).build());
+			if (additional > 0)
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3gifts given from Lucky Horseshoe");
+		},
+		(player) -> {
+			int preAmount = 3;
+			int maxAmount = 5;
+			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
+			int additional = finalAmount - preAmount;
+			PlayerUtils.giveItem(player, Pugmas25QuestItem.GIFT_INITIAL.getItemBuilder().clone().amount(finalAmount).build());
+			if (additional > 0)
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3gifts given from Lucky Horseshoe");
+		}
 	),
 	;
 
 	@AllArgsConstructor
 	enum Pugmas25SlotMachineRewardEnchant {
-		PICKAXE(List.of(Enchant.FORTUNE, Enchant.EFFICIENCY)),
-		FISHING_ROD(List.of(Enchant.LUCK_OF_THE_SEA, Enchant.LURE));
+		PICKAXE(Enchant.EFFICIENCY, Enchant.FORTUNE),
+		FISHING_ROD(Enchant.LURE, Enchant.LUCK_OF_THE_SEA),
+		SWORD(Enchant.SHARPNESS, Enchant.LOOTING),
+		;
 
-		final List<Enchantment> enchants;
-		private final List<Enchantment> sharedEnchants = List.of(Enchant.MENDING, Enchant.UNBREAKING);
+		final Enchantment uncommon;
+		final Enchantment rare;
 
 		public static Pugmas25SlotMachineRewardEnchant of(Pugmas25SlotMachineReward reward) {
 			return switch (reward) {
 				case PICKAXE -> PICKAXE;
 				case FISHING_ROD -> FISHING_ROD;
+				case SWORD -> SWORD;
 				default -> null;
 			};
 		}
 
-		public List<Enchantment> getEnchants() {
-			List<Enchantment> result = new ArrayList<>(sharedEnchants);
-			result.addAll(this.enchants);
-			return result;
+		public List<Enchantment> getUncommonEnchants() {
+			return new ArrayList<>(List.of(this.uncommon, Enchant.UNBREAKING));
+		}
+
+		public List<Enchantment> getRareEnchants() {
+			return new ArrayList<>(List.of(this.rare, Enchant.MENDING));
 		}
 
 		public List<String> getEnchantStrings() {
 			List<String> result = new ArrayList<>();
-			for (Enchantment enchant : getEnchants()) {
-				result.add(enchant.getKey().getKey());
+			for (Enchantment uncommon : getUncommonEnchants()) {
+				result.add("&e" + StringUtils.camelCase(uncommon.getKey().getKey()));
 			}
+
+			for (Enchantment rare : getRareEnchants()) {
+				result.add("&a" + StringUtils.camelCase(rare.getKey().getKey()));
+			}
+
 			return result;
 		}
 	}
@@ -159,5 +275,24 @@ public enum Pugmas25SlotMachineReward {
 
 	public enum Pugmas25SlotMachineRewardType {
 		FULL, HALF;
+	}
+
+	private static ItemStack getEnchantedBook(Pugmas25SlotMachineRewardType type, Enchantment uncommon, Enchantment rare) {
+		List<Enchantment> enchantments = new ArrayList<>(List.of(uncommon, Enchantment.UNBREAKING));
+		if (type == Pugmas25SlotMachineRewardType.FULL)
+			enchantments = new ArrayList<>(List.of(rare, Enchantment.MENDING));
+
+		Enchantment enchant = RandomUtils.randomElement(enchantments);
+		int max = enchant.getMaxLevel();
+		int level = 1;
+		if (max > 1) {
+			if (type == Pugmas25SlotMachineRewardType.HALF) {
+				level = RandomUtils.randomInt(1, (int) Math.ceil((1 + max) / 2.0));
+			} else {
+				level = max;
+			}
+		}
+
+		return new ItemBuilder(Material.ENCHANTED_BOOK).enchant(enchant, level).build();
 	}
 }
