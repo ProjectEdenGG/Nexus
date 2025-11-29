@@ -2,10 +2,10 @@ package gg.projecteden.nexus.features.events.y2025.pugmas25.models;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.operator.WeatherCommand.FixedWeatherType;
-import gg.projecteden.nexus.features.events.models.PlayerEventFishingBiteEvent;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootTime;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.FishingLoot;
+import gg.projecteden.nexus.features.events.models.PlayerEventFishingBiteEvent;
 import gg.projecteden.nexus.features.events.models.PlayerEventFishingCaughtFishEvent;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts.Pugmas25BiomeDistrict;
@@ -385,16 +385,16 @@ public class Pugmas25Fishing implements Listener {
 		else
 			possibleTreasure.add(Pugmas25QuestItem.LUCKY_HORSESHOE.get());
 
-		// Crates
+		// Trunks
 		ItemStack tool = ItemUtils.getTool(player);
 		ItemModelType toolModel = ItemModelType.of(tool);
 		if (Nullables.isNotNullOrAir(tool) && toolModel != null) {
 			if (rodWooden == toolModel)
-				possibleTreasure.add(Pugmas25QuestItem.CRATE_IRON.get());
+				possibleTreasure.add(Pugmas25QuestItem.TRUNK_IRON.get());
 			else if (rodReinforced == toolModel)
-				possibleTreasure.add(Pugmas25QuestItem.CRATE_GOLD.get());
+				possibleTreasure.add(Pugmas25QuestItem.TRUNK_GOLD.get());
 			else if (rodGolden == toolModel)
-				possibleTreasure.add(Pugmas25QuestItem.CRATE_DIAMOND.get());
+				possibleTreasure.add(Pugmas25QuestItem.TRUNK_DIAMOND.get());
 		}
 
 		// Ingots

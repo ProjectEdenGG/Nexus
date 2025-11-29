@@ -60,9 +60,9 @@ public enum Pugmas25QuestItem implements QuestItem {
 
 	SHOCK_ABSORBENT_BOOTS(ArmorSkin.WIZARD.apply(new ItemBuilder(Material.LEATHER_BOOTS).name("&oShock Absorbent Sandals").lore("&3Negates fall damage, but takes durability"))),
 
-	CRATE_IRON(new ItemBuilder(ItemModelType.EVENT_CRATE_IRON).name("&oIron Crate").lore("&eRClick &3while holding to open")),
-	CRATE_GOLD(new ItemBuilder(ItemModelType.EVENT_CRATE_GOLDEN).name("&oGolden Crate").lore("&eRClick &3while holding to open")),
-	CRATE_DIAMOND(new ItemBuilder(ItemModelType.EVENT_CRATE_DIAMOND).name("&oDiamond Crate").lore("&eRClick &3while holding to open")),
+	TRUNK_IRON(new ItemBuilder(ItemModelType.EVENT_TRUNK_IRON).name("&oIron Trunk").lore("&eRClick &3while holding to open")),
+	TRUNK_GOLD(new ItemBuilder(ItemModelType.EVENT_TRUNK_GOLDEN).name("&oGolden Trunk").lore("&eRClick &3while holding to open")),
+	TRUNK_DIAMOND(new ItemBuilder(ItemModelType.EVENT_TRUNK_DIAMOND).name("&oDiamond Trunk").lore("&eRClick &3while holding to open")),
 
 	SUSPICIOUS_DEBRIS(new ItemBuilder(Material.SUSPICIOUS_GRAVEL).name("&oSuspicious Debris").lore("&3Used in the Extractinator")),
 

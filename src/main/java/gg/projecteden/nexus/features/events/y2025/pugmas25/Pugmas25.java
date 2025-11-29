@@ -30,6 +30,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Sideba
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Snowmen;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Train;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25TrainBackground;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Trunks;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waystones;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25Entity;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25NPC;
@@ -162,6 +163,7 @@ public class Pugmas25 extends EdenEvent {
 		new Pugmas25Snowmen();
 		new Pugmas25ModelTrain();
 		new Pugmas25SellCrate();
+		new Pugmas25Trunks();
 
 		Pugmas25Train.startup();
 		Pugmas25TrainBackground.startup();
