@@ -36,7 +36,7 @@ public enum Pugmas25QuestItem implements QuestItem {
 	BOX_OF_DECORATIONS_EMPTY(new ItemBuilder(ItemModelType.EMPTY_BOX).name("&oEmpty Box of Decorations").undroppable().untrashable().unframeable()),
 
 	MAGIC_MIRROR(new ItemBuilder(ItemModelType.EVENT_MAGIC_MIRROR).name("&oMagic Mirror").lore("&3Opens the waystone warp menu")),
-	LUCKY_HORSESHOE(new ItemBuilder(ItemModelType.EVENT_LUCKY_HORSESHOE).name("&oLucky Horseshoe").lore("&3Higher chance to gain additional rewards")),
+	LUCKY_HORSESHOE(new ItemBuilder(ItemModelType.EVENT_LUCKY_HORSESHOE).name("&oLucky Horseshoe").lore("&3Gives chance to gain additional rewards in:", "&3- Fishing", "&3- Extractinator", "&3- Slot Machine")),
 
 	ADVENTURE_POCKET_GUIDE(new ItemBuilder(ItemModelType.EVENT_ADVENTURE_POCKET_GUIDE).name("&oAdventurer's Pocket Guide").lore("&3Displays your area designation")),
 	GOLD_WATCH(new ItemBuilder(ItemModelType.EVENT_GOLD_WATCH).name("&oGold Watch").lore("&3Displays the current time")),
