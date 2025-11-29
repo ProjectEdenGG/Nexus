@@ -32,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -329,6 +330,10 @@ public class CitizensUtils {
 
 			public List<NPC> find() {
 				return build().get();
+			}
+
+			public void forEach(Consumer<NPC> consumer) {
+				find().forEach(consumer);
 			}
 		}
 	}

@@ -32,6 +32,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25NPC;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25Quest;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestWaypoint;
+import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -55,7 +56,6 @@ import gg.projecteden.nexus.models.pugmas25.Pugmas25ConfigService;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.models.quests.Quester;
-import gg.projecteden.nexus.utils.CitizensUtils.NPCFinder;
 import gg.projecteden.nexus.utils.Currency;
 import gg.projecteden.nexus.utils.Currency.Price;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -64,7 +64,6 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.LookClose;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -79,6 +78,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 @HideFromWiki
@@ -122,20 +122,22 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		player().teleportAsync(Pugmas25.get().warp, TeleportCause.COMMAND);
 	}
 
-	@Path("npcs setup residents")
+	@Path("npcs setup")
 	@Permission(Group.ADMIN)
-	void npcs_setup_residents() {
-		List<NPC> npcs = NPCFinder.builder().predicate(Pugmas25NPC.RESIDENT.getPredicate()).find();
-		send(PREFIX + "Updating " + npcs.size() + " Resident NPCs...");
+	void npcs_setup() {
+		var npcs = InteractableNPC.getAllNPCs(Pugmas25NPC.class);
+		var updated = new AtomicInteger();
+
 		npcs.forEach(npc -> {
 			var lookclose = npc.getOrAddTrait(LookClose.class);
 			if (!lookclose.isEnabled())
 				lookclose.toggle();
 			lookclose.setTargetNPCs(true);
 			lookclose.setRealisticLooking(true);
-			send(PREFIX + "Updated Resident #" + npc.getId());
+			updated.incrementAndGet();
 		});
-		send(PREFIX + "Done");
+
+		send(PREFIX + "Updated " + updated.get() + " NPCs");
 	}
 
 	@Override
