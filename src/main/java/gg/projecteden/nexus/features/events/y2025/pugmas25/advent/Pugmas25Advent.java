@@ -17,6 +17,7 @@ import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -88,6 +89,9 @@ public class Pugmas25Advent implements Listener {
 	public void onOpenPresent(PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
 
+		if (WorldGroup.of(player) != WorldGroup.SURVIVAL)
+			return;
+
 		ItemStack item = event.getItem();
 		if (isNullOrAir(item))
 			return;
@@ -108,7 +112,9 @@ public class Pugmas25Advent implements Listener {
 					openPresent(player, day);
 					item.subtract();
 					return;
-				} catch (Exception ignored) {}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
 			}
 		}
 	}

@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.advent;
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.api.common.utils.TimeUtils;
+import gg.projecteden.nexus.features.customenchants.enchants.MagnetEnchant;
 import gg.projecteden.nexus.features.particles.VectorUtils;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.coupon.CouponService;
@@ -24,6 +25,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,8 +54,11 @@ public class AdventAnimation {
 	@Builder.Default
 	private final int randomMax = 40;
 	private final int presentDay;
-	private final List<ItemStack> presentContents;
-	private final List<Integer> openTwiceDays;
+	@Builder.Default
+	private final List<ItemStack> presentContents = new ArrayList<>();
+	@Builder.Default
+	private final List<Integer> openTwiceDays = new ArrayList<>();
+	@Builder.Default
 	private final List<ItemStack> givenItems = new ArrayList<>();
 	private final Player player;
 	private static final JukeboxUserService userService = new JukeboxUserService();
@@ -106,7 +111,7 @@ public class AdventAnimation {
 		new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(location).play();
 
 		if (presentContents.isEmpty()) {
-			player.sendMessage("&cReport this to an admin. Contents of present #" + presentDay + " is empty.");
+			PlayerUtils.send(player, "&cContents of present #" + presentDay + " is empty, please report this to an Admin");
 			return;
 		}
 
@@ -193,6 +198,7 @@ public class AdventAnimation {
 		_item.setCanPlayerPickup(false);
 		_item.setCanMobPickup(false);
 		_item.setVelocity(direction.multiply(length).add(new Vector(0, height, 0)));
+		_item.getPersistentDataContainer().set(MagnetEnchant.NBT_KEY_ENABLED, PersistentDataType.BOOLEAN, false);
 		return _item;
 	}
 }
