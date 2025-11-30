@@ -16,10 +16,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class Pugmas25Minigolf implements Listener {
+public class Pugmas25MiniGolf implements Listener {
 	public static final Location MINIGOLF_ANIMATION_LOCATION = Pugmas25.get().location(-712, 67, -2883);
 
-	public Pugmas25Minigolf() {
+	public Pugmas25MiniGolf() {
 		Nexus.registerListener(this);
 	}
 

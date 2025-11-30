@@ -1,12 +1,17 @@
 package gg.projecteden.nexus.features.minigolf;
 
 import gg.projecteden.nexus.features.menus.BookBuilder.WrittenBookMenu;
-import gg.projecteden.nexus.features.minigolf.models.GolfBallColor;
+import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.minigolf.models.GolfBallStyle;
 import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlockType;
 import gg.projecteden.nexus.features.minigolf.models.blocks.TeleportBlock.TeleportBlockArgs;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -19,8 +24,11 @@ import gg.projecteden.nexus.models.minigolf.MiniGolfConfig.MiniGolfCourse;
 import gg.projecteden.nexus.models.minigolf.MiniGolfConfigService;
 import gg.projecteden.nexus.models.minigolf.MiniGolfUser;
 import gg.projecteden.nexus.models.minigolf.MiniGolfUserService;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Skull;
@@ -28,6 +36,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -48,18 +57,21 @@ public class MiniGolfCommand extends CustomCommand {
 	}
 
 	@Path("play")
+	@Description("Play MiniGolf")
 	void play() {
 		MiniGolf.join(user);
 		send(PREFIX + "You have joined MiniGolf");
 	}
 
 	@Path("quit")
+	@Description("Quit MiniGolf")
 	void quit() {
 		MiniGolf.quit(user);
 		send(PREFIX + "You have quit MiniGolf");
 	}
 
 	@Path("kit")
+	@Description("Get the MiniGolf kit")
 	void kit() {
 		if (!user.isPlaying()) {
 			send(PREFIX + "You are not playing MiniGolf");
@@ -70,14 +82,55 @@ public class MiniGolfCommand extends CustomCommand {
 		send(PREFIX + "MiniGolf kit given to you");
 	}
 
-	@Path("setColor <color>")
-	void setColor(GolfBallColor color) {
-		if (!user.isPlaying()) {
-			send("not playing minigolf");
-			return;
-		}
+	@Path("ball style [style]")
+	@Description("Set your golf ball style")
+	void ball_style(GolfBallStyle style) {
+		var course = user.getCurrentCourseRequired();
 
-		user.setGolfBallColor(color);
+		if (style == null)
+			new GolfBallStyleMenu(user).open(player());
+		else {
+			if (!user.getAvailableStyles(course).contains(style))
+				error("You have not unlocked that golf ball style");
+
+			user.setStyle(course, style);
+			user.replaceGolfBallInInventory();
+			send(PREFIX + "Activated " + camelCase(style) + " Golf Ball");
+		}
+	}
+
+	@Data
+	@RequiredArgsConstructor
+	@Title("Choose your golf ball")
+	public static class GolfBallStyleMenu extends InventoryProvider {
+		private final MiniGolfUser user;
+
+		@Override
+		public void init() {
+			addCloseItem();
+			var items = new ArrayList<ClickableItem>();
+
+			try {
+				for (GolfBallStyle availableStyle : user.getAvailableStyles(user.getCurrentCourseRequired())) {
+					var golfBall = new ItemBuilder(MiniGolfUtils.getGolfBall(availableStyle))
+						.name(StringUtils.camelCase(availableStyle) + " Golf Ball");
+
+					items.add(ClickableItem.of(golfBall, e -> {
+						try {
+							user.setStyle(user.getCurrentCourseRequired(), availableStyle);
+							user.replaceGolfBallInInventory();
+							user.sendMessage(MiniGolf.PREFIX + "Activated " + StringUtils.camelCase(availableStyle) + " Golf Ball");
+						} catch (Exception ex) {
+							MenuUtils.handleException(viewer, MiniGolf.PREFIX, ex);
+						}
+					}));
+				}
+			} catch (Exception ex) {
+				MenuUtils.handleException(viewer, MiniGolf.PREFIX, ex);
+			}
+
+			paginate(items);
+		}
 	}
 
 	@Path("scorecard <course> [page]")

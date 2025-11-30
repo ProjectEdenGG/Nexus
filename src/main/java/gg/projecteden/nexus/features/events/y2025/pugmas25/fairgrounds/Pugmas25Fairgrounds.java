@@ -32,7 +32,7 @@ public class Pugmas25Fairgrounds {
 
 		new Pugmas25Frogger();
 		new Pugmas25Reflection();
-		new Pugmas25Minigolf();
+		new Pugmas25MiniGolf();
 	}
 
 	private static final Map<Ride, Boolean> rideMap = new HashMap<>();

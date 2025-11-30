@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.minigolf;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.features.minigolf.models.GolfBallColor;
+import gg.projecteden.nexus.features.minigolf.models.GolfBallStyle;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.minigolf.MiniGolfUser;
 import gg.projecteden.nexus.models.minigolf.MiniGolfUserService;
@@ -63,16 +63,14 @@ public class MiniGolfUtils {
 		.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
 		.undroppable();
 
+	public static final List<ItemStack> KIT = List.of(PUTTER, WEDGE, WHISTLE, SCORECARD);
+
 	public static ItemBuilder getGolfBall() {
 		return GOLF_BALL.clone();
 	}
 
-	public static ItemStack getGolfBall(GolfBallColor color) {
-		return getGolfBall().model(color.getModel()).build();
-	}
-
-	public static List<ItemStack> getKit(GolfBallColor color) {
-		return List.of(PUTTER, WEDGE, WHISTLE, SCORECARD, getGolfBall(color));
+	public static ItemStack getGolfBall(GolfBallStyle style) {
+		return getGolfBall().model(style.getModel()).build();
 	}
 
 	public static boolean isClub(ItemStack item) {
@@ -157,7 +155,7 @@ public class MiniGolfUtils {
 		if (!user.getOnlinePlayer().isOnline())
 			return;
 
-		PlayerUtils.giveItem(user.getOnlinePlayer(), getGolfBall(user.getGolfBallColor()));
+		PlayerUtils.giveItem(user.getOnlinePlayer(), getGolfBall(user.getStyle()));
 
 	}
 

@@ -8,7 +8,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.effects.Effects;
 import gg.projecteden.nexus.features.effects.Effects.RotatingStand.StandRotationAxis;
 import gg.projecteden.nexus.features.effects.Effects.RotatingStand.StandRotationType;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.Pugmas25Minigolf;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.Pugmas25MiniGolf;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.slotmachine.Pugmas25SlotMachine;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Geyser;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
@@ -201,11 +201,11 @@ public class Pugmas25Effects extends Effects {
 
 	private void minigolfWindmill() {
 		Tasks.repeat(TickTime.SECOND.x(2), TickTime.TICK.x(38), () -> {
-			if (!shouldAnimate(Pugmas25Minigolf.MINIGOLF_ANIMATION_LOCATION, 75))
+			if (!shouldAnimate(Pugmas25MiniGolf.MINIGOLF_ANIMATION_LOCATION, 75))
 				return;
 
-			Pugmas25Minigolf.MINIGOLF_ANIMATION_LOCATION.getBlock().setType(Material.REDSTONE_BLOCK);
-			Tasks.wait(2, () -> Pugmas25Minigolf.MINIGOLF_ANIMATION_LOCATION.getBlock().setType(Material.AIR));
+			Pugmas25MiniGolf.MINIGOLF_ANIMATION_LOCATION.getBlock().setType(Material.REDSTONE_BLOCK);
+			Tasks.wait(2, () -> Pugmas25MiniGolf.MINIGOLF_ANIMATION_LOCATION.getBlock().setType(Material.AIR));
 		});
 	}
 

@@ -284,7 +284,7 @@ public class GolfBall implements PlayerOwnedObject {
 	}
 
 	public ItemStack getDisplayItem() {
-		return MiniGolfUtils.getGolfBall(getUser().getGolfBallColor());
+		return MiniGolfUtils.getGolfBall(getUser().getStyle());
 	}
 
 	public void updateDisplayItem() {

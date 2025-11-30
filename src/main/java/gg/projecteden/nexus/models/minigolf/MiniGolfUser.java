@@ -5,7 +5,8 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.DebugDotCommand;
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
-import gg.projecteden.nexus.features.minigolf.models.GolfBallColor;
+import gg.projecteden.nexus.features.minigolf.models.GolfBallStyle;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.minigolf.MiniGolfConfig.MiniGolfCourse;
 import gg.projecteden.nexus.models.minigolf.MiniGolfConfig.MiniGolfCourse.MiniGolfHole;
@@ -22,9 +23,14 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static gg.projecteden.api.common.utils.EnumUtils.valuesExcept;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Data
 @Entity(value = "minigolf_user", noClassnameStored = true)
@@ -38,9 +44,12 @@ public class MiniGolfUser implements PlayerOwnedObject {
 	@EqualsAndHashCode.Include
 	private UUID uuid;
 	private boolean playing;
-	private GolfBallColor golfBallColor = GolfBallColor.WHITE;
 	private GolfBall golfBall;
 	private boolean debug;
+
+	private Map<String, GolfBallStyle> style = new ConcurrentHashMap<>();
+	private List<GolfBallStyle> unlockedStyles = new ArrayList<>();
+	private Map<String, List<GolfBallStyle>> unlockedCourseStyles = new ConcurrentHashMap<>();
 
 	private Map<String, Map<Integer, Integer>> currentScorecard = new ConcurrentHashMap<>();
 	private Map<String, Map<Integer, Integer>> bestScorecard = new ConcurrentHashMap<>();
@@ -51,6 +60,46 @@ public class MiniGolfUser implements PlayerOwnedObject {
 
 	public Map<Integer, Integer> getBestScorecard(MiniGolfCourse course) {
 		return bestScorecard.computeIfAbsent(course.getName(), $ -> new ConcurrentHashMap<>());
+	}
+
+	public GolfBallStyle getStyle() {
+		var course = getCurrentCourse();
+		if (course == null)
+			return GolfBallStyle.WHITE;
+
+		return style.computeIfAbsent(course.getName(), $ -> GolfBallStyle.WHITE);
+	}
+
+	public void setStyle(MiniGolfCourse course, GolfBallStyle color) {
+		this.style.put(course.getName(), color);
+		if (golfBall != null)
+			golfBall.updateDisplayItem();
+	}
+
+	public void unlockStyle(GolfBallStyle golfBallStyle) {
+		unlockedStyles.add(golfBallStyle);
+	}
+
+	public void unlockStyle(MiniGolfCourse course, GolfBallStyle golfBallStyle) {
+		unlockedCourseStyles.computeIfAbsent(course.getName(), $ -> new ArrayList<>()).add(golfBallStyle);
+	}
+
+	public List<GolfBallStyle> getAvailableStyles(MiniGolfCourse course) {
+		var styles = new ArrayList<GolfBallStyle>();
+
+		for (GolfBallStyle style : GolfBallStyle.values()) {
+			if (style.isDefault())
+				styles.add(style);
+			else if (unlockedStyles.contains(style))
+				styles.add(style);
+			else if (course != null) {
+				var courseStyles = unlockedCourseStyles.computeIfAbsent(course.getName(), $ -> new ArrayList<>());
+				if (courseStyles.contains(style))
+					styles.add(style);
+			}
+		}
+
+		return styles;
 	}
 
 	public void debug(boolean bool, String debug) {
@@ -75,15 +124,35 @@ public class MiniGolfUser implements PlayerOwnedObject {
 	}
 
 	public void giveKit() {
-		for (ItemStack itemStack : MiniGolfUtils.getKit(this.golfBallColor))
+		removeOtherGolfBallStylesFromInventory();
+
+		for (ItemStack itemStack : MiniGolfUtils.KIT)
 			if (!PlayerUtils.playerHas(this, itemStack))
 				PlayerUtils.giveItem(getOnlinePlayer(), itemStack);
+
+		giveGolfBall();
 	}
 
-	public void setGolfBallColor(GolfBallColor color) {
-		this.golfBallColor = color;
-		if (golfBall != null)
-			golfBall.updateDisplayItem();
+	public void replaceGolfBallInInventory() {
+		removeOtherGolfBallStylesFromInventory();
+		giveGolfBall();
+	}
+
+	public void giveGolfBall() {
+		var itemStack = MiniGolfUtils.getGolfBall(getStyle());
+		if (!PlayerUtils.playerHas(this, itemStack))
+			PlayerUtils.giveItem(getOnlinePlayer(), itemStack);
+	}
+
+	private void removeOtherGolfBallStylesFromInventory() {
+		for (ItemStack content : getOnlinePlayer().getInventory().getContents()) {
+			if (isNullOrAir(content))
+				continue;
+
+			for (GolfBallStyle style : valuesExcept(GolfBallStyle.class, getStyle()))
+				if (style.getModel().is(content))
+					content.setAmount(0);
+		}
 	}
 
 	public boolean canHitBall() {
@@ -125,5 +194,12 @@ public class MiniGolfUser implements PlayerOwnedObject {
 		var first = regions.iterator().next();
 		var id = first.getId().split("_minigolf_course_?")[0];
 		return new MiniGolfConfigService().get0().getCourse(id);
+	}
+
+	public MiniGolfCourse getCurrentCourseRequired() {
+		var course = getCurrentCourse();
+		if (course == null)
+			throw new InvalidInputException("You must be in a MiniGolf course");
+		return course;
 	}
 }

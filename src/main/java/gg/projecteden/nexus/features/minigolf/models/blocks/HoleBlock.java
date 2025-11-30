@@ -55,7 +55,7 @@ public class HoleBlock extends ModifierBlock {
 			.power(0)
 			.detonateAfter(TickTime.TICK.x(2))
 			.type(Type.BURST)
-				.colors(golfBall.getUser().getGolfBallColor().getFireworkColors())
+				.colors(golfBall.getUser().getStyle().getFireworkColors())
 			.fadeColors(Collections.singletonList(Color.WHITE))
 			.launch());
 

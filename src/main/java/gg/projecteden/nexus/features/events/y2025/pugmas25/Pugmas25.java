@@ -43,6 +43,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestI
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestReward;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestTask;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25ShopMenu;
+import gg.projecteden.nexus.features.minigolf.models.GolfBallStyle;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
@@ -329,7 +330,11 @@ public class Pugmas25 extends EdenEvent {
 					new Dialog(npc)
 						.npc("Wow! You've completed all " + course.getHoles().size() + " holes in one!")
 						.npc("You're a pro! Here's your Rainbow Golf Ball!")
-						.thenRun($ -> {}) // TODO
+						.thenRun($ -> {
+							miniGolfUser.unlockStyle(course, GolfBallStyle.RAINBOW);
+							miniGolfUser.setStyle(course, GolfBallStyle.RAINBOW);
+							miniGolfUser.replaceGolfBallInInventory();
+						})
 						.send(player);
 				} else {
 					int missing = course.getHoles().size() - miniGolfUser.getHolesInOne(course);

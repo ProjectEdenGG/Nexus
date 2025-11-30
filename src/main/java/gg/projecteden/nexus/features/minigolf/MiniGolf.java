@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigolf;
 
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigolf.listeners.InteractListener;
 import gg.projecteden.nexus.features.minigolf.listeners.ProjectileListener;
@@ -17,7 +16,6 @@ import gg.projecteden.nexus.models.minigolf.MiniGolfUser;
 import gg.projecteden.nexus.models.minigolf.MiniGolfUserService;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -93,14 +91,14 @@ public class MiniGolf extends Feature {
 			return;
 		}
 
-		ProtectedRegion courseRegion = new WorldGuardUtils(user.getOnlinePlayer()).getRegionsLikeAt(".*_minigolf_course.*", user.getOnlinePlayer()).stream().findFirst().orElse(null);
-		if (courseRegion == null) {
+		var course = user.getCurrentCourse();
+		if (course == null) {
 			user.debug("not in a course region");
 			return;
 		}
 
 		// Join Event
-		MiniGolfUserJoinEvent userJoinEvent = new MiniGolfUserJoinEvent(user, courseRegion);
+		var userJoinEvent = new MiniGolfUserJoinEvent(user, course);
 		if (!userJoinEvent.callEvent()) {
 			user.debug("join event cancelled");
 		}
