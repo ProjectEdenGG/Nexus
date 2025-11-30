@@ -55,6 +55,7 @@ public class Pugmas25MiniGolf implements Listener {
 		styleItem.setUnlimitedLifetime(true);
 		styleItem.setCanPlayerPickup(false);
 		styleItem.setCanMobPickup(false);
+		styleItem.setInvulnerable(true);
 
 		List<ItemStack> golfBalls = Arrays.stream(GolfBallStyle.values())
 			.filter(Objects::nonNull)

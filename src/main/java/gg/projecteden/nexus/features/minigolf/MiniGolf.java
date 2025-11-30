@@ -51,7 +51,6 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 	Minigolf:
 	- Ball Styles
 		- Event Store
-	- Customize Ball Trail (sign) --> BearFair21
 	- Scorecard
 		- Redesign in dialogs?
 		- Add ability to reset current scorecard
@@ -208,6 +207,9 @@ public class MiniGolf extends Feature {
 
 	private static void spawnParticles(MiniGolfUser user) {
 		var ball = user.getGolfBall().getSnowball();
+		if (ball == null)
+			return;
+
 		var miniGolfParticle = user.getParticle();
 		if (miniGolfParticle == null)
 			return;
