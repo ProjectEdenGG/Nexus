@@ -3,7 +3,7 @@ package gg.projecteden.nexus.models.pugmas25;
 import gg.projecteden.nexus.features.events.waypoints.IWaypoint;
 import gg.projecteden.nexus.features.events.waypoints.WaypointIcon;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Districts.Pugmas25District;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25District;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.clientside.ClientSideUser;
 import gg.projecteden.nexus.utils.ColorType;

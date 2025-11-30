@@ -5,7 +5,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Fishing.Pugmas25AnglerLoot;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25AnglerLoot;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;

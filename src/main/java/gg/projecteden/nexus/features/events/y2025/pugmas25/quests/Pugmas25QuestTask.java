@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.quests;
 
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Cabin;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Intro;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Cabin;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Intro;
 import gg.projecteden.nexus.features.hub.Hub;
 import gg.projecteden.nexus.features.quests.tasks.EnteringRegionQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask;

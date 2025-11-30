@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.events.y2025.pugmas25.quests;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.equipment.skins.ArmorSkin;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Sidebar.Pugmas25SidebarLine;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25SidebarLine;
 import gg.projecteden.nexus.features.quests.QuestItem;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ColorType;
