@@ -17,6 +17,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Cabi
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Caves;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Districts;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Fishing;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25GiftGiver;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Interactions;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Intro;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25SellCrate;
@@ -180,6 +181,7 @@ public class Pugmas25 extends EdenEvent {
 		new Pugmas25ModelTrain();
 		new Pugmas25SellCrate();
 		new Pugmas25Trunks();
+		new Pugmas25GiftGiver();
 
 		Pugmas25Train.startup();
 		Pugmas25TrainBackground.startup();

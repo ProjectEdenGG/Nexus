@@ -156,9 +156,14 @@ public enum Pugmas25QuestItem implements QuestItem {
 
 	GIFT(new ItemBuilder(ItemModelType.PUGMAS_GIFT)
 		.name("&ePugmas Gift")
-		.lore("&eGive this gift to your friends!")
+		.lore("&fGive this gift to your friends!")
+		.lore("")
 		.lore("&fThe more this gift is passed around,")
-		.lore("&fthe better the reward will be!")),
+		.lore("&fthe better the reward will be!")
+		.lore("")
+		.lore("&eRight click &fto give or claim the gift")
+		.undroppable()
+		.untradeable()),
 
 	SLOT_MACHINE_TOKEN(new ItemBuilder(ItemModelType.EVENT_TOKEN)
 		.name("&oSlot Machine Token")

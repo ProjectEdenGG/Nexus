@@ -73,6 +73,7 @@ import org.bukkit.inventory.meta.Repairable;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
@@ -812,6 +813,13 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	// NBT
+
+	public ItemBuilder pdc(Consumer<PersistentDataContainer> consumer) {
+		ItemStack item = build();
+		itemStack.editPersistentDataContainer(consumer);
+		itemMeta = item.getItemMeta();
+		return this;
+	}
 
 	public ItemBuilder nbt(Consumer<ReadWriteItemNBT> consumer) {
 		ItemStack item = build();

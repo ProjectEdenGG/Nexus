@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events.y2025.pugmas25.features.fairgrounds
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25GiftGiver;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
@@ -218,7 +219,7 @@ public enum Pugmas25SlotMachineReward {
 			int maxAmount = 3;
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
-			PlayerUtils.giveItem(player, Pugmas25QuestItem.GIFT.getItemBuilder().amount(finalAmount).build());
+			PlayerUtils.giveItem(player, Pugmas25GiftGiver.getGift(player, finalAmount));
 			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3Gifts have been added to your inventory");
 			if (additional > 0)
 				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3Gifts given from Lucky Horseshoe");
@@ -228,7 +229,7 @@ public enum Pugmas25SlotMachineReward {
 			int maxAmount = 5;
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
-			PlayerUtils.giveItem(player, Pugmas25QuestItem.GIFT.getItemBuilder().amount(finalAmount).build());
+			PlayerUtils.giveItem(player, Pugmas25GiftGiver.getGift(player, finalAmount));
 			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3Gifts have been added to your inventory");
 			if (additional > 0)
 				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3Gifts given from Lucky Horseshoe");
