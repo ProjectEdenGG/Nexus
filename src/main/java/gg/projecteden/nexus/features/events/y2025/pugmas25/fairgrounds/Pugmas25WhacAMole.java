@@ -79,6 +79,7 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 	private Hologram holoScore;
 	private Hologram holoPlayer;
 	private int score = 0;
+	private Integer rareTargetRound = null;
 
 	public Pugmas25WhacAMole() {
 		instance = this;
@@ -136,6 +137,7 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 			.filter(entity -> entity.getType() == EntityType.ARROW)
 			.forEach(Entity::remove);
 		instance.score = 0;
+		instance.rareTargetRound = null;
 
 		super.reset();
 	}
@@ -153,6 +155,7 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 	@Override
 	protected void preStart(Player player) {
 		instance.score = 0;
+		instance.rareTargetRound = RandomUtils.randomInt(13, 16);
 		instance.updateHologramPlayer();
 		instance.updateHologramScore();
 		instance.updateHologramTime();
@@ -214,8 +217,7 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 			} else if (!hasMinBadTarget) {
 				targetHead = TARGET_BAD_ITEM.clone();
 				hasMinBadTarget = true;
-			} else if (!hasRareTarget && getCurrentRound() == 15) {
-				Dev.WAKKA.send("Round 15");
+			} else if (!hasRareTarget && getCurrentRound() == rareTargetRound) {
 				targetHead = TARGET_RARE_ITEM.clone();
 				hasRareTarget = true;
 			} else {
