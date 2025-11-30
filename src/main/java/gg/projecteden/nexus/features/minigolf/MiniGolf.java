@@ -12,7 +12,6 @@ import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallMoveEven
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfUserJoinEvent;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfUserQuitEvent;
 import gg.projecteden.nexus.features.particles.ParticleUtils;
-import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.minigolf.GolfBall;
 import gg.projecteden.nexus.models.minigolf.MiniGolfUser;
@@ -27,14 +26,10 @@ import org.bukkit.Particle.DustOptions;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Snowball;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 /*
  TODO:
@@ -66,13 +61,6 @@ public class MiniGolf extends Feature {
 
 	public static final Map<UUID, Float> POWER_MAP = new HashMap<>();
 
-	public static final List<ItemModelType> KIT_MODELS = List.of(
-		ItemModelType.MINIGOLF_PUTTER,
-		ItemModelType.MINIGOLF_WEDGE,
-		ItemModelType.MINIGOLF_WHISTLE,
-		ItemModelType.MINIGOLF_SCORECARD,
-		ItemModelType.MINIGOLF_BALL
-	);
 
 	@Override
 	public void onStart() {
@@ -128,15 +116,7 @@ public class MiniGolf extends Feature {
 			user.getGolfBall().remove();
 		}
 
-		for (ItemStack content : user.getOnlinePlayer().getInventory().getContents()) {
-			if (isNullOrAir(content))
-				continue;
-
-			for (ItemModelType kitModel : KIT_MODELS)
-				if (kitModel.is(content))
-					content.setAmount(0);
-		}
-
+		user.takeKit();
 		user.setPlaying(false);
 	}
 

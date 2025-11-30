@@ -15,6 +15,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -2654,6 +2655,7 @@ public enum ItemModelType {
 		return null;
 	}
 
+	@Contract("null -> false")
 	public boolean is(@Nullable ItemStack item) {
 		if (Nullables.isNullOrAir(item))
 			return false;
@@ -2661,6 +2663,7 @@ public enum ItemModelType {
 		return item.getType() == material && model.equals(new ItemBuilder(item).model());
 	}
 
+	@Contract("null -> false")
 	public boolean is(@Nullable DecorationConfig config) {
 		if (config == null)
 			return false;

@@ -65,6 +65,14 @@ public class MiniGolfUtils {
 
 	public static final List<ItemStack> KIT = List.of(PUTTER, WEDGE, WHISTLE, SCORECARD);
 
+	public static final List<ItemModelType> KIT_MODELS = List.of(
+		ItemModelType.MINIGOLF_PUTTER,
+		ItemModelType.MINIGOLF_WEDGE,
+		ItemModelType.MINIGOLF_WHISTLE,
+		ItemModelType.MINIGOLF_SCORECARD,
+		ItemModelType.MINIGOLF_BALL
+	);
+
 	public static ItemBuilder getGolfBall() {
 		return GOLF_BALL.clone();
 	}
