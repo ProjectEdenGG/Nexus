@@ -2,6 +2,9 @@ package gg.projecteden.nexus.features.events;
 
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.FishingLoot;
+import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.quests.CommonQuestItem;
 import gg.projecteden.nexus.features.quests.QuestItem;
 import gg.projecteden.nexus.features.quests.QuestReward;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
@@ -35,10 +38,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -190,6 +197,38 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 	@Description("Spawn a quest item")
 	void quest_item(QuestItem item, @Arg("1") int amount) {
 		giveItems(item.get(), amount);
+	}
+
+	@Permission(Group.ADMIN)
+	@Path("quest item menu")
+	@Description("View all quest items")
+	void quest_item_menu() {
+		new QuestItemsProvider(player(), getEdenEvent());
+	}
+
+	@Getter
+	public static class QuestItemsProvider implements TemporaryMenuListener {
+		private final Player player;
+		private final EdenEvent edenEvent;
+
+		@Override
+		public String getTitle() {
+			return edenEvent.getName() + " Quest Items";
+		}
+
+		public QuestItemsProvider(Player viewer, EdenEvent edenEvent) {
+			this.player = viewer;
+			this.edenEvent = edenEvent;
+			Enum<? extends QuestItem>[] questItems = edenEvent.getConfig().items().getEnumConstants();
+			var items = new ArrayList<>(Arrays.stream(questItems).map(questItem -> ((QuestItem) questItem).get()).toList());
+			items.addAll(Arrays.stream(CommonQuestItem.values()).map(CommonQuestItem::get).toList());
+
+			open(items);
+		}
+
+		@Override
+		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
+		}
 	}
 
 	@Permission(Group.ADMIN)
