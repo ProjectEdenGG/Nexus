@@ -179,10 +179,15 @@ public class MiniGolfUser implements PlayerOwnedObject {
 	}
 
 	public void takeKit() {
-		for (ItemStack content : getOnlinePlayer().getInventory().getContents())
+		for (ItemStack content : getOnlinePlayer().getInventory().getContents()) {
 			for (var model : MiniGolfUtils.KIT_MODELS)
 				if (model.is(content))
 					content.setAmount(0);
+
+			for (GolfBallStyle style : GolfBallStyle.values())
+				if (style.getModel().is(content))
+					content.setAmount(0);
+		}
 	}
 
 	public void replaceGolfBallInInventory() {
