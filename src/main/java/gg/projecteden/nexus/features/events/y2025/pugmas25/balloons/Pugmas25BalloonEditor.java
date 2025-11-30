@@ -33,6 +33,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
+import java.util.UUID;
 
 public class Pugmas25BalloonEditor implements Listener {
 	private static final Pugmas25 PUGMAS = Pugmas25.get();
@@ -102,7 +103,11 @@ public class Pugmas25BalloonEditor implements Listener {
 	}
 
 	public static boolean hasSchematic() {
-		File file = Pugmas25BalloonManager.worldedit.getSchematicFile(getSchematicPath(), true);
+		return hasSchematic(editor.getUniqueId());
+	}
+
+	public static boolean hasSchematic(UUID uuid) {
+		File file = Pugmas25BalloonManager.worldedit.getSchematicFile(getSchematicPath(uuid), true);
 		return file.exists();
 	}
 
@@ -155,7 +160,11 @@ public class Pugmas25BalloonEditor implements Listener {
 	}
 
 	protected static String getSchematicPath() {
-		return Pugmas25BalloonManager.SCHEM_USER + editor.getUniqueId();
+		return getSchematicPath(editor.getUniqueId());
+	}
+
+	protected static String getSchematicPath(UUID uuid) {
+		return Pugmas25BalloonManager.SCHEM_USER + uuid;
 	}
 
 	//

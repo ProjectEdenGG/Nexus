@@ -2,17 +2,23 @@ package gg.projecteden.nexus.features.events.y2025.pugmas25.quests;
 
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.events.waypoints.IWaypoint;
+import gg.projecteden.nexus.features.events.waypoints.WaypointIcon;
 import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
+import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.MathUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.citizensnpcs.api.npc.NPC;
+import org.bukkit.Color;
+import org.bukkit.Location;
 
 import java.util.function.Predicate;
 
 @Getter
 @AllArgsConstructor
-public enum Pugmas25NPC implements InteractableNPC {
+public enum Pugmas25NPC implements InteractableNPC, IWaypoint {
 	BLACKSMITH("Blacksmith", 5591),
 	TINKERER("Tinkerer", 5597),
 	ANGLER("Angler", 5590),
@@ -33,6 +39,8 @@ public enum Pugmas25NPC implements InteractableNPC {
 	private final String name;
 	private final int npcId;
 	private final Predicate<NPC> predicate;
+	private final WaypointIcon icon = WaypointIcon.X;
+	private final Color color = ColorType.RED.getBukkitColor();
 
 	Pugmas25NPC(String name, int npcId) {
 		this(name, npcId, npcId <= 0 ? null : npc -> npc.getId() == npcId);
@@ -45,5 +53,15 @@ public enum Pugmas25NPC implements InteractableNPC {
 	@Override
 	public String toString() {
 		return getName();
+	}
+
+	@Override
+	public Location getLocation() {
+		return CitizensUtils.getNPC(npcId).getStoredLocation();
+	}
+
+	@Override
+	public boolean isQuestWaypoint() {
+		return true;
 	}
 }

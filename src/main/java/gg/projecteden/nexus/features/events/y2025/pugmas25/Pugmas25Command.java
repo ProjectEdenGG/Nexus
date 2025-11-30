@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.IEventCommand;
 import gg.projecteden.nexus.features.events.waypoints.CustomWaypoint;
@@ -11,7 +10,6 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25.Pugmas25Ques
 import gg.projecteden.nexus.features.events.y2025.pugmas25.advent.Pugmas25Advent;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.advent.Pugmas25AdventMenu;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.balloons.Pugmas25BalloonEditor;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.balloons.Pugmas25BalloonEditorMenu;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.balloons.Pugmas25BalloonEditorUtils;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.balloons.Pugmas25BalloonManager;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds.Pugmas25WhacAMole;
@@ -30,7 +28,6 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25SellCr
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Train;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25NPC;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25Quest;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestWaypoint;
 import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -58,7 +55,6 @@ import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.utils.Currency;
 import gg.projecteden.nexus.utils.Currency.Price;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
@@ -145,8 +141,9 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 	protected void quest_progress(@Arg(value = "self", permission = Group.STAFF) Quester quester) {
 		super.quest_progress(quester);
 		Pugmas25QuestProgress.ADVENT.send(user);
-		Pugmas25QuestProgress.ANGLER.send(user);
+		Pugmas25QuestProgress.DESIGN_A_BALLOON.send(user);
 		Pugmas25QuestProgress.NUTCRACKERS.send(user);
+		Pugmas25QuestProgress.ANGLER.send(user);
 	}
 
 	@Path("database deleteQuest <quest>")
@@ -504,25 +501,6 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 	@Permission(Group.ADMIN)
 	void train_crossings_close() {
 		Pugmas25Train.trainCrossings.closeCrossings();
-	}
-
-	@Permission(Group.STAFF)
-	@Path("balloon menu")
-	void balloon_menu() {
-		if (Pugmas25BalloonEditor.isBeingUsed()) {
-			if (!Pugmas25BalloonEditorUtils.isEditing(player()))
-				error(Pugmas25BalloonEditorUtils.getEditorName() + " is currently using this");
-		} else {
-			if (Nexus.isMaintenanceQueued())
-				error("Server maintenance is queued, try again later");
-
-			if (!PlayerUtils.hasRoomFor(player(), Pugmas25QuestItem.BALLOON_PAINTBRUSH.get()))
-				error("Not enough room in your inventory to do this");
-
-			Pugmas25BalloonEditor.editBalloon(nerd());
-		}
-
-		new Pugmas25BalloonEditorMenu().open(player());
 	}
 
 	@Path("balloon endSession")

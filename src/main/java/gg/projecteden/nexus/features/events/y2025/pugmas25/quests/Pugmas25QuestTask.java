@@ -82,8 +82,14 @@ public enum Pugmas25QuestTask implements IQuestTask {
 		.enterRegion(Pugmas25.get().getWorld(), Pugmas25Cabin.DOOR_REGION)
 	),
 
-	// TODO: TEST
+	/*
+		TODO GRIFFIN:
+		- add objective "Decorate the snowmen"
+		- show actual progress in show progress command (user.getDecoratedSnowmen ?)
+	 */
 	SNOWMEN(GatherQuestTask.builder()
+		.objective("Talk to the Kid")
+		.waypoint(Pugmas25NPC.KID)
 		.talkTo(Pugmas25NPC.KID)
 		.dialog(dialog -> dialog
 			.npc("Hi! Um... could you help me with something?")

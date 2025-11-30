@@ -3,15 +3,20 @@ package gg.projecteden.nexus.features.events.y2025.pugmas25.balloons;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25NPC;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -115,4 +120,26 @@ public class Pugmas25BalloonManager {
 	}
 
 
+	public static void openEditor(Player player) {
+		if (Pugmas25BalloonEditor.isBeingUsed()) {
+			if (!Pugmas25BalloonEditorUtils.isEditing(player)) {
+				PlayerUtils.send(player, "&c" + Pugmas25BalloonEditorUtils.getEditorName() + " is currently using this");
+				return;
+			}
+		} else {
+			if (Nexus.isMaintenanceQueued()) {
+				PlayerUtils.send(player, "&c" + "Server maintenance is queued, try again later");
+				return;
+			}
+
+			if (!PlayerUtils.hasRoomFor(player, Pugmas25QuestItem.BALLOON_PAINTBRUSH.get())) {
+				PlayerUtils.send(player, "&c" + "Not enough room in your inventory to do this");
+				return;
+			}
+
+			Pugmas25BalloonEditor.editBalloon(Nerd.of(player));
+		}
+
+		new Pugmas25BalloonEditorMenu().open(player);
+	}
 }

@@ -32,11 +32,11 @@ public enum Pugmas25QuestItem implements QuestItem {
 
 	TRAIN_TICKET(new ItemBuilder(ItemModelType.VOUCHER).name("&3&oTrain Ticket").lore("&3Destination: &e" + Pugmas25.EVENT_NAME).dyeColor(Color.WHITE).itemFlags(ItemFlags.HIDE_ALL)),
 
-	BOX_OF_DECORATIONS(new ItemBuilder(ItemModelType.EMPTY_BOX).name("&oBox of Decorations").undroppable().untrashable().unframeable()),
-	BOX_OF_DECORATIONS_EMPTY(new ItemBuilder(ItemModelType.EMPTY_BOX).name("&oEmpty Box of Decorations").undroppable().untrashable().unframeable()),
+	BOX_OF_DECORATIONS(new ItemBuilder(ItemModelType.EMPTY_BOX).name("&oBox of Decorations").lore("&3Quest Item").undroppable().untrashable().unframeable()),
+	BOX_OF_DECORATIONS_EMPTY(new ItemBuilder(ItemModelType.EMPTY_BOX).name("&oEmpty Box of Decorations").lore("&3Quest Item").undroppable().untrashable().unframeable()),
 
 	MAGIC_MIRROR(new ItemBuilder(ItemModelType.EVENT_MAGIC_MIRROR).name("&oMagic Mirror").lore("&3Opens the waystone warp menu")),
-	LUCKY_HORSESHOE(new ItemBuilder(ItemModelType.EVENT_LUCKY_HORSESHOE).name("&oLucky Horseshoe").lore("&3Gives chance to gain additional rewards in:", "&3- Fishing", "&3- Extractinator", "&3- Slot Machine")),
+	LUCKY_HORSESHOE(new ItemBuilder(ItemModelType.EVENT_LUCKY_HORSESHOE).name("&oLucky Horseshoe").lore("&3Gives chance to gain", "&3additional rewards in:", "&3- Fishing", "&3- Extractinator", "&3- Slot Machine")),
 
 	ADVENTURE_POCKET_GUIDE(new ItemBuilder(ItemModelType.EVENT_ADVENTURE_POCKET_GUIDE).name("&oAdventurer's Pocket Guide").lore("&3Displays your area designation")),
 	GOLD_WATCH(new ItemBuilder(ItemModelType.EVENT_GOLD_WATCH).name("&oGold Watch").lore("&3Displays the current time")),
@@ -66,8 +66,8 @@ public enum Pugmas25QuestItem implements QuestItem {
 
 	SUSPICIOUS_DEBRIS(new ItemBuilder(Material.SUSPICIOUS_GRAVEL).name("&oSuspicious Debris").lore("&3Used in the Extractinator")),
 
-	GIFT_INITIAL(new ItemBuilder(ItemModelType.PUGMAS_PRESENT_ADVENT).name("Gift").lore("&eRClick &3a player to give it to them")), // TODO
-	GIFT_OPENABLE(new ItemBuilder(ItemModelType.PUGMAS_PRESENT_ADVENT).name("Gift").lore("&eLClick &3to open", "&eRClick &3a player to give it to them")), // TODO
+	GIFT_INITIAL(new ItemBuilder(ItemModelType.PUGMAS_PRESENT_ADVENT).name("Gift").lore("&eRClick &3a player to give it to them")), // TODO GRIFFIN
+	GIFT_OPENABLE(new ItemBuilder(ItemModelType.PUGMAS_PRESENT_ADVENT).name("Gift").lore("&eLClick &3to open", "&eRClick &3a player to give it to them")), // TODO GRIFFIN
 
 	SLOT_MACHINE_TOKEN(new ItemBuilder(ItemModelType.EVENT_TOKEN).name("&oSlot Machine Token").lore("&3Used to roll the slot machine")),
 
