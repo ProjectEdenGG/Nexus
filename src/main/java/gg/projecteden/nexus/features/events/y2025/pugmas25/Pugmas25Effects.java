@@ -201,18 +201,20 @@ public class Pugmas25Effects extends Effects {
 
 	private void minigolfWindmill() {
 		Tasks.repeat(TickTime.SECOND.x(2), TickTime.TICK.x(38), () -> {
-			if (!shouldAnimate(Pugmas25Minigolf.minigolfAnimationLoc, 25))
+			if (!shouldAnimate(Pugmas25Minigolf.minigolfAnimationLoc, 75))
 				return;
 
 			Pugmas25Minigolf.minigolfAnimationLoc.getBlock().setType(Material.REDSTONE_BLOCK);
 			Tasks.wait(2, () -> Pugmas25Minigolf.minigolfAnimationLoc.getBlock().setType(Material.AIR));
 		});
-
 	}
 
 	private void tinkererFloor() {
 		Location location = location(-608, 99, -3141);
 		Tasks.repeat(TickTime.SECOND.x(2), TickTime.TICK.x(32), () -> {
+			if (!shouldAnimate(location, 25))
+				return;
+
 			location.getBlock().setType(Material.REDSTONE_BLOCK);
 			Tasks.wait(2, () -> location.getBlock().setType(Material.AIR));
 		});
