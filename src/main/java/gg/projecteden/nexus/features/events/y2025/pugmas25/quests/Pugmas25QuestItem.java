@@ -32,8 +32,8 @@ public enum Pugmas25QuestItem implements QuestItem {
 
 	TRAIN_TICKET(new ItemBuilder(ItemModelType.VOUCHER).name("&3&oTrain Ticket").lore("&3Destination: &e" + Pugmas25.EVENT_NAME).dyeColor(Color.WHITE).itemFlags(ItemFlags.HIDE_ALL)),
 
-	BOX_OF_DECORATIONS(new ItemBuilder(ItemModelType.EMPTY_BOX).name("&oBox of Decorations").lore("&3Quest Item").undroppable().untrashable().unframeable()),
-	BOX_OF_DECORATIONS_EMPTY(new ItemBuilder(ItemModelType.EMPTY_BOX).name("&oEmpty Box of Decorations").lore("&3Quest Item").undroppable().untrashable().unframeable()),
+	BOX_OF_DECORATIONS(new ItemBuilder(ItemModelType.BOX_OF_DECORATIONS).name("&oBox of Decorations").lore("&3Quest Item").undroppable().untrashable().unframeable()),
+	BOX_OF_DECORATIONS_EMPTY(new ItemBuilder(ItemModelType.BOX_OF_DECORATIONS_EMPTY).name("&oEmpty Box of Decorations").lore("&3Quest Item").undroppable().untrashable().unframeable()),
 
 	MAGIC_MIRROR(new ItemBuilder(ItemModelType.EVENT_MAGIC_MIRROR).name("&oMagic Mirror").lore("&3Opens the waystone warp menu")),
 	LUCKY_HORSESHOE(new ItemBuilder(ItemModelType.EVENT_LUCKY_HORSESHOE).name("&oLucky Horseshoe").lore("&3Gives chance to gain", "&3additional rewards in:", "&3- Fishing", "&3- Extractinator", "&3- Slot Machine")),
