@@ -66,8 +66,8 @@ public enum Pugmas25QuestItem implements QuestItem {
 
 	SUSPICIOUS_DEBRIS(new ItemBuilder(Material.SUSPICIOUS_GRAVEL).name("&oSuspicious Debris").lore("&3Used in the Extractinator")),
 
-	GIFT_INITIAL(new ItemBuilder(ItemModelType.PUGMAS_PRESENT_ADVENT).name("Gift").lore("&eRClick &3a player to give it to them")), // TODO GRIFFIN
-	GIFT_OPENABLE(new ItemBuilder(ItemModelType.PUGMAS_PRESENT_ADVENT).name("Gift").lore("&eLClick &3to open", "&eRClick &3a player to give it to them")), // TODO GRIFFIN
+	GIFT_INITIAL(new ItemBuilder(ItemModelType.PUGMAS_GIFT).name("Gift").lore("&eRClick &3a player to give it to them")), // TODO GRIFFIN
+	GIFT_OPENABLE(new ItemBuilder(ItemModelType.PUGMAS_GIFT).name("Gift").lore("&eLClick &3to open", "&eRClick &3a player to give it to them")), // TODO GRIFFIN
 
 	SLOT_MACHINE_TOKEN(new ItemBuilder(ItemModelType.EVENT_TOKEN).name("&oSlot Machine Token").lore("&3Used to roll the slot machine")),
 

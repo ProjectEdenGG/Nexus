@@ -1588,6 +1588,7 @@ public enum ItemModelType {
 	BEARFAIR21_PRESENT_RECT_3("events/bearfair21/present_rect_3"),
 	PUGMAS_PRESENT_ADVENT_OPENED("events/christmas/present_advent_opened"),
 	PUGMAS_PRESENT_ADVENT("events/christmas/present_advent_today"),
+	PUGMAS_GIFT("events/christmas/gift"),
 	PUGMAS_TRAIN_SET_ENGINE("events/christmas/train_set_engine", true),
 	PUGMAS_TRAIN_SET_CABOOSE("events/christmas/train_set_caboose", true),
 	PUGMAS_TRAIN_SET_PASSENGER("events/christmas/train_set_passenger", true),
