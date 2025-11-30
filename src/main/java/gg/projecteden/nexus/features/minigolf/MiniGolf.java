@@ -33,7 +33,6 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 /*
  TODO:
-  - persistent data
   - better entity collision detection than ProjectileHitEvent
   - Allow golfball to not go out of bounds in regions using regex
   - Golfball can get stuck on boost/conveyor blocks
@@ -46,10 +45,9 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 	Minigolf:
 	- Customize Ball Trail (sign) --> BearFair21
-	- Customize Ball Color (sign) --> /minigolf setColor <color>
-		- When player gets a hole in 1 in all holes, unlock Rainbow Ball, this may be setup already, not sure
-	- Scorecard --> BearFair21
-		- Keep until player manually resets
+	- Scorecard
+		- Redesign in dialogs?
+		- Add ability to reset current scorecard
 */
 
 public class MiniGolf extends Feature {
