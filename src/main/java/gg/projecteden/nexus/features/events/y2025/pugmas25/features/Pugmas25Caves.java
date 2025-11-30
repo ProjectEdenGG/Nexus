@@ -56,7 +56,7 @@ public class Pugmas25Caves implements Listener {
 	private static final String EXTRACTINATOR_PREFIX = StringUtils.getPrefix("Extractinator");
 	private static final double SPIDER_MAX_SCALE = 1.5;
 	private static final double SPIDER_MIN_SCALE = 0.6;
-	private static final double SPIDER_MOTHER_MIN_SCALE = 1.4;
+	private static final double SPIDER_QUEEN_MIN_SCALE = 1.4;
 	private static final double SPIDER_BABY_SCALE = 0.4;
 
 	private static final Map<Long, Integer> recentlyClearedChunks = new HashMap<>();
@@ -231,7 +231,7 @@ public class Pugmas25Caves implements Listener {
 	}
 
 	@EventHandler
-	public void onMotherSpiderDeath(EntityDeathEvent event) {
+	public void onQueenSpiderDeath(EntityDeathEvent event) {
 		if (!(event.getEntity() instanceof Mob mob))
 			return;
 
@@ -248,7 +248,7 @@ public class Pugmas25Caves implements Listener {
 		if (attribute == null)
 			return;
 
-		if (attribute.getBaseValue() < SPIDER_MOTHER_MIN_SCALE)
+		if (attribute.getBaseValue() < SPIDER_QUEEN_MIN_SCALE)
 			return;
 
 		if (!(event.getDamageSource().getCausingEntity() instanceof Player player))
@@ -279,7 +279,6 @@ public class Pugmas25Caves implements Listener {
 					setAttributeBaseValue(_spider, Attribute.MOVEMENT_SPEED, 0.2); // 0.3 base
 					setAttributeBaseValue(_spider, Attribute.JUMP_STRENGTH, 0.63); // 0.42 base
 				});
-
 			}
 		});
 	}
@@ -297,27 +296,29 @@ public class Pugmas25Caves implements Listener {
 
 		mob.setAggressive(true);
 
-		if (mob.getType() == EntityType.SPIDER) {
-			if (RandomUtils.chanceOf(10)) {
-				event.setCancelled(true);
-				mob.getWorld().spawn(mob.getLocation(), CaveSpider.class);
-			}
+		if (mob.getType() != EntityType.SPIDER)
+			return;
 
-			var attributeScale = mob.getAttribute(Attribute.SCALE);
-			if (attributeScale != null) {
-				if (attributeScale.getBaseValue() != 1)
-					return;
-			}
+		if (RandomUtils.chanceOf(10)) {
+			event.setCancelled(true);
+			mob.getWorld().spawn(mob.getLocation(), CaveSpider.class);
+		}
 
-			double randomScale = RandomUtils.randomDouble(SPIDER_MIN_SCALE, SPIDER_MAX_SCALE);
-			if (setAttributeBaseValue(mob, Attribute.SCALE, randomScale)) {
-				if (randomScale >= SPIDER_MOTHER_MIN_SCALE) {
-					mob.setCustomName("Mother Spider");
-					setAttributeBaseValue(mob, Attribute.FOLLOW_RANGE, 32); // 16 base
-					setAttributeBaseValue(mob, Attribute.ATTACK_DAMAGE, 6); // 3 base
-					setAttributeBaseValue(mob, Attribute.MOVEMENT_SPEED, 0.18); // 0.3 base
-				}
-			}
+		var attributeScale = mob.getAttribute(Attribute.SCALE);
+		if (attributeScale != null) {
+			if (attributeScale.getBaseValue() != 1)
+				return;
+		}
+
+		double randomScale = RandomUtils.randomDouble(SPIDER_MIN_SCALE, SPIDER_MAX_SCALE);
+		if (!setAttributeBaseValue(mob, Attribute.SCALE, randomScale))
+			return;
+
+		if (randomScale >= SPIDER_QUEEN_MIN_SCALE) {
+			mob.setCustomName("Queen Spider");
+			setAttributeBaseValue(mob, Attribute.FOLLOW_RANGE, 32); // 16 base
+			setAttributeBaseValue(mob, Attribute.ATTACK_DAMAGE, 6); // 3 base
+			setAttributeBaseValue(mob, Attribute.MOVEMENT_SPEED, 0.18); // 0.3 base
 		}
 	}
 
@@ -406,7 +407,6 @@ public class Pugmas25Caves implements Listener {
 	}
 
 	private boolean setAttributeBaseValue(LivingEntity entity, Attribute type, double value) {
-		entity.registerAttribute(type);
 		var attribute = entity.getAttribute(type);
 		if (attribute == null)
 			return false;
