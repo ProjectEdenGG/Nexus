@@ -1,14 +1,17 @@
 package gg.projecteden.nexus.features.minigolf;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigolf.listeners.InteractListener;
 import gg.projecteden.nexus.features.minigolf.listeners.ProjectileListener;
+import gg.projecteden.nexus.features.minigolf.models.GolfBallStyle;
 import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlock;
 import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlockType;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallModifierBlockEvent;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallMoveEvent;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfUserJoinEvent;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfUserQuitEvent;
+import gg.projecteden.nexus.features.particles.ParticleUtils;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.minigolf.GolfBall;
@@ -19,6 +22,8 @@ import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Particle.DustOptions;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Snowball;
@@ -44,6 +49,8 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
   - every 20 ticks, loop all balls and check if they are within a course region, if not --> out of bounds
 
 	Minigolf:
+	- Ball Styles
+		- Event Store
 	- Customize Ball Trail (sign) --> BearFair21
 	- Scorecard
 		- Redesign in dialogs?
@@ -193,8 +200,41 @@ public class MiniGolf extends Feature {
 				Block below = golfBall.getBlockBelow();
 				Material belowType = below.getType();
 				applyRollModifiers(golfBall, below, belowType);
+
+				spawnParticles(user);
 			}
 		});
+	}
+
+	private static void spawnParticles(MiniGolfUser user) {
+		var ball = user.getGolfBall().getSnowball();
+		var miniGolfParticle = user.getParticle();
+		if (miniGolfParticle == null)
+			return;
+
+		if (!(ball.getVelocity().lengthSquared() > 0.0001))
+			return;
+
+		try {
+			Particle particle = miniGolfParticle.getParticle();
+			ParticleBuilder particleBuilder = new ParticleBuilder(particle)
+				.location(ball.getLocation().add(0, FLOOR_OFFSET, 0))
+				.count(1)
+				.extra(0);
+
+			if (particle.equals(Particle.DUST)) {
+				if (user.getStyle().equals(GolfBallStyle.RAINBOW)) {
+					int[] rgb = ParticleUtils.incRainbow(ball.getTicksLived());
+					DustOptions dustOptions = ParticleUtils.newDustOption(particle, rgb[0], rgb[1], rgb[2]);
+					particleBuilder.data(dustOptions);
+				} else
+					particleBuilder.color(user.getStyle().getColor().getBukkitColor());
+			}
+
+			particleBuilder.spawn();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	protected static void applyRollModifiers(GolfBall golfBall, Block below, Material belowType) {

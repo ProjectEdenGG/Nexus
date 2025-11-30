@@ -4,8 +4,8 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigolf.MiniGolf;
-import gg.projecteden.nexus.features.minigolf.MiniGolfCommand;
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
+import gg.projecteden.nexus.features.minigolf.menus.ScorecardBookMenu;
 import gg.projecteden.nexus.features.minigolf.models.blocks.BounceBlock;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallSpawnEvent;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfUserPlaceBallEvent;
@@ -96,7 +96,7 @@ public class InteractListener implements Listener {
 			return;
 		}
 
-		MiniGolfCommand.openScorecard(user, course, 1, user.getCurrentScorecard(course));
+		new ScorecardBookMenu(user, course, 1, user.getCurrentScorecard(course)).open();
 	}
 
 	private void recallBall(PlayerInteractEvent event, MiniGolfUser user) {

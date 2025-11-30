@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.minigolf;
+package gg.projecteden.nexus.features.minigolf.menus;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;

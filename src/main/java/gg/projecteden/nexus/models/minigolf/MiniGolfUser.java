@@ -5,6 +5,7 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.DebugDotCommand;
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
+import gg.projecteden.nexus.features.minigolf.models.GolfBallParticle;
 import gg.projecteden.nexus.features.minigolf.models.GolfBallStyle;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -47,9 +48,13 @@ public class MiniGolfUser implements PlayerOwnedObject {
 	private GolfBall golfBall;
 	private boolean debug;
 
-	private Map<String, GolfBallStyle> style = new ConcurrentHashMap<>();
+	private Map<String, GolfBallStyle> styles = new ConcurrentHashMap<>();
 	private List<GolfBallStyle> unlockedStyles = new ArrayList<>();
 	private Map<String, List<GolfBallStyle>> unlockedCourseStyles = new ConcurrentHashMap<>();
+
+	private Map<String, GolfBallParticle> particles = new ConcurrentHashMap<>();
+	private List<GolfBallParticle> unlockedParticles = new ArrayList<>();
+	private Map<String, List<GolfBallParticle>> unlockedCourseParticles = new ConcurrentHashMap<>();
 
 	private Map<String, Map<Integer, Integer>> currentScorecard = new ConcurrentHashMap<>();
 	private Map<String, Map<Integer, Integer>> bestScorecard = new ConcurrentHashMap<>();
@@ -64,14 +69,15 @@ public class MiniGolfUser implements PlayerOwnedObject {
 
 	public GolfBallStyle getStyle() {
 		var course = getCurrentCourse();
+
 		if (course == null)
 			return GolfBallStyle.WHITE;
 
-		return style.computeIfAbsent(course.getName(), $ -> GolfBallStyle.WHITE);
+		return styles.computeIfAbsent(course.getName(), $ -> GolfBallStyle.WHITE);
 	}
 
-	public void setStyle(MiniGolfCourse course, GolfBallStyle color) {
-		this.style.put(course.getName(), color);
+	public void setStyle(MiniGolfCourse course, GolfBallStyle style) {
+		this.styles.put(course.getName(), style);
 		if (golfBall != null)
 			golfBall.updateDisplayItem();
 	}
@@ -100,6 +106,45 @@ public class MiniGolfUser implements PlayerOwnedObject {
 		}
 
 		return styles;
+	}
+
+	public GolfBallParticle getParticle() {
+		var course = getCurrentCourse();
+
+		if (course == null)
+			return GolfBallParticle.NONE;
+
+		return particles.computeIfAbsent(course.getName(), $ -> GolfBallParticle.NONE);
+	}
+
+	public void setParticle(MiniGolfCourse course, GolfBallParticle particle) {
+		this.particles.put(course.getName(), particle);
+	}
+
+	public void unlockParticle(GolfBallParticle golfBallParticle) {
+		unlockedParticles.add(golfBallParticle);
+	}
+
+	public void unlockParticle(MiniGolfCourse course, GolfBallParticle golfBallParticle) {
+		unlockedCourseParticles.computeIfAbsent(course.getName(), $ -> new ArrayList<>()).add(golfBallParticle);
+	}
+
+	public List<GolfBallParticle> getAvailableParticles(MiniGolfCourse course) {
+		var particles = new ArrayList<GolfBallParticle>();
+
+		for (GolfBallParticle particle : GolfBallParticle.values()) {
+			if (particle.isDefault())
+				particles.add(particle);
+			else if (unlockedParticles.contains(particle))
+				particles.add(particle);
+			else if (course != null) {
+				var courseParticles = unlockedCourseParticles.computeIfAbsent(course.getName(), $ -> new ArrayList<>());
+				if (courseParticles.contains(particle))
+					particles.add(particle);
+			}
+		}
+
+		return particles;
 	}
 
 	public void debug(boolean bool, String debug) {

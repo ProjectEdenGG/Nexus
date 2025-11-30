@@ -8,10 +8,6 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Color;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
@@ -54,21 +50,21 @@ public enum GolfBallStyle {
 		@Override
 		public List<Color> getFireworkColors() {
 			return EnumUtils.valuesExcept(GolfBallStyle.class, RAINBOW, WHITE, BLACK).stream()
-				.map(color -> color.getFireworkColor().getBukkitColor())
+				.map(color -> color.getColor().getBukkitColor())
 				.toList();
 		}
 	};
 
 	GolfBallStyle(ItemModelType model) {
 		this.model = model;
-		this.fireworkColor = null;
+		this.color = null;
 	}
 
 	private final ItemModelType model;
-	private final ColorType fireworkColor;
+	private final ColorType color;
 
 	public List<Color> getFireworkColors() {
-		var color = fireworkColor;
+		var color = this.color;
 
 		if (color == null)
 			color = ColorType.WHITE;
@@ -86,14 +82,5 @@ public enum GolfBallStyle {
 	public Field getField() {
 		return getClass().getField(name());
 	}
-
-	@Target(ElementType.FIELD)
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface Unlockable {}
-
-	@Target(ElementType.FIELD)
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface Purchasable {}
-
 
 }

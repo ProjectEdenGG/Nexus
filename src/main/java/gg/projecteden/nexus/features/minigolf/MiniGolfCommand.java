@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.minigolf;
 
-import gg.projecteden.nexus.features.menus.BookBuilder.WrittenBookMenu;
-import gg.projecteden.nexus.features.menus.MenuUtils;
-import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.annotations.Title;
-import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.minigolf.menus.GolfBallParticleMenu;
+import gg.projecteden.nexus.features.minigolf.menus.GolfBallStyleMenu;
+import gg.projecteden.nexus.features.minigolf.menus.MiniGolfConfigMenu;
+import gg.projecteden.nexus.features.minigolf.menus.ScorecardBookMenu;
+import gg.projecteden.nexus.features.minigolf.models.GolfBallParticle;
 import gg.projecteden.nexus.features.minigolf.models.GolfBallStyle;
 import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlockType;
 import gg.projecteden.nexus.features.minigolf.models.blocks.TeleportBlock.TeleportBlockArgs;
@@ -24,11 +24,7 @@ import gg.projecteden.nexus.models.minigolf.MiniGolfConfig.MiniGolfCourse;
 import gg.projecteden.nexus.models.minigolf.MiniGolfConfigService;
 import gg.projecteden.nexus.models.minigolf.MiniGolfUser;
 import gg.projecteden.nexus.models.minigolf.MiniGolfUserService;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Skull;
@@ -36,9 +32,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /*
 	TODO:
@@ -88,7 +82,7 @@ public class MiniGolfCommand extends CustomCommand {
 		var course = user.getCurrentCourseRequired();
 
 		if (style == null)
-			new GolfBallStyleMenu(user).open(player());
+			new GolfBallStyleMenu(user, course).open(player());
 		else {
 			if (!user.getAvailableStyles(course).contains(style))
 				error("You have not unlocked that golf ball style");
@@ -99,87 +93,24 @@ public class MiniGolfCommand extends CustomCommand {
 		}
 	}
 
-	@Data
-	@RequiredArgsConstructor
-	@Title("Choose your golf ball")
-	public static class GolfBallStyleMenu extends InventoryProvider {
-		private final MiniGolfUser user;
+	@Path("ball particle [particle]")
+	void ball_particle(GolfBallParticle particle) {
+		var course = user.getCurrentCourseRequired();
 
-		@Override
-		public void init() {
-			addCloseItem();
-			var items = new ArrayList<ClickableItem>();
+		if (particle == null)
+			new GolfBallParticleMenu(user, course).open(player());
+		else {
+			if (!user.getAvailableParticles(course).contains(particle))
+				error("You have not unlocked that golf ball particle");
 
-			try {
-				for (GolfBallStyle availableStyle : user.getAvailableStyles(user.getCurrentCourseRequired())) {
-					var golfBall = new ItemBuilder(MiniGolfUtils.getGolfBall(availableStyle))
-						.name(StringUtils.camelCase(availableStyle) + " Golf Ball");
-
-					items.add(ClickableItem.of(golfBall, e -> {
-						try {
-							user.setStyle(user.getCurrentCourseRequired(), availableStyle);
-							user.replaceGolfBallInInventory();
-							user.sendMessage(MiniGolf.PREFIX + "Activated " + StringUtils.camelCase(availableStyle) + " Golf Ball");
-						} catch (Exception ex) {
-							MenuUtils.handleException(viewer, MiniGolf.PREFIX, ex);
-						}
-					}));
-				}
-			} catch (Exception ex) {
-				MenuUtils.handleException(viewer, MiniGolf.PREFIX, ex);
-			}
-
-			paginate(items);
+			user.setParticle(course, particle);
+			send(PREFIX + "Activated " + camelCase(particle) + " Golf Ball Particle");
 		}
 	}
 
 	@Path("scorecard <course> [page]")
 	void scorecard(MiniGolfCourse course, @Arg("1") int page) {
-		openScorecard(user, course, page, user.getCurrentScorecard(course));
-	}
-
-	public static void openScorecard(MiniGolfUser user, MiniGolfCourse course, int page, Map<Integer, Integer> scorecard) {
-		var builder = new WrittenBookMenu();
-		var json = new JsonBuilder();
-
-		json.next(" ## |  Par | Strokes").newline();
-		json.next("------------------").newline();
-
-		int count = 0;
-		int start = page == 1 ? 1 : 10;
-
-		for (var hole : course.getHoles()) {
-			if (hole.getId() < start)
-				continue;
-
-			String holeNumber = String.valueOf(hole.getId());
-			if (hole.getId() < 10)
-				holeNumber = "0" + hole.getId();
-
-			String strokes = " ?";
-			if (scorecard.containsKey(hole.getId())) {
-				int strokeCount = scorecard.get(hole.getId());
-				String space = " ";
-				if (strokeCount > 9)
-					space = "";
-
-				strokes = space + strokeCount;
-			}
-
-			json.next(" " + holeNumber + " |   " + hole.getPar() + "   |   " + strokes).newline();
-
-			if (++count >= 9)
-				break;
-		}
-
-		json.newline().group();
-
-		if (page == 1)
-			json.next("      &3----> ").hover("&eNext Page").command("/minigolf scorecard " + course.getName() + " 2");
-		else
-			json.next("      &3<---- ").hover("&ePrevious Page").command("/minigolf scorecard " + course.getName() + " 1");
-
-		builder.addPage(json).open(user.getOnlinePlayer());
+		new ScorecardBookMenu(user, course, page, user.getCurrentScorecard(course));
 	}
 
 	@Permission(Group.STAFF)
