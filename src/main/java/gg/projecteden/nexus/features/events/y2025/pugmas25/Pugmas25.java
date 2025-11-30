@@ -67,6 +67,7 @@ import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -697,15 +698,16 @@ public class Pugmas25 extends EdenEvent {
 			}
 
 			@Override
-			String getProgressMessage(Pugmas25User user) {
+			@Nullable
+			List<String> getProgressMessage(Pugmas25User user) {
 				int numCollected = user.getFoundNutCrackers().size();
 				int numTotal = Pugmas25Config.get().getNutCrackerLocations().size();
 
 				return switch (getStatus(user)) {
-					case NOT_STARTED -> "&3 " + getName() + " &7- &eFind a nutcracker";
+					case NOT_STARTED -> List.of("&3 " + getName() + " &7- &eFind a nutcracker");
 					case IN_PROGRESS ->
-						"&3 " + getName() + " &7- &eStarted (" + numCollected + "/" + numTotal + " nutcrackers)";
-					case COMPLETED -> "&3 " + getName() + " &7- &aCompleted";
+						List.of("&3 " + getName() + " &7- &eStarted", "&7   - " + numCollected + "/" + numTotal + " nutcrackers found");
+					case COMPLETED -> List.of("&3 " + getName() + " &7- &aCompleted");
 				};
 			}
 		},
@@ -726,16 +728,17 @@ public class Pugmas25 extends EdenEvent {
 			}
 
 			@Override
-			String getProgressMessage(Pugmas25User user) {
+			@Nullable
+			List<String> getProgressMessage(Pugmas25User user) {
 				var adventUser = user.advent();
 				int numCollected = adventUser.getCollected().size();
 				int numTotal = Advent25Config.get().getDays().size();
 
 				return switch (getStatus(user)) {
-					case NOT_STARTED -> "&3 " + getName() + " &7- &eTalk to the Elf";
+					case NOT_STARTED -> List.of("&3 " + getName() + " &7- &eTalk to the Elf");
 					case IN_PROGRESS ->
-						"&3 " + getName() + " &7- &eStarted (" + numCollected + "/" + numTotal + " presents)";
-					case COMPLETED -> "&3 " + getName() + " &7- &aCompleted";
+						List.of("&3 " + getName() + " &7- &eStarted", "&7   - " + numCollected + "/" + numTotal + " presents collected");
+					case COMPLETED -> List.of("&3 " + getName() + " &7- &aCompleted");
 				};
 			}
 		},
@@ -752,14 +755,17 @@ public class Pugmas25 extends EdenEvent {
 			}
 
 			@Override
-			String getProgressMessage(Pugmas25User user) {
+			@Nullable
+			List<String> getProgressMessage(Pugmas25User user) {
 				Pugmas25Config config = new Pugmas25ConfigService().get0();
 				var timeUntilReset = TimeUtils.Timespan.of(Pugmas25.get().now(), config.getAnglerQuestResetDateTime()).format(FormatType.LONG);
 
 				return switch (getStatus(user)) {
-					case NOT_STARTED -> "&3 " + getName() + " &7- &eTalk to the Angler";
-					case IN_PROGRESS -> "&3 " + getName() + " &7- &eStarted (Talk to the Angler for more info)";
-					case COMPLETED -> "&3 " + getName() + " &7- &aCompleted (resets in " + timeUntilReset + ")";
+					case NOT_STARTED -> List.of("&3 " + getName() + " &7- &eTalk to the Angler");
+					case IN_PROGRESS ->
+						List.of("&3 " + getName() + " &7- &eStarted", "&7   - Talk to the Angler for more info");
+					case COMPLETED ->
+						List.of("&3 " + getName() + " &7- &aCompleted (resets in " + timeUntilReset + ")");
 				};
 			}
 		},
@@ -776,11 +782,13 @@ public class Pugmas25 extends EdenEvent {
 			}
 
 			@Override
-			String getProgressMessage(Pugmas25User user) {
+			@Nullable
+			List<String> getProgressMessage(Pugmas25User user) {
 				return switch (getStatus(user)) {
-					case NOT_STARTED -> "&3 " + getName() + " &7- &eTalk to the Aeronaut";
-					case IN_PROGRESS -> "&3 " + getName() + " &7- &eStarted (Save your balloon)";
-					case COMPLETED -> "&3 " + getName() + " &7- &aCompleted";
+					case NOT_STARTED -> List.of("&3 " + getName() + " &7- &eTalk to the Aeronaut");
+					case IN_PROGRESS ->
+						List.of("&3 " + getName() + " &7- &eStarted", "&7   - Save your hot air balloon");
+					case COMPLETED -> List.of("&3 " + getName() + " &7- &aCompleted");
 				};
 			}
 		}
@@ -791,18 +799,20 @@ public class Pugmas25 extends EdenEvent {
 
 		abstract Pugmas25QuestStatus getStatus(Pugmas25User user);
 
-		abstract String getProgressMessage(Pugmas25User user);
+		abstract @Nullable List<String> getProgressMessage(Pugmas25User user);
 
 		public String getName() {
 			return StringUtils.camelCase(this);
 		}
 
 		public void send(Pugmas25User user) {
-			String progress = getProgressMessage(user);
-			if (progress == null)
+			List<String> progress = getProgressMessage(user);
+			if (Nullables.isNullOrEmpty(progress))
 				return;
 
-			user.sendMessage(progress);
+			for (String line : progress) {
+				user.sendMessage(line);
+			}
 		}
 
 		private enum Pugmas25QuestStatus {
@@ -893,32 +903,6 @@ public class Pugmas25 extends EdenEvent {
 		}
 	}
 
-//	@EventHandler
-//	public void on(PlayerInteractEvent event) {
-//		if (!EquipmentSlotGroup.HANDS.applies(event)) return;
-//		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-//
-//		Block block = event.getClickedBlock();
-//		if (Nullables.isNullOrAir(block) || block.getType() != Material.BARRIER) return;
-//
-//		if (!isAtEvent(block))
-//			return;
-//
-//		var data = new DecorationInteractData(block, BlockFace.UP);
-//		if (data.getDecoration() == null)
-//			return;
-//
-//		if (!ItemModelType.NUTCRACKER_SHORT.is(data.getDecoration().getItem(event.getPlayer())))
-//			return;
-//
-//		Pugmas25ConfigService configService = new Pugmas25ConfigService();
-//		Pugmas25Config config = configService.get0();
-//		if (!config.getNutCrackerLocations().contains(block.getLocation()))
-//			return;
-//
-//		new Pugmas25UserService().edit(event.getPlayer(), user -> user.getFoundNutCrackers().add(block.getLocation()));
-//	}
-
 	@EventHandler
 	public void on(DecorationInteractEvent event) {
 		Player player = event.getPlayer();
@@ -940,6 +924,7 @@ public class Pugmas25 extends EdenEvent {
 			return;
 
 		new Pugmas25UserService().edit(player, user -> user.getFoundNutCrackers().add(location));
+		// TODO: SOUND + PARTICLE
 	}
 
 }

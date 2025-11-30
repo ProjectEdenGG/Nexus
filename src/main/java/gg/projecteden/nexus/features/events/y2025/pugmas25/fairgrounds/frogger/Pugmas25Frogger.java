@@ -5,6 +5,8 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.events.EventSounds;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25DailyTokens;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25DailyTokens.Pugmas25DailyTokenSource;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.features.vanish.Vanish;
@@ -311,7 +313,7 @@ public class Pugmas25Frogger implements Listener {
 			player.teleportAsync(RESPAWN_LOC);
 			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(player).volume(10).pitch(2.0).play();
 
-			// TODO: GIVE SLOT MACHINE TOKENS
+			Pugmas25DailyTokens.giveDailyTokens(player, Pugmas25DailyTokenSource.FROGGER, 5);
 		}
 	}
 

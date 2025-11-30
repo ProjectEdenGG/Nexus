@@ -14,6 +14,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
+import kotlin.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.FireworkEffect.Type;
@@ -30,6 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
+@SuppressWarnings("removal")
 @AllArgsConstructor
 public enum Pugmas25SlotMachineReward {
 
@@ -42,7 +44,8 @@ public enum Pugmas25SlotMachineReward {
 			int maxAmount = 50;
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
-			Currency.VOTE_POINTS.deposit(player, Price.of(finalAmount));
+			//Currency.VOTE_POINTS.deposit(player, Price.of(finalAmount));
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3vote points has been added to your balance");
 			if (additional > 0)
 				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3vote points given from Lucky Horseshoe");
 		},
@@ -51,7 +54,8 @@ public enum Pugmas25SlotMachineReward {
 			int maxAmount = 75;
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
-			Currency.VOTE_POINTS.deposit(player, Price.of(finalAmount));
+			//Currency.VOTE_POINTS.deposit(player, Price.of(finalAmount));
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3vote points has been added to your balance");
 			if (additional > 0)
 				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3vote points given from Lucky Horseshoe");
 		}
@@ -64,7 +68,8 @@ public enum Pugmas25SlotMachineReward {
 			int maxAmount = 500;
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
-			Currency.EVENT_TOKENS.deposit(player, Price.of(finalAmount));
+			//Currency.EVENT_TOKENS.deposit(player, Price.of(finalAmount));
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3event tokens has been added to your balance");
 			if (additional > 0)
 				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3event tokens given from Lucky Horseshoe");
 		},
@@ -73,7 +78,8 @@ public enum Pugmas25SlotMachineReward {
 			int maxAmount = 750;
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
-			Currency.EVENT_TOKENS.deposit(player, Price.of(finalAmount));
+			//Currency.EVENT_TOKENS.deposit(player, Price.of(finalAmount));
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3event tokens has been added to your balance");
 			if (additional > 0)
 				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3event tokens given from Lucky Horseshoe");
 		}
@@ -87,8 +93,9 @@ public enum Pugmas25SlotMachineReward {
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
 			PlayerUtils.giveItem(player, Pugmas25QuestItem.SLOT_MACHINE_TOKEN.getItemBuilder().clone().amount(finalAmount).build());
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3slot machine tokens has been added to your inventory");
 			if (additional > 0)
-				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3re-rolls given from Lucky Horseshoe");
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3slot machine tokens given from Lucky Horseshoe");
 		},
 		(player) -> {
 			int preAmount = 3;
@@ -96,6 +103,7 @@ public enum Pugmas25SlotMachineReward {
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
 			PlayerUtils.giveItem(player, Pugmas25QuestItem.SLOT_MACHINE_TOKEN.getItemBuilder().clone().amount(finalAmount).build());
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3slot machine tokens has been added to your inventory");
 			if (additional > 0)
 				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3re-rolls given from Lucky Horseshoe");
 		}
@@ -105,20 +113,52 @@ public enum Pugmas25SlotMachineReward {
 
 	PICKAXE(SlotPos.of(1, 4), new ItemBuilder(Material.MINER_POTTERY_SHERD).name("&dRandom Pickaxe Enchant")
 		.lore("&3Half: &eUncommon", "&3Full: &aRare", "", "&3Enchants: "),
-		(player) -> PlayerUtils.giveItem(player, getEnchantedBook(Pugmas25SlotMachineRewardType.HALF, Enchantment.EFFICIENCY, Enchantment.FORTUNE)),
-		(player) -> PlayerUtils.giveItem(player, getEnchantedBook(Pugmas25SlotMachineRewardType.FULL, Enchantment.EFFICIENCY, Enchantment.FORTUNE))
+		(player) -> {
+			var enchantLevel = getEnchantReward(Pugmas25SlotMachineRewardType.HALF, Enchantment.EFFICIENCY, Enchantment.FORTUNE);
+			ItemStack enchantedBook = new ItemBuilder(Material.ENCHANTED_BOOK).enchant(enchantLevel.getFirst(), enchantLevel.getSecond()).build();
+			PlayerUtils.giveItem(player, enchantedBook);
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + enchantLevel.getFirst().getName() + " " + enchantLevel.getSecond() + " Enchanted Book &3has been added to your inventory");
+		},
+		(player) -> {
+			var enchantLevel = getEnchantReward(Pugmas25SlotMachineRewardType.FULL, Enchantment.EFFICIENCY, Enchantment.FORTUNE);
+			ItemStack enchantedBook = new ItemBuilder(Material.ENCHANTED_BOOK).enchant(enchantLevel.getFirst(), enchantLevel.getSecond()).build();
+			PlayerUtils.giveItem(player, enchantedBook);
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + enchantLevel.getFirst().getName() + " " + enchantLevel.getSecond() + " Enchanted Book &3has been added to your inventory");
+		}
 	),
 
 	FISHING_ROD(SlotPos.of(2, 4), new ItemBuilder(Material.ANGLER_POTTERY_SHERD).name("&dRandom Fishing Rod Enchant")
 		.lore("&3Half: &eUncommon", "&3Full: &aRare", "", "&3Enchants: "),
-		(player) -> PlayerUtils.giveItem(player, getEnchantedBook(Pugmas25SlotMachineRewardType.HALF, Enchantment.LURE, Enchantment.LUCK_OF_THE_SEA)),
-		(player) -> PlayerUtils.giveItem(player, getEnchantedBook(Pugmas25SlotMachineRewardType.FULL, Enchantment.LURE, Enchantment.LUCK_OF_THE_SEA))
+		(player) -> {
+			var enchantLevel = getEnchantReward(Pugmas25SlotMachineRewardType.HALF, Enchantment.LURE, Enchantment.LUCK_OF_THE_SEA);
+			ItemStack enchantedBook = new ItemBuilder(Material.ENCHANTED_BOOK).enchant(enchantLevel.getFirst(), enchantLevel.getSecond()).build();
+			PlayerUtils.giveItem(player, enchantedBook);
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + enchantLevel.getFirst().getName() + " " + enchantLevel.getSecond() + " Enchanted Book &3has been added to your inventory");
+		},
+		(player) -> {
+			var enchantLevel = getEnchantReward(Pugmas25SlotMachineRewardType.FULL, Enchantment.LURE, Enchantment.LUCK_OF_THE_SEA);
+			ItemStack enchantedBook = new ItemBuilder(Material.ENCHANTED_BOOK).enchant(enchantLevel.getFirst(), enchantLevel.getSecond()).build();
+			PlayerUtils.giveItem(player, enchantedBook);
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + enchantLevel.getFirst().getName() + " " + enchantLevel.getSecond() + " Enchanted Book &3has been added to your inventory");
+		}
 	),
 
 	SWORD(SlotPos.of(3, 4), new ItemBuilder(Material.BLADE_POTTERY_SHERD).name("&dRandom Sword Enchant")
 		.lore("&3Half: &eUncommon", "&3Full: &aRare", "", "&3Enchants: "),
-		(player) -> PlayerUtils.giveItem(player, getEnchantedBook(Pugmas25SlotMachineRewardType.HALF, Enchantment.SHARPNESS, Enchantment.LOOTING)),
-		(player) -> PlayerUtils.giveItem(player, getEnchantedBook(Pugmas25SlotMachineRewardType.FULL, Enchantment.SHARPNESS, Enchantment.LOOTING))
+		(player) -> {
+			var enchantLevel = getEnchantReward(Pugmas25SlotMachineRewardType.HALF, Enchantment.SHARPNESS, Enchantment.LOOTING);
+			ItemStack enchantedBook = new ItemBuilder(Material.ENCHANTED_BOOK).enchant(enchantLevel.getFirst(), enchantLevel.getSecond()).build();
+
+			PlayerUtils.giveItem(player, enchantedBook);
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + enchantLevel.getFirst().getName() + " " + enchantLevel.getSecond() + " Enchanted Book &3has been added to your inventory");
+		},
+		(player) -> {
+			var enchantLevel = getEnchantReward(Pugmas25SlotMachineRewardType.FULL, Enchantment.SHARPNESS, Enchantment.LOOTING);
+			ItemStack enchantedBook = new ItemBuilder(Material.ENCHANTED_BOOK).enchant(enchantLevel.getFirst(), enchantLevel.getSecond()).build();
+
+			PlayerUtils.giveItem(player, enchantedBook);
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + enchantLevel.getFirst().getName() + " " + enchantLevel.getSecond() + " Enchanted Book &3has been added to your inventory");
+		}
 	),
 
 	//
@@ -154,9 +194,10 @@ public enum Pugmas25SlotMachineReward {
 			int maxAmount = 3;
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3Diamond Trucks have been added to your inventory");
 			PlayerUtils.giveItem(player, Pugmas25QuestItem.TRUNK_DIAMOND.getItemBuilder().clone().amount(finalAmount).build());
 			if (additional > 0)
-				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3diamond trunks given from Lucky Horseshoe");
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3Diamond Trunks given from Lucky Horseshoe");
 		},
 		(player) -> {
 			int preAmount = 3;
@@ -164,8 +205,9 @@ public enum Pugmas25SlotMachineReward {
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
 			PlayerUtils.giveItem(player, Pugmas25QuestItem.TRUNK_DIAMOND.getItemBuilder().clone().amount(finalAmount).build());
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3Diamond Trucks have been added to your inventory");
 			if (additional > 0)
-				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3diamond trunks given from Lucky Horseshoe");
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3Diamond Trunks given from Lucky Horseshoe");
 		}
 	),
 
@@ -177,8 +219,9 @@ public enum Pugmas25SlotMachineReward {
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
 			PlayerUtils.giveItem(player, Pugmas25QuestItem.GIFT_INITIAL.getItemBuilder().clone().amount(finalAmount).build());
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3Gifts have been added to your inventory");
 			if (additional > 0)
-				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3gifts given from Lucky Horseshoe");
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3Gifts given from Lucky Horseshoe");
 		},
 		(player) -> {
 			int preAmount = 3;
@@ -186,8 +229,9 @@ public enum Pugmas25SlotMachineReward {
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
 			PlayerUtils.giveItem(player, Pugmas25QuestItem.GIFT_INITIAL.getItemBuilder().clone().amount(finalAmount).build());
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3Gifts have been added to your inventory");
 			if (additional > 0)
-				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3gifts given from Lucky Horseshoe");
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3Gifts given from Lucky Horseshoe");
 		}
 	),
 	;
@@ -277,7 +321,7 @@ public enum Pugmas25SlotMachineReward {
 		FULL, HALF;
 	}
 
-	private static ItemStack getEnchantedBook(Pugmas25SlotMachineRewardType type, Enchantment uncommon, Enchantment rare) {
+	private static Pair<Enchantment, Integer> getEnchantReward(Pugmas25SlotMachineRewardType type, Enchantment uncommon, Enchantment rare) {
 		List<Enchantment> enchantments = new ArrayList<>(List.of(uncommon, Enchantment.UNBREAKING));
 		if (type == Pugmas25SlotMachineRewardType.FULL)
 			enchantments = new ArrayList<>(List.of(rare, Enchantment.MENDING));
@@ -293,6 +337,6 @@ public enum Pugmas25SlotMachineReward {
 			}
 		}
 
-		return new ItemBuilder(Material.ENCHANTED_BOOK).enchant(enchant, level).build();
+		return new Pair<>(enchant, level);
 	}
 }

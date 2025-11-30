@@ -57,6 +57,7 @@ public class Pugmas25User implements PlayerOwnedObject {
 	private boolean balloonSchemExists = false;
 
 	private int slotMachineRolls = 0;
+	private int slotMachineRewards = 0;
 
 	private boolean startedMiniGolf;
 
@@ -118,5 +119,9 @@ public class Pugmas25User implements PlayerOwnedObject {
 
 	public void incrementSlotMachineRolls() {
 		this.slotMachineRolls += 1;
+	}
+
+	public void incrementSlotMachineRewards() {
+		this.slotMachineRewards += 1;
 	}
 }

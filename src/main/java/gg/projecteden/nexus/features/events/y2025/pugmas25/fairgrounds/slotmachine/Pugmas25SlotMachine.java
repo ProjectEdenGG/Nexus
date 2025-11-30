@@ -288,6 +288,7 @@ public class Pugmas25SlotMachine extends EdenEventSinglePlayerGame {
 		}
 
 		if (reward != null) {
+			new Pugmas25UserService().edit(getGamer(), Pugmas25User::incrementSlotMachineRewards);
 			reward.give(getGamer(), rewardType);
 		} else {
 			new SoundBuilder(Sound.ENTITY_VILLAGER_NO).location(soundLocation).volume(0.5).play();
@@ -387,14 +388,14 @@ public class Pugmas25SlotMachine extends EdenEventSinglePlayerGame {
 		if (isPlaying())
 			return;
 
-		if (block.getBlockData() instanceof Powerable powerable) {
-			lever = block;
-			powerable.setPowered(true);
-			lever.setBlockData(powerable, true);
-			new SoundBuilder(Sound.BLOCK_LEVER_CLICK).location(lever).volume(0.3).pitch(0.6).play();
+		if (start(player)) {
+			if (block.getBlockData() instanceof Powerable powerable) {
+				lever = block;
+				powerable.setPowered(true);
+				lever.setBlockData(powerable, true);
+				new SoundBuilder(Sound.BLOCK_LEVER_CLICK).location(lever).volume(0.3).pitch(0.6).play();
+			}
 		}
-
-		start(player);
 	}
 
 

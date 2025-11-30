@@ -118,13 +118,13 @@ public abstract class EdenEventSinglePlayerGame extends Feature implements Liste
 
 	}
 
-	public void start(@NonNull Player player) {
+	public boolean start(@NonNull Player player) {
 		if (!init) {
 			init();
 		}
 
 		if (!startChecks(player))
-			return;
+			return false;
 
 		gamer = player;
 		gameTicks = 0;
@@ -132,6 +132,7 @@ public abstract class EdenEventSinglePlayerGame extends Feature implements Liste
 		preStart(player);
 
 		_start(player);
+		return true;
 	}
 
 	private void _start(Player player) {
