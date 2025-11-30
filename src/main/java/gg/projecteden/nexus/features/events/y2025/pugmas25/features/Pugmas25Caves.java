@@ -51,12 +51,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static gg.projecteden.api.common.utils.RandomUtils.chanceOf;
+
 public class Pugmas25Caves implements Listener {
 	private static final String EXTRACTINATOR_REGION = Pugmas25.get().getRegionName() + "_extractinator";
 	private static final String EXTRACTINATOR_PREFIX = StringUtils.getPrefix("Extractinator");
-	private static final double SPIDER_MAX_SCALE = 1.5;
+	private static final double SPIDER_MAX_SCALE = 1.2;
 	private static final double SPIDER_MIN_SCALE = 0.6;
-	private static final double SPIDER_QUEEN_MIN_SCALE = 1.4;
+	private static final double SPIDER_QUEEN_SCALE = 1.5;
 	private static final double SPIDER_BABY_SCALE = 0.4;
 
 	private static final Map<Long, Integer> recentlyClearedChunks = new HashMap<>();
@@ -151,7 +153,7 @@ public class Pugmas25Caves implements Listener {
 		int luck = RandomUtils.randomInt(luckMin, 30);
 
 		// Coins
-		if (RandomUtils.chanceOf(10)) {
+		if (chanceOf(10)) {
 			int coinAmount = Pugmas25.getLuckyAmount(1, 15, luck);
 			try {
 				Currency.COIN_POUCH.deposit(player, Price.of(coinAmount));
@@ -248,14 +250,14 @@ public class Pugmas25Caves implements Listener {
 		if (attribute == null)
 			return;
 
-		if (attribute.getBaseValue() < SPIDER_QUEEN_MIN_SCALE)
+		if (attribute.getBaseValue() <= SPIDER_MAX_SCALE)
 			return;
 
 		if (!(event.getDamageSource().getCausingEntity() instanceof Player player))
 			return;
 
 		Location location = mob.getLocation();
-		int spawnCount = RandomUtils.randomInt(2, 5);
+		int spawnCount = RandomUtils.randomInt(3, 7);
 		World world = location.getWorld();
 		Tasks.wait(10, () -> {
 			new ParticleBuilder(Particle.LARGE_SMOKE)
@@ -299,7 +301,7 @@ public class Pugmas25Caves implements Listener {
 		if (mob.getType() != EntityType.SPIDER)
 			return;
 
-		if (RandomUtils.chanceOf(10)) {
+		if (chanceOf(10)) {
 			event.setCancelled(true);
 			mob.getWorld().spawn(mob.getLocation(), CaveSpider.class);
 		}
@@ -314,12 +316,14 @@ public class Pugmas25Caves implements Listener {
 		if (!setAttributeBaseValue(mob, Attribute.SCALE, randomScale))
 			return;
 
-		if (randomScale >= SPIDER_QUEEN_MIN_SCALE) {
-			mob.setCustomName("Queen Spider");
-			setAttributeBaseValue(mob, Attribute.FOLLOW_RANGE, 32); // 16 base
-			setAttributeBaseValue(mob, Attribute.ATTACK_DAMAGE, 6); // 3 base
-			setAttributeBaseValue(mob, Attribute.MOVEMENT_SPEED, 0.18); // 0.3 base
-		}
+		if (!chanceOf(8))
+			return;
+
+		mob.setCustomName("Queen Spider");
+		setAttributeBaseValue(mob, Attribute.SCALE, SPIDER_QUEEN_SCALE);
+		setAttributeBaseValue(mob, Attribute.FOLLOW_RANGE, 32); // 16 base
+		setAttributeBaseValue(mob, Attribute.ATTACK_DAMAGE, 6); // 3 base
+		setAttributeBaseValue(mob, Attribute.MOVEMENT_SPEED, 0.18); // 0.3 base
 	}
 
 	@EventHandler
