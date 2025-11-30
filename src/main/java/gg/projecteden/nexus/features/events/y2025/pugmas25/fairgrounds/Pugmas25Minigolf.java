@@ -2,9 +2,9 @@ package gg.projecteden.nexus.features.events.y2025.pugmas25.fairgrounds;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
-import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfUserJoinEvent;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfUserQuitEvent;
+import gg.projecteden.nexus.models.minigolf.MiniGolfUser;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;

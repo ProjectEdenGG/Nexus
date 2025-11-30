@@ -2,8 +2,9 @@ package gg.projecteden.nexus.features.minigolf;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigolf.models.GolfBallColor;
-import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import gg.projecteden.nexus.models.minigolf.MiniGolfUser;
+import gg.projecteden.nexus.models.minigolf.MiniGolfUserService;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -11,7 +12,6 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -23,62 +23,57 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.List;
-import java.util.UUID;
 
 public class MiniGolfUtils {
 
 	public static void debugDot(Location location, ColorType color) {
-		for (MiniGolfUser user : MiniGolf.getUsers()) {
+		for (MiniGolfUser user : new MiniGolfUserService().getOnline())
 			user.debugDot(location, color);
-		}
 	}
 
-	@Getter
-	private static final ItemStack putter = new ItemBuilder(ItemModelType.MINIGOLF_PUTTER)
+	public static final ItemStack PUTTER = new ItemBuilder(ItemModelType.MINIGOLF_PUTTER)
 		.name("Putter")
 		.lore("&7A specialized club", "&7for finishing holes.", "")
 		.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
 		.undroppable()
 		.build();
 
-	@Getter
-	private static final ItemStack wedge = new ItemBuilder(ItemModelType.MINIGOLF_WEDGE)
+	public static final ItemStack WEDGE = new ItemBuilder(ItemModelType.MINIGOLF_WEDGE)
 		.name("Wedge")
 		.lore("&7A specialized club", "&7for tall obstacles", "")
 		.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
 		.undroppable()
 		.build();
 
-	@Getter
-	private static final ItemStack whistle = new ItemBuilder(ItemModelType.MINIGOLF_WHISTLE)
+	public static final ItemStack WHISTLE = new ItemBuilder(ItemModelType.MINIGOLF_WHISTLE)
 		.name("Golf Whistle")
 		.lore("&7Returns your last", "&7hit golf ball to its", "&7previous location", "")
 		.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
 		.undroppable()
 		.build();
 
-	private static final ItemBuilder golfBall = new ItemBuilder(ItemModelType.MINIGOLF_BALL)
+	public static final ItemBuilder GOLF_BALL = new ItemBuilder(ItemModelType.MINIGOLF_BALL)
 		.name("Golf Ball")
 		.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
 		.undroppable();
 
 	public static ItemBuilder getGolfBall() {
-		return golfBall.clone();
+		return GOLF_BALL.clone();
+	}
+
+	public static ItemStack getGolfBall(GolfBallColor color) {
+		return getGolfBall().model(color.getModel()).build();
 	}
 
 	public static List<ItemStack> getKit(GolfBallColor color) {
-		return List.of(getPutter(), getWedge(), getWhistle(), getGolfBall(color));
+		return List.of(PUTTER, WEDGE, WHISTLE, getGolfBall(color));
 	}
 
 	public static boolean isClub(ItemStack item) {
 		if (Nullables.isNullOrAir(item))
 			return false;
 
-		return ItemUtils.isFuzzyMatch(item, getPutter()) || ItemUtils.isFuzzyMatch(item, getWedge());
-	}
-
-	public static ItemStack getGolfBall(GolfBallColor color) {
-		return getGolfBall().model(color.getModel()).build();
+		return ItemUtils.isFuzzyMatch(item, PUTTER) || ItemUtils.isFuzzyMatch(item, WEDGE);
 	}
 
 	public static boolean isBottomSlab(Block block) {
@@ -87,7 +82,7 @@ public class MiniGolfUtils {
 
 	public static boolean isFloating(Location location, Block below, double belowHeight) {
 		double ballHeight = location.getY() - 0.1;
-		double floatingHeight = below.getY() + belowHeight + MiniGolf.getFloorOffset();
+		double floatingHeight = below.getY() + belowHeight + MiniGolf.FLOOR_OFFSET;
 
 		return ballHeight > floatingHeight;
 	}
@@ -142,14 +137,6 @@ public class MiniGolfUtils {
 			case 3 -> "Triple Bogey";
 			default -> diff < 4 ? "" + diff : "+" + diff;
 		};
-	}
-
-	public static MiniGolfUser getUser(UUID uuid) {
-		return MiniGolf.getUsers()
-			.stream()
-			.filter(miniGolfUser -> miniGolfUser.getUuid().equals(uuid))
-			.findFirst()
-			.orElse(null);
 	}
 
 	public static String getStrokeString(MiniGolfUser user) {

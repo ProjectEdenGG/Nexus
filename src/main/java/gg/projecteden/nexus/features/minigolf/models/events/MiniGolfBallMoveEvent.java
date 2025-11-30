@@ -1,12 +1,14 @@
 package gg.projecteden.nexus.features.minigolf.models.events;
 
 import com.google.common.base.Preconditions;
-import gg.projecteden.nexus.features.minigolf.models.GolfBall;
+import gg.projecteden.nexus.models.minigolf.GolfBall;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.event.Cancellable;
 
+@NoArgsConstructor
 public class MiniGolfBallMoveEvent extends MiniGolfBallEvent implements Cancellable {
 	@Getter
 	@Setter
@@ -23,7 +25,7 @@ public class MiniGolfBallMoveEvent extends MiniGolfBallEvent implements Cancella
 		this.from = golfBall.getLastLocation();
 		this.to = null;
 		if (golfBall.isAlive())
-			this.to = golfBall.getLocation();
+			this.to = golfBall.getBallLocation();
 	}
 
 	public MiniGolfBallMoveEvent(final GolfBall golfBall, final Location from, final Location to) {

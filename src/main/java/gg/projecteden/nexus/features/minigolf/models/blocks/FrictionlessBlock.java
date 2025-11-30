@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.minigolf.models.blocks;
 
-import gg.projecteden.nexus.features.minigolf.models.GolfBall;
+import gg.projecteden.nexus.models.minigolf.GolfBall;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Material;

@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.minigolf.models.blocks;
 
-import gg.projecteden.nexus.features.minigolf.models.GolfBall;
+import gg.projecteden.nexus.models.minigolf.GolfBall;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import org.bukkit.Material;
@@ -24,7 +24,7 @@ public class BounceBlock extends ModifierBlock {
 	public void handleRoll(GolfBall golfBall, Block below) {
 		rollDebug(golfBall);
 
-		new SoundBuilder(Sound.BLOCK_SLIME_BLOCK_HIT).location(golfBall.getLocation()).volume(0.5).play();
+		new SoundBuilder(Sound.BLOCK_SLIME_BLOCK_HIT).location(golfBall.getBallLocation()).volume(0.5).play();
 
 		golfBall.setVelocity(golfBall.getVelocity().setY(BOUNCE_Y));
 	}
@@ -33,7 +33,7 @@ public class BounceBlock extends ModifierBlock {
 	public void handleBounce(GolfBall golfBall, Block block, BlockFace blockFace) {
 		golfBall.debug("&oon hit bounce block");
 
-		new SoundBuilder(Sound.BLOCK_SLIME_BLOCK_HIT).location(golfBall.getLocation()).volume(0.5).play();
+		new SoundBuilder(Sound.BLOCK_SLIME_BLOCK_HIT).location(golfBall.getBallLocation()).volume(0.5).play();
 
 		Vector velocity = golfBall.getVelocity();
 		switch (blockFace) {

@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.minigolf.models.blocks;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
-import gg.projecteden.nexus.features.minigolf.models.GolfBall;
+import gg.projecteden.nexus.models.minigolf.GolfBall;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -49,8 +49,8 @@ public class CannonBlock extends ModifierBlock {
 			Vector newVel = MiniGolfUtils.getDirection(facing.getOppositeFace(), power);
 
 			golfBall.setVelocity(velocity.multiply(9.3).add(newVel).setY(height));
-			new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(golfBall.getLocation()).volume(3.0).play();
-			new ParticleBuilder(Particle.EXPLOSION).location(golfBall.getLocation()).count(25).spawn();
+			new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(golfBall.getBallLocation()).volume(3.0).play();
+			new ParticleBuilder(Particle.EXPLOSION).location(golfBall.getBallLocation()).count(25).spawn();
 		} catch (Exception ignored) {
 
 		}

@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.minigolf.models.blocks;
 
-import gg.projecteden.nexus.features.minigolf.models.GolfBall;
+import gg.projecteden.nexus.models.minigolf.GolfBall;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 

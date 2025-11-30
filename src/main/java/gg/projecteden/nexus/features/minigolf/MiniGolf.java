@@ -4,8 +4,6 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigolf.listeners.InteractListener;
 import gg.projecteden.nexus.features.minigolf.listeners.ProjectileListener;
-import gg.projecteden.nexus.features.minigolf.models.GolfBall;
-import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
 import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlock;
 import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlockType;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallModifierBlockEvent;
@@ -13,21 +11,21 @@ import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallMoveEven
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfUserJoinEvent;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfUserQuitEvent;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.models.minigolf.GolfBall;
+import gg.projecteden.nexus.models.minigolf.MiniGolfUser;
+import gg.projecteden.nexus.models.minigolf.MiniGolfUserService;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 /*
@@ -42,25 +40,30 @@ import java.util.UUID;
   - splash sound when ball dies in water
   - when ball respawns from out of bounce, it gets stuck in some kind of loop, only fix is to whistle 1 time, and then you can hit it again
   - every 20 ticks, loop all balls and check if they are within a course region, if not --> out of bounds
+
+	Minigolf:
+	- Entering Tent (join minigolf, first time -> talk to power) & Exiting Tent (quit minigolf)
+		- Regions = "pugmas25_minigolf_course_[top|bottom]"
+		- On minigolf quit, actually remove the items, it should be doing this, but i think its busted
+	- Customize Ball Color (sign) --> BearFair21
+	- Customize Ball Trail (sign) --> /minigolf setColor <color>
+		- When player gets a hole in 1 in all holes, unlock Rainbow Ball, this may be setup already, not sure
+	- Scorecard --> BearFair21
+		- Keep until player manually resets
 */
 
 public class MiniGolf extends Feature {
 	@Getter
-	private static final double maxVelocity = 1.5;
+	public static final double MAX_VELOCITY = 1.5;
 	@Getter
-	private static final double minVelocity = 0.01;
+	public static final double MIN_VELOCITY = 0.01;
 	@Getter
-	private static final double floorOffset = 0.05;
+	public static final double FLOOR_OFFSET = 0.05;
 	@Getter
-	private static final String holeRegionRegex = ".*minigolf_hole_[\\d]+.*$";
+	public static final String HOLE_REGION_REGEX = ".*minigolf_hole_[\\d]+.*$";
 
-	@Getter
-	private static final Set<MiniGolfUser> users = new HashSet<>();
-	@Getter
-	private static final Set<GolfBall> golfBalls = new HashSet<>();
 	@Getter
 	private static final Map<UUID, Float> powerMap = new HashMap<>();
-
 
 	@Override
 	public void onStart() {
@@ -72,15 +75,13 @@ public class MiniGolf extends Feature {
 
 	@Override
 	public void onStop() {
-		for (GolfBall golfBall : new ArrayList<>(golfBalls)) {
-			if (golfBall.isAlive()) {
-				golfBall.getSnowball().remove();
-			}
-		}
+		var userService = new MiniGolfUserService();
+		for (var user : userService.getOnline())
+			userService.save(user);
 	}
 
 	public static void join(MiniGolfUser user) {
-		if (isPlaying(user)) {
+		if (user.isPlaying()) {
 			user.debug("already playing minigolf");
 			return;
 		}
@@ -95,14 +96,13 @@ public class MiniGolf extends Feature {
 		MiniGolfUserJoinEvent userJoinEvent = new MiniGolfUserJoinEvent(user, courseRegion);
 		if (!userJoinEvent.callEvent()) {
 			user.debug("join event cancelled");
-			return;
 		}
 
-		getUsers().add(user);
+		user.setPlaying(true);
 	}
 
 	public static void quit(MiniGolfUser user) {
-		if (!isPlaying(user)) {
+		if (!user.isPlaying()) {
 			user.debug("not playing minigolf");
 			return;
 		}
@@ -114,27 +114,24 @@ public class MiniGolf extends Feature {
 			return;
 		}
 
-
 		if (user.getGolfBall() != null) {
 			user.getGolfBall().remove();
 		}
 
-		getGolfBalls().remove(user.getGolfBall());
-		getUsers().remove(user);
-	}
-
-	public static boolean isPlaying(MiniGolfUser user) {
-		return MiniGolf.getUsers().contains(user);
+		user.setPlaying(false);
 	}
 
 	private void playerTask() {
 		Tasks.repeat(TickTime.SECOND.x(5), TickTime.TICK, () -> {
-			for (MiniGolfUser user : new HashSet<>(users)) {
+			var userService = new MiniGolfUserService();
+			for (var user : userService.getOnline()) {
+				if (!user.isPlaying())
+					continue;
+
 				if (!user.canHitBall())
 					continue;
 
-				Player player = user.getOnlinePlayer();
-				float amount = player.getPing() < 200 ? 0.04F : 0.02F;
+				float amount = user.getOnlinePlayer().getPing() < 200 ? 0.04F : 0.02F;
 
 				float exp = powerMap.getOrDefault(user.getUuid(), 0.0F);
 				exp += amount;
@@ -143,25 +140,26 @@ public class MiniGolf extends Feature {
 
 				powerMap.put(user.getUuid(), exp);
 
-				player.sendExperienceChange(exp, 0); // TODO: PLAYER EXP NEVER FILLS TO 100%
-
+				user.getOnlinePlayer().sendExperienceChange(exp, 0); // TODO: PLAYER EXP NEVER FILLS TO 100%
 			}
 		});
 	}
 
 	private void miniGolfTask() {
 		Tasks.repeat(0, TickTime.TICK, () -> {
-			if (golfBalls.isEmpty())
-				return;
+			MiniGolfUserService userService = new MiniGolfUserService();
+			for (var user : userService.getOnline()) {
+				if (Bukkit.getCurrentTick() % 20 == 0)
+					userService.save(user);
 
-			for (GolfBall golfBall : new ArrayList<>(golfBalls)) {
+				var golfBall = user.getGolfBall();
 				Snowball ball = golfBall.getSnowball();
 				if (ball == null)
 					continue;
 
 				if (!ball.isValid()) {
-					golfBalls.remove(golfBall);
 					golfBall.remove();
+					user.setGolfBall(null);
 					continue;
 				}
 

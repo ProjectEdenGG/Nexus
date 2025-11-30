@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.minigolf.models.blocks;
 
-import gg.projecteden.nexus.features.minigolf.models.GolfBall;
+import gg.projecteden.nexus.models.minigolf.GolfBall;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
@@ -122,7 +122,7 @@ public class TeleportBlock extends ModifierBlock {
 		double speed;
 
 		public Location getLocation() {
-			World world = golfBall.getLocation().getWorld();
+			World world = golfBall.getBallLocation().getWorld();
 			return new Location(world, x, y, z, yaw, pitch);
 		}
 

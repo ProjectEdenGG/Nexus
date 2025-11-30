@@ -2,8 +2,8 @@ package gg.projecteden.nexus.features.minigolf.models.blocks;
 
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.BearFair21MiniGolf;
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
-import gg.projecteden.nexus.features.minigolf.models.GolfBall;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallDeathEvent.DeathCause;
+import gg.projecteden.nexus.models.minigolf.GolfBall;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -23,7 +23,7 @@ public abstract class ModifierBlock {
 
 	public void handleRoll(GolfBall golfBall, Block below) {
 		Vector velocity = golfBall.getVelocity();
-		Location location = golfBall.getLocation();
+		Location location = golfBall.getBallLocation();
 
 		rollDebug(golfBall);
 
@@ -39,7 +39,7 @@ public abstract class ModifierBlock {
 //			golfBall.setGravity(true);
 //		}
 
-		if (golfBall.getLocation().getY() < 0) {
+		if (golfBall.getBallLocation().getY() < 0) {
 			golfBall.debug("ball is in void, respawning...");
 			golfBall.respawn(DeathCause.OUT_OF_BOUNDS);
 			return;
@@ -102,7 +102,7 @@ public abstract class ModifierBlock {
 
 
 	protected void playBounceSound(GolfBall golfBall, String sound) {
-		new SoundBuilder(sound).location(golfBall.getLocation()).volume(0.5).play();
+		new SoundBuilder(sound).location(golfBall.getBallLocation()).volume(0.5).play();
 	}
 
 	public abstract Set<Material> getMaterials();
@@ -117,7 +117,7 @@ public abstract class ModifierBlock {
 			golfBall.getUser().debug(vel.length() != 0.0, "ball is too slow, stopping...");
 			golfBall.setVelocity(new Vector(0, 0, 0));
 			golfBall.setGravity(false);
-			golfBall.teleport(golfBall.getLocation());
+			golfBall.teleport(golfBall.getBallLocation());
 
 			if (!golfBall.isInBounds()) {
 				golfBall.debug("ball is out of bounds, respawning...");
@@ -136,7 +136,7 @@ public abstract class ModifierBlock {
 		if (golfBall.isMinVelocity())
 			return;
 
-		MiniGolfUtils.debugDot(golfBall.getLocation(), getDebugDotColor());
+		MiniGolfUtils.debugDot(golfBall.getBallLocation(), getDebugDotColor());
 
 		String debug = "on roll";
 		if (!this.equals(ModifierBlockType.DEFAULT.getModifierBlock()))

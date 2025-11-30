@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.minigolf.models.blocks;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.features.minigolf.models.GolfBall;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallDeathEvent.DeathCause;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallSinkEvent;
+import gg.projecteden.nexus.models.minigolf.GolfBall;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.Tasks;
@@ -40,7 +40,7 @@ public class HoleBlock extends ModifierBlock {
 			return;
 		}
 
-		MiniGolfBallSinkEvent ballSinkEvent = new MiniGolfBallSinkEvent(golfBall, golfBall.getHoleRegion(), golfBall.getStrokes(), golfBall.getPar());
+		MiniGolfBallSinkEvent ballSinkEvent = new MiniGolfBallSinkEvent(golfBall);
 		if (!ballSinkEvent.callEvent())
 			return;
 
@@ -63,7 +63,7 @@ public class HoleBlock extends ModifierBlock {
 		ballSinkEvent.sendScore();
 
 		// Reset Variables
-		golfBall.setHoleRegion(null);
+		golfBall.setHoleId(null);
 		golfBall.setStrokes(0);
 	}
 

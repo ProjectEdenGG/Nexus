@@ -3,10 +3,11 @@ package gg.projecteden.nexus.features.minigolf.listeners;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigolf.MiniGolf;
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
-import gg.projecteden.nexus.features.minigolf.models.GolfBall;
-import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
 import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlockType;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallDeathEvent.DeathCause;
+import gg.projecteden.nexus.models.minigolf.GolfBall;
+import gg.projecteden.nexus.models.minigolf.MiniGolfUser;
+import gg.projecteden.nexus.models.minigolf.MiniGolfUserService;
 import gg.projecteden.nexus.utils.Nullables;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,6 +26,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.util.Vector;
 
 import java.util.List;
+import java.util.UUID;
 
 public class ProjectileListener implements Listener {
 
@@ -40,9 +42,8 @@ public class ProjectileListener implements Listener {
 		if (!(oldBall.getShooter() instanceof Player player))
 			return;
 
-		MiniGolfUser user = MiniGolfUtils.getUser(player.getUniqueId());
-		if (user == null)
-			return;
+		UUID uuid = player.getUniqueId();
+		MiniGolfUser user = new MiniGolfUserService().get(uuid);
 
 		GolfBall golfBall = user.getGolfBall();
 		if (golfBall == null || !golfBall.isAlive())
@@ -70,15 +71,14 @@ public class ProjectileListener implements Listener {
 
 		// Spawn a new ball
 		Snowball newBall = (Snowball) world.spawnEntity(location, EntityType.SNOWBALL, CreatureSpawnEvent.SpawnReason.CUSTOM, _entity -> ((Snowball) _entity).setItem(golfBall.getDisplayItem()));
-
 		golfBall.setSnowball(newBall);
 		golfBall.setShooter(golfBall.getShooter());
 		golfBall.setGravity(oldBall.hasGravity());
 		golfBall.setName(MiniGolfUtils.getStrokeString(user));
 		golfBall.setTicksLived(oldBall.getTicksLived());
 		golfBall.setVelocity(velocity);
-		//
 		user.setGolfBall(golfBall);
+		//
 
 		// golfball has hit entity
 		if (hasHitEntity) {

@@ -1,30 +1,39 @@
-package gg.projecteden.nexus.features.minigolf.models;
+package gg.projecteden.nexus.models.minigolf;
 
+import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.DebugDotCommand;
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
+import gg.projecteden.nexus.features.minigolf.models.GolfBallColor;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 
 import java.util.UUID;
 
 @Data
+@Entity(value = "minigolf_user", noClassnameStored = true)
+@NoArgsConstructor
+@AllArgsConstructor
+@RequiredArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class MiniGolfUser implements PlayerOwnedObject {
+	@Id
+	@NonNull
 	@EqualsAndHashCode.Include
-	@NonNull
 	private UUID uuid;
-	@NonNull
-	private GolfBallColor golfBallColor;
-
+	private boolean playing;
+	private GolfBallColor golfBallColor = GolfBallColor.WHITE;
 	private GolfBall golfBall;
-
 	private boolean debug;
 
 	public void debug(boolean bool, String debug) {
@@ -55,7 +64,7 @@ public class MiniGolfUser implements PlayerOwnedObject {
 	public void setGolfBallColor(GolfBallColor color) {
 		this.golfBallColor = color;
 		if (golfBall != null)
-			golfBall.setColor(color);
+			golfBall.updateDisplayItem();
 	}
 
 	public boolean canHitBall() {

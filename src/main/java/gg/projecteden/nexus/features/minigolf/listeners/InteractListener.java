@@ -5,11 +5,12 @@ import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigolf.MiniGolf;
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
-import gg.projecteden.nexus.features.minigolf.models.GolfBall;
-import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
 import gg.projecteden.nexus.features.minigolf.models.blocks.BounceBlock;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallSpawnEvent;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfUserPlaceBallEvent;
+import gg.projecteden.nexus.models.minigolf.GolfBall;
+import gg.projecteden.nexus.models.minigolf.MiniGolfUser;
+import gg.projecteden.nexus.models.minigolf.MiniGolfUserService;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -32,6 +33,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.Set;
+import java.util.UUID;
 
 public class InteractListener implements Listener {
 
@@ -44,7 +46,8 @@ public class InteractListener implements Listener {
 		if (event.getHand() == null) return;
 		if (!event.getHand().equals(EquipmentSlot.HAND)) return;
 
-		MiniGolfUser user = MiniGolfUtils.getUser(event.getPlayer().getUniqueId());
+		UUID uuid = event.getPlayer().getUniqueId();
+		MiniGolfUser user = new MiniGolfUserService().get(uuid);
 		if (user == null)
 			return;
 
@@ -55,7 +58,7 @@ public class InteractListener implements Listener {
 		Block block = event.getClickedBlock();
 
 		// Whistle
-		if (ItemUtils.isFuzzyMatch(item, MiniGolfUtils.getWhistle())) {
+		if (ItemUtils.isFuzzyMatch(item, MiniGolfUtils.WHISTLE)) {
 			recallBall(event, user);
 			event.setCancelled(true);
 			return;
@@ -70,7 +73,7 @@ public class InteractListener implements Listener {
 
 		// Club
 		if (MiniGolfUtils.isClub(item)) {
-			boolean isWedge = ItemUtils.isFuzzyMatch(item, MiniGolfUtils.getWedge());
+			boolean isWedge = ItemUtils.isFuzzyMatch(item, MiniGolfUtils.WEDGE);
 			puttBall(event, user, isWedge);
 			event.setCancelled(true);
 			return;
@@ -105,11 +108,11 @@ public class InteractListener implements Listener {
 			return;
 		}
 
-		GolfBall golfBall = new GolfBall(user.getUuid(), user.getGolfBallColor());
+		GolfBall golfBall = new GolfBall(user.getUuid());
 
 		// Verify region
 		WorldGuardUtils worldguard = new WorldGuardUtils(block);
-		Set<ProtectedRegion> regions = worldguard.getRegionsLikeAt(MiniGolf.getHoleRegionRegex(), block.getLocation());
+		Set<ProtectedRegion> regions = worldguard.getRegionsLikeAt(MiniGolf.HOLE_REGION_REGEX, block.getLocation());
 		ProtectedRegion region = regions.stream().findFirst().orElse(null);
 		if (region == null) {
 			user.debug("hole region not found");
@@ -122,8 +125,12 @@ public class InteractListener implements Listener {
 		String extra = regionId.replaceAll(".*_minigolf_hole_[0-9]+", "");
 		user.debug("extra = " + extra);
 		regionId = StringUtils.replaceLast(regionId, extra, "");
-		golfBall.setHoleRegion(regionId);
-		user.debug("final = " + regionId);
+		user.debug("regionId = " + regionId);
+		String[] split = regionId.split("_minigolf_hole_");
+		golfBall.setCourseId(split[0]);
+		golfBall.setHoleId(Integer.parseInt(split[1]));
+		user.debug("course = " + golfBall.getCourseId());
+		user.debug("hole = " + golfBall.getHoleId());
 
 		// Place Event
 		MiniGolfUserPlaceBallEvent placeBallEvent = new MiniGolfUserPlaceBallEvent(user, golfBall, Set.of(Material.GREEN_WOOL));
@@ -149,7 +156,7 @@ public class InteractListener implements Listener {
 
 		item.setAmount(item.getAmount() - 1);
 		ballSpawnEvent.spawnBall();
-		MiniGolf.getGolfBalls().add(golfBall);
+		user.setGolfBall(golfBall);
 	}
 
 	private static void puttBall(PlayerInteractEvent event, MiniGolfUser user, boolean isWedge) {
@@ -162,7 +169,7 @@ public class InteractListener implements Listener {
 		}
 
 		Vector dir = player.getEyeLocation().getDirection();
-		Location entityLoc = golfBall.getLocation();
+		Location entityLoc = golfBall.getBallLocation();
 
 		if (!isLookingAtGolfBall(user))
 			return;
@@ -212,13 +219,13 @@ public class InteractListener implements Listener {
 		if (golfBall == null || !golfBall.isAlive())
 			return false;
 
-		if (Distance.distance(golfBall.getLocation(), user.getOnlinePlayer()).gt(3.5))
+		if (Distance.distance(golfBall.getBallLocation(), user.getOnlinePlayer()).gt(3.5))
 			return false;
 
 		Location eye = user.getOnlinePlayer().getEyeLocation();
 		Vector dir = eye.getDirection();
 
-		Location entityLoc = golfBall.getLocation();
+		Location entityLoc = golfBall.getBallLocation();
 		Vector vec = entityLoc.toVector().subtract(eye.toVector());
 
 		return dir.angle(vec) < 0.15f;

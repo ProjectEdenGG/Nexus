@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.minigolf.models.events;
 
-import gg.projecteden.nexus.features.minigolf.models.GolfBall;
-import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
+import gg.projecteden.nexus.models.minigolf.GolfBall;
+import gg.projecteden.nexus.models.minigolf.MiniGolfUser;
 import lombok.Getter;
 import org.bukkit.Material;
 

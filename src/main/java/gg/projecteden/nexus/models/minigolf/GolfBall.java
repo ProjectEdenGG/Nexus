@@ -1,15 +1,20 @@
-package gg.projecteden.nexus.features.minigolf.models;
+package gg.projecteden.nexus.models.minigolf;
 
+import dev.morphia.annotations.Converters;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.minigolf.MiniGolf;
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
 import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlockType;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallDeathEvent;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallDeathEvent.DeathCause;
-import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.models.minigolf.MiniGolfConfig.MiniGolfCourse;
+import gg.projecteden.nexus.models.minigolf.MiniGolfConfig.MiniGolfCourse.MiniGolfHole;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -28,28 +33,32 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 @Data
-public class GolfBall {
+@NoArgsConstructor
+@Converters(UUIDConverter.class)
+public class GolfBall implements PlayerOwnedObject {
 	@NonNull
-	private UUID userUuid;
+	private UUID uuid;
 	private Snowball snowball;
 	private Location lastLocation;
-	private ItemStack displayItem;
-	private String holeRegion;
+	private String courseId;
+	private Integer holeId;
 	private int strokes = 0;
-	private int par = 0;
 	private boolean active = false;
 
-	public GolfBall(@NotNull UUID userUuid, GolfBallColor color) {
-		this.userUuid = userUuid;
-		this.displayItem = MiniGolfUtils.getGolfBall(color);
-	}
-
-	public Player getPlayer() {
-		return MiniGolfUtils.getUser(userUuid).getPlayer();
+	public GolfBall(@NotNull UUID uuid) {
+		this.uuid = uuid;
 	}
 
 	public MiniGolfUser getUser() {
-		return MiniGolfUtils.getUser(userUuid);
+		return new MiniGolfUserService().get(uuid);
+	}
+
+	public MiniGolfCourse getCourse() {
+		return new MiniGolfConfigService().get0().getCourse(courseId);
+	}
+
+	public MiniGolfHole getHole() {
+		return getCourse().getHole(holeId);
 	}
 
 	public Vector getVelocity() {
@@ -87,7 +96,7 @@ public class GolfBall {
 		this.snowball.setCustomNameVisible(true);
 	}
 
-	public Location getLocation() {
+	public Location getBallLocation() {
 		if (!isAlive()) return null;
 
 		return this.snowball.getLocation();
@@ -136,7 +145,7 @@ public class GolfBall {
 	public Block getBlockBelow() {
 		if (!isAlive()) return null;
 
-		Location location = getLocation().clone();
+		Location location = getBallLocation().clone();
 		location.setY(this.snowball.getLocation().getY() - 0.25);
 		return location.getBlock();
 	}
@@ -144,13 +153,13 @@ public class GolfBall {
 	public boolean isNotMaxVelocity() {
 		if (!isAlive()) return false;
 
-		return getVelocity().length() < MiniGolf.getMaxVelocity();
+		return getVelocity().length() < MiniGolf.MAX_VELOCITY;
 	}
 
 	public boolean isMinVelocity() {
 		if (!isAlive()) return false;
 
-		return getVelocity().getY() >= 0.0 && getVelocity().length() <= MiniGolf.getMinVelocity();
+		return getVelocity().getY() >= 0.0 && getVelocity().length() <= MiniGolf.MIN_VELOCITY;
 	}
 
 	public void incStrokes() {
@@ -239,7 +248,7 @@ public class GolfBall {
 			}
 		}
 
-		boolean isInRegion = new WorldGuardUtils(this.snowball).isInRegionLikeAt(holeRegion + "(_[0-9]+)?", getLocation());
+		boolean isInRegion = new WorldGuardUtils(this.snowball).isInRegionLikeAt(getHoleRegionRegex(), getBallLocation());
 		if (!isInRegion) {
 			debug("is not inbounds: ball is not in region");
 			return false;
@@ -251,6 +260,10 @@ public class GolfBall {
 		return true;
 	}
 
+	private @NotNull String getHoleRegionRegex() {
+		return courseId.toLowerCase() + "_minigolf_hole_" + holeId + "(_[0-9]+)?";
+	}
+
 	public void debug(String message) {
 		if (getUser() != null)
 			getUser().debug(message);
@@ -259,7 +272,7 @@ public class GolfBall {
 	public void spawn(Location location) {
 		debug("spawning ball...");
 		this.active = false;
-		setLastLocation(location.toBlockLocation().add(0.5, 1 + MiniGolf.getFloorOffset(), 0.5));
+		setLastLocation(location.toBlockLocation().add(0.5, 1 + MiniGolf.FLOOR_OFFSET, 0.5));
 
 		this.snowball = (Snowball) lastLocation.getWorld().spawnEntity(lastLocation, EntityType.SNOWBALL, CreatureSpawnEvent.SpawnReason.CUSTOM, _entity -> ((Snowball) _entity).setItem(getDisplayItem()));
 		this.setGravity(false);
@@ -270,16 +283,14 @@ public class GolfBall {
 		this.setName(MiniGolfUtils.getStrokeString(getUser())); // must be after the set to user
 	}
 
-	public void setColor(GolfBallColor color) {
-		setDisplayItem(MiniGolfUtils.getGolfBall(color));
+	public ItemStack getDisplayItem() {
+		return MiniGolfUtils.getGolfBall(getUser().getGolfBallColor());
 	}
 
-	public void setDisplayItem(ItemStack item) {
-		this.displayItem = item;
-
-		if (!isAlive() || Nullables.isNullOrAir(item))
+	public void updateDisplayItem() {
+		if (this.snowball == null)
 			return;
 
-		this.snowball.setItem(item);
+		this.snowball.setItem(getDisplayItem());
 	}
 }

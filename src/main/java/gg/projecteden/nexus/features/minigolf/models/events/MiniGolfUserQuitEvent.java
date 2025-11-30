@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.minigolf.models.events;
 
-import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
+import gg.projecteden.nexus.models.minigolf.MiniGolfUser;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.event.Cancellable;
