@@ -58,6 +58,8 @@ public class Pugmas25User implements PlayerOwnedObject {
 
 	private int slotMachineRolls = 0;
 
+	private boolean startedMiniGolf;
+
 	private Set<Pugmas25Waystone> foundWaystones = new HashSet<>();
 	private Set<Pugmas25Snowman> decoratedSnowmen = new HashSet<>();
 	private Set<Location> foundNutCrackers = new HashSet<>();

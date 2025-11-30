@@ -4,11 +4,13 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigolf.MiniGolf;
+import gg.projecteden.nexus.features.minigolf.MiniGolfCommand;
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
 import gg.projecteden.nexus.features.minigolf.models.blocks.BounceBlock;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallSpawnEvent;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfUserPlaceBallEvent;
 import gg.projecteden.nexus.models.minigolf.GolfBall;
+import gg.projecteden.nexus.models.minigolf.MiniGolfConfig.MiniGolfCourse;
 import gg.projecteden.nexus.models.minigolf.MiniGolfUser;
 import gg.projecteden.nexus.models.minigolf.MiniGolfUserService;
 import gg.projecteden.nexus.utils.ActionBarUtils;
@@ -64,6 +66,13 @@ public class InteractListener implements Listener {
 			return;
 		}
 
+		// Whistle
+		if (ItemUtils.isFuzzyMatch(item, MiniGolfUtils.SCORECARD)) {
+			scorecard(event, user);
+			event.setCancelled(true);
+			return;
+		}
+
 		// Golfball
 		if (item.getType() == Material.SNOWBALL && ItemBuilder.Model.hasModel(item)) {
 			placeBall(event, user, item, block);
@@ -78,6 +87,16 @@ public class InteractListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
+	}
+
+	private void scorecard(PlayerInteractEvent event, MiniGolfUser user) {
+		MiniGolfCourse course = user.getCurrentCourse();
+		if (course == null) {
+			user.sendMessage(MiniGolf.PREFIX + "You are not in a course");
+			return;
+		}
+
+		MiniGolfCommand.openScorecard(user, course, 1, user.getCurrentScorecard(course));
 	}
 
 	private void recallBall(PlayerInteractEvent event, MiniGolfUser user) {
@@ -188,7 +207,7 @@ public class InteractListener implements Listener {
 		golfBall.setActive(true);
 		dir.setY(0).normalize();
 
-		double power = MiniGolf.getPowerMap().getOrDefault(player.getUniqueId(), .0f);
+		double power = MiniGolf.POWER_MAP.getOrDefault(player.getUniqueId(), .0f);
 		if (power >= 0.90)
 			power = 1.0;
 		else if (power < 0.16)

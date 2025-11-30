@@ -62,6 +62,9 @@ public class HoleBlock extends ModifierBlock {
 		// Send Message
 		ballSinkEvent.sendScore();
 
+		// Update Scorecards
+		golfBall.updateScorecards(ballSinkEvent.getCourse(), ballSinkEvent.getStrokes());
+
 		// Reset Variables
 		golfBall.setHoleId(null);
 		golfBall.setStrokes(0);

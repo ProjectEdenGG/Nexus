@@ -10,23 +10,28 @@ import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallModifier
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallMoveEvent;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfUserJoinEvent;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfUserQuitEvent;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.minigolf.GolfBall;
 import gg.projecteden.nexus.models.minigolf.MiniGolfUser;
 import gg.projecteden.nexus.models.minigolf.MiniGolfUserService;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Snowball;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 /*
  TODO:
@@ -42,28 +47,30 @@ import java.util.UUID;
   - every 20 ticks, loop all balls and check if they are within a course region, if not --> out of bounds
 
 	Minigolf:
-	- Entering Tent (join minigolf, first time -> talk to power) & Exiting Tent (quit minigolf)
-		- Regions = "pugmas25_minigolf_course_[top|bottom]"
-		- On minigolf quit, actually remove the items, it should be doing this, but i think its busted
-	- Customize Ball Color (sign) --> BearFair21
-	- Customize Ball Trail (sign) --> /minigolf setColor <color>
+	- Customize Ball Trail (sign) --> BearFair21
+	- Customize Ball Color (sign) --> /minigolf setColor <color>
 		- When player gets a hole in 1 in all holes, unlock Rainbow Ball, this may be setup already, not sure
 	- Scorecard --> BearFair21
 		- Keep until player manually resets
 */
 
 public class MiniGolf extends Feature {
-	@Getter
+	public static String PREFIX = StringUtils.getPrefix("MiniGolf");
+
 	public static final double MAX_VELOCITY = 1.5;
-	@Getter
 	public static final double MIN_VELOCITY = 0.01;
-	@Getter
 	public static final double FLOOR_OFFSET = 0.05;
-	@Getter
 	public static final String HOLE_REGION_REGEX = ".*minigolf_hole_[\\d]+.*$";
 
-	@Getter
-	private static final Map<UUID, Float> powerMap = new HashMap<>();
+	public static final Map<UUID, Float> POWER_MAP = new HashMap<>();
+
+	public static final List<ItemModelType> KIT_MODELS = List.of(
+		ItemModelType.MINIGOLF_PUTTER,
+		ItemModelType.MINIGOLF_WEDGE,
+		ItemModelType.MINIGOLF_WHISTLE,
+		ItemModelType.MINIGOLF_SCORECARD,
+		ItemModelType.MINIGOLF_BALL
+	);
 
 	@Override
 	public void onStart() {
@@ -99,6 +106,7 @@ public class MiniGolf extends Feature {
 		}
 
 		user.setPlaying(true);
+		user.giveKit();
 	}
 
 	public static void quit(MiniGolfUser user) {
@@ -118,6 +126,15 @@ public class MiniGolf extends Feature {
 			user.getGolfBall().remove();
 		}
 
+		for (ItemStack content : user.getOnlinePlayer().getInventory().getContents()) {
+			if (isNullOrAir(content))
+				continue;
+
+			for (ItemModelType kitModel : KIT_MODELS)
+				if (kitModel.is(content))
+					content.setAmount(0);
+		}
+
 		user.setPlaying(false);
 	}
 
@@ -133,12 +150,12 @@ public class MiniGolf extends Feature {
 
 				float amount = user.getOnlinePlayer().getPing() < 200 ? 0.04F : 0.02F;
 
-				float exp = powerMap.getOrDefault(user.getUuid(), 0.0F);
+				float exp = POWER_MAP.getOrDefault(user.getUuid(), 0.0F);
 				exp += amount;
 				if (exp > 1.00)
 					exp = 0.0F;
 
-				powerMap.put(user.getUuid(), exp);
+				POWER_MAP.put(user.getUuid(), exp);
 
 				user.getOnlinePlayer().sendExperienceChange(exp, 0); // TODO: PLAYER EXP NEVER FILLS TO 100%
 			}
@@ -153,6 +170,9 @@ public class MiniGolf extends Feature {
 					userService.save(user);
 
 				var golfBall = user.getGolfBall();
+				if (golfBall == null)
+					continue;
+
 				Snowball ball = golfBall.getSnowball();
 				if (ball == null)
 					continue;

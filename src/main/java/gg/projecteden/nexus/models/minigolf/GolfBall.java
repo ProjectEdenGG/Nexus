@@ -293,4 +293,26 @@ public class GolfBall implements PlayerOwnedObject {
 
 		this.snowball.setItem(getDisplayItem());
 	}
+
+	public void updateScorecards(MiniGolfCourse course, int strokes) {
+		updateCurrentScorecard(course, strokes);
+		updateBestScorecard(course, strokes);
+	}
+
+	public void updateCurrentScorecard(MiniGolfCourse course, int strokes) {
+		var user = getUser();
+		var currentScorecard = user.getCurrentScorecard(course);
+		if (!currentScorecard.containsKey(holeId))
+			currentScorecard.put(holeId, strokes);
+	}
+
+	public void updateBestScorecard(MiniGolfCourse course, int strokes) {
+		var user = getUser();
+		var bestScorecard = user.getBestScorecard(course);
+		if (!bestScorecard.containsKey(holeId))
+			bestScorecard.put(holeId, strokes);
+		else
+			if (bestScorecard.get(holeId) > strokes)
+				bestScorecard.put(holeId, strokes);
+	}
 }

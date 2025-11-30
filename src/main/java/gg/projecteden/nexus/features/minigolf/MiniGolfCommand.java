@@ -1,18 +1,25 @@
 package gg.projecteden.nexus.features.minigolf;
 
+import gg.projecteden.nexus.features.menus.BookBuilder.WrittenBookMenu;
 import gg.projecteden.nexus.features.minigolf.models.GolfBallColor;
 import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlockType;
 import gg.projecteden.nexus.features.minigolf.models.blocks.TeleportBlock.TeleportBlockArgs;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.minigolf.GolfBall;
+import gg.projecteden.nexus.models.minigolf.MiniGolfConfig.MiniGolfCourse;
+import gg.projecteden.nexus.models.minigolf.MiniGolfConfigService;
 import gg.projecteden.nexus.models.minigolf.MiniGolfUser;
 import gg.projecteden.nexus.models.minigolf.MiniGolfUserService;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -20,6 +27,9 @@ import org.bukkit.block.Skull;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
+
+import java.util.List;
+import java.util.Map;
 
 /*
 	TODO:
@@ -40,7 +50,6 @@ public class MiniGolfCommand extends CustomCommand {
 	@Path("play")
 	void play() {
 		MiniGolf.join(user);
-		user.giveKit();
 		send(PREFIX + "You have joined MiniGolf");
 	}
 
@@ -69,6 +78,55 @@ public class MiniGolfCommand extends CustomCommand {
 		}
 
 		user.setGolfBallColor(color);
+	}
+
+	@Path("scorecard <course> [page]")
+	void scorecard(MiniGolfCourse course, @Arg("1") int page) {
+		openScorecard(user, course, page, user.getCurrentScorecard(course));
+	}
+
+	public static void openScorecard(MiniGolfUser user, MiniGolfCourse course, int page, Map<Integer, Integer> scorecard) {
+		var builder = new WrittenBookMenu();
+		var json = new JsonBuilder();
+
+		json.next(" ## |  Par | Strokes").newline();
+		json.next("------------------").newline();
+
+		int count = 0;
+		int start = page == 1 ? 1 : 10;
+
+		for (var hole : course.getHoles()) {
+			if (hole.getId() < start)
+				continue;
+
+			String holeNumber = String.valueOf(hole.getId());
+			if (hole.getId() < 10)
+				holeNumber = "0" + hole.getId();
+
+			String strokes = " ?";
+			if (scorecard.containsKey(hole.getId())) {
+				int strokeCount = scorecard.get(hole.getId());
+				String space = " ";
+				if (strokeCount > 9)
+					space = "";
+
+				strokes = space + strokeCount;
+			}
+
+			json.next(" " + holeNumber + " |   " + hole.getPar() + "   |   " + strokes).newline();
+
+			if (++count >= 9)
+				break;
+		}
+
+		json.newline().group();
+
+		if (page == 1)
+			json.next("      &3----> ").hover("&eNext Page").command("/minigolf scorecard " + course.getName() + " 2");
+		else
+			json.next("      &3<---- ").hover("&ePrevious Page").command("/minigolf scorecard " + course.getName() + " 1");
+
+		builder.addPage(json).open(user.getOnlinePlayer());
 	}
 
 	@Permission(Group.STAFF)
@@ -135,5 +193,18 @@ public class MiniGolfCommand extends CustomCommand {
 		send("Vel: " + golfBall.getVelocity());
 		send("Below: " + golfBall.getBlockBelow().getType());
 		send("Inside: " + golfBall.getBlock().getType());
+	}
+
+	@TabCompleterFor(MiniGolfCourse.class)
+	List<String> tabCompleteMiniGolfCourse(String filter) {
+		return new MiniGolfConfigService().get0().getCourses().stream()
+			.map(MiniGolfCourse::getName)
+			.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
+			.toList();
+	}
+
+	@ConverterFor(MiniGolfCourse.class)
+	MiniGolfCourse convertToMiniGolfCourse(String value) {
+		return new MiniGolfConfigService().get0().getCourse(value);
 	}
 }

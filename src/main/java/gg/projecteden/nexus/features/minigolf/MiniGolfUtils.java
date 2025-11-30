@@ -52,6 +52,12 @@ public class MiniGolfUtils {
 		.undroppable()
 		.build();
 
+	public static final ItemStack SCORECARD = new ItemBuilder(ItemModelType.MINIGOLF_SCORECARD)
+		.name("Scorecard")
+		.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
+		.undroppable()
+		.build();
+
 	public static final ItemBuilder GOLF_BALL = new ItemBuilder(ItemModelType.MINIGOLF_BALL)
 		.name("Golf Ball")
 		.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
@@ -66,7 +72,7 @@ public class MiniGolfUtils {
 	}
 
 	public static List<ItemStack> getKit(GolfBallColor color) {
-		return List.of(PUTTER, WEDGE, WHISTLE, getGolfBall(color));
+		return List.of(PUTTER, WEDGE, WHISTLE, SCORECARD, getGolfBall(color));
 	}
 
 	public static boolean isClub(ItemStack item) {
@@ -121,11 +127,15 @@ public class MiniGolfUtils {
 		ActionBarUtils.sendActionBar(user.getPlayer(), message, TickTime.SECOND.x(3));
 	}
 
-	public static String getScore(int strokes, int par) {
+	public static int getScore(int strokes, int par) {
+		return strokes - par;
+	}
+
+	public static String getScoreTitle(int strokes, int par) {
 		if (strokes == 1)
 			return "Hole In One";
 
-		int diff = strokes - par;
+		int diff = getScore(strokes, par);
 		return switch (diff) {
 			case -4 -> "Condor";
 			case -3 -> "Albatross";

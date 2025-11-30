@@ -2014,6 +2014,7 @@ public enum ItemModelType {
 	MINIGOLF_PUTTER("minigames/minigolf/putter"),
 	MINIGOLF_WEDGE("minigames/minigolf/wedge"),
 	MINIGOLF_WHISTLE("minigames/minigolf/whistle"),
+	MINIGOLF_SCORECARD("minigames/minigolf/scorecard"),
 	// chess
 	CHESS_PAWN("minigames/chess/pawn", true),
 	CHESS_KNIGHT("minigames/chess/knight", true),

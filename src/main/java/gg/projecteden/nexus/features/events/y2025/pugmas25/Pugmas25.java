@@ -50,6 +50,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationIn
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.models.deathmessages.DeathMessages;
 import gg.projecteden.nexus.models.deathmessages.DeathMessagesService;
+import gg.projecteden.nexus.models.minigolf.MiniGolfConfigService;
+import gg.projecteden.nexus.models.minigolf.MiniGolfUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.pugmas25.Advent25Config;
@@ -99,6 +101,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static gg.projecteden.api.common.utils.StringUtils.plural;
 
 /*
 	"TODO: RELEASE PUGMAS" <-- CHECK FOR ANY COMMENTS ON WHOLE PROJECT
@@ -212,10 +216,12 @@ public class Pugmas25 extends EdenEvent {
 						var interactable = quest.getCurrentTaskStep().getInteractable();
 						if (interactable instanceof Pugmas25NPC pugmas25NPC) {
 							NPC npc = CitizensUtils.getNPC(pugmas25NPC.getNpcId());
-							particle.location(npc.getStoredLocation()).spawn();
+							if (npc != null)
+								particle.location(npc.getStoredLocation()).spawn();
 						}
 					});
 				}
+
 				// fake quests
 				for (Pugmas25QuestProgress questProgress : Pugmas25QuestProgress.values()) {
 					Pugmas25NPC pugmas25NPC = questProgress.getNpc();
@@ -223,6 +229,9 @@ public class Pugmas25 extends EdenEvent {
 						continue;
 
 					NPC npc = CitizensUtils.getNPC(pugmas25NPC.getNpcId());
+					if (npc == null)
+						continue;
+
 					particle.location(npc.getStoredLocation()).spawn();
 				}
 
@@ -309,8 +318,45 @@ public class Pugmas25 extends EdenEvent {
 		handleInteract(Pugmas25NPC.BLACKSMITH, (player, npc) -> Pugmas25ShopMenu.BLACKSMITH.open(player));
 		handleInteract(Pugmas25NPC.TINKERER, (player, npc) -> Pugmas25ShopMenu.TINKERER.open(player));
 
+		Pugmas25UserService pugmas25UserService = new Pugmas25UserService();
+		handleInteract(Pugmas25NPC.POWER, (player, npc) -> {
+			var pugmas25User = pugmas25UserService.get(player);
+			var miniGolfUser = new MiniGolfUserService().get(player);
+			var course = new MiniGolfConfigService().get0().getCourse("pugmas25");
+
+			if (pugmas25User.isStartedMiniGolf()) {
+				if (miniGolfUser.hasAllHolesInOne(course)) {
+					new Dialog(npc)
+						.npc("Wow! You've completed all " + course.getHoles().size() + " holes in one!")
+						.npc("You're a pro! Here's your Rainbow Golf Ball!")
+						.thenRun($ -> {}) // TODO
+						.send(player);
+				} else {
+					int missing = course.getHoles().size() - miniGolfUser.getHolesInOne(course);
+					new Dialog(npc)
+						.npc("Hey there, how's it going? Hope you're enjoying the course!")
+						.npc("It looks like you're still missing " + missing + " " + plural("hole", missing) + " in one")
+						.npc("Check your scorecard and keep trying!")
+						.send(player);
+				}
+			} else {
+				pugmas25User.setStartedMiniGolf(true);
+				pugmas25UserService.save(pugmas25User);
+
+				new Dialog(npc)
+					.npc("Welcome to MiniGolf!")
+					.npc("Here are your clubs, ball, and scorecard, as well as a whistle to recall your ball")
+					.thenRun($ -> miniGolfUser.giveKit())
+					.npc("There are 18 holes, and if you can score a Hole In One at least once on all of them, you will unlock a Rainbow Golf Ball!")
+					.npc("Good luck and have fun!")
+					.player("Thank you!")
+					.send(player);
+			}
+
+		});
+
 		handleInteract(Pugmas25NPC.AERONAUT, (player, npc) -> {
-			final Pugmas25UserService userService = new Pugmas25UserService();
+			final Pugmas25UserService userService = pugmas25UserService;
 			final Pugmas25User user = userService.get(player);
 
 			final Dialog dialog = new Dialog(npc);
@@ -364,7 +410,7 @@ public class Pugmas25 extends EdenEvent {
 		});
 
 		handleInteract(Pugmas25NPC.ELF, (player, npc) -> {
-			final Pugmas25UserService userService = new Pugmas25UserService();
+			final Pugmas25UserService userService = pugmas25UserService;
 			final Pugmas25User user = userService.get(player);
 
 			final Dialog dialog = new Dialog(npc);
@@ -405,7 +451,7 @@ public class Pugmas25 extends EdenEvent {
 
 		// TODO: TEST
 		handleInteract(Pugmas25NPC.ANGLER, (player, npc) -> {
-			final Pugmas25UserService userService = new Pugmas25UserService();
+			final Pugmas25UserService userService = pugmas25UserService;
 			final Pugmas25User user = userService.get(player);
 
 			final Pugmas25ConfigService configService = new Pugmas25ConfigService();

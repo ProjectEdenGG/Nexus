@@ -18,7 +18,8 @@ public class MiniGolfBallSinkEvent extends MiniGolfBallMoveEvent implements Canc
 	private final MiniGolfCourse course;
 	private final MiniGolfHole hole;
 	private final int strokes;
-	private final String score;
+	private final int score;
+	private final String scoreTitle;
 	private final String message;
 
 	public MiniGolfBallSinkEvent(GolfBall golfBall) {
@@ -27,7 +28,8 @@ public class MiniGolfBallSinkEvent extends MiniGolfBallMoveEvent implements Canc
 		this.hole = golfBall.getHole();
 		this.strokes = golfBall.getStrokes();
 		this.score = MiniGolfUtils.getScore(strokes, hole.getPar());
-		this.message = "Strokes: " + strokes + " (" + score + ")";
+		this.scoreTitle = MiniGolfUtils.getScoreTitle(strokes, hole.getPar());
+		this.message = "Strokes: " + strokes + " (" + scoreTitle + ")";
 	}
 
 	public void sendScore() {
