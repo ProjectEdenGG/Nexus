@@ -15,6 +15,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class Pugmas25Trunks implements Listener {
@@ -39,10 +41,10 @@ public class Pugmas25Trunks implements Listener {
 		if (trunk == null)
 			return;
 
-		var randomItem = RandomUtils.getWeightedRandom(trunk.getItems());
+		List<ItemStack> randomItems = trunk.getRandomItems(player);
 
 		item.subtract();
-		PlayerUtils.giveItem(player, randomItem);
+		PlayerUtils.giveItems(player, randomItems);
 		new SoundBuilder(Sound.BLOCK_CHEST_LOCKED)
 			.receiver(player)
 			.location(event.getPlayer().getLocation())

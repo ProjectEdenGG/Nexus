@@ -143,10 +143,11 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		Pugmas25QuestProgress.ADVENT.send(user);
 		Pugmas25QuestProgress.DESIGN_A_BALLOON.send(user);
 		Pugmas25QuestProgress.MINI_NUTCRACKERS.send(user);
-
+		line();
 		send("&3Repeatable Quests:");
 		Pugmas25QuestProgress.ANGLER.send(user);
 		Pugmas25QuestProgress.DAILY_FAIRGROUND_TOKENS.send(user);
+		line();
 	}
 
 	@Path("database deleteQuest <quest>")
@@ -180,6 +181,8 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 			send("Disabled until release");
 			return;
 		}
+
+		// TODO: MINIGOLF
 
 		for (Pugmas25User _user : userService.getAll()) {
 			Quester _quester = questerService.get(_user);

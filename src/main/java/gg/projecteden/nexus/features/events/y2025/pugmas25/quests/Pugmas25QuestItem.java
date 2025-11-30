@@ -58,6 +58,7 @@ public enum Pugmas25QuestItem implements QuestItem {
 		.lore("&3Gives chance to gain")
 		.lore("&3additional rewards in:")
 		.lore("&3- Fishing")
+		.lore("&3- Trunks")
 		.lore("&3- Extractinator")
 		.lore("&3- Slot Machine")),
 

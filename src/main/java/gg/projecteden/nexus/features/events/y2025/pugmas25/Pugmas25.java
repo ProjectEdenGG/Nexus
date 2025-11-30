@@ -75,6 +75,7 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.ToolType;
@@ -1044,8 +1045,20 @@ public class Pugmas25 extends EdenEvent {
 		if (!config.getNutCrackerLocations().contains(location))
 			return;
 
-		new Pugmas25UserService().edit(player, user -> user.getFoundNutCrackers().add(location));
-		// TODO: SOUND + PARTICLE
+		Pugmas25UserService userService = new Pugmas25UserService();
+		Pugmas25User user = userService.get(player);
+		user.getFoundNutCrackers().add(location);
+		userService.save(user);
+
+		new ParticleBuilder(Particle.END_ROD).receivers(player).location(location).offset(0.25, 0.25, 0.25).count(15).spawn();
+		if (user.getFoundNutCrackers().size() < config.getNutCrackerLocations().size()) {
+			new SoundBuilder(Sound.ENTITY_PLAYER_LEVELUP).receiver(player).volume(0.5).pitch(2.0).play();
+			return;
+		}
+
+		new SoundBuilder(Sound.UI_TOAST_CHALLENGE_COMPLETE).receiver(player).volume(0.5).play();
+		PlayerUtils.send(player, PREFIX + "You found all the mini nutcrackers!");
+		new EventUserService().edit(player, eventUser -> eventUser.giveTokens(250));
 	}
 
 }
