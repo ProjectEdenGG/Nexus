@@ -33,6 +33,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.features.trains.Pugma
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.trains.Pugmas25Train;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.trains.Pugmas25TrainBackground;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25AnglerLoot;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25DailyTokens.Pugmas25DailyTokenSource;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25District;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Sidebar;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25Entity;
@@ -51,6 +52,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationIn
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.models.deathmessages.DeathMessages;
 import gg.projecteden.nexus.models.deathmessages.DeathMessagesService;
+import gg.projecteden.nexus.models.eventuser.EventUser;
+import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.minigolf.MiniGolfConfigService;
 import gg.projecteden.nexus.models.minigolf.MiniGolfUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -88,6 +91,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -219,7 +223,7 @@ public class Pugmas25 extends EdenEvent {
 						if (interactable instanceof Pugmas25NPC pugmas25NPC) {
 							NPC npc = CitizensUtils.getNPC(pugmas25NPC.getNpcId());
 							if (npc != null)
-								particle.location(npc.getStoredLocation()).spawn();
+								particle.location(npc.getStoredLocation().toCenterLocation()).spawn();
 						}
 					});
 				}
@@ -234,7 +238,7 @@ public class Pugmas25 extends EdenEvent {
 					if (npc == null)
 						continue;
 
-					particle.location(npc.getStoredLocation()).spawn();
+					particle.location(npc.getStoredLocation().toCenterLocation()).spawn();
 				}
 
 				// Nutcrackers
@@ -242,7 +246,7 @@ public class Pugmas25 extends EdenEvent {
 				Set<Location> nutCrackersLeft = new HashSet<>(nutCrackers);
 				nutCrackersLeft.removeAll(user.getFoundNutCrackers());
 				for (Location nutCracker : nutCrackersLeft) {
-					particle.location(nutCracker).spawn();
+					particle.location(nutCracker.toCenterLocation()).spawn();
 				}
 			});
 		});
@@ -362,8 +366,7 @@ public class Pugmas25 extends EdenEvent {
 		});
 
 		handleInteract(Pugmas25NPC.AERONAUT, (player, npc) -> {
-			final Pugmas25UserService userService = pugmas25UserService;
-			final Pugmas25User user = userService.get(player);
+			var user = pugmas25UserService.get(player);
 
 			final Dialog dialog = new Dialog(npc);
 			if (!user.isReceivedAeronautInstructions()) {
@@ -384,7 +387,7 @@ public class Pugmas25 extends EdenEvent {
 							user.setBalloonSchemExists(true);
 
 						user.setReceivedAeronautInstructions(true);
-						userService.save(user);
+						pugmas25UserService.save(user);
 
 						if (interactHandlers.containsKey(npc))
 							interactHandlers.get(npc).accept(player, npc); // Force re-talk to npc
@@ -416,8 +419,7 @@ public class Pugmas25 extends EdenEvent {
 		});
 
 		handleInteract(Pugmas25NPC.ELF, (player, npc) -> {
-			final Pugmas25UserService userService = pugmas25UserService;
-			final Pugmas25User user = userService.get(player);
+			var user = pugmas25UserService.get(player);
 
 			final Dialog dialog = new Dialog(npc);
 			if (user.advent().isUnlockedQuest()) {
@@ -449,16 +451,59 @@ public class Pugmas25 extends EdenEvent {
 				.give(Pugmas25QuestItem.ADVENTURE_POCKET_GUIDE)
 				.thenRun(quester -> {
 					user.advent().setUnlockedQuest(true);
-					userService.save(user);
+					pugmas25UserService.save(user);
 					quester.sendMessage("&7&o[You can now find advent presents]");
 				})
 				.send(player);
 		});
 
-		// TODO: TEST
+		handleInteract(Pugmas25NPC.FARMER, (player, npc) -> {
+			var user = pugmas25UserService.get(player);
+
+			final Dialog dialog = new Dialog(npc);
+			if (user.isReceivedFarmerInstructions()) {
+				dialog
+					.npc("Still need crops? Go right ahead, you’ve got permission to harvest anything out in the field.")
+					.npc("Remember, the sell crate next to me buys hay bales in stacks of 16 and carrots in stacks of 64.")
+					.npc("Anything that doesn’t match gets returned. Nothing lost!")
+					.send(player);
+				return;
+			}
+
+			dialog
+				.npc("Howdy there! Busy season, ain’t it? I’ve already harvested everything I need for the village, but I’ve still got some extra crops left in the fields.")
+				.npc("Figure it'd be a shame lettin’ them go to waste. So how ‘bout this, you can harvest any of the leftovers!")
+				.npc("I’ve gone ahead and given you permission to break my crops. Anything you pick is yours to keep.")
+				.player("Seriously? Thanks!")
+				.npc("Yep! And if you don't need the crops, you can sell ‘em right here in the sell crate next to me.")
+				.npc("Just toss in hay bales and carrots and the crate will check what it can trade for.")
+				.npc("Only thing to remember: hay bales sell in stacks of 16, and carrots sell in stacks of 64.")
+				.npc("If you put in the wrong item or amount the crate won’t make a deal and’ll just give everything back.")
+				.npc("Now go on! Harvest away, and happy Pugmas farmin’!")
+				.thenRun(quester -> {
+					user.setReceivedFarmerInstructions(true);
+					pugmas25UserService.save(user);
+					quester.sendMessage("&7&o[You can now harvest crops]");
+				})
+				.send(player);
+
+		});
+
+		handleInteract(Pugmas25NPC.SAFETY_INSTRUCTOR, (player, npc) -> {
+			new Dialog(npc)
+				.npc("Welcome to Reflection! I’m the Safety Instructor in charge of keeping fingers, faces, and festive cheer intact.")
+				.npc("Your goal is simple: fire the laser, reflect it off the mirrors, and hit the target block on the wall.")
+				.player("Got it.")
+				.npc("Each puzzle may require a minimum number of reflections. If so, you’ll see that displayed before you start.")
+				.npc("You can rotate the mirrors using the buttons beneath them. Feel free to adjust them during or between shots.")
+				.npc("If the laser hits the back of a mirror, or any block that isn’t the target, the beam fizzles out. Harmless... but dramatically disappointing.")
+				.npc("Only the player who fires the laser is credited for completing the puzzle. So make sure it’s your shot!")
+				.npc("Solve the puzzle by directing the beam into the target block, and you’ll move on to the next puzzle.")
+				.send(player);
+		});
+
 		handleInteract(Pugmas25NPC.ANGLER, (player, npc) -> {
-			final Pugmas25UserService userService = pugmas25UserService;
-			final Pugmas25User user = userService.get(player);
+			var user = pugmas25UserService.get(player);
 
 			final Pugmas25ConfigService configService = new Pugmas25ConfigService();
 			final Pugmas25Config config = configService.get0();
@@ -480,7 +525,7 @@ public class Pugmas25 extends EdenEvent {
 					.give(Pugmas25QuestItem.FISHING_ROD_WOOD)
 					.thenRun(quester -> {
 						user.setReceivedAnglerQuestInstructions(true);
-						userService.save(user);
+						pugmas25UserService.save(user);
 						if (interactHandlers.containsKey(npc))
 							interactHandlers.get(npc).accept(player, npc); // Force re-talk to npc to get hint & set variables
 					})
@@ -495,7 +540,7 @@ public class Pugmas25 extends EdenEvent {
 					.npc("The old fish swam off, but a NEW one is ready to be caught!")
 					.thenRun(quester -> {
 						user.setReceivedAnglerQuestFish(null);
-						userService.save(user);
+						pugmas25UserService.save(user);
 						if (interactHandlers.containsKey(npc))
 							interactHandlers.get(npc).accept(player, npc); // Force re-talk to npc to get hint & set variables
 					})
@@ -519,7 +564,7 @@ public class Pugmas25 extends EdenEvent {
 					.thenRun(quester -> {
 						user.incrementCompletedAnglerQuests();
 						user.setCompletedAnglerQuest(true);
-						userService.save(user);
+						pugmas25UserService.save(user);
 						Pugmas25Fishing.giveRewards(dialog, user, quester);
 					});
 
@@ -547,7 +592,7 @@ public class Pugmas25 extends EdenEvent {
 					.npc(config.getAnglerQuestFishHint())
 					.thenRun(quester -> {
 						user.setReceivedAnglerQuestFish(questFish);
-						userService.save(user);
+						pugmas25UserService.save(user);
 					});
 			}
 
@@ -627,6 +672,17 @@ public class Pugmas25 extends EdenEvent {
 		);
 	}
 
+	@Override
+	public boolean breakBlock(BlockBreakEvent event) {
+		Pugmas25UserService userService = new Pugmas25UserService();
+		Pugmas25User user = userService.get(event.getPlayer());
+		Material blockType = event.getBlock().getType();
+		if ((blockType == Material.CARROTS || blockType == Material.WHEAT) && !user.isReceivedFarmerInstructions())
+			throw new BreakException("event_break_pugmas25_quest_farmer", "The Farmer has not given you permission to break this yet");
+
+		return super.breakBlock(event);
+	}
+
 	public LocalDateTime now() {
 		return now == null ? LocalDateTime.now() : now;
 	}
@@ -683,7 +739,7 @@ public class Pugmas25 extends EdenEvent {
 	@Getter
 	@AllArgsConstructor
 	public enum Pugmas25QuestProgress {
-		NUTCRACKERS(null) {
+		MINI_NUTCRACKERS(null) {
 			@Override
 			Pugmas25QuestStatus getStatus(Pugmas25User user) {
 				int numCollected = user.getFoundNutCrackers().size();
@@ -704,9 +760,9 @@ public class Pugmas25 extends EdenEvent {
 				int numTotal = Pugmas25Config.get().getNutCrackerLocations().size();
 
 				return switch (getStatus(user)) {
-					case NOT_STARTED -> List.of("&3 " + getName() + " &7- &eFind a nutcracker");
+					case NOT_STARTED -> List.of("&3 " + getName() + " &7- &eFind a mini nutcracker");
 					case IN_PROGRESS ->
-						List.of("&3 " + getName() + " &7- &eStarted", "&7   - " + numCollected + "/" + numTotal + " nutcrackers found");
+						List.of("&3 " + getName() + " &7- &eStarted", "&7   - " + numCollected + "/" + numTotal + " mini nutcrackers found");
 					case COMPLETED -> List.of("&3 " + getName() + " &7- &aCompleted");
 				};
 			}
@@ -790,6 +846,70 @@ public class Pugmas25 extends EdenEvent {
 						List.of("&3 " + getName() + " &7- &eStarted", "&7   - Save your hot air balloon");
 					case COMPLETED -> List.of("&3 " + getName() + " &7- &aCompleted");
 				};
+			}
+		},
+		DAILY_FAIRGROUND_TOKENS(null) {
+			@Override
+			Pugmas25QuestStatus getStatus(Pugmas25User user) {
+				EventUserService eventUserService = new EventUserService();
+				EventUser eventUser = eventUserService.get(user);
+
+				boolean started = false;
+				for (Pugmas25DailyTokenSource source : Pugmas25DailyTokenSource.values()) {
+					int received = eventUser.getTokensReceivedToday(source.getId());
+					if (received != 0) {
+						started = true;
+						break;
+					}
+				}
+				if (!started)
+					return Pugmas25QuestStatus.NOT_STARTED;
+
+				for (Pugmas25DailyTokenSource source : Pugmas25DailyTokenSource.values()) {
+					if (eventUser.getTokensReceivedToday(source.getId()) < source.getMaxDailyTokens())
+						return Pugmas25QuestStatus.IN_PROGRESS;
+				}
+
+				return Pugmas25QuestStatus.COMPLETED;
+			}
+
+			@Override
+			@Nullable
+			List<String> getProgressMessage(Pugmas25User user) {
+				EventUserService eventUserService = new EventUserService();
+				EventUser eventUser = eventUserService.get(user);
+
+				LocalDateTime tomorrow = get().now().plusDays(1).toLocalDate().atStartOfDay();
+				var timeUntilReset = TimeUtils.Timespan.of(get().now(), tomorrow).format(FormatType.LONG);
+
+				switch (getStatus(user)) {
+					case NOT_STARTED -> {
+						return List.of("&3 " + getName() + " &7- &ePlay Minigolf, Frogger, WhacAWakka, and Reflection");
+					}
+					case IN_PROGRESS -> {
+						List<String> result = new ArrayList<>();
+						result.add("&3 " + getName() + " &7- &eStarted");
+
+						for (Pugmas25DailyTokenSource source : Pugmas25DailyTokenSource.values()) {
+							int received = eventUser.getTokensReceivedToday(source.getId());
+							int max = source.getMaxDailyTokens();
+							if (received == 0)
+								result.add("&7   - " + source.getName() + ": " + "&c" + received + "&7/&e" + max + " &7event tokens");
+							else if (received < max)
+								result.add("&7   - " + source.getName() + ": " + "&6" + received + "&7/&e" + max + " &7event tokens");
+							else
+								result.add("&7   - " + source.getName() + ": " + "&a" + received + "&7/&a" + max + " &7event tokens");
+						}
+
+						return result;
+					}
+					case COMPLETED -> {
+						return List.of("&3 " + getName() + " &7- &aCompleted (resets in " + timeUntilReset + ")");
+					}
+				}
+				;
+
+				return null;
 			}
 		}
 		;
@@ -918,8 +1038,7 @@ public class Pugmas25 extends EdenEvent {
 		event.setCancelled(true);
 
 		Location location = event.getClickedBlock().getLocation();
-		Pugmas25ConfigService configService = new Pugmas25ConfigService();
-		Pugmas25Config config = configService.get0();
+		Pugmas25Config config = new Pugmas25ConfigService().get0();
 		if (!config.getNutCrackerLocations().contains(location))
 			return;
 

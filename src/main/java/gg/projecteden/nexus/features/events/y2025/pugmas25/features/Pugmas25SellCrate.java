@@ -4,6 +4,8 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25SellCrateType;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
+import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.utils.Currency;
 import gg.projecteden.nexus.utils.Currency.Price;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -42,7 +44,15 @@ public class Pugmas25SellCrate implements Listener {
 			return;
 
 		event.setCancelled(true);
-		crateType.openMenu(event.getPlayer());
+
+		Player player = event.getPlayer();
+		Pugmas25User user = new Pugmas25UserService().get(player);
+		if (crateType == Pugmas25SellCrateType.FARMING && !user.isReceivedFarmerInstructions()) {
+			PlayerUtils.send(player, Pugmas25.PREFIX + "&cThe Farmer has not given you permission to use this yet");
+			return;
+		}
+
+		crateType.openMenu(player);
 	}
 
 	@EventHandler

@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.OfflinePlayer;
@@ -55,6 +56,10 @@ public class Pugmas25DailyTokens {
 			return "pugmas25_" + name().toLowerCase();
 		}
 
+		public String getName() {
+			return StringUtils.camelCase(this);
+		}
+
 		private static Map<String, Integer> maxes = null;
 
 		public static Map<String, Integer> getMaxes() {
@@ -68,5 +73,7 @@ public class Pugmas25DailyTokens {
 
 			return maxes;
 		}
+
+
 	}
 }

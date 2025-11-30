@@ -71,7 +71,7 @@ public enum Pugmas25QuestItem implements QuestItem {
 
 	COMPASS(new ItemBuilder(ItemModelType.EVENT_COMPASS)
 		.name("&oCompass")
-		.lore("&3Displays Direction")), // to start it, call same method as compass#onjoin
+		.lore("&3Displays Direction")),
 
 	GPS(new ItemBuilder(ItemModelType.EVENT_GPS)
 		.name("&oGPS")

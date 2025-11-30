@@ -47,7 +47,7 @@ public enum Pugmas25SlotMachineReward {
 			//Currency.VOTE_POINTS.deposit(player, Price.of(finalAmount));
 			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3vote points has been added to your balance");
 			if (additional > 0)
-				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3vote points given from Lucky Horseshoe");
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3vote points given from Lucky Horseshoe");
 		},
 		(player) -> {
 			int preAmount = 50;
@@ -57,7 +57,7 @@ public enum Pugmas25SlotMachineReward {
 			//Currency.VOTE_POINTS.deposit(player, Price.of(finalAmount));
 			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3vote points has been added to your balance");
 			if (additional > 0)
-				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3vote points given from Lucky Horseshoe");
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3vote points given from Lucky Horseshoe");
 		}
 	),
 
@@ -71,7 +71,7 @@ public enum Pugmas25SlotMachineReward {
 			//Currency.EVENT_TOKENS.deposit(player, Price.of(finalAmount));
 			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3event tokens has been added to your balance");
 			if (additional > 0)
-				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3event tokens given from Lucky Horseshoe");
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3event tokens given from Lucky Horseshoe");
 		},
 		(player) -> {
 			int preAmount = 500;
@@ -81,7 +81,7 @@ public enum Pugmas25SlotMachineReward {
 			//Currency.EVENT_TOKENS.deposit(player, Price.of(finalAmount));
 			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3event tokens has been added to your balance");
 			if (additional > 0)
-				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3event tokens given from Lucky Horseshoe");
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3event tokens given from Lucky Horseshoe");
 		}
 	),
 
@@ -95,7 +95,7 @@ public enum Pugmas25SlotMachineReward {
 			PlayerUtils.giveItem(player, Pugmas25QuestItem.SLOT_MACHINE_TOKEN.getItemBuilder().clone().amount(finalAmount).build());
 			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3slot machine tokens has been added to your inventory");
 			if (additional > 0)
-				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3slot machine tokens given from Lucky Horseshoe");
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3slot machine tokens given from Lucky Horseshoe");
 		},
 		(player) -> {
 			int preAmount = 3;
@@ -105,7 +105,7 @@ public enum Pugmas25SlotMachineReward {
 			PlayerUtils.giveItem(player, Pugmas25QuestItem.SLOT_MACHINE_TOKEN.getItemBuilder().clone().amount(finalAmount).build());
 			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3slot machine tokens has been added to your inventory");
 			if (additional > 0)
-				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3re-rolls given from Lucky Horseshoe");
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3re-rolls given from Lucky Horseshoe");
 		}
 	),
 
@@ -173,7 +173,7 @@ public enum Pugmas25SlotMachineReward {
 			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3Deposited &e" + additional + " &3coins to your Coin Pouch");
 			Currency.COIN_POUCH.deposit(player, Price.of(finalAmount));
 			if (additional > 0)
-				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3coins given from Lucky Horseshoe");
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3coins given from Lucky Horseshoe");
 		},
 		(player) -> {
 			int preAmount = 30; // TODO: COINS
@@ -183,7 +183,7 @@ public enum Pugmas25SlotMachineReward {
 			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3Deposited &e" + additional + " &3coins to your Coin Pouch");
 			Currency.COIN_POUCH.deposit(player, Price.of(finalAmount));
 			if (additional > 0)
-				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3coins given from Lucky Horseshoe");
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3coins given from Lucky Horseshoe");
 		}
 	),
 
@@ -197,7 +197,7 @@ public enum Pugmas25SlotMachineReward {
 			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3Diamond Trucks have been added to your inventory");
 			PlayerUtils.giveItem(player, Pugmas25QuestItem.TRUNK_DIAMOND.getItemBuilder().clone().amount(finalAmount).build());
 			if (additional > 0)
-				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3Diamond Trunks given from Lucky Horseshoe");
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3Diamond Trunks given from Lucky Horseshoe");
 		},
 		(player) -> {
 			int preAmount = 3;
@@ -207,7 +207,7 @@ public enum Pugmas25SlotMachineReward {
 			PlayerUtils.giveItem(player, Pugmas25QuestItem.TRUNK_DIAMOND.getItemBuilder().clone().amount(finalAmount).build());
 			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3Diamond Trucks have been added to your inventory");
 			if (additional > 0)
-				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3Diamond Trunks given from Lucky Horseshoe");
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3Diamond Trunks given from Lucky Horseshoe");
 		}
 	),
 
@@ -221,7 +221,7 @@ public enum Pugmas25SlotMachineReward {
 			PlayerUtils.giveItem(player, Pugmas25QuestItem.GIFT.getItemBuilder().amount(finalAmount).build());
 			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3Gifts have been added to your inventory");
 			if (additional > 0)
-				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3Gifts given from Lucky Horseshoe");
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3Gifts given from Lucky Horseshoe");
 		},
 		(player) -> {
 			int preAmount = 3;
@@ -231,7 +231,7 @@ public enum Pugmas25SlotMachineReward {
 			PlayerUtils.giveItem(player, Pugmas25QuestItem.GIFT.getItemBuilder().amount(finalAmount).build());
 			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3Gifts have been added to your inventory");
 			if (additional > 0)
-				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3+&e" + additional + " &3Gifts given from Lucky Horseshoe");
+				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3Gifts given from Lucky Horseshoe");
 		}
 	),
 	;

@@ -31,7 +31,7 @@ public class SlotMachineColumn {
 		if (previousColumn.getStatus() != SlotMachineColumnStatus.STOPPED)
 			return false;
 
-		return previousColumn.getStoppedTick() < (game.getGameTicks() + getRandomTicks(2, 5));
+		return previousColumn.getStoppedTick() < (game.getGameTicks() + getRandomTicks(1, 3));
 	}
 
 	public boolean canSlow(Pugmas25SlotMachine game) {

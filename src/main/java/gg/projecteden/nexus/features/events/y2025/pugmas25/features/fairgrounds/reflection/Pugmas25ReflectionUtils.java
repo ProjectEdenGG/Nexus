@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.events.y2025.pugmas25.features.fairgrounds
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25DailyTokens;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25DailyTokens.Pugmas25DailyTokenSource;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -92,7 +94,7 @@ public class Pugmas25ReflectionUtils {
 		for (Player player : players)
 			Pugmas25.get().sendNoPrefix(player, Pugmas25Reflection.getPrefix() + type + " &fwas hit in " + count + " reflections!");
 
-		//BearFair21.giveDailyTokens(Reflection.getButtonPresser(), BF21PointSource.REFLECTION, 5);
+		Pugmas25DailyTokens.giveDailyTokens(Pugmas25Reflection.getButtonPresser(), Pugmas25DailyTokenSource.REFLECTION, 5);
 
 		Tasks.wait(TickTime.SECOND.x(3), () -> {
 			randomizeBanners();

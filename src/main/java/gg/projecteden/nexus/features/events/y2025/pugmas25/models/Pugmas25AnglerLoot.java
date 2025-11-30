@@ -54,7 +54,7 @@ public enum Pugmas25AnglerLoot {
 	)),
 	FROSTBITE_MINNOW(Pugmas25District.FROZEN_LAKE, EventFishingLootTime.NIGHT, ItemModelType.FISHING_LOOT_FROZEN_BONEMINNOW, List.of(
 		"I heard tiny evil minnows come out on the frozen lake at night. Bring me one! Just thaw your fingers before handing it over.",
-		"HINT2" // TODO
+		"Once the moon hits the frozen lake, tiny white-blue things start flashing under the ice like Christmas lights. Go fish one out."
 	)),
 	SCALDING_SNAPPER(Pugmas25District.HOT_SPRINGS, EventFishingLootTime.BOTH, ItemModelType.FISHING_LOOT_RED_SNAPPER, List.of(
 		"There's a creature bubbling in the hot springs that looks like it could boil someone alive. Bring it back, carefully. Or don't. I'm not responsible.",
@@ -62,7 +62,7 @@ public enum Pugmas25AnglerLoot {
 	)),
 	THERMO_TROUT(Pugmas25District.HOT_SPRINGS, EventFishingLootTime.DAY, ItemModelType.FISHING_LOOT_RAINBOW_TROUT, List.of(
 		"A smug little creature is basking in the hot springs during the day. Ruin its spa session and bring it here.",
-		"HINT2" // TODO
+		"There’s a rainbow-colored show-off basking in the hot springs during the day—right next to the geyser like it wants to be launched. Go snag it."
 	)),
 	OBSTER(Pugmas25District.HOT_SPRINGS, EventFishingLootTime.NIGHT, ItemModelType.FISHING_LOOT_OBSTER, List.of(
 		"Last time I went to the hot springs at night, something clicked at me from under the water. Bring me one so I know what was threatening me!",
@@ -89,8 +89,8 @@ public enum Pugmas25AnglerLoot {
 		"I heard gnawing in the sawmill water while the sun was up. Bring me the beaver impersonator."
 	)),
 	WOODWORM_EEL(Pugmas25District.SAWMILL, EventFishingLootTime.NIGHT, ItemModelType.FISHING_LOOT_EEL, List.of(
-		"HINT1", // TODO
-		"HINT2" // TODO
+		"There’s a slippery critter tunneling through soggy boards behind the sawmill during the night. Fetch it before it eats the building.",
+		"The sawmill gets suspiciously creaky at night, thanks to a slimy thing gnawing the wood. Reel it in."
 	)),
 	ROCKTOPUS(Pugmas25District.CAVES, EventFishingLootTime.BOTH, ItemModelType.FISHING_LOOT_OCTOPUS, List.of(
 		"Down in the caves, something with tentacles is pretending to be a boulder in the water. Go catch it before it learns how to roll.",
@@ -110,12 +110,12 @@ public enum Pugmas25AnglerLoot {
 	)),
 	ZOMBIEFISH(Pugmas25District.CAVES, EventFishingLootTime.NIGHT, ItemModelType.FISHING_LOOT_ZOMBIEFISH, List.of(
 		"After dark, something gross and half-rotted drags itself through the cave puddles. Go catch it before it decomposes.",
-		"HINT2" // TODO
+		"Down in the caves at night, there’s something half-rotten splashing around like it forgot how to die. Bring me that soggy creep."
 	)),
 	ECHO_EEL(Pugmas25District.CAVES, Pugmas25BiomeDistrict.DRIPSTONE_CAVES, -44, EventFishingLootTime.BOTH, ItemModelType.FISHING_LOOT_LAMPREY, List.of(
 		"The deep dripstone caves keep repeating everything I say. Something in there must be causing it. Bring it here so I can shush it personally.",
 		"The deep dripstone caves echo weirdly. Something’s causing it. Bring it."
-	)), // TODO: MAX Y VALUE
+	)),
 	SIPHONFIN(Pugmas25District.CAVES, Pugmas25BiomeDistrict.DRIPSTONE_CAVES, -44, EventFishingLootTime.NIGHT, ItemModelType.FISHING_LOOT_LEECH, List.of(
 		"There’s a creepy sucker hiding in the deep dripstone caves at night. Grab it before it grabs you!",
 		"Something in the deep dripstone caves keeps drinking all the puddles at night. Bring the thirsty gremlin."

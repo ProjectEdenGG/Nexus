@@ -747,7 +747,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 
 	@Data
 	@RequiredArgsConstructor
-	private static class BreakException extends RuntimeException {
+	protected static class BreakException extends RuntimeException {
 		private final String cooldownId;
 		private final String errorMessage;
 

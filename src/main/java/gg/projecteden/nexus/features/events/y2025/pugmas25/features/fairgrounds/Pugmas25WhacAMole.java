@@ -7,6 +7,8 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.EdenEventGameConfig;
 import gg.projecteden.nexus.features.events.EdenEventSinglePlayerGame;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25DailyTokens;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25DailyTokens.Pugmas25DailyTokenSource;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.EntityUtils;
@@ -120,6 +122,8 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_CHIME).pitch(0.7).location(location).play();
 		Tasks.wait(TickTime.TICK.x(6), () ->
 			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_CHIME).pitch(0.7).location(location).play());
+
+		Pugmas25DailyTokens.giveDailyTokens(getGamer(), Pugmas25DailyTokenSource.WHACAMOLE, 5);
 
 		super.end();
 	}

@@ -142,8 +142,11 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		super.quest_progress(quester);
 		Pugmas25QuestProgress.ADVENT.send(user);
 		Pugmas25QuestProgress.DESIGN_A_BALLOON.send(user);
-		Pugmas25QuestProgress.NUTCRACKERS.send(user);
+		Pugmas25QuestProgress.MINI_NUTCRACKERS.send(user);
+
+		send("&3Repeatable Quests:");
 		Pugmas25QuestProgress.ANGLER.send(user);
+		Pugmas25QuestProgress.DAILY_FAIRGROUND_TOKENS.send(user);
 	}
 
 	@Path("database deleteQuest <quest>")

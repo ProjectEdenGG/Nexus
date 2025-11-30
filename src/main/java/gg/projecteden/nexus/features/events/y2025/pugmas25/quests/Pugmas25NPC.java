@@ -33,6 +33,7 @@ public enum Pugmas25NPC implements InteractableNPC, IWaypoint {
 	MAYOR("Mayor", 5636),
 	AERONAUT("Aeronaut", 5664),
 	FARMER("Farmer", 5668),
+	SAFETY_INSTRUCTOR("Safety Instructor", 5669),
 	RESIDENT("Resident", npc -> MathUtils.isBetween(npc.getId(), 5637, 5657)),
 	;
 

@@ -56,6 +56,8 @@ public class Pugmas25User implements PlayerOwnedObject {
 	private boolean receivedAeronautInstructions = false;
 	private boolean balloonSchemExists = false;
 
+	private boolean receivedFarmerInstructions = false;
+
 	private int slotMachineRolls = 0;
 	private int slotMachineRewards = 0;
 

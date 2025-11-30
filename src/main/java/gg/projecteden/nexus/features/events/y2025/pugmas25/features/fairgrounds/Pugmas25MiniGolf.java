@@ -6,10 +6,13 @@ import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25DailyTokens;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25DailyTokens.Pugmas25DailyTokenSource;
 import gg.projecteden.nexus.features.minigolf.MiniGolf;
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
 import gg.projecteden.nexus.features.minigolf.models.GolfBallParticle;
 import gg.projecteden.nexus.features.minigolf.models.GolfBallStyle;
+import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallSinkEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.models.minigolf.MiniGolfUserService;
@@ -133,6 +136,15 @@ public class Pugmas25MiniGolf implements Listener {
 			return;
 
 		MiniGolf.quit(new MiniGolfUserService().get(player));
+	}
+
+	@EventHandler
+	public void on(MiniGolfBallSinkEvent event) {
+		Player player = event.getGolfBall().getShooter();
+		if (!Pugmas25.get().isAtEvent(player))
+			return;
+
+		Pugmas25DailyTokens.giveDailyTokens(player, Pugmas25DailyTokenSource.MINIGOLF, 3);
 	}
 
 	private static @NotNull Set<ProtectedRegion> getMinigolfRegions(Player player) {
