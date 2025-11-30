@@ -89,7 +89,7 @@ public class Pugmas25MiniGolf implements Listener {
 				if (particle != null) {
 					ParticleBuilder particleBuilder = new ParticleBuilder(particle)
 						.location(particleLoc)
-						.count(50)
+						.count(15)
 						.extra(0.01)
 						.offset(0.2, 0.2, 0.2);
 

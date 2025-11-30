@@ -110,7 +110,7 @@ public class MiniGolfCommand extends CustomCommand {
 
 	@Path("scorecard <course> [page]")
 	void scorecard(MiniGolfCourse course, @Arg("1") int page) {
-		new ScorecardBookMenu(user, course, page, user.getCurrentScorecard(course));
+		new ScorecardBookMenu(user, course, page, user.getCurrentScorecard(course)).open();
 	}
 
 	@Permission(Group.STAFF)
