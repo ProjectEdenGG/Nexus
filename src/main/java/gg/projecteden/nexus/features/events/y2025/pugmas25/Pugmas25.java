@@ -455,6 +455,9 @@ public class Pugmas25 extends EdenEvent {
 				if (!Pugmas25BalloonEditorUtils.isEditing(player)) {
 					dialog.npc("Looks like someone is currently decorating their balloon, come back when they're finished.").send(player);
 					return;
+				} else {
+					dialog.npc("You are already decorating your balloon").send(player);
+					return;
 				}
 			} else {
 				if (Nexus.isMaintenanceQueued()) {
@@ -570,7 +573,7 @@ public class Pugmas25 extends EdenEvent {
 			if (!user.isReceivedAnglerQuestInstructions()) {
 				// INTRO
 				dialog
-					.npc("Hey there! Would you like to help to collect some rare for the holiday celebrations?")
+					.npc("Hey there! Would you like to help to collect some rare fish for the holiday celebrations?")
 					.npc("Every 2 hours, a new fish becomes available to catch.")
 					.npc("Each one can only be caught in a specific area, and sometimes only at a certain time of day.")
 					.player("So I just catch the fish you want?")
