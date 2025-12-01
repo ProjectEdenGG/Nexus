@@ -143,8 +143,8 @@ public class Pugmas25Caves implements Listener {
 		put(Material.IRON_NUGGET, 13.0);
 		put(Material.IRON_INGOT, 10.0);
 		put(Material.LAPIS_LAZULI, 10.0);
-		put(Material.DIAMOND, 7.0);
 		put(Material.EMERALD, 5.0);
+		put(Material.DIAMOND, 1.0);
 		put(Material.NETHERITE_SCRAP, 0.25);
 	}};
 
