@@ -145,7 +145,7 @@ public class Pugmas25Caves implements Listener {
 		put(Material.LAPIS_LAZULI, 10.0);
 		put(Material.DIAMOND, 7.0);
 		put(Material.EMERALD, 5.0);
-		put(Material.NETHERITE_SCRAP, 1.0);
+		put(Material.NETHERITE_SCRAP, 0.25);
 	}};
 
 	public ItemStack getExtractinatorDrop(Player player, boolean lucky) {
@@ -153,8 +153,8 @@ public class Pugmas25Caves implements Listener {
 		int luck = RandomUtils.randomInt(luckMin, 30);
 
 		// Coins
-		if (chanceOf(10)) {
-			int coinAmount = Pugmas25.getLuckyAmount(1, 15, luck);
+		if (chanceOf(5)) {
+			int coinAmount = Pugmas25.getLuckyAmount(1, 10, luck);
 			try {
 				Currency.COIN_POUCH.deposit(player, Price.of(coinAmount));
 				PlayerUtils.send(player, EXTRACTINATOR_PREFIX + "&3Deposited &e" + coinAmount + " coins &3to Coin Pouch");
