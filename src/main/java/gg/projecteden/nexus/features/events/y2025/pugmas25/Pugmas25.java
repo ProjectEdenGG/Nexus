@@ -10,6 +10,7 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.DeathMessagesCommand;
 import gg.projecteden.nexus.features.events.EdenEvent;
+import gg.projecteden.nexus.features.events.EventSounds;
 import gg.projecteden.nexus.features.events.models.EventBreakable;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25BoatRace;
@@ -37,6 +38,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Angler
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25DailyTokens.Pugmas25DailyTokenSource;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25District;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Sidebar;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waystone;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25Entity;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25NPC;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25Quest;
@@ -51,6 +53,7 @@ import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.framework.annotations.Date;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.deathmessages.DeathMessages;
 import gg.projecteden.nexus.models.deathmessages.DeathMessagesService;
 import gg.projecteden.nexus.models.eventuser.EventUser;
@@ -224,7 +227,7 @@ public class Pugmas25 extends EdenEvent {
 				// real quests
 				for (Pugmas25Quest pugmas25Quest : Pugmas25Quest.values()) {
 					var quest = quester.getQuest(pugmas25Quest);
-					if (quest.isComplete())
+					if (quest == null || quest.isComplete())
 						continue;
 
 					var interactable = quest.getCurrentTaskStep().getInteractable();
@@ -261,6 +264,20 @@ public class Pugmas25 extends EdenEvent {
 				for (Location nutCracker : nutCrackersLeft) {
 					particle.clone()
 						.location(nutCracker.toCenterLocation())
+						.spawn();
+				}
+			});
+		});
+
+		Tasks.repeat(0, 1, () -> {
+			getOnlinePlayers().forEach(player -> {
+				// Waystones
+				for (Pugmas25Waystone waystone : Pugmas25Waystone.values()) {
+					Location location = waystone.getFrameLoc().clone().add(0, 1, 0).toCenterLocation();
+					new ParticleBuilder(Particle.ENCHANT)
+						.receivers(player)
+						.count(2)
+						.location(location)
 						.spawn();
 				}
 			});
@@ -699,11 +716,21 @@ public class Pugmas25 extends EdenEvent {
 
 	@Override
 	public boolean breakBlock(BlockBreakEvent event) {
-		Pugmas25UserService userService = new Pugmas25UserService();
-		Pugmas25User user = userService.get(event.getPlayer());
-		Material blockType = event.getBlock().getType();
-		if ((blockType == Material.CARROTS || blockType == Material.WHEAT) && !user.isReceivedFarmerInstructions())
-			throw new BreakException("event_break_pugmas25_quest_farmer", "The Farmer has not given you permission to break this yet");
+		var player = event.getPlayer();
+
+		try {
+			var userService = new Pugmas25UserService();
+			var user = userService.get(player);
+			var blockType = event.getBlock().getType();
+			if (!user.isReceivedFarmerInstructions())
+				if (blockType == Material.CARROTS || blockType == Material.WHEAT)
+					throw new BreakException("event_break_pugmas25_quest_farmer", "The Farmer has not given you permission to break this yet");
+		} catch (BreakException ex) {
+			if (CooldownService.isNotOnCooldown(player, ex.getCooldownId(), TickTime.MINUTE)) {
+				errorMessage(player, ex.getErrorMessage());
+				EventSounds.VILLAGER_NO.play(player);
+			}
+		}
 
 		return super.breakBlock(event);
 	}

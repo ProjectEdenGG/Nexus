@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 @Data
 public abstract class QuestTaskStep<
@@ -34,7 +35,7 @@ public abstract class QuestTaskStep<
 	TaskStepType extends QuestTaskStep<TaskType, TaskStepType>
 > {
 	public Interactable interactable;
-	protected ComponentLike objective;
+	protected Function<Quester, ComponentLike> objective;
 	protected Dialog dialog;
 	public Dialog reminder;
 	public IWaypoint waypoint;

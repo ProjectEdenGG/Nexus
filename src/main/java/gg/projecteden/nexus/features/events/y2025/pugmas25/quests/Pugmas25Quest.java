@@ -10,13 +10,14 @@ import java.util.List;
 import static gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestTask.BOARD_THE_TRAIN;
 import static gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestTask.CHECK_IN;
 import static gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestTask.ENTER_THE_CABIN;
-import static gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestTask.SNOWMEN;
+import static gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestTask.SNOWMEN_1;
+import static gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestTask.SNOWMEN_2;
 import static gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestTask.TALK_TO_TICKET_MASTER;
 
 @Getter
 public enum Pugmas25Quest implements IQuest {
 	INTRO(TALK_TO_TICKET_MASTER, BOARD_THE_TRAIN, CHECK_IN, ENTER_THE_CABIN),
-	DECORATE_SNOWMEN(SNOWMEN),
+	DECORATE_SNOWMEN(SNOWMEN_1, SNOWMEN_2),
 	;
 
 	private final List<IQuestTask> tasks;

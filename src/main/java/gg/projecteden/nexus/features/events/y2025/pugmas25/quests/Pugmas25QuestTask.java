@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.y2025.pugmas25.quests;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Cabin;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Intro;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Snowman;
 import gg.projecteden.nexus.features.hub.Hub;
 import gg.projecteden.nexus.features.quests.tasks.EnteringRegionQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask;
@@ -12,6 +13,7 @@ import gg.projecteden.nexus.features.quests.tasks.common.QuestTask.TaskBuilder;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.utils.Currency;
 import gg.projecteden.nexus.utils.Currency.Price;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -84,12 +86,7 @@ public enum Pugmas25QuestTask implements IQuestTask {
 		.enterRegion(Pugmas25.get().getWorld(), Pugmas25Cabin.DOOR_REGION)
 	),
 
-	/*
-		TODO GRIFFIN:
-		- add objective "Decorate the snowmen"
-		- show actual progress in show progress command (user.getDecoratedSnowmen ?)
-	 */
-	SNOWMEN(GatherQuestTask.builder()
+	SNOWMEN_1(InteractQuestTask.builder()
 		.objective("Talk to the Kid")
 		.waypoint(Pugmas25NPC.KID)
 		.talkTo(Pugmas25NPC.KID)
@@ -103,6 +100,16 @@ public enum Pugmas25QuestTask implements IQuestTask {
 			.npc("If you do, I'll give you something cool! Promise!")
 			.give(Pugmas25QuestItem.BOX_OF_DECORATIONS)
 		)
+	),
+
+	SNOWMEN_2(GatherQuestTask.builder()
+		.objective(quester -> {
+			var service = new Pugmas25UserService();
+			var user = service.get(quester);
+			int left = Pugmas25Snowman.values().length - user.getDecoratedSnowmen().size();
+			return new JsonBuilder("Decorate " + left + " more snowmen");
+		})
+		.talkTo(Pugmas25NPC.KID)
 		.reminder(dialog -> dialog
 			.npc("Did you decorate the snowmen yet?")
 			.npc("They all need a top hat and a monocle, just like my mom said.")

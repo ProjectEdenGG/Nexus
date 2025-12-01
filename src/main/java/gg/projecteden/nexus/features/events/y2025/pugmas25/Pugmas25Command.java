@@ -43,6 +43,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
+import gg.projecteden.nexus.models.minigolf.MiniGolfUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.pugmas25.Advent25Config;
@@ -176,17 +177,13 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 
 	@Path("database deleteAllData")
 	@Permission(Group.ADMIN)
-	void deleteAllDatabaseData() { // TODO: RELEASE PUGMAS
-		if (true) {
-			send("Disabled until release");
-			return;
-		}
+	void deleteAllDatabaseData() {
+		new MiniGolfUserService().deleteAll();
+		send("Deleted all data from MiniGolfUserService");
 
-		// TODO: MINIGOLF
-
-		for (Pugmas25User _user : userService.getAll()) {
-			Quester _quester = questerService.get(_user);
-			_quester.getQuests().removeIf(quest -> quest.getQuest() == Pugmas25Quest.INTRO || quest.getQuest() == Pugmas25Quest.DECORATE_SNOWMEN);
+		for (Quester _user : questerService.getAll()) {
+			Quester quester = questerService.get(_user);
+			quester.getQuests().removeIf(quest -> quest.getQuest() == Pugmas25Quest.INTRO || quest.getQuest() == Pugmas25Quest.DECORATE_SNOWMEN);
 		}
 		questerService.cacheAll();
 		send("Deleted all pugmas quest data from QuesterService");

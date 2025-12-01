@@ -15,6 +15,7 @@ import kotlin.Pair;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.citizensnpcs.api.event.NPCClickEvent;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -76,6 +77,11 @@ public abstract class QuestTask<
 		}
 
 		public TaskBuilderType objective(JsonBuilder message) {
+			currentStep.objective = $ -> message;
+			return (TaskBuilderType) this;
+		}
+
+		public TaskBuilderType objective(Function<Quester, ComponentLike> message) {
 			currentStep.objective = message;
 			return (TaskBuilderType) this;
 		}

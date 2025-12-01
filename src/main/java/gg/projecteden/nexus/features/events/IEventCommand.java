@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.events;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.FishingLoot;
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
-import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.quests.CommonQuestItem;
 import gg.projecteden.nexus.features.quests.QuestItem;
 import gg.projecteden.nexus.features.quests.QuestReward;
@@ -83,7 +82,7 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 			final Quest quest = quester.getQuest(iQuest);
 
 			if (!quest.isComplete()) {
-				var objective = quest.getCurrentTaskStep().getObjective();
+				var objective = quest.getCurrentTaskStep().getObjective().apply(quester);
 				send("&3 " + iQuest.getName() + " &7- &eStarted (" + quest.getCompletedSteps() + "/" + quest.getTotalSteps() + " steps)");
 				send("&7   - " + objective);
 				continue;
