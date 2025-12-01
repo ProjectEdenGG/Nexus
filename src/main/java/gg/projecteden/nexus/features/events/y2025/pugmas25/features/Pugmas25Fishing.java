@@ -114,15 +114,15 @@ public class Pugmas25Fishing implements Listener {
 
 		// Armor
 		ItemStack helmet = player.getInventory().getHelmet();
-		if (Nullables.isNotNullOrAir(helmet) && new ItemBuilder(helmet).model().equalsIgnoreCase(anglerHat))
+		if (Nullables.isNotNullOrAir(helmet) && anglerHat.equalsIgnoreCase(new ItemBuilder(helmet).model()))
 			luck += 4;
 
 		ItemStack chestplate = player.getInventory().getChestplate();
-		if (Nullables.isNotNullOrAir(chestplate) && new ItemBuilder(helmet).model().equalsIgnoreCase(anglerVest))
+		if (Nullables.isNotNullOrAir(chestplate) && anglerVest.equalsIgnoreCase(new ItemBuilder(chestplate).model()))
 			luck += 4;
 
 		ItemStack leggings = player.getInventory().getLeggings();
-		if (Nullables.isNotNullOrAir(leggings) && new ItemBuilder(helmet).model().equalsIgnoreCase(anglerPants))
+		if (Nullables.isNotNullOrAir(leggings) && anglerPants.equalsIgnoreCase(new ItemBuilder(leggings).model()))
 			luck += 4;
 
 		// Tools - In hand
