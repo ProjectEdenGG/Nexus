@@ -25,7 +25,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.features.trains.Pugma
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.trains.Pugmas25Train;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25AnglerLoot;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25District;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25SellCrateType;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25SellCrate.Pugmas25SellCrateType;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25NPC;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25Quest;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestWaypoint;
