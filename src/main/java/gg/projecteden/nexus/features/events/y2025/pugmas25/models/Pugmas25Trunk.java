@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// TODO: POTION COLOR ?
 @Getter
 @AllArgsConstructor
 public enum Pugmas25Trunk {
