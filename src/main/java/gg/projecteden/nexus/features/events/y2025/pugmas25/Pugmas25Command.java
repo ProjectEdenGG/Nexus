@@ -84,7 +84,6 @@ import static gg.projecteden.nexus.utils.StringUtils.xyzw;
 @HideFromWiki
 @NoArgsConstructor
 @Aliases("pugmas")
-@Permission(Group.STAFF)
 @Redirect(from = "/advent", to = "/pugmas25 advent")
 public class Pugmas25Command extends IEventCommand implements Listener {
 	public String PREFIX = Pugmas25.PREFIX;
@@ -411,6 +410,7 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 	}
 
 	@Path("slotMachine rewards")
+	@Permission(Group.ADMIN)
 	void slotMachine_rewards() {
 		new Pugmas25SlotMachineRewardMenu().open(player());
 	}

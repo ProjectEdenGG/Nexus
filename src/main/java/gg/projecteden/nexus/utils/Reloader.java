@@ -214,7 +214,7 @@ public class Reloader {
 			for (Quester quester : new QuesterService().getOnline())
 				if (quester.getDialog() != null)
 					if (quester.getDialog().getTaskId().get() > 0)
-						throw new InvalidInputException("Someone is in a quest dialog");
+						throw new InvalidInputException(quester.getNickname() + " is in a quest dialog");
 		}),
 		RESOURCE_PACK(() -> {
 			if (ResourcePack.isReloading())

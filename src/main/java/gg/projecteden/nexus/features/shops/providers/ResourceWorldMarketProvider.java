@@ -39,11 +39,10 @@ public class ResourceWorldMarketProvider extends ShopProvider {
 		final List<Product> products = Market.RESOURCE_WORLD_PRODUCTS;
 
 		contents.set(0, 8, ClickableItem.of(autoSellBehavior.getSettingItem(), e -> {
-				shop.setResourceMarketAutoSellBehavior(autoSellBehavior.nextWithLoop());
-				service.save(shop);
-				open(viewer, contents.pagination().getPage());
-			}
-		));
+			shop.setResourceMarketAutoSellBehavior(autoSellBehavior.nextWithLoop());
+			service.save(shop);
+			open(viewer, contents.pagination().getPage());
+		}));
 
 		List<ClickableItem> items = new ArrayList<>();
 
