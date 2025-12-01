@@ -84,6 +84,7 @@ public enum Pugmas25QuestTask implements IQuestTask {
 		.objective("Find and enter the cabin")
 		.waypoint(Pugmas25QuestWaypoint.CABIN)
 		.enterRegion(Pugmas25.get().getWorld(), Pugmas25Cabin.DOOR_REGION)
+		.reward(Pugmas25QuestReward.SPARKLER)
 	),
 
 	SNOWMEN_1(InteractQuestTask.builder()
