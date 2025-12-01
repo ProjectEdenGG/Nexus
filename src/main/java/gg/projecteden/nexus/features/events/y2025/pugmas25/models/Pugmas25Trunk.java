@@ -19,19 +19,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// TODO: POTION COLOR ?
 @Getter
 @AllArgsConstructor
 public enum Pugmas25Trunk {
 	DIAMOND(ItemModelType.EVENT_TRUNK_DIAMOND, new HashMap<>() {{
-		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.NIGHT_VISION, (int) TickTime.MINUTE.x(8)).build(), 15d);
-		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.SPEED, (int) TickTime.MINUTE.x(8)).build(), 15d);
-		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.REGENERATION, (int) TickTime.MINUTE.x(8)).build(), 15d);
-		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.STRENGTH, (int) TickTime.MINUTE.x(8)).build(), 15d);
-		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.FIRE_RESISTANCE, (int) TickTime.MINUTE.x(8)).build(), 15d);
-		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.RESISTANCE, (int) TickTime.MINUTE.x(8)).build(), 15d);
-		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.HEALTH_BOOST, (int) TickTime.MINUTE.x(8)).build(), 15d);
-		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.SATURATION, (int) TickTime.MINUTE.x(8)).build(), 15d);
-		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.ABSORPTION, (int) TickTime.MINUTE.x(8)).build(), 15d);
+		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.NIGHT_VISION, (int) TickTime.SECOND.x(60 * 8)).name("Potion of Night Vision").build(), 15d);
+		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.SPEED, (int) TickTime.SECOND.x(60 * 8)).name("Potion of Swiftness").build(), 15d);
+		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.REGENERATION, (int) TickTime.SECOND.x(60 * 8)).name("Potion of Regeneration").build(), 15d);
+		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.STRENGTH, (int) TickTime.SECOND.x(60 * 8)).name("Potion of Strength").build(), 15d);
+		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.FIRE_RESISTANCE, (int) TickTime.SECOND.x(60 * 8)).name("Potion of Fire Resistance").build(), 15d);
+		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.RESISTANCE, (int) TickTime.SECOND.x(60 * 8)).name("Potion of Resistance").build(), 15d);
+		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.HEALTH_BOOST, (int) TickTime.SECOND.x(60 * 8)).name("Potion of Healing").build(), 15d);
+		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.SATURATION, (int) TickTime.SECOND.x(60 * 8)).name("Potion of Saturation").build(), 15d);
+		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.ABSORPTION, (int) TickTime.SECOND.x(60 * 8)).name("Potion of Absorption").build(), 15d);
 		put(new ItemBuilder(Material.DIAMOND).build(), 10d);
 		put(new ItemBuilder(Material.EMERALD).build(), 8d);
 		put(new ItemBuilder(Material.NETHERITE_SCRAP).build(), 5d);
@@ -39,13 +40,13 @@ public enum Pugmas25Trunk {
 		put(Pugmas25QuestItem.LUCKY_HORSESHOE.get(), 1d);
 	}}),
 	GOLD(ItemModelType.EVENT_TRUNK_GOLDEN, new HashMap<>() {{
-		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.NIGHT_VISION, (int) TickTime.MINUTE.x(5)).build(), 10d);
-		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.SPEED, (int) TickTime.MINUTE.x(5)).build(), 10d);
-		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.REGENERATION, (int) TickTime.MINUTE.x(5)).build(), 10d);
-		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.STRENGTH, (int) TickTime.MINUTE.x(5)).build(), 10d);
-		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.FIRE_RESISTANCE, (int) TickTime.MINUTE.x(5)).build(), 10d);
-		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.RESISTANCE, (int) TickTime.MINUTE.x(5)).build(), 10d);
-		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.HEALTH_BOOST, (int) TickTime.MINUTE.x(5)).build(), 10d);
+		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.NIGHT_VISION, (int) TickTime.SECOND.x(60 * 5)).name("Potion of Night Vision").build(), 10d);
+		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.SPEED, (int) TickTime.SECOND.x(60 * 5)).name("Potion of Swiftness").build(), 10d);
+		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.REGENERATION, (int) TickTime.SECOND.x(60 * 5)).name("Potion of Regeneration").build(), 10d);
+		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.STRENGTH, (int) TickTime.SECOND.x(60 * 5)).name("Potion of Strength").build(), 10d);
+		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.FIRE_RESISTANCE, (int) TickTime.SECOND.x(60 * 5)).name("Potion of Fire Resistance").build(), 10d);
+		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.RESISTANCE, (int) TickTime.SECOND.x(60 * 5)).name("Potion of Resistance").build(), 10d);
+		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.HEALTH_BOOST, (int) TickTime.SECOND.x(60 * 5)).name("Potion of Healing").build(), 10d);
 		put(new ItemBuilder(Material.LAPIS_LAZULI).build(), 8d);
 		put(new ItemBuilder(Material.IRON_INGOT).build(), 5d);
 		put(new ItemBuilder(Material.DIAMOND).build(), 5d);

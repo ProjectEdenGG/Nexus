@@ -61,6 +61,7 @@ public class Pugmas25Intro implements Listener {
 					_player.setHealth(20);
 					_player.setFoodLevel(20);
 					_player.getInventory().clear();
+					_player.clearActivePotionEffects();
 				}
 			})
 			.next(TickTime.SECOND.x(2), _player -> {
