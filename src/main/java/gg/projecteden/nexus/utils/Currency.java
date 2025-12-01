@@ -228,6 +228,11 @@ public enum Currency {
 		public void _withdraw(Player player, Price price, ShopGroup shopGroup, Product product) {
 			new EventUserService().get(player).charge(price.asInteger());
 		}
+
+		@Override
+		protected void _deposit(Player player, Price price) {
+			new EventUserService().get(player).giveTokens(price.asInteger());
+		}
 	},
 	VOTE_POINTS() {
 		@Override
@@ -243,6 +248,11 @@ public enum Currency {
 		@Override
 		public void _withdraw(Player player, Price price, ShopGroup shopGroup, Product product) {
 			new VoterService().get(player).takePoints(price.asInteger());
+		}
+
+		@Override
+		protected void _deposit(Player player, Price price) {
+			new VoterService().get(player).givePoints(price.asInteger());
 		}
 	},
 	MINIGAME_TOKENS() {
