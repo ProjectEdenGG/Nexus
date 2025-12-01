@@ -55,9 +55,6 @@ public class Pugmas25GiftGiver implements Listener {
 		if (!ItemModelType.PUGMAS_GIFT.is(tool))
 			return;
 
-		if (!Pugmas25.get().isAtEvent(player))
-			return;
-
 		transferGift(tool, player, recipient);
 	}
 
@@ -69,9 +66,6 @@ public class Pugmas25GiftGiver implements Listener {
 
 		var tool = event.getItem();
 		if (!ItemModelType.PUGMAS_GIFT.is(tool))
-			return;
-
-		if (!Pugmas25.get().isAtEvent(player))
 			return;
 
 		var target = player.getTargetEntity(7);

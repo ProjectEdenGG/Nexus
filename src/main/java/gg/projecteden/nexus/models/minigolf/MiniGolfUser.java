@@ -172,7 +172,7 @@ public class MiniGolfUser implements PlayerOwnedObject {
 		removeOtherGolfBallStylesFromInventory();
 
 		for (ItemStack itemStack : MiniGolfUtils.KIT)
-			if (!PlayerUtils.playerHas(this, itemStack))
+			if (!PlayerUtils.playerHas(this, itemStack) && PlayerUtils.hasRoomFor(this, itemStack))
 				PlayerUtils.giveItem(getOnlinePlayer(), itemStack);
 
 		giveGolfBall();
@@ -197,7 +197,7 @@ public class MiniGolfUser implements PlayerOwnedObject {
 
 	public void giveGolfBall() {
 		var itemStack = MiniGolfUtils.getGolfBall(getStyle());
-		if (!PlayerUtils.playerHas(this, itemStack))
+		if (!PlayerUtils.playerHas(this, itemStack) || PlayerUtils.hasRoomFor(this, itemStack))
 			PlayerUtils.giveItem(getOnlinePlayer(), itemStack);
 	}
 

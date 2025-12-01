@@ -49,7 +49,7 @@ public class Pugmas25Advent implements Listener {
 			public ItemStack modify(ClientSideUser user, ClientSideItemFrame itemFrame) {
 				var present = Advent25Config.getPresent(itemFrame);
 				if (present == null)
-					return itemFrame.content();
+					return null;
 
 				var adventUser = service.get(user).advent();
 				var status = adventUser.getStatus(present);

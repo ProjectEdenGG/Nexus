@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.clientside.models;
 
 import dev.morphia.annotations.Entity;
 import fr.moribus.imageonmap.image.MapInitEvent;
-import gg.projecteden.nexus.models.clientside.ClientSideConfig.ClientSideItemFrameModifier;
 import gg.projecteden.nexus.models.clientside.ClientSideUser;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
@@ -14,7 +13,6 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
-import net.minecraft.network.syncher.SynchedEntityData.DataValue;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.level.saveddata.maps.MapDecoration;
@@ -153,17 +151,24 @@ public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFram
 
 	@Override
 	public @NotNull List<Packet<ClientGamePacketListener>> getUpdatePackets(Player player) {
+		var user = ClientSideUser.of(player);
 		var original = entity().getItem();
-		for (ClientSideItemFrameModifier modifier : ITEM_FRAME_MODIFIERS) {
-			var item = modifier.modify(ClientSideUser.of(player), this);
+
+		for (var modifier : ITEM_FRAME_MODIFIERS) {
+			var item = modifier.modify(user, this);
+			if (item == null)
+				continue;
+
 			entity.setItem(NMSUtils.toNMS(item), true, makeSound);
+			break;
 		}
 
-		final List<DataValue<?>> values = entity().getEntityData().packAll();
-		List<Packet<ClientGamePacketListener>> packets = Collections.singletonList(new ClientboundSetEntityDataPacket(entity.getId(), values));
+		var values = entity().getEntityData().packAll();
+		var packet = new ClientboundSetEntityDataPacket(entity.getId(), values);
 
 		entity.setItem(original, true, makeSound);
-		return packets;
+
+		return Collections.singletonList(packet);
 	}
 
 }

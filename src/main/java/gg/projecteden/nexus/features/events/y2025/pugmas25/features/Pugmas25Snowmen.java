@@ -31,7 +31,7 @@ public class Pugmas25Snowmen implements Listener {
 			public ItemStack modify(ClientSideUser user, ClientSideItemFrame itemFrame) {
 				Pugmas25Snowman snowman = Pugmas25Snowman.fromFrameLocation(itemFrame.getLocation());
 				if (snowman == null)
-					return itemFrame.content();
+					return null;
 
 				DecorationType display = DecorationType.SNOWMAN_PLAIN;
 				var pugmasUser = new Pugmas25UserService().get(user);
@@ -48,7 +48,7 @@ public class Pugmas25Snowmen implements Listener {
 		if (!Pugmas25.get().shouldHandle(event.getPlayer()))
 			return;
 
-		if (event.getDecorationType() != DecorationType.SNOWMAN_PLAIN && event.getDecorationType() != DecorationType.SNOWMAN_FANCY)
+		if (event.getDecorationType() != DecorationType.SNOWMAN_PLAIN)
 			return;
 
 		Pugmas25Snowman snowman = Pugmas25Snowman.fromFrameLocation(event.getDecoration().getClientsideLocation());
@@ -66,10 +66,12 @@ public class Pugmas25Snowmen implements Listener {
 		pugmasUser.decorateSnowman(snowman);
 		userService.save(pugmasUser);
 
-		if (pugmasUser.getDecoratedSnowmen().size() == Pugmas25Snowman.values().length) {
-			PlayerUtils.removeItem(event.getPlayer(), tool);
-			PlayerUtils.giveItem(event.getPlayer(), Pugmas25QuestItem.BOX_OF_DECORATIONS_EMPTY.get());
-		}
+		if (pugmasUser.getDecoratedSnowmen().size() != Pugmas25Snowman.values().length)
+			return;
+
+		PlayerUtils.removeItem(event.getPlayer(), tool);
+		PlayerUtils.giveItem(event.getPlayer(), Pugmas25QuestItem.BOX_OF_DECORATIONS_EMPTY.get());
 	}
 
 }
+

@@ -65,6 +65,7 @@ import gg.projecteden.nexus.models.pugmas25.Pugmas25Config;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25ConfigService;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
+import gg.projecteden.nexus.models.quests.Quest;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.models.warps.WarpType;
@@ -212,23 +213,30 @@ public class Pugmas25 extends EdenEvent {
 
 		Pugmas25UserService userService = new Pugmas25UserService();
 		QuesterService questerService = new QuesterService();
-		ParticleBuilder particleBuilder = new ParticleBuilder(Particle.HAPPY_VILLAGER).offset(0.25, 0.25, 0.25).count(10);
+		ParticleBuilder particleBuilder = new ParticleBuilder(Particle.HAPPY_VILLAGER)
+			.offset(0.25, 0.25, 0.25)
+			.count(10);
 		Set<Location> nutCrackers = new Pugmas25ConfigService().get0().getNutCrackerLocations();
 		Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
 			getOnlinePlayers().forEach(player -> {
 				var particle = particleBuilder.clone().receivers(player);
 				Quester quester = questerService.get(player);
 				// real quests
-				var incompleteQuests = quester.getQuests().stream().filter(quest -> !quest.isComplete()).toList();
-				if (!incompleteQuests.isEmpty()) {
-					incompleteQuests.forEach(quest -> {
-						var interactable = quest.getCurrentTaskStep().getInteractable();
-						if (interactable instanceof Pugmas25NPC pugmas25NPC) {
-							NPC npc = CitizensUtils.getNPC(pugmas25NPC.getNpcId());
-							if (npc != null)
-								particle.location(npc.getStoredLocation().toCenterLocation()).spawn();
-						}
-					});
+				for (Pugmas25Quest pugmas25Quest : Pugmas25Quest.values()) {
+					var quest = quester.getQuest(pugmas25Quest);
+					if (quest.isComplete())
+						continue;
+
+					var interactable = quest.getCurrentTaskStep().getInteractable();
+					if (interactable instanceof Pugmas25NPC pugmas25NPC) {
+						NPC npc = CitizensUtils.getNPC(pugmas25NPC.getNpcId());
+						if (npc == null)
+							continue;
+
+						particle.clone()
+							.location(npc.getStoredLocation().toCenterLocation())
+							.spawn();
+					}
 				}
 
 				// fake quests
@@ -241,7 +249,9 @@ public class Pugmas25 extends EdenEvent {
 					if (npc == null)
 						continue;
 
-					particle.location(npc.getStoredLocation().toCenterLocation()).spawn();
+					particle.clone()
+						.location(npc.getStoredLocation().toCenterLocation())
+						.spawn();
 				}
 
 				// Nutcrackers
@@ -249,7 +259,9 @@ public class Pugmas25 extends EdenEvent {
 				Set<Location> nutCrackersLeft = new HashSet<>(nutCrackers);
 				nutCrackersLeft.removeAll(user.getFoundNutCrackers());
 				for (Location nutCracker : nutCrackersLeft) {
-					particle.location(nutCracker.toCenterLocation()).spawn();
+					particle.clone()
+						.location(nutCracker.toCenterLocation())
+						.spawn();
 				}
 			});
 		});
@@ -282,6 +294,16 @@ public class Pugmas25 extends EdenEvent {
 
 	@EventHandler
 	public void on(PlayerJoinEvent event) {
+		var quester = new QuesterService().get(event.getPlayer());
+		quests: for (Pugmas25Quest pugmas25Quest : Pugmas25Quest.values()) {
+			for (Quest quest : new ArrayList<>(quester.getQuests())) {
+				if (quest.getQuest() == pugmas25Quest)
+					continue quests;
+
+				pugmas25Quest.assign(quester);
+			}
+		}
+
 		if (!shouldHandle(event.getPlayer()))
 			return;
 
@@ -1062,3 +1084,4 @@ public class Pugmas25 extends EdenEvent {
 	}
 
 }
+

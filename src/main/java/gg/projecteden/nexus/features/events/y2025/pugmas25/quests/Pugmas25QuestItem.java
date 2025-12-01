@@ -38,6 +38,7 @@ public enum Pugmas25QuestItem implements QuestItem {
 	BOX_OF_DECORATIONS(new ItemBuilder(ItemModelType.BOX_OF_DECORATIONS)
 		.name("&oBox of Decorations")
 		.lore("&3Quest Item")
+		.interactable()
 		.undroppable()
 		.untrashable()
 		.unframeable()),

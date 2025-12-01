@@ -5,10 +5,6 @@ import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waystone;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
-import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.annotations.Rows;
-import gg.projecteden.nexus.features.menus.api.annotations.Title;
-import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
@@ -16,20 +12,16 @@ import gg.projecteden.nexus.models.clientside.ClientSideConfig.ClientSideItemFra
 import gg.projecteden.nexus.models.clientside.ClientSideUser;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
-import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.DialogUtils.DialogBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Pugmas25Waystones implements Listener {
 
@@ -41,11 +33,11 @@ public class Pugmas25Waystones implements Listener {
 		ClientSideConfig.registerItemFrameModifier(new ClientSideItemFrameModifier() {
 			@Override
 			public ItemStack modify(ClientSideUser user, ClientSideItemFrame itemFrame) {
-				Pugmas25Waystone waystone = Pugmas25Waystone.fromFrameLocation(itemFrame.getLocation());
+				var waystone = Pugmas25Waystone.fromFrameLocation(itemFrame.getLocation());
 				if (waystone == null)
-					return itemFrame.content();
+					return null;
 
-				DecorationType display = DecorationType.WAYSTONE;
+				var display = DecorationType.WAYSTONE;
 				var pugmasUser = new Pugmas25UserService().get(user);
 				if (pugmasUser.getFoundWaystones().contains(waystone))
 					display = DecorationType.WAYSTONE_ACTIVATED;
@@ -69,7 +61,7 @@ public class Pugmas25Waystones implements Listener {
 
 		Pugmas25User pugmasUser = userService.get(event.getPlayer());
 		if (pugmasUser.getFoundWaystones().contains(waystone)) {
-			new Pugmas25WaystoneMenu(waystone).open(event.getPlayer());
+			new Pugmas25WaystoneMenu(event.getPlayer(), waystone).open();
 			return;
 		}
 
@@ -89,41 +81,50 @@ public class Pugmas25Waystones implements Listener {
 		if (!Pugmas25QuestItem.MAGIC_MIRROR.fuzzyMatch(item) && !Pugmas25QuestItem.PDA.fuzzyMatch(item))
 			return;
 
-		new Pugmas25WaystoneMenu().open(event.getPlayer());
+		new Pugmas25WaystoneMenu(event.getPlayer()).open();
 	}
 
-	@Rows(3)
-	@Title("Teleport to a waystone:")
-	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class Pugmas25WaystoneMenu extends InventoryProvider {
-		@Nullable
-		private Pugmas25Waystone clickedWayStone;
+	public static class Pugmas25WaystoneMenu {
+		private final Player player;
+		private final Pugmas25Waystone clickedWayStone;
 
-		@Override
-		public void init() {
-			addCloseItem();
+		public Pugmas25WaystoneMenu(Player player) {
+			this.player = player;
+			this.clickedWayStone = null;
+		}
 
-			List<ClickableItem> items = new ArrayList<>();
-			Pugmas25User user = new Pugmas25UserService().get(viewer);
-			for (Pugmas25Waystone waystone : user.getFoundWaystones()) {
-				if (clickedWayStone != null && waystone == clickedWayStone)
+		public void open() {
+			var dialog = new DialogBuilder()
+				.title("Teleport to a waystone:")
+				.bodyText("")
+				.bodyText("")
+				.multiAction()
+				.columns(2);
+
+			var user = new Pugmas25UserService().get(player);
+			for (Pugmas25Waystone waystone : Pugmas25Waystone.values()) {
+				if (!user.getFoundWaystones().contains(waystone)) {
+					dialog.button("&8" + StringUtils.camelCase(waystone));
 					continue;
+				}
 
-				ItemBuilder item = DecorationType.WAYSTONE_ACTIVATED.getConfig().getItemBuilder().name(StringUtils.camelCase(waystone)).resetLore();
-				items.add(ClickableItem.of(item, e -> teleport(waystone)));
+				if (clickedWayStone != null && waystone == clickedWayStone) {
+					dialog.button("&8" + StringUtils.camelCase(waystone));
+					continue;
+				}
+
+				dialog.button(StringUtils.camelCase(waystone), action -> teleport(waystone));
 			}
 
-			paginate(items);
+			dialog.open(player);
 		}
 
 		private void teleport(Pugmas25Waystone waystone) {
-			close();
-
-			Pugmas25.get().fadeToBlack(viewer)
+			Pugmas25.get().fadeToBlack(player)
 				.thenRun(() -> {
-					Pugmas25.get().poof(viewer.getLocation());
-					viewer.teleportAsync(waystone.getWarpLoc(), TeleportCause.PLUGIN).thenRun(() -> {
+					Pugmas25.get().poof(player.getLocation());
+					player.teleportAsync(waystone.getWarpLoc(), TeleportCause.PLUGIN).thenRun(() -> {
 						Pugmas25.get().poof(waystone.getWarpLoc());
 					});
 				});
