@@ -71,6 +71,7 @@ public enum Pugmas25QuestTask implements IQuestTask {
 			.npc("Not at all! Really, someone should be keeping an eye on it anyway. It's been locked up for weeks and is starting to look a little abandoned.")
 			.player("Well... if you're certain, then I'd be grateful to take you up on that offer.")
 			.npc("Wonderful! Here, take this key. The cabin is directly west of the Great Tree, you can't miss it.")
+			.npc("And there should be a extra Coin Pouch in the barrel inside, so you have somewhere to keep your coins!")
 			.thenRun(quester -> {
 				new Pugmas25UserService().edit(quester, user -> user.setUnlockedCabin(true));
 				quester.sendMessage("&7&o[You can now enter the cabin]");
