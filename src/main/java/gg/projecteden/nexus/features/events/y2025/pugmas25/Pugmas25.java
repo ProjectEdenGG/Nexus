@@ -787,7 +787,7 @@ public class Pugmas25 extends EdenEvent {
 				return switch (getStatus(user)) {
 					case NOT_STARTED -> List.of(
 						"&3 " + getName() + " &7- &eStarted",
-						"&7   - &eFind a mini nutcracker"
+						"&7   - Find a mini nutcracker"
 					);
 					case IN_PROGRESS -> List.of(
 						"&3 " + getName() + " &7- &eStarted",
@@ -823,7 +823,7 @@ public class Pugmas25 extends EdenEvent {
 				return switch (getStatus(user)) {
 					case NOT_STARTED -> List.of(
 						"&3 " + getName() + " &7- &eStarted",
-						"&7   - &eTalk to the Elf"
+						"&7   - Talk to the Elf"
 					);
 					case IN_PROGRESS -> List.of(
 						"&3 " + getName() + " &7- &eStarted",
@@ -854,7 +854,7 @@ public class Pugmas25 extends EdenEvent {
 				return switch (getStatus(user)) {
 					case NOT_STARTED -> List.of(
 						"&3 " + getName() + " &7- &eStarted",
-						" &7- &eTalk to the Angler"
+						"&7   - Talk to the Angler"
 					);
 					case IN_PROGRESS -> List.of(
 						"&3 " + getName() + " &7- &eStarted",
@@ -883,7 +883,7 @@ public class Pugmas25 extends EdenEvent {
 				return switch (getStatus(user)) {
 					case NOT_STARTED -> List.of(
 						"&3 " + getName() + " &7- &eStarted",
-						"&7   - &eTalk to the Aeronaut"
+						"&7   - Talk to the Aeronaut"
 					);
 					case IN_PROGRESS -> List.of(
 						"&3 " + getName() + " &7- &eStarted",
@@ -929,7 +929,10 @@ public class Pugmas25 extends EdenEvent {
 
 				switch (getStatus(user)) {
 					case NOT_STARTED -> {
-						return List.of("&3 " + getName() + " &7- &ePlay Minigolf, Frogger, WhacAWakka, and Reflection");
+						return List.of(
+							"&3 " + getName() + " &7- &eStarted",
+							"&7   - Play Minigolf, Frogger, WhacAWakka, and Reflection"
+						);
 					}
 					case IN_PROGRESS -> {
 						List<String> result = new ArrayList<>();
