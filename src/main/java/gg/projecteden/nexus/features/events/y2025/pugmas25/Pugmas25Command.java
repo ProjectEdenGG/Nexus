@@ -366,12 +366,10 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 	@Path("advent config setLootOrigin")
 	@Permission(Group.ADMIN)
 	void advent_lootOrigin() {
-		final Block block = getTargetBlockRequired();
-
-		adventConfig.setLootOrigin(block.getLocation());
+		adventConfig.setLootOrigin(location());
 		adventService.save(adventConfig);
 
-		send(PREFIX + "lootOrigin configured at " + StringUtils.xyz(adventConfig.getLootOrigin()));
+		send(PREFIX + "lootOrigin configured at " + xyzw(adventConfig.getLootOrigin()));
 	}
 
 	@Path("advent config create <day>")
