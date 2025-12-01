@@ -785,9 +785,14 @@ public class Pugmas25 extends EdenEvent {
 				int numTotal = Pugmas25Config.get().getNutCrackerLocations().size();
 
 				return switch (getStatus(user)) {
-					case NOT_STARTED -> List.of("&3 " + getName() + " &7- &eFind a mini nutcracker");
-					case IN_PROGRESS ->
-						List.of("&3 " + getName() + " &7- &eStarted", "&7   - " + numCollected + "/" + numTotal + " mini nutcrackers found");
+					case NOT_STARTED -> List.of(
+						"&3 " + getName() + " &7- &eStarted",
+						"&7   - &eFind a mini nutcracker"
+					);
+					case IN_PROGRESS -> List.of(
+						"&3 " + getName() + " &7- &eStarted",
+						"&7   - " + numCollected + "/" + numTotal + " mini nutcrackers found"
+					);
 					case COMPLETED -> List.of("&3 " + getName() + " &7- &aCompleted");
 				};
 			}
@@ -816,9 +821,14 @@ public class Pugmas25 extends EdenEvent {
 				int numTotal = Advent25Config.get().getDays().size();
 
 				return switch (getStatus(user)) {
-					case NOT_STARTED -> List.of("&3 " + getName() + " &7- &eTalk to the Elf");
-					case IN_PROGRESS ->
-						List.of("&3 " + getName() + " &7- &eStarted", "&7   - " + numCollected + "/" + numTotal + " presents collected");
+					case NOT_STARTED -> List.of(
+						"&3 " + getName() + " &7- &eStarted",
+						"&7   - &eTalk to the Elf"
+					);
+					case IN_PROGRESS -> List.of(
+						"&3 " + getName() + " &7- &eStarted",
+						"&7   - " + numCollected + "/" + numTotal + " presents collected"
+					);
 					case COMPLETED -> List.of("&3 " + getName() + " &7- &aCompleted");
 				};
 			}
@@ -842,9 +852,14 @@ public class Pugmas25 extends EdenEvent {
 				var timeUntilReset = TimeUtils.Timespan.of(Pugmas25.get().now(), config.getAnglerQuestResetDateTime()).format(FormatType.LONG);
 
 				return switch (getStatus(user)) {
-					case NOT_STARTED -> List.of("&3 " + getName() + " &7- &eTalk to the Angler");
-					case IN_PROGRESS ->
-						List.of("&3 " + getName() + " &7- &eStarted", "&7   - Talk to the Angler for more info");
+					case NOT_STARTED -> List.of(
+						"&3 " + getName() + " &7- &eStarted",
+						" &7- &eTalk to the Angler"
+					);
+					case IN_PROGRESS -> List.of(
+						"&3 " + getName() + " &7- &eStarted",
+						"&7   - Talk to the Angler for more info"
+					);
 					case COMPLETED ->
 						List.of("&3 " + getName() + " &7- &aCompleted (resets in " + timeUntilReset + ")");
 				};
@@ -866,9 +881,14 @@ public class Pugmas25 extends EdenEvent {
 			@Nullable
 			List<String> getProgressMessage(Pugmas25User user) {
 				return switch (getStatus(user)) {
-					case NOT_STARTED -> List.of("&3 " + getName() + " &7- &eTalk to the Aeronaut");
-					case IN_PROGRESS ->
-						List.of("&3 " + getName() + " &7- &eStarted", "&7   - Save your hot air balloon");
+					case NOT_STARTED -> List.of(
+						"&3 " + getName() + " &7- &eStarted",
+						"&7   - &eTalk to the Aeronaut"
+					);
+					case IN_PROGRESS -> List.of(
+						"&3 " + getName() + " &7- &eStarted",
+						"&7   - Save your hot air balloon"
+					);
 					case COMPLETED -> List.of("&3 " + getName() + " &7- &aCompleted");
 				};
 			}
