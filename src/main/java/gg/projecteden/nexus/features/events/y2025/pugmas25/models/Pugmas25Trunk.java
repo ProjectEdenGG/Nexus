@@ -37,7 +37,7 @@ public enum Pugmas25Trunk {
 		put(new ItemBuilder(Material.EMERALD).build(), 8d);
 		put(new ItemBuilder(Material.NETHERITE_SCRAP).build(), 5d);
 		put(new ItemBuilder(Material.NETHERITE_INGOT).build(), 2d);
-		put(Pugmas25QuestItem.LUCKY_HORSESHOE.get(), 1d);
+		put(Pugmas25QuestItem.LUCKY_HORSESHOE.get(), 0.5d);
 	}}),
 	GOLD(ItemModelType.EVENT_TRUNK_GOLDEN, new HashMap<>() {{
 		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.NIGHT_VISION, (int) TickTime.SECOND.x(60 * 5)).name("Potion of Night Vision").build(), 10d);

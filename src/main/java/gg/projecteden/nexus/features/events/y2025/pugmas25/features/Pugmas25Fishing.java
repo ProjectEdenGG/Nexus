@@ -199,7 +199,7 @@ public class Pugmas25Fishing implements Listener {
 
 		if (Pugmas25QuestItem.LUCKY_HORSESHOE.isInInventoryOf(player))
 			luck += 10;
-		else
+		else if (luck > 15 && RandomUtils.chanceOf(2.5))
 			possibleTreasure.add(Pugmas25QuestItem.LUCKY_HORSESHOE.get());
 
 		// Trunks
@@ -228,7 +228,7 @@ public class Pugmas25Fishing implements Listener {
 
 		// Misc
 		if (luck > 20) {
-			if (!CommonQuestItem.DISCOUNT_CARD.isInInventoryOf(player))
+			if (!CommonQuestItem.DISCOUNT_CARD.isInInventoryOf(player) && RandomUtils.chanceOf(5))
 				possibleTreasure.add(CommonQuestItem.DISCOUNT_CARD.get());
 
 			possibleTreasure.add(Pugmas25QuestItem.SLOT_MACHINE_TOKEN.get());
