@@ -795,6 +795,7 @@ public class Pugmas25 extends EdenEvent {
 				errorMessage(player, ex.getErrorMessage());
 				EventSounds.VILLAGER_NO.play(player);
 			}
+			return true;
 		}
 
 		return super.breakBlock(event);
