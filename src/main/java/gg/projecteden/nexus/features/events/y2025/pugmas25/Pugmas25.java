@@ -69,7 +69,6 @@ import gg.projecteden.nexus.models.pugmas25.Pugmas25Config;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25ConfigService;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
-import gg.projecteden.nexus.models.quests.Quest;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.models.warps.WarpType;
@@ -196,7 +195,6 @@ public class Pugmas25 extends EdenEvent {
 		Pugmas25Train.startup();
 		Pugmas25TrainBackground.startup();
 		Pugmas25ModelTrain.startup();
-		Pugmas25Advent.updateItems();
 
 		Tasks.wait(TickTime.SECOND, () -> getPlayers().forEach(this::onArrive));
 
@@ -337,14 +335,8 @@ public class Pugmas25 extends EdenEvent {
 
 	private static void autoStartQuests(Player player) {
 		var quester = new QuesterService().get(player);
-		quests: for (Pugmas25Quest pugmas25Quest : Pugmas25Quest.values()) {
-			for (Quest quest : new ArrayList<>(quester.getQuests())) {
-				if (quest.getQuest() == pugmas25Quest)
-					continue quests;
-
-				pugmas25Quest.assign(quester);
-			}
-		}
+		for (Pugmas25Quest pugmas25Quest : Pugmas25Quest.values())
+			pugmas25Quest.assign(quester);
 	}
 
 	@EventHandler
