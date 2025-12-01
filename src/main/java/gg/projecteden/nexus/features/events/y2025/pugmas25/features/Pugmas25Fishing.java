@@ -255,7 +255,7 @@ public class Pugmas25Fishing implements Listener {
 			return;
 
 		for (ItemStack item : event.getLoot()) {
-			if (Nullables.isNullOrAir(item))
+			if (Nullables.isNullOrAir(item) || ItemModelType.of(item) == null)
 				continue;
 
 			if (anglerLoot.matches(item)) {
