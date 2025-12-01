@@ -461,9 +461,6 @@ public class Pugmas25 extends EdenEvent {
 				if (!Pugmas25BalloonEditorUtils.isEditing(player)) {
 					dialog.npc("Looks like someone is currently decorating their balloon, come back when they're finished.").send(player);
 					return;
-				} else {
-					dialog.npc("You are already decorating your balloon").send(player);
-					return;
 				}
 			} else {
 				if (Nexus.isMaintenanceQueued()) {
