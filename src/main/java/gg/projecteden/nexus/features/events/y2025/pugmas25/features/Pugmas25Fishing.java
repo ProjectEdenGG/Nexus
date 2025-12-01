@@ -232,7 +232,7 @@ public class Pugmas25Fishing implements Listener {
 				possibleTreasure.add(CommonQuestItem.DISCOUNT_CARD.get());
 
 			possibleTreasure.add(Pugmas25QuestItem.SLOT_MACHINE_TOKEN.get());
-			possibleTreasure.add(Pugmas25QuestItem.GIFT.get());
+			possibleTreasure.add(Pugmas25GiftGiver.getGift(player, 1));
 			possibleTreasure.add(new ItemBuilder(Material.NETHERITE_SCRAP).amount(Pugmas25.getLuckyAmount(1, 2, luck)).build());
 		}
 

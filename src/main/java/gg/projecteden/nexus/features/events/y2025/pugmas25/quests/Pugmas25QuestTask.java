@@ -10,6 +10,8 @@ import gg.projecteden.nexus.features.quests.tasks.InteractQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTask.TaskBuilder;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
+import gg.projecteden.nexus.utils.Currency;
+import gg.projecteden.nexus.utils.Currency.Price;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -114,8 +116,11 @@ public enum Pugmas25QuestTask implements IQuestTask {
 			.npc("Thank you so much! Here's your reward, just like I promised!")
 			.npc("My mom's gonna be so proud!")
 			.take(Pugmas25QuestItem.BOX_OF_DECORATIONS_EMPTY.get())
+			.thenRun(quester -> {
+				quester.sendMessage("&e50 &3event tokens have been added to your balance");
+				Currency.EVENT_TOKENS.deposit(quester.getPlayer(), Price.of(50));
+			})
 		)
-		.reward(Pugmas25QuestReward.SNOWMEN)
 	),
 
 

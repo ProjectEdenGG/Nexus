@@ -212,7 +212,7 @@ public class Pugmas25 extends EdenEvent {
 
 		Pugmas25UserService userService = new Pugmas25UserService();
 		QuesterService questerService = new QuesterService();
-		ParticleBuilder particleBuilder = new ParticleBuilder(Particle.HAPPY_VILLAGER).offset(0.5, 0.5, 0.5).count(15);
+		ParticleBuilder particleBuilder = new ParticleBuilder(Particle.HAPPY_VILLAGER).offset(0.25, 0.25, 0.25).count(10);
 		Set<Location> nutCrackers = new Pugmas25ConfigService().get0().getNutCrackerLocations();
 		Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
 			getOnlinePlayers().forEach(player -> {

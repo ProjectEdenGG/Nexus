@@ -46,7 +46,7 @@ public enum Pugmas25SlotMachineReward {
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
 			//Currency.VOTE_POINTS.deposit(player, Price.of(finalAmount));
-			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3vote points has been added to your balance");
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3vote points have been added to your balance");
 			if (additional > 0)
 				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3vote points given from Lucky Horseshoe");
 		},
@@ -56,7 +56,7 @@ public enum Pugmas25SlotMachineReward {
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
 			//Currency.VOTE_POINTS.deposit(player, Price.of(finalAmount));
-			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3vote points has been added to your balance");
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3vote points have been added to your balance");
 			if (additional > 0)
 				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3vote points given from Lucky Horseshoe");
 		}
@@ -70,7 +70,7 @@ public enum Pugmas25SlotMachineReward {
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
 			//Currency.EVENT_TOKENS.deposit(player, Price.of(finalAmount));
-			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3event tokens has been added to your balance");
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3event tokens have been added to your balance");
 			if (additional > 0)
 				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3event tokens given from Lucky Horseshoe");
 		},
@@ -80,7 +80,7 @@ public enum Pugmas25SlotMachineReward {
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
 			//Currency.EVENT_TOKENS.deposit(player, Price.of(finalAmount));
-			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3event tokens has been added to your balance");
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3event tokens have been added to your balance");
 			if (additional > 0)
 				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3event tokens given from Lucky Horseshoe");
 		}
@@ -94,7 +94,7 @@ public enum Pugmas25SlotMachineReward {
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
 			PlayerUtils.giveItem(player, Pugmas25QuestItem.SLOT_MACHINE_TOKEN.getItemBuilder().clone().amount(finalAmount).build());
-			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3slot machine tokens has been added to your inventory");
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3slot machine tokens have been added to your inventory");
 			if (additional > 0)
 				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3slot machine tokens given from Lucky Horseshoe");
 		},
@@ -104,7 +104,7 @@ public enum Pugmas25SlotMachineReward {
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
 			PlayerUtils.giveItem(player, Pugmas25QuestItem.SLOT_MACHINE_TOKEN.getItemBuilder().clone().amount(finalAmount).build());
-			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3slot machine tokens has been added to your inventory");
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3slot machine tokens have been added to your inventory");
 			if (additional > 0)
 				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3re-rolls given from Lucky Horseshoe");
 		}

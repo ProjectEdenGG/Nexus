@@ -83,7 +83,7 @@ public class Pugmas25GiftGiver implements Listener {
 			.confirmText("&aClaim this gift?")
 			.confirmLore(List.of("&fGifts that have been given to", "&fmore people give better rewards!"))
 			.onConfirm(e -> {
-				PlayerUtils.mailItems(player, Pugmas25GiftGiverReward.of(tool).getItems(), "Pugmas25 Gift", WorldGroup.SURVIVAL);
+				PlayerUtils.mailItems(player, Pugmas25GiftGiverReward.of(tool).getRandomItems(), "Pugmas25 Gift", WorldGroup.SURVIVAL);
 				PlayerUtils.send(player, Pugmas25.PREFIX + "&3Your gift has been mailed to your Survival inbox!");
 				tool.subtract();
 			})

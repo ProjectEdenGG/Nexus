@@ -12,7 +12,6 @@ import java.util.function.BiConsumer;
 @Getter
 @AllArgsConstructor
 public enum Pugmas25QuestReward implements QuestReward {
-	SNOWMEN(((uuid, integer) -> new Pugmas25UserService().get(uuid).sendMessage("TODO: REWARD")))
 	;
 
 	private final BiConsumer<UUID, Integer> consumer;
