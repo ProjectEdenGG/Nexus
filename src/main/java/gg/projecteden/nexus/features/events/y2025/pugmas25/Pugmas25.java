@@ -437,7 +437,7 @@ public class Pugmas25 extends EdenEvent {
 					.npc("See those hot air balloons drifting above the village? They’re all decorated by visitors like you.")
 					.npc("If you'd like your own up there, you're in luck.")
 					.player("How do I get started?")
-					.npc("First you'll pick one of 6 available templates.")
+					.npc("First you'll pick one of 5 available templates.")
 					.npc("Then you'll be able to fly, and paint your balloon however you wish!")
 					.npc("When you're satisfied with your work, talk to me again and I'll help you save your masterpiece.")
 					.npc("Once saved, your balloon will have a chance to spawn above the village like the rest.")
