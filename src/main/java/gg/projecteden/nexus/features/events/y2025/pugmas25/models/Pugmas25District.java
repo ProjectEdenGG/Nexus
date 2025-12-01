@@ -22,7 +22,7 @@ public enum Pugmas25District {
 	FROZEN_LAKE("frozen_lake"),
 	FAIRGROUNDS("fair"),
 	HOT_SPRINGS("hot_springs"),
-	SAWMILL("lumberyard"),
+	LUMBERYARD("lumberyard"),
 	RIVER("river"),
 	CAVES("caves"),
 	//

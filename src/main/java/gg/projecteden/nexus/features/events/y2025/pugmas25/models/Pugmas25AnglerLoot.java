@@ -80,15 +80,15 @@ public enum Pugmas25AnglerLoot {
 		"That sneaky koi at the fairgrounds keeps pulling pranks once night falls. Go catch it so it stops tying knots in my fishing line!",
 		"The fairgrounds get way too mischievous at night, something keeps pulling pranks on fishermen. Bring me the culprit!"
 	)),
-	SPLINTERTAIL(Pugmas25District.SAWMILL, EventFishingLootTime.BOTH, ItemModelType.FISHING_LOOT_SABLEFISH, List.of(
+	SPLINTERTAIL(Pugmas25District.LUMBERYARD, EventFishingLootTime.BOTH, ItemModelType.FISHING_LOOT_SABLEFISH, List.of(
 		"There’s something in the lumberyard waters that stabbed me with a SPLINTER. A SPLINTER! Go catch it so I can file a formal complaint.",
 		"I found something swimming in the lumberyard runoff that’s sharper than the lumber. Go snag it before someone loses a finger!"
 	)),
-	SAWTOOTH_CARP(Pugmas25District.SAWMILL, EventFishingLootTime.DAY, ItemModelType.FISHING_LOOT_SAWFISH, List.of(
-		"Something in the sawmill waters during the day keeps chewing on woodchips like they're snacks. Bring me the sawdust junkie.",
-		"I heard gnawing in the sawmill water while the sun was up. Bring me the beaver impersonator."
+	SAWTOOTH_CARP(Pugmas25District.LUMBERYARD, EventFishingLootTime.DAY, ItemModelType.FISHING_LOOT_SAWFISH, List.of(
+		"Something in the lumberyard waters during the day keeps chewing on woodchips like they're snacks. Bring me the sawdust junkie.",
+		"I heard gnawing in the lumberyard waters while the sun was up. Bring me the beaver impersonator."
 	)),
-	WOODWORM_EEL(Pugmas25District.SAWMILL, EventFishingLootTime.NIGHT, ItemModelType.FISHING_LOOT_EEL, List.of(
+	WOODWORM_EEL(Pugmas25District.LUMBERYARD, EventFishingLootTime.NIGHT, ItemModelType.FISHING_LOOT_EEL, List.of(
 		"There’s a slippery critter tunneling through soggy boards behind the sawmill during the night. Fetch it before it eats the building.",
 		"The sawmill gets suspiciously creaky at night, thanks to a slimy thing gnawing the wood. Reel it in."
 	)),
