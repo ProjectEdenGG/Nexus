@@ -78,6 +78,7 @@ public enum ItemModelType {
 	HAND_MISC_FLOWER_BRACELET_ALEX("costumes/hand/misc/flower_bracelet_alex"),
 	HAND_MISC_FLOWER_BRACELET_STEVE("costumes/hand/misc/flower_bracelet_steve"),
 	HAND_MISC_PIRATE_HOOK("costumes/hand/misc/pirate_hook", true),
+	HAND_MISC_SPARKLER("costumes/hand/misc/sparkler", true),
 	HAND_MISC_RAINBOW_BRACELET_ALEX("costumes/hand/misc/rainbow_bracelet_alex"),
 	HAND_MISC_RAINBOW_BRACELET_STEVE("costumes/hand/misc/rainbow_bracelet_steve"),
 	HAND_MISC_SNAIL_SMALL("costumes/hand/misc/snail_small"),
