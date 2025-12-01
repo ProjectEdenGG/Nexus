@@ -3,12 +3,14 @@ package gg.projecteden.nexus.features.events.y2025.pugmas25.features;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25SellCrateType;
+import gg.projecteden.nexus.features.quests.CommonQuestItem;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.utils.Currency;
 import gg.projecteden.nexus.utils.Currency.Price;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MerchantBuilder.TradeBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -44,6 +46,11 @@ public class Pugmas25SellCrate implements Listener {
 			return;
 
 		event.setCancelled(true);
+
+		if (CommonQuestItem.COIN_POUCH.isNotInInventoryOf(event.getPlayer())) {
+			PlayerUtils.send(event.getPlayer(), Pugmas25.PREFIX + "&cYou need your Coin Pouch to open the sell crate");
+			return;
+		}
 
 		Player player = event.getPlayer();
 		Pugmas25User user = new Pugmas25UserService().get(player);
@@ -88,25 +95,34 @@ public class Pugmas25SellCrate implements Listener {
 				if (Nullables.isNullOrAir(ingredient)) continue;
 				if (Nullables.isNullOrAir(result)) continue;
 
-				if (item.getType().equals(ingredient.getType())) {
-					if (item.getAmount() >= ingredient.getAmount()) {
-						double loops = Math.ceil((item.getAmount() + 0D) / ingredient.getAmount());
-						for (double i = 0; i < loops; i++) {
-							int itemAmount = item.getAmount();
-							int ingredientAmount = ingredient.getAmount();
-							if (itemAmount < ingredientAmount) {
-								leftovers = true;
-								break;
-							}
+				if (!item.getType().equals(ingredient.getType()))
+					continue;
+				if (item.getAmount() < ingredient.getAmount())
+					continue;
 
-							item.setAmount(ingredientAmount);
-							if (item.equals(ingredient)) {
-								foundTrade = true;
-								itemAmount -= ingredientAmount;
-								item.setAmount(itemAmount);
-								profit.add(result);
-							}
-						}
+				double loops = Math.ceil((item.getAmount() + 0D) / ingredient.getAmount());
+				for (double i = 0; i < loops; i++) {
+					int itemAmount = item.getAmount();
+					int ingredientAmount = ingredient.getAmount();
+					if (itemAmount < ingredientAmount) {
+						leftovers = true;
+						break;
+					}
+
+					ItemModelType ingredientType = ItemModelType.of(ingredient);
+					ItemModelType itemType = ItemModelType.of(item);
+
+					boolean equals;
+					if (ingredientType == null || itemType == null)
+						equals = ItemUtils.isFuzzyMatch(item, ingredient);
+					else
+						equals = ingredientType == itemType;
+
+					if (equals) {
+						foundTrade = true;
+						itemAmount -= ingredientAmount;
+						item.setAmount(itemAmount);
+						profit.add(result);
 					}
 				}
 			}

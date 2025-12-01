@@ -8,7 +8,6 @@ import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -39,7 +38,18 @@ public class Pugmas25GiftGiver implements Listener {
 
 	public static ItemStack getGift(Player player, int finalAmount) {
 		var user = new Pugmas25UserService().get(player);
-		return getGift(List.of(user)).amount(finalAmount).build();
+		return getGift(List.of(user.getUuid())).amount(finalAmount).build();
+	}
+
+	public static List<UUID> getPlayerHistory(ItemStack item) {
+		var string = item.getPersistentDataContainer().get(PLAYER_HISTORY_KEY, PersistentDataType.STRING);
+		if (string == null)
+			return new ArrayList<>();
+
+		return Arrays.stream(string.split(","))
+			.distinct()
+			.map(UUID::fromString)
+			.collect(Collectors.toList());
 	}
 
 	@EventHandler
@@ -84,7 +94,7 @@ public class Pugmas25GiftGiver implements Listener {
 			.open(player);
 	}
 
-	public static void transferGift(ItemStack item, Player from, Player to) {
+	private static void transferGift(ItemStack item, Player from, Player to) {
 		try {
 			if (!PlayerUtils.hasRoomFor(to, item)) {
 				PlayerUtils.send(from, Pugmas25.PREFIX + "&c" + Nickname.of(to) + " doesn't have enough room in their inventory to receive this gift");
@@ -95,12 +105,12 @@ public class Pugmas25GiftGiver implements Listener {
 			var fromUser = new Pugmas25UserService().get(from);
 			var history = getPlayerHistory(item);
 
-			if (history.contains(fromUser)) {
+			if (history.contains(to.getUniqueId())) {
 				PlayerUtils.send(from, Pugmas25.PREFIX + "&c" + Nickname.of(to) + " has already received that gift!");
 				return;
 			}
 
-			history.add(fromUser);
+			history.add(fromUser.getUuid());
 			item.subtract();
 
 			PlayerUtils.giveItem(to, getGift(history).build());
@@ -111,30 +121,18 @@ public class Pugmas25GiftGiver implements Listener {
 		}
 	}
 
-	private static @NotNull ItemBuilder getGift(List<Pugmas25User> history) {
+	private static @NotNull ItemBuilder getGift(List<UUID> history) {
 		var builder = Pugmas25QuestItem.GIFT.getItemBuilder();
 		builder.lore("");
 		builder.lore("&fThis gift has already been given to:");
-		for (Pugmas25User recipient : history)
-			builder.lore("&7- &e" + recipient.getNickname());
+		for (UUID recipient : history)
+			builder.lore("&7- &e" + Nickname.of(recipient));
 
 		builder.pdc(pdc -> pdc.set(PLAYER_HISTORY_KEY, PersistentDataType.STRING, createPlayerHistory(history)));
 		return builder;
 	}
 
-	public static List<Pugmas25User> getPlayerHistory(ItemStack item) {
-		var string = item.getPersistentDataContainer().get(PLAYER_HISTORY_KEY, PersistentDataType.STRING);
-		if (string == null)
-			return new ArrayList<>();
-
-		return Arrays.stream(string.split(","))
-			.distinct()
-			.map(UUID::fromString)
-			.map(uuid -> new Pugmas25UserService().get(uuid))
-			.collect(Collectors.toList());
-	}
-
-	public static String createPlayerHistory(List<Pugmas25User> users) {
-		return String.join(",", users.stream().map(Pugmas25User::getUniqueId).map(UUID::toString).toList());
+	private static String createPlayerHistory(List<UUID> users) {
+		return String.join(",", users.stream().map(UUID::toString).toList());
 	}
 }

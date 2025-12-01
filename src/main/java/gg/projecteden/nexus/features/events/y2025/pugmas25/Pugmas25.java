@@ -703,6 +703,7 @@ public class Pugmas25 extends EdenEvent {
 		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.WHEAT)
 			.drops(Material.WHEAT, 1, 3)
+			.regenerationDelay(1, 10)
 			.sound(Sound.BLOCK_CROP_BREAK)
 		);
 
@@ -710,6 +711,7 @@ public class Pugmas25 extends EdenEvent {
 			.blockMaterials(Material.CARROTS)
 			.drops(Material.CARROT, 1, 3)
 			.requiredTool(ToolType.HOE, ToolGrade.IRON)
+			.regenerationDelay(1, 10)
 			.sound(Sound.BLOCK_CROP_BREAK)
 		);
 	}

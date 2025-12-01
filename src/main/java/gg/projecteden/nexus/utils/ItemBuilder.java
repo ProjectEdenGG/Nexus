@@ -816,7 +816,8 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	public ItemBuilder pdc(Consumer<PersistentDataContainer> consumer) {
 		ItemStack item = build();
-		itemStack.editPersistentDataContainer(consumer);
+		item.editPersistentDataContainer(consumer);
+		itemStack = item;
 		itemMeta = item.getItemMeta();
 		return this;
 	}
