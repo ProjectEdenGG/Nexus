@@ -39,7 +39,6 @@ import java.util.List;
 		ADD COMMAND TO SEE ALL MODIFIER BLOCKS & SKULLS AND ABILITY TO GRAB THEM
  */
 @HideFromWiki // TODO?
-@Permission(Group.STAFF)
 public class MiniGolfCommand extends CustomCommand {
 	private final MiniGolfUserService userService = new MiniGolfUserService();
 	private MiniGolfUser user;
@@ -88,7 +87,7 @@ public class MiniGolfCommand extends CustomCommand {
 				error("You have not unlocked that golf ball style");
 
 			user.setStyle(course, style);
-			user.replaceGolfBallInInventory();
+			user.giveGolfBall();
 			send(PREFIX + "Activated " + camelCase(style) + " Golf Ball");
 		}
 	}
@@ -113,8 +112,8 @@ public class MiniGolfCommand extends CustomCommand {
 		new ScorecardBookMenu(user, course, page, user.getCurrentScorecard(course)).open();
 	}
 
-	@Permission(Group.STAFF)
 	@Path("debug [enable]")
+	@Permission(Group.STAFF)
 	void debug(Boolean enable) {
 		if (enable == null)
 			enable = !user.isDebug();
@@ -129,12 +128,13 @@ public class MiniGolfCommand extends CustomCommand {
 	}
 
 	@Path("config")
+	@Permission(Group.ADMIN)
 	void config() {
 		new MiniGolfConfigMenu().open(player());
 	}
 
-	@Permission(Group.STAFF)
 	@Path("getTeleportItem [--speed]")
+	@Permission(Group.STAFF)
 	void getTeleportItem(@Switch Double speed) {
 		Block block = getTargetBlockRequired();
 		if (!ModifierBlockType.TELEPORT.getMaterials().contains(block.getType()))
@@ -147,8 +147,8 @@ public class MiniGolfCommand extends CustomCommand {
 			error("That block is not directional ??");
 	}
 
-	@Permission(Group.ADMIN)
 	@Path("getRotation")
+	@Permission(Group.ADMIN)
 	void getRotation() {
 		Block block = getTargetBlockRequired();
 		Skull skull = (Skull) block.getState();
@@ -158,8 +158,8 @@ public class MiniGolfCommand extends CustomCommand {
 		send("BlockFace: " + facing);
 	}
 
-	@Permission(Group.STAFF)
 	@Path("debugBall")
+	@Permission(Group.STAFF)
 	void debugBall() {
 		if (!user.isPlaying()) {
 			send("not playing minigolf");

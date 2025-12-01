@@ -37,7 +37,7 @@ public class GolfBallStyleMenu extends InventoryProvider {
 					try {
 						user.setStyle(user.getCurrentCourseRequired(), availableStyle);
 						service.save(user);
-						user.replaceGolfBallInInventory();
+						user.giveGolfBall();
 						user.sendMessage(MiniGolf.PREFIX + "Activated " + StringUtils.camelCase(availableStyle) + " Golf Ball");
 					} catch (Exception ex) {
 						MenuUtils.handleException(viewer, MiniGolf.PREFIX, ex);

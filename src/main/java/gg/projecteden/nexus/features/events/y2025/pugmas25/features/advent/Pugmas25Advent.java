@@ -104,6 +104,11 @@ public class Pugmas25Advent implements Listener {
 		if (isNullOrEmpty(lore))
 			return;
 
+//		if (!Rank.of(player).isAdmin()) {
+//			PlayerUtils.send(player, "&cTemporarily disabled, try again later");
+//			return;
+//		}
+
 		for (String line : lore) {
 			String _line = StringUtils.stripColor(line).trim();
 			if (_line.matches("Day #[0-9]+")) {

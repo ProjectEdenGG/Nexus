@@ -115,6 +115,8 @@ public class Pugmas25Caves implements Listener {
 		if (drop == null)
 			return;
 
+		// TODO GRIFFIN Stack at a time
+
 		ItemUtils.subtract(player, tool);
 		int wait = 0;
 		for (int i = 0; i < 4; i++) {

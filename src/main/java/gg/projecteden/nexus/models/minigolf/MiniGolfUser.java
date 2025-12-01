@@ -25,8 +25,10 @@ import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -49,12 +51,12 @@ public class MiniGolfUser implements PlayerOwnedObject {
 	private boolean debug;
 
 	private Map<String, GolfBallStyle> styles = new ConcurrentHashMap<>();
-	private List<GolfBallStyle> unlockedStyles = new ArrayList<>();
-	private Map<String, List<GolfBallStyle>> unlockedCourseStyles = new ConcurrentHashMap<>();
+	private Set<GolfBallStyle> unlockedStyles = new HashSet<>();
+	private Map<String, Set<GolfBallStyle>> unlockedCourseStyles = new ConcurrentHashMap<>();
 
 	private Map<String, GolfBallParticle> particles = new ConcurrentHashMap<>();
-	private List<GolfBallParticle> unlockedParticles = new ArrayList<>();
-	private Map<String, List<GolfBallParticle>> unlockedCourseParticles = new ConcurrentHashMap<>();
+	private Set<GolfBallParticle> unlockedParticles = new HashSet<>();
+	private Map<String, Set<GolfBallParticle>> unlockedCourseParticles = new ConcurrentHashMap<>();
 
 	private Map<String, Map<Integer, Integer>> currentScorecard = new ConcurrentHashMap<>();
 	private Map<String, Map<Integer, Integer>> bestScorecard = new ConcurrentHashMap<>();
@@ -87,7 +89,7 @@ public class MiniGolfUser implements PlayerOwnedObject {
 	}
 
 	public void unlockStyle(MiniGolfCourse course, GolfBallStyle golfBallStyle) {
-		unlockedCourseStyles.computeIfAbsent(course.getName(), $ -> new ArrayList<>()).add(golfBallStyle);
+		unlockedCourseStyles.computeIfAbsent(course.getName(), $ -> new HashSet<>()).add(golfBallStyle);
 	}
 
 	public List<GolfBallStyle> getAvailableStyles(MiniGolfCourse course) {
@@ -99,7 +101,7 @@ public class MiniGolfUser implements PlayerOwnedObject {
 			else if (unlockedStyles.contains(style))
 				styles.add(style);
 			else if (course != null) {
-				var courseStyles = unlockedCourseStyles.computeIfAbsent(course.getName(), $ -> new ArrayList<>());
+				var courseStyles = unlockedCourseStyles.computeIfAbsent(course.getName(), $ -> new HashSet<>());
 				if (courseStyles.contains(style))
 					styles.add(style);
 			}
@@ -126,7 +128,7 @@ public class MiniGolfUser implements PlayerOwnedObject {
 	}
 
 	public void unlockParticle(MiniGolfCourse course, GolfBallParticle golfBallParticle) {
-		unlockedCourseParticles.computeIfAbsent(course.getName(), $ -> new ArrayList<>()).add(golfBallParticle);
+		unlockedCourseParticles.computeIfAbsent(course.getName(), $ -> new HashSet<>()).add(golfBallParticle);
 	}
 
 	public List<GolfBallParticle> getAvailableParticles(MiniGolfCourse course) {
@@ -138,7 +140,7 @@ public class MiniGolfUser implements PlayerOwnedObject {
 			else if (unlockedParticles.contains(particle))
 				particles.add(particle);
 			else if (course != null) {
-				var courseParticles = unlockedCourseParticles.computeIfAbsent(course.getName(), $ -> new ArrayList<>());
+				var courseParticles = unlockedCourseParticles.computeIfAbsent(course.getName(), $ -> new HashSet<>());
 				if (courseParticles.contains(particle))
 					particles.add(particle);
 			}
@@ -190,15 +192,17 @@ public class MiniGolfUser implements PlayerOwnedObject {
 		}
 	}
 
-	public void replaceGolfBallInInventory() {
-		removeOtherGolfBallStylesFromInventory();
-		giveGolfBall();
-	}
-
 	public void giveGolfBall() {
+		removeOtherGolfBallStylesFromInventory();
+
 		var itemStack = MiniGolfUtils.getGolfBall(getStyle());
-		if (!PlayerUtils.playerHas(this, itemStack) || PlayerUtils.hasRoomFor(this, itemStack))
-			PlayerUtils.giveItem(getOnlinePlayer(), itemStack);
+		if (PlayerUtils.playerHas(this, itemStack))
+			return;
+
+		if (!PlayerUtils.hasRoomFor(this, itemStack))
+			return;
+
+		PlayerUtils.giveItem(getOnlinePlayer(), itemStack);
 	}
 
 	private void removeOtherGolfBallStylesFromInventory() {

@@ -145,11 +145,12 @@ public class MiniGolf extends Feature {
 	}
 
 	private void miniGolfTask() {
+		MiniGolfUserService userService = new MiniGolfUserService();
 		Tasks.repeat(0, TickTime.TICK, () -> {
-			MiniGolfUserService userService = new MiniGolfUserService();
 			for (var user : userService.getOnline()) {
-				if (Bukkit.getCurrentTick() % 20 == 0)
-					userService.save(user);
+				if (user.isPlaying())
+					if (Bukkit.getCurrentTick() % 20 == 0)
+						userService.save(user);
 
 				var golfBall = user.getGolfBall();
 				if (golfBall == null)
@@ -199,6 +200,9 @@ public class MiniGolf extends Feature {
 
 		try {
 			Particle particle = miniGolfParticle.getParticle();
+			if (particle == null)
+				return;
+
 			ParticleBuilder particleBuilder = new ParticleBuilder(particle)
 				.location(ball.getLocation().add(0, FLOOR_OFFSET, 0))
 				.count(1)

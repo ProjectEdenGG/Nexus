@@ -380,22 +380,28 @@ public class Pugmas25 extends EdenEvent {
 		handleInteract(Pugmas25NPC.TINKERER, (player, npc) -> Pugmas25ShopMenu.TINKERER.open(player));
 
 		Pugmas25UserService pugmas25UserService = new Pugmas25UserService();
+		MiniGolfUserService miniGolfUserService = new MiniGolfUserService();
 		handleInteract(Pugmas25NPC.POWER, (player, npc) -> {
 			var pugmas25User = pugmas25UserService.get(player);
-			var miniGolfUser = new MiniGolfUserService().get(player);
+			var miniGolfUser = miniGolfUserService.get(player);
 			var course = new MiniGolfConfigService().get0().getCourse("pugmas25");
 
 			if (pugmas25User.isStartedMiniGolf()) {
 				if (miniGolfUser.hasAllHolesInOne(course)) {
-					new Dialog(npc)
-						.npc("Wow! You've completed all " + course.getHoles().size() + " holes in one!")
-						.npc("You're a pro! Here's your Rainbow Golf Ball!")
-						.thenRun($ -> {
-							miniGolfUser.unlockStyle(course, GolfBallStyle.RAINBOW);
-							miniGolfUser.setStyle(course, GolfBallStyle.RAINBOW);
-							miniGolfUser.replaceGolfBallInInventory();
-						})
-						.send(player);
+					if (miniGolfUser.getAvailableStyles(course).contains(GolfBallStyle.RAINBOW)) {
+						Dialog.genericGreeting(Quester.of(player), npc);
+					} else {
+						new Dialog(npc)
+							.npc("Wow! You've completed all " + course.getHoles().size() + " holes in one!")
+							.npc("You're a pro! Here's your Rainbow Golf Ball!")
+							.thenRun($ -> {
+								miniGolfUser.unlockStyle(course, GolfBallStyle.RAINBOW);
+								miniGolfUser.setStyle(course, GolfBallStyle.RAINBOW);
+								miniGolfUser.giveGolfBall();
+								miniGolfUserService.save(miniGolfUser);
+							})
+							.send(player);
+					}
 				} else {
 					int missing = course.getHoles().size() - miniGolfUser.getHolesInOne(course);
 					new Dialog(npc)
