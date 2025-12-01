@@ -706,7 +706,7 @@ public class Pugmas25 extends EdenEvent {
 		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.COAL_ORE, Material.DEEPSLATE_COAL_ORE)
 			.drops(Material.COAL, 1, 3)
-			.drops(Pugmas25QuestItem.SUSPICIOUS_DEBRIS, 1, 2)
+			.drops(Pugmas25QuestItem.SUSPICIOUS_DEBRIS, 0, 2)
 			.placeholderTypes(Material.COBBLESTONE)
 			.requiredTool(ToolType.PICKAXE, ToolGrade.STONE)
 		);
@@ -714,7 +714,7 @@ public class Pugmas25 extends EdenEvent {
 		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.IRON_ORE, Material.DEEPSLATE_IRON_ORE)
 			.drops(Material.RAW_IRON, 1, 2)
-			.drops(Pugmas25QuestItem.SUSPICIOUS_DEBRIS, 1, 2)
+			.drops(Pugmas25QuestItem.SUSPICIOUS_DEBRIS, 0, 2)
 			.placeholderTypes(Material.COBBLESTONE)
 			.requiredTool(ToolType.PICKAXE, ToolGrade.STONE)
 		);
@@ -722,7 +722,7 @@ public class Pugmas25 extends EdenEvent {
 		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.COPPER_ORE, Material.DEEPSLATE_COPPER_ORE)
 			.drops(Material.RAW_COPPER, 1, 3)
-			.drops(Pugmas25QuestItem.SUSPICIOUS_DEBRIS, 1, 2)
+			.drops(Pugmas25QuestItem.SUSPICIOUS_DEBRIS, 0, 2)
 			.placeholderTypes(Material.COBBLESTONE)
 			.requiredTool(ToolType.PICKAXE, ToolGrade.IRON)
 		);
@@ -730,7 +730,7 @@ public class Pugmas25 extends EdenEvent {
 		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.GOLD_ORE, Material.DEEPSLATE_GOLD_ORE)
 			.drops(Material.RAW_GOLD, 1, 2)
-			.drops(Pugmas25QuestItem.SUSPICIOUS_DEBRIS, 1, 2)
+			.drops(Pugmas25QuestItem.SUSPICIOUS_DEBRIS, 0, 2)
 			.placeholderTypes(Material.COBBLESTONE)
 			.requiredTool(ToolType.PICKAXE, ToolGrade.IRON)
 		);
@@ -738,7 +738,7 @@ public class Pugmas25 extends EdenEvent {
 		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.LAPIS_ORE, Material.DEEPSLATE_LAPIS_ORE)
 			.drops(Material.LAPIS_LAZULI, 2, 5)
-			.drops(Pugmas25QuestItem.SUSPICIOUS_DEBRIS, 1, 2)
+			.drops(Pugmas25QuestItem.SUSPICIOUS_DEBRIS, 0, 2)
 			.placeholderTypes(Material.COBBLESTONE)
 			.requiredTool(ToolType.PICKAXE, ToolGrade.IRON)
 		);
@@ -746,7 +746,7 @@ public class Pugmas25 extends EdenEvent {
 		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.DIAMOND_ORE, Material.DEEPSLATE_DIAMOND_ORE)
 			.drops(Material.DIAMOND, 1, 2)
-			.drops(Pugmas25QuestItem.SUSPICIOUS_DEBRIS, 1, 2)
+			.drops(Pugmas25QuestItem.SUSPICIOUS_DEBRIS, 0, 2)
 			.placeholderTypes(Material.COBBLESTONE)
 			.requiredTool(ToolType.PICKAXE, ToolGrade.IRON)
 		);
@@ -754,7 +754,7 @@ public class Pugmas25 extends EdenEvent {
 		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.EMERALD_ORE, Material.DEEPSLATE_EMERALD_ORE)
 			.drops(Material.EMERALD)
-			.drops(Pugmas25QuestItem.SUSPICIOUS_DEBRIS, 1, 2)
+			.drops(Pugmas25QuestItem.SUSPICIOUS_DEBRIS, 0, 2)
 			.placeholderTypes(Material.COBBLESTONE)
 			.requiredTool(ToolType.PICKAXE, ToolGrade.DIAMOND)
 		);

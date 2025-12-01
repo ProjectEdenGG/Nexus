@@ -44,27 +44,27 @@ public enum Pugmas25SellCrateType {
 						if (loot.getGold() == null)
 							return;
 
-						add(new TradeBuilder().ingredient(loot.getItem()).result(Pugmas25SellCrate.COIN.clone().amount(loot.getGold())));
+						add(new TradeBuilder().ingredient(loot.getItem()).result(Pugmas25SellCrate.COIN.clone().amount(loot.getGold() * 4)));
 					});
 				}};
 			}
 
 			case FARMING -> {
 				return new ArrayList<>() {{
-					add(new TradeBuilder().ingredient(Material.HAY_BLOCK, 16).result(Pugmas25SellCrate.COIN.clone()));
-					add(new TradeBuilder().ingredient(Material.CARROT, 64).result(Pugmas25SellCrate.COIN.clone()));
+					add(new TradeBuilder().ingredient(Material.HAY_BLOCK, 8).result(Pugmas25SellCrate.COIN.clone().amount(6)));
+					add(new TradeBuilder().ingredient(Material.CARROT, 64).result(Pugmas25SellCrate.COIN.clone().amount(6)));
 				}};
 			}
 
 			case MINING -> {
 				return new ArrayList<>() {{
-					add(new TradeBuilder().ingredient(Material.COAL, 8).result(Pugmas25SellCrate.COIN.clone()));
-					add(new TradeBuilder().ingredient(Material.LAPIS_LAZULI, 8).result(Pugmas25SellCrate.COIN.clone()));
-					add(new TradeBuilder().ingredient(Material.COPPER_INGOT, 4).result(Pugmas25SellCrate.COIN.clone()));
-					add(new TradeBuilder().ingredient(Material.GOLD_INGOT, 1).result(Pugmas25SellCrate.COIN.clone().amount(4)));
-					add(new TradeBuilder().ingredient(Material.IRON_INGOT, 1).result(Pugmas25SellCrate.COIN.clone().amount(8)));
-					add(new TradeBuilder().ingredient(Material.DIAMOND, 1).result(Pugmas25SellCrate.COIN.clone().amount(24)));
-					add(new TradeBuilder().ingredient(Material.EMERALD, 1).result(Pugmas25SellCrate.COIN.clone().amount(30)));
+					add(new TradeBuilder().ingredient(Material.COAL, 64).result(Pugmas25SellCrate.COIN.clone()));
+					add(new TradeBuilder().ingredient(Material.LAPIS_LAZULI, 32).result(Pugmas25SellCrate.COIN.clone()));
+					add(new TradeBuilder().ingredient(Material.COPPER_INGOT, 16).result(Pugmas25SellCrate.COIN.clone()));
+					add(new TradeBuilder().ingredient(Material.GOLD_INGOT, 16).result(Pugmas25SellCrate.COIN.clone().amount(4)));
+					add(new TradeBuilder().ingredient(Material.IRON_INGOT, 16).result(Pugmas25SellCrate.COIN.clone().amount(8)));
+					add(new TradeBuilder().ingredient(Material.DIAMOND, 8).result(Pugmas25SellCrate.COIN.clone().amount(20)));
+					add(new TradeBuilder().ingredient(Material.EMERALD, 4).result(Pugmas25SellCrate.COIN.clone().amount(30)));
 					add(new TradeBuilder().ingredient(Material.NETHERITE_INGOT, 1).result(Pugmas25SellCrate.COIN.clone().amount(50)));
 				}};
 			}
