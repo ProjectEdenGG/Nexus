@@ -46,14 +46,8 @@ public enum GolfBallStyle {
 	PINK(ItemModelType.MINIGOLF_BALL_PINK, ColorType.PINK),
 
 	@Unlockable
-	RAINBOW(ItemModelType.MINIGOLF_BALL_RAINBOW) {
-		@Override
-		public List<Color> getFireworkColors() {
-			return EnumUtils.valuesExcept(GolfBallStyle.class, RAINBOW, WHITE, BLACK).stream()
-				.map(color -> color.getColor().getBukkitColor())
-				.toList();
-		}
-	};
+	RAINBOW(ItemModelType.MINIGOLF_BALL_RAINBOW),
+	;
 
 	GolfBallStyle(ItemModelType model) {
 		this.model = model;
@@ -64,6 +58,12 @@ public enum GolfBallStyle {
 	private final ColorType color;
 
 	public List<Color> getFireworkColors() {
+		if (this == RAINBOW) {
+			return EnumUtils.valuesExcept(GolfBallStyle.class, RAINBOW, WHITE, BLACK).stream()
+				.map(color -> color.getColor().getBukkitColor())
+				.toList();
+		}
+
 		var color = this.color;
 
 		if (color == null)
