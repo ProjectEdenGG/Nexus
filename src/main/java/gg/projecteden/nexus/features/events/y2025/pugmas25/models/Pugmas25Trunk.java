@@ -4,7 +4,6 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
-import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.AllArgsConstructor;
@@ -81,7 +80,7 @@ public enum Pugmas25Trunk {
 
 		List<ItemStack> result = new ArrayList<>();
 		for (int i = 0; i < rolls; i++) {
-			ItemStack item = RandomUtils.getWeightedRandom(getItems());
+			ItemStack item = RandomUtils.getWeightedRandom(items);
 			int amount = 1;
 			if (item.getType() != Material.POTION)
 				amount = RandomUtils.randomInt(1, 5);

@@ -498,14 +498,17 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder potionEffect(PotionEffectType type) {
+		potionEffectColor(type);
 		return potionEffect(type, 1, 1);
 	}
 
 	public ItemBuilder potionEffect(PotionEffectType type, int seconds) {
+		potionEffectColor(type);
 		return potionEffect(type, seconds, 1);
 	}
 
 	public ItemBuilder potionEffect(PotionEffectType type, int seconds, int amplifier) {
+		potionEffectColor(type);
 		return potionEffect(new PotionEffectBuilder(type).duration(TickTime.SECOND.x(seconds)).amplifier(amplifier - 1));
 	}
 
@@ -521,6 +524,18 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	public ItemBuilder potionEffectColor(Color color) {
 		((PotionMeta) itemMeta).setColor(color);
+		return this;
+	}
+
+	public ItemBuilder potionEffectColor(PotionEffectType type) {
+		PotionEffectColor from = PotionEffectColor.from(type);
+		if (from == null)
+			throw new InvalidInputException("Unknown potion effect color: " + type);
+		return potionEffectColor(from);
+	}
+
+	public ItemBuilder potionEffectColor(PotionEffectColor color) {
+		((PotionMeta) itemMeta).setColor(color.toBukkit());
 		return this;
 	}
 

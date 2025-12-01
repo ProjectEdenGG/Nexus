@@ -4,6 +4,9 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 public class RandomUtils extends gg.projecteden.api.common.utils.RandomUtils {
 	public static Vector randomVector() {
@@ -59,5 +62,23 @@ public class RandomUtils extends gg.projecteden.api.common.utils.RandomUtils {
 	 */
 	public static double triangle(double mode, double deviation) {
 		return mode + deviation * (randomDouble(0, 1) - randomDouble(0, 1));
+	}
+
+	public static <E> E getWeightedRandom(@NotNull Map<E, Double> weights) {
+		double total = 0;
+
+		for (double w : weights.values())
+			total += w;
+
+		double r = Math.random() * total;
+
+		for (Map.Entry<E, Double> entry : weights.entrySet()) {
+			r -= entry.getValue();
+			if (r <= 0)
+				return entry.getKey();
+		}
+
+		// Should never happen unless all weights are zero
+		throw new IllegalStateException("No item could be selected; all weights are zero?");
 	}
 }
