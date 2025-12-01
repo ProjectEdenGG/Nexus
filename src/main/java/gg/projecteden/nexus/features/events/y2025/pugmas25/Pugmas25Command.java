@@ -178,18 +178,20 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 	@Path("database deleteAllData")
 	@Permission(Group.ADMIN)
 	void deleteAllDatabaseData() {
-		new MiniGolfUserService().deleteAll();
-		send("Deleted all data from MiniGolfUserService");
-
 		for (Quester _user : questerService.getAll()) {
 			Quester quester = questerService.get(_user);
-			quester.getQuests().removeIf(quest -> quest.getQuest() == Pugmas25Quest.INTRO || quest.getQuest() == Pugmas25Quest.DECORATE_SNOWMEN);
+			for (Pugmas25Quest pugmas25Quest : Pugmas25Quest.values())
+				quester.getQuests().removeIf(quest -> quest.getQuest() == pugmas25Quest);
+			questerService.save(quester);
 		}
 		questerService.cacheAll();
 		send("Deleted all pugmas quest data from QuesterService");
 
 		userService.deleteAll();
 		send("Deleted all data from Pugmas25UserService");
+
+		new MiniGolfUserService().deleteAll();
+		send("Deleted all data from MiniGolfUserService");
 	}
 
 	@Path("modelTrain length <length>")

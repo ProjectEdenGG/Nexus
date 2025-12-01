@@ -329,7 +329,16 @@ public class Pugmas25 extends EdenEvent {
 
 	@EventHandler
 	public void on(PlayerJoinEvent event) {
-		var quester = new QuesterService().get(event.getPlayer());
+		autoStartQuests(event.getPlayer());
+
+		if (!shouldHandle(event.getPlayer()))
+			return;
+
+		onArrive(event.getPlayer());
+	}
+
+	private static void autoStartQuests(Player player) {
+		var quester = new QuesterService().get(player);
 		quests: for (Pugmas25Quest pugmas25Quest : Pugmas25Quest.values()) {
 			for (Quest quest : new ArrayList<>(quester.getQuests())) {
 				if (quest.getQuest() == pugmas25Quest)
@@ -338,11 +347,6 @@ public class Pugmas25 extends EdenEvent {
 				pugmas25Quest.assign(quester);
 			}
 		}
-
-		if (!shouldHandle(event.getPlayer()))
-			return;
-
-		onArrive(event.getPlayer());
 	}
 
 	@EventHandler
@@ -358,6 +362,7 @@ public class Pugmas25 extends EdenEvent {
 		Player player = event.getPlayer();
 		World fromWorld = event.getFrom();
 		World toWorld = player.getWorld();
+		autoStartQuests(player);
 
 		if (fromWorld.equals(toWorld))
 			return;

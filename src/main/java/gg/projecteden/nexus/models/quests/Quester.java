@@ -3,8 +3,10 @@ package gg.projecteden.nexus.models.quests;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import dev.morphia.annotations.PostLoad;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.listeners.events.LivingEntityKilledByPlayerEvent;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
@@ -68,6 +70,19 @@ public class Quester implements PlayerOwnedObject {
 
 	public static Quester of(UUID uuid) {
 		return new QuesterService().get(uuid);
+	}
+
+	@PostLoad
+	void fix() {
+		List<IQuest> found = new ArrayList<>();
+		for (Quest quest : new ArrayList<>(quests)) {
+			if (found.contains(quest.getQuest())) {
+				Nexus.warn("Removing duplicate quest " + quest.getQuest() + " from " + getNickname());
+				quests.remove(quest);
+			}
+
+			found.add(quest.getQuest());
+		}
 	}
 
 	public boolean tryAdvanceDialog(Interactable interactable) {
@@ -411,5 +426,14 @@ public class Quester implements PlayerOwnedObject {
 
 	public List<Quest> getIncompleteQuests() {
 		return quests.stream().filter(quest -> !quest.isComplete()).toList();
+	}
+
+	public void addQuest(Quest quest) {
+		var match = quests.stream().anyMatch(_quest -> _quest.getQuest() == quest.getQuest());
+
+		if (match)
+			return;
+
+		quests.add(quest);
 	}
 }

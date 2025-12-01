@@ -20,7 +20,7 @@ public interface IQuest {
 
 	default void assign(HasUniqueId player) {
 		final List<QuestTaskProgress> tasks = getTasks().stream().map(task -> new QuestTaskProgress(player.getUniqueId(), task)).toList();
-		new QuesterService().edit(player, quester -> quester.getQuests().add(new Quest(player.getUniqueId(), this, tasks)));
+		new QuesterService().edit(player, quester -> quester.addQuest(new Quest(player.getUniqueId(), this, tasks)));
 	}
 
 }

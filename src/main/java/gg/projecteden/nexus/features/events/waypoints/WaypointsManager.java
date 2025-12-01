@@ -67,7 +67,7 @@ public class WaypointsManager extends Feature implements Listener {
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			var quester = Quester.of(player);
 
-			var incompleteQuests = quester.getQuests().stream().filter(quest -> !quest.isComplete()).toList();
+			var incompleteQuests = quester.getIncompleteQuests();
 			if (incompleteQuests.isEmpty()) {
 				for (WaypointInstance waypointInstance : new ArrayList<>(WAYPOINTS))
 					if (waypointInstance.getWaypoint().isQuestWaypoint())
