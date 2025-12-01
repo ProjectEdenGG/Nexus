@@ -9,7 +9,6 @@ import gg.projecteden.nexus.features.mobheads.common.MobHeadVariant;
 import gg.projecteden.nexus.features.mobheads.variants.AxolotlVariant;
 import gg.projecteden.nexus.features.mobheads.variants.CatVariant;
 import gg.projecteden.nexus.features.mobheads.variants.ChickenVariant;
-import gg.projecteden.nexus.features.mobheads.variants.CowVariant;
 import gg.projecteden.nexus.features.mobheads.variants.CreeperVariant;
 import gg.projecteden.nexus.features.mobheads.variants.FoxVariant;
 import gg.projecteden.nexus.features.mobheads.variants.FrogVariant;
@@ -37,7 +36,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Cat;
 import org.bukkit.entity.Chicken;
-import org.bukkit.entity.Cow;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -125,13 +123,16 @@ public enum MobHeadType implements MobHead {
 	@HeadConfig(headId = "17898")
 	COD(Sound.ENTITY_COD_FLOP),
 
-	@HeadConfig(headId = "22866", variantClass = CowVariant.class)
-	COW(
-		entity -> CowVariant.of((Cow) entity),
-		(entity, type) -> ((Cow) entity).setVariant((Cow.Variant) type),
-		() -> RandomUtils.randomElement(Cow.Variant.class),
-		Sound.ENTITY_COW_AMBIENT
-	),
+	@HeadConfig(headId = "22866")
+	COW(Sound.ENTITY_COW_AMBIENT),
+
+//	@HeadConfig(headId = "22866", variantClass = CowVariant.class)
+//	COW(
+//		entity -> CowVariant.of((Cow) entity),
+//		(entity, type) -> ((Cow) entity).setVariant((Cow.Variant) type),
+//		() -> RandomUtils.randomElement(Cow.Variant.class),
+//		Sound.ENTITY_COW_AMBIENT
+//	),
 
 	@HeadConfig(headId = "106826")
 	CREAKING(Sound.ENTITY_CREAKING_AMBIENT),
