@@ -33,26 +33,28 @@ public enum Pugmas25QuestItem implements QuestItem {
 		.name("&3&oTrain Ticket")
 		.lore("&3Destination: &e" + Pugmas25.EVENT_NAME)
 		.dyeColor(Color.WHITE)
-		.itemFlags(ItemFlags.HIDE_ALL)),
+		.itemFlags(ItemFlags.HIDE_ALL)
+		.undroppable()
+		.untrashable()),
 
 	BOX_OF_DECORATIONS(new ItemBuilder(ItemModelType.BOX_OF_DECORATIONS)
 		.name("&oBox of Decorations")
 		.lore("&3Quest Item")
 		.interactable()
 		.undroppable()
-		.untrashable()
-		.unframeable()),
+		.untrashable()),
 
 	BOX_OF_DECORATIONS_EMPTY(new ItemBuilder(ItemModelType.BOX_OF_DECORATIONS_EMPTY)
 		.name("&oEmpty Box of Decorations")
 		.lore("&3Quest Item")
 		.undroppable()
-		.untrashable()
-		.unframeable()),
+		.untrashable()),
 
 	MAGIC_MIRROR(new ItemBuilder(ItemModelType.EVENT_MAGIC_MIRROR)
 		.name("&oMagic Mirror")
-		.lore("&3Opens the waystone warp menu")),
+		.lore("&3Opens the waystone warp menu")
+		.undroppable()
+		.untrashable()),
 
 	LUCKY_HORSESHOE(new ItemBuilder(ItemModelType.EVENT_LUCKY_HORSESHOE)
 		.name("&oLucky Horseshoe")
@@ -61,48 +63,68 @@ public enum Pugmas25QuestItem implements QuestItem {
 		.lore("&3- Fishing")
 		.lore("&3- Trunks")
 		.lore("&3- Extractinator")
-		.lore("&3- Slot Machine")),
+		.lore("&3- Slot Machine")
+		.undroppable()
+		.untrashable()),
 
 	ADVENTURE_POCKET_GUIDE(new ItemBuilder(ItemModelType.EVENT_ADVENTURE_POCKET_GUIDE)
 		.name("&oAdventurer's Pocket Guide")
-		.lore("&3Displays your area designation")),
+		.lore("&3Displays your area designation")
+		.undroppable()
+		.untrashable()),
 
 	GOLD_WATCH(new ItemBuilder(ItemModelType.EVENT_GOLD_WATCH)
 		.name("&oGold Watch")
-		.lore("&3Displays the current time")),
+		.lore("&3Displays the current time")
+		.undroppable()
+		.untrashable()),
 
 	COMPASS(new ItemBuilder(ItemModelType.EVENT_COMPASS)
 		.name("&oCompass")
-		.lore("&3Displays Direction")),
+		.lore("&3Displays Direction")
+		.undroppable()
+		.untrashable()),
 
 	GPS(new ItemBuilder(ItemModelType.EVENT_GPS)
 		.name("&oGPS")
-		.lore("&3Displays your direction, area designation, and the current time")),
+		.lore("&3Displays your direction, area designation, and the current time")
+		.undroppable()
+		.untrashable()),
 
 	FISHING_POCKET_GUIDE(new ItemBuilder(ItemModelType.EVENT_FISHING_POCKET_GUIDE)
 		.name("&oFisherman's Pocket Guide")
-		.lore("&3Displays your fishing luck")),
+		.lore("&3Displays your fishing luck")
+		.undroppable()
+		.untrashable()),
 
 	WEATHER_RADIO(new ItemBuilder(ItemModelType.EVENT_WEATHER_RADIO)
 		.name("&oWeather Radio")
-		.lore("&3Displays the current weather")),
+		.lore("&3Displays the current weather")
+		.undroppable()
+		.untrashable()),
 
 	SEXTANT(new ItemBuilder(ItemModelType.EVENT_SEXTANT)
 		.name("&oSextant")
-		.lore("&3Displays coordinates")),
+		.lore("&3Displays coordinates")
+		.undroppable()
+		.untrashable()),
 
 	FISH_FINDER(new ItemBuilder(ItemModelType.EVENT_FISH_FINDER)
 		.name("&oFish Finder")
 		.lore("&3Displays your fishing luck, height, and the current weather")
 		.lore("")
-		.lore("&3Increases fishing luck by &e5")),
+		.lore("&3Increases fishing luck by &e5")
+		.undroppable()
+		.untrashable()),
 
 	PDA(new ItemBuilder(ItemModelType.EVENT_PDA)
 		.name("&oPDA")
 		.lore("&3Displays direction, height, area designation, time, weather and fishing luck")
 		.lore("&3Opens the waystone warp menu")
 		.lore("")
-		.lore("&3Increases fishing luck by &e5")),
+		.lore("&3Increases fishing luck by &e5")
+		.undroppable()
+		.untrashable()),
 
 	FISHING_ROD_WOOD(new ItemBuilder(ItemModelType.FISHING_ROD_WOOD)
 		.name("&oWood Fishing Rod")
@@ -119,22 +141,27 @@ public enum Pugmas25QuestItem implements QuestItem {
 		.lore("&3Increases fishing luck by &e15")
 		.enchant(Enchantment.LURE, 3)
 		.unbreakable()
+		.undroppable()
+		.untrashable()
 		.glow()),
 
 	ANGLER_HAT(ArmorSkin.FISHING.apply(new ItemBuilder(Material.LEATHER_HELMET)
 		.name("&oAngler Hat")
 		.lore("&3Increases fishing luck by &e4")
-		.unbreakable())),
+		.unbreakable()
+		.untrashable())),
 
 	ANGLER_VEST(ArmorSkin.FISHING.apply(new ItemBuilder(Material.LEATHER_CHESTPLATE)
 		.name("&oAngler Vest")
 		.lore("&3Increases fishing luck by &e4")
-		.unbreakable())),
+		.unbreakable()
+		.untrashable())),
 
 	ANGLER_PANTS(ArmorSkin.FISHING.apply(new ItemBuilder(Material.LEATHER_LEGGINGS)
 		.name("&oAngler Pants")
 		.lore("&3Increases fishing luck by &e4")
-		.unbreakable())),
+		.unbreakable()
+		.untrashable())),
 
 	SHOCK_ABSORBENT_BOOTS(ArmorSkin.WIZARD.apply(new ItemBuilder(Material.LEATHER_BOOTS)
 		.name("&oShock Absorbent Sandals")
@@ -169,13 +196,14 @@ public enum Pugmas25QuestItem implements QuestItem {
 
 	SLOT_MACHINE_TOKEN(new ItemBuilder(ItemModelType.EVENT_TOKEN)
 		.name("&oSlot Machine Token")
-		.lore("&3Used to roll the slot machine")),
+		.lore("&3Used to roll the slot machine")
+		.untrashable()),
 
 	GNOMIFIER(new ItemBuilder(ItemModelType.GNOMIFIER)
 		.name("&oGnomifier")
 		.lore("&3Shrinks the holder to 50% scale")
+		.undroppable()
 		.untrashable()
-		.unframeable()
 		.attribute(Attribute.SCALE, new AttributeModifier(new NamespacedKey(Nexus.getInstance(), "gnomifier"), -0.5, Operation.ADD_NUMBER, EquipmentSlotGroup.HAND))),
 
 	BALLOON_PAINTBRUSH(new ItemBuilder(ItemModelType.EVENT_PAINTBRUSH)
@@ -185,6 +213,8 @@ public enum Pugmas25QuestItem implements QuestItem {
 		.undroppable().unframeable().unplaceable().unstorable().untrashable().untradeable()
 		.itemFlags(ItemBuilder.ItemFlags.HIDE_ALL)
 		.updateDecorationLore(false)
+		.undroppable()
+		.untrashable()
 		.glow()
 	),
 	;
