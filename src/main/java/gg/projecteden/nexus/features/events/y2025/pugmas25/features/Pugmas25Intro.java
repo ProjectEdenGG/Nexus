@@ -2,6 +2,9 @@ package gg.projecteden.nexus.features.events.y2025.pugmas25.features;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.commands.FlyCommand;
+import gg.projecteden.nexus.features.commands.GamemodeCommand;
+import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Cutscene;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
@@ -11,6 +14,7 @@ import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -58,6 +62,9 @@ public class Pugmas25Intro implements Listener {
 				_player.teleport(PUGMAS.warp);
 				new SoundBuilder(Sound.BLOCK_FIRE_EXTINGUISH).receiver(_player).volume(0.75).pitch(0.1).play();
 				if (!user.isVisited()) {
+					GamemodeCommand.setGamemode(player, GameMode.SURVIVAL);
+					FlyCommand.off(player, "Pugmas25Intro");
+					WorldGuardEditCommand.off(player);
 					_player.setHealth(20);
 					_player.setFoodLevel(20);
 					_player.setSaturation(5);
