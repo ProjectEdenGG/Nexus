@@ -136,8 +136,12 @@ public class Advent25User implements PlayerOwnedObject {
 			return;
 
 		found.add(day);
-		sendMessage(Pugmas25.PREFIX + "Location of present &e#" + day + " &3saved. " +
-				"View with the &eAdvent Calendar menu &3or &c/pugmas advent waypoint " + day);
+		sendMessage(
+			new JsonBuilder()
+				.next(Pugmas25.PREFIX + "Location of present &e#" + day + " &3saved. View with the ").group()
+				.next("&eAdvent Calendar menu").hover("/pugmas advent").command("/pugmas advent").group()
+				.next(" &3or &c/pugmas advent waypoint " + day)
+		);
 
 		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).receiver(getOnlinePlayer()).play();
 	}
