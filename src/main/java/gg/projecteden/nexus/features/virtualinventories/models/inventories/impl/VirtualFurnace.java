@@ -121,12 +121,11 @@ public class VirtualFurnace extends TickableVirtualInventory<FurnaceProperties> 
 			}
 		}
 
-		if (processed) {
+		if (processed)
 			new VirtualFurnaceTickEvent(this).callEvent();
 
-			if (this.isOpened())
-				updateInventoryView();
-		}
+		if (this.isOpened())
+			updateInventoryView();
 
 		return processed;
 	}
