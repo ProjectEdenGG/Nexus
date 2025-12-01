@@ -54,6 +54,7 @@ import gg.projecteden.nexus.models.pugmas25.Pugmas25ConfigService;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.models.quests.Quester;
+import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.Currency;
 import gg.projecteden.nexus.utils.Currency.Price;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -77,6 +78,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
+
+import static gg.projecteden.nexus.utils.StringUtils.xyzw;
 
 @HideFromWiki
 @NoArgsConstructor
@@ -114,9 +117,9 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 	@Path
 	void pugmas() {
 		if (!user.isVisited())
-			error("You need to take the Pugmas train at Hub to unlock this warp.");
-
-		player().teleportAsync(user.getSpawnLocation(), TeleportCause.COMMAND);
+			WarpType.PUGMAS25.get("hub").teleportAsync(player());
+		else
+			player().teleportAsync(user.getSpawnLocation(), TeleportCause.COMMAND);
 	}
 
 	@Path("npcs setup")
