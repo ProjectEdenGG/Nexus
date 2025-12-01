@@ -36,8 +36,6 @@ import java.util.function.Consumer;
 @AllArgsConstructor
 public enum Pugmas25SlotMachineReward {
 
-	// TODO: SLOT MACHINE REWARDS - COINS
-
 	VOTE_POINTS(SlotPos.of(1, 2), new ItemBuilder(Material.MOURNER_POTTERY_SHERD).name("&aVote Points")
 		.lore("&3Half: &e25 &3Vote Points", "&3Full: &e50 &3Vote Points"),
 		(player) -> {
@@ -165,10 +163,10 @@ public enum Pugmas25SlotMachineReward {
 	//
 
 	COINS(SlotPos.of(1, 6), new ItemBuilder(Material.ARMS_UP_POTTERY_SHERD).name("&6Coins")
-		.lore("&3Half: &e10 &3coins", "&3Full: &e30 &3coins"), // TODO: Coins
+		.lore("&3Half: &e500 &3coins", "&3Full: &e1500 &3coins"),
 		(player) -> {
-			int preAmount = 10; // TODO: COINS
-			int maxAmount = 30; // TODO: COINS
+			int preAmount = 500;
+			int maxAmount = 1000;
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
 			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3Deposited &e" + additional + " &3coins to your Coin Pouch");
@@ -177,8 +175,8 @@ public enum Pugmas25SlotMachineReward {
 				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3coins given from Lucky Horseshoe");
 		},
 		(player) -> {
-			int preAmount = 30; // TODO: COINS
-			int maxAmount = 50; // TODO: COINS
+			int preAmount = 1500;
+			int maxAmount = 2000;
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
 			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3Deposited &e" + additional + " &3coins to your Coin Pouch");

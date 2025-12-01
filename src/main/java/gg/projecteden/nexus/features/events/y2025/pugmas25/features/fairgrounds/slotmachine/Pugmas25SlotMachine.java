@@ -38,10 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/*
-	TODO:
-		- REWARDS
- */
 @SuppressWarnings("FieldCanBeLocal")
 @EdenEventGameConfig(
 	prefix = "Slot Machine",

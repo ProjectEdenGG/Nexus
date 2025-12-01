@@ -125,8 +125,6 @@ import static gg.projecteden.api.common.utils.StringUtils.plural;
 
 /*
 	"TODO: RELEASE PUGMAS" <-- CHECK FOR ANY COMMENTS ON WHOLE PROJECT
-	"TODO GRIFFIN"
-	"TODO"
  */
 @QuestConfig(
 	quests = Pugmas25Quest.class,
