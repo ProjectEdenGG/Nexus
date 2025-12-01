@@ -3,12 +3,12 @@ package gg.projecteden.nexus.features.hub;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.models.Train;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MathUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
@@ -123,7 +123,7 @@ public class HubModelTrain implements Listener {
 			if (!RandomUtils.chanceOf(25))
 				return;
 
-			for (Player player : Pugmas25.get().getPlayers()) {
+			for (Player player : OnlinePlayers.where().world(world).get()) {
 				double radiusVolume = Train.getRadiusVolume(player, seatEntities.getFirst().getLocation(), 15, true, 0.01, 0.1);
 				whistle.clone().receiver(player).volume(radiusVolume).play();
 			}
