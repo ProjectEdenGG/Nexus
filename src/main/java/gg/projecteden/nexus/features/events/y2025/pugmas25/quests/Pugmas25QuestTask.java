@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.InteractQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTask.TaskBuilder;
+import gg.projecteden.nexus.models.compass.CompassService;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.utils.Currency;
 import gg.projecteden.nexus.utils.Currency.Price;
@@ -50,6 +51,7 @@ public enum Pugmas25QuestTask implements IQuestTask {
 			.npc("Just follow the signs along the north western path and you'll find it in no time.")
 			.npc("Here, this should help you find your way.")
 			.give(Pugmas25QuestItem.COMPASS)
+			.thenRun(quester -> new CompassService().get(quester).start())
 			.npc("Enjoy your stay!")
 		)
 		.reminder(dialog -> dialog
