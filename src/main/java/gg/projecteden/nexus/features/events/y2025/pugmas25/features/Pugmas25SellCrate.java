@@ -143,20 +143,6 @@ public class Pugmas25SellCrate implements Listener {
 			return null;
 		}
 
-		public static Pugmas25SellCrateType of(InventoryView inv) {
-			String title = StringUtils.stripColor(inv.getTitle());
-			if (!title.contains(StringUtils.stripColor(INVENTORY_TITLE)))
-				return null;
-
-			String type = title.split(" - ")[1].split(" ")[0].toUpperCase();
-			try {
-				return valueOf(type);
-			} catch (Exception ignored) {
-			}
-
-			return null;
-		}
-
 		public void applyToSign(Block block) {
 			Sign sign = getSign(block);
 			if (sign == null)

@@ -597,7 +597,7 @@ public class Pugmas25 extends EdenEvent {
 				return;
 			}
 
-			// DIFFERENT FISH --> THIS MAY NEVER RUN
+			// DIFFERENT FISH
 			if (!user.isCompletedAnglerQuest() && receivedQuestFish != null && questFish != receivedQuestFish) {
 				dialog
 					.npc("Uh-oh! Time’s up!")
