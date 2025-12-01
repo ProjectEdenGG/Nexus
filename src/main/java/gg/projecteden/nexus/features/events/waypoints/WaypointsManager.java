@@ -110,7 +110,7 @@ public class WaypointsManager extends Feature implements Listener {
 						hideWaypoint(player, questWaypoint);
 						shouldShow = false;
 					} else {
-						shouldShow = false;
+						shouldShow = true;
 					}
 				}
 
