@@ -58,8 +58,6 @@ public class AdventAnimation {
 	private final List<ItemStack> presentContents = new ArrayList<>();
 	@Builder.Default
 	private final List<Integer> openTwiceDays = new ArrayList<>();
-	@Builder.Default
-	private final List<ItemStack> givenItems = new ArrayList<>();
 	private final Player player;
 	private static final JukeboxUserService userService = new JukeboxUserService();
 	private static final ItemStack eventTokenCoupon = new CouponService().get0().of("event_tokens").getItem();
@@ -128,29 +126,25 @@ public class AdventAnimation {
 			Tasks.wait(_wait, () -> {
 				Tasks.cancel(_itemTaskId);
 
-				if (!givenItems.contains(itemStack)) {
-					givenItems.add(itemStack);
+				boolean giveItem = true;
+				ItemBuilder itemBuilder = new ItemBuilder(itemStack);
+				String itemName = StringUtils.stripColor(itemStack.getItemMeta().getDisplayName());
 
-					boolean giveItem = true;
-					ItemBuilder itemBuilder = new ItemBuilder(itemStack);
-					String itemName = StringUtils.stripColor(itemStack.getItemMeta().getDisplayName());
-
-					// special types
-					TrophyType trophyType = TrophyType.of(itemStack);
-					if (trophyType != null) {
-						giveItem = false;
-						trophyType.give(player);
-					}
-
-					if (MaterialTag.ITEMS_MUSIC_DISCS.isTagged(itemStack.getType())) {
-						giveItem = false;
-						giveSong(player, itemName);
-					}
-					//
-
-					if (giveItem)
-						excess.addAll(PlayerUtils.giveItemsAndGetExcess(player, itemBuilder.build()));
+				// special types
+				TrophyType trophyType = TrophyType.of(itemStack);
+				if (trophyType != null) {
+					giveItem = false;
+					trophyType.give(player);
 				}
+
+				if (MaterialTag.ITEMS_MUSIC_DISCS.isTagged(itemStack.getType())) {
+					giveItem = false;
+					giveSong(player, itemName);
+				}
+				//
+
+				if (giveItem)
+					excess.addAll(PlayerUtils.giveItemsAndGetExcess(player, itemBuilder.build()));
 
 				Location _location = removeItem(_item);
 				new SoundBuilder(Sound.ENTITY_CHICKEN_EGG).location(_location).play();
