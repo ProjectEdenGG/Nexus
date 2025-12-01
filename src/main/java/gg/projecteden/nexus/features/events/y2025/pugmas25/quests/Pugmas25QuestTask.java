@@ -22,7 +22,7 @@ import lombok.Getter;
 public enum Pugmas25QuestTask implements IQuestTask {
 	TALK_TO_TICKET_MASTER(InteractQuestTask.builder()
 		.objective("Talk to the Ticket Master")
-		.waypoint(Pugmas25QuestWaypoint.TICKET_MASTER_HUB)
+		.waypoint(Pugmas25NPC.TICKET_MASTER_HUB)
 		.talkTo(Pugmas25NPC.TICKET_MASTER_HUB)
 		.dialog(dialog -> dialog
 			.npc("Hello! Where would you like to travel to?")
@@ -42,7 +42,7 @@ public enum Pugmas25QuestTask implements IQuestTask {
 	),
 	CHECK_IN(InteractQuestTask.builder()
 		.objective("Talk to the ticket master")
-		.waypoint(Pugmas25QuestWaypoint.TICKET_MASTER)
+		.waypoint(Pugmas25NPC.TICKET_MASTER)
 		.talkTo(Pugmas25NPC.TICKET_MASTER)
 		.dialog(dialog -> dialog
 			.npc("Welcome to Pugmas Village, Project Eden's Christmas celebration!")
@@ -57,7 +57,7 @@ public enum Pugmas25QuestTask implements IQuestTask {
 		)
 		.then()
 		.objective("Check in at the inn")
-		.waypoint(Pugmas25QuestWaypoint.INN)
+		.waypoint(Pugmas25NPC.INN_KEEPER)
 		.talkTo(Pugmas25NPC.INN_KEEPER)
 		.dialog(dialog -> dialog
 			.player("Hello, I'd like to rent a room.")

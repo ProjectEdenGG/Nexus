@@ -13,10 +13,7 @@ import org.bukkit.Location;
 @Getter
 @AllArgsConstructor
 public enum Pugmas25QuestWaypoint implements IWaypoint {
-	TICKET_MASTER_HUB(WaypointIcon.X, ColorType.LIGHT_RED.getBukkitColor(), new Location(Hub.getWorld(), -8.5, 149, 4.5)),
 	TRAIN(WaypointIcon.X, ColorType.LIGHT_RED.getBukkitColor(), new Location(Hub.getWorld(), 0, 151, -66)),
-	TICKET_MASTER(WaypointIcon.X, ColorType.LIGHT_RED.getBukkitColor(), loc(-697.5, 82, -2959.5)),
-	INN(WaypointIcon.X, ColorType.LIGHT_RED.getBukkitColor(), loc(-745.5, 121, -3147.5)),
 	CABIN(WaypointIcon.X, ColorType.LIGHT_RED.getBukkitColor(), loc(-699.5, 119, -3120.5)),
 	;
 
