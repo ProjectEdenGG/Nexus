@@ -17,7 +17,7 @@ public enum Pugmas25Waystone {
 	WEST_VILLAGE(loc(-721, 118, -3161), loc(-719, 118, -3159, -28).toCenterLocation()),
 	EAST_VILLAGE(loc(-611, 104, -3107), loc(-610, 104, -3104, 0).toCenterLocation()),
 	MINES(loc(-741, 105, -3161), loc(-740, 105, -3159, 0).toCenterLocation()),
-	RIDGE(loc(-673, 157, -3223), loc(-671, 157, -3220, -90)),
+	RIDGE(loc(-673, 157, -3223), loc(-671, 157, -3222, -90)),
 	HOT_SPRINGS(loc(-474, 126, -3060), loc(-474, 126, -3058, 60).toCenterLocation());
 
 	private final Location frameLoc;
