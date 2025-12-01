@@ -139,6 +139,7 @@ public class Pugmas25Caves implements Listener {
 		put(Material.RAW_COPPER, 22.0);
 		put(Material.RAW_GOLD, 22.0);
 		put(Material.RAW_IRON, 20.0);
+		put(Material.FLINT, 18.0);
 		put(Material.GOLD_NUGGET, 18.0);
 		put(Material.GOLD_INGOT, 16.0);
 		put(Material.COPPER_INGOT, 16.0);

@@ -1035,15 +1035,20 @@ public class Pugmas25 extends EdenEvent {
 						List<String> result = new ArrayList<>();
 						result.add("&3 " + getName() + " &7- &eStarted");
 
+						String sourceName;
 						for (Pugmas25DailyTokenSource source : Pugmas25DailyTokenSource.values()) {
+							sourceName = source.getName();
+							if (source == Pugmas25DailyTokenSource.WHACAMOLE)
+								sourceName = "WhacAWakka";
+
 							int received = eventUser.getTokensReceivedToday(source.getId());
 							int max = source.getMaxDailyTokens();
 							if (received == 0)
-								result.add("&7   - " + source.getName() + ": " + "&c" + received + "&7/&e" + max + " &7event tokens");
+								result.add("&7   - " + sourceName + ": " + "&c" + received + "&7/&e" + max + " &7event tokens");
 							else if (received < max)
-								result.add("&7   - " + source.getName() + ": " + "&6" + received + "&7/&e" + max + " &7event tokens");
+								result.add("&7   - " + sourceName + ": " + "&6" + received + "&7/&e" + max + " &7event tokens");
 							else
-								result.add("&7   - " + source.getName() + ": " + "&a" + received + "&7/&a" + max + " &7event tokens");
+								result.add("&7   - " + sourceName + ": " + "&a" + received + "&7/&a" + max + " &7event tokens");
 						}
 
 						return result;
