@@ -33,6 +33,7 @@ public enum Pugmas25Trunk {
 		put(new ItemBuilder(Material.POTION).potionEffect(PotionEffectType.ABSORPTION, (int) TickTime.SECOND.x(60 * 8)).name("Potion of Absorption").build(), 15d);
 		put(new ItemBuilder(Material.DIAMOND).build(), 10d);
 		put(new ItemBuilder(Material.EMERALD).build(), 8d);
+		put(Pugmas25QuestItem.SLOT_MACHINE_TOKEN.get(), 8d);
 		put(new ItemBuilder(Material.NETHERITE_SCRAP).build(), 5d);
 		put(new ItemBuilder(Material.NETHERITE_INGOT).build(), 2d);
 		put(Pugmas25QuestItem.LUCKY_HORSESHOE.get(), 0.5d);
@@ -48,6 +49,7 @@ public enum Pugmas25Trunk {
 		put(new ItemBuilder(Material.LAPIS_LAZULI).build(), 8d);
 		put(new ItemBuilder(Material.IRON_INGOT).build(), 5d);
 		put(new ItemBuilder(Material.DIAMOND).build(), 5d);
+		put(Pugmas25QuestItem.SLOT_MACHINE_TOKEN.get(), 3d);
 		put(new ItemBuilder(Material.NETHERITE_SCRAP).build(), 1d);
 	}}),
 	IRON(ItemModelType.EVENT_TRUNK_IRON, new HashMap<>() {{

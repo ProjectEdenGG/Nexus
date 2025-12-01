@@ -698,6 +698,7 @@ public class Pugmas25 extends EdenEvent {
 				new Dialog(npc)
 					.npc("Thanks for helping out the village! We are finally ready for the holidays, thank to you!")
 					.npc("Here, I think I have an extra cake you can have, as a token of my appreciation")
+					.give(Pugmas25QuestItem.SLOT_MACHINE_TOKEN.get())
 					.reward(Pugmas25QuestReward.ANNIVERSARY_CAKE)
 					.player("Thank you!");
 			}
@@ -1210,6 +1211,7 @@ public class Pugmas25 extends EdenEvent {
 
 		new SoundBuilder(Sound.UI_TOAST_CHALLENGE_COMPLETE).receiver(player).volume(0.5).play();
 		PlayerUtils.send(player, PREFIX + "You found all the mini nutcrackers!");
+		PlayerUtils.giveItem(player, Pugmas25QuestItem.SLOT_MACHINE_TOKEN.get());
 		new EventUserService().edit(player, eventUser -> eventUser.giveTokens(250));
 	}
 

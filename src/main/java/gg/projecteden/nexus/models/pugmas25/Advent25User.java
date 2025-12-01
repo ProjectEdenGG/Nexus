@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.models.pugmas25;
 
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.pugmas25.Advent25Present.Advent25PresentStatus;
@@ -91,6 +92,9 @@ public class Advent25User implements PlayerOwnedObject {
 		PlayerUtils.mailItem(getOnlinePlayer(), present.getItem().build(), null, WorldGroup.SURVIVAL);
 		PlayerUtils.send(getOnlinePlayer(), Pugmas25.PREFIX + "This present has been sent to your &esurvival &c/mail box");
 		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).receiver(getOnlinePlayer()).play();
+
+		if (found.size() % 5 == 0)
+			PlayerUtils.giveItem(getOnlinePlayer(), Pugmas25QuestItem.SLOT_MACHINE_TOKEN.get());
 	}
 
 	private void validateCanCollect(Advent25Present present) {
