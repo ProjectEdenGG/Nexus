@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.EventSounds;
 import gg.projecteden.nexus.features.events.models.EventBreakable;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25.Pugmas25QuestProgress.Pugmas25QuestStatus;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25BoatRace;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Cabin;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Caves;
@@ -86,6 +87,7 @@ import gg.projecteden.nexus.utils.ToolType;
 import gg.projecteden.nexus.utils.ToolType.ToolGrade;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
@@ -107,6 +109,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -265,6 +272,17 @@ public class Pugmas25 extends EdenEvent {
 					particle.clone()
 						.location(nutCracker.toCenterLocation())
 						.spawn();
+				}
+
+				// Mayor
+				{
+					var mayor = Pugmas25NPC.MAYOR;
+					NPC npc = CitizensUtils.getNPC(mayor.getNpcId());
+					if (npc != null) {
+						particle.clone()
+							.location(npc.getStoredLocation().toCenterLocation())
+							.spawn();
+					}
 				}
 			});
 		});
@@ -640,6 +658,47 @@ public class Pugmas25 extends EdenEvent {
 
 			dialog.send(player);
 		});
+
+		handleInteract(Pugmas25NPC.MAYOR, (player, npc) -> {
+			boolean incomplete = false;
+
+			var quester = new QuesterService().get(player);
+			for (var pugmas25Quest : Pugmas25Quest.values()) {
+				var quest = quester.getQuest(pugmas25Quest);
+				if (quest == null || !quest.isComplete()) {
+					incomplete = true;
+					break;
+				}
+			}
+
+			for (var fakeQuest : Pugmas25QuestProgress.values()) {
+				if (!fakeQuest.isRepeatable())
+					continue;
+
+				var status = fakeQuest.getStatus(new Pugmas25UserService().get(player));
+				if (status != Pugmas25QuestStatus.COMPLETED) {
+					incomplete = true;
+					break;
+				}
+			}
+
+			if (incomplete) {
+				new Dialog(npc)
+					.npc("Welcome to Pugmas Village!")
+					.npc("There's still so much to do to get ready for the holidays!")
+					.npc("Can you help us out? I would really appreciate it!")
+					.player("Sure thing! What can I do for you?")
+					.npc("Check the quest board for a list of tasks to complete.")
+					.npc("Come talk to me again when you've completed them all!")
+					.send(player);
+			} else {
+				new Dialog(npc)
+					.npc("Thanks for helping out the village! We are finally ready for the holidays, thank to you!")
+					.npc("Here, I think I have an extra cake you can have, as a token of my appreciation")
+					.reward(Pugmas25QuestReward.ANNIVERSARY_CAKE)
+					.player("Thank you!");
+			}
+		});
 	}
 
 	@Override
@@ -862,6 +921,36 @@ public class Pugmas25 extends EdenEvent {
 				};
 			}
 		},
+
+		DESIGN_A_BALLOON(Pugmas25NPC.AERONAUT) {
+			@Override
+			Pugmas25QuestStatus getStatus(Pugmas25User user) {
+				if (!user.isReceivedAeronautInstructions())
+					return Pugmas25QuestStatus.NOT_STARTED;
+
+				if (user.isBalloonSchemExists())
+					return Pugmas25QuestStatus.COMPLETED;
+
+				return Pugmas25QuestStatus.IN_PROGRESS;
+			}
+
+			@Override
+			@Nullable
+			List<String> getProgressMessage(Pugmas25User user) {
+				return switch (getStatus(user)) {
+					case NOT_STARTED -> List.of(
+						"&3 " + getName() + " &7- &eStarted",
+						"&7   - Talk to the Aeronaut"
+					);
+					case IN_PROGRESS -> List.of(
+						"&3 " + getName() + " &7- &eStarted",
+						"&7   - Save your hot air balloon"
+					);
+					case COMPLETED -> List.of("&3 " + getName() + " &7- &aCompleted");
+				};
+			}
+		},
+
 		ANGLER(Pugmas25NPC.ANGLER) {
 			@Override
 			Pugmas25QuestStatus getStatus(Pugmas25User user) {
@@ -894,34 +983,7 @@ public class Pugmas25 extends EdenEvent {
 				};
 			}
 		},
-		DESIGN_A_BALLOON(Pugmas25NPC.AERONAUT) {
-			@Override
-			Pugmas25QuestStatus getStatus(Pugmas25User user) {
-				if (!user.isReceivedAeronautInstructions())
-					return Pugmas25QuestStatus.NOT_STARTED;
 
-				if (user.isBalloonSchemExists())
-					return Pugmas25QuestStatus.COMPLETED;
-
-				return Pugmas25QuestStatus.IN_PROGRESS;
-			}
-
-			@Override
-			@Nullable
-			List<String> getProgressMessage(Pugmas25User user) {
-				return switch (getStatus(user)) {
-					case NOT_STARTED -> List.of(
-						"&3 " + getName() + " &7- &eStarted",
-						"&7   - Talk to the Aeronaut"
-					);
-					case IN_PROGRESS -> List.of(
-						"&3 " + getName() + " &7- &eStarted",
-						"&7   - Save your hot air balloon"
-					);
-					case COMPLETED -> List.of("&3 " + getName() + " &7- &aCompleted");
-				};
-			}
-		},
 		DAILY_FAIRGROUND_TOKENS(null) {
 			@Override
 			Pugmas25QuestStatus getStatus(Pugmas25User user) {
@@ -1012,12 +1074,25 @@ public class Pugmas25 extends EdenEvent {
 			}
 		}
 
-		private enum Pugmas25QuestStatus {
+		public enum Pugmas25QuestStatus {
 			NOT_STARTED,
 			IN_PROGRESS,
 			COMPLETED,
 			;
 		}
+
+		public boolean isRepeatable() {
+			return getField().isAnnotationPresent(Repeatable.class);
+		}
+
+		@SneakyThrows
+		public Field getField() {
+			return getClass().getField(name());
+		}
+
+		@Target(ElementType.FIELD)
+		@Retention(RetentionPolicy.RUNTIME)
+		private @interface Repeatable {}
 	}
 
 	// Death
