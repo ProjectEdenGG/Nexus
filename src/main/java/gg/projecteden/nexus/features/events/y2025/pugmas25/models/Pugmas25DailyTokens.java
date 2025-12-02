@@ -32,8 +32,6 @@ public class Pugmas25DailyTokens {
 
 			ActionBarUtils.sendActionBar(player, "&a+" + amount + " Event Tokens");
 		}
-
-		service.save(user);
 	}
 
 	public static int getDailyTokensLeft(OfflinePlayer player, Pugmas25DailyTokenSource source, int amount) {
