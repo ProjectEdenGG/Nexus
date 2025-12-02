@@ -43,7 +43,8 @@ public class Pugmas25SellCrate implements Listener {
 	public static final String HEADER = "&0&l[&3Sell Crate&0&l]";
 	public static final String HEADER_UNFORMATTED = "[Sell Crate]";
 	public static final String INVENTORY_TITLE = "&3Sell Crate - ";
-	public static final ItemBuilder COIN = new ItemBuilder(ItemModelType.GOLD_COINS_1).amount(1);
+	public static final ItemBuilder COIN1 = new ItemBuilder(ItemModelType.GOLD_COINS_1).amount(1);
+	public static final ItemBuilder COIN100 = new ItemBuilder(ItemModelType.GOLD_COINS_2).amount(1);
 
 	public Pugmas25SellCrate() {
 		Nexus.registerListener(this);
@@ -67,7 +68,7 @@ public class Pugmas25SellCrate implements Listener {
 
 		Player player = event.getPlayer();
 		Pugmas25User user = new Pugmas25UserService().get(player);
-		if (crateType == Pugmas25SellCrateType.FARMING && !user.isReceivedFarmerInstructions()) {
+		if (crateType == Pugmas25SellCrateType.FARMING_ITEMS && !user.isReceivedFarmerInstructions()) {
 			PlayerUtils.send(player, Pugmas25.PREFIX + "&cThe Farmer has not given you permission to use this yet");
 			return;
 		}
@@ -83,9 +84,10 @@ public class Pugmas25SellCrate implements Listener {
 	@Getter
 	@AllArgsConstructor
 	public enum Pugmas25SellCrateType {
-		FISHING("&bFishing Items"),
-		FARMING("&aFarming Items"),
-		MINING("&7Mining Items"),
+		FISHING_ITEMS("&bFishing Items"),
+		FARMING_ITEMS("&aFarming Items"),
+		MINING_ITEMS("&7Mining Items"),
+		MOB_DROPS("&6Mob Drops")
 		;
 
 		private final String line;
@@ -96,7 +98,7 @@ public class Pugmas25SellCrate implements Listener {
 
 		public @Nullable List<TradeBuilder> getTrades() {
 			switch (this) {
-				case FISHING -> {
+				case FISHING_ITEMS -> {
 					int goldMultiplier = 4;
 
 					return new ArrayList<>() {{
@@ -104,36 +106,50 @@ public class Pugmas25SellCrate implements Listener {
 							if (loot.getGold() == null)
 								return;
 
-							add(new TradeBuilder().ingredient(loot.getItem()).result(COIN.clone().amount(loot.getGold() * goldMultiplier)));
+							add(new TradeBuilder().ingredient(loot.getItem()).result(COIN1.clone().amount(loot.getGold() * goldMultiplier)));
 						});
-						add(new TradeBuilder().ingredient(Material.SALMON).result(COIN.clone().amount(4 * goldMultiplier)));
-						add(new TradeBuilder().ingredient(Material.COD).result(COIN.clone().amount(2 * goldMultiplier)));
+						add(new TradeBuilder().ingredient(Material.SALMON).result(COIN1.clone().amount(4 * goldMultiplier)));
+						add(new TradeBuilder().ingredient(Material.COD).result(COIN1.clone().amount(2 * goldMultiplier)));
 
 						for (Pugmas25AnglerLoot anglerLoot : Pugmas25AnglerLoot.values()) {
 							FishingLoot loot = anglerLoot.getLoot();
-							add(new TradeBuilder().ingredient(loot.getItem()).result(COIN.clone().amount(8 * goldMultiplier)));
+							add(new TradeBuilder().ingredient(loot.getItem()).result(COIN1.clone().amount(8 * goldMultiplier)));
 						}
 					}};
 				}
 
-				case FARMING -> {
+				case FARMING_ITEMS -> {
 					return new ArrayList<>() {{
-						add(new TradeBuilder().ingredient(Material.HAY_BLOCK, 8).result(COIN.clone().amount(6)));
-						add(new TradeBuilder().ingredient(Material.CARROT, 64).result(COIN.clone().amount(6)));
+						add(new TradeBuilder().ingredient(Material.HAY_BLOCK, 8).result(COIN1.clone().amount(24)));
+						add(new TradeBuilder().ingredient(Material.CARROT, 64).result(COIN1.clone().amount(24)));
 					}};
 				}
 
-				case MINING -> {
+				case MINING_ITEMS -> {
 					return new ArrayList<>() {{
-						add(new TradeBuilder().ingredient(Material.COAL, 32).result(COIN.clone()));
-						add(new TradeBuilder().ingredient(Material.LAPIS_LAZULI, 32).result(COIN.clone()));
-						add(new TradeBuilder().ingredient(Material.COPPER_INGOT, 16).result(COIN.clone()));
-						add(new TradeBuilder().ingredient(Material.GOLD_INGOT, 16).result(COIN.clone().amount(4)));
-						add(new TradeBuilder().ingredient(Material.IRON_INGOT, 16).result(COIN.clone().amount(8)));
-						add(new TradeBuilder().ingredient(Material.DIAMOND, 12).result(COIN.clone().amount(20)));
-						add(new TradeBuilder().ingredient(Material.EMERALD, 4).result(COIN.clone().amount(30)));
-						//add(new TradeBuilder().ingredient(Material.NETHERITE_INGOT, 1).result(COIN.clone().amount(64)));
-						// add new currency coin block which is like 100
+						add(new TradeBuilder().ingredient(Material.COAL, 32).result(COIN1.clone().amount(1)));
+						add(new TradeBuilder().ingredient(Material.LAPIS_LAZULI, 32).result(COIN1.clone().amount(1)));
+						add(new TradeBuilder().ingredient(Material.COPPER_INGOT, 16).result(COIN1.clone().amount(2)));
+						add(new TradeBuilder().ingredient(Material.GOLD_INGOT, 16).result(COIN1.clone().amount(8)));
+						add(new TradeBuilder().ingredient(Material.IRON_INGOT, 8).result(COIN1.clone().amount(16)));
+						add(new TradeBuilder().ingredient(Material.DIAMOND, 4).result(COIN1.clone().amount(35)));
+						add(new TradeBuilder().ingredient(Material.EMERALD, 2).result(COIN1.clone().amount(50)));
+						add(new TradeBuilder().ingredient(Material.NETHERITE_INGOT, 1).result(COIN100.clone().amount(5)));
+					}};
+				}
+
+				case MOB_DROPS -> {
+					return new ArrayList<>() {{
+						add(new TradeBuilder().ingredient(Material.ARROW, 16).result(COIN1.clone().amount(1)));
+						add(new TradeBuilder().ingredient(Material.PORKCHOP, 8).result(COIN1.clone().amount(1)));
+						add(new TradeBuilder().ingredient(Material.RABBIT, 4).result(COIN1.clone().amount(1)));
+						add(new TradeBuilder().ingredient(Material.STRING, 2).result(COIN1.clone().amount(1)));
+						add(new TradeBuilder().ingredient(Material.BONE, 1).result(COIN1.clone().amount(5)));
+						add(new TradeBuilder().ingredient(Material.GUNPOWDER, 1).result(COIN1.clone().amount(8)));
+						add(new TradeBuilder().ingredient(Material.SPIDER_EYE, 1).result(COIN1.clone().amount(10)));
+						add(new TradeBuilder().ingredient(Material.RABBIT_HIDE, 1).result(COIN1.clone().amount(10)));
+						add(new TradeBuilder().ingredient(Material.RABBIT_FOOT, 1).result(COIN1.clone().amount(20)));
+
 					}};
 				}
 			}
@@ -149,7 +165,7 @@ public class Pugmas25SellCrate implements Listener {
 
 			var lines = sign.getLines();
 			String line1 = StringUtils.stripColor(lines[0]);
-			String line2 = StringUtils.stripColor(lines[1]).split(" ")[0].toUpperCase();
+			String line2 = StringUtils.stripColor(lines[1]).toUpperCase().replaceAll(" ", "_");
 			if (!HEADER_UNFORMATTED.equalsIgnoreCase(line1))
 				return null;
 
@@ -198,7 +214,12 @@ public class Pugmas25SellCrate implements Listener {
 
 			result.add("&3Trades:");
 			for (TradeBuilder trade : trades) {
-				int coins = trade.getResult().getAmount();
+				ItemStack coinItem = trade.getResult();
+				int coinMultiplier = 1;
+				if (ItemModelType.of(COIN100) == ItemModelType.of(coinItem))
+					coinMultiplier = 100;
+
+				int coins = coinMultiplier * coinItem.getAmount();
 				if (coins == 0)
 					continue;
 
@@ -222,7 +243,7 @@ public class Pugmas25SellCrate implements Listener {
 				result.add(" &3- &e" + ingredientAmount + "x " + ingredientName + " &3= &6" + coins + " Coins");
 			}
 
-			if (this == FISHING)
+			if (this == FISHING_ITEMS)
 				result.add(" &3- &e1x All Angler Quest Fish &3= &632 Coins"); // Angler Loot material is changed, doesn't match itemModelType
 
 			return result;
@@ -315,8 +336,13 @@ public class Pugmas25SellCrate implements Listener {
 
 			if (!profit.isEmpty()) {
 				int coins = 0;
-				for (ItemStack itemStack : profit)
-					coins += itemStack.getAmount();
+				for (ItemStack itemStack : profit) {
+					int coinMultiplier = 1;
+					if (ItemModelType.of(COIN100) == ItemModelType.of(itemStack))
+						coinMultiplier = 100;
+
+					coins += coinMultiplier * itemStack.getAmount();
+				}
 
 				Currency.COIN_POUCH.deposit(player, Price.of(coins));
 				PlayerUtils.send(player, StringUtils.getPrefix("Sell Crate") + "&3Deposited &e" + coins + " coins &3to Coin Pouch");

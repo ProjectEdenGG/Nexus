@@ -375,6 +375,8 @@ public class Pugmas25 extends EdenEvent {
 	public void registerInteractHandlers() {
 		handleInteract(Pugmas25NPC.BLACKSMITH, (player, npc) -> Pugmas25ShopMenu.BLACKSMITH.open(player));
 		handleInteract(Pugmas25NPC.TINKERER, (player, npc) -> Pugmas25ShopMenu.TINKERER.open(player));
+		handleInteract(Pugmas25NPC.ADVENTURER, (player, npc) -> Pugmas25ShopMenu.ADVENTURER.open(player));
+		handleInteract(Pugmas25NPC.ARTIST, (player, npc) -> Pugmas25ShopMenu.ARTIST.open(player));
 
 		Pugmas25UserService pugmas25UserService = new Pugmas25UserService();
 		MiniGolfUserService miniGolfUserService = new MiniGolfUserService();

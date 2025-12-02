@@ -10,9 +10,11 @@ import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.utils.Currency;
 import gg.projecteden.nexus.utils.Currency.Price;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
@@ -24,10 +26,23 @@ public enum Pugmas25ShopMenu implements QuestShopMenu {
 		.products(List.of(
 			new Product(Material.STICK).price(Currency.COIN_POUCH, Price.of(5)),
 			new Product(Material.STONE_PICKAXE).price(Currency.COIN_POUCH, Price.of(25)),
-			new Product(Material.SHIELD).price(Currency.COIN_POUCH, Price.of(100)),
 			new Product(Material.NETHERITE_SCRAP).price(Currency.COIN_POUCH, Price.of(10000)),
 			new Product(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE).price(Currency.COIN_POUCH, Price.of(25000))
 		))
+	),
+
+	ADVENTURER(Pugmas25NPC.ADVENTURER, NPCShopMenu.builder().title("Adventurer")
+		.products(List.of(
+			new Product(Material.IRON_SWORD).price(Currency.COIN_POUCH, Price.of(75)),
+			new Product(Material.SHIELD).price(Currency.COIN_POUCH, Price.of(100)),
+			new Product(Material.BOW).price(Currency.COIN_POUCH, Price.of(50)),
+			new Product(new ItemStack(Material.ARROW, 16)).price(Currency.COIN_POUCH, Price.of(16))
+		))
+	),
+
+	ARTIST(Pugmas25NPC.ARTIST, NPCShopMenu.builder().title("Artist")
+		.products(MaterialTag.DYES.getValues().stream()
+			.map(dye -> new Product(dye).price(Currency.COIN_POUCH, Price.of(8))).toList())
 	),
 
 	TINKERER(Pugmas25NPC.TINKERER, NPCShopMenu.builder().title("Tinkerer")
@@ -72,7 +87,7 @@ public enum Pugmas25ShopMenu implements QuestShopMenu {
 
 			new Product(new ItemBuilder(Material.SHULKER_SHELL, 4).build())
 				.displayItemStack(new ItemBuilder(Material.SHULKER_SHELL, 4).lore("&7Used for upgrading your backpack"))
-				.price(Currency.COIN_POUCH, Price.of(7500)),
+				.price(Currency.COIN_POUCH, Price.of(2000)),
 
 			new Product(Pugmas25QuestItem.FISHING_ROD_WOOD)
 				.price(Currency.COIN_POUCH, Price.of(100)) // cheap

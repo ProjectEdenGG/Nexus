@@ -16,11 +16,11 @@ public enum CommonQuestItem implements QuestItem {
 	COIN_POUCH(new ItemBuilder(ItemModelType.EVENT_COIN_POUCH).name("&oCoin Pouch").lore("&3Stores currency").undroppable().untrashable().unframeable()),
 	DISCOUNT_CARD(new ItemBuilder(ItemModelType.EVENT_DISCOUNT_CARD).name("&oDiscount Card").lore("&3Shop prices lowered by &e20%")),
 
-	BASIC_BACKPACK(new ItemBuilder(BackpackTier.BASIC.create()).undroppable().unstorable().untrashable()),
-	IRON_BACKPACK(new ItemBuilder(BackpackTier.IRON.create()).undroppable().unstorable().untrashable()),
-	GOLD_BACKPACK(new ItemBuilder(BackpackTier.GOLD.create()).undroppable().unstorable().untrashable()),
-	DIAMOND_BACKPACK(new ItemBuilder(BackpackTier.DIAMOND.create()).undroppable().unstorable().untrashable()),
-	NETHERITE_BACKPACK(new ItemBuilder(BackpackTier.NETHERITE.create()).undroppable().unstorable().untrashable()),
+	BASIC_BACKPACK(new ItemBuilder(BackpackTier.BASIC.create()).undroppable().untrashable()),
+	IRON_BACKPACK(new ItemBuilder(BackpackTier.IRON.create()).undroppable().untrashable()),
+	GOLD_BACKPACK(new ItemBuilder(BackpackTier.GOLD.create()).undroppable().untrashable()),
+	DIAMOND_BACKPACK(new ItemBuilder(BackpackTier.DIAMOND.create()).undroppable().untrashable()),
+	NETHERITE_BACKPACK(new ItemBuilder(BackpackTier.NETHERITE.create()).undroppable().untrashable()),
 	;
 
 	private final ItemBuilder itemBuilder;

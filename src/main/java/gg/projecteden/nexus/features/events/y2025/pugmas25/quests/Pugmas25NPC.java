@@ -21,6 +21,8 @@ import java.util.function.Predicate;
 public enum Pugmas25NPC implements InteractableNPC, IWaypoint {
 	BLACKSMITH("Blacksmith", 5591),
 	TINKERER("Tinkerer", 5597),
+	ADVENTURER("Adventurer", 5670),
+	ARTIST("Artist", 5671),
 	ANGLER("Angler", 5590),
 	TICKET_MASTER("Ticket Master", 5587),
 	TICKET_MASTER_HUB("Ticket Master", Nexus.getEnv() == Env.UPDATE ? 5634 : 5661),
