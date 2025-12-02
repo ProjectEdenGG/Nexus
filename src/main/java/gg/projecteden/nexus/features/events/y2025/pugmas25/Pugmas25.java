@@ -122,9 +122,6 @@ import java.util.Set;
 
 import static gg.projecteden.api.common.utils.StringUtils.plural;
 
-/*
-	"TODO: RELEASE PUGMAS" <-- CHECK FOR ANY COMMENTS ON WHOLE PROJECT
- */
 @QuestConfig(
 	quests = Pugmas25Quest.class,
 	tasks = Pugmas25QuestTask.class,
@@ -979,7 +976,7 @@ public class Pugmas25 extends EdenEvent {
 					);
 					case IN_PROGRESS -> List.of(
 						"&3 " + getName() + " &7- &eStarted",
-						"&7   - Talk to the Angler for more info"
+						"&7   - Talk to the Angler for more info (reset in " + timeUntilReset + ")"
 					);
 					case COMPLETED ->
 						List.of("&3 " + getName() + " &7- &aCompleted (resets in " + timeUntilReset + ")");
@@ -1030,7 +1027,7 @@ public class Pugmas25 extends EdenEvent {
 					}
 					case IN_PROGRESS -> {
 						List<String> result = new ArrayList<>();
-						result.add("&3 " + getName() + " &7- &eStarted");
+						result.add("&3 " + getName() + " &7- &eStarted (resets in " + timeUntilReset + ")");
 
 						String sourceName;
 						for (Pugmas25DailyTokenSource source : Pugmas25DailyTokenSource.values()) {
