@@ -140,6 +140,7 @@ public class Pugmas25SellCrate implements Listener {
 
 				case MOB_DROPS -> {
 					return new ArrayList<>() {{
+						add(new TradeBuilder().ingredient(Material.ROTTEN_FLESH, 16).result(COIN1.clone().amount(1)));
 						add(new TradeBuilder().ingredient(Material.ARROW, 16).result(COIN1.clone().amount(1)));
 						add(new TradeBuilder().ingredient(Material.PORKCHOP, 8).result(COIN1.clone().amount(1)));
 						add(new TradeBuilder().ingredient(Material.RABBIT, 4).result(COIN1.clone().amount(1)));
