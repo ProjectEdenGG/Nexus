@@ -261,10 +261,6 @@ public class WorldGuardFlags implements Listener {
 	@EventHandler
 	public void onBlockInteract(PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
-
-		if (WorldGuardEditCommand.isEnabled(player))
-			return;
-
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
 			return;
 

@@ -25,7 +25,11 @@ class WaypointInstance {
 	}
 
 	public boolean isSameWorld() {
-		return getWaypoint().getLocation().getWorld().equals(getPlayer().getWorld());
+		var player = getPlayer();
+		if (player == null)
+			return false;
+
+		return getWaypoint().getLocation().getWorld().equals(player.getWorld());
 	}
 
 	public boolean isNearby() {
