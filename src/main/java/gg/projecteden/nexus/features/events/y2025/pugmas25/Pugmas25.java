@@ -524,7 +524,6 @@ public class Pugmas25 extends EdenEvent {
 			if (user.isReceivedFarmerInstructions()) {
 				dialog
 					.npc("Still need crops? Go right ahead, you’ve got permission to harvest anything out in the field.")
-					.npc("Remember, the sell crate next to me buys hay bales in stacks of 16 and carrots in stacks of 64.")
 					.npc("Anything that doesn’t match gets returned. Nothing lost!")
 					.send(player);
 				return;
@@ -537,7 +536,6 @@ public class Pugmas25 extends EdenEvent {
 				.player("Seriously? Thanks!")
 				.npc("Yep! And if you don't need the crops, you can sell ‘em right here in the sell crate next to me.")
 				.npc("Just toss in hay bales and carrots and the crate will check what it can trade for.")
-				.npc("Only thing to remember: hay bales sell in stacks of 16, and carrots sell in stacks of 64.")
 				.npc("If you put in the wrong item or amount the crate won’t make a deal and’ll just give everything back.")
 				.npc("Now go on! Harvest away, and happy Pugmas farmin’!")
 				.thenRun(quester -> {
