@@ -27,6 +27,8 @@ import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
+import gg.projecteden.nexus.models.minigolf.MiniGolfUser;
+import gg.projecteden.nexus.models.minigolf.MiniGolfUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.quests.Quester;
@@ -270,6 +272,11 @@ public class Reloader {
 					throw new InvalidInputException("There is an active Vu Lan lantern animation");
 			}
 		}),
+		MINIGOLF_BALLS(() -> {
+			for (MiniGolfUser user : new MiniGolfUserService().getAll())
+				if (user.getGolfBall() != null && user.getGolfBall().isAlive())
+					throw new InvalidInputException(user.getNickname() + " has an active MiniGolf ball");
+		})
 		;
 
 		private final Runnable runnable;
