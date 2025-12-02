@@ -49,7 +49,6 @@ public class Advent25Config implements DatabaseObject {
 	@NonNull
 	private UUID uuid;
 
-	private Location lootOrigin;
 	private Map<Integer, Advent25Present> days = new HashMap<>();
 
 	public static Advent25Config get() {

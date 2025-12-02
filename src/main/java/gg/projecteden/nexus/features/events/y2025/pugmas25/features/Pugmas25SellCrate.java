@@ -1,7 +1,9 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.features;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.events.models.EventFishingLoot.FishingLoot;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25AnglerLoot;
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.features.quests.CommonQuestItem;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
@@ -12,6 +14,7 @@ import gg.projecteden.nexus.utils.Currency;
 import gg.projecteden.nexus.utils.Currency.Price;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.MerchantBuilder.TradeBuilder;
 import gg.projecteden.nexus.utils.Nullables;
@@ -20,6 +23,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -28,7 +32,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -70,6 +73,11 @@ public class Pugmas25SellCrate implements Listener {
 		}
 
 		new SellCrateMenu(player, crateType);
+
+		JsonBuilder json = new JsonBuilder()
+			.next(StringUtils.getPrefix(StringUtils.camelCase(crateType) + " Sell Crate") + "Hover here to ").group()
+			.next("&3[&eView Trades&3]").hover(crateType.getTradesLore());
+		PlayerUtils.send(player, json);
 	}
 
 	@Getter
@@ -89,13 +97,22 @@ public class Pugmas25SellCrate implements Listener {
 		public @Nullable List<TradeBuilder> getTrades() {
 			switch (this) {
 				case FISHING -> {
+					int goldMultiplier = 4;
+
 					return new ArrayList<>() {{
 						Pugmas25.get().getFishingLoot().forEach(loot -> {
 							if (loot.getGold() == null)
 								return;
 
-							add(new TradeBuilder().ingredient(loot.getItem()).result(COIN.clone().amount(loot.getGold() * 4)));
+							add(new TradeBuilder().ingredient(loot.getItem()).result(COIN.clone().amount(loot.getGold() * goldMultiplier)));
 						});
+						add(new TradeBuilder().ingredient(Material.SALMON).result(COIN.clone().amount(4 * goldMultiplier)));
+						add(new TradeBuilder().ingredient(Material.COD).result(COIN.clone().amount(2 * goldMultiplier)));
+
+						for (Pugmas25AnglerLoot anglerLoot : Pugmas25AnglerLoot.values()) {
+							FishingLoot loot = anglerLoot.getLoot();
+							add(new TradeBuilder().ingredient(loot.getItem()).result(COIN.clone().amount(8 * goldMultiplier)));
+						}
 					}};
 				}
 
@@ -108,14 +125,15 @@ public class Pugmas25SellCrate implements Listener {
 
 				case MINING -> {
 					return new ArrayList<>() {{
-						add(new TradeBuilder().ingredient(Material.COAL, 64).result(COIN.clone()));
-						add(new TradeBuilder().ingredient(Material.LAPIS_LAZULI, 64).result(COIN.clone()));
-						add(new TradeBuilder().ingredient(Material.COPPER_INGOT, 32).result(COIN.clone()));
-						add(new TradeBuilder().ingredient(Material.GOLD_INGOT, 32).result(COIN.clone().amount(4)));
-						add(new TradeBuilder().ingredient(Material.IRON_INGOT, 32).result(COIN.clone().amount(8)));
+						add(new TradeBuilder().ingredient(Material.COAL, 32).result(COIN.clone()));
+						add(new TradeBuilder().ingredient(Material.LAPIS_LAZULI, 32).result(COIN.clone()));
+						add(new TradeBuilder().ingredient(Material.COPPER_INGOT, 16).result(COIN.clone()));
+						add(new TradeBuilder().ingredient(Material.GOLD_INGOT, 16).result(COIN.clone().amount(4)));
+						add(new TradeBuilder().ingredient(Material.IRON_INGOT, 16).result(COIN.clone().amount(8)));
 						add(new TradeBuilder().ingredient(Material.DIAMOND, 12).result(COIN.clone().amount(20)));
 						add(new TradeBuilder().ingredient(Material.EMERALD, 4).result(COIN.clone().amount(30)));
-						add(new TradeBuilder().ingredient(Material.NETHERITE_INGOT, 1).result(COIN.clone().amount(50)));
+						//add(new TradeBuilder().ingredient(Material.NETHERITE_INGOT, 1).result(COIN.clone().amount(64)));
+						// add new currency coin block which is like 100
 					}};
 				}
 			}
@@ -169,6 +187,45 @@ public class Pugmas25SellCrate implements Listener {
 			}
 
 			return sign;
+		}
+
+		public @NonNull List<String> getTradesLore() {
+			List<String> result = new ArrayList<>();
+
+			var trades = getTrades();
+			if (Nullables.isNullOrEmpty(trades))
+				return result;
+
+			result.add("&3Trades:");
+			for (TradeBuilder trade : trades) {
+				int coins = trade.getResult().getAmount();
+				if (coins == 0)
+					continue;
+
+				ItemStack ingredient = trade.getIngredients().getFirst();
+				int ingredientAmount = ingredient.getAmount();
+
+				ItemModelType itemModelType = ItemModelType.of(ingredient);
+				String ingredientName;
+				if (itemModelType == null) {
+					if (ingredient.getType() == Material.LEATHER_HORSE_ARMOR)
+						continue;
+					ingredientName = StringUtils.camelCase(ingredient.getType());
+					if (ingredient.getType() == Material.SALMON || ingredient.getType() == Material.COD)
+						ingredientName = "Vanilla " + ingredientName;
+
+				} else {
+					ingredientName = StringUtils.stripColor(itemModelType.getNamedItemBuilder().name());
+					ingredientName = ingredientName.replace("Fishing Loot ", "");
+				}
+
+				result.add(" &3- &e" + ingredientAmount + "x " + ingredientName + " &3= &6" + coins + " Coins");
+			}
+
+			if (this == FISHING)
+				result.add(" &3- &e1x All Angler Quest Fish &3= &632 Coins"); // Angler Loot material is changed, doesn't match itemModelType
+
+			return result;
 		}
 	}
 

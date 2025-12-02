@@ -65,7 +65,7 @@ public class Pugmas25ReflectionUtils {
 		if (Pugmas25Reflection.getReflections() > 0)
 			count = " in " + Pugmas25Reflection.getReflections() + "+ reflections";
 
-		Pugmas25Reflection.setMessage("Hit " + type + "&f" + count);
+		Pugmas25Reflection.setMessage("Objective: Hit " + type + "&f" + count);
 	}
 
 

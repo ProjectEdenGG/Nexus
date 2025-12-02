@@ -10,11 +10,13 @@ import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig.ClientSideItemFrameModifier;
 import gg.projecteden.nexus.models.clientside.ClientSideUser;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.pugmas25.Advent25Config;
 import gg.projecteden.nexus.models.pugmas25.Advent25ConfigService;
 import gg.projecteden.nexus.models.pugmas25.Advent25Present;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -74,7 +76,8 @@ public class Pugmas25Advent implements Listener {
 	}
 
 	public static void openPresent(Player player, int day) {
-		Advent25Present present = Advent25Config.get().get(day);
+		Advent25Config config = Advent25Config.get();
+		Advent25Present present = config.get(day);
 
 		AdventAnimation.builder()
 			.location(player.getLocation())
@@ -150,35 +153,6 @@ public class Pugmas25Advent implements Listener {
 			return;
 
 		new Pugmas25UserService().edit(player, user -> user.advent().tryCollect(present));
-	}
-
-	public static void updateItems() {
-		Advent25ConfigService configService = new Advent25ConfigService();
-		Advent25Config adventConfig = Advent25Config.get();
-
-		Location lootOrigin = adventConfig.getLootOrigin();
-		lootOrigin = lootOrigin.add(2, 0, 0);
-
-		int day = 1;
-		for (int z = 0; z <= 6; z++) {         // 0-3 col (Every other)
-			for (int x = 0; x <= 12; x++) {    // 0-6 row (Every other)
-				Block block = lootOrigin.getBlock().getRelative(x, 0, z);
-				if (isNullOrAir(block.getType()) || !block.getType().equals(Material.CHEST))
-					continue;
-
-				Chest chest = (Chest) block.getState();
-				List<ItemStack> contents = Arrays.stream(chest.getBlockInventory().getContents())
-					.filter(Nullables::isNotNullOrAir)
-					.collect(Collectors.toList());
-
-				if (isNullOrEmpty(contents))
-					Nexus.warn("Contents of advent present " + day + " is empty!");
-
-				adventConfig.get(day++).setContents(contents);
-			}
-		}
-
-		configService.save(adventConfig);
 	}
 
 }

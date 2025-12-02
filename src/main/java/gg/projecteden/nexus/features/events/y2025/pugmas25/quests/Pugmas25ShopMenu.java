@@ -22,8 +22,9 @@ public enum Pugmas25ShopMenu implements QuestShopMenu {
 
 	BLACKSMITH(Pugmas25NPC.BLACKSMITH, NPCShopMenu.builder().title("Blacksmith")
 		.products(List.of(
-			new Product(Material.STONE_PICKAXE).price(Currency.COIN_POUCH, Price.of(15)),
-			new Product(Material.STICK).price(Currency.COIN_POUCH, Price.of(50)),
+			new Product(Material.STICK).price(Currency.COIN_POUCH, Price.of(5)),
+			new Product(Material.STONE_PICKAXE).price(Currency.COIN_POUCH, Price.of(25)),
+			new Product(Material.SHIELD).price(Currency.COIN_POUCH, Price.of(100)),
 			new Product(Material.NETHERITE_SCRAP).price(Currency.COIN_POUCH, Price.of(10000)),
 			new Product(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE).price(Currency.COIN_POUCH, Price.of(25000))
 		))

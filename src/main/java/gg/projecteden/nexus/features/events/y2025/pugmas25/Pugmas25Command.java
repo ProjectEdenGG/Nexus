@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.IEventCommand;
 import gg.projecteden.nexus.features.events.waypoints.CustomWaypoint;
@@ -57,6 +58,7 @@ import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.Currency;
 import gg.projecteden.nexus.utils.Currency.Price;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
@@ -66,19 +68,24 @@ import net.citizensnpcs.trait.LookClose;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.xyzw;
 
 @HideFromWiki
@@ -142,6 +149,8 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 	@Override
 	@Path("quest progress [player]")
 	protected void quest_progress(@Arg(value = "self", permission = Group.STAFF) Quester quester) {
+		user = userService.get(quester);
+
 		super.quest_progress(quester);
 		Pugmas25QuestProgress.ADVENT.send(user);
 		Pugmas25QuestProgress.DESIGN_A_BALLOON.send(user);
@@ -357,23 +366,6 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		giveItem(present.getItem());
 	}
 
-	@Path("advent config updateItems")
-	@Permission(Group.ADMIN)
-	void advent_updateItems() {
-		Pugmas25Advent.updateItems();
-
-		send(PREFIX + "updated items");
-	}
-
-	@Path("advent config setLootOrigin")
-	@Permission(Group.ADMIN)
-	void advent_lootOrigin() {
-		adventConfig.setLootOrigin(location());
-		adventService.save(adventConfig);
-
-		send(PREFIX + "lootOrigin configured at " + xyzw(adventConfig.getLootOrigin()));
-	}
-
 	@Path("advent config create <day>")
 	@Permission(Group.ADMIN)
 	void advent_config_create(@Arg(min = 1, max = 25) int day) {
@@ -385,6 +377,27 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		adventService.save(adventConfig);
 
 		send(PREFIX + "Advent day #" + day + " configured");
+	}
+
+	@Path("advent config createLoot <day>")
+	@Permission(Group.ADMIN)
+	void advent_config_createLoot(@Arg(min = 1, max = 25) int day) {
+		final Block block = getTargetBlockRequired();
+		if (block.getType() != Material.CHEST)
+			error("You must be looking at a chest");
+
+		Chest chest = (Chest) block.getState();
+		List<ItemStack> contents = Arrays.stream(chest.getBlockInventory().getContents())
+			.filter(Nullables::isNotNullOrAir)
+			.collect(Collectors.toList());
+
+		if (isNullOrEmpty(contents))
+			Nexus.warn("Contents are empty");
+
+		adventConfig.get(day).setContents(contents);
+		adventService.save(adventConfig);
+
+		send(PREFIX + "Loot for Advent day #" + day + " configured");
 	}
 
 	@Path("advent config delete <day>")

@@ -143,26 +143,26 @@ public enum Pugmas25AnglerLoot {
 	@Getter
 	private final FishingLoot loot;
 
-	Pugmas25AnglerLoot(Pugmas25District district, EventFishingLootTime time, ItemModelType model, List<String> hint) {
-		this(district, (player) -> Pugmas25District.of(player.getLocation()) == district, model, time, hint);
+	Pugmas25AnglerLoot(Pugmas25District district, EventFishingLootTime time, ItemModelType modelId, List<String> hint) {
+		this(district, (player) -> Pugmas25District.of(player.getLocation()) == district, modelId, time, hint);
 	}
 
-	Pugmas25AnglerLoot(Pugmas25District district, Pugmas25BiomeDistrict biomeDistrict, int maxY, EventFishingLootTime time, ItemModelType model, List<String> hint) {
+	Pugmas25AnglerLoot(Pugmas25District district, Pugmas25BiomeDistrict biomeDistrict, int maxY, EventFishingLootTime time, ItemModelType modelId, List<String> hint) {
 		this(district, (player) ->
-			Pugmas25.getPlayerWorldHeight(player) <= maxY && Pugmas25Districts.of(player) == district && Pugmas25BiomeDistrict.of(player) == biomeDistrict, model, time, hint);
+			Pugmas25.getPlayerWorldHeight(player) <= maxY && Pugmas25Districts.of(player) == district && Pugmas25BiomeDistrict.of(player) == biomeDistrict, modelId, time, hint);
 		this.biomeDistrict = biomeDistrict;
 		this.maxY = maxY;
 		;
 	}
 
-	Pugmas25AnglerLoot(Pugmas25District district, Predicate<Player> predicate, ItemModelType model, EventFishingLootTime time, List<String> hint) {
-		this.modelId = model.getModel();
+	Pugmas25AnglerLoot(Pugmas25District district, Predicate<Player> predicate, ItemModelType modelId, EventFishingLootTime time, List<String> hint) {
+		this.modelId = modelId.getModel();
 		this.customName = StringUtils.camelCase(this);
 		this.district = district;
 		this.hint = hint;
 		this.time = time;
 		//
-		this.loot = new FishingLoot(name(), EventFishingLootCategory.SPECIAL, null, Material.LEATHER_HORSE_ARMOR, modelId, 5,
+		this.loot = new FishingLoot(name(), EventFishingLootCategory.SPECIAL, null, Material.LEATHER_HORSE_ARMOR, this.modelId, 5,
 			customName, "&7Quest Fish", time, null, predicate);
 	}
 

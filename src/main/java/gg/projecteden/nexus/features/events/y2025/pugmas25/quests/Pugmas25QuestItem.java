@@ -105,7 +105,7 @@ public enum Pugmas25QuestItem implements QuestItem {
 
 	SEXTANT(new ItemBuilder(ItemModelType.EVENT_SEXTANT)
 		.name("&oSextant")
-		.lore("&3Displays coordinates")
+		.lore("&3Displays height")
 		.undroppable()
 		.untrashable()),
 

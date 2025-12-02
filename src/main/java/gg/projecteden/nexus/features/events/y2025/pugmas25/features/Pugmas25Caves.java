@@ -65,6 +65,7 @@ public class Pugmas25Caves implements Listener {
 	private static final Map<Long, Integer> recentlyOpenedChunks = new HashMap<>();
 
 	private static int polarBearTask = -1;
+	private static int playerCheckerTask = -1;
 
 	public Pugmas25Caves() {
 		Nexus.registerListener(this);
@@ -77,9 +78,21 @@ public class Pugmas25Caves implements Listener {
 				polarBear.setTarget(target);
 			});
 		});
+
+		playerCheckerTask = Tasks.repeat(5, TickTime.SECOND.x(30), () -> {
+			String region = Pugmas25District.CAVES.getRegionId();
+			int players = Pugmas25.get().worldguard().getPlayersInRegion(region).size();
+			if (players > 0)
+				return;
+
+			Pugmas25.get().worldguard().getEntitiesInRegion(region).stream()
+				.filter(entity -> entity instanceof Mob)
+				.forEach(Entity::remove);
+		});
 	}
 
 	public static void shutdown() {
+		Tasks.cancel(playerCheckerTask);
 		Tasks.cancel(polarBearTask);
 	}
 
@@ -302,7 +315,7 @@ public class Pugmas25Caves implements Listener {
 		mob.setAggressive(true);
 
 		if (mob.getType() != EntityType.POLAR_BEAR && Pugmas25.get().worldguard().isInRegion(mob, "pugmas25_biome_ice")) {
-			if (RandomUtils.chanceOf(10)) {
+			if (RandomUtils.chanceOf(5)) {
 				event.setCancelled(true);
 				mob.getWorld().spawn(mob.getLocation(), PolarBear.class);
 				return;
