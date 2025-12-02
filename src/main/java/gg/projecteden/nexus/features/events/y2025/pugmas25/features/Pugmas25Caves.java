@@ -301,6 +301,14 @@ public class Pugmas25Caves implements Listener {
 
 		mob.setAggressive(true);
 
+		if (mob.getType() != EntityType.POLAR_BEAR && Pugmas25.get().worldguard().isInRegion(mob, "pugmas25_biome_ice")) {
+			if (RandomUtils.chanceOf(10)) {
+				event.setCancelled(true);
+				mob.getWorld().spawn(mob.getLocation(), PolarBear.class);
+				return;
+			}
+		}
+
 		if (mob.getType() != EntityType.SPIDER)
 			return;
 

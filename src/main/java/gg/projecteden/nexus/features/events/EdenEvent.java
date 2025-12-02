@@ -28,6 +28,7 @@ import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuest;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationRotateEvent;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomEmoji;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.framework.features.Feature;
@@ -648,6 +649,20 @@ public abstract class EdenEvent extends Feature implements Listener {
 
 	@EventHandler
 	public void _onBreakDecoration(DecorationDestroyEvent event) {
+		Player player = event.getPlayer();
+
+		if (!shouldHandle(player))
+			return;
+		if (event.isCancelled())
+			return;
+		if (WorldGuardEditCommand.isEnabled(player))
+			return;
+
+		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void _onBreakDecoration(DecorationRotateEvent event) {
 		Player player = event.getPlayer();
 
 		if (!shouldHandle(player))
