@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.listeners;
 
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ import org.bukkit.event.Listener;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
+@Disabled
 @NoArgsConstructor
 public class HappyGhastSprint implements Listener {
 	private static final NamespacedKey ATTRIBUTE_KEY = new NamespacedKey(Nexus.getInstance(), "happy_ghast_sprint");
