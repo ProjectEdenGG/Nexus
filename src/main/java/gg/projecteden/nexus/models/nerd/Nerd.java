@@ -93,6 +93,7 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 	private Map<WorldGroup, LocalDateTime> lastDeathMap = new HashMap<>();
 
 	private ToolSkin worldEditWandSkin = ToolSkin.DEFAULT;
+	private boolean voxelSniperEnabled = true;
 
 	@PreLoad
 	void preLoad(DBObject dbObject) {
