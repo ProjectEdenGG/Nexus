@@ -20,13 +20,6 @@ public class Pugmas25StartOfDayJob extends AbstractJob {
 	@Override
 	protected CompletableFuture<JobStatus> run() {
 		Advent25User.refreshAllPlayers();
-
-		// Brain-dead fix
-		final Pugmas25UserService userService = new Pugmas25UserService();
-		for (Pugmas25User user : userService.cacheAll())
-			user.resetDailys();
-		userService.saveCache();
-
 		return completed();
 	}
 

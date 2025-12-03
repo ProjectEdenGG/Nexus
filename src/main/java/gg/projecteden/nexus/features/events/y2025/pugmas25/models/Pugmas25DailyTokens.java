@@ -21,61 +21,19 @@ public class Pugmas25DailyTokens {
 		if (!Pugmas25.get().isEventActive())
 			return;
 
-		EventUserService eventUserService = new EventUserService();
-		EventUser eventUser = eventUserService.get(player);
+		EventUserService service = new EventUserService();
+		EventUser user = service.get(player);
 
-		// Brain-dead fix
-		int tokensLeft = _getDailyTokensLeft(player, source);
-		if (tokensLeft == 0) {
+		final int dailyTokensLeft = Math.abs(getDailyTokensLeft(player, source, 0));
+
+		if (dailyTokensLeft == 0) {
 			ActionBarUtils.sendActionBar(player, "&cDaily token limit reached");
-			return;
+		} else {
+			user.giveTokens(source.getId(), amount, Pugmas25DailyTokenSource.getMaxes());
+			service.save(user);
+
+			ActionBarUtils.sendActionBar(player, "&a+" + amount + " Event Tokens");
 		}
-
-		eventUser.giveTokens(amount);
-		eventUserService.save(eventUser);
-
-		int tokensSum = _getCurrentDailyTokens(player, source) + amount;
-
-		Pugmas25UserService pugmasUserService = new Pugmas25UserService();
-		Pugmas25User pugmasUser = pugmasUserService.get(player);
-		switch (source) {
-			case FROGGER -> pugmasUser.setDailyFroggerTokens(tokensSum);
-			case MINIGOLF -> pugmasUser.setDailyMiniGolfTokens(tokensSum);
-			case WHACAMOLE -> pugmasUser.setDailyWhacAWakkaTokens(tokensSum);
-			case REFLECTION -> pugmasUser.setDailyReflectionTokens(tokensSum);
-		}
-		pugmasUserService.save(pugmasUser);
-
-		ActionBarUtils.sendActionBar(player, "&a+" + amount + " Event Tokens");
-		//
-
-		// Busted AF
-//		final int dailyTokensLeft = Math.abs(getDailyTokensLeft(player, source, 0));
-//
-//		if (dailyTokensLeft == 0) {
-//			ActionBarUtils.sendActionBar(player, "&cDaily token limit reached");
-//		} else {
-//			user.giveTokens(source.getId(), amount, Pugmas25DailyTokenSource.getMaxes());
-//			service.save(user);
-//
-//			ActionBarUtils.sendActionBar(player, "&a+" + amount + " Event Tokens");
-//		}
-	}
-
-	public static int _getCurrentDailyTokens(OfflinePlayer player, Pugmas25DailyTokenSource source) {
-		Pugmas25UserService pugmasUserService = new Pugmas25UserService();
-		Pugmas25User pugmasUser = pugmasUserService.get(player);
-
-		return switch (source) {
-			case FROGGER -> pugmasUser.getDailyFroggerTokens();
-			case MINIGOLF -> pugmasUser.getDailyMiniGolfTokens();
-			case WHACAMOLE -> pugmasUser.getDailyWhacAWakkaTokens();
-			case REFLECTION -> pugmasUser.getDailyReflectionTokens();
-		};
-	}
-
-	public static int _getDailyTokensLeft(OfflinePlayer player, Pugmas25DailyTokenSource source) {
-		return source.getMaxDailyTokens() - _getCurrentDailyTokens(player, source);
 	}
 
 	public static int getDailyTokensLeft(OfflinePlayer player, Pugmas25DailyTokenSource source, int amount) {

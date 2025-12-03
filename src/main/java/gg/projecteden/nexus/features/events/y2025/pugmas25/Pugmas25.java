@@ -1020,8 +1020,7 @@ public class Pugmas25 extends EdenEvent {
 							if (source == Pugmas25DailyTokenSource.WHACAMOLE)
 								sourceName = "WhacAWakka";
 
-							//int received = eventUser.getTokensReceivedToday(source.getId());
-							int received = Pugmas25DailyTokens._getCurrentDailyTokens(user.getPlayer(), source);
+							int received = eventUser.getTokensReceivedToday(source.getId());
 							int max = source.getMaxDailyTokens();
 							if (received == 0)
 								result.add("&7   - " + sourceName + ": " + "&c" + received + "&7/&e" + max + " &7event tokens");

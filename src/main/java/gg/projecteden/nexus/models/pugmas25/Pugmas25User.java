@@ -63,24 +63,12 @@ public class Pugmas25User implements PlayerOwnedObject {
 
 	private boolean startedMiniGolf;
 
-	private int dailyMiniGolfTokens = 0;
-	private int dailyReflectionTokens = 0;
-	private int dailyFroggerTokens = 0;
-	private int dailyWhacAWakkaTokens = 0;
-
 	private Set<Pugmas25Waystone> foundWaystones = new HashSet<>();
 	private Set<Pugmas25Snowman> decoratedSnowmen = new HashSet<>();
 	private Set<Location> foundNutCrackers = new HashSet<>();
 
 	@Getter(AccessLevel.PRIVATE)
 	private Advent25User advent;
-
-	public void resetDailys() {
-		dailyMiniGolfTokens = 0;
-		dailyReflectionTokens = 0;
-		dailyFroggerTokens = 0;
-		dailyWhacAWakkaTokens = 0;
-	}
 
 	public Advent25User advent() {
 		if (advent == null)
