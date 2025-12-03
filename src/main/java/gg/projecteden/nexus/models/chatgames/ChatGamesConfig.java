@@ -384,6 +384,10 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 				}
 			}
 
+			for (var answer : answers)
+				if (answer.toLowerCase().contains(message.toLowerCase()))
+					return true;
+
 			return false;
 		}
 

@@ -305,7 +305,7 @@ public enum ChatGameType {
 		VILLAGE_RAID("What in-game event brings waves of hostile mobs attacking a village?", "raid"),
 		ALLAY_DUPLICATION("What mob can be duplicated using an amethyst shard?", "allay"),
 		BLUE_AXOLOTL("What color is the rarest Axolotl variant?", "blue"),
-		BREED_SNIFFER("What item is used to breed Sniffers?", "torchflower Seeds"),
+		BREED_SNIFFER("What item is used to breed Sniffers?", "torchflower seeds"),
 		LIGHT_FOR_CROPS("What is the minimum light level needed for crops to grow?", getNumberAnswers(9)),
 		OBSIDIAN_FOR_PORTAL("What is the minimum number of obsidian needed to make a nether portal?", getNumberAnswers(10)),
 
