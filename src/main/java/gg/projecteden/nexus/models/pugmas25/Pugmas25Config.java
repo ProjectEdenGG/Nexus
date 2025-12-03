@@ -30,9 +30,9 @@ public class Pugmas25Config implements DatabaseObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Pugmas25AnglerLoot anglerQuestFish = null;
-	private String anglerQuestFishHint = null;
-	private LocalDateTime anglerQuestResetDateTime = null;
+	private Pugmas25AnglerLoot anglerQuestFish;
+	private String anglerQuestFishHint;
+	private LocalDateTime anglerQuestResetDateTime = LocalDateTime.now();
 	private Set<Location> nutCrackerLocations = new HashSet<>();
 
 	public static Pugmas25Config get() {

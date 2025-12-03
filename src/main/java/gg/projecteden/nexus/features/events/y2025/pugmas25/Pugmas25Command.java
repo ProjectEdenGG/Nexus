@@ -152,26 +152,33 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		user = userService.get(quester);
 
 		super.quest_progress(quester);
-		Pugmas25QuestProgress.ADVENT.send(user);
-		Pugmas25QuestProgress.DESIGN_A_BALLOON.send(user);
-		Pugmas25QuestProgress.MINI_NUTCRACKERS.send(user);
+		Pugmas25QuestProgress.ADVENT.send(player(), user);
+		Pugmas25QuestProgress.DESIGN_A_BALLOON.send(player(), user);
+		Pugmas25QuestProgress.MINI_NUTCRACKERS.send(player(), user);
 		line();
 		send("&3Repeatable Quests:");
-		Pugmas25QuestProgress.ANGLER.send(user);
-		Pugmas25QuestProgress.DAILY_FAIRGROUND_TOKENS.send(user);
+		Pugmas25QuestProgress.ANGLER.send(player(), user);
+		Pugmas25QuestProgress.DAILY_FAIRGROUND_TOKENS.send(player(), user);
 		line();
 	}
 
+//	@Path("database resetAnglerTime")
+//	@Permission(Group.ADMIN)
+//	void database_resetAngler() {
+//		config.setAnglerQuestResetDateTime(LocalDateTime.now().plusHours(2));
+//		configService.save(config);
+//	}
+
 	@Path("database deleteQuest <quest>")
 	@Permission(Group.ADMIN)
-	void nextStep(Pugmas25Quest pugmasQuest) {
+	void database_deleteQuest(Pugmas25Quest pugmasQuest) {
 		quester.getQuests().removeIf(quest -> quest.getQuest() == pugmasQuest);
 		questerService.save(quester);
 	}
 
 	@Path("database deleteQuesterData")
 	@Permission(Group.ADMIN)
-	void deleteQuests() {
+	void database_deleteQuests() {
 		quester.getQuests().removeIf(quest -> quest.getQuest() == Pugmas25Quest.INTRO || quest.getQuest() == Pugmas25Quest.DECORATE_SNOWMEN);
 		questerService.save(quester);
 		send("Deleted pugmas quest data from QuesterService");
@@ -179,7 +186,7 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 
 	@Path("database deleteUserData")
 	@Permission(Group.ADMIN)
-	void deleteUser() {
+	void database_deleteUserData() {
 		userService.delete(user);
 		userService.save(user);
 		quester.getQuests().removeIf(quest -> quest.getQuest() == Pugmas25Quest.INTRO || quest.getQuest() == Pugmas25Quest.DECORATE_SNOWMEN);
@@ -188,7 +195,7 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 
 	@Path("database deleteAllData")
 	@Permission(Group.ADMIN)
-	void deleteAllDatabaseData() {
+	void database_deleteAllDatabaseData() {
 		for (Quester _user : questerService.getAll()) {
 			Quester quester = questerService.get(_user);
 			for (Pugmas25Quest pugmas25Quest : Pugmas25Quest.values())
