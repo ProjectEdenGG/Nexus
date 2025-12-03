@@ -48,7 +48,7 @@ public class Pugmas25AnglerQuestJob extends AbstractJob implements Listener {
 
 		// Reset user quest data
 		final Pugmas25UserService userService = new Pugmas25UserService();
-		for (Pugmas25User user : userService.cacheAll())
+		for (Pugmas25User user : userService.getAll())
 			user.resetAnglerQuest();
 		userService.saveCache();
 
