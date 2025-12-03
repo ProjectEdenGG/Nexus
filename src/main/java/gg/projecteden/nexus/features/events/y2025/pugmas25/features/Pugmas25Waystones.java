@@ -105,7 +105,7 @@ public class Pugmas25Waystones implements Listener {
 			var user = new Pugmas25UserService().get(player);
 			for (Pugmas25Waystone waystone : Pugmas25Waystone.values()) {
 				if (!user.getFoundWaystones().contains(waystone)) {
-					dialog.button("&8" + StringUtils.camelCase(waystone));
+					dialog.button("&c" + StringUtils.camelCase(waystone));
 					continue;
 				}
 
