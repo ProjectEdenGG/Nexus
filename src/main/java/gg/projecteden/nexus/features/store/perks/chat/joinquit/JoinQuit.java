@@ -185,8 +185,11 @@ public class JoinQuit extends Feature implements Listener {
 	}
 
 	@NotNull
-	public static String formatQuit(Player player, String finalMessage) {
-		return "&4 <&4&m &4&m &4&m &5 " + finalMessage.replaceAll("\\[player]", "&c" + Nickname.of(player) + "&5");
+	public static String formatQuit(Player player, String message) {
+		if (Dev.BRI.is(player) && message.equals("To be or not to be... [player] chose not to be"))
+			message = "To Bri or not to Bri... [player] chose not to Bri";
+
+		return "&4 <&4&m &4&m &4&m &5 " + message.replaceAll("\\[player]", "&c" + Nickname.of(player) + "&5");
 	}
 
 	public static boolean isDuplicate(Player player, String type) {
