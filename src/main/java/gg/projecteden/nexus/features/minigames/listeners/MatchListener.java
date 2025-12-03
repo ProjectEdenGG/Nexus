@@ -94,8 +94,6 @@ public class MatchListener implements Listener {
 	}
 
 	public void disableCheats(Player player) {
-		if (player.hasPermission("voxelsniper.sniper"))
-			PlayerUtils.runCommand(player, "b paint");
 		if (player.hasPermission("worldguard.region.bypass.*"))
 			PlayerUtils.runCommand(player, "wgedit off");
 		if (Vanish.isVanished(player))

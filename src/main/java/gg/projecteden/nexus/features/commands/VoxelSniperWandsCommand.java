@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -44,7 +45,12 @@ public class VoxelSniperWandsCommand extends CustomCommand {
 
 		@Override
 		public void calculate(@NotNull Player target, ContextConsumer contextConsumer) {
-			contextConsumer.accept("voxelsniper", Nerd.of(target).isVoxelSniperEnabled() ? "true" : "false");
+			boolean enabled = Nerd.of(target).isVoxelSniperEnabled();
+
+			if (Minigamer.of(target).isPlaying())
+				enabled = false;
+
+			contextConsumer.accept("voxelsniper", enabled ? "true" : "false");
 		}
 
 		@Override
