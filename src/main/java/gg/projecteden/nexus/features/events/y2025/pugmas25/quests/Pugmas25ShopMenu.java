@@ -90,14 +90,13 @@ public enum Pugmas25ShopMenu implements QuestShopMenu {
 				.price(Currency.COIN_POUCH, Price.of(2000)),
 
 			new Product(Pugmas25QuestItem.FISHING_ROD_WOOD)
-				.price(Currency.COIN_POUCH, Price.of(100)) // cheap
-				.predicate(Pugmas25QuestItem.FISHING_ROD_WOOD::isNotInInventoryOf),
+				.price(Currency.COIN_POUCH, Price.of(100)), // cheap
 
 			new Product(Pugmas25QuestItem.FISHING_ROD_REINFORCED)
 				.price(Currency.COIN_POUCH, Price.of(1000)) // expensive
 				.predicate(player -> {
 					Pugmas25UserService userService = new Pugmas25UserService();
-					return (userService.get(player).getCompletedAnglerQuests() >= 26 && Pugmas25QuestItem.FISHING_ROD_REINFORCED.isNotInInventoryOf(player));
+					return (userService.get(player).getCompletedAnglerQuests() >= 26);
 				})
 		))
 	),
