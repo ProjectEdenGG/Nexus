@@ -1,17 +1,19 @@
 package gg.projecteden.nexus.models.eventuser;
 
-import com.mongodb.DBObject;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import dev.morphia.annotations.PreLoad;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDate;
@@ -33,14 +35,6 @@ public class EventUser implements PlayerOwnedObject {
 	private UUID uuid;
 	private int tokens;
 	private List<ItemStack> rewardItems = new ArrayList<>();
-
-	@PreLoad
-	void fix(DBObject dbObject) {
-		if (dbObject.containsField("tokensReceivedToday")) {
-			dbObject.put("tokensReceivedByDate", dbObject.get("tokensReceivedToday"));
-			dbObject.removeField("tokensReceivedToday");
-		}
-	}
 
 	public void addRewardItem(ItemStack item) {
 		rewardItems.add(item);
