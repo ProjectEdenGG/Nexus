@@ -36,6 +36,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.features.trains.Pugma
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.trains.Pugmas25Train;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.trains.Pugmas25TrainBackground;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25AnglerLoot;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25DailyTokens;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25DailyTokens.Pugmas25DailyTokenSource;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25District;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Sidebar;
@@ -77,6 +78,7 @@ import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -967,7 +969,7 @@ public class Pugmas25 extends EdenEvent {
 			@Nullable
 			List<String> getProgressMessage(Pugmas25User user) {
 				Pugmas25Config config = new Pugmas25ConfigService().get0();
-				var timeUntilReset = TimeUtils.Timespan.of(Pugmas25.get().now(), config.getAnglerQuestResetDateTime()).format(FormatType.LONG);
+				String timeUntilReset = TimeUtils.Timespan.of(get().now(), config.getAnglerQuestResetDateTime()).format(FormatType.LONG);
 
 				return switch (getStatus(user)) {
 					case NOT_STARTED -> List.of(
@@ -990,17 +992,6 @@ public class Pugmas25 extends EdenEvent {
 				EventUserService eventUserService = new EventUserService();
 				EventUser eventUser = eventUserService.get(user);
 
-				boolean started = false;
-				for (Pugmas25DailyTokenSource source : Pugmas25DailyTokenSource.values()) {
-					int received = eventUser.getTokensReceivedToday(source.getId());
-					if (received != 0) {
-						started = true;
-						break;
-					}
-				}
-				if (!started)
-					return Pugmas25QuestStatus.NOT_STARTED;
-
 				for (Pugmas25DailyTokenSource source : Pugmas25DailyTokenSource.values()) {
 					if (eventUser.getTokensReceivedToday(source.getId()) < source.getMaxDailyTokens())
 						return Pugmas25QuestStatus.IN_PROGRESS;
@@ -1019,12 +1010,6 @@ public class Pugmas25 extends EdenEvent {
 				var timeUntilReset = TimeUtils.Timespan.of(get().now(), tomorrow).format(FormatType.LONG);
 
 				switch (getStatus(user)) {
-					case NOT_STARTED -> {
-						return List.of(
-							"&3 " + getName() + " &7- &eStarted",
-							"&7   - Play Minigolf, Frogger, WhacAWakka, and Reflection"
-						);
-					}
 					case IN_PROGRESS -> {
 						List<String> result = new ArrayList<>();
 						result.add("&3 " + getName() + " &7- &eStarted (resets in " + timeUntilReset + ")");
@@ -1035,7 +1020,8 @@ public class Pugmas25 extends EdenEvent {
 							if (source == Pugmas25DailyTokenSource.WHACAMOLE)
 								sourceName = "WhacAWakka";
 
-							int received = eventUser.getTokensReceivedToday(source.getId());
+							//int received = eventUser.getTokensReceivedToday(source.getId());
+							int received = Pugmas25DailyTokens._getCurrentDailyTokens(user.getPlayer(), source);
 							int max = source.getMaxDailyTokens();
 							if (received == 0)
 								result.add("&7   - " + sourceName + ": " + "&c" + received + "&7/&e" + max + " &7event tokens");
@@ -1069,13 +1055,13 @@ public class Pugmas25 extends EdenEvent {
 			return StringUtils.camelCase(this);
 		}
 
-		public void send(Pugmas25User user) {
-			List<String> progress = getProgressMessage(user);
+		public void send(Player viewer, Pugmas25User target) {
+			List<String> progress = getProgressMessage(target);
 			if (Nullables.isNullOrEmpty(progress))
 				return;
 
 			for (String line : progress) {
-				user.sendMessage(line);
+				viewer.sendMessage(line);
 			}
 		}
 
