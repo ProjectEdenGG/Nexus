@@ -8,12 +8,16 @@ import gg.projecteden.nexus.features.shops.ShopUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
+import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
+import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
 import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.Shop.ExchangeType;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
+import gg.projecteden.nexus.models.store.Contributor;
 import gg.projecteden.nexus.models.store.ContributorService;
+import gg.projecteden.nexus.models.voter.Voter;
 import gg.projecteden.nexus.models.voter.VoterService;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -226,12 +230,18 @@ public enum Currency {
 
 		@Override
 		public void _withdraw(Player player, Price price, ShopGroup shopGroup, Product product) {
-			new EventUserService().get(player).charge(price.asInteger());
+			EventUserService service = new EventUserService();
+			EventUser user = service.get(player);
+			user.charge(price.asInteger());
+			service.save(user);
 		}
 
 		@Override
 		protected void _deposit(Player player, Price price) {
-			new EventUserService().get(player).giveTokens(price.asInteger());
+			EventUserService service = new EventUserService();
+			EventUser user = service.get(player);
+			user.giveTokens(price.asInteger());
+			service.save(user);
 		}
 	},
 	VOTE_POINTS() {
@@ -247,12 +257,18 @@ public enum Currency {
 
 		@Override
 		public void _withdraw(Player player, Price price, ShopGroup shopGroup, Product product) {
-			new VoterService().get(player).takePoints(price.asInteger());
+			VoterService service = new VoterService();
+			Voter user = service.get(player);
+			user.takePoints(price.asInteger());
+			service.save(user);
 		}
 
 		@Override
 		protected void _deposit(Player player, Price price) {
-			new VoterService().get(player).givePoints(price.asInteger());
+			VoterService service = new VoterService();
+			Voter user = service.get(player);
+			user.givePoints(price.asInteger());
+			service.save(user);
 		}
 	},
 	MINIGAME_TOKENS() {
@@ -268,7 +284,10 @@ public enum Currency {
 
 		@Override
 		public void _withdraw(Player player, Price price, ShopGroup shopGroup, Product product) {
-			new PerkOwnerService().get(player).takeTokens(price.asInteger());
+			PerkOwnerService service = new PerkOwnerService();
+			PerkOwner user = service.get(player);
+			user.takeTokens(price.asInteger());
+			service.save(user);
 		}
 	},
 	STORE_CREDIT() {
@@ -279,7 +298,10 @@ public enum Currency {
 
 		@Override
 		public void _withdraw(Player player, Price price, ShopGroup shopGroup, Product product) {
-			new ContributorService().get(player).takeCredit(price.asBalance());
+			ContributorService service = new ContributorService();
+			Contributor user = service.get(player);
+			user.takeCredit(price.asBalance());
+			service.save(user);
 		}
 	},
 	;

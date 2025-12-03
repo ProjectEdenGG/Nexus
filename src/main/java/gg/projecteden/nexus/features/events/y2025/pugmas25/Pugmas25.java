@@ -1061,7 +1061,7 @@ public class Pugmas25 extends EdenEvent {
 				return;
 
 			for (String line : progress) {
-				viewer.sendMessage(line);
+				PlayerUtils.send(viewer, line);
 			}
 		}
 

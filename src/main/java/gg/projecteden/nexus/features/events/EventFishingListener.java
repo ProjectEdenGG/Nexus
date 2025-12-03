@@ -117,9 +117,6 @@ public class EventFishingListener implements Listener {
 		if (state == State.BITE)
 			return;
 
-		if (!EquipmentSlot.HAND.equals(event.getHand()))
-			return;
-
 		Player player = event.getPlayer();
 		if (!this.event.shouldHandle(player))
 			return;
