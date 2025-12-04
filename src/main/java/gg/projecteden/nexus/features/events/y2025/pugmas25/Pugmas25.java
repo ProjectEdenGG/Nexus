@@ -378,6 +378,7 @@ public class Pugmas25 extends EdenEvent {
 		handleInteract(Pugmas25NPC.TINKERER, (player, npc) -> Pugmas25ShopMenu.TINKERER.open(player));
 		handleInteract(Pugmas25NPC.ADVENTURER, (player, npc) -> Pugmas25ShopMenu.ADVENTURER.open(player));
 		handleInteract(Pugmas25NPC.ARTIST, (player, npc) -> Pugmas25ShopMenu.ARTIST.open(player));
+		handleInteract(Pugmas25NPC.BOAT_SALESMAN, (player, npc) -> Pugmas25ShopMenu.BOAT_SALESMAN.open(player));
 
 		Pugmas25UserService pugmas25UserService = new Pugmas25UserService();
 		MiniGolfUserService miniGolfUserService = new MiniGolfUserService();
@@ -1231,10 +1232,20 @@ public class Pugmas25 extends EdenEvent {
 
 		Pugmas25UserService userService = new Pugmas25UserService();
 		Pugmas25User user = userService.get(player);
+		if (user.getFoundNutCrackers().contains(location)) {
+			PlayerUtils.send(player, PREFIX + "&cYou already found this mini nutcrackers!");
+			return;
+		}
+
 		user.getFoundNutCrackers().add(location);
 		userService.save(user);
 
-		new ParticleBuilder(Particle.END_ROD).receivers(player).location(location).offset(0.25, 0.25, 0.25).count(15).spawn();
+		new ParticleBuilder(Particle.END_ROD).receivers(player)
+			.location(location.toCenterLocation()).offset(0.25, 0.25, 0.25)
+			.count(15)
+			.extra(0.01)
+			.spawn();
+
 		if (user.getFoundNutCrackers().size() < config.getNutCrackerLocations().size()) {
 			new SoundBuilder(Sound.ENTITY_PLAYER_LEVELUP).receiver(player).volume(0.5).pitch(2.0).play();
 			return;

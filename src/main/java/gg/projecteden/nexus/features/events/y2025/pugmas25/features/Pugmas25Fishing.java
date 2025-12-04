@@ -204,14 +204,20 @@ public class Pugmas25Fishing implements Listener {
 
 		// Trunks
 		ItemStack tool = ItemUtils.getTool(player);
-		ItemModelType toolModel = ItemModelType.of(tool);
-		if (Nullables.isNotNullOrAir(tool) && toolModel != null) {
-			if (rodWooden == toolModel)
+		if (Nullables.isNotNullOrAir(tool)) {
+			if (tool.getType() == Material.FISHING_ROD)
 				possibleTreasure.add(Pugmas25QuestItem.TRUNK_IRON.get());
-			else if (rodReinforced == toolModel)
-				possibleTreasure.add(Pugmas25QuestItem.TRUNK_GOLD.get());
-			else if (rodGolden == toolModel)
-				possibleTreasure.add(Pugmas25QuestItem.TRUNK_DIAMOND.get());
+			else {
+				ItemModelType toolModel = ItemModelType.of(tool);
+				if (toolModel != null) {
+					if (rodWooden == toolModel)
+						possibleTreasure.add(Pugmas25QuestItem.TRUNK_IRON.get());
+					else if (rodReinforced == toolModel)
+						possibleTreasure.add(Pugmas25QuestItem.TRUNK_GOLD.get());
+					else if (rodGolden == toolModel)
+						possibleTreasure.add(Pugmas25QuestItem.TRUNK_DIAMOND.get());
+				}
+			}
 		}
 
 		// Ingots

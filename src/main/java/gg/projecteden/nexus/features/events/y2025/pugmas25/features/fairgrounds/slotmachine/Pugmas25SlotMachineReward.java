@@ -169,7 +169,7 @@ public enum Pugmas25SlotMachineReward {
 			int maxAmount = 1000;
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
-			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3Deposited &e" + additional + " &3coins to your Coin Pouch");
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3Deposited &e" + preAmount + " &3coins to your Coin Pouch");
 			Currency.COIN_POUCH.deposit(player, Price.of(finalAmount));
 			if (additional > 0)
 				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3coins given from Lucky Horseshoe");
@@ -179,7 +179,7 @@ public enum Pugmas25SlotMachineReward {
 			int maxAmount = 2000;
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
-			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3Deposited &e" + additional + " &3coins to your Coin Pouch");
+			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&3Deposited &e" + preAmount + " &3coins to your Coin Pouch");
 			Currency.COIN_POUCH.deposit(player, Price.of(finalAmount));
 			if (additional > 0)
 				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3coins given from Lucky Horseshoe");

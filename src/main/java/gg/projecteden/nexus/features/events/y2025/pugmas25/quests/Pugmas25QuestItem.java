@@ -128,22 +128,29 @@ public enum Pugmas25QuestItem implements QuestItem {
 
 	FISHING_ROD_WOOD(new ItemBuilder(ItemModelType.FISHING_ROD_WOOD)
 		.name("&oWood Fishing Rod")
-		.enchant(Enchantment.LURE, 1)),
+		.lore("&3Can catch Iron Trunks")
+		.enchant(Enchantment.LURE, 1)
+
+	),
 
 	FISHING_ROD_REINFORCED(new ItemBuilder(ItemModelType.FISHING_ROD_REINFORCED)
 		.name("&oReinforced Fishing Rod")
 		.lore("&3Increases fishing luck by &e5")
+		.lore("&Can catch Golden Trunks")
 		.enchant(Enchant.UNBREAKING, 2)
-		.enchant(Enchantment.LURE, 2)),
+		.enchant(Enchantment.LURE, 2)
+	),
 
 	FISHING_ROD_GOLDEN(new ItemBuilder(ItemModelType.FISHING_ROD_GOLDEN)
 		.name("&oGolden Fishing Rod")
 		.lore("&3Increases fishing luck by &e15")
+		.lore("&Can catch Diamond Trunks")
 		.enchant(Enchantment.LURE, 3)
 		.unbreakable()
 		.undroppable()
 		.untrashable()
-		.glow()),
+		.glow()
+	),
 
 	ANGLER_HAT(ArmorSkin.FISHING.apply(new ItemBuilder(Material.LEATHER_HELMET)
 		.name("&oAngler Hat")

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.quests;
 
+import gg.projecteden.nexus.features.events.y2024.vulan24.models.VuLan24BoatTracker;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu.NPCShopMenuBuilder;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu.Product;
@@ -7,6 +8,7 @@ import gg.projecteden.nexus.features.quests.CommonQuestItem;
 import gg.projecteden.nexus.features.quests.QuestShopMenu;
 import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
+import gg.projecteden.nexus.utils.BoatType;
 import gg.projecteden.nexus.utils.Currency;
 import gg.projecteden.nexus.utils.Currency.Price;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -16,6 +18,7 @@ import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -43,6 +46,14 @@ public enum Pugmas25ShopMenu implements QuestShopMenu {
 	ARTIST(Pugmas25NPC.ARTIST, NPCShopMenu.builder().title("Artist")
 		.products(MaterialTag.DYES.getValues().stream()
 			.map(dye -> new Product(dye).price(Currency.COIN_POUCH, Price.of(8))).toList())
+	),
+
+	BOAT_SALESMAN(Pugmas25NPC.BOAT_SALESMAN, NPCShopMenu.builder().title("Boat Salesman")
+		.products(new ArrayList<>() {{
+			for (BoatType boatType : BoatType.values())
+				add(new Product(boatType.getBoatMaterial()).price(Currency.COIN_POUCH, Price.of(10)));
+		}})
+		.closeAfterPurchase(true)
 	),
 
 	TINKERER(Pugmas25NPC.TINKERER, NPCShopMenu.builder().title("Tinkerer")
