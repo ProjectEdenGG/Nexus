@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
+import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -28,6 +29,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.joining;
 
 public class Pugmas25GiftGiver implements Listener {
 	private static final NamespacedKey PLAYER_HISTORY_KEY = new NamespacedKey(Nexus.getInstance(), "player_history");
@@ -87,6 +90,7 @@ public class Pugmas25GiftGiver implements Listener {
 			.confirmText("&aClaim this gift?")
 			.confirmLore(List.of("&fGifts that have been given to", "&fmore people give better rewards!"))
 			.onConfirm(e -> {
+				IOUtils.fileAppend("pugmas25-gift-giver", Nickname.of(player) + " opened a gift. User history: " + getPlayerHistory(tool).stream().map(Nickname::of).collect(joining(", ")));
 				PlayerUtils.mailItems(player, Pugmas25GiftGiverReward.of(tool).getRandomItems(), "Pugmas25 Gift", WorldGroup.SURVIVAL);
 				PlayerUtils.send(player, Pugmas25.PREFIX + "&3Your gift has been mailed to your Survival inbox!");
 				tool.subtract();
@@ -116,6 +120,7 @@ public class Pugmas25GiftGiver implements Listener {
 			PlayerUtils.giveItem(to, getGift(history).build());
 			PlayerUtils.send(from, Pugmas25.PREFIX + "&3You gave a gift to " + Nickname.of(to));
 			PlayerUtils.send(to, Pugmas25.PREFIX + "&3" + Nickname.of(from) + " gave you a gift!");
+			IOUtils.fileAppend("pugmas25-gift-giver", Nickname.of(from) + " gave a gift to " + Nickname.of(to) + ". User history: " + history.stream().map(Nickname::of).collect(joining(", ")));
 		} catch (Exception ex) {
 			MenuUtils.handleException(from, Pugmas25.PREFIX, ex);
 		}
