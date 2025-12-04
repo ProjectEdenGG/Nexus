@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.minigolf;
 import gg.projecteden.nexus.features.minigolf.menus.GolfBallParticleMenu;
 import gg.projecteden.nexus.features.minigolf.menus.GolfBallStyleMenu;
 import gg.projecteden.nexus.features.minigolf.menus.MiniGolfConfigMenu;
-import gg.projecteden.nexus.features.minigolf.menus.ScorecardBookMenu;
+import gg.projecteden.nexus.features.minigolf.menus.MiniGolfScorecardMenu;
 import gg.projecteden.nexus.features.minigolf.models.GolfBallParticle;
 import gg.projecteden.nexus.features.minigolf.models.GolfBallStyle;
 import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlockType;
@@ -25,6 +25,7 @@ import gg.projecteden.nexus.models.minigolf.MiniGolfConfigService;
 import gg.projecteden.nexus.models.minigolf.MiniGolfUser;
 import gg.projecteden.nexus.models.minigolf.MiniGolfUserService;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Utils;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Skull;
@@ -33,6 +34,7 @@ import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
 
 import java.util.List;
+import java.util.Map;
 
 /*
 	TODO:
@@ -107,9 +109,9 @@ public class MiniGolfCommand extends CustomCommand {
 		}
 	}
 
-	@Path("scorecard <course> [page]")
-	void scorecard(MiniGolfCourse course, @Arg("1") int page) {
-		new ScorecardBookMenu(user, course, page, user.getCurrentScorecard(course)).open();
+	@Path("scorecard <course> [--spaces]")
+	void scorecard(@Arg("current") MiniGolfCourse course, @Switch String spaces) {
+		new MiniGolfScorecardMenu(user, course, Utils.getGson().fromJson(spaces, Map.class)).open();
 	}
 
 	@Path("debug [enable]")
@@ -189,6 +191,9 @@ public class MiniGolfCommand extends CustomCommand {
 
 	@ConverterFor(MiniGolfCourse.class)
 	MiniGolfCourse convertToMiniGolfCourse(String value) {
+		if ("current".equalsIgnoreCase(value))
+			return user.getCurrentCourseRequired();
+
 		return new MiniGolfConfigService().get0().getCourse(value);
 	}
 }
