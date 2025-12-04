@@ -93,7 +93,7 @@ public class Advent25User implements PlayerOwnedObject {
 		PlayerUtils.send(getOnlinePlayer(), Pugmas25.PREFIX + "This present has been sent to your &esurvival &c/mail box");
 		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).receiver(getOnlinePlayer()).play();
 
-		if (found.size() % 5 == 0)
+		if (present.getDay() % 5 == 0)
 			PlayerUtils.giveItem(getOnlinePlayer(), Pugmas25QuestItem.SLOT_MACHINE_TOKEN.get());
 	}
 

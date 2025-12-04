@@ -136,7 +136,7 @@ public enum Pugmas25QuestItem implements QuestItem {
 	FISHING_ROD_REINFORCED(new ItemBuilder(ItemModelType.FISHING_ROD_REINFORCED)
 		.name("&oReinforced Fishing Rod")
 		.lore("&3Increases fishing luck by &e5")
-		.lore("&Can catch Golden Trunks")
+		.lore("&3Can catch Golden Trunks")
 		.enchant(Enchant.UNBREAKING, 2)
 		.enchant(Enchantment.LURE, 2)
 	),
@@ -144,7 +144,7 @@ public enum Pugmas25QuestItem implements QuestItem {
 	FISHING_ROD_GOLDEN(new ItemBuilder(ItemModelType.FISHING_ROD_GOLDEN)
 		.name("&oGolden Fishing Rod")
 		.lore("&3Increases fishing luck by &e15")
-		.lore("&Can catch Diamond Trunks")
+		.lore("&3Can catch Diamond Trunks")
 		.enchant(Enchantment.LURE, 3)
 		.unbreakable()
 		.undroppable()

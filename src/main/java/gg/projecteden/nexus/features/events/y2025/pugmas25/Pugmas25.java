@@ -1099,7 +1099,7 @@ public class Pugmas25 extends EdenEvent {
 	public void onDeath(Player player, @NotNull Pugmas25.Pugmas25DeathCause deathType, String defaultMessage) {
 		player.teleportAsync(deathLoc);
 		// Health
-		player.setHealth(20);
+		player.setHealth(5);
 		player.setAbsorptionAmount(5);
 
 		// Hunger

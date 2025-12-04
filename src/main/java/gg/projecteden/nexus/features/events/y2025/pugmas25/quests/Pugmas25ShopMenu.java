@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.quests;
 
 import gg.projecteden.nexus.features.events.y2024.vulan24.models.VuLan24BoatTracker;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25SidebarLine;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu.NPCShopMenuBuilder;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu.Product;
@@ -57,59 +58,78 @@ public enum Pugmas25ShopMenu implements QuestShopMenu {
 	),
 
 	TINKERER(Pugmas25NPC.TINKERER, NPCShopMenu.builder().title("Tinkerer")
-		.products(List.of(
-			new Product(Pugmas25QuestItem.MAGIC_MIRROR)
+		.products(new ArrayList<>() {{
+			add(new Product(Pugmas25QuestItem.MAGIC_MIRROR)
 				.price(Currency.COIN_POUCH, Price.of(50000))
-				.predicate(Pugmas25QuestItem.MAGIC_MIRROR::isNotInInventoryOf),
+				.predicate(player -> Pugmas25QuestItem.MAGIC_MIRROR.isNotInInventoryOf(player)
+					|| Pugmas25QuestItem.PDA.isNotInInventoryOf(player)));
 
-			new Product(Pugmas25QuestItem.GNOMIFIER)
+			add(new Product(Pugmas25QuestItem.GNOMIFIER)
 				.price(Currency.COIN_POUCH, Price.of(10000))
-				.predicate(Pugmas25QuestItem.GNOMIFIER::isNotInInventoryOf),
+				.predicate(Pugmas25QuestItem.GNOMIFIER::isNotInInventoryOf));
 
-			new Product(Pugmas25QuestItem.SHOCK_ABSORBENT_BOOTS)
-				.price(Currency.COIN_POUCH, Price.of(25000)),
+			add(new Product(Pugmas25QuestItem.SHOCK_ABSORBENT_BOOTS)
+				.price(Currency.COIN_POUCH, Price.of(25000)));
 
-			new Product(Pugmas25QuestItem.FISH_FINDER)
+			add(new Product(Pugmas25QuestItem.FISH_FINDER)
 				.price(Currency.ITEMS, Price.of(List.of(
 					Pugmas25QuestItem.FISHING_POCKET_GUIDE.get(),
 					Pugmas25QuestItem.SEXTANT.get(),
 					Pugmas25QuestItem.WEATHER_RADIO.get()
 				)))
-				.predicate(Pugmas25QuestItem.FISH_FINDER::isNotInInventoryOf),
+				.predicate(player -> Pugmas25QuestItem.FISH_FINDER.isNotInInventoryOf(player)
+					|| Pugmas25QuestItem.PDA.isNotInInventoryOf(player)));
 
-			new Product(Pugmas25QuestItem.GPS)
+			add(new Product(Pugmas25QuestItem.GPS)
 				.price(Currency.ITEMS, Price.of(List.of(
 					Pugmas25QuestItem.ADVENTURE_POCKET_GUIDE.get(),
 					Pugmas25QuestItem.COMPASS.get(),
 					Pugmas25QuestItem.GOLD_WATCH.get()
 				)))
-				.predicate(Pugmas25QuestItem.GPS::isNotInInventoryOf),
+				.predicate(player -> Pugmas25QuestItem.GPS.isNotInInventoryOf(player)
+					|| Pugmas25QuestItem.PDA.isNotInInventoryOf(player)));
 
-			new Product(Pugmas25QuestItem.PDA)
+			add(new Product(Pugmas25QuestItem.PDA)
 				.price(Currency.ITEMS, Price.of(List.of(
 					Pugmas25QuestItem.FISH_FINDER.get(),
 					Pugmas25QuestItem.GPS.get(),
 					Pugmas25QuestItem.MAGIC_MIRROR.get()
 				)))
-				.predicate(Pugmas25QuestItem.PDA::isNotInInventoryOf),
+				.predicate(Pugmas25QuestItem.PDA::isNotInInventoryOf));
 
-			new Product(CommonQuestItem.BASIC_BACKPACK)
-				.price(Currency.COIN_POUCH, Price.of(5000)),
+			add(new Product(CommonQuestItem.BASIC_BACKPACK)
+				.price(Currency.COIN_POUCH, Price.of(5000)));
 
-			new Product(new ItemBuilder(Material.SHULKER_SHELL, 4).build())
+			add(new Product(new ItemBuilder(Material.SHULKER_SHELL, 4).build())
 				.displayItemStack(new ItemBuilder(Material.SHULKER_SHELL, 4).lore("&7Used for upgrading your backpack"))
-				.price(Currency.COIN_POUCH, Price.of(2000)),
+				.price(Currency.COIN_POUCH, Price.of(2000)));
 
-			new Product(Pugmas25QuestItem.FISHING_ROD_WOOD)
-				.price(Currency.COIN_POUCH, Price.of(100)), // cheap
+			add(new Product(Pugmas25QuestItem.FISHING_ROD_WOOD)
+				.price(Currency.COIN_POUCH, Price.of(100))); // cheap
 
-			new Product(Pugmas25QuestItem.FISHING_ROD_REINFORCED)
+			// Reinforced Rod
+			Pugmas25UserService userService = new Pugmas25UserService();
+			int questUnlock = 26;
+
+			// display item only, has no price defined
+			add(new Product(Pugmas25QuestItem.FISHING_ROD_REINFORCED)
+				.predicate(player -> (userService.get(player).getCompletedAnglerQuests() < questUnlock))
+				.displayItemFunction(((player, itemBuilder) -> {
+					itemBuilder
+						.lore("")
+						.lore("&3Price: &cLocked")
+						.lore("&3Required Angler Quests: &c" + userService.get(player).getCompletedAnglerQuests() + "&3/&e" + questUnlock);
+
+					return itemBuilder;
+				}))
+
+			);
+
+			add(new Product(Pugmas25QuestItem.FISHING_ROD_REINFORCED)
 				.price(Currency.COIN_POUCH, Price.of(1000)) // expensive
-				.predicate(player -> {
-					Pugmas25UserService userService = new Pugmas25UserService();
-					return (userService.get(player).getCompletedAnglerQuests() >= 26);
-				})
-		))
+				.predicate(player -> (userService.get(player).getCompletedAnglerQuests() >= questUnlock)));
+			//
+		}})
 	),
 	;
 

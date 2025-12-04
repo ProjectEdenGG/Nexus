@@ -65,6 +65,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.citizensnpcs.trait.LookClose;
 import org.bukkit.Color;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -75,6 +76,7 @@ import org.bukkit.inventory.ItemStack;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -320,6 +322,28 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 	@Permission(Group.ADMIN)
 	void waypoints_hideAll() {
 		WaypointsManager.hideAllWaypoints(player());
+	}
+
+	@Path("nutcracker hasFoundTarget")
+	@Permission(Group.ADMIN)
+	void nutcracker_hasFoundTarget() {
+		Location location = getTargetBlockRequired().getLocation();
+		if (!config.getNutCrackerLocations().contains(location))
+			error("Nutcracker not found in that location");
+
+		List<String> results = new ArrayList<>();
+		for (Pugmas25User _user : userService.getAll()) {
+			if (_user.getFoundNutCrackers().contains(location))
+				results.add("&3- &e" + _user.getNickname());
+		}
+
+		if (results.isEmpty())
+			error("No one has found this nutcracker");
+
+		send("&3Users who found this nutcracker:");
+		for (String line : results) {
+			send(line);
+		}
 	}
 
 	@Path("angler randomAnglerLoot")

@@ -429,19 +429,20 @@ public enum Currency {
 			if (free || empty)
 				return;
 
-			if (Nullables.isNotNullOrEmpty(items)) {
-				for (ItemStack _item : new ArrayList<>(items)) {
-					int amount = (int) (_item.getAmount() - Math.ceil(_item.getAmount() * percentage));
-					if (amount <= 0) {
-						amount = 0;
-						items.remove(_item);
-					}
-					item.setAmount(amount);
-				}
-
-				if (items.isEmpty())
-					free = true;
-			}
+			// Disable discount for this type of price
+//			if (Nullables.isNotNullOrEmpty(items)) {
+//				for (ItemStack _item : items) {
+//					int amount = (int) (_item.getAmount() - Math.ceil(_item.getAmount() * percentage));
+//					if (amount <= 0) {
+//						amount = 0;
+//						items.remove(_item);
+//					}
+//					_item.setAmount(amount);
+//				}
+//
+//				if (items.isEmpty())
+//					free = true;
+//			}
 
 			if (Nullables.isNotNullOrAir(item)) {
 				int amount = (int) (item.getAmount() - Math.ceil(item.getAmount() * percentage));

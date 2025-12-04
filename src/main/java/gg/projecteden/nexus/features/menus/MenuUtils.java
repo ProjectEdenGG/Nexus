@@ -358,60 +358,71 @@ public abstract class MenuUtils {
 				if (product.getPredicate() != null && !product.getPredicate().test(viewer))
 					continue;
 
-				if (CommonQuestItem.DISCOUNT_CARD.isInInventoryOf(viewer)) {
-					Price newPrice = price.clone();
-					newPrice.applyDiscount(CommonQuestItem.DISCOUNT_CARD_PERCENT);
-					price = newPrice;
+				ItemBuilder _displayItem = new ItemBuilder(product.getDisplayItemStack());
+
+				if (currency != null && price != null) {
+					if (CommonQuestItem.DISCOUNT_CARD.isInInventoryOf(viewer)) {
+						Price newPrice = price.clone();
+						newPrice.applyDiscount(CommonQuestItem.DISCOUNT_CARD_PERCENT);
+						price = newPrice;
+					}
+
+					boolean canAfford = currency.canAfford(viewer, price, shopGroup);
+					_displayItem.lore(currency.getPriceLore(viewer, price, canAfford));
 				}
-				Price finalPrice = price;
 
-				boolean canAfford = currency.canAfford(viewer, finalPrice, shopGroup);
-				List<String> priceLore = currency.getPriceLore(viewer, finalPrice, canAfford);
+				if (product.getDisplayItemFunction() != null)
+					_displayItem = product.getDisplayItemFunction().apply(viewer, _displayItem);
 
-				final ItemBuilder displayItem = new ItemBuilder(product.getDisplayItemStack()).lore(priceLore);
-				items.add(ClickableItem.of(displayItem, e -> {
-					try {
-						if (!currency.canAfford(viewer, finalPrice, shopGroup))
-							throw new InvalidInputException("You cannot afford that!");
+				final ItemBuilder displayItem = _displayItem;
+				if (currency == null) {
+					items.add(ClickableItem.empty(displayItem));
+				} else {
+					final Price finalPrice = price;
+					items.add(ClickableItem.of(displayItem, e -> {
+						try {
+							if (!currency.canAfford(viewer, finalPrice, shopGroup))
+								throw new InvalidInputException("You cannot afford that!");
 
-						ConfirmationMenu.builder()
-							.titleWithSlot("&4Are you sure?")
-							.displayItem(displayItem.build())
-							.onConfirm(e2 -> {
-								try {
-									if (!currency.canAfford(viewer, finalPrice, shopGroup))
-										throw new InvalidInputException("You cannot afford that!");
+							ConfirmationMenu.builder()
+								.titleWithSlot("&4Are you sure?")
+								.displayItem(displayItem.build())
+								.onConfirm(e2 -> {
+									try {
+										if (!currency.canAfford(viewer, finalPrice, shopGroup))
+											throw new InvalidInputException("You cannot afford that!");
 
-									currency.withdraw(viewer, finalPrice, shopGroup, product);
+										currency.withdraw(viewer, finalPrice, shopGroup, product);
 
-									if (product.isVirtual()) {
+										if (product.isVirtual()) {
+											if (onPurchase != null)
+												onPurchase.accept(viewer, this);
+											return;
+										}
+
+										currency.log(viewer, finalPrice, product, shopGroup);
+
 										if (onPurchase != null)
 											onPurchase.accept(viewer, this);
-										return;
+
+										PlayerUtils.giveItem(viewer, item);
+										DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();
+									} catch (Exception ex) {
+										MenuUtils.handleException(viewer, StringUtils.getPrefix("NPCShopMenu"), ex);
 									}
-
-									currency.log(viewer, finalPrice, product, shopGroup);
-
-									if (onPurchase != null)
-										onPurchase.accept(viewer, this);
-
-									PlayerUtils.giveItem(viewer, item);
-									DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();
-								} catch (Exception ex) {
-									MenuUtils.handleException(viewer, StringUtils.getPrefix("NPCShopMenu"), ex);
-								}
-							})
-							.onFinally(e2 -> {
-								if (closeAfterPurchase)
-									close();
-								else
-									refresh();
-							})
-							.open(viewer);
-					} catch (Exception ex) {
-						MenuUtils.handleException(viewer, StringUtils.getPrefix("NPCShopMenu"), ex);
-					}
-				}));
+								})
+								.onFinally(e2 -> {
+									if (closeAfterPurchase)
+										close();
+									else
+										refresh();
+								})
+								.open(viewer);
+						} catch (Exception ex) {
+							MenuUtils.handleException(viewer, StringUtils.getPrefix("NPCShopMenu"), ex);
+						}
+					}));
+				}
 			}
 
 			paginator().items(items).perPage(18).build();
@@ -432,6 +443,8 @@ public abstract class MenuUtils {
 
 			@Nullable
 			private Predicate<Player> predicate;
+
+			@Nullable BiFunction<Player, ItemBuilder, ItemBuilder> displayItemFunction;
 
 			@Nullable
 			private BiConsumer<Player, InventoryProvider> onPurchase;
@@ -478,7 +491,7 @@ public abstract class MenuUtils {
 			}
 
 			public static Product free(ItemStack itemStack) {
-				return new Product(itemStack, null, false, Currency.FREE, Price.of(0), null, null);
+				return new Product(itemStack, null, false, Currency.FREE, Price.of(0), null, null, null);
 			}
 
 			public static Product virtual(ItemModelType itemModelType, Currency currency, Price price, BiConsumer<Player, InventoryProvider> onPurchase) {
@@ -494,7 +507,7 @@ public abstract class MenuUtils {
 			}
 
 			public static Product virtual(ItemStack itemStack, Currency currency, Price price, BiConsumer<Player, InventoryProvider> onPurchase) {
-				return new Product(null, itemStack, true, currency, price, null, onPurchase);
+				return new Product(null, itemStack, true, currency, price, null, null, onPurchase);
 			}
 
 			public Product itemStack(ItemStack itemstack) {
@@ -525,6 +538,16 @@ public abstract class MenuUtils {
 
 			public Product predicate(Predicate<Player> predicate) {
 				this.predicate = predicate;
+				return this;
+			}
+
+			public Product displayItemFunction(BiFunction<Player, ItemBuilder, ItemBuilder> displayItemFunction) {
+				this.displayItemFunction = displayItemFunction;
+				return this;
+			}
+
+			public Product virtual(boolean virtual) {
+				this.virtual = virtual;
 				return this;
 			}
 
