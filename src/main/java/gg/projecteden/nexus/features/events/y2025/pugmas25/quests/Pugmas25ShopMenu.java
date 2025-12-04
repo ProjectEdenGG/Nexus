@@ -31,7 +31,7 @@ public enum Pugmas25ShopMenu implements QuestShopMenu {
 			new Product(Material.STICK).price(Currency.COIN_POUCH, Price.of(5)),
 			new Product(Material.STONE_PICKAXE).price(Currency.COIN_POUCH, Price.of(25)),
 			new Product(Material.NETHERITE_SCRAP).price(Currency.COIN_POUCH, Price.of(10000)),
-			new Product(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE).price(Currency.COIN_POUCH, Price.of(25000))
+			new Product(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE).price(Currency.COIN_POUCH, Price.of(7500))
 		))
 	),
 

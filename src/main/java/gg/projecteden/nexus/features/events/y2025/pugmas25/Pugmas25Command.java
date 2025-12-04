@@ -213,16 +213,16 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		Pugmas25ModelTrain.startup();
 	}
 
-	@Path("coins deposit <amount>")
+	@Path("coins deposit <amount> [player]")
 	@Permission(Group.ADMIN)
-	void coins_add(int amount) {
-		Currency.COIN_POUCH.deposit(player(), Price.of(amount));
+	void coins_add(int amount, @Arg("self") Pugmas25User user) {
+		Currency.COIN_POUCH.deposit(user.getPlayer(), Price.of(amount));
 	}
 
-	@Path("coins withdraw <amount>")
+	@Path("coins withdraw <amount> [player]")
 	@Permission(Group.ADMIN)
-	void coins_remove(int amount) {
-		Currency.COIN_POUCH.withdraw(player(), Price.of(amount), null, null);
+	void coins_remove(int amount, @Arg("self") Pugmas25User user) {
+		Currency.COIN_POUCH.withdraw(user.getPlayer(), Price.of(amount), null, null);
 	}
 
 	@Path("makeSellCrate <type>")
@@ -297,9 +297,9 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		send(PREFIX + "Set now to " + DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(time));
 	}
 
-	@Path("advent showWaypoint <day>")
+	@Path("advent waypoint <day>")
 	@Description("Get directions to a present you've already found")
-	void advent_showWaypoint(Advent25Present present) {
+	void advent_waypoint(Advent25Present present) {
 		if (!user.advent().hasFound(present))
 			error("You have not found day &e#" + present.getDay());
 
@@ -392,6 +392,7 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 	}
 
 	@Path("angler resetAll")
+	@Permission(Group.ADMIN)
 	void angler_resetAll() {
 		userService.resetAllAnglerQuests();
 		send(PREFIX + "Reset everyone's angler variables");

@@ -845,11 +845,31 @@ public class PlayerUtils {
 		return Nullables.isNotNullOrAir(item);
 	}
 
-	public static boolean playerHas(OptionalPlayer player, ItemStack itemStack) {
+	public static boolean playerHas(OptionalPlayer player, ItemStack item) {
 		if (player.getPlayer() == null)
 			return false;
 
-		return player.getPlayer().getInventory().containsAtLeast(itemStack, itemStack.getAmount());
+		if (item == null)
+			return false;
+
+		int amount = item.getAmount();
+		if (amount <= 0)
+			return true;
+
+		ItemModelType modelType = ItemModelType.of(item);
+		if (modelType != null) {
+			for (@Nullable ItemStack _item : player.getPlayer().getInventory().getContents()) {
+				if (_item == null)
+					continue;
+
+				if (modelType == ItemModelType.of(_item) && (amount -= _item.getAmount()) <= 0)
+					return true;
+			}
+
+			return false;
+		}
+
+		return player.getPlayer().getInventory().containsAtLeast(item, amount);
 	}
 
 	public static ItemStack searchInventory(OptionalPlayer player, ItemModelInstance itemModelType) {
