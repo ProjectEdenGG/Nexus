@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.equipment.skins.ToolSkin;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
 import gg.projecteden.nexus.features.itemtags.Rarity;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -372,6 +373,12 @@ public class ItemBuilderCommand extends CustomCommand {
 	@Description("Set an item's model ID")
 	void modelId(String id) {
 		item.model(id);
+	}
+
+	@Path("modelType <modelType>")
+	@Description("Set an item's model type")
+	void modelType(ItemModelType modelType) {
+		item.model(modelType);
 	}
 
 	@Path("soulbound")
