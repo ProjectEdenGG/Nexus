@@ -12,7 +12,7 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Dist
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Districts.Pugmas25BiomeDistrict;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Geyser;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Intro;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.features.advent.Pugmas25Advent;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25SellCrate.Pugmas25SellCrateType;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.advent.Pugmas25AdventMenu;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.balloons.Pugmas25BalloonEditor;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.balloons.Pugmas25BalloonEditorUtils;
@@ -26,7 +26,6 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.features.trains.Pugma
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.trains.Pugmas25Train;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25AnglerLoot;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25District;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25SellCrate.Pugmas25SellCrateType;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25NPC;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25Quest;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestWaypoint;
@@ -86,7 +85,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.xyzw;
 
 @HideFromWiki
 @NoArgsConstructor
@@ -332,13 +330,47 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		send("Set angler quest fish to " + config.getAnglerQuestFish().getCustomName());
 	}
 
-	@Path("angler resetData")
+	@Path("angler set caughtAnglerQuestLoot [status] [player]")
 	@Permission(Group.ADMIN)
-	void angler_resetData() {
-		user.setCaughtAnglerQuestLoot(false);
-		user.setCompletedAnglerQuest(false);
+	void angler_set_caughtAnglerQuestLoot(Boolean status, @Arg("self") Pugmas25User user) {
+		if (status == null)
+			status = !user.isCaughtAnglerQuestLoot();
+
+		user.setCaughtAnglerQuestLoot(status);
 		userService.save(user);
-		send("Reset user angler variables");
+		send(PREFIX + "Set " + user.getNickname() + "'s caughtAnglerQuestLoot to " + status);
+	}
+
+	@Path("angler set completedAnglerQuest [status] [player]")
+	@Permission(Group.ADMIN)
+	void angler_set_completedAnglerQuest(Boolean status, @Arg("self") Pugmas25User user) {
+		if (status == null)
+			status = !user.isCompletedAnglerQuest();
+
+		user.setCompletedAnglerQuest(status);
+		userService.save(user);
+		send(PREFIX + "Set " + user.getNickname() + "'s completedAnglerQuest to " + status);
+	}
+
+	@Path("angler status [player]")
+	@Permission(Group.ADMIN)
+	void angler_status(@Arg("self") Pugmas25User user) {
+		send(user.getNickname() + ".isCompletedAnglerQuest(): " + user.isCompletedAnglerQuest());
+		send(user.getNickname() + ".isCaughtAnglerQuestLoot(): " + user.isCaughtAnglerQuestLoot());
+	}
+
+	@Path("angler reset [player]")
+	@Permission(Group.ADMIN)
+	void angler_resetData(@Arg("self") Pugmas25User user) {
+		user.resetAnglerQuest();
+		userService.save(user);
+		send(PREFIX + "Reset " + user.getNickname() + "'s angler variables");
+	}
+
+	@Path("angler resetAll")
+	void angler_resetAll() {
+		userService.resetAllAnglerQuests();
+		send(PREFIX + "Reset everyone's angler variables");
 	}
 
 	@Path("advent tp <day>")

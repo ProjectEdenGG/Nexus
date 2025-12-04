@@ -15,4 +15,10 @@ public class Pugmas25UserService extends MongoPlayerService<Pugmas25User> {
 		return cache;
 	}
 
+	public void resetAllAnglerQuests() {
+		for (var user : cacheAll())
+			user.resetAnglerQuest();
+		saveCache();
+	}
+
 }
