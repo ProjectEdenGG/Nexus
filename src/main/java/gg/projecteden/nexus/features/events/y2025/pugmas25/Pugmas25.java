@@ -240,6 +240,14 @@ public class Pugmas25 extends EdenEvent {
 			return;
 		}
 
+		if (Pugmas25.get().getWorld().getName().equalsIgnoreCase(toWorld.getName())) {
+			if (!new Pugmas25UserService().get(player).isVisited()) {
+				WarpType.PUGMAS25.get("hub").teleportAsync(player);
+				PlayerUtils.send(player, Pugmas25.PREFIX + "&cYou must visit the board the train first to visit Pugmas");
+				return;
+			}
+		}
+
 		if (shouldHandle(player)) {
 			onArrive(player);
 		}

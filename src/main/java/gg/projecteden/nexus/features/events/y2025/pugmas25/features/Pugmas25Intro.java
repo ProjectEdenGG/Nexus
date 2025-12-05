@@ -53,6 +53,13 @@ public class Pugmas25Intro implements Listener {
 	public static void play(Player player) {
 		Pugmas25User user = userService.get(player);
 
+		var visited = user.isVisited();
+
+		if (!visited) {
+			user.setVisited(true);
+			userService.save(user);
+		}
+
 		new Pugmas25Cutscene()
 			.fade(0, "Boarding train...", 70)
 			.next(TickTime.SECOND.x(2), _player -> _player.teleport(TRANSITION_LOC))
@@ -60,8 +67,13 @@ public class Pugmas25Intro implements Listener {
 			.fade(TickTime.SECOND.x(20), "Deboarding train...", 60)
 			.next(TickTime.SECOND, _player -> {
 				_player.teleport(PUGMAS.warp);
-				new SoundBuilder(Sound.BLOCK_FIRE_EXTINGUISH).receiver(_player).volume(0.75).pitch(0.1).play();
-				if (!user.isVisited()) {
+				new SoundBuilder(Sound.BLOCK_FIRE_EXTINGUISH)
+					.receiver(_player)
+					.volume(0.75)
+					.pitch(0.1)
+					.play();
+
+				if (!visited) {
 					GamemodeCommand.setGamemode(player, GameMode.SURVIVAL);
 					FlyCommand.off(player, "Pugmas25Intro");
 					WorldGuardEditCommand.off(player);
@@ -75,9 +87,6 @@ public class Pugmas25Intro implements Listener {
 			.next(TickTime.SECOND.x(2), _player -> {
 				PUGMAS.send(_player, "You've unlocked the warp to &e" + Pugmas25.EVENT_NAME);
 				new SoundBuilder(Sound.ENTITY_PLAYER_LEVELUP).pitch(2).receiver(_player).play();
-
-				user.setVisited(true);
-				userService.save(user);
 			})
 			.next(TickTime.SECOND.x(3), _player -> PUGMAS.send(player, "Talk with the &eTicket Master &3to get started."))
 			.start(player);
