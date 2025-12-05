@@ -24,9 +24,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -41,18 +42,18 @@ public class Pugmas25GiftGiver implements Listener {
 
 	public static ItemStack getGift(Player player, int finalAmount) {
 		var user = new Pugmas25UserService().get(player);
-		return getGift(List.of(user.getUuid())).amount(finalAmount).build();
+		return getGift(Set.of(user.getUuid())).amount(finalAmount).build();
 	}
 
-	public static List<UUID> getPlayerHistory(ItemStack item) {
+	public static Set<UUID> getPlayerHistory(ItemStack item) {
 		var string = item.getPersistentDataContainer().get(PLAYER_HISTORY_KEY, PersistentDataType.STRING);
 		if (string == null)
-			return new ArrayList<>();
+			return new HashSet<>();
 
 		return Arrays.stream(string.split(","))
 			.distinct()
 			.map(UUID::fromString)
-			.collect(Collectors.toList());
+			.collect(Collectors.toSet());
 	}
 
 	@EventHandler
@@ -126,7 +127,7 @@ public class Pugmas25GiftGiver implements Listener {
 		}
 	}
 
-	private static @NotNull ItemBuilder getGift(List<UUID> history) {
+	private static @NotNull ItemBuilder getGift(Set<UUID> history) {
 		var builder = Pugmas25QuestItem.GIFT.getItemBuilder();
 		builder.lore("");
 		builder.lore("&fThis gift has already been given to:");
@@ -137,7 +138,7 @@ public class Pugmas25GiftGiver implements Listener {
 		return builder;
 	}
 
-	private static String createPlayerHistory(List<UUID> users) {
+	private static String createPlayerHistory(Set<UUID> users) {
 		return String.join(",", users.stream().map(UUID::toString).toList());
 	}
 }
