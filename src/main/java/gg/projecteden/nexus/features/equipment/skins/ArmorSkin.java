@@ -27,12 +27,14 @@ public enum ArmorSkin implements EquipmentSkinType {
 	@Internal
 	INVISIBLE,
 	ADAMANTITE,
+	@Templateable
 	AMETHYST,
 	BERSERKER,
 	@Templateable
 	@HelmetCostume("hat/armor/bone")
 	BONE,
 	BROWN_BERSERK,
+	@Templateable
 	CHERRY,
 	@Templateable
 	COBALT,
@@ -52,6 +54,7 @@ public enum ArmorSkin implements EquipmentSkinType {
 	SHADOW,
 	TANK,
 	THOR,
+	@Templateable
 	VINES,
 	WARDEN,
 	WITHER,

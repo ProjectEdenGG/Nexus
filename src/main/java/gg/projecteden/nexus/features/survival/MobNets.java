@@ -38,6 +38,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 @NoArgsConstructor
 public class MobNets extends Feature implements Listener {
 	private static final String PREFIX = StringUtils.getPrefix(MobNets.class);
@@ -57,7 +59,7 @@ public class MobNets extends Feature implements Listener {
 
 			final PlayerInventory inventory = player.getInventory();
 			final ItemStack tool = inventory.getItem(event.getHand());
-			if (gg.projecteden.nexus.utils.Nullables.isNullOrAir(tool))
+			if (isNullOrAir(tool))
 				return;
 
 			if (ItemModelType.of(tool) != ItemModelType.MOB_NET)
@@ -70,7 +72,7 @@ public class MobNets extends Feature implements Listener {
 				TameablesCommand.checkOwner(player, entity);
 
 			if (CooldownService.isNotOnCooldown(player, "mobnet-capture-" + entity.getUniqueId(), TickTime.SECOND.x(3))) {
-				final String entityName = gg.projecteden.api.common.utils.StringUtils.camelCase(entity.getType()).toLowerCase();
+				final String entityName = StringUtils.camelCase(entity.getType()).toLowerCase();
 				final JsonBuilder error = new JsonBuilder("&3Click again to capture this &e" + entityName);
 
 				if (SummonableTameableEntityType.isSummonable(entity.getType()))
@@ -84,7 +86,7 @@ public class MobNets extends Feature implements Listener {
 			final ItemStack mobNet = getMobNet(entity);
 			entity.remove();
 
-			if (gg.projecteden.nexus.utils.Nullables.isNullOrAir(inventory.getItem(event.getHand())))
+			if (isNullOrAir(inventory.getItem(event.getHand())))
 				inventory.setItem(event.getHand(), mobNet);
 			else
 				PlayerUtils.giveItem(player, mobNet);
@@ -134,7 +136,7 @@ public class MobNets extends Feature implements Listener {
 	private ItemStack getMobNet(Entity entity) {
 		return new ItemBuilder(Material.PAPER)
 			.spawnEgg(entity)
-			.name(gg.projecteden.api.common.utils.StringUtils.camelCase(entity.getType()) + " Mob Net")
+			.name(StringUtils.camelCase(entity.getType()) + " Mob Net")
 			.model("misc/mob_net/mobs/" + entity.getType().getKey().getKey())
 			.build();
 	}
