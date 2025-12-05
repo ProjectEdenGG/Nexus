@@ -7,7 +7,7 @@ import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25.Pugmas25DeathCause;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25DeathCause;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.Nullables;
@@ -120,7 +120,7 @@ public class Pugmas25Geyser {
 					float damageAmount = 0.5f;
 					double newHealth = player.getHealth() - damageAmount;
 					if (newHealth <= 0) {
-						Pugmas25.get().onDeath(player, Pugmas25DeathCause.GEYSER);
+						Pugmas25Death.onDeath(player, Pugmas25DeathCause.GEYSER);
 						continue;
 					}
 

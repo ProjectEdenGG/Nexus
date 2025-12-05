@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25;
 
-import com.destroystokyo.paper.ParticleBuilder;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
@@ -8,20 +7,21 @@ import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.commands.DeathMessagesCommand;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.EventSounds;
 import gg.projecteden.nexus.features.events.models.EventBreakable;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25.Pugmas25QuestProgress.Pugmas25QuestStatus;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25BoatRace;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Cabin;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Caves;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Death;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Districts;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Fishing;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25GiftGiver;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Interactions;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Intro;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Nutcrackers;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Particles;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25SellCrate;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Snowmen;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Trunks;
@@ -36,10 +36,10 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.features.trains.Pugma
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.trains.Pugmas25Train;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.trains.Pugmas25TrainBackground;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25AnglerLoot;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25DailyTokens.Pugmas25DailyTokenSource;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25District;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25QuestProgress;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25QuestProgress.Pugmas25QuestStatus;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Sidebar;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25Waystone;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25Entity;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25NPC;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25Quest;
@@ -51,48 +51,29 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25ShopMe
 import gg.projecteden.nexus.features.minigolf.models.GolfBallStyle;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
-import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.models.deathmessages.DeathMessages;
-import gg.projecteden.nexus.models.deathmessages.DeathMessagesService;
-import gg.projecteden.nexus.models.eventuser.EventUser;
-import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.minigolf.MiniGolfConfigService;
 import gg.projecteden.nexus.models.minigolf.MiniGolfUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
-import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.models.pugmas25.Advent25Config;
 import gg.projecteden.nexus.models.pugmas25.Advent25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25Config;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25ConfigService;
-import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.models.warps.WarpType;
-import gg.projecteden.nexus.utils.AdventureUtils;
-import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.ToolType;
 import gg.projecteden.nexus.utils.ToolType.ToolGrade;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.SneakyThrows;
-import net.citizensnpcs.api.npc.NPC;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TranslatableComponent;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Mob;
@@ -100,26 +81,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import static gg.projecteden.api.common.utils.StringUtils.plural;
 
@@ -148,8 +116,6 @@ public class Pugmas25 extends EdenEvent {
 
 	public static final String LORE = "&ePugmas 2025 Item";
 	public final Location warp = location(-688.5, 82, -2964.5, 180, 0);
-	public final Location deathLoc = location(-637.5, 66.0, -3260.5, 180, 0);
-	private final Location treeRecordPlayer = location(-683.5, 119.5, -3116.5);
 
 	private static int entityAgeTask;
 
@@ -189,6 +155,8 @@ public class Pugmas25 extends EdenEvent {
 		new Pugmas25SellCrate();
 		new Pugmas25Trunks();
 		new Pugmas25GiftGiver();
+		new Pugmas25Nutcrackers();
+		new Pugmas25Particles();
 
 		Pugmas25Train.startup();
 		Pugmas25TrainBackground.startup();
@@ -205,94 +173,6 @@ public class Pugmas25 extends EdenEvent {
 					if (entity.getTicksLived() > TickTime.HOUR.x(4))
 						entity.remove();
 				});
-		});
-
-		Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
-			new ParticleBuilder(Particle.NOTE)
-				.location(treeRecordPlayer)
-				.offset(0.2, 0.2, 0.2)
-				.count(RandomUtils.randomInt(2, 5))
-				.spawn();
-		});
-
-		Pugmas25UserService userService = new Pugmas25UserService();
-		QuesterService questerService = new QuesterService();
-		ParticleBuilder particleBuilder = new ParticleBuilder(Particle.HAPPY_VILLAGER)
-			.offset(0.25, 0.25, 0.25)
-			.count(10);
-		Set<Location> nutCrackers = new Pugmas25ConfigService().get0().getNutCrackerLocations();
-		Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
-			getOnlinePlayers().forEach(player -> {
-				var particle = particleBuilder.clone().receivers(player);
-				Quester quester = questerService.get(player);
-				// real quests
-				for (Pugmas25Quest pugmas25Quest : Pugmas25Quest.values()) {
-					var quest = quester.getQuest(pugmas25Quest);
-					if (quest == null || quest.isComplete())
-						continue;
-
-					var interactable = quest.getCurrentTaskStep().getInteractable();
-					if (interactable instanceof Pugmas25NPC pugmas25NPC) {
-						NPC npc = CitizensUtils.getNPC(pugmas25NPC.getNpcId());
-						if (npc == null)
-							continue;
-
-						particle.clone()
-							.location(npc.getStoredLocation().toCenterLocation())
-							.spawn();
-					}
-				}
-
-				// fake quests
-				for (Pugmas25QuestProgress questProgress : Pugmas25QuestProgress.values()) {
-					Pugmas25NPC pugmas25NPC = questProgress.getNpc();
-					if (pugmas25NPC == null)
-						continue;
-
-					NPC npc = CitizensUtils.getNPC(pugmas25NPC.getNpcId());
-					if (npc == null)
-						continue;
-
-					particle.clone()
-						.location(npc.getStoredLocation().toCenterLocation())
-						.spawn();
-				}
-
-				// Nutcrackers
-				Pugmas25User user = userService.get(player);
-				Set<Location> nutCrackersLeft = new HashSet<>(nutCrackers);
-				nutCrackersLeft.removeAll(user.getFoundNutCrackers());
-				for (Location nutCracker : nutCrackersLeft) {
-					particle.clone()
-						.location(nutCracker.toCenterLocation())
-						.spawn();
-				}
-
-				// Mayor
-				{
-					var mayor = Pugmas25NPC.MAYOR;
-					NPC npc = CitizensUtils.getNPC(mayor.getNpcId());
-					if (npc != null) {
-						particle.clone()
-							.location(npc.getStoredLocation().toCenterLocation())
-							.spawn();
-					}
-				}
-			});
-		});
-
-		Tasks.repeat(0, 1, () -> {
-			getOnlinePlayers().forEach(player -> {
-				// Waystones
-				for (Pugmas25Waystone waystone : Pugmas25Waystone.values()) {
-					Location location = waystone.getFrameLoc().clone().add(0, 1, 0).toCenterLocation();
-					new ParticleBuilder(Particle.ENCHANT)
-						.receivers(player)
-						.count(2)
-						.location(location)
-						.spawn();
-				}
-			});
 		});
 	}
 
@@ -851,240 +731,6 @@ public class Pugmas25 extends EdenEvent {
 		return effectiveMin + (int) (Math.random() * (max - effectiveMin + 1));
 	}
 
-	@Getter
-	@AllArgsConstructor
-	public enum Pugmas25QuestProgress {
-		MINI_NUTCRACKERS(null) {
-			@Override
-			Pugmas25QuestStatus getStatus(Pugmas25User user) {
-				int numCollected = user.getFoundNutCrackers().size();
-				if (numCollected == 0)
-					return Pugmas25QuestStatus.NOT_STARTED;
-
-				int numTotal = Pugmas25Config.get().getNutCrackerLocations().size();
-				if (numCollected == numTotal)
-					return Pugmas25QuestStatus.COMPLETED;
-
-				return Pugmas25QuestStatus.IN_PROGRESS;
-			}
-
-			@Override
-			@Nullable
-			List<String> getProgressMessage(Pugmas25User user) {
-				int numCollected = user.getFoundNutCrackers().size();
-				int numTotal = Pugmas25Config.get().getNutCrackerLocations().size();
-
-				return switch (getStatus(user)) {
-					case NOT_STARTED -> List.of(
-						"&3 " + getName() + " &7- &eStarted",
-						"&7   - Find a mini nutcracker"
-					);
-					case IN_PROGRESS -> List.of(
-						"&3 " + getName() + " &7- &eStarted",
-						"&7   - " + numCollected + "/" + numTotal + " mini nutcrackers found"
-					);
-					case COMPLETED -> List.of("&3 " + getName() + " &7- &aCompleted");
-				};
-			}
-		},
-
-		ADVENT(Pugmas25NPC.ELF) {
-			@Override
-			Pugmas25QuestStatus getStatus(Pugmas25User user) {
-				var adventUser = user.advent();
-				if (!adventUser.isUnlockedQuest())
-					return Pugmas25QuestStatus.NOT_STARTED;
-
-				int numCollected = adventUser.getCollected().size();
-				int numTotal = Advent25Config.get().getDays().size();
-				if (numCollected == numTotal)
-					return Pugmas25QuestStatus.COMPLETED;
-
-				return Pugmas25QuestStatus.IN_PROGRESS;
-			}
-
-			@Override
-			@Nullable
-			List<String> getProgressMessage(Pugmas25User user) {
-				var adventUser = user.advent();
-				int numCollected = adventUser.getCollected().size();
-				int numTotal = Advent25Config.get().getDays().size();
-
-				return switch (getStatus(user)) {
-					case NOT_STARTED -> List.of(
-						"&3 " + getName() + " &7- &eStarted",
-						"&7   - Talk to the Elf"
-					);
-					case IN_PROGRESS -> List.of(
-						"&3 " + getName() + " &7- &eStarted",
-						"&7   - " + numCollected + "/" + numTotal + " presents collected"
-					);
-					case COMPLETED -> List.of("&3 " + getName() + " &7- &aCompleted");
-				};
-			}
-		},
-
-		DESIGN_A_BALLOON(Pugmas25NPC.AERONAUT) {
-			@Override
-			Pugmas25QuestStatus getStatus(Pugmas25User user) {
-				if (!user.isReceivedAeronautInstructions())
-					return Pugmas25QuestStatus.NOT_STARTED;
-
-				if (user.isBalloonSchemExists())
-					return Pugmas25QuestStatus.COMPLETED;
-
-				return Pugmas25QuestStatus.IN_PROGRESS;
-			}
-
-			@Override
-			@Nullable
-			List<String> getProgressMessage(Pugmas25User user) {
-				return switch (getStatus(user)) {
-					case NOT_STARTED -> List.of(
-						"&3 " + getName() + " &7- &eStarted",
-						"&7   - Talk to the Aeronaut"
-					);
-					case IN_PROGRESS -> List.of(
-						"&3 " + getName() + " &7- &eStarted",
-						"&7   - Save your hot air balloon"
-					);
-					case COMPLETED -> List.of("&3 " + getName() + " &7- &aCompleted");
-				};
-			}
-		},
-
-		ANGLER(Pugmas25NPC.ANGLER) {
-			@Override
-			Pugmas25QuestStatus getStatus(Pugmas25User user) {
-				if (!user.isReceivedAnglerQuestInstructions())
-					return Pugmas25QuestStatus.NOT_STARTED;
-
-				if (user.isCompletedAnglerQuest())
-					return Pugmas25QuestStatus.COMPLETED;
-
-				return Pugmas25QuestStatus.IN_PROGRESS;
-			}
-
-			@Override
-			@Nullable
-			List<String> getProgressMessage(Pugmas25User user) {
-				Pugmas25Config config = new Pugmas25ConfigService().get0();
-				String timeUntilReset = TimeUtils.Timespan.of(get().now(), config.getAnglerQuestResetDateTime()).format(FormatType.LONG);
-
-				return switch (getStatus(user)) {
-					case NOT_STARTED -> List.of(
-						"&3 " + getName() + " &7- &eStarted",
-						"&7   - Talk to the Angler"
-					);
-					case IN_PROGRESS -> List.of(
-						"&3 " + getName() + " &7- &eStarted",
-						"&7   - Talk to the Angler for more info (reset in " + timeUntilReset + ")"
-					);
-					case COMPLETED ->
-						List.of("&3 " + getName() + " &7- &aCompleted (resets in " + timeUntilReset + ")");
-				};
-			}
-		},
-
-		DAILY_FAIRGROUND_TOKENS(null) {
-			@Override
-			Pugmas25QuestStatus getStatus(Pugmas25User user) {
-				EventUserService eventUserService = new EventUserService();
-				EventUser eventUser = eventUserService.get(user);
-
-				for (Pugmas25DailyTokenSource source : Pugmas25DailyTokenSource.values()) {
-					if (eventUser.getTokensReceivedToday(source.getId()) < source.getMaxDailyTokens())
-						return Pugmas25QuestStatus.IN_PROGRESS;
-				}
-
-				return Pugmas25QuestStatus.COMPLETED;
-			}
-
-			@Override
-			@Nullable
-			List<String> getProgressMessage(Pugmas25User user) {
-				EventUserService eventUserService = new EventUserService();
-				EventUser eventUser = eventUserService.get(user);
-
-				LocalDateTime tomorrow = get().now().plusDays(1).toLocalDate().atStartOfDay();
-				var timeUntilReset = TimeUtils.Timespan.of(get().now(), tomorrow).format(FormatType.LONG);
-
-				switch (getStatus(user)) {
-					case IN_PROGRESS -> {
-						List<String> result = new ArrayList<>();
-						result.add("&3 " + getName() + " &7- &eStarted (resets in " + timeUntilReset + ")");
-
-						String sourceName;
-						for (Pugmas25DailyTokenSource source : Pugmas25DailyTokenSource.values()) {
-							sourceName = source.getName();
-							if (source == Pugmas25DailyTokenSource.WHACAMOLE)
-								sourceName = "WhacAWakka";
-
-							int received = eventUser.getTokensReceivedToday(source.getId());
-							int max = source.getMaxDailyTokens();
-							if (received == 0)
-								result.add("&7   - " + sourceName + ": " + "&c" + received + "&7/&e" + max + " &7event tokens");
-							else if (received < max)
-								result.add("&7   - " + sourceName + ": " + "&6" + received + "&7/&e" + max + " &7event tokens");
-							else
-								result.add("&7   - " + sourceName + ": " + "&a" + received + "&7/&a" + max + " &7event tokens");
-						}
-
-						return result;
-					}
-					case COMPLETED -> {
-						return List.of("&3 " + getName() + " &7- &aCompleted (resets in " + timeUntilReset + ")");
-					}
-				}
-				;
-
-				return null;
-			}
-		}
-		;
-
-		@Nullable
-		private final Pugmas25NPC npc;
-
-		abstract Pugmas25QuestStatus getStatus(Pugmas25User user);
-
-		abstract @Nullable List<String> getProgressMessage(Pugmas25User user);
-
-		public String getName() {
-			return StringUtils.camelCase(this);
-		}
-
-		public void send(Player viewer, Pugmas25User target) {
-			List<String> progress = getProgressMessage(target);
-			if (Nullables.isNullOrEmpty(progress))
-				return;
-
-			for (String line : progress) {
-				PlayerUtils.send(viewer, line);
-			}
-		}
-
-		public enum Pugmas25QuestStatus {
-			NOT_STARTED,
-			IN_PROGRESS,
-			COMPLETED,
-			;
-		}
-
-		public boolean isRepeatable() {
-			return getField().isAnnotationPresent(Repeatable.class);
-		}
-
-		@SneakyThrows
-		public Field getField() {
-			return getClass().getField(name());
-		}
-
-		@Target(ElementType.FIELD)
-		@Retention(RetentionPolicy.RUNTIME)
-		private @interface Repeatable {}
-	}
-
 	// Death
 
 	@Override
@@ -1092,169 +738,9 @@ public class Pugmas25 extends EdenEvent {
 		return new Pugmas25UserService().get(player).getSpawnLocation();
 	}
 
-	public void onDeath(Player player, @NotNull Pugmas25.Pugmas25DeathCause deathType) {
-		onDeath(player, deathType, null);
-	}
-
-	public void onDeath(Player player, @NotNull Pugmas25.Pugmas25DeathCause deathType, String defaultMessage) {
-		player.teleportAsync(deathLoc);
-		// Health
-		player.setHealth(5);
-		player.setAbsorptionAmount(5);
-
-		// Hunger
-		player.setFoodLevel(20);
-		player.setSaturation(5);
-		player.setExhaustion(5);
-
-		// EXP
-		int expToDrop = getExpToDrop(player);
-		player.setTotalExperience(0);
-		player.setLevel(0);
-		player.setExp(0);
-		player.giveExp(expToDrop);
-
-		// Effects
-		player.clearActivePotionEffects();
-
-		// Status Resets
-		player.setFireTicks(0);
-		player.setFreezeTicks(0);
-		player.setRemainingAir(player.getMaximumAir());
-		player.setArrowsInBody(0);
-
-		// Motion
-		player.setVelocity(new Vector(0, 0, 0));
-		player.setFallDistance(0);
-
-		// Vanilla Invulnerability
-		player.setNoDamageTicks(20);
-
-		String message =
-			deathType == Pugmas25DeathCause.MONSTER && defaultMessage != null ?
-				defaultMessage : deathType.getMessage(player);
-
-		broadcast(message);
-		fadeToBlack(player, "&c&lYou died.", 30).thenRun(() -> player.teleportAsync(getRespawnLocation(player)));
-	}
-
-	public static int getExpToDrop(Player player) {
-		int level = player.getLevel();
-		int total = player.getTotalExperience();
-		int xpForNext = getExpForNextLevel(level);
-
-		return Math.min(total, xpForNext / 2);
-	}
-
-	private static int getExpForNextLevel(int level) {
-		if (level >= 30)
-			return 112 + (level - 30) * 9;
-		else if (level >= 15)
-			return 37 + (level - 15) * 5;
-		else
-			return 7 + level * 2;
-	}
-
 	@Override
 	public void onPlayerDeath(PlayerDeathEvent event) {
-		event.setCancelled(true);
-		Pugmas25DeathCause deathCause = Pugmas25DeathCause.from(event);
-
-		String defaultMessage = null;
-		Component deathMessageRaw = event.deathMessage();
-		if (deathCause == Pugmas25DeathCause.MONSTER && deathMessageRaw instanceof TranslatableComponent deathMessage) {
-			DeathMessages deathMessages = new DeathMessagesService().get(event.getPlayer());
-			JsonBuilder json = new JsonBuilder(deathMessage.args(deathMessage.args().stream().map(arg -> DeathMessagesCommand.handleArgument(deathMessages, arg)).toList()));
-			defaultMessage = AdventureUtils.asPlainText(json.build());
-		}
-
-		onDeath(event.getPlayer(), deathCause, defaultMessage);
-	}
-
-	@AllArgsConstructor
-	public enum Pugmas25DeathCause {
-		UNKNOWN("<player> died", "<player> stopped existing for unknown reasons", "<player> has left this plane of existence"),
-		GEYSER("<player> was boiled alive", "<player> tried taking a lava bath", "<player> was cooked medium rare", "<player> took a steam bath… permanently"),
-		INSTANT_DEATH("<player> had really bad luck", "<player> experienced instant regret", "<player> rolled a natural 1"),
-		FALL("<player> forgot fall damage existed", "<player> misjudged that jump", "<player> tested gravity’s loyalty"),
-		STARVATION("<player> forgot to eat", "<player> starved to death", "<player> thought hunger was optional", "<player> should’ve packed snacks", "<player> learned you can’t live on Christmas spirit alone"),
-		ELYTRA("<player> needs more practice with an elytra", "<player> became one with the wall"),
-		TRAIN("<player> found out what happens when unstoppable meets squishable", "<player> became train-shaped paste", "<player> got flattened by holiday cheer", "<player> mistook the tracks for a crosswalk"),
-		MONSTER("<player> died fighting a monster");
-
-		final List<String> messages;
-
-		Pugmas25DeathCause(String... messages) {
-			this.messages = new ArrayList<>(List.of(messages));
-		}
-
-		private static @NotNull Pugmas25DeathCause from(PlayerDeathEvent event) {
-			EntityDamageEvent damageEvent = event.getEntity().getLastDamageCause();
-
-			Pugmas25DeathCause deathCause = Pugmas25DeathCause.UNKNOWN;
-			if (damageEvent != null) {
-				deathCause = switch (damageEvent.getCause()) {
-					case FALL -> Pugmas25DeathCause.FALL;
-					case STARVATION -> Pugmas25DeathCause.STARVATION;
-					case FLY_INTO_WALL -> Pugmas25DeathCause.ELYTRA;
-					case ENTITY_ATTACK, ENTITY_SWEEP_ATTACK, ENTITY_EXPLOSION, PROJECTILE, MAGIC ->
-						Pugmas25DeathCause.MONSTER;
-					default -> Pugmas25DeathCause.UNKNOWN;
-				};
-			}
-			return deathCause;
-		}
-
-		public String getMessage(Player player) {
-			String message = RandomUtils.randomElement(messages);
-			return message.replaceAll("<player>", Nickname.of(player));
-		}
-	}
-
-	@EventHandler
-	public void on(DecorationInteractEvent event) {
-		Player player = event.getPlayer();
-		if (!isAtEvent(player))
-			return;
-
-		if (event.getDecorationType() != DecorationType.NUTCRACKER_SHORT)
-			return;
-
-		if (PlayerUtils.isWGEdit(player))
-			return;
-
-		event.setCancelled(true);
-
-		Location location = event.getClickedBlock().getLocation();
-		Pugmas25Config config = new Pugmas25ConfigService().get0();
-		if (!config.getNutCrackerLocations().contains(location))
-			return;
-
-		Pugmas25UserService userService = new Pugmas25UserService();
-		Pugmas25User user = userService.get(player);
-		if (user.getFoundNutCrackers().contains(location)) {
-			PlayerUtils.send(player, PREFIX + "&cYou already found this mini nutcrackers!");
-			return;
-		}
-
-		user.getFoundNutCrackers().add(location);
-		userService.save(user);
-
-		new ParticleBuilder(Particle.END_ROD).receivers(player)
-			.location(location.toCenterLocation()).offset(0.25, 0.25, 0.25)
-			.count(15)
-			.extra(0.01)
-			.spawn();
-
-		if (user.getFoundNutCrackers().size() < config.getNutCrackerLocations().size()) {
-			new SoundBuilder(Sound.ENTITY_PLAYER_LEVELUP).receiver(player).volume(0.5).pitch(2.0).play();
-			return;
-		}
-
-		new SoundBuilder(Sound.UI_TOAST_CHALLENGE_COMPLETE).receiver(player).volume(0.5).play();
-		PlayerUtils.send(player, PREFIX + "You found all the mini nutcrackers!");
-		PlayerUtils.giveItem(player, Pugmas25QuestItem.SLOT_MACHINE_TOKEN.get());
-		new EventUserService().edit(player, eventUser -> eventUser.giveTokens(250));
+		Pugmas25Death.onPlayerDeath(event);
 	}
 
 }

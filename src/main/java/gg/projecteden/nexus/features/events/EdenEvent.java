@@ -924,9 +924,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 		return null;
 	}
 
-	public void onPlayerDeath(PlayerDeathEvent event) {
-
-	}
+	public void onPlayerDeath(PlayerDeathEvent event) {}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on(PlayerDeathEvent event) {

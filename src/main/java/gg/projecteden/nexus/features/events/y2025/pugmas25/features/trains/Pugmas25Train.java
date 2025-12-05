@@ -7,7 +7,8 @@ import gg.projecteden.nexus.features.events.models.Train.Crossing;
 import gg.projecteden.nexus.features.events.models.Train.Crossing.TrackSide;
 import gg.projecteden.nexus.features.events.models.Train.TrainCrossings;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25.Pugmas25DeathCause;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Death;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25DeathCause;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -77,7 +78,7 @@ public class Pugmas25Train {
 			.bonkPlayers(true)
 			.onBonk((player) -> {
 				if (player.getHealth() <= 2)
-					Pugmas25.get().onDeath(player, Pugmas25DeathCause.TRAIN);
+					Pugmas25Death.onDeath(player, Pugmas25DeathCause.TRAIN);
 				else
 					NMSUtils.hurtEntity(player, NMSUtils.getDamageSources(player).fall(), 4f);
 			})

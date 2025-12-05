@@ -6,8 +6,7 @@ import gg.projecteden.nexus.features.events.IEventCommand;
 import gg.projecteden.nexus.features.events.waypoints.CustomWaypoint;
 import gg.projecteden.nexus.features.events.waypoints.WaypointIcon;
 import gg.projecteden.nexus.features.events.waypoints.WaypointsManager;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25.Pugmas25DeathCause;
-import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25.Pugmas25QuestProgress;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Death;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Districts;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Districts.Pugmas25BiomeDistrict;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25Geyser;
@@ -25,7 +24,9 @@ import gg.projecteden.nexus.features.events.y2025.pugmas25.features.fairgrounds.
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.trains.Pugmas25ModelTrain;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.trains.Pugmas25Train;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25AnglerLoot;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25DeathCause;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25District;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.models.Pugmas25QuestProgress;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25NPC;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25Quest;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestWaypoint;
@@ -475,7 +476,7 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 	@Path("death <cause>")
 	@Permission(Group.ADMIN)
 	void death_test(Pugmas25DeathCause deathCause) {
-		Pugmas25.get().onDeath(player(), deathCause, null);
+		Pugmas25Death.onDeath(player(), deathCause, null);
 	}
 
 	@Path("slotMachine rewards")
