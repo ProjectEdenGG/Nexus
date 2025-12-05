@@ -12,10 +12,12 @@ import net.kyori.adventure.text.TextComponent.Builder;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEventSource;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.ShadowColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.util.ARGBLike;
 import net.md_5.bungee.api.ChatColor;
 import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.Contract;
@@ -24,8 +26,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
 import java.util.function.Consumer;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
@@ -781,6 +788,19 @@ public class JsonBuilder implements ComponentLike {
 
 	@NotNull
 	@Contract("_ -> this")
+	public JsonBuilder shadowColor(ARGBLike color) {
+		style(style -> style.shadowColor(color));
+		return this;
+	}
+
+	@NotNull
+	@Contract("_ -> this")
+	public JsonBuilder noShadow() {
+		return shadowColor(ShadowColor.none());
+	}
+
+	@NotNull
+	@Contract("_ -> this")
 	public JsonBuilder font(@NotNull CustomFont customFont) {
 		builder.style(customFont.getStyle());
 		return this;
@@ -789,7 +809,7 @@ public class JsonBuilder implements ComponentLike {
 	@NotNull
 	@Contract("_ -> this")
 	public JsonBuilder font(@Subst("minecraft:default") @NotNull String fontPath) {
-		builder.style(Style.style().font(Key.key(fontPath)).build());
+		style(style -> style.font(Key.key(fontPath)));
 		return this;
 	}
 

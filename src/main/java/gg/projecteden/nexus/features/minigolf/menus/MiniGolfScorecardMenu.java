@@ -17,7 +17,7 @@ public class MiniGolfScorecardMenu {
 	private final MiniGolfUser user;
 	private final MiniGolfCourse course;
 	private final Map<String, Double> spaces;
-	private final String pipe = " &8|&f ";
+	private final String pipe = " &8|&0 ";
 	private final String background = "艋";
 
 	public MiniGolfScorecardMenu(MiniGolfUser user, MiniGolfCourse course) {
@@ -62,7 +62,7 @@ public class MiniGolfScorecardMenu {
 	public void open() {
 		var dialog = new DialogBuilder()
 			.title(course.getName() + " MiniGolf Scorecard");
-		var json = new JsonBuilder();
+		var json = new JsonBuilder().noShadow();
 
 		for (int i = 0; i < spaces("NEWLINES_BEFORE_BACKGROUND"); i++)
 			json.newline();
@@ -75,7 +75,7 @@ public class MiniGolfScorecardMenu {
 		String pipe = " " + this.pipe + " ";
 		json.next(
 			" ".repeat(spaces("BEFORE_HEADER")) +
-			"Hole" + pipe + "Par" + pipe + "Current" + pipe + "Best" +
+			"&0Hole" + pipe + "Par" + pipe + "Current" + pipe + "Best" +
 			" ".repeat(spaces("AFTER_HEADER"))
 		).newline();
 
@@ -97,9 +97,10 @@ public class MiniGolfScorecardMenu {
 				best = bestScorecard.get(hole.getId());
 
 			String currentString = current == 0 ? "??" : current < 10 ? "0" + current : "" + current;
-			String bestString = best == 0 ? "??" : best < 10 ? (best == 1 ? "&a" : "") + "0" + best : "" + best;
+			String bestString = best == 0 ? "??" : best < 10 ? (best == 1 ? "&2" : "") + "0" + best : "" + best;
 
 			json.next(
+				"&0" +
 				" ".repeat(spaces("BEFORE_HOLE")) +
 				holeNumber +
 				" ".repeat(spaces("AFTER_HOLE")) +
