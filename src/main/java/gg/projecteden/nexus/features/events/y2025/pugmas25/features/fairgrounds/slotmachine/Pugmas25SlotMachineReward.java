@@ -43,7 +43,7 @@ public enum Pugmas25SlotMachineReward {
 			int maxAmount = 50;
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
-			//Currency.VOTE_POINTS.deposit(player, Price.of(finalAmount));
+			Currency.VOTE_POINTS.deposit(player, Price.of(finalAmount));
 			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3vote points have been added to your balance");
 			if (additional > 0)
 				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3vote points given from Lucky Horseshoe");
@@ -53,7 +53,7 @@ public enum Pugmas25SlotMachineReward {
 			int maxAmount = 75;
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
-			//Currency.VOTE_POINTS.deposit(player, Price.of(finalAmount));
+			Currency.VOTE_POINTS.deposit(player, Price.of(finalAmount));
 			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3vote points have been added to your balance");
 			if (additional > 0)
 				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3vote points given from Lucky Horseshoe");
@@ -67,7 +67,7 @@ public enum Pugmas25SlotMachineReward {
 			int maxAmount = 500;
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
-			//Currency.EVENT_TOKENS.deposit(player, Price.of(finalAmount));
+			Currency.EVENT_TOKENS.deposit(player, Price.of(finalAmount));
 			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3event tokens have been added to your balance");
 			if (additional > 0)
 				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3event tokens given from Lucky Horseshoe");
@@ -77,7 +77,7 @@ public enum Pugmas25SlotMachineReward {
 			int maxAmount = 750;
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
-			//Currency.EVENT_TOKENS.deposit(player, Price.of(finalAmount));
+			Currency.EVENT_TOKENS.deposit(player, Price.of(finalAmount));
 			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3event tokens have been added to your balance");
 			if (additional > 0)
 				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3event tokens given from Lucky Horseshoe");

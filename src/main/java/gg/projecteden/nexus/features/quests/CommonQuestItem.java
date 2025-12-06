@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 @AllArgsConstructor
 public enum CommonQuestItem implements QuestItem {
 	COIN_POUCH(new ItemBuilder(ItemModelType.EVENT_COIN_POUCH).name("&oCoin Pouch").lore("&3Stores currency").undroppable().untrashable().unframeable()),
-	DISCOUNT_CARD(new ItemBuilder(ItemModelType.EVENT_DISCOUNT_CARD).name("&oDiscount Card").lore("&3Shop prices lowered by &e20%")),
+	DISCOUNT_CARD(new ItemBuilder(ItemModelType.EVENT_DISCOUNT_CARD).name("&oDiscount Card").lore("&3Shop prices lowered by &e20%").undroppable().untrashable()),
 
 	BASIC_BACKPACK(new ItemBuilder(BackpackTier.BASIC.create()).undroppable().untrashable()),
 	IRON_BACKPACK(new ItemBuilder(BackpackTier.IRON.create()).undroppable().untrashable()),

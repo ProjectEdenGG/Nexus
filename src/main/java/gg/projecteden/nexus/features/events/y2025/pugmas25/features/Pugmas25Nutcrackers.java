@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2025.pugmas25.features;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
@@ -20,6 +21,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 public class Pugmas25Nutcrackers implements Listener {
+
+	public Pugmas25Nutcrackers() {
+		Nexus.registerListener(this);
+	}
 
 	@EventHandler
 	public void on(DecorationInteractEvent event) {
@@ -51,7 +56,7 @@ public class Pugmas25Nutcrackers implements Listener {
 		userService.save(user);
 
 		new ParticleBuilder(Particle.END_ROD).receivers(player)
-			.location(location.toCenterLocation()).offset(0.25, 0.25, 0.25)
+			.location(location.clone().toCenterLocation()).offset(0.25, 0.25, 0.25)
 			.count(15)
 			.extra(0.01)
 			.spawn();
