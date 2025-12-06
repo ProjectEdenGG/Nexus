@@ -26,6 +26,7 @@ public enum ArmorSkin implements EquipmentSkinType {
 	DEFAULT,
 	@Internal
 	INVISIBLE,
+	@Templateable
 	ADAMANTITE,
 	@Templateable
 	AMETHYST,
@@ -48,6 +49,7 @@ public enum ArmorSkin implements EquipmentSkinType {
 	MECHANICAL,
 	@Templateable
 	MYTHRIL,
+	@Templateable
 	SCULK,
 	@Templateable
 	@HelmetCostume("hat/armor/shadow")
