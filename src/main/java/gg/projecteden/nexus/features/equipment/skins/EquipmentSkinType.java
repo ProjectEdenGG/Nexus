@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.equipment.skins;
 
 import gg.projecteden.nexus.utils.ItemBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
@@ -50,6 +52,18 @@ public interface EquipmentSkinType {
 			return true;
 
 		return false;
+	}
+
+	@AllArgsConstructor
+	enum EquipmentSkinTypeClass {
+		ARMOR(ArmorSkin.class),
+		TOOL(ToolSkin.class),
+		BACKPACK(BackpackSkin.class),
+		;
+
+		@Getter
+		private final Class<? extends Enum<? extends EquipmentSkinType>> clazz;
+
 	}
 
 }

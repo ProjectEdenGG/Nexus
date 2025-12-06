@@ -1,11 +1,14 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.features.equipment.skins.ArmorSkin;
+import gg.projecteden.nexus.features.equipment.skins.EquipmentSkinType;
+import gg.projecteden.nexus.features.equipment.skins.EquipmentSkinType.EquipmentSkinTypeClass;
 import gg.projecteden.nexus.features.recipes.RecipeUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
@@ -14,6 +17,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -69,6 +73,13 @@ public class ItemCommand extends CustomCommand {
 			PlayerUtils.giveItem(player(), type.apply(new ItemStack(material)));
 	}
 
+	@Path("rp skinTemplate <type> <skin>")
+	@Permission(Group.STAFF)
+	@Description("Spawn a resource pack skin template")
+	void rp_skinTemplate(EquipmentSkinTypeClass type, @Arg(context = 1) EquipmentSkinType skin) {
+		PlayerUtils.giveItem(player(), skin.getTemplate());
+	}
+
 	@Path("tag <tag> [amount]")
 	@Description("Spawn all items in a tag")
 	void tag(Tag<?> tag, @Arg("1") int amount) {
@@ -104,6 +115,20 @@ public class ItemCommand extends CustomCommand {
 		player().give(ItemUtils.getEmptySlotItem());
 	}
 
+	@TabCompleterFor(EquipmentSkinType.class)
+	List<String> tabCompleteEquipmentSkinType(String filter, EquipmentSkinTypeClass context) {
+		return tabCompleteEnum(filter, context.getClazz());
+	}
+
+	@ConverterFor(EquipmentSkinType.class)
+	EquipmentSkinType convertToEquipmentSkinType(String value, EquipmentSkinTypeClass context) {
+		for (Enum<? extends EquipmentSkinType> skinEnum : context.getClazz().getEnumConstants())
+			if (skinEnum.name().equalsIgnoreCase(value))
+				if (skinEnum instanceof EquipmentSkinType skin)
+					return skin;
+
+		throw new IllegalArgumentException("Skin &e" + value + "&c from type &e" + camelCase(context) + "&c not found");
+	}
 
 	@Getter
 	@AllArgsConstructor
