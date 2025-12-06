@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static gg.projecteden.nexus.features.crates.Crates.WEIGHT_FORMATTER;
+
 @Title("Crate Editing")
 public class CrateEditMenu {
 
@@ -56,10 +58,19 @@ public class CrateEditMenu {
 					new CrateEditProvider(filter, null).open(viewer);
 				});
 
-				// Save Item
-				contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.NETHER_STAR).name("&eSave").build(), e -> {
-					save(viewer.getOpenInventory().getTopInventory());
-					new CrateEditProvider(filter, editing).open(viewer);
+				// Delete Item
+				contents.set(0, 2, ClickableItem.of(new ItemBuilder(Material.LAVA_BUCKET).name("&cDelete").build(), e -> {
+					ConfirmationMenu.builder()
+						.title("&cDelete Crate Loot?")
+						.onConfirm(e2 -> {
+							PlayerUtils.giveItems(viewer, editing.getItems());
+							CrateConfigService.get().getLoot().remove(editing);
+							CrateConfigService.get().save();
+							new CrateEditProvider(filter, null).open(viewer);
+						}).onCancel(e2 -> {
+							new CrateEditProvider(filter, editing).open(viewer);
+						})
+						.open(viewer);
 				}));
 
 				// SettingsItem
@@ -75,6 +86,12 @@ public class CrateEditMenu {
 					save(viewer.getOpenInventory().getTopInventory());
 					editing.setActive(!editing.isActive());
 					CrateConfigService.get().save();
+					new CrateEditProvider(filter, editing).open(viewer);
+				}));
+
+				// Save Item
+				contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.NETHER_STAR).name("&eSave").build(), e -> {
+					save(viewer.getOpenInventory().getTopInventory());
 					new CrateEditProvider(filter, editing).open(viewer);
 				}));
 
@@ -118,14 +135,22 @@ public class CrateEditMenu {
 				Pagination page = contents.pagination();
 				List<ClickableItem> items = new ArrayList<>();
 				Crates.getLootByType(filter).forEach(loot -> {
-					ItemBuilder builder = new ItemBuilder(loot.getDisplayItem() != null ? loot.getDisplayItem().getType() :
-						(loot.isActive() ? Material.ENDER_CHEST : Material.CHEST))
+					Material display;
+					if (loot.getDisplayItem() != null)
+						display = loot.getDisplayItem().getType();
+					else
+						display = loot.isActive() ? Material.ENDER_CHEST : Material.CHEST;
+
+					ItemBuilder builder = new ItemBuilder(display)
 						.name(loot.getDisplayName())
+						.lore("&eStatus: " + (loot.isActive() ? "&aEnabled" : "&cDisabled"))
 						.lore("&3Type: &e" + StringUtils.camelCase(loot.getType()))
+						.lore("&3Weight: &e" + WEIGHT_FORMATTER.format(loot.getWeight()))
 						.lore(" ")
-						.lore("&eLeft-Click &3to edit")
-						.lore("&eRight-Click &3to enable/disable")
-						.lore("&cShift-Click to Delete");
+						.lore("&eLeft-Click &3to &eedit")
+						.lore("&eRight-Click &3to " + (loot.isActive() ? "&cdisable" : "&aenable"))
+						.lore("&eShift-Left-Click &3to &emove left")
+						.lore("&eShift-Right-Click &3to &emove right");
 
 					if (loot.getDisplayItem() != null)
 						builder.model(new ItemBuilder(loot.getDisplayItem()).model());
@@ -134,14 +159,26 @@ public class CrateEditMenu {
 					items.add(ClickableItem.of(item, e -> {
 						InventoryClickEvent event = (InventoryClickEvent) e.getEvent();
 						if (event.isShiftClick()) {
-							ConfirmationMenu.builder()
-								.title("Delete " + loot.getDisplayName() + "?")
-								.onConfirm(e2 -> {
+							// TODO Sometimes doesnt work
+							if (event.isLeftClick()) {
+								int index = CrateConfigService.get().getLoot().indexOf(loot);
+								if (index != 0) {
 									CrateConfigService.get().getLoot().remove(loot);
+									CrateConfigService.get().getLoot().add(index - 1, loot);
 									CrateConfigService.get().save();
-									new CrateEditProvider(filter, null).open(viewer);
-								}).open(viewer);
-							return;
+								}
+								new CrateEditProvider(filter, null).open(viewer);
+								return;
+							} else if (event.isRightClick()) {
+								int index = CrateConfigService.get().getLoot().indexOf(loot);
+								if (index != CrateConfigService.get().getLoot().size() - 1) {
+									CrateConfigService.get().getLoot().remove(loot);
+									CrateConfigService.get().getLoot().add(index + 1, loot);
+									CrateConfigService.get().save();
+								}
+								new CrateEditProvider(filter, null).open(viewer);
+								return;
+							}
 						}
 						if (event.isLeftClick()) {
 							new CrateEditProvider(filter, loot).open(viewer);

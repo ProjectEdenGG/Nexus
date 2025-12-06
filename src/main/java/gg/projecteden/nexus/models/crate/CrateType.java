@@ -1,14 +1,18 @@
 package gg.projecteden.nexus.models.crate;
 
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.SneakyThrows;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
@@ -16,27 +20,44 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Field;
 import java.util.Map.Entry;
 
 @Getter
-@AllArgsConstructor
 public enum CrateType {
-	VOTE(ItemModelType.CRATE_KEY_VOTE, "痪", true),
-	WITHER(ItemModelType.CRATE_KEY_WITHER, "囱"),
-	MYSTERY(ItemModelType.CRATE_KEY_MYSTERY, "笯", true),
-	WEEKLY_WAKKA(ItemModelType.CRATE_KEY_WAKKA, "清",true),
-	MINIGAMES(ItemModelType.CRATE_KEY_MINIGAMES, "禘", true),
-	ONE_BLOCK(null, "皂"),
-	HALLOWEEN(ItemModelType.CRATE_KEY_HALLOWEEN, "灿", true)
+	@KeyModel(ItemModelType.CRATE_KEY_VOTE)
+	@TitleCharacter("痪")
+	VOTE,
+
+	@Disabled
+	@KeyModel(ItemModelType.CRATE_KEY_WITHER)
+	@TitleCharacter("囱")
+	WITHER,
+
+	@KeyModel(ItemModelType.CRATE_KEY_MYSTERY)
+	@TitleCharacter("笯")
+	@PaginationButtonColor("#dcb30d")
+	MYSTERY,
+
+	@KeyModel(ItemModelType.CRATE_KEY_WAKKA)
+	@TitleCharacter("清")
+	WEEKLY_WAKKA,
+
+	@KeyModel(ItemModelType.CRATE_KEY_MINIGAMES)
+	@TitleCharacter("禘")
+	MINIGAMES,
+
+	@TitleCharacter("皂")
+	ONE_BLOCK,
+
+	@KeyModel(ItemModelType.CRATE_KEY_HALLOWEEN)
+	@TitleCharacter("灿")
+	HALLOWEEN,
 	;
-
-	final ItemModelType itemModelType;
-	final String titleCharacter;
-	final boolean enabled;
-
-	CrateType(ItemModelType itemModelType, String titleCharacter) {
-		this(itemModelType, titleCharacter, false);
-	}
 
 	final ItemStack OLD_KEY = new ItemBuilder(Material.TRIPWIRE_HOOK)
 		.name("&eCrate Key")
@@ -52,10 +73,15 @@ public enum CrateType {
 	}
 
 	public ItemStack getKey() {
+		ItemModelType keyItemModel = getKeyItemModel();
+
+		if (keyItemModel == null)
+			throw new InvalidInputException("Key model not defined for " + StringUtils.camelCase(this) + " Crate");
+
 		return new ItemBuilder(Material.PAPER)
 			.name("&e" + StringUtils.camelCase(this) + " Crate Key")
 			.glow()
-			.model(itemModelType.getModel())
+			.model(keyItemModel.getModel())
 			.lore("&7Use me at &e/crates &7to receive a reward")
 			.build();
 	}
@@ -68,10 +94,18 @@ public enum CrateType {
 	}
 
 	public static CrateType fromKey(ItemStack item) {
-		if (Nullables.isNullOrAir(item)) return null;
-		for (CrateType type : values())
-			if (type.itemModelType.is(item))
+		if (Nullables.isNullOrAir(item))
+			return null;
+
+		for (CrateType type : values()) {
+			ItemModelType keyItemModel = type.getKeyItemModel();
+			if (keyItemModel == null)
+				continue;
+
+			if (keyItemModel.is(item))
 				return type;
+		}
+
 		return null;
 	}
 
@@ -119,4 +153,47 @@ public enum CrateType {
 		item.setGravity(false);
 		Tasks.wait(10, () -> item.setCustomNameVisible(true));
 	}
+
+	public boolean isEnabled() {
+		return !getField().isAnnotationPresent(Disabled.class);
+	}
+
+	public ItemModelType getKeyItemModel() {
+		KeyModel annotation = getField().getAnnotation(KeyModel.class);
+		return annotation == null ? null : annotation.value();
+	}
+
+	public String getTitleCharacter() {
+		TitleCharacter annotation = getField().getAnnotation(TitleCharacter.class);
+		return annotation == null ? null : annotation.value();
+	}
+
+	public Color getPaginationButtonColor() {
+		PaginationButtonColor annotation = getField().getAnnotation(PaginationButtonColor.class);
+		return annotation == null ? ColorType.CYAN.getBukkitColor() : ColorType.hexToBukkit(annotation.value());
+	}
+
+	@SneakyThrows
+	public Field getField() {
+		return getClass().getField(name());
+	}
+
+	@Target(ElementType.FIELD)
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface KeyModel {
+		ItemModelType value();
+	}
+
+	@Target(ElementType.FIELD)
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface TitleCharacter {
+		String value();
+	}
+
+	@Target(ElementType.FIELD)
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface PaginationButtonColor {
+		String value();
+	}
+
 }

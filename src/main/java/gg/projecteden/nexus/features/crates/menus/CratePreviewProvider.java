@@ -33,11 +33,12 @@ import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
+
+import static gg.projecteden.nexus.features.crates.Crates.WEIGHT_FORMATTER;
 
 @AllArgsConstructor
 public class CratePreviewProvider extends InventoryProvider {
@@ -87,7 +88,6 @@ public class CratePreviewProvider extends InventoryProvider {
 				addAll(groups);
 			}};
 
-			DecimalFormat format = new DecimalFormat("#0.00");
 			AtomicDouble weightSum = new AtomicDouble(0);
 
 			for (CrateDisplay display : allLoot) {
@@ -112,7 +112,7 @@ public class CratePreviewProvider extends InventoryProvider {
 					ItemBuilder builder = new ItemBuilder(display.getDisplayItem())
 						                      .name("&e" + display.getDisplayName())
 						                      .amount(1)
-						                      .lore("&3Chance: &e" + format.format(((display.getWeightForPlayer(viewer) / weightSum.get()) * 100)) + "%");
+						                      .lore("&3Chance: &e" + WEIGHT_FORMATTER.format(((display.getWeightForPlayer(viewer) / weightSum.get()) * 100)) + "%");
 					if (display instanceof CrateLoot loot && loot.getItems().size() > 1)
 						builder.lore("&7&oClick to see bundle");
 					if (display instanceof CrateGroup)
@@ -130,17 +130,13 @@ public class CratePreviewProvider extends InventoryProvider {
 		for (int i = 0; i < 3; i++)
 			contents.set(48 + i, getOpenItem(i == 1));
 
-		paginator().items(items)
+		paginator()
+			.items(items)
 			.perPage(28)
 			.iterator(MenuUtils.innerSlotIterator(contents))
+			.useGUIArrows()
+			.buttonColor(type.getPaginationButtonColor())
 			.build();
-
-		if (!page.isFirst())
-			contents.set(0, 3, ClickableItem.of(new ItemBuilder(Material.ARROW).name("<-- Back").build(), e ->
-				new CratePreviewProvider(type, group, clickedCrate).open(viewer, page.previous())));
-		if (!page.isLast())
-			contents.set(5, 3, ClickableItem.of(new ItemBuilder(Material.ARROW).name("Next -->").build(), e ->
-				new CratePreviewProvider(type, group, clickedCrate).open(viewer, page.next())));
 	}
 
 	public Consumer<ItemClickData> getOpenButtonAction() {

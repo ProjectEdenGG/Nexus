@@ -22,6 +22,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.EquipmentSlot;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,8 +36,8 @@ import java.util.stream.Collectors;
 
 @NoArgsConstructor
 public class Crates extends Feature implements Listener {
-
 	public static final String PREFIX = StringUtils.getPrefix("Crates");
+	public static final DecimalFormat WEIGHT_FORMATTER = new DecimalFormat("#0.00");
 
 	public static List<CrateLoot> getLootByType(CrateType type) {
 		if (type == null) return CrateConfigService.get().getLoot();

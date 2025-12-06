@@ -47,6 +47,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
+import org.bukkit.Color;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -308,6 +309,7 @@ public abstract class InventoryProvider {
 		private SlotPos nextSlot;
 		private SlotIterator iterator;
 		private boolean guiArrows = false;
+		private Color buttonColor = ColorType.CYAN.getBukkitColor();
 
 		@CheckReturnValue
 		public Paginator hasResourcePack(boolean hasResourcePack) {
@@ -367,6 +369,12 @@ public abstract class InventoryProvider {
 			return this;
 		}
 
+		@CheckReturnValue
+		public Paginator buttonColor(Color buttonColor) {
+			this.buttonColor = buttonColor;
+			return this;
+		}
+
 		public void build() {
 			if (hasResourcePack == null)
 				this.hasResourcePack = ResourcePack.isEnabledFor(viewer);
@@ -390,17 +398,17 @@ public abstract class InventoryProvider {
 
 			String[] lore = {"&f", "&7Right click to jump to a page"};
 
-			ItemBuilder previous = ResourcePackNumber.of(previousPage, ColorType.CYAN).get()
+			ItemBuilder previous = ResourcePackNumber.of(previousPage, buttonColor).get()
 				.name("&fPrevious Page")
 				.lore(lore);
 
-			ItemBuilder next = ResourcePackNumber.of(nextPage, ColorType.CYAN).get()
+			ItemBuilder next = ResourcePackNumber.of(nextPage, buttonColor).get()
 				.name("&fNext Page")
 				.lore(lore);
 
 			if (guiArrows) {
-				previous.material(ItemModelType.GUI_ARROW_LEFT).dyeColor(ColorType.CYAN).itemFlags(ItemFlag.HIDE_DYE);
-				next.material(ItemModelType.GUI_ARROW_RIGHT).dyeColor(ColorType.CYAN).itemFlags(ItemFlag.HIDE_DYE);
+				previous.material(ItemModelType.GUI_ARROW_LEFT).dyeColor(buttonColor).itemFlags(ItemFlag.HIDE_DYE);
+				next.material(ItemModelType.GUI_ARROW_RIGHT).dyeColor(buttonColor).itemFlags(ItemFlag.HIDE_DYE);
 			}
 
 			page.setItemsPerPage(perPage);
