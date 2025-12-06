@@ -4,7 +4,6 @@ import gg.projecteden.nexus.features.commands.staff.admin.CouponCommand;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.features.Pugmas25GiftGiver;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
-import gg.projecteden.nexus.models.coupon.CouponService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.Getter;
@@ -57,7 +56,7 @@ public enum Pugmas25GiftGiverReward {
 		new ItemBuilder(ItemModelType.COOKIES_GINGER_ALEX).name("Gingerbread Alex").lore("&ePugmas 2025 Item").amount(32).build(),
 		new ItemBuilder(ItemModelType.COOKIES_GINGER_STEVE).name("Gingerbread Steve").lore("&ePugmas 2025 Item").amount(32).build()
 	)),
-	TIER_3(14, List.of(
+	TIER_3(List.of(
 		CouponCommand.getGenericCoupon("mcmmo", 5),
 		CouponCommand.getGenericCoupon("costume", 1),
 		CouponCommand.getGenericCoupon("event_tokens", 125),
@@ -80,7 +79,6 @@ public enum Pugmas25GiftGiverReward {
 		new ItemBuilder(ItemModelType.COOKIES_GINGER_CREEPER).name("Gingerbread Creeper").lore("&ePugmas 2025 Item").amount(64).build(),
 		new ItemBuilder(ItemModelType.COOKIES_GINGER_ALEX).name("Gingerbread Alex").lore("&ePugmas 2025 Item").amount(64).build(),
 		new ItemBuilder(ItemModelType.COOKIES_GINGER_STEVE).name("Gingerbread Steve").lore("&ePugmas 2025 Item").amount(64).build()
-
 	)),
 	;
 
@@ -106,7 +104,7 @@ public enum Pugmas25GiftGiverReward {
 		for (Pugmas25GiftGiverReward reward : values())
 			if (timesGifted <= reward.max)
 				return reward;
-		return null;
+		return values()[values().length - 1];
 	}
 
 	public List<ItemStack> getRandomItems() {
