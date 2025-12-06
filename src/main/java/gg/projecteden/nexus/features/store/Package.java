@@ -421,7 +421,7 @@ public enum Package {
 	MYSTERY_CRATE_KEY_1 {
 		@Override
 		public void handleApply(UUID uuid) {
-			var keys = new ItemBuilder(CrateType.MYSTERY.getKey()).amount(5);
+			var keys = new ItemBuilder(CrateType.MYSTERY.getKey());
 			PlayerUtils.giveItemAndMailExcess(Nerd.of(uuid), keys.build(), "1 Mystery Crate Key", WorldGroup.SURVIVAL);
 		}
 	},
