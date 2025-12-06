@@ -200,7 +200,7 @@ public class SignListener implements Listener {
 					} else {
 						final List<Arena> arenas = ArenaManager.getAllEnabled(mechanic);
 						if (arenas.size() == 0)
-							PlayerUtils.send(player, Minigames.PREFIX + "&cNo arenas found for " + gg.projecteden.api.common.utils.StringUtils.camelCase(mechanic));
+							PlayerUtils.send(player, Minigames.PREFIX + "&cNo arenas found for " + StringUtils.camelCase(mechanic));
 						else if (arenas.size() == 1) {
 							if (holdingInvite) {
 								invite(player, arenas.get(0));

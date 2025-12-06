@@ -53,7 +53,7 @@ public enum CrateType {
 
 	public ItemStack getKey() {
 		return new ItemBuilder(Material.PAPER)
-			.name("&e" + gg.projecteden.api.common.utils.StringUtils.camelCase(this) + " Crate Key")
+			.name("&e" + StringUtils.camelCase(this) + " Crate Key")
 			.glow()
 			.model(itemModelType.getModel())
 			.lore("&7Use me at &e/crates &7to receive a reward")

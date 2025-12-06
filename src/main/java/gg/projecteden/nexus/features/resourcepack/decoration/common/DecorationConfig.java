@@ -358,7 +358,7 @@ public class DecorationConfig {
 		PlayerUtils.send(player, "&3Price: &e" + (priceMoney == null ? "Unbuyable" : priceMoney + extraContext));
 		PlayerUtils.send(player, "&3Tokens: &e" + (priceTokens == null ? "Unbuyable" : priceTokens + extraContext));
 
-		PlayerUtils.send(player, "&3Material: &e" + gg.projecteden.api.common.utils.StringUtils.camelCase(this.getMaterial()));
+		PlayerUtils.send(player, "&3Material: &e" + StringUtils.camelCase(this.getMaterial()));
 		PlayerUtils.send(player, "&3Model: &e" + this.getModel());
 		PlayerUtils.send(player, "&3Lore: &f[" + String.join(",", this.getLore()) + "&f]");
 		PlayerUtils.sendLine(player);
@@ -381,7 +381,7 @@ public class DecorationConfig {
 
 		PlayerUtils.send(player, "&3Hitboxes: ");
 		for (Hitbox hitbox : this.getHitboxes()) {
-			String material = gg.projecteden.api.common.utils.StringUtils.camelCase(hitbox.getMaterial());
+			String material = StringUtils.camelCase(hitbox.getMaterial());
 
 			String hitboxType = " &e- " + material;
 			if (hitbox.getMaterial() == Material.LIGHT)
@@ -393,7 +393,7 @@ public class DecorationConfig {
 			} else {
 				String offsets = "&3[&e";
 				for (BlockFace blockFace : hitbox.getOffsets().keySet()) {
-					offsets += "&e" + gg.projecteden.api.common.utils.StringUtils.camelCase(blockFace) + "&3, &e" + hitbox.getOffsets().get(blockFace) + "&3, ";
+					offsets += "&e" + StringUtils.camelCase(blockFace) + "&3, &e" + hitbox.getOffsets().get(blockFace) + "&3, ";
 				}
 
 				hitboxType += offsets.substring(0, (offsets.length() - 2)) + "&3]";

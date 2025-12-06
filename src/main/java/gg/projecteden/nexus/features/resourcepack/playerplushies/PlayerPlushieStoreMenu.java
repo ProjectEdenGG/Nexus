@@ -52,7 +52,7 @@ public class PlayerPlushieStoreMenu extends InventoryProvider {
 		final List<ClickableItem> items = new ArrayList<>();
 		for (Tier tier : EnumUtils.valuesExcept(Tier.class, Tier.SERVER)) {
 			items.add(ClickableItem.empty(ResourcePackNumber.of(tier.ordinal() + 1, ColorType.CYAN).get()
-				.name(gg.projecteden.api.common.utils.StringUtils.camelCase(tier))
+				.name(StringUtils.camelCase(tier))
 				.itemFlags(ItemFlags.HIDE_ALL)));
 
 			for (Pose pose : Pose.of(tier)) {

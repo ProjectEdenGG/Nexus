@@ -16,6 +16,7 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -86,7 +87,7 @@ public class ScrollableMechanicSubGroupMenu extends ScrollableInventoryProvider 
 				final List<Arena> arenas = ArenaManager.getAllEnabled(mechanic);
 				boolean holdingInvite = ItemModelType.of(viewer.getItemOnCursor()) == ItemModelType.ENVELOPE_1;
 				if (arenas.isEmpty())
-					PlayerUtils.send(e.getPlayer(), Minigames.PREFIX + "&cNo arenas found for " + gg.projecteden.api.common.utils.StringUtils.camelCase(mechanic));
+					PlayerUtils.send(e.getPlayer(), Minigames.PREFIX + "&cNo arenas found for " + StringUtils.camelCase(mechanic));
 				else if (arenas.size() == 1) {
 					if (holdingInvite) {
 						invite(e.getPlayer(), arenas.get(0));

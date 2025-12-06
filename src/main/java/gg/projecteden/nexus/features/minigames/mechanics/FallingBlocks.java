@@ -406,7 +406,7 @@ public class FallingBlocks extends TeamlessMechanic {
 			player.getInventory().setItem(0, colorItem);
 			matchData.setColor(minigamer, colorItem.getType());
 
-			minigamer.tell("You chose " + gg.projecteden.api.common.utils.StringUtils.camelCase(colorItem.getType().name().replace(filter, "")) + "!");
+			minigamer.tell("You chose " + StringUtils.camelCase(colorItem.getType().name().replace(filter, "")) + "!");
 
 			player.closeInventory();
 		}
