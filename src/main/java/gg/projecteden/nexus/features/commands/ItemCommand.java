@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands;
 import gg.projecteden.nexus.features.equipment.skins.ArmorSkin;
 import gg.projecteden.nexus.features.equipment.skins.EquipmentSkinType;
 import gg.projecteden.nexus.features.equipment.skins.EquipmentSkinType.EquipmentSkinTypeClass;
+import gg.projecteden.nexus.features.equipment.skins.ToolSkin;
 import gg.projecteden.nexus.features.recipes.RecipeUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -24,6 +25,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.ToolType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -62,22 +64,29 @@ public class ItemCommand extends CustomCommand {
 	@Permission(Group.STAFF)
 	@Description("Spawn a resource pack item")
 	void rp(Material material, String id) {
-		PlayerUtils.giveItem(player(), new ItemBuilder(material).model(id).build());
+		giveItem(new ItemBuilder(material).model(id).build());
+	}
+
+	@Path("rp tool <piece> <type>")
+	@Permission(Group.STAFF)
+	@Description("Spawn a skinned tool")
+	void rp_tool(ToolType tool, ToolSkin type) {
+		giveItem(type.apply(new ItemStack(tool.getTools().getFirst())));
 	}
 
 	@Path("rp armor <piece> <type>")
 	@Permission(Group.STAFF)
-	@Description("Spawn a resource pack armor item or set")
+	@Description("Spawn a skinned armor piece or set")
 	void rp_armor(ArmorPiece piece, ArmorSkin type) {
 		for (Material material : piece.getMaterials().getValues())
-			PlayerUtils.giveItem(player(), type.apply(new ItemStack(material)));
+			giveItem(type.apply(new ItemStack(material)));
 	}
 
 	@Path("rp skinTemplate <type> <skin>")
 	@Permission(Group.STAFF)
 	@Description("Spawn a resource pack skin template")
 	void rp_skinTemplate(EquipmentSkinTypeClass type, @Arg(context = 1) EquipmentSkinType skin) {
-		PlayerUtils.giveItem(player(), skin.getTemplate());
+		giveItem(skin.getTemplate());
 	}
 
 	@Path("tag <tag> [amount]")
