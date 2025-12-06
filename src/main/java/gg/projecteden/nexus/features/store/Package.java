@@ -38,7 +38,9 @@ import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.models.boost.BoosterService;
 import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.models.costume.CostumeUserService;
+import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.models.home.HomeService;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfigService;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieUserService;
@@ -56,6 +58,7 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.SneakyThrows;
 import net.luckperms.api.context.ImmutableContextSet;
 import org.bukkit.Bukkit;
@@ -409,6 +412,28 @@ public enum Package {
 		@Override
 		public boolean has(Contributor player) {
 			return count(player) > 0;
+		}
+	},
+
+	@Id("7155397")
+	@Category(StoreCategory.VISUALS)
+	@Display(model = ItemModelType.CRATE_KEY_MYSTERY)
+	MYSTERY_CRATE_KEY_1 {
+		@Override
+		public void handleApply(UUID uuid) {
+			var keys = new ItemBuilder(CrateType.MYSTERY.getKey()).amount(5);
+			PlayerUtils.giveItemAndMailExcess(Nerd.of(uuid), keys.build(), "1 Mystery Crate Key", WorldGroup.SURVIVAL);
+		}
+	},
+
+	@Id("7155399")
+	@Category(StoreCategory.VISUALS)
+	@Display(model = ItemModelType.CRATE_KEY_MYSTERY)
+	MYSTERY_CRATE_KEY_5 {
+		@Override
+		public void handleApply(UUID uuid) {
+			var keys = new ItemBuilder(CrateType.MYSTERY.getKey()).amount(5);
+			PlayerUtils.giveItemAndMailExcess(Nerd.of(uuid), keys.build(), "5 Mystery Crate Keys", WorldGroup.SURVIVAL);
 		}
 	},
 
