@@ -51,17 +51,20 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class Restrictions implements Listener {
+	public static final String PREFIX = StringUtils.getPrefix("Restrictions");
+
 	private static final List<WorldGroup> ALLOWED_WORLD_GROUPS = Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.CREATIVE, WorldGroup.SKYBLOCK);
 	private static final List<WorldGroup> BLOCKED_WORLD_GROUPS = Arrays.asList(WorldGroup.LEGACY, WorldGroup.SERVER);
 	private static final List<String> BLOCKED_WORLDS = Arrays.asList("safepvp", "events");
 
-	public static boolean isPerkAllowedAt(HasUniqueId player, Location location) {
-		if (Rank.of(player).isAdmin())
+	public static boolean isPerkAllowedAt(@Nullable HasUniqueId player, Location location) {
+		if (player != null && Rank.of(player).isAdmin())
 			return true;
 
 		WorldGroup worldGroup = WorldGroup.of(location);
@@ -79,6 +82,22 @@ public class Restrictions implements Listener {
 			return false;
 
 		return true;
+	}
+
+	@EventHandler
+	public void on(PortalCreateEvent event) {
+		var worldGuardUtils = new WorldGuardUtils(event.getWorld());
+
+		for (var block : event.getBlocks()) {
+			if (worldGuardUtils.getRegionsAt(block.getLocation()).isEmpty())
+				continue;
+
+			event.setCancelled(true);
+			if (event.getEntity() instanceof Player player)
+				PlayerUtils.send(player, PREFIX + "&cYou cannot create portals in protected areas");
+
+			return;
+		}
 	}
 
 	@EventHandler
@@ -147,7 +166,7 @@ public class Restrictions implements Listener {
 			return;
 
 		event.setCancelled(true);
-		PlayerUtils.send(event.getPlayer(), StringUtils.getPrefix("Restrictions") + "&cYou cannot change worlds that fast");
+		PlayerUtils.send(event.getPlayer(), PREFIX + "&cYou cannot change worlds that fast");
 	}
 
 	@EventHandler
