@@ -43,10 +43,14 @@ public class Pugmas25Intro implements Listener {
 		if (!event.getRegion().getId().matches(TRANSITION_REGION_REGEX))
 			return;
 
-		if (!PlayerUtils.playerHas(player, Pugmas25QuestItem.TRAIN_TICKET.get()))
-			return;
+		Pugmas25User user = userService.get(player);
+		if (!user.isVisited()) {
+			if (!PlayerUtils.playerHas(player, Pugmas25QuestItem.TRAIN_TICKET.get()))
+				return;
 
-		PlayerUtils.removeItem(player, Pugmas25QuestItem.TRAIN_TICKET.get());
+			PlayerUtils.removeItem(player, Pugmas25QuestItem.TRAIN_TICKET.get());
+		}
+
 		play(player);
 	}
 

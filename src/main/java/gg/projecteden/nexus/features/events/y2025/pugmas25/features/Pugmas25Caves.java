@@ -379,12 +379,12 @@ public class Pugmas25Caves implements Listener {
 	@Getter
 	@AllArgsConstructor
 	public enum CaveWarp {
-		MINES(loc(-746.5, 104.5, -3153.5, -90), loc(-268.5, 40.5, -3037.5, 90)),
+		MINES(loc(-746.5, 104.5, -3153.5, 90), loc(-268.5, 40.5, -3037.5, -90)),
 		SPRINGS(loc(-473.5, 108.5, -3101, 45), loc(-273.5, 35.5, -2963.5, -126)),
 		ICE(loc(-498.5, 119.5, -3126.5, 18), loc(-187.5, 55.5, -3055.5, 180)),
 		MINESHAFT(loc(-781.0, 68.0, -3029.5, 180), loc(-382.0, 70.0, -3019.5, -40)),
 		HOLE(loc(-528.0, 72.5, -2866.0, -172), loc(-213.5, 80.5, -2960.5, -1)),
-		LUSH(loc(-720.5, 142.5, -3276.5, 90), loc(-351.5, 71.5, -3075.5, -90)),
+		LUSH(loc(-720.5, 142.5, -3276.5, -90), loc(-351.5, 71.5, -3075.5, 90)),
 		;
 
 		private final Location aboveLoc;

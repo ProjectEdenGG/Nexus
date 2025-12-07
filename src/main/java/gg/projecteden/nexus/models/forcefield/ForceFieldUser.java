@@ -73,7 +73,7 @@ public class ForceFieldUser implements PlayerOwnedObject {
 			.polygon(PolygonEffect.Polygon.TRIANGLE)
 			.updateLoc(true)
 			.ticks(-1)
-			.clientSide(true)
+			//.clientSide(true)
 			.player(getOnlinePlayer())
 			.radius(this.radius)
 			.whole(false)
