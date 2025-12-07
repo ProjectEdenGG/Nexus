@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.commands.staff;
 
-import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -15,7 +14,9 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.PlotUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
+import kotlin.Pair;
 import lombok.NonNull;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -27,6 +28,10 @@ import org.bukkit.entity.Villager.Profession;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @Permission(Group.STAFF)
 @Description("Shows all nearby entities")
@@ -73,7 +78,7 @@ public class EntitiesCommand extends CustomCommand {
 			Location location = entity.getLocation();
 
 			String name = StringUtils.camelCase(entity.getType());
-			if (!Nullables.isNullOrEmpty(entity.getCustomName()))
+			if (!isNullOrEmpty(entity.getCustomName()))
 				name = name + " named " + StringUtils.stripColor(entity.getCustomName());
 
 			JsonBuilder json = new JsonBuilder("&7 - &e" + name).hover("Click to TP")
@@ -103,18 +108,30 @@ public class EntitiesCommand extends CustomCommand {
 		});
 	}
 
-	@Path("byChunk <type> [world]")
-	@Description("View entity counts by chunk")
-	void count(EntityType type, @Arg("current") World world) {
-		Utils.sortByValue(new HashMap<Chunk, Integer>() {{
-			for (Entity entity : world.getEntities()) {
-				if (entity.getType() == type)
-					put(entity.getChunk(), getOrDefault(entity.getChunk(), 0) + 1);
-			}
-		}}).forEach((chunk, count) -> {
-			if (count > 0)
-				send(getChunkMessage(chunk, count));
-		});
+	@Path("byChunk [type] [--page] [--excludedTypes]")
+	@Description("View entity counts by type and chunk")
+	void count(
+		EntityType type,
+		@Switch @Arg("1") int page,
+		@Switch @Arg(type = EntityType.class) List<EntityType> excludedTypes
+	) {
+		var values = Utils.sortByValueReverse(new HashMap<Pair<Chunk, EntityType>, Integer>() {{
+			for (World world : Bukkit.getWorlds())
+				for (Entity entity : world.getEntities())
+					if ((type == null || entity.getType() == type) && (isNullOrEmpty(excludedTypes) || !excludedTypes.contains(entity.getType())))
+						put(new Pair<>(entity.getChunk(), entity.getType()), getOrDefault(new Pair<>(entity.getChunk(), entity.getType()), 0) + 1);
+		}});
+
+		if (values.isEmpty())
+			error("No entities found");
+
+		send(PREFIX + "Entities by type and chunk");
+		new Paginator<Pair<Chunk, EntityType>>()
+			.values(values.keySet())
+			.formatter((value, index) -> getChunkMessage(value, values.get(value)))
+			.command("/entities byChunk " + (type == null ? "" : type.name()) + " --page=" + page + " " + (isNullOrEmpty(excludedTypes) ? "" : "--excludedTypes=" + excludedTypes.stream().map(EntityType::name).collect(Collectors.joining(","))))
+			.page(page)
+			.send();
 	}
 
 	@Path("villagers [world]")
@@ -164,6 +181,17 @@ public class EntitiesCommand extends CustomCommand {
 	private JsonBuilder getChunkMessage(Chunk chunk, Integer count) {
 		return json("&e" + chunk.getX() + ", " + chunk.getZ() + " &7- " + count)
 			.command("/tppos " + (chunk.getX() * 16) + " 100 " + (chunk.getZ() * 16) + " " + chunk.getWorld().getName());
+	}
+
+	private JsonBuilder getChunkMessage(Pair<Chunk, EntityType> pair, Integer count) {
+		var chunk = pair.getFirst();
+		var type = pair.getSecond();
+		int x = chunk.getX() * 16;
+		int z = chunk.getZ() * 16;
+		var world = chunk.getWorld();
+
+		return json("&e%s &3%s %d, %d &7- %d".formatted(camelCase(type), world.getName(), x, z, count))
+			.command("/tppos %d 100 %d %s".formatted(x, z, world.getName()));
 	}
 
 }
