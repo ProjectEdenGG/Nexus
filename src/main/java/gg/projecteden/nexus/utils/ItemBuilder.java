@@ -1054,6 +1054,8 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public String model() {
+		if (itemMeta == null)
+			return null;
 		if (!itemMeta.hasItemModel())
 			return null;
 		return itemMeta.getItemModel().getKey();
