@@ -157,34 +157,34 @@ public class CrateEditMenu {
 
 					ItemStack item = builder.build();
 					items.add(ClickableItem.of(item, e -> {
-						InventoryClickEvent event = (InventoryClickEvent) e.getEvent();
-						if (event.isShiftClick()) {
-							// TODO Sometimes doesnt work
-							if (event.isLeftClick()) {
-								int index = CrateConfigService.get().getLoot().indexOf(loot);
-								if (index != 0) {
-									CrateConfigService.get().getLoot().remove(loot);
-									CrateConfigService.get().getLoot().add(index - 1, loot);
-									CrateConfigService.get().save();
-								}
-								new CrateEditProvider(filter, null).open(viewer);
-								return;
-							} else if (event.isRightClick()) {
-								int index = CrateConfigService.get().getLoot().indexOf(loot);
-								if (index != CrateConfigService.get().getLoot().size() - 1) {
-									CrateConfigService.get().getLoot().remove(loot);
-									CrateConfigService.get().getLoot().add(index + 1, loot);
-									CrateConfigService.get().save();
-								}
-								new CrateEditProvider(filter, null).open(viewer);
-								return;
+						if (e.isShiftLeftClick()) {
+							int index = CrateConfigService.get().getLoot().indexOf(loot);
+							if (index != 0) {
+								CrateConfigService.get().getLoot().remove(loot);
+								CrateConfigService.get().getLoot().add(index - 1, loot);
+								CrateConfigService.get().save();
 							}
+							new CrateEditProvider(filter, null).open(viewer);
+							return;
 						}
-						if (event.isLeftClick()) {
+
+						if (e.isShiftRightClick()) {
+							int index = CrateConfigService.get().getLoot().indexOf(loot);
+							if (index != CrateConfigService.get().getLoot().size() - 1) {
+								CrateConfigService.get().getLoot().remove(loot);
+								CrateConfigService.get().getLoot().add(index + 1, loot);
+								CrateConfigService.get().save();
+							}
+							new CrateEditProvider(filter, null).open(viewer);
+							return;
+						}
+
+						if (e.isLeftClick()) {
 							new CrateEditProvider(filter, loot).open(viewer);
 							return;
 						}
-						if (event.isRightClick()) {
+
+						if (e.isRightClick()) {
 							loot.setActive(!loot.isActive());
 							CrateConfigService.get().save();
 							new CrateEditProvider(filter, null).open(viewer, page.getPage());
