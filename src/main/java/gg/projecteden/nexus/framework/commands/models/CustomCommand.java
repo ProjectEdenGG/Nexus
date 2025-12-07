@@ -237,6 +237,17 @@ public abstract class CustomCommand extends ICustomCommand {
 		return player().getTargetEntity(120);
 	}
 
+	protected <E extends Entity> E getTargetEntity(Class<E> entityType) {
+		Entity targetEntity = getTargetEntity();
+		if (targetEntity == null)
+			return null;
+
+		if (!entityType.isInstance(targetEntity))
+			error("You must be looking at " + StringUtils.an(entityType.getSimpleName()));
+
+		return (E) targetEntity;
+	}
+
 	protected Entity getTargetEntityRequired() {
 		Entity targetEntity = getTargetEntity();
 		if (targetEntity == null)
