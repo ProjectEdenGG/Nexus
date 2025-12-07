@@ -233,7 +233,8 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	protected Entity getTargetEntity() {
-		return player().rayTraceEntities(120).getHitEntity();
+		var result = player().rayTraceEntities(120);
+		return result == null ? null : result.getHitEntity();
 	}
 
 	protected <E extends Entity> E getTargetEntity(Class<E> entityType) {
