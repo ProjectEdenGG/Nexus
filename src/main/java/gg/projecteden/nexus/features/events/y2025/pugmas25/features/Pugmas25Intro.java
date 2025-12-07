@@ -92,7 +92,10 @@ public class Pugmas25Intro implements Listener {
 				PUGMAS.send(_player, "You've unlocked the warp to &e" + Pugmas25.EVENT_NAME);
 				new SoundBuilder(Sound.ENTITY_PLAYER_LEVELUP).pitch(2).receiver(_player).play();
 			})
-			.next(TickTime.SECOND.x(3), _player -> PUGMAS.send(player, "Talk with the &eTicket Master &3to get started."))
+			.next(TickTime.SECOND.x(3), _player -> {
+				if (!visited)
+					PUGMAS.send(player, "Talk with the &eTicket Master &3to get started.");
+			})
 			.start(player);
 	}
 }
