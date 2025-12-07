@@ -232,9 +232,8 @@ public abstract class CustomCommand extends ICustomCommand {
 		return CitizensUtils.getNPC(entity);
 	}
 
-	// Ignores entities in creative or spectator mode
 	protected Entity getTargetEntity() {
-		return player().getTargetEntity(120);
+		return player().rayTraceEntities(120).getHitEntity();
 	}
 
 	protected <E extends Entity> E getTargetEntity(Class<E> entityType) {
