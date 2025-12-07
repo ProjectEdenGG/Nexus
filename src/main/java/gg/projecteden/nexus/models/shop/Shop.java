@@ -442,7 +442,7 @@ public class Shop implements PlayerOwnedObject {
 			if (purchasable)
 				builder.lore(getExchange().getOwnLore());
 
-			return builder.lore("", "&7Click to edit");
+			return builder.lore("", "&7Click to edit", "&7Shift+Click to move");
 		}
 
 		public boolean isMarket() {

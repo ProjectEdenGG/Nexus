@@ -5,7 +5,6 @@ import com.destroystokyo.paper.profile.ProfileProperty;
 import com.google.common.collect.ImmutableSortedMap;
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.NBTItem;
-import de.tr7zw.nbtapi.handler.NBTHandlers;
 import de.tr7zw.nbtapi.iface.ReadWriteItemNBT;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
@@ -438,11 +437,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder hideTooltip() {
-		components(nbt -> {
-			ReadWriteNBT readWriteNBT = NBT.createNBTObject();
-			readWriteNBT.setBoolean("minecraft:hide_tooltip", true);
-			nbt.set("minecraft:tooltip_display", readWriteNBT, NBTHandlers.STORE_READWRITE_TAG);
-		});
+		itemMeta.setHideTooltip(true);
 		return this;
 	}
 

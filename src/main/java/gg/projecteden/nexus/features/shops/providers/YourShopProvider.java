@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.shops.providers;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -29,6 +30,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -37,6 +39,7 @@ import static gg.projecteden.nexus.utils.Extensions.camelCase;
 @Title("&0Your shop")
 public class YourShopProvider extends ShopProvider {
 	protected List<Filter> filters = new ArrayList<>();
+	protected boolean isReordering = false;
 
 	public YourShopProvider(ShopProvider previousMenu) {
 		this.previousMenu = previousMenu;
@@ -45,6 +48,13 @@ public class YourShopProvider extends ShopProvider {
 	@Override
 	public void init() {
 		super.init();
+
+		if (isReordering) {
+			contents.set(0, 0, ClickableItem.of(new ItemBuilder(Material.BARRIER).name("&cStop reordering").build(), e -> {
+				isReordering = false;
+				refresh();
+			}));
+		}
 
 		Shop shop = new ShopService().get(viewer);
 
@@ -110,15 +120,54 @@ public class YourShopProvider extends ShopProvider {
 			if (isFiltered(product))
 				return;
 
-			ItemStack item = product.getItemWithOwnLore().build();
-			items.add(ClickableItem.of(item, e -> {
-				if (handleRightClick(product, e))
+			var item = product.getItemWithOwnLore();
+			if (isReordering)
+				item.hideTooltip();
+
+			items.add(ClickableItem.of(item, click -> {
+				if (handleShiftClick(product, click))
 					return;
+
+				if (handleRightClick(product, click))
+					return;
+
 				new EditProductProvider(this, product).open(viewer);
 			}));
 		});
 
 		paginate(items);
+	}
+
+	private boolean handleShiftClick(Product product, ItemClickData click) {
+		if (!click.isShiftClick())
+			return false;
+
+		var shop = product.getShop();
+		shop.getProducts().sort(Comparator.comparing(Product::getShopGroup));
+
+		if (click.isShiftLeftClick()) {
+			int index = shop.getProducts().indexOf(product);
+			if (index != 0) {
+				shop.getProducts().remove(product);
+				shop.getProducts().add(index - 1, product);
+				isReordering = true;
+				service.save(shop);
+			}
+			refresh();
+			return true;
+		} else if (click.isShiftRightClick()) {
+			int index = shop.getProducts().indexOf(product);
+			if (index != shop.getProducts().size() - 1) {
+				shop.getProducts().remove(product);
+				shop.getProducts().add(index + 1, product);
+				isReordering = true;
+				service.save(shop);
+			}
+			refresh();
+			return true;
+		}
+
+		return false;
 	}
 
 	public enum FilterByStock implements FilterType {

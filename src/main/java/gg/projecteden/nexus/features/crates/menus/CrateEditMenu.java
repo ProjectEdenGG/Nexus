@@ -10,7 +10,6 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.api.content.Pagination;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
 import gg.projecteden.nexus.models.crate.CrateConfigService;
@@ -34,15 +33,21 @@ import java.util.Arrays;
 import java.util.List;
 
 import static gg.projecteden.nexus.features.crates.Crates.WEIGHT_FORMATTER;
+import static java.util.Comparator.comparing;
 
 @Title("Crate Editing")
 public class CrateEditMenu {
 
 	@NoArgsConstructor
-	@AllArgsConstructor
 	public static class CrateEditProvider extends InventoryProvider {
 		private CrateType filter;
 		private CrateLoot editing;
+		private boolean isReordering = false;
+
+		public CrateEditProvider(CrateType filter, CrateLoot editing) {
+			this.filter = filter;
+			this.editing = editing;
+		}
 
 		@Override
 		protected int getRows(Integer page) {
@@ -112,6 +117,13 @@ public class CrateEditMenu {
 				// Close Item
 				addCloseItem();
 
+				if (isReordering) {
+					contents.set(0, 0, ClickableItem.of(new ItemBuilder(Material.BARRIER).name("&cStop reordering").build(), e -> {
+						isReordering = false;
+						refresh();
+					}));
+				}
+
 				// Filter Item
 				contents.set(0, 8, ClickableItem.of(
 					new ItemBuilder(Material.BOOK).name("&eFilter").lore("&3" + (filter == null ? "All" : StringUtils.camelCase(filter.name()))), e ->
@@ -132,8 +144,11 @@ public class CrateEditMenu {
 				}));
 
 				// Loot Items
-				Pagination page = contents.pagination();
-				List<ClickableItem> items = new ArrayList<>();
+				var page = contents.pagination();
+				var items = new ArrayList<ClickableItem>();
+
+				CrateConfigService.get().getLoot().sort(comparing(CrateLoot::getType));
+
 				Crates.getLootByType(filter).forEach(loot -> {
 					Material display;
 					if (loot.getDisplayItem() != null)
@@ -155,6 +170,9 @@ public class CrateEditMenu {
 					if (loot.getDisplayItem() != null)
 						builder.model(new ItemBuilder(loot.getDisplayItem()).model());
 
+					if (isReordering)
+						builder.hideTooltip();
+
 					ItemStack item = builder.build();
 					items.add(ClickableItem.of(item, e -> {
 						if (e.isShiftLeftClick()) {
@@ -162,9 +180,10 @@ public class CrateEditMenu {
 							if (index != 0) {
 								CrateConfigService.get().getLoot().remove(loot);
 								CrateConfigService.get().getLoot().add(index - 1, loot);
+								isReordering = true;
 								CrateConfigService.get().save();
 							}
-							new CrateEditProvider(filter, null).open(viewer);
+							refresh();
 							return;
 						}
 
@@ -173,9 +192,10 @@ public class CrateEditMenu {
 							if (index != CrateConfigService.get().getLoot().size() - 1) {
 								CrateConfigService.get().getLoot().remove(loot);
 								CrateConfigService.get().getLoot().add(index + 1, loot);
+								isReordering = true;
 								CrateConfigService.get().save();
 							}
-							new CrateEditProvider(filter, null).open(viewer);
+							refresh();
 							return;
 						}
 
