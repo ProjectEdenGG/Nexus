@@ -4,7 +4,6 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
@@ -42,7 +41,6 @@ import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig.DecorationStorePasteHistory;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -287,8 +285,21 @@ public class DecorationCommand extends CustomCommand {
 			return;
 		}
 
+		var previousOwner = decoration.getOwner(player());
+		if (previousOwner == newOwner.getUniqueId())
+			error("The owner of the " + decoration.getConfig().getName() + " decoration is already " + Nickname.of(newOwner));
+
 		decoration.setOwner(newOwner.getUniqueId(), player());
-		send(PREFIX + "Set the owner of the decoration to " + Nickname.of(decoration.getOwner(player())));
+
+		if (!decoration.getOwner(player()).equals(newOwner.getUniqueId()))
+			error("Failed to change owner");
+
+		send("%sChanged owner of the &e%s &3decoration from &e%s &3to &e%s".formatted(
+			PREFIX,
+			decoration.getConfig().getName(),
+			Nickname.of(previousOwner),
+			Nickname.of(decoration.getOwner(player()))
+		));
 	}
 
 	@Permission(Group.STAFF)

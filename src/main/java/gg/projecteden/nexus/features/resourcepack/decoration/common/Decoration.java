@@ -22,6 +22,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationRo
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.workbenches.dyestation.CreativeBrushMenu;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.trust.TrustsUser;
 import gg.projecteden.nexus.models.trust.TrustsUser.TrustType;
 import gg.projecteden.nexus.models.trust.TrustsUserService;
@@ -100,10 +101,23 @@ public class Decoration {
 
 		String owner;
 		NBTItem nbtItem = new NBTItem(item);
+
 		if (nbtItem.hasKey(DecorationNBTKey.OWNER.getKey())) { // Legacy
-			owner = nbtItem.getString(DecorationNBTKey.OWNER.getKey());
-		} else if (DecorationNBTKey.OWNER.hasKey(itemFrame)) {
+			var nbtItemOwner = nbtItem.getString(DecorationNBTKey.OWNER.getKey());
+			var itemFrameOwner = DecorationNBTKey.OWNER.getKey(itemFrame);
+
+			if (nbtItemOwner != null && !nbtItemOwner.equals(itemFrameOwner)) {
+				DecorationLang.debug(debugger, "&eLegacy NBT Key owner mismatch, item owner: " + nbtItemOwner + ", item frame owner: " + itemFrameOwner);
+			} else {
+				DecorationLang.debug(debugger, "&eMoving NBT Key from item to item frame, owner: " + nbtItemOwner);
+				DecorationNBTKey.OWNER.setKey(itemFrame, nbtItemOwner);
+				nbtItem.removeKey(DecorationNBTKey.OWNER.getKey());
+			}
+		}
+
+		if (DecorationNBTKey.OWNER.hasKey(itemFrame)) {
 			owner = DecorationNBTKey.OWNER.getKey(itemFrame);
+			DecorationLang.debug(debugger, "&eUsing ItemFrame NBT Key, owner: " + owner);
 		} else {
 			DecorationLang.debug(debugger, "&cMissing NBT Key: Owner");
 			return null;
@@ -115,6 +129,7 @@ public class Decoration {
 
 	public void setOwner(UUID uuid, Player debugger) {
 		ItemStack item = getItem(debugger);
+		DecorationLang.debug(debugger, "&eSetting owner to " + Nickname.of(uuid) + ", item: " + item);
 		if (Nullables.isNullOrAir(item))
 			return;
 
@@ -139,12 +154,15 @@ public class Decoration {
 	}
 
 	public ItemStack getItem(OfflinePlayer debugger) {
-		if (!isValidFrame())
+		if (!isValidFrame()) {
+			DecorationLang.debug(debugger.getPlayer(), "Is not valid frame");
 			return null;
-
+		}
 		ItemStack frameItem = itemFrame.getItem();
-		if (Nullables.isNullOrAir(frameItem))
+		if (Nullables.isNullOrAir(frameItem)) {
+			DecorationLang.debug(debugger.getPlayer(), "Frame item is null or air");
 			return null;
+		}
 
 		return frameItem;
 	}
