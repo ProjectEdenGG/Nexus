@@ -132,6 +132,8 @@ public class BadgeUser implements PlayerOwnedObject {
 		MONTHLY_PODIUMS_FIRST("Monthly Podiums - 1st place", CustomEmoji.PODIUM_FIRST.getChar(), MONTHLY_PODIUM_CONSUMER),
 		MONTHLY_PODIUMS_SECOND("Monthly Podiums - 2nd place", CustomEmoji.PODIUM_SECOND.getChar(), MONTHLY_PODIUM_CONSUMER),
 		MONTHLY_PODIUMS_THIRD("Monthly Podiums - 3rd place", CustomEmoji.PODIUM_THIRD.getChar(), MONTHLY_PODIUM_CONSUMER),
+		CONNECT4_CHAMPION("Connect4 Champion", CustomEmoji.CONNECT4),
+
 		;
 
 		Badge(SocialMediaSite site) {

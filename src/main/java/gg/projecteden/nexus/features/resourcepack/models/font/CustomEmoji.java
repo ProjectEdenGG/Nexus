@@ -31,6 +31,8 @@ public enum CustomEmoji {
 	SOCIAL_MEDIA_VENMO("洱"),
 	SOCIAL_MEDIA_PAYPAL("郎"),
 
+	CONNECT4("耀"),
+
 	SCREEN_BLACK("鄜"),
 	SCREEN_RED_20_OPACITY("滍");
 
