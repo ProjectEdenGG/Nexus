@@ -156,7 +156,7 @@ public enum Pugmas25QuestProgress {
 				);
 				case IN_PROGRESS -> List.of(
 					"&3 " + getName() + " &7- &eStarted",
-					"&7   - Talk to the Angler for more info (reset in " + timeUntilReset + ")"
+					"&7   - Talk to the Angler for more info (resets in " + timeUntilReset + ")"
 				);
 				case COMPLETED -> List.of("&3 " + getName() + " &7- &aCompleted (resets in " + timeUntilReset + ")");
 			};

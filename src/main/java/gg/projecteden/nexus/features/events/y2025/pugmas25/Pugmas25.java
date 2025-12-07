@@ -62,6 +62,8 @@ import gg.projecteden.nexus.models.pugmas25.Pugmas25ConfigService;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.quests.QuesterService;
+import gg.projecteden.nexus.models.trophy.TrophyHolderService;
+import gg.projecteden.nexus.models.trophy.TrophyType;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -560,7 +562,7 @@ public class Pugmas25 extends EdenEvent {
 			}
 
 			for (var fakeQuest : Pugmas25QuestProgress.values()) {
-				if (!fakeQuest.isRepeatable())
+				if (fakeQuest.isRepeatable())
 					continue;
 
 				var status = fakeQuest.getStatus(new Pugmas25UserService().get(player));
@@ -580,12 +582,16 @@ public class Pugmas25 extends EdenEvent {
 					.npc("Come talk to me again when you've completed them all!")
 					.send(player);
 			} else {
-				new Dialog(npc)
-					.npc("Thanks for helping out the village! We are finally ready for the holidays, thank to you!")
-					.npc("Here, I think I have an extra cake you can have, as a token of my appreciation")
-					.give(Pugmas25QuestItem.SLOT_MACHINE_TOKEN.get())
-					.reward(Pugmas25QuestReward.ANNIVERSARY_CAKE)
-					.player("Thank you!");
+				if (new TrophyHolderService().get(player).hasEarned(TrophyType.PUGMAS_2025_ANNIVERSARY_CAKE))
+					Dialog.genericGreeting(quester, npc);
+				else
+					new Dialog(npc)
+						.npc("Thanks for helping out the village! We are finally ready for the holidays, thank to you!")
+						.npc("Here, I think I have an extra cake you can have, as a token of my appreciation")
+						.give(Pugmas25QuestItem.SLOT_MACHINE_TOKEN.get())
+						.reward(Pugmas25QuestReward.ANNIVERSARY_CAKE)
+						.player("Thank you!")
+						.send(player);
 			}
 		});
 	}

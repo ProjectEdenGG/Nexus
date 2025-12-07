@@ -48,7 +48,7 @@ public class Pugmas25Nutcrackers implements Listener {
 		Pugmas25UserService userService = new Pugmas25UserService();
 		Pugmas25User user = userService.get(player);
 		if (user.getFoundNutCrackers().contains(location)) {
-			PlayerUtils.send(player, Pugmas25.PREFIX + "&cYou already found this mini nutcrackers!");
+			PlayerUtils.send(player, Pugmas25.PREFIX + "&cYou already found this mini nutcracker!");
 			return;
 		}
 

@@ -43,6 +43,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redi
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.models.minigolf.MiniGolfUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -50,6 +51,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.pugmas25.Advent25Config;
 import gg.projecteden.nexus.models.pugmas25.Advent25ConfigService;
 import gg.projecteden.nexus.models.pugmas25.Advent25Present;
+import gg.projecteden.nexus.models.pugmas25.Advent25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25Config;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25ConfigService;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
@@ -153,8 +155,8 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		user = userService.get(quester);
 		super.quest_progress(quester);
 		Pugmas25QuestProgress.DESIGN_A_BALLOON.send(player(), user);
-		Pugmas25QuestProgress.ADVENT.send(player(), user);
 		Pugmas25QuestProgress.MINI_NUTCRACKERS.send(player(), user);
+		Pugmas25QuestProgress.ADVENT.send(player(), user);
 		line();
 		send("&6Repeatable Quests:");
 		Pugmas25QuestProgress.ANGLER.send(player(), user);
@@ -272,7 +274,12 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 	@Path("advent")
 	@Description("Open the advent calender")
 	void advent(@Arg(value = "30", permission = Group.ADMIN) @Switch int frameTicks) {
-		new Pugmas25AdventMenu(user.advent(), frameTicks).open(player());
+		Advent25User advent = user.advent();
+
+		if (!advent.isUnlockedQuest())
+			throw new InvalidInputException("You haven't unlocked this quest yet");
+
+		new Pugmas25AdventMenu(advent, frameTicks).open(player());
 	}
 
 	@Path("now [timestamp]")
