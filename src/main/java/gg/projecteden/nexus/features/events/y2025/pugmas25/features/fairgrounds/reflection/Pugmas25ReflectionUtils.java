@@ -9,6 +9,8 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -129,7 +131,21 @@ public class Pugmas25ReflectionUtils {
 		}
 	}
 
-	static void rotateBanner(Block banner) {
+	@Getter
+	@AllArgsConstructor
+	public enum RotationType {
+		FORWARDS(1),
+		BACKWARDS(-1),
+		;
+
+		private final int amount;
+
+		public static RotationType of(Player player) {
+			return player.isSneaking() ? RotationType.BACKWARDS : RotationType.FORWARDS;
+		}
+	}
+
+	static void rotateBanner(Block banner, RotationType rotationType) {
 		Block banner1 = banner.getRelative(0, -5, 0);
 
 		BlockData blockData = banner.getBlockData();
@@ -138,7 +154,7 @@ public class Pugmas25ReflectionUtils {
 		Rotatable rotatable = (Rotatable) blockData;
 		Rotatable rotatable1 = (Rotatable) blockData1;
 
-		BlockFace newFace = rotateBlockFace(rotatable.getRotation());
+		BlockFace newFace = rotateBlockFace(rotatable.getRotation(), rotationType);
 
 		rotatable.setRotation(newFace);
 		rotatable1.setRotation(newFace);
@@ -147,10 +163,12 @@ public class Pugmas25ReflectionUtils {
 		banner1.setBlockData(rotatable1);
 	}
 
-	private static BlockFace rotateBlockFace(BlockFace blockFace) {
-		int ndx = Pugmas25Reflection.getAngles().indexOf(blockFace) + 1;
+	private static BlockFace rotateBlockFace(BlockFace blockFace, RotationType rotationType) {
+		int ndx = Pugmas25Reflection.getAngles().indexOf(blockFace) + rotationType.getAmount();
 		if (ndx == Pugmas25Reflection.getAngles().size())
 			ndx = 0;
+		if (ndx < 0)
+			ndx = Pugmas25Reflection.getAngles().size() - 1;
 		return Pugmas25Reflection.getAngles().get(ndx);
 	}
 

@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events.y2025.pugmas25.features.fairgrounds
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.features.fairgrounds.reflection.Pugmas25ReflectionUtils.RotationType;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -47,7 +48,7 @@ public class Pugmas25ReflectionListeners implements Listener {
 		Material type = block.getType();
 
 		if (type.equals(Material.IRON_BLOCK))
-			Pugmas25ReflectionUtils.rotateBanner(block.getRelative(0, 2, 0));
+			Pugmas25ReflectionUtils.rotateBanner(block.getRelative(0, 2, 0), RotationType.of(event.getPlayer()));
 		else if (type.equals(Material.NETHERITE_BLOCK) && !Pugmas25Reflection.isActive()) {
 			Location skullLoc = LocationUtils.getCenteredLocation(block.getRelative(0, 3, 0).getLocation());
 			skullLoc.setY(skullLoc.getY() + 0.25);

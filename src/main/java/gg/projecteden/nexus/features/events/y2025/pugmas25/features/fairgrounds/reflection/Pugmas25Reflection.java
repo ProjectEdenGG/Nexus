@@ -41,7 +41,16 @@ public class Pugmas25Reflection {
 	@Getter
 	private static final Location center = Pugmas25.get().location(-744, 75, -2936);
 	@Getter
-	private static final List<BlockFace> angles = Arrays.asList(BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST);
+	private static final List<BlockFace> angles = Arrays.asList(
+		BlockFace.NORTH,
+		BlockFace.NORTH_EAST,
+		BlockFace.EAST,
+		BlockFace.SOUTH_EAST,
+		BlockFace.SOUTH,
+		BlockFace.SOUTH_WEST,
+		BlockFace.WEST,
+		BlockFace.NORTH_WEST
+	);
 
 	// Laser + Sound
 	@Getter
