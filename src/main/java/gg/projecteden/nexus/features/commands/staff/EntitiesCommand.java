@@ -125,11 +125,14 @@ public class EntitiesCommand extends CustomCommand {
 		if (values.isEmpty())
 			error("No entities found");
 
+		String typeString = type == null ? "" : type.name();
+		String excludedTypesString = isNullOrEmpty(excludedTypes) ? "" : "--excludedTypes=" + excludedTypes.stream().map(EntityType::name).collect(Collectors.joining(","));
+
 		send(PREFIX + "Entities by type and chunk");
 		new Paginator<Pair<Chunk, EntityType>>()
 			.values(values.keySet())
 			.formatter((value, index) -> getChunkMessage(value, values.get(value)))
-			.command("/entities byChunk " + (type == null ? "" : type.name()) + " --page=" + page + " " + (isNullOrEmpty(excludedTypes) ? "" : "--excludedTypes=" + excludedTypes.stream().map(EntityType::name).collect(Collectors.joining(","))))
+			.command("/entities byChunk %s %s --page=".formatted(typeString, excludedTypesString))
 			.page(page)
 			.send();
 	}
