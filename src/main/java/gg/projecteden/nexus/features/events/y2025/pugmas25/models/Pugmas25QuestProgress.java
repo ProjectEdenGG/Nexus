@@ -85,6 +85,7 @@ public enum Pugmas25QuestProgress {
 		@Nullable
 		List<String> getProgressMessage(Pugmas25User user) {
 			var adventUser = user.advent();
+			int numFound = adventUser.getFound().size();
 			int numCollected = adventUser.getCollected().size();
 			int numTotal = Advent25Config.get().getDays().size();
 
@@ -95,6 +96,7 @@ public enum Pugmas25QuestProgress {
 				);
 				case IN_PROGRESS -> List.of(
 					"&3 " + getName() + " &7- &eStarted",
+					"&7   - " + numFound + "/" + numTotal + " presents found",
 					"&7   - " + numCollected + "/" + numTotal + " presents collected"
 				);
 				case COMPLETED -> List.of("&3 " + getName() + " &7- &aCompleted");
