@@ -12,25 +12,6 @@ import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
 
-/*
-	TODO:
-		Country flags
-		Earth
-		Project Eden logo
-		NASA
-		Starbucks
-		Beach ball
-		8-ball
-		Disco ball
-		Watermelon
-		Christmas ornament
-		Player heads
-		Armadillo (for bri specifically)
-
-		- Custom sounds?
-		- Custom sink animations?
- */
-
 @Getter
 @AllArgsConstructor
 public enum GolfBallStyle {
