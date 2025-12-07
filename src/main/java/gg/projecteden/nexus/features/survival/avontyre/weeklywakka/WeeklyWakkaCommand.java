@@ -19,12 +19,15 @@ import gg.projecteden.nexus.models.weeklywakka.WeeklyWakkaService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NonNull;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -191,6 +194,76 @@ public class WeeklyWakkaCommand extends _WarpCommand {
 	@Description("View the nearest Weekly Wakka warp")
 	public void nearest() {
 		super.nearest();
+	}
+
+	@Path("farthest [page]")
+	@Permission(Group.ADMIN)
+	void farthest(@Arg("1") Integer page) {
+		var selection = worldedit().getPlayerSelection(player());
+		var locations = getWarpType().getAll().stream().map(Warp::getLocation).toList();
+
+		if (locations.isEmpty()) {
+			send("&cNo warps found to use as POIs");
+			return;
+		}
+
+		int minX = selection.getMinimumPoint().getBlockX();
+		int maxX = selection.getMaximumPoint().getBlockX();
+		int minZ = selection.getMinimumPoint().getBlockZ();
+		int maxZ = selection.getMaximumPoint().getBlockZ();
+		int y = (int) (locations.stream().mapToDouble(Location::getY).sum() / locations.size());
+		send(PREFIX + "&3Average Y value: &e" + y);
+
+		List<GridSection> sections = new ArrayList<>();
+
+		for (int x = minX; x < maxX; x += 10) {
+			for (int z = minZ; z < maxZ; z += 10) {
+				int centerX = x + 5;
+				int centerZ = z + 5;
+				Location sectionCenter = new Location(player().getWorld(), centerX, y, centerZ);
+
+				if (!selection.contains(worldedit().toBlockVector3(sectionCenter)))
+					continue;
+
+				double nearestDistance = locations.stream()
+					.mapToDouble(sectionCenter::distanceSquared)
+					.min()
+					.orElse(0);
+
+				sections.add(new GridSection(x, z, sectionCenter, nearestDistance));
+			}
+		}
+
+		sections.sort((a, b) -> Double.compare(b.nearestDistance, a.nearestDistance));
+
+		send(PREFIX + "Most barren areas:");
+		new Paginator<GridSection>()
+			.values(sections)
+			.formatter((section, index) ->
+				json("&3%s &e(%d, %d) &7- %s blocks".formatted(
+					index,
+					section.x,
+					section.z,
+					String.format("%.1f", Math.sqrt(section.nearestDistance))
+				)).command(StringUtils.tppos(section.center))
+			)
+			.command("/weeklywakka farthest")
+			.page(page)
+			.send();
+	}
+
+	private static class GridSection {
+		int x;
+		int z;
+		Location center;
+		double nearestDistance;
+
+		GridSection(int x, int z, Location center, double nearestDistance) {
+			this.x = x;
+			this.z = z;
+			this.center = center;
+			this.nearestDistance = nearestDistance;
+		}
 	}
 
 }
