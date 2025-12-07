@@ -89,8 +89,10 @@ public class Pugmas25Intro implements Listener {
 				}
 			})
 			.next(TickTime.SECOND.x(2), _player -> {
-				PUGMAS.send(_player, "You've unlocked the warp to &e" + Pugmas25.EVENT_NAME);
-				new SoundBuilder(Sound.ENTITY_PLAYER_LEVELUP).pitch(2).receiver(_player).play();
+				if (!visited) {
+					PUGMAS.send(_player, "You've unlocked the warp to &e" + Pugmas25.EVENT_NAME);
+					new SoundBuilder(Sound.ENTITY_PLAYER_LEVELUP).pitch(2).receiver(_player).play();
+				}
 			})
 			.next(TickTime.SECOND.x(3), _player -> {
 				if (!visited)

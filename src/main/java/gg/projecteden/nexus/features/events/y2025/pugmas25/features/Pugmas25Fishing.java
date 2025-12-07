@@ -237,7 +237,7 @@ public class Pugmas25Fishing implements Listener {
 			if (RandomUtils.chanceOf(50))
 				possibleTreasure.add(Pugmas25QuestItem.SLOT_MACHINE_TOKEN.get());
 
-			if (RandomUtils.chanceOf(10))
+			if (RandomUtils.chanceOf(20))
 				possibleTreasure.add(Pugmas25GiftGiver.getGift(player, 1));
 
 			possibleTreasure.add(new ItemBuilder(Material.NETHERITE_SCRAP).amount(Pugmas25.getLuckyAmount(1, 2, luck)).build());
