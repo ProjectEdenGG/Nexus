@@ -1,10 +1,12 @@
 package gg.projecteden.nexus.features.modeltrain;
 
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Rail;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
@@ -24,7 +26,7 @@ public class ModelTrain {
 	private List<ArmorStand> cars = new ArrayList<>();
 	private ArmorStand engineStand = null;
 	private Vector enginePos = null;
-	private Vector railCenterTarget = null;
+	private Vector lateralOffset = new Vector(0, 0, 0);
 	private float smoothedYaw = 0f;
 	private float smoothedPitch = 0f;
 	private boolean yawInitialized = false;
@@ -49,9 +51,12 @@ public class ModelTrain {
 	public void start() {
 		startLocation.setPitch(0);
 		engineStand = world.spawn(startLocation, ArmorStand.class, stand -> {
+			stand.setSmall(true);
+			stand.setBasePlate(false);
+			stand.setArms(false);
 			stand.setGravity(false);
 			stand.setInvulnerable(true);
-			stand.setHelmet(new ItemStack(Material.PLAYER_HEAD));
+			stand.setHelmet(new ItemBuilder(Material.LEATHER_HORSE_ARMOR).model("events/christmas/train_set_engine_1").build());
 		});
 
 		// TODO: FACING WRONG DIRECTION ON SPAWN IN SOME DIRECTIONS
@@ -78,11 +83,6 @@ public class ModelTrain {
 				Vector newDirection = ModelTrainUtils.readRailDirection(currentBlock, direction);
 				direction = ModelTrainUtils.snapToCardinal(newDirection);
 
-				// Snap to block center on X/Z when we first enter it
-				enginePos.setX(currentBlock.getX() + 0.5);
-				enginePos.setZ(currentBlock.getZ() + 0.5);
-				enginePos.setY(currentBlock.getY() + 0.1);
-
 				// LAST
 				previousBlock = currentBlock;
 			}
@@ -94,12 +94,46 @@ public class ModelTrain {
 	}
 
 	private void moveForward(Vector direction) {
+		// Ensure forward direction is normalized
+		Vector forward = direction.clone().normalize();
 
-		// Move forward in X/Y/Z
-		enginePos.add(direction.clone().multiply(speed));
-
-		// Attach to the actual rail surface EVERY TICK
 		Block railBlock = ModelTrainUtils.getRailBlockAtPosition(enginePos, world);
+
+		Vector moveVec = forward.clone().multiply(speed);
+
+		if (railBlock != null) {
+
+			// Desired rail center (X/Z only)
+			Vector railCenter = new Vector(
+				railBlock.getX() + 0.5,
+				enginePos.getY(),
+				railBlock.getZ() + 0.5
+			);
+
+			// Vector from our position to the center
+			Vector toCenter = railCenter.clone().subtract(enginePos);
+
+			// Side axis (perpendicular to forward)
+			Vector side = new Vector(-forward.getZ(), 0, forward.getX()).normalize();
+
+			// Signed sideways distance
+			double sideDist = toCenter.dot(side);
+
+			// Smooth ONLY the lateral correction
+			lateralOffset = lateralOffset.clone().multiply(0.8)
+				.add(side.clone().multiply(sideDist * 0.2));
+
+			// Inject sideways correction INTO movement vector
+			moveVec.add(lateralOffset);
+
+			// CRITICAL: clamp total movement back to base speed
+			moveVec.normalize().multiply(speed);
+		}
+
+		// Apply final speed-corrected movement
+		enginePos.add(moveVec);
+
+		// Hard-lock Y to rail surface (anti-derail)
 		if (railBlock != null) {
 			double surfaceY = ModelTrainUtils.getRailSurfaceY(enginePos, railBlock);
 			enginePos.setY(surfaceY);
@@ -109,11 +143,10 @@ public class ModelTrain {
 	}
 
 	private void updateHeadPose(Vector motion) {
+		Vector vector = motion.clone().normalize();
 
-		Vector v = motion.clone().normalize();
-
-		float targetYaw = ModelTrainUtils.yawFromVector(v);
-		float targetPitch = ModelTrainUtils.pitchFromVector(v);
+		float targetYaw = ModelTrainUtils.yawFromVector(vector);
+		float targetPitch = ModelTrainUtils.pitchFromVector(vector);
 
 		if (!yawInitialized) {
 			smoothedYaw = targetYaw;
@@ -125,12 +158,10 @@ public class ModelTrain {
 		float prevYaw = smoothedYaw;
 		float prevPitch = smoothedPitch;
 
-		// shortest-arc delta in continuous space
 		float yawDelta = ModelTrainUtils.shortestAngleDelta(prevYaw, targetYaw);
 		float pitchDelta = targetPitch - prevPitch;
 
-		// Apply smoothing to deltas
-		smoothedYaw = prevYaw + yawDelta * 0.2f;
+		smoothedYaw = prevYaw + yawDelta * 0.1f;
 		smoothedPitch = prevPitch + pitchDelta * 0.25f;
 
 		EulerAngle current = engineStand.getHeadPose();
