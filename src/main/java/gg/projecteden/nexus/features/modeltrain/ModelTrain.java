@@ -93,10 +93,26 @@ public class ModelTrain {
 	}
 
 	private void moveForward(Vector direction, boolean updateHeadPose) {
+
+		// Move forward in X/Y/Z
 		enginePos.add(direction.clone().multiply(speed));
+
+		// Attach to the actual rail surface EVERY TICK
+		Block railBlock = getRailBlockAtPosition(enginePos);
+		if (railBlock != null) {
+			double surfaceY = getRailSurfaceY(enginePos, railBlock, direction);
+			enginePos.setY(surfaceY);
+		}
+
 		engineStand.teleport(enginePos.toLocation(world));
-		if (updateHeadPose)
-			engineStand.setHeadPose(new EulerAngle(Math.toRadians(previousPitch), Math.toRadians(previousYaw), 0));
+
+		if (updateHeadPose) {
+			engineStand.setHeadPose(new EulerAngle(
+				Math.toRadians(previousPitch),
+				Math.toRadians(previousYaw),
+				0
+			));
+		}
 	}
 
 	private void updateHeadPose(Vector direction) {
@@ -111,6 +127,38 @@ public class ModelTrain {
 			Math.toRadians(previousYaw),
 			0
 		));
+	}
+
+	private double getRailSurfaceY(Vector pos, Block railBlock, Vector motion) {
+		double baseY = railBlock.getY() + 0.1; // visual rail surface height
+
+		if (!(railBlock.getBlockData() instanceof Rail rail))
+			return baseY;
+
+		Rail.Shape shape = rail.getShape();
+
+		// Flat rails → constant height
+		if (!shape.name().startsWith("ASCENDING"))
+			return baseY;
+
+		// SLOPES → interpolate Y based on local block progress
+		double frac;
+
+		if (shape == Rail.Shape.ASCENDING_NORTH) {
+			frac = 1.0 - (pos.getZ() - railBlock.getZ());
+		} else if (shape == Rail.Shape.ASCENDING_SOUTH) {
+			frac = (pos.getZ() - railBlock.getZ());
+		} else if (shape == Rail.Shape.ASCENDING_EAST) {
+			frac = (pos.getX() - railBlock.getX());
+		} else if (shape == Rail.Shape.ASCENDING_WEST) {
+			frac = 1.0 - (pos.getX() - railBlock.getX());
+		} else {
+			return baseY;
+		}
+
+		frac = Math.max(0, Math.min(1, frac)); // clamp
+
+		return baseY + frac;
 	}
 
 	private Block getRailBlockAtPosition(Vector pos) {
