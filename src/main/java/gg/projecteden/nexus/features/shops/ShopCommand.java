@@ -36,6 +36,7 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
+import kotlin.Pair;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -80,10 +81,10 @@ public class ShopCommand extends CustomCommand implements Listener {
 		new MainMenuProvider(null).open(player());
 	}
 
-	@Path("edit")
+	@Path("edit [player]")
 	@Description("Edit your shop")
-	void edit() {
-		new YourShopProvider(null).open(player());
+	void edit(@Arg(value = "self", permission = Group.ADMIN) Shop shop) {
+		new YourShopProvider(shop, null).open(player());
 	}
 
 	@Path("<player>")
@@ -112,10 +113,10 @@ public class ShopCommand extends CustomCommand implements Listener {
 		new BrowseShopsProvider(null).open(player());
 	}
 
-	@Path("collect")
+	@Path("collect [user]")
 	@Description("Collect items sold to you or items that didnt fit in your inventory")
-	void collect() {
-		new CollectItemsProvider(player(), null);
+	void collect(@Arg(value = "self", permission = Group.ADMIN) Shop shop) {
+		new CollectItemsProvider(player(), shop, null);
 	}
 
 	@Permission(Group.ADMIN)
@@ -196,7 +197,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 	}
 
 	@Getter
-	private static final Map<UUID, Product> interactStockMap = new HashMap<>();
+	private static final Map<UUID, Pair<Shop, Product>> interactStockMap = new HashMap<>();
 
 	@HideFromWiki
 	@HideFromHelp
@@ -206,8 +207,9 @@ public class ShopCommand extends CustomCommand implements Listener {
 		if (!interactStockMap.containsKey(uuid()))
 			error("You are not stocking any items");
 
-		Product product = interactStockMap.get(uuid());
-		interactStockMap.remove(uuid());
+		var pair = interactStockMap.remove(uuid());
+		var product = pair.getSecond();
+
 		if (product == null)
 			send(PREFIX + "Stopped mass restocking items");
 		else
@@ -216,7 +218,8 @@ public class ShopCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onContainerInteract(PlayerInteractEvent event) {
-		if (!interactStockMap.containsKey(event.getPlayer().getUniqueId()))
+		var player = event.getPlayer();
+		if (!interactStockMap.containsKey(player.getUniqueId()))
 			return;
 
 		Block block = event.getClickedBlock();
@@ -227,8 +230,9 @@ public class ShopCommand extends CustomCommand implements Listener {
 		if (!(state instanceof Container container))
 			return;
 
-		Shop shop = service.get(event.getPlayer());
-		Product product = interactStockMap.get(event.getPlayer().getUniqueId());
+		var pair = interactStockMap.get(player.getUniqueId());
+		var shop = pair.getFirst();
+		var product = pair.getSecond();
 
 		event.setCancelled(true);
 		if (product == null) {
@@ -236,7 +240,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 			var rejected = shop.massAddStock(contents);
 			container.getInventory().setContents(rejected.toArray(new ItemStack[0]));
 
-			send(event.getPlayer(), new JsonBuilder(Shops.PREFIX + "Added all matching items to your shop's stock. &eClick here to end")
+			send(player, new JsonBuilder(Shops.PREFIX + "Added all matching items to your shop's stock. &eClick here to end")
 				.command("/shop cancelInteractStock"));
 		} else {
 			int stockToAdd = 0;
@@ -250,7 +254,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 
 			product.addStock(stockToAdd);
 
-			send(event.getPlayer(), new JsonBuilder(Shops.PREFIX + "Added &e" + stockToAdd + " &3stock to "
+			send(player, new JsonBuilder(Shops.PREFIX + "Added &e" + stockToAdd + " &3stock to "
 				+ StringUtils.pretty(product.getItem()) + " (&e" + product.getStock() + " &3total). &eClick here to end")
 				.command("/shop cancelInteractStock"));
 		}

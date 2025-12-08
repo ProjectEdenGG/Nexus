@@ -29,7 +29,7 @@ public class MainMenuProvider extends ShopProvider {
 
 		contents.set(3, 3, ClickableItem.of(Material.COMPASS, "&6&lSearch Items", e -> new SearchProductsProvider(this).open(viewer)));
 		ItemStack head = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(viewer).name("&6&lYour Shop").build();
-		contents.set(3, 5, ClickableItem.of(head, e -> new YourShopProvider(this).open(viewer)));
+		contents.set(3, 5, ClickableItem.of(head, e -> new YourShopProvider(service.get(viewer), this).open(viewer)));
 
 		updateTask();
 	}

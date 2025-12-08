@@ -24,6 +24,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
+import kotlin.Pair;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -62,7 +63,7 @@ public class EditProductProvider extends ShopProvider {
 				.prefix(Shops.PREFIX)
 				.onError(() -> open(viewer))
 				.response(lines -> {
-					if (lines[0].length() > 0) {
+					if (!lines[0].isEmpty()) {
 						String input = lines[0].replaceAll("[^\\d.-]+", "");
 						if (!Utils.isDouble(input))
 							throw new InvalidInputException("Could not parse &e" + lines[0] + " &cas a dollar amount");
@@ -79,7 +80,7 @@ public class EditProductProvider extends ShopProvider {
 			contents.set(1, 3, ClickableItem.of(new ItemBuilder(Material.LIME_CONCRETE_POWDER).name("&6Add Stock").lore("&f", "&7Right click to add in bulk").build(), e -> {
 				if (e.isRightClick()) {
 					viewer.closeInventory();
-					ShopCommand.getInteractStockMap().put(viewer.getUniqueId(), product);
+					ShopCommand.getInteractStockMap().put(viewer.getUniqueId(), new Pair<>(product.getShop(), product));
 					PlayerUtils.send(viewer, new JsonBuilder(Shops.PREFIX + "Right click any container (ie chest, shulker box, etc) to stock &e"
 						+ StringUtils.pretty(product.getItem()) + "&3. &eClick here to end").command("/shop cancelInteractStock"));
 				} else {
@@ -121,7 +122,7 @@ public class EditProductProvider extends ShopProvider {
 		contents.set(3, 6, ClickableItem.of(new ItemBuilder(Material.LAVA_BUCKET).name("&cDelete").build(), e ->
 			ConfirmationMenu.builder()
 				.onConfirm(e2 -> {
-					Shop shop = service.get(viewer);
+					Shop shop = product.getShop();
 					shop.removeProduct(product);
 					service.save(shop);
 					previousMenu.open(viewer);

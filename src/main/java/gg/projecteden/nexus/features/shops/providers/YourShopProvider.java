@@ -22,6 +22,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import kotlin.Pair;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -35,14 +36,25 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static gg.projecteden.nexus.utils.Extensions.camelCase;
+import static gg.projecteden.nexus.utils.PlayerUtils.isSelf;
 
 @Title("&0Your shop")
 public class YourShopProvider extends ShopProvider {
+	protected Shop shop;
 	protected List<Filter> filters = new ArrayList<>();
 	protected boolean isReordering = false;
 
-	public YourShopProvider(ShopProvider previousMenu) {
+	public YourShopProvider(Shop shop, ShopProvider previousMenu) {
+		this.shop = shop;
 		this.previousMenu = previousMenu;
+	}
+
+	@Override
+	public String getTitle() {
+		if (isSelf(viewer, shop))
+			return "&0Your shop";
+		else
+			return "&0" + shop.getNickname() + "'s shop";
 	}
 
 	@Override
@@ -56,9 +68,9 @@ public class YourShopProvider extends ShopProvider {
 			}));
 		}
 
-		Shop shop = new ShopService().get(viewer);
-
-		contents.set(0, 1, ClickableItem.of(Material.ENDER_EYE, "&6Preview your shop", e -> new PlayerShopProvider(this, shop).open(viewer)));
+		contents.set(0, 1, ClickableItem.of(Material.ENDER_EYE, "&6Preview your shop", e -> {
+			new PlayerShopProvider(this, shop).open(viewer);
+		}));
 
 		ItemBuilder description = new ItemBuilder(Material.OAK_SIGN).name("&6Set shop description");
 		if (!shop.getDescription().isEmpty())
@@ -74,24 +86,31 @@ public class YourShopProvider extends ShopProvider {
 				open(viewer);
 			}).open(viewer)));
 
-		contents.set(0, 4, ClickableItem.of(Material.LIME_CONCRETE_POWDER, "&6Add item", e -> new ExchangeConfigProvider(this).open(viewer)));
+		contents.set(0, 4, ClickableItem.of(Material.LIME_CONCRETE_POWDER, "&6Add item", e -> {
+			new ExchangeConfigProvider(this).open(viewer);
+		}));
 
 		contents.set(0, 5, ClickableItem.of(Material.HOPPER, "&6Mass Restock", List.of("&f", "&7Right click to restock from containers"), e -> {
 			if (e.isRightClick()) {
 				viewer.closeInventory();
-				ShopCommand.getInteractStockMap().put(viewer.getUniqueId(), null);
+				ShopCommand.getInteractStockMap().put(viewer.getUniqueId(), new Pair<>(shop, null));
 				PlayerUtils.send(viewer, new JsonBuilder(Shops.PREFIX + "Right click any container (ie chest, shulker box, etc) to restock your shop. &eClick here to end").command("/shop cancelInteractStock"));
 			} else
 				new EditProductProvider.MassAddStockProvider(viewer, this, shop, shopGroup);
 		}));
 
 		contents.set(0, 6, ClickableItem.of(Material.WRITABLE_BOOK, "&6Shop history", e -> {
-			PlayerUtils.runCommand(viewer, "shop history");
+			PlayerUtils.runCommand(viewer, "shop history " + shop.getName());
 			viewer.closeInventory();
 		}));
-		contents.set(0, 7, ClickableItem.of(Material.CYAN_SHULKER_BOX, "&6Collect items", e -> new CollectItemsProvider(viewer, this)));
 
-		contents.set(5, 3, ClickableItem.of(new ItemBuilder(Material.RED_CONCRETE_POWDER).name("&cDisable all").lore("", "&7Click to disable all items"), e3 ->
+		contents.set(0, 7, ClickableItem.of(Material.CYAN_SHULKER_BOX, "&6Collect items", e -> {
+			new CollectItemsProvider(viewer, shop, this);
+		}));
+
+		contents.set(5, 3, ClickableItem.of(new ItemBuilder(Material.RED_CONCRETE_POWDER)
+			.name("&cDisable all")
+			.lore("", "&7Click to disable all items"), e3 ->
 			ConfirmationMenu.builder()
 				.onConfirm(e21 -> {
 					shop.getProducts().forEach(product2 -> product2.setEnabled(false));
@@ -232,14 +251,15 @@ public class YourShopProvider extends ShopProvider {
 	public static class CollectItemsProvider implements TemporaryMenuListener {
 		@Getter
 		private final Player player;
+		private final Shop shop;
 		private final ShopProvider previousMenu;
 
-		public CollectItemsProvider(Player player, ShopProvider previousMenu) {
+		public CollectItemsProvider(Player player, Shop shop, ShopProvider previousMenu) {
 			this.player = player;
+			this.shop = shop;
 			this.previousMenu = previousMenu;
 
 			ShopService service = new ShopService();
-			Shop shop = service.get(player);
 
 			if (shop.getHolding().isEmpty())
 				throw new InvalidInputException("No items available for collection");
@@ -253,7 +273,6 @@ public class YourShopProvider extends ShopProvider {
 		@Override
 		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
 			ShopService service = new ShopService();
-			Shop shop = service.get(player);
 
 			for (ItemStack content : event.getInventory().getContents())
 				if (!Nullables.isNullOrAir(content))

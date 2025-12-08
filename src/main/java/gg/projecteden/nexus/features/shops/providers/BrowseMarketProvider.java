@@ -29,9 +29,9 @@ public class BrowseMarketProvider extends PlayerShopProvider {
 	}
 
 	@Override
-	public void addFilters(Player player, InventoryContents contents) {
-		addSearchFilter(player, contents);
-		addExchangeFilter(player, contents);
+	public void addFilters(InventoryContents contents) {
+		addSearchFilter(contents);
+		addExchangeFilter(contents);
 	}
 
 }
