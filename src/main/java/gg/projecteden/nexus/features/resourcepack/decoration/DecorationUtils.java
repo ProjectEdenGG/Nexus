@@ -5,6 +5,7 @@ import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.ReflectionUtils;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
+import gg.projecteden.nexus.features.equipment.skins.ArmorSkin;
 import gg.projecteden.nexus.features.equipment.skins.ToolSkin;
 import gg.projecteden.nexus.features.recipes.functionals.DiamondTotemOfUndying;
 import gg.projecteden.nexus.features.recipes.functionals.Glue;
@@ -501,8 +502,11 @@ public class DecorationUtils {
 		items.add(new CustomCreativeItem(new ItemBuilder(Material.LIGHT), "Project Eden"));
 		items.add(new CustomCreativeItem(Proportionator.ITEM, "Project Eden"));
 
-		for (ToolSkin toolSkin : EnumUtils.valuesExcept(ToolSkin.class, ToolSkin.DEFAULT))
+		for (var toolSkin : EnumUtils.valuesExcept(ToolSkin.class, ToolSkin.DEFAULT))
 			items.add(new CustomCreativeItem(toolSkin.getTemplate(), "Project Eden"));
+
+		for (var armorSkin : ArmorSkin.getTemplateable())
+			items.add(new CustomCreativeItem(armorSkin.getTemplate(), "Project Eden"));
 
 		for (DecorationConfig config : DecorationConfig.getALL_DECOR_CONFIGS())
 			if (config instanceof Backpack)
