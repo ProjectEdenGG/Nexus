@@ -476,9 +476,14 @@ public class Shop implements PlayerOwnedObject {
 			return items;
 		}
 
+		public @Nullable Double getTotalPrice() {
+			if (!(price instanceof Number price)) return null;
+			return price.doubleValue() * Math.floor(stock / item.getAmount());
+		}
+
 		public @Nullable Double getPricePerItem() {
-			if (!(price instanceof Number number)) return null;
-			return number.doubleValue() / item.getAmount();
+			if (!(price instanceof Number price)) return null;
+			return price.doubleValue() / item.getAmount();
 		}
 
 		@Override

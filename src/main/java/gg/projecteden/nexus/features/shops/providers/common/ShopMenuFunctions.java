@@ -160,37 +160,73 @@ public class ShopMenuFunctions {
 	@Getter
 	@AllArgsConstructor
 	public enum Sorter implements IterableEnum {
-		DEFAULT(Comparator.naturalOrder()),
-		PRICE_LOW_TO_HIGH(Comparator.comparing(product -> {
-			if (product.getPrice() instanceof Number number)
-				return number.doubleValue();
-			else
-				return Double.MAX_VALUE;
-		})),
-		PRICE_HIGH_TO_LOW(Comparator.comparing(product -> {
-			if (product.getPrice() instanceof Number number)
-				return -number.doubleValue();
-			else
-				return Double.MAX_VALUE;
-		})),
-		STOCK_LOW_TO_HIGH((product, other) -> {
-			var stock = Double.compare(product.getStock(), other.getStock());
-			if (stock != 0) return stock;
-			if (product.getPrice() instanceof Number price1 && other.getPrice() instanceof Number price2) {
-				var price = Double.compare(price1.doubleValue(), price2.doubleValue());
+		ALPHABETICAL(Product::compareTo),
+
+		PRICE_LOW_TO_HIGH((product, other) -> {
+			Object price1 = product.getPrice();
+			Object price2 = other.getPrice();
+			if (price1 instanceof Number number1 && price2 instanceof Number number2) {
+				var price = Double.compare(number1.doubleValue(), number2.doubleValue());
 				if (price != 0) return price;
 			}
 			return product.compareTo(other);
 		}),
-		STOCK_HIGH_TO_LOW((product, other) -> {
-			var stock = Double.compare(product.getStock(), other.getStock());
-			if (stock != 0) return -stock;
-			if (product.getPrice() instanceof Number price1 && other.getPrice() instanceof Number price2) {
-				var price = Double.compare(price1.doubleValue(), price2.doubleValue());
+
+		PRICE_HIGH_TO_LOW((product, other) -> {
+			Object price1 = product.getPrice();
+			Object price2 = other.getPrice();
+			if (price1 instanceof Number number1 && price2 instanceof Number number2) {
+				var price = Double.compare(number1.doubleValue(), number2.doubleValue());
+				if (price != 0) return -price;
+			}
+			return product.compareTo(other);
+		}),
+
+		PRICE_PER_ITEM_LOW_TO_HIGH((product, other) -> {
+			Double price1 = product.getPricePerItem();
+			Double price2 = other.getPricePerItem();
+			if (price1 != null && price2 != null) {
+				var price = Double.compare(price1, price2);
 				if (price != 0) return price;
 			}
 			return product.compareTo(other);
 		}),
+
+		PRICE_PER_ITEM_HIGH_TO_LOW((product, other) -> {
+			Double price1 = product.getPricePerItem();
+			Double price2 = other.getPricePerItem();
+			if (price1 != null && price2 != null) {
+				var price = Double.compare(price1, price2);
+				if (price != 0) return -price;
+			}
+			return product.compareTo(other);
+		}),
+
+		TOTAL_PRICE_LOW_TO_HIGH((product, other) -> {
+			Double price1 = product.getTotalPrice();
+			Double price2 = other.getTotalPrice();
+			if (price1 != null && price2 != null) {
+				var price = Double.compare(price1, price2);
+				if (price != 0) return price;
+			}
+			return product.compareTo(other);
+		}),
+
+		TOTAL_PRICE_HIGH_TO_LOW((product, other) -> {
+			Double price1 = product.getTotalPrice();
+			Double price2 = other.getTotalPrice();
+			if (price1 != null && price2 != null) {
+				var price = Double.compare(price1, price2);
+				if (price != 0) return -price;
+			}
+			return product.compareTo(other);
+		}),
+
+		STOCK_LOW_TO_HIGH(Comparator.comparingDouble(Product::getStock)
+			.thenComparing(product -> product)),
+
+		STOCK_HIGH_TO_LOW(Comparator.comparingDouble((Product product) -> -product.getStock())
+			.thenComparing(product -> product)),
 		;
 
 		private final Comparator<Product> comparator;

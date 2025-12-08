@@ -38,7 +38,7 @@ import java.util.List;
 public class BrowseProductsProvider extends ShopProvider {
 	@Getter
 	protected List<Filter> filters;
-	protected Sorter sorter = Sorter.DEFAULT;
+	protected Sorter sorter = Sorter.ALPHABETICAL;
 	protected Shop shop;
 
 	public BrowseProductsProvider(ShopProvider previousMenu) {
@@ -85,7 +85,7 @@ public class BrowseProductsProvider extends ShopProvider {
 	}
 
 	public void addSorter(InventoryContents contents) {
-		Sorter sorter = this.sorter != null ? this.sorter : Sorter.DEFAULT;
+		Sorter sorter = this.sorter != null ? this.sorter : Sorter.ALPHABETICAL;
 		Sorter next = sorter.nextWithLoop();
 		Sorter next2 = next.nextWithLoop();
 
