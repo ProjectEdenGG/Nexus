@@ -38,6 +38,7 @@ import java.util.List;
 public class BrowseProductsProvider extends ShopProvider {
 	@Getter
 	protected List<Filter> filters;
+	protected Sorter sorter = Sorter.DEFAULT;
 	protected Shop shop;
 
 	public BrowseProductsProvider(ShopProvider previousMenu) {
@@ -78,17 +79,32 @@ public class BrowseProductsProvider extends ShopProvider {
 		super.init();
 
 		filters.add(FilterRequiredType.REQUIRED.of("No resource world items", product -> !product.isResourceWorld()));
-		addFilters(viewer, contents);
-		addItems(viewer, contents);
+		addSorter(contents);
 		addFilters(contents);
 		addItems(contents);
 	}
 
-	public void addFilters(Player player, InventoryContents contents) {
-		addSearchFilter(player, contents);
-		addStockFilter(player, contents);
-		addExchangeFilter(player, contents);
-		addMarketFilter(player, contents);
+	public void addSorter(InventoryContents contents) {
+		Sorter sorter = this.sorter != null ? this.sorter : Sorter.DEFAULT;
+		Sorter next = sorter.nextWithLoop();
+		Sorter next2 = next.nextWithLoop();
+
+		var item = new ItemBuilder(Material.MAGENTA_GLAZED_TERRACOTTA).name("&6Sort by:")
+			.lore("&e⬇ " + StringUtils.camelCase(sorter.name()))
+			.lore("&7⬇ " + StringUtils.camelCase(next.name()))
+			.lore("&7⬇ " + StringUtils.camelCase(next2.name()));
+
+		contents.set(5, 2, ClickableItem.of(item.build(), e -> {
+			this.sorter = next;
+			refresh();
+		}));
+	}
+
+	public void addFilters(InventoryContents contents) {
+		addSearchFilter(contents);
+		addStockFilter(contents);
+		addExchangeFilter(contents);
+		addMarketFilter(contents);
 	}
 
 	public void addSearchFilter(InventoryContents contents) {

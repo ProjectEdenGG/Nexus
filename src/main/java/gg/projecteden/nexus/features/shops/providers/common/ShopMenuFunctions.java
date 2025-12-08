@@ -18,6 +18,7 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionType;
 
+import java.util.Comparator;
 import java.util.function.Predicate;
 
 public class ShopMenuFunctions {
@@ -156,10 +157,43 @@ public class ShopMenuFunctions {
 		}
 	}
 
-	public enum SortType {
-		ALPHABETICAL,
-		STOCK,
-		PRICE
+	@Getter
+	@AllArgsConstructor
+	public enum Sorter implements IterableEnum {
+		DEFAULT(Comparator.naturalOrder()),
+		PRICE_LOW_TO_HIGH(Comparator.comparing(product -> {
+			if (product.getPrice() instanceof Number number)
+				return number.doubleValue();
+			else
+				return Double.MAX_VALUE;
+		})),
+		PRICE_HIGH_TO_LOW(Comparator.comparing(product -> {
+			if (product.getPrice() instanceof Number number)
+				return -number.doubleValue();
+			else
+				return Double.MAX_VALUE;
+		})),
+		STOCK_LOW_TO_HIGH((product, other) -> {
+			var stock = Double.compare(product.getStock(), other.getStock());
+			if (stock != 0) return stock;
+			if (product.getPrice() instanceof Number price1 && other.getPrice() instanceof Number price2) {
+				var price = Double.compare(price1.doubleValue(), price2.doubleValue());
+				if (price != 0) return price;
+			}
+			return product.compareTo(other);
+		}),
+		STOCK_HIGH_TO_LOW((product, other) -> {
+			var stock = Double.compare(product.getStock(), other.getStock());
+			if (stock != 0) return -stock;
+			if (product.getPrice() instanceof Number price1 && other.getPrice() instanceof Number price2) {
+				var price = Double.compare(price1.doubleValue(), price2.doubleValue());
+				if (price != 0) return price;
+			}
+			return product.compareTo(other);
+		}),
+		;
+
+		private final Comparator<Product> comparator;
 	}
 
 }
