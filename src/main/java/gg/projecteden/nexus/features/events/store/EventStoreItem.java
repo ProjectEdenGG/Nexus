@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.events.store.providers.purchasable.EventSto
 import gg.projecteden.nexus.features.particles.effects.WingsEffect.WingStyle;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.store.perks.visuals.EmojiHatsCommand.EmojiHat;
+import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -28,7 +29,22 @@ import java.util.List;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public enum EventStoreItem {
-	CUSTOM_PAINTINGS(40, Material.PAINTING) {
+	MYSTERY_CRATE_KEY(1500, ItemModelType.CRATE_KEY_MYSTERY) {
+		@Override
+		public List<String> getLore() {
+			return List.of(
+				"&eUse at &c/crates",
+				"",
+				"&6Price:&e " + getPrice() + " tokens per key"
+			);
+		}
+
+		@Override
+		public void onClick(Player player, EventStoreMenu currentMenu) {
+			CrateType.MYSTERY.give(player, 1);
+		}
+	},
+	CUSTOM_PAINTINGS(500, Material.PAINTING) {
 		@Override
 		public List<String> getLore() {
 			return List.of(
@@ -44,7 +60,7 @@ public enum EventStoreItem {
 			PlayerUtils.runCommand(player, "warp images");
 		}
 	},
-	DECORATION_HEADS(15, Material.PLAYER_HEAD) {
+	DECORATION_HEADS(100, Material.PLAYER_HEAD) {
 		@Override
 		@NotNull
 		public ItemBuilder getRawDisplayItem() {
@@ -63,7 +79,7 @@ public enum EventStoreItem {
 			PlayerUtils.runCommandAsOp(player, "hdb");
 		}
 	},
-	EMOJI_HATS(75, Material.PLAYER_HEAD) {
+	EMOJI_HATS(200, Material.PLAYER_HEAD) {
 		@Override
 		@NotNull
 		public ItemBuilder getRawDisplayItem() {
@@ -91,7 +107,7 @@ public enum EventStoreItem {
 			new EventStoreEmojiHatProvider(currentMenu).open(player);
 		}
 	},
-	PARTICLES(75, Material.REDSTONE) {
+	PARTICLES(250, Material.REDSTONE) {
 		@Override
 		public List<String> getLore() {
 			return List.of("&eCustomizable particle shapes and designs",
@@ -113,7 +129,7 @@ public enum EventStoreItem {
 			new EventStoreParticlesProvider(currentMenu).open(player);
 		}
 	},
-	WINGS(75, Material.ELYTRA) {
+	WINGS(200, Material.ELYTRA) {
 		@Override
 		public List<String> getLore() {
 			return List.of("&eParticle wings with customizable styles and colors",
@@ -135,7 +151,7 @@ public enum EventStoreItem {
 			new EventStoreWingsProvider(currentMenu).open(player);
 		}
 	},
-	CHAT_EMOJIS(5, ItemModelType.EMOJI_100) {
+	CHAT_EMOJIS(100, ItemModelType.EMOJI_100) {
 		@Override
 		public List<String> getLore() {
 			return List.of("&eSend custom emojis in chat!", "&f👀 💯 🔥 👍 👏 😍 😎",
@@ -154,7 +170,7 @@ public enum EventStoreItem {
 				.next("&3, or request your own via &c/ticket &3or &#5865F2#questions"));
 		}
 	},
-	SONGS(200, Material.JUKEBOX) {
+	SONGS(250, Material.JUKEBOX) {
 		@Override
 		protected List<String> getLore() {
 			return List.of("&ePlay custom noteblock songs from anywhere",

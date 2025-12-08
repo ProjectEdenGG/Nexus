@@ -61,6 +61,9 @@ public class EventsCommand extends CustomCommand {
 	@Path("store")
 	@Description("Open the event store")
 	void store() {
+		if (worldGroup() != WorldGroup.SURVIVAL)
+			error("The Event Store is only available in Survival");
+
 		new EventStoreProvider().open(player());
 	}
 
