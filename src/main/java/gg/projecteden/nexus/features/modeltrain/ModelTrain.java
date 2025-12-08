@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.modeltrain;
 
 import gg.projecteden.nexus.utils.LocationUtils.CardinalDirection;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -21,7 +20,7 @@ public class ModelTrain {
 	private final World world;
 	private int task = -1;
 	private boolean active = false;
-	private double speed = 0.2;
+	private double speed = 0.1;
 	private Vector direction;
 	//
 	private List<ArmorStand> cars = new ArrayList<>();
@@ -66,18 +65,15 @@ public class ModelTrain {
 				return;
 
 			// 1. Find the rail block we're currently on
-			Block currentBlock = enginePos.toLocation(world).getBlock();
+			Block currentBlock = getRailBlockAtPosition(enginePos);
 
-			if (!(currentBlock.getBlockData() instanceof Rail))
-				currentBlock = currentBlock.getRelative(0, -1, 0);
-
-			if (!(currentBlock.getBlockData() instanceof Rail))
-				return; // not on rails
+			if (currentBlock == null)
+				return; // derailed
 
 			// 2. If we entered a NEW rail block, update direction from shape + approach
 			if (!currentBlock.equals(previousBlock)) {
 
-				Vector newDirection = readRailDirection(currentBlock, previousBlock);
+				Vector newDirection = readRailDirection(currentBlock);
 				direction = snapToCardinal(newDirection);
 
 				updateHeadPose(newDirection);
@@ -85,6 +81,7 @@ public class ModelTrain {
 				// Snap to block center on X/Z when we first enter it
 				enginePos.setX(currentBlock.getX() + 0.5);
 				enginePos.setZ(currentBlock.getZ() + 0.5);
+				enginePos.setY(currentBlock.getY() + 0.1);
 
 				// LAST
 				previousBlock = currentBlock;
@@ -116,23 +113,31 @@ public class ModelTrain {
 		));
 	}
 
-	private Vector readRailDirection(Block currentBlock, Block previousBlock) {
+	private Block getRailBlockAtPosition(Vector pos) {
+		Block base = pos.toLocation(world).getBlock();
+
+		if (base.getBlockData() instanceof Rail)
+			return base;
+
+		Block below = base.getRelative(0, -1, 0);
+		if (below.getBlockData() instanceof Rail)
+			return below;
+
+		Block above = base.getRelative(0, 1, 0);
+		if (above.getBlockData() instanceof Rail)
+			return above;
+
+		return null; // actually derailed
+	}
+
+	private Vector readRailDirection(Block currentBlock) {
 
 		if (!(currentBlock.getBlockData() instanceof Rail rail))
-			return direction; // fallback: keep going same way
+			return direction; // keep current motion
 
 		RailDirection railShape = RailDirection.fromShape(rail.getShape());
 
-		CardinalDirection approach;
-
-		if (previousBlock == null) {
-			// First block only — but MUST snap direction to cardinal first!
-			approach = getCardinalDirection(direction);
-		} else {
-			approach = getApproachFromBlocks(previousBlock, currentBlock);
-		}
-
-		return railShape.getDirection(approach);
+		return railShape.getDirection(getCardinalDirection(direction), direction);
 	}
 
 	private CardinalDirection getCardinalDirection(Vector dir) {
@@ -148,18 +153,17 @@ public class ModelTrain {
 		return z > 0 ? CardinalDirection.SOUTH : CardinalDirection.NORTH;
 	}
 
-
-	private CardinalDirection getApproachFromBlocks(Block prev, Block curr) {
-		int dx = curr.getX() - prev.getX();
-		int dz = curr.getZ() - prev.getZ();
-
-		if (Math.abs(dx) > Math.abs(dz))
-			return dx > 0 ? CardinalDirection.EAST : CardinalDirection.WEST;
-
-		return dz > 0 ? CardinalDirection.SOUTH : CardinalDirection.NORTH;
-	}
-
 	private Vector snapToCardinal(Vector v) {
+		// SLOPES: keep exact rail-aligned movement (NO normalize)
+		if (Math.abs(v.getY()) > 0.1) {
+			return new Vector(
+				Math.signum(v.getX()),
+				Math.signum(v.getY()),
+				Math.signum(v.getZ())
+			);
+		}
+
+		// --- FLAT TRACK ---
 		if (Math.abs(v.getX()) > Math.abs(v.getZ()))
 			return new Vector(v.getX() > 0 ? 1 : -1, 0, 0);
 		else
@@ -171,7 +175,7 @@ public class ModelTrain {
 	}
 
 	public float pitchFromVector(Vector v) {
-		return (float) Math.toDegrees(Math.asin(v.getY())); // v must be normalized
+		return (float) -Math.toDegrees(Math.asin(v.getY())); // v must be normalized
 	}
 
 	public float lerp(float a, float b, float t) {
@@ -187,7 +191,7 @@ public class ModelTrain {
 		// ----------- STRAIGHT RAILS -----------
 		NORTH_SOUTH {
 			@Override
-			public Vector getDirection(CardinalDirection approach) {
+			public Vector getDirection(CardinalDirection approach, Vector direction) {
 				// Moving NORTH (dz < 0) keeps going NORTH
 				// Moving SOUTH (dz > 0) keeps going SOUTH
 				return (approach == CardinalDirection.NORTH)
@@ -198,7 +202,7 @@ public class ModelTrain {
 
 		EAST_WEST {
 			@Override
-			public Vector getDirection(CardinalDirection approach) {
+			public Vector getDirection(CardinalDirection approach, Vector direction) {
 				// Moving EAST (dx > 0) keeps going EAST
 				// Moving WEST (dx < 0) keeps going WEST
 				return (approach == CardinalDirection.EAST)
@@ -210,26 +214,34 @@ public class ModelTrain {
 		// ----------- SLOPES -----------
 		ASCENDING_NORTH {
 			@Override
-			public Vector getDirection(CardinalDirection approach) {
-				return new Vector(0, 1, -1);
+			public Vector getDirection(CardinalDirection approach, Vector direction) {
+				// Preserve current horizontal motion, force Y upward or downward
+				double z = Math.signum(direction.getZ());
+				return new Vector(0, z < 0 ? 1 : -1, z);
 			}
 		},
+
 		ASCENDING_SOUTH {
 			@Override
-			public Vector getDirection(CardinalDirection approach) {
-				return new Vector(0, 1, 1);
+			public Vector getDirection(CardinalDirection approach, Vector direction) {
+				double z = Math.signum(direction.getZ());
+				return new Vector(0, z > 0 ? 1 : -1, z);
 			}
 		},
+
 		ASCENDING_EAST {
 			@Override
-			public Vector getDirection(CardinalDirection approach) {
-				return new Vector(1, 1, 0);
+			public Vector getDirection(CardinalDirection approach, Vector direction) {
+				double x = Math.signum(direction.getX());
+				return new Vector(x, x > 0 ? 1 : -1, 0);
 			}
 		},
+
 		ASCENDING_WEST {
 			@Override
-			public Vector getDirection(CardinalDirection approach) {
-				return new Vector(-1, 1, 0);
+			public Vector getDirection(CardinalDirection approach, Vector direction) {
+				double x = Math.signum(direction.getX());
+				return new Vector(x, x < 0 ? 1 : -1, 0);
 			}
 		},
 
@@ -240,7 +252,7 @@ public class ModelTrain {
 		// SOUTH_EAST connects SOUTH <-> EAST
 		SOUTH_EAST {
 			@Override
-			public Vector getDirection(CardinalDirection approach) {
+			public Vector getDirection(CardinalDirection approach, Vector direction) {
 				// Entering from SOUTH side = traveling NORTH into this block → turn EAST
 				// Entering from EAST side = traveling WEST into this block → turn SOUTH
 				return switch (approach) {
@@ -254,7 +266,7 @@ public class ModelTrain {
 		// SOUTH_WEST connects SOUTH <-> WEST
 		SOUTH_WEST {
 			@Override
-			public Vector getDirection(CardinalDirection approach) {
+			public Vector getDirection(CardinalDirection approach, Vector direction) {
 				// From SOUTH (moving NORTH) → turn WEST
 				// From WEST  (moving EAST)  → turn SOUTH
 				return switch (approach) {
@@ -268,7 +280,7 @@ public class ModelTrain {
 		// NORTH_EAST connects NORTH <-> EAST
 		NORTH_EAST {
 			@Override
-			public Vector getDirection(CardinalDirection approach) {
+			public Vector getDirection(CardinalDirection approach, Vector direction) {
 				// From NORTH (moving SOUTH) → turn EAST
 				// From EAST  (moving WEST)  → turn NORTH
 				return switch (approach) {
@@ -282,7 +294,7 @@ public class ModelTrain {
 		// NORTH_WEST connects NORTH <-> WEST
 		NORTH_WEST {
 			@Override
-			public Vector getDirection(CardinalDirection approach) {
+			public Vector getDirection(CardinalDirection approach, Vector direction) {
 				// From NORTH (moving SOUTH) → turn WEST
 				// From WEST  (moving EAST)  → turn NORTH
 				return switch (approach) {
@@ -293,7 +305,7 @@ public class ModelTrain {
 			}
 		};
 
-		public abstract Vector getDirection(CardinalDirection approach);
+		public abstract Vector getDirection(CardinalDirection approach, Vector direction);
 
 		public static RailDirection fromShape(Rail.Shape shape) {
 			return valueOf(shape.name());
