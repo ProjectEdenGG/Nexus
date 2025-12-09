@@ -15,14 +15,22 @@ import java.util.function.BiConsumer;
 @Getter
 @AllArgsConstructor
 public enum Pugmas25QuestReward implements QuestReward {
-	SPARKLER(((uuid, amount) -> {
+	COSTUME_SPARKLER(((uuid, amount) -> {
 		new CostumeUserService().edit(uuid, user -> user.getOwnedCostumes().add("hand/misc/sparkler"));
 		PlayerUtils.send(uuid, Pugmas25.PREFIX + "You now own the Sparkler hand costume! &c/costumes");
 	})),
-	ANNIVERSARY_CAKE(((uuid, amount) -> {
+	TROPHY_ANNIVERSARY_CAKE(((uuid, amount) -> {
 		new TrophyHolderService().edit(uuid, user -> user.earn(TrophyType.PUGMAS_2025_ANNIVERSARY_CAKE));
 		PlayerUtils.send(uuid, Pugmas25.PREFIX + "You now own the Pugmas 2025 Anniversary Cake trophy! &c/trophies");
-	}))
+	})),
+	TROPHY_NUTCRACKER(((uuid, amount) -> {
+		new TrophyHolderService().edit(uuid, user -> user.earn(TrophyType.PUGMAS_2025_NUTCRACKER));
+		PlayerUtils.send(uuid, Pugmas25.PREFIX + "You now own the Pugmas 2025 Nutcracker trophy! &c/trophies");
+	})),
+	TROPHY_MINIGOLF(((uuid, amount) -> {
+		new TrophyHolderService().edit(uuid, user -> user.earn(TrophyType.PUGMAS_2025_MINIGOLF));
+		PlayerUtils.send(uuid, Pugmas25.PREFIX + "You now own the Pugmas 2025 Minigolf trophy! &c/trophies");
+	})),
 	;
 
 	private final BiConsumer<UUID, Integer> consumer;

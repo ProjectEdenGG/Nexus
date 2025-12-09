@@ -24,6 +24,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.CounterMaterial;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.CounterType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.HandleType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.DyeableFireplace;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.DyeableFurniture;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.DyeableOrnament;
@@ -273,7 +274,30 @@ public enum DecorationType {
 	@TypeConfig(money = 240, tokens = 24, theme = Theme.HOLIDAY)
 	NUTCRACKER_TALL(new DyeableFloorThing(false, "Tall Nutcracker", ItemModelType.NUTCRACKER_TALL, ColorableType.DYE, HitboxFloor._1x3V)),
 
-// 	------------------------------------------------------------------------------------------------------
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	PLUSHIE_SNOWMAN(new DyeableFloorThing(false, "Snowman Plushie", ItemModelType.PLUSHIE_SNOWMAN, ColorableType.DYE, "2E6E00")),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	PLUSHIE_SANTA(new FloorThing(false, "Santa Plushie", ItemModelType.PLUSHIE_SANTA)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	PLUSHIE_ELF(new FloorThing(false, "Elf Plushie", ItemModelType.PLUSHIE_ELF)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	RIBBON_BAND(new Dyeable(false, "Band Ribbon", ItemModelType.RIBBON_BAND, ColorableType.DYE, "FF0000")),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	RIBBON_CROSS(new Dyeable(false, "Cross Ribbon", ItemModelType.RIBBON_CROSS, ColorableType.DYE, "FF0000")),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	RIBBON_BOW_FLOOR(new Dyeable(false, "Floor Ribbon", ItemModelType.RIBBON_FLOOR, ColorableType.DYE, "FF0000")),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	RIBBON_BOW_WALL(new Dyeable(false, "Wall Ribbon", ItemModelType.RIBBON_WALL, ColorableType.DYE, "FF0000")),
+
+
+
+	// 	------------------------------------------------------------------------------------------------------
 //										CATALOG: Spooky
 // 	------------------------------------------------------------------------------------------------------
 	@TypeConfig(money = 75, tokens = 7, theme = Theme.SPOOKY)

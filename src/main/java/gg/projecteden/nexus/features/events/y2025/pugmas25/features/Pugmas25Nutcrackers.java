@@ -4,6 +4,7 @@ import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.Pugmas25;
 import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestItem;
+import gg.projecteden.nexus.features.events.y2025.pugmas25.quests.Pugmas25QuestReward;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
@@ -11,6 +12,8 @@ import gg.projecteden.nexus.models.pugmas25.Pugmas25Config;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25ConfigService;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25User;
 import gg.projecteden.nexus.models.pugmas25.Pugmas25UserService;
+import gg.projecteden.nexus.models.trophy.TrophyHolderService;
+import gg.projecteden.nexus.models.trophy.TrophyType;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import org.bukkit.Location;
@@ -47,6 +50,12 @@ public class Pugmas25Nutcrackers implements Listener {
 
 		Pugmas25UserService userService = new Pugmas25UserService();
 		Pugmas25User user = userService.get(player);
+		// oops
+		if (user.getFoundNutCrackers().size() == config.getNutCrackerLocations().size()
+			&& !new TrophyHolderService().get(player).getEarned().contains(TrophyType.PUGMAS_2025_NUTCRACKER)) {
+			Pugmas25QuestReward.TROPHY_NUTCRACKER.getConsumer().accept(player.getUniqueId(), 1);
+		}
+
 		if (user.getFoundNutCrackers().contains(location)) {
 			PlayerUtils.send(player, Pugmas25.PREFIX + "&cYou already found this mini nutcracker!");
 			return;
