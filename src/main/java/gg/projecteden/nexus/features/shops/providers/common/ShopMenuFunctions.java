@@ -68,49 +68,64 @@ public class ShopMenuFunctions {
 		}
 
 		public boolean matches(ItemStack item, String filter) {
+			return indexOf(item, filter) != -1;
+		}
+
+		public int indexOf(ItemStack item, String filter) {
 			String input = filter.trim();
 			Material type = item.getType();
 
-			if (contains(type.name(), input))
-				return true;
+			int index = indexOf(type.name(), input);
+			if (index != -1)
+				return index;
 
-			if (contains(LanguageUtils.translate(type), input))
-				return true;
+			index = indexOf(LanguageUtils.translate(type), input);
+			if (index != -1)
+				return index;
 
-			if (item.getItemMeta().hasDisplayName())
-				if (contains(StringUtils.stripColor(item.getItemMeta().getDisplayName()), input))
-					return true;
+			if (item.getItemMeta().hasDisplayName()) {
+				index = indexOf(StringUtils.stripColor(item.getItemMeta().getDisplayName()), input);
+				if (index != -1)
+					return index;
+			}
 
-			for (Enchantment enchantment : item.getEnchantments().keySet())
-				if (contains(enchantment.getKey().getKey(), input))
-					return true;
+			for (Enchantment enchantment : item.getEnchantments().keySet()) {
+				index = indexOf(enchantment.getKey().getKey(), input);
+				if (index != -1)
+					return index;
+			}
 
 			if (item.getItemMeta() instanceof EnchantmentStorageMeta meta)
-				for (Enchantment enchantment : meta.getStoredEnchants().keySet())
-					if (contains(enchantment.getKey().getKey(), input))
-						return true;
+				for (Enchantment enchantment : meta.getStoredEnchants().keySet()) {
+					index = indexOf(enchantment.getKey().getKey(), input);
+					if (index != -1)
+						return index;
+				}
 
 			if (item.getItemMeta() instanceof PotionMeta meta) {
 				final PotionType effectType = meta.getBasePotionType();
-				if (effectType != null)
-					if (contains(ItemUtils.getFixedPotionName(effectType), input))
-						return true;
+				if (effectType != null) {
+					index = indexOf(ItemUtils.getFixedPotionName(effectType), input);
+					if (index != -1)
+						return index;
+				}
 
-				for (PotionEffect effect : meta.getCustomEffects())
-					if (contains(ItemUtils.getFixedPotionName(effect.getType()), input))
-						return true;
+				for (PotionEffect effect : meta.getCustomEffects()) {
+					index = indexOf(ItemUtils.getFixedPotionName(effect.getType()), input);
+					if (index != -1)
+						return index;
+				}
 			}
 
-			return false;
+			return -1;
 		}
 
-		private boolean contains(String key, String message) {
-			if (key.toLowerCase().contains(message.toLowerCase()))
-				return true;
-			if (key.replace("_", " ").toLowerCase().contains(message.toLowerCase()))
-				return true;
+		private int indexOf(String key, String message) {
+			var index = key.toLowerCase().indexOf(message.toLowerCase());
+			if (index != -1)
+				return index;
 
-			return false;
+			return key.replace("_", " ").toLowerCase().indexOf(message.toLowerCase());
 		}
 	}
 
@@ -157,9 +172,40 @@ public class ShopMenuFunctions {
 		}
 	}
 
+	@Data
+	@AllArgsConstructor
+	public static class Sorter {
+		private SorterType type;
+		private Comparator<Product> comparator;
+	}
+
+	public interface SorterType extends IterableEnum {
+
+		String name();
+
+		default Comparator<Product> getComparator() {
+			return null;
+		}
+
+		default Sorter get() {
+			return new Sorter(this, getComparator());
+		}
+	}
+
+	public enum BestMatchSorter implements SorterType {
+		BEST_MATCH,
+		;
+
+		public Sorter of(String query) {
+			return new Sorter(this, Comparator
+				.<Product>comparingInt(product -> FilterSearchType.SEARCH.indexOf(product.getItem(), query))
+				.thenComparing(Product::compareTo));
+		}
+	}
+
 	@Getter
 	@AllArgsConstructor
-	public enum Sorter implements IterableEnum {
+	public enum DefaultSorterType implements SorterType {
 		ALPHABETICAL(Product::compareTo),
 
 		PRICE_LOW_TO_HIGH((product, other) -> {

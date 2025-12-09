@@ -9,6 +9,8 @@ import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
 import gg.projecteden.nexus.features.shops.Shops;
+import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.BestMatchSorter;
+import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.DefaultSorterType;
 import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.Filter;
 import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterEmptyStock;
 import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterExchangeType;
@@ -17,10 +19,12 @@ import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.Fi
 import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterSearchType;
 import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterType;
 import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.Sorter;
+import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.SorterType;
 import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.Shop.Product;
+import gg.projecteden.nexus.utils.CircularListIterator;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -31,14 +35,17 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterSearchType.SEARCH;
 
 @Title("&0Browse Items")
 public class BrowseProductsProvider extends ShopProvider {
 	@Getter
 	protected List<Filter> filters;
-	protected Sorter sorter = Sorter.ALPHABETICAL;
+	protected Sorter sorter;
 	protected Shop shop;
 
 	public BrowseProductsProvider(ShopProvider previousMenu) {
@@ -85,17 +92,27 @@ public class BrowseProductsProvider extends ShopProvider {
 	}
 
 	public void addSorter(InventoryContents contents) {
-		Sorter sorter = this.sorter != null ? this.sorter : Sorter.ALPHABETICAL;
-		Sorter next = sorter.nextWithLoop();
-		Sorter next2 = next.nextWithLoop();
+		var sorters = new ArrayList<Sorter>();
+		var searchFilter = filters.stream().filter(filter -> filter.getType() == SEARCH).findFirst();
+		searchFilter.ifPresent(filter -> sorters.add(BestMatchSorter.BEST_MATCH.of(filter.getMessage())));
+		sorters.addAll(Arrays.stream(DefaultSorterType.values()).map(SorterType::get).toList());
+
+		var iterator = new CircularListIterator<>(sorters);
+		var startIndex = sorters.indexOf(sorter);
+		if (startIndex != -1)
+			iterator.setStartIndex(startIndex);
+
+		sorter = iterator.next();
+		var next = iterator.next();
+		var next2 = iterator.next();
 
 		var item = new ItemBuilder(Material.MAGENTA_GLAZED_TERRACOTTA).name("&6Sort by:")
-			.lore("&e⬇ " + StringUtils.camelCase(sorter.name()))
-			.lore("&7⬇ " + StringUtils.camelCase(next.name()))
-			.lore("&7⬇ " + StringUtils.camelCase(next2.name()));
+			.lore("&e⬇ " + StringUtils.camelCase(sorter.getType().name()))
+			.lore("&7⬇ " + StringUtils.camelCase(next.getType().name()))
+			.lore("&7⬇ " + StringUtils.camelCase(next2.getType().name()));
 
 		contents.set(5, 2, ClickableItem.of(item.build(), e -> {
-			this.sorter = next;
+			sorter = next;
 			refresh();
 		}));
 	}
