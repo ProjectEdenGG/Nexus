@@ -75,15 +75,16 @@ public class Pugmas25Advent implements Listener {
 		});
 	}
 
-	public static void openPresent(Player player, int day) {
+	public static boolean openPresent(Player player, int day) {
 		Advent25Config config = Advent25Config.get();
 		Advent25Present present = config.get(day);
 
-		AdventAnimation.builder()
+		return AdventAnimation.builder()
 			.location(player.getLocation())
 			.player(player)
 			.presentDay(present.getDay())
 			.presentContents(present.getContents())
+			.openTwiceDays(List.of(18, 25))
 			.build()
 			.open();
 	}
@@ -117,8 +118,8 @@ public class Pugmas25Advent implements Listener {
 			if (_line.matches("Day #[0-9]+")) {
 				try {
 					int day = Integer.parseInt(_line.replaceAll("Day #", ""));
-					openPresent(player, day);
-					item.subtract();
+					if (openPresent(player, day))
+						item.subtract();
 					return;
 				} catch (Exception ex) {
 					ex.printStackTrace();

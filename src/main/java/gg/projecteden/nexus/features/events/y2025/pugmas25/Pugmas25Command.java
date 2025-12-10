@@ -430,6 +430,16 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		giveItem(present.getItem());
 	}
 
+	@Path("advent getAllCollected <day>")
+	@Permission(Group.ADMIN)
+	void advent_getCollected(@Arg(min = 1, max = 25) int day) {
+		send("Collected day: " + day);
+		for (Pugmas25User user : new Pugmas25UserService().getAll()) {
+			if (user.advent().hasCollected(day))
+				send(" - " + user.getNickname());
+		}
+	}
+
 	@Path("advent config create <day>")
 	@Permission(Group.ADMIN)
 	void advent_config_create(@Arg(min = 1, max = 25) int day) {

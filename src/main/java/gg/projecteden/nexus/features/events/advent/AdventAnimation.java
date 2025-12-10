@@ -13,6 +13,7 @@ import gg.projecteden.nexus.models.jukebox.JukeboxUserService;
 import gg.projecteden.nexus.models.trophy.TrophyType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -62,10 +63,15 @@ public class AdventAnimation {
 	private static final JukeboxUserService userService = new JukeboxUserService();
 	private static final ItemStack eventTokenCoupon = new CouponService().get0().of("event_tokens").getItem();
 
-	public void open() {
+	public boolean open() {
+		if (Nullables.isNullOrEmpty(presentContents)) {
+			PlayerUtils.send(player, "&cContents of present #" + presentDay + " is empty, please report this to an Admin");
+			return false;
+		}
+
 		if (openTwiceDays.contains(presentDay)) {
 			openTwice();
-			return;
+			return true;
 		}
 
 		ItemStack chest = new ItemBuilder(ItemModelType.PUGMAS_PRESENT_ADVENT).build();
@@ -79,6 +85,7 @@ public class AdventAnimation {
 			explodeContents(location);
 		});
 
+		return true;
 	}
 
 	public void openTwice() {
@@ -107,11 +114,6 @@ public class AdventAnimation {
 
 	private void explodeContents(Location location) {
 		new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(location).play();
-
-		if (presentContents.isEmpty()) {
-			PlayerUtils.send(player, "&cContents of present #" + presentDay + " is empty, please report this to an Admin");
-			return;
-		}
 
 		List<ItemStack> excess = new ArrayList<>();
 		int waitMax = 0;
