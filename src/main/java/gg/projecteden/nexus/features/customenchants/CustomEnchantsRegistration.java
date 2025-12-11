@@ -12,8 +12,8 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.item.Item;
@@ -137,7 +137,7 @@ public class CustomEnchantsRegistration {
 			if (customEnchant instanceof Listener listener)
 				Nexus.registerListener(listener);
 
-			return CraftEnchantment.minecraftToBukkit(lookup.get().value());
+			return CraftEnchantment.minecraftHolderToBukkit(lookup.get());
 		}
 
 		unfreeze();
@@ -161,7 +161,7 @@ public class CustomEnchantsRegistration {
 			display, definition, exclusiveSet, DataComponentMap.builder().build()
 		);
 
-		nmsRegistry().createIntrusiveHolder(enchantment);
+		var holder = nmsRegistry().createIntrusiveHolder(enchantment);
 		Registry.register(nmsRegistry(), customEnchant.getId(), enchantment);
 
 		freeze();
@@ -169,7 +169,7 @@ public class CustomEnchantsRegistration {
 		if (customEnchant instanceof Listener listener)
 			Nexus.registerListener(listener);
 
-		return CraftEnchantment.minecraftToBukkit(enchantment);
+		return CraftEnchantment.minecraftHolderToBukkit(holder);
 	}
 
 	static HolderSet.Named<Item> createItemsSet(@NotNull String prefix, @NotNull CustomEnchant customEnchantment) {
@@ -178,7 +178,7 @@ public class CustomEnchantsRegistration {
 
 		if (customEnchantment.getSupportedMaterials() != null && !customEnchantment.getSupportedMaterials().isEmpty())
 			customEnchantment.getSupportedMaterials().forEach(material -> {
-				ResourceLocation location = CraftNamespacedKey.toMinecraft(material.getKey());
+				Identifier location = CraftNamespacedKey.toMinecraft(material.getKey());
 				Holder.Reference<Item> holder = nmsItemRegistry().get(location).orElse(null);
 				if (holder == null) return;
 
@@ -192,7 +192,7 @@ public class CustomEnchantsRegistration {
 	}
 
 	static <T> TagKey<T> getTagKey(@NotNull Registry<T> registry, @NotNull String name) {
-		return TagKey.create(registry.key(), ResourceLocation.withDefaultNamespace(name));
+		return TagKey.create(registry.key(), Identifier.withDefaultNamespace(name));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -244,7 +244,7 @@ public class CustomEnchantsRegistration {
 
 	@NotNull
 	private static <T> ResourceKey<T> getResourceKey(@NotNull Registry<T> registry, @NotNull String name) {
-		return ResourceKey.create(registry.key(), ResourceLocation.withDefaultNamespace(name));
+		return ResourceKey.create(registry.key(), Identifier.withDefaultNamespace(name));
 	}
 
 	@NotNull

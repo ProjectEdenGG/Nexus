@@ -22,7 +22,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.effect.MobEffect;
@@ -859,7 +859,7 @@ public class ItemUtils {
 		public static Potion toNMS(PotionType basePotionData) {
 			if (basePotionData == null)
 				return null;
-			var potion = BuiltInRegistries.POTION.get(ResourceLocation.withDefaultNamespace(basePotionData.getKey().getKey())).orElse(null);
+			var potion = BuiltInRegistries.POTION.get(Identifier.withDefaultNamespace(basePotionData.getKey().getKey())).orElse(null);
 			if (potion == null)
 				return null;
 			return potion.value();

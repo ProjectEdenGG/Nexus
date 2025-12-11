@@ -17,7 +17,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ClientInformation;
@@ -197,7 +197,7 @@ public class NMSUtils {
 
 	@SneakyThrows
 	public static Property getSkinProperty(Player player) {
-		return Property.fromNMS(getGameProfile(player).getProperties().get("textures").iterator().next());
+		return Property.fromNMS(getGameProfile(player).properties().get("textures").iterator().next());
 	}
 
 	public static boolean setBlockDataAt(BlockData blockData, Location location, boolean doPhysics) {
@@ -243,7 +243,7 @@ public class NMSUtils {
 				case FALL -> soundEffectType.getFallSound();
 			};
 
-			ResourceLocation nmsString = nmsSound.location();
+			Identifier nmsString = nmsSound.location();
 			String soundString = nmsString.getPath().replace(".", "_").toUpperCase();
 			return Sound.valueOf(soundString);
 		} catch (Exception ex) {

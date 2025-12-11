@@ -27,7 +27,7 @@ import gg.projecteden.nexus.features.customenchants.enchants.TunnelingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.VeinMinerEnchant;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Unreleased;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
@@ -300,9 +300,9 @@ public class Enchant {
 			Debug.log("Registered so far in CraftRegistry: " + registered);
 
 			NamespacedKey namespacedKey = NamespacedKey.minecraft(key);
-			final ResourceLocation resourceLocation = CraftNamespacedKey.toMinecraft(namespacedKey);
-			Debug.log("NMS enchant 1 %s/%s: %s".formatted(namespacedKey.toString(), resourceLocation.toString(), Registry.ENCHANTMENT.getOrThrow(namespacedKey)));
-			Debug.log("NMS enchant 2 %s/%s: %s".formatted(namespacedKey.toString(), resourceLocation.toString(), CustomEnchantsRegistration.nmsRegistry().getOptional(resourceLocation).orElse(null)));
+			final Identifier Identifier = CraftNamespacedKey.toMinecraft(namespacedKey);
+			Debug.log("NMS enchant 1 %s/%s: %s".formatted(namespacedKey.toString(), Identifier.toString(), Registry.ENCHANTMENT.getOrThrow(namespacedKey)));
+			Debug.log("NMS enchant 2 %s/%s: %s".formatted(namespacedKey.toString(), Identifier.toString(), CustomEnchantsRegistration.nmsRegistry().getOptional(Identifier).orElse(null)));
 			Enchantment enchantment = Registry.ENCHANTMENT.get(namespacedKey);
 
 			Preconditions.checkNotNull(enchantment, "No Enchantment found for %s. This is a bug.", namespacedKey);

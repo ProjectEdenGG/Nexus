@@ -16,7 +16,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NoArgsConstructor;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
@@ -60,7 +60,7 @@ public class AttributeCommand extends CustomCommand implements Listener {
 
 	public static double getDefaultValue(Attribute attribute) {
 		AttributeSupplier supplier = net.minecraft.world.entity.player.Player.createAttributes().build();
-		Holder<net.minecraft.world.entity.ai.attributes.Attribute> holder = BuiltInRegistries.ATTRIBUTE.get(ResourceLocation.withDefaultNamespace(attribute.getKey().value())).orElseThrow();
+		Holder<net.minecraft.world.entity.ai.attributes.Attribute> holder = BuiltInRegistries.ATTRIBUTE.get(Identifier.withDefaultNamespace(attribute.getKey().value())).orElseThrow();
 
 		if (supplier.hasAttribute(holder))
 			return supplier.getBaseValue(holder);

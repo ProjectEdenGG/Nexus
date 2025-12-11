@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.utils;
 
 import lombok.AllArgsConstructor;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
@@ -60,7 +60,7 @@ public class PlayDoorSoundUtil {
 				.replace("door", "fence_gate")
 				.replace("wooden_", "");
 
-			return new SoundEvent(ResourceLocation.withDefaultNamespace(path), Optional.empty());
+			return new SoundEvent(Identifier.withDefaultNamespace(path), Optional.empty());
 		}
 	}
 
