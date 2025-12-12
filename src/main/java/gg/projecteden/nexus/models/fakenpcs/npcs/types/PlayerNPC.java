@@ -8,9 +8,9 @@ import gg.projecteden.nexus.features.fakenpc.FakeNPCUtils.SkinProperties;
 import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC;
 import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPCType;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
 import gg.projecteden.nexus.utils.nms.NMSUtils.Property;
-import gg.projecteden.nexus.utils.Tasks;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -55,8 +55,8 @@ public class PlayerNPC extends FakeNPC {
 
 		Property skinProperty = new Property("textures", skinProperties.getTexture(), skinProperties.getSignature());
 
-		profile.getProperties().removeAll("textures"); // ensure client does not crash due to duplicate properties.
-		profile.getProperties().put("textures", skinProperty.toNMS());
+		profile.properties().removeAll("textures"); // ensure client does not crash due to duplicate properties.
+		profile.properties().put("textures", skinProperty.toNMS());
 	}
 
 

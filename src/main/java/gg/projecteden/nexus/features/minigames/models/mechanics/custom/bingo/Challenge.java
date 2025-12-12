@@ -110,7 +110,7 @@ public enum Challenge {
 	CRAFT_2_CHEST_MINECARTS(new CraftChallenge(new FuzzyItemStack(Material.CHEST_MINECART, 2))),
 	CRAFT_2_FURNACE_MINECARTS(new CraftChallenge(new FuzzyItemStack(Material.FURNACE_MINECART, 2))),
 	CRAFT_2_HOPPER_MINECARTS(new CraftChallenge(new FuzzyItemStack(Material.HOPPER_MINECART, 2))),
-	CRAFT_12_CHAINS(new CraftChallenge(new FuzzyItemStack(Material.CHAIN, 12))),
+	CRAFT_12_IRON_CHAINS(new CraftChallenge(new FuzzyItemStack(Material.IRON_CHAIN, 12))),
 	CRAFT_32_BRICKS(new CraftChallenge(new FuzzyItemStack(Material.BRICKS, 32))),
 	CRAFT_6_IRON_DOOR(new CraftChallenge(new FuzzyItemStack(Material.IRON_DOOR, 6))),
 	CRAFT_3_IRON_TRAPDOORS(new CraftChallenge(new FuzzyItemStack(Material.IRON_TRAPDOOR, 3))),

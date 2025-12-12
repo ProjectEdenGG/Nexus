@@ -22,7 +22,7 @@ public class HitboxEnums {
 	public enum HitboxSingle implements CustomHitbox {
 		_1x1_BARRIER(Hitbox.single()),
 		_1x1_LIGHT(Hitbox.single(Material.LIGHT)),
-		_1x1_CHAIN(Hitbox.single(Material.CHAIN)),
+		_1x1_CHAIN(Hitbox.single(Material.IRON_CHAIN)),
 		_1x1_POT(Hitbox.single(Material.FLOWER_POT)),
 		_1x1_HEAD(Hitbox.single(Material.PLAYER_HEAD)),
 		NONE(Hitbox.NONE()),
@@ -342,9 +342,9 @@ public class HitboxEnums {
 		)),
 
 		GIANT_CANDY_CANE(List.of(
-			Hitbox.origin(Material.CHAIN),
-			Hitbox.offset(Material.CHAIN, BlockFace.UP, 1),
-			Hitbox.offset(Material.CHAIN, BlockFace.UP, 2)
+			Hitbox.origin(Material.IRON_CHAIN),
+			Hitbox.offset(Material.IRON_CHAIN, BlockFace.UP, 1),
+			Hitbox.offset(Material.IRON_CHAIN, BlockFace.UP, 2)
 		)),
 
 		GRAVESTONE_TALL(List.of(

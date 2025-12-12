@@ -87,7 +87,7 @@ public class WindChime extends CeilingThing implements CraftableDecoration {
 	public RecipeBuilder<?> getRecipeBuilder() {
 		return new ShapedBuilder("111", "222", "343")
 			.add('1', Material.STICK)
-			.add('2', Material.CHAIN)
+			.add('2', Material.IRON_CHAIN)
 			.add('3', type.getIngot())
 			.add('4', MaterialTag.WOOD_BUTTONS);
 	}
