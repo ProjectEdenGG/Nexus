@@ -1,7 +1,9 @@
 package gg.projecteden.nexus.features.titan.serverbound;
 
 import gg.projecteden.api.common.utils.StringUtils;
+import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
 import gg.projecteden.nexus.features.titan.ClientMessage;
+import gg.projecteden.nexus.features.titan.clientbound.BackbackConfig;
 import gg.projecteden.nexus.features.titan.clientbound.UpdateState;
 import gg.projecteden.nexus.features.titan.models.Serverbound;
 import gg.projecteden.nexus.features.vanish.Vanish;
@@ -11,6 +13,8 @@ import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import org.bukkit.entity.Player;
+
+import java.util.Arrays;
 
 @Getter
 public class Handshake extends Serverbound {
@@ -31,5 +35,12 @@ public class Handshake extends Serverbound {
 			.send();
 
 		Chatter.of(player).notifyTitanOfChannelChange();
+
+		ClientMessage.builder()
+			.players(player)
+			.message(new BackbackConfig((BackbackConfig.Entry[]) Arrays.stream(Backpacks.BackpackTier.values())
+				.map(tier -> new BackbackConfig.Entry(tier.getNBTKey(), tier.getRows()))
+				.toArray()))
+			.send();
 	}
 }
