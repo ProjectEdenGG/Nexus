@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.resourcepack.decoration.types.toggle;
+package gg.projecteden.nexus.features.resourcepack.decoration.types.cycle;
 
 import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxUnique;
@@ -12,8 +12,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+@Getter
 public class TV extends WallThing implements Cyclable {
-	@Getter
 	private final ChannelType channelType;
 
 	public TV(String name, ChannelType channelType) {

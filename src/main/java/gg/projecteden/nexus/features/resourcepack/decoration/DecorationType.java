@@ -43,6 +43,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Table.TableTh
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.BirdHouse;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.WindChime;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.WindChime.WindChimeType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.cycle.SnowGlobe;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.cycle.SnowGlobe.SnowGlobeType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.DyeableInstrument;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.Instrument;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.Instrument.InstrumentSound;
@@ -69,16 +71,16 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Dyea
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableWallThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.FloorThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.Curtain;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.Curtain.CurtainType;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.DyeableGiantCandle;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.DyeableGiantCandle.DyeableCandleType;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.GiantCandle;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.GiantCandle.CandleType;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.RecordPlayer;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.RecordPlayer.RecordPlayerType;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.TV;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.TV.ChannelType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.cycle.Curtain;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.cycle.Curtain.CurtainType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.cycle.DyeableGiantCandle;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.cycle.DyeableGiantCandle.DyeableCandleType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.cycle.GiantCandle;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.cycle.GiantCandle.CandleType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.cycle.RecordPlayer;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.cycle.RecordPlayer.RecordPlayerType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.cycle.TV;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.cycle.TV.ChannelType;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.models.trophy.TrophyType;
@@ -295,7 +297,8 @@ public enum DecorationType {
 	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
 	RIBBON_BOW_WALL(new Dyeable(false, "Wall Ribbon", ItemModelType.RIBBON_WALL, ColorableType.DYE, "FF0000")),
 
-
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	SNOWGLOBE(new SnowGlobe(SnowGlobeType.PRESENT)),
 
 	// 	------------------------------------------------------------------------------------------------------
 //										CATALOG: Spooky
@@ -2109,6 +2112,15 @@ public enum DecorationType {
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	GIANT_CANDLE_THREE_LIT_DYEABLE(new DyeableGiantCandle("Giant Candles", DyeableCandleType.THREE, true)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY, tabs = Tab.INTERNAL)
+	SNOWGLOBE_TREE(new SnowGlobe(SnowGlobeType.TREE)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY, tabs = Tab.INTERNAL)
+	SNOWGLOBE_PUG(new SnowGlobe(SnowGlobeType.PUG)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY, tabs = Tab.INTERNAL)
+	SNOWGLOBE_SNOWMAN(new SnowGlobe(SnowGlobeType.SNOWMAN)),
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	FLAT_SCREEN_TV_TEST_PATTERN(new TV("Flat Screen TV", ChannelType.TEST_PATTERN)),

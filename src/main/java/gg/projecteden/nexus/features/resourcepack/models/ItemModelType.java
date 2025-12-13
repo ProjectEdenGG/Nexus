@@ -530,6 +530,10 @@ public enum ItemModelType {
 	RIBBON_CROSS("decoration/christmas/ribbon_2", true),
 	RIBBON_FLOOR("decoration/christmas/ribbon_3", true),
 	RIBBON_WALL("decoration/christmas/ribbon_4", true),
+	SNOWGLOBE_TREE("decoration/christmas/snowglobe/tree", true),
+	SNOWGLOBE_PUG("decoration/christmas/snowglobe/pug", true),
+	SNOWGLOBE_SNOWMAN("decoration/christmas/snowglobe/snowman", true),
+	SNOWGLOBE_PRESENT("decoration/christmas/snowglobe/present", true),
 
 	TRAFFIC_BLOCKADE("decoration/construction/traffic_blockade", true),
 	TRAFFIC_BLOCKADE_LIGHTS("decoration/construction/traffic_blockade_lights", true),

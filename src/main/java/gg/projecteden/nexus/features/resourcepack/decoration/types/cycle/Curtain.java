@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.resourcepack.decoration.types.toggle;
+package gg.projecteden.nexus.features.resourcepack.decoration.types.cycle;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
