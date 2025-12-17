@@ -373,7 +373,7 @@ public class Pugmas25SlotMachine extends EdenEventSinglePlayerGame {
 		if (Nullables.isNullOrAir(block) || block.getType() != Material.LEVER)
 			return;
 
-		if (!worldguard().isInRegion(player, getPlayRegion()))
+		if (!worldguard().isInRegion(player, instance.getPlayRegion()))
 			return;
 
 		if (!worldguard().isInRegion(block, LEVER_REGION))

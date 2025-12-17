@@ -22,6 +22,7 @@ public class ModelTrain {
 	private boolean active = false;
 	private double speed = 0.1;
 	private Vector direction;
+	private double yOffset = 1.35;
 	//
 	private List<ArmorStand> cars = new ArrayList<>();
 	private ArmorStand engineStand = null;
@@ -50,6 +51,7 @@ public class ModelTrain {
 
 	public void start() {
 		startLocation.setPitch(0);
+		startLocation.add(0, -yOffset, 0);
 		engineStand = world.spawn(startLocation, ArmorStand.class, stand -> {
 			stand.setSmall(true);
 			stand.setBasePlate(false);
@@ -72,7 +74,7 @@ public class ModelTrain {
 				return;
 
 			// 1. Find the rail block we're currently on
-			Block currentBlock = ModelTrainUtils.getRailBlockAtPosition(enginePos, world);
+			Block currentBlock = ModelTrainUtils.getRailBlockAtPosition(enginePos, yOffset, world);
 
 			if (currentBlock == null)
 				return; // derailed
@@ -97,18 +99,14 @@ public class ModelTrain {
 		// Ensure forward direction is normalized
 		Vector forward = direction.clone().normalize();
 
-		Block railBlock = ModelTrainUtils.getRailBlockAtPosition(enginePos, world);
+		Block railBlock = ModelTrainUtils.getRailBlockAtPosition(enginePos, yOffset, world);
 
 		Vector moveVec = forward.clone().multiply(speed);
 
 		if (railBlock != null) {
 
 			// Desired rail center (X/Z only)
-			Vector railCenter = new Vector(
-				railBlock.getX() + 0.5,
-				enginePos.getY(),
-				railBlock.getZ() + 0.5
-			);
+			Vector railCenter = new Vector(railBlock.getX() + 0.5, enginePos.getY(), railBlock.getZ() + 0.5);
 
 			// Vector from our position to the center
 			Vector toCenter = railCenter.clone().subtract(enginePos);
@@ -120,8 +118,8 @@ public class ModelTrain {
 			double sideDist = toCenter.dot(side);
 
 			// Smooth ONLY the lateral correction
-			lateralOffset = lateralOffset.clone().multiply(0.8)
-				.add(side.clone().multiply(sideDist * 0.2));
+			lateralOffset = lateralOffset.clone().multiply(0.8)    // 0.8 =
+				.add(side.clone().multiply(sideDist * 0.2));        // 0.2 =
 
 			// Inject sideways correction INTO movement vector
 			moveVec.add(lateralOffset);
@@ -135,7 +133,7 @@ public class ModelTrain {
 
 		// Hard-lock Y to rail surface (anti-derail)
 		if (railBlock != null) {
-			double surfaceY = ModelTrainUtils.getRailSurfaceY(enginePos, railBlock);
+			double surfaceY = ModelTrainUtils.getRailSurfaceY(enginePos, yOffset, railBlock);
 			enginePos.setY(surfaceY);
 		}
 
@@ -169,11 +167,7 @@ public class ModelTrain {
 		double newYaw = current.getY() + Math.toRadians(smoothedYaw - prevYaw);
 		double newPitch = current.getX() + Math.toRadians(smoothedPitch - prevPitch);
 
-		engineStand.setHeadPose(new EulerAngle(
-			newPitch,
-			newYaw,
-			current.getZ()
-		));
+		engineStand.setHeadPose(new EulerAngle(newPitch, newYaw, current.getZ()));
 	}
 
 }

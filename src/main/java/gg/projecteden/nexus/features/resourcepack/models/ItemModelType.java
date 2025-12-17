@@ -507,6 +507,8 @@ public enum ItemModelType {
 	TOY_TRAIN("decoration/christmas/toy_train"),
 	CHRISTMAS_TREE_COLORED("decoration/christmas/tree_color"),
 	CHRISTMAS_TREE_WHITE("decoration/christmas/tree_white"),
+	CHRISTMAS_TREE_COLORED_BIG("decoration/christmas/tree_color_big"),
+	CHRISTMAS_TREE_WHITE_BIG("decoration/christmas/tree_white_big"),
 	ORNAMENT_BAUBLE("decoration/christmas/ornament/bauble", true),
 	ORNAMENT_BAUBLE_ACCENT("decoration/christmas/ornament/bauble_accent", true),
 	ORNAMENT_CANDY_CANE("decoration/christmas/ornament/candy_cane", true),

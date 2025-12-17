@@ -123,8 +123,6 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 		Tasks.wait(TickTime.TICK.x(6), () ->
 			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_CHIME).pitch(0.7).location(location).play());
 
-		Pugmas25DailyTokens.giveDailyTokens(getGamer(), Pugmas25DailyTokenSource.WHACAMOLE, 5);
-
 		super.end();
 	}
 
@@ -262,6 +260,8 @@ public class Pugmas25WhacAMole extends EdenEventSinglePlayerGame {
 			return;
 
 		instance.holoScore.setLine(0, "&3Score: &e" + instance.score);
+		if (instance.score % 10 == 0)
+			Pugmas25DailyTokens.giveDailyTokens(getGamer(), Pugmas25DailyTokenSource.WHACAMOLE, 5);
 	}
 
 	private void updateHologramTime() {

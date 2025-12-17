@@ -67,6 +67,13 @@ public class HitboxEnums {
 			Hitbox.offsetLight(BlockFace.UP, 2)
 		)),
 
+		_1x4V(List.of(
+			Hitbox.origin(),
+			Hitbox.offset(BlockFace.UP, 1),
+			Hitbox.offset(BlockFace.UP, 2),
+			Hitbox.offset(BlockFace.UP, 3)
+		)),
+
 		_1x2H(List.of(
 			Hitbox.origin(),
 			Hitbox.offset(BlockFace.EAST, 1)

@@ -490,10 +490,10 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		send(PREFIX + "Advent day #" + present.getDay() + " deleted");
 	}
 
-	@Path("death <cause>")
+	@Path("death <cause> [player]")
 	@Permission(Group.ADMIN)
-	void death_test(Pugmas25DeathCause deathCause) {
-		Pugmas25Death.onDeath(player(), deathCause, null);
+	void death_test(Pugmas25DeathCause deathCause, @Arg(value = "self", permission = Group.STAFF) Quester quester) {
+		Pugmas25Death.onDeath(quester.getPlayer(), deathCause, null);
 	}
 
 	@Path("slotMachine rewards")

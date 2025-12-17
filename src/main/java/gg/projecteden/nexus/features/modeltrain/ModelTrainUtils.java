@@ -1,10 +1,12 @@
 package gg.projecteden.nexus.features.modeltrain;
 
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Rail;
+import org.bukkit.block.data.Rail.Shape;
 import org.bukkit.util.Vector;
 
 public class ModelTrainUtils {
@@ -51,8 +53,8 @@ public class ModelTrainUtils {
 		return z > 0 ? RailBlockFace.SOUTH : RailBlockFace.NORTH;
 	}
 
-	protected static double getRailSurfaceY(Vector pos, Block railBlock) {
-		double baseY = railBlock.getY() + 0.1;
+	protected static double getRailSurfaceY(Vector pos, double yOffset, Block railBlock) {
+		double baseY = railBlock.getY() + 0.1 + yOffset;
 
 		if (!(railBlock.getBlockData() instanceof Rail rail))
 			return baseY;
@@ -70,8 +72,9 @@ public class ModelTrainUtils {
 		return Math.max(0, Math.min(1, v));
 	}
 
-	protected static Block getRailBlockAtPosition(Vector pos, World world) {
-		Block base = pos.toLocation(world).getBlock();
+	protected static Block getRailBlockAtPosition(Vector pos, double yOffset, World world) {
+		Vector posOffset = pos.setY(pos.getY() + yOffset);
+		Block base = posOffset.toLocation(world).getBlock();
 
 		if (base.getBlockData() instanceof Rail) return base;
 
@@ -104,24 +107,22 @@ public class ModelTrainUtils {
 		private final Vector direction;
 	}
 
+	@Getter
+	@AllArgsConstructor
 	protected enum RailDirection {
 		// ----------- STRAIGHT RAILS -----------
-		NORTH_SOUTH {
+		NORTH_SOUTH(Shape.NORTH_SOUTH) {
 			@Override
 			public Vector getDirection(RailBlockFace approach, Vector direction) {
-				// Moving NORTH (dz < 0) keeps going NORTH
-				// Moving SOUTH (dz > 0) keeps going SOUTH
 				return (approach == RailBlockFace.NORTH)
 					? RailBlockFace.NORTH.getDirection()
 					: RailBlockFace.SOUTH.getDirection();
 			}
 		},
 
-		EAST_WEST {
+		EAST_WEST(Shape.EAST_WEST) {
 			@Override
 			public Vector getDirection(RailBlockFace approach, Vector direction) {
-				// Moving EAST (dx > 0) keeps going EAST
-				// Moving WEST (dx < 0) keeps going WEST
 				return (approach == RailBlockFace.EAST)
 					? RailBlockFace.EAST.getDirection()
 					: RailBlockFace.WEST.getDirection();
@@ -129,16 +130,15 @@ public class ModelTrainUtils {
 		},
 
 		// ----------- SLOPES -----------
-		ASCENDING_NORTH {
+		ASCENDING_NORTH(Shape.ASCENDING_NORTH) {
 			@Override
 			public Vector getDirection(RailBlockFace approach, Vector direction) {
-				// Preserve current horizontal motion, force Y upward or downward
 				double z = Math.signum(direction.getZ());
 				return new Vector(0, z < 0 ? 1 : -1, z);
 			}
 		},
 
-		ASCENDING_SOUTH {
+		ASCENDING_SOUTH(Shape.ASCENDING_SOUTH) {
 			@Override
 			public Vector getDirection(RailBlockFace approach, Vector direction) {
 				double z = Math.signum(direction.getZ());
@@ -146,7 +146,7 @@ public class ModelTrainUtils {
 			}
 		},
 
-		ASCENDING_EAST {
+		ASCENDING_EAST(Shape.ASCENDING_EAST) {
 			@Override
 			public Vector getDirection(RailBlockFace approach, Vector direction) {
 				double x = Math.signum(direction.getX());
@@ -154,7 +154,7 @@ public class ModelTrainUtils {
 			}
 		},
 
-		ASCENDING_WEST {
+		ASCENDING_WEST(Shape.ASCENDING_WEST) {
 			@Override
 			public Vector getDirection(RailBlockFace approach, Vector direction) {
 				double x = Math.signum(direction.getX());
@@ -163,7 +163,7 @@ public class ModelTrainUtils {
 		},
 
 		// ----------- CURVES -----------
-		SOUTH_EAST {
+		SOUTH_EAST(Shape.SOUTH_EAST) {
 			@Override
 			public Vector getDirection(RailBlockFace approach, Vector direction) {
 				return switch (approach) {
@@ -173,7 +173,7 @@ public class ModelTrainUtils {
 			}
 		},
 
-		SOUTH_WEST {
+		SOUTH_WEST(Shape.SOUTH_WEST) {
 			@Override
 			public Vector getDirection(RailBlockFace approach, Vector direction) {
 				return switch (approach) {
@@ -183,7 +183,7 @@ public class ModelTrainUtils {
 			}
 		},
 
-		NORTH_EAST {
+		NORTH_EAST(Shape.NORTH_EAST) {
 			@Override
 			public Vector getDirection(RailBlockFace approach, Vector direction) {
 				return switch (approach) {
@@ -193,7 +193,7 @@ public class ModelTrainUtils {
 			}
 		},
 
-		NORTH_WEST {
+		NORTH_WEST(Shape.NORTH_WEST) {
 			@Override
 			public Vector getDirection(RailBlockFace approach, Vector direction) {
 				return switch (approach) {
@@ -205,8 +205,15 @@ public class ModelTrainUtils {
 
 		public abstract Vector getDirection(RailBlockFace approach, Vector direction);
 
+		private final Rail.Shape shape;
+
 		public static RailDirection fromShape(Rail.Shape shape) {
-			return valueOf(shape.name());
+			for (RailDirection direction : values()) {
+				if (direction.getShape() == shape)
+					return direction;
+			}
+
+			throw new InvalidInputException("Invalid shape: " + shape);
 		}
 	}
 }

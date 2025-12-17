@@ -165,6 +165,12 @@ public enum DecorationType {
 	@TypeConfig(money = 150, tokens = 15, theme = Theme.HOLIDAY)
 	CHRISTMAS_TREE_WHITE(new FloorThing(false, "White Christmas Tree", ItemModelType.CHRISTMAS_TREE_WHITE, HitboxFloor._1x2V)),
 
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	CHRISTMAS_TREE_COLOR_BIG(new FloorThing(false, "Big Colorful Christmas Tree", ItemModelType.CHRISTMAS_TREE_COLORED_BIG, HitboxFloor._1x4V)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	CHRISTMAS_TREE_WHITE_BIG(new FloorThing(false, "Big White Christmas Tree", ItemModelType.CHRISTMAS_TREE_WHITE_BIG, HitboxFloor._1x4V)),
+
 	@TypeConfig(money = 45, tokens = 5, theme = Theme.HOLIDAY)
 	MISTLETOE(new CeilingThing(false, "Mistletoe", ItemModelType.MISTLETOE)),
 
