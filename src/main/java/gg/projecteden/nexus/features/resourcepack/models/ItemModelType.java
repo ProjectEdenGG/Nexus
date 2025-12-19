@@ -537,6 +537,11 @@ public enum ItemModelType {
 	SNOWGLOBE_SNOWMAN("decoration/christmas/snowglobe/snowman", true),
 	SNOWGLOBE_PRESENT("decoration/christmas/snowglobe/present", true),
 
+	PRESENT_SHORT_DOUBLE_1("decoration/christmas/present/short_double_1", true),
+	PRESENT_MINI_1("decoration/christmas/present/mini_1", true),
+	PRESENT_BLOCK_1("decoration/christmas/present/block_1", true),
+	PRESENT_TALL_1("decoration/christmas/present/tall_1", true),
+
 	TRAFFIC_BLOCKADE("decoration/construction/traffic_blockade", true),
 	TRAFFIC_BLOCKADE_LIGHTS("decoration/construction/traffic_blockade_lights", true),
 	TRAFFIC_CONE_BARREL("decoration/construction/traffic_cone_barrel", true),

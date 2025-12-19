@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.listeners;
 
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -31,10 +32,7 @@ public class RenameChests implements Listener {
 					BlockState nameable = block.getState();
 					((Nameable) nameable).setCustomName(name);
 					nameable.update();
-					if (event.getPlayer().getGameMode() == GameMode.SURVIVAL) {
-						item.setAmount(item.getAmount() - 1);
-						event.getPlayer().updateInventory();
-					}
+					ItemUtils.subtract(event.getPlayer(), item);
 				})
 				.onCancel(e -> {
 					if (block.getState() instanceof BlockInventoryHolder state) {

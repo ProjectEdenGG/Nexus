@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,6 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Light;
+import org.bukkit.block.data.type.Skull;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -249,10 +251,17 @@ public class Hitbox {
 			Block offsetBlock = hitbox.getOffsetBlock(origin);
 			offsetBlock.setType(material);
 
-			if (material == Material.LIGHT) {
-				Light light = (Light) offsetBlock.getBlockData();
-				light.setLevel(hitbox.getLightLevel());
-				offsetBlock.setBlockData(light);
+			switch (material) {
+				case LIGHT -> {
+					Light light = (Light) offsetBlock.getBlockData();
+					light.setLevel(hitbox.getLightLevel());
+					offsetBlock.setBlockData(light);
+				}
+				case PLAYER_HEAD -> {
+					Skull skull = (Skull) offsetBlock.getBlockData();
+					skull.setRotation(PlayerUtils.getBlockFace(player));
+					offsetBlock.setBlockData(skull);
+				}
 			}
 		}
 	}

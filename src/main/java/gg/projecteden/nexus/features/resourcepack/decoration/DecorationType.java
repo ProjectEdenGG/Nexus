@@ -36,6 +36,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Furniture;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.HangingBanner;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Ornament;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Ornament.OrnamentType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Present;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Present.PresentType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.StandingBanner;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Table;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Table.TableShape;
@@ -305,6 +307,18 @@ public enum DecorationType {
 
 	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
 	SNOWGLOBE(new SnowGlobe(SnowGlobeType.PRESENT)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY, tabs = Tab.PRESENTS)
+	PRESENT_SHORT_DOUBLE_RED(new Present(PresentType.SHORT_DOUBLE_RED)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY, tabs = Tab.PRESENTS)
+	PRESENT_MINI_RED(new Present(PresentType.MINI_RED)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY, tabs = Tab.PRESENTS)
+	PRESENT_BLOCK_RED(new Present(PresentType.BLOCK_RED)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY, tabs = Tab.PRESENTS)
+	PRESENT_TALL_RED(new Present(PresentType.TALL_RED)),
 
 	// 	------------------------------------------------------------------------------------------------------
 //										CATALOG: Spooky
