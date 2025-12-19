@@ -32,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Builder
 public class AdventAnimation {
@@ -65,7 +66,8 @@ public class AdventAnimation {
 
 	public boolean open() {
 		if (Nullables.isNullOrEmpty(presentContents)) {
-			PlayerUtils.send(player, "&cContents of present #" + presentDay + " is empty, please report this to an Admin");
+			PlayerUtils.send(player, "&cContents of present #" + presentDay + " are still being worked on, try again later :)");
+			//PlayerUtils.send(player, "&cContents of present #" + presentDay + " is empty, please report this to an Admin");
 			return false;
 		}
 
@@ -82,7 +84,7 @@ public class AdventAnimation {
 			Tasks.cancel(itemTaskId);
 			Location location = removeItem(item);
 
-			explodeContents(location);
+			explodeContents(location, true);
 		});
 
 		return true;
@@ -92,6 +94,7 @@ public class AdventAnimation {
 		ItemStack chest = new ItemBuilder(ItemModelType.PUGMAS_PRESENT_ADVENT).build();
 		Item chestItem = spawnItem(location, chest, length1, height1, location.getDirection());
 		int itemTaskId = particleTask(particle1, chestItem);
+		AtomicBoolean giveRewards = new AtomicBoolean(true);
 
 		Tasks.wait(ticks1, () -> {
 			Tasks.cancel(itemTaskId);
@@ -102,17 +105,20 @@ public class AdventAnimation {
 				Item _item = spawnItem(location, chest, length2, height2, VectorUtils.getRandomDirection());
 				int _itemTaskId = particleTask(particle2, _item);
 
+				boolean giveRewardFinal = giveRewards.get();
 				Tasks.wait(ticks2 + RandomUtils.randomInt(0, randomMax), () -> {
 					Tasks.cancel(_itemTaskId);
 					Location _location = removeItem(_item);
-					explodeContents(_location);
+					explodeContents(_location, giveRewardFinal);
 				});
+
+				giveRewards.set(false);
 			}
 
 		});
 	}
 
-	private void explodeContents(Location location) {
+	private void explodeContents(Location location, boolean giveRewards) {
 		new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(location).play();
 
 		List<ItemStack> excess = new ArrayList<>();
@@ -128,35 +134,39 @@ public class AdventAnimation {
 			Tasks.wait(_wait, () -> {
 				Tasks.cancel(_itemTaskId);
 
-				boolean giveItem = true;
-				ItemBuilder itemBuilder = new ItemBuilder(itemStack);
-				String itemName = StringUtils.stripColor(itemStack.getItemMeta().getDisplayName());
+				if (giveRewards) {
+					boolean giveItem = true;
+					ItemBuilder itemBuilder = new ItemBuilder(itemStack);
+					String itemName = StringUtils.stripColor(itemStack.getItemMeta().getDisplayName());
 
-				// special types
-				TrophyType trophyType = TrophyType.of(itemStack);
-				if (trophyType != null) {
-					giveItem = false;
-					trophyType.give(player);
+					// special types
+					TrophyType trophyType = TrophyType.of(itemStack);
+					if (trophyType != null) {
+						giveItem = false;
+						trophyType.give(player);
+					}
+
+					if (MaterialTag.ITEMS_MUSIC_DISCS.isTagged(itemStack.getType())) {
+						giveItem = false;
+						giveSong(player, itemName);
+					}
+					//
+
+					if (giveItem)
+						excess.addAll(PlayerUtils.giveItemsAndGetExcess(player, itemBuilder.build()));
 				}
-
-				if (MaterialTag.ITEMS_MUSIC_DISCS.isTagged(itemStack.getType())) {
-					giveItem = false;
-					giveSong(player, itemName);
-				}
-				//
-
-				if (giveItem)
-					excess.addAll(PlayerUtils.giveItemsAndGetExcess(player, itemBuilder.build()));
 
 				Location _location = removeItem(_item);
 				new SoundBuilder(Sound.ENTITY_CHICKEN_EGG).location(_location).play();
 			});
 		}
 
-		Tasks.wait(waitMax, () -> {
-			PlayerUtils.giveItemsAndMailExcess(player, excess, WorldGroup.SURVIVAL);
-			new SoundBuilder(Sound.ENTITY_CHICKEN_EGG).receiver(player).play();
-		});
+		if (giveRewards) {
+			Tasks.wait(waitMax, () -> {
+				PlayerUtils.giveItemsAndMailExcess(player, excess, WorldGroup.SURVIVAL);
+				new SoundBuilder(Sound.ENTITY_CHICKEN_EGG).receiver(player).play();
+			});
+		}
 	}
 
 	private void giveSong(Player player, String itemName) {
