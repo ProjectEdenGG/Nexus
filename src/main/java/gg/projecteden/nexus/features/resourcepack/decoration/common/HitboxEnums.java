@@ -275,6 +275,19 @@ public class HitboxEnums {
 	@Getter
 	@AllArgsConstructor
 	public enum HitboxUnique implements CustomHitbox {
+		HOLLY_CANDLE_BIG(List.of(Hitbox.originLight(12))),
+		HOLLY_CANDLES(List.of(Hitbox.originLight(15))),
+
+		STRING_LIGHTS(List.of(
+			Hitbox.originLight(8),
+			Hitbox.offsetLight(8, BlockFace.EAST, 1)
+		)),
+
+		STRING_LIGHTS_FLIPPED(List.of(
+			Hitbox.originLight(8),
+			Hitbox.offsetLight(8, BlockFace.WEST, 1)
+		)),
+
 		LAMP(List.of(
 			Hitbox.origin(),
 			Hitbox.offset(BlockFace.UP, 1),
@@ -396,6 +409,14 @@ public class HitboxEnums {
 			Hitbox.offsetLight(BlockFace.WEST, 1, BlockFace.UP, 1),
 			Hitbox.offsetLight(BlockFace.EAST, 1),
 			Hitbox.offsetLight(BlockFace.EAST, 1, BlockFace.UP, 1)
+		)),
+
+		SANTAS_TABLE(List.of(
+			Hitbox.origin(),
+			Hitbox.offset(BlockFace.WEST, 1),
+			Hitbox.offset(BlockFace.EAST, 1),
+			Hitbox.offsetLight(12, BlockFace.WEST, 1, BlockFace.UP, 1),
+			Hitbox.offsetLight(12, BlockFace.EAST, 1, BlockFace.UP, 1)
 		)),
 		;
 

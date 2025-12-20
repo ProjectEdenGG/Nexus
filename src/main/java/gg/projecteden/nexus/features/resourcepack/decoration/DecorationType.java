@@ -34,6 +34,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Flag.PrideFla
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Flora;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Furniture;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.HangingBanner;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.LetterBlock;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.LetterBlock.LetterBlockType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Ornament;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Ornament.OrnamentType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Present;
@@ -66,8 +68,9 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Trash
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Waystone;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Well;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.WorkBench;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Block;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.BlockThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.CeilingThing;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableBlockThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableCeilingThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableWallThing;
@@ -319,6 +322,33 @@ public enum DecorationType {
 
 	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY, tabs = Tab.PRESENTS)
 	PRESENT_TALL_RED(new Present(PresentType.TALL_RED)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	SANTAS_CHAIR(new DyeableChair(false, true, "Santa's Chair", ItemModelType.SANTAS_CHAIR, ColorableType.DYE, HitboxSingle._1x1_BARRIER, 1.2)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	SANTAS_TABLE(new FloorThing(true, "Santa's Table", ItemModelType.SANTAS_TABLE, HitboxUnique.SANTAS_TABLE)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	STRING_LIGHTS(new WallThing(true, "String Lights", ItemModelType.STRING_LIGHTS, HitboxUnique.STRING_LIGHTS)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	STRING_LIGHTS_FLIPPED(new WallThing(true, "String Lights (Flipped)", ItemModelType.STRING_LIGHTS_FLIPPED, HitboxUnique.STRING_LIGHTS_FLIPPED)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	HOLLY_CANDLE_BIG(new FloorThing(false, "Big Holly Candle", ItemModelType.HOLLY_CANDLE_BIG, HitboxUnique.HOLLY_CANDLE_BIG)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	HOLLY_CANDLES(new FloorThing(false, "Holly Candles", ItemModelType.HOLLY_CANDLES, HitboxUnique.HOLLY_CANDLES)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	LETTER_BLOCK_A(new LetterBlock(LetterBlockType.A)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	LETTER_BLOCK_B(new LetterBlock(LetterBlockType.B)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	LETTER_BLOCK_C(new LetterBlock(LetterBlockType.C)),
 
 	// 	------------------------------------------------------------------------------------------------------
 //										CATALOG: Spooky
@@ -1434,13 +1464,13 @@ public enum DecorationType {
 	APPLIANCE_SLUSHIE_MACHINE(new DyeableFloorThing(false, "Slushie Machine", ItemModelType.APPLIANCE_SLUSHIE_MACHINE, ColorableType.DYE, HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(money = 180, tokens = 18, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_GRILL_COMMERCIAL(new Block("Commercial Grill", ItemModelType.APPLIANCE_GRILL_COMMERCIAL, RotationSnap.BOTH)),
+	APPLIANCE_GRILL_COMMERCIAL(new BlockThing("Commercial Grill", ItemModelType.APPLIANCE_GRILL_COMMERCIAL, RotationSnap.BOTH)),
 
 	@TypeConfig(money = 180, tokens = 18, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_OVEN_COMMERCIAL(new Block("Commercial Oven", ItemModelType.APPLIANCE_OVEN_COMMERCIAL, RotationSnap.BOTH)),
+	APPLIANCE_OVEN_COMMERCIAL(new BlockThing("Commercial Oven", ItemModelType.APPLIANCE_OVEN_COMMERCIAL, RotationSnap.BOTH)),
 
 	@TypeConfig(money = 180, tokens = 18, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_DEEP_FRYER_COMMERCIAL(new Block("Commercial Deep Fryer", ItemModelType.APPLIANCE_DEEP_FRYER_COMMERCIAL, RotationSnap.BOTH)),
+	APPLIANCE_DEEP_FRYER_COMMERCIAL(new BlockThing("Commercial Deep Fryer", ItemModelType.APPLIANCE_DEEP_FRYER_COMMERCIAL, RotationSnap.BOTH)),
 
 	// Counters - STEEL HANDLES
 	@TypeConfig(money = 165, tokens = 16, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.STEEL_HANDLES, Tab.MARBLE_COUNTER})
