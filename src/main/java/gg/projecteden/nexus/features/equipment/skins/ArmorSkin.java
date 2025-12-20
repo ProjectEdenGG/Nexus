@@ -220,6 +220,9 @@ public enum ArmorSkin implements EquipmentSkinType {
 		if (model == null)
 			return null;
 
+		if (!model.contains("/")) // StringIndexOutOfBounds
+			return null;
+
 		String baseModel = model.toLowerCase().substring(0, model.lastIndexOf('/'));
 
 		for (ArmorSkin skin : values())
