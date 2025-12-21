@@ -350,6 +350,12 @@ public enum DecorationType {
 	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
 	LETTER_BLOCK_C(new LetterBlock(LetterBlockType.C)),
 
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	GINGERBREAD_HOUSE(new FloorThing(false, "Gingerbread House on a Plate", ItemModelType.GINGERBREAD_HOUSE_PLATE, HitboxSingle._1x1_LIGHT(8))),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	GINGERBREAD_MAN(new FloorThing(false, "Gingerbread Man on a Plate", ItemModelType.GINGERBREAD_MAN_PLATE)),
+
 	// 	------------------------------------------------------------------------------------------------------
 //										CATALOG: Spooky
 // 	------------------------------------------------------------------------------------------------------

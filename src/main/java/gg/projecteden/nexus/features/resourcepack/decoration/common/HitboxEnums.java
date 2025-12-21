@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox.LightHitbox;
+import gg.projecteden.nexus.utils.MathUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -13,7 +15,11 @@ public class HitboxEnums {
 		List<Hitbox> getHitboxes();
 
 		default String getName() {
-			return ((Enum<?>) this).name();
+			return this instanceof Enum<?> e ? e.name() : getFallbackName();
+		}
+
+		default String getFallbackName() {
+			return "CUSTOM";
 		}
 	}
 
@@ -29,6 +35,21 @@ public class HitboxEnums {
 		;
 
 		final List<Hitbox> hitboxes;
+
+		public static CustomHitbox _1x1_LIGHT(int lightLevel) {
+			int clamped = MathUtils.clamp(lightLevel, 0, 15);
+			return new CustomHitbox() {
+				@Override
+				public List<Hitbox> getHitboxes() {
+					return Hitbox.single(new LightHitbox(clamped));
+				}
+
+				@Override
+				public String getFallbackName() {
+					return HitboxSingle._1x1_LIGHT.name();
+				}
+			};
+		}
 	}
 
 	@Getter

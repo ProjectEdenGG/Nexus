@@ -542,6 +542,9 @@ public enum ItemModelType {
 	STRING_LIGHTS_FLIPPED("decoration/christmas/string_lights_inverted"),
 	HOLLY_CANDLE_BIG("decoration/christmas/candle_big"),
 	HOLLY_CANDLES("decoration/christmas/candles"),
+	GINGERBREAD_HOUSE_PLATE("decoration/christmas/gingerbread_house_plate"),
+	GINGERBREAD_MAN_PLATE("decoration/christmas/gingerbread_man_plate"),
+
 	LETTER_BLOCK_A("decoration/christmas/block_a", true),
 	LETTER_BLOCK_B("decoration/christmas/block_b", true),
 	LETTER_BLOCK_C("decoration/christmas/block_c", true),
