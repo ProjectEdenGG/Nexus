@@ -544,6 +544,12 @@ public enum ItemModelType {
 	HOLLY_CANDLES("decoration/christmas/candles"),
 	GINGERBREAD_HOUSE_PLATE("decoration/christmas/gingerbread_house_plate"),
 	GINGERBREAD_MAN_PLATE("decoration/christmas/gingerbread_man_plate"),
+	CLOWN_IN_THE_BOX_CLOSED_OFF("decoration/christmas/clown_in_the_box_closed_off"),
+	CLOWN_IN_THE_BOX_CLOSED_ON("decoration/christmas/clown_in_the_box_closed"),
+	CLOWN_IN_THE_BOX_OFF("decoration/christmas/clown_in_the_box_off"),
+	CLOWN_IN_THE_BOX_ON("decoration/christmas/clown_in_the_box"),
+	GEARS_CHRISTMAS("decoration/christmas/gears"),
+
 
 	LETTER_BLOCK_A("decoration/christmas/block_a", true),
 	LETTER_BLOCK_B("decoration/christmas/block_b", true),

@@ -20,6 +20,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Bunting;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet.CabinetMaterial;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet.CabinetType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.ClownInTheBox;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.ClownInTheBox.ClownInTheBoxType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.CounterMaterial;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.CounterType;
@@ -70,7 +72,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Well;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.WorkBench;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.BlockThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.CeilingThing;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableBlockThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableCeilingThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableWallThing;
@@ -356,7 +357,13 @@ public enum DecorationType {
 	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
 	GINGERBREAD_MAN(new FloorThing(false, "Gingerbread Man on a Plate", ItemModelType.GINGERBREAD_MAN_PLATE)),
 
-	// 	------------------------------------------------------------------------------------------------------
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	CLOWN_IN_THE_BOX(new ClownInTheBox(ClownInTheBoxType.CLOSED_OFF)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	GEARS_CHRISTMAS(new WallThing(false, "Christmas Gears", ItemModelType.GEARS_CHRISTMAS)),
+
+// 	------------------------------------------------------------------------------------------------------
 //										CATALOG: Spooky
 // 	------------------------------------------------------------------------------------------------------
 	@TypeConfig(money = 75, tokens = 7, theme = Theme.SPOOKY)
@@ -2144,6 +2151,15 @@ public enum DecorationType {
 // 	------------------------------------------------------------------------------------------------------
 //										INTERNAL USE ONLY
 // 	------------------------------------------------------------------------------------------------------
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	CLOWN_IN_THE_BOX_CLOSED_ON(new ClownInTheBox(ClownInTheBoxType.CLOSED_ON)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	CLOWN_IN_THE_BOX_OPEN_ON(new ClownInTheBox(ClownInTheBoxType.OPEN_ON)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	CLOWN_IN_THE_BOX_OPEN_OFF(new ClownInTheBox(ClownInTheBoxType.OPEN_OFF)),
 
 	@TypeConfig(unbuyable = true, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE)
 	SPOOKY_SHELF_WALL_1X1(new WallThing(false, "Spooky Wall Shelf 1x1", ItemModelType.SHELF_WALL_1X1_SPOOKY, HitboxSingle._1x1_BARRIER)),
