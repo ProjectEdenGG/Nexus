@@ -95,6 +95,11 @@ public class Advent25User implements PlayerOwnedObject {
 
 		if (present.getDay() % 5 == 0)
 			PlayerUtils.giveItem(getOnlinePlayer(), Pugmas25QuestItem.SLOT_MACHINE_TOKEN.get());
+
+		if (present.getDay() == 25) {
+			PlayerUtils.giveItem(getOnlinePlayer(), Pugmas25QuestItem.SLOT_MACHINE_TOKEN.get());
+			PlayerUtils.giveItem(getOnlinePlayer(), Pugmas25QuestItem.SLOT_MACHINE_TOKEN.get());
+		}
 	}
 
 	private void validateCanCollect(Advent25Present present) {
