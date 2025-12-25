@@ -146,7 +146,7 @@ public class AdventAnimation {
 						trophyType.give(player);
 					}
 
-					if (MaterialTag.ITEMS_MUSIC_DISCS.isTagged(itemStack.getType())) {
+					if (MaterialTag.ITEMS_MUSIC_DISCS.isTagged(itemStack.getType()) && new ItemBuilder(itemStack).name().equalsIgnoreCase("Jukebox Song")) {
 						giveItem = false;
 						giveSong(player, itemName);
 					}
@@ -170,13 +170,14 @@ public class AdventAnimation {
 	}
 
 	private void giveSong(Player player, String itemName) {
+		JukeboxUser user = userService.get(player);
 		JukeboxSong song = JukeboxSong.of(itemName);
 		if (song == null) {
-			player.sendMessage("&cReport this to an admin. Song " + itemName + " not found");
+			user.sendMessage(StringUtils.getPrefix("Jukebox") + "&cReport this to an admin. Song " + itemName + " not found");
 			return;
 		}
 
-		JukeboxUser user = userService.get(player);
+
 		if (!user.owns(song)) {
 			user.give(song);
 			userService.save(user);
