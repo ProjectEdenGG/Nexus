@@ -127,6 +127,7 @@ public class Catalog implements Listener {
 		KITCHENWARE(ItemModelType.KITCHENWARE_MIXING_BOWL),
 		WINDCHIMES(ItemModelType.WINDCHIMES_COPPER),
 		ORNAMENTS(ItemModelType.ORNAMENT_BAUBLE, DyeChoice.RED),
+		PRESENTS(ItemModelType.PRESENT_BLOCK_1, DyeChoice.WHITE),
 		GIANT_ORNAMENTS(ItemModelType.ORNAMENT_BAUBLE_ACCENT, DyeChoice.RED),
 		;
 

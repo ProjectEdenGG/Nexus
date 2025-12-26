@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.commands;
 
 import com.xxmicloxx.NoteBlockAPI.event.SongEndEvent;
+import gg.projecteden.nexus.features.commands.staff.admin.CouponCommand;
+import gg.projecteden.nexus.features.commands.staff.admin.CouponCommand.CouponEvent;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.store.EventStoreItem;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -17,15 +19,21 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redi
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.coupon.CouponService;
+import gg.projecteden.nexus.models.coupon.Coupons.Coupon;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.jukebox.JukeboxSong;
 import gg.projecteden.nexus.models.jukebox.JukeboxUser;
 import gg.projecteden.nexus.models.jukebox.JukeboxUserService;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -159,10 +167,37 @@ public class JukeboxCommand extends CustomCommand implements Listener {
 		if (user.owns(song))
 			error("You already own that song");
 
-		new EventUserService().edit(user, eventUser -> eventUser.charge(EventStoreItem.SONGS.getPrice()));
+		if (!tryUseCoupon(CouponEvent.SONG))
+			new EventUserService().edit(user, eventUser -> eventUser.charge(EventStoreItem.SONGS.getPrice()));
+
 		user.give(song);
 		service.save(user);
 		send(EdenEvent.PREFIX_STORE + "Purchased song &e" + song.getName() + "&3. Play with &c/song play " + song.getName());
+	}
+
+	private boolean tryUseCoupon(CouponEvent event) {
+		ItemStack couponItem = ItemUtils.getTool(player());
+		if (Nullables.isNullOrAir(couponItem))
+			return false;
+
+		Coupon coupon = new CouponService().get0().of(couponItem);
+		if (coupon == null)
+			return false;
+
+		if (CouponEvent.of(coupon.getId()) != event)
+			return false;
+
+		int usesLeft = event.extractValue(couponItem) - 1;
+		couponItem.subtract();
+
+		// gives single coupons back instead of updating amount lore
+		if (usesLeft > 0) {
+			ItemStack refund = CouponCommand.getGenericCoupon("song", 1);
+			refund.setAmount(usesLeft);
+			PlayerUtils.giveItem(player(), refund);
+		}
+
+		return true;
 	}
 
 	@Path("stop")

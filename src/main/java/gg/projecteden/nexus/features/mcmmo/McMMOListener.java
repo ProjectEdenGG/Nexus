@@ -17,6 +17,7 @@ import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetProvider.ResetSkillType;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
@@ -31,9 +32,6 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.PlayerUtils.searchInventory;
 
 public class McMMOListener implements Listener {
 
@@ -139,8 +137,8 @@ public class McMMOListener implements Listener {
 		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL)
 			return;
 
-		var totem = searchInventory(event.getPlayer(), ItemModelType.KEEP_INVENTORY_TOTEM);
-		if (isNullOrAir(totem))
+		var totem = PlayerUtils.searchInventory(event.getPlayer(), ItemModelType.KEEP_INVENTORY_TOTEM);
+		if (Nullables.isNullOrAir(totem))
 			return;
 
 		event.setKeepInventory(true);

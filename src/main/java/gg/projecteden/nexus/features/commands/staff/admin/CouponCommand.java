@@ -103,8 +103,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 		SONG(false) {
 			@Override
 			void use(PlayerInteractEvent event, @NotNull ItemStack item) {
-				// TODO
-				PlayerUtils.send(event.getPlayer(), "Make a /ticket or post in #questions to claim this coupon.");
+				PlayerUtils.runCommand(event.getPlayer(), "jukebox store");
 			}
 		},
 		EXPERIENCE_75(true) {

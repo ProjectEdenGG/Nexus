@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.particles.effects.WingsEffect.WingStyle;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.store.perks.visuals.EmojiHatsCommand.EmojiHat;
 import gg.projecteden.nexus.models.crate.CrateType;
+import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -41,6 +42,7 @@ public enum EventStoreItem {
 
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
+			new EventUserService().edit(player, user -> user.charge(getPrice()));
 			CrateType.MYSTERY.give(player, 1);
 		}
 	},

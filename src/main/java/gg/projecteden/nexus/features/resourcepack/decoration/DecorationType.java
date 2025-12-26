@@ -20,6 +20,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Bunting;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet.CabinetMaterial;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet.CabinetType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.ClownInTheBox;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.ClownInTheBox.ClownInTheBoxType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.CounterMaterial;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.CounterType;
@@ -34,8 +36,12 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Flag.PrideFla
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Flora;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Furniture;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.HangingBanner;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.LetterBlock;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.LetterBlock.LetterBlockType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Ornament;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Ornament.OrnamentType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Present;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Present.PresentType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.StandingBanner;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Table;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Table.TableShape;
@@ -43,6 +49,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Table.TableTh
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.BirdHouse;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.WindChime;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.WindChime.WindChimeType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.cycle.SnowGlobe;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.cycle.SnowGlobe.SnowGlobeType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.DyeableInstrument;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.Instrument;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.Instrument.InstrumentSound;
@@ -62,23 +70,23 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Trash
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Waystone;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Well;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.WorkBench;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Block;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.BlockThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.CeilingThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableCeilingThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableWallThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.FloorThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.Curtain;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.Curtain.CurtainType;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.DyeableGiantCandle;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.DyeableGiantCandle.DyeableCandleType;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.GiantCandle;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.GiantCandle.CandleType;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.RecordPlayer;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.RecordPlayer.RecordPlayerType;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.TV;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.TV.ChannelType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.cycle.Curtain;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.cycle.Curtain.CurtainType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.cycle.DyeableGiantCandle;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.cycle.DyeableGiantCandle.DyeableCandleType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.cycle.GiantCandle;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.cycle.GiantCandle.CandleType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.cycle.RecordPlayer;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.cycle.RecordPlayer.RecordPlayerType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.cycle.TV;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.cycle.TV.ChannelType;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.models.trophy.TrophyType;
@@ -162,6 +170,12 @@ public enum DecorationType {
 
 	@TypeConfig(money = 150, tokens = 15, theme = Theme.HOLIDAY)
 	CHRISTMAS_TREE_WHITE(new FloorThing(false, "White Christmas Tree", ItemModelType.CHRISTMAS_TREE_WHITE, HitboxFloor._1x2V)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	CHRISTMAS_TREE_COLOR_BIG(new FloorThing(false, "Big Colorful Christmas Tree", ItemModelType.CHRISTMAS_TREE_COLORED_BIG, HitboxFloor._1x4V)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	CHRISTMAS_TREE_WHITE_BIG(new FloorThing(false, "Big White Christmas Tree", ItemModelType.CHRISTMAS_TREE_WHITE_BIG, HitboxFloor._1x4V)),
 
 	@TypeConfig(money = 45, tokens = 5, theme = Theme.HOLIDAY)
 	MISTLETOE(new CeilingThing(false, "Mistletoe", ItemModelType.MISTLETOE)),
@@ -295,9 +309,61 @@ public enum DecorationType {
 	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
 	RIBBON_BOW_WALL(new Dyeable(false, "Wall Ribbon", ItemModelType.RIBBON_WALL, ColorableType.DYE, "FF0000")),
 
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	SNOWGLOBE(new SnowGlobe(SnowGlobeType.PRESENT)),
 
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY, tabs = Tab.PRESENTS)
+	PRESENT_SHORT_DOUBLE_RED(new Present(PresentType.SHORT_DOUBLE_RED)),
 
-	// 	------------------------------------------------------------------------------------------------------
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY, tabs = Tab.PRESENTS)
+	PRESENT_MINI_RED(new Present(PresentType.MINI_RED)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY, tabs = Tab.PRESENTS)
+	PRESENT_BLOCK_RED(new Present(PresentType.BLOCK_RED)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY, tabs = Tab.PRESENTS)
+	PRESENT_TALL_RED(new Present(PresentType.TALL_RED)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	SANTAS_CHAIR(new DyeableChair(false, true, "Santa's Chair", ItemModelType.SANTAS_CHAIR, ColorableType.DYE, HitboxSingle._1x1_BARRIER, 1.2)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	SANTAS_TABLE(new FloorThing(true, "Santa's Table", ItemModelType.SANTAS_TABLE, HitboxUnique.SANTAS_TABLE)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	STRING_LIGHTS(new WallThing(true, "String Lights", ItemModelType.STRING_LIGHTS, HitboxUnique.STRING_LIGHTS)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	STRING_LIGHTS_FLIPPED(new WallThing(true, "String Lights (Flipped)", ItemModelType.STRING_LIGHTS_FLIPPED, HitboxUnique.STRING_LIGHTS_FLIPPED)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	HOLLY_CANDLE_BIG(new FloorThing(false, "Big Holly Candle", ItemModelType.HOLLY_CANDLE_BIG, HitboxUnique.HOLLY_CANDLE_BIG)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	HOLLY_CANDLES(new FloorThing(false, "Holly Candles", ItemModelType.HOLLY_CANDLES, HitboxUnique.HOLLY_CANDLES)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	LETTER_BLOCK_A(new LetterBlock(LetterBlockType.A)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	LETTER_BLOCK_B(new LetterBlock(LetterBlockType.B)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	LETTER_BLOCK_C(new LetterBlock(LetterBlockType.C)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	GINGERBREAD_HOUSE(new FloorThing(false, "Gingerbread House on a Plate", ItemModelType.GINGERBREAD_HOUSE_PLATE, HitboxSingle._1x1_LIGHT(8))),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	GINGERBREAD_MAN(new FloorThing(false, "Gingerbread Man on a Plate", ItemModelType.GINGERBREAD_MAN_PLATE)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	CLOWN_IN_THE_BOX(new ClownInTheBox(ClownInTheBoxType.CLOSED_OFF)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	GEARS_CHRISTMAS(new WallThing(false, "Christmas Gears", ItemModelType.GEARS_CHRISTMAS)),
+
+// 	------------------------------------------------------------------------------------------------------
 //										CATALOG: Spooky
 // 	------------------------------------------------------------------------------------------------------
 	@TypeConfig(money = 75, tokens = 7, theme = Theme.SPOOKY)
@@ -1411,13 +1477,13 @@ public enum DecorationType {
 	APPLIANCE_SLUSHIE_MACHINE(new DyeableFloorThing(false, "Slushie Machine", ItemModelType.APPLIANCE_SLUSHIE_MACHINE, ColorableType.DYE, HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(money = 180, tokens = 18, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_GRILL_COMMERCIAL(new Block("Commercial Grill", ItemModelType.APPLIANCE_GRILL_COMMERCIAL, RotationSnap.BOTH)),
+	APPLIANCE_GRILL_COMMERCIAL(new BlockThing("Commercial Grill", ItemModelType.APPLIANCE_GRILL_COMMERCIAL, RotationSnap.BOTH)),
 
 	@TypeConfig(money = 180, tokens = 18, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_OVEN_COMMERCIAL(new Block("Commercial Oven", ItemModelType.APPLIANCE_OVEN_COMMERCIAL, RotationSnap.BOTH)),
+	APPLIANCE_OVEN_COMMERCIAL(new BlockThing("Commercial Oven", ItemModelType.APPLIANCE_OVEN_COMMERCIAL, RotationSnap.BOTH)),
 
 	@TypeConfig(money = 180, tokens = 18, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_DEEP_FRYER_COMMERCIAL(new Block("Commercial Deep Fryer", ItemModelType.APPLIANCE_DEEP_FRYER_COMMERCIAL, RotationSnap.BOTH)),
+	APPLIANCE_DEEP_FRYER_COMMERCIAL(new BlockThing("Commercial Deep Fryer", ItemModelType.APPLIANCE_DEEP_FRYER_COMMERCIAL, RotationSnap.BOTH)),
 
 	// Counters - STEEL HANDLES
 	@TypeConfig(money = 165, tokens = 16, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.STEEL_HANDLES, Tab.MARBLE_COUNTER})
@@ -2086,6 +2152,15 @@ public enum DecorationType {
 //										INTERNAL USE ONLY
 // 	------------------------------------------------------------------------------------------------------
 
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	CLOWN_IN_THE_BOX_CLOSED_ON(new ClownInTheBox(ClownInTheBoxType.CLOSED_ON)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	CLOWN_IN_THE_BOX_OPEN_ON(new ClownInTheBox(ClownInTheBoxType.OPEN_ON)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY)
+	CLOWN_IN_THE_BOX_OPEN_OFF(new ClownInTheBox(ClownInTheBoxType.OPEN_OFF)),
+
 	@TypeConfig(unbuyable = true, theme = Theme.SPOOKY, tabs = Tab.SPOOKY_FURNITURE)
 	SPOOKY_SHELF_WALL_1X1(new WallThing(false, "Spooky Wall Shelf 1x1", ItemModelType.SHELF_WALL_1X1_SPOOKY, HitboxSingle._1x1_BARRIER)),
 
@@ -2109,6 +2184,15 @@ public enum DecorationType {
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	GIANT_CANDLE_THREE_LIT_DYEABLE(new DyeableGiantCandle("Giant Candles", DyeableCandleType.THREE, true)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY, tabs = Tab.INTERNAL)
+	SNOWGLOBE_TREE(new SnowGlobe(SnowGlobeType.TREE)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY, tabs = Tab.INTERNAL)
+	SNOWGLOBE_PUG(new SnowGlobe(SnowGlobeType.PUG)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.HOLIDAY, tabs = Tab.INTERNAL)
+	SNOWGLOBE_SNOWMAN(new SnowGlobe(SnowGlobeType.SNOWMAN)),
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	FLAT_SCREEN_TV_TEST_PATTERN(new TV("Flat Screen TV", ChannelType.TEST_PATTERN)),

@@ -150,7 +150,7 @@ public enum ArmorSkin implements EquipmentSkinType {
 	public static EquipmentSlot getSlot(ItemBuilder builder) {
 		if (MaterialTag.ALL_HELMETS.isTagged(builder.material()))
 			return EquipmentSlot.HEAD;
-		if (MaterialTag.ALL_CHESTPLATES.isTagged(builder.material()))
+		if (MaterialTag.ALL_CHESTPLATES.isTagged(builder.material()) || builder.material() == Material.ELYTRA)
 			return EquipmentSlot.CHEST;
 		if (MaterialTag.ALL_LEGGINGS.isTagged(builder.material()))
 			return EquipmentSlot.LEGS;
@@ -218,6 +218,9 @@ public enum ArmorSkin implements EquipmentSkinType {
 
 		String model = ItemBuilder.Model.of(stack);
 		if (model == null)
+			return null;
+
+		if (!model.contains("/")) // StringIndexOutOfBounds
 			return null;
 
 		String baseModel = model.toLowerCase().substring(0, model.lastIndexOf('/'));

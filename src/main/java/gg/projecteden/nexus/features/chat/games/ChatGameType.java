@@ -369,7 +369,7 @@ public enum ChatGameType {
 
 		LONGEST_LAND_BORDER("Name one of the two countries that share the longest land border in the world", List.of("Canada", "United States", "United States of America", "USA")),
 		LONGEST_RIVER("What is the longest river in the world?", "Nile"),
-		LONGEST_MOUNTAIN_RANGE("What is the longest mountain range in the world?", "Andes"),
+		LONGEST_MOUNTAIN_RANGE("What is the longest above-water mountain range in the world?", "Andes"),
 		LARGEST_COUNTRY_WORLD("What is the largest country in the world by land mass?", "Russia"),
 		LARGEST_ISLAND("What is the largest island in the world (excluding continents)?", "Greenland"),
 		LARGEST_COUNTRY_AFRICA("What is the largest country in Africa by land mass?", "Algeria"),

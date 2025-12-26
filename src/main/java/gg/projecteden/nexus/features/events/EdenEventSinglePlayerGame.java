@@ -111,6 +111,11 @@ public abstract class EdenEventSinglePlayerGame extends Feature implements Liste
 			return false;
 		}
 
+		if (!worldguard().isInRegion(player, getPlayRegion())) {
+			send(player, "&cYou're not standing in the play region!");
+			return false;
+		}
+
 		return true;
 	}
 
@@ -119,12 +124,12 @@ public abstract class EdenEventSinglePlayerGame extends Feature implements Liste
 	}
 
 	public boolean start(@NonNull Player player) {
+		if (!startChecks(player))
+			return false;
+
 		if (!init) {
 			init();
 		}
-
-		if (!startChecks(player))
-			return false;
 
 		gamer = player;
 		gameTicks = 0;

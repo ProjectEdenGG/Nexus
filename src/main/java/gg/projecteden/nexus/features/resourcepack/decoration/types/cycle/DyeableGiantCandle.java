@@ -1,19 +1,15 @@
-package gg.projecteden.nexus.features.resourcepack.decoration.types.toggle;
+package gg.projecteden.nexus.features.resourcepack.decoration.types.cycle;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxUnique;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Cyclable;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.GiantCandle.ICandle;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.cycle.GiantCandle.ICandle;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
-import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.type.Light;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

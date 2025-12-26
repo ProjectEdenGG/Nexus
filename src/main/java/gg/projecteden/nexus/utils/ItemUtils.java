@@ -465,8 +465,10 @@ public class ItemUtils {
 	}
 
 	public static void subtract(Player player, ItemStack itemStack) {
-		if (shouldSubtract(player, itemStack))
+		if (shouldSubtract(player, itemStack)) {
 			itemStack.subtract();
+			player.updateInventory();
+		}
 	}
 
 	public static void update(ItemStack item, @Nullable Player player) {

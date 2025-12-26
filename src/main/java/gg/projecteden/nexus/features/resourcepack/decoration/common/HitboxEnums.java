@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox.LightHitbox;
+import gg.projecteden.nexus.utils.MathUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -13,7 +15,11 @@ public class HitboxEnums {
 		List<Hitbox> getHitboxes();
 
 		default String getName() {
-			return ((Enum<?>) this).name();
+			return this instanceof Enum<?> e ? e.name() : getFallbackName();
+		}
+
+		default String getFallbackName() {
+			return "CUSTOM";
 		}
 	}
 
@@ -29,6 +35,21 @@ public class HitboxEnums {
 		;
 
 		final List<Hitbox> hitboxes;
+
+		public static CustomHitbox _1x1_LIGHT(int lightLevel) {
+			int clamped = MathUtils.clamp(lightLevel, 0, 15);
+			return new CustomHitbox() {
+				@Override
+				public List<Hitbox> getHitboxes() {
+					return Hitbox.single(new LightHitbox(clamped));
+				}
+
+				@Override
+				public String getFallbackName() {
+					return HitboxSingle._1x1_LIGHT.name();
+				}
+			};
+		}
 	}
 
 	@Getter
@@ -65,6 +86,13 @@ public class HitboxEnums {
 			Hitbox.originLight(),
 			Hitbox.offsetLight(BlockFace.UP, 1),
 			Hitbox.offsetLight(BlockFace.UP, 2)
+		)),
+
+		_1x4V(List.of(
+			Hitbox.origin(),
+			Hitbox.offset(BlockFace.UP, 1),
+			Hitbox.offset(BlockFace.UP, 2),
+			Hitbox.offset(BlockFace.UP, 3)
 		)),
 
 		_1x2H(List.of(
@@ -268,6 +296,19 @@ public class HitboxEnums {
 	@Getter
 	@AllArgsConstructor
 	public enum HitboxUnique implements CustomHitbox {
+		HOLLY_CANDLE_BIG(List.of(Hitbox.originLight(12))),
+		HOLLY_CANDLES(List.of(Hitbox.originLight(15))),
+
+		STRING_LIGHTS(List.of(
+			Hitbox.originLight(8),
+			Hitbox.offsetLight(8, BlockFace.EAST, 1)
+		)),
+
+		STRING_LIGHTS_FLIPPED(List.of(
+			Hitbox.originLight(8),
+			Hitbox.offsetLight(8, BlockFace.WEST, 1)
+		)),
+
 		LAMP(List.of(
 			Hitbox.origin(),
 			Hitbox.offset(BlockFace.UP, 1),
@@ -389,6 +430,14 @@ public class HitboxEnums {
 			Hitbox.offsetLight(BlockFace.WEST, 1, BlockFace.UP, 1),
 			Hitbox.offsetLight(BlockFace.EAST, 1),
 			Hitbox.offsetLight(BlockFace.EAST, 1, BlockFace.UP, 1)
+		)),
+
+		SANTAS_TABLE(List.of(
+			Hitbox.origin(),
+			Hitbox.offset(BlockFace.WEST, 1),
+			Hitbox.offset(BlockFace.EAST, 1),
+			Hitbox.offsetLight(12, BlockFace.WEST, 1, BlockFace.UP, 1),
+			Hitbox.offsetLight(12, BlockFace.EAST, 1, BlockFace.UP, 1)
 		)),
 		;
 

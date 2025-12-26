@@ -68,6 +68,9 @@ public class Pugmas25BoatRace implements Listener {
 		if (!Pugmas25.get().isAtEvent(player))
 			return;
 
+		if (boat.getPassengers().size() > 1)
+			return;
+
 		Material type = boat.getBoatMaterial();
 		boat.remove();
 		PlayerUtils.giveItem(player, type);
