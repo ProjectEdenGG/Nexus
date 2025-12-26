@@ -56,7 +56,7 @@ repositories {
 }
 
 dependencies {
-    paperweight.paperDevBundle("${parchmentVersion}", "gg.projecteden.parchment")
+    paperweight.paperDevBundle(parchmentVersion, "gg.projecteden.parchment")
     compileOnly("gg.projecteden.parchment:parchment-api:${parchmentVersion}")
     implementation("gg.projecteden:eden-common:${edenApiVersion}")
     implementation("gg.projecteden:eden-db:${edenApiVersion}")
