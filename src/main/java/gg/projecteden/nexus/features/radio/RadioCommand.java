@@ -152,7 +152,6 @@ public class RadioCommand extends CustomCommand {
 	}
 
 	// Staff Commands
-
 	@Path("players <radio>")
 	@Permission(Group.STAFF)
 	@Description("Lists all players listening to the server radio")
@@ -266,6 +265,24 @@ public class RadioCommand extends CustomCommand {
 			error("Radio is not enabled");
 		radio.reload();
 		send(PREFIX + StringUtils.camelCase(radio.getType()) + " Radio &e" + radio.getId() + " &3reloaded");
+	}
+
+	@Path("config clone <radio> <id>")
+	@Permission(Group.ADMIN)
+	@Description("Create a new radio from an existing radio")
+	void configClone(Radio originRadio, String id) {
+		Radio cloneRadio = Radio.builder()
+			.id(id)
+			.type(originRadio.getType())
+			.particles(originRadio.isParticles())
+			.updatePlaying(originRadio.isUpdatePlaying())
+			.radius(originRadio.getRadius())
+			.songs(originRadio.getSongs())
+			.build();
+
+		config.add(cloneRadio);
+		configService.save(config);
+		send(PREFIX + StringUtils.camelCase(originRadio.getType()) + " Radio &e" + id + " &3cloned from &e" + originRadio.getId() + " &3Radio");
 	}
 
 	@Path("config create <type> <id> [radius]")
