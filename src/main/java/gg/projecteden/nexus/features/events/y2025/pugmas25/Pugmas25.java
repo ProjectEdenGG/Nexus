@@ -571,6 +571,9 @@ public class Pugmas25 extends EdenEvent {
 				if (fakeQuest.isRepeatable())
 					continue;
 
+				if (fakeQuest == Pugmas25QuestProgress.MINI_NUTCRACKERS)
+					continue;
+
 				var status = fakeQuest.getStatus(new Pugmas25UserService().get(player));
 				if (status != Pugmas25QuestStatus.COMPLETED) {
 					incomplete = true;
