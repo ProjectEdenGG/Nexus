@@ -2001,6 +2001,23 @@ public enum DecorationType {
 	@TypeConfig(money = 450, tokens = 45)
 	WINDOW_CURTAINS_3x3(new Curtain("Window Curtains 3x3", CurtainType._3x3_OPEN)),
 
+	// Barrels
+
+	@TypeConfig(money = 200, tokens = 20)
+	BARREL_LARGE(new FloorThing(true, "Large Barrel", ItemModelType.BARREL_LARGE, HitboxFloor._2x2x2)),
+
+	@TypeConfig(money = 200, tokens = 20)
+	BARREL_LARGE_SIDE(new FloorThing(true, "Large Barrel", ItemModelType.BARREL_LARGE_SIDE, HitboxFloor._2x2x2)),
+
+	@TypeConfig(money = 250, tokens = 25)
+	BARREL_LARGE_TAPPED(new FloorThing(true, "Large Barrel", ItemModelType.BARREL_LARGE_TAPPED, HitboxFloor._2x2x2)),
+
+	@TypeConfig(money = 50, tokens = 5)
+	BARREL_SMALL(new FloorThing(false, "Small Barrel", ItemModelType.BARREL_SMALL, HitboxSingle._1x1_HEAD)),
+
+	@TypeConfig(money = 50, tokens = 5)
+	BARREL_SMALL_SIDE(new FloorThing(false, "Small Barrel", ItemModelType.BARREL_SMALL_SIDE, HitboxSingle._1x1_HEAD)),
+
 	//	Misc
 	@TypeConfig(money = 75, tokens = 7)
 	TRASH_CAN(new TrashCan("Trash Can", ItemModelType.TRASH_CAN, ColorableType.DYE, "C7C7C7", HitboxSingle._1x1_BARRIER)),
@@ -2087,7 +2104,7 @@ public enum DecorationType {
 	CARDBOARD_BOX_MEDIUM(new FloorThing(false, "Medium Cardboard Box", ItemModelType.CARDBOARD_BOX_MEDIUM, HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(money = 100, tokens = 10)
-	CARDBOARD_BOX_LARGE(new FloorThing(true, "Large Cardboard Box", ItemModelType.CARDBOARD_BOX_LARGE, HitboxUnique.CARDBOARD_BOX)),
+	CARDBOARD_BOX_LARGE(new FloorThing(true, "Large Cardboard Box", ItemModelType.CARDBOARD_BOX_LARGE, HitboxFloor._2x2x2)),
 
 	@TypeConfig(money = 500, tokens = 50)
 	PLAYER_HEAD_BLOCK(new PlayerHeadBlock(false, "Player Head Block", ItemModelType.PLAYER_HEAD_BLOCK, HitboxSingle._1x1_BARRIER)),

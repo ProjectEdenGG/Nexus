@@ -588,6 +588,12 @@ public enum ItemModelType {
 	CURTAINS_2x3H_CLOSED("decoration/curtains_3x2_closed", true),
 	CURTAINS_3x3_OPENED("decoration/curtains_3x3", true),
 	CURTAINS_3x3_CLOSED("decoration/curtains_3x3_closed", true),
+	BARREL_LARGE("decoration/barrel_large"),
+	BARREL_LARGE_SIDE("decoration/barrel_large_side"),
+	BARREL_LARGE_TAPPED("decoration/barrel_large_tapped"),
+	BARREL_SMALL("decoration/barrel_small"),
+	BARREL_SMALL_SIDE("decoration/barrel_small_side"),
+
 	ROAST_CHICKEN_SERVING("decoration/edible/roast_chicken_serving", Material.COOKIE),
 	ROAST_CHICKEN_STAGE_0("decoration/edible/roast_chicken_stage0"),
 	ROAST_CHICKEN_STAGE_1("decoration/edible/roast_chicken_stage1"),
