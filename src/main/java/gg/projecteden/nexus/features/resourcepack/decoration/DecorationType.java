@@ -2007,16 +2007,16 @@ public enum DecorationType {
 	BARREL_LARGE(new FloorThing(true, "Large Barrel", ItemModelType.BARREL_LARGE, HitboxFloor._2x2x2)),
 
 	@TypeConfig(money = 200, tokens = 20)
-	BARREL_LARGE_SIDE(new FloorThing(true, "Large Barrel", ItemModelType.BARREL_LARGE_SIDE, HitboxFloor._2x2x2)),
+	BARREL_LARGE_SIDE(new FloorThing(true, "Large Barrel Side", ItemModelType.BARREL_LARGE_SIDE, HitboxFloor._2x2x2)),
 
 	@TypeConfig(money = 250, tokens = 25)
-	BARREL_LARGE_TAPPED(new FloorThing(true, "Large Barrel", ItemModelType.BARREL_LARGE_TAPPED, HitboxFloor._2x2x2)),
+	BARREL_LARGE_TAPPED(new FloorThing(true, "Large Barrel Tapped", ItemModelType.BARREL_LARGE_TAPPED, HitboxFloor._2x2x2)),
 
 	@TypeConfig(money = 50, tokens = 5)
 	BARREL_SMALL(new FloorThing(false, "Small Barrel", ItemModelType.BARREL_SMALL, HitboxSingle._1x1_HEAD)),
 
 	@TypeConfig(money = 50, tokens = 5)
-	BARREL_SMALL_SIDE(new FloorThing(false, "Small Barrel", ItemModelType.BARREL_SMALL_SIDE, HitboxSingle._1x1_HEAD)),
+	BARREL_SMALL_SIDE(new FloorThing(false, "Small Barrel Side", ItemModelType.BARREL_SMALL_SIDE, HitboxSingle._1x1_HEAD)),
 
 	//	Misc
 	@TypeConfig(money = 75, tokens = 7)
