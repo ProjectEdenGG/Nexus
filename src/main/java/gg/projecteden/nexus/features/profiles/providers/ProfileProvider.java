@@ -21,6 +21,9 @@ import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.features.socialmedia.commands.SocialMediaCommand;
 import gg.projecteden.nexus.features.trust.providers.TrustsMenu;
 import gg.projecteden.nexus.features.trust.providers.TrustsPlayerMenu;
+import gg.projecteden.nexus.models.badge.BadgeUser;
+import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
+import gg.projecteden.nexus.models.badge.BadgeUserService;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.CostumeUser;
@@ -48,10 +51,13 @@ import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
 import gg.projecteden.nexus.models.trust.TrustsUserService;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -69,7 +75,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Rows(6)
@@ -84,6 +93,9 @@ public class ProfileProvider extends InventoryProvider {
 
 	private final ProfileUser targetUser;
 	private final ChatColor backgroundColor;
+	private final BadgeUser targetBadgeUser;
+	private final Map<Badge, Integer> displayBadges;
+	private final Set<Badge> ownedBadges;
 
 	private InventoryProvider previousMenu = null;
 	private ProfileTextureType textureOverride = null;
@@ -109,6 +121,9 @@ public class ProfileProvider extends InventoryProvider {
 	public ProfileProvider(OfflinePlayer offlinePlayer) {
 		this.targetUser = new ProfileUserService().get(offlinePlayer);
 		this.backgroundColor = targetUser.getBackgroundColor();
+		this.displayBadges = targetUser.getBadges();
+		this.targetBadgeUser = new BadgeUserService().get(offlinePlayer);
+		this.ownedBadges = this.targetBadgeUser.getOwned();
 
 		fillCostumes(targetUser);
 		fillArmor(targetUser);
@@ -150,6 +165,67 @@ public class ProfileProvider extends InventoryProvider {
 		for (SlotTexture slotTexture : SlotTexture.values()) {
 			slotTexture.setItem(this, contents);
 		}
+
+		fillBadges();
+	}
+
+	private void fillBadges() {
+		if (!isSelf(viewer, targetUser)) {
+			// Badge Viewer
+			displayBadges.keySet().forEach(badge -> {
+				int column = displayBadges.get(badge);
+				SlotPos slotPos = SlotPos.of(0, column);
+				ItemBuilder item = new ItemBuilder(badge.getModelType())
+					.name(badge.getName() + " Badge")
+					.lore(badge.getLore(targetBadgeUser));
+				contents.set(SlotPos.of(0, column), ClickableItem.empty(item));
+			});
+		} else {
+			// Badge Editor
+			List<Integer> usedColumns = new ArrayList<>();
+			displayBadges.keySet().forEach(badge -> {
+				int column = displayBadges.get(badge);
+				usedColumns.add(column);
+				ItemBuilder item = new ItemBuilder(badge.getModelType()).name(badge.getName() + " Badge")
+					.lore(badge.getLore(targetBadgeUser))
+					.lore("", "&cShift+Click to remove badge");
+
+				contents.set(SlotPos.of(0, column), ClickableItem.of(item, e -> {
+					if (e.isShiftClick()) {
+						displayBadges.remove(badge);
+						reopenMenu(viewer, targetUser, previousMenu);
+					}
+				}));
+			});
+
+			int minBadgeSlot = 2;
+			int maxBadgeSlot = 8;
+			Set<Badge> badgeChoices = new HashSet<>(ownedBadges);
+			badgeChoices.removeAll(displayBadges.keySet());
+			for (int i = minBadgeSlot; i <= maxBadgeSlot; i++) {
+				final int column = i;
+				if (usedColumns.contains(column))
+					continue;
+
+				SlotPos slotPos = SlotPos.of(0, column);
+				ItemBuilder item = new ItemBuilder(ItemModelType.GUI_PLUS).dyeColor(ColorType.LIGHT_GREEN).itemFlags(ItemFlags.HIDE_ALL)
+					.name("&aClick to display a random badge").lore("&cTODO: Badge Picker");
+				ClickableItem clickableItem;
+				if (!badgeChoices.isEmpty()) {
+					clickableItem = ClickableItem.of(item, e -> {
+						Badge badge = RandomUtils.randomElement(badgeChoices);
+						displayBadges.put(badge, column);
+						reopenMenu(viewer, targetUser, previousMenu);
+					});
+				} else {
+					item.dyeColor(ColorType.LIGHT_GRAY).name("&cNo more badges to display");
+					clickableItem = ClickableItem.empty(item);
+				}
+
+				contents.set(SlotPos.of(0, column), clickableItem);
+			}
+		}
+
 	}
 
 	//
@@ -327,7 +403,7 @@ public class ProfileProvider extends InventoryProvider {
 
 			@Override
 			public List<String> getLore(Player viewer, ProfileUser target) {
-				if (ProfileMenuItem.isSelf(viewer, target))
+				if (isSelf(viewer, target))
 					return List.of("", "&3Privacy Setting: &e" + StringUtils.camelCase(target.getSocialMediaPrivacy()));
 
 				if (target.canNotView(PrivacySettingType.SOCIAL_MEDIA, viewer))
@@ -432,7 +508,7 @@ public class ProfileProvider extends InventoryProvider {
 		VIEW_FRIENDS(4, 2, ItemModelType.GUI_PROFILE_ICON_FRIENDS) {
 			@Override
 			public List<String> getLore(Player viewer, ProfileUser target) {
-				if (ProfileMenuItem.isSelf(viewer, target))
+				if (isSelf(viewer, target))
 					return List.of("&3Total: &e" + totalFriends(target), "", "&3Privacy Setting: &e" + StringUtils.camelCase(target.getFriendsPrivacy()));
 
 				if (target.canNotView(PrivacySettingType.FRIENDS, viewer))
@@ -638,7 +714,7 @@ public class ProfileProvider extends InventoryProvider {
 		TELEPORT(4, 6, Material.ENDER_PEARL, null) {
 			@Override
 			public boolean shouldNotShow(Player viewer, ProfileUser target) {
-				if (ProfileMenuItem.isSelf(viewer, target))
+				if (isSelf(viewer, target))
 					return true;
 
 				return super.shouldNotShow(viewer, target);
@@ -702,7 +778,7 @@ public class ProfileProvider extends InventoryProvider {
 		VIEW_HOMES(4, 0, ItemModelType.GUI_PROFILE_ICON_HOMES) {
 			@Override
 			public String getName(Player viewer, ProfileUser target) {
-				if (ProfileMenuItem.isSelf(viewer, target))
+				if (isSelf(viewer, target))
 					return "&eEdit Homes";
 
 				return super.getName(viewer, target);
@@ -710,7 +786,7 @@ public class ProfileProvider extends InventoryProvider {
 
 			@Override
 			public List<String> getLore(Player viewer, ProfileUser target) {
-				if (ProfileMenuItem.isSelf(viewer, target))
+				if (isSelf(viewer, target))
 					super.getLore(viewer, target);
 
 				HomeOwner targetOwner = homeService.get(target);
@@ -727,7 +803,7 @@ public class ProfileProvider extends InventoryProvider {
 			public void onClick(ItemClickData e, Player viewer, ProfileUser target, InventoryContents contents, InventoryProvider previousMenu) {
 				HomeOwner targetOwner = homeService.get(target);
 
-				if (ProfileMenuItem.isSelf(viewer, target)) {
+				if (isSelf(viewer, target)) {
 					new EditHomesProvider(targetOwner, previousMenu).open(viewer);
 					return;
 				}
@@ -765,10 +841,6 @@ public class ProfileProvider extends InventoryProvider {
 
 		private static Nerd getNerd(ProfileUser user) {
 			return Nerd.of(user);
-		}
-
-		private static boolean isSelf(Player viewer, ProfileUser target) {
-			return PlayerUtils.isSelf(viewer, target);
 		}
 
 		private final int row, col;
@@ -866,6 +938,10 @@ public class ProfileProvider extends InventoryProvider {
 	}
 
 	//
+
+	private static boolean isSelf(Player viewer, ProfileUser target) {
+		return PlayerUtils.isSelf(viewer, target);
+	}
 
 	private void fillCostumes(ProfileUser target) {
 		CostumeUser costumeUser = costumeService.get(target);

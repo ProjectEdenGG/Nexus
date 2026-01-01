@@ -40,6 +40,14 @@ public enum ItemModelType {
 		}
 	},
 	WARD_CHARM("functional/ward_charm"),
+	// badges
+	BADGE_CONNECT4("ui/gui/profile/badge/connect4"),
+	BADGE_BIRTHDAY("ui/gui/profile/badge/birthday"),
+	BADGE_BOT("ui/gui/profile/badge/bot"),
+	BADGE_MONTHLY_FIRST("ui/gui/profile/badge/monthly_first"),
+	BADGE_MONTHLY_SECOND("ui/gui/profile/badge/monthly_second"),
+	BADGE_MONTHLY_THIRD("ui/gui/profile/badge/monthly_third"),
+	BADGE_SUPPORTER("ui/gui/profile/badge/supporter"),
 	// armor
 	ARMOR_FILLED_BOOTS("armor/filled/boots"),
 	ARMOR_FILLED_CHESTPLATE("armor/filled/chestplate"),

@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomEmoji;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -32,6 +33,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Data
 @Entity(value = "badge_user", noClassnameStored = true)
@@ -115,9 +117,9 @@ public class BadgeUser implements PlayerOwnedObject {
 	@Getter
 	@AllArgsConstructor
 	public enum Badge {
-		BOT("Bot", CustomEmoji.BOT),
-		SUPPORTER("Supporter", CustomEmoji.SUPPORTER),
-		BIRTHDAY("Birthday", CustomEmoji.BIRTHDAY),
+		BOT("Bot", CustomEmoji.BOT, ItemModelType.BADGE_BOT),
+		SUPPORTER("Supporter", CustomEmoji.SUPPORTER, ItemModelType.BADGE_SUPPORTER),
+		BIRTHDAY("Birthday", CustomEmoji.BIRTHDAY, ItemModelType.BADGE_BIRTHDAY),
 		TWITTER(SocialMediaSite.TWITTER),
 		INSTAGRAM(SocialMediaSite.INSTAGRAM),
 		SNAPCHAT(SocialMediaSite.SNAPCHAT),
@@ -129,28 +131,29 @@ public class BadgeUser implements PlayerOwnedObject {
 		SPOTIFY(SocialMediaSite.SPOTIFY),
 		REDDIT(SocialMediaSite.REDDIT),
 		GITHUB(SocialMediaSite.GITHUB),
-		MONTHLY_PODIUMS_FIRST("Monthly Podiums - 1st place", CustomEmoji.PODIUM_FIRST.getChar(), MONTHLY_PODIUM_CONSUMER),
-		MONTHLY_PODIUMS_SECOND("Monthly Podiums - 2nd place", CustomEmoji.PODIUM_SECOND.getChar(), MONTHLY_PODIUM_CONSUMER),
-		MONTHLY_PODIUMS_THIRD("Monthly Podiums - 3rd place", CustomEmoji.PODIUM_THIRD.getChar(), MONTHLY_PODIUM_CONSUMER),
-		CONNECT4_CHAMPION("Connect4 Champion", CustomEmoji.CONNECT4),
+		MONTHLY_PODIUMS_FIRST("Monthly Podiums - 1st place", CustomEmoji.PODIUM_FIRST.getChar(), MONTHLY_PODIUM_CONSUMER, ItemModelType.BADGE_MONTHLY_FIRST),
+		MONTHLY_PODIUMS_SECOND("Monthly Podiums - 2nd place", CustomEmoji.PODIUM_SECOND.getChar(), MONTHLY_PODIUM_CONSUMER, ItemModelType.BADGE_MONTHLY_SECOND),
+		MONTHLY_PODIUMS_THIRD("Monthly Podiums - 3rd place", CustomEmoji.PODIUM_THIRD.getChar(), MONTHLY_PODIUM_CONSUMER, ItemModelType.BADGE_MONTHLY_THIRD),
+		CONNECT4_CHAMPION("Connect4 Champion", CustomEmoji.CONNECT4, ItemModelType.BADGE_CONNECT4),
 
 		;
 
 		Badge(SocialMediaSite site) {
-			this(site.getName(), site.getEmoji(), SOCIAL_MEDIA_CONSUMER.apply(site));
+			this(site.getName(), site.getEmoji(), SOCIAL_MEDIA_CONSUMER.apply(site), ItemModelType.NULL);
 		}
 
-		Badge(String name, CustomEmoji emoji) {
-			this(name, emoji.getChar());
+		Badge(String name, CustomEmoji emoji, ItemModelType modelType) {
+			this(name, emoji.getChar(), modelType);
 		}
 
-		Badge(String name, String emoji) {
-			this(name, emoji, null);
+		Badge(String name, String emoji, ItemModelType modelType) {
+			this(name, emoji, null, modelType);
 		}
 
 		private final String name;
 		private final String emoji;
 		private final BiConsumer<BadgeUser, JsonBuilder> consumer;
+		private final ItemModelType modelType;
 
 		public void customize(BadgeUser nerd, JsonBuilder json) {
 			if (consumer == null)
@@ -159,6 +162,11 @@ public class BadgeUser implements PlayerOwnedObject {
 			consumer.accept(nerd, json);
 		}
 
+		public List<String> getLore(BadgeUser nerd) {
+			JsonBuilder json = new JsonBuilder();
+			customize(nerd, json);
+			return json.getHoverLines().stream().map(line -> "&f" + line).collect(Collectors.toList());
+		}
 	}
 
 }
