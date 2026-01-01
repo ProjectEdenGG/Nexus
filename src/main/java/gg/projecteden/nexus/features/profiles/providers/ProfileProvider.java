@@ -209,14 +209,10 @@ public class ProfileProvider extends InventoryProvider {
 
 				SlotPos slotPos = SlotPos.of(0, column);
 				ItemBuilder item = new ItemBuilder(ItemModelType.GUI_PLUS).dyeColor(ColorType.LIGHT_GREEN).itemFlags(ItemFlags.HIDE_ALL)
-					.name("&aClick to display a random badge").lore("&cTODO: Badge Picker");
+					.name("&aClick to pick a badge");
 				ClickableItem clickableItem;
 				if (!badgeChoices.isEmpty()) {
-					clickableItem = ClickableItem.of(item, e -> {
-						Badge badge = RandomUtils.randomElement(badgeChoices);
-						displayBadges.put(badge, column);
-						reopenMenu(viewer, targetUser, previousMenu);
-					});
+					clickableItem = ClickableItem.of(item, e -> new BadgesProvider(this, targetBadgeUser, targetUser, column).open(viewer));
 				} else {
 					item.dyeColor(ColorType.LIGHT_GRAY).name("&cNo more badges to display");
 					clickableItem = ClickableItem.empty(item);
