@@ -155,8 +155,10 @@ public class Pugmas25Command extends IEventCommand implements Listener {
 		user = userService.get(quester);
 		super.quest_progress(quester);
 		Pugmas25QuestProgress.DESIGN_A_BALLOON.send(player(), user);
-		Pugmas25QuestProgress.MINI_NUTCRACKERS.send(player(), user);
 		Pugmas25QuestProgress.ADVENT.send(player(), user);
+		line();
+		send("&6Optional Quests:");
+		Pugmas25QuestProgress.MINI_NUTCRACKERS.send(player(), user);
 		line();
 		send("&6Repeatable Quests:");
 		Pugmas25QuestProgress.ANGLER.send(player(), user);
