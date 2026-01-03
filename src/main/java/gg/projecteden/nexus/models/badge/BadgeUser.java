@@ -24,6 +24,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -117,9 +118,9 @@ public class BadgeUser implements PlayerOwnedObject {
 	@Getter
 	@AllArgsConstructor
 	public enum Badge {
-		BOT("Bot", CustomEmoji.BOT, ItemModelType.BADGE_BOT),
-		SUPPORTER("Supporter", CustomEmoji.SUPPORTER, ItemModelType.BADGE_SUPPORTER),
-		BIRTHDAY("Birthday", CustomEmoji.BIRTHDAY, ItemModelType.BADGE_BIRTHDAY),
+		BOT("Bot", CustomEmoji.BOT, ItemModelType.BADGE_BOT, null),
+		SUPPORTER("Supporter", CustomEmoji.SUPPORTER, ItemModelType.BADGE_SUPPORTER, "Purchase any package on the /store"),
+		BIRTHDAY("Birthday", CustomEmoji.BIRTHDAY, ItemModelType.BADGE_BIRTHDAY, "Given on your /birthday"),
 		TWITTER(SocialMediaSite.TWITTER),
 		INSTAGRAM(SocialMediaSite.INSTAGRAM),
 		SNAPCHAT(SocialMediaSite.SNAPCHAT),
@@ -131,29 +132,31 @@ public class BadgeUser implements PlayerOwnedObject {
 		SPOTIFY(SocialMediaSite.SPOTIFY),
 		REDDIT(SocialMediaSite.REDDIT),
 		GITHUB(SocialMediaSite.GITHUB),
-		MONTHLY_PODIUMS_FIRST("Monthly Podiums - 1st place", CustomEmoji.PODIUM_FIRST.getChar(), MONTHLY_PODIUM_CONSUMER, ItemModelType.BADGE_MONTHLY_FIRST),
-		MONTHLY_PODIUMS_SECOND("Monthly Podiums - 2nd place", CustomEmoji.PODIUM_SECOND.getChar(), MONTHLY_PODIUM_CONSUMER, ItemModelType.BADGE_MONTHLY_SECOND),
-		MONTHLY_PODIUMS_THIRD("Monthly Podiums - 3rd place", CustomEmoji.PODIUM_THIRD.getChar(), MONTHLY_PODIUM_CONSUMER, ItemModelType.BADGE_MONTHLY_THIRD),
-		CONNECT4_CHAMPION("Connect4 Champion", CustomEmoji.CONNECT4, ItemModelType.BADGE_CONNECT4),
+		MONTHLY_PODIUMS_FIRST("Monthly Podiums - 1st place", CustomEmoji.PODIUM_FIRST.getChar(), MONTHLY_PODIUM_CONSUMER, ItemModelType.BADGE_MONTHLY_FIRST, "Being 1st place on any podium from the previous month"),
+		MONTHLY_PODIUMS_SECOND("Monthly Podiums - 2nd place", CustomEmoji.PODIUM_SECOND.getChar(), MONTHLY_PODIUM_CONSUMER, ItemModelType.BADGE_MONTHLY_SECOND, "Being 2nd place on any podium from the previous month"),
+		MONTHLY_PODIUMS_THIRD("Monthly Podiums - 3rd place", CustomEmoji.PODIUM_THIRD.getChar(), MONTHLY_PODIUM_CONSUMER, ItemModelType.BADGE_MONTHLY_THIRD, "Being 3rd place on any podium from the previous month"),
+		CONNECT4_CHAMPION("Connect4 Champion", CustomEmoji.CONNECT4, ItemModelType.BADGE_CONNECT4, "Win a Connect4 Tournament"),
 
 		;
 
 		Badge(SocialMediaSite site) {
-			this(site.getName(), site.getEmoji(), SOCIAL_MEDIA_CONSUMER.apply(site), ItemModelType.NULL);
+			this(site.getName(), site.getEmoji(), SOCIAL_MEDIA_CONSUMER.apply(site), ItemModelType.NULL, null);
 		}
 
-		Badge(String name, CustomEmoji emoji, ItemModelType modelType) {
-			this(name, emoji.getChar(), modelType);
+		Badge(String name, CustomEmoji emoji, ItemModelType modelType, String obtain) {
+			this(name, emoji.getChar(), modelType, obtain);
 		}
 
-		Badge(String name, String emoji, ItemModelType modelType) {
-			this(name, emoji, null, modelType);
+		Badge(String name, String emoji, ItemModelType modelType, String obtain) {
+			this(name, emoji, null, modelType, obtain);
 		}
 
 		private final String name;
 		private final String emoji;
 		private final BiConsumer<BadgeUser, JsonBuilder> consumer;
 		private final ItemModelType modelType;
+		@Nullable
+		private final String howToObtain;
 
 		public void customize(BadgeUser nerd, JsonBuilder json) {
 			if (consumer == null)
