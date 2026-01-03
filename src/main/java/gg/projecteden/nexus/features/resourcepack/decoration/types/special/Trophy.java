@@ -21,6 +21,7 @@ public class Trophy extends DecorationConfig {
 		this.model = trophy.getItemModelType().getModel();
 		this.hitboxes = Hitbox.NONE();
 		this.disabledPlacements = PlacementType.FLOOR.getDisabledPlacements();
+		this.rotatable = true;
 
 		DecorationTagType.setLore(List.of("&7" + trophy), this);
 	}

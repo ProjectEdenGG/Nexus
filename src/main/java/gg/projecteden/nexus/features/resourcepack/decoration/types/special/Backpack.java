@@ -24,6 +24,7 @@ public class Backpack extends DecorationConfig {
 		this.model = tier.getModel().getModel();
 		this.hitboxes = Hitbox.NONE();
 		this.disabledPlacements = PlacementType.FLOOR.getDisabledPlacements();
+		this.rotatable = true;
 		this.overrideTabComplete = true;
 	}
 
