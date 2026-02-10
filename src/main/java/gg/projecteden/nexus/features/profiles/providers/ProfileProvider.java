@@ -50,6 +50,8 @@ import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
+import gg.projecteden.nexus.models.store.Contributor;
+import gg.projecteden.nexus.models.store.ContributorService;
 import gg.projecteden.nexus.models.trust.TrustsUserService;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -71,6 +73,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -189,6 +192,13 @@ public class ProfileProvider extends InventoryProvider {
 				ItemBuilder item = new ItemBuilder(badge.getModelType())
 					.name(badge.getName() + " Badge")
 					.lore(badge.getLore(targetBadgeUser));
+
+				if (badge == Badge.SUPPORTER) {
+					Contributor contributor = new ContributorService().get(targetUser);
+					item.lore("&3This Month: &e" + contributor.getMonthlySumFormatted(YearMonth.now()));
+					item.lore("&3Total: &e" + contributor.getSumFormatted());
+				}
+
 				contents.set(SlotPos.of(0, column), ClickableItem.empty(item));
 			});
 		} else {

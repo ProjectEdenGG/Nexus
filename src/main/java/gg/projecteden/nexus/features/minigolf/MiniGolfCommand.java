@@ -120,10 +120,10 @@ public class MiniGolfCommand extends CustomCommand {
 		if (enable == null)
 			enable = !user.isDebug();
 
-		if (!user.isPlaying()) {
-			send("not playing minigolf");
-			return;
-		}
+//		if (!user.isPlaying()) {
+//			send("not playing minigolf");
+//			return;
+//		}
 
 		user.setDebug(enable);
 		send("set debug to: " + user.isDebug());

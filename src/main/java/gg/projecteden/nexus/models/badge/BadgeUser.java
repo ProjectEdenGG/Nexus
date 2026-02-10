@@ -132,9 +132,9 @@ public class BadgeUser implements PlayerOwnedObject {
 		SPOTIFY(SocialMediaSite.SPOTIFY),
 		REDDIT(SocialMediaSite.REDDIT),
 		GITHUB(SocialMediaSite.GITHUB),
-		MONTHLY_PODIUMS_FIRST("Monthly Podiums - 1st place", CustomEmoji.PODIUM_FIRST.getChar(), MONTHLY_PODIUM_CONSUMER, ItemModelType.BADGE_MONTHLY_FIRST, "Being 1st place on any podium from the previous month"),
-		MONTHLY_PODIUMS_SECOND("Monthly Podiums - 2nd place", CustomEmoji.PODIUM_SECOND.getChar(), MONTHLY_PODIUM_CONSUMER, ItemModelType.BADGE_MONTHLY_SECOND, "Being 2nd place on any podium from the previous month"),
-		MONTHLY_PODIUMS_THIRD("Monthly Podiums - 3rd place", CustomEmoji.PODIUM_THIRD.getChar(), MONTHLY_PODIUM_CONSUMER, ItemModelType.BADGE_MONTHLY_THIRD, "Being 3rd place on any podium from the previous month"),
+		MONTHLY_PODIUMS_FIRST("Monthly Podiums - 1st place", CustomEmoji.PODIUM_FIRST.getChar(), MONTHLY_PODIUM_CONSUMER, ItemModelType.BADGE_MONTHLY_FIRST, "Given for being 1st place on any podium from the previous month"),
+		MONTHLY_PODIUMS_SECOND("Monthly Podiums - 2nd place", CustomEmoji.PODIUM_SECOND.getChar(), MONTHLY_PODIUM_CONSUMER, ItemModelType.BADGE_MONTHLY_SECOND, "Given for being 2nd place on any podium from the previous month"),
+		MONTHLY_PODIUMS_THIRD("Monthly Podiums - 3rd place", CustomEmoji.PODIUM_THIRD.getChar(), MONTHLY_PODIUM_CONSUMER, ItemModelType.BADGE_MONTHLY_THIRD, "Given for being 3rd place on any podium from the previous month"),
 		CONNECT4_CHAMPION("Connect4 Champion", CustomEmoji.CONNECT4, ItemModelType.BADGE_CONNECT4, "Win a Connect4 Tournament"),
 
 		;

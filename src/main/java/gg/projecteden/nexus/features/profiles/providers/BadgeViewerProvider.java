@@ -40,7 +40,7 @@ public class BadgeViewerProvider extends InventoryProvider {
 				.name(badge.getName() + " Badge")
 				.lore(badge.getLore(badgeUser))
 				.lore("")
-				.lore("&3How To Obtain:")
+				.lore("&3How to obtain:")
 				.lore("&e" + badge.getHowToObtain());
 
 			items.add(ClickableItem.empty(item));

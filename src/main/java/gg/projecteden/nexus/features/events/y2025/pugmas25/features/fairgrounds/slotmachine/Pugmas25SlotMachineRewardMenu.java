@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Rows(5)
-@Title("Slot Machine Rewards")
 public class Pugmas25SlotMachineRewardMenu extends InventoryProvider {
 	ItemBuilder infoItem = new ItemBuilder(ItemModelType.GUI_INFO).name("&eInfo").lore("&e2 &3of a kind -> &eHalf reward", "&e3 &3of a kind -> &eFull reward").itemFlags(ItemFlags.HIDE_ALL);
 	ItemBuilder categoryPrize = new ItemBuilder(Material.EMERALD).name("&aPrizes").itemFlags(ItemFlags.HIDE_ALL);
@@ -24,7 +23,7 @@ public class Pugmas25SlotMachineRewardMenu extends InventoryProvider {
 
 	@Override
 	public String getTitle() {
-		return blankTexture();
+		return blankTexture() + "&8Slot Machine Rewards";
 	}
 
 	@Override

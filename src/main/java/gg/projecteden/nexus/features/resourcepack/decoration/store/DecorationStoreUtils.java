@@ -154,9 +154,12 @@ public class DecorationStoreUtils {
 			if (itemFrame == null) {
 				// BedAdditions
 				if (MaterialTag.BEDS.isTagged(targetBlock)) {
+					DecorationStoreManager.debug(player, "  checking bed additions");
 					BedInteractionData bedData = new BedInteractionData(player, targetBlock, null, true);
 					if (!bedData.getAdditionsLeft().isEmpty()) {
-						itemFrame = bedData.getAdditionsLeft().keySet().stream().toList().get(0);
+						itemFrame = bedData.getAdditionsLeft().keySet().stream().toList().getFirst();
+					} else {
+						DecorationStoreManager.debug(player, "  found nothing");
 					}
 				}
 			}
