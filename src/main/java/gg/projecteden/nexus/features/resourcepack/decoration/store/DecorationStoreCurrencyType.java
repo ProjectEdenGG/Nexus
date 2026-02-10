@@ -4,6 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.TypeConfig;
+import gg.projecteden.nexus.features.resourcepack.decoration.TypeConfigPricing;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.MultiState;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
@@ -33,7 +34,7 @@ public enum DecorationStoreCurrencyType {
 	MONEY(85,
 		vars -> new BankerService().has(vars.getPlayer(), vars.getPrice(), vars.getShopGroup()),
 		vars -> new BankerService().withdraw(TransactionCause.DECORATION_STORE.of(null, vars.getPlayer(), BigDecimal.valueOf(-vars.getPrice()), vars.getShopGroup(), vars.getProductName())),
-		typeConfig -> typeConfig.money(),
+		type -> type.getTypeConfigMoney(),
 		price -> StringUtils.prettyMoney(price),
 		price -> "&3Price: &a"
 	),
@@ -41,7 +42,7 @@ public enum DecorationStoreCurrencyType {
 	TOKENS(15,
 		vars -> new EventUserService().get(vars.getPlayer()).getTokens() >= vars.getPrice(),
 		vars -> new EventUserService().get(vars.getPlayer()).charge((int) Math.ceil(vars.getPrice())),
-		typeConfig -> typeConfig.tokens(),
+		type -> type.getTypeConfigTokens(),
 		price -> price + " tokens",
 		price -> "&3Tokens: &a" + price
 	),
@@ -51,7 +52,7 @@ public enum DecorationStoreCurrencyType {
 	private final int skullPrice;
 	private final Predicate<Variables> checkFunds;
 	private final Consumer<Variables> withdraw;
-	private final Function<TypeConfig, Integer> price;
+	private final Function<DecorationType, Integer> price;
 	private final Function<Integer, String> pricePretty;
 	private final Function<Integer, String> priceLabel;
 
@@ -107,14 +108,13 @@ public enum DecorationStoreCurrencyType {
 		if (type == null)
 			return null;
 
-		TypeConfig typeConfig = type.getTypeConfig();
-		if (typeConfig == null)
+		if (!type.hasTypeConfig())
 			return null;
 
-		if (typeConfig.unbuyable())
+		if (!type.isBuyable())
 			return null;
 
-		int price = this.price.apply(typeConfig);
+		int price = this.price.apply(type);
 		if (price <= -1)
 			return null;
 

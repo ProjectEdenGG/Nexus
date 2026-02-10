@@ -152,8 +152,8 @@ public class CatalogThemeProvider extends InventoryProvider {
 			return new ArrayList<>();
 
 		return tree.getDecorationTypes().stream()
-				.filter(type -> type.getTypeConfig().theme() == theme)
-				.filter(type -> !type.getTypeConfig().unbuyable())
+			.filter(type -> type.getTypeConfigTheme() == theme)
+			.filter(type -> type.isBuyable())
 				.filter(type -> {
 					Integer price = currency.getPriceDecor(type.getConfig(), DecorationStoreType.CATALOG);
 					return price != null && price != -1;

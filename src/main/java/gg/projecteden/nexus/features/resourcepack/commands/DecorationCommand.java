@@ -651,11 +651,14 @@ public class DecorationCommand extends CustomCommand {
 				if (type == null)
 					return true;
 
-				TypeConfig typeConfig = type.getTypeConfig();
-				if (typeConfig == null || typeConfig.tabs().length == 0)
+				if (!type.hasTypeConfig())
 					return true;
 
-				return Arrays.stream(typeConfig.tabs()).toList().getLast() != Tab.INTERNAL;
+				Catalog.Tab[] tabs = type.getTypeConfigTabs();
+				if (tabs.length == 0)
+					return true;
+
+				return Arrays.stream(tabs).toList().getLast() != Tab.INTERNAL;
 			})
 			.map(DecorationConfig::getId)
 			.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
