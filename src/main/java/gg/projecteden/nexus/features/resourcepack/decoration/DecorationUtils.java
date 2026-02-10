@@ -483,7 +483,7 @@ public class DecorationUtils {
 	public static CustomCreativeItem[] getCreativeItems() {
 		List<CustomCreativeItem> items = new ArrayList<>();
 		items.addAll(Arrays.stream(DecorationType.values())
-			.filter(decorationType -> Arrays.stream(decorationType.getTypeConfig().tabs()).noneMatch(tab -> tab == Tab.INTERNAL))
+			.filter(decorationType -> Arrays.stream(decorationType.getTypeConfigTabs()).noneMatch(tab -> tab == Tab.INTERNAL))
 			.map(CustomCreativeItem::new)
 			.toList());
 
