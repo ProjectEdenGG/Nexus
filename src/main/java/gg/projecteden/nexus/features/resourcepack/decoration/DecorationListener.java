@@ -300,6 +300,14 @@ public class DecorationListener implements Listener {
 		if (data.getDecoration() == null)
 			return;
 
+		int flowerPots = data.getDecoration().getConfig().getHitboxes().stream()
+			.filter(hitbox -> hitbox.getMaterial() == Material.FLOWER_POT)
+			.toList()
+			.size();
+
+		if (flowerPots == 0)
+			return;
+
 		DecorationLang.debug(event.getPlayer(), "manipulate decoration hitbox (flowerpot)");
 		event.setCancelled(true);
 	}
