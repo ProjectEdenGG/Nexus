@@ -51,6 +51,7 @@ repositories {
     maven { url = uri("https://repo.repsy.io/mvn/quantiom/minecraft") }
     maven { url = uri("https://nexus.neetgames.com/repository/maven-public") }
     maven { url = uri("https://maven.playpro.com/") }
+    maven { url = uri("https://repo.magmaguy.com/releases") }
 
 //    maven("https://repo.mineinabyss.com/releases") // PlayerAnimator
 }
@@ -77,6 +78,7 @@ dependencies {
     implementation("fr.skytasul:glowingentities:1.4.3")
     implementation("tech.blastmc.lights:LxGoAPI:1.0.10-SNAPSHOT")
     implementation("de.sfuhrm:sudoku:5.0.1")
+    implementation(platform("com.intellectualsites.bom:bom-newest:1.56")) // Ref: https://github.com/IntellectualSites/bom
     compileOnly("mysql:mysql-connector-java:8.0.33")
     compileOnly("org.slf4j:slf4j-api:2.0.5")
     compileOnly("gg.projecteden.crates:api:1.0.7-SNAPSHOT")
@@ -100,13 +102,12 @@ dependencies {
     compileOnly("world.bentobox:bentobox:1.20.1-SNAPSHOT")
     compileOnly("nl.pim16aap2:BigDoors:0.1.8.39")
     compileOnly("net.coreprotect:coreprotect:23.0")
-    compileOnly("com.magmaguy:BetterStructures:1.4.1-SNAPSHOT")
-    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.12.4-SNAPSHOT")
-    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.12.4-SNAPSHOT") { isTransitive = false }
+    compileOnly("com.magmaguy:BetterStructures:1.7.0")
+    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core")
+    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit") { isTransitive = false }
     compileOnly("com.griefcraft:lwc:2.3.2-dev")
-    implementation(platform("com.intellectualsites.bom:bom-1.18.x:1.20"))
-    compileOnly("com.plotsquared:PlotSquared-Core")
-    compileOnly("com.plotsquared:PlotSquared-Bukkit")
+    compileOnly("com.intellectualsites.plotsquared:plotsquared-core")
+    compileOnly("com.intellectualsites.plotsquared:plotsquared-bukkit") { isTransitive = false }
     compileOnly("net.citizensnpcs:citizensapi:2.0.37-SNAPSHOT")
     compileOnly("net.citizensnpcs:citizens-main:2.0.37-SNAPSHOT") {
         exclude("*", "*")
