@@ -26,7 +26,7 @@ public class CustomCreativeItem {
 	public CustomCreativeItem(DecorationType decorationType) {
 		this.itemStack = decorationType.getConfig().getItem();
 		this.item = NBT.serializeItemStack(itemStack);
-		this.category = "Decorations: " + StringUtils.camelCase(decorationType.getTypeConfig().theme());
+		this.category = "Decorations: " + StringUtils.camelCase(decorationType.getTypeConfigTheme());
 	}
 
 	public CustomCreativeItem(ItemBuilder item, String category) {

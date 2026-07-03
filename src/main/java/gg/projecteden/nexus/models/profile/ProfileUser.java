@@ -12,6 +12,7 @@ import gg.projecteden.nexus.features.resourcepack.models.font.CustomFont;
 import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
 import gg.projecteden.nexus.models.friends.FriendsUser;
 import gg.projecteden.nexus.models.friends.FriendsUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -31,8 +32,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -57,6 +60,7 @@ public class ProfileUser implements PlayerOwnedObject {
 	private Set<CreatedColor> createdColors = new HashSet<>();
 	private Set<ProfileTextureType> unlockedTextureTypes = new HashSet<>();
 	private ProfileTitleFont titleFont = ProfileTitleFont.BLOCKY;
+	private Map<Badge, Integer> badges = new HashMap<>();
 
 	public Color getBukkitBackgroundColor() {
 		return ColorType.toBukkitColor(this.backgroundColor);

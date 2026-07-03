@@ -11,6 +11,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bukkit.inventory.ItemStack;
 
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Backpack extends DecorationConfig {
 	@Getter
@@ -19,11 +21,12 @@ public class Backpack extends DecorationConfig {
 	public Backpack(BackpackTier tier) {
 		this.tier = tier;
 		this.id = "backpack_3d_" + tier.name().toLowerCase();
-		this.name = "Backpack";
+		this.name = (tier == BackpackTier.BASIC ? "" : camelCase(tier) + " ") + "Backpack";
 		this.material = Backpacks.getDefaultBackpack().getType();
 		this.model = tier.getModel().getModel();
 		this.hitboxes = Hitbox.NONE();
 		this.disabledPlacements = PlacementType.FLOOR.getDisabledPlacements();
+		this.rotatable = true;
 		this.overrideTabComplete = true;
 	}
 

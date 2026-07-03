@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox.LightHitbox;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
 import gg.projecteden.nexus.utils.MathUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -129,6 +130,17 @@ public class HitboxEnums {
 			Hitbox.offset(BlockFace.EAST, 1),
 			Hitbox.offset(BlockFace.UP, 1),
 			Hitbox.offset(BlockFace.UP, 1, BlockFace.EAST, 1)
+		)),
+
+		_2x2x2(List.of(
+			Hitbox.origin(),
+			Hitbox.offset(BlockFace.EAST, 1),
+			Hitbox.offset(BlockFace.NORTH, 1),
+			Hitbox.offset(BlockFace.NORTH, 1, BlockFace.EAST, 1),
+			Hitbox.offset(BlockFace.UP, 1),
+			Hitbox.offset(BlockFace.UP, 1, BlockFace.EAST, 1),
+			Hitbox.offset(BlockFace.UP, 1, BlockFace.NORTH, 1),
+			Hitbox.offset(BlockFace.UP, 1, BlockFace.NORTH, 1, BlockFace.EAST, 1)
 		)),
 
 		_2x3V(List.of(
@@ -329,17 +341,6 @@ public class HitboxEnums {
 		GIANT_CANDLE_LIT(List.of(
 			Hitbox.origin(),
 			Hitbox.offsetLight(15, BlockFace.UP, 1)
-		)),
-
-		CARDBOARD_BOX(List.of(
-				Hitbox.origin(),
-				Hitbox.offset(BlockFace.EAST, 1),
-				Hitbox.offset(BlockFace.NORTH, 1),
-				Hitbox.offset(BlockFace.NORTH, 1, BlockFace.EAST, 1),
-				Hitbox.offset(BlockFace.UP, 1),
-				Hitbox.offset(BlockFace.UP, 1, BlockFace.EAST, 1),
-				Hitbox.offset(BlockFace.UP, 1, BlockFace.NORTH, 1),
-				Hitbox.offset(BlockFace.UP, 1, BlockFace.NORTH, 1, BlockFace.EAST, 1)
 		)),
 
 		DRUM_KIT(List.of(

@@ -133,6 +133,7 @@ public enum Pugmas25QuestProgress {
 		}
 	},
 
+	@Repeatable
 	ANGLER(Pugmas25NPC.ANGLER) {
 		@Override
 		public Pugmas25QuestStatus getStatus(Pugmas25User user) {
@@ -165,6 +166,7 @@ public enum Pugmas25QuestProgress {
 		}
 	},
 
+	@Repeatable
 	DAILY_FAIRGROUND_TOKENS(null) {
 		@Override
 		public Pugmas25QuestStatus getStatus(Pugmas25User user) {

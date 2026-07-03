@@ -571,6 +571,9 @@ public class Pugmas25 extends EdenEvent {
 				if (fakeQuest.isRepeatable())
 					continue;
 
+				if (fakeQuest == Pugmas25QuestProgress.MINI_NUTCRACKERS)
+					continue;
+
 				var status = fakeQuest.getStatus(new Pugmas25UserService().get(player));
 				if (status != Pugmas25QuestStatus.COMPLETED) {
 					incomplete = true;
@@ -592,7 +595,7 @@ public class Pugmas25 extends EdenEvent {
 					Dialog.genericGreeting(quester, npc);
 				else
 					new Dialog(npc)
-						.npc("Thanks for helping out the village! We are finally ready for the holidays, thank to you!")
+						.npc("Thanks for helping out the village! We are finally ready for the holidays, thanks to you!")
 						.npc("Here, I think I have an extra cake you can have, as a token of my appreciation")
 						.give(Pugmas25QuestItem.SLOT_MACHINE_TOKEN.get())
 						.reward(Pugmas25QuestReward.TROPHY_ANNIVERSARY_CAKE)

@@ -91,7 +91,7 @@ public enum Pugmas25SlotMachineReward {
 			int maxAmount = 3;
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
-			PlayerUtils.giveItem(player, Pugmas25QuestItem.SLOT_MACHINE_TOKEN.getItemBuilder().clone().amount(finalAmount).build());
+			PlayerUtils.giveItem(player, Pugmas25QuestItem.SLOT_MACHINE_TOKEN.getItemBuilder().amount(finalAmount).build());
 			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3slot machine tokens have been added to your inventory");
 			if (additional > 0)
 				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3slot machine tokens given from Lucky Horseshoe");
@@ -101,7 +101,7 @@ public enum Pugmas25SlotMachineReward {
 			int maxAmount = 5;
 			int finalAmount = Pugmas25.getLuckyHorseshoeAmount(player, preAmount, maxAmount);
 			int additional = finalAmount - preAmount;
-			PlayerUtils.giveItem(player, Pugmas25QuestItem.SLOT_MACHINE_TOKEN.getItemBuilder().clone().amount(finalAmount).build());
+			PlayerUtils.giveItem(player, Pugmas25QuestItem.SLOT_MACHINE_TOKEN.getItemBuilder().amount(finalAmount).build());
 			PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&e" + preAmount + " &3slot machine tokens have been added to your inventory");
 			if (additional > 0)
 				PlayerUtils.send(player, Pugmas25SlotMachine.PREFIX + "&a+&e" + additional + " &3re-rolls given from Lucky Horseshoe");
