@@ -186,7 +186,7 @@ public class CustomEnchantsRegistration {
 			});
 
 		// Creates new tag, puts it in the 'frozenTags' map and binds holders to it.
-		nmsItemRegistry().bindTag(customKey, holders);
+		nmsItemRegistry().bindTags(Map.of(customKey, holders));
 
 		return getFrozenTags(nmsItemRegistry()).get(customKey);
 	}
@@ -215,7 +215,7 @@ public class CustomEnchantsRegistration {
 		List<Holder<net.minecraft.world.item.enchantment.Enchantment>> holders = new ArrayList<>();
 
 		// Creates new tag, puts it in the 'frozenTags' map and binds holders to it.
-		nmsRegistry().bindTag(customKey, holders);
+		nmsRegistry().bindTags(Map.of(customKey, holders));
 
 		return getFrozenTags(nmsRegistry()).get(customKey);
 	}

@@ -28,7 +28,6 @@ import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.ComponentLike;
@@ -215,7 +214,6 @@ public class Chat extends Feature {
 		private final ComponentLike message;
 		private final Function<Player, JsonBuilder> messageFunction;
 		private final MuteMenuItem muteMenuItem;
-		private final MessageType messageType;
 		private final List<Target> targets;
 		private final List<UUID> include;
 		private final List<UUID> exclude;
@@ -224,14 +222,13 @@ public class Chat extends Feature {
 
 		@Builder(buildMethodName = "send", builderMethodName = "all")
 		public Broadcast(PublicChannel channel, Identity sender, String prefix, ComponentLike message, Function<Player, JsonBuilder> messageFunction, MuteMenuItem muteMenuItem,
-						 MessageType messageType, List<Target> targets, List<UUID> include, List<UUID> exclude, boolean checkCanSeeSender, boolean hideFromConsole) {
+						 List<Target> targets, List<UUID> include, List<UUID> exclude, boolean checkCanSeeSender, boolean hideFromConsole) {
 			this.channel = channel == null ? ChatManager.getMainChannel() : channel;
 			this.sender = sender == null ? Identity.nil() : sender;
 			this.prefix = prefix;
 			this.message = message;
 			this.messageFunction = messageFunction;
 			this.muteMenuItem = muteMenuItem == null ? this.channel.getMuteMenuItem() : muteMenuItem;
-			this.messageType = messageType == null ? MessageType.SYSTEM : messageType;
 			this.targets = isNullOrEmpty(targets) ? List.of(Target.INGAME, Target.DISCORD) : targets;
 			this.include = include;
 			this.exclude = exclude;
@@ -297,9 +294,8 @@ public class Chat extends Feature {
 						final Set<Chatter> recipients = broadcast.channel.getRecipients(sender);
 						players = recipients.stream().map(Chatter::getOnlinePlayer).toList();
 
-						if (broadcast.messageType == MessageType.CHAT)
-							if (broadcast.muteMenuItem != null && broadcast.muteMenuItem.name().startsWith("CHANNEL_"))
-								new PublicChatEvent(sender, broadcast.channel, AdventureUtils.asLegacyText(component)).checkWasSeen();
+						if (broadcast.muteMenuItem != null && broadcast.muteMenuItem.name().startsWith("CHANNEL_"))
+							new PublicChatEvent(sender, broadcast.channel, AdventureUtils.asLegacyText(component)).checkWasSeen();
 					}
 
 					players.stream()
@@ -319,9 +315,7 @@ public class Chat extends Feature {
 							}
 							return true;
 						})
-						// TODO - 1.19.2 Chat Validation Kick
-						// .forEach(chatter -> chatter.sendMessage(broadcast.sender, broadcast.getMessage(this, chatter), broadcast.messageType));
-						.forEach(chatter -> chatter.sendMessage(broadcast.getMessage(this, chatter), broadcast.messageType));
+						.forEach(chatter -> chatter.sendMessage(broadcast.getMessage(this, chatter)));
 				}
 			},
 			DISCORD(StringUtils::getDiscordPrefix) {

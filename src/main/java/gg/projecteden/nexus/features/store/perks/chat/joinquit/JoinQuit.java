@@ -28,7 +28,6 @@ import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
-import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -89,9 +88,7 @@ public class JoinQuit extends Feature implements Listener {
 
 			for (Player receiver : OnlinePlayers.getAll()) {
 				if (!MuteMenuUser.hasMuted(receiver, MuteMenuItem.JOIN_QUIT))
-					// TODO - 1.19.2 Chat Validation Kick
-					// receiver.sendMessage(player, component, MessageType.CHAT);
-					receiver.sendMessage(component, MessageType.CHAT);
+					receiver.sendMessage(component);
 			}
 
 			if (!player.hasPlayedBefore())
@@ -156,13 +153,9 @@ public class JoinQuit extends Feature implements Listener {
 				continue;
 
 			if (reason != QuitReason.DISCONNECTED && Rank.of(receiver).isStaff())
-				// TODO - 1.19.2 Chat Validation Kick
-				// receiver.sendMessage(player, staffComponent, MessageType.CHAT);
-				receiver.sendMessage(staffComponent, MessageType.CHAT);
+				receiver.sendMessage(staffComponent);
 			else
-				// TODO - 1.19.2 Chat Validation Kick
-				// receiver.sendMessage(player, component, MessageType.CHAT);
-				receiver.sendMessage(component, MessageType.CHAT);
+				receiver.sendMessage(component);
 		}
 
 		Jingle.QUIT.playAll();

@@ -15,7 +15,7 @@ import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.network.syncher.SynchedEntityData.DataValue;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
@@ -102,7 +102,7 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 			uuid = UUID.randomUUID();
 
 		if (entity == null) {
-			entity = new ArmorStand(EntityType.ARMOR_STAND, NMSUtils.toNMS(location.getWorld()));
+			entity = new ArmorStand(EntityTypes.ARMOR_STAND, NMSUtils.toNMS(location.getWorld()));
 			id = entity.getId();
 			entityUuid = entity.getUUID();
 		}
@@ -155,7 +155,7 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 			entity.getZ(),
 			entity.getRotationVector().x,
 			entity.getRotationVector().y,
-			EntityType.ARMOR_STAND,
+			EntityTypes.ARMOR_STAND,
 			0,
 			Vec3.ZERO,
 			0

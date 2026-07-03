@@ -20,10 +20,15 @@ import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContentService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
+import gg.projecteden.nexus.utils.TitleBuilder;
 import net.citizensnpcs.api.npc.NPC;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -584,7 +589,7 @@ public class BearFair21PugmasIsland implements BearFair21Island {
 	private static void removeContent(BearFair21User user, Content content) {
 		BearFair21ClientsideContentManager.sendRemoveContent(user.getOnlinePlayer(), Collections.singletonList(content));
 		BearFair21ClientsideContentManager.sendRemoveEntityFrom(user.getOnlinePlayer(),
-				content.getLocation().getBlock().getRelative(0, 1, 0).getLocation(), EntityType.ARMOR_STAND);
+				content.getLocation().getBlock().getRelative(0, 1, 0).getLocation(), EntityTypes.ARMOR_STAND);
 	}
 
 	@EventHandler

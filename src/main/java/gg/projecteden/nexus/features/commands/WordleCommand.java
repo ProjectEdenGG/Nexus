@@ -31,7 +31,6 @@ import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import net.kyori.adventure.audience.MessageType;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -434,7 +433,6 @@ public class WordleCommand extends CustomCommand implements Listener {
 									.sender(player)
 									.message(message)
 									.prefix("Wordle")
-									.messageType(MessageType.CHAT)
 									.muteMenuItem(MuteMenuItem.WORDLE)
 									.send();
 							});

@@ -30,7 +30,6 @@ import gg.projecteden.nexus.utils.Tasks;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
-import net.kyori.adventure.audience.MessageType;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -104,7 +103,6 @@ public class Koda {
 				.next(message)
 			)
 			.muteMenuItem(muteMenuItem)
-			.messageType(MessageType.CHAT)
 			.send();
 	}
 
@@ -201,7 +199,6 @@ public class Koda {
 				.channel(channel)
 				.sender(event.getChatter()) // Set sender to the sender of the trigger, so that the mute carries over
 				.message(viewer -> channel.getChatterFormat(chatter, Chatter.of(viewer), false).next(finalResponse))
-				.messageType(MessageType.CHAT)
 				.send();
 
 			if (StaticChannel.GLOBAL.getChannel().equals(channel))

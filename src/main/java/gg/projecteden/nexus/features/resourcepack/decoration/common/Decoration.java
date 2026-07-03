@@ -46,11 +46,12 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.Rotation;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
-import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -260,7 +261,7 @@ public class Decoration {
 		}
 
 		DecorationEntityData.of(itemFrame).setProcessDestroy(true);
-		new HangingBreakByEntityEvent(itemFrame, player, RemoveCause.ENTITY).callEvent(); // For CoreProtect
+		new HangingBreakByEntityEvent(itemFrame, player, DamageSource.builder(DamageType.PLAYER_ATTACK).withCausingEntity(player).build()).callEvent(); // For CoreProtect
 
 		ItemFrameRotation rotation = getRotation();
 		BlockFace finalFace = BlockFace.UP;

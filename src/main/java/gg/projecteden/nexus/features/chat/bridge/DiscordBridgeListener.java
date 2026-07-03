@@ -26,7 +26,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
@@ -92,7 +91,7 @@ public class DiscordBridgeListener extends ListenerAdapter {
 			.next(getReplyContent(event, channel.get(), viewer))
 			.group()
 			.next(json)
-		).messageType(MessageType.CHAT).send();
+		).send();
 	}
 
 	private JsonBuilder getReplyContent(MessageReceivedEvent event, PublicChannel channel, Player viewer) {

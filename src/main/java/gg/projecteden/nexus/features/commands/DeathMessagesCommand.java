@@ -42,10 +42,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
-import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.TranslationArgument;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.event.HoverEvent.ShowEntity;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -256,9 +256,9 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 			.group();
 
 		if (deathMessageRaw instanceof TranslatableComponent deathMessage) {
-			output.next(deathMessage.args(deathMessage.args().stream().map(arg -> handleArgument(deathMessages, arg)).toList()));
+			output.next(deathMessage.arguments(deathMessage.arguments().stream().map(arg -> TranslationArgument.component(handleArgument(deathMessages, arg.asComponent()))).toList()));
 		} else {
-			Nexus.warn("Death message ("+deathMessageRaw.examinableName()+") is not translatable: " + AdventureUtils.asPlainText(deathMessageRaw));
+			Nexus.warn("Death message ("+deathMessageRaw+") is not translatable: " + AdventureUtils.asPlainText(deathMessageRaw));
 			output.next(deathMessageRaw);
 		}
 
@@ -267,7 +267,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		event.deathMessage(null);
 
 		if (deathMessages.getBehavior() == Behavior.SHOWN) {
-			Broadcast.ingame().sender(player).message(output).messageType(MessageType.CHAT).muteMenuItem(MuteMenuItem.DEATH_MESSAGES).send();
+			Broadcast.ingame().sender(player).message(output).muteMenuItem(MuteMenuItem.DEATH_MESSAGES).send();
 
 			if (worldGroup == WorldGroup.SURVIVAL)
 				discord(deathString, player);
@@ -295,9 +295,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		Chatter chatter = new ChatterService().get(player);
 		for (Chatter recipient : StaticChannel.LOCAL.getChannel().getRecipients(chatter))
 			if (!MuteMenuUser.hasMuted(recipient.getOnlinePlayer(), MuteMenuItem.DEATH_MESSAGES))
-				// TODO - 1.19.2 Chat Validation Kick
-				// recipient.sendMessage(player, output, MessageType.CHAT);
-				recipient.sendMessage(output, MessageType.CHAT);
+				recipient.sendMessage(output);
 	}
 
 	public static Component handleArgument(DeathMessages player, Component component) {
@@ -367,11 +365,8 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 			}
 
 			// if that failed or was empty, get a translatable text component instead
-			if (finalComponent == failsafeComponent) {
-				String key = Bukkit.getUnsafe().getTranslationKey(entity.getType());
-				if (key != null)
-					finalComponent = Component.translatable(key);
-			}
+			if (finalComponent == failsafeComponent)
+				finalComponent = Component.translatable(entity.getType().translationKey());
 		}
 		return finalComponent;
 	}

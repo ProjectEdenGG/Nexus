@@ -882,7 +882,7 @@ public class JsonBuilder implements ComponentLike {
 	 */
 	@NotNull @Contract("_ -> this")
 	public JsonBuilder bookPage(int page) {
-		return bookPage(String.valueOf(page));
+		return clickEvent(ClickEvent.changePage(page));
 	}
 
 	/**
@@ -892,7 +892,7 @@ public class JsonBuilder implements ComponentLike {
 	 */
 	@NotNull @Contract("_ -> this")
 	public JsonBuilder bookPage(@NotNull String page) {
-		return clickEvent(ClickEvent.changePage(page));
+		return clickEvent(ClickEvent.changePage(Integer.parseInt(page)));
 	}
 
 	/**

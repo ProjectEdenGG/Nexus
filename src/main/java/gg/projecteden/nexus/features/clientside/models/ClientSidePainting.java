@@ -14,7 +14,7 @@ import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.syncher.SynchedEntityData.DataValue;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.decoration.painting.Painting;
 import org.bukkit.Art;
 import org.bukkit.Location;
@@ -74,7 +74,7 @@ public class ClientSidePainting implements IClientSideEntity<ClientSidePainting,
 			uuid = UUID.randomUUID();
 
 		if (entity == null) {
-			entity = new Painting(EntityType.PAINTING, NMSUtils.toNMS(location.getWorld()));
+			entity = new Painting(EntityTypes.PAINTING, NMSUtils.toNMS(location.getWorld()));
 			id = entity.getId();
 			entityUuid = entity.getUUID();
 		}

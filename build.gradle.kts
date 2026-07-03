@@ -6,9 +6,9 @@ val edenApiVersion: String by project
 plugins {
     `java-library`
     `maven-publish`
-    id("io.freefair.lombok") version "8.11"
-    id("com.gradleup.shadow") version "8.3.0"
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.19"
+    id("io.freefair.lombok") version "9.5.0"
+    id("com.gradleup.shadow") version "9.3.0"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.21"
 }
 
 repositories {
@@ -100,9 +100,9 @@ dependencies {
     compileOnly("world.bentobox:bentobox:1.20.1-SNAPSHOT")
     compileOnly("nl.pim16aap2:BigDoors:0.1.8.39")
     compileOnly("net.coreprotect:coreprotect:23.0")
-    compileOnly("com.magmaguy:BetterStructures:1.4.1-SNAPSHOT")
-    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.12.4-SNAPSHOT")
-    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.12.4-SNAPSHOT") { isTransitive = false }
+    //compileOnly("com.magmaguy:BetterStructures:2.6.2-SNAPSHOT")
+    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.15.2-SNAPSHOT")
+    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.15.2-SNAPSHOT") { isTransitive = false }
     compileOnly("com.griefcraft:lwc:2.3.2-dev")
     implementation(platform("com.intellectualsites.bom:bom-1.18.x:1.20"))
     compileOnly("com.plotsquared:PlotSquared-Core")
@@ -142,7 +142,7 @@ publishing {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(25))
 }
 
 tasks {
@@ -152,9 +152,17 @@ tasks {
 
     compileJava {
         options.encoding = Charsets.UTF_8.name()
-        options.release.set(21)
+        options.release.set(25)
         options.compilerArgs.add("-parameters")
         options.compilerArgs.add("-proc:full")
+        options.compilerArgs.addAll(
+            listOf(
+                "-Xlint:-unchecked",
+                "-Xlint:-deprecation",
+                "-Xlint:-removal",
+                "-Xlint:-dep-ann"
+            )
+        )
     }
 
     javadoc { options.encoding = Charsets.UTF_8.name() }
