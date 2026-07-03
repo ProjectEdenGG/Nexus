@@ -78,7 +78,6 @@ public class InvisibleItemFrame extends FunctionalRecipe {
 		return RecipeBuilder.surround(CustomRecipes.getLingeringInvisibilityPotionItems())
 			.with(Material.ITEM_FRAME)
 			.toMake(getItem().clone().amount(8).build())
-			.build()
 			.getRecipe();
 	}
 
