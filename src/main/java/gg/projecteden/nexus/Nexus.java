@@ -34,7 +34,6 @@ import gg.projecteden.nexus.utils.protection.ProtectionUtils;
 import it.sauronsoftware.cron4j.Scheduler;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import me.lucko.spark.api.Spark;
 import me.lucko.spark.api.SparkProvider;
 import net.buycraft.plugin.bukkit.BuycraftPluginBase;
@@ -74,8 +73,6 @@ public class Nexus extends JavaPlugin {
 	@Getter
 	private static Thread thread;
 	public static final LocalDateTime EPOCH = LocalDateTime.now();
-	@Getter
-	private final static HeadDatabaseAPI headAPI = new HeadDatabaseAPI();
 	private static API api;
 	public static final String DOMAIN = "projecteden.gg";
 

@@ -5,8 +5,14 @@ import gg.projecteden.nexus.hooks.IHook;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class BentoBoxHook extends IHook<BentoBoxHook> {
+
+	@Override
+	protected @NotNull String getPluginName() {
+		return "BentoBox";
+	}
 
 	public World getOneBlockWorld() {
 		return Bukkit.getWorld("oneblock_world");

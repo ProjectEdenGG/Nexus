@@ -36,7 +36,7 @@ import java.util.UUID;
 @Getter
 public class Nameplates extends Feature {
 	private final PushService pushService = new PushService();
-	private final NameplateManager nameplateManager;
+	private NameplateManager nameplateManager;
 	private final PushTeamAssigner defaultTeamAssigner = new PushTeamAssigner();
 	@Getter(value = AccessLevel.NONE)
 	private final Map<UUID, TeamAssigner> teamAssigners = new HashMap<>();
@@ -45,14 +45,11 @@ public class Nameplates extends Feature {
 	@Getter
 	private static boolean debug;
 
-	public Nameplates() {
+	@Override
+	public void onStart() {
 		this.nameplateManager = new NameplateManager();
 		new NameplatesListener();
 		new TameablesNameplateFix();
-	}
-
-	@Override
-	public void onStart() {
 		Tasks.wait(1, () -> {
 			this.nameplateManager.onStart();
 			fixNPCNameplates();

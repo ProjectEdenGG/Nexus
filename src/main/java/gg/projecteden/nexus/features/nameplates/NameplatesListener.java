@@ -6,12 +6,12 @@ import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpda
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
 import gg.projecteden.nexus.features.vanish.events.VanishToggleEvent;
 import gg.projecteden.nexus.framework.features.Features;
+import gg.projecteden.nexus.hooks.libsdisguises.LibsDisguisesHook.LibsDisguisesDisguiseEvent;
+import gg.projecteden.nexus.hooks.libsdisguises.LibsDisguisesHook.LibsDisguisesUndisguiseEvent;
 import gg.projecteden.nexus.models.afk.events.AFKEvent;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import me.libraryaddict.disguise.events.DisguiseEvent;
-import me.libraryaddict.disguise.events.UndisguiseEvent;
 import net.citizensnpcs.api.event.NPCSpawnEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -155,7 +155,7 @@ public class NameplatesListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void on(DisguiseEvent event) {
+	public void on(LibsDisguisesDisguiseEvent event) {
 		if (!(event.getEntity() instanceof Player player))
 			return;
 
@@ -164,7 +164,7 @@ public class NameplatesListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void on(UndisguiseEvent event) {
+	public void on(LibsDisguisesUndisguiseEvent event) {
 		if (!(event.getEntity() instanceof Player player))
 			return;
 

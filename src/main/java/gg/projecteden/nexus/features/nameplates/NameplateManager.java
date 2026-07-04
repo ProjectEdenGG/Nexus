@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.nameplates.packets.NameplateMetadataPacket;
 import gg.projecteden.nexus.features.nameplates.packets.NameplateSpawnPacket;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.models.nameplates.NameplateUserService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.CitizensUtils;
@@ -16,7 +17,6 @@ import gg.projecteden.nexus.utils.nms.packet.EntityDestroyPacket;
 import gg.projecteden.nexus.utils.nms.packet.EntityPassengersPacket;
 import gg.projecteden.nexus.utils.nms.packet.EntitySneakPacket;
 import lombok.Data;
-import me.libraryaddict.disguise.DisguiseAPI;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
@@ -190,7 +190,7 @@ public class NameplateManager {
 				return true;
 			if (player.isDead())
 				return true;
-			if (DisguiseAPI.isDisguised(player))
+			if (Hook.LIBSDISGUISES.isDisguised(player))
 				return true;
 			if (player.hasPotionEffect(PotionEffectType.INVISIBILITY))
 				return true;

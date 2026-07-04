@@ -6,8 +6,14 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.jetbrains.annotations.NotNull;
 
 public class CitizensHook extends IHook<CitizensHook> {
+
+	@Override
+	protected @NotNull String getPluginName() {
+		return "Citizens";
+	}
 
 	public NPCRegistry getRegistry() {
 		return null;

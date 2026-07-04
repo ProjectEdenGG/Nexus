@@ -32,7 +32,7 @@ public class BearFair21RadioHeads implements Listener {
 
 		Location radioHeadLoc = new Location(BearFair21.getWorld(), 16, 119, -19);
 		ItemStack item = ItemUtils.getItem(block);
-		// item.equals(Nexus.getHeadAPI().getItemHead("17150"))
+		// item.equals(Hook.HEADDATABASE.getItemHead("17150"))
 		if (item.equals(ItemUtils.getItem(radioHeadLoc.getBlock()))) {
 			event.setCancelled(true);
 

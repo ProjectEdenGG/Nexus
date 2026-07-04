@@ -19,6 +19,7 @@ import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.features.vanish.events.VanishToggleEvent;
 import gg.projecteden.nexus.framework.commands.Commands;
+import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.tip.Tip;
@@ -39,7 +40,6 @@ import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup.SpawnType;
 import io.papermc.paper.event.player.PlayerTradeEvent;
-import me.libraryaddict.disguise.DisguiseAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
@@ -405,9 +405,9 @@ public class Misc implements Listener {
 
 		switch (event.getNewWorldGroup()) {
 			case MINIGAMES -> {
-				if (DisguiseAPI.isDisguised(player))
+				if (Hook.LIBSDISGUISES.isDisguised(player))
 					if (event.getOldWorldGroup() != WorldGroup.MINIGAMES)
-						DisguiseAPI.undisguiseToAll(player);
+						Hook.LIBSDISGUISES.undisguiseToAll(player);
 			}
 		}
 	}

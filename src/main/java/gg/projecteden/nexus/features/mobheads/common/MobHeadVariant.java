@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.mobheads.common;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.mobheads.MobHeadType;
+import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -27,7 +27,7 @@ public interface MobHeadVariant extends MobHead {
 	}
 
 	default @NotNull ItemStack getItemStack() {
-		return Nexus.getHeadAPI().getItemHead(getHeadId());
+		return Hook.HEADDATABASE.getItemHead(getHeadId());
 	}
 
 	default @NonNull ItemStack getNamedItemStack() {

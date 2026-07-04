@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.pride21;
 
-import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.utils.LocationUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ public enum Decorations {
 	private final int z;
 
 	public @NotNull ItemStack getHead() {
-		return Nexus.getHeadAPI().getItemHead(headID);
+		return Hook.HEADDATABASE.getItemHead(headID);
 	}
 
 	public @NotNull Location getLocation() {

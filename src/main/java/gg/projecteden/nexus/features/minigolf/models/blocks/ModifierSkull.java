@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.minigolf.models.blocks;
 
-import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.models.minigolf.GolfBall;
 import gg.projecteden.nexus.utils.ItemUtils;
 import org.bukkit.Material;
@@ -27,7 +27,7 @@ public abstract class ModifierSkull extends ModifierBlock {
 		if (id == -1) return true;
 
 		ItemStack itemStack = ItemUtils.getItem(block);
-		return String.valueOf(id).equals(Nexus.getHeadAPI().getItemID(itemStack));
+		return String.valueOf(id).equals(Hook.HEADDATABASE.getItemID(itemStack));
 	}
 
 	@Override

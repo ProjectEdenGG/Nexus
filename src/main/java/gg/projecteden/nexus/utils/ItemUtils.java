@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.utils.Debug.DebugType;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
 import gg.projecteden.nexus.utils.nms.NMSUtils;
@@ -536,7 +537,7 @@ public class ItemUtils {
 	public static boolean isSameHead(ItemStack itemStack1, ItemStack itemStack2) {
 		if (Nullables.isNullOrAir(itemStack1) || Nullables.isNullOrAir(itemStack2)) return false;
 		if (itemStack1.getType() != Material.PLAYER_HEAD || itemStack2.getType() != Material.PLAYER_HEAD) return false;
-		return Nexus.getHeadAPI().getItemID(itemStack1).equals(Nexus.getHeadAPI().getItemID(itemStack2));
+		return Hook.HEADDATABASE.getItemID(itemStack1).equals(Hook.HEADDATABASE.getItemID(itemStack2));
 	}
 
 	/**

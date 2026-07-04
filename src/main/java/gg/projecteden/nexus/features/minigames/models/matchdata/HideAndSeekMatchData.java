@@ -10,7 +10,6 @@ import lombok.Data;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;

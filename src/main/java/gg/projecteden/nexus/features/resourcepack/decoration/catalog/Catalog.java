@@ -17,6 +17,7 @@ import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.DyeChoice;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.IOUtils;
@@ -342,7 +343,7 @@ public class Catalog implements Listener {
 		if (config != null) {
 			productId = config.getId();
 		} else {
-			String headId = Nexus.getHeadAPI().getItemID(itemStack);
+			String headId = Hook.HEADDATABASE.getItemID(itemStack);
 			if (headId == null)
 				headId = "Player Head";
 

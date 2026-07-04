@@ -75,7 +75,7 @@ dependencies {
     implementation("com.github.mpkorstanje:simmetrics-core:4.1.1")
     implementation("org.jetbrains:annotations:24.0.1")
     implementation("net.jthink:jaudiotagger:3.0.1")
-    implementation("fr.skytasul:glowingentities:1.4.3")
+    implementation("fr.skytasul:glowingentities:2.0.0")
     implementation("tech.blastmc.lights:LxGoAPI:1.0.10-SNAPSHOT")
     implementation("de.sfuhrm:sudoku:5.0.1")
     implementation(platform("com.intellectualsites.bom:bom-newest:1.56")) // Ref: https://github.com/IntellectualSites/bom
