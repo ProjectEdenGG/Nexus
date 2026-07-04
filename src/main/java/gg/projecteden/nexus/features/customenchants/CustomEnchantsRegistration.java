@@ -234,10 +234,13 @@ public class CustomEnchantsRegistration {
 	static <T> Map<TagKey<T>, HolderSet.Named<T>> getTagsMap(@NotNull Object tagSet) {
 		// new HashMap, because original is ImmutableMap.
 		try {
-			Field field = tagSet.getClass().getDeclaredField("val$map");
+			Field field = Arrays.stream(tagSet.getClass().getDeclaredFields())
+				.filter(f -> Map.class.isAssignableFrom(f.getType()))
+				.findFirst()
+				.orElseThrow();
 			field.setAccessible(true);
 			return new HashMap<>((Map<TagKey<T>, HolderSet.Named<T>>) field.get(tagSet));
-		} catch (IllegalAccessException | NoSuchFieldException e) {
+		} catch (IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
 	}
