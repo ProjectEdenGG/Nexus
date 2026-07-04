@@ -38,9 +38,9 @@ public class Handshake extends Serverbound {
 
 		ClientMessage.builder()
 			.players(player)
-			.message(new BackbackConfig((BackbackConfig.Entry[]) Arrays.stream(Backpacks.BackpackTier.values())
+			.message(new BackbackConfig(Arrays.stream(Backpacks.BackpackTier.values())
 				.map(tier -> new BackbackConfig.Entry(tier.getNBTKey(), tier.getRows()))
-				.toArray()))
+				.toArray(BackbackConfig.Entry[]::new)))
 			.send();
 	}
 }
