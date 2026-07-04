@@ -110,7 +110,10 @@ public class CustomEnchantsRegistration {
 
 			frozenTags.forEach(tagsMap::putIfAbsent);
 
-			Field valMapField = tagSet.getClass().getDeclaredField("val$map");
+			Field valMapField = Arrays.stream(tagSet.getClass().getDeclaredFields())
+				.filter(f -> Map.class.isAssignableFrom(f.getType()))
+				.findFirst()
+				.orElseThrow();
 			valMapField.setAccessible(true);
 			valMapField.set(tagSet, tagsMap);
 
