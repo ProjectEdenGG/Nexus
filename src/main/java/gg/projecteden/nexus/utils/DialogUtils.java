@@ -113,8 +113,9 @@ public class DialogUtils {
 		public DialogBuilder bodyItem(ItemStack item, Component description) {
 			return this.body(
 				DialogBody.item(item)
-					.description(description == null ? null : DialogBody.plainMessage(description))
-					.build());
+					.description(description == null ? null : DialogBody.plainMessage(description, (int) (AdventureUtils.asPlainText(description).length() * 6.67) + 6))
+					.build()
+			);
 		}
 
 		public DialogBuilder body(DialogBody body) {
