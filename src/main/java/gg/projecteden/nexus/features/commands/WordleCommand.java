@@ -336,7 +336,7 @@ public class WordleCommand extends CustomCommand implements Listener {
 			for (var guess : guessesForAnimation) {
 				dialog.bodyText(game.getColoredGuess(guess).stream()
 					.map(WordleLetter::toString)
-					.collect(joining(" ")));
+					.collect(joining(" ")), 1024);
 			}
 
 			if (animationStep >= 0) {
