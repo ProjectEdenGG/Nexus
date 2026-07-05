@@ -261,7 +261,7 @@ public class Decoration {
 		}
 
 		DecorationEntityData.of(itemFrame).setProcessDestroy(true);
-		new HangingBreakByEntityEvent(itemFrame, player, DamageSource.builder(DamageType.PLAYER_ATTACK).withCausingEntity(player).build()).callEvent(); // For CoreProtect
+		new HangingBreakByEntityEvent(itemFrame, player, DamageSource.builder(DamageType.PLAYER_ATTACK).withDirectEntity(itemFrame).withCausingEntity(player).build()).callEvent(); // For CoreProtect
 
 		ItemFrameRotation rotation = getRotation();
 		BlockFace finalFace = BlockFace.UP;
