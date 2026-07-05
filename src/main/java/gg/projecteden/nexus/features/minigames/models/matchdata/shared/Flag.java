@@ -24,6 +24,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 public class Flag {
@@ -65,7 +66,7 @@ public class Flag {
 		final List<Player> players = carrier.getMatch().getAliveMinigamers().stream()
 			.filter(minigamer -> !minigamer.isRespawning())
 			.map(Minigamer::getOnlinePlayer)
-			.toList();
+			.collect(Collectors.toList());
 		players.addAll(carrier.getMatch().getSpectators().stream().map(Minigamer::getOnlinePlayer).toList());
 
 		new ParticleBuilder(Particle.FLAME)
