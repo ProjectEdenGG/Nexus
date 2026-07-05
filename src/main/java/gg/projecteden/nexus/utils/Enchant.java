@@ -161,6 +161,9 @@ public class Enchant {
 	// Walk quicker while sneaking
 	public static final Enchantment SWIFT_SNEAK = getEnchantment("swift_sneak");
 
+	// Launches the player horizontally when using a jab attack
+	public static final Enchantment LUNGE = getEnchantment("lunge");
+
 	// Keep item on death
 	@Unreleased
 	public static final Enchantment SOULBOUND = CustomEnchants.get(SoulboundEnchant.class);
