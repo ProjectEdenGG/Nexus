@@ -48,6 +48,7 @@ public enum ToolSkin implements EquipmentSkinType {
 		ToolType.BOW,
 		ToolType.CROSSBOW,
 		ToolType.MACE,
+		ToolType.SPEAR,
 		ToolType.FISHING_ROD
 	);
 
