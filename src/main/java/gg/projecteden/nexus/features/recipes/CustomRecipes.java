@@ -413,6 +413,13 @@ public class CustomRecipes extends Feature implements Listener {
 		RecipeBuilder.shapeless(Material.POLISHED_ANDESITE).toMake(Material.ANDESITE).register(RecipeType.STONE_BRICK);
 		RecipeBuilder.shapeless(Material.POLISHED_GRANITE).toMake(Material.GRANITE).register(RecipeType.STONE_BRICK);
 		RecipeBuilder.shapeless(Material.POLISHED_DIORITE).toMake(Material.DIORITE).register(RecipeType.STONE_BRICK);
+		RecipeBuilder.shapeless(Material.BLACKSTONE).toMake(Material.POLISHED_BLACKSTONE_BRICKS).register(RecipeType.STONE_BRICK);
+		RecipeBuilder.shapeless(Material.CHISELED_POLISHED_BLACKSTONE).toMake(Material.POLISHED_BLACKSTONE_BRICK_SLAB, 2).register(RecipeType.STONE_BRICK);
+		RecipeBuilder.shapeless(Material.POLISHED_BLACKSTONE_BRICK_SLAB, 2).toMake(Material.CHISELED_POLISHED_BLACKSTONE).register(RecipeType.STONE_BRICK);
+		RecipeBuilder.shapeless(Material.POLISHED_BLACKSTONE_BRICKS).toMake(Material.POLISHED_BLACKSTONE).register(RecipeType.STONE_BRICK);
+		RecipeBuilder.shapeless(Material.CHISELED_RESIN_BRICKS).toMake(Material.RESIN_BRICK_SLAB, 2).register(RecipeType.STONE_BRICK);
+		RecipeBuilder.shapeless(Material.MUD_BRICKS).toMake(Material.PACKED_MUD).register(RecipeType.STONE_BRICK);
+		RecipeBuilder.shaped("11", "11").add('1', Material.POLISHED_BLACKSTONE).toMake(Material.BLACKSTONE, 4).register(RecipeType.STONE_BRICK);
 	}
 
 	private void registerFurnace() {
