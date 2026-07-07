@@ -26,11 +26,13 @@ public class ClientSideFeature extends Feature {
 	public void onStart() {
 		new ClientSideEntitiesManager();
 
-		for (Player player : OnlinePlayers.getAll()) {
-			ClientSideUser user = ClientSideUser.of(player);
-			for (var entity : ClientSideConfig.getEntities(player.getWorld()))
-				user.show(entity);
-		}
+		Tasks.async(() -> {
+			for (Player player : OnlinePlayers.getAll()) {
+				ClientSideUser user = ClientSideUser.of(player);
+				for (var entity : ClientSideConfig.getEntities(player.getWorld()))
+					user.show(entity);
+			}
+		});
 	}
 
 	@Override

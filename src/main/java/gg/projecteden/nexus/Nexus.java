@@ -239,28 +239,30 @@ public class Nexus extends JavaPlugin {
 	@Override
 	@SuppressWarnings({"Convert2MethodRef", "CodeBlock2Expr"})
 	public void onDisable() {
-		List<Runnable> tasks = List.of(
-			() -> { PlayerUtils.runCommandAsConsole("save-all"); },
-			() -> { GlowUtils.shutdown(); },
-			() -> { if (cron.isStarted()) cron.stop(); },
-			() -> { if (protocolManager != null) protocolManager.removePacketListeners(this); },
-			() -> { if (commands != null) commands.unregisterAll(); },
-			() -> { if (features != null) features.unregisterExcept(Discord.class, Chat.class); },
-			() -> { if (features != null) features.unregister(Discord.class, Chat.class); },
-			() -> { Bukkit.getServicesManager().unregisterAll(this); },
-			() -> { MySQLPersistence.shutdown(); },
-			() -> { GoogleUtils.shutdown(); },
-			() -> { LuckPermsUtils.shutdown(); },
-			() -> { shutdownDatabases(); },
-			() -> { if (api != null) api.shutdown(); }
-		);
+		new Timer("Disable", () -> {
+			List<Runnable> tasks = List.of(
+					() -> { new Timer(" Save Worlds", () -> { PlayerUtils.runCommandAsConsole("save-all"); }); },
+					() -> { new Timer(" GlowUtils", () -> { GlowUtils.shutdown(); }); },
+					() -> { new Timer(" Cron", () -> { if (cron.isStarted()) cron.stop(); }); },
+					() -> { new Timer(" ProtocolManager", () -> { if (protocolManager != null) protocolManager.removePacketListeners(this); }); },
+					() -> { new Timer(" Commands", () -> { if (commands != null) commands.unregisterAll(); }); },
+					() -> { new Timer(" Features except Chat", () -> { if (features != null) features.unregisterExcept(Discord.class, Chat.class); }); },
+					() -> { new Timer(" Features", () -> { if (features != null) features.unregister(Discord.class, Chat.class); }); },
+					() -> { new Timer(" Bukkit Services", () -> { Bukkit.getServicesManager().unregisterAll(this); }); },
+					() -> { new Timer(" MySQL", () -> { MySQLPersistence.shutdown(); }); },
+					() -> { new Timer(" GoogleUtils", () -> { GoogleUtils.shutdown(); }); },
+					() -> { new Timer(" LuckPermsUtils", () -> { LuckPermsUtils.shutdown(); }); },
+					() -> { new Timer(" Databases", () -> { shutdownDatabases(); }); },
+					() -> { new Timer(" API", () -> { if (api != null) api.shutdown(); }); }
+			);
 
-		for (Runnable task : tasks)
-			try {
-				task.run();
-			} catch (Throwable ex) {
-				ex.printStackTrace();
-			}
+			for (Runnable task : tasks)
+				try {
+					task.run();
+				} catch (Throwable ex) {
+					ex.printStackTrace();
+				}
+		});
 	}
 
 	public static boolean isMaintenanceQueued() {

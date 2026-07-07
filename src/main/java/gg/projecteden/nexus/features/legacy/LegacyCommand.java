@@ -64,6 +64,13 @@ public class LegacyCommand extends _WarpSubCommand {
 			error("You can only run this command in the legacy world");
 	}
 
+	@Permission(Group.ADMIN)
+	@Path("freezeWorlds")
+	@Description("Set game rules and WorldGuard flags on legacy worlds to freeze them in place")
+	void freezeWorlds() {
+		Legacy.setGameRules();
+	}
+
 	// Items
 
 	@Path("items transfer")
