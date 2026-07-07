@@ -14,6 +14,7 @@ import gg.projecteden.nexus.utils.Tasks;
 import lombok.NonNull;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -23,7 +24,7 @@ import static gg.projecteden.nexus.features.commands.creative.ReachCommand.PERMI
 @Permission(PERMISSION)
 @WikiConfig(rank = "Guest", feature = "Creative")
 @Description("Set your creative mod block interaction range")
-public class ReachCommand extends CustomCommand {
+public class ReachCommand extends CustomCommand implements Listener {
 	public static final String PERMISSION = "essentials.gamemode.creative";
 	public static final NamespacedKey KEY = new NamespacedKey(Nexus.getInstance(), "creative-reach");
 	private static final CreativeUserService service = new CreativeUserService();
