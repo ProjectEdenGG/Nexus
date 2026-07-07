@@ -11,6 +11,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.creative.CreativeUser;
 import gg.projecteden.nexus.models.creative.CreativeUserService;
 import gg.projecteden.nexus.utils.Tasks;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
@@ -24,6 +25,7 @@ import static gg.projecteden.nexus.features.commands.creative.ReachCommand.PERMI
 @Permission(PERMISSION)
 @WikiConfig(rank = "Guest", feature = "Creative")
 @Description("Set your creative mod block interaction range")
+@NoArgsConstructor
 public class ReachCommand extends CustomCommand implements Listener {
 	public static final String PERMISSION = "essentials.gamemode.creative";
 	public static final NamespacedKey KEY = new NamespacedKey(Nexus.getInstance(), "creative-reach");
