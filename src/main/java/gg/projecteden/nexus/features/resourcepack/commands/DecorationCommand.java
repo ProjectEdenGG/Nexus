@@ -7,7 +7,6 @@ import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
-import gg.projecteden.nexus.features.resourcepack.decoration.TypeConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Tab;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
@@ -270,8 +269,11 @@ public class DecorationCommand extends CustomCommand {
 			return;
 		}
 
-		decoration.getOwner(player());
-		send(PREFIX + Nickname.of(decoration.getOwner(player())) + " owns that decoration");
+		var owner = decoration.getOwner(player());
+		if (owner == null)
+			error("Could not determine the owner of that decoration");
+
+		send(PREFIX + Nickname.of(owner) + " owns that decoration");
 	}
 
 	@Permission(Group.STAFF)

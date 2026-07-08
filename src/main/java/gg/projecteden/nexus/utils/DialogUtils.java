@@ -76,12 +76,25 @@ public class DialogUtils {
 			return this.bodyText(new JsonBuilder(text).build());
 		}
 
+		public DialogBuilder bodyText(String text, int width) {
+			return this.bodyText(new JsonBuilder(text).build(), width);
+		}
+
 		public DialogBuilder bodyText(JsonBuilder text) {
 			return this.bodyText(text.build());
 		}
 
+		public DialogBuilder bodyText(JsonBuilder text, int width) {
+			return this.bodyText(text.build(), width);
+		}
+
 		public DialogBuilder bodyText(Component text) {
 			this.body(plainMessage(text));
+			return this;
+		}
+
+		public DialogBuilder bodyText(Component text, int width) {
+			this.body(plainMessage(text, width));
 			return this;
 		}
 
@@ -100,8 +113,9 @@ public class DialogUtils {
 		public DialogBuilder bodyItem(ItemStack item, Component description) {
 			return this.body(
 				DialogBody.item(item)
-					.description(description == null ? null : DialogBody.plainMessage(description))
-					.build());
+					.description(description == null ? null : DialogBody.plainMessage(description, (int) (AdventureUtils.asPlainText(description).length() * 6.67) + 6))
+					.build()
+			);
 		}
 
 		public DialogBuilder body(DialogBody body) {

@@ -9,6 +9,7 @@ import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.TranslationArgument;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -91,7 +92,7 @@ public class Pugmas25Death implements Listener {
 		Component deathMessageRaw = event.deathMessage();
 		if (deathCause == Pugmas25DeathCause.MONSTER && deathMessageRaw instanceof TranslatableComponent deathMessage) {
 			DeathMessages deathMessages = new DeathMessagesService().get(event.getPlayer());
-			JsonBuilder json = new JsonBuilder(deathMessage.args(deathMessage.args().stream().map(arg -> DeathMessagesCommand.handleArgument(deathMessages, arg)).toList()));
+			JsonBuilder json = new JsonBuilder(deathMessage.arguments(deathMessage.arguments().stream().map(arg -> TranslationArgument.component(DeathMessagesCommand.handleArgument(deathMessages, arg.asComponent()))).toList()));
 			defaultMessage = AdventureUtils.asPlainText(json.build());
 		}
 

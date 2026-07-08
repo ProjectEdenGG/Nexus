@@ -13,9 +13,9 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.syncher.SynchedEntityData.DataValue;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.decoration.Painting;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.decoration.painting.Painting;
 import org.bukkit.Art;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
@@ -74,13 +74,13 @@ public class ClientSidePainting implements IClientSideEntity<ClientSidePainting,
 			uuid = UUID.randomUUID();
 
 		if (entity == null) {
-			entity = new Painting(EntityType.PAINTING, NMSUtils.toNMS(location.getWorld()));
+			entity = new Painting(EntityTypes.PAINTING, NMSUtils.toNMS(location.getWorld()));
 			id = entity.getId();
 			entityUuid = entity.getUUID();
 		}
 		entity.snapTo(location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch());
 		entity.setDirection(NMSUtils.toNMS(blockFace));
-		var optional = entity.registryAccess().lookupOrThrow(Registries.PAINTING_VARIANT).get(ResourceLocation.tryParse(variant));
+		var optional = entity.registryAccess().lookupOrThrow(Registries.PAINTING_VARIANT).get(Identifier.tryParse(variant));
 		if (optional.isEmpty())
 			return this;
 

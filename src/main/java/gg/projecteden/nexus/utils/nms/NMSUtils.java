@@ -12,12 +12,13 @@ import lombok.SneakyThrows;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Rotations;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ClientInformation;
@@ -30,6 +31,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.decoration.HangingEntity;
@@ -90,7 +92,7 @@ public class NMSUtils {
 	}
 
 	public static Block toNMS(org.bukkit.block.Block block) {
-		return ((CraftBlock) block).getNMS().getBlock();
+		return ((CraftBlock) block).getBlockState().getBlock();
 	}
 
 	public static BlockState toNMS(BlockData blockData) {
@@ -111,7 +113,7 @@ public class NMSUtils {
 	}
 
 	public static EntityType<?> toNMS(org.bukkit.entity.EntityType type) {
-		return net.minecraft.world.entity.EntityType.byString(type.getName()).get();
+		return BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.parse(type.getKey().toString()));
 	}
 
 	public static ItemStack toNMS(org.bukkit.inventory.ItemStack itemStack) {
@@ -197,7 +199,7 @@ public class NMSUtils {
 
 	@SneakyThrows
 	public static Property getSkinProperty(Player player) {
-		return Property.fromNMS(getGameProfile(player).getProperties().get("textures").iterator().next());
+		return Property.fromNMS(getGameProfile(player).properties().get("textures").iterator().next());
 	}
 
 	public static boolean setBlockDataAt(BlockData blockData, Location location, boolean doPhysics) {
@@ -221,7 +223,7 @@ public class NMSUtils {
 	}
 
 	public static ArmorStand createHologram(Level world) {
-		ArmorStand armorStand = new ArmorStand(EntityType.ARMOR_STAND, world);
+		ArmorStand armorStand = new ArmorStand(EntityTypes.ARMOR_STAND, world);
 		armorStand.setMarker(true);
 		armorStand.setInvisible(true);
 		armorStand.setNoBasePlate(true);
@@ -243,7 +245,7 @@ public class NMSUtils {
 				case FALL -> soundEffectType.getFallSound();
 			};
 
-			ResourceLocation nmsString = nmsSound.location();
+			Identifier nmsString = nmsSound.location();
 			String soundString = nmsString.getPath().replace(".", "_").toUpperCase();
 			return Sound.valueOf(soundString);
 		} catch (Exception ex) {

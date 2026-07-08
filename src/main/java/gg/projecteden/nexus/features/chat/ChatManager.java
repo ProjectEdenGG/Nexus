@@ -18,7 +18,6 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import lombok.Setter;
-import net.kyori.adventure.audience.MessageType;
 import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
@@ -121,8 +120,6 @@ public class ChatManager {
 						.hover("&cClick to see original message")
 						.command("/echo &3Original message: &f" + event.getOriginalMessage());
 
-			// TODO - 1.19.2 Chat Validation Kick
-			// recipient.sendMessage(event, json, MessageType.CHAT);
 			recipient.sendMessage(json);
 		});
 
@@ -154,8 +151,6 @@ public class ChatManager {
 				if (!recipient.isOnline())
 					event.getChatter().sendMessage(notOnline);
 				else {
-					// TODO - 1.19.2 Chat Validation Kick
-					// recipient.sendMessage(event, from, MessageType.CHAT);
 					recipient.sendMessage(from);
 					if (canSee)
 						++seen;
@@ -166,9 +161,7 @@ public class ChatManager {
 		}
 
 		if (seen > 0) {
-			// TODO - 1.19.2 Chat Validation Kick
-			// event.getChatter().sendMessage(event, to, MessageType.CHAT);
-			event.getChatter().sendMessage(to, MessageType.SYSTEM);
+			event.getChatter().sendMessage(to);
 		}
 
 		Bukkit.getConsoleSender().sendMessage(Nickname.of(event.getChatter()) + " -> " + event.getRecipientNames() + ": " + event.getMessage());

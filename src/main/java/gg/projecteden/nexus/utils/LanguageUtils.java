@@ -2,7 +2,6 @@ package gg.projecteden.nexus.utils;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
@@ -36,7 +35,7 @@ public class LanguageUtils {
 	 * @return English translation
 	 */
 	public static String translate(@NotNull Block block) {
-		return translate(Bukkit.getUnsafe().getBlockTranslationKey(block.getType()));
+		return translate(block.getType().translationKey());
 	}
 
 	/**
@@ -45,7 +44,7 @@ public class LanguageUtils {
 	 * @return English translation
 	 */
 	public static String translate(@NotNull Material material) {
-		return translate(Bukkit.getUnsafe().getItemTranslationKey(material));
+		return translate(material.translationKey());
 	}
 
 	/**
@@ -54,7 +53,7 @@ public class LanguageUtils {
 	 * @return English translation
 	 */
 	public static String translate(@NotNull EntityType entity) {
-		return translate(Bukkit.getUnsafe().getTranslationKey(entity));
+		return translate(entity.translationKey());
 	}
 
 	/**
@@ -63,6 +62,6 @@ public class LanguageUtils {
 	 * @return English translation
 	 */
 	public static String translate(@NotNull ItemStack item) {
-		return translate(Bukkit.getUnsafe().getTranslationKey(item));
+		return translate(item.translationKey());
 	}
 }

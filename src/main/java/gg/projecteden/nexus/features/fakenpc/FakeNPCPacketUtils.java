@@ -84,8 +84,8 @@ public class FakeNPCPacketUtils {
 
 		Property skinProperty = new Property("textures", skinProperties.getTexture(), skinProperties.getSignature());
 
-		profile.getProperties().removeAll("textures"); // ensure client does not crash due to duplicate properties.
-		profile.getProperties().put("textures", skinProperty.toNMS());
+		profile.properties().removeAll("textures"); // ensure client does not crash due to duplicate properties.
+		profile.properties().put("textures", skinProperty.toNMS());
 
 		return serverPlayer;
 	}

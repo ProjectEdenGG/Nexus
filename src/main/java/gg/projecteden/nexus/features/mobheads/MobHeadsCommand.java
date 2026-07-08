@@ -14,6 +14,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.MobHeadConverter;
+import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.models.mobheads.MobHeadChanceConfigService;
 import gg.projecteden.nexus.models.mobheads.MobHeadUser;
 import gg.projecteden.nexus.models.mobheads.MobHeadUser.MobHeadData;
@@ -41,6 +42,10 @@ public class MobHeadsCommand extends CustomCommand implements Listener {
 
 	public MobHeadsCommand(@NonNull CommandEvent event) {
 		super(event);
+
+		if (isPlayerCommandEvent())
+			if (!Hook.HEADDATABASE.isEnabled())
+				error("HeadDatabase is not enabled");
 	}
 
 	@Path

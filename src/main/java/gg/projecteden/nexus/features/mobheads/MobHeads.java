@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.mobheads.common.MobHead;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.MobHeadConverter;
+import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.models.boost.Booster;
 import gg.projecteden.nexus.models.mobheads.MobHeadUser.MobHeadData;
@@ -81,6 +82,9 @@ public class MobHeads extends Feature implements Listener {
 
 	@EventHandler
 	public void on(BlockPlaceEvent event) {
+		if (!Hook.HEADDATABASE.isEnabled())
+			return;
+
 		Block placed = event.getBlockPlaced();
 		Material placedType = placed.getType();
 
@@ -104,6 +108,9 @@ public class MobHeads extends Feature implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onKillEntity(EntityDeathEvent event) {
+		if (!Hook.HEADDATABASE.isEnabled())
+			return;
+
 		if (event.isCancelled())
 			return;
 
@@ -178,6 +185,9 @@ public class MobHeads extends Feature implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void on(EntityPickupItemEvent event) {
+		if (!Hook.HEADDATABASE.isEnabled())
+			return;
+
 		Item item = event.getItem();
 		ItemStack itemStack = item.getItemStack();
 		if (!MaterialTag.SKULLS.isTagged(itemStack.getType()))
@@ -331,6 +341,9 @@ public class MobHeads extends Feature implements Listener {
 
 	@EventHandler
 	public void on(EntityTargetEvent event) {
+		if (!Hook.HEADDATABASE.isEnabled())
+			return;
+
 		if (!(event.getTarget() instanceof Player player))
 			return;
 

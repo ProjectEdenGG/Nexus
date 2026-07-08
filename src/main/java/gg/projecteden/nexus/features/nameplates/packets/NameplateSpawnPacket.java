@@ -2,15 +2,15 @@ package gg.projecteden.nexus.features.nameplates.packets;
 
 import gg.projecteden.nexus.features.nameplates.NameplatesCommand;
 import gg.projecteden.nexus.utils.nms.packet.EntitySpawnPacket;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class NameplateSpawnPacket extends EntitySpawnPacket {
-	public static int ENTITY_ID_COUNTER = 32333;
+	public static int ENTITY_ID_COUNTER = Integer.MAX_VALUE;
 
 	public NameplateSpawnPacket(int entityId) {
-		super(entityId, EntityType.TEXT_DISPLAY);
+		super(entityId, EntityTypes.TEXT_DISPLAY);
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.mobheads.common;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.mobheads.MobHeadType;
+import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -61,7 +61,7 @@ public interface MobHead {
 				return vanillaHead;
 		}
 
-		String id = Nexus.getHeadAPI().getItemID(item);
+		String id = Hook.HEADDATABASE.getItemID(item);
 		if (id == null)
 			return null;
 

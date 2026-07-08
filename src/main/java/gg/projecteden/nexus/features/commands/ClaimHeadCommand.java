@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.models.voter.Voter;
 import gg.projecteden.nexus.models.voter.VoterService;
 import org.bukkit.inventory.ItemStack;
@@ -25,7 +25,7 @@ public class ClaimHeadCommand extends CustomCommand {
 		if (voter.getHeadCoupons() <= 0)
 			error("You do not have any Head Database coupons");
 
-		ItemStack item = Nexus.getHeadAPI().getItemHead(headId);
+		ItemStack item = Hook.HEADDATABASE.getItemHead(headId);
 		if (item == null)
 			error("That head could not be found");
 

@@ -5,11 +5,15 @@ import com.sk89q.worldguard.protection.flags.StateFlag.State;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.operator.CreativeFlagsCommand;
+import gg.projecteden.nexus.features.legacy.listeners.LegacyEntities;
+import gg.projecteden.nexus.features.legacy.listeners.LegacyItems;
+import gg.projecteden.nexus.features.legacy.listeners.LegacyMisc;
+import gg.projecteden.nexus.features.legacy.listeners.LegacyShulkerBoxes;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.spawnlimits.SpawnLimits.SpawnLimitType;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.GameRule;
@@ -52,12 +56,13 @@ public class Legacy extends Feature {
 
 	@Override
 	public void onStart() {
-		Utils.registerListeners(getClass().getPackage().getName() + ".listeners");
-
-		setGameRules();
+		Nexus.registerListener(new LegacyEntities());
+		Nexus.registerListener(new LegacyItems());
+		Nexus.registerListener(new LegacyMisc());
+		Nexus.registerListener(new LegacyShulkerBoxes());
 	}
 
-	private void setGameRules() {
+	public static void setGameRules() {
 		for (World world : WorldGroup.LEGACY.getWorlds()) {
 			for (SpawnLimitType limitType : SpawnLimitType.values())
 				limitType.set(world, 0);

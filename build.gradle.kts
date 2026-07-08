@@ -6,9 +6,9 @@ val edenApiVersion: String by project
 plugins {
     `java-library`
     `maven-publish`
-    id("io.freefair.lombok") version "8.11"
-    id("com.gradleup.shadow") version "8.3.0"
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.18"
+    id("io.freefair.lombok") version "9.5.0"
+    id("com.gradleup.shadow") version "9.3.0"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.21"
 }
 
 repositories {
@@ -51,13 +51,13 @@ repositories {
     maven { url = uri("https://repo.repsy.io/mvn/quantiom/minecraft") }
     maven { url = uri("https://nexus.neetgames.com/repository/maven-public") }
     maven { url = uri("https://maven.playpro.com/") }
-    maven { url = uri("https://repo.magmaguy.com/releases") }
+//    maven { url = uri("https://repo.magmaguy.com/releases") }
 
 //    maven("https://repo.mineinabyss.com/releases") // PlayerAnimator
 }
 
 dependencies {
-    paperweight.paperDevBundle("${parchmentVersion}", "gg.projecteden.parchment")
+    paperweight.paperDevBundle(parchmentVersion, "gg.projecteden.parchment")
     compileOnly("gg.projecteden.parchment:parchment-api:${parchmentVersion}")
     implementation("gg.projecteden:eden-common:${edenApiVersion}")
     implementation("gg.projecteden:eden-db:${edenApiVersion}")
@@ -75,7 +75,7 @@ dependencies {
     implementation("com.github.mpkorstanje:simmetrics-core:4.1.1")
     implementation("org.jetbrains:annotations:24.0.1")
     implementation("net.jthink:jaudiotagger:3.0.1")
-    implementation("fr.skytasul:glowingentities:1.4.3")
+    implementation("fr.skytasul:glowingentities:2.0.0")
     implementation("tech.blastmc.lights:LxGoAPI:1.0.10-SNAPSHOT")
     implementation("de.sfuhrm:sudoku:5.0.1")
     implementation(platform("com.intellectualsites.bom:bom-newest:1.56")) // Ref: https://github.com/IntellectualSites/bom
@@ -102,7 +102,7 @@ dependencies {
     compileOnly("world.bentobox:bentobox:1.20.1-SNAPSHOT")
     compileOnly("nl.pim16aap2:BigDoors:0.1.8.39")
     compileOnly("net.coreprotect:coreprotect:23.0")
-    compileOnly("com.magmaguy:BetterStructures:1.7.0")
+//    compileOnly("com.magmaguy:BetterStructures:1.7.0")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit") { isTransitive = false }
     compileOnly("com.griefcraft:lwc:2.3.2-dev")
@@ -143,7 +143,7 @@ publishing {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(25))
 }
 
 tasks {
@@ -153,9 +153,17 @@ tasks {
 
     compileJava {
         options.encoding = Charsets.UTF_8.name()
-        options.release.set(21)
+        options.release.set(25)
         options.compilerArgs.add("-parameters")
         options.compilerArgs.add("-proc:full")
+        options.compilerArgs.addAll(
+            listOf(
+                "-Xlint:-unchecked",
+                "-Xlint:-deprecation",
+                "-Xlint:-removal",
+                "-Xlint:-dep-ann"
+            )
+        )
     }
 
     javadoc { options.encoding = Charsets.UTF_8.name() }

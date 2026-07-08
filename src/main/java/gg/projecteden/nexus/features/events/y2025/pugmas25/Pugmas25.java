@@ -138,6 +138,9 @@ public class Pugmas25 extends EdenEvent {
 	public void onStart() {
 		super.onStart();
 
+		if (isAfterEvent())
+			return;
+
 		sidebar = new Pugmas25Sidebar();
 
 		new Pugmas25Districts();

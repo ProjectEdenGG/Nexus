@@ -25,6 +25,7 @@ import gg.projecteden.nexus.features.mobheads.variants.TraderLlamaVariant;
 import gg.projecteden.nexus.features.mobheads.variants.TropicalFishVariant;
 import gg.projecteden.nexus.features.mobheads.variants.VillagerVariant;
 import gg.projecteden.nexus.features.mobheads.variants.ZombieVillagerVariant;
+import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.models.mobheads.MobHeadChanceConfigService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -461,7 +462,7 @@ public enum MobHeadType implements MobHead {
 		this.ambientSound = ambientSound;
 
 		if (Nullables.isNotNullOrEmpty(headId) || gg.projecteden.nexus.utils.Nullables.isNotNullOrAir(headType)) {
-			this.baseSkull = gg.projecteden.nexus.utils.Nullables.isNullOrAir(headType) ? Nexus.getHeadAPI().getItemHead(headId) : new ItemStack(headType);
+			this.baseSkull = gg.projecteden.nexus.utils.Nullables.isNullOrAir(headType) ? Hook.HEADDATABASE.getItemHead(headId) : new ItemStack(headType);
 			this.namedSkull = new ItemBuilder(this.baseSkull).name("&e" + getDisplayName() + " Head").lore("&3Mob Head").build();
 		} else {
 			if (!"PLAYER".equals(name()))

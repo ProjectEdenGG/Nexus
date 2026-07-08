@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.store.perks.inventory;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -13,6 +12,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redi
 import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownException;
+import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -66,13 +66,13 @@ public class PlayerHeadCommand extends CustomCommand {
 
 		String id = null;
 		if (!Nullables.isNullOrAir(tool))
-			id = Nexus.getHeadAPI().getItemID(tool);
+			id = Hook.HEADDATABASE.getItemID(tool);
 		else if (!Nullables.isNullOrAir(block))
-			id = Nexus.getHeadAPI().getItemID(ItemUtils.getItem(block));
+			id = Hook.HEADDATABASE.getItemID(ItemUtils.getItem(block));
 		else
 			error("You must be holding or looking at a head");
 
-		ItemStack item = Nexus.getHeadAPI().getItemHead(id);
+		ItemStack item = Hook.HEADDATABASE.getItemHead(id);
 		send(json(PREFIX + item.getItemMeta().getDisplayName() + " &3head ID: &e" + id).copy(id).hover("&eClick to copy"));
 	}
 }

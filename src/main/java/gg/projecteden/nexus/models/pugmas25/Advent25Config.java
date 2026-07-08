@@ -11,31 +11,18 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackCo
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.nms.NMSUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.ChatFormatting;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.waypoints.WaypointStyleAssets;
-import net.minecraft.world.waypoints.WaypointTransmitter;
 import org.bukkit.Location;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.ArmorStand.LockType;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.util.EulerAngle;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 
 @Data

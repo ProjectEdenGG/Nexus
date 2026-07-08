@@ -74,12 +74,14 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag SHOVELS = new MaterialTag("_SHOVEL", MatchMode.SUFFIX);
 	public static final MaterialTag HOES = new MaterialTag("_HOE", MatchMode.SUFFIX);
 
+	public static final MaterialTag SPEARS = new MaterialTag("_SPEAR", MatchMode.SUFFIX);
+
 	public static final MaterialTag TOOLS = new MaterialTag(PICKAXES, AXES, SHOVELS, HOES)
 		.append(Material.FISHING_ROD, Material.LEAD, Material.SHEARS, Material.FLINT_AND_STEEL);
 
 	public static final MaterialTag ARROWS = new MaterialTag("ARROW", MatchMode.SUFFIX);
 	public static final MaterialTag WEAPONS = new MaterialTag("_SWORD", MatchMode.SUFFIX)
-		.append(Material.BOW, Material.CROSSBOW, Material.TRIDENT, Material.MACE).append(ARROWS);
+		.append(Material.BOW, Material.CROSSBOW, Material.TRIDENT, Material.MACE).append(SPEARS, ARROWS);
 
 	public static final MaterialTag ALL_HELMETS = new MaterialTag("_HELMET", MatchMode.SUFFIX);
 	public static final MaterialTag ALL_CHESTPLATES = new MaterialTag("_CHESTPLATE", MatchMode.SUFFIX);
@@ -92,6 +94,7 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag ARMOR_NETHERITE = new MaterialTag("NETHERITE_", MatchMode.PREFIX, MaterialTag.ARMOR);
 	public static final MaterialTag ARMOR_DIAMOND = new MaterialTag("DIAMOND_", MatchMode.PREFIX, MaterialTag.ARMOR);
 	public static final MaterialTag ARMOR_IRON = new MaterialTag("IRON_", MatchMode.PREFIX, MaterialTag.ARMOR);
+	public static final MaterialTag ARMOR_COPPER = new MaterialTag("COPPER_", MatchMode.PREFIX, MaterialTag.ARMOR);
 	public static final MaterialTag ARMOR_GOLD = new MaterialTag("GOLDEN_", MatchMode.PREFIX, MaterialTag.ARMOR);
 	public static final MaterialTag ARMOR_CHAINMAIL = new MaterialTag("CHAINMAIL_", MatchMode.PREFIX, MaterialTag.ARMOR);
 	public static final MaterialTag ARMOR_LEATHER = new MaterialTag("LEATHER_", MatchMode.PREFIX, MaterialTag.ARMOR);
@@ -100,6 +103,7 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag TOOLS_NETHERITE = new MaterialTag("NETHERITE_", MatchMode.PREFIX, MaterialTag.TOOLS);
 	public static final MaterialTag TOOLS_DIAMOND = new MaterialTag("DIAMOND_", MatchMode.PREFIX, MaterialTag.TOOLS);
 	public static final MaterialTag TOOLS_IRON = new MaterialTag("IRON_", MatchMode.PREFIX, MaterialTag.TOOLS);
+	public static final MaterialTag TOOLS_COPPER = new MaterialTag("COPPER_", MatchMode.PREFIX, MaterialTag.TOOLS);
 	public static final MaterialTag TOOLS_GOLD = new MaterialTag("GOLDEN_", MatchMode.PREFIX, MaterialTag.TOOLS);
 	public static final MaterialTag TOOLS_CHAINMAIL = new MaterialTag("CHAINMAIL_", MatchMode.PREFIX, MaterialTag.TOOLS);
 	public static final MaterialTag TOOLS_STONE = new MaterialTag("STONE_", MatchMode.PREFIX, MaterialTag.TOOLS);
@@ -180,7 +184,7 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag MINERAL_ORES = new MaterialTag("_ORE", MatchMode.CONTAINS);
 	public static final MaterialTag MINERAL_RAW = new MaterialTag(Material.RAW_COPPER, Material.RAW_GOLD, Material.RAW_IRON);
-	public static final MaterialTag MINERAL_NUGGETS = new MaterialTag(Material.GOLD_NUGGET, Material.IRON_NUGGET, Material.NETHERITE_SCRAP, Material.ANCIENT_DEBRIS);
+	public static final MaterialTag MINERAL_NUGGETS = new MaterialTag(Material.GOLD_NUGGET, Material.COPPER_NUGGET, Material.IRON_NUGGET, Material.NETHERITE_SCRAP, Material.ANCIENT_DEBRIS);
 	public static final MaterialTag MINERAL_INGOTS = new MaterialTag(Material.COAL, Material.CHARCOAL, Material.LAPIS_LAZULI, Material.REDSTONE, Material.QUARTZ,
 		Material.COPPER_INGOT, Material.GOLD_INGOT, Material.IRON_INGOT, Material.DIAMOND, Material.EMERALD, Material.NETHERITE_INGOT);
 	public static final MaterialTag MINERAL_RAW_BLOCKS = new MaterialTag(Material.RAW_COPPER_BLOCK, Material.RAW_GOLD_BLOCK, Material.RAW_IRON_BLOCK);

@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.store.models.EventStoreImage;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.hooks.headdatabase.HeadDatabaseHook.HeadDatabasePlayerClickHeadEvent;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
@@ -16,7 +17,6 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import me.arcaniax.hdb.api.PlayerClickHeadEvent;
 import org.bukkit.GameMode;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -46,7 +46,7 @@ public class EventStoreListener implements Listener {
 	private static final List<WorldGroup> HDB_BYPASS = List.of(WorldGroup.CREATIVE, WorldGroup.STAFF);
 
 	@EventHandler
-	public void onPlayerClickHeadDatabase(PlayerClickHeadEvent event) {
+	public void onPlayerClickHeadDatabase(HeadDatabasePlayerClickHeadEvent event) {
 		final Player player = event.getPlayer();
 		try {
 			final WorldGroup worldGroup = WorldGroup.of(player);

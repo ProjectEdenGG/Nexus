@@ -10,6 +10,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.TranslationArgument;
+import net.kyori.adventure.text.TranslationArgumentLike;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
@@ -18,7 +20,6 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.kyori.adventure.title.Title;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,9 +31,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class AdventureUtils {
-	private static final PlainTextComponentSerializer PLAIN_SERIALIZER = PlainTextComponentSerializer.builder().flattener(Bukkit.getUnsafe().componentFlattener()).build();
-	private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.builder().extractUrls().hexColors().flattener(Bukkit.getUnsafe().componentFlattener()).build();
-	private static final LegacyComponentSerializer LEGACY_AMPERSAND_SERIALIZER = LegacyComponentSerializer.builder().extractUrls().hexColors().character('&').flattener(Bukkit.getUnsafe().componentFlattener()).build();
+	private static final PlainTextComponentSerializer PLAIN_SERIALIZER = PlainTextComponentSerializer.plainText();
+	private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.builder().extractUrls().hexColors().build();
+	private static final LegacyComponentSerializer LEGACY_AMPERSAND_SERIALIZER = LegacyComponentSerializer.builder().extractUrls().hexColors().character('&').build();
 	@SuppressWarnings("UnstableApiUsage")
 	public static final Title.Times BASIC_TIMES = Title.Times.times(TimeUtils.TickTime.SECOND.duration(1, 2), TimeUtils.TickTime.SECOND.duration(5), TimeUtils.TickTime.SECOND.duration(1, 2));
 
@@ -40,7 +41,8 @@ public class AdventureUtils {
 		Component component = componentLike.asComponent();
 		component = component.style(Style.empty());
 		if (component instanceof TranslatableComponent tComponent) {
-			component = tComponent.args(stripColor(tComponent.args()));
+			List<Component> components = tComponent.arguments().stream().map(TranslationArgumentLike::asComponent).toList();
+			component = tComponent.arguments(stripColor(components).stream().map(TranslationArgument::component).toList());
 		}
 		return component.children(stripColor(component.children()));
 	}

@@ -34,15 +34,16 @@ import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.network.syncher.SynchedEntityData.DataValue;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ChunkMap.TrackedEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.PositionMoveRotation;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.item.FallingBlockEntity;
-import net.minecraft.world.entity.monster.Slime;
+import net.minecraft.world.entity.monster.cubemob.Slime;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
@@ -411,7 +412,7 @@ public class PacketUtils {
 
 	public static ArmorStand entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, double distance, String customName, int index) {
 		ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
-		ArmorStand armorStand = new ArmorStand(EntityType.ARMOR_STAND, nmsPlayer.level());
+		ArmorStand armorStand = new ArmorStand(EntityTypes.ARMOR_STAND, nmsPlayer.level());
 		Location loc = bukkitEntity.getLocation();
 		double y = loc.getY() + (distance * index);
 		if (bukkitEntity instanceof Player)
@@ -451,7 +452,7 @@ public class PacketUtils {
 	public static Slime spawnSlime(Player player, Location location, int size, boolean invisible, boolean glowing) {
 		ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
 
-		Slime slime = new Slime(EntityType.SLIME, nmsPlayer.level());
+		Slime slime = new Slime(EntityTypes.SLIME, nmsPlayer.level());
 		slime.snapTo(new Vec3(location.x(), location.y(), location.z()), 0, 0);
 		slime.setSize(size, true);
 		slime.setInvisible(invisible);
@@ -518,7 +519,7 @@ public class PacketUtils {
 		@NonNull HasPlayer player, Location location,
 		boolean marker, boolean invulnerable, boolean invisible, boolean customNameVisible, boolean noGravity, boolean pose0) {
 		ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
-		ArmorStand armorStand = new ArmorStand(EntityType.ARMOR_STAND, nmsPlayer.level());
+		ArmorStand armorStand = new ArmorStand(EntityTypes.ARMOR_STAND, nmsPlayer.level());
 
 		armorStand.snapTo(new Vec3(location.getX(), location.getY(), location.getZ()), location.getYaw(), location.getPitch());
 		armorStand.setMarker(marker);
@@ -540,7 +541,7 @@ public class PacketUtils {
 			location.getZ(),
 			location.getPitch(),
 			location.getYaw(),
-			EntityType.ARMOR_STAND,
+			EntityTypes.ARMOR_STAND,
 			0,
 			Vec3.ZERO,
 			0
@@ -593,7 +594,7 @@ public class PacketUtils {
 	}
 
 	public static Integer getObjectId(org.bukkit.entity.EntityType entity) {
-		return BuiltInRegistries.ENTITY_TYPE.getId(EntityType.byString(entity.getName()).get());
+		return BuiltInRegistries.ENTITY_TYPE.getId(BuiltInRegistries.ENTITY_TYPE.get(Identifier.parse(entity.getKey().toString())).get().value());
 	}
 
 	public static Integer getObjectId(org.bukkit.entity.Entity entity) {

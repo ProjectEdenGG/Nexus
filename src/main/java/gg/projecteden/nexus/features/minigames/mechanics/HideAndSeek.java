@@ -21,6 +21,7 @@ import gg.projecteden.nexus.features.minigames.models.perks.Perk;
 import gg.projecteden.nexus.features.minigames.models.statistics.HideAndSeekStatistics;
 import gg.projecteden.nexus.features.resourcepack.models.CustomItemCooldown;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
+import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.models.cooldown.Cooldown;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.Distance;
@@ -39,7 +40,6 @@ import gg.projecteden.nexus.utils.Utils;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
 import net.kyori.adventure.text.Component;
@@ -183,7 +183,7 @@ public class HideAndSeek extends Infection {
 		disguise.setEntity(player);
 		disguise.startDisguise();
 		matchData.getDisguises().put(player.getUniqueId(), disguise);
-		DisguiseAPI.setActionBarShown(player, false);
+		Hook.LIBSDISGUISES.setActionBarShown(player, false);
 		minigamer.setImmobileTicks(0);
 		applySelectorCooldown(minigamer);
 		match.getScoreboard().update();
@@ -408,7 +408,7 @@ public class HideAndSeek extends Infection {
 	}
 
 	public void cleanup(Minigamer minigamer) {
-		DisguiseAPI.undisguiseToAll(minigamer.getOnlinePlayer());
+		Hook.LIBSDISGUISES.undisguiseToAll(minigamer.getOnlinePlayer());
 		new CooldownService().edit(minigamer, cooldown -> {
 			cooldown.clear("hide-and-seek-selector");
 			cooldown.clear("hide-and-seek-stun");

@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.listeners.events;
 
-import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.utils.ItemUtils;
 import lombok.Getter;
 import org.bukkit.block.Block;
@@ -33,6 +33,6 @@ public class PlayerInteractHeadEvent extends PlayerEvent {
 	}
 
 	public @Nullable String getHeadDatabaseId() {
-		return Nexus.getHeadAPI().getItemID(this.droppedItem);
+		return Hook.HEADDATABASE.getItemID(this.droppedItem);
 	}
 }

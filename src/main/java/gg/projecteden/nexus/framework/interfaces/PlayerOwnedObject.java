@@ -22,7 +22,6 @@ import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.HasLocation;
 import gg.projecteden.parchment.OptionalLocation;
 import gg.projecteden.parchment.OptionalPlayerLike;
-import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
@@ -182,15 +181,6 @@ public interface PlayerOwnedObject extends gg.projecteden.api.mongodb.interfaces
 			sendMessage(json(message));
 		else
 			Mail.fromServer(getUuid(), WorldGroup.SURVIVAL, message).send();
-	}
-
-	default void sendMessage(UUID sender, ComponentLike component, MessageType type) {
-		if (UUIDUtils.isUUID0(getUuid()))
-			Nexus.log(AdventureUtils.asPlainText(component));
-		else
-			// TODO - 1.19.2 Chat Validation Kick
-			// sendMessage(identityOf(sender), component, type);
-			sendMessage(component, type);
 	}
 
 	default void sendMessage(UUID sender, ComponentLike component) {

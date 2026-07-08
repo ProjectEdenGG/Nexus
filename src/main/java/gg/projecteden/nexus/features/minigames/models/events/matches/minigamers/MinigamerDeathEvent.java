@@ -14,6 +14,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.TranslationArgument;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -78,9 +79,9 @@ public class MinigamerDeathEvent extends MinigamerMatchEvent implements Cancella
 			JsonBuilder output = new JsonBuilder();
 			if (deathMessage instanceof TranslatableComponent deathMessage) {
 				final DeathMessages user = new DeathMessagesService().get(minigamer);
-				output.next(deathMessage.args(deathMessage.args().stream().map(arg -> DeathMessagesCommand.handleArgument(user, arg)).toList()));
+				output.next(deathMessage.arguments(deathMessage.arguments().stream().map(arg -> TranslationArgument.component(DeathMessagesCommand.handleArgument(user, arg.asComponent()))).toList()));
 			} else {
-				Nexus.warn("Death message ("+deathMessage.asComponent().examinableName()+") is not translatable: " + AdventureUtils.asPlainText(deathMessage));
+				Nexus.warn("Death message ("+deathMessage.asComponent()+") is not translatable: " + AdventureUtils.asPlainText(deathMessage));
 				output.next(deathMessage);
 			}
 		}

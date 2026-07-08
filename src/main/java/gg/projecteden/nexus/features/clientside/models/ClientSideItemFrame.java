@@ -13,7 +13,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.level.saveddata.maps.MapDecoration;
 import net.minecraft.world.level.saveddata.maps.MapId;
@@ -106,7 +106,7 @@ public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFram
 			uuid = UUID.randomUUID();
 
 		if (entity == null) {
-			entity = new ItemFrame(EntityType.ITEM_FRAME, NMSUtils.toNMS(location.getWorld()));
+			entity = new ItemFrame(EntityTypes.ITEM_FRAME, NMSUtils.toNMS(location.getWorld()));
 			id = entity.getId();
 			entityUuid = entity.getUUID();
 		}

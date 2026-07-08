@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 public class EntityUtils {
 
 	public static void forcePacket(Entity entity) {
-		((CraftEntity) entity).getHandle().hasImpulse = true; // hasImpulse = true
+		((CraftEntity) entity).getHandle().needsSync = true; // hasImpulse = true (renamed)
 	}
 
 	@NotNull

@@ -31,7 +31,6 @@ import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import net.kyori.adventure.audience.MessageType;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -283,12 +282,13 @@ public class WordleCommand extends CustomCommand implements Listener {
 
 			for (WordleUser user : users) {
 				var head = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(user);
-				dialog.bodyItem(head.build(), " " + Nerd.of(user).getColoredName());
+				dialog.bodyItem(head.hideTooltip().build(), Nerd.of(user).getColoredName());
+				List<String> chars = new ArrayList<>();
 				for (String guess : user.get(date).getGuesses()) {
 					var letters = user.get(date).getColoredGuess(guess).stream().peek(letter -> letter.setLetter(null));
-					dialog.bodyText(letters.map(WordleLetter::toString).collect(joining(" ")));
+					chars.add(letters.map(WordleLetter::toString).collect(joining(" ")));
 				}
-				dialog.bodyText("");
+				dialog.bodyText(chars.stream().collect(joining(System.lineSeparator() + System.lineSeparator())));
 			}
 
 			dialog.multiAction()
@@ -321,8 +321,6 @@ public class WordleCommand extends CustomCommand implements Listener {
 			var dialog = new DialogBuilder()
 				.title("Wordle #" + gameConfig.getDaysSinceLaunch() + " | " + date.format(formatter));
 
-			dialog.bodyText("");
-
 			List<String> guessesForAnimation = new ArrayList<>(game.getGuesses());
 			if (animationStep != -1 && animationStep <= 4) {
 				var last = guessesForAnimation.removeLast();
@@ -334,10 +332,13 @@ public class WordleCommand extends CustomCommand implements Listener {
 			while (guessesForAnimation.size() < 6)
 				guessesForAnimation.add("     ");
 
+			List<String> body = new ArrayList<>();
 			for (var guess : guessesForAnimation) {
-				dialog.bodyText(game.getColoredGuess(guess).stream()
+				String chars = game.getColoredGuess(guess).stream()
 					.map(WordleLetter::toString)
-					.collect(joining(" ")));
+					.collect(joining(" "));
+
+				body.add(chars);
 			}
 
 			if (animationStep >= 0) {
@@ -362,20 +363,22 @@ public class WordleCommand extends CustomCommand implements Listener {
 
 			if (game.isFailed()) {
 				if (animationStep == -1 || animationStep == 5) {
-					dialog.bodyText(Arrays.stream(solution.toUpperCase().split(""))
+					body.add(Arrays.stream(solution.toUpperCase().split(""))
 						.map(letter -> new WordleLetter(FAILED, letter).toString())
 						.collect(joining(" ")));
 				}
 			}
 
-			dialog.bodyText("");
+			body.add(System.lineSeparator());
 
 			for (String row : KEYBOARD){
-				dialog.bodyText(getKeyboardColors(row, guessesForAnimation, solution)
+				body.add(getKeyboardColors(row, guessesForAnimation, solution)
 					.stream()
 					.map(WordleLetter::toString)
 					.collect(joining(" ")));
 			}
+
+			dialog.bodyText(body.stream().collect(joining(System.lineSeparator() + System.lineSeparator())));
 
 			var guesses = game.getGuesses();
 			if (!game.isComplete() || animationStep < 5)
@@ -434,7 +437,6 @@ public class WordleCommand extends CustomCommand implements Listener {
 									.sender(player)
 									.message(message)
 									.prefix("Wordle")
-									.messageType(MessageType.CHAT)
 									.muteMenuItem(MuteMenuItem.WORDLE)
 									.send();
 							});

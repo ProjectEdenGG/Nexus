@@ -4,7 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import lombok.Getter;
 
 public class Timer {
-	private static final int IGNORE = 1000;
+	private static final int IGNORE = 5;
 
 	@Getter
 	private final long duration;
@@ -20,7 +20,10 @@ public class Timer {
 
 		duration = System.currentTimeMillis() - startTime;
 
-		if (debug == null ? Debug.isEnabled() : debug || duration > IGNORE)
+		if (duration <= IGNORE)
+			return;
+
+		if (debug == null ? Debug.isEnabled() : debug)
 			Nexus.log("[Timer] " + id + " took " + duration + "ms");
 	}
 

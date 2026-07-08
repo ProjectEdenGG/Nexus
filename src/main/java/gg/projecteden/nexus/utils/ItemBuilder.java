@@ -19,6 +19,7 @@ import gg.projecteden.nexus.features.resourcepack.models.ItemModelInstance;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.IsColored;
+import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.skincache.SkinCache;
 import gg.projecteden.nexus.utils.SymbolBanner.Symbol;
@@ -595,7 +596,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public static ItemBuilder fromHeadId(String id) {
-		return new ItemBuilder(Nexus.getHeadAPI().getItemHead(id));
+		return new ItemBuilder(Hook.HEADDATABASE.getItemHead(id));
 	}
 
 	// Banners

@@ -1,14 +1,12 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.store;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
-import gg.projecteden.nexus.features.resourcepack.decoration.TypeConfig;
-import gg.projecteden.nexus.features.resourcepack.decoration.TypeConfigPricing;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.MultiState;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
@@ -66,7 +64,7 @@ public enum DecorationStoreCurrencyType {
 
 		public String getProductName() {
 			if (this.itemStack.getType() == Material.PLAYER_HEAD) {
-				String id = Nexus.getHeadAPI().getItemID(this.itemStack);
+				String id = Hook.HEADDATABASE.getItemID(this.itemStack);
 				if (id == null)
 					return "Player Head";
 

@@ -1,12 +1,10 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.store;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.MultiState;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
-import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
+import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -76,11 +74,11 @@ public class BuyableData {
 
 	public @Nullable String getName() {
 		if (isHDB()) {
-			String id = Nexus.getHeadAPI().getItemID(displayItem);
+			String id = Hook.HEADDATABASE.getItemID(displayItem);
 			if (id == null)
 				return "Player Head";
 
-			ItemStack item = Nexus.getHeadAPI().getItemHead(id);
+			ItemStack item = Hook.HEADDATABASE.getItemHead(id);
 			return StringUtils.stripColor(item.getItemMeta().getDisplayName());
 		} else if (isDecoration())
 			return decorationConfig.getName();
