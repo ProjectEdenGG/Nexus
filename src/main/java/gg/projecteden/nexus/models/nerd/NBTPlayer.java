@@ -1,13 +1,16 @@
 package gg.projecteden.nexus.models.nerd;
 
-import de.tr7zw.nbtapi.*;
+import de.tr7zw.nbtapi.NBTCompound;
+import de.tr7zw.nbtapi.NBTCompoundList;
+import de.tr7zw.nbtapi.NBTFile;
+import de.tr7zw.nbtapi.NBTItem;
+import de.tr7zw.nbtapi.NBTList;
+import de.tr7zw.nbtapi.NBTType;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.api.interfaces.HasUniqueId;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
-import gg.projecteden.nexus.utils.Timer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -51,11 +54,12 @@ public class NBTPlayer implements PlayerOwnedObject {
 
 	@NotNull
 	private NBTFile loadNbtFile() {
-		try {
-			File file = Paths.get(Bukkit.getServer().getWorlds().getFirst().getName() + "/playerdata/" + uuid + ".dat").toFile();
-			if (file.exists())
-				return new NBTFile(file);
+		File file = Paths.get(Bukkit.getServer().getWorlds().getFirst().getName() + "/players/data/" + uuid + ".dat").toFile();
+		if (!file.exists())
 			throw new InvalidInputException("[Nerd]" + getNickname() + "'s data file does not exist");
+
+		try {
+			return new NBTFile(file);
 		} catch (Exception ex) {
 			throw new InvalidInputException("[Nerd] Error opening " + getNickname() + "'s data file");
 		}
