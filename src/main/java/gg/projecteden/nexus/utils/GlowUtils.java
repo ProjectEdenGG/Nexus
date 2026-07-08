@@ -24,7 +24,11 @@ import java.util.List;
 @SuppressWarnings("deprecation")
 public class GlowUtils {
 
-	public static GlowingEntities API = new GlowingEntities(Nexus.getInstance());
+	public static GlowingEntities API;
+
+	public static void startup() {
+		API = new GlowingEntities(Nexus.getInstance());
+	}
 
 	public static void shutdown() {
 		API.disable();

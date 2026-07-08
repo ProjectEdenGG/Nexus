@@ -48,7 +48,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mvplugins.multiverse.core.MultiverseCoreApi;
 import org.mvplugins.multiverse.inventories.MultiverseInventoriesApi;
@@ -58,6 +57,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -339,28 +339,38 @@ public class Nexus extends JavaPlugin {
 	}
 
 	private void hooks() {
-		signMenuFactory = new SignMenuFactory(this);
-		protocolManager = ProtocolLibrary.getProtocolManager();
+		var hooks = new LinkedHashMap<String, Runnable>();
+		hooks.put("SignMenuFactory", () -> signMenuFactory = new SignMenuFactory(this));
+		hooks.put("ProtocolLibrary", () -> protocolManager = ProtocolLibrary.getProtocolManager());
+		hooks.put("MultiverseCoreApi", () -> registerService(MultiverseCoreApi.class, service -> multiverseCore = service));
+		hooks.put("MultiverseInventoriesApi", () -> registerService(MultiverseInventoriesApi.class, service -> multiverseInventories = service));
+		hooks.put("BuycraftX", () -> buycraft = (BuycraftPluginBase) Bukkit.getServer().getPluginManager().getPlugin("BuycraftX"));
+		hooks.put("OpenInv", () -> openInv = (IOpenInv) Bukkit.getPluginManager().getPlugin("OpenInv"));
+		hooks.put("BigDoors", () -> bigDoors = BigDoors.get().getPlugin());
+		hooks.put("cron", cron::start);
+		hooks.put("LuckPerms", () -> registerService(LuckPerms.class, service -> luckPerms = service));
+		hooks.put("ProtectionUtils", () -> ProtectionUtils.init(this));
+		hooks.put("GlowUtils", GlowUtils::startup);
+		hooks.put("CoreProtect", () -> {
+			coreProtect = ((CoreProtect) Bukkit.getPluginManager().getPlugin("CoreProtect"));
+			if (coreProtect != null)
+				coreProtectAPI = coreProtect.getAPI();
+		});
 
-		RegisteredServiceProvider<MultiverseCoreApi> coreProvider = Bukkit.getServicesManager().getRegistration(MultiverseCoreApi.class);
-		if (coreProvider != null)
-			multiverseCore = coreProvider.getProvider();
-		RegisteredServiceProvider<MultiverseInventoriesApi> invProvider = Bukkit.getServicesManager().getRegistration(MultiverseInventoriesApi.class);
-		if (invProvider != null)
-			multiverseInventories = invProvider.getProvider();
+		for (var hook : hooks.keySet()) {
+			try {
+				hooks.get(hook).run();
+			} catch (Exception ex) {
+				Nexus.severe("Error while running hook: " + hook);
+				ex.printStackTrace();
+			}
+		}
+	}
 
-		buycraft = (BuycraftPluginBase) Bukkit.getServer().getPluginManager().getPlugin("BuycraftX");
-		openInv = (IOpenInv) Bukkit.getPluginManager().getPlugin("OpenInv");
-		bigDoors = BigDoors.get().getPlugin();
-		coreProtect = ((CoreProtect) Bukkit.getPluginManager().getPlugin("CoreProtect"));
-		if(coreProtect != null)
-			coreProtectAPI = coreProtect.getAPI();
-		cron.start();
-		RegisteredServiceProvider<LuckPerms> lpProvider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
-		if (lpProvider != null)
-			luckPerms = lpProvider.getProvider();
-		//
-		ProtectionUtils.init(this);
+	private static <T> void registerService(Class<T> serviceClass, java.util.function.Consumer<T> consumer) {
+		var provider = Bukkit.getServicesManager().getRegistration(serviceClass);
+		if (provider != null)
+			consumer.accept(provider.getProvider());
 	}
 
 	public static Spark getSpark() {
