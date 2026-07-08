@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.survival.structures;
 
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.survival.structures.models.Spawner;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -25,6 +26,7 @@ import org.bukkit.entity.EntityType;
 import java.util.List;
 import java.util.Optional;
 
+@Disabled
 @HideFromWiki // TODO
 @Permission(Group.ADMIN)
 public class SpawnerCommand extends CustomCommand {

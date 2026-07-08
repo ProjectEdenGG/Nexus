@@ -51,7 +51,7 @@ repositories {
     maven { url = uri("https://repo.repsy.io/mvn/quantiom/minecraft") }
     maven { url = uri("https://nexus.neetgames.com/repository/maven-public") }
     maven { url = uri("https://maven.playpro.com/") }
-    maven { url = uri("https://repo.magmaguy.com/releases") }
+//    maven { url = uri("https://repo.magmaguy.com/releases") }
 
 //    maven("https://repo.mineinabyss.com/releases") // PlayerAnimator
 }
@@ -102,7 +102,7 @@ dependencies {
     compileOnly("world.bentobox:bentobox:1.20.1-SNAPSHOT")
     compileOnly("nl.pim16aap2:BigDoors:0.1.8.39")
     compileOnly("net.coreprotect:coreprotect:23.0")
-    compileOnly("com.magmaguy:BetterStructures:1.7.0")
+//    compileOnly("com.magmaguy:BetterStructures:1.7.0")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit") { isTransitive = false }
     compileOnly("com.griefcraft:lwc:2.3.2-dev")

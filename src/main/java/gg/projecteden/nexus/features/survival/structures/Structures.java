@@ -5,6 +5,7 @@ package gg.projecteden.nexus.features.survival.structures;
 //import com.magmaguy.betterstructures.buildingfitter.util.LocationProjector;
 
 import com.sk89q.worldedit.math.BlockVector3;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.survival.structures.models.Spawner;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.structure.Structure;
@@ -40,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Disabled
 @NoArgsConstructor
 public class Structures extends Feature implements Listener {
 	private static final String region_buildadmin = "structures";
