@@ -168,7 +168,7 @@ public class NameplateManager {
 		NameplatePlayer(UUID uuid) {
 			Nameplates.debug("Now managing " + Nickname.of(uuid));
 			this.uuid = uuid;
-			this.entityId = NameplateSpawnPacket.ENTITY_ID_COUNTER++;
+			this.entityId = NameplateSpawnPacket.ENTITY_ID_COUNTER--;
 		}
 
 		public boolean isViewing(Player player) {

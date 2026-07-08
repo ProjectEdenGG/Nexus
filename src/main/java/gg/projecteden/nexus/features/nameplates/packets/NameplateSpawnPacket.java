@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class NameplateSpawnPacket extends EntitySpawnPacket {
-	public static int ENTITY_ID_COUNTER = 32333;
+	public static int ENTITY_ID_COUNTER = Integer.MAX_VALUE;
 
 	public NameplateSpawnPacket(int entityId) {
 		super(entityId, EntityTypes.TEXT_DISPLAY);
