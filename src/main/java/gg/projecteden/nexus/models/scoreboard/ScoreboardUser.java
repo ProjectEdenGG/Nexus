@@ -5,6 +5,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PostLoad;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.scoreboard.ScoreboardLine;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.Tasks;
@@ -44,6 +45,7 @@ public class ScoreboardUser implements PlayerOwnedObject {
 
 	private transient int headerTaskId = -1;
 	private transient Map<ScoreboardLine, Integer> taskIds = new ConcurrentHashMap<>();
+	public transient boolean erroring;
 
 	public static final	int MAX_SCOREBOARD_LINES = 15;
 	public static final int HEADER_UPDATE_INTERVAL = 2;
@@ -82,11 +84,22 @@ public class ScoreboardUser implements PlayerOwnedObject {
 	}
 
 	public void on() {
+		if (erroring)
+			return;
+
 		pause();
 		this.layout = new ScoreboardLayout();
 		active = true;
 
-		Sidebar.get(getOnlinePlayer()).applyLayout(this.layout);
+		try {
+			Sidebar.get(getOnlinePlayer()).applyLayout(this.layout);
+		} catch (Exception ex) {
+			Nexus.log("Error applying configured Sidebar layout to " + getNickname() + ", disabling");
+			ex.printStackTrace();
+			erroring = true;
+			pause();
+			return;
+		}
 
 		this.layout.start();
 	}
@@ -99,7 +112,16 @@ public class ScoreboardUser implements PlayerOwnedObject {
 	public void pause() {
 		if (this.layout != null)
 			this.layout.stop();
-		Sidebar.get(getOnlinePlayer()).applyLayout(null);
+
+		try {
+			Sidebar.get(getOnlinePlayer()).applyLayout(null);
+		} catch (Exception ex) {
+			if (!erroring) {
+				Nexus.log("Error applying null Sidebar layout to " + getNickname() + ", disabling");
+				ex.printStackTrace();
+			}
+			erroring = true;
+		}
 	}
 
 	public void setOrder(ScoreboardLine line, int index) {

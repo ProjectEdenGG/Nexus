@@ -11,6 +11,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.scoreboard.ScoreboardService;
@@ -173,6 +175,13 @@ public class SidebarCommand extends CustomCommand implements Listener {
 		user.setLines(ScoreboardLine.getDefaultLines(player()));
 		service.save(user);
 		edit();
+	}
+
+	@Permission(Group.ADMIN)
+	@Path("resetErroring [player]")
+	void resetErroring(ScoreboardUser user) {
+		user.erroring = false;
+		send("&eErroring has been reset for " + user.getNickname());
 	}
 
 	@EventHandler
