@@ -150,15 +150,9 @@ public class ShopCommand extends CustomCommand implements Listener {
 		});
 	}
 
-	@Path("massRestock")
-	@Description("Restock any item in your shop in one menu")
-	void massRestock() {
-		new EditProductProvider.MassAddStockProvider(player(), null, service.get(player()), ShopGroup.of(worldGroup()));
-	}
-
-	@Path("restockFromCollect")
+	@Path("collect restock")
 	@Description("Move all items in your shop collect into your shop stock")
-	void restockFromCollect() {
+	void collect_restock() {
 		var shop = service.get(player());
 		shop.getProducts().forEach(product -> product.setEditing(true));
 		var holding = new ArrayList<>(shop.getHolding(shopGroup));
@@ -166,6 +160,12 @@ public class ShopCommand extends CustomCommand implements Listener {
 		shop.getProducts().forEach(product -> product.setEditing(false));
 		shop.getHolding(shopGroup).clear();
 		shop.addHolding(shopGroup, rejected);
+	}
+
+	@Path("massRestock")
+	@Description("Restock any item in your shop in one menu")
+	void massRestock() {
+		new EditProductProvider.MassAddStockProvider(player(), null, service.get(player()), ShopGroup.of(worldGroup()));
 	}
 
 	@Async

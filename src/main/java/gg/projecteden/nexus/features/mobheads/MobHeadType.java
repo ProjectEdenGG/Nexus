@@ -9,6 +9,8 @@ import gg.projecteden.nexus.features.mobheads.common.MobHeadVariant;
 import gg.projecteden.nexus.features.mobheads.variants.AxolotlVariant;
 import gg.projecteden.nexus.features.mobheads.variants.CatVariant;
 import gg.projecteden.nexus.features.mobheads.variants.ChickenVariant;
+import gg.projecteden.nexus.features.mobheads.variants.CopperGolemVariant;
+import gg.projecteden.nexus.features.mobheads.variants.CowVariant;
 import gg.projecteden.nexus.features.mobheads.variants.CreeperVariant;
 import gg.projecteden.nexus.features.mobheads.variants.FoxVariant;
 import gg.projecteden.nexus.features.mobheads.variants.FrogVariant;
@@ -29,6 +31,7 @@ import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.models.mobheads.MobHeadChanceConfigService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
+import io.papermc.paper.world.WeatheringCopperState;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.DyeColor;
@@ -37,6 +40,8 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Cat;
 import org.bukkit.entity.Chicken;
+import org.bukkit.entity.CopperGolem;
+import org.bukkit.entity.Cow;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -102,6 +107,9 @@ public enum MobHeadType implements MobHead {
 	@HeadConfig(headId = "58939")
 	CAMEL(Sound.ENTITY_CAMEL_STAND),
 
+	@HeadConfig(headId = "123542")
+	CAMEL_HUSK(Sound.ENTITY_CAMEL_HUSK_STAND),
+
 	@HeadConfig(headId = "14189", variantClass = CatVariant.class)
 	CAT(
 		entity -> CatVariant.of((Cat) entity),
@@ -124,16 +132,21 @@ public enum MobHeadType implements MobHead {
 	@HeadConfig(headId = "17898")
 	COD(Sound.ENTITY_COD_FLOP),
 
-	@HeadConfig(headId = "22866")
-	COW(Sound.ENTITY_COW_AMBIENT),
+	@HeadConfig(headId = "123445", variantClass = CopperGolemVariant.class)
+	COPPER_GOLEM(
+		entity -> CopperGolemVariant.of((CopperGolem) entity),
+		(entity, type) -> ((CopperGolem) entity).setWeatheringState((WeatheringCopperState) type),
+		() -> RandomUtils.randomElement(WeatheringCopperState.class),
+		Sound.ENTITY_COPPER_GOLEM_SPIN
+	),
 
-//	@HeadConfig(headId = "22866", variantClass = CowVariant.class)
-//	COW(
-//		entity -> CowVariant.of((Cow) entity),
-//		(entity, type) -> ((Cow) entity).setVariant((Cow.Variant) type),
-//		() -> RandomUtils.randomElement(Cow.Variant.class),
-//		Sound.ENTITY_COW_AMBIENT
-//	),
+	@HeadConfig(headId = "22866", variantClass = CowVariant.class)
+	COW(
+		entity -> CowVariant.of((Cow) entity),
+		(entity, type) -> ((Cow) entity).setVariant((Cow.Variant) type),
+		() -> RandomUtils.randomElement(Cow.Variant.class),
+		Sound.ENTITY_COW_AMBIENT
+	),
 
 	@HeadConfig(headId = "106826")
 	CREAKING(Sound.ENTITY_CREAKING_AMBIENT),
@@ -243,6 +256,9 @@ public enum MobHeadType implements MobHead {
 	@HeadConfig(headId = "3918")
 	MULE(Sound.ENTITY_MULE_ANGRY),
 
+	@HeadConfig(headId = "123259")
+	NAUTILUS(Sound.ENTITY_NAUTILUS_AMBIENT),
+
 	@HeadConfig(headId = "340")
 	OCELOT(Sound.ENTITY_OCELOT_AMBIENT),
 
@@ -253,6 +269,9 @@ public enum MobHeadType implements MobHead {
 		() -> RandomUtils.randomElement(Panda.Gene.class),
 		Sound.ENTITY_PANDA_AMBIENT
 	),
+
+	@HeadConfig(headId = "123518")
+	PARCHED(Sound.ENTITY_PARCHED_AMBIENT),
 
 	@HeadConfig(headId = "34702", variantClass = ParrotVariant.class)
 	PARROT(
@@ -351,6 +370,9 @@ public enum MobHeadType implements MobHead {
 	@HeadConfig(headId = "35431")
 	STRIDER(Sound.ENTITY_STRIDER_AMBIENT),
 
+	@HeadConfig(headId = "128501")
+	SULFUR_CUBE(Sound.ENTITY_SULFUR_CUBE_ABSORB),
+
 	@HeadConfig(headId = "50682")
 	TADPOLE(Sound.ENTITY_TADPOLE_GROW_UP),
 
@@ -414,6 +436,9 @@ public enum MobHeadType implements MobHead {
 
 	@HeadConfig(headId = "33747")
 	ZOMBIE_HORSE(Sound.ENTITY_ZOMBIE_HORSE_AMBIENT),
+
+	@HeadConfig(headId = "123260")
+	ZOMBIE_NAUTILUS(Sound.ENTITY_ZOMBIE_NAUTILUS_AMBIENT),
 
 	@HeadConfig(headId = "27600", variantClass = ZombieVillagerVariant.class)
 	ZOMBIE_VILLAGER(
@@ -564,7 +589,12 @@ public enum MobHeadType implements MobHead {
 		return variantConverter.apply(entity);
 	}
 
-	private static final List<EntityType> EXCLUDED_TYPES = List.of(EntityType.ARMOR_STAND, EntityType.GIANT, EntityType.NPC);
+	private static final List<EntityType> EXCLUDED_TYPES = List.of(
+			EntityType.ARMOR_STAND,
+			EntityType.GIANT,
+			EntityType.NPC,
+			EntityType.MANNEQUIN
+		);
 
 	public static List<EntityType> getExpectedTypes() {
 		List<EntityType> expectedTypes = new ArrayList<>(Arrays.asList(EntityType.values()));
