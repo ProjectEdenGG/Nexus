@@ -47,6 +47,11 @@ public class DeployCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
+	@Override
+	public void _shutdown() {
+		Dev.getOnlineStaff().forEach(deployingBar::removeViewer);
+	}
+
 	@Path("create <id> <name> <player>")
 	@HideFromHelp
 	@TabCompleteIgnore
