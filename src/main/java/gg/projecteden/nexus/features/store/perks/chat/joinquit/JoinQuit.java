@@ -80,6 +80,9 @@ public class JoinQuit extends Feature implements Listener {
 		if (player.hasPermission("jq.custom") && joinMessages.size() > 0)
 			message = RandomUtils.randomElement(joinMessages);
 
+		if (Dev.BRI.is(player) && message.equals("To be or not to be... [player] chose to be!"))
+			message = "To Bri or not to Bri... [player] chose to Bri!";
+
 		final String finalMessage = message;
 
 		if (player.isOnline()) {
@@ -136,6 +139,9 @@ public class JoinQuit extends Feature implements Listener {
 		if (player.hasPermission("jq.custom") && quitMessages.size() > 0)
 			message = RandomUtils.randomElement(quitMessages);
 
+		if (Dev.BRI.is(player) && message.equals("To be or not to be... [player] chose not to be"))
+			message = "To Bri or not to Bri... [player] chose not to Bri";
+
 		final String reasonString;
 		if (player.getResourcePackStatus() == Status.DECLINED && !new LocalResourcePackUserService().get(player).isEnabled()) {
 			reason = QuitReason.KICKED;
@@ -171,17 +177,11 @@ public class JoinQuit extends Feature implements Listener {
 
 	@NotNull
 	public static String formatJoin(Player player, String message) {
-		if (Dev.BRI.is(player) && message.equals("To be or not to be... [player] chose to be!"))
-			message = "To Bri or not to Bri... [player] chose to Bri!";
-
 		return "&2 &2&m &2&m &2&m &2>&5 " + message.replaceAll("\\[player]", "&a" + Nickname.of(player) + "&5");
 	}
 
 	@NotNull
 	public static String formatQuit(Player player, String message) {
-		if (Dev.BRI.is(player) && message.equals("To be or not to be... [player] chose not to be"))
-			message = "To Bri or not to Bri... [player] chose not to Bri";
-
 		return "&4 <&4&m &4&m &4&m &5 " + message.replaceAll("\\[player]", "&c" + Nickname.of(player) + "&5");
 	}
 
