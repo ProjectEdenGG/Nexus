@@ -138,6 +138,7 @@ public class PixelartCommand extends CustomCommand {
 
 	@SneakyThrows
 	@Path("palette")
+	@Description("List all available block palette colors and their corresponding colors")
 	void palette() {
 		for (Material material : ColorUtils.BLOCK_PALETTE.keySet()) {
 			try {

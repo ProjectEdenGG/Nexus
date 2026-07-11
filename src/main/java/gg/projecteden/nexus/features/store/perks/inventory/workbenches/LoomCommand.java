@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.store.perks.inventory.workbenches;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -34,6 +35,7 @@ public class LoomCommand extends _WorkbenchCommand {
 
 	@Path("cheat")
 	@Permission(Group.STAFF)
+	@Description("Open a custom banner building menu that doesn't require materials")
 	void cheat() {
 		new LoomCheatMenu().open(player());
 	}

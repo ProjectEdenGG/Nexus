@@ -82,6 +82,7 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 	}
 
 	@Path("list [--radius]")
+	@Description("List all custom bounding boxes")
 	void list(
 		@Switch Integer radius
 	) {

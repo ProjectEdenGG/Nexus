@@ -121,6 +121,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 
 	@Permission(Group.ADMIN)
 	@Path("products create [--price] [--exchangeType] [--amount] [--disabled]")
+	@Description("Create a new product for your shop from the item you are holding")
 	void products_create(
 		@Switch @Arg("1") double price,
 		@Switch @Arg("SELL") ExchangeType exchangeType,

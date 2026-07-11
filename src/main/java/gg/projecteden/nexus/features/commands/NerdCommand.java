@@ -80,8 +80,9 @@ public class NerdCommand extends CustomCommand {
 		send(json().next(StringUtils.paste(new NBTPlayer(nerd).getNbtFile().asNBTString())));
 	}
 
-	@Path("timeSinceDeath [player] [value]")
 	@Permission(Group.ADMIN)
+	@Path("timeSinceDeath [player] [value]")
+	@Description("Update a player's time since death")
 	void timeSinceDeath(@Arg("self") Player player, Integer value) {
 		var initial = player.getStatistic(Statistic.TIME_SINCE_DEATH);
 		if (value != null) {

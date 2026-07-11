@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -56,6 +57,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
+@WikiConfig(feature = "Tameables")
 public class TameablesCommand extends CustomCommand implements Listener {
 	private static final Map<UUID, PendingTameablesAction> actions = new HashMap<>();
 	private static final Map<UUID, Entity> moveQueue = new HashMap<>();

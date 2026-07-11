@@ -29,6 +29,7 @@ public class BackpackCommand extends CustomCommand {
 	}
 
 	@Path("get <tier>")
+	@Description("Get a backpack with the specified tier")
 	void get(BackpackTier tier) {
 		giveItem(tier.create());
 	}

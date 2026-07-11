@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.freeze.Freeze;
 import gg.projecteden.nexus.models.punishments.Punishment;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @Aliases("ymc")
 @Permission(Group.MODERATOR)
+@WikiConfig(feature = "Justice")
 public class YouMayContinueCommand extends _JusticeCommand {
 
 	public YouMayContinueCommand(CommandEvent event) {

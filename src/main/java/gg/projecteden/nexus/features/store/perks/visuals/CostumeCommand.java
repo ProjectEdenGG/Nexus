@@ -102,6 +102,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	}
 	
 	@Path("useArmorSkinHelmetCostume [state]")
+	@Description("Toggle whether or not to use armor skin helmet costumes")
 	void useArmorSkinHelmetCostume(Boolean state) {
 		var user = service.get(player());
 

@@ -58,6 +58,7 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 
 	@Path("flags registry [enable]")
 	@Description("Set the WorldGuard flag registry state")
+	@Permission(Group.ADMIN)
 	void flags_registry(Boolean enable) {
 		if (enable == null)
 			enable = !WorldGuardFlagUtils.registry.isInitialized();

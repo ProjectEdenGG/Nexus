@@ -6,9 +6,11 @@ import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.API;
 import gg.projecteden.nexus.features.NexusCommand;
+import gg.projecteden.nexus.features.commands.staff.NightVisionCommand;
 import gg.projecteden.nexus.features.documentation.DocumentationCommand.AllCommands.CommandMeta;
 import gg.projecteden.nexus.features.documentation.DocumentationCommand.AllCommands.CommandMeta.PathMeta;
 import gg.projecteden.nexus.features.documentation.DocumentationCommand.AllCommands.CommandMeta.PathMeta.ArgumentMeta;
+import gg.projecteden.nexus.features.mobheads.MobHeadsCommand;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.ICustomCommand;
@@ -125,15 +127,22 @@ public class DocumentationCommand extends CustomCommand {
 
 			IOUtils.fileWrite("plugins/Nexus/wiki/commands.txt", (writer, outputs) -> {
 				outputs.add("== Custom Commands ==");
-				sections.keySet().stream().sorted(Comparator.comparing(rank -> {
+				sections.keySet().stream().sorted(Comparator.comparingDouble(rank -> {
+					if ("staff".equalsIgnoreCase(rank))
+						return Rank.BUILDER.ordinal() - 0.5;
+
 					try {
 						return Rank.valueOf(rank.toUpperCase()).ordinal();
 					} catch (Exception ignore) {
 						return 99;
 					}
 				})).forEach(rank -> {
-					outputs.add("=== " + rank + " ===");
-					Utils.sortByKey(sections.get(rank)).keySet().forEach(feature -> {
+					var rankLabel = rank;
+					if ("staff".equalsIgnoreCase(rank))
+						rankLabel = "Staff (Builder+ & Moderator+)";
+
+					outputs.add("=== " + rankLabel + " ===");
+					for (String feature : Utils.sortByKey(sections.get(rank)).keySet()) {
 						if (sections.get(rank).keySet().size() > 1)
 							outputs.add("==== " + feature + " ====");
 
@@ -147,7 +156,7 @@ public class DocumentationCommand extends CustomCommand {
 						});
 
 						outputs.add("|}");
-					});
+					}
 				});
 			});
 
@@ -188,6 +197,18 @@ public class DocumentationCommand extends CustomCommand {
 		if (wikiConfig != null && !Nullables.isNullOrEmpty(wikiConfig.feature()))
 			feature = wikiConfig.feature();
 
+		// Special cases
+		final Permission commandPermission = command.getClass().getAnnotation(Permission.class);
+		final Permission methodPermission = method.getAnnotation(Permission.class);
+		final String permission = methodPermission != null ? methodPermission.value() : commandPermission != null ? commandPermission.value() : null;
+		if (permission != null) {
+			if (MobHeadsCommand.PERMISSION_GET.equals(permission))
+				feature = "Creative";
+			if (NightVisionCommand.PERMISSION.equals(permission))
+				feature = "Creative";
+		}
+		//
+
 		return feature;
 	}
 
@@ -201,8 +222,6 @@ public class DocumentationCommand extends CustomCommand {
 		if (commandPermission != null)
 			rank = commandPermission.value().replaceFirst("group\\.", "").replaceFirst("ladder\\.", "");
 
-		if ("staff".equalsIgnoreCase(rank))
-			rank = "builder";
 		if ("seniorstaff".equalsIgnoreCase(rank))
 			rank = "operator";
 
@@ -217,6 +236,13 @@ public class DocumentationCommand extends CustomCommand {
 		wikiConfig = method.getAnnotation(WikiConfig.class);
 		if (wikiConfig != null && !Nullables.isNullOrEmpty(wikiConfig.rank()))
 			rank = wikiConfig.rank();
+
+		// Special cases
+		if (MobHeadsCommand.PERMISSION_GET.equals(rank))
+			rank = "guest";
+		if (NightVisionCommand.PERMISSION.equals(rank))
+			rank = "guest";
+		//
 
 		return StringUtils.camelCase(rank);
 	}

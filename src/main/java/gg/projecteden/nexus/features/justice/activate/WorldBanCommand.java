@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.commands.staff;
+package gg.projecteden.nexus.features.justice.activate;
 
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.justice.misc._JusticeCommand;

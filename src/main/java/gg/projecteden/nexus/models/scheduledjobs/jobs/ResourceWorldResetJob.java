@@ -5,7 +5,7 @@ import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob;
 import gg.projecteden.api.mongodb.models.scheduledjobs.common.RetryIfInterrupted;
 import gg.projecteden.api.mongodb.models.scheduledjobs.common.Schedule;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.shops.ResourceWorldCommand;
+import gg.projecteden.nexus.features.commands.ResourceWorldCommand;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.bukkit.Bukkit;

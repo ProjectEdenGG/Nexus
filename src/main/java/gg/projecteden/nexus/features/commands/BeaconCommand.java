@@ -55,6 +55,7 @@ public class BeaconCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("set primaryEffect <effect>")
+	@Description("Set the primary effect of a beacon")
 	void set_primaryEffect(PotionEffectType effect) {
 		Beacon beacon = getTargetBeacon();
 		if (beacon == null)
@@ -65,6 +66,7 @@ public class BeaconCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("set secondaryEffect <effect>")
+	@Description("Set the secondary effect of a beacon")
 	void set_secondaryEffect(PotionEffectType effect) {
 		Beacon beacon = getTargetBeacon();
 		if (beacon == null)

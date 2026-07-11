@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.ambience.effects.particles;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.ambience.effects.particles.common.ParticleEffect;
 import gg.projecteden.nexus.features.ambience.effects.particles.common.ParticleEffectType;
-import gg.projecteden.nexus.features.events.DebugDotCommand;
+import gg.projecteden.nexus.features.commands.staff.admin.DebugDotCommand;
 import gg.projecteden.nexus.models.ambience.AmbienceUser;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.RandomUtils;

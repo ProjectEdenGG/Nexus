@@ -19,6 +19,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -42,6 +43,7 @@ import java.util.stream.Collectors;
 
 @Aliases("db")
 @Permission(Group.ADMIN)
+@WikiConfig(feature = "Database")
 public class DatabaseCommand extends CustomCommand {
 
 	public DatabaseCommand(@NonNull CommandEvent event) {

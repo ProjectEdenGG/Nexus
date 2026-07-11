@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.vanish.VanishUser;
@@ -15,7 +16,7 @@ import lombok.NonNull;
 @Redirect(from = {"/vanish fj", "/fj"}, to = "/vanish fakejoin")
 @Redirect(from = {"/vanish fq", "/fq"}, to = "/vanish fakequit")
 @Redirect(from = {"/vanish ni", "/ni"}, to = "/vanish settings interact")
-@Permission("nexus.vanish")
+@Permission(Group.MODERATOR)
 public class VanishCommand extends CustomCommand {
 	private static final VanishUserService service = new VanishUserService();
 	private VanishUser user;

@@ -19,6 +19,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.reminders.ReminderConfig;
@@ -52,6 +53,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Aliases("reminder")
 @Permission(Group.STAFF)
+@WikiConfig(feature = "Reminders")
 public class RemindersCommand extends CustomCommand implements Listener {
 	private static ReminderConfig config;
 

@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.warps.Warps.Warp;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ public abstract class _WarpSubCommand extends _WarpCommand {
 
 	@Path("(warp|warps) list [filter]")
 	@Description("List available warps")
+	@WikiConfig(feature = "Warps")
 	public void list(@Arg(tabCompleter = Warp.class) String filter) {
 		super.list(filter);
 	}
@@ -25,6 +27,7 @@ public abstract class _WarpSubCommand extends _WarpCommand {
 	@Path("(warp|warps) (set|create) <name>")
 	@Permission(Group.STAFF)
 	@Description("Create a new warp")
+	@WikiConfig(feature = "Warps")
 	public void set(@Arg(tabCompleter = Warp.class) String name) {
 		super.set(name);
 	}
@@ -32,6 +35,7 @@ public abstract class _WarpSubCommand extends _WarpCommand {
 	@Path("(warp|warps) reset <name>")
 	@Permission(Group.STAFF)
 	@Description("Update a warp's location")
+	@WikiConfig(feature = "Warps")
 	public void reset(@Arg(tabCompleter = Warp.class) String name) {
 		super.reset(name);
 	}
@@ -39,30 +43,35 @@ public abstract class _WarpSubCommand extends _WarpCommand {
 	@Path("(warp|warps) (rm|remove|delete|del) <name>")
 	@Permission(Group.STAFF)
 	@Description("Delete a warp")
+	@WikiConfig(feature = "Warps")
 	public void delete(Warp warp) {
 		super.delete(warp);
 	}
 
 	@Path("(warp|warps) (teleport|tp|warp) <name>")
 	@Description("Teleport to a warp")
+	@WikiConfig(feature = "Warps")
 	public void teleport(Warp warp) {
 		super.teleport(warp);
 	}
 
 	@Path("(warp|warps) <name>")
 	@Description("Teleport to a warp")
+	@WikiConfig(feature = "Warps")
 	public void tp(Warp warp) {
 		super.tp(warp);
 	}
 
 	@Path("(warp|warps) tp nearest")
 	@Description("Teleport to the nearest warp")
+	@WikiConfig(feature = "Warps")
 	public void teleportNearest() {
 		super.teleportNearest();
 	}
 
 	@Path("(warp|warps) nearest")
 	@Description("View the nearest warp")
+	@WikiConfig(feature = "Warps")
 	public void nearest() {
 		super.nearest();
 	}

@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils.NPCShopMenu.Product;
 import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks.BackpackTier;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.halloween25.Halloween25User;
@@ -15,6 +16,7 @@ import lombok.NonNull;
 
 import java.util.List;
 
+@HideFromWiki
 public class Halloween25Command extends CustomCommand {
 
 	public Halloween25Command(@NonNull CommandEvent event) {

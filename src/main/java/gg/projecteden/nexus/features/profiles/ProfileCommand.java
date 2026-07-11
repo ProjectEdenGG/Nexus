@@ -57,7 +57,73 @@ public class ProfileCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
+	@Path("[player]")
+	@Description("View a player's profile")
+	public void open(@Arg("self") Nerd target) {
+		openProfile(target, player(), null);
+	}
+
+	@Path("setTexture <type>")
+	@Permission(Group.ADMIN)
+	@Description("Set your profile's background texture")
+	public void setTexture(ProfileTextureType type) {
+		ProfileUser user = service.get(player());
+		user.setTextureType(type);
+		service.save(user);
+		send("Set texture to " + StringUtils.camelCase(type));
+	}
+
+	@Path("preview <type>")
+	@Description("Preview a profile texture")
+	public void preview(ProfileTextureType type) {
+		if (type.isInternal())
+			error("You cannot preview this profile texture");
+
+		openProfile(player(), player(), type, null);
+	}
+
+	@HideFromWiki
+	@HideFromHelp
+	@Description("Set your profile's about me")
+	@Path("setAbout <input...>")
+	public void setAbout(@Arg(min = 75, stripColor = true) String input) {
+		if (Nullables.isNullOrEmpty(input))
+			error("Missing input");
+
+		if (Censor.isCensored(player(), input))
+			error("Inappropriate input in about");
+
+		ProfileUser user = service.get(player());
+		if (!input.equals(user.getNerd().getAbout()))
+			user.getNerd().setAbout(input.trim());
+
+		new ProfileSettingsProvider(player(), user).open(player());
+	}
+
+	@HideFromWiki
+	@HideFromHelp
+	@Description("Set your profile's status")
+	@Path("setStatus <text...>")
+	public void setStatus(String input) {
+		if (Nullables.isNullOrEmpty(input))
+			error("Missing input");
+
+		input = StringUtils.stripColor(input.trim());
+		if (Censor.isCensored(player(), input))
+			error("Inappropriate input in status");
+
+		ProfileUser user = service.get(player());
+		if (!input.equals(user.getStatus())) {
+			user.setStatus(input);
+			Discord.staffLog(StringUtils.getDiscordPrefix("Status") + user.getNerd().getNickname() + " set their profile status to `" + user.getStatus() + "`");
+			service.save(user);
+		}
+
+		new ProfileSettingsProvider(player(), user).open(player());
+	}
+
 	@Path("degreeOfSeparation <player>")
+	@Description("Find the degree of separation between you and another player")
 	public void degreeOfSeparation(OfflinePlayer player) {
 		FriendsUserService friendsUserService = new FriendsUserService();
 
@@ -75,7 +141,7 @@ public class ProfileCommand extends CustomCommand implements Listener {
 			index++;
 		}
 
-		send(formatted.toString());
+		send(PREFIX + Nickname.of(player) + " is " + formatted + " degrees of separation away from you");
 	}
 
 	private Map<UUID, Set<UUID>> buildGraph(FriendsUserService service, UUID start) {
@@ -147,71 +213,6 @@ public class ProfileCommand extends CustomCommand implements Listener {
 		}
 
 		return new ArrayList<>(path); // return as List for convenience
-	}
-
-	@Path("[player]")
-	@Description("View a player's profile")
-	public void open(@Arg("self") Nerd target) {
-		openProfile(target, player(), null);
-	}
-
-	@Path("setTexture <type>")
-	@Permission(Group.ADMIN)
-	@Description("Set your profile's background texture")
-	public void setTexture(ProfileTextureType type) {
-		ProfileUser user = service.get(player());
-		user.setTextureType(type);
-		service.save(user);
-		send("Set texture to " + StringUtils.camelCase(type));
-	}
-
-	@Path("preview <type>")
-	@Description("Preview a profile texture")
-	public void preview(ProfileTextureType type) {
-		if (type.isInternal())
-			error("You cannot preview this profile texture");
-
-		openProfile(player(), player(), type, null);
-	}
-
-	@HideFromWiki
-	@HideFromHelp
-	@Description("Set your profile's about me")
-	@Path("setAbout <input...>")
-	public void setAbout(@Arg(min = 75, stripColor = true) String input) {
-		if (Nullables.isNullOrEmpty(input))
-			error("Missing input");
-
-		if (Censor.isCensored(player(), input))
-			error("Inappropriate input in about");
-
-		ProfileUser user = service.get(player());
-		if (!input.equals(user.getNerd().getAbout()))
-			user.getNerd().setAbout(input.trim());
-
-		new ProfileSettingsProvider(player(), user).open(player());
-	}
-
-	@HideFromWiki
-	@HideFromHelp
-	@Description("Set your profile's status")
-	@Path("setStatus <text...>")
-	public void setStatus(String input) {
-		if (Nullables.isNullOrEmpty(input))
-			error("Missing input");
-
-		input = StringUtils.stripColor(input.trim());
-		if (Censor.isCensored(player(), input))
-			error("Inappropriate input in status");
-
-		ProfileUser user = service.get(player());
-		if (!input.equals(user.getStatus())) {
-			user.setStatus(input);
-			Discord.staffLog(StringUtils.getDiscordPrefix("Status") + user.getNerd().getNickname() + " set their profile status to `" + user.getStatus() + "`");
-			service.save(user);
-		}
-
-		new ProfileSettingsProvider(player(), user).open(player());
 	}
 
 	@EventHandler

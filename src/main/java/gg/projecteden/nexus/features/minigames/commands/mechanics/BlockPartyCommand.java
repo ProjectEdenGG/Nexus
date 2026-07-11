@@ -213,6 +213,7 @@ public class BlockPartyCommand extends CustomCommand {
 	}
 
 	@Path("lights add <channel>")
+	@Description("Add a light to the board")
 	void addLight(int channel) {
 		LxBoard board = getBoardRequired();
 
@@ -234,6 +235,7 @@ public class BlockPartyCommand extends CustomCommand {
 	}
 
 	@Path("lights test [color]")
+	@Description("Test the lights on the board")
 	void testLights(DyeColor color) {
 		LxBoard board = getBoardRequired();
 
@@ -252,28 +254,33 @@ public class BlockPartyCommand extends CustomCommand {
 	}
 
 	@Path("lights cue <cue>")
+	@Description("Go to a specific cue on the board")
 	void cue(int cueNum) {
 		getBoardRequired().goToCue(cueNum);
 	}
 
 	@Path("lights out")
+	@Description("Go to cue 0 on the board")
 	void lightsOut() {
 		getBoardRequired().goToCue(0);
 	}
 
 	@Confirm
 	@Path("lights removeAllEntitiesFromChannels")
+	@Description("Remove all lights from the board")
 	void removeAllLights() {
 		getBoardRequired().setChannels(new ChannelList());
 		getArenaRequired().write();
 	}
 
 	@Path("lights debug [on/off]")
+	@Description("Toggle debug mode for the board")
 	void debugLights(boolean on) {
 		getBoardRequired().setDebug(on);
 	}
 
 	@Path("lights updateCues")
+	@Description("Update the cues on the board")
 	void updateCues() {
 		LxBoard board = getBoardRequired();
 		board.setCues(BlockPartyArena.getDefaultBoard().getCues());

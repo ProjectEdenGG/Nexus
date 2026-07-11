@@ -49,6 +49,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redi
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
@@ -472,6 +473,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Path("warp arena <arena>")
 	@Permission(Group.STAFF)
 	@Description("Warp to an arena")
+	@WikiConfig(feature = "Warps")
 	void warp_arena(Arena arena) {
 		arena.teleport(minigamer);
 	}

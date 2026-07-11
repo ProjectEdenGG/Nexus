@@ -8,10 +8,12 @@ import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -65,6 +67,7 @@ import static java.util.stream.Collectors.joining;
 
 @NoArgsConstructor
 @SuppressWarnings("deprecation")
+@WikiConfig(feature = "Wordle")
 public class WordleCommand extends CustomCommand implements Listener {
 	private static final List<String> KEYBOARD = List.of("QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM");
 	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy");
@@ -78,8 +81,9 @@ public class WordleCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path("[date]")
 	@Async
+	@Path("[date]")
+	@Description("Play Wordle")
 	void wordle(LocalDate date) {
 		var user = userService.get(player());
 		var userZonedLocalDate = user.getZonedLocalDate();
@@ -100,6 +104,7 @@ public class WordleCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("stats [player]")
+	@Description("View Wordle stats")
 	void stats(@Arg("self") WordleUser user) {
 		send(PREFIX + (isSelf(user) ? "Your stats" : user.getNickname() + "'s stats"));
 		send("&e Games completed: &7" + user.getGamesCompleted());
@@ -110,25 +115,15 @@ public class WordleCommand extends CustomCommand implements Listener {
 		send("&e Best streak: &7" + user.getBestStreak());
 	}
 
-	@Path("streak [user]")
-	void streak(@Arg("self") WordleUser user) {
-		int streak = user.getStreak();
-		send(PREFIX + streak + StringUtils.plural(" day", streak));
-	}
-
-	@Path("average [user]")
-	void average(@Arg("self") WordleUser user) {
-		send(PREFIX + "Average guesses: " + StringUtils.getDf().format(user.getAverage()));
-	}
-
 	@Path("top streak [page]")
+	@Description("View active streaks leaderboard")
 	void top_streak(@Arg("1") int page) {
 		var users = userService.getAll().stream()
 			.filter(user -> user.getStreak() > 1)
 			.sorted(Comparator.comparing(WordleUser::getStreak).reversed())
 			.toList();
 
-		send(PREFIX + "Highest current streaks");
+		send(PREFIX + "Highest active streaks");
 		new Paginator<WordleUser>()
 			.values(users)
 			.formatter((user, index) -> json(index + " &e" + user.getNickname() + " &7- " + user.getStreak() + " days"))
@@ -138,6 +133,7 @@ public class WordleCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("top bestStreak [page]")
+	@Description("View highest streaks of all time leaderboard")
 	void top_bestStreak(@Arg("1") int page) {
 		var users = userService.getAll().stream()
 			.filter(user -> user.getBestStreak() > 1)
@@ -154,6 +150,7 @@ public class WordleCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("top average [page]")
+	@Description("View average number of guesses leaderboard (minimum 15 games)")
 	void top_average(@Arg("1") int page) {
 		var users = userService.getAll().stream()
 			.filter(user -> user.getAverage() > 0)
@@ -171,6 +168,7 @@ public class WordleCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("top successRate [page]")
+	@Description("View success rate leaderboard (minimum 15 games)")
 	void top_successRate(@Arg("1") int page) {
 		var users = userService.getAll().stream()
 			.filter(user -> user.getGamesCompleted() > 15)
@@ -187,6 +185,7 @@ public class WordleCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("top completed [page]")
+	@Description("View most games completed successfully leaderboard")
 	void top_completed(@Arg("1") int page) {
 		var users = userService.getAll().stream()
 			.filter(user -> user.getGames().values().stream().anyMatch(WordleGame::isSuccess))
@@ -203,6 +202,7 @@ public class WordleCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("results [date]")
+	@Description("View server results of a specific Wordle game")
 	void results(LocalDate date) {
 		var user = userService.get(player());
 		var userZonedLocalDate = user.getZonedLocalDate();
@@ -217,6 +217,7 @@ public class WordleCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("archive [yearMonth]")
+	@Description("Open a Wordle calendar to play and view past games")
 	void archive(YearMonth yearMonth) {
 		var user = userService.get(player());
 
@@ -228,6 +229,7 @@ public class WordleCommand extends CustomCommand implements Listener {
 
 	@Path("setPlayedOnReleaseDay <date> [player] [state]")
 	@Permission(Group.ADMIN)
+	@Description("Set whether a player played Wordle on its release day")
 	void setPlayedOnReleaseDay(LocalDate date, @Arg("self") WordleUser user, Boolean state) {
 		if (state == null)
 			state = !user.get(date).isPlayedOnReleaseDay();
@@ -238,6 +240,7 @@ public class WordleCommand extends CustomCommand implements Listener {
 
 	@Path("setSolvedOnReleaseDay <date> [player] [state]")
 	@Permission(Group.ADMIN)
+	@Description("Set whether a player solved Wordle on its release day")
 	void setSolvedOnReleaseDay(LocalDate date, @Arg("self") WordleUser user, Boolean state) {
 		if (state == null)
 			state = !user.get(date).isSolvedOnReleaseDay();
@@ -249,6 +252,7 @@ public class WordleCommand extends CustomCommand implements Listener {
 	@Confirm
 	@Path("delete <player> <date>")
 	@Permission(Group.SENIOR_STAFF)
+	@Description("Delete a player's Wordle data for a specific puzzle")
 	void delete(WordleUser user, LocalDate date) {
 		user.getGames().remove(date);
 		userService.save(user);
@@ -257,6 +261,7 @@ public class WordleCommand extends CustomCommand implements Listener {
 
 	@Path("config")
 	@Permission(Group.ADMIN)
+	@Description("Configure Wordle settings")
 	void config(
 		@Switch Integer before,
 		@Switch Integer after,

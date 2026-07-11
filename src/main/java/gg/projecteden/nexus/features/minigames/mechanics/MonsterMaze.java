@@ -6,7 +6,7 @@ import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.events.DebugDotCommand;
+import gg.projecteden.nexus.features.commands.staff.admin.DebugDotCommand;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginEvent;

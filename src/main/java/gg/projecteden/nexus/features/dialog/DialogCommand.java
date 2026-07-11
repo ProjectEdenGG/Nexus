@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.dialog;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ColorType;
@@ -18,6 +19,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@HideFromWiki
 public class DialogCommand extends CustomCommand {
 
 	public DialogCommand(@NonNull CommandEvent event) {

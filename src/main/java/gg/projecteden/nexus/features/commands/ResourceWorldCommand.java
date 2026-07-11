@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.shops;
+package gg.projecteden.nexus.features.commands;
 
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.api.common.annotations.Async;
@@ -9,6 +9,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.homes.HomesFeature;
+import gg.projecteden.nexus.features.shops.Market;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;

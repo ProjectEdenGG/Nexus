@@ -40,6 +40,7 @@ public class TitanCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("View information about Titan")
 	void info() {
 		send();
 		send(json(PREFIX + "Titan is a Fabric mod built for the Project Eden server designed to enhance a player's " +

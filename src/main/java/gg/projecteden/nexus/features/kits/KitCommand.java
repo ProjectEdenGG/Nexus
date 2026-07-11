@@ -55,14 +55,14 @@ public class KitCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("reload")
-	@Permission(Group.STAFF)
+	@Permission(Group.SENIOR_STAFF)
 	@Description("Reload kits from disk")
 	void reload() {
 		KitManager.reloadConfig();
 	}
 
 	@Path("edit")
-	@Permission(Group.STAFF)
+	@Permission(Group.SENIOR_STAFF)
 	@Description("Open the kit editor menu")
 	void edit() {
 		new KitManagerProvider().open(player());

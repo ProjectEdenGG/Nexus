@@ -9,10 +9,12 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -41,6 +43,7 @@ import static gg.projecteden.nexus.utils.PlotUtils.getPlot;
 import static gg.projecteden.nexus.utils.PlotUtils.getPlotArea;
 
 @Permission(Group.ADMIN)
+@WikiConfig(feature = "Creative")
 public class PlotCleanupCommand extends CustomCommand {
 
 	public PlotCleanupCommand(CommandEvent event) {
@@ -48,6 +51,7 @@ public class PlotCleanupCommand extends CustomCommand {
 	}
 
 	@Path("info [--showDistr]")
+	@Description("Display rating info about a plot")
 	void info(@Switch boolean showDistr) {
 		var plot = getPlot(location());
 		if (plot == null)
@@ -82,6 +86,7 @@ public class PlotCleanupCommand extends CustomCommand {
 	}
 
 	@Path("next")
+	@Description("Visit the next plot ready for deletion")
 	void next() {
 		getSortedPlots().stream()
 			.filter(plot -> {
@@ -96,6 +101,7 @@ public class PlotCleanupCommand extends CustomCommand {
 	}
 
 	@Path("forceKeep [state]")
+	@Description("Toggle force keep for a plot")
 	void forceKeep(Boolean state) {
 		var plot = getPlot(location());
 		if (plot == null)
@@ -116,6 +122,7 @@ public class PlotCleanupCommand extends CustomCommand {
 
 	@Async
 	@Path("autodelete")
+	@Description("Delete the plot you are in if it is eligible for deletion")
 	void autodelete() {
 		var plot = getPlot(location());
 		if (plot == null)
@@ -142,6 +149,7 @@ public class PlotCleanupCommand extends CustomCommand {
 	}
 
 	@Path("list [page]")
+	@Description("List all plots and their ratings")
 	void list(@Arg("1") int page) {
 		new Paginator<Plot>()
 			.values(getSortedPlots())
@@ -170,6 +178,7 @@ public class PlotCleanupCommand extends CustomCommand {
 
 	@Async
 	@Path("stats")
+	@Description("Display stats about plot ratings")
 	void stats() {
 		var plots = getPlotArea(location()).getBasePlots();
 		Map<RatingResult, Integer> counts = new HashMap<>();
@@ -189,6 +198,7 @@ public class PlotCleanupCommand extends CustomCommand {
 
 	@Async
 	@Path("recalculate")
+	@Description("Recalculate the rating of a plot")
 	void recalculate() {
 		var plot = getPlot(location());
 		if (plot == null)
@@ -207,6 +217,7 @@ public class PlotCleanupCommand extends CustomCommand {
 	@Async
 	@SneakyThrows
 	@Path("recalculateAll [delay]")
+	@Description("Recalculate the rating of all plots")
 	void recalculateAll(@Arg("500") int delay) {
 		var plots = getPlotArea(location()).getBasePlots();
 
@@ -278,6 +289,7 @@ public class PlotCleanupCommand extends CustomCommand {
 	}
 
 	@Path("validateChunk")
+	@Description("Validate if the plot contains the chunk you are standing in")
 	void validateChunk() {
 		var plot = getPlot(getTargetBlockRequired().getLocation());
 		if (plot == null)

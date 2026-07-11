@@ -37,6 +37,7 @@ public class ChunksCommand extends CustomCommand {
 	}
 
 	@Path("unloadAll <world> [--removeTickets]")
+	@Description("Unload all chunks in a world")
 	void unloadAll(World world, @Switch Plugin removeTickets) {
 		for (Chunk chunk : world.getLoadedChunks()) {
 			if (removeTickets != null)

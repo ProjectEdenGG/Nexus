@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.events;
+package gg.projecteden.nexus.features.commands.staff.admin;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.particles.effects.DotEffect;
@@ -16,7 +16,7 @@ import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
-@Permission(Group.STAFF)
+@Permission(Group.ADMIN)
 public class DebugDotCommand extends CustomCommand {
 
 	public DebugDotCommand(@NonNull CommandEvent event) {

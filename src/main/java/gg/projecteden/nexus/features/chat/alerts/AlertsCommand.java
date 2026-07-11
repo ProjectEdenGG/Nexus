@@ -145,7 +145,7 @@ public class AlertsCommand extends CustomCommand {
 	}
 
 	@Path("channel <channel> [state]")
-	@Description("Toggle always alerting for messages in a channel")
+	@Description("Toggle alerts for messages in a channel")
 	void channel(PublicChannel channel, Boolean state) {
 		if (state == null)
 			state = !alerts.getChannels().contains(channel);

@@ -3,7 +3,7 @@ package gg.projecteden.nexus.models.minigolf;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.features.events.DebugDotCommand;
+import gg.projecteden.nexus.features.commands.staff.admin.DebugDotCommand;
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
 import gg.projecteden.nexus.features.minigolf.models.GolfBallParticle;
 import gg.projecteden.nexus.features.minigolf.models.GolfBallStyle;

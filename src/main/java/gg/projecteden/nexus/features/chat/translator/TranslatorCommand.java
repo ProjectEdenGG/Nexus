@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.chat.translator;
 
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -13,6 +14,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.UUID;
 
+@Disabled
 @Aliases("translate")
 @Permission(Group.STAFF)
 public class TranslatorCommand extends CustomCommand {

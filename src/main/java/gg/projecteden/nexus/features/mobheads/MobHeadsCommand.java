@@ -38,6 +38,7 @@ import java.util.function.Function;
 @NoArgsConstructor
 @Aliases("mobhead")
 public class MobHeadsCommand extends CustomCommand implements Listener {
+	public static final String PERMISSION_GET = "nexus.mobheads.get";
 	private final MobHeadUserService service = new MobHeadUserService();
 
 	public MobHeadsCommand(@NonNull CommandEvent event) {
@@ -54,7 +55,7 @@ public class MobHeadsCommand extends CustomCommand implements Listener {
 		new MobHeadUserMenu().open(player());
 	}
 
-	@Permission("nexus.mobheads.get")
+	@Permission(PERMISSION_GET)
 	@Path("get <type>")
 	@Description("Spawn a mob head")
 	void mobHead(MobHead mobHead) {

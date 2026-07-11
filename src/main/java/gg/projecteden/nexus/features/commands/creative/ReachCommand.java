@@ -39,7 +39,8 @@ public class ReachCommand extends CustomCommand implements Listener {
 			user = service.get(player());
 	}
 
-	@Path(value = "<reach>")
+	@Path("<reach>")
+	@Description("Set your creative mode block interaction range")
 	void run(@Arg(min = 0, max = 64) double reach) {
 		user.setReach(reach);
 		service.save(user);

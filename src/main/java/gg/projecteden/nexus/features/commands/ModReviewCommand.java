@@ -13,6 +13,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.modreview.ModReview;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Aliases({"modcheck", "checkmod"})
 @Description("A list of client-side modifications that have been reviewed by the staff team")
+@WikiConfig(feature = "ModReview")
 public class ModReviewCommand extends CustomCommand implements Listener {
 	private final ModReviewService service = new ModReviewService();
 	private final ModReview modReview = service.get0();

@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.warps.WarpType;
@@ -33,6 +34,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Aliases("ww")
+@WikiConfig(feature = "Weekly Wakka")
 public class WeeklyWakkaCommand extends _WarpCommand {
 
 	public WeeklyWakkaCommand(@NonNull CommandEvent event) {
@@ -196,8 +198,9 @@ public class WeeklyWakkaCommand extends _WarpCommand {
 		super.nearest();
 	}
 
-	@Path("farthest [page]")
 	@Permission(Group.ADMIN)
+	@Path("farthest [page]")
+	@Description("Find areas with no nearby Weekly Wakka warps")
 	void farthest(@Arg("1") Integer page) {
 		var selection = worldedit().getPlayerSelection(player());
 		var locations = getWarpType().getAll().stream().map(Warp::getLocation).toList();

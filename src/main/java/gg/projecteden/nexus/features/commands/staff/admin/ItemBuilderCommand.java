@@ -12,6 +12,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Ladder;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -52,7 +53,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
 
-@Permission("nexus.itembuilder")
+@Permission(Ladder.BUILDER)
 public class ItemBuilderCommand extends CustomCommand {
 	private ItemBuilder item;
 

@@ -26,6 +26,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Feature;
@@ -68,6 +69,7 @@ import static gg.projecteden.nexus.utils.Reloader.reloader;
 
 @NoArgsConstructor
 @Permission(Group.ADMIN)
+@WikiConfig(feature = "Nexus")
 public class NexusCommand extends CustomCommand implements Listener {
 
 	public NexusCommand(CommandEvent event) {
@@ -313,6 +315,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("saveAll [--flush]")
+	@Description("Save all worlds")
 	void saveAll(@Switch boolean flush) {
 		MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
 		server.saveEverything(false, flush, true);

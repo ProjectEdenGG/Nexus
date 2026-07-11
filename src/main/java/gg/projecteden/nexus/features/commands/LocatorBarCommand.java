@@ -64,8 +64,9 @@ public class LocatorBarCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("color")
+	@Description("Change the color of your locator bar icon")
 	void color() {
-		send(PREFIX + "Change your &c/profile &3background color to set your locator bar color.");
+		send(PREFIX + "Change your &c/profile &3background color to set your locator bar color");
 	}
 
 	@EventHandler

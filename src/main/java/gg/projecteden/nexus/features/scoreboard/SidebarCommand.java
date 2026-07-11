@@ -179,6 +179,7 @@ public class SidebarCommand extends CustomCommand implements Listener {
 
 	@Permission(Group.ADMIN)
 	@Path("resetErroring [player]")
+	@Description("Reset erroring state for a player")
 	void resetErroring(ScoreboardUser user) {
 		user.erroring = false;
 		send("&eErroring has been reset for " + user.getNickname());
