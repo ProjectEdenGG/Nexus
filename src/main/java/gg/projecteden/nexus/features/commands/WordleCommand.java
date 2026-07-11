@@ -61,10 +61,6 @@ import static java.util.stream.Collectors.joining;
 
 /* TODO
 	Prevent reload if dialog is open (good luck)
-
-
-	Leaderboard
-		Best all time streak
  */
 
 @NoArgsConstructor
