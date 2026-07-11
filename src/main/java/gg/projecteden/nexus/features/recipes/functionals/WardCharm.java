@@ -59,6 +59,7 @@ public class WardCharm extends FunctionalRecipe {
 		EntityType.SNIFFER,
 		EntityType.SNOW_GOLEM,
 		EntityType.SQUID,
+		EntityType.SULFUR_CUBE,
 		EntityType.TROPICAL_FISH,
 		EntityType.TURTLE,
 		EntityType.ZOMBIE_HORSE
