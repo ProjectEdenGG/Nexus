@@ -62,18 +62,8 @@ import static java.util.stream.Collectors.joining;
 /* TODO
 	Prevent reload if dialog is open (good luck)
 
-	My stats
-		Total completed
-		Average guesses needed
-		Win rate
-		Current streak
-		Best streak
 
 	Leaderboard
-		Most completed
-		Lowest average guesses needed
-		Best win rate
-		Best current streak
 		Best all time streak
  */
 
@@ -113,6 +103,17 @@ public class WordleCommand extends CustomCommand implements Listener {
 			new WordleMenu(date).open(player());
 	}
 
+	@Path("stats [player]")
+	void stats(@Arg("self") WordleUser user) {
+		send(PREFIX + (isSelf(user) ? "Your stats" : user.getNickname() + "'s stats"));
+		send("&e Games completed: &7" + user.getGamesCompleted());
+		send("&e Games won: &7" + user.getGamesSucceeded());
+		send("&e Win rate: &7" + StringUtils.getDf().format(user.getSuccessRate()));
+		send("&e Average guesses: &7" + StringUtils.getDf().format(user.getAverage()));
+		send("&e Current streak: &7" + user.getStreak());
+		send("&e Best streak: &7" + user.getBestStreak());
+	}
+
 	@Path("streak [user]")
 	void streak(@Arg("self") WordleUser user) {
 		int streak = user.getStreak();
@@ -131,7 +132,7 @@ public class WordleCommand extends CustomCommand implements Listener {
 			.sorted(Comparator.comparing(WordleUser::getStreak).reversed())
 			.toList();
 
-		send(PREFIX + "Highest streaks");
+		send(PREFIX + "Highest current streaks");
 		new Paginator<WordleUser>()
 			.values(users)
 			.formatter((user, index) -> json(index + " &e" + user.getNickname() + " &7- " + user.getStreak() + " days"))
@@ -140,19 +141,67 @@ public class WordleCommand extends CustomCommand implements Listener {
 			.send();
 	}
 
+	@Path("top bestStreak [page]")
+	void top_bestStreak(@Arg("1") int page) {
+		var users = userService.getAll().stream()
+			.filter(user -> user.getBestStreak() > 1)
+			.sorted(Comparator.comparing(WordleUser::getBestStreak).reversed())
+			.toList();
+
+		send(PREFIX + "Highest streaks of all time");
+		new Paginator<WordleUser>()
+			.values(users)
+			.formatter((user, index) -> json(index + " &e" + user.getNickname() + " &7- " + user.getBestStreak() + " days"))
+			.command("/wordle top bestStreak")
+			.page(page)
+			.send();
+	}
+
 	@Path("top average [page]")
 	void top_average(@Arg("1") int page) {
 		var users = userService.getAll().stream()
 			.filter(user -> user.getAverage() > 0)
-			.filter(user -> user.getGames().values().stream().filter(WordleGame::isComplete).count() > 5)
+			.filter(user -> user.getGamesCompleted() > 15)
 			.sorted(Comparator.comparing(WordleUser::getAverage))
 			.toList();
 
-		send(PREFIX + "Best average number of guesses");
+		send(PREFIX + "Best average number of guesses (minimum 15 games)");
 		new Paginator<WordleUser>()
 			.values(users)
 			.formatter((user, index) -> json(index + " &e" + user.getNickname() + " &7- " + StringUtils.getDf().format(user.getAverage()) + " guesses"))
 			.command("/wordle top average")
+			.page(page)
+			.send();
+	}
+
+	@Path("top successRate [page]")
+	void top_successRate(@Arg("1") int page) {
+		var users = userService.getAll().stream()
+			.filter(user -> user.getGamesCompleted() > 15)
+			.sorted(Comparator.comparing(WordleUser::getSuccessRate).reversed())
+			.toList();
+
+		send(PREFIX + "Best success rate (minimum 15 games)");
+		new Paginator<WordleUser>()
+			.values(users)
+			.formatter((user, index) -> json(index + " &e" + user.getNickname() + " &7- " + StringUtils.getDf().format(user.getSuccessRate()) + "%"))
+			.command("/wordle top successRate")
+			.page(page)
+			.send();
+	}
+
+	@Path("top completed [page]")
+	void top_completed(@Arg("1") int page) {
+		var users = userService.getAll().stream()
+			.filter(user -> user.getGames().values().stream().anyMatch(WordleGame::isSuccess))
+			.sorted(Comparator.comparing(WordleUser::getGamesSucceeded).reversed())
+			.toList();
+
+		send(PREFIX + "Most games completed successfully");
+		new Paginator<WordleUser>()
+			.values(users)
+			.formatter((user, index) -> json(index + " &e" + user.getNickname() + " &7- " + user.getGamesSucceeded() + " games"))
+			.command("/wordle top completed")
 			.page(page)
 			.send();
 	}

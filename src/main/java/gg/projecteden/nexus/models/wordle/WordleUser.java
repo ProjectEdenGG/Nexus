@@ -64,12 +64,28 @@ public class WordleUser implements PlayerOwnedObject {
 		return getZonedLocalDateTime().toLocalDate();
 	}
 
+	public int getGamesSucceeded() {
+		return (int) games.values().stream().filter(WordleGame::isSuccess).count();
+	}
+
+	public int getGamesCompleted() {
+		return (int) games.values().stream().filter(WordleGame::isComplete).count();
+	}
+
+	public double getSuccessRate() {
+		return (double) getGamesSucceeded() / (double) getGamesCompleted() * 100d;
+	}
+
 	public int getStreak() {
+		return getStreakFrom(getZonedLocalDate());
+	}
+
+	private int getStreakFrom(LocalDate date) {
 		int streak = 0;
-		var date = getZonedLocalDate();
+		var today = getZonedLocalDate();
 
 		// Allow today's to be incomplete
-		if (get(date).isSolvedOnReleaseDay())
+		if (today.isEqual(date) && get(date).isSolvedOnReleaseDay())
 			++streak;
 
 		date = date.minusDays(1);
@@ -80,6 +96,18 @@ public class WordleUser implements PlayerOwnedObject {
 		}
 
 		return streak;
+	}
+
+	public int getBestStreak() {
+		int bestStreak = 0;
+		var date = getZonedLocalDate();
+
+		while (!date.isBefore(WordleConfig.EPOCH)) {
+			bestStreak = Math.max(bestStreak, getStreakFrom(date));
+			date = date.minusDays(1);
+		}
+
+		return bestStreak;
 	}
 
 	public double getAverage() {
