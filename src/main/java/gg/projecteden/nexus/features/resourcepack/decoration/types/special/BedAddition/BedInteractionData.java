@@ -391,7 +391,7 @@ public class BedInteractionData {
 			if (config == null)
 				continue;
 
-			if (!(config instanceof DyeableBedAddition))
+			if (!(config instanceof IBedAddition))
 				continue;
 
 			result.put(frame, config);
