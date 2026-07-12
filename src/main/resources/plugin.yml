@@ -6,7 +6,7 @@ authors:
   - WakkaFlocka
   - Blast-MC
   - lexikiq
-api-version: 1.21
+api-version: 26.2
 load: POSTWORLD
 softdepend:
   - mcMMO

@@ -51,6 +51,7 @@ repositories {
     maven { url = uri("https://repo.repsy.io/mvn/quantiom/minecraft") }
     maven { url = uri("https://nexus.neetgames.com/repository/maven-public") }
     maven { url = uri("https://maven.playpro.com/") }
+    maven { url = uri("https://mvn.lib.co.nz/public") }
 //    maven { url = uri("https://repo.magmaguy.com/releases") }
 
 //    maven("https://repo.mineinabyss.com/releases") // PlayerAnimator
@@ -112,7 +113,7 @@ dependencies {
     compileOnly("net.citizensnpcs:citizens-main:2.0.37-SNAPSHOT") {
         exclude("*", "*")
     }
-    compileOnly("LibsDisguises:LibsDisguises:10.0.31") {
+    compileOnly("me.libraryaddict.disguises:libsdisguises:11.0.18") {
         exclude("org.spigotmc", "spigot-api")
         exclude("org.spigotmc", "spigot")
     }
