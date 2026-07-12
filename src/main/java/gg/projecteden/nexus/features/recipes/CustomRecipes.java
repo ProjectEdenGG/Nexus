@@ -426,6 +426,9 @@ public class CustomRecipes extends Feature implements Listener {
 		RecipeBuilder.shapeless(Material.CHISELED_SULFUR).toMake(Material.SULFUR_BRICK_SLAB, 2).register(RecipeType.STONE_BRICK);
 		RecipeBuilder.shapeless(Material.SULFUR_BRICKS).toMake(Material.POLISHED_SULFUR).register(RecipeType.STONE_BRICK);
 		RecipeBuilder.shapeless(Material.POLISHED_SULFUR).toMake(Material.SULFUR).register(RecipeType.STONE_BRICK);
+
+		RecipeBuilder.shapeless(Material.CHISELED_RED_SANDSTONE).toMake(Material.RED_SANDSTONE_SLAB, 2).register(RecipeType.STONE_BRICK);
+		RecipeBuilder.shapeless(Material.CHISELED_SANDSTONE).toMake(Material.SANDSTONE_SLAB, 2).register(RecipeType.STONE_BRICK);
 	}
 
 	private void registerFurnace() {
@@ -468,8 +471,6 @@ public class CustomRecipes extends Feature implements Listener {
 		RecipeBuilder.shapeless(Material.NETHER_WART_BLOCK).toMake(Material.NETHER_WART, 9).register(RecipeType.MISC);
 		RecipeBuilder.shapeless(Material.BLUE_ICE).toMake(Material.PACKED_ICE, 9).register(RecipeType.MISC);
 		RecipeBuilder.shapeless(Material.PACKED_ICE).toMake(Material.ICE, 9).register(RecipeType.MISC);
-		RecipeBuilder.shapeless(Material.CHISELED_RED_SANDSTONE).toMake(Material.RED_SANDSTONE_SLAB, 2).register(RecipeType.MISC);
-		RecipeBuilder.shapeless(Material.CHISELED_SANDSTONE).toMake(Material.SANDSTONE_SLAB, 2).register(RecipeType.MISC);
 		RecipeBuilder.shapeless(Material.GLOWSTONE).toMake(Material.GLOWSTONE_DUST, 3).register(RecipeType.MISC);
 		RecipeBuilder.shapeless(Material.BLAZE_POWDER, Material.BLAZE_POWDER).toMake(Material.BLAZE_ROD).register(RecipeType.MISC);
 		RecipeBuilder.shapeless(Material.DRIPSTONE_BLOCK).toMake(Material.POINTED_DRIPSTONE, 4).register(RecipeType.MISC);
