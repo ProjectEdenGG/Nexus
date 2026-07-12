@@ -18,6 +18,7 @@ import gg.projecteden.nexus.models.jukebox.JukeboxSong;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -153,7 +154,7 @@ public class CratePinatas implements Listener {
 			this.player = player;
 			this.type = type;
 			Nexus.registerTemporaryListener(this);
-			pinata = new ItemBuilder(RandomUtils.randomElement(PINATAS)).build();
+			pinata = new ItemBuilder(RandomUtils.randomElement(PINATAS)).setting(ItemSetting.STORABLE, false).build();
 			start();
 		}
 
@@ -298,7 +299,7 @@ public class CratePinatas implements Listener {
 
 			CrateConfig.CrateLoot loot = CrateHandler.pickCrateLoot(type, player);
 			loots.add(loot);
-			ItemStack item = loot.getDisplayItem();
+			ItemStack item = new ItemBuilder(loot.getDisplayItem()).setting(ItemSetting.STORABLE, false).build();
 
 			items.add(stand.getLocation().getWorld().spawn(stand.getLocation().clone().add(0, 3, 0), Item.class, i -> {
 				i.setItemStack(item);
