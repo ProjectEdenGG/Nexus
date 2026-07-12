@@ -27,18 +27,25 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.store.Contributor;
 import gg.projecteden.nexus.models.store.Contributor.Purchase;
 import gg.projecteden.nexus.models.store.ContributorService;
+import gg.projecteden.nexus.models.store.DisguisePermissionConfigService;
 import gg.projecteden.nexus.models.warps.WarpType;
+import gg.projecteden.nexus.utils.DialogUtils.DialogBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import net.buycraft.plugin.data.Coupon;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -313,4 +320,175 @@ public class StoreCommand extends CustomCommand implements Listener {
 		new ExtraPlotUserService().get(event.getUuid()).update();
 	}
 
+	@Permission(Group.STAFF)
+	@Path("config disguises edit")
+	@Description("Edit disguise packages")
+	void config_disguises_edit() {
+		new DisguiseConfigDialog().open(player());
+	}
+
+	@Permission(Group.ADMIN)
+	@Path("config disguises generate")
+	@Description("Generate disguise packages")
+	void config_disguises_generate() {
+		var service = new DisguisePermissionConfigService();
+		var config = service.get0();
+		config.generate();
+	}
+
+	static class DisguiseConfigDialog {
+		public void open(Player player) {
+			var service = new DisguisePermissionConfigService();
+			var config = service.get0();
+			var builder = new DialogBuilder()
+				.title("Disguise packages")
+				.multiAction()
+				.columns(1);
+
+			for (var pack : config.getPackages().keySet())
+				builder.button(StringUtils.camelCase(pack), $ -> new DisguiseConfigEditPackageDialog(pack).open(player));
+
+			builder
+				.button("&eAdd Package", $ -> new DisguiseConfigAddPackageDialog().open(player))
+				.exitButton("Save & Close", $ -> {
+					service.save(config);
+					config.generate();
+				})
+				.open(player);
+		}
+	}
+
+	static class DisguiseConfigAddPackageDialog {
+		public void open(Player player) {
+			new DialogBuilder()
+				.title("Add new package")
+				.inputText("name", "Package Name")
+				.confirmation()
+				.onCancel($ -> new DisguiseConfigDialog().open(player))
+				.onSubmit(action -> {
+					var service = new DisguisePermissionConfigService();
+					var config = service.get0();
+					config.getPackages().put(action.getText("name").toLowerCase(), new ArrayList<>());
+					service.save(config);
+					new DisguiseConfigDialog().open(player);
+				})
+				.open(player);
+		}
+	}
+
+	static class DisguiseConfigEditPackageDialog {
+		private final String pack;
+
+		DisguiseConfigEditPackageDialog(String pack) {
+			this.pack = pack;
+		}
+
+		public void open(Player player) {
+			var service = new DisguisePermissionConfigService();
+			var config = service.get0();
+			var disguiseTypes = config.getPackages().get(pack);
+
+			var builder = new DialogBuilder()
+				.title("Disguise types for " + StringUtils.camelCase(pack) + " package")
+				.multiAction()
+				.columns(1);
+
+			for (var disguiseType : disguiseTypes)
+				builder.button(StringUtils.camelCase(disguiseType), $ -> new DisguiseConfigEditDisguiseTypeDialog(pack, disguiseType).open(player));
+
+			builder
+				.button("&eAdd Entity", $ -> new DisguiseConfigAddEntityDialog(pack).open(player))
+				.exitButton("Back", $ -> Tasks.wait(1, () -> new DisguiseConfigDialog().open(player)))
+				.open(player);
+		}
+	}
+
+	static class DisguiseConfigAddEntityDialog {
+		private final String pack;
+		private String label = "Entity Type";
+
+		DisguiseConfigAddEntityDialog(String pack) {
+			this.pack = pack;
+		}
+
+		public void open(Player player) {
+			new DialogBuilder()
+				.title("Add entity to " + StringUtils.camelCase(pack) + " package")
+				.inputText("type", label)
+				.confirmation()
+				.onCancel($ -> new DisguiseConfigEditPackageDialog(pack).open(player))
+				.onSubmit(action -> {
+					var service = new DisguisePermissionConfigService();
+					var config = service.get0();
+					try {
+						DisguiseType type = DisguiseType.valueOf(action.getText("type").toUpperCase());
+						config.getPackages().get(pack).add(type);
+						service.save(config);
+						new DisguiseConfigEditPackageDialog(pack).open(player);
+					} catch (Exception ex) {
+						this.label = "&cInvalid entity type";
+						open(player);
+					}
+				})
+				.open(player);
+		}
+	}
+
+	static class DisguiseConfigEditDisguiseTypeDialog {
+		private final String pack;
+		private final DisguiseType disguiseType;
+		private Class<? extends FlagWatcher> watcherClass;
+
+		DisguiseConfigEditDisguiseTypeDialog(String pack, DisguiseType disguiseType) {
+			this.pack = pack;
+			this.disguiseType = disguiseType;
+			this.watcherClass = disguiseType.getWatcherClass();
+		}
+
+		public void open(Player player) {
+			var service = new DisguisePermissionConfigService();
+			var config = service.get0();
+			var builder = new DialogBuilder()
+					.title("Disguise type")
+					.multiAction()
+					.columns(1);
+
+			var methods = ParamInfoManager.getDisguiseWatcherMethods(disguiseType.getWatcherClass(), false);
+			List<Class<? extends FlagWatcher>> supers = new ArrayList<>();
+
+			for (var method : methods) {
+				if (method.getWatcherClass() == watcherClass) {
+					var enabledWatchers = config.getEnabledWatchers().computeIfAbsent(method.getWatcherClass().getSimpleName(), $ -> new ArrayList<>());
+					boolean allowed = enabledWatchers.contains(method.getName());
+					builder.button((allowed ? "&a" : "&c") + method.getName(), $ -> {
+						if (!allowed)
+							enabledWatchers.add(method.getName());
+						else
+							enabledWatchers.remove(method.getName());
+						service.save(config);
+						open(player);
+					});
+				} else if (!supers.contains(method.getWatcherClass())) {
+					supers.add(method.getWatcherClass());
+				}
+			}
+
+			for (var superType : supers)
+				builder.button(superType.getSimpleName(), $ -> {
+					watcherClass = superType;
+					open(player);
+				});
+
+			builder
+				.exitButton("Back", $ -> Tasks.wait(1, () -> {
+					if (watcherClass == disguiseType.getWatcherClass())
+						new DisguiseConfigEditPackageDialog(pack).open(player);
+					else {
+						watcherClass = disguiseType.getWatcherClass();
+						open(player);
+					}
+				}))
+				.open(player);
+		}
+	}
 }
