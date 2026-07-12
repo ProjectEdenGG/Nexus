@@ -8,6 +8,7 @@ import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand;
+import gg.projecteden.nexus.features.customenchants.enchants.MagnetEnchant;
 import gg.projecteden.nexus.features.listeners.common.TemporaryListener;
 import gg.projecteden.nexus.features.particles.effects.CircleEffect;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
@@ -48,6 +49,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -174,6 +177,8 @@ public class CratePinatas implements Listener {
 				_item.setCanMobPickup(false);
 				_item.setPickupDelay((short) 32767);
 				_item.setVelocity(player.getLocation().getDirection().normalize());
+				PersistentDataContainer pdc = _item.getPersistentDataContainer();
+				pdc.set(MagnetEnchant.NBT_KEY_ENABLED, PersistentDataType.BOOLEAN, false);
 			});
 
 			AtomicInteger taskId = new AtomicInteger();
@@ -307,6 +312,8 @@ public class CratePinatas implements Listener {
 				i.setCanPlayerPickup(false);
 				i.customName(new JsonBuilder(loot.getDisplayName()).build());
 				i.setVelocity(new Vector(RandomUtils.randomDouble(-.25, .25), .25, RandomUtils.randomDouble(-.25, .25)));
+				PersistentDataContainer pdc = i.getPersistentDataContainer();
+				pdc.set(MagnetEnchant.NBT_KEY_ENABLED, PersistentDataType.BOOLEAN, false);
 
 				Color color = Color.fromRGB(RandomUtils.randomInt(0, 255), RandomUtils.randomInt(0, 255), RandomUtils.randomInt(0, 255));
 				AtomicInteger taskId = new AtomicInteger();
