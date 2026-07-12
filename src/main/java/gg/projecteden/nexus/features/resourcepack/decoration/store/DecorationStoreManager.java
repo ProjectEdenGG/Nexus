@@ -7,12 +7,14 @@ import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegion
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.Decorations;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.BedInteractionData;
 import gg.projecteden.nexus.features.resourcepack.models.font.InventoryTexture;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -100,10 +102,19 @@ public class DecorationStoreManager implements Listener {
 					Entity targetEntity = DecorationStoreUtils.getTargetEntity(player);
 					ItemStack targetEntityItem = DecorationStoreUtils.getTargetEntityItem(targetEntity);
 					boolean isApplicableEntity = DecorationStoreUtils.isApplicableEntity(player, targetEntity, targetEntityItem, storeType);
-					//
+
+					// bed block -> bed additions (first)
+					if (!isApplicableBlock && !isApplicableEntity) {
+						if (MaterialTag.BEDS.isTagged(targetBlock)) {
+							BedInteractionData bedData = new BedInteractionData(player, targetBlock, null, true);
+							if (!bedData.getAdditionsLeft().isEmpty()) {
+								targetEntity = bedData.getAdditionsLeft().keySet().stream().findFirst().orElse(null);
+								isApplicableEntity = DecorationStoreUtils.isApplicableEntity(player, targetEntity, targetEntityItem, storeType);
+							}
+						}
+					}
 
 					if (!isApplicableBlock && !isApplicableEntity) {
-
 						if (data != null) {
 							data.unglow();
 
