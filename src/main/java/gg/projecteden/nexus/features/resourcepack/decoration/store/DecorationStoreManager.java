@@ -104,7 +104,7 @@ public class DecorationStoreManager implements Listener {
 					boolean isApplicableEntity = DecorationStoreUtils.isApplicableEntity(player, targetEntity, targetEntityItem, storeType);
 
 					// bed block -> bed additions (first)
-					if (!isApplicableBlock && !isApplicableEntity) {
+					if (!isApplicableBlock && !isApplicableEntity && targetBlock != null) {
 						if (MaterialTag.BEDS.isTagged(targetBlock)) {
 							BedInteractionData bedData = new BedInteractionData(player, targetBlock, null, true);
 							if (!bedData.getAdditionsLeft().isEmpty()) {
