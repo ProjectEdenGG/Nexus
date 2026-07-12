@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -19,6 +20,7 @@ import org.bukkit.event.player.PlayerBucketEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
 @NoArgsConstructor
+@WikiConfig(feature = "Creative")
 public class AxolotlBucketCommand extends CustomCommand implements Listener {
 
 	public AxolotlBucketCommand(@NonNull CommandEvent event) {

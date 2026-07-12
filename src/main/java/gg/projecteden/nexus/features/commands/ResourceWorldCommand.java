@@ -201,6 +201,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 
 	public static Map<Environment, String> SEEDS = new HashMap<>();
 
+	@Permission(Group.STAFF)
 	@Path("setNewSeed <environment> <seed>")
 	@Description("Set the next seed for the specified environment")
 	void setNewSeed(Environment environment, String seed) {

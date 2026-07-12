@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.creative.CreativeUser;
 import gg.projecteden.nexus.models.creative.CreativeUserService;
@@ -16,6 +17,7 @@ import lombok.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
+@WikiConfig(feature = "Creative")
 @Redirect(from = "/plot home", to = "/creative home")
 public class CreativeCommand extends CustomCommand {
 
