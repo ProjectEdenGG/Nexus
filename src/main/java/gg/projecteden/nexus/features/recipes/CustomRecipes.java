@@ -482,7 +482,7 @@ public class CustomRecipes extends Feature implements Listener {
 		RecipeBuilder.shapeless(Material.MOSS_CARPET, 3).toMake(Material.MOSS_BLOCK, 2).register(RecipeType.MISC);
 		RecipeBuilder.shapeless(Material.SAND).add(Material.PAPER).toMake(ItemModelType.SAND_PAPER.getNamedItem()).register(RecipeType.MISC);
 		RecipeBuilder.shapeless(Material.RED_SAND).add(Material.PAPER).toMake(ItemModelType.RED_SAND_PAPER.getNamedItem()).register(RecipeType.MISC);
-		RecipeBuilder.shapeless(Material.SADDLE).toMake(Material.LEATHER, 4).register(RecipeType.MISC);
+		RecipeBuilder.shapeless(Material.SADDLE).toMake(Material.LEATHER, 3).register(RecipeType.MISC);
 		RecipeBuilder.shapeless(Material.CHEST).toMake(Material.BARREL).register(RecipeType.MISC);
 		RecipeBuilder.shapeless(Material.BARREL).toMake(Material.CHEST).register(RecipeType.MISC);
 		RecipeBuilder.shapeless(Material.CLAY).toMake(Material.CLAY_BALL, 4).register(RecipeType.MISC);
