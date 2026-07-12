@@ -160,7 +160,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 		victim.clearInventory();
 
-		final Location bed = player.getBedSpawnLocation();
+		final Location bed = player.getRespawnLocation();
 		if (bed != null && getWorld().equals(bed.getWorld()))
 			victim.teleportAsync(bed);
 		else
