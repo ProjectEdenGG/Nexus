@@ -350,10 +350,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 
 			builder
 				.button("&eAdd Package", $ -> new DisguiseConfigAddPackageDialog().open(player))
-				.exitButton("Save & Close", $ -> {
-					service.save(config);
-					config.generate();
-				})
+				.exitButton("Save & Close", $ -> service.save(config))
 				.open(player);
 		}
 	}
@@ -453,7 +450,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 					.multiAction()
 					.columns(1);
 
-			var methods = ParamInfoManager.getDisguiseWatcherMethods(disguiseType.getWatcherClass(), false);
+			var methods = ParamInfoManager.getDisguiseWatcherMethods(disguiseType.getWatcherClass(), true);
 			List<Class<? extends FlagWatcher>> supers = new ArrayList<>();
 
 			for (var method : methods) {
