@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.resourcepack;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.equipment.skins.ToolSkin;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.Debug;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
@@ -68,7 +69,11 @@ public class ResourcePackListener implements Listener {
 		if (event.getRightClicked() instanceof ItemFrame)
 			return;
 
-		if (ResourcePack.isCustomItem(ItemUtils.getTool(event.getPlayer())))
+		var tool = ItemUtils.getTool(event.getPlayer());
+		if (ToolSkin.of(tool) != null)
+			return;
+
+		if (ResourcePack.isCustomItem(tool))
 			event.setCancelled(true);
 	}
 
