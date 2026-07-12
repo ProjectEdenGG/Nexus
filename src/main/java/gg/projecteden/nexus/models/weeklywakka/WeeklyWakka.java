@@ -12,9 +12,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.map.HashedMap;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Data
@@ -32,4 +34,5 @@ public class WeeklyWakka implements PlayerOwnedObject {
 	private String currentLocation;
 	@Embedded
 	private List<UUID> foundPlayers = new ArrayList<>();
+	private Map<UUID, Integer> streaks = new HashedMap<>();
 }

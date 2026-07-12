@@ -108,11 +108,14 @@ public class WeeklyWakkaFeature extends Feature implements Listener {
 			return;
 		}
 
-		WeeklyWakkaUtils.tell(player, "Hey, you found me! Nice job, here's your reward!");
-		CrateType.WEEKLY_WAKKA.give(player);
-
 		weeklyWakka.getFoundPlayers().add(player.getUniqueId());
+		int streak = weeklyWakka.getStreaks().getOrDefault(player.getUniqueId(), 0) + 1;
+		weeklyWakka.getStreaks().put(player.getUniqueId(), streak);
 		service.save(weeklyWakka);
+
+		WeeklyWakkaUtils.tell(player, "Hey, you found me! Nice job, here's your reward!" +
+			(streak > 1 ? " You are on a " + streak + " week streak!" : ""));
+		CrateType.WEEKLY_WAKKA.give(player);
 
 		Tasks.wait(TickTime.SECOND.x(5), () ->
 			WeeklyWakkaUtils.tell(player, WeeklyWakkaUtils.getTips().get(Integer.parseInt(weeklyWakka.getCurrentTip())).get()));
@@ -160,6 +163,10 @@ public class WeeklyWakkaFeature extends Feature implements Listener {
 		}
 		Supplier<JsonBuilder> newTip = RandomUtils.randomElement(newTips);
 		weeklyWakka.setCurrentTip(String.valueOf(tips.indexOf(newTip)));
+
+		for (UUID uuid : new ArrayList<>(weeklyWakka.getStreaks().keySet()))
+			if (!weeklyWakka.getFoundPlayers().contains(uuid))
+				weeklyWakka.getStreaks().remove(uuid);
 
 		weeklyWakka.getFoundPlayers().clear();
 		service.save(weeklyWakka);

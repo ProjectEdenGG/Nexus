@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.survival.avontyre.weeklywakka;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.features.warps.commands._WarpCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -12,6 +13,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.models.warps.Warps.Warp;
@@ -31,6 +33,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 @Aliases("ww")
@@ -84,6 +87,43 @@ public class WeeklyWakkaCommand extends _WarpCommand {
 		}
 
 		send(PREFIX + "You have found wakka this week! He resets in &e" + WeeklyWakkaFeature.getNextWeek());
+	}
+
+	@Path("streak [player]")
+	@Description("Check your Weekly Wakka streak")
+	void streak(@Arg(value = "self", permission = Group.STAFF) Player player) {
+		WeeklyWakkaService service = new WeeklyWakkaService();
+		WeeklyWakka weeklyWakka = service.get0();
+
+		int streak = weeklyWakka.getStreaks().getOrDefault(player.getUniqueId(), 0);
+		if (streak == 0) {
+			send(PREFIX + "Your streak is &e0&3! Go find the hidden wakka around spawn to start a new streak");
+			return;
+		}
+
+		send(PREFIX + "Your current streak is &e" + streak);
+	}
+
+	@Path("streak leaderboard [page]")
+	@Description("See who has the highest Weekly Wakka streaks")
+	void streakLeaderboard(@Arg("1") int page) {
+		WeeklyWakkaService service = new WeeklyWakkaService();
+		WeeklyWakka weeklyWakka = service.get0();
+
+		if (weeklyWakka.getStreaks().isEmpty())
+			error("No streaks found");
+
+		send(PREFIX + "Weekly Wakka streaks leaderboard");
+
+		final BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) ->
+			json("&3" + index + " &e" + Nerd.of(uuid).getColoredName() + " &7- " + weeklyWakka.getStreaks().get(uuid));
+
+		new Paginator<UUID>()
+			.values(Utils.sortByValueReverse(weeklyWakka.getStreaks()).keySet())
+			.formatter(formatter)
+			.command("/weeklywakka streak leaderboard")
+			.page(page)
+			.send();
 	}
 
 	@HideFromHelp
