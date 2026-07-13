@@ -30,6 +30,7 @@ import gg.projecteden.nexus.models.store.ContributorService;
 import gg.projecteden.nexus.models.store.DisguisePermissionConfigService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.DialogUtils.DialogBuilder;
+import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
@@ -50,8 +51,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Aliases({"donate", "buy"})
@@ -333,7 +336,26 @@ public class StoreCommand extends CustomCommand implements Listener {
 	void config_disguises_generate() {
 		var service = new DisguisePermissionConfigService();
 		var config = service.get0();
-		config.generate();
+
+		for (var pack : config.getPackages().keySet()) {
+			List<String> lines = new ArrayList<>();
+			lines.add("name: store.disguises." + pack.toLowerCase());
+			lines.add("permissions:");
+			var types = config.getPackages().get(pack);
+			for (var type : types) {
+				var methods = ParamInfoManager.getDisguiseWatcherMethods(type.getWatcherClass(), true);
+				var keys = config.getEnabledWatchers().keySet().stream().filter(className -> Arrays.stream(methods).anyMatch(method -> method.getWatcherClass().getSimpleName().equals(className))).collect(Collectors.toList());
+				List<String> watchers = new ArrayList<>();
+				for (var key : keys)
+					watchers.addAll(config.getEnabledWatchers().get(key));
+				lines.add("- libsdisguises.disguise." + type.name().toLowerCase() + "." + String.join(".", watchers));
+			}
+			IOUtils.fileWrite("plugins/LuckPerms/yaml-storage/groups/store.disguises." + pack.toLowerCase() + ".yml", (writer, outputs) -> {
+				outputs.addAll(lines);
+			});
+		}
+
+		send(PREFIX + "Permissions written");
 	}
 
 	static class DisguiseConfigDialog {
