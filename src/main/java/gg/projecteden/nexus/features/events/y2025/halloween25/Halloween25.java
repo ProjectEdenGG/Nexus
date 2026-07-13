@@ -10,7 +10,6 @@ import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.models.boost.Booster;
 import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.models.halloween25.Halloween25UserService;
-import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.Model;
@@ -100,10 +99,6 @@ public class Halloween25 extends Feature implements Listener {
 	}
 
 	public static boolean isEventActive(Player player) {
-		if (player != null)
-			if (Rank.of(player).isAdmin())
-				return true;
-
 		if (Nexus.getEnv() != Env.PROD)
 			return false;
 
