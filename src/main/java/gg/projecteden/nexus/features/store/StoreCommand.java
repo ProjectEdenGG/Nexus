@@ -343,12 +343,25 @@ public class StoreCommand extends CustomCommand implements Listener {
 			var builder = new DialogBuilder()
 				.title("Disguise packages")
 				.multiAction()
-				.columns(1);
+				.columns(2);
 
 			for (var pack : config.getPackages().keySet())
-				builder.button(StringUtils.camelCase(pack), $ -> new DisguiseConfigEditPackageDialog(pack).open(player));
+				builder
+					.button("&c-", 25, $ -> new DialogBuilder()
+						.title("Remove " + StringUtils.camelCase(pack) + " package")
+						.bodyText("Are you sure you want to remove the " + StringUtils.camelCase(pack) + " package?")
+						.confirmation()
+						.onCancel($$ -> open(player))
+						.onSubmit($$ -> {
+							config.getPackages().remove(pack);
+							service.save(config);
+							open(player);
+						})
+						.open(player))
+					.button(StringUtils.camelCase(pack), $ -> new DisguiseConfigEditPackageDialog(pack).open(player));
 
 			builder
+				.button("&f", 25)
 				.button("&eAdd Package", $ -> new DisguiseConfigAddPackageDialog().open(player))
 				.exitButton("Save & Close", $ -> service.save(config))
 				.open(player);
@@ -388,13 +401,28 @@ public class StoreCommand extends CustomCommand implements Listener {
 			var builder = new DialogBuilder()
 				.title("Disguise types for " + StringUtils.camelCase(pack) + " package")
 				.multiAction()
-				.columns(1);
+				.columns(2);
 
 			for (var disguiseType : disguiseTypes)
-				builder.button(StringUtils.camelCase(disguiseType), $ -> new DisguiseConfigEditDisguiseTypeDialog(pack, disguiseType).open(player));
+				builder
+					.button("&c-", 25, $ -> new DialogBuilder()
+						.title("Remove " + StringUtils.camelCase(disguiseType) + " type from " + StringUtils.camelCase(pack) + " package")
+						.bodyText("Are you sure you want to remove " + StringUtils.camelCase(disguiseType) + " type from " + pack + " package?")
+						.confirmation()
+						.onCancel($$ -> open(player))
+						.onSubmit($$ -> {
+							config.getPackages().get(pack).remove(disguiseType);
+							service.save(config);
+							open(player);
+						})
+						.open(player))
+					.button(StringUtils.camelCase(disguiseType), $ -> {
+						new DisguiseConfigEditDisguiseTypeDialog(pack, disguiseType).open(player);
+					});
 
 			builder
-				.button("&eAdd Entity", $ -> new DisguiseConfigAddEntityDialog(pack).open(player))
+				.button("&f", 25)
+				.button("&eAdd Entity",$ -> new DisguiseConfigAddEntityDialog(pack).open(player))
 				.exitButton("Back", $ -> Tasks.wait(1, () -> new DisguiseConfigDialog().open(player)))
 				.open(player);
 		}
