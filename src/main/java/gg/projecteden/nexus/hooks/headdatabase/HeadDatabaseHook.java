@@ -73,10 +73,6 @@ public class HeadDatabaseHook extends IHook<HeadDatabaseHook> {
 			return handlers;
 		}
 
-		public ItemStack getHead() {
-			return null;
-		}
-
 		public @NonNull HandlerList getHandlers() {
 			return handlers;
 		}
