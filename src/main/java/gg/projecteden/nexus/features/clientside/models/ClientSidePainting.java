@@ -97,12 +97,47 @@ public class ClientSidePainting implements IClientSideEntity<ClientSidePainting,
 		if (art != null)
 			painting.setArt(art);
 		return painting;
-
 	}
 
 	@Override
 	public @NotNull List<Packet<ClientGamePacketListener>> getSpawnPackets(Player player) {
-		return Collections.singletonList(new ClientboundAddEntityPacket(entity, entity.getDirection().get3DDataValue(), entity.blockPosition().atY(entity.getBlockY() - (height - 1))));
+		var pos = entity.blockPosition();
+		var verticalOffset = 0;
+		var horizontalOffset = 0;
+
+		if (height == 2 && width == 1) {
+			verticalOffset = -1;
+		}
+		if (height == 1 && width == 2) {
+			horizontalOffset = -1;
+		}
+		if (height == 2 && width == 2) {
+			verticalOffset = -1;
+			horizontalOffset = -1;
+		}
+		if (height == 2 && width == 4) {
+			verticalOffset = -1;
+			horizontalOffset = -1;
+		}
+		if (height == 4 && width == 3) {
+			verticalOffset = -1;
+		}
+		if (height == 3 && width == 4) {
+			horizontalOffset = -1;
+		}
+		if (height == 4 && width == 4) {
+			verticalOffset = -1;
+			horizontalOffset = -1;
+		}
+
+		if (blockFace == BlockFace.NORTH || blockFace == BlockFace.SOUTH) {
+			pos = pos.offset(horizontalOffset, verticalOffset, 0);
+		}
+		if (blockFace == BlockFace.EAST || blockFace == BlockFace.WEST) {
+			pos = pos.offset(0, verticalOffset, horizontalOffset);
+		}
+
+		return Collections.singletonList(new ClientboundAddEntityPacket(entity, entity.getDirection().get3DDataValue(), pos));
 	}
 
 	@Override
