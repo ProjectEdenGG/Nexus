@@ -185,7 +185,12 @@ public class Discord extends Feature {
 	}
 
 	public static CompletableFuture<Message> send(String message, TextChannel... targets) {
-		return send(new MessageCreateBuilder().addContent(StringUtils.stripColor(message).replace("<@role", "<@&")), targets);
+		var builder = new MessageCreateBuilder();
+
+		if (List.of(targets).contains(TextChannel.STAFF_BRIDGE))
+			builder = builder.setAllowedMentions(List.of(MentionType.HERE));
+
+		return send(builder.addContent(StringUtils.stripColor(message).replace("<@role", "<@&")), targets);
 	}
 
 	public static CompletableFuture<Message> send(MessageCreateBuilder message, TextChannel... targets) {
