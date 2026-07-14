@@ -65,6 +65,14 @@ public class DiscordBridgeListener extends ListenerAdapter {
 		JsonBuilder json = new JsonBuilder();
 		String content = discordChatEvent.getMessage();
 
+		if (content.matches("https://klipy.com/gifs/[\\w-]+")) {
+			json.next("&f&l[View Gif]")
+				.url(content)
+				.hover("&fClick to view on your browser")
+				.group();
+			content = "";
+		}
+
 		if (content.length() > 0) {
 			if (event.getMessage().getReferencedMessage() != null)
 				json.next(" ");
@@ -79,6 +87,7 @@ public class DiscordBridgeListener extends ListenerAdapter {
 
 			json.next("&f&l[View Attachment]")
 				.url(attachment.getUrl())
+				.hover("&fClick to view on your browser")
 				.group();
 		}
 
