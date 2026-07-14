@@ -66,6 +66,7 @@ public class Booster implements PlayerOwnedObject {
 		private LocalDateTime received;
 		private LocalDateTime activated;
 		private boolean cancelled;
+		private int stat;
 
 		public Boost(@NonNull UUID uuid, Boostable type, double multiplier, TickTime duration) {
 			this(uuid, type, multiplier, duration.get() / 20);
@@ -130,7 +131,7 @@ public class Booster implements PlayerOwnedObject {
 			activated = LocalDateTime.now();
 
 			if (!isPersonal()) {
-				type.onActivate();
+				type.onGlobalActivate(this);
 				DiscordHandler.deleteHistoryAndSendMessage();
 			}
 
@@ -147,8 +148,8 @@ public class Booster implements PlayerOwnedObject {
 		public void expire() {
 			if (!isPersonal()) {
 				config().removeBoost(this);
-				type.onExpire();
 				broadcast("&e" + getNickname() + "'s &e" + getMultiplierFormatted() + " " + StringUtils.camelCase(type) + " boost &3has &cexpired");
+				type.onGlobalExpire(this);
 				DiscordHandler.editMessage();
 				// TODO Auto start next in queue?
 			} else {
@@ -176,7 +177,7 @@ public class Booster implements PlayerOwnedObject {
 			save();
 		}
 
-		private void broadcast(String message) {
+		public void broadcast(String message) {
 			Broadcast.all().prefix("Boosts").message(message).muteMenuItem(MuteMenuItem.BOOSTS).send();
 		}
 
@@ -243,7 +244,7 @@ public class Booster implements PlayerOwnedObject {
 				return ChronoUnit.SECONDS.between(LocalDateTime.now(), getExpiration());
 		}
 
-		private void save() {
+		public void save() {
 			new BoosterService().save(getBooster());
 		}
 

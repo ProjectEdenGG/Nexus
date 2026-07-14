@@ -3,6 +3,7 @@ package gg.projecteden.nexus.models.boost;
 import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.resourcepack.models.ItemModelType;
 import gg.projecteden.nexus.features.shops.Market;
+import gg.projecteden.nexus.models.boost.Booster.Boost;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
@@ -26,18 +27,24 @@ public enum Boostable {
 
 	@Pauseable
 	@PossiblePersonal
-	MCMMO_EXPERIENCE(Material.NETHERITE_PICKAXE),
+	MCMMO_EXPERIENCE(Material.NETHERITE_PICKAXE) {
+		@Override
+		public void onGlobalExpire(Boost boost) {
+			if (boost.getStat() > 0)
+				boost.broadcast("&e" + boost.getStat() + " mcMMO levels &3were earned during this boost!");
+		}
+	},
 
 	@Pauseable
 	@Disabled
 	MARKET_SELL_PRICES(Material.OAK_SIGN) {
 		@Override
-		public void onActivate() {
+		public void onGlobalActivate(Boost boost) {
 			Market.load();
 		}
 
 		@Override
-		public void onExpire() {
+		public void onGlobalExpire(Boost boost) {
 			Market.load();
 		}
 	},
@@ -111,9 +118,9 @@ public enum Boostable {
 		return getField().isAnnotationPresent(Pauseable.class);
 	}
 
-	public void onActivate() {}
+	public void onGlobalActivate(Boost boost) {}
 
-	public void onExpire() {}
+	public void onGlobalExpire(Boost boost) {}
 
 	@Target(ElementType.FIELD)
 	@Retention(RetentionPolicy.RUNTIME)

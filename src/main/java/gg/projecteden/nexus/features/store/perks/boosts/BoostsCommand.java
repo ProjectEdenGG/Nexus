@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.store.perks.boosts;
 
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
+import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
@@ -55,6 +56,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static gg.projecteden.nexus.models.boost.Boostable.MCMMO_EXPERIENCE;
+
 @Aliases("boost")
 @NoArgsConstructor
 @WikiConfig(rank = "Store", feature = "Boosts")
@@ -100,6 +103,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 
 			configService.save(config);
 		});
+
 		Tasks.repeatAsync(TickTime.MINUTE, TickTime.MINUTE.x(5), () -> {
 			BoostConfig config = BoostConfig.get();
 			if (config.getBoosts().isEmpty())
@@ -375,7 +379,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onMcMMOExpGain(McMMOPlayerXpGainEvent event) {
-		event.setRawXpGained((float) (event.getRawXpGained() * Booster.getTotalBoost(event.getPlayer(), Boostable.MCMMO_EXPERIENCE)));
+		event.setRawXpGained((float) (event.getRawXpGained() * Booster.getTotalBoost(event.getPlayer(), MCMMO_EXPERIENCE)));
 	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
@@ -396,6 +400,16 @@ public class BoostsCommand extends CustomCommand implements Listener {
 
 			PlayerUtils.runCommand(event.getPlayer(), "boosts");
 		});
+	}
+
+	@EventHandler
+	public void on(McMMOPlayerLevelUpEvent event) {
+		var boost = BoostConfig.get().getBoost(MCMMO_EXPERIENCE);
+		if (boost == null)
+			return;
+
+		boost.setStat(boost.getStat() + 1);
+		boost.save();
 	}
 
 }
