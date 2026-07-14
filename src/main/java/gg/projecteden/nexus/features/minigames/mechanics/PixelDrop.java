@@ -337,7 +337,7 @@ public class PixelDrop extends TeamlessMechanic {
 		Tasks.sync(() -> {
 			String message = publicChatEvent.getMessage();
 			List<Minigamer> guessed = matchData.getGuessed();
-			List<Minigamer> minigamers = match.getMinigamers();
+			List<Minigamer> minigamers = match.getAliveMinigamers();
 
 			if (!matchData.isCanGuess()) {
 				minigamers.forEach(recipient -> sendChat(recipient, minigamer, "&f" + message));
