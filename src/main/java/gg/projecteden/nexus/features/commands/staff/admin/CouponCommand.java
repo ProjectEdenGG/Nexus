@@ -5,7 +5,9 @@ import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import com.gmail.nossr50.util.player.UserManager;
 import com.mongodb.lang.Nullable;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.mcmmo.McMMO;
 import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetProvider;
+import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetProvider.ResetSkillType;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
@@ -19,6 +21,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.costume.CostumeUserService;
@@ -28,6 +31,7 @@ import gg.projecteden.nexus.models.coupon.Coupons.Coupon;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.voter.VoterService;
+import gg.projecteden.nexus.utils.DialogUtils.DialogBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
@@ -37,6 +41,7 @@ import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.bukkit.entity.FishHook.HookState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -83,7 +88,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 		MCMMO(false) {
 			@Override
 			void use(PlayerInteractEvent event, @NotNull ItemStack item) {
-				new McMMOLevelCouponProvider(extractValue(item)).open(event.getPlayer());
+				McMMOLevelCouponDialog.open(event.getPlayer(), extractValue(item));
 			}
 		},
 		EVENT_TOKENS(false) {
@@ -287,35 +292,42 @@ public class CouponCommand extends CustomCommand implements Listener {
 			couponEvent.handle(event);
 	}
 
-	@Title("Select McMMO Skill")
-	@AllArgsConstructor
-	public static class McMMOLevelCouponProvider extends InventoryProvider {
+	public static class McMMOLevelCouponDialog {
+
 		private static final int MAX_LEVEL = 200;
-		private int levels;
 
-		@Override
-		public void init() {
-			ItemStack coupon = viewer.getInventory().getItemInMainHand();
-			McMMOPlayer mcmmoPlayer = UserManager.getPlayer(viewer);
-			for (McMMOResetProvider.ResetSkillType skill : McMMOResetProvider.ResetSkillType.values()) {
-				ItemStack item = new ItemBuilder(skill.getMaterial())
-					.name("&e" + StringUtils.camelCase(skill.name()))
-					.lore("&3Level: &e" + mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())))
-					.build();
+		public static void open(Player player, int level) {
+			McMMOPlayer mcmmoPlayer = UserManager.getPlayer(player);
 
-				contents.set(skill.getRow(), skill.getColumn(), ClickableItem.of(item, e -> {
-					int mcMMOLevel = mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name()));
-					if (mcMMOLevel >= MAX_LEVEL)
-						return;
+			var builder = new DialogBuilder()
+				.title("McMMO Coupon - " + level + " Level" + (level > 1 ? "s" : ""))
+				.bodyText("Select a skill to level up")
+				.multiAction();
 
-					levels = Math.min(MAX_LEVEL - mcMMOLevel, levels);
-					PlayerUtils.runCommandAsConsole("addlevels " + viewer.getName() + " " + skill.name().toLowerCase() + " " + levels);
+			for (PrimarySkillType type : PrimarySkillType.values()) {
+				if (type.isChildSkill())
+					continue;
+
+				int mcMMOLevel = mcmmoPlayer.getSkillLevel(type);
+				if (mcMMOLevel >= McMMOLevelCouponDialog.MAX_LEVEL)
+					continue;
+
+				int levels = Math.min(McMMOLevelCouponDialog.MAX_LEVEL - mcMMOLevel, level);
+				String label = "&e" + StringUtils.camelCase(type.name()) + " &3- &e" + mcmmoPlayer.getSkillLevel(type) + " &3(+" + levels + ")";
+
+				builder.button(label, e -> {
+					ItemStack coupon = player.getInventory().getItemInMainHand();
+					PlayerUtils.runCommandAsConsole("addlevels " + player.getName() + " " + type.name().toLowerCase() + " " + levels);
 					coupon.subtract();
-					viewer.closeInventory();
-				}));
+					e.closeDialog();
+				});
 			}
 
+			builder.columns(1);
+			builder.exitButton("&cClose");
+			builder.open(player);
 		}
+
 	}
 
 }
