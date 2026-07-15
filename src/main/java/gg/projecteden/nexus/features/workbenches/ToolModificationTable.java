@@ -4,6 +4,8 @@ import gg.projecteden.nexus.features.equipment.skins.ArmorSkin;
 import gg.projecteden.nexus.features.equipment.skins.BackpackSkin;
 import gg.projecteden.nexus.features.equipment.skins.EquipmentSkinType;
 import gg.projecteden.nexus.features.equipment.skins.ToolSkin;
+import gg.projecteden.nexus.features.equipment.stattrack.StatTrack;
+import gg.projecteden.nexus.features.equipment.stattrack.StatTrackStatistic;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.InventoryManager;
 import gg.projecteden.nexus.features.menus.api.ItemClickData;
@@ -17,6 +19,7 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,6 +27,7 @@ import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
@@ -78,6 +82,8 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 			put(21, TMTSlotType.STAT_TRACK);
 
 			put(15, TMTSlotType.RENDER);
+
+			put(8, TMTSlotType.STAT_TRACK_CONFIG);
 		}};
 
 		@Override
@@ -205,7 +211,7 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 					EquipmentSkinType type = EquipmentSkinType.of(tool);
 					if (type != null)
 						return ClickableItem.of(type.getTemplate(), e -> onClick(inv, tool, e));
-					return ClickableItem.of(ItemUtils.getEmptySlotItem(), e -> onClick(inv, tool, e)); // TODO - correct item
+					return ClickableItem.of(ItemUtils.getEmptySlotItem(), e -> onClick(inv, tool, e));
 				}
 			},
 			PARTICLE {
@@ -217,7 +223,70 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 			STAT_TRACK {
 				@Override
 				ClickableItem getItem(ToolModificationTableMenu inv, ItemStack tool) {
-					return null;
+					if (tool == null)
+						return ClickableItem.empty(ItemUtils.getEmptySlotItem());
+
+					if (StatTrack.isEnabledOn(tool))
+						return ClickableItem.empty(StatTrack.getTemplate());
+					return ClickableItem.of(ItemUtils.getEmptySlotItem(), e -> onClick(inv, tool, e));
+				}
+
+				private void onClick(ToolModificationTableMenu inv, ItemStack tool, ItemClickData e) {
+					Player player = e.getPlayer();
+					ItemStack cursor = player.getItemOnCursor();
+
+					if (!new ItemBuilder(cursor).model().equalsIgnoreCase(new ItemBuilder(StatTrack.getTemplate()).model()))
+						return;
+
+					player.getItemOnCursor().subtract();
+					inv.tool = StatTrack.enableFor(tool);
+					inv.init();
+				}
+			},
+			STAT_TRACK_CONFIG {
+				@Override
+				ClickableItem getItem(ToolModificationTableMenu inv, ItemStack tool) {
+					if (!StatTrack.isEnabledOn(tool))
+						return ClickableItem.empty(ItemUtils.getEmptySlotItem());
+
+					ItemBuilder builder = new ItemBuilder(Material.PAPER)
+						.name("&eStatTrack Config")
+						.model(ItemModelType.GUI_GEAR)
+						.lore("&eLeft Click &3to change")
+						.lore("&3displayed statistic")
+						.lore("&3 ");
+
+					List<StatTrackStatistic> validStats = StatTrack.getValidStatsFor(tool);
+
+					int currentStatIndex = 0;
+					for (int i = 0; i < validStats.size(); i++) {
+						StatTrackStatistic stat = validStats.get(i);
+						if (StatTrack.getDisplayedStat(tool).equals(stat)) {
+							builder.lore("&e- " + stat.getDisplayName());
+							currentStatIndex = i;
+						}
+						else
+							builder.lore("&3- " + stat.getDisplayName());
+					}
+
+					builder.lore("&3 ");
+					builder.lore("&eShift-Right &3Click to Eject");
+					builder.lore("&3StatTrack from this tool");
+					builder.lore("&4&oThis will permanently delete all");
+					builder.lore("&4&otracked statistics for this tool");
+
+					int nextStatIndex = currentStatIndex == (validStats.size() - 1) ? 0 : currentStatIndex + 1;
+					return ClickableItem.of(builder.build(), e -> {
+						if (e.isAnyLeftClick()) {
+							inv.tool = StatTrack.setDisplayedStat(tool, validStats.get(nextStatIndex));
+							inv.init();
+						}
+						else if (e.isShiftRightClick()) {
+							PlayerUtils.giveItemAndMailExcess(e.getPlayer(), StatTrack.getTemplate(), WorldGroup.of(e.getPlayer()));
+							inv.tool = StatTrack.disableFor(tool);
+							inv.init();
+						}
+					});
 				}
 			},
 			RENDER {
