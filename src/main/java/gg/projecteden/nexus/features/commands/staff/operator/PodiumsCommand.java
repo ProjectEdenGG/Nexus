@@ -8,6 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import lombok.NonNull;
 
 @Permission(Group.SENIOR_STAFF)
@@ -23,6 +24,17 @@ public class PodiumsCommand extends CustomCommand {
 	void update(Podium podium) {
 		podium.updateActual();
 		send(PREFIX + "Updated");
+	}
+
+	@Path("withTies <podium>")
+	@Description("Debug podium data including ties")
+	void withTies(Podium podium) {
+		send(PREFIX + camelCase(podium) + " data including ties:");
+		var top = podium.getTopWithTiesLastMonth();
+		top.forEach((score, uuids) -> {
+			send(score + ":");
+			uuids.forEach(uuid -> send(" - " + Nickname.of(uuid)));
+		});
 	}
 
 }

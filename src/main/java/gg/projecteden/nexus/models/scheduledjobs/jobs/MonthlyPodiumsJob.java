@@ -16,8 +16,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Data
 @NoArgsConstructor
@@ -39,9 +40,20 @@ public class MonthlyPodiumsJob extends AbstractJob {
 		podiumUserService.deleteAllSync();
 
 		for (MonthlyPodiumType type : MonthlyPodiumType.values()) {
-			AtomicInteger spot = new AtomicInteger(0);
-			type.getPodium().getTopLastMonth().forEach((uuid, text) -> podiumUserService.edit(uuid, podiumUser ->
-				podiumUser.getPodiums().add(new MonthlyPodiumData(type, PodiumSpot.values()[spot.getAndIncrement()], text))));
+			int spot = 0;
+			for (var entry : type.getPodium().getTopWithTiesLastMonth().entrySet()) {
+				String text = entry.getKey();
+				List<UUID> uuids = entry.getValue();
+
+				for (UUID uuid : uuids) {
+					var user = podiumUserService.get(uuid);
+					user.getPodiums().add(new MonthlyPodiumData(type, PodiumSpot.values()[spot], text));
+					podiumUserService.save(user);
+				}
+
+				if (++spot == 3)
+					break;
+			}
 		}
 
 		for (MonthlyPodiumUser podiumUser : podiumUserService.getAll()) {

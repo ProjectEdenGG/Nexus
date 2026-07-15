@@ -25,6 +25,7 @@ import gg.projecteden.nexus.models.statistics.StatisticsUserService;
 import gg.projecteden.nexus.models.statistics.StatisticsUserService.StatisticGroup;
 import gg.projecteden.nexus.models.store.Contributor;
 import gg.projecteden.nexus.models.store.ContributorService;
+import gg.projecteden.nexus.models.voter.TopVoter;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -41,9 +42,11 @@ import tech.blastmc.holograms.api.models.line.Offset;
 import java.text.NumberFormat;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -104,6 +107,26 @@ public class Podiums implements Listener {
 						(h1, h2) -> h1, LinkedHashMap::new
 					));
 			}
+
+			@Override
+			public Map<String, List<UUID>> getTopWithTies(YearMonth yearMonth) {
+				HoursService service = new HoursService();
+				List<PageResult> allResults = service.getPage(new HoursTopArguments(yearMonth.format(DateTimeFormatter.ofPattern("yyyy-MM"))));
+
+				Map<String, List<UUID>> scoreToUuids = new LinkedHashMap<>();
+
+				allResults.stream()
+						.sorted(Comparator.comparing(result -> service.get(result.getUuid()).getMonthly(yearMonth), Comparator.reverseOrder()))
+						.forEach(result -> {
+							int monthly = service.get(result.getUuid()).getMonthly(yearMonth);
+							if (monthly > 0) {
+								String score = Timespan.ofSeconds(monthly).format();
+								scoreToUuids.computeIfAbsent(score, k -> new ArrayList<>()).add(result.getUuid());
+							}
+						});
+
+				return scoreToUuids;
+			}
 		},
 		VOTES(4651, 4652, 4653) {
 			@Override
@@ -124,6 +147,25 @@ public class Podiums implements Listener {
 						topVoter -> NumberFormat.getInstance().format(topVoter.getCount()),
 						(h1, h2) -> h1, LinkedHashMap::new
 					));
+			}
+
+			@Override
+			public Map<String, List<UUID>> getTopWithTies(YearMonth yearMonth) {
+				TopVoterData data = new TopVoterData(yearMonth);
+
+				Map<String, List<UUID>> scoreToUuids = new LinkedHashMap<>();
+
+				data.getTopVoters().stream()
+						.sorted(Comparator.comparing(TopVoter::getCount, Comparator.reverseOrder()))
+						.forEach(topVoter -> {
+							int count = topVoter.getCount();
+							if (count > 0) {
+								String score = NumberFormat.getInstance().format(count);
+								scoreToUuids.computeIfAbsent(score, $ -> new ArrayList<>()).add(topVoter.getVoter().getUuid());
+							}
+						});
+
+				return scoreToUuids;
 			}
 		},
 		BALANCE(4654, 4655, 4656) {
@@ -199,6 +241,24 @@ public class Podiums implements Listener {
 						(h1, h2) -> h1, LinkedHashMap::new
 					));
 			}
+
+			@Override
+			public Map<String, List<UUID>> getTopWithTies(YearMonth yearMonth) {
+				ContributorService service = new ContributorService();
+
+				Map<String, List<UUID>> scoreToUuids = new LinkedHashMap<>();
+
+				service.getAll().stream()
+					.sorted(Comparator.comparing(contributor -> contributor.getMonthlySum(yearMonth), Comparator.reverseOrder()))
+					.forEach(contributor -> {
+						if (contributor.getMonthlySum(yearMonth) > 0) {
+							String sum = contributor.getMonthlySumFormatted(yearMonth);
+							scoreToUuids.computeIfAbsent(sum, k -> new ArrayList<>()).add(contributor.getUuid());
+						}
+					});
+
+				return scoreToUuids;
+			}
 		},
 		TOP_CONTRIBUTORS(4645, 4646, 4647) {
 			@Override
@@ -235,6 +295,14 @@ public class Podiums implements Listener {
 		public abstract Map<UUID, String> getTop();
 
 		public Map<UUID, String> getTopLastMonth() {
+			throw new NotImplementedException();
+		}
+
+		public Map<String, List<UUID>> getTopWithTiesLastMonth() {
+			return getTopWithTies(YearMonth.now().minusMonths(1));
+		}
+
+		public Map<String, List<UUID>> getTopWithTies(YearMonth yearMonth) {
 			throw new NotImplementedException();
 		}
 
