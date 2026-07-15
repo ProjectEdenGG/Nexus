@@ -57,6 +57,7 @@ public class BoostConfig implements PlayerOwnedObject {
 
 	public Boost getBoost(Boostable boostable) {
 		String id = boosts.get(boostable);
+		if (id == null) return null;
 		String[] split = id.split("#");
 		Booster booster = new BoosterService().get(UUID.fromString(split[0]));
 		return booster.get(Integer.parseInt(split[1]));
