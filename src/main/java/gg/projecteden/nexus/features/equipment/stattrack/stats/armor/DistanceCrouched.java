@@ -32,7 +32,7 @@ public class DistanceCrouched extends StatTrackStatistic {
 		double x1 = event.getTo().x();
 		double z1 = event.getTo().z();
 		double x2 = event.getFrom().x();
-		double z2 = event.getFrom().x();
+		double z2 = event.getFrom().z();
 		double distanceSquared = Math.pow(x1 - x2, 2) + Math.pow(z1 - z2, 2); // don't count y distance, only x-z
 		if (distanceSquared <= 0 || distanceSquared > 4) // teleports - insane lag won't track but willing to take that
 			return;
