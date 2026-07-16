@@ -123,7 +123,7 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 						return ClickableItem.of(tool, e -> {
 							ItemStack cursor = e.getPlayer().getItemOnCursor();
 
-							if (!isNullOrAir(cursor) && !EquipmentSkinType.isApplicable(cursor))
+							if (!isNullOrAir(cursor) && !EquipmentSkinType.isApplicable(cursor) && !StatTrack.isApplicableItem(cursor))
 								return;
 
 							e.getPlayer().setItemOnCursor(tool);
@@ -138,7 +138,7 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 							if (isNullOrAir(item))
 								return;
 
-							if (EquipmentSkinType.isApplicable(item)) {
+							if (EquipmentSkinType.isApplicable(item) || StatTrack.isApplicableItem(item)) {
 								e.getPlayer().setItemOnCursor(null);
 								inv.tool = item;
 								inv.init();
@@ -292,12 +292,15 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 			RENDER {
 				@Override
 				ClickableItem getItem(ToolModificationTableMenu inv, ItemStack tool) {
+					if (tool == null)
+						return ClickableItem.empty(ItemUtils.getEmptySlotItem());
+
 					EquipmentSkinType skinType = EquipmentSkinType.of(tool);
 					if (skinType != null)
 						return ClickableItem.empty(skinType.getBig(tool));
 
 					else {
-						if (ToolSkin.DEFAULT.applies(tool))
+						if (ToolSkin.DEFAULT.applies(tool) || tool.getType() == Material.ELYTRA)
 							return ClickableItem.empty(ToolSkin.DEFAULT.getBig(tool));
 
 						if (ArmorSkin.DEFAULT.applies(tool))

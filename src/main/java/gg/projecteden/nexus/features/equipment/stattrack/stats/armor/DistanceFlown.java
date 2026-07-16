@@ -5,6 +5,9 @@ import gg.projecteden.nexus.features.equipment.stattrack.stats.annotations.Displ
 import gg.projecteden.nexus.features.equipment.stattrack.stats.annotations.Id;
 import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Material;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 
 @Id("distance_flown")
@@ -20,4 +23,22 @@ public class DistanceFlown extends StatTrackStatistic {
 	public boolean canTrack(ItemStack item) {
 		return item.getType() == Material.ELYTRA;
 	}
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onMove(PlayerMoveEvent event) {
+		if (!event.hasExplicitlyChangedPosition())
+			return;
+
+		if (!event.getPlayer().isGliding())
+			return;
+
+		if (!event.getTo().getWorld().equals(event.getFrom().getWorld()))
+			return;
+
+		double distanceSquared = event.getTo().distanceSquared(event.getFrom());
+		if (distanceSquared <= 0 || distanceSquared > 32) // teleports - insane lag won't track but willing to take that
+			return;
+		track(event.getPlayer().getInventory().getChestplate(), Math.sqrt(distanceSquared));
+	}
+
 }

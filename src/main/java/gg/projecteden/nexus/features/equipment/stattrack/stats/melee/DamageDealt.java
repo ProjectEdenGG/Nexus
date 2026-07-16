@@ -50,7 +50,7 @@ public class DamageDealt extends StatTrackStatistic {
 
 	private void handleMeleeDamage(Player player, EntityDamageByEntityEvent event) {
 		ItemStack weapon = ItemUtils.getTool(player);
-		track(weapon, (int) event.getFinalDamage());
+		track(weapon, event.getFinalDamage());
 	}
 
 	private void handleProjectileDamage(Projectile projectile, EntityDamageByEntityEvent event) {
@@ -69,7 +69,7 @@ public class DamageDealt extends StatTrackStatistic {
 		try { statTrackId = UUID.fromString(storedId); }
 		catch (IllegalArgumentException ignore) { return; }
 
-		track(statTrackId, (int) event.getFinalDamage());
+		track(statTrackId, event.getFinalDamage());
 	}
 
 }

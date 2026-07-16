@@ -39,7 +39,7 @@ public class StatTrackCommand extends CustomCommand {
 		StatTrackItem item = SERVICE.get(statTrackId);
 		send(PREFIX + "Stats:");
 		line();
-		for (Entry<String, Integer> value : item.getValues().entrySet())
+		for (Entry<String, Double> value : item.getValues().entrySet())
 			send("&e - " + StatTrack.idToDisplay(value.getKey()) + ": " + value.getValue());
 	}
 

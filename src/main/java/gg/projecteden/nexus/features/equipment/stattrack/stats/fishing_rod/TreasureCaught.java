@@ -70,6 +70,8 @@ public class TreasureCaught extends StatTrackStatistic {
 			     BONE,
 			     INK_SAC,
 			     TRIPWIRE_HOOK -> true;
+			case BOW,
+				 FISHING_ROD -> item.getEnchantments().isEmpty();
 			default -> false;
 		};
 	}

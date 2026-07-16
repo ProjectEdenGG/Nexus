@@ -68,6 +68,10 @@ public class StatTrack extends Feature implements Listener {
 		return statistic == null ? null : statistic.getDisplayName();
 	}
 
+	public static boolean isApplicableItem(ItemStack cursor) {
+		return STATISTICS.stream().anyMatch(stat -> stat.canTrack(cursor));
+	}
+
 	public static List<StatTrackStatistic> getValidStatsFor(ItemStack tool) {
 		return STATISTICS.stream().filter(stat -> stat.canTrack(tool)).toList();
 	}
@@ -168,7 +172,7 @@ public class StatTrack extends Feature implements Listener {
 		int amount = 0;
 		if (stat != null) {
 			StatTrackItem statTrackItem = SERVICE.get(getStatTrackId(item));
-			amount = statTrackItem.getValues().getOrDefault(stat.getId(), 0);
+			amount = statTrackItem.getValues().getOrDefault(stat.getId(), 0.0).intValue();
 		}
 		String formattedAmount = String.format("%,d", amount);
 

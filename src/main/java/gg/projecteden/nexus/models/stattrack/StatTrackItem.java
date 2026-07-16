@@ -34,7 +34,7 @@ public class StatTrackItem implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Map<String, Integer> values = new HashMap<>();
+	private Map<String, Double> values = new HashMap<>();
 
 
 }

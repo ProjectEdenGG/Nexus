@@ -30,7 +30,7 @@ public abstract class StatTrackStatistic implements Listener {
 		this.track(tool, 1);
 	}
 
-	public void track(ItemStack tool, int amount) {
+	public void track(ItemStack tool, double amount) {
 		if (!canTrack(tool)) return;
 		UUID uuid = StatTrack.getStatTrackId(tool);
 		if (uuid == null) return;
@@ -38,9 +38,9 @@ public abstract class StatTrackStatistic implements Listener {
 		track(uuid, amount);
 	}
 
-	public void track(UUID uuid, int amount) {
+	public void track(UUID uuid, double amount) {
 		StatTrackItem item = StatTrack.SERVICE.get(uuid);
-		int value = item.getValues().getOrDefault(getId(), 0) + amount;
+		double value = item.getValues().getOrDefault(getId(), 0.0) + amount;
 		item.getValues().put(getId(), value);
 		StatTrack.SERVICE.save(item);
 	}
