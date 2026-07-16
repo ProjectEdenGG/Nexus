@@ -169,7 +169,7 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 				getViewer().updateInventory();
 			}
 
-			if (this.tool != null && new ItemBuilder(item).model().equalsIgnoreCase(new ItemBuilder(StatTrack.getTemplate()).model())) {
+			if (this.tool != null && StatTrack.isTemplate(item)) {
 				if (StatTrack.isEnabledOn(tool)) return;
 				if (!StatTrack.isApplicableItem(tool)) return;
 
@@ -322,7 +322,7 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 					Player player = e.getPlayer();
 					ItemStack cursor = player.getItemOnCursor();
 
-					if (!new ItemBuilder(cursor).model().equalsIgnoreCase(new ItemBuilder(StatTrack.getTemplate()).model()))
+					if (!StatTrack.isTemplate(cursor))
 						return;
 
 					player.getItemOnCursor().subtract();

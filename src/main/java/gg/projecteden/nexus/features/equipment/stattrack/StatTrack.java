@@ -72,6 +72,11 @@ public class StatTrack extends Feature implements Listener {
 		return STATISTICS.stream().anyMatch(stat -> stat.canTrack(cursor));
 	}
 
+	public static boolean isTemplate(ItemStack template) {
+		if (template == null) return false;
+		return new ItemBuilder(getTemplate()).model().equalsIgnoreCase(new ItemBuilder(template).model());
+	}
+
 	public static List<StatTrackStatistic> getValidStatsFor(ItemStack tool) {
 		return STATISTICS.stream().filter(stat -> stat.canTrack(tool)).toList();
 	}
