@@ -1,11 +1,13 @@
 package gg.projecteden.nexus.features.workbenches;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.equipment.skins.ArmorSkin;
 import gg.projecteden.nexus.features.equipment.skins.BackpackSkin;
 import gg.projecteden.nexus.features.equipment.skins.EquipmentSkinType;
 import gg.projecteden.nexus.features.equipment.skins.ToolSkin;
 import gg.projecteden.nexus.features.equipment.stattrack.StatTrack;
 import gg.projecteden.nexus.features.equipment.stattrack.StatTrackStatistic;
+import gg.projecteden.nexus.features.listeners.common.TemporaryListener;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.InventoryManager;
 import gg.projecteden.nexus.features.menus.api.ItemClickData;
@@ -18,11 +20,13 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -72,19 +76,7 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 	}
 
 	@Rows(3)
-	private static class ToolModificationTableMenu extends InventoryProvider {
-
-		private static final Map<Integer, TMTSlotType> SLOTS = new HashMap<>() {{
-			put(10, TMTSlotType.TOOL);
-
-			put(3, TMTSlotType.SKIN);
-			put(12, TMTSlotType.PARTICLE);
-			put(21, TMTSlotType.STAT_TRACK);
-
-			put(15, TMTSlotType.RENDER);
-
-			put(8, TMTSlotType.STAT_TRACK_CONFIG);
-		}};
+	private static class ToolModificationTableMenu extends InventoryProvider implements TemporaryListener {
 
 		@Override
 		public String getTitle() {
@@ -94,8 +86,35 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 		private ItemStack tool;
 
 		@Override
+		public void open(Player viewer) {
+			super.open(viewer);
+			Nexus.registerTemporaryListener(this);
+		}
+
+		@Override
 		public void init() {
 			contents.clear();
+
+			Map<Integer, TMTSlotType> SLOTS = new HashMap<>() {{
+				put(10, TMTSlotType.TOOL);
+
+				if (tool != null) {
+					if (EquipmentSkinType.isApplicable(tool)) {
+						put(3, TMTSlotType.SKIN);
+						put(12, TMTSlotType.STAT_TRACK);
+						put(21, TMTSlotType.PARTICLE);
+					}
+					else {
+						put(3, TMTSlotType.STAT_TRACK);
+						put(12, TMTSlotType.PARTICLE);
+					}
+				}
+
+				put(15, TMTSlotType.RENDER);
+
+				put(8, TMTSlotType.STAT_TRACK_CONFIG);
+			}};
+
 			for (int i = 0; i < 27; i++)
 				if (!SLOTS.containsKey(i))
 					contents.set(i, ClickableItem.empty(ItemUtils.getEmptySlotItem()));
@@ -113,6 +132,52 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 				this.getViewer().give(this.tool);
 				Tasks.wait(1, () -> this.getViewer().updateInventory());
 			}
+			Nexus.unregisterTemporaryListener(this);
+		}
+
+		@Override
+		public Player getPlayer() {
+			return getViewer();
+		}
+
+		@EventHandler
+		public void onShiftClick(InventoryClickEvent event) {
+			if (!event.isShiftClick()) return;
+			if (!event.getWhoClicked().equals(getViewer())) return;
+			if (event.getClickedInventory() == null) return;
+			if (event.getClickedInventory().equals(getBukkitInventory())) return;
+
+			ItemStack item = event.getClickedInventory().getItem(event.getSlot());
+			if (isNullOrAir(item)) return;
+
+			if (EquipmentSkinType.isApplicable(item) || StatTrack.isApplicableItem(item)) {
+				tool = item.clone();
+				item.subtract();
+				init();
+				getViewer().updateInventory();
+				return;
+			}
+
+			if (this.tool != null && EquipmentSkinType.isTemplate(item) && EquipmentSkinType.isApplicable(tool)) {
+				if (EquipmentSkinType.of(tool) != null) return;
+
+				EquipmentSkinType type = EquipmentSkinType.of(item);
+				if (type == null) return;
+				tool = type.apply(tool);
+				item.subtract();
+				init();
+				getViewer().updateInventory();
+			}
+
+			if (this.tool != null && new ItemBuilder(item).model().equalsIgnoreCase(new ItemBuilder(StatTrack.getTemplate()).model())) {
+				if (StatTrack.isEnabledOn(tool)) return;
+				if (!StatTrack.isApplicableItem(tool)) return;
+
+				tool = StatTrack.enableFor(tool);
+				item.subtract();
+				init();
+				getViewer().updateInventory();
+			}
 		}
 
 		private enum TMTSlotType {
@@ -125,6 +190,16 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 
 							if (!isNullOrAir(cursor) && !EquipmentSkinType.isApplicable(cursor) && !StatTrack.isApplicableItem(cursor))
 								return;
+
+							if (e.isShiftClick() && PlayerUtils.hasRoomFor(e.getPlayer(), tool)) {
+								((InventoryClickEvent) e.getEvent()).setCancelled(false);
+								Tasks.wait(1, () -> {
+									inv.tool = null;
+									inv.init();
+									e.getPlayer().updateInventory();
+								});
+								return;
+							}
 
 							e.getPlayer().setItemOnCursor(tool);
 							inv.tool = isNullOrAir(cursor) ? null : cursor;
@@ -155,6 +230,16 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 
 					ItemStack clicked = e.getItem();
 					EquipmentSkinType clickedType = EquipmentSkinType.of(clicked);
+
+					if (e.isShiftClick() && clickedType != null) {
+						((InventoryClickEvent) e.getEvent()).setCancelled(false);
+						Tasks.wait(1, () -> {
+							reset(inv, tool);
+							inv.init();
+							player.updateInventory();
+						});
+						return;
+					}
 
 					if (!EquipmentSkinType.isTemplate(cursor) && !isNullOrAir(cursor))
 						return;
@@ -211,7 +296,7 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 					EquipmentSkinType type = EquipmentSkinType.of(tool);
 					if (type != null)
 						return ClickableItem.of(type.getTemplate(), e -> onClick(inv, tool, e));
-					return ClickableItem.of(ItemUtils.getEmptySlotItem(), e -> onClick(inv, tool, e));
+					return ClickableItem.of(new ItemBuilder(ItemModelType.GUI_TOOL_SKIN_OUTLINE).hideTooltip().build(), e -> onClick(inv, tool, e));
 				}
 			},
 			PARTICLE {
@@ -228,6 +313,8 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 
 					if (StatTrack.isEnabledOn(tool))
 						return ClickableItem.empty(StatTrack.getTemplate());
+					if (Dev.BLAST.is(inv.getViewer())) // TODO - remove on release
+						return ClickableItem.of(new ItemBuilder(ItemModelType.GUI_TOOL_STATTRACK_OUTLINE).hideTooltip().build(), e -> onClick(inv, tool, e));
 					return ClickableItem.of(ItemUtils.getEmptySlotItem(), e -> onClick(inv, tool, e));
 				}
 
