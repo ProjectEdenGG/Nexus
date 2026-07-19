@@ -313,9 +313,7 @@ public class ToolModificationTable extends CustomBench implements ICraftableCust
 
 					if (StatTrack.isEnabledOn(tool))
 						return ClickableItem.empty(StatTrack.getTemplate());
-					if (Dev.BLAST.is(inv.getViewer())) // TODO - remove on release
-						return ClickableItem.of(new ItemBuilder(ItemModelType.GUI_TOOL_STATTRACK_OUTLINE).hideTooltip().build(), e -> onClick(inv, tool, e));
-					return ClickableItem.of(ItemUtils.getEmptySlotItem(), e -> onClick(inv, tool, e));
+					return ClickableItem.of(new ItemBuilder(ItemModelType.GUI_TOOL_STATTRACK_OUTLINE).hideTooltip().build(), e -> onClick(inv, tool, e));
 				}
 
 				private void onClick(ToolModificationTableMenu inv, ItemStack tool, ItemClickData e) {

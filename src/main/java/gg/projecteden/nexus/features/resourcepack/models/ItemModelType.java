@@ -34,7 +34,7 @@ public enum ItemModelType {
 	PROPORTIONATOR_FUEL("functional/proportionator/fuel"),
 	GUI_TOOL_OUTLINES("ui/gui/tool_modification/tool_outlines"),
 	GUI_TOOL_SKIN_OUTLINE("ui/gui/tool_modification/skin_outline"),
-	GUI_TOOL_STATTRACK_OUTLINE("ui/gui/tool_moodification/stattrack_outline"),
+	GUI_TOOL_STATTRACK_OUTLINE("ui/gui/tool_modification/stattrack_outline"),
 	INVISIBLE_ITEM_FRAME("functional/invis_item_frame") {
 		@Override
 		public ItemStack getItem() {

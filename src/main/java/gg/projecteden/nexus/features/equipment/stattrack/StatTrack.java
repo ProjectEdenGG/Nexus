@@ -36,7 +36,7 @@ public class StatTrack extends Feature implements Listener {
 	public static final NamespacedKey TRACKING_KEY = new NamespacedKey(Nexus.getInstance(), "stat_track_id");
 	public static final StatTrackItemService SERVICE = new StatTrackItemService();
 	@Getter
-	private static final ItemStack template = new ItemBuilder(Material.PAPER).model("todo/stattrack").name("&eStatTrack").build();
+	private static final ItemStack template = new ItemBuilder(Material.PAPER).model("misc/tools/stattrack").name("&eStatTrack").build();
 
 	private static final List<StatTrackStatistic> STATISTICS = new ArrayList<>();
 
