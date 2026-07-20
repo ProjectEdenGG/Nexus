@@ -77,7 +77,7 @@ public class StatisticsUser implements PlayerOwnedObject {
 	}
 
 	private @NotNull String getFilePath() {
-		return "server/stats/" + uuid + ".json";
+		return "server/players/stats/" + uuid + ".json";
 	}
 
 }
