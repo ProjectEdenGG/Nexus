@@ -21,6 +21,7 @@ import gg.projecteden.nexus.utils.Tasks;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Chunk;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -142,7 +143,7 @@ public class WeeklyWakkaFeature extends Feature implements Listener {
 
 		new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_BLAST).location(location).play();
 		location.getWorld().spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, location, 500, 0.5, 1, 0.5, 0);
-		location.getWorld().spawnParticle(Particle.FLASH, location, 10, 0, 0, 0);
+		location.getWorld().spawnParticle(Particle.FLASH, location, 10, 0, 0, 0, Color.WHITE);
 
 		List<Warp> warps = WarpType.WEEKLY_WAKKA.getAll();
 		WeeklyWakkaService service = new WeeklyWakkaService();
