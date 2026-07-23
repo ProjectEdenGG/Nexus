@@ -26,6 +26,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.trust.TrustsUser;
 import gg.projecteden.nexus.models.trust.TrustsUser.TrustType;
 import gg.projecteden.nexus.models.trust.TrustsUserService;
+import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
@@ -33,7 +34,9 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
+import io.papermc.paper.entity.TeleportFlag;
 import io.papermc.paper.entity.TeleportFlag.EntityState;
+import io.papermc.paper.entity.TeleportFlag.Relative;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -539,15 +542,17 @@ public class Decoration {
 		if (armorStand == null)
 			return false;
 
-		if (sitEvent.getSeat().isBackless()) {
-			int taskId = Tasks.repeat(0, TickTime.TICK.x(4), () -> {
-				Location rotated = armorStand.getLocation().clone();
-				rotated.setYaw(player.getLocation().getYaw());
-				armorStand.teleport(rotated, EntityState.RETAIN_PASSENGERS);
-			});
-
-			backlessTasks.put(player.getUniqueId(), taskId);
-		}
+		// TODO: Teleporting the armorstand with a player as a passenger, constantly closes the players chat/menus
+		// 		- TeleportFlags are no longer used, retain passengers works by default
+//		if (sitEvent.getSeat().isBackless()) {
+//			int taskId = Tasks.repeat(0, TickTime.TICK.x(4), () -> {
+//				Location rotated = armorStand.getLocation().clone();
+//				rotated.setYaw(player.getLocation().getYaw());
+//				armorStand.teleport(rotated, EntityState.RETAIN_PASSENGERS);
+//			});
+//
+//			backlessTasks.put(player.getUniqueId(), taskId);
+//		}
 
 		return true;
 	}
