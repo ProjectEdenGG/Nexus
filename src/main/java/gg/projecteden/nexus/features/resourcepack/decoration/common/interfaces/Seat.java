@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration.BacklessData;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -186,7 +187,10 @@ public interface Seat extends Interactable {
 	}
 
 	static void dismount(Player player, ArmorStand armorStand) {
-		Tasks.cancel(Decoration.getBacklessTasks().remove(player.getUniqueId()));
+		BacklessData data = Decoration.getBacklessTasks().remove(player.getUniqueId());
+		if (data != null)
+			Tasks.cancel(data.getTaskId());
+
 		double yDiff = armorStand.getLocation().getY() - armorStand.getLocation().getBlockY();
 		armorStand.remove();
 		player.teleport(player.getLocation().add(0, 1 + yDiff, 0));

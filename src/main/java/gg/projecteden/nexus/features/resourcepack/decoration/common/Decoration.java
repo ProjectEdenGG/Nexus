@@ -26,7 +26,6 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.trust.TrustsUser;
 import gg.projecteden.nexus.models.trust.TrustsUser.TrustType;
 import gg.projecteden.nexus.models.trust.TrustsUserService;
-import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
@@ -34,9 +33,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
-import io.papermc.paper.entity.TeleportFlag;
-import io.papermc.paper.entity.TeleportFlag.EntityState;
-import io.papermc.paper.entity.TeleportFlag.Relative;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -532,7 +528,15 @@ public class Decoration {
 	}
 
 	@Getter
-	private static final Map<UUID, Integer> backlessTasks = new HashMap<>();
+	private static final Map<UUID, BacklessData> backlessTasks = new HashMap<>();
+
+	@Setter
+	@Getter
+	@AllArgsConstructor
+	public class BacklessData {
+		int taskId;
+		float playerYaw;
+	}
 
 	public boolean trySit(DecorationSitEvent sitEvent, Player player, Block block) {
 		if (!sitEvent.callEvent())
@@ -542,19 +546,40 @@ public class Decoration {
 		if (armorStand == null)
 			return false;
 
-		// TODO: Teleporting the armorstand with a player as a passenger, constantly closes the players chat/menus
-		// 		- TeleportFlags are no longer used, retain passengers works by default
-//		if (sitEvent.getSeat().isBackless()) {
-//			int taskId = Tasks.repeat(0, TickTime.TICK.x(4), () -> {
-//				Location rotated = armorStand.getLocation().clone();
-//				rotated.setYaw(player.getLocation().getYaw());
-//				armorStand.teleport(rotated, EntityState.RETAIN_PASSENGERS);
-//			});
-//
-//			backlessTasks.put(player.getUniqueId(), taskId);
-//		}
+		if (sitEvent.getSeat().isBackless()) {
+			BacklessData data = new BacklessData(-1, player.getLocation().getYaw());
+			backlessTasks.put(player.getUniqueId(), data);
+
+			int taskId = Tasks.repeat(0, TickTime.TICK.x(4), () -> {
+				float oldYaw = data.getPlayerYaw();
+				float newYaw = player.getLocation().getYaw();
+
+				if (Math.abs(yawDifference(oldYaw, newYaw)) <= 5f)
+					return;
+
+				data.setPlayerYaw(newYaw);
+
+				Location rotated = armorStand.getLocation().clone();
+				rotated.setYaw(newYaw);
+				armorStand.teleport(rotated);
+			});
+
+			data.setTaskId(taskId);
+		}
 
 		return true;
+	}
+
+	private float yawDifference(float a, float b) {
+		float diff = (a - b) % 360.0f;
+
+		if (diff > 180.0f)
+			diff -= 360.0f;
+
+		if (diff < -180.0f)
+			diff += 360.0f;
+
+		return diff;
 	}
 
 	public boolean paint(Player player, Block block, ItemStack tool) {
